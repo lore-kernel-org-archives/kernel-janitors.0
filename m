@@ -1,43 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C506FBE;
-	Wed, 21 Feb 2024 00:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBA96FC3;
+	Wed, 21 Feb 2024 00:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708476528; cv=none; b=iQyAzSveSyKcW01/W168DiqNdKP9r393pku/LYivfExObWgbnCTzWUlfDQnyl+Fu9iPc185+knDXzYiG6NM3ozgPjcj0zKGrhATgc0iKm4TdtDFCGc23eDXnlghV1qepKL2l3asGONkp3a0DPu1ueqaMjEjrRRjgM218QnzD7yM=
+	t=1708476709; cv=none; b=koF5rhXcFkdGCxjI2c9udzyFzwxEo/y+Tx3xPHnity4Sf9UVxvcsyCZeQ4rpAf3H7UCQzcIQmjaOwP3fgokBM5yXXWRf6NWNtLpsVILjQmtVwAdcIuNQBEsJJ0OR9cX3qS+OeAu+L19Ww0eBKtGDvflOLHtI9v8UpXjiat4RCAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708476528; c=relaxed/simple;
-	bh=Z26wBzvMatb73janE/pjbUd/FUwUvp+X7ENzvMeozC0=;
+	s=arc-20240116; t=1708476709; c=relaxed/simple;
+	bh=Ncr8WgFBMmxONPdwFz/Fb8hFz7H28QbV5ZY6jMhjEYM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rfgRHiRfsB15XHG8mQkt1QtTHabdbVBSnhQjAaaewAq1Z/9FJWuWdWiaO2yU9fy5Q2NUpkfXrcnlUm5bucbxj2LMJM4pfwUKsO/NsnhqE0DPBv+R27Bn6O1Yf2AtX8Meus7Dz1Yxgo3oH75RUo3ciEtDXKWanRrg+ouzRwevVIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cks+HwHU; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=VP2gFLBjC2dj0hX5nofoVVycqBBzFKoVdvetJyOYaH+T63wn66nzX6aBUfxRIhqOCM6IzC4vWAovHr/LOi+/sFT7BcnI9MLvu9VhPf6PaFZiMaR0TNnRHUBFIjn119DSzZkOkL+aHDMC53NAHsDSGRsPTsGHZ7pjwaAFjbyNeXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pkZkIFWJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cks+HwHU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C64EC433C7;
-	Wed, 21 Feb 2024 00:48:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pkZkIFWJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4F8BC433F1;
+	Wed, 21 Feb 2024 00:51:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708476528;
-	bh=Z26wBzvMatb73janE/pjbUd/FUwUvp+X7ENzvMeozC0=;
+	s=k20201202; t=1708476708;
+	bh=Ncr8WgFBMmxONPdwFz/Fb8hFz7H28QbV5ZY6jMhjEYM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=cks+HwHUpf66KkyPRfCtDhk0NzUfRpCREYYcUP/i8K1bjpTPBSuI3mrAm6pb72hau
-	 6JZGfhhZD22Ki/NEDLMx78gDod6ltpH9LqeNWDABaxL+rXUihhuBzDalrKjak3BHfO
-	 NbSZUXjjLmOIz9x/cqFI6XBmAjpGO+oK//F9PEyYdKb+5B/JL3sxUk1VzhFhTPY2fj
-	 yTELobOJYPD2O1TduG/qV4I5Chh/f1J6e40W7vsDr4AnpKZVNYvqRZTyhdd+HCgudR
-	 IRqz28x/23rnv2LwA++sKc0ctrMX+wtPA2XuL4hO2s+whO6/TeZVcmLprSi40qQz55
-	 wU7Y3wn7OL6Qw==
+	b=pkZkIFWJrVR7bo//86y2c2Kn134q5TqKjcMMuBLimZR6x8tLtjOaA7TfjeZrmYfDw
+	 7EQL48GphdVQprRVKhyWZjxEow8XNe2TbzkcmVzaIlZO+udwjgf2nei9ix1sI6Jn2P
+	 7Wi8EaI10oaZmUHP/lQ3DyHbecbPqd7L54ILynIdZWx8S3Ow6Qmr3Wp7M/UsNB1Unb
+	 ydSWIdLrTcZfslvVTUC0DkoJT942Fg2tGww6DPnJxK9jUBJS0XQOZ12tBoW4MPqV0l
+	 e5eXJSQSmG6HU0USdQkxUfepIBE6iujQV9TK3fNWCKeiAo1/+iQlohkcWC3zd/N+1+
+	 mojqpvCWPTEvg==
 From: Mark Brown <broonie@kernel.org>
-To: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
- Baojun Xu <baojun.xu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- linux-sound@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ Colin Ian King <colin.i.king@gmail.com>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240216142219.2109050-1-colin.i.king@gmail.com>
-References: <20240216142219.2109050-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] ASoC: tas2781: Remove redundant initialization
- of pointer 'data'
-Message-Id: <170847652597.70487.7579277890832174117.b4-ty@kernel.org>
-Date: Wed, 21 Feb 2024 00:48:45 +0000
+In-Reply-To: <20240216134918.2108262-1-colin.i.king@gmail.com>
+References: <20240216134918.2108262-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] regulator: core: Remove redundant assignment to
+ variable possible_uV
+Message-Id: <170847670760.72396.11946631659826067398.b4-ty@kernel.org>
+Date: Wed, 21 Feb 2024 00:51:47 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -48,25 +46,25 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13-dev-a684c
 
-On Fri, 16 Feb 2024 14:22:19 +0000, Colin Ian King wrote:
-> The pointer 'data' being initialized with a value that is never read, it
-> is being re-assigned inside a while-loop. The initialization is redundant
-> and can be removed.
+On Fri, 16 Feb 2024 13:49:18 +0000, Colin Ian King wrote:
+> The variable possible_uV being assigned a value that is never read, the
+> control flow via the following goto statement takes a path where the
+> variable is not accessed. The assignment is redundant and can be removed.
 > 
-> Cleans up clang scan build warning
-> sound/soc/codecs/tas2781-fmwlib.c:1534:17: warning: Value stored to
-> 'data' during its initialization is never read [deadcode.DeadStores]
+> Cleans up clang scan build warning:
+> drivers/regulator/core.c:3935:3: warning: Value stored to 'possible_uV'
+> is never read [deadcode.DeadStores]
 > 
 > [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
 Thanks!
 
-[1/1] ASoC: tas2781: Remove redundant initialization of pointer 'data'
-      commit: e480c0991db00b24b39010bfd56eda5ec2417186
+[1/1] regulator: core: Remove redundant assignment to variable possible_uV
+      commit: 055100d1a3b27ce154b3e3041d3cef24778821b3
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
