@@ -1,71 +1,97 @@
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id BE4EC3C481;
-	Thu, 22 Feb 2024 10:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932623A1AE;
+	Thu, 22 Feb 2024 10:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708597576; cv=none; b=nSvWAv1Zb+rATCXVUqQ7ua2nb6eKoajNQ2nHbeUC8YBT7hzaPvqHvIEXnnHCtjJXUWlmOCbzAMVPXM83l4s33r57oikR4W8aNaE5s96S3E7ozOBfERRMd2uJR7ZVbvKZJ7LaP64ghGRhBUJYpbJAX+13Vj7mKn3nlAHj59+iUtk=
+	t=1708597624; cv=none; b=MpBlX1Vyx8tWXcW0JH74baKMh8KYxJg4DWVQQ4Fcyg4PQ1+4nuY1ullrsb5x8BaTtyRVib5t9Jt2do2Gpcz8EpeZbVCOxAeI0rFGu5LocZYYRWBG9hu0DaAhJO1cn8o1Iei0mIBaeGMhcLoYqF8Jc1F3H/tga70FA4eDkpQYFxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708597576; c=relaxed/simple;
-	bh=Rm+Yj2UuZ1027lvdPwgeiZQLrr3sHaHO5cTHO1idRqg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G6pfVhou3QvsIsUHgvSK9LgyiZD8E6u8zQI31mun11HkxUs78/jVYaqsbHnVMBF5umGRrLNNu2NajhtLrOWMPep1MNIcaPtOrMU0W4JGdOb+/ce4bBRNvxk8Ltl1mccPOxqxsCZmdq5upA8lMn94hv87dD4SJ+MRVm+lEjgprc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 093096032FDD7;
-	Thu, 22 Feb 2024 18:25:52 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: hubcap@omnibond.com,
-	martin@omnibond.com
-Cc: Su Hui <suhui@nfschina.com>,
-	xiyuyang19@fudan.edu.cn,
-	cymi20@fudan.edu.cn,
-	tanxin.ctf@gmail.com,
-	devel@lists.orangefs.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] orangefs: Fix possible NULL deference in orangefs_mount
-Date: Thu, 22 Feb 2024 18:25:49 +0800
-Message-Id: <20240222102548.1426561-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1708597624; c=relaxed/simple;
+	bh=GaQtAt+0ZBuHOH149SkMsTgO5Nb/9QOVByr5ZUaP4EM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F449/ksCg85RltIQos2tg4IhH46G0W6vKbSSyqPvp9fJpwJQcPLa3YBjNjemH+4zV/FF6PCTfn/Wlr3mrVilkHo4PcxOeukFR10iimkvl1yVPJOkLktDuN6yhgCmgfHkA02LJ4v0FApRmZKbPdS10VpWBkD9ACJxSmoAEgD6Q7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kfesqtsY; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kfesqtsY"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4128cfb6b6fso1085765e9.0;
+        Thu, 22 Feb 2024 02:27:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708597621; x=1709202421; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=flDKL0Jl4YYNTMBfDlt09JDqExll7DCl518ysKuqYuc=;
+        b=kfesqtsYh32g98AnegRZwSF0ADaBE74pceYM/nhCjfmpeNTF1Q0GfMDEkU+KQ8661u
+         82Jex4IHk/N4qTC9nDAKCtmAzflRdrlYRCB81jcNn1hJaWtzWr8/35Oec4dN6pkORM8s
+         yNUSjj2FavxByav9xIJZdLptzW5eqN/qBd/a0rALMGXl3U2nfbAyBYqPBqfeXcdhA6rJ
+         iDEeZ9v4QMfy7rL5qoguwKyGz4Hm9kyeGiZKiDavzrBMBjZYUDKr8fkCMPmzcFklHAKv
+         L4ltSU5F/Qbo33MbxrM2apsgzU3Ek5BugqlfHh2Z2EdG/rJIJEa6VEahGn0CGKct449m
+         Sh1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708597621; x=1709202421;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=flDKL0Jl4YYNTMBfDlt09JDqExll7DCl518ysKuqYuc=;
+        b=MY7snsybaI9NPqzTmox8nmVopq7f11MheNbxEMjzG1rq71lqf2lhPDvZ4EVjN9zP2N
+         +T+D+SIcMDk3EpsHNkbyU/9RDlA8p4IV9X68biTXKU8nfllxOyHrNJG6dizaqXUbZfVN
+         miebt3L2QNUXsuGQGft6cLKzN6FgQy5sBvXtCx5rpUWsADKZfInZiy7Kzhnx72tdImWc
+         pU/pdCHRLunz+Oks8jVvczr5Kax+U1hNWG2pHHGGHWRr3TUaoz5qghRC8GHUcIWG73GU
+         Qi+SDCGiM2awGrDEM4vPJ/nE0EIXNi6TgeZQ1kvr7knDXRrQHg5R8FzdTCZR+fwXi8Jw
+         vznQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIrs+FBp9xotcYv0ggGom2jC4kvt/Rea9bsjReF4owLeSp7aZo7XIcMQWMLSzBzobFqY87kZuu/hTlEccqioePjwaAb6QgtqwSRmlLQuk5fOnaXSpgRgGL45yeR/wlGdHEivG4OwrtoluBUEKrwlmgV7w+EC11vUbepKVvaFai5X9diHkzAJw14Q==
+X-Gm-Message-State: AOJu0YwieK+9W8TW55CxZDDrHShcUU+K6UmMyKNmCGFHvfSuVhlZ/G/B
+	xxv6xs/apJj6thDjvdFEh/MVtVUWOxDP7iZKYW8/3UWsXgMnXHdG
+X-Google-Smtp-Source: AGHT+IGm9OmYvF5AOKI6SIlJ+oFUOFk7gvki3TY7/frQsO3RLmX839J5ayqdHX9tKEsVaelx9yz53A==
+X-Received: by 2002:a05:600c:3554:b0:412:78ac:a0de with SMTP id i20-20020a05600c355400b0041278aca0demr2320245wmq.27.1708597620654;
+        Thu, 22 Feb 2024 02:27:00 -0800 (PST)
+Received: from [192.168.0.101] (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.googlemail.com with ESMTPSA id t4-20020a05600c450400b004127057d6b9sm5749415wmo.35.2024.02.22.02.26.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Feb 2024 02:27:00 -0800 (PST)
+Message-ID: <7c78e205-d798-4ce6-82b6-9d03737d3734@gmail.com>
+Date: Thu, 22 Feb 2024 10:26:58 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] ACPI: thermal_lib: Add missing checks for errors in
+ return code ret
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
+ linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240221123936.3421462-1-colin.i.king@gmail.com>
+ <4b78456b-071f-46c0-bb47-919b493cab79@moroto.mountain>
+ <68571997-c33a-49f8-b922-4b102e5b682b@moroto.mountain>
+ <CAJZ5v0h8_F_Fru13aAzZ27W304gwex1d0NPyitourTaS_-ajeQ@mail.gmail.com>
+Content-Language: en-US
+From: "Colin King (gmail)" <colin.i.king@gmail.com>
+In-Reply-To: <CAJZ5v0h8_F_Fru13aAzZ27W304gwex1d0NPyitourTaS_-ajeQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-scripts/coccinelle/null/deref_null.cocci complains:
-fs/orangefs/super.c:584:18-25: ERROR:
-ORANGEFS_SB ( sb ) is NULL but dereferenced.
+On 22/02/2024 10:21, Rafael J. Wysocki wrote:
+> On Wed, Feb 21, 2024 at 2:19 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>>
+>> Btw, in real life, in 2024, the compiler is going to automatically
+>> initialize "temp_decik" to zero.  So we could just do:
+>>
+>> -       int temp_decik;
+>> +       int temp_decik = 0;
+>>
+>> That would silence the warning without affecting anything else at all.
+> 
+> Sounds good to me.
+> 
+> Anyone willing to cut a patch for this?
 
-When memory allocation for orangefs_sb_info_s fails, ORANGEFS_SB(sb)
-is NULL and ORANGEFS_SB(sb)->no_list will result in NULL deference.
-Add a judgement to fix this NULL deference problem.
-
-Fixes: ac2c63757f4f ("orangefs: Fix sb refcount leak when allocate sb info failed.")
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- fs/orangefs/super.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/orangefs/super.c b/fs/orangefs/super.c
-index 5254256a224d..c056c86e2482 100644
---- a/fs/orangefs/super.c
-+++ b/fs/orangefs/super.c
-@@ -581,7 +581,8 @@ struct dentry *orangefs_mount(struct file_system_type *fst,
- 
- free_sb_and_op:
- 	/* Will call orangefs_kill_sb with sb not in list. */
--	ORANGEFS_SB(sb)->no_list = 1;
-+	if (ORANGEFS_SB(sb))
-+		ORANGEFS_SB(sb)->no_list = 1;
- 	/* ORANGEFS_VFS_OP_FS_UMOUNT is done by orangefs_kill_sb. */
- 	deactivate_locked_super(sb);
- free_op:
--- 
-2.30.2
+will do
 
