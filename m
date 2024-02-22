@@ -1,81 +1,134 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA0C22099
-	for <kernel-janitors@vger.kernel.org>; Thu, 22 Feb 2024 10:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D572BB1B;
+	Thu, 22 Feb 2024 10:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708598763; cv=none; b=WP7r1orJseGhFEYUidSK6P04srSjMj7ODTjKKKwwVEnXpjT4smvqKPJFkPDbpiZ24Mi2/qa8k2JQiky7cqDbnvPmYRSwO0fzRkzLZ15RolKx/QRYe0ZvxOQVB098h6OyfDsReVHECVEuEw9AKMWsixZAdSGywgrP2MzbH/EOqic=
+	t=1708599448; cv=none; b=Zpb8cYMP5ALgbEoeLoZulpO+6PUpEa/j85tFlKg/WrlwG3s3fXoanCoMiH2E+vS8B57NOwXduozLlekW+F83s80Cvu69Jd2p4vPcWSRoG1Q/7mZjsQIFGkb4Ob+Hnto5uE18xnbamC0XhR8riEW1hGyJ1erO7d31XZdHJDOkh6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708598763; c=relaxed/simple;
-	bh=c+Am164OK8KhHus7xwiJiVHp4mqrOSD4BzBr5iW5bb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y1nFqfLr7wfuuesYCxx0ttjlI/IebSRAMY1BNijjvQVTVDcDGINZZOnSVUlrRa/jMK+61++3I/J5Dqvx2G2cbiPLhfxxIK8fi+pcg15KVphRFHKr+08LADTZ/xEF8unhTU5s6LfSrCuaCSXrdU77Fs2Pf0JJ9Zus2qlla0t+7AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bZYz6kZR; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1708599448; c=relaxed/simple;
+	bh=KZFamjtTkLlgnuhFg6Rr3E9yf5OE94BjBfpAh6iuEGI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ZHO+X7escd7HSUb2qvGSR2MmvemTnlMKPkzP5MGw3ee+Kg04nWUTQBzhrDpEMTRatNPC1zulVP+9NS3J79y0x9YNj5qPajsqw0F1lk3T/huqGu9aMUcrj3LRd5U/i0Y+QjGXe7f7RpLIA5hGL7/7oZba5ALcxafLE9gMtQiYtUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TwhZdvVr; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bZYz6kZR"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-33d38c9ca5bso2581124f8f.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 22 Feb 2024 02:46:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TwhZdvVr"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2d208d0b282so101904501fa.0;
+        Thu, 22 Feb 2024 02:57:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708598760; x=1709203560; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OpytlI5vC3wVN5F9RGMaAAniUyCYbok6OJJykifAV50=;
-        b=bZYz6kZRZU/LrIq2ncq8URNhzZM/gQfNHtrAjBiJNAYxxw2gTEO8GbU08fY6kbvVNk
-         Ng5GFZKEX197pJsPsy6hyYgGcyr7sx1fwZP72875ZZYluwgnul+GLQxHIqfmGS1yX6Ac
-         DCutJjMnX76Su/8aaq53mp0DluYRfpdTwpuwrWZf4Lt6eVuIMLsZfrXOuYU1wFg96YuJ
-         Vu5b83JNg9SE/wbS6NyMESaS9IxJjaNzEBZQGAEK5gWDDFV81SBTzw+rCv04Mm12Qfaq
-         o3zBX0NpZwavyl7/UwehOK3VdPgEWcBc0cMZxcRoSigJ4oh+eNgKs7STyOKGvTJpRj7q
-         bc8Q==
+        d=gmail.com; s=20230601; t=1708599445; x=1709204245; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wGYV6JHoJ7Q+x7LBEW9ExN+ZwTE9A2g4Q3ZY71UFQaI=;
+        b=TwhZdvVrwp5X90pjhnXaRlOlxjZgNMD+gjazKx6iUu61Yr6AMEoIhyrvTlBJHD8hfW
+         4yB/1u3kzyi5YYU4V6+RXO8wXR4ZLY9iQMeCZvK21rvNgQegaWxDWnWSThLaBDmk1HR+
+         kWLewHVM15c49Yws4elSCRFmYYl+bVFmXMyCGQQwFyiCCMGcxnwb1bfq0cBse5Jo1Zbk
+         XiLO5cBCMAzAEE7bQTap8Qtxj6IkdW5Q+KR7XE023IDOeZk+zjWL6dvMbuRwN2FWFIAa
+         JpB1Lze4k93A5aPPaZaOrILQ4Id64LnfcU3sKYzwHyuc7xoIkDkUsnpRuV2EWOL+Mkmn
+         eGtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708598760; x=1709203560;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OpytlI5vC3wVN5F9RGMaAAniUyCYbok6OJJykifAV50=;
-        b=X6T7gP8NgtB5slXhg39K1Fil8CmXlb6z+qUfyzFJ04ovZr0iDx+1fnv9plwfMLjqXL
-         ynPSOIaXIt0oDhoRubQb2e9qkg6iuDtbhnrMdAseinLMksrdyXjOTHkJlAlam3M/yz87
-         Nyx7EzVo0d7THYua25zy4zb8s4C/6oDbipIURUc6WL+2Tdvqqn1uaZ+3DEpOEwSnvJXA
-         +Ki1JBc4QRNGLgaRDJ5SrY+UGlu0OSzQBuAZuI8BFenhj/n1DcNtLA0Uhgakju+zJigU
-         LhH600oFZKf5lkY57LOfsoSdFFy2Q8Vo3Al/chDAhJGy7x9q9EZM7BrarKObTQ07vhSm
-         EmYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJivte2tdY+Mds3obpysai9HONZHt+rlRUqHmX/5lRQMzye4k0CXPe9glFUyXV5ICmb9wwxHM8drKTlc7h/U18lb4nopdf0JlBC9hMw5x1
-X-Gm-Message-State: AOJu0Yy5GhPVNYcZPEbGTyfk1c3PY6FXyUS+76JwYC/Nn4JWnqjka22z
-	dDJKh68TVjMl/pDoWGAd91X/EZjwAEG4MOMfGW5dNfGb7MorDnZkR3qwdV3m5kA=
-X-Google-Smtp-Source: AGHT+IHyFVlvKFVb/JOUH2jIASwAtIlSchBHJRJ7WOo963nkUWqxCW3AwPoDczaPeQvjwxnUcCWM0w==
-X-Received: by 2002:a5d:4e84:0:b0:33d:7eb:1a6a with SMTP id e4-20020a5d4e84000000b0033d07eb1a6amr12769145wru.68.1708598759792;
-        Thu, 22 Feb 2024 02:45:59 -0800 (PST)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id e6-20020adffd06000000b0033cf60e268fsm19710118wrr.116.2024.02.22.02.45.58
+        d=1e100.net; s=20230601; t=1708599445; x=1709204245;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wGYV6JHoJ7Q+x7LBEW9ExN+ZwTE9A2g4Q3ZY71UFQaI=;
+        b=gC8mZQZwWy2kFijgURzH94OS9KyrBZ3qSaQGjz1hAxd2m2HNKHcxo6Mc73ieVmpa32
+         p/oqxPpMAGbOZrS1Gbz1nk2hHZX4I49uIRb1QlxnYo3+B4HHRUiQ1YllDuvM1IT9TEX2
+         LBOvFJWlPlAdCWISqQhUEr27fcY9xcCqdsUkWvnFYsO6hMje8j70QTdlcozkHiChE2jL
+         iiDLndz+4NHcv7af3BUl1fU7wiiZrOWre9fxvmxZI4h+LomsbZ8zh4+WUlEax1VskhbJ
+         zIJmSYEplamSzFrpj6mGvA7yEbZiE7HorbbevuyTfLTwKJ4pp2k9+NSruiTVpTRILPPC
+         0ySg==
+X-Forwarded-Encrypted: i=1; AJvYcCWv/D5gnvbEL8l7v2mc5KVcCMgevGTb0+12Bnn27F87iAzEhevmvPbtceGm8PM+lS3luym2sd/2kb1ILWcV6xHeOmZh1DOIJPqkf+SuAKrNvRIF3jBvOTH9S03oubEzQngHpCkrpWYaYw==
+X-Gm-Message-State: AOJu0YypyCvNu7MEHwLsV2ZkuZ4mbkKri4O6cNrTyV6iBJoOKgmAui+5
+	NN1LYGvz6BQDQfUwcE6tjFNCC7eDmgrGfMZW4DP5NyOG+Jq8n3a8
+X-Google-Smtp-Source: AGHT+IHz5LqeM9DUmbD/xyQv66R4i+bjqBOk1QDmMso/Qu5MSDXQ0gE8+Dy4cGs7NeCGyFy9ARzguA==
+X-Received: by 2002:a05:651c:1199:b0:2d2:6378:ad3e with SMTP id w25-20020a05651c119900b002d26378ad3emr623730ljo.7.1708599444544;
+        Thu, 22 Feb 2024 02:57:24 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id m20-20020a05600c281400b0041214ff06cesm21011733wmb.42.2024.02.22.02.57.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Feb 2024 02:45:59 -0800 (PST)
-Date: Thu, 22 Feb 2024 13:45:55 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: hubcap@omnibond.com, martin@omnibond.com, xiyuyang19@fudan.edu.cn,
-	cymi20@fudan.edu.cn, tanxin.ctf@gmail.com, devel@lists.orangefs.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] orangefs: Fix possible NULL deference in orangefs_mount
-Message-ID: <3e4e23ca-5e00-43b3-91a7-690e690279e1@moroto.mountain>
-References: <20240222102548.1426561-1-suhui@nfschina.com>
+        Thu, 22 Feb 2024 02:57:24 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Len Brown <lenb@kernel.org>,
+	linux-acpi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next][V2] ACPI: thermal_lib: Initialize temp_decik to zero
+Date: Thu, 22 Feb 2024 10:57:23 +0000
+Message-Id: <20240222105723.3810303-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240222102548.1426561-1-suhui@nfschina.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-This was already fixed in commit:
-9bf93dcfc453 ("Julia Lawall reported this null pointer dereference, this
-should fix it.")
+Static analysis with clang scan build is warning that uninitialized
+data is being passed into various functions. Stop these warnings by
+initializing temp_decik to zero.
 
-Amusing subject...  :P
+Cleans up clang scan warnings in lines 106, 125, 146 and 164 such as:
+drivers/acpi/thermal_lib.c:106:9: warning: 2nd function call argument
+is an uninitialized value [core.CallAndMessage]
 
-regards,
-dan carpenter
+Kudos to Dan Carpenter for the deeper analysis of this issue.
+
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+
+V2: just set temp_decik to 0
+
+---
+ drivers/acpi/thermal_lib.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/acpi/thermal_lib.c b/drivers/acpi/thermal_lib.c
+index 4e0519ca9739..6214d6ebe1fa 100644
+--- a/drivers/acpi/thermal_lib.c
++++ b/drivers/acpi/thermal_lib.c
+@@ -100,7 +100,7 @@ static int thermal_temp(int error, int temp_decik, int *ret_temp)
+  */
+ int thermal_acpi_active_trip_temp(struct acpi_device *adev, int id, int *ret_temp)
+ {
+-	int temp_decik;
++	int temp_decik = 0;
+ 	int ret = acpi_active_trip_temp(adev, id, &temp_decik);
+ 
+ 	return thermal_temp(ret, temp_decik, ret_temp);
+@@ -119,7 +119,7 @@ EXPORT_SYMBOL_GPL(thermal_acpi_active_trip_temp);
+  */
+ int thermal_acpi_passive_trip_temp(struct acpi_device *adev, int *ret_temp)
+ {
+-	int temp_decik;
++	int temp_decik = 0;
+ 	int ret = acpi_passive_trip_temp(adev, &temp_decik);
+ 
+ 	return thermal_temp(ret, temp_decik, ret_temp);
+@@ -139,7 +139,7 @@ EXPORT_SYMBOL_GPL(thermal_acpi_passive_trip_temp);
+  */
+ int thermal_acpi_hot_trip_temp(struct acpi_device *adev, int *ret_temp)
+ {
+-	int temp_decik;
++	int temp_decik = 0;
+ 	int ret = acpi_hot_trip_temp(adev, &temp_decik);
+ 
+ 	return thermal_temp(ret, temp_decik, ret_temp);
+@@ -158,7 +158,7 @@ EXPORT_SYMBOL_GPL(thermal_acpi_hot_trip_temp);
+  */
+ int thermal_acpi_critical_trip_temp(struct acpi_device *adev, int *ret_temp)
+ {
+-	int temp_decik;
++	int temp_decik = 0;
+ 	int ret = acpi_critical_trip_temp(adev, &temp_decik);
+ 
+ 	return thermal_temp(ret, temp_decik, ret_temp);
+-- 
+2.39.2
 
