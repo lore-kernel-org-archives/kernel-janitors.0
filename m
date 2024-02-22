@@ -1,79 +1,57 @@
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74CFEDC
-	for <kernel-janitors@vger.kernel.org>; Thu, 22 Feb 2024 00:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BBC14A8F;
+	Thu, 22 Feb 2024 04:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708560798; cv=none; b=qNNdVHagj+aPQYnA76DFxKUqxxzPHjYYPRVegDi2NE2iEcxJL7deBH713tYypNos5K4YXyEFUlH+2S7ENSZNf+6p2FYn+C3hoK3CepA0r+BlsGe5bHlgldJVcb9t6Vn9u2duONli708xK9N5u03jGpqezpWttnwTKtjrAn4VzbQ=
+	t=1708575855; cv=none; b=KUpQ2Vhul2dEJ7vWibt45X8eTeUv8aHxbFC59t7U0qZRhijvDep4RR/3ReoaPVC468tjB+rhVJJrQngrxt5KYiJeoh9cOE8Y0uj+cUyNLAjXX4FS5WDNG6lLSuHQwRjf8l4nATsHFmws39Quxl4w4wOF9Yno0midx9+QtEl71H4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708560798; c=relaxed/simple;
-	bh=iUVWUF9NkdrHOfQDIfPkftj/GJ/E6lO+EKObpVPf634=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iqg2r2TOomNFXVykok86U9kSyVFPFBA9LgGEW7xoeX4YzdXHuKUrsJQKOqsI3bmVXs7zwgqCAUneQJZ0KWGMssBF2XEjJapQGAZPsLIcA/OoIeftem82Q5uVvvKjKVHLhN99fsLf0ZCjpYxnPjHvAZCiUG2MXlELSNh9n0YXbqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BVCFB3Qn; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1708575855; c=relaxed/simple;
+	bh=d9S37lA+8Flk7L+rhFCq54DZFysAzFpIrDZ4k0n/A5c=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=mwT/C0QUld2Ey5INjDmexrVlD5ZuOFzoFfZvVLQiPtrcqbq9APqr0+pzykv/s/2scZoafWH1LM3YcBBSDyu2/EcOOziG3Jol927ljQqBk8I6HWO3enX5suv9MaDE+kyxbzCo63U3dB+UpLZmiGWrw9Zh2u/ZXoUr/QjBvlWGFpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I2IkThWj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BVCFB3Qn"
-Date: Wed, 21 Feb 2024 19:13:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1708560795;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9DMHLnyzhcN8vf6iG1IKFZXAcocDG2xngD5mV3RGx+c=;
-	b=BVCFB3QnnSsV6YcYDk3XQRAF6CwNL1RSt46ymfCNlUPryJ2e1DhklXaqKS/wmxS1ei03ee
-	g/fOundriHURen1VughVUN9rg1SEunNP6VvbfK2iVnr5us4mzitB7DjnHo+J7l28wZsFYR
-	gYbJ1Epul/iyk/9wkhxWIEoN3zQ1Hxc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: "Colin King (gmail)" <colin.i.king@gmail.com>
-Cc: Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] bcachefs: remove redundant assignment to variable
- ret
-Message-ID: <27hacgxfzyeatjx27nb4k5rb5cajt5yw4c2papfr4h64urb7qx@teo2ha6msqnl>
-References: <20240221115203.3413554-1-colin.i.king@gmail.com>
- <3qaoftjgf7p2ugutl524b3yin7pqpjrkftjx3frunhduf3so66@tjhcdoq6unk3>
- <cfa4cd82-67e9-4483-9c35-a425859f4a21@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2IkThWj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C97BC433C7;
+	Thu, 22 Feb 2024 04:24:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708575854;
+	bh=d9S37lA+8Flk7L+rhFCq54DZFysAzFpIrDZ4k0n/A5c=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=I2IkThWjlCpzMK9SugnrC70otRpHakffSuIXWuHACP5e/48kwgPZM/JoquVcHbDAG
+	 4ZvwL1g4ETI+QalZv75fz4ThwbJ9F1RJ6MzX8SimGQyLEJRcqncLblR06y+vjYnaXt
+	 Gd67GdBOowaAntU5VNQdr9Ei+skDEX0Fik7MT4QHUK34eFbBPUgzQXBlTFZOVZjuhB
+	 Yy8a+psRKgJYt0B4vi1xwrO92Owp4pLxVQNH/8CqP6xvgWXL49hU3brWPLXb/PTs9d
+	 LglqclzddD5Q+8Pj48wWqHE7sxJZvFTWsTPDw/jn7f9OhvyoY1X+y250Ky5zvwZZQd
+	 7DQe66BCRkHeA==
+Message-ID: <539c9f8dfb9233e61eccb8c7bcfc2ae3.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cfa4cd82-67e9-4483-9c35-a425859f4a21@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <c3f1877c9a0886fa35c949c8f0ef25547f284f18.1704912510.git.christophe.jaillet@wanadoo.fr>
+References: <c3f1877c9a0886fa35c949c8f0ef25547f284f18.1704912510.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] clk: hisilicon: hi3519: Release the correct number of gates in hi3519_clk_unregister()
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Jiancheng Xue <xuejiancheng@hisilicon.com>, Michael Turquette <mturquette@baylibre.com>
+Date: Wed, 21 Feb 2024 20:24:12 -0800
+User-Agent: alot/0.10
 
-On Thu, Feb 22, 2024 at 12:08:28AM +0000, Colin King (gmail) wrote:
-> On 22/02/2024 00:04, Kent Overstreet wrote:
-> > On Wed, Feb 21, 2024 at 11:52:03AM +0000, Colin Ian King wrote:
-> > > Variable ret is being assigned a value that is never read, it is
-> > > being re-assigned a couple of statements later on. The assignment
-> > > is redundant and can be removed.
-> > > 
-> > > Cleans up clang scan build warning:
-> > > fs/bcachefs/super-io.c:806:2: warning: Value stored to 'ret' is
-> > > never read [deadcode.DeadStores]
-> > > 
-> > > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > 
-> > I'll take this, but - entirely too much of the traffic on this list is
-> > getting taken up by static analyzer bullshit, we need to cut down on
-> > this
-> 
-> I'll back off then.
+Quoting Christophe JAILLET (2024-01-10 10:58:21)
+> The gates are stored in 'hi3519_gate_clks', not 'hi3519_mux_clks'.
+> This is also in line with how hisi_clk_register_gate() is called in the
+> probe.
+>=20
+> Fixes: 224b3b262c52 ("clk: hisilicon: hi3519: add driver remove path and =
+fix some issues")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Maybe just wrap up fixes for all the warnings every now and then? It is
-worth keeping up on static analyzer warnings, it's just the mailing list
-noise I want to cut down on, as well as making better use of my own
-time.
-
-I'd be happy to take a patch like that now and then, or - maybe we could
-get a dashboard going, like I was just running by Dan in the other
-thread? If we could get a dirt simple stupid dashboard that had both the
-clangc analyzer warnings, and the smatch warnings - I think that would
-make a lot of people happy.
+Applied to clk-next
