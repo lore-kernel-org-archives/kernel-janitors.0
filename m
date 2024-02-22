@@ -1,68 +1,65 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4723412E40
-	for <kernel-janitors@vger.kernel.org>; Thu, 22 Feb 2024 06:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F921642B
+	for <kernel-janitors@vger.kernel.org>; Thu, 22 Feb 2024 06:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708582450; cv=none; b=e1l4SOpuxdX7HdZFWZWSXngJFotYkqiqp+nPO5eihE5AzCOzUrWNiNns2vw9OzfrMO9yWsPG6uTA44LsNIg6NYcVbdBMTnC0Eegwb+VRbxHXxlfSyjmf04pssUgQ6g+V+H9xFdo9avXxXs08YXYfYeKx2sQ0ZCHuWZRUk82CxR8=
+	t=1708582472; cv=none; b=OlPRyg67IqKEitBao0l01xB2JVAzD2vSuERF0dpUd+2s6YPQyfRT3PUFf6Vp5Sv5ucjHB5xzdn90cXwj6nL1Nw3aCe7C30M/NOhI+SByJPcWTk72C96SHBxnKcQrYwAvAeTGOwhikJgVFyHealgPsItk/PEHGbZ74tO9iG3bFkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708582450; c=relaxed/simple;
-	bh=bn5i7/H5MiGU8X0jDHY08Xk8tKztkxjuCmvj7DxUVWU=;
+	s=arc-20240116; t=1708582472; c=relaxed/simple;
+	bh=eronbDz8hniFpG4P8U1NjCuXIc5mT2H0q1+vHe4QvZ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rcKLKjWf9ScKAgrkr0cd0xHPLC7G81qcrSkjCAKMrCJ6nFbNh/62LzZHg6wLLtWOPA2kfP0c2i2nyf9pbd5L2rJIIGlZ3zXAT4FjDlWD1AwBDrgSWVeVHIKb4KUTIOw2ZFr9ktLNl4xUqHFw130p34sPvFbeGDbZdh1vhvk4jT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZssiwUOS; arc=none smtp.client-ip=209.85.167.45
+	 Content-Disposition; b=p5ft929cQ4mvteij027/Gaz5t8Dzn1jIz/4tfjgGYsLdzZeP4clbiMtscXQ/FA96r7kpT44b2/Uomdw2h1iFyQs7mJBflqA4KfpmLRny3am8D9zgBLqYvObTjrQ4LODkhT4TLnL6Sz9CUEw/FBUQNEoWxpeZQoupoF8kmXFTrIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tqHv6mvb; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZssiwUOS"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-512bc0e8ce1so4706073e87.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 21 Feb 2024 22:14:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tqHv6mvb"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-412700a7207so10447325e9.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 21 Feb 2024 22:14:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708582446; x=1709187246; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708582469; x=1709187269; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=4SC+H9Oulb2l4KVayVXMGit73eWaz8qeCs2MKjcvOvk=;
-        b=ZssiwUOSH8jikzJYq8ZcP5uGGi6D0dmW7qLMtDVUrOprFj/imhE5lg8l+2JBrT+1Ja
-         jo+dQATSr2viMRGoeXXXZdBuw3hgeLLWfudCiYtdRR9glVeZslvFJqeaxuLyEPGR3Z+6
-         EVv9XO/cS4V1lTlYl3SP8X8JI9SJONBpwCOBBjYDIzyoRLQMoV8FNTQgzVv7mxLzKHRN
-         29pK2BNotffTu44O84ADPTQohNQDHcWrpVx6ckGqkg4avFKqTDD4DuLTqXRqoQJqheI4
-         CBgUglcOQ/9SDcg3YsyB06Xjs91+Nza1AcoG548haDqPcO3ZkYZ794PNYwaxd+cn+cql
-         lZ7w==
+        bh=ihJpziOlMuDcSvTLuJ/gU0Hae3a368M+b9HMO37f99A=;
+        b=tqHv6mvbEQESR6TN0fWmiYp95YTLBbXV0HW/8XpTFbJokG75u9vku9tiZy+qEmaEDn
+         m0UnFrKessgtla2iX1TVY8SK7qMJidIjCCqFoXFuyEHy6DvVJHS67Os2QGUmdRwA1+7R
+         V8aBXwezYOGqQ/Vhg2Ynf9lTvYqWcuSM5S4TssexsqHBZ6ZbMWm0pgL9T3jjlj1+vWQo
+         ZqG7hcZ20xlxcq8shbXZkw/ZT9vhsUgEsu2a/Zs/25/U28F2lAE676BJDi+3kgi2aFtL
+         OwJFBy0fWUE80TdxrWsDO9xj7qU6dkorGxglyV7DsoorOZD3Km07LQTgCIIiMPZcmISm
+         LjUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708582446; x=1709187246;
+        d=1e100.net; s=20230601; t=1708582469; x=1709187269;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4SC+H9Oulb2l4KVayVXMGit73eWaz8qeCs2MKjcvOvk=;
-        b=fpQ2f2mtzzl2CYjhtK8AFzm14BsKmGOEvXCL1cJVCj2D/elFfNxaXK+v8yRZRGIZgg
-         ZrywRSOGIvhCn+7yIlZ6QYTKDf88OK/QHt8nCmzsJgxuSyFzkDor5llz745GyyWaZLji
-         eIXQeQ+oCuOHgHDzIAFatqqovq2F/fM+ykYTxdKAUqU+eotpobHViq9hLIzWAqduClyL
-         gqxdX9DZbahnwkmkmM5e9e/dPQ5vHs/MBs/hOGy/fk31ggrlkst3FnxVfPZ7STsNfVBh
-         jnoW33GdcLOegDWKmWeKLkTBtdNkoHbx8NxlpzwKbV0aj6fUked/d4b1ASRejW7GTP3p
-         XJ9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXB+9nfcc7fDJRZbCT0LScJsUnl6QXxFsGibioQ56rWyI0SRwOoZVeo/HwFYL9/1PSfqobGTDGwUOgVZHgfNBSPzjD5PjrWMut3uFzAx1y7
-X-Gm-Message-State: AOJu0Yzvk1btigF7/5KVsJ7tf+j7NXvMbKE8FfjF0tsA7t0SH7HSy8+y
-	uOA9OiN1JUreX1qy+3/bQ2MgLMGS//MTIZBJbMrcQ6037/C2ptUmvgVmgLYJz1s=
-X-Google-Smtp-Source: AGHT+IEFPpQi7S+GhwawZ7jvmKAOogqWriYg4ubc/su/gpl01N2jx+fL0rRyTg5Zi4uPXaVSGiPYKw==
-X-Received: by 2002:a05:6512:3f06:b0:512:8d30:6dce with SMTP id y6-20020a0565123f0600b005128d306dcemr14162544lfa.52.1708582446477;
-        Wed, 21 Feb 2024 22:14:06 -0800 (PST)
+        bh=ihJpziOlMuDcSvTLuJ/gU0Hae3a368M+b9HMO37f99A=;
+        b=KWGn4IbHVU2PrXsVgcmc1ry7DpYwf917mBqHEDpESVMiXRrSqb3dh4/VGOVnX5C6Jf
+         eI44dz0JTglVZg6u43edRmhFYX2ZX3J3tyGiQDsrshitOHtAkKF/TLGJQHgHuvVxJ6mP
+         Evfzm9bdBhMoIoTQaYJQrnAcNQp4jNOCBS28YHEeS/c2XuoyVTMsP4HKDBsw0Uk/cIpO
+         W9j7LjfZC1V2QiIHs84Xl77bMfOCv/yVglixLniVzYPWI/9CkRJXOoLUexorFgoeLaKm
+         0GPw3DT/Dc8aebYCIxEHad19mJvZGJwl5q7K9mudj9ymuVSboeCee2fJUMaz5R2WOncO
+         I9Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+K3EsRA26PSthOMqeFKogZtO6GvcPXquLFvalxJWKLlH5mWXrmNGBQ9oP4WszZwuQSKDhKIT7SPAxomi+R41cfLf/+hBY6jOIcJ7hV7/j
+X-Gm-Message-State: AOJu0YzD2TPVbP8N1Q9vs0ripvGsQNfefARF2akmiqeQl0r36+r7ZR5o
+	rN9vgMXJ7IagpKLXtjEt8t1kYWRt7X9FH+InO6PxRdAmCKYfwPJScylpooTOGA0=
+X-Google-Smtp-Source: AGHT+IGopM8CATzEXKdXm/OXCkYnC4ug5JZs7YcBQ+FJg2FL6Lca7YApWQZuoAl0Xt1vK64K14teSg==
+X-Received: by 2002:adf:ea82:0:b0:33d:29d3:1aa2 with SMTP id s2-20020adfea82000000b0033d29d31aa2mr8014703wrm.12.1708582469338;
+        Wed, 21 Feb 2024 22:14:29 -0800 (PST)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id u7-20020a7bc047000000b0040fe4b733f4sm4867924wmc.26.2024.02.21.22.14.05
+        by smtp.gmail.com with ESMTPSA id cc18-20020a5d5c12000000b0033d67791dc0sm8215530wrb.43.2024.02.21.22.14.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Feb 2024 22:14:06 -0800 (PST)
-Date: Thu, 22 Feb 2024 09:14:02 +0300
+        Wed, 21 Feb 2024 22:14:29 -0800 (PST)
+Date: Thu, 22 Feb 2024 09:14:25 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Robert Richter <rrichter@amd.com>, linux-cxl@vger.kernel.org,
+To: Mike Looijmans <mike.looijmans@topic.nl>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>, linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] cxl/hdm: Clean up a debug printk
-Message-ID: <3d3d969d-651d-4e9d-a892-900876a60ab5@moroto.mountain>
+Subject: [PATCH 1/2] iio: adc: ti-ads1298: Fix error code in probe()
+Message-ID: <5f393a87-ca8b-4e68-a6f4-a79f75a91ccb@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,35 +70,29 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Smatch complains that %pa is for phys_addr_t types and "size" is a u64.
+There is a copy and paste bug here, it should be "reg_vref" instead of
+"reg_avdd".  The "priv->reg_avdd" variable is zero so it ends up
+returning success.
 
-    drivers/cxl/core/hdm.c:521 cxl_dpa_alloc() error: '%pa' expects
-    argument of type 'phys_addr_t*', argument 4 has type 'ullong*
-
-Looking at this, to me it seems more useful to print the sizes as
-decimal instead of hex.  Let's do that.
-
+Fixes: 00ef7708fa60 ("iio: adc: ti-ads1298: Add driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/cxl/core/hdm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/iio/adc/ti-ads1298.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-index 7d97790b893d..0b1843631b26 100644
---- a/drivers/cxl/core/hdm.c
-+++ b/drivers/cxl/core/hdm.c
-@@ -518,9 +518,9 @@ int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, unsigned long long size)
- 	}
+diff --git a/drivers/iio/adc/ti-ads1298.c b/drivers/iio/adc/ti-ads1298.c
+index ed895a30beed..67637f1abdc7 100644
+--- a/drivers/iio/adc/ti-ads1298.c
++++ b/drivers/iio/adc/ti-ads1298.c
+@@ -657,7 +657,7 @@ static int ads1298_probe(struct spi_device *spi)
+ 	priv->reg_vref = devm_regulator_get_optional(dev, "vref");
+ 	if (IS_ERR(priv->reg_vref)) {
+ 		if (PTR_ERR(priv->reg_vref) != -ENODEV)
+-			return dev_err_probe(dev, PTR_ERR(priv->reg_avdd),
++			return dev_err_probe(dev, PTR_ERR(priv->reg_vref),
+ 					     "Failed to get vref regulator\n");
  
- 	if (size > avail) {
--		dev_dbg(dev, "%pa exceeds available %s capacity: %pa\n", &size,
-+		dev_dbg(dev, "%llu exceeds available %s capacity: %llu\n", size,
- 			cxled->mode == CXL_DECODER_RAM ? "ram" : "pmem",
--			&avail);
-+			(u64)avail);
- 		rc = -ENOSPC;
- 		goto out;
- 	}
+ 		priv->reg_vref = NULL;
 -- 
 2.43.0
 
