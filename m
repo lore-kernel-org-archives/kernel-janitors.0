@@ -1,65 +1,68 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB5B179AA
-	for <kernel-janitors@vger.kernel.org>; Thu, 22 Feb 2024 06:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4723412E40
+	for <kernel-janitors@vger.kernel.org>; Thu, 22 Feb 2024 06:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708582408; cv=none; b=tRv2q5dpuVzfxTtnNneTBQpwLYNEgDQBfLryYuKDf59wDc2YaI9vHfbNIDsG9cX5X5ky1J7g45uoEOE+9LUAWR1hrCBJgIrEs2Wa6KEAGz31gXlYlynQyRzRMNe2mLN8uhSNsc+3qRBq9iOTIUeLorf3IQ9CvYhMRDzNofjQLvc=
+	t=1708582450; cv=none; b=e1l4SOpuxdX7HdZFWZWSXngJFotYkqiqp+nPO5eihE5AzCOzUrWNiNns2vw9OzfrMO9yWsPG6uTA44LsNIg6NYcVbdBMTnC0Eegwb+VRbxHXxlfSyjmf04pssUgQ6g+V+H9xFdo9avXxXs08YXYfYeKx2sQ0ZCHuWZRUk82CxR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708582408; c=relaxed/simple;
-	bh=UXEAEw7UmL2MRU38lPF6CscWJjihKIKdWohwWysbVHM=;
+	s=arc-20240116; t=1708582450; c=relaxed/simple;
+	bh=bn5i7/H5MiGU8X0jDHY08Xk8tKztkxjuCmvj7DxUVWU=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MhmPKo2nuL0gT+fLjOGOy3N0HgOdjXaZ40nIWsF2EKyhliisDDyWZHQV+SrZSEQw/GGcY8ldvtvSqpApL7ehgZjkMMfQj5DqNVMdxUUS/7eZrWhH3IXNvwF5SHmTLjQrRhflc+wwDrfYXHRAEFQRX8dRXJ5AIxzntAkuAjrkptY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mYkaeP4m; arc=none smtp.client-ip=209.85.128.47
+	 Content-Disposition; b=rcKLKjWf9ScKAgrkr0cd0xHPLC7G81qcrSkjCAKMrCJ6nFbNh/62LzZHg6wLLtWOPA2kfP0c2i2nyf9pbd5L2rJIIGlZ3zXAT4FjDlWD1AwBDrgSWVeVHIKb4KUTIOw2ZFr9ktLNl4xUqHFw130p34sPvFbeGDbZdh1vhvk4jT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZssiwUOS; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mYkaeP4m"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4125df3c40aso41222075e9.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 21 Feb 2024 22:13:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZssiwUOS"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-512bc0e8ce1so4706073e87.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 21 Feb 2024 22:14:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708582405; x=1709187205; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708582446; x=1709187246; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=/yg7tRxzbV+EmatCrfewdaj9UpcnaRdPJGRrG9tMkoc=;
-        b=mYkaeP4m9bJyAN/MEpgtby9DCAeXot4g9eSiY7HdZJhW0J0UB+dP11Y1YV57kA2eNE
-         2KIlcnHZjcPYpcMVxnYnlvpRaD7feqNjo19XZ8x3vd9SA8D12kyi+5oOS7KO5OKkS0ys
-         HI8B713RR8bSXXbwUP8DMbplqaeePNQ+Ru09lK2sBt/AW/25yg8ejA4/v7CkLWYgXU4e
-         5JPc62lE7P0hldOarTvaQY4zix7GjhQnQxHy42qzNpLTb25Is3+SL7DUprdJJdsPI9Tz
-         gqgfEkSlghv3KIVHCvbrKN1qi2uk54olrCC3hyREHwZj8UzDekSuUbaJwlY3GennRAFt
-         KcYA==
+        bh=4SC+H9Oulb2l4KVayVXMGit73eWaz8qeCs2MKjcvOvk=;
+        b=ZssiwUOSH8jikzJYq8ZcP5uGGi6D0dmW7qLMtDVUrOprFj/imhE5lg8l+2JBrT+1Ja
+         jo+dQATSr2viMRGoeXXXZdBuw3hgeLLWfudCiYtdRR9glVeZslvFJqeaxuLyEPGR3Z+6
+         EVv9XO/cS4V1lTlYl3SP8X8JI9SJONBpwCOBBjYDIzyoRLQMoV8FNTQgzVv7mxLzKHRN
+         29pK2BNotffTu44O84ADPTQohNQDHcWrpVx6ckGqkg4avFKqTDD4DuLTqXRqoQJqheI4
+         CBgUglcOQ/9SDcg3YsyB06Xjs91+Nza1AcoG548haDqPcO3ZkYZ794PNYwaxd+cn+cql
+         lZ7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708582405; x=1709187205;
+        d=1e100.net; s=20230601; t=1708582446; x=1709187246;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/yg7tRxzbV+EmatCrfewdaj9UpcnaRdPJGRrG9tMkoc=;
-        b=mJEu4vXIB/dwnwrL6yGs99su03mKgw+rJVUuW78QJP12q8420V5CidjZsX3XDrzKVG
-         ofU2BSMKhtKQc5EzO6GtvtMZzEEqirMmvJpeLqrQeIablgSLuOvzJRKBqhm6bjrHYjui
-         0CflQDN6RhL4Q2FZtKbavqw9AWrgJn1257eA0QEmdHVH4QnGtmBKECBHUSPXX3RGlkIE
-         GtiQnHzx3CSvtjlf7262+V/NBvbcoeFMh7VmFWmthw5dXkT6W/p+OGyFUNQ1FyHXWWco
-         M0V2acbwCTNoMdclHLYzE+lrn61N6Suwg3gnjNlkNLpwp1b5EJKJOXmEILM2+CCi0IzZ
-         1lPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXE773tPdGzYq8ZblfBWVHVd3o8gUouL+wNNmpWTnKw6EOnW1oVtw1qCsugqjCPfo2YVMNxK7XvflTbB+qP5azb2otBUPMJdQXuJ3QxbHth
-X-Gm-Message-State: AOJu0Yzuptvi0nx+cRS4D0aIdq8fkjSuQXviccvfGNavcyuffqIfHGy+
-	MEbPPaqi+fgpF66NSaQ7cuemKQg1SbOZUtWh33EnoVCT48ILUhWSNRe70OP0uwc=
-X-Google-Smtp-Source: AGHT+IEfk0s8M8mAHLTsj07Utv328xeqW4cg2gD3PrX3Sqlc5RNEtyazu79guuStk3rCXLGsMq4LEw==
-X-Received: by 2002:a05:600c:4f04:b0:412:8850:9c6f with SMTP id l4-20020a05600c4f0400b0041288509c6fmr258709wmq.31.1708582405588;
-        Wed, 21 Feb 2024 22:13:25 -0800 (PST)
+        bh=4SC+H9Oulb2l4KVayVXMGit73eWaz8qeCs2MKjcvOvk=;
+        b=fpQ2f2mtzzl2CYjhtK8AFzm14BsKmGOEvXCL1cJVCj2D/elFfNxaXK+v8yRZRGIZgg
+         ZrywRSOGIvhCn+7yIlZ6QYTKDf88OK/QHt8nCmzsJgxuSyFzkDor5llz745GyyWaZLji
+         eIXQeQ+oCuOHgHDzIAFatqqovq2F/fM+ykYTxdKAUqU+eotpobHViq9hLIzWAqduClyL
+         gqxdX9DZbahnwkmkmM5e9e/dPQ5vHs/MBs/hOGy/fk31ggrlkst3FnxVfPZ7STsNfVBh
+         jnoW33GdcLOegDWKmWeKLkTBtdNkoHbx8NxlpzwKbV0aj6fUked/d4b1ASRejW7GTP3p
+         XJ9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXB+9nfcc7fDJRZbCT0LScJsUnl6QXxFsGibioQ56rWyI0SRwOoZVeo/HwFYL9/1PSfqobGTDGwUOgVZHgfNBSPzjD5PjrWMut3uFzAx1y7
+X-Gm-Message-State: AOJu0Yzvk1btigF7/5KVsJ7tf+j7NXvMbKE8FfjF0tsA7t0SH7HSy8+y
+	uOA9OiN1JUreX1qy+3/bQ2MgLMGS//MTIZBJbMrcQ6037/C2ptUmvgVmgLYJz1s=
+X-Google-Smtp-Source: AGHT+IEFPpQi7S+GhwawZ7jvmKAOogqWriYg4ubc/su/gpl01N2jx+fL0rRyTg5Zi4uPXaVSGiPYKw==
+X-Received: by 2002:a05:6512:3f06:b0:512:8d30:6dce with SMTP id y6-20020a0565123f0600b005128d306dcemr14162544lfa.52.1708582446477;
+        Wed, 21 Feb 2024 22:14:06 -0800 (PST)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id x14-20020a05600c21ce00b00412704a0e4asm4841890wmj.2.2024.02.21.22.13.24
+        by smtp.gmail.com with ESMTPSA id u7-20020a7bc047000000b0040fe4b733f4sm4867924wmc.26.2024.02.21.22.14.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Feb 2024 22:13:25 -0800 (PST)
-Date: Thu, 22 Feb 2024 09:13:21 +0300
+        Wed, 21 Feb 2024 22:14:06 -0800 (PST)
+Date: Thu, 22 Feb 2024 09:14:02 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Javier Martinez Canillas <javierm@redhat.com>,
-	Helge Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] firmware/sysfb: fix an error code in sysfb_init()
-Message-ID: <aaaa2e13-849b-41a0-8186-25f3d2a16f86@moroto.mountain>
+To: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Robert Richter <rrichter@amd.com>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] cxl/hdm: Clean up a debug printk
+Message-ID: <3d3d969d-651d-4e9d-a892-900876a60ab5@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -70,31 +73,35 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This error path accidentally returns success when it should preserve the
-error code from sysfb_parent_dev().
+Smatch complains that %pa is for phys_addr_t types and "size" is a u64.
 
-Fixes: 4e754597d603 ("firmware/sysfb: Create firmware device only for enabled PCI devices")
+    drivers/cxl/core/hdm.c:521 cxl_dpa_alloc() error: '%pa' expects
+    argument of type 'phys_addr_t*', argument 4 has type 'ullong*
+
+Looking at this, to me it seems more useful to print the sizes as
+decimal instead of hex.  Let's do that.
+
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/firmware/sysfb.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/cxl/core/hdm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/sysfb.c b/drivers/firmware/sysfb.c
-index a6b48703dc9e..880ffcb50088 100644
---- a/drivers/firmware/sysfb.c
-+++ b/drivers/firmware/sysfb.c
-@@ -127,8 +127,10 @@ static __init int sysfb_init(void)
- 	sysfb_apply_efi_quirks();
+diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
+index 7d97790b893d..0b1843631b26 100644
+--- a/drivers/cxl/core/hdm.c
++++ b/drivers/cxl/core/hdm.c
+@@ -518,9 +518,9 @@ int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, unsigned long long size)
+ 	}
  
- 	parent = sysfb_parent_dev(si);
--	if (IS_ERR(parent))
-+	if (IS_ERR(parent)) {
-+		ret = PTR_ERR(parent);
- 		goto unlock_mutex;
-+	}
- 
- 	/* try to create a simple-framebuffer device */
- 	compatible = sysfb_parse_mode(si, &mode);
+ 	if (size > avail) {
+-		dev_dbg(dev, "%pa exceeds available %s capacity: %pa\n", &size,
++		dev_dbg(dev, "%llu exceeds available %s capacity: %llu\n", size,
+ 			cxled->mode == CXL_DECODER_RAM ? "ram" : "pmem",
+-			&avail);
++			(u64)avail);
+ 		rc = -ENOSPC;
+ 		goto out;
+ 	}
 -- 
 2.43.0
 
