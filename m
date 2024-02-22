@@ -1,64 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C21134CE5;
-	Thu, 22 Feb 2024 13:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF09135A6F;
+	Thu, 22 Feb 2024 13:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708610056; cv=none; b=I1vVOlKsBijnfsEVJYwgz7eyq8QAmSdB5+96nNffW/VlG30tVs44nH8bSdNOrVj5QQ9CZZCZHBZz2GhAg0/WBntwdkOm7KdaJEVnYde7HRs7UW/UIlHt1Toqc+ANh9vBz8L2O+KnFnZQXgOlBBdMfB1daICYiPR71fFEWtLs+is=
+	t=1708610334; cv=none; b=ii1mCsGtK9E0OwbvQ3aMW4tw2BsVxV2O49iukb1Phen5kDPI0onDte08g0S+exlFKqntF3ga9xR8OLajMo1rTiLzRSKV7rHd/PfiHORSnHNarDfBvOGwtjAq0XrSGMsGhuCeNDtYtvxxAjh+ThZPNr/mS83Dy8RmrLAMAmWXEeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708610056; c=relaxed/simple;
-	bh=TFqTDDc7hfgU+NmeSyhNhMWiSsAwWXo+2EEjwbhB9NM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=une7QYfL5SYFil4+D0JdkdfpLNrq/lI58tY3h2B1tHPleod0iEjeQ1YGo/JUkiKWv5GqenV2VuP6aNMTL8WKrBryB57kHtZxnm6Gc+61Nptde/X+IMz83OD+he2OPv3N5qyLFxip7i/bvb4bDk4xJMU+ThMS3NDutP0kJpkxd2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhIh2Xhs; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1708610334; c=relaxed/simple;
+	bh=BPj7ZTa0ybr98UPnmaRLp0/4ee86tORekl3Li+MJZ0A=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=BUbKaEjVYnLFcrZ/ly2ISLhfQungEHgkZGPH4CiUsWEXn5qXqV4vqR7sfLEGLlK2Joe0y2MgzSlWwGxm1ss9/kBIMbCAFQ4Sb8/7VmTSXiwtU3IeH8jPYowSpY4h4IFRNeu6kZSabgQMvhb9pcqdAKJHDOQkPaJJ0KmIPoIovJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R/XGtNPC; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhIh2Xhs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8E91C433F1;
-	Thu, 22 Feb 2024 13:54:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708610055;
-	bh=TFqTDDc7hfgU+NmeSyhNhMWiSsAwWXo+2EEjwbhB9NM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jhIh2XhskNnFDqhlshGY5CJ1ZjtI+yVVJithb8D4km1zc527YGA9k2xeIy0smnTYM
-	 gf/SvP1qQ6Mf+4EEFkLZF/qxVXIU+dcBrP6PXuR4RVBrUaFEMd6KAYrdv6HL4bSqrE
-	 GoRBiIio3VehM5XmfruHvU7hy5bK0cDC6steaagzObJVVt3oRAgyXGGTYSpPDT+6DK
-	 tojXe02djpvcHwk3JaPAmHEdeEeXARubluikQHLy0qVyDA2CGlTYvhWw/R7aaWkGQp
-	 t8hdxZGLiSZXsG4BPFN2OKiNGIEv2rh/r+G2sbmjch0FcgLFsPqALA7CFC5HA/vevY
-	 GkZHtNQZ0xnrQ==
-Date: Thu, 22 Feb 2024 13:54:11 +0000
-From: Simon Horman <horms@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Bryan Whitehead <bryan.whitehead@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] net: microchip: lan743x: Fix spelling mistake
- "erro" -> "error"
-Message-ID: <20240222135411.GA961545@kernel.org>
-References: <20240220091737.2676984-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R/XGtNPC"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5645efb2942so1522584a12.1;
+        Thu, 22 Feb 2024 05:58:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708610331; x=1709215131; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wsFRRGkWpORaXCmeXzSxC+JNHyxXCgQHjaZ6TzY3sLk=;
+        b=R/XGtNPCZln/c+4ZCHVeaZ4DD+R1bYGfrmp0e5lJstvDmlfIYKLT66SN3URkCHso8e
+         yJZw08H6tvFIYiI7ImgBWinfTDjZ0ZjP7E0xayb7wdKRm68OvzdNXLD6aE6fI9N4r5CE
+         qhN2mxONVR30/iIUuWrgM4Tj5sQjA3G81umyWAkyz3+qvlvYW11O6IaYhPFZGJxCuZZB
+         4CfeKakatucNFmlUYhjC3OLddWTDeYj9j3xoPc6d4dKyDuiPN9aOftCN99P2q84Hj+NI
+         ZymJe7uyXH2uCPrNJqUfkK0Odz3VS3PLRwcgtadSbNvEo2mmeGupqGiuoBR102AsoNFP
+         tqKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708610331; x=1709215131;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wsFRRGkWpORaXCmeXzSxC+JNHyxXCgQHjaZ6TzY3sLk=;
+        b=gZLcuZqN86OyNOyUGYe75goJeai6LkZdVJgbWjY+Xj+Z9BcOYJhhGPC5clPVaSg/cj
+         P0qkStfSxuXJwLxIsmUBax7ZlkLoStgGJme+S4nD4xYzfj4VXvaU7wi0Q4yro77SqT4M
+         SloOFWQB51v9DWj596XlT0AvTgVrGWelEHsVGLA5l3Rjnkf6oM98ZQM8GxxeZqVXoVMH
+         QtnYEV9tEoR66wdRtRqJKC6juv5+Y3i63o6ZkV+yLCqXJAbjXvSqWaL4YctVN3n4Y8dv
+         bS2YehTWqCO3C+3uwUdoOnQ28WWoVH22E+KefPtgl+cd0/jIiNepk+CdapL1syUATJ3x
+         cDoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVF+sLLeX8pnNFgqxj1M3ErvJoI+ACI9TWOO7UuAAtmTVPJcEV06RV4ZkHvpVWh/FjH/cWLC/WVvbhtMJ1OsS5drwuSaEiWe1qFz0cQLMbhvXMETRQYUvokNaExSjPPHMT+diKw8te3
+X-Gm-Message-State: AOJu0YxC6WfRbtwbaqc7z5jT/5G/KJ8OWk47r2vyh0AW0HhqgAvRdikB
+	KwBwRTdTQ/R4DI9v30Z04c7/JzcO8+OIQlAonLTM8LHKuuwst3+P
+X-Google-Smtp-Source: AGHT+IFIlQeNdFyMQvX3AKp0V/AMXaTukTRqPqjOa9oGpQBWhBKGNXokCjDwSjAF5L3jJ+ukTvxjOg==
+X-Received: by 2002:a17:907:72c1:b0:a3f:4fd7:3cef with SMTP id du1-20020a17090772c100b00a3f4fd73cefmr2878725ejc.2.1708610330935;
+        Thu, 22 Feb 2024 05:58:50 -0800 (PST)
+Received: from felia.fritz.box ([2a02:810d:7e40:14b0:e4dd:831d:c00a:fc45])
+        by smtp.gmail.com with ESMTPSA id m8-20020a1709060d8800b00a3eeb10acb4sm2805317eji.185.2024.02.22.05.58.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Feb 2024 05:58:50 -0800 (PST)
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Vinod Koul <vkoul@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	dmaengine@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry in MEDIATEK DMA DRIVER
+Date: Thu, 22 Feb 2024 14:58:47 +0100
+Message-Id: <20240222135847.5160-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240220091737.2676984-1-colin.i.king@gmail.com>
 
-On Tue, Feb 20, 2024 at 09:17:37AM +0000, Colin Ian King wrote:
-> There is a spelling mistake in a netif_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/ethernet/microchip/lan743x_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Commit fa3400504824 ("dt-bindings: dma: convert MediaTek High-Speed
+controller to the json-schema")  converts mtk-hsdma.txt to
+mediatek,mt7622-hsdma.yaml, but misses to adjust its reference in
+MAINTAINERS.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-FWIIW, confirm is mispelt twice in comments in the same file.
-But unlike the problem addressed here, it is not user visible.
+Repair this file reference in MEDIATEK DMA DRIVER.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e27cc69a867c..28b2013031bd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13743,7 +13743,7 @@ L:	dmaengine@vger.kernel.org
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/dma/mtk-*
++F:	Documentation/devicetree/bindings/dma/mediatek,*
+ F:	drivers/dma/mediatek/
+ 
+ MEDIATEK ETHERNET DRIVER
+-- 
+2.17.1
+
