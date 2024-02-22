@@ -1,54 +1,62 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2410986632;
-	Wed, 21 Feb 2024 23:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A212EA923
+	for <kernel-janitors@vger.kernel.org>; Thu, 22 Feb 2024 00:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708556741; cv=none; b=FBiMGLLQHSK4F/rRiG8b9doWVAUzYT3OKUavKOwzBm3eGTWbDXg6mvAuEq8wCU2BcVZnaoWx62/nND2z+c5iXss2gjwcOAombegt39DHd4VbXu+3CmH1I2OfGNK8dY9sY/OCgX4W6bUuW7RtA+hF9qnDGnL3VrnGl4w8nU1UUVs=
+	t=1708560270; cv=none; b=IpzS/jo5AaLyY1E3PYPWICrQ6jFyx1vmpN1BPkXwLq8IEKVPIEdhtJQ53XJBqimSpo+pANyMBC6Nb4iKHiM7ctYDldsnOhZ44UGRyLUiD6kDVnWgxiGRFy57OVXZlEWHRbIy/7NlY53UBGK37BYvBTMbw9wH2RL6z+DpuBwyxmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708556741; c=relaxed/simple;
-	bh=LAAbCC+QCTemFN3gQPcvPRW68/SdYRMsVBiAYhtn8Wg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=M9/1JcWrtOJa0qb9cw8vAzOkRQEh9zLh8es8PymU05c/+BBH/PqaTMBofvf8B6ZLSS7aa+zN3YsdWrJ/XHyOmdbKMQDHE7LUZ3P/TZsW8Hchfl4pX4aw8sYAXf1OzwPlCG/lrfrl2kdcD5i8+w1aXmkrb7/vdBnzyumm6c87zQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DAA7C433C7;
-	Wed, 21 Feb 2024 23:05:40 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id CCFDF106B79D; Thu, 22 Feb 2024 00:05:37 +0100 (CET)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Andrew Davis <afd@ti.com>, Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <fe1b90d0-7234-4e03-accc-69a119f6a7eb@moroto.mountain>
-References: <fe1b90d0-7234-4e03-accc-69a119f6a7eb@moroto.mountain>
-Subject: Re: [PATCH] power: reset: xgene-reboot: Fix a NULL vs IS_ERR()
- test
-Message-Id: <170855673781.1674060.14659779619103169462.b4-ty@collabora.com>
-Date: Thu, 22 Feb 2024 00:05:37 +0100
+	s=arc-20240116; t=1708560270; c=relaxed/simple;
+	bh=4WKkWotYZ1Oazo/PiLbdh34LV4deHtqfIISRRq7ZkH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PJdFFNhLH2Gvbf9Soo36cabRLizfSCZQYjHlkRy9BuoEtcmMLc+3Xzvu+rBfPvKP0hxGffcdadROaFJCLxcCX3R5eKmLTu//DuF5mnmSFPfekCDCFIvsfrIqouq4QDgbpLxNCXKby2sPQPXtED11YSH+OihWPbxE/Zrug4qzydE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TIMkT15W; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TIMkT15W"
+Date: Wed, 21 Feb 2024 19:04:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1708560266;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DacZQ2bgLZrPyV3TE+Kd66Fku/+A0+dgRbmVjv/psVo=;
+	b=TIMkT15Wa83yuKPGA7xJBGstG2DmQTXX6m46kts3xS2DRGpqIxD0qfriZ6Uj8+J3aTLC7Q
+	S6zwVQOMpY4HUNWunGEpmApf7YuNFrH33khwHIE+k2HD/Nd2OVamTuJeO+x5YYbufH81xm
+	9C6yHywEYXYfmMNWDGv86G2xOms2uFI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] bcachefs: remove redundant assignment to variable
+ ret
+Message-ID: <3qaoftjgf7p2ugutl524b3yin7pqpjrkftjx3frunhduf3so66@tjhcdoq6unk3>
+References: <20240221115203.3413554-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240221115203.3413554-1-colin.i.king@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-
-On Tue, 20 Feb 2024 12:02:22 +0300, Dan Carpenter wrote:
-> The devm_platform_ioremap_resource() function returns error points.  It
-> never returns NULL.  Update the check accordingly.
+On Wed, Feb 21, 2024 at 11:52:03AM +0000, Colin Ian King wrote:
+> Variable ret is being assigned a value that is never read, it is
+> being re-assigned a couple of statements later on. The assignment
+> is redundant and can be removed.
 > 
+> Cleans up clang scan build warning:
+> fs/bcachefs/super-io.c:806:2: warning: Value stored to 'ret' is
+> never read [deadcode.DeadStores]
 > 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Applied, thanks!
-
-[1/1] power: reset: xgene-reboot: Fix a NULL vs IS_ERR() test
-      commit: 62f4b33bf2b966035420c3e211bfa37f697c4d1f
-
-Best regards,
--- 
-Sebastian Reichel <sebastian.reichel@collabora.com>
-
+I'll take this, but - entirely too much of the traffic on this list is
+getting taken up by static analyzer bullshit, we need to cut down on
+this
