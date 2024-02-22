@@ -1,101 +1,100 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E1F4436C;
-	Thu, 22 Feb 2024 14:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC61414037B;
+	Thu, 22 Feb 2024 18:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708612404; cv=none; b=I+PhHyfZFDnTdqMCVg/fU5k1F93l+TYUVl0+nSuC5VYKvT/PVlDioR7GU9zUNoetxEYMVJmbeuFvSJwry5a49HA3WIHQwch0IRdTIsyHvveeYRsoRwMeGDMQmHCWV0uBJKVcHgiA3DZ2kkYEPOQ71AL0TSGBJj3S84pq0lLTAPc=
+	t=1708626604; cv=none; b=Bqyp7M91t62yOo0IJYqYZQQg+tKG3XhuTlK9YvWJLFiNgF1FQzCiyVkj9XrYJRcECpGFeeH2iZJ3jId/FjqlMr5y25eJDABxdssA5WqsNyuMZz3DYWQXOXUY12bgt+wPlGFwhmzoUwM50kt0TT1PmIkdDvciEG09Yvj+oliDjus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708612404; c=relaxed/simple;
-	bh=7Nxd9L0hTx4wS4KdRxCSjT6nCn4X+i13aWUcdkoxH2o=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=B87Z1aRG+hAIAaXOPWtbYGQTJbC7tU1OX0bkkwb4gzdvNDwSWceXcpeRQF4kmq7Zm12z4daqOZRbRSxXimkUBV6WeMJr6m2SzutFcb+zX+TSGY74tKYAsXfwGluWPWmhXTGiDYZnK2o5c0otiVZBb3V9d1+ZhG9KF/KsCTBn+FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eMQy/uoZ; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1708626604; c=relaxed/simple;
+	bh=oIzPtj+CyOLKn0NcTVtqH16JXPUfqFE5Kv4atxAP9t4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ittAHO5NVaJBqUQ+nPCMJ60deyLucE7hmemLGb+WT972aSCpEiDlukIr9Csmc7xdeM2M9+23GK62qpUt1lvla5KjQfOzaWcoJWrhp5HP/XjAwEuBELEgxza5HAgT6E8ezisp1Msod8z+4+/6X/cenhKmFWWBXotMJMN0AdhktqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wcme3Ygr; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eMQy/uoZ"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a293f2280c7so1145202566b.1;
-        Thu, 22 Feb 2024 06:33:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708612401; x=1709217201; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ldyzz6/JzuL7eIas6PfwBWLiCcFLpsFRhU47ib609w8=;
-        b=eMQy/uoZ7i3VOPPd+/IwRfRO+1+PJDPiLBizbL9YThX0mrnXL4CfcRksN+fUmAYQr1
-         c29IcXO7Ue+ZLSlSLNGHVoYDi4JqYR7teXw2GgXPFZ6U7apBj/OnMORsI3S9TX8i/QQi
-         jjmk7OvryjKJOHofcIec1LWzXXQiIXMBIUL/9cp4UDz0lEftanY6aoluFePIwdu05+Q1
-         6m1i9XFLexxRFJvinV0fhZnsGxUicmjccD2ZrhhSeBpN/kElACrQuzbLKMwtDrmeCGTc
-         9VgMfxBScDQ9dwPjhAnGRwemL6hHNcT7D+QvOzkefjxqbp3tm3IP4TCmp3FMUeZq/he5
-         Z81Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708612401; x=1709217201;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ldyzz6/JzuL7eIas6PfwBWLiCcFLpsFRhU47ib609w8=;
-        b=gAbfHcU2ZlRDmU2bTRnj9+szhP2o05Bp1eb62cT8sUP/Q2XIamGBkKdeLJv1v5skrw
-         EpRmcz/E1AYxQtOl5TkeLXUDgSFv3tJUjckifP9HuzNJhztJki5+53KRbpc46KUEJDnb
-         3gzC/031/MLRO0lMk3r6cVQF7RY0aOfXWEHiZPvY20TLjE8KOsqvcQrEGOLSPchQ/kn6
-         h1tHifuvI5QsinYAl88IK7rXeGqCziHaApwYaux178tmSLFFtCTsY9upO9oFNIiw12vu
-         vW3EzVDJqwFq3neCkOeW/ovx/7Oz7PFv166ayMF8ytzOhAc/5i0GoRz+B5gkx4EPhLRD
-         YVKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBr6h/69lu3vRmV3moOnSRwBPhhytjUyYFOBuIC1uryRYkmm8psPqxapjk5oeM0uTp/5hUeE4IGyKFA/h85a12FSobDi3ULzYdcMkU
-X-Gm-Message-State: AOJu0YwYLywiBTC4uUy9b6ghJcFNblZS/vU90TVDi9X/yTrWB7F8h9Qm
-	9M1eY01WUAaiUlpGANkjJ39dII5uUqWCXLWNhjyg5DUgpoYXrcD4zZObg0JM
-X-Google-Smtp-Source: AGHT+IE/mq6F4oG3XuFKcZ0cPjBTjZcJco4+3Mo3sbwsAXaFVeGGVeSxCh/cb3xzKOmdp5YiV9BS1Q==
-X-Received: by 2002:a17:906:69b:b0:a3f:6302:1e61 with SMTP id u27-20020a170906069b00b00a3f63021e61mr2516651ejb.73.1708612400745;
-        Thu, 22 Feb 2024 06:33:20 -0800 (PST)
-Received: from felia.fritz.box ([2a02:810d:7e40:14b0:e4dd:831d:c00a:fc45])
-        by smtp.gmail.com with ESMTPSA id vu12-20020a170907a64c00b00a3f15cb8d9dsm2245506ejc.126.2024.02.22.06.33.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Feb 2024 06:33:20 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	=?UTF-8?q?Th=C3=A9o=20Lebrun?= <theo.lebrun@bootlin.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: remove entry to non-existing file in MOBILEYE MIPS SOCS
-Date: Thu, 22 Feb 2024 15:33:12 +0100
-Message-Id: <20240222143312.27757-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wcme3Ygr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1708626602; x=1740162602;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=oIzPtj+CyOLKn0NcTVtqH16JXPUfqFE5Kv4atxAP9t4=;
+  b=Wcme3YgrjQerpnZZyNZP6vs4EfmCyOUX7FbfRey3tYjIizFPETWF7wAB
+   /n+MGB5cfBfAVGqoGnFjYVj7O4+FGj91ZozgXAWiE9p1Ai6qupwUbX29l
+   TlJH8NAemBB1uwRmCX31m/a/wE2SHMJcVqpocgvpDBqXdw7yfjaKQa9Qm
+   lIV637Efm4ga8/c357v840R7DUu+pnGrw2d5833hmEsV+OXAty9wq2zwh
+   LPrbza+jrvBuUWVZkSJFtGT2FzovRQSIEOU70GRNAuMS/7ZAkgLQK5EtH
+   uXtfVRshy4YSR91rX9okIOjkUkMcjf6v3FO9uasvIqQPnMxSh4xhuki5v
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10992"; a="6697550"
+X-IronPort-AV: E=Sophos;i="6.06,179,1705392000"; 
+   d="scan'208";a="6697550"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2024 10:30:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,179,1705392000"; 
+   d="scan'208";a="5552642"
+Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.246.114.198]) ([10.246.114.198])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2024 10:29:59 -0800
+Message-ID: <9cc1ccfa-5ddc-46d6-93ff-dab952191207@intel.com>
+Date: Thu, 22 Feb 2024 11:29:59 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cxl/hdm: Clean up a debug printk
+Content-Language: en-US
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Davidlohr Bueso <dave@stgolabs.net>
+Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Robert Richter <rrichter@amd.com>,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <3d3d969d-651d-4e9d-a892-900876a60ab5@moroto.mountain>
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <3d3d969d-651d-4e9d-a892-900876a60ab5@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Commit f34158edd249 ("MAINTAINERS: Add entry for Mobileye MIPS SoCs") adds
-the section MOBILEYE MIPS SOCS with a file entry to the non-existing file
-include/dt-bindings/soc/mobileye,eyeq5.h.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
 
-Possibly, this file was part of an early patch series, but in the final
-patch series, this file does not appear anymore.
+On 2/21/24 11:14 PM, Dan Carpenter wrote:
+> Smatch complains that %pa is for phys_addr_t types and "size" is a u64.
+> 
+>     drivers/cxl/core/hdm.c:521 cxl_dpa_alloc() error: '%pa' expects
+>     argument of type 'phys_addr_t*', argument 4 has type 'ullong*
+> 
+> Looking at this, to me it seems more useful to print the sizes as
+> decimal instead of hex.  Let's do that.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Delete this file entry in the MOBILEYE MIPS SOCS section.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 28b2013031bd..19ac6a8e46b2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14914,7 +14914,6 @@ F:	Documentation/devicetree/bindings/mips/mobileye.yaml
- F:	arch/mips/boot/dts/mobileye/
- F:	arch/mips/configs/eyeq5_defconfig
- F:	arch/mips/mobileye/board-epm5.its.S
--F:	include/dt-bindings/soc/mobileye,eyeq5.h
- 
- MODULE SUPPORT
- M:	Luis Chamberlain <mcgrof@kernel.org>
--- 
-2.17.1
-
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/cxl/core/hdm.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
+> index 7d97790b893d..0b1843631b26 100644
+> --- a/drivers/cxl/core/hdm.c
+> +++ b/drivers/cxl/core/hdm.c
+> @@ -518,9 +518,9 @@ int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, unsigned long long size)
+>  	}
+>  
+>  	if (size > avail) {
+> -		dev_dbg(dev, "%pa exceeds available %s capacity: %pa\n", &size,
+> +		dev_dbg(dev, "%llu exceeds available %s capacity: %llu\n", size,
+>  			cxled->mode == CXL_DECODER_RAM ? "ram" : "pmem",
+> -			&avail);
+> +			(u64)avail);
+>  		rc = -ENOSPC;
+>  		goto out;
+>  	}
