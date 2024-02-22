@@ -1,65 +1,65 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF09135A6F;
-	Thu, 22 Feb 2024 13:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E1F4436C;
+	Thu, 22 Feb 2024 14:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708610334; cv=none; b=ii1mCsGtK9E0OwbvQ3aMW4tw2BsVxV2O49iukb1Phen5kDPI0onDte08g0S+exlFKqntF3ga9xR8OLajMo1rTiLzRSKV7rHd/PfiHORSnHNarDfBvOGwtjAq0XrSGMsGhuCeNDtYtvxxAjh+ThZPNr/mS83Dy8RmrLAMAmWXEeA=
+	t=1708612404; cv=none; b=I+PhHyfZFDnTdqMCVg/fU5k1F93l+TYUVl0+nSuC5VYKvT/PVlDioR7GU9zUNoetxEYMVJmbeuFvSJwry5a49HA3WIHQwch0IRdTIsyHvveeYRsoRwMeGDMQmHCWV0uBJKVcHgiA3DZ2kkYEPOQ71AL0TSGBJj3S84pq0lLTAPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708610334; c=relaxed/simple;
-	bh=BPj7ZTa0ybr98UPnmaRLp0/4ee86tORekl3Li+MJZ0A=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=BUbKaEjVYnLFcrZ/ly2ISLhfQungEHgkZGPH4CiUsWEXn5qXqV4vqR7sfLEGLlK2Joe0y2MgzSlWwGxm1ss9/kBIMbCAFQ4Sb8/7VmTSXiwtU3IeH8jPYowSpY4h4IFRNeu6kZSabgQMvhb9pcqdAKJHDOQkPaJJ0KmIPoIovJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R/XGtNPC; arc=none smtp.client-ip=209.85.208.52
+	s=arc-20240116; t=1708612404; c=relaxed/simple;
+	bh=7Nxd9L0hTx4wS4KdRxCSjT6nCn4X+i13aWUcdkoxH2o=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=B87Z1aRG+hAIAaXOPWtbYGQTJbC7tU1OX0bkkwb4gzdvNDwSWceXcpeRQF4kmq7Zm12z4daqOZRbRSxXimkUBV6WeMJr6m2SzutFcb+zX+TSGY74tKYAsXfwGluWPWmhXTGiDYZnK2o5c0otiVZBb3V9d1+ZhG9KF/KsCTBn+FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eMQy/uoZ; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R/XGtNPC"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5645efb2942so1522584a12.1;
-        Thu, 22 Feb 2024 05:58:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eMQy/uoZ"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a293f2280c7so1145202566b.1;
+        Thu, 22 Feb 2024 06:33:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708610331; x=1709215131; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1708612401; x=1709217201; darn=vger.kernel.org;
         h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wsFRRGkWpORaXCmeXzSxC+JNHyxXCgQHjaZ6TzY3sLk=;
-        b=R/XGtNPCZln/c+4ZCHVeaZ4DD+R1bYGfrmp0e5lJstvDmlfIYKLT66SN3URkCHso8e
-         yJZw08H6tvFIYiI7ImgBWinfTDjZ0ZjP7E0xayb7wdKRm68OvzdNXLD6aE6fI9N4r5CE
-         qhN2mxONVR30/iIUuWrgM4Tj5sQjA3G81umyWAkyz3+qvlvYW11O6IaYhPFZGJxCuZZB
-         4CfeKakatucNFmlUYhjC3OLddWTDeYj9j3xoPc6d4dKyDuiPN9aOftCN99P2q84Hj+NI
-         ZymJe7uyXH2uCPrNJqUfkK0Odz3VS3PLRwcgtadSbNvEo2mmeGupqGiuoBR102AsoNFP
-         tqKA==
+        bh=ldyzz6/JzuL7eIas6PfwBWLiCcFLpsFRhU47ib609w8=;
+        b=eMQy/uoZ7i3VOPPd+/IwRfRO+1+PJDPiLBizbL9YThX0mrnXL4CfcRksN+fUmAYQr1
+         c29IcXO7Ue+ZLSlSLNGHVoYDi4JqYR7teXw2GgXPFZ6U7apBj/OnMORsI3S9TX8i/QQi
+         jjmk7OvryjKJOHofcIec1LWzXXQiIXMBIUL/9cp4UDz0lEftanY6aoluFePIwdu05+Q1
+         6m1i9XFLexxRFJvinV0fhZnsGxUicmjccD2ZrhhSeBpN/kElACrQuzbLKMwtDrmeCGTc
+         9VgMfxBScDQ9dwPjhAnGRwemL6hHNcT7D+QvOzkefjxqbp3tm3IP4TCmp3FMUeZq/he5
+         Z81Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708610331; x=1709215131;
+        d=1e100.net; s=20230601; t=1708612401; x=1709217201;
         h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wsFRRGkWpORaXCmeXzSxC+JNHyxXCgQHjaZ6TzY3sLk=;
-        b=gZLcuZqN86OyNOyUGYe75goJeai6LkZdVJgbWjY+Xj+Z9BcOYJhhGPC5clPVaSg/cj
-         P0qkStfSxuXJwLxIsmUBax7ZlkLoStgGJme+S4nD4xYzfj4VXvaU7wi0Q4yro77SqT4M
-         SloOFWQB51v9DWj596XlT0AvTgVrGWelEHsVGLA5l3Rjnkf6oM98ZQM8GxxeZqVXoVMH
-         QtnYEV9tEoR66wdRtRqJKC6juv5+Y3i63o6ZkV+yLCqXJAbjXvSqWaL4YctVN3n4Y8dv
-         bS2YehTWqCO3C+3uwUdoOnQ28WWoVH22E+KefPtgl+cd0/jIiNepk+CdapL1syUATJ3x
-         cDoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVF+sLLeX8pnNFgqxj1M3ErvJoI+ACI9TWOO7UuAAtmTVPJcEV06RV4ZkHvpVWh/FjH/cWLC/WVvbhtMJ1OsS5drwuSaEiWe1qFz0cQLMbhvXMETRQYUvokNaExSjPPHMT+diKw8te3
-X-Gm-Message-State: AOJu0YxC6WfRbtwbaqc7z5jT/5G/KJ8OWk47r2vyh0AW0HhqgAvRdikB
-	KwBwRTdTQ/R4DI9v30Z04c7/JzcO8+OIQlAonLTM8LHKuuwst3+P
-X-Google-Smtp-Source: AGHT+IFIlQeNdFyMQvX3AKp0V/AMXaTukTRqPqjOa9oGpQBWhBKGNXokCjDwSjAF5L3jJ+ukTvxjOg==
-X-Received: by 2002:a17:907:72c1:b0:a3f:4fd7:3cef with SMTP id du1-20020a17090772c100b00a3f4fd73cefmr2878725ejc.2.1708610330935;
-        Thu, 22 Feb 2024 05:58:50 -0800 (PST)
+        bh=ldyzz6/JzuL7eIas6PfwBWLiCcFLpsFRhU47ib609w8=;
+        b=gAbfHcU2ZlRDmU2bTRnj9+szhP2o05Bp1eb62cT8sUP/Q2XIamGBkKdeLJv1v5skrw
+         EpRmcz/E1AYxQtOl5TkeLXUDgSFv3tJUjckifP9HuzNJhztJki5+53KRbpc46KUEJDnb
+         3gzC/031/MLRO0lMk3r6cVQF7RY0aOfXWEHiZPvY20TLjE8KOsqvcQrEGOLSPchQ/kn6
+         h1tHifuvI5QsinYAl88IK7rXeGqCziHaApwYaux178tmSLFFtCTsY9upO9oFNIiw12vu
+         vW3EzVDJqwFq3neCkOeW/ovx/7Oz7PFv166ayMF8ytzOhAc/5i0GoRz+B5gkx4EPhLRD
+         YVKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBr6h/69lu3vRmV3moOnSRwBPhhytjUyYFOBuIC1uryRYkmm8psPqxapjk5oeM0uTp/5hUeE4IGyKFA/h85a12FSobDi3ULzYdcMkU
+X-Gm-Message-State: AOJu0YwYLywiBTC4uUy9b6ghJcFNblZS/vU90TVDi9X/yTrWB7F8h9Qm
+	9M1eY01WUAaiUlpGANkjJ39dII5uUqWCXLWNhjyg5DUgpoYXrcD4zZObg0JM
+X-Google-Smtp-Source: AGHT+IE/mq6F4oG3XuFKcZ0cPjBTjZcJco4+3Mo3sbwsAXaFVeGGVeSxCh/cb3xzKOmdp5YiV9BS1Q==
+X-Received: by 2002:a17:906:69b:b0:a3f:6302:1e61 with SMTP id u27-20020a170906069b00b00a3f63021e61mr2516651ejb.73.1708612400745;
+        Thu, 22 Feb 2024 06:33:20 -0800 (PST)
 Received: from felia.fritz.box ([2a02:810d:7e40:14b0:e4dd:831d:c00a:fc45])
-        by smtp.gmail.com with ESMTPSA id m8-20020a1709060d8800b00a3eeb10acb4sm2805317eji.185.2024.02.22.05.58.50
+        by smtp.gmail.com with ESMTPSA id vu12-20020a170907a64c00b00a3f15cb8d9dsm2245506ejc.126.2024.02.22.06.33.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Feb 2024 05:58:50 -0800 (PST)
+        Thu, 22 Feb 2024 06:33:20 -0800 (PST)
 From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	Vinod Koul <vkoul@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	dmaengine@vger.kernel.org
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	=?UTF-8?q?Th=C3=A9o=20Lebrun?= <theo.lebrun@bootlin.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in MEDIATEK DMA DRIVER
-Date: Thu, 22 Feb 2024 14:58:47 +0100
-Message-Id: <20240222135847.5160-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: remove entry to non-existing file in MOBILEYE MIPS SOCS
+Date: Thu, 22 Feb 2024 15:33:12 +0100
+Message-Id: <20240222143312.27757-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -67,34 +67,35 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 
-Commit fa3400504824 ("dt-bindings: dma: convert MediaTek High-Speed
-controller to the json-schema")  converts mtk-hsdma.txt to
-mediatek,mt7622-hsdma.yaml, but misses to adjust its reference in
-MAINTAINERS.
+Commit f34158edd249 ("MAINTAINERS: Add entry for Mobileye MIPS SoCs") adds
+the section MOBILEYE MIPS SOCS with a file entry to the non-existing file
+include/dt-bindings/soc/mobileye,eyeq5.h.
 
 Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
 broken reference.
 
-Repair this file reference in MEDIATEK DMA DRIVER.
+Possibly, this file was part of an early patch series, but in the final
+patch series, this file does not appear anymore.
+
+Delete this file entry in the MOBILEYE MIPS SOCS section.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index e27cc69a867c..28b2013031bd 100644
+index 28b2013031bd..19ac6a8e46b2 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -13743,7 +13743,7 @@ L:	dmaengine@vger.kernel.org
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
--F:	Documentation/devicetree/bindings/dma/mtk-*
-+F:	Documentation/devicetree/bindings/dma/mediatek,*
- F:	drivers/dma/mediatek/
+@@ -14914,7 +14914,6 @@ F:	Documentation/devicetree/bindings/mips/mobileye.yaml
+ F:	arch/mips/boot/dts/mobileye/
+ F:	arch/mips/configs/eyeq5_defconfig
+ F:	arch/mips/mobileye/board-epm5.its.S
+-F:	include/dt-bindings/soc/mobileye,eyeq5.h
  
- MEDIATEK ETHERNET DRIVER
+ MODULE SUPPORT
+ M:	Luis Chamberlain <mcgrof@kernel.org>
 -- 
 2.17.1
 
