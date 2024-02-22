@@ -1,142 +1,72 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A380D182D2;
-	Thu, 22 Feb 2024 09:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0ED73B19E;
+	Thu, 22 Feb 2024 10:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708592754; cv=none; b=t8elg1SLy2wHMw13rHcekoeXLDmtcFjRgDpOqamiAwGrH21AM7NjU9LPLtGYkcpavnb7CJMKtIaALA63kkbmlAmGQRWOezGR7WpfD1W71MQGsLhy6AD8vp91EAfVjcR8oEinCAFiIWFW9pPQorznaaOg0dAm3sCzRmW2o86JJfI=
+	t=1708597282; cv=none; b=YWAtLAZNPIfiHAh01QRvi4yYuYIwjs/owvOSPvcfmEOjIhgiOvRnMR4B5BHqbQ+R5yef9FcO0z851iU9PEfgphlqhuP6UAHSdZo6rvOjKhOgLg0uZmhkq2jmvbln0G3vbNFdmh9sqBaWojhRQBZJnCyauuzbO6LCeezSS/r2Ers=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708592754; c=relaxed/simple;
-	bh=+vn1ckrtx6RQRz3eYg5eAEtVg2EE5KZ8R/asI7H1qUU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bfTK3ZYQttsj2oAyvRkyKzXyRIKwUgP8qfRTrc5qZ2pX8qUC99vxaXOohJ8Y37SR2qqD4XUzBw13zP+opcoDzUCDhMGxLguYdLY2HOv8irE8RpfQ0+fKk6YcN6o6bwrQZKYcElufDV3vHtEkhvBzwgmWxMOeZ6XTF2WTugGRZJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bqwri99i; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oHdJI6L1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bqwri99i; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oHdJI6L1; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bqwri99i";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oHdJI6L1";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bqwri99i";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oHdJI6L1"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A14081F452;
-	Thu, 22 Feb 2024 09:05:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1708592750; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ttaLeBa6Qt+Edx6r7FQgoY9x3tYtNqF1wyVE0b0N7DE=;
-	b=bqwri99i1QH2wmnjSrvjlkJ5dHkkUE/dlBi64+ydWv6GhDzXZbkwryfDO+m1tWuh6OE8r6
-	un/SoOaGQBeFX0PXhDRVR+9ywkusq93xXTPDT/mdHQuaiGJ/KEHoAdWRddxeE9XImif/7y
-	+VRL/NgSLAhhyNbEz0eIHxLclPBeCxM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1708592750;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ttaLeBa6Qt+Edx6r7FQgoY9x3tYtNqF1wyVE0b0N7DE=;
-	b=oHdJI6L1KVsC8yy2wNGf5T/J6pqSJe7T1aBZAJ2KsvrqX1TeZ+E4LJ4AC2XUNwkokc4tgL
-	AsDhlKJCgGp8aBCw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1708592750; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ttaLeBa6Qt+Edx6r7FQgoY9x3tYtNqF1wyVE0b0N7DE=;
-	b=bqwri99i1QH2wmnjSrvjlkJ5dHkkUE/dlBi64+ydWv6GhDzXZbkwryfDO+m1tWuh6OE8r6
-	un/SoOaGQBeFX0PXhDRVR+9ywkusq93xXTPDT/mdHQuaiGJ/KEHoAdWRddxeE9XImif/7y
-	+VRL/NgSLAhhyNbEz0eIHxLclPBeCxM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1708592750;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ttaLeBa6Qt+Edx6r7FQgoY9x3tYtNqF1wyVE0b0N7DE=;
-	b=oHdJI6L1KVsC8yy2wNGf5T/J6pqSJe7T1aBZAJ2KsvrqX1TeZ+E4LJ4AC2XUNwkokc4tgL
-	AsDhlKJCgGp8aBCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6C17D13A8C;
-	Thu, 22 Feb 2024 09:05:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id h/N6GG4O12VBeQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 22 Feb 2024 09:05:50 +0000
-Date: Thu, 22 Feb 2024 10:05:50 +0100
-Message-ID: <87sf1k6f81.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ALSA: echoaudio: remove redundant assignment to variable clock
-In-Reply-To: <20240221113809.3410109-1-colin.i.king@gmail.com>
-References: <20240221113809.3410109-1-colin.i.king@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1708597282; c=relaxed/simple;
+	bh=wE2DiKHzedQFS4/Sv7Q4affh96fFxvQSuCyGy/JHcD4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e4c6o0GRe+cJP9ahc0YDlB1OS+MmHKVuR50UQgBuDvoIKw+0ESNN7zlScgBwdiJSgXEl35+fnbWZy7I+D94/2+XF0ADP+hcNW+3KZaQhqecp8j1b2pxlYJjqPTLsD10OnjnDfogYPlE65yADgUOO33IfqoVR8OguNfm0O8Z/zG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3bc21303a35so2852751b6e.0;
+        Thu, 22 Feb 2024 02:21:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708597280; x=1709202080;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kK3gRxW77qjjSvXPb0NgN3PqGi0C2jqyqN8S19nxRnY=;
+        b=mrWb3KarGiiaS5SuuqyrkifHBM74bXskGMuWuEYUF4vVXeR8aupoIc8uP/Y4/+pexq
+         Jqz9/AM7F4/eExZrZyF7wTDa+Nau8Zpas8EIGoi0UnnxuYGFGR3qhyxVGvJuYKgGKMcn
+         OcDSZw50AIyc6tW7kiL2ahcxXzZIgn0Ujp1w5qZ7CNgLa5XUaB2K1xhPZQ4dNPm5nNNM
+         YzL+Zv2OXtqs4LRh7Zw3+b+J16vb/FUEmY+6vfSh/fR7RVLojlvkw92dy7j64EEGpF85
+         k6xYNof5FIyl0kAfJFOGB35T6cTP5gYM4boVFSgHQk55bffSsWCNBcwzRxadWVx9jpr/
+         2KJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnODE1oP7Hee7ky6gEQ5yB2jjT4iTz8Y+s0Hon4bRnpo0RBZG1c8XFQP8mfQce3JpI551ugb8ImyINrXrZG79SF2RYlF9lHda24OqqShLYnbRIksw3hD9MiMG3U6bRBZAdCLFAS24kcv7BoHnS+Hf5Xy1BLFL2eLlCo4Jr96Zn47ptuyE4OIHaLw==
+X-Gm-Message-State: AOJu0YyUfrgTN2sA7AVpR3netfmRDjawMv25rmV4+BysgZACPTz2BnXA
+	obZ1+NVSSsajDHarM0FPTJ9UxpSAeUcuUmJkIJl3DnnWXyKrvYxf5WHo7FW7kPxsUfB4UBgiHtV
+	nKqJB5aYMnGBIoYR2y1f36W+U3aU=
+X-Google-Smtp-Source: AGHT+IG+X3dqidb0ShY/50olhNfvLyhndxC1etmc74C0iLVeqGePmbv99hyqomN2a+V5DCBFy0N44slvB4F3YoV38mE=
+X-Received: by 2002:a05:6820:b0c:b0:599:e8ff:66d9 with SMTP id
+ df12-20020a0568200b0c00b00599e8ff66d9mr1903798oob.1.1708597279817; Thu, 22
+ Feb 2024 02:21:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=bqwri99i;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=oHdJI6L1
-X-Spamd-Result: default: False [0.40 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 TO_DN_SOME(0.00)[];
-	 RCPT_COUNT_FIVE(0.00)[6];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.de:+];
-	 MX_GOOD(-0.01)[];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-0.79)[84.62%];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DWL_DNSWL_LOW(-1.00)[suse.de:dkim];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 MID_CONTAINS_FROM(1.00)[];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: 0.40
-X-Rspamd-Queue-Id: A14081F452
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Bar: /
+MIME-Version: 1.0
+References: <20240221123936.3421462-1-colin.i.king@gmail.com>
+ <4b78456b-071f-46c0-bb47-919b493cab79@moroto.mountain> <68571997-c33a-49f8-b922-4b102e5b682b@moroto.mountain>
+In-Reply-To: <68571997-c33a-49f8-b922-4b102e5b682b@moroto.mountain>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 22 Feb 2024 11:21:08 +0100
+Message-ID: <CAJZ5v0h8_F_Fru13aAzZ27W304gwex1d0NPyitourTaS_-ajeQ@mail.gmail.com>
+Subject: Re: [PATCH][next] ACPI: thermal_lib: Add missing checks for errors in
+ return code ret
+To: Dan Carpenter <dan.carpenter@linaro.org>, Colin Ian King <colin.i.king@gmail.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 21 Feb 2024 12:38:09 +0100,
-Colin Ian King wrote:
-> 
-> The variable clock is being assigned a value that is never read,
-> it is being re-assigned a new value in every case in the following
-> switch statement. The assignment is redundant and can be removed.
-> 
-> Cleans up clang scan build warning:
-> sound/pci/echoaudio/echoaudio_3g.c:277:2: warning: Value stored
-> to 'clock' is never read [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Wed, Feb 21, 2024 at 2:19=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> Btw, in real life, in 2024, the compiler is going to automatically
+> initialize "temp_decik" to zero.  So we could just do:
+>
+> -       int temp_decik;
+> +       int temp_decik =3D 0;
+>
+> That would silence the warning without affecting anything else at all.
 
-Thanks, applied.
+Sounds good to me.
 
-
-Takashi
+Anyone willing to cut a patch for this?
