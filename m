@@ -1,59 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FC21FA2;
-	Thu, 22 Feb 2024 04:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E8479D0
+	for <kernel-janitors@vger.kernel.org>; Thu, 22 Feb 2024 05:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708577526; cv=none; b=euX2l98+VGoAu/5nMLSxStXLrDXVtMwq1GTHcyYVCOTAn5IXrok1F4ACTnkKDAg39q5NQ4yumOViAzt7tIGW0PxtJbm5cy3KzJPFGXV0CCMeYn9VIFMgKynaRgNmllfpyBYfGV+wzCU4w5Tkj96iAVNMLd49IXE3lZ0TZWyP6VU=
+	t=1708579506; cv=none; b=HJ589+B13A5R7yy4HW4Z+wzTUmSYWnTV7CIxirWS8XsKR5rdoY+cXU8vp3vEOTxJcQoueyxpc74ok+1B9mWyWLPfbcAl5praPL8elsVOWiiQDbL4UTT0v3lqpbsaGcfcLMZyYiKjyoTJilJ5h47svCmV+FddKayKFEc/qxcqzG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708577526; c=relaxed/simple;
-	bh=3rjrUjwhsSCmh0RJibzoaF4JJV18xHOBdy6qFbX+vbM=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=i2C6Bveo7VuLP6m9aY9SwXEdQB4hbr3uAzjPZKiQCG5nLLsX/d8euX4q/VRtylfbpiMeXTEKckywI/D9GjLGtHueZGqgBwl4FuxZvWXuAAkXWhWMQarRR3DKcKw9ZYeLIb91lsH7bdmE9wZt12CfXrTqBB5qk7n4jctUAIfQdYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q4KEjPM0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1708579506; c=relaxed/simple;
+	bh=8H/BzytqOZYzFjZacY932uXfieYnQyStCWl2l/du+ws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a/FpctOqniGmRX27VnARkIvjWu+fPb0MJH3bg6zM+5PcrlQ6jYCdTogj1/oDyA+uHJ3veC5mONUu0V067OMr8xZH6YTzxFpGoMysYQ+1PcNDfOrd7g3Dc10A1oCuGmBi181KBwDLm8VRtwZlfI6CN1iPyaSfWCUMbsk9eMNUQNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ix51u0ti; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q4KEjPM0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E4BAC433C7;
-	Thu, 22 Feb 2024 04:52:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708577526;
-	bh=3rjrUjwhsSCmh0RJibzoaF4JJV18xHOBdy6qFbX+vbM=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=q4KEjPM0AfWmpL0qKK2Uk86RAnIqaI55UmqGSw3s8AKJGsNCg4RP4WMPTqDrr8FyX
-	 515DOgYFoWs1wIDqmqt2aPPpXJksI+L5Rh/x57IdgBmPeeXtyQBhLladlh/WNS8/nN
-	 NKRmr06cY/+WjMLly2Cc7VXRxizXlHkH6CJl0aorcZJ8VXKb2RBudoD28jwYhbySeC
-	 CS+tPC/dU4Ospsp0VTtNxKPiFLSpq64Cir0GKoi+I5YwBxuvCVP5naXWgx35mWij4N
-	 cFyupe8IVBCkBkuGChsGbaND3a7tss645ijw+5IyVwoQ6XQiUZniGa99zVPPKhoqz5
-	 6lz4s29rHQ1Pw==
-Message-ID: <050cb3a63e606d40d32da0a1d4c3a61d.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ix51u0ti"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3394b892691so231235f8f.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 21 Feb 2024 21:25:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1708579503; x=1709184303; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8H/BzytqOZYzFjZacY932uXfieYnQyStCWl2l/du+ws=;
+        b=ix51u0tiPc2BdlkZS3k/4vhnj5pk1TgWrLfxU9VZcC9OMdkLtAL1zTmT9mEmwT44/a
+         uVVeCSQyE4g+3D08w1fV5LK+6r/T3hpZIEr7ae0gU4YtF0Od1LuevAeYT2FQYSA9yNFO
+         tFVW+iHZ3P/oH2vwH7EoGWByWet7QGyalF7baflv09xeIRgavmq5SCXqD5GcWOR87BR0
+         oYE708MaWijQ7ZlYAfPHiCoU9OKKsPPfBB+h3fM8BteFuPj4PqEYo/aC9IOCUU/zE9FR
+         Mbf2OrBj2UTawxgAdxfvZTcuspg7td3MccE2vyR00lyw2yUut6VupJGX49hlwHQQpRft
+         tbkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708579503; x=1709184303;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8H/BzytqOZYzFjZacY932uXfieYnQyStCWl2l/du+ws=;
+        b=vT5Pxrvdc/HurXUhwJeU0Pzjel+3S5ale6pNp2JQZOp1mEEc9IqsxLcuepKIb3JVam
+         fV669CSDtPKSDkZscj3vU9XxlW1OojeRSZ59T52uwWJK4XmuBIcpzSnbYMbxkF0SQCWC
+         P5WNPKa5CJIwPS7I3QE5wYDaQxIQ2esEkrQgmE2vFoyhDNc1Dqcjjn1UuS0yso9+LfA2
+         KiFa0ZImBTbqRGVD8Liudd+yk9TNkID3SZfRlZ3sJ9Dj+2ip4eILKaVvSq7mQy2+n3jb
+         vuiRSyny5BT8PY/rF8UaOEkeIzog5WBAC6VlIbJ5FFix1rYBPRrzuDTiL7n/uhaXcUXO
+         aACQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkrK2WAbYDewwlV5r0FhtqYjkoae6GB5cghCHEpGxHMLGgs0MBEv+V5s1lU7KaFnDmoGZUjBj68IzmejdsyCDYgDnPASF0bwqP+/H7288j
+X-Gm-Message-State: AOJu0YzUuB7ka5yQbQcYrsKP95y2ykeAFi8p1bGk2r3NmlYFtCpbaOa6
+	/lNCoClGBtvdZDaL3vIMujYPyDREOH9HY4w6+KUhI3CifGyKiVtTv0XOjdrQ4Dc=
+X-Google-Smtp-Source: AGHT+IGccZ0j73/5DrOmMr+HWme+77iCv5MXgbQTR75Cls7ZJMbT2w/CLOu9Xq8tSwrznHtU3sy6jg==
+X-Received: by 2002:a5d:4d8e:0:b0:33d:6fe1:8dc2 with SMTP id b14-20020a5d4d8e000000b0033d6fe18dc2mr1057619wru.3.1708579502807;
+        Wed, 21 Feb 2024 21:25:02 -0800 (PST)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id e2-20020a056000120200b0033cf80ad6f5sm18922729wrx.60.2024.02.21.21.25.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Feb 2024 21:25:02 -0800 (PST)
+Date: Thu, 22 Feb 2024 08:24:58 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: "Colin King (gmail)" <colin.i.king@gmail.com>,
+	Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] bcachefs: remove redundant assignment to variable
+ ret
+Message-ID: <bc2cef70-6adf-48cb-814c-a1087939ec17@moroto.mountain>
+References: <20240221115203.3413554-1-colin.i.king@gmail.com>
+ <3qaoftjgf7p2ugutl524b3yin7pqpjrkftjx3frunhduf3so66@tjhcdoq6unk3>
+ <cfa4cd82-67e9-4483-9c35-a425859f4a21@gmail.com>
+ <27hacgxfzyeatjx27nb4k5rb5cajt5yw4c2papfr4h64urb7qx@teo2ha6msqnl>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2c553c2a5077757e4f7af0bb895acc43881cf62c.1704616152.git.christophe.jaillet@wanadoo.fr>
-References: <2c553c2a5077757e4f7af0bb895acc43881cf62c.1704616152.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] clk: mediatek: mt7622-apmixedsys: Fix an error handling path in clk_mt8135_apmixed_probe()
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>
-Date: Wed, 21 Feb 2024 20:52:04 -0800
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <27hacgxfzyeatjx27nb4k5rb5cajt5yw4c2papfr4h64urb7qx@teo2ha6msqnl>
 
-Quoting Christophe JAILLET (2024-01-07 00:29:28)
-> 'clk_data' is allocated with mtk_devm_alloc_clk_data(). So calling
-> mtk_free_clk_data() explicitly in the remove function would lead to a
-> double-free.
->=20
-> Remove the redundant call.
->=20
-> Fixes: c50e2ea6507b ("clk: mediatek: mt7622-apmixedsys: Add .remove() cal=
-lback for module build")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+To be honest, the point of explaining how to run Smatch was really to
+let you know that you're now on your own.
 
-Applied to clk-next
+regards,
+dan carpenter
+
