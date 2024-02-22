@@ -1,134 +1,64 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D572BB1B;
-	Thu, 22 Feb 2024 10:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C21134CE5;
+	Thu, 22 Feb 2024 13:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708599448; cv=none; b=Zpb8cYMP5ALgbEoeLoZulpO+6PUpEa/j85tFlKg/WrlwG3s3fXoanCoMiH2E+vS8B57NOwXduozLlekW+F83s80Cvu69Jd2p4vPcWSRoG1Q/7mZjsQIFGkb4Ob+Hnto5uE18xnbamC0XhR8riEW1hGyJ1erO7d31XZdHJDOkh6Q=
+	t=1708610056; cv=none; b=I1vVOlKsBijnfsEVJYwgz7eyq8QAmSdB5+96nNffW/VlG30tVs44nH8bSdNOrVj5QQ9CZZCZHBZz2GhAg0/WBntwdkOm7KdaJEVnYde7HRs7UW/UIlHt1Toqc+ANh9vBz8L2O+KnFnZQXgOlBBdMfB1daICYiPR71fFEWtLs+is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708599448; c=relaxed/simple;
-	bh=KZFamjtTkLlgnuhFg6Rr3E9yf5OE94BjBfpAh6iuEGI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ZHO+X7escd7HSUb2qvGSR2MmvemTnlMKPkzP5MGw3ee+Kg04nWUTQBzhrDpEMTRatNPC1zulVP+9NS3J79y0x9YNj5qPajsqw0F1lk3T/huqGu9aMUcrj3LRd5U/i0Y+QjGXe7f7RpLIA5hGL7/7oZba5ALcxafLE9gMtQiYtUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TwhZdvVr; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1708610056; c=relaxed/simple;
+	bh=TFqTDDc7hfgU+NmeSyhNhMWiSsAwWXo+2EEjwbhB9NM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=une7QYfL5SYFil4+D0JdkdfpLNrq/lI58tY3h2B1tHPleod0iEjeQ1YGo/JUkiKWv5GqenV2VuP6aNMTL8WKrBryB57kHtZxnm6Gc+61Nptde/X+IMz83OD+he2OPv3N5qyLFxip7i/bvb4bDk4xJMU+ThMS3NDutP0kJpkxd2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhIh2Xhs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TwhZdvVr"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2d208d0b282so101904501fa.0;
-        Thu, 22 Feb 2024 02:57:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708599445; x=1709204245; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wGYV6JHoJ7Q+x7LBEW9ExN+ZwTE9A2g4Q3ZY71UFQaI=;
-        b=TwhZdvVrwp5X90pjhnXaRlOlxjZgNMD+gjazKx6iUu61Yr6AMEoIhyrvTlBJHD8hfW
-         4yB/1u3kzyi5YYU4V6+RXO8wXR4ZLY9iQMeCZvK21rvNgQegaWxDWnWSThLaBDmk1HR+
-         kWLewHVM15c49Yws4elSCRFmYYl+bVFmXMyCGQQwFyiCCMGcxnwb1bfq0cBse5Jo1Zbk
-         XiLO5cBCMAzAEE7bQTap8Qtxj6IkdW5Q+KR7XE023IDOeZk+zjWL6dvMbuRwN2FWFIAa
-         JpB1Lze4k93A5aPPaZaOrILQ4Id64LnfcU3sKYzwHyuc7xoIkDkUsnpRuV2EWOL+Mkmn
-         eGtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708599445; x=1709204245;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wGYV6JHoJ7Q+x7LBEW9ExN+ZwTE9A2g4Q3ZY71UFQaI=;
-        b=gC8mZQZwWy2kFijgURzH94OS9KyrBZ3qSaQGjz1hAxd2m2HNKHcxo6Mc73ieVmpa32
-         p/oqxPpMAGbOZrS1Gbz1nk2hHZX4I49uIRb1QlxnYo3+B4HHRUiQ1YllDuvM1IT9TEX2
-         LBOvFJWlPlAdCWISqQhUEr27fcY9xcCqdsUkWvnFYsO6hMje8j70QTdlcozkHiChE2jL
-         iiDLndz+4NHcv7af3BUl1fU7wiiZrOWre9fxvmxZI4h+LomsbZ8zh4+WUlEax1VskhbJ
-         zIJmSYEplamSzFrpj6mGvA7yEbZiE7HorbbevuyTfLTwKJ4pp2k9+NSruiTVpTRILPPC
-         0ySg==
-X-Forwarded-Encrypted: i=1; AJvYcCWv/D5gnvbEL8l7v2mc5KVcCMgevGTb0+12Bnn27F87iAzEhevmvPbtceGm8PM+lS3luym2sd/2kb1ILWcV6xHeOmZh1DOIJPqkf+SuAKrNvRIF3jBvOTH9S03oubEzQngHpCkrpWYaYw==
-X-Gm-Message-State: AOJu0YypyCvNu7MEHwLsV2ZkuZ4mbkKri4O6cNrTyV6iBJoOKgmAui+5
-	NN1LYGvz6BQDQfUwcE6tjFNCC7eDmgrGfMZW4DP5NyOG+Jq8n3a8
-X-Google-Smtp-Source: AGHT+IHz5LqeM9DUmbD/xyQv66R4i+bjqBOk1QDmMso/Qu5MSDXQ0gE8+Dy4cGs7NeCGyFy9ARzguA==
-X-Received: by 2002:a05:651c:1199:b0:2d2:6378:ad3e with SMTP id w25-20020a05651c119900b002d26378ad3emr623730ljo.7.1708599444544;
-        Thu, 22 Feb 2024 02:57:24 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m20-20020a05600c281400b0041214ff06cesm21011733wmb.42.2024.02.22.02.57.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Feb 2024 02:57:24 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhIh2Xhs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8E91C433F1;
+	Thu, 22 Feb 2024 13:54:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708610055;
+	bh=TFqTDDc7hfgU+NmeSyhNhMWiSsAwWXo+2EEjwbhB9NM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jhIh2XhskNnFDqhlshGY5CJ1ZjtI+yVVJithb8D4km1zc527YGA9k2xeIy0smnTYM
+	 gf/SvP1qQ6Mf+4EEFkLZF/qxVXIU+dcBrP6PXuR4RVBrUaFEMd6KAYrdv6HL4bSqrE
+	 GoRBiIio3VehM5XmfruHvU7hy5bK0cDC6steaagzObJVVt3oRAgyXGGTYSpPDT+6DK
+	 tojXe02djpvcHwk3JaPAmHEdeEeXARubluikQHLy0qVyDA2CGlTYvhWw/R7aaWkGQp
+	 t8hdxZGLiSZXsG4BPFN2OKiNGIEv2rh/r+G2sbmjch0FcgLFsPqALA7CFC5HA/vevY
+	 GkZHtNQZ0xnrQ==
+Date: Thu, 22 Feb 2024 13:54:11 +0000
+From: Simon Horman <horms@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Bryan Whitehead <bryan.whitehead@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next][V2] ACPI: thermal_lib: Initialize temp_decik to zero
-Date: Thu, 22 Feb 2024 10:57:23 +0000
-Message-Id: <20240222105723.3810303-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+Subject: Re: [PATCH][next] net: microchip: lan743x: Fix spelling mistake
+ "erro" -> "error"
+Message-ID: <20240222135411.GA961545@kernel.org>
+References: <20240220091737.2676984-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240220091737.2676984-1-colin.i.king@gmail.com>
 
-Static analysis with clang scan build is warning that uninitialized
-data is being passed into various functions. Stop these warnings by
-initializing temp_decik to zero.
+On Tue, Feb 20, 2024 at 09:17:37AM +0000, Colin Ian King wrote:
+> There is a spelling mistake in a netif_err message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/ethernet/microchip/lan743x_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cleans up clang scan warnings in lines 106, 125, 146 and 164 such as:
-drivers/acpi/thermal_lib.c:106:9: warning: 2nd function call argument
-is an uninitialized value [core.CallAndMessage]
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Kudos to Dan Carpenter for the deeper analysis of this issue.
-
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
-
-V2: just set temp_decik to 0
-
----
- drivers/acpi/thermal_lib.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/acpi/thermal_lib.c b/drivers/acpi/thermal_lib.c
-index 4e0519ca9739..6214d6ebe1fa 100644
---- a/drivers/acpi/thermal_lib.c
-+++ b/drivers/acpi/thermal_lib.c
-@@ -100,7 +100,7 @@ static int thermal_temp(int error, int temp_decik, int *ret_temp)
-  */
- int thermal_acpi_active_trip_temp(struct acpi_device *adev, int id, int *ret_temp)
- {
--	int temp_decik;
-+	int temp_decik = 0;
- 	int ret = acpi_active_trip_temp(adev, id, &temp_decik);
- 
- 	return thermal_temp(ret, temp_decik, ret_temp);
-@@ -119,7 +119,7 @@ EXPORT_SYMBOL_GPL(thermal_acpi_active_trip_temp);
-  */
- int thermal_acpi_passive_trip_temp(struct acpi_device *adev, int *ret_temp)
- {
--	int temp_decik;
-+	int temp_decik = 0;
- 	int ret = acpi_passive_trip_temp(adev, &temp_decik);
- 
- 	return thermal_temp(ret, temp_decik, ret_temp);
-@@ -139,7 +139,7 @@ EXPORT_SYMBOL_GPL(thermal_acpi_passive_trip_temp);
-  */
- int thermal_acpi_hot_trip_temp(struct acpi_device *adev, int *ret_temp)
- {
--	int temp_decik;
-+	int temp_decik = 0;
- 	int ret = acpi_hot_trip_temp(adev, &temp_decik);
- 
- 	return thermal_temp(ret, temp_decik, ret_temp);
-@@ -158,7 +158,7 @@ EXPORT_SYMBOL_GPL(thermal_acpi_hot_trip_temp);
-  */
- int thermal_acpi_critical_trip_temp(struct acpi_device *adev, int *ret_temp)
- {
--	int temp_decik;
-+	int temp_decik = 0;
- 	int ret = acpi_critical_trip_temp(adev, &temp_decik);
- 
- 	return thermal_temp(ret, temp_decik, ret_temp);
--- 
-2.39.2
-
+FWIIW, confirm is mispelt twice in comments in the same file.
+But unlike the problem addressed here, it is not user visible.
