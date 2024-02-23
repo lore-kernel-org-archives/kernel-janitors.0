@@ -1,98 +1,105 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBF08287B;
-	Fri, 23 Feb 2024 16:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86DE84FB0
+	for <kernel-janitors@vger.kernel.org>; Fri, 23 Feb 2024 17:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708705735; cv=none; b=i9wBncXmpPbAqtcTSISmpOMxWfGVJfI3gzBQ4u8gKoYZu7ZU9wRiTemmD5DKXuYgrmB0PzoLijGCczlglcaKgChO41tLEmbzls5khx/RPLiBxBSQoKROUkadWiQkp/QN7QmQjKyxOmjEO9s8e31tcanbCe2hr/JghULjZzpJtxE=
+	t=1708708249; cv=none; b=V/n65KD4VoLGdKLdxtGEGLi661MrEhRySSMqYNlhoZQAvjIdRC9J1M4+0L6K3TtkeFy19o4VCj0xU8C/F8o+V7zt5KHh2yhjtg25PBasN4BfGHYHZg5eeQE6kUMuUtwyuULgTFM4z6Mf2GCqeRumjcsinPEi60yOYD1MsX1dFQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708705735; c=relaxed/simple;
-	bh=5YbTR7gyfaezo2opFjG6lXkXRaDF1IHJkCMt5G/1Gwo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=SaxRsTFYKedsHqCUbU0VMO1eMf0wpnHaw2U02gZOo6lJYEnSreqYiE1dMR+dO6cEyT/UZvtZeXBPscniCenALxIhnKnnv2RICukPKf4QLJDbPo89AdCwMzwe0Z1VMRRo9/z8+oIX+D0nj22zWeanzSGhxEM9yOZqGJv4ZkaOgsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOeTJRoP; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1708708249; c=relaxed/simple;
+	bh=y9JUzFCj5/6Y4JFU5uKrYaAMUtXH6djFg6d36YsXAVU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nPjlRCk/XmtLqn+6K6wiQDw0fQ9Kvd9Phq/3qx7hrHwHuZhEJF1EzZTKm9fJjVOkC1Ax2zXEU1Jh4sNvhfcdFQENrYXaTugQ/CsishcRjNjPSWyB4idxYdwaUCHp0Rf13UdSBrsA/Kwbsxvo0Bl4rO/dAaBYnpmLF6xJq7clBGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ZFxKjX92; arc=none smtp.client-ip=80.12.242.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOeTJRoP"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4128f5ec9b7so7459355e9.3;
-        Fri, 23 Feb 2024 08:28:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708705732; x=1709310532; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aoib1qDvqXB6tm8HGIYPQsiyL3x8ruk6j93ZM2+3jRs=;
-        b=MOeTJRoPbtU08fNYwthHcggbNIrC0hEccshS/YsLUR1Ky5cpIhkVJtqwE3IPrW30mK
-         flx7ddW6Eb1WHvt0Ny6fE3ay9HQkLM604IQO9OgAfqV7lH+2/U5OyGH4MbzUVI+oqWNa
-         oW810eaM8nwf4AAKJkQ1x/EgOB4t0IxD6s9mXijPF5cxx+ioPBC2Xs0qnhH0Uutj+IcY
-         qzR/k0EEYKkGPyuOARZkGRIdyEMaVryf+mFGVFcOyqW43jawDk8nEDxm/URk4OsA479x
-         ftf79f85bGrnlIhO0nNaR2iX3g38EBrF0yXs0cehmv/6J2tEsHInN2cnc9qF9UeCg1Lm
-         s7oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708705732; x=1709310532;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aoib1qDvqXB6tm8HGIYPQsiyL3x8ruk6j93ZM2+3jRs=;
-        b=SEzM12h6dHmh+pKsSp/MeGtbtV3EnJuVMMVOuXGGMVGUZLnxvThII9AdYHjvuKrT+P
-         9j6fiCAxYJqRZ+dE62olblwu8cr1LZjWBNgKCl7VwulkJYpgQ4Ahdiq+4YYsWKRt0sZI
-         iaYQeCtkWUkLNwGlinFBFbWBxx0xhJqxFXvvl1mAdRXN+euYrLx1OQMc1qxstKISPzuT
-         15CXcLoA1xYiPGRoGjcI1hS0i8C2aNGOWToIVz2hx+L9CAl86j3d52dNrgH1dZPGe8sB
-         YpL6P0AeYrIV5JxEXx+w0u4RANfsr6ecrCZQm8qfLx9iOs3wHzyn12J84H+DzbLN4rNQ
-         iPhw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFpAHxwDR4IwhO5+MMfyIKuBNvqmjDQAS/3rvt7VNo6a+g7mS7/cbfPgokIPyXl88CgfnsVnjCYHfaw70IriVwVDHlQVyu++BgmNEr+NL6DDLrRa8xipNxsDFaNLVlQdc64nH0h8/J6g==
-X-Gm-Message-State: AOJu0YxcdO+oh2yg7oYAa+BZpowq6cNJxMIqsp3hE8FuvD9lmFu/RMH/
-	SKLb70SXvV2yVJQkfvhuzKjySgxfrOQ32WavjS43sj1hGSG3NBj6j97jnQOx
-X-Google-Smtp-Source: AGHT+IFOwIC6IuTODMV51tXOSHJACqr21Yq7b0hX5JR1OEkHYV0qY455zw5E0qSXOXAhqMqT6FCVAw==
-X-Received: by 2002:a05:600c:4ec9:b0:412:8faa:65db with SMTP id g9-20020a05600c4ec900b004128faa65dbmr261477wmq.38.1708705731452;
-        Fri, 23 Feb 2024 08:28:51 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id he8-20020a05600c540800b004129867fae8sm219812wmb.1.2024.02.23.08.28.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Feb 2024 08:28:51 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] pinctrl: ocelot: remove redundant assignment to variable ret
-Date: Fri, 23 Feb 2024 16:28:50 +0000
-Message-Id: <20240223162850.3914349-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ZFxKjX92"
+Received: from fedora.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id dZ3GrKc3YdwEKdZ3GrQYVX; Fri, 23 Feb 2024 18:09:37 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1708708177;
+	bh=yqjFD2SSA0fcwHyt4UvJnhSi3JeettLpDMfFQ+pNE78=;
+	h=From:To:Cc:Subject:Date;
+	b=ZFxKjX92Vu7ZqQCSXP5FXEIV4ARiUZPiTmKDl8DjfrUCWc8awqrlxd1pGs1iaZD1V
+	 ndBEv+CCPhtf4lo3spUhMT0FIZxcNl1bPZzZ6KgTC/Bd9K22kU90ZiBrLJLa0Gpgit
+	 r5mpBLS6NhtRdB6oejdlo5L8Vi/byW7v0/CVVenpgBMkRWhHsB41yRVOOjEu4Igjx1
+	 EpdofouwzhryL49+ZIBtKnONYzCCpGC6fjGpe1iqqsnZfB3F735Hw0+SgVzN8THGMB
+	 MBvpPyvaAF0KW62UBEvVrNlthJUj5YfQltxx/yG1t0IMxCSFGrMuIlxxscCGsV8qmJ
+	 mm7/FlCgFIXOQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 23 Feb 2024 18:09:37 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/i915/display: Save a few bytes of memory in intel_backlight_device_register()
+Date: Fri, 23 Feb 2024 18:09:28 +0100
+Message-ID: <ecfdb3af5005e05131e2fb93fd870830f39a8c29.1708708142.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The variable ret is being assigned a value that is never read, it
-is being re-assigned a value in every case statement in the following
-switch statement. The assignment is redundant and can be removed.
+'name' may still be "intel_backlight" when backlight_device_register() is
+called.
+In such a case, using kstrdup_const() saves a memory duplication when
+dev_set_name() is called in backlight_device_register().
 
-Cleans up clang scan build warning:
-drivers/pinctrl/pinctrl-ocelot.c:1404:3: warning: Value stored to 'ret'
-is never read [deadcode.DeadStores]
+Use kfree_const() accordingly.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/pinctrl/pinctrl-ocelot.c | 1 -
- 1 file changed, 1 deletion(-)
+Compile tested only
+---
+ drivers/gpu/drm/i915/display/intel_backlight.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index 52aadd6d72a8..be9b8c010167 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -1401,7 +1401,6 @@ static int ocelot_hw_set_value(struct ocelot_pinctrl *info,
- 	if (info->pincfg) {
- 		const struct ocelot_pincfg_data *opd = info->pincfg_data;
+diff --git a/drivers/gpu/drm/i915/display/intel_backlight.c b/drivers/gpu/drm/i915/display/intel_backlight.c
+index 1946d7fb3c2e..9e4a9d4f1585 100644
+--- a/drivers/gpu/drm/i915/display/intel_backlight.c
++++ b/drivers/gpu/drm/i915/display/intel_backlight.c
+@@ -949,7 +949,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+ 	else
+ 		props.power = FB_BLANK_POWERDOWN;
  
--		ret = 0;
- 		switch (reg) {
- 		case PINCONF_BIAS:
- 			ret = ocelot_pincfg_clrsetbits(info, pin,
+-	name = kstrdup("intel_backlight", GFP_KERNEL);
++	name = kstrdup_const("intel_backlight", GFP_KERNEL);
+ 	if (!name)
+ 		return -ENOMEM;
+ 
+@@ -963,7 +963,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+ 		 * compatibility. Use unique names for subsequent backlight devices as a
+ 		 * fallback when the default name already exists.
+ 		 */
+-		kfree(name);
++		kfree_const(name);
+ 		name = kasprintf(GFP_KERNEL, "card%d-%s-backlight",
+ 				 i915->drm.primary->index, connector->base.name);
+ 		if (!name)
+@@ -987,7 +987,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+ 		    connector->base.base.id, connector->base.name, name);
+ 
+ out:
+-	kfree(name);
++	kfree_const(name);
+ 
+ 	return ret;
+ }
 -- 
-2.39.2
+2.43.2
 
