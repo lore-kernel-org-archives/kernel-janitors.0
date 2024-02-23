@@ -1,103 +1,105 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B48D7EEFF;
-	Fri, 23 Feb 2024 13:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765407AE50
+	for <kernel-janitors@vger.kernel.org>; Fri, 23 Feb 2024 14:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708695832; cv=none; b=QhltKRakw7tP6qlx9Ve3jSBPm02nTj/kjHmIqlDWe5UHG20cinuwuxINpfa19oaFkJY0DxmyHP9M5d21prid8D/CIzPilZ6q+RtItG37ea8Ecs4e/m/iH9CFM6RuTsodMgRb4Tp3noPUPDI0vhAoPStsJGmBSG28TmlEZ9mb/Jc=
+	t=1708698020; cv=none; b=u4rAa8fq0XKG6MlKzvUHoIKBHLd3wpo6xYz0bhm6S2D81gONQSG0Z1pmNYilce2vQaR2mfFNFNeRD1ARP6nLUlcNYnH0YPe90eOH9a2d7iu/pJWx0DYun0ZdwmzIPmsuFl66ITyw4tBF2DIAqa5Hc10x85cuwMaOExutsfwE88c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708695832; c=relaxed/simple;
-	bh=YlAkG1NjLt1BPx3c0QOJwwkn6FnM1Le7rrXcmsU3dqQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mEpapHBBEMWRGCn7g/ykZwEIl91g4/rID8+pHIpaLeXcXa/Bg3cjyn6Vx0EWh6a4B8Qm1pZZluI7ItvOcRe5edGweTiwHOXJ/XfSLTX9Fgwsbg2Bb84qMXKF26iA4kx+Jundt3Lsfxy+T3dJnX6YtSe/3oLR3ZMd3E9nzULjLOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hUKYes58; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1708698020; c=relaxed/simple;
+	bh=P9QaVDrmjk4Jn91La3VhEGTQaiz1JWgebffCRbAeQP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EhwBWR8099HlC3MLubXajUmjjA85CXWwz+sDXGev2+6AM5sp4lJovj/kW2hK1zXy9AawnnBPonhsyEmnRIn0Quc3fK7SgR057iYPqZexp47Bo8+ErFZsqN/fulf8E3yJDdSxtUJmBaZXqAt8E5VEUyz+tcTaIBKuZ+dac41c2Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uw1QsRTX; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUKYes58"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-412960dbb0eso2752135e9.1;
-        Fri, 23 Feb 2024 05:43:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uw1QsRTX"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-41294136c27so3648315e9.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 23 Feb 2024 06:20:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708695828; x=1709300628; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MU2sVD1dKQkXFBV/2lOKUBvmSJdVDqTPygsANSVveDA=;
-        b=hUKYes58bSSt08i4Gs3EcTtqVk+nNC2ZMe4NiahcH2wuD/d8kljarskltOhZt1oqxj
-         hfuH1xwosMDSuSLoNnGf0AOVFFQyijk5bI1TlOD+oaS/qxjCLXcf1pwj8bGzRKXu8YE3
-         s45h4+TSQVTlfK5CiSbcx8dX2kK2Oc9m1ikoANcA7AsUy5Pt8ZZu4QahqM6y/T0zhqbb
-         Eze60WF0aqZrxbstFLXWUyQRXjFZmrRPanLY/TutK9HVY2R2IQGApxrBtgL66x8dETaD
-         YK2UKgMM4QF1/l3PnbZ9yFe1HyrgbbSW3HvFKz/az9qn08ho2IYwiQACoOpGl9NCFpCZ
-         1f3w==
+        d=linaro.org; s=google; t=1708698017; x=1709302817; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y2AYcb7BkAamBT8laTS5yV6Xd89bfL5FSrmzKjPqhBc=;
+        b=uw1QsRTXWuPeSb/2UJqVI1qeWx9300OaT5dSuuKDMWAkfUKeInP2uJiSHOYydBI9kh
+         sgQC/CM47/aBex7bremuF6BDQuaQ+fx1buPWddMGixBNxZ0KNlo95laS7zaO7u6p1oFx
+         E1mdLEIBPU2higXQP/Z85TJ4EMhHiNvSXW2jstFN4etqhtqHV8ssykCouyxm2p6zjTCc
+         CPY9iPf40Tu/igDZ5cVMVtlXLJ+dHxWfk0x3V5Y1ZpUFZZrsNkxza/1fc7srvZmJDuEz
+         WNFKl15Mi3jDycgZyv71iSsV/J6SZMnmv43ymr2cjrJ92syFQRnnNJfDh0Hecs8l/Fxu
+         5Scw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708695828; x=1709300628;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MU2sVD1dKQkXFBV/2lOKUBvmSJdVDqTPygsANSVveDA=;
-        b=b1An7OVMXw+Q1PsDv4A2UaZ1lqsClfijv3b6S+cnjNR1a5AVW6KxobsLXANJpPoLcz
-         g1j34TAL/qdNqRh5NAEKA32V0AkHSsrB544HleUGgu/G7pjWjh7DPIcsp4NVQ132hxO/
-         fKXbTGYVQTIVkYt57bKOJDrKPxvW4B7UBiFS9bJ1691i/PZL3LtdWBlyGnTO6YJXHnAf
-         nu7KwkcbPTocxRrrxz4CuTsBBPW7RAqgEvNZEqW1IG/6u7WQ88YVLvmeBEhd+gGS0EWj
-         y+dP8pcqKvAJsaYxySxJu6+R0ys8SYMjX7CQzvJac69kCA9JYvMp0VWnCj+J4L7dhQPx
-         9krg==
-X-Forwarded-Encrypted: i=1; AJvYcCWU2qgAuzwwSvLnde40KL6nkKDCJj5ZnE+w3epdlxCNfmGtyLb9spA8J/6VEevvncIOep0bgXdMP20IODu5jzazALXt/eL5wYkrwXYLOld1ae1DljNIFb7L7j9V9O61cqZb1AgN2kaw
-X-Gm-Message-State: AOJu0YyZgMvBBPV0eA2qtRKw8gqjtYqZftC2Pg3SAaA+sa7cf1oH0sjF
-	BAvGKlK6ZBky7f7+j19yk2ULL9vGOhGduy0BTdfrbhXzfPWNX5pK
-X-Google-Smtp-Source: AGHT+IEoOr/wovuVU84wwaIU1tZ3DkQrFObSLZXV9WEeLb+FRbEKQKNr7Px6ERkE1O9z4rS6In43/w==
-X-Received: by 2002:a05:600c:3b89:b0:412:94b7:bc2 with SMTP id n9-20020a05600c3b8900b0041294b70bc2mr1322633wms.2.1708695828307;
-        Fri, 23 Feb 2024 05:43:48 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id hi17-20020a05600c535100b0041290251dc2sm2316210wmb.14.2024.02.23.05.43.47
+        d=1e100.net; s=20230601; t=1708698017; x=1709302817;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y2AYcb7BkAamBT8laTS5yV6Xd89bfL5FSrmzKjPqhBc=;
+        b=r+0uG5/xFOR4CQ6Q9OMfDNMWJNW6ZsrRarO1bT4AnOjmqdJCUFaZYfMKOAEF3u+SB7
+         Xxp79wuaoFfKFjfWs89JV5li1Bofq9gcRJcg85advfXT8lB8sgzaV0buI+2ZYfamg2bO
+         R4niIeKzLQ5qPMKRWgGHDMK8YmOsBNf9NIPABW+no1mZbVuAiKssr+OZiGrGVqYu1mQm
+         D6ElBye2jffckzm8HsXdp6tbEuIlkVDW7dDmK799s3YVQikG0twYJgouoi8ji1naUJeF
+         Fddb2vf/hHtp/ZKimn0Z1jf3j/EdBUKCS5VpwTd/7TnLRtTRdvBzyjIQrl8AvCcUyc1N
+         7+Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCURF7crv8DlF4VZZmP6THxzf1MjLe/QCsC0hQW/ksLiqOb1tRg7RyNDtvVRKCFO+dWR+0S7nObtDSyisnPBnSevDyg/cxEa9mZaDs13wQQ0
+X-Gm-Message-State: AOJu0Yx3jlh6o9PZotmP8HaQ0xD3abte1RaxFoa0im7rm10dGb0y5dGV
+	iaTNmgLcfXAhML45/i2k656tXYXByfL6X9ovNjTK68SK+n7Jnh+eZmxk2G3+UpY=
+X-Google-Smtp-Source: AGHT+IGvvyTHIzHSJgDc3IDWolA6PB7uhiChrNVPgIcyXbduQ/ai5adJSBuYtEvQFDu/bAgDe3ZyHg==
+X-Received: by 2002:a05:600c:3051:b0:412:78da:8abe with SMTP id n17-20020a05600c305100b0041278da8abemr1408960wmh.30.1708698016772;
+        Fri, 23 Feb 2024 06:20:16 -0800 (PST)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id dq8-20020a0560000cc800b0033ce5b3390esm2966338wrb.38.2024.02.23.06.20.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Feb 2024 05:43:47 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: clocking-wizard: Remove redundant initialization of pointer div_addr
-Date: Fri, 23 Feb 2024 13:43:47 +0000
-Message-Id: <20240223134347.3908301-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Fri, 23 Feb 2024 06:20:16 -0800 (PST)
+Date: Fri, 23 Feb 2024 17:20:13 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Potapenko <glider@google.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] lib/stackdepot: off by one in depot_fetch_stack()
+Message-ID: <361ac881-60b7-471f-91e5-5bf8fe8042b2@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-The pointer div_addr is being assigned a value that is never used, it is
-being re-assigned a different value near the end of the function where
-it is being read in the next statement. The initialization is redundant
-and can be removed.
+The stack_pools[] array has DEPOT_MAX_POOLS.  The "pools_num" tracks the
+number of pools which are initialized.  See depot_init_pool() for more
+details.
 
-Cleans up clang scan build warning:
-drivers/clk/xilinx/clk-xlnx-clock-wizard.c:501:16: warning: Value stored
-to 'div_addr' during its initialization is never read [deadcode.DeadStores]
+If pool_index == pools_num_cached, this will read one element beyond what
+we want.  If not all the pools are initialized, then the pool will be
+NULL, triggering a WARN(), and if they are all initialized it will read
+one element beyond the end of the array.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Fixes: b29d31885814 ("lib/stackdepot: store free stack records in a freelist")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 2 +-
+From static analysis.  What seems to have happened is that originally
+we stored the highest index instead of the number of elements and when
+we changed the > to >= comparison was overlooked.
+
+ lib/stackdepot.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-index 6a6e5d9292e8..19eb3fb7ae31 100644
---- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-+++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-@@ -498,7 +498,7 @@ static int clk_wzrd_dynamic_all_nolock(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_wzrd_divider *divider = to_clk_wzrd_divider(hw);
- 	unsigned long vco_freq, rate_div, clockout0_div;
--	void __iomem *div_addr = divider->base;
-+	void __iomem *div_addr;
- 	u32 reg, pre, f;
- 	int err;
+diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+index 8c795bb20afb..af6cc19a2003 100644
+--- a/lib/stackdepot.c
++++ b/lib/stackdepot.c
+@@ -447,7 +447,7 @@ static struct stack_record *depot_fetch_stack(depot_stack_handle_t handle)
  
+ 	lockdep_assert_not_held(&pool_lock);
+ 
+-	if (pool_index > pools_num_cached) {
++	if (pool_index >= pools_num_cached) {
+ 		WARN(1, "pool index %d out of bounds (%d) for stack id %08x\n",
+ 		     pool_index, pools_num_cached, handle);
+ 		return NULL;
 -- 
-2.39.2
+2.43.0
 
