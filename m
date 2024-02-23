@@ -1,93 +1,70 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2CC18B04
-	for <kernel-janitors@vger.kernel.org>; Fri, 23 Feb 2024 09:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469E17BAF8;
+	Fri, 23 Feb 2024 12:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708682263; cv=none; b=pjNy9HoG9/+zE80kHygpxjjxK8GI5XL7hI9wTCeL9+UxQ0A/frH6UaQPMND5IIZO/q+YtbA0IEfGMX21I5jmXqrGeFSlE/biYyIT6N8DLY34uZSlHkpWuw3JyRC7+BdcECuX7lBtSTP7DmUXoMtxVO9gYsHVwHZZr42rsFKU/aM=
+	t=1708690125; cv=none; b=WqPASz2RZf70kb1ngoaihzhlby0VbtAGtRIVJMR2jgAEJyoUPgmfURZ1V4XSBFPN54RfzNZ9SyQnDnJIXTrybIOl/s/VGXMVKGObyTq45m9N6MuV7Jx7HWkGAAmEBC2qVFQEs7DDsgyzgjZn/ANbqusRwbV0xmVK8yWD/xjtgek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708682263; c=relaxed/simple;
-	bh=v0l7HTP7lsDPJCnwCBLsqGp+y2UNKtugLO9N2xkevdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n3tMQLMAYoHdIm7mLKQbAniH2L7BlOzeTKWhH1QCTGD0eTeDct92wr+ypp0qETPNt7Px0q42xBngrHbAaRty4UBJVhXYkJF8O75GoLjYPcCUrwSoFlZ3LhWuqCWP9/riyGQqekEdWD4l1fzd/igzNr8M9Fsy7OzAD+W52f3XGxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dZjQNpvo; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1708690125; c=relaxed/simple;
+	bh=FGK/wZzrbp28TbwrnGWoJmL3G1Uylty0KLXbIXJ9ZvE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=kO76t+tCMEEv1pf7rvQvX4pm37YRBU7JaxT0n+yW4iLpSLgWcRUvTEMv1YxlM+AHnGIlgwoxpweZ2/UgQb13HuTQZdzkfVaSd7zO8FD8BCj3qmvuX2r04qlcbvDaxa3ttNPrWUVoAALnJ49+j9z7+iP7Ba7p1CLZwpa3+J8Ul28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RYW/138L; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dZjQNpvo"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-33d26da3e15so116398f8f.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 23 Feb 2024 01:57:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708682259; x=1709287059; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0/y/rI+M/5qiVISNkhUYwwY4gRxXJKTqbidyY3f2wE0=;
-        b=dZjQNpvo741c6WI3kkW9Pift5Phe9OtpEs0BgP1BJttEQ8vsMS4HELWROU9kj+sJVj
-         6rbizHUaiPQ4CGZxIeZyknUF6OUisNqJ9jnaNeraJpQ2roTdpxeNVrjcN7tcWoekUCn2
-         KUOYr+t3Lufi0bDLX8N5FzsDNV+znnXgmymeyKHE+77fKQGr4BtpnLZh1l19S7BoAryx
-         THPu2RreYc7Kf9gevUAVkzb0e9gapt5iCFOQ31Wo2q+1KQESBOmXoNRA/dLzjamA8NND
-         oaqsnc72jbmp82DT+IrFmcMBwP/mrCTmQGDSSZRSllGT9e4kyek3DQiq4JWr0d7keRs/
-         bQ1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708682259; x=1709287059;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0/y/rI+M/5qiVISNkhUYwwY4gRxXJKTqbidyY3f2wE0=;
-        b=q/gEVzIY8tKkZvqEzPaJ5H8PvIRkHXY/YaqIAfz8KkYsmEuEDGv7zXsTOytFztUQbw
-         u45B8ovrH63a3UlbEF2gNTCSdE1ucNrA1sCazIm5v9+HiQIxz9Xzxcn5Yy7iLx5PzxlJ
-         YxxSr40FXWvs7OykrvzCa2LKfV54I5lTuvnUkd/OLMCQURjMU8dHSrOFOlnHLYyB5A6U
-         ddz93cTwmJchntaTe8Qow6DvsGzfEavMdLu48MT7md9fZXuUJ05f5DNcrM+SIZrLaMLI
-         KKPmNbAFL+DdIDnJhkqoEiKh4tJF+GzwGvGImHsOSlLBhKxpWG74/Okp63Eu2btJ8uTY
-         CZow==
-X-Forwarded-Encrypted: i=1; AJvYcCU68MG1aQfGeZg6Dc3WsnZvXfcPC4x/Z21j1jNMofKtmnvL1EZlVVa1oifHL1oL6p5zW2fhl5awFqzwvWJC/KH2kNWeNoIkqJ5CI9lfk7aq
-X-Gm-Message-State: AOJu0Yyd9hl06czmoOI7O3cvfcQhHaPDmjcHd/KfpWgs+LNnwwsm+Ha6
-	qBh8IgMhcNMds+gsq+DY8m7vCZPodats8I5Oyx1qWVDOoHF6p/vuQpBvHMWi2oAj+RX+klkM5S+
-	/
-X-Google-Smtp-Source: AGHT+IE6tVWqEE3mCN+25DqhP/CUP5T/jGAansZoun1aHwjyncsoYOjI/jf9FiAzxP2Z7I7QVismBw==
-X-Received: by 2002:a5d:6691:0:b0:33d:2567:995c with SMTP id l17-20020a5d6691000000b0033d2567995cmr1215561wru.1.1708682259350;
-        Fri, 23 Feb 2024 01:57:39 -0800 (PST)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id bn22-20020a056000061600b0033d81d9c44esm2313054wrb.70.2024.02.23.01.57.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Feb 2024 01:57:39 -0800 (PST)
-Date: Fri, 23 Feb 2024 12:57:35 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] orangefs: re-fix sb refcount leak when allocate sb
- info failed.
-Message-ID: <32506721-f81b-46d8-b421-d5d2a4b3540a@moroto.mountain>
-References: <20240223093639.1794556-1-suhui@nfschina.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RYW/138L"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12119C43390;
+	Fri, 23 Feb 2024 12:08:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708690124;
+	bh=FGK/wZzrbp28TbwrnGWoJmL3G1Uylty0KLXbIXJ9ZvE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=RYW/138LYT8K9jj3sEDxKvD6NYDskq1onJQ77rrXctU45rVW3jAOCgVrfwWeBNGJT
+	 IicppUO7TEzRZCWoR14m/9bQpevcpcEE8pVXki7WJq0mFUrn5lwM4JGkwE9MKRWKxm
+	 r4+DwTwK1YziRnrBZcSC5lJYp8fdD38zzi8/NjzdRjdICEs75MQozEV4/erBwRLYSN
+	 vUoGuRvqOq7mbeM05yrmZuKue/ewiEd0gFgfAY5g5QaUtFl7oqPkTG1XqAb3EQweNb
+	 IZGVmrHCY9SpVe1FlUP0033d4q5jS8f9Z2Aera8KpeeI+1gWcpyPcvzcVZfkhnGc3g
+	 MDNu4RKOWsaIw==
+From: Vinod Koul <vkoul@kernel.org>
+To: =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ Conor Dooley <conor+dt@kernel.org>, dmaengine@vger.kernel.org, 
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240222135847.5160-1-lukas.bulwahn@gmail.com>
+References: <20240222135847.5160-1-lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in MEDIATEK DMA DRIVER
+Message-Id: <170869012270.529520.7551546252747451054.b4-ty@kernel.org>
+Date: Fri, 23 Feb 2024 17:38:42 +0530
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240223093639.1794556-1-suhui@nfschina.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.3
 
-On Fri, Feb 23, 2024 at 05:36:41PM +0800, Su Hui wrote:
-> This problem was previously fixed by commit ac2c63757f4f ("orangefs: Fix sb
-> refcount leak when allocate sb info failed.").
-> Add a judgement to fix NULL deference problem and also avoid refcount
-> leak problem.
+
+On Thu, 22 Feb 2024 14:58:47 +0100, Lukas Bulwahn wrote:
+> Commit fa3400504824 ("dt-bindings: dma: convert MediaTek High-Speed
+> controller to the json-schema")  converts mtk-hsdma.txt to
+> mediatek,mt7622-hsdma.yaml, but misses to adjust its reference in
+> MAINTAINERS.
 > 
-> Fixes: 9bf93dcfc453 ("Julia Lawall reported this null pointer dereference, this should fix it.")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
-> ps: Thanks for Dan's suggestion[1].
-> [1]: https://lore.kernel.org/all/c4bf77fb-c289-4f5d-9f20-e0861a543d91@moroto.mountain/
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
+> 
+> [...]
 
-Thanks!
+Applied, thanks!
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+[1/1] MAINTAINERS: adjust file entry in MEDIATEK DMA DRIVER
+      commit: e3027b0d0b9db35a382285cca99364aa4905e39f
 
-regards,
-dan carpenter
+Best regards,
+-- 
+~Vinod
+
 
