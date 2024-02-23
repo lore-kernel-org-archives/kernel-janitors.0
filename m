@@ -1,65 +1,63 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21566FB9;
-	Fri, 23 Feb 2024 14:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBF08287B;
+	Fri, 23 Feb 2024 16:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708700014; cv=none; b=E/P47v0BGlr3jISCSOFmmsLrXvfKfWpsCifNxR3Obvi7I/c3zBayRBUuS2Qtn9uWStKJQ2F/vOMFPkCzmyy4W+j6Xhgy0/tbiXzthPyOZ5nNYtFKx8Pe7RhJDXrJ7JsLWh80OtN9N+H9Exw+FqX8L0hXfD1sRrLv86QMaMEyHzM=
+	t=1708705735; cv=none; b=i9wBncXmpPbAqtcTSISmpOMxWfGVJfI3gzBQ4u8gKoYZu7ZU9wRiTemmD5DKXuYgrmB0PzoLijGCczlglcaKgChO41tLEmbzls5khx/RPLiBxBSQoKROUkadWiQkp/QN7QmQjKyxOmjEO9s8e31tcanbCe2hr/JghULjZzpJtxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708700014; c=relaxed/simple;
-	bh=jNZB8Ha/81ZEkS+EVythIX6YkFlIT32/7Z17lY22gls=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=u50zcvlQElsminScWPXSUcbWLkHrXMiFbjAbyJLqAPDDQRPBspdqdColx5IvnW6MZFqICkVzDe5m5GXnR9g8Yv8pdACGw0ETHZIbQRUjgSW7g3iBGbWoeNly3tEPvc8Lj04ANXW4skV2u6IdyDDoZp7W9II7CaZOhjQSEF4bzL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hWctQYAu; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1708705735; c=relaxed/simple;
+	bh=5YbTR7gyfaezo2opFjG6lXkXRaDF1IHJkCMt5G/1Gwo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=SaxRsTFYKedsHqCUbU0VMO1eMf0wpnHaw2U02gZOo6lJYEnSreqYiE1dMR+dO6cEyT/UZvtZeXBPscniCenALxIhnKnnv2RICukPKf4QLJDbPo89AdCwMzwe0Z1VMRRo9/z8+oIX+D0nj22zWeanzSGhxEM9yOZqGJv4ZkaOgsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOeTJRoP; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hWctQYAu"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-41291355cb4so6286945e9.1;
-        Fri, 23 Feb 2024 06:53:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOeTJRoP"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4128f5ec9b7so7459355e9.3;
+        Fri, 23 Feb 2024 08:28:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708700011; x=1709304811; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1708705732; x=1709310532; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=s/a+7Lbr7oxAEnMW9lRS2BPIWRChV9WXDE8CQg9Hrfk=;
-        b=hWctQYAuJqeTzcWCXlafVUlifzCelNeQDT/fWFMIRKPNsWThg8Jzu51zTgtFzw0qLd
-         J2FjPDmF8RmS5U4ZG7xrP5FghlYome8YvZSaVUpa4wwVPdRqbbcCT1y+0EHz/kuPqCdW
-         iv57iN0aRZJC/YcZvyWCOfX0efKFn++PCzJFz8kJI+YYF+AnFbsQA+xMnuY06Vs6YrSz
-         UFPVgGdq3Wmecj5AnRV0T0hG3u8ZEm2rlZMnDMKS7KdujROOhwqCjrirfgkguEtiNXC9
-         VBE14vNgiEmP/Kyms15GzJhf4uaPfSAkTg48CpKwq+7C5M9HbLOrcRT94vTmy/Hj9WS3
-         7nEg==
+        bh=aoib1qDvqXB6tm8HGIYPQsiyL3x8ruk6j93ZM2+3jRs=;
+        b=MOeTJRoPbtU08fNYwthHcggbNIrC0hEccshS/YsLUR1Ky5cpIhkVJtqwE3IPrW30mK
+         flx7ddW6Eb1WHvt0Ny6fE3ay9HQkLM604IQO9OgAfqV7lH+2/U5OyGH4MbzUVI+oqWNa
+         oW810eaM8nwf4AAKJkQ1x/EgOB4t0IxD6s9mXijPF5cxx+ioPBC2Xs0qnhH0Uutj+IcY
+         qzR/k0EEYKkGPyuOARZkGRIdyEMaVryf+mFGVFcOyqW43jawDk8nEDxm/URk4OsA479x
+         ftf79f85bGrnlIhO0nNaR2iX3g38EBrF0yXs0cehmv/6J2tEsHInN2cnc9qF9UeCg1Lm
+         s7oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708700011; x=1709304811;
+        d=1e100.net; s=20230601; t=1708705732; x=1709310532;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=s/a+7Lbr7oxAEnMW9lRS2BPIWRChV9WXDE8CQg9Hrfk=;
-        b=IR2QcmzciwASeBPsVMM1aEaCho8rtDZdJ18cgQU9g6ndm+Xf/bnSpw+fF02E2s3UjI
-         82TmAEp4RkhcC19CEixv9H7W//Jla6plfBFDuDKO0u6L6eZ824MDIMIcpn3VWGiyNsxt
-         TC6PTavH07/riCV+ws0IOfo4U75PZdRV6HNuWk8hhwVw2Kk3iCt+YnWnEnGicMOaXFNr
-         Dg0Lrp8MDqJAKRalk1CTm8xcJTSqUy25sHYyTE1SYDv5cC5+sLOaVp7HgnvQ9gTNodEF
-         thwRmcbY48C20GyqaWPp8Qr72Uw4ZVVPsfpMPmGn4xv4YNslmqld28wuYEVKVXsBDTK0
-         svHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMdT9pmLuLgEf0vt1lIDLL4Yptm50vSkfrZ08CkaDkYtKtAGLPGs0tzNe3BbVx4ds1KyRqVxyXzKv7wbkauqNN9fTDgOiF+97nHHzL
-X-Gm-Message-State: AOJu0YwPzX2IFRinhkw+aGPdd2tsr00V7TbCcxthdk9wTZPwCdIeNea7
-	dZ2XHszpljT+M7+QlQgg2vWcB20ZHoZypBfeK67RnIOfydC3DKRc
-X-Google-Smtp-Source: AGHT+IF35jagaTTZ5yDNpFhVTYaG+pRkNtNOoRROuGdHT169YIqL9YMhI6h0l9YJGvPC1RWOYJUXyw==
-X-Received: by 2002:a05:600c:1389:b0:412:952d:3c6a with SMTP id u9-20020a05600c138900b00412952d3c6amr44821wmf.13.1708700009287;
-        Fri, 23 Feb 2024 06:53:29 -0800 (PST)
+        bh=aoib1qDvqXB6tm8HGIYPQsiyL3x8ruk6j93ZM2+3jRs=;
+        b=SEzM12h6dHmh+pKsSp/MeGtbtV3EnJuVMMVOuXGGMVGUZLnxvThII9AdYHjvuKrT+P
+         9j6fiCAxYJqRZ+dE62olblwu8cr1LZjWBNgKCl7VwulkJYpgQ4Ahdiq+4YYsWKRt0sZI
+         iaYQeCtkWUkLNwGlinFBFbWBxx0xhJqxFXvvl1mAdRXN+euYrLx1OQMc1qxstKISPzuT
+         15CXcLoA1xYiPGRoGjcI1hS0i8C2aNGOWToIVz2hx+L9CAl86j3d52dNrgH1dZPGe8sB
+         YpL6P0AeYrIV5JxEXx+w0u4RANfsr6ecrCZQm8qfLx9iOs3wHzyn12J84H+DzbLN4rNQ
+         iPhw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFpAHxwDR4IwhO5+MMfyIKuBNvqmjDQAS/3rvt7VNo6a+g7mS7/cbfPgokIPyXl88CgfnsVnjCYHfaw70IriVwVDHlQVyu++BgmNEr+NL6DDLrRa8xipNxsDFaNLVlQdc64nH0h8/J6g==
+X-Gm-Message-State: AOJu0YxcdO+oh2yg7oYAa+BZpowq6cNJxMIqsp3hE8FuvD9lmFu/RMH/
+	SKLb70SXvV2yVJQkfvhuzKjySgxfrOQ32WavjS43sj1hGSG3NBj6j97jnQOx
+X-Google-Smtp-Source: AGHT+IFOwIC6IuTODMV51tXOSHJACqr21Yq7b0hX5JR1OEkHYV0qY455zw5E0qSXOXAhqMqT6FCVAw==
+X-Received: by 2002:a05:600c:4ec9:b0:412:8faa:65db with SMTP id g9-20020a05600c4ec900b004128faa65dbmr261477wmq.38.1708705731452;
+        Fri, 23 Feb 2024 08:28:51 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id t6-20020a05600c450600b0040fdf5e6d40sm2686953wmo.20.2024.02.23.06.53.28
+        by smtp.gmail.com with ESMTPSA id he8-20020a05600c540800b004129867fae8sm219812wmb.1.2024.02.23.08.28.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Feb 2024 06:53:28 -0800 (PST)
+        Fri, 23 Feb 2024 08:28:51 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Roy Pledge <Roy.Pledge@nxp.com>,
-	Li Yang <leoyang.li@nxp.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] soc: fsl: dpio: remove redundant assignment to pointer p
-Date: Fri, 23 Feb 2024 14:53:27 +0000
-Message-Id: <20240223145327.3909835-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] pinctrl: ocelot: remove redundant assignment to variable ret
+Date: Fri, 23 Feb 2024 16:28:50 +0000
+Message-Id: <20240223162850.3914349-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -70,41 +68,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There are two places where pointer p is being assigned a value that
-is never read, the pointer is re-assingned later. The assignments
-are redundant and can be removed.
+The variable ret is being assigned a value that is never read, it
+is being re-assigned a value in every case statement in the following
+switch statement. The assignment is redundant and can be removed.
 
-Cleans up two clang scan build warnings:
-drivers/soc/fsl/dpio/qbman-portal.c:662:3: warning: Value stored to 'p'
-is never read [deadcode.DeadStores]
-drivers/soc/fsl/dpio/qbman-portal.c:820:3: warning: Value stored to 'p'
+Cleans up clang scan build warning:
+drivers/pinctrl/pinctrl-ocelot.c:1404:3: warning: Value stored to 'ret'
 is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/soc/fsl/dpio/qbman-portal.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/pinctrl/pinctrl-ocelot.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/soc/fsl/dpio/qbman-portal.c b/drivers/soc/fsl/dpio/qbman-portal.c
-index 0a3fb6c115f4..03cc374f11d7 100644
---- a/drivers/soc/fsl/dpio/qbman-portal.c
-+++ b/drivers/soc/fsl/dpio/qbman-portal.c
-@@ -659,7 +659,6 @@ int qbman_swp_enqueue_multiple_direct(struct qbman_swp *s,
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index 52aadd6d72a8..be9b8c010167 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -1401,7 +1401,6 @@ static int ocelot_hw_set_value(struct ocelot_pinctrl *info,
+ 	if (info->pincfg) {
+ 		const struct ocelot_pincfg_data *opd = info->pincfg_data;
  
- 	if (!s->eqcr.available) {
- 		eqcr_ci = s->eqcr.ci;
--		p = s->addr_cena + QBMAN_CENA_SWP_EQCR_CI;
- 		s->eqcr.ci = qbman_read_register(s, QBMAN_CINH_SWP_EQCR_CI);
- 		s->eqcr.ci &= full_mask;
- 
-@@ -817,7 +816,6 @@ int qbman_swp_enqueue_multiple_desc_direct(struct qbman_swp *s,
- 	full_mask = s->eqcr.pi_ci_mask;
- 	if (!s->eqcr.available) {
- 		eqcr_ci = s->eqcr.ci;
--		p = s->addr_cena + QBMAN_CENA_SWP_EQCR_CI;
- 		s->eqcr.ci = qbman_read_register(s, QBMAN_CINH_SWP_EQCR_CI);
- 		s->eqcr.available = qm_cyc_diff(s->eqcr.pi_ring_size,
- 					eqcr_ci, s->eqcr.ci);
+-		ret = 0;
+ 		switch (reg) {
+ 		case PINCONF_BIAS:
+ 			ret = ocelot_pincfg_clrsetbits(info, pin,
 -- 
 2.39.2
 
