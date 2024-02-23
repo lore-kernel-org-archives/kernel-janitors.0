@@ -1,105 +1,110 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765407AE50
-	for <kernel-janitors@vger.kernel.org>; Fri, 23 Feb 2024 14:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21566FB9;
+	Fri, 23 Feb 2024 14:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708698020; cv=none; b=u4rAa8fq0XKG6MlKzvUHoIKBHLd3wpo6xYz0bhm6S2D81gONQSG0Z1pmNYilce2vQaR2mfFNFNeRD1ARP6nLUlcNYnH0YPe90eOH9a2d7iu/pJWx0DYun0ZdwmzIPmsuFl66ITyw4tBF2DIAqa5Hc10x85cuwMaOExutsfwE88c=
+	t=1708700014; cv=none; b=E/P47v0BGlr3jISCSOFmmsLrXvfKfWpsCifNxR3Obvi7I/c3zBayRBUuS2Qtn9uWStKJQ2F/vOMFPkCzmyy4W+j6Xhgy0/tbiXzthPyOZ5nNYtFKx8Pe7RhJDXrJ7JsLWh80OtN9N+H9Exw+FqX8L0hXfD1sRrLv86QMaMEyHzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708698020; c=relaxed/simple;
-	bh=P9QaVDrmjk4Jn91La3VhEGTQaiz1JWgebffCRbAeQP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EhwBWR8099HlC3MLubXajUmjjA85CXWwz+sDXGev2+6AM5sp4lJovj/kW2hK1zXy9AawnnBPonhsyEmnRIn0Quc3fK7SgR057iYPqZexp47Bo8+ErFZsqN/fulf8E3yJDdSxtUJmBaZXqAt8E5VEUyz+tcTaIBKuZ+dac41c2Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uw1QsRTX; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1708700014; c=relaxed/simple;
+	bh=jNZB8Ha/81ZEkS+EVythIX6YkFlIT32/7Z17lY22gls=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=u50zcvlQElsminScWPXSUcbWLkHrXMiFbjAbyJLqAPDDQRPBspdqdColx5IvnW6MZFqICkVzDe5m5GXnR9g8Yv8pdACGw0ETHZIbQRUjgSW7g3iBGbWoeNly3tEPvc8Lj04ANXW4skV2u6IdyDDoZp7W9II7CaZOhjQSEF4bzL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hWctQYAu; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uw1QsRTX"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-41294136c27so3648315e9.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 23 Feb 2024 06:20:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hWctQYAu"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-41291355cb4so6286945e9.1;
+        Fri, 23 Feb 2024 06:53:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708698017; x=1709302817; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y2AYcb7BkAamBT8laTS5yV6Xd89bfL5FSrmzKjPqhBc=;
-        b=uw1QsRTXWuPeSb/2UJqVI1qeWx9300OaT5dSuuKDMWAkfUKeInP2uJiSHOYydBI9kh
-         sgQC/CM47/aBex7bremuF6BDQuaQ+fx1buPWddMGixBNxZ0KNlo95laS7zaO7u6p1oFx
-         E1mdLEIBPU2higXQP/Z85TJ4EMhHiNvSXW2jstFN4etqhtqHV8ssykCouyxm2p6zjTCc
-         CPY9iPf40Tu/igDZ5cVMVtlXLJ+dHxWfk0x3V5Y1ZpUFZZrsNkxza/1fc7srvZmJDuEz
-         WNFKl15Mi3jDycgZyv71iSsV/J6SZMnmv43ymr2cjrJ92syFQRnnNJfDh0Hecs8l/Fxu
-         5Scw==
+        d=gmail.com; s=20230601; t=1708700011; x=1709304811; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=s/a+7Lbr7oxAEnMW9lRS2BPIWRChV9WXDE8CQg9Hrfk=;
+        b=hWctQYAuJqeTzcWCXlafVUlifzCelNeQDT/fWFMIRKPNsWThg8Jzu51zTgtFzw0qLd
+         J2FjPDmF8RmS5U4ZG7xrP5FghlYome8YvZSaVUpa4wwVPdRqbbcCT1y+0EHz/kuPqCdW
+         iv57iN0aRZJC/YcZvyWCOfX0efKFn++PCzJFz8kJI+YYF+AnFbsQA+xMnuY06Vs6YrSz
+         UFPVgGdq3Wmecj5AnRV0T0hG3u8ZEm2rlZMnDMKS7KdujROOhwqCjrirfgkguEtiNXC9
+         VBE14vNgiEmP/Kyms15GzJhf4uaPfSAkTg48CpKwq+7C5M9HbLOrcRT94vTmy/Hj9WS3
+         7nEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708698017; x=1709302817;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y2AYcb7BkAamBT8laTS5yV6Xd89bfL5FSrmzKjPqhBc=;
-        b=r+0uG5/xFOR4CQ6Q9OMfDNMWJNW6ZsrRarO1bT4AnOjmqdJCUFaZYfMKOAEF3u+SB7
-         Xxp79wuaoFfKFjfWs89JV5li1Bofq9gcRJcg85advfXT8lB8sgzaV0buI+2ZYfamg2bO
-         R4niIeKzLQ5qPMKRWgGHDMK8YmOsBNf9NIPABW+no1mZbVuAiKssr+OZiGrGVqYu1mQm
-         D6ElBye2jffckzm8HsXdp6tbEuIlkVDW7dDmK799s3YVQikG0twYJgouoi8ji1naUJeF
-         Fddb2vf/hHtp/ZKimn0Z1jf3j/EdBUKCS5VpwTd/7TnLRtTRdvBzyjIQrl8AvCcUyc1N
-         7+Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCURF7crv8DlF4VZZmP6THxzf1MjLe/QCsC0hQW/ksLiqOb1tRg7RyNDtvVRKCFO+dWR+0S7nObtDSyisnPBnSevDyg/cxEa9mZaDs13wQQ0
-X-Gm-Message-State: AOJu0Yx3jlh6o9PZotmP8HaQ0xD3abte1RaxFoa0im7rm10dGb0y5dGV
-	iaTNmgLcfXAhML45/i2k656tXYXByfL6X9ovNjTK68SK+n7Jnh+eZmxk2G3+UpY=
-X-Google-Smtp-Source: AGHT+IGvvyTHIzHSJgDc3IDWolA6PB7uhiChrNVPgIcyXbduQ/ai5adJSBuYtEvQFDu/bAgDe3ZyHg==
-X-Received: by 2002:a05:600c:3051:b0:412:78da:8abe with SMTP id n17-20020a05600c305100b0041278da8abemr1408960wmh.30.1708698016772;
-        Fri, 23 Feb 2024 06:20:16 -0800 (PST)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id dq8-20020a0560000cc800b0033ce5b3390esm2966338wrb.38.2024.02.23.06.20.15
+        d=1e100.net; s=20230601; t=1708700011; x=1709304811;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s/a+7Lbr7oxAEnMW9lRS2BPIWRChV9WXDE8CQg9Hrfk=;
+        b=IR2QcmzciwASeBPsVMM1aEaCho8rtDZdJ18cgQU9g6ndm+Xf/bnSpw+fF02E2s3UjI
+         82TmAEp4RkhcC19CEixv9H7W//Jla6plfBFDuDKO0u6L6eZ824MDIMIcpn3VWGiyNsxt
+         TC6PTavH07/riCV+ws0IOfo4U75PZdRV6HNuWk8hhwVw2Kk3iCt+YnWnEnGicMOaXFNr
+         Dg0Lrp8MDqJAKRalk1CTm8xcJTSqUy25sHYyTE1SYDv5cC5+sLOaVp7HgnvQ9gTNodEF
+         thwRmcbY48C20GyqaWPp8Qr72Uw4ZVVPsfpMPmGn4xv4YNslmqld28wuYEVKVXsBDTK0
+         svHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMdT9pmLuLgEf0vt1lIDLL4Yptm50vSkfrZ08CkaDkYtKtAGLPGs0tzNe3BbVx4ds1KyRqVxyXzKv7wbkauqNN9fTDgOiF+97nHHzL
+X-Gm-Message-State: AOJu0YwPzX2IFRinhkw+aGPdd2tsr00V7TbCcxthdk9wTZPwCdIeNea7
+	dZ2XHszpljT+M7+QlQgg2vWcB20ZHoZypBfeK67RnIOfydC3DKRc
+X-Google-Smtp-Source: AGHT+IF35jagaTTZ5yDNpFhVTYaG+pRkNtNOoRROuGdHT169YIqL9YMhI6h0l9YJGvPC1RWOYJUXyw==
+X-Received: by 2002:a05:600c:1389:b0:412:952d:3c6a with SMTP id u9-20020a05600c138900b00412952d3c6amr44821wmf.13.1708700009287;
+        Fri, 23 Feb 2024 06:53:29 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id t6-20020a05600c450600b0040fdf5e6d40sm2686953wmo.20.2024.02.23.06.53.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Feb 2024 06:20:16 -0800 (PST)
-Date: Fri, 23 Feb 2024 17:20:13 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Potapenko <glider@google.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] lib/stackdepot: off by one in depot_fetch_stack()
-Message-ID: <361ac881-60b7-471f-91e5-5bf8fe8042b2@moroto.mountain>
+        Fri, 23 Feb 2024 06:53:28 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Roy Pledge <Roy.Pledge@nxp.com>,
+	Li Yang <leoyang.li@nxp.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] soc: fsl: dpio: remove redundant assignment to pointer p
+Date: Fri, 23 Feb 2024 14:53:27 +0000
+Message-Id: <20240223145327.3909835-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-The stack_pools[] array has DEPOT_MAX_POOLS.  The "pools_num" tracks the
-number of pools which are initialized.  See depot_init_pool() for more
-details.
+There are two places where pointer p is being assigned a value that
+is never read, the pointer is re-assingned later. The assignments
+are redundant and can be removed.
 
-If pool_index == pools_num_cached, this will read one element beyond what
-we want.  If not all the pools are initialized, then the pool will be
-NULL, triggering a WARN(), and if they are all initialized it will read
-one element beyond the end of the array.
+Cleans up two clang scan build warnings:
+drivers/soc/fsl/dpio/qbman-portal.c:662:3: warning: Value stored to 'p'
+is never read [deadcode.DeadStores]
+drivers/soc/fsl/dpio/qbman-portal.c:820:3: warning: Value stored to 'p'
+is never read [deadcode.DeadStores]
 
-Fixes: b29d31885814 ("lib/stackdepot: store free stack records in a freelist")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-From static analysis.  What seems to have happened is that originally
-we stored the highest index instead of the number of elements and when
-we changed the > to >= comparison was overlooked.
+ drivers/soc/fsl/dpio/qbman-portal.c | 2 --
+ 1 file changed, 2 deletions(-)
 
- lib/stackdepot.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/lib/stackdepot.c b/lib/stackdepot.c
-index 8c795bb20afb..af6cc19a2003 100644
---- a/lib/stackdepot.c
-+++ b/lib/stackdepot.c
-@@ -447,7 +447,7 @@ static struct stack_record *depot_fetch_stack(depot_stack_handle_t handle)
+diff --git a/drivers/soc/fsl/dpio/qbman-portal.c b/drivers/soc/fsl/dpio/qbman-portal.c
+index 0a3fb6c115f4..03cc374f11d7 100644
+--- a/drivers/soc/fsl/dpio/qbman-portal.c
++++ b/drivers/soc/fsl/dpio/qbman-portal.c
+@@ -659,7 +659,6 @@ int qbman_swp_enqueue_multiple_direct(struct qbman_swp *s,
  
- 	lockdep_assert_not_held(&pool_lock);
+ 	if (!s->eqcr.available) {
+ 		eqcr_ci = s->eqcr.ci;
+-		p = s->addr_cena + QBMAN_CENA_SWP_EQCR_CI;
+ 		s->eqcr.ci = qbman_read_register(s, QBMAN_CINH_SWP_EQCR_CI);
+ 		s->eqcr.ci &= full_mask;
  
--	if (pool_index > pools_num_cached) {
-+	if (pool_index >= pools_num_cached) {
- 		WARN(1, "pool index %d out of bounds (%d) for stack id %08x\n",
- 		     pool_index, pools_num_cached, handle);
- 		return NULL;
+@@ -817,7 +816,6 @@ int qbman_swp_enqueue_multiple_desc_direct(struct qbman_swp *s,
+ 	full_mask = s->eqcr.pi_ci_mask;
+ 	if (!s->eqcr.available) {
+ 		eqcr_ci = s->eqcr.ci;
+-		p = s->addr_cena + QBMAN_CENA_SWP_EQCR_CI;
+ 		s->eqcr.ci = qbman_read_register(s, QBMAN_CINH_SWP_EQCR_CI);
+ 		s->eqcr.available = qm_cyc_diff(s->eqcr.pi_ring_size,
+ 					eqcr_ci, s->eqcr.ci);
 -- 
-2.43.0
+2.39.2
 
