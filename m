@@ -1,105 +1,68 @@
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86DE84FB0
-	for <kernel-janitors@vger.kernel.org>; Fri, 23 Feb 2024 17:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF6117C8;
+	Sat, 24 Feb 2024 00:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708708249; cv=none; b=V/n65KD4VoLGdKLdxtGEGLi661MrEhRySSMqYNlhoZQAvjIdRC9J1M4+0L6K3TtkeFy19o4VCj0xU8C/F8o+V7zt5KHh2yhjtg25PBasN4BfGHYHZg5eeQE6kUMuUtwyuULgTFM4z6Mf2GCqeRumjcsinPEi60yOYD1MsX1dFQk=
+	t=1708735833; cv=none; b=uNvH/ctve5HBzU6mS4aalwsfcgYXu8JP7BH7K+Q0rjejDw9/ZjYoUwvMJDXAVbm9tmEQowrCW1pQ3ipWQ10Mr+KbSAaAL9O40YRP4HRDeIojb3rmpvbHeYsLyyDlNQSriXsWgRgr7S2uIJV0BCjmdUe0IjpT+ynOshoE6S9j0Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708708249; c=relaxed/simple;
-	bh=y9JUzFCj5/6Y4JFU5uKrYaAMUtXH6djFg6d36YsXAVU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nPjlRCk/XmtLqn+6K6wiQDw0fQ9Kvd9Phq/3qx7hrHwHuZhEJF1EzZTKm9fJjVOkC1Ax2zXEU1Jh4sNvhfcdFQENrYXaTugQ/CsishcRjNjPSWyB4idxYdwaUCHp0Rf13UdSBrsA/Kwbsxvo0Bl4rO/dAaBYnpmLF6xJq7clBGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ZFxKjX92; arc=none smtp.client-ip=80.12.242.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ZFxKjX92"
-Received: from fedora.home ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id dZ3GrKc3YdwEKdZ3GrQYVX; Fri, 23 Feb 2024 18:09:37 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1708708177;
-	bh=yqjFD2SSA0fcwHyt4UvJnhSi3JeettLpDMfFQ+pNE78=;
-	h=From:To:Cc:Subject:Date;
-	b=ZFxKjX92Vu7ZqQCSXP5FXEIV4ARiUZPiTmKDl8DjfrUCWc8awqrlxd1pGs1iaZD1V
-	 ndBEv+CCPhtf4lo3spUhMT0FIZxcNl1bPZzZ6KgTC/Bd9K22kU90ZiBrLJLa0Gpgit
-	 r5mpBLS6NhtRdB6oejdlo5L8Vi/byW7v0/CVVenpgBMkRWhHsB41yRVOOjEu4Igjx1
-	 EpdofouwzhryL49+ZIBtKnONYzCCpGC6fjGpe1iqqsnZfB3F735Hw0+SgVzN8THGMB
-	 MBvpPyvaAF0KW62UBEvVrNlthJUj5YfQltxx/yG1t0IMxCSFGrMuIlxxscCGsV8qmJ
-	 mm7/FlCgFIXOQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 23 Feb 2024 18:09:37 +0100
-X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/i915/display: Save a few bytes of memory in intel_backlight_device_register()
-Date: Fri, 23 Feb 2024 18:09:28 +0100
-Message-ID: <ecfdb3af5005e05131e2fb93fd870830f39a8c29.1708708142.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1708735833; c=relaxed/simple;
+	bh=1Yx8JWtZT7NJ/ks9g6HxK/LqurKWFCidlnpb6hkrE10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sZs44ZEmlGhapqM9+GRj0EzO0L449Qk62zfP0EzV089pqSVPWDdGDb7l7dMCKBoNXFlrsD71ssy3HqalPHA5uelUfwi75YBMxMB4CN2eHBgbjCGWRtC9lVDRxzzCFly0jPAOKWLKu3oXYw4XvHwWkZQR6YzUv0yeZ9iXHDTm3/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+	id 1rdgF6-00HDvZ-OA; Sat, 24 Feb 2024 08:50:17 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 24 Feb 2024 08:50:31 +0800
+Date: Sat, 24 Feb 2024 08:50:31 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Damian Muszynski <damian.muszynski@intel.com>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Lucas Segarra Fernandez <lucas.segarra.fernandez@intel.com>,
+	Tero Kristo <tero.kristo@linux.intel.com>,
+	Markas Rapoportas <markas.rapoportas@intel.com>,
+	qat-linux@intel.com, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] crypto: qat - uninitialized variable in
+ adf_hb_error_inject_write()
+Message-ID: <Zdk9V06gKW8EsH2k@gondor.apana.org.au>
+References: <193d36b0-961a-4b66-b945-37988f157ebe@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <193d36b0-961a-4b66-b945-37988f157ebe@moroto.mountain>
 
-'name' may still be "intel_backlight" when backlight_device_register() is
-called.
-In such a case, using kstrdup_const() saves a memory duplication when
-dev_set_name() is called in backlight_device_register().
+On Tue, Feb 13, 2024 at 09:09:41PM +0300, Dan Carpenter wrote:
+> There are a few issues in this code.  If *ppos is non-zero then the
+> first part of the buffer is not initialized.  We never initialize the
+> last character of the buffer.  The return is not checked so it's
+> possible that none of the buffer is initialized.
+> 
+> This is debugfs code which is root only and the impact of these bugs is
+> very small.  However, it's still worth fixing.  To fix this:
+> 1) Check that *ppos is zero.
+> 2) Use copy_from_user() instead of simple_write_to_buffer().
+> 3) Explicitly add a NUL terminator.
+> 
+> Fixes: e2b67859ab6e ("crypto: qat - add heartbeat error simulator")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  .../crypto/intel/qat/qat_common/adf_heartbeat_dbgfs.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 
-Use kfree_const() accordingly.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/gpu/drm/i915/display/intel_backlight.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/display/intel_backlight.c b/drivers/gpu/drm/i915/display/intel_backlight.c
-index 1946d7fb3c2e..9e4a9d4f1585 100644
---- a/drivers/gpu/drm/i915/display/intel_backlight.c
-+++ b/drivers/gpu/drm/i915/display/intel_backlight.c
-@@ -949,7 +949,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
- 	else
- 		props.power = FB_BLANK_POWERDOWN;
- 
--	name = kstrdup("intel_backlight", GFP_KERNEL);
-+	name = kstrdup_const("intel_backlight", GFP_KERNEL);
- 	if (!name)
- 		return -ENOMEM;
- 
-@@ -963,7 +963,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
- 		 * compatibility. Use unique names for subsequent backlight devices as a
- 		 * fallback when the default name already exists.
- 		 */
--		kfree(name);
-+		kfree_const(name);
- 		name = kasprintf(GFP_KERNEL, "card%d-%s-backlight",
- 				 i915->drm.primary->index, connector->base.name);
- 		if (!name)
-@@ -987,7 +987,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
- 		    connector->base.base.id, connector->base.name, name);
- 
- out:
--	kfree(name);
-+	kfree_const(name);
- 
- 	return ret;
- }
+Patch applied.  Thanks.
 -- 
-2.43.2
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
