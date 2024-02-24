@@ -1,68 +1,103 @@
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF6117C8;
-	Sat, 24 Feb 2024 00:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AD916429;
+	Sat, 24 Feb 2024 18:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708735833; cv=none; b=uNvH/ctve5HBzU6mS4aalwsfcgYXu8JP7BH7K+Q0rjejDw9/ZjYoUwvMJDXAVbm9tmEQowrCW1pQ3ipWQ10Mr+KbSAaAL9O40YRP4HRDeIojb3rmpvbHeYsLyyDlNQSriXsWgRgr7S2uIJV0BCjmdUe0IjpT+ynOshoE6S9j0Eg=
+	t=1708798449; cv=none; b=XDelPixgj6Zo8uH5Nqzy855POEsrht4NVmA72150Nyq84ZU0qq4+rTuJ8eokda6BqfkADifO6w5JmxT7yXDhSUHTk7qwPf6YJpekDZec7EofEmCxff4woSg8oYN4O+ewRe6Ri3zp/IE6UU5EDC1RuSPgRnkSbsVFAniFVMLMsTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708735833; c=relaxed/simple;
-	bh=1Yx8JWtZT7NJ/ks9g6HxK/LqurKWFCidlnpb6hkrE10=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sZs44ZEmlGhapqM9+GRj0EzO0L449Qk62zfP0EzV089pqSVPWDdGDb7l7dMCKBoNXFlrsD71ssy3HqalPHA5uelUfwi75YBMxMB4CN2eHBgbjCGWRtC9lVDRxzzCFly0jPAOKWLKu3oXYw4XvHwWkZQR6YzUv0yeZ9iXHDTm3/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-	id 1rdgF6-00HDvZ-OA; Sat, 24 Feb 2024 08:50:17 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 24 Feb 2024 08:50:31 +0800
-Date: Sat, 24 Feb 2024 08:50:31 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Damian Muszynski <damian.muszynski@intel.com>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Lucas Segarra Fernandez <lucas.segarra.fernandez@intel.com>,
-	Tero Kristo <tero.kristo@linux.intel.com>,
-	Markas Rapoportas <markas.rapoportas@intel.com>,
-	qat-linux@intel.com, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] crypto: qat - uninitialized variable in
- adf_hb_error_inject_write()
-Message-ID: <Zdk9V06gKW8EsH2k@gondor.apana.org.au>
-References: <193d36b0-961a-4b66-b945-37988f157ebe@moroto.mountain>
+	s=arc-20240116; t=1708798449; c=relaxed/simple;
+	bh=LB41P1zdziD/jinsl8eBZ2jf6IUljvsn2veNnk/hyj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hPZ0rdXWQDHWuW1nQ6N7fCTX7dFCIual8Ev7vpwEd1yz9gcvNUY9c1gXzVK5gaAxLiRuPxBjEGrDYkGF6NNcVAgjwM0bnyRQ2H4O1OM9ErLPV+0RU1IWz1EGf4lSUnjY1MxRsDe+9RQ0ab+qChmxuajJVdvlAEjC1J+08BhqrCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dtQ+ukrf; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtQ+ukrf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBD15C43390;
+	Sat, 24 Feb 2024 18:14:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708798448;
+	bh=LB41P1zdziD/jinsl8eBZ2jf6IUljvsn2veNnk/hyj4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dtQ+ukrfmNwsDQuwcwye86Idu3Tus8e10nud7wuuCqnyBRLoX2CEcwOOTp2f77lph
+	 yjy080zAGeT2zbDBVJD1rCdow4rI0F/Z+YgNmhHQu/FA1cjL+ZjKcnwLffqgMl0nH4
+	 9kceuBvtBzUoh3lJbG+lC/CDwnZWGKwEGZ8cAwr+PqdAZScJXF2NL3kyP1xY+NZoux
+	 12jhcgICiJeILqV192V/OkbB7BRrbnFq72vcLja9JBDPA6kcmGmR5GeEbhXACk/aDL
+	 NOviesZbuxdyW8wT0ba+cgX/O+0EH8f4nhxPo1vlOgNT53/s77RDEfCNVb24zvJwf2
+	 LynEZEStSgO8w==
+Date: Sat, 24 Feb 2024 18:13:54 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Mike Looijmans <mike.looijmans@topic.nl>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] iio: adc: ti-ads1298: Fix error code in probe()
+Message-ID: <20240224181354.76842da7@jic23-huawei>
+In-Reply-To: <e315c126-619c-48a1-a5d8-001e5ed01930@topic.nl>
+References: <5f393a87-ca8b-4e68-a6f4-a79f75a91ccb@moroto.mountain>
+	<e315c126-619c-48a1-a5d8-001e5ed01930@topic.nl>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <193d36b0-961a-4b66-b945-37988f157ebe@moroto.mountain>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 13, 2024 at 09:09:41PM +0300, Dan Carpenter wrote:
-> There are a few issues in this code.  If *ppos is non-zero then the
-> first part of the buffer is not initialized.  We never initialize the
-> last character of the buffer.  The return is not checked so it's
-> possible that none of the buffer is initialized.
-> 
-> This is debugfs code which is root only and the impact of these bugs is
-> very small.  However, it's still worth fixing.  To fix this:
-> 1) Check that *ppos is zero.
-> 2) Use copy_from_user() instead of simple_write_to_buffer().
-> 3) Explicitly add a NUL terminator.
-> 
-> Fixes: e2b67859ab6e ("crypto: qat - add heartbeat error simulator")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  .../crypto/intel/qat/qat_common/adf_heartbeat_dbgfs.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
+On Thu, 22 Feb 2024 08:10:25 +0100
+Mike Looijmans <mike.looijmans@topic.nl> wrote:
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> Good catch on both patches.
+> 
+> If so desired, you have my
+> 
+> Acked-by: Mike Looijmans <mike.looijmans@topic.nl>
+
+Dan, here is a classic example of why I think any series with more than
+1 patch could benefit from a cover letter. It gives somewhere for
+reviewers to give tags for the lot in a fashion b4 can understand.
+
+Otherwise great find and applied to the togreg branch of iio.git
+with Mike's tag added to both of them!  Hopefully the fixes tags will
+remain stable - whilst in theory that tree doesn't get rebased, in practice
+it might if I messed anything up enough :( 
+
+Thanks
+
+Jonathan
+
+
+> 
+> 
+> 
+> On 22-02-2024 07:14, Dan Carpenter wrote:
+> > There is a copy and paste bug here, it should be "reg_vref" instead of
+> > "reg_avdd".  The "priv->reg_avdd" variable is zero so it ends up
+> > returning success.
+> >
+> > Fixes: 00ef7708fa60 ("iio: adc: ti-ads1298: Add driver")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >   drivers/iio/adc/ti-ads1298.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/iio/adc/ti-ads1298.c b/drivers/iio/adc/ti-ads1298.c
+> > index ed895a30beed..67637f1abdc7 100644
+> > --- a/drivers/iio/adc/ti-ads1298.c
+> > +++ b/drivers/iio/adc/ti-ads1298.c
+> > @@ -657,7 +657,7 @@ static int ads1298_probe(struct spi_device *spi)
+> >   	priv->reg_vref = devm_regulator_get_optional(dev, "vref");
+> >   	if (IS_ERR(priv->reg_vref)) {
+> >   		if (PTR_ERR(priv->reg_vref) != -ENODEV)
+> > -			return dev_err_probe(dev, PTR_ERR(priv->reg_avdd),
+> > +			return dev_err_probe(dev, PTR_ERR(priv->reg_vref),
+> >   					     "Failed to get vref regulator\n");
+> >   
+> >   		priv->reg_vref = NULL;  
+> 
+> 
+
