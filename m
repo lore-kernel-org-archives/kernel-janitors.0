@@ -1,73 +1,105 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9EA1CFA7;
-	Mon, 26 Feb 2024 12:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AAB73162;
+	Mon, 26 Feb 2024 12:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708950841; cv=none; b=NNJuhDOqClrCVJHW3CHqzMXl6+zORJdIUpUt18dSykJ+5p5lpIKnd6NlHIhSBji/xtESpavAgWjtI4YxBTIzW9EVOGJWPfw6aOvNqSLYfP7T9zO8rVqFo8e9jf05JuUbSURZfU8cTjPOhRQZP9VTi63GoyHYQVe8ShrQPMR1js4=
+	t=1708951722; cv=none; b=h8ZGGM0uMOmH19Iw6u6rfi9TYWZlacZ13v3BC8LtwXx8IO0G4WhIYBu3WpJiERcMWrTbyS3siUkknAdu8h8qHgiqbWDkIFY/sOPmbnUZpB1SC+hVuLKolFS6yCQdDe0hHISNPSaIUT6fmU8rB6Y5P57QvTPhEl2JJmYchtXOX+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708950841; c=relaxed/simple;
-	bh=yTKK6qTVp/S8l1CYnLD9a4Jr8ZrucjT94QlJdY1OCxw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E4jwoP3iReEFbsMFISLft/Qi+Mn5ZH5EG8yWCfGC3bMWWS0MScbqS59Do0lVJ2CDXK6Z5lNtiFwhGgHyrA3CeKiGXg+PvQdFXcPVKS/GTEIokuae2UHLQg6PpvVLQ+LfcW0B2C052hReCgjDdkT43TWVgwcMCvwCNyGlmO/UwRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jsmsxXwV; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1708951722; c=relaxed/simple;
+	bh=KJYqGiy9A+wukcKRPI63mollMcq0daEoFtYsTGBRUzM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GBvLu0VSIhoRW4t6Dx02+E/wEoRR99XMdav5SBEyZKPnvB2/wmDN5cod4GZAqOSAvDWTQfjbyclKt7MYDL5HO3FkFRTdrpsZ9jXmrTKqAPGGWGUNho2fH8YXs8bXzYU7ItQTUI+AwNudZ+gUeXlqE7kcrEKsJAKZry3hHeN/nH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N6O8T0N9; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jsmsxXwV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1708950838;
-	bh=yTKK6qTVp/S8l1CYnLD9a4Jr8ZrucjT94QlJdY1OCxw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jsmsxXwVeXseXIYn86JQZ679HZED+QL5moQjh1DVj9GbMGu5KYHlE4tY0t1xFylXu
-	 OKksilY4tr5zFGMmMaQUyt3yDZGNiqy3vMMcS/Y+HdUoS0C0hYFBIV8cQ3eKUT7hqn
-	 xMBHfjl4y+CnUJMvC3dhRFr4vuRGUrWDsMylvifSwcVJNtyEto65c/rc0p58TNFq34
-	 rTABcNH/qNCicSUQzUaIZ8+zhxMtGwHzMvIKAhSZksCdTduBs14HdfYdPDfIvs7x7H
-	 PotQQlaIrTwAzMPbdLa1mY4wQis4X1G8MRcBmYCZzlVRh0GVadxzIGENsQeRLc8weh
-	 hOUDq3V1f69iw==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 414BB37803EE;
-	Mon, 26 Feb 2024 12:33:57 +0000 (UTC)
-Message-ID: <7866fd9b-6f68-402d-abdf-087b1088d28b@collabora.com>
-Date: Mon, 26 Feb 2024 13:33:56 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N6O8T0N9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1708951721; x=1740487721;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=KJYqGiy9A+wukcKRPI63mollMcq0daEoFtYsTGBRUzM=;
+  b=N6O8T0N9ntBG7/9HCeoowQwjZtvd+5r3/Dfey0kKHbiFNkz72DrOS9kT
+   y3jhjcjKW7DKY77F1zEg7T7TWxjAw9izq2AQNAmwlN7sJEseqjmE1NW/q
+   oWyzVLd6RFtdpxk0aUY2jtIUkmpgPH/baJ+pvLPSQOyumrZCxjFsQHqv5
+   wG2TM9mNKGnhtmnjHLAJvi47XsuN3dT7OQZweTG+hKyimaPSpVaNZABmo
+   Ucko1TuwC8uf5QSxQbDOEWmGyBtsgLCoQxSa6Z/UHeWet3XHJWoOMb5n3
+   nMfVlM9XdYCAIGotR7RIB4T5W7U3z5NUnCZGsAkO7QP0/y7jingpsAThp
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10995"; a="3780103"
+X-IronPort-AV: E=Sophos;i="6.06,185,1705392000"; 
+   d="scan'208";a="3780103"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2024 04:48:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,185,1705392000"; 
+   d="scan'208";a="6647948"
+Received: from hibeid-mobl.amr.corp.intel.com (HELO localhost) ([10.252.46.254])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2024 04:48:37 -0800
+From: Jani Nikula <jani.nikula@intel.com>
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, workflows@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas
+ Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] docs: submit-checklist: structure by category
+In-Reply-To: <20240226104653.54877-1-lukas.bulwahn@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240226104653.54877-1-lukas.bulwahn@gmail.com>
+Date: Mon, 26 Feb 2024 14:48:36 +0200
+Message-ID: <87o7c3mlwb.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: clk-mt8173-apmixedsys: Use common error
- handling code in clk_mt8173_apmixed_probe()
-Content-Language: en-US
-To: Markus Elfring <Markus.Elfring@web.de>, linux-clk@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, Chen-Yu Tsai <wenst@chromium.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <u.kleine-koenig@pengutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <6a64e7b3-b1ce-46c4-9c85-89f731aee592@web.de>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <6a64e7b3-b1ce-46c4-9c85-89f731aee592@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Il 26/02/24 13:26, Markus Elfring ha scritto:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 26 Feb 2024 13:10:37 +0100
-> 
-> Add a label so that a bit of exception handling can be better reused
-> at the end of this function implementation.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+On Mon, 26 Feb 2024, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> diff --git a/Documentation/process/submit-checklist.rst b/Documentation/process/submit-checklist.rst
+> index b1bc2d37bd0a..7d8dba942fe8 100644
+> --- a/Documentation/process/submit-checklist.rst
+> +++ b/Documentation/process/submit-checklist.rst
+> @@ -11,110 +11,121 @@ These are all above and beyond the documentation that is provided in
+>  and elsewhere regarding submitting Linux kernel patches.
+>  
+>  
+> +*Review your code:*
 
-Reviewed-by: AngeloGiaocchino Del Regno <angelogioacchino.delregno@collabora.com>
+If you're adding subheadings, maybe consider making them actual
+subheadings instead of just italicizing them.
+
+The top heading should probably be modified to follow the guidelines in
+Documentation/doc-guide/sphinx.rst. This should be a separate change.
+
+> +
+>  1) If you use a facility then #include the file that defines/declares
+>     that facility.  Don't depend on other header files pulling in ones
+>     that you use.
+>  
+> -2) Builds cleanly:
+> +2) Check your patch for general style as detailed in
+> +   :ref:`Documentation/process/coding-style.rst <codingstyle>`.
+>  
+> -  a) with applicable or modified ``CONFIG`` options ``=y``, ``=m``, and
+> -     ``=n``.  No ``gcc`` warnings/errors, no linker warnings/errors.
+> +3) All memory barriers {e.g., ``barrier()``, ``rmb()``, ``wmb()``} need a
+> +   comment in the source code that explains the logic of what they are doing
+> +   and why.
+
+I think we should just remove all the manually updated bullet
+numbering. Either make them bulleted lists with "*" or autonumbered
+lists with "#.". See [1]. This should be a separate change.
+
+BR,
+Jani.
 
 
+[1] https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html#lists-and-quote-like-blocks
+
+
+-- 
+Jani Nikula, Intel
