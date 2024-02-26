@@ -1,112 +1,108 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732D312BF29;
-	Mon, 26 Feb 2024 14:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A51B1E4A1;
+	Mon, 26 Feb 2024 14:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708958668; cv=none; b=V3Wdb+2NgS3H/zd3ET1KljWxZN6/c9F0BrqkLapTXu9Y/iZHRr1Q5HpX9rJbnJ3cUbX6V15QokponENwFGJOuIT9ufti/03z4DixRttJ5uImOmBQU9oYG5A9EXo+SvRV/0eQIYMoD5zZRxa37EHo3BDFbXt+qfz+ykfsmsYgrc0=
+	t=1708959241; cv=none; b=mb+Z5Skjp8/8w825wGMG7xDGIhQ90iEu44X0ko5uXLsd8If934Q55svjBSvFZBmrktbyJCkP+CuV2gtNcf33ehObREzOSD56AV/4U66rO3O0Fy62tA212OBCT2EkmN+OA7FPGzQQ5rcZkQPRmMyxpS6u5yIq3BXf7B/TBPa5PDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708958668; c=relaxed/simple;
-	bh=WS8wGXmQM2s1gH1iYfEEVs4FsClq44BPDrBK14QrVOA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KMYRu1dtWWn7AsrX7f79Sp8Rhd3c6fLfFqQjbR3Bwq/NT7sdm8oQJml56nj5+AyesllRslhwEg6YDm7QVuqjY1Weprosj6Pf3fUUNQTHd1wyHmLV0g9ZiG4RWmbA/hDHi4RLsH6VmPURK7zx7WxwwbF4CICd+80Wo6lMZ8Y0qhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=DCHsz+Gk; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1708959241; c=relaxed/simple;
+	bh=pZDilNSIXaQXrKiWyVhZ5AP3xK2eNb9wOETKTeIfubc=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=G75SIppMjn6FnyAxcNAwVDrsESIkWDYUvHuQeH5wFzowuO9zvvumwUqy/AezTppbSVM/gYPniXAhZ2yvs5ubi9L8khDPAGbIItkYQJsNcXX7AgJ5uSPT7T+bBMMScg1YJ3B7wO8+CIqgJLCff8MyTF/nBlm8Z7jdyIbR85mMRAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f/1OGA8X; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DCHsz+Gk"
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41QDLLdF031418;
-	Mon, 26 Feb 2024 14:43:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-11-20; bh=vEUYPk/vTjUcosp4mayE+HEMCQCXiWr8F/WnC06iTYQ=;
- b=DCHsz+GkTt9rNVCCdVmhEAkA5ZrezQMCfGL0y2w6tT5OrubfWdR3EMvzYZY3RbpxEZnk
- barjTYcrSibPx4+EHS/o4v7vcubTQDkDZ+RxzYFxbu2UuWmpFp7dZPmzteWCRvCrx9CK
- JM9cvc7kJtJlPsKCkCVOxaUZUiphApUhgywD4gP+oyE3KrdxaXAVg8uQOtFrI6V7YCpH
- qXMXCXCqm8Ym2+iNcby3Nxdnwd6mrTdSnqnfT9dGs2iYdyUTw8iNQUvzdk1vmBNBCHWj
- bN1sv7j7+ATNc8+eV9AD6pWoZochj9pYZZ2YdfB8onjtjQ0a+T5Dpv7yIH0LnZfssE+z Qw== 
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3wf90v4njc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 26 Feb 2024 14:43:58 +0000
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 41QESwwd001840;
-	Mon, 26 Feb 2024 14:43:56 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3wf6w5n9ry-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 26 Feb 2024 14:43:56 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41QEhuwF030519;
-	Mon, 26 Feb 2024 14:43:56 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3wf6w5n9qa-1;
-	Mon, 26 Feb 2024 14:43:55 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Matthew Sakai <msakai@redhat.com>, dm-devel@lists.linux.dev,
-        Mike Snitzer <snitzer@kernel.org>, Ken Raeburn <raeburn@redhat.com>,
-        Chung Chung <cchung@redhat.com>, Thomas Jaskiewicz <tom@jaskiewicz.us>,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        John Wiele <jwiele@redhat.com>,
-        "J. corwin Coburn" <corwin@hurlbutnet.net>,
-        linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, dan.carpenter@linaro.org
-Subject: [PATCH] dm vdo: Fix a use-after-free in load_index_save()
-Date: Mon, 26 Feb 2024 06:41:35 -0800
-Message-ID: <20240226144155.2101066-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f/1OGA8X"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1708959240; x=1740495240;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=pZDilNSIXaQXrKiWyVhZ5AP3xK2eNb9wOETKTeIfubc=;
+  b=f/1OGA8XLByGZRv6gu5db8Ssc6kZXb66ZUplBCykk7ma+XMDiJWGkCxB
+   fjdrPkwEXA8rPBTy0Bl4Hs5N1dH0Rl1PiaO25FwZpb0nSTy5H5y7VeMzz
+   anw6I5hrDmbdx56sjMSrIB9BtSloZ5NnwABT6Zm9n7jUa23E+wtdHlg2t
+   btpMQiODHro7fRtfKMVbv0VEb7R27fDxXGgo9UDu8fTjXya6LhzUr+l6U
+   HaA72kX/0+YvU3RfMrc0pX30ixtWUdntke7BfJFldl3MMCrzGk6pFdeg+
+   zBBEX/O1zpJUptaix65GyRCzT3vc+CQL2AegYVuxLbX/Ism+Kdtz0ozU4
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10995"; a="20791744"
+X-IronPort-AV: E=Sophos;i="6.06,185,1705392000"; 
+   d="scan'208";a="20791744"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2024 06:53:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,185,1705392000"; 
+   d="scan'208";a="11321342"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.246.48.12])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2024 06:53:55 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 26 Feb 2024 16:53:50 +0200 (EET)
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Hans de Goede <hdegoede@redhat.com>, 
+    Mario Limonciello <mario.limonciello@amd.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    kernel-janitors@vger.kernel.org, dan.carpenter@linaro.org
+Subject: Re: [PATCH] platform/x86/amd/pmf: Fix missing error code in
+ amd_pmf_init_smart_pc()
+In-Reply-To: <20240226144011.2100804-1-harshit.m.mogalapalli@oracle.com>
+Message-ID: <a7b4dfc8-8be9-911a-6c56-4f84c1b85d73@linux.intel.com>
+References: <20240226144011.2100804-1-harshit.m.mogalapalli@oracle.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-26_10,2024-02-26_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0 adultscore=0
- mlxscore=0 mlxlogscore=999 phishscore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2402260111
-X-Proofpoint-GUID: 4v26zrTyEdjYF7bZ2CgOZzmIitR6aBNZ
-X-Proofpoint-ORIG-GUID: 4v26zrTyEdjYF7bZ2CgOZzmIitR6aBNZ
+Content-Type: multipart/mixed; boundary="8323328-1479405409-1708959230=:1203"
 
-Smatch warns:
-	drivers/md/dm-vdo/indexer/index-layout.c:1570
-	load_index_save() warn: 'table' was already freed.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Store the error value in result and then free the table before
-returning.
+--8323328-1479405409-1708959230=:1203
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Fixes: b46d79bdb82a ("dm vdo: add deduplication index storage interface")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is based on static analysis and only compile tested.
----
- drivers/md/dm-vdo/indexer/index-layout.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+On Mon, 26 Feb 2024, Harshit Mogalapalli wrote:
 
-diff --git a/drivers/md/dm-vdo/indexer/index-layout.c b/drivers/md/dm-vdo/indexer/index-layout.c
-index 1453fddaa656..18fac999e3e4 100644
---- a/drivers/md/dm-vdo/indexer/index-layout.c
-+++ b/drivers/md/dm-vdo/indexer/index-layout.c
-@@ -1566,10 +1566,11 @@ static int __must_check load_index_save(struct index_save_layout *isl,
- 
- 
- 	if (table->header.type != RH_TYPE_SAVE) {
-+		result = vdo_log_error_strerror(UDS_CORRUPT_DATA,
-+						"unexpected index save %u header type %u",
-+						instance, table->header.type);
- 		vdo_free(table);
--		return vdo_log_error_strerror(UDS_CORRUPT_DATA,
--					      "unexpected index save %u header type %u",
--					      instance, table->header.type);
-+		return result;
- 	}
- 
- 	result = read_index_save_data(reader, isl, table->header.payload);
--- 
-2.39.3
+> On the error path, assign -ENOMEM to ret when memory allocation of
+> "dev->prev_data" fails.
+>=20
+> Fixes: e70961505808 ("platform/x86/amd/pmf: Fixup error handling for amd_=
+pmf_init_smart_pc()")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> ---
+> This is based on static analysis with smatch, only compile tested
+> ---
+>  drivers/platform/x86/amd/pmf/tee-if.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/platform/x86/amd/pmf/tee-if.c b/drivers/platform/x86=
+/amd/pmf/tee-if.c
+> index 8527dca9cf56..dcbe8f85e122 100644
+> --- a/drivers/platform/x86/amd/pmf/tee-if.c
+> +++ b/drivers/platform/x86/amd/pmf/tee-if.c
+> @@ -458,8 +458,10 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
+>  =09amd_pmf_hex_dump_pb(dev);
+> =20
+>  =09dev->prev_data =3D kzalloc(sizeof(*dev->prev_data), GFP_KERNEL);
+> -=09if (!dev->prev_data)
+> +=09if (!dev->prev_data) {
+> +=09=09ret =3D -ENOMEM;
+>  =09=09goto error;
+> +=09}
+> =20
+>  =09ret =3D amd_pmf_start_policy_engine(dev);
+>  =09if (ret)
+>=20
 
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+--8323328-1479405409-1708959230=:1203--
