@@ -1,336 +1,101 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E78A13AC5;
-	Mon, 26 Feb 2024 10:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C351DA37;
+	Mon, 26 Feb 2024 10:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708944435; cv=none; b=mZAKXJgunqwd4pAfs1rMw7jdTrKKLIh/npY9Y9FAnYPcadhiq/zSxRd9yv4sVXInofJd/mTWPkhTXQbu45/CabbEiaISCfwZOaewtmEztSkYojHwdDVcNOCjqwv9sXedMvEhLrtlwl8A6agdS17uRUdEkPNoVxTDa+qtB/ju0LI=
+	t=1708944810; cv=none; b=rycdXJEpSIbjy4LXadLZ9wJwuK0jAQpV9O7JGO53QuoJG1CXZih0Xue1IEdgmLss8xPs0mpquMPrcGGIRnrtle/6Z/2IjnwOiBr6GQRErEuaTzV2DbVty7myG3ETwc8DQvb2wf79tPX1aUZ/nNWbuyewBRNge/L9ykkD+QOjTk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708944435; c=relaxed/simple;
-	bh=b2zP15hp3my/Zgo6TPJb8NR4Hz/zxAHO+EDyKjO8PFA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nfvmp/94NnpdjKD4T79rLVN7Z/mosgLRrt0ofrf2qHFpEoV6tG6cUNCrjVXho+SZONoRo+BtyXhPrGSTAxr7q+A+PvBCrz1VVaHaObEeN9tCzXoGvEeZJ8ttQ6ouA5dQU+lpPbc5jYmR5zZzV1X2L3wENfiSzrx+05WYs8x449o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QeDEVlLs; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1708944810; c=relaxed/simple;
+	bh=MfMjSREicPDXRC/3aBTnncTM7gNapB8ABPtYerIMlIA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=deI7jONRoc4iK1BheaJN1O7/9Pt6tevZBu2VKdH//ClJQdofJV+DvIG+wwBnSixCJzVcWXzthHKVDaD+smthk9lhTbc661d7GclLqs1qsrBPMPsI8EG+v8gIbhA1/FU5GMZSuHTKhPDZj8mzipT2+nmXjjQaLcFTpWiLEuqKTfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R7PzBfJs; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QeDEVlLs"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a3f893ad5f4so411045666b.2;
-        Mon, 26 Feb 2024 02:47:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7PzBfJs"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-412a4a932f4so6106185e9.0;
+        Mon, 26 Feb 2024 02:53:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708944431; x=1709549231; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1708944807; x=1709549607; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cpfx0GE3evITkVyqlAdocfj8/iqGlFsQTTziHhgua2c=;
-        b=QeDEVlLsqZWpzu0dMp1doKD/LPxiTZ7ftLDwMRGqdNMrn6DAH9vjllO9rVaKPgAiGG
-         WuvIkKXo6LzAfczp5Wxv76Gve6aEmk34EVLu1i9E0ASyBH9tn3LgyKjLwgeljmXlFTZW
-         UhsDtD4HS1GS54CcDXv0/ztezmaM8kZ5cN0B+Tk9oBGNWFlR8jfDToLqu9vNdpasrHkL
-         jhIV3WNkUSU90jO4mHmdUA2Oz1iKJI29Tt7Bnr++91+bbGWmiP0fdyPd37ayiUNLvbqA
-         O3iKKqYn+kptDy0iFsCoskt3mWk7BYgchZeudo1LQC4b/d9JKlT/CL/Ah2lzfU9m+QSt
-         JcpA==
+        bh=WxImVZgrwHuDPLvTHCT/J1rnzl1rCH1Ccw5OGBwvHPM=;
+        b=R7PzBfJsDaz8s4ebbFMOBi29olB4Q804x5i/YuENyYPh3ukOJurzrHmnVV/ZIZk5y5
+         AUZp5u7jZWgF3IQRrZoZw2IjoMT5hKPQ2xmcQv2Uwl+FtT6w2GZ4lNAcSDkEz8R71kXN
+         MhazCB3To/Y+E7plDtqOnHiF7qYcw9TuHo3j+SRiUYItkqbNQc+3ojYvxJSa0SrrE8g5
+         n4N9hQW2j86CycxkUMepi4Pb+ZBLN5pBFIIsDS092oExmM/SO+EL6ncIypOIRctZuSwn
+         ffP0DGx1EotUpI2ccoDbFftFHCwJrhHLv3CXteg4HZyWFenJyLkeVJFdpkQAzPp0lO8U
+         88QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708944431; x=1709549231;
+        d=1e100.net; s=20230601; t=1708944807; x=1709549607;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cpfx0GE3evITkVyqlAdocfj8/iqGlFsQTTziHhgua2c=;
-        b=Z2105LPJ9fIYvPeZpLnvWozot5xXMgLy7S1hl73c5DJTmZJLjAB/qoVBk56kSXm/eY
-         JFl0EY7X4CykaTyKjR89sFMpLEQqbkmSyNAcxuXBJvxvHuSeaRM7k6y56OqqSJoaqMQd
-         xf34JxNgfmKzsyTwsyTTFRuoAsk5+J6zZcN8a0OlZFs8hxSuq7AEJJNc7HgoBj7jiykO
-         vFVDUjJwKQHBZNSpc2LPVewvAUhCIKdTMhjrAWq5tkONlL8dAQeuYvJVjFK2S1CB724i
-         /vDKACmvmD4SCotz+Ay/tLouqKHfwCuh/uJFleKQAnANwwkMCuRteDgtu5ljLvmXriDJ
-         mAAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVadW32rFTSVaFu/PyXbsTyfOEbv/brISij9KHzMFk7hFBwhVfVxq4ignaJOxbN7pvG8LJZQYJpFhs2kZXfF6S1lBFWtHV0I6TevGFIvoUhQLBPMf42Czlf17M973FIuYsa0am+xSIX0cKzzE2QNjI6ivcvFG4XS1YvhZsnZRfo8fts
-X-Gm-Message-State: AOJu0YyyOD3eK24rPzuzf0L1jyODp2ysTZdcQQdpIaLIeQmu0OazhPvG
-	AWgpZdxHL/VrA3LEW0uHrb3phhemmmernP7zVoTjl3JX75U6dZ6z
-X-Google-Smtp-Source: AGHT+IH8BTS8jTgd4YgQ/FRXtECBOni7z5mBkZk/W8XRrm6RSZBPGzGzCvvsv6NrzEuuqVCjId4GpA==
-X-Received: by 2002:a17:906:a049:b0:a43:3670:a2b7 with SMTP id bg9-20020a170906a04900b00a433670a2b7mr2259386ejb.44.1708944431110;
-        Mon, 26 Feb 2024 02:47:11 -0800 (PST)
-Received: from lola.. ([2a02:810d:7e40:14b0:d371:e319:5dd0:9b35])
-        by smtp.gmail.com with ESMTPSA id tl2-20020a170907c30200b00a4335edcfd1sm1213528ejc.189.2024.02.26.02.47.10
+        bh=WxImVZgrwHuDPLvTHCT/J1rnzl1rCH1Ccw5OGBwvHPM=;
+        b=xGFdXVG64Q2gVsl2J1F8fR07S3B5N3xAGutdY949uZIw2ybrkoMiv54jdGz761MrjP
+         PVFQjgkzZ42jb8V8oJwVX4/aUqEckpcTOtnDvm9Vx/N0WRBQ0OoJPBDJcmQG5+hBFE9d
+         w8gqpBM5jHugvNdbNLWBrUOXhyWYPVxbPHgxQZV4Jx96BNgvn0Ssq8ZggsJaRYfOoDFZ
+         6AEBReVEZwnopUxuR2tK92FJGjBVRjbnpFYwM/05e0b0VG7JrSZxCJLUnbY3j2xR5MQC
+         N8ypjfj5xD4orT84eRjvDQzy6pdoXzCTCOS4bIsjEu5gNnwpqTnUgXqweJQfTbaDqQF0
+         AFsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQimkaG601L87evuTKiCx9FbYqeVXYUc3eY20yOAoklCJkQBZDwN5CTvBf+dO69FvHoHHDC8NkdtcaiKZEIXx62oe9SKdvjdMNw0dziC6m5MtDfIwY4mge01wMr7Z7DtZQ9fArf8wvA1jQjEZVdQ==
+X-Gm-Message-State: AOJu0Yz8loiPI+FJT2dUVkjCioi1VOksFYRbaDBxAZ52bC1RGzHmWFAd
+	fz9Ic+4XvPxB/ofBB8u1j7Sug87LBA8vWz41HW4LsW1Wy+B4vJWV
+X-Google-Smtp-Source: AGHT+IFS46DdNEiDIIuLjUalKwqRgb8fMiohPHldcIt0jR12r1ZO9era2cs2BvZcIixNBzEHG1yWqg==
+X-Received: by 2002:a05:600c:1f0f:b0:412:a4fc:219b with SMTP id bd15-20020a05600c1f0f00b00412a4fc219bmr1780452wmb.41.1708944807012;
+        Mon, 26 Feb 2024 02:53:27 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id o25-20020a05600c379900b004129051a8f7sm11378892wmr.41.2024.02.26.02.53.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Feb 2024 02:47:10 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org
+        Mon, 26 Feb 2024 02:53:26 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] docs: submit-checklist: structure by category
-Date: Mon, 26 Feb 2024 11:46:53 +0100
-Message-ID: <20240226104653.54877-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.43.2
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] perf test: Fix spelling mistake "curent" -> "current"
+Date: Mon, 26 Feb 2024 10:53:26 +0000
+Message-Id: <20240226105326.3944887-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-While going through the submit checklist, the list order seemed rather
-random, probably just by historical coincidences of always adding yet the
-next point someone thought of at the end of the list.
+There is a spelling mistake in a pr_debug message. Fix it.
 
-Structure and order them by the category of such activity,
-reviewing, documenting, checking with tools, building and testing.
-
-As the diff of the reordering is large:
-Review code now includes previous points 1, 5 and 22.
-Review Kconfig includes previous 6, 7 and 8.
-Documenting includes previous 11, 15, 16, 17, 18 and 23.
-Checking with tools includes previous 5, 9 and 10.
-Building includes previous 2, 3, 20 and 24.
-Testing includes previous 12, 13, 14, 19 and 21.
-
-Previous point 4 (compile for ppc64) was merged into point 3 (build for
-many architectures), as it was just a further note to cross-compiling.
-
-Previous point 5 was split into one in review and one in checking
-to have every previous point in the right category.
-Point 11 was shortened, as building documentation is mentioned already
-in Build your code, 1d.
-
-A note that was presented visually much too aggressive in the HTML view was
-turned into a simple "Note that..." sentence in the enumeration.
-
-The recommendation to test with the -mm patchset (previous 21, now
-testing, point 5) was updated to the current state of affairs to test with
-a recent tag of linux-next.
-
-Note that the previous first point still remains the first list even after
-reordering. Based on some vague memory, the first point was important to
-Randy to stay the first one in any reordering.
-
-While at it, the reference to CONFIG_SLUB_DEBUG was replaced by
-CONFIG_DEBUG_SLAB.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-So far, no point disappeared and nothing new was added.
+ tools/perf/tests/symbols.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Points/Ideas for further improvements (based on my knowledge and judgement):
-
-  - The Review Kconfig changes makes sense, but I am not sure if they are
-    so central during review. If we keep it, let us see if there are other
-    parts for review that are also important similar to Kconfig changes.
-   
-  - Concerning checking with tools, checkpatch probably still makes sense;
-    it pointed out in several places. If sparse and checkstack are really
-    the next two tools to point out, I am not so sure about.
-    sparse has a lot of false positives nowadays, and many things are not
-    fixed just because sparse complains about it.
-    And I have never used make checkstack and have not found much
-    documentation about it.
-    So, maybe other tools deserve to be mentioned here instead?
-
-I am happy to get feedback---I will work through submitting-patches next
-and do some clean-up there. While doing that, I might learn what really
-should go into a better future 'submit-checklist' documentation.
-
- Documentation/process/submit-checklist.rst | 157 +++++++++++----------
- 1 file changed, 84 insertions(+), 73 deletions(-)
-
-diff --git a/Documentation/process/submit-checklist.rst b/Documentation/process/submit-checklist.rst
-index b1bc2d37bd0a..7d8dba942fe8 100644
---- a/Documentation/process/submit-checklist.rst
-+++ b/Documentation/process/submit-checklist.rst
-@@ -11,110 +11,121 @@ These are all above and beyond the documentation that is provided in
- and elsewhere regarding submitting Linux kernel patches.
- 
- 
-+*Review your code:*
-+
- 1) If you use a facility then #include the file that defines/declares
-    that facility.  Don't depend on other header files pulling in ones
-    that you use.
- 
--2) Builds cleanly:
-+2) Check your patch for general style as detailed in
-+   :ref:`Documentation/process/coding-style.rst <codingstyle>`.
- 
--  a) with applicable or modified ``CONFIG`` options ``=y``, ``=m``, and
--     ``=n``.  No ``gcc`` warnings/errors, no linker warnings/errors.
-+3) All memory barriers {e.g., ``barrier()``, ``rmb()``, ``wmb()``} need a
-+   comment in the source code that explains the logic of what they are doing
-+   and why.
- 
--  b) Passes ``allnoconfig``, ``allmodconfig``
- 
--  c) Builds successfully when using ``O=builddir``
-+*Review Kconfig changes:*
- 
--  d) Any Documentation/ changes build successfully without new warnings/errors.
--     Use ``make htmldocs`` or ``make pdfdocs`` to check the build and
--     fix any issues.
-+1) Any new or modified ``CONFIG`` options do not muck up the config menu and
-+   default to off unless they meet the exception criteria documented in
-+   ``Documentation/kbuild/kconfig-language.rst`` Menu attributes: default value.
- 
--3) Builds on multiple CPU architectures by using local cross-compile tools
--   or some other build farm.
-+2) All new ``Kconfig`` options have help text.
- 
--4) ppc64 is a good architecture for cross-compilation checking because it
--   tends to use ``unsigned long`` for 64-bit quantities.
-+3) Has been carefully reviewed with respect to relevant ``Kconfig``
-+   combinations.  This is very hard to get right with testing---brainpower
-+   pays off here.
- 
--5) Check your patch for general style as detailed in
--   :ref:`Documentation/process/coding-style.rst <codingstyle>`.
--   Check for trivial violations with the patch style checker prior to
--   submission (``scripts/checkpatch.pl``).
--   You should be able to justify all violations that remain in
--   your patch.
-+*Provide documentation:*
- 
--6) Any new or modified ``CONFIG`` options do not muck up the config menu and
--   default to off unless they meet the exception criteria documented in
--   ``Documentation/kbuild/kconfig-language.rst`` Menu attributes: default value.
-+1) Include :ref:`kernel-doc <kernel_doc>` to document global kernel APIs.
-+   (Not required for static functions, but OK there also.)
- 
--7) All new ``Kconfig`` options have help text.
-+2) All new ``/proc`` entries are documented under ``Documentation/``
- 
--8) Has been carefully reviewed with respect to relevant ``Kconfig``
--   combinations.  This is very hard to get right with testing -- brainpower
--   pays off here.
-+3) All new kernel boot parameters are documented in
-+   ``Documentation/admin-guide/kernel-parameters.rst``.
-+
-+4) All new module parameters are documented with ``MODULE_PARM_DESC()``
- 
--9) Check cleanly with sparse.
-+5) All new userspace interfaces are documented in ``Documentation/ABI/``.
-+   See ``Documentation/ABI/README`` for more information.
-+   Patches that change userspace interfaces should be CCed to
-+   linux-api@vger.kernel.org.
- 
--10) Use ``make checkstack`` and fix any problems that it finds.
-+6) If any ioctl's are added by the patch, then also update
-+   ``Documentation/userspace-api/ioctl/ioctl-number.rst``.
- 
--    .. note::
- 
--       ``checkstack`` does not point out problems explicitly,
--       but any one function that uses more than 512 bytes on the stack is a
--       candidate for change.
-+*Check your code with tools:*
- 
--11) Include :ref:`kernel-doc <kernel_doc>` to document global  kernel APIs.
--    (Not required for static functions, but OK there also.) Use
--    ``make htmldocs`` or ``make pdfdocs`` to check the
--    :ref:`kernel-doc <kernel_doc>` and fix any issues.
-+1) Check for trivial violations with the patch style checker prior to
-+   submission (``scripts/checkpatch.pl``).
-+   You should be able to justify all violations that remain in
-+   your patch.
- 
--12) Has been tested with ``CONFIG_PREEMPT``, ``CONFIG_DEBUG_PREEMPT``,
--    ``CONFIG_DEBUG_SLAB``, ``CONFIG_DEBUG_PAGEALLOC``, ``CONFIG_DEBUG_MUTEXES``,
--    ``CONFIG_DEBUG_SPINLOCK``, ``CONFIG_DEBUG_ATOMIC_SLEEP``,
--    ``CONFIG_PROVE_RCU`` and ``CONFIG_DEBUG_OBJECTS_RCU_HEAD`` all
--    simultaneously enabled.
-+2) Check cleanly with sparse.
- 
--13) Has been build- and runtime tested with and without ``CONFIG_SMP`` and
--    ``CONFIG_PREEMPT.``
-+3) Use ``make checkstack`` and fix any problems that it finds.
-+   Note that ``checkstack`` does not point out problems explicitly,
-+   but any one function that uses more than 512 bytes on the stack is a
-+   candidate for change.
- 
--14) All codepaths have been exercised with all lockdep features enabled.
- 
--15) All new ``/proc`` entries are documented under ``Documentation/``
-+*Build your code:*
-+
-+1) Builds cleanly:
-+
-+  a) with applicable or modified ``CONFIG`` options ``=y``, ``=m``, and
-+     ``=n``.  No ``gcc`` warnings/errors, no linker warnings/errors.
-+
-+  b) Passes ``allnoconfig``, ``allmodconfig``
-+
-+  c) Builds successfully when using ``O=builddir``
-+
-+  d) Any Documentation/ changes build successfully without new warnings/errors.
-+     Use ``make htmldocs`` or ``make pdfdocs`` to check the build and
-+     fix any issues.
- 
--16) All new kernel boot parameters are documented in
--    ``Documentation/admin-guide/kernel-parameters.rst``.
-+2) Builds on multiple CPU architectures by using local cross-compile tools
-+   or some other build farm. Note that ppc64 is a good architecture for
-+   cross-compilation checking because it tends to use ``unsigned long`` for
-+   64-bit quantities.
- 
--17) All new module parameters are documented with ``MODULE_PARM_DESC()``
-+3) Newly-added code has been compiled with ``gcc -W`` (use
-+   ``make KCFLAGS=-W``).  This will generate lots of noise, but is good
-+   for finding bugs like "warning: comparison between signed and unsigned".
- 
--18) All new userspace interfaces are documented in ``Documentation/ABI/``.
--    See ``Documentation/ABI/README`` for more information.
--    Patches that change userspace interfaces should be CCed to
--    linux-api@vger.kernel.org.
-+4) If your modified source code depends on or uses any of the kernel
-+   APIs or features that are related to the following ``Kconfig`` symbols,
-+   then test multiple builds with the related ``Kconfig`` symbols disabled
-+   and/or ``=m`` (if that option is available) [not all of these at the
-+   same time, just various/random combinations of them]:
- 
--19) Has been checked with injection of at least slab and page-allocation
--    failures.  See ``Documentation/fault-injection/``.
-+   ``CONFIG_SMP``, ``CONFIG_SYSFS``, ``CONFIG_PROC_FS``, ``CONFIG_INPUT``,
-+   ``CONFIG_PCI``, ``CONFIG_BLOCK``, ``CONFIG_PM``, ``CONFIG_MAGIC_SYSRQ``,
-+   ``CONFIG_NET``, ``CONFIG_INET=n`` (but latter with ``CONFIG_NET=y``).
- 
--    If the new code is substantial, addition of subsystem-specific fault
--    injection might be appropriate.
- 
--20) Newly-added code has been compiled with ``gcc -W`` (use
--    ``make KCFLAGS=-W``).  This will generate lots of noise, but is good
--    for finding bugs like "warning: comparison between signed and unsigned".
-+*Test your code:*
- 
--21) Tested after it has been merged into the -mm patchset to make sure
--    that it still works with all of the other queued patches and various
--    changes in the VM, VFS, and other subsystems.
-+1) Has been tested with ``CONFIG_PREEMPT``, ``CONFIG_DEBUG_PREEMPT``,
-+   ``CONFIG_SLUB_DEBUG``, ``CONFIG_DEBUG_PAGEALLOC``, ``CONFIG_DEBUG_MUTEXES``,
-+   ``CONFIG_DEBUG_SPINLOCK``, ``CONFIG_DEBUG_ATOMIC_SLEEP``,
-+   ``CONFIG_PROVE_RCU`` and ``CONFIG_DEBUG_OBJECTS_RCU_HEAD`` all
-+   simultaneously enabled.
- 
--22) All memory barriers {e.g., ``barrier()``, ``rmb()``, ``wmb()``} need a
--    comment in the source code that explains the logic of what they are doing
--    and why.
-+2) Has been build- and runtime tested with and without ``CONFIG_SMP`` and
-+   ``CONFIG_PREEMPT.``
- 
--23) If any ioctl's are added by the patch, then also update
--    ``Documentation/userspace-api/ioctl/ioctl-number.rst``.
-+3) All codepaths have been exercised with all lockdep features enabled.
- 
--24) If your modified source code depends on or uses any of the kernel
--    APIs or features that are related to the following ``Kconfig`` symbols,
--    then test multiple builds with the related ``Kconfig`` symbols disabled
--    and/or ``=m`` (if that option is available) [not all of these at the
--    same time, just various/random combinations of them]:
-+4) Has been checked with injection of at least slab and page-allocation
-+   failures.  See ``Documentation/fault-injection/``.
-+   If the new code is substantial, addition of subsystem-specific fault
-+   injection might be appropriate.
- 
--    ``CONFIG_SMP``, ``CONFIG_SYSFS``, ``CONFIG_PROC_FS``, ``CONFIG_INPUT``, ``CONFIG_PCI``, ``CONFIG_BLOCK``, ``CONFIG_PM``, ``CONFIG_MAGIC_SYSRQ``,
--    ``CONFIG_NET``, ``CONFIG_INET=n`` (but latter with ``CONFIG_NET=y``).
-+5) Tested with the most recent tag of linux-next to make sure that it still
-+   works with all of the other queued patches and various changes in the VM,
-+   VFS, and other subsystems.
+diff --git a/tools/perf/tests/symbols.c b/tools/perf/tests/symbols.c
+index 2fed6d67f50f..d208105919ed 100644
+--- a/tools/perf/tests/symbols.c
++++ b/tools/perf/tests/symbols.c
+@@ -85,7 +85,7 @@ static int create_map(struct test_info *ti, char *filename, struct map **map_p)
+ 		*map_p = find_module_map(ti->machine, dso);
+ 		dso__put(dso);
+ 		if (!*map_p) {
+-			pr_debug("Failed to find map for curent kernel module %s",
++			pr_debug("Failed to find map for current kernel module %s",
+ 				 filename);
+ 			return TEST_FAIL;
+ 		}
 -- 
-2.43.2
+2.39.2
 
