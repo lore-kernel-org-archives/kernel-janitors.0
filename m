@@ -1,35 +1,35 @@
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A411CAB1;
-	Mon, 26 Feb 2024 10:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAC655E79;
+	Mon, 26 Feb 2024 10:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708944207; cv=none; b=tZISm+fy8/aoTMzhZ/WBJi9iRqmrCvfBE4W4F60Umo9lxqMDkDYUH59uguQpNFFTIuJFuWqI+GcjV4wYTDSdCF5iUn6YC0NbwU3vAnTwF+jXgpl0k3ExHNSUynXYjJBZGiGEkH1UtSruE9wRSqdIpHOv2iaULt7s6LKzN1GY9yE=
+	t=1708944308; cv=none; b=RGc+qEB3GrMZwccqwJEDUfuiHacIClL5YGV2+JWs6uiG7GxopEoVWWznDd6FpcqFCDmNRNnsUQ6wllJWWYiM+J15oiTEZVPLBEdSei9it7qBugKyqMPYiH+7Pqo5V4eAQ1nrBa5CuXhjCYZppXSVw6lUEl1n/6RwSsPHjXyZEPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708944207; c=relaxed/simple;
-	bh=bCOEdmzm2b5pTbM42AruTEdEivbhVbBQbwIOPdHVrdY=;
+	s=arc-20240116; t=1708944308; c=relaxed/simple;
+	bh=5hRWP8w7u3GTMa9wrvVcIUEgllEBtm+WJ7H/wCNR8Mw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=t6sYcDv/KToCyo7Ht0uCgQ0wACLEacrHw0vAfc4R4/7Z/0RJImdBBkyOkQrGlWnp+F8NN349aV8erm52FqX1bCDHvkU+IqvlJK1WnpMJJviB3O/uP6ToKsExvcQ6aOCATeikjrOqnvGlMt0mTLAKVkcH4wsoIajmhoEIlcLw5bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YvGqP2LL; arc=none smtp.client-ip=217.70.183.196
+	 MIME-Version; b=mb3Ecwc5naMKneDTHxQ99HDm64itFvCxLb895ppNS8baF4TT6z3bxP/+MkM4LUqiAY+q1ynKZ7M0hjzat8v+S/BTjfKUOmq5CpA0nYKRqoywHf5WyoUIAm9dhzx1pFKjSQpoZBZrzZabnEnjxv+QVznXaCOuwSHfGAiU8gePq5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YSM5//Dj; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YvGqP2LL"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0E2AFE0003;
-	Mon, 26 Feb 2024 10:43:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YSM5//Dj"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D84DDC0003;
+	Mon, 26 Feb 2024 10:45:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1708944203;
+	t=1708944305;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9cUOu/Bvds6IWzkUYXUufNxfYQc8ER3syNtdbbPnHc8=;
-	b=YvGqP2LLM+FcTfrtjxQwzs7w3A2fUilwQeUI58huYIm2Kg1IQMFfGt+Zet2mcELXqH2fob
-	mn4B2THIdiZmkOsYQUmnmSIq4P258lPEmg80dYPqD/7sY7u7ZuXtoaC3XfASxHuN01/MFn
-	ysabwloahnVouXM+KREKryMSYQojH8p/FzMg2NlnQZn5HSHyoT3D1K0H8Wx/BrtIVlKNTm
-	YKgKPmiXzz+jm91LfbKhCi8QmV4Qbldt0B7Dhu8K9Dwx5BCADLIQKTfxbCH4yIhlMgmDkQ
-	Y/F6coD0LmKVep9scoc2ocmi7rGw4SfPk/796x6la7xFzZjySPlpMgNuZCwfTw==
+	bh=tYWYbEcL0LZiU1LAQRsUtVSe1ESaZH+8FD5tt71//JQ=;
+	b=YSM5//DjDEbFXDh9KyH1O/eN8heVsBdAQQZ0iqQtWj1AP0ldH9kdTgwddeTIXFmc9Ojksk
+	/VTLysgF67xFxszfyivlSH/hdK0BCEPJ/vnDY7PAAiUhKiUq0hIt9ZoFQ23PcTF3papF57
+	nvH5JrYa8UiZz5DGiK5jjmEr3hpVZEzQA6JmVcmShsDDD4O/zaHaynjj2JZrhvo1u7qsPI
+	194ywQTXoyjqlT579aRYs2iiL3vw+N5lX5gDEaUf5k96GmFItPab69JcLC/d61JYlGwZ0p
+	A2QoWIthMxKLztvhbWVtBlAgnMammBIabSzqGmK3OlqhQ4z6D8Yj7YaIyo66og==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
 To: Colin Ian King <colin.i.king@gmail.com>,
 	Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -38,11 +38,11 @@ To: Colin Ian King <colin.i.king@gmail.com>,
 	linux-mtd@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] mtd: chips: remove redundant assignment to variable timeo
-Date: Mon, 26 Feb 2024 11:43:22 +0100
-Message-Id: <20240226104322.489020-1-miquel.raynal@bootlin.com>
+Subject: Re: [PATCH][next] mtd: rawnand: remove redundant assignment to variable bbtblocks
+Date: Mon, 26 Feb 2024 11:45:04 +0100
+Message-Id: <20240226104504.490157-1-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240215140106.2062858-1-colin.i.king@gmail.com>
+In-Reply-To: <20240209174019.3933233-1-colin.i.king@gmail.com>
 References: 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -51,21 +51,20 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'2416a2e7be9b27157f173268f5c7f769bd72a8dc'
+X-linux-mtd-patch-commit: b'9367043f1c02a1e4bc3ee50df2772c7c557ce617'
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Thu, 2024-02-15 at 14:01:06 UTC, Colin Ian King wrote:
-> In two functions the variable timeo is being initialized with a value
-> that is never read, it is being re-assigned later on. The initializations
-> are redundant and can be removed.
+On Fri, 2024-02-09 at 17:40:19 UTC, Colin Ian King wrote:
+> The variable bbtblocks is being assigned a value that is never
+> read. The assignment is redundant and can be removed.
 > 
 > Cleans up clang scan build warning:
-> warning: Value stored to 'timeo' during its initialization is never
-> read [deadcode.DeadStores]
+> drivers/mtd/nand/raw/nand_bbt.c:579:3: warning: Value stored to
+> 'bbtblocks' is never read [deadcode.DeadStores]
 > 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
 
 Miquel
