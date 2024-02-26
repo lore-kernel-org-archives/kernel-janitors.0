@@ -1,95 +1,120 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B281CD3D
-	for <kernel-janitors@vger.kernel.org>; Mon, 26 Feb 2024 09:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CED5DF12;
+	Mon, 26 Feb 2024 09:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708938989; cv=none; b=ecJKK8zDhM3tFvTzZCwgrp+/RHflHOYwHpuQUllUndJlptoQM4/VS2eMlNsDxuOW/d5/E//4qsyHyBuqWg6Q3B0gQuhpsoJLdL5NF7+/tCb9dKAEvU7ZS3b1xotJJu9ZtJy+DQzeNEI7RmGPk8WmI0VbKFt+QB8OilyUhtFK1wM=
+	t=1708940363; cv=none; b=DSx2joSddIvsRTM585JEfD2vRLBeZls+n6/xpsUXrojGxuUULvs6u1JjVqCB0/IQVAVo4XKcjmctrV2XLKxSnTTIvGD/UqBz8bIs2RAQJRvQaWNRQVUdkNYAhilaPPU9SlfGnwh+ZaoA8YT0EKcHFO8fe0J3e8wCbMgdfKIJp6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708938989; c=relaxed/simple;
-	bh=u2D1K14aSbuHQlYPlwf4/XUKp9ima91ZltaPpSb69vQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=AmKSZzGQKRDK45i6WtUwdBDnp7isUnTrS2IbDVooo0saSVOyCLLdUeZ/JnDWvaCJSw+n+5HM9Fr2f6ouEFyjVuej2gsXZaY4QoZcB70aQBftcDspGRvEmYt+JPv9N5354ebx2dTKgSfFLO9gy1+nFrqJ7rNaCZE4i7eHJwJ2yGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TTF/xT18; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1708940363; c=relaxed/simple;
+	bh=3sQIE5Ce5t4wLKok3Vp32KDZX/XtBqvN1n0Wh/SWVNs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VkcXIdg2xOJooyUhAB1fvulD/fnd6IPWsUw0sc8zmt/PkxHp6G1goucBGdO0cEEox/V0+Qe0rYTBT5dzqV7Mba/aBoDR1aQNEY9r4fuGKUcwH1cCgi5HMLWO3qOpam4LPAYQhKc4LYURhuGoSUyCxXmyGJrX3tqum8IBQrqV2xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aXmWn3Gi; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TTF/xT18"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-563d56ee65cso3481887a12.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 26 Feb 2024 01:16:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aXmWn3Gi"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a3e72ec566aso348518566b.2;
+        Mon, 26 Feb 2024 01:39:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708938986; x=1709543786; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q52e/ahqP4T6pWmT8jNQjktGuVz+xJCyCIgv15kYLW0=;
-        b=TTF/xT18ttL7w3NE/WATQKpUb1vEcT2wNAVqyvvlXGiClSWuUP35FkzBXf+1o8aLvi
-         Oani2opPgFLnjc0fGpfcJ5pVlWg678QxNsCp8Hu4sQ2HdCLjjZ2zKcQED3NxWvfVI4xI
-         rHTwar/4ZrMbXZz3m0OplzztlluOkSNOtb9KQfWPT7Lp+ImDqtay1w3IExqIliASmNBn
-         JJ+sBC4qxMrm0ZEXiIWdlGxrwNtD0mU8qh9V+Qdmku0Gu66Ow9hEDyfVXXS6ltxPzoK7
-         UZAeOIaJ/YHgDAYmDk9W/Tvdof342dYv9p7p5CleVL+4KFBUC8jCr1t3uDTobcQX6e92
-         pRkA==
+        d=gmail.com; s=20230601; t=1708940360; x=1709545160; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vawvIwXybApZ/749Z2EWmgW5ee2p21jliyJDHDQcteA=;
+        b=aXmWn3Gie8XON7WCzheCzqAURX6yJP/B4yB445/SGjr3yPC1bbe/vtzonNg8ZaGS30
+         9BGGGlCOvkDmtngY8w5Gz/xvevZulxfwV/IQ5WXU5Y3449ne64PgYgdmxQM4KsB+W97n
+         XTWnUSAWxD6z0swVe704psVGOatwG7IHmt260ALO2ebPneEoef32Dw1GmWquWmtNtr0S
+         OqQKTMNLlJsSbpAtA2JzivjlebAmAX4zruU92ATAl6T+OG/f660sNlJH5tq7BabCHXyz
+         vB0xaa+uJgy3ABAfk2cl3JgMyAH/GNKBWVspLINmy5pcMtNeNKPJfEPJtaCdSZJiHQc/
+         eMiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708938986; x=1709543786;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q52e/ahqP4T6pWmT8jNQjktGuVz+xJCyCIgv15kYLW0=;
-        b=A44wP5O4XaPjR/I7VmAdW5+RvCJgBzzjlO4f623Fe+KdFc6aU/IFKLUgYxggEzN9/O
-         uygI+qNamOlB9fvPkm/3LMfQ8kNeYtZv6XLfS4WLbSKHrAbURaCFWtxyv0KU8s/BNRxD
-         FvV3IGvUl3DCfE6ctY4z9k/lHe5PFMOENf0xo3Y4kiPSpOv/83vhI+M29y4u3v3vxNaK
-         TG2MAQ+3hkQ5QWNskUHfywI0vMmWN73oFKKCGFwzUiVCVFQx1UtHVdqpVDUj5luvVg5X
-         6z8few7g1Tsq20lnZRtdG6mhm9aFU6MHfjq/IycBK5In0UW+v3Yjmk0Aw28YGVKIZ1Sp
-         v43Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXhGiLBSzqvuVqDvj4NY+N6RzjeSClBtTdNzEi2eXqsl4PVjueQ+uFFlVeGnWRuDVzWjcGIzE1FXEMOB8gk0VMlvc5dJQalr/PTOd75a/Tg
-X-Gm-Message-State: AOJu0YzZOC3ze1R0NM+DVI13ZwEgdWt2nRhqHrxfIK+f78AcLRCLD1yl
-	sZywUtnIDqG61ffhIocK/RKTupDijbV/tbnODxOmFZ5VTt4PXhskbNEQ5UKy+lE=
-X-Google-Smtp-Source: AGHT+IHCJnITCwMOFBnEouaFM5+XWHwJ6u2WI0iCbuf0+DskJlC6ES88lu/X8WYpnPi+CJgpZf4dBg==
-X-Received: by 2002:a17:906:f6d4:b0:a43:277b:96b4 with SMTP id jo20-20020a170906f6d400b00a43277b96b4mr427569ejb.57.1708938986160;
-        Mon, 26 Feb 2024 01:16:26 -0800 (PST)
-Received: from [127.0.1.1] ([188.24.162.93])
-        by smtp.gmail.com with ESMTPSA id r18-20020a170906365200b00a3efa4e033asm2202076ejb.151.2024.02.26.01.16.24
+        d=1e100.net; s=20230601; t=1708940360; x=1709545160;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vawvIwXybApZ/749Z2EWmgW5ee2p21jliyJDHDQcteA=;
+        b=vXf1k+UmtqoycuS+sY4vXd/sxX5XRWW/W62SLOyXqjrMHjP7sZhBeDMLk9bNEXYgKY
+         1NfsuQePVl1iLt8p9TfNk9inejwe8Az5L8usBTV5fWZ79h5qJvOeOj+Qa+OPzWPKZO9z
+         /xHdC5jX/dUH05keYv8uTKfc/b3jNooovR4ot2ax0f8La1eK4JfQ54mspC2LT0ts1xhq
+         f2oSlZBDldMIp+BfysTskVpRfqTxvLzgo+u0WAI37kR5kkGA+XokeXsOvj1oyD1aUKZX
+         G/4ONoLdqZvRFfnhvWNHMLIXbjCo4+tBU7WD74Cr8lbSyHqPbg6LywBzcV8FZQofOdPT
+         f1Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXf5tWYkxa7OuDMAfexkHXz+Q53jkboVUHAY4+gI87kwJDH+Mn91mo0Y4NhblEWY9mtTsK5B3A3jG+YXO7ECwNTncWc+fZuW/ff1qxOtq/r8EzxumwWfuzOaR9pypg86hd7c44qHrs
+X-Gm-Message-State: AOJu0Yw2cUQu7CP8jTrL8rrE2o6jz90qt8nGOoD10dKu3IS/4IP46xpP
+	aWzJNtPxtze6guqUC+lzJwyWP6nv+jnARFjenQ2FGEJf0UVEuCaj
+X-Google-Smtp-Source: AGHT+IHGbfdoYnZVhOhTEfOcjzozW9EnW+g/nwo588gaAwWsI7B6sWmZr/epE9+HUsQuRSsA4578Pw==
+X-Received: by 2002:a17:906:fb0b:b0:a43:5429:499d with SMTP id lz11-20020a170906fb0b00b00a435429499dmr1209736ejb.27.1708940360174;
+        Mon, 26 Feb 2024 01:39:20 -0800 (PST)
+Received: from lola.. ([2a02:810d:7e40:14b0:d371:e319:5dd0:9b35])
+        by smtp.gmail.com with ESMTPSA id ll9-20020a170907190900b00a42e4b5ab00sm2226937ejc.41.2024.02.26.01.39.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Feb 2024 01:16:25 -0800 (PST)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Abel Vesa <abelvesa@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
- Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, kernel@pengutronix.de, linux-imx@nxp.com, 
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- kernel-janitors@vger.kernel.org, Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr, 
- Kuan-Wei Chiu <visitorckw@gmail.com>
-In-Reply-To: <01446ce9-c0e8-4467-8b2d-fd736bc5b8e4@web.de>
-References: <01446ce9-c0e8-4467-8b2d-fd736bc5b8e4@web.de>
-Subject: Re: [PATCH] clk: imx: scu: Use common error handling code in
- imx_clk_scu_alloc_dev()
-Message-Id: <170893898492.1768204.4132765783691588048.b4-ty@linaro.org>
-Date: Mon, 26 Feb 2024 11:16:24 +0200
+        Mon, 26 Feb 2024 01:39:19 -0800 (PST)
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	linux-doc@vger.kernel.org,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] docs: freeze some package versions for sphinx virtualenv setup
+Date: Mon, 26 Feb 2024 10:38:54 +0100
+Message-ID: <20240226093854.47830-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
 
+If you currently follow the instructions for sphinx install:
 
-On Fri, 22 Dec 2023 13:03:08 +0100, Markus Elfring wrote:
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
-> 
-> 
+    /usr/bin/python3 -m venv sphinx_2.4.4
+    . sphinx_2.4.4/bin/activate
+    pip install -r ./Documentation/sphinx/requirements.txt
 
-Applied, thanks!
+you encounter an error during make htmldocs:
 
-[1/1] clk: imx: scu: Use common error handling code in imx_clk_scu_alloc_dev()
-      commit: e4818d3b3f621e996b5a1d1a4913d11ccf769c24
+    Sphinx version error:
+    The sphinxcontrib.applehelp extension used by this project needs
+    at least Sphinx v5.0; it therefore cannot be built with this version.
 
-Best regards,
+Akira-san Yokosawa reported this already in January 2023 and Jani Nikula
+was fast in providing a fix (see Link). This however remained as a thread
+on the linux-doc mailing and was never turned into a patch for Jonathan to
+pick up.
+
+Fix some versions for the Sphinx 2.4.4 to continue to work.
+
+Link: https://lore.kernel.org/linux-doc/cb72b3d6-de7a-4c8a-a99c-72d58a23f89c@gmail.com/
+Reported-by: Akira Yokosawa <akiyks@gmail.com>
+Closes: https://lore.kernel.org/linux-doc/cb72b3d6-de7a-4c8a-a99c-72d58a23f89c@gmail.com/
+Suggested-by: Jani Nikula <jani.nikula@linux.intel.com>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ Documentation/sphinx/requirements.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Documentation/sphinx/requirements.txt b/Documentation/sphinx/requirements.txt
+index 5d47ed443949..0aa4fdb84632 100644
+--- a/Documentation/sphinx/requirements.txt
++++ b/Documentation/sphinx/requirements.txt
+@@ -2,5 +2,10 @@
+ jinja2<3.1
+ # alabaster>=0.7.14 is not compatible with Sphinx<=3.3
+ alabaster<0.7.14
++sphinxcontrib-applehelp==1.0.4
++sphinxcontrib-devhelp==1.0.2
++sphinxcontrib-htmlhelp==2.0.1
++sphinxcontrib-qthelp==1.0.3
++sphinxcontrib-serializinghtml==1.1.5
+ Sphinx==2.4.4
+ pyyaml
 -- 
-Abel Vesa <abel.vesa@linaro.org>
+2.43.2
 
