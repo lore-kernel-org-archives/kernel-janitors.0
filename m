@@ -1,135 +1,63 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from c.mail.sonic.net (c.mail.sonic.net [64.142.111.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD18C136A;
-	Tue, 27 Feb 2024 00:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A244037145;
+	Tue, 27 Feb 2024 06:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.142.111.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708994500; cv=none; b=SPEwa4LPvoQz9LQZyFVaHUEXFjxVVo79NUuC42VthElamH5E2bHxa4WZwyRe6UaBeZHcaUtoHIrOfewvzdI4+J4gxtFmCfkUwgOH27u4D3McJPYEXgfUwxKwdtwIPwupJkpVY+iK+blP98+D9YZXeZJ+ER12ho6+NKeU6PJMAwA=
+	t=1709016746; cv=none; b=pSBRBlpgtN8oRjZQPj99BkJHlbxxQB9fZ/xFoxdKsTuTLhJ6breIO4fRFu34+r9atq4mwp1QlPYievY04If6j8skZNCmf5VCJL2NY3o5bv9FZ0b6Rk2aMG/P+7Ax/ueY9xuuT9rGCrvfX1p7atotMgPSJXpkMyIVCO0gBowuj2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708994500; c=relaxed/simple;
-	bh=OCMg9lVSRi1dM4mQ/dHVKSvIT2dNp6Xad44VFS/XxqA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C7iy0I6PwV0N3QUS5+N4hTY5cSKH6FzZ+gUuqwBEvI7vIPGLAWR1FUPnT201w+CAsPy4+HLsxvhITf5mgp0CPBIi1X/rumd+SjuPq3oh92X03dStYFLmV1hVZhz8wPkye+/48QxNS87eZfTCjFla5fkgYIYufHp5TCO2ilyKhhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=E9Pw2iwk; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1709016746; c=relaxed/simple;
+	bh=bIkL3j1SUti+mxRknWXsGzjEHfZ++LfAOrCAj6OvBfk=;
+	h=From:To:Date:MIME-Version:Subject:Message-ID:Content-type; b=P7naSDFe6uge/aI0R0RLzI7ZyaVBJvGeDSl4vn06vzN9poHUCviI1L3ZAUTngezcK3kq5PlX/777KrVK+uLnECVSxsoNwvWy+1nul7pqGPWbgetHPri94ZIK+rZV0NsbH+3I+ThLKXNcqTIGLl0vREOjHPbUceOaV20N4aHJC2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sonic.net; spf=pass smtp.mailfrom=sonic.net; dkim=pass (2048-bit key) header.d=sonic.net header.i=@sonic.net header.b=nrWVfgTd; arc=none smtp.client-ip=64.142.111.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sonic.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sonic.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="E9Pw2iwk"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=E3yLeoY54L7an1gZ4crtQOnqHhnFkPcsPYy0GYM/xeQ=; b=E9Pw2iwkGDsfhccy5Lx+Hx4Mlg
-	70ogJLDoMrg4GWhsksRjSilxhaGGnPUV9B0gNqASn5zii8g91A1xK/BiMkQge0f3CvchoM2ifOUTA
-	rV7oYrED8mzqWgjAiArJdUZF2AyUc2gMfrI4WaHMWNj+BpA0EtnYQz7F4COSKeX3YoKtx+mLMkWcZ
-	61mtJJyNA/6QYOLjRYnpD7t1gEPXBOa+L7JXPQG8hs1tWtdu4/ksWYVEBHrIH7n9SDw9mIAitqJrR
-	qFVz9dVCE1rakSnVmhDSR5WJIT+OopKjwuMSfFk56SnUy7GjmT1GoOyFGzKEpCzpWOjoTRhSqWwg+
-	Kj7ixWXA==;
-Received: from [50.53.50.0] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1relXN-000000038CT-14fW;
-	Tue, 27 Feb 2024 00:41:37 +0000
-Message-ID: <43df625f-bd32-4dd9-a960-6d0f5c0304c7@infradead.org>
-Date: Mon, 26 Feb 2024 16:41:36 -0800
+	dkim=pass (2048-bit key) header.d=sonic.net header.i=@sonic.net header.b="nrWVfgTd"
+Received: from [192.168.1.94] (45-23-117-7.lightspeed.livnmi.sbcglobal.net [45.23.117.7])
+	(authenticated bits=0)
+	by c.mail.sonic.net (8.16.1/8.16.1) with ESMTPSA id 41R6qJT2030968
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 26 Feb 2024 22:52:22 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sonic.net; s=net23;
+	t=1709016744; bh=bIkL3j1SUti+mxRknWXsGzjEHfZ++LfAOrCAj6OvBfk=;
+	h=From:To:Date:MIME-Version:Subject:Message-ID:From:Subject;
+	b=nrWVfgTd4XU80z03W0r+K/FWhA/OzEUePMzte5vAbDVSWJa+7M9L94aky84u1ESZu
+	 F2Cbn9vNaICMFWtzz1mjB4Sw30U8CGXm8zzmcgFVYLDXNKAeu/5VyJKyMBOcDVRBX6
+	 JZSkqvwLuq8Jtcfh6M47eyzXlR5bQBcWmCvVjzeOzCFrcBdmv768H+6c5fTdW9rDbO
+	 iaEkFwjnCFyulg3P3zshm3LEdWNS5zAkqnxDHVoPBRud5NnoQ379lZHOvAcXALYzDv
+	 8PDD8ZKRyBrWK4/cyMHdIfTq88T2/lZjLpLqqPyQNUxteUnK9DUeFqw7tZmEjwfdp4
+	 dmmqmqj/OC/Yg==
+From: delyan@sonic.net
+To: fstests+unsubscribe@vger.kernel.org, fstests@vger.kernel.org,
+        git+subscribe@vger.kernel.org, git+unsubscribe@vger.kernel.org,
+        git@vger.kernel.org, git-commits-head+subscribe@vger.kernel.org,
+        git-commits-head+unsubscribe@vger.kernel.org,
+        git-commits-head@vger.kernel.org, initramfs+subscribe@vger.kernel.org,
+        initramfs+unsubscribe@vger.kernel.org, initramfs@vger.kernel.org,
+        io-uring+subscribe@vger.kernel.org,
+        io-uring+unsubscribe@vger.kernel.org, io-uring@vger.kernel.org,
+        kernel-janitors+subscribe@vger.kernel.org,
+        kernel-janitors+unsubscribe@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Date: Tue, 27 Feb 2024 01:52:18 -0500
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: submit-checklist: structure by category
-Content-Language: en-US
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, workflows@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240226104653.54877-1-lukas.bulwahn@gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240226104653.54877-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: subscribe
+Message-ID: <65DD86A2.26711.445FA9FD@delyan.sonic.net>
+Priority: normal
+X-mailer: Pegasus Mail for Windows (4.80.1028)
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
+X-Sonic-CAuth: UmFuZG9tSVbJ79Tzo2m/TgVHl44QfDudJQokRJ2kt57p+g/4CyJ0HD4E8JxfQhjRBK7t2tN0wAzEFhR4NTWUe+vhumVoO6iw
+X-Sonic-ID: C;Cr9LwDzV7hGbeC5nR+6Zsg== M;crQowjzV7hGbeC5nR+6Zsg==
+X-Spam-Flag: Unknown
+X-Sonic-Spam-Details: not scanned (too big) by cerberusd
 
-Hi Lukas,
-
-I'll review the file changes separately. This is just replying
-to the patch description comments.
-
-
-On 2/26/24 02:46, Lukas Bulwahn wrote:
-> While going through the submit checklist, the list order seemed rather
-> random, probably just by historical coincidences of always adding yet the
-> next point someone thought of at the end of the list.
-
-Probably.
-
-> Structure and order them by the category of such activity,
-> reviewing, documenting, checking with tools, building and testing.
-> 
-> As the diff of the reordering is large:
-> Review code now includes previous points 1, 5 and 22.
-> Review Kconfig includes previous 6, 7 and 8.
-> Documenting includes previous 11, 15, 16, 17, 18 and 23.
-> Checking with tools includes previous 5, 9 and 10.
-> Building includes previous 2, 3, 20 and 24.
-> Testing includes previous 12, 13, 14, 19 and 21.
-> 
-...
-
-> 
-> The recommendation to test with the -mm patchset (previous 21, now
-> testing, point 5) was updated to the current state of affairs to test with
-> a recent tag of linux-next.
-
-ack.
-
-> Note that the previous first point still remains the first list even after
-> reordering. Based on some vague memory, the first point was important to
-> Randy to stay the first one in any reordering.
-
-Yes, I have said that. Stephen Rothwell wanted it to be first in the list.
-
-
-> While at it, the reference to CONFIG_SLUB_DEBUG was replaced by
-> CONFIG_DEBUG_SLAB.
-
-I don't understand this comment. DEBUG_SLAB is gone.
-I think those 2 symbols might be reversed in your comments. ?
-
-
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> So far, no point disappeared and nothing new was added.
-> 
-
-That's a good start IMO.
-
-> Points/Ideas for further improvements (based on my knowledge and judgement):
-> 
->   - The Review Kconfig changes makes sense, but I am not sure if they are
->     so central during review. If we keep it, let us see if there are other
->     parts for review that are also important similar to Kconfig changes.
->    
->   - Concerning checking with tools, checkpatch probably still makes sense;
->     it pointed out in several places. If sparse and checkstack are really
->     the next two tools to point out, I am not so sure about.
-
-I doubt that ckeckstack is important since gcc & clang warn us about
-stack usage.
-
->     sparse has a lot of false positives nowadays, and many things are not
->     fixed just because sparse complains about it.
->     And I have never used make checkstack and have not found much
->     documentation about it.
->     So, maybe other tools deserve to be mentioned here instead?
-> 
-> I am happy to get feedback---I will work through submitting-patches next
-> and do some clean-up there. While doing that, I might learn what really
-> should go into a better future 'submit-checklist' documentation.
-> 
->  Documentation/process/submit-checklist.rst | 157 +++++++++++----------
->  1 file changed, 84 insertions(+), 73 deletions(-)
-
-
--- 
-#Randy
+subscribe
