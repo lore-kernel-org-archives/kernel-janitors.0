@@ -1,58 +1,76 @@
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA3B4CB45;
-	Tue, 27 Feb 2024 18:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0862A14E2CB
+	for <kernel-janitors@vger.kernel.org>; Tue, 27 Feb 2024 20:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709059491; cv=none; b=pLB1KJju49krQtkHXNStVyIKKWzZvW5OTk6MjZ11KzKoE5BteJ50j0hJIohIXfiGunLWQTaPv0Zw9ci2rLUyZYpGwm22nqrVJcd49NBASL+zBFX+oLwbEa4fZVOR1finmA2h6L7VoPzO8hZaJzSwHBHFe8b/228i9tY3bQ65GVc=
+	t=1709067073; cv=none; b=Fh3DJZnyPfDjYm53DF/DEYZrmqyF1NMV4BpmMTRo3M9DM6+xx4S5ZliiXhIOjRW2Qm+mEgiKwQV42HyWn8zIE+h7YJvlaeFbIezCqRphV0MLfJ2RB0wt4I9ljTsbNg9XI/kOgfP8LN0s3hZyuxc+ER09G1PGw8naTrZN4ZYVasw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709059491; c=relaxed/simple;
-	bh=e5LEOg3Dp4RGsCdApUKXSKlKWZtAYCNCKl6mAFykbDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hpNGv9kRewaOzWavt+T5eXpLw4CGG8VbnUO+h/ZJOTdoFixp/Bg5sZDoAYp2hZtgisC+Nrk3sRS1CKx7PSjAaFHcE/xcEhXAvZ69fJsjTmagBk/FjAcMxbyxTK+35mbQjnlNSseTiWHTasIBRkEjyCbte6BGanCJK106Vt+fxKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 5979D68C4E; Tue, 27 Feb 2024 19:44:44 +0100 (CET)
-Date: Tue, 27 Feb 2024 19:44:44 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dma-contiguous: remove debug code to removed
- CONFIG_CMA_DEBUG
-Message-ID: <20240227184444.GA20094@lst.de>
-References: <20240207143825.986-1-lukas.bulwahn@gmail.com> <20240227154424.GB15319@lst.de> <CAKXUXMxctfDVt=+UHNrFfQFMhRitiQVQ1DBu-X0gtuM-WZYJgA@mail.gmail.com>
+	s=arc-20240116; t=1709067073; c=relaxed/simple;
+	bh=CHjYuJEs1YGST1wT3cXrPmtA83Fz7pwoVCFfvmEsfoc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e1aVz9xo1mSFa8mUXfN3HTrm0mk5TephcPvhGK1Ucf+qhF084+cLbTHiq3lk+tMna069TPLCwCI5HmVzHmpN8LqkM4pjASFziLizFJg9M1g2ZRB4YJM7FBgLsPgGyYHSA0QjsLeK5ytmCMaO1vJSU3E9+AyncC9QTsrrMUwsl0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gXMM5bLC; arc=none smtp.client-ip=80.12.242.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gXMM5bLC"
+Received: from fedora.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id f4PjrRU7nxsbMf4PjrnVjY; Tue, 27 Feb 2024 21:51:03 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1709067063;
+	bh=4X7OgnhzA0408NmQJznS3WtjF09N6jPBQZSZ+cdPFMU=;
+	h=From:To:Cc:Subject:Date;
+	b=gXMM5bLCajy5uQYD5Vmf2X16QRsXPNaj2madgH6f/begypQJvO1AsoFa5s9aioiMi
+	 VUeoehXAIMYdPyHkTw8Q6hKxFp7LNvVOc0flIN25qiPFUlnL30vn8XvuqLodmCMZaS
+	 BSAyF3CE/hOYUqRGyNIZarhIPY1mSpYgUhQ3ScQ5vaMzx7yvj8OuROnxBsiApuosqC
+	 qZSk9L5hedtKfNgF5YoXZwcYjZGF968ixq9NA2s5ZL4Ed9anprA8dw/WqeEK0OXdR4
+	 OCKQAoVXM+P/EfD9QMmVo1c6Mt2eVwVespEP+yizOus8zrZFPsMcN/L9aHfpNO0ljC
+	 rek6feTdO4ocQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 27 Feb 2024 21:51:03 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: andy@greyhouse.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH net 0/2] net: tehuti: Fix some error handling paths in bdx_probe()
+Date: Tue, 27 Feb 2024 21:50:54 +0100
+Message-ID: <cover.1709066709.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKXUXMxctfDVt=+UHNrFfQFMhRitiQVQ1DBu-X0gtuM-WZYJgA@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Feb 27, 2024 at 07:23:36PM +0100, Lukas Bulwahn wrote:
-> On Tue, Feb 27, 2024 at 4:44 PM Christoph Hellwig <hch@lst.de> wrote:
-> >
-> > Thanks,
-> >
-> > added to the dma-mapping for-next branch.
-> >
-> 
-> Christoph, please drop this patch in your for-next branch if possible.
-> 
-> Andrew has picked this patch already and squashed it together with the
-> commit "mm/cma: drop CONFIG_CMA_DEBUG" in the mm tree. So, you do not
-> need to add it anymore.
+The patch has been split in 2 patches in the hope to ease review. But
+they both fix issues introduced years ago in the same commit.
 
-Ok, I'll drop it.
+Moreover, the 2nd patch partly undoes the first one.
+
+So, if preferred they can be merged in a single patch.
+
+They are both compile tested-only.
+
+Christophe JAILLET (2):
+  net: tehuti: Fix a missing pci_disable_msi() in the error handling
+    path of bdx_probe()
+  net: tehuti: Fix leaks in the error handling path of bdx_probe()
+
+ drivers/net/ethernet/tehuti/tehuti.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+-- 
+2.43.2
+
