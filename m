@@ -1,65 +1,65 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5408F44C68
-	for <kernel-janitors@vger.kernel.org>; Wed, 28 Feb 2024 10:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 036D256752
+	for <kernel-janitors@vger.kernel.org>; Wed, 28 Feb 2024 10:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709115445; cv=none; b=eoNtPO2nh/6IS2MzSXa6pv1xYLgVqQjvJiUizsU8YWj86bhydDmzg6ewdaasa21xLXTAVFXVm4hpiMNz/qCLS8RsXcX5Ykmv1ODOfQ0YGFk3VD+Dp2OXCyRrQRWA1ulubM93gmURYUx2HA5dRFf/hdWpR87wGWEvzqMVYmnkfG4=
+	t=1709115905; cv=none; b=AJf4lm5Imw9JN5cQEdsrZvau2C2FU4k2N4108HuO0dO9lf1auCV0POnuAvnFSuF1Snkz6NmiQVhlA8MCEwEUQXkoUqGgFlmR6LL00JKOb0QTjjji4DK7j8IzFfLDP2UFwqKA9iLwoj5cwtCmmQmZOre2JWpkGk+fUQUfKp/aJPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709115445; c=relaxed/simple;
-	bh=IH3Bikqi68/A7myTJacr+ILlvEGyjU3gcgKm2F9+LWA=;
+	s=arc-20240116; t=1709115905; c=relaxed/simple;
+	bh=RJWvUgHr8awlOHf5f+a2KBnaO6oNMg4fY/qdVUnzznE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t1gj4wU7hhp718lw3jNjKnckn4MOBOOArZ4X2WK8Evor/3UqC7oUeQ5u+pyOut68o5ebC7sX5KozFrDORVq98tDjrkZoznpXTXubCYBRaiZANBh3ql0y5WbUNl04cywn0LXa5sYoX4uVfMytMlH/S4PmqSDCBr6kZVZ2hs1zxxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sKxKZKBm; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=QMLXmeoQ2fFnIl2vL6+x6EYq9trYs2U1Zjx3ZszTl268matIYnLp6DrQCVZX/L6l7Sv0JuoYWcj2q9pOQ7yv5nDBQmiZDmXao0UlgmLsOk72nLSdOzA7ijQcB9IBsG2PgB5GZoKvMJQUfk+4fQzJ7hKcgNBQ4nHrTx5w5MgVWNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=VHLB0nZS; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sKxKZKBm"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-40fd72f7125so41550365e9.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 28 Feb 2024 02:17:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="VHLB0nZS"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2d28464c554so50468581fa.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 Feb 2024 02:25:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709115442; x=1709720242; darn=vger.kernel.org;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1709115900; x=1709720700; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CoC1aILR23YFVOifjxSejtqanuyoJI7UmmW0U6nvIzU=;
-        b=sKxKZKBmuqS3jUyOaAKDYxS5lPkpLaDSQnWoSPTw/9PWDdU5/OAMFe3frRcOFUrxyd
-         +3G4CFaVhIQVaSBnFozZqYWIVvRsDNNN9T0Eb/xmzbJzLKQ0uiYTqnQ/7kUuIggNTYXi
-         uHTc3yPutfAM/HxmiTFP9pb+jkCk3Op+zbWVjpGea3Y9rMSqVXDcrfSf7eVivpYjzn9N
-         gL5QcHTSONvdYbazTKN6BK51U19VVsjCaxS6GyKwPhRUB4dwplONnnOvXR5pZqq1mfJZ
-         cEW5swr9cPbURo7xGrhc80Ep0AXMvXZAF9O6gqmAPik51PTLFQNQTeDldWTYH4zkH6T3
-         zTQQ==
+        bh=RJWvUgHr8awlOHf5f+a2KBnaO6oNMg4fY/qdVUnzznE=;
+        b=VHLB0nZSyQaFKtZcmkt3np1G94/kCMT4QEtZ1pFMUERk0xrpuIB/cFHO3fGjlRzOP2
+         oPzD+8DH9HrM6ThX/bOOsq6ol5+/fZ4EzAiMfjD7TN2bC2b4a0f9oSIYEidetc7dvYXm
+         LHmy3iZ85hsllimJ56Q4XeIdZRw+4XtGJCOlFSddkUfu8pJ7hsEkC8YrBoB8ClXV9FyZ
+         rnVg9lleA486hOl6cyZb52Sw1VtTF9Cn+lIANYJUmkeF22AC7rs3muACZfI5sj6NmLL4
+         Bc6THhkHYFJce4Qv++qsTkeDdqTkLuYtS6pVv2T1Fq+0D9kckt0TssylpV33o8mP3aM+
+         5xyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709115442; x=1709720242;
+        d=1e100.net; s=20230601; t=1709115900; x=1709720700;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CoC1aILR23YFVOifjxSejtqanuyoJI7UmmW0U6nvIzU=;
-        b=utSDxRLPiXYQY/QWE1gBewlShPfwsJwCZyGM5QOA4FWeLCqO/XIRyHBlj9J7RprHfT
-         1KsAqscBaE0qkiv01FN2//uy5tQ1y0zOzdGDg3kYE6cAOqmsmrIMxX5BMtmeXd6OnrMe
-         yM5k70NE6I8LDIE3bF26OwR8AYpkwKbe1MgIkXcCPyynkEURrBXkpXWYM4IbTV10fksy
-         2Ek+cVUcwGP4k/Psl1bxngHxD/E0qGsh3+vfBrS+530bIh0YU9BXj7oRufaS9NFiaOBP
-         L97uRmRM+0Q0mmzcU/3RiIyKipMeXgUpe99exUhNbHK6y3diaa6fr+clupSx8Ggrvguo
-         Rk0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUcWkB7jPSufudFbjmVIRASlCqihO7rHffA7eTJMDz8C7fCe0YE5r94t7/L3v7lRby4dzLeooo+GYLRw1yoCWPXYMMngNS3DEE52iPv0Bcd
-X-Gm-Message-State: AOJu0YxqwcF9YwM118INgmv60GXkE5KZZg2cIZyAubpUKfdXci8Jeuns
-	NbOG4KQeAZuDOa38BqXQPym1a5aoVhkjxXlZfHFqVrmwsR6rRz4y+dD42J+iqOk=
-X-Google-Smtp-Source: AGHT+IEpamqaOQJDn0FhlvGVDX/h+ul85tspB7tBYEVrVbYsrmgIR5nB914VhdUa8+jQISj4AybjKg==
-X-Received: by 2002:a05:600c:548a:b0:412:9e75:29f1 with SMTP id iv10-20020a05600c548a00b004129e7529f1mr8539047wmb.28.1709115441614;
-        Wed, 28 Feb 2024 02:17:21 -0800 (PST)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id s28-20020a05600c319c00b00412a38e732csm1605103wmp.35.2024.02.28.02.17.20
+        bh=RJWvUgHr8awlOHf5f+a2KBnaO6oNMg4fY/qdVUnzznE=;
+        b=nQgqfIJo2eZ/xFioemWd1m2BLLEGYNc2H1f9/aC1S77vUQg8ZZXFowsFJtcNds1r+/
+         kfHy/JZwa3khqtDDdj8w04OD2naPqMnOGU2dLLRqnkjN6fveIeGGO8CFfXgG8a+uh8pC
+         t5pFp8oDGDwFvNilZjLBmvuJyBfcjDj3uW/5QTlLVPaM/1aeaIfwicLEKUNzapQcZvAJ
+         s+23cg1V3mMNI5d58Yo7N7rHGPZVccg2LlJ/g/hKqBD8YwL+GX7aUTaomki5XzD6BuRn
+         5Ym0DG8PrVueqj3Rzs3fHP+zp3F+ZxLGPeLVAPp1bN5CMWxvH1h9+cq0Vd3qI+SouXCd
+         vRQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVs3yt0APaGBXL4KpaaTKz8Ci0CDgPCaYmC59eZxhK0Xi1HuWfKkLjoX7o1wTaSlgQfnPONQTpPG8SzqjVeGVAzRTGbSV2VYsSH8Hj8RRfS
+X-Gm-Message-State: AOJu0Yzj35cJYdXkDTz2eZBMhdJdWVVBOnLbooRVtUfP+HXWa+0c+mty
+	Yq+cAXCgSYezgPTcpl6JjODG42PtZlgm6ROuQnoTlTFoXOM77IJc42IEqSkiL2k=
+X-Google-Smtp-Source: AGHT+IE1v8GX4KnuPAkO6ZzFb7IevBYvi4p+fVrf0lN07SaeF+mCEndEdGtR/o1KHfLMa4I/j6BhoA==
+X-Received: by 2002:a05:651c:b0b:b0:2d2:d449:6425 with SMTP id b11-20020a05651c0b0b00b002d2d4496425mr633734ljr.35.1709115900049;
+        Wed, 28 Feb 2024 02:25:00 -0800 (PST)
+Received: from localhost ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id jj2-20020a05600c6a0200b004120537210esm1621345wmb.46.2024.02.28.02.24.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Feb 2024 02:17:21 -0800 (PST)
-Date: Wed, 28 Feb 2024 13:17:17 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
+        Wed, 28 Feb 2024 02:24:59 -0800 (PST)
+Date: Wed, 28 Feb 2024 11:24:56 +0100
+From: Jiri Pirko <jiri@resnulli.us>
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc: andy@greyhouse.net, davem@davemloft.net, edumazet@google.com,
 	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH net 2/2] net: tehuti: Fix leaks in the error handling
  path of bdx_probe()
-Message-ID: <3b12e1e2-4859-40b6-8d9d-0a940251bed4@moroto.mountain>
+Message-ID: <Zd8J-F1SEyZwF5Mv@nanopsycho>
 References: <cover.1709066709.git.christophe.jaillet@wanadoo.fr>
  <9090b599c7574892b77a9521e3ddb3a52a154205.1709066709.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
@@ -72,73 +72,20 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <9090b599c7574892b77a9521e3ddb3a52a154205.1709066709.git.christophe.jaillet@wanadoo.fr>
 
-On Tue, Feb 27, 2024 at 09:50:56PM +0100, Christophe JAILLET wrote:
-> If an error occurs when allocating the net_device, all the one already
-> allocated and registered should be released, as already done in the remove
-> function.
-> 
-> Add a new label, remove the now useless 'err_out_disable_msi' label and
-> adjust the error handling path accordingly.
-> 
-> Fixes: 1a348ccc1047 ("[NET]: Add Tehuti network driver.")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only.
-> ---
->  drivers/net/ethernet/tehuti/tehuti.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/tehuti/tehuti.c b/drivers/net/ethernet/tehuti/tehuti.c
-> index 938a5caf5a3b..6678179885cb 100644
-> --- a/drivers/net/ethernet/tehuti/tehuti.c
-> +++ b/drivers/net/ethernet/tehuti/tehuti.c
-> @@ -1965,7 +1965,7 @@ bdx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->  		ndev = alloc_etherdev(sizeof(struct bdx_priv));
->  		if (!ndev) {
->  			err = -ENOMEM;
-> -			goto err_out_disable_msi;
-> +			goto err_out_free;
->  		}
->  
->  		ndev->netdev_ops = &bdx_netdev_ops;
-> @@ -2031,13 +2031,13 @@ bdx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->  		if (bdx_read_mac(priv)) {
->  			pr_err("load MAC address failed\n");
->  			err = -EFAULT;
-> -			goto err_out_disable_msi;
-> +			goto err_out_free_current;
->  		}
->  		SET_NETDEV_DEV(ndev, &pdev->dev);
->  		err = register_netdev(ndev);
->  		if (err) {
->  			pr_err("register_netdev failed\n");
-> -			goto err_out_free;
-> +			goto err_out_free_current;
->  		}
->  		netif_carrier_off(ndev);
->  		netif_stop_queue(ndev);
-> @@ -2046,9 +2046,14 @@ bdx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->  	}
->  	RET(0);
->  
-> -err_out_free:
-> +err_out_free_current:
->  	free_netdev(ndev);
-
-Since it seems like you're going to be resending this patch, could you
-do this free_netdev() before gotos?  That way if someone adds more code
-after the loop then we can still use the goto ladder to unwind.  (No one
-is going to add more code after the loop, I know...  I wouldn't have
-commented except that it seemed like you were going to resend.)
-
-		if (bdx_read_mac(priv)) {
-			free_netdev(ndev);
-			pr_err("load MAC address failed\n");
-			err = -EFAULT;
-			goto err_out_free;
-		}
-
-regards,
-dan carpenter
+Tue, Feb 27, 2024 at 09:50:56PM CET, christophe.jaillet@wanadoo.fr wrote:
+>If an error occurs when allocating the net_device, all the one already
+>allocated and registered should be released, as already done in the remove
+>function.
+>
+>Add a new label, remove the now useless 'err_out_disable_msi' label and
+>adjust the error handling path accordingly.
+>
+>Fixes: 1a348ccc1047 ("[NET]: Add Tehuti network driver.")
+>Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>---
+>Compile tested only.
 
 
+Looks okay.
+
+Reviewed-by: Jiri Pirko <jiri@nvidia.com>
