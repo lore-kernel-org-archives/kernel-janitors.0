@@ -1,120 +1,101 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380DB6EF02;
-	Wed, 28 Feb 2024 17:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8303BBC5
+	for <kernel-janitors@vger.kernel.org>; Wed, 28 Feb 2024 17:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709140245; cv=none; b=RES2h8TZv1nmP8myB0mVODarRJlcX+Cc3HRvBlmGLC64g+6m0dGn0GRsuNZpsSDta2cVbDKdHsouaUV4FM0bGxx35vd7XIit7V3kUV+9RFGfjyU3PRYOs3CTUcKXwgqccX26sXmS7Js1V0Kb+A7ugni+dToLIl/YeAo7NVyxVcE=
+	t=1709142180; cv=none; b=NKcJxuM/1h2CgH2gD/Cm8ZvVhQ+0Gz8o7O6Hcx2K+45nUueF9m8IIR3TUBWVSYEvURNWIz6vTGLc1V1KIGqCtYAe38KukQRkJaCgq66KuThJcsT7O8uAlAkvSgDM0TNqU0N4KXQygm1fo3Z1D/klnVc1xa9oRDsjgXtCPiwqnhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709140245; c=relaxed/simple;
-	bh=PDZWRcSg20BdxUwgxmJMHinyREAR0J3sVtBXMdbFXyk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TA9S7QcLXh837DOkdZ2fj8de6qOpv+3mhhdl47przzZcm8kHh760J0Xt9XEaHiIcWhwP90t4uPvAI+bXgqrfpi05okcpH1+KFtn9cTkKBDwogl3YH6M/QBkFMj6Exvhji8/8jEdyEw/oFX6AZEMlQKkkWhT6hMC6rEam001VF4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DWwtyg1X; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709142180; c=relaxed/simple;
+	bh=OnTfdMWKLwh8ThOMjY8rRqP+fXnwlTEZOKp8/UdqfZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M0KBEnidGgJ5b8+fUmoVx0Oug2ev+EHttucE/YQT/8K+W6oAb+z6x1gjcm8HymQybqFqxv8S+v4QFcX8VJfTyvoLMxDq3pTPfeinyW+kYnKKeUOPYzQuLyBPhTpkBHn8g/iBDdhpVfr8JOLNseOzlWxViZAubXLlGVft2Qi/oNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HB3WysVT; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DWwtyg1X"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-412b88e2f07so1771905e9.3;
-        Wed, 28 Feb 2024 09:10:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HB3WysVT"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-33d0a7f2424so28214f8f.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 Feb 2024 09:42:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709140242; x=1709745042; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6WiiouwYNer2Jzd0vSzegS7p804ganFmhzlojYqoV8o=;
-        b=DWwtyg1XOFfMfxyEwa8WOJjkyYrlFABHvG2uuzW++eKfDRAHwc/O/EVVC9+jsJZq0o
-         6oBuiSu+Pu+6HUe5ZZVci5mbhNbq2lXPQOjzwxxOzdoxcA+3vIzE+xbheacYp6WkG1N2
-         SErBB/73QSL6Lys2mYyWTPBLBUFEzq7niuzVyHqBte3dSqmks7LxQrNYsj//9ttfFayM
-         zWdVs0Cl/A6xg9YauBXh0h7bueYIgeuavNkofC5OioZi59AzkxlZVIINYe1AYD7ZDsCC
-         2vh1ge0NwWDddfUOBllXKCoJglIeRwQFYoCiSPT7cE3AMH60j9hp7i0JBweacGPxlkiH
-         9jBA==
+        d=linaro.org; s=google; t=1709142177; x=1709746977; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5XTL7Wi5fSoGtPT9aaYhGYa7xeX5imrSZZwRbhwuwVM=;
+        b=HB3WysVTsoXuAk6qBgsO1dAToEe0AoD0mUK32iptO8rvhe33gL0+nKv/2tryZrxNkX
+         ot/LrAEsqqF+PFt6Rt+BbNkRR+IE0AM6S98LXm2rWu4e/uG8hMReatmoDebdsFDhpl7K
+         knR1FD0tgH3HyGGWzFTO8eTNUaYEdtRV3npePly4vlxNhVjP9FuhzoHljDuJtMwrpCRk
+         wLdSkeU23YwOCVcALZiu0Lltz4wkI2aSx1i/63U/Zukdm3jmKtrpAe+fgqFftAbJXgnz
+         a4RAOs+T8tgvXMJnUrYuwVZfT+Xb58k+Mn3sVksiXbRLjk58GIlpxyuc60yuRL32dWHC
+         F2Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709140242; x=1709745042;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6WiiouwYNer2Jzd0vSzegS7p804ganFmhzlojYqoV8o=;
-        b=v7VCTVfInD/CEtTJwAaEsnjMahUbEFgB8BUPNqDDvbcq9IQp7O1UlbJUlc3dAw2v3p
-         cypBBgb8qsXDkxS0RmIwT4nqM8JDjmSEG4l43BXmte+DSL/WxyhVFh2N3w22zSp3zrLZ
-         V/zzzBj25ZrVdy6MftKZlBr46aBitKC9O16MXpJb8zk9y13BwGU/NN4d51zevESFy9eF
-         iDQccXr1PCgx8h8A40U7BtdvL0GTktNbz4DMN7NusWgsuBC518t9oYJUDNJj2VR2oawL
-         DUN/bX/30bAEqRNeaiXCth7POUOs8/Ar49lrHI1xHB9L39NoLv8qKGUX2Cw2nGOYKL2z
-         BIQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUS++8et11ge3+OqjpmAV5GKBv21PTtj2jmvg6bFTDOHph/ZCJU7+NIXfuyVogDFdWwopxjZC6nt756FaSvCfILtykqCItNuYmG0wNHsLWESVN8WH6ct7vbX0G50KsvSYyUvOKwP7X03CnyZbJD
-X-Gm-Message-State: AOJu0YzUdcmkfRflgf49MzCsS2X86zOP+Lvfeq50eR+JNtEXQhjAHJej
-	I/LgbR2moFcqd+g8UNFdCbS3B2s3JSadXXWA910xddrcwlHAFVA8nmo2Smj5rNqneL8rgnP1ZWM
-	vGDblvYc1Kpzo+M/21QtxvSRTTTEDK1+8
-X-Google-Smtp-Source: AGHT+IFNlVok0G/bM11U9R3yRs6/+bfGlzsPAH8qf+jJJ/S7zGispJ1683nsnt1tl8fiThUrHiDRWn/2WqhIM2BkSRE=
-X-Received: by 2002:a05:600c:310c:b0:412:b586:6d2a with SMTP id
- g12-20020a05600c310c00b00412b5866d2amr97153wmo.7.1709140242308; Wed, 28 Feb
- 2024 09:10:42 -0800 (PST)
+        d=1e100.net; s=20230601; t=1709142177; x=1709746977;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5XTL7Wi5fSoGtPT9aaYhGYa7xeX5imrSZZwRbhwuwVM=;
+        b=jPRhnxcXZjiBxry6GYynmRbbuFWfYKzCj+ZnY+rcsC+Jy76Sny7QYOhh3KU4OzIPQk
+         rhEq59jRRsfIo+oxydeI2rohB3jyI6BZwPdLgAnxyQSthehr4TDyTpqcjKmaru1J/Wgb
+         PaCt7AuWUGXFaQpQXW8XAVyXb5xKOCr4PNOD2MTP3fQSjN5kj6D+73fl9kflkfrNE80p
+         Ddr+g+Ec7374F0kd7pMcg2EGrlhxzZ+Rjbe6g/sNy1Glyrg1TFi4QMGvohrviH59ibbZ
+         wFXnUa5lzUCeA9O7jdmfFTve34+xba8IIAZMb1QgLH2ouqAavQY7RQ6bEBUjfYUjr5XF
+         q+0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVmmluhIx3ok9GowQKKRwujrFGlkp4vZ+OnNRLAZq4ltbwbVporB+Ra8Z0H/oCULNPNdZk/D6q1I8rP05mGImuidfpaj5Je06IA+C1Ge9nS
+X-Gm-Message-State: AOJu0YycNZbZv4/4BijQH37d/k3AcdkEYX+a+lUGGHNgr/fUECF1Wilp
+	X9nNoAExYHOlbsgU8yYauXTq+/gXjsvwP/LB4WdRvJpwTwm74Ndlt4eMbawbyrc=
+X-Google-Smtp-Source: AGHT+IEPgnl6zrKV1TWi+lu4XTy2PTm0dyVStykU3E0t1mjb2hp9hd9ASfakK+UaUYWfPrmiDRXcrw==
+X-Received: by 2002:adf:f049:0:b0:33d:3099:e67b with SMTP id t9-20020adff049000000b0033d3099e67bmr157217wro.63.1709142176705;
+        Wed, 28 Feb 2024 09:42:56 -0800 (PST)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id bw11-20020a0560001f8b00b0033da4b06632sm15535993wrb.6.2024.02.28.09.42.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Feb 2024 09:42:55 -0800 (PST)
+Date: Wed, 28 Feb 2024 20:42:52 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Cindy Lu <lulu@redhat.com>, Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Xie Yongji <xieyongji@bytedance.com>,
+	Maxime Coquelin <maxime.coquelin@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] vduse: Fix off by one in vduse_dev_mmap()
+Message-ID: <81e2238e-3ed8-44dc-82fe-256155c271ba@moroto.mountain>
+References: <e26476e0-68ae-412d-a5d9-4996bc30d038@moroto.mountain>
+ <20240227104743-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <361ac881-60b7-471f-91e5-5bf8fe8042b2@moroto.mountain>
-In-Reply-To: <361ac881-60b7-471f-91e5-5bf8fe8042b2@moroto.mountain>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Wed, 28 Feb 2024 18:10:31 +0100
-Message-ID: <CA+fCnZd_eNHes56x3edzcYWeDKW2WRJYqrz_FyCks5wxtLdFdQ@mail.gmail.com>
-Subject: Re: [PATCH] lib/stackdepot: off by one in depot_fetch_stack()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Alexander Potapenko <glider@google.com>, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	Marco Elver <elver@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240227104743-mutt-send-email-mst@kernel.org>
 
-On Fri, Feb 23, 2024 at 3:20=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> The stack_pools[] array has DEPOT_MAX_POOLS.  The "pools_num" tracks the
-> number of pools which are initialized.  See depot_init_pool() for more
-> details.
->
-> If pool_index =3D=3D pools_num_cached, this will read one element beyond =
-what
-> we want.  If not all the pools are initialized, then the pool will be
-> NULL, triggering a WARN(), and if they are all initialized it will read
-> one element beyond the end of the array.
->
-> Fixes: b29d31885814 ("lib/stackdepot: store free stack records in a freel=
-ist")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> From static analysis.  What seems to have happened is that originally
-> we stored the highest index instead of the number of elements and when
-> we changed the > to >=3D comparison was overlooked.
->
->  lib/stackdepot.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/lib/stackdepot.c b/lib/stackdepot.c
-> index 8c795bb20afb..af6cc19a2003 100644
-> --- a/lib/stackdepot.c
-> +++ b/lib/stackdepot.c
-> @@ -447,7 +447,7 @@ static struct stack_record *depot_fetch_stack(depot_s=
-tack_handle_t handle)
->
->         lockdep_assert_not_held(&pool_lock);
->
-> -       if (pool_index > pools_num_cached) {
-> +       if (pool_index >=3D pools_num_cached) {
->                 WARN(1, "pool index %d out of bounds (%d) for stack id %0=
-8x\n",
->                      pool_index, pools_num_cached, handle);
->                 return NULL;
-> --
-> 2.43.0
->
+On Tue, Feb 27, 2024 at 10:48:49AM -0500, Michael S. Tsirkin wrote:
+> On Tue, Feb 27, 2024 at 06:21:46PM +0300, Dan Carpenter wrote:
+> > The dev->vqs[] array has "dev->vq_num" elements.  It's allocated in
+> > vduse_dev_init_vqs().  Thus, this > comparison needs to be >= to avoid
+> > reading one element beyond the end of the array.
+> > 
+> > Fixes: 316ecd1346b0 ("vduse: Add file operation for mmap")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> 
+> Oh wow and does this not come from userspace? If yes we
+> need the speculation magic macro when using the index, do we not?
+> 
 
-Hi Dan,
+Yes, it does come from userspace.
 
-This patch needs to be rebased onto "lib/stackdepot: Fix first entry
-having a 0-handle", which is now in mm-stable.
+To be honest, I'm not sure about speculation.  The similar places in
+this file protect against speculation so, probably?  I'll resend the
+patch.
 
-Thank you!
+regards,
+dan carpenter
+
