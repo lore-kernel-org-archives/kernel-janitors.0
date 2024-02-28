@@ -1,107 +1,110 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB8715CD42
-	for <kernel-janitors@vger.kernel.org>; Wed, 28 Feb 2024 17:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C407208D2;
+	Wed, 28 Feb 2024 17:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709142250; cv=none; b=fUgI0BZMjbO1xgVUdkx1eTaVRNafD4Ayrm6o9IuxhViIC46bI7GfMXhsgrdJiFgzATNZFX+KQkm6QW/LZAU0lk4OUeyxnmT2UgrefZHagbsfxlLrSyoRlbVc9FXRSS2L8NUqdCuUdPRt/bKCgcgUHc0WvBBwrvmDwtumYZ7Z2yw=
+	t=1709142823; cv=none; b=hcXJq5vde6fpkHcjeLftzupt0EhFsDXu/TfNdIJ+ZCz/IwR9KEiujxa3ZBhtJg5HI0b8JLiIPY0yFFkCsTWlHl6U9SslMHLizChoEjbiVl0lq4+PiHUV1IhE3cTwTajGX6MQSjU+uF859fUQWfh2jmz1ayHN4mkmeDAJlb8NNOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709142250; c=relaxed/simple;
-	bh=W6V/WUDrcU6ltqu9bzNaahvrM7LME69p9CtE6KRKCd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=it1u5ausZ3foyPunfgul/eF+wi5kBn2C3nHXyYepHDlmGddSSJjw9k4hyDEfmztZJshPFemfBHSZi19R+CDEVqd1aSaX8bq3+QGvIUFbHVLHKEmGFo3/Rilfv9Y/LI7WLk+4ebNlzbYMhgpi6D8JwWvqeW2uWgK4XzR1gCh1rk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ymi35g3E; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709142823; c=relaxed/simple;
+	bh=LXfHA3dCGDNxmUPr2jMG1cF0psgm9mzwYPfFa63rcSc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d5ifZ6BMpi7c46rjYjCT4K0BJJ7LBaqTAQTxmh01N7Bq+B7ZIJny/LhqnNGUbuPbj/MsCd+4f4ZZ4ttbKuGXy1l+V44n/DYaQhogVAgv5g3DMtADAfeVBS1Kq+j3CiZP4iifR7HoDJG4a6JTfd9JDsh2WsSJlF870981WsyFfQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WjrF+WcI; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ymi35g3E"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-412b814da6bso2690015e9.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 28 Feb 2024 09:44:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WjrF+WcI"
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5a0919f2022so2707eaf.1;
+        Wed, 28 Feb 2024 09:53:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709142247; x=1709747047; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZQYfGRlMuAzV9NGrkcAH7hkAKHgrR0yYSvegD/d+xL8=;
-        b=Ymi35g3EEvkMiXXIouWabZ77SZcpf2PnI9YixiRbeWetDQW5jVnR0/tzDLx6B33lb7
-         mEwhM0o+GsJ15JdH2I6QtSJLUYiyKJgdytf/qU+QbIwuGU7J+3R23l2p8jLII2PFUyCt
-         PceCeRRomVtvwV+l8Koe0VfAakSwMeFBzADIFlk6wqyuuT4YvR+uD8GQ7aDsv8xi/ICF
-         06tkgwhsxkzWc/Q1qG/b0shlaVDg0dwtmk1SxZu68jzKN+zpn/QxyK6D8f9Tw7DRuhVY
-         KhU/LS6YLpruRlZqJiJIGkW+IKx8HruMK4gJC4BIGSShmpPYew7tLI3BQ/QpP7ICcQK1
-         b1yg==
+        d=gmail.com; s=20230601; t=1709142821; x=1709747621; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YTms7y6gBlfM5rqkqnuoQOJmNRtZZ8spMxgJ/p47Svk=;
+        b=WjrF+WcIXhu5oQhpTDaOBjDQJItvDQPzu9NfUIKRsx73ifJp8lVdauRya235Cw7MQg
+         gWuD6vgEhobMwzmXrZthR9flcVd4+91xSN5G1OTfiF1SEooKPLNQrS0SvWuLS/TQS+v4
+         Ppw8/PLZLA4RwlqoiHp43+BiqnOPTQC5oHQ6z0dX0RenbZ84CjKHIofEFOLn9zLMosBT
+         d5+wSgOXECDlcOTZjg/JUNlXhiRPDWB3P8l8C5UMTHSeKwE/X97xbVxwr5odFWc3/3fp
+         y/MQD7GLUYPw766FGpOxUgmKqHngRDZKJt8X+sqWTDAqqzeV7si8uU7hGEEBZVIFGSsQ
+         +kXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709142247; x=1709747047;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZQYfGRlMuAzV9NGrkcAH7hkAKHgrR0yYSvegD/d+xL8=;
-        b=NBnK/8latyJchpSpJmOpCle92q0KrEMfgi+4w5bUGCHZy1jtB7cA56NMueIh8Va0+K
-         SdEzePS0/y24+wDPbH8uf/TRYbGbxBrI7llAAQQ42teHD2Xr1TdNrx6uDZ5xaf80P33J
-         brcRIjT/vIcOC4iYOOEMCRkEkr/G+LUIo7bLx1BxW6ewbt2fpv0KLGuuokD03wZ6kcCo
-         vMk0Quu1/o38xjKyN+3DuL5jnn5jdmCedmDZLa7mC2Xy1JBJBDhLaFChEmSnga6Sn6Sl
-         PnQFjZcDhiBE8t6mhDLrUIup7c/msI+a+AeUGCSGMGDKAyafYzoqDItDzIzgf037jWIW
-         n9tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXzqxk+STrru+YqqQ8bAIqtGoSbLwWatnpVwbJv2kSCjZoA29EMG7pfoEz5NvnZNm5r85c7fKUq5upPXamLGTfonpd57HOKsF9hovrcoyGa
-X-Gm-Message-State: AOJu0YwT6JaPZxdw3u9hX8EQSAMya+eUDfQNbgAxRAH9wS5s1IXQa643
-	jJB/vlRAVT07CD3AvNzD5PjODT6XqEFZud4A3+84vwatiD3OGRYq+kTfLirJBC8=
-X-Google-Smtp-Source: AGHT+IHOwDyfmepDmBoQvFrRKQ7FFwyrzLDzVXnTAg0OSmmsmnEyu00VFewWnjH4ylk3CMxRj1xMVg==
-X-Received: by 2002:a05:600c:468f:b0:412:64a5:a21 with SMTP id p15-20020a05600c468f00b0041264a50a21mr127317wmo.40.1709142247357;
-        Wed, 28 Feb 2024 09:44:07 -0800 (PST)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id j10-20020a5d564a000000b0033e0523b829sm1008975wrw.13.2024.02.28.09.44.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Feb 2024 09:44:07 -0800 (PST)
-Date: Wed, 28 Feb 2024 20:44:03 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Cindy Lu <lulu@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Xie Yongji <xieyongji@bytedance.com>,
-	Maxime Coquelin <maxime.coquelin@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] vduse: Fix off by one in vduse_dev_mmap()
-Message-ID: <e2361611-e8e3-4c6a-9f71-30e81a65f793@moroto.mountain>
+        d=1e100.net; s=20230601; t=1709142821; x=1709747621;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YTms7y6gBlfM5rqkqnuoQOJmNRtZZ8spMxgJ/p47Svk=;
+        b=L5HXMQSR0/T53EmApYW+yZtQsKz8ZjxSRTxT706MFLcsngRPYcK5qJG4Bden02BBWv
+         oCKpv4r6Ki3HrAnU3NTyeZxGlyWSak5GysKcuDn3FhIWpKfkt69asefGeB7gn3Woo3pS
+         um693uCHpEnPJhV2LhupcV2sj90FC/pq+xDNyhmVNI/ZXspIPKgU1rx04sKCKVq32FMe
+         00HxA7v6s7tMYm18Osw6PjXg58zz8gRGFwWknlb+pL4zZWSrYMFOWm3Wh27K9nTUQTAH
+         D8iAsmdnMIVyrs/nm8zPZF7G/6tDqizUBpg3tnTmypjG6aPXVVTVLgmWuYVOcKy40ERh
+         Vt6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW2a8az9JDYs6zMoUZF4MT+csu1hu8TLoCgi393tXS7AfChgQU/UhONsFNK+mNofZKw01mPJ8zF9Pm50YzX8Zzl4bwe6HuppsSHnwjVDjElD5gV71ALOplIMjjtcyx97AeYCEDLbc8TAn0IrBTE
+X-Gm-Message-State: AOJu0YxsFBxrT/RJPDl0LTdrPpqOfqx3TFIUigZOA/uleLyzG3psrUe0
+	yLIA502/VPTjQ7lqnfmFeoezczq+hV9k0cYjUhkMygcdDT/k1WmrfQMb36c/FuKNBTIXeGcsLuA
+	c72eG2wv8teba1UZLO0MYKu9T14s=
+X-Google-Smtp-Source: AGHT+IHkShvoS3j34PpGZRdJpuildkNUMYe35bZWqGOxz31gFD0leWwH221mlvIRgK4ri/3cGJzWg3ZL+/JJmI+oCpE=
+X-Received: by 2002:a05:6820:d8e:b0:5a0:e1c1:5014 with SMTP id
+ ek14-20020a0568200d8e00b005a0e1c15014mr216278oob.0.1709142820730; Wed, 28 Feb
+ 2024 09:53:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <e2361611-e8e3-4c6a-9f71-30e81a65f793@moroto.mountain>
+In-Reply-To: <e2361611-e8e3-4c6a-9f71-30e81a65f793@moroto.mountain>
+From: Stefan Hajnoczi <stefanha@gmail.com>
+Date: Wed, 28 Feb 2024 12:53:28 -0500
+Message-ID: <CAJSP0QVYUrkbk6beMB6nW1q9G3jMqeDzGwMagyXh1B1skFdHjQ@mail.gmail.com>
+Subject: Re: [PATCH v2] vduse: Fix off by one in vduse_dev_mmap()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Cindy Lu <lulu@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Xie Yongji <xieyongji@bytedance.com>, 
+	Maxime Coquelin <maxime.coquelin@redhat.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Brauner <brauner@kernel.org>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The dev->vqs[] array has "dev->vq_num" elements.  It's allocated in
-vduse_dev_init_vqs().  Thus, this > comparison needs to be >= to avoid
-reading one element beyond the end of the array.
+On Wed, 28 Feb 2024 at 12:44, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> The dev->vqs[] array has "dev->vq_num" elements.  It's allocated in
+> vduse_dev_init_vqs().  Thus, this > comparison needs to be >= to avoid
+> reading one element beyond the end of the array.
+>
+> Add an array_index_nospec() as well to prevent speculation issues.
+>
+> Fixes: 316ecd1346b0 ("vduse: Add file operation for mmap")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> v2: add array_index_nospec().
 
-Add an array_index_nospec() as well to prevent speculation issues.
+Did you forget to update the patch, I don't see array_index_nospec()?
 
-Fixes: 316ecd1346b0 ("vduse: Add file operation for mmap")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: add array_index_nospec().
-
- drivers/vdpa/vdpa_user/vduse_dev.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-index b7a1fb88c506..eb914084c650 100644
---- a/drivers/vdpa/vdpa_user/vduse_dev.c
-+++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-@@ -1532,9 +1532,10 @@ static int vduse_dev_mmap(struct file *file, struct vm_area_struct *vma)
- 	if ((vma->vm_flags & VM_SHARED) == 0)
- 		return -EINVAL;
- 
--	if (index > dev->vq_num)
-+	if (index >= dev->vq_num)
- 		return -EINVAL;
-
- 	vq = dev->vqs[index];
- 	vaddr = vq->vdpa_reconnect_vaddr;
- 	if (vaddr == 0)
--- 
-2.43.0
-
+>
+>  drivers/vdpa/vdpa_user/vduse_dev.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
+> index b7a1fb88c506..eb914084c650 100644
+> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> @@ -1532,9 +1532,10 @@ static int vduse_dev_mmap(struct file *file, struct vm_area_struct *vma)
+>         if ((vma->vm_flags & VM_SHARED) == 0)
+>                 return -EINVAL;
+>
+> -       if (index > dev->vq_num)
+> +       if (index >= dev->vq_num)
+>                 return -EINVAL;
+>
+>         vq = dev->vqs[index];
+>         vaddr = vq->vdpa_reconnect_vaddr;
+>         if (vaddr == 0)
+> --
+> 2.43.0
+>
+>
