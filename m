@@ -1,94 +1,108 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4047912BE86;
-	Wed, 28 Feb 2024 11:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E2415B967
+	for <kernel-janitors@vger.kernel.org>; Wed, 28 Feb 2024 14:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709118156; cv=none; b=eb1EVrFjUDX/goQt0CDJ6dwH1enUtAS8whE5KvzNLbPwKaik0/vZGMO3TuttoUlzXwy7bLDS6QIKThmJ/Ck+3HrsH/kO7iXXlXJNJZTTar7hR1hLfuBDwomqjdbSSxpY6F9TqiHCoKHl5zaYERGY5jDioqKbUC3aT9xXmNBbXTg=
+	t=1709132380; cv=none; b=JN4F7OhssvzL3JLfI+4AddxNdf1reiw//9CD9xgUGIpyvmYlEqUWQlRzm3fbtL9LNiSP9yorWB5B9iTpFBktim5y6gN7hcqepjvm355QslYpzTXEbLHwt64nlsOplJ8D1gZ3Zp9ShSVrVCgmA/+RL06R3+7os6xrue3H3t6H0kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709118156; c=relaxed/simple;
-	bh=6qUCxmFbflDlJlXRfbHoHUwRdpCmzb5lDTHq3HFZwtU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pC91yTPPSpyBYFchw3zRt+T39Bk2o1sArYsHHj2m3Ec+RBUTvS1GihAJsQvJQQ4rLbThwNoFjtVPWO4oQLtEXz55jbDcZAzgoaXNuVxtln8haqmPd+lcSO4rHIgiGevUClUmTs1qj4HLr2dU4SMA3GZUCo8berWtPMxOMZMqkd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mYifyglH; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1709132380; c=relaxed/simple;
+	bh=DGibxGXROfONoqQx0DYX48YEs23do8kEJg5PaBmKah8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V698VaUnw5d60stPg8YmQJzptoy43nlrBREnFE7zP4JU7z18/f9NKt/ggp9wjocooMzy6LSHKfoNs81DrES88h4caVHJEizLj9/Zxdcz4aGnLhW51yIrvfvmI9wVBXxzx8SMb2Bf5aDZRFAlg9grihOtV2U/B7YqHoRO4Z0eBPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yHGCC82G; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mYifyglH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1709118155; x=1740654155;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=6qUCxmFbflDlJlXRfbHoHUwRdpCmzb5lDTHq3HFZwtU=;
-  b=mYifyglH1Olp1V5IhE8SolIWM959Hd/pEteIYOKlNndxugEDrxVhZov1
-   hfMGVsfjhGSDxAXvX4YSDYp3TZM2wUM3QnROSxlCUqDYTBQG24+0TYc2n
-   qIAOoiNYGJnx5bwbI3LCZtaj+lOVSCw09bPQqAYzkIkuM4TbyGOs18wxO
-   2e+IgbuCgf3ZEgBHG45FkNoEfPpBoNWJie+k21h+dOc3cLvL9rU1rcYiA
-   nQTIp8iZnNcK3WUSYmMIFzKBTSYBJrsAnyR7SgrdMjvP4kob0Xt8GVony
-   eJBQg70HVawZ86JH11WV6N+GSDT9Q0avYKKURDhk4mVeMw6QSOHuHhUaH
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10996"; a="25976971"
-X-IronPort-AV: E=Sophos;i="6.06,190,1705392000"; 
-   d="scan'208";a="25976971"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2024 03:02:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.06,190,1705392000"; 
-   d="scan'208";a="7336043"
-Received: from tmelzer-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.32.33])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2024 03:02:29 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Colin Ian King <colin.i.king@gmail.com>, Rodrigo Vivi
- <rodrigo.vivi@intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin
- <tvrtko.ursulin@linux.intel.com>, David Airlie <airlied@gmail.com>, Daniel
- Vetter <daniel@ffwll.ch>, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/i915/dp: Fix spelling mistake "redect" ->
- "reject"
-In-Reply-To: <20240228092042.4125617-1-colin.i.king@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240228092042.4125617-1-colin.i.king@gmail.com>
-Date: Wed, 28 Feb 2024 13:02:26 +0200
-Message-ID: <87bk80am2l.fsf@intel.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yHGCC82G"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-412a9e9c776so6056365e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 Feb 2024 06:59:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1709132377; x=1709737177; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rbrx7HVa2y5fUE9QU+x+EKnMvXEJQXBHESgYcH8oieA=;
+        b=yHGCC82GKurxUf1GMdZo7v8eQMvPo0SYB9A5P3+tWrRxZCGGp57JCZefy73yrc30Xm
+         06b6GUF60XNXLtiLpH515CyWM8edfDpEyHZ4QVrga07VV4V8Pp/tIN2RQIlaRKdFGwjH
+         J5isN3+YK5/RMeMochXSUcV5NIQ4OeNndG/MXoitUA86Dllyes1pL4DAJmrHF4ffC2KT
+         iU7kLbUbVCM2sUG39gcpoJxENypeA0Es6K0mh53HsqlYbkg4/9DxzelzjAY0CMBWhlaN
+         zmfy3dVyb7Qb8ltOsn4EPaB8fncQuDqpeDxiZBRiINxudo69oAAb2FAgdOHvCvyOx0ar
+         oTHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709132377; x=1709737177;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rbrx7HVa2y5fUE9QU+x+EKnMvXEJQXBHESgYcH8oieA=;
+        b=CqshyhdMJHzBdJ0jGCGBieZ8kQ3gW9EoeQTZo1/4FwmE4IJU6eij3aOFF5TtrlhZ4/
+         SU+SEu3R0DeByY9vXQiuWPKYdfvksqcuLyMEbSghC0byDCmlgIYkul7Ttzt3WMLDAA/f
+         zNmoagQxdwRVyrXZ89bsd3O7SY6i5eNID18aqN2cSnZmKuFZX19K8pC+d/JbWWhiNHDb
+         LB19LYCvGJg2wgYFd55RRTaVt0//kLWHCix2uqyPFwSaHqNXxceNUSFue/nASTsRcsvg
+         WNtzDoIKcH5PYnTU2goPLIg6rsDkWpO8/VF3krpWJLKw0KPmcW8N1h7Za2LxbMPrvC21
+         hnbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYN1F/zz2KRk0EUwdLD1INxqelOgRchMa6kHkwC6ojcziHK0V8ietkk0IRE9oUUEQ3ffBtQYlTlUHogJ+kLevchMLrbANgRxmVVKC1ZsG2
+X-Gm-Message-State: AOJu0Ywut9OvM6O2pyd6Et+z+IVV4YiemPimAsnXzZQVc5wKXmWB2XtW
+	tWcxiNi84ZFb6XvFnB2fSf5rxt7oDgbjV93y4l2bF07WfgZVcTEfUz0tahynX1s=
+X-Google-Smtp-Source: AGHT+IFchycGMykpHbANjTJFoomdujpktccrhzPLJQUuqBou81fEAjdXv27WGdHHfvK2TAZOUqVLxg==
+X-Received: by 2002:a05:600c:4f0c:b0:412:b431:eb31 with SMTP id l12-20020a05600c4f0c00b00412b431eb31mr1837067wmq.18.1709132376444;
+        Wed, 28 Feb 2024 06:59:36 -0800 (PST)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id k8-20020a7bc408000000b00412b011458fsm2304389wmi.30.2024.02.28.06.59.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Feb 2024 06:59:36 -0800 (PST)
+Date: Wed, 28 Feb 2024 17:59:31 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jiri Pirko <jiri@resnulli.us>
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	Markus Elfring <Markus.Elfring@web.de>, netdev@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Madalin Bucur <madalin.bucur@nxp.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Sean Anderson <sean.anderson@seco.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: fman: Use common error handling code in dtsec_init()
+Message-ID: <8e3b3338-d2f9-44ac-bcf6-e53ccc3c9cb2@moroto.mountain>
+References: <9b879c8d-4c28-4748-acf6-18dc69d8ebdf@web.de>
+ <20240227184657.76ec4e82@kernel.org>
+ <Zd7mFe3-kbqjGpxh@nanopsycho>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zd7mFe3-kbqjGpxh@nanopsycho>
 
-On Wed, 28 Feb 2024, Colin Ian King <colin.i.king@gmail.com> wrote:
-> There is a spelling mistake in a drm_dbg_kms message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Wed, Feb 28, 2024 at 08:51:49AM +0100, Jiri Pirko wrote:
+> Wed, Feb 28, 2024 at 03:46:57AM CET, kuba@kernel.org wrote:
+> >On Tue, 27 Feb 2024 14:14:52 +0100 Markus Elfring wrote:
+> >> Adjust jump targets so that a bit of exception handling can be better
+> >> reused at the end of this function implementation.
+> >
+> >Okay, but..
+> >
+> >>  .../net/ethernet/freescale/fman/fman_dtsec.c  | 19 +++++++++++--------
+> >>  1 file changed, 11 insertions(+), 8 deletions(-)
+> >
+> >..you've added more lines than you've removed so what's the point.
+> 
+> To have cleaner error path? Not always lines of code is the correct
+> indicator of patch quality :)
+> 
 
-Pushed to drm-intel-next, thanks for the patch.
+I really don't like those goto e_nomem type of things.  When you're
+laddering gotos you should do that kind of thing before the gotos so
+that when people add new gotos it doesn't make a mess.  It's the same
+for unlocks, do that before the goto unless it matches a lock at the
+very start of the function.  Or if you're doing a goto from inside a
+loop then clean up the partial iteration through the loop before the
+goto.
 
-BR,
-Jani.
+regards,
+dan carpenter
 
-> ---
->  drivers/gpu/drm/i915/display/intel_dp_tunnel.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/display/intel_dp_tunnel.c b/drivers/gpu/drm/i915/display/intel_dp_tunnel.c
-> index 75d76f91ecbd..6503abdc2b98 100644
-> --- a/drivers/gpu/drm/i915/display/intel_dp_tunnel.c
-> +++ b/drivers/gpu/drm/i915/display/intel_dp_tunnel.c
-> @@ -348,7 +348,7 @@ void intel_dp_tunnel_resume(struct intel_dp *intel_dp,
->  
->  out_err:
->  	drm_dbg_kms(&i915->drm,
-> -		    "[DPTUN %s][CONNECTOR:%d:%s][ENCODER:%d:%s] Tunnel can't be resumed, will drop and redect it (err %pe)\n",
-> +		    "[DPTUN %s][CONNECTOR:%d:%s][ENCODER:%d:%s] Tunnel can't be resumed, will drop and reject it (err %pe)\n",
->  		    drm_dp_tunnel_name(intel_dp->tunnel),
->  		    connector->base.base.id, connector->base.name,
->  		    encoder->base.base.id, encoder->base.name,
-
--- 
-Jani Nikula, Intel
