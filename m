@@ -1,172 +1,133 @@
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2072.outbound.protection.outlook.com [40.107.22.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77772E859;
-	Wed, 28 Feb 2024 09:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709112528; cv=fail; b=EPmrF4snoTVpKh2145EnD7zWcxhvQvTygBCqgyWoWGqjfvBSi5ESPO8BBaEQXx4bsY+1rZSnIJIq+oDaAMvzmYWJHoHnCoN2LL2XhZFWFXRAsSaLy1iZ60d+7Jl62HAcAvByKmihYYCPRED5KR5ETQDaATCpAFDeIReFhxb5p14=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709112528; c=relaxed/simple;
-	bh=jXTA3NA9f9/qHIBW7HyD0brTyoYO8Qoj5+3CjHwgQ5w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=IVF7wu65y6kcLqssWl2aXcd13e6YvVyxCZ1HSwBZTQTBiGdgc8TuKVCftvywHI61BVNG7s3AExEVN6FKy72FFRSzAsD6DK+i52JsTcVrZBTWyQjJckGQ7NZB5AD4dmtH+KAEFBL9/R79JGTNpUgm2qIHIAiBG18MEF9ip87/EFU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=GA7yAhVr; arc=fail smtp.client-ip=40.107.22.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AEC7339A8
+	for <kernel-janitors@vger.kernel.org>; Wed, 28 Feb 2024 09:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709113879; cv=none; b=hEgSBk58JlTxDERHoiZFrU5p38HXsxqWEGgsHzbDfAs8L8mtyRmQ4uuFUuitZwpxm3mpkBFF8lvVR8O2x21LJQbFnJ9iLaneUWDE3La3UfwbHAiNpHcycDYLPzp3iAk5HORJ0Tx2KaiZjk8gqyxN0AFLsPxBIKNT1dG0ady38ak=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709113879; c=relaxed/simple;
+	bh=s8RRMzYpwsgS7/6fo5fbyQvyzCSLLaKP69VHlB8a1iw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KRhXKlk8PYRSt9VjmydZOGHJenklqy1VsBgOveubOXqN1+LmLF3JXmtuzhcf/my9pVcPVMfCwnaLEhWaX2pd9jWoAMP1ML1pyW1sOPp5rHe491CA0JoTyjGDl175+3tgwzQpKZYDvQiiSrHDz8wsy4CJYiF9YEqL23Z8K/yOSUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=0RSKe4Sk; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="GA7yAhVr"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FD1+yl2wvRXw8BBFbP1uS1UkiwqqIAPGxsLTP0/MEgs/2LrIgM2aOpPJTPuzwtp4p3Iu8kz5Fbwy1IteRMiSWqLktfOfCv5UoIDY9+1gDIFk5+hw5SYCn326Y4Pl3zTwRV4JxotyCjGaMALC2fm2Y5mrfDsbhHXd35OhLU54Zb2ctY/ROh/1GxJAl3CIDtPi9GBlfQIyos8/PaB8zAGWnYsScyL2HsywMNlyXmJHKYdinfwLXaI3/rtck/gzBHsOTG9KrKhGJo+eAogkXUFGrAD58kpjZDT4wlO4wHM2ZAVoL3EpNvPa7S+tzGDghrPM0jXy4yiidZPGstN+zHUXpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pBEoo8yjOmb6pUjJm32BXUOAQc2IcNKgsm9gyZacvOU=;
- b=N+aHsLhtKX7QnGBYFXlxDu3/0EWeeZI2FxGOckar1t5GOzNITLEgBPiWDzmx4kZBcseCMPrRXUhxEiiRMf9m8DFUx26nz7M+t2SNQ8+cmElXgctO7uj3XBlce35pofDzkZeT+m3YIecBsa5+R4IO7ERAJWa7FcO7DY02ahDTgL4SBwkRtX19dYxh44lRa2qsq+NRjnxGAI8X3DhYYPfvS4zjRtRuqAkGXzYxLGh5vc90XvBDgUgyJ1xh0RST8hWYg6JVfqwdZt6vV/cDdG3/aMUjfzWare/oW3lebSTDCfnrwXSwpXL+SuQI/CfhG5ecNc3S6GNUM16kA7c9KhGHkA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pBEoo8yjOmb6pUjJm32BXUOAQc2IcNKgsm9gyZacvOU=;
- b=GA7yAhVrh9qxtlDC7YWaiDw0rMe5qbEkdYwXEKNWxpmMhl+XGbI7uVOHC2nHvJosO0ZLndG3I2b9ep4z7OF+WdxXgozy0Sll3Ew5ARCcnJBD07wG0sWF73v6OG6bpo9XMHDYsYHaTyca8mB2MRi3Y/KIQ6ho8JZ0dZF2z0LzYMs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AM6PR04MB5333.eurprd04.prod.outlook.com (2603:10a6:209:4a::22)
- by AS8PR04MB7560.eurprd04.prod.outlook.com (2603:10a6:20b:29d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7316.36; Wed, 28 Feb
- 2024 09:28:38 +0000
-Received: from AM6PR04MB5333.eurprd04.prod.outlook.com
- ([fe80::e905:d263:1321:f08]) by AM6PR04MB5333.eurprd04.prod.outlook.com
- ([fe80::e905:d263:1321:f08%6]) with mapi id 15.20.7316.037; Wed, 28 Feb 2024
- 09:28:38 +0000
-Date: Wed, 28 Feb 2024 11:28:32 +0200
-From: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Philipp Stanner <pstanner@redhat.com>, 
-	Lucas Stach <l.stach@pengutronix.de>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="0RSKe4Sk"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-513181719easo713777e87.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 Feb 2024 01:51:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1709113876; x=1709718676; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4im3iLarn+fVDeLiii7X0Q81Iw4mK1e/JWWrlhbYVWI=;
+        b=0RSKe4SkpsKXa8tVldOIlomFXyLrEg3cD1vQcrbauNAX421WmTJn4f7U0c3P5jckdT
+         tpyWpXy6/FpX7hclSdo8QkcvW/8iKtxhFH75NWZaCm7wQOzdiCsx6DhqsaKkZ2kzAjNR
+         ov7uPDKmlnb8SjgZvATlbIMDuoVBeRRzVOO9drThnmmKZ6uOkmU1AwP9TCef1JeR4eOd
+         xGHDVpGYP027yX6+oN1KCCuAPYYMohUnS1GXkk2WzPi3Ym/45PutjjfmqhOtfyQ/vP/y
+         BsKSFNDlYj4eEjZ28XiuKRukKOj1x+tmZCWi2OrLLVuNhInYawaB7ELNxP/KAT2o2qD/
+         eKNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709113876; x=1709718676;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4im3iLarn+fVDeLiii7X0Q81Iw4mK1e/JWWrlhbYVWI=;
+        b=nNKBODyz1bo3OFwBBwitWY3XhyWnOnr7elgKtzrDuXRCbU02yYaFNe33oEZe545Irh
+         E1ce/9RUkdOlee+VpE7tVKsAJ47IdlzqGok9U0/2WWBwnwhVeQ9WgJJPefjBe7iB0zrv
+         sgrm5JJQYELqnbG0+76M9Bmly4rD0uS471FdY/XhRZhAauMPtjK6GJ29vGdf7BrzQWba
+         kPAPp0K0K6A7KS4QsJ5P13dIpBZ16344xk4hNVeqyl5NrE6NWBSKGwQ8CtN4mwc2ikHm
+         A2yg5owVc5/GlC6/E7qRNR9N4u3Jt7s8xltSMvNCDY3MeZVSWARDkFIMOHbcDZQu/r0f
+         P25g==
+X-Forwarded-Encrypted: i=1; AJvYcCUQupluJKGknLGKjfi7vcwCrEasLTnPvB44AcrG8hhZeQoD/isX8OKdd92IuS1USJedP/13WIUiASNIhStCGU/X3p9cQ+cbEfXvQdvkhVQS
+X-Gm-Message-State: AOJu0YzrUsjsLfohGIkOQIVX00hKqfAb6hlDV2RZn+89c0+Zssc+SHRz
+	swa+9SetFpVUbz7VFn9aOo4f0iJqIsBNPZmgIhjBPOV63hD825Pn8g+3jpBbaLg=
+X-Google-Smtp-Source: AGHT+IE9Cgc15gAcIviadOB2K14AmCJF6uxTTVrM3FL0KsxJOhVvLqJW+cMJNBaeOSwbkx20kticDQ==
+X-Received: by 2002:a05:6512:b1b:b0:513:c2:95a9 with SMTP id w27-20020a0565120b1b00b0051300c295a9mr5686175lfu.54.1709113875720;
+        Wed, 28 Feb 2024 01:51:15 -0800 (PST)
+Received: from localhost ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id k3-20020adff5c3000000b0033d8ce120f2sm13910002wrp.95.2024.02.28.01.51.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Feb 2024 01:51:15 -0800 (PST)
+Date: Wed, 28 Feb 2024 10:51:12 +0100
+From: Jiri Pirko <jiri@resnulli.us>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: andy@greyhouse.net, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/imx/dcss: fix resource size calculation
-Message-ID: <wd5qlrd5c3kmguosjqyi7w7oayvjfh3mrzuw7nx64ibagmtkck@bczrrshd7a43>
-References: <4914592b-4256-4c9c-bc1d-6dec1e473831@moroto.mountain>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4914592b-4256-4c9c-bc1d-6dec1e473831@moroto.mountain>
-X-ClientProxiedBy: AM0P190CA0023.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:208:190::33) To AM6PR04MB5333.eurprd04.prod.outlook.com
- (2603:10a6:209:4a::22)
+Subject: Re: [PATCH net 1/2] net: tehuti: Fix a missing pci_disable_msi() in
+ the error handling path of bdx_probe()
+Message-ID: <Zd8CEAng7emsvaxg@nanopsycho>
+References: <cover.1709066709.git.christophe.jaillet@wanadoo.fr>
+ <011588ecfd6689e27237f96213acdb7a3543f981.1709066709.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR04MB5333:EE_|AS8PR04MB7560:EE_
-X-MS-Office365-Filtering-Correlation-Id: 171a0b4b-6cf3-4ce6-b129-08dc383fa4dd
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	+H8AFY5pX7d3NYuT3C3FvfIv+b4eQVeL4ZAdMU8JCfPxuQFx84hEhxzbFD0FbGIniJI6hK964h07J5egcQxAR7BUnkkWEgumwAdXK9214vTARpnX2ukiemTKOq4O2geQea8Tc0La2yGuzszbJ26CY38c+3qPlUJMWkWGZi9A0YeuSRWJOYfkX/EJG20WFh4ZzjvG4ad+OrgkcXYCf7TMR2Lsj6RJk1iSipe55GBD8sIWAtbxAifgYWLbSeFTJcCM9PUSsHDgAVshU4wFP1L1GCtyWTDtdr8IXYXjuQcGRYXXzety9kCgIQkMjKf7ht7o6Qb39RjcNiCJrC5thmHXGAJBGy9tjAPsSwi68acq2SfLboUnxFItj1PCNQokig7L8J5MTtDScorkBYhkQ/8q8Yx1LPen92nA8ODMpvZskF/Z5sQUji4n8tll7r9+TZwLPujqR4cQ9dbDqJXG3wcar9SGEqcyImok5iu1OGx4kWpqwcf22tcKJOfY/hBo/V1U5p0rUtCOvLpJVnpw5cErP5QC2UK3BGlddBEzcIj+pfcxAO84PJWEUhZt3nfGMyX6JKbNUqbn41F0HJo4qAzDrMw1EORpuZPys1jN6Hq36i5bhcjFwUdiU1q8dJtV90Y4
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5333.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CfksxUt5mR71ioMwnGjkaA0huSTemciiF/p4Cwf07YQ9sJjM5QpoFkP95FoU?=
- =?us-ascii?Q?o7m/AmLp/5hKvytTWCFol4LrBb41gm14lIi2QU9U7EfYD7OtvMmtsknojUOZ?=
- =?us-ascii?Q?Q/Tv7XqVPjn26fLeNG69r1mRYRiX+9+k05CK8xGXE9yU32p5Cf0lW9jAWi7l?=
- =?us-ascii?Q?1LR3m2/aUmqDwCYtpTJ6Vm0NS9SH1j7QAmE/IBvJoU7GncLG+P1+p++Hvg3W?=
- =?us-ascii?Q?01Twuf7CZ0rra3saZ4qYj/+/eXu6N7XDS1UZ8KmzRVlgwvdhFCWioh0IOynJ?=
- =?us-ascii?Q?4zw3qOsIl5ww0d3EUgedZAQhKSz/yJrImB5IEP43hW+QZwi8oAUSBJgmAdnF?=
- =?us-ascii?Q?w/+MqKHQWjYRXESBTink96bT6huSJbfAZsSNmUOeAstyyWQ+eXkMOqZThgsx?=
- =?us-ascii?Q?Bj8a/g/gZ+nmaJycfOVCfDp2PlXcvC3Bo9EUIAhghr2IaDJP4fRliWYKVE7O?=
- =?us-ascii?Q?VFAFJNmm2WCnJgmANS/3P3ukM/sFOFSm3YXoDQUrHNEBj9rScuIL9nmxoGjK?=
- =?us-ascii?Q?pHR17fsarATkIe0l4wHIjN4Dqcs4bEjGpLQ/dvXBKemtPkS49MynDhsdtshm?=
- =?us-ascii?Q?hDwyr68D12eiyLZxjZRsgL1Yge8hnYziyJuy7Ilg/ahxRODCZitYGUjZk4qj?=
- =?us-ascii?Q?gUTAYaAEmppxuxiCvw803Xa+hI6qtcj7M2oDe8hb9nTU49/t9+OJ1KyoUIOu?=
- =?us-ascii?Q?5LySUQIwY7D28WWJUd7PMqSfq2xe26ofu0qeIri8wasm99CQruzkIPO3E3ts?=
- =?us-ascii?Q?Bxd+FNZHxnUEnkT/lyzc8Jg0g430ywtYP6OY7jAFiYpY4ZjwM9JJWbefYsny?=
- =?us-ascii?Q?JAUMpoaVYBxkntcoRMneMxzxfKlpW5lRuIlX3QDATp6r4jG0FBWq1s+zzy3j?=
- =?us-ascii?Q?AXcWmirzSdqMTopJRtFjhscJVbcJMi6nlrdMM0q08iA1sMT3v6Ou3sKViCTG?=
- =?us-ascii?Q?aZ3+a+BuoR30a4rpYhZV1GmyMcUV849SRKPe0TnNhTSti5dwNJorkGSTMSl4?=
- =?us-ascii?Q?3q852d9iQWDcs+X41ZXwovHIHBMidjg/vUfQsvj8vUl5aBUTlkdvMvAU1YlT?=
- =?us-ascii?Q?v2Uagg8JQDoPiRYnqQeIFLpsSC5iZ3xbZj4IsumRuCdLtQvJrgHkqPKoWH9I?=
- =?us-ascii?Q?v1tz38EQ79lI4bXmt/spehIVmifl4ydWjyxBhN4Gfx2UuKGBfNWPbEl6oeIA?=
- =?us-ascii?Q?bAGxyJIkWpVHIn7H4rtnXPWFAjdhZLGf5y5li83oSGlyAfh54fPJoyB7ofy8?=
- =?us-ascii?Q?s98DV6m9jwi0DsXgL2zfgOHD2o5upixLaw/ea41VCyzdE2W0ERZxE0x3HNZC?=
- =?us-ascii?Q?jMhjdzuL+stAEefezHYtO5IIS7IBggAfcVUpf044W2swMAi2OlezuWRPGgp/?=
- =?us-ascii?Q?bxd+igekDTa1w9YtUjlOyDa+z8DMQvlcJdwuQ0c42T83ps7eGwJQ7vFGv9iy?=
- =?us-ascii?Q?MbfEhOWL28joUcnKTEjN1EIylUK1qW4eYipg0I4DEiri4PgTxTOZfp2i3hJR?=
- =?us-ascii?Q?V4hTMDT3KDfT4rDEc2QS69wqNj/OuZ7G149JTD0EfwCBX+QQaS6xMd0r/JBz?=
- =?us-ascii?Q?/Ak8oA55OUKTEdO/2o2nQCyO4MIOGCv5uoEOA1z8NKOdpeM+uXid//I3lhNO?=
- =?us-ascii?Q?ww=3D=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 171a0b4b-6cf3-4ce6-b129-08dc383fa4dd
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5333.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2024 09:28:38.3158
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NuTgRRy8xlblTitfE4aAEvzOMhC6vsvu0yx3mz3MaZr4PhEsJerpO7javdtfmYb033jnNonXTVNifRqy6HaoPQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7560
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <011588ecfd6689e27237f96213acdb7a3543f981.1709066709.git.christophe.jaillet@wanadoo.fr>
 
-Hi Dan,
-
-On Tue, Feb 13, 2024 at 09:05:01PM +0300, Dan Carpenter wrote:
-> The resource is inclusive of the ->start and ->end addresses so this
-> calculation is not correct.  It should be "res->end - res->start + 1".
-> Use the resource_size() to do the calculation.
+Tue, Feb 27, 2024 at 09:50:55PM CET, christophe.jaillet@wanadoo.fr wrote:
+>If an error occurs after a successful call to pci_enable_msi(),
+>pci_disable_msi() should be called as already done in the remove function.
+>
+>Add a new label and the missing pci_disable_msi() call.
+>
+>Fixes: 1a348ccc1047 ("[NET]: Add Tehuti network driver.")
+>Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>---
+>Compile tested only.
+>---
+> drivers/net/ethernet/tehuti/tehuti.c | 9 +++++++--
+> 1 file changed, 7 insertions(+), 2 deletions(-)
+>
+>diff --git a/drivers/net/ethernet/tehuti/tehuti.c b/drivers/net/ethernet/tehuti/tehuti.c
+>index ca409515ead5..938a5caf5a3b 100644
+>--- a/drivers/net/ethernet/tehuti/tehuti.c
+>+++ b/drivers/net/ethernet/tehuti/tehuti.c
+>@@ -1965,7 +1965,7 @@ bdx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+> 		ndev = alloc_etherdev(sizeof(struct bdx_priv));
+> 		if (!ndev) {
+> 			err = -ENOMEM;
+>-			goto err_out_iomap;
+>+			goto err_out_disable_msi;
+> 		}
 > 
-> Fixes: 90393c9b5408 ("drm/imx/dcss: request memory region")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-
-And pushed to drm-misc-next-fixes.
-
-Thanks,
-Laurentiu
-
-> ---
-> From static analysis.  Not tested.
+> 		ndev->netdev_ops = &bdx_netdev_ops;
+>@@ -2031,7 +2031,7 @@ bdx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+> 		if (bdx_read_mac(priv)) {
+> 			pr_err("load MAC address failed\n");
+> 			err = -EFAULT;
+>-			goto err_out_iomap;
+>+			goto err_out_disable_msi;
+> 		}
+> 		SET_NETDEV_DEV(ndev, &pdev->dev);
+> 		err = register_netdev(ndev);
+>@@ -2048,6 +2048,11 @@ bdx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 > 
->  drivers/gpu/drm/imx/dcss/dcss-dev.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/imx/dcss/dcss-dev.c b/drivers/gpu/drm/imx/dcss/dcss-dev.c
-> index 597e9b7bd4bf..7fd0c4c14205 100644
-> --- a/drivers/gpu/drm/imx/dcss/dcss-dev.c
-> +++ b/drivers/gpu/drm/imx/dcss/dcss-dev.c
-> @@ -167,7 +167,6 @@ struct dcss_dev *dcss_dev_create(struct device *dev, bool hdmi_output)
->  	struct resource *res;
->  	struct dcss_dev *dcss;
->  	const struct dcss_type_data *devtype;
-> -	resource_size_t res_len;
->  
->  	devtype = of_device_get_match_data(dev);
->  	if (!devtype) {
-> @@ -181,8 +180,7 @@ struct dcss_dev *dcss_dev_create(struct device *dev, bool hdmi_output)
->  		return ERR_PTR(-EINVAL);
->  	}
->  
-> -	res_len = res->end - res->start;
-> -	if (!devm_request_mem_region(dev, res->start, res_len, "dcss")) {
-> +	if (!devm_request_mem_region(dev, res->start, resource_size(res), "dcss")) {
->  		dev_err(dev, "cannot request memory region\n");
->  		return ERR_PTR(-EBUSY);
->  	}
-> -- 
-> 2.43.0
-> 
+> err_out_free:
+> 	free_netdev(ndev);
+>+err_out_disable_msi:
+>+#ifdef BDX_MSI
+
+ifdef does not seem to be necessary here. The irq_type check should be
+enough.
+
+pw-bot: cr
+
+
+>+	if (nic->irq_type == IRQ_MSI)
+>+		pci_disable_msi(pdev);
+>+#endif
+> err_out_iomap:
+> 	iounmap(nic->regs);
+> err_out_res:
+>-- 
+>2.43.2
+>
+>
