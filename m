@@ -1,104 +1,100 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3132CCB3;
-	Wed, 28 Feb 2024 08:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44DC2E84B;
+	Wed, 28 Feb 2024 09:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709109852; cv=none; b=uzIKTXhopsWeO/25E9dnbaHd7S3VT+rTpveLcE1LNhc7pTDnymTz0/xiQKK7GBVQnP0+mLOnPAn+UfvZ/aYwVPtHM6hFOMZcpkUpyOwVTTD4SRmGGClPnbsKjkfJLWY1BtGohTDzVgJHF8jZuarLxjDpzpQMH3Ewv6KMn8jHIJE=
+	t=1709112047; cv=none; b=Y+42zKeDgURpOj3bJK/R6S3BHzBT7e/F8oIAJgvyvsnFf6WAw8a15ucndv4Q8BeQpcN/spRgikS/cXu5O2gPTCU/FLonXFXbav22MhSFvcA7DjDzp5FXy7RQ4RGUoLjgDMLJAL6mYaKY0bIqsicTCrNYyyeNWnPYTenI8QT4rxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709109852; c=relaxed/simple;
-	bh=cHIS1svXb6d/RpoB/Li5PbPLE1lQzEq1C87i6qaodzY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ld/fNsJfMTWcK9b5yO75ksZLZbd5BECrNJ41/jJeqStBm4TyQFonVXjngNIu0qreraB1U023sMQoOfos1ZxXjnKOzxYze0/EdjRoHlbgzGrf4qQ61HHH5vOj1gmU1WBuqOD5FcrmfgM9TWpPkI8YQDEAkn5J/Yu7glLDBcFODLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sur7Hj1K; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1709112047; c=relaxed/simple;
+	bh=V/8zs0tE6GUyqcVezTh3xOtRONJaj657JNEedNDBs6o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=kw10Q6K5ZSLldSnzkd+Smg7gHBQKYsp5ASpUHLPiAMKpeFwwxI2hBNd++oWsU2NDF86El+WIJF4B6Bx/DkGrIZ6t//Ah3WNcF0cTiXUNCeuSfuMCkWJxeTQPZRpTyg3z0nv/i97pvnjoJKCS9ipdOym/qj64jNao1Bkw11zO2bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dz8cCpXq; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sur7Hj1K"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1709109826; x=1709714626; i=markus.elfring@web.de;
-	bh=cHIS1svXb6d/RpoB/Li5PbPLE1lQzEq1C87i6qaodzY=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=sur7Hj1Kl1YB2neskONQG2q7PC6AzVx2JuxowRHZCqh9yJMYM9sd4A+K1jEF3nKO
-	 +0ftNVar+jSf0OaUH92joGYT+MKdMaYJaQ54MOWE6mBP/rMpZ3+vFhX25Fq50iCap
-	 EkkksCvUihJDDBwq6g4drzQF7E+H+S4WbKZirKT+V2rc4a5wDc0djK7O46VDPiPWt
-	 KArIx5XwMV9/whj30Y6QvqrDeaSHO9XIwhxtYprays6ZxmRXbIXksZRh3D4k5BoR7
-	 d8sfDHu79ok7EFPoa7nSCeoikk4LNo4ia4ntAc8s3J2THdavm8wks/i0z6pX6pNNI
-	 qjR8YkDg+HOBkAZcag==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N3ouw-1qx0oz11rE-00ze7P; Wed, 28
- Feb 2024 09:43:45 +0100
-Message-ID: <99ea976a-2a37-4656-b370-53daaff54c49@web.de>
-Date: Wed, 28 Feb 2024 09:43:35 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dz8cCpXq"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-513143d3c40so1546697e87.3;
+        Wed, 28 Feb 2024 01:20:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709112044; x=1709716844; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a2noyD+gH5EeHWvIbCVfQ5txzmPqGPvNkLe5Kdw3vzI=;
+        b=dz8cCpXqBuk3qOdcTOEjLdYXy4jasJu/4+7groKUTVe8z2RW6uzGaPA/diPhOHUksm
+         83fh3sOunBIdPIC3Po9dd29UYr7tPGIrwK2DU5RcR/QzvW6fv9gRuF0l/I2XA+1VL5Sw
+         zeWQQwwl/gI6jPT+vOkeU9mGpuUoBWYQx3S7P9yyN3givwKLiZtU2CimeorHFTN1Xmsk
+         x/wm+oyBZG6+SpZ8Rb/Wrwjwr8CDY6Eme8xR0k3HAESrrLs6YbtP7PrwowZXuQwCpyvm
+         BewS7eqiUZUlAwL7MhYH6GPHUxi0YPC/76JWqXgLAroQChZDTIgZF+IULKiZgTBl42AE
+         5XfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709112044; x=1709716844;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a2noyD+gH5EeHWvIbCVfQ5txzmPqGPvNkLe5Kdw3vzI=;
+        b=nh79PPYXJUy9VyisiaE0Nuh0ZniXnGAvpfCUGpC6ubSEtkKRX6BVrLWDcpkUY52Q9I
+         fnE7uNsXCPwQUKdu5zL9VHQHsgiFzNUx5s8MarC5MLQ0u0LdUkIte3x39LNscWcvgSdm
+         Ljk0Klv9BDi70YH/D/cTI0VAF8dmEitSihVMOp+NUs9dQCwVXNoKm3HxTwgLjt3CTrFW
+         cigBpQzfaU9FLysRYExALo/PJtLzyO56mUYoLRrLq7RoRq9+GWMHfI9Clsa7M45Cvv38
+         CbXJhepLbnfcrbiqzsxS3NQSC1g2GTJ8fkS8pJvexUuXPlE3GuDGZFrflhhbLip/3ScE
+         Xbhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMmkCdrrbeH5PgAkULxETRb8qEdjY04mvUYElJ3Abh7zSd0SdwrnA33rsujxAzO3+/PZolblzQyoO2BAtG8hnie0WcxES8ABxK/+1A
+X-Gm-Message-State: AOJu0Yw8Q3IHizo5pKmi77+gIpo2eHGeyjtG3uZ3RnOfGH3qyHn+epmo
+	pyOy77xnOO5GFxZ74BO3WFiRtiQ7M4LlRlJYkBVd8iuDZRCwvu7v
+X-Google-Smtp-Source: AGHT+IHqmkUwiO2sfj7BD6bTWs5IUeTj5Q2VJyj4bs2CxxwV7i3xk4DbJ+e5SZU7I6iDYoTpbxt8yg==
+X-Received: by 2002:a05:6512:991:b0:512:ee1f:b5af with SMTP id w17-20020a056512099100b00512ee1fb5afmr6493372lft.41.1709112043681;
+        Wed, 28 Feb 2024 01:20:43 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id 17-20020a05600c229100b00412b2afb2c8sm1457617wmf.26.2024.02.28.01.20.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Feb 2024 01:20:43 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/i915/dp: Fix spelling mistake "redect" -> "reject"
+Date: Wed, 28 Feb 2024 09:20:42 +0000
+Message-Id: <20240228092042.4125617-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: net: fman: Use common error handling code in dtsec_init()
-Content-Language: en-GB
-To: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jiri Pirko <jiri@resnulli.us>,
- Madalin Bucur <madalin.bucur@nxp.com>, Paolo Abeni <pabeni@redhat.com>,
- Sean Anderson <sean.anderson@seco.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <9b879c8d-4c28-4748-acf6-18dc69d8ebdf@web.de>
- <20240227184657.76ec4e82@kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240227184657.76ec4e82@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UEhwDiFFYhbgpCNlbJ0nMLLlJiSUwR7HvrCgVPbeGeuv1ho1Hzh
- QP/LE3Kre6ApUfuUlw5Nn+7yogjHSg/EXBCsTU+9TVnN87aeHhjoyy3rzkHUkUumGqXQkTe
- noa/DF3Rs6RyBKTtI6Ba3lWR2F2SHeqg3SV31381zPJpDNDNy79RaQEFds1WrB0WGi2Bmh3
- 8m3y6T8aGHM/HAvZONfww==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/QhjLhitUUU=;rpelHu5AhkcwITbez8ZWCQrQC7b
- cM963v/AgxcIb1xtJ+crDhpAq5n3CRYqVV+sHvn0UPun/cNWovVu+VnOeuQxFOsYJ8MvCGAmx
- XfoMDZo7K5lKrrncjVeUeXfFFAjaxBpzBSv0lzqgU/zuixrBNJUoX333Axca14zNmgY3yGq62
- 4M9kY00bAqA49lwDDYQRzsPdbnrwvu9ryZBi0ph6UzoMQsIO2JnvkOh+SdiO/A8PDiGkCIy+l
- WNEbVna/k6mqcLsgu1G6/QW/eBY8FXYAwQGOysQfsuGQVWN4sBNVo4e3TN4OChriGavyjayF4
- JLvejHRVIAVD4pS9iEgDwVLQOhekpwbLYMYnnRganTPWeBaFyfWBaMrMCZ+ymOgsP1EsmtvbZ
- XULtruU8D4KZ5sEkE1xQRSmr0zw2771g1XwNBZMiooc+4WJObWs3zv1r68tuOocAWfjDE29/N
- bOluLQpIcJ0D9par2AouOalclthzqGyv42J3QuT5XjD18DFnsAum1YmV3212wWRa1r/b32EVC
- v2tAY4NSImADiVyn9aPL/3hRXplipHUr35JQiS8KzgzuCqygh33FO4c7dcAlzSs4fMxPYIHRu
- kOtGSGBdg+x4hqDwlxa4rMILEqhYw+sEQB2WhEzcnWi1xl1gmgsimEhtLQEjSan6O4qSfoW/W
- foGI0QWSv8ikyH7D624KiE72UAU0GNqSE1/JJYY2+utt4pXIX4NMIGASFDvGzjfiFZDzUEDgN
- C/qToK8EDYF
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
->> Adjust jump targets so that a bit of exception handling can be better
->> reused at the end of this function implementation.
->
-> Okay, but..
->
->>  .../net/ethernet/freescale/fman/fman_dtsec.c  | 19 +++++++++++--------
->>  1 file changed, 11 insertions(+), 8 deletions(-)
->
-> ..you've added more lines than you've removed so what's the point.
+There is a spelling mistake in a drm_dbg_kms message. Fix it.
 
-* Can the change acceptance grow any more for attempts to improve error ha=
-ndling
-  another bit?
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/i915/display/intel_dp_tunnel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-* Would you like to fiddle with scope-based resource management?
-  https://elixir.bootlin.com/linux/v6.8-rc6/source/include/linux/cleanup.h=
-#L8
+diff --git a/drivers/gpu/drm/i915/display/intel_dp_tunnel.c b/drivers/gpu/drm/i915/display/intel_dp_tunnel.c
+index 75d76f91ecbd..6503abdc2b98 100644
+--- a/drivers/gpu/drm/i915/display/intel_dp_tunnel.c
++++ b/drivers/gpu/drm/i915/display/intel_dp_tunnel.c
+@@ -348,7 +348,7 @@ void intel_dp_tunnel_resume(struct intel_dp *intel_dp,
+ 
+ out_err:
+ 	drm_dbg_kms(&i915->drm,
+-		    "[DPTUN %s][CONNECTOR:%d:%s][ENCODER:%d:%s] Tunnel can't be resumed, will drop and redect it (err %pe)\n",
++		    "[DPTUN %s][CONNECTOR:%d:%s][ENCODER:%d:%s] Tunnel can't be resumed, will drop and reject it (err %pe)\n",
+ 		    drm_dp_tunnel_name(intel_dp->tunnel),
+ 		    connector->base.base.id, connector->base.name,
+ 		    encoder->base.base.id, encoder->base.name,
+-- 
+2.39.2
 
-  See also:
-  Article by Jonathan Corbet from 2023-06-15
-  https://lwn.net/Articles/934679/
-
-
-> --
-> pw-bot: reject
-
-Can such an reaction be reconsidered once more?
-
-Regards,
-Markus
