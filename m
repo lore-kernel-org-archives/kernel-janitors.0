@@ -1,110 +1,111 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32B140846
-	for <kernel-janitors@vger.kernel.org>; Wed, 28 Feb 2024 18:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596024086E;
+	Wed, 28 Feb 2024 19:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709144654; cv=none; b=fdX4+D821MiCtx5Ll1W0Ri+M7SsB7ydmG8FZOBfDXVU8gGoEy2r0w9KGdFAERYK9J7R30HIg716wy9IAleDFUBvkt7eqZzhPeP2WDTVp+qac/TrWgAsN1z3j8dWtJFty2zbImwEEUK1VekvAumDgU+pBprQDOg1tkAx8u3rDfTI=
+	t=1709147990; cv=none; b=p1VPNTV3pSSAWoQEWpRwXEgoiOniU3mSCoPI9ILckvyYjtfAQz6/zo6fcCrW6+C2BFvmQygOun/tjdGMA+fbpGzOw6h7ykT1mfB7gK5QfA/bLIaPRxQpKuFwJcyqgzAGl90Jv+v8Bc91odgr04IpBQ/PghBUWhMW8fqOmYdTrQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709144654; c=relaxed/simple;
-	bh=r81XQMf23teX1T+JGKRU64I4W8Z8plFKuxG2dA9W0e0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JCBWLSyVeDskxfPVBAVU47aKSHXFDFJXANOdP45oR+dcrgtunb0VSrlSSuYp/IhEav4DivxYKLHndmnLX8JaqQeAPBjrYJmfL+5Mw9z/djXxz8Kdl71yLCE+Amb+wLuFAGROl0VkEm90wbu03piiz+xQKTrpsymPydZ8oQDbMHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=joQFw1pO; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709147990; c=relaxed/simple;
+	bh=Tt6dSM09C60ngZskWhxqghZ9GcZWzW94KOavNzMs1RM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hH42VBgHhTRu0MXzMiBot9zXpVBLRy5CgxVRvMisxI7lxlzoh9cKNvBXtOEW4GL6wpRs4tu1pcs8hlcKlqSj1dyalLNfG+2zmbgSpL2rA5c5VGqMrAYJHSh9Hb3fX2nWFseonetgBmuIyRDB6We5UdJj9Hbm47fqAfkc3HNaNL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOsuBTJR; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="joQFw1pO"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-412ba5ce271so177005e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 28 Feb 2024 10:24:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOsuBTJR"
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5a0bf814be3so57800eaf.0;
+        Wed, 28 Feb 2024 11:19:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709144651; x=1709749451; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0Qz1dKrMSqcJN7vhekUwEPSMU/YeVaBN11f7/M4F1f4=;
-        b=joQFw1pO5rSKT4ik+toEE+KLxABAeNEwHJ9bgvPrBH57WAqAZF45Q2eNXGmArQobII
-         H14UpvAfd5yEx9YkWald8rilqmwVzYSQ8l3NUfFQGb90EekzxaETh7pcUjnoBOItqCTV
-         Ml5haV6XcRJpbUbM7W8bhN9fDMuuuIPRYZCJ8X6Pr39V+sacyf5GzCLAUqBaHgTgKv69
-         3OD0lGEvF768gLee0+GVxREkHN/qWfbwr4/3jRR5tAwr09Q85ltW7B1s0YvWlEhjdZTV
-         2doyaAzVOv2nlKr+XlZ33h20HhONxLGj/aSxgG20i6mrA34jcl0n2DO4Gl9LqSfQLXAy
-         dvaw==
+        d=gmail.com; s=20230601; t=1709147988; x=1709752788; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=phvTuz6PNOiEIMAaVEz5O2kseqWR4cE3nLmyIyGPTqU=;
+        b=DOsuBTJR8YoeLwh1smaxlM8h1cOf45FoBq+ePgIEFbhHJfHN4pwNw3EpHvNhqVYGIh
+         Mbq11xwDRmOqynShN4Y5JmEk7U0H9eB3dSTX233TUD7vV+z2IPtUMlytaBmXxzaElLjO
+         K/uWJQFS9qtMBBxCtOptjLg3yD9Dujl4v0a4mxfR0lwJSEoMUkLu3NLg2VV1r+LW3XUD
+         Df8xsJq+/xVzXCa17y2/WtsUJT2+mn5Q0XARgyrzfGuDsupfsa97OW9SrjKJxTpv1lnV
+         Gb4b3z7rPnjA8uIhP7/IaMpUejgmciVy/fJaU1a71Ld0yeutQRqeqjfqEKrEZvyTlQBp
+         FVNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709144651; x=1709749451;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Qz1dKrMSqcJN7vhekUwEPSMU/YeVaBN11f7/M4F1f4=;
-        b=K+y3gMXqTH+f3g03wvlYNog+7GNOxpB0HmnAP8fTLe+53/0rD0TliarbTUN0bG2kZS
-         JHrWlSbxz6Q694ZQqY8+qp9RTxZ9vG+us82SHMiAgmjNTgJov1JsaXtGtpLc4QeJDN+u
-         ajX9lZqgFkjt/Ae2vRx8G2aPe+vaoZZEUYwoHNtlHyjmFF0rNJK6zf1TV1HWx0bRf4k8
-         kLj69CVoASrS3jtJcyNPqn1oUxqLTrzazAWyCqe6U43fYw1eF8KJe7NOU9jEorK6zHNW
-         4S6XvlY2A/WsdCVqGyDvAPhASxbniRgeTHXf8pIiyNz//1IDF14OIoUWVueKEU4hGJFC
-         p2Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJryw3oKaq5TdLcYAOVjHMs21jB/Vh6VvQijQrGtzMG0qT4+AfK12PIQ5+6SWIDw1QIgQ4U61s3fAsHBXm92EyquGyUt0JFPmAL8w+FGnI
-X-Gm-Message-State: AOJu0Yyh8wry+A/y/m5MwCteohR137YSY54AHyXwsjx9eYiMvHHyvmVp
-	RUsHI4is/uKVunBP/pddSDkYMf7mEOT4leiRaBv/8GUWoTT5y2xH1SnOIqKYMOQosFCdmilhM1C
-	o
-X-Google-Smtp-Source: AGHT+IElRJ3gqeiSGlL5qwYW93OYT6mf3vu1RfSzg+Bf0SkGa+KphevMjr4f+hkHMRduO19FmMIfEA==
-X-Received: by 2002:a05:600c:4e90:b0:412:b659:1ac9 with SMTP id f16-20020a05600c4e9000b00412b6591ac9mr58808wmq.11.1709144651138;
-        Wed, 28 Feb 2024 10:24:11 -0800 (PST)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id q16-20020a7bce90000000b0041069adbd87sm2781312wmj.21.2024.02.28.10.24.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Feb 2024 10:24:10 -0800 (PST)
-Date: Wed, 28 Feb 2024 21:24:07 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Cindy Lu <lulu@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Xie Yongji <xieyongji@bytedance.com>,
-	Maxime Coquelin <maxime.coquelin@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH v3] vduse: Fix off by one in vduse_dev_mmap()
-Message-ID: <98298b2f-7288-4b0b-8974-3d5111b589cb@moroto.mountain>
+        d=1e100.net; s=20230601; t=1709147988; x=1709752788;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=phvTuz6PNOiEIMAaVEz5O2kseqWR4cE3nLmyIyGPTqU=;
+        b=jJ9cYAtDRgjmtedh2Ahq2bqXPksc23WErDcEowU1MC01cyErxUcg65k1FcNS9p00nj
+         q/pvQhHoHdLUuhmtonoQpDfcn6Sc91F+5TIE1wml699Rg4As1fivMGDOkahZqdHHasqZ
+         LBwCARhL21zCzr5ywUPf9EvDWtCEwQJVs7F7sKnXDL36Wv9T+tHXppSO/lX/+YFWcud+
+         tWaqEsLoqeabbRQ+dNV+iBvhs5ft7opUdqh1yUoKwwZTRIYOj2KNctqY8mpbP0l9sjti
+         4v//pRuFUyNWIflhWMJV7e8L+5o98wOyBgMT9HFeHX05jDagyEqa2T9hFRIw+JbFbZKF
+         q9fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUesVQaOC2IkkoGDIoQEY7b0wQHMbRZ0VG1VaKb19zToW/IrMhmxgFMIaVKG5lCiwrRQHsYOflpiv70XAEn4C/3tRbWnk+ISrLl6vxRQ35SMR98S0eXfTZ3vczF8FjGw5G2tZGvTkZCYTG9zxkD
+X-Gm-Message-State: AOJu0YxLcmQFgtlXUMWBQwYZ2fuWWs3LrlJkaBEKXVcAWiUA7CCjGlyJ
+	jaMjd0DORR9Vy+tSuyjezKg3iIx9kY8caOmjbG6+rv4I8iVIZPXbNaPxGM7CEYCeE/81Gs0QjIa
+	FHOdn31vXAnhnebnPqt4ZeIcQVardKUpc
+X-Google-Smtp-Source: AGHT+IH/EIolfDA4zKZNCvS17yEvKi+CDTbOpEYfpEr3bP+kiR7I5G9Me13eUg8HC7hX1ig2yHn1UaJ20jH2Yr8I814=
+X-Received: by 2002:a4a:351c:0:b0:5a0:daf5:a5d0 with SMTP id
+ l28-20020a4a351c000000b005a0daf5a5d0mr523851ooa.9.1709147988479; Wed, 28 Feb
+ 2024 11:19:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <98298b2f-7288-4b0b-8974-3d5111b589cb@moroto.mountain>
+In-Reply-To: <98298b2f-7288-4b0b-8974-3d5111b589cb@moroto.mountain>
+From: Stefan Hajnoczi <stefanha@gmail.com>
+Date: Wed, 28 Feb 2024 14:19:34 -0500
+Message-ID: <CAJSP0QWW2QvibpcrZbcLzVp8ngnooiTqP8i2emd+0sdCj_7Yww@mail.gmail.com>
+Subject: Re: [PATCH v3] vduse: Fix off by one in vduse_dev_mmap()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Cindy Lu <lulu@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Xie Yongji <xieyongji@bytedance.com>, 
+	Maxime Coquelin <maxime.coquelin@redhat.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Brauner <brauner@kernel.org>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The dev->vqs[] array has "dev->vq_num" elements.  It's allocated in
-vduse_dev_init_vqs().  Thus, this > comparison needs to be >= to avoid
-reading one element beyond the end of the array.
+On Wed, 28 Feb 2024 at 13:24, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> The dev->vqs[] array has "dev->vq_num" elements.  It's allocated in
+> vduse_dev_init_vqs().  Thus, this > comparison needs to be >= to avoid
+> reading one element beyond the end of the array.
+>
+> Add an array_index_nospec() as well to prevent speculation issues.
+>
+> Fixes: 316ecd1346b0 ("vduse: Add file operation for mmap")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> v2: add array_index_nospec()
+> v3: I accidentally corrupted v2.  Try again.
+>
+>  drivers/vdpa/vdpa_user/vduse_dev.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-Add an array_index_nospec() as well to prevent speculation issues.
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
-Fixes: 316ecd1346b0 ("vduse: Add file operation for mmap")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: add array_index_nospec()
-v3: I accidentally corrupted v2.  Try again.
-
- drivers/vdpa/vdpa_user/vduse_dev.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-index b7a1fb88c506..eb914084c650 100644
---- a/drivers/vdpa/vdpa_user/vduse_dev.c
-+++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-@@ -1532,9 +1532,10 @@ static int vduse_dev_mmap(struct file *file, struct vm_area_struct *vma)
- 	if ((vma->vm_flags & VM_SHARED) == 0)
- 		return -EINVAL;
- 
--	if (index > dev->vq_num)
-+	if (index >= dev->vq_num)
- 		return -EINVAL;
- 
-+	index = array_index_nospec(index, dev->vq_num);
- 	vq = dev->vqs[index];
- 	vaddr = vq->vdpa_reconnect_vaddr;
- 	if (vaddr == 0)
--- 
-2.43.0
-
+> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
+> index b7a1fb88c506..eb914084c650 100644
+> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> @@ -1532,9 +1532,10 @@ static int vduse_dev_mmap(struct file *file, struct vm_area_struct *vma)
+>         if ((vma->vm_flags & VM_SHARED) == 0)
+>                 return -EINVAL;
+>
+> -       if (index > dev->vq_num)
+> +       if (index >= dev->vq_num)
+>                 return -EINVAL;
+>
+> +       index = array_index_nospec(index, dev->vq_num);
+>         vq = dev->vqs[index];
+>         vaddr = vq->vdpa_reconnect_vaddr;
+>         if (vaddr == 0)
+> --
+> 2.43.0
+>
+>
