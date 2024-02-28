@@ -1,111 +1,83 @@
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596024086E;
-	Wed, 28 Feb 2024 19:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BED086241;
+	Wed, 28 Feb 2024 21:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709147990; cv=none; b=p1VPNTV3pSSAWoQEWpRwXEgoiOniU3mSCoPI9ILckvyYjtfAQz6/zo6fcCrW6+C2BFvmQygOun/tjdGMA+fbpGzOw6h7ykT1mfB7gK5QfA/bLIaPRxQpKuFwJcyqgzAGl90Jv+v8Bc91odgr04IpBQ/PghBUWhMW8fqOmYdTrQE=
+	t=1709157444; cv=none; b=HKzOOLLqbKIuiz84FiPB5GpuaU3ptWpJ/pTg5p1mccY5qByCDTYKYOiDNLEW9gwCT+nPrfHJ0PIU/xjmT9tak4bSFNks2YZ5kcXMJcZmrBmSYMS+bpxPKe7g+cQpsTugKqZHzqyPOoTe/OTImMLPCcb28/QX4KsL0wfRJ2kzH5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709147990; c=relaxed/simple;
-	bh=Tt6dSM09C60ngZskWhxqghZ9GcZWzW94KOavNzMs1RM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hH42VBgHhTRu0MXzMiBot9zXpVBLRy5CgxVRvMisxI7lxlzoh9cKNvBXtOEW4GL6wpRs4tu1pcs8hlcKlqSj1dyalLNfG+2zmbgSpL2rA5c5VGqMrAYJHSh9Hb3fX2nWFseonetgBmuIyRDB6We5UdJj9Hbm47fqAfkc3HNaNL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOsuBTJR; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709157444; c=relaxed/simple;
+	bh=1+LVLjOpDU7K/uDlhk0mGw5Kdy7KZzXFjgIZnDyaAew=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=F2fj+dhO5yNtXkloK1devYwyYYTt+E8RpTmxFxu2jxg5PIBM4w0kLzlBucvkbanxglTLErJnRI3gGWgtxKy9hsMxRWvAKCzowAa9qTCDELGMf6SWBYbVrvNM2Ufu1QGPjip1UZ2g2S8xBPrAIh91w06lyI5Ox+VvfjWeHq+E2sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=dxUVRkZp; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOsuBTJR"
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5a0bf814be3so57800eaf.0;
-        Wed, 28 Feb 2024 11:19:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709147988; x=1709752788; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=phvTuz6PNOiEIMAaVEz5O2kseqWR4cE3nLmyIyGPTqU=;
-        b=DOsuBTJR8YoeLwh1smaxlM8h1cOf45FoBq+ePgIEFbhHJfHN4pwNw3EpHvNhqVYGIh
-         Mbq11xwDRmOqynShN4Y5JmEk7U0H9eB3dSTX233TUD7vV+z2IPtUMlytaBmXxzaElLjO
-         K/uWJQFS9qtMBBxCtOptjLg3yD9Dujl4v0a4mxfR0lwJSEoMUkLu3NLg2VV1r+LW3XUD
-         Df8xsJq+/xVzXCa17y2/WtsUJT2+mn5Q0XARgyrzfGuDsupfsa97OW9SrjKJxTpv1lnV
-         Gb4b3z7rPnjA8uIhP7/IaMpUejgmciVy/fJaU1a71Ld0yeutQRqeqjfqEKrEZvyTlQBp
-         FVNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709147988; x=1709752788;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=phvTuz6PNOiEIMAaVEz5O2kseqWR4cE3nLmyIyGPTqU=;
-        b=jJ9cYAtDRgjmtedh2Ahq2bqXPksc23WErDcEowU1MC01cyErxUcg65k1FcNS9p00nj
-         q/pvQhHoHdLUuhmtonoQpDfcn6Sc91F+5TIE1wml699Rg4As1fivMGDOkahZqdHHasqZ
-         LBwCARhL21zCzr5ywUPf9EvDWtCEwQJVs7F7sKnXDL36Wv9T+tHXppSO/lX/+YFWcud+
-         tWaqEsLoqeabbRQ+dNV+iBvhs5ft7opUdqh1yUoKwwZTRIYOj2KNctqY8mpbP0l9sjti
-         4v//pRuFUyNWIflhWMJV7e8L+5o98wOyBgMT9HFeHX05jDagyEqa2T9hFRIw+JbFbZKF
-         q9fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUesVQaOC2IkkoGDIoQEY7b0wQHMbRZ0VG1VaKb19zToW/IrMhmxgFMIaVKG5lCiwrRQHsYOflpiv70XAEn4C/3tRbWnk+ISrLl6vxRQ35SMR98S0eXfTZ3vczF8FjGw5G2tZGvTkZCYTG9zxkD
-X-Gm-Message-State: AOJu0YxLcmQFgtlXUMWBQwYZ2fuWWs3LrlJkaBEKXVcAWiUA7CCjGlyJ
-	jaMjd0DORR9Vy+tSuyjezKg3iIx9kY8caOmjbG6+rv4I8iVIZPXbNaPxGM7CEYCeE/81Gs0QjIa
-	FHOdn31vXAnhnebnPqt4ZeIcQVardKUpc
-X-Google-Smtp-Source: AGHT+IH/EIolfDA4zKZNCvS17yEvKi+CDTbOpEYfpEr3bP+kiR7I5G9Me13eUg8HC7hX1ig2yHn1UaJ20jH2Yr8I814=
-X-Received: by 2002:a4a:351c:0:b0:5a0:daf5:a5d0 with SMTP id
- l28-20020a4a351c000000b005a0daf5a5d0mr523851ooa.9.1709147988479; Wed, 28 Feb
- 2024 11:19:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="dxUVRkZp"
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 394E1418B5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1709157440; bh=DO5e71RdTX5yUtcfDd+c4uOig1miJfhV0O+dktJFG1I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=dxUVRkZpaECQw8FDTWr//PM0MbQcGua0rXo1i2RpfOg0OFNM1sBN2VIFLkow6V+yK
+	 9dbwd6yXwx0gRV0fpj+A4KUVKQi/4fNaxob9Tv4WKGt0b6tk2QVcD7bckWP6Wz8AL+
+	 92vjQoT6nDPMomFH24YYXNGpUeL5zKj5S6HJ+vGcLByQ18LH4vyddkcCWkgyzMclIH
+	 l1IW7Uqye+8Z9XHCThRr1EUVe49NoP6ABrnlSKNl2mtMzgg5FdtdpQdMZMcIJ61HPP
+	 jMPNFetu60PQABmDiSBnHA+bOqif1H/+u0kR8JJGRil3MuRGVZX2bIv6cn1asyckOw
+	 KY8QdtUa7uuGg==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::646])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 394E1418B5;
+	Wed, 28 Feb 2024 21:57:20 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas
+ Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] docs: submit-checklist: structure by category
+In-Reply-To: <20240226104653.54877-1-lukas.bulwahn@gmail.com>
+References: <20240226104653.54877-1-lukas.bulwahn@gmail.com>
+Date: Wed, 28 Feb 2024 14:57:19 -0700
+Message-ID: <87h6hsp800.fsf@meer.lwn.net>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <98298b2f-7288-4b0b-8974-3d5111b589cb@moroto.mountain>
-In-Reply-To: <98298b2f-7288-4b0b-8974-3d5111b589cb@moroto.mountain>
-From: Stefan Hajnoczi <stefanha@gmail.com>
-Date: Wed, 28 Feb 2024 14:19:34 -0500
-Message-ID: <CAJSP0QWW2QvibpcrZbcLzVp8ngnooiTqP8i2emd+0sdCj_7Yww@mail.gmail.com>
-Subject: Re: [PATCH v3] vduse: Fix off by one in vduse_dev_mmap()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Cindy Lu <lulu@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Xie Yongji <xieyongji@bytedance.com>, 
-	Maxime Coquelin <maxime.coquelin@redhat.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Brauner <brauner@kernel.org>, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-On Wed, 28 Feb 2024 at 13:24, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> The dev->vqs[] array has "dev->vq_num" elements.  It's allocated in
-> vduse_dev_init_vqs().  Thus, this > comparison needs to be >= to avoid
-> reading one element beyond the end of the array.
->
-> Add an array_index_nospec() as well to prevent speculation issues.
->
-> Fixes: 316ecd1346b0 ("vduse: Add file operation for mmap")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> v2: add array_index_nospec()
-> v3: I accidentally corrupted v2.  Try again.
->
->  drivers/vdpa/vdpa_user/vduse_dev.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+> While going through the submit checklist, the list order seemed rather
+> random, probably just by historical coincidences of always adding yet the
+> next point someone thought of at the end of the list.
+>
+> Structure and order them by the category of such activity,
+> reviewing, documenting, checking with tools, building and testing.
 
-> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-> index b7a1fb88c506..eb914084c650 100644
-> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> @@ -1532,9 +1532,10 @@ static int vduse_dev_mmap(struct file *file, struct vm_area_struct *vma)
->         if ((vma->vm_flags & VM_SHARED) == 0)
->                 return -EINVAL;
->
-> -       if (index > dev->vq_num)
-> +       if (index >= dev->vq_num)
->                 return -EINVAL;
->
-> +       index = array_index_nospec(index, dev->vq_num);
->         vq = dev->vqs[index];
->         vaddr = vq->vdpa_reconnect_vaddr;
->         if (vaddr == 0)
-> --
-> 2.43.0
->
->
+So this is clearly a step in the right direction, so I'm not opposed to
+it.  But I do have a couple of thoughts:
+
+- This document is old and unloved.  Its age shows in a lot of ways
+  (wmb() rather than the sorts of barriers that are socially acceptable
+  in 2024, for example).  It makes no mention of the CI systems that
+  should get their say for a lot of subsystems; nor does it mention the
+  subsystem-specific maintainer profiles that should also be
+  consulted. And so on.  It needs a lot of work rather than a
+  reshuffling.  (But, as I say, the reshuffling is an improvement, so
+  I'll take it).
+
+- It's a bit of an awkward fit with submitting-patches.rst.  Someday
+  we'll have a set of coherent docs, maybe.
+
+Anyway, I'm done grumbling now...:)  I'll look forward to v2 -
+preferably soon; I have travel coming up and may need to cut things off
+for 6.9 a bit earlier than usual.
+
+Thanks,
+
+jon
