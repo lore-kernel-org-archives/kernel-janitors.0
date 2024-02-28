@@ -1,61 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153C51361C4;
-	Wed, 28 Feb 2024 22:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1ED13D2EC;
+	Wed, 28 Feb 2024 23:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709160768; cv=none; b=QAIWOPEs1D7CbuHCtU1bqfCtlhTFGvqHMqwnaALYIWshfoV2enOH/cpDbXR6dHYmZ4GOOvOvj8gJoo1pocWaFLTLefT6FOdNe3LKWYgFLpIhG8aNmq1empLbQ3nVh0aj4+A+kGk3waw6od18CK0SzXzJEK9mY61kxmF1GV0cqC8=
+	t=1709161393; cv=none; b=Yvfb2eNwT+OQBMKBthtFAiJGShbO8OSpTdWabzd4IdMi9JBxkeJyfdWmySIICybCs1fYFeTPt4vEu2tFDpSXG/dTwoBuCfw1xj27qHDU1crAlm9a5pM/KWFlAmpEf4AQvLEa/SOKmC9D6RsrpEm+/vTHF4v/5lIaZcrEzdCWj1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709160768; c=relaxed/simple;
-	bh=rp5tVm36pOFi7dx64Dt/TsUDvBpUSC1wYSU105mX2PU=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=V5FH5TtXzAeFrn4iRK6qaBsmc/ZrqkbTRttSWzwjhUukF3fcXaN4Vr67rmnwBkX8S2imW+/HWhOLgSe/Sk0abVDkkknGbnehgnbrWXF6v/SJZGBU5X3fICSK5KqBGBDz/Z5fOF/0uxbDJmxgsnVxAGgtlfubryrEK9ZJioE4HTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ig2DdpEH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709161393; c=relaxed/simple;
+	bh=po5FvhdrjHlOz2JRmBTxwzgRG233kHblzB3DOAhWYmY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nYl8Q0bCNvBOaWiSvsXE3fwddTKlZ3rZc4L/5AhXEkxaaFbqV53JgKJXuKfaAJEwX5+hVfRtwmZJxG/Ot6RA6Nz5BMKiHkh1TE2UlFbXBkFVXqOVLmRvgTfZnY8wqU7VZAGPnESNfhDXzq/NNu3kW9/6IwuJq43NV9vu00CRlxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UX+Nty8i; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ig2DdpEH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9538C433C7;
-	Wed, 28 Feb 2024 22:52:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709160767;
-	bh=rp5tVm36pOFi7dx64Dt/TsUDvBpUSC1wYSU105mX2PU=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Ig2DdpEHakycymqnNy15snbZp0I4HbIi4BpEasJXH1D3fcloMOav5lrFBgx6S2JBv
-	 b5F+KzrIRvVT71I4eLFIgLH9uStyNgE99TftvtIW151BfnD9nyb/o4bEVtKOvW/hZS
-	 QKiNwHG8uz1pywAghTvmTXfSbB0dZ2dmV3WzX74Y0HGM+H1NA1yUUVWBI0M21aOCgB
-	 Rwq4ZhHvO/54OzQyYr9b1EMRZ43cWC8tO34YAQ8Y9gMIUM1ryL6V/vEQ4VHxNE3OHL
-	 fLRgKF+8eeyEy2cytGn8pbbDEst5mrNBZ4D76FOjAdhXtnr3r+NOAPJyX9x3zLamUt
-	 geE7IiDwdnmxw==
-Message-ID: <db086a936b9583a9caca3117f830fedb.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UX+Nty8i"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=exl8mldDgfMmNdvFA8534z1ZX7bw2tXMon2gQ9u2Kc0=; b=UX+Nty8i10/+0ZGaNcSgbYFxUk
+	AO5ZurXOhP9FZzoxqWRQO0GU/RUDUFHxGqwb2FOA+Sl61CatxoT+LKm39IC5KitnyGuagPpu5Ruid
+	nnvoz7pyl2Ae6d/ZlL2KelFwbu/Zmf0XgNDU4OFHa743DSKPlFiUCbaCErD0Bi36BoUfTPvy8wNY7
+	XDe/lv4aeFh4EsSNqdkH6mNbRhP169iFSbBmeAGpZZLdLJD18wmbHVPTbENlNJMZZiOukfxxNvjb/
+	2+cN44S66anzAxL8bJtCm31tWXih94rXyD8/wNXSorOWFkYZKBIJe6mCkjjfqlp8NJHq4p46zc6oZ
+	KyGmk/QQ==;
+Received: from [50.53.50.0] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rfSxC-0000000BE5a-2kXP;
+	Wed, 28 Feb 2024 23:03:10 +0000
+Message-ID: <4bec9a50-e846-4507-9332-22bd7a05e7f2@infradead.org>
+Date: Wed, 28 Feb 2024 15:03:08 -0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240223134347.3908301-1-colin.i.king@gmail.com>
-References: <20240223134347.3908301-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH] clk: clocking-wizard: Remove redundant initialization of pointer div_addr
-From: Stephen Boyd <sboyd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: submit-checklist: structure by category
+Content-Language: en-US
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, workflows@vger.kernel.org, linux-doc@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Colin Ian King <colin.i.king@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@amd.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Date: Wed, 28 Feb 2024 14:52:45 -0800
-User-Agent: alot/0.10
+References: <20240226104653.54877-1-lukas.bulwahn@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240226104653.54877-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Quoting Colin Ian King (2024-02-23 05:43:47)
-> The pointer div_addr is being assigned a value that is never used, it is
-> being re-assigned a different value near the end of the function where
-> it is being read in the next statement. The initialization is redundant
-> and can be removed.
->=20
-> Cleans up clang scan build warning:
-> drivers/clk/xilinx/clk-xlnx-clock-wizard.c:501:16: warning: Value stored
-> to 'div_addr' during its initialization is never read [deadcode.DeadStore=
-s]
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
+Hi Lukas,
 
-Applied to clk-next
+Sorry about the (my) delay.
+
+
+On 2/26/24 02:46, Lukas Bulwahn wrote:
+
+> 
+>  Documentation/process/submit-checklist.rst | 157 +++++++++++----------
+>  1 file changed, 84 insertions(+), 73 deletions(-)
+> 
+> diff --git a/Documentation/process/submit-checklist.rst b/Documentation/process/submit-checklist.rst
+> index b1bc2d37bd0a..7d8dba942fe8 100644
+> --- a/Documentation/process/submit-checklist.rst
+> +++ b/Documentation/process/submit-checklist.rst
+> @@ -11,110 +11,121 @@ These are all above and beyond the documentation that is provided in
+>  and elsewhere regarding submitting Linux kernel patches.
+>  
+>  
+> +*Review your code:*
+
+These "headings" (?) shouldn't have ending ':'s IMO.
+Maybe they should be real headings?
+
+Otherwise the patch is a very good & welcome improvement, although as
+Jon said, the file needs some TLC. (after this patch is applied)
+
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+
+
+Thanks.
+-- 
+#Randy
