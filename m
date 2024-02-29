@@ -1,77 +1,101 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D7F64A8A;
-	Thu, 29 Feb 2024 10:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D857995E;
+	Thu, 29 Feb 2024 10:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709202354; cv=none; b=XuDVt9NAIjo3YMaRmI45eihXHraapkew2UrtjziDWtI9vkE6XRoa9Rk8UbJtVaPsOhli06HTewEmXV8s/dJ+RLf7mBrAfM2E5YUfbXLT8Em5az3vQRv2yypFZXX+VDV1IOdPMdgXCVfQs8WmMqSn41XSNe/i4m/HqMGIAX3DsG8=
+	t=1709203018; cv=none; b=FoyCb9BT6pRRcqfuMUniWmNx5W2lEtPiYzifamjaPag4qPQPoDSIzl56imp6pDcxRZyEg1yi7B7WS4qdaopxKrmGaj5R18maCWyYOfGwWUxphwD798LOkcsDKhM0AKwQgXAqio3y2DVgY06qxBgDUO8uJga/PASW9YVjzc0k33w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709202354; c=relaxed/simple;
-	bh=BZOzxkLaNwJzyuWMx5kdxPnNkLL7LABOOFE1Vzr+SB4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JFFGpM0PEURtldhjh3+1B36GeMr8mX3o0Z3nYJMts+xJq4T0jjsZcA0eluSnMnpvYetbXb+MfyoL2zZwNO2MYURJAz+PzLfctKtI5/2XOTY5u58f1EPfdp5h1aWoMTlDpWx+//KKvznTo0RZUvGEn9X2fBlEdgGc+G+dAib1azQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iyQi1zYZ; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1709203018; c=relaxed/simple;
+	bh=Bsbvr0XH+zc8GCj+JI/JzIn86gN+UlJQiaX4Au6r7U8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HtDi2TpLhTVc3wVeN0M8C0hlKJMWqps42foff0gCLqN56rLg2ZqAf+qlxyEPmC58gRXn3j+OApBgO9X5oOvqJSNrYJ8O9ISi8LT7uROFsFtLWk6ulCAhpNnx8e6jhs959e2CIen1lS6kpHNgK13SVo/hcSK5V9nK1wVLpWBk1b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TvCjNs+C; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iyQi1zYZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1709202353; x=1740738353;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=BZOzxkLaNwJzyuWMx5kdxPnNkLL7LABOOFE1Vzr+SB4=;
-  b=iyQi1zYZ42f43Ljn2az1KeblEJTEekiREoJE3zWqfInP1FySP7MQRlTJ
-   qOXAnSd55kxvvnBp19T9c2T0njxYkI8dIKAO98U/TMmozsOx6/LILGJ0K
-   EMXhZV+tg/Rl6tJWFD8zpA+6C2AiV9Ox60PEk2IvEBW6/c2/g95Oj8iOk
-   tjRkU2jLUk4l0P6t3IHp15bXr10Lt4YqlSbSEv3iyyF+IUgg9N4xslF3y
-   C8vfTQIDdKt+wI2QZHlWwApbP48vEY1iQzbkJh70h4w3VPNu5+r242Ufc
-   isRRiO/4ouzRWmFsjxahYSFnhr3ly82B0IdHMcucWzwIxhfUyzcXDB7kw
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10998"; a="3786392"
-X-IronPort-AV: E=Sophos;i="6.06,194,1705392000"; 
-   d="scan'208";a="3786392"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Feb 2024 02:25:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.06,194,1705392000"; 
-   d="scan'208";a="30961090"
-Received: from smatua-mobl.ger.corp.intel.com (HELO localhost) ([10.252.47.143])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Feb 2024 02:25:49 -0800
-From: Jani Nikula <jani.nikula@intel.com>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>,
- workflows@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas
- Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH v2 0/3] docs: submit-checklist: structure by category
-In-Reply-To: <20240229030743.9125-1-lukas.bulwahn@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240229030743.9125-1-lukas.bulwahn@gmail.com>
-Date: Thu, 29 Feb 2024 12:25:46 +0200
-Message-ID: <87plwf8t3p.fsf@intel.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TvCjNs+C"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-565b434f90aso1128588a12.3;
+        Thu, 29 Feb 2024 02:36:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709203015; x=1709807815; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H1NlY8tMN7P2Y6bWlORzMKpAclH/YyADf97OHECAI4Q=;
+        b=TvCjNs+COqu/8jhd2Q+IWnTyg9nvyegB1GT8+SXzmiNcrNWjd8Z77pD/9sWB5WAYwd
+         /cJ0VbdJaghZPWd0wNzojy7QsZxQagHTm9k5WcRZ9+631/ZsqQZRT7Yb0pdkaaV5y+xo
+         QXeyLfvv6qhVFvg/0d7uRbI48C1yuKYLHWkPuDN/xw+kPsQTGprVJI7IyiYUU2r8xMtQ
+         OniIsRoR8nBxAHhmvI1zpJmo7lMysNAAT/yoM5148ZjpVRIflvxRjZE/tNPPdLs6VRus
+         3kprKC0rQvKUH3GV/TZJOR95aB3HIVxVQ78N1cqjBu/7A59wLkgME5yrYAI6bWwJcsUf
+         xU/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709203015; x=1709807815;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H1NlY8tMN7P2Y6bWlORzMKpAclH/YyADf97OHECAI4Q=;
+        b=imEv6GcUKuru8htq1mX52G9TgECvK17/YgyOLB2L6lqkq2NLDYMOSBlX4Tjq30hY26
+         A/P2IEVd0x35CZcZ/WOkDHXPJt1qjFeBSBd3PLBNTrykX65UYTanDXyQpxqOR7dFU7un
+         M25anddkQrOTtosoG5kFrLufsivivLXHSpniWK+KFrfRVS6jtMl3Gz8pEdo54msxv26i
+         9SFObTG70AtV98fDZsCXX9KjugiY+2EIHRS4sE11ZflNFAG8jt/yy8RKYKwPBRsZxKpI
+         dXORoTF7EXU6+j0DlJ1PLqNqXc8fGfmk//QAaKF5cqWcJrJoaAugZvImpRUMuqvHEDwM
+         O85g==
+X-Forwarded-Encrypted: i=1; AJvYcCXV6B9yFUfZDGSnbSW+kWOTmPOJ2X6X99aBFZf7nUUqDlYO3szj4QniVHnGuJMSpaF4CdE+bceUnpPEBuNAWXpUgsE2kVphkwV6E/GOmFpHxr5ouU0xtlr3pPVxIAyN0B4WAXggBNAQNDbXjL+HRuria+jn+zS0fJV0sxtW0DWb/+m44ZZ/okLLsxCY1dETIjwlQY3dYqm5Wb2X8FNRZ2d5S/Tv
+X-Gm-Message-State: AOJu0YzmX7FmQC71iN/Bs3y3RRAZppLmLADgAlNe12+54nwxLxpIP7O0
+	LA6D7YbUhb0XYWBuYgS515cS/zckle04ok0tH19IKymqU+VBaF10vAgNVM9Rq6kgRcxxbaWn/ew
+	sTpJOb0c5zwjM0xLhz/FMqGWHzMBcYdFp/No=
+X-Google-Smtp-Source: AGHT+IGjKN7QsUcypeAA5SHqe0dGglsBIpMg+8XvC9BB3DHUw1Cx+eFzkMZiBo687XNl2n8mZmBho32y+QVbvKVpSLw=
+X-Received: by 2002:a17:906:278e:b0:a3f:c4f9:eb16 with SMTP id
+ j14-20020a170906278e00b00a3fc4f9eb16mr1185894ejc.20.1709203015072; Thu, 29
+ Feb 2024 02:36:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240229030743.9125-1-lukas.bulwahn@gmail.com> <87plwf8t3p.fsf@intel.com>
+In-Reply-To: <87plwf8t3p.fsf@intel.com>
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Thu, 29 Feb 2024 11:36:43 +0100
+Message-ID: <CAKXUXMzySDQfuF7+AY77hXQbP0GuNMwdTrx6w_1ZP5R4O4kNqw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] docs: submit-checklist: structure by category
+To: Jani Nikula <jani.nikula@intel.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, workflows@vger.kernel.org, 
+	linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 29 Feb 2024, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> from Jani Nikula:
->   - turn categories into subheadings
->   - use common heading adornment
->   - change to bullet or autonumbered lists
->   - propose those changes as separate additional patches
+On Thu, Feb 29, 2024 at 11:25=E2=80=AFAM Jani Nikula <jani.nikula@intel.com=
+> wrote:
+>
+> On Thu, 29 Feb 2024, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> > from Jani Nikula:
+> >   - turn categories into subheadings
+> >   - use common heading adornment
+> >   - change to bullet or autonumbered lists
+> >   - propose those changes as separate additional patches
+>
+> I was hoping these cleanups would've come *first*, but up to Jon to
+> decide if that really matters.
+>
 
-I was hoping these cleanups would've come *first*, but up to Jon to
-decide if that really matters.
+I see, changing to autonumbered lists could be done before, but the
+subheadings only exist once reordered.
 
-BR,
-Jani.
+I am still in favor of the squashed commit: we are talking about a
+very small document that central content has not been touched for a
+long time. It is not code, where someone would bisect into. So, the
+history does not need to carry every single stylistic change as yet
+another commit.
 
+Jani, I can do what you are asking for---but it is certainly going to
+take yet a few hours to have the commits exactly into that form of
+stylistic changes.
 
--- 
-Jani Nikula, Intel
+Let us see what Jon thinks.
+
+Lukas
