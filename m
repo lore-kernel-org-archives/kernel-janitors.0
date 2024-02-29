@@ -1,115 +1,91 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F75F4AECF;
-	Thu, 29 Feb 2024 17:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08AF6CBF3;
+	Thu, 29 Feb 2024 17:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709227378; cv=none; b=S9gZ7Ep1cDG0Tx/TnRU4lfOtK4fQ6ePa3khDQjyM79uDaMHgSndJL1AqDxDoBtK+mZI+5LyDU+TTgpkV3g1TOwbcOZSK2q48pcHvNeKRElvEC7L9eyMfEiCjWIOKnnE3tUubVfzbCOS2q99TSuitLUOg3QPHv9V4a4go6LJUH98=
+	t=1709227889; cv=none; b=Cl+v/51rsuggxU4+S9gTsELMo83kiSXlKW10Qpt8MvasV82eHcubaNhQFRPo3ihWFf9NK0KIKJB8QLM6W11ELLwER7c1biMnbxK71Pksnq6nPKkWZNxFVcy3n0HgpSbapV1Qu/b5kjOUgbGlFNDDySih5Kiqu8bhwDrV2/3ppQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709227378; c=relaxed/simple;
-	bh=SQbsvdu0cE2Ik/fBRCrlAO/Q4tea0oky+nUL5VmextQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iqGqCrn/yZgglGiPoWtWKni4LRfohsdh4044NrfpnLkP3Q8lyrr0ex1VkP0eYleM4sAQHyFnWDwrmdgMn0k8r+N1ssQ+QK0nNbHGGrttfa43NbqA/2ffYFCmoZEZ+otj5Zp8y9cBLZE5aqsdbX2Q4L/B7anCDrZvNaQsKOspEyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RweJnD1J; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709227889; c=relaxed/simple;
+	bh=9DzNczRfLQHZQ7xM/5Rsf1G4ssLJqqDQeagj+2HQ7og=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hXk0pu9DLg2AWM8bkoOpqJ65PW2OIItWLqo3hPH9ztBlRBJAPuDrgfqQRr7ZGoWc/mWXDFFkZkMlyj+fP3EniDE/uoStDp+PQov66EjervP1dH6U11tgnCPxUXLzlwUzEpsYcMF2Ok/HABcXQmHQPF+GCdnhJVR6mn3X7LytO9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=diJHgxM0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RweJnD1J"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-33de6da5565so668084f8f.2;
-        Thu, 29 Feb 2024 09:22:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709227375; x=1709832175; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OklTFrhYXGCqleMpBHtH1y+bu7HTN31ZIOzM6nBjKdg=;
-        b=RweJnD1JgCaRrIaDoaoT64ZJKOxS1ixNCshr+f/ufnIIZXdoymoSYx2f0kkthXC7ey
-         LlqReKi9sfcv86flfnYo0btcyl8eUYe+MXwipCC8zUOHbUBlKiGZNsGI471zj3j0dFVF
-         W4bLEexDQGszSScRAH7Yh7v7ngApVyrip9Wy8BRm3F1j+ZftUjZsfeMWOYLX/lG0M+hg
-         Ha+b7INKQyLlup+TTkxRZc1OqH23wwrcjYwzkPYIUq2oVMJWm2hFJUq4lGcgAk16JclR
-         N51SlEyeFnUfcYUB2y/KMuy/cSGbJ2+am3vEsQjtm0Q3SJDyRQZdk/SNnWueyQ7wSMO4
-         iNhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709227375; x=1709832175;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OklTFrhYXGCqleMpBHtH1y+bu7HTN31ZIOzM6nBjKdg=;
-        b=UWxe1SAZlEzub26B0FOn8mCEOuOItvjlxV/NN4V28eAr67VleHttF8z70kaMyGjBUA
-         4aMQr56GmZcy3ylpDRZ3ab1JKwOQ7Oo/Wt27nwvR+zsUXJoOl7HZLv0znxQ6X1+VylLX
-         8AP7faoKU8jYpu6D1aAX1CiL2QpIAmY4kiFJXAPpWIkRJ8KMMH0s+xudDC6yU1ST+WK+
-         peO8Xw8ivD/psLpTJV2ZZwvR6QcRdNxXuOA2F4nOiHWIoceJr78GJCMvtcbK22fUERGl
-         33XGn7B4Y1NzkQwHacxNlGfYo1KCMflM03hIl1ja8RKoeX7KAUEIaK3eOQZ+czOCYwu3
-         JMeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWw6/B9actMDJR80OaUfRPadOgx24srRm69CyGpjtDrNCeUs9w38iJXnrUNx5yh5Yo3A+bkQ3ud2lVLzTX6/F7rd90KJ8T0KqEPeFvia/ZAMIskoil84S7tgXAFHsiM2OxYg4q7KuLWR9JaB6mG
-X-Gm-Message-State: AOJu0YzALQCbKmxB/JYVwD8oRwuEBHLzeOedrvvro76xwysquun2jeLZ
-	jdF7paelGcWO9B1O7XB6IGBVHVJyo0rSJq3HUK4SI/ZNrPDZ97/A
-X-Google-Smtp-Source: AGHT+IHWTt6rjRxOqBV5Im6+I/dsQJ6kYbTSypm3wfepuXBXRGFF9dZ2SpnW45gfNfDja78qG5JKHQ==
-X-Received: by 2002:a05:6000:1e81:b0:33d:284a:401 with SMTP id dd1-20020a0560001e8100b0033d284a0401mr1674096wrb.68.1709227375232;
-        Thu, 29 Feb 2024 09:22:55 -0800 (PST)
-Received: from [192.168.0.101] (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.googlemail.com with ESMTPSA id bw1-20020a0560001f8100b0033db0c866f7sm2318693wrb.11.2024.02.29.09.22.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Feb 2024 09:22:54 -0800 (PST)
-Message-ID: <5e705d83-871e-4403-a77f-ec197eefb7c4@gmail.com>
-Date: Thu, 29 Feb 2024 17:22:54 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="diJHgxM0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D5D1C433F1;
+	Thu, 29 Feb 2024 17:31:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709227889;
+	bh=9DzNczRfLQHZQ7xM/5Rsf1G4ssLJqqDQeagj+2HQ7og=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=diJHgxM014XnHKWcaxVwTBkW3gX57RmZxYWS+sJS+A7HG35g3mzRWzGi6YrIHriPn
+	 QgUZzvQlv4DAI1wWyZ+KYWohVL6+qvRqKOBAKh1Eg5afeYkADvoypyDL7wSSngpC9e
+	 gptRCTe8jpqiSosxVs/SQ/fTdvQu0bKclizFrICODQB/No3OTJkAMW8KxPl8K2qofN
+	 m3Sr8deGN0pYmVf2ay7keF8TOqQmkl3/tOgN+rS6S939MLrazA2ETU7a+bTmTSuvaX
+	 4tS8lqpbf3gxEcBRMFT2oG9c0M0T0FcQqIE7YxH2I2hK2idblOSQSfCKdGnWtET+pJ
+	 QvuC8j/TNBaQg==
+Date: Thu, 29 Feb 2024 09:31:27 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: "Colin King (gmail)" <colin.i.king@gmail.com>
+Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] f2fs: Fix two spelling mistakes in
+ f2fs_zone_status array
+Message-ID: <ZeC_b8JipJyjycW3@google.com>
+References: <20240229091449.105032-1-colin.i.king@gmail.com>
+ <ZeC64dDr-nBGlsli@google.com>
+ <5e705d83-871e-4403-a77f-ec197eefb7c4@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] f2fs: Fix two spelling mistakes in f2fs_zone_status
- array
-Content-Language: en-US
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240229091449.105032-1-colin.i.king@gmail.com>
- <ZeC64dDr-nBGlsli@google.com>
-From: "Colin King (gmail)" <colin.i.king@gmail.com>
-In-Reply-To: <ZeC64dDr-nBGlsli@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5e705d83-871e-4403-a77f-ec197eefb7c4@gmail.com>
 
-On 29/02/2024 17:12, Jaegeuk Kim wrote:
-> Hi Colin,
+On 02/29, Colin King (gmail) wrote:
+> On 29/02/2024 17:12, Jaegeuk Kim wrote:
+> > Hi Colin,
+> > 
+> > Thank you for the fix. If you don't mind, can I integrate this fix
+> > into the original patch?
 > 
-> Thank you for the fix. If you don't mind, can I integrate this fix
-> into the original patch?
+> Sure. No problem.
 
-Sure. No problem.
+Thank you so much!
 
-Colin
 > 
-> Thanks,
-> 
-> On 02/29, Colin Ian King wrote:
->> The array f2fs_zone_status contains two spelling mistakes in
->> literal strings. Fix them.
->>
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->> ---
->>   fs/f2fs/segment.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index bdb27e4a604b..072c4355d3d3 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -4921,8 +4921,8 @@ static int sanity_check_curseg(struct f2fs_sb_info *sbi)
->>   const char *f2fs_zone_status[BLK_ZONE_COND_OFFLINE + 1] = {
->>   	[BLK_ZONE_COND_NOT_WP]		= "NOT_WP",
->>   	[BLK_ZONE_COND_EMPTY]		= "EMPTY",
->> -	[BLK_ZONE_COND_IMP_OPEN]	= "IMPLICITE_OPEN",
->> -	[BLK_ZONE_COND_EXP_OPEN]	= "EXPLICITE_OPEN",
->> +	[BLK_ZONE_COND_IMP_OPEN]	= "IMPLICIT_OPEN",
->> +	[BLK_ZONE_COND_EXP_OPEN]	= "EXPLICIT_OPEN",
->>   	[BLK_ZONE_COND_CLOSED]		= "CLOSED",
->>   	[BLK_ZONE_COND_READONLY]	= "READONLY",
->>   	[BLK_ZONE_COND_FULL]		= "FULL",
->> -- 
->> 2.39.2
-
+> Colin
+> > 
+> > Thanks,
+> > 
+> > On 02/29, Colin Ian King wrote:
+> > > The array f2fs_zone_status contains two spelling mistakes in
+> > > literal strings. Fix them.
+> > > 
+> > > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> > > ---
+> > >   fs/f2fs/segment.c | 4 ++--
+> > >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > > index bdb27e4a604b..072c4355d3d3 100644
+> > > --- a/fs/f2fs/segment.c
+> > > +++ b/fs/f2fs/segment.c
+> > > @@ -4921,8 +4921,8 @@ static int sanity_check_curseg(struct f2fs_sb_info *sbi)
+> > >   const char *f2fs_zone_status[BLK_ZONE_COND_OFFLINE + 1] = {
+> > >   	[BLK_ZONE_COND_NOT_WP]		= "NOT_WP",
+> > >   	[BLK_ZONE_COND_EMPTY]		= "EMPTY",
+> > > -	[BLK_ZONE_COND_IMP_OPEN]	= "IMPLICITE_OPEN",
+> > > -	[BLK_ZONE_COND_EXP_OPEN]	= "EXPLICITE_OPEN",
+> > > +	[BLK_ZONE_COND_IMP_OPEN]	= "IMPLICIT_OPEN",
+> > > +	[BLK_ZONE_COND_EXP_OPEN]	= "EXPLICIT_OPEN",
+> > >   	[BLK_ZONE_COND_CLOSED]		= "CLOSED",
+> > >   	[BLK_ZONE_COND_READONLY]	= "READONLY",
+> > >   	[BLK_ZONE_COND_FULL]		= "FULL",
+> > > -- 
+> > > 2.39.2
