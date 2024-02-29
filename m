@@ -1,91 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08AF6CBF3;
-	Thu, 29 Feb 2024 17:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2678132C1E;
+	Thu, 29 Feb 2024 18:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709227889; cv=none; b=Cl+v/51rsuggxU4+S9gTsELMo83kiSXlKW10Qpt8MvasV82eHcubaNhQFRPo3ihWFf9NK0KIKJB8QLM6W11ELLwER7c1biMnbxK71Pksnq6nPKkWZNxFVcy3n0HgpSbapV1Qu/b5kjOUgbGlFNDDySih5Kiqu8bhwDrV2/3ppQY=
+	t=1709232987; cv=none; b=iluQHQFksYie2NJ2il0+JrHCl5Hs1morQ1fcIFLL0JJ1MYk0vDaDHWSescQa8govA3FXDyBtdv1KJslHzy/Eyzs/SfjcYiFnZjdUCAJG3FYi2339KJGP8PHcdALdWNKuP9b0op6vk9zSy9vTrcrcLiPRMYV4sSrhNPwppe4BT8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709227889; c=relaxed/simple;
-	bh=9DzNczRfLQHZQ7xM/5Rsf1G4ssLJqqDQeagj+2HQ7og=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hXk0pu9DLg2AWM8bkoOpqJ65PW2OIItWLqo3hPH9ztBlRBJAPuDrgfqQRr7ZGoWc/mWXDFFkZkMlyj+fP3EniDE/uoStDp+PQov66EjervP1dH6U11tgnCPxUXLzlwUzEpsYcMF2Ok/HABcXQmHQPF+GCdnhJVR6mn3X7LytO9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=diJHgxM0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709232987; c=relaxed/simple;
+	bh=EKoWtZULRre8yAsyfn1dkM46JTGZw1nHFJhhwMcc01w=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=RGdFuD7d8EAFZdI1cr1tlRIO600ELot2PqwyUBywr4mkm/T9Yj3dN7wd7GXIjznr4uji2D3atbFlaliTGqEOpfas3wqdUA+eZRXZ04X1tVMYr1NnBR5g79x0iHUiOj49t4zWuzW6lFhJ1Ifqlu3P0iGoTUeEv7F+sPiVvT76ABw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RW+iLcSi; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="diJHgxM0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D5D1C433F1;
-	Thu, 29 Feb 2024 17:31:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709227889;
-	bh=9DzNczRfLQHZQ7xM/5Rsf1G4ssLJqqDQeagj+2HQ7og=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=diJHgxM014XnHKWcaxVwTBkW3gX57RmZxYWS+sJS+A7HG35g3mzRWzGi6YrIHriPn
-	 QgUZzvQlv4DAI1wWyZ+KYWohVL6+qvRqKOBAKh1Eg5afeYkADvoypyDL7wSSngpC9e
-	 gptRCTe8jpqiSosxVs/SQ/fTdvQu0bKclizFrICODQB/No3OTJkAMW8KxPl8K2qofN
-	 m3Sr8deGN0pYmVf2ay7keF8TOqQmkl3/tOgN+rS6S939MLrazA2ETU7a+bTmTSuvaX
-	 4tS8lqpbf3gxEcBRMFT2oG9c0M0T0FcQqIE7YxH2I2hK2idblOSQSfCKdGnWtET+pJ
-	 QvuC8j/TNBaQg==
-Date: Thu, 29 Feb 2024 09:31:27 -0800
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: "Colin King (gmail)" <colin.i.king@gmail.com>
-Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] f2fs: Fix two spelling mistakes in
- f2fs_zone_status array
-Message-ID: <ZeC_b8JipJyjycW3@google.com>
-References: <20240229091449.105032-1-colin.i.king@gmail.com>
- <ZeC64dDr-nBGlsli@google.com>
- <5e705d83-871e-4403-a77f-ec197eefb7c4@gmail.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RW+iLcSi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1709232962; x=1709837762; i=markus.elfring@web.de;
+	bh=EKoWtZULRre8yAsyfn1dkM46JTGZw1nHFJhhwMcc01w=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=RW+iLcSiUD808cZ3zD3bg/NTr9RTIrGu16aY5OuhN0LTR/PMuABUuoeAaIES7eGB
+	 VxhIJz4QQPQb8XRdIgLtLMAauYMR4DuC61QHS3UVxqlv7gJZlij7HctCREGO3LjDW
+	 INrA0S6XUN6Yg4grq0XGARDR86SCYXX2KyhjEWxIVdcdMRer/Gbk9J4p07d33Aj1x
+	 Rruu1caBmS5WlsvSEpvUybEab6ZRBV+BTD5CyQSoDn42KvO/B/2yZiaH8x9E+v6iA
+	 VMUteae4DWXjt5gw/q8moZeMZ+NB4M14X1KIAXmZO+kDVC9AObzHYy2eA9sIsg57Q
+	 w+Mkae/6PpbXZ2jhnA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MoecP-1r4X1f18yP-00oyA6; Thu, 29
+ Feb 2024 19:56:02 +0100
+Message-ID: <dbebaea7-289c-47d9-ba06-cd58a10ea662@web.de>
+Date: Thu, 29 Feb 2024 19:55:46 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5e705d83-871e-4403-a77f-ec197eefb7c4@gmail.com>
+User-Agent: Mozilla Thunderbird
+To: linux-staging@lists.linux.dev, linux-tegra@vger.kernel.org,
+ linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] staging: media: tegra-video: Use common error handling code
+ in tegra_vi_graph_parse_one()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:5nHI55wJDHdGpQyhkuvBJi5YqQfCTQ34RVAV54eYhVrFpht0hYJ
+ dpu9AIS51aPwIEo4rVbUDLJtfkgUxasRSgpRVDR7zFZEPiHWrjypWHDp27FpQ4tG8KPiKr8
+ ZsgNifA8T+kv2cMCCRS/BVc/UcwogkKQY67JZgp15hfwnnwhZztIRGMvQZseWL2AwnNj8Np
+ g8bk4/kPqrA8tmfqa8XRQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8wIh9N3RJr4=;roRuaNv5zMgHjQW6x4d3+75EZOG
+ 74AgeDDDFxXuCBhSq5CvNPRp2bsPirhPPZxPGxHPE8jOtuFJx67/052c/Y+uNG3h8tpobITmA
+ 7QI3VdnQzMwDtEQxsokDbc70rYfgGD2OkdzntHfBmCdMMSj96b9Qo20FfEbmFm4HjtBOBfHpf
+ 17BSHM39B5uH5TV0rb78dPztfbQLcXZoPtltQrrSEg2iTQ4azX0Gbps3NjjrPpurq1a/hPTuN
+ gC5HIB7OulJJQsYww1RiPCg/yIDodvmwzqoRozB4n/cvTi64Qq6uZax7Xh5CV6Z/anNRSH0aG
+ nC8/9VT87Tlyp99PtLmAhGS8ix51Cn1szrvf5SkIqErcwwo08aU8mRqbqei61IlDYHHB4Grq0
+ S2qIwPqWbG/5uN/b6pJJFDwSHZ1d5b/HsR8Kya3uFTebWKPSUPU40Z730sKUAL4Y5/7dYfa7L
+ oMFuTLCbeCQiWK6DNa9R4q74ZyPjodVmwp3CmjOAG+VN9iL4vuE3t/Z2Iptt3pmntsNkJEAbS
+ TwP0zjN54m6wwoTIDBNr4LVJBW8Ssr4kdsPFJ4QUGzTRt8A0+qojnuN+Nf4pbar2xC4j2mf4f
+ vL/XR3La9h+WMrLcVY6340jvYV6WI82HJdElt2+J0dbMoaCReDnCrqNadeOe11i2ZY/D62ja7
+ hBzYJA8wY9/ef/bqS27fvR6Y3lUYzDbuQjbDseBRHkL8klj0ZZeUlLWIGTHOcfch3PvgV/izz
+ oD9dMvZPjdWFm/yAozYjbN3Qh4MzFSwsAb2JtgMEAf9+KmBDEMTp3km4TYAsQY/imurcWDlDe
+ GFp6eugJIc5b07rgr1RbRxBSYC5jMVduAYGl6xI+bsvlc=
 
-On 02/29, Colin King (gmail) wrote:
-> On 29/02/2024 17:12, Jaegeuk Kim wrote:
-> > Hi Colin,
-> > 
-> > Thank you for the fix. If you don't mind, can I integrate this fix
-> > into the original patch?
-> 
-> Sure. No problem.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 29 Feb 2024 19:44:36 +0100
 
-Thank you so much!
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function implementation.
 
-> 
-> Colin
-> > 
-> > Thanks,
-> > 
-> > On 02/29, Colin Ian King wrote:
-> > > The array f2fs_zone_status contains two spelling mistakes in
-> > > literal strings. Fix them.
-> > > 
-> > > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > > ---
-> > >   fs/f2fs/segment.c | 4 ++--
-> > >   1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > > index bdb27e4a604b..072c4355d3d3 100644
-> > > --- a/fs/f2fs/segment.c
-> > > +++ b/fs/f2fs/segment.c
-> > > @@ -4921,8 +4921,8 @@ static int sanity_check_curseg(struct f2fs_sb_info *sbi)
-> > >   const char *f2fs_zone_status[BLK_ZONE_COND_OFFLINE + 1] = {
-> > >   	[BLK_ZONE_COND_NOT_WP]		= "NOT_WP",
-> > >   	[BLK_ZONE_COND_EMPTY]		= "EMPTY",
-> > > -	[BLK_ZONE_COND_IMP_OPEN]	= "IMPLICITE_OPEN",
-> > > -	[BLK_ZONE_COND_EXP_OPEN]	= "EXPLICITE_OPEN",
-> > > +	[BLK_ZONE_COND_IMP_OPEN]	= "IMPLICIT_OPEN",
-> > > +	[BLK_ZONE_COND_EXP_OPEN]	= "EXPLICIT_OPEN",
-> > >   	[BLK_ZONE_COND_CLOSED]		= "CLOSED",
-> > >   	[BLK_ZONE_COND_READONLY]	= "READONLY",
-> > >   	[BLK_ZONE_COND_FULL]		= "FULL",
-> > > -- 
-> > > 2.39.2
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/staging/media/tegra-video/vi.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/medi=
+a/tegra-video/vi.c
+index af6e3a0d8df4..5a08d9551f8b 100644
+=2D-- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -1730,21 +1730,20 @@ static int tegra_vi_graph_parse_one(struct tegra_v=
+i_channel *chan,
+ 			ret =3D PTR_ERR(tvge);
+ 			dev_err(vi->dev,
+ 				"failed to add subdev to notifier: %d\n", ret);
+-			fwnode_handle_put(remote);
+-			goto cleanup;
++			goto put_fwnode;
+ 		}
+
+ 		ret =3D tegra_vi_graph_parse_one(chan, remote);
+-		if (ret < 0) {
+-			fwnode_handle_put(remote);
+-			goto cleanup;
+-		}
++		if (ret < 0)
++			goto put_fwnode;
+
+ 		fwnode_handle_put(remote);
+ 	}
+
+ 	return 0;
+
++put_fwnode:
++	fwnode_handle_put(remote);
+ cleanup:
+ 	dev_err(vi->dev, "failed parsing the graph: %d\n", ret);
+ 	v4l2_async_nf_cleanup(&chan->notifier);
+=2D-
+2.44.0
+
