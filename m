@@ -1,139 +1,97 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5392736123;
-	Thu, 29 Feb 2024 07:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA015821A;
+	Thu, 29 Feb 2024 09:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709193161; cv=none; b=hX+J4o+KTwUPXy5GqnoWFCcfCLX7eaZF+HaP841Gmpt/gKRrlgkaEnXeOC2BfIEnhilZYG/bfFvhBCrpvKs633k+hdwqu0H3BT7mMJiv6DlPJedAC0OBFcWeUEEDrCCiXQfqVLCPLUXBZC+dEJoCM4h5F7mXsFjw7ZoiJhdJ3vk=
+	t=1709198094; cv=none; b=Ch2j/PzjWPLL+gu+fHazlrH6P+oYYkYu4mrAmBg+d1Toh8QbLmcdss+q+pS4JbMYnyMRGzbz8EPBxCP9OY/kTXOLJ0vIamp7oSpdr6qi0gIC71WGgV08M1hLBlBuoBXdV621DLiybSqfpYKdwEgu9BVGFxPG9LkUDAAHaDOOnPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709193161; c=relaxed/simple;
-	bh=e0kBmdz6lHm0agLmmbZC7IlJJ22/X6+f6wHkV+FAG88=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=oCePv8BJhn4ACEgAK5tFzclGQXRpg3pYi0H5MGmv27GOu/mLDio89gOJU+Hq0XMtlFyCqywEwJlGzfARek4cKZFWYf03wTGTagOVryBR9T7Yy04fs70R5tn58DUcMgThITqom4eF1Czk4+iKCnWeGroigMA57NTyEvoNOhORT50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JKDn3jSD; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1709198094; c=relaxed/simple;
+	bh=C5R2TmBzlumHMHH2p7vy4pdnmxWie3CbQH1AmU1xvos=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=sKXhfV0UsfDQot6ptDjngnseP645cLfQN4nV6lYeoajIfNuhkn/qA14+RmD6sHSchkzqR51mp++30fxL2n3ZELPE1PsxRx6Uqve2SE9VKunKmIciSYO3rq4HHeDqhZkekEYSISXo7oHt4WkfIkhr8m/QtkkWmbnT1zV1Wmm0Is0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JtAdUVKY; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKDn3jSD"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1dc49b00bdbso6458595ad.3;
-        Wed, 28 Feb 2024 23:52:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JtAdUVKY"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-513173e8191so683770e87.1;
+        Thu, 29 Feb 2024 01:14:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709193160; x=1709797960; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5un4ACCZ7NErWeeOUddptPFbjqDwYB5cCq+sufhY4Dw=;
-        b=JKDn3jSDiP7Y4BykhdLllsCEvlPw7W6WVuPdfeGcLknk6w9hWrcZsu+f0q6rK5+7n+
-         4fH9GhKmxtLl4cwxBoZzTDVwlLed5emGaYGasAOO6kEh/9PX8uGm5lSucgxrN8x6U77v
-         qZXF+KFJzCZGr68UFLwjUWwUKwlkvclV//D8ASJb8pDkjb9gJXqrAZuHX3Vpf9EVafj8
-         daBpLgysAl5crljn4D8O5tOzGE2kixXFj1DzvGVCvLRPiOahEs+0QJUFjQRDZfEwsP2Y
-         ye760P7at0HE/jL0yaZqKvzmmpgInKJKCOLmyEc4zWaZZ4LMeIsQM+p/A2FgGApsSTyS
-         vy+w==
+        d=gmail.com; s=20230601; t=1709198091; x=1709802891; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BzPR/m2RFv6uhgD4TF2TCBedYS7ZWfD3SFjKIsmd5XQ=;
+        b=JtAdUVKYXjykd2Skxb7cmJF8BaNCOmvKWCcCij4/ia0XQtHgk8f/q7Jl5DjIPVhvWR
+         0c2n92tk1TAn8r8KsfTyL0WjFTRTcju6mOY6ugL06KAGNCrUqs/AkzUK7Jnn1cBeGPhv
+         UeqPpf0c6Nqv/wXsUa/Ue4HnFDOCWHci2usJx2cN4r3lIRHu7UgoPCOrhMctCvIWwSlS
+         dy+V8/JxUBIFfP0UhF8EP8dwy53BTD3vZOzXiAfZcU4q11H9mNNGcLrTYOkEDaLQz49a
+         rVv2g1v9utG0LkeLLtc3o54PuPxwtMQPmm9deFMK+9OY8YT7h5TySHQxLOHnuK4/760/
+         OTKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709193160; x=1709797960;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5un4ACCZ7NErWeeOUddptPFbjqDwYB5cCq+sufhY4Dw=;
-        b=lCxSg6muYI0p3fPCTXyTlWFUCLX9pRU8IvNreuuUS4Kj1f+gTqV/JuSsBmCEr6buuR
-         YVuT46h2RGtXvKRWmNH0NC+HB3tecYQN2/8Njd41/zpLDeepq4/LHaipFZiEoQLNmdfG
-         /dUH4BZs6GvwEgbKvYdobub+/tjNcITmIflV9bSMI9wl/Lq03Inosx84TWfY+vVZyStK
-         VKKc7fM/2JDOcTZKN+C2gj6Kq/1KOctoSUV5ETXEj5eM0adsP2nQLaCnFQ6+8mDLbK3F
-         bV0sCN1YYErMX84GkjBsdLk9xwl6bs5wIAhbR4Ky2U4BeVxtShWzYhOJEuyGwz2Wpkg4
-         fubA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXjCysE9rgiBgAc3A72QWGcDOFfLQTABj4QZ8sMwBsMGPZGK0ucDLYVU6b/Xof7SARniElHstqQtBLdrXrDIgsXgU4B09ee3pEN2JTgkzPKLLvxMS4YzSJ9KQqQOfZMFGejeZyjrGlE+0oUkXbAPZDslb+arX8us/0smbAXQjDW9nMyP2uucnedDoKce0/HrnBogKrolBXWLLMvetLFjOysbob
-X-Gm-Message-State: AOJu0YySm8acZZVkBDstVjjBcsebm5owAA3enlBRdFXSqgWUdz/kHusc
-	kOghvW/NObgop32wXeG/XQD32DK64gb85Yum6EGmCecGikTJNrN4
-X-Google-Smtp-Source: AGHT+IEZEymE5vyIjhpOWpiG7w217jlxxRMWq4kcbp3e+Hrb0BRhZh/isKM4x8enMJ/Z6+yecEzxeQ==
-X-Received: by 2002:a17:902:f682:b0:1dc:483b:534 with SMTP id l2-20020a170902f68200b001dc483b0534mr1371017plg.68.1709193159506;
-        Wed, 28 Feb 2024 23:52:39 -0800 (PST)
-Received: from [10.0.2.15] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
-        by smtp.gmail.com with ESMTPSA id u8-20020a17090341c800b001dcb4a30685sm754120ple.4.2024.02.28.23.52.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Feb 2024 23:52:39 -0800 (PST)
-Message-ID: <8df0c587-8f5b-4523-89d7-dc458ab2c1df@gmail.com>
-Date: Thu, 29 Feb 2024 16:52:41 +0900
+        d=1e100.net; s=20230601; t=1709198091; x=1709802891;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BzPR/m2RFv6uhgD4TF2TCBedYS7ZWfD3SFjKIsmd5XQ=;
+        b=uUFsc26DedEfxvFnvtJtzciC6OZxS6O+1fLQB4OW5IAyELu2e3c7itEQyC2AOXm20b
+         A57p5i213yACUJr11vLx3eVwB0QyeQQWBaZsogrE8Y7OpwIdbdVaEIXN2G6rRqWwlRbZ
+         x7SIfjGEMYk6dxgEeDov5WvoN8Njllc3wRIBvRmkq+Q27Uwmzr4z93PsrWQx3C1ZjJSB
+         ZlFf8WHye5JKx1fKmWC7c/1USNMpICqrmy4f2TOux9BwGyJfEach0k4NqVWX9uCMQf8J
+         ni9scpA4oQciQF4z3Prr9vH05I7+aDpunNffFNh38tYpvn/dkiEM3K6PjXYmFw/zEUHJ
+         FS0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU8AgVkT43AZiLa3y6Vm+xS4E2pwdteFwz0v6Dd6PFg82lHV+jYEJVPZ0F1sfc2CZMXTlmrCFhpo277VarZYYTaQWrPrKvMBDklj/tq
+X-Gm-Message-State: AOJu0YzBcVRUUXmR6FgGlt/AvM52l8yeWwQ/tfF4Z6qKhyHVNCRxQDot
+	lP+2NQuN5KoGBdktj6Ymp1KQct3nD1B3Jcv7q4IDQhdEj6i4KbVz
+X-Google-Smtp-Source: AGHT+IHww30pD/DmIG+i8xRd/dPP7OIbG5+LBh5J2pDzBeUzdf597VyaV4CRLyS6vRbwRGNWKL5UFw==
+X-Received: by 2002:ac2:4951:0:b0:513:1829:57f with SMTP id o17-20020ac24951000000b005131829057fmr1048326lfi.5.1709198091210;
+        Thu, 29 Feb 2024 01:14:51 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id jz6-20020a05600c580600b00412b843cd2esm914807wmb.0.2024.02.29.01.14.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Feb 2024 01:14:50 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>,
+	linux-f2fs-devel@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] f2fs: Fix two spelling mistakes in f2fs_zone_status array
+Date: Thu, 29 Feb 2024 09:14:49 +0000
+Message-Id: <20240229091449.105032-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: lukas.bulwahn@gmail.com
-Cc: corbet@lwn.net, jani.nikula@intel.com, kernel-janitors@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- rdunlap@infradead.org, workflows@vger.kernel.org,
- Akira Yokosawa <akiyks@gmail.com>
-References: <20240229030743.9125-4-lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH v2 3/3] docs: submit-checklist: change to autonumbered
- lists
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <20240229030743.9125-4-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Lukas,
+The array f2fs_zone_status contains two spelling mistakes in
+literal strings. Fix them.
 
-I might be nitpicking too much, but let me go ahead...
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/f2fs/segment.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Thu, 29 Feb 2024 04:07:43 +0100, Lukas Bulwahn wrote:
-> During review (see Link), Jani Nikula suggested to use autonumbered
-> lists instead of manually-maintained bullet numbering.
-> 
-> Turn all lists into autonumbered lists.
-> 
-> Link: https://lore.kernel.org/linux-doc/87o7c3mlwb.fsf@intel.com/
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  Documentation/process/submit-checklist.rst | 48 +++++++++++-----------
->  1 file changed, 24 insertions(+), 24 deletions(-)
-> 
-> diff --git a/Documentation/process/submit-checklist.rst b/Documentation/process/submit-checklist.rst
-> index e531dd504b6c..c984b747a755 100644
-> --- a/Documentation/process/submit-checklist.rst
-> +++ b/Documentation/process/submit-checklist.rst
-> @@ -14,62 +14,62 @@ and elsewhere regarding submitting Linux kernel patches.
->  Review your code
->  ================
->  
-> -1) If you use a facility then #include the file that defines/declares
-> +#. If you use a facility then #include the file that defines/declares
->     that facility.  Don't depend on other header files pulling in ones
->     that you use.
-
-Wait.  This will render the list starting from:
-
-    1. If you use ...
-
-In patch 1/1, you didn't change the ")".
-
-It was Jani who suggested "#.", but "#)" would work just fine.
-
-For details, see docutils' documentation at:
-
-    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#enumerated-lists
-
-By the way, you should be able to use auto enumeration in the 2nd-level
-list as well.
-
-> @@ -77,7 +77,7 @@ Check your code with tools
->  Build your code
->  ===============
->  
-> -1) Builds cleanly:
-> +#. Builds cleanly:
->  
->    a) with applicable or modified ``CONFIG`` options ``=y``, ``=m``, and
->       ``=n``.  No ``gcc`` warnings/errors, no linker warnings/errors.
-
-While the first item needs "a)", subsequent items can use "#)".
-
-Either way,
-
-Reviewed-by: Akira Yokosawa <akiyks@gmail.com>
-
-        Thanks, Akira
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index bdb27e4a604b..072c4355d3d3 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4921,8 +4921,8 @@ static int sanity_check_curseg(struct f2fs_sb_info *sbi)
+ const char *f2fs_zone_status[BLK_ZONE_COND_OFFLINE + 1] = {
+ 	[BLK_ZONE_COND_NOT_WP]		= "NOT_WP",
+ 	[BLK_ZONE_COND_EMPTY]		= "EMPTY",
+-	[BLK_ZONE_COND_IMP_OPEN]	= "IMPLICITE_OPEN",
+-	[BLK_ZONE_COND_EXP_OPEN]	= "EXPLICITE_OPEN",
++	[BLK_ZONE_COND_IMP_OPEN]	= "IMPLICIT_OPEN",
++	[BLK_ZONE_COND_EXP_OPEN]	= "EXPLICIT_OPEN",
+ 	[BLK_ZONE_COND_CLOSED]		= "CLOSED",
+ 	[BLK_ZONE_COND_READONLY]	= "READONLY",
+ 	[BLK_ZONE_COND_FULL]		= "FULL",
+-- 
+2.39.2
 
