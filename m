@@ -1,37 +1,37 @@
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5413BBD8;
-	Thu, 29 Feb 2024 06:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405183BBD8;
+	Thu, 29 Feb 2024 06:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709186670; cv=none; b=RiknXJn+pZMuV2TFIQb0sLAP0JDOwe39e6Ght4VWxgZfqzYsD6E1VI4lR6V4XsRb15FRKE4pMkrfSdJpDD1+7UiuN9zL1tCWgy0c2U1Q0iKcVtkaE262Ml483PxG23xJCdG4rZVn534NVICFQoODpjDHri7XoftMG/Kc0fyiwpY=
+	t=1709186784; cv=none; b=Vcjd4eOsjm84cPpOQZDo4r5+W0i7jwnqIluDjU3g5iabw2louybXevHtxCIZ49fM4zHeXqCPpAxW11Nl9palinqoaJw2qNRAKN2EEJAN0NWfAX9PxzjLt70NmhL59BIJ82i6PlwsKD8u39nL8B88E6fWXLkYg68Qw3c5+fAo8Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709186670; c=relaxed/simple;
-	bh=lODg7xEbsH7/rJSZ6/Sv/aGlo0vRxv09DUpNmbq5mCk=;
+	s=arc-20240116; t=1709186784; c=relaxed/simple;
+	bh=9WQT0htHnIuS/yIfIbQmif+LhvsBLCUNRDOl504kjvI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PfNd3x/57YJEaig3tJrcJDc4+ofJ8Gmo00RqPb4ke/FxX3sS3l5QJIY33D/EvptOFrXA4A5CJWRSvmt9JQVNjS9tcwIgwvuP7CELWlbfyjk2YodBXMota/mm9BD/z0OJtoYROA1c2gOpliGKJPsk5SJrL1G7UuPKa2012+QlTds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IHB86wWZ; arc=none smtp.client-ip=198.137.202.133
+	 In-Reply-To:Content-Type; b=XAD9rKSQ1D0dqrBBCvx4bprY1CUhnZIbIGHBBhmAG431RrXx1xYtOhlW132AqIjHrlZ2FmuAAhfvTle2JSnNj0pEG8cPvYHIlhpPrSrcsXjuPpeozYVOisVa1aBZJo8y7GNA6y+GoDcjlzp6+VMFsu7PpgWswLqMFgMa/ISbEtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JMRdC/A+; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IHB86wWZ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JMRdC/A+"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
 	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=jVLaPOcNfzOtiM0Q70Qg2FhdH5/N6bESWo4OOnctJm8=; b=IHB86wWZoZTLVULVzh9BRzgavb
-	b3VktEXdWG1SN43F3+etBoUkOEM9VcynLDn09CSQL44aUEN6YPJeMFbO4tn+E94XXWxlBqRt8ZpJr
-	xtO8EG3kCO3XtC0tcC2CueZ3A7kuaDFAF3aTRAlT5MD5ateKPaonpQdzsOMBAvGEPWjiSvvF11khX
-	xdGBSR0W6lI9UeWPHn64A/OSy2XAgzLztO2CzBH2U6Rf8pI2T5rOAjonKUyLf6ZNu2BQo4Hmeob91
-	5YHCuaQMuh4APbYZgCmJqtDyi3MuVFVHasSfdqUufM0iKuP/F6U7T20HTMBdWt0n/qvQcO7Vh+Rv7
-	oVZ2wVDQ==;
+	bh=z1l5CyWmh9G+M0xFTiEWNP6CGf0E3u0s2ktX6w5WuFI=; b=JMRdC/A+fbIRs5X8Bll3QvbZmA
+	XKgQsWyKLuvGJR73bqH/UDrGDweRzjvugFSOpk0QU18oyPT6BDJInJkEvY0D/Dfqrfqe+zUF7fLif
+	xADwDfBHfvuRmMh9EDHBholTxj1y0SyljquhGBxzxb4ChJJzjT1erZJV52KyiD6r70+oBAPBWiAM6
+	D2We/BwNU4Bxy2hhSa2mShgwyj7Oa9WwVicuAc6s++OlXl938XYBqc0MGo659CFBXBNLdUoZkS8yJ
+	rDulhxaIN/Pd2Y65Ex5PwhPT4JM7pkcU6LvWeYSiI3Ki7FDzAXnRjm/EPtMUZWCeiyY4nUXC9e3Lb
+	qfojsU4g==;
 Received: from [50.53.50.0] (helo=[192.168.254.15])
 	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rfZWu-0000000CEVm-08oi;
-	Thu, 29 Feb 2024 06:04:28 +0000
-Message-ID: <a288a0b3-78fc-4166-b1c5-81a51441abb3@infradead.org>
-Date: Wed, 28 Feb 2024 22:04:27 -0800
+	id 1rfZYk-0000000CF2G-3Vjj;
+	Thu, 29 Feb 2024 06:06:22 +0000
+Message-ID: <550a60bd-69b5-425e-b960-5a66bc5a1af9@infradead.org>
+Date: Wed, 28 Feb 2024 22:06:22 -0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -39,34 +39,33 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] docs: submit-checklist: use subheadings
+Subject: Re: [PATCH v2 3/3] docs: submit-checklist: change to autonumbered
+ lists
 Content-Language: en-US
 To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet
  <corbet@lwn.net>, Jani Nikula <jani.nikula@intel.com>,
  workflows@vger.kernel.org, linux-doc@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20240229030743.9125-1-lukas.bulwahn@gmail.com>
- <20240229030743.9125-3-lukas.bulwahn@gmail.com>
+ <20240229030743.9125-4-lukas.bulwahn@gmail.com>
 From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240229030743.9125-3-lukas.bulwahn@gmail.com>
+In-Reply-To: <20240229030743.9125-4-lukas.bulwahn@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
 On 2/28/24 19:07, Lukas Bulwahn wrote:
-> During review (see Link), Jani Nikula suggested to use proper subheadings
-> instead of using italics to indicate the different new top-level
-> categories in the checklist. Further the top heading should follow the
-> common scheme.
+> During review (see Link), Jani Nikula suggested to use autonumbered
+> lists instead of manually-maintained bullet numbering.
 > 
-> Use subheadings. Adjust to common heading adornment.
+> Turn all lists into autonumbered lists.
 > 
 > Link: https://lore.kernel.org/linux-doc/87o7c3mlwb.fsf@intel.com/
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
->  Documentation/process/submit-checklist.rst | 26 ++++++++++++----------
->  1 file changed, 14 insertions(+), 12 deletions(-)
+>  Documentation/process/submit-checklist.rst | 48 +++++++++++-----------
+>  1 file changed, 24 insertions(+), 24 deletions(-)
 > 
 
 Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
