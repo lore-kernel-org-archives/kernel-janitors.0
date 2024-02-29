@@ -1,97 +1,77 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA015821A;
-	Thu, 29 Feb 2024 09:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D7F64A8A;
+	Thu, 29 Feb 2024 10:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709198094; cv=none; b=Ch2j/PzjWPLL+gu+fHazlrH6P+oYYkYu4mrAmBg+d1Toh8QbLmcdss+q+pS4JbMYnyMRGzbz8EPBxCP9OY/kTXOLJ0vIamp7oSpdr6qi0gIC71WGgV08M1hLBlBuoBXdV621DLiybSqfpYKdwEgu9BVGFxPG9LkUDAAHaDOOnPQ=
+	t=1709202354; cv=none; b=XuDVt9NAIjo3YMaRmI45eihXHraapkew2UrtjziDWtI9vkE6XRoa9Rk8UbJtVaPsOhli06HTewEmXV8s/dJ+RLf7mBrAfM2E5YUfbXLT8Em5az3vQRv2yypFZXX+VDV1IOdPMdgXCVfQs8WmMqSn41XSNe/i4m/HqMGIAX3DsG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709198094; c=relaxed/simple;
-	bh=C5R2TmBzlumHMHH2p7vy4pdnmxWie3CbQH1AmU1xvos=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=sKXhfV0UsfDQot6ptDjngnseP645cLfQN4nV6lYeoajIfNuhkn/qA14+RmD6sHSchkzqR51mp++30fxL2n3ZELPE1PsxRx6Uqve2SE9VKunKmIciSYO3rq4HHeDqhZkekEYSISXo7oHt4WkfIkhr8m/QtkkWmbnT1zV1Wmm0Is0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JtAdUVKY; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709202354; c=relaxed/simple;
+	bh=BZOzxkLaNwJzyuWMx5kdxPnNkLL7LABOOFE1Vzr+SB4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JFFGpM0PEURtldhjh3+1B36GeMr8mX3o0Z3nYJMts+xJq4T0jjsZcA0eluSnMnpvYetbXb+MfyoL2zZwNO2MYURJAz+PzLfctKtI5/2XOTY5u58f1EPfdp5h1aWoMTlDpWx+//KKvznTo0RZUvGEn9X2fBlEdgGc+G+dAib1azQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iyQi1zYZ; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JtAdUVKY"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-513173e8191so683770e87.1;
-        Thu, 29 Feb 2024 01:14:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709198091; x=1709802891; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BzPR/m2RFv6uhgD4TF2TCBedYS7ZWfD3SFjKIsmd5XQ=;
-        b=JtAdUVKYXjykd2Skxb7cmJF8BaNCOmvKWCcCij4/ia0XQtHgk8f/q7Jl5DjIPVhvWR
-         0c2n92tk1TAn8r8KsfTyL0WjFTRTcju6mOY6ugL06KAGNCrUqs/AkzUK7Jnn1cBeGPhv
-         UeqPpf0c6Nqv/wXsUa/Ue4HnFDOCWHci2usJx2cN4r3lIRHu7UgoPCOrhMctCvIWwSlS
-         dy+V8/JxUBIFfP0UhF8EP8dwy53BTD3vZOzXiAfZcU4q11H9mNNGcLrTYOkEDaLQz49a
-         rVv2g1v9utG0LkeLLtc3o54PuPxwtMQPmm9deFMK+9OY8YT7h5TySHQxLOHnuK4/760/
-         OTKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709198091; x=1709802891;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BzPR/m2RFv6uhgD4TF2TCBedYS7ZWfD3SFjKIsmd5XQ=;
-        b=uUFsc26DedEfxvFnvtJtzciC6OZxS6O+1fLQB4OW5IAyELu2e3c7itEQyC2AOXm20b
-         A57p5i213yACUJr11vLx3eVwB0QyeQQWBaZsogrE8Y7OpwIdbdVaEIXN2G6rRqWwlRbZ
-         x7SIfjGEMYk6dxgEeDov5WvoN8Njllc3wRIBvRmkq+Q27Uwmzr4z93PsrWQx3C1ZjJSB
-         ZlFf8WHye5JKx1fKmWC7c/1USNMpICqrmy4f2TOux9BwGyJfEach0k4NqVWX9uCMQf8J
-         ni9scpA4oQciQF4z3Prr9vH05I7+aDpunNffFNh38tYpvn/dkiEM3K6PjXYmFw/zEUHJ
-         FS0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU8AgVkT43AZiLa3y6Vm+xS4E2pwdteFwz0v6Dd6PFg82lHV+jYEJVPZ0F1sfc2CZMXTlmrCFhpo277VarZYYTaQWrPrKvMBDklj/tq
-X-Gm-Message-State: AOJu0YzBcVRUUXmR6FgGlt/AvM52l8yeWwQ/tfF4Z6qKhyHVNCRxQDot
-	lP+2NQuN5KoGBdktj6Ymp1KQct3nD1B3Jcv7q4IDQhdEj6i4KbVz
-X-Google-Smtp-Source: AGHT+IHww30pD/DmIG+i8xRd/dPP7OIbG5+LBh5J2pDzBeUzdf597VyaV4CRLyS6vRbwRGNWKL5UFw==
-X-Received: by 2002:ac2:4951:0:b0:513:1829:57f with SMTP id o17-20020ac24951000000b005131829057fmr1048326lfi.5.1709198091210;
-        Thu, 29 Feb 2024 01:14:51 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id jz6-20020a05600c580600b00412b843cd2esm914807wmb.0.2024.02.29.01.14.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Feb 2024 01:14:50 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	linux-f2fs-devel@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] f2fs: Fix two spelling mistakes in f2fs_zone_status array
-Date: Thu, 29 Feb 2024 09:14:49 +0000
-Message-Id: <20240229091449.105032-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iyQi1zYZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1709202353; x=1740738353;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=BZOzxkLaNwJzyuWMx5kdxPnNkLL7LABOOFE1Vzr+SB4=;
+  b=iyQi1zYZ42f43Ljn2az1KeblEJTEekiREoJE3zWqfInP1FySP7MQRlTJ
+   qOXAnSd55kxvvnBp19T9c2T0njxYkI8dIKAO98U/TMmozsOx6/LILGJ0K
+   EMXhZV+tg/Rl6tJWFD8zpA+6C2AiV9Ox60PEk2IvEBW6/c2/g95Oj8iOk
+   tjRkU2jLUk4l0P6t3IHp15bXr10Lt4YqlSbSEv3iyyF+IUgg9N4xslF3y
+   C8vfTQIDdKt+wI2QZHlWwApbP48vEY1iQzbkJh70h4w3VPNu5+r242Ufc
+   isRRiO/4ouzRWmFsjxahYSFnhr3ly82B0IdHMcucWzwIxhfUyzcXDB7kw
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10998"; a="3786392"
+X-IronPort-AV: E=Sophos;i="6.06,194,1705392000"; 
+   d="scan'208";a="3786392"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Feb 2024 02:25:53 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,194,1705392000"; 
+   d="scan'208";a="30961090"
+Received: from smatua-mobl.ger.corp.intel.com (HELO localhost) ([10.252.47.143])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Feb 2024 02:25:49 -0800
+From: Jani Nikula <jani.nikula@intel.com>
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>,
+ workflows@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas
+ Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH v2 0/3] docs: submit-checklist: structure by category
+In-Reply-To: <20240229030743.9125-1-lukas.bulwahn@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240229030743.9125-1-lukas.bulwahn@gmail.com>
+Date: Thu, 29 Feb 2024 12:25:46 +0200
+Message-ID: <87plwf8t3p.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The array f2fs_zone_status contains two spelling mistakes in
-literal strings. Fix them.
+On Thu, 29 Feb 2024, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> from Jani Nikula:
+>   - turn categories into subheadings
+>   - use common heading adornment
+>   - change to bullet or autonumbered lists
+>   - propose those changes as separate additional patches
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/f2fs/segment.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I was hoping these cleanups would've come *first*, but up to Jon to
+decide if that really matters.
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index bdb27e4a604b..072c4355d3d3 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -4921,8 +4921,8 @@ static int sanity_check_curseg(struct f2fs_sb_info *sbi)
- const char *f2fs_zone_status[BLK_ZONE_COND_OFFLINE + 1] = {
- 	[BLK_ZONE_COND_NOT_WP]		= "NOT_WP",
- 	[BLK_ZONE_COND_EMPTY]		= "EMPTY",
--	[BLK_ZONE_COND_IMP_OPEN]	= "IMPLICITE_OPEN",
--	[BLK_ZONE_COND_EXP_OPEN]	= "EXPLICITE_OPEN",
-+	[BLK_ZONE_COND_IMP_OPEN]	= "IMPLICIT_OPEN",
-+	[BLK_ZONE_COND_EXP_OPEN]	= "EXPLICIT_OPEN",
- 	[BLK_ZONE_COND_CLOSED]		= "CLOSED",
- 	[BLK_ZONE_COND_READONLY]	= "READONLY",
- 	[BLK_ZONE_COND_FULL]		= "FULL",
+BR,
+Jani.
+
+
 -- 
-2.39.2
-
+Jani Nikula, Intel
