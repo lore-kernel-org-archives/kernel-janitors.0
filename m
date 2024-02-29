@@ -1,121 +1,112 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B5F12F580;
-	Thu, 29 Feb 2024 14:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E5C137768;
+	Thu, 29 Feb 2024 14:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709217976; cv=none; b=VS9aroMDYCiSnQfbzqiwTF2hOJwdNmTFtiKBHhnA2s5wD6h74iVRZ+Mg/v0izkTuzTfiW6i3uGeX5kruMWX7NiP8dpiVZd4DA9eYOsE9CeVFMP0pV+gs+BkiFk8DoIog5k/DN8+jF1Z+XVLekDijTGMSrIH7E8jONeX/P4zJhwg=
+	t=1709218214; cv=none; b=aOTHeofMMsS/cvcceK+FIwWOWJCF07ghcirhonKa5me4CZILQ72WJr3v4j9TcsuVSs5IrguL9Jtkf+PZUbi/scitHu6ND+WPrLm1lKj578CaBwQ5fSRDHtw0OLeKNZE7SOup0TlRNu2TtQI7ZsKYwDbjZeyC70BrI5TXUwcULQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709217976; c=relaxed/simple;
-	bh=3oJedtpUCDtslx7gH0XWE1db//lVWLZiW0moWQs5pns=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tnzziS+SGUybs37gtJ47O09/ecGep4MUf+INHa60vGNCkhUYHo36Dha5IeQnvxTrA7BKCMjzhbciTSX95tjB+X8i5GKQmAAGdM0SvSSGvYEJyUYIgEeMtvyU3jsau2sXmY56eHwbrv/609qmf+zG1g/EtcAjoUqdqe038mIgRI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nx4DrTWh; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1709218214; c=relaxed/simple;
+	bh=TOTjG3XFCu+SOCsoJWQ+YdswTrZJGHoVHpqHXU1UTDg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TTleNRhZpAcizv1LD27skUPKpYjVhgb9JWXU6X3TTlNkclkwmT0khVbgfQmKu+R/Q+/gS9hJmFO7Ax+zYLKSSCeKDxr2FGhmtiB8cOfTFBF9yzX20/ZQdRHzmisLfOiPIihsTzCalUsrSrxaj1a1UiTSQn++vynaCDJgDvEt5Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=o+9pjhFN; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nx4DrTWh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1709217974; x=1740753974;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=3oJedtpUCDtslx7gH0XWE1db//lVWLZiW0moWQs5pns=;
-  b=Nx4DrTWhVC49Th+tSpQVjHaVueYcYd/zpj2fiTuktm4IzKhEjVXuQAif
-   VhSlWhQEbV7ZnfhOFwY3Hz4Q/E93ryVOI7Dj+STxAbSN0Nw7gUK09bPNZ
-   2ldyst25rw59deXTuLJcDa+f5fqMcZB5m9eAu+gR6aQpmNPJERx0BTCpc
-   RhaKi6gNqk+uyB00FJl7ozysAf/L3aON3qW6KnsNWQktzrta/Y7CWSgEf
-   W6mAGZ27g5BMF/5lPEiLnshykFCixpd7lT9uet2bkDM7rI7DjGTzLZkwS
-   55pqB0JhgZEcJXXrPP6AgnjVdnuyNgrQK0JNI6nXv20suYU5C36tHnTvZ
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10998"; a="14398435"
-X-IronPort-AV: E=Sophos;i="6.06,194,1705392000"; 
-   d="scan'208";a="14398435"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Feb 2024 06:46:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.06,194,1705392000"; 
-   d="scan'208";a="8080548"
-Received: from unknown (HELO localhost) ([10.237.66.160])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Feb 2024 06:46:09 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Rodrigo Vivi
- <rodrigo.vivi@intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin
- <tvrtko.ursulin@linux.intel.com>, David Airlie <airlied@gmail.com>, Daniel
- Vetter <daniel@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/i915/display: Save a few bytes of memory in
- intel_backlight_device_register()
-In-Reply-To: <ecfdb3af5005e05131e2fb93fd870830f39a8c29.1708708142.git.christophe.jaillet@wanadoo.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <ecfdb3af5005e05131e2fb93fd870830f39a8c29.1708708142.git.christophe.jaillet@wanadoo.fr>
-Date: Thu, 29 Feb 2024 16:46:07 +0200
-Message-ID: <8734tb8h1s.fsf@intel.com>
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="o+9pjhFN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1709218211; x=1740754211;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ywrhZUKaJjcwpmTB5QYutRLtgp1qQnXwV/7znwi7QCg=;
+  b=o+9pjhFNznvq8PmgIQJRwnr2a9RoPaLXdGEWR9ygWMTTrYLmJgOZP1Is
+   +eCfOFEGYPMoPYxSr+YqHh+RCD+dve2hRx9OFQVBT9506zW+0q4eGYdOL
+   LBICRjkB/85DWZMsuxn7YNEEzHW0E0hxWS2pLWAdDmHZjgX5EriGV0TBn
+   3O/cIZKtJc8uereRiwO/hp4v/pCzAtsiwnrsm1M2gk3x79ZaW8vb9Pjzm
+   jSm0htccKjXWYlv/PyCqQhGAPaC5pbU/oXVDivnBFXPsjStZhLEDO6RXc
+   nqQLm2CMSzinUB+vmcfeAVMwUR59IGTZgRo7DqErvfw9wKEbjMCMlrpbp
+   w==;
+X-IronPort-AV: E=Sophos;i="6.06,194,1705359600"; 
+   d="scan'208";a="35668392"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 29 Feb 2024 15:50:05 +0100
+Received: from steina-w.localnet (steina-w.tq-net.de [10.123.53.25])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id B61DA280071;
+	Thu, 29 Feb 2024 15:50:05 +0100 (CET)
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, Markus Niebel <Markus.Niebel@ew.tq-group.com>, Lee Jones <lee@kernel.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file patterns in TQ SYSTEMS BOARD & DRIVER SUPPORT
+Date: Thu, 29 Feb 2024 15:50:04 +0100
+Message-ID: <7803640.lOV4Wx5bFT@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20231123113245.23542-1-lukas.bulwahn@gmail.com>
+References: <20231123113245.23542-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-On Fri, 23 Feb 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-> 'name' may still be "intel_backlight" when backlight_device_register() is
-> called.
-> In such a case, using kstrdup_const() saves a memory duplication when
-> dev_set_name() is called in backlight_device_register().
->
-> Use kfree_const() accordingly.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Hello,
 
-Thanks, pushed to drm-intel-next.
+Am Donnerstag, 23. November 2023, 12:32:45 CET schrieb Lukas Bulwahn:
+> Commit 77da3f22b3d5 ("MAINTAINERS: Add entry for TQ-Systems device trees
+> and drivers") adds some file patterns for files in arch/arm/boot/dts/, but
+> those patterns do not match any files in the repository. Hence,
+> ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about broken
+> references. The files of interest are actually in the directory
+> arch/arm/boot/dts/nxp/imx/.
+>=20
+> Adjust the file patterns to match the intended files.
+>=20
+> Fixes: 77da3f22b3d5 ("MAINTAINERS: Add entry for TQ-Systems device trees =
+and drivers")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-BR,
-Jani.
+any feedback? Can this be merged?
+
+Thanks,
+Alexander
 
 > ---
-> Compile tested only
-> ---
->  drivers/gpu/drm/i915/display/intel_backlight.c | 6 +++---
+>  MAINTAINERS | 6 +++---
 >  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/display/intel_backlight.c b/drivers/gpu/drm/i915/display/intel_backlight.c
-> index 1946d7fb3c2e..9e4a9d4f1585 100644
-> --- a/drivers/gpu/drm/i915/display/intel_backlight.c
-> +++ b/drivers/gpu/drm/i915/display/intel_backlight.c
-> @@ -949,7 +949,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
->  	else
->  		props.power = FB_BLANK_POWERDOWN;
->  
-> -	name = kstrdup("intel_backlight", GFP_KERNEL);
-> +	name = kstrdup_const("intel_backlight", GFP_KERNEL);
->  	if (!name)
->  		return -ENOMEM;
->  
-> @@ -963,7 +963,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
->  		 * compatibility. Use unique names for subsequent backlight devices as a
->  		 * fallback when the default name already exists.
->  		 */
-> -		kfree(name);
-> +		kfree_const(name);
->  		name = kasprintf(GFP_KERNEL, "card%d-%s-backlight",
->  				 i915->drm.primary->index, connector->base.name);
->  		if (!name)
-> @@ -987,7 +987,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
->  		    connector->base.base.id, connector->base.name, name);
->  
->  out:
-> -	kfree(name);
-> +	kfree_const(name);
->  
->  	return ret;
->  }
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index df7a57ac864e..1e439b08d5d4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -22084,9 +22084,9 @@ TQ SYSTEMS BOARD & DRIVER SUPPORT
+>  L:	linux@ew.tq-group.com
+>  S:	Supported
+>  W:	https://www.tq-group.com/en/products/tq-embedded/
+> -F:	arch/arm/boot/dts/imx*mba*.dts*
+> -F:	arch/arm/boot/dts/imx*tqma*.dts*
+> -F:	arch/arm/boot/dts/mba*.dtsi
+> +F:	arch/arm/boot/dts/nxp/imx/imx*mba*.dts*
+> +F:	arch/arm/boot/dts/nxp/imx/imx*tqma*.dts*
+> +F:	arch/arm/boot/dts/nxp/imx/mba*.dtsi
+>  F:	arch/arm64/boot/dts/freescale/fsl-*tqml*.dts*
+>  F:	arch/arm64/boot/dts/freescale/imx*mba*.dts*
+>  F:	arch/arm64/boot/dts/freescale/imx*tqma*.dts*
+>=20
 
--- 
-Jani Nikula, Intel
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
