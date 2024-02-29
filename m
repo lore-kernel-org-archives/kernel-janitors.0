@@ -1,112 +1,146 @@
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E5C137768;
-	Thu, 29 Feb 2024 14:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224907CF14;
+	Thu, 29 Feb 2024 15:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709218214; cv=none; b=aOTHeofMMsS/cvcceK+FIwWOWJCF07ghcirhonKa5me4CZILQ72WJr3v4j9TcsuVSs5IrguL9Jtkf+PZUbi/scitHu6ND+WPrLm1lKj578CaBwQ5fSRDHtw0OLeKNZE7SOup0TlRNu2TtQI7ZsKYwDbjZeyC70BrI5TXUwcULQg=
+	t=1709219757; cv=none; b=LGlA54hjXM7bty4sxUEhtQuENPqwTTFVhx2nHi8yqeA9VjDpzU0jRkth/nUlZPzSZx421ddXzWyxlikvOQWgLO9ZZXP4OrlsBRaniVmQL25+obQHRPL9zGATq9FuT09FJsCttJ5TbAKSe0Ssm/q5FFZ8nirL27DXROYtzg8b3Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709218214; c=relaxed/simple;
-	bh=TOTjG3XFCu+SOCsoJWQ+YdswTrZJGHoVHpqHXU1UTDg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TTleNRhZpAcizv1LD27skUPKpYjVhgb9JWXU6X3TTlNkclkwmT0khVbgfQmKu+R/Q+/gS9hJmFO7Ax+zYLKSSCeKDxr2FGhmtiB8cOfTFBF9yzX20/ZQdRHzmisLfOiPIihsTzCalUsrSrxaj1a1UiTSQn++vynaCDJgDvEt5Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=o+9pjhFN; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1709219757; c=relaxed/simple;
+	bh=CMg56geOOc7u+9Ot72DBWXSDwNyJX1YOqqE0Ry+xNaw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EnQEdMDtwX+VEPpI0bg7OpYEGgUeMO/Y48h77M24VzTXoTXv9PxXplJEtFBgpSmV2LlTDn4l/Bvpy4/lStZ8Ag6yyKPepbeXzM8WyuaeSJquTZ4Oyx1rt7cJyhtWM/NnAsDEvHCaRWKDAryRPuWrxSYLFYmMy292LMgwBO+5eEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gxpbQsSk; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="o+9pjhFN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxpbQsSk"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-33d7b8f563eso730081f8f.0;
+        Thu, 29 Feb 2024 07:15:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1709218211; x=1740754211;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ywrhZUKaJjcwpmTB5QYutRLtgp1qQnXwV/7znwi7QCg=;
-  b=o+9pjhFNznvq8PmgIQJRwnr2a9RoPaLXdGEWR9ygWMTTrYLmJgOZP1Is
-   +eCfOFEGYPMoPYxSr+YqHh+RCD+dve2hRx9OFQVBT9506zW+0q4eGYdOL
-   LBICRjkB/85DWZMsuxn7YNEEzHW0E0hxWS2pLWAdDmHZjgX5EriGV0TBn
-   3O/cIZKtJc8uereRiwO/hp4v/pCzAtsiwnrsm1M2gk3x79ZaW8vb9Pjzm
-   jSm0htccKjXWYlv/PyCqQhGAPaC5pbU/oXVDivnBFXPsjStZhLEDO6RXc
-   nqQLm2CMSzinUB+vmcfeAVMwUR59IGTZgRo7DqErvfw9wKEbjMCMlrpbp
-   w==;
-X-IronPort-AV: E=Sophos;i="6.06,194,1705359600"; 
-   d="scan'208";a="35668392"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 29 Feb 2024 15:50:05 +0100
-Received: from steina-w.localnet (steina-w.tq-net.de [10.123.53.25])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id B61DA280071;
-	Thu, 29 Feb 2024 15:50:05 +0100 (CET)
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, Markus Niebel <Markus.Niebel@ew.tq-group.com>, Lee Jones <lee@kernel.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust file patterns in TQ SYSTEMS BOARD & DRIVER SUPPORT
-Date: Thu, 29 Feb 2024 15:50:04 +0100
-Message-ID: <7803640.lOV4Wx5bFT@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20231123113245.23542-1-lukas.bulwahn@gmail.com>
-References: <20231123113245.23542-1-lukas.bulwahn@gmail.com>
+        d=gmail.com; s=20230601; t=1709219754; x=1709824554; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9wui/V5y8FOLo8YiI+83F7lgNFV8HwNcsEwhvDRA3dk=;
+        b=gxpbQsSkRYJnUbt4SPTbDLFw5ZfyvsBxyRth3M930ToKT90Eg2PVIfzYYYuqSClTdZ
+         wpXWegEJUNHmoCaXVUCWUFxYChZR1pOPCJ9+gyX8jfBlu9cdzCQJQEsQhWHuqzKrtXjH
+         2RvHspDLFpnyYaRh9Z5N5EzuccZviWIJVPO/6b4rsOmOnxOFwYXzrmDg3FQFtkfK+fl2
+         BXwemPBdEQi1yWaELdu3TcCNfur/BpC2MADKYXbpyc3Y2cxs6uF0LidByUtbvLvZSF87
+         5HVulwysbpUm47RAytBicMWYd9qMwNRXotG1Yjd1ZIOkEjGu66hX+2JUUMVe5xVEqYxf
+         kujA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709219754; x=1709824554;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9wui/V5y8FOLo8YiI+83F7lgNFV8HwNcsEwhvDRA3dk=;
+        b=XjuMLrXiGU0fLWiD/F8CJePqXw3XW2FyJ7O2Y5xbbC0gnkusaQf8u2xb0ips6BMrBw
+         sySxTPflHKodS8ZN8plF7kBCyy3uR2bQ5rLARvlAUgnC2eyo5BytsTRTOa2RPh7ggq7F
+         mS3mDbMKs7Yuvx633sNpTMtSCBs62ETCdhUs9jXIgIhXoCBKbwRFcmOFKSkP3RS0CbAk
+         fRHUDkZT44lp0mq0Ry/Abi/9VSyTdgOrXVPm569oXPuGkD2+pdfmR8t3hgJr62zjUsRm
+         QZaAu1f1jVj6E+hxAdIF9lUZ+svwTeWkvMGrj7XS6bHTcqppJFWvZFX4I3OVGb6LHLg3
+         oTKg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZs2JFy6qfE6KvITCPuRWkiq0VN31AHN0Rv6Al0BfIU2gpAt72MX+WvLsiJcsPWJQpVeuyqqkZjxFNhbIf6yMTcSIOFUmxYevitmPYhHR+m+/7EWPzDJMbix80bjH9CRaoYsEw4k+1h2qrQg2w
+X-Gm-Message-State: AOJu0Yy0+C1NLnTtXQsBl/qat31Tab6cORRwQz8KY7bGnxbop9NqEZcb
+	8y/N9cp77PC2O8ezDOXKQyOZPS4PJSAfn7Lah+YC+g9bEOk5YIdWAiOqp5U2Iyx7Fv+YJwNHD+y
+	Fu/tTL3sG64wn7CpvftcVu4x+kOM=
+X-Google-Smtp-Source: AGHT+IHBfx8h6PdIH43PxYY+wWK3aRQjRg+CgGijUqZHtNSgcpoCMEjUhxFG+Ur8m68bSm1/0QI0M0MWqrtcFGzwaAY=
+X-Received: by 2002:adf:ed89:0:b0:33d:afbc:6c76 with SMTP id
+ c9-20020adfed89000000b0033dafbc6c76mr1609517wro.1.1709219754260; Thu, 29 Feb
+ 2024 07:15:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240229120541.219429-1-colin.i.king@gmail.com> <f7b36055-a710-4d57-b952-33431876e221@ieee.org>
+In-Reply-To: <f7b36055-a710-4d57-b952-33431876e221@ieee.org>
+From: Vaibhav Agarwal <vaibhav.sr@gmail.com>
+Date: Thu, 29 Feb 2024 20:45:17 +0530
+Message-ID: <CAAs3649g_nr5-6PLnGL31ouo5GMhn7o0zuDOjSO+HmG6vUnkXQ@mail.gmail.com>
+Subject: Re: [PATCH][next] staging: greybus: Remove redundant variable 'mask'
+To: Alex Elder <elder@ieee.org>
+Cc: Colin Ian King <colin.i.king@gmail.com>, Mark Greer <mgreer@animalcreek.com>, 
+	Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, greybus-dev@lists.linaro.org, 
+	linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
 
-Hello,
+On Thu, Feb 29, 2024 at 6:51=E2=80=AFPM Alex Elder <elder@ieee.org> wrote:
+>
+> On 2/29/24 6:05 AM, Colin Ian King wrote:
+> > The variable mask is being assigned and bit-set but it is never
+> > being used apart from this. The variable is redundant and can
+> > be removed.
+> >
+> > Cleans up clang scan build warning:
+> > drivers/staging/greybus/audio_topology.c:764:15: warning: variable 'mas=
+k'
+> > set but not used [-Wunused-but-set-variable]
+> >
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Am Donnerstag, 23. November 2023, 12:32:45 CET schrieb Lukas Bulwahn:
-> Commit 77da3f22b3d5 ("MAINTAINERS: Add entry for TQ-Systems device trees
-> and drivers") adds some file patterns for files in arch/arm/boot/dts/, but
-> those patterns do not match any files in the repository. Hence,
-> ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about broken
-> references. The files of interest are actually in the directory
-> arch/arm/boot/dts/nxp/imx/.
->=20
-> Adjust the file patterns to match the intended files.
->=20
-> Fixes: 77da3f22b3d5 ("MAINTAINERS: Add entry for TQ-Systems device trees =
-and drivers")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Thanks Colin for sharing this patch.
 
-any feedback? Can this be merged?
+>
+>
+> This is a reasonable change, but I don't know this code that
+> well and would like to hear from Vaibhav (if possible) or
+> someone else whether they think the mask value *should* have
+> been used in this spot.  It doesn't look like it to me, but
+> I'd like you to get a second opinion...
 
-Thanks,
-Alexander
+The original intent was use the mask field while maintaining regmap entries=
+.
+However, I could not push changes on "maintain regmap" during ARA days :(
+Anyways, for now it makes sense to drop the unused mask variable.
 
-> ---
->  MAINTAINERS | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index df7a57ac864e..1e439b08d5d4 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22084,9 +22084,9 @@ TQ SYSTEMS BOARD & DRIVER SUPPORT
->  L:	linux@ew.tq-group.com
->  S:	Supported
->  W:	https://www.tq-group.com/en/products/tq-embedded/
-> -F:	arch/arm/boot/dts/imx*mba*.dts*
-> -F:	arch/arm/boot/dts/imx*tqma*.dts*
-> -F:	arch/arm/boot/dts/mba*.dtsi
-> +F:	arch/arm/boot/dts/nxp/imx/imx*mba*.dts*
-> +F:	arch/arm/boot/dts/nxp/imx/imx*tqma*.dts*
-> +F:	arch/arm/boot/dts/nxp/imx/mba*.dtsi
->  F:	arch/arm64/boot/dts/freescale/fsl-*tqml*.dts*
->  F:	arch/arm64/boot/dts/freescale/imx*mba*.dts*
->  F:	arch/arm64/boot/dts/freescale/imx*tqma*.dts*
->=20
+>
+>                                         -Alex
+>
+> > ---
+> >   drivers/staging/greybus/audio_topology.c | 3 ---
+> >   1 file changed, 3 deletions(-)
+> >
+> > diff --git a/drivers/staging/greybus/audio_topology.c b/drivers/staging=
+/greybus/audio_topology.c
+> > index 08e6a807c132..5dc4721105d4 100644
+> > --- a/drivers/staging/greybus/audio_topology.c
+> > +++ b/drivers/staging/greybus/audio_topology.c
+> > @@ -761,7 +761,6 @@ static int gbcodec_enum_dapm_ctl_put(struct snd_kco=
+ntrol *kcontrol,
+> >   {
+> >       int ret, wi, ctl_id;
+> >       unsigned int val, mux, change;
+> > -     unsigned int mask;
+> >       struct snd_soc_dapm_widget_list *wlist =3D snd_kcontrol_chip(kcon=
+trol);
+> >       struct snd_soc_dapm_widget *widget =3D wlist->widgets[0];
+> >       struct gb_audio_ctl_elem_value gbvalue;
+> > @@ -802,7 +801,6 @@ static int gbcodec_enum_dapm_ctl_put(struct snd_kco=
+ntrol *kcontrol,
+> >
+> >       mux =3D ucontrol->value.enumerated.item[0];
+> >       val =3D mux << e->shift_l;
+> > -     mask =3D e->mask << e->shift_l;
+> >
+> >       if (le32_to_cpu(gbvalue.value.enumerated_item[0]) !=3D
+> >           ucontrol->value.enumerated.item[0]) {
+> > @@ -815,7 +813,6 @@ static int gbcodec_enum_dapm_ctl_put(struct snd_kco=
+ntrol *kcontrol,
+> >               if (ucontrol->value.enumerated.item[1] > e->items - 1)
+> >                       return -EINVAL;
+> >               val |=3D ucontrol->value.enumerated.item[1] << e->shift_r=
+;
+> > -             mask |=3D e->mask << e->shift_r;
+> >               if (le32_to_cpu(gbvalue.value.enumerated_item[1]) !=3D
+> >                   ucontrol->value.enumerated.item[1]) {
+> >                       change =3D 1;
+>
 
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+Acked-by: Vaibhav Agarwal <vaibhav.sr@gmail.com>
