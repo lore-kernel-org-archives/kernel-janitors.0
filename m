@@ -1,88 +1,121 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685B84B5DA
-	for <kernel-janitors@vger.kernel.org>; Thu, 29 Feb 2024 13:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B5F12F580;
+	Thu, 29 Feb 2024 14:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709213926; cv=none; b=sZr7o1dM8Iij/AeOzk8Q+x3HP6OLOcXXKWorCkHneiFkfJ9tLqvV4rHoB64j4epRkj+JK8DADnxSsf7OtnAw2AiYqqeMDbmkHUsh6lMDH5+TNwMSa7z4lsDqZB+DV1rrLmijH9gfPP2tPUwtAGWvrgCfHmAiUA6RTa6Z1PCMJlI=
+	t=1709217976; cv=none; b=VS9aroMDYCiSnQfbzqiwTF2hOJwdNmTFtiKBHhnA2s5wD6h74iVRZ+Mg/v0izkTuzTfiW6i3uGeX5kruMWX7NiP8dpiVZd4DA9eYOsE9CeVFMP0pV+gs+BkiFk8DoIog5k/DN8+jF1Z+XVLekDijTGMSrIH7E8jONeX/P4zJhwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709213926; c=relaxed/simple;
-	bh=IgTG61UP+6FyhLCLuzFpVqoxtaeq7U//LN38utfZLxY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J9LJaL7DiX3LAbBxa0RWYwtQD5yr0UAaIA/L004QrFzlC+V7p7hld2qxrkJ/ltIcve4gqOMCsX0Fw0RkxQ6jnclSlkXJ3O+XNPbXd/OiBDyItnIWzXrrApnzKW5qCLK67h7CWPvJNFZegPs6fyIm3/chCaHZo2aDQuZa3oS1Xxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z9Kqqr9S; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709217976; c=relaxed/simple;
+	bh=3oJedtpUCDtslx7gH0XWE1db//lVWLZiW0moWQs5pns=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tnzziS+SGUybs37gtJ47O09/ecGep4MUf+INHa60vGNCkhUYHo36Dha5IeQnvxTrA7BKCMjzhbciTSX95tjB+X8i5GKQmAAGdM0SvSSGvYEJyUYIgEeMtvyU3jsau2sXmY56eHwbrv/609qmf+zG1g/EtcAjoUqdqe038mIgRI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nx4DrTWh; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z9Kqqr9S"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dcbc00f6c04so948114276.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 29 Feb 2024 05:38:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709213922; x=1709818722; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IgTG61UP+6FyhLCLuzFpVqoxtaeq7U//LN38utfZLxY=;
-        b=Z9Kqqr9S/du3pt1DwFfxkty40yun2kbpGuXsls5dArBUx/N5nf0Re8a20KcqiT6fKW
-         lJPnCUJNTM8zXDByFbLsjX/fYGj+/ppiHliocmsw3DrOf1iJeMYH6JfrH8O6VQBFRRRF
-         exkm7IL+683UWpHoESs3jDULwNysjpRgaD3bF7CZk3KKLx+1eQ3JZI8DG5UjpomFTuAH
-         04v38upX79vjFkOi4+uR/k4BkT6PT87/39Wqel3+MxKxbWArEG4Wtu3p8yh8mIu841Z1
-         hx7EdqH/FJJLtS/vKp0nWNlIRQpvD58AmGICvJEcpHAhH4MO/KCZtaJYvfUjcv/D3U//
-         JIqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709213922; x=1709818722;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IgTG61UP+6FyhLCLuzFpVqoxtaeq7U//LN38utfZLxY=;
-        b=km4nqgIJfFJ/jLeLbAsAwERdXnbWiZK9elgslCedfcZnA2fQ47uFvk/sS6XVnAkcxV
-         PGRE7QmoKLniGCTyAuIzbwO1t5ps4XyksALQiDnlAlMc1Lej4ALiszYqX3KaZGAottv1
-         w8LvPqEu81T9iMXKO+OcXxjkSWN8nQvWZkCEGpMCn7Yg0wy2Jlfea36hvP0fV8OqDOjc
-         p2Mggg2t/WFCJDwBoHRWeRnYfMjqirWuxtajRTMkkJ1svAvaKtvc6kULYw3YQHB15iPO
-         IZkmPhF+X+KFpT8hI0p7CMygToo5AMLp8tB3Dms5ujj9+VeESqFLpgLXcqVrCBZvQ3Xg
-         rSlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwKSpaeGuKoMwHmm4OuTkSy/tZleGKtWOYCLOAbqvHqUy/MYtulFH2o3XmqYazSe122+l2qqmR+JnqTF0FEtC9vPs+s5QbQnN414fstbLO
-X-Gm-Message-State: AOJu0YwjDkcdrDLZgou0R7hnA7+gkSKAQKJ/gNbziEJc/17H8V4ONT7n
-	MdSz1ev5w8hwiG/PV5acjC6Ni+oMjVLDvLZVF58d6RMAh+jUHMYwQcw5P0TSbcbdvHekxXsedEr
-	6UQphGPMGnx2lxkWr0D01ipQHsZYsbEW8Efi3UQ==
-X-Google-Smtp-Source: AGHT+IHM+r25TrBY9AX9ipefyLXUMLaheRjIdWYWuABgl1FVp0VyIn45HlK3V83H/L/hgt8QY0zg7MnvQFGOqbohVwM=
-X-Received: by 2002:a05:6902:2193:b0:dc7:4b0a:589 with SMTP id
- dl19-20020a056902219300b00dc74b0a0589mr2680154ybb.55.1709213922539; Thu, 29
- Feb 2024 05:38:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nx4DrTWh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1709217974; x=1740753974;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=3oJedtpUCDtslx7gH0XWE1db//lVWLZiW0moWQs5pns=;
+  b=Nx4DrTWhVC49Th+tSpQVjHaVueYcYd/zpj2fiTuktm4IzKhEjVXuQAif
+   VhSlWhQEbV7ZnfhOFwY3Hz4Q/E93ryVOI7Dj+STxAbSN0Nw7gUK09bPNZ
+   2ldyst25rw59deXTuLJcDa+f5fqMcZB5m9eAu+gR6aQpmNPJERx0BTCpc
+   RhaKi6gNqk+uyB00FJl7ozysAf/L3aON3qW6KnsNWQktzrta/Y7CWSgEf
+   W6mAGZ27g5BMF/5lPEiLnshykFCixpd7lT9uet2bkDM7rI7DjGTzLZkwS
+   55pqB0JhgZEcJXXrPP6AgnjVdnuyNgrQK0JNI6nXv20suYU5C36tHnTvZ
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10998"; a="14398435"
+X-IronPort-AV: E=Sophos;i="6.06,194,1705392000"; 
+   d="scan'208";a="14398435"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Feb 2024 06:46:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,194,1705392000"; 
+   d="scan'208";a="8080548"
+Received: from unknown (HELO localhost) ([10.237.66.160])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Feb 2024 06:46:09 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin
+ <tvrtko.ursulin@linux.intel.com>, David Airlie <airlied@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/i915/display: Save a few bytes of memory in
+ intel_backlight_device_register()
+In-Reply-To: <ecfdb3af5005e05131e2fb93fd870830f39a8c29.1708708142.git.christophe.jaillet@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <ecfdb3af5005e05131e2fb93fd870830f39a8c29.1708708142.git.christophe.jaillet@wanadoo.fr>
+Date: Thu, 29 Feb 2024 16:46:07 +0200
+Message-ID: <8734tb8h1s.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240223162850.3914349-1-colin.i.king@gmail.com>
-In-Reply-To: <20240223162850.3914349-1-colin.i.king@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 29 Feb 2024 14:38:31 +0100
-Message-ID: <CACRpkdaPxGX249Uu5GsP79+ga2=k40u2+oeGUYpEaXAnh4+F0g@mail.gmail.com>
-Subject: Re: [PATCH][next] pinctrl: ocelot: remove redundant assignment to
- variable ret
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, Feb 23, 2024 at 5:28=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
-
-> The variable ret is being assigned a value that is never read, it
-> is being re-assigned a value in every case statement in the following
-> switch statement. The assignment is redundant and can be removed.
+On Fri, 23 Feb 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+> 'name' may still be "intel_backlight" when backlight_device_register() is
+> called.
+> In such a case, using kstrdup_const() saves a memory duplication when
+> dev_set_name() is called in backlight_device_register().
 >
-> Cleans up clang scan build warning:
-> drivers/pinctrl/pinctrl-ocelot.c:1404:3: warning: Value stored to 'ret'
-> is never read [deadcode.DeadStores]
+> Use kfree_const() accordingly.
 >
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Patch applied!
+Thanks, pushed to drm-intel-next.
 
-Yours,
-Linus Walleij
+BR,
+Jani.
+
+> ---
+> Compile tested only
+> ---
+>  drivers/gpu/drm/i915/display/intel_backlight.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/i915/display/intel_backlight.c b/drivers/gpu/drm/i915/display/intel_backlight.c
+> index 1946d7fb3c2e..9e4a9d4f1585 100644
+> --- a/drivers/gpu/drm/i915/display/intel_backlight.c
+> +++ b/drivers/gpu/drm/i915/display/intel_backlight.c
+> @@ -949,7 +949,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+>  	else
+>  		props.power = FB_BLANK_POWERDOWN;
+>  
+> -	name = kstrdup("intel_backlight", GFP_KERNEL);
+> +	name = kstrdup_const("intel_backlight", GFP_KERNEL);
+>  	if (!name)
+>  		return -ENOMEM;
+>  
+> @@ -963,7 +963,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+>  		 * compatibility. Use unique names for subsequent backlight devices as a
+>  		 * fallback when the default name already exists.
+>  		 */
+> -		kfree(name);
+> +		kfree_const(name);
+>  		name = kasprintf(GFP_KERNEL, "card%d-%s-backlight",
+>  				 i915->drm.primary->index, connector->base.name);
+>  		if (!name)
+> @@ -987,7 +987,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+>  		    connector->base.base.id, connector->base.name, name);
+>  
+>  out:
+> -	kfree(name);
+> +	kfree_const(name);
+>  
+>  	return ret;
+>  }
+
+-- 
+Jani Nikula, Intel
