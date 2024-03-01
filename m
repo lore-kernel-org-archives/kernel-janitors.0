@@ -1,109 +1,79 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08A96D1A4;
-	Fri,  1 Mar 2024 14:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B688423DE;
+	Fri,  1 Mar 2024 14:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709302085; cv=none; b=IyXMf/1M7J0AeOLMwbbX7WRj3YEzUp7fhD0tSslI68PrRGjbFhTD8eD3hBMGaWclIfhnQCbS1FNFe4jK4hzstfyDhwGIAiyQpxnJYIAz9LHZ2FzdDT0zvi8t+B9V4bAVvU88HbNKUyfFXSiwhhLMiT6pb9sYQKBt+xs6efItGVU=
+	t=1709304213; cv=none; b=c4gBPdTucYUP/iDlx13lTGrpWHQexG8hqu/XqgQB0rO50p/j3ugwrnca0pRNxF9J6kopFXgB9FWb3FiVyPvRSEq3/2UxhQj/nFizPAYVw133uFfnkeBvg3lud8n+j80ecqokOp78K38HaNPr4xiDZOAaQcGiEEYZOrV+O2JZ9g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709302085; c=relaxed/simple;
-	bh=bCnomT+2ED4Jkxxq+pu6nRP6pi+vAEgaQ1rqoBBay6g=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=QLY0X4OojeClxVPGfg/E+wCgiARYMQs+TqG5z0T0STbkfhzhB33Yrt8MpIkJ0OAE8t3+Wnj7cNbQZHjcjfqUvXQ3UP2pGDXmiy9iFVQCphv2zkFiDUiCPc0H62V3QpdxYFKcwDMeGKR1jYmaTcU+zAtpZ6JCFtCIVitfYWoCssk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=IqosRX5u; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1709304213; c=relaxed/simple;
+	bh=OnTKFgas6IdFh92/KQpHTR95vTLrd8aWhLoDrIWhXy8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Bds4z7t3DDUlZpZTpQ5zH7B6k+ZzIqZhDJYoPoV0umRx3gtICvoDA6Dxdbb3PqaOUREfpPx40oNrIHnCmgpxDRQ9/XtkjDMMZ3D7QVOzqdEYrj9IQJuknpMcBEX9ikXv/Rzeu8CFLUB0V3pG3uJVi6i8eLoO+e15EU7wx1UQCQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=tnjThimi; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="IqosRX5u"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1709302072; x=1709906872; i=markus.elfring@web.de;
-	bh=bCnomT+2ED4Jkxxq+pu6nRP6pi+vAEgaQ1rqoBBay6g=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=IqosRX5up0YUpcgwldV00Fw7nQDhh3bvWhQ+GfxDrLjI+idbP/2SFIK55bVAEQQu
-	 GinRhCCqSmKUtQFeZaF4QaSpsy1CJzWIB0bvEM7fA91KFkRpMONncM3pAHqdOq3Dr
-	 T/J2ulB4FlRDRUJxaNZCtu1SqDHzyD7ygd0GGTC75Yuk4fTgbniRD9JR2qibmM7eH
-	 tfre5vDgyUqOj3avidDuy6NBb7QZc+wF6G2XmKCBWm2iDIUOyCYyWeJaX8BsU+SDT
-	 RCDCVmsN8wbM8y6jdeEI/Ih2NkHqhOaAzx7fZJHzxJMd/Iceis6Ebgugti0UFZ+py
-	 xiir5cRN/EoT/68dDQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N8Voj-1qkMRq3it7-014X8n; Fri, 01
- Mar 2024 15:07:51 +0100
-Message-ID: <9d0511cd-1fb2-4612-9b21-196a43ad0397@web.de>
-Date: Fri, 1 Mar 2024 15:07:50 +0100
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="tnjThimi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1709304210;
+	bh=OnTKFgas6IdFh92/KQpHTR95vTLrd8aWhLoDrIWhXy8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tnjThimieXpRL4nOo0zsMGwlIFay9Xm5OlmUmjLNGWcSHgokdjjc9caUXHWIDGrG7
+	 ngSyAK1rY1EyjDaFXXusw+/PuGXNUTPPO6Q5EU29IrKxq1K/EvrUKeEO+pH/ckes//
+	 +eFUPxkQxC2qkeMF6n97lN2+vGQ/olRAhQzUaZH7QTIeiLbJLvpsw9mvDJXuYiyOEZ
+	 IPVdzMhnqYlJ3I3t/DjqaV8n326Yuj4LmRU500cnLWJlcPcxxrK1RG14k7Qq8vGOus
+	 h27yHz2YzQ0dol8nQxGXdAaKcj5+wGafWPDcilgO1MEzveyLWkz67pQq9wClDgSzD5
+	 C1/vAcmct4GPA==
+Received: from localhost.localdomain (broslavsky.collaboradmins.com [68.183.210.73])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B331A37803EE;
+	Fri,  1 Mar 2024 14:43:27 +0000 (UTC)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	kernel@collabora.com,
+	kernel-janitors@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH io_uring/net: correct the type of variable
+Date: Fri,  1 Mar 2024 19:43:48 +0500
+Message-Id: <20240301144349.2807544-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] media: v4l2-fwnode: Improve exception handling in
- v4l2_fwnode_connector_add_link()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:LEUQBvFdHCVfm2kd8AqCv/C4/RsI5ff027Mb70htNk95PRhrmAi
- S6bqeuQusfUOLnwqELcas6C/4RHZpcoq22ihwSmvU0+PpuZIo8ozvdOF7XJnKqUrmg9pxQd
- NGLDsz1VDgRF9NiCHcT3ckachFA6P/1t+gATTePTGrBlmmEMrNorRO3yNWaq3QQGiP/LCtz
- +vDFUm4xbplB6ASaiRspg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:zHaLcXrErqM=;EsjKksCa4tH2THJlPAtiPwkKJLl
- 8Xfagu/ewpVajhuLFC9xitMc7JQ62+eG2NMDNWY9Tk7r97HzxnbEd13pFYzrDwZcMFBF8Jr01
- rEXAGhvjPpuMmr/Pux6jGIH0xj1yceiv41H6sdB79uZ0Sb8eWjllDz4bHx9fBeMsbo6hJDTeJ
- mHb3EvH9Zf2FDEkEzbqN7rFJlv1Wzg1QTcrZiw7zzPLe2nCJWeo8QtFyOfJs6QY69hpWl9ajr
- dc66RBjTb0roQBPVp6JFwoCzAQZHSVzZ4mALV4WfvboMwoUomDBmIUpqHqt5IRDML+wuOs+hl
- O4gtBJRVAXH/s8/HvZ1PsZ7BxOI3/3T6JacIE8WsGzQrc7nWDxMhv3q4UrLnSY1274vEEwByB
- qDcAv8YtRNcgREzW9PfvKjG/diodpJms342NzBbYtYmzGV8aiHepXW8a2nxKuHPapT5gXrfva
- u+4qSK1qj8eXV278GNfKu4k0aLVgOzec+SyxxckRJgVXhUz0s5J5NABdX1g1ss0P4/bpIc2/b
- 4T4QsDLJOAGqhLxX3tA7Tnh/YGDDThpGVqqAORR3FEsNoRgH7o2YXq4mrbFwVSyn7jxVbSFqt
- DNweJ+O9x4S/NsrwOzMhjNRlfn60JodKmYl6RzZJ1Ai7qMVyvNp8PRzAaK1pnt3KcorjEX542
- ktbdJr5RQ+bUX5hXq+ROLYzeqadUfSN9GV5A9rY0ufdajFfWrt6OOJ0Ro1kCml2dvONEWfL+Q
- jpIa/QfBY0DKah9NrvWiqwKV0jT8nQuYFFmTnxNyvyctVEdT0s7dkfD1e3GDBU5S5hs/msJTg
- LkEuGY0/6SC1phYZIqeHLy05gcupVQCKfV3IuRwmxFG0M=
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 1 Mar 2024 15:02:09 +0100
+The namelen is of type int. It shouldn't be made size_t which is
+unsigned. The signed number is needed for error checking before use.
 
-The kfree() function was called in one case by
-the v4l2_fwnode_connector_add_link() function during error handling
-even if the passed variable contained a null pointer.
-Thus use another label.
+Fixes: c55978024d12 ("io_uring/net: move receive multishot out of the generic msghdr path")
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ io_uring/net.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/media/v4l2-core/v4l2-fwnode.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-co=
-re/v4l2-fwnode.c
-index 89c7192148df..dc6daf3a9a51 100644
-=2D-- a/drivers/media/v4l2-core/v4l2-fwnode.c
-+++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-@@ -744,7 +744,7 @@ int v4l2_fwnode_connector_add_link(struct fwnode_handl=
-e *fwnode,
- 	link =3D kzalloc(sizeof(*link), GFP_KERNEL);
- 	if (!link) {
- 		err =3D -ENOMEM;
--		goto err;
-+		goto put_fwnode_ep;
- 	}
-
- 	err =3D v4l2_fwnode_parse_link(connector_ep, &link->fwnode_link);
-@@ -760,6 +760,7 @@ int v4l2_fwnode_connector_add_link(struct fwnode_handl=
-e *fwnode,
-
- err:
- 	kfree(link);
-+put_fwnode_ep:
- 	fwnode_handle_put(connector_ep);
-
- 	return err;
-=2D-
-2.44.0
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 926d1fb0335de..b4ca803d85e23 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -551,7 +551,7 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ static int io_recvmsg_mshot_prep(struct io_kiocb *req,
+ 				 struct io_async_msghdr *iomsg,
+-				 size_t namelen, size_t controllen)
++				 int namelen, size_t controllen)
+ {
+ 	if ((req->flags & (REQ_F_APOLL_MULTISHOT|REQ_F_BUFFER_SELECT)) ==
+ 			  (REQ_F_APOLL_MULTISHOT|REQ_F_BUFFER_SELECT)) {
+-- 
+2.39.2
 
