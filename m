@@ -1,36 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F2871B43;
-	Fri,  1 Mar 2024 16:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88E65228
+	for <kernel-janitors@vger.kernel.org>; Fri,  1 Mar 2024 16:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709310246; cv=none; b=pF1dHwa6ywz0E2RYrXaHtW4/sKCMYi5M69hbRI4W3NVGdcBJymwKJqrgkcxgcw0IqUfS4ERsaKOiLGsG+ZbrY4kDjUydBmvU6bKUkmBY/naLxL/vxXW9rUbvegAo9L7tZhDRNZ5Kyrx5UhBR8d5yd8Zgt3f/+visiomWxuMT4oY=
+	t=1709311175; cv=none; b=oWLxWCBLZ5Rr6Z716n/FnmvCGxdiN2P4RAuPRj1JOKPqXJvLkUnT3q2PMDJicm4v+OLDDQpc18HsYXMb2k5JO+LDXBKGFOg0j8PNQi0JLCmLUrfzouvXRaeS65LuUD0VBhAkfNNTYNNsCAUPoqPxzi3QLB/ilS4hdPJmx1qGSks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709310246; c=relaxed/simple;
-	bh=nq+dTB9sZf2knTv8a3VS+AYoILhfpagAL7MZwhJ2pmE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=VBQlQXXa3JkzLOvAydCY9Kj5BIqRsbVH3WxY5wpVtFr6AvVuwUhrxpB9XoqlQkR80vgazH4FVbeluOsUrJ09ewyP0ft+Tc1kyp0M1eeDQqs+1mzuarkbgi9ZIho4MO9KKUAB2wDVken7KaklYwA9sC98590bXyNsflOhw0nyQdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ZQvK6iOT; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1709311175; c=relaxed/simple;
+	bh=4LCWmAiman5r71J5/XB8evn4nHCvsyVvo6RCk/szjFE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qrgTetnV6Zln6Chza2pWnzr8v1lzCWHUCgyoH1sghHM8u6nn6Doxrgzfv40DKK4wemoKAMZtv8XBwaVyxgWfR3FgmGJdpxj7zysvpLIA0pLybQ+lAw3MxjTep7NkMjA2pi4IG5eSAR6+xdtnX3XVYrO43JEpN21wDSshodheyLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=BgAs5u5J; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ZQvK6iOT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1709310212; x=1709915012; i=markus.elfring@web.de;
-	bh=nq+dTB9sZf2knTv8a3VS+AYoILhfpagAL7MZwhJ2pmE=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=ZQvK6iOT+bO4tPhYEnabsP9Xu4NuWKZALwGjgVtKfDNkBimaFc1j75CeTokSIHMX
-	 TA7lfeNKK8zYRfMu6CfukWcyWBYTQ8pjL07uhrn9xzb7/qxGWgYA5oJeTf1OMX4lg
-	 IBI/NNjcV4ooxaF+sVo2kKm8GR7TbYeOvpPkQ7SzrBiN7cBwKNCMurfiEiLDTAbic
-	 XhE55G+pyxzYVDqx64R4vJ5MsnZ0ANCIV250WNE1ylhXo48WiH8JaW+eDP7g7QGoM
-	 4R2M7H9eiPty88Gb7IwLop/KAOvrbunEbqGaVYNfD9SMZusNJ+98rvYHhgkwvtrdH
-	 JSAzTrsoyEiDUWg0dw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MKMA7-1rRbDv0YaF-00LuRI; Fri, 01
- Mar 2024 17:23:32 +0100
-Message-ID: <0b89e175-47da-4e66-bb3b-a45a400dc3ae@web.de>
-Date: Fri, 1 Mar 2024 17:23:25 +0100
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BgAs5u5J"
+Received: from [192.168.1.18] ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id g5utrzXJF9TLjg5uurqagy; Fri, 01 Mar 2024 17:39:26 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1709311166;
+	bh=RN0U8d0tLa6K7dQm1uz+etryBFOWXolWyCXCTbp29Xc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=BgAs5u5JiucHRHyG36DPlbfHDTpaH9GYNXjVbAyrtDqgAsWeQixQlDa52jAj/vZyt
+	 PJoc0ZSd1Qmbw3Cskch4mFqBQ3gBNWM4DqAm41gjROvQMOhCE8MO6u8R9jNQCZ4F3L
+	 pWAjeljun8RB/RiiyoBUet3QhosyKgbqqHG7Bsg1grO8j7C8dROxORtjjyy++nRMx7
+	 HLLbcXGx7iGSxhSTCxF7Mly/e8hGbSANoyFBynDUtZWXPFX9j9tbIX7CPNkQfcZo2l
+	 snQ7UkRUucD8xh9ydtYFCaIQJznQ3trlz65yJ4sFc+iRUdqJdRuli3c1sPpkH4m7KX
+	 TFwKlgn/Y0XjQ==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 01 Mar 2024 17:39:26 +0100
+X-ME-IP: 92.140.202.140
+Message-ID: <5a0172a7-1a02-47d4-86c7-f5fd22e9767c@wanadoo.fr>
+Date: Fri, 1 Mar 2024 17:39:21 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -38,76 +42,61 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- RD Babiera <rdbabiera@google.com>, Rob Herring <robh@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Yu Zhe <yuzhe@nfschina.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] usb: typec: fusb302: Use common error handling code in
- fusb302_probe()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:o7GcYrUfVXrYS2ZCPe02m7WMplSN24/yNpO+Dv2Zv7dcHv5XFlE
- 15XhwzGS0OyPzBxck2FX65wbryPxGYv3vLUpqdTi9n/qNhVWghgdTzOnkgLnDYrXgAm+CWf
- 0nxH0Fd4Or8KrPaAKyLXSVrwDdNdRuwYoMHLq1WH4Hpf0ZAXdEepTBfgsyUqYvo95B/hs6c
- R2wFjcDaj9Bu41DxZWCOQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:XMDho9cx+UU=;b58AOzK5r9e5ujBhpUnW+QTrDF0
- af00PfU+SJcQuUSRd2WXaqjA+9JhPY62tJ4czPaQZZEyNSnF2r8A1cMYCB0OqjEWN8x/UbKHR
- n/EI4JZOhELQcvnF+IScPTH/dwEV31E4iUIdolKQGsdkVRc8IKsaRXykZPpFkDerl3QrRzTAq
- 1jApWXH7esPKjcqzaL7/Frn4Itj4TX/IVcbZDdifgN6fw+WB78D491AvPyZ72AbnaFBw3sUjv
- /4dLAcANQAoZmlP/JldAfoIQfYTRhHN1t0mUTrKCGP+XfjDIIdf7MlG6P/KikWWSndqNjr9jx
- Qcc4VUVXcJOfp0+qLuAxGo5G/VbygPezXoU/tpwnbYmUWWKKAxnLpDoSA7h4dta9J5kWGQ9Te
- sNydATeYIJh1hkc1GvMs16cYD52RtLjNgCxwWJp5AAk+jVRR7fddVl4ZrUWOCHu6UBqIMiIr3
- bdD55UqrmL+3AxZJvmzkP0OQ8Dz/OTkKObNv9XuSbAcw+xKKeEAHclXgMZUuTp2P1EHk1ZsMH
- wi1OzpMqvOFSiyjeaZEDJdf8IzerMZ4ZEyexnrOMZ2l7gDWwoH148dj4ULoTPEa9fWxNGUeZK
- kTgzbIhi3OhlSSilbqbpnTff6D41V2yRE4QxuvSQH1LsaQUMy6WORheU/hMglm5OtWprF4ch5
- vzfLJZeJtMMYJ9TqZBOI9HwE5r/PYTIHoWCoR4dZlfLvAIpZtgzZ/Pcn9cr67J46y4BP08F53
- i+SnzS6GokXepWVkqZlIYmOsHUgzqAio9QZRn2UxBW4vXB4vOzsl1s+DoADgQRaJIcOB5JgYl
- 9VAVFqnlB11s4d2rF41EguskBOHPbEv56nRxIZJbYfXvY=
+Subject: Re: [PATCH] scsi: lpfc: correct size for cmdwqe/rspwqe for memset
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ James Smart <james.smart@broadcom.com>,
+ Dick Kennedy <dick.kennedy@broadcom.com>,
+ "James E.J. Bottomley" <jejb@linux.ibm.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Justin Tee <justin.tee@broadcom.com>
+Cc: kernel@collabora.com, kernel-janitors@vger.kernel.org,
+ James Smart <jsmart2021@gmail.com>, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240301144434.2809483-1-usama.anjum@collabora.com>
+Content-Language: en-MW
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240301144434.2809483-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 1 Mar 2024 17:00:23 +0100
+Le 01/03/2024 à 15:44, Muhammad Usama Anjum a écrit :
+> The cmdwqe and rspwqe are of type lpfc_wqe128. They should be memset
+> with the same type.
+> 
+> Fixes: 61910d6a5243 ("scsi: lpfc: SLI path split: Refactor CT paths")
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>   drivers/scsi/lpfc/lpfc_bsg.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/scsi/lpfc/lpfc_bsg.c b/drivers/scsi/lpfc/lpfc_bsg.c
+> index d80e6e81053b0..8caf54aa20391 100644
+> --- a/drivers/scsi/lpfc/lpfc_bsg.c
+> +++ b/drivers/scsi/lpfc/lpfc_bsg.c
+> @@ -3169,10 +3169,10 @@ lpfc_bsg_diag_loopback_run(struct bsg_job *job)
+>   	}
+>   
+>   	cmdwqe = &cmdiocbq->wqe;
+> -	memset(cmdwqe, 0, sizeof(union lpfc_wqe));
+> +	memset(cmdwqe, 0, sizeof(union lpfc_wqe128));
 
-Add a label so that a bit of exception handling can be better reused
-at the end of this function implementation.
+Hi,
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/usb/typec/tcpm/fusb302.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+maybe even:
+	memset(cmdwqe, 0, sizeof(*cmdwqe));
 
-diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fus=
-b302.c
-index ef18a448b740..e1e030da1dec 100644
-=2D-- a/drivers/usb/typec/tcpm/fusb302.c
-+++ b/drivers/usb/typec/tcpm/fusb302.c
-@@ -1741,10 +1741,9 @@ static int fusb302_probe(struct i2c_client *client)
+Same below and in your other patch.
 
- 	chip->tcpm_port =3D tcpm_register_port(&client->dev, &chip->tcpc_dev);
- 	if (IS_ERR(chip->tcpm_port)) {
--		fwnode_handle_put(chip->tcpc_dev.fwnode);
- 		ret =3D dev_err_probe(dev, PTR_ERR(chip->tcpm_port),
- 				    "cannot register tcpm port\n");
--		goto destroy_workqueue;
-+		goto put_fwnode;
- 	}
+just my 2c,
 
- 	ret =3D request_irq(chip->gpio_int_n_irq, fusb302_irq_intn,
-@@ -1761,6 +1760,7 @@ static int fusb302_probe(struct i2c_client *client)
+CJ
 
- tcpm_unregister_port:
- 	tcpm_unregister_port(chip->tcpm_port);
-+put_fwnode:
- 	fwnode_handle_put(chip->tcpc_dev.fwnode);
- destroy_workqueue:
- 	fusb302_debugfs_exit(chip);
-=2D-
-2.44.0
+
+>   	if (phba->sli_rev < LPFC_SLI_REV4) {
+>   		rspwqe = &rspiocbq->wqe;
+> -		memset(rspwqe, 0, sizeof(union lpfc_wqe));
+> +		memset(rspwqe, 0, sizeof(union lpfc_wqe128));
+>   	}
+>   
+>   	INIT_LIST_HEAD(&head);
 
