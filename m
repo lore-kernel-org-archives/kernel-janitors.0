@@ -1,114 +1,102 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEA016FF47;
-	Thu, 29 Feb 2024 22:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE302405DB;
+	Fri,  1 Mar 2024 07:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709247102; cv=none; b=leCUTGzlcz0KQVNycH15hSryZGacKXtTnOYlzDuyaKdK0eXhap7gT9kM39h3wZfTFVKbrOeTRoszvpgmaO3Gzs8Cz4COLeUMy2cH7TbBN91cSfytTxsLhxpzhOBhxDHg0F81P/J3FjSzzzamm6wMTlFHqOt9kptqgatDJZNEBRY=
+	t=1709279212; cv=none; b=DX9q3YT17fIBif5ZvPGfU6C+FK0X3M5TOESgT15z2b61jR07dRWyYekvoI+w+istQe3hfl8J/uCrGv3NvhPcP2AdEPCqq149n0XgIlXqpN6Jh6AQ6f8/OcOMfEBeT0PR8E/+n+k3AdgOyCTtDSUk3EcnjVGuRaM+tiLiyAZcmGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709247102; c=relaxed/simple;
-	bh=gENCS1RwyKGGjAJ+g0H0xutNIpNay1XIcumfYiGBmXk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=dlRIuT1meW1BTL2rb9fOM3lCHb2JVgvGQfCRm9HRrkERxMjXFAyzCV8vMltX60Qz1scPRk0VHCXcbXdRGlW0na618CRBqxi8mnL0WeZ2Kr5VMMjLG2cqRiILV+kasXQA7wYPviJMrYR9v8o9UVJqBO1fzTFfP7IW6ii/HMqAh68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KG3THHXW; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709279212; c=relaxed/simple;
+	bh=PtVj2Cs/5utkaUVwbD5AXLYA8GHmi80b51Oqj9vJ8HQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=OVdWBBVUFc4Z3aMPvPJnojWueH3JtSeowaG37lMqRXEsgqL+LlZhtHczykNMNkymyo+znHieSnVpNHEsWgCiOajnSikGLmG4vu8mAx6ThErSSm4KT6UN25jIluDzuaDRQUx2uMhYsJIO0CLprX6FrOIus6xDfhT+paolF4/Wf0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vEWh/wuj; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KG3THHXW"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-33e1692fb02so360303f8f.0;
-        Thu, 29 Feb 2024 14:51:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709247099; x=1709851899; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3L9ixUueiI05jpi7f65YJ28x09hBlNI3L5Dn4dXdhtw=;
-        b=KG3THHXWTlwmOz7fRdMrOyf7QTI6SBz1zlS3vhVSk/wBOrlp3rkaqvL5/0NQ/84A+T
-         x4VjIxidH42trSgnvKBoDhoqJDyd2RsNP8F4Ibb0b+ECdgKkn8wbRuLjF8ePTI3BYivX
-         mZf1uKnTg2pqLn0dtU9iRUNy/inbG5uXGdj287jJUf96tzLpzKKe9chF2hkmHw5u6r4Z
-         +WBy5C8ZHXTkQW8zArf4rqEI2ENshY+i8Kl6XvCyZ1uk67V7M2MFDLc2YqeQp7kcLJpk
-         DT8hX3Ay2VGMulaqoLzepfnqhuHAdeuDV3QxGBZphSqQ6eHmY6qTJinDRgLyxlVuPjq7
-         qHfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709247099; x=1709851899;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3L9ixUueiI05jpi7f65YJ28x09hBlNI3L5Dn4dXdhtw=;
-        b=VTB0vI/WniSkuUbqmTu6x3UvyzQI7JjRWM3i/1bnIRdlWR1FLdo4/9mQZ59o+af5bT
-         n/+Qb3iX0fFfBaJVdjH8KkLIKN+9Z6TTNJ48A2A7OY1P56mbCXyc6TvW2StycJYJf8Gw
-         hKv0H5l/v9satJvekSelFBGCNEyOR0FsgtNTl6bCeGCiHV7jRruyGqQ0k1PbUwAblhUj
-         5Fc59LmpHNnUOe5Fku7ydkrQ4mTumrUQKtTy2PHgtba33nLNZZ4ZHl2amptZIXpvFVwZ
-         d2mbVCvgU2o9QZsL541o+oi/jKhbjGBnlb93kVfddecCXJEXb1edSGhgecQNeWomTz2H
-         tyyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaI1TJT9Vv68cT3XpD/m2qttwP6lIHjfgR83jLx7a1g8Xjvhc65C3ExZ+tBJ5giKJ1ddTOzcmFLzCxtrr64XYgCXJB0gZqsQCuToqN8zWOZ0Oj4+MCcPW1+949t3AX3o/KAy7ntCzxyqm4Ww==
-X-Gm-Message-State: AOJu0YxQIqJciZgh6pdWl6MLARXK9Z92ejKj03BlnWt4zqjMoZW4g3uN
-	fYSsecpjQeqTLIEXSni30b/C2+IU1qDVTnnYiQXTBI7B/341emr+
-X-Google-Smtp-Source: AGHT+IGuz0LwrlRo/C7GfS+teQBq2Sq2iggdwk8ap0kAYWevKtiR09uv8paoPiASXzl3JLqzfZYY6A==
-X-Received: by 2002:a5d:498c:0:b0:33d:e2d9:8401 with SMTP id r12-20020a5d498c000000b0033de2d98401mr239007wrq.51.1709247099315;
-        Thu, 29 Feb 2024 14:51:39 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id q13-20020adfcb8d000000b0033ce06c303csm2861408wrh.40.2024.02.29.14.51.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Feb 2024 14:51:38 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Hans de Goede <hdegoede@redhat.com>,
-	linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] vboxsf: remove redundant variable out_len
-Date: Thu, 29 Feb 2024 22:51:38 +0000
-Message-Id: <20240229225138.351909-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vEWh/wuj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1709279197; x=1709883997; i=markus.elfring@web.de;
+	bh=PtVj2Cs/5utkaUVwbD5AXLYA8GHmi80b51Oqj9vJ8HQ=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=vEWh/wujuPkr5ZgUKGrC7CR17ajTtwB8K0+7BUgACfosZ+YkVCxOkokrpBZ0MHPL
+	 yKIjqDGCfxtom0sTR+kmTUpuj/Ok4KAHTlO0RzySVvafbhY11Ga9PMd5zSS4PyfQk
+	 VAX3ElI3F02jdmh7X9DeJJqt3yfJlOnzxr462cjXEc2apqKpTvBXySiaALaGBBoMX
+	 I6Hs/BbvcvpBhoCBMaHFPQsQzG05yzM24gN8r+XBlIYbCaArZsEpXpM31FFpOEHOW
+	 7nq8J8PkDaZMkyJ5Fs9eQfpsP6ak3+rXIOvj5AjCv9Rt1xeAiLgmrhFKbnRcpHObg
+	 1uWF8XPffY4vRwqsmg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MA4fW-1rZx3v2OaY-00Baxt; Fri, 01
+ Mar 2024 08:46:37 +0100
+Message-ID: <79fa4854-976d-4aad-86ac-c156b0c4937e@web.de>
+Date: Fri, 1 Mar 2024 08:46:25 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] media: i2c: ds90ub960: Delete duplicate source code in
+ ub960_parse_dt_rxports()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:NG6uo48tDikPs/0i4tEmGu816A1pQ83tsl2OXdg3u6hJ5bwtoyO
+ BjRU6fcWGkrgTk6joa1FlnF7RBUozfSJH9fqxJz0A/9TmzxZpXJTDatt1LM6B3NsqdN5T26
+ H853kokKn63cWdDZhBzT1ojYkPPy/rDan4daCVEou18V1+O5cXYY3P5ds0+ijVcTx9+xs+7
+ SXRSO+1JjmgDt/TNkOLDg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Z/ukpIoRDls=;0SinomGpMNGuyZ7CuXAkKrUBS69
+ o5VCs//WXLxsJQAdvYJT6ILPRcp+zspbC2T8zbwkUYBbMK7VQH3YrN1nXJQ7lz+VP7qB5HCQ7
+ n0/2lrwFfPwLCLSAx2nobiKHpwod+w+dPsLaqJzvpckXRLU5x/WZHQw8HfqkC//80zFd4fxv4
+ XMlFzDr5n5CC5os48AgQIe2jg3wPcH7gho1UcMg5RHfDD4Z/MvyJFkNbjYDXbbXsrBUH1jkiH
+ Gvyptdpm1ftYOsc7TuH29vWpSWTqFGQ4n3NjkcP4U/OvWq3nDC1bdDLPUxj+yHN4uEYniMw36
+ mCf0odVkbJ7ubKuBmdM5ZymzMNYfVlmvEhsYDOnLRL8Z0LYWwUX1Imd82WWD/fTVVKBsAtGQ+
+ rT+tnd3um6Eag2RfK72cIPA4hzeD+14/ErRAMKAEgkJ9DaoHdCN664tBqak+n880rt8zZa4Xj
+ X1HJb56WmFXbVpuBjcX+Fv/NfPHefUHFK4wyeYYwCO01I+8qYdOBKHpo8VWzAxpJuzqTBdtJD
+ 8ZMn7OihOAHohXt1H9rzkeX0ezhzA50MA85RQSCycfQWd670621IiHhqprNTZy3VheNbNId6K
+ 5d5Kzl9TpRWKAFFUE1bADesH6ffb5BGJCL4QUeltuGPotcTwUJN+8ubtHccdSHRegVDgsLMjG
+ s7I8lfaJh900ZealoffrLoTp7e/d86mNk1KU+MSaeaDgpEy+lZKUaXeZrTd4zR5ztMeBQYdYA
+ RcV5FisSS9OjRwARJpVix0Gw3k6Stevs/69UqHG9kOqsiTpD+3yuopk1UjOG46JfjaFDJvehl
+ xxs6FmrjLYbbqpC7/0WYXaGaboDF5hmko5g4g/ePy0tCw=
 
-The variable out_len is being used to accumulate the number of
-bytes but it is not being used for any other purpose. The variable
-is redundant and can be removed.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 1 Mar 2024 08:23:24 +0100
 
-Cleans up clang scan build warning:
-fs/vboxsf/utils.c:443:9: warning: variable 'out_len' set but not
-used [-Wunused-but-set-variable]
+Avoid the specification of a duplicate fwnode_handle_put() call
+in this function implementation.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/vboxsf/utils.c | 3 ---
- 1 file changed, 3 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/media/i2c/ds90ub960.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/fs/vboxsf/utils.c b/fs/vboxsf/utils.c
-index 72ac9320e6a3..9515bbf0b54c 100644
---- a/fs/vboxsf/utils.c
-+++ b/fs/vboxsf/utils.c
-@@ -440,7 +440,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
- {
- 	const char *in;
- 	char *out;
--	size_t out_len;
- 	size_t out_bound_len;
- 	size_t in_bound_len;
- 
-@@ -448,7 +447,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
- 	in_bound_len = utf8_len;
- 
- 	out = name;
--	out_len = 0;
- 	/* Reserve space for terminating 0 */
- 	out_bound_len = name_bound_len - 1;
- 
-@@ -469,7 +467,6 @@ int vboxsf_nlscpy(struct vboxsf_sbi *sbi, char *name, size_t name_bound_len,
- 
- 		out += nb;
- 		out_bound_len -= nb;
--		out_len += nb;
+diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
+index ffe5f25f8647..eb708ed7b56e 100644
+=2D-- a/drivers/media/i2c/ds90ub960.c
++++ b/drivers/media/i2c/ds90ub960.c
+@@ -3486,10 +3486,7 @@ static int ub960_parse_dt_rxports(struct ub960_data=
+ *priv)
+ 		}
  	}
- 
- 	*out = 0;
--- 
-2.39.2
+
+-	fwnode_handle_put(links_fwnode);
+-
+-	return 0;
+-
++	ret =3D 0;
+ err_put_links:
+ 	fwnode_handle_put(links_fwnode);
+
+=2D-
+2.44.0
 
