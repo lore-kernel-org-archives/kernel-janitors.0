@@ -1,107 +1,103 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30D5EDB;
-	Fri,  1 Mar 2024 14:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABE315CC;
+	Fri,  1 Mar 2024 15:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709305153; cv=none; b=QNFYvvfZjCzMnt1ylPNjR+srBTPjkgExj4BPiHhZdv0XBLq5HFdZF/pJT3cYnVV5wxRF+1hyP6mn75duNTaB0TcRSBrBbtn1AXUIZZKGjS9XmdAJXxNgDgFWAWGxyNx4eMUyX7fkA6FWlvoQK1XTPtYaNNVF1wzT3L2gT8KgTgw=
+	t=1709305450; cv=none; b=kEutlPYTNl09pzdjPNIFOQ56tog5wb2Hi9l1aFFX1yes1pmW+zF8pmCh27HR0zfNAcb3pondT2XOHL8cAsJrjRinmfl0bSHDMmkmx068Z4P7jX1BykKy78yqfDdinT67Ye/CiF/SD1zjj41cqkOHcHgJTysAPf1REnakQwIyEPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709305153; c=relaxed/simple;
-	bh=dMzft81as3iiP62L7QXb8pRBQ9sMEKQ4Xtd88MvJnMM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XFvhfjnAi+S7A1zULZwR2V43vamS2x6Pxoth3boMVgGtltERzh61KmjIIz0shGdyN3QrbMOk5K+T3xJNHaE+k8Gxq2Qt4397vbU927yQrZBwBxF7x305WgZZDtsfyEbRGmIwVyh7unLPObqx/Hjw51+msZVTHaSgsVm5+BdU4TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DMHy8/Bc; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709305450; c=relaxed/simple;
+	bh=8b4klxTgnQVm/tbELPg2yxa2m+O4M5Ntj7KUNSDPzxg=;
+	h=Content-Type:Date:Message-Id:Cc:From:To:Subject:References:
+	 In-Reply-To; b=sU6Qz5M6ZIhLaza6+KJ18akjX/fRfxfRQw8qIEVN7Xk/9+Yo13rlw3xvTdmGiRnJe7Xdi0/BOakOPdEoDjpfblO7zygaziEK6AkFgdZUd/DdGeMRBtczo/KXMR3AKygM0ItbkE5IDBfRBCYTx7mZBKagAhFSHrnD4YBlcvCFYqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RAsmulBD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DMHy8/Bc"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-55a179f5fa1so3586468a12.0;
-        Fri, 01 Mar 2024 06:59:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709305149; x=1709909949; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kLyuwERybQOj+h6jmDlpKw7bG2pgzNYOb9yDrzmQoPE=;
-        b=DMHy8/BcUY4FPrTtLmY8OkqKD3NEd0FkO0KFT5bFT/Dger/klyt1aTpAFBQf43Fv56
-         L24XbjhrQii5aKUEKlAuvsBI8/7cRRm0FKxFOQpiPFBUZKNFOwX8gusUL8OUK8mVWAAQ
-         iO/UD1Pb0i1xnNpcwH2fbXuzsfGXtvWLLzoitzeDIZEiad8apOuNX2y6HwDah0+1yaAu
-         zVklQY8ZwNQsgTP/NCAVWlvsEFo48cIUW/H5S2uPCtPID301367K89WGGFy0EV9M9ZHL
-         PFR2Ib+rHEZagdgBYagnXkQqIsZAkT4HSQK/kj674jR9g8AFi0WAcJ3brMrhHtLHaFe5
-         WkrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709305149; x=1709909949;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kLyuwERybQOj+h6jmDlpKw7bG2pgzNYOb9yDrzmQoPE=;
-        b=t33bdOkV+JeXAmC0fBB4JPLw2Ti3RS00pyCvOsBiXLnyXeWyGia68fFZt439ujx0Zr
-         itvYxi6oKaJbzZv1c2DUVhkZQf8BK60W+gEG2VK7Uo7FMtRjCNxxK3ADCo7DaPDymArx
-         iacJqMv618Qx871ngNEvE9y+6sPPlNatdTWQ0zKiiJcMmDgd+kpmokv/IyLJzzNRmUKU
-         hqmaIhqJyPpSnSUaaD23LDoB/7t/MYgP4R9S/tDZRGCOXLcuPixNNx22qEU+mXrlBwOD
-         rz5yXsQ89/b5xnsRUEbbMbndf+/Xj3eT48hquraxv64+/YfEdIUUdChrpQfjIupgymx7
-         opAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmFeKnVZ1LdSHfKWmZU7Elk99rQhNl3Ed0qXvYoVrDdB7TLsqzUMgjdEtXn5aJY1EIIsMsA26DqaDtkjQmEwAb/a2kbysT+CCgutoN1Crgky/StYfpIj3N1zREVVPz6g8IhqQBnSq8YKoCeLbi1yZMSO9oOQJPbqS1+ucthJZucoThLg88UIe+
-X-Gm-Message-State: AOJu0Yy41N+T3pD1lr++Gx1XNPxTZ8NIKhW45e3+kzfjhM34GP21uY7d
-	um8X5HRtKFbq0dvrxxLDfFZfRLPwD/zlhCSriJuJ+d5RT83/kwNi
-X-Google-Smtp-Source: AGHT+IFT3q4H46273R4HzZYK4jJH/VA5RfAXD3mgU1YfyMmd8So3nExlWrCbwQf+WzSRSEj1yL18ZQ==
-X-Received: by 2002:a05:6402:3584:b0:566:f66d:bd38 with SMTP id y4-20020a056402358400b00566f66dbd38mr57579edc.25.1709305149486;
-        Fri, 01 Mar 2024 06:59:09 -0800 (PST)
-Received: from lola.. ([2a02:810d:7e40:14b0:d371:e319:5dd0:9b35])
-        by smtp.gmail.com with ESMTPSA id m18-20020aa7c492000000b005662d3418dfsm1619076edq.74.2024.03.01.06.59.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Mar 2024 06:59:09 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-rtc@vger.kernel.org
-Cc: Eddie Huang <eddie.huang@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in ARM/Mediatek RTC DRIVER
-Date: Fri,  1 Mar 2024 15:59:07 +0100
-Message-ID: <20240301145907.32732-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.43.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RAsmulBD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 600BDC433C7;
+	Fri,  1 Mar 2024 15:04:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709305449;
+	bh=8b4klxTgnQVm/tbELPg2yxa2m+O4M5Ntj7KUNSDPzxg=;
+	h=Date:Cc:From:To:Subject:References:In-Reply-To:From;
+	b=RAsmulBD3Akg3zzYlXjxlRTxDWhi/Fo0WxID12TKQmSSDDZOusA3Z4zsU9uKPqCA2
+	 v/wdNRKOuev6YAhsF4mePiXcMqyCmuoDuV+vPQtwPBtFeAQH3Rxc0Ae2GQY3MnJzrZ
+	 jtTlBhXMNkBfUXs/acOJcd9RNZAPDBAU+VaUgZPf0BX+7LCfmmOMSh55tBg1C/wiFb
+	 UreKVTdQBQ41iVSPGbGw6Smae41j5NtyqA66Wv/Eug5cAysB/hQlp5KCqiRZbJ/KQZ
+	 pF0kdv2SItktqY+T5RBCWsCrykY4XWp7B/s6SFMRJeRYIePc3YkwGQC27iCa357ra8
+	 E1qXS+7qwHSUw==
+Content-Type: multipart/signed;
+ boundary=dcbc775c0ca5af93bb9f19526977feebad1ad56af9d8f64d40c34533ac2c;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Fri, 01 Mar 2024 16:04:01 +0100
+Message-Id: <CZII7JH72OWF.1IAQO5VJCBZX3@kernel.org>
+Cc: <kernel@collabora.com>, <kernel-janitors@vger.kernel.org>,
+ <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Muhammad Usama Anjum" <usama.anjum@collabora.com>, "Tudor Ambarus"
+ <tudor.ambarus@linaro.org>, "Pratyush Yadav" <pratyush@kernel.org>, "Miquel
+ Raynal" <miquel.raynal@bootlin.com>, "Richard Weinberger" <richard@nod.at>,
+ "Vignesh Raghavendra" <vigneshr@ti.com>, "Takahiro Kuwano"
+ <Takahiro.Kuwano@infineon.com>
+Subject: Re: [PATCH] mtd: spi-nor: core: correct type of i to be signed
+X-Mailer: aerc 0.16.0
+References: <20240301144517.2811370-1-usama.anjum@collabora.com>
+In-Reply-To: <20240301144517.2811370-1-usama.anjum@collabora.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Commit e8c0498505b0 ("dt-bindings: rtc: convert MT2717 RTC to the
-json-schema") and commit aef3952ec13f ("dt-bindings: rtc: convert MT7622
-RTC to the json-schema") convert rtc-mt{2712,7622}.txt to
-mediatek,mt{2712,7622}-rtc.yaml, but misses to adjust the file entries in
-MAINTAINERS.
+--dcbc775c0ca5af93bb9f19526977feebad1ad56af9d8f64d40c34533ac2c
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
+Hi,
 
-Repair these file entries in ARM/Mediatek RTC DRIVER.
+On Fri Mar 1, 2024 at 3:45 PM CET, Muhammad Usama Anjum wrote:
+> The i should be signed to find out the end of the loop. Otherwise,
+> i >=3D 0 is always true and loop becomes infinite.
+>
+> Fixes: 6a9eda34418f ("mtd: spi-nor: core: set mtd->eraseregions for non-u=
+niform erase map")
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>  drivers/mtd/spi-nor/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
+> index 65b32ea59afc6..46bc45b80883f 100644
+> --- a/drivers/mtd/spi-nor/core.c
+> +++ b/drivers/mtd/spi-nor/core.c
+> @@ -3373,7 +3373,7 @@ static u32
+>  spi_nor_get_region_erasesize(const struct spi_nor_erase_region *region,
+>  			     const struct spi_nor_erase_type *erase_type)
+>  {
+> -	u8 i;
+> +	s8 i;
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Can we just have an "int" here. So we don't shoot ourselves in the
+foot again. I'm really no friend of these kind of micro
+optimizations, it should have been int in the first place IMHO.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1fd658b710eb..76b6c2160a84 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2377,8 +2377,8 @@ M:	Sean Wang <sean.wang@mediatek.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
--F:	Documentation/devicetree/bindings/rtc/rtc-mt2712.txt
--F:	Documentation/devicetree/bindings/rtc/rtc-mt7622.txt
-+F:	Documentation/devicetree/bindings/rtc/mediatek,mt2712-rtc.yaml
-+F:	Documentation/devicetree/bindings/rtc/mediatek,mt7622-rtc.yaml
- F:	drivers/rtc/rtc-mt2712.c
- F:	drivers/rtc/rtc-mt6397.c
- F:	drivers/rtc/rtc-mt7622.c
--- 
-2.43.2
+-michael
 
+> =20
+>  	if (region->overlaid)
+>  		return region->size;
+
+
+--dcbc775c0ca5af93bb9f19526977feebad1ad56af9d8f64d40c34533ac2c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iIgEABYIADAWIQQCnWSOYTtih6UXaxvNyh2jtWxG+wUCZeHuYRIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQzcodo7VsRvtp+wD+KQl+p3C2+4qOt0VnkpYbjzqiMJxIj7gj
+O7VZPJX0mA0BAJvAJ948Oer0qeYQC9QCjaW69eLEjcNaL1fCCTXoBPQH
+=vz1B
+-----END PGP SIGNATURE-----
+
+--dcbc775c0ca5af93bb9f19526977feebad1ad56af9d8f64d40c34533ac2c--
