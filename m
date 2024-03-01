@@ -1,102 +1,84 @@
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88E65228
-	for <kernel-janitors@vger.kernel.org>; Fri,  1 Mar 2024 16:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCA28C02
+	for <kernel-janitors@vger.kernel.org>; Fri,  1 Mar 2024 16:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709311175; cv=none; b=oWLxWCBLZ5Rr6Z716n/FnmvCGxdiN2P4RAuPRj1JOKPqXJvLkUnT3q2PMDJicm4v+OLDDQpc18HsYXMb2k5JO+LDXBKGFOg0j8PNQi0JLCmLUrfzouvXRaeS65LuUD0VBhAkfNNTYNNsCAUPoqPxzi3QLB/ilS4hdPJmx1qGSks=
+	t=1709312187; cv=none; b=McSNxY0U2MwFM+wnZK9fEkikut11MBxvdrBLNdqTPKbLXybtC6Hq588p/dugLn64VMiGgNsCB5Tfn4c/dh77gTA86iBLxXykvGMYUXZloL6CzvPJOpsMQpUwIc9JX+o6WxM2V/Kmk3FYce7/XbiqI0tUvUm7yPx5+dXbMJken1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709311175; c=relaxed/simple;
-	bh=4LCWmAiman5r71J5/XB8evn4nHCvsyVvo6RCk/szjFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qrgTetnV6Zln6Chza2pWnzr8v1lzCWHUCgyoH1sghHM8u6nn6Doxrgzfv40DKK4wemoKAMZtv8XBwaVyxgWfR3FgmGJdpxj7zysvpLIA0pLybQ+lAw3MxjTep7NkMjA2pi4IG5eSAR6+xdtnX3XVYrO43JEpN21wDSshodheyLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=BgAs5u5J; arc=none smtp.client-ip=80.12.242.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1709312187; c=relaxed/simple;
+	bh=/cFMkXs1YLuLcWkvfAIme/Dxe5G3rypX0cn7ux3WWHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sKFI41qTnB7EQsT3SZ8dAOderWIXoRO+NtPaOJJGEtEBew0q/J1/31YIfgSPWqtWJcnQhyVHoTt0+1in6WQgupq77+tBEnwAaXlNgj/XYqWPzW9vK9xK/3fAOc7anS38s3Za3/M8fUU2iIf6PLZF9XEP3puvL0SGNd5yop3FJXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CnHPZZ4P; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BgAs5u5J"
-Received: from [192.168.1.18] ([92.140.202.140])
-	by smtp.orange.fr with ESMTPA
-	id g5utrzXJF9TLjg5uurqagy; Fri, 01 Mar 2024 17:39:26 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1709311166;
-	bh=RN0U8d0tLa6K7dQm1uz+etryBFOWXolWyCXCTbp29Xc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=BgAs5u5JiucHRHyG36DPlbfHDTpaH9GYNXjVbAyrtDqgAsWeQixQlDa52jAj/vZyt
-	 PJoc0ZSd1Qmbw3Cskch4mFqBQ3gBNWM4DqAm41gjROvQMOhCE8MO6u8R9jNQCZ4F3L
-	 pWAjeljun8RB/RiiyoBUet3QhosyKgbqqHG7Bsg1grO8j7C8dROxORtjjyy++nRMx7
-	 HLLbcXGx7iGSxhSTCxF7Mly/e8hGbSANoyFBynDUtZWXPFX9j9tbIX7CPNkQfcZo2l
-	 snQ7UkRUucD8xh9ydtYFCaIQJznQ3trlz65yJ4sFc+iRUdqJdRuli3c1sPpkH4m7KX
-	 TFwKlgn/Y0XjQ==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 01 Mar 2024 17:39:26 +0100
-X-ME-IP: 92.140.202.140
-Message-ID: <5a0172a7-1a02-47d4-86c7-f5fd22e9767c@wanadoo.fr>
-Date: Fri, 1 Mar 2024 17:39:21 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CnHPZZ4P"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-412cd73cb57so2213175e9.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 01 Mar 2024 08:56:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1709312182; x=1709916982; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C3VqmontYstpREaYRLuFgnoF0ld9uXpBQEwscACOSmI=;
+        b=CnHPZZ4P3NldBSArxCs6//bWsWyy5eLw5uTEyPHwG3nZUFdVT8yBGw4D1/Jv6jFq6R
+         3W0JL2D1cPLDlSpSwNsSL1f15VWA2DXcjzHEgX258hV6J5CC2MceoAhPzEV4kzHvCQ5c
+         GavLKzD8MfzVhilAdVmgq2KMZlfalDRNX4c5yAnB7jJ4Y+cNBMZ5TnOCKuXIBF0u9G2/
+         r8h1rNrTgIGFc1S8Kh3IE8lV4fIvZgTxdlbhaMM02B3Y7+Tkl3noGaDYbNBMMJNqIlRh
+         fkUJYhPnDNIQXZTiJjOoAPdVCFCyeldxiznoJ/LGYGpEO7dN+8amUaF8OYM0bIrztmjG
+         CbTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709312182; x=1709916982;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C3VqmontYstpREaYRLuFgnoF0ld9uXpBQEwscACOSmI=;
+        b=Xph0sQP9PkrdKj+8BxluHnkXv881ef/S06GOISAHt233Z0nD+CdPyJ2ZAOof8cD1Rq
+         cCeCkHtMP1cPCsNftEWLXUOnZfgb8VwYOmE50Hnf8xXcIakU3ulQnOHNhBqytz6ZjkRl
+         z65/O67YRIznE0ATWzbl+2Eqd08gbPGAl1VS4hfZzSP3VnITnop9oNLITC5Nwjw/d9yh
+         16R6W7Uj8a1s+FDtVPGWyrCHpTeRc7DvcZRr3XAlGOH/IgLHdpgy2yRsZhxZ8Bn80e3E
+         oXi4iO+kdrdDFtgWjvGKk+NOuW5pxAB5b+eg7luJcnvTyO1QlBYKWfBINbILy/b69sdf
+         oU8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUCvuaqmDpUpw1iw2fXG+fzK0l4+cwEZI5u5vm4CxeDwvtDPcduwjS/fgoB5H8iSSbydlvooT6p6jO/cZ/i4N2Ye5Xwi2x2fH56t3g9nwTb
+X-Gm-Message-State: AOJu0YzM/UAEeS5RdSRlUVWs9SPK/ASpQRDLvYGk54zBsxkMMVSW+4yY
+	00MQeMhKOUFdsb5jiAzURv2JsfGeHXANjU+R/kz2nVlPXAS8yaHwBvjytlqndgg=
+X-Google-Smtp-Source: AGHT+IGgN8ojolxlaeOgWQJDi81cvaJNFC52G5ZvMJnSJLlTJJuzLntA1bBA/gTcgOaSnW1MlBUEnQ==
+X-Received: by 2002:adf:e9c1:0:b0:33d:3fed:39f3 with SMTP id l1-20020adfe9c1000000b0033d3fed39f3mr1816627wrn.52.1709312181785;
+        Fri, 01 Mar 2024 08:56:21 -0800 (PST)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id u14-20020a056000038e00b0033e10b7a1bdsm4823816wrf.32.2024.03.01.08.56.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Mar 2024 08:56:21 -0800 (PST)
+Date: Fri, 1 Mar 2024 19:56:12 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/2] io_uring/net: remove unnecessary check
+Message-ID: <da610465-d1ee-42b2-9f8d-099ed3c39e51@moroto.mountain>
+References: <7f5d7887-f76e-4e68-98c2-894bfedbf292@moroto.mountain>
+ <3d17a814-2300-4902-8b2c-2a73c0e9bfc4@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: lpfc: correct size for cmdwqe/rspwqe for memset
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- James Smart <james.smart@broadcom.com>,
- Dick Kennedy <dick.kennedy@broadcom.com>,
- "James E.J. Bottomley" <jejb@linux.ibm.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Justin Tee <justin.tee@broadcom.com>
-Cc: kernel@collabora.com, kernel-janitors@vger.kernel.org,
- James Smart <jsmart2021@gmail.com>, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240301144434.2809483-1-usama.anjum@collabora.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240301144434.2809483-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3d17a814-2300-4902-8b2c-2a73c0e9bfc4@moroto.mountain>
 
-Le 01/03/2024 à 15:44, Muhammad Usama Anjum a écrit :
-> The cmdwqe and rspwqe are of type lpfc_wqe128. They should be memset
-> with the same type.
+On Fri, Mar 01, 2024 at 06:29:52PM +0300, Dan Carpenter wrote:
+> "namelen" is type size_t so it can't be negative.
 > 
-> Fixes: 61910d6a5243 ("scsi: lpfc: SLI path split: Refactor CT paths")
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->   drivers/scsi/lpfc/lpfc_bsg.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/lpfc/lpfc_bsg.c b/drivers/scsi/lpfc/lpfc_bsg.c
-> index d80e6e81053b0..8caf54aa20391 100644
-> --- a/drivers/scsi/lpfc/lpfc_bsg.c
-> +++ b/drivers/scsi/lpfc/lpfc_bsg.c
-> @@ -3169,10 +3169,10 @@ lpfc_bsg_diag_loopback_run(struct bsg_job *job)
->   	}
->   
->   	cmdwqe = &cmdiocbq->wqe;
-> -	memset(cmdwqe, 0, sizeof(union lpfc_wqe));
-> +	memset(cmdwqe, 0, sizeof(union lpfc_wqe128));
 
-Hi,
+Jens applied Muhammad's patch so this part isn't required any more (and
+would introduce a bug if it were).
 
-maybe even:
-	memset(cmdwqe, 0, sizeof(*cmdwqe));
-
-Same below and in your other patch.
-
-just my 2c,
-
-CJ
-
-
->   	if (phba->sli_rev < LPFC_SLI_REV4) {
->   		rspwqe = &rspiocbq->wqe;
-> -		memset(rspwqe, 0, sizeof(union lpfc_wqe));
-> +		memset(rspwqe, 0, sizeof(union lpfc_wqe128));
->   	}
->   
->   	INIT_LIST_HEAD(&head);
+regards,
+dan carpenter
 
