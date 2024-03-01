@@ -1,65 +1,63 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8E541C7A
-	for <kernel-janitors@vger.kernel.org>; Fri,  1 Mar 2024 15:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236E16FB9D
+	for <kernel-janitors@vger.kernel.org>; Fri,  1 Mar 2024 15:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709306986; cv=none; b=L0tbzLdgFlcfOF8AyuBkEgRvCk01GmlTwgzbxc3ZxLcTMZb04BfNhDlWnf6xk6oUAlsUu7MJSBA837bvXhx5CKkaEoj348fPLki1NY9cN0rAPzi0iVj+Fu+u5Q9RAQ2kxYi+DAKEZr3cFET0dNx0yZc6ai21qvXK9B8DcYT5nY8=
+	t=1709306999; cv=none; b=pig4WL4ArdDKMox2nR6oQL2/elL+rJKl9274b9L3ZyoLuvLfzPFl06fVgKN6Jxr540E0xfE0GEDhemY5IGKDqr/EapNpTqPCu3gr/LqVg7qzvzfo85vDr8YYNiktbYhLBtevg1i9bqao7ZqH3OD0JAmHDuv2cIreiLzublRjb8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709306986; c=relaxed/simple;
-	bh=5ZdVDMXs3mwTr4vWqpROwmQUzW0VeWSwZH0+3nB9a6A=;
+	s=arc-20240116; t=1709306999; c=relaxed/simple;
+	bh=zh1tMmI9C8esm9t8S5ODtHnOIgNunq7h2YrtfEFvx/Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ZPhZ9ekPg27Q8G6pjsGLlvcY5RfwPflPSo9LiAI/675Sdbp5hnhrsMvZFNefhHddEDWSTiaZ1tdEEqrvRnuvZqDm79Vhg2SY+ts67pN12KNzWpAG2SbOo9Y/m5LCsLe7xGbFjHQdJKjVK7zsYHOfsWvrEHK9t7JXcv64GCob0jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q0+ZC4T/; arc=none smtp.client-ip=209.85.128.43
+	 Content-Disposition:In-Reply-To; b=jau09z1RQL9UgFA52xxbzLADu2wb3PJgSSC8CLSO5yTKtqQ2L4/ItpueXhG/o4roaxIyXL5Yx1bfhPdWo7DEEsoui/yEzjnhD3psZkaEEJcAfUVyKtUX/GlDq+F8CDG5Z6++2PhOTp4cL+QHz+u7gUAwykoM5SXmRJhdsjQ/lZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iN+Gj8BL; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q0+ZC4T/"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-412cb23625fso2959525e9.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 01 Mar 2024 07:29:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iN+Gj8BL"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2d275e63590so29904031fa.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 01 Mar 2024 07:29:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709306983; x=1709911783; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1709306996; x=1709911796; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
          :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A9xdheLv/6a2bwYercXwXyeHsHuRfad0YKjyOjEInbQ=;
-        b=q0+ZC4T/71iLdg16IhHSC/synJmVczkJseZeCNfmPn1qDFKotgzxb8wnW183Hgk3EM
-         wiskBJl1jY28QnFeOVYfSztid724P2+7NW7Dw7pLIhaui2DD19L6Y68AwNQHsS8R7S2B
-         igNXHQHn85NOvTSfiLaJIbOkb0eHcIPRMms1EPB/P2NrKdXjec+4BWUZn3IXtFbCF33T
-         JyrGF8MttGt4umpZDpJ51pqEx/VTTEUuMKFF3VssQ6GX/2jfRYI1Ee0fWoaS0lwPG8h+
-         y5wame0LMrmTTY2bAffdGpLVH2QhiiEfkF+4HFfn+vdc2V47Zp7ArEf0WazNRuxRsaIz
-         Znaw==
+        bh=LwF1vEHHtNcLEL22JU7CbamIfjcY0v8w9f8KAiAGRpo=;
+        b=iN+Gj8BLG7HaTyiBwK6YrhMrrIGiUH1KBbRM+WYLGIStLQUsdJiiDT8mAnZhyYDe0i
+         c9M/sZSyJC3TxXEIAeRBVuAiHTKg6msl4k8SgObymvgGho+tdkul7JSAZm/ZYzpidVMj
+         bFm3yJByorJR58EPp23wAxNsFc+DU7GFkuwsCqsUh+wbHJGPOINsql66cjrGOomlD5fw
+         FSgwzISi1HG0hbsWJ2v+R2XowxCCzXND8GW3lWvgMt7eAH5bjqfc1XQXD0f37mVJpHIB
+         1ktYZPekGQZubSeNJiS8/IESaCq6PCGWpPnL9Ib2y9V6zRIToV1fOpdDRSbUsDMLAjY/
+         HVFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709306983; x=1709911783;
+        d=1e100.net; s=20230601; t=1709306996; x=1709911796;
         h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
          :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=A9xdheLv/6a2bwYercXwXyeHsHuRfad0YKjyOjEInbQ=;
-        b=RlyST5GmEzeHIPbhM5srAil2JAjn/JoEGyRnoxuZywLeQHlPTnSUJ+l4CZxtxwluOb
-         QVER9+jF/NacyDnSXKdBlE7hhGNR+2JkrQppewSk0KdSwFiJc6N7o/DPo2EQ12//ExQn
-         eI4/IHX+4v5IQ1wgOTQt7EfukGLH6Q9rPFwTtm5CTMeOLg8foIu5+23G0jbqOmCy9Zx1
-         C7aCL90MyygvFitln4V5G1VYW7RkD+B3lFhb2gxjo/roGgdL/KEWeaBPiT5kq+RJimln
-         oqa5NsQpekYG6A3LDiJHgtJNeEV7lXnmQLV42nu+v5uPq8rAUBdCX0ge8no05Nni4UeH
-         VKQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXij3u+qqsZ6RsMLlJ6QAD/Xr0qDuYpVKNaholkVNzORwEJpocm3PyTwoztFx4+ffOjdiw5FTVfZBJ60iCweZEbtiM8U8nZwe/eqQnYTARt
-X-Gm-Message-State: AOJu0YxuV9dnOMbi6KSodU/6oBCN5HKPN8PYK6sgv6onvHN2vDQPays6
-	rTMFE0HZ1Y3XQVMpl14iAy+l01ungFtw23EVyNlJbEYKgyCX6+gkWa68acijlVM=
-X-Google-Smtp-Source: AGHT+IGGv3plD+hCVhgRd5kUqoLDDA+4lOiRrar8lyoH+2ulD04zylW5q06PRdjlxmOjAeoNva3p3w==
-X-Received: by 2002:a05:600c:4f83:b0:412:268f:1fa4 with SMTP id n3-20020a05600c4f8300b00412268f1fa4mr1731633wmq.1.1709306983141;
-        Fri, 01 Mar 2024 07:29:43 -0800 (PST)
+        bh=LwF1vEHHtNcLEL22JU7CbamIfjcY0v8w9f8KAiAGRpo=;
+        b=PT8Zxg0/8UORbmj8BhpX9hKpZcHOmEauiVqnhgM/DL/TbgQOCabNct6Ulov6B3yaca
+         klH1FzQNpz+8aoMCz2UiqydIZ0D3vCOFZ/wC3jZSardauDYNUo1Hw3YzOKBaev11Mur1
+         0/N9AwWVHo6JCzGBwfgLHHtzr9s35AxOcqYZlq/3OpnyrM+gcV5mF3tkgEPRNlD/rr+w
+         +R2lV+EUpqTxWB6oHVRyATM7ZcPO9xFULdEvvtswsjStJSThU/HWRjyDJour8S2A5KBx
+         jqOXDRmhhWIKs8dqBGDCk0XHEet2OHEgSVnubJ2pCB7vAeNMWhQ/BcoTUa9l3eu5e6R9
+         IzjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqsobrn14d0YwveTYzdlPv22kddLK4KO7j3dFjqtUZkarI8IuZ8aVYm6CrewI/gFf+6lJW8VY7TCiGgniYk+tkvGfaBLqJbhhEIBZLH6RZ
+X-Gm-Message-State: AOJu0YyeIXksVqCwI1BDPsEDYDfKWCcomxVab1oRYrDaENh1GORik8PE
+	Zz3Q7/qSeUm9bY5l7//QAAMjObLFawvTYnCXaZtTybVy7Mr651c7rmFLuNI4DX0=
+X-Google-Smtp-Source: AGHT+IF+EdHbA/WMtHbEnW0MVWTX37KjpNSG/+lUHF/XBnrsQVeoc3UrADapsOV5vobHj+kpeNESiw==
+X-Received: by 2002:a2e:2404:0:b0:2d2:935a:7a3d with SMTP id k4-20020a2e2404000000b002d2935a7a3dmr1312182ljk.34.1709306996297;
+        Fri, 01 Mar 2024 07:29:56 -0800 (PST)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id jd20-20020a05600c68d400b004128fa77216sm8827201wmb.1.2024.03.01.07.29.42
+        by smtp.gmail.com with ESMTPSA id g8-20020a05600c310800b00412b0ef22basm5835531wmo.10.2024.03.01.07.29.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Mar 2024 07:29:42 -0800 (PST)
-Date: Fri, 1 Mar 2024 18:29:39 +0300
+        Fri, 01 Mar 2024 07:29:56 -0800 (PST)
+Date: Fri, 1 Mar 2024 18:29:52 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dylan Yudaken <dylany@fb.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH 1/2] io_uring/net: fix overflow check in
- io_recvmsg_mshot_prep()
-Message-ID: <138bd2e2-ede8-4bcc-aa7b-f3d9de167a37@moroto.mountain>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH 2/2] io_uring/net: remove unnecessary check
+Message-ID: <3d17a814-2300-4902-8b2c-2a73c0e9bfc4@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,45 +69,26 @@ Content-Disposition: inline
 In-Reply-To: <7f5d7887-f76e-4e68-98c2-894bfedbf292@moroto.mountain>
 X-Mailer: git-send-email haha only kidding
 
-The "controllen" variable is type size_t (unsigned long).  Casting it
-to int could lead to an integer underflow.
+"namelen" is type size_t so it can't be negative.
 
-The check_add_overflow() function considers the type of the destination
-which is type int.  If we add two positive values and the result cannot
-fit in an integer then that's counted as an overflow.
-
-However, if we cast "controllen" to an int and it turns negative, then
-negative values *can* fit into an int type so there is no overflow.
-
-Good: 100 + (unsigned long)-4 = 96  <-- overflow
- Bad: 100 + (int)-4 = 96 <-- no overflow
-
-I deleted the cast of the sizeof() as well.  That's not a bug but the
-cast is unnecessary.
-
-Fixes: 9b0fc3c054ff ("io_uring: fix types in io_recvmsg_multishot_overflow")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- io_uring/net.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ io_uring/net.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/io_uring/net.c b/io_uring/net.c
-index 926d1fb0335d..da257bf429d5 100644
+index da257bf429d5..04a7426c80d2 100644
 --- a/io_uring/net.c
 +++ b/io_uring/net.c
-@@ -559,10 +559,10 @@ static int io_recvmsg_mshot_prep(struct io_kiocb *req,
+@@ -557,8 +557,6 @@ static int io_recvmsg_mshot_prep(struct io_kiocb *req,
+ 			  (REQ_F_APOLL_MULTISHOT|REQ_F_BUFFER_SELECT)) {
+ 		int hdr;
  
- 		if (unlikely(namelen < 0))
- 			return -EOVERFLOW;
--		if (check_add_overflow((int)sizeof(struct io_uring_recvmsg_out),
-+		if (check_add_overflow(sizeof(struct io_uring_recvmsg_out),
+-		if (unlikely(namelen < 0))
+-			return -EOVERFLOW;
+ 		if (check_add_overflow(sizeof(struct io_uring_recvmsg_out),
  					namelen, &hdr))
  			return -EOVERFLOW;
--		if (check_add_overflow(hdr, (int)controllen, &hdr))
-+		if (check_add_overflow(hdr, controllen, &hdr))
- 			return -EOVERFLOW;
- 
- 		iomsg->namelen = namelen;
 -- 
 2.43.0
 
