@@ -1,125 +1,222 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A5E6F50A
-	for <kernel-janitors@vger.kernel.org>; Fri,  1 Mar 2024 13:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8D7386;
+	Fri,  1 Mar 2024 13:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709300528; cv=none; b=rDtfsTqTZwe2IkWS6ZyguCXF9Z+vaK98BzbHvkYKb4QMkVw+5U5y5iQ6ghATlcNlNu7PO/fpwtNxcGyfEme3TSloZojqRD+ZBmghjQxJwxeR8QIXoKpzqpUOKAZKtiT/T98NzM+2OyEIT9+7JW0USC9/P5yyIMnzrhOnQHEZddU=
+	t=1709300810; cv=none; b=ZuiwyETtswiAMTBF9ZjSw88vw3HWsgPpwqlXM+Aes84j1VfQd9zg6peyBOs9BKPgdl+ZovzZAQ14GEKAg5O9i+dJYUPwWFwF8et3oOgsX1ltimMqdXGtQpJSj7HsmM0tDP5O/U+JjY6hf/eji53T54m2twWWTECMPorMXtMkGPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709300528; c=relaxed/simple;
-	bh=fOoQnUhhAc6liUjXqMNkl7SNhfdn9BzELDOo6neJx2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jH3Yk3HlDwHQ9AoW2pYGojKwhgOGOTGXBAd+eWOJYo23wYcbJLSBH2OzEwEYyB682xfRx6SMHJdaQj9lrETQE0EzyM4tawWcaAWPoeh0rxyCDnTD45thVC0cG5GZ3YVAMa9lvTLyRIrhECNt9c11MsiR/LirBqzdtXjfMJZDtNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z4InROop; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709300810; c=relaxed/simple;
+	bh=54FFq9yRx8MYuVhw3vkGHx7fdD7CrqETGUwW/4CAovY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c6pWN7tPI3KEJCq9vPA+OnhgQEoCpDv9ypDa3CuasheJ7+AutxB/JLlellpFzo0qE08IjZMjfc/R9V3w/NEW5PJ0/8QW12b/9/J8yo4u82Wy/yKeWTHQbFHc1snHQbzS84kC1i1uG/InEjhxBTaRf1WrWZMDmsT5t0IMoH7QtVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bhFGHt9H; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z4InROop"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-412c83a8259so4730945e9.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 01 Mar 2024 05:42:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bhFGHt9H"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-565a2c4cc1aso3222896a12.2;
+        Fri, 01 Mar 2024 05:46:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709300525; x=1709905325; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lQGlreTAyn3APLCjXtSXcpGzC35vL6EiYGDd6miAJ80=;
-        b=Z4InROopDzhU7Apc0/GT+twrfz2OulyPPQXnzzfb0kgRRFWyh1Nu1pGX2E10Yy9ATI
-         BRWWgVklkfb6Kp8znCMLf7mpqPMG/LLtr/Z4K+ojpNrfquJJ5EftIXMy6EfzhOtPnzU7
-         lYF2XfxN4bZ44a/9OUWAilq1tn+8cyulV2NCegqDC7dmSU6+zT4vSaps0FFwRrwwiS2d
-         ofGpV6GYolLnEZjDwk+Eqw9gaLiw+PqtB8Kv3W5Ss6zV+lnjNrX7fq80T5f/K0/e9sLk
-         EsfuZAWXxSAEPkZF7kxghi/K20JaieGvB8o9Shzok9HXKBVzZACb+nswAOlOMKsjkpTP
-         GiiQ==
+        d=gmail.com; s=20230601; t=1709300807; x=1709905607; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yaHYFmAj2a1qF5bLRyGFMlUXUbLIC303Xpdp1+Wxpss=;
+        b=bhFGHt9H8ZsS3+ux3BG/7jENxIM2xxY4ladt0DZXCOM/wtKbLCcpc7zj4JtwpNVeKE
+         nmPMBjnt86SneFfk+J/MupQ89nlTu+Kt9Hdc5toNj4BYIl7h6VcShTamE6rFE2pmIe28
+         T41Pf6YSY+b5JNCh0SplgVWgUhTc2WR13eb7yzh50sW9oQFrHXIC9umFeJqZU7tfNi9N
+         eB2OoqsUYJZMgQMpMpXy3Y7VUrYU5JRKMG1xO3ZGIeKvb1ZuJfhFwXoN85WEkUZK/ri8
+         /goYvyPGJ2mmN6yJDtRRqAp/SGTG6c3l/iNFGwKunlf7vlcQm572MVk2ZhR8dDYSlHz7
+         N/Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709300525; x=1709905325;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lQGlreTAyn3APLCjXtSXcpGzC35vL6EiYGDd6miAJ80=;
-        b=j+8rfoxw9dgAdRIrDIg9SQS9b+mYZZhOwPLy5JLIApHjZ3KvixGiLpNnHF52SwxOQZ
-         sPLicV8eFNzecm4gyMlXedJd5qoHN/r1VTv5rp1v++S73xvFv1vcSTPmwbqWeIviQ6fP
-         ktdDfwuwsuxVNfvV9Y07hZR8TVd13a2TuDWflZZk7gc+gScQPI9y+T/BV1CwBmzyhnyP
-         ArLdURCteSSQ8yZNbDwjx17x/iJI+HNcE85M7NIsQ6XsB3D+jtSpJUEqngp+tegWiyR7
-         WKIZdKhc1WG5FAu3dw21uAndBtFwuCp//Ae5YXLRihhGtLOT2GbuYN0mgmydbGnjVBFE
-         UviA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUpp5SA4V2p9kz2SY6iJWDiCXYaMD7xSOoXFeZCQKOuvXSUje9Q1PXTdyxjVEXZGvrgjV6vLBiH9FJFc6RG4ox7DhlmFoRt+cxgb4xBW6K
-X-Gm-Message-State: AOJu0YyMa+U3ZH5nvL+ygfxaCuOVkLrpReO6BRxG69EPoSljFu3ugrAI
-	SGGuFA7i4xgdwHb97zaOa6r3t/6kNmlmHkAP7O0haE4LjvUGQKij9XsNEJqpkCA=
-X-Google-Smtp-Source: AGHT+IH48oxAyLV5Vg3GSB9oA4Go2//qltAa2mr/bRjgpNO14ZrIKBf+t0wA6J1OaFB3e71GBnGabw==
-X-Received: by 2002:a05:600c:4fc4:b0:412:c8c9:c844 with SMTP id o4-20020a05600c4fc400b00412c8c9c844mr1287765wmq.26.1709300525246;
-        Fri, 01 Mar 2024 05:42:05 -0800 (PST)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id x4-20020a05600c21c400b00412afd8425esm8364247wmj.24.2024.03.01.05.42.04
+        d=1e100.net; s=20230601; t=1709300807; x=1709905607;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yaHYFmAj2a1qF5bLRyGFMlUXUbLIC303Xpdp1+Wxpss=;
+        b=AC2oFtSmE/6RCx/arw329gG1vsPdVwN4RfoPoC0TRIRzu8bzurPSXma6zX077Ienaw
+         6TUlVOjTiOE/uv9pkn5rgimcn9tJfwfdDQnW/MMrFtPRBVpd5aEhmXzlvwrk4ZOd7iWC
+         zCyzjmNH/IDpkF/g3IJm+4HAWjhQTIIBuxg5O7tUwC4d650Ba4upiSvNmHAPNX9sqZU1
+         x71xb/AMDATNXqXBXUvBdHxeFq6gTMYpMdJOdqQ0jOa4JsxTvtZ7V/kpSKdmbW0WJ+1F
+         jUS6ftc80wN6YfWlBC/cpNh8vh2xhUzXqRJgP2sT08Ft0oqxTmCBZ1ExaLQIrY9ihO0S
+         EN7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWC3QFN8ZJg4/8FbXNb1Q4OUvwZh22OrEszDwJ7jYLfzCbCWycNs2AuOgDYIV0bl/F7L5oFYz68H5d8G544B/Q2HZh3q8P+KShDq+tY5cFMPPAJmcp8W5FLgropQj78aPw0oObj+yxB/FUtQyCtHv83L6MjvnHkyxKZgoW/k5pHoC/h
+X-Gm-Message-State: AOJu0YwgLoBmnHY45oWefaG352lXppK7QEI42F+aXi/tJA55XA1R55sr
+	pUmTfU2vwChgqd6THmwb+erfdnYKvSvPtyF9ianT/N8AB9V+znMqFHarc2FqmVc=
+X-Google-Smtp-Source: AGHT+IG2ZWNiDZ/UapF2emTgF/bCbiuQ7tutc4XzcrVhKozADdzWclYYDUbgLtjEov25z51CeWOB5g==
+X-Received: by 2002:a50:cbc9:0:b0:565:1780:9399 with SMTP id l9-20020a50cbc9000000b0056517809399mr1267962edi.25.1709300806508;
+        Fri, 01 Mar 2024 05:46:46 -0800 (PST)
+Received: from lola.. ([2a02:810d:7e40:14b0:d371:e319:5dd0:9b35])
+        by smtp.gmail.com with ESMTPSA id fj10-20020a0564022b8a00b00563f8233ba8sm1584107edb.7.2024.03.01.05.46.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Mar 2024 05:42:04 -0800 (PST)
-Date: Fri, 1 Mar 2024 16:42:01 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>,
-	linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: rcar-csi2: Use common error handling code in
- rcsi2_parse_dt()
-Message-ID: <260d82b6-e7fc-40c3-b414-50a883709fd7@moroto.mountain>
-References: <8b4203dc-bc0a-4c00-8862-e2d0ed6e346b@web.de>
- <CAMuHMdWwegdks3eEviEsBJE3AvUVKbZqHduYdhuwz=8xTMDs5g@mail.gmail.com>
+        Fri, 01 Mar 2024 05:46:46 -0800 (PST)
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>,
+	workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH 0/3] Towards a re-organized submitting patches
+Date: Fri,  1 Mar 2024 14:46:34 +0100
+Message-ID: <20240301134637.27880-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWwegdks3eEviEsBJE3AvUVKbZqHduYdhuwz=8xTMDs5g@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Sakari Ailus pointed out in another thread that we could use __free()
-instead.  Something like this:
+Dear Jonathan,
 
-diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
-index 582d5e35db0e..c569df6057b7 100644
---- a/drivers/media/platform/renesas/rcar-csi2.c
-+++ b/drivers/media/platform/renesas/rcar-csi2.c
-@@ -1372,8 +1372,8 @@ static int rcsi2_parse_v4l2(struct rcar_csi2 *priv,
- static int rcsi2_parse_dt(struct rcar_csi2 *priv)
- {
- 	struct v4l2_async_connection *asc;
--	struct fwnode_handle *fwnode;
--	struct fwnode_handle *ep;
-+	struct fwnode_handle *fwnode __free(fwnode_handle) = NULL;
-+	struct fwnode_handle *ep __free(fwnode_handle);
- 	struct v4l2_fwnode_endpoint v4l2_ep = {
- 		.bus_type = V4L2_MBUS_UNKNOWN,
- 	};
-@@ -1388,18 +1388,14 @@ static int rcsi2_parse_dt(struct rcar_csi2 *priv)
- 	ret = v4l2_fwnode_endpoint_parse(ep, &v4l2_ep);
- 	if (ret) {
- 		dev_err(priv->dev, "Could not parse v4l2 endpoint\n");
--		fwnode_handle_put(ep);
- 		return -EINVAL;
- 	}
- 
- 	ret = rcsi2_parse_v4l2(priv, &v4l2_ep);
--	if (ret) {
--		fwnode_handle_put(ep);
-+	if (ret)
- 		return ret;
--	}
- 
- 	fwnode = fwnode_graph_get_remote_endpoint(ep);
--	fwnode_handle_put(ep);
- 
- 	dev_dbg(priv->dev, "Found '%pOF'\n", to_of_node(fwnode));
- 
-@@ -1408,7 +1404,6 @@ static int rcsi2_parse_dt(struct rcar_csi2 *priv)
- 
- 	asc = v4l2_async_nf_add_fwnode(&priv->notifier, fwnode,
- 				       struct v4l2_async_connection);
--	fwnode_handle_put(fwnode);
- 	if (IS_ERR(asc))
- 		return PTR_ERR(asc);
- 
+I wanted to clean up the development-process documentation. There is
+however no easy way to break the ice here:
+
+The elephant in the room is that there is some unclear relation between
+5.Posting.rst, 6.Followthrough.rst and submitting-patches.rst.
+(Yes, I know each document has its own history...; but let us put the
+history aside for now.)
+
+Submitting-patches.rst contains information largely put together from
+different initial starting points and is partly outdated due to common
+workflows with git format-patch and git send-email.
+
+Often when new additions are made, they are somehow added to both
+documents with slightly different wording.
+
+Also, looking at the word count (with wc -l) on next-20240227:
+
+  2917 5.Posting.rst
+  2136 6.Followthrough.rst
+  5878 submitting-patches.rst
+
+So, from the numbers, you would expect that submitting-patches.rst is a
+detailing of Posting and Followthrough.
+However, it is really difficult to see how submitting-patches.rst would
+be a refinement of Posting and Followthrough or if and where it is not.
+First, at the moment, the different initial starting points and different
+ordering somehow makes it difficult to judge.
+
+Also, the factor of 20% more words really does not indicate much more
+content in submitting-patches compared to Posting and Followthrough.
+
+For a simple experiment, I moved the larger parts on the tags
+(signed-off-by, co-developed-by, acked-by, reported-by, etc.) into a
+separate document and then ran the numbers on submitting-patches again:
+
+  4329 submitting-patches.rst
+
+Nowt, the size of submitting-patches is actually below Posting and
+Followthrough.
+
+So, the difficult task to reach a coherent process description is to see
+some relation between these documents and then go through the editorial
+changes. I have come up with this kind of vision:
+
+Phase 1: Clean up submitting patches
+
+  Topics/Statements that can be easily cleaned up first do not get in
+  the way (at least mentally) when trying to understand the next steps.
+  
+  E.g., as an experiment I moved the details on tags into a separate
+  document.
+  
+Phase 2: Make submitting-patches have one clear temporal flow.
+
+  The top-level structure should basically be along the temporal order of
+  things: Prepare a patch, Post a patch, Respond to review, Send reworked
+  patches, Be patient before resending
+
+  "No MIME, no links, no compression, no attachments. Just plain text"
+  needs to be reworked into "Send your patch".
+  
+  The content from the canonical patch format needs to evaluated on
+  relevance with a git workflow and the important pieces need to be
+  included into the temporal flow.
+
+  In other words, it is worth describing "the canonical patch format" much
+  more from what the submitter may add where and in which format rather
+  than explaining the purpose of some things that git format-patch does by
+  default and usually nobody would play around with.
+
+  Probably, prepare a patch will need to be broken down a bit in some
+  smaller steps. The "Send reworked patch" section is new and needs to
+  include content distributed throughout submitting-patches.
+  
+Phase 3: Merge the pieces of content from Posting and Followthrough into
+submitting patches if it adds something to that document.
+
+  When both documents roughly cover the topics of similar depth, we look
+  fine-grained into how to construct the one document that has the best
+  from both documents.
+  
+Phase 4: Remove Posting and Followthrough and simply replace it in the
+process description with submitting patches.
+  
+  In some way, when both documents cover the topic in similar depth either
+  document could be deleted.
+  However, the name "submitting patches" is probably already stuck too much
+  with the community; I have seen many presentations referring to
+  submitting patches, but I have not seen anyone referring to '5.Posting'
+  in any presentation.
+
+  Also, the number of references---excluding translations---to Posting and
+  Followthrough, submitting_patches.rst is 3, 1 and 41, respectively.
+  In fact, the two references in handling-regressions mention Posting just
+  as further reference next to submitting patches, clearly just indicating
+  this kind of duplication. So, submitting-patches is much more stuck with
+  the community at the current state and once the content from Posting is
+  added to submitting-patches, Posting will not be missed.
+
+  Further, this requires to rewrite the process description intro
+  and the intro of submitting patches a bit, such that if readers:
+
+  - just jump into submitting-patches from the top page,
+  - or are going through the development-process from cover to cover
+    (coming from its section 4 and moving on to section 7)
+
+  they see a roughly consistent flow of thought and suitable introduction.
+  But I think this should be feasible.
+
+Let us see how long it takes me to work through this and convince the
+reviewers and future readers that we are moving a good direction.
+
+So, here are some first changes to Phase 1 and Phase 2.
+
+Current state:
+
+I spend roughly two days of work---besides the usual distractions---on
+this topic, digging into the documents and trying to make a plan.
+
+Obviously, the final goal is not reached with this series, but I would
+like to get first feedback and hope that we can get the first patches
+generally accepted (but not necessarily included into the repository yet
+if only truly accepted when seeing the full picture of changes) to
+continue the rework with some backing confidence that this is not all in
+vain.
+
+Please let me know if this is going in the right direction and if some
+patches would already be accepted to be included upfront to lower the
+risks and conflicts when continuing the editorial work.
+
+Well, long text... some short simple patches for now.
+
+
+Best regards,
+
+Lukas
+
+
+Lukas Bulwahn (3):
+  docs: submitting-patches: divert focus from PATCH in the subject line
+  docs: submitting-patches: move split_changes before describe_change
+  docs: submitting-patches: move backtraces to patch description
+
+ Documentation/process/submitting-patches.rst | 119 +++++++++----------
+ 1 file changed, 58 insertions(+), 61 deletions(-)
+
+-- 
+2.43.2
 
