@@ -1,111 +1,105 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00435B1E2;
-	Fri,  1 Mar 2024 09:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44CE6A8B2;
+	Fri,  1 Mar 2024 10:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709285161; cv=none; b=cIIlQm/4Dt7T7aU3u2eXIYgyQmppyeP4kN6e4+FpqN6JgbFc2+TykyVr5TtA6EUrNLo57wfFVjHvF12EXIx6o8ThdW94HWnFQltNsNtWJDj/AP/eIVbGR5mG/liiI7PKvJYIpLWoUyF8WwrnjlzgJe3BUPXqvQk38ECMnnZ8Bvw=
+	t=1709288450; cv=none; b=E+ZF9hn+escPVv4flC2D1ey/OlxB5U4WxN8c4/jsOSjLCyG2CisOswIUfw/YtyLBPxrWjTCZ8So5dG2GHzxhhO0pbanddAZBwML8vFoWQbrrSvCKAf0J+kzDDtOeLFdpN63JR4W7MoUtOddDK+1wn1SMRO44YqqxSl8gmFIodls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709285161; c=relaxed/simple;
-	bh=sN1SvxmlzsPc4GNfK/+SfrEzV9RqjLvrfnVGn5gfylQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=POpqcCTslQAlp1zt9RaBxLlEUdn2vez7NzdRhZUU3SuXqo22hxhY7WcAT3hECQEhcJxQB4fK8/eFHdmB3s3fhmikPTOqOYLSCNSTSqnSjd/dcXMjPRde+WqkoIW42ehvTDs3pRj12lNC3TiiIHkESyirVP5qriMRW6R0kxi9nV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1d911c2103aso3990395ad.0;
-        Fri, 01 Mar 2024 01:25:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709285159; x=1709889959;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rvBvZAsShRAcxOaAuR2g72h+Alt1DyFcdhhr75XnVWc=;
-        b=NqTc9a4D8OPRo6YJd+37Ngtebke4jNc+/QmU7Gj3w1yV8xTYXGUIgavo20g1zSjpbh
-         Lwt3uNPDBAQa67n/1uwA4CK+TWuS6ReyTqHqkUf0uFxtzEG3Se1wm47fl93bDTtAlN+I
-         EwvERA/twQR2xUxRmFLuWAyNOiR5+EJr6nPoFVKivTzLtsynDCHG7ZCdEqSsDWMMRsTU
-         aCHz1wRH2s6MjphuQsVvb8PYddeoGtby7oy5w4byT4G2MpPrifos6s6Qged9NEefuGeu
-         P+a6YQUCJWcjH5oVOde+8cZsTGpyjYXoabdxDl+OUi3LAT4yzNWN11HvupmkMjB01fIO
-         2zJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxGFFUnmT1qTDU2UpdCYZ30GnZHDe0LULFciciyrcU/IeXJX7gzzL878fXMqm8aum+LVzCC6CT6U3Cfo+7eyKaXFBTE3lsAbKUkx/X5hw330c5+lc4kQ8PX4x1BTaPbYdjtECeDIeoFfmMgBDIYip44bfH/3zhO6b+9nBu5eIu0aPF1Wf5nz/DZKUp
-X-Gm-Message-State: AOJu0YzZe7ZQ4FjdDPdxMir2PEiUjyndBAPLjk2XQh8Ub9wajTaZTvpN
-	A9kRm3rp9a7sz8RIF1g1O/nBBMyZFKviNAvwoL/1Fyi/9j5jh0mx
-X-Google-Smtp-Source: AGHT+IHNKZrSwznz/6W/vqfHTfsBZW3ScbjjlHJkN0z7Xg9qLKLx0WqwGZ3s31af9X1XAWOVS2nlBQ==
-X-Received: by 2002:a17:902:d4d0:b0:1db:5b41:c59a with SMTP id o16-20020a170902d4d000b001db5b41c59amr1316686plg.45.1709285159205;
-        Fri, 01 Mar 2024 01:25:59 -0800 (PST)
-Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
-        by smtp.gmail.com with ESMTPSA id y6-20020a17090322c600b001dcb063349csm2953127plg.150.2024.03.01.01.25.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Mar 2024 01:25:58 -0800 (PST)
-Date: Fri, 1 Mar 2024 09:25:57 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Wei Liu <wei.liu@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Markus Elfring <Markus.Elfring@web.de>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH 1/2] Drivers: hv: vmbus: Remove duplication and cleanup
- code in create_gpadl_header()
-Message-ID: <ZeGfJZv-dWMIZJsx@liuwe-devbox-debian-v2>
-References: <20240111165451.269418-1-mhklinux@outlook.com>
- <de6c23b2-aa27-494a-a0ec-fe14a4289b38@web.de>
- <SN6PR02MB4157A7AC71EF769E5B88202CD46F2@SN6PR02MB4157.namprd02.prod.outlook.com>
- <SN6PR02MB4157D586E6523E5747690FB0D44B2@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1709288450; c=relaxed/simple;
+	bh=XnJJ/DuVyMNtN8i32SvT66PU+gRXPYlBC+UZSbXhbd8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=g8QMmfTmeZGwv6/kBj7UZa5EBXvvvAkyaSz7vLMgzUUBBkkNmNdPxg70Kny/wl7lHy0gqCH4IuU/LhXa4geSb9aTHF/8b+RLHvUOn4eOgLB9e8xma9YwwGDXhl/EaduGhq5GgWXso5gqd1sMhQWo6CC7kvNyEGRKPTv3XSGHEiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=gQL08X9N; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="gQL08X9N"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1709288428; x=1709893228; i=markus.elfring@web.de;
+	bh=XnJJ/DuVyMNtN8i32SvT66PU+gRXPYlBC+UZSbXhbd8=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=gQL08X9NVZrlig7gp98I8sAQQ+ORwftbgdpTa1m8Uptvcy8tht4oBE7lY/vsfF3l
+	 AyPwgJwKIQchKpfjLjokAaobUq6c5651QfcvPPLS+6IEDxW9F+Jnn1T6fVAGerb3o
+	 IMniBYazjqp5lBQynA/Upo+/jMgY8ahE8EwirFFoIzbKBNr0fPho6TPqfati8Zo2V
+	 BuRfmX/FVPCqzR3qwMyofANOPRZFb039RGSB4RrR28R4t8/EUC4kwERp+wS2yB1ya
+	 Wcxt88zWTJ13moiQrP9vnzCpXxkgTd8WC5cajxncjK1eyOOhIwrmsSuRRbWtNU7Pt
+	 y6ut0OkOGzBZrA0VmA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MWzD3-1rLy0T11Qn-00XR2t; Fri, 01
+ Mar 2024 11:20:28 +0100
+Message-ID: <0f98e7de-4351-481f-86be-e573805c82f6@web.de>
+Date: Fri, 1 Mar 2024 11:20:26 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <SN6PR02MB4157D586E6523E5747690FB0D44B2@SN6PR02MB4157.namprd02.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+To: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Eugen Hristev <eugen.hristev@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] media: microchip-csi2dc: Move a fwnode_handle_put() call into
+ an if branch in csi2dc_of_parse()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:3zOeZeLgrJuL3S2I4zME9Gi1I6z1I7OFnDgqu8b0tQcvJuw/wfq
+ KywAjCJ/m3Z2Uk3RmerBE6XUwv8gt+hgHvajIa4YPSTe7eaLDrk4D7VsWyTgPXKe/8BD4xs
+ lIReWa03QBnUHUwmNxkmO8nBscbmkm/Ok2v17CdcqwyLBdXJKzg4lXGwGq/Xu0xP63ofgLx
+ eJVYeOTDAg6Occ8M0iCBA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:JrS5DAV2alI=;swQcZg+CJenRsuPdDlrFOqKYLWe
+ IQwCC05aq9G3hpsqYg1nFlYiiWJdc327P0ltpu7CVeNMyBYP6wMEuqlyjot/z48qKJ7MRzw1W
+ BjWo+4GGfwv59c7HlehR09jT0L5vmqv9dmIQVYIO5CjJa4zSOehu4c0FimLE9jAUFfPsbmJ1d
+ SmfyTR8Ugpz57jm8hz9RXnN2/u8Xw3B4VCQIjREyP2RF8Xoi9NVLH8Mtp67jiUZNdt4NRV6jS
+ sKLhsbXT+2e/oRsfsgf6R6d/47CjOY0oRmzKBXr+57t+XLYTlkTOq6Bdc3BFuhivPXN+sdHTA
+ CmYnZn2vePUlSjAkWlnoJZhEEGb/RoV1JUPUfc5dPrYFYpNY1Y0KzCyHaSmYLC+uavyciMIDk
+ vib/7NLq16AtuhPEGXgRZmNdpRbKl5xLaIuIFeSx/v7Wzm3jBnU1tXt/J4hrkhvo0WJYDl179
+ LVvPh5jSSlxqfkNO383iVI9+7ivNvoewsf8/muQnrVxx99jMr7+oKiPoHmPSIWUY8RM0oR1WJ
+ MUVNlxxnQVFcu/KWEv63IXdhZsuqmeANAdmvJd20R7ORTcQNVpryYA0a+MHOncLaNemdJBEAH
+ VzpK8ZoIjVaWrWvuMfJjZDv6gYzmmfUxM7nfb0+PV1t1XXd9yHslBfVHQs+DJuTz3iLzV+D8c
+ 2QNpPR/HDxfH9Aeb7h3n4t/s4UKejBSohBENS23CeP37ONMYmUCwi6fofhFZxY6ovkBJzUojq
+ 13wgf6mxRHlYX7YdY1n8zdFSOj7Mgi42eM3BLNJxJEvYipT7EWqQrxCoINlBTkAE8Q+s5zicj
+ VflXJolFyYv2rjf7xVTMs+TvO6KOTUTpzSDc655JLUHf8=
 
-On Fri, Feb 09, 2024 at 03:33:24PM +0000, Michael Kelley wrote:
-> From: Michael Kelley <mhklinux@outlook.com> Sent: Friday, January 12, 2024 8:19 AM
-> > 
-> > From: Markus Elfring <Markus.Elfring@web.de> Sent: Friday, January 12,
-> > 2024 12:06 AM
-> > >
-> > > …
-> > > > Eliminate the duplication by making minor tweaks to the logic and
-> > > > associated comments. While here, simplify the handling of memory
-> > > > allocation errors, and use umin() instead of open coding it.
-> > > …
-> > >
-> > > I got the impression that the adjustment for the mentioned macro
-> > > should be performed in a separate update step of the presented patch series.
-> > > https://elixir.bootlin.com/linux/v6.7/source/include/linux/minmax.h#L95
-> > >
-> > > See also:
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Docu
-> > > mentation/process/submitting-patches.rst?h=v6.7#n81
-> > >
-> > 
-> > To me, this is a judgment call.  Breaking out the umin() change into
-> > a separate patch is OK, but for consistency then I should probably
-> > break out the change to memory allocation errors in the same
-> > way.   Then we would have three patches, plus the patch to
-> > separately handle the indentation so the changes are reviewable.
-> > To me, that's overkill for updates to a single function that have
-> > no functionality change.  The intent of the patch is to cleanup
-> > and simplify a single 13-year old function, and it's OK to do
-> > that in a single patch (plus the indentation patch).
-> > 
-> > Wei Liu is the maintainer for the Hyper-V code.  Wei -- any
-> > objections to keeping a single patch (plus the indentation patch)?
-> > But I'll break it out if that's your preference.
-> > 
-> 
-> Wei Liu -- any input on this?  This is just a cleanup/simplification
-> patch, so it's not urgent.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 1 Mar 2024 11:11:44 +0100
 
-These patches are fine. I'll take them via the hyperv-fixes tree.
+Move a fwnode_handle_put() call into an if branch of this function
+so that the control flow looks a bit safer directly.
 
-Thanks,
-Wei.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/media/platform/microchip/microchip-csi2dc.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/platform/microchip/microchip-csi2dc.c b/drivers=
+/media/platform/microchip/microchip-csi2dc.c
+index fee73260bb1e..ed800a3bb268 100644
+=2D-- a/drivers/media/platform/microchip/microchip-csi2dc.c
++++ b/drivers/media/platform/microchip/microchip-csi2dc.c
+@@ -595,12 +595,11 @@ static int csi2dc_of_parse(struct csi2dc_device *csi=
+2dc,
+
+ 	output_fwnode =3D fwnode_graph_get_next_endpoint
+ 				(of_fwnode_handle(of_node), input_fwnode);
+-
+-	if (output_fwnode)
++	if (output_fwnode) {
+ 		ret =3D v4l2_fwnode_endpoint_parse(output_fwnode,
+ 						 &output_endpoint);
+-
+-	fwnode_handle_put(output_fwnode);
++		fwnode_handle_put(output_fwnode);
++	}
+
+ 	if (!output_fwnode || ret) {
+ 		dev_info(csi2dc->dev,
+=2D-
+2.44.0
+
