@@ -1,92 +1,113 @@
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B473B7002C
-	for <kernel-janitors@vger.kernel.org>; Fri,  1 Mar 2024 15:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F2871B43;
+	Fri,  1 Mar 2024 16:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709308531; cv=none; b=UcUR9FgOTu5itgj00Wlc76cvfVp/iSvP87jroqLbtua1DNY0bKX+hR8ToEEthNgwUT4rC8d2stEx6ncdOuypOnlHz602WHi/a5EGEilZ6ixLavIPCoWMk3QqbUn+6D36uTjq0BItegiwrdBWAum/CLnORRJm4jSd/LLBt4KZDUw=
+	t=1709310246; cv=none; b=pF1dHwa6ywz0E2RYrXaHtW4/sKCMYi5M69hbRI4W3NVGdcBJymwKJqrgkcxgcw0IqUfS4ERsaKOiLGsG+ZbrY4kDjUydBmvU6bKUkmBY/naLxL/vxXW9rUbvegAo9L7tZhDRNZ5Kyrx5UhBR8d5yd8Zgt3f/+visiomWxuMT4oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709308531; c=relaxed/simple;
-	bh=zi0bk5Cs+q7geBC6wE4n/dJCyCKURk4w3ELa9Zvu7s4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UJjeY4leXsdHGptoY3Nit8F/03zw0j724by6QMu/XKWfubt3qKx92JIcWs820RZZ1oyyXJYjN4zDx923DlOar1IJHD90hJx++Tq5KGuCvpFyUD5dTq25NUF46SNaAYBbzflet+ijQ7efRFb8LPe+ChLheD9zcDYxOe2azuDHDkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MlwjITw6; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+	s=arc-20240116; t=1709310246; c=relaxed/simple;
+	bh=nq+dTB9sZf2knTv8a3VS+AYoILhfpagAL7MZwhJ2pmE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=VBQlQXXa3JkzLOvAydCY9Kj5BIqRsbVH3WxY5wpVtFr6AvVuwUhrxpB9XoqlQkR80vgazH4FVbeluOsUrJ09ewyP0ft+Tc1kyp0M1eeDQqs+1mzuarkbgi9ZIho4MO9KKUAB2wDVken7KaklYwA9sC98590bXyNsflOhw0nyQdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ZQvK6iOT; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MlwjITw6"
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7bf3283c18dso37153639f.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 01 Mar 2024 07:55:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1709308529; x=1709913329; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cAWTzafg6SPo4FfnmrTdAIG/dU4gxVOaqWTDkLn0alM=;
-        b=MlwjITw6m0JYmG/7UsEEleTLmVz5r1MVBbluh6b2EUW/JaYrDFf5m7IgWVOE2xSOhq
-         kNJFJEf5dZbEeJP9UhYGbmgb0zGTm98GauDHjX8igG3rQFBguS1dWH21a0IkflgzTyqL
-         YpUO/EpplNDGtjGlHBtEorWZ7Crng+VCi9QsGWlrzsNUEF1oWn65RpOr4j/5B4kRtKxl
-         t/puuCmY1NEwWodu8yvWjmVYRm5TVstQTeMdeYI76073ie63wYuDCPTwhpcaoGpNwfFr
-         RU8NjohrS1Fc7BvqNianNACPtMXGQOUcTWjpUBq6jxdOOm/7ezQ7TQeALRHpHtSe+00t
-         r3yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709308529; x=1709913329;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cAWTzafg6SPo4FfnmrTdAIG/dU4gxVOaqWTDkLn0alM=;
-        b=NgHudRzAJ8PHviDcbazQthSIkXhdYE2xoIx7VgT0j6xQ4PXlAO10u6TwuUFl76d1qR
-         9eGgXDsrj8Jir51eICN5e0OiGFC5lKug0ZxnR0KhQ3N0zIh/pLUmNImSPZDanWwOX0m6
-         laiFLdLr9DUtptfD8N0BywDNrbgwyG6CsDXfrndmi8rlIKo5aA3NUJqBIkw6cRafLDTY
-         gStwAQC1bjlEhEbqD3QKCX4G0s0wZSPnY3q+PXJaZYJF6UIMoxP6YfdKZ+23KU/0saqH
-         VQtid3WlzTiHUJw5AdPKmrboL+/CitfK8ueyMNVAs8GvBlaSnsnBqynmMWb3By4D8sYZ
-         1ONg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMZmja5K5iEhL4Mzgr3CD470H/CTDmmDlcDy4nicM0l+R8oesOUZBtlvGsuyHrE85sZ2wjuWtF618hyPfi4SpWzrQe7hIuUKcyWchaRL2g
-X-Gm-Message-State: AOJu0YzpgWv6c7RrklPfaaKJaoNmlQKa9JMb+4Y3EgRVFMF8hzGA+z8k
-	vs4fye/dOg5bhAlYgVV0z/kgl5TA8lc2bBkYMPAT3XQxst5hj9YidZ6qJ1JXmvg=
-X-Google-Smtp-Source: AGHT+IH2AOVQ8MRVaLOMNYPUdikaYE3C9/yoGEwzLVtlfctn/SxJ+c3fl6voRhYHWRtZLwheJYI/Ag==
-X-Received: by 2002:a6b:670a:0:b0:7c7:7f73:d1a with SMTP id b10-20020a6b670a000000b007c77f730d1amr1900238ioc.1.1709308528831;
-        Fri, 01 Mar 2024 07:55:28 -0800 (PST)
-Received: from [127.0.0.1] ([99.196.129.26])
-        by smtp.gmail.com with ESMTPSA id b4-20020a02c984000000b004745e754b73sm894609jap.176.2024.03.01.07.55.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Mar 2024 07:55:27 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>, 
- Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: kernel@collabora.com, kernel-janitors@vger.kernel.org, 
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240301144349.2807544-1-usama.anjum@collabora.com>
-References: <20240301144349.2807544-1-usama.anjum@collabora.com>
-Subject: Re: [PATCH io_uring/net: correct the type of variable
-Message-Id: <170930852175.1084422.15074919053163753559.b4-ty@kernel.dk>
-Date: Fri, 01 Mar 2024 08:55:21 -0700
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ZQvK6iOT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1709310212; x=1709915012; i=markus.elfring@web.de;
+	bh=nq+dTB9sZf2knTv8a3VS+AYoILhfpagAL7MZwhJ2pmE=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=ZQvK6iOT+bO4tPhYEnabsP9Xu4NuWKZALwGjgVtKfDNkBimaFc1j75CeTokSIHMX
+	 TA7lfeNKK8zYRfMu6CfukWcyWBYTQ8pjL07uhrn9xzb7/qxGWgYA5oJeTf1OMX4lg
+	 IBI/NNjcV4ooxaF+sVo2kKm8GR7TbYeOvpPkQ7SzrBiN7cBwKNCMurfiEiLDTAbic
+	 XhE55G+pyxzYVDqx64R4vJ5MsnZ0ANCIV250WNE1ylhXo48WiH8JaW+eDP7g7QGoM
+	 4R2M7H9eiPty88Gb7IwLop/KAOvrbunEbqGaVYNfD9SMZusNJ+98rvYHhgkwvtrdH
+	 JSAzTrsoyEiDUWg0dw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MKMA7-1rRbDv0YaF-00LuRI; Fri, 01
+ Mar 2024 17:23:32 +0100
+Message-ID: <0b89e175-47da-4e66-bb3b-a45a400dc3ae@web.de>
+Date: Fri, 1 Mar 2024 17:23:25 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.5-dev-2aabd
+User-Agent: Mozilla Thunderbird
+To: linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ RD Babiera <rdbabiera@google.com>, Rob Herring <robh@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Yu Zhe <yuzhe@nfschina.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] usb: typec: fusb302: Use common error handling code in
+ fusb302_probe()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:o7GcYrUfVXrYS2ZCPe02m7WMplSN24/yNpO+Dv2Zv7dcHv5XFlE
+ 15XhwzGS0OyPzBxck2FX65wbryPxGYv3vLUpqdTi9n/qNhVWghgdTzOnkgLnDYrXgAm+CWf
+ 0nxH0Fd4Or8KrPaAKyLXSVrwDdNdRuwYoMHLq1WH4Hpf0ZAXdEepTBfgsyUqYvo95B/hs6c
+ R2wFjcDaj9Bu41DxZWCOQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:XMDho9cx+UU=;b58AOzK5r9e5ujBhpUnW+QTrDF0
+ af00PfU+SJcQuUSRd2WXaqjA+9JhPY62tJ4czPaQZZEyNSnF2r8A1cMYCB0OqjEWN8x/UbKHR
+ n/EI4JZOhELQcvnF+IScPTH/dwEV31E4iUIdolKQGsdkVRc8IKsaRXykZPpFkDerl3QrRzTAq
+ 1jApWXH7esPKjcqzaL7/Frn4Itj4TX/IVcbZDdifgN6fw+WB78D491AvPyZ72AbnaFBw3sUjv
+ /4dLAcANQAoZmlP/JldAfoIQfYTRhHN1t0mUTrKCGP+XfjDIIdf7MlG6P/KikWWSndqNjr9jx
+ Qcc4VUVXcJOfp0+qLuAxGo5G/VbygPezXoU/tpwnbYmUWWKKAxnLpDoSA7h4dta9J5kWGQ9Te
+ sNydATeYIJh1hkc1GvMs16cYD52RtLjNgCxwWJp5AAk+jVRR7fddVl4ZrUWOCHu6UBqIMiIr3
+ bdD55UqrmL+3AxZJvmzkP0OQ8Dz/OTkKObNv9XuSbAcw+xKKeEAHclXgMZUuTp2P1EHk1ZsMH
+ wi1OzpMqvOFSiyjeaZEDJdf8IzerMZ4ZEyexnrOMZ2l7gDWwoH148dj4ULoTPEa9fWxNGUeZK
+ kTgzbIhi3OhlSSilbqbpnTff6D41V2yRE4QxuvSQH1LsaQUMy6WORheU/hMglm5OtWprF4ch5
+ vzfLJZeJtMMYJ9TqZBOI9HwE5r/PYTIHoWCoR4dZlfLvAIpZtgzZ/Pcn9cr67J46y4BP08F53
+ i+SnzS6GokXepWVkqZlIYmOsHUgzqAio9QZRn2UxBW4vXB4vOzsl1s+DoADgQRaJIcOB5JgYl
+ 9VAVFqnlB11s4d2rF41EguskBOHPbEv56nRxIZJbYfXvY=
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 1 Mar 2024 17:00:23 +0100
 
-On Fri, 01 Mar 2024 19:43:48 +0500, Muhammad Usama Anjum wrote:
-> The namelen is of type int. It shouldn't be made size_t which is
-> unsigned. The signed number is needed for error checking before use.
-> 
-> 
+Add a label so that a bit of exception handling can be better reused
+at the end of this function implementation.
 
-Applied, thanks!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/usb/typec/tcpm/fusb302.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[1/1] [PATCH io_uring/net: correct the type of variable
-      commit: e86b4a164fc86d224bd177e02a9c070b9f1c3db4
+diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fus=
+b302.c
+index ef18a448b740..e1e030da1dec 100644
+=2D-- a/drivers/usb/typec/tcpm/fusb302.c
++++ b/drivers/usb/typec/tcpm/fusb302.c
+@@ -1741,10 +1741,9 @@ static int fusb302_probe(struct i2c_client *client)
 
-Best regards,
--- 
-Jens Axboe
+ 	chip->tcpm_port =3D tcpm_register_port(&client->dev, &chip->tcpc_dev);
+ 	if (IS_ERR(chip->tcpm_port)) {
+-		fwnode_handle_put(chip->tcpc_dev.fwnode);
+ 		ret =3D dev_err_probe(dev, PTR_ERR(chip->tcpm_port),
+ 				    "cannot register tcpm port\n");
+-		goto destroy_workqueue;
++		goto put_fwnode;
+ 	}
 
+ 	ret =3D request_irq(chip->gpio_int_n_irq, fusb302_irq_intn,
+@@ -1761,6 +1760,7 @@ static int fusb302_probe(struct i2c_client *client)
 
+ tcpm_unregister_port:
+ 	tcpm_unregister_port(chip->tcpm_port);
++put_fwnode:
+ 	fwnode_handle_put(chip->tcpc_dev.fwnode);
+ destroy_workqueue:
+ 	fusb302_debugfs_exit(chip);
+=2D-
+2.44.0
 
