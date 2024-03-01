@@ -1,102 +1,105 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE302405DB;
-	Fri,  1 Mar 2024 07:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BC21D6BD;
+	Fri,  1 Mar 2024 08:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709279212; cv=none; b=DX9q3YT17fIBif5ZvPGfU6C+FK0X3M5TOESgT15z2b61jR07dRWyYekvoI+w+istQe3hfl8J/uCrGv3NvhPcP2AdEPCqq149n0XgIlXqpN6Jh6AQ6f8/OcOMfEBeT0PR8E/+n+k3AdgOyCTtDSUk3EcnjVGuRaM+tiLiyAZcmGA=
+	t=1709282822; cv=none; b=bqHPNbzyIXpCQK18A+265GdHepKZ7hLudibT6242ruvZ9tHES4iphWGPtauzlubohd2i1/bMs8pirikMa9gOiPKpc0gC9SqIlKps77bj/rzPzgBxHgyAGyOwphTJ9ZYXmXfNFP1tdt1MXSQl38JJWx48gTvyH6P+qgWIRKpi2I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709279212; c=relaxed/simple;
-	bh=PtVj2Cs/5utkaUVwbD5AXLYA8GHmi80b51Oqj9vJ8HQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=OVdWBBVUFc4Z3aMPvPJnojWueH3JtSeowaG37lMqRXEsgqL+LlZhtHczykNMNkymyo+znHieSnVpNHEsWgCiOajnSikGLmG4vu8mAx6ThErSSm4KT6UN25jIluDzuaDRQUx2uMhYsJIO0CLprX6FrOIus6xDfhT+paolF4/Wf0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vEWh/wuj; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1709282822; c=relaxed/simple;
+	bh=mBL8PGXV/JmsDTo9f1jc418xkycUcDbyqjWYl05TJoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lH8U7fp0C5Om56taIIfkiF/8trQ1Fu/rPeOY6tpMN6o5Mhiacd73Wwctoph1w0rPn2EaVY3ZXhrxQflpSl/HczA4vsSMITkfpJVba3MC589DlGhoPMD1Y/vzdmFjZqp1BrVPO1iOKufjZiaKPCZvzyvfEB++84RL5wH+0nBzanY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VDJTUczH; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vEWh/wuj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1709279197; x=1709883997; i=markus.elfring@web.de;
-	bh=PtVj2Cs/5utkaUVwbD5AXLYA8GHmi80b51Oqj9vJ8HQ=;
-	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
-	b=vEWh/wujuPkr5ZgUKGrC7CR17ajTtwB8K0+7BUgACfosZ+YkVCxOkokrpBZ0MHPL
-	 yKIjqDGCfxtom0sTR+kmTUpuj/Ok4KAHTlO0RzySVvafbhY11Ga9PMd5zSS4PyfQk
-	 VAX3ElI3F02jdmh7X9DeJJqt3yfJlOnzxr462cjXEc2apqKpTvBXySiaALaGBBoMX
-	 I6Hs/BbvcvpBhoCBMaHFPQsQzG05yzM24gN8r+XBlIYbCaArZsEpXpM31FFpOEHOW
-	 7nq8J8PkDaZMkyJ5Fs9eQfpsP6ak3+rXIOvj5AjCv9Rt1xeAiLgmrhFKbnRcpHObg
-	 1uWF8XPffY4vRwqsmg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MA4fW-1rZx3v2OaY-00Baxt; Fri, 01
- Mar 2024 08:46:37 +0100
-Message-ID: <79fa4854-976d-4aad-86ac-c156b0c4937e@web.de>
-Date: Fri, 1 Mar 2024 08:46:25 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VDJTUczH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1709282821; x=1740818821;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mBL8PGXV/JmsDTo9f1jc418xkycUcDbyqjWYl05TJoY=;
+  b=VDJTUczHd55h2tHmNZgRBOhNbCXfL50NcYIDYz0LtN7gGKk5ob6d98qY
+   ASn2o++ia8fAkZo77Z+AZ6uRkza7pf4dDU4d7pNLx2rcplQ88WQGnyuC9
+   s1Uca1t6yG2HmWfDepd1b5FoMLBIUzaaJFY5karCg8XxbJB2KpSd3exCK
+   0HgY+8JslXdnn2fyaoO7ZBVz34wI5csbT3TICdlp4rUSPSaknlzO1o1ZK
+   2/A+nQQDkXCKiifOxx5IjVfQ6l9VzIILHoN7xTfw6O2K2a3b8+Wi5Ly41
+   9Glc3d0n4yB8EixCjYMBurgTQ50fH4m8UzFGVWMcTZaNIGPidXs2nh4YI
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10999"; a="6760270"
+X-IronPort-AV: E=Sophos;i="6.06,195,1705392000"; 
+   d="scan'208";a="6760270"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2024 00:47:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,195,1705392000"; 
+   d="scan'208";a="12814752"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2024 00:46:58 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id C8A0911F811;
+	Fri,  1 Mar 2024 10:46:54 +0200 (EET)
+Date: Fri, 1 Mar 2024 08:46:54 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] media: i2c: ds90ub960: Delete duplicate source code in
+ ub960_parse_dt_rxports()
+Message-ID: <ZeGV_siWFkfqSEgZ@kekkonen.localdomain>
+References: <79fa4854-976d-4aad-86ac-c156b0c4937e@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] media: i2c: ds90ub960: Delete duplicate source code in
- ub960_parse_dt_rxports()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NG6uo48tDikPs/0i4tEmGu816A1pQ83tsl2OXdg3u6hJ5bwtoyO
- BjRU6fcWGkrgTk6joa1FlnF7RBUozfSJH9fqxJz0A/9TmzxZpXJTDatt1LM6B3NsqdN5T26
- H853kokKn63cWdDZhBzT1ojYkPPy/rDan4daCVEou18V1+O5cXYY3P5ds0+ijVcTx9+xs+7
- SXRSO+1JjmgDt/TNkOLDg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Z/ukpIoRDls=;0SinomGpMNGuyZ7CuXAkKrUBS69
- o5VCs//WXLxsJQAdvYJT6ILPRcp+zspbC2T8zbwkUYBbMK7VQH3YrN1nXJQ7lz+VP7qB5HCQ7
- n0/2lrwFfPwLCLSAx2nobiKHpwod+w+dPsLaqJzvpckXRLU5x/WZHQw8HfqkC//80zFd4fxv4
- XMlFzDr5n5CC5os48AgQIe2jg3wPcH7gho1UcMg5RHfDD4Z/MvyJFkNbjYDXbbXsrBUH1jkiH
- Gvyptdpm1ftYOsc7TuH29vWpSWTqFGQ4n3NjkcP4U/OvWq3nDC1bdDLPUxj+yHN4uEYniMw36
- mCf0odVkbJ7ubKuBmdM5ZymzMNYfVlmvEhsYDOnLRL8Z0LYWwUX1Imd82WWD/fTVVKBsAtGQ+
- rT+tnd3um6Eag2RfK72cIPA4hzeD+14/ErRAMKAEgkJ9DaoHdCN664tBqak+n880rt8zZa4Xj
- X1HJb56WmFXbVpuBjcX+Fv/NfPHefUHFK4wyeYYwCO01I+8qYdOBKHpo8VWzAxpJuzqTBdtJD
- 8ZMn7OihOAHohXt1H9rzkeX0ezhzA50MA85RQSCycfQWd670621IiHhqprNTZy3VheNbNId6K
- 5d5Kzl9TpRWKAFFUE1bADesH6ffb5BGJCL4QUeltuGPotcTwUJN+8ubtHccdSHRegVDgsLMjG
- s7I8lfaJh900ZealoffrLoTp7e/d86mNk1KU+MSaeaDgpEy+lZKUaXeZrTd4zR5ztMeBQYdYA
- RcV5FisSS9OjRwARJpVix0Gw3k6Stevs/69UqHG9kOqsiTpD+3yuopk1UjOG46JfjaFDJvehl
- xxs6FmrjLYbbqpC7/0WYXaGaboDF5hmko5g4g/ePy0tCw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <79fa4854-976d-4aad-86ac-c156b0c4937e@web.de>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 1 Mar 2024 08:23:24 +0100
+Hi Markus,
 
-Avoid the specification of a duplicate fwnode_handle_put() call
-in this function implementation.
+On Fri, Mar 01, 2024 at 08:46:25AM +0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 1 Mar 2024 08:23:24 +0100
+> 
+> Avoid the specification of a duplicate fwnode_handle_put() call
+> in this function implementation.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/media/i2c/ds90ub960.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
+> index ffe5f25f8647..eb708ed7b56e 100644
+> --- a/drivers/media/i2c/ds90ub960.c
+> +++ b/drivers/media/i2c/ds90ub960.c
+> @@ -3486,10 +3486,7 @@ static int ub960_parse_dt_rxports(struct ub960_data *priv)
+>  		}
+>  	}
+> 
+> -	fwnode_handle_put(links_fwnode);
+> -
+> -	return 0;
+> -
+> +	ret = 0;
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/media/i2c/ds90ub960.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+I think it'd be nicer to initialise ret as zero, then you can just drop the
+assignment above.
 
-diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
-index ffe5f25f8647..eb708ed7b56e 100644
-=2D-- a/drivers/media/i2c/ds90ub960.c
-+++ b/drivers/media/i2c/ds90ub960.c
-@@ -3486,10 +3486,7 @@ static int ub960_parse_dt_rxports(struct ub960_data=
- *priv)
- 		}
- 	}
+>  err_put_links:
+>  	fwnode_handle_put(links_fwnode);
+> 
 
--	fwnode_handle_put(links_fwnode);
--
--	return 0;
--
-+	ret =3D 0;
- err_put_links:
- 	fwnode_handle_put(links_fwnode);
+-- 
+Regards,
 
-=2D-
-2.44.0
-
+Sakari Ailus
