@@ -1,122 +1,111 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFB767E7A;
-	Fri,  1 Mar 2024 09:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00435B1E2;
+	Fri,  1 Mar 2024 09:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709283769; cv=none; b=lZR0jqgnECyZ46vd+51yWAJNQ/4WngMjPOxHxd2PJQShOA5u9gwLp2uoopEq9BgAQ6odovPj7Tgnsoo7yzeY4gu+ULNFvPMXaEpOWYvhLwtvhyts8fOJGAqFJHFNoNXB6Uwl9yGOjY4wAdDklnLN3rZov/R8rpBa4lvPY8PXcYE=
+	t=1709285161; cv=none; b=cIIlQm/4Dt7T7aU3u2eXIYgyQmppyeP4kN6e4+FpqN6JgbFc2+TykyVr5TtA6EUrNLo57wfFVjHvF12EXIx6o8ThdW94HWnFQltNsNtWJDj/AP/eIVbGR5mG/liiI7PKvJYIpLWoUyF8WwrnjlzgJe3BUPXqvQk38ECMnnZ8Bvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709283769; c=relaxed/simple;
-	bh=rg/9tIV+l6rkm6nBFZtaGTD9o47J4VCrowIfSPkATgw=;
+	s=arc-20240116; t=1709285161; c=relaxed/simple;
+	bh=sN1SvxmlzsPc4GNfK/+SfrEzV9RqjLvrfnVGn5gfylQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oSVyY1eL/cmjO0hftSXCdHX/XZK4DlbPU/89FbK0GEaHScNwifanZect9Unx7c73fF7FlLDBErskBlXI8yHkVZ17CaHGPSzmuTtczAmcM6QuvCM+GXFaj4MT71slixH6I96Nxd9O5F93yFTz9W7XDoo4HMXrt+2ZT2Fi/4+ZCdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EecX3Ws6; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EecX3Ws6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1709283768; x=1740819768;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rg/9tIV+l6rkm6nBFZtaGTD9o47J4VCrowIfSPkATgw=;
-  b=EecX3Ws6lW1uJpBxuBmm09vDErzA+OQNFPSUETeRoL7OA/Sr7UYSiPwM
-   pfnrB9d0ejgAbV4moq2gzNODaWsNoa1KSOIHceej/TfqTc/Y4qvwPF5fH
-   nw32wytvNI9qNCDZJFR+9JS2y3N382a93kHfvNJXaJATuKonl0KhL0WM1
-   CYqq5DZ1CgMvrQmq5LGJwzr5ZWL0sk1VGOiYhpTlGA8n/oZc+O6JbfNMN
-   3C3sXMfU0hQcePMKEz7nNe6aOinZG12BR5pfqlcpbEaPoDFeHryFR8ngn
-   lO53sVt0IaM+MEhNGRfGuC/9V2R17yVDb3RRMcqeITsEIbYuam2vDq5ik
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10999"; a="15223600"
-X-IronPort-AV: E=Sophos;i="6.06,195,1705392000"; 
-   d="scan'208";a="15223600"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2024 01:02:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.06,195,1705392000"; 
-   d="scan'208";a="39156675"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2024 01:02:44 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 60C9511F811;
-	Fri,  1 Mar 2024 11:02:41 +0200 (EET)
-Date: Fri, 1 Mar 2024 09:02:41 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-media@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: i2c: ds90ub960: Delete duplicate source code in
- ub960_parse_dt_rxports()
-Message-ID: <ZeGZsRtH6YLx2FiM@kekkonen.localdomain>
-References: <79fa4854-976d-4aad-86ac-c156b0c4937e@web.de>
- <ZeGV_siWFkfqSEgZ@kekkonen.localdomain>
- <db1d7227-f9a4-42fa-89ba-b484e1260e0b@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=POpqcCTslQAlp1zt9RaBxLlEUdn2vez7NzdRhZUU3SuXqo22hxhY7WcAT3hECQEhcJxQB4fK8/eFHdmB3s3fhmikPTOqOYLSCNSTSqnSjd/dcXMjPRde+WqkoIW42ehvTDs3pRj12lNC3TiiIHkESyirVP5qriMRW6R0kxi9nV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1d911c2103aso3990395ad.0;
+        Fri, 01 Mar 2024 01:25:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709285159; x=1709889959;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rvBvZAsShRAcxOaAuR2g72h+Alt1DyFcdhhr75XnVWc=;
+        b=NqTc9a4D8OPRo6YJd+37Ngtebke4jNc+/QmU7Gj3w1yV8xTYXGUIgavo20g1zSjpbh
+         Lwt3uNPDBAQa67n/1uwA4CK+TWuS6ReyTqHqkUf0uFxtzEG3Se1wm47fl93bDTtAlN+I
+         EwvERA/twQR2xUxRmFLuWAyNOiR5+EJr6nPoFVKivTzLtsynDCHG7ZCdEqSsDWMMRsTU
+         aCHz1wRH2s6MjphuQsVvb8PYddeoGtby7oy5w4byT4G2MpPrifos6s6Qged9NEefuGeu
+         P+a6YQUCJWcjH5oVOde+8cZsTGpyjYXoabdxDl+OUi3LAT4yzNWN11HvupmkMjB01fIO
+         2zJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxGFFUnmT1qTDU2UpdCYZ30GnZHDe0LULFciciyrcU/IeXJX7gzzL878fXMqm8aum+LVzCC6CT6U3Cfo+7eyKaXFBTE3lsAbKUkx/X5hw330c5+lc4kQ8PX4x1BTaPbYdjtECeDIeoFfmMgBDIYip44bfH/3zhO6b+9nBu5eIu0aPF1Wf5nz/DZKUp
+X-Gm-Message-State: AOJu0YzZe7ZQ4FjdDPdxMir2PEiUjyndBAPLjk2XQh8Ub9wajTaZTvpN
+	A9kRm3rp9a7sz8RIF1g1O/nBBMyZFKviNAvwoL/1Fyi/9j5jh0mx
+X-Google-Smtp-Source: AGHT+IHNKZrSwznz/6W/vqfHTfsBZW3ScbjjlHJkN0z7Xg9qLKLx0WqwGZ3s31af9X1XAWOVS2nlBQ==
+X-Received: by 2002:a17:902:d4d0:b0:1db:5b41:c59a with SMTP id o16-20020a170902d4d000b001db5b41c59amr1316686plg.45.1709285159205;
+        Fri, 01 Mar 2024 01:25:59 -0800 (PST)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id y6-20020a17090322c600b001dcb063349csm2953127plg.150.2024.03.01.01.25.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Mar 2024 01:25:58 -0800 (PST)
+Date: Fri, 1 Mar 2024 09:25:57 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Wei Liu <wei.liu@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH 1/2] Drivers: hv: vmbus: Remove duplication and cleanup
+ code in create_gpadl_header()
+Message-ID: <ZeGfJZv-dWMIZJsx@liuwe-devbox-debian-v2>
+References: <20240111165451.269418-1-mhklinux@outlook.com>
+ <de6c23b2-aa27-494a-a0ec-fe14a4289b38@web.de>
+ <SN6PR02MB4157A7AC71EF769E5B88202CD46F2@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <SN6PR02MB4157D586E6523E5747690FB0D44B2@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <db1d7227-f9a4-42fa-89ba-b484e1260e0b@ideasonboard.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SN6PR02MB4157D586E6523E5747690FB0D44B2@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-Huomenta,
-
-On Fri, Mar 01, 2024 at 10:49:19AM +0200, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 01/03/2024 10:46, Sakari Ailus wrote:
-> > Hi Markus,
+On Fri, Feb 09, 2024 at 03:33:24PM +0000, Michael Kelley wrote:
+> From: Michael Kelley <mhklinux@outlook.com> Sent: Friday, January 12, 2024 8:19 AM
 > > 
-> > On Fri, Mar 01, 2024 at 08:46:25AM +0100, Markus Elfring wrote:
-> > > From: Markus Elfring <elfring@users.sourceforge.net>
-> > > Date: Fri, 1 Mar 2024 08:23:24 +0100
-> > > 
-> > > Avoid the specification of a duplicate fwnode_handle_put() call
-> > > in this function implementation.
-> > > 
-> > > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > > ---
-> > >   drivers/media/i2c/ds90ub960.c | 5 +----
-> > >   1 file changed, 1 insertion(+), 4 deletions(-)
-> > > 
-> > > diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
-> > > index ffe5f25f8647..eb708ed7b56e 100644
-> > > --- a/drivers/media/i2c/ds90ub960.c
-> > > +++ b/drivers/media/i2c/ds90ub960.c
-> > > @@ -3486,10 +3486,7 @@ static int ub960_parse_dt_rxports(struct ub960_data *priv)
-> > >   		}
-> > >   	}
-> > > 
-> > > -	fwnode_handle_put(links_fwnode);
-> > > -
-> > > -	return 0;
-> > > -
-> > > +	ret = 0;
+> > From: Markus Elfring <Markus.Elfring@web.de> Sent: Friday, January 12,
+> > 2024 12:06 AM
+> > >
+> > > …
+> > > > Eliminate the duplication by making minor tweaks to the logic and
+> > > > associated comments. While here, simplify the handling of memory
+> > > > allocation errors, and use umin() instead of open coding it.
+> > > …
+> > >
+> > > I got the impression that the adjustment for the mentioned macro
+> > > should be performed in a separate update step of the presented patch series.
+> > > https://elixir.bootlin.com/linux/v6.7/source/include/linux/minmax.h#L95
+> > >
+> > > See also:
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Docu
+> > > mentation/process/submitting-patches.rst?h=v6.7#n81
+> > >
 > > 
-> > I think it'd be nicer to initialise ret as zero, then you can just drop the
-> > assignment above.
+> > To me, this is a judgment call.  Breaking out the umin() change into
+> > a separate patch is OK, but for consistency then I should probably
+> > break out the change to memory allocation errors in the same
+> > way.   Then we would have three patches, plus the patch to
+> > separately handle the indentation so the changes are reviewable.
+> > To me, that's overkill for updates to a single function that have
+> > no functionality change.  The intent of the patch is to cleanup
+> > and simplify a single 13-year old function, and it's OK to do
+> > that in a single patch (plus the indentation patch).
+> > 
+> > Wei Liu is the maintainer for the Hyper-V code.  Wei -- any
+> > objections to keeping a single patch (plus the indentation patch)?
+> > But I'll break it out if that's your preference.
+> > 
 > 
-> I don't like successful execution entering error paths. That's why there's
-> the return 0.
+> Wei Liu -- any input on this?  This is just a cleanup/simplification
+> patch, so it's not urgent.
 
-It could be called a common cleanup path as what you really want to do here
-is to put the fwnode handle, independently of whether there was an error.
-I think the current code is of course fine, too.
+These patches are fine. I'll take them via the hyperv-fixes tree.
 
-Soon you can do
-
-	struct fwnode_handle *links_fwnode __free(fwnode_handle);
-
-and forget about putting it (but you must need putting it).
-
--- 
-Terveisin,
-
-Sakari Ailus
+Thanks,
+Wei.
