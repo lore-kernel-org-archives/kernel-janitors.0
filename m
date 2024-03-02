@@ -1,64 +1,73 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095E712E52
-	for <kernel-janitors@vger.kernel.org>; Sat,  2 Mar 2024 08:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11C4B661
+	for <kernel-janitors@vger.kernel.org>; Sat,  2 Mar 2024 09:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709368251; cv=none; b=R7NhQmBK4f5h5RMD8dkZz3CR5u746ObikOXesE7dQ9xqasn+ViuFyud1BDgw496GeT4BRBXZyyrH8UWWrhUoxPvW/evzOClRMAbWa6A01cAcCtnmFuHeXnvN//q/rNHgsxbB/Ng5N4mHjLfJm1pW165b6SNk4u6yeKPNVR3OSN4=
+	t=1709370849; cv=none; b=JuT1exhhs9UDSmad4vNBLN8yam6aDTpxTcUb+soNb9yR05WNF6bUBsU0Z7lYLZCatapmp/MwDiW0WdvaGLTVAP6FGNUmB6SnZv8B/g3xbw583cYJk1RvXwy4ghcD+RRvj4S5eghNtGW9fHDqPCIXGk2CR4BD9SmMNw7wg33+svw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709368251; c=relaxed/simple;
-	bh=FhJw75e257Az8mxXeRR41uutfZ0ZnhQWt5by0FdTv/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MElDkffWlwR9tMnfhWNSsqmppjxzf32/ROY69bwP3afYDMxiIUc3fAPm/jxU++O/+D57p3v1A/QLZpHk2/4hSMMUvSf1GCbLhBDcN2ncaAAjlEmRmN1VZQ6tWKeBB7UMF60+KeXIPsfP8RYwRD0361HQir3PHrSMZN+SEawU07M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IYmCr8Ja; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1709370849; c=relaxed/simple;
+	bh=AQCHu6wjC1Mc61DwzXSbpHVMgu3N08Sag4neGTjHap8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TbS3jV4ASL7a/aTNLIk58+bwsMz2dwbKuW5gKrejUUcvDz9WiLWQoeqcl+PGxx7TyLlfIO/5BoMgaiwSoVZYQdHod0FIKCP7WtR4Ox37+ZOwH9Fs6ubilq2oedHMqEeTmlthrHIPteEjgC3iZnkYeWdDVZFTqwxBnTuHoC37G7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TyzyDhVy; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IYmCr8Ja"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-412cad778afso6729395e9.0
-        for <kernel-janitors@vger.kernel.org>; Sat, 02 Mar 2024 00:30:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TyzyDhVy"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a3fb8b0b7acso419769666b.2
+        for <kernel-janitors@vger.kernel.org>; Sat, 02 Mar 2024 01:14:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709368248; x=1709973048; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LOcsM9bK++g0t5d/3L0FrYxkOtpdjx7QFD2VwrE7ApY=;
-        b=IYmCr8JasAluwetgH8FdyW04hsAf/kM8vPOMOBVoifM86/Xfpyf1q23pRefkYNGJDe
-         eNt2WrAxLdnrmYkZbgg5hy8DH2Qma/0MhQtk83N8wDljaXCTcdC66LdZB+TjGilVUZrG
-         oQV4+Dst8vVFS5niFD596zOlKvtfRcSvIMCZthO0LsX7boiX5Tw/DjX+efTRSrJqpXd0
-         s4EHHzKhSCJvG1DrqwW9sbs2/hmD8iGddO0NMjqbw0wlgyTvyMtSQhVAE0clDCjiJufg
-         NN+uuFVu4DBqv8B5s3jmF6p7gmcbSFKxVQgjHnnY180KnsmkbzqgOKfxxBkeJ/kPLIEn
-         gMkw==
+        d=linaro.org; s=google; t=1709370844; x=1709975644; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DFSpcwT4Hy2bJfwJLXbvIJSYRBInQpfC3lHF7abplN0=;
+        b=TyzyDhVykPJyXTVESsrhxoch0+bBcNML8ayZyTOIlmiUJlvLSNocu76IrF//dhYNHT
+         D5ZKcSshJIkRd0VtR5WG8ul12ginmdsDbM0xkmj7pBbqhMcbtNGLtFxSswUIjK+brm04
+         C/zBMUxlBeSPPK7oLOBc6oNtgHdBRjFmC3fafPeIWJlA568cufqfyt5y+hEL/k0w6QMM
+         nqDortpPlKMM2sJJDyxwfRKn0ijAcD262kURRZ9A9tLr5/OXXApD1l18rfbGsCMywS5V
+         wnICBIC3EEl5lBhsuHJEIOpmbaEhgkptCal5r10karvwzZwtFejLy++qS+Dd3TC5LDIm
+         4UDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709368248; x=1709973048;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LOcsM9bK++g0t5d/3L0FrYxkOtpdjx7QFD2VwrE7ApY=;
-        b=fxQxE18h7rsf3mZiIx/Y+Qx1K8JQYNhZ3zifZQE1DjWtF3dR+m9Xi4raTjA4PwQrNS
-         UHq87uKXx5CX3+X1FpKcnewzZTqd7xIhVLLloyEvzUKLXRQBmzYiTJRhX7qwKoaJgEn0
-         EJn005MMyYdMrSa3ndtRuP+fKmJcB8pBQrTRtm5JA2F1KXevYgu5VJJklHPub3g6U2ZO
-         K9tyrR6zQTvi6sfHb0wGSWXpRIOY+9OmkkugF4M1DJ5AaGbZhO49cjtQEjBffwULxur+
-         T9tp7Vjc9csM9ts9FecPoOoB91gBBlzLqIoXkz0qgOcU59VMd0BvAbdFBGC3HOE5WRRG
-         kzOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7ZyaQMyMmUPd+n4HMOWXmBwgYc7drbjq/Pu7oS5E56qqAR/p6XoWgHnTg5ahEGedupPAvCQVH8zmhv6CJL+7f7RrTa6E8XSqQ+l0jxXXE
-X-Gm-Message-State: AOJu0YxRb7spxrJfE5U9gQsgMsuP2bxIEF8h/AnDPKQT3B4Vz7w4fh4B
-	XCwP7CJ1ARzyFpStie39bmD2M3N9gQBRaVF5oSDxB4Ze7P1ygeZ853PCs6+dGyU=
-X-Google-Smtp-Source: AGHT+IGHC6HfBXM5nrYJHQLRoXksV5gxN2hyd8vm2fltZWuTwZWskF98EeISwQKVDYPxh9Y3tIt5Ng==
-X-Received: by 2002:a05:600c:5024:b0:412:d0ab:a6f2 with SMTP id n36-20020a05600c502400b00412d0aba6f2mr1129766wmr.39.1709368248431;
-        Sat, 02 Mar 2024 00:30:48 -0800 (PST)
+        d=1e100.net; s=20230601; t=1709370844; x=1709975644;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DFSpcwT4Hy2bJfwJLXbvIJSYRBInQpfC3lHF7abplN0=;
+        b=R9R2Ty7SwsWxtSJuHEGEyX++w8sBWrXLCBKM8T7IZMl9DRc0nKCC9TMfFmhtVp83Ug
+         xnbks4Sc432kPk7c6wkVoTVY4jVW/LmOOO0cn7JjxwwFg9qJvzJFM6N54vaYudmE4BE7
+         xizUro10GlO7EPjybZWpXSMrew3d2aoH5oOsMRWPKDQr0uVttOy/KHtZsccshkq96n/9
+         A0VQR28YAl8ZKlfC+R0r6eTXE2I1yu+3z2BndGO3r77B0UaUp7mTapoePSBTNKsJ6QKY
+         Bp4l2TgSFFdNybRDCSuQdQ6uGjCkc2XodpZP9D9JuBfpiVr37R4Gf5xOQMWttRl9QoCA
+         TLXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXy0y72LclsfTgLWPf7zqG39XbAZHH7Smw56TDZwwpz/gsSrURccpRuc0kL9kFRt8Pu+2oFtrEPqG/tSnaf6CzbThDKw211GVPgfUVJNOe
+X-Gm-Message-State: AOJu0Yyh1qLAlC/fZFcp8sQe2Ibpqjewhx0LmqKQPkIYJTcdy3l4E2SW
+	ADKQ+hreJo7GUBbxs4PyPDgm5zx7Dqf0IESJPPjDxwMjhNjAtaK8+FQgN5Kpcjg=
+X-Google-Smtp-Source: AGHT+IFw0H9KYLYbJ+iK2SiQXFZ3sKDi47m5yY6mq2kN5tKP5jX67KeShfXodKkF3G4h5YBsmaugIw==
+X-Received: by 2002:a17:906:80cc:b0:a40:2998:567c with SMTP id a12-20020a17090680cc00b00a402998567cmr3019889ejx.41.1709370843819;
+        Sat, 02 Mar 2024 01:14:03 -0800 (PST)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id l18-20020adfb112000000b0033d4deb2356sm6729168wra.56.2024.03.02.00.30.46
+        by smtp.gmail.com with ESMTPSA id c13-20020a056000104d00b0033dfa7ecd33sm5901777wrx.61.2024.03.02.01.14.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Mar 2024 00:30:47 -0800 (PST)
-Date: Sat, 2 Mar 2024 11:30:43 +0300
+        Sat, 02 Mar 2024 01:14:03 -0800 (PST)
+Date: Sat, 2 Mar 2024 12:13:59 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] Bluetooth: ISO: Clean up returns values in iso_connect_ind()
-Message-ID: <5f73d9d7-61d7-49ab-a5e3-adda72685122@moroto.mountain>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Markus Elfring <Markus.Elfring@web.de>, linux-media@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] media: i2c: ds90ub960: Delete duplicate source code in
+ ub960_parse_dt_rxports()
+Message-ID: <8ece4c88-dbc7-4327-ac2a-0a097fc990d0@moroto.mountain>
+References: <79fa4854-976d-4aad-86ac-c156b0c4937e@web.de>
+ <ZeGV_siWFkfqSEgZ@kekkonen.localdomain>
+ <db1d7227-f9a4-42fa-89ba-b484e1260e0b@ideasonboard.com>
+ <ZeGZsRtH6YLx2FiM@kekkonen.localdomain>
+ <ZeISEYXTaiyA-b4K@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -67,57 +76,66 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <ZeISEYXTaiyA-b4K@smile.fi.intel.com>
 
-This function either returns 0 or HCI_LM_ACCEPT.  Make it clearer which
-returns are which and delete the "lm" variable because it is no longer
-required.
+On Fri, Mar 01, 2024 at 07:36:17PM +0200, Andy Shevchenko wrote:
+> On Fri, Mar 01, 2024 at 09:02:41AM +0000, Sakari Ailus wrote:
+> > On Fri, Mar 01, 2024 at 10:49:19AM +0200, Tomi Valkeinen wrote:
+> > > On 01/03/2024 10:46, Sakari Ailus wrote:
+> > > > On Fri, Mar 01, 2024 at 08:46:25AM +0100, Markus Elfring wrote:
+> > > > > From: Markus Elfring <elfring@users.sourceforge.net>
+> > > > > Date: Fri, 1 Mar 2024 08:23:24 +0100
+> > > > > 
+> > > > > Avoid the specification of a duplicate fwnode_handle_put() call
+> > > > > in this function implementation.
+> > > > > 
+> > > > > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> > > > > ---
+> > > > >   drivers/media/i2c/ds90ub960.c | 5 +----
+> > > > >   1 file changed, 1 insertion(+), 4 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
+> > > > > index ffe5f25f8647..eb708ed7b56e 100644
+> > > > > --- a/drivers/media/i2c/ds90ub960.c
+> > > > > +++ b/drivers/media/i2c/ds90ub960.c
+> > > > > @@ -3486,10 +3486,7 @@ static int ub960_parse_dt_rxports(struct ub960_data *priv)
+> > > > >   		}
+> > > > >   	}
+> > > > > 
+> > > > > -	fwnode_handle_put(links_fwnode);
+> > > > > -
+> > > > > -	return 0;
+> > > > > -
+> > > > > +	ret = 0;
+> > > > 
+> > > > I think it'd be nicer to initialise ret as zero, then you can just drop the
+> > > > assignment above.
+> 
+> I think tearing apart the assignment and its actual user is not good.
+> 
+> > > I don't like successful execution entering error paths. That's why there's
+> > > the return 0.
+> > 
+> > It could be called a common cleanup path as what you really want to do here
+> > is to put the fwnode handle, independently of whether there was an error.
+> > I think the current code is of course fine, too.
+> > 
+> > Soon you can do
+> > 
+> > 	struct fwnode_handle *links_fwnode __free(fwnode_handle);
+> > 
+> > and forget about putting it (but you must need putting it).
+> 
+> Let's wait for the Jonathan's patches to land (v6.9-rc1 I hope) and then
+> we may modify drivers if needed.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- net/bluetooth/iso.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+The __free(fwnode_handle) stuff has already been merged.
 
-diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
-index 30c777c469f9..8af75d37b14c 100644
---- a/net/bluetooth/iso.c
-+++ b/net/bluetooth/iso.c
-@@ -1910,7 +1910,6 @@ int iso_connect_ind(struct hci_dev *hdev, bdaddr_t *bdaddr, __u8 *flags)
- 	struct hci_evt_le_big_info_adv_report *ev2;
- 	struct hci_ev_le_per_adv_report *ev3;
- 	struct sock *sk;
--	int lm = 0;
- 
- 	bt_dev_dbg(hdev, "bdaddr %pMR", bdaddr);
- 
-@@ -1954,7 +1953,7 @@ int iso_connect_ind(struct hci_dev *hdev, bdaddr_t *bdaddr, __u8 *flags)
- 
- 			if (sk && test_bit(BT_SK_PA_SYNC_TERM,
- 					   &iso_pi(sk)->flags))
--				return lm;
-+				return 0;
- 		}
- 
- 		if (sk) {
-@@ -2041,16 +2040,14 @@ int iso_connect_ind(struct hci_dev *hdev, bdaddr_t *bdaddr, __u8 *flags)
- 
- done:
- 	if (!sk)
--		return lm;
--
--	lm |= HCI_LM_ACCEPT;
-+		return 0;
- 
- 	if (test_bit(BT_SK_DEFER_SETUP, &bt_sk(sk)->flags))
- 		*flags |= HCI_PROTO_DEFER;
- 
- 	sock_put(sk);
- 
--	return lm;
-+	return HCI_LM_ACCEPT;
- }
- 
- static void iso_connect_cfm(struct hci_conn *hcon, __u8 status)
--- 
-2.43.0
+We could do some additional work to make a _scoped() macro for
+fwnode_handles but here it's function wide so we already have what we
+need.
+
+regards,
+dan carpenter
+
 
