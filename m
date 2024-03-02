@@ -1,38 +1,36 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C821017593;
-	Sat,  2 Mar 2024 11:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25642376;
+	Sat,  2 Mar 2024 11:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709378764; cv=none; b=mRL2OhLxZ2kZJgk3URMOnpphZ5Z6MvyLMtPNOAiivG/QcvLrSW5y9sqU4EoMLwc7WQapxvJ7tLvvYo8q24RxhdAqd1V3CLmSdO8VRbc3hocrNt4LLx29Xa1qjlTQckD8qjXddyw7oqObBYjKPOOeccVD8mcofmTEMNmjUcww55w=
+	t=1709379756; cv=none; b=A1Ih5EXtV+5oCBT2Utt9nQDmJopnVKh4R5BWW40WxOvKihgV+j3IwXr22B8o1BlmVQiiadqXgLOmeCAuIZRI8X1I+VmHjsZ7aM6rmuenBX/k6o88XLjE7DP6/G4Ns64iMp3sSJJNXZwGZFLBq3GI6zdRvtqajfhW3mCwO2klkXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709378764; c=relaxed/simple;
-	bh=OUTrGAUUb83ehkuew994F0ovDeCHlzF87rm1EoH0du4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=crNONbYlj8yX2EbmvO4kzksH9SN6G69XsykgNz+XvintSvuDIyTcpivXa+obL6IrUS7FFtDztUbVa1UNCTqa/vGhPshKAP8oCvX6q5a6f1MHiGXt3NNAEVSEZMra/Mxyz4wKlbFQLGA7GplRpboIqqlkaA6tkQfjg3x7PZtBh+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aXCy6Sxw; arc=none smtp.client-ip=212.227.17.11
+	s=arc-20240116; t=1709379756; c=relaxed/simple;
+	bh=E3Q9qWL8O0+GN7VCd1Dl19Fyi0SNZTTCX+IlfgtclCY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=q8EU+MrbzLAF/bux9mi22Nqx6+kNUwE8Dc/8ivstopf9SkA4yb4jp0KcJK7eubupm3KtTuxIBXGbgHS1Rrli0ss1pExATY/zqWvHH4ZLAh9EqHzy8MYWBb7I0K8FtpFCsos3MIIJ4lwzSjPt3EBOAzqQ0CciXebiLV9fadKLi8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DPXjRX1d; arc=none smtp.client-ip=212.227.17.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aXCy6Sxw"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DPXjRX1d"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1709378739; x=1709983539; i=markus.elfring@web.de;
-	bh=OUTrGAUUb83ehkuew994F0ovDeCHlzF87rm1EoH0du4=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=aXCy6SxwmIowIzZrMg0w+a9rBfVupG/Hihlj0+1CFt20ewJU+b3RpC3JrSJNTux2
-	 ws7d1tfAKLe+O6zrNk6P5/sVKQ18pzawuVw30ggiXPMWfbwwN8dcDOyjufGhGQl5r
-	 GuFz+8fk8LhUnuI/pzXfjZFLPT2I4sxbxU6HJPIQ1q8fNY+IHkbBewkC9mLg+CU6b
-	 YHxpTJYKYa4r2pJMHWyWon1U15oF0XW2DXeejR/Z8VIAv2IpHmFQ2HB03Yqh/SzcZ
-	 iPH4hcWytxjq7Yic4pfb1ZUCIm2cuG6MzxOkEuhUfmMcYeVi95Q1Zbip0svgCn/mv
-	 Ixu+b9vD8ug+G4bX0w==
+	t=1709379729; x=1709984529; i=markus.elfring@web.de;
+	bh=E3Q9qWL8O0+GN7VCd1Dl19Fyi0SNZTTCX+IlfgtclCY=;
+	h=X-UI-Sender-Class:Date:To:Cc:From:Subject;
+	b=DPXjRX1d6w9S6Wi3Yvg/FUZrL14SO1FScXJSOxyDgch1YbvYXMK+Tkwz0voKtzSa
+	 XydXNk9qno9veQye0HBtEdDw1EhNudQh2HvHJLA7iSsWeZXzMThBSYcHf4brt4zLY
+	 mdwzDp0Y1bB/XG/eCv/nZt3OLvQfcxy6sxYO+IJaQOx4J9BS0EDajim9g+/lMZvBT
+	 CeFt9w8yUALALMCVlccluCb9wlfvWrjgFIvXJgQg8CDbPfvhHllFaQ0pkyBRcCIJI
+	 jIX1XnYWoWsIWCBDKWysBiHLjD0RFzRjhK4J3rrf9zWJ0JpbnRYS/FCsP9zG2RW+Z
+	 Bl6VjOSA9m3uyj/9iA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MGgNU-1rbTvs3eVe-00EIP2; Sat, 02
- Mar 2024 12:25:38 +0100
-Message-ID: <5b2ac08c-cede-44f3-af7f-1bd1b89d113e@web.de>
-Date: Sat, 2 Mar 2024 12:25:37 +0100
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MActe-1rZpFp2G88-00BXXz; Sat, 02
+ Mar 2024 12:42:09 +0100
+Message-ID: <8a7607f8-d634-415e-8269-e26dcc0f9fdc@web.de>
+Date: Sat, 2 Mar 2024 12:42:08 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -40,47 +38,94 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: i2c: ds90ub960: Delete duplicate source code in
- ub960_parse_dt_rxports()
+To: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jeff LaBundy
+ <jeff@labundy.com>, Rob Herring <robh@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 Content-Language: en-GB
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <79fa4854-976d-4aad-86ac-c156b0c4937e@web.de>
- <ZeGV_siWFkfqSEgZ@kekkonen.localdomain>
- <db1d7227-f9a4-42fa-89ba-b484e1260e0b@ideasonboard.com>
- <ZeGZsRtH6YLx2FiM@kekkonen.localdomain> <ZeISEYXTaiyA-b4K@smile.fi.intel.com>
- <8ece4c88-dbc7-4327-ac2a-0a097fc990d0@moroto.mountain>
+Cc: LKML <linux-kernel@vger.kernel.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <8ece4c88-dbc7-4327-ac2a-0a097fc990d0@moroto.mountain>
+Subject: [PATCH] Input: iqs626a - Use common error handling code in
+ iqs626_parse_events()
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:2f5M1q42L5ZXnK64WgtMumJwOpZhYCe7tAAq+BvQzoMSUfSjy2P
- d87nDiGvj4rLSyfGkbCgRu71ZSV4a9VzsKQB4NX3Y23HcwulkC55LWYn1eUHgDFBLEl1xNy
- 8i0rY+bWT75o58AwhdCQnazlDw0tSPs6UN8V8vSZf7OLQiHu+Kw+yXaM1fVygId+m/ET6QF
- 577BEdO954NNg+Co4Upeg==
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:h9A/1MY03Hlt1owaa+huYDBVzhk7qF1ZdtK174hH1eiFGxapT2y
+ Pw/pNtsWPNsatHBRwAxOvnvQXDIFIbs0sVAa1uSBSJSTL10AUeqHlv0e9mJoqgcz0kBHfay
+ H48J2/sMmnVgXmXl6ryZH1OlUJBSJpuCfyKZjGYRQ9CpWRgVKvSBXJXIAqoBnn15TMoBHxx
+ 7Fq2+BvxeC5/aIgp54OLg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VGhGnEHWso4=;IsBx7aGkzCw3jSEWa5tjcGrRH8P
- zlnwb9yarrgkzR2Ur2L67ka0yCnsCS0wR3EnI5BYn9Bd6AH62wr5LaAqma7iH1FKzQWjg5Hav
- +3HMmsrdRzLy1KnijjuI/jrsoKNBrsDVTSMztdao3pDxuVVmin2YxE2Sln9B7DZfZOu1V7vzd
- g24BOXh5mTMQ4FEyjGBpDT8U72uUP1skgglXbKjiKtW5G5e6Gn2KjXSor4Y93xfGwOw/I9T4g
- rJtRPWj7dlbJQf24qNx1ITAsc3M4wP++fmX88diGjLEILmpYfOgu9Dd6H+R5LLrYtnIgvcopa
- q5vxHTATBmpBKCesU1r09pr7Z0MEZZae0/+UivKTog9r/l4zVQyn8ZWRX+RF2lk/f643oLdEm
- E6AGqWWipDOeZQCZGu4B4uXetntU2iZ4ifl3fZQXC4JzvHO8Ixq5oHukc8RtSdYCp/+oRLb0N
- DmsW5OPZ4nwp6A5itWjluM0f3YQEovJUX6gyV2wKeqLwukwrEGR3PSDd/c8RBV6ne6jBs+lE7
- c6nn9b0sIsG7thM+dCEcDfRDfVytCu+TxMjrYxYuWZiRr1JheVtCmVACj6rv7VKryphGxAqFk
- zEts5mDXs2/TzHg671pDSfjdTZ7NQnAfxvmtc6PG6+wyjB7lu0NxAeTjGVBoNIxFdoFb9hugx
- aYRqfA4lLp+te0axijvp8f6K/n6lKKUrJwxidoSpvJZ2XLyWcf30QM4YW0IZqoLI01BXA1N9I
- haWLPL+GrG/b6Tj4cuPhJZhTd//cmk4NNtU4kc6+0Oqr7zBKPd6Za6JpQJyeT2ffaqJBL+ZWx
- vAW5cLjWSS6+AON4wLvC1FytND+pQYWMcvJF++1n2T0eE=
+UI-OutboundReport: notjunk:1;M01:P0:pmsEEA7ll84=;dN/IpDwWFntwUoLhARGcxU797SD
+ Zg1a1k0c7eO4VMzGtV6DrBvjwBqb5YJlqjVVZn0jaEzgtGg3WVKhb1RbLuF7n+xyZYsl8gFny
+ 1Jay2eQlONetdD+M0SF6SmVZQMj4LRCEMQ4lgOI+idzT9mLy62Rog5h4BoG6vBVD46Nx7Xv+J
+ CrQjLq0ktWL6/lLhPNv1REL+H6z/I+XrFJ1Cfm/t2HhK0b97TFBnod97va3t3f4GYw9iHNtxn
+ 3qRl2VYU6m/K1eO3LtjPN47q2sEmKNOwRdYp5dczOCMNd/Wv7bn6nNQEYwxaduDMVS1oH49Tv
+ Z60b7zH7wVtt1rlzMj5uVrTq9mCdGBHnTCqGj8+Z9nwoCsQ7nyXmnWrN1RCY4OjD9yZeja5Cw
+ 5PXKsTMkqq/Mhu/KpZ8WaH2kSUeoOje7x0j4w5q/FheRuNwe2L9+Z9VB3EJoAn5mXWR9VxUaE
+ E23bQsqFtXZG9YUqPCk1HnbiJpioQRB5P8S7mzHcHnXLhEFHlUmwhMX1twxW7DZ0pjWx6W7Vf
+ wy2xlLkpA/96MrqT2Bx8JZ8nAQtaQ8D/2HTiK3w1dG0kLaJQudQtD0ea/kAGFkwE28Rnrh/SU
+ ImuYUlUBSk+GwypHnP9rAtjsqkF2COh7oZtrHxS7YR1ZbfL6VCIWfRC7llkFne7t0i6hZmouo
+ 5+Yo0AyO/yHU2ojsqJG+yGnmT00dzLmTgQUg7ZoRygrheL3FF0Zl9wVPtWGGWCbFFYyqKEmua
+ GXp37jTM8x3aRTE/gr+v16PdOaGp3ZjVXXsWJPOL87oafeNAHL3aOlLXieoi6BsAKvMGXvaI6
+ oez+RcDVLbOJAyDCTtT3Ed5feWOFn19BdTDbWySRDGNoo=
 
-> The __free(fwnode_handle) stuff has already been merged.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 2 Mar 2024 11:44:17 +0100
 
-Would you like to point a corresponding commit out?
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function implementation.
 
-Regards,
-Markus
+This issue was transformed by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/input/misc/iqs626a.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/input/misc/iqs626a.c b/drivers/input/misc/iqs626a.c
+index 0dab54d3a060..fa9570755f7b 100644
+=2D-- a/drivers/input/misc/iqs626a.c
++++ b/drivers/input/misc/iqs626a.c
+@@ -530,8 +530,7 @@ iqs626_parse_events(struct iqs626_private *iqs626,
+ 					dev_err(&client->dev,
+ 						"Invalid input type: %u\n",
+ 						val);
+-					fwnode_handle_put(ev_node);
+-					return -EINVAL;
++					goto put_fwnode;
+ 				}
+
+ 				iqs626->kp_type[ch_id][i] =3D val;
+@@ -545,8 +544,7 @@ iqs626_parse_events(struct iqs626_private *iqs626,
+ 				dev_err(&client->dev,
+ 					"Invalid %s channel hysteresis: %u\n",
+ 					fwnode_get_name(ch_node), val);
+-				fwnode_handle_put(ev_node);
+-				return -EINVAL;
++				goto put_fwnode;
+ 			}
+
+ 			if (i =3D=3D IQS626_EVENT_DEEP_DN ||
+@@ -566,8 +564,7 @@ iqs626_parse_events(struct iqs626_private *iqs626,
+ 				dev_err(&client->dev,
+ 					"Invalid %s channel threshold: %u\n",
+ 					fwnode_get_name(ch_node), val);
+-				fwnode_handle_put(ev_node);
+-				return -EINVAL;
++				goto put_fwnode;
+ 			}
+
+ 			if (ch_id =3D=3D IQS626_CH_HALL)
+@@ -580,6 +577,10 @@ iqs626_parse_events(struct iqs626_private *iqs626,
+ 	}
+
+ 	return 0;
++
++put_fwnode:
++	fwnode_handle_put(ev_node);
++	return -EINVAL;
+ }
+
+ static noinline_for_stack int
+=2D-
+2.44.0
+
