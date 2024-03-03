@@ -1,145 +1,113 @@
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C1067C53;
-	Sun,  3 Mar 2024 16:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE81B654;
+	Sun,  3 Mar 2024 18:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709483519; cv=none; b=Rukedr/ceOa74q5o98/KrVEcCWDz+GwvzYC2ey2VCps6UvM+WIkx/1KmHDaLQUy0iNI1hjsvDt7BUSF/bxhbUW1KxL+XGx/h8v9K9xaT+Jh5AprP7Dc0yyI1UhQbXZFVfuBlSJbbb1CorU8rYZqP607vGEFmKY5i/OhPyvui5a0=
+	t=1709490000; cv=none; b=Q18EmG47ltar6s/M5ct1T8yblumlHD/aBpOvbgHWbzp+ZgMCZIqN/4zEJ/l9iwhAXW8IUrw+pkAjf33awHyTgUVpDafzQWXxqtKuSJUj4iMmnTWvUVJ1BdjT8Pg0+MYwrTUl050OIDiSUboAFwPuPQR3FVDxshe8zulsUiEndY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709483519; c=relaxed/simple;
-	bh=6Yvhhe2kjbUCk6x50Jaz3f46pJmaSnkE5sEIvbMqGzM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ErrUoO5KZ6dkMqY7BCWSjIsiF3X4agazCsEYSWoVjCkQGs/sd8rzeNMGveTy3dgPViATw7N9C07lfvvGomT7jeaOPWLRQ7ONustNpEHU5rN6fesNUJDtXlT23152nooF59YwTjNBroFdCDzCehMdLNGLbDukS0PLyhs1vzB8VNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=tHI62Hum; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+	s=arc-20240116; t=1709490000; c=relaxed/simple;
+	bh=OpFUZkht/kNkK1sffj4iZQMCp1wCBtb91Rpt3Ft7ccA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AFwlgYuYwcc22MhGGl996cGQwhCJxUvyk9JdQaVyUQrwRSPdnHmy/b458w+oEjd/9YH6PXtAUqyZx0yf9fFx28eONzDnW/+M/cH3zyVq1MxjMdzgt0efqTj59JKONUTZqM5ov1SVHIjpx/zKhE9s2j/pvGH9Rnmtbbisw4A98Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=22aNaIbi; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="tHI62Hum"
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4A1C9418B6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1709483517; bh=RZ9QyPPIEU1uTzfgh2H7LHMcSBo6RADiP6Tsyr7H0jE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=tHI62HumxKmk0icQ7uEOX6tt5aOVeBDD6Q02eKLt4aUFCyiazduBLsZJrntHEUjdv
-	 Qk9XmtYSHw6nT31aHQeug8j6DzUuSHJWj2xiKvoz1ASLLoB5+7EKhoYpkWTuXgTf21
-	 0BRQUyO0Pegvbu8rjmt+93t0MwIzsgTbEZykWGQwNLNnoYiJiGDEG8BUkfGZs5dRLY
-	 KgsheT4iebUvC+FF1bP5EVmo9gIAHLxgy3NQG4ign94DE+HFb8ktEQaP315xbB8apn
-	 zfbYICVjO/Jy2pqEhq6Ch4Yq8ckZQM8STXpGiODKyG17Jlp7K03TYvSJwW61BMSvio
-	 ts0bPDx/snxAQ==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 4A1C9418B6;
-	Sun,  3 Mar 2024 16:31:57 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas
- Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH 0/3] Towards a re-organized submitting patches
-In-Reply-To: <20240301134637.27880-1-lukas.bulwahn@gmail.com>
-References: <20240301134637.27880-1-lukas.bulwahn@gmail.com>
-Date: Sun, 03 Mar 2024 09:31:56 -0700
-Message-ID: <87plwbxon7.fsf@meer.lwn.net>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="22aNaIbi"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=4Zprqxh0tqZFACIsoF0C+/8aiRekfRqNvxtqcVAY67w=; b=22aNaIbicw0tEK5jEEVEjslKJT
+	cvZ6D2p0pwLk7niNKqQNrnSlCS88e2po8vaO1wtQKIiutVD9GNp3lBxxTZmIq4jMKo+bmZL83RnMr
+	Ho///zFagi5/fdPZsReW1qUxHwAQ6x6tdewFaEOXBNaUAiEDoCDxQw+G9cgsXYmxiFp8M3pg6fSpE
+	pVA26IeTPBK/P83hPMtIVRmySELsumRYukFcU0zlYIE6tNaH5sQrairFuMx+zompNAxO1dLZhBPHA
+	fJ2TZd+dAdRpISKjYpHA35hTVnLen4Jb5j4piT1niUZoGvO7aHZLSDGgG8abqp3ZD6eUR420gDAAh
+	S1z9Pjeg==;
+Received: from [50.53.50.0] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rgqRG-00000006SaN-2aT9;
+	Sun, 03 Mar 2024 18:19:54 +0000
+Message-ID: <04c07ca9-6377-4326-b9b5-4a4ed49c2f66@infradead.org>
+Date: Sun, 3 Mar 2024 10:19:54 -0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] docs: submit-checklist: change to autonumbered
+ lists
+Content-Language: en-US
+To: Jonathan Corbet <corbet@lwn.net>, Akira Yokosawa <akiyks@gmail.com>,
+ lukas.bulwahn@gmail.com
+Cc: jani.nikula@intel.com, kernel-janitors@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ workflows@vger.kernel.org
+References: <20240229030743.9125-4-lukas.bulwahn@gmail.com>
+ <8df0c587-8f5b-4523-89d7-dc458ab2c1df@gmail.com>
+ <8734t7z4vs.fsf@meer.lwn.net>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <8734t7z4vs.fsf@meer.lwn.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
 
-> Dear Jonathan,
->
-> I wanted to clean up the development-process documentation. There is
-> however no easy way to break the ice here:
->
-> The elephant in the room is that there is some unclear relation between
-> 5.Posting.rst, 6.Followthrough.rst and submitting-patches.rst.
-> (Yes, I know each document has its own history...; but let us put the
-> history aside for now.)
 
-FWIW, the objective of those two documents is quite different; one is a
-high-level overview of how the development process as a whole works, the
-other is a detailed guide to submitting work for consideration.
+On 3/3/24 07:55, Jonathan Corbet wrote:
+> Akira Yokosawa <akiyks@gmail.com> writes:
+> 
+>>> -1) If you use a facility then #include the file that defines/declares
+>>> +#. If you use a facility then #include the file that defines/declares
+>>>     that facility.  Don't depend on other header files pulling in ones
+>>>     that you use.
+>>
+>> Wait.  This will render the list starting from:
+>>
+>>     1. If you use ...
+>>
 
-> Submitting-patches.rst contains information largely put together from
-> different initial starting points and is partly outdated due to common
-> workflows with git format-patch and git send-email.
+I have already said that Stephen Rothwell wanted this #1 item to be at the
+top of the checklist. That makes it easy to tell people to "see submit-checklist
+item #1".
 
-You should have seen it before I thrashed it a few years back :)
 
-> For a simple experiment, I moved the larger parts on the tags
-> (signed-off-by, co-developed-by, acked-by, reported-by, etc.) into a
-> separate document and then ran the numbers on submitting-patches again:
->
->   4329 submitting-patches.rst
->
-> Nowt, the size of submitting-patches is actually below Posting and
-> Followthrough.
+>> In patch 1/1, you didn't change the ")".
+>>
+>> It was Jani who suggested "#.", but "#)" would work just fine.
+> 
+> So I'm a little confused.  Is the objection that it renders the number
+> as "1." rather than "1)"?  That doesn't seem like the biggest of deals,
+> somehow, but am I missing something?
+> 
+> A bigger complaint I might raise is that auto-numbering restarts the
+> enumeration in each subsection, so we have a lot of steps #1, which is a
+> definite change from before.
 
-I don't think we should be driven by word counts.  I do think that
-moving a bunch of information on tags to its own document could make
-sense.
+ack
 
-> So, the difficult task to reach a coherent process description is to see
-> some relation between these documents and then go through the editorial
-> changes. I have come up with this kind of vision:
->
-> Phase 1: Clean up submitting patches
->
->   Topics/Statements that can be easily cleaned up first do not get in
->   the way (at least mentally) when trying to understand the next steps.
->   
->   E.g., as an experiment I moved the details on tags into a separate
->   document.
+> That, of course, can be fixed by giving an explicit starting number in
+> each subsection, partially defeating the point of the change in the
+> first place.
 
-Fine.
+ack
 
-> Phase 2: Make submitting-patches have one clear temporal flow.
->
->   The top-level structure should basically be along the temporal order of
->   things: Prepare a patch, Post a patch, Respond to review, Send reworked
->   patches, Be patient before resending
+> I honestly have to wonder: does this document need the enumerated list
+> at all?  We don't refer to the numbers anywhere, so I don't think there
+> is much useful information there.  How about just using regular bulleted
+> lists instead?
 
-This makes sense as well.  I wonder if splitting the document along some
-of those lines might also be a good idea, with submitting-patches.rst
-becoming a relatively short overview deferring details to the others.
-This is one of the most important docs we have, and it's far too much
-for people to engage with all at once.
+That also works.
 
-> Phase 3: Merge the pieces of content from Posting and Followthrough into
-> submitting patches if it adds something to that document.
->
->   When both documents roughly cover the topics of similar depth, we look
->   fine-grained into how to construct the one document that has the best
->   from both documents.
->   
-> Phase 4: Remove Posting and Followthrough and simply replace it in the
-> process description with submitting patches.
+> That said, I don't have strong feelings one way or the other, and can
+> certainly apply it as-is if that's the consensus on what we should do.
 
-In broad terms, this seems like a good direction to me.
+My preference is to leave the submit-checklist numbered from 1 to N,
+without a repeated #1 in each section. But I'm not hung up on it.
 
-Again, let's remember the different purposes of these documents.  The
-development-process document is an overall description of the process,
-so it doesn't need the details.  But when you say:
-
-> Posting will not be missed.
-
-I don't entirely agree.  But I don't doubt it could be a fraction of
-what it is now.
-
-> So, here are some first changes to Phase 1 and Phase 2.
-
-At a first glance, these changes seem fine.  I think I'll hold them
-until after the merge window so that others can think about what you're
-up to, but I suspect there will be no reason not to apply this first set
-then.
-
-Thanks for working on this material; it's some of the most important we
-have and it definitely needs some attention.
-
-jon
+thanks.
+-- 
+#Randy
