@@ -1,101 +1,142 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A0538392
-	for <kernel-janitors@vger.kernel.org>; Mon,  4 Mar 2024 11:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BED38DF5
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Mar 2024 11:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709551023; cv=none; b=WttSDTFhlQOxp+6Dz65pdCbVz1P46uLzLXAmJhEcQNUhNdG/8UsTdVURSKFq+8Hjpl2fySe2fdFANgqb1AwvaxG9UHJgqeAoG8zCIzz7PqdfeOH6tCmXSwFn8zUgB7md4oBCMiXkzplqzb8obo2tNXNT/KLQ/7H9/iQALuJXp7c=
+	t=1709551982; cv=none; b=H5W8WRq9awa5Cep6jhAjZV5kg2eM22b+oUA3MDJzJ5Be5+FawmZ9PONYm8xNEfWNqb8jaIJKXG+87K15RnIodu//j5h3k26BAD7He69oK0LUL5uHurhkRCmLDZkf4AFNmRK37WTxlaVOhlROk7XPPLoFImOyXpiXEUhMxRnIR6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709551023; c=relaxed/simple;
-	bh=1BlIC2w6gZRcb1Jdtr26xUooK5VTCCvRxi1fD+9dmjU=;
+	s=arc-20240116; t=1709551982; c=relaxed/simple;
+	bh=8tXG9rx3pLAtn54IfYAwMD1l9xHfhlAoTKmFPJpoLtw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jVFFvLQKMNeeNy6SqScD2fwpKCy1AbvUnCI0IWspNVf1Mmq8Jj1u62mGItKnzRu3SXnqCSP+F3AiErBN1sqFwzyGhmvs135uD9CRR1tcV+zA1QPeM+aDNrdipOmOlP45Z7ax10bd51lglI7hJVo0hTQB5LED69dOsMpuGxrgTmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sop8FN6d; arc=none smtp.client-ip=209.85.128.42
+	 Content-Type:Content-Disposition:In-Reply-To; b=aRPw9TBGZ1GrDG+IIsOKBMvn+xmZ5fZjx6m2ktfiEJrXVgPbJcycQD0NuutTIGY9hk9A6u6tCjyy+o056wn/sXt1f7kP6ks9DhYXe9vY7TzTAFcF5LsBVSej0knOMYvjFT3tf/qQhiNXQxpzSgoOfL7atByKEt/Lz3SYyt7mgv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J5xudpDt; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sop8FN6d"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-412e1b52934so5473985e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 04 Mar 2024 03:17:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J5xudpDt"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-412e783c94fso2373645e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Mar 2024 03:33:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709551020; x=1710155820; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DPUD3naOzI7U6jLpCCkxFwa6T8a3pJ7jOrwXbJt7XTY=;
-        b=Sop8FN6dK6CxzkRm+YtGJ5SIU8GCTvMBSK+QW/8ZmCwyQ71Qx0VlGTnjaBAoplBzn7
-         /tPeYjx0RwbWoEZXZGJmBczDNLsKtAL0py3YxBi9yz5KSmAh9pRaw2EKCJNbkKkGLPCz
-         Z/e5iIoGad0Su1hovQ/nQUbzFi1fukotQdzx2lgv/qCIoqxLNuEfqV610Lt26kxGcwqL
-         7ldjC0jTx92vFJd4XU9rkuA4g3Sj9AkoiHExCye+KlxOiAvag8kurPvq5MKSE0bDnV7f
-         c8CDDLO214JwHEnyubXlFt+7xvQaSLt4hqokjky01b9L1fcIzVC551gLxEfcJwr+OXvl
-         BQNQ==
+        d=linaro.org; s=google; t=1709551979; x=1710156779; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=202rFosXjhFYE+j5mBIhVw+lc/s83SboshMBdgomeu8=;
+        b=J5xudpDtGICFcsnA8mmLg5/3OOOxbp9sIUI8WpmUM1DLOexrELc/IsMiqV3lIw3S3E
+         y5T/mP+SPGk0UAVXjsE8vt0Q890FWM6XpPqoFWNViMZlfkmaFWd45YdSLaa7Aag9fV+1
+         QQbeZ2GzwKkhKRqwjawZkRZFiM+bajATadJyUCdDIW2AwwqbAMVuz1w4HrlhwOlAJe54
+         2CYWEonhqsyeW5G4Nus2DJgZXAhpi9nn+V80MHWBRO+2U/CTwtfujF9HMxVGpMBNGAK7
+         X7y+bU5xz+dgbaMwFvZvsZnE/wxzZp3MNMX6GMoqfZFklEk6PRRQI88UuV07vxn/o3QI
+         u+Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709551020; x=1710155820;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DPUD3naOzI7U6jLpCCkxFwa6T8a3pJ7jOrwXbJt7XTY=;
-        b=fqdrYbU1u3yTvZ422AQc9FfSmviT6j0noYRXwz4kv83e56ZZIJi4FWOcG5cxjIQZjr
-         4yIIwCA7mguWNtPZ3H2dErd4r2R5S4FWKCnuxHeqA8SvBFje2q36Zt8XMOOxootzL+CC
-         1qc3/sz9dyPv5k8ISZKMnbHzU3ouqueCZGTG/vbcNASyyZe+KjwvWsdU6pqJcMn2+5uf
-         l9OKSCPuYTU5GIjWW1grsDEpEmMEusQx1LMMoeWLieub9Qa4NpoaCLH6HrufNmjIzm7h
-         JotKYe12fA1GjPbtQah+vVx4vcEQiENBcH/mLx5aAcd6N0heNo505TeU0ei++VLycR73
-         vRhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTbPeRQhHnJzHWDSoC6G5gXj6LwDVmso397iGPKiZFDijHd5hH4pRA20HO/4769MNl9UcN1Tn9BbWPo+u5m7oK0tj2wYSLiDlTQhlad18q
-X-Gm-Message-State: AOJu0YwmvueHz87pV2u5DfWqGAP28VAeW8+JG/EjR7OP4YkPKdyx60Gf
-	qlZwcAKyvg8SD8SlTGVcH59dZJePoeBmap3bDKP9MQ0heklijjiOc/uIgdbRjks=
-X-Google-Smtp-Source: AGHT+IG6uK4fFqrEq/hLrMABlpzJKWFrWyb+lxIYdFMUfmF6a1mHNvSHt1pq4YpGXjO/LuODZzbRDQ==
-X-Received: by 2002:a05:600c:3849:b0:412:e568:a123 with SMTP id s9-20020a05600c384900b00412e568a123mr1251187wmr.10.1709551020575;
-        Mon, 04 Mar 2024 03:17:00 -0800 (PST)
+        d=1e100.net; s=20230601; t=1709551979; x=1710156779;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=202rFosXjhFYE+j5mBIhVw+lc/s83SboshMBdgomeu8=;
+        b=CKJJkMgCU4MzOVUa9L2eP9kTq1TO1xR1Kv/UTbGEnIZq5TQTAYJ5GNb8guouXfWa+z
+         sKjvQoDHh6vnHM+lHs2So4AdLu25svjkYl8Gvr6Q81RDQ7d+a3gvAjTC8F3RRZSNLoDW
+         4FKCGhN0/Mm523KCG7nbe+RZTW7fitw44YIicHUu3guW0FeBCm8LwPpQfBX3ASSRjBYX
+         ALosKK89ony8gWZA3xkkrgWVwFQRSlyhOSFo1xnLDm3wjkLR5KyHCwovLc2QpOT1I/nq
+         XaPU8Oj1po4PmpvRfiVxc6U+bG7MGpBtGKIl0bzLIlWdkXXKz3LmjlFTbkjzdN4hI2Vd
+         WsNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwi2M7J4mQ97w1GcJ4uTfxfjDJxGXZ/lU06zXZSG6XmrZbOjEqTo67y0SjjaFFv/dzZDFV7EgXRegJJTrfG8Eycu8jdXfdqto9roJMTyMF
+X-Gm-Message-State: AOJu0YwgwsLoBsHkdHKPLmihf6YZK3xwmAHmnNHEhaGd1CQYusj7jnW6
+	6899kjzEA0j7fYTv+qDMh9dcsJ3/GtueIiWV3CqOm4q34jZWVqPXURaSZGO+rXU=
+X-Google-Smtp-Source: AGHT+IEr2Xo21Q/br36eGatLTCNsEagP+hGAH1EvtLB+2zZMEM7q81Z9ROjZaGk0RaPEBYMhUEyO7w==
+X-Received: by 2002:a05:600c:4508:b0:412:c288:d22b with SMTP id t8-20020a05600c450800b00412c288d22bmr7323696wmo.14.1709551978868;
+        Mon, 04 Mar 2024 03:32:58 -0800 (PST)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id n6-20020a05600c4f8600b0041273fc463csm17525439wmq.17.2024.03.04.03.16.59
+        by smtp.gmail.com with ESMTPSA id f12-20020a05600c4e8c00b00412ae4b45b3sm17796835wmq.30.2024.03.04.03.32.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Mar 2024 03:17:00 -0800 (PST)
-Date: Mon, 4 Mar 2024 14:16:56 +0300
+        Mon, 04 Mar 2024 03:32:58 -0800 (PST)
+Date: Mon, 4 Mar 2024 14:32:54 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Markus Elfring <Markus.Elfring@web.de>,
-	linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: Markus Elfring <Markus.Elfring@web.de>, linux-input@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: rcar-csi2: Use common error handling code in
- rcsi2_parse_dt()
-Message-ID: <cc121bef-8bca-44e6-81aa-bf8e682bdaf5@moroto.mountain>
-References: <8b4203dc-bc0a-4c00-8862-e2d0ed6e346b@web.de>
- <CAMuHMdWwegdks3eEviEsBJE3AvUVKbZqHduYdhuwz=8xTMDs5g@mail.gmail.com>
- <260d82b6-e7fc-40c3-b414-50a883709fd7@moroto.mountain>
- <ZeWnD9YrXLWJYmhT@kekkonen.localdomain>
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jeff LaBundy <jeff@labundy.com>, Rob Herring <robh@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2] Input: iqs626a - Use scope-based resource management
+ in iqs626_parse_events()
+Message-ID: <2be02b12-84ce-4f83-b104-685f3b7cfd95@moroto.mountain>
+References: <8a7607f8-d634-415e-8269-e26dcc0f9fdc@web.de>
+ <ZeU8ENmnPj3sKxAv@nixie71>
+ <ZeVOPSt0L1D4BxuZ@google.com>
+ <e8a2b63f-4f9a-463b-b419-c5f673191111@web.de>
+ <b91fe21-fe2-eac8-d1ee-ea8922a08861@inria.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZeWnD9YrXLWJYmhT@kekkonen.localdomain>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b91fe21-fe2-eac8-d1ee-ea8922a08861@inria.fr>
 
-On Mon, Mar 04, 2024 at 10:48:47AM +0000, Sakari Ailus wrote:
-> Hi Dan,
+On Mon, Mar 04, 2024 at 11:55:23AM +0100, Julia Lawall wrote:
 > 
-> On Fri, Mar 01, 2024 at 04:42:01PM +0300, Dan Carpenter wrote:
-> > Sakari Ailus pointed out in another thread that we could use __free()
-> > instead.  Something like this:
-> > 
 > 
-> Looks good to me.
-
-Thanks for checking!  I've never used these before.
-
+> On Mon, 4 Mar 2024, Markus Elfring wrote:
 > 
-> We could merge this with your SoB (pending Niklas's review). :-) The driver
-> has been since moved under drivers/media/platform/renesas/rcar-vin/ .
+> > From: Markus Elfring <elfring@users.sourceforge.net>
+> > Date: Mon, 4 Mar 2024 11:40:04 +0100
+> >
+> > Scope-based resource management became supported also for this software
+> > area by contributions of Jonathan Cameron on 2024-02-17.
+> >
+> > device property: Add cleanup.h based fwnode_handle_put() scope based cleanup.
+> > https://lore.kernel.org/r/20240217164249.921878-3-jic23@kernel.org
+> >
+> >
+> > * Thus use the attribute “__free(fwnode_handle)”.
+> >
+> > * Reduce the scope for the local variable “ev_node” into a for loop.
+> >
+> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> > ---
+> >
+> > v2:
+> > An other cleanup technique was applied as requested by Dmitry Torokhov
+> > and Jeff LaBundy.
+> >
+> >
+> >  drivers/input/misc/iqs626a.c | 8 ++------
+> >  1 file changed, 2 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/input/misc/iqs626a.c b/drivers/input/misc/iqs626a.c
+> > index 0dab54d3a060..86fcb5134f45 100644
+> > --- a/drivers/input/misc/iqs626a.c
+> > +++ b/drivers/input/misc/iqs626a.c
+> > @@ -462,7 +462,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
+> >  {
+> >  	struct iqs626_sys_reg *sys_reg = &iqs626->sys_reg;
+> >  	struct i2c_client *client = iqs626->client;
+> > -	struct fwnode_handle *ev_node;
+> >  	const char *ev_name;
+> >  	u8 *thresh, *hyst;
+> >  	unsigned int val;
+> > @@ -501,6 +500,8 @@ iqs626_parse_events(struct iqs626_private *iqs626,
+> >  		if (!iqs626_channels[ch_id].events[i])
+> >  			continue;
+> >
+> > +		struct fwnode_handle *ev_node __free(fwnode_handle);
+> 
+> Doesn't this need to be initialized?
+> 
 
-Alright.  I can resend this as a proper patch.
+Only if you declared before the continue; statement.  Generally kernel
+style is that you have to declare variables at the start of the block...
+But that's becoming less universal now that it's not a compile error.
 
 regards,
 dan carpenter
+
 
