@@ -1,98 +1,81 @@
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02A43D547;
-	Mon,  4 Mar 2024 13:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757493D547;
+	Mon,  4 Mar 2024 13:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709558378; cv=none; b=JK5oIyEtNvlApyWLfuvx7Q3qi3Qc8goyx4JtnXuYYhbHbObdsS5FnNMnbSPBqb7cq3OtcnnI/Ks3BG8dXLzCFVqdy1DocphtMLM1POD+0auxcDMupNf/nN3fFqE6vhPY7L/N9EBmKXUWTGGQt5VdQ5RR6ehNsMy/9Yqm6d7kawY=
+	t=1709558575; cv=none; b=QHgZb6DympXSbLHahj/dnsrP8n/zVe/GaOuEF4htjU/lZ5AjMU2w5ygy1pUMbpYnrScu/Jf9lY4CjG7ZTvXBRIjCd+ZGQsHUDicQ1twd6WpX5LqxzAWO8lZ5AaqZl4w1XDimU8IvUn5EjLGZQgZwekhyiBmrcFJH96Kn0lk2XyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709558378; c=relaxed/simple;
-	bh=afzJtdtms/jbY1raMtb1alh1Cys2o04f4eQPLD2PdkU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AohnQpVCXXxyaSd+SxnEAyavEGrESAIKQxFbeX0Vz7RWHODMOdocy3JeK5lo98CO7cWZuL/Tw7R0pYHkbhy7wx/SJqTwdWHYyufcGUsAh2sH5VCwXkPeP09Hfz73iFDLtycTX4zGoiYTD16xntd4AzmloniEZeHA5CRa18Nkt5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=j0vsoZ5h; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1709558575; c=relaxed/simple;
+	bh=wvqVrTZYUETegQB929WmfG/ja/6JUPIg5ef7y9GtyRE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=JC6OxYSqak4KHcvZ7SXvl++6qLNX3ibFSDOeXKP+Ry7bQhG2Fe+WdXHEr2tvXghpWNrn9gqSQWSgC1IYP6VxMHiBa9EeemMQJSyo/glMyW1Nl+4+lapj1i9JITvGgvis36RunAtnm4laHgMrVYye1IfSIom1LjlyTVHaUIQzmnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DR/vqkTq; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="j0vsoZ5h"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C8D07E0009;
-	Mon,  4 Mar 2024 13:19:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1709558374;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sss8ohSvvwGn3uSwOCh1KZp9GMEloGBYCwOa6wonWFE=;
-	b=j0vsoZ5hRpTOvw/xyk1SdAUlqkRAqFVd/BazCSa+SSz7n7eR+kj+vdKiscpSSnHeyrnaq+
-	U8wltMM4u2gb8coGq/zn/KrmIbVnENiLSwHcHy57LIYD0cXbScPGALY/kwAuluzYpmu5Vr
-	rm33cstmzNS4NWJxpe+IC1EE7U7amKH1DOyUjSPInCGfptYIxCQJBWJLcVVl5ZYABkh8u+
-	5ks9A01fsDpnbrlqlK+HeJ4xkFwadmLa2epVbTZhVcgm6r51QjdAwxXngFmx1hNb8v9EwQ
-	Wj5t8c0xGhfqKNrNvQg5Ce0qRmvIchJ6VNxej6Peem/KqTRofqqL9Zcxzc7F/w==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Vladimir Kondratiev
- <vladimir.kondratiev@mobileye.com>, =?utf-8?Q?Th=C3=A9o?= Lebrun
- <theo.lebrun@bootlin.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas
- Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: remove entry to non-existing file in
- MOBILEYE MIPS SOCS
-In-Reply-To: <20240222143312.27757-1-lukas.bulwahn@gmail.com>
-References: <20240222143312.27757-1-lukas.bulwahn@gmail.com>
-Date: Mon, 04 Mar 2024 14:19:33 +0100
-Message-ID: <87sf16gmmy.fsf@BL-laptop>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DR/vqkTq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1709558574; x=1741094574;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=wvqVrTZYUETegQB929WmfG/ja/6JUPIg5ef7y9GtyRE=;
+  b=DR/vqkTqYzUop2/LTwXpStpV/fXjKlL1h9K5BpMfuwr4QgfQYnbDRSyM
+   zdGnrmWnYL/nChqfBbD4KSMs8uvG+GHeEJDdpz8eARva2sFMhAMSneRwV
+   7cp3mnHU6hNE486Sel0RKwtFZ16xsL72HbygF46G6K0zBPwwte2rB/3BV
+   4jK5toE2n81Q1y5syJNrQY1ERalFw6PXPOc4quB4l7E+1De8qglegU/bX
+   wPmRI2URsDCmtZ9OT7jxrMAXcnw0oAGt7PDmZQItGRAAiFI25Bwlyo5t3
+   yxCwsSGWbw1e9INf421ZNgQBRiK4PllI3pY+efSRcV+Se+JgUgACj5Hp8
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,11002"; a="15198228"
+X-IronPort-AV: E=Sophos;i="6.06,203,1705392000"; 
+   d="scan'208";a="15198228"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2024 05:22:53 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,203,1705392000"; 
+   d="scan'208";a="8946080"
+Received: from ekohn-mobl1.ger.corp.intel.com (HELO localhost) ([10.246.49.145])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2024 05:22:50 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 4 Mar 2024 15:22:47 +0200 (EET)
+To: Dan Carpenter <dan.carpenter@linaro.org>, 
+    Shravan Kumar Ramani <shravankr@nvidia.com>
+cc: Hans de Goede <hdegoede@redhat.com>, Vadim Pasternak <vadimp@nvidia.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/mellanox: mlxbf-pmc: fix signedness bugs
+In-Reply-To: <a4af764e-990b-4ebd-b342-852844374032@moroto.mountain>
+Message-ID: <9bdeba5e-0f33-c1d9-4cb4-6fdb42ec2fa9@linux.intel.com>
+References: <a4af764e-990b-4ebd-b342-852844374032@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-Sasl: gregory.clement@bootlin.com
+Content-Type: text/plain; charset=US-ASCII
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+On Thu, 29 Feb 2024, Dan Carpenter wrote:
 
-> Commit f34158edd249 ("MAINTAINERS: Add entry for Mobileye MIPS SoCs") adds
-> the section MOBILEYE MIPS SOCS with a file entry to the non-existing file
-> include/dt-bindings/soc/mobileye,eyeq5.h.
->
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
->
-> Possibly, this file was part of an early patch series, but in the final
-> patch series, this file does not appear anymore.
->
-> Delete this file entry in the MOBILEYE MIPS SOCS section.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-
-Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-
-Thanks,
-
-Gregory
+> These need to be signed for the error handling to work.  The
+> mlxbf_pmc_get_event_num() function returns int so int type is correct.
+> 
+> Fixes: 1ae9ffd303c2 ("platform/mellanox: mlxbf-pmc: Cleanup signed/unsigned mix-up")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 28b2013031bd..19ac6a8e46b2 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14914,7 +14914,6 @@ F:	Documentation/devicetree/bindings/mips/mobileye.yaml
->  F:	arch/mips/boot/dts/mobileye/
->  F:	arch/mips/configs/eyeq5_defconfig
->  F:	arch/mips/mobileye/board-epm5.its.S
-> -F:	include/dt-bindings/soc/mobileye,eyeq5.h
->  
->  MODULE SUPPORT
->  M:	Luis Chamberlain <mcgrof@kernel.org>
-> -- 
-> 2.17.1
->
+> The code in mlxbf_pmc_valid_range() has a check for negatives but that
+> has a signedness bug too.  Fortunately "(u32)-EINVAL + 8" will not
+> result in an integer overflow so the offset is treated as invalid.
+
+Hi,
+
+While this patch itself was fine so I applied it, when reviewing the patch 
+I noticed that some of the kstrtouint() derived values were not properly 
+bound checked (some were fed directly to FIELD_PREP()).
 
 -- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+ i.
+
