@@ -1,119 +1,180 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC3E16436
-	for <kernel-janitors@vger.kernel.org>; Mon,  4 Mar 2024 07:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B71179A8
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Mar 2024 08:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709538691; cv=none; b=WREJFBTOljxuGQadvORGL7ytbiKTclyZKJR312zO4WCPCLu/e7bC3RGXKpkDl59nN2EakpiHXWLVZTkmSqL7UoICNdcuqQkGeGl2xqdLCQA617QkKpV9eRD23eOahbyoCjbwyZNjc5iQp3wqfMsRN7uR15Xp5DeTGK0aDLoAmn8=
+	t=1709540334; cv=none; b=bFDxFEKY/QtUwB6db/8nalXrzdkrPS1CQA6w5ADipKAxKvS2oC4MHE6K2H0oskA4uNk4XfnQTXMdkdt8JvrQ06c47f3tHpExUf5cLMHYa+iawhYWoyECCdE/psgHN24knqMhfpKzo+3TuvtOIDZ1u6BdX74vEgqDFjuigT6cwqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709538691; c=relaxed/simple;
-	bh=owFBBvSyol5Quh62N2HJFLrQ+Rxow5j0Z9jnmALctYs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FTfCfTDuqmLbHsopss4KWavoat5Au0lljs/2y8tkRY7M+FOqPcEDmtAdBscadVIwAobnSo/J3XMQ+AujWqKqMiT8QlX/Kr31hOSVjd9wD7GzrY26PJ6QrDEaB30afFY4d+dzqGb55HJYaHGnJDBRMUn2ok26TfiYV5HseSLfnLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WDTRsunw; arc=none smtp.client-ip=209.85.208.171
+	s=arc-20240116; t=1709540334; c=relaxed/simple;
+	bh=lf4QbrTdyQGbsfhBE4a4VPnu/JGFsWbiqabuasROWBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kiVfOoDGBtrBsndI5QNhvAkwndBoEE8QMU7x71/87EVpnSPXuYYJx3bPtLZuxfDpEZBi05zmQr3YdMRItTed0gSeoK2vIVP+bLCEevqQg6QDPql7iycYZWm9rTWTP9OdXwglSwfKWQ5NDEG5WGYglhsijXxz6xsXFzr507Pd5b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U9FcpVwy; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WDTRsunw"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2d2ab9c5e83so40595871fa.2
-        for <kernel-janitors@vger.kernel.org>; Sun, 03 Mar 2024 23:51:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U9FcpVwy"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-33e1d327595so1491243f8f.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Mar 2024 00:18:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709538688; x=1710143488; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HWvU3Y40gzx94WbLTxYgWZzKcXstQArKnjMG7cs8mWk=;
-        b=WDTRsunwPfgmt0sAk8E/8rZWvSTZzJ+/GFNiPjtRj660JluNWT+JElndh43EOv2YzJ
-         9kVNOKQMy+j2DYLmlHJzzps7uz7HD5yOOq84Ov8WsimQps5YoB8mWPvDrbrNVOOlq4i6
-         y918SR9DZtmJRqijMJwuqIMrdU4bVJDph4C9WajbA9U/UdARH1ZvMFyNnx5h5OE++gMe
-         3FfejdJP3gC1GIJLPNdiMsUi3uo42wPjdYuJVvQKwZLCpnG5SGjZyNTL4z9EnfOUlMdG
-         Sm+AfdocmBbVLebljWTeNLlMZZYgDERhGyqpBCjyr/hc14ye/dk34mDp4ZZEKo8Ndb/H
-         VzEw==
+        d=linaro.org; s=google; t=1709540330; x=1710145130; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X+Wz3vSqADvCmRUr41ggthQrfscNeOqtvo32hpAdQrU=;
+        b=U9FcpVwy5ni2jVlNJvOlBgmRDA2f8YDpTGVpaC7QD/UnNcTb++1BG6j+Il88f2sZH4
+         FNny5sfQkIQO1m7fo+WoO5ikXpOSxNHMNQuu95T8EJbBewxDB8GL53iU94MzMwXvFvXm
+         lqMSmANTLEBZ2zz/e+0HRYjatEcU2LZo4KwUseeRTbW+XKycxT7F/IOOGvXMGTPamfgL
+         4zo79l2I8bF3FOZ5Zg+Z0cNZuGy8elQ35Uv/LXT2IjR4KM7fj6+h+s5jZDOgrXfnLWY6
+         XEmdRxYO9QTSX0jHdp1svbmSGFdTGnjLBmLlEDQAsGaAA6ldQoSvYhPn/pon/PJWnkMd
+         AC8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709538688; x=1710143488;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HWvU3Y40gzx94WbLTxYgWZzKcXstQArKnjMG7cs8mWk=;
-        b=OQq9xS9FvKdgsgsMc2p9gYoG22z9/nfgMO/Tyls+cVt/V7hm4PE7T0s0+HwUVvTRnB
-         KcX0hT/9rsjBvzT22h0VE8wEIjtv4ljPI0/imhce1nc/HKaAfsRswlGj/deTWqRqHLn6
-         St9uG/fnEaDMvzCdcNEXQK2XoprBmt+d9uphTMker2hCJFyDPF2EPh8HvJ0feGwqa5V6
-         9R0qU5cno3q3xvc4/pa6ppF/0gmLGzA5reCbYykrhmjjdUyfxR8M+FJKW4wJRZ+1lM2N
-         Xt8R6a17t5GLg4O856GB5Y1oUH+Pu55wJZ4ckN+1vPjdlu5RV0uVCG/n7nB1f2MDPPNg
-         6JSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWOz5AJkH1yxSqmHnwZJ1sdTWDUBai/I0O0gYob+LgLgRvO9dMx2ZabDjgWxWS6pe1mNHIiDt5zK9TzNYbLu04dVtHp2mehIbO5TksVsXoB
-X-Gm-Message-State: AOJu0YyPWGtaINvX8K3UopCaa2A5e+MtO77c8TgpsIcGHAxjHkwrilnc
-	coK/6skSromdxTu7uw0Zd0E1lj+uE8OrXmjQPtGROdCwawkjVx0gLFHr/6GeaXs=
-X-Google-Smtp-Source: AGHT+IEUICwfJIiBbierTI0MhAjTfQX5+cl2OonSg/acMJtoHZl/Brk4/Jj3JhOx9JLBQPKMiSjqWg==
-X-Received: by 2002:ac2:5e35:0:b0:513:2347:4b57 with SMTP id o21-20020ac25e35000000b0051323474b57mr4460752lfg.66.1709538688355;
-        Sun, 03 Mar 2024 23:51:28 -0800 (PST)
-Received: from [192.168.2.107] ([79.115.63.35])
-        by smtp.gmail.com with ESMTPSA id g3-20020adfe403000000b0033af3a43e91sm11481037wrm.46.2024.03.03.23.51.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Mar 2024 23:51:27 -0800 (PST)
-Message-ID: <713393d5-13ef-4891-bf7c-d835edacef8a@linaro.org>
-Date: Mon, 4 Mar 2024 07:51:26 +0000
+        d=1e100.net; s=20230601; t=1709540330; x=1710145130;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X+Wz3vSqADvCmRUr41ggthQrfscNeOqtvo32hpAdQrU=;
+        b=TIzrvLSaSxuIGjthMdkwsiAdCgnyOEaLoAT7LIYRHmXiGbWwYmMIfTK67TYG9Yo7b6
+         e6vKslEZXMNg8QtlUvsv3v7zpSF7s0X7jHfWAECkOddVbLQww+zj/6AIFrFYcsjM/lxD
+         XAzikTyDQGOu8IH4OK+s2usmRKiAWTYMCbBZuAhE4Rfjo9g5C+g5wNuqhxRDz00HgQd1
+         wZTvvB2YGe+J5uBEy465btZYh4Q9O8Me4D0CWVExyRipADs9LSNPYOzsBsq1XZC5RnNf
+         FfU6Gik0yRPEKZk1HCn89Fygavw7cYoZ0Xbioa6daHYmGb7R0gjDp7l0f8hgFkXBZxfw
+         BgFg==
+X-Forwarded-Encrypted: i=1; AJvYcCViLU/JuG0Ltyn3KT4JfO/sBVZ1Oc4S27Ia7DWw6qo08D9bNtmuwI5CF4bTVV1hS4ZuM9SG5eJEkAd+6vOyeUvyWgbUNvCKlKcZ48FKLVgY
+X-Gm-Message-State: AOJu0YzdbYyNyT+1sZ/rWB8E7GbM5YWB62rj30UaxIj4xTa5JhEObPbH
+	vpFOmm9fGmzoZtJEHF0OIR2jE/3cRy5BKOKC2fmnqCYebkQA48Ah3Q/OQvrEVSw=
+X-Google-Smtp-Source: AGHT+IEEACqniaOv1TiY0H6kWmP529cCDflhJo/tAnZFMaI+Uhz12qFbHINc222Iumefyt2EZD63nw==
+X-Received: by 2002:a5d:650b:0:b0:33d:f3cc:1f8a with SMTP id x11-20020a5d650b000000b0033df3cc1f8amr5370378wru.55.1709540330225;
+        Mon, 04 Mar 2024 00:18:50 -0800 (PST)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id v13-20020adfd04d000000b0033d202abf01sm11477083wrh.28.2024.03.04.00.18.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Mar 2024 00:18:49 -0800 (PST)
+Date: Mon, 4 Mar 2024 11:18:45 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jeff LaBundy <jeff@labundy.com>, Markus Elfring <Markus.Elfring@web.de>,
+	linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Input: iqs626a - Use common error handling code in
+ iqs626_parse_events()
+Message-ID: <11e5db31-2a8f-458d-a249-7205e37aa20f@moroto.mountain>
+References: <8a7607f8-d634-415e-8269-e26dcc0f9fdc@web.de>
+ <ZeU8ENmnPj3sKxAv@nixie71>
+ <ZeVOPSt0L1D4BxuZ@google.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mtd: spi-nor: core: correct type of i to be signed
-Content-Language: en-US
-To: Michael Walle <mwalle@kernel.org>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Pratyush Yadav <pratyush@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
-Cc: kernel@collabora.com, kernel-janitors@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240301144517.2811370-1-usama.anjum@collabora.com>
- <CZII7JH72OWF.1IAQO5VJCBZX3@kernel.org>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <CZII7JH72OWF.1IAQO5VJCBZX3@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZeVOPSt0L1D4BxuZ@google.com>
 
+On Sun, Mar 03, 2024 at 08:29:49PM -0800, Dmitry Torokhov wrote:
+> On Sun, Mar 03, 2024 at 09:12:16PM -0600, Jeff LaBundy wrote:
+> > Hi Markus,
+> > 
+> > On Sat, Mar 02, 2024 at 12:42:08PM +0100, Markus Elfring wrote:
+> > > From: Markus Elfring <elfring@users.sourceforge.net>
+> > > Date: Sat, 2 Mar 2024 11:44:17 +0100
+> > > 
+> > > Add a jump target so that a bit of exception handling can be better reused
+> > > at the end of this function implementation.
+> > > 
+> > > This issue was transformed by using the Coccinelle software.
+> > > 
+> > > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> > > ---
+> > >  drivers/input/misc/iqs626a.c | 13 +++++++------
+> > >  1 file changed, 7 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/drivers/input/misc/iqs626a.c b/drivers/input/misc/iqs626a.c
+> > > index 0dab54d3a060..fa9570755f7b 100644
+> > > --- a/drivers/input/misc/iqs626a.c
+> > > +++ b/drivers/input/misc/iqs626a.c
+> > > @@ -530,8 +530,7 @@ iqs626_parse_events(struct iqs626_private *iqs626,
+> > >  					dev_err(&client->dev,
+> > >  						"Invalid input type: %u\n",
+> > >  						val);
+> > > -					fwnode_handle_put(ev_node);
+> > > -					return -EINVAL;
+> > > +					goto put_fwnode;
+> > >  				}
+> > > 
+> > >  				iqs626->kp_type[ch_id][i] = val;
+> > > @@ -545,8 +544,7 @@ iqs626_parse_events(struct iqs626_private *iqs626,
+> > >  				dev_err(&client->dev,
+> > >  					"Invalid %s channel hysteresis: %u\n",
+> > >  					fwnode_get_name(ch_node), val);
+> > > -				fwnode_handle_put(ev_node);
+> > > -				return -EINVAL;
+> > > +				goto put_fwnode;
+> > >  			}
+> > > 
+> > >  			if (i == IQS626_EVENT_DEEP_DN ||
+> > > @@ -566,8 +564,7 @@ iqs626_parse_events(struct iqs626_private *iqs626,
+> > >  				dev_err(&client->dev,
+> > >  					"Invalid %s channel threshold: %u\n",
+> > >  					fwnode_get_name(ch_node), val);
+> > > -				fwnode_handle_put(ev_node);
+> > > -				return -EINVAL;
+> > > +				goto put_fwnode;
+> > >  			}
+> > > 
+> > >  			if (ch_id == IQS626_CH_HALL)
+> > > @@ -580,6 +577,10 @@ iqs626_parse_events(struct iqs626_private *iqs626,
+> > >  	}
+> > > 
+> > >  	return 0;
+> > > +
+> > > +put_fwnode:
+> > > +	fwnode_handle_put(ev_node);
+> > > +	return -EINVAL;
+> > >  }
+> > > 
+> > >  static noinline_for_stack int
+> > > --
+> > > 2.44.0
+> > > 
+> > 
+> > Thank you for this patch, but it seems like a NAK to me. I think this is
+> > a matter of personal preference, and according to mine, it is much more
+> > confusing to insert a goto label after a function's primary return path
+> > than to have 2-3 calls to fwnode_handle_put().
+> > 
+> > If you feel strongly otherwise, then I would suggest a helper function as
+> > recommended by Dmitry in another thread. However, maybe that helper should
+> > live in the driver core, as I suspect this driver is not the only place we
+> > can avoid calling fwnode_handle_put() in an error path that returns an int.
+> 
+> Yes, it should go into include/linux/fwnode.h, something like
+> 
+> DEFINE_FREE(fwnode, struct fwnode_handle *, if (_T) fwnode_hanlde_put(_T));
+> 
+> Then drivers can do:
+> 
+> 	struct fwnode_handle *ev_node __free(fwnode) =
+> 		fwnode_get_named_child_node(ch_node, ev_name);
+> 
+> and have it automatically be "put" once execution leaves the variable
+> scope.
+> 
+> Ah, we actually already have it defined in include/linux/property.h, all
+> the better.
 
+It's already there.
 
-On 3/1/24 15:04, Michael Walle wrote:
-> Hi,
-> 
-> On Fri Mar 1, 2024 at 3:45 PM CET, Muhammad Usama Anjum wrote:
->> The i should be signed to find out the end of the loop. Otherwise,
->> i >= 0 is always true and loop becomes infinite.
->>
->> Fixes: 6a9eda34418f ("mtd: spi-nor: core: set mtd->eraseregions for non-uniform erase map")
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->>  drivers/mtd/spi-nor/core.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
->> index 65b32ea59afc6..46bc45b80883f 100644
->> --- a/drivers/mtd/spi-nor/core.c
->> +++ b/drivers/mtd/spi-nor/core.c
->> @@ -3373,7 +3373,7 @@ static u32
->>  spi_nor_get_region_erasesize(const struct spi_nor_erase_region *region,
->>  			     const struct spi_nor_erase_type *erase_type)
->>  {
->> -	u8 i;
->> +	s8 i;
-> 
-> Can we just have an "int" here. So we don't shoot ourselves in the
+DEFINE_FREE(fwnode_handle, struct fwnode_handle *, fwnode_handle_put(_T))
 
-Muhammad, do you care to resubmit using int? Would be better indeed.
+I can send a patch for this.  You need to be a bit carefull to move
+the declaration into the correct scope for this to work.  I should write
+some Smatch rules for this...
 
-> foot again. I'm really no friend of these kind of micro
-> optimizations, it should have been int in the first place IMHO.
-> 
-> -michael
-> 
->>  
->>  	if (region->overlaid)
->>  		return region->size;
-> 
+regards,
+dan carpenter
+
