@@ -1,40 +1,40 @@
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1224224B26;
-	Mon,  4 Mar 2024 10:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98BE20323;
+	Mon,  4 Mar 2024 10:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709547705; cv=none; b=tjllv7+B+Y9lH+2mTIRFbLllQBJQHxMKxPHpKK8LYsIsgAuJQDhN/d8Iz8szUc6G5GFayV4zZROloCYo4oPGAkEaqnWvk0Sdqfp/J6CH5Z457GMyLstCMceLbBgHNi/5ZcGuNe05cxEzq/z97AMy6Oz0skztmj3vv602YEKbxYY=
+	t=1709548344; cv=none; b=b2nWzLqCOOgIxwQDilFeHFsDx9nMOa7CJW1x7z0n/nj9+qNxiizvpQPxaonBx4oEAciM9t7LVqjy2eMxnyziIk5MH/PfCZh+WHb2hz6Jsu3GBGa8gBgTrAyngjNhiXPtEP/FsSh/Y9txmZv1j9Hw8VAzQiDgFe6wSaPMf/++qaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709547705; c=relaxed/simple;
-	bh=CdqsZgMWba5+4/38tOJ0rHa2CTmblAVjgPmyX2jcBAQ=;
+	s=arc-20240116; t=1709548344; c=relaxed/simple;
+	bh=KIzJmkOsvRhcMZS0B9T7opj0yBL9GqIfatloVh3/Am4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hKJp0UnV2AQsQf48Hw0VMntiaqtfb10+Lg05cJshNnd2Lf/j5+3r0anySpmV+85XGj/9PTYdjhJMyluuCi4DQ1BwjvUSuyrO3DLn93Sl04mbYOSyuuR8zzrRsMvKpk/WrRWetObWkh0k+FD3+iMczSYEiVvwuHyYxzshB9nk9XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hmxqRTZH; arc=none smtp.client-ip=46.235.227.194
+	 In-Reply-To:Content-Type; b=OhTFh52lJ6mgBsNbESar+OKHzqbN9mFnVJyP3CnF5++rNfz9zoMQXd55r4GJotUpLy1Iyv71ELQSgdM6enH+/xi9KbmNs/4TyG8xw3U+BxH2XKtBXk73z8Zrdi7orn7YgfXP+ho1TI58psgNeEZVnlGCnjhjSQlepXZIPSD6FDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=i1yH4fpz; arc=none smtp.client-ip=46.235.227.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hmxqRTZH"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="i1yH4fpz"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1709547702;
-	bh=CdqsZgMWba5+4/38tOJ0rHa2CTmblAVjgPmyX2jcBAQ=;
+	s=mail; t=1709548341;
+	bh=KIzJmkOsvRhcMZS0B9T7opj0yBL9GqIfatloVh3/Am4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hmxqRTZHaFH0EmwDUqjKD9B2YwFeSsIN/Sv9G9R8MUAarAtX2CpV6WXAVo3j03DJZ
-	 6vtWlYiV9WgPT41PzE6h8UvM67wx+aYuxtN5FD6Z5ySrC0TSYmZWVDzObsJNaEEq19
-	 2F5mvVJ+sQerOh7Oec65NMyNutREUl9jXMX76RXUcTYj+60Jola5sSeKiapp7c3csh
-	 DrnyU2GY34R8J3dVvpY3sTjr9zMAhT+l4KSSlIpa2KFcJtnKaqdo5tN6OKykJmv9wh
-	 GlRMMxNol9Qj3uXcyXs/AHzksKgEVfi4mYlgmPapw+/Iel+AITOCchRhf27ktJFVQB
-	 DDXKQJZ5gzz6A==
+	b=i1yH4fpzGroY/z8eVXA2TS5zjJOZX8uHwkLqd4QP2aDIrfVAMk6u+ox/P8ACmkInH
+	 p9+IVX5Wm0ndqsvmtCMLvkGSkcVaC2TqJqeSOKgVbHInYxJoMjkUVPHFFqze7Jh6kC
+	 CCKpV4p5MZ850HI40/VXeiGA/wnFkuAYD+l3hMLFqFvCKZz3xz8uTK9yFL92H1vUsc
+	 os61xfdUAHAb//65Ytdz4W5Q9uwPZnKgKtoH5doNvcY4yXW/Dph9xIgC3YQ4VQ0k/x
+	 eLA59fSLbnxrlTp/nEF/o9+F2Gd6gmgrrrPb1vOa1mOR0ZMlHREbwv376+3DHHcN70
+	 WbqldLG0XfaFA==
 Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 7C77137813CB;
-	Mon,  4 Mar 2024 10:21:41 +0000 (UTC)
-Message-ID: <02738700-6328-460b-8a5f-fb531756dd55@collabora.com>
-Date: Mon, 4 Mar 2024 11:21:40 +0100
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4BD6537813CB;
+	Mon,  4 Mar 2024 10:32:20 +0000 (UTC)
+Message-ID: <d0ddbec4-2b08-4820-ba9e-eb1f976c7499@collabora.com>
+Date: Mon, 4 Mar 2024 11:32:19 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,7 +42,7 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mtd: spi-nor: core: correct type of i to be signed
+Subject: Re: [PATCH v2] mtd: spi-nor: core: correct type of i
 Content-Language: en-US
 To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
  Tudor Ambarus <tudor.ambarus@linaro.org>,
@@ -52,15 +52,16 @@ To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
  Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
 Cc: kernel@collabora.com, kernel-janitors@vger.kernel.org,
  linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240301144517.2811370-1-usama.anjum@collabora.com>
+References: <20240304090103.818092-1-usama.anjum@collabora.com>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20240301144517.2811370-1-usama.anjum@collabora.com>
+In-Reply-To: <20240304090103.818092-1-usama.anjum@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Il 01/03/24 15:45, Muhammad Usama Anjum ha scritto:
+Il 04/03/24 10:01, Muhammad Usama Anjum ha scritto:
 > The i should be signed to find out the end of the loop. Otherwise,
-> i >= 0 is always true and loop becomes infinite.
+> i >= 0 is always true and loop becomes infinite. Make its type to be
+> int.
 > 
 > Fixes: 6a9eda34418f ("mtd: spi-nor: core: set mtd->eraseregions for non-uniform erase map")
 > Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
