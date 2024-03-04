@@ -1,148 +1,168 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AA44C630;
-	Mon,  4 Mar 2024 15:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076B34AED4;
+	Mon,  4 Mar 2024 16:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709567976; cv=none; b=KDIMecZKBdOFCoH1tB1LoI9vrkgbYMZ8laR/8ZWSY7o4vgULV6C+XcQMANP4t41Kat3nFCXlnINO/VkAn0A+9A3CvsuAgORAezDIdMwOhLywRy0m5W0roFixdvU3+QnmS1QGGw9SXnP01Yc+1L5X6tk8mpKLzWuEGL34p/7uuec=
+	t=1709568656; cv=none; b=oCJdBUZUFYxwy/3vyarPwAVBeyhzU0DuIBm5QJD8DXZqaSmwVOF8dUDDu5KLgUXIBhlZx+gptXiqSaE3sdQKkm8+V4YDn8i3ADFZw5qNg5kjehQdEDLCAvL58B7Ot/dewOlEaypewhSeyQGCcUQvpVB8gVWz+U6hRtrtRsWBSik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709567976; c=relaxed/simple;
-	bh=kWwhagXSgzGBOzzHe1+SkKphXDZuQxr2VZJ2zSGNr7E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=N+Zdr5zBUr09DO/N7jyS/HWKl7MIsp8EXMgDjN0htqlsC5Wq4dcdiW/tQT7eLE5OM6G4an9mq2tx0P2Y7Eix5LALjv/zh3HJ7YTRtB0GeEB4V9qfXtlFvq7O7Kwnme17t3LFnDrJGrJZ6ev6V8MRTX+JaV5dS3lZdA9IiLhd1HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=rIV/+q9Q; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1709568656; c=relaxed/simple;
+	bh=dHq0DKGqX9xEFsFLh6i7JCdWBtfyDQ931akUkFp0FUQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=IrdQXlHc4M+Srk/Scr3ve/gPd7LWpDa+/pN00CMRpeCAlr/ODXau9IcRlamliOLneDw1ckBursqZ4zAqs9R7SvRoS4E4khSzWICQ2yAgMgePpIW+58bODA9wM8iJb+8z76oazpgeR0hlNSuWb63ZsdF5eEKtXzx9ZZooHRCW1W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gKPu1Dac; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="rIV/+q9Q"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1709567972;
-	bh=kWwhagXSgzGBOzzHe1+SkKphXDZuQxr2VZJ2zSGNr7E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rIV/+q9QuURjC8AzXzjygtQmgYWce2d1gTJp7ei1RAGregxwsWFdzbRILE0UdcLKd
-	 88Fqq5uusnT7lSkf6ryw8INw7HHA1mwyhgUapWWjRdrAdQYvXUtjERJlv0G/xJ6JvB
-	 2cUcXz36Xy9fhPAQohalbcgem08UdrxH1P1J952O4sDtQUeE+6ieiSTOi52sgsFFoQ
-	 7dWTaFlRKTdqgv3EztYRiQvkQvBaADzN/5zYlOCkto0W3cBw7LCA1XfE2HSASXsFyL
-	 d6E4HHMjmVh/00QERi/PY4PfMBcHzNe+joUirI1yK8TnHMkufKlNi8GnEzqrtXlzh1
-	 yaYxLDe6g+asA==
-Received: from localhost.localdomain (broslavsky.collaboradmins.com [68.183.210.73])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3D72237820CC;
-	Mon,  4 Mar 2024 15:59:26 +0000 (UTC)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <keescook@chromium.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: kernel@collabora.com,
-	kernel-janitors@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gKPu1Dac"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-412e6bdd454so5249735e9.1;
+        Mon, 04 Mar 2024 08:10:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709568652; x=1710173452; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wwRon3YDC+GD9jnJ5kPZT5CVostWJPWX7LavrbEpoio=;
+        b=gKPu1Dac7+rvd3t+8W0t2zaXicL8gGyUbZd5yz05ML9orrySfK8GuJtTvV2FqZ6bp5
+         LVkcpFoDLwqz6Zff9Zbk+hdaAYRXAj+tyk4ReLM9IuzB6wXIl7tNLuRA5mtZv7p4Gpz6
+         MFVUmsKqMhPcrIZ2Yb2xpMrcqpGF1y4cx5PHSqMtrXQc7yklxiobEv0RLTUAvbbk4bnp
+         GcWhuqEequ+6rXG+Z2GZ4V5PscB2iT1KQD4yD89pYg6Br7AW15hGFgPjUV7OFMO9alZd
+         uZF0K7qgvBSCidNHg71azA19a+gKdjQtORy9UN+Lr1h9wHQpy0AQc9CH0xDQR1jEpQhi
+         HDLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709568652; x=1710173452;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wwRon3YDC+GD9jnJ5kPZT5CVostWJPWX7LavrbEpoio=;
+        b=WgUVyR6dtwmrbTs995fjzIVS7/JbuLnC9hCEZOej8HwOF70rpOFEUDbbhrVCK4m7t+
+         w6H7IzECvVggitM7Xl5rD23t39ifeh7/cC30dfNNi9sKbdHO8aWu5hfc4DmEhiyU/MLd
+         GXK1Z/xzQNzFKjNEkujV/fr4xGZxcqrNKcq8rd0ntsdqssggrdsuH3MndySnEO8JDYY+
+         zb6NskTPNWZ6Om5IqJo6h9jS+tuvEMVhG+hUDeVzEZg+JkdW2IWxqFR3Con+XF9+12cM
+         YOhGjCp42w/p2N3wMJkJLpVryXRT8kWdeExuUhgvpDmjd/3K9C65wsoOO8H+chBCtJzH
+         MlXA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0NGGuIN1OjhGe70Nn9mTuyxVg7EbZyfGn8cVeRgAVHK1tGawju4IXwwys43xVGnl3pQVfQyf/lNOFGiqWG1Vvzwqqg8LkPDhwy1dr
+X-Gm-Message-State: AOJu0YyNy06dBX9GEMRDTZzwFg9TGKVmhUR5WDeU/b8bXCKUHQghSO2f
+	Bo/1Coe3ZzNiL1sLJjAZojMQZT4FQtXkZRIUwCJocxAzsGiV+JZe
+X-Google-Smtp-Source: AGHT+IEdMQwzgNiAneqscWzS9EICOuVeppTy/0OTasXHdy8KD6a7dFoAuwIugLDkT/sqDpRZDhZupA==
+X-Received: by 2002:a05:600c:470e:b0:412:c3cf:ee2b with SMTP id v14-20020a05600c470e00b00412c3cfee2bmr7689936wmo.12.1709568652173;
+        Mon, 04 Mar 2024 08:10:52 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id g8-20020a05600c310800b00412b0ef22basm15161814wmo.10.2024.03.04.08.10.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Mar 2024 08:10:46 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev,
+	Ruan Jinjie <ruanjinjie@huawei.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Atin Bainada <hi@atinb.me>
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] selftests/exec: conform test to TAP format output
-Date: Mon,  4 Mar 2024 20:59:25 +0500
-Message-Id: <20240304155928.1818928-3-usama.anjum@collabora.com>
+Subject: [PATCH][next] staging: rtl8723bs: remove redundant variable hoffset
+Date: Mon,  4 Mar 2024 16:10:45 +0000
+Message-Id: <20240304161045.769912-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240304155928.1818928-1-usama.anjum@collabora.com>
-References: <20240304155928.1818928-1-usama.anjum@collabora.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Conform the layout, informational and status messages to TAP. No
-functional change is intended other than the layout of output messages.
-While at it, do minor cleanups like move the declarations of the variables
-on top of the function.
+Variable hoffset in functions hal_EfuseGetCurrentSize_WiFi and
+hal_EfuseGetCurrentSize_BT is being assigned a value but it not
+being read for any useful reason at all. The variable is redundant
+and can be removed.
 
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cleans up clang scan build warnings for lines 957 and 1050:
+drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c:957:5: warning:
+variable 'hoffset' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- .../testing/selftests/exec/recursion-depth.c  | 53 +++++++++----------
- 1 file changed, 26 insertions(+), 27 deletions(-)
+ drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/tools/testing/selftests/exec/recursion-depth.c b/tools/testing/selftests/exec/recursion-depth.c
-index 2dbd5bc45b3ed..b2f37d86a5f62 100644
---- a/tools/testing/selftests/exec/recursion-depth.c
-+++ b/tools/testing/selftests/exec/recursion-depth.c
-@@ -23,45 +23,44 @@
- #include <fcntl.h>
- #include <sys/mount.h>
- #include <unistd.h>
-+#include "../kselftest.h"
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+index c5219a4a4919..7a5c3a98183b 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+@@ -954,7 +954,7 @@ static u16 hal_EfuseGetCurrentSize_WiFi(
+ #endif
+ 	u16 efuse_addr = 0;
+ 	u16 start_addr = 0; /*  for debug */
+-	u8 hoffset = 0, hworden = 0;
++	u8 hworden = 0;
+ 	u8 efuse_data, word_cnts = 0;
+ 	u32 count = 0; /*  for debug */
  
- int main(void)
- {
-+	int fd, rv;
-+
-+	ksft_print_header();
-+	ksft_set_plan(1);
-+
- 	if (unshare(CLONE_NEWNS) == -1) {
- 		if (errno == ENOSYS || errno == EPERM) {
--			fprintf(stderr, "error: unshare, errno %d\n", errno);
--			return 4;
-+			ksft_test_result_skip("error: unshare, errno %d\n", errno);
-+			ksft_finished();
+@@ -1001,16 +1001,13 @@ static u16 hal_EfuseGetCurrentSize_WiFi(
  		}
--		fprintf(stderr, "error: unshare, errno %d\n", errno);
--		return 1;
--	}
--	if (mount(NULL, "/", NULL, MS_PRIVATE|MS_REC, NULL) == -1) {
--		fprintf(stderr, "error: mount '/', errno %d\n", errno);
--		return 1;
-+		ksft_exit_fail_msg("error: unshare, errno %d\n", errno);
- 	}
-+
-+	if (mount(NULL, "/", NULL, MS_PRIVATE | MS_REC, NULL) == -1)
-+		ksft_exit_fail_msg("error: mount '/', errno %d\n", errno);
-+
- 	/* Require "exec" filesystem. */
--	if (mount(NULL, "/tmp", "ramfs", 0, NULL) == -1) {
--		fprintf(stderr, "error: mount ramfs, errno %d\n", errno);
--		return 1;
--	}
-+	if (mount(NULL, "/tmp", "ramfs", 0, NULL) == -1)
-+		ksft_exit_fail_msg("error: mount ramfs, errno %d\n", errno);
  
- #define FILENAME "/tmp/1"
+ 		if (EXT_HEADER(efuse_data)) {
+-			hoffset = GET_HDR_OFFSET_2_0(efuse_data);
+ 			efuse_addr++;
+ 			efuse_OneByteRead(padapter, efuse_addr, &efuse_data, bPseudoTest);
+ 			if (ALL_WORDS_DISABLED(efuse_data))
+ 				continue;
  
--	int fd = creat(FILENAME, 0700);
--	if (fd == -1) {
--		fprintf(stderr, "error: creat, errno %d\n", errno);
--		return 1;
--	}
-+	fd = creat(FILENAME, 0700);
-+	if (fd == -1)
-+		ksft_exit_fail_msg("error: creat, errno %d\n", errno);
-+
- #define S "#!" FILENAME "\n"
--	if (write(fd, S, strlen(S)) != strlen(S)) {
--		fprintf(stderr, "error: write, errno %d\n", errno);
--		return 1;
--	}
-+	if (write(fd, S, strlen(S)) != strlen(S))
-+		ksft_exit_fail_msg("error: write, errno %d\n", errno);
-+
- 	close(fd);
+-			hoffset |= ((efuse_data & 0xF0) >> 1);
+ 			hworden = efuse_data & 0x0F;
+ 		} else {
+-			hoffset = (efuse_data>>4) & 0x0F;
+ 			hworden = efuse_data & 0x0F;
+ 		}
  
--	int rv = execve(FILENAME, NULL, NULL);
--	if (rv == -1 && errno == ELOOP) {
--		return 0;
--	}
--	fprintf(stderr, "error: execve, rv %d, errno %d\n", rv, errno);
--	return 1;
-+	rv = execve(FILENAME, NULL, NULL);
-+	ksft_test_result(rv == -1 && errno == ELOOP,
-+			 "execve failed as expected (ret %d, errno %d)\n", rv, errno);
-+	ksft_finished();
- }
+@@ -1047,7 +1044,7 @@ static u16 hal_EfuseGetCurrentSize_BT(struct adapter *padapter, u8 bPseudoTest)
+ 	u16 btusedbytes;
+ 	u16 efuse_addr;
+ 	u8 bank, startBank;
+-	u8 hoffset = 0, hworden = 0;
++	u8 hworden = 0;
+ 	u8 efuse_data, word_cnts = 0;
+ 	u16 retU2 = 0;
+ 
+@@ -1085,7 +1082,6 @@ static u16 hal_EfuseGetCurrentSize_BT(struct adapter *padapter, u8 bPseudoTest)
+ 				break;
+ 
+ 			if (EXT_HEADER(efuse_data)) {
+-				hoffset = GET_HDR_OFFSET_2_0(efuse_data);
+ 				efuse_addr++;
+ 				efuse_OneByteRead(padapter, efuse_addr, &efuse_data, bPseudoTest);
+ 
+@@ -1094,11 +1090,8 @@ static u16 hal_EfuseGetCurrentSize_BT(struct adapter *padapter, u8 bPseudoTest)
+ 					continue;
+ 				}
+ 
+-/* 				hoffset = ((hoffset & 0xE0) >> 5) | ((efuse_data & 0xF0) >> 1); */
+-				hoffset |= ((efuse_data & 0xF0) >> 1);
+ 				hworden = efuse_data & 0x0F;
+ 			} else {
+-				hoffset = (efuse_data>>4) & 0x0F;
+ 				hworden =  efuse_data & 0x0F;
+ 			}
+ 
+@@ -1114,18 +1107,15 @@ static u16 hal_EfuseGetCurrentSize_BT(struct adapter *padapter, u8 bPseudoTest)
+ 	) {
+ 			if (efuse_data != 0xFF) {
+ 				if ((efuse_data&0x1F) == 0x0F) { /* extended header */
+-					hoffset = efuse_data;
+ 					efuse_addr++;
+ 					efuse_OneByteRead(padapter, efuse_addr, &efuse_data, bPseudoTest);
+ 					if ((efuse_data & 0x0F) == 0x0F) {
+ 						efuse_addr++;
+ 						continue;
+ 					} else {
+-						hoffset = ((hoffset & 0xE0) >> 5) | ((efuse_data & 0xF0) >> 1);
+ 						hworden = efuse_data & 0x0F;
+ 					}
+ 				} else {
+-					hoffset = (efuse_data>>4) & 0x0F;
+ 					hworden =  efuse_data & 0x0F;
+ 				}
+ 				word_cnts = Efuse_CalculateWordCnts(hworden);
 -- 
 2.39.2
 
