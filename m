@@ -1,53 +1,52 @@
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F27199B9;
-	Mon,  4 Mar 2024 09:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625501A58B;
+	Mon,  4 Mar 2024 09:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709542847; cv=none; b=R8F96DA3DurYOJe6OzRGGECxBnA75qtvNAAzK8mJmFW8lZZynNyvEZOgd/Irrjwg68uqVE2/zs+k5BLocndeFnO8WUM1Wc4np+H8G4f+G1D9oncrqBOcRDs7tS8JKH+CBTrcGXPmuAcYlTri7L/CH13ajiKlfSasB3+pk3mEWfo=
+	t=1709543191; cv=none; b=HqbEkQuM9VLg2nFbyDeCkMWI8Meo3iqu3hi/x7JeUUnltzNH3TJ6vwu/ZBQJOVOnjw2a/syJ0jEdzmBHu2fP4ZOltJoIyuSf9F7RaaNaPf7aGahrbiMq/y9sZw7p5Zx0MYYrgGEGcNA1PpjBIOvjnNaY6kwWlJqZvLndokw4a+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709542847; c=relaxed/simple;
-	bh=bAB5F4vNP6IVN7+dQqmn759QyLQ7N1UG2FLkohO65P8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mPnU2L+Z/vEmgMsomkUw1RClRtCBYMiJNbkMe89udz2w5Cus5N0bhxA5/zft5FdDkTEJHEqSHqzuMU1eqjCbKPTHd+SpHQUd58EveWJ1jHji2gAxPOa5FxY4dH926bL5h3KABByP6ezZwuaLKNi2V3UUmNUvBg7P/GD+tCmwtyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CFN/4qSk; arc=none smtp.client-ip=46.235.227.194
+	s=arc-20240116; t=1709543191; c=relaxed/simple;
+	bh=GCuw5Sm9pjw8RPsF+AZn1B/kTPwUEgdiAsqcOZ4ANW4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V+F0nfqV8n4FGanRatN6e+RD5tQd1kgVzUdAmD9AixJ750rsGuWF/warwoy21g5Ndo3xgPt5HhFGZHu9TLZrqv8/T6O4k6/QAm1bWDB+zpnPfi5NCagiPsSCvv74wdL5H3bvJASyCU22hZofLv0KRlPE+bgvTqbnvNiOnrd2984=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GAj+fQta; arc=none smtp.client-ip=46.235.227.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CFN/4qSk"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GAj+fQta"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1709542844;
-	bh=bAB5F4vNP6IVN7+dQqmn759QyLQ7N1UG2FLkohO65P8=;
+	s=mail; t=1709543188;
+	bh=GCuw5Sm9pjw8RPsF+AZn1B/kTPwUEgdiAsqcOZ4ANW4=;
 	h=From:To:Cc:Subject:Date:From;
-	b=CFN/4qSkWBc9srp/cqJivW54+P7ZwVqVbVST0wpPuMjw9RIgz/SLskeWyjaIvuQil
-	 18X5kSm0FG1hFvv/vCUz2mMeIX6SjaJwNZ05GEPpy5wtRk52rfWWclC0EBq0IK1Jyd
-	 KBgyp419NNL7VdiV8tzw1zA90IdPNgwN16k05ChE4tKD3vPEGz4dpKvmZ7wFpSbuqR
-	 J0i57OXQ2J/mRtLteKNq4fAJ7iavX1dT/KxzWQNDpSX5pXH7PYffTMepvrrFjUDEWi
-	 PXe2A1AgTR/CQP+SpzE5Z+Wn892rOedK2eH+SSGJoCW/nWausLiwhQS14AV59zHPT6
-	 UMwjMPdN2Feaw==
+	b=GAj+fQtaM6u3iin5ZbT5b0HjMjDpd/odSbjNw77qL0jim7x03ptPzJ3bAn2cN7C4R
+	 RUhQyBKG4m5ZeDvxb18qKB6sFfIH9e90sYI+neWLEe6F0yURn8zBzKGUulqISlmwBQ
+	 XxV3K0kgY+E6imnSaPWHGnyw36w4DWbvtI3BR88NCiRrDf8hY02+T+Zaj2sAag6Kot
+	 Gz96q1i1YBfXSQGnD7tdvpdbhT+gdyoLdJWooHAMAzWI8tAPFk+Noj//Q/Cutvcgih
+	 6RpS3PiGj43mprxgFFChFZ4PPKIBfO6NH4UM4Rq7JnY4NYOWP6rS0m6sAnm00Kmk68
+	 EBHE8sb39w5dQ==
 Received: from localhost.localdomain (broslavsky.collaboradmins.com [68.183.210.73])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id AC13F3781FE9;
-	Mon,  4 Mar 2024 09:00:41 +0000 (UTC)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id BD3A53781FE9;
+	Mon,  4 Mar 2024 09:06:25 +0000 (UTC)
 From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
+To: James Smart <james.smart@broadcom.com>,
+	Dick Kennedy <dick.kennedy@broadcom.com>,
+	"James E.J. Bottomley" <jejb@linux.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Hannes Reinecke <hare@suse.com>
 Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
 	kernel@collabora.com,
 	kernel-janitors@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
+	James Smart <jsmart2021@gmail.com>,
+	linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] mtd: spi-nor: core: correct type of i
-Date: Mon,  4 Mar 2024 14:01:03 +0500
-Message-Id: <20240304090103.818092-1-usama.anjum@collabora.com>
+Subject: [PATCH v2] scsi: lpfc: correct size for wqe for memset
+Date: Mon,  4 Mar 2024 14:06:48 +0500
+Message-Id: <20240304090649.833953-1-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -57,32 +56,30 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The i should be signed to find out the end of the loop. Otherwise,
-i >= 0 is always true and loop becomes infinite. Make its type to be
-int.
+The wqe is of type lpfc_wqe128. It should be memset with the same type.
 
-Fixes: 6a9eda34418f ("mtd: spi-nor: core: set mtd->eraseregions for non-uniform erase map")
+Fixes: 6c621a2229b0 ("scsi: lpfc: Separate NVMET RQ buffer posting from IO resources SGL/iocbq/context")
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
 Changes since v1:
-- Make i int instead of u8
+- Use *wqe instead of type to find sizeof
 ---
- drivers/mtd/spi-nor/core.c | 2 +-
+ drivers/scsi/lpfc/lpfc_nvmet.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-index 65b32ea59afc6..3e1f1913536bf 100644
---- a/drivers/mtd/spi-nor/core.c
-+++ b/drivers/mtd/spi-nor/core.c
-@@ -3373,7 +3373,7 @@ static u32
- spi_nor_get_region_erasesize(const struct spi_nor_erase_region *region,
- 			     const struct spi_nor_erase_type *erase_type)
- {
--	u8 i;
-+	int i;
+diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
+index 8258b771bd009..561ced5503c63 100644
+--- a/drivers/scsi/lpfc/lpfc_nvmet.c
++++ b/drivers/scsi/lpfc/lpfc_nvmet.c
+@@ -1586,7 +1586,7 @@ lpfc_nvmet_setup_io_context(struct lpfc_hba *phba)
+ 		wqe = &nvmewqe->wqe;
  
- 	if (region->overlaid)
- 		return region->size;
+ 		/* Initialize WQE */
+-		memset(wqe, 0, sizeof(union lpfc_wqe));
++		memset(wqe, 0, sizeof(*wqe));
+ 
+ 		ctx_buf->iocbq->cmd_dmabuf = NULL;
+ 		spin_lock(&phba->sli4_hba.sgl_list_lock);
 -- 
 2.39.2
 
