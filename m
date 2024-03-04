@@ -1,139 +1,133 @@
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F0A6025B;
-	Mon,  4 Mar 2024 17:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D1261668
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Mar 2024 17:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709572588; cv=none; b=s92+2Gkbv9FkNzeIERaDQG0sRyUxRDjNqzwWYmJtekyLTlJouI5Ti+ozw/MXWb0AXHBZmZY7/GOOi3A2ew1I8GX34CYEKrZRlMTfFukt9dzNEETPoUinmHoWJcLeaRAZeg7q9gqtMjM+5Q35H6Omp48jjZvfJhhFXO+jKoW7DOc=
+	t=1709574599; cv=none; b=rZz5x7pHkLkblSe2exSGz+lCuu3BAy9oVSEU7+1Cs0k42Q6E0HdZWNM41/we4g9QHXi8cTwKSvgk7On2WwWgz+Wi2hMYwsoZFu7RvWcqFqphFNQ/P2odwTw0pyo5uHYaZJvhQxJpPMAnQxTi1vg+pT0fIOLxsMZNcHOnqmh3vgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709572588; c=relaxed/simple;
-	bh=m4aPM8M6KAN3usk2/26PJxZ518eFliLBsTOWT8kko9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oZ0NS2yXwRrt0P+2gL+JcWjP9OkmSvqSlluEfl1eQS/2IpnrL4WpmeqYeULCryESRj6nCcTLht8XkgJ5NAdmAI0eede8bsC3p6k8KgzbialH1ZKJDkr+X5dMC2E7E0ig/rethKJl61njOvuQYNDEcHJlgKzvbB3xpeEVO6cLluI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNi2jmam; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709574599; c=relaxed/simple;
+	bh=VtwakiId4faZUwyLZXPzBmmz2ssNcRrMaBHvrtoWAa4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d1ayCrVYklwxarGQCkbyZyzi8zAMLLJYlGACI4D14MEuW9Wx0C+WvKxg7HSgh3toGK7TUnC/arDAEen2aPPKWMogohUclY5EGGAkRM1orsn1/xO+PNAX87S0oy3obHXaVw4GZpYBjt0LBHAb11bX9ZgTlvtQW04S7PaFr1xSV/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=THVANDHY; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNi2jmam"
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-5ce9555d42eso4053186a12.2;
-        Mon, 04 Mar 2024 09:16:26 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="THVANDHY"
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-472d80cda16so69319137.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Mar 2024 09:49:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709572586; x=1710177386; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=GiGUTwcmS+sZMCMr3FUD76KaDTM9Y9RtqjrMO//bVwE=;
-        b=jNi2jmamFhTSA3Q9UPcFSSwkGSG6Iw2Tqm7KMTgWRWMvZZ6JVxatYB92v44dT4IGgF
-         NXJwEM+mWGdkW0hvV5kPU9G6FdD4xgN0ELfdKx5wKXyq3MnZCcFrDp/4+LnNt2SrzYTh
-         bGFz8e2Ho8ad3ngAFRuYQ14ecC1igF+z3Eqv4HrYLbDdCHGUiMeblJ747j1STDSj2bT7
-         ghVq0FEcWiS1b6UHOlAbUPyn4WyE5JEsKuCE1l2fi39qA49xDrkVp+mD6SxcRnZgt3Df
-         MheGX+kTYuA0TF5QwRSISVbY58PKPTVvHkEYt8AcsZd/g/Z4vjXLnYkrrLEjp3ATdi27
-         ZTVw==
+        d=ieee.org; s=google; t=1709574595; x=1710179395; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9Pd2ZqD9+Nj0j4ec7ryunKzk1xgCPWEAoRbwQKMaYuE=;
+        b=THVANDHYX5yiR/J5vbjr/rXCHjOuTRBc6ITAjfE/11qSRHUGApacS1a3hxl6FjhtJe
+         GhjGbZbq1bGSyBsv7JvGHQVT9sCSBscAyo5G1Fbls0dZHn2wc3qRF+KPR4elOblp8Ql/
+         M5f6SUvRX5YIeNWIiS453u0lvRrHYewJNIzm8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709572586; x=1710177386;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1709574595; x=1710179395;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GiGUTwcmS+sZMCMr3FUD76KaDTM9Y9RtqjrMO//bVwE=;
-        b=Xv+0TatP7bx+rT7FBfhGOlWRn+vQ/lYTrlLWtNis63BTgPs9owO6DxlaW8/NqKVYoR
-         9B3Wko9wmV/TBpl6eB6L1kXnuEURdSIvW8qs77VAYnzrnBWMeFVOhFcG041iAk6Uy6C4
-         9U14qQSRbLA1KJ2HuZ3mlEFiLSHfNbX06/jQpus8xTx1kiHNVLMwuK8zjg4F6wby+Gxa
-         D8jZTbxDb1ji86nNh+jQ6JQp4ZFftkhJI/Io7evXuM+pVc3XjWU1lqRR0ngnrBnsa7an
-         qHLIL+KW28LCkk+5LHJuSAPkvTQjGk4Dc7+7G23MLMhaUCueDG7PeGdEd7Eht8PIC7Um
-         1HTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMdevwhHKRFValZXhLfSmuQIun0gaazhtFOrKhQWlW1U+6zkOywzrMFyxcRKCEvojKsva87yasl+Z93p6DoYoE9S5Hesxh8BNhDK8HZq/hAwFNcS6Ig5Lq6pXOL+qsSuAutcFuGLTFYDCaJ5HHObYFqEmX5O+jAwHF6NODFcD0G+foYNXqWAoyCLc=
-X-Gm-Message-State: AOJu0Yy4jiOfu+R/8jYt2DUA5B6fxTQrFEcNPAycg6wrkhYnxmPdXXfn
-	L1q2a6lWuuQlKhnzuqiR7i7TwKKCNubQA42xKHfl6xa+DMO0m0RV
-X-Google-Smtp-Source: AGHT+IGuVXFuv6smouEpbKdN0FwHDvZTejuV/4+04n1oAt1D7900BVI3gEwpMEPYxt6tRHJMB294Pg==
-X-Received: by 2002:a17:90b:46c8:b0:29b:1f62:6a3a with SMTP id jx8-20020a17090b46c800b0029b1f626a3amr7834956pjb.29.1709572585964;
-        Mon, 04 Mar 2024 09:16:25 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:99d7:8333:f50c:d6a6])
-        by smtp.gmail.com with ESMTPSA id ta6-20020a17090b4ec600b0029a849e7268sm10345209pjb.28.2024.03.04.09.16.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Mar 2024 09:16:25 -0800 (PST)
-Date: Mon, 4 Mar 2024 09:16:23 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-input@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, Jeff LaBundy <jeff@labundy.com>,
-	Rob Herring <robh@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2] Input: iqs626a - Use scope-based resource management
- in iqs626_parse_events()
-Message-ID: <ZeYB51RRw6Lg0XSh@google.com>
-References: <8a7607f8-d634-415e-8269-e26dcc0f9fdc@web.de>
- <ZeU8ENmnPj3sKxAv@nixie71>
- <ZeVOPSt0L1D4BxuZ@google.com>
- <e8a2b63f-4f9a-463b-b419-c5f673191111@web.de>
- <b91fe21-fe2-eac8-d1ee-ea8922a08861@inria.fr>
+        bh=9Pd2ZqD9+Nj0j4ec7ryunKzk1xgCPWEAoRbwQKMaYuE=;
+        b=vqK/bq6o34j1l48/TBPJZKMMlkU5243W7Zd7SjJoY27jR2WjlMK1bXieFpVA2gTP+c
+         Ezjn5aUNp8b7OM15zN71Uxh2o9UXoHNWvTpMjEPL9AAq6RPNTmVA/+zKeXVOLxFbW+gV
+         PSRTgCO0d4bl5a76k1uFNCKRNegp53K3DWdVWrNmbAQioGA4Ep9Q/Y9eyLnwTAwnr+g6
+         lbB4cVDexg7dGiXZBdMw9qt7j/f4vnZSzduXLOqNoIqpChSwUfnV4cSNuVsbGKdscGuu
+         jOxpR8hE2Wyrs4FsPKU7eJXkIsPOv2B/EcisoWKdCaIeX20M4veJq570+4esmaOJwrPg
+         4TwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgGazbOaeKXPZcHkMK072oeKinj/cNuwMIqWawmkcen1HwsYZ2WVmU2e971vHvJLA6/BaQZCM6uZYOp5RVXH9Fn3br+gIHlHo9tmsl8sUp
+X-Gm-Message-State: AOJu0Yw9S7xs72Bvr4y6K+Zi9JAOukAlVkj/vlVEKBsltqSbQMU6deiD
+	5a4de8IbpamlLlA34u9xISg6Y/r719mhAdPLhT/xPdDqMmjCXtAV5Bz+HKuevw==
+X-Google-Smtp-Source: AGHT+IFKl0IbUfafOj5m9zaSe/S5V0PjhekyC8gN8/+VSm+peqpjggkhFvHZLy6t34sJp++enhU9+Q==
+X-Received: by 2002:a67:e34e:0:b0:472:6e92:dc9 with SMTP id s14-20020a67e34e000000b004726e920dc9mr6672607vsm.4.1709574595513;
+        Mon, 04 Mar 2024 09:49:55 -0800 (PST)
+Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.googlemail.com with ESMTPSA id kd3-20020a05622a268300b0042ef2740186sm1103686qtb.51.2024.03.04.09.49.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Mar 2024 09:49:55 -0800 (PST)
+Message-ID: <1c77c0ef-c098-4962-909d-6bf53cdbde60@ieee.org>
+Date: Mon, 4 Mar 2024 11:49:53 -0600
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b91fe21-fe2-eac8-d1ee-ea8922a08861@inria.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: greybus: fix get_channel_from_mode() failure
+ path
+Content-Language: en-US
+To: Rui Miguel Silva <rmfrfs@gmail.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <379c0cb4-39e0-4293-8a18-c7b1298e5420@moroto.mountain>
+ <m3sf16tky7.fsf@gmail.com>
+From: Alex Elder <elder@ieee.org>
+In-Reply-To: <m3sf16tky7.fsf@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 04, 2024 at 11:55:23AM +0100, Julia Lawall wrote:
+On 3/4/24 3:17 AM, Rui Miguel Silva wrote:
+> Hi Dan,
+> once again thanks for the patch.
 > 
+> Dan Carpenter <dan.carpenter@linaro.org> writes:
 > 
-> On Mon, 4 Mar 2024, Markus Elfring wrote:
+>> The get_channel_from_mode() function is supposed to return the channel
+>> which matches the mode.  But it has a bug where if it doesn't find a
+>> matching channel then it returns the last channel.  It should return
+>> NULL instead.
+>>
+>> Also remove an unnecessary NULL check on "channel".
+>>
+>> Fixes: 2870b52bae4c ("greybus: lights: add lights implementation")
+>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > 
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Mon, 4 Mar 2024 11:40:04 +0100
-> >
-> > Scope-based resource management became supported also for this software
-> > area by contributions of Jonathan Cameron on 2024-02-17.
-> >
-> > device property: Add cleanup.h based fwnode_handle_put() scope based cleanup.
-> > https://lore.kernel.org/r/20240217164249.921878-3-jic23@kernel.org
-> >
-> >
-> > * Thus use the attribute “__free(fwnode_handle)”.
-> >
-> > * Reduce the scope for the local variable “ev_node” into a for loop.
-> >
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
-> >
-> > v2:
-> > An other cleanup technique was applied as requested by Dmitry Torokhov
-> > and Jeff LaBundy.
-> >
-> >
-> >  drivers/input/misc/iqs626a.c | 8 ++------
-> >  1 file changed, 2 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/input/misc/iqs626a.c b/drivers/input/misc/iqs626a.c
-> > index 0dab54d3a060..86fcb5134f45 100644
-> > --- a/drivers/input/misc/iqs626a.c
-> > +++ b/drivers/input/misc/iqs626a.c
-> > @@ -462,7 +462,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
-> >  {
-> >  	struct iqs626_sys_reg *sys_reg = &iqs626->sys_reg;
-> >  	struct i2c_client *client = iqs626->client;
-> > -	struct fwnode_handle *ev_node;
-> >  	const char *ev_name;
-> >  	u8 *thresh, *hyst;
-> >  	unsigned int val;
-> > @@ -501,6 +500,8 @@ iqs626_parse_events(struct iqs626_private *iqs626,
-> >  		if (!iqs626_channels[ch_id].events[i])
-> >  			continue;
-> >
-> > +		struct fwnode_handle *ev_node __free(fwnode_handle);
-> 
-> Doesn't this need to be initialized?
+> Reviewed-by: Rui Miguel Silva <rmfrfs@gmail.com>
 
-It would be better if we had a helper here, iqs626_get_ev_node() or
-something.
+Looks good.
 
-Thanks.
+Reviewed-by: Alex Elder <elder@linaro.org>
 
--- 
-Dmitry
+> 
+> Cheers,
+>    Rui
+> 
+>> ---
+>>   drivers/staging/greybus/light.c | 8 ++++----
+>>   1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/staging/greybus/light.c b/drivers/staging/greybus/light.c
+>> index d62f97249aca..a5c2fe963866 100644
+>> --- a/drivers/staging/greybus/light.c
+>> +++ b/drivers/staging/greybus/light.c
+>> @@ -95,15 +95,15 @@ static struct led_classdev *get_channel_cdev(struct gb_channel *channel)
+>>   static struct gb_channel *get_channel_from_mode(struct gb_light *light,
+>>   						u32 mode)
+>>   {
+>> -	struct gb_channel *channel = NULL;
+>> +	struct gb_channel *channel;
+>>   	int i;
+>>   
+>>   	for (i = 0; i < light->channels_count; i++) {
+>>   		channel = &light->channels[i];
+>> -		if (channel && channel->mode == mode)
+>> -			break;
+>> +		if (channel->mode == mode)
+>> +			return channel;
+>>   	}
+>> -	return channel;
+>> +	return NULL;
+>>   }
+>>   
+>>   static int __gb_lights_flash_intensity_set(struct gb_channel *channel,
+>> -- 
+>> 2.43.0
+
