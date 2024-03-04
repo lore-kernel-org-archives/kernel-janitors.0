@@ -1,68 +1,64 @@
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014AB53A6;
-	Mon,  4 Mar 2024 04:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012B812B93
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Mar 2024 07:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709526594; cv=none; b=h0E9tezcM2TkmbQkEqm6fKG4EUj1fN0yUecJc7NVhOKwa8eqFSdb/0XeA6gxt1AuuCtQuIgsde+dRGWE3BqAXsPSG9uTcezyiuMzQDbwnGHZhuszcb4y7zGCFztofRUTFlwo/jKahozRr6y3t6Ii87gcD8hr1W3+uwvh41h8g6s=
+	t=1709535894; cv=none; b=hDxwBjSjB9KwPQX5zaoY7FXmlGAWL47M6rk014D73fwwkuAyCBrTDYmc93jyoYViSz8yiG6OWWaJO8hy77B1IIMY0yM0kY89vYzQa/8zLXVeFrEetm88Qpeau8muOMHTpKO1OQwOQVLOM0vYj/rFxZxs9nhClc5VLxNL0AZjOt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709526594; c=relaxed/simple;
-	bh=vg1F76KLLo9ij++70/vcPP1ggO6jUjku8rAQfmzK1RI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EEmTVjjNmdVvDcWqG/wFiSvgU0GqoaZ3wdquzz/MunBd2fdinES7qz7qh8uEwiYYh6cnKoHelNhyJKaCuYFZLzNsejZjyw6OT5phzIFDNJFvNNfVr8EPNqSMpKzk/rfaJwgKpdDWeLquRt7RkpklQN1NWdAYECrUIg2OixWCzTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jESWj7SN; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709535894; c=relaxed/simple;
+	bh=fOzF9T+7+v6nbIr6JpI2D3fB/kcAd613CX/CdSkUuJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AGbFkzZgQWiGsmgiO9TlJ7foBgiHACSERLmAD0L6l7aDVu7xMgYDBTkqeh2zZ1It6M6uEdrJzBYLnQHNebFlSSt8+tJOrT+d7pKTBFXR8bNU9Ehk4UqPNl5VUU/J7LmkItCrRO1lMpdJslMn6G3WFgiDv6NGP1xazAEmxHrh1e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QqgxkHIn; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jESWj7SN"
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-5c6bd3100fcso2936601a12.3;
-        Sun, 03 Mar 2024 20:29:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QqgxkHIn"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-33d2b354c72so3133916f8f.1
+        for <kernel-janitors@vger.kernel.org>; Sun, 03 Mar 2024 23:04:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709526592; x=1710131392; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sSQXl6NrPtVEUAzn9GiFxnVuDffvcWyxyKsHsetEWkU=;
-        b=jESWj7SNVUxzO3O1T3kImSR/7IIT6ywCBCjt3FyOAfmSHhhE2uUDg9+lZcRsU7S1FT
-         QwZgu5kykNLTSFlFB15guzsIb1+tk1OsCp/H56wxLpcYchOFFJjXkMPsITvIq7H8YeHn
-         c89zGlcViyIqhKcKUUBB7cb0tspXuu/d82P2dsBriKWw7qS06piSl5C894phuk/pgFxl
-         Xj1PiZUka+5AOi9GYamd5UwRS0cWAMtXz+Ja6EpTw4Egl3C8NJlL/2jC33OOC+MCbp4r
-         1ZIV/d8iKyQTL4hiucMJ+v+suJ4fUcR0NsNea+G0bXsrplWoLAfmVstjWS5RRFPKugy2
-         a3Ug==
+        d=linaro.org; s=google; t=1709535891; x=1710140691; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/RTu2QOOVQbOweB1LGR/BRbdQUT3nXvJVjgo89rA8a4=;
+        b=QqgxkHInV4+gl4HHNp17XXNyik/Bcn8YA+vnUVHB2DLacIH2Gwt2E8Oe5Q4zouwm6+
+         C5WexYBrTa6PQ/E49dwt2JzHQ7n90zKCsshi0WG6JhiMtvF53EYTLYAaBK0PXlYbjrr5
+         haP3oJNHMlFC0HeQAVchgCmV+pTL2HAYvVCYmOAw9egIPE7bZg4yCY1hANdokMsbpZPn
+         d9+BsM0pxdwB/Q58Fj9UT7YOUjyL1fStrbeLEpYVs64XEgGzRcmRASN+aPnzfAGBU4tg
+         0wr6yj6TjGQ54DWlDFcw2Dl5IOgpidxYzUPqq195CVNevcL0riPNHmF8BR+qzSLBnN6V
+         TXHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709526592; x=1710131392;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sSQXl6NrPtVEUAzn9GiFxnVuDffvcWyxyKsHsetEWkU=;
-        b=AJG8gxDs/GqtgV8vRx3fyYT0YfTOJllhITf4yJ+FUTf2Ma6e2TjmpMkl17XrKoTY9l
-         ywR6fO1TjIJv/ZJ2WhNsJhtnHBNFafYFmqJ7cfAlMdhzs56GipV5OYf1McVKDVelNeg9
-         nXV5CGyitbZk8Djq0Cypahwpjx9tTbYmIVhfZsUnffNacJLGq0cvHt4ZFazK/qjD/992
-         xGVXt6JQnE3tU2ruUE8m4XStffTRnk4D31VClThe0YWANllUo/iwRJZI6+A6+q7zTXLk
-         L5waDcLrHNC6iReNkuC5JPRA+8D5rb4Y5H7K7d/s6rqoKYSxAosarGwMW7LE3fzWeNtd
-         Yskw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoC/wqkYr3SFK1kwliYLEzmDTdyM8oHmu/MV/bjYNfImklD3tQ5KekFtlDRNok7FV0A9HOuiG7VXVeCrFXZIA2BSOZO67JO+gIIPAu5tvFMqIWTGdCrNokhmGks+EhK8CEYLUX+kFoiQt0HVwB4u+oynjhnzyO2+r1qqiFcXUOsfbkmFw86XxbwqQ=
-X-Gm-Message-State: AOJu0YxB3Qh8PYxUPErkzxVOpB7ZSn6IohEexJWKPVFT1NlFuNe248Aq
-	84BNqn2uNWm5Tb3kZ+r2sAEpFdpRiMoZ+ZD7NS8V08CfiTNC0SO4
-X-Google-Smtp-Source: AGHT+IFeu/kCwR7KRtY+Gh+J4uCgHmxWuDgnHtxPsoVnOHy8NDdM5dFAxzeVySMjj6Bhq0r6F4Ql7A==
-X-Received: by 2002:a05:6a20:3545:b0:1a1:4aa0:d593 with SMTP id f5-20020a056a20354500b001a14aa0d593mr1858199pze.47.1709526592166;
-        Sun, 03 Mar 2024 20:29:52 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:99d7:8333:f50c:d6a6])
-        by smtp.gmail.com with ESMTPSA id t5-20020a170902dcc500b001d949393c50sm7407382pll.187.2024.03.03.20.29.51
+        d=1e100.net; s=20230601; t=1709535891; x=1710140691;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/RTu2QOOVQbOweB1LGR/BRbdQUT3nXvJVjgo89rA8a4=;
+        b=gt2OwIparn+xhTicN+8dYrREcSz+YMT/gbsogwH3MpVPHoIEj7Jlk3aW7kTPy4xteu
+         dI1tjLx3SN+rbEfQY4jLzK4gb79EszSyCjQK/Ks0MTyVr9rs77UerUmMtYUAnyIAtRuY
+         sNT1RxnKWvnv7OXPq0Wyl08JoFHWY2xbYAlylR82eQerQrMcFNhAOy8InTNspCSMoFL2
+         PTzFIdRSiHZnj6iK7aDx1RHBJpI7aMfKCqhsLoni/Y5HVLwZWbm5zFsGrhd7OfyMHMz+
+         bwMvLvRjwjdPvRNuTT62rUcWlswQx6ZxzBLtfRqY+dsD5l7yyvi7qI5VZw0KTQF4GqHO
+         Z4eA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHiY5HrLl/e+uyeyew3pd4KE5lGNz0DSRsLAiHngtCbla+G5WPrjt7bsJ03cJfOU7V3msrhU/kadh6diIgL2Srw05JLr4xrJNYvYRrFYhf
+X-Gm-Message-State: AOJu0Yy/PFOFjD8VhmzwJKz+tPViN0CT70Lee7oif+67NzkLefrjvdSN
+	P6VBsfeqhXBMIMRdErty0ulOUPqpZc5sNEsWNl6ru/HtfRYecs2EcxpFSSbfP6Q=
+X-Google-Smtp-Source: AGHT+IFc4xUICRVVStYlfPV57gzFOOaMSvfieW4xk8n3smggrfWI5KpXmkdHe/qcd3sZ3tLX4YTRXQ==
+X-Received: by 2002:adf:9c8b:0:b0:33d:47d6:c159 with SMTP id d11-20020adf9c8b000000b0033d47d6c159mr5733432wre.12.1709535891433;
+        Sun, 03 Mar 2024 23:04:51 -0800 (PST)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id r18-20020adfca92000000b0033dcc0d1399sm11375456wrh.25.2024.03.03.23.04.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Mar 2024 20:29:51 -0800 (PST)
-Date: Sun, 3 Mar 2024 20:29:49 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Jeff LaBundy <jeff@labundy.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-input@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Input: iqs626a - Use common error handling code in
- iqs626_parse_events()
-Message-ID: <ZeVOPSt0L1D4BxuZ@google.com>
-References: <8a7607f8-d634-415e-8269-e26dcc0f9fdc@web.de>
- <ZeU8ENmnPj3sKxAv@nixie71>
+        Sun, 03 Mar 2024 23:04:51 -0800 (PST)
+Date: Mon, 4 Mar 2024 10:04:48 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Rui Miguel Silva <rmfrfs@gmail.com>
+Cc: Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] staging: greybus: fix get_channel_from_mode() failure path
+Message-ID: <379c0cb4-39e0-4293-8a18-c7b1298e5420@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,100 +67,45 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZeU8ENmnPj3sKxAv@nixie71>
+X-Mailer: git-send-email haha only kidding
 
-On Sun, Mar 03, 2024 at 09:12:16PM -0600, Jeff LaBundy wrote:
-> Hi Markus,
-> 
-> On Sat, Mar 02, 2024 at 12:42:08PM +0100, Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Sat, 2 Mar 2024 11:44:17 +0100
-> > 
-> > Add a jump target so that a bit of exception handling can be better reused
-> > at the end of this function implementation.
-> > 
-> > This issue was transformed by using the Coccinelle software.
-> > 
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > ---
-> >  drivers/input/misc/iqs626a.c | 13 +++++++------
-> >  1 file changed, 7 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/input/misc/iqs626a.c b/drivers/input/misc/iqs626a.c
-> > index 0dab54d3a060..fa9570755f7b 100644
-> > --- a/drivers/input/misc/iqs626a.c
-> > +++ b/drivers/input/misc/iqs626a.c
-> > @@ -530,8 +530,7 @@ iqs626_parse_events(struct iqs626_private *iqs626,
-> >  					dev_err(&client->dev,
-> >  						"Invalid input type: %u\n",
-> >  						val);
-> > -					fwnode_handle_put(ev_node);
-> > -					return -EINVAL;
-> > +					goto put_fwnode;
-> >  				}
-> > 
-> >  				iqs626->kp_type[ch_id][i] = val;
-> > @@ -545,8 +544,7 @@ iqs626_parse_events(struct iqs626_private *iqs626,
-> >  				dev_err(&client->dev,
-> >  					"Invalid %s channel hysteresis: %u\n",
-> >  					fwnode_get_name(ch_node), val);
-> > -				fwnode_handle_put(ev_node);
-> > -				return -EINVAL;
-> > +				goto put_fwnode;
-> >  			}
-> > 
-> >  			if (i == IQS626_EVENT_DEEP_DN ||
-> > @@ -566,8 +564,7 @@ iqs626_parse_events(struct iqs626_private *iqs626,
-> >  				dev_err(&client->dev,
-> >  					"Invalid %s channel threshold: %u\n",
-> >  					fwnode_get_name(ch_node), val);
-> > -				fwnode_handle_put(ev_node);
-> > -				return -EINVAL;
-> > +				goto put_fwnode;
-> >  			}
-> > 
-> >  			if (ch_id == IQS626_CH_HALL)
-> > @@ -580,6 +577,10 @@ iqs626_parse_events(struct iqs626_private *iqs626,
-> >  	}
-> > 
-> >  	return 0;
-> > +
-> > +put_fwnode:
-> > +	fwnode_handle_put(ev_node);
-> > +	return -EINVAL;
-> >  }
-> > 
-> >  static noinline_for_stack int
-> > --
-> > 2.44.0
-> > 
-> 
-> Thank you for this patch, but it seems like a NAK to me. I think this is
-> a matter of personal preference, and according to mine, it is much more
-> confusing to insert a goto label after a function's primary return path
-> than to have 2-3 calls to fwnode_handle_put().
-> 
-> If you feel strongly otherwise, then I would suggest a helper function as
-> recommended by Dmitry in another thread. However, maybe that helper should
-> live in the driver core, as I suspect this driver is not the only place we
-> can avoid calling fwnode_handle_put() in an error path that returns an int.
+The get_channel_from_mode() function is supposed to return the channel
+which matches the mode.  But it has a bug where if it doesn't find a
+matching channel then it returns the last channel.  It should return
+NULL instead.
 
-Yes, it should go into include/linux/fwnode.h, something like
+Also remove an unnecessary NULL check on "channel".
 
-DEFINE_FREE(fwnode, struct fwnode_handle *, if (_T) fwnode_hanlde_put(_T));
+Fixes: 2870b52bae4c ("greybus: lights: add lights implementation")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/staging/greybus/light.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Then drivers can do:
-
-	struct fwnode_handle *ev_node __free(fwnode) =
-		fwnode_get_named_child_node(ch_node, ev_name);
-
-and have it automatically be "put" once execution leaves the variable
-scope.
-
-Ah, we actually already have it defined in include/linux/property.h, all
-the better.
-
-Thanks.
-
+diff --git a/drivers/staging/greybus/light.c b/drivers/staging/greybus/light.c
+index d62f97249aca..a5c2fe963866 100644
+--- a/drivers/staging/greybus/light.c
++++ b/drivers/staging/greybus/light.c
+@@ -95,15 +95,15 @@ static struct led_classdev *get_channel_cdev(struct gb_channel *channel)
+ static struct gb_channel *get_channel_from_mode(struct gb_light *light,
+ 						u32 mode)
+ {
+-	struct gb_channel *channel = NULL;
++	struct gb_channel *channel;
+ 	int i;
+ 
+ 	for (i = 0; i < light->channels_count; i++) {
+ 		channel = &light->channels[i];
+-		if (channel && channel->mode == mode)
+-			break;
++		if (channel->mode == mode)
++			return channel;
+ 	}
+-	return channel;
++	return NULL;
+ }
+ 
+ static int __gb_lights_flash_intensity_set(struct gb_channel *channel,
 -- 
-Dmitry
+2.43.0
+
