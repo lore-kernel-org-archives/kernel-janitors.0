@@ -1,63 +1,57 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C365D13FE5
-	for <kernel-janitors@vger.kernel.org>; Mon,  4 Mar 2024 07:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEC6168D0;
+	Mon,  4 Mar 2024 07:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709535917; cv=none; b=kzU5kfxNyv6AGsOaj1J7Cd6mIP0HtM7ciksTojRdBXPr8rkwFJf2N2VJw7rH7z4WZPT9B4XHcymm2YpVp0SV1HPtquF5i4/tSUiNwWKHntb8RUV/sxwmkNKiuJfJxqmosTPdgDmEeYnPEDC/woItmU0opYWMFW5NER3TzDs5/xA=
+	t=1709537017; cv=none; b=Ynyq7Ea11AxGO08hY+IaXv7kA7mZ6+mgYCqwzxrNOWgnu8z65nQ7jbGOsHLbW0UmjZvFXvbxjrplEQmoI79wh1CHmZgw49bX6GDjTkNX7NPHopgTv82xxZ5kakV6PYRg3jKkFEJoRjw/XrIq4FD+t3pzuTL+bMfP9R8rGuQWGJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709535917; c=relaxed/simple;
-	bh=hNjxuYC2EJdA/XoKsj5uylY7h9/KQd56NM+y23zLnFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=sNgGbYcaJxeB/ohIEQR8YI2Xu1FVpIQUQIWc7JDVJWRglPspKOI27MdrC4pInPpQV3aJzH6KpCec4PVsclM81j2GgYIHbpEJ56HnN2Ni1SgZ15CG8CrjycwZ/RLbuhXYcKue1mdDDOqT/cuuqesYRQhh4WrUJCNczQmF+vzqs98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bugxc8gL; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709537017; c=relaxed/simple;
+	bh=B27z1Z88iPUB5Ma3pXW59JeufqOPxYT1JfOeH07WPPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gb3ZRppXaXx8jnjo58Ys8Eq87DfyujKakfXHGJVHqWfsSYJIoK1SOWRwAFOkmh1FUE8iBCeBEmh7oI4KeJ6cRnUr4SZLtUo1VVuxk0swEC3ipF6yVlnZkIH8/bvDUD8VNBJE1pLEytQDp66WPf0gDpI/KQD8JFGYNILKriXFrCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fuiqweWU; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bugxc8gL"
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2d2505352e6so51274041fa.3
-        for <kernel-janitors@vger.kernel.org>; Sun, 03 Mar 2024 23:05:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709535914; x=1710140714; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vZGUpUYM0VesXHneGzkSI0l8X+1IzpaMdy5MewuWCx4=;
-        b=Bugxc8gLbcQ2+cvQPJ/1O1DFqxrhaKmlchtewNFn8jQiaN0CIL2aQMwONd4nL0CDHd
-         AtqErT4VZ9KMLKWvGoniMCyzFC/iHsDv0HB8rQbxnkuQSzRey00zNq3yyVxZs65MkvJg
-         0p1+Wer5sc++3L4wuDunp7alm3GyyPpAJz+h0mVpBLi9/tW1+JHvLZs0lFAsOF1cOKDI
-         dfBaakynVSGgcFAhvx4XgPR+mG/ExQsR6AhoecAwgADHSYiINee1qwI4/n1uvWFpCEXb
-         SA+dVNFTazGX+fIZemnSY+ixGmgMavjAjcZXuXYKl3JE3Iw1j3rvS2ygQZDv9gN/sNpG
-         HzTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709535914; x=1710140714;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vZGUpUYM0VesXHneGzkSI0l8X+1IzpaMdy5MewuWCx4=;
-        b=AZmI3XiFinax7e7TBlfcrKgSEfzGMs11TS+bab4rO+eCqm+WoHppi+OlzWzv7pAkTs
-         tw0J/1HAm/O9VfXEDTkqKQ+Pp2mbmUZnGv5ZJUp3gU95ps4kYPpK6OUxH/qKlKwZp2le
-         Q9HksTrG7hxoZ+OBmH2ZN/0WV/qXeZgxYMr9uwlynWrlbHlzp7F56vrLs8S85aSrYazx
-         RUlAPREnl8vWW4J8WQo0Z0o3r1Z3gbbxCJjiDuW8ccbTFFzgFc+gCeifDBKIN0KNkDbK
-         iF/JYkEEuUAOFLQjZhT1ZXbim8JbYdgzC9p97jk/V+uIl6vXPpW++CRHoM601daCngZ5
-         kyCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRKfc8lNocSO9FMqHCiREnLGvgYAQ02/OLwyfyXRMLw9EfpJuidIaYpSEHI3XhIp/pVMj9KPIeXLLkpckwCV8dR1nokvdplpjJKFq0PZLQ
-X-Gm-Message-State: AOJu0YwGbDO0Dy+8GepRdZwq0ZeHLTTarFpVBdz3fGclxfx+FO4S07s9
-	H5+bSrj1t1o/ipDNHWJPRx4J8pDCAH6o4+SXSYowOkhSzTNbBkhjpQIAw2Ua0Cw=
-X-Google-Smtp-Source: AGHT+IFW8Mx8FI4E0PUY4m2TiAQNZqb8odfxy6I3n9gy3/58yevGa3GaBngabXuahye/TfmVqpHMyg==
-X-Received: by 2002:a2e:b711:0:b0:2d2:950e:2717 with SMTP id j17-20020a2eb711000000b002d2950e2717mr5298552ljo.35.1709535913963;
-        Sun, 03 Mar 2024 23:05:13 -0800 (PST)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id h19-20020a05600c351300b00412e5e67511sm928473wmq.16.2024.03.03.23.05.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Mar 2024 23:05:13 -0800 (PST)
-Date: Mon, 4 Mar 2024 10:05:09 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] pinctrl: core: comment that pinctrl_add_gpio_range() is
- deprecated
-Message-ID: <533a7a10-c6eb-4ebe-adf1-f8dc95ae8d33@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fuiqweWU"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1709537015; x=1741073015;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=B27z1Z88iPUB5Ma3pXW59JeufqOPxYT1JfOeH07WPPU=;
+  b=fuiqweWUhA8dVE9YH+u4RmGfzdg3zGBiNcKb7XRweekoqZf+/dje4b4F
+   Tm/zjZco049Qf/5xiyUttQGj7z6gVeTSKyRHLfLRuo6Xl8lnWxDQqAWl6
+   YMnqguaQE2N+rB+LSFUZI2/ruPT+I0N37EolB8K3QRyYPJqxEQLVwRv6r
+   GckKZmWOFa1Q0o61g8pj+CZ+pcrH0AaE+BbxGKPDwq4hWt0+ibg9cQl44
+   inoubd/bWiqhiw/tL+CZfvpIPMFuEVMKVufDlLbeTGnbMk4QvO2i2/Ndn
+   gYr9UHeE50PINb0SSGhkMd0HwbnmlnBZGKRf6tJbzKlPkIN9RuaTvEhF/
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,11002"; a="3867756"
+X-IronPort-AV: E=Sophos;i="6.06,203,1705392000"; 
+   d="scan'208";a="3867756"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2024 23:23:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,203,1705392000"; 
+   d="scan'208";a="9463163"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2024 23:23:22 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 94EA711F8B1;
+	Mon,  4 Mar 2024 09:23:19 +0200 (EET)
+Date: Mon, 4 Mar 2024 07:23:19 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] media: v4l2-fwnode: Improve exception handling in
+ v4l2_fwnode_connector_add_link()
+Message-ID: <ZeV25-dTLVE_vyqx@kekkonen.localdomain>
+References: <9d0511cd-1fb2-4612-9b21-196a43ad0397@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -66,31 +60,51 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <9d0511cd-1fb2-4612-9b21-196a43ad0397@web.de>
 
-The pinctrl_add_gpio_range() function is deprecated add a comment so
-people don't accidentally use it in new code.
+Hi Markus,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/pinctrl/core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+On Fri, Mar 01, 2024 at 03:07:50PM +0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 1 Mar 2024 15:02:09 +0100
+> 
+> The kfree() function was called in one case by
+> the v4l2_fwnode_connector_add_link() function during error handling
+> even if the passed variable contained a null pointer.
+> Thus use another label.
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index ee56856cb80c..2d4412795ea4 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -412,6 +412,10 @@ static int pinctrl_get_device_gpio_range(struct gpio_chip *gc,
-  * @pctldev: pin controller device to add the range to
-  * @range: the GPIO range to add
-  *
-+ * DEPRECATED: Don't use this function in new code.  See section 2 of
-+ * Documentation/devicetree/bindings/gpio/gpio.txt on how to bind pinctrl and
-+ * gpio drivers.
-+ *
-  * This adds a range of GPIOs to be handled by a certain pin controller. Call
-  * this to register handled ranges after registering your pin controller.
-  */
+This isn't a problem, the code is fine as-is.
+
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/media/v4l2-core/v4l2-fwnode.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+> index 89c7192148df..dc6daf3a9a51 100644
+> --- a/drivers/media/v4l2-core/v4l2-fwnode.c
+> +++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+> @@ -744,7 +744,7 @@ int v4l2_fwnode_connector_add_link(struct fwnode_handle *fwnode,
+>  	link = kzalloc(sizeof(*link), GFP_KERNEL);
+>  	if (!link) {
+>  		err = -ENOMEM;
+> -		goto err;
+> +		goto put_fwnode_ep;
+>  	}
+> 
+>  	err = v4l2_fwnode_parse_link(connector_ep, &link->fwnode_link);
+> @@ -760,6 +760,7 @@ int v4l2_fwnode_connector_add_link(struct fwnode_handle *fwnode,
+> 
+>  err:
+>  	kfree(link);
+> +put_fwnode_ep:
+>  	fwnode_handle_put(connector_ep);
+> 
+>  	return err;
+> --
+> 2.44.0
+> 
+
 -- 
-2.43.0
-
+Sakari Ailus
