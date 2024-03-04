@@ -1,121 +1,206 @@
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62A41B814;
-	Mon,  4 Mar 2024 09:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF5322636;
+	Mon,  4 Mar 2024 09:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709543861; cv=none; b=LVRqFP31bIsitgYB0CC+fmKS6jO7BuQ1Ih93UFTrgfUVd+/PnsnoLlR1vy0KaD193b+2db7bJ/jvjomJMB3Ex37fAGqwNKaIUgiUKsTgyvPPJfoKQjiH7GYTaTuhcH8+OvqWFPQuXtoTWVabRHLdul3CFWZ8YkO0bOyrayrAtio=
+	t=1709546166; cv=none; b=DoxA83Zvj/2UWYB88zEFIvSWzzn9AEctPZm0760oU0xuxwHRR4cBQSH3SzYtJYixJkDL9zF0LAgOI/0FnwhRNWfx7+wxu/pv0Aht7Cy+BsIpc+IP1KCS6CIeoTXNOdewHP2cVz3OWawq+ban1+hPnrs8A8pewG7koQ8I052LSH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709543861; c=relaxed/simple;
-	bh=Qq1jg86NYicltpYfn1YXwPRMwEdiM2aWEnn4TNPiai8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=h2ESVor/MYOrk/gjN2tFQAoZBZ+JWZzQRM566CvgYH5cMFqGtkWesOZEHNbPiFVnEz770hLQg7+uIFYr10NwS/UYrVv36YRRjQC/HrN/QtP+OfdYJn4v/PksehEPv0elGvMulP4INWCLD4SwVxxgqFTB+xqBeKPokv0Ie4mmvnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WE1xC0pp; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709546166; c=relaxed/simple;
+	bh=jSfbbkk9CK9YA15plDKrv6U6U/hTy+uv5U2LvfWuUe4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=POeSQfItq/QxWVm/PxZDDr7o6FFR7hgc1y1jV8BVgXKttJ9nAkLiNXnEAn6tBjHtDBjttqpvDHnf04GgH6vC6l3C4RKw6VfAc0OdGc+aL2L1dGmpV6WT2mMWNCTOhsZuKQk0rCio0ZQum1O4NUFP4kh1VrPtht3Efn8vF3IvqvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pdDIlOJv; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WE1xC0pp"
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2d23114b19dso51792641fa.3;
-        Mon, 04 Mar 2024 01:17:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709543858; x=1710148658; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wxb84sArYHWCge17RqY2dnfS8pZorGfPXvmpeXBM+UE=;
-        b=WE1xC0pprrgUY/tpgdCHInmleFaKWpc+KYzPSszg5xsD6rH5aPrPeEh/jyK3IoL5g1
-         UQWlmybUNS4F8kuKy1EF3rcZ/uSc1eLYbny6KwnkPP/RPfez8U5lHTU/h4Zbmm0IJEvp
-         cU7GOeK6UL1jPkpP/6jGgV4Ljbd/hD/AB8cVvI1XOJ4b22u5qSqRQoNcEZwP2AEcb4Bp
-         K+Cb0SE0rmwNzxAsthO4D/ok33M3ZjV6KOatAkqSc2Taar9FC3UHCYTgx5HA9X6gwSt9
-         0fgDW7fejF/jX0sP0PhFfwKQL+v2NKLWggq4uH6E99x2wrhrcODc7hRhoE/gEm0AW4Wz
-         IzJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709543858; x=1710148658;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wxb84sArYHWCge17RqY2dnfS8pZorGfPXvmpeXBM+UE=;
-        b=UA4fMlG+j3qd2iFPFq8u7PJ7eYqxbvAH/9lGGBKcKJingTB69yg9B8fUrfcL0tbZs7
-         rpWnT/9vi6qMJuqmpYLmmgcwYR4zlxXf0ZfuniMixaimRiim+I2TqZ0+w/rr8IN/ivod
-         ibdpTPGY+EqkcN+NNXcaSMxU+QKVnurbOJ/gNQxLwvHbbg97qQ+h6/Z2Co1dTcfuFB6r
-         8UHkm402pdG8xN0CY2ALIGDLXj0+j2jKanaLaADhJi1dtzVk1hMReqpd2JL1BGFvErgN
-         KEFH4DwnvTUGig9bcf3VWIMSRsO6tjv/U77Olr5TwDAoX+Q1FHB0cubf2zfoIaAV9L/R
-         rGOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbB5U61zL0ZbcoPUrJZ30dga6H58Tk+Z/tw5LDxv41LBfY8qZQsDyuBNp6QB9KpSXXoj3m5tTVsdrKL8ackeT6N8Ms9Ns3wKqEh9aO2n0JbG0G+6MyIFrRjuV9/yNce655j/IwmyAfFxqnUGF+
-X-Gm-Message-State: AOJu0Yz51Rw4goqaqEJT7syfYvlxNMGk4ObLu2krfH0i2xqn8axKVR3I
-	izB1cJipE8aifjgC3Y9QbkowHsR6AJvi4wN11oCA0HPhxeZvkllT
-X-Google-Smtp-Source: AGHT+IHoWbhv0G7/RF1N1tx36guIvvx6OukW50GAMYLBOZmWqoYnRwfEqdFQ9lwVbVqHZlcw8HR+hQ==
-X-Received: by 2002:a2e:9cd3:0:b0:2d2:b068:6d2a with SMTP id g19-20020a2e9cd3000000b002d2b0686d2amr5802516ljj.16.1709543857438;
-        Mon, 04 Mar 2024 01:17:37 -0800 (PST)
-Received: from localhost (a109-49-32-45.cpe.netcabo.pt. [109.49.32.45])
-        by smtp.gmail.com with ESMTPSA id a10-20020a05600c348a00b00412e5060995sm1679557wmq.34.2024.03.04.01.17.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Mar 2024 01:17:36 -0800 (PST)
-From: Rui Miguel Silva <rmfrfs@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, greybus-dev@lists.linaro.org,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] staging: greybus: fix get_channel_from_mode() failure path
-In-Reply-To: <379c0cb4-39e0-4293-8a18-c7b1298e5420@moroto.mountain>
-References: <379c0cb4-39e0-4293-8a18-c7b1298e5420@moroto.mountain>
-Date: Mon, 04 Mar 2024 09:17:36 +0000
-Message-ID: <m3sf16tky7.fsf@gmail.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pdDIlOJv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1709546126; x=1710150926; i=markus.elfring@web.de;
+	bh=jSfbbkk9CK9YA15plDKrv6U6U/hTy+uv5U2LvfWuUe4=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=pdDIlOJvuvnotqh5K70Ry4Ls/JceTgSbTt1GPGXnwmVNEqnzyuZDPLt4WEAKa/nu
+	 SksNrs6ifMgU75g4NfUSKGYzbO3hgw5LJTlx3JVtfFwGZZhgt+g9y39mlve8c8qHz
+	 NeHpQ61HFqolkwhiMs/nISUU/5uGZdJaCHTRduDDbXFajl+rvi2Efew1IC+w5re+F
+	 pM12jDdmSBf56CX6jOaBSQpEbbgSsv8dIw/TzbEdC9naztLag+DKDGPV9sPHygiI4
+	 qFB6pJtge/TNeAfjhGRGIPF3GhLsc3wFvUp6X1zSe1epr5VzxfNOAzN2ugOfCkeec
+	 QOjPs/81EpMiHoT4hg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mr7ek-1r2oYK036s-00oEyI; Mon, 04
+ Mar 2024 10:55:26 +0100
+Message-ID: <b5f9c66e-d9c8-4dc6-8ce5-8d1dc5f0782d@web.de>
+Date: Mon, 4 Mar 2024 10:55:11 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2] Input: iqs269a - Use scope-based resource management in
+ iqs269_parse_chan()
+To: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jeff LaBundy
+ <jeff@labundy.com>, Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+ Rob Herring <robh@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ ye xingchen <ye.xingchen@zte.com.cn>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <6bf9f962-cf75-459d-89f4-2546063fc154@web.de>
+ <ZeT6UUFNq1ujMW17@google.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <ZeT6UUFNq1ujMW17@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Qkke/HXW4fcpS+uHR6ibXHPFQmgBB8hmITPhKPu+t98AJ6FUAyE
+ y3AleKWpPAmbl1YM51DH41xg+dufDZ3BwZVci4msJx+bk2elUt+xCqARh93QQ3cgLDb/KJc
+ 1ibnQNJc/8Uy6ueutkhwBy08yc2GwxvimWejYrJPgCEQ3cMJHKt8iaJCmpEZXsD0U/n7gz7
+ gERj+PKd7tMP+heRxV5lg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:M3fBihiZ3/M=;6dsTCfsvsglmme9bdNMzy5cxJBp
+ nO3I7HSl6I7Cs72oMggwnpaXoZ9USrn/YicGy5Ghyn74wznYK4XzgjjkdeoKP9EPzw8aRqGc2
+ UH6cmMlf4awa85fRZ9LgNSo2w5t4nHhdgwsnkpIG4rZs6BQbt+cCSYiCfDJhdnfmfWBzSfH7K
+ QlnagVRADFLoY5Pj1x/Ftvx1WTrE2pdRBHiSF2jcAUaP8BKlIamjWgaVITFoeKIsPAKIzxUK4
+ ypn1yy7wfxIYcUotBqJasvq7Avg8aFfpwUaAO1Gs1fxP2zKK/8o5w6xps/ubEgigzEXN/BZA5
+ UzkMMJJG2fjkphlzGiyCYGInBdzMtjvOSwuqfGnOS9csvDsjKtlmca4VgUHfqUerLBmTrb4X3
+ uyd9yXZP+yd9JzIzINqXK0ob8Zi8mjoTdNbmJyeZVTFY+g1tY9luQq0/Fg6K1ydS3PALvo2fA
+ 9+VjsSfKSrv7Zz9EXXzHV22swgxvgK9yBXS9Tq110ose9K3BY2sCRnAZVGy8HSndD+tSzjmyS
+ XE+9sDhD90JfSorFAWVjHOV/9godxVFC0qYDcTlLsYty5Dr5nPPwF8gLgKGFvcVFOBG2CC0Pn
+ 18tLE5MfrihpfEdtgcLIfLzNlGaniimTGtiAxZp88gQGxrV3pNDK34aFTbjBqPUfvL69olBlE
+ TD8Qo+dvKLoeqjuQV7psU6FebbvpZN9RoRofkoCTD/yq7GoCAH7n32MwLLK8GUFxZ9Alh8hQu
+ TNoFodgLg4wDDPZusgIziFzA1JIhK6GxE4KlZjmKGtCodjRs1t1A8y6ALDL8DqtZR+Eh5tJoz
+ GP1+8gVnao6bo31EB2ie3g+VqZU8cvZDwA1OJtaTkjVDQ=
 
-Hi Dan,
-once again thanks for the patch.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 4 Mar 2024 10:30:52 +0100
 
-Dan Carpenter <dan.carpenter@linaro.org> writes:
+Scope-based resource management became supported also for this software
+area by contributions of Jonathan Cameron on 2024-02-17.
 
-> The get_channel_from_mode() function is supposed to return the channel
-> which matches the mode.  But it has a bug where if it doesn't find a
-> matching channel then it returns the last channel.  It should return
-> NULL instead.
->
-> Also remove an unnecessary NULL check on "channel".
->
-> Fixes: 2870b52bae4c ("greybus: lights: add lights implementation")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+device property: Add cleanup.h based fwnode_handle_put() scope based clean=
+up.
+https://lore.kernel.org/r/20240217164249.921878-3-jic23@kernel.org
 
-Reviewed-by: Rui Miguel Silva <rmfrfs@gmail.com>
 
-Cheers,
-  Rui
+* Thus use the attribute =E2=80=9C__free(fwnode_handle)=E2=80=9D.
 
-> ---
->  drivers/staging/greybus/light.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/staging/greybus/light.c b/drivers/staging/greybus/light.c
-> index d62f97249aca..a5c2fe963866 100644
-> --- a/drivers/staging/greybus/light.c
-> +++ b/drivers/staging/greybus/light.c
-> @@ -95,15 +95,15 @@ static struct led_classdev *get_channel_cdev(struct gb_channel *channel)
->  static struct gb_channel *get_channel_from_mode(struct gb_light *light,
->  						u32 mode)
->  {
-> -	struct gb_channel *channel = NULL;
-> +	struct gb_channel *channel;
->  	int i;
->  
->  	for (i = 0; i < light->channels_count; i++) {
->  		channel = &light->channels[i];
-> -		if (channel && channel->mode == mode)
-> -			break;
-> +		if (channel->mode == mode)
-> +			return channel;
->  	}
-> -	return channel;
-> +	return NULL;
->  }
->  
->  static int __gb_lights_flash_intensity_set(struct gb_channel *channel,
-> -- 
-> 2.43.0
+* Reduce the scope for the local variable =E2=80=9Cev_node=E2=80=9D into a=
+ for loop.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+
+v2:
+An other cleanup technique was applied as requested by Dmitry Torokhov.
+
+
+ drivers/input/misc/iqs269a.c | 73 ++++++++++++++++++------------------
+ 1 file changed, 37 insertions(+), 36 deletions(-)
+
+diff --git a/drivers/input/misc/iqs269a.c b/drivers/input/misc/iqs269a.c
+index cd14ff9f57cf..9caee936927b 100644
+=2D-- a/drivers/input/misc/iqs269a.c
++++ b/drivers/input/misc/iqs269a.c
+@@ -557,7 +557,6 @@ static int iqs269_parse_chan(struct iqs269_private *iq=
+s269,
+ 			     const struct fwnode_handle *ch_node)
+ {
+ 	struct i2c_client *client =3D iqs269->client;
+-	struct fwnode_handle *ev_node;
+ 	struct iqs269_ch_reg *ch_reg;
+ 	u16 engine_a, engine_b;
+ 	unsigned int reg, val;
+@@ -734,47 +733,49 @@ static int iqs269_parse_chan(struct iqs269_private *=
+iqs269,
+ 	}
+
+ 	for (i =3D 0; i < ARRAY_SIZE(iqs269_events); i++) {
+-		ev_node =3D fwnode_get_named_child_node(ch_node,
+-						      iqs269_events[i].name);
+-		if (!ev_node)
+-			continue;
+-
+-		if (!fwnode_property_read_u32(ev_node, "azoteq,thresh", &val)) {
+-			if (val > IQS269_CHx_THRESH_MAX) {
+-				dev_err(&client->dev,
+-					"Invalid channel %u threshold: %u\n",
+-					reg, val);
+-				fwnode_handle_put(ev_node);
+-				return -EINVAL;
++		{
++			struct fwnode_handle *ev_node __free(fwnode_handle)
++						      =3D fwnode_get_named_child_node(ch_node,
++										    iqs269_events[i].name);
++
++			if (!ev_node)
++				continue;
++
++			if (!fwnode_property_read_u32(ev_node, "azoteq,thresh", &val)) {
++				if (val > IQS269_CHx_THRESH_MAX) {
++					dev_err(&client->dev,
++						"Invalid channel %u threshold: %u\n",
++						reg, val);
++					return -EINVAL;
++				}
++
++				ch_reg->thresh[iqs269_events[i].th_offs] =3D val;
+ 			}
+
+-			ch_reg->thresh[iqs269_events[i].th_offs] =3D val;
+-		}
+-
+-		if (!fwnode_property_read_u32(ev_node, "azoteq,hyst", &val)) {
+-			u8 *hyst =3D &ch_reg->hyst;
+-
+-			if (val > IQS269_CHx_HYST_MAX) {
+-				dev_err(&client->dev,
+-					"Invalid channel %u hysteresis: %u\n",
+-					reg, val);
+-				fwnode_handle_put(ev_node);
+-				return -EINVAL;
++			if (!fwnode_property_read_u32(ev_node, "azoteq,hyst", &val)) {
++				u8 *hyst =3D &ch_reg->hyst;
++
++				if (val > IQS269_CHx_HYST_MAX) {
++					dev_err(&client->dev,
++						"Invalid channel %u hysteresis: %u\n",
++						reg, val);
++					return -EINVAL;
++				}
++
++				if (i =3D=3D IQS269_EVENT_DEEP_DN ||
++				    i =3D=3D IQS269_EVENT_DEEP_UP) {
++					*hyst &=3D ~IQS269_CHx_HYST_DEEP_MASK;
++					*hyst |=3D (val << IQS269_CHx_HYST_DEEP_SHIFT);
++				} else if (i =3D=3D IQS269_EVENT_TOUCH_DN ||
++					   i =3D=3D IQS269_EVENT_TOUCH_UP) {
++					*hyst &=3D ~IQS269_CHx_HYST_TOUCH_MASK;
++					*hyst |=3D val;
++				}
+ 			}
+
+-			if (i =3D=3D IQS269_EVENT_DEEP_DN ||
+-			    i =3D=3D IQS269_EVENT_DEEP_UP) {
+-				*hyst &=3D ~IQS269_CHx_HYST_DEEP_MASK;
+-				*hyst |=3D (val << IQS269_CHx_HYST_DEEP_SHIFT);
+-			} else if (i =3D=3D IQS269_EVENT_TOUCH_DN ||
+-				   i =3D=3D IQS269_EVENT_TOUCH_UP) {
+-				*hyst &=3D ~IQS269_CHx_HYST_TOUCH_MASK;
+-				*hyst |=3D val;
+-			}
++			error =3D fwnode_property_read_u32(ev_node, "linux,code", &val);
+ 		}
+
+-		error =3D fwnode_property_read_u32(ev_node, "linux,code", &val);
+-		fwnode_handle_put(ev_node);
+ 		if (error =3D=3D -EINVAL) {
+ 			continue;
+ 		} else if (error) {
+=2D-
+2.44.0
+
