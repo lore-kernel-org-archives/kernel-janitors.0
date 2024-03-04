@@ -1,90 +1,82 @@
-Received: from nautica.notk.org (nautica.notk.org [91.121.71.147])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E9A3D39A;
-	Mon,  4 Mar 2024 12:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.121.71.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AADD3F9C7;
+	Mon,  4 Mar 2024 13:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709557188; cv=none; b=H4nXKqGSO7itD+TaMKljNT6xO8dwRn3BC6qlbu+witN1eNNLv/Am57UM24gXEg4fXXbMBy+fBfZpTQkWE8SYnEXBu4JVWmKF4uwyUlY8kL1PIULTw0m10/cv2F217BvQdSo7l8xr/bpIwNCV/EAag3QwfkQsXxWhZcaSduXfMug=
+	t=1709558258; cv=none; b=nSeQb6sq0yVK3CNwQjagvOvki7ZBn4bIxnr7KtColy8/fr9I4dR3JyQgZgHidlgYVmif4vTSFJyWxuTjeDuSJcGd6ZTyHT2JK0iQhPKkUdEWMmSDwskstFiv2tAr7zY+ZnRlcS+u9tiyI4Iql+FT2QUv6PHkNQPHcm19M8tPLLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709557188; c=relaxed/simple;
-	bh=e6W5dVjrDlaxEdGJQ8TjsG2c+Fxj/jwHrFyoZXM5Vj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UjzAKrEB+KLO/EvivnXN4+m//vNl29FG6spAEw1pYUhn7Ij9Zi8foooymra0QKMQYeR/loXzgQxMluZwKyGlON7T28Yak9is4Nwv0A8u9bI3mHXucLYvTA3YkvJ6ipdvULqKttYkFXRilY0qzZzDoEzjFMpZZ1PQ+im+1SJ2cxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=CTnrPNLa; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=CTnrPNLa; arc=none smtp.client-ip=91.121.71.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+	s=arc-20240116; t=1709558258; c=relaxed/simple;
+	bh=OX/K8YyOzC1SThuNTMwMMnK8+cBQVcgmipBIo+ZTROA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=cyU9/MDADKrRTETj3Zx59msY0G9zgKf7paHtFJszuYoo4GRITx2TH98zqL5jqHFKQK7s6u2S/gBEoTltYoBr8/agthlZxtu0A2Nh2uNBmS630sW+RH9bPYCpobPd77MwaFN4C78aggLsGXKNzGR56bcsNeVXLeW2+AP2zTdUbC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jUsPpxYt; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="CTnrPNLa";
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="CTnrPNLa"
-Received: by nautica.notk.org (Postfix, from userid 108)
-	id D339BC01E; Mon,  4 Mar 2024 13:59:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-	t=1709557184; bh=XCIi2WCMNQlzfotdYfhM0XMfceVX/+qsBXNDxTeiHxI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CTnrPNLa4r78QqlS0P0Qp+MgRcQmweTgXU2ePiSPL3S0MkI7aUJBd1neL3Imj4D4e
-	 rkf8lc76Q8tO1ojOWz7aeOytnGEHRtWfWWM83cOApHUtvFOD8n/Efmmr0DLEJeChGv
-	 PgqNR5QPYNRAiUiYUL73Iy0wL+gKnJXyH79GqAKWAwrvxODO/PfVMhYb/3q+A3l/R+
-	 DckCEfvMa1PI+7CYX7uHlVLUW0TGeMnfmpDgaRo/oCSTPV9Rb5V2od7o3um+uQxfnF
-	 bDyRvc1byit6BJIeZWRhqZLqtp7yuq1Sv61xlHygFtZsMSE0CWIY83yFEqOej7tCsv
-	 OFbLNhzJXDqRg==
-X-Spam-Level: 
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by nautica.notk.org (Postfix) with ESMTPS id 2DE2AC009;
-	Mon,  4 Mar 2024 13:59:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-	t=1709557184; bh=XCIi2WCMNQlzfotdYfhM0XMfceVX/+qsBXNDxTeiHxI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CTnrPNLa4r78QqlS0P0Qp+MgRcQmweTgXU2ePiSPL3S0MkI7aUJBd1neL3Imj4D4e
-	 rkf8lc76Q8tO1ojOWz7aeOytnGEHRtWfWWM83cOApHUtvFOD8n/Efmmr0DLEJeChGv
-	 PgqNR5QPYNRAiUiYUL73Iy0wL+gKnJXyH79GqAKWAwrvxODO/PfVMhYb/3q+A3l/R+
-	 DckCEfvMa1PI+7CYX7uHlVLUW0TGeMnfmpDgaRo/oCSTPV9Rb5V2od7o3um+uQxfnF
-	 bDyRvc1byit6BJIeZWRhqZLqtp7yuq1Sv61xlHygFtZsMSE0CWIY83yFEqOej7tCsv
-	 OFbLNhzJXDqRg==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id b5420c5c;
-	Mon, 4 Mar 2024 12:59:37 +0000 (UTC)
-Date: Mon, 4 Mar 2024 21:59:22 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Eric Van Hensbergen <ericvh@kernel.org>
-Cc: Colin Ian King <colin.i.king@gmail.com>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	v9fs@lists.linux.dev, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] fs/9p: remove redundant pointer v9ses
-Message-ID: <ZeXFqt1NDp9sdz7n@codewreck.org>
-References: <20240229222250.351322-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jUsPpxYt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1709558256; x=1741094256;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=OX/K8YyOzC1SThuNTMwMMnK8+cBQVcgmipBIo+ZTROA=;
+  b=jUsPpxYt2rxU0MwZYiU32eHmgH5WKW2oSAv7E8DCebA806ev4if9YltW
+   L9gdwKO6x8XttyrSSNKbN9Q2vLAWT2xC2IexjBHxW1EJj07fVJZ4vaIKQ
+   5zva3Y1cb6Tiz5dOcX/bpRlVnYZn/YIUrfsWBbhRggrKHYbIAP95YjlSr
+   CNU5FyNNvbe/RfPENWwPPEAm3BKv9dRDgRQ3FDpyWaXNbzwwAR0htJYy3
+   mbeDwDyMwv+kZXfFKNh+0m6JRI4beXap/tsU40yWxZBN+UEXWAZRi6vLD
+   4pCV01iYcYkEcfMWjnhTHzoxeyrhTfbV1GU0p4tbMZ2GuWYbnGjnrCpe0
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,11002"; a="4213933"
+X-IronPort-AV: E=Sophos;i="6.06,203,1705392000"; 
+   d="scan'208";a="4213933"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2024 05:17:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,203,1705392000"; 
+   d="scan'208";a="13656421"
+Received: from ekohn-mobl1.ger.corp.intel.com (HELO localhost) ([10.246.49.145])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2024 05:17:32 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Shravan Kumar Ramani <shravankr@nvidia.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, 
+ Vadim Pasternak <vadimp@nvidia.com>, platform-driver-x86@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <a4af764e-990b-4ebd-b342-852844374032@moroto.mountain>
+References: <a4af764e-990b-4ebd-b342-852844374032@moroto.mountain>
+Subject: Re: [PATCH] platform/mellanox: mlxbf-pmc: fix signedness bugs
+Message-Id: <170955824704.5357.5837908391020307060.b4-ty@linux.intel.com>
+Date: Mon, 04 Mar 2024 15:17:27 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240229222250.351322-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.3
 
-Colin Ian King wrote on Thu, Feb 29, 2024 at 10:22:50PM +0000:
-> Pointer v9ses is being assigned the value from the return of inlined
-> function v9fs_inode2v9ses (which just returns inode->i_sb->s_fs_info).
-> The pointer is not used after the assignment, so the variable is
-> redundant and can be removed.
+On Thu, 29 Feb 2024 16:11:36 +0300, Dan Carpenter wrote:
+
+> These need to be signed for the error handling to work.  The
+> mlxbf_pmc_get_event_num() function returns int so int type is correct.
 > 
-> Cleans up clang scan warnings such as:
-> fs/9p/vfs_inode_dotl.c:300:28: warning: variable 'v9ses' set but not
-> used [-Wunused-but-set-variable]
-
-Thanks for the patch!
-
-Eric, this appears to be for your -next tree as it doesn't build on
-master -- didn't notice the [next] in the subject line until I tried...
-(I've just build-checked on your tree and it appears correct there)
-
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Reviewed-by: Dominique Martinet <asmadeus@codewreck.org>
 
--- 
-Dominique
+Thank you for your contribution, it has been applied to my local
+review-ilpo branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[1/1] platform/mellanox: mlxbf-pmc: fix signedness bugs
+      commit: d22168db08c4c8e6c5e25fa3570f50f0f2ff1ef1
+
+--
+ i.
+
