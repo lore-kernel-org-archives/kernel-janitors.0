@@ -1,113 +1,132 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B08C495F0;
-	Mon,  4 Mar 2024 16:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2451C5C90B
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Mar 2024 16:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709570219; cv=none; b=FjYv2ciytNIqAqyF5SVPd5YIH5zHCjnVRwEiqNGwgLjJ5Gt5V0+p96hOiXM6BAqZnESVT7R4VOofPhw7fKJ6LMexJN+WwdZAlHO5gOxz8jdfxnzwzTuelHZxALPeyBYEnVq+FPVdRmrk1hM/QdTA12oKkfKOdL/9UO3k5yy0iW4=
+	t=1709571453; cv=none; b=NhdpGbxn3sgXdvfIisBW3Gx57Xt3JqmOyKM7nwVIbjKU/i75kvgXACUs/K6mGPAjNDThUokXGZEk8SavtS8UCvneMgES1rCOGAYEyYka3/q9N9Cp4iQup8PUdNXDHYzI2ti0co9tw4IV/rQJezect7Jw+ezmd+ev9aZrAz4X7e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709570219; c=relaxed/simple;
-	bh=xOyOxEs2LoaPprIcK9amuUKq49ywZ782kUPidDTbhpE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GpSXLv4jN2JMAXLW+Mr9pH+d2ty8bte+S/q3qdOAFu6n5g6J+9erv1W4LFIQEL0WbWUa+uKEa+9i4HwjdPb4oKUvEFjMzSY1bj8dwBkk3ZBXqOY19ZRw8eSEdJBoXBvf40JJBnB5QCU1ONqRDpJQYfV6tRPbs9hIBbAaXrv2gWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KYZoXbaS; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709571453; c=relaxed/simple;
+	bh=9OxuSXlUAAkHSjgdNxhAWnJy3LIVqOW1+hdGG3ZGS5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F1mAQHGH+FOI80zGItvKf759he+NuRhs7+qrnpQBTHaczEgFT3kTrL1PJAFjEgRDD0k5lbfcyZ75xhe0iAfoe/uEHgpDVhxOC3DckaC+RUxc/LXI1TkvO1bUeaIO/0ApoPOtSOo6oJKZjxMcIMuquLV8wJHCyLRtADbNlii+aUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a9O4iaS+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KYZoXbaS"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-412e795f458so5010535e9.3;
-        Mon, 04 Mar 2024 08:36:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709570216; x=1710175016; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D57LV4PQlM/pc6do6owRfCiEmFwq5OiC/rPbAO2Ui6E=;
-        b=KYZoXbaSMOFw8K/OSrgdGeCZN+jK3CMjmG3/huWGbn7OhCtttDXLiLJsMn22TC4xci
-         kZITrCn6bFzs+YSslxN4Pd913PoyDxDaGYaTpQM5xKlNqg0pV73XrdhrgIM8ExFbQVMW
-         3RKjV55C3Zqet6JkHYbxDvlUDyLyOmTCAvo7Atj2P6Tu42Tsg5EPIe9amOoJDN6nif6U
-         dSIfkH8hN/0wj11q+m1cRJiO/DMtRyA8R9tp84mBxp5tGYNA2Ixf2t/wJSh0dtbHuvK3
-         yQZnet4sNb4eNyR4lAWb0Uy9k2wOfLiYPVUgGkNiqtt0CzvLtWZseb4vgRyJGzrqcOQS
-         6q9A==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a9O4iaS+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1709571451;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AlBk3gVwDcJKKsrS4jsAo8rmbEynrWIssEK39CmSxmA=;
+	b=a9O4iaS+A52SAuzt7fiTSyqHwoVV8xOogIl3C7pfZsFRcq6Xsd+W+uovby/nb5kfCHXluI
+	DQL7jjR4ICh7IhGKBP05skBjjOwhIurLNlpz5vnFNbaBI1/DO+TELRYV3GOH+t2gU0nu2W
+	rVYFlOSJ4g/mNQ1A3TDfr2lMYx1/pNk=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-68--DiBIk7iOlGf5nuJCJFgSg-1; Mon, 04 Mar 2024 11:57:29 -0500
+X-MC-Unique: -DiBIk7iOlGf5nuJCJFgSg-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-513182f4018so3280184e87.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Mar 2024 08:57:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709570216; x=1710175016;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D57LV4PQlM/pc6do6owRfCiEmFwq5OiC/rPbAO2Ui6E=;
-        b=nxVSCwg6/+x+KWpS3xKWjhGpj0BeBZwdDqox7IEv74IsQYfRR0rwFunEVN6/oOZ4bE
-         PdyGEu5klxs306nssZNFWOB2/o0uM6wQTT/OXDkCS7wIi9ZmE3fT3HFhBgNJjETZJcSo
-         THE0HEUefqUh5H9xFV2FWj5Y3U9gv/MieI4h1mV/MKknsq8sCNiLZbqkZy9hOo4YEbud
-         QIDgr5FcsG9FSm62/561UfqsWplv5KRp6Pp76mRfVLaTcngY1wFvcV5d5lQAhXPv297K
-         l2fCXVMYg6fwiLtC8lFsNGT/sOYibZmAofJjWDWy2r9JkB1iow0FwkALmcWt0+7Mk3ZA
-         8Jtg==
-X-Forwarded-Encrypted: i=1; AJvYcCW6oHTicWpSXEinUxJ+njYqS0ATCGFWecSOaNe0rmW+B+3sFrfENy4tIAZiLZgG2OKQqm6Hb/KrZ/AaCSfI4gz4wvG0B2+bWEi6MNSO5dxEhalpf8BqYpuRf2QA6X/qMSa5a689+2Gpb+/hxdqKLxrc+FiS
-X-Gm-Message-State: AOJu0YwoHFBWBiPava60URzV8KRqGZ9wP/RpbmG8rxEAbxcKUWptw9Oe
-	QsZAJNj+vLvTIFeATrs2RgNZQaNhVfAtR4yhYqWYSqgMCE5EWbTJ
-X-Google-Smtp-Source: AGHT+IGwhHmhMCQY5Wj9Ojyw77j2lS7hN7OmHTas5EyAlXpHFn/hpF7T3R90MIEi3AEaS8ApQIaj/g==
-X-Received: by 2002:a05:600c:4f83:b0:412:bef7:317c with SMTP id n3-20020a05600c4f8300b00412bef7317cmr8052982wmq.13.1709570216101;
-        Mon, 04 Mar 2024 08:36:56 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id k4-20020a05600c1c8400b00412e556d4besm2679933wms.48.2024.03.04.08.36.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Mar 2024 08:36:55 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] apparmor: remove useless static inline function is_deleted
-Date: Mon,  4 Mar 2024 16:36:55 +0000
-Message-Id: <20240304163655.771616-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1709571448; x=1710176248;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AlBk3gVwDcJKKsrS4jsAo8rmbEynrWIssEK39CmSxmA=;
+        b=VltNauSee4+kvvNCjeXuDarwUk8DXW1RKuQvdi9qXaa/wtEgSd9stZNntJQxV/xxLc
+         CPRN0tX9yA3HE1xGKxIqqzKhP328JQYsGvMY4G0QLfQ9dwU6gSKw7PICiktMdv/9oFSx
+         7We5QGBrSuXFsfmzALfuLK1/bdXZfcynBL9GwBqZDUTVwLZisbRaR5Fmse0X0bvu9fOQ
+         ZsI2SbGxzrfzZ0iE3+TDqbODaqhjqHjcRpnIZAPBEzdJYsi2NNRtq8M4eoo6yHNsDxSR
+         nLr6RbF9JgcpZaO03VQJQ9AopwCsR+LylPFxNBut41bS9OICjbBlFwkHFfRfgaSgBrFU
+         mX2g==
+X-Gm-Message-State: AOJu0Yx60t0KL9yES/f6nyKhwJLQoHnqYKcLuTNTL+4lFRp9ltXQW8r5
+	vEAUWhwRfk75jDMFTIXvsUROqnvveEJ+AEYVNdncPO6p3MiPNp2lnSXQZfjRg8kj9fHuV9bY2ho
+	sbdkFFgC4KMvshPGU1mzuNyVCVtsB33RGuNFKD4639gmFgNUlPT7FF+93X0Is1vubgw==
+X-Received: by 2002:a05:6512:31ce:b0:513:3d35:bef6 with SMTP id j14-20020a05651231ce00b005133d35bef6mr5404873lfe.51.1709571448414;
+        Mon, 04 Mar 2024 08:57:28 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF3gKm69xEtdhrx5ahjwFzQ4tyocLGE2enIJx1LHgL7epBS9Ks4QKBoBonvlnMcFFZnGyHzTA==
+X-Received: by 2002:a05:6512:31ce:b0:513:3d35:bef6 with SMTP id j14-20020a05651231ce00b005133d35bef6mr5404860lfe.51.1709571448060;
+        Mon, 04 Mar 2024 08:57:28 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id wr8-20020a170907700800b00a4553c6d52csm1218221ejb.35.2024.03.04.08.57.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Mar 2024 08:57:27 -0800 (PST)
+Message-ID: <c0fb0480-5078-40eb-b1eb-dc5a7859f399@redhat.com>
+Date: Mon, 4 Mar 2024 17:57:26 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86/amd/pmf: Fix missing error code in
+ amd_pmf_init_smart_pc()
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, dan.carpenter@linaro.org
+References: <20240226144011.2100804-1-harshit.m.mogalapalli@oracle.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240226144011.2100804-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The inlined function is_deleted is redundant, it is not called at all
-from any function in security/apparmor/file.c and so it can be removed.
+Hi,
 
-Cleans up clang scan build warning:
-security/apparmor/file.c:153:20: warning: unused function
-'is_deleted' [-Wunused-function]
+On 2/26/24 15:40, Harshit Mogalapalli wrote:
+> On the error path, assign -ENOMEM to ret when memory allocation of
+> "dev->prev_data" fails.
+> 
+> Fixes: e70961505808 ("platform/x86/amd/pmf: Fixup error handling for amd_pmf_init_smart_pc()")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- security/apparmor/file.c | 13 -------------
- 1 file changed, 13 deletions(-)
+Thank you for your patch/series, I've applied this patch
+(series) to my review-hans branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
 
-diff --git a/security/apparmor/file.c b/security/apparmor/file.c
-index c03eb7c19f16..d52a5b14dad4 100644
---- a/security/apparmor/file.c
-+++ b/security/apparmor/file.c
-@@ -144,19 +144,6 @@ int aa_audit_file(const struct cred *subj_cred,
- 	return aa_audit(type, profile, &ad, file_audit_cb);
- }
- 
--/**
-- * is_deleted - test if a file has been completely unlinked
-- * @dentry: dentry of file to test for deletion  (NOT NULL)
-- *
-- * Returns: true if deleted else false
-- */
--static inline bool is_deleted(struct dentry *dentry)
--{
--	if (d_unlinked(dentry) && d_backing_inode(dentry)->i_nlink == 0)
--		return true;
--	return false;
--}
--
- static int path_name(const char *op, const struct cred *subj_cred,
- 		     struct aa_label *label,
- 		     const struct path *path, int flags, char *buffer,
--- 
-2.39.2
+Note it will show up in the pdx86 review-hans branch once I've
+pushed my local branch there, which might take a while.
+
+I will include this patch in my next fixes pull-req to Linus
+for the current kernel development cycle.
+
+Regards,
+
+Hans
+
+
+
+
+> ---
+> This is based on static analysis with smatch, only compile tested
+> ---
+>  drivers/platform/x86/amd/pmf/tee-if.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/x86/amd/pmf/tee-if.c b/drivers/platform/x86/amd/pmf/tee-if.c
+> index 8527dca9cf56..dcbe8f85e122 100644
+> --- a/drivers/platform/x86/amd/pmf/tee-if.c
+> +++ b/drivers/platform/x86/amd/pmf/tee-if.c
+> @@ -458,8 +458,10 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
+>  	amd_pmf_hex_dump_pb(dev);
+>  
+>  	dev->prev_data = kzalloc(sizeof(*dev->prev_data), GFP_KERNEL);
+> -	if (!dev->prev_data)
+> +	if (!dev->prev_data) {
+> +		ret = -ENOMEM;
+>  		goto error;
+> +	}
+>  
+>  	ret = amd_pmf_start_policy_engine(dev);
+>  	if (ret)
 
