@@ -1,96 +1,70 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D8A224DF
-	for <kernel-janitors@vger.kernel.org>; Mon,  4 Mar 2024 10:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FA4241E5;
+	Mon,  4 Mar 2024 10:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709547081; cv=none; b=SWLpbHXh7gw28mw6Vdqgyj+BweZGcMPZpbpSV38dtTQXG5E/oZpBaSkqJLnr4L3z7xNn0rDBj9hZJRWmmb+XcXbfjN+zeBblGiszZ4RlUZipZ51JffXtsK18O1iHMGH+eIQXCN8RORlR4uTc7suv7tUGGXylDy8Jo3vELt6L/Gc=
+	t=1709547436; cv=none; b=TBzlZraY1SI2XsCYBcpchtbPVgCjnG6N3fGAcaQOG7dXizrroS2Kf+9XnisQJnNH+qnylo8v6jfVqvsfyqpgUgudzCl8rPAG5PgFCeF7FrnP0qVIloYMAioE22f8SmHcj8cG9trD6W9liZ45ybMlbmlw1JEZjNw2FFotvzXB5tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709547081; c=relaxed/simple;
-	bh=QsoSw7nIsKdCbrB08TRB5MwF9IW2XROJQ40mzxo9EQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lC+D2NwWW7O8ryl/fI+VGOY0X2ZXDi3K7dFRdv4nOAj3i5f7uUCID34z6aXP3jSrtIU0MPED8yUr4GxAE9MZVg8K48434bTaWg9zDpPbUHNO+SkkZVPdNWW2sDBmQPaiq23zN7u/CMMrR5u2vk+6rXDCwhe1iRBJlc0ux5MYA+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t1vKMRHA; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709547436; c=relaxed/simple;
+	bh=ltcyOw+TgqviIKZ8PQUG8CPcAe7I74uGtSNAStThC1w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VJOpuJ4Kb7F501R/AL3cTwe/+2P2gzOhLay28fshaUIk+kUrT3oliZTQpss/sHa2QLq8fMpZnbPSyYGhGcht/E1JbxFm797QHUyWzOMLjFvlCfV727IJ5Otr3tMNDn06rpSktSkF0ZoHS6XEzN70MlWeT8nlwfpLcBuaqLx4c4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fb11IaKc; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t1vKMRHA"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-33da51fd636so2102006f8f.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 04 Mar 2024 02:11:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709547076; x=1710151876; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=apfVynKdMHWt/84gIfAXsivA2/2+KZh2cujSEqljhTk=;
-        b=t1vKMRHAekQqK4ihSgzLQ0FhGEG+pptJ/XdfGmAHmEWyO1JrVm+uK1CZMFUrfprRzG
-         gf6jEqW78w/oAIFcbCZ+LkFHwxDmwS1r/fMxHXWs8ZH9DgJMXj+Sx1W9L83Y7jkWzHgk
-         skMXS2K+FfWGLDswauoZJhbC7Psq5sjmdqXaF8bamDlx9yElMHxKJLqEJmAHaOU2ZN1z
-         X7wPUEL+TPmJ+gN78sPaOg5IACtXSGRRLlnB7HEZ+BDm+Yt6eOHIHZxx5GP3g2dowHaP
-         pNenXNllbzML3GB8v50NzHdDtVwOnsl3SnlVHJP8EZwa3G8+CZ2BLVmpmTqmmPmpu+Hm
-         vEwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709547076; x=1710151876;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=apfVynKdMHWt/84gIfAXsivA2/2+KZh2cujSEqljhTk=;
-        b=d5CvOCGLI7YbPb+HmyzH1FVA5A8siNRPR9R8qfCGRbfVMqqpqGyuvScdFECsAzVhlD
-         cvc9KnSzUNViz0pBJ6Hi2J421ITl0vRV2KUfSioPh011IJK9X0wgbXeA9j9tD9lZxR5q
-         UXrL80h28E7v9PVlgH4556zBHAeNsWPZsdPnBE6UJyVXE3VMf/iaIglHBQ2pHgK+qcqV
-         lJQlu5xP2HKYUsXpGj7e1IwZWRvWAr/WWL5vYXVxzjWE+C5dNbgfFwiHqhvy4Fl6WPHI
-         NDu1n/p0VubriHEtsUv0DpCTGC5Eo+YbzJmoX3f5NUfWoWgKTIg8fs4gW1ptkpMXU2Lr
-         jh/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXvtwQwJ7XRn+tM9WkJLsjTt94YwgrNYENpWCreAtiSPyby/VWUh5rLcZ68Um04Gh847Mew3c7j5ntl0wBrGf7RgQQBMR9//vzU2EHxourb
-X-Gm-Message-State: AOJu0YyTmAZAyctWHo7B1/J3bvmCVp7wkUUdJyFJJIVz+qXhOsU46Q7h
-	QTCLFOUKZCFkn9bjh4OPkVby3uJbXVC5qW8JUEhkMFwdne7jB2yKWpvHAYwADlY=
-X-Google-Smtp-Source: AGHT+IHNn7sU3K7fVrmKdjcX18dvKktXyRnPZAwnYOUoT0D0zKIFokCLkKqap2Bkk/sWa6rTyu9UnQ==
-X-Received: by 2002:a5d:5ccb:0:b0:33e:1627:4682 with SMTP id cg11-20020a5d5ccb000000b0033e16274682mr5193040wrb.29.1709547076459;
-        Mon, 04 Mar 2024 02:11:16 -0800 (PST)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id f10-20020a5d58ea000000b0033d4cf751b2sm11722955wrd.33.2024.03.04.02.11.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Mar 2024 02:11:15 -0800 (PST)
-Date: Mon, 4 Mar 2024 13:11:11 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Takahiro Kuwano <Takahiro.Kuwano@infineon.com>,
-	kernel@collabora.com, kernel-janitors@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mtd: spi-nor: core: correct type of i
-Message-ID: <7a42984f-34cc-494e-b8f3-83596621d31a@moroto.mountain>
-References: <20240304090103.818092-1-usama.anjum@collabora.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fb11IaKc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1709547432;
+	bh=ltcyOw+TgqviIKZ8PQUG8CPcAe7I74uGtSNAStThC1w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fb11IaKccd0sn7CyPKu2BXQKbFW2upyD39noI5TM03TJBBiM5ye+aWnCUUD2VbkIq
+	 2TnHjnBrpEVsp4dAD81Wujg/2j3bYBUPN+PI1ui+pqh3XqbQ9AS1HyWi5D+Tm0y9Tl
+	 NXav/eWcHeq9xhcHxEkGYzaSJGHAt9AJ4EHlVVVOCSkNGkqR4NwznUGaNk+vUJaiDE
+	 IvaQKjCwcb0EBo5VHb7oK2HPqb7UUoSsCo+BnT+j04XQmITA8I8pylgLfe7w4TJCjv
+	 GVclBtl4+0/QhrYVEDW+AR1QYgVcXe+cPtL2ufpRyVs+46CSb+DPwSEyEoDusH73BK
+	 xCWmU2AHLwU7Q==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D33AE3781FE9;
+	Mon,  4 Mar 2024 10:17:11 +0000 (UTC)
+Message-ID: <fcb78476-d1e4-4354-99a6-0bb92a2ec3b6@collabora.com>
+Date: Mon, 4 Mar 2024 11:17:11 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240304090103.818092-1-usama.anjum@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: mt76: connac: check for null before dereferencing
+Content-Language: en-US
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ Ryder Lee <ryder.lee@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>,
+ Sean Wang <sean.wang@mediatek.com>, Kalle Valo <kvalo@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: kernel@collabora.com, kernel-janitors@vger.kernel.org,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240301144406.2808307-1-usama.anjum@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20240301144406.2808307-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 04, 2024 at 02:01:03PM +0500, Muhammad Usama Anjum wrote:
-> The i should be signed to find out the end of the loop. Otherwise,
-> i >= 0 is always true and loop becomes infinite. Make its type to be
-> int.
+Il 01/03/24 15:44, Muhammad Usama Anjum ha scritto:
+> The wcid can be NULL. It should be checked for validity before
+> dereferencing it to avoid crash.
 > 
-> Fixes: 6a9eda34418f ("mtd: spi-nor: core: set mtd->eraseregions for non-uniform erase map")
+> Fixes: 098428c400ff ("wifi: mt76: connac: set correct muar_idx for mt799x chipsets")
 > Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
-> Changes since v1:
-> - Make i int instead of u8
 
-Thanks!
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
 
