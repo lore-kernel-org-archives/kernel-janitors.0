@@ -1,110 +1,119 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEC6168D0;
-	Mon,  4 Mar 2024 07:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC3E16436
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Mar 2024 07:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709537017; cv=none; b=Ynyq7Ea11AxGO08hY+IaXv7kA7mZ6+mgYCqwzxrNOWgnu8z65nQ7jbGOsHLbW0UmjZvFXvbxjrplEQmoI79wh1CHmZgw49bX6GDjTkNX7NPHopgTv82xxZ5kakV6PYRg3jKkFEJoRjw/XrIq4FD+t3pzuTL+bMfP9R8rGuQWGJs=
+	t=1709538691; cv=none; b=WREJFBTOljxuGQadvORGL7ytbiKTclyZKJR312zO4WCPCLu/e7bC3RGXKpkDl59nN2EakpiHXWLVZTkmSqL7UoICNdcuqQkGeGl2xqdLCQA617QkKpV9eRD23eOahbyoCjbwyZNjc5iQp3wqfMsRN7uR15Xp5DeTGK0aDLoAmn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709537017; c=relaxed/simple;
-	bh=B27z1Z88iPUB5Ma3pXW59JeufqOPxYT1JfOeH07WPPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gb3ZRppXaXx8jnjo58Ys8Eq87DfyujKakfXHGJVHqWfsSYJIoK1SOWRwAFOkmh1FUE8iBCeBEmh7oI4KeJ6cRnUr4SZLtUo1VVuxk0swEC3ipF6yVlnZkIH8/bvDUD8VNBJE1pLEytQDp66WPf0gDpI/KQD8JFGYNILKriXFrCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fuiqweWU; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1709538691; c=relaxed/simple;
+	bh=owFBBvSyol5Quh62N2HJFLrQ+Rxow5j0Z9jnmALctYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FTfCfTDuqmLbHsopss4KWavoat5Au0lljs/2y8tkRY7M+FOqPcEDmtAdBscadVIwAobnSo/J3XMQ+AujWqKqMiT8QlX/Kr31hOSVjd9wD7GzrY26PJ6QrDEaB30afFY4d+dzqGb55HJYaHGnJDBRMUn2ok26TfiYV5HseSLfnLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WDTRsunw; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fuiqweWU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1709537015; x=1741073015;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=B27z1Z88iPUB5Ma3pXW59JeufqOPxYT1JfOeH07WPPU=;
-  b=fuiqweWUhA8dVE9YH+u4RmGfzdg3zGBiNcKb7XRweekoqZf+/dje4b4F
-   Tm/zjZco049Qf/5xiyUttQGj7z6gVeTSKyRHLfLRuo6Xl8lnWxDQqAWl6
-   YMnqguaQE2N+rB+LSFUZI2/ruPT+I0N37EolB8K3QRyYPJqxEQLVwRv6r
-   GckKZmWOFa1Q0o61g8pj+CZ+pcrH0AaE+BbxGKPDwq4hWt0+ibg9cQl44
-   inoubd/bWiqhiw/tL+CZfvpIPMFuEVMKVufDlLbeTGnbMk4QvO2i2/Ndn
-   gYr9UHeE50PINb0SSGhkMd0HwbnmlnBZGKRf6tJbzKlPkIN9RuaTvEhF/
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,11002"; a="3867756"
-X-IronPort-AV: E=Sophos;i="6.06,203,1705392000"; 
-   d="scan'208";a="3867756"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2024 23:23:26 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.06,203,1705392000"; 
-   d="scan'208";a="9463163"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2024 23:23:22 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 94EA711F8B1;
-	Mon,  4 Mar 2024 09:23:19 +0200 (EET)
-Date: Mon, 4 Mar 2024 07:23:19 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: v4l2-fwnode: Improve exception handling in
- v4l2_fwnode_connector_add_link()
-Message-ID: <ZeV25-dTLVE_vyqx@kekkonen.localdomain>
-References: <9d0511cd-1fb2-4612-9b21-196a43ad0397@web.de>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WDTRsunw"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2d2ab9c5e83so40595871fa.2
+        for <kernel-janitors@vger.kernel.org>; Sun, 03 Mar 2024 23:51:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1709538688; x=1710143488; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HWvU3Y40gzx94WbLTxYgWZzKcXstQArKnjMG7cs8mWk=;
+        b=WDTRsunwPfgmt0sAk8E/8rZWvSTZzJ+/GFNiPjtRj660JluNWT+JElndh43EOv2YzJ
+         9kVNOKQMy+j2DYLmlHJzzps7uz7HD5yOOq84Ov8WsimQps5YoB8mWPvDrbrNVOOlq4i6
+         y918SR9DZtmJRqijMJwuqIMrdU4bVJDph4C9WajbA9U/UdARH1ZvMFyNnx5h5OE++gMe
+         3FfejdJP3gC1GIJLPNdiMsUi3uo42wPjdYuJVvQKwZLCpnG5SGjZyNTL4z9EnfOUlMdG
+         Sm+AfdocmBbVLebljWTeNLlMZZYgDERhGyqpBCjyr/hc14ye/dk34mDp4ZZEKo8Ndb/H
+         VzEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709538688; x=1710143488;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HWvU3Y40gzx94WbLTxYgWZzKcXstQArKnjMG7cs8mWk=;
+        b=OQq9xS9FvKdgsgsMc2p9gYoG22z9/nfgMO/Tyls+cVt/V7hm4PE7T0s0+HwUVvTRnB
+         KcX0hT/9rsjBvzT22h0VE8wEIjtv4ljPI0/imhce1nc/HKaAfsRswlGj/deTWqRqHLn6
+         St9uG/fnEaDMvzCdcNEXQK2XoprBmt+d9uphTMker2hCJFyDPF2EPh8HvJ0feGwqa5V6
+         9R0qU5cno3q3xvc4/pa6ppF/0gmLGzA5reCbYykrhmjjdUyfxR8M+FJKW4wJRZ+1lM2N
+         Xt8R6a17t5GLg4O856GB5Y1oUH+Pu55wJZ4ckN+1vPjdlu5RV0uVCG/n7nB1f2MDPPNg
+         6JSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOz5AJkH1yxSqmHnwZJ1sdTWDUBai/I0O0gYob+LgLgRvO9dMx2ZabDjgWxWS6pe1mNHIiDt5zK9TzNYbLu04dVtHp2mehIbO5TksVsXoB
+X-Gm-Message-State: AOJu0YyPWGtaINvX8K3UopCaa2A5e+MtO77c8TgpsIcGHAxjHkwrilnc
+	coK/6skSromdxTu7uw0Zd0E1lj+uE8OrXmjQPtGROdCwawkjVx0gLFHr/6GeaXs=
+X-Google-Smtp-Source: AGHT+IEUICwfJIiBbierTI0MhAjTfQX5+cl2OonSg/acMJtoHZl/Brk4/Jj3JhOx9JLBQPKMiSjqWg==
+X-Received: by 2002:ac2:5e35:0:b0:513:2347:4b57 with SMTP id o21-20020ac25e35000000b0051323474b57mr4460752lfg.66.1709538688355;
+        Sun, 03 Mar 2024 23:51:28 -0800 (PST)
+Received: from [192.168.2.107] ([79.115.63.35])
+        by smtp.gmail.com with ESMTPSA id g3-20020adfe403000000b0033af3a43e91sm11481037wrm.46.2024.03.03.23.51.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 03 Mar 2024 23:51:27 -0800 (PST)
+Message-ID: <713393d5-13ef-4891-bf7c-d835edacef8a@linaro.org>
+Date: Mon, 4 Mar 2024 07:51:26 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9d0511cd-1fb2-4612-9b21-196a43ad0397@web.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mtd: spi-nor: core: correct type of i to be signed
+Content-Language: en-US
+To: Michael Walle <mwalle@kernel.org>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Pratyush Yadav <pratyush@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
+Cc: kernel@collabora.com, kernel-janitors@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240301144517.2811370-1-usama.anjum@collabora.com>
+ <CZII7JH72OWF.1IAQO5VJCBZX3@kernel.org>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <CZII7JH72OWF.1IAQO5VJCBZX3@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Markus,
 
-On Fri, Mar 01, 2024 at 03:07:50PM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 1 Mar 2024 15:02:09 +0100
-> 
-> The kfree() function was called in one case by
-> the v4l2_fwnode_connector_add_link() function during error handling
-> even if the passed variable contained a null pointer.
-> Thus use another label.
 
-This isn't a problem, the code is fine as-is.
+On 3/1/24 15:04, Michael Walle wrote:
+> Hi,
+> 
+> On Fri Mar 1, 2024 at 3:45 PM CET, Muhammad Usama Anjum wrote:
+>> The i should be signed to find out the end of the loop. Otherwise,
+>> i >= 0 is always true and loop becomes infinite.
+>>
+>> Fixes: 6a9eda34418f ("mtd: spi-nor: core: set mtd->eraseregions for non-uniform erase map")
+>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>> ---
+>>  drivers/mtd/spi-nor/core.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
+>> index 65b32ea59afc6..46bc45b80883f 100644
+>> --- a/drivers/mtd/spi-nor/core.c
+>> +++ b/drivers/mtd/spi-nor/core.c
+>> @@ -3373,7 +3373,7 @@ static u32
+>>  spi_nor_get_region_erasesize(const struct spi_nor_erase_region *region,
+>>  			     const struct spi_nor_erase_type *erase_type)
+>>  {
+>> -	u8 i;
+>> +	s8 i;
+> 
+> Can we just have an "int" here. So we don't shoot ourselves in the
 
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/media/v4l2-core/v4l2-fwnode.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-> index 89c7192148df..dc6daf3a9a51 100644
-> --- a/drivers/media/v4l2-core/v4l2-fwnode.c
-> +++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-> @@ -744,7 +744,7 @@ int v4l2_fwnode_connector_add_link(struct fwnode_handle *fwnode,
->  	link = kzalloc(sizeof(*link), GFP_KERNEL);
->  	if (!link) {
->  		err = -ENOMEM;
-> -		goto err;
-> +		goto put_fwnode_ep;
->  	}
-> 
->  	err = v4l2_fwnode_parse_link(connector_ep, &link->fwnode_link);
-> @@ -760,6 +760,7 @@ int v4l2_fwnode_connector_add_link(struct fwnode_handle *fwnode,
-> 
->  err:
->  	kfree(link);
-> +put_fwnode_ep:
->  	fwnode_handle_put(connector_ep);
-> 
->  	return err;
-> --
-> 2.44.0
-> 
+Muhammad, do you care to resubmit using int? Would be better indeed.
 
--- 
-Sakari Ailus
+> foot again. I'm really no friend of these kind of micro
+> optimizations, it should have been int in the first place IMHO.
+> 
+> -michael
+> 
+>>  
+>>  	if (region->overlaid)
+>>  		return region->size;
+> 
