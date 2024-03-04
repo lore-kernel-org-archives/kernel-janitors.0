@@ -1,70 +1,131 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755E2249F4;
-	Mon,  4 Mar 2024 10:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C9F374DE;
+	Mon,  4 Mar 2024 10:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709548345; cv=none; b=Az4uGbhOfr7vs2iS8Tb64EQxnNLEujK1CGYwepuiJczGDApaDbgjY8j8toDt0MjttC0KzPPtMZTU/Cyf5vYHUOtlElzPj/fccMKAU/gHUnLSD7s1cXbFH8BVkzcUNaR59XWlvP44RsSJg1WI91HjJWSMpjVWnz05nUmPsXJYZis=
+	t=1709549335; cv=none; b=adWvqNIA7QTUIb8Z93mfKYxQhFk98+N1WgPzTiKxQP60QCUICLEbS10ebjweAHYSKyYFddlhE8pQ6WMfo9bCoJp59w51l4Kww+tRQw9rPBZUQHPsyxICPI9gdpMpPxbRPAm0Fm2DcRSR6SkRirhs/EFX7pVpvhrjVkOTn/pQfrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709548345; c=relaxed/simple;
-	bh=YazaxYSTieA5lQl0E2xF/DFcpgv65JFrmncXrg70YAQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SP/wfQ45M4y4DbXX03TZHz0lwhjsp0/ZY5t6IUK6jipPkBd4DlnMiJjKp8w19rPQrU/+2oM8xFleq4M+IQb7l2Z7L+4ejcsphKGkTkehGN47YGXvvc/AzH4j6M+DpO9pf/M6Uqd27riXX6veV5/qt7oBk1gNCD99zWhxG/VAS0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JbVnd2YV; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1709549335; c=relaxed/simple;
+	bh=OE0XZMxoN+lzBJ6Pub/O4OVZnEDZz5AZoPrtdE7dITo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h9vNbz9tw4CdUqsyvbr21AiHqRRu2Idphux0VWNmDP/KI8G8FIv1mwaHKjhj1KehAqWzSCG1T+6qiTKonROcSjVgAVQE3nHKRufKEUreVUf30JuwNOlOQRIFU2oxUpweJN/UT+QMzrml7cn6oKYgUGMMpg2VpXB+tkRBS8arzGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CR2tb1cA; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JbVnd2YV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1709548342;
-	bh=YazaxYSTieA5lQl0E2xF/DFcpgv65JFrmncXrg70YAQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JbVnd2YVXN+09b8YSM/hkmyBdT/HVu8L+jWuMtEsPq7uaUp7AWwUc8OAVMjkDgEQz
-	 3ODfYOfwRgn3vU3MuD8ddQIS447f69xvNL+BkMSFUE+fPIfyVNfvPqaFeuChmTS9Ny
-	 bjpD72J54iuvOd8a8lv18uoVHIqvHCEj4b/o44y3RflRYiQwMwNNmneCjWF0djjUsY
-	 mmJOnSPZReJeiXnBZVQEx3iCV7458BRDqbHB9etRVMNlcvJT7eYON+pBqlYbr1jtUl
-	 hjhYa+d9Vb6cHatsnNEilmpOmgVJHm6snmDVOozDLfIRfLp45V7/qes78Tyx/4tVj7
-	 r6nzgSCaBHGUA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 050FC3781FE3;
-	Mon,  4 Mar 2024 10:32:21 +0000 (UTC)
-Message-ID: <367fd03e-b645-49bc-95f2-0fe06a043370@collabora.com>
-Date: Mon, 4 Mar 2024 11:32:21 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CR2tb1cA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1709549332; x=1741085332;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OE0XZMxoN+lzBJ6Pub/O4OVZnEDZz5AZoPrtdE7dITo=;
+  b=CR2tb1cA+TraR8LCqREED7ChrsBO29hi/r9+SDXalwINVKgbx37bx9cQ
+   YUsvokWxwy8r/eqVVVF1PfQP4IO03aF58p/yPUCpUa5kEZV4bv0B5ZHfH
+   LdklePH5kLEHh8LVkb7vSonjGcSp+LxJYH53yNZGxmW1i6ZTrNuP6QGGM
+   v5eY5bKEP38A9Sgvifg8e+qTSlK8w0xWHY/PwZmMT2RghWqHBD5vh5zJZ
+   LIP9kbFyJR9nBFJ8bL6RHH4oUcJDy8kNHBwYxPRt44av1cqn32oxz6Fk9
+   n2I9EtwXqtm3uNx6oX4tOveSt2iqvzJJH/ghugOgrKxNNPqSKI9FxC778
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,11002"; a="4197661"
+X-IronPort-AV: E=Sophos;i="6.06,203,1705392000"; 
+   d="scan'208";a="4197661"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2024 02:48:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,203,1705392000"; 
+   d="scan'208";a="46470235"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2024 02:48:51 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 9C6C911F8B1;
+	Mon,  4 Mar 2024 12:48:47 +0200 (EET)
+Date: Mon, 4 Mar 2024 10:48:47 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] media: rcar-csi2: Use common error handling code in
+ rcsi2_parse_dt()
+Message-ID: <ZeWnD9YrXLWJYmhT@kekkonen.localdomain>
+References: <8b4203dc-bc0a-4c00-8862-e2d0ed6e346b@web.de>
+ <CAMuHMdWwegdks3eEviEsBJE3AvUVKbZqHduYdhuwz=8xTMDs5g@mail.gmail.com>
+ <260d82b6-e7fc-40c3-b414-50a883709fd7@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] scsi: lpfc: correct size for wqe for memset
-Content-Language: en-US
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- James Smart <james.smart@broadcom.com>,
- Dick Kennedy <dick.kennedy@broadcom.com>,
- "James E.J. Bottomley" <jejb@linux.ibm.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Hannes Reinecke <hare@suse.com>
-Cc: kernel@collabora.com, kernel-janitors@vger.kernel.org,
- James Smart <jsmart2021@gmail.com>, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240304090649.833953-1-usama.anjum@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20240304090649.833953-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <260d82b6-e7fc-40c3-b414-50a883709fd7@moroto.mountain>
 
-Il 04/03/24 10:06, Muhammad Usama Anjum ha scritto:
-> The wqe is of type lpfc_wqe128. It should be memset with the same type.
+Hi Dan,
+
+On Fri, Mar 01, 2024 at 04:42:01PM +0300, Dan Carpenter wrote:
+> Sakari Ailus pointed out in another thread that we could use __free()
+> instead.  Something like this:
 > 
-> Fixes: 6c621a2229b0 ("scsi: lpfc: Separate NVMET RQ buffer posting from IO resources SGL/iocbq/context")
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Looks good to me.
 
+We could merge this with your SoB (pending Niklas's review). :-) The driver
+has been since moved under drivers/media/platform/renesas/rcar-vin/ .
 
+> diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
+> index 582d5e35db0e..c569df6057b7 100644
+> --- a/drivers/media/platform/renesas/rcar-csi2.c
+> +++ b/drivers/media/platform/renesas/rcar-csi2.c
+> @@ -1372,8 +1372,8 @@ static int rcsi2_parse_v4l2(struct rcar_csi2 *priv,
+>  static int rcsi2_parse_dt(struct rcar_csi2 *priv)
+>  {
+>  	struct v4l2_async_connection *asc;
+> -	struct fwnode_handle *fwnode;
+> -	struct fwnode_handle *ep;
+> +	struct fwnode_handle *fwnode __free(fwnode_handle) = NULL;
+> +	struct fwnode_handle *ep __free(fwnode_handle);
+>  	struct v4l2_fwnode_endpoint v4l2_ep = {
+>  		.bus_type = V4L2_MBUS_UNKNOWN,
+>  	};
+> @@ -1388,18 +1388,14 @@ static int rcsi2_parse_dt(struct rcar_csi2 *priv)
+>  	ret = v4l2_fwnode_endpoint_parse(ep, &v4l2_ep);
+>  	if (ret) {
+>  		dev_err(priv->dev, "Could not parse v4l2 endpoint\n");
+> -		fwnode_handle_put(ep);
+>  		return -EINVAL;
+>  	}
+>  
+>  	ret = rcsi2_parse_v4l2(priv, &v4l2_ep);
+> -	if (ret) {
+> -		fwnode_handle_put(ep);
+> +	if (ret)
+>  		return ret;
+> -	}
+>  
+>  	fwnode = fwnode_graph_get_remote_endpoint(ep);
+> -	fwnode_handle_put(ep);
+>  
+>  	dev_dbg(priv->dev, "Found '%pOF'\n", to_of_node(fwnode));
+>  
+> @@ -1408,7 +1404,6 @@ static int rcsi2_parse_dt(struct rcar_csi2 *priv)
+>  
+>  	asc = v4l2_async_nf_add_fwnode(&priv->notifier, fwnode,
+>  				       struct v4l2_async_connection);
+> -	fwnode_handle_put(fwnode);
+>  	if (IS_ERR(asc))
+>  		return PTR_ERR(asc);
+>  
+> 
+
+-- 
+Regards,
+
+Sakari Ailus
