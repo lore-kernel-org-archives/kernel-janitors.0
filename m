@@ -1,180 +1,80 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B71179A8
-	for <kernel-janitors@vger.kernel.org>; Mon,  4 Mar 2024 08:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5FA1AAD7;
+	Mon,  4 Mar 2024 08:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709540334; cv=none; b=bFDxFEKY/QtUwB6db/8nalXrzdkrPS1CQA6w5ADipKAxKvS2oC4MHE6K2H0oskA4uNk4XfnQTXMdkdt8JvrQ06c47f3tHpExUf5cLMHYa+iawhYWoyECCdE/psgHN24knqMhfpKzo+3TuvtOIDZ1u6BdX74vEgqDFjuigT6cwqA=
+	t=1709541891; cv=none; b=KY7BbHucRQgMxs1Ip24o8CNQBokMlmNo7SlnFjFanp7UA5DeFa5XP+xiAFqL00chiGsIXtq6q6VoRzcxnbegI18mRgPmrIKkMYKlN3UhpdEC+luoSTzmCyaWIhqeddcGIgfHn4cTr0fEMyqtG9A9cwhVjhd3CqQc8Vdlnbn+wZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709540334; c=relaxed/simple;
-	bh=lf4QbrTdyQGbsfhBE4a4VPnu/JGFsWbiqabuasROWBs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kiVfOoDGBtrBsndI5QNhvAkwndBoEE8QMU7x71/87EVpnSPXuYYJx3bPtLZuxfDpEZBi05zmQr3YdMRItTed0gSeoK2vIVP+bLCEevqQg6QDPql7iycYZWm9rTWTP9OdXwglSwfKWQ5NDEG5WGYglhsijXxz6xsXFzr507Pd5b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U9FcpVwy; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709541891; c=relaxed/simple;
+	bh=aQdBSLlALLw63VO8L/jjBkWYw2D61GkjyZobEivi5pg=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jZJYmkVLYxpDk8igGUJlZkvCydPR3VREP9zsvN2eCZivVF7V7aINFti3Qj3jFfWiZTZAlzLiDSKigfnAqNbnV1ilr+PGbcfAgozAzs0vIdG7AJkXqtbF0j/m+Z0IYJNYPPXc+DJTMK913lMMI/K9udiOE1JN3jYBaCTjDo7ywhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WnEnDnHr; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U9FcpVwy"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-33e1d327595so1491243f8f.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 04 Mar 2024 00:18:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709540330; x=1710145130; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=X+Wz3vSqADvCmRUr41ggthQrfscNeOqtvo32hpAdQrU=;
-        b=U9FcpVwy5ni2jVlNJvOlBgmRDA2f8YDpTGVpaC7QD/UnNcTb++1BG6j+Il88f2sZH4
-         FNny5sfQkIQO1m7fo+WoO5ikXpOSxNHMNQuu95T8EJbBewxDB8GL53iU94MzMwXvFvXm
-         lqMSmANTLEBZ2zz/e+0HRYjatEcU2LZo4KwUseeRTbW+XKycxT7F/IOOGvXMGTPamfgL
-         4zo79l2I8bF3FOZ5Zg+Z0cNZuGy8elQ35Uv/LXT2IjR4KM7fj6+h+s5jZDOgrXfnLWY6
-         XEmdRxYO9QTSX0jHdp1svbmSGFdTGnjLBmLlEDQAsGaAA6ldQoSvYhPn/pon/PJWnkMd
-         AC8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709540330; x=1710145130;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X+Wz3vSqADvCmRUr41ggthQrfscNeOqtvo32hpAdQrU=;
-        b=TIzrvLSaSxuIGjthMdkwsiAdCgnyOEaLoAT7LIYRHmXiGbWwYmMIfTK67TYG9Yo7b6
-         e6vKslEZXMNg8QtlUvsv3v7zpSF7s0X7jHfWAECkOddVbLQww+zj/6AIFrFYcsjM/lxD
-         XAzikTyDQGOu8IH4OK+s2usmRKiAWTYMCbBZuAhE4Rfjo9g5C+g5wNuqhxRDz00HgQd1
-         wZTvvB2YGe+J5uBEy465btZYh4Q9O8Me4D0CWVExyRipADs9LSNPYOzsBsq1XZC5RnNf
-         FfU6Gik0yRPEKZk1HCn89Fygavw7cYoZ0Xbioa6daHYmGb7R0gjDp7l0f8hgFkXBZxfw
-         BgFg==
-X-Forwarded-Encrypted: i=1; AJvYcCViLU/JuG0Ltyn3KT4JfO/sBVZ1Oc4S27Ia7DWw6qo08D9bNtmuwI5CF4bTVV1hS4ZuM9SG5eJEkAd+6vOyeUvyWgbUNvCKlKcZ48FKLVgY
-X-Gm-Message-State: AOJu0YzdbYyNyT+1sZ/rWB8E7GbM5YWB62rj30UaxIj4xTa5JhEObPbH
-	vpFOmm9fGmzoZtJEHF0OIR2jE/3cRy5BKOKC2fmnqCYebkQA48Ah3Q/OQvrEVSw=
-X-Google-Smtp-Source: AGHT+IEEACqniaOv1TiY0H6kWmP529cCDflhJo/tAnZFMaI+Uhz12qFbHINc222Iumefyt2EZD63nw==
-X-Received: by 2002:a5d:650b:0:b0:33d:f3cc:1f8a with SMTP id x11-20020a5d650b000000b0033df3cc1f8amr5370378wru.55.1709540330225;
-        Mon, 04 Mar 2024 00:18:50 -0800 (PST)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id v13-20020adfd04d000000b0033d202abf01sm11477083wrh.28.2024.03.04.00.18.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Mar 2024 00:18:49 -0800 (PST)
-Date: Mon, 4 Mar 2024 11:18:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Jeff LaBundy <jeff@labundy.com>, Markus Elfring <Markus.Elfring@web.de>,
-	linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Input: iqs626a - Use common error handling code in
- iqs626_parse_events()
-Message-ID: <11e5db31-2a8f-458d-a249-7205e37aa20f@moroto.mountain>
-References: <8a7607f8-d634-415e-8269-e26dcc0f9fdc@web.de>
- <ZeU8ENmnPj3sKxAv@nixie71>
- <ZeVOPSt0L1D4BxuZ@google.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WnEnDnHr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1709541888;
+	bh=aQdBSLlALLw63VO8L/jjBkWYw2D61GkjyZobEivi5pg=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=WnEnDnHr/h/QXOlI26XCkJxch5TkTF9EBxc6HF62ugTISIN5nv5ptzrwQOqtte1IP
+	 UzYGGsH7s1getc6wfxdjsP1ksdp2eXXMUI6dWwBRDuGWRVz+AszYdf4eqhlRYl6qVw
+	 cOuDy4kO2l+xUd2P0FheHhX54e6BJe4/5A1WjOlw5EdB5hIHqdBvmrB2x++GVReO+l
+	 dkepW+mNmAQ9CcmUJ4Tc/D4bxuWqERG8byJ11ETfccLyc0lAIJkVk8caU7q1/Gypn6
+	 J31c8g4WTtkPnuBAh1ekFrod/KKkWBwWKn6vOa703G00ZHxzlX6VDXMVbOxFwiAjr/
+	 h2ze1Ljv0lSEg==
+Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1441F3782076;
+	Mon,  4 Mar 2024 08:44:39 +0000 (UTC)
+Message-ID: <bceb2aab-7b8e-4b87-a3ac-b5f25505612a@collabora.com>
+Date: Mon, 4 Mar 2024 13:44:54 +0500
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZeVOPSt0L1D4BxuZ@google.com>
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ James Smart <james.smart@broadcom.com>,
+ Dick Kennedy <dick.kennedy@broadcom.com>,
+ "James E.J. Bottomley" <jejb@linux.ibm.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>, kernel@collabora.com,
+ kernel-janitors@vger.kernel.org, James Smart <jsmart2021@gmail.com>,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: lpfc: correct size for cmdwqe/rspwqe for memset
+To: Justin Tee <justin.tee@broadcom.com>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+References: <20240301144434.2809483-1-usama.anjum@collabora.com>
+ <5a0172a7-1a02-47d4-86c7-f5fd22e9767c@wanadoo.fr>
+ <CAAmqgVM8+wWQOaF43FzQ1O-hBspB_aUODHygHeNM_e2o7Ni9uw@mail.gmail.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <CAAmqgVM8+wWQOaF43FzQ1O-hBspB_aUODHygHeNM_e2o7Ni9uw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Mar 03, 2024 at 08:29:49PM -0800, Dmitry Torokhov wrote:
-> On Sun, Mar 03, 2024 at 09:12:16PM -0600, Jeff LaBundy wrote:
-> > Hi Markus,
-> > 
-> > On Sat, Mar 02, 2024 at 12:42:08PM +0100, Markus Elfring wrote:
-> > > From: Markus Elfring <elfring@users.sourceforge.net>
-> > > Date: Sat, 2 Mar 2024 11:44:17 +0100
-> > > 
-> > > Add a jump target so that a bit of exception handling can be better reused
-> > > at the end of this function implementation.
-> > > 
-> > > This issue was transformed by using the Coccinelle software.
-> > > 
-> > > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > > ---
-> > >  drivers/input/misc/iqs626a.c | 13 +++++++------
-> > >  1 file changed, 7 insertions(+), 6 deletions(-)
-> > > 
-> > > diff --git a/drivers/input/misc/iqs626a.c b/drivers/input/misc/iqs626a.c
-> > > index 0dab54d3a060..fa9570755f7b 100644
-> > > --- a/drivers/input/misc/iqs626a.c
-> > > +++ b/drivers/input/misc/iqs626a.c
-> > > @@ -530,8 +530,7 @@ iqs626_parse_events(struct iqs626_private *iqs626,
-> > >  					dev_err(&client->dev,
-> > >  						"Invalid input type: %u\n",
-> > >  						val);
-> > > -					fwnode_handle_put(ev_node);
-> > > -					return -EINVAL;
-> > > +					goto put_fwnode;
-> > >  				}
-> > > 
-> > >  				iqs626->kp_type[ch_id][i] = val;
-> > > @@ -545,8 +544,7 @@ iqs626_parse_events(struct iqs626_private *iqs626,
-> > >  				dev_err(&client->dev,
-> > >  					"Invalid %s channel hysteresis: %u\n",
-> > >  					fwnode_get_name(ch_node), val);
-> > > -				fwnode_handle_put(ev_node);
-> > > -				return -EINVAL;
-> > > +				goto put_fwnode;
-> > >  			}
-> > > 
-> > >  			if (i == IQS626_EVENT_DEEP_DN ||
-> > > @@ -566,8 +564,7 @@ iqs626_parse_events(struct iqs626_private *iqs626,
-> > >  				dev_err(&client->dev,
-> > >  					"Invalid %s channel threshold: %u\n",
-> > >  					fwnode_get_name(ch_node), val);
-> > > -				fwnode_handle_put(ev_node);
-> > > -				return -EINVAL;
-> > > +				goto put_fwnode;
-> > >  			}
-> > > 
-> > >  			if (ch_id == IQS626_CH_HALL)
-> > > @@ -580,6 +577,10 @@ iqs626_parse_events(struct iqs626_private *iqs626,
-> > >  	}
-> > > 
-> > >  	return 0;
-> > > +
-> > > +put_fwnode:
-> > > +	fwnode_handle_put(ev_node);
-> > > +	return -EINVAL;
-> > >  }
-> > > 
-> > >  static noinline_for_stack int
-> > > --
-> > > 2.44.0
-> > > 
-> > 
-> > Thank you for this patch, but it seems like a NAK to me. I think this is
-> > a matter of personal preference, and according to mine, it is much more
-> > confusing to insert a goto label after a function's primary return path
-> > than to have 2-3 calls to fwnode_handle_put().
-> > 
-> > If you feel strongly otherwise, then I would suggest a helper function as
-> > recommended by Dmitry in another thread. However, maybe that helper should
-> > live in the driver core, as I suspect this driver is not the only place we
-> > can avoid calling fwnode_handle_put() in an error path that returns an int.
-> 
-> Yes, it should go into include/linux/fwnode.h, something like
-> 
-> DEFINE_FREE(fwnode, struct fwnode_handle *, if (_T) fwnode_hanlde_put(_T));
-> 
-> Then drivers can do:
-> 
-> 	struct fwnode_handle *ev_node __free(fwnode) =
-> 		fwnode_get_named_child_node(ch_node, ev_name);
-> 
-> and have it automatically be "put" once execution leaves the variable
-> scope.
-> 
-> Ah, we actually already have it defined in include/linux/property.h, all
-> the better.
+I'll send v2.
 
-It's already there.
+On 3/1/24 11:59 PM, Justin Tee wrote:
+> Hi Muhammad,
+> 
+> Agreed with Christophe's comment.
+> 
+> memset(cmdwqe, 0, sizeof(*cmdwqe));
+> memset(rspwqe, 0, sizeof(*rspwqe));
+> 
+> Thanks,
+> Justin
+> 
 
-DEFINE_FREE(fwnode_handle, struct fwnode_handle *, fwnode_handle_put(_T))
-
-I can send a patch for this.  You need to be a bit carefull to move
-the declaration into the correct scope for this to work.  I should write
-some Smatch rules for this...
-
-regards,
-dan carpenter
-
+-- 
+BR,
+Muhammad Usama Anjum
