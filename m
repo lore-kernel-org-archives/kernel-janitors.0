@@ -1,156 +1,101 @@
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660B538DDD;
-	Mon,  4 Mar 2024 10:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A0538392
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Mar 2024 11:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709549800; cv=none; b=XOoFiTVHrxkVkc0L8FuJhxrq/O/jxYtZpRT0qdj1yQyVie+Q8da6MGqIa7WQ+Q9qu2PpM2IZXgb0OvIrCOR7uX5Hxzaz+FHsyLoCHZOZdS/ZnGFpZUXwqXstfYamkqeD05XKSNp2kLPeW7ZRE5YMc87sI1v54NGKfNPqwxj2KTk=
+	t=1709551023; cv=none; b=WttSDTFhlQOxp+6Dz65pdCbVz1P46uLzLXAmJhEcQNUhNdG/8UsTdVURSKFq+8Hjpl2fySe2fdFANgqb1AwvaxG9UHJgqeAoG8zCIzz7PqdfeOH6tCmXSwFn8zUgB7md4oBCMiXkzplqzb8obo2tNXNT/KLQ/7H9/iQALuJXp7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709549800; c=relaxed/simple;
-	bh=24Wt4baQz9Fe57w/o1XeNPq06hI45Sc0xGbmnFC7+Js=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ZX8svERORf4O109Uf9qnLZ6eodhnK/x7eQy3qL4AWUtA9ZBLnGaVaD7Y3UqwH1JHqqw0IWebS6FJAFZwyTdxWWJ8f4DIkBRi8mMBW5tFfPOdaDOKBwj+ijkzJr6XqAvWmNwq0ctBqHFNmAqRtigyHBQTptWQGMB7KDSNljTIqGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=Nei2I58y; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1709551023; c=relaxed/simple;
+	bh=1BlIC2w6gZRcb1Jdtr26xUooK5VTCCvRxi1fD+9dmjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jVFFvLQKMNeeNy6SqScD2fwpKCy1AbvUnCI0IWspNVf1Mmq8Jj1u62mGItKnzRu3SXnqCSP+F3AiErBN1sqFwzyGhmvs135uD9CRR1tcV+zA1QPeM+aDNrdipOmOlP45Z7ax10bd51lglI7hJVo0hTQB5LED69dOsMpuGxrgTmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sop8FN6d; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="Nei2I58y"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sop8FN6d"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-412e1b52934so5473985e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Mar 2024 03:17:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=AsaY1BGuEP7x4VKORfviVFJfoqV+zfnSfsG0OgmTAfI=;
-  b=Nei2I58yJdspuHmu1GK0f6Tq9JvoRwbqBsa/879VDpcWRjnl1ohIflZ1
-   JAJE7QuiHr5zDABDSfDqRmv64HL9qXRlcj6f7CySt9NcGQ2Hbgvs5LZE1
-   FLh4ruWWA7hoZpoU3pLimakxt6kGOqgD4gzJ0DA+YVqCRnLPdrs/DETz2
-   M=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.06,203,1705359600"; 
-   d="scan'208";a="81213033"
-Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2024 11:55:24 +0100
-Date: Mon, 4 Mar 2024 11:55:23 +0100 (CET)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Markus Elfring <Markus.Elfring@web.de>
-cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-    Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-    Jeff LaBundy <jeff@labundy.com>, Rob Herring <robh@kernel.org>, 
-    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2] Input: iqs626a - Use scope-based resource management
- in iqs626_parse_events()
-In-Reply-To: <e8a2b63f-4f9a-463b-b419-c5f673191111@web.de>
-Message-ID: <b91fe21-fe2-eac8-d1ee-ea8922a08861@inria.fr>
-References: <8a7607f8-d634-415e-8269-e26dcc0f9fdc@web.de> <ZeU8ENmnPj3sKxAv@nixie71> <ZeVOPSt0L1D4BxuZ@google.com> <e8a2b63f-4f9a-463b-b419-c5f673191111@web.de>
+        d=linaro.org; s=google; t=1709551020; x=1710155820; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DPUD3naOzI7U6jLpCCkxFwa6T8a3pJ7jOrwXbJt7XTY=;
+        b=Sop8FN6dK6CxzkRm+YtGJ5SIU8GCTvMBSK+QW/8ZmCwyQ71Qx0VlGTnjaBAoplBzn7
+         /tPeYjx0RwbWoEZXZGJmBczDNLsKtAL0py3YxBi9yz5KSmAh9pRaw2EKCJNbkKkGLPCz
+         Z/e5iIoGad0Su1hovQ/nQUbzFi1fukotQdzx2lgv/qCIoqxLNuEfqV610Lt26kxGcwqL
+         7ldjC0jTx92vFJd4XU9rkuA4g3Sj9AkoiHExCye+KlxOiAvag8kurPvq5MKSE0bDnV7f
+         c8CDDLO214JwHEnyubXlFt+7xvQaSLt4hqokjky01b9L1fcIzVC551gLxEfcJwr+OXvl
+         BQNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709551020; x=1710155820;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DPUD3naOzI7U6jLpCCkxFwa6T8a3pJ7jOrwXbJt7XTY=;
+        b=fqdrYbU1u3yTvZ422AQc9FfSmviT6j0noYRXwz4kv83e56ZZIJi4FWOcG5cxjIQZjr
+         4yIIwCA7mguWNtPZ3H2dErd4r2R5S4FWKCnuxHeqA8SvBFje2q36Zt8XMOOxootzL+CC
+         1qc3/sz9dyPv5k8ISZKMnbHzU3ouqueCZGTG/vbcNASyyZe+KjwvWsdU6pqJcMn2+5uf
+         l9OKSCPuYTU5GIjWW1grsDEpEmMEusQx1LMMoeWLieub9Qa4NpoaCLH6HrufNmjIzm7h
+         JotKYe12fA1GjPbtQah+vVx4vcEQiENBcH/mLx5aAcd6N0heNo505TeU0ei++VLycR73
+         vRhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTbPeRQhHnJzHWDSoC6G5gXj6LwDVmso397iGPKiZFDijHd5hH4pRA20HO/4769MNl9UcN1Tn9BbWPo+u5m7oK0tj2wYSLiDlTQhlad18q
+X-Gm-Message-State: AOJu0YwmvueHz87pV2u5DfWqGAP28VAeW8+JG/EjR7OP4YkPKdyx60Gf
+	qlZwcAKyvg8SD8SlTGVcH59dZJePoeBmap3bDKP9MQ0heklijjiOc/uIgdbRjks=
+X-Google-Smtp-Source: AGHT+IG6uK4fFqrEq/hLrMABlpzJKWFrWyb+lxIYdFMUfmF6a1mHNvSHt1pq4YpGXjO/LuODZzbRDQ==
+X-Received: by 2002:a05:600c:3849:b0:412:e568:a123 with SMTP id s9-20020a05600c384900b00412e568a123mr1251187wmr.10.1709551020575;
+        Mon, 04 Mar 2024 03:17:00 -0800 (PST)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id n6-20020a05600c4f8600b0041273fc463csm17525439wmq.17.2024.03.04.03.16.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Mar 2024 03:17:00 -0800 (PST)
+Date: Mon, 4 Mar 2024 14:16:56 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] media: rcar-csi2: Use common error handling code in
+ rcsi2_parse_dt()
+Message-ID: <cc121bef-8bca-44e6-81aa-bf8e682bdaf5@moroto.mountain>
+References: <8b4203dc-bc0a-4c00-8862-e2d0ed6e346b@web.de>
+ <CAMuHMdWwegdks3eEviEsBJE3AvUVKbZqHduYdhuwz=8xTMDs5g@mail.gmail.com>
+ <260d82b6-e7fc-40c3-b414-50a883709fd7@moroto.mountain>
+ <ZeWnD9YrXLWJYmhT@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-544120387-1709549724=:3479"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZeWnD9YrXLWJYmhT@kekkonen.localdomain>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, Mar 04, 2024 at 10:48:47AM +0000, Sakari Ailus wrote:
+> Hi Dan,
+> 
+> On Fri, Mar 01, 2024 at 04:42:01PM +0300, Dan Carpenter wrote:
+> > Sakari Ailus pointed out in another thread that we could use __free()
+> > instead.  Something like this:
+> > 
+> 
+> Looks good to me.
 
---8323329-544120387-1709549724=:3479
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Thanks for checking!  I've never used these before.
 
+> 
+> We could merge this with your SoB (pending Niklas's review). :-) The driver
+> has been since moved under drivers/media/platform/renesas/rcar-vin/ .
 
+Alright.  I can resend this as a proper patch.
 
-On Mon, 4 Mar 2024, Markus Elfring wrote:
+regards,
+dan carpenter
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 4 Mar 2024 11:40:04 +0100
->
-> Scope-based resource management became supported also for this software
-> area by contributions of Jonathan Cameron on 2024-02-17.
->
-> device property: Add cleanup.h based fwnode_handle_put() scope based cleanup.
-> https://lore.kernel.org/r/20240217164249.921878-3-jic23@kernel.org
->
->
-> * Thus use the attribute “__free(fwnode_handle)”.
->
-> * Reduce the scope for the local variable “ev_node” into a for loop.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->
-> v2:
-> An other cleanup technique was applied as requested by Dmitry Torokhov
-> and Jeff LaBundy.
->
->
->  drivers/input/misc/iqs626a.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/input/misc/iqs626a.c b/drivers/input/misc/iqs626a.c
-> index 0dab54d3a060..86fcb5134f45 100644
-> --- a/drivers/input/misc/iqs626a.c
-> +++ b/drivers/input/misc/iqs626a.c
-> @@ -462,7 +462,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
->  {
->  	struct iqs626_sys_reg *sys_reg = &iqs626->sys_reg;
->  	struct i2c_client *client = iqs626->client;
-> -	struct fwnode_handle *ev_node;
->  	const char *ev_name;
->  	u8 *thresh, *hyst;
->  	unsigned int val;
-> @@ -501,6 +500,8 @@ iqs626_parse_events(struct iqs626_private *iqs626,
->  		if (!iqs626_channels[ch_id].events[i])
->  			continue;
->
-> +		struct fwnode_handle *ev_node __free(fwnode_handle);
-
-Doesn't this need to be initialized?
-
-julia
-
-
-> +
->  		if (ch_id == IQS626_CH_TP_2 || ch_id == IQS626_CH_TP_3) {
->  			/*
->  			 * Trackpad touch events are simply described under the
-> @@ -530,7 +531,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
->  					dev_err(&client->dev,
->  						"Invalid input type: %u\n",
->  						val);
-> -					fwnode_handle_put(ev_node);
->  					return -EINVAL;
->  				}
->
-> @@ -545,7 +545,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
->  				dev_err(&client->dev,
->  					"Invalid %s channel hysteresis: %u\n",
->  					fwnode_get_name(ch_node), val);
-> -				fwnode_handle_put(ev_node);
->  				return -EINVAL;
->  			}
->
-> @@ -566,7 +565,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
->  				dev_err(&client->dev,
->  					"Invalid %s channel threshold: %u\n",
->  					fwnode_get_name(ch_node), val);
-> -				fwnode_handle_put(ev_node);
->  				return -EINVAL;
->  			}
->
-> @@ -575,8 +573,6 @@ iqs626_parse_events(struct iqs626_private *iqs626,
->  			else
->  				*(thresh + iqs626_events[i].th_offs) = val;
->  		}
-> -
-> -		fwnode_handle_put(ev_node);
->  	}
->
->  	return 0;
-> --
-> 2.44.0
->
->
->
---8323329-544120387-1709549724=:3479--
