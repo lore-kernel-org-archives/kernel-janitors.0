@@ -1,119 +1,165 @@
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6A2126F36;
-	Tue,  5 Mar 2024 15:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA70E128803
+	for <kernel-janitors@vger.kernel.org>; Tue,  5 Mar 2024 16:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709652274; cv=none; b=VWXJLIk/h+VQ1Heg8jODhSx3y6a1ISSPd8fngctjtXhsVhbq2Oezmb3IudNvs7U+JTFyp6ND59+EL0nfhXioXxYNIQoaj1SLV3t0soHHaBBA3IJypjRIZAsteYcRYNV4cvDZvUqSyd00+XTvUKdZYqfKW7bknroB2n+QA0QxufI=
+	t=1709655712; cv=none; b=sU+IiXAGbIjxymetCSPYIPszWnRjyxk0z1AVn6SwyuoVoYCe2DhCyHTI7cjfrTQH63N1PFpaRf7yIS7eMM3N/SjbEbmeDykuir9GEp7LKvJ+X+5MBp01i/usFAcVYFvTPgT/wIYBg1s2RPESj6jE4CCRopXDEcJQ5fd0kmGnuBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709652274; c=relaxed/simple;
-	bh=qjlIRQeJBKz2vz5aisxD5IOrlTqfFDk0KcO4WDSaG8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qfal3SQi2DORiOgDSH4FQM8DsTcrpkoPAkTai9h0sIDr9LDW76I2H2FLc4mziCdiz2Ca53W7L9sVbRcUuP6PXRfvze0U9qndIkGrCs0LQ8PDi6LkZ3yKsaGPVeNAX9WkW4KnJ3uhm1DbAlKgRjR7pfQaOTsEtd15w14RRGSVe+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UhfaeAnI; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1709655712; c=relaxed/simple;
+	bh=ePf0scKJsigQuOAKkRlhcPZMVuNR9qj2n46++S/7wAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nvDXqnnYt1RsL99b7LyJRreQzl/aDQ+DtzF+n4TZsaWBcu+pkqLOwKPz69fLSbutBLN/zKvx3tAAlh6ABdBCaWcw9GOROhrAB2RWNjKhsNrZIlCmofMBBxL5sNPIZX33lF1jvPYgvj40kccLoV6bmXANKbrQJZMmGnl/X6gCh6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T4Zdm/QD; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UhfaeAnI"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AFA0EE0002;
-	Tue,  5 Mar 2024 15:24:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1709652269;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TC7BcVWBBaci9HUeR/cYeDY12xKiEfNlPcIEH+Cc0Io=;
-	b=UhfaeAnIOQbUnNE6KTFMqs54WVSJT5qGaJYgQ3zmXxYfnYO/oq/KMKfa97O0DFuS4gxDae
-	U84iL5lDUbL8yKfUP6E326+8tw0r6fEKbuaJbuPTQ8VK8KLkZiMkDMuDlTgkXgG3yZY6ZU
-	d3AcO6UMdix9Eh1Gu/9sf616R6xVZRRVZrwuTV20ubPxWpEwYkf5YirxAh+uVBtmSqPcbj
-	Q6z8Z8He8c6kwrH/kBGfsp/Gsl1LV9gDPzt6tJLnK6cd1OmAkKE5V5sgfjjcdXVpuiM+cb
-	+lNq8D9Tj0eBdFA500K4B1GPk64bCDQfOeJf79r465gWkJX4g3oVHcDNWx6t6Q==
-Date: Tue, 5 Mar 2024 16:24:27 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Markus Elfring <Markus.Elfring@web.de>, Dan Carpenter
- <dan.carpenter@linaro.org>
-Cc: linux-staging@lists.linux.dev, linux-tegra@vger.kernel.org,
- linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter
- <jonathanh@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sowjanya Komatineni <skomatineni@nvidia.com>, Thierry Reding
- <thierry.reding@gmail.com>, LKML <linux-kernel@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T4Zdm/QD"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-412eb6e15ceso7689585e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 05 Mar 2024 08:21:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1709655709; x=1710260509; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xbTnyXoHjbAH+HuOp1p4uK1MGCpktFM+Ft7hQZ4kc8Y=;
+        b=T4Zdm/QDsGo7+DHiFCAi+h0B6tVnuom95VW/bt3TqoR4l51WLCTLozJmolkrmNwPBs
+         VT/wFQjCS7tznszg5Y9t6f/y7gAkWpvUXJZx0CwzCv/vWOfZzt4nq7n9Y3swXSsfwfQ/
+         sQq2vx+2RQf23qEusTk6uImaEwbuAFG5Ww1Kem1CmOOa/zceVsivMTcNXlKp2bY58s8L
+         //FuGr/CGc1XHTv7WdsIJ//qDEvQpl+aM1fNdUxdmmuL/UluG1hmwntRGSjiNLRtS4gD
+         i3KCYGibagfvgGMOunXYcSyHpx+7DDVc5+/2ByG+uIMa70kbNHVtQ0ESjwBwLtzS/l48
+         tIBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709655709; x=1710260509;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xbTnyXoHjbAH+HuOp1p4uK1MGCpktFM+Ft7hQZ4kc8Y=;
+        b=iUV1BdFFw3F8EVWfP79kgWIxv7UiQwnDO7eKpfrsyoUf2YC+3ZK/T/X1IeUuKA2lQq
+         Rv/YHBd6KBQyKoAa80MtizVaCKFOVGBpghwDfV3c8Exy30ffo2Z0TtEg8xgBBH4BFpH8
+         ckFNyPrVkb5TBLcpqpUlxCTOxFR86zfV69117ljXzZ0cQVtxLK5v/pI+0m89bg8pIhJB
+         NATlLgXgoLqwDo5YeFJyShjFOyDSVeQw4j3bHFzdpxRccf3hxMm9TEFyRTJUbiyuZtHx
+         rd6QbtDpEfy/IaZnLbR28e9jc2SXMLXy7zeQ2wvFgwF67EEvP6jB/BnSoVRU53zqoIee
+         ELKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9CXYZDj+44tGjxWh+EmmPP2YPohu7KB4IFDy0gy7WVPdCfzPLT6bj2vtJR+5X/Gi21K/mGPeRgwJiGtGzi9xK74mPHyWeAzJpxJ/kCoGE
+X-Gm-Message-State: AOJu0YzZ9GFHat7WTYFOe8QFUhPX4oQOjJiScv4R8+gqIb4i/aJfIxRI
+	Ch5DWlgeT3RXf1aRlNbJpgVBeYI1UrQCbiv65Xelx4saU6dKljhotKkG51RD/uk=
+X-Google-Smtp-Source: AGHT+IFzmlN7MlHIvgYTDNDnpOiEWNiD6ttwixhjRaArwIgoqAErAdm9nFln7aLUd8aHdUcKy+wmzg==
+X-Received: by 2002:a05:600c:46ce:b0:412:ad6e:88cb with SMTP id q14-20020a05600c46ce00b00412ad6e88cbmr10431968wmo.36.1709655708736;
+        Tue, 05 Mar 2024 08:21:48 -0800 (PST)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id v10-20020a05600c470a00b00412704a0e4asm21342739wmo.2.2024.03.05.08.21.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Mar 2024 08:21:48 -0800 (PST)
+Date: Tue, 5 Mar 2024 19:21:44 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>, linux-staging@lists.linux.dev,
+	linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	LKML <linux-kernel@vger.kernel.org>
 Subject: Re: staging: media: tegra-video: Use common error handling code in
  tegra_vi_graph_parse_one()
-Message-ID: <20240305162427.49a9f013@booty>
-In-Reply-To: <f451ffba-db26-4a3b-a4b3-186c31f2ad64@web.de>
+Message-ID: <e38cc9fb-9453-47ed-b460-335016581049@moroto.mountain>
 References: <dbebaea7-289c-47d9-ba06-cd58a10ea662@web.de>
-	<20240301183936.505fcc72@booty>
-	<9f1b617f-06cb-4b22-a050-325424720c57@moroto.mountain>
-	<f451ffba-db26-4a3b-a4b3-186c31f2ad64@web.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+ <20240301183936.505fcc72@booty>
+ <9f1b617f-06cb-4b22-a050-325424720c57@moroto.mountain>
+ <f451ffba-db26-4a3b-a4b3-186c31f2ad64@web.de>
+ <20240305162427.49a9f013@booty>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240305162427.49a9f013@booty>
 
-Hello Dan, Markus,
+On Tue, Mar 05, 2024 at 04:24:27PM +0100, Luca Ceresoli wrote:
+> Hello Dan, Markus,
+> 
+> On Sat, 2 Mar 2024 11:40:26 +0100
+> Markus Elfring <Markus.Elfring@web.de> wrote:
+> 
+> > >>> Add a jump target so that a bit of exception handling can be better reused
+> > >>> at the end of this function implementation.  
+> > …
+> > >> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>  
+> > >
+> > > These patches make the code worse.  
+> 
+> This is of course a legitimate opinion. However Markus' patch
+> implements what is recommended by the documentation and is in common
+> use in the kernel code. A quick search found 73 occurrences in v6.8-rc7:
+> 
+> $ expr $(pcregrep -r -M ':\n\tfwnode_handle_put'  drivers | wc -l) / 2
+> 73
+> $
+> 
+> 300+ are found for of_node_put().
+> 
 
-On Sat, 2 Mar 2024 11:40:26 +0100
-Markus Elfring <Markus.Elfring@web.de> wrote:
+Using an unwind ladder is the best way to write error handling, yes.
+I've written a long blog about it.
 
-> >>> Add a jump target so that a bit of exception handling can be better r=
-eused
-> >>> at the end of this function implementation. =20
-> =E2=80=A6
-> >> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com> =20
-> >
-> > These patches make the code worse. =20
+https://staticthinking.wordpress.com/2022/04/28/free-the-last-thing-style/
 
-This is of course a legitimate opinion. However Markus' patch
-implements what is recommended by the documentation and is in common
-use in the kernel code. A quick search found 73 occurrences in v6.8-rc7:
+In my blog, I talk about that "Unwinding from loops is slightly
+complicated."  Because what you want to do is clean up partial
+iterations before the goto.
 
-$ expr $(pcregrep -r -M ':\n\tfwnode_handle_put'  drivers | wc -l) / 2
-73
-$
+Now imagine we apply Markus's patch and someone comes along an adds a
+new allocation after the loop is over.  Then we have to do some kind of
+bunny hop:
 
-300+ are found for of_node_put().
+free_new_thing:
+	free(thing);
+	goto cleanup;  <-- ugly little goto
+put_fwnode:
+	fwnode_handle_put(remote);
+cleanup:
+	dev_err(vi->dev, "failed parsing the graph: %d\n", ret);
+	v4l2_async_nf_cleanup(&chan->notifier);
+	return ret;
 
-> > If we're in the middle of a loop,
-> > then we should clean up the partial loop before doing the goto.
-> > Otherwise it creates a mess when we add a new allocation function after
-> > the end of the loop. =20
->=20
-> How does such a feedback fit to another known information source?
->=20
-> Section =E2=80=9C7) Centralized exiting of functions=E2=80=9D
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/process/coding-style.rst?h=3Dv6.8-rc6#n526
->
-> > Someone is going to add a _scoped() loop which uses cleanup.h magic to
-> > call _put automatically.  This is a good option. =20
->=20
-> I became also curious how scope-based resource management will influence
-> Linux coding styles further.
-> Will various collateral evolution become more interesting?
+Adding the little goto seems like a small thing when you're seeing it
+in an email like this.  But when you add the new goto years later,
+people are used to unwind ladders working in a specific way and they
+forget that, "Oh this ladder has a weird rung that we have to skip over."
+We see these bugs more with locking.
 
-After some research I think I found what Dan means:
+	one = alloc();
+	if (!one)
+		return;
 
-https://lore.kernel.org/all/20240225142714.286440-3-jic23@kernel.org/
+	lock();
+	two = alloc();
+	if (!two)
+		goto free_one;  <-- should have unlocked before the goto
+	unlock;
 
-After reading the above thread, I agree using *_scoped() macros will
-be a good improvement. It is not yet in mainline as of v6.8-rc7, but
-it is in linux-next. So I think despite being valid this patch might
-still be discarded because a better solution should be available in a
-few weeks.
+	three = alloc();
+	if (!three)
+		goto free_two;
 
-Luca
+	return 0;
 
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+free_two:
+	free(two);
+free_one:
+	unlock();
+	free(one);
+
+	return -ENOMEM;
+
+regards,
+dan carpenter
+
