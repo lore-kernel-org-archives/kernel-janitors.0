@@ -1,160 +1,119 @@
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268665A7A4;
-	Tue,  5 Mar 2024 13:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6A2126F36;
+	Tue,  5 Mar 2024 15:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709645025; cv=none; b=V2ynJwArTJLV0owLzD5SCvVzc11YSZmHELYrBr+Fd1K7TCzjasoPDSI+4M6rA4G7awa7jx7uhWmmOafzyvcCnU95bDXruIuYBEsb/Gd0ojEZ2WwlzdARvgQMyRfZexW79jQTTLVPqzkNlKTpVfs0AqkYP4VH9QD/VHVufUQTKBk=
+	t=1709652274; cv=none; b=VWXJLIk/h+VQ1Heg8jODhSx3y6a1ISSPd8fngctjtXhsVhbq2Oezmb3IudNvs7U+JTFyp6ND59+EL0nfhXioXxYNIQoaj1SLV3t0soHHaBBA3IJypjRIZAsteYcRYNV4cvDZvUqSyd00+XTvUKdZYqfKW7bknroB2n+QA0QxufI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709645025; c=relaxed/simple;
-	bh=NSn3fjj7cZhdRvPGCd66wr3eOuzKXKPPeUoqCE4yTi0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oQ0X6YPlEVy33ZMqbt4Yb/3uUBu5iQCwJJCt7Cjh1nJSijgbco1brGPWfhIDSLkXXK/rcqvM1mKZBzxg9A5en8uYcUr81KsJJcGbsp12L89cqAUDF2ARuq/UCq4G6j4i5/NAXEYd/Hbv0QLvWJ0VbtrScy92q5Zzjo3C702xpBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=n+oNEcpr; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+	s=arc-20240116; t=1709652274; c=relaxed/simple;
+	bh=qjlIRQeJBKz2vz5aisxD5IOrlTqfFDk0KcO4WDSaG8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qfal3SQi2DORiOgDSH4FQM8DsTcrpkoPAkTai9h0sIDr9LDW76I2H2FLc4mziCdiz2Ca53W7L9sVbRcUuP6PXRfvze0U9qndIkGrCs0LQ8PDi6LkZ3yKsaGPVeNAX9WkW4KnJ3uhm1DbAlKgRjR7pfQaOTsEtd15w14RRGSVe+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UhfaeAnI; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="n+oNEcpr"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=R8G11MBkvhlXCVhZnnXEF3NYg8qRglIYPfW64j0+IFs=; t=1709645023;
-	x=1710077023; b=n+oNEcprrzj5xwS3oJtdE/0Sl9xDGDu34mTMPLxl2fWA8fDdkO/Fr8G0dQ2U8
-	D83rD47V7qlez8LP1M3vZHUCMGX7I9C1AwRjcDLlzwoWDTItpaCwzCtHIXAfM+s9uu4o3OKoId1PH
-	x6oW8uQ4BgBV89nM7HF9aDt2xuGdP6vjURcYBS3iazXNdUAC89NOrIJsVTXNGyIIx2fOdwqcRb74t
-	jTfIEQiT3EUYLaOx0vBux4Fo+r7UKTSov11raGQs1CItWccQqpHMl+e6NcWsxbk0WWzc0kc5txoS7
-	e3TYfDvjB5qLmNaKoGqFasVqp2vwuxY4hzv4EtuzKmq3mM3ZnA==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1rhUlf-00081c-Ei; Tue, 05 Mar 2024 14:23:39 +0100
-Message-ID: <3d40b22d-2cc0-4c34-b8af-e9c84042dd12@leemhuis.info>
-Date: Tue, 5 Mar 2024 14:23:38 +0100
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UhfaeAnI"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AFA0EE0002;
+	Tue,  5 Mar 2024 15:24:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1709652269;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TC7BcVWBBaci9HUeR/cYeDY12xKiEfNlPcIEH+Cc0Io=;
+	b=UhfaeAnIOQbUnNE6KTFMqs54WVSJT5qGaJYgQ3zmXxYfnYO/oq/KMKfa97O0DFuS4gxDae
+	U84iL5lDUbL8yKfUP6E326+8tw0r6fEKbuaJbuPTQ8VK8KLkZiMkDMuDlTgkXgG3yZY6ZU
+	d3AcO6UMdix9Eh1Gu/9sf616R6xVZRRVZrwuTV20ubPxWpEwYkf5YirxAh+uVBtmSqPcbj
+	Q6z8Z8He8c6kwrH/kBGfsp/Gsl1LV9gDPzt6tJLnK6cd1OmAkKE5V5sgfjjcdXVpuiM+cb
+	+lNq8D9Tj0eBdFA500K4B1GPk64bCDQfOeJf79r465gWkJX4g3oVHcDNWx6t6Q==
+Date: Tue, 5 Mar 2024 16:24:27 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Markus Elfring <Markus.Elfring@web.de>, Dan Carpenter
+ <dan.carpenter@linaro.org>
+Cc: linux-staging@lists.linux.dev, linux-tegra@vger.kernel.org,
+ linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter
+ <jonathanh@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>, Thierry Reding
+ <thierry.reding@gmail.com>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: staging: media: tegra-video: Use common error handling code in
+ tegra_vi_graph_parse_one()
+Message-ID: <20240305162427.49a9f013@booty>
+In-Reply-To: <f451ffba-db26-4a3b-a4b3-186c31f2ad64@web.de>
+References: <dbebaea7-289c-47d9-ba06-cd58a10ea662@web.de>
+	<20240301183936.505fcc72@booty>
+	<9f1b617f-06cb-4b22-a050-325424720c57@moroto.mountain>
+	<f451ffba-db26-4a3b-a4b3-186c31f2ad64@web.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Towards a re-organized submitting patches
-Content-Language: en-US, de-DE
-To: Jonathan Corbet <corbet@lwn.net>, Lukas Bulwahn
- <lukas.bulwahn@gmail.com>, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240301134637.27880-1-lukas.bulwahn@gmail.com>
- <87plwbxon7.fsf@meer.lwn.net>
- <57b07ec5-586a-46e6-9ba2-26be2372c1c2@leemhuis.info>
- <87edcorg06.fsf@meer.lwn.net>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-In-Reply-To: <87edcorg06.fsf@meer.lwn.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1709645023;1a982acb;
-X-HE-SMSGID: 1rhUlf-00081c-Ei
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On 05.03.24 13:59, Jonathan Corbet wrote:
-> Thorsten Leemhuis <linux@leemhuis.info> writes:
->> On 03.03.24 17:31, Jonathan Corbet wrote:
->>> Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
->>>> I wanted to clean up the development-process documentation. There is
->>>> however no easy way to break the ice here:
->>>>
->>>> The elephant in the room is that there is some unclear relation between
->>>> 5.Posting.rst, 6.Followthrough.rst and submitting-patches.rst.
->>>> (Yes, I know each document has its own history...; but let us put the
->>>> history aside for now.)
->>>
->>> FWIW, the objective of those two documents is quite different; one is a
->>> high-level overview of how the development process as a whole works, the
->>> other is a detailed guide to submitting work for consideration.
->>
->> Sorry, I'm slightly confused here, so I have to ask: which is which?
->>
->> Due to the "*essential*" in the headline of submitting-patches.rst and
->> its "For *detailed* information on how the kernel development process
->> works, see Documentation/process/development-process.rst" in the intro
->> make it sounds to me like submitting-patches.rst should be the one with
->> the high-level overview. But...
->>
->>> Again, let's remember the different purposes of these documents.  The
->>> development-process document is an overall description of the process,
->>> so it doesn't need the details.
->>
->> ...this makes it sounds like you consider it the other way around. And
->> for me that feels the wrong, as why describe the overall process in
->> detail, but leave the most important part of the process to some other
->> document?
->>
->> /me wonders what he is missing
-> 
-> The series of files starting with Documentation/process/1.Intro.rst was
-> meant to describe the whole of the development process to a wider
-> audience; I originally wrote it as a project for the Linux Foundation.
-> It covers far more than the business of putting up patches for
-> consideration - development cycles and all that.
-> 
-> submitting-patches.rst, instead, covers the details of getting code
-> considered for merging; it is intended to be read by the people actually
-> trying to do that work.
-> 
-> One document describes what the pieces of the car are and how they work
-> together to get you to the pub.  The other gives all of the steps for
-> working on the brakes without causing accidents.  They both fit as part
-> of a larger body of documentation, but they are definitely not the same
-> document.
+Hello Dan, Markus,
 
-Thx for the clarification. And of course both fit in a larger body. It
-seems some of the word used in the intros of both documents made me
-assume it was the other way around at some point in the past and then it
-stuck. Wondering if that's just me or if that happened to others as
-well. Whatever, if Lukas will realize his plans I guess the different
-target audiences will become more obvious over time.
+On Sat, 2 Mar 2024 11:40:26 +0100
+Markus Elfring <Markus.Elfring@web.de> wrote:
 
-Thx again! Ciao, Thorsten
+> >>> Add a jump target so that a bit of exception handling can be better r=
+eused
+> >>> at the end of this function implementation. =20
+> =E2=80=A6
+> >> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com> =20
+> >
+> > These patches make the code worse. =20
+
+This is of course a legitimate opinion. However Markus' patch
+implements what is recommended by the documentation and is in common
+use in the kernel code. A quick search found 73 occurrences in v6.8-rc7:
+
+$ expr $(pcregrep -r -M ':\n\tfwnode_handle_put'  drivers | wc -l) / 2
+73
+$
+
+300+ are found for of_node_put().
+
+> > If we're in the middle of a loop,
+> > then we should clean up the partial loop before doing the goto.
+> > Otherwise it creates a mess when we add a new allocation function after
+> > the end of the loop. =20
+>=20
+> How does such a feedback fit to another known information source?
+>=20
+> Section =E2=80=9C7) Centralized exiting of functions=E2=80=9D
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
+ocumentation/process/coding-style.rst?h=3Dv6.8-rc6#n526
+>
+> > Someone is going to add a _scoped() loop which uses cleanup.h magic to
+> > call _put automatically.  This is a good option. =20
+>=20
+> I became also curious how scope-based resource management will influence
+> Linux coding styles further.
+> Will various collateral evolution become more interesting?
+
+After some research I think I found what Dan means:
+
+https://lore.kernel.org/all/20240225142714.286440-3-jic23@kernel.org/
+
+After reading the above thread, I agree using *_scoped() macros will
+be a good improvement. It is not yet in mainline as of v6.8-rc7, but
+it is in linux-next. So I think despite being valid this patch might
+still be discarded because a better solution should be available in a
+few weeks.
+
+Luca
+
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
