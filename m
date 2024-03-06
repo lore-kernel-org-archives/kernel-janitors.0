@@ -1,87 +1,82 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D2B13664D;
-	Wed,  6 Mar 2024 15:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9271350EF;
+	Wed,  6 Mar 2024 15:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709739815; cv=none; b=N62lCWHM5M7E/HsZPusQETub65FD8gNH3fKC2fOFUZ25wOUwpCisgjT9fYBGQygwuhiYE+QeqO0GYL6Ww4GjZfMxtVTKliQ2ETq9v7rIEWwGkNekCyIwRzXWIlWjUTOdo3Ic+jhVX0DI3m72hO4uMT8Fz1DaHy6WNDhCLrvHFdA=
+	t=1709740462; cv=none; b=baHCQ/0wq0iD1DuVCjVEmKI/EbGlrDIf4brPCIq1gYjSJj1SM52xQTDVBRipzhfETA9VvKg6d03hddrARJW3tMD1JX3h9xbb1CiJtyGPZdxAayC6GYuH7BURWwQ/TjObfG8PUuTma4AJrQNDVx//diCd168s6wspg3QiU00PE7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709739815; c=relaxed/simple;
-	bh=L54QSDfP6jYa7LP99ropL3BoZ+PWNlbhNlP3Am7ntYg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o9eNSvNzTB/ASPxtOS26xTAndCVbuhL9805iGGh9rQpGgkbfE7AZRB6hC9P0JeY6XilDKjXXupmj+1iQFCA4gik6P1lpd61URNYiTrxmF7GU0wgWavsGyOF8YDwTCY0uBp+lHD00X3D8HUcHFDBaSQMK3hEx/Go7o6Zv8m/nkKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=csZvXbCp; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709740462; c=relaxed/simple;
+	bh=QA/aKryvrm59TLPorBsymx+woVTJLVgY9zv5V0F3bU0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=avXYo5MYuGW1e4gDERMdexuzIZ4X3ccbjZdQCk3koflBCi9EndwvKI5jJlXkPmVoyqP07YKpnqZZvjg4FRrHovGJjqVbQjsCvMbwmCFKvxspgUjZw68wWXWyLla4Qpfp2lT21GdbRGQcOLneo7EhOdHAHkFFhpxVH4cWxjObwA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nnn+lCzg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="csZvXbCp"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a3ed9cae56fso186097166b.1;
-        Wed, 06 Mar 2024 07:43:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709739812; x=1710344612; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=564XW1Zg593J2gO92SEH6dhjFbJFfOOzGq+FzdnpDxA=;
-        b=csZvXbCpF0PySNx8nIASfPzNisRYGn+sAWi+MtBSj2rowD9bW8K/5qq7lxr4/ggLYv
-         4aGAGELdkzRW6LKEJ702oQOMaYUIKj8pNlAfUcsGvzINxuOK3e77kw7bVnSPl5qsEZB7
-         DrfAEHvr1l3ydIqoruPhmYDGEhlK953sKowGWntqIS8ZxU4laWAYDniF63Wp+zy82eUq
-         UgIJH9dE1rqD0oRAaN+MbP+63qyOREQMyDKeNFPOGSTe0w+o3ifVmtyXjYW9PmO4f6JW
-         UhjTjO2C01ZFyCPhGxLGAHc9B75F8elXIGvj0yF94FEA8u9T4fTLBhqKzlhF1YL2DFXI
-         jBYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709739812; x=1710344612;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=564XW1Zg593J2gO92SEH6dhjFbJFfOOzGq+FzdnpDxA=;
-        b=gNCVfoD65tI7b3+Y3xW7qM2iUlqPQPv7i0sBU7VkVBA9zCYtRowNCo0GL5tKt5Mkf7
-         wXMmup0qPnSocz+YrMNc4KxdpeUoeRusaOcQSbkR5+2DKrwurn1FtAPHg2OSOIMRyiiG
-         VjwdquQBTWbv0x6xZ8WvaN8D/higNrzHoO/XHO8XYHrM4MtMlKqdHp5CrpC2IskLqEnE
-         qRYSXFUxLDAOq6NQKOud4v0+EbSadT6J3Wn8b6ewGltLdtfmg6xo66q2wrWcEI9Mk4nw
-         x85C1o+oH6ObHeAM7zH0KYxnt8QhlEObBegjVFcmRWgi68rsAXcehVNLSkCuN863DZgj
-         g2Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCUXkHaMb6FAHLiEEpFQ51t/jexvN8Po5gOGztRDheKagjtMZX/OzjY0CMcU4hUiJWBC1GBsGEKhwK+pmqnkeT6UgCywdMkJ+FErkOeL
-X-Gm-Message-State: AOJu0Yx0yR7kfQVtRc9ZPtbuApp1+nmlXg4K1tOAJqkyqGRZom/F3BAO
-	lfNa9FJMrB8fADjXMs8EyqgNaZ/b0Sdw3AG4g2gUcstUnrrYL/uJHs1TDnzX71o34Khr4DmYWtH
-	Vz0B3swLjcBlGjjnvTzYUL9VSjnE=
-X-Google-Smtp-Source: AGHT+IEYVgDvWAx0tkMslUDJ6VQQCdyJISWKYeieeoobQ8e5jZzjaqU/edPut17SR+CFrTtOMHlgrdnSmMQ8Fwrr2oo=
-X-Received: by 2002:a17:907:6d13:b0:a45:9e6e:fba1 with SMTP id
- sa19-20020a1709076d1300b00a459e6efba1mr7618951ejc.15.1709739812372; Wed, 06
- Mar 2024 07:43:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nnn+lCzg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD9FCC433F1;
+	Wed,  6 Mar 2024 15:54:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709740462;
+	bh=QA/aKryvrm59TLPorBsymx+woVTJLVgY9zv5V0F3bU0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Nnn+lCzgK2O0834H3DjRpkECGzxGhTGpjdqCmxV8l4JW/MmZrBBD48eM3XLgMQ3mn
+	 salDfOTZczGTQH/nNcVXmFOX7QEkFijfgfEuItCJaHceEGm3r71A9zVWzrGd7YmtFP
+	 jZ3dDx1RRP1I0WctktE4IyyJOnhjntiny+sW/bhLM42Vl1Ln/pgbXQFG/pRkDYWjVW
+	 Ny2TKAcKClFQf3s943jqGteHH2XVAaLx/BTe7NnVvBacvxE2igcL7f512vc05jsvmJ
+	 BH6rm/MBFQi3drNGqxDx+sNR19xQimQUOG+PhY3uYLrB4DgxMvE8gfs0dttBY1atcn
+	 9uO53qEmQx3dw==
+From: Mark Brown <broonie@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Lee Jones <lee@kernel.org>, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <19f62cc2-bdcf-46f7-a5c5-971ef05e1ea7@moroto.mountain>
+References: <19f62cc2-bdcf-46f7-a5c5-971ef05e1ea7@moroto.mountain>
+Subject: Re: [PATCH] regulator: lp8788-buck: fix copy and paste bug in
+ lp8788_dvs_gpio_request()
+Message-Id: <170974046063.173132.14907640215703299478.b4-ty@kernel.org>
+Date: Wed, 06 Mar 2024 15:54:20 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <b442a768dd23d9c6fdac6fcc30bc86794e85c8f5.camel@gmail.com> <0eb384a3-5634-453d-b08e-a80db3fb742d@moroto.mountain>
-In-Reply-To: <0eb384a3-5634-453d-b08e-a80db3fb742d@moroto.mountain>
-From: Ayaan Mirza <ayaanmirza.788@gmail.com>
-Date: Wed, 6 Mar 2024 21:13:20 +0530
-Message-ID: <CAFSNnn2BsM-DmnT9Or1fCTKMCG58ruNE7vrBggQuns9-_K67HA@mail.gmail.com>
-Subject: Re: [PATCH] Subject: Improved help text for rtl8712
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-a684c
 
-Thanks for the tip! Will keep in mind!
+On Wed, 06 Mar 2024 16:52:29 +0300, Dan Carpenter wrote:
+> "gpio2" as intended here, not "gpio1".
+> 
+> 
 
-On Wed, Mar 6, 2024 at 8:46=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
->
-> Also the subject is wrong.  You left out the subsystem prefix.  It
-> should be:
->
-> Subject: [PATCH] Staging: rtl8712: Improve help text for rtl8712
->
-> regards,
-> dan carpenter
->
+Applied to
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
---=20
-Regards,
-Ayaan Mirza Baig
+Thanks!
+
+[1/1] regulator: lp8788-buck: fix copy and paste bug in lp8788_dvs_gpio_request()
+      commit: e6f0b08a036734552628ab788ecb528ca53814ab
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
