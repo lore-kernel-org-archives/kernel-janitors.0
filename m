@@ -1,44 +1,66 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1145C28EC;
-	Wed,  6 Mar 2024 15:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01EE134CEF
+	for <kernel-janitors@vger.kernel.org>; Wed,  6 Mar 2024 15:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709737266; cv=none; b=qAuepCVH//Whx1Bz/It5X8ydmHMVjVKrsCYnEA5ptRd0lN5V0xJzgDQEaFSo91rj1vqYip/Kmwt45Tp6XxcrmJz03MvU6TfI0NrLCF3H5GioNAFQnav0XlGYmOdDkM4CD4CswF4AIrjMIxr3YRK5vltb42mXuAGfwsDnparXHUg=
+	t=1709737747; cv=none; b=qPCPFIlj1X7Jr3XFr1XJ1SGt+U+ompAH5hG4wLAoT/UC/uVo/C1aY6i6gxHSVpAkSCeFcRLTZresVMv4XRZb4/rltYMxxNp8nXzswAYdMK/vS/hEOaO75EApDeYNFATmaoayn4pznTsAvQpGhU8fMQPSZs5ZENmU4vesNcUJBg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709737266; c=relaxed/simple;
-	bh=KYmer60mc8PcsnZd2TV+zzjoRykr0eBCuDN/h8vjbwg=;
+	s=arc-20240116; t=1709737747; c=relaxed/simple;
+	bh=jbtDCBpf12tNWjIi8xNoPvKMmgV3/4H7xox9r9lT4k4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aCSxLGHG/K4ZKea/GDgPHY0oJTY5RMvaSnrEvrT8jL7HG975LgU7mxlwAhhm87PQCcKuCn5n+Jsavnfb/PRwUonUZxx7fPjqWWGaDEdkU/5fYwT9CisJcVp4U3qGKiqw4P8I8Q+MPZ/w1YnV5rM0Jt2RTUKdnL3fwj4gRtKy0h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KxJ6vkQd; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=Grub30AUHOK3db+eoWr8ewqcg4ZhZhWOaQWcpHcviF6tOZ72b+Rz2zcX20l6oyNBLfFa/FjXwF/cdABX1pjKhE/bBIqLk1m4jQhitvOys10Cind/KdPeYsG8nyk9v+u08i6xSnG9F8oJ8Ck7rFWEqDmru3pR0dzcunqLXIuKsxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uibrp1QN; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KxJ6vkQd"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Ll+1Du/bb2u+urPB/fc9XN9sLdVfL/sTZ5PzpjIu2ds=; b=KxJ6vkQdfAHSJmbCDtoi/lGO1Y
-	Ib/OUrM9LDmlM7/MldSzsq2idBKgrgV5yB+8p5yWpO3h8S9pUC/ndAbwOK/tyYXsb8fYz3eKdyvTj
-	SlVEOcZzTSGTLONhy5cIk6xui/bdcLZe3J8mOEdSVQ2Z8PtlH9bIS3hX3U7SA6xCNC2cvvbEofgcz
-	9woGMhw6c7FuVXuYI9DmYkSfOgkSRm8c7IsF/70Wzp016glqAfcDasFPivrftZjFq+QrsZdzv7JRX
-	VvpiIn5/Rl8Z2OdZ6N4RmurFzMPBsqo57YhBkSdoeLn9iwixn/la+yJU0GooxiaFDGxd1wZfj9CTU
-	5FNh4biQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rhslP-000000071Iu-4BNe;
-	Wed, 06 Mar 2024 15:01:00 +0000
-Date: Wed, 6 Mar 2024 15:00:59 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Wedson Almeida Filho <walmeida@microsoft.com>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] hfsplus: remove dev_err message "xattr exists yet"
-Message-ID: <ZeiFK0gfGrIcTx78@casper.infradead.org>
-References: <20240306124054.1785697-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uibrp1QN"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-512e39226efso7055437e87.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 06 Mar 2024 07:09:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1709737744; x=1710342544; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hp6x815KAY3JWPUiKmoiGn3qRQ+0HmVIas1eOpRKDhY=;
+        b=uibrp1QN+S1ArrZGDHb4jFhBowuuGUTV8UfBtQ/hTViNbWuCMim54J8drhL4cE+vc4
+         hp9Q5Vsi3TbNaadrMy/s5eFtMLhKck/a3L37yVU+Lcv1o4bGS3x/5UD/o78jbOIrGMW2
+         TeQLxDKHnLA11/kRARINn9D6BvwiJAFl9aCPLk3OHtxF6UYYHcLe2/JMQJ/d+FcWT1OU
+         vo0LIpkDX7x3eTLM1U23V5/Bz/9aH44VwtzcjSvaDZm1/IL4lpa9w4hUMcmkYxrHNDfz
+         BKZ/V9LU1/xJKzIhROpmsluTGXEWNr3Un/9q+QhnJCY3MS2fCLxj6HcOXTYNctC+dKql
+         H2Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709737744; x=1710342544;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hp6x815KAY3JWPUiKmoiGn3qRQ+0HmVIas1eOpRKDhY=;
+        b=K+23Dpg3eTO61tFQVvdK2noNnu/Mc6OUgR4FyiZ4Y+KbpprK+t7vwXPpK3Hyaok+VN
+         JJsym0WKwOHjYcFWLWjH45LH5Xm7a4X5FHcozfWb5YSMi5O7CISzqSi4vCvqsKtjjM6A
+         6q3LJYWtkPQ9bFGNrkm+hYX508oNVFxASk1FO3tgndNq5iWRKNb5MK0QLUMvYNDUgB/B
+         sVtEid2uaaa2Rai21tmAiyuxnLNWYHGI24WaKmLqCVv5p1iXJTMJ8VWr809c6hPj6hqV
+         pZJHYnMnqpBNF3Sb4rM0l8skbljLnDes6iRzfS3NaS/XWgZcLs4FAo9nbWxtucWY7k/p
+         zb+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUmbhR+QL7LTyTR/k+lYhpYizfyk0SuH1Sn8Skw9sJtVe7i4yXpPSAt5T4CmGrj2mpET3saNhkN0PJxng/fIYs/VimPh6YFVPZpm9C1EZfM
+X-Gm-Message-State: AOJu0YySCyBsqnu68axcu8P11YwDhoL1lwcTeRVQT4wZeKVzl3E8DvDU
+	tj0USyE2vVNd2f6RQcqe07PJwSmdU3YIoQ0FD+gXUc5TcLgAnAXObOd42N0NIwU=
+X-Google-Smtp-Source: AGHT+IHpVdrkldSOry+sg8KBGgSikEKDS9C7yH+jRteTOiUQtWcqqLQ/HiwwjaWDM3cPQlyoxPtIZQ==
+X-Received: by 2002:a05:6512:e98:b0:513:59fb:1a50 with SMTP id bi24-20020a0565120e9800b0051359fb1a50mr2969946lfb.54.1709737743509;
+        Wed, 06 Mar 2024 07:09:03 -0800 (PST)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id s15-20020a05600c45cf00b0041304100fa9sm288447wmo.45.2024.03.06.07.09.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Mar 2024 07:09:03 -0800 (PST)
+Date: Wed, 6 Mar 2024 18:08:59 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Andy Whitcroft <apw@canonical.com>
+Cc: Joe Perches <joe@perches.com>,
+	kernel-janitors <kernel-janitors@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: checkpatch.pl getting stuck on a macro in mm/kmsan/kmsan_test.c
+Message-ID: <2bac2cd3-ccdc-413f-aae7-110b5c36122a@moroto.mountain>
+References: <CAKXUXMwCdV466mRd4K0ePV73qDO9GRAph4KuC5nQ0JAp-ouemQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -47,44 +69,52 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240306124054.1785697-1-colin.i.king@gmail.com>
+In-Reply-To: <CAKXUXMwCdV466mRd4K0ePV73qDO9GRAph4KuC5nQ0JAp-ouemQ@mail.gmail.com>
 
-On Wed, Mar 06, 2024 at 12:40:54PM +0000, Colin Ian King wrote:
-> While exercising hfsplus with stress-ng with xattr tests the kernel
-> log was spammed with many "xattr exists yet" messages. The error
-> EOPNOTSUPP is returned, so the need to emit these error messages is
-> not necessary; removing them reduces kernel error spamming.
+On Wed, Mar 06, 2024 at 10:33:55AM +0100, Lukas Bulwahn wrote:
+> Dear Joe,
+> 
+> while running checkpatch.pl -f on all files in the kernel repository
+> (v6.8-rc1) for some experiment, I noticed that checkpatch.pl got stuck
+> on mm/kmsan/kmsan_test.c, i.e., ./scripts/checkpatch.pl -f
+> mm/kmsan/kmsan_test.c never terminates.
+> 
+> I could already boil it down to checkpatch getting stuck on the macro
+> #define DEFINE_TEST_MEMSETXX(size), see lines 541 to 554 in
+> mm/kmsan/kmsan_test.c on v6.8-rc1.
+> 
+> I do not know if it is worth fixing, but certainly I was surprised
+> that reasonable code can put checkpatch into some stuck state.
 
-Isn't that the wrong errno though?  EOPNOTSUPP isn't listed as an errno
-in the fsetxattr manpage.  ENOTSUP should be used for "xattrs are not
-supported".  But this condition looks like EEXIST to me.
+I think the bug is ancient...  Here is a stupid solution.  But afterward
+it still prints a ton of Perl warnings:
 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  fs/hfsplus/xattr.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-> index 9c9ff6b8c6f7..57101524fff4 100644
-> --- a/fs/hfsplus/xattr.c
-> +++ b/fs/hfsplus/xattr.c
-> @@ -288,7 +288,6 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
->  
->  	if (!strcmp_xattr_finder_info(name)) {
->  		if (flags & XATTR_CREATE) {
-> -			pr_err("xattr exists yet\n");
->  			err = -EOPNOTSUPP;
->  			goto end_setxattr;
->  		}
-> @@ -335,7 +334,6 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
->  
->  	if (hfsplus_attr_exists(inode, name)) {
->  		if (flags & XATTR_CREATE) {
-> -			pr_err("xattr exists yet\n");
->  			err = -EOPNOTSUPP;
->  			goto end_setxattr;
->  		}
-> -- 
-> 2.39.2
-> 
-> 
+substr outside of string at ./scripts/checkpatch.pl line 5158.
+Use of uninitialized value $op_type in string ne at ./scripts/checkpatch.pl line 5164.
+substr outside of string at ./scripts/checkpatch.pl line 5158.
+Use of uninitialized value $op_type in string ne at ./scripts/checkpatch.pl line 5164.
+
+regards,
+dan carpenter
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 9c4c4a61bc83..bd7a286bc1ce 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2260,10 +2260,14 @@ sub annotate_values {
+ 		} elsif ($cur =~ /(^.)/o) {
+ 			print "C($1)\n" if ($dbg_values > 1);
+ 		}
++		my $old = $cur;
+ 		if (defined $1) {
+ 			$cur = substr($cur, length($1));
+ 			$res .= $type x length($1);
+ 		}
++		if ($old eq $cur) {
++			last;
++		}
+ 	}
+ 
+ 	return ($res, $var);
+
+
