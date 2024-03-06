@@ -1,78 +1,87 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D465D904
-	for <kernel-janitors@vger.kernel.org>; Wed,  6 Mar 2024 15:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D2B13664D;
+	Wed,  6 Mar 2024 15:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709738206; cv=none; b=qi7yXG2/mg0iuYNgeN+e2QI+TzPVphVjxSE/dBa3+TrbJIAWtng3tD8dKxh2IiFFxLVJUJIo7zTSE9L6YU8nMQUIm/p6WzWno4i/Emhl1ReMoo511pe15YEtoDS8x4PeR82k2y3tohzj8xl7G/HR2v7XfNwy1S44iwo2e/aygRc=
+	t=1709739815; cv=none; b=N62lCWHM5M7E/HsZPusQETub65FD8gNH3fKC2fOFUZ25wOUwpCisgjT9fYBGQygwuhiYE+QeqO0GYL6Ww4GjZfMxtVTKliQ2ETq9v7rIEWwGkNekCyIwRzXWIlWjUTOdo3Ic+jhVX0DI3m72hO4uMT8Fz1DaHy6WNDhCLrvHFdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709738206; c=relaxed/simple;
-	bh=o2tehRP8VldR9ITvDj4X6sv+xRh4ood61fpHAeI64Kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EVtjKauYB+HkgmHPZpUZMq7GSqYSQCGXnSgnD5DkSH8MRqoB/jPOqghs/lJGon4PZbP8Rz1gqUtCI87IzFUWIa/Q1qxK3ERxJIMxO4vYcQldiUV0BemoiVgWJDehd3aymCcYxUuL/0AeL+M8m9mS6WH2nVy2BEdfyotJx9YO8K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZuIa8ViD; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709739815; c=relaxed/simple;
+	bh=L54QSDfP6jYa7LP99ropL3BoZ+PWNlbhNlP3Am7ntYg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o9eNSvNzTB/ASPxtOS26xTAndCVbuhL9805iGGh9rQpGgkbfE7AZRB6hC9P0JeY6XilDKjXXupmj+1iQFCA4gik6P1lpd61URNYiTrxmF7GU0wgWavsGyOF8YDwTCY0uBp+lHD00X3D8HUcHFDBaSQMK3hEx/Go7o6Zv8m/nkKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=csZvXbCp; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZuIa8ViD"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-412f8d2b0fcso4043185e9.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 06 Mar 2024 07:16:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="csZvXbCp"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a3ed9cae56fso186097166b.1;
+        Wed, 06 Mar 2024 07:43:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709738203; x=1710343003; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CbMXRNnfQkRZ0edUG1oFzjXLgUZ/yjT9H5O+qEGXIE8=;
-        b=ZuIa8ViDGzPmrcVpcldAWHgVd75n1n40I2fWjx4wfM1vyIHovqVBVtxZxMV1Ahn//x
-         7BjDETQFjnaPTAR2ybsuhrMx9gIxRH4fVb3ru/ZI6Q1uPKO8ZGo7RYwcIllC1kLVB2AI
-         hhsvm+pIPlHybIHUStNo2m9+XwrpfY6ro3b7T6IS7z8f1jgLbG3KlTDIRS2BH3AEPCSU
-         qlmX6NgCS6gPZ9IsKIjz5P9VdSPyX8Gx5TG8bYKx8Ic8bign92sNEl/DMqTaqNRArxN5
-         rmmuFjoqxchTzuDYWez37eHjrjDfGCMQtD5g8dRrdCL2s6I/jG9i3x/w/MvCH8CO/45/
-         RMIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709738203; x=1710343003;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1709739812; x=1710344612; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CbMXRNnfQkRZ0edUG1oFzjXLgUZ/yjT9H5O+qEGXIE8=;
-        b=glD1zfnTBxjvgIoZzDIpeROZuP2+Y4wdttH9IEf64KvtBQ4W7vsN7p5TvS7+mXww2K
-         ShRmU3VOdRZIm9D3F/Q3GDp+J6Rr09cGkPXPmI7gTDTV6x3sP5HU8rX0M4088EBfdR33
-         BWRTDHEokWJ8NHHOmJM/LoqvfgUiHS150ambVhS6CyvgwcSNn9XRkohhpRJwQZHDNAxg
-         Ikp1ivuSKg/JTEeXhPwNYwMvhqHcZ7DAqIhHjKTAaOPQ6P2Wb4UdBz2luLqcNs3IB4RV
-         FNFpFll+UF5sbShHBRMs5t5fzazI2Kqr8tHyJC2URpD/Mmj3ToIx+sEVKmMKwsi87pxq
-         VRew==
-X-Gm-Message-State: AOJu0Yyb0CMHv+YWDvTQ72MNrWC0g9UGnqjSUOwMgcssms6BU7mk8X/9
-	ZY+hztDxqwMrFUEy3zRr40YJV1366dWesAnbyIzubBq57gfB3YMTfkaxow2uzbg=
-X-Google-Smtp-Source: AGHT+IE+y9weXx3ygaJfAbwWVfVXS9x+mMOYhnkGQrUGfIQpr92/kiYwK/AqkYsiQIh1zyVWuNITKQ==
-X-Received: by 2002:a05:600c:4f15:b0:412:b6b8:b5f1 with SMTP id l21-20020a05600c4f1500b00412b6b8b5f1mr12644187wmq.18.1709738202924;
-        Wed, 06 Mar 2024 07:16:42 -0800 (PST)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id d15-20020a5d644f000000b0033e052be14fsm17775290wrw.98.2024.03.06.07.16.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Mar 2024 07:16:42 -0800 (PST)
-Date: Wed, 6 Mar 2024 18:16:38 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ayaan Mirza Baig <ayaanmirza.788@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, ayaanmirza788@gmail.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Subject: Improved help text for rtl8712
-Message-ID: <0eb384a3-5634-453d-b08e-a80db3fb742d@moroto.mountain>
-References: <b442a768dd23d9c6fdac6fcc30bc86794e85c8f5.camel@gmail.com>
+        bh=564XW1Zg593J2gO92SEH6dhjFbJFfOOzGq+FzdnpDxA=;
+        b=csZvXbCpF0PySNx8nIASfPzNisRYGn+sAWi+MtBSj2rowD9bW8K/5qq7lxr4/ggLYv
+         4aGAGELdkzRW6LKEJ702oQOMaYUIKj8pNlAfUcsGvzINxuOK3e77kw7bVnSPl5qsEZB7
+         DrfAEHvr1l3ydIqoruPhmYDGEhlK953sKowGWntqIS8ZxU4laWAYDniF63Wp+zy82eUq
+         UgIJH9dE1rqD0oRAaN+MbP+63qyOREQMyDKeNFPOGSTe0w+o3ifVmtyXjYW9PmO4f6JW
+         UhjTjO2C01ZFyCPhGxLGAHc9B75F8elXIGvj0yF94FEA8u9T4fTLBhqKzlhF1YL2DFXI
+         jBYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709739812; x=1710344612;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=564XW1Zg593J2gO92SEH6dhjFbJFfOOzGq+FzdnpDxA=;
+        b=gNCVfoD65tI7b3+Y3xW7qM2iUlqPQPv7i0sBU7VkVBA9zCYtRowNCo0GL5tKt5Mkf7
+         wXMmup0qPnSocz+YrMNc4KxdpeUoeRusaOcQSbkR5+2DKrwurn1FtAPHg2OSOIMRyiiG
+         VjwdquQBTWbv0x6xZ8WvaN8D/higNrzHoO/XHO8XYHrM4MtMlKqdHp5CrpC2IskLqEnE
+         qRYSXFUxLDAOq6NQKOud4v0+EbSadT6J3Wn8b6ewGltLdtfmg6xo66q2wrWcEI9Mk4nw
+         x85C1o+oH6ObHeAM7zH0KYxnt8QhlEObBegjVFcmRWgi68rsAXcehVNLSkCuN863DZgj
+         g2Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUXkHaMb6FAHLiEEpFQ51t/jexvN8Po5gOGztRDheKagjtMZX/OzjY0CMcU4hUiJWBC1GBsGEKhwK+pmqnkeT6UgCywdMkJ+FErkOeL
+X-Gm-Message-State: AOJu0Yx0yR7kfQVtRc9ZPtbuApp1+nmlXg4K1tOAJqkyqGRZom/F3BAO
+	lfNa9FJMrB8fADjXMs8EyqgNaZ/b0Sdw3AG4g2gUcstUnrrYL/uJHs1TDnzX71o34Khr4DmYWtH
+	Vz0B3swLjcBlGjjnvTzYUL9VSjnE=
+X-Google-Smtp-Source: AGHT+IEYVgDvWAx0tkMslUDJ6VQQCdyJISWKYeieeoobQ8e5jZzjaqU/edPut17SR+CFrTtOMHlgrdnSmMQ8Fwrr2oo=
+X-Received: by 2002:a17:907:6d13:b0:a45:9e6e:fba1 with SMTP id
+ sa19-20020a1709076d1300b00a459e6efba1mr7618951ejc.15.1709739812372; Wed, 06
+ Mar 2024 07:43:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b442a768dd23d9c6fdac6fcc30bc86794e85c8f5.camel@gmail.com>
+References: <b442a768dd23d9c6fdac6fcc30bc86794e85c8f5.camel@gmail.com> <0eb384a3-5634-453d-b08e-a80db3fb742d@moroto.mountain>
+In-Reply-To: <0eb384a3-5634-453d-b08e-a80db3fb742d@moroto.mountain>
+From: Ayaan Mirza <ayaanmirza.788@gmail.com>
+Date: Wed, 6 Mar 2024 21:13:20 +0530
+Message-ID: <CAFSNnn2BsM-DmnT9Or1fCTKMCG58ruNE7vrBggQuns9-_K67HA@mail.gmail.com>
+Subject: Re: [PATCH] Subject: Improved help text for rtl8712
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Also the subject is wrong.  You left out the subsystem prefix.  It
-should be:
+Thanks for the tip! Will keep in mind!
 
-Subject: [PATCH] Staging: rtl8712: Improve help text for rtl8712
+On Wed, Mar 6, 2024 at 8:46=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
+>
+> Also the subject is wrong.  You left out the subsystem prefix.  It
+> should be:
+>
+> Subject: [PATCH] Staging: rtl8712: Improve help text for rtl8712
+>
+> regards,
+> dan carpenter
+>
 
-regards,
-dan carpenter
 
+--=20
+Regards,
+Ayaan Mirza Baig
