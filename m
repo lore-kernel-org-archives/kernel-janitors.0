@@ -1,97 +1,97 @@
-Received: from quicklyemailsend77.com (quicklyemailsend77.com [57.128.172.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521185381
-	for <kernel-janitors@vger.kernel.org>; Wed,  6 Mar 2024 05:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.128.172.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2BB17BCB
+	for <kernel-janitors@vger.kernel.org>; Wed,  6 Mar 2024 05:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709702910; cv=none; b=KehL3Sg5HoiK4CcDjr0UDJrrW3wBMrzjoCVqWFxvIG5k7YfyyZcyGEnpuR1D000GFGIfzngOgl+E1o6Qez45dF6c9W++5PjwYlmxM3rzdQo3jth3AfG2w1YkSnNMgL/UaCYfw75PqIpKd1gGKJpkBUF04zDmi9B8p9gAD1GNEyE=
+	t=1709703053; cv=none; b=obhQXrT1EVG5ro2WYKktMaCFSyvDL7nM0z697KwkGr6QrCoDY9Mqo4uyy/mrE6YNITN5AXcynWjFg2MfNTbWFiOrgST2wJy5gPapHR83tB9FWOjuufVuks9RJ/UlgMrli5MykI3dWjn446H2RUSsro74jZYWwrMKn1MOYc9HQKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709702910; c=relaxed/simple;
-	bh=UkCnC3hxyWUR811IY5T5PlAQFaHotSY7xhHSl4hh88I=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fKDc2/uDIdxKmoQrIyzdJv6O16OQBeoP8I+TIiin7VnLFaxcvBQMsX0TmA/GWlH+qolgGNUywtw0zZnsHXPXCLBADeeST/ZQ/J25uJOEGdOCz7ZH00N0+W8h5nhzMg/idu9i0JN+sTkcKXvSmlJQXJrqG/VwLcx0lL6lkV+lJUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicklyemailsend77.com; spf=pass smtp.mailfrom=quicklyemailsend77.com; dkim=pass (2048-bit key) header.d=quicklyemailsend77.com header.i=@quicklyemailsend77.com header.b=hgG2Hmrz; arc=none smtp.client-ip=57.128.172.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicklyemailsend77.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicklyemailsend77.com
+	s=arc-20240116; t=1709703053; c=relaxed/simple;
+	bh=OY98z60/QzvLbbjJJOeTrYBjG7cId8nlzWYX3q2YOzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=koguKun9DZ/iWdqUyu5eZfyZy5pFS63TSg7W11em24m2BWj/krdBe9zj2Lx4zYnDOtWcn3KvgkRgbzA6CYwJ378jnKxUPeyp7Qfdte0R3yj4GLhNoUHMi9oTpEuMq6N0lDBovdUWK7ivC+aDGvwvfuJtdDqFkj5etu46VttFUTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ss2OTsBW; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicklyemailsend77.com header.i=@quicklyemailsend77.com header.b="hgG2Hmrz"
-Received: from quicklyemailsend77.com (unknown [185.255.114.95])
-	by quicklyemailsend77.com (Postfix) with ESMTPA id 4872E3AC116
-	for <kernel-janitors@vger.kernel.org>; Wed,  6 Mar 2024 03:44:14 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 quicklyemailsend77.com 4872E3AC116
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ss2OTsBW"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-412eeb018ffso10225115e9.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 05 Mar 2024 21:30:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=quicklyemailsend77.com; s=default; t=1709696655;
-	bh=eefLZdwY5mr6nwq86b3d+rtsxGUHJntuGmXl+R35AcQ=;
-	h=Reply-To:From:To:Subject:Date:From;
-	b=hgG2Hmrzw8yAr/2xQfZbW/cAbkSpduzhhTb6aIyQEX7okIz0kBGZ1bZtv1m4132oU
-	 +w+I1PRwlIdNanMJ/5jb1OihHGqNDxDb/3ZXD9TGqNnBhl+ooHMxhDD1JucNoLlyhs
-	 p0K/T/xLHleS1NwpUHKCukR8UlTmQHPT8LZYk+bamyDSbgn6XUGdzHzoP9Y8KD6tZO
-	 cOJjiAgd71RGL6PX2Gz3mwQC2koyt4xBn0ez1pBqDQhspyYFDn3I9ZTJohXRP9OwEH
-	 qXq1VLOQ/JjvdKpG2E/oPudeoQSlViP1wklC4XxrVrahpHb5owFo+W/vSS65FAhPLQ
-	 D4O4c0RLn0ycg==
-Reply-To: joakimlarson@skendiaelevator.com
-From: info@quicklyemailsend77.com
-To: kernel-janitors@vger.kernel.org
-Subject: =?UTF-8?B?7YyQ66ekIOusuOydmCAyMDI0?=
-Date: 05 Mar 2024 19:44:14 -0800
-Message-ID: <20240305194413.5DD810AEC824B5DB@quicklyemailsend77.com>
+        d=linaro.org; s=google; t=1709703050; x=1710307850; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CNOl498zVyqa8QNphWPOEGcqb03+QO3BzSaHzQ2kTRc=;
+        b=Ss2OTsBWOLOVZ8wXUd8p0cgQFMprlBmnOgJAK49pv3Ptjf9za4+uY0go53tpB6zJwI
+         7QlHLjxiPk+on6xs5WcS2z66voO/sidx06UxJ/bBhsvOXMfxr5Vw+7WimQKz6JsGcKML
+         7QvN9JU5sIWtC+Wk8aj7yATii+8AyfaV/t90009ddIWqhUBsKfdXJhtV2Jkrj2W9nOBG
+         fgqg22Ja1kDD8eFQTi+YSBRnPes0In5rfcDXShCUlktmKCQEj0URIBoBK1wAuSpOGGd+
+         QF5QhLIdKgCBeD4bfDuGtEyOTELmiXt6YXuXPeqk7YOgQDn3aaRluUaEFruvBkAdug9F
+         7xSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709703050; x=1710307850;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CNOl498zVyqa8QNphWPOEGcqb03+QO3BzSaHzQ2kTRc=;
+        b=fttLA3hoikbxhyoZpUbtbFCPfvBavNVjJPaTDQnDhdai62TMiFNiJ9QvaV78Soh4JX
+         hEkGps/TThxOtG0CI9EZAhJ2dzucdwLCZ43CRfnTMOiuqx2BexU7yRBql36IKBGBSZDN
+         AoG6jIeqCd2d3D0QclI7L9yOPRhdbxthP0fBdmOOeyNM4Yt8Ax5ciQiJ+TFq0pb+8/6i
+         gv7RgI6HA4VOjNNYYisuITQDazCECZkJOmwhBUWwAEuB33EG9TYFgD8ZrxILDywjPMUN
+         AV2qM7zcxy3q5VNFnvJIt0L9VaIXqkB2730ayrTlatX6b28A7P1GtJWDUNWkXqXOmwbg
+         eWYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhIdBRThHfklXXHMq9afdq/1z9hJVkpjy9M7DgIUtNbSZzkOo1qitYgX+3nr6goKPNUCAUrPoL3udxasZ94yAzrJlb0sTQEwjUpjcb8zYD
+X-Gm-Message-State: AOJu0YwwquWJV2IcSlp6XRr7aXq8uyhmMSwbi/qt9Uq9lPAqWFdrTEXv
+	2nFkz3+r6gFGezE+n5CYoVDfhXOCNYYgvJH0ZwUWzCmsDJm7Acd6zbsa9n7CXNs=
+X-Google-Smtp-Source: AGHT+IHUD3k4wXBn/nqincbWXBgb7lYot4qWLOwu90kC6NiIRRaWqliTeBdnFMWQzdTP8Ja5lYSwZQ==
+X-Received: by 2002:a05:600c:3596:b0:411:a94a:1ee with SMTP id p22-20020a05600c359600b00411a94a01eemr12189693wmq.21.1709703049710;
+        Tue, 05 Mar 2024 21:30:49 -0800 (PST)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id be15-20020a05600c1e8f00b00412f6c695d1sm421000wmb.43.2024.03.05.21.30.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Mar 2024 21:30:49 -0800 (PST)
+Date: Wed, 6 Mar 2024 08:30:46 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>, Tony Luck <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>, naveenkrishna.chatradhi@amd.com,
+	muralidhara.mk@amd.com, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] RAS/AMD/FMPM: Fix off by one in error handling
+Message-ID: <6fdec71a-846b-4cd0-af69-e5f6cd12f4f6@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
+Decrement "i" before the first iteration.  Depending on where this fails
+it could free something from one element beyond the end of the
+fru_records[] array.
 
-=EC=95=88=EB=85=95=ED=95=98=EC=84=B8=EC=9A=94
-=20
-=EC=8A=A4=EC=9B=A8=EB=8D=B4 =EC=8A=A4=EC=B9=B8=EB=94=94=EC=95=84 =EC=97=98=
-=EB=A0=88=EB=B0=94=ED=86=A0(Skandia Elevato)=EC=97=90=EC=84=9C =EC=98=A8 =
-=EC=9A=94=EC=95=84=ED=82=B4 =EB=9D=BC=EB=A5=B4=EC=86=90(JOAKIM LARSSON) .
-=20
-=EC=9A=B0=EB=A6=AC=EB=8A=94 =EA=B8=B4=EA=B8=89=ED=95=98=EA=B2=8C =EA=B7=80=
-=ED=95=98=EC=9D=98 =EC=A0=9C=ED=92=88=EC=9D=84 =ED=95=84=EC=9A=94=EB=A1=9C =
-=ED=95=98=EB=A9=B0 =EA=B0=80=EB=8A=A5=ED=95=9C =ED=95=9C =EB=B9=A8=EB=A6=AC=
- =EC=8B=9C=ED=97=98 =EC=A3=BC=EB=AC=B8=EC=9D=84 =ED=95=98=EA=B3=A0 =EC=8B=
-=B6=EC=8A=B5=EB=8B=88=EB=8B=A4. 
-=20
-=EC=98=A8=EB=9D=BC=EC=9D=B8=EC=9C=BC=EB=A1=9C =EC=A0=9C=ED=92=88=EC=97=90 =
-=EB=8C=80=ED=95=9C =EC=A0=95=EB=B3=B4=EB=A5=BC =EC=88=98=EC=A7=91=ED=95=98=
-=EA=B3=A0 =EC=9E=88=EC=8A=B5=EB=8B=88=EB=8B=A4. 
-=20
-=EA=B7=B8=EB=A6=AC=EA=B3=A0 =EB=82=B4 =EB=AA=A8=EC=9E=84=EC=97=90=EC=84=9C =
-=EB=82=98=EB=8A=94 =EC=9A=B0=EB=A6=AC=EA=B0=80 =EB=8B=B9=EC=8B=A0=EC=9D=98 =
-=EC=A0=9C=ED=92=88=EC=9D=84 =EC=A3=BC=EB=AC=B8=ED=95=A0 =EA=B2=83=EC=9D=B4=
-=EB=9D=BC=EA=B3=A0 =EC=83=9D=EA=B0=81=ED=95=A9=EB=8B=88=EB=8B=A4.
-=20
-1. =EC=B5=9C=EC=8B=A0 Catalouge=EB=A5=BC =EB=B3=B4=EB=82=BC =EC=88=98 =EC=
-=9E=88=EC=8A=B5=EB=8B=88=EA=B9=8C?
-=20
-2. =EC=9A=B0=EB=A6=AC=EA=B0=80 =EC=A3=BC=EB=AC=B8=ED=95=A0 =EC=88=98 =EC=9E=
-=88=EB=8A=94 =EC=B5=9C=EC=86=8C=ED=95=9C=EC=9D=80 =EB=AC=B4=EC=97=87=EC=9D=
-=B4=EA=B3=A0 =EB=98=90=ED=95=9C =EA=B8=B0=EA=B0=84=EC=9D=84 =EB=B3=B4=EB=82=
-=B4=EC=8B=AD=EC=8B=9C=EC=98=A4=20
-=EB=B0=8F =EC=A1=B0=EA=B1=B4.
-3. =EC=9A=B0=EB=A6=AC=EA=B0=80 =EC=A3=BC=EB=AC=B8=ED=95=98=EB=8A=94 =EA=B2=
-=BD=EC=9A=B0 =EC=A7=80=EB=B6=88=EC=9D=84 =EC=96=B4=EB=96=BB=EA=B2=8C =ED=95=
-=B4=EA=B2=B0=ED=95=98=EA=B8=B0=EB=A5=BC =EC=9B=90=ED=95=98=EC=8B=AD=EB=8B=
-=88=EA=B9=8C?
-=20
-=EA=B7=80=ED=95=98=EC=9D=98 =ED=9A=8C=EC=8B=A0 =EB=8C=80=EA=B8=B0 =EC=A4=91=
+Fixes: 6f15e617cc99 ("RAS: Introduce a FRU memory poison manager")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/ras/amd/fmpm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Mr Joakim larssonv(=EB=B6=80=EC=82=AC=EC=9E=A5/=EC=98=81=EC=97=85 =EA=B4=80=
-=EB=A6=AC=EC=9E=90)
-
-=EB=B0=A9=EB=AC=B8=EC=9E=90 =EC=A3=BC=EC=86=8C: Kedumsv=C3=A4gen 14, SE-534=
- 94 Vara, Sweden
-
-=EB=B0=B0=EC=86=A1 =EC=A3=BC=EC=86=8C: Industriv=C3=A4gen, SE-534 94 Vara, =
-Sweden
-
-joakimlarson@skendiaelevator.com
-https://skandiaelevator.com
+diff --git a/drivers/ras/amd/fmpm.c b/drivers/ras/amd/fmpm.c
+index 0963c9e7b853..2f4ac9591c8f 100644
+--- a/drivers/ras/amd/fmpm.c
++++ b/drivers/ras/amd/fmpm.c
+@@ -817,7 +817,7 @@ static int allocate_records(void)
+ 	return ret;
+ 
+ out_free:
+-	for (; i >= 0; i--)
++	while (--i >= 0)
+ 		kfree(fru_records[i]);
+ 
+ 	kfree(fru_records);
+-- 
+2.43.0
 
