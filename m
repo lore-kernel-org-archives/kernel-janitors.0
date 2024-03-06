@@ -1,104 +1,99 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDA61272B9;
-	Wed,  6 Mar 2024 12:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9A313173F
+	for <kernel-janitors@vger.kernel.org>; Wed,  6 Mar 2024 13:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709728861; cv=none; b=JHgWbBlWo5ESu20l13a2F7LogjiA2GoCFfKUQXd6mW+llFiHDXd97LBGCXaq+ZVDqwlVF4wq6XHhmuTI2luoUkY2QSp7T86xBq6M71ntpprcZuVloJh1BiCKhtX0YwoQ17tKqw/yMYjLY+suchbQVFBz89CKw/hw7LDHyF9nevw=
+	t=1709733156; cv=none; b=NQ2p4vTjWEPTkL/OBDSX/NnJvox4DFzeE0qL5mmAGBCCjhP14wNfqM9d84wApLjQdoyRrPqByJ5O0qWvgQ2cB4XkFWfehySe42MherpjBoFHJxVnB3Vgu3KJFhHgu4BoVoh3Qbr4KY3lotUDo6HMSFyorzrkggV0yJu1P9jwgWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709728861; c=relaxed/simple;
-	bh=UtXFUhqermy9LTNrI/IvJ4ub3irTv6w86+6UyvBqI9o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=FHqr37Ifo619rgyc3GoWiicHEotxdQb2S1eF8utlClS5FiPcj/BgFVFJ8Kr4Z8F77AnUGUemdMcFYpkoCEoJAYr9nkx1M4K2+96rSe3nPOvS56I/ficxrBl5iOmsmoyakCk33YqbzFSP2jjdyOiFNgXzfweehdshWinHSebY5fY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IMmn96V7; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709733156; c=relaxed/simple;
+	bh=NE9uz7ZBHC0eNJ7adCmd/UKg5wS6nfgIQyX+/EqGsD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=iwi/v9jL3kGTbw53NYSewWRHayUAMddXxirk6jHjorzMzJcLkTpPd7FaUHujBaXY/rP+4cXGouHC52aF+5T70LR470rmYfrC9vYHE+M4s+WZHxm6sEVu6pcFJCobr0zSGDY/3u5iaJZC4IbzWLRZTtFBMLtf0x6dmSEtBqZ4/1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SF3fHshL; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IMmn96V7"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-412f0655d81so9651565e9.2;
-        Wed, 06 Mar 2024 04:40:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SF3fHshL"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-412e784060cso5307135e9.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 06 Mar 2024 05:52:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709728856; x=1710333656; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sb4JijoDvx9NYWTRsmYG7XFGmbbVsOk1cVh5cF3zIr8=;
-        b=IMmn96V7S7rEkLoUjg0K9Zp9I2vdCvKuqsz6fGO4X5/XkDWxrIlcTiBPQBZoOfZ1Z6
-         TavlD9yFiDlJK7fg6lzhVn98J+G+J46W1TGA9R/R1mj7eXmbiWAJf/ydetbDkCoLrymm
-         sgvrdQ3BerwV6ZNGGBu/2BfBaAj/dECNznbMLUHYGl+JnqR2bnffYCgI7OCsJ6hNzYEa
-         Um0NBPShrjhGOqZsorqUSK14FXLxoeacT8tPlrg5Kom9j5CNc4wUPZj121l0q1jps29l
-         hiyILtrTQM4frcWVQlFJHY5iWXws6NlDm7ScSMLoE7Oi23StOD31VC8ur9aRMwmt17MP
-         Evrw==
+        d=linaro.org; s=google; t=1709733153; x=1710337953; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0YUTY+l2RgN437PUSLue8tToMPkzTitFlDucsO/DZvk=;
+        b=SF3fHshLBWpMwhVf6yPGPRVxa6UiZEFQryRg7bJTgLXzGbSKgVWRbfJ1fnsoj+vhqX
+         oTDWKHFBt+ft+9Gpu1F1yP7yP84yhTl92N4jSsCZSPqdZDkWHV3Smjh/cnQDmJiDBzYz
+         xJ3Qu7rHOTVYxcexam8O2qawja+LdLyEgeEIzsY2Jvs1C9IGpbEtbRMVCwWa9seXh1zG
+         7cYI43iebWetqZGwQCSXf7EZOBPtEI/koral7bFSARid2aCN9PAoIDhvuyaq31lJpos2
+         fJXgHmji7VevsldnLryk3/DlL51+V/lDaFzD3SmwbzbPyIEgVeG4NQpXeCue0LTb+IPa
+         x0AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709728856; x=1710333656;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Sb4JijoDvx9NYWTRsmYG7XFGmbbVsOk1cVh5cF3zIr8=;
-        b=EFGZM+OPTL1DnxLT2ViLjY5XXtB2Mr8srs06dSSDNWPoPyQJ76otMEH/Dm/hMJF3+r
-         ShgL4FjQn+EiM7hGrMb24DaQIKcB0+tc32orO8SxK/7sGGRyJUxRqmm2F4bowqTtz6Wc
-         31cEnOccVTCqvo8gBzRoT9odAuDM0ltOtf1Zhy9fcJWhwISJ02U0wxLtIiGNN3WGXQJI
-         ZfZXi3ooRbEcHszFoFBbzWcDUxZ4RJFcZqNcZbB/G4x7pAzE0992MEp8sz+aXAmyJe7L
-         uZ+gp418seaNeRU2tGROydB9cLC27oFgnCKgLuOSsd/uQZ4uEaEjman4+AKqujLSje6I
-         6rbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJzAOfwfeurAFuyq1UkZTG2tDNbuAdS9fn6t1j83uD29y2Cq63VhubVjx87vCLrf/VIOlK1d/6rzqiyBTuikCleQ6aULZ8qOp1ZjK7Q7iaMk7xHBOPCLpW108JdP1EC3G3ybEJD6bmkxtr8g==
-X-Gm-Message-State: AOJu0YyI+g2QFhI19dlWhaCdN6hzWvSKRdBwLunr2lJjNlaLFsN0taCn
-	eHD3deXTnoHep+CsQF8P77dqfiubI3TezFyYp3jZWpLTb5IhTra1
-X-Google-Smtp-Source: AGHT+IF1DaezPiqzFxxA1H+f5F4oN502JTyV/jTD1scFcDyo8uoWYmdH3zmw/9EBnVpZ5lKsUQzOAw==
-X-Received: by 2002:a05:600c:4448:b0:412:f6dc:1d3 with SMTP id v8-20020a05600c444800b00412f6dc01d3mr1046437wmn.11.1709728855924;
-        Wed, 06 Mar 2024 04:40:55 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m9-20020a05600c3b0900b0041294d015fbsm20904242wms.40.2024.03.06.04.40.55
+        d=1e100.net; s=20230601; t=1709733153; x=1710337953;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0YUTY+l2RgN437PUSLue8tToMPkzTitFlDucsO/DZvk=;
+        b=jnR8FkL4HwCbaKmF1ye9qNup1r4hdmAK1aVMJxAxyxiZEfYlPkpwvEHOuPxq1uLfdY
+         QyLGumH9jXt/izKD3O8BeAEZJm5rqrowWdDVGalWd0he649YZnZVHPyPT9t38+uL/xvq
+         ES2DKbzCp/ZcHYwog9/yqgtUUjlXjhxIRJvY/eCl9spUiBF4vrlD6okZ9pspWCtdwHBw
+         5KgF/0JZGwRJ6znItyVxEBsSVU57g4r+iQiWzHkeAP3Mjuq92YIXrUI2auZR1w4bDA4R
+         JezM+N281zhsK6wt5s6cdgNhr+a2W7WyCkc9bkLkMawrIwDuByuCyC8lRZeds87wy66e
+         xitw==
+X-Forwarded-Encrypted: i=1; AJvYcCWC5xLPBaflf1k1h5Lfmeg+eT4eckxt3B5AtDfekqyr/q/fUILA0u2h+EmtUX4ytXZLjCHiMUMXXTEYF2Q5m2bXUL7dZr0zmAfoUSOdUiwk
+X-Gm-Message-State: AOJu0YxwTRLuqaxY3rOichsK10MtQzntjpLAPu5VvdNh8TT9gIlSVs50
+	j1XagquMlVtyCOEKZ+Uvge46bC7auggnupMf70b7i51lM5NztP6faFRIGBwGpSk=
+X-Google-Smtp-Source: AGHT+IEVdyAZQURDM9SrFLVnut8Vs6bokwqor8I0IOn+wmMlR2loefoe4428fbp744qhAQ3KAOLUmg==
+X-Received: by 2002:a05:600c:1391:b0:412:e0f7:ef52 with SMTP id u17-20020a05600c139100b00412e0f7ef52mr5183535wmf.19.1709733153251;
+        Wed, 06 Mar 2024 05:52:33 -0800 (PST)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id j11-20020a5d604b000000b0033d9ee09b7asm17653491wrt.107.2024.03.06.05.52.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Mar 2024 04:40:55 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Wedson Almeida Filho <walmeida@microsoft.com>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] hfsplus: remove dev_err message "xattr exists yet"
-Date: Wed,  6 Mar 2024 12:40:54 +0000
-Message-Id: <20240306124054.1785697-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Wed, 06 Mar 2024 05:52:33 -0800 (PST)
+Date: Wed, 6 Mar 2024 16:52:29 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] regulator: lp8788-buck: fix copy and paste bug in
+ lp8788_dvs_gpio_request()
+Message-ID: <19f62cc2-bdcf-46f7-a5c5-971ef05e1ea7@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-While exercising hfsplus with stress-ng with xattr tests the kernel
-log was spammed with many "xattr exists yet" messages. The error
-EOPNOTSUPP is returned, so the need to emit these error messages is
-not necessary; removing them reduces kernel error spamming.
+"gpio2" as intended here, not "gpio1".
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Fixes: 95daa868f22b ("regulator: lp8788-buck: Fully convert to GPIO descriptors")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- fs/hfsplus/xattr.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/regulator/lp8788-buck.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index 9c9ff6b8c6f7..57101524fff4 100644
---- a/fs/hfsplus/xattr.c
-+++ b/fs/hfsplus/xattr.c
-@@ -288,7 +288,6 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
+diff --git a/drivers/regulator/lp8788-buck.c b/drivers/regulator/lp8788-buck.c
+index 712eaa6ff8ab..2ade249ab6df 100644
+--- a/drivers/regulator/lp8788-buck.c
++++ b/drivers/regulator/lp8788-buck.c
+@@ -430,9 +430,9 @@ static int lp8788_dvs_gpio_request(struct platform_device *pdev,
+ 		gpiod_set_consumer_name(buck->gpio1, "LP8788_B2_DVS1");
  
- 	if (!strcmp_xattr_finder_info(name)) {
- 		if (flags & XATTR_CREATE) {
--			pr_err("xattr exists yet\n");
- 			err = -EOPNOTSUPP;
- 			goto end_setxattr;
- 		}
-@@ -335,7 +334,6 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
+ 		buck->gpio2 = devm_gpiod_get_index(dev, "dvs", 1, GPIOD_OUT_LOW);
+-		if (IS_ERR(buck->gpio1))
+-			return PTR_ERR(buck->gpio1);
+-		gpiod_set_consumer_name(buck->gpio1, "LP8788_B2_DVS2");
++		if (IS_ERR(buck->gpio2))
++			return PTR_ERR(buck->gpio2);
++		gpiod_set_consumer_name(buck->gpio2, "LP8788_B2_DVS2");
  
- 	if (hfsplus_attr_exists(inode, name)) {
- 		if (flags & XATTR_CREATE) {
--			pr_err("xattr exists yet\n");
- 			err = -EOPNOTSUPP;
- 			goto end_setxattr;
- 		}
+ 		buck->dvs = pdata->buck2_dvs;
+ 		break;
 -- 
-2.39.2
+2.43.0
 
