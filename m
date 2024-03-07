@@ -1,65 +1,71 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE71823BF;
-	Thu,  7 Mar 2024 09:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA57839FB;
+	Thu,  7 Mar 2024 09:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709803214; cv=none; b=QPy+mFwhIM+rGDWW3Z3YOr2JHChuMzcJiSJTZq+pYeN6d8R3ZlfQgSXs9qJaguhjt+NU63bxqpfUTD6LZFsqLYuJ4od7yzCjJwizBKyIjbMpCSvUqNg4ibvfe3iFKjzBPDonaaZMVdCZ4XoT0H0hms2RDl1tiGFK12Hqc5AU5QE=
+	t=1709804251; cv=none; b=q3AFp5/3dq0oDlQyd0LPufIBmQUPWi3POnB+WsMEUzaFhpBi25SobT7wOnehjLrPJdA4gjXQ9P5W7MSXzq9lAhRbMSKrmJq/5BezVVlqI/sDc2JiYD4J3mOrZ/RP8lVWr93FRykn2/aybzmmLOi6LgFKgq0/CeOS64g3uRNK52k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709803214; c=relaxed/simple;
-	bh=JExp8xfZdKco+i9aU2Nf94UpagHKLlLHb9vJ2ivtHCM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=pzt3NtnGv6mQZ/Rg1SjNRCVA+xNqOX0K9WIQAs4AJLHWjsMH9tqOE/kd8fAW+we+9ORQw/GB91EQWczfa8iep7EesZcI9gF0xdRmbVeLzEozhD8LpJ2hKfflqjNykQEzApCCWpN04E3f0Coo1QivPzqiiS9Qi8v5f7x+L4Eapy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3Lhb9mF; arc=none smtp.client-ip=209.85.221.52
+	s=arc-20240116; t=1709804251; c=relaxed/simple;
+	bh=KbA38Ez7VtxM30+T3uVG3G9pGCGRaypiLEGvKLOb124=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=OWoLB2I/Wc/+oQ0qn+F55U/DOZRFjDU0+SlPKWTXcII9v3hEAkH4BqkjSUvRwUKrTbAbEFv40h983l2ZaZUQ8CPFG7PEeuuXPdcLjaleyg0NKkOusZPgPh7BaM3dMH6Z3pPhigqhADDEfWjaCUyEoq6G7IqgfUKg+OBx00h15h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IYXndIMM; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3Lhb9mF"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-33d568fbf62so299889f8f.3;
-        Thu, 07 Mar 2024 01:20:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IYXndIMM"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-413007fe6a3so5963505e9.3;
+        Thu, 07 Mar 2024 01:37:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709803211; x=1710408011; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1709804248; x=1710409048; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YW0Mqn4ceL/DfI+pL4E21JiugQofGYiHeHUz1OXuJoM=;
-        b=E3Lhb9mFfe4ncEejzXKKPhEgcBMgFRVWy+Q3/UVj5hnFxv8P2OPC+/5rt8s6ix4TuW
-         B5751oRAKOCnxwOQS/Yr2aYlcg5sEA4wDYU217XzKZ/ku2MWzJ9BXvy2dhA2O5E/2aHp
-         lHo9wKeY0vrwrm8No+aI9w/LQg9CwCBZhepNiNWiohdvFSODwtbtcYD43bNgoy/c4Ui7
-         AJSQpV/Jfq6UW2y7PJgo+wr6fTiWVlnkh7Ss3PK9mYpvgF9cCAeVAsQlh+EP33i7NNyd
-         ayYaSe0LFTxxV4koo8C+ycrYbc/o+ehdveYQ4U1aRU+Xdnk5aop44pRyL5vIlI6P87CK
-         PWGg==
+        bh=fCGSUBoz7hkTWog5vBebF9UgG8HPCPhDFefPQRO1q34=;
+        b=IYXndIMMHwsd3eeo3iUCyoOAMA9ChALUPtZePj9yEnZWOQumGIpTNxGNCbhNNQEmYY
+         aQeFtnr6LYk0bMmSnuPs5q2+M2joystMQr4+lGIf2kjbuQolvN06jr2ar6bVvNraMHmh
+         HJiVGG6f9p7XaFq4mxvEG1xTyuXvanCDQFUW+EFry+nXNEansy0BZQOxZTgiuHR8HFRe
+         UkqUwJMtKcDsB/WpnPg/byUBra/A3aTPS/X47d3/hzZ1v4xSFRefs7icrTIox+txGFkx
+         9PzJLxKQYXsAHg936/OoARl58XnZsUqA/K78Z27s45Y18pccoEi0yHqmNLOke1DcA09n
+         UxMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709803211; x=1710408011;
+        d=1e100.net; s=20230601; t=1709804248; x=1710409048;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YW0Mqn4ceL/DfI+pL4E21JiugQofGYiHeHUz1OXuJoM=;
-        b=XWVcTyqKnKm7Ax1ApNJ3eX8nk6lmf71P08tp4rvC+4SFgXKSSAObwInAAY5D503dzC
-         8UmfwM0P9siiRWc6a0rcOjsg2WxlS3SVcAw7hCz7p7VTaFIvJXHwQU0oSyiDtY9NEtyF
-         U4Jrfr7yznYGCHpNtq9IeKrvhUb8S0rKvfQzyYjzwjAkPZR15zxD9sWzK4Y6r6ppuYya
-         2creDCFIZw2nFC5QkcmiWlv1bR6/rhUTrleO400s3oxkhskcTWSbYufC6P/zV3mA087C
-         6C5q5+qUBGT1+U+0fAoXVAjk/U5JWj55X8LHMtamyIjgaJ39ipx4WKkjQqLHWjvK8eFj
-         Q09w==
-X-Forwarded-Encrypted: i=1; AJvYcCWQPE3BZVXgoDv0NGpBxZDG5lwUwZyVQ0s7Wl763h0f4j2B//7exvBPu+lmNL83N6HNd7MhXpUc/OTPFiqADmuLqXWO3Ot8ygw1/U5YFfi1oF1jUCTfpUi1IVNKE3x9mUcVpt9ElBsUtbysRA==
-X-Gm-Message-State: AOJu0YxJEH7LHenlCMZIptEtO4AVaDfGjAvvvuTQnH2w/GQivtMB4GvR
-	ZRXgBQi6zazGg3zIcbsXPQq2dwXx1rGY1l6OmWrnCZjYnj409ujj
-X-Google-Smtp-Source: AGHT+IFsxBXURzKqFHcbtOlx9sJQBSH12U2/M37d2BFYrAjIIjZsY3XNHK735iX4oAlq0YZvbc6xew==
-X-Received: by 2002:a05:6000:4026:b0:33e:83a:b4f with SMTP id cp38-20020a056000402600b0033e083a0b4fmr17190412wrb.2.1709803210634;
-        Thu, 07 Mar 2024 01:20:10 -0800 (PST)
+        bh=fCGSUBoz7hkTWog5vBebF9UgG8HPCPhDFefPQRO1q34=;
+        b=iDZBmofjbCAh1wvhMx1FwloEIR1WrlSZfRLKnXEzT7iuvFjJ28/Aa42Zt37Z9heQ0+
+         vd5KWM5oFWxiccWXzDTu9AwlT+M69Vr6FXYfFbJ/dD4mvrAoKqJ691JaTMxvv2vu1hce
+         o/RADqkZu0zl/Vp6kLBYfW/m9BNY5Y/Ckhe0m3dpvC9p47Vuy5wt1mAb0wTqSNQL8zbQ
+         CP3p/7ZLQADtkX6AWDiAJnrfl3rahdjTITasCZwvk5cTXQDtQkAiBryWrBBWNI3fUW77
+         +OV92tj1BuS4eL3zWJ1tFFXtMzlJj5pOfEZF0Fy5LEE2lAUgAR8GM8PmjGVquuMbpqfn
+         y8HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWB0Y1U1dntjjwhdDrQ9J6YEK0e7W4eDS2n/bbcuxQ7m3n0IQIwKAUnDfjpDX8oO36s4oNeEMzIecJqVHXZZOl7bexaphKOQMiPAP896kTeJmK+Z3YaJb1eSPVRv9UG2uhxsPhiDwtMJCmZhg==
+X-Gm-Message-State: AOJu0YwSVZbq40ivxSQY0Wilf60Mx+GRcma+IMaVuGyRFmJiCKkEL3Rl
+	0Y39bj7R4t1vtnrhOCle3T/HEq7Fg6k5XpBRrHP3upybCGvOV0E1
+X-Google-Smtp-Source: AGHT+IE8RizOzmSDjEf4PsBNhWryLujYdRAkPfhGtCn7+tuTX8NXpG2EQMCqSC/G4cmzXNtq0f6k3g==
+X-Received: by 2002:a05:600c:3b26:b0:412:e3aa:8f69 with SMTP id m38-20020a05600c3b2600b00412e3aa8f69mr8126669wms.30.1709804248388;
+        Thu, 07 Mar 2024 01:37:28 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bk15-20020a0560001d8f00b0033b48190e5esm20290113wrb.67.2024.03.07.01.20.10
+        by smtp.gmail.com with ESMTPSA id j6-20020a05600c190600b00413074ea471sm2073513wmq.31.2024.03.07.01.37.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Mar 2024 01:20:10 -0800 (PST)
+        Thu, 07 Mar 2024 01:37:27 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Wedson Almeida Filho <walmeida@microsoft.com>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org
+To: Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org,
-	willy@infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next][V2] hfsplus: remove dev_err messages and fix errno values
-Date: Thu,  7 Mar 2024 09:20:09 +0000
-Message-Id: <20240307092009.1975845-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] drm/msm: remove unused variable 'out'
+Date: Thu,  7 Mar 2024 09:37:27 +0000
+Message-Id: <20240307093727.1978126-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -70,58 +76,40 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-While exercising hfsplus with stress-ng with xattr tests the kernel
-log was spammed with many error messages. The need to emit these
-messages is not necessary, so remove them. Also fix the errno returns,
-for XATTR_CREATE errors these should be -EEXIST, and for XATTR_REPLACE
-this should be -ENODATA.
+The variable out is being initialized and incremented but it is never
+actually referenced in any other way. The variable is redundant and can
+be removed.
 
-Kudos to Matthew Wilcox for spotting the need for -EEXIST instead of
--EOPNOTSUPP.
+Cleans up clang scan build warning:
+drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:843:6: warning: variable
+'out' set but not used [-Wunused-but-set-variable]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
+ drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-V2: Also remove "cannot replace xattr" message and fix the errno returns
-
----
- fs/hfsplus/xattr.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index 9c9ff6b8c6f7..f61a9370a233 100644
---- a/fs/hfsplus/xattr.c
-+++ b/fs/hfsplus/xattr.c
-@@ -288,8 +288,7 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+index 1f5245fc2cdc..d4e1ebfcb021 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+@@ -840,7 +840,6 @@ static void a6xx_get_shader_block(struct msm_gpu *gpu,
+ 		struct a6xx_crashdumper *dumper)
+ {
+ 	u64 *in = dumper->ptr;
+-	u64 out = dumper->iova + A6XX_CD_DATA_OFFSET;
+ 	size_t datasize = block->size * A6XX_NUM_SHADER_BANKS * sizeof(u32);
+ 	int i;
  
- 	if (!strcmp_xattr_finder_info(name)) {
- 		if (flags & XATTR_CREATE) {
--			pr_err("xattr exists yet\n");
--			err = -EOPNOTSUPP;
-+			err = -EEXIST;
- 			goto end_setxattr;
- 		}
- 		hfs_bnode_read(cat_fd.bnode, &entry, cat_fd.entryoffset,
-@@ -335,8 +334,7 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
+@@ -853,8 +852,6 @@ static void a6xx_get_shader_block(struct msm_gpu *gpu,
  
- 	if (hfsplus_attr_exists(inode, name)) {
- 		if (flags & XATTR_CREATE) {
--			pr_err("xattr exists yet\n");
--			err = -EOPNOTSUPP;
-+			err = -EEXIST;
- 			goto end_setxattr;
- 		}
- 		err = hfsplus_delete_attr(inode, name);
-@@ -347,8 +345,7 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
- 			goto end_setxattr;
- 	} else {
- 		if (flags & XATTR_REPLACE) {
--			pr_err("cannot replace xattr\n");
--			err = -EOPNOTSUPP;
-+			err = -ENODATA;
- 			goto end_setxattr;
- 		}
- 		err = hfsplus_create_attr(inode, name, value, size);
+ 		in += CRASHDUMP_READ(in, REG_A6XX_HLSQ_DBG_AHB_READ_APERTURE,
+ 			block->size, dumper->iova + A6XX_CD_DATA_OFFSET);
+-
+-		out += block->size * sizeof(u32);
+ 	}
+ 
+ 	CRASHDUMP_FINI(in);
 -- 
 2.39.2
 
