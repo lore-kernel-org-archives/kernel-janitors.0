@@ -1,115 +1,71 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94FE12F5B0
-	for <kernel-janitors@vger.kernel.org>; Thu,  7 Mar 2024 16:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 3325F12FF7C
+	for <kernel-janitors@vger.kernel.org>; Thu,  7 Mar 2024 17:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709830325; cv=none; b=JEQQ3GgYKurTldSWoJkJEQ8ITkqks/QVARCtaNVAFcOpB5T8BvUdp23rlGE3ngFa3y0tguDseEEwTfBj47MZm9CvWSHOXiaixMgWg2p9b2OUdJjvWz+Ze7Zco27Bpvf0InTOND8cUHv2w+BMEaCAQt/OWEaA9kJoEIcCwEWpPBk=
+	t=1709832594; cv=none; b=bSdGH5oM6NHH/WuVHN1/j8wuo4R3eaqoFtwgKLHI1lTPEYEeIDAYcGcCdwFvXK7EdrKJDLlmujlTE6r6f0pfhSrxFbsTuFQ+8qlnYCyoosd+HTrOkSV7T+tDSh0qr0DUitDIYJ/hW/IJlsxjQzKS6GDKae+Oe1tCXUbm6NICTtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709830325; c=relaxed/simple;
-	bh=i9CCT9j7BCqV2bE+0gCx3jMpwRqeW581xksody4aj88=;
+	s=arc-20240116; t=1709832594; c=relaxed/simple;
+	bh=knRagf2SaEsYlyHQSJfvNiE/tRYyl0/2a8GwXg+213Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BcCOZancUywRkpygTUaojrxWLD2WNkul7HaE849gHrBNOBb2WhpwZIZVNOaLWVqlqBIaefCnFMBw4hXPxskfi6YadXI+/WFLkxgV3Ol+QS+0r6hEkHovfjBoeAAR1DNxf+e8K4b/6Z9m0bTzDmLgsR3/cukt+n8lltZuqk/F39w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1riGyO-00019r-AR; Thu, 07 Mar 2024 17:52:00 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1riGyN-004yht-Qw; Thu, 07 Mar 2024 17:51:59 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1riGyN-001PCL-2O;
-	Thu, 07 Mar 2024 17:51:59 +0100
-Date: Thu, 7 Mar 2024 17:51:59 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=iqLd8zWTIipKyGv+wJDPmrM6Qzovu+ZYeXVUiqet2J0CD7hB1xweS6XC0f+BxicAqeNhDRMiEl2IfAD2e6Aj0Y5JDE4nJzm9MgCEGWURlsyVcIjwqRw14C/ihErPrbPC7yTFF6aoWgOrnO4afpriPyJjKQUJlbq/Rc60RHWR1Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 226215 invoked by uid 1000); 7 Mar 2024 12:29:51 -0500
+Date: Thu, 7 Mar 2024 12:29:51 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Colin Ian King <colin.i.king@gmail.com>,
+  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org,
+  kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH][next] usb: gadget: net2272: remove redundant variable
  irqflags
-Message-ID: <mywsgq453muhggv5y7pfrsg7zrodtuebcpo5rbc4kus5h2ameo@fhnpemjuntaz>
+Message-ID: <2b318367-2428-44ba-b4d9-0a452fcb7858@rowland.harvard.edu>
 References: <20240307105135.1981060-1-colin.i.king@gmail.com>
+ <mywsgq453muhggv5y7pfrsg7zrodtuebcpo5rbc4kus5h2ameo@fhnpemjuntaz>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gewgcxuilb6kaoqd"
-Content-Disposition: inline
-In-Reply-To: <20240307105135.1981060-1-colin.i.king@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
-
-
---gewgcxuilb6kaoqd
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <mywsgq453muhggv5y7pfrsg7zrodtuebcpo5rbc4kus5h2ameo@fhnpemjuntaz>
 
-On Thu, Mar 07, 2024 at 10:51:35AM +0000, Colin Ian King wrote:
-> The variable irqflags is being initialized and being bit-or'd with
-> values but it is never read afterwards. The variable is redundant
-> and can be removed.
->=20
-> Cleans up clang scan build warning:
-> drivers/usb/gadget/udc/net2272.c:2610:15: warning: variable 'irqflags'
-> set but not used [-Wunused-but-set-variable]
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Thu, Mar 07, 2024 at 05:51:59PM +0100, Uwe Kleine-König wrote:
+> On Thu, Mar 07, 2024 at 10:51:35AM +0000, Colin Ian King wrote:
+> > The variable irqflags is being initialized and being bit-or'd with
+> > values but it is never read afterwards. The variable is redundant
+> > and can be removed.
+> > 
+> > Cleans up clang scan build warning:
+> > drivers/usb/gadget/udc/net2272.c:2610:15: warning: variable 'irqflags'
+> > set but not used [-Wunused-but-set-variable]
+> > 
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> 
+> this "problem" exists since the driver was introduced in commit
+> ceb80363b2ec ("USB: net2272: driver for PLX NET2272 USB device
+> controller"). Might be worth a Fixes: line.
+> 
+> I wonder if the better fix would be:
+> 
+> diff --git a/drivers/usb/gadget/udc/net2272.c b/drivers/usb/gadget/udc/net2272.c
+> index 12e76bb62c20..19bbc38f3d35 100644
+> --- a/drivers/usb/gadget/udc/net2272.c
+> +++ b/drivers/usb/gadget/udc/net2272.c
+> @@ -2650,7 +2650,7 @@ net2272_plat_probe(struct platform_device *pdev)
+>  		goto err_req;
+>  	}
+>  
+> -	ret = net2272_probe_fin(dev, IRQF_TRIGGER_LOW);
+> +	ret = net2272_probe_fin(dev, irqflags);
+>  	if (ret)
+>  		goto err_io;
 
-this "problem" exists since the driver was introduced in commit
-ceb80363b2ec ("USB: net2272: driver for PLX NET2272 USB device
-controller"). Might be worth a Fixes: line.
+I agree, that makes much more sense.
 
-I wonder if the better fix would be:
-
-diff --git a/drivers/usb/gadget/udc/net2272.c b/drivers/usb/gadget/udc/net2=
-272.c
-index 12e76bb62c20..19bbc38f3d35 100644
---- a/drivers/usb/gadget/udc/net2272.c
-+++ b/drivers/usb/gadget/udc/net2272.c
-@@ -2650,7 +2650,7 @@ net2272_plat_probe(struct platform_device *pdev)
- 		goto err_req;
- 	}
-=20
--	ret =3D net2272_probe_fin(dev, IRQF_TRIGGER_LOW);
-+	ret =3D net2272_probe_fin(dev, irqflags);
- 	if (ret)
- 		goto err_io;
-=20
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---gewgcxuilb6kaoqd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmXp8K4ACgkQj4D7WH0S
-/k726wgApuSl5j8yqZxfz0r/ljO+iYK/Mkfds9vddxUBRxPq16H/WB7iqdlAAj6L
-Z3+ZTxiXgsExqYh+ZEeU4lKwHa8DYotgoQZOxkANsqjJBIK+JQoDj73w+UvraCEv
-sGi0Uv606kD8zV1Nb8pYq5O9n8G24XWwH9f1y96zKlt+IAnwLnDrq0D8d6SfIfd4
-VJFvrVTl2oNsWky9RS74vRfGEkc2H9R3UrwRRyD1Sv2PpZOpyKJKru621qHw1kv/
-+aPOIxHEty7nTu87lQJZ1RwRX7rmwYwqlPChOoL6hLD4KM1fkcsihbGqSr/3pMqz
-EKbgDXH/dFyvvnrWghAoTkEkjujmmQ==
-=8zp0
------END PGP SIGNATURE-----
-
---gewgcxuilb6kaoqd--
+Alan Stern
