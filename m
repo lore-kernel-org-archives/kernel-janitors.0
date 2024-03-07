@@ -1,45 +1,72 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23AF1CD29;
-	Thu,  7 Mar 2024 10:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8BC1D699;
+	Thu,  7 Mar 2024 10:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709806724; cv=none; b=hRLWBZ5b/1NVnRinSISwfD+k6mrUmpnKurwlcfwHF7VsVYtxH1A4zPLSJPInfeCc2iMfZYnX7Wf7e3bFwtzK3WzwDamVU6FoH6RMO79kEwIX5ZM6m6fzTvK0MLGwzkAqEQau6UKHXfafEpn+rChXONIPjAGvW24dnJ1HiLtFHU4=
+	t=1709808086; cv=none; b=Fe8E1Xzu+O7VVL4An1i3/SVN1Z/KU1KWkmBun+dHtpQJAuMULfQCihnGiERysGVVmZAfBA7lVk01RUCJlYQIxEopv/vx5dU7ohG8sQdVxLvPwvAqesoGN84hGlnkOUo2azL7l+h3+yLMJnuP38IqQMP0ce3hMXyyViw0QVp8I9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709806724; c=relaxed/simple;
-	bh=+0Oa2jHUICRbuqKJwTQq++Eufn8AHFdNcjT4/IAsGN0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jgHjtYFH90F31ABuOhNk6eeCpVjkhRlBXEwfjtPmtPCWWJvXXfPZJ4yyj4YpZKPgbSOwSbnw/hA77gEJ07phjaYXA0WTEc2d4B3XEoESCpJmPG91omC/aSB2DzQmXaUw4UMFlFj0fWy5KhImpPHCc2v3qgWGQlDJesidwuU+sC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XnbAdDb2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709808086; c=relaxed/simple;
+	bh=u0HbKc169Dv/IfHrwEar9MH/mTXRwSs/imuaMF9eTMQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=oPFSiz7HGNahwmH8GL0eKNanFmyOUcNmsf3gYu0qCiI0D7JqhG6/6Bj+eyUI0iJUh2EdBH2sKt3Gm5qL9ymbljox2FX4q59D7vbt7RggkHLFwbnwGZGea7lfCz1J40SxvHVHqmlu6cuXc/0RcVUg88OtGuoqFSA/YisSIJNC7Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CG5NMRVh; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XnbAdDb2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59542C433C7;
-	Thu,  7 Mar 2024 10:18:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709806724;
-	bh=+0Oa2jHUICRbuqKJwTQq++Eufn8AHFdNcjT4/IAsGN0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XnbAdDb23PBlK9t0mMF5gIIhyCaKb3L4irC62f5lweb4+Kr7cw9cv6vVf1gGdIWd6
-	 MHCc+UNMpP7kHOoqvwGnzE/YizYxOlF5NDdX/VEVvRQTYmfLWSie5dUnvVS75v2YIj
-	 y0BskxiSpGStRi0PeFBEyNBo9cd9s7+pPu05/MzvkSvBPWFgwhbDEbdwraWaXezxep
-	 fhrUNhl35KFzfbhLJ3zGSzd1Yizp2b1wA9gIi0X0pliUaTyYTv/FoeVdBlivDPRjB3
-	 BkWo7jg5BAoTvPRiVyVo1+zj+s1YWafb9pN8o4246ZXueH3YCJC3NPYgYW/lucWfET
-	 QGmOsNfvww8jA==
-From: Christian Brauner <brauner@kernel.org>
-To: Wedson Almeida Filho <walmeida@microsoft.com>,
-	linux-fsdevel@vger.kernel.org,
-	Colin Ian King <colin.i.king@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	willy@infradead.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CG5NMRVh"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-412fc5f5099so5804775e9.2;
+        Thu, 07 Mar 2024 02:41:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709808083; x=1710412883; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qgaA4hwjMMxXsNn/H65VvY2aAb1+rjCArUM3dz35oeg=;
+        b=CG5NMRVhpcDuJcA+oNFDOK1FTObA0mcwbghq7pZZSGn5yl/mX/FqhLpqffdIrIE7Wz
+         BaLB/Dm2gaoeXa647Opbu+YrAxQDo3gang6KqpnmIsKUhdozjkbkImRhHlURsxfiOMhj
+         LzD/3bEtj1TxC0XVakAO54d6NFp0E/elfXGEVl0JDv6pMG7jfm4En/VGfT5OYiH0McUQ
+         xN/Hs+7lxWuIrqkQbr+NVWofvqAdAWbNKuyBn9ZgQVgqVtsUUWowENcrmcwQtEdcBIq5
+         sL+7Cj1LLousMDvVY2Pn7/+mnOUyM75HP3BA2R8jty529iS6xC0OBHL1ncKnUTP9B2Tr
+         m6aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709808083; x=1710412883;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qgaA4hwjMMxXsNn/H65VvY2aAb1+rjCArUM3dz35oeg=;
+        b=en2BGEeoKze2KrxAneQSh95MmfscFErs4rLITsbFBVMCfTa/yxJ5NxAKAIefW5Xp3b
+         qcW40H5sZHqMcGvfYV7QEjZ4W/D3Wm6ir+vO1uhbOfGq4ladr5u4ERoiljp/BKs6FzQ/
+         /Qf92+rfUcMwhSa3GhiSLCXaOxSlT+uBdgwpB0r7ugyiRmcseQHNqpdcCyw8uD5Xzx/2
+         jCo6BD15XUoRh5TbfFFeOig6ZmM3ey8apdmU5uIcZ6o4mJ1cbIzHmKdNoSGC/YsAGikm
+         eJIeZ7J72MxPBx+2ETvlsN0fFQ6rVMD3mHDQmRB49vU8Xo3nI9jI0zGho0ad6AvQCf6Q
+         EWfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWY5Mof1wu/2i4OpMdd3GASZ+w5zSTkSHH2MFAjDIu/5YNGSqsknkovNnAOYqqTMHLtl/4yrAVUQ5XYL4LbuVhiWWEJgPVUcc8RDc5e
+X-Gm-Message-State: AOJu0YzSJycQT8MAMYyUnidUaVs0vjyFTEpvDw3aNAe3dfIORNAWZBEu
+	Y60O9S3cgLuL+EyNtFVBnJEaHdnBE2HeM/vWqcWQZYJyS1Kyk/y4
+X-Google-Smtp-Source: AGHT+IHFfQLpO+Ajim+32v9BfNQVyFeSt1SNjsGAX7r/QvA8WtdX08e2LuaNBQOxKkcCwOPQi0HNYg==
+X-Received: by 2002:a05:600c:4ecf:b0:412:b457:6303 with SMTP id g15-20020a05600c4ecf00b00412b4576303mr15685863wmq.21.1709808082840;
+        Thu, 07 Mar 2024 02:41:22 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id fk15-20020a05600c0ccf00b00413133cb9b8sm384147wmb.19.2024.03.07.02.41.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Mar 2024 02:41:19 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Dave Airlie <airlied@redhat.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	virtualization@lists.linux.dev,
+	spice-devel@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next][V2] hfsplus: remove dev_err messages and fix errno values
-Date: Thu,  7 Mar 2024 11:18:35 +0100
-Message-ID: <20240307-speck-meerschwein-5b13faf7b1a1@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240307092009.1975845-1-colin.i.king@gmail.com>
-References: <20240307092009.1975845-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] drm/qxl: remove unused variable num_relocs
+Date: Thu,  7 Mar 2024 10:41:19 +0000
+Message-Id: <20240307104119.1980621-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -47,36 +74,50 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1244; i=brauner@kernel.org; h=from:subject:message-id; bh=+0Oa2jHUICRbuqKJwTQq++Eufn8AHFdNcjT4/IAsGN0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS+nFLj1fxtzuxnstUCN3dsl+bfNL1+seC+4wvyJ65d4 esmLcPT2VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRcG2Gf+qut1USYkz0OJha WNqeqvi9u/2lrHzNVh/3Y0H7TA0NzjIybH/ycu7Gq/eD1W9Irq9xvH5gR7KExIp9bHMcn0kZW6l J8gMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Thu, 07 Mar 2024 09:20:09 +0000, Colin Ian King wrote:
-> While exercising hfsplus with stress-ng with xattr tests the kernel
-> log was spammed with many error messages. The need to emit these
-> messages is not necessary, so remove them. Also fix the errno returns,
-> for XATTR_CREATE errors these should be -EEXIST, and for XATTR_REPLACE
-> this should be -ENODATA.
-> 
-> Kudos to Matthew Wilcox for spotting the need for -EEXIST instead of
-> -EOPNOTSUPP.
-> 
-> [...]
+The variable num_relocs is being initialized and incremented but it is
+never actually referenced in any other way. The variable is redundant
+and can be removed.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Cleans up clang scan build warning:
+drivers/gpu/drm/qxl/qxl_ioctl.c:148:14: warning: variable 'num_relocs'
+set but not used [-Wunused-but-set-variable]
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/qxl/qxl_ioctl.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+diff --git a/drivers/gpu/drm/qxl/qxl_ioctl.c b/drivers/gpu/drm/qxl/qxl_ioctl.c
+index dd0f834d881c..506ae1f5e099 100644
+--- a/drivers/gpu/drm/qxl/qxl_ioctl.c
++++ b/drivers/gpu/drm/qxl/qxl_ioctl.c
+@@ -145,7 +145,7 @@ static int qxl_process_single_command(struct qxl_device *qdev,
+ 	struct qxl_release *release;
+ 	struct qxl_bo *cmd_bo;
+ 	void *fb_cmd;
+-	int i, ret, num_relocs;
++	int i, ret;
+ 	int unwritten;
+ 
+ 	switch (cmd->type) {
+@@ -200,7 +200,6 @@ static int qxl_process_single_command(struct qxl_device *qdev,
+ 	}
+ 
+ 	/* fill out reloc info structs */
+-	num_relocs = 0;
+ 	for (i = 0; i < cmd->relocs_num; ++i) {
+ 		struct drm_qxl_reloc reloc;
+ 		struct drm_qxl_reloc __user *u = u64_to_user_ptr(cmd->relocs);
+@@ -230,7 +229,6 @@ static int qxl_process_single_command(struct qxl_device *qdev,
+ 			reloc_info[i].dst_bo = cmd_bo;
+ 			reloc_info[i].dst_offset = reloc.dst_offset + release->release_offset;
+ 		}
+-		num_relocs++;
+ 
+ 		/* reserve and validate the reloc dst bo */
+ 		if (reloc.reloc_type == QXL_RELOC_TYPE_BO || reloc.src_handle) {
+-- 
+2.39.2
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] hfsplus: remove dev_err messages and fix errno values
-      https://git.kernel.org/vfs/vfs/c/41983afe811a
