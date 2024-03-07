@@ -1,79 +1,111 @@
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D457F130E23;
-	Thu,  7 Mar 2024 17:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BC6132494;
+	Thu,  7 Mar 2024 18:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709833829; cv=none; b=MAklZEUdOruPMdFiK5t0navwoDKuTxDuq9Zmk6oT+rSbs8m2gSE2CwCdQumpwxyT7PTGcxtjIuucM0WYUlTTqZ9HQACJzhWXZwQ+C1y3AWMbjqSXFmmT6TYhBmE4i7Z4nXTtx4T1fKHm4NMA6xAumdIzgOsHUNA2YpeGDIwHdwk=
+	t=1709835459; cv=none; b=cLghDe4ks0yOooBoIzTQI/fNrBTplpwDWFdlLGaQveXrb59RGlF6kvgoGsoSZZQrQC3PKc+5Mpzb4j7fUmTl3kWKrMsA6CWKgIm6MbqIzR6yV0vUl5aXWbN8x8uZTOmtji2L6GhCWvKSPyZkeBI8eqqXuAeBeJYbQE8DOwoABd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709833829; c=relaxed/simple;
-	bh=UkQw+M2hziB+AtfHClDHqBrPe0u0iSyiMBdceYnvNxw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O29iQhebTmK42pab0P1Sk6eoQpy+j5kgGStkiHfSSIBhSJjwypIWArFG07YIcDAI9nma7INVkqQyO3Lkm6F9lAVg1z46K4RgDwHw64SowOY3UaS5/Hzlv+DD9vIEgQINpWlYGZ8MS3jqQVl3hQJElLirTYz1nGFEzAf9lEgFhdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 03BBB1C14D8;
-	Thu,  7 Mar 2024 17:13:35 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf03.hostedemail.com (Postfix) with ESMTPA id 5E9B76000B;
-	Thu,  7 Mar 2024 17:13:33 +0000 (UTC)
-Message-ID: <3d9e47beeb08b3319651b49b81da4271cbbcad96.camel@perches.com>
-Subject: Re: checkpatch.pl getting stuck on a macro in mm/kmsan/kmsan_test.c
-From: Joe Perches <joe@perches.com>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Dan Carpenter
-	 <dan.carpenter@linaro.org>
-Cc: kernel-janitors <kernel-janitors@vger.kernel.org>, Linux Kernel
-	Mailing List <linux-kernel@vger.kernel.org>
-Date: Thu, 07 Mar 2024 09:13:32 -0800
-In-Reply-To: <CAKXUXMwCdV466mRd4K0ePV73qDO9GRAph4KuC5nQ0JAp-ouemQ@mail.gmail.com>
-References: 
-	<CAKXUXMwCdV466mRd4K0ePV73qDO9GRAph4KuC5nQ0JAp-ouemQ@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1709835459; c=relaxed/simple;
+	bh=tS/IFPg7cx1pgTE8i9jCOG/PSDwlO/ZsPG9gatsNzZM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GlEtWKjZ/yjHwu+K5U2mQuWEsJBRWn5kifWI7lZrpwdRCvTlugWyZX6FbbIPmS61JXFNsRQhurWsQxdOp3EPxsu2XASXswF/rtMxCXa59u/doxcfUco9Uu7u/jE7qYi8KPv5BR02lnTodGQUrdQdWdhcDtWEC2uqs2EwbSV5zbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RF7vrSnw; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RF7vrSnw"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-33ddd1624beso782475f8f.1;
+        Thu, 07 Mar 2024 10:17:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709835456; x=1710440256; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E4IzLeRGDXIml4WPRP0z/vVkc5vfGEv9d+YctMnKNIQ=;
+        b=RF7vrSnwAPwaStIzwXNK5M9TL15xNRpGauS80BK3OjvBDoiySj3KxCEGhlmDAq+NF+
+         UxkCHX0gycoWXrPEbb+rps1TGxH2WdtbnxlMtaUbshy2CWZ8tOkoDn296S5oOD988uYh
+         /MCrJtPhURHX5DLIiQ3dDuPAUfwvo3pfcqJxCLw/L7Enh9GrKKH7iQ448wdLof5NDj8b
+         byK/I0uAUCwR7E7xHyIPAa61X7URKPGXzTefwQNIvVxjEHQfpYU/FPsC5YgQFExxfVT3
+         FXuOjbWKfsh9XaB7fF416wsQ9rOu51zEHZFLF7y1iMlexaIVL8rpGUsTI1bMioxF1hT0
+         XPyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709835456; x=1710440256;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E4IzLeRGDXIml4WPRP0z/vVkc5vfGEv9d+YctMnKNIQ=;
+        b=pFu88zBeArTsG5pH7hWs6qWTVvM2AV/QzCk+t1Ry94kYeM3rbfJzOuR9axNTfBpBEB
+         8GQEerZiWKttAs8+YMVZs0ODPoxszwRAtJ3MD5XjuBcy2xcApSD93VlJ8/pQl0K0InkN
+         cgySD8GAjmItuVeXC0tR0tT5cuV11EWHckyxyKTb/LCcZz0fBLl5R+CVRRB8DF2eAYeV
+         6QJSYZeDby8GJKBTHIwVpCpA1sAOgGsyCrDAGqu78x2ODB/MfXsi5RjUgXP5SkQMbjt5
+         B81SpGFeaYfNs/cm1kaN1y6waQtKTOroMrDzqOcULGcVEkat43jxVTDviVlE5bMSaT6i
+         9tjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWA9e87Sb/Dh2cqlZ17NW177IBS4Q5SDRT4/BfVjwxi/CIsRIKmNdxmFrNck5EKslMb5HSd9nwnIVQGXlp2BWtUHIW6teCjN4n3t1A+HiknXOTtxQ13EAuGbiThMVzKytl3M6T/neeJ
+X-Gm-Message-State: AOJu0YyMmw3RigPil5eHjVDx3O2WkKZs3I7MkA6u0c71HZtEUeZckrMY
+	WsfVO1ehpx0V/5JmDHwgTLZBHnTK77bSO+lPW1aw5Cov9SFCE+K9Wg5o3eGh65k=
+X-Google-Smtp-Source: AGHT+IFhXEcBUHBfrGKPRVKKjnrYD0VO7ipK2IkyLwPd+jvBJOsv+bpjH/6Bly7zRDfwPiRtfhvtag==
+X-Received: by 2002:adf:a31a:0:b0:33e:73a3:fd13 with SMTP id c26-20020adfa31a000000b0033e73a3fd13mr624632wrb.16.1709835455886;
+        Thu, 07 Mar 2024 10:17:35 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id bw1-20020a0560001f8100b0033db0c866f7sm21242811wrb.11.2024.03.07.10.17.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Mar 2024 10:17:35 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Roy Huang <roy.huang@analog.com>,
+	Ash Aziz <ash.aziz@plxtech.com>,
+	Mike Frysinger <vapier@gentoo.org>,
+	Seth Levy <seth.levy@plxtech.com>,
+	linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next][V2] usb: gadget: net2272: Use irqflags in the call to net2272_probe_fin
+Date: Thu,  7 Mar 2024 18:17:34 +0000
+Message-Id: <20240307181734.2034407-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: 5E9B76000B
-X-Stat-Signature: bcjmq85es8tghntjkgwc514jcdkrqkb4
-X-Rspamd-Server: rspamout01
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1+lFb7snM1uJiWroRAnCi7TfyQNi+Z2QnM=
-X-HE-Tag: 1709831613-598557
-X-HE-Meta: U2FsdGVkX1/fqsZ7gRjkaPArITu2uknZnBXYsXrXUZ/0LIJoV41Ft4QGlY8WStIHj6JK0A/r25AhV4Xs1gk38f/cs+yGSdF9PNMuk6mMWMHLnIjR8OeQyOhBmTmntEML7n6fcwy1f0ywFPhBvJLBA12DqEhI3ouG8JxO1b6QMEbYC5ZwiSqARvUApEJBobDOf2A1/1woP6uPvSJzatdxN2VndGDFXCs7kpFODaYmKL/uTnOi+Lro4GK16qiZthtEkNsc1j6Lj2/i+70ZGA7mslan9AoB5tQt9CJeSSe+5DKKFGsalq787+RPFnzn6P8L
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-03-06 at 10:33 +0100, Lukas Bulwahn wrote:
-> Dear Joe,
->=20
-> while running checkpatch.pl -f on all files in the kernel repository
-> (v6.8-rc1) for some experiment, I noticed that checkpatch.pl got stuck
-> on mm/kmsan/kmsan_test.c, i.e., ./scripts/checkpatch.pl -f
-> mm/kmsan/kmsan_test.c never terminates.
->=20
-> I could already boil it down to checkpatch getting stuck on the macro
-> #define DEFINE_TEST_MEMSETXX(size), see lines 541 to 554 in
-> mm/kmsan/kmsan_test.c on v6.8-rc1.
->=20
-> I do not know if it is worth fixing, but certainly I was surprised
-> that reasonable code can put checkpatch into some stuck state.
->=20
+Currently the variable irqflags is being set but is not being used,
+it appears it should be used in the call to net2272_probe_fin
+rather than IRQF_TRIGGER_LOW being used. Kudos to Uwe Kleine-König
+for suggesting the fix.
 
-I know why it hangs.  I'll give it a think for a bit.
-I rather doubt Dan's suggestion is the appropriate one.
+Cleans up clang scan build warning:
+drivers/usb/gadget/udc/net2272.c:2610:15: warning: variable 'irqflags'
+set but not used [-Wunused-but-set-variable]
 
-Code is:
+Fixes: ceb80363b2ec ("USB: net2272: driver for PLX NET2272 USB device controller")
 
-		volatile uint##size##_t
-uninit;			\
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
 
-and in checkpatch line 2304:
+V2: don't remove irqflags but instead use it in the call to net2272_probe_fin
 
-			$possible =3D~ s/\s*$Type\s*//g;
+---
+ drivers/usb/gadget/udc/net2272.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-where uint is a $Type it removes.
+diff --git a/drivers/usb/gadget/udc/net2272.c b/drivers/usb/gadget/udc/net2272.c
+index 12e76bb62c20..19bbc38f3d35 100644
+--- a/drivers/usb/gadget/udc/net2272.c
++++ b/drivers/usb/gadget/udc/net2272.c
+@@ -2650,7 +2650,7 @@ net2272_plat_probe(struct platform_device *pdev)
+ 		goto err_req;
+ 	}
+ 
+-	ret = net2272_probe_fin(dev, IRQF_TRIGGER_LOW);
++	ret = net2272_probe_fin(dev, irqflags);
+ 	if (ret)
+ 		goto err_io;
+ 
+-- 
+2.39.2
 
