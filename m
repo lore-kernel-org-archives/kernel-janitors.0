@@ -1,95 +1,127 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F9D82D75
-	for <kernel-janitors@vger.kernel.org>; Thu,  7 Mar 2024 08:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE71823BF;
+	Thu,  7 Mar 2024 09:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709800767; cv=none; b=oeDmiQaUCFFx/QC4JbhF+aSQkxRbgZMjZPKvMhV5a1LdoBfJBkbfnrPCrHmiJJq/K5egcUFPRF6kstz5wd8dFU93bRs/1BXbekm6/9g7MwsrBQVJHdpqtFv+jEWHvALFoPhxGN3aZyO7mbuiPMdO8JisyKxnHw19fxP1ngvZt6A=
+	t=1709803214; cv=none; b=QPy+mFwhIM+rGDWW3Z3YOr2JHChuMzcJiSJTZq+pYeN6d8R3ZlfQgSXs9qJaguhjt+NU63bxqpfUTD6LZFsqLYuJ4od7yzCjJwizBKyIjbMpCSvUqNg4ibvfe3iFKjzBPDonaaZMVdCZ4XoT0H0hms2RDl1tiGFK12Hqc5AU5QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709800767; c=relaxed/simple;
-	bh=EajkfPF4XOdvGbZOn/CrnjZTPHr/uf5N7kNuu1geeyE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=id0NDEPBJj2U+OwuMGfJh/CRC0NBaVc0B0jr85hom4aRp35pGhLJy5v3RE7bwJooffBAZOdI+L91lKDbfypkVtmiQ3e+i/G7YbFUoycq/qHncaE0eIt/OJarvHTsBVO8p+sC191MiiBSWn8AtSUq8UKXuF1i6blyOAQHFnG3xEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VroM5gZ1; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709803214; c=relaxed/simple;
+	bh=JExp8xfZdKco+i9aU2Nf94UpagHKLlLHb9vJ2ivtHCM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=pzt3NtnGv6mQZ/Rg1SjNRCVA+xNqOX0K9WIQAs4AJLHWjsMH9tqOE/kd8fAW+we+9ORQw/GB91EQWczfa8iep7EesZcI9gF0xdRmbVeLzEozhD8LpJ2hKfflqjNykQEzApCCWpN04E3f0Coo1QivPzqiiS9Qi8v5f7x+L4Eapy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3Lhb9mF; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VroM5gZ1"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-412ed3f1e3fso5263365e9.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 07 Mar 2024 00:39:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3Lhb9mF"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-33d568fbf62so299889f8f.3;
+        Thu, 07 Mar 2024 01:20:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709800763; x=1710405563; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PnvP01sqSCbkr/XzKyXEVDF7n+8RZwMaxaOyNtLHfAU=;
-        b=VroM5gZ1qWRhbOxriUTXdBQ2gAygf0XrgOK87sdW7RD3tjHTKTE1hlKbFHoo+hdQQW
-         N7kFYvM0Ss/CtdkX3FWKfHO5wpiM1C8Srthe82PPFr0HlKJN4XDLKeJM8ejSMCxLcZMx
-         aBfdcCQGZiK2AigwIadrBDKfOCyjFH88+7Tojjeb276zslrnFxFjyKpoCiUlw3bs0WGH
-         fOIcxHNjlB0JhnSMeCukz4BnB8nP+anXIe8+8w9U2BkIliOFwcESu+qU7pYBpa0Gj13l
-         ZLZr3oZsiGaF0Dz4H2hkR3Fgl5qK7o/usI+M1dxPj43ZimEypJ43rRLhZiWnAU45miyW
-         uiTg==
+        d=gmail.com; s=20230601; t=1709803211; x=1710408011; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YW0Mqn4ceL/DfI+pL4E21JiugQofGYiHeHUz1OXuJoM=;
+        b=E3Lhb9mFfe4ncEejzXKKPhEgcBMgFRVWy+Q3/UVj5hnFxv8P2OPC+/5rt8s6ix4TuW
+         B5751oRAKOCnxwOQS/Yr2aYlcg5sEA4wDYU217XzKZ/ku2MWzJ9BXvy2dhA2O5E/2aHp
+         lHo9wKeY0vrwrm8No+aI9w/LQg9CwCBZhepNiNWiohdvFSODwtbtcYD43bNgoy/c4Ui7
+         AJSQpV/Jfq6UW2y7PJgo+wr6fTiWVlnkh7Ss3PK9mYpvgF9cCAeVAsQlh+EP33i7NNyd
+         ayYaSe0LFTxxV4koo8C+ycrYbc/o+ehdveYQ4U1aRU+Xdnk5aop44pRyL5vIlI6P87CK
+         PWGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709800763; x=1710405563;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PnvP01sqSCbkr/XzKyXEVDF7n+8RZwMaxaOyNtLHfAU=;
-        b=keyxVKCq/4ruw1VosawHIcVNvtgNTaQrbiu9Hodn/jTCbOvCe7Qu51ekxvV4LdG4ol
-         wNM4lXpzVvOr4kJri2aJMXSdeLp+8sPdtLV8cUjvd9SuU36LBtoTSWSgMosgXjpdLPzF
-         lHxuz//HobiEC9+QfhEBH1N3FQEZ2Z9Y1phwg9zfDSIl3if2tO6fdwuI75H600MTJtsy
-         8ZuJGT+XJTYY887O/zhvJlrr7YJM/4/WTk2U8jVuoWa4gWvayNRoNCVZMwO8FXLlkz3k
-         bLHnI+rZdPmTa101pTt6PsYe1/AVKZLBmRYfLhN3TpvoK1MOui+C5fAHxljARZ8p+B3t
-         4yfA==
-X-Forwarded-Encrypted: i=1; AJvYcCVe/jkyvY05shI3+CKxh1DY3jaQhJco46uSCICPY+V3ctpAn0XHWj82UGooOytF8cP2djf0zwAqAvB63LIc9p45VGv6XXJm8JZm3zI04KuZ
-X-Gm-Message-State: AOJu0YzqripYzSwqM4vnuuvpB68kZP15mlecJi0GiG+y3a5m47T8z1Sj
-	FZAjrAOA5wq8mvD7iQ4196ORQvgUnPS6ch3Yrm/7fV+w0h/AArkrQLQ1D5sKqFw=
-X-Google-Smtp-Source: AGHT+IHwdVJnLyPhxmA+xwcyhbQLGTYcljpn6bF2PF7D+cZuR+YCWXwL5IVs0ZpL20zkc42ROTpCBA==
-X-Received: by 2002:a05:600c:154d:b0:413:1012:5b6 with SMTP id f13-20020a05600c154d00b00413101205b6mr1063558wmg.22.1709800763188;
-        Thu, 07 Mar 2024 00:39:23 -0800 (PST)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id fl9-20020a05600c0b8900b00412eff2eb5bsm1910902wmb.13.2024.03.07.00.39.22
+        d=1e100.net; s=20230601; t=1709803211; x=1710408011;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YW0Mqn4ceL/DfI+pL4E21JiugQofGYiHeHUz1OXuJoM=;
+        b=XWVcTyqKnKm7Ax1ApNJ3eX8nk6lmf71P08tp4rvC+4SFgXKSSAObwInAAY5D503dzC
+         8UmfwM0P9siiRWc6a0rcOjsg2WxlS3SVcAw7hCz7p7VTaFIvJXHwQU0oSyiDtY9NEtyF
+         U4Jrfr7yznYGCHpNtq9IeKrvhUb8S0rKvfQzyYjzwjAkPZR15zxD9sWzK4Y6r6ppuYya
+         2creDCFIZw2nFC5QkcmiWlv1bR6/rhUTrleO400s3oxkhskcTWSbYufC6P/zV3mA087C
+         6C5q5+qUBGT1+U+0fAoXVAjk/U5JWj55X8LHMtamyIjgaJ39ipx4WKkjQqLHWjvK8eFj
+         Q09w==
+X-Forwarded-Encrypted: i=1; AJvYcCWQPE3BZVXgoDv0NGpBxZDG5lwUwZyVQ0s7Wl763h0f4j2B//7exvBPu+lmNL83N6HNd7MhXpUc/OTPFiqADmuLqXWO3Ot8ygw1/U5YFfi1oF1jUCTfpUi1IVNKE3x9mUcVpt9ElBsUtbysRA==
+X-Gm-Message-State: AOJu0YxJEH7LHenlCMZIptEtO4AVaDfGjAvvvuTQnH2w/GQivtMB4GvR
+	ZRXgBQi6zazGg3zIcbsXPQq2dwXx1rGY1l6OmWrnCZjYnj409ujj
+X-Google-Smtp-Source: AGHT+IFsxBXURzKqFHcbtOlx9sJQBSH12U2/M37d2BFYrAjIIjZsY3XNHK735iX4oAlq0YZvbc6xew==
+X-Received: by 2002:a05:6000:4026:b0:33e:83a:b4f with SMTP id cp38-20020a056000402600b0033e083a0b4fmr17190412wrb.2.1709803210634;
+        Thu, 07 Mar 2024 01:20:10 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id bk15-20020a0560001d8f00b0033b48190e5esm20290113wrb.67.2024.03.07.01.20.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Mar 2024 00:39:22 -0800 (PST)
-Date: Thu, 7 Mar 2024 11:39:18 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Chandan Babu R <chandan.babu@oracle.com>,
-	Dave Chinner <dchinner@redhat.com>, linux-xfs@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] xfs: small cleanup in xrep_update_qflags()
-Message-ID: <72f966bd-9a5d-4f57-93fe-c62966ae6995@moroto.mountain>
+        Thu, 07 Mar 2024 01:20:10 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Wedson Almeida Filho <walmeida@microsoft.com>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	willy@infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next][V2] hfsplus: remove dev_err messages and fix errno values
+Date: Thu,  7 Mar 2024 09:20:09 +0000
+Message-Id: <20240307092009.1975845-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-The "mp" pointer is the same as "sc->mp" so this change doesn't affect
-runtime at all.  However, it's nicer to use same name for both the lock
-and the unlock.
+While exercising hfsplus with stress-ng with xattr tests the kernel
+log was spammed with many error messages. The need to emit these
+messages is not necessary, so remove them. Also fix the errno returns,
+for XATTR_CREATE errors these should be -EEXIST, and for XATTR_REPLACE
+this should be -ENODATA.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Kudos to Matthew Wilcox for spotting the need for -EEXIST instead of
+-EOPNOTSUPP.
+
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/xfs/scrub/repair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/xfs/scrub/repair.c b/fs/xfs/scrub/repair.c
-index f43dce771cdd..8ee7663fd958 100644
---- a/fs/xfs/scrub/repair.c
-+++ b/fs/xfs/scrub/repair.c
-@@ -724,7 +724,7 @@ xrep_update_qflags(
- 	xfs_trans_log_buf(sc->tp, bp, 0, sizeof(struct xfs_dsb) - 1);
+V2: Also remove "cannot replace xattr" message and fix the errno returns
+
+---
+ fs/hfsplus/xattr.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
+index 9c9ff6b8c6f7..f61a9370a233 100644
+--- a/fs/hfsplus/xattr.c
++++ b/fs/hfsplus/xattr.c
+@@ -288,8 +288,7 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
  
- no_update:
--	mutex_unlock(&sc->mp->m_quotainfo->qi_quotaofflock);
-+	mutex_unlock(&mp->m_quotainfo->qi_quotaofflock);
- }
+ 	if (!strcmp_xattr_finder_info(name)) {
+ 		if (flags & XATTR_CREATE) {
+-			pr_err("xattr exists yet\n");
+-			err = -EOPNOTSUPP;
++			err = -EEXIST;
+ 			goto end_setxattr;
+ 		}
+ 		hfs_bnode_read(cat_fd.bnode, &entry, cat_fd.entryoffset,
+@@ -335,8 +334,7 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
  
- /* Force a quotacheck the next time we mount. */
+ 	if (hfsplus_attr_exists(inode, name)) {
+ 		if (flags & XATTR_CREATE) {
+-			pr_err("xattr exists yet\n");
+-			err = -EOPNOTSUPP;
++			err = -EEXIST;
+ 			goto end_setxattr;
+ 		}
+ 		err = hfsplus_delete_attr(inode, name);
+@@ -347,8 +345,7 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
+ 			goto end_setxattr;
+ 	} else {
+ 		if (flags & XATTR_REPLACE) {
+-			pr_err("cannot replace xattr\n");
+-			err = -EOPNOTSUPP;
++			err = -ENODATA;
+ 			goto end_setxattr;
+ 		}
+ 		err = hfsplus_create_attr(inode, name, value, size);
 -- 
-2.43.0
+2.39.2
 
