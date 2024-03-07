@@ -1,55 +1,115 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAEA63121;
-	Thu,  7 Mar 2024 15:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94FE12F5B0
+	for <kernel-janitors@vger.kernel.org>; Thu,  7 Mar 2024 16:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709824618; cv=none; b=Bo46fVXrlLhmomN+Goqd+Cxd1kAWuP/kTXFqacSJz+3YBsGWhqjYvvk2O38rBAbbK0K3Z6BDfgsHSjp7wcNfxw2kfjhCuuO93BuRUoecgTvhbD8Vp4cbvg4Iq93OL1UeaVS8qyotWxgrpgLrW/1s/CoLRTm13jctAXPQlEmFWvo=
+	t=1709830325; cv=none; b=JEQQ3GgYKurTldSWoJkJEQ8ITkqks/QVARCtaNVAFcOpB5T8BvUdp23rlGE3ngFa3y0tguDseEEwTfBj47MZm9CvWSHOXiaixMgWg2p9b2OUdJjvWz+Ze7Zco27Bpvf0InTOND8cUHv2w+BMEaCAQt/OWEaA9kJoEIcCwEWpPBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709824618; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
+	s=arc-20240116; t=1709830325; c=relaxed/simple;
+	bh=i9CCT9j7BCqV2bE+0gCx3jMpwRqeW581xksody4aj88=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KeLs9YVNlN3SUR5mk3y8qPLXDLZc59nIvSQ481tp+tFYPdbkJ5MC7T2ao6iOZYQdooY5a2N3jfHyV6eMXmMifJVciMUqlvLqvsyUH8Czwi9L3Lx8vebPdEhrBlZ38Vgdjgdc1x27zg/KZ+fUszv6pTuwgDDrTLg06eHbMyVusx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xTFF6QaW; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xTFF6QaW"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=xTFF6QaWHrooDJTcK4B9fa82NB
-	BRzuHgPkA6q+3SBzM3uca6gNVuHMaaW70J+yl8uldHKIcfX+10OV/bvENHNObi6q/xgL0lYjDkF05
-	0OI94w6RHKHJ8cEJ+8LLIQ9FytoypHLBGYTTI/qMklC6+Wi3QM5SCMgyyHkIDg1DGjsgCoxHFyitD
-	PwLhh8kAptls/6Iu10bEDXpXqkCHGoUwdXEy76PxfWzHz46/084f4ZUxBYbEIPzh+eKBy/yS/8cbZ
-	kiU3KngAERhkWB5eiLxyAFzDmjb3CvlJnNVuNC6nVCZWNPk4Rxy6k3MhlmsM1XYKTcoqipm7fR/jw
-	IIUkdj5w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1riFUO-00000005F7Z-2B5w;
-	Thu, 07 Mar 2024 15:16:56 +0000
-Date: Thu, 7 Mar 2024 07:16:56 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Dave Chinner <dchinner@redhat.com>, linux-xfs@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xfs: small cleanup in xrep_update_qflags()
-Message-ID: <ZenaaIA27MyR4SaQ@infradead.org>
-References: <72f966bd-9a5d-4f57-93fe-c62966ae6995@moroto.mountain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BcCOZancUywRkpygTUaojrxWLD2WNkul7HaE849gHrBNOBb2WhpwZIZVNOaLWVqlqBIaefCnFMBw4hXPxskfi6YadXI+/WFLkxgV3Ol+QS+0r6hEkHovfjBoeAAR1DNxf+e8K4b/6Z9m0bTzDmLgsR3/cukt+n8lltZuqk/F39w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1riGyO-00019r-AR; Thu, 07 Mar 2024 17:52:00 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1riGyN-004yht-Qw; Thu, 07 Mar 2024 17:51:59 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1riGyN-001PCL-2O;
+	Thu, 07 Mar 2024 17:51:59 +0100
+Date: Thu, 7 Mar 2024 17:51:59 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] usb: gadget: net2272: remove redundant variable
+ irqflags
+Message-ID: <mywsgq453muhggv5y7pfrsg7zrodtuebcpo5rbc4kus5h2ameo@fhnpemjuntaz>
+References: <20240307105135.1981060-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gewgcxuilb6kaoqd"
 Content-Disposition: inline
-In-Reply-To: <72f966bd-9a5d-4f57-93fe-c62966ae6995@moroto.mountain>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20240307105135.1981060-1-colin.i.king@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 
-Looks good:
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+--gewgcxuilb6kaoqd
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Mar 07, 2024 at 10:51:35AM +0000, Colin Ian King wrote:
+> The variable irqflags is being initialized and being bit-or'd with
+> values but it is never read afterwards. The variable is redundant
+> and can be removed.
+>=20
+> Cleans up clang scan build warning:
+> drivers/usb/gadget/udc/net2272.c:2610:15: warning: variable 'irqflags'
+> set but not used [-Wunused-but-set-variable]
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+this "problem" exists since the driver was introduced in commit
+ceb80363b2ec ("USB: net2272: driver for PLX NET2272 USB device
+controller"). Might be worth a Fixes: line.
+
+I wonder if the better fix would be:
+
+diff --git a/drivers/usb/gadget/udc/net2272.c b/drivers/usb/gadget/udc/net2=
+272.c
+index 12e76bb62c20..19bbc38f3d35 100644
+--- a/drivers/usb/gadget/udc/net2272.c
++++ b/drivers/usb/gadget/udc/net2272.c
+@@ -2650,7 +2650,7 @@ net2272_plat_probe(struct platform_device *pdev)
+ 		goto err_req;
+ 	}
+=20
+-	ret =3D net2272_probe_fin(dev, IRQF_TRIGGER_LOW);
++	ret =3D net2272_probe_fin(dev, irqflags);
+ 	if (ret)
+ 		goto err_io;
+=20
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--gewgcxuilb6kaoqd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmXp8K4ACgkQj4D7WH0S
+/k726wgApuSl5j8yqZxfz0r/ljO+iYK/Mkfds9vddxUBRxPq16H/WB7iqdlAAj6L
+Z3+ZTxiXgsExqYh+ZEeU4lKwHa8DYotgoQZOxkANsqjJBIK+JQoDj73w+UvraCEv
+sGi0Uv606kD8zV1Nb8pYq5O9n8G24XWwH9f1y96zKlt+IAnwLnDrq0D8d6SfIfd4
+VJFvrVTl2oNsWky9RS74vRfGEkc2H9R3UrwRRyD1Sv2PpZOpyKJKru621qHw1kv/
++aPOIxHEty7nTu87lQJZ1RwRX7rmwYwqlPChOoL6hLD4KM1fkcsihbGqSr/3pMqz
+EKbgDXH/dFyvvnrWghAoTkEkjujmmQ==
+=8zp0
+-----END PGP SIGNATURE-----
+
+--gewgcxuilb6kaoqd--
