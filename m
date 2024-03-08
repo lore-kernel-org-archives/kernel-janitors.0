@@ -1,75 +1,101 @@
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93E82263A;
-	Fri,  8 Mar 2024 11:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89ADC10A34;
+	Fri,  8 Mar 2024 13:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709895998; cv=none; b=Zx4Y6WPFq6nDHjMU4uprCFIKsIJ1nGCc1W35PT8D3UKIZxRQWLqjy/UJB5SEfYGmcLYefruIY8zYwD3SnbXASDfBtTIyjvUaxcm7SBa9V8zxsjuioJ2mL4EgMAHNFCQe1RchL9N8n06y+8lnKM6q1qibFLmLTprWz+cGrZs+ChY=
+	t=1709903933; cv=none; b=CCg59B2BxqL855OrByP0NHmjFNTd6bclE3MAJrQnmAEg0HLG+DqZkLzlAZYm0Of+UJOsSQx5vkPeiu+6HMMX5rfDkFA0YUh9dJNKmKZpFM3/NF7lwqu2XRuo/n0ylgQA7TG8bzdrx9eLO+8KHuAGHTWuG/Ue6Qhuefx1vWQ4dJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709895998; c=relaxed/simple;
-	bh=Dlic2xdJ/4Lp/BC+kW2Kll6aPOhh2E5AospJCmpw9rw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ms7A7T8ei6LMf1/VodIkXdB6/l6tdpqWeb1SkJ1+O25M3ZTyL7tivZNUKOtmG6DMBGMZ4pH0TC+gZkn/slHEXbmMwKYzeLOQ3uJzJIAnqI20+p3u4DfFHd+arFU3lYt2BgBGZlknM1O8p+VsU89DidmvOx+DqCiOWN90HCseJRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=le04kcLe; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1709903933; c=relaxed/simple;
+	bh=oPEWudfma1ZgyCTM00cIONaayXz1JGWtyvpKY2ge/lI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=dBOzOe65yVJ8vKbxR3K5ObGt8X/R4wj1GTdJLP/8L7Pnv7YzFwYZpGJ9TMwmdQclhvbFQuTGTDkwtjb1iUz/YZ8eyTbX9M15kPNz+IkOXYHSh9y1pmYWQZgutN3c8KpcItEdijUnL3Og1ts7HNEJqtEuwMvvR6A3P1kVqG7hFD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RMxUGehw; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="le04kcLe"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 881F220005;
-	Fri,  8 Mar 2024 11:06:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1709895994;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yDokQE8eDevsZTVbL+J84sEhjfKF7F3KjE3ssol2SRA=;
-	b=le04kcLei1b9u0cNrGSc+7mmEjWxFYNIWNuBCBWBXInJiPoZ6dlCTkQt7rZqKgROC6JuwV
-	xrwL/JvruFTsA/EevlSdi9X0Fvfu8hJlOWo7p9vPEYiYAFt4JX/35zlsRJIlNsayoRcgQc
-	eYYJoL5T1c1Khei+Lvc93IBsTk3raSIrSto5PP/M6Yeti8PwNRwQ+dngj658YOBDr+TJDr
-	tipL8rnYTgA6Vbb2FoMlDb6i/3dj9kXjrrJQmMdpwgIMVvL32/awV7ykHIAXn1MaZZguoF
-	ckUJ1lR13iP4H5aZoXjcC5K4QnWmh1DJv1rjvZ8InmYk1olzO8UVjmicP08dzQ==
-Date: Fri, 8 Mar 2024 12:06:33 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	linux-rtc@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Eddie Huang <eddie.huang@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>, kernel-janitors@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMxUGehw"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4131804e695so3816625e9.0;
+        Fri, 08 Mar 2024 05:18:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709903930; x=1710508730; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=43felEw2qApt1wR5OexBfyucmoH5eT2hn7DMVQ2pgzw=;
+        b=RMxUGehwsjjfc8NHdebt0EmpS58t0P/aLXWjwiQcmwX1Ay3eO7scJTTF9H3zs3WJl/
+         QNM+Zd48hgGs2XH3YYhlR/+bsJ7qH/HvJGfCRVsQ4UI6CWD6GNBoGSyf+rkolZ9wEk7C
+         SSjsmoo4bu+CRvePuDlvdAeKXbmA1BkhyWmq3ghwClntBZh/sKIbr19OgEqr1gzz2/kV
+         RIhDI92GYdt+w5kk37MhCG0d5U05Vj+WDKPdY3qFrTF4hWd+w2NCAw4OwcY6sqijqYmh
+         yNLb4PVlYcjtNPjRx0u5xkisB2+/XVoGnDGTNB5TfDZcKUfD0+5fz7PAOEHQ7Sc7+bea
+         OLKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709903930; x=1710508730;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=43felEw2qApt1wR5OexBfyucmoH5eT2hn7DMVQ2pgzw=;
+        b=UaLHRKuMINxnfLVhXjB7iYMgysaA2gHcfd5ok7dwzr+BSv1IeMs5diTM1ytEuW9qgj
+         YXLe6M2eChaoxtkmCNjtjDixO52AOsIxpl0JznRJcxmW5wMfXnHFg/h25bv/rrUUZ+J0
+         st7DZ8WxyS1o4UBEfNuFL3406X1Vztzwz74ekMwhCMvdGMm3Y1HL3JroNvqSi90NI+Fs
+         pcrxeBEOyqfxXIyvK/lVfFk9ntPiyQMyeYnVaqoS7MNylgJGDfKVIRY0CNbv27PeHCBz
+         XPPAIp0ZFXUWEae8vbqAs7Qn5YPJgWJGVTJtBz9FRhsxz+TSpcVqpTGRgTRiFJ85gGd0
+         ur0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUUOY0HsMHWXK8hdwLmX/KKLO6f7NB52+fPRApQ0xINhYTMH/hFl71RMMXjFDWQquw3zGUCNTPm7Z1kwxeO1viorKJBlr9vlsg5wxUL
+X-Gm-Message-State: AOJu0YznYzSzdeMoXRMyvtqn8OBefrduK/i3WuW1YosurI0SchiZiLmo
+	pz6IfKqJ0Xnt+Bxs0s/MH34Z/dDemb6kIG03SYeIxyourH7eRIlp
+X-Google-Smtp-Source: AGHT+IEcuoG4fcGSupG1DbYvisBXr0Tx9ypW68pn12SmHxssWNkQCyBpexd4VsSzxr2lqy7I3TimNw==
+X-Received: by 2002:a05:600c:5012:b0:412:e4aa:f11e with SMTP id n18-20020a05600c501200b00412e4aaf11emr238159wmr.4.1709903929563;
+        Fri, 08 Mar 2024 05:18:49 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id z11-20020a05600c0a0b00b00412f428aedasm5963761wmp.46.2024.03.08.05.18.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Mar 2024 05:18:49 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: H Hartley Sweeten <hsweeten@visionengravers.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in ARM/Mediatek RTC DRIVER
-Message-ID: <170989597157.2150728.2892505588638437856.b4-ty@bootlin.com>
-References: <20240301145907.32732-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH][next] comedi: remove unused helper function dma_chain_flag_bits
+Date: Fri,  8 Mar 2024 13:18:48 +0000
+Message-Id: <20240308131848.2057693-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240301145907.32732-1-lukas.bulwahn@gmail.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 01 Mar 2024 15:59:07 +0100, Lukas Bulwahn wrote:
-> Commit e8c0498505b0 ("dt-bindings: rtc: convert MT2717 RTC to the
-> json-schema") and commit aef3952ec13f ("dt-bindings: rtc: convert MT7622
-> RTC to the json-schema") convert rtc-mt{2712,7622}.txt to
-> mediatek,mt{2712,7622}-rtc.yaml, but misses to adjust the file entries in
-> MAINTAINERS.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
-> 
-> [...]
+The helper function dma_chain_flag_bits is not being called from
+anywhere, it is redundant and can be removed.
 
-Applied, thanks!
+Cleans up clang scan build warning:
+drivers/comedi/drivers/cb_pcidas64.c:377:28: warning: unused
+function 'dma_chain_flag_bits' [-Wunused-function]
 
-[1/1] MAINTAINERS: adjust file entry in ARM/Mediatek RTC DRIVER
-      https://git.kernel.org/abelloni/c/1e60ac6b8b57
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/comedi/drivers/cb_pcidas64.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Best regards,
-
+diff --git a/drivers/comedi/drivers/cb_pcidas64.c b/drivers/comedi/drivers/cb_pcidas64.c
+index ff19fc3859e4..d398c6df9482 100644
+--- a/drivers/comedi/drivers/cb_pcidas64.c
++++ b/drivers/comedi/drivers/cb_pcidas64.c
+@@ -374,11 +374,6 @@ static inline u16 pipe_full_bits(u16 hw_status_bits)
+ 	return (hw_status_bits >> 10) & 0x3;
+ };
+ 
+-static inline unsigned int dma_chain_flag_bits(u16 prepost_bits)
+-{
+-	return (prepost_bits >> 6) & 0x3;
+-}
+-
+ static inline unsigned int adc_upper_read_ptr_code(u16 prepost_bits)
+ {
+ 	return (prepost_bits >> 12) & 0x3;
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.39.2
+
