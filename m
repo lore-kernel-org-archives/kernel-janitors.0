@@ -1,63 +1,63 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89ADC10A34;
-	Fri,  8 Mar 2024 13:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0927217EF;
+	Fri,  8 Mar 2024 13:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709903933; cv=none; b=CCg59B2BxqL855OrByP0NHmjFNTd6bclE3MAJrQnmAEg0HLG+DqZkLzlAZYm0Of+UJOsSQx5vkPeiu+6HMMX5rfDkFA0YUh9dJNKmKZpFM3/NF7lwqu2XRuo/n0ylgQA7TG8bzdrx9eLO+8KHuAGHTWuG/Ue6Qhuefx1vWQ4dJY=
+	t=1709905165; cv=none; b=jMBIhFv2MpDCz48653iD3QZ76jBZKACxcXJkegndVJRZgRSakCUFgdUwHePZKVu1BfaxyZmGQRZmFjXJhpvo8n1wEUX6CD7Mxl/cyKMvoEHNyOMWWzbcFUmfZn6V0GHDFFHDDDchv2jIs4YZWLtjqTIWXDLEAmVC4h7Op/7IZ7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709903933; c=relaxed/simple;
-	bh=oPEWudfma1ZgyCTM00cIONaayXz1JGWtyvpKY2ge/lI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=dBOzOe65yVJ8vKbxR3K5ObGt8X/R4wj1GTdJLP/8L7Pnv7YzFwYZpGJ9TMwmdQclhvbFQuTGTDkwtjb1iUz/YZ8eyTbX9M15kPNz+IkOXYHSh9y1pmYWQZgutN3c8KpcItEdijUnL3Og1ts7HNEJqtEuwMvvR6A3P1kVqG7hFD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RMxUGehw; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1709905165; c=relaxed/simple;
+	bh=27ijGwAcHi4/OxMZhzEqyuP8A1bO1+mOagHVsZu6/LA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=cc+tbfV5AgsPBUDjdodFtI+9MPm9HUVXDonFYIQkdoFDuGw5/7olAdKluuNrvlLLqYqtOZBEmxEwZ8YhHv5olWIRbDPu5hNrPgTPL54faYdJH26v9/xczSoQ3G4cyYvYy2KqAzIxTy9asihUf4YxANPIx30UMMoWybEUhrmp9MA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLJFRJ/4; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMxUGehw"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4131804e695so3816625e9.0;
-        Fri, 08 Mar 2024 05:18:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLJFRJ/4"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4131a5e3685so3669685e9.1;
+        Fri, 08 Mar 2024 05:39:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709903930; x=1710508730; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1709905162; x=1710509962; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=43felEw2qApt1wR5OexBfyucmoH5eT2hn7DMVQ2pgzw=;
-        b=RMxUGehwsjjfc8NHdebt0EmpS58t0P/aLXWjwiQcmwX1Ay3eO7scJTTF9H3zs3WJl/
-         QNM+Zd48hgGs2XH3YYhlR/+bsJ7qH/HvJGfCRVsQ4UI6CWD6GNBoGSyf+rkolZ9wEk7C
-         SSjsmoo4bu+CRvePuDlvdAeKXbmA1BkhyWmq3ghwClntBZh/sKIbr19OgEqr1gzz2/kV
-         RIhDI92GYdt+w5kk37MhCG0d5U05Vj+WDKPdY3qFrTF4hWd+w2NCAw4OwcY6sqijqYmh
-         yNLb4PVlYcjtNPjRx0u5xkisB2+/XVoGnDGTNB5TfDZcKUfD0+5fz7PAOEHQ7Sc7+bea
-         OLKw==
+        bh=zmSwf1GXNG8FcmTatGusE4kangHWWi5lffewaC7Q0+0=;
+        b=kLJFRJ/4hZUryTY2x+6EPxWic547FIja1SImiggjyuPjLSfpjw8WUrhYzwWZ8/H/1W
+         EOL15TGMkPYCe+L46mAJBxPzb64W2TOQdMTby0lWfVS931w57QDEKlBv7g5f0xIx2bcv
+         RWfKtQ1Gn1ODyeHszIQeWTNVAXlSWcqTS7J4FAy8KKb2OqwQEw0QX/UertCjCTtx23BF
+         NoX5pBrE2DJsGlHQDwG1uSNVdl3R4vOk19oj4eOIcl2fDLzFi3NRnWDMiSXy6kslmW9s
+         OYDe7xMEY1APdnyqb0jp2Y5KIH0A0qvVmr25ER1UsUWCCPRj+Id1s4FDykOay2CoMTix
+         0weQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709903930; x=1710508730;
+        d=1e100.net; s=20230601; t=1709905162; x=1710509962;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=43felEw2qApt1wR5OexBfyucmoH5eT2hn7DMVQ2pgzw=;
-        b=UaLHRKuMINxnfLVhXjB7iYMgysaA2gHcfd5ok7dwzr+BSv1IeMs5diTM1ytEuW9qgj
-         YXLe6M2eChaoxtkmCNjtjDixO52AOsIxpl0JznRJcxmW5wMfXnHFg/h25bv/rrUUZ+J0
-         st7DZ8WxyS1o4UBEfNuFL3406X1Vztzwz74ekMwhCMvdGMm3Y1HL3JroNvqSi90NI+Fs
-         pcrxeBEOyqfxXIyvK/lVfFk9ntPiyQMyeYnVaqoS7MNylgJGDfKVIRY0CNbv27PeHCBz
-         XPPAIp0ZFXUWEae8vbqAs7Qn5YPJgWJGVTJtBz9FRhsxz+TSpcVqpTGRgTRiFJ85gGd0
-         ur0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUUOY0HsMHWXK8hdwLmX/KKLO6f7NB52+fPRApQ0xINhYTMH/hFl71RMMXjFDWQquw3zGUCNTPm7Z1kwxeO1viorKJBlr9vlsg5wxUL
-X-Gm-Message-State: AOJu0YznYzSzdeMoXRMyvtqn8OBefrduK/i3WuW1YosurI0SchiZiLmo
-	pz6IfKqJ0Xnt+Bxs0s/MH34Z/dDemb6kIG03SYeIxyourH7eRIlp
-X-Google-Smtp-Source: AGHT+IEcuoG4fcGSupG1DbYvisBXr0Tx9ypW68pn12SmHxssWNkQCyBpexd4VsSzxr2lqy7I3TimNw==
-X-Received: by 2002:a05:600c:5012:b0:412:e4aa:f11e with SMTP id n18-20020a05600c501200b00412e4aaf11emr238159wmr.4.1709903929563;
-        Fri, 08 Mar 2024 05:18:49 -0800 (PST)
+        bh=zmSwf1GXNG8FcmTatGusE4kangHWWi5lffewaC7Q0+0=;
+        b=xFfWgdIRqdYuwI/OgH6JZhKQyldwnDM/tLqXAUp6+4SJOiyvVLaIjBeC3CuB3dxRTA
+         rClSxP+X7x5eWy1ftK5n5p6tAuwxzb5kWGh4wbTCD1dAGWdLn1at4quvzgbu7c8glZ9A
+         z0lm2emqPPse941XaYGYXUd/6Gw/YNfBX+OGVuRS4XEZMSw7w0U0sGqfgEOundU3YR+x
+         VJFA2LjEkGEPtM4YQtnC6j5clCluEwVlwG8u1XHHsADjM6I4f4/hIZa6nGnqcDbc3Fl+
+         u+8V/NlikIiz+x6NT4GYxzuvY8ZakQ1CGn/EVnzVu2XtVMOHz9q53YA+Wm8AYGfNP9ZP
+         HbOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXiZ6kuN7PjG5uqOg/IKA2w83fmdw93o9nRd8/3u48n05DhpKQ7mvAZD7FaGQgozFzAL9U8+27mJOe75krJFheOvVdm/j+WX+DKuExUPH3T02I3OIET5X0eXuWvjcifQv8+UnjTsUCEdHU=
+X-Gm-Message-State: AOJu0YwvVVwFIV00OjyCWweIZOTlMc6jE/vFUBBR2CGb+S9ou0h38jZS
+	lNUJY4b8dZxXAow0g0ObkwX/ak3F04cD7pAUEDmNitj9W4qbOQV+r1tOYo5QXSQ=
+X-Google-Smtp-Source: AGHT+IHV4nlHLhb/Hc0jjbbFGVfsp8Wa9NojsjwaQ+UHmL+O1QQPw2dQQDsm5KU5DG2ZSUv0O+m/HA==
+X-Received: by 2002:a05:600c:1e0e:b0:413:1438:cbd4 with SMTP id ay14-20020a05600c1e0e00b004131438cbd4mr2628577wmb.17.1709905162087;
+        Fri, 08 Mar 2024 05:39:22 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id z11-20020a05600c0a0b00b00412f428aedasm5963761wmp.46.2024.03.08.05.18.48
+        by smtp.gmail.com with ESMTPSA id bi19-20020a05600c3d9300b004131bb71c07sm948625wmb.11.2024.03.08.05.39.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Mar 2024 05:18:49 -0800 (PST)
+        Fri, 08 Mar 2024 05:39:21 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: H Hartley Sweeten <hsweeten@visionengravers.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] comedi: remove unused helper function dma_chain_flag_bits
-Date: Fri,  8 Mar 2024 13:18:48 +0000
-Message-Id: <20240308131848.2057693-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] block: partitions: only define function mac_fix_string for CONFIG_PPC_PMAC
+Date: Fri,  8 Mar 2024 13:39:21 +0000
+Message-Id: <20240308133921.2058227-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -68,34 +68,37 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The helper function dma_chain_flag_bits is not being called from
-anywhere, it is redundant and can be removed.
+The helper function mac_fix_string is only required with CONFIG_PPC_PMAC,
+add #if CONFIG_PPC_PMAC and #endif around the function.
 
 Cleans up clang scan build warning:
-drivers/comedi/drivers/cb_pcidas64.c:377:28: warning: unused
-function 'dma_chain_flag_bits' [-Wunused-function]
+block/partitions/mac.c:23:20: warning: unused function 'mac_fix_string' [-Wunused-function]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/comedi/drivers/cb_pcidas64.c | 5 -----
- 1 file changed, 5 deletions(-)
+ block/partitions/mac.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/comedi/drivers/cb_pcidas64.c b/drivers/comedi/drivers/cb_pcidas64.c
-index ff19fc3859e4..d398c6df9482 100644
---- a/drivers/comedi/drivers/cb_pcidas64.c
-+++ b/drivers/comedi/drivers/cb_pcidas64.c
-@@ -374,11 +374,6 @@ static inline u16 pipe_full_bits(u16 hw_status_bits)
- 	return (hw_status_bits >> 10) & 0x3;
- };
+diff --git a/block/partitions/mac.c b/block/partitions/mac.c
+index 7b521df00a39..c80183156d68 100644
+--- a/block/partitions/mac.c
++++ b/block/partitions/mac.c
+@@ -20,6 +20,7 @@ extern void note_bootable_part(dev_t dev, int part, int goodness);
+  * Code to understand MacOS partition tables.
+  */
  
--static inline unsigned int dma_chain_flag_bits(u16 prepost_bits)
--{
--	return (prepost_bits >> 6) & 0x3;
--}
--
- static inline unsigned int adc_upper_read_ptr_code(u16 prepost_bits)
++#ifdef CONFIG_PPC_PMAC
+ static inline void mac_fix_string(char *stg, int len)
  {
- 	return (prepost_bits >> 12) & 0x3;
+ 	int i;
+@@ -27,6 +28,7 @@ static inline void mac_fix_string(char *stg, int len)
+ 	for (i = len - 1; i >= 0 && stg[i] == ' '; i--)
+ 		stg[i] = 0;
+ }
++#endif
+ 
+ int mac_partition(struct parsed_partitions *state)
+ {
 -- 
 2.39.2
 
