@@ -1,76 +1,75 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B2A54665;
-	Fri,  8 Mar 2024 10:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93E82263A;
+	Fri,  8 Mar 2024 11:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709893834; cv=none; b=iFDp7e/qzRHQZc8CglGFKH4/53QWzv47GuzX2kpgtCgd8i5Is3/JcxfmwT3PV58ggKu1qpYp8YhO6xNMVYbKKwOeB/M05V3HczlnFCRCwoPC613UiAxexeE8k7x7A7/B1jrZoeBr6tB6ZE6Z1/h4uZH4sIe+MhXqlGAk3qEQnKk=
+	t=1709895998; cv=none; b=Zx4Y6WPFq6nDHjMU4uprCFIKsIJ1nGCc1W35PT8D3UKIZxRQWLqjy/UJB5SEfYGmcLYefruIY8zYwD3SnbXASDfBtTIyjvUaxcm7SBa9V8zxsjuioJ2mL4EgMAHNFCQe1RchL9N8n06y+8lnKM6q1qibFLmLTprWz+cGrZs+ChY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709893834; c=relaxed/simple;
-	bh=ybeysiln1arLPFOn44mZI7U6wTDKxbgcZkjm5Al4/ok=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=rjITWkhY8QFppWqW4ogNK3rO4NZHgVlCY3uo4F8mRkuiuEDT5XDnY88SEcEDdxyd9+Rrt1xklODbkb8oWduam5Bbw+pyN8u9RlIg9fsHGT41B+g8InZo4LRdQwNZs+EjcIXRBH1525CZ9zbyGjZV1XQz4fyHCL4FO9z5y/ZvZrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DxQYalDF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709895998; c=relaxed/simple;
+	bh=Dlic2xdJ/4Lp/BC+kW2Kll6aPOhh2E5AospJCmpw9rw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ms7A7T8ei6LMf1/VodIkXdB6/l6tdpqWeb1SkJ1+O25M3ZTyL7tivZNUKOtmG6DMBGMZ4pH0TC+gZkn/slHEXbmMwKYzeLOQ3uJzJIAnqI20+p3u4DfFHd+arFU3lYt2BgBGZlknM1O8p+VsU89DidmvOx+DqCiOWN90HCseJRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=le04kcLe; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DxQYalDF"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2567CC43390;
-	Fri,  8 Mar 2024 10:30:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709893834;
-	bh=ybeysiln1arLPFOn44mZI7U6wTDKxbgcZkjm5Al4/ok=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=DxQYalDFR6fsHPYG75UlFIrPldH21l85DOKixy9Rf0XCNfhijTCNw1EhQBK4h+Wu2
-	 47mTeGBqNHoS8PgJBFt3XzMlWQhW9QL24rJbz1rWfCzQuOYwPny8ECOtAQMuWETtM+
-	 OTkV2VxulMRBgBqbZtRgUhCxibhv5bJGqkFyC1rIre0x74q4PVvdp2nRoLJKQBfa2R
-	 BM70Z1bvA/QbGQtHd2yyhHelHhLncuI3iTwjgu2w+SsbTERLamKDfPsaPGBlcU9n+T
-	 R6s7vh5TEb5LRDb48KBcvmcUeDOjhK2TSXyA7ON94Rmlf2jsIfjmXYziEqTg6ayDRb
-	 kxX2AcWx0arpw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id F312FD84BB7;
-	Fri,  8 Mar 2024 10:30:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="le04kcLe"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 881F220005;
+	Fri,  8 Mar 2024 11:06:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1709895994;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yDokQE8eDevsZTVbL+J84sEhjfKF7F3KjE3ssol2SRA=;
+	b=le04kcLei1b9u0cNrGSc+7mmEjWxFYNIWNuBCBWBXInJiPoZ6dlCTkQt7rZqKgROC6JuwV
+	xrwL/JvruFTsA/EevlSdi9X0Fvfu8hJlOWo7p9vPEYiYAFt4JX/35zlsRJIlNsayoRcgQc
+	eYYJoL5T1c1Khei+Lvc93IBsTk3raSIrSto5PP/M6Yeti8PwNRwQ+dngj658YOBDr+TJDr
+	tipL8rnYTgA6Vbb2FoMlDb6i/3dj9kXjrrJQmMdpwgIMVvL32/awV7ykHIAXn1MaZZguoF
+	ckUJ1lR13iP4H5aZoXjcC5K4QnWmh1DJv1rjvZ8InmYk1olzO8UVjmicP08dzQ==
+Date: Fri, 8 Mar 2024 12:06:33 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	linux-rtc@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Eddie Huang <eddie.huang@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in ARM/Mediatek RTC DRIVER
+Message-ID: <170989597157.2150728.2892505588638437856.b4-ty@bootlin.com>
+References: <20240301145907.32732-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] net: chelsio: remove unused function calc_tx_descs
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <170989383398.12583.5995436016062470108.git-patchwork-notify@kernel.org>
-Date: Fri, 08 Mar 2024 10:30:33 +0000
-References: <20240307112237.1982789-1-colin.i.king@gmail.com>
-In-Reply-To: <20240307112237.1982789-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240301145907.32732-1-lukas.bulwahn@gmail.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Thu,  7 Mar 2024 11:22:37 +0000 you wrote:
-> The inlined helper function calc_tx_descs is not used and is redundant.
-> Remove it.
+On Fri, 01 Mar 2024 15:59:07 +0100, Lukas Bulwahn wrote:
+> Commit e8c0498505b0 ("dt-bindings: rtc: convert MT2717 RTC to the
+> json-schema") and commit aef3952ec13f ("dt-bindings: rtc: convert MT7622
+> RTC to the json-schema") convert rtc-mt{2712,7622}.txt to
+> mediatek,mt{2712,7622}-rtc.yaml, but misses to adjust the file entries in
+> MAINTAINERS.
 > 
-> Cleans up clang scan build warning:
-> drivers/net/ethernet/chelsio/cxgb4/sge.c:814:28: warning: unused
-> function 'calc_tx_descs' [-Wunused-function]
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
 > 
 > [...]
 
-Here is the summary with links:
-  - [next] net: chelsio: remove unused function calc_tx_descs
-    https://git.kernel.org/netdev/net-next/c/9b78bbef5138
+Applied, thanks!
 
-You are awesome, thank you!
+[1/1] MAINTAINERS: adjust file entry in ARM/Mediatek RTC DRIVER
+      https://git.kernel.org/abelloni/c/1e60ac6b8b57
+
+Best regards,
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
