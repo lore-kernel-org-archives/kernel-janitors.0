@@ -1,97 +1,76 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5615535C8;
-	Fri,  8 Mar 2024 08:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B2A54665;
+	Fri,  8 Mar 2024 10:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709887503; cv=none; b=VQjRosF8Ep15CLno0MpfLKwtLn6OdqkgmxK61wPEc7WAaXX2t4edzGyW6M7GnCWGySirRkZdIhfc7pqwXgHRNtgP51T3kH4AQwIfRvQv/h26ISzMKuj5UVbVjISvgWP8Y6psOCcrT58H9BLf1pJYFpP2PkfMhrDUTNYA2i5iNIw=
+	t=1709893834; cv=none; b=iFDp7e/qzRHQZc8CglGFKH4/53QWzv47GuzX2kpgtCgd8i5Is3/JcxfmwT3PV58ggKu1qpYp8YhO6xNMVYbKKwOeB/M05V3HczlnFCRCwoPC613UiAxexeE8k7x7A7/B1jrZoeBr6tB6ZE6Z1/h4uZH4sIe+MhXqlGAk3qEQnKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709887503; c=relaxed/simple;
-	bh=WIfKrII/q5Cy4fnBaoGorSTt/WCJneNDItG3lsR+aqM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=R4IpfzlDjlH8/x0q4qtzIA/CHVZV3Ou2lsBvYHGWAIl3jPQW+YF0XULz8FzoCLFlj8TcdwJxeGJyoEm//SrU8l7byTLJzJ6jqaKUlF4LObknJpCc3YRrSkOaoIgk3QSWG5UR1VQjzbINx0qgZFBExvQMyUH0pkA0WWWrdEB3YCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WmPwPTqp; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709893834; c=relaxed/simple;
+	bh=ybeysiln1arLPFOn44mZI7U6wTDKxbgcZkjm5Al4/ok=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=rjITWkhY8QFppWqW4ogNK3rO4NZHgVlCY3uo4F8mRkuiuEDT5XDnY88SEcEDdxyd9+Rrt1xklODbkb8oWduam5Bbw+pyN8u9RlIg9fsHGT41B+g8InZo4LRdQwNZs+EjcIXRBH1525CZ9zbyGjZV1XQz4fyHCL4FO9z5y/ZvZrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DxQYalDF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WmPwPTqp"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-33e742ca96bso714365f8f.3;
-        Fri, 08 Mar 2024 00:45:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709887500; x=1710492300; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hHn/aiaeEqq5HNrZZ6UGDx6LpcyY5jbRWNKamKPcfsY=;
-        b=WmPwPTqp8VCTqReQ0Bf9LWAnjsQvXtEuoe2AVTkr6FRcWQO+qvufNOx7TCQZ9CE7EN
-         xLDYzvseEETs9/S5ftdm+YUD89bTE3B+76XUuVyCFV0xPi5BkM41lwVIwNNaoXQm4NcV
-         qABMjXk8B6NKhLD96Dd2eDsBNhbI2XkX1z1cgI1KQMt4TdU6pngBjlEQmhl+ZMRvgcfk
-         N1aFMIY7OhyePj52IvtMkkNFrP69MmTFfa+JzqM4YHR6t77AqHJHV6NGzYBBHX5BVC2x
-         xel6n2Vtm6wcnGQIV5zIVOq/3TN+5gUABOr/UYA8pWhm77RbpW4PX+Puvf4fVAb24yRg
-         tIMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709887500; x=1710492300;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hHn/aiaeEqq5HNrZZ6UGDx6LpcyY5jbRWNKamKPcfsY=;
-        b=onzByKv5ncHKEKB9mBiqgtNJYrzYFxMJJ40h3GoxrBWqFgRo4qXIpFAl6AVXf0gbaq
-         Hh1u/qLXiuI3Srn6adHJNI5hP9qPU6Dul7Cu2LUwa3MgEOARhUnMIT9PoUl/NPHzjSG6
-         NQHqlXoPdPnT1bruS2GvvjNnv9psih5Ic8ujKchFCbSN09TsKx6YV9s22RUDbKNCYXGi
-         oBkBkrFCk+NFPX8O4/HXw+qZ8AKSriVmnLT16Ap4l3w6Dtfkc4YaEOskmJ+etOuLVYYQ
-         hoYj1AX09DOxyGEYGKh/QOVzllYe3xewMRtebDP5AbuchXGlOcXMDnT3Ur9mH9m7vScD
-         5i+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUWP09oX875VT5JEsc95uKtS+2o0tEvXZzzqroNv56AAGWUE6uKpTvPoWx4Vuqid0uQdhO0+8rfEs/tyHIO2jHlEANQtpKku1GDzkC3eTvf4V5QtF785IH75YabLtKMzyEZV9xF
-X-Gm-Message-State: AOJu0Ywh8hnc1WkaGvlx37j0Up+NucKlJaPqjrU4sla+p7ufM7NYXhaf
-	b5pCxW3yr0INleKf11YDr77/LZb84O+LuqQ29l5oyYXtEBjpl1Ht
-X-Google-Smtp-Source: AGHT+IEaPCezIBMexsJ1m8k8liW6LsShUPZYXPBXqhksit7ulmPugMafosBC+eD0gvo63Jc4wBZFvg==
-X-Received: by 2002:a5d:4645:0:b0:33e:754e:7f75 with SMTP id j5-20020a5d4645000000b0033e754e7f75mr1108804wrs.16.1709887500073;
-        Fri, 08 Mar 2024 00:45:00 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id y1-20020adff6c1000000b0033e699fc6b4sm3089078wrp.69.2024.03.08.00.44.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Mar 2024 00:44:59 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] tools: ynl: Fix spelling mistake "Constructred" -> "Constructed"
-Date: Fri,  8 Mar 2024 08:44:58 +0000
-Message-Id: <20240308084458.2045266-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DxQYalDF"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2567CC43390;
+	Fri,  8 Mar 2024 10:30:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709893834;
+	bh=ybeysiln1arLPFOn44mZI7U6wTDKxbgcZkjm5Al4/ok=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=DxQYalDFR6fsHPYG75UlFIrPldH21l85DOKixy9Rf0XCNfhijTCNw1EhQBK4h+Wu2
+	 47mTeGBqNHoS8PgJBFt3XzMlWQhW9QL24rJbz1rWfCzQuOYwPny8ECOtAQMuWETtM+
+	 OTkV2VxulMRBgBqbZtRgUhCxibhv5bJGqkFyC1rIre0x74q4PVvdp2nRoLJKQBfa2R
+	 BM70Z1bvA/QbGQtHd2yyhHelHhLncuI3iTwjgu2w+SsbTERLamKDfPsaPGBlcU9n+T
+	 R6s7vh5TEb5LRDb48KBcvmcUeDOjhK2TSXyA7ON94Rmlf2jsIfjmXYziEqTg6ayDRb
+	 kxX2AcWx0arpw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id F312FD84BB7;
+	Fri,  8 Mar 2024 10:30:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] net: chelsio: remove unused function calc_tx_descs
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <170989383398.12583.5995436016062470108.git-patchwork-notify@kernel.org>
+Date: Fri, 08 Mar 2024 10:30:33 +0000
+References: <20240307112237.1982789-1-colin.i.king@gmail.com>
+In-Reply-To: <20240307112237.1982789-1-colin.i.king@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-There is a spelling mistake in an error message. Fix it.
+Hello:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/net/ynl/lib/ynl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-diff --git a/tools/net/ynl/lib/ynl.c b/tools/net/ynl/lib/ynl.c
-index b9e77af5af5f..4b9c091fc86b 100644
---- a/tools/net/ynl/lib/ynl.c
-+++ b/tools/net/ynl/lib/ynl.c
-@@ -423,7 +423,7 @@ static int ynl_msg_end(struct ynl_sock *ys, struct nlmsghdr *nlh)
- 	}
- 	if (nlh->nlmsg_pid == YNL_MSG_OVERFLOW) {
- 		yerr(ys, YNL_ERROR_INPUT_TOO_BIG,
--		     "Constructred message longer than internal buffer");
-+		     "Constructed message longer than internal buffer");
- 		return -EMSGSIZE;
- 	}
- 
+On Thu,  7 Mar 2024 11:22:37 +0000 you wrote:
+> The inlined helper function calc_tx_descs is not used and is redundant.
+> Remove it.
+> 
+> Cleans up clang scan build warning:
+> drivers/net/ethernet/chelsio/cxgb4/sge.c:814:28: warning: unused
+> function 'calc_tx_descs' [-Wunused-function]
+> 
+> [...]
+
+Here is the summary with links:
+  - [next] net: chelsio: remove unused function calc_tx_descs
+    https://git.kernel.org/netdev/net-next/c/9b78bbef5138
+
+You are awesome, thank you!
 -- 
-2.39.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
