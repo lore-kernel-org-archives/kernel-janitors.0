@@ -1,145 +1,128 @@
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11420E555
-	for <kernel-janitors@vger.kernel.org>; Fri,  8 Mar 2024 05:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAB6134A9
+	for <kernel-janitors@vger.kernel.org>; Fri,  8 Mar 2024 06:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709875164; cv=none; b=FwHyXh7GsTxmF3/7CSzHFFZKQklymPssVYGBMT7WtafM1JKQPdyZXF+RieS5fueXZ4Xi35hymBaPwiE9Jrj9pe+lkp8Ij8tBMj+o1zs1JPanZgXJ3QSvKTwCHt+QSJb0oq/r7a7Wykw3zKOcTPfVFD3UbyC5ce3vCnVqEFEsaFc=
+	t=1709879976; cv=none; b=E8JzkyL9ShcCL8VIBEBNIjnWZi1udVyO55ONTLrJxwi0nS/bqhqEEIMveUubz04VIrFy8PkpzMd1lG1TTl8p0qxkYlwC/Bd43XppZwTdpJZGjqsM35xHVje/X7cQUdXaG0nmV34weHQlgEEzmos9PgZQa9FlyVBAhGA3ieJTyBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709875164; c=relaxed/simple;
-	bh=M1OaeS8r7UTARn6ojib+isEL+VXsqpPbSLcJZ2CZr/U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eD+xzq3P8llR2D3NRFjkK7/48+7QxOqBAfk5exDtcr2C6RUBD4mYFLOplFWga1cNbh/+DMQoMbw8wU4kB/X8ATM6LlZ+FNxZctDUVlcUE0D69LY77g6wbKtQN0K0UuC5dIxw7xTnoFE5GQwKOeRSb4bZda24Z6hxDtUu3s8d908=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=tO1BVjHK; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+	s=arc-20240116; t=1709879976; c=relaxed/simple;
+	bh=ZnEIIn8cQ0wfZE9v4L8hG51HQtqAhWYwi0Q3L85DRMY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pSFHzaHAAg995F4q1d9HOkc32plDgN1gwDPpr1J7sarsAa5i+Rqpeu/lxmcAtFLnC7lh/mT7NLLbs2EPvuDd3Dy1/8lE8jILrcKXxBBLlxLywg4z9AEGJv7ujkemhU8bIbdA9ELiwrdM9BcUrJmK9DLUwctnNMf/XzXSIdnnTWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=B1fuZPDs; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="tO1BVjHK"
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3662e41370fso186345ab.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 07 Mar 2024 21:19:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1709875161; x=1710479961; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1Q1pOxUwOp5itp+TMEHjsIEi+PFZvIZX6/sMKOzN+aM=;
-        b=tO1BVjHKb6Z9vpEVLsk7Y9Eas0x+2Hg1MQ0iJpRDqjew4pevzGaFZU2rZOzAiSVoZ+
-         P+RJJ03Yi+8zbFMDN8tLNPAw6nEUf806LpMx/iI5PaGSG5PNABmpslcLbuj7K2ljvdcA
-         C07vn37phkHfExiaiaYybp5RQQEnYX3YZ43/8UaETxaXvCOGhfU6Bg/jyXgdyAurtHFz
-         gdLwy8CXWp2+fAeS4D+BWF+BnyEqfGhhlPbx0/KIGofLh/JqN7Uxkd2p3I+x1GtkEB3o
-         /OCKwMl7QtFZyyGXzoIqgfodc49lGz/kI6nGhFjpWOMdirPZY9GfuP8FAlQqV24sTjBd
-         oZlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709875161; x=1710479961;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1Q1pOxUwOp5itp+TMEHjsIEi+PFZvIZX6/sMKOzN+aM=;
-        b=SY+sOuiUimnNjRFeQDMjc8LQhUBbcMoBhmdEcRq6vIVCB/pmrqkOuhPM2QazqEvAUl
-         ggjR+HTRTblAdChyFffERSQUX7ZiJ0kRT42GkYgZw86LG5P9E7XEk+i3TMIpSlrBYCyT
-         Skvqlg8EKtTPzAwXPtkbhlxNfltwVN1BKWJ8A0p9S6EgptmSZbvfNAP4iBeEojWH5MOQ
-         9+uV+lntB9OOjX//KoUHoKtQm4VBy7XhLP4Lc1dB2/xcr44dHtVoE4KAfCBg+kpRGzl2
-         J0AIJ0Qoz9ro+881su5Z5pOnfLsPA7jUqKHp22IWsZUGefYW1WI/REEbC3cWS2EWlABT
-         lKWg==
-X-Forwarded-Encrypted: i=1; AJvYcCU/5QfjHeT6KWUQTDQxLhg7Tzu2YqPF8OXi4u2dHtDRcw9Y6H9Jn/5YowcHwyw0tIUY/qk2vgUngTAtjdf3n0ZNPqnGWtgMYhPEFp605Wmv
-X-Gm-Message-State: AOJu0YyhkUxoPW1h0Xd0kvlKb71jNVL4PSRf40ya/DGtmsGWcCwMSh2y
-	vIcdqw8rYBo7CynQLUA4MYpTA3GBdupWdvs2Xcsertwj8869VfLWirsQvaTfs3h4rPxVdlW6ky0
-	lubLEFLMl7oos9/Zr/EThEO1niRUFWZQqztdcWg==
-X-Google-Smtp-Source: AGHT+IGGNpCpXwkQjWIuGNKUjBb878ACq22fLX85aTMVIeV0LGFHGYH4vpYBvsarm+l3VNkirWWt6u0qF+Xk02D/r0A=
-X-Received: by 2002:a05:6e02:1807:b0:365:69a:86b2 with SMTP id
- a7-20020a056e02180700b00365069a86b2mr27431076ilv.17.1709875161075; Thu, 07
- Mar 2024 21:19:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="B1fuZPDs"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1709879949; x=1710484749; i=markus.elfring@web.de;
+	bh=ZnEIIn8cQ0wfZE9v4L8hG51HQtqAhWYwi0Q3L85DRMY=;
+	h=X-UI-Sender-Class:Date:From:Subject:To:Cc:References:
+	 In-Reply-To;
+	b=B1fuZPDsdF5VqUX9H66ht76Sz4NVxjbKakzGH+U8rJt56oE66WtoL0oJibRzBxV8
+	 jvc8dxlnK5zefcTAOOKC04kO4b371Aq4U4+o4rO5fUR8Za1w4gEfUJIuFnBSvK2Mb
+	 +YOPUHZSuEM6x7xUaQlc7cKA1RbMX8uVsHFrQaRVQdG/DC35UCe+1J30rsMDgho6X
+	 6/evgfvMetzqtP47s/PD+F3B1U1eAx71MmlILsqUTaBdrnwLh25oVHQdclNpdrOJK
+	 FQc7Pqu7u3NJ4GASaHjhPuHv2C1p7DA+anK10px3+T/JG7zpK9J5bz468ix5lLZLN
+	 4N7PoY3YMtoJikap6g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mkmzl-1qywra2ULn-00mG1n; Fri, 08
+ Mar 2024 07:39:09 +0100
+Message-ID: <e02915e5-e5a1-4365-8d09-3bae25b2d8ad@web.de>
+Date: Fri, 8 Mar 2024 07:38:54 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240307081951.1954830-1-colin.i.king@gmail.com> <Zeo8_ulDb4wYI_rO@linux.dev>
-In-Reply-To: <Zeo8_ulDb4wYI_rO@linux.dev>
-From: Anup Patel <anup@brainfault.org>
-Date: Fri, 8 Mar 2024 10:49:09 +0530
-Message-ID: <CAAhSdy0YHP4xWNz3W2tVE=-Wwtxe6r+-YKd+ytWreKEn7euGxA@mail.gmail.com>
-Subject: Re: [PATCH][next] KVM: selftests: Fix spelling mistake "trigged" -> "triggered"
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Colin Ian King <colin.i.king@gmail.com>, Marc Zyngier <maz@kernel.org>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Atish Patra <atishp@atishpatra.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: Re: [cocci] question about kernel cocci and cleanup.h
+To: Jesse Brandeburg <jesse.brandeburg@intel.com>, cocci@inria.fr,
+ kernel-janitors@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, Alan Brady <alan.brady@intel.com>,
+ "Jacob E. Keller" <jacob.e.keller@intel.com>,
+ Przemyslaw Kitszel <przemyslaw.kitszel@intel.com>
+References: <CO1PR11MB49149F1167679926A2917E0997202@CO1PR11MB4914.namprd11.prod.outlook.com>
+Content-Language: en-GB
+In-Reply-To: <CO1PR11MB49149F1167679926A2917E0997202@CO1PR11MB4914.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:LbBbqlcalE+25TSItXEPS6N6VJNF4aRVgYjS6a7lDJUjiRc3b9d
+ XCTKxWHwoRvXKs9sMxEZqWVuz+q6gZT0crfgkLzCmZWMJi86yLQOs1Ez+ktfRjPsNV83h8B
+ HH5oTnRHohefOSYwagWHOXIq2iGeIDfa/TYFgDRetXU6LjdhwRW9smLUl2xLPmM6l1MEIMl
+ rpYhDh9eh3WFPc+wqVnkQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:e1zK2ike2ms=;3B2zKGEFgNnr8DltSwnFkFGQnRC
+ qCDrS0MrEDblC+9cFuPNt0s6XT17eDtP0tu4TC6YL4KPpsG6zedsfkNw2wU0goYTEKkbSdEgD
+ ATBr+kSLVzEW8lSC0bQzJHHJeMLS5aKOO+wU10EgZalcYHZJZn8lKbDAi54JZVBwndsKQBZSB
+ sekK0kpM5P8d1tru2YgnoRIy3oLitVqGlj7Sze1DxQMYgWLMdr7a7pVkVGgGJUg2g1njPKMyl
+ nuXZKXMrO7FVKIe9fzDv36bz0ctVWK98JHNK8JMA6wa4fS9FJidSjG5wey6saGXlOO2ILRuyC
+ qRmefG0Vv0AJKYfWEhjtUbCbnp7LRQOO5LsA7GI+j70b8eYIy054nRmhb8EB8Eholk9AhTc5A
+ AXYJZ3/X3sjnSDRavRyvfyfnwxpmtumabv9EqXrZSU7f5MbB45Ix9KrVShST82bEePHNgSF/X
+ oNXJli6RhPKcv3iIx1yVkFQRFY+VVOulQMlD0cn7XGZ9TLAIbEv4orlC+LEOMSehzNcjkXo4c
+ ZKxbS1Xu4hoYVm+2ohgPrgvkxfp5dwb4DQtqcShJzwRSFxKiSMF8BxOLS0d4uAck0wYAeXRjR
+ W8FseTIVLiH5+qNN7WhEQNjFaX/rnSyoTfZYqlBysC2hBHXPmF681KM9f39/TVbz751H/e9ym
+ v+dQOI1AJFPmVbEZ+UqAbQbUaC+Yo9xEnJNcOvd3drIYFl9RLCFb7zy4voo3OaVsfVMWKglyt
+ 7HKTatJ9WoiuhO7Y3Z100xXn4qfdEZa8lrrx4C9pv8ezETjUx7mQ7lN71NsWvXwrIrkXOrmkW
+ 3UOfUUS25yIrjxHlXDUoodmS59YhGKNfZMXZYJm0XV3gM=
 
-On Fri, Mar 8, 2024 at 3:47=E2=80=AFAM Oliver Upton <oliver.upton@linux.dev=
-> wrote:
->
-> Thanks for the fix Colin. Paolo/Anup, up to you how you want to play it,
-> I see the 6.9 PR is already out for riscv.
->
-> Acked-by: Oliver Upton <oliver.upton@linux.dev>
+> Hi Julia and team, I had a question about whether it=E2=80=99s possible =
+to use coccinelle/spatch to start to identify functions which are able to =
+use inline destructors (__free or DEFINE_FREE()) from include/linux/cleanu=
+p.h
 
-I can take this as a Linux-6.9-rcX fix if everyone is okay with it.
+Generally, yes.
+
+A specific cleanup function is mapped to a selected pointer type.
+Will any more collateral evolution happen according to the usage of =E2=80=
+=9Csmart pointers=E2=80=9D?
+
+
+
+> To some extent a missing kfree logic is already part of the scripts/cocc=
+i, but what I was curious about is whether spatch can find
+
+Further applications of the semantic patch language (Coccinelle software) =
+have got
+a lot of potential.
+I find the corresponding data processing and development resources improva=
+ble
+in various ways.
+
+
+>  1. Function that allocates a stack variable which is a pointer (or has =
+one passed as a pointer argument)
+>  2. Function calls *alloc
+>  3. Function calls kfree() before return in all paths after alloc
+
+I got the impression that advanced source code analyses can be very challe=
+nging
+for such cases.
+
+How will knowledge representations evolve accordingly?
+
+
+> I know this would be nearly impossible to auto-patch, but having a =E2=
+=80=9Cgrep=E2=80=9D for this pattern would be super helpful.
+
+Can the support grow for such an idea considerably?
+
+
+> Would someone be interested in looking at this for the kernel?
+
+Yes, of course.
+
+
+> It seems like a valuable help to find refactoring locations.
+
+Would you like to help any more to benefit from known adjustment possibili=
+ties?
 
 Regards,
-Anup
+Markus
 
->
-> On Thu, Mar 07, 2024 at 08:19:51AM +0000, Colin Ian King wrote:
-> > There are spelling mistakes in __GUEST_ASSERT messages. Fix them.
-> >
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > ---
-> >  tools/testing/selftests/kvm/aarch64/arch_timer.c | 2 +-
-> >  tools/testing/selftests/kvm/riscv/arch_timer.c   | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/kvm/aarch64/arch_timer.c b/tools/t=
-esting/selftests/kvm/aarch64/arch_timer.c
-> > index ddba2c2fb5de..16ac74d07d68 100644
-> > --- a/tools/testing/selftests/kvm/aarch64/arch_timer.c
-> > +++ b/tools/testing/selftests/kvm/aarch64/arch_timer.c
-> > @@ -136,7 +136,7 @@ static void guest_run_stage(struct test_vcpu_shared=
-_data *shared_data,
-> >               irq_iter =3D READ_ONCE(shared_data->nr_iter);
-> >               __GUEST_ASSERT(config_iter + 1 =3D=3D irq_iter,
-> >                               "config_iter + 1 =3D 0x%lx, irq_iter =3D =
-0x%lx.\n"
-> > -                             "  Guest timer interrupt was not trigged =
-within the specified\n"
-> > +                             "  Guest timer interrupt was not triggere=
-d within the specified\n"
-> >                               "  interval, try to increase the error ma=
-rgin by [-e] option.\n",
-> >                               config_iter + 1, irq_iter);
-> >       }
-> > diff --git a/tools/testing/selftests/kvm/riscv/arch_timer.c b/tools/tes=
-ting/selftests/kvm/riscv/arch_timer.c
-> > index e22848f747c0..0f9cabd99fd4 100644
-> > --- a/tools/testing/selftests/kvm/riscv/arch_timer.c
-> > +++ b/tools/testing/selftests/kvm/riscv/arch_timer.c
-> > @@ -60,7 +60,7 @@ static void guest_run(struct test_vcpu_shared_data *s=
-hared_data)
-> >               irq_iter =3D READ_ONCE(shared_data->nr_iter);
-> >               __GUEST_ASSERT(config_iter + 1 =3D=3D irq_iter,
-> >                               "config_iter + 1 =3D 0x%x, irq_iter =3D 0=
-x%x.\n"
-> > -                             "  Guest timer interrupt was not trigged =
-within the specified\n"
-> > +                             "  Guest timer interrupt was not triggere=
-d within the specified\n"
-> >                               "  interval, try to increase the error ma=
-rgin by [-e] option.\n",
-> >                               config_iter + 1, irq_iter);
-> >       }
-> > --
-> > 2.39.2
-> >
->
-> --
-> Thanks,
-> Oliver
