@@ -1,92 +1,105 @@
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBB01C3E
-	for <kernel-janitors@vger.kernel.org>; Sat,  9 Mar 2024 20:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9601EB23
+	for <kernel-janitors@vger.kernel.org>; Sun, 10 Mar 2024 11:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710016436; cv=none; b=MBwOFngV3EoklLA47yco1DdcCobyTdXXO/cN+4rg5OQCcO65ka1eKI1zaCjXIikhj5ttTK+6m3pnvFhF+TiCpvZFDLFj7hRB1RuAzBW41hcCeaWDh6FD8E2hYzU3DETc7OF+9CcNpS7v55jAuCIAjaSF14rAu2wYu95WnCifyPc=
+	t=1710069660; cv=none; b=uDr8ewb4Fo5kFoxgXcB3RN2ktPoXDW2HKfcF4aAFVF9XmDfCmOmLAV6f1FhFiGnB3tCfmwU9hm31SrOidBZEjpFK+DIrT2JCdP5xMNXYYFFt24i/MjrmC5PGpteeRZ6rIz5hs5Q/kWAo7jf5X1FQnkv/vHE0amzaF4cKUbEuq+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710016436; c=relaxed/simple;
-	bh=EcVIXfIICY3Ok2eDXhdHjNP9eppBGwoPoBbQbWCdGQs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mb4IkZH4k2DkFHA71LBK20rxYfEXfoyWj5h7hk9Yv8EhGXs59kxvCC0LlCHLTcS+FX7umDom21zEKru7xpBLn7stCAGuxc2xM0vYuGXhPi/RTiB1o0HuJNrR/4fTjWst95enrWairRi46jD/tf2qCOsz8xRFOh4N8x/mPzpZ/Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=H0VGmGZX; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H0VGmGZX"
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-5d3907ff128so2667110a12.3
-        for <kernel-janitors@vger.kernel.org>; Sat, 09 Mar 2024 12:33:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1710016435; x=1710621235; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wsLvds74XFvPRZt+5SLhXxXFTA14aJAZhNEVhjPIrvk=;
-        b=H0VGmGZXyUF+OV3/clYF/ovjxWbHc2nKovGKsUKXgr4m0F4BoSTLxopfmw7MHCxtJS
-         Qf384rAFnF8rjq+UkIiawNKdPbYQytf8KSQAl8XnilBaIEKmxR84O4F8DTBPjC9KoslF
-         3L0f/k9BPEJqOdpVWpBiJaTXmfgwoZieyRfVE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710016435; x=1710621235;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wsLvds74XFvPRZt+5SLhXxXFTA14aJAZhNEVhjPIrvk=;
-        b=hMxDSp3QwhuhYllpw5Y7wVDTyupYNsYO9BHxjrhrH177AKraG9qajoyNZIDCXZe0Qb
-         kLvHTktGJc+ESfkSD02sdqZB4sVPyVu6N5ucZFfrAEWxKMovZFdSz/nHM5t+nMR+0adC
-         w00wClj9ZsKU4KiB+4cjptqxkUcpe9CG0TYtAwMwwQX7k24eNYe5HI5bYYmAcNXk4Clw
-         c7ignnZNLfmeuT4gssqzNDNUWHPJfiuYttp0lTMEpdyL3x5KSqtPLRjklCGRD7xSQZY2
-         gjuh5q+hWQrJBIqT2GzQkVCYaNgg8Y7vlrV0zGEKXR519d+IiJUiLmp5nRLH/z4eG2aN
-         jRQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBkQRbz5IpY6D09P/DmLzg6VRFL7dlJgUK6adeIA5UaGYDVIbXxmlPkWION0T3BFlGELrdZCGKPrrAxd9TmjloYCIjRwZGmZuJzYojb1kk
-X-Gm-Message-State: AOJu0YwDenTLaKGI8XyPvqK3D3vmK1CH2A5Wjdco2QRI+R88lydkWukL
-	564Kb4VFemkUqL/aBnWX+DE06x3upYOLtLNHj4cAgGxr5HsI2aSvk0GzO+rTmQ==
-X-Google-Smtp-Source: AGHT+IGs8pUXb5mDGS8kHPviqknzo+hzJ7Te+hq+G7yo5xcEkhGPpfVIqG3exWqTnYNB4l5GZuju7w==
-X-Received: by 2002:a05:6a20:72a6:b0:1a3:11b7:a0de with SMTP id o38-20020a056a2072a600b001a311b7a0demr317316pzk.15.1710016434950;
-        Sat, 09 Mar 2024 12:33:54 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id a18-20020a637f12000000b005e49bf50ff9sm1644000pgd.0.2024.03.09.12.33.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Mar 2024 12:33:54 -0800 (PST)
-From: Kees Cook <keescook@chromium.org>
-To: Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Kees Cook <keescook@chromium.org>,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] pstore/zone: Don't clear memory twice
-Date: Sat,  9 Mar 2024 12:33:51 -0800
-Message-Id: <171001642971.4101342.15404186717889149238.b4-ty@chromium.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <fa2597400051c18c6ca11187b0e4b906729991b2.1709972649.git.christophe.jaillet@wanadoo.fr>
-References: <fa2597400051c18c6ca11187b0e4b906729991b2.1709972649.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1710069660; c=relaxed/simple;
+	bh=1lo6Ufa9Y9sMpEkHeCVyy0nzTlREwq9VUjUqovb3NiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rt5A0IQHvE7Hi/vFJ+J1mDDekg99JYV3HjBbn47Nm1tWd4taOGE0NpHOoAcm4dNBwoz6pl/TH6aW64jEnXcNQ+prmbKNLC5isL8y0lQvG+CS/pCfgEGvWyTyYLbTttDlwKqEAOaxtsbET/qCNEfK1ItOk2wORSMCqnE9fBJtzrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rjHEQ-0001CI-P0; Sun, 10 Mar 2024 12:20:42 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rjHEP-005VO1-1y; Sun, 10 Mar 2024 12:20:41 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rjHEO-003OnK-35;
+	Sun, 10 Mar 2024 12:20:40 +0100
+Date: Sun, 10 Mar 2024 12:20:40 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Roy Huang <roy.huang@analog.com>, Ash Aziz <ash.aziz@plxtech.com>, 
+	Mike Frysinger <vapier@gentoo.org>, Seth Levy <seth.levy@plxtech.com>, linux-usb@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next][V2] usb: gadget: net2272: Use irqflags in the call
+ to net2272_probe_fin
+Message-ID: <hycmac4toie3uk7xvgrgqrcw5f2vi2sm4j45ca5coc4qs7orec@gtigekcag6d6>
+References: <20240307181734.2034407-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nsvuqs7gnggucupu"
+Content-Disposition: inline
+In-Reply-To: <20240307181734.2034407-1-colin.i.king@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 
-On Sat, 09 Mar 2024 09:24:27 +0100, Christophe JAILLET wrote:
-> There is no need to call memset(..., 0, ...) on memory allocated by
-> kcalloc(). It is already zeroed.
-> 
-> Remove the redundant call.
-> 
-> 
 
-Applied to for-next/pstore, thanks!
+--nsvuqs7gnggucupu
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[1/1] pstore/zone: Don't clear memory twice
-      https://git.kernel.org/kees/c/c8d25d696f52
+Hello,
 
-Take care,
+On Thu, Mar 07, 2024 at 06:17:34PM +0000, Colin Ian King wrote:
+> Currently the variable irqflags is being set but is not being used,
+> it appears it should be used in the call to net2272_probe_fin
+> rather than IRQF_TRIGGER_LOW being used. Kudos to Uwe Kleine-K=F6nig
+> for suggesting the fix.
+>=20
+> Cleans up clang scan build warning:
+> drivers/usb/gadget/udc/net2272.c:2610:15: warning: variable 'irqflags'
+> set but not used [-Wunused-but-set-variable]
+>=20
+> Fixes: ceb80363b2ec ("USB: net2272: driver for PLX NET2272 USB device con=
+troller")
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
--- 
-Kees Cook
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+Suggested-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
 
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--nsvuqs7gnggucupu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmXtl4cACgkQj4D7WH0S
+/k4YHQf8Dde9ohuB8pl8cPyQtzLgarlGSXTb6nDXSoQO1UA128zHw7Aj2rGHThMq
+xeeodRSsqpQRLpz/ANWuDpCgBRSGcDagzYBDCKFj2oBfIzmNOkAGVFBq2Sf1K6Ai
+Mj+lObCZFRG5vLAENcII3I2bghO8hPSnbZEwgvYbKaTdZwXKExf/oxJzb+KyxlpT
+AS+FNRu/ZxYajiL9nZbWjSmMNVuzGdUFrYJP8IQmLCgGj6JYsf7ur7v1/dFy3S4G
+E5SokdH9QlDoJyJ1Vx1sXsVVU6m//YGF0F/IOGpQuwhKwImjpF4tdy/zvbnlf9fh
+5Ehlr5FfggTzLqNWnkWOrOOwuaJaFQ==
+=POC+
+-----END PGP SIGNATURE-----
+
+--nsvuqs7gnggucupu--
