@@ -1,107 +1,126 @@
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA7B22064;
-	Mon, 11 Mar 2024 12:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B21D4AEC9;
+	Mon, 11 Mar 2024 17:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710161795; cv=none; b=CLYmfL7+YqX8LNxQJTfiNJ8JPedlrttOBKlFp/tWW64Ea7raQap+DNgxlR5WUiW128rdu2afSY1MDZn0HLzdR97E2f4vKcoGm8+MYiwl8NKkpcdZcDq2EtTIHXXMQLflzchfNC3nXeeHSyjwsBqhrhPYSXIbRmBi/jQLGTQkbJ0=
+	t=1710176994; cv=none; b=aZukGRYcP2oronUnKBOwLpMMgac+O793u+rGPyQsMICyvN/FPQ0FHGmJfNc6guo/kvlS2HJHwhCd+AtPfpre0fQmQZHW+166vQPaWJ89ys996MNpg9Hkt/ABeBjQrwn3lQfXp4SvWqWnUbjwb2O4Lrd2mRtucXXMlF9TLBHrHKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710161795; c=relaxed/simple;
-	bh=YOWPvJ1PovYucPG7scHldyK0kJUpjkmbzRBUpiky0aA=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=ea4MaOVx2Z/bXUy9nJIr2Jumxsm9GWX4HYjU82fSu+mKn8+3/UVHkd05C/DYUTPaPsInDqUMdoYtZSKxwFBM1OJB+j479WPC8ChYCkrygG6JnLy7rQoebE5cZXf61nvlYNeuFF33yofMwP8CKfRnxt+Sw1RCKefZIetWrMUoBeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id CEA126450941;
-	Mon, 11 Mar 2024 13:56:28 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id PXZWRRISZQ8B; Mon, 11 Mar 2024 13:56:28 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 1F4376450948;
-	Mon, 11 Mar 2024 13:56:28 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id aRa4meSvKNMG; Mon, 11 Mar 2024 13:56:28 +0100 (CET)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id EB0836450941;
-	Mon, 11 Mar 2024 13:56:27 +0100 (CET)
-Date: Mon, 11 Mar 2024 13:56:27 +0100 (CET)
-From: Richard Weinberger <richard@nod.at>
-To: Christian Heusel <christian@heusel.eu>
-Cc: David Woodhouse <dwmw2@infradead.org>, 
-	linux-mtd <linux-mtd@lists.infradead.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	kernel-janitors <kernel-janitors@vger.kernel.org>
-Message-ID: <1349276201.40757.1710161787719.JavaMail.zimbra@nod.at>
-In-Reply-To: <b4oa6jak7f4hiaqcqpmasclaylqdhdzgne75a6nol6z33d4o7z@3soexkn4smz4>
-References: <20240211003907.167891-1-christian@heusel.eu> <b4oa6jak7f4hiaqcqpmasclaylqdhdzgne75a6nol6z33d4o7z@3soexkn4smz4>
-Subject: Re: [PATCH] jffs2: print symbolic error name instead of error code
+	s=arc-20240116; t=1710176994; c=relaxed/simple;
+	bh=yy7nLIc9ARnpjfGsqcuqP0zQZXEMX49eVq06dLU0h04=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=L6eOIrEswQOSjh38JSVCrLy6HNa8K3UFEh+3KZwlG4rbBEJicWT2x52yg9xc5Tlwmd6BC1HbBRNus80Jnw4vjoA1UrsNStZ800EvPAReSUVxa1IyLVf6sgMtYsG4mQZZlvOiDYZTCiho957IWzchKIsY223FB8KWgKtPULrgEFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OOEYxatM; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OOEYxatM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1710176991;
+	bh=yy7nLIc9ARnpjfGsqcuqP0zQZXEMX49eVq06dLU0h04=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=OOEYxatMo5uTX/liE3V8JTujD6RVwmqScXEq20wkVnKvQCPQp6BdkOCR+qurJbIqt
+	 FVsNOJFGhfW3CH1wX91vAwkkF0+pgDXGkiFeCCuQ85xmp+4NNmqi1bn34jXKxq88Qb
+	 I2Fw4fNQpf/5eXabYSKq90AICCvAgp28ejqIXKbWwczWdd6clPCCgOLB5s+PyNN2OL
+	 fL2AmIiW0UBpUg24faQPjJ1RaPIrqjNja4G5VCwqR+SuOMSt+RJUxQSmDrcWS/1s30
+	 nIblG1ZKfqRVEwqIVTu19PoD24K/0rQDNJ5fkFnsza8emwbkJAPjb0tkCk+mu/r5vv
+	 Ql4koz6WqoJ1A==
+Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id DA073378200D;
+	Mon, 11 Mar 2024 17:09:47 +0000 (UTC)
+Message-ID: <f877ce53-a5ee-4447-a57c-339a1e9701f4@collabora.com>
+Date: Mon, 11 Mar 2024 22:10:21 +0500
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
-Thread-Topic: jffs2: print symbolic error name instead of error code
-Thread-Index: W9U2fKy9ORNwIjN+anjPvwswt4VI2w==
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com,
+ kernel-janitors@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH 1/3] selftests/exec: Add the overall result line
+ accourding to TAP
+Content-Language: en-US
+To: Shuah Khan <shuah@kernel.org>, Eric Biederman <ebiederm@xmission.com>
+References: <20240304155928.1818928-1-usama.anjum@collabora.com>
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20240304155928.1818928-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Christian Heusel" <christian@heusel.eu>
-> An: "David Woodhouse" <dwmw2@infradead.org>, "richard" <richard@nod.at>, =
-"linux-mtd" <linux-mtd@lists.infradead.org>,
-> "linux-kernel" <linux-kernel@vger.kernel.org>
-> CC: "kernel-janitors" <kernel-janitors@vger.kernel.org>
-> Gesendet: Montag, 11. M=C3=A4rz 2024 13:47:40
-> Betreff: Re: [PATCH] jffs2: print symbolic error name instead of error co=
-de
+Soft reminder!
 
-> On 24/02/11 01:39AM, Christian Heusel wrote:
->> Utilize the %pe print specifier to get the symbolic error name as a
->> string (i.e "-ENOMEM") in the log message instead of the error code to
->> increase its readablility.
->>=20
->> This change was suggested in
->> https://lore.kernel.org/all/92972476-0b1f-4d0a-9951-af3fc8bc6e65@suswa.m=
-ountain/
->>=20
->> Signed-off-by: Christian Heusel <christian@heusel.eu>
->> ---
->>  fs/jffs2/background.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>=20
->> diff --git a/fs/jffs2/background.c b/fs/jffs2/background.c
->> index 6da92ecaf66d..bb0ee1a59e71 100644
->> --- a/fs/jffs2/background.c
->> +++ b/fs/jffs2/background.c
->> @@ -44,8 +44,8 @@ int jffs2_start_garbage_collect_thread(struct jffs2_sb=
-_info
->> *c)
->>=20
->>  =09tsk =3D kthread_run(jffs2_garbage_collect_thread, c, "jffs2_gcd_mtd%=
-d",
->>  =09c->mtd->index);
->>  =09if (IS_ERR(tsk)) {
->> -=09=09pr_warn("fork failed for JFFS2 garbage collect thread: %ld\n",
->> -=09=09=09-PTR_ERR(tsk));
->> +=09=09pr_warn("fork failed for JFFS2 garbage collect thread: %pe\n",
->> +=09=09=09tsk);
->>  =09=09complete(&c->gc_thread_exit);
->>  =09=09ret =3D PTR_ERR(tsk);
->>  =09} else {
->> --
->> 2.43.1
->=20
-> Friendly ping on the above patch, since it's now a month after sending
-> it :)
+On 3/4/24 8:59 PM, Muhammad Usama Anjum wrote:
+> The following line is missing from the test's execution. Add it to make
+> it fully TAP conformant:
+>   # Totals: pass:27 fail:0 xfail:0 xpass:0 skip:0 error:0
+> 
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>  tools/testing/selftests/exec/binfmt_script.py | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/exec/binfmt_script.py b/tools/testing/selftests/exec/binfmt_script.py
+> index 05f94a741c7aa..2c575a2c0eab4 100755
+> --- a/tools/testing/selftests/exec/binfmt_script.py
+> +++ b/tools/testing/selftests/exec/binfmt_script.py
+> @@ -16,6 +16,8 @@ SIZE=256
+>  NAME_MAX=int(subprocess.check_output(["getconf", "NAME_MAX", "."]))
+>  
+>  test_num=0
+> +pass_num=0
+> +fail_num=0
+>  
+>  code='''#!/usr/bin/perl
+>  print "Executed interpreter! Args:\n";
+> @@ -42,7 +44,7 @@ foreach my $a (@ARGV) {
+>  # ...
+>  def test(name, size, good=True, leading="", root="./", target="/perl",
+>                       fill="A", arg="", newline="\n", hashbang="#!"):
+> -    global test_num, tests, NAME_MAX
+> +    global test_num, pass_num, fail_num, tests, NAME_MAX
+>      test_num += 1
+>      if test_num > tests:
+>          raise ValueError("more binfmt_script tests than expected! (want %d, expected %d)"
+> @@ -80,16 +82,20 @@ def test(name, size, good=True, leading="", root="./", target="/perl",
+>          if good:
+>              print("ok %d - binfmt_script %s (successful good exec)"
+>                    % (test_num, name))
+> +            pass_num += 1
+>          else:
+>              print("not ok %d - binfmt_script %s succeeded when it should have failed"
+>                    % (test_num, name))
+> +            fail_num = 1
+>      else:
+>          if good:
+>              print("not ok %d - binfmt_script %s failed when it should have succeeded (rc:%d)"
+>                    % (test_num, name, proc.returncode))
+> +            fail_num = 1
+>          else:
+>              print("ok %d - binfmt_script %s (correctly failed bad exec)"
+>                    % (test_num, name))
+> +            pass_num += 1
+>  
+>      # Clean up crazy binaries
+>      os.unlink(script)
+> @@ -166,6 +172,8 @@ test(name="two-under-trunc-arg", size=int(SIZE/2), arg=" ")
+>  test(name="two-under-leading",   size=int(SIZE/2), leading=" ")
+>  test(name="two-under-lead-trunc-arg", size=int(SIZE/2), leading=" ", arg=" ")
+>  
+> +print("# Totals: pass:%d fail:%d xfail:0 xpass:0 skip:0 error:0" % (pass_num, fail_num))
+> +
+>  if test_num != tests:
+>      raise ValueError("fewer binfmt_script tests than expected! (ran %d, expected %d"
+>                       % (test_num, tests))
 
-Thanks for the ping. Your patch looks good. I'll queue it.
-
-Thanks,
-//richard
+-- 
+BR,
+Muhammad Usama Anjum
