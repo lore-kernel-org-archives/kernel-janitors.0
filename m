@@ -1,106 +1,136 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B425364BE
-	for <kernel-janitors@vger.kernel.org>; Mon, 11 Mar 2024 11:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D2E1364;
+	Mon, 11 Mar 2024 12:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710154863; cv=none; b=WavxH0ShqWvLll7arTwVQIdMciRdROB0Gl9VWnetcifPo9c3AwglH5OxEexZLSqWyV0Pu/U7flWIAnsrwFL8OsZmv6ESxXz/wwkIEuQBlAj+m0q7DJMVLjuW3m9DzfPCfhCInV4/yRPn65YA0Igtjle1mNwrKo+SIGoz/SzNUWw=
+	t=1710161294; cv=none; b=ARaHpFv5Uv2plXOJJMtDH6HbTHgoIrYmURM0JJgdQl2cs+77lgD1ubYN1ac+Xr1YE7V3uiqvivPGgxV2fJL9Il3mtnVRfOvbphcTuNEIEPvZvwISJk8yLILgPDePICcKOx2atqAZmv0cIgcSiYdU8EuOPRJOQzhpbKzCLO0CsJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710154863; c=relaxed/simple;
-	bh=EJwC2X4/a4PrYYGENHc96zyVnf31IyxcNikfeTn9Iqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UBwietIibB9lXy0Q7B2lgM4IH9dl3v2e0SQsvVRQ3soRKfWgPdr/C4RxQiJDz34wDGq62bu+zeWkizKRw7A3dPx3OpxYdk2NBRyYwAFlsgQNRKipsBuoBRV/lBXAMzBjLsy6ip7arDPy7pP03Rkr81f+pweZWpun7xeQce4/mTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UMl7D/G9; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1710161294; c=relaxed/simple;
+	bh=U57Hk+dBS1y30YHhm431gGyozho2mBlgztMRDZ59myc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ahSR6Pwi5dcDlLd1DhmGRMVX1HnHZuLuhbRbURA4u0Daf0H2iUH6QjH5QhEW/6OkfS47f3s6f2tDO7effr9gksILfWrFhrTS4c2Wg0lJ/xzKCwZVetFSL+oT3r3t6Y8FkXJchaLFASi2fnoZZlPwcuxHw8tlXxf4Neim6Oqt8aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=VgqSjHMr; arc=none smtp.client-ip=212.227.126.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UMl7D/G9"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5101cd91017so6893361e87.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 11 Mar 2024 04:01:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710154859; x=1710759659; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S1M9CrsxURK9osAlAJKJLTrbinlvddAx/ivsJ1lbXFE=;
-        b=UMl7D/G9HQJXCSTp48O4jUirKGfQnk+0/h8/npTw9iNhoJVsbUOn1ZhGdeY3DaBSgR
-         Sajq+hsljsPELgy5rCNZUabvKvVtw0yuzcw2tUAbw6MmrIJL+E1oObRDaxVCExNcS47+
-         5SziGTwcfcoI23xcfAvzBXnTNz/i3ztdvUvOOrNtZPiOZNwcCaq3h2gYwEOS6TUt26/i
-         io0p7hM4KcTDSvxWgXzg8aSrrMzJl3Htul5/NR/wg09KNvYDYEG/NY9qVuCeKkDaMY8V
-         k9EeGAnv188eugy44RfrJimlcWHGQz3ydTyipkTrQMj01xKe8tTleMCaXaVTD8dR+hy2
-         HNjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710154859; x=1710759659;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S1M9CrsxURK9osAlAJKJLTrbinlvddAx/ivsJ1lbXFE=;
-        b=Q+5epjohRC0V1VvzMfAnvudtTFaTiui09t58V43fUF5vgYWtEKY8QHpA0GqvS0iEdk
-         0MLqYHWN3im4XvXisHLi9DNgEdL/W2Qdsv2FIfJMjfwJ3e3unGBPY73rYR7u5nQsc6yM
-         Q1hsIaQIJYXKKVNuTxssQEHjnjHZq6F9oqbslurmrxtGshgTm6Bde/94LiS/W3jRGkIx
-         /fyWCshkka0Kc4KpgHpph9ODYX/hRAD2yrcqRxRU7ZxKB3PZePh1rBqTbzwdf9v01dhs
-         IsIlJ8t7l0Dm61/GJIXtywltjbXqKgEbkavDpl+PYqHLMuYhhboWMH3A/sIZBsBwhe0m
-         XZ0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUdyoqn8huJm/BFYLUryXPB23Up7WQvnoX8okhJBJNkYaLeIYlVikOkJuPkeJ5cRrNtpKmee1uYIhjszDUfGur7VVEujncjmA7TgDuhFN/q
-X-Gm-Message-State: AOJu0Yw/pzUz7aQlKVIoLdz5iaiuS31doAb3H9YdyYiwrRFxecVcul/T
-	aZXe7KO9GXCrpZK4C36ZQZjg5te4NUvrEKVgjpvdTEMzfPVHbski0c9EUUL+XJU=
-X-Google-Smtp-Source: AGHT+IFwCGdoVdTpdQaznB2idQvFXubh9UWyyPMuumHmhiYMoRkMnvTiGe/Fhx2f7ORUyE/itJx+5g==
-X-Received: by 2002:a05:6512:ea2:b0:513:b0d4:da40 with SMTP id bi34-20020a0565120ea200b00513b0d4da40mr706289lfb.20.1710154857841;
-        Mon, 11 Mar 2024 04:00:57 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id eo5-20020a056512480500b00513179f6c22sm1045933lfb.96.2024.03.11.04.00.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Mar 2024 04:00:57 -0700 (PDT)
-Date: Mon, 11 Mar 2024 14:00:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] gpio: nomadik: remove BUG_ON() in nmk_gpio_populate_chip()
-Message-ID: <ae643df0-3a3e-4270-8dbf-be390ee4b478@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="VgqSjHMr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=heusel.eu;
+	s=s1-ionos; t=1710161263; x=1710766063; i=christian@heusel.eu;
+	bh=U57Hk+dBS1y30YHhm431gGyozho2mBlgztMRDZ59myc=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:
+	 In-Reply-To;
+	b=VgqSjHMr+haZtw0jZRKEgE/69AQYEB9jpDiIXVkbcWi8K5Z5DxDtBpZQAz/lY4VE
+	 SDn46RZmzuisUyQX/p0pTlIRw+ejEWZlaZ3BmwJH8eIFUaz6uryXxGoF6An9Qq21e
+	 iIwfiHOj20UKM/LbGZxYHsYeVDnx1xnOyb93ks42NhYr04aGGkc8PTUk6uRGJ6sIO
+	 fJNlBeiziDUquPL27eOCqbf50m0Wjt6W5CYhYw56Gp42x2JSAJtl2aWgUQhHpVdsh
+	 Vxfryyh07ImWnrPG1RRZ0IMvHFCMCkCrUD9+CN4McpxcNN7nc2jdDaJUFIrhepefI
+	 VKPWjr1PLab+C1k9KQ==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([84.170.90.173]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N63mC-1qlzzr0JFA-016QKL; Mon, 11 Mar 2024 13:47:43 +0100
+Date: Mon, 11 Mar 2024 13:47:40 +0100
+From: Christian Heusel <christian@heusel.eu>
+To: David Woodhouse <dwmw2@infradead.org>, 
+	Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] jffs2: print symbolic error name instead of error code
+Message-ID: <b4oa6jak7f4hiaqcqpmasclaylqdhdzgne75a6nol6z33d4o7z@3soexkn4smz4>
+References: <20240211003907.167891-1-christian@heusel.eu>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="u36om64zlux4crqa"
+Content-Disposition: inline
+In-Reply-To: <20240211003907.167891-1-christian@heusel.eu>
+X-Provags-ID: V03:K1:cCA2v6Yl7qVfchXCjmjHzHof0YuIyG8VnO4ZV42PYUgerHlw0Df
+ C6Hi5BO1rlTOIcq4jNJVRXDdBBW1GWR6+Vb/6LiRQ9HMo32hbEiwuusAKfD25W4D9g3LtDj
+ CiWY56wH80/xA3fgHUBh/xh6FBgfHSlTu0xi9S2dDYOnH4PFTbQ2/j0b0F8jaG5EhLP2CNc
+ Pvye80JhDGlrJLs2SL1ZQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:TOIz44WZJa0=;MyS8RxB+EdiCl7XJkSIX7TNN68R
+ QR0+dCPy7Ia6LsNvV4aH8k8eImoWzIgIkgkLxtx1w1aNxkX2AMEw3y4AnTdYij7QaSEmmyywq
+ C5AA7lQJz/H4Vi4TTuXXpe5wAororgN+gXaDULqCOSaxnj3lAEKzG5H4ZhYklAKwGY6bthTpU
+ aHuBDO6wf56WnGtyjKLaeljkfUuSGQdnJf8A5OuexRyNkc66/pnjSLcJnaw0ldGz9ARbxbKp3
+ D09DfMkwtVFXAFlftCPqkMxNfgBCsaoAwmLod4w6CFtKJo/EOHl6WUlEHRVmbNUgouxDKLGZv
+ wDNDv1fkG8lUqR+GFRXjpzeJVwOPEXHKWW6fmbKgfZNOQFoGrc8m4ImN6VuEbKfm8zFNPKQf9
+ YHt5ABl9GSZ7PxbCWrne6PLC9XdD5HHQ1tYPXAOUOGA94+ko4x4XBcnhNu7GHPaLKMwnCuqUM
+ b+TAc4cKUN58gCkKwfAIFd0/Kl848UphxeepAog3UAgmfboa/SRvYxiFUfVsh4z65QjgNUi/V
+ Uvc5XtMhXKtV+U8etV59FhcdclLYAUpDAQPYuE9bGN8Lh4b7RZniCWt32NM0Cgr5HG4HFLZ0b
+ 2KNJLNES/R29kw2kNm9u35/lMU2vbVUld3JoiFC/7nQ0CCCsITvGeDqexBC4AfMH5TcTaDncI
+ FxODoaTTpU5fZMvSIxTkAf8IdrR6bfrhCnu4l/MpT3FdGKGowcuDyKE+3mFZZjLaAknXpjwTo
+ W/Pj4vQLFRT32dJNqIjkKQYFPMgfIco42ZQzWOsJt2JrVG3KsbGzIM=
+
+
+--u36om64zlux4crqa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: quoted-printable
 
-Using BUG_ON() is discouraged and also the check wasn't done early
-enough to prevent an out of bounds access.  Check earlier and return
-an error instead of calling BUG().
+On 24/02/11 01:39AM, Christian Heusel wrote:
+> Utilize the %pe print specifier to get the symbolic error name as a
+> string (i.e "-ENOMEM") in the log message instead of the error code to
+> increase its readablility.
+>=20
+> This change was suggested in
+> https://lore.kernel.org/all/92972476-0b1f-4d0a-9951-af3fc8bc6e65@suswa.mo=
+untain/
+>=20
+> Signed-off-by: Christian Heusel <christian@heusel.eu>
+> ---
+>  fs/jffs2/background.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/fs/jffs2/background.c b/fs/jffs2/background.c
+> index 6da92ecaf66d..bb0ee1a59e71 100644
+> --- a/fs/jffs2/background.c
+> +++ b/fs/jffs2/background.c
+> @@ -44,8 +44,8 @@ int jffs2_start_garbage_collect_thread(struct jffs2_sb_=
+info *c)
+>=20
+>  	tsk =3D kthread_run(jffs2_garbage_collect_thread, c, "jffs2_gcd_mtd%d",=
+ c->mtd->index);
+>  	if (IS_ERR(tsk)) {
+> -		pr_warn("fork failed for JFFS2 garbage collect thread: %ld\n",
+> -			-PTR_ERR(tsk));
+> +		pr_warn("fork failed for JFFS2 garbage collect thread: %pe\n",
+> +			tsk);
+>  		complete(&c->gc_thread_exit);
+>  		ret =3D PTR_ERR(tsk);
+>  	} else {
+> --
+> 2.43.1
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/gpio/gpio-nomadik.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Friendly ping on the above patch, since it's now a month after sending
+it :)
 
-diff --git a/drivers/gpio/gpio-nomadik.c b/drivers/gpio/gpio-nomadik.c
-index 463a765620dc..5e2f9b51ece3 100644
---- a/drivers/gpio/gpio-nomadik.c
-+++ b/drivers/gpio/gpio-nomadik.c
-@@ -533,6 +533,11 @@ struct nmk_gpio_chip *nmk_gpio_populate_chip(struct fwnode_handle *fwnode,
- 	}
- 
- #ifdef CONFIG_PINCTRL_NOMADIK
-+	if (id >= ARRAY_SIZE(nmk_gpio_chips)) {
-+		dev_err(dev, "populate: invalid id: %u\n", id);
-+		platform_device_put(gpio_pdev);
-+		return ERR_PTR(-EINVAL);
-+	}
- 	/* Already populated? */
- 	nmk_chip = nmk_gpio_chips[id];
- 	if (nmk_chip) {
-@@ -606,7 +611,6 @@ struct nmk_gpio_chip *nmk_gpio_populate_chip(struct fwnode_handle *fwnode,
- 	}
- 
- #ifdef CONFIG_PINCTRL_NOMADIK
--	BUG_ON(nmk_chip->bank >= ARRAY_SIZE(nmk_gpio_chips));
- 	nmk_gpio_chips[id] = nmk_chip;
- #endif
- 	return nmk_chip;
--- 
-2.43.0
+Cheers,
+chris
 
+--u36om64zlux4crqa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmXu/WwACgkQwEfU8yi1
+JYWNaBAA3O92OboqsUyaSWRqJ+1aXC2lC2cHWCQnaLE8/tlW8wIlA6FPrZKkO6h3
+TxxzZo8TPzpZgaUzkOlZps5CjOYQNzx1axbm2WXkrj44oHbmavq+Zj7ehSjdvwMW
+P5foTpyJJt6mwBgaKv8I3WIR8utjV8AyMLsjPtSayYcvBtsmZxJyPcY38On7JuSH
+mNegCXTkBorj2R3Rzm8ijWCIA39Bc5HCpdk03cx8T2+2+3BcTZ9HH8nFA+qIXd5H
+wTN+iQjdxHE/+yMqaExoRFWM5C4lLk5ub38j2d2VzBY6sIfDBzGmwRcfmapofAsG
+tj1NyYCB2Oe1dA2cr5BZ7CrIh5CTHRPSgOMSkJIItet0jmTrtyndfocmsSEzsKoM
+A/QC0bGK8M/7APTBjY5YY6FFBpZlIWkfCP2cdk/EmYuPLhU+UuJHdl9difcIClik
+nmdptzAGu4uBsHqDQShnTxPUkaGi4geeY5QM2ylxtYIsd0aH198GDF6BO26UPRmg
+c8r0RcqTJ19Jeyb87waHKDqejKlkMFm1/tM5LU9U0aGr43TmFJ6Xky5YJ7hOp5Gr
+ZAU7gUXUwXmB0qs96+Hl6lU4PISIkb8FPmqYLRf57mxMhSyRuz7k1fyYlstzfGCB
+vwIkWhSLK+/ZYmSsyumqyhCOxdtT+QWpMJfA68OQcvlv7cRqUqk=
+=EQU3
+-----END PGP SIGNATURE-----
+
+--u36om64zlux4crqa--
