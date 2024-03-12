@@ -1,90 +1,111 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEB34AEC3;
-	Mon, 11 Mar 2024 17:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07A178274;
+	Tue, 12 Mar 2024 09:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710177088; cv=none; b=HWXnvlapoBcqz/uVWDuRCPYIEEzBMWXqaN9iopTZP01R7z48Ztz1dLQOV0F6I4CAqMbopmM1klNaEwxUhi3z7EDlK/mRfxHH8vUy+UMpk+v0HvIZYRDane6a1VtIPc+d4QEZq0wQ6p7AnBPFpRuvu5jyt3EIzoUlSfKjLmFv/P8=
+	t=1710235094; cv=none; b=Aqj1+KC0QI16/WAO4ckICszA0a8Ahx0fqC/SYQpvTgyz3sjVdku3eF9W+niiRqw3oUwZLsaTAkuS4LWdquXRgHslRZzXNkt8BfyuOm/cpLutY6Ph5cDK5/pPHvqVuQ6gdC+83astoMaytGm853SmyS2+nhkNmn5D4qdBWt/dA1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710177088; c=relaxed/simple;
-	bh=5AOlmp0WhMZQanJVzfmUCGnKbq90HEOIbEhrlt/ju1k=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CM/BGMxRkiQHrBkbfXrQKdVDo99lfRC9cyncUqyTMcH0PSxbL6KSZ+Zf61BILYXTa6c2cLArdclGZXIVgIZJMsqxcVb5BfwCsywNUHVXP7sANnrWo4c5dDt4tfcpAnU68Ozuz1sZQIJU27kGRizELv6XY+b38VPYj7KRf5w3/CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dl1NqHij; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1710235094; c=relaxed/simple;
+	bh=xULG24erpUcoihlm+Uw7EJPRQq7iaA6trJNTM9vkwmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DqKvUyqnSss3i8uuRAg8F1Hm7jlPDVSqtZVsj77fNUyitOTtzF2di7JwzGlAv6x5IajZX6rhDjYLyY2vUh3P/tdVC+DYh8ZTFfJSa2hSyBZTwpRZ9iCeWddmdNFth7eu0zsa3FU9bBXhIn3iIzBYxj0gpIX5qSwb1agsOLydvHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D/4LLAe2; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dl1NqHij"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1710177085;
-	bh=5AOlmp0WhMZQanJVzfmUCGnKbq90HEOIbEhrlt/ju1k=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=dl1NqHij7NxipguTGBERLEIq1bqfVRVP4iq3wioNLnoRj8g82MYWcih38MC1YerDb
-	 YhPWoqoawOeG7J4ySudJmbQ64zMgmzEPziktv0To8I/s5RD4sK3x+XDx0nkmsIB2eC
-	 htiJP4vxClYA8IPklK1mq1etU6mBcnrMIBPNFpzDeio9bKEFjNTc5++dxjOEy9Yawi
-	 V97kUv+MyIoZND+Z8lyElxyXZeUndm0a/JY8Q3XVaIfzAcc3p95pz6amt0zErJssIV
-	 wswXPg+bMzbbuhGFVTrPNABshzD/Y01VLthmaXySK9zYeolaTh1DypNY3jBQ7OS/ku
-	 gIUIVVy+Qh8kA==
-Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 45F1B378200D;
-	Mon, 11 Mar 2024 17:11:19 +0000 (UTC)
-Message-ID: <ab6b08c5-86a2-47e3-8683-28cdbe5be7cf@collabora.com>
-Date: Mon, 11 Mar 2024 22:11:51 +0500
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D/4LLAe2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1710235093; x=1741771093;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xULG24erpUcoihlm+Uw7EJPRQq7iaA6trJNTM9vkwmA=;
+  b=D/4LLAe2jrbdqW0I5nK0r68hdZBaet0Fu6epfge3tpKNbKARAN/SpQby
+   nAVUdVGk9uYDj8siktNqS5Tuy81nk0aTLELPbyCSShJI/3pY1fuIz5Bw0
+   mhCm2qoHtj9AUYVkCkdNipAZT+Vm6JJcH5LIcKin+0WFLyUxSccACPS2L
+   RfTDDCXpmGF4Mzq0HR4nvZI7hsf06B5cPCQ3LCLsFVcYylKbs5LHQ8jod
+   5LfA4PzJFRs9rcFivk9Yea8cybJFRkV0ZM1xQ1na6/8WPj/6EElBIicYr
+   3gYBKSDEhd6EWyU0pPheTtv3rOM+xENnVz6Ql5z7FiBOHcDnKYeOsFvOJ
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,11010"; a="4784219"
+X-IronPort-AV: E=Sophos;i="6.07,119,1708416000"; 
+   d="scan'208";a="4784219"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2024 02:18:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,11010"; a="937051555"
+X-IronPort-AV: E=Sophos;i="6.07,119,1708416000"; 
+   d="scan'208";a="937051555"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by fmsmga001.fm.intel.com with SMTP; 12 Mar 2024 02:18:07 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 12 Mar 2024 11:18:06 +0200
+Date: Tue, 12 Mar 2024 11:18:06 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?iso-8859-1?Q?G=FCnter_R=F6ck?= <linux@roeck-us.net>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	RD Babiera <rdbabiera@google.com>, Rob Herring <robh@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Yu Zhe <yuzhe@nfschina.com>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] usb: typec: fusb302: Use common error handling code in
+ fusb302_probe()
+Message-ID: <ZfAdzsqXeO/IOY/A@kuha.fi.intel.com>
+References: <0b89e175-47da-4e66-bb3b-a45a400dc3ae@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com,
- kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] wifi: mt76: connac: check for null before dereferencing
-Content-Language: en-US
-To: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
- Ryder Lee <ryder.lee@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>,
- Sean Wang <sean.wang@mediatek.com>, Kalle Valo <kvalo@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-References: <20240301144406.2808307-1-usama.anjum@collabora.com>
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240301144406.2808307-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0b89e175-47da-4e66-bb3b-a45a400dc3ae@web.de>
 
-Soft reminder
-
-On 3/1/24 7:44 PM, Muhammad Usama Anjum wrote:
-> The wcid can be NULL. It should be checked for validity before
-> dereferencing it to avoid crash.
+On Fri, Mar 01, 2024 at 05:23:25PM +0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 1 Mar 2024 17:00:23 +0100
 > 
-> Fixes: 098428c400ff ("wifi: mt76: connac: set correct muar_idx for mt799x chipsets")
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> Add a label so that a bit of exception handling can be better reused
+> at the end of this function implementation.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
 > ---
->  drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/usb/typec/tcpm/fusb302.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c b/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c
-> index af0c2b2aacb00..7af60eebe517a 100644
-> --- a/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c
-> +++ b/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c
-> @@ -283,7 +283,7 @@ __mt76_connac_mcu_alloc_sta_req(struct mt76_dev *dev, struct mt76_vif *mvif,
->  	};
->  	struct sk_buff *skb;
->  
-> -	if (is_mt799x(dev) && !wcid->sta)
-> +	if (is_mt799x(dev) && wcid && !wcid->sta)
->  		hdr.muar_idx = 0xe;
->  
->  	mt76_connac_mcu_get_wlan_idx(dev, wcid, &hdr.wlan_idx_lo,
+> diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
+> index ef18a448b740..e1e030da1dec 100644
+> --- a/drivers/usb/typec/tcpm/fusb302.c
+> +++ b/drivers/usb/typec/tcpm/fusb302.c
+> @@ -1741,10 +1741,9 @@ static int fusb302_probe(struct i2c_client *client)
+> 
+>  	chip->tcpm_port = tcpm_register_port(&client->dev, &chip->tcpc_dev);
+>  	if (IS_ERR(chip->tcpm_port)) {
+> -		fwnode_handle_put(chip->tcpc_dev.fwnode);
+>  		ret = dev_err_probe(dev, PTR_ERR(chip->tcpm_port),
+>  				    "cannot register tcpm port\n");
+> -		goto destroy_workqueue;
+> +		goto put_fwnode;
+>  	}
+> 
+>  	ret = request_irq(chip->gpio_int_n_irq, fusb302_irq_intn,
+> @@ -1761,6 +1760,7 @@ static int fusb302_probe(struct i2c_client *client)
+> 
+>  tcpm_unregister_port:
+>  	tcpm_unregister_port(chip->tcpm_port);
+> +put_fwnode:
+>  	fwnode_handle_put(chip->tcpc_dev.fwnode);
+>  destroy_workqueue:
+>  	fusb302_debugfs_exit(chip);
+> --
+> 2.44.0
 
 -- 
-BR,
-Muhammad Usama Anjum
+heikki
