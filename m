@@ -1,111 +1,86 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07A178274;
-	Tue, 12 Mar 2024 09:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D9279DA7
+	for <kernel-janitors@vger.kernel.org>; Tue, 12 Mar 2024 11:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710235094; cv=none; b=Aqj1+KC0QI16/WAO4ckICszA0a8Ahx0fqC/SYQpvTgyz3sjVdku3eF9W+niiRqw3oUwZLsaTAkuS4LWdquXRgHslRZzXNkt8BfyuOm/cpLutY6Ph5cDK5/pPHvqVuQ6gdC+83astoMaytGm853SmyS2+nhkNmn5D4qdBWt/dA1Q=
+	t=1710244376; cv=none; b=t9Iy3cnWwkxykAm2962ickU9lPl+8OmafXxUXg0ZpLx7gKC3A1QI/oxm2EmahB2dcztsZ2+VhK/FXy2gigqk0OJNmaIe8IQFfcNE7PdKVwFAu6SHhrU2n24tD+o1/46ISi5ijF60cE5LqmUzwhDXXpqrnqQpHp+Cbf8amESkb8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710235094; c=relaxed/simple;
-	bh=xULG24erpUcoihlm+Uw7EJPRQq7iaA6trJNTM9vkwmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DqKvUyqnSss3i8uuRAg8F1Hm7jlPDVSqtZVsj77fNUyitOTtzF2di7JwzGlAv6x5IajZX6rhDjYLyY2vUh3P/tdVC+DYh8ZTFfJSa2hSyBZTwpRZ9iCeWddmdNFth7eu0zsa3FU9bBXhIn3iIzBYxj0gpIX5qSwb1agsOLydvHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D/4LLAe2; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1710244376; c=relaxed/simple;
+	bh=JWULMh7o9qtF+RsBiOf3B41hJfHZ1YtSIOHKt7eEqF8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JnAejwhl8cgD/ULBpypBWwzURqgdp7a+CJNkIbWm/E6HC8fG/0HToQ4fvBX2/I0YtB5tTyW4+moImCLiZW0w9zfe8t3ZvEVBe939Htnh84tX5NXBs6PvCvrdRmP0b55ad8JIoEcL2nUf9vKTNGmj9Ho7N1yv2ow6DK7VtJ33NIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yZENlQaD; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D/4LLAe2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1710235093; x=1741771093;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xULG24erpUcoihlm+Uw7EJPRQq7iaA6trJNTM9vkwmA=;
-  b=D/4LLAe2jrbdqW0I5nK0r68hdZBaet0Fu6epfge3tpKNbKARAN/SpQby
-   nAVUdVGk9uYDj8siktNqS5Tuy81nk0aTLELPbyCSShJI/3pY1fuIz5Bw0
-   mhCm2qoHtj9AUYVkCkdNipAZT+Vm6JJcH5LIcKin+0WFLyUxSccACPS2L
-   RfTDDCXpmGF4Mzq0HR4nvZI7hsf06B5cPCQ3LCLsFVcYylKbs5LHQ8jod
-   5LfA4PzJFRs9rcFivk9Yea8cybJFRkV0ZM1xQ1na6/8WPj/6EElBIicYr
-   3gYBKSDEhd6EWyU0pPheTtv3rOM+xENnVz6Ql5z7FiBOHcDnKYeOsFvOJ
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,11010"; a="4784219"
-X-IronPort-AV: E=Sophos;i="6.07,119,1708416000"; 
-   d="scan'208";a="4784219"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2024 02:18:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,11010"; a="937051555"
-X-IronPort-AV: E=Sophos;i="6.07,119,1708416000"; 
-   d="scan'208";a="937051555"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by fmsmga001.fm.intel.com with SMTP; 12 Mar 2024 02:18:07 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 12 Mar 2024 11:18:06 +0200
-Date: Tue, 12 Mar 2024 11:18:06 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	=?iso-8859-1?Q?G=FCnter_R=F6ck?= <linux@roeck-us.net>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	RD Babiera <rdbabiera@google.com>, Rob Herring <robh@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Yu Zhe <yuzhe@nfschina.com>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: typec: fusb302: Use common error handling code in
- fusb302_probe()
-Message-ID: <ZfAdzsqXeO/IOY/A@kuha.fi.intel.com>
-References: <0b89e175-47da-4e66-bb3b-a45a400dc3ae@web.de>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yZENlQaD"
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dc74e33fe1bso4883908276.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 12 Mar 2024 04:52:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1710244374; x=1710849174; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iYh9NgFiUlDSRFh0N6tnk2Yai7KZlV9KzVjtJmtqPwA=;
+        b=yZENlQaDzlx/kvHDBhrtvkA4pnGAmJ+dTWbp/c6NJHi5zG5fb1aQWnofvuCtgwEoXx
+         f526ph+FDmbKC6AiAadWwltrVIGGLNA5zMW9KJQM3nipF4ssFV2K2GGRwqPcouDt16Qu
+         QLdkpSFfvRx52yqkWDMvfaaInDlwACBbbsu/4TEo7JLu1Ym2HruaiwAFw01S0KB9LQf5
+         xZOGEgQB+VwyfwMzydkXkBQMaD2BkCMn9c1I8oMalsLNOh4F0u0dC/ONrWFX4HoGCqAx
+         bn4Lx9X6HOiUiIJ2xUDI6yeLwR7YRPzRZd9WW9hsTWBofm6T+wU9qy7TUOP+JXfybLUe
+         WkRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710244374; x=1710849174;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iYh9NgFiUlDSRFh0N6tnk2Yai7KZlV9KzVjtJmtqPwA=;
+        b=lfS2cfyGzvkP1IVaYtznMCekINNTVXyd88kRlDiLPDv17yrQUaZd/GtHt4jpjj0TGV
+         9X+PCvnx/Ay5uBSpe9HXwentwadsdZ5kWMbBxDOBd3DomWhFLoGDXkdSNgBWG5rw/gCh
+         tsihNUhJIQ6ZfThI/kBpUj9fmi1uzdQQwcbevBaqZrMexgXegBfmiuSS7rvBLRpjVwlC
+         e0/Ucc0fVK35pFFeov9On2l+UkvEzaBiPcVvyysb7kvIVAnyFUb/owRQLQiEGSpMpcRo
+         zFepCX8re5kA6lNQGxisiqt1Rpd61XKuIRuClYUz23wDbpkn5RN6IJoYp2WGzHuvdLyq
+         qJFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEHa+2IL33Af9H5EDzpe7VOY2aBzRwL4MGhw9CFT7Y2radzpCo21nbnq98XK9yeuRLY/VW0NZSlBM0EwSFWQkkUenpiA9eZm+7K/WwWVgn
+X-Gm-Message-State: AOJu0YxB1ZgS4RVZDMI9a/wQLCBuI8tlqfQYZ2PIe5d3m0XkFVCNXNpV
+	susAK/GSU/1561blWO7/ZQ5nvd6i5p/7l8Q6mxmhz2FVR5M2m9TImqyi54QYY4IVZftSoQIQF2G
+	6nX5goB+61OY1fA4y+dsQvWked1hWsbZL6+0B4Q==
+X-Google-Smtp-Source: AGHT+IHM4+XkGrEr4TR1Ej4v7sv8rnNzednJ2Q7ydm5WMikNndCuOBWPz9jPurIvtRqHtOuQiNrGRxmNT6kHIFbRmWU=
+X-Received: by 2002:a25:140b:0:b0:dbf:23cd:c05c with SMTP id
+ 11-20020a25140b000000b00dbf23cdc05cmr6527345ybu.13.1710244374125; Tue, 12 Mar
+ 2024 04:52:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0b89e175-47da-4e66-bb3b-a45a400dc3ae@web.de>
+References: <ae643df0-3a3e-4270-8dbf-be390ee4b478@moroto.mountain>
+In-Reply-To: <ae643df0-3a3e-4270-8dbf-be390ee4b478@moroto.mountain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 12 Mar 2024 12:52:42 +0100
+Message-ID: <CACRpkdYtiyHgvtPJYxq2BNb9UxthwPQPHyUddQ5Q1eat1NY4XQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: nomadik: remove BUG_ON() in nmk_gpio_populate_chip()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-arm-kernel@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 01, 2024 at 05:23:25PM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 1 Mar 2024 17:00:23 +0100
-> 
-> Add a label so that a bit of exception handling can be better reused
-> at the end of this function implementation.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+On Mon, Mar 11, 2024 at 12:00=E2=80=AFPM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
 
-Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Using BUG_ON() is discouraged and also the check wasn't done early
+> enough to prevent an out of bounds access.  Check earlier and return
+> an error instead of calling BUG().
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-> ---
->  drivers/usb/typec/tcpm/fusb302.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
-> index ef18a448b740..e1e030da1dec 100644
-> --- a/drivers/usb/typec/tcpm/fusb302.c
-> +++ b/drivers/usb/typec/tcpm/fusb302.c
-> @@ -1741,10 +1741,9 @@ static int fusb302_probe(struct i2c_client *client)
-> 
->  	chip->tcpm_port = tcpm_register_port(&client->dev, &chip->tcpc_dev);
->  	if (IS_ERR(chip->tcpm_port)) {
-> -		fwnode_handle_put(chip->tcpc_dev.fwnode);
->  		ret = dev_err_probe(dev, PTR_ERR(chip->tcpm_port),
->  				    "cannot register tcpm port\n");
-> -		goto destroy_workqueue;
-> +		goto put_fwnode;
->  	}
-> 
->  	ret = request_irq(chip->gpio_int_n_irq, fusb302_irq_intn,
-> @@ -1761,6 +1760,7 @@ static int fusb302_probe(struct i2c_client *client)
-> 
->  tcpm_unregister_port:
->  	tcpm_unregister_port(chip->tcpm_port);
-> +put_fwnode:
->  	fwnode_handle_put(chip->tcpc_dev.fwnode);
->  destroy_workqueue:
->  	fusb302_debugfs_exit(chip);
-> --
-> 2.44.0
+Thanks Dan, I applied the patch to the pin control tree since the
+rest of the stuff is resting there and Bartosz already sent his pull
+request.
 
--- 
-heikki
+Yours,
+Linus Walleij
