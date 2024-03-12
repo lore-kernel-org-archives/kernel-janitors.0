@@ -1,93 +1,108 @@
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86C556471
-	for <kernel-janitors@vger.kernel.org>; Tue, 12 Mar 2024 12:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02954BA28;
+	Tue, 12 Mar 2024 12:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710245687; cv=none; b=dxAUUkwahfHOVb6bpK0YgaTMYjml6PYS/p8jBGH2m5hWZ6ukGpNF9RdNpQkGA8A4MSZ1bZKBktX/2h+7Iv9l4B3L7bRnNXvsqz5+wTjm+BTDRcR2kLDyWGeEfAD+ZGI+cIqgDqFS0qsWe2zgZqCzglCTBnI3HahwCIjWlnOx0Dc=
+	t=1710245760; cv=none; b=IJ2yGI64RTxEct3IXTJu8hASuDsMxeGusWZ4Gdpt+YFipFBy0Bf3YxoxeTfIHY7rD3p+P4SJaKyqFQxUcdwn9eK4L+JGN0eKCZA/8NOTGXaR/WLWFaS7Z1brULfVdDMZ4rs5pYAkCjLXZHNs/eQsAK2kTbj4HQgXlpXY1Bs6mn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710245687; c=relaxed/simple;
-	bh=duOeKCS6bveowPG54FKvXNovbWkIKFNUj3Vc2HDZcO0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qQCzvyRL5I84MvcAv8QG8gMnfsc/t32kVKYvRRh7eQlXHSWt4vRjPw+ODkBpq6NqvOXMStXe2soIpw9MmfxRXd7yLmNIKAiIWHGuqpCkwH0i+7VhKT1MjKpFs+Bd6tv9ZLXI7/uwQT4iQ3IbJ6YNDmX7Cx5gDqBINq6f1DUSzGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=nuQU3m+A; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1710245760; c=relaxed/simple;
+	bh=eWOfUZKmPNZhyLKzOWRxcFwX/pcgSuoNoaDv6gFnoaY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=G71mb3/MHPbc53GrwJBAFz8uidxymiiQ0oQp8S9o/EqDLoV7XnXe0e5vq0siuQJg/g2rRCSZbW/8quqbr4+fdcyE+l3l4sOHoXHDO18lFrBEjYbL4RIKwXXqIGBtiDKmSrc9lXKcd6jFLC2JoOYf1RqR8WQCWwORxFXnV4qbvac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=adYU1hc0; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="nuQU3m+A"
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-474c44ac8aeso82482137.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 12 Mar 2024 05:14:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1710245684; x=1710850484; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XZC0o0r2wFDW28FPKH9Tb5iKiJa9D3c2T5RaNX1TwfI=;
-        b=nuQU3m+AQmfF4KSfY2hHxbJ0RugcJEwPmyY4stpNsvgAkKRw/EGRk/6P0iVrzdQwXm
-         zPm/Z5as16PYXpuIVzM0jT4WueGxMunEAJNqLXroV9VKovIHiYLX53yth+fqZfbcaRq+
-         DWenlwJl+x5Wh7p8+foQVNzU8zkFcB8a471UDbqVZl64SUKUBW1fcgVXkjX6LE9ICRp3
-         BS2MOOzGpNCdvIM0ChddM1D7Zrx3H/acYKsxTfpv7wMXARoyYTd+cq22PPCyJ3Jrg8jq
-         CtIfAKZRTft2TMmhUodPs7NYwLjYnSC30ppJyjBuffNiTbHHEWtBQTxAYdVhh0CO8lif
-         UATQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710245684; x=1710850484;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XZC0o0r2wFDW28FPKH9Tb5iKiJa9D3c2T5RaNX1TwfI=;
-        b=lSxkr2L+7t8QY9l02QPNORWXzFhOj/fYxAhWuODjFZs65rIXYW/tybelO+bXmQDNnE
-         pf6IJ+GRMbYiKj33U6Rd4x3jaImb0u7mXHTSh34G1H9NvLxZPUeUlWcj6NIp/pzmQVy5
-         SlzoVzhBDyyG5MSsgRVVwupge8+aVg7ZQmDQvKUmxS9OzKGspuvZfmUzFdQHFjudmTgW
-         6evAZILkiEs3yQtKTSzgxwVfH/S1Fuse3Xu6VP2Uks2X952scNth5DFoDTTyDKq4DdUY
-         NWnSBpSfjeNNwkjaHy0jv8cZa9TuWV1q53mONbhKvaRWJSc0ZXgRSVeNrDRYzR5cL7NK
-         UoAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcZEzzGU44OV4TbWnahWBMecdkEuP10y70AtOZ4O7OXZ/KTLuZWbpeAT84kM3B1yx8rj1eb09AZ/S3etREEuOhc1yfAtpIRuLBRSeOK3EX
-X-Gm-Message-State: AOJu0YzkTqRO42MhXMuCjjEfug5F8J7BlyQvD48mlT+vHoUKlVdcG2PD
-	lsBLy+VBGJgYMNYYrv9o+eH4gwuUgzejeO6vqTyEuBGIZy2zoVYCjBtO0wYRg2HsQG0gsGFu5/7
-	AdntxP94BT9WE/LOqptPfnIlB7JC5AFkZDbPsQkJFUU1Fklxj
-X-Google-Smtp-Source: AGHT+IGC6GWeZ2uR1cZhuSX5z92E2OTDgg+XTAjGxI/njmH7eNlkIR7bUmLNMi0nRjdzhJz6htsK6DVHtdg4w43ul40=
-X-Received: by 2002:a67:f492:0:b0:474:c602:f4d3 with SMTP id
- o18-20020a67f492000000b00474c602f4d3mr380845vsn.21.1710245683902; Tue, 12 Mar
- 2024 05:14:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="adYU1hc0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1710245756;
+	bh=eWOfUZKmPNZhyLKzOWRxcFwX/pcgSuoNoaDv6gFnoaY=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=adYU1hc0/HUIwUycHrtd4GegMyOYxLD39anPc8saT3TETvOqtNyQ1llQF2VUsLSr7
+	 7GeJ+1fEoSnY9Hm3uUOvfQWEoit6kSpS3/72J3TcBaVhHpu2qgZROsZcIgS0vv0xGd
+	 wBS69XgiEJRrrZIJ4abtOSNXdr2i8lmsR4hMzIVt1b1S5Ns7pwZisRAXt29+Z2OsHe
+	 ASDxfuus5r7Mm0Wmlt0btj7g0xR+3wE7Ki0Xj+x3DIrXKuf/KoQxi9+E0sQrT3ZfhR
+	 XMtJnwEj6Ql9qIpQHQ5PwM/rfWFjH3ngRjtEGLwPNFZsgsjczDJqL40bY2jUv1/Wkt
+	 6HgrTtkgafApw==
+Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0E2D3378207B;
+	Tue, 12 Mar 2024 12:15:53 +0000 (UTC)
+Message-ID: <d690b7d7-2568-4a47-a653-eb25671fb138@collabora.com>
+Date: Tue, 12 Mar 2024 17:16:23 +0500
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ae643df0-3a3e-4270-8dbf-be390ee4b478@moroto.mountain> <CACRpkdYtiyHgvtPJYxq2BNb9UxthwPQPHyUddQ5Q1eat1NY4XQ@mail.gmail.com>
-In-Reply-To: <CACRpkdYtiyHgvtPJYxq2BNb9UxthwPQPHyUddQ5Q1eat1NY4XQ@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 12 Mar 2024 13:14:32 +0100
-Message-ID: <CAMRc=MfvKy=0d3mrE5NaZMdVoG1P5s8AakrrQy+D+9a5Ua3Uqw@mail.gmail.com>
-Subject: Re: [PATCH] gpio: nomadik: remove BUG_ON() in nmk_gpio_populate_chip()
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Walle <mwalle@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Takahiro Kuwano <Takahiro.Kuwano@infineon.com>, kernel@collabora.com,
+ kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mtd: spi-nor: core: correct type of i
+Content-Language: en-US
+To: Pratyush Yadav <pratyush@kernel.org>
+References: <20240304090103.818092-1-usama.anjum@collabora.com>
+ <865fc24b-ae27-4084-893b-c5c389480a09@collabora.com>
+ <mafs0r0gf8x6c.fsf@kernel.org>
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <mafs0r0gf8x6c.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 12, 2024 at 12:52=E2=80=AFPM Linus Walleij <linus.walleij@linar=
-o.org> wrote:
->
-> On Mon, Mar 11, 2024 at 12:00=E2=80=AFPM Dan Carpenter <dan.carpenter@lin=
-aro.org> wrote:
->
-> > Using BUG_ON() is discouraged and also the check wasn't done early
-> > enough to prevent an out of bounds access.  Check earlier and return
-> > an error instead of calling BUG().
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->
-> Thanks Dan, I applied the patch to the pin control tree since the
-> rest of the stuff is resting there and Bartosz already sent his pull
-> request.
->
+On 3/12/24 5:14 PM, Pratyush Yadav wrote:
+> Hi,
+> 
+> On Mon, Mar 11 2024, Muhammad Usama Anjum wrote:
+> 
+>> Soft reminder
+> 
+> Miquel should pick up the patch when sending out his pull request [0].
+> 
+> [0] https://lore.kernel.org/linux-mtd/20240307180919.4cb7a4cb@xps-13/
+Thanks Pratyush!
 
-Yes I did. There were no conflicts in next with nomadik updates so I
-figured you'll just send it yourself. Let me know if you need anything
-from my side.
+> 
+>>
+>> On 3/4/24 2:01 PM, Muhammad Usama Anjum wrote:
+>>> The i should be signed to find out the end of the loop. Otherwise,
+>>> i >= 0 is always true and loop becomes infinite. Make its type to be
+>>> int.
+>>>
+>>> Fixes: 6a9eda34418f ("mtd: spi-nor: core: set mtd->eraseregions for non-uniform erase map")
+>>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>>> ---
+>>> Changes since v1:
+>>> - Make i int instead of u8
+>>> ---
+>>>  drivers/mtd/spi-nor/core.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
+>>> index 65b32ea59afc6..3e1f1913536bf 100644
+>>> --- a/drivers/mtd/spi-nor/core.c
+>>> +++ b/drivers/mtd/spi-nor/core.c
+>>> @@ -3373,7 +3373,7 @@ static u32
+>>>  spi_nor_get_region_erasesize(const struct spi_nor_erase_region *region,
+>>>  			     const struct spi_nor_erase_type *erase_type)
+>>>  {
+>>> -	u8 i;
+>>> +	int i;
+>>>  
+>>>  	if (region->overlaid)
+>>>  		return region->size;
+> 
 
-Bart
+-- 
+BR,
+Muhammad Usama Anjum
