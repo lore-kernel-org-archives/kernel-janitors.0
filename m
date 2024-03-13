@@ -1,110 +1,80 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D6C604B8;
-	Wed, 13 Mar 2024 18:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A375D732
+	for <kernel-janitors@vger.kernel.org>; Wed, 13 Mar 2024 19:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710355953; cv=none; b=LFLPeifyX0vr8zpSPO3FDTWSsNW7RRR7XJLk5HbdRoid/RBMLAmtGSF/jfTkes5Gi6k3IynFxA9iNN/QSzKBZI6QR12oxpo7AA9sWhE35WUIlE/MHToVsSjUmH3E7EqSfAQiHlIvih7EuBhMdM1BAqcoTXxn4FyejLdprl9eJN4=
+	t=1710356706; cv=none; b=R5WjKf2anCc6AwuCDnDnDr7jEuwQi6mVqcXPApguJvCqIa/hsWYrQHOpMGjD+yrj0Y9xbGG4bIsQQtxzXE+9Tf0Mzo/HU3ldpjUDQyBe4Qy9C+TBlcMMv+jzHOzbnonyhehAbJ9BIcM5b/kgN+3ie0qdYi4nLwgN9utWAqPgJ0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710355953; c=relaxed/simple;
-	bh=uiOhDb2aI1GM9s1bqPmkWJ30LvgnRIJ1fB5938Y3rig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SdqL64/DKRcJ2chCsNyn37DoptEYbBaQrIp2EKu05VYOj9BaE/9xA2a2a0et0CJFuKCgsh/WUi//4pibP5J4lTN1FrSBvqXzy3xGiqLDTVAxJlsRnE2GWs3L5vEgaoicaJ+3UVXAUf7EQ9nYRqscnyao292OOs1bGyNQS/uZ5L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LfllGhln; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1710356706; c=relaxed/simple;
+	bh=JjFDLPWpxqjU2QEEdDwkP2gB3hpAsOJy37rkMIzHD88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PxieFSx2FhbBgph2JE1jnpOHVDHiGzhQC8OQUZGLxkrli/yROtlc3im/I5TW45Prj0FkpfLs+EY5quArgY/OQAKE7a2203J9viS8fRGGzyM9Zs8wOHH6/9MKuubv/+AZ4BWQ4RPPaGprVys3/Nzg7+EygmyjUAOTDd2qPoS01c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SJxpdiHv; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LfllGhln"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=w1PC9u+vdjtH+/OhAVuI9GgnMz4d8ZzYulX30ZT4Frs=; b=LfllGhln8mFk5kHvFr4qv6qvw8
-	3Hp//2EKrunOZrdPkG3WMnlzSNDRB1ZUZNXoLbdYy1A/FwSt04d+dzRBx9an783YtmcVD7oZOkk3w
-	Se2KWmjIDcj+BILbBgCDkufKBj2szXpX4YqfI9C3en1RPT31S3hV5uaXtvDcsWwiJ9szFrnj+aB7h
-	LQP0Ma7MPVK8JXLgr/0B1TnWcPbTjFrqnyrmo5PiRbhjkY6hG13y0x267TdnZYkpJGXhOZ3riwrO/
-	+qxO2AQ22ni4XY92Z0DkdTEOalDAloS+i6DZKxOyM0Cp/w5gPBXIbk4QvRC3ZJ4gHs3j/DvDpEjhG
-	eyKGfIow==;
-Received: from [50.53.2.121] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rkTiI-0000000BRE6-1pL4;
-	Wed, 13 Mar 2024 18:52:30 +0000
-Message-ID: <33aee996-8bc8-4063-86ee-e8ffff69000c@infradead.org>
-Date: Wed, 13 Mar 2024 11:52:29 -0700
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SJxpdiHv"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1dd8dd198d0so1044635ad.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 13 Mar 2024 12:05:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1710356704; x=1710961504; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4huMKqPxqzLf5OCIAsTKzbUWeR7Lg0yQNTBgZN7mj/M=;
+        b=SJxpdiHvik7/dbI8Kno7TotkgL1dUs9r4Kwbf9voAgvl3TS/l4f+bGh0boDT+cESI7
+         T9HmL690hjqmh5ohtCymKEglD+zbu3uUBIkMmqU1SKPDDZZ2HPlnHTzrxCvZvlGHTigG
+         aZR+XJYTRQ2ezxEow8QTNislqP9g89lQUlI+8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710356704; x=1710961504;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4huMKqPxqzLf5OCIAsTKzbUWeR7Lg0yQNTBgZN7mj/M=;
+        b=i2xseVnR08vxLgvC8gH/GjW5JR/86RkTRKsIeUHukZX6Ek5ZVCoY9Fe2vAOYe6bS/J
+         P56oHsvwdrKhm6+ztI9Lrr0m9hIv7/TatiodLcQ8oKrejUCdvqWRKtuEKsYF//AbDLNm
+         opYe7if18L53wGyjtjx0etdBPutem5NFC89k5WzIeE5VJIhhWIENS+gONNcxoyUbTaVX
+         FguwYnPS+eiKUtl24Ahn/X+vGPLHv2+6T1spf6U0KqWzqYAlQgbS/doqYFx6nMcZ47jF
+         EXLuk4HZ2CMgb+90WkxqogVV+vnYC3MwyIbvCnhCgqRLfrEpzbAcHTQ5eWKC98eN8JAd
+         PtNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgmpkR3JdZD7jVUOmLruv9Iok4tKeTQWPNGf/IXwRBmDKxshvDODo5dbrifHj8KgJkzZ8e5Pp726I+PCAbqhMuzW1RBKc3TEOTRHiQcRIN
+X-Gm-Message-State: AOJu0YxXlhb8/LIX6umzxXfRQfKweeLwz79Pwx9oN5Ib4FqJnC/yMB26
+	mWFc6OriQ4MzCycw+LLwdP3xBdDE4trJOiDPhsCgVQvlTFkGcFZultEZvV/20g==
+X-Google-Smtp-Source: AGHT+IHO7jXGQDKaRXkUme504UD6kNd5mIw4KUxjBzwWwgkI0TfIS5EUk+wbR2Pl9l0sLSRI4YfEug==
+X-Received: by 2002:a17:902:e741:b0:1dd:a120:7761 with SMTP id p1-20020a170902e74100b001dda1207761mr12028570plf.14.1710356704001;
+        Wed, 13 Mar 2024 12:05:04 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id u3-20020a170902e5c300b001dda32430b3sm5998581plf.89.2024.03.13.12.05.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Mar 2024 12:05:03 -0700 (PDT)
+Date: Wed, 13 Mar 2024 12:05:02 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Shuah Khan <shuah@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
+	kernel@collabora.com, kernel-janitors@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] selftests/exec: Add the overall result line
+ accourding to TAP
+Message-ID: <202403131204.FF098416C6@keescook>
+References: <20240304155928.1818928-1-usama.anjum@collabora.com>
+ <f877ce53-a5ee-4447-a57c-339a1e9701f4@collabora.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] docs: submitting-patches: divert focus from PATCH in
- the subject line
-Content-Language: en-US
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, workflows@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240301134637.27880-1-lukas.bulwahn@gmail.com>
- <20240301134637.27880-2-lukas.bulwahn@gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240301134637.27880-2-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f877ce53-a5ee-4447-a57c-339a1e9701f4@collabora.com>
 
-Hi--
+On Mon, Mar 11, 2024 at 10:10:21PM +0500, Muhammad Usama Anjum wrote:
+> Soft reminder!
 
-On 3/1/24 05:46, Lukas Bulwahn wrote:
-> Submitting-patches is already assuming that git is used to prepare
-> patches. So, developers will use git format-patch and git send-email, and
-> this will take care that PATCH is usually in the subject line. Hence, the
-> 'include PATCH in the subject' does not deserve be an own section.
-> 
-> Move this note into 'the canonical patch format' section, where it
-> currently fits best.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  Documentation/process/submitting-patches.rst | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
-> 
-> diff --git a/Documentation/process/submitting-patches.rst b/Documentation/process/submitting-patches.rst
-> index 66029999b587..2ec0c0d7d68f 100644
-> --- a/Documentation/process/submitting-patches.rst
-> +++ b/Documentation/process/submitting-patches.rst
-> @@ -384,16 +384,6 @@ patch or patch series which have not been modified in any way from the
->  previous submission.
->  
->  
-> -Include PATCH in the subject
-> ------------------------------
-> -
-> -Due to high e-mail traffic to Linus, and to linux-kernel, it is common
-> -convention to prefix your subject line with [PATCH].  This lets Linus
-> -and other kernel developers more easily distinguish patches from other
-> -e-mail discussions.
-> -
-> -``git send-email`` will do this for you automatically.
-> -
->  
->  Sign your work - the Developer's Certificate of Origin
->  ------------------------------------------------------
-> @@ -616,6 +606,10 @@ The canonical patch subject line is::
->  
->      Subject: [PATCH 001/123] subsystem: summary phrase
->  
-> +Prefix your subject line with [PATCH]. This allows to distinguish patches
-> +from other e-mail discussions. ``git send-email`` will do this for you
-> +automatically.
+Ah yes! Thanks for the reminder on these. I will get them into -next
+shortly.
 
-Is this perhaps 'git format-patch' will do this for you automatically.
-?  I don't know, just asking.
-
-> +
->  The canonical patch message body contains the following:
->  
->    - A ``from`` line specifying the patch author, followed by an empty
-
-thanks.
 -- 
-#Randy
+Kees Cook
