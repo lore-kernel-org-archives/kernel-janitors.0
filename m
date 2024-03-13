@@ -1,80 +1,94 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A375D732
-	for <kernel-janitors@vger.kernel.org>; Wed, 13 Mar 2024 19:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C684D108
+	for <kernel-janitors@vger.kernel.org>; Wed, 13 Mar 2024 20:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710356706; cv=none; b=R5WjKf2anCc6AwuCDnDnDr7jEuwQi6mVqcXPApguJvCqIa/hsWYrQHOpMGjD+yrj0Y9xbGG4bIsQQtxzXE+9Tf0Mzo/HU3ldpjUDQyBe4Qy9C+TBlcMMv+jzHOzbnonyhehAbJ9BIcM5b/kgN+3ie0qdYi4nLwgN9utWAqPgJ0o=
+	t=1710361653; cv=none; b=pcTy61wbqCXZgDPkInH0cJB1e3ZvKgqoeHlAugZrGA8GMC1kBR3cwJ/babocf2NcO402KoXf/6uxdkRN5n2J7S88AJLnqXbzhRQ6HP16F4Qt2IpgHNZc4AfUUdOh0VKuMuMbAklY3Od+4apsUknZopvruOn2lqnoHE1BYb6OmPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710356706; c=relaxed/simple;
-	bh=JjFDLPWpxqjU2QEEdDwkP2gB3hpAsOJy37rkMIzHD88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PxieFSx2FhbBgph2JE1jnpOHVDHiGzhQC8OQUZGLxkrli/yROtlc3im/I5TW45Prj0FkpfLs+EY5quArgY/OQAKE7a2203J9viS8fRGGzyM9Zs8wOHH6/9MKuubv/+AZ4BWQ4RPPaGprVys3/Nzg7+EygmyjUAOTDd2qPoS01c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SJxpdiHv; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1710361653; c=relaxed/simple;
+	bh=6KYs3BQgjwZsV5TdSedJLoIrS+8iHieLsZx7y+UPnzA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=seprU3IKAfocTC47v32jLKiqphLvkri8erF7o0aLG1PIsZJF3ke8XtXp9rFhpkMh3QK58auI9ueuYSmXlfjMe8Nh+1VESknATtQBEPbd3BVMiC23kINbKon3xn2He0+zI0Uh3qg/gi162l5bb94foZy+nPMOhxTMytb0jBVaCnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=a9W3afKE; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SJxpdiHv"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1dd8dd198d0so1044635ad.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 13 Mar 2024 12:05:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="a9W3afKE"
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3663a681015so479355ab.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 13 Mar 2024 13:27:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1710356704; x=1710961504; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4huMKqPxqzLf5OCIAsTKzbUWeR7Lg0yQNTBgZN7mj/M=;
-        b=SJxpdiHvik7/dbI8Kno7TotkgL1dUs9r4Kwbf9voAgvl3TS/l4f+bGh0boDT+cESI7
-         T9HmL690hjqmh5ohtCymKEglD+zbu3uUBIkMmqU1SKPDDZZ2HPlnHTzrxCvZvlGHTigG
-         aZR+XJYTRQ2ezxEow8QTNislqP9g89lQUlI+8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710356704; x=1710961504;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1710361651; x=1710966451; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4huMKqPxqzLf5OCIAsTKzbUWeR7Lg0yQNTBgZN7mj/M=;
-        b=i2xseVnR08vxLgvC8gH/GjW5JR/86RkTRKsIeUHukZX6Ek5ZVCoY9Fe2vAOYe6bS/J
-         P56oHsvwdrKhm6+ztI9Lrr0m9hIv7/TatiodLcQ8oKrejUCdvqWRKtuEKsYF//AbDLNm
-         opYe7if18L53wGyjtjx0etdBPutem5NFC89k5WzIeE5VJIhhWIENS+gONNcxoyUbTaVX
-         FguwYnPS+eiKUtl24Ahn/X+vGPLHv2+6T1spf6U0KqWzqYAlQgbS/doqYFx6nMcZ47jF
-         EXLuk4HZ2CMgb+90WkxqogVV+vnYC3MwyIbvCnhCgqRLfrEpzbAcHTQ5eWKC98eN8JAd
-         PtNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgmpkR3JdZD7jVUOmLruv9Iok4tKeTQWPNGf/IXwRBmDKxshvDODo5dbrifHj8KgJkzZ8e5Pp726I+PCAbqhMuzW1RBKc3TEOTRHiQcRIN
-X-Gm-Message-State: AOJu0YxXlhb8/LIX6umzxXfRQfKweeLwz79Pwx9oN5Ib4FqJnC/yMB26
-	mWFc6OriQ4MzCycw+LLwdP3xBdDE4trJOiDPhsCgVQvlTFkGcFZultEZvV/20g==
-X-Google-Smtp-Source: AGHT+IHO7jXGQDKaRXkUme504UD6kNd5mIw4KUxjBzwWwgkI0TfIS5EUk+wbR2Pl9l0sLSRI4YfEug==
-X-Received: by 2002:a17:902:e741:b0:1dd:a120:7761 with SMTP id p1-20020a170902e74100b001dda1207761mr12028570plf.14.1710356704001;
-        Wed, 13 Mar 2024 12:05:04 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id u3-20020a170902e5c300b001dda32430b3sm5998581plf.89.2024.03.13.12.05.03
+        bh=eF2DJ3K0vqdhNLJam1R2VnPzYiUW+uxIa0Tf2briAJ4=;
+        b=a9W3afKEOxvSY4kRgWoH8PtJzVJNFleJdFpn9old5/tP8Smm2aSsM0K0/N/2Hghx1q
+         uOR0RZpDk6mUtd2x4o63GtY6wSr2zWDtxIhmyEhkVaIV3re1VFSlu2+Sreuzaj0/Y0/x
+         Xrd8yc9wGEhoSDkHQqmY8G2YZ+kSETC66vzlPvagvvTvK07HAOR/TqVFRNFykAnysI8G
+         /a6ICiNZkNY6bTJfqeJ1Vn5SlkdqqkNDklV0tNPSl9GVS4LOEZVow3Pm65V1jO3qPcYi
+         ivclXmBUHerME7l2uLTyALkGXpOlZ44+Z7bHSE70cozdlLy3D9y6tsmtZmFpge9lEO1E
+         K+DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710361651; x=1710966451;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eF2DJ3K0vqdhNLJam1R2VnPzYiUW+uxIa0Tf2briAJ4=;
+        b=US58Du94bSbNjJHXFXwgY5lPQPp50D9P3r93TxTgpEJ8mcCk99lHpr6XIrZGnptTkA
+         Md4x1EaNpsGs8zIEDItMZFF2OiIokzwbRRZ4CsmIz1RRn8XuXcEqFSdzIuEICDo72VKB
+         PXrHd8EquAeUCg+DgY9PFW0iv0z5Msgn+NRr+D/Z5HBBPLLsoEWlLIwpqO8s8p0E3msv
+         12LpVlNqP+JWWLGWtWSRl5t9pJSO14GGNw4eZ14jJnpx0H2GHRWXBsE0Ol0uH5E16Z1l
+         VRLt+5btQrf5dBd2kCbfMhbn8mtQpCneLETOlT7GBvkdFeNXEjqEp9l98a0hEUNB8DPw
+         DziQ==
+X-Gm-Message-State: AOJu0YxxSZYw+5hBdG3Iqos4M3dNw1vHOWw0Cw15RX5B1a9rysnGwvfO
+	hhkTtuU539Uk4Ey7w+Isim0qIsPnmPJFUHT3z8BiW1R5D4L3gBeE/IlT94uPSl0=
+X-Google-Smtp-Source: AGHT+IHrpTG3IyrY66fdBdCSOtK8R6pRDlYafTxhW5d810MFfjPxeOohqUqtft8HGNclAFoVpU5ASg==
+X-Received: by 2002:a6b:e914:0:b0:7c8:bb03:a7a with SMTP id u20-20020a6be914000000b007c8bb030a7amr23560iof.2.1710361651366;
+        Wed, 13 Mar 2024 13:27:31 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id a42-20020a02942d000000b00476cca7d5b9sm3081057jai.166.2024.03.13.13.27.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Mar 2024 12:05:03 -0700 (PDT)
-Date: Wed, 13 Mar 2024 12:05:02 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Shuah Khan <shuah@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
-	kernel@collabora.com, kernel-janitors@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] selftests/exec: Add the overall result line
- accourding to TAP
-Message-ID: <202403131204.FF098416C6@keescook>
-References: <20240304155928.1818928-1-usama.anjum@collabora.com>
- <f877ce53-a5ee-4447-a57c-339a1e9701f4@collabora.com>
+        Wed, 13 Mar 2024 13:27:30 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: linux-block@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240308133921.2058227-1-colin.i.king@gmail.com>
+References: <20240308133921.2058227-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] block: partitions: only define function
+ mac_fix_string for CONFIG_PPC_PMAC
+Message-Id: <171036165065.297831.13967283119583163229.b4-ty@kernel.dk>
+Date: Wed, 13 Mar 2024 14:27:30 -0600
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f877ce53-a5ee-4447-a57c-339a1e9701f4@collabora.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
-On Mon, Mar 11, 2024 at 10:10:21PM +0500, Muhammad Usama Anjum wrote:
-> Soft reminder!
 
-Ah yes! Thanks for the reminder on these. I will get them into -next
-shortly.
+On Fri, 08 Mar 2024 13:39:21 +0000, Colin Ian King wrote:
+> The helper function mac_fix_string is only required with CONFIG_PPC_PMAC,
+> add #if CONFIG_PPC_PMAC and #endif around the function.
+> 
+> Cleans up clang scan build warning:
+> block/partitions/mac.c:23:20: warning: unused function 'mac_fix_string' [-Wunused-function]
+> 
+> 
+> [...]
 
+Applied, thanks!
+
+[1/1] block: partitions: only define function mac_fix_string for CONFIG_PPC_PMAC
+      commit: 5205a4aa8fc9454853b705b69611c80e9c644283
+
+Best regards,
 -- 
-Kees Cook
+Jens Axboe
+
+
+
