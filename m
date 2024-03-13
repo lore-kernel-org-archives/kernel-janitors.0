@@ -1,96 +1,110 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A5D1B298;
-	Wed, 13 Mar 2024 09:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D6C604B8;
+	Wed, 13 Mar 2024 18:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710321381; cv=none; b=IIEPQF3ocOebo7F98dgX1s5UC1djVB8Rwc3/Di5Xr8HbPAx2gGvP/VqcCTCwgueIzajBTwEaojWqqxAP0cEijv5P4nSad/vlVGBRsk3UZgb+v12tOYZlEhl3liZuRWB3KX+2pox6jxX6XCLClRrw4G43iOD0GoFEUpwCY/rt+g0=
+	t=1710355953; cv=none; b=LFLPeifyX0vr8zpSPO3FDTWSsNW7RRR7XJLk5HbdRoid/RBMLAmtGSF/jfTkes5Gi6k3IynFxA9iNN/QSzKBZI6QR12oxpo7AA9sWhE35WUIlE/MHToVsSjUmH3E7EqSfAQiHlIvih7EuBhMdM1BAqcoTXxn4FyejLdprl9eJN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710321381; c=relaxed/simple;
-	bh=Atlbt8XHVDTUdCT97W7QdTOXLmd6AcNECPeg4I4RqlM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=RQtd/LNhxVIXisxN5tEmQEHRUMl8Z7KUOoIl1cbobG0ja//5tTmDNTAWopMllfMXORiulANJ9kAm9EUh4HQohM8AQOE1UY8Kf5/s+8s8+BxUNk5zxlWJUueJSUcju4Ipd/EnnW5Z6v8qXihANsu7mJj45XcBRDzawJiHVOdF4+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HdYURgJ3; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1710355953; c=relaxed/simple;
+	bh=uiOhDb2aI1GM9s1bqPmkWJ30LvgnRIJ1fB5938Y3rig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SdqL64/DKRcJ2chCsNyn37DoptEYbBaQrIp2EKu05VYOj9BaE/9xA2a2a0et0CJFuKCgsh/WUi//4pibP5J4lTN1FrSBvqXzy3xGiqLDTVAxJlsRnE2GWs3L5vEgaoicaJ+3UVXAUf7EQ9nYRqscnyao292OOs1bGyNQS/uZ5L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LfllGhln; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HdYURgJ3"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-33e95b68b3eso2932527f8f.1;
-        Wed, 13 Mar 2024 02:16:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710321378; x=1710926178; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mGDcHoSk1YuhKsU3tKb5CF1JuJEf/myqjNAnBVPHlLo=;
-        b=HdYURgJ3QjM7vHQRMylTNx8Ek1XtyZMUiljxpzyBFGuLZrUX37u7MDGmVsd4894zRf
-         /y+0R1xPK+v0PE586WzkDG6BQC6TAkvX52AfwgYHaVtYut/9kU1A9jBzoMxZCmLzOZm2
-         WfMuu4UosEg0zMM02mqIiwpH7Dfuzmp0mjVKMWHTJeEupQdzDMAJcMjvhJRM3bFKRWuW
-         iuyYUXIKNcFVkYWgsdKdlW3/1aLq8F6GckDTsXd150jovZ6Unxb82wAY9QQ0SawBPXbL
-         OhuYRzN7vnkIRuAJjoyxVik0IuaFtw6iiX6z5/jisc8UE3C0Fq20i44bvkVCR7koGB87
-         K6eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710321378; x=1710926178;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mGDcHoSk1YuhKsU3tKb5CF1JuJEf/myqjNAnBVPHlLo=;
-        b=fpEFH61mt7M/u6AFE4tUrsfZIDypdTjrz9nVt4du9PvwZK2OT67V4KujnLPLi51xd6
-         NVofh8KtQKGAnM7Y6ZavXe6KrW23Ov3e7gAVO1LpxUi8r9SH0DM9aV+KN9JKW5K7d0i9
-         Ep47BdcyuTcjBRFvx9pdWBwgWZlOsDJkhrHiwSxKM11/1gZhobVJMMvRgx6J1oG2d5co
-         aCELgMaDtSCJwWvHq4d23Uz9QtJzDyqf1uq04AAcb00ZVu1oi0VMXRqEUtmoNw70wC62
-         RvZS/PicgYP1bBEg0M/tRcuY2r4FU/50iddmie43dBgSDWq525oofLdJcRQtNNzQhFJd
-         890A==
-X-Forwarded-Encrypted: i=1; AJvYcCXQQ1FXKKyIlQrmF60G6tKnHUj6GnM/Gaff0zY1sSgKe8T8MiSSL5ADmRIiCcIrOMHpV3+20kGt4CBO8fEezKd/6XMGDSbowI+sC77C9y1YEXs53d7cvWVq6GEoS70RhU+phLP6NY4jMg==
-X-Gm-Message-State: AOJu0YwhP/np7nAbHIm+cD4EXGpGQScojydeLr/8fKUzvIiGJlSbnprD
-	8OljKlBdnObmoZRcjCv7C4yUMijFxB6xWLFLigvVhhkZGEVjBG/e
-X-Google-Smtp-Source: AGHT+IEruf3cpMcjdOkRLg3eoF7si8rSAhEbBa0Ar3XOh98WB9H4ieC6eWWoBlx+qNRNT7qF6mweCQ==
-X-Received: by 2002:adf:cf07:0:b0:33e:b316:8597 with SMTP id o7-20020adfcf07000000b0033eb3168597mr1086816wrj.50.1710321377725;
-        Wed, 13 Mar 2024 02:16:17 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id g5-20020a5d6985000000b0033d6c928a95sm11210707wru.63.2024.03.13.02.16.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Mar 2024 02:16:17 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <sfrench@samba.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Tom Talpey <tom@talpey.com>,
-	linux-cifs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ksmbd: Fix spelling mistake "connction" -> "connection"
-Date: Wed, 13 Mar 2024 09:16:16 +0000
-Message-Id: <20240313091616.2266107-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LfllGhln"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=w1PC9u+vdjtH+/OhAVuI9GgnMz4d8ZzYulX30ZT4Frs=; b=LfllGhln8mFk5kHvFr4qv6qvw8
+	3Hp//2EKrunOZrdPkG3WMnlzSNDRB1ZUZNXoLbdYy1A/FwSt04d+dzRBx9an783YtmcVD7oZOkk3w
+	Se2KWmjIDcj+BILbBgCDkufKBj2szXpX4YqfI9C3en1RPT31S3hV5uaXtvDcsWwiJ9szFrnj+aB7h
+	LQP0Ma7MPVK8JXLgr/0B1TnWcPbTjFrqnyrmo5PiRbhjkY6hG13y0x267TdnZYkpJGXhOZ3riwrO/
+	+qxO2AQ22ni4XY92Z0DkdTEOalDAloS+i6DZKxOyM0Cp/w5gPBXIbk4QvRC3ZJ4gHs3j/DvDpEjhG
+	eyKGfIow==;
+Received: from [50.53.2.121] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rkTiI-0000000BRE6-1pL4;
+	Wed, 13 Mar 2024 18:52:30 +0000
+Message-ID: <33aee996-8bc8-4063-86ee-e8ffff69000c@infradead.org>
+Date: Wed, 13 Mar 2024 11:52:29 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] docs: submitting-patches: divert focus from PATCH in
+ the subject line
+Content-Language: en-US
+To: Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, workflows@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240301134637.27880-1-lukas.bulwahn@gmail.com>
+ <20240301134637.27880-2-lukas.bulwahn@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240301134637.27880-2-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-There is a spelling mistake in a ksmbd_debug debug message. Fix it.
+Hi--
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/smb/server/oplock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 3/1/24 05:46, Lukas Bulwahn wrote:
+> Submitting-patches is already assuming that git is used to prepare
+> patches. So, developers will use git format-patch and git send-email, and
+> this will take care that PATCH is usually in the subject line. Hence, the
+> 'include PATCH in the subject' does not deserve be an own section.
+> 
+> Move this note into 'the canonical patch format' section, where it
+> currently fits best.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  Documentation/process/submitting-patches.rst | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
+> 
+> diff --git a/Documentation/process/submitting-patches.rst b/Documentation/process/submitting-patches.rst
+> index 66029999b587..2ec0c0d7d68f 100644
+> --- a/Documentation/process/submitting-patches.rst
+> +++ b/Documentation/process/submitting-patches.rst
+> @@ -384,16 +384,6 @@ patch or patch series which have not been modified in any way from the
+>  previous submission.
+>  
+>  
+> -Include PATCH in the subject
+> ------------------------------
+> -
+> -Due to high e-mail traffic to Linus, and to linux-kernel, it is common
+> -convention to prefix your subject line with [PATCH].  This lets Linus
+> -and other kernel developers more easily distinguish patches from other
+> -e-mail discussions.
+> -
+> -``git send-email`` will do this for you automatically.
+> -
+>  
+>  Sign your work - the Developer's Certificate of Origin
+>  ------------------------------------------------------
+> @@ -616,6 +606,10 @@ The canonical patch subject line is::
+>  
+>      Subject: [PATCH 001/123] subsystem: summary phrase
+>  
+> +Prefix your subject line with [PATCH]. This allows to distinguish patches
+> +from other e-mail discussions. ``git send-email`` will do this for you
+> +automatically.
 
-diff --git a/fs/smb/server/oplock.c b/fs/smb/server/oplock.c
-index 9af5fd68bd85..80971e60ca10 100644
---- a/fs/smb/server/oplock.c
-+++ b/fs/smb/server/oplock.c
-@@ -1843,7 +1843,7 @@ int smb2_check_durable_oplock(struct ksmbd_conn *conn,
- 
- 	if (memcmp(conn->ClientGUID, fp->client_guid,
- 				SMB2_CLIENT_GUID_SIZE)) {
--		ksmbd_debug(SMB, "Client guid of fp is not equal to the one of connction\n");
-+		ksmbd_debug(SMB, "Client guid of fp is not equal to the one of connection\n");
- 		ret = -EBADF;
- 		goto out;
- 	}
+Is this perhaps 'git format-patch' will do this for you automatically.
+?  I don't know, just asking.
+
+> +
+>  The canonical patch message body contains the following:
+>  
+>    - A ``from`` line specifying the patch author, followed by an empty
+
+thanks.
 -- 
-2.39.2
-
+#Randy
