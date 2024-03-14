@@ -1,77 +1,66 @@
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293DD59B4A;
-	Wed, 13 Mar 2024 22:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DB44A15;
+	Thu, 14 Mar 2024 02:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710368605; cv=none; b=GGrcnIuEpLvDGY/pSjguYOavxXrNrzH1G2H4AmN38JYuI8kXUeCEy9oPd5+f58uHKC9T4VPkBXe74VukdW9mCIaSLFBykg9O3MQ1mtbPUWY/68YdkbH+u9CRGaaqoZT+4x08quvdILoPe1VKoXf1z/gqYA3un8hGsdKALaYMOCM=
+	t=1710384298; cv=none; b=Dx/5Is+NK5chHimMvVv1mW2AgdvoabLkcLaAIPde61nrrg4TNOrrwiG/xu3bZdhTe7pk//vROSc9kgxmkCg08CTNHCxvSeE2ur1b3UsVjdh2i4bySiLvCZO7DwFwjQSSxQmgxbrxPDXieBfJFDPlUEc2RRv0GWXhFJl/HQlLbZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710368605; c=relaxed/simple;
-	bh=a8Sh3dNbafbG/9FnX5AWeGa/mggShESsl2IMd9EzZtg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nsOLwT4OaEqg3UtwlTkmlXzPYkGylKxgn2XVOCaidK3bo8NGpX71B2N89hrzkHn+lOPGfNr2ryNau5VcJY1iJLPENX1+SvgASdQr+17HDamnBkxA9aH6CwjBFkrpJ6r4KYL0jv0ZtpjhQCo/KiZYFVwwm6PgFfCk+DN5wTH4zdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EoelQSV3; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1710384298; c=relaxed/simple;
+	bh=zpXun0U0mFZ/WUOEpPGTdJhPFwQ4U8x7VrbLbI/AWA4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NJ6QBl9kM7oXDuA/flNJWy4TxynLqDGg7sNniAN5Ujsmn6qn9dWZp4FhoJEtwDuR+df1De08/SnPs13kaHbhj5IJvG04PMWqhBBmV8idA2SEPgW5Fyx/EHPjhoBRuHrMLHl+q+JmOK9f1nLSS0sGkkorq95X7Zj5Z8/sQG1mEy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6GmGRTb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EoelQSV3"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D03211BF204;
-	Wed, 13 Mar 2024 22:23:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1710368599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3LF1DgETq3+uAOl/bFUlSXoTzHAoPYEGhBrdRccuLQQ=;
-	b=EoelQSV3syJ71nv3hScMYI/oP/f38N7nV2KbckHkGwKn3GP/6MVb3kUVskLwVuEv33dSpb
-	S0swiDDtCYQJPmeOwt/pEmh8F3XF2lPPsfWsLs98O0L9wwaOqSNfqtaZSr+6Ga6BCPyWM+
-	vus4WQYwUx0dsD2xPAs/syXMYWLvEl6ORZcJNCUTYxy0O8MeZ868zgJvn80aSO9PcvqVyX
-	XkcQOcLcaGBY+CFd99rTkp9TmnWrvXnVpzKgkbdthBHoLGeYw207Z0H4k3KJe921NqZB5u
-	29RdXywPV7g6Ny4IgGqZKQMDLivSZwNJC9xIFAh2vVahZFGUP8sxhGfETnXo/Q==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
-Cc: kernel@collabora.com,
-	kernel-janitors@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mtd: spi-nor: core: correct type of i
-Date: Wed, 13 Mar 2024 23:23:13 +0100
-Message-Id: <20240313222313.800965-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240304090103.818092-1-usama.anjum@collabora.com>
-References: 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6GmGRTb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5138C43390;
+	Thu, 14 Mar 2024 02:44:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710384297;
+	bh=zpXun0U0mFZ/WUOEpPGTdJhPFwQ4U8x7VrbLbI/AWA4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=l6GmGRTbyXJJdKtz1LyMU27xPf3a/z6aD1uQr1wC1aF+JjxwBAJdbDKYgB5uF4uVu
+	 3cdOaujqXl/gECX9xruKvfOizQQdtWYyUdFXUnwC74hZON404bQ2bD51p+b4g41CIT
+	 TL2p3isPzv0CWifUSmfa+Ybre37gH7H/+epVxbmicbG0kCuu8Xqpl3qXmQGi9xeuCh
+	 FOlBb+PHsl/LDk4+1QCLGT+aEi9iAC2d449QHbEkzWzH44iSaDbbndIKQI06tM/zV1
+	 509VTTBFpJlh/RXCAkxFDsUwuNjCqFyu+/LIGqc/8giL4hwsCG7EqrZuyqIMLU2oYi
+	 kjwbNi+f6WXhA==
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-221a4f9557dso309888fac.2;
+        Wed, 13 Mar 2024 19:44:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWb+9YBGhMAVUgy1oRFFJcbC0a57tNDQ8MhwSy2wp5YGHC3fY+K5Thalyer0kjw0D91CyTIj5qTiuN8JCYdD4YBceUVqsxTzBendtljMP2XEqcwBqq8S6e2YNKq5EWYadqPAtTJSMdIFgfSEPkbHAp42CJRdxkH7/ZKDNrVoqiQ8obOdmIRZJhgbQ==
+X-Gm-Message-State: AOJu0YypCnF2aAqVeBXMy4AldPIQDa0RV09velkbjsn6NGyXhh07u7ZW
+	ugzX7ZZALZq+wyIjrKZ66N1oTGF//Z0wlArhY0Y32tp4F26TL2EhlqUL/zrs428HPpd4ZQD1jnx
+	SFdfx37+3yG23Ie+oA/rWY/LvR5o=
+X-Google-Smtp-Source: AGHT+IHRMvUyXhaS/qB0en9fxIF3carecNgLcCingHznCZFEMFXIA3UgYdz7cmgz22K/LmOnmhqFQO0zQd8nsmdrUBI=
+X-Received: by 2002:a05:6870:910b:b0:221:bcde:29cc with SMTP id
+ o11-20020a056870910b00b00221bcde29ccmr680399oae.21.1710384296981; Wed, 13 Mar
+ 2024 19:44:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'2842dc9bc1a53893eec62ec9e49beb3b501702d0'
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: miquel.raynal@bootlin.com
+References: <20240313091616.2266107-1-colin.i.king@gmail.com>
+In-Reply-To: <20240313091616.2266107-1-colin.i.king@gmail.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Thu, 14 Mar 2024 11:44:45 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-wa_K4APq3QCdf8Fp1Qx8-j9=3ub9e=kZrN2TS4U06GQ@mail.gmail.com>
+Message-ID: <CAKYAXd-wa_K4APq3QCdf8Fp1Qx8-j9=3ub9e=kZrN2TS4U06GQ@mail.gmail.com>
+Subject: Re: [PATCH][next] ksmbd: Fix spelling mistake "connction" -> "connection"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Steve French <sfrench@samba.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2024-03-04 at 09:01:03 UTC, Muhammad Usama Anjum wrote:
-> The i should be signed to find out the end of the loop. Otherwise,
-> i >= 0 is always true and loop becomes infinite. Make its type to be
-> int.
-> 
-> Fixes: 6a9eda34418f ("mtd: spi-nor: core: set mtd->eraseregions for non-uniform erase map")
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> Reviewed-by: Michael Walle <mwalle@kernel.org>
-> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
-
-Miquel
+2024=EB=85=84 3=EC=9B=94 13=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 6:16, C=
+olin Ian King <colin.i.king@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1=
+:
+>
+> There is a spelling mistake in a ksmbd_debug debug message. Fix it.
+Acked-by: Namjae Jeon <linkinjeon@kernel.org>
+Applied it to #ksmbd-for-next-next.
+Thanks for your patch!
