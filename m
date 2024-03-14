@@ -1,66 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DB44A15;
-	Thu, 14 Mar 2024 02:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62AE71B34
+	for <kernel-janitors@vger.kernel.org>; Thu, 14 Mar 2024 15:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710384298; cv=none; b=Dx/5Is+NK5chHimMvVv1mW2AgdvoabLkcLaAIPde61nrrg4TNOrrwiG/xu3bZdhTe7pk//vROSc9kgxmkCg08CTNHCxvSeE2ur1b3UsVjdh2i4bySiLvCZO7DwFwjQSSxQmgxbrxPDXieBfJFDPlUEc2RRv0GWXhFJl/HQlLbZo=
+	t=1710430177; cv=none; b=po1BmbvroB5jxqYb2//3IjZ7NCfob38m2yvE7QQAzVPh3PbDpm4USt0PcphBP4XBeV/DEFUDKIX+rgfJawLt8T6OmJgIXhudB0/NYTAKEkwPN7ifjb43rcfmfPHt+R20DRykYSnzbR007o2vcy/UpnTkss8Q6bqn9ScVi5lHRhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710384298; c=relaxed/simple;
-	bh=zpXun0U0mFZ/WUOEpPGTdJhPFwQ4U8x7VrbLbI/AWA4=;
+	s=arc-20240116; t=1710430177; c=relaxed/simple;
+	bh=BK5vGjzgLHTG5Uy0fF+PO/iDPbQ/wrXrAZUSjAUJ9iw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NJ6QBl9kM7oXDuA/flNJWy4TxynLqDGg7sNniAN5Ujsmn6qn9dWZp4FhoJEtwDuR+df1De08/SnPs13kaHbhj5IJvG04PMWqhBBmV8idA2SEPgW5Fyx/EHPjhoBRuHrMLHl+q+JmOK9f1nLSS0sGkkorq95X7Zj5Z8/sQG1mEy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6GmGRTb; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=n0bRPoIDxMtMDcYg1CxFOhanmrqSt1GOv8P4v/hrbt710KLQmN+tQJ5j1w0+w0jZkCDl9DJuLkXGPS7LQVRyXr+iB8bJs+AtSYjmOI95do0ZBvKJxSteHpp03okOviSECOnAPrV8kQCG9Ij9AYDQva5aluJnZYAjlHveFf9DtzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=n5glVOxG; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6GmGRTb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5138C43390;
-	Thu, 14 Mar 2024 02:44:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710384297;
-	bh=zpXun0U0mFZ/WUOEpPGTdJhPFwQ4U8x7VrbLbI/AWA4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=l6GmGRTbyXJJdKtz1LyMU27xPf3a/z6aD1uQr1wC1aF+JjxwBAJdbDKYgB5uF4uVu
-	 3cdOaujqXl/gECX9xruKvfOizQQdtWYyUdFXUnwC74hZON404bQ2bD51p+b4g41CIT
-	 TL2p3isPzv0CWifUSmfa+Ybre37gH7H/+epVxbmicbG0kCuu8Xqpl3qXmQGi9xeuCh
-	 FOlBb+PHsl/LDk4+1QCLGT+aEi9iAC2d449QHbEkzWzH44iSaDbbndIKQI06tM/zV1
-	 509VTTBFpJlh/RXCAkxFDsUwuNjCqFyu+/LIGqc/8giL4hwsCG7EqrZuyqIMLU2oYi
-	 kjwbNi+f6WXhA==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-221a4f9557dso309888fac.2;
-        Wed, 13 Mar 2024 19:44:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWb+9YBGhMAVUgy1oRFFJcbC0a57tNDQ8MhwSy2wp5YGHC3fY+K5Thalyer0kjw0D91CyTIj5qTiuN8JCYdD4YBceUVqsxTzBendtljMP2XEqcwBqq8S6e2YNKq5EWYadqPAtTJSMdIFgfSEPkbHAp42CJRdxkH7/ZKDNrVoqiQ8obOdmIRZJhgbQ==
-X-Gm-Message-State: AOJu0YypCnF2aAqVeBXMy4AldPIQDa0RV09velkbjsn6NGyXhh07u7ZW
-	ugzX7ZZALZq+wyIjrKZ66N1oTGF//Z0wlArhY0Y32tp4F26TL2EhlqUL/zrs428HPpd4ZQD1jnx
-	SFdfx37+3yG23Ie+oA/rWY/LvR5o=
-X-Google-Smtp-Source: AGHT+IHRMvUyXhaS/qB0en9fxIF3carecNgLcCingHznCZFEMFXIA3UgYdz7cmgz22K/LmOnmhqFQO0zQd8nsmdrUBI=
-X-Received: by 2002:a05:6870:910b:b0:221:bcde:29cc with SMTP id
- o11-20020a056870910b00b00221bcde29ccmr680399oae.21.1710384296981; Wed, 13 Mar
- 2024 19:44:56 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n5glVOxG"
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-42f2a4f77a6so4446601cf.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Mar 2024 08:29:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1710430171; x=1711034971; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tuhQc5l9apEej2H4LOTY9yaoxPUBJy/wLmmpg/Pkruk=;
+        b=n5glVOxGsnctw/5jZnWEKcMdDcXqTWHRBa+sWfvNfJ+BO8d4+frFSRW/QA/2Qx3Ke9
+         hUJM+itue+MdCyOai+U8nHCVqLpmtrBA6Y58DQw8e2OLKuHDVhX0prB4IQzsK6qa/aa1
+         NJeQkjVjrrjdlINJwe2W6E3IJ39d4ZOE+Rh4Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710430171; x=1711034971;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tuhQc5l9apEej2H4LOTY9yaoxPUBJy/wLmmpg/Pkruk=;
+        b=OuLgF551DqP/wkB2U7RV7Ed1Uf+sUfZsvTP8jdoAu59AyPbjC/sBwJqDOKe128KoMT
+         DgwENp+hch7/gSNZ9YRv/jEqoMZNjpnzxJcJ2vL8b0FpnSmc89TGP6WlNQtf4MBIk7Xb
+         f0A9WrxwfXqyLy2AOeqSLU4rr0rRDnUHpHvHm0kNGVt0wbvS2cATFZSvAUcHg55c+Ry1
+         3qNJ6azpyyohFVk210PI7i0nPaWzHE7z43a1F2m7kHgYbgDYh6vhr0mjWiuc9tglFey7
+         RHC9qGnfhfOLreykr6oKNnfpb8xzui2bOJgk7xGPQSLHVRLOZDyA/+VxW7QeSdERWffs
+         qKCA==
+X-Forwarded-Encrypted: i=1; AJvYcCU35a54wjFb6cvCegVEMvAt7zyip9G2V9bu+7eYOpqKeqme8AUIgFyYubLHyWY+ZYiND04NmGy8AAfU8xBQcjQWpS9i1grTyJ0yyD16Wvyp
+X-Gm-Message-State: AOJu0YxeOVexw+E4f4l4cF5NKdnpl9nVnQWQ9CpmlWdwzyJIH8pBoN3e
+	o6EjYWhiW9HhNUqKDYi5Y7jrzxlBN9j3XjdXAwXECDG4c9m6qVKo9S7Va0W6s2Ew7GInfMauQzu
+	RrQ==
+X-Google-Smtp-Source: AGHT+IEvfEWd5+gSIe6Z/Y2UDs/hA1w3c7lYUryk7NQuvf/fLO5ia8BFTHVnmNHfLwyS2zfLpPZoBg==
+X-Received: by 2002:a05:622a:11d4:b0:42e:6f56:c358 with SMTP id n20-20020a05622a11d400b0042e6f56c358mr2472491qtk.42.1710430171662;
+        Thu, 14 Mar 2024 08:29:31 -0700 (PDT)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com. [209.85.160.178])
+        by smtp.gmail.com with ESMTPSA id d3-20020ac85443000000b0042e67a04eddsm878354qtq.65.2024.03.14.08.29.30
+        for <kernel-janitors@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Mar 2024 08:29:30 -0700 (PDT)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-43095dcbee6so324261cf.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Mar 2024 08:29:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXez5FVY+wCln2GMHQZjbJPzNmeSyNDlpHbFpFzk9KzaXJAMK9lrwDe9eYCYiOIWwFJWtvaFDPYDYhZgcplF/UGricHIHhUs3lNLdZWMxBa
+X-Received: by 2002:ac8:474e:0:b0:430:90af:43c3 with SMTP id
+ k14-20020ac8474e000000b0043090af43c3mr272846qtp.21.1710430169466; Thu, 14 Mar
+ 2024 08:29:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240313091616.2266107-1-colin.i.king@gmail.com>
-In-Reply-To: <20240313091616.2266107-1-colin.i.king@gmail.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 14 Mar 2024 11:44:45 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-wa_K4APq3QCdf8Fp1Qx8-j9=3ub9e=kZrN2TS4U06GQ@mail.gmail.com>
-Message-ID: <CAKYAXd-wa_K4APq3QCdf8Fp1Qx8-j9=3ub9e=kZrN2TS4U06GQ@mail.gmail.com>
-Subject: Re: [PATCH][next] ksmbd: Fix spelling mistake "connction" -> "connection"
+References: <20240307093727.1978126-1-colin.i.king@gmail.com>
+In-Reply-To: <20240307093727.1978126-1-colin.i.king@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 14 Mar 2024 08:29:12 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XQ5XBT4Jt6VUgVqxsn7NQZjDCTRFOFk5Fr+Fxkpv55SQ@mail.gmail.com>
+Message-ID: <CAD=FV=XQ5XBT4Jt6VUgVqxsn7NQZjDCTRFOFk5Fr+Fxkpv55SQ@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/msm: remove unused variable 'out'
 To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Steve French <sfrench@samba.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org, 
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
 	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-2024=EB=85=84 3=EC=9B=94 13=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 6:16, C=
-olin Ian King <colin.i.king@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1=
-:
+Hi,
+
+On Thu, Mar 7, 2024 at 1:37=E2=80=AFAM Colin Ian King <colin.i.king@gmail.c=
+om> wrote:
 >
-> There is a spelling mistake in a ksmbd_debug debug message. Fix it.
-Acked-by: Namjae Jeon <linkinjeon@kernel.org>
-Applied it to #ksmbd-for-next-next.
-Thanks for your patch!
+> The variable out is being initialized and incremented but it is never
+> actually referenced in any other way. The variable is redundant and can
+> be removed.
+>
+> Cleans up clang scan build warning:
+> drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:843:6: warning: variable
+> 'out' set but not used [-Wunused-but-set-variable]
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c | 3 ---
+>  1 file changed, 3 deletions(-)
+
+Tested-by: Douglas Anderson <dianders@chromium.org>
