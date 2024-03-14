@@ -1,101 +1,98 @@
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62AE71B34
-	for <kernel-janitors@vger.kernel.org>; Thu, 14 Mar 2024 15:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1195270CA8;
+	Thu, 14 Mar 2024 16:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710430177; cv=none; b=po1BmbvroB5jxqYb2//3IjZ7NCfob38m2yvE7QQAzVPh3PbDpm4USt0PcphBP4XBeV/DEFUDKIX+rgfJawLt8T6OmJgIXhudB0/NYTAKEkwPN7ifjb43rcfmfPHt+R20DRykYSnzbR007o2vcy/UpnTkss8Q6bqn9ScVi5lHRhM=
+	t=1710434115; cv=none; b=vGSBopvsGEsCWtPYh5xpkZwveC4SWccEAkLmxVReYYCgzxQRC8+8PPjQu2IROLBv/yoAJOkBpeU11cn95FoCfJvmJoHIpkwrSauWyQhClhDQQZQzyUouNV8XWhfltF5ioG+sqcmD+hLs1+16GZ7+7r3uSOg9Ei7keFKFfsncLq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710430177; c=relaxed/simple;
-	bh=BK5vGjzgLHTG5Uy0fF+PO/iDPbQ/wrXrAZUSjAUJ9iw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n0bRPoIDxMtMDcYg1CxFOhanmrqSt1GOv8P4v/hrbt710KLQmN+tQJ5j1w0+w0jZkCDl9DJuLkXGPS7LQVRyXr+iB8bJs+AtSYjmOI95do0ZBvKJxSteHpp03okOviSECOnAPrV8kQCG9Ij9AYDQva5aluJnZYAjlHveFf9DtzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=n5glVOxG; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1710434115; c=relaxed/simple;
+	bh=WD4pFfaN5EK2gR4oPGKEc40ZY4i6lXlbjdoFiH6yqdA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=uKnD5kmy1x7ic+6P7+CH9ph+5qa9pPVmCkedHMDyf1j3xQ+xT7JsghlAEyR74NT4k7glqI17a+VFx25t7XQhRXE82Wz4g/Vh9i/+dIqmC4bQAFzXgCpf59N/w4+TUtPFDkg4SK9BPDnKaw5KqaukG5bHMP/Jr1vKJrFm55hDydU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PX8Zf4od; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n5glVOxG"
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-42f2a4f77a6so4446601cf.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Mar 2024 08:29:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PX8Zf4od"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-33d38c9ca5bso653486f8f.2;
+        Thu, 14 Mar 2024 09:35:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1710430171; x=1711034971; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tuhQc5l9apEej2H4LOTY9yaoxPUBJy/wLmmpg/Pkruk=;
-        b=n5glVOxGsnctw/5jZnWEKcMdDcXqTWHRBa+sWfvNfJ+BO8d4+frFSRW/QA/2Qx3Ke9
-         hUJM+itue+MdCyOai+U8nHCVqLpmtrBA6Y58DQw8e2OLKuHDVhX0prB4IQzsK6qa/aa1
-         NJeQkjVjrrjdlINJwe2W6E3IJ39d4ZOE+Rh4Q=
+        d=gmail.com; s=20230601; t=1710434112; x=1711038912; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3febcg30MUvzziLDV9p5DhB+HO5C8w1a7PC8hf/KTOA=;
+        b=PX8Zf4odVGVb8SbryYl5liUFDm4h8siJ/9fwNrzw+b4viHfBwBsHywa72wpgC1ZQGv
+         ff43JKfxEpCEckKW7iosVHVyem1wzKyWlEPcMmXgTKYfKFK8zrrFw3yxylSACaXFoJM4
+         BGt3VyvFfL+mzMwGt/tEwRu61ojCV8c+sE7RF5qmMehJZo2O2IBiN04HuzRqYMWY1Wjw
+         5mMcA8TkTHLFSwR3m8HfNa01YGGn0DNGco3YoHBu0xSyQHUjgmJpzYwrM0dBtMByTByp
+         ovxqXLpCxdxuX6bsQ4gkmKUX0EuLPoyWdkn21hPqStz0Bhd8PJimnoB+Vud4IaPZiJQg
+         RjJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710430171; x=1711034971;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tuhQc5l9apEej2H4LOTY9yaoxPUBJy/wLmmpg/Pkruk=;
-        b=OuLgF551DqP/wkB2U7RV7Ed1Uf+sUfZsvTP8jdoAu59AyPbjC/sBwJqDOKe128KoMT
-         DgwENp+hch7/gSNZ9YRv/jEqoMZNjpnzxJcJ2vL8b0FpnSmc89TGP6WlNQtf4MBIk7Xb
-         f0A9WrxwfXqyLy2AOeqSLU4rr0rRDnUHpHvHm0kNGVt0wbvS2cATFZSvAUcHg55c+Ry1
-         3qNJ6azpyyohFVk210PI7i0nPaWzHE7z43a1F2m7kHgYbgDYh6vhr0mjWiuc9tglFey7
-         RHC9qGnfhfOLreykr6oKNnfpb8xzui2bOJgk7xGPQSLHVRLOZDyA/+VxW7QeSdERWffs
-         qKCA==
-X-Forwarded-Encrypted: i=1; AJvYcCU35a54wjFb6cvCegVEMvAt7zyip9G2V9bu+7eYOpqKeqme8AUIgFyYubLHyWY+ZYiND04NmGy8AAfU8xBQcjQWpS9i1grTyJ0yyD16Wvyp
-X-Gm-Message-State: AOJu0YxeOVexw+E4f4l4cF5NKdnpl9nVnQWQ9CpmlWdwzyJIH8pBoN3e
-	o6EjYWhiW9HhNUqKDYi5Y7jrzxlBN9j3XjdXAwXECDG4c9m6qVKo9S7Va0W6s2Ew7GInfMauQzu
-	RrQ==
-X-Google-Smtp-Source: AGHT+IEvfEWd5+gSIe6Z/Y2UDs/hA1w3c7lYUryk7NQuvf/fLO5ia8BFTHVnmNHfLwyS2zfLpPZoBg==
-X-Received: by 2002:a05:622a:11d4:b0:42e:6f56:c358 with SMTP id n20-20020a05622a11d400b0042e6f56c358mr2472491qtk.42.1710430171662;
-        Thu, 14 Mar 2024 08:29:31 -0700 (PDT)
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com. [209.85.160.178])
-        by smtp.gmail.com with ESMTPSA id d3-20020ac85443000000b0042e67a04eddsm878354qtq.65.2024.03.14.08.29.30
-        for <kernel-janitors@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Mar 2024 08:29:30 -0700 (PDT)
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-43095dcbee6so324261cf.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Mar 2024 08:29:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXez5FVY+wCln2GMHQZjbJPzNmeSyNDlpHbFpFzk9KzaXJAMK9lrwDe9eYCYiOIWwFJWtvaFDPYDYhZgcplF/UGricHIHhUs3lNLdZWMxBa
-X-Received: by 2002:ac8:474e:0:b0:430:90af:43c3 with SMTP id
- k14-20020ac8474e000000b0043090af43c3mr272846qtp.21.1710430169466; Thu, 14 Mar
- 2024 08:29:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1710434112; x=1711038912;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3febcg30MUvzziLDV9p5DhB+HO5C8w1a7PC8hf/KTOA=;
+        b=rUBj17wvIhNV9LW/OrlnwofEyoNr1DnxwPjL3RiWG9uNAv/aEhuzoOCxJ+wvD4o2zL
+         dzYahlg4hcZ0Dg6wYdaSswd2U/8D98zu/Ia6ABGdDnGu1ydyfQ265idn/t0CxK2XnM6T
+         TfmFHqDk5Prr7uCwWwq4miOYLr5XAwBzGkF3VW6scUZc8q70pS9LTrQC2YigSeaL66J0
+         FOtRx4pRWJe/tdbbcN0Zx5xh7/vbCtv7lCrLLONGZtFNoQPPTzGybG2nkSZYQQd5luZO
+         O4pGwUCxsCqea8e5wfyrFUmuiIlM/tY0MnuFCOCMNKY9bnHkcqtmPQIb0uznMw4inYXM
+         HAMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHRSYCFJobSTa8taetbQdtdPaHcuD7qnAEXxhpPNZBA00xmo87yArxWUHacMpn21s9Nm8Zre0Rb/JfVKdkyzue6XEO+Z7RVRF/XqKx
+X-Gm-Message-State: AOJu0YzdrM7152flRUhYHyf4XRCATr9DCOcMYQI2zD+qsvftBklvOdMo
+	+nLjfBAv8Y3uRTEmZU1iC0uNHtv3JTuwXdMHfPYmXQdhznayz1aY
+X-Google-Smtp-Source: AGHT+IE7wio3dnoMGVtXz8wtABUS0fpDn3g6mBSI8Z6/SWNg9HZmBIqQ1Zp7CyQqZNKiMCi/VKBiZA==
+X-Received: by 2002:a5d:5750:0:b0:33e:34aa:d78a with SMTP id q16-20020a5d5750000000b0033e34aad78amr1707480wrw.8.1710434112289;
+        Thu, 14 Mar 2024 09:35:12 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id q15-20020adff78f000000b0033e192a5852sm1126824wrp.30.2024.03.14.09.35.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Mar 2024 09:35:11 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/gma500: Fix spelling mistake "patter" -> "pattern"
+Date: Thu, 14 Mar 2024 16:35:11 +0000
+Message-Id: <20240314163511.2372458-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240307093727.1978126-1-colin.i.king@gmail.com>
-In-Reply-To: <20240307093727.1978126-1-colin.i.king@gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 14 Mar 2024 08:29:12 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XQ5XBT4Jt6VUgVqxsn7NQZjDCTRFOFk5Fr+Fxkpv55SQ@mail.gmail.com>
-Message-ID: <CAD=FV=XQ5XBT4Jt6VUgVqxsn7NQZjDCTRFOFk5Fr+Fxkpv55SQ@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/msm: remove unused variable 'out'
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi,
+There is a spelling mistake in a DRM_DEBUG_KMS message. Fix it.
 
-On Thu, Mar 7, 2024 at 1:37=E2=80=AFAM Colin Ian King <colin.i.king@gmail.c=
-om> wrote:
->
-> The variable out is being initialized and incremented but it is never
-> actually referenced in any other way. The variable is redundant and can
-> be removed.
->
-> Cleans up clang scan build warning:
-> drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:843:6: warning: variable
-> 'out' set but not used [-Wunused-but-set-variable]
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c | 3 ---
->  1 file changed, 3 deletions(-)
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/gma500/cdv_intel_dp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Tested-by: Douglas Anderson <dianders@chromium.org>
+diff --git a/drivers/gpu/drm/gma500/cdv_intel_dp.c b/drivers/gpu/drm/gma500/cdv_intel_dp.c
+index dd1eb7e9877d..cc2ed9b3fd2d 100644
+--- a/drivers/gpu/drm/gma500/cdv_intel_dp.c
++++ b/drivers/gpu/drm/gma500/cdv_intel_dp.c
+@@ -1547,7 +1547,7 @@ cdv_intel_dp_start_link_train(struct gma_encoder *encoder)
+ 	}
+ 
+ 	if (!clock_recovery) {
+-		DRM_DEBUG_KMS("failure in DP patter 1 training, train set %x\n", intel_dp->train_set[0]);
++		DRM_DEBUG_KMS("failure in DP pattern 1 training, train set %x\n", intel_dp->train_set[0]);
+ 	}
+ 
+ 	intel_dp->DP = DP;
+-- 
+2.39.2
+
