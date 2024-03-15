@@ -1,104 +1,77 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FB819BCA;
-	Fri, 15 Mar 2024 11:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98D42CCAD;
+	Fri, 15 Mar 2024 14:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710503263; cv=none; b=rcIQ8YuL2gyeXTP+zDZSz5HMw6D/OAC5dnA+/0PQjH21I/sHdsUjQcOYy2IUKEA1HbNXkFbSVeFYdGsf+0+k4QKnGip5F1HnrxYQwAvofy6M62Yfg5nikseHgrI6jhqhTNZwME1brJkSdGrYVVTa86nHo1zLjLAmfD3cp9jAIsE=
+	t=1710511228; cv=none; b=a7GI6JioNlon1OSTqjSzMj8488dPbZmne9JPXaQNcoPN3qei6Nzm//cZ+xwh3W3L6+rQvIL6SrhCPrIuujMjlotv2voIyUnWODAzLYGvhu6u+9+rU7I+viqljS7LX29mmBnyjbEaqLdWmDtIcCkIcSMY8bEjV33uvMNirPgKNPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710503263; c=relaxed/simple;
-	bh=AswBXoqd1Nll3PUsMhni9UdwEee82Lmsp5/ibAz0M40=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AWHMILonN3mF0DZ7MS4gSLs3sAk+65Mku00s48wnJRQo/xhmtIYe6+zm3NYg9RZNdAsc5v9GGPJ/Mh3vhGHsVhrMxCkO04V8r/dAyz5d5UOcVBKrozTuZVCVOb7Br5eW0FofTmivFCllrgiqp//xtqL41pLIgs+AzTdaVIaGXro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jpUHnxUF; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1710511228; c=relaxed/simple;
+	bh=AZP6LgRFwKHqKWfDp056pqDc5aEgznPPgS6hov1CARs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=GLailLB1rNhitlD13BX0giyM8JhtUlrGgPQX5E6rbvKlz9LUEcZrJVOaNemyfeZfq0PQpUwUDgKMONzcG/xOm77f8zTvoctLDmt13D7o99tAxylEhAfJz24S2L/cqHwpf+dG6tdDKuroDKTBkX9As4cnB5nhTSJw/VQYYeM1gBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bpcZqi5h; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jpUHnxUF"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-33e76d653b5so1772916f8f.3;
-        Fri, 15 Mar 2024 04:47:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710503260; x=1711108060; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QBlUH6VyFh2xDF9O9EaMafykW3lDWFVu4skyiusQ/sk=;
-        b=jpUHnxUFK12f0BTl5gAr1zZmhGUG/Av7drZXHs5RH8p3t9v/67k8+qL0tXJ2lCrVBB
-         nLqjZlU500dUBuNHpF48FMzBl0voW1kiRDJXZ3rEyiq3G2fJ+CA5Vdy8QO2HENLdRrfc
-         XF0F55OPVfHMg4BXK3RkQYTdXcb5rX6S7SIIWTkLaTanHPozaDiwEzFknXTldrAyrz+r
-         xgPk4cdCm+4u3ClPB811+iENXgDXA4nIvLAha4M4nbJ8N+5FPTUaL3F1KQLfmDtpq1xW
-         MkRxnl+VDu3mhaZL7wb7WguGORBsYpYzcmH4tN1yUTtNBxVpC5iXMWBvFLAYdpdAwqay
-         SJVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710503260; x=1711108060;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QBlUH6VyFh2xDF9O9EaMafykW3lDWFVu4skyiusQ/sk=;
-        b=m3HT0OVDFiJreUo+ji7NFXX8AvEg3nNzKDO3H+uzdME/T3v2OBS6jpRd1/QPFeaF34
-         OrblqLLN6EDXZs7BlVY2n+NtRG8f49vjj24xwCOQ7z8Gi6BHbUER9owHGPdRRSJ1TdgT
-         ITkWd/uE8pFM6pZYePB1sy+6zKaLfMdxgjD5pL2crs0Ubij2JfNDg9phXJd3J0NAlu88
-         ZkpS2unStGVrUtjVJwHf6dTdT6EH+fpX8JptCYYKC8ApCmzz0L/ewS/Y0uNecVhD9ye7
-         l0Qcv792wH/k3FkAifClgTO31G3OzK3/iPRGuHPAb/AixtXm7HAtSzy6f+3scZW0gcE7
-         Jr2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUsCpaUdUfH/kGcq1ewXmNEDnbuvFVhxx5G/kLX62ytVcoFj89myuBcXAPYaVC+EzCY5hKAOQa6RnU3Bz+C5nh5pcgsLrzyXXs1zIs7T43HzpFATA5Mvea/gfdRnrJqbGeop7q32jr/
-X-Gm-Message-State: AOJu0YxuYT58NMX53r1Z60mg4Ps8I02ihyiB3f90CZXQm0vIXuflQz4b
-	+qn0NtywxS5Rc5+zkmjpfhgupPnK/PzFzmuRqwexbikSz6WiKGQ3
-X-Google-Smtp-Source: AGHT+IHi84fX2o6Jp6CHUeDay1Tto/v43V7AWtP3llWsnohmF+j5EzC//EqLEZbyWp1SgH73pk7jFg==
-X-Received: by 2002:adf:fe89:0:b0:33e:73e8:c1e1 with SMTP id l9-20020adffe89000000b0033e73e8c1e1mr3569085wrr.18.1710503260207;
-        Fri, 15 Mar 2024 04:47:40 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1b:2000:944c:cbc7:1e1c:2c47? (p200300f6ef1b2000944ccbc71e1c2c47.dip0.t-ipconnect.de. [2003:f6:ef1b:2000:944c:cbc7:1e1c:2c47])
-        by smtp.gmail.com with ESMTPSA id f22-20020a5d58f6000000b0033e7a204dc7sm3002446wrd.32.2024.03.15.04.47.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Mar 2024 04:47:39 -0700 (PDT)
-Message-ID: <717ad48efa7ffc6cc1960be05558e9cbf0b6c4c8.camel@gmail.com>
-Subject: Re: [PATCH][next] iio: accel: adxl367: Remove second semicolon
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Cosmin
- Tanislav <cosmin.tanislav@analog.com>, Jonathan Cameron <jic23@kernel.org>,
-  linux-iio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 15 Mar 2024 12:51:07 +0100
-In-Reply-To: <20240315091436.2430227-1-colin.i.king@gmail.com>
-References: <20240315091436.2430227-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bpcZqi5h"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1FC6FC433C7;
+	Fri, 15 Mar 2024 14:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710511228;
+	bh=AZP6LgRFwKHqKWfDp056pqDc5aEgznPPgS6hov1CARs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=bpcZqi5h2xKg9WGd3wHnKTicXVOHAwHlqxER/SAyh93746/4H90uMwFGkQ4r6tT6B
+	 JbosKofCC2xGaLvWs39IMg9R6Emv+Mcl659aVK1Qm2KXEeEyNbxCX7sFZwu3+eVwkU
+	 /8/yOeSWgAmg6CwCSFm2tQyloAbRZeP8Ios123DUWRDGHc7Yk0NCdGAKpR8shTJvV9
+	 fKE4vxW3+pgil8g6hApi2sdYf+WhB4C+GZVn+1Wc8qkQkDh8tNwjkVFWeqbVjVzudT
+	 gYO1wg40KIM9pWDT+cMjjG02Jq/Z+K599JbBo66jYz+W6jTDZx48DVM4wWSEGAXyXu
+	 NEJoW8vQaVLUw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0AA9FD84BA8;
+	Fri, 15 Mar 2024 14:00:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] selftests/bpf: Remove second semicolon
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171051122803.31092.15319627583349442995.git-patchwork-notify@kernel.org>
+Date: Fri, 15 Mar 2024 14:00:28 +0000
+References: <20240315092654.2431062-1-colin.i.king@gmail.com>
+In-Reply-To: <20240315092654.2431062-1-colin.i.king@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
+ haoluo@google.com, jolsa@kernel.org, shuah@kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Fri, 2024-03-15 at 09:14 +0000, Colin Ian King wrote:
-> There is a statement with two semicolons. Remove the second one, it
+Hello:
+
+This patch was applied to bpf/bpf-next.git (master)
+by Daniel Borkmann <daniel@iogearbox.net>:
+
+On Fri, 15 Mar 2024 09:26:54 +0000 you wrote:
+> There are statements with two semicolons. Remove the second one, it
 > is redundant.
->=20
+> 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
+>  tools/testing/selftests/bpf/benchs/bench_local_storage_create.c | 2 +-
+>  tools/testing/selftests/bpf/progs/iters.c                       | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+Here is the summary with links:
+  - [next] selftests/bpf: Remove second semicolon
+    https://git.kernel.org/bpf/bpf-next/c/4c8644f86c85
 
-> =C2=A0drivers/iio/accel/adxl367.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/iio/accel/adxl367.c b/drivers/iio/accel/adxl367.c
-> index 210228affb80..5cf4828a5eb5 100644
-> --- a/drivers/iio/accel/adxl367.c
-> +++ b/drivers/iio/accel/adxl367.c
-> @@ -621,7 +621,7 @@ static int _adxl367_set_odr(struct adxl367_state *st,=
- enum
-> adxl367_odr odr)
-> =C2=A0static int adxl367_set_odr(struct iio_dev *indio_dev, enum adxl367_=
-odr odr)
-> =C2=A0{
-> =C2=A0	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
-> -		struct adxl367_state *st =3D iio_priv(indio_dev);;
-> +		struct adxl367_state *st =3D iio_priv(indio_dev);
-> =C2=A0		int ret;
-> =C2=A0
-> =C2=A0		guard(mutex)(&st->lock);
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
