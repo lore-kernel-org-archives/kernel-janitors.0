@@ -1,97 +1,104 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEDC17C66;
-	Fri, 15 Mar 2024 09:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FB819BCA;
+	Fri, 15 Mar 2024 11:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710495393; cv=none; b=g/TM81U8xb3xo6fAd+1yGcKB/XvVhzI4auLWU9GC3C5rG1Y8PAsj8LIImTLM5vsJKc2oKGJWqJ4DMyxksD7XLB5A+p/NgAqN+C4dHnSmYAmW990Am7fWiGvK7IFHQxF55wIL3a+iUeO/XNqwKYnegQwcGywaZrJigUBTS/CgEBQ=
+	t=1710503263; cv=none; b=rcIQ8YuL2gyeXTP+zDZSz5HMw6D/OAC5dnA+/0PQjH21I/sHdsUjQcOYy2IUKEA1HbNXkFbSVeFYdGsf+0+k4QKnGip5F1HnrxYQwAvofy6M62Yfg5nikseHgrI6jhqhTNZwME1brJkSdGrYVVTa86nHo1zLjLAmfD3cp9jAIsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710495393; c=relaxed/simple;
-	bh=VgyR9/qh5SvA5TrFhzFHvJ6YsXi9BlJT3v7qlQZYuoE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=S/Mg1/tK7qiu+2OB2bBfzgVIPJOAp6o8kTxw494MhvQjSMvtMG9Uv0PsPQSFFRepv/3ISqEGfyAgtKbgQ/CR3/gouhJq+IgoEm4Bhp5zU+1WrrXwhdpdDi6/3cLzItoGzd1KPQ18grsF3z7fshWInZCbHrtSdweFwAyprz8i/rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MJ4Y0VJO; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1710503263; c=relaxed/simple;
+	bh=AswBXoqd1Nll3PUsMhni9UdwEee82Lmsp5/ibAz0M40=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=AWHMILonN3mF0DZ7MS4gSLs3sAk+65Mku00s48wnJRQo/xhmtIYe6+zm3NYg9RZNdAsc5v9GGPJ/Mh3vhGHsVhrMxCkO04V8r/dAyz5d5UOcVBKrozTuZVCVOb7Br5eW0FofTmivFCllrgiqp//xtqL41pLIgs+AzTdaVIaGXro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jpUHnxUF; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJ4Y0VJO"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-41403b203e0so681105e9.3;
-        Fri, 15 Mar 2024 02:36:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jpUHnxUF"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-33e76d653b5so1772916f8f.3;
+        Fri, 15 Mar 2024 04:47:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710495390; x=1711100190; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fJTv+jCFSNgUGswO7FXJc0Lm26VLRiBRl5ZlHIS2q+A=;
-        b=MJ4Y0VJOI+Rj+ewA8IqIwzO4RHIyiLbT7yPIExDWJCq/tnOW2povxHgfOGFi+EVZe3
-         s/DtkpYC+uSmuBfH8x2NNUPsxpvuMNclnJ//IB3wr7sqSuFX1lBnKz0stiTfYtunQut5
-         owx/g0/igpO4hpUJ6Tfp21tqvo0Y9X8wuPlam68pSM02NpJw+ZXm5Pys7vUFqiFwpv3f
-         ckuQMPkVzLNfuALZ+50uZ117n97vUz6gaDD+i14AOC+qivQyMohnRoxnDC95Oc7QnMOe
-         ozu5FftmyOIHm04lULKY1PiH3VfikmZUaywIJFhOgWkbLa9PbTaX9WUaDXZKvlyt4qdc
-         pvmQ==
+        d=gmail.com; s=20230601; t=1710503260; x=1711108060; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QBlUH6VyFh2xDF9O9EaMafykW3lDWFVu4skyiusQ/sk=;
+        b=jpUHnxUFK12f0BTl5gAr1zZmhGUG/Av7drZXHs5RH8p3t9v/67k8+qL0tXJ2lCrVBB
+         nLqjZlU500dUBuNHpF48FMzBl0voW1kiRDJXZ3rEyiq3G2fJ+CA5Vdy8QO2HENLdRrfc
+         XF0F55OPVfHMg4BXK3RkQYTdXcb5rX6S7SIIWTkLaTanHPozaDiwEzFknXTldrAyrz+r
+         xgPk4cdCm+4u3ClPB811+iENXgDXA4nIvLAha4M4nbJ8N+5FPTUaL3F1KQLfmDtpq1xW
+         MkRxnl+VDu3mhaZL7wb7WguGORBsYpYzcmH4tN1yUTtNBxVpC5iXMWBvFLAYdpdAwqay
+         SJVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710495390; x=1711100190;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fJTv+jCFSNgUGswO7FXJc0Lm26VLRiBRl5ZlHIS2q+A=;
-        b=jUbKsUkSG7e1Y549LTgunuJ5VxG31BHvVi63YDHD1YE1RWisWJzgQ7eeYdqvAKZmX5
-         I59O1uYYQ0zmCuPMKvD5Hw/fk+9FvRdmUOd3taidYWHc7IN+Y9XYNHW1inhibJFw84Mr
-         JSFygBfZ6/73G9OIgzTH7QZQSr+1GQyO2VSLr8qEYyn4Rxhrek6sAG87xNkL/S28LmKc
-         rzpYF/EUhY0Pt0BK58UrEKRs12qZw2UijzqofIo+y6vpZLiVI7zUX6zRB7Yws4b56AVO
-         /LnliewWPrxdNKqET91vK5wM2V6Z+kRQdnu1nVJkBowTWJ7AsTvNbvAD198mz5xjBZo2
-         Mjpw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAlYTPu33e/JuU2mbPel5MuqdLpgycRPcHFCUbFOkv40TBa3krmkZWTySbMU0KPuGihLTKNdJLZWZVw5+VJl4EE4Rb6IRkeaSmlWDUajZpI4/lt9O4D7GgRbo0B9whDd0qaEIB/9SZO5+er2mGA8BQj+qArO3Lzx5SMW5fWarTG7EM
-X-Gm-Message-State: AOJu0YyiAfTuL+mhQb+2HFExq7JjSA/IjeBTjmC/w97e6NmtQMHzUsbb
-	h0xDVySD6/vloHnqBy3BJm1wrLta3dui5q6TlujkIG4bv3o2smMY
-X-Google-Smtp-Source: AGHT+IEoKXdqYZ7z7nKgWADnipOKrnv6Eesx2OFOohN1P1Y4ePV4yX8maQRJ2mf+EaidEc6k6Vm2nQ==
-X-Received: by 2002:a05:600c:19cd:b0:413:ea5a:7787 with SMTP id u13-20020a05600c19cd00b00413ea5a7787mr3018899wmq.22.1710495390374;
-        Fri, 15 Mar 2024 02:36:30 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o18-20020a05600c4fd200b004132f9cf053sm8314827wmq.33.2024.03.15.02.36.29
+        d=1e100.net; s=20230601; t=1710503260; x=1711108060;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QBlUH6VyFh2xDF9O9EaMafykW3lDWFVu4skyiusQ/sk=;
+        b=m3HT0OVDFiJreUo+ji7NFXX8AvEg3nNzKDO3H+uzdME/T3v2OBS6jpRd1/QPFeaF34
+         OrblqLLN6EDXZs7BlVY2n+NtRG8f49vjj24xwCOQ7z8Gi6BHbUER9owHGPdRRSJ1TdgT
+         ITkWd/uE8pFM6pZYePB1sy+6zKaLfMdxgjD5pL2crs0Ubij2JfNDg9phXJd3J0NAlu88
+         ZkpS2unStGVrUtjVJwHf6dTdT6EH+fpX8JptCYYKC8ApCmzz0L/ewS/Y0uNecVhD9ye7
+         l0Qcv792wH/k3FkAifClgTO31G3OzK3/iPRGuHPAb/AixtXm7HAtSzy6f+3scZW0gcE7
+         Jr2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUsCpaUdUfH/kGcq1ewXmNEDnbuvFVhxx5G/kLX62ytVcoFj89myuBcXAPYaVC+EzCY5hKAOQa6RnU3Bz+C5nh5pcgsLrzyXXs1zIs7T43HzpFATA5Mvea/gfdRnrJqbGeop7q32jr/
+X-Gm-Message-State: AOJu0YxuYT58NMX53r1Z60mg4Ps8I02ihyiB3f90CZXQm0vIXuflQz4b
+	+qn0NtywxS5Rc5+zkmjpfhgupPnK/PzFzmuRqwexbikSz6WiKGQ3
+X-Google-Smtp-Source: AGHT+IHi84fX2o6Jp6CHUeDay1Tto/v43V7AWtP3llWsnohmF+j5EzC//EqLEZbyWp1SgH73pk7jFg==
+X-Received: by 2002:adf:fe89:0:b0:33e:73e8:c1e1 with SMTP id l9-20020adffe89000000b0033e73e8c1e1mr3569085wrr.18.1710503260207;
+        Fri, 15 Mar 2024 04:47:40 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1b:2000:944c:cbc7:1e1c:2c47? (p200300f6ef1b2000944ccbc71e1c2c47.dip0.t-ipconnect.de. [2003:f6:ef1b:2000:944c:cbc7:1e1c:2c47])
+        by smtp.gmail.com with ESMTPSA id f22-20020a5d58f6000000b0033e7a204dc7sm3002446wrd.32.2024.03.15.04.47.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Mar 2024 02:36:29 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] KVM: selftests: Remove second semicolon
-Date: Fri, 15 Mar 2024 09:36:29 +0000
-Message-Id: <20240315093629.2431491-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Fri, 15 Mar 2024 04:47:39 -0700 (PDT)
+Message-ID: <717ad48efa7ffc6cc1960be05558e9cbf0b6c4c8.camel@gmail.com>
+Subject: Re: [PATCH][next] iio: accel: adxl367: Remove second semicolon
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Cosmin
+ Tanislav <cosmin.tanislav@analog.com>, Jonathan Cameron <jic23@kernel.org>,
+  linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 15 Mar 2024 12:51:07 +0100
+In-Reply-To: <20240315091436.2430227-1-colin.i.king@gmail.com>
+References: <20240315091436.2430227-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
-There is a statement with two semicolons. Remove the second one, it
-is redundant.
+On Fri, 2024-03-15 at 09:14 +0000, Colin Ian King wrote:
+> There is a statement with two semicolons. Remove the second one, it
+> is redundant.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/kvm/x86_64/xen_shinfo_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-diff --git a/tools/testing/selftests/kvm/x86_64/xen_shinfo_test.c b/tools/testing/selftests/kvm/x86_64/xen_shinfo_test.c
-index d2ea0435f4f7..7d707d8068a4 100644
---- a/tools/testing/selftests/kvm/x86_64/xen_shinfo_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/xen_shinfo_test.c
-@@ -125,7 +125,7 @@ struct compat_vcpu_runstate_info {
- 	uint32_t state;
- 	uint64_t state_entry_time;
- 	uint64_t time[5];
--} __attribute__((__packed__));;
-+} __attribute__((__packed__));
- 
- struct arch_vcpu_info {
- 	unsigned long cr2;
--- 
-2.39.2
+> =C2=A0drivers/iio/accel/adxl367.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/iio/accel/adxl367.c b/drivers/iio/accel/adxl367.c
+> index 210228affb80..5cf4828a5eb5 100644
+> --- a/drivers/iio/accel/adxl367.c
+> +++ b/drivers/iio/accel/adxl367.c
+> @@ -621,7 +621,7 @@ static int _adxl367_set_odr(struct adxl367_state *st,=
+ enum
+> adxl367_odr odr)
+> =C2=A0static int adxl367_set_odr(struct iio_dev *indio_dev, enum adxl367_=
+odr odr)
+> =C2=A0{
+> =C2=A0	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+> -		struct adxl367_state *st =3D iio_priv(indio_dev);;
+> +		struct adxl367_state *st =3D iio_priv(indio_dev);
+> =C2=A0		int ret;
+> =C2=A0
+> =C2=A0		guard(mutex)(&st->lock);
 
