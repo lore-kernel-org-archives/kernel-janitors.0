@@ -1,69 +1,66 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F375A17592;
-	Fri, 15 Mar 2024 09:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030FA13AC5;
+	Fri, 15 Mar 2024 09:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710493774; cv=none; b=W9VeZ8EijcQSFVXnfAkGtnanZjBTpf2k9QqHpuO6vVRaXuHA/Y/CL0hLUcaPPClGc3Hv0GhwBGnLdqPkhTEieVrZKXNXnDXZyWs3r9raMqYaI3O7q6p7L9b0o1rjXcE+3KTaakKv3yhQN0HcuuHHyQPLz2/rIOZ8XsPkbZmsPT4=
+	t=1710494081; cv=none; b=fnrfVtHqvjCb4UcNVKQsAWEvYF0lg3Zi63wOFFRXGQeqMNMhtQmN0TspylGdAjdlZv2BRC5RnFefJzOBYXvzoRyP1BmJiCMhbbIJdGuueVbOsDtTvy08VkakMFzOVydnWH6pMSP1DDr5GiURWNgZABFwoabeY6oUeqZy3NCsUDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710493774; c=relaxed/simple;
-	bh=6eRLO1ilpanWKc8ZBdMe29fHVLUp4DyMn0BYswI+o5w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=oa5bjzwaEz/cvLKzF+p4TVoOZOvxJDb8NB/pUqQswkXrikgN9kEvjLJaOK2Pk8nMdfZ0/ykdVEqeS+leHWoXZ/rHHKULBQGGl9dDug7CrThvkB4861JioO13LEFjQFgHDf0RjOSJvI3Yo1RdJdYKBamIZD2xah7EHc2rKyUaB78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ifi3cfvD; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1710494081; c=relaxed/simple;
+	bh=UsJgKbEx0AKH4pAVybDI3SH53hz+4clcfF4q3S14ZMA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=jf2iRK6Km3v7ZExLENU3kQSuu4DC+P1wpjBhJMLVn8bon4it4YAZ1d5ezljXdyEEvcFj+V5M+mNQZLiR91u10cyqkcPsZZorNaTwECvMcD2ZcAmXlvoehDR8G2fonHBWFEUfZuPEU+bGQL4TA6Lco03HxKylouVhiS4MjekXpTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VBdseELT; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ifi3cfvD"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-41402466fb8so1249545e9.0;
-        Fri, 15 Mar 2024 02:09:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VBdseELT"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2d21cdbc85bso24027501fa.2;
+        Fri, 15 Mar 2024 02:14:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710493771; x=1711098571; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1710494078; x=1711098878; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rGxpqeVYITmqsu8ISYbdggA8wEernvQ3qM2whpST9xA=;
-        b=Ifi3cfvDlHII7RLFiX09LCo+XQ1W+zEZQF0Qor/hPSUT/ZqKW8JTpXuil6BilGsFA5
-         w63X7mrJBLNigZ5QC+WVeuj7tb815Nfza34iYVrZVUwr03G7+tpHSJRh4YD/unWU/ong
-         +oTsaLOf9l2ObqeDcJHtsjf3XWthL9KOmzWWm5XW7ISe6+VTrEy5bjNT2EDZu3JKiP6I
-         zqYGcIct+EhezyDd6iKI04VbciII8BX+EhUXb3ysP0ck6lPLZNCt3h9rBB9LebGdIdOw
-         O7FVOb/jCD0vLfhsPXJVX7asndejYB/bLy3xJioq2hpOcrBAYswzG9bJTdHNo99bo5m6
-         rcUg==
+        bh=Kdhg2x3t8Nf/uv6nbcx14LUHcWP8lBLkCrAgVBOR3+8=;
+        b=VBdseELTJq+R0fUmhkj8cs6NfGuFz93eDsRx6H4vqdYT96yHoRSLetBTnPTyn0pPwB
+         avlo5UUbkWnN2zPRYINsdzlz2nck/1iqkyisyCtxu5GB+7sA7niCEf5/vdEAscpujti6
+         f3A/1fkjH9ZnqKQZz3IySaSHQ63D2Vr7bUt+opHYsB8AyHyw9RHYIOjsiXs4QqrBXvdN
+         r5yX8uHBcW4GB07fXDyb6+k+KP4r5B5kYu9z0AfGaVOOqqbhEZ1MUQLJJd8ULjkXWM+B
+         3CWKAzZhFqtwyhOflmJGl3jj915KfaFjVlL1bsB6rcY69VcHh9bWoYTYLDUh7+SMJCFY
+         a41A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710493771; x=1711098571;
+        d=1e100.net; s=20230601; t=1710494078; x=1711098878;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rGxpqeVYITmqsu8ISYbdggA8wEernvQ3qM2whpST9xA=;
-        b=QitB/T75yB9MlN+r/4S/ThDkjVeKwv2ikN0EEFF5jSRfdupLUutKOEp3lkt6/fCpZZ
-         yX/6sc8X3tzySHDKONeZuOkrEV7JdjP6mWWarW/QHjHpgoM9UlUzsgWitw779EUx31ei
-         mEBccmaQ0/N2o6nSJWktWHndU8fFcLi+mkXhc0rZtCxya8X0bKbeVBX0FfjvgXVEwleR
-         mGozJa9b6zMlDYrCpO4JMLzVJUmAoejT7faXPH4UUfie2i07cqRmQ5dy1l4dJ4905zAC
-         rQOoKX21c3mN5ZqP9yEHCew9cm/sWR49E4fBecFo3xdrQG+Y9DljKRHS40kuGLDnAcAM
-         Oc4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ+bWmOgQdMBeMj9WPG2HTq1v7/GWhqfSV35PFoqAhiLSbRe2N8KdkjydDP72+FmvmqtqiydT7Xf2LVelyzg/OE8+ZpKQLsNmB+jWi
-X-Gm-Message-State: AOJu0Yz0pXhIi2aN602tsgbIPyAu4Ts0DMTfHbOw+WJh27cgAXDjIjrU
-	/97YahgrFm1ovPi3en5BMaqN+iUfWuAcDZdb7J0zpcXRCnSHNGL4ag+CX2qyqWs=
-X-Google-Smtp-Source: AGHT+IH4hfq7wKhnrhc38RUmnv/6x309HrRcxXSHxhQRObiDiRWGWskNZ5S1CEfcYDXBUw1fO9QhWA==
-X-Received: by 2002:a05:600c:4f07:b0:413:1139:3bec with SMTP id l7-20020a05600c4f0700b0041311393becmr2890485wmq.35.1710493771112;
-        Fri, 15 Mar 2024 02:09:31 -0700 (PDT)
+        bh=Kdhg2x3t8Nf/uv6nbcx14LUHcWP8lBLkCrAgVBOR3+8=;
+        b=SAVhM8KFrPzSwqvzgg2PcSmWGXqbSkO02dA1ZljgdO/vr5+pYO/8W1/ZIB7QXyxKbc
+         s/BZO+H5/N6xbvyEtsWHNKaagwxebkhanbWsqPjEcuOksjyKGfN5NaiTMSqs1YQW6y3x
+         DglQOiAqTBZ/RC4guCGMmObVPXYIohI/byXv81XgmOP0QiCZ2gk6qe0TOL0PMW4bIPYz
+         QcfZautjPJ2buk/SrQNvdsV7WzNyW3XsC0WvdGrFbf4wDqXoYEwBt4CYeM4lXX/Xl59H
+         30JDDSvixB4pQK448RONIp34a4vnONMBuXS8AX7bWB4yVU6V6ZY5fniPSGHpmeDrV2qb
+         jpQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVb2OoQzRuaamSZCi9SodvoyEKEY8rsttuDEVi7gcqAIRVUDFz9P1nEJ5/bRLFqu19TyRONa8qGZ+7G8BfpoAl6xSO3Y692zAUqBnZtu/XmPLPWNLtMLE8qUyw3I0RGNy/lZYBfD/zt
+X-Gm-Message-State: AOJu0YyySt8B2q06mW7TNAsVHqaQGccomsVluhuFwX+9R3Yj3VRKfpkG
+	VBBVpyI+MD1fLFxssSAjTHaWzML23nSDbBbWCHLhVtDvrpY+8W06
+X-Google-Smtp-Source: AGHT+IFkANNGzB0Gt1dRmpu4/6570ZhiIh3q/3WxPkx8sXXzRwN27f8fcui1dezilc/yejo7Yqxf+g==
+X-Received: by 2002:a2e:b611:0:b0:2d4:251f:c151 with SMTP id r17-20020a2eb611000000b002d4251fc151mr1655141ljn.46.1710494077935;
+        Fri, 15 Mar 2024 02:14:37 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bi10-20020a05600c3d8a00b00414009768b0sm1499649wmb.33.2024.03.15.02.09.30
+        by smtp.gmail.com with ESMTPSA id f5-20020adffcc5000000b0033e7b05edf3sm2710694wrs.44.2024.03.15.02.14.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Mar 2024 02:09:30 -0700 (PDT)
+        Fri, 15 Mar 2024 02:14:37 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Karol Herbst <kherbst@redhat.com>,
-	Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@redhat.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Ben Skeggs <bskeggs@redhat.com>,
-	dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org
+To: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	linux-iio@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/nouveau/gr/gf100: Remove second semicolon
-Date: Fri, 15 Mar 2024 09:09:30 +0000
-Message-Id: <20240315090930.2429958-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] iio: accel: adxl367: Remove second semicolon
+Date: Fri, 15 Mar 2024 09:14:36 +0000
+Message-Id: <20240315091436.2430227-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -79,22 +76,22 @@ is redundant.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.c | 2 +-
+ drivers/iio/accel/adxl367.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.c b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.c
-index 986e8d547c94..060c74a80eb1 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/gr/gf100.c
-@@ -420,7 +420,7 @@ gf100_gr_chan_new(struct nvkm_gr *base, struct nvkm_chan *fifoch,
- 			return ret;
- 	} else {
- 		ret = nvkm_memory_map(gr->attrib_cb, 0, chan->vmm, chan->attrib_cb,
--				      &args, sizeof(args));;
-+				      &args, sizeof(args));
- 		if (ret)
- 			return ret;
- 	}
+diff --git a/drivers/iio/accel/adxl367.c b/drivers/iio/accel/adxl367.c
+index 210228affb80..5cf4828a5eb5 100644
+--- a/drivers/iio/accel/adxl367.c
++++ b/drivers/iio/accel/adxl367.c
+@@ -621,7 +621,7 @@ static int _adxl367_set_odr(struct adxl367_state *st, enum adxl367_odr odr)
+ static int adxl367_set_odr(struct iio_dev *indio_dev, enum adxl367_odr odr)
+ {
+ 	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+-		struct adxl367_state *st = iio_priv(indio_dev);;
++		struct adxl367_state *st = iio_priv(indio_dev);
+ 		int ret;
+ 
+ 		guard(mutex)(&st->lock);
 -- 
 2.39.2
 
