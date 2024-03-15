@@ -1,62 +1,69 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5912C17C60;
-	Fri, 15 Mar 2024 09:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0218E17BB9;
+	Fri, 15 Mar 2024 09:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710494394; cv=none; b=DWj6uLQA7gCQYqtn4JKvQS4ShLH/3VTRcJeWZiZlnWS+ktcphyaYggdvxYI6ziqSMy4H9Gh+NdbwPaybZdz+TDp6/mRKzoyO0khGcQYlewVp97OzxA8A7VD9YQx9ZJnXCSktjTuIGGm0tWCrfDnrWGFM6rFSynXrcBJiersvFbc=
+	t=1710494818; cv=none; b=YiK83fMoqpC04q9q/+NwYKQk3/SdLvnrOMoOpd1ElaO7Gva8+zVxog3xZk9pJJoWCbc9QcAkYbtQS9CfQ6DQGQOGnaMZnuNvJiOeOHXxQM1nnhfVvi8YFRV+bNbk1VV3GuPCx1hRyTlmDQOYACX5i4sSwf27QxsUxBcMAu0SUfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710494394; c=relaxed/simple;
-	bh=AHqSOaYNZFgQYet46uTTxEfuRsPs8jM7XyxJUop08WQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=j8aGrzcqiCeo8m6/kBv800V1xniXQPQpKhIGDVLaOF1BzS8l8jEskkvW5M8eklUVc/Jw8Thki9Yvk1hR3R8AvKrzLVeOc9MW/h82BjNa2+faHvYvrEA8Vtb9Jj8P56sKOQvZn+ZbgKOpJGehPV36E2RkQoQRxIzuoxnQ01lIDcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IUs0E6zs; arc=none smtp.client-ip=209.85.221.50
+	s=arc-20240116; t=1710494818; c=relaxed/simple;
+	bh=B189A+GOAXY/PxUfUcn9D1ygMGSqq+flupHGVm7EOrA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=iH+W858tcMKDCkZ6Gcpr3vUS2OGN5GHYhMKB6ANDv/zRjLJBMkSJI8njtI8pIHD/TbYl9LXFKaNcAxvGgrpwDKxTOwe9WJjZkeIluRB+lRDYJy1tdNztwsQ5l7+Az+3XMA7iHtCE7RIpFlZAc4ZHuDTvZeSWLlhoaY5LvpwPCJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RPWe5/fg; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IUs0E6zs"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-33ecbe78c3fso701550f8f.3;
-        Fri, 15 Mar 2024 02:19:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RPWe5/fg"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-413ef770363so14481525e9.2;
+        Fri, 15 Mar 2024 02:26:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710494390; x=1711099190; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1710494815; x=1711099615; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HQw5oNsYEXSP8sYyXUIy+9N1iJwFeZV5w5qJgAdE1PQ=;
-        b=IUs0E6zsw1KXD2i4OQ1DhBHVpLVaPGFsNZZStWtfH25dfWkqb2ofRpBfkD4IXhAO85
-         VBzZMWbeQfOK5bhCh1nDSmCwlcNwdb19CEtlAxQOpETxUm597OLfnhOU5kbxW0puK6a9
-         CKk1IMhUawiLKbRPR7cP9+TmZYVjBWENeH8xqiSEjoUdIDGMSa/L+KVdxwe9tGnKW2rl
-         /1AaMHKle7Ou9MgVKL7qc72kckIgTA/6hvkWqEg2um/p8vINjaJommL8Obg/STN1o7Uj
-         6H/BxBgZHPw596RGwfjsJ5mQ46c4YOKhFByAMKkWv5wNN9/Kd+H1K1/srFrxl1X2HLNF
-         5nsQ==
+        bh=7uoc1FhiOzy9zo6HbOlCBGlUHBMGiad+RyI7SAZIQAY=;
+        b=RPWe5/fgY7De3x4daPRcsDXP/12QcJnZc8+Nvuogbk8oifxvvqrHBA5zxd12C5eI3b
+         m3TK3sK1IUmR9viKP4/MJOfnucD8XvnbnTYLWtpaLycTf7ox+9lp9nJ/Kq6BEFEe3plB
+         NAihP1YZTN+LCEGDtm+VTg+cUHIPvYnrjQm7vjD8I8A0aX44kzt8NdzmpgC9Cd3x2kgo
+         UINcTPWzHx3VaspiEx+IHI1YnYpBoHAjc7yBi4TCeypHWnRnaO14YctRorbtQoyn9zAR
+         c1JS0sxRkOSx+raJksmYVkqHoBpQtqksGjx75BMPW0wLFkGS0ItBMmA8/Bmm4x+jk33/
+         FGww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710494390; x=1711099190;
+        d=1e100.net; s=20230601; t=1710494815; x=1711099615;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HQw5oNsYEXSP8sYyXUIy+9N1iJwFeZV5w5qJgAdE1PQ=;
-        b=n364Sn5iUqHN47J7oPgn2IDFwHuDlH7rm1QT0pQC05JnMhTLomxkyDO09TStIElN64
-         I/MOvydI8+L7F1/EOsmpPEnWEvFYBrJbzdGb4dW2zhuMMN9z85bQ3w0C7j7r9q27KgCv
-         kRJnrlbMJw1hN3secbQSxuTbs1PrF2UUsqlISA1oXKEvcdn/bWA62RKmyUOShvJWG5Mx
-         FMuGE17SjKfZffBITwKMN7OxrepsmfoDuxNCVnJlG/EgWN9Jp+GUzQ8XEWwax45DMhNz
-         H51yhxp+p2SpGRJWrU4ZcI5HchzIiszvpzEt9N5mGjUWPE6TbtEOmRIw6ofiXBuCXtnP
-         YzcA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNFqQ2D9KLxL10WjjwEiGnE/pzadmkMS3XmTGjX7YrB4hOgPnsdNPbnkP5Wy4nOPDCyqXT6HDLr0USnj+TRqZ64ym8lIKwlVnmgj8k
-X-Gm-Message-State: AOJu0YzvSLGI0zsu2A3uJMOggG6xSemVA6Vbq0DZ/PKlgSqyScFKVTE7
-	qC0JjB/tYnzZ2Jsbckk8WqwYlrHiaoKXHfwozqB1QQqvmrmIWcuS
-X-Google-Smtp-Source: AGHT+IEPdVBZg1VY8jVGSbWV92yzvxfLlvNgJ8Fm6j0v75JcMGGC9XqCOWMIYR7F+cZQf+yjsTfhsg==
-X-Received: by 2002:a5d:5750:0:b0:33e:34aa:d78a with SMTP id q16-20020a5d5750000000b0033e34aad78amr3009495wrw.8.1710494390487;
-        Fri, 15 Mar 2024 02:19:50 -0700 (PDT)
+        bh=7uoc1FhiOzy9zo6HbOlCBGlUHBMGiad+RyI7SAZIQAY=;
+        b=CSFZrNJMHoddpU2+8LuHNAvbRWRB2PDIts6xFa1JpOskLvGEim7EzWTTYNwVZjCeiK
+         pjYvB/mCTcxKxjNbokn3SaN2OCgY/nunnm58OotuFwkSs2r36dZn8qAxjl3mzvJeTYPm
+         I9dBBVVkJBXk7xvbvOAuUL9kwOS/LZL2JKzcmKM8IeAZxfoiagRoi0A02XdVdWCvfTst
+         DR6X/okI4uROE0bCsytnzHlsyxw4rSgDv/nuiqcNeBkgaVSdMa53Y918/+XJobFlpkJs
+         x+6INWnY9z7eiKoB2DNHlKlEr/rz/3FGGaf7WgN1R6w9y8rH2j14Hrb/bVIsdVqcaqUF
+         RUNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoIUD8NPEwrpBfbWq4KpnZe36FRNoemJ1xrnQhrstcO4GSTU1yzYKN8FDsesF0k+cjt9ayVYTXlnQmkNkUpbo2R1/eK9gOCmgrUevzQnGlvZxjNdEN8kFquhsTPJFDeXQEI1FdExRgz0Gr1RYO2CvUwIdYdDjcsjIXpBZpBRFXGlP2
+X-Gm-Message-State: AOJu0Yw9mN6VFZQkFAfo8Y77ij5QSInoU+jOXbkT5DiJhkHaUGMwautt
+	plqTAlge3SITlBD5VDOeu4JSM4g0Iugff1adeMzoDsA9kNY9SxJn
+X-Google-Smtp-Source: AGHT+IFMeMBdmo97BMuwK0Izj+6Rxcz5sZu0QUBhehR7e6sd457BVotjbx7ooGfVpA6f6hjDlf4IYA==
+X-Received: by 2002:a05:600c:45c4:b0:414:24d:7f9 with SMTP id s4-20020a05600c45c400b00414024d07f9mr651665wmo.1.1710494815202;
+        Fri, 15 Mar 2024 02:26:55 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id h13-20020a056000000d00b0033ec9ddc638sm2723586wrx.31.2024.03.15.02.19.49
+        by smtp.gmail.com with ESMTPSA id jg5-20020a05600ca00500b00414024d078dsm944989wmb.17.2024.03.15.02.26.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Mar 2024 02:19:50 -0700 (PDT)
+        Fri, 15 Mar 2024 02:26:54 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Jan Kara <jack@suse.com>
+To: John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] udf: Remove second semicolon
-Date: Fri, 15 Mar 2024 09:19:49 +0000
-Message-Id: <20240315091949.2430585-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] selftests/bpf: Remove second semicolon
+Date: Fri, 15 Mar 2024 09:26:54 +0000
+Message-Id: <20240315092654.2431062-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -67,27 +74,41 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a statement with two semicolons. Remove the second one, it
+There are statements with two semicolons. Remove the second one, it
 is redundant.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/udf/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/bpf/benchs/bench_local_storage_create.c | 2 +-
+ tools/testing/selftests/bpf/progs/iters.c                       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/udf/super.c b/fs/udf/super.c
-index 2217f7ed7a49..ba6b747a3830 100644
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -630,7 +630,7 @@ static int udf_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 			if (!uopt->nls_map) {
- 				errorf(fc, "iocharset %s not found",
- 					param->string);
--				return -EINVAL;;
-+				return -EINVAL;
- 			}
+diff --git a/tools/testing/selftests/bpf/benchs/bench_local_storage_create.c b/tools/testing/selftests/bpf/benchs/bench_local_storage_create.c
+index b36de42ee4d9..e2ff8ea1cb79 100644
+--- a/tools/testing/selftests/bpf/benchs/bench_local_storage_create.c
++++ b/tools/testing/selftests/bpf/benchs/bench_local_storage_create.c
+@@ -186,7 +186,7 @@ static void *task_producer(void *input)
+ 
+ 		for (i = 0; i < batch_sz; i++) {
+ 			if (!pthd_results[i])
+-				pthread_join(pthds[i], NULL);;
++				pthread_join(pthds[i], NULL);
  		}
- 		break;
+ 	}
+ 
+diff --git a/tools/testing/selftests/bpf/progs/iters.c b/tools/testing/selftests/bpf/progs/iters.c
+index 3db416606f2f..fe65e0952a1e 100644
+--- a/tools/testing/selftests/bpf/progs/iters.c
++++ b/tools/testing/selftests/bpf/progs/iters.c
+@@ -673,7 +673,7 @@ static __noinline void fill(struct bpf_iter_num *it, int *arr, __u32 n, int mul)
+ 
+ static __noinline int sum(struct bpf_iter_num *it, int *arr, __u32 n)
+ {
+-	int *t, i, sum = 0;;
++	int *t, i, sum = 0;
+ 
+ 	while ((t = bpf_iter_num_next(it))) {
+ 		i = *t;
 -- 
 2.39.2
 
