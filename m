@@ -1,82 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC581BDD0;
-	Sat, 16 Mar 2024 16:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3850BF510
+	for <kernel-janitors@vger.kernel.org>; Sat, 16 Mar 2024 16:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710606570; cv=none; b=gPO1wamtqrbPgBiC9G4B2ik4QRRtnHr0LffKsxTt7qmBj06jwVn+CELqotBsHiApRKK03PK5uRqF7Aui3uiu7ARPeEa3uk6eELPqOQu63t6PYNmm4Jd2358Y+B226RQsWBJojC39r/Az7/5LTU1SCGfCt02ZRI+GNmyxlQY6FLg=
+	t=1710606775; cv=none; b=n2617HqfG3vajmt9UOF7neEqGW1NWLIIQoSC1iEpp3HwNhvlYFq8FD7+KNmnMTKrsi4X250tF2jiIll+yX+MnHY6Y5MqU9MG3eYNnpJDNGEdlt0sDDJl15y/m+Cs/twBGGnSTYH6KZys4gd8MS7ajKIZArAe/HxL1/VW6iA+x7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710606570; c=relaxed/simple;
-	bh=5qE8kYJREZWCNMC1klayr2kNVh5Rg7+5qdAS3gKxcg4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IcLCE8I9nKL4YL86Cfj+fgniCB22IgwPBk6/ca0aYm+ctVklkLvBzRzpvtC6LCjs3O/Q4vVM8fZRKbOK7KGATgPlWJT5/pD5OCrJ8gwdiUjbMVXdRINJ2aX5BUPswq26BeHL15VawEyFptW5paMQNNGEtkyajdLYrOXBQT/D6Fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MwrqswgV; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1710606775; c=relaxed/simple;
+	bh=CK3MIQ+LHn6aar5yvtRcHf096sLPPsqQQO8tyaHQJ94=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m2rTUEZr18/5SDFZaatvi5WT2H/0l+yRVAzqpO8tLq3+t+IbRamOnr1BhSc5AaR9MFI8LE0QR86SASJVeUPyIaWrMIEMnynAcjJ3g10xRroPpA3ePmAnQf/8cM2X1Sg8bU+05psAZ0tmN2KSL393sRzPu2z7gcGeu6X7GXSl+p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=O+ZeE9CL; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MwrqswgV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF03CC433F1;
-	Sat, 16 Mar 2024 16:29:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710606569;
-	bh=5qE8kYJREZWCNMC1klayr2kNVh5Rg7+5qdAS3gKxcg4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MwrqswgVxGCPKB7gHtMKSFzUTipBn3n9+ODM2kZBJaCwPT9ZnEJMlSg6Z9RPPknIT
-	 jYRQBPiG+vRDIBz6MNr9CSY/4XJgP2aY4t0ZktSOaH9mAuvKeWrlAFii3zuz77nlxa
-	 FClu1D6NisoqLnoO00n1Ciz1zR10tujQO6hyNWRhVtXH7dAQ9GK6hlFBUmFwkO0SGz
-	 YIzQMoCu+1kRPpGUpfNNvUiEZKwKa724Jj8S6TUHJSA36255oTyItSawoO0UunWeQO
-	 PKUDgpLII9GMXU1RkdnP/N06Md1oOezUWhdhWTZQHgLMAosEWgvQ0iXl++LPz+/onn
-	 oqfQo09C9exeg==
-Message-ID: <893d73c3-e449-49ad-b297-1acef5dae38e@kernel.org>
-Date: Sat, 16 Mar 2024 10:29:27 -0600
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="O+ZeE9CL"
+Received: from fedora.home ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id lWwfrdx0634cQlWwfroueZ; Sat, 16 Mar 2024 17:31:42 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1710606702;
+	bh=fk+ucFrD3yqbJl/SXn+CcoirbFuY/lHmnVNwfXo1N/c=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=O+ZeE9CLB0dJs9eF0Hts9ozgB9/lFOORZUnwJ488VlyjOZIlSosYFRg/YHCxIjcWr
+	 BFeeCRMynmt2mDGet0ywofvfYrDgo399NXEXIBFRDF/+C8l1gi1pyRTVrOtUHIp0wE
+	 ZcHZnjBrupKJjxytrNLIJNVnFyYZG4kTcYw9bj5hAZeyA2KbrEbTQmTf1kKqudXmns
+	 kpNFTrnsFzoyRp1fwvgWOc9aQrG0sAIJo4H0esZrgTmtm5Ld5cMMK2jx7suK5wxBEJ
+	 T7pD0ZqM+GQNpN16TYq3R/fUh89UwcYi0FKOXvjN2sApIaRcRiVojeV2yzJz2Fb41z
+	 MunWsmR4VjxUg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 16 Mar 2024 17:31:42 +0100
+X-ME-IP: 92.140.202.140
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] bus: ts-nbus: Fix an error handling path in ts_nbus_probe()
+Date: Sat, 16 Mar 2024 17:31:36 +0100
+Message-ID: <6c887c85434edb17d2217c5198c48018dfa97923.1710606677.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] nexthop: fix uninitialized variable in
- nla_put_nh_group_stats()
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>, Ido Schimmel <idosch@nvidia.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Petr Machata <petrm@nvidia.com>,
- Kees Cook <keescook@chromium.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <b2578acd-9838-45b6-a50d-96a86171b20e@moroto.mountain>
-From: David Ahern <dsahern@kernel.org>
-In-Reply-To: <b2578acd-9838-45b6-a50d-96a86171b20e@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/16/24 3:46 AM, Dan Carpenter wrote:
-> The nh_grp_hw_stats_update() function doesn't always set "hw_stats_used"
-> so it could be used without being initialized.  Set it to false.
-> 
-> Fixes: 5072ae00aea4 ("net: nexthop: Expose nexthop group HW stats to user space")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  net/ipv4/nexthop.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/ipv4/nexthop.c b/net/ipv4/nexthop.c
-> index 74928a9d1aa4..c25bfdf4e25f 100644
-> --- a/net/ipv4/nexthop.c
-> +++ b/net/ipv4/nexthop.c
-> @@ -824,8 +824,8 @@ static int nla_put_nh_group_stats(struct sk_buff *skb, struct nexthop *nh,
->  				  u32 op_flags)
->  {
->  	struct nh_group *nhg = rtnl_dereference(nh->nh_grp);
-> +	bool hw_stats_used = false;
->  	struct nlattr *nest;
-> -	bool hw_stats_used;
->  	int err;
->  	int i;
->  
+If of_platform_populate() fails, we must shutdown the FPGA, as already done
+in the remove function.
 
-Reviewed-by: David Ahern <dsahern@kernel.org>
+Fixes: 5b143d2a6ede ("bus: add driver for the Technologic Systems NBUS")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
 
-The flag could be moved under
-	`if (op_flags & NHA_OP_FLAG_DUMP_HW_STATS ...`
-as well.
+This patch is speculative and based on the output of one of my scripts that
+tries to spot calls in .remove function that are not also in the error
+handling path of the probe. I'm not familiar with the pwm_ API.
+
+I don't think that the locking in the remove function is needed here.
+
+Review with care.
+---
+ drivers/bus/ts-nbus.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/bus/ts-nbus.c b/drivers/bus/ts-nbus.c
+index baf22a82c47a..fa1bb9b78446 100644
+--- a/drivers/bus/ts-nbus.c
++++ b/drivers/bus/ts-nbus.c
+@@ -309,13 +309,19 @@ static int ts_nbus_probe(struct platform_device *pdev)
+ 	dev_set_drvdata(dev, ts_nbus);
+ 
+ 	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+-	if (ret < 0)
+-		return dev_err_probe(dev, ret,
+-				     "failed to populate platform devices on bus\n");
++	if (ret < 0) {
++		dev_err_probe(dev, ret,
++			      "failed to populate platform devices on bus\n");
++		goto err_disable_pwm;
++	}
+ 
+ 	dev_info(dev, "initialized\n");
+ 
+ 	return 0;
++
++err_disable_pwm:
++	pwm_disable(ts_nbus->pwm);
++	return ret;
+ }
+ 
+ static void ts_nbus_remove(struct platform_device *pdev)
+-- 
+2.44.0
+
