@@ -1,45 +1,56 @@
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3850BF510
-	for <kernel-janitors@vger.kernel.org>; Sat, 16 Mar 2024 16:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191541BF34
+	for <kernel-janitors@vger.kernel.org>; Sat, 16 Mar 2024 19:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710606775; cv=none; b=n2617HqfG3vajmt9UOF7neEqGW1NWLIIQoSC1iEpp3HwNhvlYFq8FD7+KNmnMTKrsi4X250tF2jiIll+yX+MnHY6Y5MqU9MG3eYNnpJDNGEdlt0sDDJl15y/m+Cs/twBGGnSTYH6KZys4gd8MS7ajKIZArAe/HxL1/VW6iA+x7w=
+	t=1710618763; cv=none; b=aOMZzEv3a1c3FDGB2Ain7kFdiDzE8QXUZ+EzQuwxeE7gfFTlEDftUOHHsY8JJLBnOM4xuv+N2wMM6Y+fklWFx5a/3gDxrAHGIE7NqBLb2CUqpXGKJFeL5svWjSoREBdDN9ERD0L/akp7EemcbLGPkOJ3fgkkdgWo6x/nymYYe4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710606775; c=relaxed/simple;
-	bh=CK3MIQ+LHn6aar5yvtRcHf096sLPPsqQQO8tyaHQJ94=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m2rTUEZr18/5SDFZaatvi5WT2H/0l+yRVAzqpO8tLq3+t+IbRamOnr1BhSc5AaR9MFI8LE0QR86SASJVeUPyIaWrMIEMnynAcjJ3g10xRroPpA3ePmAnQf/8cM2X1Sg8bU+05psAZ0tmN2KSL393sRzPu2z7gcGeu6X7GXSl+p8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=O+ZeE9CL; arc=none smtp.client-ip=80.12.242.15
+	s=arc-20240116; t=1710618763; c=relaxed/simple;
+	bh=Kz6AxoyXS0ite1d+zI9BgQ9XZyg/PeBhDTilw9ktBHk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R7fIgJDXsBITEiQT8Mu28MfFWnOpN1nw9vt+EtwpI3EX5Am9IVrIf7EzEN4tcsHwffuKUf5dr/s7HXE6Dp/W9TdfhR49W1Ga6etVxmufnFRTyLCchDYVEU2Be4fP8lt208lJ8EP3b2LBzROjwT4rM7vtd6Ta82idQfDRRqpL9DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=D9DxHyYr; arc=none smtp.client-ip=80.12.242.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="O+ZeE9CL"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="D9DxHyYr"
 Received: from fedora.home ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id lWwfrdx0634cQlWwfroueZ; Sat, 16 Mar 2024 17:31:42 +0100
+	id la3vrEPOXk8gIla3vrpUVD; Sat, 16 Mar 2024 20:51:27 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1710606702;
-	bh=fk+ucFrD3yqbJl/SXn+CcoirbFuY/lHmnVNwfXo1N/c=;
+	s=t20230301; t=1710618687;
+	bh=SjbNtOBQ+cS5fJj7smJylRnTlii80ZoATXXlQUbJZNQ=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=O+ZeE9CLB0dJs9eF0Hts9ozgB9/lFOORZUnwJ488VlyjOZIlSosYFRg/YHCxIjcWr
-	 BFeeCRMynmt2mDGet0ywofvfYrDgo399NXEXIBFRDF/+C8l1gi1pyRTVrOtUHIp0wE
-	 ZcHZnjBrupKJjxytrNLIJNVnFyYZG4kTcYw9bj5hAZeyA2KbrEbTQmTf1kKqudXmns
-	 kpNFTrnsFzoyRp1fwvgWOc9aQrG0sAIJo4H0esZrgTmtm5Ld5cMMK2jx7suK5wxBEJ
-	 T7pD0ZqM+GQNpN16TYq3R/fUh89UwcYi0FKOXvjN2sApIaRcRiVojeV2yzJz2Fb41z
-	 MunWsmR4VjxUg==
+	b=D9DxHyYrkaOm5kE1mLlkXYRjXycXxsTBWVhnZ8Z9aVjjq+D6t1RBVaxow3EeogIP5
+	 IM8Xv/gAhp/8W0xITHPIPKeeeMDDP1e2QqRPDB90yamocgV2NaU+1sN+IooU3WZJv/
+	 5OjbTL/v2Y9NagH5qxNgBXRLe0a5NPm+eb8SyBwWD+YvsW2IR9Dh2pz4BmvkBixD+/
+	 G8a4e+q30hS8hVo+0UJJ4APTF0fifdeurMlzzvjpN87gJzeWJBFvwZASjlRzKyC1Wk
+	 uOj5Aufzu3x9taZdnIWltPU9E9HRp5PihX25hIsMzVEWvPGp2L/4MSHZGgsplBKvci
+	 t72o/8I9nifHw==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 16 Mar 2024 17:31:42 +0100
+X-ME-Date: Sat, 16 Mar 2024 20:51:27 +0100
 X-ME-IP: 92.140.202.140
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
-	Arnd Bergmann <arnd@arndb.de>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] bus: ts-nbus: Fix an error handling path in ts_nbus_probe()
-Date: Sat, 16 Mar 2024 17:31:36 +0100
-Message-ID: <6c887c85434edb17d2217c5198c48018dfa97923.1710606677.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/bridge: lt9611uxc: Fix an error handling path in lt9611uxc_probe()
+Date: Sat, 16 Mar 2024 20:51:21 +0100
+Message-ID: <e09122722190d052cee792a9246c274510f3b928.1710618660.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -49,52 +60,36 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If of_platform_populate() fails, we must shutdown the FPGA, as already done
-in the remove function.
+If lt9611uxc_audio_init() fails, some resources still need to be released
+before returning the error code.
 
-Fixes: 5b143d2a6ede ("bus: add driver for the Technologic Systems NBUS")
+Use the existing error handling path.
+
+Fixes: 0cbbd5b1a012 ("drm: bridge: add support for lontium LT9611UXC bridge")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only.
-
-This patch is speculative and based on the output of one of my scripts that
-tries to spot calls in .remove function that are not also in the error
-handling path of the probe. I'm not familiar with the pwm_ API.
-
-I don't think that the locking in the remove function is needed here.
-
-Review with care.
 ---
- drivers/bus/ts-nbus.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/bridge/lontium-lt9611uxc.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/bus/ts-nbus.c b/drivers/bus/ts-nbus.c
-index baf22a82c47a..fa1bb9b78446 100644
---- a/drivers/bus/ts-nbus.c
-+++ b/drivers/bus/ts-nbus.c
-@@ -309,13 +309,19 @@ static int ts_nbus_probe(struct platform_device *pdev)
- 	dev_set_drvdata(dev, ts_nbus);
+diff --git a/drivers/gpu/drm/bridge/lontium-lt9611uxc.c b/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
+index f4f593ad8f79..d0c77630a2f9 100644
+--- a/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
++++ b/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
+@@ -965,7 +965,11 @@ static int lt9611uxc_probe(struct i2c_client *client)
+ 		}
+ 	}
  
- 	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
--	if (ret < 0)
--		return dev_err_probe(dev, ret,
--				     "failed to populate platform devices on bus\n");
-+	if (ret < 0) {
-+		dev_err_probe(dev, ret,
-+			      "failed to populate platform devices on bus\n");
-+		goto err_disable_pwm;
-+	}
- 
- 	dev_info(dev, "initialized\n");
- 
- 	return 0;
+-	return lt9611uxc_audio_init(dev, lt9611uxc);
++	ret = lt9611uxc_audio_init(dev, lt9611uxc);
++	if (ret)
++		goto err_remove_bridge;
 +
-+err_disable_pwm:
-+	pwm_disable(ts_nbus->pwm);
-+	return ret;
- }
++	return 0;
  
- static void ts_nbus_remove(struct platform_device *pdev)
+ err_remove_bridge:
+ 	free_irq(client->irq, lt9611uxc);
 -- 
 2.44.0
 
