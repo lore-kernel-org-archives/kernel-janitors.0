@@ -1,69 +1,69 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5844C134B1
-	for <kernel-janitors@vger.kernel.org>; Sat, 16 Mar 2024 09:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3961110940
+	for <kernel-janitors@vger.kernel.org>; Sat, 16 Mar 2024 09:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710581417; cv=none; b=RE2eaGsowLeWEH6wXjeDsb90w+vV0WpTbgpHW83iUAL9ovRwmhYwHkuM9yw4gJxBlBsWJXgcJD4CCyWueGz0Jfng3SiBXdFIQj/xmoibMpikRLTtfm4FYv+XwgtbKP0zv1vg9BYaQl+q4RdzYSVsD3RKzKIP69TxU4HJj3fhC0Q=
+	t=1710582288; cv=none; b=BS7SPMp9JvyZEugWETWPbTXuprew96sDTrIgHQA8Ht/s6rYz3JMbcIOGj1jopPhLraC8n9nKLRfwmSpC8nKg2tPxXTCNLwO0soo98t/68h8adDEGdgJiIZxom2xqUl7svKOfYzfRSxzlexyLusFFS5yYZIqDF3kGodX+Yapf5rM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710581417; c=relaxed/simple;
-	bh=3a6ZkGbC6qnjXSvnaDZPukV97lFmXpUpFjamuzvR7e4=;
+	s=arc-20240116; t=1710582288; c=relaxed/simple;
+	bh=3bDlKy2nzAl5JOkcvkmJwxyf1GS0vVOX5MatiJK86Vw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LPpRDc4KEn/Ejtie/08AKsZ6GaYgEmMjBdJDrunL0gOIEMVCr7Ut5na8KW0zMIqBkivrXG4EEAJlWxhz3McOg6ULFFayJdTt89wDnRel9AYhHrG5sJXEeWPt+/7772vJSWJXJItUj2XCuByVSvPNAOS3R/f5DhNuVtQ0P/PbFG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hQ9d3b//; arc=none smtp.client-ip=209.85.167.41
+	 Content-Disposition; b=VSzlUG8HBXEuTtOr1ts4h4RURl8hCMUEp7hjKSQ2mvnrRO0EsM+y+TMI7qGUPC0jHfdLYa+nDqJ8QZhdK4gha1iUMXPiKZPxK+8ny/S8brjuIXdWoU0MkWsUnT/YBNBcdWD9yw/l/0kghZNJ0mjxqA+0Gzx7oT0aedYLg0we3Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q4ykPHFH; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hQ9d3b//"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-513ccc70a6dso4882290e87.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 16 Mar 2024 02:30:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q4ykPHFH"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-33ed5b6bf59so713603f8f.0
+        for <kernel-janitors@vger.kernel.org>; Sat, 16 Mar 2024 02:44:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710581413; x=1711186213; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1710582284; x=1711187084; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=dGUAB3UIw3E7EFrzYS72iNT6shEEycV/Wx4kFX1KU/c=;
-        b=hQ9d3b//VyzUIh/rdiLQt7Jdf7l7DRhbvVjrM2jerO3K8r8lcPflktsdqZzAKdG2Gb
-         r0uX1uPuTE3P2HGfIwI7PD91N/oo7N6LHth+E2FAfx0TBhaMusUhBjG/3l/T6T/BCqxU
-         Gh3nHg0mX4Xl9KA6Bb89tgU90Lft241uyOtVmOzasW9D45XD/A+gHDGP0mnPPZWR7Yrg
-         0wmrtvTwbmm63bHBWh9A4PbsXvGjEFiIegt82bZERiZRP0NGH6z7CKVHX+0BeS07NUDu
-         hauV/Z7OpE/xAr+hnxaOkt27TWlLhBQ5iFR3rnY4oYKN7ivCOGGu0Vpz75gqWMA9diQ7
-         2R9w==
+        bh=eZiaMvkrAIYRvQGhX/VCrACQexpce25p/Aogx0gSR78=;
+        b=Q4ykPHFH9k5MWBa7RqVIsFBBhRJ9b0KbGGiVwyhlKIqPoZ8PySluHXRVxAtjMFl4U1
+         Epa46E0AoTIbtNSznQW2fgGv5lBVWg2PbOyh4UZIltxgsSEZ9CxXusM/dzxe8tVH/DOR
+         F5IAeN1e2ssvZQl/SkIFkKjmQcl2iNaVT4sWNZ/oaWahjfqPCJ91PP5Ol0aVKWAnyxbO
+         77iwvaLiygB0acqEwkT4YJlGM9bx7daDkKSWv9lf7ObrLWJdpHY7sxPW+0U0xw4stMMj
+         hvBRGueIqiRmJkdRyS/fVgssroIp+sd5nfRS2OjWAmxHXZBPlyD5Eq50dWKQ/ybbnD51
+         uSUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710581413; x=1711186213;
+        d=1e100.net; s=20230601; t=1710582284; x=1711187084;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dGUAB3UIw3E7EFrzYS72iNT6shEEycV/Wx4kFX1KU/c=;
-        b=QqiCLpaqZL5Ew8/Jn1lHZiBh7XLJxJWu3Q9YfcpaS8600zC2CEwHk6KqhlbotkE5Q3
-         sebeKZYzNiRxSniGYLeqn7J8yp971M7wnlGnfoLj5CJ/N1K72m3WYQbPAgLG2kOUCwPe
-         BcYPjOifXcsgezjnKnBH7csMIYyG1Q8JHLdHoFUaAAkDKuWbPx+A9N+gf8lSkNqveKXr
-         KkQugm+mV4JBCwMA7D82P6EiilPdfrEdO8eTuVSk0y41sNi8crUHhUasTFPl1BJZbVGi
-         8aUJZ27j+kEN7zHiD3e8aRUnxhR9lU5au1krW2LYCz501XNILBlet7i2rTYXS0yDaFVs
-         TwiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbygHC90AMtW7iZV/WEt3Jn+0R15Nz5jdJcRjCJBCvmzvc+33updDoX68H0MVkdoeVoQD7HWoOM3a5ltsnz7H3Ye9sSD/dA32RhOBSStGY
-X-Gm-Message-State: AOJu0YyH1TJctrthlba/aqDZLAFBqi0OhPhnPetkGcUphhxtKc7mtBsF
-	+zOG7K/xRyVDR2h3582+DxlR/jvZECDHiYKTnMhogggGE4WJFuHiNWZthaoHE0ua5VPdCxml1Hx
-	a
-X-Google-Smtp-Source: AGHT+IHaVTRcQ6GSzZTIOX7uqn97na0aCbldg2yl3L19ISK8nvKzKRYsmj4GCGkP1PGTK3RRw+8UUw==
-X-Received: by 2002:a19:914c:0:b0:513:c223:f0e4 with SMTP id y12-20020a19914c000000b00513c223f0e4mr1128678lfj.10.1710581413374;
-        Sat, 16 Mar 2024 02:30:13 -0700 (PDT)
+        bh=eZiaMvkrAIYRvQGhX/VCrACQexpce25p/Aogx0gSR78=;
+        b=ad1TaLQnXdLTllyMN0J0eH1yjAYZvyV9tpFO1MT+iBlw3/g3+2+keIrVARt5MdedaZ
+         C8YfkunxBguqYmk8aaTH1w7r4S64UDzYrhEMSReV5AhWxHB/BVYgwXvDAE/GBBAy+RlK
+         qKOXSgX0a1wTV/STKp3oNUzUxAPoViCFGufezAD7loF1DsYPTekEft+JwKMXOTYmD4mH
+         oCtmgF4Y/kK59V8WRVy+RzNyMIWuL/KJcem5XaA65hzaX+XPp27gLT+CjQHn8cuxBr/g
+         y4+Ub8MFFGMHw28cbeFn/NbpgqHgx8F9RoBTTqs/S/o2XLo5bcTV5fwM2DKDHvpWvUdJ
+         dMvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFeTZD4uRiXokpYdPwd6bC2ScQKxvx5HIpNgWluhMK+rdjjLbglbvYzgkFN3UIZjdFSO4yUKPGBIk+gtCKDJDduTQ1YOfyByi69ix+St1c
+X-Gm-Message-State: AOJu0Yza4/mO2gFUTUMcvU1qcQhG1vWVcSbNgEahDaKKJoA9j73KxlPi
+	HE/VsmguyP8wSc/oQmve59VGbTQv+rYrW6UhJLbizju5DEA2GmmdV/k1xvqXK3ZqH31Z39itfHW
+	h
+X-Google-Smtp-Source: AGHT+IFOW1q6txMH9F3aIQBkLScKJhp062IvZBzvTzICyAWp7NA/r2UF046gqnjt7+cVDSSe9CEKdA==
+X-Received: by 2002:a5d:47ac:0:b0:33e:d865:41f with SMTP id 12-20020a5d47ac000000b0033ed865041fmr1595984wrb.35.1710582284437;
+        Sat, 16 Mar 2024 02:44:44 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id fb4-20020a05600c520400b004132901d73asm8228520wmb.46.2024.03.16.02.30.12
+        by smtp.gmail.com with ESMTPSA id ay19-20020a5d6f13000000b0033e2291fbc0sm5157397wrb.68.2024.03.16.02.44.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Mar 2024 02:30:13 -0700 (PDT)
-Date: Sat, 16 Mar 2024 12:30:09 +0300
+        Sat, 16 Mar 2024 02:44:44 -0700 (PDT)
+Date: Sat, 16 Mar 2024 12:44:40 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] serial: 8250_lpc18xx: disable clks on error in probe()
-Message-ID: <92646c10-e0b5-4117-a9ac-ce9987d33ce3@moroto.mountain>
+To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net] ice: Fix freeing uninitialized pointers
+Message-ID: <77145930-e3df-4e77-a22d-04851cf3a426@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,28 +74,49 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Goto the clean up path to clean up a couple clocks before returning
-on this error path.
+Automatically cleaned up pointers need to be initialized before exiting
+their scope.  In this case, they need to be initialized to NULL before
+any return statement.
 
-Fixes: 0087b9e694ee ("serial: 8250_lpc18xx: Switch to use uart_read_port_properties()")
+Fixes: 90f821d72e11 ("ice: avoid unnecessary devm_ usage")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/tty/serial/8250/8250_lpc18xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/ice/ice_common.c  | 4 ++--
+ drivers/net/ethernet/intel/ice/ice_ethtool.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_lpc18xx.c b/drivers/tty/serial/8250/8250_lpc18xx.c
-index 7984ee05af1d..47e1a056a60c 100644
---- a/drivers/tty/serial/8250/8250_lpc18xx.c
-+++ b/drivers/tty/serial/8250/8250_lpc18xx.c
-@@ -151,7 +151,7 @@ static int lpc18xx_serial_probe(struct platform_device *pdev)
+diff --git a/drivers/net/ethernet/intel/ice/ice_common.c b/drivers/net/ethernet/intel/ice/ice_common.c
+index 4d8111aeb0ff..4b27d2bc2912 100644
+--- a/drivers/net/ethernet/intel/ice/ice_common.c
++++ b/drivers/net/ethernet/intel/ice/ice_common.c
+@@ -1002,8 +1002,8 @@ static void ice_get_itr_intrl_gran(struct ice_hw *hw)
+  */
+ int ice_init_hw(struct ice_hw *hw)
+ {
+-	struct ice_aqc_get_phy_caps_data *pcaps __free(kfree);
+-	void *mac_buf __free(kfree);
++	struct ice_aqc_get_phy_caps_data *pcaps __free(kfree) = NULL;
++	void *mac_buf __free(kfree) = NULL;
+ 	u16 mac_buf_len;
+ 	int status;
  
- 	ret = uart_read_port_properties(&uart.port);
- 	if (ret)
--		return ret;
-+		goto dis_uart_clk;
+diff --git a/drivers/net/ethernet/intel/ice/ice_ethtool.c b/drivers/net/ethernet/intel/ice/ice_ethtool.c
+index 255a9c8151b4..78b833b3e1d7 100644
+--- a/drivers/net/ethernet/intel/ice/ice_ethtool.c
++++ b/drivers/net/ethernet/intel/ice/ice_ethtool.c
+@@ -941,11 +941,11 @@ static u64 ice_loopback_test(struct net_device *netdev)
+ 	struct ice_netdev_priv *np = netdev_priv(netdev);
+ 	struct ice_vsi *orig_vsi = np->vsi, *test_vsi;
+ 	struct ice_pf *pf = orig_vsi->back;
++	u8 *tx_frame __free(kfree) = NULL;
+ 	u8 broadcast[ETH_ALEN], ret = 0;
+ 	int num_frames, valid_frames;
+ 	struct ice_tx_ring *tx_ring;
+ 	struct ice_rx_ring *rx_ring;
+-	u8 *tx_frame __free(kfree);
+ 	int i;
  
- 	uart.port.iotype = UPIO_MEM32;
- 	uart.port.regshift = 2;
+ 	netdev_info(netdev, "loopback test\n");
 -- 
 2.43.0
 
