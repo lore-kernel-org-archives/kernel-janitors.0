@@ -1,112 +1,93 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527C517BAF;
-	Sat, 16 Mar 2024 12:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8C218C36;
+	Sat, 16 Mar 2024 14:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710591726; cv=none; b=qENxKKprhmujOW1hrfMIUMqnWK9LMvbZls34tzRDMj/ZV3S2mvLuWmVxoU0LW1Wau7yk5RZbKus70uK2QuAKrv93/nJwrj5A0ZuBk4CrKlAdgGKlQ986EGj+MLZnZ5No89WncpQK3T6BY5jKYz6yE7jCiuetX0YkAjAH/+GumdQ=
+	t=1710597991; cv=none; b=L6YuOe97uwvzpgED48Xk3GFNXkZ9V1Zo+GSc87+hcdU2VoibZsTxqhhk+49HFuXZzb5UqAVsnpjquD5ukHHhYDJPtbMR3sS6QzxE18I0u7xncbDATqHQiTKzQGYTtx25PX4lJ1ZdT3ubSeFFyCNPi16PHiDcKXd8zyo3L1G/A7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710591726; c=relaxed/simple;
-	bh=XxGy920P9DR0EZIW7+Yb4OcOzn4dQ1bS2DyY+nDGDIQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yv4HNYmF6VG173Pawvguc04uzb8bSNik+oauAq4sEM8wSxuDxeW07tTIrvQ/MypOSLFa0mT1uZxmo7//x5MmIlT6MCUq+bADk0E3ExoObxNayDfzjpD8TUQe3LOQOrcp8yC88md7qB6K1KzWBSzUlDemIsDsoljndkAZSEnZRbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=l2MVLw3N; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1710597991; c=relaxed/simple;
+	bh=QKLuZWkkygYcB6WBv1qdecfbnnJIK9dRYC9Tpk4yfRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZGfXt7C7rvRgDrnipSNQaYKWlBLsVqqKvDEFbHk6dXtKwoOpwPnNS9CR265WiMlRm63+zGeJ5hcOS7vh/6/7QQVVVGFiw4SLO9sGWHIAKWoX/7jvxugIrtKAIbu+6AV+ktY+fRsMw7GHECqG7N4lwRKpf2cWt0kBnY1YQ2VnUbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jysqc5wx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="l2MVLw3N"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1710591699; x=1711196499; i=markus.elfring@web.de;
-	bh=/QEqgj+Ltvb5OtOACFmXDcDy9+HrKk324HPLGGfFo/0=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=l2MVLw3NsJrTFcF3Yy3k+a3aQzrwT0E160jWyKi9qpmd3akGxhV4YYElzHRJV225
-	 96irb6BJc6lfHaUObWetKgUsqUGK0ejZglw8HV/tMS2vlKSGwiJQ28TUt2NJGZDV+
-	 zW6o5WopqgFzOwy6lWyb6n6y9E2iuEYprpfB9VSNFHBnbz7KjOPjN/BQKHXkTHfO9
-	 EexQ3Ax72k3D8ggTaJ/+pIpQcNnYOk/VOYVyaJCcT2q7KlsZT8q6H+LzeiSQulPWl
-	 V6Jbflimsg+dltdy77kCgQj9etUzVeuojDy/2Oyyh7gHozzCBBTJCqlB6h8SgBsDw
-	 0bj+iPIit2VqLpb3sg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MJFhJ-1rWP0411x5-00KlSo; Sat, 16
- Mar 2024 13:21:39 +0100
-Message-ID: <aa212ffb-1786-4b86-95cc-f2ee0cd455bf@web.de>
-Date: Sat, 16 Mar 2024 13:21:37 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jysqc5wx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29D24C433C7;
+	Sat, 16 Mar 2024 14:06:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710597991;
+	bh=QKLuZWkkygYcB6WBv1qdecfbnnJIK9dRYC9Tpk4yfRQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jysqc5wxajcRPLEwBcjYSgMy0/WGvTlUCo1KvJm4lv+uZCbD593hbnXWZnn8TQs3X
+	 B54etI8pwPYhwD/QSfGL3gbo9l+pT6BIj2h+3Lwqxi5C5LyImhg01dUrkxMoO1ETwk
+	 wmdO9Qe0DceAfn4AOfIkj9rUF5/SR7f+LJy+npQkYEkAgCnoBkTkzAhnSnRut/4erV
+	 Na20PIq1YW4I9MZlLxSQAwtdWw9hgZ+YcUGQcro7pTkYrUnEDWmD0w8WMzLSdUvJ57
+	 dh1gsqWEivN9sIoCFn4gkc8lbpIxP5CxAOixjV3gL/Rz3V6cNE2Umq7KJwGtLF7EGo
+	 OL/zpkojGABYQ==
+Date: Sat, 16 Mar 2024 14:06:16 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Colin Ian King <colin.i.king@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Cosmin
+ Tanislav <cosmin.tanislav@analog.com>, linux-iio@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] iio: accel: adxl367: Remove second semicolon
+Message-ID: <20240316140616.09301073@jic23-huawei>
+In-Reply-To: <717ad48efa7ffc6cc1960be05558e9cbf0b6c4c8.camel@gmail.com>
+References: <20240315091436.2430227-1-colin.i.king@gmail.com>
+	<717ad48efa7ffc6cc1960be05558e9cbf0b6c4c8.camel@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: media: rcar-csi2: Use common error handling code in
- rcsi2_parse_dt()
-Content-Language: en-GB
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <8b4203dc-bc0a-4c00-8862-e2d0ed6e346b@web.de>
- <CAMuHMdWwegdks3eEviEsBJE3AvUVKbZqHduYdhuwz=8xTMDs5g@mail.gmail.com>
- <260d82b6-e7fc-40c3-b414-50a883709fd7@moroto.mountain>
- <ZeWnD9YrXLWJYmhT@kekkonen.localdomain>
- <cc121bef-8bca-44e6-81aa-bf8e682bdaf5@moroto.mountain>
- <20240316094652.GC2092253@ragnatech.se>
- <0b77e146-df2f-4fe1-a4e8-206a62a5ac59@moroto.mountain>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <0b77e146-df2f-4fe1-a4e8-206a62a5ac59@moroto.mountain>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:CYSazAyFcqwG1K8ccAxElR2MFdI5csaNRfKL+ujpwkyo75gM003
- sMdgTgvdVoJrXQqCpIJj8HopF1R1OxI9nPHiSzk7esSS/5NYTTfIlgcVjVkkgwZEbs7216C
- EmoXtU4prJmU/9IoNYgX3mpnRvbl5gb+CtrmeoTjC2mz0nI1in6INRD7iQygE7G9GbfJqI4
- hkJTtovI1y/iB5bGh0omQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:vkl82kTfK7s=;dI3oT/euE+q6zJprge2r7OksWoN
- y+lxnkJvAhGefLtmu4hbfogcGfAA5IK3XcSyWPTCm6pBxqb3ENZhR7YQ15RTd0ycw8fRjuNJ2
- 8hip2ZKvg/3cdQxL3fbNdynx4kk2mSv9PI56RDP6PTjl4FPZ/QQMGrwo01R+FMBN+VZVMBlA0
- fcQBJrxNrdQVk0Gge534xgeLY5MZWIwZCdern3as+xezRNoRKLCo7KJYuNnmMLp8GLZhlbsJX
- p5WZZo/3MSWAHrifuqusg9QTdalqtiYQwZtLfRNBmhnS1OZhreoiiXJBxcqjsNNFgEjQ7sxqK
- OoDhHzNDmKO6ydMziKB/TVB/HYiViICXeRmnUym8DoTDFeQ8BNFKhzfM1ugpQBMETa36BNdv+
- UfUb3npTGPcTQnjENWrXFhblDUC2oTqgp9YEK6PRh/TD5AD43eN704VlyalWMXY3CymQO5oeO
- DM93HPfmqQE9XSwQFny/gMwvU0plaUwh2UKUiATd1DYutEd0SX5lL+39MWPyt+mMtFiWEWp+Z
- KDBHP7dJ/07uVclbXQaJ+LuGm/m0ZR7HN1MzywA9oDYZUMoGZXmcj27/GMiScFgX/Xzc2r05o
- eZLtGxx/YH9qXy9oK3JWJPSjpU8V/IkbXym6pZ6RP/Xpd24gwTOk3XsWxHyawQwxjNFOOsYZs
- M3xygpKuYZPdWF9rBa2Za65h6XDDW1ccdAda+Xg/plMjnRsGA2jn1MiV/vhJSSFLhBQcgdfzA
- SEBs4paGpOwy7+QAFHgkJq5125wLhiuNua1Czq3tNywIB/eKuBZNiAf5IbiLit1oN33DEE+60
- mKtP++GiXuLFsR3YsPeJnUlOs4HhEGdUJGNLSK/o81GfM=
+Content-Transfer-Encoding: quoted-printable
 
-> I said I would send a couple of these but then Markus went ahead and
-> sent the patches that I was going to write...
+On Fri, 15 Mar 2024 12:51:07 +0100
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-I dared also to touch some software components.
+> On Fri, 2024-03-15 at 09:14 +0000, Colin Ian King wrote:
+> > There is a statement with two semicolons. Remove the second one, it
+> > is redundant.
+> >=20
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> > --- =20
+>=20
+> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+Thanks Colin.
+
+oops.
+
+Applied to the togreg-normal branch of iio.git, but note I'll not rush
+this in, so will be the 6.10 merge window now.
+
+Jonathan
 
 
->                                                And then it was like,
-> "Oh, these have some questionable style issues"
+>=20
+> > =C2=A0drivers/iio/accel/adxl367.c | 2 +-
+> > =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/iio/accel/adxl367.c b/drivers/iio/accel/adxl367.c
+> > index 210228affb80..5cf4828a5eb5 100644
+> > --- a/drivers/iio/accel/adxl367.c
+> > +++ b/drivers/iio/accel/adxl367.c
+> > @@ -621,7 +621,7 @@ static int _adxl367_set_odr(struct adxl367_state *s=
+t, enum
+> > adxl367_odr odr)
+> > =C2=A0static int adxl367_set_odr(struct iio_dev *indio_dev, enum adxl36=
+7_odr odr)
+> > =C2=A0{
+> > =C2=A0	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+> > -		struct adxl367_state *st =3D iio_priv(indio_dev);;
+> > +		struct adxl367_state *st =3D iio_priv(indio_dev);
+> > =C2=A0		int ret;
+> > =C2=A0
+> > =C2=A0		guard(mutex)(&st->lock); =20
+>=20
 
-The patch review is still evolving, isn't it?
-
-
-> so it wasn't clear what was happening and I lost track.
-
-I find such information surprising.
-
-
-There are various source code places left over which could be adjusted somehow.
-
-Some contributors would appreciate further clarifications according to
-desirable collateral evolution.
-
-See also:
-question about kernel cocci and cleanup.h
-2024-03-07
-https://lore.kernel.org/cocci/CO1PR11MB49149F1167679926A2917E0997202@CO1PR11MB4914.namprd11.prod.outlook.com/
-
-Regards,
-Markus
