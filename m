@@ -1,38 +1,38 @@
 Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CA455C07;
-	Mon, 18 Mar 2024 17:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0DC55C14;
+	Mon, 18 Mar 2024 18:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710784721; cv=none; b=akglDLlIlhG5at42Y4tSdh8eNopnHqyTZK5B9D4pG0PWmvIqvgY+Gtfy7hBaVvHBB3HMo8l4OqZ+xqAw4dtRaglhiT6WL2YR7RG5Fvwz3vkSb3Srr4zbJI0J+iAkIX19/+LpkgMhJBMV4FcHMh5xZfe79l57Zk1Hj8OMnwTWeZQ=
+	t=1710785568; cv=none; b=A+iqydobbMD5cA3i3Cn1I3zYXgomo1EkDM9ZpLo3CBSIWYWCdEA8llhm9wMiQwAiFk/w3AgFTgzKHGU6mdG7+JloF3Pxp3utvMTMPmUN4V50qUKXzuxHWgU4yY6S10ctIpV5klJNhgg2uolVIwWhUeeawXYU9EcwBmNinuIVV5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710784721; c=relaxed/simple;
-	bh=TPxnDE5bkgZGAxq2z8iGbeup3QwNkwr5USo3SDnON2c=;
+	s=arc-20240116; t=1710785568; c=relaxed/simple;
+	bh=Lac3YRJkU4gFApnJTCBqCe0z/9YKT7CxPuYov4fasoY=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=DWiDlyPewrB3iklEiLu6BL7pf0/fKZJEbisx0nYciDFrz8F90bepAhrO12X+dgE5Pxt4aP2iAd/CPr45o0lFoW5HfoHe9IaqaXfKwIGkhFs33nigZgbCrhXm0KwEUnTT8Ns8CaaIHFP4/8uuZQ54KAZrrg7c5ksxUJ+KypzqRqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=V0+kA6Ha; arc=none smtp.client-ip=212.227.17.11
+	 In-Reply-To:Content-Type; b=cPKskl7HAkYWRR0OJdJcfNH+UsXHj958GpqsQx9l6zGILeZwi9/pYoO9rNcQpk7uiar7NoUnDwaxyh7DpuC3DkN1tz6WerLRM9ryMtuiFhXID0z//Nwm/tvorPuvyVPJxR53Rl1CGWmYVN04dpYOFnHqOUzBffssAwMFxcroygY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DtiAJ4mL; arc=none smtp.client-ip=212.227.17.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="V0+kA6Ha"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DtiAJ4mL"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1710784692; x=1711389492; i=markus.elfring@web.de;
-	bh=EY0Hjw4+w2olzLszyx5nxJuGBBuLjuPZp0CFP/bSy4c=;
+	s=s29768273; t=1710785542; x=1711390342; i=markus.elfring@web.de;
+	bh=Lac3YRJkU4gFApnJTCBqCe0z/9YKT7CxPuYov4fasoY=;
 	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
 	 In-Reply-To;
-	b=V0+kA6HaGYAa/C6ly7UFSp2H0nnpDWqAKynSkm9PMW1zp4uwDho8xbcsfVta02IC
-	 TECMyfpHJAgb6tzjOatfb4qt4pKi5/jxsWJBWHFhKpSrdkp538aOPB6WOYHfVjOyy
-	 qIT67Jp8LptmP5kgPUS6JDfSSdeVkGMpSYzZbTdb55Vl0cj/BrGPqo+0CcqbnCpWU
-	 leM7PVYh0icWowhyZfGGQKJff78MCjMUTx/hmO4gqEvwGILyUlNBeeRIMZrDWYkB5
-	 pPUbMmuiGZk200j+p9N1ctRaN8P6SDZN3pBPF/GuNoCOzlmVtewNGA2UcpsHYo0zv
-	 eiW33T1QVzxs8Zhb5w==
+	b=DtiAJ4mL+fiMEmlLYNE+iHg/3zZ03m+na+DnFX9rNp0X8vC3m1YzzzfbqIbNUz4M
+	 Dt/DoYRZ0bTHZMXQhjGQI5H+aW5q/a5zWyI2OiPdDqCrEIY13lTnnTv64UmgOhJlP
+	 AdP1de9DaQxLPmVPhHjOMruAxmUu8IjvBxqgt1t6o6/JqA2aLA8ttQPPqZgEPNpVd
+	 nnPPPOBzYznZLns/h1E7VD70fWADr5hWWCz4+RfWiMZaxts+7fOHzhLOJi0dCa8xQ
+	 1WhA2QoKteLDviVFmPYk2hYl3ekUd1OQ3YXoY7bsM5TWPGLkVHKXgzMZZteTc6bIV
+	 SZWCtywFzYFN47nToA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MEUW8-1rXUSX3rQo-00GPBA; Mon, 18
- Mar 2024 18:58:12 +0100
-Message-ID: <4fe6f68a-786c-4e3d-b97d-847d6965d1d3@web.de>
-Date: Mon, 18 Mar 2024 18:58:10 +0100
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MqIFF-1r0cvV1ZHH-00nKIM; Mon, 18
+ Mar 2024 19:12:22 +0100
+Message-ID: <d5efc400-8dbc-4aee-9fb5-2993e6830e2c@web.de>
+Date: Mon, 18 Mar 2024 19:12:21 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -62,49 +62,39 @@ From: Markus Elfring <Markus.Elfring@web.de>
 In-Reply-To: <20240317193714.403132-5-ayushdevel1325@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:r2F2bDMqhKgRohtQ/KunHakzfn6SdVEejCaMS6iHsj0TxlpYJDf
- RrWyxna0jlyusRSuyumnI75ggM8jsvsRXuSkQ+/ETO/lUp0oSXC9pz2E4IlOZ9wQh6jBCds
- bS85YDJhYeS6L89hUauyhAwrYwYEqHG2jr+keShniaDz4CFsK+CsnljCojrVTaPQA/g3eCA
- Ml3JtrgsjHUHmOJ/28sfw==
+X-Provags-ID: V03:K1:d3rsWjua/euVmCusMEdf9EWPGyz5EyJVackRp6jiopEEya/axKM
+ 7KtTisuDqOjT7g+BpfBqQUwvkJdzBesfLFecqA+eroXI5usXRM1yMhefzveu38JXth+ok/K
+ 9memp43OQwwmFTM+1S32xqzmjH/zYdRag8frGqdD+AMSRfF6t28WhqRCmDHj5Qt7AtzUka7
+ 533VbMOvhlXUEbK3I4QyQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ghagHPhdV3o=;yuht04V33nbPduIWJm5LROvF4bF
- /mLWU5oe42zYF7JLibuZkzWFb+gf+YmBIGHGdYu4UCfnOp1aiD+sRl3R7M76F3vkCAhgLNcOF
- YjrgrL7+payvk4Wh2j/YXEAp39TNY52nowu6jOq3so6bt55wnnr5IqPCqWTUA6dhWuzeAwgBY
- SCwBY2LDqW/iwYqiS+5uqWMvA47t+fIgy2ir9HyQBMjF/UUtv/cfjIft4uDta4ez6rPWaBBmh
- qaUoej3dKW0eeEUNPLLWqqasPR+aYU6deVd+jKgXBCDFV8J8nofHQiO0aosdcgnILhANO1boy
- jgUU6rkvVXubH6a6U7HQwbdKWNoi2Iy8gQ5PbyoQwlzWno8Yx4FJJKNv1saruY0/YAbamVukN
- u/CSjXJfPAseIQrjvH49stmGF7mDfANdB7bAvwpkdB8wbzOn4t8zRWLRfbDYXDuf592Qpd5eo
- 39pT6uzskfyulbIaJXoT/dGDq8ctIlTfqRSIGFfHYuCyxqA3HDTJVaY8s/cBK+RUqXcB5k+yW
- MAJmdQt3fCxZkTVTfPkzdNdL+5UnmM2uilI9Fuf7Gz9fRmTe+xl4aD+xqrnEr9ZepO0VLu9vF
- owmdMlWsWtxpofgSPasQq0DC3kgfG2amOqvHHIO0gFJYk7iXrJzp4RzkfWfhJIw/RglljeDdP
- w9aSMI+WiY6LOREuBw7/GjP/jhF4xDv0Upy68hS4CyIAXctr0/7OysI0PRa1iiRayjj7DhR4z
- 1HtmAUAxid+S57vX0IMxdlzb52Tfl0xs4rwm+MEh4WjqI8sQUReeKqpeAPExHAMVh831maXZV
- Hik+fmwx5psU57Jpl6tquYdXEHmYGXV+ZW7IKksyULOdc=
+UI-OutboundReport: notjunk:1;M01:P0:FOAv7gLOqbk=;LIFw7TE+o2L/aes12HD1LR9Y1I0
+ VDIjhJs70jys6vXqjVzsgrWtqrEk9pchL9A+mGrUuU99U2rzuYEvJe3Tp0/WZpfS7FCgkZt6n
+ wf4MuB3QnaDd3jyAg6wfQFcWpPpzY2mJUXIsFtteJWmXX8LxUf84i6opANHArV6uPrTgW1Bt8
+ ye49vSH5h8mLrS5Egj+E7vN+eTIpzd3pr0XqiOjpEvUeXtGjj/AD53pnNayTJy8s8PsfW9/+Q
+ 8amXd2uh1sYJX6GK1MqiJHlaRy33xCM69nyFSCNOqHzFCbrR1BqGddY7yKRALti7PUmdUTe7p
+ 5Q5I2FcCXUoI6HQburx4jGu1ftlbnqcpp/0FdKovJI95vXuxYf7RIuDad8S5vz0Yyt84Rb8Wr
+ G/tGX7Qvs6dgatLzJlUQLjfJ3jd/wzjfB1j3QFpAiIuef8TUmvokOgPESnwR96E7H2c/Ul6j+
+ q7BB1qJD1+B+GF4520sj1KEIsePWDJrlvGb/DRgyYkHBxAFHmIfEPfxR8YVHQMw+U3FvWMLcv
+ mnxV4xtKtb/7cklHsq3MY09j55UNMdKEhngLtNn8Ua1Ion3GAWEqv4tA1+bL07hm6nCfinpeU
+ tIA/Z3AFQMJ/LM+kKDJZQd8PmaZCY52VMv5YnxybipwTuwOK3E3DuJHYQH9btP8v7746qxjuH
+ 2C/xWUSp6SGrPueZ+BvTReM5nrolHLfNQUl9cMU9gCl9buwICLJYiuQtu+jDn6QKiBDkyrife
+ Lj0OzKfxvNPeK8h2fp+zxep8H/B417sLSJpY4Fy1zJIr+jNxaiAsSgLeoOjgpFRQZHylw4n6o
+ e1HDP836GHMfIfjaEKUq9QklADBV+IztnZKY+buyRd+Bs=
 
 =E2=80=A6
-> +++ b/drivers/misc/mikrobus/mikrobus_core.c
+> +++ b/drivers/misc/mikrobus/mikrobus_core.h
 =E2=80=A6
-> +static int mikrobus_pinctrl_setup(struct mikrobus_port *port,
-> +				  struct addon_board_info *board)
-> +{
-> +	int ret;
-> +
-> +	if (!board || board->pin_state[MIKROBUS_PIN_PWM] =3D=3D MIKROBUS_STATE=
-_PWM)
-> +		ret =3D mikrobus_pinctrl_select(port, "pwm_default");
-> +	else
-> +		ret =3D mikrobus_pinctrl_select(port, "pwm_gpio");
+> +#ifndef __MIKROBUS_H
+> +#define __MIKROBUS_H
 =E2=80=A6
 
-How do you think about to avoid the specification of a bit of duplicate so=
-urce code here
-by using conditional operator expressions?
+I suggest to avoid the specification of leading underscores for include gu=
+ards.
 
-	ret =3D mikrobus_pinctrl_select(port,
-				      ((!board ||
-					board->pin_state[MIKROBUS_PIN_PWM] =3D=3D MIKROBUS_STATE_PWM)
-				      ? "pwm_default"
-				      : "pwm_gpio"));
+See also:
+https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
+efine+a+reserved+identifier#DCL37C.Donotdeclareordefineareservedidentifier=
+-NoncompliantCodeExample%28IncludeGuard%29
 
 
 Regards,
