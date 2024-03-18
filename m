@@ -1,142 +1,110 @@
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2073.outbound.protection.outlook.com [40.107.237.73])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241013612C;
-	Mon, 18 Mar 2024 11:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710760707; cv=fail; b=TrvSqUWVJiu89EPkxp9p2nMp/HXh8uw4G9gA0IXPpwydyQIny5dvlYLfUQaa/yXKUKxoThvba/nmpjHQFsuySElYuct/hjd+TMCEB60eM96VZz9rydXPFOHIBL9AJt3wAsSjHn8Uptsr3Wxs6hArWzmyP68YpjVUBgnkgEyiPLI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710760707; c=relaxed/simple;
-	bh=cvOet1D9kJ8Ptt5gVjtjCJ2rM+LMJmVDeqTgAV+AKeo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fJ4NmMlTtQGGHqFfmIP9lW3jjZmGliO9Ke7FrxR90RBi2IEyjFhuqYGA16lkrYgsm5/Dvtz0WspfZIBlaUxwY8OuftXxUACi3C989/d5izD007OsA2qj0KqlX1pxnG7Gb/28mNTePmFvrLgbjHAUq1CumWzLn9mhkz4Kw0RV2Bw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=asem.it; spf=pass smtp.mailfrom=asem.it; dkim=pass (2048-bit key) header.d=asem.it header.i=@asem.it header.b=EfVpeZjs; arc=fail smtp.client-ip=40.107.237.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=asem.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asem.it
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ECC55780;
+	Mon, 18 Mar 2024 17:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1710783334; cv=none; b=uSAp/L+X2LXIgdxAT2Gi0kLJlteqomXB1xcuOZfzrIbq8Xkp7yibdOIIWtU5wqJkdnGLRDq5X/5KkyNJpYCEKrMHcEzl0lw1vjcbHmX58ZtqCLCURSFX8tIk1HE6J9RGPDLqGPL9jR6eFryZvcBKsxrTirJ0e5V85ts/K7o6siU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1710783334; c=relaxed/simple;
+	bh=XoJNQUUFayCUG3xRrAmVCwbMxRg8KixIWe/vEYZcOPQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=dVR6nTDi4hQOKrzpLnGlrnNuV/TbKF7BK8o9R1ajht5KcOdjWshnkhQmzzwg9fZibLtODPmEtukOysyiadLp5wFe+EaanY5HBefm2gUkdHtOBxS9jVfx1fPFEo3fnnnY1nDA45rlP5b3zAH10D1qhQrl3RH954mqG7HoBOurxow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JogwiI17; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=asem.it header.i=@asem.it header.b="EfVpeZjs"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bUUvgFZhILi7Tx7wROEWiIhgGkXUkMNnPMDYim11ZkZXhaIa4aRJ2/18oLmb+1EsYH5OhPcIGReCPVQZofvm6UNntGCDJHJ0s2yNg31Otpc84pMl3a15TuasfQQCGH49Imq3BEZXxiSi6X5dj+DAFCz13hTy06GL5YodhQQqBj4jTKhU+d9lUFsj/tn95+n/qeGK2s4p6F8ZXqzgPUBmex3Uj9GbhDHw1mPMgpYXkEc9olhBCmS3nyxgXm8ofXhjNmsBdBbP/9oaJqbNcHZ3uyGYFml5WQYVMnivfmktK6eAy9rUmQuAJpuMsiBzGMhBDRxO6XEcePhvVuRIxtyxVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4Q7s2oeB8PjHAoDn6LW/FRIrE6Tm52EMITyyGLnEHXE=;
- b=hWKGZsoofDFe4QzBccGcI5mbleVrTerv/10pfKfAsuR+KpNKNH1V13immdm//b9s1BSGjpkVre80t1xSyUkXiR4bAPU7xHu5ra7QeG3E1QqoAASnKXiJk6KCxY83u05kffCJ35LJS8bGfKNAIgLtuMjrrqlQkv+nI50glZs6fPmiZUqMH/mLc/fLjAeLaPEhtd77Kiyr1xm+xvO+dslo/sNcNeyDZDgIz+VoWfC0X6hlZLj+hHBYJ1al5Beci4LmP6H1x2kl2eSQjFK7Gp/qUWeTheuGuy/whdVR3TeZs2OrqczwuoJGDAPlIZhHiEr3WBEeDOjl8zNa+L1BM9ZHyQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=asem.it; dmarc=pass action=none header.from=asem.it; dkim=pass
- header.d=asem.it; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=asem.it; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4Q7s2oeB8PjHAoDn6LW/FRIrE6Tm52EMITyyGLnEHXE=;
- b=EfVpeZjsQ+dxSQFgey8m5WIxNw4qUMw57mCgja6g/s9XF5et3qkzm+I4+N8/Yfa28EQk+jojRFUcL934RSLiNDXBSudPlYeMd7lak6rQFkBvXVMUgkzL8Co3EJPfpD06EHWI6C9p6LidZmtXueLkiRqwgKgO3JtQkGhrYJ6woGCGx+O3u+j9DpdXixmluC4udMzloNRGbn7CaefxMStoD7qu4HJiJm2KNed4lpD1vGlJusAeGEQWVihHebL3XNI7s4QKv6SS0ZKZ0XDa9XSY3CC1/RL9de+BgpzgbF+YDaE1/iksLFPJrCXjAPWHAxIwaj0hOg4mzSflFIC5dpRRQg==
-Received: from PH0PR22MB3789.namprd22.prod.outlook.com (2603:10b6:510:29c::11)
- by PH7PR22MB3685.namprd22.prod.outlook.com (2603:10b6:510:1d4::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.26; Mon, 18 Mar
- 2024 11:18:21 +0000
-Received: from PH0PR22MB3789.namprd22.prod.outlook.com
- ([fe80::35ce:ff48:fa8b:d4a7]) by PH0PR22MB3789.namprd22.prod.outlook.com
- ([fe80::35ce:ff48:fa8b:d4a7%7]) with mapi id 15.20.7386.025; Mon, 18 Mar 2024
- 11:18:21 +0000
-From: FLAVIO SULIGOI <f.suligoi@asem.it>
-To: 'Dan Carpenter' <dan.carpenter@linaro.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>
-CC: Lee Jones <lee@kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] backlight: mp3309c: fix signedness bug in
- mp3309c_parse_fwnode()
-Thread-Topic: [PATCH] backlight: mp3309c: fix signedness bug in
- mp3309c_parse_fwnode()
-Thread-Index: AQHaeSX7sx3kNaLcF0SXkvq4SwekQQ==
-Date: Mon, 18 Mar 2024 11:18:20 +0000
-Message-ID:
- <PH0PR22MB37894A0A8F267262A2A9C0A3F92D2@PH0PR22MB3789.namprd22.prod.outlook.com>
-References: <74347f67-360d-4513-8939-595e3c4764fa@moroto.mountain>
-In-Reply-To: <74347f67-360d-4513-8939-595e3c4764fa@moroto.mountain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=asem.it;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR22MB3789:EE_|PH7PR22MB3685:EE_
-x-ms-office365-filtering-correlation-id: d5c1708b-ac0e-49a2-4403-08dc473d1e7e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info:
- Mqia5YLOMwOlaPuxhbyzY0CtWAI3rragLclSKvlbfVjx/FA8+LUb1EXbUroz612M5RSANvkeeDjPziCryhehF15tpr1QH9XR1eiA8m2J+U0ufG47hgWRbl78GTVVgkHZhZE5877QIcVeqO+pwHTyEV4ipHFnAm1PDaRRVIu1s5S5TF/hPAY8JGL8IFi+eOc22Ejr1LaAUZJYSXfliLomwsjkVIW2ogPdG4JBZCN6D1r/0sjjrAQE1fKAuyF2cMnKbZwW3bhRu+0QYlDbBYancrtBNCL463detpj7mxXZhnjW/j3DvWSMr6kpOK2t1qnREmAWqdbDjjxpRKKbvWXB6Z8m+9TVSBQROQjRGEmtKHpDlb0ZH+Yo8tDKuN4MZcHBMeBj3iLE5NeO8flou52izqIGJN0///msai1JYu7WF7KFm0TbiH1YQ8T8LWrRxcDnGA60mdlIHFWaA8p2NgdLzGtHmh5bFTx4iGAI41NoL5wKrAT3+aVtfnZ6Cwg1e9eNUpw1s+ucOeG/pQtcwA+QdptXjBKu+pt2C1ERz+gJYYDI1OkcAOweUjA/yCMXVOW/Hxb0qLpAcHl8eaWVAA1i9aNOGVEp87Sm/b7542j6HtnhPZeaXlK26rWX1MpgGAlf6JkVms+bqwkyHlAI10tLGQEP4djAW4tNu7clXjv8Ux8PAIGsxl/0yqRbnzlhKJFEaBQLBEhrQUPiBwizBCh2Og==
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR22MB3789.namprd22.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015)(7416005)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?NlxnOYpFJS/WVEtnmekhvgM2oG0U7mrTo4khGgA6a0TLYBcdJsMCRi06lCJn?=
- =?us-ascii?Q?LA18yrKcK9Frm+ZHXM4rhFzLvJRv/IG385oPy+D0T9WsAgQF3NezmUZH+VXA?=
- =?us-ascii?Q?39Uecp57hp1g49g+aTQzNiMn9a9cnJMsk2uwx0wJgnQ0NHcxrSPepvCqOqtb?=
- =?us-ascii?Q?x7w7WHOeQ4ZPgY4CgAMwtwmIPG2Dkkix9N0kupo5RbMrZ76SCKbCWng5UY2e?=
- =?us-ascii?Q?mjwHAvzLZ104zjP6ZDjt2hr9E+WZSHXxrz02XaMXOOhe5pD14zlS4iEdtenw?=
- =?us-ascii?Q?tk/CYOwxaztA1U6ogA9wri9HIlRG7XM3QjwaofFFIZzZSIrOdlDNntw5/7f1?=
- =?us-ascii?Q?JB7HqM0Y3hd7TR96N2ut120qZYYamMjj9/1ETrJt695+/Kf3isPjhUq/lIS0?=
- =?us-ascii?Q?4gzHVQTozVQs9fN7VznOvFBgODKXdgdBFTpHA3wy0m8InWsvnBtyNYtltBZ3?=
- =?us-ascii?Q?TTTCcr+ffluXWN0H8EouVTL+uuGkg/KUtTvTkhM5CU6CEJrukMgE4S8tk4hv?=
- =?us-ascii?Q?7V2todh3ziJXBLxaP1HWqaVRCFPBhBKj4cpuiWrfR/f78kx7Gz4LC4avMt/C?=
- =?us-ascii?Q?wzYaG21xIiOJpJYBRKj5SYA13iml9/AUMEARuBinwoj6YIU7HL+tISk3X04w?=
- =?us-ascii?Q?0r97nEhHV0slVkvBRuN6xCCvojIRCyFe+axXDk+L34Dq4AiI7O7dG/yTtz6x?=
- =?us-ascii?Q?0LziNgbR22FkGmReSvGNM7EJWmKCYj31GvcseqcT/ohiGkRFPlmHQndpdwrY?=
- =?us-ascii?Q?y6n39B3B2dNl61tj0pJa/2oHjn6c2OSvnB07XHdnFQSr0bN95AsEHqZsuSYm?=
- =?us-ascii?Q?9l7ydYmYTpg1LIEuKRHEXu5FUIsADpzzOx1cxyBIsnM2klXlkSdP2g8WmCIw?=
- =?us-ascii?Q?a1kDoezROgTCZ+vpbCYhPWPjQc+PtQueqIp+p/dK5UdAXt2Fgt7QsISlLYdI?=
- =?us-ascii?Q?/nNBOPiX392y7qXqA2wcMpK9lSs7Ubd7Vy799iRoD0JWB5IOW0zpc0baxgy+?=
- =?us-ascii?Q?kNZvuRHyOZHZnhm6b0vVosOIZuOfsUx2997fPqNbwNyN93WXsv3ERTn70VAr?=
- =?us-ascii?Q?Rpl8/Pn+MiFjZBJmFQeMOCXm+rFdmiA0W2bwcp2Lz2/+pFrTIhAmOGdman5v?=
- =?us-ascii?Q?4eJq1QezwSlppGk9RBxJ9llA+NegeM5lHdD9Ta0nU4sTfhqXWUZ15fJ+RU5e?=
- =?us-ascii?Q?BWABO5o4Vbk0zeuqstKAjmhAnQrn1r9OZzzNxs0DR/IaEhDFdboSviDG74n6?=
- =?us-ascii?Q?PDRV/88Z5YfSDdOsD7n1Kc9HT/5FALpA1+ARwxAkdEmHm0A22TKYoFHFEdAl?=
- =?us-ascii?Q?j3FLp+aNj67PK3uJAGi07oUMyfQeyfnmYKtoR2X65ezJpk2NULwE+7u9LW2l?=
- =?us-ascii?Q?dHeBaxbBV6R5jThV7tCWz9NepL1yebstHUUIImYZvSeddM1ckzVjcjAr2SQS?=
- =?us-ascii?Q?hzUr1vB5aH2LFMuZEta6Sd8zx0M7qh+jf5Er0Kq/z9usgw/xA17mqa3Y4Fql?=
- =?us-ascii?Q?uXOUn4r1/+kJyg6MHvM3wWyJNu+wyNFFB9HIdqYgsJPb9uxdZTTDg0pcCvWL?=
- =?us-ascii?Q?J813qzutT8oJ9Q5MzLVS1MSQaWLTJ/JoaBoCjhomhWFxx7FC/H436stBArYq?=
- =?us-ascii?Q?yu1VNQ3yKDbykM1u6YH5BBw=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JogwiI17"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1710783296; x=1711388096; i=markus.elfring@web.de;
+	bh=zL2UFIO2avZuf4cHRjFFmzwc7ks5q6OVftTUkucV4BQ=;
+	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
+	 In-Reply-To;
+	b=JogwiI17BOi49/yQuCytE7MPZ/qIpHhWfyoqhHAd1TiqdebvHZReeoEAEJSrIeEN
+	 DX3zIUxRV8l7Bx7gh0YwFqKSx1gKdlhHNX1961842Z2I6fbVA2Qk+6VDWB76T92n0
+	 F2v1Z+ULfkSf/50Zf0cCOiTaNmG7vzwMFcFjQhFGduQl6nnd9CocAGpnT/hY0pZgk
+	 mKBXG4pRtCuoMQPwCwy8UmhLKG29gzFTUJIQ77MJ3llLubG0VDuNz2d93DZMhyk8p
+	 keSdAdQ5byNbGHds15H2XdG5kOeOEfWCHr4jJu8WsJVf5XsQPOp8NM93EXwNwQj/Q
+	 vSNz9+PuUCu6RYyE1g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MzkSZ-1qrOwA3vX7-00vVE0; Mon, 18
+ Mar 2024 18:34:56 +0100
+Message-ID: <7d834747-0004-4556-b260-c747074a5df6@web.de>
+Date: Mon, 18 Mar 2024 18:34:47 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: asem.it
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR22MB3789.namprd22.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5c1708b-ac0e-49a2-4403-08dc473d1e7e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2024 11:18:20.9565
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 855b093e-7340-45c7-9f0c-96150415893e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gbxVntwZCZ5huYKYrtZvqddYt2D+xwUJAAyapVrz2Y5WfLkPnUGq4Sk4jCSEXzyUfvO8PS2aRWDxbRbeVnK5Mn0i863W3MJ853O0EAYR9AwCkJCCw158ruYEMiGZizpp
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR22MB3685
+User-Agent: Mozilla Thunderbird
+To: Ayush Singh <ayushdevel1325@gmail.com>,
+ Vaishnav M A <vaishnav@beagleboard.org>, devicetree@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, lorforlinux@beagleboard.org,
+ greybus-dev@lists.linaro.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Alex Elder <elder@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, Conor Dooley <conor+dt@kernel.org>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jason Kridner <jkridner@beagleboard.org>, Johan Hovold <johan@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Mark Brown <broonie@kernel.org>, Nishanth Menon <nm@ti.com>,
+ Rob Herring <robh@kernel.org>, Robert Nelson
+ <robertcnelson@beagleboard.org>, Tero Kristo <kristo@kernel.org>,
+ Vaishnav M A <vaishnav.a@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+References: <20240317193714.403132-5-ayushdevel1325@gmail.com>
+Subject: Re: [PATCH v4 4/5] mikrobus: Add mikroBUS driver
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240317193714.403132-5-ayushdevel1325@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:rGQO4fDn0vNN389tBnKe7onogTvUErLvvTXduyGL6pWKFdmDEqy
+ MCYn5pkmCHDACrPUJoNy2C7GvGm1hYCvBujMK+WsDmVllQ2MYfQf5+4qeUPkILbJYGTHjoy
+ cMNmBfhajyMkcoBbxdstbnNIoU6tToHIwCqiARcUKBEdM5V/z5GbrKM5TGJjdtTWsSdEl7J
+ mBvYGlMAiI8JvT71ryP2A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:7zD/DEBSM+I=;jR8jlBRRX3dOz59O2ZMyBlQGtol
+ u0BPn49w8vjSOeOdVkdxwlyYABexe3OvWICT6qmI9Apqsf9MKaxT8EIV5+CV04pIdjvwBE896
+ 1ueen8J87DYHuiI3PzZnN+2NoQbCptvE68Jp6AymKTBzPe1vw2VjsReQIqjUJJiKlsQ2jAePP
+ Yi/m9dWJ1XlzlQBGURVqOHxAn4n9S+bWzqs6W3pULZkbgnMH8BIU/XqkCnCxReW/TiGzEii/G
+ EFpvohWYchriay7ZZv4oP+nPZ633qrUYakf2SIlL69r/Rrvi3Kzze5ppl5HJAmnYB5Wvy0IkZ
+ 5SLUhpV/0DsR4+SLaUn4EEFq2rjOdWZWriQKIBXcw8/FhoEUQq8tHOeaaxy/AF+wsSUp+15q+
+ k10dFxBhHnOfJ2jBWXmNfsIqj1iGGquEu8QzAV69obc26noD1e9qnKhVzWZm8mil9YyHiLYSl
+ sDcXCAaccEogysA0PlBqbwcWC38hnHB2qAU89hV63umMfwr/VqD3P30E6/haT6MScpodO0tz0
+ rTIaj1KNEQp2qe2SYILnp1syn1GTieirb/cnkJmoFoITI/Y66OX+CAVdyeHaJYDMStfLSljUE
+ NnEzzX0PWIkut/Rkg3FOEcPeovfKjha0PoMGYm/x3QDpmDXnMkuunqrxn37M1Hxh5CkcozJzO
+ wrXAIyT4AoPvF55AwkS19hbVqbV9J8V5cXn6l0OYdxyjXn+HZZKcaXedRBYmazomRlXQa7dX/
+ jFczj4w8pDvlGGnOeRqD3awYga8yynVb2zhc9y2ELKVi6jiWv1GLaNSm87XUSpL2l6Nc/Rc3T
+ kES1V8VyySJ69k0OKaP1TK1gG/zBpZ9dRvmKLmTiF3McI=
 
-Hi Dan,
+=E2=80=A6
+> +++ b/drivers/misc/mikrobus/mikrobus_core.c
+=E2=80=A6
+> +static int mikrobus_pinctrl_select(struct mikrobus_port *port,
+> +				   const char *pinctrl_selected)
+> +{
+> +	struct pinctrl_state *state;
+> +	int ret;
+> +
+> +	state =3D pinctrl_lookup_state(port->pinctrl, pinctrl_selected);
+> +	if (IS_ERR(state)) {
+> +		return dev_err_probe(&port->dev, PTR_ERR(state),
+> +				     "failed to find state %s",
+> +				     pinctrl_selected);
+> +	}
+=E2=80=A6
 
-> The "num_levels" variable is used to store error codes from
-> device_property_count_u32() so it needs to be signed.  This doesn't cause=
- an
-> issue at runtime because devm_kcalloc() won't allocate negative sizes.
-> However, it's still worth fixing.
->=20
-> Fixes: b54c828bdba9 ("backlight: mp3309c: Make use of device properties")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+I suggest to reconsider the need for extra curly brackets here.
 
-I've just tested on my board with the mp3309c chip, all is ok.
-Thanks!
+See also:
+Section =E2=80=9C3) Placing Braces and Spaces=E2=80=9D
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv6.8#n197
 
-Tested-by: Flavio Suligoi <f.suligoi@asem.it>
 
+Regards,
+Markus
