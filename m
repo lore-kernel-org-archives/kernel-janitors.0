@@ -1,38 +1,56 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0DC55C14;
-	Mon, 18 Mar 2024 18:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C1B5577A
+	for <kernel-janitors@vger.kernel.org>; Mon, 18 Mar 2024 18:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710785568; cv=none; b=A+iqydobbMD5cA3i3Cn1I3zYXgomo1EkDM9ZpLo3CBSIWYWCdEA8llhm9wMiQwAiFk/w3AgFTgzKHGU6mdG7+JloF3Pxp3utvMTMPmUN4V50qUKXzuxHWgU4yY6S10ctIpV5klJNhgg2uolVIwWhUeeawXYU9EcwBmNinuIVV5w=
+	t=1710787304; cv=none; b=PXRLDu+qTy14Ws4Q2D2hpMWGLQnMxusEb4AS+2CSGPhOGTW+kBrbf2c8PJFiR1G4rro3EqGs5gxo3hGkZYiNet3jMH0/P+H4kDh+8exB3jwBJSDQD7G4BC6kVdGZrlB7KNMpZRFB9ysXcRbSPm55hR/DW4ReLooNyDdFi+2Pm7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710785568; c=relaxed/simple;
-	bh=Lac3YRJkU4gFApnJTCBqCe0z/9YKT7CxPuYov4fasoY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=cPKskl7HAkYWRR0OJdJcfNH+UsXHj958GpqsQx9l6zGILeZwi9/pYoO9rNcQpk7uiar7NoUnDwaxyh7DpuC3DkN1tz6WerLRM9ryMtuiFhXID0z//Nwm/tvorPuvyVPJxR53Rl1CGWmYVN04dpYOFnHqOUzBffssAwMFxcroygY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DtiAJ4mL; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1710787304; c=relaxed/simple;
+	bh=bZ8EF+f0ojIjoq6Dr918Kh/3SPma0ywuu31m4SVF0CI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JV7zZxHGf2zgUfLx6Rwjpby0JC8Q0fOqucHs0gjCk2xpbmvU7ywa7K0bzp3TS91hoB9TGGKETmCGBUBGCDbkrgGD8/k/5GBXb5LiAkKgfzx6CO0zfFYFeM4hiYAmGcWPG1hWGVP5WABaFlkr5ZPm5ZVDpU1En/Is+SlHZJ2RJes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=dMjyIKml; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DtiAJ4mL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1710785542; x=1711390342; i=markus.elfring@web.de;
-	bh=Lac3YRJkU4gFApnJTCBqCe0z/9YKT7CxPuYov4fasoY=;
-	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
-	 In-Reply-To;
-	b=DtiAJ4mL+fiMEmlLYNE+iHg/3zZ03m+na+DnFX9rNp0X8vC3m1YzzzfbqIbNUz4M
-	 Dt/DoYRZ0bTHZMXQhjGQI5H+aW5q/a5zWyI2OiPdDqCrEIY13lTnnTv64UmgOhJlP
-	 AdP1de9DaQxLPmVPhHjOMruAxmUu8IjvBxqgt1t6o6/JqA2aLA8ttQPPqZgEPNpVd
-	 nnPPPOBzYznZLns/h1E7VD70fWADr5hWWCz4+RfWiMZaxts+7fOHzhLOJi0dCa8xQ
-	 1WhA2QoKteLDviVFmPYk2hYl3ekUd1OQ3YXoY7bsM5TWPGLkVHKXgzMZZteTc6bIV
-	 SZWCtywFzYFN47nToA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MqIFF-1r0cvV1ZHH-00nKIM; Mon, 18
- Mar 2024 19:12:22 +0100
-Message-ID: <d5efc400-8dbc-4aee-9fb5-2993e6830e2c@web.de>
-Date: Mon, 18 Mar 2024 19:12:21 +0100
+	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="dMjyIKml"
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-429f53f0b0bso29390611cf.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 18 Mar 2024 11:41:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ieee.org; s=google; t=1710787301; x=1711392101; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h2Eahz5y1g6Io4kuIZCPOk+HRz1bynd6ShyA3Ce0EGU=;
+        b=dMjyIKmlDNCMZ3lNdbPCCvzpwkAD6yspleRqJAznvikT+WCcOja2js+6+xd4hX2Asx
+         leNBm+qNaNjoi4eFFyY3lgfUq9YftU2FuLRAdViMqVHLM0GVFCTB/Di0/RvySj05y0pT
+         tMhRFiBLl+8rxRJxkk3GFhdGISmglhkBVPnug=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710787301; x=1711392101;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h2Eahz5y1g6Io4kuIZCPOk+HRz1bynd6ShyA3Ce0EGU=;
+        b=DiUU+7SRW1EGgR1axupoPu+TjVVV63bZxNuFKjFJd4Dp5jbFh5i/yi3bK3ldK/GsLs
+         pDb8J1ucBGuqy4u0Xl8V8QVPFfQEyZUkUS4dzlc9pF15Z7FBQhl5+zoTWcNlCG0Na0C5
+         XvRQQYRE4AyZ2NfGTpJaldE68Qm0238URJegFhuU9tTg1AMuUQps1NbF+NtkOEmnwj7V
+         2+FJy+petZlSunz8wFysvF4v8RvhQIUa0Cop9TDw7cpBiXA9BiiQiQuFP+JWWcVuvCAl
+         tPtZuJZxQeSMzyBdWnM2e8ROlFSW4D04lXY4dgChF7taDkEP5Dk8T1twHlSTlpr5vlsP
+         l5KA==
+X-Forwarded-Encrypted: i=1; AJvYcCVcGgnHaROrUQqi1LUN/y/ID9vRGsWwM4Eu5WaMVuYd0mUoyk1vUBXgQh4iD3KBc9myWHaNdt+jbZkM11f5jn8Grn4hJceH2is9KNaYPymG
+X-Gm-Message-State: AOJu0YwBrlxBO/HXHpQzpuqk+lr9nmkuDADtVM+L3uic9AQpPOqc33qb
+	Pd4MmV9TWgX9B+hQsrG7q0mcnetGdlPYyXt4VzltTIpvWnZC488nvXZII7ZPQw==
+X-Google-Smtp-Source: AGHT+IGa3DaP+ZQVnj5jdz1bnLoir7DhMaL4Yu8xli/2COHN6CI/dNA/dqupLIRNhbwqIkT59FDHPg==
+X-Received: by 2002:a05:622a:248:b0:430:e4ad:afbf with SMTP id c8-20020a05622a024800b00430e4adafbfmr381232qtx.20.1710787301471;
+        Mon, 18 Mar 2024 11:41:41 -0700 (PDT)
+Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.googlemail.com with ESMTPSA id fj5-20020a05622a550500b00430b423f06csm3796449qtb.86.2024.03.18.11.41.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Mar 2024 11:41:41 -0700 (PDT)
+Message-ID: <3eb9d5c2-149c-460c-9684-3fdaf946c400@ieee.org>
+Date: Mon, 18 Mar 2024 13:41:38 -0500
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -40,7 +58,10 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Ayush Singh <ayushdevel1325@gmail.com>,
+Subject: Re: [PATCH v4 4/5] mikrobus: Add mikroBUS driver
+Content-Language: en-US
+To: Markus Elfring <Markus.Elfring@web.de>,
+ Ayush Singh <ayushdevel1325@gmail.com>,
  Vaishnav M A <vaishnav@beagleboard.org>, devicetree@vger.kernel.org,
  kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, lorforlinux@beagleboard.org,
@@ -56,46 +77,46 @@ Cc: LKML <linux-kernel@vger.kernel.org>, Alex Elder <elder@kernel.org>,
  <robertcnelson@beagleboard.org>, Tero Kristo <kristo@kernel.org>,
  Vaishnav M A <vaishnav.a@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
 References: <20240317193714.403132-5-ayushdevel1325@gmail.com>
-Subject: Re: [PATCH v4 4/5] mikrobus: Add mikroBUS driver
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240317193714.403132-5-ayushdevel1325@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:d3rsWjua/euVmCusMEdf9EWPGyz5EyJVackRp6jiopEEya/axKM
- 7KtTisuDqOjT7g+BpfBqQUwvkJdzBesfLFecqA+eroXI5usXRM1yMhefzveu38JXth+ok/K
- 9memp43OQwwmFTM+1S32xqzmjH/zYdRag8frGqdD+AMSRfF6t28WhqRCmDHj5Qt7AtzUka7
- 533VbMOvhlXUEbK3I4QyQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:FOAv7gLOqbk=;LIFw7TE+o2L/aes12HD1LR9Y1I0
- VDIjhJs70jys6vXqjVzsgrWtqrEk9pchL9A+mGrUuU99U2rzuYEvJe3Tp0/WZpfS7FCgkZt6n
- wf4MuB3QnaDd3jyAg6wfQFcWpPpzY2mJUXIsFtteJWmXX8LxUf84i6opANHArV6uPrTgW1Bt8
- ye49vSH5h8mLrS5Egj+E7vN+eTIpzd3pr0XqiOjpEvUeXtGjj/AD53pnNayTJy8s8PsfW9/+Q
- 8amXd2uh1sYJX6GK1MqiJHlaRy33xCM69nyFSCNOqHzFCbrR1BqGddY7yKRALti7PUmdUTe7p
- 5Q5I2FcCXUoI6HQburx4jGu1ftlbnqcpp/0FdKovJI95vXuxYf7RIuDad8S5vz0Yyt84Rb8Wr
- G/tGX7Qvs6dgatLzJlUQLjfJ3jd/wzjfB1j3QFpAiIuef8TUmvokOgPESnwR96E7H2c/Ul6j+
- q7BB1qJD1+B+GF4520sj1KEIsePWDJrlvGb/DRgyYkHBxAFHmIfEPfxR8YVHQMw+U3FvWMLcv
- mnxV4xtKtb/7cklHsq3MY09j55UNMdKEhngLtNn8Ua1Ion3GAWEqv4tA1+bL07hm6nCfinpeU
- tIA/Z3AFQMJ/LM+kKDJZQd8PmaZCY52VMv5YnxybipwTuwOK3E3DuJHYQH9btP8v7746qxjuH
- 2C/xWUSp6SGrPueZ+BvTReM5nrolHLfNQUl9cMU9gCl9buwICLJYiuQtu+jDn6QKiBDkyrife
- Lj0OzKfxvNPeK8h2fp+zxep8H/B417sLSJpY4Fy1zJIr+jNxaiAsSgLeoOjgpFRQZHylw4n6o
- e1HDP836GHMfIfjaEKUq9QklADBV+IztnZKY+buyRd+Bs=
+ <4fe6f68a-786c-4e3d-b97d-847d6965d1d3@web.de>
+From: Alex Elder <elder@ieee.org>
+In-Reply-To: <4fe6f68a-786c-4e3d-b97d-847d6965d1d3@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> +++ b/drivers/misc/mikrobus/mikrobus_core.h
-=E2=80=A6
-> +#ifndef __MIKROBUS_H
-> +#define __MIKROBUS_H
-=E2=80=A6
+On 3/18/24 12:58 PM, Markus Elfring wrote:
+> …
+>> +++ b/drivers/misc/mikrobus/mikrobus_core.c
+> …
+>> +static int mikrobus_pinctrl_setup(struct mikrobus_port *port,
+>> +				  struct addon_board_info *board)
+>> +{
+>> +	int ret;
+>> +
+>> +	if (!board || board->pin_state[MIKROBUS_PIN_PWM] == MIKROBUS_STATE_PWM)
+>> +		ret = mikrobus_pinctrl_select(port, "pwm_default");
+>> +	else
+>> +		ret = mikrobus_pinctrl_select(port, "pwm_gpio");
+> …
+> 
+> How do you think about to avoid the specification of a bit of duplicate source code here
+> by using conditional operator expressions?
+> 
+> 	ret = mikrobus_pinctrl_select(port,
+> 				      ((!board ||
+> 					board->pin_state[MIKROBUS_PIN_PWM] == MIKROBUS_STATE_PWM)
+> 				      ? "pwm_default"
+> 				      : "pwm_gpio"));
 
-I suggest to avoid the specification of leading underscores for include gu=
-ards.
+No.
 
-See also:
-https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
-efine+a+reserved+identifier#DCL37C.Donotdeclareordefineareservedidentifier=
--NoncompliantCodeExample%28IncludeGuard%29
+It's a complex enough bit of logic without trying to bury
+it inside the parameters passed to the function.
 
+					-Alex
 
-Regards,
-Markus
+> 
+> 
+> Regards,
+> Markus
+> 
+
