@@ -1,112 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3FD381C8;
-	Mon, 18 Mar 2024 18:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1DC5A4C4;
+	Mon, 18 Mar 2024 21:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710788138; cv=none; b=PGgVF+nCqpeQaX1kyg+suAn5tALq8sehGslZCGWHsyR8TbVpLQy2Ky5QS8kUb4ZREBmWet+Cydwbsszg1HdxDk3pIgnYdLPYh2p9+BWATD8pLBIjJz+oFTXf86DjfsyWNLmZdywYDbqZMyRArjWqzZd01JgionvAw7hysc9BuiU=
+	t=1710798452; cv=none; b=uRRd8JiSfGnjlu/64PfQluj1/wHCZQMfau7DQ9XFiBzsgqal28ZxhcXbMgXxyB2a0mM83NaOK3omHXb8CajKtBtteQ+0rYrxKPLaWmrnI8OTLaCB2LIIHPaFxo+MCJrYlDorhdufNY9+xPWyAY3qX6lfXmuCZ9lwQsUCYMzSNj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710788138; c=relaxed/simple;
-	bh=I81m1u3/gCGGvR+mJK7Lbsg9hTItXoG0ObMM/YWSWRg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tMXiXp8c9VNNHWFGddQcTb6aR6VDMcIdEY2piJG4dMFD9EQMqioSyK3Gt3ztEI+/oJwPJWANj7R/bP/qClyx2tcf47pQg3QGaeMAeQRC5xosb1PG2ErCNUAafflk4to+x79m5hu/R6uEX3YDvqm1eEAt+QqxDSDxW3VzlaTTcp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GoRAe/t5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1710798452; c=relaxed/simple;
+	bh=0KHLOX989patS77pGpcRZFTzkTlt4FFLOAPNDbE1sso=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T4HIZpse48Yf171OUKy/XABQ6+qPLPDQrOrnYsAOc/wPcWdY4CLaXT0g/3iCKndwD0pZjxoEwLx+uzD3Vv66vrRGsq4frQV5xmzflavJa9C8g7NZCO6oo13fct5QbF7sdTnh2tad5X5EHOIpNZ3UIZ5WLAWSKGeVWd8kpqNMkxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=BtT6BSCA; arc=none smtp.client-ip=80.12.242.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GoRAe/t5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B88CEC43390;
-	Mon, 18 Mar 2024 18:55:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1710788137;
-	bh=I81m1u3/gCGGvR+mJK7Lbsg9hTItXoG0ObMM/YWSWRg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GoRAe/t5gnCYRr4W2+XxQic8Y6xH09gwfXPD5Ta4nNmIMvaDKSWQOqbHa8/Tq6bQu
-	 694lYsH9NoB9QPxSl8bNuUi0DUIr67W8GxGvn/zZ4J0vVgPM4mIptyEjWcqUQp0iG/
-	 DzzRMwvPwXEn11MZ7EmGkDE33RmJ8ajp03tiCvto=
-Date: Mon, 18 Mar 2024 19:55:33 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alex Elder <elder@ieee.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>,
-	Ayush Singh <ayushdevel1325@gmail.com>,
-	Vaishnav M A <vaishnav@beagleboard.org>, devicetree@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, lorforlinux@beagleboard.org,
-	greybus-dev@lists.linaro.org, LKML <linux-kernel@vger.kernel.org>,
-	Alex Elder <elder@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Jason Kridner <jkridner@beagleboard.org>,
-	Johan Hovold <johan@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Mark Brown <broonie@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Robert Nelson <robertcnelson@beagleboard.org>,
-	Tero Kristo <kristo@kernel.org>, Vaishnav M A <vaishnav.a@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-Subject: Re: [PATCH v4 4/5] mikrobus: Add mikroBUS driver
-Message-ID: <2024031818-lizard-actress-2279@gregkh>
-References: <20240317193714.403132-5-ayushdevel1325@gmail.com>
- <4fe6f68a-786c-4e3d-b97d-847d6965d1d3@web.de>
- <3eb9d5c2-149c-460c-9684-3fdaf946c400@ieee.org>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BtT6BSCA"
+Received: from [192.168.1.18] ([92.140.202.140])
+	by smtp.orange.fr with ESMTPA
+	id mKpDrVX3HykpTmKpDrlHk1; Mon, 18 Mar 2024 22:47:21 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1710798441;
+	bh=Ki8LFuEpDeR2mCHJn1d/kGG14vmkqd8OY5uyzfzg9Qc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=BtT6BSCAllOalo4Torsvp9ebPARr532K3yfpGu5YkFPtWUGFT/8yFUxQl8rrSGqk7
+	 LJLXIPCFJcnIXv/hS+TrJeQ+0QxMKSYFHguTyrBjz6Ehsdwiksg6I1E98NAGRl7prY
+	 Evnf6p4hrYbW/oUufarHq975ylA3gkz5NhoX3OoPsn61LVFZcduJloyvN/M4PPJ4Tl
+	 1txPov/jEW1BdfZURM0okyyOYrpClTiF83clIDbJlhbk9qjz4GdTQAbAtvnb9sW0Hk
+	 t1zLN7ddTI/g/5wsMKOq+ZpfA/pKA2wiAv92ysOtbLcmtU59/u3dDho5g+wAGTfwkl
+	 OMpS+aL8j3UwQ==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 18 Mar 2024 22:47:21 +0100
+X-ME-IP: 92.140.202.140
+Message-ID: <c4236382-d3c8-4560-9a95-f90effcf6d88@wanadoo.fr>
+Date: Mon, 18 Mar 2024 22:47:19 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] caif: Use UTILITY_NAME_LENGTH instead of hard-coding 16
+Content-Language: en-MW
+To: Ratheesh Kannoth <rkannoth@marvell.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+References: <af10f5a3236d47fd183487c9dcba3b3b3c66b595.1710584144.git.christophe.jaillet@wanadoo.fr>
+ <20240318032133.GA1312783@maili.marvell.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240318032133.GA1312783@maili.marvell.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3eb9d5c2-149c-460c-9684-3fdaf946c400@ieee.org>
 
-On Mon, Mar 18, 2024 at 01:41:38PM -0500, Alex Elder wrote:
-> On 3/18/24 12:58 PM, Markus Elfring wrote:
-> > …
-> > > +++ b/drivers/misc/mikrobus/mikrobus_core.c
-> > …
-> > > +static int mikrobus_pinctrl_setup(struct mikrobus_port *port,
-> > > +				  struct addon_board_info *board)
-> > > +{
-> > > +	int ret;
-> > > +
-> > > +	if (!board || board->pin_state[MIKROBUS_PIN_PWM] == MIKROBUS_STATE_PWM)
-> > > +		ret = mikrobus_pinctrl_select(port, "pwm_default");
-> > > +	else
-> > > +		ret = mikrobus_pinctrl_select(port, "pwm_gpio");
-> > …
-> > 
-> > How do you think about to avoid the specification of a bit of duplicate source code here
-> > by using conditional operator expressions?
-> > 
-> > 	ret = mikrobus_pinctrl_select(port,
-> > 				      ((!board ||
-> > 					board->pin_state[MIKROBUS_PIN_PWM] == MIKROBUS_STATE_PWM)
-> > 				      ? "pwm_default"
-> > 				      : "pwm_gpio"));
-> 
-> No.
-> 
-> It's a complex enough bit of logic without trying to bury
-> it inside the parameters passed to the function.
+Le 18/03/2024 à 04:21, Ratheesh Kannoth a écrit :
+> On 2024-03-16 at 15:46:10, Christophe JAILLET (christophe.jaillet@wanadoo.fr) wrote:
+>> UTILITY_NAME_LENGTH is 16. So better use the former when defining the
+>> 'utility_name' array. This makes the intent clearer when it is used around
+>> line 260.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   net/caif/cfctrl.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/net/caif/cfctrl.c b/net/caif/cfctrl.c
+>> index 8480684f2762..b6d9462f92b9 100644
+>> --- a/net/caif/cfctrl.c
+>> +++ b/net/caif/cfctrl.c
+>> @@ -206,7 +206,7 @@ int cfctrl_linkup_request(struct cflayer *layer,
+>>   	u8 tmp8;
+>>   	struct cfctrl_request_info *req;
+>>   	int ret;
+>> -	char utility_name[16];
+>> +	char utility_name[UTILITY_NAME_LENGTH];
+> Reverse xmas tree.
 
 Hi,
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+I'll update and repost when net-next is reopened, but honestly, looking 
+at this file, changing this to reverse xmas style won't change that much 
+for the overall coding style!
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+Moreover, as said by Dan, it is not really easy to understand the wishes 
+of different maintainers. Should I have updated the lay-out, someone 
+could have argued that patches should be 1 thing at a time.
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+CJ
 
-thanks,
+> 
+>>   	struct cfpkt *pkt;
+>>   	struct cflayer *dn = cfctrl->serv.layer.dn;
+>>
+>> --
+>> 2.44.0
+>>
+> 
+> 
 
-greg k-h's patch email bot
