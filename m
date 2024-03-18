@@ -1,69 +1,72 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE13F25776
-	for <kernel-janitors@vger.kernel.org>; Mon, 18 Mar 2024 08:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9855924A12
+	for <kernel-janitors@vger.kernel.org>; Mon, 18 Mar 2024 08:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710749153; cv=none; b=MT9qXbP0qSX8cv6o56j1PxLDg5iN9/TQrNIfyrIj/MrnUina3VweXGuYdPu/yxJLLwNWSAWAx0eKWgYftrgi25wS9sYvvwEvDa1BJnNNDgz3xnt5APenohUvX9RsI7in1hAvQS7XbhcDJ6bymVHZQ8wq59TVTsM6Zs0B1AHxwtY=
+	t=1710749459; cv=none; b=TEPO5C+sOE3Z9LJ6Xb9KDnRO/1SwGK+i3tbTKEF61t0ofP4C3M6V9o1qCIdWAYWteNot36VVXgB+sbA3bhivnELLND8M4xLjgcIR6krOUOw8jOhvpzIz2+UuVHz2UgHK4MArReChF/Dg5mCwIQJkdzKQio0H5fbDeG1B0Nfmh4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710749153; c=relaxed/simple;
-	bh=xi5wwcua6lSYpDyXXRxYzCJScSbcdjnZzat3Av4lAFY=;
+	s=arc-20240116; t=1710749459; c=relaxed/simple;
+	bh=opmeh9JyNTU62HaqhKhjZQzYJINRflOWclmPToSuOvY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KDGCuXiVh+q8U8ULkvllIBEfUWIUFo3ST211tFoExKxzAjqK4+pALCrRimO6iKoT6nnAb5wPwlh2CxKJgao2G0fwTg1UgJ1tbGcb3rXt9W3bLURg53zNmlEE2y/9shHF4RknUyQAuIWKXdxdLxvBeicHTdvZupc1jcOn4An3V3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lcBOLlQs; arc=none smtp.client-ip=209.85.208.47
+	 Content-Type:Content-Disposition:In-Reply-To; b=pkhNOEjIgLx9wMNpN4jEw+dA2cSRP5zet6Qs9mTRG94MYQZRcgEHJ1InRC2WK6MRmxIl6mGMy/w2OUCdRqqGvGLoYohCFswPQg/IpzgzmEw+YpAgc3Kw8AfwSdhLpZ22z9Kyuks6x23SdA7S80Vc3UsIiZW+YiCtXsxhNmhSqHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j/QuOR6w; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lcBOLlQs"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-56b8248e2d8so174612a12.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 18 Mar 2024 01:05:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j/QuOR6w"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-568c51f44e5so1542285a12.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 18 Mar 2024 01:10:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710749150; x=1711353950; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1710749456; x=1711354256; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ItwEhW+Elih6WOdZ654FWHRBfnNI2hxeOn7Y1OcJxDk=;
-        b=lcBOLlQsJJHhrlOR8jwNpiV9pjv+mgPTwIkKuLlGvqugNHYh+I2uPNrItMz1CRZyOz
-         xfyIRZM3063F+mh6QHX5uwI93yrkrvEroBqtX/w/zTJrhtFszLcZN48lNLujaLy5+/mi
-         lfxm2z3DxAT0KH0LX3Rlewr6VNWYr5M7nsEV3RapNwJudHX86F5KZ5HUJmlGwAMWtaDD
-         Xx2O8QOuWmIE8IEFWUr+DRWKijuIiFuTNFv+hecLxtQbpe0zwt6vfAEWhQ6ncrGCiPJg
-         cg06XHoQctWVUNKbo8LONaZw2njAIDU6/01J5YjwVxGXjXrXLhQ2AMxKwq9JcX8y++5o
-         9ihQ==
+        bh=E4DNi1tThxPrAjwj3MNLTkspc0oafwDCMGAENKTid3c=;
+        b=j/QuOR6w9TSdjgU1TlaZerDTlRnKi4MwLIK6OD5Z6wf5Bi6Lc23Uy2w4CBDNoheNoi
+         xNliQLXJJTvrCjWG3Mz9BEKmHl9awVjwFYCU7pRVoj/uwifDQ9252CK35c9D8BDyuClr
+         XiM1/j/Dcx/tfo8bR62SWXBq4/tJyOVN6cAwJC1Evut9WeJaDFY7a0SfQ8pP8oAbC1Zk
+         Y5xlS7pDOFqnFej6ulWXp7ncnwgzFHdGEFV7vB4jbTVD+aHD6E0cUX3iNOeLMiVW9Hy+
+         hlmZmLlOQnbfsZGqcrctcKfl7ejBP67mUFItk39yw5XTnNIMxK53mIg1/YLWTbdorixk
+         qqnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710749150; x=1711353950;
+        d=1e100.net; s=20230601; t=1710749456; x=1711354256;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ItwEhW+Elih6WOdZ654FWHRBfnNI2hxeOn7Y1OcJxDk=;
-        b=XCJOoZgufPfwgyfAsznm67l0eXRbS2TxAojDifsCE5QNL8u2NhXPQz2ZzHvjPI9shi
-         Wh+23cfTfzAfWhSFk1agXnVEU4+WFj+n7RcfQpE26t23GRzT3tz+ENDtZsGpcOuj7Ukr
-         zcHd+E8iD/fAlbYkVVD8wHdpUpLOvEMkXrcbUw2nJsoyseynOcxJ+3nse/etBN8+mv1+
-         jX2sbIIfzknuvY3A3hI4Q9uptmS2jAttc6r8jaIOOBAyLi4moela+ZWUukpTRwxW3y1E
-         cFvdoSE6hUlhey+dCvlFBdhmyXUQMAQTyGz2rCou+pHW0jVb+2c2phLkiF6h2Wyq/eyj
-         uFjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBouwt0km8w3sGGONVgeafJtbwpDBhpGsg7kOWn75tPB0ZcvlrWNxjrjiEGXBKQSmDUpdYWHbNPivp4Q04C8js12smP5xyvfoHpnHy7gRx
-X-Gm-Message-State: AOJu0YzSjLu+tmJw1c4quVPl0o+IGMyWmiu/CGfht2QduM/09tq7VCL3
-	khB0z6WPhK9ZaZM/1YbGUe9Wfz7ezgAavWMkaMs7QWKgAXi91LFu4BIi6jnfv+c=
-X-Google-Smtp-Source: AGHT+IHKtcrmJOgM+mlLfZ7Vs05DyRjA6NQDYRTKLkIuZFdj2gc0SGhwQECvBIW2kaQ3t2ReK5LFKw==
-X-Received: by 2002:a17:906:5fd5:b0:a44:e371:a31b with SMTP id k21-20020a1709065fd500b00a44e371a31bmr6557533ejv.10.1710749149848;
-        Mon, 18 Mar 2024 01:05:49 -0700 (PDT)
+        bh=E4DNi1tThxPrAjwj3MNLTkspc0oafwDCMGAENKTid3c=;
+        b=rQozazULUsGPU7FXHO9VlEmd9BxVtqjM7K4cY523NGdip6y9rZo0ix5515/eP9im/f
+         OXcDL0uyacU1QJoigZKNGoCZpPwFDdSOX2GaW3vv1r6O/C9l2ooQ/qpxWYqJ60WENQSy
+         pwF+SGIO2GbqkCGA3ObHgVObGu/0OkiXi/pTpe+ijjbda8rqwxpnNBJ306bB7Mau0YOx
+         ycvqTyRXFC6SKqloFiVf7/E/Ku7bx0aOug1YtSfN6Nirv570O8GcFeB6ObWPaRSCGiTw
+         OsbWNwbdRJhixAzojfqcp6B5zCCilMOJzPCxCWmObOlfymWzPyj1M3TGhENV8gogjdQg
+         /Uvg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6jAVBpKOSvgJ10zAJKd275QR17s4EnSWyV39CgPWbpUMSpsKmKPWnXgBzImcsaRPHw5WnvkQkofUOzl1MZZ/aW1E/YPEkE6wZXf9Jt+UU
+X-Gm-Message-State: AOJu0YyhAPs8xpMI8Y6uvYcaCtN9+cR89ZP7y/8YbKwRp0uQm6789xLL
+	IvA07ZIQAt91PDNnci1nW4p52bG4Vy7ob2HUiofFuqlqH9RG5g9rcKUGlitjF88=
+X-Google-Smtp-Source: AGHT+IF7QDTquWD+I+K+G6iw+g4y541SJ1nIcz4EIs4ACVb80u6p6Zv/G7HRDxnFSFtqQ8VONOtvKQ==
+X-Received: by 2002:a17:906:ca17:b0:a46:cef3:4aba with SMTP id jt23-20020a170906ca1700b00a46cef34abamr125127ejb.75.1710749455840;
+        Mon, 18 Mar 2024 01:10:55 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ht17-20020a170907609100b00a461b1e814asm4517581ejc.130.2024.03.18.01.05.48
+        by smtp.gmail.com with ESMTPSA id dv22-20020a170906b81600b00a4658d3e405sm4531600ejb.196.2024.03.18.01.10.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Mar 2024 01:05:49 -0700 (PDT)
-Date: Mon, 18 Mar 2024 11:05:45 +0300
+        Mon, 18 Mar 2024 01:10:55 -0700 (PDT)
+Date: Mon, 18 Mar 2024 11:10:51 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ratheesh Kannoth <rkannoth@marvell.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+To: Jiri Pirko <jiri@resnulli.us>
+Cc: Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH] caif: Use UTILITY_NAME_LENGTH instead of hard-coding 16
-Message-ID: <148f58b6-fe56-4fd2-b430-d6aa40037bb5@moroto.mountain>
-References: <af10f5a3236d47fd183487c9dcba3b3b3c66b595.1710584144.git.christophe.jaillet@wanadoo.fr>
- <20240318032133.GA1312783@maili.marvell.com>
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] ice: Fix freeing uninitialized pointers
+Message-ID: <a315177e-a9b1-4110-a176-8a909335c56f@moroto.mountain>
+References: <77145930-e3df-4e77-a22d-04851cf3a426@moroto.mountain>
+ <Zff0IO6nqpMiGXl5@nanopsycho>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -72,35 +75,49 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240318032133.GA1312783@maili.marvell.com>
+In-Reply-To: <Zff0IO6nqpMiGXl5@nanopsycho>
 
-On Mon, Mar 18, 2024 at 08:51:33AM +0530, Ratheesh Kannoth wrote:
-> On 2024-03-16 at 15:46:10, Christophe JAILLET (christophe.jaillet@wanadoo.fr) wrote:
-> > UTILITY_NAME_LENGTH is 16. So better use the former when defining the
-> > 'utility_name' array. This makes the intent clearer when it is used around
-> > line 260.
+On Mon, Mar 18, 2024 at 08:58:24AM +0100, Jiri Pirko wrote:
+> Sat, Mar 16, 2024 at 10:44:40AM CET, dan.carpenter@linaro.org wrote:
+> >Automatically cleaned up pointers need to be initialized before exiting
+> >their scope.  In this case, they need to be initialized to NULL before
+> >any return statement.
 > >
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> >  net/caif/cfctrl.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >Fixes: 90f821d72e11 ("ice: avoid unnecessary devm_ usage")
+> >Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> >---
+> > drivers/net/ethernet/intel/ice/ice_common.c  | 4 ++--
+> > drivers/net/ethernet/intel/ice/ice_ethtool.c | 2 +-
+> > 2 files changed, 3 insertions(+), 3 deletions(-)
 > >
-> > diff --git a/net/caif/cfctrl.c b/net/caif/cfctrl.c
-> > index 8480684f2762..b6d9462f92b9 100644
-> > --- a/net/caif/cfctrl.c
-> > +++ b/net/caif/cfctrl.c
-> > @@ -206,7 +206,7 @@ int cfctrl_linkup_request(struct cflayer *layer,
-> >  	u8 tmp8;
-> >  	struct cfctrl_request_info *req;
-> >  	int ret;
-> > -	char utility_name[16];
-> > +	char utility_name[UTILITY_NAME_LENGTH];
-> Reverse xmas tree.
+> >diff --git a/drivers/net/ethernet/intel/ice/ice_common.c b/drivers/net/ethernet/intel/ice/ice_common.c
+> >index 4d8111aeb0ff..4b27d2bc2912 100644
+> >--- a/drivers/net/ethernet/intel/ice/ice_common.c
+> >+++ b/drivers/net/ethernet/intel/ice/ice_common.c
+> >@@ -1002,8 +1002,8 @@ static void ice_get_itr_intrl_gran(struct ice_hw *hw)
+> >  */
+> > int ice_init_hw(struct ice_hw *hw)
+> > {
+> >-	struct ice_aqc_get_phy_caps_data *pcaps __free(kfree);
+> >-	void *mac_buf __free(kfree);
+> >+	struct ice_aqc_get_phy_caps_data *pcaps __free(kfree) = NULL;
+> >+	void *mac_buf __free(kfree) = NULL;
+> > 	u16 mac_buf_len;
+> > 	int status;
+> > 
 > 
+> How about similar issues in:
+> ice_set_fc()
+> ice_cfg_phy_fec()
+> ?
 
-It's always hard to know what to do when the original code isn't in the
-correct format.  Someone sent a patch last week which fixed a bug and
-partially converted a declaration block into reverse Christmas tree...
+Yeah.  Sorry, I'll resend.  Smatch didn't warn about those bugs because
+the sanity checks are the begining of the functions:
+
+	if (!pi || !aq_failures)
+		return -EINVAL;
+
+are never true...  It's the first time I've run into this as an issue.
 
 regards,
 dan carpenter
