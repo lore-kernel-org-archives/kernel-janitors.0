@@ -1,97 +1,62 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A70354657;
-	Tue, 19 Mar 2024 08:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505D339FFD;
+	Tue, 19 Mar 2024 19:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710836236; cv=none; b=a/MNqi+bMrpgz/VKh7ZD29JqbiKDJQap3AXhQJV1Jd06aCJGiRUXUTI/Gfmx1xsFq/isGibmBW8mPXJ2BO7jyYn3sq5zXp5Lwm/85ESant1gN2c9IFnFFlAYHxW/rPHjIIFGjQps20j7G5QWiJNN++Cb2ELn9wDLrz+/9KWJj/0=
+	t=1710877399; cv=none; b=Byrp+JPi30yXsDVD/OFamzTbnskCDmdqgUM455ttmIm9/1haX8Lg7xjPG9sGbL6fu8fx60HYtCc2+OqyrXJir+APDvnUoyaZoU9gvPKUYUY5SV7s16kC+QS5kkG+PFILFy+tMPe859h0CvIBaoGky+8Xdr5xmlqBRqKDG3ebM90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710836236; c=relaxed/simple;
-	bh=uzonqETjBL7wvsx1e0qgd7nuZrbRUOV/H6cEp0IzqiI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=hiFwzu/ypM0ZwzPoz3E4EWy3noZwijUs9aGjKLrDGacC3Qi0jtq/GhwyB1rrzRTrezlhXY+SsJkJwoMq5/9HE/lZR/z9sAjJCbPJDws7w3hohmcdQ0/S1KTEwP0bnYyoZq2Z8elXJzsuxwEtaYVMmZzGLuhy3UuteuOmbWAu+1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=g/x+FVBm; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1710877399; c=relaxed/simple;
+	bh=4c0gTY5ILrK0uD6EsujNoi/J2gWpLE0huRdLKPHIfwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K8TLd7IZmow2i5uDTMa4yf/MzkKBAIvpOzQ0zDAOkuGL1Cgb+fRya4cmBFIlY57yySbY/okIZ8WShSzpY9d/Nn95W358sNEavImIZx4JezFe1EvdROvRqA93SAKSaVo4kRLjJuZIv5+L93EsxsGDWDrt8jJV3ynccOoIeL7SAtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPj5lcGs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="g/x+FVBm"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1710836202; x=1711441002; i=markus.elfring@web.de;
-	bh=uzonqETjBL7wvsx1e0qgd7nuZrbRUOV/H6cEp0IzqiI=;
-	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
-	 In-Reply-To;
-	b=g/x+FVBmnu61tRamL12tuhNDgx9SMWTYiZfQkebr6p5v+WBg2maOW+/qaWRrTBWN
-	 VB+0loBcCKFAwCqSbczc04X5EwwCxQtAiLuBUpRvxCs7EvSZh7ZAV0GCjh6Iq2muU
-	 VQGW4RlC/wcDbhP1jNgFf6F4cLBlC6I4oB+GMS1eTmumBWxawOpWhY76p/X3H+p9m
-	 6kXQAsJPix8kmeK0/Rk+wqDHYn3fuwQdyvG4rkHbfrCc9u6g2aAb2xK0Jgsdkg8Gb
-	 3pMfRU1b/5vUujSZBIeyzhbBS3lFbf/yZHA+3mWqagbq361zWpCaX7rwsS9oLwfhA
-	 vTZ2vRMylGwzZ9SCrQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N62uQ-1qgPOE11Sq-016FmE; Tue, 19
- Mar 2024 09:16:42 +0100
-Message-ID: <96d3951d-b349-41b8-aabb-a192ad48998f@web.de>
-Date: Tue, 19 Mar 2024 09:16:29 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPj5lcGs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A102DC433C7;
+	Tue, 19 Mar 2024 19:43:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710877399;
+	bh=4c0gTY5ILrK0uD6EsujNoi/J2gWpLE0huRdLKPHIfwg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hPj5lcGsZBFbWYX9sTipBmth0flulHxveKZSdSIYL9f9rnIFdPotJ6AjMBKD9E1Wx
+	 Sfu6LWJqHTQmjEHpqD7W6UVFp526dSluffT6r6Lkpy/tN0s0b0eV8IT1jY2Iuy0ot7
+	 FnynRVm1UV0bQlEwjm7EfDD7x0rScmrqtfrz55YX5uqHh9z4my7KKb48L0CT3ZtJuj
+	 qhKbGM2CLqEXiHYNK2QyoEZaVjw82vdlfv2xfLQdrsFCy13lnNP+4BKRMzGuuO/lJx
+	 D309CxTY3kt0I5KXRslduxBgSvTFNf56Iju2LDEyAkGaQO0op5UzVkkZGzhYH46qsB
+	 6mtHcRQkiIalA==
+Date: Tue, 19 Mar 2024 12:43:17 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Jesse Brandeburg
+ <jesse.brandeburg@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, intel-wired-lan@lists.osuosl.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] ice: Fix freeing uninitialized pointers
+Message-ID: <20240319124317.3c3f16cd@kernel.org>
+In-Reply-To: <77145930-e3df-4e77-a22d-04851cf3a426@moroto.mountain>
+References: <77145930-e3df-4e77-a22d-04851cf3a426@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Ayush Singh <ayushdevel1325@gmail.com>,
- Vaishnav M A <vaishnav@beagleboard.org>, devicetree@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, lorforlinux@beagleboard.org,
- greybus-dev@lists.linaro.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Alex Elder <elder@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, Conor Dooley <conor+dt@kernel.org>,
- Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jason Kridner <jkridner@beagleboard.org>, Johan Hovold <johan@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Mark Brown <broonie@kernel.org>, Nishanth Menon <nm@ti.com>,
- Rob Herring <robh@kernel.org>, Robert Nelson
- <robertcnelson@beagleboard.org>, Tero Kristo <kristo@kernel.org>,
- Vaishnav M A <vaishnav.a@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-References: <20240317193714.403132-3-ayushdevel1325@gmail.com>
-Subject: Re: [PATCH v4 2/5] spi: Make of_find_spi_controller_by_node()
- available
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240317193714.403132-3-ayushdevel1325@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:0IHwukSICsCvj6kPOCM3vt8fzMgYs/nIP5+26Xk+rQXIsUzZooI
- yGP3OV6ldYmxeHm2sAIVkY+9nJvFtrdDZN/XkROgbABzLnr54XgLc6V8sVdES6oSJd7NXAG
- 8v0SQgMz+JZkWW1zSywvHayFEufEtYWVzKC/6RuQo8lZpX1h4nZq5bNqOBKaPR4xuGUcQVc
- JH1Xw2XHEk8zmSykpitlg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:3RBMOAKdwIU=;MKcjDM5zaXWSHwJ3rfDeQAu0vxs
- QaiauQyp0eKMC+n3+IcKn7LreYpPleAmDqehCAaTqKdQtF5ksxCfKRDkQVDHxmS9U2xwZ9j+A
- VYk8ByHVzuv/CLjL3engeFaYfJUrr298Ji2ZwzOPLLnMlF4Y7evl8uGs0whg4l3hBABcNvPe/
- +u9CvF+oXof3XNRe1JzHrqVr17f29WqX8mUUDQb9Ob1DohNT6gLh5IYZhD+Y9Eif/iVomVD20
- GJ3kGUE8RNvWkVoii18Kqb0uKG1dErlheEMQTf+vpnkLcRB3KuXkYBltR6jbW0cAgNhO7mpSk
- X3m0OIdd8YBS4rAe1yb0q3Et4Thg0iZjU7M3LcAljSRCH4b+SGcZxrszCTyIR4PnZRVpBufHr
- SIrDDqYXPBPrI3Lw2kMKrNMr1Ly0Qf52563Wcy3f7RR0W7OmmS39HltOkccDs4qUDPCyalKiL
- 6bBsH3B0kM2SI9oh2OfV92BJMo/cnjFsyY24Zu7eyTpmWYEDil4AjhvYcbW1mVCj2GO3nVevE
- Hi2YWkTvGx15hFAIQ3qckXQBj7r8WRqbpvVKR0td/Dqt80qld30zgr7uzh9cX9z6RUvNyU/qF
- qseg/13A2ZkKbkZW6T2XBKOWHg9OcR1aqcree7uYzxRHkMp69TRYhR6ngsjGpCYOjuiBO2pel
- wP4M8pKXhiX+54UzC+0nNZYoLxOr5o1ssvqZHWSfLZZvnlDiWmfUUIdArn7NCR9JcDiDAGQXH
- ql26ZbKO1o54jNSDGE2uuW0l96zPaXNae118jdOHJarYXbFAzp56boBW7AoFnY/sGn18RyOII
- xY1YLTBy9m92bOsur+wqNP5RgdfshRr8ctYLqdM0d+ALA=
 
-> This externalizes and exports the symbol
-> of_find_spi_controller_by_node() from the SPI core akin to how
-> of_find_i2c_adapter_by_node() is already available. As we will
-> need this also for non-dynamic OF setups, we move it under a
-> CONFIG_OF check.
+On Sat, 16 Mar 2024 12:44:40 +0300 Dan Carpenter wrote:
+> -	struct ice_aqc_get_phy_caps_data *pcaps __free(kfree);
+> -	void *mac_buf __free(kfree);
+> +	struct ice_aqc_get_phy_caps_data *pcaps __free(kfree) = NULL;
+> +	void *mac_buf __free(kfree) = NULL;
 
-Would a change description be more desirable with a corresponding imperative wording?
+This is just trading one kind of bug for another, and the __free()
+magic is at a cost of readability.
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.8#n94
-
-Regards,
-Markus
+I think we should ban the use of __free() in all of networking,
+until / unless it cleanly handles the NULL init case.
