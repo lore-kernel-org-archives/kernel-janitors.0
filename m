@@ -1,123 +1,97 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB5140853
-	for <kernel-janitors@vger.kernel.org>; Tue, 19 Mar 2024 07:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A70354657;
+	Tue, 19 Mar 2024 08:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710832990; cv=none; b=JJvdpMFyKT/BZctDPcT2jLQpj8Ei38PHX13c/sRpUikGJ3y9+QGMhoWDC1CwvytelS5IxjJndCdnoehl0oSp9/Pq53/NUShQTfeiTtNJ8cutv8ICVN4YXbE4uvw6j96WJU7D1MP/nG61dqrKTrX0V05ddG5tt5G2oMTpWYpC24U=
+	t=1710836236; cv=none; b=a/MNqi+bMrpgz/VKh7ZD29JqbiKDJQap3AXhQJV1Jd06aCJGiRUXUTI/Gfmx1xsFq/isGibmBW8mPXJ2BO7jyYn3sq5zXp5Lwm/85ESant1gN2c9IFnFFlAYHxW/rPHjIIFGjQps20j7G5QWiJNN++Cb2ELn9wDLrz+/9KWJj/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710832990; c=relaxed/simple;
-	bh=gqHMvDqH0GXe3nNnNKZOzNASEO3LjbY4EVAyXt8HAfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dn7FXXkSDluTjcQNXYdL7LPiKHzzKBZLM4G+MSBjHDPbAMS9KOOJHmA+C7O2rDbhrP6gZJ6uZnNu4JI8Fa/hxXjWnwwqcqhryvi6WdLWpODzOCRFyhfyDAqNTu9nHYEYotX+Ftq2veANHi7H2DE+eFLSadFpMG9OOya8IYSeYVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IwNEHwuF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1710836236; c=relaxed/simple;
+	bh=uzonqETjBL7wvsx1e0qgd7nuZrbRUOV/H6cEp0IzqiI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=hiFwzu/ypM0ZwzPoz3E4EWy3noZwijUs9aGjKLrDGacC3Qi0jtq/GhwyB1rrzRTrezlhXY+SsJkJwoMq5/9HE/lZR/z9sAjJCbPJDws7w3hohmcdQ0/S1KTEwP0bnYyoZq2Z8elXJzsuxwEtaYVMmZzGLuhy3UuteuOmbWAu+1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=g/x+FVBm; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IwNEHwuF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710832987;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VuSY72tnFKw3HBgsDczhmcUm8blV9e3YgrUys0sfBAo=;
-	b=IwNEHwuFMvHhmkgjjuwi76dcFW41E9wsPqVEms/+VzRNZcGjZGl5DjkLox5FcKHhpkEBV+
-	8xiihux8+jabQFn96rlXDQoUoBqUqyJgIJJS3Mzy59QbKpmXW0/SonLX+MOqBrljMoz8U+
-	J2/HCddIpGv/gzq/bxvYTu0qlgSXj2g=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-253-kJZO4BkLP1-SVCAo6OTAlQ-1; Tue, 19 Mar 2024 03:23:05 -0400
-X-MC-Unique: kJZO4BkLP1-SVCAo6OTAlQ-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-41464672d85so2714105e9.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 19 Mar 2024 00:23:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710832985; x=1711437785;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VuSY72tnFKw3HBgsDczhmcUm8blV9e3YgrUys0sfBAo=;
-        b=P4v26knPMm3a/MgZ60P+ydBKtCEEG/SthDpnt6v3mk9HnXZpWu5Tv4WJTbssIIZX7F
-         JS7rEnkePvW04wwIV3hhtK8GGrABXkUq4o0KdMzR0VBgM+4tFd2dP4Vd47qddD9NW/ua
-         4D5VCrqUqBhjZaLnLa9eqIn9QgjHCAnOGikIngsF7+RGs5BG5ilNfre5cX24RgmlK+0G
-         StrN4SQ3ZjCHBo6qdmJaAmYuGdXrhemghF6420nRvAVARDeJNxNVk79n4krcv+SrcUvC
-         HQFIHb173XtD7i5xlzmjKqupZ9KwAz03Q/cWthJL6rQKD07VLByhURiqNrSEOHNR8ihU
-         HgCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWS0W0RGX8WkSqd3tKu2hyhTptA7+KA1FsnSOX0lHZOssiXTI9D9LPt6rWTQWHqH8VEjYACGTdd+CxCok9yIUG+j4U74P0pXu9wtQaN+aSK
-X-Gm-Message-State: AOJu0YwOcEJqhBSVDxK1GJt9JwPI7we8rPAD7nwg5jS1ZvnJDQx22VVJ
-	XBpFoCqzZRyqPIl1DQr6kTCP7Paju++18bKKTF16xtHgjBXYTqOyYjEycC85E4IOyAE/CXyvCdy
-	6w1wXuMOSiRo5le/GHVLh78frevtNvBgdnD2g6b3sdS634e4dwPGNl+t3nx8rfCbyAQ==
-X-Received: by 2002:a05:600c:1ca8:b0:414:1351:8662 with SMTP id k40-20020a05600c1ca800b0041413518662mr2829451wms.12.1710832984747;
-        Tue, 19 Mar 2024 00:23:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFpzVhgY4JbDOMx+gLoAdQmLnA6ngQJMNzK4g2rbZEkR6NI+HOgZjEDBPCMFSZnVPXHqFGHSA==
-X-Received: by 2002:a05:600c:1ca8:b0:414:1351:8662 with SMTP id k40-20020a05600c1ca800b0041413518662mr2829433wms.12.1710832984278;
-        Tue, 19 Mar 2024 00:23:04 -0700 (PDT)
-Received: from redhat.com ([2.52.6.254])
-        by smtp.gmail.com with ESMTPSA id fb4-20020a05600c520400b00413e4ff2884sm20338273wmb.40.2024.03.19.00.23.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Mar 2024 00:23:03 -0700 (PDT)
-Date: Tue, 19 Mar 2024 03:23:00 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Cindy Lu <lulu@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Xie Yongji <xieyongji@bytedance.com>,
-	Maxime Coquelin <maxime.coquelin@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v3] vduse: Fix off by one in vduse_dev_mmap()
-Message-ID: <20240319032236-mutt-send-email-mst@kernel.org>
-References: <98298b2f-7288-4b0b-8974-3d5111b589cb@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="g/x+FVBm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1710836202; x=1711441002; i=markus.elfring@web.de;
+	bh=uzonqETjBL7wvsx1e0qgd7nuZrbRUOV/H6cEp0IzqiI=;
+	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
+	 In-Reply-To;
+	b=g/x+FVBmnu61tRamL12tuhNDgx9SMWTYiZfQkebr6p5v+WBg2maOW+/qaWRrTBWN
+	 VB+0loBcCKFAwCqSbczc04X5EwwCxQtAiLuBUpRvxCs7EvSZh7ZAV0GCjh6Iq2muU
+	 VQGW4RlC/wcDbhP1jNgFf6F4cLBlC6I4oB+GMS1eTmumBWxawOpWhY76p/X3H+p9m
+	 6kXQAsJPix8kmeK0/Rk+wqDHYn3fuwQdyvG4rkHbfrCc9u6g2aAb2xK0Jgsdkg8Gb
+	 3pMfRU1b/5vUujSZBIeyzhbBS3lFbf/yZHA+3mWqagbq361zWpCaX7rwsS9oLwfhA
+	 vTZ2vRMylGwzZ9SCrQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N62uQ-1qgPOE11Sq-016FmE; Tue, 19
+ Mar 2024 09:16:42 +0100
+Message-ID: <96d3951d-b349-41b8-aabb-a192ad48998f@web.de>
+Date: Tue, 19 Mar 2024 09:16:29 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <98298b2f-7288-4b0b-8974-3d5111b589cb@moroto.mountain>
+User-Agent: Mozilla Thunderbird
+To: Ayush Singh <ayushdevel1325@gmail.com>,
+ Vaishnav M A <vaishnav@beagleboard.org>, devicetree@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, lorforlinux@beagleboard.org,
+ greybus-dev@lists.linaro.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Alex Elder <elder@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, Conor Dooley <conor+dt@kernel.org>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jason Kridner <jkridner@beagleboard.org>, Johan Hovold <johan@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Mark Brown <broonie@kernel.org>, Nishanth Menon <nm@ti.com>,
+ Rob Herring <robh@kernel.org>, Robert Nelson
+ <robertcnelson@beagleboard.org>, Tero Kristo <kristo@kernel.org>,
+ Vaishnav M A <vaishnav.a@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+References: <20240317193714.403132-3-ayushdevel1325@gmail.com>
+Subject: Re: [PATCH v4 2/5] spi: Make of_find_spi_controller_by_node()
+ available
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240317193714.403132-3-ayushdevel1325@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:0IHwukSICsCvj6kPOCM3vt8fzMgYs/nIP5+26Xk+rQXIsUzZooI
+ yGP3OV6ldYmxeHm2sAIVkY+9nJvFtrdDZN/XkROgbABzLnr54XgLc6V8sVdES6oSJd7NXAG
+ 8v0SQgMz+JZkWW1zSywvHayFEufEtYWVzKC/6RuQo8lZpX1h4nZq5bNqOBKaPR4xuGUcQVc
+ JH1Xw2XHEk8zmSykpitlg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:3RBMOAKdwIU=;MKcjDM5zaXWSHwJ3rfDeQAu0vxs
+ QaiauQyp0eKMC+n3+IcKn7LreYpPleAmDqehCAaTqKdQtF5ksxCfKRDkQVDHxmS9U2xwZ9j+A
+ VYk8ByHVzuv/CLjL3engeFaYfJUrr298Ji2ZwzOPLLnMlF4Y7evl8uGs0whg4l3hBABcNvPe/
+ +u9CvF+oXof3XNRe1JzHrqVr17f29WqX8mUUDQb9Ob1DohNT6gLh5IYZhD+Y9Eif/iVomVD20
+ GJ3kGUE8RNvWkVoii18Kqb0uKG1dErlheEMQTf+vpnkLcRB3KuXkYBltR6jbW0cAgNhO7mpSk
+ X3m0OIdd8YBS4rAe1yb0q3Et4Thg0iZjU7M3LcAljSRCH4b+SGcZxrszCTyIR4PnZRVpBufHr
+ SIrDDqYXPBPrI3Lw2kMKrNMr1Ly0Qf52563Wcy3f7RR0W7OmmS39HltOkccDs4qUDPCyalKiL
+ 6bBsH3B0kM2SI9oh2OfV92BJMo/cnjFsyY24Zu7eyTpmWYEDil4AjhvYcbW1mVCj2GO3nVevE
+ Hi2YWkTvGx15hFAIQ3qckXQBj7r8WRqbpvVKR0td/Dqt80qld30zgr7uzh9cX9z6RUvNyU/qF
+ qseg/13A2ZkKbkZW6T2XBKOWHg9OcR1aqcree7uYzxRHkMp69TRYhR6ngsjGpCYOjuiBO2pel
+ wP4M8pKXhiX+54UzC+0nNZYoLxOr5o1ssvqZHWSfLZZvnlDiWmfUUIdArn7NCR9JcDiDAGQXH
+ ql26ZbKO1o54jNSDGE2uuW0l96zPaXNae118jdOHJarYXbFAzp56boBW7AoFnY/sGn18RyOII
+ xY1YLTBy9m92bOsur+wqNP5RgdfshRr8ctYLqdM0d+ALA=
 
-On Wed, Feb 28, 2024 at 09:24:07PM +0300, Dan Carpenter wrote:
-> The dev->vqs[] array has "dev->vq_num" elements.  It's allocated in
-> vduse_dev_init_vqs().  Thus, this > comparison needs to be >= to avoid
-> reading one element beyond the end of the array.
-> 
-> Add an array_index_nospec() as well to prevent speculation issues.
-> 
-> Fixes: 316ecd1346b0 ("vduse: Add file operation for mmap")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> This externalizes and exports the symbol
+> of_find_spi_controller_by_node() from the SPI core akin to how
+> of_find_i2c_adapter_by_node() is already available. As we will
+> need this also for non-dynamic OF setups, we move it under a
+> CONFIG_OF check.
 
-Thanks a lot!
-I assume this will be squashed in the relevant patch when that is
-re-spun.
+Would a change description be more desirable with a corresponding imperative wording?
 
-> ---
-> v2: add array_index_nospec()
-> v3: I accidentally corrupted v2.  Try again.
-> 
->  drivers/vdpa/vdpa_user/vduse_dev.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-> index b7a1fb88c506..eb914084c650 100644
-> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> @@ -1532,9 +1532,10 @@ static int vduse_dev_mmap(struct file *file, struct vm_area_struct *vma)
->  	if ((vma->vm_flags & VM_SHARED) == 0)
->  		return -EINVAL;
->  
-> -	if (index > dev->vq_num)
-> +	if (index >= dev->vq_num)
->  		return -EINVAL;
->  
-> +	index = array_index_nospec(index, dev->vq_num);
->  	vq = dev->vqs[index];
->  	vaddr = vq->vdpa_reconnect_vaddr;
->  	if (vaddr == 0)
-> -- 
-> 2.43.0
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.8#n94
 
+Regards,
+Markus
