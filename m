@@ -1,130 +1,95 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mx2.mythic-beasts.com (mx2.mythic-beasts.com [46.235.227.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4173EA98;
-	Wed, 20 Mar 2024 12:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D64C187F;
+	Wed, 20 Mar 2024 16:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710937162; cv=none; b=KMpiOBgLAMETMEr0XaVE0Jr1IRxGU6OilG062zoa0FCnNRAsyQtuQ5n96OrHIM6qidS6oElrFa4NI+AftueevzFchHfnXm9gq868pzVniClViQcbppzU1BglxnhIv9xWB4ZTKxc6Ckf6UYzr0h+bBRSkq4WpvRd5YgRld91KaKo=
+	t=1710953240; cv=none; b=n6rdhA6rApr1gHPOZErXqu/xOXmq8JXaMPm4emyvMG376w3I82JakTgNHeHlUbYd2CUFT/U0PSHEArk2zVqCMk43Ymj8AUGsMpWwYzltqeNRqaw1eBxfmM/qjgVMp4jh1Ku6rMrCGHJLnqdxnz3qlGuSc5gXqPuwwEzXTIRnymU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710937162; c=relaxed/simple;
-	bh=lRT9oSTfLR+JQlZUwPoWrQebKedyDM3ti0p4qPc/OEY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=nNaRyxB2XFrYgqu1Q3JuHjgXPen0CYJVdm/kYuLoW+x0oW0W4sQgBoue/CZje5BZ5lWuINHN6E4nhwh7HrBlYAc0x6gAG1IToqoL706IbPk+xz+7t2amzQAi6MTCzDSoJYSwcLmsGhiRxbR+VBk6OPXfa8tvY9Z3541VAhi2ImM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ey69IQD+; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ey69IQD+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1710937128; x=1711541928; i=markus.elfring@web.de;
-	bh=KhP5z213JRHgg+2Y4l04p0agR635gtrVnTmlg2I++II=;
-	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
-	 In-Reply-To;
-	b=ey69IQD+cdUgDYt2KtdYDS6PfEx1U3euVUDVZQd/I3lnASEWs2+7iDm8CTAAXG+c
-	 V907K5kHdsPrLxJ2DVHtBBzI1Wq8lwQ40+w2s7Qec3kJmhT9goNqPphA5lAY+HI6M
-	 CZW3YFtxbaK4PPFPgig47U7fz9lEm4tU5r4qTtmzWHfiE0CCyQHQvOdxyNckBl+ha
-	 IJOD63OrVpIKSAZiqod03i1daYuSVRGSnqLZZMDMgGJGqls8pNEqau/ijaBFAePYn
-	 ZHQnu5jyoobtE+z4aNDmxFc+l+nZK3/xh4HwE44TLdIdFKmbCLXvjb+rGSOTVGRMp
-	 JHUi//IsZIr0l0/AHw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N9LIc-1qjpQC2DWG-015dwE; Wed, 20
- Mar 2024 13:18:48 +0100
-Message-ID: <4b8ee072-70bc-4a0a-8e43-e244f8ee2f22@web.de>
-Date: Wed, 20 Mar 2024 13:18:33 +0100
+	s=arc-20240116; t=1710953240; c=relaxed/simple;
+	bh=KB4S6lfaY4jS9DUXhlshuPyIa2efuohtTmYPcJtq7Ew=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=sPwo2cPnYNDSKFwNUoF3awNzsqU26V7RYGJkurI1laFuy7SDXD4TLj1z2HdrE8NG8pkG6pE5B++uaeYz/bMt+7fc0jj2265IC1Mr8ouF9u9t/F+74VN549rHrQtI7wPREJh/vAVlfTbwcsgUAhAwJGrgETJOcvgNpA9jfTEd690=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk; spf=pass smtp.mailfrom=jic23.retrosnub.co.uk; arc=none smtp.client-ip=46.235.227.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jic23.retrosnub.co.uk
+Received: by mailhub-hex-d.mythic-beasts.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <jic23@jic23.retrosnub.co.uk>)
+	id 1rmyt8-00BNeD-Pz; Wed, 20 Mar 2024 16:34:18 +0000
+Date: Wed, 20 Mar 2024 16:33:02 +0000
+From: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+To: Julia Lawall <julia.lawall@inria.fr>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+CC: Jakub Kicinski <kuba@kernel.org>,
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+ Jesse Brandeburg <jesse.brandeburg@intel.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH net] ice: Fix freeing uninitialized pointers
+User-Agent: K-9 Mail for Android
+In-Reply-To: <f1bdbed9-8549-3787-bd17-ecd62851e8a@inria.fr>
+References: <77145930-e3df-4e77-a22d-04851cf3a426@moroto.mountain> <20240319124317.3c3f16cd@kernel.org> <facf5615-d7ac-4167-b23c-6bab7c123138@moroto.mountain> <f1bdbed9-8549-3787-bd17-ecd62851e8a@inria.fr>
+Message-ID: <10F403F7-E8B7-48F0-90CF-3C8A8BEB10F2@jic23.retrosnub.co.uk>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
- intel-wired-lan@lists.osuosl.org,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- Jesse Brandeburg <jesse.brandeburg@intel.com>, Jiri Pirko
- <jiri@resnulli.us>, Paolo Abeni <pabeni@redhat.com>,
- Pucha Himasekhar Reddy <himasekharx.reddy.pucha@intel.com>
-References: <77145930-e3df-4e77-a22d-04851cf3a426@moroto.mountain>
-Subject: Re: [PATCH net] ice: Fix freeing uninitialized pointers
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <77145930-e3df-4e77-a22d-04851cf3a426@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:PTUuB43Z3DS7y5k1LlzvJWE5GpgoYr2z888JWO4A8Mid5gKORZl
- MkpJK4sPj0ibCEfU/Pw4f5+CIFy2gNMghqQLHOhx/qdJ2joepGCvIS4FT/vzNi3ZISYJm5m
- W0rWME1EqkcsjFu2+pZtTZTKhWraCRg+epsZkoQ6DCHkmtw8Mxj9kbPwzJj8jb9ofEii8JW
- 9eLlGudzZsRxA81ao1Igw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:soozx22Hh6Q=;7yVwJkmtUEyeQXzSrPhICqaGpWL
- wbPjm8iTqr9BUqyukACz4OdGv9m9vWc3/fg29pK0KYzZZsDLtEvH0ZrLwJFZP48im70E3QMh8
- D+g2/gtmggCoy70i5gd0tQMWyrix8wTEIPRATPDCqtwdr1aockW3cszBmSfN3+g9fgUJEr03n
- X2AZXgrXdislMFF9cKmCiuxQUib6tkR5jLqQ/jT3eEK/3FbAVSsz94RsiMGpfbPaczIM0E5AZ
- L3bwe2yFjjVrZkOg/oBVqXfrC3+J1T//XU18zo2T0b0AjqgZwRVbXVSQQj+Ms7IbmhuvlNw+/
- fveFWGbZ1sMyvO9A5fma3wCii4WBsBBly70rIpn9021AXkNkNIXgw3YWRsS5ytNUtqJDacZdQ
- oxtzxCA0eWVlZYEpGByshiLpTEX9anZf20Q8icqiwfFUEeDU7a0jdKODkHo+n2wSPUyBko6LS
- 2AHZ+k48/WmQHiXsW5u2RTZuqJTcXJE5yln/0Lw4ujuU7nlN4faOW9g+mFNWp1kNyFNx5sCgY
- Yb8YfPFPED0KE8yRRm5xbEuB3U/ggpVTOvgB00yuUdmTGsbisqimEEnfbgurwAa0x+M3eSKNu
- 1GKcJZqia2LYnli/+5Yyysb7oy5LonCTHWVhOtcNKw2xuF9gdmdFcWDscJsN3ch8Nn8jRXB0b
- tz57Ae48zbuB0FHfO9Zg+ebV4uho2nVHhkKsF06LOfd462kDywP1pSssWQZupeUu51OSNV9PG
- KabbQuuIq0xxf0CNFfT+twKeG13Z+yZddKXnl8gNE2b3wFBvooJ2Xvqgyr8CBJbow1ahPmu4B
- 8WEuUavjN7uJsok8ZYho4JjUckMm8s/fThJNp3TJv9U6Y=
-
-> Automatically cleaned up pointers need to be initialized before exiting
-> their scope.  In this case, they need to be initialized to NULL before
-> any return statement.
-
-I suggest to reconsider such information a bit more.
+X-BlackCat-Spam-Score: 0
 
 
-=E2=80=A6
-> +++ b/drivers/net/ethernet/intel/ice/ice_common.c
-> @@ -1002,8 +1002,8 @@ static void ice_get_itr_intrl_gran(struct ice_hw *=
-hw)
->   */
->  int ice_init_hw(struct ice_hw *hw)
->  {
-> -	struct ice_aqc_get_phy_caps_data *pcaps __free(kfree);
-> -	void *mac_buf __free(kfree);
-> +	struct ice_aqc_get_phy_caps_data *pcaps __free(kfree) =3D NULL;
-> +	void *mac_buf __free(kfree) =3D NULL;
->  	u16 mac_buf_len;
->  	int status;
 
-How do you think about to reduce the scope for affected local variables in=
-stead
-with the help of a small script (like the following) for the semantic patc=
-h language?
+On 20 March 2024 07:32:17 GMT, Julia Lawall <julia=2Elawall@inria=2Efr> wr=
+ote:
+>
+>
+>On Wed, 20 Mar 2024, Dan Carpenter wrote:
+>
+>> On Tue, Mar 19, 2024 at 12:43:17PM -0700, Jakub Kicinski wrote:
+>> > On Sat, 16 Mar 2024 12:44:40 +0300 Dan Carpenter wrote:
+>> > > -	struct ice_aqc_get_phy_caps_data *pcaps __free(kfree);
+>> > > -	void *mac_buf __free(kfree);
+>> > > +	struct ice_aqc_get_phy_caps_data *pcaps __free(kfree) =3D NULL;
+>> > > +	void *mac_buf __free(kfree) =3D NULL;
+>> >
+>> > This is just trading one kind of bug for another, and the __free()
+>> > magic is at a cost of readability=2E
+>> >
+>> > I think we should ban the use of __free() in all of networking,
+>> > until / unless it cleanly handles the NULL init case=2E
+>>
+>> Free handles the NULL init case, it doesn't handle the uninitialized
+>> case=2E  I had previously argued that checkpatch should complain about
+>> every __free() pointer if the declaration doesn't have an assignment=2E
+>>
+>> The =3D NULL assignment is unnecessary if the pointer is assigned to
+>> something else before the first return, so this might cause "unused
+>> assignment" warnings?  I don't know if there are any tools which
+>> complain about that in that situation=2E  I think probably we should ju=
+st
+>> make that an exception and do the checkpatch thing because it's such a
+>> simple rule to implement=2E
+>
+>My understanding from Jonathan Cameron was that Linus wants a NULL always=
+,
+>unless there is an initialization with the declaration=2E
 
+I don't have thread to hand but Linus strongly preferred moving any declar=
+ation using this to
+ where it is assigned so that it was obvious that the allocator and freer =
+match=2E
 
-@movement1@
-attribute name __free;
-@@
--struct ice_aqc_get_phy_caps_data *pcaps __free(kfree);
- ... when any
-+struct ice_aqc_get_phy_caps_data *
- pcaps
-+__free(kfree)
- =3D kzalloc(sizeof(*pcaps), ...);
-
-@movement2@
-attribute name __free;
-@@
--void *mac_buf __free(kfree);
- ... when any
-+void *
- mac_buf
-+__free(kfree)
- =3D kcalloc(2, sizeof(struct ice_aqc_manage_mac_read_resp), ...);
-
-
-Regards,
-Markus
+Not checked if that makes sense here though=20
+>
+>julia
