@@ -1,70 +1,72 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC8A8625F
-	for <kernel-janitors@vger.kernel.org>; Thu, 21 Mar 2024 15:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C329D1E879
+	for <kernel-janitors@vger.kernel.org>; Thu, 21 Mar 2024 15:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711035320; cv=none; b=q/tBccJFcxzUlnGKWHBSc1kTuhl1PLq0OsyBvbmB1nI6QdI3ZHUHRz7CbtByqXxz3ziWX2qhuZcmSgMRGLFdIS44gv6VcNCu3KmYwGyQC65mu4Qj3M/SYz4lEpyl+lvUaADTTsBRyg13tTuJbEf2W3CEUcu3Do5OC3encaOiP40=
+	t=1711036176; cv=none; b=BDyZlQVdz4tdK7WzwCpBm69CnO9kuT750tJ3zg5ISpQGDxIsqBibbnGI1VwjSc+Xgf54EdaFU06XeCfoWhfsJ19o1ZnEomT2za8hc2fuopkveE93ckudkFT3pkv4sf79szjhPF0CCTH9eKdJllOWtDsN6/Gl5qb/ntE5aKFdkd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711035320; c=relaxed/simple;
-	bh=7/Vr7UGZFgfY5hiZbZVagMHjl3VeIKITw0zb4mGRSdw=;
+	s=arc-20240116; t=1711036176; c=relaxed/simple;
+	bh=03zm1CMeVrOLuwdydHw+vTkdItfVFTx9tilzNEsOzoU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oKFEPgVuSZsJPPEyiIciNedfdMcTSNRj5ArZB5CTSrPM+8MvYIWBKPCSBja1ZR7iEKsZ3z5L5d1s07GWLDdX+rSQAO1IxhYB8prl3ClZNWqy/SvYiMHUXY4F6VsT4LN7ALSDzoLNlWwiw3MGl1+w/ebguOJ9XcLbVyelWscjNJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=zCyF18DF; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+	 Content-Type:Content-Disposition:In-Reply-To; b=iCLF1eL8WaHMNy4Sw2helAKYcRMQZhsnfcsCoYkx6+t+3tqq+rlag6kk3nthvi0lYW2aXnvJSRYV2tgMSHt9ekmJaMbKkMZmZlyN0ewQtxUHMdg5+AKFpixiRfa1hBCwTZybboWr15jDss8QlMtbsrr5RJibLFkb6hw8ikMi9So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PMrdRguP; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="zCyF18DF"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a46d0a8399aso373777366b.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 21 Mar 2024 08:35:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PMrdRguP"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4146f2b3fafso8134915e9.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 21 Mar 2024 08:49:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1711035317; x=1711640117; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1711036173; x=1711640973; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7/Vr7UGZFgfY5hiZbZVagMHjl3VeIKITw0zb4mGRSdw=;
-        b=zCyF18DFXr31m/24zPy4vHD0iVUXK/iO3DFdA+PsRBeOnabwqpwQZrSrqXFNLntlWj
-         YdpGS2H4cq0aZtqGlfu0Dwqn0Be7UQ6OfvOAWkYHJqLFGpMfZLiiwtN7oNdOFV52hnxO
-         v22ae/TBDNPTQ2Z9nq+MDnhRZxKkKLpSTr5HB4tgq9vmtJ11+Wku1Sn53OjHYtYWmtsD
-         D6DFom5lcCNMTPSHD84mhxpVJWDElwzv8nSpNujgS0nt2eDW7BxA+9aTGrYHUQT/kz+e
-         qzrAkupnUu/IRQIshLWaZN/nY+4yDnPw2W+oiPPnku4+VrX9Ma673TspLhmb31dKUO+M
-         ZTSw==
+        bh=nn0KXLTmKo1UAHS+ioXMLgSp1Jk0+gNJVUyK//P+Ags=;
+        b=PMrdRguP2ivpzCDwlpDiGj7Y33QDj9TXMe8qZDuExe9fO0k69kvZgx0AUTyFzAHUtM
+         ogjIWBCLEg+voM0Ix7SMZMwC4ji1RXw3RCzIQ9j99/ZPvJ3hzkioHac7FZxp8qEkBaSm
+         utk3u/RZ3SJJzQol5EyTlY9WkG4XnI/L1IaghSPMrKNVmYI6NLe9YW0MJphqIxc6b+6q
+         9/WlE6s0MH/782ma4zQ5KeH0MLB0go50vYgRNcMHVWsMlTK4t2IiGerfq764d6hoJYar
+         XKy9HR7YnWMpJvE+UhIocNUbzfpeuHYem9+Y40kIJL+k00Tktc1NiuZZIuXJnAwKCgTy
+         YNKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711035317; x=1711640117;
+        d=1e100.net; s=20230601; t=1711036173; x=1711640973;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7/Vr7UGZFgfY5hiZbZVagMHjl3VeIKITw0zb4mGRSdw=;
-        b=hUvnyAztbgsYZcOLLpWRUKrqFnXLN09VwpDxLIQDQenwMk8nbZYCOfX3pOO5gv0HHV
-         s1yNKj0x4Fm0Huo2KNwKiLiZT2XLNevpkf1dvEAFaTNSSSweFim1sBzuHyC0V2XjrTuO
-         9PmFdpOEgyjt6eNFSVUbD+bc1iod2PXIY+196bXSvsVgg00uURslasWnQp/L2W+NGccw
-         fLrwmSbErKEJxmcR44zjApbRRUweAZ7OmrD/fzTpWpA1uctU0XSPWWvHrCfE80vT3+7A
-         +hc40ZbpD33npIAKrOjwDlK1o+0qb5AjjWPFGi4pbNKrt5KEFj0FwzWXF0ykxGxC5es/
-         yqoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwwuRVAf4+vVjiVwEXo7LM8dRZYmtsxym5VX7NXaTrV0bxRZmDrG3Mb+XVJPKiFvZ1r+xIdgDZfdumG/277KIdpoS1xNwj6SxD0fdr7c3j
-X-Gm-Message-State: AOJu0YxQxupF3pIEOcE9InxY1v0/ks/YBDwtorniMlxLGC7Lxo3tiOhM
-	dzO5Dhic05vGc2d708zEOkyx52vuMs18Ar2KhbtC0n/aqJCwRPe9148OwJN2Uu8=
-X-Google-Smtp-Source: AGHT+IFzD7bSzwoych8HcblWm59fVdm+D+wuiZhdHvhn9H6Gbm7/4alQeCSXNlk1PpFwllpAsWO2gw==
-X-Received: by 2002:a17:906:590c:b0:a46:a85d:de81 with SMTP id h12-20020a170906590c00b00a46a85dde81mr2754941ejq.12.1711035316755;
-        Thu, 21 Mar 2024 08:35:16 -0700 (PDT)
-Received: from localhost ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id w1-20020a1709067c8100b00a46a04d7dc4sm40922ejo.61.2024.03.21.08.35.15
+        bh=nn0KXLTmKo1UAHS+ioXMLgSp1Jk0+gNJVUyK//P+Ags=;
+        b=FdUUu++9I5+CItyj6xomUsgSRdsjT3/fdhnRbMR9nThHrCPI2dvI22skrNkd2MHPB+
+         R4BGRQ25wN8+OqCf37uxzMvU0qGUb5sAQf49VM40DryPhO8k4q/w+1OENW80mMvjM1VB
+         MvL3Gf1hnCPeQzYAQiUDsvX/FoIeWiVB6hVjwa7QVuDe5/csCnf5CshtMDF4Pq03yCz0
+         V898XKCFr6aq95Ay/Fg8vv/y8TWVjnEkDkY213Hr052IpAygHVdyoUMcl5LMR7fm0HBs
+         Qye457tkb4M4LZ+Up4X06LqJkuXWMKLXg+fzW5gpzNGYzdQYqU9gOQEDktVmphl8LOVJ
+         jJTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXvUaYj1PO6w7g4H/rYhj/sKNrwDYfaVIC1zQhct3grafcJrYtvzwe2aU/7Cja2sayt6S3s/KXv3MBgVoqFcSJTfbvACWKn5Fe7rfAipuV
+X-Gm-Message-State: AOJu0Yw5nz4IQUFV7Mmmos8OpWaN/5NuXPR52EUASxNC5wp4X43uA7Ht
+	ZiF8zDtFXOYFOsBOb2NDUAO5FFc+xvbj1EaS44F0ZhLqFpJT69vz9frMH4pX7T4=
+X-Google-Smtp-Source: AGHT+IHS0COvGmxGWKzVrLFKmJH2kCt88HgGRRr5C/qE0aKfK7wiVDsrmhkHV9SjTOUK91PmmME4Iw==
+X-Received: by 2002:a05:600c:218e:b0:414:a6d:52d8 with SMTP id e14-20020a05600c218e00b004140a6d52d8mr1687053wme.17.1711036172968;
+        Thu, 21 Mar 2024 08:49:32 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id jh2-20020a05600ca08200b00413e63bb140sm5997582wmb.41.2024.03.21.08.49.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Mar 2024 08:35:16 -0700 (PDT)
-Date: Thu, 21 Mar 2024 16:35:13 +0100
-From: Jiri Pirko <jiri@resnulli.us>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Ido Schimmel <idosch@nvidia.com>, David Ahern <dsahern@kernel.org>,
+        Thu, 21 Mar 2024 08:49:32 -0700 (PDT)
+Date: Thu, 21 Mar 2024 18:49:29 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jiri Pirko <jiri@resnulli.us>
+Cc: Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Petr Machata <petrm@nvidia.com>, Kees Cook <keescook@chromium.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 net] nexthop: fix uninitialized variable in
- nla_put_nh_group_stats()
-Message-ID: <ZfxTsVPwYbruXJfY@nanopsycho>
-References: <f08ac289-d57f-4a1a-830f-cf9a0563cb9c@moroto.mountain>
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 net] ice: Fix freeing uninitialized pointers
+Message-ID: <dd392ed9-9f68-4364-bc9a-ab95d6b54cda@moroto.mountain>
+References: <0efe132b-b343-4438-bb00-5a4b82722ed3@moroto.mountain>
+ <ZfxTjYUPAFz_LRlk@nanopsycho>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,13 +75,41 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f08ac289-d57f-4a1a-830f-cf9a0563cb9c@moroto.mountain>
+In-Reply-To: <ZfxTjYUPAFz_LRlk@nanopsycho>
 
-Thu, Mar 21, 2024 at 03:42:18PM CET, dan.carpenter@linaro.org wrote:
->The "*hw_stats_used" value needs to be set on the success paths to prevent
->an uninitialized variable bug in the caller, nla_put_nh_group_stats().
->
->Fixes: 5072ae00aea4 ("net: nexthop: Expose nexthop group HW stats to user space")
->Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Thu, Mar 21, 2024 at 04:34:37PM +0100, Jiri Pirko wrote:
+> >The change to ice_update_link_info() isn't required because it's
+> >assigned on the very next line...  But I did that because it's harmless
+> >and makes __free() stuff easier to verify.  I felt like moving the
+> >declarations into the code would be controversial and it also ends up
+> >making the lines really long.
+> >
+> >		goto goto err_unroll_sched;
+> >
+> >	struct ice_aqc_get_phy_caps_data *pcaps __free(kfree) =
+> >		kzalloc(sizeof(*pcaps), GFP_KERNEL);
+> 
+> Yeah, that is why I'm proposing KZALLOC_FREE helper:
+> https://lore.kernel.org/all/20240315132249.2515468-1-jiri@resnulli.us/
+> 
 
-Reviewed-by: Jiri Pirko <jiri@nvidia.com>
+I like the idea, but I'm not keen on the format.  What about something
+like?
+
+#define __ALLOC(p) p __free(kfree) = kzalloc(sizeof(*p), GFP_KERNEL)
+
+	struct ice_aqc_get_phy_caps_data *__ALLOC(pcaps);
+
+I'm not a huge fan of putting functions which can fail into the
+declaration block but I feel like we're going to officially say that
+small allocations can't fail.
+
+https://lwn.net/Articles/964793/
+https://lore.kernel.org/all/170925937840.24797.2167230750547152404@noble.neil.brown.name/
+
+Normally we would try to delay the allocations until after all the
+sanity checks have run but that's optimizing for the failure case.  In
+the normal case we're going to want these allocations.
+
+regards,
+damn carpenter
