@@ -1,95 +1,78 @@
-Received: from mx2.mythic-beasts.com (mx2.mythic-beasts.com [46.235.227.24])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D64C187F;
-	Wed, 20 Mar 2024 16:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2739455;
+	Thu, 21 Mar 2024 03:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710953240; cv=none; b=n6rdhA6rApr1gHPOZErXqu/xOXmq8JXaMPm4emyvMG376w3I82JakTgNHeHlUbYd2CUFT/U0PSHEArk2zVqCMk43Ymj8AUGsMpWwYzltqeNRqaw1eBxfmM/qjgVMp4jh1Ku6rMrCGHJLnqdxnz3qlGuSc5gXqPuwwEzXTIRnymU=
+	t=1710991758; cv=none; b=fbZL4G4SBP0GQbkFihXcp9nkc8+rZt2NIn5tQNtnyFdin0WunSciK7pqvKFzLe7zC72osGflsdAc+SQnWxVOIyf7Tgm4GCIJb8RieQyU5GIxVVN4SyEjfqBCo7qBvMP49Xo77gZZsl4/7A51aRN8boqf1QngPnCkuiG8zlf3VRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710953240; c=relaxed/simple;
-	bh=KB4S6lfaY4jS9DUXhlshuPyIa2efuohtTmYPcJtq7Ew=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=sPwo2cPnYNDSKFwNUoF3awNzsqU26V7RYGJkurI1laFuy7SDXD4TLj1z2HdrE8NG8pkG6pE5B++uaeYz/bMt+7fc0jj2265IC1Mr8ouF9u9t/F+74VN549rHrQtI7wPREJh/vAVlfTbwcsgUAhAwJGrgETJOcvgNpA9jfTEd690=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk; spf=pass smtp.mailfrom=jic23.retrosnub.co.uk; arc=none smtp.client-ip=46.235.227.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jic23.retrosnub.co.uk
-Received: by mailhub-hex-d.mythic-beasts.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <jic23@jic23.retrosnub.co.uk>)
-	id 1rmyt8-00BNeD-Pz; Wed, 20 Mar 2024 16:34:18 +0000
-Date: Wed, 20 Mar 2024 16:33:02 +0000
-From: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-To: Julia Lawall <julia.lawall@inria.fr>,
- Dan Carpenter <dan.carpenter@linaro.org>
-CC: Jakub Kicinski <kuba@kernel.org>,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
- Jesse Brandeburg <jesse.brandeburg@intel.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Jonathan Cameron <jic23@kernel.org>
+	s=arc-20240116; t=1710991758; c=relaxed/simple;
+	bh=AndrSsRlqw/W3pe2hOtcA+x3b9aKANapvXbBK9oocR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pXOY3lxNBmCdR77XfV1shtr6SDQxI/URKUHgHzEfe8ctpbJrKnS0ZYdPgKLfkMgtUSRO50BX7a3Cd3EowGSDlAmAh922AX3AXajMqn4xnHSX3gpp3N+9CFdp0Z5nNoL57aEFrF4O0RuVjfxMevDu676Yu7i4tksLpWjm2Jku88A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OyeHGcVW; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyeHGcVW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79A8CC433F1;
+	Thu, 21 Mar 2024 03:29:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710991758;
+	bh=AndrSsRlqw/W3pe2hOtcA+x3b9aKANapvXbBK9oocR0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OyeHGcVWPFs5jA4jqo37nPwn0hPr4JaN3Tk9M97jdrF1Ew6O1kaC8D7ZDTAE5Z403
+	 GDPKM4sMWJUrachr1ZouLRAwbI1VUoef22cCmIzAJNN2bDXSg3VJI2lSqN6f8b3GdY
+	 iuvnuhitVAge5QJNdD46qatqfWY+7FQeyb+JiFT6fBfqatpoB+k2MKrmbGNP7PeN3y
+	 QnEea0YPBxvhRQUUy4Yqf2XCOFbXwo0NV/NGGf6uZ4JBDlgpmaunLjgXLCaF0bF1ba
+	 azYkWxrcD9eL9ImsxJT7eHcQwHE4Bvk1STDgkTmilGmDnFULbc4mZaMXW2pPP2Dn4z
+	 76vwdGIAeT86w==
+Date: Wed, 20 Mar 2024 20:29:16 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Jesse Brandeburg
+ <jesse.brandeburg@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, intel-wired-lan@lists.osuosl.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH net] ice: Fix freeing uninitialized pointers
-User-Agent: K-9 Mail for Android
-In-Reply-To: <f1bdbed9-8549-3787-bd17-ecd62851e8a@inria.fr>
-References: <77145930-e3df-4e77-a22d-04851cf3a426@moroto.mountain> <20240319124317.3c3f16cd@kernel.org> <facf5615-d7ac-4167-b23c-6bab7c123138@moroto.mountain> <f1bdbed9-8549-3787-bd17-ecd62851e8a@inria.fr>
-Message-ID: <10F403F7-E8B7-48F0-90CF-3C8A8BEB10F2@jic23.retrosnub.co.uk>
+Message-ID: <20240320202916.2f2bda73@kernel.org>
+In-Reply-To: <facf5615-d7ac-4167-b23c-6bab7c123138@moroto.mountain>
+References: <77145930-e3df-4e77-a22d-04851cf3a426@moroto.mountain>
+	<20240319124317.3c3f16cd@kernel.org>
+	<facf5615-d7ac-4167-b23c-6bab7c123138@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-BlackCat-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 20 Mar 2024 08:01:49 +0300 Dan Carpenter wrote:
+> > This is just trading one kind of bug for another, and the __free()
+> > magic is at a cost of readability.
+> > 
+> > I think we should ban the use of __free() in all of networking,
+> > until / unless it cleanly handles the NULL init case.  
+> 
+> Free handles the NULL init case, it doesn't handle the uninitialized
+> case.  I had previously argued that checkpatch should complain about
+> every __free() pointer if the declaration doesn't have an assignment.
+> 
+> The = NULL assignment is unnecessary if the pointer is assigned to
+> something else before the first return, so this might cause "unused
+> assignment" warnings?  I don't know if there are any tools which
+> complain about that in that situation.  I think probably we should just
+> make that an exception and do the checkpatch thing because it's such a
+> simple rule to implement.
 
+What I was trying to say is that the __free() thing is supposed to
+prevent bugs, and it's not. Even if it was easy to write the matcher
+rule, if __free() needs a rule to double check its use - it's failing 
+at making it easier to write correct code.
 
-On 20 March 2024 07:32:17 GMT, Julia Lawall <julia=2Elawall@inria=2Efr> wr=
-ote:
->
->
->On Wed, 20 Mar 2024, Dan Carpenter wrote:
->
->> On Tue, Mar 19, 2024 at 12:43:17PM -0700, Jakub Kicinski wrote:
->> > On Sat, 16 Mar 2024 12:44:40 +0300 Dan Carpenter wrote:
->> > > -	struct ice_aqc_get_phy_caps_data *pcaps __free(kfree);
->> > > -	void *mac_buf __free(kfree);
->> > > +	struct ice_aqc_get_phy_caps_data *pcaps __free(kfree) =3D NULL;
->> > > +	void *mac_buf __free(kfree) =3D NULL;
->> >
->> > This is just trading one kind of bug for another, and the __free()
->> > magic is at a cost of readability=2E
->> >
->> > I think we should ban the use of __free() in all of networking,
->> > until / unless it cleanly handles the NULL init case=2E
->>
->> Free handles the NULL init case, it doesn't handle the uninitialized
->> case=2E  I had previously argued that checkpatch should complain about
->> every __free() pointer if the declaration doesn't have an assignment=2E
->>
->> The =3D NULL assignment is unnecessary if the pointer is assigned to
->> something else before the first return, so this might cause "unused
->> assignment" warnings?  I don't know if there are any tools which
->> complain about that in that situation=2E  I think probably we should ju=
-st
->> make that an exception and do the checkpatch thing because it's such a
->> simple rule to implement=2E
->
->My understanding from Jonathan Cameron was that Linus wants a NULL always=
-,
->unless there is an initialization with the declaration=2E
-
-I don't have thread to hand but Linus strongly preferred moving any declar=
-ation using this to
- where it is assigned so that it was obvious that the allocator and freer =
-match=2E
-
-Not checked if that makes sense here though=20
->
->julia
+In any case. This is a patch for Intel wired, I'll let Intel folks
+decide.
