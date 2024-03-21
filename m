@@ -1,131 +1,68 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14C38613B;
-	Thu, 21 Mar 2024 18:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEB31292CE;
+	Thu, 21 Mar 2024 18:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711044191; cv=none; b=L57npTFC1/kvL3zKJXmSIDc+tb8TA7PGUMQYZEYZs2gg9NealoUK8Jax71jYsFkNRgwhqU88zCudTnhSmeK2bJFOEhObgRVuf91a1QRjm322kWIeF/vrOvz6xrmeu0aE+NSN51zIy03q7+9wHbqMD+rK2/1mG6cGH0Xt9EPaIxY=
+	t=1711044842; cv=none; b=pU7AH/N9AiUmtsT8UvY6HX+KTtGzPe9CziZIrTcBkDA2m/MIz2c7B6ekzEkUSGe+Aq3wqpoj+bugtJU6+/bv2DWV5j1VKLoj1VA0H91/CtcXDKUTebngcDpA+yfDVg48VlR+sxkEwLL3MPP8oypoqsg9rbV3g3EzBWJZ5fbh6VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711044191; c=relaxed/simple;
-	bh=cpK068KVvFXrGJJCmc7jXbXiOVvPQ+oU7A4+RLoU+Qw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=foUGVIkfuTXwfNxmBI+ipS6iM8H2Seev4DCEe8ToO6SPXMb9eUKWmG3rXARWEel2JLFO3KQxmeRtuSn1sUcfWhVkXNhZor7NyegkizecCY+iTRSlQwieSRclzUwsEUMdNxRyyRMLAwHn9EcEPu/qIjxFLicBWEbxvxrYb00rVR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LjblWkn4; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1711044842; c=relaxed/simple;
+	bh=XUlN3uXoacGlQBJNEV343fyloPlUcDzqZL5AIHjXbco=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=QDv3oKJzJomyJf8O+9HGKc9McGLhuLZ4uecdejr5lg3Z8IY3c8cBtISAfTWQxYfOAb8MHvR0MgPpJsp0RSm6KI+h9aPQsjm86ZVik8f2Wt/Q8PbsTzKckby1O71+8AJI4R/cZOR3PsHE3ypz5g/rN/1LxzZjrATYSCaJUTSlYO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gXgctHp8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LjblWkn4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1711044190; x=1742580190;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=cpK068KVvFXrGJJCmc7jXbXiOVvPQ+oU7A4+RLoU+Qw=;
-  b=LjblWkn46DoJ4D30T1Q4+Xd2HPvwa1M93IlbrFEIGc4mVKHokGBICI3L
-   k1DV7xeY8QPHGYUMy0tVVOBiZnxjfeftq4YU77n1MWAnsZ/BEAMIY9/M7
-   oaH4WY8SApKWwNspi8MOYAtUd9IKT4dY70kznKAf2nW1rZ7r8tAImk8ik
-   xwyoD0fAxtGAxRseivGItDo6DzvJ2ee3HGygKUfqQaF5KYv+fX1soZP5k
-   nyhCpxkMqF8PNDNd0LYoU3ljR1uGPC8/2x0idbHxZNPJ7G/ykfxpeVyNh
-   Bn02mls4QgT04iL1Cs6qIjrvVbGU323Or3xdjJBpT8/070h2lmqx61438
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,11020"; a="6180634"
-X-IronPort-AV: E=Sophos;i="6.07,143,1708416000"; 
-   d="scan'208";a="6180634"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2024 11:03:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,11020"; a="914717075"
-X-IronPort-AV: E=Sophos;i="6.07,143,1708416000"; 
-   d="scan'208";a="914717075"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2024 11:03:04 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1rnMkm-0000000ExcL-2Dkx;
-	Thu, 21 Mar 2024 20:03:00 +0200
-Date: Thu, 21 Mar 2024 20:03:00 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	David Laight <David.Laight@aculab.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>, Jonathan Cameron <jic23@kernel.org>,
-	Julia Lawall <julia.lawall@inria.fr>,
-	Kees Cook <keescook@chromium.org>,
-	Lukasz Czapnik <lukasz.czapnik@intel.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Pucha Himasekhar Reddy <himasekharx.reddy.pucha@intel.com>
-Subject: Re: [PATCH net] ice: Fix freeing uninitialized pointers
-Message-ID: <Zfx2VL7xnj4rQoV8@smile.fi.intel.com>
-References: <77145930-e3df-4e77-a22d-04851cf3a426@moroto.mountain>
- <d2b1f3bd-42f1-483b-916e-3735b39a30e1@web.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gXgctHp8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CD4DC433F1;
+	Thu, 21 Mar 2024 18:14:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711044842;
+	bh=XUlN3uXoacGlQBJNEV343fyloPlUcDzqZL5AIHjXbco=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=gXgctHp8kphN9fq2pXjJI2fDGR1kFRn1bGLZ1eU/Rj7LyeHn7k4kQGIVaOZ2OoJ3S
+	 g18Xf5PB7CLUvvToJ8f8M8Xv7+dvp1hLwAngdLcDAGrGrWw0Bs5ZVTmqd1ufcgwBTh
+	 0kA+RCWGZrbkwEeRDyIkseVYk8WIOBJmjMvUmc9yDSJCpCTAetCbQ9IXORFnv+1xCf
+	 Z6NbUqy1IWQTJg+Uc1/ZlbbEzVEP4pLSsohohT+r/lDz9Tbzbkg2BZocbPY7WI1Fgh
+	 Nj5flbZND0cHPRKHr6KvIY2qzZSbqRkj9JDMqiYFu1/xvy8AhiAZpULnx78Lnj2Pa+
+	 omVb1Ic+a3FVQ==
+From: Lee Jones <lee@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Flavio Suligoi <f.suligoi@asem.it>, Lee Jones <lee@kernel.org>, 
+ Daniel Thompson <daniel.thompson@linaro.org>, 
+ Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, 
+ dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <74347f67-360d-4513-8939-595e3c4764fa@moroto.mountain>
+References: <74347f67-360d-4513-8939-595e3c4764fa@moroto.mountain>
+Subject: Re: (subset) [PATCH] backlight: mp3309c: fix signedness bug in
+ mp3309c_parse_fwnode()
+Message-Id: <171104484009.147635.12745541732945934686.b4-ty@kernel.org>
+Date: Thu, 21 Mar 2024 18:14:00 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d2b1f3bd-42f1-483b-916e-3735b39a30e1@web.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Mailer: b4 0.12.4
 
-On Thu, Mar 21, 2024 at 06:59:00PM +0100, Markus Elfring wrote:
-
-…
-
-> > +++ b/drivers/net/ethernet/intel/ice/ice_ethtool.c
-> > @@ -941,11 +941,11 @@ static u64 ice_loopback_test(struct net_device *netdev)
-> >  	struct ice_netdev_priv *np = netdev_priv(netdev);
-> >  	struct ice_vsi *orig_vsi = np->vsi, *test_vsi;
-> >  	struct ice_pf *pf = orig_vsi->back;
-> > +	u8 *tx_frame __free(kfree) = NULL;
-> >  	u8 broadcast[ETH_ALEN], ret = 0;
-> >  	int num_frames, valid_frames;
-> >  	struct ice_tx_ring *tx_ring;
-> >  	struct ice_rx_ring *rx_ring;
-> > -	u8 *tx_frame __free(kfree);
-> >  	int i;
-> >
-> >  	netdev_info(netdev, "loopback test\n");
+On Sat, 16 Mar 2024 12:45:27 +0300, Dan Carpenter wrote:
+> The "num_levels" variable is used to store error codes from
+> device_property_count_u32() so it needs to be signed.  This doesn't
+> cause an issue at runtime because devm_kcalloc() won't allocate negative
+> sizes.  However, it's still worth fixing.
 > 
-> How do you think about to reduce the scope for the affected local variable instead
-> with the help of a small script (like the following) for the semantic patch language?
 > 
-> @movement@
-> attribute name __free;
-> @@
-> -u8 *tx_frame __free(kfree);
->  int i;
->  ... when any
->  if (ice_fltr_add_mac(test_vsi, ...))
->  { ... }
-> +
-> +{
-> +u8 *tx_frame __free(kfree) = NULL;
->  if (ice_lbtest_create_frame(pf, &tx_frame, ...))
->  { ... }
->  ... when any
-> +}
-> +
->  valid_frames = ice_lbtest_receive_frames(...);
 
-I believe you don't understand what the scope of the above can be.
+Applied, thanks!
 
--- 
-With Best Regards,
-Andy Shevchenko
+[1/1] backlight: mp3309c: fix signedness bug in mp3309c_parse_fwnode()
+      commit: 84a053e072c8aacff8074ac5d6f7a4e7ff745209
 
+--
+Lee Jones [李琼斯]
 
