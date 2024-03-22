@@ -1,38 +1,38 @@
 Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F031756B;
-	Fri, 22 Mar 2024 08:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C70926ADB;
+	Fri, 22 Mar 2024 10:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711097351; cv=none; b=Rbi9vgl4ELQ6rm0eoNINUTzRHbKRekWKMjB99xnOdKc1hpjzbYG2CuAO/XnJb8nNE3AP4Y8KZWGHYoGerdxe2y2ifkkwzYsvHv7YBUIcV4p5rsOLMg4XwJu4vP5ejgmSZPVkfuhgvmYGe7Ko0TV3PWs5cqN0JMIB6TM6zScrQ0U=
+	t=1711102570; cv=none; b=AR+wv5zqn0D91qd2/VWbQAAT2yA8RYRr8pD22gWT95pe47bv3M5uWyFqHszfpUcgmqBJbuGDzX4GVzLpqdCj9HnQ72XDyAKwCGDePI3muEwKpTIPu7OtTN+qD7SFQ1WUMK6pgz1+Vwiv0jGzzCdKqrAq+ffK/8Wlf/ir+89QawQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711097351; c=relaxed/simple;
-	bh=dTYtO0jE8wKYKJFcNaD+LqthVoE8a2KnRw+uYik6gTg=;
+	s=arc-20240116; t=1711102570; c=relaxed/simple;
+	bh=GadESi8ONSV56erp89XTT+vSta6NjyXh9DD7OG2fFAk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FCoFbH4RQarIfBIRs95EMzpE1Pb+d3ZXCnKT321acnKeyQwCjoRxP5jvJcrbIqGQMzThpo9ror8EIVz5fagzD1LZ0IRTwES61crD1msRUxkZwFRjXqZfCoV8tpNdxZdxHJyZ7yZxLekg/EtPz9hiSgdU2H8wNSNsywd+jms7GvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Sz+QOfoT; arc=none smtp.client-ip=212.227.15.4
+	 In-Reply-To:Content-Type; b=GzhD8K+syW30a0xPXWftCf6RkJwjT81eUQ/qqHiw9tt35KOmjoM10zlyB0S23uFlKscVoDCghNnsxCuTu0zhMPpxFmMCJxiSNVYLqLEY+fkswO+6oitxHZqnXhNhIqGZSJk5tjvDrGQRwSddP1aiO8Eh99nd8GzWamr2JHirGbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Y2ReAm1C; arc=none smtp.client-ip=212.227.15.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Sz+QOfoT"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Y2ReAm1C"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1711097319; x=1711702119; i=markus.elfring@web.de;
-	bh=dTYtO0jE8wKYKJFcNaD+LqthVoE8a2KnRw+uYik6gTg=;
+	s=s29768273; t=1711102564; x=1711707364; i=markus.elfring@web.de;
+	bh=YITSdSNKjtGWKQJCqVlDxMIGXLNZSJ1FOmf8VqHMVLI=;
 	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
 	 In-Reply-To;
-	b=Sz+QOfoTD5Bpl9wGXJrzR7Ksj2hc9ZMWXKuPOVVkcJIo/2955grVbFz9Zkdlqq+1
-	 a3yjXRxAtaAEZlRun5zFoV8E2k03VmQPOlM03BzQjQtK9rLmwAkzBIL+4TJ+DVE9j
-	 QvpLEA95pWcJy/f4HblymlKI7wdYytyGtbqaES/4877+2ehtdioJb6hbQp31cVpQ0
-	 9y2WPLi1zLfG7tcLRHJn1HktVcNvXnbp5ygTFaIys19EBO9fuvRwOcs5vX0jpEGrG
-	 J1eeCBie4ftMdtGE5YLi4Dft6t+yCP4q0/peaFSiHsLazxJqgDdvIfDanQblKCuq3
-	 9H6qvkbL/dy7u9Wbcg==
+	b=Y2ReAm1Cd4sNe5u0ne9uK6PLGurzdh+kkALmaxx1M8WJ19BTpB/sxYqatqgkFwzP
+	 HNF6CiMavemFWZHCjCubLFrgKKREtpcm54KNbLjWzuDbNgiCTymtjqR23i11rdQhb
+	 /jsC0CFngbzNkN5VYgk6g9PyNKArXi5Mrpdfnjj+8m3wLJeQ+ifFhl1ZzhMRiju1f
+	 9ASJjnPNlrnDdQAZBiLiUD8HpjBHbUSXIl3tqKcquS2n347ya0QQ1U3zAb0PyBpt1
+	 cmsN0xV+5bpWjRmzfaTXqNXoLqHvTf/2sVlyTXTYeAwf0dMUTQrJgA9vrYO/Sy0xn
+	 tyLUC+DMpTYrbbW5Pw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MECGX-1rdRYY2bZd-006i6z; Fri, 22
- Mar 2024 09:48:39 +0100
-Message-ID: <5412e9e1-2470-497a-a879-d28e6039be15@web.de>
-Date: Fri, 22 Mar 2024 09:48:27 +0100
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mfc4q-1r7vNl0NY0-00jbRy; Fri, 22
+ Mar 2024 11:10:13 +0100
+Message-ID: <9b09c797-2b01-40d8-9e83-ecb6e25ee78a@web.de>
+Date: Fri, 22 Mar 2024 11:10:10 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -40,67 +40,58 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: ice: Fix freeing uninitialized pointers
-To: Julia Lawall <Julia.Lawall@inria.fr>, kernel-janitors@vger.kernel.org,
- netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+Subject: Re: [v2] ice: Fix freeing uninitialized pointers
+Content-Language: en-GB
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
+ intel-wired-lan@lists.osuosl.org
+Cc: Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
  Przemek Kitszel <przemyslaw.kitszel@intel.com>,
  Tony Nguyen <anthony.l.nguyen@intel.com>, LKML
  <linux-kernel@vger.kernel.org>,
  Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
  David Laight <David.Laight@aculab.com>, "David S. Miller"
  <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
  Jakub Kicinski <kuba@kernel.org>,
  Jesse Brandeburg <jesse.brandeburg@intel.com>, Jiri Pirko
  <jiri@resnulli.us>, Jonathan Cameron <jic23@kernel.org>,
- Kees Cook <keescook@chromium.org>, Lukasz Czapnik
- <lukasz.czapnik@intel.com>, Paolo Abeni <pabeni@redhat.com>,
+ Julia Lawall <julia.lawall@inria.fr>, Kees Cook <keescook@chromium.org>,
+ Lukasz Czapnik <lukasz.czapnik@intel.com>, Paolo Abeni <pabeni@redhat.com>,
  Pucha Himasekhar Reddy <himasekharx.reddy.pucha@intel.com>,
  Dan Williams <dan.j.williams@intel.com>
-References: <e5172afb-427b-423e-877a-10352cf4a007@web.de>
- <F2FBADE8-EDF9-4987-A97B-CF4D2D1452E0@inria.fr>
-Content-Language: en-GB
+References: <0efe132b-b343-4438-bb00-5a4b82722ed3@moroto.mountain>
+ <0d7062e1-995b-42bc-8a62-d57c8cb588ee@web.de>
+ <7ca4a907-2a9c-4711-a13c-22cbfec15e0e@moroto.mountain>
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <F2FBADE8-EDF9-4987-A97B-CF4D2D1452E0@inria.fr>
+In-Reply-To: <7ca4a907-2a9c-4711-a13c-22cbfec15e0e@moroto.mountain>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:9YXkvZdYpqeXj5WB8AcK0LWQYNWMZbgwO0vYGnbOxScaxdApu0A
- /wGrtYc+l2huJpHcvNNT/1tZcW/e7ub95xlO4cy1Zi2g5iveCJACnZEZAxlbdwyQfqkN5ee
- 3JfFsFxlVMK775YZ8vqtGLBwf74q6UBIBZyWpm0F3PNzdPiKJdcSuT1zLtKuEqGCdgRbVOy
- 9HIZtqoXS2nyv+XOb1+1g==
+X-Provags-ID: V03:K1:OPtKNGD3xEcd1Z7sJW7cRkjajBmWMTdxQ7djE0xUhQ1czhFk4yH
+ OVOh6h+sux0OGb4dFA5OaxAiv2F5OWxkUlsDdTB4f5Pvtz2WBLmL0CV0DgoYjprq1yAbO5G
+ b1/blJMXPlAmdOtqF6VrJzL01o8nYCkjLkbKyX1X5vVNYHTjvXF9uZyFXaI1Skgc3NRMsNq
+ SWWI3YTNfkGNTd1Y5yQHw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:eGYjQvfGa2w=;8aqjLC4e8Qn3i8gHlnKYxMR90PI
- otP3Ewl1/O20JuaFJwwDQibzoecYfetjeu9HAkew3SG+utku+ttOzFmVK5+nnJOF39MPo1dZJ
- Ht3GGhh5IUrvv82ADmD1A0w+f6++0BVbJcUX30PKHKz2ZRc5tNneT0vTREp+W5elGnouMV+x2
- TXjV/R0A7RVgJ9+hvPqMsUgEqvKa6GXbaH16ERyx/gLpirXkdFAsn4phqqWcY3AuiLgvp/z6D
- 4pG3dYpEE3o0ZpXFtob3KUEJuzDQSmlxz0Ok2ANTBt43rLnNICwi8SPvYVOZYM4nqgXl2Fmu8
- xvFoytyWjrHCzbIONmIpHyT6uCG6fwfDc4s2U0n+/BIC+ebPdv4nLUHT248MsQleGKxpGZ7xe
- 9wfA6QD6IA5nA70QnMYr4RDvI9oLKihilwDGw8rExQtkixGtDrsEBFRk6GjSqW6v0exz76oSy
- F74K6nFt/WkVHW5Kbuj4vWwegMapIwxDLAdA3Jn5U1NdSo3Y+tmpctsQCB7TmULsqQ1af3bOc
- L4uGN4ZaqKEuPVXX80aCa97ibUCSStQCzQWgvas7st7w4fhGwNgDGGlXbFFKBEfej2RU/rKZ4
- 1nSYTE3/tRvFu6BUnPV7jmtWKW0lkuU/s688IhVHYgah6V/wyLP9+p+Xu9ZEGHSmkBUG1Qh3b
- 6G8PI/cwldbw2t5R/4ZpUMYltcaTAKy7gQ3Nv4Z235ovhlOyRjPXtYHSASEPKcv6WU6TfoaUw
- Joe7kDDizCqbYkGbK2fbxZJG7Y5/zYA1rAVsSA2SZtLuZt+gcuhfQ2unsbbYd1odhctZE5Avd
- y+KFWCW0whvRwvg7LZgy8bzOrLOA+d1k2pKeNPb+oHRRM=
+UI-OutboundReport: notjunk:1;M01:P0:HTHlWZPjstg=;x80qYP9/CGxP7aDaVgcrNlTbZCo
+ 8+g3feTSIdzmhy59CGiNd+Y2CkUnn3bhYyjDFbhgKuFyi2US31K4d4Ssaxf46f6LbTg0mG2VT
+ Ab/N2Olz2GjX0FyMg45JwCzWCYE3uD8KY6fMpk12gmaM6V/5MVZwjpKZEWSG5ZNrWLTTucvh4
+ QK3vq3Vdj4ySXAb4t0aO61TTUM731MJyrzzSkQTo4+OtNBwkWxj2988EECm13MTv/p8yLdU2z
+ Tvuh3H/k1ZQVZRpJIGsZzewOm2nD8xRl96OzPcwnbfPrcblQd2aXfTvhAXJrtfOr+kUiZplDN
+ ztRgIs3VeZ/IM7zUAxg/9k/G1gH8hPV/p5sr7/nDRAhsOwzbYPNipSEE0VUoV+C9NDVrr1WzD
+ J3gxC7v4YH//04J2kPQG4NYGA+B5e5csAAJbPtw/VuQ4IIeWli1Pxz5gXDxMiwpzd2dCiivtU
+ 4c4CwlgrN2r/+O8qNKWxwnnOYZrPaaM3Acgk24988vlrWUEGwT3VuA1ZWnNnx8KW5zY4AIQkj
+ TN8LcARbvYrz3PIFKLvS5gxFwB3qhL5CY8Pfi9xr6Ya3EmZPJXsCrWt7UNUdxiHrFezfRks+j
+ i5RCd4l79gskUd+XK89dCmxsQbpFvxLciO8Bs7alT7ijXgrcyXH+8SqrL3YvswgZ8et8Cj4Kg
+ SRs5UcH8oE0TFL7Xd1fPlkRViExswSYDryUW8adaulV5vmf9993ce+YQplB2juw4X/+5hr8Rc
+ Pxd8Z2+k0GNykhsagBTe5nrJ1vlFpRZUzmKhdwWd+W6Xag6D6gkUzAxVIBHdTd5DPIAFsOG0O
+ tiMMF+iecfcmaEdmBPSHq00WfyvuMa/OjmqXEAy0kMyO8=
 
-> Does one prefer an initialization of null at the top of the function
+> Markus please don't do this.  Don't take a controversial opinion and
+> start trying to force it on everyone via review comments and an
+> automatic converstion script.
 
-Several developers got used to such a programming approach.
-
-
-> or an initialization to a meaningful value in the middle of the function ?
-
-Coding style preferences are evolving more with the growing support for
-the discussed scope-based resource management (cleanup functions and guards),
-aren't they?
-
-Further developers can handle variable definitions at the beginning of
-a compound statement (a code block) at least.
-Corresponding clarifications will influence the change acceptance for such definitions
-without adding extra curly brackets.
-Would you like to consider design possibilities with scope reductions?
+I dare also to point additional change possibilities out.
+I hope that further collateral evolution will become better supported.
 
 Regards,
 Markus
