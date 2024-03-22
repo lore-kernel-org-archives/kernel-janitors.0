@@ -1,68 +1,83 @@
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B4A3A8C3
-	for <kernel-janitors@vger.kernel.org>; Fri, 22 Mar 2024 11:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5585F20DDB;
+	Fri, 22 Mar 2024 12:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711107247; cv=none; b=M3mQvcf+SvoLZKZdxo4UB3Do2A2EH/nZsi8dK/lORu17lmRYK1yRMwxeyoF7tAe05+zXSQRMibMRj338bf5pkkkQx/RcWrdaKD6DwnpftZZuvI5UBOYNM+ZVUBDJtqH490xNIZoveCEyjqj6T7bCr7YhWEqcSZPylf62OFpD838=
+	t=1711112252; cv=none; b=eo3gtzWbc+3CGWl9hwH80+zNC7Eny8XskvDLHpXXuqPlmTwXiviZXvjeN5YcZk1hQgLJUoRoHVNfBqP6UjM2gFcdPiKaQzQAI2lJzYT6Y3dHVsKY5Y/8zYb/LFpWIU4x6qLzSSSpESNT6/398EMbFte7dfjRcjcYgykosCXEM4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711107247; c=relaxed/simple;
-	bh=EDLSzvHWzWJckccgae9InvdeABzJhvqCfI6ieGm1XfY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cItyCMWGfI+rB/Rv21qz1B9yVNusjIQc5DdjArJyYC9QAi5rAeftaCPPH7ohW2VvOC4sAKDdB6h/Q4g+XibXDYRtm34kfbRfFRNfGvxduu732QZDNpO15/NayMWWvbslNC85zg6vS/lO32UV51BC068dvs6NpJ8is8Q6wIHGZjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=okH1hJuq; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1711112252; c=relaxed/simple;
+	bh=vi6qepP3WZqihtomx/Ad9yWtRNe/QyPnUUouWN8vfoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K+Xx9z95nP8yTKu7kPKX1rTzd8Qyh6dGfYZdDZL5p4ME5nvjV40BzPAxf2WoXMCR1r4xWOJU7ZdYV29OpfSciCcepSLWpRtF/7H+AWR/pucz4e2dzLtIX4DMQbApmnJnqbmpZcP/qLhKXQb+dvoStgJ6Y8C8aAq6ChXCAPJOEe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYOnqs3X; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="okH1hJuq"
-Message-ID: <3140f17b-f7b4-4705-877f-df2c0af460d2@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1711107243;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t678LVHSCoxay4XYSJ0VwadhX/XRd8hTe6DYJoC6mOo=;
-	b=okH1hJuq01MrIEXSupw5A53MiUW/2sSEI/CQAe86vH5rhfU/RMX0OWgs5aFfX1JjGmV2GW
-	SLYsrw6Wch8TknYz3eqO+exU46APFpUXiNS0KqhsZ8WqnLI/kjuUBetNm2TSieVCaO4XK3
-	p0X42SIwucnQ0gwKMSL3lOtd9lGMAVM=
-Date: Fri, 22 Mar 2024 19:33:56 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYOnqs3X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C3C3C433F1;
+	Fri, 22 Mar 2024 12:57:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711112251;
+	bh=vi6qepP3WZqihtomx/Ad9yWtRNe/QyPnUUouWN8vfoc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mYOnqs3XbPZ567x2XcqYUCB8z7YM6n71i0LA+G1lsomcgE09dZnAsQ5/jnVOTis/+
+	 RPvyII8VqC0yle9uD7ZI419zJtCNjPgh2PUXSiKJa6Ta6yS7/N3S6qkotXWZpmYiaz
+	 ppB5rTjd2bgLZ0m95ihhxh1d4FPmSMv95QhZaPRoxFx9kfF/ZQNmP/sejCpxpxZTKH
+	 Ma1dDeNOZD/KjfsULlkpWSYR7ICpajzsaCRnPE6iAFhSyZzf5lcP9KnPGqq1J9QFaF
+	 lFRUdJHIeZy5ZsdhHsNZBIgz0JCqnnWZKZ2v1ra6cd3Grj9LXoI4gMoFBUQoNJv0Ak
+	 YtYq2gOuwo3Qg==
+Date: Fri, 22 Mar 2024 12:57:27 +0000
+From: Simon Horman <horms@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 net] ice: Fix freeing uninitialized pointers
+Message-ID: <20240322125727.GE372561@kernel.org>
+References: <0efe132b-b343-4438-bb00-5a4b82722ed3@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [next] drm/gma500: Fix spelling mistake "patter" -> "pattern"
-To: Colin Ian King <colin.i.king@gmail.com>,
- Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240314163511.2372458-1-colin.i.king@gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <20240314163511.2372458-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0efe132b-b343-4438-bb00-5a4b82722ed3@moroto.mountain>
 
-Hi,
+On Thu, Mar 21, 2024 at 05:42:12PM +0300, Dan Carpenter wrote:
+> Automatically cleaned up pointers need to be initialized before exiting
+> their scope.  In this case, they need to be initialized to NULL before
+> any return statement.
+> 
+> Fixes: 90f821d72e11 ("ice: avoid unnecessary devm_ usage")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> v2: I missed a couple pointers in v1.
+> 
+> The change to ice_update_link_info() isn't required because it's
+> assigned on the very next line...  But I did that because it's harmless
+> and makes __free() stuff easier to verify.  I felt like moving the
+> declarations into the code would be controversial and it also ends up
+> making the lines really long.
+> 
+> 		goto goto err_unroll_sched;
+> 
+> 	struct ice_aqc_get_phy_caps_data *pcaps __free(kfree) =
+> 		kzalloc(sizeof(*pcaps), GFP_KERNEL);
 
+Thanks Dan,
 
-On 2024/3/15 00:35, Colin Ian King wrote:
-> There is a spelling mistake in a DRM_DEBUG_KMS message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+I agree with the approach you have taken here.
 
+And I apologise that it's quite likely that I skipped warnings regarding
+these problems when reviewing patches that introduced them - I did not
+understand the issue that this patch resolves.
 
-Reviewed-by:Sui Jingfeng <sui.jingfeng@linux.dev>
-
--- 
-Best regards,
-Sui
-
+Reviewed-by: Simon Horman <horms@kernel.org>
