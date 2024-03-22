@@ -1,95 +1,100 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07668F6E
-	for <kernel-janitors@vger.kernel.org>; Fri, 22 Mar 2024 05:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AEF1119E;
+	Fri, 22 Mar 2024 07:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711085530; cv=none; b=riTVa0c47EOVEluAsWUJKbsJE3TKzIhgwC3MVyXtbudM6hHMw1r6Lc40RYhL/yHreRpxXDbBVWgsoIwEWZo+7qVm+FJqZydPijx4oqVe6cvBVXxTBFBp+zL+CFaxuwouhNF+GjRdPE5AmigOC0MySdLkCLv1OgLEoj7CaVADZZ8=
+	t=1711092322; cv=none; b=JeU+0PbCqC++9LxInZIG2/YVq30vrIQAEhZvCNaEch2PmnFxsHbRGN6XezZ8tdet+UoABCzvb8Q0kp8Q7ZDuQO/zSZgZBSvpC6ZRwmmnLoo0NhOKed3gF8curoDbMn0FP+sXnoVZ0XScAu9hKb/qumrVcg+UB4xRWp7XIbhT/iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711085530; c=relaxed/simple;
-	bh=gW3fIZf8vN6iEiqmwYK/QLqdMMMGzpIb+vf5nBRh7oc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FMHVuhXH/YlxV+z54HdK/Bk8yaaKo7Ar2357cLkMw8KqCmxVx+eoOd49FHE3rHjECg+gIaneeNpwXrzx4QheYXg4A1oCO9ROqHaPx4q4wry9M629HgD/GJo5bUHfReJtecQF4PXH36yErzAKozmtOpX4uyBUaECGUuR+mnMzQhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DXkAkenu; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1711092322; c=relaxed/simple;
+	bh=deldEFKMWIiGWJW2Eh0gw1DLVhU5F6dOnznP2xCyQaA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=UYYiBWEJb/KkpO3NiLBZ0AaB05BsN99VIxiqHt0mfjUqwDS6Hgbuqdu4MwiD3C1Dr/UdJQTqQ11Vy5yj3RaGFDR7PlRCPfbfnlHpW1URE0f4dAnrrYYLqyijvXJVQ9LnjRqyvJnDD+zRQDrQksFdz8eZdgLvdnK6bIWXhWn7c7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=S3gBIDuJ; arc=none smtp.client-ip=192.134.164.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DXkAkenu"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-414787c73c7so4595555e9.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 21 Mar 2024 22:32:08 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="S3gBIDuJ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711085527; x=1711690327; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=k+glO5iNDnOJRX1bMlWGx35LFvgqhLSy12w38sJ7h5I=;
-        b=DXkAkenuMD7Dq0tSxFGZb9UuWfFh3h4GzTJcEZ+KwSTUI6OBpVtt2i4OILSAvO20wc
-         dg9+NhibWifTjbapox5n/gfBfKoIWfBJ8L8mBWlgUoax3768YRVrqRjd25xhjDA1iv7Y
-         gqxLn1kRI1iRX1YDDHxuPR2KzqEgjaW8y2PMv12DaypLPyyxUZJqrMsLx212XZ1Q/YKM
-         Vbk9eKR2YoMlo6mpnDkNrFiOY0eI2zul2smqOGRwR+t3Dkki63suyfdfiL9EnVxABmdr
-         8mZPP+p44X7PX37H5WNPj6+MMa01EcyWuMQAz9TK+6XzG1Xd6N02ABp4R8sIopen9Qke
-         WB9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711085527; x=1711690327;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k+glO5iNDnOJRX1bMlWGx35LFvgqhLSy12w38sJ7h5I=;
-        b=NcmfmYDXor6W4/a7flK99fcT+hUZux7hdlnEU7kFY1M5DoPFkNvmLFBQKlj7il7ZgW
-         UafexCaos2GlqH4Ce9V3KiQdyBkY5sGCCJ8qEYJB8pAK1uitgpx2DJhzudG3tAuoNm4N
-         4RwEpaEPLDVK6of9MgH7L6A3YXTIhq2trFCKv5m+aTBTP+ftqMNDT3cj/6qGUKkFFbdT
-         VT86AKDj9fAOcZoCAUyjzAgPmIhi6kkPdx8dZOKvFMmG+hBvpJ2kNTtK3MQv1TFDUHRq
-         /UDtDx9x44QqIOFQYrjZ+hnwA7v1yh06XTNBIZD8CaHh4LTY7ZbC8ythx/Hb/i/8iTvj
-         uQZQ==
-X-Gm-Message-State: AOJu0YzgNAuN2bJ65VuIbuyUlKL26Y22T5l4P8HI33jUCISsFsUMxFy2
-	61mNJEvPrHEGef7rNVoA7VbYBYVWBi5zGUwrENjuMcNKyFRjOkydghvKDNT+TAA=
-X-Google-Smtp-Source: AGHT+IFUrNidyaL2odjdKfD+FtYadw4MHtswbb1LkvUM7SXIPYO/YUG7URif4e21XfDKyIOZxaierw==
-X-Received: by 2002:a05:600c:3502:b0:414:7909:6680 with SMTP id h2-20020a05600c350200b0041479096680mr751469wmq.16.1711085527043;
-        Thu, 21 Mar 2024 22:32:07 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id z18-20020a5d4d12000000b0033ec8f3ca9bsm1190810wrt.49.2024.03.21.22.32.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Mar 2024 22:32:06 -0700 (PDT)
-Date: Fri, 22 Mar 2024 08:32:02 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	David Laight <David.Laight@aculab.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>, Jonathan Cameron <jic23@kernel.org>,
-	Julia Lawall <julia.lawall@inria.fr>,
-	Kees Cook <keescook@chromium.org>,
-	Lukasz Czapnik <lukasz.czapnik@intel.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Pucha Himasekhar Reddy <himasekharx.reddy.pucha@intel.com>
-Subject: Re: [PATCH v2 net] ice: Fix freeing uninitialized pointers
-Message-ID: <7ca4a907-2a9c-4711-a13c-22cbfec15e0e@moroto.mountain>
-References: <0efe132b-b343-4438-bb00-5a4b82722ed3@moroto.mountain>
- <0d7062e1-995b-42bc-8a62-d57c8cb588ee@web.de>
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=ZlmxMcxkID2APtdDfuPjyw9p7ZsnzMLqcX7Pogi+DwM=;
+  b=S3gBIDuJwtLpODXitOZtu7d+JPZWfXlEKDDRrdpd91mZdDnU9XwPNv8W
+   A/DxwGKelRp0rlpAxQ1BO9ZhYMblxfbkn2sIqF2ykNh785PtT94jrqPBV
+   WFQKUyPTqj7gip27FdT+S/UnWpXzytrLuU2RB35RjvKHJ/0bs80Z9Xdlv
+   0=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.07,145,1708383600"; 
+   d="scan'208";a="157923739"
+Received: from 184-074-243-067.biz.spectrum.com (HELO [172.20.17.26]) ([184.74.243.67])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2024 08:25:08 +0100
+Date: Fri, 22 Mar 2024 03:24:56 -0400 (EDT)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Jakub Kicinski <kuba@kernel.org>
+cc: Jesse Brandeburg <jesse.brandeburg@intel.com>, 
+    Julia Lawall <Julia.Lawall@inria.fr>, 
+    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+    Dan Carpenter <dan.carpenter@linaro.org>, kernel-janitors@vger.kernel.org, 
+    netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org, 
+    Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
+    Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+    Tony Nguyen <anthony.l.nguyen@intel.com>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Alexander Lobakin <aleksander.lobakin@intel.com>, 
+    David Laight <David.Laight@aculab.com>, 
+    "David S. Miller" <davem@davemloft.net>, 
+    Eric Dumazet <edumazet@google.com>, Jiri Pirko <jiri@resnulli.us>, 
+    Jonathan Cameron <jic23@kernel.org>, Kees Cook <keescook@chromium.org>, 
+    Lukasz Czapnik <lukasz.czapnik@intel.com>, Paolo Abeni <pabeni@redhat.com>, 
+    Pucha Himasekhar Reddy <himasekharx.reddy.pucha@intel.com>, 
+    Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH net] ice: Fix freeing uninitialized pointers
+In-Reply-To: <20240321184828.3e22c698@kernel.org>
+Message-ID: <82b49991-eb5a-7e8c-67e0-b0fd932f40b4@inria.fr>
+References: <e5172afb-427b-423e-877a-10352cf4a007@web.de> <F2FBADE8-EDF9-4987-A97B-CF4D2D1452E0@inria.fr> <b9dc2c7a-2688-4a7b-8482-1e762c39449c@intel.com> <20240321184828.3e22c698@kernel.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d7062e1-995b-42bc-8a62-d57c8cb588ee@web.de>
+Content-Type: multipart/mixed; boundary="8323329-551105037-1711092310=:3390"
 
-Markus please don't do this.  Don't take a controversial opinion and
-start trying to force it on everyone via review comments and an
-automatic converstion script.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-regards,
-dan carpenter
+--8323329-551105037-1711092310=:3390
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
+
+
+On Thu, 21 Mar 2024, Jakub Kicinski wrote:
+
+> On Thu, 21 Mar 2024 15:27:47 -0700 Jesse Brandeburg wrote:
+> > The gist of it is that we should instead be using inline declarations,
+> > which I also agree is a reasonable style for this. It more clearly shows
+> > the __free(kfree) and the allocation (kzalloc, kcalloc, etc) on the same
+> > (or virtually the same) line of code.
+> >
+> > I'm curious if Jakub would dislike this less? Accept?
+>
+> At present I find this construct unreadable.
+> I may get used to it, hard to say.
+>
+> Also I don't see the benefit of the auto-freeing construct,
+> I'd venture a guess that all the bugs it may prevent would
+> have been caught by smatch. But I'm an old curmudgeon stuck
+> in my ways. Feel free to experiment in Intel drivers, and we'll
+> see how it works out 🤷️
+
+In my experiments with of_node_put, there seem to be many functions where
+removing the frees makes the function much more readable.  But
+kmalloc/kfree may be used in different contexts, where the management of
+the memory is a smaller percentage of the overall code.  So the tradeoffs
+may be different.
+
+julia
+--8323329-551105037-1711092310=:3390--
