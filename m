@@ -1,96 +1,81 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150021E522;
-	Fri, 22 Mar 2024 13:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24B9482E4;
+	Fri, 22 Mar 2024 15:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711115294; cv=none; b=SiFvpslf8wzadfnWzCHBeNVJXx7imroI1Mu/UFnBswIDYXHPu2X0PTBBdUxiaci1hvxF+jTB11YbofAKdFwuv+6w4KoV/vSCStqQvXuo/YuQ1oAqB8wg6691dP4KVYgwUngRU53Bj85JWY0C253mvXcQj8YKFw/8soiYiIgOAYU=
+	t=1711119820; cv=none; b=fHEfA+o9g9YL6MHnxiH0+CMRuoEGGpIXRhO00Qg3a9HNg+6jgN7QQD58jeDeH2WU4ctK6OZQojhfqEaktbWo/MrUJU1Zi3cZuID/yCEXdUDCaaXrNaPUhyYX5gGvvy0kEgT6B0jsE1XdczahcvT1v716HIxDWh02lLXPzI6/Mwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711115294; c=relaxed/simple;
-	bh=yAqs6k7CJPGwrhFOqcbBcKT5BMwacTGQwa+/4jfCTog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KgBC4Tkgw6GpQuauMTPaAVuHE0sTmLEaJgTgZeZn//iR2Wj/LtmedEefIUBxs8xdQ5mxg9y4MJAjZFVLv8sESmdUoumQj+1MLqikAYz6Gt9DEYSDWT/o5/CMFK1ff/pC3wXKX5XgVJ89k0eVipC/aPPGKQemd8/tDTYWj/xG9YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GE+vXlar; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711119820; c=relaxed/simple;
+	bh=wLpygW9FYxva6ods0rOQA5KWZKfQ7KIT6Udekt7Xvzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AtNdujTpJP7Q4eFOp+OdRtzGSfQXCYah33qkT8ncN8sNtitqNTWyX+3Ju4X69jRyMRrKmo29LZE9eWjlCtiK2foQzYgFXvelUMtNd62HS4WN2AYeKc40Lm2YkbU72j7ShsrSW5LaIJvoANVlHHV37H2fqBRbdz2it0P/ykhw7YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HsMClaxW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GE+vXlar"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31C13C433C7;
-	Fri, 22 Mar 2024 13:48:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1711115293;
-	bh=yAqs6k7CJPGwrhFOqcbBcKT5BMwacTGQwa+/4jfCTog=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GE+vXlarH6VfHHxUq1E37b8ORsXgcqY5v8ITccO9qaX5tSFL++addXv9zGgVKzrvC
-	 N2wp4AczFsex8Hk+u0Pt335sQrWiBTC63o4Rgy0gXuHNn4AgFsFVn8CH4vsbZbnWE9
-	 Rw8EtV2RqnNPRAE8riAxGV7t40ve6zl3tGw8YTdM=
-Date: Fri, 22 Mar 2024 14:48:11 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Lukas Wunner <lukas.wunner@intel.com>
-Subject: Re: [PATCH] cleanup: Add usage and style documentation
-Message-ID: <2024032200-outage-tribute-b630@gregkh>
-References: <171097196970.1011049.9726486429680041876.stgit@dwillia2-xfh.jf.intel.com>
- <8a1adff2-eb83-4dec-b8d0-1e523245de65@web.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HsMClaxW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 677EEC433C7;
+	Fri, 22 Mar 2024 15:03:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711119819;
+	bh=wLpygW9FYxva6ods0rOQA5KWZKfQ7KIT6Udekt7Xvzc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HsMClaxWIL79OYvoZ8cCAZo3NCiLqVUVbM8EsiW5QpNgi93yEvJawTHzns5ULfJCO
+	 n00xPAvdfP0vMk06wppenLie8WV1EIjMZueUVspAQwVEmI/p2+aA3KDQK1DUESxRaW
+	 1acKFSnQkigbvo4uCcwwFDlVPgBW7lZzMB4r0dLyKweS5jummg5uz+yUlwrXwf05ba
+	 bfd6ZO/dqMDWuKkXAUs209wP8DGJflrkBVylnANK/kTyBSK4eyPaKmoKxVbCor5lDs
+	 EPK2D8hNL7Qu/eF2buvDTZ13shSleFGNj79wORHDYxPPTtkgXskAfoagKcoA6d9A33
+	 WlEuxdWcIUeMQ==
+Date: Fri, 22 Mar 2024 08:03:37 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Dan Carpenter
+ <dan.carpenter@linaro.org>, kernel-janitors@vger.kernel.org,
+ netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org, Maciej
+ Fijalkowski <maciej.fijalkowski@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+ LKML <linux-kernel@vger.kernel.org>, Alexander Lobakin
+ <aleksander.lobakin@intel.com>, David Laight <David.Laight@aculab.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jiri Pirko <jiri@resnulli.us>, Jonathan Cameron
+ <jic23@kernel.org>, Kees Cook <keescook@chromium.org>, Lukasz Czapnik
+ <lukasz.czapnik@intel.com>, Paolo Abeni <pabeni@redhat.com>, Pucha
+ Himasekhar Reddy <himasekharx.reddy.pucha@intel.com>, Dan Williams
+ <dan.j.williams@intel.com>
+Subject: Re: [PATCH net] ice: Fix freeing uninitialized pointers
+Message-ID: <20240322080337.77a10cfd@kernel.org>
+In-Reply-To: <82b49991-eb5a-7e8c-67e0-b0fd932f40b4@inria.fr>
+References: <e5172afb-427b-423e-877a-10352cf4a007@web.de>
+	<F2FBADE8-EDF9-4987-A97B-CF4D2D1452E0@inria.fr>
+	<b9dc2c7a-2688-4a7b-8482-1e762c39449c@intel.com>
+	<20240321184828.3e22c698@kernel.org>
+	<82b49991-eb5a-7e8c-67e0-b0fd932f40b4@inria.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8a1adff2-eb83-4dec-b8d0-1e523245de65@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 22, 2024 at 02:00:42PM +0100, Markus Elfring wrote:
-> …
-> > +++ b/include/linux/cleanup.h
-> > @@ -4,6 +4,118 @@
+On Fri, 22 Mar 2024 03:24:56 -0400 (EDT) Julia Lawall wrote:
+> > At present I find this construct unreadable.
+> > I may get used to it, hard to say.
 > >
-> >  #include <linux/compiler.h>
-> >
-> > +/**
-> > + * DOC: scope-based cleanup helpers
-> > + *
-> > + * The "goto error" pattern is notorious for introducing …
-> 
-> Will any other label become more helpful for this description approach?
-> 
-> 
-> > + * this tedium and can aid in maintaining FILO (first in last out)
->              ⬆
-> Would an other word be more appropriate here?
-> 
+> > Also I don't see the benefit of the auto-freeing construct,
+> > I'd venture a guess that all the bugs it may prevent would
+> > have been caught by smatch. But I'm an old curmudgeon stuck
+> > in my ways. Feel free to experiment in Intel drivers, and we'll
+> > see how it works out =F0=9F=A4=B7=EF=B8=8F =20
+>=20
+> In my experiments with of_node_put, there seem to be many functions where
+> removing the frees makes the function much more readable.  But
+> kmalloc/kfree may be used in different contexts, where the management of
+> the memory is a smaller percentage of the overall code.  So the tradeoffs
+> may be different.
 
-Hi,
-
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
-
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
-
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
+Good point! References are likely a very good use case for this sort
+of thing. The act of bumping a counter lacks the feeling of lifetime
+we get with an object :(
