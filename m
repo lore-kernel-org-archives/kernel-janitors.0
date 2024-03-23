@@ -1,38 +1,38 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCAB3A1A3;
-	Sat, 23 Mar 2024 16:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AB763D;
+	Sat, 23 Mar 2024 18:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711213036; cv=none; b=HIbxia3dmr+R48cUTXB86uX6CW3RwaILMZje098ulDY78k2y1Yti4fKKQNSsvTaJ0I+RIu8SGVTUOhgPoQo85T/pyd+iU+BOi5/7g58xPwG1CRrZKzlNJB9TrUn0/MCcQcJnJ6dtT7ySCi+IojegJPct+u8xyD/yrDB2GufHzOU=
+	t=1711216915; cv=none; b=TC3EgJPtIFpr0kkNSsUI30Ctr5nCkERm+HAYYlwf15YMCN69wGR6WIB+CLx39+1WF9kxzCiRKCexBeguZiVKil/my7fBQA8ldOXNi9p1G8jemDDG67ucp+1NWhCUaGvPTy3SIQmstsxIJS8q4jHi/ZuIRUAq3vHaCTvYvTiE2Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711213036; c=relaxed/simple;
-	bh=95s1LxwD46f3RtcC8PeuotIjmcLiiX0ljaeHhJykyOM=;
+	s=arc-20240116; t=1711216915; c=relaxed/simple;
+	bh=QVrfyERZB/O2NaoOaw/v0iV9cdqwocK7uYeLZ2eGZcI=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=aOuKaaf8Sa7k25Z6EW+4QCmlTIJ9GcFS2QNH0lD0MwM6cQ4AP5pIxgb31XEi2keOJWcW6tatrylDbhtn53E8ToZYaP0iczlpyvynqwJfqTFbveRjmoQTGevw+wZ3nGmuDBoqkmnVfy/TGg7sr0PRPbPJlTpXQEYNdyMv64eyUeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lIVm9CBQ; arc=none smtp.client-ip=212.227.15.14
+	 In-Reply-To:Content-Type; b=u2LbysP78WDoMWOtYjYkUfDzzNH+/VSDlw8g/fUfB6IT6lDncBVLNcTriurq0ZkU2bQkP6nyXbq1Iicu5oRmiMY9BenYi5XxIG8f8IaChYkRmEh0UJIAT84FDjsn+RePru3xppgJy7FZ0jgm2SQ+LY7NJ5ZnceOC90yApevl3IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iqUrlb+e; arc=none smtp.client-ip=212.227.15.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lIVm9CBQ"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iqUrlb+e"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1711212994; x=1711817794; i=markus.elfring@web.de;
-	bh=Mm4VZjgznOtn+DsFuQ/+wbzhd9T3mnnR8PtcFlTVgYU=;
+	s=s29768273; t=1711216868; x=1711821668; i=markus.elfring@web.de;
+	bh=PyL2Ioh4vlALFYGvyjWWeKkUOfZjj8evfoP8akboAlw=;
 	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
 	 In-Reply-To;
-	b=lIVm9CBQIGpAwxCkaZ/3KyokahHzcoIXCHe0iQFkB0bp75KLBDjin1OvQpffK7pA
-	 oLoEiZTVGh8Z+q/dQZT2v7npFVyOp/egYZEdV3zrswAapQ7SIf9SHtUTha8WSFdQy
-	 oE9TrrhEqZgJ520C2IZ1b/3t3UYIeSrSdRTz7x2cluIoZBSdeanstrgnYYXAZrjrx
-	 OvoxFZXdrCHM1d7S0zduv7Gz++qNT/j9+zXhIJbLuLt5jb/Uc/7sGxMQhRJAn7PjK
-	 I2F5jr9oVZJGJWRJYVyvgFviqygSbYDspBkSenBrcjLh2Qs72EkN7appBIXl24scR
-	 7uNvUhm+nv/pafIxwA==
+	b=iqUrlb+eCxD5v3QWSGMGSn0sg84vRhtzyJ14IT2t7CKw2G+CREDGrIQ8SprUgNaa
+	 qwyEKTb10wlKWY2R74C2Qr4t4B81khDw7Wvb7KRVFH97aJSitVK40ZYIERFJgX8TU
+	 kBVb7EhbklERu95cuaUo3s6xac3NmzN8U7SerzDJaEeynueSvCGPV0CSDESu3V31o
+	 tpjJpKZxZR1VORFde0mRn/viCvKxnqsC8MqrTZFPDpA4gp17NLR+g1jTovYdhzpQc
+	 rXtuydO1w20NWNKzwcpZiP7ACBbbbYuzHN9C5T6GAHpBo+IlO14tWPvBpwOYcbJPx
+	 Rlp+mSnxwFSJsQ+x0g==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M1rPI-1rlrkQ06jA-00EeCJ; Sat, 23
- Mar 2024 17:56:34 +0100
-Message-ID: <08c9f970-3007-461a-b9f9-9ab414024f68@web.de>
-Date: Sat, 23 Mar 2024 17:56:29 +0100
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N3Xnj-1qnudT2Rxz-00zEZM; Sat, 23
+ Mar 2024 19:01:08 +0100
+Message-ID: <f3849725-b7b3-4edc-8220-aabeb79b8151@web.de>
+Date: Sat, 23 Mar 2024 19:01:03 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -40,62 +40,85 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
- intel-wired-lan@lists.osuosl.org, smatch@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- David Laight <David.Laight@aculab.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- Jesse Brandeburg <jesse.brandeburg@intel.com>, Jiri Pirko
- <jiri@resnulli.us>, Jonathan Cameron <jic23@kernel.org>,
- Julia Lawall <julia.lawall@inria.fr>, Kees Cook <keescook@chromium.org>,
- Lukasz Czapnik <lukasz.czapnik@intel.com>, Paolo Abeni <pabeni@redhat.com>,
- Pucha Himasekhar Reddy <himasekharx.reddy.pucha@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>
-References: <0efe132b-b343-4438-bb00-5a4b82722ed3@moroto.mountain>
-Subject: Re: [PATCH v2 net] ice: Fix freeing uninitialized pointers
+To: Dan Williams <dan.j.williams@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Ira Weiny <ira.weiny@intel.com>,
+ Jesse Brandeburg <jesse.brandeburg@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Julia Lawall <Julia.Lawall@inria.fr>, Kevin Tian <kevin.tian@intel.com>,
+ Lukas Wunner <lukas.wunner@intel.com>
+References: <65fe1f9aadf51_2690d2948f@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Subject: RE: [PATCH] cleanup: Add usage and style documentation
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <0efe132b-b343-4438-bb00-5a4b82722ed3@moroto.mountain>
+In-Reply-To: <65fe1f9aadf51_2690d2948f@dwillia2-mobl3.amr.corp.intel.com.notmuch>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kiRndK7BLuqFNuvVd1HXr4cnMYe9v3VzpVM5ramyWfnyTZFlD9k
- jDgrNy/xc1Igrw6zJX46ksdqOAEaGXkpq//gCpiR7kVDv+sqxUcItMvJ9uF8RqEuJgG3Psc
- bfZ0khznwVaXT/soerN977m+mA6ciDIR3eJjMnc1Zn/5R6DorbePBTrGJBGkegEP4/45eTO
- zx/KKh7vxXRssW+vjn9xw==
+X-Provags-ID: V03:K1:SmyqD010p0uwXhTqLFAT+MKBEAIrDaiCEBHBDDR0wyTqCIJfaTN
+ hhkOvtxDEjq2pESON3LwSrVFy/5Xu2I1SsB7NG4o5ftJB7ZkZLH4LOzUVFD0uKqtgGFZMFr
+ 8q5118J4thJ7hf5Y4Ub/QAmDfKjWBmU7udNDS7aLl6uVpMKyT8deDvoU3/NxrKA63mmdodS
+ skuSI80wdZBvkcGZVUEnw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PMFs1vMvo1c=;MP5SqoEPyH6wB6JcLKh21elBcjh
- ORtQoEW8RXCAUKrYrlNE59jzLNMV4ffv/gcBPaSMk2F2DY4OE3Hp4ruvt3MHqXLEq4pUgEJ7G
- R4BgRVjxnP4iemqB74azluTGiDDxszrrptAyBKWD1izc9Vw6I4VV73FBWutkJgFDhOnXBI/1v
- 0mVlZ3WG+8cMGzg3UhmdlvZRxStcd3M5Sc/1eDfsYHIij7jlpGOdkr3cMpvwaQDxht6dSV1FH
- LkNgX1QR8PFqHTGfY6K77hB2tRDE9cJa2jJ/1sMWjNs9mduY2PMW7fTQ0S+oAf2+O9dSa1vpt
- vCpvcIq9hjELeVqs0nVNPoioeO64S01tIuwJcssYpx/M/NN+RYyGXDZsa9Y5v9CEmz2jpZra0
- a2YqPXAjfjmHkuqGvfZJNyb3fdcDFeY+5WXzKL36srPqdXQe6oG+iaS2KThnVjNKXjQ7Ylq83
- zUfcmsZaV7PD1ralRp4lVtRSAWbVsHTvJqoTGMrNM+SWdvoWXXajbtNZficqydKbtgmPIsEgq
- txTFb+Dy+tXEOB9t15MZ4O5hPYSo5hOyffgbRO4w/EJZdmQQ8ruKnxGL7VShHI6viVBlB6qfW
- VTirBVHcSYXFWtVxxpZuYmWmC9AYJbZP+qij1k83/g/JBVjTUTQ5XjJA0BwEWwBK/ggLBS8Gm
- Tb/N+/ouJRfuMwuf6vXdQ+a3codQtXH2fUqW8h5qG/ocF3XK0CN2bGBvx2cpdF0FZ/Zu42R+0
- yz3Z9pZgDoUzUOz6MoZGy6UCZvfNxcLFAXtbtK2nLF6W2dC+S0dKI4nQM30UhDP0u7RLarx2J
- KGOxkTrXY0NN10C4Z1pMBBpnffSQg/tebkWXHo8Gflr/A=
+UI-OutboundReport: notjunk:1;M01:P0:dUActWliC4w=;hdeZqY0mxakffsHlGyutv6l/x6V
+ 34T0aoeci1Pufl8ZUt98g5j4kqBglt7/6+xJLX20BZCxEPRVEyxgJOi6+vYlCX71SLR5DbsZV
+ kxtYuforeNfBXZR5B8/IlwPock3+ibJXaH8Rjr9GScuAZA1ua+N/cfgy7K2lZHZ7Z02vYHvrC
+ yQoXjLj93PxQGx3a/iHgoqpVkoGtMNl96sgYQK/cP4o1AKetq/43EUfZGheTq5rlryNYtK/aZ
+ byIESvgr2hfz0z6YzqJ7cejyvDMJGoqDYWYs6rMCERlsxiupcXmxpHEiRiXdAntXoGZsAN7vL
+ Ru+rIYBspjysvIeO/lxC0BnDKN4/ITZEygYocFdgxLCapf0Z1PqzpzRrB2rrt6rR0WO1R7wCG
+ BfBTs6bb3NYSBo2dOrewns61D3jj1VuAjop9G4bWRiu7IQ0kLkIeObE8Q5gGlx0+5aJsp3Gpu
+ KDlcASUKWOoo64SjR02m24SJICe5AS+7COIN3+xmM6s/EdsCWwngMUmOaguzq59TF3Q6a0drh
+ n5Z0/7IISQ2F9Tu/FkbziUvZT253ScXShp/JR9AAJ0r0AY6894x2HXkuSpcKQZxXiSVrH9pbY
+ vKfg5PSUUakfb019YxzC2bTQlFDOD5QRWxIQxTE6VGrIVFNbD4E3lBLk/6w60rBWVY+DbKilv
+ 4k6FGjglKA5vGIFNCrP85/rAA3yPIeTumJWOiAEJAAv2gwrSwB2evs6ZFWlA2u1dUigQIykgf
+ VuxVrYjlCypDlzqFSFPp0kwKucI1g43CGhcAGZZNmq8E/8RenBET09I+XJvko4X6V3AQch++o
+ Xn7twrHuWGHtQ+rOvu6glL7ivS+wJ/1BgNqA83P6JjDoI=
 
-> Automatically cleaned up pointers need to be initialized before exiting
-> their scope.  In this case, they need to be initialized to NULL before
-> any return statement.
+> DEFINE_FREE(remove_free, struct object *, if (_T) remove_free(_T))
+> static int init(void)
+> {
+>         struct object *obj __free(remove_free) =3D NULL;
+>         int err;
+>
+>         guard(mutex)(lock);
+>         obj =3D alloc_add();
+>
+>         if (!obj)
+>                 return -ENOMEM;
+>
+>         err =3D other_init(obj);
+>         if (err)
+>                 return err; // remove_free() called without the lock!!
+>
+>         no_free_ptr(obj);
+>         return 0;
+> }
 
-* May we expect that compilers should report that affected variables
-  were only declared here instead of appropriately defined
-  (despite of attempts for scope-based resource management)?
+You demonstrated an improvable lock granularity and a questionable combina=
+tion
+of variable scopes.
 
-* Did you extend detection support in the source code analysis tool =E2=80=
-=9CSmatch=E2=80=9D
-  for a questionable implementation detail?
 
+> The fix for this bug is to replace the "__free(...) =3D NULL" pattern an=
+d
+> move the assignment to the declaration.
+>
+>         guard(mutex)(lock);
+>         struct object *obj __free(remove_free) =3D alloc_add();
+
+How do you think about to describe such a source code transformation
+as a conversion of a variable assignment to a variable definition
+at the place of a resource allocation?
+
+Would you like to increase the collaboration with the macros =E2=80=9CDEFI=
+NE_CLASS=E2=80=9D and =E2=80=9CCLASS=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.8.1/source/include/linux/cleanup.h#L82
 
 Regards,
 Markus
