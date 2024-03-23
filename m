@@ -1,81 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24B9482E4;
-	Fri, 22 Mar 2024 15:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8DAA41;
+	Sat, 23 Mar 2024 01:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711119820; cv=none; b=fHEfA+o9g9YL6MHnxiH0+CMRuoEGGpIXRhO00Qg3a9HNg+6jgN7QQD58jeDeH2WU4ctK6OZQojhfqEaktbWo/MrUJU1Zi3cZuID/yCEXdUDCaaXrNaPUhyYX5gGvvy0kEgT6B0jsE1XdczahcvT1v716HIxDWh02lLXPzI6/Mwo=
+	t=1711156229; cv=none; b=Z3CeGJ53pTVVXx4GkZ6pIJuu7TeTTSS6bYeJGvOtf+Z/ucJBdGShB9ZkuFuwaQttQL0HmbQHoozibIiPfjDROIjCudxkpjY7FTew18OA8wTLBTk5mBTIZLGZqMDZ6NEKthRrJVs9jNnl0yNmDx8Cv13SOyTY0L4OOLIYoaOOvDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711119820; c=relaxed/simple;
-	bh=wLpygW9FYxva6ods0rOQA5KWZKfQ7KIT6Udekt7Xvzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AtNdujTpJP7Q4eFOp+OdRtzGSfQXCYah33qkT8ncN8sNtitqNTWyX+3Ju4X69jRyMRrKmo29LZE9eWjlCtiK2foQzYgFXvelUMtNd62HS4WN2AYeKc40Lm2YkbU72j7ShsrSW5LaIJvoANVlHHV37H2fqBRbdz2it0P/ykhw7YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HsMClaxW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711156229; c=relaxed/simple;
+	bh=50PefJZSTcgeBQSLtNejEsHNZTUKJEsfoi+Slynip1s=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=dcuVsenUffllVozlgvuDrOMqfM33RNp9zrDQQ/6zQWjeXmd6vaUrXcJk+LcHQmXdxpojHClAoccR3EB9JqRrTrVBV1/eIwbyrg5fY/BFKmcqE8vj3sGWvl+VLXHHkYejRHFz6DzOvxOZTyfdNMm2Ey7VHmPoEuqmrfVLj/0qc+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LaGo48FI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HsMClaxW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 677EEC433C7;
-	Fri, 22 Mar 2024 15:03:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LaGo48FI"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F25E9C433A6;
+	Sat, 23 Mar 2024 01:10:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711119819;
-	bh=wLpygW9FYxva6ods0rOQA5KWZKfQ7KIT6Udekt7Xvzc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HsMClaxWIL79OYvoZ8cCAZo3NCiLqVUVbM8EsiW5QpNgi93yEvJawTHzns5ULfJCO
-	 n00xPAvdfP0vMk06wppenLie8WV1EIjMZueUVspAQwVEmI/p2+aA3KDQK1DUESxRaW
-	 1acKFSnQkigbvo4uCcwwFDlVPgBW7lZzMB4r0dLyKweS5jummg5uz+yUlwrXwf05ba
-	 bfd6ZO/dqMDWuKkXAUs209wP8DGJflrkBVylnANK/kTyBSK4eyPaKmoKxVbCor5lDs
-	 EPK2D8hNL7Qu/eF2buvDTZ13shSleFGNj79wORHDYxPPTtkgXskAfoagKcoA6d9A33
-	 WlEuxdWcIUeMQ==
-Date: Fri, 22 Mar 2024 08:03:37 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Dan Carpenter
- <dan.carpenter@linaro.org>, kernel-janitors@vger.kernel.org,
- netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org, Maciej
- Fijalkowski <maciej.fijalkowski@intel.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
- LKML <linux-kernel@vger.kernel.org>, Alexander Lobakin
- <aleksander.lobakin@intel.com>, David Laight <David.Laight@aculab.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jiri Pirko <jiri@resnulli.us>, Jonathan Cameron
- <jic23@kernel.org>, Kees Cook <keescook@chromium.org>, Lukasz Czapnik
- <lukasz.czapnik@intel.com>, Paolo Abeni <pabeni@redhat.com>, Pucha
- Himasekhar Reddy <himasekharx.reddy.pucha@intel.com>, Dan Williams
- <dan.j.williams@intel.com>
-Subject: Re: [PATCH net] ice: Fix freeing uninitialized pointers
-Message-ID: <20240322080337.77a10cfd@kernel.org>
-In-Reply-To: <82b49991-eb5a-7e8c-67e0-b0fd932f40b4@inria.fr>
-References: <e5172afb-427b-423e-877a-10352cf4a007@web.de>
-	<F2FBADE8-EDF9-4987-A97B-CF4D2D1452E0@inria.fr>
-	<b9dc2c7a-2688-4a7b-8482-1e762c39449c@intel.com>
-	<20240321184828.3e22c698@kernel.org>
-	<82b49991-eb5a-7e8c-67e0-b0fd932f40b4@inria.fr>
+	s=k20201202; t=1711156229;
+	bh=50PefJZSTcgeBQSLtNejEsHNZTUKJEsfoi+Slynip1s=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=LaGo48FI+kZrqJRK7zdXjDZ4odEa8O8XbG+uVJh9a0nAx3UHYwMEWPMNCtm3DjQFW
+	 rUiP2yCJGglLP7ytKBsLkXgq0G88FX11c/TAr3js79RQ+bEliDawl0SA4Md3cwFZH8
+	 u+5Yb0opuoDFYPZNajR26Pck7kw9HIqoIELO/6pZ7TwdOrnlwuzobOkDe6QLAsMcPs
+	 WpvHMNtvWBUUQHjqThzBbOXGze+di5AJ1Yn0uMf0QgrgugKEXD//5ho0QW1P72QNUx
+	 +YwsafULuNo9voeWMupcBI4Xj0Nm7PN1GsqCItUrcWoqWOpVrZ0/X8DWEDvjsUp48L
+	 mQehKflQdv6uQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E128AD8BCE4;
+	Sat, 23 Mar 2024 01:10:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 net] nexthop: fix uninitialized variable in
+ nla_put_nh_group_stats()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171115622891.16003.9139794414566350599.git-patchwork-notify@kernel.org>
+Date: Sat, 23 Mar 2024 01:10:28 +0000
+References: <f08ac289-d57f-4a1a-830f-cf9a0563cb9c@moroto.mountain>
+In-Reply-To: <f08ac289-d57f-4a1a-830f-cf9a0563cb9c@moroto.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: idosch@nvidia.com, dsahern@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, petrm@nvidia.com,
+ keescook@chromium.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 
-On Fri, 22 Mar 2024 03:24:56 -0400 (EDT) Julia Lawall wrote:
-> > At present I find this construct unreadable.
-> > I may get used to it, hard to say.
-> >
-> > Also I don't see the benefit of the auto-freeing construct,
-> > I'd venture a guess that all the bugs it may prevent would
-> > have been caught by smatch. But I'm an old curmudgeon stuck
-> > in my ways. Feel free to experiment in Intel drivers, and we'll
-> > see how it works out =F0=9F=A4=B7=EF=B8=8F =20
->=20
-> In my experiments with of_node_put, there seem to be many functions where
-> removing the frees makes the function much more readable.  But
-> kmalloc/kfree may be used in different contexts, where the management of
-> the memory is a smaller percentage of the overall code.  So the tradeoffs
-> may be different.
+Hello:
 
-Good point! References are likely a very good use case for this sort
-of thing. The act of bumping a counter lacks the feeling of lifetime
-we get with an object :(
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Thu, 21 Mar 2024 17:42:18 +0300 you wrote:
+> The "*hw_stats_used" value needs to be set on the success paths to prevent
+> an uninitialized variable bug in the caller, nla_put_nh_group_stats().
+> 
+> Fixes: 5072ae00aea4 ("net: nexthop: Expose nexthop group HW stats to user space")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> v2: Set the variable in nh_grp_hw_stats_update() instead of
+>     nla_put_nh_group_stats().
+> 
+> [...]
+
+Here is the summary with links:
+  - [v2,net] nexthop: fix uninitialized variable in nla_put_nh_group_stats()
+    https://git.kernel.org/netdev/net/c/9145e2249ed6
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
