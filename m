@@ -1,88 +1,93 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458401A38DA;
-	Sun, 24 Mar 2024 13:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E644E19F501;
+	Sun, 24 Mar 2024 22:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711288283; cv=none; b=m6Vtv97N/3FpasyS/qXSjQ+gj2MMpnRbiVhdWvouQ+ICOn8Wp3ZAVxJK0oIDN9Zx1f2qSd4b9b8+TQRrBDjEEjfRQjL8WE2Oljef0NCBrA0mG926sb95pomVRVEuFZB2pGCV/UpjwZJdE3QebVUDTRINdRNn1aGZIKx936WooH8=
+	t=1711320178; cv=none; b=qwo4I0+ftczx8lsjuE4G5og9MdkIMSYJDKtku9Dg1mbhuAi9dGZgeCAveyX4XpHkjtSmzGzp0kGlvHPBvDtsA0yE8jjBlu0VtRbEMOViNn9L1RBhcX5vcM+6fDAKK/+4/Rz665dbIXX0w38B7gNrsx1CXRPuNpEo/NuQjWgF8iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711288283; c=relaxed/simple;
-	bh=Q1qsaNc4Xf1RFSr+vL9gGoT1ITWqAgeVcD4vzkh8OOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V/KLuJso9tM53Wzy9UtwymKb0wEQgh8E7J/rwNj9coVIrinNVXLtWWCZ0KDKxFye9cwypg05EHDmQTFrfy6UylWijetpCTawvNoh6AaA0xRco3g/f+UAGOZ7pt0/OQADXyskj9Wzvc9VzADRXRJu+vD+cdTRe5maX5rlMaDuZ1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EY39n9/2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711320178; c=relaxed/simple;
+	bh=4R1K5XCsgWuPw6D5zIv86PhgnTtk3Z9jomPfPWJlF9k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=S70vOJ1hQBk8iXze55/EoU7LLOVpyGpszywEy1WQxsMVhctpRx7NGX/6xfpMJm8MOITdv3NOiCsIaAO3Um4MRxOTlDGhxLPkdryC9d8O0fdDHPFKfA+c5g+Y6RX6KAntCoi0+qtycIQbv0MQcLI07Y8M3Uj2JRnJPKVm5sOgiRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GrNrPf+N; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EY39n9/2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC09FC433F1;
-	Sun, 24 Mar 2024 13:51:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GrNrPf+N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A038AC43394;
+	Sun, 24 Mar 2024 22:42:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711288282;
-	bh=Q1qsaNc4Xf1RFSr+vL9gGoT1ITWqAgeVcD4vzkh8OOU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EY39n9/2Iz9Dw5jZ6/LFN/6DfJYpsBVf8aF1plriJ8crGr/BSN4Xpb+MXOlnj98a7
-	 TUaddxR9bi3Pao2Vg9lCO+XWPB11WobJTJY+Ms8JdLAtM8kqaJh/PYkJRR6ytyEnfb
-	 0Rd7jp4FS+6DQiwGeaTBtYCFMiyQu0A5epbtn1+kq4URa+0kJaHsLF2IiDC5/esIjB
-	 k4OBXz7PxLKid0bb0jF1OzNsjqNdAPf3Y3P2RAoaSwLf2Jzl4u/tONSM16OuKZePDl
-	 SCeHhZxD1l54+YUunXtspAgqWgWvmfUnH+JVrHv+DqPvdexbxS+gUXpQfZb+eIZ2ah
-	 7Qy3c1rY16pwA==
-Date: Sun, 24 Mar 2024 13:51:10 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Petre Rodan <petre.rodan@subdimension.ro>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH] iio: pressure: hsc030pa: Use spi_read()
-Message-ID: <20240324135110.1e71572d@jic23-huawei>
-In-Reply-To: <8327ac591d244ac85aa83c01e559076159c7ba12.1711283728.git.christophe.jaillet@wanadoo.fr>
-References: <8327ac591d244ac85aa83c01e559076159c7ba12.1711283728.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=k20201202; t=1711320177;
+	bh=4R1K5XCsgWuPw6D5zIv86PhgnTtk3Z9jomPfPWJlF9k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GrNrPf+Nvh54K+Eu6Z/Rz5tP4Br3AfUZwNGUhHD/f9UIZHCh0l29TaIvE9/2zPhcy
+	 PTG5VbQeTnlrHY24g1J1b8siFyf5DCZBMnStcyygIF2GvgoN4kZJrSOFyEmG0Z2eFD
+	 O6H4HxiikJL+7RZdBEKQpRTaPsxrwn26Uw7MG/OrgW60sG/18IrL1VAzGAPhucbGoe
+	 wHBfNvD9WiBZ/b1kSa35G90LTCiqrdHez0ZgjmOLCiazVl+2r01Vqt1JSxWjkk+rqh
+	 XD6EkQrE9lk9G/8J+PzJISCorukqutU8pEzcZ2KaIkJqytyJDKPqfBWNn4ssWRixGU
+	 f9GB9/MlSJcwQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Ian Rogers <irogers@google.com>,
+	kernel-janitors@vger.kernel.org,
+	Namhyung Kim <namhyung@kernel.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.8 485/715] perf pmu: Fix a potential memory leak in perf_pmu__lookup()
+Date: Sun, 24 Mar 2024 18:31:04 -0400
+Message-ID: <20240324223455.1342824-486-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240324223455.1342824-1-sashal@kernel.org>
+References: <20240324223455.1342824-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 
-On Sun, 24 Mar 2024 13:36:16 +0100
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> Use spi_read() instead of hand-writing it.
-> It is less verbose.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Applied to the togreg-normal branch of iio.git.
+[ Upstream commit ef5de1613d7d92bdc975e6beb34bb0fa94f34078 ]
 
-Thanks,
+The commit in Fixes has reordered some code, but missed an error handling
+path.
 
-Jonathan
+'goto err' now, in order to avoid a memory leak in case of error.
 
-> ---
-> Compile test only
-> ---
->  drivers/iio/pressure/hsc030pa_spi.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iio/pressure/hsc030pa_spi.c b/drivers/iio/pressure/hsc030pa_spi.c
-> index 818fa6303454..337eecc577d2 100644
-> --- a/drivers/iio/pressure/hsc030pa_spi.c
-> +++ b/drivers/iio/pressure/hsc030pa_spi.c
-> @@ -23,14 +23,9 @@
->  static int hsc_spi_recv(struct hsc_data *data)
->  {
->  	struct spi_device *spi = to_spi_device(data->dev);
-> -	struct spi_transfer xfer = {
-> -		.tx_buf = NULL,
-> -		.rx_buf = data->buffer,
-> -		.len = HSC_REG_MEASUREMENT_RD_SIZE,
-> -	};
->  
->  	msleep_interruptible(HSC_RESP_TIME_MS);
-> -	return spi_sync_transfer(spi, &xfer, 1);
-> +	return spi_read(spi, data->buffer, HSC_REG_MEASUREMENT_RD_SIZE);
->  }
->  
->  static int hsc_spi_probe(struct spi_device *spi)
+Fixes: f63a536f03a2 ("perf pmu: Merge JSON events with sysfs at load time")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Ian Rogers <irogers@google.com>
+Cc: kernel-janitors@vger.kernel.org
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Link: https://lore.kernel.org/r/9538b2b634894c33168dfe9d848d4df31fd4d801.1693085544.git.christophe.jaillet@wanadoo.fr
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/perf/util/pmu.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index 88b9aa7d3a27a..6b82f4759ce69 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -1019,10 +1019,9 @@ struct perf_pmu *perf_pmu__lookup(struct list_head *pmus, int dirfd, const char
+ 	 * type value and format definitions. Load both right
+ 	 * now.
+ 	 */
+-	if (pmu_format(pmu, dirfd, name)) {
+-		free(pmu);
+-		return NULL;
+-	}
++	if (pmu_format(pmu, dirfd, name))
++		goto err;
++
+ 	pmu->is_core = is_pmu_core(name);
+ 	pmu->cpus = pmu_cpumask(dirfd, name, pmu->is_core);
+ 
+-- 
+2.43.0
 
