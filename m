@@ -1,124 +1,112 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AB763D;
-	Sat, 23 Mar 2024 18:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBF1171C8
+	for <kernel-janitors@vger.kernel.org>; Sun, 24 Mar 2024 10:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711216915; cv=none; b=TC3EgJPtIFpr0kkNSsUI30Ctr5nCkERm+HAYYlwf15YMCN69wGR6WIB+CLx39+1WF9kxzCiRKCexBeguZiVKil/my7fBQA8ldOXNi9p1G8jemDDG67ucp+1NWhCUaGvPTy3SIQmstsxIJS8q4jHi/ZuIRUAq3vHaCTvYvTiE2Y8=
+	t=1711277000; cv=none; b=MeP+PGXMGY2ShnjvXNiWkQ+r2gocL77IvHlxrQO2/ZNw1UN92cbufit8tbHCjeIc3WLwd1rGIL4p4xWvPl9Z72CQS/pZ/dDYcn+vicZYWjxL8bup+ZtWrYB3VBOZKlDVP2LBwm1Eh2OotFjkj31p8NrGor+/np1kZjgkKV6ZruI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711216915; c=relaxed/simple;
-	bh=QVrfyERZB/O2NaoOaw/v0iV9cdqwocK7uYeLZ2eGZcI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=u2LbysP78WDoMWOtYjYkUfDzzNH+/VSDlw8g/fUfB6IT6lDncBVLNcTriurq0ZkU2bQkP6nyXbq1Iicu5oRmiMY9BenYi5XxIG8f8IaChYkRmEh0UJIAT84FDjsn+RePru3xppgJy7FZ0jgm2SQ+LY7NJ5ZnceOC90yApevl3IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iqUrlb+e; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1711277000; c=relaxed/simple;
+	bh=9MObCN77I7tUZOnnNXSJUXOLNM1PpU+2YR/y22SVpzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NFCybdAAOa1id8KBeifdYIf+I9lpXBUHJdimf1P7WqBJtO8xTacYrSq7NZ/QbRvVhZ0Hzr/nekKXo6BLFJKTjWPYydnpe6KVLsAsZKV3nyyz/bZGkNtZ1ax/brjRvKEYbYuIu0xZ+udleiddrbqbmIXshxkOFTu0qXawvRXw+NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t+sp3ErF; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iqUrlb+e"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1711216868; x=1711821668; i=markus.elfring@web.de;
-	bh=PyL2Ioh4vlALFYGvyjWWeKkUOfZjj8evfoP8akboAlw=;
-	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
-	 In-Reply-To;
-	b=iqUrlb+eCxD5v3QWSGMGSn0sg84vRhtzyJ14IT2t7CKw2G+CREDGrIQ8SprUgNaa
-	 qwyEKTb10wlKWY2R74C2Qr4t4B81khDw7Wvb7KRVFH97aJSitVK40ZYIERFJgX8TU
-	 kBVb7EhbklERu95cuaUo3s6xac3NmzN8U7SerzDJaEeynueSvCGPV0CSDESu3V31o
-	 tpjJpKZxZR1VORFde0mRn/viCvKxnqsC8MqrTZFPDpA4gp17NLR+g1jTovYdhzpQc
-	 rXtuydO1w20NWNKzwcpZiP7ACBbbbYuzHN9C5T6GAHpBo+IlO14tWPvBpwOYcbJPx
-	 Rlp+mSnxwFSJsQ+x0g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N3Xnj-1qnudT2Rxz-00zEZM; Sat, 23
- Mar 2024 19:01:08 +0100
-Message-ID: <f3849725-b7b3-4edc-8220-aabeb79b8151@web.de>
-Date: Sat, 23 Mar 2024 19:01:03 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t+sp3ErF"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-513e134f73aso4524595e87.2
+        for <kernel-janitors@vger.kernel.org>; Sun, 24 Mar 2024 03:43:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1711276997; x=1711881797; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Ribv/O+whBGnqTci5nPx7uHIdlxoMvUZURqWTthedJw=;
+        b=t+sp3ErFqzNFszzBMy6tw6WIgal1gAoHxTi8DSEIS89alD/K1V8uSxLiuHsPubEeH9
+         XCB/kWFkmqFsX0PpZpMwWpkSbHW8Glptt0tvlM29pHmaO8niMED1fDuwugxlACvqhdpc
+         egPjhfQnuohak0iE9JCZv57zaLcCFGV32ehBUAtQw2d6ZVeGyw5FzT7zqcwGw4DtwT8j
+         4GIAsFpu4isbHJiqmT1J/aZOlp+g5x8mgI/5iT782IS8eVQqiljC1RwPAHXz7e0BwC0Y
+         6v3fhShEnn2QHb0FhXcXPtXsLIgfE6xlWDp6qsak+xjdBrDX6uh1YCq9NgonLIXgtjcg
+         1HnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711276997; x=1711881797;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ribv/O+whBGnqTci5nPx7uHIdlxoMvUZURqWTthedJw=;
+        b=d8XB72v63ogGreZB5niZO28jjMrk/QAoYSfs+jLatiBKTFiRRBmI4y3RLvA3QJv7Vm
+         /WsU3tjGdgj9gEzfzKUlrzLvbyvnCSOU/ZpGPTEBQzEa+0s1gKtQuJu84U/c9scNioRN
+         ZIGbeADDKjc0AP/M9uKnFtdUAfYBZM3djL1nkmOjluGJmhPpiwkEZaaymLmTFs/uQ/Uc
+         XyzOVjImMZmU5pxB0LLbGbc0y9AOvjJby4zSMHnprWgWlF0QIwwq87WexxBGc/6BZQ2/
+         M9V6drxQSlAnTrkpo9rOeu51SuUFXd9/sAPhrqKOPE1Fr+KvkSKYcTG4+gmXYJH3Rv0I
+         5YlA==
+X-Gm-Message-State: AOJu0YzXqzTCHeAPSwhy2YNfBg9moBuDVaU+CVnYB3ZD9Am/QeiDL7LE
+	g8DT3uAPBtiEKJqXnUBLYAccZdTJ5jI/qZOsa81YbiYVnFXRUySt2lCpkse5h8I=
+X-Google-Smtp-Source: AGHT+IG4o6Yn5vUl781OaAZhuvbmnwlLG9/TmJ93NsAHIltWR7Tebhzu896a3DsWYdgcU18bziiJ7g==
+X-Received: by 2002:ac2:5b9a:0:b0:512:dfa1:6a1c with SMTP id o26-20020ac25b9a000000b00512dfa16a1cmr3000023lfn.10.1711276996932;
+        Sun, 24 Mar 2024 03:43:16 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id f13-20020a056402004d00b005689bfe2688sm1816184edu.39.2024.03.24.03.43.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Mar 2024 03:43:16 -0700 (PDT)
+Date: Sun, 24 Mar 2024 13:43:12 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org, smatch@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	David Laight <David.Laight@aculab.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>, Jonathan Cameron <jic23@kernel.org>,
+	Julia Lawall <julia.lawall@inria.fr>,
+	Kees Cook <keescook@chromium.org>,
+	Lukasz Czapnik <lukasz.czapnik@intel.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Pucha Himasekhar Reddy <himasekharx.reddy.pucha@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>
+Subject: Re: [PATCH v2 net] ice: Fix freeing uninitialized pointers
+Message-ID: <f292facc-8a22-42e1-9a41-5ec8bd665cb7@moroto.mountain>
+References: <0efe132b-b343-4438-bb00-5a4b82722ed3@moroto.mountain>
+ <08c9f970-3007-461a-b9f9-9ab414024f68@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Dan Williams <dan.j.williams@intel.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Ira Weiny <ira.weiny@intel.com>,
- Jesse Brandeburg <jesse.brandeburg@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Julia Lawall <Julia.Lawall@inria.fr>, Kevin Tian <kevin.tian@intel.com>,
- Lukas Wunner <lukas.wunner@intel.com>
-References: <65fe1f9aadf51_2690d2948f@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-Subject: RE: [PATCH] cleanup: Add usage and style documentation
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <65fe1f9aadf51_2690d2948f@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:SmyqD010p0uwXhTqLFAT+MKBEAIrDaiCEBHBDDR0wyTqCIJfaTN
- hhkOvtxDEjq2pESON3LwSrVFy/5Xu2I1SsB7NG4o5ftJB7ZkZLH4LOzUVFD0uKqtgGFZMFr
- 8q5118J4thJ7hf5Y4Ub/QAmDfKjWBmU7udNDS7aLl6uVpMKyT8deDvoU3/NxrKA63mmdodS
- skuSI80wdZBvkcGZVUEnw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:dUActWliC4w=;hdeZqY0mxakffsHlGyutv6l/x6V
- 34T0aoeci1Pufl8ZUt98g5j4kqBglt7/6+xJLX20BZCxEPRVEyxgJOi6+vYlCX71SLR5DbsZV
- kxtYuforeNfBXZR5B8/IlwPock3+ibJXaH8Rjr9GScuAZA1ua+N/cfgy7K2lZHZ7Z02vYHvrC
- yQoXjLj93PxQGx3a/iHgoqpVkoGtMNl96sgYQK/cP4o1AKetq/43EUfZGheTq5rlryNYtK/aZ
- byIESvgr2hfz0z6YzqJ7cejyvDMJGoqDYWYs6rMCERlsxiupcXmxpHEiRiXdAntXoGZsAN7vL
- Ru+rIYBspjysvIeO/lxC0BnDKN4/ITZEygYocFdgxLCapf0Z1PqzpzRrB2rrt6rR0WO1R7wCG
- BfBTs6bb3NYSBo2dOrewns61D3jj1VuAjop9G4bWRiu7IQ0kLkIeObE8Q5gGlx0+5aJsp3Gpu
- KDlcASUKWOoo64SjR02m24SJICe5AS+7COIN3+xmM6s/EdsCWwngMUmOaguzq59TF3Q6a0drh
- n5Z0/7IISQ2F9Tu/FkbziUvZT253ScXShp/JR9AAJ0r0AY6894x2HXkuSpcKQZxXiSVrH9pbY
- vKfg5PSUUakfb019YxzC2bTQlFDOD5QRWxIQxTE6VGrIVFNbD4E3lBLk/6w60rBWVY+DbKilv
- 4k6FGjglKA5vGIFNCrP85/rAA3yPIeTumJWOiAEJAAv2gwrSwB2evs6ZFWlA2u1dUigQIykgf
- VuxVrYjlCypDlzqFSFPp0kwKucI1g43CGhcAGZZNmq8E/8RenBET09I+XJvko4X6V3AQch++o
- Xn7twrHuWGHtQ+rOvu6glL7ivS+wJ/1BgNqA83P6JjDoI=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <08c9f970-3007-461a-b9f9-9ab414024f68@web.de>
 
-> DEFINE_FREE(remove_free, struct object *, if (_T) remove_free(_T))
-> static int init(void)
-> {
->         struct object *obj __free(remove_free) =3D NULL;
->         int err;
->
->         guard(mutex)(lock);
->         obj =3D alloc_add();
->
->         if (!obj)
->                 return -ENOMEM;
->
->         err =3D other_init(obj);
->         if (err)
->                 return err; // remove_free() called without the lock!!
->
->         no_free_ptr(obj);
->         return 0;
-> }
+On Sat, Mar 23, 2024 at 05:56:29PM +0100, Markus Elfring wrote:
+> > Automatically cleaned up pointers need to be initialized before exiting
+> > their scope.  In this case, they need to be initialized to NULL before
+> > any return statement.
+> 
+> * May we expect that compilers should report that affected variables
+>   were only declared here instead of appropriately defined
+>   (despite of attempts for scope-based resource management)?
+> 
 
-You demonstrated an improvable lock granularity and a questionable combina=
-tion
-of variable scopes.
+We disabled GCC's check for uninitialized variables a long time ago
+because it had too many false positives.
 
+> * Did you extend detection support in the source code analysis tool “Smatch”
+>   for a questionable implementation detail?
 
-> The fix for this bug is to replace the "__free(...) =3D NULL" pattern an=
-d
-> move the assignment to the declaration.
->
->         guard(mutex)(lock);
->         struct object *obj __free(remove_free) =3D alloc_add();
+Yes.  Smatch detects this as an uninitialized variable.
 
-How do you think about to describe such a source code transformation
-as a conversion of a variable assignment to a variable definition
-at the place of a resource allocation?
+regards,
+dan carpenter
 
-Would you like to increase the collaboration with the macros =E2=80=9CDEFI=
-NE_CLASS=E2=80=9D and =E2=80=9CCLASS=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.8.1/source/include/linux/cleanup.h#L82
-
-Regards,
-Markus
