@@ -1,93 +1,74 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21501EC645;
-	Sun, 24 Mar 2024 22:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 23457157475;
+	Mon, 25 Mar 2024 06:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711320950; cv=none; b=nInpGBgEn9jo6nJCBVy/PywLAVXmGBgTZhaqAVabBKq3XDX6zspUDBHtYG2g5R92SqCvFrk5nbcKAZakKhtUG7Zw1EnWLTMLlurR1Pz0GkYeOTjY3SQMKm3EZzrlwBjx93WEEpC0qmvo1YEJpnwXtL/IFnrqZMNNC1g1jBCuVjU=
+	t=1711348383; cv=none; b=M1WzJHQ1QONwKU/S1bFkgDrCXU+K1D9SjHUKAiziFkJNcJSeNXJLPz5iH1+PQweShRsUJ00LfXK4mgKjm//1rFggFf9Lks2EvoYpQb3QT9iNVGdjjhMpnLvHdaXDwuNVVOWlqK8c9K8QYkjG9kIJIYkpoQY2fEsW/YG/zEVLXIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711320950; c=relaxed/simple;
-	bh=sdiZ1qUDoyOouFFJuBLt5ddv90gXD8wwmSNJapd092Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cBlFiPFp5iuS//tqWL8hSbNCUdW9V9w2HXy5lxsY7M8UXdwMuLO/R2fAIV/XeGKpgSCUR7bAVrJ7vO9YXA60mEBI2hkAn5IQtj7IZUP395ITNL6A+m2T6bjCqA8D8QL9GEzXR4Z7BaXFn2ZLhkukR/Bpc7BcGSkDrQLtbw3SiKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lr/+Vgqr; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lr/+Vgqr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3CDBC433F1;
-	Sun, 24 Mar 2024 22:55:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711320949;
-	bh=sdiZ1qUDoyOouFFJuBLt5ddv90gXD8wwmSNJapd092Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lr/+VgqrE6NyKVnXd+Gs5IRVEG94K8jla2UQYRfNPa8GnUyLB5lVaJnZwtFux67gv
-	 F4cLLu+YHXGet20mUvMRDk5/7XHMFIfYAnvTxRMC8gX1bZuuucdHITDwgocXObdd2t
-	 IC18kRwMF5T9d7OZXBA7XIiBb2vf+fo4yuJhoBFa5vIS4KXTUlELlaQcnYjvbrVudY
-	 hPd03y9Me5J0dyadD5QJCIm2H8hb25Yo+kDkEXVwPB+SAQr2XR2WsBNCfJL2F3IamO
-	 0omegl4/MD/5iz7ol4WXScPOULiVJs8W9IKK/UVphGUTQg8Y1HeVKM2hZM6Wsxm5tQ
-	 SwQZMJuhyhpRQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Ian Rogers <irogers@google.com>,
-	kernel-janitors@vger.kernel.org,
-	Namhyung Kim <namhyung@kernel.org>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.7 513/713] perf pmu: Fix a potential memory leak in perf_pmu__lookup()
-Date: Sun, 24 Mar 2024 18:43:59 -0400
-Message-ID: <20240324224720.1345309-514-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240324224720.1345309-1-sashal@kernel.org>
-References: <20240324224720.1345309-1-sashal@kernel.org>
+	s=arc-20240116; t=1711348383; c=relaxed/simple;
+	bh=OckePRxIwMwlzlvfeeZnYH2Mn9sWTcwL/alzK8BGPnc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U9CuX7hQ/cCA4nMGXlgq0PrRvGoOl9Tqm1Njbl8OD+1qNd9V7EWVSe4F0kp4U3fawwK0ocVcLz4iS4jN2WDmmgnLcyZ+wMK8K675QZMYRVFjpUGVnbo0s+471Yr938yze6hlvkE+AIUOj9IkGMaCRg8Evf/IICPBHM2MmREB/Uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id E650A6029A552;
+	Mon, 25 Mar 2024 14:32:37 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: Felix.Kuehling@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: Su Hui <suhui@nfschina.com>,
+	Philip.Yang@amd.com,
+	alex.sierra@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/amdkfd: return negative error code in svm_ioctl()
+Date: Mon, 25 Mar 2024 14:31:49 +0800
+Message-Id: <20240325063148.3950639-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+svm_ioctl() should return negative error code in default case.
 
-[ Upstream commit ef5de1613d7d92bdc975e6beb34bb0fa94f34078 ]
-
-The commit in Fixes has reordered some code, but missed an error handling
-path.
-
-'goto err' now, in order to avoid a memory leak in case of error.
-
-Fixes: f63a536f03a2 ("perf pmu: Merge JSON events with sysfs at load time")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Ian Rogers <irogers@google.com>
-Cc: kernel-janitors@vger.kernel.org
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Link: https://lore.kernel.org/r/9538b2b634894c33168dfe9d848d4df31fd4d801.1693085544.git.christophe.jaillet@wanadoo.fr
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 42de677f7999 ("drm/amdkfd: register svm range")
+Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
- tools/perf/util/pmu.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Ps: When I try to compile this file, there is a error :
+drivers/gpu/drm/amd/amdkfd/kfd_migrate.c:28:10: fatal error: amdgpu_sync.h:
+No such file or directory.
 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 33e783fc908fe..aaa013af52524 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -1019,10 +1019,9 @@ struct perf_pmu *perf_pmu__lookup(struct list_head *pmus, int dirfd, const char
- 	 * type value and format definitions. Load both right
- 	 * now.
- 	 */
--	if (pmu_format(pmu, dirfd, name)) {
--		free(pmu);
--		return NULL;
--	}
-+	if (pmu_format(pmu, dirfd, name))
-+		goto err;
-+
- 	pmu->is_core = is_pmu_core(name);
- 	pmu->cpus = pmu_cpumask(dirfd, name, pmu->is_core);
+Maybe there are some steps I missed or this place need to be corrected?
+
+ drivers/gpu/drm/amd/amdkfd/kfd_svm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
+index f0f7f48af413..41c376f3fd27 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
+@@ -4147,7 +4147,7 @@ svm_ioctl(struct kfd_process *p, enum kfd_ioctl_svm_op op, uint64_t start,
+ 		r = svm_range_get_attr(p, mm, start, size, nattrs, attrs);
+ 		break;
+ 	default:
+-		r = EINVAL;
++		r = -EINVAL;
+ 		break;
+ 	}
  
 -- 
-2.43.0
+2.30.2
 
