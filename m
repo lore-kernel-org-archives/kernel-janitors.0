@@ -1,82 +1,149 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97F44DA19;
-	Mon, 25 Mar 2024 17:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49045125D5;
+	Mon, 25 Mar 2024 19:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711388668; cv=none; b=gkkQao9rWXTmSc3nZCfguYLXu3eKXSOEn12z5rEC1fIXv+knIpHJBFhugcbQz5zWepzPv04BWDTLH+bGG3xGQ7ZnVxWqUyOxMTxJ129gwI2u7VHO5bG3WCv0Kgt3jj+MsORWuc2RVBpDy5+TNa3vbl1yxbAoPSHxrrb8lIpIpU4=
+	t=1711393970; cv=none; b=s3/HQ/RYFDY+Bmvl7Wh2wKBU6bQuoxfUgSAL1lrCsr6IzBDEsh6VmdpYBIGX5BdZS3JfNh/gYCJyx/jR5adlQiQtjzYOXf7OiB905tQH0vklp2xjTtBV9+fyeK6D6lIikdfDy10bdnkLBesJhKXT8Vi7KQdJzAFXQ6OZnoblvq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711388668; c=relaxed/simple;
-	bh=7CY+Bz8yedB/peytCKYBeJnkgHswHn7/LaefhaOtwso=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hDQeoITqPhs4x0eQZ0iJk1HOxF76qWxn/ZfiKuCpRRzXwdbzRU632TWz/fNHE0op5RsJa2tIkAvcNV8R3LZqpLyIHXSPTWs7uEqYnm2A8M665k/lD1u0r4GKiEcdf9vo/SEwUAZKd+2MACNMJ+FkC56+8851m7uz5mLgTy/lobw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b5E7Cp9v; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711393970; c=relaxed/simple;
+	bh=5YofjHhQd84JC8ExqA0FU+vMotkFNia4E/YVr5/G6U8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U+YYfBvjaUnYG7xTOMF1w8RVE+HcnDWV+2QqG2za36wWFcOOyWrArDLQ2nUEhBVyPpbBWVKe7BfA0IeU62NXrqHU7YCF4FQZ0OWOBdjuujG44ieTPgceMx8Y8H9sv6Hi9Vi2/y2QU4VYz4k5UWEYkAFMvY0/uXyLi8/E0dxk/3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AL8Kf1X5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TZCxvoj1; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AL8Kf1X5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TZCxvoj1; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b5E7Cp9v"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83E1CC43394;
-	Mon, 25 Mar 2024 17:44:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711388667;
-	bh=7CY+Bz8yedB/peytCKYBeJnkgHswHn7/LaefhaOtwso=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=b5E7Cp9vw5ZcCZo74dXk618Ub7MK4Cu8hzLzgh5xDExGgQX489Kv1CxIFLQJLXGv1
-	 m5uiOiTiimIokRR7BArZB7QTrH3PEKOC2CipiM9j/LcPN1y9GcHaLoz7n/kFJLjf5M
-	 Rxhbh4tpcDZlvnOiFi1ueacxBmIFMkKiB1w18IvivgnaSh7AXKjktg8Jd6D7ZalQZG
-	 EBodP1GBDJ82oPQCtUSZEPxJq5RwTT6pOk787V0q42ECiK5sNWlfWV1nu+eE1yHaC/
-	 qiL0GZ41s2WWdmUDPdmaTTslwZjq/N4gZrSKILtFCLWrKGgLq1WW9qDmRHWu7qyyTd
-	 fqLdYptM0EcWg==
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J . Wysocki" <rafael@kernel.org>, 
- Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240315084417.2427797-1-colin.i.king@gmail.com>
-References: <20240315084417.2427797-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] regmap: maple: Remove second semicolon
-Message-Id: <171138866623.327223.15646139902370074252.b4-ty@kernel.org>
-Date: Mon, 25 Mar 2024 17:44:26 +0000
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AL8Kf1X5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TZCxvoj1";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AL8Kf1X5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TZCxvoj1"
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 86C822227C;
+	Mon, 25 Mar 2024 19:12:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1711393966; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sv6lDzyyCtkE4zay8240/H88oSDu1T9Fy0kgOmNLNOQ=;
+	b=AL8Kf1X57IWHbMpzJJmuG99Z6/KwsY1x+bXhLclV1oy7k10IBBtiAJAFPjzAFjePwe9Kkx
+	PFA24ilLVUX0o+YnSfk2eK9cpNWdkB3CAnm0mEs/fRQV6owkZ3JixAVTxLg5PeoR5o+bJ6
+	P635D7Qg+7gWh59oGBPRDGJUI0qxF/w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1711393966;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sv6lDzyyCtkE4zay8240/H88oSDu1T9Fy0kgOmNLNOQ=;
+	b=TZCxvoj1/DPH1ruaZ/E1/kJqJjkmAP7wF9adU/aMrvSlDNJXFaJ9Cv+SXIQsLd0hy7RYm8
+	u94WDZlBvoE2jKBw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1711393966; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sv6lDzyyCtkE4zay8240/H88oSDu1T9Fy0kgOmNLNOQ=;
+	b=AL8Kf1X57IWHbMpzJJmuG99Z6/KwsY1x+bXhLclV1oy7k10IBBtiAJAFPjzAFjePwe9Kkx
+	PFA24ilLVUX0o+YnSfk2eK9cpNWdkB3CAnm0mEs/fRQV6owkZ3JixAVTxLg5PeoR5o+bJ6
+	P635D7Qg+7gWh59oGBPRDGJUI0qxF/w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1711393966;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sv6lDzyyCtkE4zay8240/H88oSDu1T9Fy0kgOmNLNOQ=;
+	b=TZCxvoj1/DPH1ruaZ/E1/kJqJjkmAP7wF9adU/aMrvSlDNJXFaJ9Cv+SXIQsLd0hy7RYm8
+	u94WDZlBvoE2jKBw==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 7D35013A2E;
+	Mon, 25 Mar 2024 19:12:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id 2ruHHq7MAWbRZgAAn2gu4w
+	(envelope-from <jack@suse.cz>); Mon, 25 Mar 2024 19:12:46 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 36C3CA0812; Mon, 25 Mar 2024 20:12:42 +0100 (CET)
+Date: Mon, 25 Mar 2024 20:12:42 +0100
+From: Jan Kara <jack@suse.cz>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Jan Kara <jack@suse.com>, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] udf: Remove second semicolon
+Message-ID: <20240325191242.3r6onuxvk3bqcxzs@quack3>
+References: <20240315091949.2430585-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240315091949.2430585-1-colin.i.king@gmail.com>
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -0.81
+X-Spamd-Result: default: False [-0.81 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 RCPT_COUNT_THREE(0.00)[4];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 TO_DN_SOME(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FREEMAIL_TO(0.00)[gmail.com];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-0.01)[46.17%]
+X-Spam-Flag: NO
 
-On Fri, 15 Mar 2024 08:44:17 +0000, Colin Ian King wrote:
+On Fri 15-03-24 09:19:49, Colin Ian King wrote:
 > There is a statement with two semicolons. Remove the second one, it
 > is redundant.
 > 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+Thanks. Added to my tree.
+
+								Honza
+
+> ---
+>  fs/udf/super.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
-
-Thanks!
-
-[1/1] regmap: maple: Remove second semicolon
-      commit: aad6b35290f52639d3601063d33d9621c0948a04
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> diff --git a/fs/udf/super.c b/fs/udf/super.c
+> index 2217f7ed7a49..ba6b747a3830 100644
+> --- a/fs/udf/super.c
+> +++ b/fs/udf/super.c
+> @@ -630,7 +630,7 @@ static int udf_parse_param(struct fs_context *fc, struct fs_parameter *param)
+>  			if (!uopt->nls_map) {
+>  				errorf(fc, "iocharset %s not found",
+>  					param->string);
+> -				return -EINVAL;;
+> +				return -EINVAL;
+>  			}
+>  		}
+>  		break;
+> -- 
+> 2.39.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
