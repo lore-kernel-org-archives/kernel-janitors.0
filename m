@@ -1,69 +1,81 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAAD85955
-	for <kernel-janitors@vger.kernel.org>; Mon, 25 Mar 2024 14:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2ADC5DF1C
+	for <kernel-janitors@vger.kernel.org>; Mon, 25 Mar 2024 15:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711376709; cv=none; b=pvU5sGtahGHm6Y6j3FyEblhjlcMyGE8O2R9YjAuJxOSnRwLc2CR+eR+8+ZuqDGtK9MPL0jEdQGbu/UCz5IOZ7t9qKxfdikrRvONgElcEKohRFfxyDyEM4P8XLiYtRx15Jvn4xifO1unGesE2DEoYET+89Ngm1X1Vzd8SnNY1oQw=
+	t=1711380988; cv=none; b=AwackWKp/TCUrbM+U6LamLquFVWeH4E42DUCEbdNO6DH0vUpa/+e5jnJPzwF8J6TW5qHEkGQADO2TOa3jxNYxkoFDZoC3XtkSg7I+cq0LZRiRPY843bICXrLOOTi1OhrsOyP+rZEfX1s0dcS08W4KHxrRIz67XFL4qEnDYmfPkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711376709; c=relaxed/simple;
-	bh=+MeltPZVNKwDT4s9LWJGLhPwYg6oTgYBzKVCn15VZsc=;
+	s=arc-20240116; t=1711380988; c=relaxed/simple;
+	bh=kX8SJsy7Wu9qxWsB/EuNbqjpIU+HpoK55f1JMPu/7D4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HYrloQ3+SgYGIgAUcbLSprOj2NWjQ0n2QkguLlbhj5/MLdxXScR/JTSMuBM2IbkqNdDnB4RjDKFsYKzsq6bM+K9rOITrwd/4pMiyQzNfNOheGcA+aAXEA3oQmAEC6GPKoNu6mOoeaNLjS05olcCwawDgVU6VkA1Muuh5blDVMLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hhxvnGY1; arc=none smtp.client-ip=209.85.167.54
+	 Content-Type:Content-Disposition:In-Reply-To; b=LDOtRy0RK5kcoy65lALSocoCYxDsa9kWkkNo6tyGDOKeOMtiHZXPyMHAfI+ejmcMof2L8EFSXzyfwTZVjwcWYjosSWoj3yoSQ9opCqUZWmjFAGRmwmXN59IcUfumRL8jmvWZ4pAzlPcQ4n4novULQJM5yn1s4toHLFcWQt0LJUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nMyliOQC; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hhxvnGY1"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-513d717269fso5505965e87.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 25 Mar 2024 07:25:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nMyliOQC"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-56c0652d37aso2394179a12.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 25 Mar 2024 08:36:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711376706; x=1711981506; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1711380985; x=1711985785; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=O3PUtNY4boQ+ipy4wQYd09otPfOvXLpDaCkOQ9UXG84=;
-        b=hhxvnGY1pu+otW6Yd/0JGjmzbva5HqMncBVKvci/73gkV2z6H+efQDQXzGMIV2XISZ
-         jJF8mP3YVIpGKtbpdbfxywzfT79JbH0+hVju3cqQY7KL5cjuWiEDjnW3OzPN0cmSy1cI
-         lsH292aWVY19lCEV03oHbzl07vXKOOI2dCO39ioWj5Cxi7hbEoZZaVMqjUl4T1GI88H2
-         VmsSRjN/fBIGUF2lqdFhyUOLfoAjeI55+9ukbfX7N3OcV7WOFP5Uq/O67ffH8cig9Jxt
-         p2kXx2XX6x8WXKO8er+1/Nw2bs1Ewdg3fT8v0Zu0sAspKSInI36DCTOIPjEB7ahm/bNj
-         tq5Q==
+        bh=JYD9V/lEsf9uqiYf4EWxgIYLkJpRooIT1PnEwEiySfg=;
+        b=nMyliOQCyLZxIm+T6Wup3xSrA2CVl05uNOeBy5CZ5gMyOaI7YwVeNJyNAHpPbYcgJw
+         v8cpHwygtsMlNht65yZttit1IsMQcVsCODC7+njkzMvE9+AJG6vFG5B8ZDd5RDFWOsq/
+         zuLFFyuz3rNk1DLUEnAz+rHibP5Jc933I5qifTep0KMj72l/s3vTG4qLixa/b4L68Rb8
+         PW8TFJ3vuILA/BChL7wZ3y4ocjo/sPX8mJUQY4RasMnSmuhdPuq/t16yudja2w3DAxdx
+         S8tjJW3n6wQ6UffAyhWhGQCioW3XMisMnNq3A6gO8SkAbjCM1asqIPazCmylOUix9mFh
+         m74A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711376706; x=1711981506;
+        d=1e100.net; s=20230601; t=1711380985; x=1711985785;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=O3PUtNY4boQ+ipy4wQYd09otPfOvXLpDaCkOQ9UXG84=;
-        b=o3elLhxPxsUOxYwnTq+ThmYdeMQtFVAzcVy7FbcqyCOiPDG68qpvvs/1W803weC27z
-         CTx6+MrF4N0mRmvfL8uUYQjwKSOOemHSDltsZLabcOUArYkNmCD0TCV2yY5FJNoJ6ZIB
-         kHJad6ighxsGQxFnHNqGbimjQ2Q3Oo3c66ti5ZD5+8cABTN9SrVp5rrKxzpMl2MpujTJ
-         pJ0uOqyUT5QvGEVz69VZB0U7NDqlLYOB+bkA97VbGW+szHJ1m8EBaAp+B7HfMcbnMsoV
-         xoTYtr+yU4uKFLDXYWU+O3m0nm10st/a9mjS90YrIdaQFpTc7Ex36oBJBbMfz7CicxHy
-         Zn/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXXDq0K7FVQ6lMhcPsSn0EtTNTYfcHLG7hym9TBGUPGY4KbABt2zproyjHdmHI5subdyVExZSlMR5dpADi+buVd2zAVTkd0sP/yWYAVsEx4
-X-Gm-Message-State: AOJu0YxRKkjTXDxmIUC6zCt7TiVrwr6UoE2tX8Ad+BqhL7PbpY+2196j
-	BCe6BoCWCdqEhrup+1YVcfS6/Eoclyn5rTnb8Sl+Gd9K44Muc/eKviSWBRmfHoU=
-X-Google-Smtp-Source: AGHT+IEFidCgty+v00DMTxMPtnXdVdXzQmlAggnT/0h5fv4Uf17UIa5tj3pq//IwqDLEoDELOZO2Xw==
-X-Received: by 2002:a19:ca14:0:b0:513:23be:e924 with SMTP id a20-20020a19ca14000000b0051323bee924mr4375709lfg.59.1711376705571;
-        Mon, 25 Mar 2024 07:25:05 -0700 (PDT)
+        bh=JYD9V/lEsf9uqiYf4EWxgIYLkJpRooIT1PnEwEiySfg=;
+        b=GqUsy+NAqhDy0n69KQiG3wQPJ/hCjve4ekJhy2G9/8tb32YgcVZM5qb2g5aK5FSEGv
+         2L3DqWlVg7mSXqj0A1DF9hhxZIHXzR3sBZNW3cS/SCOZjzKmWcmjT5ahVBCfoE5PGqG8
+         ZUbuOnTmORjKNeHckmkvCYYIBdgd85HEMleD/LGTXycIXu04Zzhy4o8WrsaMlH681OMr
+         hARE6ozetdXMS8oj2Hux6BAPwJo2Vy2DDqcxTMZIuAZSrfMw4Bxs2HsRZTcNapSpbog9
+         JZpUoyeRdqqxFfFmw7nZpSBQtP6wXN7mbpc+x+3H0SMUasPMi0ROwEODtvakvKkX/oBO
+         sc6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVXHZjq+ObosI8r5iO3LsESLoAv7gpxgS4NiKhUKZjqOy78qep87oq2D3J+WbOLa0gWk3igo0gR0fJ+2JleTuEjbzPr7t8jbFqtvQRCtkIU
+X-Gm-Message-State: AOJu0Yy1cXwteLINPgrgQyoAe2/Klmz1+Y+Ij7MifNlKzE7uwiNnS2Z9
+	6MqrYwrgbA3bbZocXXBucJI/z0uf0Qayft59RT7kLmdqmQ3NO3EJYnOIk2DXs90=
+X-Google-Smtp-Source: AGHT+IF2L6kelCSMu/YRNMu9WaK4KKCHqMviE11VEijc/cs+BMMniJENJTygPUjr5tPFrc3qxoCONg==
+X-Received: by 2002:a17:906:69c2:b0:a47:3cd5:b3f1 with SMTP id g2-20020a17090669c200b00a473cd5b3f1mr5421382ejs.35.1711380984859;
+        Mon, 25 Mar 2024 08:36:24 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id l12-20020a1709062a8c00b00a45f39b2d16sm3104885eje.200.2024.03.25.07.25.04
+        by smtp.gmail.com with ESMTPSA id z3-20020a170906668300b00a4750a4a1f7sm1999823ejo.6.2024.03.25.08.36.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Mar 2024 07:25:05 -0700 (PDT)
-Date: Mon, 25 Mar 2024 17:25:00 +0300
+        Mon, 25 Mar 2024 08:36:24 -0700 (PDT)
+Date: Mon, 25 Mar 2024 18:36:21 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: arnaud.pouliquen@foss.st.com, lgirdwood@gmail.com, broonie@kernel.org,
-	perex@perex.cz, tiwai@suse.com, nathan@kernel.org,
-	ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
-	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ASoC: sti: uniperif: fix the undefined bitwise shift
- behavior problem
-Message-ID: <5d850276-a872-45fb-9df2-2b72479787be@moroto.mountain>
-References: <20240325034032.1031885-1-suhui@nfschina.com>
+To: Subbaraya Sundeep Bhatta <sbhatta@marvell.com>
+Cc: Su Hui <suhui@nfschina.com>,
+	Sunil Kovvuri Goutham <sgoutham@marvell.com>,
+	Geethasowjanya Akula <gakula@marvell.com>,
+	Hariprasad Kelam <hkelam@marvell.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"nathan@kernel.org" <nathan@kernel.org>,
+	"ndesaulniers@google.com" <ndesaulniers@google.com>,
+	"morbo@google.com" <morbo@google.com>,
+	"justinstitt@google.com" <justinstitt@google.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [EXTERNAL] [PATCH 2/2] octeontx2-pf: remove unused variables
+ req_hdr and rsp_hdr
+Message-ID: <21c3a484-68a1-43a0-ac48-e9a85027605c@moroto.mountain>
+References: <20240325073549.823832-1-suhui@nfschina.com>
+ <20240325073549.823832-2-suhui@nfschina.com>
+ <CO1PR18MB466675E232FA99415D766F68A1362@CO1PR18MB4666.namprd18.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -72,78 +84,34 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240325034032.1031885-1-suhui@nfschina.com>
+In-Reply-To: <CO1PR18MB466675E232FA99415D766F68A1362@CO1PR18MB4666.namprd18.prod.outlook.com>
 
-On Mon, Mar 25, 2024 at 11:40:33AM +0800, Su Hui wrote:
-> Clang static checker(scan-build):
-> sound/soc/sti/uniperif_player.c:1115:12: warning:
-> The result of the left shift is undefined because the right operand is
-> negative [core.UndefinedBinaryOperatorResult]
+On Mon, Mar 25, 2024 at 12:44:44PM +0000, Subbaraya Sundeep Bhatta wrote:
+> Hi,
 > 
-> When UNIPERIF_CONFIG_BACK_STALL_REQ_SHIFT(ip) equals to -1, the result of
-> SET_UNIPERIF_CONFIG_BACK_STALL_REQ_DISABLE(ip) is undefined.
+> >-----Original Message-----
+> >From: Su Hui <suhui@nfschina.com>
+> >Sent: Monday, March 25, 2024 1:06 PM
+> >To: Sunil Kovvuri Goutham <sgoutham@marvell.com>; Geethasowjanya Akula
+> ><gakula@marvell.com>; Subbaraya Sundeep Bhatta <sbhatta@marvell.com>;
+> >Hariprasad Kelam <hkelam@marvell.com>; davem@davemloft.net;
+> >edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
+> >nathan@kernel.org; ndesaulniers@google.com; morbo@google.com;
+> >justinstitt@google.com
+> >Cc: Su Hui <suhui@nfschina.com>; netdev@vger.kernel.org; linux-
+> >kernel@vger.kernel.org; llvm@lists.linux.dev; kernel-janitors@vger.kernel.org
+> >Subject: [PATCH 2/2] octeontx2-pf: remove unused variables
+> >req_hdr and rsp_hdr
+> >
+> >Clang static checker(scan-buid):
+> >drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:503:2: warning:
+> >Value stored to 'rsp_hdr' is never read [deadcode.DeadStores]
+> >
+> Consider this also as a fix and add Fixes tag. Also please add "net" in subject to
+> easily identify whether this patch as net or net-next material.
 > 
-> Here are some results of using different compilers.
-> 		1UL >> -1	1UL << -1
-> gcc 10.2.1	0x2		0
-> gcc 11.4.0	0		0x8000000000000000
-> clang 14.0.0	0x64b8a45d72a0	0x64b8a45d72a0
-> clang 17.0.0	0x556c43b0f2a0	0x556c43b0f2a0
-> 
-> Add some macros to ensure that when right opreand is negative or other
-> invalid values, the results of bitwise shift is zero.
-> 
-> Fixes: e1ecace6a685 ("ASoC: sti: Add uniperipheral header file")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  sound/soc/sti/uniperif.h | 17 ++++++++++++++---
->  1 file changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/soc/sti/uniperif.h b/sound/soc/sti/uniperif.h
-> index 2a5de328501c..1cbff01fbff0 100644
-> --- a/sound/soc/sti/uniperif.h
-> +++ b/sound/soc/sti/uniperif.h
-> @@ -12,17 +12,28 @@
->  
->  #include <sound/dmaengine_pcm.h>
->  
-> +#define SR_SHIFT(a, b)		({unsigned long __a = (a); \
-> +				unsigned int __b = (b); \
-> +				__b < BITS_PER_LONG ? \
-> +				__a >> __b : 0; })
 
-The code definitely looks buggy, but how do you know your solution is
-correct without testing it?
-
-I don't like this solution at all.  This is basically a really
-complicated way of writing "if (b != -1)".  Instead of checking for -1,
-the better solution is to just stop passing -1.  If you review that
-file, every time it uses "-1" that's either dead code or a bug...
-
-sound/soc/sti/uniperif.h
-   132  #define UNIPERIF_ITS_UNDERFLOW_REC_DONE_SHIFT(ip) \
-   133          ((ip)->ver < SND_ST_UNIPERIF_VERSION_UNI_PLR_TOP_1_0 ? -1 : 12)
-                                                                      ^^^^
-This is dead code
-
-   134  #define UNIPERIF_ITS_UNDERFLOW_REC_DONE_MASK(ip) \
-   135          ((ip)->ver < SND_ST_UNIPERIF_VERSION_UNI_PLR_TOP_1_0 ? \
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-because the version is checked here.
-
-   136                  0 : (BIT(UNIPERIF_ITS_UNDERFLOW_REC_DONE_SHIFT(ip))))
-
-Just delete UNIPERIF_ITS_UNDERFLOW_REC_DONE_SHIFT() and use 12 directly.
-
-[ snip ]
-
-   988  #define UNIPERIF_BIT_CONTROL_OFFSET(ip)  \
-   989          ((ip)->ver < SND_ST_UNIPERIF_VERSION_UNI_PLR_TOP_1_0 ? -1 : 0x004c)
-                                                                       ^^^
-Negative offsets seem like a bug.
-
-   990  #define GET_UNIPERIF_BIT_CONTROL(ip) \
-   991          readl_relaxed(ip->base + UNIPERIF_BIT_CONTROL_OFFSET(ip))
+It's not a bug fix so it doesn't need a Fixes tag.
 
 regards,
 dan carpenter
