@@ -1,118 +1,102 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2ADC5DF1C
-	for <kernel-janitors@vger.kernel.org>; Mon, 25 Mar 2024 15:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA1D76401;
+	Mon, 25 Mar 2024 17:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711380988; cv=none; b=AwackWKp/TCUrbM+U6LamLquFVWeH4E42DUCEbdNO6DH0vUpa/+e5jnJPzwF8J6TW5qHEkGQADO2TOa3jxNYxkoFDZoC3XtkSg7I+cq0LZRiRPY843bICXrLOOTi1OhrsOyP+rZEfX1s0dcS08W4KHxrRIz67XFL4qEnDYmfPkk=
+	t=1711387477; cv=none; b=iWzf5IddlpESiOAXf0FbMw8OkEOzYW7LK1IneM/ypKvVhRaJ8Xng2JjJ9I5qJZPsELqVrCOA3I+ito7cmrqT113QlRELyO5UixVTOEKqfTOAAd8SX7LDAyKX7VeivD0bP58esKklNSGQtUK0mTAm2f61X4tCpgSaqPnUQ2zfppQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711380988; c=relaxed/simple;
-	bh=kX8SJsy7Wu9qxWsB/EuNbqjpIU+HpoK55f1JMPu/7D4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LDOtRy0RK5kcoy65lALSocoCYxDsa9kWkkNo6tyGDOKeOMtiHZXPyMHAfI+ejmcMof2L8EFSXzyfwTZVjwcWYjosSWoj3yoSQ9opCqUZWmjFAGRmwmXN59IcUfumRL8jmvWZ4pAzlPcQ4n4novULQJM5yn1s4toHLFcWQt0LJUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nMyliOQC; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1711387477; c=relaxed/simple;
+	bh=U0tpeTPOyTpPTe351qE8OA5AoJGCat0VCds9PVfXYDQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=oFPpFxy7eLSc3RBBNX9IekYhUYMiHcJ3e34U29IMcfy74qDB1bEs3RCpef4PO2hMqMrmSJBbuQQ6+Sk5yG5WTf+loiW+ZsWE4FIil+S3lUoKfMcIoMfOnCmkEIUpVjbmmQxiXIyU8rUQIG2uAAGDjDgVQUkGhhYaYlbcD7vgu8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bRWZkVTC; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nMyliOQC"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-56c0652d37aso2394179a12.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 25 Mar 2024 08:36:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711380985; x=1711985785; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JYD9V/lEsf9uqiYf4EWxgIYLkJpRooIT1PnEwEiySfg=;
-        b=nMyliOQCyLZxIm+T6Wup3xSrA2CVl05uNOeBy5CZ5gMyOaI7YwVeNJyNAHpPbYcgJw
-         v8cpHwygtsMlNht65yZttit1IsMQcVsCODC7+njkzMvE9+AJG6vFG5B8ZDd5RDFWOsq/
-         zuLFFyuz3rNk1DLUEnAz+rHibP5Jc933I5qifTep0KMj72l/s3vTG4qLixa/b4L68Rb8
-         PW8TFJ3vuILA/BChL7wZ3y4ocjo/sPX8mJUQY4RasMnSmuhdPuq/t16yudja2w3DAxdx
-         S8tjJW3n6wQ6UffAyhWhGQCioW3XMisMnNq3A6gO8SkAbjCM1asqIPazCmylOUix9mFh
-         m74A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711380985; x=1711985785;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JYD9V/lEsf9uqiYf4EWxgIYLkJpRooIT1PnEwEiySfg=;
-        b=GqUsy+NAqhDy0n69KQiG3wQPJ/hCjve4ekJhy2G9/8tb32YgcVZM5qb2g5aK5FSEGv
-         2L3DqWlVg7mSXqj0A1DF9hhxZIHXzR3sBZNW3cS/SCOZjzKmWcmjT5ahVBCfoE5PGqG8
-         ZUbuOnTmORjKNeHckmkvCYYIBdgd85HEMleD/LGTXycIXu04Zzhy4o8WrsaMlH681OMr
-         hARE6ozetdXMS8oj2Hux6BAPwJo2Vy2DDqcxTMZIuAZSrfMw4Bxs2HsRZTcNapSpbog9
-         JZpUoyeRdqqxFfFmw7nZpSBQtP6wXN7mbpc+x+3H0SMUasPMi0ROwEODtvakvKkX/oBO
-         sc6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVXHZjq+ObosI8r5iO3LsESLoAv7gpxgS4NiKhUKZjqOy78qep87oq2D3J+WbOLa0gWk3igo0gR0fJ+2JleTuEjbzPr7t8jbFqtvQRCtkIU
-X-Gm-Message-State: AOJu0Yy1cXwteLINPgrgQyoAe2/Klmz1+Y+Ij7MifNlKzE7uwiNnS2Z9
-	6MqrYwrgbA3bbZocXXBucJI/z0uf0Qayft59RT7kLmdqmQ3NO3EJYnOIk2DXs90=
-X-Google-Smtp-Source: AGHT+IF2L6kelCSMu/YRNMu9WaK4KKCHqMviE11VEijc/cs+BMMniJENJTygPUjr5tPFrc3qxoCONg==
-X-Received: by 2002:a17:906:69c2:b0:a47:3cd5:b3f1 with SMTP id g2-20020a17090669c200b00a473cd5b3f1mr5421382ejs.35.1711380984859;
-        Mon, 25 Mar 2024 08:36:24 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id z3-20020a170906668300b00a4750a4a1f7sm1999823ejo.6.2024.03.25.08.36.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Mar 2024 08:36:24 -0700 (PDT)
-Date: Mon, 25 Mar 2024 18:36:21 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Subbaraya Sundeep Bhatta <sbhatta@marvell.com>
-Cc: Su Hui <suhui@nfschina.com>,
-	Sunil Kovvuri Goutham <sgoutham@marvell.com>,
-	Geethasowjanya Akula <gakula@marvell.com>,
-	Hariprasad Kelam <hkelam@marvell.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"nathan@kernel.org" <nathan@kernel.org>,
-	"ndesaulniers@google.com" <ndesaulniers@google.com>,
-	"morbo@google.com" <morbo@google.com>,
-	"justinstitt@google.com" <justinstitt@google.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [EXTERNAL] [PATCH 2/2] octeontx2-pf: remove unused variables
- req_hdr and rsp_hdr
-Message-ID: <21c3a484-68a1-43a0-ac48-e9a85027605c@moroto.mountain>
-References: <20240325073549.823832-1-suhui@nfschina.com>
- <20240325073549.823832-2-suhui@nfschina.com>
- <CO1PR18MB466675E232FA99415D766F68A1362@CO1PR18MB4666.namprd18.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bRWZkVTC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1711387398; x=1711992198; i=markus.elfring@web.de;
+	bh=U0tpeTPOyTpPTe351qE8OA5AoJGCat0VCds9PVfXYDQ=;
+	h=X-UI-Sender-Class:Date:Subject:To:References:Cc:From:
+	 In-Reply-To;
+	b=bRWZkVTCzppdEH7uqzBNqYMs/I+Wvd1v3zhBOlzHh3JvP7VRPM7M14eaJdHwffT+
+	 gAH4F3Ndy2JRndaz0L++yVp9mVuezqn8yAisWi+T/7ZgpRVDpmmgygh6AjolOIvit
+	 kNb2ajA0LVr2iMG7p2dRzNlzS7KKaTG/7k/H9gJhARf9pzh47AGEYI19RP0OsWRVN
+	 7MZx3FHo/G8doNCDXvdMO3q2X4WytGjKYFc6BVjpNz2G8suO1gq1/n0fe5ADPBlll
+	 uqD3ntomL9G/wqtWWVR8a0kcq7740Q1sbGpaIZHGqyIe+Zw4JfmDK3UzuDFfaDaUk
+	 57ZRDApFvkWovxo26Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MUl9B-1sExm83qRV-00QmJk; Mon, 25
+ Mar 2024 18:23:18 +0100
+Message-ID: <8bb50ff8-ff26-45a2-a35b-956c81eb7e80@web.de>
+Date: Mon, 25 Mar 2024 18:22:59 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CO1PR18MB466675E232FA99415D766F68A1362@CO1PR18MB4666.namprd18.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 12/13] perf dso: Reference counting related fixes
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ James Clark <james.clark@arm.com>,
+ Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+ Colin Ian King <colin.i.king@gmail.com>,
+ =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>,
+ Leo Yan <leo.yan@linux.dev>, Song Liu <song@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>, Liam Howlett <liam.howlett@oracle.com>,
+ Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+ Ben Gainey <ben.gainey@arm.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Yanteng Si <siyanteng@loongson.cn>,
+ Ravi Bangoria <ravi.bangoria@amd.com>, Sun Haiyong <sunhaiyong@loongson.cn>,
+ Changbin Du <changbin.du@huawei.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, zhaimingbing <zhaimingbing@cmss.chinamobile.com>,
+ Paran Lee <p4ranlee@gmail.com>, Li Dong <lidong@vivo.com>,
+ Andi Kleen <ak@linux.intel.com>, Chengen Du <chengen.du@canonical.com>,
+ linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20240321160300.1635121-1-irogers@google.com>
+ <20240321160300.1635121-13-irogers@google.com>
+Content-Language: en-GB
+Cc: linux-kernel@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240321160300.1635121-13-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:pskIHGf+C3w8pWYXN3g6cdHPcoa+SpW+UpkcrSPDmFidRUj6+xn
+ 88ySkN74QP0NtfTP2Lmo2qRkZZ3BIeQXWNFyJxVA8ZeybIhJNLIdyR2Sahum1O43vMwyRuw
+ OOV0NDeDZFiJWzgDjCoOtKCVV901Od+NWE8VGMLlycV6fJOfYdsBeBGYjgWmaqRr/bj0TAS
+ 6rlKrKSuiM/YlNuiwzFlg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:v95kMyinJlk=;E5e5fyRIagm+9ibeKx83xJAyNZz
+ MG0zuOKI+XCLrx6OgP0qgokntj0JnQvTBvQMTa28oqFle6B2qKuHjYsmjjHJXabJaj3sc9vyl
+ KUMIK4mTV6o8l19R43uwNK5OVqgZWnfPTCJ2OheBT7420/Rl2RxCFWs4DThYp9PvswCsD4Dqv
+ xRujJQTCA6/0kj6hMF18p/71h3RtcIj26TquPK9RoZ1lv2n0lYS+/UON+7JmV+k2dDUUlx1pa
+ qFftIZa+lXY2qx0aKqrWSBD72WMwtM4k/C1OEfWjhNkwFwGppH27Yxd1Spq7/A1GBKXl4CYFC
+ l8RnDUTn9vb04F7DiJkxD+elzKO3u0fHvMyLsG/NxRINlHa52v+PWa6RKncIiPSUwudlJj3Fz
+ vhz2Eyzr8ERTSI7brjkeJiIDMnw/XySuFb/0sGgy7VLOFGZ2m7U9cmHuVj2GpaEhrasRNkuDM
+ KVSzDv4PvTqmWOgfNF3BKsR77kJgkHsYKQ1PN9aPDL3vxThLNvuCCVn8Swc45NHTn1bxx5e6Q
+ byy17MQnYuxpepr3KpGJg3y8n/4WFVzJgeh/yBZ1Ivb0L0cac+DU596y7PoCfAT2kK31Yh9SA
+ NMpv8qZBaQLFKB9JPbQMbMGJDRG88rF4YvS/Rj7o3ke7RFiqp5CiP17gDFupq3TQe76Bu2Ena
+ 4z8FnxaUz5WpJnZYrTu1rCdKApYJJtIDUFRhjwBxdI3KTKLKtKLcyCRFkaEP+Grfu1l23C8RC
+ /waejXJa3cUUWHC5CQsf9NbKpWlVuR2Otbnve4TYOMgbDH/nF9HDqLLr2CclBx4v8R5AM6TcX
+ It4mU2lidzptegDjpdnhsHBkJivLO5bFhDrJKRH5J5Y4I=
 
-On Mon, Mar 25, 2024 at 12:44:44PM +0000, Subbaraya Sundeep Bhatta wrote:
-> Hi,
-> 
-> >-----Original Message-----
-> >From: Su Hui <suhui@nfschina.com>
-> >Sent: Monday, March 25, 2024 1:06 PM
-> >To: Sunil Kovvuri Goutham <sgoutham@marvell.com>; Geethasowjanya Akula
-> ><gakula@marvell.com>; Subbaraya Sundeep Bhatta <sbhatta@marvell.com>;
-> >Hariprasad Kelam <hkelam@marvell.com>; davem@davemloft.net;
-> >edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
-> >nathan@kernel.org; ndesaulniers@google.com; morbo@google.com;
-> >justinstitt@google.com
-> >Cc: Su Hui <suhui@nfschina.com>; netdev@vger.kernel.org; linux-
-> >kernel@vger.kernel.org; llvm@lists.linux.dev; kernel-janitors@vger.kernel.org
-> >Subject: [PATCH 2/2] octeontx2-pf: remove unused variables
-> >req_hdr and rsp_hdr
-> >
-> >Clang static checker(scan-buid):
-> >drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:503:2: warning:
-> >Value stored to 'rsp_hdr' is never read [deadcode.DeadStores]
-> >
-> Consider this also as a fix and add Fixes tag. Also please add "net" in subject to
-> easily identify whether this patch as net or net-next material.
-> 
+> Ensure gets and puts are better aligned fixing reference couting
 
-It's not a bug fix so it doesn't need a Fixes tag.
+How do you think about to avoid a typo in the last word of this text line
+for the final commit?
 
-regards,
-dan carpenter
 
+> checking problems.
+
+
+Regards,
+Markus
