@@ -1,52 +1,52 @@
 Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66C515ADA4;
-	Mon, 25 Mar 2024 12:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715AA134A8;
+	Mon, 25 Mar 2024 12:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.148.174
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711370539; cv=fail; b=ZPG4WWuGJdcY4Qsq05N3CziSoWn32GYGlgh5ZQo8tnhf9LyNm2vDZhI58eS47p07/WRKfJi+muQJpjvrfI6bZuM461aaEn0txDe5ObOddoTP8vCiSn9/2W1wJB8TCdWmB5/lWqxUwEqVmuJP1NhdOXEWcsNjViVD8jPtLhtqwRE=
+	t=1711370700; cv=fail; b=WtanbrUvlLCtQJGMMY49qw3f9nIA/0U6mLg3xtf5c1Yb4zSop3rYaAGVNml3Di8pOgxlTjzOKmEV7A5v+00uNfbEwJhkXgTk2FJGNky82bhQ/Vs6jdOBAP3XUYuQ+tJ0fQjOfjTMtSFcS3YKuJAol+7PWYKzZPv9eF6HFRk77Zg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711370539; c=relaxed/simple;
-	bh=ukwneb6zF5Ne54UyD8aDvAGP0U2myLn9dnzSXb5SFyI=;
+	s=arc-20240116; t=1711370700; c=relaxed/simple;
+	bh=mM2jqFPzzVLqCXMdSpX/YoMyaANeZe078MDPCVl3GtY=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YK4f2Qtqev4J7zjptraNNT4DrePns8e22Pmt6DdcAspVp/22hTs9MxMuqE+rqnYjJ8aOBbTHu30HxE3OlGlXmID09W8zBO69JDCYPFnenhBi54nbwVXBHClMs5y71SRRwyvLKmXKlFoTogXtN7EPV+Ty8T+4rYPD2Owu6LGXeyo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=WkfoJOQV; arc=fail smtp.client-ip=67.231.148.174
+	 Content-Type:MIME-Version; b=GVXj/9RM8nN+460rer3LQQx7V926z3uLfW7zrP1c6oWaf2Co9AHFH+0LteQO4fOfUbjcqYHNM7WAvgmwP1SnYdyhE1o+beNry3JdvV6k+EQkxGjTu6GDS9Pckwdql438KLLKPrTPDJbRxO5oaOWo2a5ikbiS7AA41NoyCYBM2VY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=XTxu/E//; arc=fail smtp.client-ip=67.231.148.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="WkfoJOQV"
+	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="XTxu/E//"
 Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42PBk7Zo002352;
-	Mon, 25 Mar 2024 05:42:08 -0700
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2101.outbound.protection.outlook.com [104.47.70.101])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3x38pbr7hh-1
+	by mx0a-0016f401.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42PBjrWL001608;
+	Mon, 25 Mar 2024 05:44:48 -0700
+Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04lp2040.outbound.protection.outlook.com [104.47.73.40])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3x38pbr805-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Mar 2024 05:42:07 -0700 (PDT)
+	Mon, 25 Mar 2024 05:44:47 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=C2kPhzCLC0GweDJvM62+qXkBMzjS3DoF3WiVj0aSqacJcb8ycOPksIhIzoBtneqZyOoxG3FZuzQOCzxLgntme0gGWNwM61hwHyrvw1CKuMCjLrkg8stOr1ClqsBvFbZ3rBBHfmQk2tcls6sb7vi6S3GZ40Fdol7RoFAMuARVRj9HT9r+TeHL0dsvAU2L6BWyYak022Z5YV3Q5RRFFdePDam48gtMH21mXzaGDa7jjeqsY1yoaqTrtg3R5SN7awXRbXv/GhLnuy240bdz5mjwiHhlQE2WYxTasFQv90gbXUnn9iF8vXx0zu3B4xQGb2gD5cpxCg4d7AhfFMVPUDE6RQ==
+ b=PTtEi1zFrxkO3B9eGqMVnIor8c4KMN9qjMqe1Nf2YiRBGB2mCBT5OAtRcQHk7G/BFlokoyGiQ92ZKnoceAeKpbYpfPgC06L+R4b/AOJBCPNI7hjSZhG9p6//6v61xVYCj2aErxBCS//i7Pjsk8kSLy5Eix8L/clncbzN0EaZ4goSPMXENwzFDr98BVO3RfRCgEBXnLa57aO6eD1DSnJtaZoBFduiXYX9MObx949xYSmgIIpULik1zUYZjP+HOCJ2d9xDTDHNvapY8KI9xDlb8oGgmm6vyrVB6DRY4eU0dmGtz5RkXfq7ups7VAfrowr5pmOpiUbu9JYSoPL0n0mZlg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ukwneb6zF5Ne54UyD8aDvAGP0U2myLn9dnzSXb5SFyI=;
- b=mLlCmp4HCzc8nnlfUa8bnaxRe1vYUGXGoUf4boErna+k8OQX1bBO2WDj/cD5m7+6N7gleR5n5AFrgn/aLDTTvPEFYAQtXPfscAJChCDVHqFFRnnq5RfPJXxmdjVO1yfnA0V51+aVm4S7zcEJ6msq6rpDvTAs/Jmo2ljVvViWRmiGEujKfJmVLk11t8qlM/CBPF677RvJpDr7LGtJSWaf13zdSF6WUYjdBlymjQEJcKKef/RvL0PHOfsBmxRSKRiSKTOYr3gqtJFNqkREA8jnxoxY8ve/eUbTE67AXpH9FQO5pda/S8EL5CyGCztfWmQbO8/syNqnzfLJ3Iju3cMq1Q==
+ bh=Mw4/dt0u5H1qRNWbp7Zi3g+c3c4Ar6HTDjyxK6JFkXs=;
+ b=B663aqjquP0t2hCj8Zyr8585Ia5wXkoOM9ESbI/EY4ZZefB741Ga3HM/jArflb58S1Jnnv7PRRBitWo3UiWrQ25lWvXSdF/1qxvt3dvNqNPe3Ou5w1bljzhhrwxQ6T+UlOIzN/gQck0AVewW8Zw5MWltTGPUuc+/u7OwKajHNSiQZ1D0NxY+1AYR9hKh20vnzPvOsT+LaiKtC/CUKCjZsKBBBxouiP0oDXHzG0MpzN/orj56ox3ayPS2d2d/j15m9y9rX5La8b7YKm8rVEaKs8J7hmYhNHzaxcAxc6yBzsCpgxFNFtFn1bOWyMA9ENitLdHnWQPAO2YuPcu0fqLlAw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
  dkim=pass header.d=marvell.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ukwneb6zF5Ne54UyD8aDvAGP0U2myLn9dnzSXb5SFyI=;
- b=WkfoJOQVGs6+PC1oAX6Ea9dKjGKoxe3377ClzcMgY6bqfkiD0ctjwRHbsYT/rmCM3ZEJ5IqTQxIRDjYeHL9csJiCB88Ium+Mc0noUPIBr6A4NJsHLTfTLW9AW+miH4d4vUWAqmy0ignq1ImcpzbUWUR4F/bpvYa8wufPfZhqqeQ=
+ bh=Mw4/dt0u5H1qRNWbp7Zi3g+c3c4Ar6HTDjyxK6JFkXs=;
+ b=XTxu/E//C2GSYvrYobfDjsnwDTFplF5T2QP6MyPmYD87ISE9QVyAadIT6LTJgJn2sVgiI+L86R506TuQTBzf2oBM4ThJHk4vQyM10P5KyW6XqIAF2YUMy2CelpIYuNGsgo+g6uQ6G2I2SgHKjAmapv2XBFNa4kpwq5xP8UjKfrY=
 Received: from CO1PR18MB4666.namprd18.prod.outlook.com (2603:10b6:303:e5::24)
- by SN4PR18MB4855.namprd18.prod.outlook.com (2603:10b6:806:21f::5) with
+ by MN0PR18MB6094.namprd18.prod.outlook.com (2603:10b6:208:4a5::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.32; Mon, 25 Mar
- 2024 12:42:05 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.28; Mon, 25 Mar
+ 2024 12:44:44 +0000
 Received: from CO1PR18MB4666.namprd18.prod.outlook.com
  ([fe80::5087:a566:c473:1fef]) by CO1PR18MB4666.namprd18.prod.outlook.com
  ([fe80::5087:a566:c473:1fef%7]) with mapi id 15.20.7409.031; Mon, 25 Mar 2024
- 12:42:05 +0000
+ 12:44:44 +0000
 From: Subbaraya Sundeep Bhatta <sbhatta@marvell.com>
 To: Su Hui <suhui@nfschina.com>, Sunil Kovvuri Goutham <sgoutham@marvell.com>,
         Geethasowjanya Akula <gakula@marvell.com>,
@@ -56,66 +56,69 @@ To: Su Hui <suhui@nfschina.com>, Sunil Kovvuri Goutham <sgoutham@marvell.com>,
         "edumazet@google.com" <edumazet@google.com>,
         "kuba@kernel.org"
 	<kuba@kernel.org>,
-        "pabeni@redhat.com" <pabeni@redhat.com>
-CC: Sai Krishna Gajula <saikrishnag@marvell.com>,
-        "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org"
-	<kernel-janitors@vger.kernel.org>
-Subject: RE: [EXTERNAL] [PATCH 1/2] octeontx2-pf: check negative error code in
- otx2_open()
-Thread-Topic: [EXTERNAL] [PATCH 1/2] octeontx2-pf: check negative error code
- in otx2_open()
-Thread-Index: AQHafocejEkZK72mrkOj39rY0uPDDrFIZiIA
-Date: Mon, 25 Mar 2024 12:42:05 +0000
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "nathan@kernel.org" <nathan@kernel.org>,
+        "ndesaulniers@google.com"
+	<ndesaulniers@google.com>,
+        "morbo@google.com" <morbo@google.com>,
+        "justinstitt@google.com" <justinstitt@google.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "llvm@lists.linux.dev" <llvm@lists.linux.dev>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [EXTERNAL] [PATCH 2/2] octeontx2-pf: remove unused variables
+ req_hdr and rsp_hdr
+Thread-Topic: [EXTERNAL] [PATCH 2/2] octeontx2-pf: remove unused variables
+ req_hdr and rsp_hdr
+Thread-Index: AQHafocf78zPvIoQlUeZgrhxSP5MI7FIZsYg
+Date: Mon, 25 Mar 2024 12:44:44 +0000
 Message-ID: 
- <CO1PR18MB4666EC4FB52BAF4A1A8EA021A1362@CO1PR18MB4666.namprd18.prod.outlook.com>
+ <CO1PR18MB466675E232FA99415D766F68A1362@CO1PR18MB4666.namprd18.prod.outlook.com>
 References: <20240325073549.823832-1-suhui@nfschina.com>
-In-Reply-To: <20240325073549.823832-1-suhui@nfschina.com>
+ <20240325073549.823832-2-suhui@nfschina.com>
+In-Reply-To: <20240325073549.823832-2-suhui@nfschina.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO1PR18MB4666:EE_|SN4PR18MB4855:EE_
-x-ms-office365-filtering-correlation-id: b43c63f0-2803-4284-7af1-08dc4cc8fa00
+x-ms-traffictypediagnostic: CO1PR18MB4666:EE_|MN0PR18MB6094:EE_
+x-ms-office365-filtering-correlation-id: c40ca516-c6da-4b72-913a-08dc4cc958cd
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
 x-microsoft-antispam-message-info: 
- Gxif2egC8ErRonMZusUGUSVrt5htOj6kLcSvYw1QPTieE3bzDG8D8Ks4DZ44HukBWRxe6oK4T3UeeTaQSDCJQ7dhhUrU6YShvTKEebXpj6+5CkFAPh56/lpxXTFZn/5LP0XgA1DK06W2U6WpmchxJ63VjXgqQgv18EhTPNCxOXx3fxE16Tp953r54yy/sO8TC5FMYCwcF1Y3ZTzl3A5HxHpzjATYOURq5zMMt6Zbq+22MmHGyk0mBftmOTdFX3t4MMJLMISCDMpn22Edb5icVjeBiyQ7xyMn4AQMmmDfrrWXA/jNvqNBSYzyS9a56rxIWjohQhyNgqdhPVYm414Ch5vWvqkvQ5Vr2ouhM3bc2hag6BZU3bchkOyVw1VuK37iMdYa345PEY/rN4hz1vi1unSYDEKVdc9l/irSnojArjV+pitlBB4xeQiSqDutLsgachyvZPsi9TIdWN9PXx6XcbXwO9/nUVaRdVDsvJyjq5KLfoqWzcLnhYmiF/3NvNgIF5wZMR02mJyemYkYbukQx3aQ6ccGWrnvvP1R0UzOB5pJ7tqZSGYWIR1EdvoH2o9Xg3j7fVTp7T+ofh60THx0Q4QKbMUkZtbZQcaForgaLHcLQasj0lU5UMLJWsUL8WMeRgCtgz4KVpydRAxqbUm3JOlcr58t/jNSwkrniEk+kTMtfEHyWfMEV3uvUZSuoOPbsPzrtl8f38e7dxFWaS7TrQ==
+ 8WK896y5K7OwLc9ywROB95bFX2InDZc4K1O8IWjo+ugSao99GMAgyWTLe/7eAQXNaJ911Sis+uqjuEDtBCBcl887fgXDVpJXgdYPp3TBD5wPPaXuRjND+MpZMlFKYvb5JKEjrrsGiu3ZbW11PMtpVkD8fWW0+uNpTtLpzr4pmZTxxYOBDEQcnrzPg0ce4XhuX4FFvqiQjDT430wN1MqLT9mx13sJZ6K2rJY43UmnHiBb3rCpUltIbrTWXCKP3yCdaddKPlN7U13EeE8Xc81zSEB2G6wICBEuwyF/TkJpv9zf6kFoisZ6vaO4fLaKwwgMYKYgtQLJRGGPgDnhd5lVfsLk5pczCkBDzF5o9XXb3qGA6q5syXLS0b62eepijlTJM1ximW4uV7gUII7ex/tAAZHbmq6/E3Y//raPuvP3b0gbR7KJhU6aAVGX1Ie7zrwGUzCLeYfrEWmfq2+GKIxckNsYP4flPFdzrdCqbyEtZElmtsRibsNQXNEJrcLx981ThcTfM3eEHZEwkhWgsj3bYKEWdWFa3Tt4mYGQNtZ9ZNDxAoBO/Q02itjSQJ4Xwg9N1zQcYPMnmJsGv3EmjNbspgIzR/NZ6gbJvpHwG3T74a4ljAyRIjMOk1k7qs5E283XCbW+uJEKO7gIIdkSsm44cZOsR0sJck+QcBIgTDLtuCXu7H5m0x13266f509BSu5y6rAZALPwR3TDkcMNcAn/ePyMXJJpp5+SZsrX8v7jrXw=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR18MB4666.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1102;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR18MB4666.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(376005)(1800799015)(366007)(38070700009)(921011);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?wd7dmSaiBT+GAZtuHBGG/od/rxLaVx/MhiMHwXM7K3WBjRhuCILHFei4ZnSE?=
- =?us-ascii?Q?q5e2IskCHH6M4Kn84xcOR4iIprs+LZ6EEcFXKQh7VeclxNPATb1Ec16g3GeJ?=
- =?us-ascii?Q?+gjydJwGWaocNXqx296+P/m6Dzt9rI8q73mRf/nH3accIXkoCWGrCQYZkRBv?=
- =?us-ascii?Q?B8X7n+vZQBr/Y6cJ6H7a7U4NGSiREyN0Ng9yqDRIpYYYlHyLfBnyjKXbARPB?=
- =?us-ascii?Q?Ht1vKES/BpkQ6u+5F8jCBCiF8MmZS5uRUHBnbWTPsVa2/ax/s68695I3gWfN?=
- =?us-ascii?Q?6g1gwM4IUFkqJagiHF2ljbL4bz3HgI6upWYwrqaBvRZE5QAwV3Ku6OJ08zV1?=
- =?us-ascii?Q?eTFJwUjieujlz7l1mOpARSDyJm6koO/oZf+CLXcdOpPbpFfV61a/2l7cxo9E?=
- =?us-ascii?Q?mMcgnLH/u0yC6AI9LdIwg+haqEUJGKWTpGIwUtY2gRM3fA1HJiejVa916+NN?=
- =?us-ascii?Q?unuzREPmqwezZtRVU5p/ay6D8bEMZHwQ6eRXPNs9BQtHaAaMXDIyZtucHteG?=
- =?us-ascii?Q?cJqDGBEtTXi7iccq6IoqIkwDp2KCmj7Pg76pQGC+/9vpaSeVaMrb8pLPL1Jw?=
- =?us-ascii?Q?7HdFyDOslvDrBXZvlW1W13RFKinn1bujHOkI0eTHtAwyto3xzP/sOftkRwHF?=
- =?us-ascii?Q?4G3jbX311FTvWv2d3Yt5B8YXjFi6fqFZM6e5GEuDnJFQaGwq7jSZaqz2i/dB?=
- =?us-ascii?Q?zKJXWXMXFvIi2j51SsKTXXgZJQPSmC422suSGJIIw0pB2TX6nwhw1QgkfBn3?=
- =?us-ascii?Q?dqFOQ/RSrJXY7wGUuza8gTTsS3tHSM3sGZX/QE5izEyUXvPEmSKP6WBXY9H+?=
- =?us-ascii?Q?MG91TR8hgYqQj+GQqQNL+ix5m51fWaNVX+rdEwCowwXplrE7v1xwWaG2HCit?=
- =?us-ascii?Q?trf6kvx+tRqkareTGczYLsEEAvVk3xxGBMYCMNO+KSHXHXCHxkeO/zjkSMOA?=
- =?us-ascii?Q?kOkA1+RBwsuAlWJqfC/JV9XS/EWnZ70Yw/bl73LptT9tzsqLIYk78VdgzRq4?=
- =?us-ascii?Q?2s+PAPPc+I5OKhnNshUONOeq7EIcK2sUqebR/4itCJhb3Z6PD/xomtbLnuqT?=
- =?us-ascii?Q?v65HfOg9/C63150lD8FeWjsCGBiLs/hde8da2Rxn8nG6uG5StvxyEpa/vQve?=
- =?us-ascii?Q?zWf5IWUA86OjELCcRrVgH2sJjhLHEs7sdDzXVTD/tHRf9O1e1IwLp9eS5WZe?=
- =?us-ascii?Q?cNOWYfc1Jyhx5zil/9TM2n1o2rb/EZrkMMBo5QWupgEmooprefjdQK5nyeZz?=
- =?us-ascii?Q?PGXBF2JCgeTUuo3sWsHwvIPDq9GFL3jEVa8tuU52ZIjp751p6vBfiypodmwn?=
- =?us-ascii?Q?D+zRdiudUhZLXGHgRnt80vCwYdj5NKUzeQYx8Go3j04Y2TldgavYPk9Smn3/?=
- =?us-ascii?Q?WZZuTsPiaNtY7JPsJAain8Sycgeg4oLwGx2rhG7ZCMWzXWK9prF2yaU+Q95R?=
- =?us-ascii?Q?DKOcHkZOp6NehyPuTZnftaxj+ArzjTSb5q/JlYs1fM5CW9gI28pOzPI/6koe?=
- =?us-ascii?Q?9NM1P2Eq1cmg9agyi4MLbZLaa3OPfAn52C5cYWhUkS8baKTykhxHPAMGLQ?=
+ =?us-ascii?Q?I6SekxjjCyfpSx9/L1CZMNb11pj4fUKTT+/IkIubtA/QP01Gb1qSIH7UY2pW?=
+ =?us-ascii?Q?Jvn6JuofNnNe1hmQo5dCJo3nOIrpdF4pu6uO235Llm5qKdCwYXJ6bknqqA0O?=
+ =?us-ascii?Q?xhid/ZepJLKjK45gja0c9dIW+B6EyOIYT0rgRX72qJfFzfDMHnYjBi++KIEv?=
+ =?us-ascii?Q?wY/brkOVnzACFV3iPNZkVcEA31LA4YGWQOtRUGWrnO1LFRBj82CHJgZcD/Ec?=
+ =?us-ascii?Q?b4tNfEU/LD+7FqfdAqxe9hEoUG6XUyxfYZ+ruD5++/SeL11ZrYMLrpDBagWY?=
+ =?us-ascii?Q?IO3lqQs3dESk60ETGJFVIoDO5bYi5rr50uYQ20Pa72qcrMPkz5gZSVcf5GOt?=
+ =?us-ascii?Q?1YhPWCjF7tkvJKoKTRILc4zjcM1KEeKziYYGrfK6ASgJTG1sJe+45H1R4yZW?=
+ =?us-ascii?Q?hN1G7m2hKI/pi4UwOWRrTJZ92ApFafg1StvN26Cgbj5Ks0C8M+Ul/nNhm+sM?=
+ =?us-ascii?Q?1bcXG/esscefyeeKwgHzwMRTKDy36baOZkgOtMIvFFzA68LMFq/qWgagR70T?=
+ =?us-ascii?Q?tM49hpR0H7Umdx2n0VH3wsBI+PHqalblfJWC6mCi4AktigFUUAJ6M0JyMz5q?=
+ =?us-ascii?Q?vX3FIZ6xr88SzVJm4tZpHhCR+xwCtk8aNh0qkz3SWHuq0mnc0v2CcUdt2lfW?=
+ =?us-ascii?Q?GeUboI/QR3lzr2Nny7lv+OZM2BoFAAw3vgoc4iRqiYNZTWv9lcowyPPdert6?=
+ =?us-ascii?Q?qE7QgohJ3aPUH3RUzfaMMFbHdopO8GKb0SmUk5QCcyalOUOpg/Y9bc1FZ7on?=
+ =?us-ascii?Q?JUPt0Chs5qZLY7FI5MHAjRD9WBCJYy1fPFecKOn/WDZdT5/YbgWN39BP61GC?=
+ =?us-ascii?Q?Iv1T9slm1+mDiMo1SGglpW7HKQ6lZ08m5bZvkvDxYM1APwP9nb+A/EQYYkYu?=
+ =?us-ascii?Q?7NVOO8muE9yySyoZMLtS/lojVloaD3TF/fdaUBshdA8nrjtFSVTa0x7LlNyn?=
+ =?us-ascii?Q?J/MxRVm4/UB1IyONHi0mymtdUOvZwIZScPWqeXoJcvWNmZdmndTh+4UOlMSg?=
+ =?us-ascii?Q?fQxp42qkqvRDfTDhYkBRzPUuTi/mSEwliK+EqQmQbxbadqhYXL2Nf7eWwPXS?=
+ =?us-ascii?Q?K7PFvzmeftD3oi4rd0Ub87c6FRcL0BrSon1PKpYc/D4aIGWrTgAfT9fEGGUH?=
+ =?us-ascii?Q?8amiyZplKir7CYXh9VxyNPrk+M6SfxP9XCNdoRsW1uKis267xAp8+iC+XE+O?=
+ =?us-ascii?Q?Zn2Fb139KyapiL0PeDRk18lL+sbjPdQiIUp37EJnDpfxoC7suKPXcK65lB08?=
+ =?us-ascii?Q?UZ00MWaLp1/+17S8i3n0Ift2iT3ECT9iE9B25gNaDCP1zMUDGQeh53HEB1nf?=
+ =?us-ascii?Q?REIroaDCGSeREqmTtVMs/+3gC3Ll9kru1seQ2V2RwEQs4jmJN6+mQ4NyIOjS?=
+ =?us-ascii?Q?xiZHudfxdSr7Qgnoyf/7BCiimjtd/unXu9kpGDbmgXx05uy4NMX1TlrXVR4K?=
+ =?us-ascii?Q?XqtQKDxKdEZvyq96yjkXmolyMsgb1VqOVBdfodXAE4pTUn13XwXP6fRgDRSm?=
+ =?us-ascii?Q?biAXDRFeB6K3qjh+mswE94Q0y4xTbkcyO2+phtyKK3HnSHnwHR2Ies9VvA?=
  =?us-ascii?Q?=3D=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -128,21 +131,21 @@ MIME-Version: 1.0
 X-OriginatorOrg: marvell.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: CO1PR18MB4666.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b43c63f0-2803-4284-7af1-08dc4cc8fa00
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Mar 2024 12:42:05.1226
+X-MS-Exchange-CrossTenant-Network-Message-Id: c40ca516-c6da-4b72-913a-08dc4cc958cd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Mar 2024 12:44:44.1300
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: e3Wl3Blj/XaoHHoZyOU9jU5QSjdrcr90Ij+K+PlpSUzVx/AxO6q7zzk/K0Q22Wpy9JOePI+VOF3rzYmFIuExCQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR18MB4855
-X-Proofpoint-GUID: pGJt-F_25vXM5sZ03ASdEZGRoKFTtgll
-X-Proofpoint-ORIG-GUID: pGJt-F_25vXM5sZ03ASdEZGRoKFTtgll
+X-MS-Exchange-CrossTenant-userprincipalname: +ExFDZN/crwUVsOVhjcXPUxWWiDpitW8l+URUosXJFidjZ81It27Nuv1uWXeQcAi9UqRD4GRqPSIKrujLJLQjg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR18MB6094
+X-Proofpoint-GUID: qcN6x61j4SekXdjO-AfvbLUS4zgtGHiI
+X-Proofpoint-ORIG-GUID: qcN6x61j4SekXdjO-AfvbLUS4zgtGHiI
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2024-03-25_08,2024-03-21_02,2023-05-22_02
 
-
+Hi,
 
 >-----Original Message-----
 >From: Su Hui <suhui@nfschina.com>
@@ -150,17 +153,82 @@ X-Proofpoint-Virus-Version: vendor=baseguard
 >To: Sunil Kovvuri Goutham <sgoutham@marvell.com>; Geethasowjanya Akula
 ><gakula@marvell.com>; Subbaraya Sundeep Bhatta <sbhatta@marvell.com>;
 >Hariprasad Kelam <hkelam@marvell.com>; davem@davemloft.net;
->edumazet@google.com; kuba@kernel.org; pabeni@redhat.com
->Cc: Su Hui <suhui@nfschina.com>; Sai Krishna Gajula
-><saikrishnag@marvell.com>; netdev@vger.kernel.org; linux-
->kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
->Subject: [PATCH 1/2] octeontx2-pf: check negative error code in
->otx2_open()
+>edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
+>nathan@kernel.org; ndesaulniers@google.com; morbo@google.com;
+>justinstitt@google.com
+>Cc: Su Hui <suhui@nfschina.com>; netdev@vger.kernel.org; linux-
+>kernel@vger.kernel.org; llvm@lists.linux.dev; kernel-janitors@vger.kernel.=
+org
+>Subject: [PATCH 2/2] octeontx2-pf: remove unused variables
+>req_hdr and rsp_hdr
 >
->otx2_rxtx_enable() return negative error code such as -EIO,
->check -EIO rather than EIO to fix this problem.
+>Clang static checker(scan-buid):
+>drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:503:2: warning:
+>Value stored to 'rsp_hdr' is never read [deadcode.DeadStores]
 >
->Fixes: c926252205c4 ("octeontx2-pf: Disable packet I/O for graceful exit")
->Signed-off-by: Su Hui <suhui@nfschina.com>
+Consider this also as a fix and add Fixes tag. Also please add "net" in sub=
+ject to
+easily identify whether this patch as net or net-next material.
 
-Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
+Thanks,
+Sundeep
+
+>Remove these unused variables to save some space.
+>
+>Signed-off-by: Su Hui <suhui@nfschina.com>
+>---
+> drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c | 8 ++------
+> 1 file changed, 2 insertions(+), 6 deletions(-)
+>
+>diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+>b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+>index 3f46d5e0fb2e..637b05c79c42 100644
+>--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+>+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+>@@ -450,7 +450,6 @@ static void otx2_pfvf_mbox_handler(struct
+>work_struct *work)
+> 	struct mbox_msghdr *msg =3D NULL;
+> 	int offset, vf_idx, id, err;
+> 	struct otx2_mbox_dev *mdev;
+>-	struct mbox_hdr *req_hdr;
+> 	struct otx2_mbox *mbox;
+> 	struct mbox *vf_mbox;
+> 	struct otx2_nic *pf;
+>@@ -461,9 +460,8 @@ static void otx2_pfvf_mbox_handler(struct
+>work_struct *work)
+>
+> 	mbox =3D &pf->mbox_pfvf[0].mbox;
+> 	mdev =3D &mbox->dev[vf_idx];
+>-	req_hdr =3D (struct mbox_hdr *)(mdev->mbase + mbox->rx_start);
+>
+>-	offset =3D ALIGN(sizeof(*req_hdr), MBOX_MSG_ALIGN);
+>+	offset =3D ALIGN(sizeof(struct mbox_hdr), MBOX_MSG_ALIGN);
+>
+> 	for (id =3D 0; id < vf_mbox->num_msgs; id++) {
+> 		msg =3D (struct mbox_msghdr *)(mdev->mbase + mbox->rx_start
+>+
+>@@ -494,7 +492,6 @@ static void otx2_pfvf_mbox_up_handler(struct
+>work_struct *work)
+> 	struct otx2_nic *pf =3D vf_mbox->pfvf;
+> 	struct otx2_mbox_dev *mdev;
+> 	int offset, id, vf_idx =3D 0;
+>-	struct mbox_hdr *rsp_hdr;
+> 	struct mbox_msghdr *msg;
+> 	struct otx2_mbox *mbox;
+>
+>@@ -502,8 +499,7 @@ static void otx2_pfvf_mbox_up_handler(struct
+>work_struct *work)
+> 	mbox =3D &pf->mbox_pfvf[0].mbox_up;
+> 	mdev =3D &mbox->dev[vf_idx];
+>
+>-	rsp_hdr =3D (struct mbox_hdr *)(mdev->mbase + mbox->rx_start);
+>-	offset =3D mbox->rx_start + ALIGN(sizeof(*rsp_hdr),
+>MBOX_MSG_ALIGN);
+>+	offset =3D mbox->rx_start + ALIGN(sizeof(struct mbox_hdr),
+>MBOX_MSG_ALIGN);
+>
+> 	for (id =3D 0; id < vf_mbox->up_num_msgs; id++) {
+> 		msg =3D mdev->mbase + offset;
+>--
+>2.30.2
+
