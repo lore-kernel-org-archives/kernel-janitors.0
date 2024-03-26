@@ -1,149 +1,70 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49045125D5;
-	Mon, 25 Mar 2024 19:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 0B9C7446BA;
+	Tue, 26 Mar 2024 05:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711393970; cv=none; b=s3/HQ/RYFDY+Bmvl7Wh2wKBU6bQuoxfUgSAL1lrCsr6IzBDEsh6VmdpYBIGX5BdZS3JfNh/gYCJyx/jR5adlQiQtjzYOXf7OiB905tQH0vklp2xjTtBV9+fyeK6D6lIikdfDy10bdnkLBesJhKXT8Vi7KQdJzAFXQ6OZnoblvq4=
+	t=1711431692; cv=none; b=Hv/o6UYFgeaoAYV6ddf6kxGBaBZWhW2t5FSJtNwVwix4NYPvln4URUKjxeSkAQu/YMmJQfLSmqMB8/SHMZ9XA+OcU+gP2Q8lziH2uoAC02m7nYbn0n56kjEqOskz3QaNSOWV3xfPubsCjsdmWocv5FRZc0eEaiQZ7q921TxCXK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711393970; c=relaxed/simple;
-	bh=5YofjHhQd84JC8ExqA0FU+vMotkFNia4E/YVr5/G6U8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U+YYfBvjaUnYG7xTOMF1w8RVE+HcnDWV+2QqG2za36wWFcOOyWrArDLQ2nUEhBVyPpbBWVKe7BfA0IeU62NXrqHU7YCF4FQZ0OWOBdjuujG44ieTPgceMx8Y8H9sv6Hi9Vi2/y2QU4VYz4k5UWEYkAFMvY0/uXyLi8/E0dxk/3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AL8Kf1X5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TZCxvoj1; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AL8Kf1X5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TZCxvoj1; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AL8Kf1X5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TZCxvoj1";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AL8Kf1X5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TZCxvoj1"
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 86C822227C;
-	Mon, 25 Mar 2024 19:12:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1711393966; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sv6lDzyyCtkE4zay8240/H88oSDu1T9Fy0kgOmNLNOQ=;
-	b=AL8Kf1X57IWHbMpzJJmuG99Z6/KwsY1x+bXhLclV1oy7k10IBBtiAJAFPjzAFjePwe9Kkx
-	PFA24ilLVUX0o+YnSfk2eK9cpNWdkB3CAnm0mEs/fRQV6owkZ3JixAVTxLg5PeoR5o+bJ6
-	P635D7Qg+7gWh59oGBPRDGJUI0qxF/w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1711393966;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sv6lDzyyCtkE4zay8240/H88oSDu1T9Fy0kgOmNLNOQ=;
-	b=TZCxvoj1/DPH1ruaZ/E1/kJqJjkmAP7wF9adU/aMrvSlDNJXFaJ9Cv+SXIQsLd0hy7RYm8
-	u94WDZlBvoE2jKBw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1711393966; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sv6lDzyyCtkE4zay8240/H88oSDu1T9Fy0kgOmNLNOQ=;
-	b=AL8Kf1X57IWHbMpzJJmuG99Z6/KwsY1x+bXhLclV1oy7k10IBBtiAJAFPjzAFjePwe9Kkx
-	PFA24ilLVUX0o+YnSfk2eK9cpNWdkB3CAnm0mEs/fRQV6owkZ3JixAVTxLg5PeoR5o+bJ6
-	P635D7Qg+7gWh59oGBPRDGJUI0qxF/w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1711393966;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sv6lDzyyCtkE4zay8240/H88oSDu1T9Fy0kgOmNLNOQ=;
-	b=TZCxvoj1/DPH1ruaZ/E1/kJqJjkmAP7wF9adU/aMrvSlDNJXFaJ9Cv+SXIQsLd0hy7RYm8
-	u94WDZlBvoE2jKBw==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 7D35013A2E;
-	Mon, 25 Mar 2024 19:12:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id 2ruHHq7MAWbRZgAAn2gu4w
-	(envelope-from <jack@suse.cz>); Mon, 25 Mar 2024 19:12:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 36C3CA0812; Mon, 25 Mar 2024 20:12:42 +0100 (CET)
-Date: Mon, 25 Mar 2024 20:12:42 +0100
-From: Jan Kara <jack@suse.cz>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Jan Kara <jack@suse.com>, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] udf: Remove second semicolon
-Message-ID: <20240325191242.3r6onuxvk3bqcxzs@quack3>
-References: <20240315091949.2430585-1-colin.i.king@gmail.com>
+	s=arc-20240116; t=1711431692; c=relaxed/simple;
+	bh=zdIoSYl0H+cZnP925/Fbsw4JQQ8i2NFXq9a2yvqMDBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=sipIIV8M83PKCXc2cmMTzXiVUMbb8nBOqt7OcLOfK4Wa47dZU/vZfclku+WQ2I12dXNtDSA966d+pAczAC7lpKMYVzxuWFHhTDGjLZjKVJDCQyc9VvHYcJZD0lsmCxC+AdFKgi9sTDTBLzsYgOJmVcLBuwS8NUcR3h73lqJonaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id B8C3C6075D669;
+	Tue, 26 Mar 2024 13:41:25 +0800 (CST)
+Message-ID: <0e719692-a166-1f56-4226-e71f7503aa94@nfschina.com>
+Date: Tue, 26 Mar 2024 13:41:24 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240315091949.2430585-1-colin.i.king@gmail.com>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -0.81
-X-Spamd-Result: default: False [-0.81 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 RCPT_COUNT_THREE(0.00)[4];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 TO_DN_SOME(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-0.01)[46.17%]
-X-Spam-Flag: NO
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] drm/amdkfd: return negative error code in svm_ioctl()
+Content-Language: en-US
+To: Philip Yang <yangp@amd.com>, Felix.Kuehling@amd.com,
+ alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com,
+ airlied@gmail.com, daniel@ffwll.ch
+Cc: Philip.Yang@amd.com, alex.sierra@amd.com, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <b4af9fda-8685-d486-95aa-ca46c11a2cc5@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri 15-03-24 09:19:49, Colin Ian King wrote:
-> There is a statement with two semicolons. Remove the second one, it
-> is redundant.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On 2024/3/25 22:09, Philip Yang wrote:
+>
+>
+> On 2024-03-25 02:31, Su Hui wrote:
+>
+> Good catch, ioctl should return -errno. I will apply it to drm-next.
+>
+> Reviewed-by: Philip Yang<philip.yang@amd.com>
+>
+>> ---
+>> Ps: When I try to compile this file, there is a error :
+>> drivers/gpu/drm/amd/amdkfd/kfd_migrate.c:28:10: fatal error: amdgpu_sync.h:
+>> No such file or directory.
+>>
+>> Maybe there are some steps I missed or this place need to be corrected?
+>
+> Don't know how you compile the driver, amdgpu_sync.h is located under 
+> amdgpu folder, amdkfd/Makefile is included from amdgpu/Makefile, which 
+> set ccflag-y -I correctly.
+>
+Got it,  I should using 'make 
+drivers/gpu/drm/amd/amdgpu/../amdkfd/kfd_migrate.o'
+rather than 'make drivers/gpu/drm/amd/amdkfd/kfd_migrate.o'.
 
-Thanks. Added to my tree.
+Thanks a lot!
 
-								Honza
-
-> ---
->  fs/udf/super.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/udf/super.c b/fs/udf/super.c
-> index 2217f7ed7a49..ba6b747a3830 100644
-> --- a/fs/udf/super.c
-> +++ b/fs/udf/super.c
-> @@ -630,7 +630,7 @@ static int udf_parse_param(struct fs_context *fc, struct fs_parameter *param)
->  			if (!uopt->nls_map) {
->  				errorf(fc, "iocharset %s not found",
->  					param->string);
-> -				return -EINVAL;;
-> +				return -EINVAL;
->  			}
->  		}
->  		break;
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards,
+Su Hui
