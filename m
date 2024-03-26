@@ -1,158 +1,59 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8510C6F08E;
-	Tue, 26 Mar 2024 12:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFC412D74D;
+	Tue, 26 Mar 2024 14:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711454820; cv=none; b=M8SerXpMLX39YQa+H2vx1AXb641IUJ/meTLPkAFO2WXMZFUHj38ZXm4UZkcgDl+Pcz6/sFonidRZhqTHZ7CJcXIl354cNfMWKfPVDbmJUxd/MdngQCEV8qfVOVdfyvW2zlCI91UDl+DkhmSwm+JQXCpHQw6D24nbcPTvmg3QTHw=
+	t=1711462762; cv=none; b=nXsbHG4HINX+6U3EHl+MPgZ5kpd87MNQFwEfggTwyMgnvjpKW84Ggi54SuX0Ax2OZBW+L1UXptwYaURsfDTjbTw4nxz31eM6wfU37j1x9NpT5nsYmhNHYcmBGkV0hxjWI+LdzKLrTWH4edo2il7B3R7CW4/z3H+14kL8hoXGvtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711454820; c=relaxed/simple;
-	bh=3FzmbtGZZ7DvyD3OJ+z6tU4V4LGQHD6/1YEh2weunmA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=OX8nY/gjG+47VhQMg2QoQ/siHExaeRXD2xMXOIk6m4NLU+fVp3IEN3lm2Z7qmcWGbe3NFpRpASctpYbixDJNV84Cp0xs8So4RT+jn7rS9d9Eg2oiS1ZVXGpXQt1Ch7GXPEpAqeCZvMA/r5dKLtJz1N0J2JPY3w0p7Ce7sQMVGkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Z6BGyx/a; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1711462762; c=relaxed/simple;
+	bh=cUG492G07dhJ295J2s6Bln1s6TgRP0M3K3HaWg8Wrcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JGtOb57Y9K8clIm4o7PApk4F6ZMX/z17Ty9q5EVfIcfzT4nzYDoFXm3MQVrY2TqRbf4y+rVmqeIGTJ8biSgD22Wie5HUx0R8oLSs4YzYxxATHeSPLcq/Reg9JjTRjnzcVmbaixw1+QR9HOu4Kt8+49AyMjcRj6///RLBJI+jsyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T5C+HdgV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Z6BGyx/a"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1711454772; x=1712059572; i=markus.elfring@web.de;
-	bh=reTJekpRAbVkVaR6Ps74n/JKQGAzpk6naWUcepoHBnc=;
-	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
-	 In-Reply-To;
-	b=Z6BGyx/amhmAtn4HI51cKgC3t5dpc/XA/EsJoLtv7yxJO3njsoXk9lUBiPLMu/jq
-	 r67vRnuvcqFG79dvlW2+7Q2EVdW+wQ/6yoUw9KNL+IgFciz6rP4RI4B7PR42c6ryQ
-	 XTs5A+FtZAaoHgv5Ootx4o/nJ8VK0x4i/x5jJORnkcW3hLZ3PcdLJCRgR5c+fVV+b
-	 eXoeiNphZyj4rzQvGMKvVKpYy1f6rbNRRzKTez+BZ1QVDZVU7flSd3mTchrK8BGlX
-	 zWZiGSsZNxBm5qGOQK2ZX8dJ3OCGmYJNgKvv/Ddxe2Eo3zN/Zgumm/4vUoWrRAODO
-	 t10Nir0Br82/MYW11g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MzTPQ-1skCSS2uGW-00vQEB; Tue, 26
- Mar 2024 13:06:12 +0100
-Message-ID: <570afd53-b1ed-4456-b83e-fca29857f000@web.de>
-Date: Tue, 26 Mar 2024 13:06:05 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T5C+HdgV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E926BC43390;
+	Tue, 26 Mar 2024 14:19:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711462761;
+	bh=cUG492G07dhJ295J2s6Bln1s6TgRP0M3K3HaWg8Wrcs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T5C+HdgVS4qy/7M7L6NSr7ER7ibxLccniWf/xtu2V/w87sozoVQVerjOkd9t2JJY3
+	 d75k6Ihfs1arrkeh+3lnTOAK7N5XKkMIYBkSdD8lffC2ISSWbW0kqxHP0VY7C23tuB
+	 knTNN8sbqvf/fw28+Z3AjtpNa49qDOU54KsmDQojVP2cEoggPP3HZSbVnTW5ooTpfo
+	 ZWVTx3v+iHTOlLdbJ5+kw8QXdrKQCuyJ14yQMfj810WQ6Qjr0lTfw4x8dWlg6mdUMe
+	 lIXywLcq9ihEPp9biq9VHITu0JqClQQSYK6/cwm2Wagrd7qP2HC6q2fQmGKnbXXkOQ
+	 HiCoF9shtzGcQ==
+Date: Tue, 26 Mar 2024 14:19:16 +0000
+From: Simon Horman <horms@kernel.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, saikrishnag@marvell.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net v2 1/2] octeontx2-pf: check negative error code in
+ otx2_open()
+Message-ID: <20240326141916.GW403975@kernel.org>
+References: <20240326061233.4133148-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Dan Williams <dan.j.williams@intel.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Ira Weiny <ira.weiny@intel.com>,
- Jesse Brandeburg <jesse.brandeburg@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Julia Lawall <Julia.Lawall@inria.fr>, Kevin Tian <kevin.tian@intel.com>,
- Lukas Wunner <lukas.wunner@intel.com>, Matthew Wilcox <willy@infradead.org>
-References: <171140738438.1574931.15717256954707430472.stgit@dwillia2-xfh.jf.intel.com>
-Subject: Re: [PATCH v2] cleanup: Add usage and style documentation
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <171140738438.1574931.15717256954707430472.stgit@dwillia2-xfh.jf.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:BgFUPW3xHjwYrRMtgoo20y7vIBXuyr8pzAvnoMtyk1VznSTTOA+
- 2HfzRJYuGFNVvMurFxHzbBoNNRYG+EIg6fREeH5NF5yWUGKiU2Vj7TiGIuBcl0cn4JlVhuU
- 9taiqRiAeuyZQieLLOJMQeaT4cVFeOVHJMJ7moDXsY0Xvcg9phuSTdUcJHwk39SCZ2/Ddzs
- 5geFhBWgiMHSGrK9Ee3oA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:dfm3TQltfcE=;YyoCq04Dxq5vJPAzHeOVEsmsgUJ
- ibbY/IEQoLPNOSviWzWggc96XJUIZgoGt1QKE0Hlf1HjWGR5IEfIdo3Q+N3vmDII6fVcCLJZY
- nzoYlJrchUdt0gEH19pgG7p6WQpAgifS1GN1LvWDE5l6f/P9CGRKc0HpB2F1dMqj8YdNjBZIf
- hS6x+vKNcxc90yHEP8cv1QxtyLTkYsRbclbEtsNEtq+j3rRMDn+2tJ2sSObS45+2E2w2FhH8V
- QBzVKDt89i/4slYMQI0HPK/zxsGpy0IGC/IWUKPj6/OgK3bQzZAEqa4AoOEczrJ+8XMOq80rQ
- STNadkCTBafiH9XAGPJrDq5SkF/xHavXGlF2RzzdSckoXwPSvW+hFfEo4T6A2TSWttoM7RkYJ
- u5CFCkmnRwMDR/pJKABbFnbkk8Xw32G0RiRLMYwUxOJV2q0Vq19VZ0XP+dIFK2yb6FN3ycnIN
- zpqEZe+QKMuiWr/8XF5pgRNcYFCLh3BZ/wmhAX0dvcKbJ824j/VSV6fZcNAPzIp19aLpihA4E
- qfR/gSHODGWGu/Jr+PhonGA6Hgw9wH5KPoheX6okwuLwZIjQNM2lM8MPKak4TP6A3Ii6mARJ3
- LlNMF+4Dg7vIj9K23129gRdhe3M3FtU3GAu/aG7jjzXhpShMv1NNR4EBdEdxkPE8nyT/iHi9L
- wU/eXbcgRSPntqMOzgFe/atxdu+Hbck/U09++JJ5uhcWYmcQv1v6JVQWKMAWLcK98H5jdfXqi
- DwTXP65n7WGkAFKt5xCxY72A5mduJSXcsRz9w+Wyw1ySZ5C+BOoUkQ8X7oNWz4GBfSes5wERl
- bwz/zuTdAccjYHBKaGLbquB6G6fuXD1TcuXoHzE74X6uc=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240326061233.4133148-1-suhui@nfschina.com>
 
-=E2=80=A6
-> +++ b/include/linux/cleanup.h
-> @@ -4,6 +4,157 @@
->
->  #include <linux/compiler.h>
->
-> +/**
-> + * DOC: scope-based cleanup helpers
-> + *
-> + * The "goto error" pattern is notorious for introducing =E2=80=A6
+On Tue, Mar 26, 2024 at 02:12:34PM +0800, Su Hui wrote:
+> otx2_rxtx_enable() return negative error code such as -EIO,
+> check -EIO rather than EIO to fix this problem.
+> 
+> Fixes: c926252205c4 ("octeontx2-pf: Disable packet I/O for graceful exit")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
 
-Will any other label become more helpful for this description approach?
-
-> + * this tedium =E2=80=A6
-
-Would an other wording be more appropriate here?
-
-
-> + *                          =E2=80=A6 maintaining FILO (first in last o=
-ut)
-
-How does this text fit to your response from yesterday?
-https://lore.kernel.org/all/6601c7f7369d4_2690d29490@dwillia2-mobl3.amr.co=
-rp.intel.com.notmuch/
-
-
-> + *                                                       =E2=80=A6 If a=
- function
-> + * wants to invoke pci_dev_put() on error, but return @dev (i.e. withou=
-t
-> + * freeing it) on success, it can do:
-> + *
-> + * ::
-> + *
-> + *	return no_free_ptr(dev);
-> + *
-> + * ...or:
-> + *
-> + * ::
-> + *
-> + *	return_ptr(dev);
-=E2=80=A6
-
-Would this macro call be preferred as a succinct specification
-(so that only the shorter one should be mentioned here)?
-https://elixir.bootlin.com/linux/v6.8.1/source/include/linux/cleanup.h#L78
-
-
-> + * Observe the lock is held for the remainder of the "if ()" block not
-> + * the remainder of "func()".
-
-I suggest to add a word in this sentence.
-
-* Observe the lock is held for the remainder of the "if ()" block
-* (and not the remainder of "func()").
-
-
-> + * the top of the function poses this potential interdependency problem
-
-I suggest to add a comma at the end of this line.
-
-
-> + * the recommendation is to always define and assign variables in one
-> + * statement and not group variable definitions at the top of the
-> + * function when __free() is used.
-
-I became curious how code layout guidance will evolve further also
-according to such an advice.
-
-
-Would you like to increase the collaboration with the macros =E2=80=9CDEFI=
-NE_CLASS=E2=80=9D and =E2=80=9CCLASS=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.8.1/source/include/linux/cleanup.h#L82
-
-Regards,
-Markus
+Reviewed-by: Simon Horman <horms@kernel.org>
