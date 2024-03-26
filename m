@@ -1,88 +1,74 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C035D734
-	for <kernel-janitors@vger.kernel.org>; Tue, 26 Mar 2024 10:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0EC4C3DE;
+	Tue, 26 Mar 2024 10:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711448088; cv=none; b=YDuUcZ2orDDyjaH+/gmmXrY0TqYVAxmA3GTYTpxBTuN9yIGL69N/4Fjs+IsJzXejR2AyL22xivYXxJc07UF/5X2aF1PK6w2/dK42r4KVCro/NnoqUjqqvSdtoQfJ4VKsbVSBwWhoflJ1qUJkuLkqw1RTuyRF4PH4iqFEVUVhBao=
+	t=1711448802; cv=none; b=aLi28GBpLVMwUgM1klA9Yru0Y9SfeR6lVZ2iHppqRlCHiSKldObQ6XA3EgCk3WDcSb5lujVc9Qv+fe8hWWMlPyCXxESxald6AUsNq8IR6c4T3tdZrh8EGkISm2iyo9u+SwSyx7z1GyzBaRsp5hp4CsmLsANdA25xqUhM+Jn9uoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711448088; c=relaxed/simple;
-	bh=zS/DlGBU279on+SkgAiw/HfAypukIeqEH3KdLCX2I84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fetH5+fo3By/YI+q16lj5ShPSW9nmZoKwxjT0oXoMwQk2Q/iCUfH2Bxp4F37ry8GnAv6/YMobwo63VTUswhQ/lv2a9epoHdw3g4OEarItdH5VOxUboRxJCUPYaCp/a5zbhl88ajDUC5fK45TcofRWODgoVoxVwLVHJDliBt9NKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB4382F4
-	for <kernel-janitors@vger.kernel.org>; Tue, 26 Mar 2024 03:15:19 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3968F3F64C
-	for <kernel-janitors@vger.kernel.org>; Tue, 26 Mar 2024 03:14:46 -0700 (PDT)
-Date: Tue, 26 Mar 2024 10:14:37 +0000
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1711448802; c=relaxed/simple;
+	bh=Ufkhyldei9lgWlSrdN5/bzS4q1PlmwydeMttBxm5jDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W0ML7Z8c3r6fj0a03LYo4oENfFkOkz2nVWImAp83KXg14leS7LcE5lrfTC2gsnu91yj6cNKfxx17WKuffKMuUsKRdl3SaangmLQe5IFxR9+SNUMpUrDYeIdueCHOfnhbSv3ljIvNMbImHPlQdwoVFzI/1CtJ0RX7FRN6aL8HH7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XrWLZ/p0; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XrWLZ/p0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1711448798;
+	bh=Ufkhyldei9lgWlSrdN5/bzS4q1PlmwydeMttBxm5jDA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XrWLZ/p0SL1vC9suePIteW3t0c+F0fS6QxscxFZySrI0BCE2wkRtVZb00LoK8NTKV
+	 x/IjwdcCvLuphTjU17aQD/x5srAduK2fSfXXZl9rGSGcqU/X5vBGCOLwOGVZss/bMc
+	 6r6zHqjb2CHlP5RSoKSOGll+vKlEd9v2LJfvGAYTyR8Rsuwwo5JOvOeBtutIqXD6DF
+	 O4sYKmF40T78E0KwAE+GkbBK6oI0ADXsaVMFCbWtf8aNX6oCS5LfeWj/k4Ru1mUc4D
+	 qqr/xN7C1LjNnIGX8psTRnL9pI/dKim4K5tgu0LypI81mVkaEgT4l/7s1rEmSC2mMf
+	 VOoA1bjlLu+Dw==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 271D437813D7;
+	Tue, 26 Mar 2024 10:26:38 +0000 (UTC)
+Date: Tue, 26 Mar 2024 11:26:35 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Liviu Dudau <liviu.dudau@arm.com>
+Cc: Colin Ian King <colin.i.king@gmail.com>, Steven Price
+ <steven.price@arm.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH][next] drm/panthor: Fix spelling mistake "readyness" ->
  "readiness"
-Message-ID: <ZgKgDZrUakS_pwBS@e110455-lin.cambridge.arm.com>
+Message-ID: <20240326112635.110302e1@collabora.com>
+In-Reply-To: <ZgKgDZrUakS_pwBS@e110455-lin.cambridge.arm.com>
 References: <20240326100219.43989-1-colin.i.king@gmail.com>
+	<ZgKgDZrUakS_pwBS@e110455-lin.cambridge.arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240326100219.43989-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 26, 2024 at 10:02:19AM +0000, Colin Ian King wrote:
-> There is a spelling mistake in a drm_err message. Fix it.
+On Tue, 26 Mar 2024 10:14:37 +0000
+Liviu Dudau <liviu.dudau@arm.com> wrote:
+
+> On Tue, Mar 26, 2024 at 10:02:19AM +0000, Colin Ian King wrote:
+> > There is a spelling mistake in a drm_err message. Fix it.
+> > 
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>  
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
-
-Boris, can you also pick this one up when you're pushing your kernel doc fix?
-
-Best regards,
-Liviu
-
-> ---
->  drivers/gpu/drm/panthor/panthor_gpu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Acked-by: Liviu Dudau <liviu.dudau@arm.com>
 > 
-> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
-> index 6dbbc4cfbe7e..0f7c962440d3 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gpu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_gpu.c
-> @@ -333,7 +333,7 @@ int panthor_gpu_block_power_on(struct panthor_device *ptdev,
->  						 val, (mask32 & val) == mask32,
->  						 100, timeout_us);
->  		if (ret) {
-> -			drm_err(&ptdev->base, "timeout waiting on %s:%llx readyness",
-> +			drm_err(&ptdev->base, "timeout waiting on %s:%llx readiness",
->  				blk_name, mask);
->  			return ret;
->  		}
-> -- 
-> 2.39.2
-> 
+> Boris, can you also pick this one up when you're pushing your kernel doc fix?
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+Sure, I will.
