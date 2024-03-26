@@ -1,87 +1,158 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC18DDBC;
-	Tue, 26 Mar 2024 10:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8510C6F08E;
+	Tue, 26 Mar 2024 12:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711450780; cv=none; b=GRZI+xXOJ1cPzWFyWO/lSpgn1uIoRd2mF/52BO33ERESGLGpDMk5j/k4ereWr0lq1XQhtJHAeWNZTDHXV94fvmOLu0G19FeMnRXMP66RaaNoHj1GJT+ihUc5iyGRH9iMXpLILdx3p3z1Ieo4/2j3nrHSxNuZIsE1lCwYKHp3u3g=
+	t=1711454820; cv=none; b=M8SerXpMLX39YQa+H2vx1AXb641IUJ/meTLPkAFO2WXMZFUHj38ZXm4UZkcgDl+Pcz6/sFonidRZhqTHZ7CJcXIl354cNfMWKfPVDbmJUxd/MdngQCEV8qfVOVdfyvW2zlCI91UDl+DkhmSwm+JQXCpHQw6D24nbcPTvmg3QTHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711450780; c=relaxed/simple;
-	bh=aliybyz47uinRGXtRKuSPxDxjVQ2TQQ62bnfexZTrs0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e/V3+HxgSCpd8jtcuU/LT0WM+/7/nv0Pufv6KmIJ1pvIXi4BhX3uZ43d7PRZagOU54tiEGfBTYq+j8bQdM+K0I8hzKWXLKUbnzWc1JSNT8d2a+Er/WiF1CMuDsqouidHMQaAPHDa3quq3zZCW/igFgf0HzHmtfqK3zgK/jECFPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=w/mLZvXV; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1711454820; c=relaxed/simple;
+	bh=3FzmbtGZZ7DvyD3OJ+z6tU4V4LGQHD6/1YEh2weunmA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=OX8nY/gjG+47VhQMg2QoQ/siHExaeRXD2xMXOIk6m4NLU+fVp3IEN3lm2Z7qmcWGbe3NFpRpASctpYbixDJNV84Cp0xs8So4RT+jn7rS9d9Eg2oiS1ZVXGpXQt1Ch7GXPEpAqeCZvMA/r5dKLtJz1N0J2JPY3w0p7Ce7sQMVGkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Z6BGyx/a; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="w/mLZvXV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1711450776;
-	bh=aliybyz47uinRGXtRKuSPxDxjVQ2TQQ62bnfexZTrs0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=w/mLZvXVacsLyu1w1YPitYD7b71BVTkwHwEjVQcPrOlcSprscNQbgLFCPjs/hv7VD
-	 IAi2JzFPKfGSXYLyD/5JEMz1xHzAG7FnqOgmU6OXf/yCn3rWflQExN6oWNoXtygBno
-	 hqIcspidGTNLc3p86j0Ng5RuU+ag+toUkvuZ1XwqBcL7F+AcM9Aiw8NBvxPoZ0gzu/
-	 lrwGH4xuuRNaQhS2+lxjsPvUWO0Lm0jjjX0DSzDfinIlY2BPDQsnvapUW3RqFRvWAE
-	 lgZUdXc4RUXE3pmiWskVNBM3PDHe5qB7V8lG4FngdaxSyYKTgC+GrEO5E7eMjZDIN+
-	 quDDouyKuxzRg==
-Received: from localhost (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3E65B378110A;
-	Tue, 26 Mar 2024 10:59:36 +0000 (UTC)
-Date: Tue, 26 Mar 2024 11:59:34 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/panthor: Fix spelling mistake "readyness" ->
- "readiness"
-Message-ID: <20240326115934.726d3ca1@collabora.com>
-In-Reply-To: <20240326100219.43989-1-colin.i.king@gmail.com>
-References: <20240326100219.43989-1-colin.i.king@gmail.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Z6BGyx/a"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1711454772; x=1712059572; i=markus.elfring@web.de;
+	bh=reTJekpRAbVkVaR6Ps74n/JKQGAzpk6naWUcepoHBnc=;
+	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
+	 In-Reply-To;
+	b=Z6BGyx/amhmAtn4HI51cKgC3t5dpc/XA/EsJoLtv7yxJO3njsoXk9lUBiPLMu/jq
+	 r67vRnuvcqFG79dvlW2+7Q2EVdW+wQ/6yoUw9KNL+IgFciz6rP4RI4B7PR42c6ryQ
+	 XTs5A+FtZAaoHgv5Ootx4o/nJ8VK0x4i/x5jJORnkcW3hLZ3PcdLJCRgR5c+fVV+b
+	 eXoeiNphZyj4rzQvGMKvVKpYy1f6rbNRRzKTez+BZ1QVDZVU7flSd3mTchrK8BGlX
+	 zWZiGSsZNxBm5qGOQK2ZX8dJ3OCGmYJNgKvv/Ddxe2Eo3zN/Zgumm/4vUoWrRAODO
+	 t10Nir0Br82/MYW11g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MzTPQ-1skCSS2uGW-00vQEB; Tue, 26
+ Mar 2024 13:06:12 +0100
+Message-ID: <570afd53-b1ed-4456-b83e-fca29857f000@web.de>
+Date: Tue, 26 Mar 2024 13:06:05 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+To: Dan Williams <dan.j.williams@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Ira Weiny <ira.weiny@intel.com>,
+ Jesse Brandeburg <jesse.brandeburg@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Julia Lawall <Julia.Lawall@inria.fr>, Kevin Tian <kevin.tian@intel.com>,
+ Lukas Wunner <lukas.wunner@intel.com>, Matthew Wilcox <willy@infradead.org>
+References: <171140738438.1574931.15717256954707430472.stgit@dwillia2-xfh.jf.intel.com>
+Subject: Re: [PATCH v2] cleanup: Add usage and style documentation
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <171140738438.1574931.15717256954707430472.stgit@dwillia2-xfh.jf.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:BgFUPW3xHjwYrRMtgoo20y7vIBXuyr8pzAvnoMtyk1VznSTTOA+
+ 2HfzRJYuGFNVvMurFxHzbBoNNRYG+EIg6fREeH5NF5yWUGKiU2Vj7TiGIuBcl0cn4JlVhuU
+ 9taiqRiAeuyZQieLLOJMQeaT4cVFeOVHJMJ7moDXsY0Xvcg9phuSTdUcJHwk39SCZ2/Ddzs
+ 5geFhBWgiMHSGrK9Ee3oA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dfm3TQltfcE=;YyoCq04Dxq5vJPAzHeOVEsmsgUJ
+ ibbY/IEQoLPNOSviWzWggc96XJUIZgoGt1QKE0Hlf1HjWGR5IEfIdo3Q+N3vmDII6fVcCLJZY
+ nzoYlJrchUdt0gEH19pgG7p6WQpAgifS1GN1LvWDE5l6f/P9CGRKc0HpB2F1dMqj8YdNjBZIf
+ hS6x+vKNcxc90yHEP8cv1QxtyLTkYsRbclbEtsNEtq+j3rRMDn+2tJ2sSObS45+2E2w2FhH8V
+ QBzVKDt89i/4slYMQI0HPK/zxsGpy0IGC/IWUKPj6/OgK3bQzZAEqa4AoOEczrJ+8XMOq80rQ
+ STNadkCTBafiH9XAGPJrDq5SkF/xHavXGlF2RzzdSckoXwPSvW+hFfEo4T6A2TSWttoM7RkYJ
+ u5CFCkmnRwMDR/pJKABbFnbkk8Xw32G0RiRLMYwUxOJV2q0Vq19VZ0XP+dIFK2yb6FN3ycnIN
+ zpqEZe+QKMuiWr/8XF5pgRNcYFCLh3BZ/wmhAX0dvcKbJ824j/VSV6fZcNAPzIp19aLpihA4E
+ qfR/gSHODGWGu/Jr+PhonGA6Hgw9wH5KPoheX6okwuLwZIjQNM2lM8MPKak4TP6A3Ii6mARJ3
+ LlNMF+4Dg7vIj9K23129gRdhe3M3FtU3GAu/aG7jjzXhpShMv1NNR4EBdEdxkPE8nyT/iHi9L
+ wU/eXbcgRSPntqMOzgFe/atxdu+Hbck/U09++JJ5uhcWYmcQv1v6JVQWKMAWLcK98H5jdfXqi
+ DwTXP65n7WGkAFKt5xCxY72A5mduJSXcsRz9w+Wyw1ySZ5C+BOoUkQ8X7oNWz4GBfSes5wERl
+ bwz/zuTdAccjYHBKaGLbquB6G6fuXD1TcuXoHzE74X6uc=
 
-On Tue, 26 Mar 2024 10:02:19 +0000
-Colin Ian King <colin.i.king@gmail.com> wrote:
+=E2=80=A6
+> +++ b/include/linux/cleanup.h
+> @@ -4,6 +4,157 @@
+>
+>  #include <linux/compiler.h>
+>
+> +/**
+> + * DOC: scope-based cleanup helpers
+> + *
+> + * The "goto error" pattern is notorious for introducing =E2=80=A6
 
-> There is a spelling mistake in a drm_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Will any other label become more helpful for this description approach?
 
-Queued to drm-misc-next.
+> + * this tedium =E2=80=A6
 
-> ---
->  drivers/gpu/drm/panthor/panthor_gpu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
-> index 6dbbc4cfbe7e..0f7c962440d3 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gpu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_gpu.c
-> @@ -333,7 +333,7 @@ int panthor_gpu_block_power_on(struct panthor_device *ptdev,
->  						 val, (mask32 & val) == mask32,
->  						 100, timeout_us);
->  		if (ret) {
-> -			drm_err(&ptdev->base, "timeout waiting on %s:%llx readyness",
-> +			drm_err(&ptdev->base, "timeout waiting on %s:%llx readiness",
->  				blk_name, mask);
->  			return ret;
->  		}
+Would an other wording be more appropriate here?
 
+
+> + *                          =E2=80=A6 maintaining FILO (first in last o=
+ut)
+
+How does this text fit to your response from yesterday?
+https://lore.kernel.org/all/6601c7f7369d4_2690d29490@dwillia2-mobl3.amr.co=
+rp.intel.com.notmuch/
+
+
+> + *                                                       =E2=80=A6 If a=
+ function
+> + * wants to invoke pci_dev_put() on error, but return @dev (i.e. withou=
+t
+> + * freeing it) on success, it can do:
+> + *
+> + * ::
+> + *
+> + *	return no_free_ptr(dev);
+> + *
+> + * ...or:
+> + *
+> + * ::
+> + *
+> + *	return_ptr(dev);
+=E2=80=A6
+
+Would this macro call be preferred as a succinct specification
+(so that only the shorter one should be mentioned here)?
+https://elixir.bootlin.com/linux/v6.8.1/source/include/linux/cleanup.h#L78
+
+
+> + * Observe the lock is held for the remainder of the "if ()" block not
+> + * the remainder of "func()".
+
+I suggest to add a word in this sentence.
+
+* Observe the lock is held for the remainder of the "if ()" block
+* (and not the remainder of "func()").
+
+
+> + * the top of the function poses this potential interdependency problem
+
+I suggest to add a comma at the end of this line.
+
+
+> + * the recommendation is to always define and assign variables in one
+> + * statement and not group variable definitions at the top of the
+> + * function when __free() is used.
+
+I became curious how code layout guidance will evolve further also
+according to such an advice.
+
+
+Would you like to increase the collaboration with the macros =E2=80=9CDEFI=
+NE_CLASS=E2=80=9D and =E2=80=9CCLASS=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.8.1/source/include/linux/cleanup.h#L82
+
+Regards,
+Markus
