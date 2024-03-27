@@ -1,112 +1,97 @@
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id E5EB417554;
-	Wed, 27 Mar 2024 01:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F012208A8;
+	Wed, 27 Mar 2024 11:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711502136; cv=none; b=uuKxF5znhN+KoMkyWVUBP79lisYM2m4Pi3/05ZinEKDh5plP5FfowYYxqahsu7/+k1kM8YMgFRliZgZIZgWsHrPFC/qmYzmJc3rTec/A1JohyjLDTdei2roaHQ+2TVPzTSdPJRh0xvEODhm6tSbCGh3oNKQmh/dxzHviRyng1Qg=
+	t=1711537521; cv=none; b=W6pVEMdW8uuTUdEAje72zijW4vQtoQ3+8inFqRdtRyGoCnfKVyZ3qpLAUiwL9wiyZTbAyrqnIup5BE01j1dXBd3AtpVavC38HXeQ4CAsw+DCOwfT1yQaTJ2ilb8fBksy+suQjQ5r9pxW9EooA5e3VxHo7POIPuhOW3Fh7g2qJUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711502136; c=relaxed/simple;
-	bh=vlAURbsX5wpvGXqFwL0Rpdj7KYf37DTQ2Jtnu3oSU2o=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
-	 Content-Type; b=c4gYT7ahV3DbABDXdJsIK5WWJfv/Uejnt/MwaOTQO3C6C1ukvqSXRj2uQrvbrO0NhtXoyeZvNkY48GguZ1reOHN9VoolHUelSYH09lD+ltdJV3BWFAxCbHwi5M/m0Ced/ltT/vuOjXAatARL5rK2mSQ7cgIBdsoScznzYI1gZPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from [172.30.11.106] (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 3E1AC6019C949;
-	Wed, 27 Mar 2024 09:15:19 +0800 (CST)
-Message-ID: <a9bc4138-df79-112a-6470-90c86ba5bc95@nfschina.com>
-Date: Wed, 27 Mar 2024 09:15:18 +0800
+	s=arc-20240116; t=1711537521; c=relaxed/simple;
+	bh=2ybKd7wRmjS3EUGpteosq0iA1MFDnreqoLF22JlUHHQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=frNU4QkDBYVrihC7kNZV5o/Eou6FpJjRUpJGuEvGQ/9G8iOVA3cs05u4eucSh+Ek1daZXLsZxb6YpXzAK2LwKKzgXNlbED/yJdca3gOVcOH/l5IWksbOmqu0GA4Ia71NbCc4vG0FUhqVwLXgKPgNvOv8JzHZoud3uo/MsrPi3MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eHJYEbsZ; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eHJYEbsZ"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-41495c4a8f6so1667715e9.2;
+        Wed, 27 Mar 2024 04:05:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711537518; x=1712142318; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=014p56NXkTx8ykc7/eVqJqevMHd3n2lLs/kLUplg5o0=;
+        b=eHJYEbsZonPI/9eIkv6IyPyX8AdWZthqRab5PfK6NniOtFXlid1e6jzJYgZCJKZGre
+         vhmyMstkzmsEoAi8CiThK2RPgaDv02xMrcvPS6kNm5DguAj21T2BvxdYXq5QtFu6ad6U
+         GD4WMpzF8EwNNjk8oiWVKoYnaZAdZrYWKDYbk2IyqieaoOJS7c6fGqQzGWLbDZvsV4fw
+         Q4sQwQ59s6iz3hUlsg3jX32Zj69CiZfqMtsaFoTmoXbmvLhoSi2a6tbU1zKBx6zyvH0n
+         Nb8qs8YHETPuk7rcD7Vn2fvivW1m1OaKjZUzpusCG/btrkSR4D1zBrVngva5eo3D10uT
+         xZHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711537518; x=1712142318;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=014p56NXkTx8ykc7/eVqJqevMHd3n2lLs/kLUplg5o0=;
+        b=PzPTDld3ROAMWnqejZdg0KmueCpEzZjPj+lA6HrUIzn/nmA3CRnOE6GUU6Wz2GDtFL
+         fjMT1YkLAhqZhFNVaPvCa8LLHxSPJrm4ObZt87Mf7KJRunLGemMKcx0aZVLcV3q12HRz
+         XkP6b6zVSe6O61guskd1NIBzBHYkz9NF4Hw0fFwhDjNluzxNrNAs2xJ1AP2BWqcEvRtV
+         VfMkaMBogbtVAw84JVwz6BmP9WyRDCcq8w3HrLWoDlyGUWbMzabwFjLsCvdiJXfh34LC
+         xYXRRuaqyvRPsPYlrGHSBoX+5OGMfrnMP+r8rr+VC8cItC4AGe8YdiOy8ZrQaJnMNzrA
+         T+cA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWCrCI6II08sCqqfIo8kTZPl1f8Z+TeJwQ47MHsyAfKr2cse1Z5BxeLFatBaSGX4pv9r/hdS0/BYieJExPTxky6qM8uztukCYM0/VU
+X-Gm-Message-State: AOJu0YxXGFvZY3JV/RJJkbUde3kpoQtkMatdzJxaoi2uV+KotpYaflmo
+	FcZl4qBbPeK2gvIVOkvLEQznvmkdw4le19JaMhPXzrVo0PSL6hLN
+X-Google-Smtp-Source: AGHT+IELU/7JO+2Zja+aj+L6RZpytn4mXOMjoQiGw3A+Qqveb4jzvTJ5TixVDe6G93XhZRpnua7/gw==
+X-Received: by 2002:a05:600c:358a:b0:413:f290:c747 with SMTP id p10-20020a05600c358a00b00413f290c747mr1671154wmq.33.1711537517652;
+        Wed, 27 Mar 2024 04:05:17 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id dx23-20020a05600c63d700b00414887d9329sm1775106wmb.46.2024.03.27.04.05.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Mar 2024 04:05:17 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Anup Patel <anup@brainfault.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	linux-riscv@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] irqchip/riscv-aplic: Fix spelling mistake "forwared" -> "forwarded"
+Date: Wed, 27 Mar 2024 11:05:16 +0000
+Message-Id: <20240327110516.283738-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH] ASoC: sti: uniperif: fix the undefined bitwise shift
- behavior problem
-Content-Language: en-US
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: arnaud.pouliquen@foss.st.com, lgirdwood@gmail.com, broonie@kernel.org,
- perex@perex.cz, tiwai@suse.com, nathan@kernel.org, ndesaulniers@google.com,
- morbo@google.com, justinstitt@google.com, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-In-Reply-To: <e70c65b0-2e0d-613f-4f05-bda61377fc01@nfschina.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-This is a kindly resend email.
-Sorry for the error style of last email :(
-On 2024/3/26 13:30, Su Hui wrote:
-> Hi,
-> On 2024/3/25 22:25, Dan Carpenter wrote:
->> On Mon, Mar 25, 2024 at 11:40:33AM +0800, Su Hui wrote:
->>> --- a/sound/soc/sti/uniperif.h
->>> +++ b/sound/soc/sti/uniperif.h
->>> @@ -12,17 +12,28 @@
->>>   
->>>   #include <sound/dmaengine_pcm.h>
->>>   
->>> +#define SR_SHIFT(a, b)		({unsigned long __a = (a); \
->>> +				unsigned int __b = (b); \
->>> +				__b < BITS_PER_LONG ? \
->>> +				__a >> __b : 0; })
->> The code definitely looks buggy, but how do you know your solution is
->> correct without testing it?
-> I only test some cases like SR_SHIFT(1, -1),SR_SHIFT(8,1), it seems have a right result.
-> Oh, maybe I understand it. When 'a' is a negative value like '(int)-1', SR_SHIFT(a, b) will
-> have some bugs.
->> I don't like this solution at all.  This is basically a really
->> complicated way of writing "if (b != -1)".  Instead of checking for -1,
->> the better solution is to just stop passing -1.  If you review that
->> file, every time it uses "-1" that's either dead code or a bug...
-> Agreed，some are dead codes which can be removed, but what should we do with the
-> following error codes like this one?
-> sound/soc/sti/uniperif.h
->   415 #define UNIPERIF_CONFIG_BACK_STALL_REQ_SHIFT(ip) \
->   416         ((ip)->ver < SND_ST_UNIPERIF_VERSION_UNI_PLR_TOP_1_0 ? 7 : -1)
->   ...
->   423 #define SET_UNIPERIF_CONFIG_BACK_STALL_REQ_DISABLE(ip) \
->   424         SET_UNIPERIF_REG(ip, \
->   425                 UNIPERIF_CONFIG_OFFSET(ip), \
->   426                 UNIPERIF_CONFIG_BACK_STALL_REQ_SHIFT(ip), \
->                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> How about this solution? If the condition is false, just skip it.
->
-> @@ -412,8 +412,7 @@
->                  UNIPERIF_CONFIG_REPEAT_CHL_STS_MASK(ip), 1)
->   
->   /* BACK_STALL_REQ */
-> -#define UNIPERIF_CONFIG_BACK_STALL_REQ_SHIFT(ip) \
-> -       ((ip)->ver < SND_ST_UNIPERIF_VERSION_UNI_PLR_TOP_1_0 ? 7 : -1)
-> +#define UNIPERIF_CONFIG_BACK_STALL_REQ_SHIFT(ip) 7
->   #define UNIPERIF_CONFIG_BACK_STALL_REQ_MASK(ip) 0x1
->   #define GET_UNIPERIF_CONFIG_BACK_STALL_REQ(ip) \
->          GET_UNIPERIF_REG(ip, \
-> @@ -421,10 +420,11 @@
->                  UNIPERIF_CONFIG_BACK_STALL_REQ_SHIFT(ip), \
->                  UNIPERIF_CONFIG_BACK_STALL_REQ_MASK(ip))
->   #define SET_UNIPERIF_CONFIG_BACK_STALL_REQ_DISABLE(ip) \
-> +       ((ip)->ver < SND_ST_UNIPERIF_VERSION_UNI_PLR_TOP_1_0 ? -1 : \
->          SET_UNIPERIF_REG(ip, \
->                  UNIPERIF_CONFIG_OFFSET(ip), \
->                  UNIPERIF_CONFIG_BACK_STALL_REQ_SHIFT(ip), \
-> -               UNIPERIF_CONFIG_BACK_STALL_REQ_MASK(ip), 0)
-> +               UNIPERIF_CONFIG_BACK_STALL_REQ_MASK(ip), 0))
->   #define SET_UNIPERIF_CONFIG_BACK_STALL_REQ_ENABLE(ip) \
->
-> Maybe should print some error log here.
-> I'm not sure about the safety of skipping SET_UNIPERIF_REG when the condition is false,
->
-> Would it be better to make the result of undefined shift equal to zero?
->
-> regards,
-> Su Hui
->   
->
+There is a spelling mistake in a dev_info message. Fix it.
+
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/irqchip/irq-riscv-aplic-msi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-riscv-aplic-msi.c b/drivers/irqchip/irq-riscv-aplic-msi.c
+index 36cd04a5057b..028444af48bd 100644
+--- a/drivers/irqchip/irq-riscv-aplic-msi.c
++++ b/drivers/irqchip/irq-riscv-aplic-msi.c
+@@ -251,7 +251,7 @@ int aplic_msi_setup(struct device *dev, void __iomem *regs)
+ 
+ 	/* Advertise the interrupt controller */
+ 	pa = priv->msicfg.base_ppn << APLIC_xMSICFGADDR_PPN_SHIFT;
+-	dev_info(dev, "%d interrupts forwared to MSI base %pa\n", priv->nr_irqs, &pa);
++	dev_info(dev, "%d interrupts forwarded to MSI base %pa\n", priv->nr_irqs, &pa);
+ 
+ 	return 0;
+ }
+-- 
+2.39.2
+
