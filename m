@@ -1,195 +1,112 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CF213C8FD
-	for <kernel-janitors@vger.kernel.org>; Tue, 26 Mar 2024 15:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id E5EB417554;
+	Wed, 27 Mar 2024 01:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711468328; cv=none; b=g/5W2W6myD9auDQhyT1ViCwF72C+FHZco7fZ+mlfe+YtedcIkQC8rYnXqwsQ5ihXXHaZdPDaa5vaAbJoBBZn+7y2GdXE88asTw5T1nusPJLvhMsaeTNupyc+0rZYp9AlR9i2PcZ2k+5x6X7OYHbsA4yuejr8valW8LrPVbeWzpQ=
+	t=1711502136; cv=none; b=uuKxF5znhN+KoMkyWVUBP79lisYM2m4Pi3/05ZinEKDh5plP5FfowYYxqahsu7/+k1kM8YMgFRliZgZIZgWsHrPFC/qmYzmJc3rTec/A1JohyjLDTdei2roaHQ+2TVPzTSdPJRh0xvEODhm6tSbCGh3oNKQmh/dxzHviRyng1Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711468328; c=relaxed/simple;
-	bh=6bb1aY6OkPt9GctNOb+fRQxsx4J2kOgZFbswZWRs66o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZRyB+n+4FYUMS4dTMPA86G8jTs9dv9MK35A22VugnNqdkp7TbBjlss3pyv/kV4EV6sQsXJfBnTEyymIPUU+sZdXw96gIFs/ldLAZwfHxIllvY3TzZOMRTmgZB1z46j2W8uNw1nLTb8QMwAAU0NiJk+ASnOdghGrqn0G3p4LOlF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=XswwYzhh; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="XswwYzhh"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-513ccc70a6dso9910036e87.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 26 Mar 2024 08:52:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1711468324; x=1712073124; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xa2x1sPnf7shVAks7EWDE7iAgi3vVgK+502IUWMTbOs=;
-        b=XswwYzhh5zfJnsswS9RsQrHR/GXP91n33v/eysLCUa8VsjyqN+q36+sRyiuoOovJH8
-         wV5ArjFkYzxm4HO1F0r8YzwmANkXSLIyFjcMYaSHqgdJUhIryqcChnehzoBEIZF+ungh
-         xCJYheJarArNtKlOcjhXuWOVLmsIC3gRQLln8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711468324; x=1712073124;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xa2x1sPnf7shVAks7EWDE7iAgi3vVgK+502IUWMTbOs=;
-        b=ikjl1yJU80Lm5JqxIh6MAw6/tUB0dKcHOMhA2yWDAY9DuGP22VxGffUaZ5AywWshIs
-         64S15YhBDTM2qWh+Q/3ktWjzK7yvuBkwA9EUUc/DwaqnNl6TXlkhuCWd2q0HYYPpuL2I
-         MMWKnOhiz9Lf4nw/YP8zqKADlXCvCour60w+4TyZHia8Zj3XqXbyefsEPh9LuU5B6f0L
-         VNId4mMtt6CAvSa7xTq0NRQ4/lHw3+xcAZ6vTnpZregUlVJdbDuibg2bI+JLxquKELw5
-         KfSGrEgJW2drufWU6EZHMSLrJK2Y1jPCk0EQGQYNnNqTjI6/9MdILBb+lWdLcdUo4rOd
-         B18A==
-X-Forwarded-Encrypted: i=1; AJvYcCU49ojR87Yl6HHnDkCLudAItZj0x/G9+NBc2mjUiWI01zoSf8UKmSDUsSuQagCH3GaFaD8aaROLpyQznoYpfLoJHjaxoTLZUALfje+zrv5l
-X-Gm-Message-State: AOJu0Yxa6QNO5I2WiBjkQosCY/FDT21FHsOu7+fhELbNr9OO74gzfUZ8
-	v6MTm3nC5QX+OFcksQKTZyb0tvxMVxCReHpOhaBajoSdDIrdSv4TmNYXyt8s6qBi42meAT5iwwU
-	h3EAexjHYpUxnDSZhaAzQtORXzcFTq1BY44xE
-X-Google-Smtp-Source: AGHT+IEd99iQdt5s3nxQmQjQL+kWq2UATM17DlKBxE0FXHEHbmb6dlrsT+p+vWHMtj6uU8KDB4FaZxjZTkMdmQsnOLg=
-X-Received: by 2002:a19:3807:0:b0:513:e4e0:8e12 with SMTP id
- f7-20020a193807000000b00513e4e08e12mr8414535lfa.12.1711468324525; Tue, 26 Mar
- 2024 08:52:04 -0700 (PDT)
+	s=arc-20240116; t=1711502136; c=relaxed/simple;
+	bh=vlAURbsX5wpvGXqFwL0Rpdj7KYf37DTQ2Jtnu3oSU2o=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
+	 Content-Type; b=c4gYT7ahV3DbABDXdJsIK5WWJfv/Uejnt/MwaOTQO3C6C1ukvqSXRj2uQrvbrO0NhtXoyeZvNkY48GguZ1reOHN9VoolHUelSYH09lD+ltdJV3BWFAxCbHwi5M/m0Ced/ltT/vuOjXAatARL5rK2mSQ7cgIBdsoScznzYI1gZPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 3E1AC6019C949;
+	Wed, 27 Mar 2024 09:15:19 +0800 (CST)
+Message-ID: <a9bc4138-df79-112a-6470-90c86ba5bc95@nfschina.com>
+Date: Wed, 27 Mar 2024 09:15:18 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240326061233.4133148-1-suhui@nfschina.com>
-In-Reply-To: <20240326061233.4133148-1-suhui@nfschina.com>
-From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Date: Tue, 26 Mar 2024 21:21:53 +0530
-Message-ID: <CAH-L+nM4nKxfRM29J02dtFcWkY7yuW+980swUhHC=avD8ZdkEQ@mail.gmail.com>
-Subject: Re: [PATCH net v2 1/2] octeontx2-pf: check negative error code in otx2_open()
-To: Su Hui <suhui@nfschina.com>
-Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com, 
-	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, saikrishnag@marvell.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000008cc0af061492450f"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] ASoC: sti: uniperif: fix the undefined bitwise shift
+ behavior problem
+Content-Language: en-US
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: arnaud.pouliquen@foss.st.com, lgirdwood@gmail.com, broonie@kernel.org,
+ perex@perex.cz, tiwai@suse.com, nathan@kernel.org, ndesaulniers@google.com,
+ morbo@google.com, justinstitt@google.com, alsa-devel@alsa-project.org,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+In-Reply-To: <e70c65b0-2e0d-613f-4f05-bda61377fc01@nfschina.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---0000000000008cc0af061492450f
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Mar 26, 2024 at 11:43=E2=80=AFAM Su Hui <suhui@nfschina.com> wrote:
+This is a kindly resend email.
+Sorry for the error style of last email :(
+On 2024/3/26 13:30, Su Hui wrote:
+> Hi,
+> On 2024/3/25 22:25, Dan Carpenter wrote:
+>> On Mon, Mar 25, 2024 at 11:40:33AM +0800, Su Hui wrote:
+>>> --- a/sound/soc/sti/uniperif.h
+>>> +++ b/sound/soc/sti/uniperif.h
+>>> @@ -12,17 +12,28 @@
+>>>   
+>>>   #include <sound/dmaengine_pcm.h>
+>>>   
+>>> +#define SR_SHIFT(a, b)		({unsigned long __a = (a); \
+>>> +				unsigned int __b = (b); \
+>>> +				__b < BITS_PER_LONG ? \
+>>> +				__a >> __b : 0; })
+>> The code definitely looks buggy, but how do you know your solution is
+>> correct without testing it?
+> I only test some cases like SR_SHIFT(1, -1),SR_SHIFT(8,1), it seems have a right result.
+> Oh, maybe I understand it. When 'a' is a negative value like '(int)-1', SR_SHIFT(a, b) will
+> have some bugs.
+>> I don't like this solution at all.  This is basically a really
+>> complicated way of writing "if (b != -1)".  Instead of checking for -1,
+>> the better solution is to just stop passing -1.  If you review that
+>> file, every time it uses "-1" that's either dead code or a bug...
+> Agreed，some are dead codes which can be removed, but what should we do with the
+> following error codes like this one?
+> sound/soc/sti/uniperif.h
+>   415 #define UNIPERIF_CONFIG_BACK_STALL_REQ_SHIFT(ip) \
+>   416         ((ip)->ver < SND_ST_UNIPERIF_VERSION_UNI_PLR_TOP_1_0 ? 7 : -1)
+>   ...
+>   423 #define SET_UNIPERIF_CONFIG_BACK_STALL_REQ_DISABLE(ip) \
+>   424         SET_UNIPERIF_REG(ip, \
+>   425                 UNIPERIF_CONFIG_OFFSET(ip), \
+>   426                 UNIPERIF_CONFIG_BACK_STALL_REQ_SHIFT(ip), \
+>                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> How about this solution? If the condition is false, just skip it.
 >
-> otx2_rxtx_enable() return negative error code such as -EIO,
-> check -EIO rather than EIO to fix this problem.
+> @@ -412,8 +412,7 @@
+>                  UNIPERIF_CONFIG_REPEAT_CHL_STS_MASK(ip), 1)
+>   
+>   /* BACK_STALL_REQ */
+> -#define UNIPERIF_CONFIG_BACK_STALL_REQ_SHIFT(ip) \
+> -       ((ip)->ver < SND_ST_UNIPERIF_VERSION_UNI_PLR_TOP_1_0 ? 7 : -1)
+> +#define UNIPERIF_CONFIG_BACK_STALL_REQ_SHIFT(ip) 7
+>   #define UNIPERIF_CONFIG_BACK_STALL_REQ_MASK(ip) 0x1
+>   #define GET_UNIPERIF_CONFIG_BACK_STALL_REQ(ip) \
+>          GET_UNIPERIF_REG(ip, \
+> @@ -421,10 +420,11 @@
+>                  UNIPERIF_CONFIG_BACK_STALL_REQ_SHIFT(ip), \
+>                  UNIPERIF_CONFIG_BACK_STALL_REQ_MASK(ip))
+>   #define SET_UNIPERIF_CONFIG_BACK_STALL_REQ_DISABLE(ip) \
+> +       ((ip)->ver < SND_ST_UNIPERIF_VERSION_UNI_PLR_TOP_1_0 ? -1 : \
+>          SET_UNIPERIF_REG(ip, \
+>                  UNIPERIF_CONFIG_OFFSET(ip), \
+>                  UNIPERIF_CONFIG_BACK_STALL_REQ_SHIFT(ip), \
+> -               UNIPERIF_CONFIG_BACK_STALL_REQ_MASK(ip), 0)
+> +               UNIPERIF_CONFIG_BACK_STALL_REQ_MASK(ip), 0))
+>   #define SET_UNIPERIF_CONFIG_BACK_STALL_REQ_ENABLE(ip) \
 >
-> Fixes: c926252205c4 ("octeontx2-pf: Disable packet I/O for graceful exit"=
-)
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
-> ---
-LGTM
-Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
-> v2: add "net" in subject
->  drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Maybe should print some error log here.
+> I'm not sure about the safety of skipping SET_UNIPERIF_REG when the condition is false,
 >
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drive=
-rs/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-> index b40bd0e46751..3f46d5e0fb2e 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-> @@ -1933,7 +1933,7 @@ int otx2_open(struct net_device *netdev)
->          * mcam entries are enabled to receive the packets. Hence disable=
- the
->          * packet I/O.
->          */
-> -       if (err =3D=3D EIO)
-> +       if (err =3D=3D -EIO)
->                 goto err_disable_rxtx;
->         else if (err)
->                 goto err_tx_stop_queues;
-> --
-> 2.30.2
+> Would it be better to make the result of undefined shift equal to zero?
 >
+> regards,
+> Su Hui
+>   
 >
-
-
---=20
-Regards,
-Kalesh A P
-
---0000000000008cc0af061492450f
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
-BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
-hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
-JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
-aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
-FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
-T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
-o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
-aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
-YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
-cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
-ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
-HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
-Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
-LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
-zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
-4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
-cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
-u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
-a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
-x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
-VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
-bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
-AQkEMSIEIGuRILz2fiQxw2zdJwSYKdwhvzIyn5LTqkqxABVoYakoMBgGCSqGSIb3DQEJAzELBgkq
-hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDMyNjE1NTIwNFowaQYJKoZIhvcNAQkPMVwwWjAL
-BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
-9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBamkHgZFQG
-9oz+aLr1okGWEatyZE64sEICqGSTaHDRxqY2fbj2lY8FabhU3392r51mq+82JCwRZm4r41dh0zeH
-UzJsB0Dr5fjf8o8b6Q0KWQrLQpAesLx/18oCFNl+CWevpm0z353ZbvfHRfMD2pwgjso4m8+9/WzT
-YXdKDzpSKQ9MMeYEMB8oI8HNT2T5XsE/HQBL327qc7F2q6RIk6ggUF9ZhAdTC9wBggIVTcwKJWjx
-8XDETHcCcd4yHVOI9MON2B+DrJX9y3D9FK0nIY1cz57cL2UnA/dYruh3pgFE3YYNVDyiyv7w1O1j
-MRYrhMF6x2RQUcSWyiGvRNCfOicc
---0000000000008cc0af061492450f--
