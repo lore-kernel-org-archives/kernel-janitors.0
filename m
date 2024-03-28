@@ -1,68 +1,64 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA1D7BAE5;
-	Thu, 28 Mar 2024 11:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D405854BDA;
+	Thu, 28 Mar 2024 12:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711626300; cv=none; b=eUpiDzRfMUQ2QUaiho4KSLM9Lz/4fpu/jRtILtT5htPgtOhBmYv99Z0B6yAi3PiESlC1CXAB19WnNCOdvyYt3v4LVrRkObByDPwXxE60bPlZl9TEmFI5PL+HbfsW4ZbIqywP7dpAVEhbFvTSLQUN5JOi2rXRqazYerBPq/a1s1U=
+	t=1711628538; cv=none; b=Hrp1MiHp/SNIeOszFa/67sPy6RvK2NlNjTLN6QUc/MrSx2LBV2zxoblxfCiQs60ksrZifkSg8gRRhwcdsJINh3sRUVLlN45KFdIDBC7ytPkmFbTL+wF79cC9Ayfv8q8AWAcsryFjm3iiV3goTqhpHxpF7uIo52xQ8N0HajbjVnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711626300; c=relaxed/simple;
-	bh=OYM8k1EiWPWpNf5LRNyDFFCvXpyMLeqLULX1HXll2yM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GD4OBDWhT7/WGRfBaeBuV0bpeZ2s8N0pkZQTpi8An5A6xk9+U5GriR9U8yc6JMfFTsv5EgVl/Z+sjUiKl77s8TXl7NZP55dLlQ6NyA3CC+zRgotKNEICLUonIRDjE4GHQcpLAQFPrwvzMuuyWWEaRIXIaWpSulH6wukSm9TPmFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CvDvHfnc; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1711628538; c=relaxed/simple;
+	bh=2fe0n8LweizaCOPGU4EyERZ9VYXN1XEcuUzuN0FtvQA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=KPVmX/474QH/RnVz/yS0aeXOsqzWfOrdQbtxoW93WmiRrGrVPGPHqH53gUtV6ipAQNuj+8pMn+RE7zPCEDXanWSr7sK9wETtO0lZF2tm2uRqMWQdukRAUmmz+yc+Y48f5plBzHO2xt9hEgnEJWDspAZkpQSNNYKLQvS464+EsOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D0wtH3fm; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvDvHfnc"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-513e134f73aso898489e87.2;
-        Thu, 28 Mar 2024 04:44:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D0wtH3fm"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-341cce3e5f0so783995f8f.1;
+        Thu, 28 Mar 2024 05:22:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711626297; x=1712231097; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1711628535; x=1712233335; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=e9MZemIHH/wBwBEQSnrQYLhJvhCNeO4YGhKFn3AbGPg=;
-        b=CvDvHfncRAuH6IVn/DzViCnCdrn1DwVWFosoHQgEn+CLxGaW3tOMkAohZPysyPNE17
-         xnknKCruI6HOqWGdURoKY1A9KI18J/4893ifYJJABlJ2UeykkskUa9YBYjyXA5tM8YEF
-         R6UF0wBp0fsyTXzLvf50tpdGDjaj3Pozj27tHyGUggMGCrjUI7B7XksNxT0V40LmL2Lw
-         w1/y+3NUzVaYGks+SdY3iSTphAucmz7MQjpX0VEoxfK2jNIBewnZVSFQ2lk1T6O6Z0bw
-         j+oGaMkxyj7N8hIVndso9ssnhb49aEZw6v+g1qX1GKxxGeA/NeYpwGzIai3EkpcYSKQ6
-         hyZg==
+        bh=ayHPtSs90OswBRl/sKzno/7Sgnyo8R4+Sjb5HQX47gY=;
+        b=D0wtH3fm3bP5kNdXwqnnuaW0Mu6MfiA8nKpcWFKxeWBqZ6zIDMj2Yv43ZCCe9rsR4q
+         dR8a0T3CWMIF2NAM2kaMtTB3YiV586EetqiPnMKbq/2+GCmilLAbJ+aAWtRoTcZTWnMt
+         kw7m9yr+7DfLAaxeKDa2d1kvWAta098piZm84ptIvG1WxIIkDDsjiLX8EciBAHpKLYR4
+         9fjE0ltW9+L9D1OpfsK/fzFiSG4+GCsF2zSRkdiSP2fNZ1eKZ/3aQ8obABiAWJeMZ063
+         gzRBNDeQwSTXOBoq2DsHuKbb82ULs0YBUaHXuvQDJMT0Ugnu9h3SoC8XZCDxv7FK1ONJ
+         /15A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711626297; x=1712231097;
+        d=1e100.net; s=20230601; t=1711628535; x=1712233335;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=e9MZemIHH/wBwBEQSnrQYLhJvhCNeO4YGhKFn3AbGPg=;
-        b=OGydKMyehlAswNbpDdXLsghOUDPqsGeZAuKr0NES6t0UfrrtgJPnzMjDZQPo2nSw9i
-         6nri0LimLRljxs/CasXpiWO8OUwDnLd0e0dcp/xsA0EYe3cgCi2eRwB4ISCjdg8RXHcy
-         HSaf913++6Bh62YMohEJJ1xc9Gcg2KbElYxqL4KYy5EllFZ0eOpNLtZCS0RJns3UypFD
-         +2HKWzczipEGSfBjmRAX3MKCtVsPRQnCfA9HT+NPAwUDIQweG/YgOJkTOF1JCke26R8E
-         JyK4vJ+rJVqT5UbAD2dvqHE3WlgXnAJyvgu5WVBrowuIaBrlR1FceIbF+fTLh7/vQP2x
-         LMOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgzWOwe9oOR51h9FWjd7BF2O56x+zQaY9t8uIsqWKRC+3kRIOMcMq/hVcvtbx298eUl4qLWN3WiZmXfwygQq42eXSlv5qq7IA++R1iBc5qZWaHdWgysc/7POE4BxI+FAGwkGVfPm1eLxc=
-X-Gm-Message-State: AOJu0YxmzyjSWdqfsJ9jrF1/LbJdKTW+JfJuidGuwUgPpFOpKPWlsU1v
-	N5E1gF1EafDtICjJwWlrdRJzUui1QgpOSrLpx+bcL1tKTy5oj6gu
-X-Google-Smtp-Source: AGHT+IGEl6kIo0nRaR4sdMsNwoiqAEZ+tfdSkPUMmYpwE3JGZWyrDnwFHzDvEeA7KMSIxgFR1yAEjQ==
-X-Received: by 2002:ac2:504c:0:b0:515:9ee7:ce45 with SMTP id a12-20020ac2504c000000b005159ee7ce45mr1914760lfm.49.1711626296973;
-        Thu, 28 Mar 2024 04:44:56 -0700 (PDT)
+        bh=ayHPtSs90OswBRl/sKzno/7Sgnyo8R4+Sjb5HQX47gY=;
+        b=o0JdnudbCfl6joh4ShEtLfKgEjLFbB6GcYUHlZFYM4GqOewyIKu07ja9UpeHOTjLBB
+         kQyEqiSM6UMSrSSmDCPO9wNxJNAZ1TUBOSoYXLbVOZSC+/PTtAw//A8O5+4JfPvBA/uJ
+         ocG5VCfycQIQEApjITkdEW/mApZwaFoJK7pN+GGGQCLlauWmpDVHzbbhRjpCIJcHpnVe
+         v4eyLo1tkLdxsx2e8VKYQA8bSpqOu5ME3q+47bPvy0hlZj/AmaFiqugRPuOCjKbqYmNG
+         Z6NSi5ZR6OQ8DBN2zXHPqOZmL01GaMGG9AXElRmYjtcEm6frQFEhomjYUxSSKSxVq48V
+         w5Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCWur7AZJ15TDHuHkCNEYxadYruOZCZV7FZ9s+xT9BRoJDA01xPGqcaTh1vvzbG78rYsmZcxvwxfKsGAbDXSsbBvOG0oGryT7UIKsnunm6/tYuk35WuhG1jeahTdWfI+czUjsHF82uWYhWQ=
+X-Gm-Message-State: AOJu0Yy/deRRzVI9Mc5BTnO9IUBg2enuljA21llgQ29S1cdxjBHIdBED
+	vLWs7KPYeEMYIvqC5bN7dVFTBtWz/ASqk1KQuCdgQpQd8oaStUJ6
+X-Google-Smtp-Source: AGHT+IHzqvUZ2ksUlygpI0QeJuF7vcP1wfbXiUmzh4ylbdpcwnBTVKDqLeJGESOkUEI0TxiC+UVLvw==
+X-Received: by 2002:a5d:560f:0:b0:33d:2180:30e8 with SMTP id l15-20020a5d560f000000b0033d218030e8mr2680359wrv.25.1711628535038;
+        Thu, 28 Mar 2024 05:22:15 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bp29-20020a5d5a9d000000b00341d28586afsm1581112wrb.2.2024.03.28.04.44.56
+        by smtp.gmail.com with ESMTPSA id bl37-20020adfe265000000b0033b87c2725csm1625229wrb.104.2024.03.28.05.22.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Mar 2024 04:44:56 -0700 (PDT)
+        Thu, 28 Mar 2024 05:22:14 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] staging: media: ipu3: remove redundant assignment to pointer css_pipe
-Date: Thu, 28 Mar 2024 11:44:55 +0000
-Message-Id: <20240328114455.762195-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] HID: sony: remove redundant assignment to variable ret
+Date: Thu, 28 Mar 2024 12:22:13 +0000
+Message-Id: <20240328122213.762889-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -73,30 +69,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Pointer css_pipe is being assigned a value that is never read afterwards.
-The assignment is redundant and can be removed.
+The variable ret is being assigned a value that is never read
+afterwards. The assignment is redundant and can be removed.
 
 Cleans up clang scan build warning:
-drivers/staging/media/ipu3/ipu3-css.c:2058:3: warning: Value stored
-to 'css_pipe' is never read [deadcode.DeadStores]
+drivers/hid/hid-sony.c:2020:3: warning: Value stored to 'ret'
+is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/staging/media/ipu3/ipu3-css.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/hid/hid-sony.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/staging/media/ipu3/ipu3-css.c b/drivers/staging/media/ipu3/ipu3-css.c
-index 9c10f1474c35..1b0a59b78949 100644
---- a/drivers/staging/media/ipu3/ipu3-css.c
-+++ b/drivers/staging/media/ipu3/ipu3-css.c
-@@ -2055,7 +2055,6 @@ struct imgu_css_buffer *imgu_css_buf_dequeue(struct imgu_css *css)
- 			return ERR_PTR(-EIO);
- 		}
+diff --git a/drivers/hid/hid-sony.c b/drivers/hid/hid-sony.c
+index ebc0aa4e4345..1d37b39e1171 100644
+--- a/drivers/hid/hid-sony.c
++++ b/drivers/hid/hid-sony.c
+@@ -2016,8 +2016,6 @@ static int sony_input_configured(struct hid_device *hdev,
  
--		css_pipe = &css->pipes[pipe];
- 		dev_dbg(css->dev, "event: pipeline done 0x%8x for pipe %d\n",
- 			event, pipe);
- 		break;
+ 	} else if (sc->quirks & MOTION_CONTROLLER) {
+ 		sony_init_output_report(sc, motion_send_output_report);
+-	} else {
+-		ret = 0;
+ 	}
+ 
+ 	if (sc->quirks & SONY_LED_SUPPORT) {
 -- 
 2.39.2
 
