@@ -1,106 +1,71 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E6640859;
-	Thu, 28 Mar 2024 21:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AB3A923;
+	Fri, 29 Mar 2024 17:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711662285; cv=none; b=f+75KOCx6mlsue9HCl3RPi2jubNRsmlHroK5YDuPoNUQmcgQjWyTj7MLnVSB3Hj6lB6nsZp7iPfj8Y0Cb+jAG4PyylczTwb05SjGphFZ2TdclyVmina53fAXh+FEcCtECyhbauOyMzDyjJ8eXdfE10vG3HFZEVjadUYjSkr7J6k=
+	t=1711734360; cv=none; b=D/2Nmrcm6H/WSwNsyA+ktsLbxhMaAL1wyfaMLwFs2fGkQ16PwNCyBMBIBGsck8PUKhrG5n7cXISO/eDtsB2w0o5o2dHSYH3bPptxcW3fAKI5iU8HeBtSsMH8E0F3vL3VMKwjRPgyGBL8rH6okW7yD4hOwda1BTU9XYs1faYm49Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711662285; c=relaxed/simple;
-	bh=vgncJ12bPOEKNn+P6UNocQm/1RyRBEr539fqesou12g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AHfmM9vJuK8ix6bJUFLLYTbNhUKvbLTgScf718ZyisRfwkmzm9xF7fbL6q7eaf/XIO9pe3NIlnsJRDe83MORvHQQn3kUU+XeJ8+hMFnFqOvnu3LtCcfXbYwVEJPRCJ3AHzbFgYUiS7KnlcdTYkh4I+Uklqp9W2aCdaB1pSnyg/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DaU6WNUW; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1711734360; c=relaxed/simple;
+	bh=HFcDQXQ4/V0olwInsRZS2sioZwVCn9Un9HBzhqOv1RU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TN6ZBJ/m3QgENynxI4kHHCqb8eHGZtaNFVM9k/SCcs3HNg/1d/kREYQkj1xXjxMgu/wtMoBTT/kv+tNa+041OwKHjQeaDypptuca0FTxAXgGP5YcyJhDnLbLOUcsgM+n066xl7JEqQcbd5/+GV6LSscryUF/ZIdHr/OsdsI4ePI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OxY7oCjP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DaU6WNUW"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-51581c51ee6so459436e87.0;
-        Thu, 28 Mar 2024 14:44:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711662282; x=1712267082; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=00zSfVR5n/E7ASw56UXmOmJHpf1s4deJDOOGHOzNx/A=;
-        b=DaU6WNUWknMlvG99sHGLOi7wVp+wjvH16w1OPjpP3fb/uyIHfz9Nqzo34PtJ42jpVI
-         6Ri8WrG5cur3K+ngacHYVwBAqOzklltA4yLJj7uTFuO9GbnMhrZrWwXmRaqvGm0s+dWA
-         idFC4kHc+nw9RAsRN1MM/QfhX9JJeY92LsOn2/Hs7hoL5JUUUR2HGbbKGWTTqnJ5n/Uj
-         npLn6aeK3/igqRvClP5E0D/hV35Qjuu6gYiBjCMZZTiJzLjSyQAxNOiZPliFw7ypIabR
-         errF8Nz8SH8Hh/Cec91h362PE2YcAbyU0n7BLRxjI76qyH0T2nGPnnrwjnw5cJ1jbnlS
-         tZKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711662282; x=1712267082;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=00zSfVR5n/E7ASw56UXmOmJHpf1s4deJDOOGHOzNx/A=;
-        b=N+ZSD6TfZehuqElWHe8HIO0EuHVdOWXrzI7cPWsjOwSmyrwfl7k35SCrQa4AkOAFJA
-         BH/PXkGyhU5baHP2f5WuOippH7/HI+avC/qnuJwp374DpnXdCYwXqAaoU5ga9bhYLGrk
-         7zHZZvwZDEnA9S6XfiTcAQjJ8iets0W6h4507ElERDljt4Lpkvq6/njy1UBZnPm8bkA3
-         g9BFNESRpefs77VINMkzc4vIuZVTI+5eNIXQ+htkvTIZ5euDxB6hDWhOXmxMmQTS5q4P
-         55bQdljbS5qkI8CRfV3JPEbJ2lHHdBOhpazUfI6+gmxZRpMuZY9tLEml1hXOjynpfq+g
-         p7bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNQajE8FY8L0uUcESADvtMdap82xqg4FAu5TQGNnfSqo85NyItlr9KwTdo3jmIeSC+SWB31zFhHXK5l1+YmUH7Qmw2NsCkqwIHM2vY
-X-Gm-Message-State: AOJu0YzGVa6/C6Z/egatF/LffOzG+n9KxvVdq42cLod/Odh+SKxYmOKR
-	A2twc6IRpdobkmJ4iZxq/7tA9jJie+iefeOdV86ZHPoh+QDuCPkQ
-X-Google-Smtp-Source: AGHT+IGsA3Mym1ynkHCg1Jmo+MF6x3uqCVPaWZwhuEPdX18nfgIQrGLpfb4vb/+0JjdZUIssKVIlDg==
-X-Received: by 2002:a2e:9bc2:0:b0:2d6:b698:968 with SMTP id w2-20020a2e9bc2000000b002d6b6980968mr241372ljj.1.1711662281405;
-        Thu, 28 Mar 2024 14:44:41 -0700 (PDT)
-Received: from [192.168.0.104] (p54a07fa0.dip0.t-ipconnect.de. [84.160.127.160])
-        by smtp.gmail.com with ESMTPSA id q14-20020a056402248e00b0056c5515c183sm959340eda.13.2024.03.28.14.44.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Mar 2024 14:44:41 -0700 (PDT)
-Message-ID: <b3b033ac-0fe7-4a89-a7f5-ee96d5c806d7@gmail.com>
-Date: Thu, 28 Mar 2024 22:44:40 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OxY7oCjP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06549C433C7;
+	Fri, 29 Mar 2024 17:45:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711734359;
+	bh=HFcDQXQ4/V0olwInsRZS2sioZwVCn9Un9HBzhqOv1RU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OxY7oCjP2GoakWmVTJBFF2ww/W7egc/tuBsgT+LvgoNjXbz5XwsVTEma04/FTqDsl
+	 bMa+jHbV8m8GxuR/3uOnxSXXX+bAFfM03hL9LrQr0zf2+8yyxEAHue0ZfUkbU/2NVv
+	 HoTNsUjzowUTEggo897VrBoN5mjEpmUH6ImYGZdlTVBneXFff+v6O3ME9Yyf9hqfVy
+	 qMWU0FY3zoN41h/ZZTnr4UZncWDr+X31eue4/IjvX72xqy/MpwyKmcbWboI2BDv8cU
+	 IrtQTkRYd1Xw80UnleTlfuHSdGlTF6pbjU8sDFNyiCyRKGOfg0T1PRNuV8TMcvT8Rw
+	 0w1jwraAZ1RDg==
+Date: Fri, 29 Mar 2024 17:45:53 +0000
+From: Simon Horman <horms@kernel.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, nathan@kernel.org,
+	ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
+	dan.carpenter@linaro.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next v3] octeontx2-pf: remove unused variables
+ req_hdr and rsp_hdr
+Message-ID: <20240329174553.GN651713@kernel.org>
+References: <20240328020723.4071539-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] staging: vt6655: remove redundant assignment to
- variable byData
-To: Colin Ian King <colin.i.king@gmail.com>,
- Forest Bond <forest@alittletooquiet.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-staging@lists.linux.dev
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240328111557.761380-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240328111557.761380-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240328020723.4071539-1-suhui@nfschina.com>
 
-On 3/28/24 12:15, Colin Ian King wrote:
-> Variable byData is being assigned a value that is never read, it is
-> being re-assigned later on. The assignment is redundant and can be
-> removed.
+On Thu, Mar 28, 2024 at 10:07:24AM +0800, Su Hui wrote:
+> Clang static checker(scan-buid):
+> drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c:503:2: warning:
+> Value stored to 'rsp_hdr' is never read [deadcode.DeadStores]
 > 
-> Cleans up clang scan build warning:
-> drivers/staging/vt6655/srom.c:67:2: warning: Value stored to 'byData'
-> is never read [deadcode.DeadStores]
+> Remove these unused variables to save some space.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Signed-off-by: Su Hui <suhui@nfschina.com>
 > ---
->   drivers/staging/vt6655/srom.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/staging/vt6655/srom.c b/drivers/staging/vt6655/srom.c
-> index 1b89d401a7eb..e80556509c58 100644
-> --- a/drivers/staging/vt6655/srom.c
-> +++ b/drivers/staging/vt6655/srom.c
-> @@ -64,7 +64,6 @@ unsigned char SROMbyReadEmbedded(void __iomem *iobase,
->   	unsigned char byData;
->   	unsigned char byOrg;
->   
-> -	byData = 0xFF;
->   	byOrg = ioread8(iobase + MAC_REG_I2MCFG);
->   	/* turn off hardware retry for getting NACK */
->   	iowrite8(byOrg & (~I2MCFG_NORETRY), iobase + MAC_REG_I2MCFG);
+> v3:
+>  - using net-next in subject
+>  - split the v2 patchset into individual patches
+> v2:
+>  - add "net" in subject
 
+Thanks for the updates.
 
-Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Reviewed-by: Simon Horman <horms@kernel.org>
+
