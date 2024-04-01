@@ -1,95 +1,50 @@
-Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from msa.smtpout.orange.fr (msa-209.smtpout.orange.fr [193.252.23.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6732B1474C1;
-	Sun, 31 Mar 2024 16:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=62.96.220.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711902491; cv=fail; b=pO3+CUCBkbjJdWJJcKBsl/hbSwxH9bt6kAviAjv/24oqmfSKLiq8sMGfMG7FWAXBht/BTIipujsRIqWaChYH2op8qhDq7dAKk/yKroNRKy24NveudRGRFgNfL47YqEfk197O9WVdBNhb5lhocGbrUa7H0DDwvbBDMsbMWLUFFZg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711902491; c=relaxed/simple;
-	bh=NnGqycWyMgrqtn4VdYQ5lLrY/jrFOUXth/lMty4JYP8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rrYjYUAczfgGVUqKiIctzBIPRV+0RV17codTK5mvJy1zsGfmqqOJE41iRMOk+pgdeyCmHLCry6Q5jVYgjkNx6NLr6rogFxjg3mmCVULhlf0oeGj2VTIsONR+0wl9GnDji/iqYMFFiOiiKt4+obnRz6igrpVBYtuGRcrjfGYEQP0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=fail smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=j1aCOlEw; arc=none smtp.client-ip=80.12.242.16; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; arc=fail smtp.client-ip=62.96.220.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="j1aCOlEw"
-Received: from localhost (localhost [127.0.0.1])
-	by a.mx.secunet.com (Postfix) with ESMTP id 099DC208C2;
-	Sun, 31 Mar 2024 18:28:06 +0200 (CEST)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-	by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id tterbB3-3B2R; Sun, 31 Mar 2024 18:28:05 +0200 (CEST)
-Received: from mailout2.secunet.com (mailout2.secunet.com [62.96.220.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by a.mx.secunet.com (Postfix) with ESMTPS id DCE6E2082B;
-	Sun, 31 Mar 2024 18:28:04 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 a.mx.secunet.com DCE6E2082B
-Received: from cas-essen-01.secunet.de (unknown [10.53.40.201])
-	by mailout2.secunet.com (Postfix) with ESMTP id CFF17800056;
-	Sun, 31 Mar 2024 18:28:04 +0200 (CEST)
-Received: from mbx-essen-01.secunet.de (10.53.40.197) by
- cas-essen-01.secunet.de (10.53.40.201) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Sun, 31 Mar 2024 18:28:04 +0200
-Received: from Pickup by mbx-essen-01.secunet.de with Microsoft SMTP Server id
- 15.1.2507.17; Sun, 31 Mar 2024 16:23:46 +0000
-X-sender: <netdev+bounces-83495-peter.schumann=secunet.com@vger.kernel.org>
-X-Receiver: <peter.schumann@secunet.com>
- ORCPT=rfc822;peter.schumann@secunet.com NOTIFY=NEVER;
- X-ExtendedProps=BQBYABcASAAAAJ05ab4WgQhHsqdZ7WUjHylDTj1TY2h1bWFubiBQZXRlcixPVT1Vc2VycyxPVT1NaWdyYXRpb24sREM9c2VjdW5ldCxEQz1kZQUAbAACAAAFAAwAAgAADwA2AAAATWljcm9zb2Z0LkV4Y2hhbmdlLlRyYW5zcG9ydC5NYWlsUmVjaXBpZW50LkRpc3BsYXlOYW1lDwAPAAAAU2NodW1hbm4sIFBldGVyBQA8AAIAAAUAHQAPAAwAAABtYngtZXNzZW4tMDEFAA4AEQAuyVP5XtO9RYbNJlr9VbVbBQALABcAvgAAAEOSGd+Q7QVIkVZ3ffGxE8RDTj1EQjQsQ049RGF0YWJhc2VzLENOPUV4Y2hhbmdlIEFkbWluaXN0cmF0aXZlIEdyb3VwIChGWURJQk9IRjIzU1BETFQpLENOPUFkbWluaXN0cmF0aXZlIEdyb3VwcyxDTj1zZWN1bmV0LENOPU1pY3Jvc29mdCBFeGNoYW5nZSxDTj1TZXJ2aWNlcyxDTj1Db25maWd1cmF0aW9uLERDPXNlY3VuZXQsREM9ZGUFABIADwBgAAAAL289c2VjdW5ldC9vdT1FeGNoYW5nZSBBZG1pbmlzdHJhdGl2ZSBHcm91cCAoRllESUJPSEYyM1NQRExUKS9jbj1SZWNpcGllbnRzL2NuPVBldGVyIFNjaHVtYW5uNWU3BQBHAAIAAAUARgAHAAMAAAAFAEMAAgAABQAWAAIAAAUAagAJAAEAAAAAAAAABQAUABEAnTlpvhaBCEeyp1ntZSMfKQUAFQAWAAIAAAAPADUAAABNaWNyb3NvZnQuRXhjaGFuZ2UuVHJhbnNwb3J0LkRpcmVjdG9yeURhdGEuSXNSZXNvdXJjZQIAAAUAIwACAAEFACIADwAxAAAAQXV0b1Jlc3BvbnNlU3VwcHJlc3M6IDANClRyYW5zbWl0SGlzdG9yeTogRmFsc
-	2UNCg8ALwAAAE1pY3Jvc29mdC5FeGNoYW5nZS5UcmFuc3BvcnQuRXhwYW5zaW9uR3JvdXBUeXBlDwAVAAAATWVtYmVyc0dyb3VwRXhwYW5zaW9uBQAmAAIAAQ==
-X-CreatedBy: MSExchange15
-X-HeloDomain: b.mx.secunet.com
-X-ExtendedProps: BQBjAAoANKPp8x1Q3AgFAGEACAABAAAABQA3AAIAAA8APAAAAE1pY3Jvc29mdC5FeGNoYW5nZS5UcmFuc3BvcnQuTWFpbFJlY2lwaWVudC5Pcmdhbml6YXRpb25TY29wZREAAAAAAAAAAAAAAAAAAAAAAAUASQACAAEFAGIACgDoAAAAlooAAAUABAAUIAEAAAAaAAAAcGV0ZXIuc2NodW1hbm5Ac2VjdW5ldC5jb20FAAYAAgABDwAqAAAATWljcm9zb2Z0LkV4Y2hhbmdlLlRyYW5zcG9ydC5SZXN1Ym1pdENvdW50BwABAAAADwAJAAAAQ0lBdWRpdGVkAgABBQACAAcAAQAAAAUAAwAHAAAAAAAFAAUAAgABBQBkAA8AAwAAAEh1YgUAKQACAAE=
-X-Source: SMTP:Default MBX-DRESDEN-01
-X-SourceIPAddress: 62.96.220.37
-X-EndOfInjectedXHeaders: 12995
-X-Virus-Scanned: by secunet
-Received-SPF: Pass (sender SPF authorized) identity=mailfrom; client-ip=139.178.88.99; helo=sv.mirrors.kernel.org; envelope-from=netdev+bounces-83495-peter.schumann=secunet.com@vger.kernel.org; receiver=peter.schumann@secunet.com 
-DKIM-Filter: OpenDKIM Filter v2.11.0 b.mx.secunet.com 083FD2025D
-Authentication-Results: b.mx.secunet.com;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="j1aCOlEw"
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
-ARC-Seal: i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711787619; cv=none; b=uHKInowc5QXZTdrGWSIcO1HyNtkmN/yXJf6teQACgNnAOrVX0WD4ZHeqR1u24I5RS2YXjouYaPoh9lWdEa/mB8bHZv47RxEJNI6jJwR/S8eXJzxNXXZQn3TKAGGaR891zFa0B354Pf/FTpkY+VOleJ8f6zZ5kCjJl+iUo58nkuM=
-ARC-Message-Signature: i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711787619; c=relaxed/simple;
-	bh=NnGqycWyMgrqtn4VdYQ5lLrY/jrFOUXth/lMty4JYP8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jc5Wq0X6t9/HKjHv7+OsBYJHgS5uC5wJbhTuMvLle6eMIUemfPDnMn2/KPObue5FVnZuUj0kzsJ+V6r6+kUkz4vB6y3xwKd5WWBs0DGyG3SFtd9lAsQVfgBqnTTQ0BigN0qAPz/AvU2GXTGFiQ4GeXgZqYjAPc71T3QTMLp/C4Y=
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=j1aCOlEw; arc=none smtp.client-ip=80.12.242.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC72383BA;
+	Mon,  1 Apr 2024 13:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.209
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1711976911; cv=none; b=UEdUH/Zu68KanzNjSc6dY9ZxPmnJooV5HvVMUIuRCbpzKzTbr4aSbPB9g6Su3EoLYS5n5yKgfK7SG9FG6id/QetcuvKEu/BXHtNWCRQS6Dk2XfB/x4SHb53WNPQslN0zhi/mze7Rj2Mxcuw/2jyMAGe6TbOwQguTRUsu/N4+rPA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1711976911; c=relaxed/simple;
+	bh=3j7ZintJt6IY5YGQgufV4/rhKwMzKzmHz80qDoMWNpw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ASQf53s+6DkcTkkPOQU7xjkL4aIturJuSZGCDxf8KZia1kFovQbXwUrF4F+E9Wk/8Pi68YQ91liWyCz03RGiHFW6SU10oyGdU+bYw3SOeHDztqNDd8aVLcQ8sXeEN2WEvzc7QXYhj+43DJsEPkrkzMfNHH4PKMvD2ykmEQPpd/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gKtEF0Vm; arc=none smtp.client-ip=193.252.23.209
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gKtEF0Vm"
+Received: from fedora.home ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id rHOirI9t6uWdGrHOirOs7H; Mon, 01 Apr 2024 15:08:26 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1711787541;
-	bh=W45diehFRu0ilTy3yuLbniJUjWNxtFJBsavO8BYE9DU=;
+	s=t20230301; t=1711976906;
+	bh=98Z2FPBJRx39uUlwlsoLLukd26uFSpPNJzTdkcV+H8w=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=j1aCOlEwaqP6X3Kc2oB+BS0/FjHi9NYqu72fOLHMt60i9oCMlvfd28cTRXXjCmMna
-	 IrzUx3b0TbYkGaVXr10a4dzj4/aAVz0EqKP42YqmiSaQXDrEE9cgeqgVwM1tZuIL1/
-	 7zdmEKZylV928aOgF5ltoCVKQ4pg4SkMOrPBVIFesZ6Rj0KMHVeXSg+Lf/neZDty3/
-	 +gb4O+iQmJ/lxHcctOKlw0OKsglVHwJ6Oesq/qrmZAA+N4xSyKZKLJ7G6ZkalID+hD
-	 KkQ9af6ngzwIjF7L5BVZOa1ApDJXX8IFZ599QOycC5h/uy30lk4gMxPGX8j9ZjE2t0
-	 7JqztYzCMuEUQ==
+	b=gKtEF0Vm22hOmvVP8w6nKcQh5fM++77MKgJMF9Kn/o4hD9TNHriG3fQoUlowHZAHJ
+	 NC7HGj449Mwrhz6bFSTkQCeObs7suwY6heb8Myi68AYHyFT+BE0HZBXaCID9uW8KO7
+	 0BlTf4PgYxGFhUzKatCX00j2qZ0tLmuPmw5MjXVzw9Ah1C5TrSXy1lVyFhrcE/ihiH
+	 bbV/CsipxrgwoY443nyTUVWMOz2heEJSZNtbmYV95/IooilM647eM+YCo9y/8M82mV
+	 dVFQfsNonO2xFXqyNgWSI3AT5jmRYpg+wkT8bBZ1AJCgJCMtOz/NsH06r8EvVnUC0o
+	 kQ+5itbwPD8ng==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 30 Mar 2024 09:32:21 +0100
+X-ME-Date: Mon, 01 Apr 2024 15:08:26 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: rkannoth@marvell.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, <netdev@vger.kernel.org>
-Subject: [PATCH net-next v2] caif: Use UTILITY_NAME_LENGTH instead of hard-coding 16
-Date: Sat, 30 Mar 2024 09:32:12 +0100
-Message-ID: <8c1160501f69b64bb2d45ce9f26f746eec80ac77.1711787352.git.christophe.jaillet@wanadoo.fr>
+To: Moritz Fischer <mdf@kernel.org>,
+	Wu Hao <hao.wu@intel.com>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Tom Rix <trix@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-fpga@vger.kernel.org
+Subject: [PATCH] fpga: altera-cvp: Remove an unused field in struct altera_cvp_conf
+Date: Mon,  1 Apr 2024 15:08:21 +0200
+Message-ID: <7986690e79fa6f7880bc1db783cb0e46a1c2723e.1711976883.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.44.0
-Precedence: bulk
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -97,50 +52,36 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
-Message-ID: <20240330083212.MmjlO_i-m5cyGr7v9Zcvr9_Wk0p7Mv0OK_KmmH29Yl4@z>
 
-UTILITY_NAME_LENGTH is 16. So better use the former when defining the
-'utility_name' array. This makes the intent clearer when it is used around
-line 260.
+In "struct altera_cvp_conf", the 'mgr' field is unused.
+Remove it.
 
-While at it, declare variable in reverse xmas tree style.
+Found with cppcheck, unusedStructMember.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Changes in v2:
-  - Declare variable in reverse xmas tree style [Ratheesh Kannoth]
+Apparently, it has never been used. It is not a left-over from a
+refactoring.
 
-v1: https://lore.kernel.org/all/af10f5a3236d47fd183487c9dcba3b3b3c66b595.1710584144.git.christophe.jaillet@wanadoo.fr/
+The address of the 'fpga_manager' is handled via pci_[s|g]et_drvdata().
+
+Compile tested only.
 ---
- net/caif/cfctrl.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/fpga/altera-cvp.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/net/caif/cfctrl.c b/net/caif/cfctrl.c
-index 8480684f2762..20139fa1be1f 100644
---- a/net/caif/cfctrl.c
-+++ b/net/caif/cfctrl.c
-@@ -201,14 +201,14 @@ int cfctrl_linkup_request(struct cflayer *layer,
- 			  struct cflayer *user_layer)
- {
- 	struct cfctrl *cfctrl = container_obj(layer);
-+	struct cflayer *dn = cfctrl->serv.layer.dn;
-+	char utility_name[UTILITY_NAME_LENGTH];
-+	struct cfctrl_request_info *req;
-+	struct cfpkt *pkt;
- 	u32 tmp32;
- 	u16 tmp16;
- 	u8 tmp8;
--	struct cfctrl_request_info *req;
- 	int ret;
--	char utility_name[16];
--	struct cfpkt *pkt;
--	struct cflayer *dn = cfctrl->serv.layer.dn;
+diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+index 4ffb9da537d8..6b0914432445 100644
+--- a/drivers/fpga/altera-cvp.c
++++ b/drivers/fpga/altera-cvp.c
+@@ -72,7 +72,6 @@ static bool altera_cvp_chkcfg;
+ struct cvp_priv;
  
- 	if (!dn) {
- 		pr_debug("not able to send linkup request\n");
+ struct altera_cvp_conf {
+-	struct fpga_manager	*mgr;
+ 	struct pci_dev		*pci_dev;
+ 	void __iomem		*map;
+ 	void			(*write_data)(struct altera_cvp_conf *conf,
 -- 
 2.44.0
-
 
