@@ -1,96 +1,114 @@
-Received: from msa.smtpout.orange.fr (msa-209.smtpout.orange.fr [193.252.23.209])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150E04E1D5;
-	Mon,  1 Apr 2024 20:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07B754744;
+	Mon,  1 Apr 2024 21:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712004616; cv=none; b=oQIcSQFbIFEyz/y7l6E+9vQYU/hZlqw9CVbjtc7fSE6yCg5KgEyeLhmWlg4oEnTXXl3OUM3NMazV8uh4YT64qCNE4KMZAwY0v6RN7o7/iuzvzNOhEWFfm6jBa9+v7/zJLRNXAdA3noFqUgtqAjI9t/RGNP3Z5xKpaq1aNyGGn/w=
+	t=1712008447; cv=none; b=iXCwE3481b6mbj2qk6OgAr2nSEcQG8DcQL06Lh2JOGNRGhvlMw9AsLUfEv4kfUcCXASubE513gF7er5krDr3tKN0ZIobTbsgfv2Zcz2ydlWNv3/rKn+7Z/MbrhXX1DuhwcMnDjTo/cfdue4Tl5I4U2NYVPKvHDfojgOWrm+FjX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712004616; c=relaxed/simple;
-	bh=VKgxvyuMDn6pPuzrSQH/fyXU71CRcxvmHV5mShrhvU4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=srOgBqivxnNESPDECyDSDCvFNvTQ95lxotCoMfaD6X+scOUE9hgVl4XNHeKCJSYYXpI0QC/5CCtAS5K4bXKXh9OLTiBUTrj1A2hJIAgQ+xts9jhUu7v/x1l3vVDiwEU3qZYKO6HhFE2XXOQKPpLuj8YHp4pUwjtQ9cdzyaSdYNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=byCKusv8; arc=none smtp.client-ip=193.252.23.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1712008447; c=relaxed/simple;
+	bh=Tby9SwNmyiiwFffC8TGSgy7B+o5zysI1sDIz1lHUBUA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=U8ob47F6NRblBaFRuaVcPdKXyy1IEcvqVuxlYo/W5oH9v2RPo+mGNoB5dZAiI48Nlsxw1+EraMFR9MimHyydq9IMI7ddbUxR32M8dj60bqYVz7q108heblVnyjxLrIhKL2EnvSH1ysLAThqfbBxa+o22dwlvLM7jkibl38PhPQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PLgkaOvc; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="byCKusv8"
-Received: from fedora.home ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id rOaSrTguCRo54rOaTrI000; Mon, 01 Apr 2024 22:49:03 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1712004543;
-	bh=VPi98jZXacwHLVzFnIc7JUWg7LJMcQPKff2POQefCl8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=byCKusv8wkGLaFBaQFNvZ5G2kLW3RWNvThLQQygSe4RTcCOdA6jG9JascXZynUFlZ
-	 MHXcF1oKKwslBSp5r+R0wD5D2YuhMvCr7lGoKdOnifttuEoe/S0i0zlBhJWsVJP/rC
-	 Ae/+eVgT2pCScoEUlXmec83fcVkBjYQDm+kEQrI3vsilo5u5jybTmI4yZ1bdsf8PjL
-	 /CyUHTq4djDRlTVdRkS6Gy5GNOSOR5bLFdumIV2wO+FxQ8+xoAoc3YrvK2I3s3PoJ3
-	 xUMyciEpw0oZ9v3rYfcDWSu/n7ijHBVJXXzNJUwcuvFbNAUseeMS5g422Tns91Eq/f
-	 YTR7sA2fxIR9A==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 01 Apr 2024 22:49:03 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Tony Lindgren <tony@atomide.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-omap@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH] pinctrl: pinctrl-single: Remove some unused fields in struct pcs_function
-Date: Mon,  1 Apr 2024 22:48:55 +0200
-Message-ID: <a6b653642298d35b1e3656e9bfc6d1b322fbbe68.1712004518.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.44.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PLgkaOvc"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4156dfa8a75so5755625e9.1;
+        Mon, 01 Apr 2024 14:54:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712008444; x=1712613244; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7iUisfySJlUpllNR1rWEURtls5OEygug/FNDU7BTr2s=;
+        b=PLgkaOvckSLZFhcbiTgZ+Rm+crQYhIIZjtdgwNhzJjVhhL9pNRNO5ux83PscgMDVkA
+         Hake7xlFY/+LjAuS/HRygDX4oXjDIgPvYVjt8RcWBZ1nxzlHkuJvbHKa8DAud9waB/pL
+         ZInm6bSqReIgbGkEee6dZBH1eeXK3oNXnZ/TgIIt4du3s6UKGbyFMsn3Hx8sUzWUxa/1
+         W+tqwPNGXOtQYk6aJ+lnXdf9XCDe9Xk4cDT+kTSBS6KiA2hRax+phasepFG79SxnMNKH
+         o3RVT7AqsZp+nEN3Ri+RMS2eEP4eD4sRK80v4S3UcdkTtK45IxXfNPKjwHFnv8l4+ypp
+         vcBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712008444; x=1712613244;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7iUisfySJlUpllNR1rWEURtls5OEygug/FNDU7BTr2s=;
+        b=OSpicp1fjbqM+LCQEVsrVZ7vYklq/cl23ourlJmedL8MBZT+yUshhYKWNXV1guJgV0
+         oXpnFYvIwdoveH2vEIST0ww+iooQXXhNSApfcL+54wTCp1Z41ThWCYRrPN+/ulewwM1z
+         rZT4yoQ0WWAxOh+kuBJ8PCR0uV7oi5qKPNqyhQ/zeu0yWKgcPIUp01e9WQwyi9m9XB+7
+         /ocseaPyNGDQnXO7ugQgZ23cBIvgGhA5cnhV7E0/qT+u31fukimmCfyZm1XgiAKI1CtX
+         SjRvyXIhU1+wMvd91GYSirD6B3rECRMeBQAmMMgZ2KBxum2iCRDdGJkKVUc+a0RsdzXa
+         TuqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVduxiKKB0WEspqdN3OtbQZ+87A5NdTwdcTjoTQMLaPraDrQCgVsaYucB/qNAzwd3/o/K3lGvB8GfrLchZjLI7IRxK76TW0CLMSbhxy5A00TeHgEFYCkwDsIPZLXMDXqm+wub1X5xWF9jrVUYA=
+X-Gm-Message-State: AOJu0YwGV6BhSjcYIKWFxocMqw1O2R5RnMl38YYr2sbF3vOaudRoCEtd
+	ufAoVo9BRA+fIyrgsDobtmf4w3XbRocZCsykigEmx2/t9ajJSljz
+X-Google-Smtp-Source: AGHT+IHW+hjEDlhg1rFNI/CeLAEyX5Id3FTjduFBw8r0aS5TowLPLl1mAVPweSZ8nfwwdF13N0ZmPA==
+X-Received: by 2002:a5d:648e:0:b0:33e:c528:c900 with SMTP id o14-20020a5d648e000000b0033ec528c900mr9509436wri.55.1712008443930;
+        Mon, 01 Apr 2024 14:54:03 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id di6-20020a0560000ac600b00341c9956dc9sm12506046wrb.68.2024.04.01.14.54.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Apr 2024 14:54:03 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] wifi: brcm80211: Fix spelling mistake "ivalid" -> "invalid"
+Date: Mon,  1 Apr 2024 22:54:02 +0100
+Message-Id: <20240401215402.1348565-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-In "struct pcs_function", the 'pgnames' and 'npgnames' fields are unused.
-This is a left-over from commit 571aec4df5b7 ("pinctrl: single: Use generic
-pinmux helpers for managing functions");
+There are spelling mistakes in bphy_err messages. Fix them.
 
-Remove them.
-
-Found with cppcheck, unusedStructMember.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-Compile tested only.
----
- drivers/pinctrl/pinctrl-single.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index 19cc0db771a5..2261d4663d19 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -81,8 +81,6 @@ struct pcs_conf_type {
-  * @name:	pinctrl function name
-  * @vals:	register and vals array
-  * @nvals:	number of entries in vals array
-- * @pgnames:	array of pingroup names the function uses
-- * @npgnames:	number of pingroup names the function uses
-  * @conf:	array of pin configurations
-  * @nconfs:	number of pin configurations available
-  * @node:	list node
-@@ -91,8 +89,6 @@ struct pcs_function {
- 	const char *name;
- 	struct pcs_func_vals *vals;
- 	unsigned nvals;
--	const char **pgnames;
--	int npgnames;
- 	struct pcs_conf_vals *conf;
- 	int nconfs;
- 	struct list_head node;
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index b99aa66dc5a9..5fe0e671ecb3 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -4549,7 +4549,7 @@ brcmf_configure_wpaie(struct brcmf_if *ifp,
+ 
+ 	if (!brcmf_valid_wpa_oui(&data[offset], is_rsn_ie)) {
+ 		err = -EINVAL;
+-		bphy_err(drvr, "ivalid OUI\n");
++		bphy_err(drvr, "invalid OUI\n");
+ 		goto exit;
+ 	}
+ 	offset += TLV_OUI_LEN;
+@@ -4588,7 +4588,7 @@ brcmf_configure_wpaie(struct brcmf_if *ifp,
+ 	for (i = 0; i < count; i++) {
+ 		if (!brcmf_valid_wpa_oui(&data[offset], is_rsn_ie)) {
+ 			err = -EINVAL;
+-			bphy_err(drvr, "ivalid OUI\n");
++			bphy_err(drvr, "invalid OUI\n");
+ 			goto exit;
+ 		}
+ 		offset += TLV_OUI_LEN;
+@@ -4622,7 +4622,7 @@ brcmf_configure_wpaie(struct brcmf_if *ifp,
+ 	for (i = 0; i < count; i++) {
+ 		if (!brcmf_valid_wpa_oui(&data[offset], is_rsn_ie)) {
+ 			err = -EINVAL;
+-			bphy_err(drvr, "ivalid OUI\n");
++			bphy_err(drvr, "invalid OUI\n");
+ 			goto exit;
+ 		}
+ 		offset += TLV_OUI_LEN;
 -- 
-2.44.0
+2.39.2
 
