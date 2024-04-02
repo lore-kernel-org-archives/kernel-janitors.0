@@ -1,159 +1,138 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE6D13541B;
-	Tue,  2 Apr 2024 16:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712075059; cv=fail; b=Agltyoic/M6DdyR8+p4Ko2cGxqN3QpHXOQm34fnKS6zUxQA49w2ZMjE0DdVbZsqBKR1rYhIj3yB8FHBdGZ2GmLk/BgkVwCAvChKEYpfF+tGTlAm7ZKGaguOSGWexXpuy0YphF6Xspoh/eh8vmdZ6GUygFSN6C+0uZWW52a8q6Mg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712075059; c=relaxed/simple;
-	bh=wZm4MU3AAIAGTMsX+Q0lyoE2B6larj/Go7M1CiVdG9M=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=So6Julfb8eHWU3Enkqr9DHawtLU42sR3+PmTWDxWsMBOOEt/eaCT0Nh5SH7MK7rsf3p76GLwet95Vx9cgyvyVwJgX+Qkuzb8fvS+oBrICo+7Gs+2bZ2+stQ2zOHtOrIYF8Or6RrkNmYOWTT9RXm8BEC1+u7bFBXPpwLeR4Ykt74=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jc9cyXyW; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4331756A
+	for <kernel-janitors@vger.kernel.org>; Tue,  2 Apr 2024 16:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712075613; cv=none; b=O3JF09CYz9WNUa2pReBAtb9Qg1Of7t4TMG7kprN2B8Us7DM0G6l1K54VrWohd8Orbp3PZtXdlyz5Hje2XlJHzqOrQVK1nRnWg0XFudmUEM2/VRaycHD5dgUoyfYPmCkLueMzxgtl4oR4zFM1LAIZ4KRmFow8DZz7I5t9ZgaLi5M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712075613; c=relaxed/simple;
+	bh=QTAUVY7LfjE56ADj75f0WHyMKTN0jzSyXtQIY6XP++A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ukeiA/pYnHldI1a8bzUA0grBw29hvfLbAWP/7jq6ceiIDeC+YCj3/Bb8iFV/Y2zLyEpsvMTgkYYTPnOQyvkpy8IvBb66ll7MdQuNDH0UfIzsWD1L410y6C9814ZhW3Pbv68hKb9iEydlivDNny8lqpTVCipN9ilXdaZiKTBzcOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ulL8ERGG; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jc9cyXyW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1712075058; x=1743611058;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=wZm4MU3AAIAGTMsX+Q0lyoE2B6larj/Go7M1CiVdG9M=;
-  b=jc9cyXyW+pHmrAFMsIoqSsjMbNh10gQzPCP+1mKSp8+r4YemEwIu2yCj
-   xp5K0WQaeW5gT1+kCQNEjFpLF1MHbXZaEMWr6yj3fzbpuPKtN3VEo/M1U
-   xlZVKjkE7R3DhKtFWttZTmdWlVvMXb/OTx4i0J4DUYw/qa7rUigaKCfmc
-   yUJ//SfF2aEze9cwYanWv6fhu/lWJKXBN02G0Ol00b8fP9IhSJgpoaoEP
-   gi/2Qt9EvmBKjgGCHL0yuQorNqgqGSBFf8gf4BdEulcb7OB+dhHbvHrX/
-   Ri/zxHfPBHAb9f/67JA6eUO7SdAiRSj7hQeIf7j5Fwi0hpkHM3nmu1lVC
-   w==;
-X-CSE-ConnectionGUID: Z7Lu2og7T6+eTdcbeZZ/jw==
-X-CSE-MsgGUID: PAP7VgQ7S7edhexk5j7MlA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11032"; a="18621700"
-X-IronPort-AV: E=Sophos;i="6.07,175,1708416000"; 
-   d="scan'208";a="18621700"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2024 09:24:17 -0700
-X-CSE-ConnectionGUID: thby8Z+ZT+ah0DO4uKzlAA==
-X-CSE-MsgGUID: NcjKvGiBQCChNLAZ4XcEuA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,175,1708416000"; 
-   d="scan'208";a="22829584"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 02 Apr 2024 09:24:16 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 2 Apr 2024 09:24:15 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Tue, 2 Apr 2024 09:24:15 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.40) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 2 Apr 2024 09:24:15 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hyukT9uGppB5ImEDI5ioFTlJPYFsimn4V/IA2HjU9GMYckHkW2SyR5xu/9vVZj5B7X+S5MJ3EArjN7OIuaiDpO/c9Ew1RFuWrwH3uBAU1/cSjEjGu+/7jYQRsUDXj9GsPkbSHecMqCR0k0BnsfkSQw5ip0oDAKxm3qlBGsyaz2P3Ce41FyC5KQAHj8iq2LwKjKeVOPYo0NJAW+tBVLAkKBIU2kibMteApRzQOCFUwXdy3HOl3mjk6aGA2Q2sQ4FJTLRyTFhX72mJmoVlgVbbB9TOFiVHraun308qYPTeJ5/DAZWFqSwFAd/tIK6C9e4+9ZFhgdZcmG7tQkrLLJ0xfg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W2l/w4gDAn2FilbtRTxVH1/4LKfeNZSn+4ZI4ZlOk0g=;
- b=hI66M/GF6TvLMp/JbTH6AgAegeFawtHAwVLYrwoTxMCNPtR+xcudvwalwhylCieZW+FTc2yHUqswUtOWyuL+ntHxPGI35LgPtnXO6Qy5heZDwyRYV/JVc2ad5eet6r1hEoxYaALpokBypca35Hi7aQ7qtfb9prpHdguHnLt2oOi8mLQnGPwiAPVjfZKnQfrMxQcntCpzHOcluf3ZjOOBq8DZNmtc8TjLRJuWbToVYw7uyPjDUcARS206DQsmTAOPwEl9a1mJRkmGhrUNnrNgm4IgBoAm5yTOAvmQSHlH9tOwC/eR0SyG8oSB6IoGJyty4N+jIovOwLHfUDGUN9xvxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CY5PR11MB6366.namprd11.prod.outlook.com (2603:10b6:930:3a::8)
- by MW4PR11MB5776.namprd11.prod.outlook.com (2603:10b6:303:183::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7452.26; Tue, 2 Apr
- 2024 16:24:13 +0000
-Received: from CY5PR11MB6366.namprd11.prod.outlook.com
- ([fe80::90e5:7578:2fbf:b7c4]) by CY5PR11MB6366.namprd11.prod.outlook.com
- ([fe80::90e5:7578:2fbf:b7c4%4]) with mapi id 15.20.7452.019; Tue, 2 Apr 2024
- 16:24:13 +0000
-Date: Tue, 2 Apr 2024 17:24:08 +0100
-From: "Cabiddu, Giovanni" <giovanni.cabiddu@intel.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-CC: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller"
-	<davem@davemloft.net>, Xin Zeng <xin.zeng@intel.com>, <qat-linux@intel.com>,
-	<linux-crypto@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] crypto: qat: Fix spelling mistake "Invalide" ->
- "Invalid"
-Message-ID: <ZgwxKIsk+vDIUiI8@gcabiddu-mobl.ger.corp.intel.com>
-References: <20240402081355.1365780-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240402081355.1365780-1-colin.i.king@gmail.com>
-Organization: Intel Research and Development Ireland Ltd - Co. Reg. #308263 -
- Collinstown Industrial Park, Leixlip, County Kildare - Ireland
-X-ClientProxiedBy: DBBPR09CA0041.eurprd09.prod.outlook.com
- (2603:10a6:10:d4::29) To CY5PR11MB6366.namprd11.prod.outlook.com
- (2603:10b6:930:3a::8)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ulL8ERGG"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-515a81928a1so8892955e87.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 02 Apr 2024 09:33:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1712075609; x=1712680409; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8eBAi60q8FF9/ONXl+YI1oi2f67+yFwmO1MPFJZV80Q=;
+        b=ulL8ERGGKXeEFz5R0MhpuFgRwSFXGJWtMnM5j6yjlITyniONZ7Dns10Da7oDlzKkkK
+         DhaJURcpz4EXYT9b2wg5I840E3bWyL4hePlx4KQJ8Q5N1tGmz56/VRTvb+WPac7aVEDS
+         6lPqCLWMCx2YyUB77ZCQpdQV3aH1PxSurdFQ+B87IymO5uAyhISM7Q10GpoImLSjCSeo
+         4VUa9ZatmvakTPZ8UcpsuBXP0BmrU98/kE1z5h9ePwujV5S/9fR+g3BALQ7H0sUo54Ne
+         tBGaVu3h5y9qsXdJEQilEpo9hLzADjYoqUDLHqoGaH+wW7kqlU8Fx4WHNkGTTTy5Ay3p
+         QAkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712075609; x=1712680409;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8eBAi60q8FF9/ONXl+YI1oi2f67+yFwmO1MPFJZV80Q=;
+        b=qMG5R6fCG/K3HtWO9AN0DHkZmC7ts1trwT7lZ6eUISe3AzWTYpKxUQLlRmjx7yZxTB
+         ACbII1wROPpFtaewG5+0cNuOBO/3a/dPawRhK1WKuQkpe8k88PyJil3OCW3LJlduINrV
+         tx8R0pbxAKZtXz4jlbFV7qJOe1nwprimlPzLIs9Nj1sIL3mOKa0aJNovRk3Zw/tTHgdI
+         PW1P+TP2tM+1kkY29cGM8QDG65HCqlskBFZWjkZ/J+71rQAGmYi7T9Sf/8V46F5uBwhF
+         Idqd436tBYw4x7g45fudFC9ObkaS9I2sYRrjLYWdNvWKi46S74CIUJczEJ/xB5rk8uKm
+         EqtA==
+X-Forwarded-Encrypted: i=1; AJvYcCXkfiZUJyGzWaMZrG0Cfqn8/e58HKX+5AnoYDwJo6r+jO41YD5uoFDjr5nB8hpkmNN+bpBL9d2pJFw5/QuaB3T1VYjIbBVEbGiQduNn9sp8
+X-Gm-Message-State: AOJu0YxjQ5Je0+4/Kod4fVytAfjSJZKkH+/3gfFzkQzWqE4DMzjH/7mB
+	//SH7oLzDQnMbImViiqFcR9iA2dYtZMmzD4Yw6BbNvD+PZgGvIyhdxmUvut5tLQ=
+X-Google-Smtp-Source: AGHT+IHIX7s2OjCovkzetlaRfayUzrdv/CIw0hPqydZjXFMP92Xd72ZPjcSjswpyJLynuJFUczcOOg==
+X-Received: by 2002:a05:6512:3f28:b0:515:a9d5:aab6 with SMTP id y40-20020a0565123f2800b00515a9d5aab6mr2176422lfa.18.1712075608669;
+        Tue, 02 Apr 2024 09:33:28 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id o16-20020a1709061d5000b00a4e8cf42527sm846771ejh.121.2024.04.02.09.33.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Apr 2024 09:33:28 -0700 (PDT)
+Date: Tue, 2 Apr 2024 19:33:24 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Grant Likely <grant.likely@linaro.org>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, error27@gmail.com
+Subject: Re: [PATCH v3] drm/panthor: Fix couple of NULL vs IS_ERR() bugs
+Message-ID: <a7d59aee-f8db-411f-9bad-729baff35c88@moroto.mountain>
+References: <20240402141412.1707949-1-harshit.m.mogalapalli@oracle.com>
+ <20240402163838.34003a10@collabora.com>
+ <91e25b42-c3fa-4b69-ab8c-5d79610e757b@moroto.mountain>
+ <20240402171925.41dce3a5@collabora.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR11MB6366:EE_|MW4PR11MB5776:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: YhlMrscUxK36+qjpmgk8i2FP9cgPTDQYMv1v+jwV2Dsb2uKzdLtvAvfS/JbZKS35pTtHovHZ1Vcw2A8UXznrpf3IbdHHQEHl8WrweVt4W2SrDSSgFFQ9yzvA9caTwLcPbYyO7bhCEL6f6xTO1dJ7a8u1fYFhD+CH/DpW/6WwtK8ZoIid2zVe8CUdIJ0L7/dKCOcmdnqdfK8ZZ2RZesD+u1UCJRov7DQyBzF4VrW75laq2mw++P51matfUDXGqtZnRJ/C6IbpYa8Zv6sThbETkjOc/PXNeWZZJoubyqJNKnECXv+QTx9eSncsLeF1OsowbNI8KRKpP0wwWmO0z0UKx7P+TXlwzTCAHeoYo7GlJeQQ41bthFze7PCG157pBj+HM2+vf7g8hEBpnyKU80+DjZeST9IJf79ZOsqlGZ7uwPP1nj9wdvgLQ+of8wtGgJkfvlEOf+UO1Z9oH6BWyXX3vkTK9hQxTuqOpJQVCwpcV17G02Vuz4ja/qH+d1aIY2dcDKiOJu3/XbtvZGKurCuk44xxqglbpOznJwN0ifvARCtve99ysYaBvYezKi4ge/CUU1BAd7OfqGnGughwQdiaPEshH+iwAWxcnCf9n34Tb0gcknQHALqiiz3yZo2gxWxXigjmZImjmQxeyqCtpgES31AdZRCgwD4lD7sYwS2viac=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6366.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?kuXYxnztC/qEZAwPJha8jFAQpLhKJLkCYhXAVYXyTfyo5V4XkyYWo2zLToLQ?=
- =?us-ascii?Q?25+5XvklnU4fAmr9FcPbInMf9t5YViIti/zG9JV2Ff46Gc4OeXc+U3SH72yB?=
- =?us-ascii?Q?Wy79hEeU0169DTgNsQwvIr9w9I4p8c9ay8ZKRQP7cUAov0O3aQqFunYgUahR?=
- =?us-ascii?Q?7Wl2kemjUV1rT4W6FtTKOV38xjYPubbpWUSjVcUAZza2uvmbvy0jHdT2+2c+?=
- =?us-ascii?Q?ve69GfFY66YH9UskVXMrfIpceDv8D2ZhxaC9UHGlHoT0dFrVQIiXA1aLRZhP?=
- =?us-ascii?Q?K94viMEpNLh42/aJqH1RRg5nMJV1WIkMkNdd2CztTU3EFzxAeFb4mddAyxjB?=
- =?us-ascii?Q?cpEEXi+3MbcXpSdU+XS9T2ZY5EcM1gntpIRpE4XnNvldIwqmDWnRCEFyMtHh?=
- =?us-ascii?Q?YjCe5oQUCBBC6UG3eAUfXm3KpXUr2DwdeQbGE1FBBa/CC/Xbiy/oj0iQG850?=
- =?us-ascii?Q?6oqt8whzxYTHvHzj0146+rpYiwyDaxrpoGEvhnaQxJenNIvEktH7xcvCcqiR?=
- =?us-ascii?Q?eDMpl1hXimYRPoNf3By7e0Zd6nC4OMP8aDvKhXfOcy8IZAgkw5PjRKpyOSVa?=
- =?us-ascii?Q?n8EyK//sYBbEA4U9e4zvPZxafm/5bDnsfqsihQjPtnApcCTkLX/eJJrky2VL?=
- =?us-ascii?Q?eOJFZ4jY0WoP3DzZCj0NGzSBVsVy5ehYCKYqoKM44UCaM+2/okwTdq3RuEVX?=
- =?us-ascii?Q?OMY2O0VOmg7F0QF1dfmOuf59yCMzdClaXtt4zFaN5FaE3byJRpOKkRZEz4fu?=
- =?us-ascii?Q?bGI8uMu8EHZ6QCq4hsH8PRAKmTuyrRMPGbfqnfxcI+eVx7nde2IrZ8K/cmkE?=
- =?us-ascii?Q?ig9DRp/B9d9Ao063pfvyItXOWXeVkdiCzmsNFFNEbDTz/vSLbtLoeTlV7LBp?=
- =?us-ascii?Q?X1G/S+TIHRoCUhLhnr1+nzcj7dqwCBbQn1CKEQWs19tiOk5vPFMLVZRWY18o?=
- =?us-ascii?Q?JyVQ0zw/GNqsmKRTfqxeW7fv9uvEAMgO5no/3qcHnIqOy42zGSoyvqqusZBL?=
- =?us-ascii?Q?xBPDwXPRlTK8WSKhzNgLb8Flo8d3jB9KVnI3HBPiJykQCreZj/3dluJ7beSH?=
- =?us-ascii?Q?tg03mOBb83f4eVwdBpmHPISCvHgw4B0K8+HPVGP9XdMkzB3M69X9ga/C0maC?=
- =?us-ascii?Q?Sa8MrBlnKfkawwa5NR6IflOWanH4x/AT3IS4kdURjfvj8ofQzMdzVdNwYJrE?=
- =?us-ascii?Q?aZsV23Ne8LdP8i9ZyDUh4JBJy+4Tzq9CMZiFvnSz7ixT5078818vQJt9XLUA?=
- =?us-ascii?Q?vv7SVmZl0XVE4i7bLN75nb47ZSFxqq8lAMEHmDy6JIK3SxTYCNhonMK0DSIf?=
- =?us-ascii?Q?KUWYBQOeUhfykFsYxbMLRaca/IQknuB+zKEidK0ljoaJd6wlRrX7HZRBG9S0?=
- =?us-ascii?Q?3Odn341oKnwajYhpVM5SiMUgb6R68oKK1OMoySU2gzQgc841DRBBF/swCQrY?=
- =?us-ascii?Q?ndnEqkVcsjtTybXrI8cBElscW5/QhPA52oTaNLONuGMRIoxTaHy8uOgNgO1n?=
- =?us-ascii?Q?oom//SnVq+ubHWJxkblj8taz065mkf7b0J338b1FBA+Me1gDyu01H4YsPdqr?=
- =?us-ascii?Q?sWqIHStKB1Z7iUNpANOrorhdPw84T2L7BAjdxBdaJ0DLP74gwB79CsP+pBgU?=
- =?us-ascii?Q?rg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9dfa0ae-1f52-45a0-4b90-08dc533155b5
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6366.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2024 16:24:13.7361
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zhfEiFhdFDICwZ9DvvK1w/xJPkmEjyosjuf7C23jJnnucTh/qtnUDtmqThXjvpBVp3lQpLwmwhLMk+jcL2ql+VdwFxbJtghkXIEBxyKTVf0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB5776
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240402171925.41dce3a5@collabora.com>
 
-On Tue, Apr 02, 2024 at 09:13:55AM +0100, Colin Ian King wrote:
-> There is a spelling mistake in a dev_err message. Fix it.
+On Tue, Apr 02, 2024 at 05:19:25PM +0200, Boris Brezillon wrote:
+> On Tue, 2 Apr 2024 17:44:18 +0300
+> Dan Carpenter <dan.carpenter@linaro.org> wrote:
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-Acked-by: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
+> > On Tue, Apr 02, 2024 at 04:38:38PM +0200, Boris Brezillon wrote:
+> > > On Tue,  2 Apr 2024 07:14:11 -0700
+> > > Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com> wrote:
+> > >   
+> > > > Currently panthor_vm_get_heap_pool() returns both ERR_PTR() and
+> > > > NULL(when create is false and if there is no poool attached to the  
+> > > 
+> > >                                                ^ pool
+> > >   
+> > > > VM)
+> > > > 	- Change the function to return error pointers, when pool is
+> > > > 	  NULL return -ENOENT
+> > > > 	- Also handle the callers to check for IS_ERR() on failure.
+> > > > 
+> > > > Fixes: 4bdca1150792 ("drm/panthor: Add the driver frontend block")  
+> > > 
+> > > I would explain that the code was correct, but the documentation didn't
+> > > match the function behavior, otherwise it feels a bit weird to have a
+> > > Fixes tag here.  
+> > 
+> > The code wasn't correct, it returned a mix of error pointers and NULL.
+> 
+> AFAICT, this is allowed, otherwise why would we have IS_ERR_OR_NULL().
 
-Regards,
+Yep.  I have written a blog about this:
+https://staticthinking.wordpress.com/2022/08/01/mixing-error-pointers-and-null/
 
---
-Giovanni
+> The fact smatch can't see through panthor_vm_get_heap_pool() and detect
+> that the return value is different for create=false/true doesn't mean
+> the code was wrong. I'm certainly not saying this is a good thing to
+> have a function that encodes the error case with two different kind of
+> return value, but I wouldn't qualify it as a bug either. What's
+> incorrect though, is the fact the documentation doesn't match the code.
+> 
+> > So it needs a Fixes tag.
+> 
+> I didn't say we should drop the Fixes tag, but the bug being fixed here
+> is a mismatch between the doc and the implementation, the code itself
+> was correct, and the behavior is actually unchanged with this patch
+> applied, it's just done in a less confusing way.
+
+Oh.  Sorry, I haven't been following this thread closely and I misread
+the code as well.  You're right that the code works.  In this case, I
+would say actually that it does not need a Fixes tag because it's not
+a bug.  It's just a cleanup.
+
+Sorry for the noise.
+
+regards,
+dan carpenter
+
