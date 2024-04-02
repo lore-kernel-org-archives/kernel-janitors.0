@@ -1,67 +1,69 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0895A0E0
-	for <kernel-janitors@vger.kernel.org>; Tue,  2 Apr 2024 09:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395955B694
+	for <kernel-janitors@vger.kernel.org>; Tue,  2 Apr 2024 09:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712051810; cv=none; b=ooey+4/3+sImT76VI281P02tvRoTdLyce8A3BxRUfxq3dGnmcgqYUn0IG34bp9QDnKvhyeVyj9qvga6YMpFJCxE+Kx6Ii8a3uI+MWquFkLuy3T7GwYV93ROhiVAzORJti/GuSgN/rU3n0Usqqb4o3WqndgaHDI5Nri9T1Zl56h8=
+	t=1712051821; cv=none; b=B2IOqICEuQOC23hymq4fYWX1s68TuqBVKzNyKI4AxcXaKkqVgpJifBU9vK0R8hFIl5ceQ5wUsJTK7tyuOxH2s/mrs0Zpz4DJAulyswN3Exanz8i5dh4EeH4ocEvXhHJKX6NGPbWtKAPokk0YUF3msNtMuZ7Jr43h5kMPUK8KNzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712051810; c=relaxed/simple;
-	bh=teQDxib2Uf+FgdvYVSISC39IdNk+9G89gKg6gn5dyJA=;
+	s=arc-20240116; t=1712051821; c=relaxed/simple;
+	bh=iP61wYLmnnQVWQX/vBTSXN9AMov1jT600DiQQbSBwlI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Zvzw+ZDHWAEkhWVZR77DEHnpYs8tF/Tt6hHkCWZX0UhfSago//6Q4EaRmijKTUlcxg1wfIehMOavmdwBDy+0tjGt8gCNgbAWUYt0GEv8a3onw99lfhvD0v7kP4TigcYAiAkJvCQU7thyK6T2B+XJVHX7bQk/4uo4OE0ckI4RqgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JTdE5dde; arc=none smtp.client-ip=209.85.208.44
+	 Content-Disposition; b=Ey9YNBuOU4sbxPgD2ne7S7fZxYvnUnB0tGU7IKrLz/7fArBahfLgWTH4vNfRm2Q3NXFP8ekUMGukJAyXQ3UGEUBGqh2u+Bdwg0s8XV6JufIUCMzbv8fHPrP2iDEzahvDIPu+fXVsqW5rM193KVabu46ZB0D/9gJybuMgwlBRPBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SkHkeqkj; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JTdE5dde"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-56df1dbb15dso377572a12.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 02 Apr 2024 02:56:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SkHkeqkj"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-56845954ffeso7076732a12.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 02 Apr 2024 02:56:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712051806; x=1712656606; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1712051818; x=1712656618; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=718ZM86+71A8BdEVL2GnpD+8wX4z74S1znydXwGnzcw=;
-        b=JTdE5ddenp7q9/Jb6uWFwA2H5igPP/90C85jklRW0uNyDTQzKAfIrLyLJZfnPDtbz4
-         eoCsyUD1TX8LRymL0pYsQELMdMQ0vWEvOjx6UnhU9PoCoWj2a+qlwQ9hc0CY5LoZ+hhH
-         NU6Zmx8RvIbZSI4EXwoTFpppvLnI2reR9MFxTIWTAUI9HkTWMric0e5ca9af00zV7SIt
-         uGwsN1kRZGQriBZ5k61j+msryZoAdmFx/MKYI8gz69pu1nusOJ1OIzdjdvsWK7F5psjN
-         nSjs3KWTYw1qqIZCuHtfv65ECLyCQ7H+9McbWxhyJqXoUuxSuIYiWcLyGV9hiDizEz2Q
-         H2oQ==
+        bh=VwgQXgoUW3ptEVLp+FHIBGiwI73MMNowi6SZaD84hB0=;
+        b=SkHkeqkj6Y9XZxGuEhACJ7noJvDVA49Zup3UxNSleXZBmN2cLL1xp/0RjmvJyvkC6d
+         vxcmuwrR1GJHRqjlxnbPhbzV4jAESXRE3m/Qbkl0ezYZGQkCi49XYs1ctwry2ukUQLnB
+         nuYXjbd+L+TxHM3bkry+m4jAanAwPpmedZNvUYN9QTGnENqGk/slYD3s/PSuNTf4iAGq
+         76Hgr5bOcmNAi3984+WL1snjjEh/PFbMTA/XOKeO8QF+3dA7yywkCHD/UkHL2npaijGt
+         mAQed/iDZmfWw3MXsyUPSx6OUKYuU3QHsS2Ls2Xox0lP0fpXEm2dCd6B4SB9Kd0kGeIB
+         xVvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712051806; x=1712656606;
+        d=1e100.net; s=20230601; t=1712051818; x=1712656618;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=718ZM86+71A8BdEVL2GnpD+8wX4z74S1znydXwGnzcw=;
-        b=Zq5zqjTla9sbHOXCNuiFSxgy2p35EA3GT7/QUFuyfLgfOH9vswm1Aj6njhXrxEfNWS
-         InCQsAaViYVLSDTWlvJtGU0oi3z7qAk5gGVKJT7A1ODMzhLxAZQAgnwULNu97oF3sBdy
-         CQF9zhV5UOTR/JiouMVlYH+W1j1UiHVZjCqiOgk88djKlOt4uZBqbmDPFrQtF5EnmcT/
-         iMMKVtsEn6b4rTF+6f4w4hXUGgRCIcMc17rdHJNG1o3hkGvsHdRoQBp+nIZrHFzQbcdB
-         q83wsaExier2GDNpVGgjifHKOkiW6dSjFkbwQMivj64MYN9poI+EpzrP2VLcwpehWBlk
-         OPow==
-X-Forwarded-Encrypted: i=1; AJvYcCUUgyMA8EEppFCeedt4ozUls5ZUIZO/mAV+06jogqhL+UXi6XgiZfbYdEEksfuA0JOiw2SrhWRkA30LMUIlJgL3tITrY+yVKp9HWhTAkYSh
-X-Gm-Message-State: AOJu0YzWSmw06MubC8Z5sIwpZL+ZgL4WT/4QLqPuyX4zx7ecBTNqyQ59
-	zbthj5AGYtUC7lW9mkxts447vbRCtMpD09Xqw80r8QjLFw8QAgq/Xacnyw/lmNQ=
-X-Google-Smtp-Source: AGHT+IEJjgwUkgIFH8v8m5U7taah5woPEVoICpVprECTBBshSjtqYr7X1fMj5MRpzZPnXQqCG7ctQg==
-X-Received: by 2002:a05:6402:4311:b0:56c:197a:76e2 with SMTP id m17-20020a056402431100b0056c197a76e2mr9137367edc.0.1712051806315;
-        Tue, 02 Apr 2024 02:56:46 -0700 (PDT)
+        bh=VwgQXgoUW3ptEVLp+FHIBGiwI73MMNowi6SZaD84hB0=;
+        b=BwAxyBOpZGFRU7BJCjyQ0OeX7e+Ut7Ev82OAfWUvOQnWMuPYVP4AZoFE7sErMKImz/
+         jPrk0tk1Ld9w46rc5RJh6VUC0v2xYryzyH7xKDbrxWMpsvZaC1cIkdw6eHRlV1pf/QpM
+         2HIi4GzTnAeJadqezzwk7LllNDEia7FXJY0GidCU4dqNtPFQGmSVDb+cAj3VVMq237cp
+         rcw6t/eML/n7NBfa3VZegQepoKhZnoV9ZILV0tBff5r6OGS8BQo1fGpqCt20XAmBGbUu
+         8r7YmvCZEwRGQDbxKZ6+/4eYWJBDbJnMtSF34LdREQ3O8/N10xQGyiI+39/vxBhwKjST
+         vPMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBxhWFoX5BXrN2AZdIuO9FqZcMaz98MjX0EYrIz5TY70IBZWww2JyWGUfb+cVd9ImYvHAlH/EqeyWMpDCvggK6U0L7iTZbfuMpEULHDpWZ
+X-Gm-Message-State: AOJu0YxsGYVsXc3eltqOzfqCE59FESBEEoZ8kbeE2NC1GUniPeokHhLw
+	McFYofQPAIy1QjMeI5cTzrNOuhhC0ncCYqrfOPu93TGl+1cAHDJWcmh/cAcBgtU=
+X-Google-Smtp-Source: AGHT+IGY/ckv5IDWBeqA+lu7NK4+cJGbNGKIoaQ4W6h+blnbepjFmGXMUHAOqLWzHMLmnsm5NYCPaw==
+X-Received: by 2002:a05:6402:27ce:b0:56d:b687:5a57 with SMTP id c14-20020a05640227ce00b0056db6875a57mr8537324ede.20.1712051818415;
+        Tue, 02 Apr 2024 02:56:58 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id dh25-20020a0564021d3900b0056c09fda4e6sm6726525edb.54.2024.04.02.02.56.45
+        by smtp.gmail.com with ESMTPSA id eg14-20020a056402288e00b0056df6ed8f4csm119336edb.37.2024.04.02.02.56.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Apr 2024 02:56:46 -0700 (PDT)
-Date: Tue, 2 Apr 2024 12:56:42 +0300
+        Tue, 02 Apr 2024 02:56:58 -0700 (PDT)
+Date: Tue, 2 Apr 2024 12:56:54 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Heiko Stuebner <heiko@sntech.de>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/panthor: Fix off by one in panthor_fw_get_cs_iface()
-Message-ID: <62835c16-c85c-483d-a8fe-63be78d49d15@moroto.mountain>
+To: Quinn Tran <qutran@marvell.com>
+Cc: Nilesh Javali <njavali@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	"James E.J. Bottomley" <jejb@linux.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Himanshu Madhani <himanshu.madhani@oracle.com>,
+	Larry Wisneski <Larry.Wisneski@marvell.com>,
+	Duane Grigsby <duane.grigsby@marvell.com>,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] scsi: qla2xxx: Fix off by one in qla_edif_app_getstats()
+Message-ID: <5c125b2f-92dd-412b-9b6f-fc3a3207bd60@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -72,28 +74,29 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The ->iface.streams[csg_slot][] array has MAX_CS_PER_CSG elements so
-this > comparison needs to be >= to prevent an out of bounds access.
+The app_reply->elem[] array is allocated earlier in this function and it
+has app_req.num_ports elements.  Thus this > comparison needs to be >=
+to prevent memory corruption.
 
-Fixes: 2718d91816ee ("drm/panthor: Add the FW logical block")
+Fixes: 7878f22a2e03 ("scsi: qla2xxx: edif: Add getfcinfo and statistic bsgs")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/panthor/panthor_fw.c | 2 +-
+ drivers/scsi/qla2xxx/qla_edif.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-index 33c87a59834e..181395e2859a 100644
---- a/drivers/gpu/drm/panthor/panthor_fw.c
-+++ b/drivers/gpu/drm/panthor/panthor_fw.c
-@@ -308,7 +308,7 @@ panthor_fw_get_csg_iface(struct panthor_device *ptdev, u32 csg_slot)
- struct panthor_fw_cs_iface *
- panthor_fw_get_cs_iface(struct panthor_device *ptdev, u32 csg_slot, u32 cs_slot)
- {
--	if (drm_WARN_ON(&ptdev->base, csg_slot >= MAX_CSGS || cs_slot > MAX_CS_PER_CSG))
-+	if (drm_WARN_ON(&ptdev->base, csg_slot >= MAX_CSGS || cs_slot >= MAX_CS_PER_CSG))
- 		return NULL;
+diff --git a/drivers/scsi/qla2xxx/qla_edif.c b/drivers/scsi/qla2xxx/qla_edif.c
+index 26e6b3e3af43..dcde55c8ee5d 100644
+--- a/drivers/scsi/qla2xxx/qla_edif.c
++++ b/drivers/scsi/qla2xxx/qla_edif.c
+@@ -1100,7 +1100,7 @@ qla_edif_app_getstats(scsi_qla_host_t *vha, struct bsg_job *bsg_job)
  
- 	return &ptdev->fw->iface.streams[csg_slot][cs_slot];
+ 		list_for_each_entry_safe(fcport, tf, &vha->vp_fcports, list) {
+ 			if (fcport->edif.enable) {
+-				if (pcnt > app_req.num_ports)
++				if (pcnt >= app_req.num_ports)
+ 					break;
+ 
+ 				app_reply->elem[pcnt].rekey_count =
 -- 
 2.43.0
 
