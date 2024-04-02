@@ -1,114 +1,66 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07B754744;
-	Mon,  1 Apr 2024 21:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737E616415;
+	Tue,  2 Apr 2024 03:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712008447; cv=none; b=iXCwE3481b6mbj2qk6OgAr2nSEcQG8DcQL06Lh2JOGNRGhvlMw9AsLUfEv4kfUcCXASubE513gF7er5krDr3tKN0ZIobTbsgfv2Zcz2ydlWNv3/rKn+7Z/MbrhXX1DuhwcMnDjTo/cfdue4Tl5I4U2NYVPKvHDfojgOWrm+FjX8=
+	t=1712028554; cv=none; b=lmxUX2Hu1bm2U54SGdl01Dr5+Z/DV6iq8GP0elEHTxVhM6nqmXwLxJ0dwRhbfVo6pPGG+J33hIzXGonkBRR2a+zhWlbGM+rSSHKMYTrmE0FY0D5blSJLp2BUrj8+/eyZlA/XsjcauqrQTtWFxbHF/e0M2mR665bdCjxp4hvi4oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712008447; c=relaxed/simple;
-	bh=Tby9SwNmyiiwFffC8TGSgy7B+o5zysI1sDIz1lHUBUA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=U8ob47F6NRblBaFRuaVcPdKXyy1IEcvqVuxlYo/W5oH9v2RPo+mGNoB5dZAiI48Nlsxw1+EraMFR9MimHyydq9IMI7ddbUxR32M8dj60bqYVz7q108heblVnyjxLrIhKL2EnvSH1ysLAThqfbBxa+o22dwlvLM7jkibl38PhPQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PLgkaOvc; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1712028554; c=relaxed/simple;
+	bh=y6RYKuOQsgSxbPHP3Ik43Hn/qaEJ4mSoNkkT+W333oE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HzeZxCESZGXCWHInDnb5mJ6MOzx3oI1OI5ZE0qzbRiUHH4vr2s0li9z6L7AEtpA/wTDwisQy5EGGFKFj8flEDkw0qjn32mO6inXnU/tGx/X/XQMdKoGDHret6/jef22AHOi8Asbqhyt/mLlk/KjHqNr5i5bYOli/pyjdf6sE9Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLmgLhra; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PLgkaOvc"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4156dfa8a75so5755625e9.1;
-        Mon, 01 Apr 2024 14:54:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712008444; x=1712613244; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7iUisfySJlUpllNR1rWEURtls5OEygug/FNDU7BTr2s=;
-        b=PLgkaOvckSLZFhcbiTgZ+Rm+crQYhIIZjtdgwNhzJjVhhL9pNRNO5ux83PscgMDVkA
-         Hake7xlFY/+LjAuS/HRygDX4oXjDIgPvYVjt8RcWBZ1nxzlHkuJvbHKa8DAud9waB/pL
-         ZInm6bSqReIgbGkEee6dZBH1eeXK3oNXnZ/TgIIt4du3s6UKGbyFMsn3Hx8sUzWUxa/1
-         W+tqwPNGXOtQYk6aJ+lnXdf9XCDe9Xk4cDT+kTSBS6KiA2hRax+phasepFG79SxnMNKH
-         o3RVT7AqsZp+nEN3Ri+RMS2eEP4eD4sRK80v4S3UcdkTtK45IxXfNPKjwHFnv8l4+ypp
-         vcBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712008444; x=1712613244;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7iUisfySJlUpllNR1rWEURtls5OEygug/FNDU7BTr2s=;
-        b=OSpicp1fjbqM+LCQEVsrVZ7vYklq/cl23ourlJmedL8MBZT+yUshhYKWNXV1guJgV0
-         oXpnFYvIwdoveH2vEIST0ww+iooQXXhNSApfcL+54wTCp1Z41ThWCYRrPN+/ulewwM1z
-         rZT4yoQ0WWAxOh+kuBJ8PCR0uV7oi5qKPNqyhQ/zeu0yWKgcPIUp01e9WQwyi9m9XB+7
-         /ocseaPyNGDQnXO7ugQgZ23cBIvgGhA5cnhV7E0/qT+u31fukimmCfyZm1XgiAKI1CtX
-         SjRvyXIhU1+wMvd91GYSirD6B3rECRMeBQAmMMgZ2KBxum2iCRDdGJkKVUc+a0RsdzXa
-         TuqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVduxiKKB0WEspqdN3OtbQZ+87A5NdTwdcTjoTQMLaPraDrQCgVsaYucB/qNAzwd3/o/K3lGvB8GfrLchZjLI7IRxK76TW0CLMSbhxy5A00TeHgEFYCkwDsIPZLXMDXqm+wub1X5xWF9jrVUYA=
-X-Gm-Message-State: AOJu0YwGV6BhSjcYIKWFxocMqw1O2R5RnMl38YYr2sbF3vOaudRoCEtd
-	ufAoVo9BRA+fIyrgsDobtmf4w3XbRocZCsykigEmx2/t9ajJSljz
-X-Google-Smtp-Source: AGHT+IHW+hjEDlhg1rFNI/CeLAEyX5Id3FTjduFBw8r0aS5TowLPLl1mAVPweSZ8nfwwdF13N0ZmPA==
-X-Received: by 2002:a5d:648e:0:b0:33e:c528:c900 with SMTP id o14-20020a5d648e000000b0033ec528c900mr9509436wri.55.1712008443930;
-        Mon, 01 Apr 2024 14:54:03 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id di6-20020a0560000ac600b00341c9956dc9sm12506046wrb.68.2024.04.01.14.54.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Apr 2024 14:54:03 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] wifi: brcm80211: Fix spelling mistake "ivalid" -> "invalid"
-Date: Mon,  1 Apr 2024 22:54:02 +0100
-Message-Id: <20240401215402.1348565-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLmgLhra"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E307C433F1;
+	Tue,  2 Apr 2024 03:29:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712028554;
+	bh=y6RYKuOQsgSxbPHP3Ik43Hn/qaEJ4mSoNkkT+W333oE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YLmgLhraq5I3uEJEtbnWPBq3NDfVPbIDoyovNUtPb8KG23IzTJmGk8CC40XmPpzN8
+	 LXD8yRQ+9oSBXpXsIvg+4Irq0zq0cS/FUYahKzrs763gTbLSt201gJZQLcjf3x7s0j
+	 16N9flHliBV6pqeY6SDWY3BGuiFO1rVX0CA2ozXbYyc5X1JvENl65qQbzdu9ZksuLl
+	 2MnLUi3oNHxlgZuELOB8TiNuDbd1anL5i791iQ2E1TtwcwXRLHJZn6xuxTaq8Js/wO
+	 5XJQrFrO1mUCOeaR5EU39K2AYA/a9ZO7DfguQzIgCYPV9c6oX/nt2r5MgOWw7k3DLj
+	 gGJ1ApEEoBQrw==
+Message-ID: <b786c895-692f-4485-affd-97d78b786546@kernel.org>
+Date: Tue, 2 Apr 2024 12:29:11 +0900
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ata: ahci_st: Remove an unused field in struct
+ st_ahci_drv_data
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Patrice Chotard <patrice.chotard@foss.st.com>,
+ Niklas Cassel <cassel@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org
+References: <f1804954a746e93382429cf38e4f1f9fb46bb578.1711975449.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <f1804954a746e93382429cf38e4f1f9fb46bb578.1711975449.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-There are spelling mistakes in bphy_err messages. Fix them.
+On 4/1/24 21:44, Christophe JAILLET wrote:
+> In "struct st_ahci_drv_data", the 'ahci' field is unused.
+> Remove it.
+> 
+> Found with cppcheck, unusedStructMember.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Applied to for-6.9-fixes. Thanks !
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-index b99aa66dc5a9..5fe0e671ecb3 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-@@ -4549,7 +4549,7 @@ brcmf_configure_wpaie(struct brcmf_if *ifp,
- 
- 	if (!brcmf_valid_wpa_oui(&data[offset], is_rsn_ie)) {
- 		err = -EINVAL;
--		bphy_err(drvr, "ivalid OUI\n");
-+		bphy_err(drvr, "invalid OUI\n");
- 		goto exit;
- 	}
- 	offset += TLV_OUI_LEN;
-@@ -4588,7 +4588,7 @@ brcmf_configure_wpaie(struct brcmf_if *ifp,
- 	for (i = 0; i < count; i++) {
- 		if (!brcmf_valid_wpa_oui(&data[offset], is_rsn_ie)) {
- 			err = -EINVAL;
--			bphy_err(drvr, "ivalid OUI\n");
-+			bphy_err(drvr, "invalid OUI\n");
- 			goto exit;
- 		}
- 		offset += TLV_OUI_LEN;
-@@ -4622,7 +4622,7 @@ brcmf_configure_wpaie(struct brcmf_if *ifp,
- 	for (i = 0; i < count; i++) {
- 		if (!brcmf_valid_wpa_oui(&data[offset], is_rsn_ie)) {
- 			err = -EINVAL;
--			bphy_err(drvr, "ivalid OUI\n");
-+			bphy_err(drvr, "invalid OUI\n");
- 			goto exit;
- 		}
- 		offset += TLV_OUI_LEN;
 -- 
-2.39.2
+Damien Le Moal
+Western Digital Research
 
