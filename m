@@ -1,67 +1,64 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B4D80BFE;
-	Tue,  2 Apr 2024 13:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663A933D1;
+	Tue,  2 Apr 2024 13:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712065456; cv=none; b=AojUp0HP95vRKq8LQB9A/Oia7b0I4kk3uFYxaWhz4CjY+mFbaoz9QygjZm7zPsyZqHiLefXcqi9TEAbk7O09AnWdQZG3eh4W115HOjW6XYYR7onqAc1qjkzNq/5Lhp+LTRtxSAdV4tj6RMGoM5sSG7PQ3yr+msQDU7nGoC20ppw=
+	t=1712065657; cv=none; b=pPt3npkwxxeIWg+Kv526p+Scq5XpNiRsuUQ8FTBFMAva+x6hExenaJNqsrDIovaKtZTKDuPoQVP14ZU7VXDKtyhpRV2eT3csmUzfsnooPgVlAi5qhbg/4HZrtm9RA3vybuh4AA3YQPN1VpcoGL/mq/6uu4SxnTZWCUo0JvpTuPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712065456; c=relaxed/simple;
-	bh=fX4wdNLj4mpJXnKy6OYwufs3fuHwSvr3osAkiv/d/rw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yr8ant2V9zyeEZPSe3F7Up6VSYzQz0Z4des2hf+67DKTJlLmDiK5U9L7qJHVQB13ttxz11N2icf8gTuGOsK9ppAKgy/gAoZDrDTn9nJdz41ArAG7MrGCi3eIY+WWw1eJ8hTXA3eC/2YOEjAhWX/KZf/LZnPDyzPx9baZJcYgOb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+Frg/IV; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1712065657; c=relaxed/simple;
+	bh=vGn66XkpBDDZFkr8QUJL1l6IKJXYOGPf9g22hUi8pRg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oZpSLbfxH8qt1+xzVGwpAIA4lSsVOMtAsvz+1o7LFEUaQGwG0qwGFjIvOdOw4QEs1ifv6EzckpwurTFfrbd1xv32330c2L3UB/rVoc+/GD7cz3mXzwd03BKkqehkXcWUBiH8NQd5K9AciTFzR3h3uIdhgUvUcGc8jWGvs6MU2FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=RSPlsexI; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+Frg/IV"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-56c583f5381so6880387a12.1;
-        Tue, 02 Apr 2024 06:44:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712065453; x=1712670253; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=h8hhkZTFbU/vuzsYhmShVWNS4yGIt56q5tjAp6Vay20=;
-        b=P+Frg/IVXg7zGK6l+IfhBCRwKX9D/ZFduPX/wcdu7qeRYgrKAxr0mHu/4GXMfWMRVa
-         RZrBS2iq8rne/DIui0NQQfhea1TbNem0M3C5bJOy91Xqy1iPJV8PxoQpFmWzn9qUkGRO
-         1gCAPqnmMJTKancMzRg2izyRP/3EsFdJlujnzKi46VwlSpNWDTUkY8739PNxB8kqvTrC
-         VuWpkzrvpY+I1VvrwGnyNtq0Ld96A1Mx8HzNCPBAFJyR7VCsGgheW50UaRkhFZjQ6zNj
-         h5If2aE5BACDI80E8iq9sNRIc872610zgl1Y1NnyNi3rvPJKvnLajVV2qKtB9x85lJ8p
-         3xuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712065453; x=1712670253;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h8hhkZTFbU/vuzsYhmShVWNS4yGIt56q5tjAp6Vay20=;
-        b=NvpBkf+u9BuLNHjNDpwRTOlhWzntzotkeGWOdoKcIXbOfctT/4HWjhmYXheMGEk36T
-         ZV7vjgkVENi2V6C4OTFjZ3lhKiKqPw2Vh9tumUuchkZ6oknB4coiwpnXSKcMVfkOK7ZS
-         3cYRG1gDomXSU5K20M53HLNcs/S5gyKgST5jhecnUhSAb+dGwM7t7vNp2+g3WVjXLjvj
-         LdiWZ04YHzRVJzYVJnybhJoZN6uSw8K9uovbXRYMDmaP/TmXlV7dRblfQnUqaJP2ggju
-         qWVZ/DSzjpMKPuLwWqjIG5FvizsKy8T7VemSoMZhnlCBhDpvwQ/9ZekZwVCPQl56Nb2D
-         /exA==
-X-Forwarded-Encrypted: i=1; AJvYcCXePWJJN5Ha3EYcQ+BDly/dKs58o9AFBCALnhyw+aXcpPjt3WXry5uxmxA68Z4qQUZs6qqupOEehjjsaNqCEg5eeuXvd8drrGQEhsOZqvgI1CnIfkRa9uagk5NzZGZYL7ciCjUiKQP52Gg=
-X-Gm-Message-State: AOJu0YyETpkB3cZHjhjTsRobFP2EuhvCe7wtIV3y/oP1qk1We0Ja9uwY
-	1TTd92A4oIMz47w+OCj0AriwzuXldotSZhOa/PPMuehDnpgkSyya
-X-Google-Smtp-Source: AGHT+IHbYAQ9hfvj++/l//lkX9k97qC+cvPqgA97/D4BDSsfP170cjxSJc20nAEgUjLrcC6M+pSGXw==
-X-Received: by 2002:a05:6402:3590:b0:56b:ddcb:bb67 with SMTP id y16-20020a056402359000b0056bddcbbb67mr12994163edc.2.1712065452859;
-        Tue, 02 Apr 2024 06:44:12 -0700 (PDT)
-Received: from lola.. ([178.25.29.59])
-        by smtp.gmail.com with ESMTPSA id g28-20020a056402321c00b0056c1c2b851esm6818177eda.0.2024.04.02.06.44.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Apr 2024 06:44:12 -0700 (PDT)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Radu Sabau <radu.sabau@analog.com>,
-	linux-hwmon@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: repair file entry in ADP1050 HARDWARE MONITOR DRIVER
-Date: Tue,  2 Apr 2024 15:42:03 +0200
-Message-ID: <20240402134203.8297-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.44.0
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RSPlsexI"
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4327hqKL020065;
+	Tue, 2 Apr 2024 13:47:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-11-20; bh=2VVY6Eqd01Tnl+nUtZiZ06ERpIzu3oNa0E/idaAnNtw=;
+ b=RSPlsexIHr4h3ZvtmydsX/wJdfqSpgJXZ/IMbRresyAWC+shDaBocKWy358u8uo+MimY
+ xt6FhfzLiQmle22lpUmRXhHrCCNUJSd/PSettbiLjP9ipVAQ2hHaUFX2G94371IRc39O
+ t9A7vj3McAiZVUUEM2DVKtEfDUmWA5SqYO9DLp/Wj31MryivB/ySk1Pv4KHLraFq8Zw3
+ thlkJHth6NumjR8LO+ne+BnVlZQ8Oj3uGylw6qJ63zOr8Dy+zS2o4rgPudLWxM/Gq3R9
+ /yJUUGfSLgHT4+LurfzjsROt+3DDrHSOUZkQ/1JAPmt+wEYb5GMMdfbvelEvAqrUWXAl tQ== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3x7tb9tpxj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 02 Apr 2024 13:47:14 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 432Cu6so015463;
+	Tue, 2 Apr 2024 13:47:13 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3x6966tswv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 02 Apr 2024 13:47:13 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 432DlCFe004519;
+	Tue, 2 Apr 2024 13:47:12 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3x6966tswc-1;
+	Tue, 02 Apr 2024 13:47:12 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+        Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Grant Likely <grant.likely@linaro.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH v2] drm/panthor: Fix couple of NULL vs IS_ERR() bugs
+Date: Tue,  2 Apr 2024 06:47:08 -0700
+Message-ID: <20240402134709.1706323-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -69,34 +66,89 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-02_07,2024-04-01_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ bulkscore=0 spamscore=0 suspectscore=0 phishscore=0 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2403210000 definitions=main-2404020101
+X-Proofpoint-GUID: K5O4oPvkf_P70AWbgGnCTEuzg9lQhAJy
+X-Proofpoint-ORIG-GUID: K5O4oPvkf_P70AWbgGnCTEuzg9lQhAJy
 
-Commit 4e1008d8aae5 ("dt-bindings: hwmon: pmbus: adp1050: add bindings")
-adds the ADP1050 HARDWARE MONITOR DRIVER section, but slips in a typo in
-its file entry.
+1. The devm_drm_dev_alloc() function returns error pointers.
+   Update the error handling to check for error pointers instead of NULL.
+2. Currently panthor_vm_get_heap_pool() returns both ERR_PTR() and
+   NULL(when create is false and if there is no poool attached to the
+   VM)
+	- Change the function to return error pointers, when pool is
+	  NULL return -ENOENT
+	- Also handle the callers to check for IS_ERR() on failure.
 
-Fortunately, ./scripts/get_maintainer.pl --self-test=patterns complains
-about this broken reference.
-
-Remove the typo in ADP1050 HARDWARE MONITOR DRIVER.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Fixes: 4bdca1150792 ("drm/panthor: Add the driver frontend block")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 ---
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is spotted by smatch and the patch is only compile tested
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 13ac7ce270b3..272b238d5488 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -506,7 +506,7 @@ M:	Radu Sabau <radu.sabau@analog.com>
- L:	linux-hwmon@vger.kernel.org
- S:	Supported
- W:	https://ez.analog.com/linux-software-drivers
--F:	Dcumentation/devicetree/bindings/hwmon/pmbus/adi,adp1050.yaml
-+F:	Documentation/devicetree/bindings/hwmon/pmbus/adi,adp1050.yaml
+v1->v2: Fix the function panthor_vm_get_heap_pool() to only return error
+pointers and handle the caller sites [Suggested by Boris Brezillon]
+	- Also merge these IS_ERR() vs NULL bugs into same patch
+---
+ drivers/gpu/drm/panthor/panthor_drv.c   | 6 +++---
+ drivers/gpu/drm/panthor/panthor_mmu.c   | 2 ++
+ drivers/gpu/drm/panthor/panthor_sched.c | 2 +-
+ 3 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+index 11b3ccd58f85..c8374cd4a30d 100644
+--- a/drivers/gpu/drm/panthor/panthor_drv.c
++++ b/drivers/gpu/drm/panthor/panthor_drv.c
+@@ -1090,8 +1090,8 @@ static int panthor_ioctl_tiler_heap_destroy(struct drm_device *ddev, void *data,
+ 		return -EINVAL;
  
- ADP1653 FLASH CONTROLLER DRIVER
- M:	Sakari Ailus <sakari.ailus@iki.fi>
+ 	pool = panthor_vm_get_heap_pool(vm, false);
+-	if (!pool) {
+-		ret = -EINVAL;
++	if (IS_ERR(pool)) {
++		ret = PTR_ERR(pool);
+ 		goto out_put_vm;
+ 	}
+ 
+@@ -1385,7 +1385,7 @@ static int panthor_probe(struct platform_device *pdev)
+ 
+ 	ptdev = devm_drm_dev_alloc(&pdev->dev, &panthor_drm_driver,
+ 				   struct panthor_device, base);
+-	if (!ptdev)
++	if (IS_ERR(ptdev))
+ 		return -ENOMEM;
+ 
+ 	platform_set_drvdata(pdev, ptdev);
+diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+index fdd35249169f..e1285cdb09ff 100644
+--- a/drivers/gpu/drm/panthor/panthor_mmu.c
++++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+@@ -1893,6 +1893,8 @@ struct panthor_heap_pool *panthor_vm_get_heap_pool(struct panthor_vm *vm, bool c
+ 			vm->heaps.pool = panthor_heap_pool_get(pool);
+ 	} else {
+ 		pool = panthor_heap_pool_get(vm->heaps.pool);
++		if (!pool)
++			pool = ERR_PTR(-ENOENT);
+ 	}
+ 	mutex_unlock(&vm->heaps.lock);
+ 
+diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+index 5f7803b6fc48..617df2b980d0 100644
+--- a/drivers/gpu/drm/panthor/panthor_sched.c
++++ b/drivers/gpu/drm/panthor/panthor_sched.c
+@@ -1343,7 +1343,7 @@ static int group_process_tiler_oom(struct panthor_group *group, u32 cs_id)
+ 	if (unlikely(csg_id < 0))
+ 		return 0;
+ 
+-	if (!heaps || frag_end > vt_end || vt_end >= vt_start) {
++	if (IS_ERR(heaps) || frag_end > vt_end || vt_end >= vt_start) {
+ 		ret = -EINVAL;
+ 	} else {
+ 		/* We do the allocation without holding the scheduler lock to avoid
 -- 
-2.44.0
+2.39.3
 
