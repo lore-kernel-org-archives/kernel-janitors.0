@@ -1,66 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737E616415;
-	Tue,  2 Apr 2024 03:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3A2249E4;
+	Tue,  2 Apr 2024 06:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712028554; cv=none; b=lmxUX2Hu1bm2U54SGdl01Dr5+Z/DV6iq8GP0elEHTxVhM6nqmXwLxJ0dwRhbfVo6pPGG+J33hIzXGonkBRR2a+zhWlbGM+rSSHKMYTrmE0FY0D5blSJLp2BUrj8+/eyZlA/XsjcauqrQTtWFxbHF/e0M2mR665bdCjxp4hvi4oE=
+	t=1712039754; cv=none; b=ATfO+jxyOjbi2kb6FuuNE8RImKsgM+wXQFdbLfZSnkN1s2p8yhgC58/DP0iA/b/Mk6A2dy8BnmRsrwSmLecCJNfBfm4Tv7dgnNNJ+VPZPD5O0VQOO9KR6z5JgYrLgYBqy6gh9aRN5vMca5q3JkZ5E2c9oHtbCiSnGm42NlrwzKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712028554; c=relaxed/simple;
-	bh=y6RYKuOQsgSxbPHP3Ik43Hn/qaEJ4mSoNkkT+W333oE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HzeZxCESZGXCWHInDnb5mJ6MOzx3oI1OI5ZE0qzbRiUHH4vr2s0li9z6L7AEtpA/wTDwisQy5EGGFKFj8flEDkw0qjn32mO6inXnU/tGx/X/XQMdKoGDHret6/jef22AHOi8Asbqhyt/mLlk/KjHqNr5i5bYOli/pyjdf6sE9Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLmgLhra; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712039754; c=relaxed/simple;
+	bh=Feqjj4R3LtzqrmfPSc4AxFtg1P9nxO6x1fNkNugNZJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GOdBmLtyr+qol1ufV9agnc9NRVdyeLA5aNAPyskVw7tYenXbfx4PRp/xg9WGlVr/JURSLxLNTVmL5MMdxlcAOH5skLDGjLVj7yqolnIcJ8PwAyF0IDZEibSW2HEMYr/obCdBGaIrPpDJFnStexcnBpi5jFrkDoAMZNdaE3IxfT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c3khOu2N; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLmgLhra"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E307C433F1;
-	Tue,  2 Apr 2024 03:29:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712028554;
-	bh=y6RYKuOQsgSxbPHP3Ik43Hn/qaEJ4mSoNkkT+W333oE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YLmgLhraq5I3uEJEtbnWPBq3NDfVPbIDoyovNUtPb8KG23IzTJmGk8CC40XmPpzN8
-	 LXD8yRQ+9oSBXpXsIvg+4Irq0zq0cS/FUYahKzrs763gTbLSt201gJZQLcjf3x7s0j
-	 16N9flHliBV6pqeY6SDWY3BGuiFO1rVX0CA2ozXbYyc5X1JvENl65qQbzdu9ZksuLl
-	 2MnLUi3oNHxlgZuELOB8TiNuDbd1anL5i791iQ2E1TtwcwXRLHJZn6xuxTaq8Js/wO
-	 5XJQrFrO1mUCOeaR5EU39K2AYA/a9ZO7DfguQzIgCYPV9c6oX/nt2r5MgOWw7k3DLj
-	 gGJ1ApEEoBQrw==
-Message-ID: <b786c895-692f-4485-affd-97d78b786546@kernel.org>
-Date: Tue, 2 Apr 2024 12:29:11 +0900
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c3khOu2N"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1712039753; x=1743575753;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Feqjj4R3LtzqrmfPSc4AxFtg1P9nxO6x1fNkNugNZJw=;
+  b=c3khOu2NdM2V0fD0EqN6gA1l/69wX05ds4CxY8Q/G7b0w7HEwqnBJ8wA
+   VELK99RFIS4HOu89u6253Dld4Uz5y73vqgWRC1yGBoGgy3DlEN9wjACDM
+   S4NQIBHBRO7Lu9QVpVgkzXlTWTDFOdnY7SXN6VP9pRXQLLNu14MmlaZKI
+   wCymdkbZBtlqpEfozJo9wR9ABTjhw/yEjHUETUTFqExV3srOX8mZsTVEy
+   36J86TTGlC/6tvH/HUk/Mn8SYzgUO0txlwip2RjMJm3I/+K6CKxIe+TyA
+   2lo1PgMckCi9u7T+QMo/6HEetxFl9kMXNPcczC49WqEgce/waGrrebS2e
+   A==;
+X-CSE-ConnectionGUID: VoxBJcvFQvSfIUkcPxb2iw==
+X-CSE-MsgGUID: ddVnmZ9ZS3WW58SS/DlbiA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11031"; a="17810246"
+X-IronPort-AV: E=Sophos;i="6.07,174,1708416000"; 
+   d="scan'208";a="17810246"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2024 23:35:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,174,1708416000"; 
+   d="scan'208";a="18043933"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa008.fm.intel.com with ESMTP; 01 Apr 2024 23:35:47 -0700
+Date: Tue, 2 Apr 2024 14:30:57 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
+	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-fpga@vger.kernel.org
+Subject: Re: [PATCH] fpga: altera-cvp: Remove an unused field in struct
+ altera_cvp_conf
+Message-ID: <ZgumIQV3fUpxNqno@yilunxu-OptiPlex-7050>
+References: <7986690e79fa6f7880bc1db783cb0e46a1c2723e.1711976883.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ata: ahci_st: Remove an unused field in struct
- st_ahci_drv_data
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Patrice Chotard <patrice.chotard@foss.st.com>,
- Niklas Cassel <cassel@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org
-References: <f1804954a746e93382429cf38e4f1f9fb46bb578.1711975449.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <f1804954a746e93382429cf38e4f1f9fb46bb578.1711975449.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7986690e79fa6f7880bc1db783cb0e46a1c2723e.1711976883.git.christophe.jaillet@wanadoo.fr>
 
-On 4/1/24 21:44, Christophe JAILLET wrote:
-> In "struct st_ahci_drv_data", the 'ahci' field is unused.
+On Mon, Apr 01, 2024 at 03:08:21PM +0200, Christophe JAILLET wrote:
+> In "struct altera_cvp_conf", the 'mgr' field is unused.
 > Remove it.
 > 
 > Found with cppcheck, unusedStructMember.
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied to for-6.9-fixes. Thanks !
+Acked-by: Xu Yilun <yilun.xu@intel.com>
 
--- 
-Damien Le Moal
-Western Digital Research
+Applied to for-next.
 
+> ---
+> Apparently, it has never been used. It is not a left-over from a
+> refactoring.
+> 
+> The address of the 'fpga_manager' is handled via pci_[s|g]et_drvdata().
+> 
+> Compile tested only.
+> ---
+>  drivers/fpga/altera-cvp.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+> index 4ffb9da537d8..6b0914432445 100644
+> --- a/drivers/fpga/altera-cvp.c
+> +++ b/drivers/fpga/altera-cvp.c
+> @@ -72,7 +72,6 @@ static bool altera_cvp_chkcfg;
+>  struct cvp_priv;
+>  
+>  struct altera_cvp_conf {
+> -	struct fpga_manager	*mgr;
+>  	struct pci_dev		*pci_dev;
+>  	void __iomem		*map;
+>  	void			(*write_data)(struct altera_cvp_conf *conf,
+> -- 
+> 2.44.0
+> 
+> 
