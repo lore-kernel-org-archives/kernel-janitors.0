@@ -1,114 +1,105 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298F95731E
-	for <kernel-janitors@vger.kernel.org>; Tue,  2 Apr 2024 09:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92C35FDD3;
+	Tue,  2 Apr 2024 10:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712051896; cv=none; b=Z2i5kf+t3r9kLVBEDntju0HigAB7LBgJ/DcxlNQLr/uXW7VFO1mEU6Ghar/mkyr+Sx+TNY3w6QE/pCg6i9O6VL6LJGPJovkZW3ezhI515fGWd9RPIp8tzGc7JrLEEbzjhCGeOn3M8gqM37tHgkLpf6H2n1w/hpblY/xuz8MdLQw=
+	t=1712054072; cv=none; b=ODC730hv/heg3kUTBskHQl0887nSs4kaOzV5l9x7BcYT0cLMxpwVoyQvWdVHzKQXm+WiiUar8Qu2rngIK2Lw/mEJ4mY1+ziMyn30v3pqGprFwS1hPIzO0hinSILqiseDIV4PRV6pan38LWoXnt4wQJfZKMM4/EmKhDejDkV1+5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712051896; c=relaxed/simple;
-	bh=i3dAA3EBuiwwRsOxrV8BH5VJ943ZUlY2pGSFcOqvWsw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dmVzBtLVsWy9K1x8Pl3wedcZ48x+qgKU7Eg3xHMf6JMoR4YTOGZiK53uecvbD0B4w8aixi7r6UFUF01c67oszhbzcd6LIzkfojvTZi7ZR5HDoLQ9Fj1I3qLoULJg5IBRzDbfQItTwHpPs3JD20dzRdb5NntFKfijHw5cDPcTNIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lW/riFUL; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1712054072; c=relaxed/simple;
+	bh=MtHCuL1dh9NAzjU2nv4D1ZXmRiiRxmcJ91zi476pkWI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jn0teP5PZn1FvRs2G6NJP7xh36xHyS2X/0RZMNCOA8aC7T9bw4cyvYerINLUGTUd2t/X+q1RCReMtZsDrhHinsDKzzSLI8uhVNRjeWszglGEpJ8n0UnOt7ptO9qGJzUcgAVLwTvhAn9q8toTsLFf+cAnOt5RQ/FmBWplzpLRlXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=aU+AJi5M; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lW/riFUL"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-56899d9bf52so6286617a12.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 02 Apr 2024 02:58:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712051893; x=1712656693; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ld5/UZMRVCPDO/dKTQcgFxFhH+C0bdjqoU583UYXs7Q=;
-        b=lW/riFULRJeVOWDl3FOtQ1mA7mgZZs3VeDZJhMPuHixSaBW/YqAfASuUZr+yY3T477
-         HuMkEpCUiKm1ONF2P4qWldjcuXHa+9et8ktaAQo6kfLRZ30L5cYzt7+ePek6EwbX18xR
-         bwqJIQmOq26Hs5M/b/jDwdfxnNaoeEcoZdcx0S8zc7dnyPiSNoFDfUvCCDq4vpGQk6bG
-         uL9xxE3ya/aTKjo/Ub49RpxPQhTPU+Sg/Eci1RI6vPihBC5hYGL5E9ZcEqwb4E30Sgv5
-         bIV2UMScktdCSkLT44zMkIdn6pvi7XfwbfV7wPEV+fyYnRIKqWHri+FZwI39HXu1RAOj
-         clLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712051893; x=1712656693;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ld5/UZMRVCPDO/dKTQcgFxFhH+C0bdjqoU583UYXs7Q=;
-        b=a9xG7afxQ72QtYGVgNJA+qFD4WT/pOFK8+k0QWaEAy9YpFqQBDKl51/B7vuaylreBD
-         UhxJ30Ky5UXP4roKS55KnxFAZ9SDUnBCx9FzuIcONw+94gah/ui2DSX+hdLDh+LwAmxE
-         M9H4ypmVU9WoeAHQ19o7mQKQIvBP+FzzMfxE+e3ayhir/nWaGbv/xBzNym6gJCDjP4Fd
-         vkRSPj6iPwpnObw2XldHVN90aNij7AgH0E6QO5FvjMYDTt7mhuVtQ91seky7635gnkVP
-         m6Q6/N72zcPjurKOcUghD2qtzXkbZ/2i7hK+9QV+eSoQrW66iuPTqUe2fRqggTx7ejnp
-         z8JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvK8YpidIOC95547rqYEMkYEHA0rmknfES1yN9ZP0kE8Opd8gtWU2mJCCzCRHbn/YeS6G2qzR99PCTTmpCLTq2XHSvOTIJ5UuDngaexbCk
-X-Gm-Message-State: AOJu0YwXP4JQjyq02cqmPgHLsyLUdACVvVuey9Lpbxnna4sokRUTKLwG
-	lCjQ8O3mnWrkYgx43T6zoIYwwV8IEq4akj5Up6IWQKb+oeHK1kCeGI2TKxkyg+0=
-X-Google-Smtp-Source: AGHT+IFgDns4XbXtOdDo3mYfgf9w3lFqwUVjIK8JRoHpGzz1mCaGhgoZUM8ANRaz4ThKySFmuVQUqQ==
-X-Received: by 2002:a50:d4cc:0:b0:56b:9925:38a with SMTP id e12-20020a50d4cc000000b0056b9925038amr7967208edj.38.1712051893318;
-        Tue, 02 Apr 2024 02:58:13 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id u22-20020aa7d556000000b0056c63ba1387sm5295464edr.86.2024.04.02.02.58.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Apr 2024 02:58:13 -0700 (PDT)
-Date: Tue, 2 Apr 2024 12:58:09 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Grant Likely <grant.likely@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/panthor: Fix a couple -ENOMEM error codes
-Message-ID: <cf5bbba5-427e-4940-b91e-925f9fa71f8d@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="aU+AJi5M"
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4327iiOs004794;
+	Tue, 2 Apr 2024 10:34:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-11-20; bh=doURrX6cOIUJ979xtncnfOLcxqEuol0zMJzFfxCbUk4=;
+ b=aU+AJi5MFCodAk/sE0HwPxZduCE1+urSGSR7GQB3QWmLFxnI9TNyzhteQjRqx2V4z4rg
+ 5VWPZ6uNo7+Yr6BCQC+xIKw5SxRQa8b3gHAJsI0UV/emKu05CWwCUFy9dRQJcpgR9ZIg
+ TR3pEaR09yw0+rT7Dd2+/X4XEVFQq/Iy5d+eYrcevzUmQGlWPlMqYRX+jag9exft4sdP
+ 1ew653avEVE6amuk2YgsQgOJSTLVDVdjwOXK0cvBiTzKl4BakSz+RHNe2VD3sm1AOQYa
+ cKRbBMDp+Xy/BZzfPoa/aznsmbW1c/9iZUokQpZU9QpCcVlfvAbjlDetPzdNZHbV4/j2 tQ== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3x6ambcap8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 02 Apr 2024 10:34:05 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 432AIud9018642;
+	Tue, 2 Apr 2024 10:34:03 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3x696cv055-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 02 Apr 2024 10:34:03 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 432ATveP027893;
+	Tue, 2 Apr 2024 10:34:02 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3x696cv03w-1;
+	Tue, 02 Apr 2024 10:34:02 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+        Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Heiko Stuebner <heiko@sntech.de>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH] drm/panthor: Fix NULL vs IS_ERR() bug in panthor_ioctl_tiler_heap_destroy()
+Date: Tue,  2 Apr 2024 03:33:58 -0700
+Message-ID: <20240402103358.1689379-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-02_04,2024-04-01_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 spamscore=0
+ bulkscore=0 adultscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2403210000
+ definitions=main-2404020076
+X-Proofpoint-ORIG-GUID: eNjiaX-TyA1zHTP2tDJYuaKaSAl0CL5e
+X-Proofpoint-GUID: eNjiaX-TyA1zHTP2tDJYuaKaSAl0CL5e
 
-These error paths forgot to set the error code to -ENOMEM.
+panthor_vm_get_heap_pool() returns ERR_PTR on failure.
 
-Fixes: 647810ec2476 ("drm/panthor: Add the MMU/VM logical block")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Fixes: 4bdca1150792 ("drm/panthor: Add the driver frontend block")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 ---
- drivers/gpu/drm/panthor/panthor_mmu.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+This is spotted by smatch and the patch is only compile tested
+---
+ drivers/gpu/drm/panthor/panthor_drv.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-index fdd35249169f..a26b40aab261 100644
---- a/drivers/gpu/drm/panthor/panthor_mmu.c
-+++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-@@ -1264,8 +1264,10 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
- 	op_ctx->rsvd_page_tables.pages = kcalloc(pt_count,
- 						 sizeof(*op_ctx->rsvd_page_tables.pages),
- 						 GFP_KERNEL);
--	if (!op_ctx->rsvd_page_tables.pages)
-+	if (!op_ctx->rsvd_page_tables.pages) {
-+		ret = -ENOMEM;
- 		goto err_cleanup;
-+	}
+diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+index 11b3ccd58f85..050b905b0453 100644
+--- a/drivers/gpu/drm/panthor/panthor_drv.c
++++ b/drivers/gpu/drm/panthor/panthor_drv.c
+@@ -1090,8 +1090,8 @@ static int panthor_ioctl_tiler_heap_destroy(struct drm_device *ddev, void *data,
+ 		return -EINVAL;
  
- 	ret = kmem_cache_alloc_bulk(pt_cache, GFP_KERNEL, pt_count,
- 				    op_ctx->rsvd_page_tables.pages);
-@@ -1318,8 +1320,10 @@ static int panthor_vm_prepare_unmap_op_ctx(struct panthor_vm_op_ctx *op_ctx,
- 		op_ctx->rsvd_page_tables.pages = kcalloc(pt_count,
- 							 sizeof(*op_ctx->rsvd_page_tables.pages),
- 							 GFP_KERNEL);
--		if (!op_ctx->rsvd_page_tables.pages)
-+		if (!op_ctx->rsvd_page_tables.pages) {
-+			ret = -ENOMEM;
- 			goto err_cleanup;
-+		}
+ 	pool = panthor_vm_get_heap_pool(vm, false);
+-	if (!pool) {
+-		ret = -EINVAL;
++	if (IS_ERR(pool)) {
++		ret = PTR_ERR(pool);
+ 		goto out_put_vm;
+ 	}
  
- 		ret = kmem_cache_alloc_bulk(pt_cache, GFP_KERNEL, pt_count,
- 					    op_ctx->rsvd_page_tables.pages);
 -- 
-2.43.0
+2.39.3
 
