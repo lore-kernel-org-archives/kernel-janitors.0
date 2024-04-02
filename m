@@ -1,53 +1,51 @@
-Received: from msa.smtpout.orange.fr (msa-218.smtpout.orange.fr [193.252.23.218])
+Received: from msa.smtpout.orange.fr (msa-209.smtpout.orange.fr [193.252.23.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD278495;
-	Tue,  2 Apr 2024 18:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB3015B557;
+	Tue,  2 Apr 2024 19:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712082927; cv=none; b=ijUzlt66XRsm+P+hPLy8sCuIao1GqitqhaLOeKI50HWEOJTkrwDp0og7yqLXuwlLH7rLA5biAlnQ56p52R6K2k9HpI/s/O12566BqcN8cKaJuVNnKcrp8BpwQf4cAHtwy+e4TYFEOrYu9xzJ8InqrL3O203tYf/zMhsvv7C94FQ=
+	t=1712084708; cv=none; b=QRxf3nng5yS0TRviyfWbae9EeJRYKBabDG7TWzKXvfluYxb0N8SSL/CH70SDzePRPBG6gqSBo0Dnk/mTplHe2TSXtz8PfTqGQiZa4YR5pLOpBykxbZkbupFMRtAejq5J/Vr2icrcKWIxjWMD6/Zc9atZwSetJIINEF/W5fJjvFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712082927; c=relaxed/simple;
-	bh=1Tr3evgpqgoyinYe9ZXN3oojD3I0yY6WTZcG5ZHh2iw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MRvl4NHnakUyGHha8VsXaXotIy/k3QuhRAAcyTfZkYzT5j6Ue5f8ffV8YjelH3CwN9+xdtvvNWSuJ4TQU6kSu3a77IpQhskLbT5T1PSTLJqC9CTN4LAYkURqoBNwiAAyFG0RE/NY0G8KXT+CPaBLcCfP/HWq7l6Od7YuklN1oLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=kOFWeNAg; arc=none smtp.client-ip=193.252.23.218
+	s=arc-20240116; t=1712084708; c=relaxed/simple;
+	bh=kwS3OFemD+CoFC/VCnAgVw9Q22mZZPnHTqgKqaV9KE4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eEACIoI4+fTRmN9VMYHM2cGNjUU7j3ZnY5uzSTa9qAPH9PwYF8d5V5Udkm82J3+s9LAGVibg6Lq0XVAxOzLzgTR7jErPdKFA9SuS6qIKKQSWazzMb6e7b8qtDSrEr/FLTcoJKND5YtPhj/LCZMxgMBPRUrdiAgdUx906IgORg/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=mwQdviqu; arc=none smtp.client-ip=193.252.23.209
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="kOFWeNAg"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="mwQdviqu"
 Received: from fedora.home ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id rixOriJikJkhtrixOr9UEV; Tue, 02 Apr 2024 20:34:05 +0200
+	id rjIXreq63bxcHrjIYrcKYp; Tue, 02 Apr 2024 20:55:55 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1712082845;
-	bh=lFOjc52+8+hT07tTL2YCB1U/dZ8Xx1kaP44Rh2w3vjA=;
+	s=t20230301; t=1712084155;
+	bh=l5BYZcX/ubDaEhlB2OsDSUhwIwWkP6ApQYe4UEhGpww=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=kOFWeNAgbhKrXzWSoEoiSTd48dAtjGPnz8qptymiT3IBkhAiIfGRmhZqrVFVvCiB8
-	 mDhcfF8VbGU8jJglg7pTBRz9h62HW/B69GMk6lWmKQAygE4DTvrBZn+sKrmL0gQ5ll
-	 BsqWckqY4xDzRk2bgrvWubZt+PFlB3O+x20F9HJ/AM7sw8uwHCFuzFjJ0vET4E25ex
-	 PVbo2Bsas+rBuwQz/yrkO4JV0CSfTqyLjBRmhAIA+Km5Y+4LgQkB2PASmIJxyoFMdG
-	 Sj5THfl/Sx3M+AyF/MzJrc5W63TjVnzUOuAz80A7/kkzwy0t7AxJVgY3qF2DQlLbuP
-	 J/CpnVD1uVVcA==
+	b=mwQdviqu1SnMvOpCqr3ecoBAcjiyL3n3k9etd9llmy458xo9wrCbllEbtE4Bq7KGv
+	 sYnxteRKq2nV63ihrRR0xGT/HfYrFFF/tRdNqN5pjg3ZObsnlppGZObbapQ/o0TBvw
+	 Td5woGwM+mJi3rSLDJPZeWJy624kZsvciSrZLEuZST3vejkyKI8fG4vehFXnpsCRRq
+	 zTlwICc4cfaK4JeUaCJ4aOYpUpzRaokzrEi5GH2WXaeUc9yoj8658UwZgXJvHjqGQR
+	 jEjhqxW5v/OTx1kYgR2KUhaUGPjucd0xKA2dRx8bzBYMwWPibhEprFUhbU9JY0dBIp
+	 0LZFeqW8Cwhlw==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 02 Apr 2024 20:34:05 +0200
+X-ME-Date: Tue, 02 Apr 2024 20:55:55 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Vladimir Oltean <olteanv@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
+To: Madalin Bucur <madalin.bucur@nxp.com>,
+	Sean Anderson <sean.anderson@seco.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Michael Walle <michael@walle.cc>
+	Paolo Abeni <pabeni@redhat.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	netdev@vger.kernel.org
-Subject: [PATCH net] net: dsa: sja1105: Fix parameters order in sja1110_pcs_mdio_write_c45()
-Date: Tue,  2 Apr 2024 20:33:56 +0200
-Message-ID: <ff2a5af67361988b3581831f7bd1eddebfb4c48f.1712082763.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH net-next] net: fman: Remove some unused fields in some structure
+Date: Tue,  2 Apr 2024 20:55:50 +0200
+Message-ID: <425222d4f6c584e8316ccb7b2ef415a85c96e455.1712084103.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -57,40 +55,50 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The definition and declaration of sja1110_pcs_mdio_write_c45() don't have
-parameters in the same order.
+In "struct muram_info", the 'size' field is unused.
+In "struct memac_cfg", the 'fixed_link' field is unused.
 
-Knowing that sja1110_pcs_mdio_write_c45() is used as a function pointer
-in 'sja1105_info' structure with .pcs_mdio_write_c45, and that we have:
+Remove them.
 
-   int (*pcs_mdio_write_c45)(struct mii_bus *bus, int phy, int mmd,
-				  int reg, u16 val);
+Found with cppcheck, unusedStructMember.
 
-it is likely that the definition is the one to change.
-
-Found with cppcheck, funcArgOrderDifferent.
-
-Fixes: ae271547bba6 ("net: dsa: sja1105: C45 only transactions for PCS")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only.
----
- drivers/net/dsa/sja1105/sja1105_mdio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/dsa/sja1105/sja1105_mdio.c b/drivers/net/dsa/sja1105/sja1105_mdio.c
-index 833e55e4b961..52ddb4ef259e 100644
---- a/drivers/net/dsa/sja1105/sja1105_mdio.c
-+++ b/drivers/net/dsa/sja1105/sja1105_mdio.c
-@@ -94,7 +94,7 @@ int sja1110_pcs_mdio_read_c45(struct mii_bus *bus, int phy, int mmd, int reg)
- 	return tmp & 0xffff;
- }
+For fman_memac.c, I think that it is a left-over from commit 5d93cfcf7360
+("net: dpaa: Convert to phylink").
+Maybe, #include <linux/phy_fixed.h> can be removed too, but it is not the
+purpose of this patch.
+---
+ drivers/net/ethernet/freescale/fman/fman_memac.c | 1 -
+ drivers/net/ethernet/freescale/fman/fman_muram.c | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/freescale/fman/fman_memac.c b/drivers/net/ethernet/freescale/fman/fman_memac.c
+index 758535adc9ff..92b8f4ab26f1 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_memac.c
++++ b/drivers/net/ethernet/freescale/fman/fman_memac.c
+@@ -267,7 +267,6 @@ struct memac_cfg {
+ 	bool reset_on_init;
+ 	bool pause_ignore;
+ 	bool promiscuous_mode_enable;
+-	struct fixed_phy_status *fixed_link;
+ 	u16 max_frame_length;
+ 	u16 pause_quanta;
+ 	u32 tx_ipg_length;
+diff --git a/drivers/net/ethernet/freescale/fman/fman_muram.c b/drivers/net/ethernet/freescale/fman/fman_muram.c
+index f557d68e5b76..1ed245a2ee01 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_muram.c
++++ b/drivers/net/ethernet/freescale/fman/fman_muram.c
+@@ -12,7 +12,6 @@
+ struct muram_info {
+ 	struct gen_pool *pool;
+ 	void __iomem *vbase;
+-	size_t size;
+ 	phys_addr_t pbase;
+ };
  
--int sja1110_pcs_mdio_write_c45(struct mii_bus *bus, int phy, int reg, int mmd,
-+int sja1110_pcs_mdio_write_c45(struct mii_bus *bus, int phy, int mmd, int reg,
- 			       u16 val)
- {
- 	struct sja1105_mdio_private *mdio_priv = bus->priv;
 -- 
 2.44.0
 
