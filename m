@@ -1,127 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740EA5FB85;
-	Wed,  3 Apr 2024 08:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EF1139581;
+	Wed,  3 Apr 2024 11:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712131616; cv=none; b=HMSgZ5FxpOyIjTt0uGsN/KARILAu9+CBCklveBiH3fNE3Eqib1cxWDZ8qHlZs5WRmX4uBE82weNklX10dP2SZ2quHGPMsrexLCustnewHMLnD8DN04ABMYoj4g/LKIS7q3xWjyBupVeBvEl4m0NwqVb2ZMZq5IseYsVztAV9yUQ=
+	t=1712142692; cv=none; b=vCn5QdiObECxnKydJiyqMu1EHlR3fYb7ECf/LWOtnpWbapKfqBdWp1BCjHK+9CSuSyTNt7E4N2x+HcpsG49FukyLVx9cw/oCJCRGt9gX1oYkMTa0KEzWDoOf/9B7UxbJucnIH48Sw5miMboM6CWzPp1Upj4Rfb6p/0+luDawCMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712131616; c=relaxed/simple;
-	bh=D1fnKXGmnMmng2XJnWn0RD1OcALCWsnaPJw6jX/2oJk=;
-	h=Content-Type:Date:Message-Id:Cc:From:To:Subject:References:
-	 In-Reply-To; b=MXwQcbred8r/zC+5pYK2RkHrq05tUbrkoug8Nll+Cv52+vUBqQ1f4oRpOzSEfv5wF/YPV6jBmm4h3Y47ExqQhjJGRNfKzIepqeZ/3zA9u9ek4dAHP9/dEOVXafOxl+AolUsbdzbSwdnJZi0Z9bcn1+aboEuNr5YMvm3XZXub+Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmYdqFEB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712142692; c=relaxed/simple;
+	bh=HYrEwCsTKUUPSTMstPgXVXggHLkZU1WHZaifX4qzm8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KhiNvoIFq4ne36qTPMom3tbqLNyLaZagRnOaSZhZWWgHGODXvy5KFfu/rZPk8Qr4cH0Z6oAcxQhmpoFh8dyf5MVUqWGETPWRH8JW1aOLkpd7d64EiTXi2goMY0W/2kvjR7qpo1ua6Ms4ubHc5kOx/aQpqVBQRMm/G9Tsfd4QpTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SleascXF; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmYdqFEB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A036C433F1;
-	Wed,  3 Apr 2024 08:06:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712131615;
-	bh=D1fnKXGmnMmng2XJnWn0RD1OcALCWsnaPJw6jX/2oJk=;
-	h=Date:Cc:From:To:Subject:References:In-Reply-To:From;
-	b=nmYdqFEB6hMbmmMq1HTnQD9AKOwTHn4LdeG9WSL5+bA6ISFiyoReQ48mynf1bfrtm
-	 2cxWDzfq6Kwpw8GDirG4YQfjKe9KXPN3fenEZdrTPLR0RX8tnu5I2qCpjZp0rqR9qA
-	 l1NmFCpNYaJo426dTMZF+vqvRLeLqUhe2717vOit18YdAHTHdpTU4O56dacq4W8Cz+
-	 w1AAimDEt1D/jUbc/YXGSz3OCtM8fU7dyfmtiff26M6BgOrILchaYd5HgbVe2vj1Zx
-	 2levQjXnuaDyq7+IL74gDHVRHz1fcFJ7E5HY3oHaaTTOkV/Qw9kb7b/ijgKPY4d9vz
-	 IX/6EqidI7a+w==
-Content-Type: multipart/signed;
- boundary=4bd2cb084b6d1bc3a4d2b6f2223a5fc8229f83965193b4e69adc10d305a3;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Wed, 03 Apr 2024 10:06:51 +0200
-Message-Id: <D0AC0465UQUJ.26171T9KETMCW@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
- <netdev@vger.kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>, "Vladimir Oltean"
- <olteanv@gmail.com>, "Andrew Lunn" <andrew@lunn.ch>, "Florian Fainelli"
- <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo
- Abeni" <pabeni@redhat.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SleascXF"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-56e0c29ad5dso381578a12.1;
+        Wed, 03 Apr 2024 04:11:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712142689; x=1712747489; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PPWyL/8K/BY0S344zl7ViimO1GnRHFRzJH9oqU0Xwvk=;
+        b=SleascXFCtUAGBz7yQf2atGKREWWsySjBxhdqpwDKc1YLyoedJf/RKz6AKBQ2px8PA
+         wpYRFa729pyVxx45CFw3Hi8vhRb42ctjUslBOT/4y2qsAYWBgepjJTYWz7xBINRPmKk9
+         EmD/AEw/AIHYPmanyaAS7UqmpkjxCRRo2Ypy8K4+fRC2qQYO0YmwUNncZWYfRtYBwp1q
+         HmFuTxSu0gfvSvoUl831B+JbqIWfo/FWbw22z3CSXTN9Dn/4vFZTHuf3bIWSLrI3Nfw7
+         1g+75rXbvR1XkRro+h1xAVr3wNdOIIsuTr3fhw0sHqS9u+/HP4F83DoCms3JuE3LR8rG
+         FnIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712142689; x=1712747489;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PPWyL/8K/BY0S344zl7ViimO1GnRHFRzJH9oqU0Xwvk=;
+        b=pUA3Flh4QA/K+9PFcRCDnms9Toq/SkglvfB8lvHHGxlwNxapkjOG0dwJNttNP0ys3M
+         9qpmVXJ30o7l6aPM3NOEBtjgTyL2e+OZilUsLmpFlQWMgehv2tXwgG8vtyJJgMYDDxW/
+         r8fakGWeveJSZUbqDnAJXgLQpg1rLeDLiptvjWy5btIC9b4bOD62wKh7CYzCevIYetSk
+         JCr+Hi3SgwuD/DFV/33sjQzJNdoiawIDPINN/nspYvREC3YzcYQqyoqAQpJNtDn4tsu8
+         WE1DQOVNV60rBjMEjKqJRdo0wqVWBsIg5TYuYAYPVLbmBKmZwpBqk5E80W81CMZR57gB
+         5oNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqYN6fsY6k9Z4ByMI536cgcq7eeaabUnh1UBcfO3L/MNNIysN79hVY2gDWG48BARFglh5bCIHfKonGFIstQL7pzoN8rMrJX9OF5sfbfJMDheeyABe/+A5OEejSqwoOrSJb9G6wTsr4aGLQgONu04lxocjZ9IL+sJhCS8QF31wZMiepv1pV
+X-Gm-Message-State: AOJu0YwC8CWLS3MrCZJN1zxCKeJ14ubhN8DhVP5+IVY3x/o3Ih4KC6o4
+	EDwXmXrlKyAT+6Ou1BaVAIRWKT4a/lPZbq7T22jdCVqctpaFJfJH
+X-Google-Smtp-Source: AGHT+IFIdt/DeMggzvMvrxB3pr3IO4m0+qNSS0nfMS174yFpcTL7KqTIPP/ygiguKGBWPIAP+FAGzg==
+X-Received: by 2002:a17:906:ce30:b0:a4e:8044:231e with SMTP id sd16-20020a170906ce3000b00a4e8044231emr1640424ejb.42.1712142688679;
+        Wed, 03 Apr 2024 04:11:28 -0700 (PDT)
+Received: from skbuf ([2a02:2f04:d700:2000::b2c])
+        by smtp.gmail.com with ESMTPSA id s23-20020a170906285700b00a4e7d03e995sm2519191ejc.45.2024.04.03.04.11.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Apr 2024 04:11:27 -0700 (PDT)
+Date: Wed, 3 Apr 2024 14:11:25 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Michael Walle <mwalle@kernel.org>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	netdev@vger.kernel.org
 Subject: Re: [PATCH net] net: dsa: sja1105: Fix parameters order in
  sja1110_pcs_mdio_write_c45()
-X-Mailer: aerc 0.16.0
+Message-ID: <20240403111125.ef2jxiq2am4bbtmf@skbuf>
 References: <ff2a5af67361988b3581831f7bd1eddebfb4c48f.1712082763.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <ff2a5af67361988b3581831f7bd1eddebfb4c48f.1712082763.git.christophe.jaillet@wanadoo.fr>
+ <D0AC0465UQUJ.26171T9KETMCW@kernel.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D0AC0465UQUJ.26171T9KETMCW@kernel.org>
 
---4bd2cb084b6d1bc3a4d2b6f2223a5fc8229f83965193b4e69adc10d305a3
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Wed, Apr 03, 2024 at 10:06:51AM +0200, Michael Walle wrote:
+> Vladimir, do you happen to know if some of your boards will use this
+> function? Just wondering because it was never noticed.
+> 
+> -michael
 
-On Tue Apr 2, 2024 at 8:33 PM CEST, Christophe JAILLET wrote:
-> The definition and declaration of sja1110_pcs_mdio_write_c45() don't have
-> parameters in the same order.
->
-> Knowing that sja1110_pcs_mdio_write_c45() is used as a function pointer
-> in 'sja1105_info' structure with .pcs_mdio_write_c45, and that we have:
->
->    int (*pcs_mdio_write_c45)(struct mii_bus *bus, int phy, int mmd,
-> 				  int reg, u16 val);
->
-> it is likely that the definition is the one to change.
+The SJA1110 uses the XPCS only for SGMII and 2500Base-X links. On the
+Bluebox3 I have (which is currently in a cardboard box for the time
+being, so I will have to rely on static analysis just like everybody
+else), these links are the cascade ports between switches. However,
+those cascade ports are only used for autonomous traffic bridging (the
+board has a weird "H" topology). Traffic terminated on the CPU doesn't
+go through the SGMII links, so this is why I haven't noticed it during
+casual testing.
 
-See also "struct mii_bus":
-
-	/** @write_c45: Perform a C45 write transfer on the bus */
-	int (*write_c45)(struct mii_bus *bus, int addr, int devnum,
-			 int regnum, u16 val);
-
->
-> Found with cppcheck, funcArgOrderDifferent.
->
-> Fixes: ae271547bba6 ("net: dsa: sja1105: C45 only transactions for PCS")
-
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only.
-> ---
->  drivers/net/dsa/sja1105/sja1105_mdio.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/dsa/sja1105/sja1105_mdio.c b/drivers/net/dsa/sja=
-1105/sja1105_mdio.c
-> index 833e55e4b961..52ddb4ef259e 100644
-> --- a/drivers/net/dsa/sja1105/sja1105_mdio.c
-> +++ b/drivers/net/dsa/sja1105/sja1105_mdio.c
-> @@ -94,7 +94,7 @@ int sja1110_pcs_mdio_read_c45(struct mii_bus *bus, int =
-phy, int mmd, int reg)
->  	return tmp & 0xffff;
->  }
-> =20
-> -int sja1110_pcs_mdio_write_c45(struct mii_bus *bus, int phy, int reg, in=
-t mmd,
-> +int sja1110_pcs_mdio_write_c45(struct mii_bus *bus, int phy, int mmd, in=
-t reg,
->  			       u16 val)
-
-Reviewed-by: Michael Walle <mwalle@kernel.org>
-
-Vladimir, do you happen to know if some of your boards will use this
-function? Just wondering because it was never noticed.
-
--michael
-
->  {
->  	struct sja1105_mdio_private *mdio_priv =3D bus->priv;
-
-
---4bd2cb084b6d1bc3a4d2b6f2223a5fc8229f83965193b4e69adc10d305a3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZg0OHBIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/hg0wF/RTzwJEa5sk8GegngsX3YXJNsapFGBssA
-1yi4ssEWgnZ6MhuJioHlBvvAGMyORvVSAYDbILAPiVw0FfyfNp47+kanvUqhvG78
-pxSroqUKdQMTmg56f1PDbdoUyTwYihmBgHw=
-=ICMO
------END PGP SIGNATURE-----
-
---4bd2cb084b6d1bc3a4d2b6f2223a5fc8229f83965193b4e69adc10d305a3--
+However, there are other NXP systems using downstream device trees which
+are likely impacted, but they are on older kernels and probably haven't
+seen the regression just yet. So the fix is welcome.
