@@ -1,56 +1,91 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9682F129E8D;
-	Thu,  4 Apr 2024 15:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A371D559;
+	Thu,  4 Apr 2024 16:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712245540; cv=none; b=j9aLgkyiDlbqagVEjBhmbSTWotTRafdDQXqK+tTqLlzrwVLqVXcJk0KoP8KAOgCcQp+cJprSpDi9gVPhN3AwQNT0MzGCYeudTxWVbHKM8CsmdZszRJ7M0PKKg7nDPzGGUeYPxdGfWtBJmecvhtHgj6Fh8nwZI2EOzAQU3oHndhg=
+	t=1712249927; cv=none; b=c2jBTOq9L/uP/4QbhpSfRHgyH8iWL6447CNdgrGjTEBn23KEDPoAJyZw1vhvFrukRxhFZQGvsfMfSU5gvduaVtSLCp486ST5dVhc0vCumN3vzSc9tNl+E5fDD18cy33B12dCQ3+/Aaq9XZIMrjC1MdV8XhyqnfYLQXGWnIp5+js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712245540; c=relaxed/simple;
-	bh=06LltEwRa6hVHukKdlRsi3VG2JyLvZ9do/OpA5AoXpg=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=gIWDhbnceb1CMjq3pmJmWKrC9WUgFbZIKyzOmh+hnyefm/u79gF1Rs2ZdkHVtl48TAnl/EGDih9ofefUbPVVSB3KxrUZsi6shMtWOjx1tTIolmITAzD4ulfMxiad1iCmd4WvJCgboHWMXPG1kJxR0Y+p9cF44DzXtkl56XYijOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZW3d0pYN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712249927; c=relaxed/simple;
+	bh=vYAdJExLD0Pba8+2LILXT/H49qXYZgBBf2Q0yYemBxA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=MgavfmxPvXZckqJPvaz1wrw3HOH4t6opBjKjHfimRQJtaB2AiGD47UNSG0MtwtA4+hHWVP3FNfxXwNAsyjP4XZa6QibxwFdVcypnZPGFcfdm79LnJegcZYFyAH6cEbTPZop/60cJvQrPER5avTOoef+NPS88lQZ4TU3ZZONbhD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d0j3p/rQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZW3d0pYN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B176C433F1;
-	Thu,  4 Apr 2024 15:45:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0j3p/rQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFA94C433C7;
+	Thu,  4 Apr 2024 16:58:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712245540;
-	bh=06LltEwRa6hVHukKdlRsi3VG2JyLvZ9do/OpA5AoXpg=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ZW3d0pYNqxfCnLK9j1vk2ztek9ZkO0Tt8EA0wlGrDSNbnmgTeEOerca+Dm9APhtPp
-	 TLXdj2dQ6gf7zKLXIx5mEWgdvT8/+1wI9V+t1kI02MH2BUO3Fo7W7r6v1GbqgJrnQ9
-	 tmKDea9C1KF/hn/+AWLEA57YTeQipxbi+gdfCy8R4fO2acXYowKhAa321CC/szp8OI
-	 TLo+oC9J8GyK3EIui4+GBTHj8U8K/KE2StnZXB7MYYBh4VS8J3KgsFt0oOlqW4KPw0
-	 YjO6YKe8bgdHqNTtv6dSHLPWGhUuY+L2RfTX1o6XensvKN9Iya9anF5Fa50uRt3bXq
-	 Xd9OFPn0z5TGw==
-Message-ID: <613b6a72867cbbbbca39888a53f26fa7.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1712249926;
+	bh=vYAdJExLD0Pba8+2LILXT/H49qXYZgBBf2Q0yYemBxA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=d0j3p/rQQpf1uHNZz+bARmhaiknJY5BzUDYV4N4dsxFM4zVkcJArJh1WkwhaYLxqM
+	 AfEFrRroN5hIbNAioWiZntCjm+6E5J8GIcRdwmm39bJUirtP6sfCTs6dDM2pSW6paH
+	 tlvIrgSg46q5k0OzND6gEuFBmlkVts0ml/JBSsjjKAt4qM7PzadZPdJgE/8yLOB5LV
+	 bJm7LhTy9mwO81Sy+JamcYyBcnbYduDE8El+PIq9hWLas/lxvOd1c/w7t2v20SP0Wn
+	 B/wwglprYs63C03p9F+FfZAnrdn0zVWfHptZ4S66KveekU/KiePcD4jfSFkvipA4Nx
+	 wljbKF520fP1A==
+From: Mark Brown <broonie@kernel.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, 
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+ Bard Liao <yung-chuan.liao@linux.intel.com>, 
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
+ Daniel Baluta <daniel.baluta@nxp.com>, 
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <9d2477cf-25aa-4d12-818f-fdafc9aaa28a@moroto.mountain>
+References: <9d2477cf-25aa-4d12-818f-fdafc9aaa28a@moroto.mountain>
+Subject: Re: [PATCH] ASoC: SOF: Disable pointless writes to debugfs file
+Message-Id: <171224992349.92541.12088841230483454478.b4-ty@kernel.org>
+Date: Thu, 04 Apr 2024 17:58:43 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <6cfb0e5251c3a59a156e70bcf6a0cc74aa764faa.1711985490.git.christophe.jaillet@wanadoo.fr>
-References: <6cfb0e5251c3a59a156e70bcf6a0cc74aa764faa.1711985490.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] clk: nxp: Remove an unused field in struct lpc18xx_pll
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Michael Turquette <mturquette@baylibre.com>, Vladimir Zapolskiy <vz@mleia.com>
-Date: Thu, 04 Apr 2024 08:45:37 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev
 
-Quoting Christophe JAILLET (2024-04-01 08:31:53)
-> In "struct lpc18xx_pll", the 'lock' field is unused.
-> Remove it.
->=20
-> Found with cppcheck, unusedStructMember.
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+On Thu, 04 Apr 2024 10:38:45 +0300, Dan Carpenter wrote:
+> The permissions on this debugfs file are 0444 so it can't be written to.
+> And writing to the file hasn't done anything since commit 6e9548cdb30e
+> ("ASoC: SOF: Convert the generic IPC flood test into SOF client").
+> Delete the write function.
+> 
+> 
 
-Applied to clk-next
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: SOF: Disable pointless writes to debugfs file
+      commit: 84ae7d9cfa5f6ec284efccedcb7baf7c075774d4
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
