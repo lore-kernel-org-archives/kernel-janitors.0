@@ -1,50 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBF51BF37;
-	Thu,  4 Apr 2024 14:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9491D551;
+	Thu,  4 Apr 2024 15:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712242230; cv=none; b=VcSWB9oZAMIFIplX1VZ4ERAhOwqgsRD4i/KFMFzw2BzIAPsBvzTOlBxKjW0qiBmQqA7XHXJFTUpeKTJQhgWTsSkxt3iXWY9NN/25xpzBxrxs8onJXului0+rRGZS0HEtJqEZY7oeuiX1dTpTFEcHh7d06mbGzaSuv9vYiOJOwGw=
+	t=1712243529; cv=none; b=oZAKbZyACid+P6UIEd1EIPVPDswjf1pZq1L8sc7S0nDi7ItVU5GhAquW9GO3W8vCoU8bL48l/zs3LZGAXJMdMF8L5NYbbYpgsLP7jrniSsju+zZF2FoAhB1IKRKCMMp+NOkeqE5DwpGlC3RitXdb2/aPAM55oQ6boATjiP+WkkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712242230; c=relaxed/simple;
-	bh=SCMIZ1IGMHRrGNpDE/LUqaEShJmCNL+gjhIz3VUxPNw=;
+	s=arc-20240116; t=1712243529; c=relaxed/simple;
+	bh=J1aqCHl4RlvByCEFGZ60+2vPpqa4aKe6g5qYLLoW0CI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h9dIa+Ioy84v9uBY6vAjjuAYYqGwWgc26tELAfpULWkDkZYyAAYUjnnjhr4i/XWOFNHHpNRU1cyitR/DegunX+xaxCnmHNUQ0YguyKU4BAvlY9rO6FOskjDpwiKRVlSX7HQ0p9e35zObKCqX7Yn8uJ6QXMSxYilnSrpp05bQ5Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gyRaBgO6; arc=none smtp.client-ip=192.198.163.10
+	 In-Reply-To:Content-Type; b=WUW8zq2njdAi9h3H2wQ9MlTohOjKCCbCngfWjkg5XmuDIOSamhxFW86yUAO8PD7jlfkrMh2nuRyuhrRvLV+CVzQ9oX1IQYpW8gqbpQVAHW3o/o9zOs0UJBrDODZnGwHk6cm8thrWpU0YuSxFgGyn64dSJmT9ZSH6MN54BJJkRBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dc3+AVDp; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gyRaBgO6"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dc3+AVDp"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1712242229; x=1743778229;
+  t=1712243528; x=1743779528;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=SCMIZ1IGMHRrGNpDE/LUqaEShJmCNL+gjhIz3VUxPNw=;
-  b=gyRaBgO6iHU7G+M3z7CAuDPNh8s9ZqsGIL4Lco23SXCenJ4IaCHsOFj2
-   KzVU3PJMDVcZcbl9LWwoECo28JcItO+LbqV4vgr0vAVhyQBDX16gLsmsv
-   UvxVThRjAgJGvP15ucQW+1QFbEJXDqQgOZYcbkjIAJAXlJXTkxhGUOE5U
-   Jh/0V5yny640vDFGFyWrcNCwt7O313bEL8ly5RbdHFcE3WD/7lURsrhBH
-   RQTjosXEnENPvAeJ+9nZnlHbjGrLzwGMYRjKYVbNO7sxrIhYSauho+34u
-   MQsLAfkqdQD3tHP9pRp3oHAUnJmpIfLAre3CeciALo0xvvnAq7flgBJoT
-   Q==;
-X-CSE-ConnectionGUID: 6oSGR9rKSJmIImoaTSPmIA==
-X-CSE-MsgGUID: xnmJQGB0T4O2cKhBLBiowg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11034"; a="18885071"
+  bh=J1aqCHl4RlvByCEFGZ60+2vPpqa4aKe6g5qYLLoW0CI=;
+  b=Dc3+AVDpodc3alHA0dmsqxF6ClKugBDF7/XTS2MwaT/7Gq+npGwklAL3
+   zm+hsm1l3g2glFjQ1YcN6c4UPpK56V5N5Fbypxp0Zujkz/R7+dupuj3Vg
+   9VWDSYiqyFCPvLKgwhod0tWfUfzweMjyXATJ3/Tixs6raJNbFURHEOC9t
+   IGTPIz8crVFKwSx5uZsCkA7UjKdpUkoqDH856a4LfDzInz38TY2kWo7vy
+   i1IjzNAKSBsQRojYxm2f8oeInV9Fo9gx0N5fvHPJvxKh2C6KKRyG/CM1Y
+   ezzYs2aHpsp1Wq/t6/shaJAApJ560wQbm1ke0p7fcHKHKwiwznXlQXRXz
+   A==;
+X-CSE-ConnectionGUID: oHke3O1MQ+iUPrXb3nkyPw==
+X-CSE-MsgGUID: x7yeo/CiRUOF+77ysEWvnw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11034"; a="11355536"
 X-IronPort-AV: E=Sophos;i="6.07,179,1708416000"; 
-   d="scan'208";a="18885071"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2024 07:50:28 -0700
-X-CSE-ConnectionGUID: GaTUqSPCScudo0L9LiAGBg==
-X-CSE-MsgGUID: G5bDDajiRvKG+tlUsjc4PA==
+   d="scan'208";a="11355536"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2024 08:12:07 -0700
+X-CSE-ConnectionGUID: JEZ3/RujSLiVwTylxe6LDw==
+X-CSE-MsgGUID: 7XRf0ZZKT4u4MRwLUuR2FQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.07,179,1708416000"; 
-   d="scan'208";a="19264395"
+   d="scan'208";a="23282962"
 Received: from aghiriba-mobl.ger.corp.intel.com (HELO [10.251.213.116]) ([10.251.213.116])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2024 07:50:25 -0700
-Message-ID: <853f31f7-3616-4412-b153-ee24a7901757@linux.intel.com>
-Date: Thu, 4 Apr 2024 17:50:55 +0300
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2024 08:12:04 -0700
+Message-ID: <bab6cb4d-a460-45c9-a889-52a97eb6dd69@linux.intel.com>
+Date: Thu, 4 Apr 2024 18:12:35 +0300
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: SOF: Disable pointless writes to debugfs file
+Subject: Re: [PATCH] ASoC: SOF: Clean up sof_ipc_flood_dfs_write()
 To: Dan Carpenter <dan.carpenter@linaro.org>,
  Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Cc: Liam Girdwood <lgirdwood@gmail.com>,
@@ -64,79 +64,87 @@ Cc: Liam Girdwood <lgirdwood@gmail.com>,
  Takashi Iwai <tiwai@suse.com>, sound-open-firmware@alsa-project.org,
  linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
  kernel-janitors@vger.kernel.org
-References: <9d2477cf-25aa-4d12-818f-fdafc9aaa28a@moroto.mountain>
-Content-Language: en-US
+References: <a35dded2-392b-4ccb-9dbb-d782ac9b6547@moroto.mountain>
 From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-In-Reply-To: <9d2477cf-25aa-4d12-818f-fdafc9aaa28a@moroto.mountain>
+Content-Language: en-US
+In-Reply-To: <a35dded2-392b-4ccb-9dbb-d782ac9b6547@moroto.mountain>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 
 
-On 04/04/2024 10:38, Dan Carpenter wrote:
-> The permissions on this debugfs file are 0444 so it can't be written to.
-> And writing to the file hasn't done anything since commit 6e9548cdb30e
-> ("ASoC: SOF: Convert the generic IPC flood test into SOF client").
-> Delete the write function.
-
-I agree, it is not used anymore and ...
-
+On 04/04/2024 10:34, Dan Carpenter wrote:
+> This function doesn't support partial writes so using
+> simple_write_to_buffer() doesn't really make sense.  It's better to
+> just use copy_from_user().
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Thanks, it makes sense.
 
 Acked-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
 
 > ---
-> I haven't tested this patch and there is a risk that it breaks some of
-> the test scripts.  Another option would be to just make it a dummy
-> function that does { return count; }.  But I thought I would try the
-> better option first.
+>  sound/soc/sof/sof-client-ipc-flood-test.c | 17 +++++++++++------
+>  1 file changed, 11 insertions(+), 6 deletions(-)
 > 
-> Please review this extra carefully.
-> 
->  sound/soc/sof/debug.c | 19 -------------------
->  1 file changed, 19 deletions(-)
-> 
-> diff --git a/sound/soc/sof/debug.c b/sound/soc/sof/debug.c
-> index 7c8aafca8fde..937e51b02a24 100644
-> --- a/sound/soc/sof/debug.c
-> +++ b/sound/soc/sof/debug.c
-> @@ -19,24 +19,6 @@
->  #include "sof-priv.h"
->  #include "ops.h"
->  
-> -static ssize_t sof_dfsentry_write(struct file *file, const char __user *buffer,
-> -				  size_t count, loff_t *ppos)
-> -{
+> diff --git a/sound/soc/sof/sof-client-ipc-flood-test.c b/sound/soc/sof/sof-client-ipc-flood-test.c
+> index c0d6723aed59..1b2e9e25a836 100644
+> --- a/sound/soc/sof/sof-client-ipc-flood-test.c
+> +++ b/sound/soc/sof/sof-client-ipc-flood-test.c
+> @@ -160,15 +160,20 @@ static ssize_t sof_ipc_flood_dfs_write(struct file *file, const char __user *buf
+>  	unsigned long ipc_count = 0;
+>  	struct dentry *dentry;
+>  	int err;
 > -	size_t size;
-> -	char *string;
-> -	int ret;
-> -
-> -	string = kzalloc(count+1, GFP_KERNEL);
-> -	if (!string)
-> -		return -ENOMEM;
-> -
-> -	size = simple_write_to_buffer(string, count, ppos, buffer, count);
-> -	ret = size;
-> -
-> -	kfree(string);
-
-This was not too constructive ;)
-
-> -	return ret;
-> -}
-> -
->  static ssize_t sof_dfsentry_read(struct file *file, char __user *buffer,
->  				 size_t count, loff_t *ppos)
->  {
-> @@ -126,7 +108,6 @@ static const struct file_operations sof_dfs_fops = {
->  	.open = simple_open,
->  	.read = sof_dfsentry_read,
->  	.llseek = default_llseek,
-> -	.write = sof_dfsentry_write,
->  };
+>  	char *string;
+>  	int ret;
 >  
->  /* create FS entry for debug files that can expose DSP memories, registers */
+> +	if (*ppos != 0)
+> +		return -EINVAL;
+> +
+>  	string = kzalloc(count + 1, GFP_KERNEL);
+>  	if (!string)
+>  		return -ENOMEM;
+>  
+> -	size = simple_write_to_buffer(string, count, ppos, buffer, count);
+> +	if (copy_from_user(string, buffer, count)) {
+> +		ret = -EFAULT;
+> +		goto out;
+> +	}
+>  
+>  	/*
+>  	 * write op is only supported for ipc_flood_count or
+> @@ -198,7 +203,7 @@ static ssize_t sof_ipc_flood_dfs_write(struct file *file, const char __user *buf
+>  	/* limit max duration/ipc count for flood test */
+>  	if (flood_duration_test) {
+>  		if (!ipc_duration_ms) {
+> -			ret = size;
+> +			ret = count;
+>  			goto out;
+>  		}
+>  
+> @@ -207,7 +212,7 @@ static ssize_t sof_ipc_flood_dfs_write(struct file *file, const char __user *buf
+>  			ipc_duration_ms = MAX_IPC_FLOOD_DURATION_MS;
+>  	} else {
+>  		if (!ipc_count) {
+> -			ret = size;
+> +			ret = count;
+>  			goto out;
+>  		}
+>  
+> @@ -231,9 +236,9 @@ static ssize_t sof_ipc_flood_dfs_write(struct file *file, const char __user *buf
+>  	if (err < 0)
+>  		dev_err_ratelimited(dev, "debugfs write failed to idle %d\n", err);
+>  
+> -	/* return size if test is successful */
+> +	/* return count if test is successful */
+>  	if (ret >= 0)
+> -		ret = size;
+> +		ret = count;
+>  out:
+>  	kfree(string);
+>  	return ret;
 
 -- 
 Péter
