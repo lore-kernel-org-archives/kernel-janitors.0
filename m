@@ -1,66 +1,71 @@
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BE75A4E0
-	for <kernel-janitors@vger.kernel.org>; Thu,  4 Apr 2024 07:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3620A59B67
+	for <kernel-janitors@vger.kernel.org>; Thu,  4 Apr 2024 07:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712215904; cv=none; b=JuMW7LJD+0EDel2L0d37nF5PIozNYi9tIWZnBd1wrRlrjgnXUcfgbEAomEFwryidwn+Yb6W9kliBkDDO+H7COxqWje2+E7DO0Z4jrDIDdIbS2PXQomTY35BvTSybjPeFqur1fiFZNvLLuF2783VfbCf6MHukMK9TdQbP77OQBd4=
+	t=1712215934; cv=none; b=gbS+3EMC+js/+UQl99hUBnnLi3Be+qs4c4LxujC5VynvQZSnFbNkXgXUjL8CwvbBEtCoRX3yTlruAj5/kB9BxF6WX+gtdRITRcbcfLuBMlXszUN+bSZVyCa5PzshDpxbi1tYsZ6yAbS4ytRb2kQc5MeX30jkL0AsLz+UpIMYqOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712215904; c=relaxed/simple;
-	bh=zVyGWF1iveaM9nRdNRBaWoSVHzX2upsrKArTedHzmbM=;
+	s=arc-20240116; t=1712215934; c=relaxed/simple;
+	bh=Ls3PpIQ2YyG8xs+4rpQ3hM8m7hScp+Qun/2/ykjbdKw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AvzHZFluFjxhcOxoCC5eXbVtLe5TN0mF74+yXqR+wzjpFeR7I5xBdmKXr5UdS6uaCekfkpiWvLy+6u13mUxSD/kgPrr6dF96WDj9u6iktLzA0K9HyEGuoarHV2/DxunKbwBWn0SnAjiwB3yBSa3X969OLu0J00DAjnAV7yeq2IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zJikKwsA; arc=none smtp.client-ip=209.85.208.182
+	 Content-Disposition; b=AzEzFxFtR7vDiopj+lRxQLb86hekz2zeR6f6qp2OMxWvBGUxWwhxsGx+C2Fbfa5SJyEdu2PaqwL8Tv21oos374i4MPsTDzmlSlsIt6BsWzrtuL1kxLK+Fqo9y+D2zJzadeO60uFg3X6DI3NBDeLm+9JKMutgLCBhTv6TyIZuZK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NI2aZhhX; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zJikKwsA"
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2d700beb60bso10078641fa.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 04 Apr 2024 00:31:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NI2aZhhX"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-56c197d042fso653657a12.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 04 Apr 2024 00:32:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712215901; x=1712820701; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1712215931; x=1712820731; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Vu3+4crI0+2uxroxmdzmWagiwHkz9rJOougDEXvD4hk=;
-        b=zJikKwsAcweayZ9Lc7v6y4hljX7aC8cNMkOoGzJbKLQfpYNalPAFeRJ/s3uPD8ap1m
-         NW+Fm1aHeIUYbnaKU7Uk6VX4OnmPxX4Y3yltC1mXsprtRewDwD5QHxW/shgmIOLi+k0a
-         VqvNLcuxFWmydH4ZuCR2PTNb8lqprqESr3azMSru3ls0obEoPmQnD68MHPRqFgaY4FEM
-         4KUL304MaPVAR6OM7wlQX71hA9+cHAbdN8o79B9DKQrBG8mZoZptW0po1ek2W0i5bd1A
-         jJyn7PJh7O8AgYStNRHBdHcKuFSsGmXBox+ek5SLLgEfJ/FjrO2Q5OVzsgV2EZx0tWgb
-         kZRw==
+        bh=//sAcOVGiFM67Mc+7u0Jl/+UyvrH+ecyO1z9cymLgoc=;
+        b=NI2aZhhXCQ6QWkJfbx1MpJwSI0s0ENFJ4MmReW/55Nyo4LTX5UfIoPPFXSyvhXGtoZ
+         vqu05wb51knuofbAk/7YoU8EFjH8BDWNOEFR1Zosl/twhmwQM29I1M1+y/Jrwt02JnZF
+         OMoJJ6La5xVZdX56nO6UyO+J5ZQA1DpFSzVWpjnhSe7BOfZtr4s/KPJ6nD4TUiMWo+xk
+         JyOt86SFO48KTzXeZNDwoPp2uF4uXwbY14XNO7YiJ9LUmJJCbFjouyeZpEcuYyMvsS5t
+         XPZojwzwRKCOPoWJgWhwFAKdyIRQ14xpHVDLeAmOhU2HRq/xnNDo3rUkEXbV3dprPqNg
+         /OpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712215901; x=1712820701;
+        d=1e100.net; s=20230601; t=1712215931; x=1712820731;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vu3+4crI0+2uxroxmdzmWagiwHkz9rJOougDEXvD4hk=;
-        b=BgZ7hAi0GQtt2VWVJil9pkwF3PHHoE2ZCPl7SeaZ2zEl1B6Y5LAuGpEcStyHt6ggC1
-         p/qkrG36seLxENIDDFJqJjPIYkw4MhxhEnX85FsNg4EOwFTakS6JbyakUzH/Tk2mVOkm
-         yaVZ7LERiA03BWlsop9qK5LGiUdXFuUg1BrENciO0y+79dqJXwd+VK/gBbt6Rfy1ZMRG
-         ApiiTZh4BcSIRpwQqPaBwnAcVranNdCrQZQtsdAcQwoTzQq+cG8Ou4F8WW7wNaNHKDT/
-         TDVWtXsUtfugsXLtg/eKA0CFS2jvdMyxJ+SYZqHHA2DeAa3BC/8AwY1U0gN4E5rTct3p
-         AX3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWI8yeloPxXb48BycUf6M81qwM001OCpwGBVzgF6RKsOLMhDqdyq4WnofE0geCsCDWdNlUQThqB2ODMw7CXQmSBc8n7yu/XSw0uH5VcItX/
-X-Gm-Message-State: AOJu0Yz7O+oBnnVBZ/KZWCoL9qRe0fzyOj7KNEYSNWovzHHuEQfYmPb3
-	tHQ+NhBtdRaXpmGRvjIKjAu0LwzfnL0UOWhaY5B6ZmzIJXtUnG5jB1QEC6NkBlY=
-X-Google-Smtp-Source: AGHT+IGiE75e3sow3qx8AU7LvCSgmcUGI1nvrGeSu7KhuHffLa4dHJlju06ThA2DLfKY1Ea1b1TWvA==
-X-Received: by 2002:a2e:b04c:0:b0:2d8:41c5:ad64 with SMTP id d12-20020a2eb04c000000b002d841c5ad64mr1540458ljl.13.1712215900612;
-        Thu, 04 Apr 2024 00:31:40 -0700 (PDT)
+        bh=//sAcOVGiFM67Mc+7u0Jl/+UyvrH+ecyO1z9cymLgoc=;
+        b=iHCeoFG6MGkLamX3vZXkqeyTKPb8bPhC5oO0zRLD547j72UwODWnJfNgnpvJEzF/R4
+         s9cyqbeFWq+U04av/KT8w38lf9h+s1ywslDwPTYNK0l8GKHkephXhMeTeQxp+rq54jft
+         aO/UdmYJVxBuaa9fOyKWmVCgX1cupDOTXvzqLKhSV6teZ98aET7sNdXYpyL3st/wpnHq
+         8olClntaoYIv4t91boDC5RsP4k6xiH3dj8qPoTTaj+lG3n+GWDmtDJZubVdOkLwDr7xl
+         pNcF6V1AR8iTSI6nXXOvyEfLI/Jmqg4svkG9nTu7E41yWjn2K3QwRLd//KuzNGidGv8v
+         Mqvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIUHzv9D51REd/tyQyJXmx8OkU92IYo5oOf4LHJ6GKBRmHCAJtsla3Ng1hw5bAz0L5qC4KxH5sfldpDz0QT0GjLUIW9WvZ7xv6xnY97kMD
+X-Gm-Message-State: AOJu0YyzfYMalWpuMzGYpgh+QxoBFEstnD14brrOxFvdPRRWsWcuTm23
+	/01c1n3pr2LGcOsvbUNNnux/FcdNE49WAs6JzbZWemOkU/612UuKeAlfx3U8p1M=
+X-Google-Smtp-Source: AGHT+IHGoMQHATjr9mp/W1xlbFnASpGskQs04R+ZSL+kTmOQTHyHF5yua8U3fbJLoFFE5vCnaPng5A==
+X-Received: by 2002:a50:8add:0:b0:56d:ee61:6874 with SMTP id k29-20020a508add000000b0056dee616874mr1078667edk.20.1712215931473;
+        Thu, 04 Apr 2024 00:32:11 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id u14-20020a170906780e00b00a46c8dbd5e4sm8625495ejm.7.2024.04.04.00.31.39
+        by smtp.gmail.com with ESMTPSA id s2-20020aa7cb02000000b0056c0d96e099sm8845373edt.89.2024.04.04.00.32.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Apr 2024 00:31:40 -0700 (PDT)
-Date: Thu, 4 Apr 2024 10:31:32 +0300
+        Thu, 04 Apr 2024 00:32:11 -0700 (PDT)
+Date: Thu, 4 Apr 2024 10:32:07 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dumitru Ceclan <mitrutzceclan@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Michael Walle <michael@walle.cc>, Andy Shevchenko <andy@kernel.org>,
-	Nuno Sa <nuno.sa@analog.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] iio: adc: ad7173: Fix ! vs ~ typo in ad7173_sel_clk()
-Message-ID: <5401c681-c4aa-4fab-8c8c-8f0a379e2687@moroto.mountain>
+To: Rohit Visavalia <rohit.visavalia@amd.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Michal Simek <michal.simek@amd.com>,
+	Vishal Sagar <vishal.sagar@amd.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm: xlnx: db: fix a memory leak in probe
+Message-ID: <86def134-9537-4939-912e-3a424e3a75b6@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,27 +76,27 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This was obviously supposed to be a bitwise negate instead of logical.
+Free "dp" before returning.
 
-Fixes: 76a1e6a42802 ("iio: adc: ad7173: add AD7173 driver")
+Fixes: be318d01a903 ("drm: xlnx: dp: Reset DisplayPort IP")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/iio/adc/ad7173.c | 2 +-
+ drivers/gpu/drm/xlnx/zynqmp_dp.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-index 4ff6ce46b02c..b1d6ea17ced3 100644
---- a/drivers/iio/adc/ad7173.c
-+++ b/drivers/iio/adc/ad7173.c
-@@ -835,7 +835,7 @@ static unsigned long ad7173_sel_clk(struct ad7173_state *st,
- {
- 	int ret;
+diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c b/drivers/gpu/drm/xlnx/zynqmp_dp.c
+index 5a40aa1d4283..8a15d18a65a6 100644
+--- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
++++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
+@@ -1716,7 +1716,7 @@ int zynqmp_dp_probe(struct zynqmp_dpsub *dpsub)
  
--	st->adc_mode &= !AD7173_ADC_MODE_CLOCKSEL_MASK;
-+	st->adc_mode &= ~AD7173_ADC_MODE_CLOCKSEL_MASK;
- 	st->adc_mode |= FIELD_PREP(AD7173_ADC_MODE_CLOCKSEL_MASK, clk_sel);
- 	ret = ad_sd_write_reg(&st->sd, AD7173_REG_ADC_MODE, 0x2, st->adc_mode);
+ 	ret = zynqmp_dp_reset(dp, true);
+ 	if (ret < 0)
+-		return ret;
++		goto err_free;
  
+ 	ret = zynqmp_dp_reset(dp, false);
+ 	if (ret < 0)
 -- 
 2.43.0
 
