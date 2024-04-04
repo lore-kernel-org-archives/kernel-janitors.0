@@ -1,134 +1,107 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388A65B208
-	for <kernel-janitors@vger.kernel.org>; Thu,  4 Apr 2024 07:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DEE3D96B;
+	Thu,  4 Apr 2024 08:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712216332; cv=none; b=hBLqDwelZ9ErktHRN3rkChd+vcuNGZb436uaiKtma0O5tGcaPNjfj4kwyGGRwVN/fOynaHar4viYh+1IRadD0QXUAZoiX+y8AESTXLol6i3g+xGIN1xuvfGNoJlqOVpZTu15Hq5JzqUpXmInQ6stwGYmxkVd48swRPwk8+5YBDg=
+	t=1712221201; cv=none; b=FHoJfDRJJkzMvvfs5Qc6FUuXF3OEryRf9zXc6+D0ia+cD2Yv7rHoJruhKhk6In1MYts0+pXPYp4kG2nj2Pq0i1R5ciDaauLNj40O7z81RNs2sGjNH7SESjM8z1CVDU5IlI+a49O5UlemPcgMXbR0uGHYE6YrcVUSYzyajnkSyjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712216332; c=relaxed/simple;
-	bh=JRQbqG9dvdwBcgYHftBoddCN89kAvlWQMBhezfFQtC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HgF/YhOB87NK30i9zw/Igy5jDXHdMF/r2qDyWmEAWRtP8k+BDVMZ8JIptVsr1da13hVV4zkR6ZHrY5SJ+aMaT6oPf3OdztFVjcZFo7YUO+WvlVKo6bZVdiRGXsikViGkFQisN1wUrYaUuFZx0MRh0MIjV71JuZeLBisnUcGbDvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hxQIzQz/; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1712221201; c=relaxed/simple;
+	bh=zFV67fOp03KxbIcwK8vP/lP0IGis8ozPjbOeUJBXnYQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aVQnaCuXZs7QRNhrj8YozhoXq0oIAQTv9soXpTvbpfJp09+t+D/0FTDZ+Fd8sK6WLFdEOFnXiZM3jQuC7n1joohpejkkEcovzZmPWl1YIByRSJ4OybsmUTQYewguFqYZPNKkAmcg1vq64VC95hd/+te86HjXG+qgBZtFkY2N2/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fGxIBB6G; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hxQIzQz/"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-56829f41f81so909160a12.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 04 Apr 2024 00:38:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fGxIBB6G"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-56e1bbdb362so651882a12.1;
+        Thu, 04 Apr 2024 01:59:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712216329; x=1712821129; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jmb/MEHh47+ZYNv/6YgsJI1m65tIb2/eWlw2hu0WHw0=;
-        b=hxQIzQz/HUn0/u0cWHOK6ob3OUU2USgu5kktqLt4pD8yoSGFJ8YYNcFIsFsylLdySa
-         CfhsrsU2uUnwGqJ0SFsNoEsvJLQBSggBVBWK4puR8dM4of2xNLr/SxZUuuw2+TdSrriK
-         Dnmoxsq9bhsnzo5m/OXNj2mYbuv9dCqZKDJMdGaoVJacfeFMKelVb7ThgLbhNIvDinfF
-         1TckqgIYRqd2OsKZY8LG/Xx0sVbUb77EyD1QvE+3zKJEk9LG6I05gwpDFRExCSN7AMWA
-         ntM1x1eUZXaEqeNkHO0Ri5VuEoeCeVVUDLA0Xh4FQvEmAiVm+3H9RB6zUrCSRGS2Pjjp
-         Hx2w==
+        d=gmail.com; s=20230601; t=1712221198; x=1712825998; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OOhldulBQUILs95IIEuLjdbv/PRLLb7tYoW3G02BM1Q=;
+        b=fGxIBB6GwGSg3ORo18n22QSxykmpNuOSZRPpKYz+S/Zft55fOunJKt+v0uttlFNNsr
+         D+dNelPqOphSF9H06bUWvTMdBw/bv3At/v7f4tUJml+krleLtDPHpVwd1MQ5sx281biK
+         wZKxMpP/RSAjsEcJeeTtt2g/qBrXEXdDlhCcWdpWoSaLhNYvrlKiTGIVN4adnLQROgvn
+         8mKVkSlHgTFPhbZtSfynG0pgG1Envkh7KaablJ6U5C2YvG2dkbz3h3+3KkHDufBI/h7M
+         1kHibHUBt6VbSDJUyKzY3ktDy6nKrkzGfJvmniHQKyOFZUpnBUdCEsx3uPmu2mHnrvjO
+         5YRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712216330; x=1712821130;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jmb/MEHh47+ZYNv/6YgsJI1m65tIb2/eWlw2hu0WHw0=;
-        b=LfuvmPgDH50fn2rDN1cCzJhG4CuKOcbefJmR0qdwXcS4ZIEvFRNEqxFmv6O8AdrOa5
-         yljqZdF6KWM/XKT3u65xpMTw03hsG9Z+h3Sq2utpdVazqHwPh4+NIYS9ZJouBfP+qgsR
-         VosL6zf4oq4xIeGrWtPbUPyahUOzs9d14hbDEq9kinhiQdJzzxVe5N8x1e5SjPYsGXxv
-         XQow1gIrHS7d2BGkFVqGvGofLO/Sf39/8/0U1kITwco8CQJqrtrO3JOrpYum+P33olmz
-         pK4Z9HrT1xSkzBUfRqi98MF+yuXPKWaGQYwaKtPmRb/9Cw3LbyRY0AjcqAYL4JfUv/Up
-         szpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOe8NgR4Tf5LObnJuuB32VyL1oY7DsNGpBl4ltnXTPmbRrSOphvWsuWimfEmVNDrOyi4LRbC6q7180PNqoUMh/Hxjkf8lclgDyGOczJfqr
-X-Gm-Message-State: AOJu0Yz794kYTHhdEVbMM2ZYaQ/1wxrUuYiOkzxUHpU6h1IoRuwyeT4c
-	6jQODox3gc5VufIvkShkLsjzFsDQqKiqonAROQBNNMfrbZJu/IyNZP/4PWtSYD0=
-X-Google-Smtp-Source: AGHT+IHE+q9ZZKNYKvoonZR5Fvl2siN6wSOxvSeOM9MxOaAEVORcHubD7hn/X+A6eP1b1L93x+mGtA==
-X-Received: by 2002:a50:d75e:0:b0:56e:2186:847d with SMTP id i30-20020a50d75e000000b0056e2186847dmr254514edj.16.1712216329436;
-        Thu, 04 Apr 2024 00:38:49 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ef15-20020a05640228cf00b0056c1380a972sm8849750edb.74.2024.04.04.00.38.48
+        d=1e100.net; s=20230601; t=1712221198; x=1712825998;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OOhldulBQUILs95IIEuLjdbv/PRLLb7tYoW3G02BM1Q=;
+        b=XB6TZs67WoGRh6I2o/ToxT97Ng1ENlDN0R1rB0qZmFcKwQeW9CBHy06/2mHVdPWz7u
+         S3kq2tLOcB7VeEd4Hm6eQbjShsJo2J0U1xajSAMaRWT65dgr6xh2mNbEGJER/GNJ/Qcj
+         GXQxGDpLHn26wX6GEaS2SJYiejmrRhUQINYir+prTYYmVeEjkbDD+ADlpjTAtRVXWnZG
+         rIVANlBWBbqh8nwiUqYyhHwHNYHP3YDBK+Etnp3RH/shWweAoe1+Qp/B26DW07ggTtIt
+         T60IqI86CHYZZlacejAdUGA93I+hvmOXhBFirEDNB2E91JjJaek+1ox/n6PlOgngLh6m
+         9c+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWuW0RGgxM4JB2dyxNI8sxFx/g1N7l2hxx4yETdoK/HCe9tYqXgWpcWbfs9rfMtFxMZHl6/zXq2L9B4r3SgAmPSb8kaOatRbdRAiSahbsi3MrNc8mn7f04H6x4ptqh2kcTF8OU997v/sUaWUfzvipHDXW5T92Ib6A6ka7R+I9Q9X0WF+FGKFJfJ
+X-Gm-Message-State: AOJu0YzRbtCx0MYyMlMk27hZocZZHGh143l06eafpbybtV0zsSctPiL3
+	YdlnvfgA+UMTj5Yu3g7ovwncE+zxuQbk/+ZiUxoeRjdIqBLBAvXuT5A0zqShWxDv+Q==
+X-Google-Smtp-Source: AGHT+IGY+C7YfnEBCwiRkSDQ7u8iEooJJomfeXMR+JEgEVhZyoKeF281Qcvg+5HUFUHi+lrqfU8O4g==
+X-Received: by 2002:a17:906:2314:b0:a51:7a24:4de4 with SMTP id l20-20020a170906231400b00a517a244de4mr1422298eja.41.1712221197942;
+        Thu, 04 Apr 2024 01:59:57 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1b:2000:15d4:fc17:481e:8afe? (p200300f6ef1b200015d4fc17481e8afe.dip0.t-ipconnect.de. [2003:f6:ef1b:2000:15d4:fc17:481e:8afe])
+        by smtp.gmail.com with ESMTPSA id i25-20020a17090639d900b00a4df5e48d11sm8805509eje.72.2024.04.04.01.59.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Apr 2024 00:38:49 -0700 (PDT)
-Date: Thu, 4 Apr 2024 10:38:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, sound-open-firmware@alsa-project.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] ASoC: SOF: Disable pointless writes to debugfs file
-Message-ID: <9d2477cf-25aa-4d12-818f-fdafc9aaa28a@moroto.mountain>
+        Thu, 04 Apr 2024 01:59:57 -0700 (PDT)
+Message-ID: <8faeeb203456ceb8c07c5f2a46f8a7b367f574e4.camel@gmail.com>
+Subject: Re: [PATCH] iio: adc: ad7173: Fix ! vs ~ typo in ad7173_sel_clk()
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>, Dumitru Ceclan
+	 <mitrutzceclan@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>,
+ Michael Walle <michael@walle.cc>, Andy Shevchenko <andy@kernel.org>, Nuno
+ Sa <nuno.sa@analog.com>,  linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  kernel-janitors@vger.kernel.org
+Date: Thu, 04 Apr 2024 11:03:29 +0200
+In-Reply-To: <5401c681-c4aa-4fab-8c8c-8f0a379e2687@moroto.mountain>
+References: <5401c681-c4aa-4fab-8c8c-8f0a379e2687@moroto.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.0 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
 
-The permissions on this debugfs file are 0444 so it can't be written to.
-And writing to the file hasn't done anything since commit 6e9548cdb30e
-("ASoC: SOF: Convert the generic IPC flood test into SOF client").
-Delete the write function.
+On Thu, 2024-04-04 at 10:31 +0300, Dan Carpenter wrote:
+> This was obviously supposed to be a bitwise negate instead of logical.
+>=20
+> Fixes: 76a1e6a42802 ("iio: adc: ad7173: add AD7173 driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-I haven't tested this patch and there is a risk that it breaks some of
-the test scripts.  Another option would be to just make it a dummy
-function that does { return count; }.  But I thought I would try the
-better option first.
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-Please review this extra carefully.
-
- sound/soc/sof/debug.c | 19 -------------------
- 1 file changed, 19 deletions(-)
-
-diff --git a/sound/soc/sof/debug.c b/sound/soc/sof/debug.c
-index 7c8aafca8fde..937e51b02a24 100644
---- a/sound/soc/sof/debug.c
-+++ b/sound/soc/sof/debug.c
-@@ -19,24 +19,6 @@
- #include "sof-priv.h"
- #include "ops.h"
- 
--static ssize_t sof_dfsentry_write(struct file *file, const char __user *buffer,
--				  size_t count, loff_t *ppos)
--{
--	size_t size;
--	char *string;
--	int ret;
--
--	string = kzalloc(count+1, GFP_KERNEL);
--	if (!string)
--		return -ENOMEM;
--
--	size = simple_write_to_buffer(string, count, ppos, buffer, count);
--	ret = size;
--
--	kfree(string);
--	return ret;
--}
--
- static ssize_t sof_dfsentry_read(struct file *file, char __user *buffer,
- 				 size_t count, loff_t *ppos)
- {
-@@ -126,7 +108,6 @@ static const struct file_operations sof_dfs_fops = {
- 	.open = simple_open,
- 	.read = sof_dfsentry_read,
- 	.llseek = default_llseek,
--	.write = sof_dfsentry_write,
- };
- 
- /* create FS entry for debug files that can expose DSP memories, registers */
--- 
-2.43.0
+> =C2=A0drivers/iio/adc/ad7173.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+> index 4ff6ce46b02c..b1d6ea17ced3 100644
+> --- a/drivers/iio/adc/ad7173.c
+> +++ b/drivers/iio/adc/ad7173.c
+> @@ -835,7 +835,7 @@ static unsigned long ad7173_sel_clk(struct ad7173_sta=
+te
+> *st,
+> =C2=A0{
+> =C2=A0	int ret;
+> =C2=A0
+> -	st->adc_mode &=3D !AD7173_ADC_MODE_CLOCKSEL_MASK;
+> +	st->adc_mode &=3D ~AD7173_ADC_MODE_CLOCKSEL_MASK;
+> =C2=A0	st->adc_mode |=3D FIELD_PREP(AD7173_ADC_MODE_CLOCKSEL_MASK, clk_se=
+l);
+> =C2=A0	ret =3D ad_sd_write_reg(&st->sd, AD7173_REG_ADC_MODE, 0x2, st-
+> >adc_mode);
+> =C2=A0
 
