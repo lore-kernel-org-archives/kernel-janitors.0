@@ -1,37 +1,50 @@
-Received: from nbd.name (nbd.name [46.4.11.11])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4698286B;
-	Thu,  4 Apr 2024 11:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBF51BF37;
+	Thu,  4 Apr 2024 14:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712231495; cv=none; b=dvWDG119I91NxJ8Zm0whLTQuKr+rGCVfjQ6cZVg6Wd3T/J4mihvz03MskijbHLg4uLjoosjvAr0qZp2JdNxh/AH3ctxf8e+WklYIRU8zkF4kutOUokK+8fm2DcW38+xZIgRYUzmX81dSxInvArWm3RVVAwiopACB2BhmpqL3MQQ=
+	t=1712242230; cv=none; b=VcSWB9oZAMIFIplX1VZ4ERAhOwqgsRD4i/KFMFzw2BzIAPsBvzTOlBxKjW0qiBmQqA7XHXJFTUpeKTJQhgWTsSkxt3iXWY9NN/25xpzBxrxs8onJXului0+rRGZS0HEtJqEZY7oeuiX1dTpTFEcHh7d06mbGzaSuv9vYiOJOwGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712231495; c=relaxed/simple;
-	bh=8O5ZvZ4fjwgxssxn/ENNSi7XeulcJkW5wfpRx1emVzY=;
+	s=arc-20240116; t=1712242230; c=relaxed/simple;
+	bh=SCMIZ1IGMHRrGNpDE/LUqaEShJmCNL+gjhIz3VUxPNw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F3VmGSFZ8mFdresCuz538RhdO1vLGJZzEA4ubjQtAKSbFyUSB5IzgqzoVIQ0MP/D4KGPXu2+1McRq779D+VeWfpl0XNLDKgoTJgwyyxkRshJpzOFJ32wJ0mq5qJNrS6TpmgxHkR93K5gbTrDJuZedgeG1yF2BjP9VoSoceINkHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=XhJgRF9F; arc=none smtp.client-ip=46.4.11.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
+	 In-Reply-To:Content-Type; b=h9dIa+Ioy84v9uBY6vAjjuAYYqGwWgc26tELAfpULWkDkZYyAAYUjnnjhr4i/XWOFNHHpNRU1cyitR/DegunX+xaxCnmHNUQ0YguyKU4BAvlY9rO6FOskjDpwiKRVlSX7HQ0p9e35zObKCqX7Yn8uJ6QXMSxYilnSrpp05bQ5Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gyRaBgO6; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="XhJgRF9F"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
-	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=llRzHEkl3eDbrJM0DrmtkTmAdEXjMEgY6FEgWZBJato=; b=XhJgRF9FaehxNarnGDJUCdPpCr
-	TTjHcwyu3Uyb3N8+ZwDzoTEORab4vG/c+v4FhDD2CBIyJIeBVU1a5gnrR6bXdlB9deZP4cHZxtK6F
-	heDktcHoGqccxJRopAOgbRQQvFihBmspGYfUady+IRBkEKWXKdbnvE/IqAoN0EQ3kFUY=;
-Received: from p54ae9c93.dip0.t-ipconnect.de ([84.174.156.147] helo=nf.local)
-	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.94.2)
-	(envelope-from <nbd@nbd.name>)
-	id 1rsLcl-00CzBm-AT; Thu, 04 Apr 2024 13:51:19 +0200
-Message-ID: <6a18e0cc-a200-4db4-839f-f5ad213d44c4@nbd.name>
-Date: Thu, 4 Apr 2024 13:51:18 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gyRaBgO6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1712242229; x=1743778229;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=SCMIZ1IGMHRrGNpDE/LUqaEShJmCNL+gjhIz3VUxPNw=;
+  b=gyRaBgO6iHU7G+M3z7CAuDPNh8s9ZqsGIL4Lco23SXCenJ4IaCHsOFj2
+   KzVU3PJMDVcZcbl9LWwoECo28JcItO+LbqV4vgr0vAVhyQBDX16gLsmsv
+   UvxVThRjAgJGvP15ucQW+1QFbEJXDqQgOZYcbkjIAJAXlJXTkxhGUOE5U
+   Jh/0V5yny640vDFGFyWrcNCwt7O313bEL8ly5RbdHFcE3WD/7lURsrhBH
+   RQTjosXEnENPvAeJ+9nZnlHbjGrLzwGMYRjKYVbNO7sxrIhYSauho+34u
+   MQsLAfkqdQD3tHP9pRp3oHAUnJmpIfLAre3CeciALo0xvvnAq7flgBJoT
+   Q==;
+X-CSE-ConnectionGUID: 6oSGR9rKSJmIImoaTSPmIA==
+X-CSE-MsgGUID: xnmJQGB0T4O2cKhBLBiowg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11034"; a="18885071"
+X-IronPort-AV: E=Sophos;i="6.07,179,1708416000"; 
+   d="scan'208";a="18885071"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2024 07:50:28 -0700
+X-CSE-ConnectionGUID: GaTUqSPCScudo0L9LiAGBg==
+X-CSE-MsgGUID: G5bDDajiRvKG+tlUsjc4PA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,179,1708416000"; 
+   d="scan'208";a="19264395"
+Received: from aghiriba-mobl.ger.corp.intel.com (HELO [10.251.213.116]) ([10.251.213.116])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2024 07:50:25 -0700
+Message-ID: <853f31f7-3616-4412-b153-ee24a7901757@linux.intel.com>
+Date: Thu, 4 Apr 2024 17:50:55 +0300
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -39,52 +52,91 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: mt76: connac: check for null before dereferencing
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
- Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
- Kalle Valo <kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: kernel@collabora.com, kernel-janitors@vger.kernel.org,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20240301144406.2808307-1-usama.anjum@collabora.com>
- <ab6b08c5-86a2-47e3-8683-28cdbe5be7cf@collabora.com>
- <1dd3cead-6251-425f-b050-582892da0800@collabora.com>
+Subject: Re: [PATCH] ASoC: SOF: Disable pointless writes to debugfs file
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+ Daniel Baluta <daniel.baluta@nxp.com>,
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>, Mark Brown
+ <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, sound-open-firmware@alsa-project.org,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <9d2477cf-25aa-4d12-818f-fdafc9aaa28a@moroto.mountain>
 Content-Language: en-US
-From: Felix Fietkau <nbd@nbd.name>
-Autocrypt: addr=nbd@nbd.name; keydata=
- xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
- ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
- Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
- AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
- vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
- wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
- TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
- l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
- dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
- HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
- VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
- CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
- VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
- Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
- DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
- wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
- f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
- aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
- FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
- TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
- GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
- cL98efvrjdstUfTCP2pfetyN
-In-Reply-To: <1dd3cead-6251-425f-b050-582892da0800@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+In-Reply-To: <9d2477cf-25aa-4d12-818f-fdafc9aaa28a@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 04.04.24 13:49, Muhammad Usama Anjum wrote:
-> Soft reminder
 
-I have this one in my mt76 tree already, and it will be included in my 
-next pull request to Kalle.
 
-- Felix
+On 04/04/2024 10:38, Dan Carpenter wrote:
+> The permissions on this debugfs file are 0444 so it can't be written to.
+> And writing to the file hasn't done anything since commit 6e9548cdb30e
+> ("ASoC: SOF: Convert the generic IPC flood test into SOF client").
+> Delete the write function.
 
+I agree, it is not used anymore and ...
+
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Acked-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+
+> ---
+> I haven't tested this patch and there is a risk that it breaks some of
+> the test scripts.  Another option would be to just make it a dummy
+> function that does { return count; }.  But I thought I would try the
+> better option first.
+> 
+> Please review this extra carefully.
+> 
+>  sound/soc/sof/debug.c | 19 -------------------
+>  1 file changed, 19 deletions(-)
+> 
+> diff --git a/sound/soc/sof/debug.c b/sound/soc/sof/debug.c
+> index 7c8aafca8fde..937e51b02a24 100644
+> --- a/sound/soc/sof/debug.c
+> +++ b/sound/soc/sof/debug.c
+> @@ -19,24 +19,6 @@
+>  #include "sof-priv.h"
+>  #include "ops.h"
+>  
+> -static ssize_t sof_dfsentry_write(struct file *file, const char __user *buffer,
+> -				  size_t count, loff_t *ppos)
+> -{
+> -	size_t size;
+> -	char *string;
+> -	int ret;
+> -
+> -	string = kzalloc(count+1, GFP_KERNEL);
+> -	if (!string)
+> -		return -ENOMEM;
+> -
+> -	size = simple_write_to_buffer(string, count, ppos, buffer, count);
+> -	ret = size;
+> -
+> -	kfree(string);
+
+This was not too constructive ;)
+
+> -	return ret;
+> -}
+> -
+>  static ssize_t sof_dfsentry_read(struct file *file, char __user *buffer,
+>  				 size_t count, loff_t *ppos)
+>  {
+> @@ -126,7 +108,6 @@ static const struct file_operations sof_dfs_fops = {
+>  	.open = simple_open,
+>  	.read = sof_dfsentry_read,
+>  	.llseek = default_llseek,
+> -	.write = sof_dfsentry_write,
+>  };
+>  
+>  /* create FS entry for debug files that can expose DSP memories, registers */
+
+-- 
+Péter
