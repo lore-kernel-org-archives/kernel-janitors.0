@@ -1,80 +1,78 @@
-Received: from mail.mleia.com (mleia.com [178.79.152.223])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD571552FA;
-	Wed,  3 Apr 2024 19:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.79.152.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92EB1CABD;
+	Thu,  4 Apr 2024 02:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712173711; cv=none; b=oqUVSGNlk6sn80DP4DlITnG/qv34yMxVdycBO7Nw8I7op9P5eLRyrldUd61nVL2V/16RvBIVHUgL22FLiX50O+abFUYfgpyy1Unv9x8WZspfhB6M4WMV4cOctM/1GOqgjSov/F1SVVwwxnm6TCLDU133QdPcT8PvvlqFyyXYBKI=
+	t=1712199043; cv=none; b=pdoFUBb1pnrgxBgALe+ge9Kiwk64xpXXAhBaCv+4VKjk12gwDLoVM7HPC3mX3qYy4uztPieBsxhIXoOLCGij/ekLjdoj2cqjqVnGJ5sZsuRngrPfugUQVWCHG1dyFLpsPyNOGB0EPPuH8szManPCNPbAX+sdlMnasFk+Q49/uI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712173711; c=relaxed/simple;
-	bh=YgTe41TFlt+02N95B2a0BKSnw+zW/yykrDi7+gadw4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lV1IcV1n4p4iNHfxtWAk5hAcaXf2njz+DhY1iszP3jarS0kZMof85aeMcRJjZoHegSgw1ed2QT/yp1U9VFjVRAQBzqtmBuN8pryy+HmR+7if/SReTc8GFco7pgTIU5mKNxEn2mOBVtQjpKRWMN76xxLoz3xs7+vwx8mC9DsxbXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com; spf=none smtp.mailfrom=mleia.com; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=joOpIze7; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=joOpIze7; arc=none smtp.client-ip=178.79.152.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mleia.com
+	s=arc-20240116; t=1712199043; c=relaxed/simple;
+	bh=Z0NqPyA1Ag7ywDCAREb3aLXtL9z+FPZPJKBvHQO0qu4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=dwPWzU7ZssKI7S63B28N167hpvm0xQmdKKZ+9oN1xzUqwyygnmEMEM+jm2UPXYaZdaEX5d5aMXdOi+qh/elKdVSBVZss0KfFuOpAWdHfUuLqK0YgFNNPKXuo2/zBXsdS43IDNp5zGoOUh6Bbo3mvJcLTvSxIMwkuDdfsjXn2qBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=babYapBx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="joOpIze7";
-	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="joOpIze7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-	t=1712173367; bh=YgTe41TFlt+02N95B2a0BKSnw+zW/yykrDi7+gadw4Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=joOpIze7hYPykHqFQpqhIwnodHNIiFwDFrkxh+z2rHAslc7iyqp6+/MNJV6/+jWwX
-	 /yVIzkVhlPU2jeVF70X29QOi6AdeNacrZQrMHSi2EL8F4JbouH2vqQMfrLTaiDA+Rx
-	 5YIaFzKysRKAtHsiPenSBdZ9IQeKFERuRK0m+dZMtp80nfYWBLW3527lJhSmKuXKmi
-	 +S5kWuiZUWWirxWABEE2DeaXyNaAlm0aL21Npjijn+clZPp1SMK4l53//aqUIqJyBj
-	 pHSvh5aIMC2amXQqKFTdKw0gndL2H7Ly83mTmkzt3CTALfVe/dK0aJ0T5UdrygC3Z8
-	 h4wfEH1r0hDQA==
-Received: from mail.mleia.com (localhost [127.0.0.1])
-	by mail.mleia.com (Postfix) with ESMTP id 269AC464922;
-	Wed,  3 Apr 2024 19:42:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-	t=1712173367; bh=YgTe41TFlt+02N95B2a0BKSnw+zW/yykrDi7+gadw4Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=joOpIze7hYPykHqFQpqhIwnodHNIiFwDFrkxh+z2rHAslc7iyqp6+/MNJV6/+jWwX
-	 /yVIzkVhlPU2jeVF70X29QOi6AdeNacrZQrMHSi2EL8F4JbouH2vqQMfrLTaiDA+Rx
-	 5YIaFzKysRKAtHsiPenSBdZ9IQeKFERuRK0m+dZMtp80nfYWBLW3527lJhSmKuXKmi
-	 +S5kWuiZUWWirxWABEE2DeaXyNaAlm0aL21Npjijn+clZPp1SMK4l53//aqUIqJyBj
-	 pHSvh5aIMC2amXQqKFTdKw0gndL2H7Ly83mTmkzt3CTALfVe/dK0aJ0T5UdrygC3Z8
-	 h4wfEH1r0hDQA==
-Message-ID: <42ff72e4-e791-4b27-bf17-4f8a950264af@mleia.com>
-Date: Wed, 3 Apr 2024 22:42:45 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="babYapBx"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4A4CFC43399;
+	Thu,  4 Apr 2024 02:50:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712199043;
+	bh=Z0NqPyA1Ag7ywDCAREb3aLXtL9z+FPZPJKBvHQO0qu4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=babYapBxC3JxNFI8z01+x6T2wNnl/TdGYD+Sjp7dxvjVzz5WJTPhZScrrb35OMtaf
+	 Bc49gAlrOdrms5bjXdHn6puun1kncoLIWUHIyzouZ1mm8arI780jlur1uoZAz3uuQG
+	 dD6IUiTYJrldynPR/IaH1xD+YC9vku7XqoOTmPjJVnSGxXbvS6aHqBDhkbeScg9SNL
+	 v1nx9FS10qWDq/wFwOMzyyl+ynkUUM8QI25cUCFTmIHAxk3dmsutJTI8sWaEKTUEoy
+	 iaV6BFEtf5lFaTA0M+FhCeyhRtGbEqz0CP3MXqjMCJwG6ZbskzEYt6ezPMPOQELKQz
+	 I4vPi06ntdHzQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 34EA8D84BB4;
+	Thu,  4 Apr 2024 02:50:43 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: nxp: Remove an unused field in struct lpc18xx_pll
-Content-Language: en-US
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <6cfb0e5251c3a59a156e70bcf6a0cc74aa764faa.1711985490.git.christophe.jaillet@wanadoo.fr>
-From: Vladimir Zapolskiy <vz@mleia.com>
-In-Reply-To: <6cfb0e5251c3a59a156e70bcf6a0cc74aa764faa.1711985490.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
-X-CRM114-CacheID: sfid-20240403_194247_182173_86A86778 
-X-CRM114-Status: UNSURE (   5.38  )
-X-CRM114-Notice: Please train this message. 
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: fman: Remove some unused fields in some
+ structure
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171219904321.5496.4241068677460405258.git-patchwork-notify@kernel.org>
+Date: Thu, 04 Apr 2024 02:50:43 +0000
+References: <425222d4f6c584e8316ccb7b2ef415a85c96e455.1712084103.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <425222d4f6c584e8316ccb7b2ef415a85c96e455.1712084103.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: madalin.bucur@nxp.com, sean.anderson@seco.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ netdev@vger.kernel.org
 
-On 4/1/24 18:31, Christophe JAILLET wrote:
-> In "struct lpc18xx_pll", the 'lock' field is unused.
-> Remove it.
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue,  2 Apr 2024 20:55:50 +0200 you wrote:
+> In "struct muram_info", the 'size' field is unused.
+> In "struct memac_cfg", the 'fixed_link' field is unused.
+> 
+> Remove them.
 > 
 > Found with cppcheck, unusedStructMember.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> [...]
 
-Thank you for the change!
+Here is the summary with links:
+  - [net-next] net: fman: Remove some unused fields in some structure
+    https://git.kernel.org/netdev/net-next/c/04af1d643701
 
-Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
---
-Best wishes,
-Vladimir
+
