@@ -1,107 +1,80 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DEE3D96B;
-	Thu,  4 Apr 2024 08:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF3C81AB5;
+	Thu,  4 Apr 2024 11:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712221201; cv=none; b=FHoJfDRJJkzMvvfs5Qc6FUuXF3OEryRf9zXc6+D0ia+cD2Yv7rHoJruhKhk6In1MYts0+pXPYp4kG2nj2Pq0i1R5ciDaauLNj40O7z81RNs2sGjNH7SESjM8z1CVDU5IlI+a49O5UlemPcgMXbR0uGHYE6YrcVUSYzyajnkSyjQ=
+	t=1712229627; cv=none; b=GR+E/oLl5PIejgaYasmdz8fewe+52XD7qGis4oMOnjtawwFpTtEJs+vj9rBp7RqWvxRlngQrtNqq2IZP4QYayer27HtF0Ta1CwjtTdiHJLWlyOlHWQzbdlmeaDsFgBTmmom0O+0LuXoj5ir2CY0cWGqFOTy7SfJ9XfUlyhgFQn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712221201; c=relaxed/simple;
-	bh=zFV67fOp03KxbIcwK8vP/lP0IGis8ozPjbOeUJBXnYQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aVQnaCuXZs7QRNhrj8YozhoXq0oIAQTv9soXpTvbpfJp09+t+D/0FTDZ+Fd8sK6WLFdEOFnXiZM3jQuC7n1joohpejkkEcovzZmPWl1YIByRSJ4OybsmUTQYewguFqYZPNKkAmcg1vq64VC95hd/+te86HjXG+qgBZtFkY2N2/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fGxIBB6G; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1712229627; c=relaxed/simple;
+	bh=uizeStKHDGOmVR+J1SVYeTPjm6UGUaB7epfBeytqslU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=NVJ5VcufjgSO0LqG2suCFpEKRd4/6jFIjOlgWK7jkp3vsiFodUhjLZo7fHQsAtWSwoNy5TUZYpeaTyM6JXkvONqvdtjOPZHIvIK6/s0HetTq3H86w3KKQ9hw1qcn3U7oz11lRO1Ke3S7QXUPvlst2xlQMYCkK3L1+Uj6Z6QvQVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GKl5MP0f; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fGxIBB6G"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-56e1bbdb362so651882a12.1;
-        Thu, 04 Apr 2024 01:59:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712221198; x=1712825998; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=OOhldulBQUILs95IIEuLjdbv/PRLLb7tYoW3G02BM1Q=;
-        b=fGxIBB6GwGSg3ORo18n22QSxykmpNuOSZRPpKYz+S/Zft55fOunJKt+v0uttlFNNsr
-         D+dNelPqOphSF9H06bUWvTMdBw/bv3At/v7f4tUJml+krleLtDPHpVwd1MQ5sx281biK
-         wZKxMpP/RSAjsEcJeeTtt2g/qBrXEXdDlhCcWdpWoSaLhNYvrlKiTGIVN4adnLQROgvn
-         8mKVkSlHgTFPhbZtSfynG0pgG1Envkh7KaablJ6U5C2YvG2dkbz3h3+3KkHDufBI/h7M
-         1kHibHUBt6VbSDJUyKzY3ktDy6nKrkzGfJvmniHQKyOFZUpnBUdCEsx3uPmu2mHnrvjO
-         5YRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712221198; x=1712825998;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OOhldulBQUILs95IIEuLjdbv/PRLLb7tYoW3G02BM1Q=;
-        b=XB6TZs67WoGRh6I2o/ToxT97Ng1ENlDN0R1rB0qZmFcKwQeW9CBHy06/2mHVdPWz7u
-         S3kq2tLOcB7VeEd4Hm6eQbjShsJo2J0U1xajSAMaRWT65dgr6xh2mNbEGJER/GNJ/Qcj
-         GXQxGDpLHn26wX6GEaS2SJYiejmrRhUQINYir+prTYYmVeEjkbDD+ADlpjTAtRVXWnZG
-         rIVANlBWBbqh8nwiUqYyhHwHNYHP3YDBK+Etnp3RH/shWweAoe1+Qp/B26DW07ggTtIt
-         T60IqI86CHYZZlacejAdUGA93I+hvmOXhBFirEDNB2E91JjJaek+1ox/n6PlOgngLh6m
-         9c+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWuW0RGgxM4JB2dyxNI8sxFx/g1N7l2hxx4yETdoK/HCe9tYqXgWpcWbfs9rfMtFxMZHl6/zXq2L9B4r3SgAmPSb8kaOatRbdRAiSahbsi3MrNc8mn7f04H6x4ptqh2kcTF8OU997v/sUaWUfzvipHDXW5T92Ib6A6ka7R+I9Q9X0WF+FGKFJfJ
-X-Gm-Message-State: AOJu0YzRbtCx0MYyMlMk27hZocZZHGh143l06eafpbybtV0zsSctPiL3
-	YdlnvfgA+UMTj5Yu3g7ovwncE+zxuQbk/+ZiUxoeRjdIqBLBAvXuT5A0zqShWxDv+Q==
-X-Google-Smtp-Source: AGHT+IGY+C7YfnEBCwiRkSDQ7u8iEooJJomfeXMR+JEgEVhZyoKeF281Qcvg+5HUFUHi+lrqfU8O4g==
-X-Received: by 2002:a17:906:2314:b0:a51:7a24:4de4 with SMTP id l20-20020a170906231400b00a517a244de4mr1422298eja.41.1712221197942;
-        Thu, 04 Apr 2024 01:59:57 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1b:2000:15d4:fc17:481e:8afe? (p200300f6ef1b200015d4fc17481e8afe.dip0.t-ipconnect.de. [2003:f6:ef1b:2000:15d4:fc17:481e:8afe])
-        by smtp.gmail.com with ESMTPSA id i25-20020a17090639d900b00a4df5e48d11sm8805509eje.72.2024.04.04.01.59.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Apr 2024 01:59:57 -0700 (PDT)
-Message-ID: <8faeeb203456ceb8c07c5f2a46f8a7b367f574e4.camel@gmail.com>
-Subject: Re: [PATCH] iio: adc: ad7173: Fix ! vs ~ typo in ad7173_sel_clk()
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Dumitru Ceclan
-	 <mitrutzceclan@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>,
- Michael Walle <michael@walle.cc>, Andy Shevchenko <andy@kernel.org>, Nuno
- Sa <nuno.sa@analog.com>,  linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org,  kernel-janitors@vger.kernel.org
-Date: Thu, 04 Apr 2024 11:03:29 +0200
-In-Reply-To: <5401c681-c4aa-4fab-8c8c-8f0a379e2687@moroto.mountain>
-References: <5401c681-c4aa-4fab-8c8c-8f0a379e2687@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.0 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GKl5MP0f"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 69B8FC433F1;
+	Thu,  4 Apr 2024 11:20:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712229626;
+	bh=uizeStKHDGOmVR+J1SVYeTPjm6UGUaB7epfBeytqslU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=GKl5MP0fHKQKB0R5/++mmpl+ryHhVzzwDTSOC8jL3Jgsu7ZKNZ0Yi/TcPLhsn9zB0
+	 2XIrWmgNrzpjh2YSy1C/JwVohzaCGcwYN52Aj9hZ96Aumj1VEL+bKpgwx19X82HnHH
+	 lziyoYE2jaFILJ4KeKbP9ppCbSl6YgKPnIEw0hFeZos3STx/+U7PcdDzx+n59/7BOv
+	 rd07a1A1rq2ryxqRsjGAVjrObAxzuaLgXI8cHWiEpIM937aBvHmK4L4wltDO4SGmsA
+	 F6TyPbnhIHPdJmLIEkIuccoS3VIRevKqbAy4LoJd+ZUIrQNYbNlOVILE8M2MFVw+Oj
+	 rsMuCTu5dH9Gw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 548FFD84BA4;
+	Thu,  4 Apr 2024 11:20:26 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: dsa: sja1105: Fix parameters order in
+ sja1110_pcs_mdio_write_c45()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171222962634.8594.16340816459676269808.git-patchwork-notify@kernel.org>
+Date: Thu, 04 Apr 2024 11:20:26 +0000
+References: <ff2a5af67361988b3581831f7bd1eddebfb4c48f.1712082763.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <ff2a5af67361988b3581831f7bd1eddebfb4c48f.1712082763.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: olteanv@gmail.com, andrew@lunn.ch, f.fainelli@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ michael@walle.cc, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 
-On Thu, 2024-04-04 at 10:31 +0300, Dan Carpenter wrote:
-> This was obviously supposed to be a bitwise negate instead of logical.
->=20
-> Fixes: 76a1e6a42802 ("iio: adc: ad7173: add AD7173 driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
+Hello:
 
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-> =C2=A0drivers/iio/adc/ad7173.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-> index 4ff6ce46b02c..b1d6ea17ced3 100644
-> --- a/drivers/iio/adc/ad7173.c
-> +++ b/drivers/iio/adc/ad7173.c
-> @@ -835,7 +835,7 @@ static unsigned long ad7173_sel_clk(struct ad7173_sta=
-te
-> *st,
-> =C2=A0{
-> =C2=A0	int ret;
-> =C2=A0
-> -	st->adc_mode &=3D !AD7173_ADC_MODE_CLOCKSEL_MASK;
-> +	st->adc_mode &=3D ~AD7173_ADC_MODE_CLOCKSEL_MASK;
-> =C2=A0	st->adc_mode |=3D FIELD_PREP(AD7173_ADC_MODE_CLOCKSEL_MASK, clk_se=
-l);
-> =C2=A0	ret =3D ad_sd_write_reg(&st->sd, AD7173_REG_ADC_MODE, 0x2, st-
-> >adc_mode);
-> =C2=A0
+On Tue,  2 Apr 2024 20:33:56 +0200 you wrote:
+> The definition and declaration of sja1110_pcs_mdio_write_c45() don't have
+> parameters in the same order.
+> 
+> Knowing that sja1110_pcs_mdio_write_c45() is used as a function pointer
+> in 'sja1105_info' structure with .pcs_mdio_write_c45, and that we have:
+> 
+>    int (*pcs_mdio_write_c45)(struct mii_bus *bus, int phy, int mmd,
+> 				  int reg, u16 val);
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] net: dsa: sja1105: Fix parameters order in sja1110_pcs_mdio_write_c45()
+    https://git.kernel.org/netdev/net/c/c120209bce34
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
