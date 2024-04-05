@@ -1,59 +1,38 @@
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB1B26AFD
-	for <kernel-janitors@vger.kernel.org>; Fri,  5 Apr 2024 07:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CA327447;
+	Fri,  5 Apr 2024 10:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712301281; cv=none; b=Pc5/83mWBnfBbeJv4Q0F1FBKlMgHFNroFD1zJNKVUT3H7Yl4I1CPqoAxjWsnPBgfIqWQJPGkIzTIyzHXiDKXlQwKkWhSCY4cAQ7cHjZsgITSDJUjeH1EchqJaghpZD7To/Pfd0uL8LRNpX8VPWrO2kwpcYQtmCaVO79Fv5uFb1g=
+	t=1712311591; cv=none; b=VrOV1DfPDUWCa7OJsj3xaoDLgxlpRioErPlpbbB2LipqExT1P0PXnCGbQaakXShkNR/sxKmXq+WF591O9V0UjljSggNXzeZhx+nYRhQpPKJ0wh8IHXgJHqOWao4/ed1Z0xVJDkQ5qoTWE/TAxR8VViNCxoWKK5YVDtRaC3vq9wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712301281; c=relaxed/simple;
-	bh=SaiKRf3RQbp8FV10MR4XbyWuycnREfYo3jf47AiQHiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S4iMcVEl1e7OhxLcwmC4tUqbwvyZD96K2uFIAiQkAMR3pEfJeCmrXEaaP4AfyADQmnW3JmF1v8tbyKFlEmFUZC+ATEnDESa5gICdRSNzqSrYKQ+sf0EBC/nnFkVQMvU9FN7gAx4a17sxS2XlBgiMXkS4P8OZwMMNPt3eSE5n7Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tweaklogic.com; spf=pass smtp.mailfrom=tweaklogic.com; dkim=pass (2048-bit key) header.d=tweaklogic.com header.i=@tweaklogic.com header.b=F4rmytWg; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tweaklogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tweaklogic.com
+	s=arc-20240116; t=1712311591; c=relaxed/simple;
+	bh=46/M8frtVI1xwHwJDfzOWBILidy1qF/nbknjFjniG0Y=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=I65StV5mdgcdNDrhriClKl9q4OrC2wlJNDsTnwiqTed+GXtEC+5YNHXCeTSYm3rt9yj375ai/0dYwy9zEwOIPqQdTOFBn+fgeIuenQb04lYAQiBFWOs3YucYd1vQLoC8yGifj7Cyp2z2FJJrzBhBkrYY0W+GvV5TIR7R5ZZvl3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=IxP8PvBs; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tweaklogic.com header.i=@tweaklogic.com header.b="F4rmytWg"
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-6e6a5bd015dso814067a34.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 05 Apr 2024 00:14:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tweaklogic.com; s=google; t=1712301278; x=1712906078; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M9skp/veFntESVv5IBHSeh0fw1XOzAJyP4HZp0g89cM=;
-        b=F4rmytWgo6milu2bsaV3MoFR738b7PdQOldSqtJSnokLVD6WG9h3QzVYbt1nqH5YqJ
-         E9/w4YutP8rKGE4qP3HBoJSxhDqasAAjLxknPBAYADa2kftYv3viLE3EvXBb9Vj9EzgI
-         RX8P9gyrzk9BqhcQkNXY+yurwKkvyjEHQcyjhO6rYjTr8B1UoFAgc93Ow/PAXVgVr6m3
-         PVFHZzFCB+AZL3pJCcGkE7H7kjOtvhwR+iLjzdOUjuL7iN77B/E6P4wKFcSLYOrSxSUx
-         WJzZvURGaWnC6U+p1Sic1tDD4jkMqTeYlBfhs19GwNL7zNfeZJNcWENjyAD5t/PJnLws
-         ZKZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712301278; x=1712906078;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M9skp/veFntESVv5IBHSeh0fw1XOzAJyP4HZp0g89cM=;
-        b=LsxZYWu0lKC+DejFVZmDyjjigg3ik8jm5IdinX9B/VCXdLy1GJ8EEOVV1eBCjcanJn
-         jCyxXT9ZIKaB7K1FJ4HASDcPadmufacxPEVFhBWETL1BiMhR5x00pjMX+iA0hvkRiPgu
-         aBESFQnIzeHRHXmKUI5MaNKLWYH803RJc7jjJs/tcufat6jBhOXFX6AeIWDD8b0rB71O
-         LVKZEYfjyTAJiQZIp2c8vyyrh193NM85CjpuTW0E8Z8QFQBSZAWaSu/BIsweP8ALiMcG
-         WqhKbvbmjjVHV79KceBgsg58nWYZipZqiuryii8GcTEpPVelqjpIqHFh7SDwC3cF+PoS
-         4Pug==
-X-Forwarded-Encrypted: i=1; AJvYcCUvEBDn9VRi4CvWOEf0SQemw9DvhoRe61Hs3zqg80eYj9niDwBl5aDznAnpD9Q3Nq1T1w/k63JgE0zPCEieLbRwsM4Lkb0r9z4ofsfsFg6U
-X-Gm-Message-State: AOJu0YxDVlklN/Ha0WLmAfacq9lADZvAJe9Yx0Mfp7TCXBEQMsDpjtK/
-	kCm7J0kCUaZLkBqYb4sRCnxRuO8RXRdP9OzgBXJS5NcCYt3Q7A5ngx7tayV1ziE=
-X-Google-Smtp-Source: AGHT+IGja6uppOhisB7znHWGeozcffmJLxLnLmJLpdn9gQKm01/J3UU1NMKfhr8BvFaTqUkqaPpdbw==
-X-Received: by 2002:a9d:7dce:0:b0:6e6:b9ed:694b with SMTP id k14-20020a9d7dce000000b006e6b9ed694bmr674113otn.26.1712301278118;
-        Fri, 05 Apr 2024 00:14:38 -0700 (PDT)
-Received: from [192.168.20.11] ([180.150.112.31])
-        by smtp.gmail.com with ESMTPSA id n17-20020a635911000000b005dc3fc53f19sm784922pgb.7.2024.04.05.00.14.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Apr 2024 00:14:37 -0700 (PDT)
-Message-ID: <7a54d993-8aff-472f-8132-85e0ca79ff13@tweaklogic.com>
-Date: Fri, 5 Apr 2024 17:44:31 +1030
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="IxP8PvBs"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1712311570; x=1712916370; i=markus.elfring@web.de;
+	bh=h1rD7cl36D2n8I8nOEC0tJ1ZmmxTzOTFUREe8MP1MAI=;
+	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
+	 In-Reply-To;
+	b=IxP8PvBsbBgI06W49RzUSQBvZz6BCq3PFnpRVr/ZpiFKbUMPG2UB3AtDHpkN84U+
+	 lT2K2HCZIswoF7yj0G0WE/4+yM03xYmvhfvywElv5UJEsgo2Ma08KexaUyPV5Vopq
+	 596Br/ZBhBLA8drDiizBzHtnFT6JxVd3NzW1Igh8OwUFw5TGkG6+ZN28EdXTLFilk
+	 rpuGxpOjfkT+IpMbnLy3Pkk5OuuLB9eBZdgfeEJ5RB+ZC/D11D/Ou9A5BUnTLgtH0
+	 s8ssHbY3ADf6l6wcr6Ad5Jc80L8ue+aqO4pJ4TAekuXq1JPhFbWAJBikPEvE1nZG9
+	 3CcfR/cYv4/prJWrhQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MKdHE-1s6txd3UOS-00Ubi9; Fri, 05
+ Apr 2024 12:06:09 +0200
+Message-ID: <12a5180c-fbac-41dc-b1bf-9eded9d8c5ed@web.de>
+Date: Fri, 5 Apr 2024 12:05:56 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -61,45 +40,63 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: light: apds9306: Fix off by one in
- apds9306_sampling_freq_get()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <69c5cb83-0209-40ff-a276-a0ae5e81c528@moroto.mountain>
-Content-Language: en-US
-From: Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>
-In-Reply-To: <69c5cb83-0209-40ff-a276-a0ae5e81c528@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Shahar Avidar <ikobh7@gmail.com>, linux-staging@lists.linux.dev,
+ kernel-janitors@vger.kernel.org,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ "Felix N. Kimbu" <felixkimbu1@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+References: <20240405074000.3481217-6-ikobh7@gmail.com>
+Subject: Re: [PATCH v3 5/7] staging: pi433: Remove duplicated code using the
+ "goto" error recovery scheme.
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240405074000.3481217-6-ikobh7@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:mhQpAhLFo7ec/e+NSRI//PqcCKVx4mChnrxS6HgTJKN0F9eJODN
+ G18UTr3jFVbFS535x0kRrC5Awju3Fb7FQ92s/mBaG0mf5PQqG4RqxsUiadSxY9v/37CJQlW
+ X/hJhWIZc44ruv9F+DgP29MYONiq7YK11IdqjEn2PMe5nqZ1gE2QtkCdgAIwPrT9mZ7PkYG
+ usLzoDhNnMUOr835xL+bA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:4QjQawHPQ3k=;1+SIoM3nxoQyGRfDtsKMlr3BPbY
+ sdbnZGu6YO8wbYi7c8JOY+023ecEHxj6USL226LwddImTF4Y3ZRIDL21VzzUNJzTkXoj9Jola
+ KJuvXL9NU3RAt9khWJBLEz4zbFlBZRFEctFR48ihhFvb1A/SeHNJDXMHqTZZ0zOla2AB58IeF
+ cnNoUkmRk/tuRv+r9u89DNXhL/wX8HSmLvj3x8IFDlT2aZOUWJn51FnK3tja/Lb9KId0QIU4U
+ ug13HJdwEMqv3IfHLf/QNFjdsTDxti0foXDAwFdOO3PYKMyuO52Vbc2ded8ZKGXRs6fyVAUud
+ Dk6c+eFzTX0wYE28V+spJDjy+XPWnsCuROE1NZj5oxvQ6OG25zxDDXL+VuHxdRaGRMnX4G+VI
+ RmFasWpvZ1zISIdmbmwTsNCILH4fVPvJf7a9ysDk2PljsWPMVdh1r82QsIz7GAoBRQM6ksoFm
+ BR3cd+CkDUnXN5pslGn9BXiWQkIt8mwHU2vKtgshzIjJVkhsEsGSGb83e6tbPuRTfAjW+gxdk
+ 6DLA8D6SFvnTIa/UpaWRMalvbvvPoo0iXqScdvHx+9tVZXMK6B6CeLx0CkYs8/mxT/tL6s3B3
+ e03KDak7pRwe1BsOmh0RnewcUWdfiVwcqmK3bSdJkAzBJoPyL5tMauBMezomezVIbnr/66oJe
+ tk/E12ppxp94FdEBLmvGeBUyhDq+x98VD+jWjgwW+FniFMuu1sIIPBVaf0ptavuFMafGTDe1q
+ OROECt+eoy3ivkVtxind6TOYLH3yx+kf8dlzo50XkTOAXkeZByOei8Y9N+W6qSDrOVwjSzA1q
+ xs8WAb+Axc/tetLGUkn7TqGY4wJpKFf3Js0F1JxBsaZvs=
 
-On 4/4/24 18:01, Dan Carpenter wrote:
-> The > comparison needs to be >= to prevent an out of bounds access.
-> 
-> Fixes: 620d1e6c7a3f ("iio: light: Add support for APDS9306 Light Sensor")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/iio/light/apds9306.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/light/apds9306.c b/drivers/iio/light/apds9306.c
-> index 4d8490602cd7..49fa6b7d5170 100644
-> --- a/drivers/iio/light/apds9306.c
-> +++ b/drivers/iio/light/apds9306.c
-> @@ -635,7 +635,7 @@ static int apds9306_sampling_freq_get(struct apds9306_data *data, int *val,
->   	if (ret)
->   		return ret;
->   
-> -	if (repeat_rate_idx > ARRAY_SIZE(apds9306_repeat_rate_freq))
-> +	if (repeat_rate_idx >= ARRAY_SIZE(apds9306_repeat_rate_freq))
->   		return -EINVAL;
-Good find.
+I suggest to use the summary phrase =E2=80=9CUse common error handling cod=
+e
+in pi433_init()=E2=80=9D instead.
 
-Reviewed-by: Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>
+
+> pi433_init had "unregister_chrdev" called twice.
+> Remove it using goto statements.
+
+How do you think about to use the following change description?
+
+   unregister_chrdev() was called in two if branches.
+   Thus add jump targets so that a bit of exception handling can be better
+   reused at the end of this function implementation.
+
+
+=E2=80=A6
+v2->v3:
+=E2=80=A6
+          a seperate patch.
+=E2=80=A6
+
+Would you like to avoid a typo here?
 
 Regards,
-Subhajit Ghosh
->   
->   	*val = apds9306_repeat_rate_freq[repeat_rate_idx][0];
-
+Markus
