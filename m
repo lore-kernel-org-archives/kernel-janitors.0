@@ -1,102 +1,117 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CA327447;
-	Fri,  5 Apr 2024 10:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DF915F3FB
+	for <kernel-janitors@vger.kernel.org>; Fri,  5 Apr 2024 10:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712311591; cv=none; b=VrOV1DfPDUWCa7OJsj3xaoDLgxlpRioErPlpbbB2LipqExT1P0PXnCGbQaakXShkNR/sxKmXq+WF591O9V0UjljSggNXzeZhx+nYRhQpPKJ0wh8IHXgJHqOWao4/ed1Z0xVJDkQ5qoTWE/TAxR8VViNCxoWKK5YVDtRaC3vq9wQ=
+	t=1712311747; cv=none; b=Wbo32jCQ1226PKujzOsjGu/DtSbyaZ1lOVEWqAqq49hDOOQRaTCDuNUECX04wsxekWgoFIkCcrpITzEWg3YhBCDPwf2XqNA26WI+NSaBTUPclhOjsV/mE/14zICNo8FKQRSTFGx/wE16mZriWt22tXDL0QnTUDdF3I2vBOAb0f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712311591; c=relaxed/simple;
-	bh=46/M8frtVI1xwHwJDfzOWBILidy1qF/nbknjFjniG0Y=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=I65StV5mdgcdNDrhriClKl9q4OrC2wlJNDsTnwiqTed+GXtEC+5YNHXCeTSYm3rt9yj375ai/0dYwy9zEwOIPqQdTOFBn+fgeIuenQb04lYAQiBFWOs3YucYd1vQLoC8yGifj7Cyp2z2FJJrzBhBkrYY0W+GvV5TIR7R5ZZvl3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=IxP8PvBs; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1712311747; c=relaxed/simple;
+	bh=8ImoAIEI0ugK8rC2IFmLmrAs2sbpTrlBbGo+o8vj+No=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=elSa91Qmu7xagQ1z+SL+zhz/v3CkusN8Rkjfif0t/2IEZuAOCGP2AG2JnWvn1ZYvjODp7IW9DTBoLyt5Tm8DhXRg9B53jNmCYYZJ0C9O84kXeU9s1NqzCwRkp849jTJZGTH6TkAVwlGANyz4feHWB72Rv1Vdh5HQBs8bNPwcJf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hjSnUDup; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="IxP8PvBs"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1712311570; x=1712916370; i=markus.elfring@web.de;
-	bh=h1rD7cl36D2n8I8nOEC0tJ1ZmmxTzOTFUREe8MP1MAI=;
-	h=X-UI-Sender-Class:Date:To:Cc:References:Subject:From:
-	 In-Reply-To;
-	b=IxP8PvBsbBgI06W49RzUSQBvZz6BCq3PFnpRVr/ZpiFKbUMPG2UB3AtDHpkN84U+
-	 lT2K2HCZIswoF7yj0G0WE/4+yM03xYmvhfvywElv5UJEsgo2Ma08KexaUyPV5Vopq
-	 596Br/ZBhBLA8drDiizBzHtnFT6JxVd3NzW1Igh8OwUFw5TGkG6+ZN28EdXTLFilk
-	 rpuGxpOjfkT+IpMbnLy3Pkk5OuuLB9eBZdgfeEJ5RB+ZC/D11D/Ou9A5BUnTLgtH0
-	 s8ssHbY3ADf6l6wcr6Ad5Jc80L8ue+aqO4pJ4TAekuXq1JPhFbWAJBikPEvE1nZG9
-	 3CcfR/cYv4/prJWrhQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MKdHE-1s6txd3UOS-00Ubi9; Fri, 05
- Apr 2024 12:06:09 +0200
-Message-ID: <12a5180c-fbac-41dc-b1bf-9eded9d8c5ed@web.de>
-Date: Fri, 5 Apr 2024 12:05:56 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hjSnUDup"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a47385a4379so561859066b.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 05 Apr 2024 03:09:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1712311744; x=1712916544; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IJJyKfshi1mkCaS5tt0HZulFROWfnXGZiaDgMO8R3Nk=;
+        b=hjSnUDupcvxj7zneyHBiU1R2EpvBrhstswDO7W6OLMw1llTc7JtBrFIcQrNK0o1ss3
+         7GYrLfw3eVgtcnqW4GB7loxHOUEcgdSsbMKbsb9Gn0MglOizT4N4eHxCARAQWcx/4r5W
+         mG1Rg0eRwJkBggrqrGy0r9X3MH4zRl90bjfMaT3JgEvObncUeIYwq0u2aPFSuW8raKtt
+         OevqRXINmAx+ASQq4/5C8xp1BL6X2WcPOnTSJp6LT0BVkmVnC6uRXsHCjpI8yNPwxZPQ
+         rVeg1Cjo5yomH/dyA4UvCDZCA6MHe1b5pvdtB6/cNvR2pBkpDq+GI4+NLdXVEmYHBoha
+         vi6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712311744; x=1712916544;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IJJyKfshi1mkCaS5tt0HZulFROWfnXGZiaDgMO8R3Nk=;
+        b=dSL4hXOH1cehJQHDziT4hVpzqDvXwTxo9d0qIMNcUnpFn15aRXaRNmv0tp7c1c+uVJ
+         6Dfl2cA5mxY0beXmeWzL9oq2BGj/ggYYoGL1mUheXYLbDrjU3qFxUyLKZXeHALEpNcQF
+         A3krM6Pm2XgAkFqWCqEEr1bIy4hYFFqYUtxaauIfxsFocNBDorv6ZzNxxR+ULGGNq9IL
+         00NyHmhAtklp9hTVMKwS3DLUxPIMvSYgxkvPzKVVPgh2iEQMbvr5TpFDiEbydOF6gMoI
+         13OHUjTF5F6PoDNXe5+h5LilAsbdTqx1rvsqhhkwe2ncVI0WVeoLk8wi5ZcqNzvOjV4N
+         xuHA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnzDXUuUVtLXdrmMxJIg0gxtMF62mTAFv4nAJtJ7BXDCCm37FafPpj4yrbHEEMzC2zdKoIARXgWnht6AYrDzs9ImLUDNEawmyK7T3+u1v5
+X-Gm-Message-State: AOJu0YzTa4ZOQMHPouv3NoOhpXl2IwQknu1xbz91xN5u6LUuM2AxGvX7
+	NYWDIFtHY3YrPk1wPMrtvY7xxwN8TKjJCEnkx+j2xkrbQNcWClx1HI0AB9dkypk=
+X-Google-Smtp-Source: AGHT+IHSByE+q9VpdHRF4fCIC0/s5XcORINNOZr0+G4TGptAdJjbM1kdurv9GRJWoBAdanDW5rSG6Q==
+X-Received: by 2002:a17:906:a856:b0:a51:9304:1a01 with SMTP id dx22-20020a170906a85600b00a5193041a01mr1067995ejb.26.1712311743540;
+        Fri, 05 Apr 2024 03:09:03 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id lf11-20020a170906ae4b00b00a51a691cd23sm503559ejb.190.2024.04.05.03.09.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Apr 2024 03:09:03 -0700 (PDT)
+Date: Fri, 5 Apr 2024 13:08:59 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Eric Woudstra <ericwouds@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] net: phy: air_en8811h: fix some error codes
+Message-ID: <7ef2e230-dfb7-4a77-8973-9e5be1a99fc2@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Shahar Avidar <ikobh7@gmail.com>, linux-staging@lists.linux.dev,
- kernel-janitors@vger.kernel.org,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- "Felix N. Kimbu" <felixkimbu1@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Dan Carpenter <dan.carpenter@linaro.org>
-References: <20240405074000.3481217-6-ikobh7@gmail.com>
-Subject: Re: [PATCH v3 5/7] staging: pi433: Remove duplicated code using the
- "goto" error recovery scheme.
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240405074000.3481217-6-ikobh7@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mhQpAhLFo7ec/e+NSRI//PqcCKVx4mChnrxS6HgTJKN0F9eJODN
- G18UTr3jFVbFS535x0kRrC5Awju3Fb7FQ92s/mBaG0mf5PQqG4RqxsUiadSxY9v/37CJQlW
- X/hJhWIZc44ruv9F+DgP29MYONiq7YK11IdqjEn2PMe5nqZ1gE2QtkCdgAIwPrT9mZ7PkYG
- usLzoDhNnMUOr835xL+bA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4QjQawHPQ3k=;1+SIoM3nxoQyGRfDtsKMlr3BPbY
- sdbnZGu6YO8wbYi7c8JOY+023ecEHxj6USL226LwddImTF4Y3ZRIDL21VzzUNJzTkXoj9Jola
- KJuvXL9NU3RAt9khWJBLEz4zbFlBZRFEctFR48ihhFvb1A/SeHNJDXMHqTZZ0zOla2AB58IeF
- cnNoUkmRk/tuRv+r9u89DNXhL/wX8HSmLvj3x8IFDlT2aZOUWJn51FnK3tja/Lb9KId0QIU4U
- ug13HJdwEMqv3IfHLf/QNFjdsTDxti0foXDAwFdOO3PYKMyuO52Vbc2ded8ZKGXRs6fyVAUud
- Dk6c+eFzTX0wYE28V+spJDjy+XPWnsCuROE1NZj5oxvQ6OG25zxDDXL+VuHxdRaGRMnX4G+VI
- RmFasWpvZ1zISIdmbmwTsNCILH4fVPvJf7a9ysDk2PljsWPMVdh1r82QsIz7GAoBRQM6ksoFm
- BR3cd+CkDUnXN5pslGn9BXiWQkIt8mwHU2vKtgshzIjJVkhsEsGSGb83e6tbPuRTfAjW+gxdk
- 6DLA8D6SFvnTIa/UpaWRMalvbvvPoo0iXqScdvHx+9tVZXMK6B6CeLx0CkYs8/mxT/tL6s3B3
- e03KDak7pRwe1BsOmh0RnewcUWdfiVwcqmK3bSdJkAzBJoPyL5tMauBMezomezVIbnr/66oJe
- tk/E12ppxp94FdEBLmvGeBUyhDq+x98VD+jWjgwW+FniFMuu1sIIPBVaf0ptavuFMafGTDe1q
- OROECt+eoy3ivkVtxind6TOYLH3yx+kf8dlzo50XkTOAXkeZByOei8Y9N+W6qSDrOVwjSzA1q
- xs8WAb+Axc/tetLGUkn7TqGY4wJpKFf3Js0F1JxBsaZvs=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-I suggest to use the summary phrase =E2=80=9CUse common error handling cod=
-e
-in pi433_init()=E2=80=9D instead.
+These error paths accidentally return "ret" which is zero/success
+instead of the correct error code.
 
+Fixes: 71e79430117d ("net: phy: air_en8811h: Add the Airoha EN8811H PHY driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/net/phy/air_en8811h.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> pi433_init had "unregister_chrdev" called twice.
-> Remove it using goto statements.
+diff --git a/drivers/net/phy/air_en8811h.c b/drivers/net/phy/air_en8811h.c
+index 720542a4fd82..4c9a1c9c805e 100644
+--- a/drivers/net/phy/air_en8811h.c
++++ b/drivers/net/phy/air_en8811h.c
+@@ -272,11 +272,11 @@ static int __air_buckpbus_reg_read(struct phy_device *phydev,
+ 
+ 	pbus_data_high = __phy_read(phydev, AIR_BPBUS_RD_DATA_HIGH);
+ 	if (pbus_data_high < 0)
+-		return ret;
++		return pbus_data_high;
+ 
+ 	pbus_data_low = __phy_read(phydev, AIR_BPBUS_RD_DATA_LOW);
+ 	if (pbus_data_low < 0)
+-		return ret;
++		return pbus_data_low;
+ 
+ 	*pbus_data = pbus_data_low | (pbus_data_high << 16);
+ 	return 0;
+@@ -323,11 +323,11 @@ static int __air_buckpbus_reg_modify(struct phy_device *phydev,
+ 
+ 	pbus_data_high = __phy_read(phydev, AIR_BPBUS_RD_DATA_HIGH);
+ 	if (pbus_data_high < 0)
+-		return ret;
++		return pbus_data_high;
+ 
+ 	pbus_data_low = __phy_read(phydev, AIR_BPBUS_RD_DATA_LOW);
+ 	if (pbus_data_low < 0)
+-		return ret;
++		return pbus_data_low;
+ 
+ 	pbus_data_old = pbus_data_low | (pbus_data_high << 16);
+ 	pbus_data_new = (pbus_data_old & ~mask) | set;
+-- 
+2.43.0
 
-How do you think about to use the following change description?
-
-   unregister_chrdev() was called in two if branches.
-   Thus add jump targets so that a bit of exception handling can be better
-   reused at the end of this function implementation.
-
-
-=E2=80=A6
-v2->v3:
-=E2=80=A6
-          a seperate patch.
-=E2=80=A6
-
-Would you like to avoid a typo here?
-
-Regards,
-Markus
