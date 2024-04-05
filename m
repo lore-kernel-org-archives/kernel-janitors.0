@@ -1,86 +1,55 @@
-Received: from msa.smtpout.orange.fr (msa-213.smtpout.orange.fr [193.252.23.213])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0BC17277E;
-	Fri,  5 Apr 2024 18:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A0E172BAD
+	for <kernel-janitors@vger.kernel.org>; Fri,  5 Apr 2024 18:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712341103; cv=none; b=N4mYQfwxE4ql/UFPnBUMx/l1iPM0nzTwvAJconZ2LkHIJ1c0Hou8grae224g9ya2NW4aXJWAC0Cn3pmXQB6eRyzeEgQYtxJTzdS8ouAOGIJYxYaSeoNtmRHkkt4fTE42RW4b9phuqpJNyxWCT572Q0/KoTilOlEhFUlDutINc0Q=
+	t=1712342543; cv=none; b=HQLIOymyQbh0oGKURaBstrwZU4+uB0QlwRYNYi/MxK4/WU9q5TmQ/s01CDIPpH1QF7NuArXhe5MzGPtygetq42rxIRveVyA4xnP+Ca73TyJyimO0yM89d0ZXo6xa82bIrahzk8BSH6xEPMVFtiYx/W8w6ft2WFldUZEjisCjj+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712341103; c=relaxed/simple;
-	bh=cvs/43SwtLRtedcsO543rgUvMrFflja1dGXNQx9R344=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CJPgNLkb2Dn1CV4p1WCwHCbGSc6TCY++D2ffXiOEl//avpCIWR9DmE3HHQOK89jH98qdWR6g1gMv1GlCR/7a3LrIM2BOAiBl68csoO/dk78FTJgZgsRzkZhSF+RU1PLVe4RMaaitte1HP9xcN6aWpH8HmGLw0wj75Pd5DMecwd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lkTgAZOC; arc=none smtp.client-ip=193.252.23.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1712342543; c=relaxed/simple;
+	bh=aKzj2nNlzMJ8azIYfSPAwEduj86IzTAYqe3VzO9WswM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tWDDlQ2ytANjSpLw8d3K9KeWx6v31AsxW+birPwDvsnzJF1dXgAEF5tiXsKn11K4Ux27znkNmd857Zm7xWR5oWbnKnX05x157b+yCclwBlAt03b0OFGzV3tkij4zJpdZYly0/GoHDc0R4gxeUtXxDgVKoVdCKXPQ3gIQQsNt3dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gjJR7JMP; arc=none smtp.client-ip=95.215.58.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lkTgAZOC"
-Received: from fedora.home ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id so7frCyNy41mCso7gr3bZJ; Fri, 05 Apr 2024 20:17:08 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1712341028;
-	bh=CBOkN9rmFPDZtUIpA+M9rXhLCZmZnPuzbOdFADzAiHU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=lkTgAZOCcEfDQ6oFnLdPtpbDX3pQNJE5xRzadS8UtdiIVUW+JpWKdYOywrEp0LFns
-	 1M8+YXAffelLS48FIErg2gSVHJS+vxT6xtJfEF1OEIOQ3gPk4IYsAZEYkTo0HTr7cE
-	 7LT1vBFXD97HtS5IVWNigCSzRk9OBpRSmOPvsTfs9ok8+JQQSCt6togt8evYjq0LsT
-	 jkdxr5HXJH2VQKEXwbuHRyMXWKL4VVlJ9TWkpytUrdSiVMJBTWxVgjxve2TsA5QRsK
-	 cCqp7kPNj4FYzNODtt8cF9vi/SnH9G8nvFEYlBSC9v+8x+ZHHhkWAoRatIb3jlwR2V
-	 Rk0Vvb+rxDpQA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 05 Apr 2024 20:17:08 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pci@vger.kernel.org
-Subject: [PATCH] PCI: endpoint: Remove some unused fields in struct pci_epf_group
-Date: Fri,  5 Apr 2024 20:16:59 +0200
-Message-ID: <6507d44b6c60a19af35a605e2d58050be8872ab6.1712341008.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.44.0
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gjJR7JMP"
+Date: Fri, 5 Apr 2024 14:42:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1712342539;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tZ+uiehsJ3wgEMKI7SgICdPj63wSJBV8Zz0Zm6XtKDI=;
+	b=gjJR7JMPwM69GilljNxaLsraANZiI6ZRtq1EYVMXDo+DU9QnxgReuT6F28u6Gk1vvV1aKA
+	xO8AU8gk5FRrrcr5U3/R50gv77g3bYT79QBgMK3FUOm4LFJ4EkJi7ohhby7osRXx+CbPpA
+	9jPo5NKxNAaopVsaY52eQbFhnH3JOS8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] bcachefs: fix ! vs ~ typo in __clear_bit_le64()
+Message-ID: <ojophuwjmdwwq3ki6zi5lxzsma3xjmfgpwvutb6lden3j746sl@fe5lg43ptovd>
+References: <5ecccc80-70b2-4c04-8c09-1113fef3e515@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5ecccc80-70b2-4c04-8c09-1113fef3e515@moroto.mountain>
+X-Migadu-Flow: FLOW_OUT
 
-In "struct pci_epf_group", the 'type_group' field is unused.
+On Fri, Apr 05, 2024 at 06:01:02PM +0300, Dan Carpenter wrote:
+> The ! was obviously intended to be ~.  As it is, this function does
+> the equivalent to: "addr[bit / 64] = 0;".
+> 
+> Fixes: 27fcec6c27ca ("bcachefs: Clear recovery_passes_required as they complete without errors")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-This was added, but already unused, by commit 70b3740f2c19 ("PCI: endpoint:
-Automatically create a function specific attributes group")
-
-Remove it.
-
-Found with cppcheck, unusedStructMember.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
----
- drivers/pci/endpoint/pci-ep-cfs.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
-index 0ea64e24ed61..ad4e2e329ae9 100644
---- a/drivers/pci/endpoint/pci-ep-cfs.c
-+++ b/drivers/pci/endpoint/pci-ep-cfs.c
-@@ -23,7 +23,6 @@ struct pci_epf_group {
- 	struct config_group group;
- 	struct config_group primary_epc_group;
- 	struct config_group secondary_epc_group;
--	struct config_group *type_group;
- 	struct delayed_work cfs_work;
- 	struct pci_epf *epf;
- 	int index;
--- 
-2.44.0
-
+Thanks, applied
