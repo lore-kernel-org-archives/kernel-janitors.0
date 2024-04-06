@@ -1,96 +1,91 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82532125DC;
-	Sat,  6 Apr 2024 01:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1F33A1AB;
+	Sat,  6 Apr 2024 15:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712368773; cv=none; b=UmGgOCSbsmjSwYasqCRdjMOwXhgBdNgYZOZJnYBaLjpyyIZoand2s0PGWSV85UwA4C+2MiuN9GLsGxqzU5/9Giw8IwSeLemHeu7nC4xAirHdje6SQ8tGD7BEeNEqAD254zDTU3SL97ILFruuLI0hKeMJIMg3zSLvte1+t1YpqQI=
+	t=1712418169; cv=none; b=ETWgPrBcD09ACwVkOMnExacQLNTz7S/ZJ0oEG0S4fALtsgwDCQa+rXCq107CIPa55FdZ3tcmJOjaeW7kB1dYtf1v3kflr3H1DnCVAWXICblFdyRCbhpFW/kzyPI1ttnjMkMk+DYNI9Md/BscPOfmU5ObnBidcKvCfQYtSVA3o+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712368773; c=relaxed/simple;
-	bh=Z7VCcSKqAqefSjmsmcNaIRDZm19lO+XBUKel61A0WCs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QIgFQxe6UyQe8tAvtOdm62BIwTtAONmK0TJcz5ySKj0lD1aw+ds4NJWzBnmypvturarQ1CpuYuviEO/ozHI2RQHgrCh8Sr993+86Oh63zBUkvh56XvIhLya8wVlKvgFu+4n+JZVbzNKY+NuZxK/p5FFrOPXD+vkrMwBjSnyJbx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=T6PPfuHf; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1712418169; c=relaxed/simple;
+	bh=hCjVczF/+i7ArwQOZesXRzF8mpKkIe90t9B2oG+LLs4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AmSAzUZIf3SLTizC2vE+wpnLglUpCHCd6K7FpzZPYvh1B68ysyjMfbo7Y47rxnfYuEKM/3viEq2q75kK/+X72j4hKks6LOvvkND34C6FqkjnK2Pzt0ow3LQD2XwFi0m7TEOYUOXrqPCJboRxijXuS8+hgQjhz+lstTr9GeraFzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dO0OFTzQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="T6PPfuHf"
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4361iHBc024192;
-	Sat, 6 Apr 2024 01:58:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2023-11-20;
- bh=JrIVJnIlZ2irb8MalvkujLN8fFv5qjkoRcrej4VnBOg=;
- b=T6PPfuHfv4wO2CsQJIDJyrUJ9U2FuDP/9WpbDqwyrZUZybylCYcJk6LXZS5oud+/xsec
- oCrw1jMQ9WC3TwOovHJ4fx8FWR4TVcrLWaP5WhBpWDU66L4B0YRatiSYsEEf9d0AZ1yz
- n7kQQSQEgSbs+LHSrC44XWYJGd1w4wG9314OoT4n6WS/C4HNSyIm6/dtc5EcYgIEuHYt
- Hp++3KDhOy0oSxXy4+/KwCEx1Ymw59+ABw6UFPas6zFlULcxQN2NJW885CMncAQQKZtO
- 6BZG8AUajMswFVssE9uCvrbIazeIkUp/qNI71AeJxOO3fHwF8QX0z1Z7iTZ5D/6SaYu0 Ww== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3xaw02006w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 06 Apr 2024 01:58:56 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 4361XVQd032535;
-	Sat, 6 Apr 2024 01:58:55 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3xavu3rer6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 06 Apr 2024 01:58:55 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4361wqvb000912;
-	Sat, 6 Apr 2024 01:58:54 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3xavu3repx-3;
-	Sat, 06 Apr 2024 01:58:54 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: Quinn Tran <qutran@marvell.com>, Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Nilesh Javali <njavali@marvell.com>,
-        GR-QLogic-Storage-Upstream@marvell.com,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Himanshu Madhani <himanshu.madhani@oracle.com>,
-        Larry Wisneski <Larry.Wisneski@marvell.com>,
-        Duane Grigsby <duane.grigsby@marvell.com>, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] scsi: qla2xxx: Fix off by one in qla_edif_app_getstats()
-Date: Fri,  5 Apr 2024 21:58:33 -0400
-Message-ID: <171236847476.2627662.10581186530455800083.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <5c125b2f-92dd-412b-9b6f-fc3a3207bd60@moroto.mountain>
-References: <5c125b2f-92dd-412b-9b6f-fc3a3207bd60@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dO0OFTzQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BDE7C433C7;
+	Sat,  6 Apr 2024 15:42:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712418169;
+	bh=hCjVczF/+i7ArwQOZesXRzF8mpKkIe90t9B2oG+LLs4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dO0OFTzQK8FQP88si9FI6Mzyhtt6Zl0Y21i4i0Ydkc2HfcxfXXAEL2MnBXYDQB2K4
+	 +Qr/X0i3iBMflqfh0WFKGc3kW3JU33sqH0o1TOeU8QjxrKX6ojwkayK40n143BsfKy
+	 eIN2Pb0zSyCvtyD/eZ7A3sbuF3wOJ32/H0Lz4821fAMaVQGYaRbyvA6ZZBwNLmijXd
+	 ud6gwcs/WeCKNshS3khphIrQ/rVthAQx9aQSjqc0/ej4nEo41YZWtsTS9D4CjdJTkI
+	 LRi6DetaZu2SUbKhOW0FbiVbV6wpdqLQ5DQAqWxyqWWOSWmqG0G9t1IlixlZDicvLE
+	 S8Astdtm+UBgw==
+Date: Sat, 6 Apr 2024 16:42:35 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: light: apds9306: Fix off by one in
+ apds9306_sampling_freq_get()
+Message-ID: <20240406164235.55193b5f@jic23-huawei>
+In-Reply-To: <7a54d993-8aff-472f-8132-85e0ca79ff13@tweaklogic.com>
+References: <69c5cb83-0209-40ff-a276-a0ae5e81c528@moroto.mountain>
+	<7a54d993-8aff-472f-8132-85e0ca79ff13@tweaklogic.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-06_01,2024-04-05_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
- bulkscore=0 mlxlogscore=635 mlxscore=0 adultscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2404010000 definitions=main-2404060013
-X-Proofpoint-ORIG-GUID: 6Q3V5RB-qL-JeDFNg1it--MnBuCI3wtO
-X-Proofpoint-GUID: 6Q3V5RB-qL-JeDFNg1it--MnBuCI3wtO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 02 Apr 2024 12:56:54 +0300, Dan Carpenter wrote:
+On Fri, 5 Apr 2024 17:44:31 +1030
+Subhajit Ghosh <subhajit.ghosh@tweaklogic.com> wrote:
 
-> The app_reply->elem[] array is allocated earlier in this function and it
-> has app_req.num_ports elements.  Thus this > comparison needs to be >=
-> to prevent memory corruption.
+> On 4/4/24 18:01, Dan Carpenter wrote:
+> > The > comparison needs to be >= to prevent an out of bounds access.
+> > 
+> > Fixes: 620d1e6c7a3f ("iio: light: Add support for APDS9306 Light Sensor")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >   drivers/iio/light/apds9306.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/iio/light/apds9306.c b/drivers/iio/light/apds9306.c
+> > index 4d8490602cd7..49fa6b7d5170 100644
+> > --- a/drivers/iio/light/apds9306.c
+> > +++ b/drivers/iio/light/apds9306.c
+> > @@ -635,7 +635,7 @@ static int apds9306_sampling_freq_get(struct apds9306_data *data, int *val,
+> >   	if (ret)
+> >   		return ret;
+> >   
+> > -	if (repeat_rate_idx > ARRAY_SIZE(apds9306_repeat_rate_freq))
+> > +	if (repeat_rate_idx >= ARRAY_SIZE(apds9306_repeat_rate_freq))
+> >   		return -EINVAL;  
+> Good find.
 > 
+> Reviewed-by: Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>
+> 
+Applied to the togreg branch of iio.git (where the fixes patch is currently)
+and pushed out as testing initially because there is other stuff in there
+I want 0-day to checkout before I make a mess of linux-next.
+
+Thanks,
+
+Jonathan
+
+> Regards,
+> Subhajit Ghosh
+> >   
+> >   	*val = apds9306_repeat_rate_freq[repeat_rate_idx][0];  
 > 
 
-Applied to 6.9/scsi-fixes, thanks!
-
-[1/1] scsi: qla2xxx: Fix off by one in qla_edif_app_getstats()
-      https://git.kernel.org/mkp/scsi/c/4406e4176f47
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
