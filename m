@@ -1,68 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995F54436F;
-	Sun,  7 Apr 2024 16:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EEA11181;
+	Sun,  7 Apr 2024 20:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712507972; cv=none; b=ArVUnnr0s01a9FAnDZ7ZFIG7XgoBSUPpYZv701x+d5QRM/UAB+FXbrP843lSOvXWu2cTj4FmZkxJrQpSc+yNRRVf5+tH9wyTl0OcPLBaVCRuTRiemz7KEyR1jKUJMxd3yTl7ec5u/KFPzVkQcQxGGU9oIvDgTw7cw8OzVGE60EY=
+	t=1712520192; cv=none; b=dqADoRVlVdM9ttww1jNWF8Zxx0pywF7BHFUxzZ7mHr+FWd+nRnrP5r1kilv49HXrzxtHAINvg/0STBk7fu+K7NUiQDIbzf7znlPsPOXUaMSGQMdcbua2f8LaM3cNM63wCm8vT8THx4w1C7G6x7ERiXOpp/8xjtUHy2dklK/EJRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712507972; c=relaxed/simple;
-	bh=aYE0LPbj0UqNR/GD3pDKhH4l/Zf9h9AanycUw9dj54o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=n+xSwWxpy6cDg9+MVs29iYCEGf+HtigVimIeL2D1qSl/a3rcibx1TECB1MNB2r83MVXzIDd4O4cbIqJ00R2QrK1HuUjWPDz0ne1/14EZsP+nXkEx9w1XLQ3TYWrAz/vCeqXJCj8nCbpS9fQ+wRpSfFP69QztndlBF+4zGam5DRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rpKp7MLl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712520192; c=relaxed/simple;
+	bh=keKEy/3Xr8accsTk/JDqcRgA2FSs4IU5nT8QrCVYNHE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yn3BqJDtt50VX+cFmpXHEn19VVlWO4hDnu/MaNr9w/95NhhBdYivJWSjPMBe+lsWCEMq1un6nq6nOoeAimqqNeCh2h+Qyd7FFLqlAP38dQXSW3hOIemZAkiwqGHHn/qKiu+r3aF1PUtykJUMIWSHXOTfzyEBtKZdKvy5edILRAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ndXKCBHe; arc=none smtp.client-ip=80.12.242.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpKp7MLl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C78C433F1;
-	Sun,  7 Apr 2024 16:39:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712507971;
-	bh=aYE0LPbj0UqNR/GD3pDKhH4l/Zf9h9AanycUw9dj54o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=rpKp7MLlunN2B9HgiZ4M9mzpsG/FkvGGmYHr81A/oB4tsR/RF+tSSUhQ9oox0OYJ9
-	 fdMGXPQdmkK6OmPH1ihjGWDEJm0Ku8EDfxRgeJjkqqhsxhlcW8MGIbVqg7xRqsg0te
-	 QvxlN/gk/53VEYMVAzy/0cpTDgoema3/il7VNUd8ipPqnwmkOVdNNyQld4YR+X5OTH
-	 bw7+PTtIV6B9acnk7f7lE9zLyAvkAb9QJf6Mo5CFtWjgvuUwfEwbRiZ5jSVCz75Cpj
-	 vBmPFbbpxMbbEz1uWm0bGRwSpvRy5THjrbmzL9UWry/zfdYHXu9J7ktaaH5uaBCT/2
-	 4cicJGTrBiDrg==
-From: Vinod Koul <vkoul@kernel.org>
-To: dmaengine@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240308134750.2058556-1-colin.i.king@gmail.com>
-References: <20240308134750.2058556-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] dmaengine: pch_dma: remove unused function
- chan2parent
-Message-Id: <171250796960.435322.1751126757223779847.b4-ty@kernel.org>
-Date: Sun, 07 Apr 2024 22:09:29 +0530
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ndXKCBHe"
+Received: from fedora.home ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id tYiBrICUDz1OZtYiBrfStB; Sun, 07 Apr 2024 22:01:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1712520119;
+	bh=gOBZVvTbMI4Vvy9nFHPCW2JYo+PpjPrCvqOXxjC2HGc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=ndXKCBHemAwbLOKLOO2DOm3giezlAGq19PHmek5chO1wkT5gUZPMjUJikYvKnURdd
+	 wGHjgS0P7bENVtSp2WxQxaXAnUsnehEl+PPfoClhHm0ad3IYGBWiZjlq9Xr5h7MU8d
+	 h8XmHoL7HbSVSRY4dS4rWUnG5SR2I0CNAewO8hIpMr7fO65TS3F/YugMLCEXaGcTHU
+	 SbngVs0Sreh/6oF97hzgyZbuchAFrL34WYM2ykDORy1WiDAkweUrr/gh8Td80eY4me
+	 JViE28pwYxzW8uZlisovIEchTebYhV0fsGyuUQAGOVRH42LrmtFDROZP1qooMrHpRV
+	 JQQCItc7Q4Piw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 07 Apr 2024 22:01:59 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH 1/2] thermal/drivers/mediatek/lvts_thermal: Make debugfs related fields more consistent
+Date: Sun,  7 Apr 2024 22:01:48 +0200
+Message-ID: <42a87fb9837f1760d1ad4eb7162a7536785dc6f5.1712520052.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.3
+Content-Transfer-Encoding: 8bit
 
+The debugfs code is only generated if CONFIG_MTK_LVTS_THERMAL_DEBUGFS is
+defined.
 
-On Fri, 08 Mar 2024 13:47:50 +0000, Colin Ian King wrote:
-> The helper function chan2parent is not used and has never been
-> used since the first commit to the code back in 2010. The function
-> is redundant and can be removed.
-> 
-> Cleans up clang scan build warning:
-> drivers/dma/pch_dma.c:158:30: warning: unused function 'chan2parent' [-Wunused-function]
-> 
-> [...]
+So 'dom_dentry' should be included in the 'struct lvts_domain' with the
+same condition, instead of CONFIG_DEBUG_FS.
 
-Applied, thanks!
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only
+---
+ drivers/thermal/mediatek/lvts_thermal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1/1] dmaengine: pch_dma: remove unused function chan2parent
-      commit: 4665be0e952f68306cc6fba2cce68b940a7ec78c
-
-Best regards,
+diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
+index fd4bd650c77a..3003dc350766 100644
+--- a/drivers/thermal/mediatek/lvts_thermal.c
++++ b/drivers/thermal/mediatek/lvts_thermal.c
+@@ -150,7 +150,7 @@ struct lvts_domain {
+ 	void __iomem *base;
+ 	size_t calib_len;
+ 	u8 *calib;
+-#ifdef CONFIG_DEBUG_FS
++#ifdef CONFIG_MTK_LVTS_THERMAL_DEBUGFS
+ 	struct dentry *dom_dentry;
+ #endif
+ };
 -- 
-~Vinod
-
+2.44.0
 
