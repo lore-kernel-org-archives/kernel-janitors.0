@@ -1,72 +1,74 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267E838393
-	for <kernel-janitors@vger.kernel.org>; Mon,  8 Apr 2024 08:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD5D47F78
+	for <kernel-janitors@vger.kernel.org>; Mon,  8 Apr 2024 08:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712563801; cv=none; b=o1C83FzqZuGKZoX41slshd+HIS+VEDCq85TCk2j6vUCohV3Ra8UgF2gpDtCrDWVoAzHbmtDnyZ65hONJ/bFZOXENQtwavH/Uk9D7AhuSt1Xgfe4TMisFWxF5hb4v4i9UE9drhBY9aWrvsJnWXsHFRYi/9PrVDDE8l6GQDjEpIQ0=
+	t=1712563821; cv=none; b=UEhOCQJckhltBoJGIXlo/edioeYh7XnH3i1Dsv86nMRL8l+b6XDqofTmVxyOUl6dp1kP6qEuWB0lbKKFZ7Ljr+u6gDvG5rHNWn+pLowXyh+2P4kY+63cgAb9y1UV8BXxIvXrR1N4XmqSrfnALqVdjWcQphs2kkp8ponMR629aKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712563801; c=relaxed/simple;
-	bh=ljkAHH/jrVsEddYmqwbcAhxir0nJCPPqH96atvjx+I8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZS1tzAATXuPytOoCLY/lHJxXMtbw6plhlC7iPA9xjjku3rXVKxU640QIknkAiz1YWjYgx6L6NZDJ+tb675VurbGApX1Tjyp3YxRZl+f9O17C5go1OWl6S7XtRmAl4UWF4+EJEVfOYmpJaY9btS7V/DZ3pbBlCxAKggvM8Oni4QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BCdJ1pjI; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1712563821; c=relaxed/simple;
+	bh=RRyqPnteX9svo/FeqH7qejShvl+Wu9J6rtShURC1Bwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=huKhYaju5dshkOhf7nONDz0aW9oqLYjyoYzd9mdKpZ+SgT1+Kvc7nMU4Q54NpkR2MgCUKryTXhL/sCex/ufozMqmT1WYViFoAWW5rxTBBrQPaLTcwOrcp5+Yw2mxWDYlv1HRa7AzmEDL/VPSbzqhNR7ZC8Ykj4vXb2CWa7mEasg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ECaDEgO5; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BCdJ1pjI"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a51addddbd4so255356766b.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 08 Apr 2024 01:09:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ECaDEgO5"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a51969e780eso484111566b.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 08 Apr 2024 01:10:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712563797; x=1713168597; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OzIHovojG3644yJzi7Rp4zPvS+LnsKi9BT3OOCmERoA=;
-        b=BCdJ1pjInKKk4vrgVcjnsJf+I8ArtH02GFeLNUq5rIpogQRb1hlTw5Z4a3CIC9dQ86
-         p99pc2LF+33dZHwTcmQ1PXNyRNgdShtYxKUSWlLafAORk5KWI3oB/Ej8E8U0MpM8EJlY
-         qpkdpWMfD8j733hkxoa0lhQ8kmu+Quh1PTpL/yIXyID5KDMxHta/P9lXZ3uyOkRE1FNP
-         NVbd3Z2+aDKxlS+UCRpPT6VnHCKMul0ZxQ4TisDo8oMpguE1aYKRNXfWum1OD/3yOZFA
-         jUaYsiHZiRh/Emp4+Hs73LZBgkDILK2QonUpJAWjV06+OC6Mh1L222fKXGtzA9bfNqtI
-         dvdg==
+        d=linaro.org; s=google; t=1712563818; x=1713168618; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zrHqjLybF7CJnuNHXKR+lEoGvKA0pqz74L9RRTV+fT8=;
+        b=ECaDEgO5bVhvHkPP0coFC3v9GyoLAfoYLjWAQ90iQBKh9meLoBGsM2+DeO0ebiE9PB
+         zc8BxPE61FnUzDa/XQE16HfiFPJXCcn33EuCD4GXc0P2NTWmRl3S5CtHhRGf8xsS2Udf
+         jsFI/cybYV0cI1gowI7LfP7NuPkrZBJOPqvsKfIEeYqfpm/3x0jZkYSno8QbP6mUtALw
+         SIn7wodoAD1gpXjrRWl2qoZ93TCygzssTy/F0V/qbCiyJ8stk+xslLI0Pk9BMIG69AWv
+         D/rjxkSW+2KYBjaD4qaBTAMZ0cJnQ9V+uUWKoU0hymHSbMP7hjJdU3yseyf2nNSpDgyQ
+         gp7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712563797; x=1713168597;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OzIHovojG3644yJzi7Rp4zPvS+LnsKi9BT3OOCmERoA=;
-        b=ojZV0jJHBmyLUAslEfhJt3jMZbEhEGPJio7+E7wALiqqlCnhL4tL68ztOzvNTqrV2+
-         73R8ktvrfBKdtayA4wTo7uEyeWRA4wZBbD6PIyEaNC1dAZ1fuQUBXzl4N5aCVbZ4B4d3
-         Px/MyZx+Ts3n5xgZRcphIdzRWIs0Hcwmy6NBc8wp1iHGB4/s5+gdyXYtNFe6EVlBu5Z+
-         82sGWfHa46GW1HYXNltgsVGZvDvgZrSuxPxVwr3JwjE68Qb4IxiZ5knwm4L0tZqi9MF1
-         VuSjXwbBMZVwuK+abVkunG/y4kUY+X/yc0nUJLWq/FFMqiabaUxCv8QPvYhnsKJvy3FM
-         jewA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrkwk9XptyqynHFiXeKcOQP7j7CcVrAb8uGcZHsavioe1Wr3k0rxxp/fz3C5ddZXpkxdxDHyVwwbFj7zZ3e81INkbdDLYm/QYhAEM3bsHA
-X-Gm-Message-State: AOJu0Yxjy+NIueM+Rhk/eTuOvOmPUZC/e4aPGzNMev6tUq2PYMaJVx0Q
-	sKyn1DKCip/r4UW3ZYTULjMh7UZGhDTKHY6HYGuFtyDH5VNRtBFpyHyKN8ANflM=
-X-Google-Smtp-Source: AGHT+IHtvCDCPVlkweFZtEXFJMtCJqeKZm0fgLqDOmu+n81huoTOcfZOWzp5QNMYK38WJkLMK2XiTQ==
-X-Received: by 2002:a17:906:3391:b0:a4e:768a:144f with SMTP id v17-20020a170906339100b00a4e768a144fmr4666050eja.36.1712563797196;
-        Mon, 08 Apr 2024 01:09:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1712563818; x=1713168618;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zrHqjLybF7CJnuNHXKR+lEoGvKA0pqz74L9RRTV+fT8=;
+        b=AjSxL8mV76UQTnDm8lqgbgRIGIx9DSrosryPsgNKuZ/Wj/+xWXpsDPBLeBf6neMFR/
+         CzRZVztOUdV6RBuNkZ+qWO6xeoC5EGLJZH0qO/eANRR7s9VbqCCegZW8kbHyfQDBlNJB
+         Qx4JPCwR61QS+aKdnalzylX32RDsjgYjkcyhlWEbk7rJD6MRIDPOt5y6aFZwkNfJG/Ww
+         MUwzsMY3wha1bvcNerpaUo78f8kWK7ZhWa2eJZfQuo0u6nOocVtxoNx/uEcO0E6sYi0m
+         G8byqDdMEpYQw8Mcuvkv9bvvV8WoDCf920c4//PIm6An14EJE46DmWZsY9hWmb6A9EdZ
+         pBSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIOwK9d3rgyPx0hn9L9GfOkAJML2jUohV0P4MmEbMOSSI57Y6bCzY90Sw3Y7bgYa4WD04b8RlgwCLxm+yJM4ULEqkYu/wtimElVq3thTkH
+X-Gm-Message-State: AOJu0Yz6pfgf1YxfngGmRGqizr/WSXCBbDjQlZajdPypdEH5qIsMgoRm
+	+lnYUWkBxo7CPhNd+FyEVlM3XbUEFYW7W9cES31+pXl63kcB8ET29pYbVawyKpc=
+X-Google-Smtp-Source: AGHT+IFaWJ0ko+880OE4+Ydorjjhc+EVFX8MZM5sS9kOSFgetr0n6d6xvsAp8RTPVZNNLK44nNU7nQ==
+X-Received: by 2002:a17:906:fcab:b0:a51:8a78:d2ff with SMTP id qw11-20020a170906fcab00b00a518a78d2ffmr5620413ejb.34.1712563818217;
+        Mon, 08 Apr 2024 01:10:18 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id gt17-20020a1709072d9100b00a51b3d4bb39sm3081020ejc.59.2024.04.08.01.09.56
+        by smtp.gmail.com with ESMTPSA id my46-20020a1709065a6e00b00a4735e440e1sm4149587ejc.97.2024.04.08.01.10.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Apr 2024 01:09:56 -0700 (PDT)
-Date: Mon, 8 Apr 2024 11:09:51 +0300
+        Mon, 08 Apr 2024 01:10:17 -0700 (PDT)
+Date: Mon, 8 Apr 2024 10:35:59 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 2/2] thermal/drivers/mediatek/lvts_thermal: Improve some
- memory allocation
-Message-ID: <d97f2a57-d318-455b-a860-8bd7972c8aaf@moroto.mountain>
-References: <42a87fb9837f1760d1ad4eb7162a7536785dc6f5.1712520052.git.christophe.jaillet@wanadoo.fr>
- <8cb69f245311a348164b0b5ca3dbc59386746035.1712520052.git.christophe.jaillet@wanadoo.fr>
+To: Brent Lu <brent.lu@intel.com>
+Cc: Cezary Rojewski <cezary.rojewski@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Terry Cheong <htcheong@chromium.org>,
+	Uday M Bhat <uday.m.bhat@intel.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Mac Chiang <mac.chiang@intel.com>, apoorv <apoorv@intel.com>,
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] ASoC: Intel: sof_rt5682: Fix uninitialized variable in probe
+Message-ID: <6e16433f-1897-46a2-b3ee-e177e7d846b8@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -75,42 +77,30 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8cb69f245311a348164b0b5ca3dbc59386746035.1712520052.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email haha only kidding
 
-On Sun, Apr 07, 2024 at 10:01:49PM +0200, Christophe JAILLET wrote:
-> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
-> index 3003dc350766..b133f731c5ba 100644
-> --- a/drivers/thermal/mediatek/lvts_thermal.c
-> +++ b/drivers/thermal/mediatek/lvts_thermal.c
-> @@ -204,7 +204,7 @@ static const struct debugfs_reg32 lvts_regs[] = {
->  
->  static int lvts_debugfs_init(struct device *dev, struct lvts_domain *lvts_td)
->  {
-> -	struct debugfs_regset32 *regset;
-> +	struct debugfs_regset32 *regsets;
->  	struct lvts_ctrl *lvts_ctrl;
->  	struct dentry *dentry;
->  	char name[64];
-> @@ -214,8 +214,14 @@ static int lvts_debugfs_init(struct device *dev, struct lvts_domain *lvts_td)
->  	if (IS_ERR(lvts_td->dom_dentry))
->  		return 0;
->  
-> +	regsets = devm_kcalloc(dev, lvts_td->num_lvts_ctrl,
-> +			       sizeof(*regsets), GFP_KERNEL);
-> +	if (!regsets)
-> +		return 0;
+Initialize "is_legacy_cpu" to false to prevent an uninitialized variable
+bug.
 
-I understand that this preserved the behavior from the original code,
-but the original code was wrong.  This should return -ENOMEM.
+Fixes: 8efcd4864652 ("ASoC: Intel: sof_rt5682: use common module for sof_card_private initialization")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ sound/soc/intel/boards/sof_rt5682.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +
->  	for (i = 0; i < lvts_td->num_lvts_ctrl; i++) {
->  
-> +		struct debugfs_regset32 *regset = &regsets[i];
->  		lvts_ctrl = &lvts_td->lvts_ctrl[i];
-
-The blank line should come after the declaration.
-
-regards,
-dan carpenter
+diff --git a/sound/soc/intel/boards/sof_rt5682.c b/sound/soc/intel/boards/sof_rt5682.c
+index aadd341a202c..966bcd3e8bdc 100644
+--- a/sound/soc/intel/boards/sof_rt5682.c
++++ b/sound/soc/intel/boards/sof_rt5682.c
+@@ -606,7 +606,7 @@ static int sof_audio_probe(struct platform_device *pdev)
+ {
+ 	struct snd_soc_acpi_mach *mach = pdev->dev.platform_data;
+ 	struct sof_card_private *ctx;
+-	bool is_legacy_cpu;
++	bool is_legacy_cpu = false;
+ 	int ret;
+ 
+ 	if (pdev->id_entry && pdev->id_entry->driver_data)
+-- 
+2.43.0
 
