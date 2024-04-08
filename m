@@ -1,130 +1,63 @@
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165F03EA93;
-	Sun,  7 Apr 2024 20:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979A37462;
+	Mon,  8 Apr 2024 03:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712520197; cv=none; b=WAGJKuXX1EgYrOmV8WJrVrAvcZbyeJTDO1INGnOnkKMW5imnoB1lNV2zNdS387gbRCsXnASEV0k3e5OefHyXDl5/4wYnw5S5lmUd2YQsHDYehTfSO1xMkFEoyZRYmpi+bRrL2n8ltzNkPl5BRb+IYYbkkitIdMCZRZkFSnyVDCM=
+	t=1712547031; cv=none; b=E1wV98uorEI2SMKDOA4/dDm4KZAiJhelRWXzSe55eey5hM/Myk0TXQtJaYD0NcHqzs6ar+TpAwl7AVqEzDSP3KGNPWv09o7IvcnN9H/XLf/ntkyust2gmZSbmyvSEvpZ/Djo/VYa2vgpcLOosjSU1Xr8ULZACv667rM8v62tyFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712520197; c=relaxed/simple;
-	bh=lHqg1QJCxrsNhs4z4v/Y14TlaLQ598KsjsJ/Pyg4uMA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JbN5LdtnGNPjXGHspKLjWAvo7vpXEX3OscEDdkoqVzvfLJTwqo6ZK/q01sNzd0dDr1LJCUHnKUUgrCNHI138JLv2fqJtzlXa8o+MLSTsWyTZcbc1mGTVdyTYoYtQfzVjAhMmojIzU/jbJp0FYGvMB2oqbBX06KviMXTUTB/sH4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=qvs10VBO; arc=none smtp.client-ip=80.12.242.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1712547031; c=relaxed/simple;
+	bh=1z7RxyFB+uJNVAsDVYm/gfzQrLSD3coa/jjMx+qmw3s=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=oORPW/LtHz4BIdQqsbQq/QhWinmKKGKY3FxcLOHisVZXw7oT1L6qXmAcntjMEr93zMxOcZPgYyRzz7GvsoigmI4V8+fpKZPlxxQy8XUW0LROWB/E2rXHbileCZp4RPu+pIPJugdncvBGzDGr31d2bXc28KeUmKFkqh36MNSAD4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t4AuUaYD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="qvs10VBO"
-Received: from fedora.home ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id tYiBrICUDz1OZtYiJrfStr; Sun, 07 Apr 2024 22:02:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1712520125;
-	bh=yDBPh3Zd5MPQHTnfbxFeCnae77YFIui58j4SxgeMCkQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=qvs10VBOaOJ7o7KEE3sCJ1qbBrUcBXVDTAqkSfuaumV8kz1YI/wUFqQCBed3AqJ4R
-	 WW9w1d1LT+Pa1WfjBHBOiD5W9T6ozKlp2uYEujckaXwRLcePiUBTE/qa2cLxOh3qhj
-	 S7bk4U7p9jur8kb5szZBdHfstJ6yS/P5BUUAvG2da6/reJuu/Uu7TVbpLYSZ8hIhED
-	 X2Y6+UD2jq7xgj6B6xCuzalrhTepBK/dHLHCu5ml/p+pEvUl53XJ5MtceIdCU6/fTY
-	 iQUdYdBqAnyNKl4jajCq1mMvX3alsRr4vn5jBA9D7wIYD3ocMw2HwzPf4hnenOfz6l
-	 IPjEMwU4liSHA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 07 Apr 2024 22:02:05 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH 2/2] thermal/drivers/mediatek/lvts_thermal: Improve some memory allocation
-Date: Sun,  7 Apr 2024 22:01:49 +0200
-Message-ID: <8cb69f245311a348164b0b5ca3dbc59386746035.1712520052.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <42a87fb9837f1760d1ad4eb7162a7536785dc6f5.1712520052.git.christophe.jaillet@wanadoo.fr>
-References: <42a87fb9837f1760d1ad4eb7162a7536785dc6f5.1712520052.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t4AuUaYD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0931DC433F1;
+	Mon,  8 Apr 2024 03:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712547031;
+	bh=1z7RxyFB+uJNVAsDVYm/gfzQrLSD3coa/jjMx+qmw3s=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=t4AuUaYDz29c5TeUHRPr8a3xGe3S0s3eijZg1QJCC5BkLKdRh1+7DJ8Gptsu/W2dA
+	 pr93GZt2TwjD/pJ6z72MOB4CpTZBrmUv2MtWtYjl6QHUTYcw71kv5kWVQiMRQjFFVF
+	 lLZZ3y8UP9boMYaF7qCovQwtWxs3n6/1fZ7SXFDtmuAsm3wZ0euUZH98FoW1Y4BKSo
+	 8Uf6R+P8PBMBry1kcwAAqL+1Sn3k26aTkPUruJG34OpSr7T1sW5uODWOzXZgsw0E0T
+	 Ar6wUuf55mGCl3BD7XduIg3SV5ar38sDzgrw16QFaskjbB9sJbW8/JEJxnekdqb2Lq
+	 9UAnJGw2tEHtg==
+Message-ID: <02b7818fff2dd5f0cf923e500fd5b569.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <82a0768e-95b0-4091-bdd1-14c3e893726b@web.de>
+References: <82a0768e-95b0-4091-bdd1-14c3e893726b@web.de>
+Subject: Re: [PATCH] spmi: pmic-arb: Replace three IS_ERR() calls by null pointer checks in spmi_pmic_arb_probe()
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bjorn Andersson <andersson@kernel.org>, David Collins <quic_collinsd@quicinc.com>, Fei Shao <fshao@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Markus Elfring <Markus.Elfring@web.de>, Peng Wu <wupeng58@huawei.com>, Vinod Koul <vkoul@kernel.org>, kernel-janitors@vger.kernel.org
+Date: Sun, 07 Apr 2024 20:30:28 -0700
+User-Agent: alot/0.10
 
-lvts_debugfs_init() is called with lvts_td->num_lvts_ctrl being 2, 3 or 4.
-sizeof(struct debugfs_regset32) is small. 32 byres on a x86_64.
+Quoting Markus Elfring (2024-02-04 01:24:18)
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 4 Feb 2024 09:39:48 +0100
+>=20
+> The devm_ioremap() function does not return error pointers.
+> It returns NULL on error.
+> This issue was detected once more also by using the Coccinelle software.
+>=20
+> Update three checks (and corresponding error codes) for failed
+> function calls accordingly.
+>=20
+> Fixes: ffdfbafdc4f4 ("spmi: Use devm_spmi_controller_alloc()")
+> Fixes: 231601cd22bd ("spmi: pmic-arb: Add support for PMIC v7")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-So, given the overhead of devm_kzalloc(), it is better to allocate all
-needed regset at once.
-
-The overhead of devm_kzalloc() is 40 bytes on a x86_64, and because of
-rounding in memory allocation, it leads to:
- 2 * (32 + 40) = 2 * 72	--> 2 96 bytes allocations for a total of 192 bytes
- 3 * (32 + 40) = 3 * 72	--> 3 96 bytes allocations for a total of 288 bytes
- 4 * (32 + 40) = 4 * 72	--> 4 96 bytes allocations for a total of 384 bytes
-
-using a single devm_kcalloc():
- 2 * 32 + 40 = 104	--> 1 allocation for a total of 128
- 3 * 32 + 40 = 136	--> 1 allocation for a total of 192
- 4 * 32 + 40 = 168	--> 1 allocation for a total of 192
-
-So, this saves both a few bytes and reduce memory fragmentation.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only
----
- drivers/thermal/mediatek/lvts_thermal.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
-index 3003dc350766..b133f731c5ba 100644
---- a/drivers/thermal/mediatek/lvts_thermal.c
-+++ b/drivers/thermal/mediatek/lvts_thermal.c
-@@ -204,7 +204,7 @@ static const struct debugfs_reg32 lvts_regs[] = {
- 
- static int lvts_debugfs_init(struct device *dev, struct lvts_domain *lvts_td)
- {
--	struct debugfs_regset32 *regset;
-+	struct debugfs_regset32 *regsets;
- 	struct lvts_ctrl *lvts_ctrl;
- 	struct dentry *dentry;
- 	char name[64];
-@@ -214,8 +214,14 @@ static int lvts_debugfs_init(struct device *dev, struct lvts_domain *lvts_td)
- 	if (IS_ERR(lvts_td->dom_dentry))
- 		return 0;
- 
-+	regsets = devm_kcalloc(dev, lvts_td->num_lvts_ctrl,
-+			       sizeof(*regsets), GFP_KERNEL);
-+	if (!regsets)
-+		return 0;
-+
- 	for (i = 0; i < lvts_td->num_lvts_ctrl; i++) {
- 
-+		struct debugfs_regset32 *regset = &regsets[i];
- 		lvts_ctrl = &lvts_td->lvts_ctrl[i];
- 
- 		sprintf(name, "controller%d", i);
-@@ -223,10 +229,6 @@ static int lvts_debugfs_init(struct device *dev, struct lvts_domain *lvts_td)
- 		if (IS_ERR(dentry))
- 			continue;
- 
--		regset = devm_kzalloc(dev, sizeof(*regset), GFP_KERNEL);
--		if (!regset)
--			continue;
--
- 		regset->base = lvts_ctrl->base;
- 		regset->regs = lvts_regs;
- 		regset->nregs = ARRAY_SIZE(lvts_regs);
--- 
-2.44.0
-
+Applied to spmi-next
