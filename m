@@ -1,83 +1,85 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263372D057;
-	Mon,  8 Apr 2024 12:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFDB73528;
+	Mon,  8 Apr 2024 12:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712579239; cv=none; b=M1L5JRakw+EMV16CM7bhGvpIkvUh1fElFasjv4HosDhe3ghKH4LUEpdLrUsK16b9KxaVpG3xWgr3lkwUfvKL3LWmXiCNR2oZhyPua2JkXuIasaL/avn2FIRyaqEqA0wgmSzYsuLWVudArNqflO2wp79OzGYF6K++WFK6MIqC898=
+	t=1712580194; cv=none; b=s4SYEfJt5D0e9ngMvSi/WiNqe/4Kx0Gg6C4vabdNoM4roUEvUkEjKwbsT+vxkTDSa2vT8hRiqfCkd/xfDCdMJ7IGzz5ZnWOA28KlV+yXT0K3vDrefCvEzhouyI+NAYnxy71r57pnwc+JpvJXvBSRKcCxCploFVzj4S1MJFERvyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712579239; c=relaxed/simple;
-	bh=6wgT8FIhKnWbuRXBiRVHGkeD1dvaZerj7s+LagQqc4o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jM5OmIjpOsjthT2bIs9k40PywPVys7912i1XlvKFqcVSAtQSkhNQNHNQxjbbo1gsxP/7bSqZ++Q1QPXIQ+4WnDrPGfdCUVxCVn5Ktfl5b1f+wZcxcBmIeSVpMyroLceD4OV4O5ktKwggp9SH/hV6a69duPJ6+GpOOC1pG35Z9CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E09BEDA7;
-	Mon,  8 Apr 2024 05:27:47 -0700 (PDT)
-Received: from [10.57.73.196] (unknown [10.57.73.196])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF8923F64C;
-	Mon,  8 Apr 2024 05:27:15 -0700 (PDT)
-Message-ID: <effb8ca8-9d45-45d1-afab-467d0ac20fbd@arm.com>
-Date: Mon, 8 Apr 2024 13:27:17 +0100
+	s=arc-20240116; t=1712580194; c=relaxed/simple;
+	bh=o/n/XAccFgkV88Qr6FGsWOys2YM7DrCPsQ3Jhs046CA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ni8NfMjaSWAJJkCoztRDWiz77ci3H5ln0fsq8XcG6ToG6aI5Ijf5i6w+oU/18ZeaevvJRKaeDLTWKLbNr65rSmNLTcheAJk/yNs/g8JuLlrlIBKZtXBa49S9drN/I8+5/MNb/y5Qhij2x0ylP+JTb5G3QFYzdVoQYjFKUW/lXcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UfnYN5dG; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UfnYN5dG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 524EFC43390;
+	Mon,  8 Apr 2024 12:43:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712580194;
+	bh=o/n/XAccFgkV88Qr6FGsWOys2YM7DrCPsQ3Jhs046CA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UfnYN5dG9atj25XdUli0yLnXOk6I6s2dpUmII/5SkH8ba38vp7aNeHO2xbJqK+fps
+	 sJ9NLYw8oXcjFWoI+4AIF+DC/PgfSq66WgXrFYFAMAhjOFA78jTi8Znq4ACGF+nwk/
+	 T4UG8o25SS0L2scTMoCVtdeRrtV9UmJeH/PIo14w0s8MYhScGevnfZXkuwDNU3+hkk
+	 yCn96Q95g1T5k5WnMPgPfJK+Cg9EVo+mnTfxo+KnDLn6PnF2lcml+8YQu/x4Unblw/
+	 DQvI7O4qlrhfmqCkil47MVQjOQ76zZbhJdRbc9DtDjfjGSmKW/u3zVkHPgHGauS/KN
+	 g49JeLf3Sh8mg==
+Date: Mon, 8 Apr 2024 13:43:09 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ASoC: soc-card: Fix a reversed if condition
+Message-ID: <25771b56-8564-42c1-9a2d-408d91f23618@sirena.org.uk>
+References: <155bb76e-dc57-4a5c-b0eb-acee5ebde9f4@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panthor: clean up some types in
- panthor_sched_suspend()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <85356b15-4840-4e64-8c75-922cdd6a5fef@moroto.mountain>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <85356b15-4840-4e64-8c75-922cdd6a5fef@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UBthYBJrUXVgQDT2"
+Content-Disposition: inline
+In-Reply-To: <155bb76e-dc57-4a5c-b0eb-acee5ebde9f4@moroto.mountain>
+X-Cookie: Drive defensively.  Buy a tank.
 
-On 08/04/2024 08:36, Dan Carpenter wrote:
-> These variables should be u32 instead of u64 because they're only
-> storing u32 values.  Also static checkers complain when we do:
-> 
-> 	suspended_slots &= ~upd_ctx.timedout_mask;
-> 
-> In this code "suspended_slots" is a u64 and "upd_ctx.timedout_mask".  The
-> mask clears out the top 32 bits which would likely be a bug if anything
-> were stored there.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Reviewed-by: Steven Price <steven.price@arm.com>
+--UBthYBJrUXVgQDT2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If you fancy a bit more clean-up then I think faulty_slots is completely
-redundant as a separate variable. In particular in the "if
-(suspended_slots)" section it's updated but that updated value is never
-used... otherwise I'll put it on my list for cleaning up later.
+On Mon, Apr 08, 2024 at 10:38:02AM +0300, Dan Carpenter wrote:
 
-> ---
->  drivers/gpu/drm/panthor/panthor_sched.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> index d4bc652b34d5..b3a51a6de523 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -2546,7 +2546,7 @@ void panthor_sched_suspend(struct panthor_device *ptdev)
->  {
->  	struct panthor_scheduler *sched = ptdev->scheduler;
->  	struct panthor_csg_slots_upd_ctx upd_ctx;
-> -	u64 suspended_slots, faulty_slots;
-> +	u32 suspended_slots, faulty_slots;
->  	struct panthor_group *group;
->  	u32 i;
->  
+>  	ret =3D snd_soc_register_card(priv->card);
+> -	if (!ret)
+> +	if (ret)
+>  		return ret;
+> =20
+>  	return 0;
 
+Clearly a better fix here would just be to remove the conditional
+entirely.
+
+--UBthYBJrUXVgQDT2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmYT5lwACgkQJNaLcl1U
+h9BdVgf9Gspq62woabsu/dxrXY/4ffmusjwWnUNxtVs9udrENILi2P80owdU/EAZ
+/bEa1yhMg3mZrA0JkXwUkWwDE0ZEeH+e2mSmSsfxDiwlkgGhvuHo61fyuU/mql+n
+0v4LLqn9eOcT+B5+m+CU5cKkmUY2+zo7j5k06McNS+NK39PxXJxNX6OEZfTB+mTK
+JSQqCDkYV7R8UXe0WNIE2IkfrMcSMP7EHVt8itGe0P3J+1WtqR/ch/CmkrIZtYyn
+ca8u3XpfLWyiLu+lON4vs0QzLvTN1b2UId7XS+gZO4SteUiv3NqUOuABKl6Kgkoh
+Cz7Es53alHDgiEFj1/TZ8VkvzmhaRQ==
+=I361
+-----END PGP SIGNATURE-----
+
+--UBthYBJrUXVgQDT2--
