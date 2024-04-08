@@ -1,64 +1,66 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DAF52F8E
-	for <kernel-janitors@vger.kernel.org>; Mon,  8 Apr 2024 08:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99BA4D110
+	for <kernel-janitors@vger.kernel.org>; Mon,  8 Apr 2024 09:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712563830; cv=none; b=JO4QMRz2C6cLRa2365oV5FQ6l2+H9n8jsU+oSqsPx8mU5ENsfFsVlyKwartFmJI7HpdX59hRYIJfkVgux3UtnmrNvV55YRLuKOqKpeWz9DLHWIeechbyTHd6AQsuvX3JFTjH5et1OxXVvEF3MO2Gup7FxZz9llAhmsnp402zl/0=
+	t=1712570283; cv=none; b=VvOS/aDWy1fcqa9ue1xtEOG7tzdfdk67VbU4Q68xQ2tg+JP50S/mt0pEbR/K2QOjdiALo3HV3/VloOp0hYvlrArVuwVwx5DwUUF/dEKRF4/gXisX/UyBvV0sr60fj48aAbJMRJAiMTcgGvsAw3jubcpIgHjU66rYjY/Vw75yYqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712563830; c=relaxed/simple;
-	bh=virOewUX4t0oSLmoki5IIgzfGSQ60/H3437FkDr3qko=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pHA2zEQEn9Q1fs5q034zPUrh3MQM1uE9csu1L3uKAiIXP9My06Z0+gKSkgP3hIzR65Z02e5K9qFwlyf2oUziE0HOOHMwLxHUUWrbEutV024+6PO7niDDY9CzPsVzlIYaE1vq1Uy8Zfq835454nGB3ki1JT9uTQNpp4r2bwMxVOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JtK9dDMH; arc=none smtp.client-ip=209.85.208.46
+	s=arc-20240116; t=1712570283; c=relaxed/simple;
+	bh=62xI9BC0E/Xk0AwhbbhN6+RNRrPnUXP1hM+tL/u1m5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VGLW8/yuVN3QwR5mU4CYf58+35R5CoMQuCjO4lFDg7NQpHsRaOJfDhEKXPuePNBos0K0zEN7oLtv72n3Ze+hGcXu/DzvNgij5ZB9OMvrb1xHBNysaqcs5uvbRF2L6+x4QHPsTFbbNYxPeFoVlXClXHbxe4q//C8mXC2M1vtAwIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sxgDY4U8; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JtK9dDMH"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-563cb3ba9daso4073908a12.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 08 Apr 2024 01:10:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sxgDY4U8"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a51d83fafa8so76222666b.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 08 Apr 2024 02:58:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712563828; x=1713168628; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SO3oSKHhB+QUpEgYOl7F+vhVd4MWO5gWULhDTn9lHJk=;
-        b=JtK9dDMHhI40zGAm112hD9FH+/Um82S5KZTsm3vXdSoVMMsXwePpUt/H4ASWhyXgH8
-         anE5e4xDNptqeEcyFZLOftnk9m+qbNFZ2Sy/4fgI+ErCudRGXKyn1G8p6nONzJK5nmZ1
-         M9FxZpGGc6F14bAjkhEGD/1eoc6rwsg/lT8nGs+lODyaUGT62X5xxiZh2V6FU0o0EPRb
-         SWqwE+ZfP7Ftu1uWPbAzbziLNF+TNsdBRLktzTNzPhfnDrVTQ/xvB9V/aOCOLHSvZeZT
-         2WlwsVdfBrm50l5LYBzDATMNhfcaQkTCsc0oPUYS+pSBBpbt97kxBjrP/dmxA+dXnEfQ
-         5lmA==
+        d=linaro.org; s=google; t=1712570280; x=1713175080; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fv7s+807WBCiP6+884Fp+Z2/jKppTCCB8106gsyIN9Q=;
+        b=sxgDY4U8Oyp2toO1Z8gCuSWDWF0KU+zQoy1bktUaxNsj2knvVGHOEaLOVcdQ4mCk9y
+         38dFFAZ/6af9syy9AM0qtse1g3K8b+n/GG+djnFQxeSP8ggW+rlPvDHKwVSWOQsJSRSQ
+         JQOKKR5ITcMQa4QVW/9f/tVAWjh2Wq7J1pcHSx/l59eBEuYdL24Ap/uLhjlR5oEuhyht
+         KziHK0nVj3wWCBwiqlFAtSX4+/6D20bWYxdw1aGgLzS2H3h9laar/KP0Xz+wiKr413K8
+         nLzHDG81JEcqBc6slw1Q+uu3x+V8WCFp8BW7wfo0EzQcOjaaf2yehFXsMPFzxWoZIPs7
+         UItg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712563828; x=1713168628;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SO3oSKHhB+QUpEgYOl7F+vhVd4MWO5gWULhDTn9lHJk=;
-        b=VPy9X5rVlypidNPwsXAH9py3hzMxBSboGTr6VqSNJxuFEdnDlTwwI1K11XgtDNgqwh
-         4Rq/Vdoe88kNPbYl1U3ftgOG1BVSl7X8I7WNlRJthFu/DpJ5wgK0c4AuIVSY7idTlo2+
-         bYavAnuJhqT0IbHALmcVNMS4QIsyJ+X8N+rrUs6O/vyoQT/9YZ2p44U76Owz5biLkBRO
-         JO/+NkL3WYu30dJ+BSnWXw/pQeGm+2vAxSpnO6jq0Ax6rekNv/jGmTPbzHWU+JTn2wJq
-         IiXQAVyFGmaWKNfzrgnE1CbRfLs2T6EkMpTKXuavn5/4ppLm8BxYgutX69fIA9e/wrut
-         j8JA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8XhJrIzzr9teHWgM9HZKF6DCLYhhfJWOO/lIrfurLwNfJMZA25PA78A7aZyLSlIKlGnQa/LvsJ2Q3S5RvbTgNtGIMkwcMgWAHFWjUJJ0A
-X-Gm-Message-State: AOJu0YwAeJNXPIY5Rp2h+I2rRIHfjOgHq3rUkrNNsfc8MgGqWtWynx7R
-	tqKq/i8soCfxAQpGGZZi4YQBhgXgayW7I4mbQ5t3Ue2KtS9rC8ArYTOtnXrIWok=
-X-Google-Smtp-Source: AGHT+IGBP2Eb1evno6OQER1fBynnrKOVTRDH6lrULwXK4u5X7YCnyIyHK40Fs4HT+0CKsXZ9E+hNfQ==
-X-Received: by 2002:a17:906:ae4f:b0:a47:4bd6:9857 with SMTP id lf15-20020a170906ae4f00b00a474bd69857mr4337354ejb.64.1712563827422;
-        Mon, 08 Apr 2024 01:10:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1712570280; x=1713175080;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fv7s+807WBCiP6+884Fp+Z2/jKppTCCB8106gsyIN9Q=;
+        b=ZMI157PMYtMxG4YGvXHGhZwMfk4r7f7qiyPhruP3YOvW5LXnBOf7BTMwjHdVOx83FS
+         nuyAf6xf5jEsfrfZm8RQUcDNFhCjqw6dnrpjckTPgZ/VajvkF+Kzji0FIAVEwcSlHyqu
+         hNP3RkJlYz5IsFwJA185v3jWLdNHrtJt47CfWwQZdCxVFimoQMAnpSuP0A8W/raUrLym
+         kE/1RWCJmHxFG7LEURiB6VVDTQ1NJIkUiaPIfnChC121LWI7dD1cQlw+T8s0nZRXstkP
+         RI4B+yB68twkc2ovR+BeRK59xkLR8GK7h8dGw1AythtSDQHyc1GQvbv41/Ziqs6SBPsH
+         FRXg==
+X-Forwarded-Encrypted: i=1; AJvYcCW09Xzqi/bIVDGwjIfTTNaffhjstKoXvD5M1jFEN7SlNalM3L1EwvgccXievZ7NQZOtdH6dGrYIN+FEmIRnCBNdYynMmbjkeVBu+e72BO3b
+X-Gm-Message-State: AOJu0Yy+XYSHHYu4R7ncE7n5AcQGpznARRN2oOCzqb4sbrq+D7Gj/b9f
+	VgE5Xa2Dj0rBN85kuM4ShZp+79T6Be24J+jvSTTF7RtfaiN7owS5/keiZ6a1Rj0=
+X-Google-Smtp-Source: AGHT+IEhY6lp/9F9/v5i0fRG2NqXdj7s4vv69fFui5HJK9MrVInM4cRflU+KYvPepQn823uaxF2z5w==
+X-Received: by 2002:a17:906:565a:b0:a4e:1109:9007 with SMTP id v26-20020a170906565a00b00a4e11099007mr5506039ejr.19.1712570279911;
+        Mon, 08 Apr 2024 02:57:59 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id r11-20020a1709067fcb00b00a4e9359fbe8sm4091818ejs.44.2024.04.08.01.10.26
+        by smtp.gmail.com with ESMTPSA id g1-20020a1709067c4100b00a519e8c27d2sm4219658ejp.208.2024.04.08.02.57.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Apr 2024 01:10:27 -0700 (PDT)
-Date: Mon, 8 Apr 2024 10:38:02 +0300
+        Mon, 08 Apr 2024 02:57:59 -0700 (PDT)
+Date: Mon, 8 Apr 2024 12:57:52 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Eddie James <eajames@linux.ibm.com>
+Cc: Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>,
+	Alistar Popple <alistair@popple.id.au>, linux-fsi@lists.ozlabs.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] ASoC: soc-card: Fix a reversed if condition
-Message-ID: <155bb76e-dc57-4a5c-b0eb-acee5ebde9f4@moroto.mountain>
+Subject: Re: [PATCH] fsi: i2cr-scom: Fix error code in read/write
+Message-ID: <a4926166-bfed-4696-bd3e-5b8e29c8b176@moroto.mountain>
+References: <ee554aa1-0257-4662-8da5-1ea6be2740e9@moroto.mountain>
+ <4666c1f5-06e3-2b03-993c-5d53637856a2@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -67,30 +69,56 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <4666c1f5-06e3-2b03-993c-5d53637856a2@linux.ibm.com>
 
-This if condition is reversed.  But fortunately, it has very little
-impact on runtime behavior.
+On Mon, Oct 02, 2023 at 09:57:22AM -0500, Eddie James wrote:
+> 
+> On 9/7/23 04:55, Dan Carpenter wrote:
+> > The copy_to/from_user() functions return the number of bytes that they
+> > were not able to copy but we want to return negative -EFAULT to the
+> > user.
+> 
+> 
+> Thanks.
+> 
+> Reviewed-by: Eddie James <eajames@linux.ibm.com>
+> 
 
-Fixes: ef7784e41db7 ("ASoC: soc-card: Add KUnit test case for snd_soc_card_get_kcontrol")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- sound/soc/soc-card-test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This was never merged.
 
-diff --git a/sound/soc/soc-card-test.c b/sound/soc/soc-card-test.c
-index 075c52fe82e5..a9fe7d243807 100644
---- a/sound/soc/soc-card-test.c
-+++ b/sound/soc/soc-card-test.c
-@@ -148,7 +148,7 @@ static int soc_card_test_case_init(struct kunit *test)
- 	priv->card->owner = THIS_MODULE;
- 
- 	ret = snd_soc_register_card(priv->card);
--	if (!ret)
-+	if (ret)
- 		return ret;
- 
- 	return 0;
--- 
-2.43.0
+regards,
+dan carpenter
 
+
+> 
+> > 
+> > Fixes: c0b34bed0bbf ("fsi: Add I2C Responder SCOM driver")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >   drivers/fsi/i2cr-scom.c | 10 ++++------
+> >   1 file changed, 4 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/fsi/i2cr-scom.c b/drivers/fsi/i2cr-scom.c
+> > index cb7e02213032..df1e1df40332 100644
+> > --- a/drivers/fsi/i2cr-scom.c
+> > +++ b/drivers/fsi/i2cr-scom.c
+> > @@ -45,9 +45,8 @@ static ssize_t i2cr_scom_read(struct file *filep, char __user *buf, size_t len,
+> >   	if (ret)
+> >   		return ret;
+> > -	ret = copy_to_user(buf, &data, len);
+> > -	if (ret)
+> > -		return ret;
+> > +	if (copy_to_user(buf, &data, len))
+> > +		return -EFAULT;
+> >   	return len;
+> >   }
+> > @@ -62,9 +61,8 @@ static ssize_t i2cr_scom_write(struct file *filep, const char __user *buf, size_
+> >   	if (len != sizeof(data))
+> >   		return -EINVAL;
+> > -	ret = copy_from_user(&data, buf, len);
+> > -	if (ret)
+> > -		return ret;
+> > +	if (copy_from_user(&data, buf, len))
+> > +		return -EFAULT;
+> >   	ret = fsi_master_i2cr_write(scom->i2cr, (u32)*offset, data);
+> >   	if (ret)
