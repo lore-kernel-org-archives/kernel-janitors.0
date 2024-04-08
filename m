@@ -1,50 +1,40 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from msa.smtpout.orange.fr (msa-218.smtpout.orange.fr [193.252.23.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA15F14389C;
-	Mon,  8 Apr 2024 17:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30905B1E1;
+	Mon,  8 Apr 2024 18:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712596982; cv=none; b=Ujd3PKRlPIA+r/xXwv1rVqLjwpns90Qf8l0CVQ0ETVoF43rQye98mOSxziPTG92IAgxrEZg1wMU0+s8UkVuk+lgSY+2ujxKgMEm+QRRH0F/yoSPeWq9LHN12glBs1+aI4Rq51merzxBwsksT5uha7fabah6frru7sLLefBvGpRY=
+	t=1712601772; cv=none; b=SWFi94nxsDUJUkBCV5MSRE2/3+o4GgEbiFqcUcxKCIChmsRvRYKGaQLZMOZpjKrHDmmrwdCp7JqJGoXz/olvxrWOIPaGlCTyOLHNixJIO3zJ730lv/zFUSAh2tNv2iCLKiA/thlP24/Oc5qBGSHZo1uqqGRlkcNA/qrRY2bx3Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712596982; c=relaxed/simple;
-	bh=PSdUNjxecv9/EH8TvrTsRyagADl80n4dir3Oe48bPOI=;
+	s=arc-20240116; t=1712601772; c=relaxed/simple;
+	bh=R9etM9K/rMXR1S/WeDzLSM3twTGK87ckl9PKXWHangM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kfu7ZbcDYAMFKHi4mAh4FtzjwtXKKW2SQgl5VoMY/dYg/kXraCrx/MJTHZsi08H9EAutpi6tsWPip5ZEy4+XIgY82KT+oOkR9eIMFPV+WwkLFU1GDwCY02BLYBXVgqYlUgFa7yRt4olqVR72MxhJyXESgm4ndcEE+LK31PKrmNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nZ4TR5Ma; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 In-Reply-To:Content-Type; b=dm9LTnqDId+ksWOCvVwGYx9+/aDnd5V8753l961SJCa1HOSrlQPAiiTQYVEJAaS+0oeO/1ap12ay1bzkHFBEl/jj041+Sv7vrvPd2R7OETHRGV9rmJwsOSin1J4o5jqfeScKQN0jk3sWRVeToC1MDmoIw+WRxpL4w+ZXAL/09HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=B65DQIQo; arc=none smtp.client-ip=193.252.23.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nZ4TR5Ma"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1712596981; x=1744132981;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PSdUNjxecv9/EH8TvrTsRyagADl80n4dir3Oe48bPOI=;
-  b=nZ4TR5MaekUhIy6cDlE9WHE8T+dN9+EtVSydQAII/uojo83l+ZwaYsVR
-   Jcd9TlCZQXZfEGm5VTRKBRsi+MIb2nIUA4K46QxdLoEZutGW0oseiTAEl
-   tjxzm202gQk0k+XioylUh5yxByoDZe8+wVb6F/htyrtuZXpfNqEdkYn+N
-   MupaR4/s3lDVHej3FfBgalVLD2TnHOTjFmJlo/3Nfge2d4jlmFyyhmQoL
-   6V7d/n1krPFCaMOgGnoNs+xjW1RrojKVzt2FKUIIIestBl0mZe+xuDKn3
-   g4oCh4jVb3sZh8b5n3vQt7IimLOSLwGv8S7UcNFUpSgbUPATljJGJgAL1
-   w==;
-X-CSE-ConnectionGUID: oghk6tjmQiakx4EFQSU6Ag==
-X-CSE-MsgGUID: RRXlIi+0SU6okRH0KXMJpA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11038"; a="7757467"
-X-IronPort-AV: E=Sophos;i="6.07,187,1708416000"; 
-   d="scan'208";a="7757467"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2024 10:23:00 -0700
-X-CSE-ConnectionGUID: a8sq+q/VRRmRTSHSWV6cuw==
-X-CSE-MsgGUID: OlpQj4e/SoSchFFOlUJeuw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,187,1708416000"; 
-   d="scan'208";a="24697460"
-Received: from shahsmit-mobl1.amr.corp.intel.com (HELO [10.212.101.141]) ([10.212.101.141])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2024 10:22:59 -0700
-Message-ID: <ba585faa-d761-45ed-9e44-784097b3439a@linux.intel.com>
-Date: Mon, 8 Apr 2024 10:37:29 -0500
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="B65DQIQo"
+Received: from [192.168.1.18] ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id ttvHraeeh8kwettvqrxLFy; Mon, 08 Apr 2024 20:41:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1712601689;
+	bh=uODaAsGcejErYuW1YygJ3cxSc6qnAISZuPiqVvd2Fxk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=B65DQIQoh++9ClW+m9OS7AvA+W5nnU8YNdGLOzf90gDeJpzJIH1p8rDandXiTXb82
+	 RJX7TfgHHeFsQnilRsDh8IA6uxZrmx7exkET3nebzDGuTuCeJaiPceXVD+nZAM9d4X
+	 vgD9LwUJHGMvME/h49yuS+L7faj5zuEKE7lAQoOn6hMIWCsMfzvDeE2WnmVAR/jPeJ
+	 669E2dZc0eyMq1ERcIEwPnRFtAh5LT32pHa0Hl1LBq/3SU2ubwhCdDzacg8qgWjeag
+	 ASS7M5nckPusI7uTkvL2fHApeeoxZnLwwingI9z8RPJkNsRfCwe3BqzvYaVaCCsO57
+	 /6MYHLvVJXsJQ==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 08 Apr 2024 20:41:29 +0200
+X-ME-IP: 86.243.17.157
+Message-ID: <4ebbe227-38b1-4a1c-af34-9ba7bdfecad5@wanadoo.fr>
+Date: Mon, 8 Apr 2024 20:41:26 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -52,56 +42,88 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: Intel: sof_rt5682: Fix uninitialized variable in
- probe
-To: Dan Carpenter <dan.carpenter@linaro.org>, Brent Lu <brent.lu@intel.com>
-Cc: Cezary Rojewski <cezary.rojewski@intel.com>,
- Liam Girdwood <liam.r.girdwood@linux.intel.com>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>, Mark Brown
- <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Terry Cheong <htcheong@chromium.org>,
- Uday M Bhat <uday.m.bhat@intel.com>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Mac Chiang <mac.chiang@intel.com>, apoorv <apoorv@intel.com>,
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <6e16433f-1897-46a2-b3ee-e177e7d846b8@moroto.mountain>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <6e16433f-1897-46a2-b3ee-e177e7d846b8@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 2/2] thermal/drivers/mediatek/lvts_thermal: Improve some
+ memory allocation
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <42a87fb9837f1760d1ad4eb7162a7536785dc6f5.1712520052.git.christophe.jaillet@wanadoo.fr>
+ <8cb69f245311a348164b0b5ca3dbc59386746035.1712520052.git.christophe.jaillet@wanadoo.fr>
+ <d97f2a57-d318-455b-a860-8bd7972c8aaf@moroto.mountain>
+Content-Language: en-MW
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <d97f2a57-d318-455b-a860-8bd7972c8aaf@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-
-On 4/8/24 02:35, Dan Carpenter wrote:
-> Initialize "is_legacy_cpu" to false to prevent an uninitialized variable
-> bug.
+Le 08/04/2024 à 10:09, Dan Carpenter a écrit :
+> On Sun, Apr 07, 2024 at 10:01:49PM +0200, Christophe JAILLET wrote:
+>> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
+>> index 3003dc350766..b133f731c5ba 100644
+>> --- a/drivers/thermal/mediatek/lvts_thermal.c
+>> +++ b/drivers/thermal/mediatek/lvts_thermal.c
+>> @@ -204,7 +204,7 @@ static const struct debugfs_reg32 lvts_regs[] = {
+>>   
+>>   static int lvts_debugfs_init(struct device *dev, struct lvts_domain *lvts_td)
+>>   {
+>> -	struct debugfs_regset32 *regset;
+>> +	struct debugfs_regset32 *regsets;
+>>   	struct lvts_ctrl *lvts_ctrl;
+>>   	struct dentry *dentry;
+>>   	char name[64];
+>> @@ -214,8 +214,14 @@ static int lvts_debugfs_init(struct device *dev, struct lvts_domain *lvts_td)
+>>   	if (IS_ERR(lvts_td->dom_dentry))
+>>   		return 0;
+>>   
+>> +	regsets = devm_kcalloc(dev, lvts_td->num_lvts_ctrl,
+>> +			       sizeof(*regsets), GFP_KERNEL);
+>> +	if (!regsets)
+>> +		return 0;
 > 
-> Fixes: 8efcd4864652 ("ASoC: Intel: sof_rt5682: use common module for sof_card_private initialization")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> I understand that this preserved the behavior from the original code,
+> but the original code was wrong.  This should return -ENOMEM.
 
-Good catch.
+Hi Dan,
+I don't agree.
 
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+For me, this memory allocation is of the same type as all debugfs 
+functions that we ignore the error code.
 
-> ---
->  sound/soc/intel/boards/sof_rt5682.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+If it fails, it is not a reason good enough to have the probe fail. 
+(anyway, if we are short on memory at this point other errors will 
+likely occur)
+
 > 
-> diff --git a/sound/soc/intel/boards/sof_rt5682.c b/sound/soc/intel/boards/sof_rt5682.c
-> index aadd341a202c..966bcd3e8bdc 100644
-> --- a/sound/soc/intel/boards/sof_rt5682.c
-> +++ b/sound/soc/intel/boards/sof_rt5682.c
-> @@ -606,7 +606,7 @@ static int sof_audio_probe(struct platform_device *pdev)
->  {
->  	struct snd_soc_acpi_mach *mach = pdev->dev.platform_data;
->  	struct sof_card_private *ctx;
-> -	bool is_legacy_cpu;
-> +	bool is_legacy_cpu = false;
->  	int ret;
->  
->  	if (pdev->id_entry && pdev->id_entry->driver_data)
+>> +
+>>   	for (i = 0; i < lvts_td->num_lvts_ctrl; i++) {
+>>   
+>> +		struct debugfs_regset32 *regset = &regsets[i];
+>>   		lvts_ctrl = &lvts_td->lvts_ctrl[i];
+> 
+> The blank line should come after the declaration.
+
+The blank line was already there, and in this file, it looks like the 
+preferred style (even if not completely consistent)
+
+Let see if there is some comment about 0 or -ENOMEM in case of memory 
+allocation error, and if needed, I'll repost without the blank line.
+
+This patch being a really tiny tiny tiny improvement (IMHO), so it may 
+also just be ignored.
+
+
+CJ
+
+> 
+> regards,
+> dan carpenter
+> 
+> 
+> 
+
