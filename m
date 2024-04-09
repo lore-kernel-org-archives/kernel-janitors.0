@@ -1,93 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068C512E1F2;
-	Tue,  9 Apr 2024 13:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285C815749F;
+	Tue,  9 Apr 2024 19:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712668082; cv=none; b=IGFDRJNnppaVvySswlnLJlRNGkK28bqHkelQ5+ONByavDVvBm50fnr5iZNk6vGuUiNSt8+doaKktCznlvDQez6M8PCeeTECO0gzkmMbnDMGsBq7RVNJZ1zX4zczgsyNVrkHjWyLZVd52BDyKBQntvU/5IO2F0wCfWUHBlXkUsPI=
+	t=1712692604; cv=none; b=bsMKoifmnsi/3I5VMhYwwbBc+50B625u2pbV8aqAKBd7RSA8gnBM/AMq/E5N9YU3WbctIe1gj84jeuM4HuvN9EFZ3+SaUqvjaEaYIx0NosESpqjN77fENK6AZKc9slT+4ZNB8bXZ2Yu+gmfaOUXOmamlgZgDnLba6zCmPWo/dBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712668082; c=relaxed/simple;
-	bh=6UT6JdRmlSUWwWxh7sOA/sm5C8Rr31qoQNdkYTzvIrw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=afji/0ICss3PyrTI6PQ+X1ad0zY1+FPoc2E4x5DV7qhN021ZM+IQNr8aJsZlWaYa/DaD5eejPmp5JdSRkE2MGDecyOLpLbJ63/+LmWrZMQtppVUCEtXFb78sgFOSegjtmzqTYUfNsMo9ktFFSn8eHD0CvL972jNQMPTjva249qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bx+QZYpi; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712692604; c=relaxed/simple;
+	bh=z7BAwHdlIOFlrDrp4E1/+ZBYeK6Y4f5EcDVqiHKagr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bnKHmkWx322XRaDtAYECoVmnxv0wwA3mDaGMdgBGBBHOxD+0jR0dIDk7NKaLbNK2zYaVHyDe+aP1CYcHfQdr9iQChpmcSIYuTdierxDo+VKPxHry1/aK3uHg2+WW7OKWvpUjBTfRw2o+PmlS60MRZzFnjqbGyPvy38L6xOFWFLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=qdqurBoH; arc=none smtp.client-ip=80.12.242.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bx+QZYpi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD05BC433F1;
-	Tue,  9 Apr 2024 13:07:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712668081;
-	bh=6UT6JdRmlSUWwWxh7sOA/sm5C8Rr31qoQNdkYTzvIrw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Bx+QZYpiRMOXU7l9N991efCKp5nkeBbNXd8ijQiOJqbln0PQxAyKWoTs9PoERy8GS
-	 foyS9A9C2vtkiLcBycvGw672yJQ7VyRpPUtiGRIudYBo6CSmV8UqjpcbYCYdS8SdAi
-	 V3YWhkVe05zno8cUijUkt3Yye15l2+eG6RMmHmfGTnwLs9rTDzYJEii4YtJOx2o+QA
-	 Dv0N2hum8lfAXaaXU2HukBQltEE2zJGWoLn80+2Vip3VL0pALRJgWtKKyMpWIsC+I8
-	 ZsoxOdQ0l70D0QXjQipI1N4mQo6amL75z8T7hGE1g2oSgiR7hlO01KcEyREkt9H4+F
-	 rPGirVMDMturw==
-From: Mark Brown <broonie@kernel.org>
-To: Brent Lu <brent.lu@intel.com>, Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Cezary Rojewski <cezary.rojewski@intel.com>, 
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, 
- Liam Girdwood <liam.r.girdwood@linux.intel.com>, 
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
- Bard Liao <yung-chuan.liao@linux.intel.com>, 
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
- Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Terry Cheong <htcheong@chromium.org>, Uday M Bhat <uday.m.bhat@intel.com>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
- Mac Chiang <mac.chiang@intel.com>, apoorv <apoorv@intel.com>, 
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <6e16433f-1897-46a2-b3ee-e177e7d846b8@moroto.mountain>
-References: <6e16433f-1897-46a2-b3ee-e177e7d846b8@moroto.mountain>
-Subject: Re: [PATCH] ASoC: Intel: sof_rt5682: Fix uninitialized variable in
- probe
-Message-Id: <171266807748.28088.3831139815604734848.b4-ty@kernel.org>
-Date: Tue, 09 Apr 2024 14:07:57 +0100
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="qdqurBoH"
+Received: from fedora.home ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id uHa9rwxIo83vquHa9rIXzq; Tue, 09 Apr 2024 21:56:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1712692599;
+	bh=fu5z4vCgv5ADaSG0dkgCAD7sDLo0K4zyVyA83A0IAdI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=qdqurBoHVqAzZ2c9o312nL4dTD+sj2NhJYfzHw4TlE6jYLXojmdXtoINymkHisIGS
+	 jbdRjM70I8RxAUyScubaNP8GsQQXSQ2avXCkjjldcwgh/P2N6vTnlqiwiB+Lhin8ul
+	 7yk1oNCV2NUNrzNBq5cS+tTYBn5f8bkykJB+sdemHwUdB1kKPHwhFoVlMaExnvCZrS
+	 mHcPmDIufMkWU8tpDGT05lPoRObO17Bb92OeQrecYkE6KZ8uhcXnHqbYHOziH83U2B
+	 1uiq0AmruaUWFypV6AstfIjmNx0NBMEabaxze0bRlkW8H6ERglTjbrGfiaV0EsTEsM
+	 +IXCUX1ombSyg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 09 Apr 2024 21:56:39 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Amit Kucheria <amitk@kernel.org>,
+	Thara Gopinath <thara.gopinath@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: [PATCH] thermal/drivers/qcom: Remove some unused fields in struct qpnp_tm_chip
+Date: Tue,  9 Apr 2024 21:56:34 +0200
+Message-ID: <d1c3a3c455f485dae46290e3488daf1dcc1d355a.1712687589.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev
+Content-Transfer-Encoding: 8bit
 
-On Mon, 08 Apr 2024 10:35:59 +0300, Dan Carpenter wrote:
-> Initialize "is_legacy_cpu" to false to prevent an uninitialized variable
-> bug.
-> 
-> 
+In "struct qpnp_tm_chip", the 'prev_stage' field is unused.
+Remove it.
 
-Applied to
+Found with cppcheck, unusedStructMember.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
 
-Thanks!
+Apparently, it has never been used. It is not a left-over from a
+refactoring.
+---
+ drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-[1/1] ASoC: Intel: sof_rt5682: Fix uninitialized variable in probe
-      commit: 9cb83ed19b35e6c596b4e6644708ac4e011f32ab
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
+index 78c5cfe6a0c0..3cd74f6cac8f 100644
+--- a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
++++ b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
+@@ -74,7 +74,6 @@ struct qpnp_tm_chip {
+ 	long				temp;
+ 	unsigned int			thresh;
+ 	unsigned int			stage;
+-	unsigned int			prev_stage;
+ 	unsigned int			base;
+ 	/* protects .thresh, .stage and chip registers */
+ 	struct mutex			lock;
+-- 
+2.44.0
 
