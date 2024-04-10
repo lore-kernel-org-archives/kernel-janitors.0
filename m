@@ -1,86 +1,65 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC6015B130;
-	Wed, 10 Apr 2024 12:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961F615EFC4
+	for <kernel-janitors@vger.kernel.org>; Wed, 10 Apr 2024 14:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712750732; cv=none; b=k2J6YTAkEhjokAOU/zC/KRDaNljyQVlOir3t8WtEQNOmvdKMkvVYZnvXSD1MIeOOjwY2AojGtlAWk8QEESswhfHaMsQAKWYXwiHIKqyFC6hhngf0yY6eZ6g0H2ur4Uw65dmQSmqMhRp2NR5OQwh5SD5hy+WlSisdidNHnx70rcA=
+	t=1712758962; cv=none; b=Kj74JGCzBgC88OfHqnkAhgNQxgnYLDnEjdfFCIuH8hPvn8IsOz5zOgfVm5L/0jhUHGxfufcnsIo61DT770/cT6G6CoOUfNuYsX7qcJVjmeC+9AOXiG3oCAOliJ2YCbKy25K3RUnGBBA3jkHcMH/Gh/FVUULMOz0nETGNChWM4/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712750732; c=relaxed/simple;
-	bh=BUBDmIoEG33TRM8dUlpufq0UNJhZ+19dYpk7y2R9Q+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M4MXH+b3lxMDz0ZQWC8IzX091xtibdieW3xg0y/8jQE/WxD9wV6XYyy1lzbyhHYhUKsUZGVrcynJ8R2t6fxreO3MLRQDLOrVm8rM+76QkS+wd8/89HP+8vz/Y9LVi75VHG0bBZeGkrd2LznWHEN6CcJAbb+TObjYxOVCFKK5nm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gi+aUPFr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=L8GpkAD0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gi+aUPFr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=L8GpkAD0; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1712758962; c=relaxed/simple;
+	bh=yaSKqEJum2ck2PZxdBaoUcQHyswu/eekvDph0rJnJ3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lafrbnhAJuC/A8953atYO1j6jivi0GOu3WXxVwatnbiiDqbZ4sdZxsu9Te31BauLITmpLY4Pr0NnFv/LQCxPDb+/qubevq5ne6O3FGCFKz0iQgtP0qacF7buPA4Xs+axknb9zfb/So90eZtX+dnEyCJ1I7NaxaIyHKNKC0RhCJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mdlAwCf0; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gi+aUPFr";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="L8GpkAD0";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gi+aUPFr";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="L8GpkAD0"
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7E659350AA;
-	Wed, 10 Apr 2024 12:05:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1712750727; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nilFxSt4AAqE2lRCUBz3PtSSaWDM5UjMiq7TLWAkpuI=;
-	b=gi+aUPFrLBBLpuiLHhY1c5QoQjWfa/8gl/uJ2Lxub8UX39xPS3ndjRn2f9OUtKngbeGtin
-	TrqpWkfgX1ZHylP1if3IbuL8igqmWPoJWyWIxqqVeydY0LtwjTa5Kt53VX2GCpuBmBmlE4
-	NBKeJf7R0CSddWwtd83VNyH9nBMB0qk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1712750727;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nilFxSt4AAqE2lRCUBz3PtSSaWDM5UjMiq7TLWAkpuI=;
-	b=L8GpkAD078iLHJ85nZsCTBf/Tb3vwgOEoGLhPtiv55bSzc0rXH+pn8HGUvkSF9CMdah69g
-	giFUQNhL41C9Q8Dw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=gi+aUPFr;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=L8GpkAD0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1712750727; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nilFxSt4AAqE2lRCUBz3PtSSaWDM5UjMiq7TLWAkpuI=;
-	b=gi+aUPFrLBBLpuiLHhY1c5QoQjWfa/8gl/uJ2Lxub8UX39xPS3ndjRn2f9OUtKngbeGtin
-	TrqpWkfgX1ZHylP1if3IbuL8igqmWPoJWyWIxqqVeydY0LtwjTa5Kt53VX2GCpuBmBmlE4
-	NBKeJf7R0CSddWwtd83VNyH9nBMB0qk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1712750727;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nilFxSt4AAqE2lRCUBz3PtSSaWDM5UjMiq7TLWAkpuI=;
-	b=L8GpkAD078iLHJ85nZsCTBf/Tb3vwgOEoGLhPtiv55bSzc0rXH+pn8HGUvkSF9CMdah69g
-	giFUQNhL41C9Q8Dw==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 7453B13A92;
-	Wed, 10 Apr 2024 12:05:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id gmRjHIeAFmZcBAAAn2gu4w
-	(envelope-from <jack@suse.cz>); Wed, 10 Apr 2024 12:05:27 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 222A1A06D8; Wed, 10 Apr 2024 14:05:27 +0200 (CEST)
-Date: Wed, 10 Apr 2024 14:05:27 +0200
-From: Jan Kara <jack@suse.cz>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>,
-	linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] jbd2: remove redundant assignement to variable err
-Message-ID: <20240410120527.i5mfitfnik2jywgw@quack3>
-References: <20240410112803.232993-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mdlAwCf0"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-56e2ac1c16aso6943539a12.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 10 Apr 2024 07:22:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1712758959; x=1713363759; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J9TniiRgXZpUH84DKODlQtqenNtFYZDXqebQBO7ZDCw=;
+        b=mdlAwCf0+1A/tEOJM6L2xyodHkh8NxF9qUtSHN70/QFE5M9NEHDgqC+n3US1kmtX81
+         cM1I38sY9dWemYpwyqf2477rBfjRfppDLmRCPmVKu7baFTvSqO54m74UragWpqEMDrYO
+         Om2AJgdm1bTCHlDLP/0qrYmYwuGpUU+WwRaCm6DjdxGg3yOLw6mvDC13LGtCc13vbpqr
+         h6StmdufMFMtyzRDThxXkl0F44XK3OnqAggg26gOTPBEhWMWL4yqB2ScSMEuX/nELwnr
+         770UQGoqqq/ugQttE4jMfXBgU/wN+NVHqD6MULuGFYU1jObXgXKJWl7FnJpGrfliF1Nj
+         gYhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712758959; x=1713363759;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J9TniiRgXZpUH84DKODlQtqenNtFYZDXqebQBO7ZDCw=;
+        b=H2W/xYi1gT5rRz9d+/gnnesUqtXCyFEwOoefjEf2pVAHrTwJ/S+DNoq3gJ2fzoeOTU
+         2X6xaJlbN+UokP5NXsps9D5w0BWiCbVbZfaX4D3SRpab3xpGPrrgVaATpgUD78+PlELW
+         yP1wylPlBu7wrps7dgTbQC7w13q0hPc/fqsW5q5B/ssEdm0IEtOKHijKNkL6e9FkColX
+         r1nVMJBvTbQxtxSdawDEeduLusihvIxENECtKLZmWN6NDZ/rUAngBc88wTfgjW275WRc
+         MlI9x2YLd9Qo+HjX96MRxUno1zzFxxMGOKNjd0SXB9C+M0P0cbcAo1hRFnXJy7Ridhis
+         vUoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVcAxG3m7khx2PZv7NBIxroAWDGclNERGpbzKsJkI75zsg57dBVrquSR2boyhA03L8ERY3m3ZOyB0fQv5g3tIxQrzAbJemzfj0iH+T0ERk5
+X-Gm-Message-State: AOJu0YyLzgGe0fweDtv1bjdu3QKZctaiXLs2r3tv6hIrKmWUESgpTA3F
+	Rp4At//hxNmS78OjemLK2a9/gAl14MBxAl2hwMVVocsYodA9LM64QpLkiZE1INw=
+X-Google-Smtp-Source: AGHT+IEyFlSMTciTLKgZ0LwqpaVCq5r0Cqpl/6AriXAmz2R/iaZjTELdZrW5xapwul9CBN0LkBtUvA==
+X-Received: by 2002:a17:906:a410:b0:a46:f69b:49b1 with SMTP id l16-20020a170906a41000b00a46f69b49b1mr1637529ejz.46.1712758958594;
+        Wed, 10 Apr 2024 07:22:38 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id e9-20020a17090618e900b00a4655513f0bsm7000506ejf.88.2024.04.10.07.22.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Apr 2024 07:22:36 -0700 (PDT)
+Date: Wed, 10 Apr 2024 17:22:32 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] ASoC: soc-card: soc-card-test: Fix some error handling in
+ probe()
+Message-ID: <2db68591-64e2-4f43-a5e1-cb8849f0a296@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -89,81 +68,35 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240410112803.232993-1-colin.i.king@gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-0.11 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	BAYES_HAM(-0.60)[81.72%];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:98:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email,imap2.dmz-prg2.suse.org:helo,imap2.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
-X-Spam-Score: -0.11
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: 7E659350AA
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
+X-Mailer: git-send-email haha only kidding
 
-On Wed 10-04-24 12:28:03, Colin Ian King wrote:
-> The variable err is being assigned a value that is never read, it
-> is being re-assigned inside the following while loop and also
-> after the while loop. The assignment is redundant and can be
-> removed.
-> 
-> Cleans up clang scan build warning:
-> fs/jbd2/commit.c:574:2: warning: Value stored to 'err' is never
-> read [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Fix this reversed if statement and call put_device() before returning
+the error code.
 
-OK, this assignment indeed looks redundant and is not even making code
-easier to reason about. So feel free to add:
+Fixes: ef7784e41db7 ("ASoC: soc-card: Add KUnit test case for snd_soc_card_get_kcontrol")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: call put_device()
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+ sound/soc/soc-card-test.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-								Honza
-
-> ---
->  fs/jbd2/commit.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
-> index 5e122586e06e..78a9d08ae9f8 100644
-> --- a/fs/jbd2/commit.c
-> +++ b/fs/jbd2/commit.c
-> @@ -571,7 +571,6 @@ void jbd2_journal_commit_transaction(journal_t *journal)
->  	J_ASSERT(commit_transaction->t_nr_buffers <=
->  		 atomic_read(&commit_transaction->t_outstanding_credits));
->  
-> -	err = 0;
->  	bufs = 0;
->  	descriptor = NULL;
->  	while (commit_transaction->t_buffers) {
-> -- 
-> 2.39.2
-> 
+diff --git a/sound/soc/soc-card-test.c b/sound/soc/soc-card-test.c
+index 075c52fe82e5..faf9a3d46884 100644
+--- a/sound/soc/soc-card-test.c
++++ b/sound/soc/soc-card-test.c
+@@ -148,8 +148,10 @@ static int soc_card_test_case_init(struct kunit *test)
+ 	priv->card->owner = THIS_MODULE;
+ 
+ 	ret = snd_soc_register_card(priv->card);
+-	if (!ret)
++	if (ret) {
++		put_device(priv->card_dev);
+ 		return ret;
++	}
+ 
+ 	return 0;
+ }
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.43.0
+
