@@ -1,131 +1,100 @@
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957BE16DEBE;
-	Wed, 10 Apr 2024 15:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35DB916F0EE;
+	Wed, 10 Apr 2024 16:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712763453; cv=none; b=XpxFnq9wqN4lr5wHjWbHq31SUBKy/gK8JOU36mqVTYyx8ye9XshzgEyhzvEFZicPAT5bCZ+/ySs4dWU0ud3f8+bJdfZTZgoJXF6eZB+1M4y3m0NF3ZmXHqFJnJKdTDHLblkMUopRvtrIaSzDTt6pmUhyMfhG09wdCo1H8ZAU0cU=
+	t=1712766145; cv=none; b=ESCv9Itnup/wxvTkifvFn7ey2nX5nN6wKW0edxvASbCU/1BFfQm3krBlQzww44dqSNFE9vE/tZW8HHnBUi7hFx5jkkfVemErf3g+6RyOc7IDVrsxWbjF+OE0WqFGNqD/mb5/kroMf7FPx3Dpl9DDLI9JOiQUa3QvANWfqGAHj5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712763453; c=relaxed/simple;
-	bh=lehSfaH243LXCD6sAoOXW9jcrRWK8YPPkbntDIj4gNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JM2aCPXNyVgD1/cmn7a0tdLROnmEtT//mt1UbNDbNiUtKvxwY3SLvXjKF9TqZjF/iXcxVjh3Vie3yxwMPCcUZ43y1liGq7x/qK4o40bhWBmoh8ZlkLf+gQyMQILRp78FOOndkUt7WJ+jN88E46a9COVDu/hYkAR7tN+cUSZ6Wz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=qHQDc8nA; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+	s=arc-20240116; t=1712766145; c=relaxed/simple;
+	bh=RSc60GGCkzefo7hAd7oUdI/LD2fJrAc/bWt6d7Qbuac=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hJmI1up0+9vigVowUrUGxD6st2S4wHj77sEft8kdl2RuKnOBI3dIr62RUCTBZVCwPPm0LBUiXnzRocByo9/+frqjKVMu2Xw+mJ7m1ZWKUm6Yf/736edVKj6WWRVwNQefWIs2U7WQCCN3Y4mmzVaAzd8RsjhYWAVTgNFwk6nTNLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JBDbgWpU; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="qHQDc8nA"
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43A5ji46028164;
-	Wed, 10 Apr 2024 10:37:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	PODMain02222019; bh=Qu83Tf/i0xP/o08yPLOaQHlB6LgAi9Y5S45cHMDmpZI=; b=
-	qHQDc8nA8aU84AvaZLNoKDbXgw6W4Fvfs9CqPA/UkteZaqPxjZVGfCsJrD/9PH6e
-	nRgaD+eA4Mtv9XDXz8n9kSgHN0pont+IgVYrn1rJPZM4csC1ffvLecKKeE4/TSv+
-	Ry8WYAaPR1N8bCblUKh7wPAX0Sfs3dCymSYQAV0jaffY1jwmhjBR99/YROjbx9IK
-	IRMpeur4tCOBw8vyOJkBMDC2YIrxxZR2tSx0F3U3KHuCEoRsurcMngnSVdPWYqKC
-	Nq8YOicB86v1fTZSSXK3JcmYRhiI2MO0S9zvIBrHj4klmen/TO2ZjaVyIKyOcCZN
-	QaiP8IsQXI7ZkQpki7qggA==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3xb3sxn5mj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Apr 2024 10:37:07 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 10 Apr
- 2024 16:37:04 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Wed, 10 Apr 2024 16:37:04 +0100
-Received: from [198.61.64.213] (EDIN4L06LR3.ad.cirrus.com [198.61.64.213])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 4501282024A;
-	Wed, 10 Apr 2024 15:37:04 +0000 (UTC)
-Message-ID: <6b427ff3-9528-40f9-8638-1fabdc3e4880@opensource.cirrus.com>
-Date: Wed, 10 Apr 2024 16:37:04 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JBDbgWpU"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-417c5cc6be0so2444775e9.3;
+        Wed, 10 Apr 2024 09:22:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712766142; x=1713370942; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Un0q94+0D1nSdkyt4bWQE/2WmNoTX3iVEbAyLwz3Yqg=;
+        b=JBDbgWpUunTNpdjAQPYLkuJByLNs8Ewv/GR0W7WOXyWXKYAb8Xi5Zb+BJgYo1cPmtH
+         uQy/GfNIBDG2SBFAS/QO4BQmRATtbJeOikn8wDOt8j/AjcAAXHpPcQYIJJREam4F93xh
+         28oCKy5+Z1lsePu6S4ykUO10sn9MA1MLXgVT6a4Y3K3GCpvzujnXkjXQnaDcHknLv/W5
+         vTuhkqY8z9pGCyOYg/MlLlmjG/WzAS+fP2Tytp2sZSghjbZf+zzIabevBcew1xUUooyF
+         Y7nmql/lqz4HR6BDyvAQ0E2ral9TRT/kS05UH9MoXqyt8wduh7KQcz/NV95KfUBmWyVM
+         T0LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712766142; x=1713370942;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Un0q94+0D1nSdkyt4bWQE/2WmNoTX3iVEbAyLwz3Yqg=;
+        b=IEHi7tv5UtWGN+CpRLtPLtxYSEZGKOo22kZJg+2WykOGnVGXxnIuFq0uP4sB5KXIV7
+         lOddFHln+6tnDpdGNyUyNm6Bgu5q5+9alHlWjFY4UOIMTwCEoZoRF0AYGvQxdRNF6uol
+         dLKJBvjP1NVpiEkf/g32Q5VU/xZrWGgNXCKbkUeG6oM5bf5biPTrELLDIZzCXCYMoSct
+         uqmDBe4KCgyRnjaz57BhTRf2RR/P/6nFkdhPAqsy7mDiva7g9DVuGB2jI1LrSx72b/qy
+         QSOXo6iF140+k6Q3sEQ6paK6c5n7+7CPweFPoUSOVSotEDdv5HKUVsyxnPJXBxo77foI
+         lvlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxGfAYJUSUpW5qAPJvYFBEqTPiURyhbVVtJTv2UjnE1luBjlrkfAykboK+37XjEilv4GmF/NCFXKpntzU3QsN8U37BVtlTe3WBwhxQPS2L/e8Yzg2293aurnFxz75oZHBftAnS6iubpXOExA==
+X-Gm-Message-State: AOJu0Yz8egv/B8m2ePV3YKgBWjx5Q3/qGMUTbYxbuod7Hb+lqElUYYr9
+	WahvvROPVWVM/zKXolJ+XnK58zt3N7QBrLD0UbdNzs+P4cyDowHP
+X-Google-Smtp-Source: AGHT+IFJ2sIdGoBtfQPeCbUI0llgwzc3jXatjTyMfEH/mraGoPhvOR+CHYmovvJX5lSzWIlYVxWdGg==
+X-Received: by 2002:a05:600c:4e88:b0:416:a6ff:bba0 with SMTP id f8-20020a05600c4e8800b00416a6ffbba0mr2509726wmq.11.1712766142309;
+        Wed, 10 Apr 2024 09:22:22 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id y14-20020a5d4ace000000b00341dbb4a3a7sm14129528wrs.86.2024.04.10.09.22.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Apr 2024 09:22:21 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] fs/direct-io: remove redundant assignment to variable retval
+Date: Wed, 10 Apr 2024 17:22:21 +0100
+Message-Id: <20240410162221.292485-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ASoC: soc-card: soc-card-test: Fix some error handling
- in probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <2db68591-64e2-4f43-a5e1-cb8849f0a296@moroto.mountain>
- <c8e9a7a0-6fcf-4bbe-a659-b2360f5980d8@opensource.cirrus.com>
- <6aaca4c3-46c4-475a-aecd-cf471370e97c@moroto.mountain>
-Content-Language: en-US
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-In-Reply-To: <6aaca4c3-46c4-475a-aecd-cf471370e97c@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: wZqbFBKgA9JYLC5aYDkIYND5GXSvuogb
-X-Proofpoint-GUID: wZqbFBKgA9JYLC5aYDkIYND5GXSvuogb
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 10/4/24 16:31, Dan Carpenter wrote:
-> On Wed, Apr 10, 2024 at 03:43:45PM +0100, Richard Fitzgerald wrote:
->> On 10/4/24 15:22, Dan Carpenter wrote:
->>> Fix this reversed if statement and call put_device() before returning
->>> the error code.
->>>
->>> Fixes: ef7784e41db7 ("ASoC: soc-card: Add KUnit test case for snd_soc_card_get_kcontrol")
->>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->>> ---
->>> v2: call put_device()
->>>
->>>    sound/soc/soc-card-test.c | 4 +++-
->>>    1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/sound/soc/soc-card-test.c b/sound/soc/soc-card-test.c
->>> index 075c52fe82e5..faf9a3d46884 100644
->>> --- a/sound/soc/soc-card-test.c
->>> +++ b/sound/soc/soc-card-test.c
->>> @@ -148,8 +148,10 @@ static int soc_card_test_case_init(struct kunit *test)
->>>    	priv->card->owner = THIS_MODULE;
->>>    	ret = snd_soc_register_card(priv->card);
->>> -	if (!ret)
->>> +	if (ret) {
->>> +		put_device(priv->card_dev);
->>>    		return ret;
->>> +	}
->>>    	return 0;
->>>    }
->>
->> Thanks.
->> Reviewed-by: Richard Fitzgerald <rf@opensource.cirrus.com>
->>
->> I can see that put_device() is also missing earlier in the
->> function:
->>
->> 	if (!priv->card)
->> 		return -ENOMEM;
->>
->> I can send a fix for that.
-> 
-> No.  Let me resend.  I'm sorry, this patch has not been up to proper
-> standards.  
+The variable retval is being assigned a value that is not being read,
+it is being re-assigned later on in the function. The assignment
+is redundant and can be removed.
 
-The same could be said for my original code here.
+Cleans up clang scan build warning:
+fs/direct-io.c:1220:2: warning: Value stored to 'retval' is never
+read [deadcode.DeadStores]
 
-I suggest moving this block of code _before_ the kunit_device_register()
-so there's no need to put_device() if the alloc fails:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/direct-io.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-	priv->card = kunit_kzalloc(test, sizeof(*priv->card), GFP_KERNEL);
-	if (!priv->card)
-		return -ENOMEM;
-
-Also I should fix Smatch to warn about missing put_device()
-> calls to prevent this sort of thing going forward.
-> 
-> regards,
-> dan carpenter
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index 62c97ff9e852..b0aafe640fa4 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -1217,7 +1217,6 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
+ 	 */
+ 	inode_dio_begin(inode);
+ 
+-	retval = 0;
+ 	sdio.blkbits = blkbits;
+ 	sdio.blkfactor = i_blkbits - blkbits;
+ 	sdio.block_in_file = offset >> blkbits;
+-- 
+2.39.2
 
