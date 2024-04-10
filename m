@@ -1,124 +1,100 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC23156C4C;
-	Wed, 10 Apr 2024 11:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2DA15B15A;
+	Wed, 10 Apr 2024 11:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712747490; cv=none; b=bqrm8fkD+PsqzSat1Ox9qICL36U0hENKq64Eyvm3SLnsxvu3JikjNmc82pl3i1wIL8EnYQKe+ZT4qqLwCv+cRtDI6e7wLe3t1LgDcMvm30smFkcQmt+6TKJjU9fqpLwtxRwDCUX7vb8My3LPCnwl4QUxJav+cpAtFuT0G5vvR60=
+	t=1712748489; cv=none; b=ZfUrPj64xURxvC4p29DNCq0/7bf9gT2KWhEiRAd/6mUAR/hq2EcDyqtkmBPuNEV6xXPl+Bb/6m/u0AC+3IMIevhzpAXsUf2J+QJbGpdGHhZZPYKeCKdcs2mijowcBlqo2x9Bn5f6t5/437t++q5D0Rlvg4k/7YAqZmbjtlDv1zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712747490; c=relaxed/simple;
-	bh=/VeiGzK8lC3FVg2lRwCpx8Hm9fTsDx2RHhQLKAONLqc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DSfXyUe+aAojTQIhS4RQ6dRjLktZF3bSWUwoiSPQsgwDZYfy17PRNja5cc66/a5j/9QKug2W5li/j9KkfM0xUHMcb/QOORcjrn9xicgCRijvbxkqymMBt1fqd36PvaPFRk/hTBEGRRcPrLfIymgsqn6bNq4wpfUrb9+BP45XAfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=mgQg8l4t; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1712748489; c=relaxed/simple;
+	bh=zQD9reb1Og/2cv0dqHDZdUJcbucn8FwX4wKjO/1ShN0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=e4iGGhzm7HDG3RzfK03yutaU0C/DWIvUTSDOH+3HNlOEiMXmz9rvnH8oC6WFMZS9hhii99+Shei+1ptyx6oXgs/NYKedk26kwR+QN7UqrOuNR8TlAx9r+CFxwkFcgrstVOOEmn6uxT8Jj39fr/d18fKZXCD6JHQUJzo6VoydfBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U6LAVQo+; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mgQg8l4t"
-Received: from [192.168.88.20] (91-154-34-181.elisa-laajakaista.fi [91.154.34.181])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A3CA4741;
-	Wed, 10 Apr 2024 13:10:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1712747445;
-	bh=/VeiGzK8lC3FVg2lRwCpx8Hm9fTsDx2RHhQLKAONLqc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mgQg8l4t09o5g0UmavOhXgAGn1qjP3Zh/RXRb7FApGEUzT//zYQMuyq+Az9GLg3Pj
-	 0vF72/zCXKUFrAty95MfnmdNah7e15BHQQxDy0fQJr5p+41JkO6wb4Qeh50vlfqjqi
-	 kepxIKlmgTNAyj3CumLC7Kb6sXFfZXKGXC6jaDTs=
-Message-ID: <0b4f1714-2c63-4cc5-9288-f419512bf3d4@ideasonboard.com>
-Date: Wed, 10 Apr 2024 14:11:23 +0300
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U6LAVQo+"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-516d756eb74so5912746e87.3;
+        Wed, 10 Apr 2024 04:28:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712748485; x=1713353285; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Di3el+9O+K85+qwRdX3FObg5JWhX17wOpW5ZhQZowA=;
+        b=U6LAVQo+e+3MHW/feKZDb2eLmL1Dg3ya1HICPgyXsrapgVhWFG2T1lofCvmh/uyfL3
+         I2qruVX+eyRtCHAPW5BA14+NE2INDgi0IIh7y2feQfzJIKhe0qZTipueIKj3SNtfNAIs
+         xHqmGD7llF+qwyo3OTe/RQm/bZMtbYlkqt9yYl33NS/SpD+nKsPLT0xozFOOufVctmMK
+         lNyv+FFSvwLWHpmg/jOEDTAbS+hROsj3rb4iOr5sjMqZK2n0fZ6U776MWSbyGQo643ft
+         g8Zve4kzSFqwRolHBcMPqvEy6pXapboZ+C6z8NFuupJ0dKiSDUCE6MBuSFyl0MmJ+ujU
+         Pcjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712748485; x=1713353285;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5Di3el+9O+K85+qwRdX3FObg5JWhX17wOpW5ZhQZowA=;
+        b=uwCHENxQOJeOmwQdpJuy2YHFM6a47A7gJdmjJEZpVMplDUk1f9IBK2Vd+JRDujZjMh
+         Xb58Z5M9ClRThUE494uTel2XI1RDbft0UX//m5+C5Xt6FbB+3wT8i9BcR2bXVeOp3a7q
+         pH1fBwOYCcQJCxuJWUfbPSuTpxIrZNQIqw58QLJLcEo7t6Cs/DSpHIhN6q5S7hwAJx0k
+         6xjz762P0O+Zyzn9jZKYXv0ha0fAMX+mV87ngKaXG9JGYy6ITPf2F3BQYUq2bz2KWLcU
+         NCx5CwaW5tgNIin2GN833WuPpr8vw1Nymw835Jze1QlyTfkq21hohUhd0YvV3szHl9eq
+         18Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCWCgcLUimUpdgY5s/C0GjUPvmA7AKa/PITXhtMEi5WZ4dxDd4XBIPwdzKV18PpBYXRAv9bWXthHme1042DrAVkAz75B98/lxEiVqdt9g4FVwnmkZ99AKUmzEuYZv9X0ZA0YgJI4rEGhOg==
+X-Gm-Message-State: AOJu0Yyhgy8y3H76R74XvK3nX+/CHv2erYzJ2iCXBSxx+tlxkKgy61lE
+	SudJC/JbCbKr4+ceALBPKXCdeVPkEW6/D3boDo1ZJQk0OgsBq2bw
+X-Google-Smtp-Source: AGHT+IGf1h0UiA0XnNpSWQPwb+7C7LUshO+9D6IWkNrocMZzRR2s4bom2PG43tzhgkyK+fAY/XOupw==
+X-Received: by 2002:a19:a403:0:b0:515:8564:28c8 with SMTP id q3-20020a19a403000000b00515856428c8mr1236389lfc.67.1712748485357;
+        Wed, 10 Apr 2024 04:28:05 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id r6-20020a05600c458600b004162a9f03a6sm2001182wmo.7.2024.04.10.04.28.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Apr 2024 04:28:04 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.com>,
+	linux-ext4@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] jbd2: remove redundant assignement to variable err
+Date: Wed, 10 Apr 2024 12:28:03 +0100
+Message-Id: <20240410112803.232993-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: xlnx: db: fix a memory leak in probe
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Rohit Visavalia <rohit.visavalia@amd.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Michal Simek <michal.simek@amd.com>, Vishal Sagar <vishal.sagar@amd.com>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <86def134-9537-4939-912e-3a424e3a75b6@moroto.mountain>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <86def134-9537-4939-912e-3a424e3a75b6@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 04/04/2024 10:32, Dan Carpenter wrote:
-> Free "dp" before returning.
-> 
-> Fixes: be318d01a903 ("drm: xlnx: dp: Reset DisplayPort IP")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/gpu/drm/xlnx/zynqmp_dp.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> index 5a40aa1d4283..8a15d18a65a6 100644
-> --- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> +++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> @@ -1716,7 +1716,7 @@ int zynqmp_dp_probe(struct zynqmp_dpsub *dpsub)
->   
->   	ret = zynqmp_dp_reset(dp, true);
->   	if (ret < 0)
-> -		return ret;
-> +		goto err_free;
->   
->   	ret = zynqmp_dp_reset(dp, false);
->   	if (ret < 0)
+The variable err is being assigned a value that is never read, it
+is being re-assigned inside the following while loop and also
+after the while loop. The assignment is redundant and can be
+removed.
 
-Thanks, applying to drm-misc-next.
+Cleans up clang scan build warning:
+fs/jbd2/commit.c:574:2: warning: Value stored to 'err' is never
+read [deadcode.DeadStores]
 
-  Tomi
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/jbd2/commit.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+index 5e122586e06e..78a9d08ae9f8 100644
+--- a/fs/jbd2/commit.c
++++ b/fs/jbd2/commit.c
+@@ -571,7 +571,6 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+ 	J_ASSERT(commit_transaction->t_nr_buffers <=
+ 		 atomic_read(&commit_transaction->t_outstanding_credits));
+ 
+-	err = 0;
+ 	bufs = 0;
+ 	descriptor = NULL;
+ 	while (commit_transaction->t_buffers) {
+-- 
+2.39.2
 
