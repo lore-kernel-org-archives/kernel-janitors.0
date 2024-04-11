@@ -1,70 +1,58 @@
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EC114A0AE;
-	Thu, 11 Apr 2024 11:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FB84683;
+	Thu, 11 Apr 2024 12:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712835909; cv=none; b=O5QBp94iR7qGC/sJ7a7rs0RT2jmdRB+8BUkIjoiHpVSrFqngAUdY/27V7r+onFcHefd0XZrc8q7JrKvYKVMhEd/QLjV0Eo5v5aZ0svqGJWO8b5IHXKYn3a37BMkLCZz1XbY/QL7hWjEaO/MJY+5sPrrEPfviXh4KodEIX5Zf2u4=
+	t=1712838996; cv=none; b=ZXBbDHkqhLyp4vHOn3D/J6I/CPj9uxDBCtQndZ2L+/PG1uXYT9R+hnCeL1KK4lD5iI6LHsX4pP5Zo4wWPvjjxsAj8Sj7j8ayHSPwoamMR6Sxd3+dknOiVwNWcFtEfLyVrbaCyCV58odPeGAGjhAnQ+X5iiMHrNjXYmqHUzsa2lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712835909; c=relaxed/simple;
-	bh=XRFBR7q3J3br3yr1FBOa62Y1C7spuDVeCqnhCIGgb4k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=c10YGWOgdGyQhk373Ed98zW+J4AuAiApTOMfJlGzVNTuxZ1n8VdHSsi87G6WPY8nGACzHDVWhLCt5hXx5K/UA9X7Ffg7Bmk3lVGYKD8ufqPG3y9295996k+A5w5scVGN1snwFyLl+QbzJ/eC65Tp+QhjtJ90pob1TOqJ7hdOdNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4VFd8h3qZhz1R5XY;
-	Thu, 11 Apr 2024 19:42:12 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2BE0C140E9F;
-	Thu, 11 Apr 2024 19:44:57 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 11 Apr 2024 19:44:56 +0800
-Message-ID: <cedafaa6-5507-41d3-bd1e-a8964b8630ba@huawei.com>
-Date: Thu, 11 Apr 2024 19:44:56 +0800
+	s=arc-20240116; t=1712838996; c=relaxed/simple;
+	bh=9WbGxfE5PYlgXvD8VxYHuYDy1niiS/0v9CNOAh/N7n4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qh6ogXuHrNydLUckrT6SGGSvUyNAI9mMKMqxTudx61NyYP5k01cPRKTda3CEdsvKJEWh2/KbNzZJThrQ7tmrA3hfyoDU87WHNKIOeAaYdZL8MJ5d0/cqwBUYWAdmz6mDbDmzDaGhDitM+MP6LiCOSLYIByE4AXp9hMuNwMZYBH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bhd4psLl; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bhd4psLl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51931C433F1;
+	Thu, 11 Apr 2024 12:36:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712838995;
+	bh=9WbGxfE5PYlgXvD8VxYHuYDy1niiS/0v9CNOAh/N7n4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bhd4psLlx7juY3ukr1UqAMsDW98j1XaRyooFcVisAsLK6l2txAX9KtxumX4INPDyM
+	 0MLRj5p3n6sNDHN18Id+SPKuAiJp0GRtEKSBzYim7if5NpfebXBFg5K+vDeghHbHXc
+	 FEWgrHI5wqZmtCiw5QxbyOxi1TAaWivQMAWmgh0IDtDPY1AiNaPllbudW19d8gA+ys
+	 gtkUofepnz09qfnCgny1dhRIRmyrL9kAYNLKGpTWuY8sDqLRtkwgTMsgNw2IR08XxN
+	 cgYeSKS4x+pfOonAjfvro5O5K5BY/roy7uEGtNyULVakpVr86dgrBdrSJUjdyZPbph
+	 6fXOJQk/40dEg==
+Date: Thu, 11 Apr 2024 14:36:32 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>, 
+	linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in ARM/LPC32XX SOC SUPPORT
+Message-ID: <whpjtk2nmbft4dqndhealztzxh5du4uemqmmizguwvhmfa2htm@qcklwqf7j4d4>
+References: <20240411050257.42943-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bcachefs: fix typo in reference to BCACHEFS_DEBUG
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Lukas Bulwahn <lbulwahn@redhat.com>, Kent Overstreet
-	<kent.overstreet@linux.dev>, Brian Foster <bfoster@redhat.com>,
-	<linux-bcachefs@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Lukas Bulwahn <lukas.bulwahn@redhat.com>
-References: <20240411082931.56362-1-lukas.bulwahn@redhat.com>
- <a2683fad-07db-4857-9ebf-7adf31a09e50@huawei.com>
- <b6d90387-7892-4c28-9855-ae35faacfe9c@moroto.mountain>
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <b6d90387-7892-4c28-9855-ae35faacfe9c@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml500022.china.huawei.com (7.185.36.66)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240411050257.42943-1-lukas.bulwahn@redhat.com>
 
-Thanks, I got it!
+Hi Lukas,
 
-On 2024/4/11 18:21, Dan Carpenter wrote:
-> On Thu, Apr 11, 2024 at 05:21:05PM +0800, Hongbo Li wrote:
->> Also, I am curious why such spelling errors cannot be detected at the
->> compilation stage.
->>
-> 
-> The IS_ENABLED() macro is testing whether the define exists or not.
-> In this case both "CONFIG_BCACHEFS_DEBUG" and "CONFIG_BCACHEFS_DEBU" do
-> not exist for this config.
-> 
-> Lukas's scripts make a list of macros we expect to exist and then checks
-> against the list.
-> 
-> regards,
-> dan carpenter
-> 
+> -F:	Documentation/devicetree/bindings/i2c/i2c-pnx.txt
+> +F:	Documentation/devicetree/bindings/i2c/nxp,pnx-i2c.yaml
+
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+
+I guess this should go through the arm folks?
+
+Thanks,
+Andi
