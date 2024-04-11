@@ -1,59 +1,86 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from flow3-smtp.messagingengine.com (flow3-smtp.messagingengine.com [103.168.172.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F623BBC3;
-	Thu, 11 Apr 2024 16:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC183D547;
+	Thu, 11 Apr 2024 16:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712852892; cv=none; b=VFFnMLv9kXj2c+ETnPFC55D8whmUxH27GlZzcj8XPZCiZGH5hpNndaPN5Vz1HuhmHxNwJ4jUFvkAEOiALl/8A0Q/fyhNLyXED7p3GBBcRbJK0V2z5NVb9Dj6WkbDeT19ogsMK/LVKdQ+isVqfxcZnpNnvDjTb1j0MNeO03Uv9Hg=
+	t=1712852967; cv=none; b=A55tMoPpAQo7vmNMoj9PHZVivSIHyVldwlNSnnkcl9BG3F7JL5W6b8CrdwD76ZRGdOVVilZ4GFmHGHvNyrheZ65ZYsvHjQtvtUEde7XDXoTuPgAs4fPv+y9n8OGCTBHxwWNnrsPlya4KUYCDDYRdM1N3ntoEWvSb9nmDC5BLfTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712852892; c=relaxed/simple;
-	bh=3XlIAOs87uqlOBPMpqubX7mfWhYqIMI28TNCOjbin5U=;
+	s=arc-20240116; t=1712852967; c=relaxed/simple;
+	bh=nG9AvDiE9iyn3GD+qkFmmatVAFhuimsNOSJez9ntW2A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KCqpeyeyzXoI4fB1ObGEyh/S50RciSnqs/5en1qo+UCTqp+SGwu/c46UXb8wR0enBI2AEkixnJ2Sk1tqkjQiPKp6mqNezQX8CZw5Cn+h6hk386BCWZkZpV3JsAbPHYFxJF1Hbd2SzmYWD0ma/zEELFCpVN1a4nIJx+JI76bV09Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DdZoJw2r; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=EwwrynCnC+ifeyEMvSA5owY4P6X8wT5+JyrNTXLsVl1jcpRozvlfzJJ4sqz/60iQh2M5pOSb+aFIj8kkzrcJBHvNUBDrh6bnQvIIa875/fijsMQHv+X0JRrRWJsDUPRXnDtjvXBoowJlBVaUtxde/SdWg4cyrKbf8QcBwFN9Mno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tyhicks.com; spf=pass smtp.mailfrom=tyhicks.com; dkim=pass (2048-bit key) header.d=tyhicks.com header.i=@tyhicks.com header.b=LFrnW+gV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QjszwsZV; arc=none smtp.client-ip=103.168.172.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tyhicks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tyhicks.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DdZoJw2r"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1712852890; x=1744388890;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3XlIAOs87uqlOBPMpqubX7mfWhYqIMI28TNCOjbin5U=;
-  b=DdZoJw2r/RtjVpxa7ykTqtcgj79Aoj4DRiBjCo+3gTNxv6jr4QmtoqH5
-   G/P+eCmdgozQftm8H7rH6CEMB+ltfxVH5cXBKY9d/P0Oadhe5VZPqnaHh
-   AasKz1iXCZ4kYuf9Cyq61qgT+4UuDiJ3cg3aBOvJrkTTArOXsVHDoEgJF
-   k0HdI1X8ZHVjCWrg/Ipl7rV+SWGlS2FfjKe6IoUu6YqfGu784M6Fqhw0K
-   WCwchtAiEp+/hIeWY3wf81YFQh2fUESb08/gJtpOhW63Gpdc3QSqiScvh
-   Vxc52ZhmRr64HgBCglF9Et4d4tjM1spuACFcVpiKLdzyxV61BIvdkM7fa
-   g==;
-X-CSE-ConnectionGUID: 0jMTWNdAS2aFaNOLUT54iw==
-X-CSE-MsgGUID: C5tGTc4JTjmMoJI+VZ//xw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11041"; a="18837131"
-X-IronPort-AV: E=Sophos;i="6.07,193,1708416000"; 
-   d="scan'208";a="18837131"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2024 09:27:42 -0700
-X-CSE-ConnectionGUID: eO0p8wtaQSW5ISEQjzvlNQ==
-X-CSE-MsgGUID: 0V9qqLyfQMOCzSrfOBR6XQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,193,1708416000"; 
-   d="scan'208";a="25422038"
-Received: from ntasneem-mobl.amr.corp.intel.com (HELO aschofie-mobl2) ([10.212.182.183])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2024 09:27:41 -0700
-Date: Thu, 11 Apr 2024 09:27:39 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Ben Cheatham <Benjamin.Cheatham@amd.com>,
-	Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
-	linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: repair file entry in COMPUTE EXPRESS LINK
-Message-ID: <ZhgPe5mDt2ocXovz@aschofie-mobl2>
-References: <20240411062443.47372-1-lukas.bulwahn@redhat.com>
+	dkim=pass (2048-bit key) header.d=tyhicks.com header.i=@tyhicks.com header.b="LFrnW+gV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QjszwsZV"
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailflow.nyi.internal (Postfix) with ESMTP id 9DA22200367;
+	Thu, 11 Apr 2024 12:29:24 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Thu, 11 Apr 2024 12:29:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tyhicks.com; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1712852964; x=1712860164; bh=gqLmiSCFDE
+	hztj3oo+M3RvxGGuNWOcopRWr00SfiOXg=; b=LFrnW+gVLOjXO932zV8JFLHcU4
+	Z11oxiPjXEeIoTv+hRBxeNFBSHFRORV89RE+hDz8o/FNQfb0ZylM3LlaV7SfIbIh
+	Addzl5MtYd6DCOKuuPjLWJpx7oS4vGZa3oYfHS1M59LR0YuAs7ja3h2OT7vsqFfY
+	5lefW/nwLq1Gjc8RK3AO2aQKwckfEkr+nH8s5ZalQfAl92JZTgbm+Wg914c2UB5m
+	eNqrL2vxBMmvDGIaiYP6BCPQg3oUbh782W0RrfBe4O6nE4nSNjLpbLzpSB9hnFID
+	pXfng5Et+lGDZHZhWOFMibGKmgT0m+diqRUIayMGR5+j1SDWiOhyO1XbxcyQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1712852964; x=1712860164; bh=gqLmiSCFDEhztj3oo+M3RvxGGuNW
+	OcopRWr00SfiOXg=; b=QjszwsZVkv7GUJ0uc0dhoDjZrwffXdSQOTPWHmT4H3mj
+	sdeyyErO2JxiM/ZM7lw+G2Xjk+V8dzc0F0tFHdo6JHONeBT/ha7tRiMO+nyluWht
+	sCLk0CteXP+F0ciqwnwyEzKIhl9lFKOQejgIyx3d0knunefs6jkNYVEfPy6BfWky
+	My4ZuOyf7c/xkIXD1YnRECJRudPOX5hGDB9SeyTh2Mi6k0tMbZfTJvdXYfILZCyY
+	TMycg/iXXwbTaWErbdzYedwL/odNoQ4I/lF28UcD3TuK+QiDKYMU7xoQyKetNMnM
+	xrjf9RbU15ha6PRU4peAkTbO7efhDWd6dUDQ8SlhlA==
+X-ME-Sender: <xms:5A8YZul7kXoS-E9HTR43PZEfsjxiUGr6s04HTzfT7XGJQqRPvj-YWQ>
+    <xme:5A8YZl00B3abTQ5vNWSDYehm_cfFWxdUj6XlCR_XJIzyPSm5bvgogBrpmjNhj3AbY
+    YVU8tpnsP6EPyEyqaY>
+X-ME-Received: <xmr:5A8YZsoxOZ0l_g7S6OVUqYg1WXYzf7dlDHutUKObDutlAEQVsPctVQbFuHs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrudehkedguddtvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvhihl
+    vghrucfjihgtkhhsuceotghouggvsehthihhihgtkhhsrdgtohhmqeenucggtffrrghtth
+    gvrhhnpedvhedvtddthfefhfdtgfelheefgefgudejueevkeduveekvdegjedttdefgfel
+    ieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegtoh
+    guvgesthihhhhitghkshdrtghomh
+X-ME-Proxy: <xmx:5A8YZikbMasM7VZgHvtObLV2P9GFgJ0r470-Kc7fgEo774Qvf2Oj3g>
+    <xmx:5A8YZs0qX9ZGWE_5YIJqL-CXhvqo1qiTvKUehekqralf-0nAJJfbMQ>
+    <xmx:5A8YZpsD3ILS-9-fb0yu84z7H8q2JBo_xGPFRaXTzSzJxv8tekgNbA>
+    <xmx:5A8YZoVcbJKojpd_wm4DCcLSdUivGbr5St9mLlhRB_29tXjO_qgkvA>
+    <xmx:5A8YZt4seqo2FXF3xVRK1SddDyq4KetKDKrVv1LOiQ97qa59hBpsDkJP>
+Feedback-ID: i78e14604:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 11 Apr 2024 12:29:22 -0400 (EDT)
+Date: Thu, 11 Apr 2024 11:29:19 -0500
+From: Tyler Hicks <code@tyhicks.com>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+	speakup@linux-speakup.org, intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-wireless@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-afs@lists.infradead.org, ecryptfs@vger.kernel.org,
+	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org, linux-arch@vger.kernel.org,
+	io-uring@vger.kernel.org, cocci@inria.fr,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] treewide: Fix common grammar mistake "the the"
+Message-ID: <ZhgPuPVYT26SxgQW@sequoia>
+References: <20240411150437.496153-4-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -62,51 +89,16 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240411062443.47372-1-lukas.bulwahn@redhat.com>
+In-Reply-To: <20240411150437.496153-4-thorsten.blum@toblux.com>
 
-On Thu, Apr 11, 2024 at 08:24:43AM +0200, Lukas Bulwahn wrote:
-> Commit 12fb28ea6b1c ("EINJ: Add CXL error type support") adds the header
-> file include/linux/einj-cxl.h, but then adds a file entry with cxl-einj.h
-> (note the swapping of words) to the COMPUTE EXPRESS LINK (CXL) section.
+On 2024-04-11 17:04:40, Thorsten Blum wrote:
+> Use `find . -type f -exec sed -i 's/\<the the\>/the/g' {} +` to find all
+> occurrences of "the the" and replace them with a single "the".
 > 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
+> Changes only comments and documentation - no code changes.
 > 
-> Repair the file entry in COMPUTE EXPRESS LINK (CXL).
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 
-How about stating the impact, something like:
+Reviewed-by: Tyler Hicks <code@tyhicks.com>
 
-get_maintainer.pl can only return commit_signer history for file
-include/linux/einj-cxl.h because the entry in MAINTAINERS is wrong.
-Correct the entry so that the full MAINTAINER list is returned.
-
-It is interesting how you found it and I'm not suggesting deleting
-that.
-
-Thanks,
-Alison
-
-
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index edf6176a5530..03204db05027 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -5415,7 +5415,7 @@ M:	Dan Williams <dan.j.williams@intel.com>
->  L:	linux-cxl@vger.kernel.org
->  S:	Maintained
->  F:	drivers/cxl/
-> -F:	include/linux/cxl-einj.h
-> +F:	include/linux/einj-cxl.h
->  F:	include/linux/cxl-event.h
->  F:	include/uapi/linux/cxl_mem.h
->  F:	tools/testing/cxl/
-> -- 
-> 2.44.0
-> 
-> 
+Tyler
