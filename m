@@ -1,101 +1,81 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D4714388B;
-	Thu, 11 Apr 2024 09:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1436143C51;
+	Thu, 11 Apr 2024 09:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712826339; cv=none; b=oJjeN/DFs0SKyb9Q4OBJeUnqMjM3cz2sY+zPZ+QNdAd5kFwBdjM6vnIumMe0IUh3ouVXDE6JaYe0XmvG2qimYRIUits9sc+u6f5kG834YWWq7+KpR05ytk6dzW1jXySAYeiWLfM4zdOQ2SgrhG7B/K1cKxGqF5yKpQBDW138umA=
+	t=1712827025; cv=none; b=PzS36SrMjDSiquqxBwRbpIXthvo7uuKQSIZOw2rMeg8Nsn4aZzp7dkbb0TE0nlTUC1f4CCFWjqXy6oicxxPZK5v0fVVH0AuhxmArJwORqKTdPafKLJeDE0DhqOmMTmB9lAPDMnOYAJC5knzYmyyV6rAd+NcRZEvW7Ly79R+k1oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712826339; c=relaxed/simple;
-	bh=h1ECHJrI6yDGWiq8/tzickwJ+lsJ6Lz0fibT2Qel/bw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=UMv9SpGoUGahc0S7f+0fvPWN2YbAFselh3sO6rvJUpqy9rUB0hjRUCtBc0ll2suXCUYPWJKPVtNA9u/5FOw4rlcZTntGyHN34r6/4zRP49b+qgShvQDRhR64pH8WHCeS+iixeDjJBvWiRG31lZRVd6iM/dBlh6cj5dP/MAtrv3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FT16ysT/; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FT16ysT/"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-346b480e1acso329901f8f.0;
-        Thu, 11 Apr 2024 02:05:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712826336; x=1713431136; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ThLGpbeHjKHISy6v+wWhWzlM1AmHv+Kiehy1oJijdu4=;
-        b=FT16ysT/obu8gWYpZghQQR3McHt/frdzoZ3lpHLjGOzAnbwFckH+nMTazlJz3hIILo
-         saerQ39IxNRjQKUlv7aKqr+dSyBEiGcWotdwFe1bwW60QOYWNDHdh6xVTB6RUy2YC4Ec
-         Dz5r+Z/rBzxkHe6xBKZxaY6CGjereBOxaTbLFtRtTf92GJqyoWWOResVy1OFYgM5vNWs
-         qg7Nriqs6+Ec+CkOMckTvtCzoCh3iZ0SVD5cntTydgG1fli7NgvPlYG/25GbzsLUINFw
-         yQ3ZM75+/nEoP3LGSccwozsA7bblqDemkySkvJyqG/tkWCMwiaFQvhtmEhWvQzOzStkv
-         bcnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712826336; x=1713431136;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ThLGpbeHjKHISy6v+wWhWzlM1AmHv+Kiehy1oJijdu4=;
-        b=I0BAQkmoP9W7xd0l90yxiCDn+ZkKKHdSVr7c/6gBz+b0c2jMqHt0V8b6yx8+vdLoyJ
-         lTY0+KZu4j1V95YrvCjxhH8tdLFAtWn7h+3JZ/i4rkZymMel16v/GbuEG5gtuc1VcYv5
-         QnfIQTGA93BnykO52BMuqWtSnP8fTlcG3dwOueIA4MXXZU/I5acpeoEfl3izG5JSNd0F
-         4dTBCUPKV904ydG5T88MseWRPBcaqxY3ngZKadU4oXr24bg/ENg9RFQLThZXDGp0d2Ii
-         rxLuCW935rtP1Nnpa8mUbpgz80KwNUCYnHWCetBkctDnlEFZ94vqDCktvm1CC8t2e4vi
-         VNkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ700d5S3Gmk7k3eY662w8Pkf9TSZQJg7cqYrzus05BH+VOjaKx82bUrfju+mTB0C2NhMkPF8IDH9Y3jMpbJdr1G719KuCU2auWwxi
-X-Gm-Message-State: AOJu0YxaH+DKUOCAixeA+ZT2HOFlMvxHH3pvSTj78A/PLkuCOhHnHIn6
-	4Ug4FitGcuO/FmyLkzTzT5SoLrYOJnjdmNpxV6mBpwa0kip3iG/Y
-X-Google-Smtp-Source: AGHT+IFTY79T++ZLVntjb/YvHujT/vlh2HyBVoWR1sjZgibIrmibZdxv2OPUYMdSc/Jlz/ExOtnfFw==
-X-Received: by 2002:a5d:47c1:0:b0:346:bca2:6184 with SMTP id o1-20020a5d47c1000000b00346bca26184mr949714wrc.0.1712826336250;
-        Thu, 11 Apr 2024 02:05:36 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id m4-20020adff384000000b0033e7de97214sm1279914wro.40.2024.04.11.02.05.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Apr 2024 02:05:35 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: David Woodhouse <dwmw2@infradead.org>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	iommu@lists.linux.dev
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] iommu/vt-d: remove redundant assignment to variable err
-Date: Thu, 11 Apr 2024 10:05:35 +0100
-Message-Id: <20240411090535.306326-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1712827025; c=relaxed/simple;
+	bh=l0t4D9s2/1QlWcjfS0uDVRP8x3YMT80ZWdmTgsPw7g8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sUmBoTs2YiEMzPeuaKxKnrwZ7Y3MibGBJu1o/RxPEqlEp3xy7NUoT8bfDvdWUghScgRm+SnRN91jylkgfTkZuAjCymQoFhjTOxD67iaja/yPL7+JzbQx9Tq3moEHJK6WeWXjAv7H2eiSxJAYa9eFI2tNFLkoZmJZStRC7pI+VEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4VFYsq0pNNz1RC7f;
+	Thu, 11 Apr 2024 17:14:07 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2F2AD1400C9;
+	Thu, 11 Apr 2024 17:17:00 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 11 Apr 2024 17:16:59 +0800
+Message-ID: <11712bdc-9119-4ad2-b4ac-f6e2d0730134@huawei.com>
+Date: Thu, 11 Apr 2024 17:16:59 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bcachefs: fix typo in reference to BCACHEFS_DEBUG
+Content-Language: en-US
+To: Lukas Bulwahn <lbulwahn@redhat.com>, Kent Overstreet
+	<kent.overstreet@linux.dev>, Brian Foster <bfoster@redhat.com>,
+	<linux-bcachefs@vger.kernel.org>
+CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Lukas
+ Bulwahn <lukas.bulwahn@redhat.com>
+References: <20240411082931.56362-1-lukas.bulwahn@redhat.com>
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <20240411082931.56362-1-lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-Variable err is being assigned a value that is never read. It is
-either being re-assigned later on error exit paths, or never referenced
-on the non-error path.
 
-Cleans up clang scan build warning:
-drivers/iommu/intel/dmar.c:1070:2: warning: Value stored to 'err' is
-never read [deadcode.DeadStores]`
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/iommu/intel/dmar.c | 1 -
- 1 file changed, 1 deletion(-)
+On 2024/4/11 16:29, Lukas Bulwahn wrote:
+> Commit ec9cc18fc2e6 ("bcachefs: Add checks for invalid snapshot IDs")
+> intends to check the sanity of a snapshot and panic when
+> BCACHEFS_DEBUG is set, but that conditional has a typo.
+> 
+> Fix the typo to refer to the actual existing Kconfig symbol.
+> 
+> This was found with ./scripts/checkkconfigsymbols.py.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>   fs/bcachefs/snapshot.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/bcachefs/snapshot.h b/fs/bcachefs/snapshot.h
+> index b7d2fed37c4f..3fdb41b33d2d 100644
+> --- a/fs/bcachefs/snapshot.h
+> +++ b/fs/bcachefs/snapshot.h
+> @@ -77,7 +77,7 @@ static inline u32 __bch2_snapshot_parent(struct bch_fs *c, u32 id)
+>   		return 0;
+>   
+>   	u32 parent = s->parent;
+> -	if (IS_ENABLED(CONFIG_BCACHEFS_DEBU) &&
+> +	if (IS_ENABLED(CONFIG_BCACHEFS_DEBUG) &&
+>   	    parent &&
+>   	    s->depth != snapshot_t(c, parent)->depth + 1)
+>   		panic("id %u depth=%u parent %u depth=%u\n",
 
-diff --git a/drivers/iommu/intel/dmar.c b/drivers/iommu/intel/dmar.c
-index 36d7427b1202..351be9455214 100644
---- a/drivers/iommu/intel/dmar.c
-+++ b/drivers/iommu/intel/dmar.c
-@@ -1067,7 +1067,6 @@ static int alloc_iommu(struct dmar_drhd_unit *drhd)
- 		goto error_free_seq_id;
- 	}
- 
--	err = -EINVAL;
- 	if (!cap_sagaw(iommu->cap) &&
- 	    (!ecap_smts(iommu->ecap) || ecap_slts(iommu->ecap))) {
- 		pr_info("%s: No supported address widths. Not attempting DMA translation.\n",
--- 
-2.39.2
-
+Reviewed-by: Hongbo Li <lihongbo22@huawei.com>
