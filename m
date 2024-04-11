@@ -1,65 +1,64 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F77E35F18;
-	Thu, 11 Apr 2024 08:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F0513CAA2;
+	Thu, 11 Apr 2024 08:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712825358; cv=none; b=PJFTOeuIXTL79YwgNjzIWe/qsiV+WTCzArQ0M9EO1WSUIJHgS1+E3i5znVG4Gf7rvOvaztoHAybTY+2B/QmLm3ISIv3m2Fsin5fXnG937IM0xi/7nvAt7/1veJaS7vezuTx+3nQFLJBilIaCoX93u5+wy1NDicEueeOobKbILgw=
+	t=1712825742; cv=none; b=FnS1wPB1xw2W6mH9Ym2qtd53W50XwayY+l0lO+YdM+4QZflP1Md8giMAqRxBSjuGudk3wqRXJRgKk2zfoKyNm8/YfElx2+149Y7YckmjFWQ3y23FSCMlJp4Ro4ScuM9ycukDozpSW8AlR5QuuXgQxpAuZIDZo3iVq69THSa4BjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712825358; c=relaxed/simple;
-	bh=chQTnWSlVUh4fTmtbvWlQnO2lU0Riy/R0Hldxq1A9w0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=cEGn9WX2amiNEXy+iQTSPbMi3PFWkKoE6XY+p6PYjAVPHVw25LQJjvZmyw7L2EDATC261Ic1J7NRYnVt9gIomzsGFwSrgmhIKneveFSKU+drbvdCJYHPVYJUI/xyI8eX9uY/XTeCKm1iLQQrPk+zlFktJ6R80I2kTAZ2Vsxh3+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JngeEH8F; arc=none smtp.client-ip=209.85.167.43
+	s=arc-20240116; t=1712825742; c=relaxed/simple;
+	bh=ldw+xs/dWBNbaZ8UjYEKjjEZwNdjPX+4HdpQAyz3ojY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Od5FbntGUlLNy1W41NkK0daHxfEZBPbpNmEqAaN8iVJ+yr+zMIuMQL5DqpIsDJXllvxJkxB8+wyu1E1/jPLfPVUQ8cYsEamxtgJWA7yR6mVWDFDjWjFzN4q/aIRvKPK/fT9RhCYUQlrhq3+HQ/0kjxCUYrcmT9+urPDzJFWhWzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C3b6RpHx; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JngeEH8F"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-516d09bd434so8485835e87.1;
-        Thu, 11 Apr 2024 01:49:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C3b6RpHx"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2d4a8bddc21so103104211fa.0;
+        Thu, 11 Apr 2024 01:55:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712825354; x=1713430154; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1712825739; x=1713430539; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ce3+OUkZq40m+efQaypNKgk9aBlLNcnyZ4pRprOWxa0=;
-        b=JngeEH8FcygieFZIybLvy+v/qv2YHzjtstDbkcy2gaGMGVNzUy1pouuBR7N0PTMn7v
-         JadufODpyDkdCgsOpulzGF38ZPj9fsVEVwfM2vgqQNXoGBNyD1KrsdVv++deurDtgn78
-         iIQP+Tcc+gAClHkTMxFwcVyUZ4hvPNakXs7kLr2NeT6++wgiKA9JCmvSZk0O61ZP5PD9
-         VPcqajLwy9Ofzi30+kQHZFt6R/5G8ehlXYeRq8rAR+OZm1anmcQQb9vvkx459f5FWPKX
-         17qU6RcejF0qiks6AcdjChHj6/i+Qap1qsBo1lUQThibKqFpQr64CN/HZ86bTim446WI
-         4Cog==
+        bh=Oezm+XeiDrrLKggyC4riCoaNw/6HsqhGMN90b4ZxeZ0=;
+        b=C3b6RpHx1Ufo9i+9QnnP05mAinkuaDqmBqDTA+cpwv8ApuorfneVDRahIZvKV2zRve
+         fQHmqOFwEwzf5hOEglmlJUV1z40iYd5Y8M5ATHkEnasOoQW2A/wcGZ72+F8ZWNoXSqrL
+         N81sUp4GjhrQwyMeYF5rq5ab5xy8VvabiM90OmuicoW7vyhyNj3EH9YJBe/rRV9mXZE8
+         sCAOZS0WMiFSpcHfjD0Q5mt2Qw6jqLbfkFsx5AjOyEOf9CxCj7PXrKCvnMixDrWAm0lp
+         3nEekBojDQ+Cs2n9Zs6KLQ3InzpDa/xf5EHh/KkwKVPiEra626P7uIek8pXHqyR7uO0x
+         fOuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712825354; x=1713430154;
+        d=1e100.net; s=20230601; t=1712825739; x=1713430539;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ce3+OUkZq40m+efQaypNKgk9aBlLNcnyZ4pRprOWxa0=;
-        b=kAKDWJZY4Yt5gmPhVVRan1tAOJRy5U0RUox2Ik8fRj9KqIlzquHnVNhza/NVuqnoRy
-         HpGSXI1thDUjgmctfOw+x3qdCSbUF9mpyMBWEktuFnvw2xkb1DPfGVxOI7BBrys/Wa9w
-         IPjPUfJIlulvTYTaPeEwtF8BjtMG5tEJLfKOz4U/tWfT2afe3BrZ9A4/qH1mwZxl46jk
-         YOJue39SaYTVHsvgABtYl7T3Od6ML0SiBFGEJmRq/3Smp9k582msrzoEguY7AtzHKV1J
-         dHbnLWY0sEmjm4HtesLwuvqdVacOJCo5pgFHlYZKWvqktZfY9TrfxjdCrFbxaKibIHg+
-         oJmg==
-X-Forwarded-Encrypted: i=1; AJvYcCWo2pe5gwPGwajFvfvzkakJ3ZgKHNgy8rDVEQUOxxBnaMwtAphJRcWAsF+2OzaSW65DmQ37dlQGYEEVNNUnJ9kaNod0NMDvrpT2mqtu1zhxTzg2ocBzFJbBLcNdcMxYYNVzvWQt3XowTXRf8UDX
-X-Gm-Message-State: AOJu0Yy/NMotELB3ajEeMqSV3dU0k3s7gznJUkXibu1jnih7nGWwKGz9
-	9xdJGjRxU3roriLZf/ZTcfoboUN/uNq8TusEZOoxL1E0RO+IPacku4R0DTLA
-X-Google-Smtp-Source: AGHT+IFmzoMFrQQ2KSPtvwMFPgsLDBPqZH4WpawT8dEaC3sMYw4joUMwdrJBv9YtUNXWhi3CE4XYYw==
-X-Received: by 2002:a05:6512:68c:b0:515:c195:d6b8 with SMTP id t12-20020a056512068c00b00515c195d6b8mr3852456lfe.60.1712825354309;
-        Thu, 11 Apr 2024 01:49:14 -0700 (PDT)
+        bh=Oezm+XeiDrrLKggyC4riCoaNw/6HsqhGMN90b4ZxeZ0=;
+        b=ci4ELd7tw83ZIGKY9Rn/OO2Tf2aigeagCLmcZL48hjVsQ+6GwSgH2xmL3y+JXPh2yT
+         EaDDH/ymswmjrNM1yG/PeZ+qcK9iF1THL1JRQr4kcwyg1lO44RMCpA1yvCmk3dYjeg9V
+         8hSXls9uOnXP+x/XLnNncFitBfZbCG3pF0eUapxjl4FjUrfYnPIee0nHim1DLtlFh0f8
+         E2lsDk0qAMDJvGSSvCb40/dynL5XNW+2EO3REXvKkuL71g06XOcn1WlhcvkVuxu5aw/w
+         rcH80MtLFkM2zD5TqbUSjZuvSZFWeK+1Sl7sJDqoGUvVaR0nJi5uB5O8YlKtpx3DSzAf
+         qHwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDGTb6d8w5nA9NfX44Sj6WDpQbdQXOBEEsrAzzoBZIYdBa6EiGxlJtta6gtN2Qa8h4GSzrjJUhns2VwmfPQTx6dMiwiuTOSlSGzpSotyI65E4XhMdJ43fZqV078/aUcL3sscJqiqUuQolG
+X-Gm-Message-State: AOJu0Yz4IFuAxfEt/cZ+EEekMR/JofTkfM5TRjW00Dmh+zLwgnwr4jwi
+	AgcRtJ7w//52pcQvA7E8j0KY4KAGQcYKsfaoQETknURxZny5aaMMuHg0sTIy
+X-Google-Smtp-Source: AGHT+IHvRntyLgw9Jk8Ie6LLIReooOxA+Z3S96pjuTbtq5OLGcQZgV/DBtYrLNHVNSBqV9vTs4WRTg==
+X-Received: by 2002:a05:651c:1054:b0:2d9:ed7c:7882 with SMTP id x20-20020a05651c105400b002d9ed7c7882mr152415ljm.26.1712825738542;
+        Thu, 11 Apr 2024 01:55:38 -0700 (PDT)
 Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id b11-20020adfe30b000000b0034625392416sm1237204wrj.104.2024.04.11.01.49.13
+        by smtp.gmail.com with ESMTPSA id f19-20020a05600c4e9300b00417d624cffbsm1458253wmq.6.2024.04.11.01.55.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Apr 2024 01:49:13 -0700 (PDT)
+        Thu, 11 Apr 2024 01:55:38 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-serial@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] tpm/eventlog: remove redundant assignment to variabel ret
-Date: Thu, 11 Apr 2024 09:49:13 +0100
-Message-Id: <20240411084913.305780-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] serial: omap: remove redundant assignment to variable tmout
+Date: Thu, 11 Apr 2024 09:55:37 +0100
+Message-Id: <20240411085537.306020-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -70,31 +69,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Variable ret is being assigned and error code that is never read, it is
-either being re-assigned in an error exit path or never referenced again
-on the non-error path. The assignment is redundant and can be removed.
+Variable tmout is being assigned a value that is never read, it is
+being re-assinged in the following for-loop statement. The assignment
+is redundant and can be removed.
 
-Cleans up clang scan build warning:
-drivers/char/tpm/eventlog/acpi.c:145:2: warning: Value stored to 'ret'
+Cleans up clang scan warning:
+drivers/tty/serial/omap-serial.c:1096:3: warning: Value stored to 'tmout'
 is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/char/tpm/eventlog/acpi.c | 1 -
+ drivers/tty/serial/omap-serial.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
-index bd757d836c5c..69533d0bfb51 100644
---- a/drivers/char/tpm/eventlog/acpi.c
-+++ b/drivers/char/tpm/eventlog/acpi.c
-@@ -142,7 +142,6 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
+diff --git a/drivers/tty/serial/omap-serial.c b/drivers/tty/serial/omap-serial.c
+index 9be1c871cf11..d7e172eeaab1 100644
+--- a/drivers/tty/serial/omap-serial.c
++++ b/drivers/tty/serial/omap-serial.c
+@@ -1093,7 +1093,6 @@ static void __maybe_unused wait_for_xmitr(struct uart_omap_port *up)
  
- 	log->bios_event_log_end = log->bios_event_log + len;
+ 	/* Wait up to 1s for flow control if necessary */
+ 	if (up->port.flags & UPF_CONS_FLOW) {
+-		tmout = 1000000;
+ 		for (tmout = 1000000; tmout; tmout--) {
+ 			unsigned int msr = serial_in(up, UART_MSR);
  
--	ret = -EIO;
- 	virt = acpi_os_map_iomem(start, len);
- 	if (!virt) {
- 		dev_warn(&chip->dev, "%s: Failed to map ACPI memory\n", __func__);
 -- 
 2.39.2
 
