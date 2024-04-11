@@ -1,58 +1,62 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FB84683;
-	Thu, 11 Apr 2024 12:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459DF3D556;
+	Thu, 11 Apr 2024 12:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712838996; cv=none; b=ZXBbDHkqhLyp4vHOn3D/J6I/CPj9uxDBCtQndZ2L+/PG1uXYT9R+hnCeL1KK4lD5iI6LHsX4pP5Zo4wWPvjjxsAj8Sj7j8ayHSPwoamMR6Sxd3+dknOiVwNWcFtEfLyVrbaCyCV58odPeGAGjhAnQ+X5iiMHrNjXYmqHUzsa2lo=
+	t=1712839854; cv=none; b=bZ07dA8Mirj74RDynmwTTspHnBE0Us/ZTo6NzXloUVvepKFS3Arc4BiCHthiRY3PTHZJ2mMWry+B17Q/zLEtmEDqoMN6TLJNK7Z1y7lZIZMU0uZrL077qT9vIQS9MA34OdCwnlOf2UmETipNSBhJCt1T+WVRTv8C4s3oVFY942o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712838996; c=relaxed/simple;
-	bh=9WbGxfE5PYlgXvD8VxYHuYDy1niiS/0v9CNOAh/N7n4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qh6ogXuHrNydLUckrT6SGGSvUyNAI9mMKMqxTudx61NyYP5k01cPRKTda3CEdsvKJEWh2/KbNzZJThrQ7tmrA3hfyoDU87WHNKIOeAaYdZL8MJ5d0/cqwBUYWAdmz6mDbDmzDaGhDitM+MP6LiCOSLYIByE4AXp9hMuNwMZYBH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bhd4psLl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712839854; c=relaxed/simple;
+	bh=KFmGrFmdn3lcoh2YD9pX55yYfPAhnPK1vR7i66oVoec=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=BKSHieKKkkkgPbyGZzh/7X7WaypokKz5a83h35mVnG0XB90WsKQ/PFWO8/CuIQUPhYoyAF8oMxsGJrF8AqYIqmaRK5Cn8tOmSYueT0c7d4jXdBJB9tzf4vTQEesdR5er4ArC5YGDsVns/tdvppN7B3xbsBZ+oCY0y16V1LlTG1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sLgV9YGx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bhd4psLl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51931C433F1;
-	Thu, 11 Apr 2024 12:36:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sLgV9YGx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4F9EC433F1;
+	Thu, 11 Apr 2024 12:50:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712838995;
-	bh=9WbGxfE5PYlgXvD8VxYHuYDy1niiS/0v9CNOAh/N7n4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bhd4psLlx7juY3ukr1UqAMsDW98j1XaRyooFcVisAsLK6l2txAX9KtxumX4INPDyM
-	 0MLRj5p3n6sNDHN18Id+SPKuAiJp0GRtEKSBzYim7if5NpfebXBFg5K+vDeghHbHXc
-	 FEWgrHI5wqZmtCiw5QxbyOxi1TAaWivQMAWmgh0IDtDPY1AiNaPllbudW19d8gA+ys
-	 gtkUofepnz09qfnCgny1dhRIRmyrL9kAYNLKGpTWuY8sDqLRtkwgTMsgNw2IR08XxN
-	 cgYeSKS4x+pfOonAjfvro5O5K5BY/roy7uEGtNyULVakpVr86dgrBdrSJUjdyZPbph
-	 6fXOJQk/40dEg==
-Date: Thu, 11 Apr 2024 14:36:32 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Animesh Agarwal <animeshagarwal28@gmail.com>, 
-	linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in ARM/LPC32XX SOC SUPPORT
-Message-ID: <whpjtk2nmbft4dqndhealztzxh5du4uemqmmizguwvhmfa2htm@qcklwqf7j4d4>
-References: <20240411050257.42943-1-lukas.bulwahn@redhat.com>
+	s=k20201202; t=1712839853;
+	bh=KFmGrFmdn3lcoh2YD9pX55yYfPAhnPK1vR7i66oVoec=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=sLgV9YGx9yDtIPyi2grMj1nPTa7JwRWoJZrFBvw60M1I5w+q9TCO1T1kUv55LGgtW
+	 94YqXzrfJdcj24/zf2uW66cBuxiJOzbbmBC6ZydhmTAnKd4vV9k8Q88edmShczgSjS
+	 OejDApPTosswUurUwYH+k+0YcboZvAhVFCLPW452GsKaX9PxaLULHgjnuS/8jXQ3R9
+	 Tfu4dMpPZrb6qUZsf/UhRwbhTokkI8KAxWqXNNZRb+BQUyqkdwvmNSbHcr0yZVel0m
+	 lNSxOiZSykHhfQpHn4ndKIoVo9/zurOttAJ6yZqx0VEJql3lu30uLimGe6TJYNy3lL
+	 6If6iHPuuyGAw==
+From: Lee Jones <lee@kernel.org>
+To: Colin Foster <colin.foster@in-advantage.com>, 
+ Lee Jones <lee@kernel.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <7af920eb686b719cb7eb39c832e3ad414e0e1e1a.1712258667.git.christophe.jaillet@wanadoo.fr>
+References: <7af920eb686b719cb7eb39c832e3ad414e0e1e1a.1712258667.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: (subset) [PATCH] mfd: ocelot-spi: Use spi_sync_transfer()
+Message-Id: <171283985247.2355641.18193123658485241015.b4-ty@kernel.org>
+Date: Thu, 11 Apr 2024 13:50:52 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240411050257.42943-1-lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.12.4
 
-Hi Lukas,
+On Thu, 04 Apr 2024 21:25:09 +0200, Christophe JAILLET wrote:
+> Use spi_sync_transfer() instead of hand-writing it.
+> It is less verbose.
+> 
+> 
 
-> -F:	Documentation/devicetree/bindings/i2c/i2c-pnx.txt
-> +F:	Documentation/devicetree/bindings/i2c/nxp,pnx-i2c.yaml
+Applied, thanks!
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+[1/1] mfd: ocelot-spi: Use spi_sync_transfer()
+      commit: 1947c079bb1b78d3c2784ce99133fc046de6dbf6
 
-I guess this should go through the arm folks?
+--
+Lee Jones [李琼斯]
 
-Thanks,
-Andi
