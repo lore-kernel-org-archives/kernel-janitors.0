@@ -1,174 +1,108 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F843399F
-	for <kernel-janitors@vger.kernel.org>; Thu, 11 Apr 2024 11:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2031A145B08;
+	Thu, 11 Apr 2024 11:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712834841; cv=none; b=YHiiEEa5ctTzs1hI1YcPjDar8Mkd2zWghjR7nPOyVHYKrugsiO8HX24ljfiD6oYj8RYlNdqOg1RIUhrteKlEK39TXElCkcHdgQyq5DUHbZljon6grHABv9bIG/oz2lzC7wSDIBC3ljUPWoq8EXahk19rN4sqZdLQIUWiyt5j3bs=
+	t=1712835053; cv=none; b=VoX4WD+QhU+suzFmTQbBtOoDBvnUCAKdkPlUxii6x9F9CvtwNZhpLEs1o6aVUcuQLgM66kIC165Jseh/wvoqugxEhrNcvvAbDyirFUcMaaOzP9LHoexhmlfLGfSpbNzff2rxF6flcF9I22RLeYH0ncNxIaePrZ9R0wBQ/r0hYLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712834841; c=relaxed/simple;
-	bh=SXj9y6dEQyLjYVUDk/uY67G232uAsHDAK22JxGiQ7zc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NMEijUzIHebIsQqXKoLMZrX7Tf6R89Ul30hDtYn/n7mLVSwrSKaenTcIbhv9/FS18hRa5uzf93z9DESO1/XsCtDFFVzMymeN2x5H4kcdX1Fpm5IreiS2i0On8FjoKZ42559ccuiT/BJbSLLZg/4tjArp9YLCxW+tUd4+FsjbPyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L082FRQF; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1712835053; c=relaxed/simple;
+	bh=4uxuOFC2LQMADBNRGOlEQBqFMMT+ww4A8mDJbPx4eGk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=BYfPA+RpCzuIR2bvkq7tvUWIzc/l5d11f8AvyLdEeFo9rqMx8xDhmSKHntKFerMumiUtO6svOtUtU7+tcdihcD4+KDmUQFQm6BswA3P5ZhL93jQnD9TysO25fHZkrrqZz0BMqq3b2TPepKoXSKFVLGHVgTMdZTvIinlzqNY1B5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=I6ZlEQ2J; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L082FRQF"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-56e346224bdso5874724a12.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 11 Apr 2024 04:27:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712834838; x=1713439638; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JPgHHwHJQUjcN9+ZETRpKSXHrtMV9qPUP/hzLNBulq4=;
-        b=L082FRQFnAl2gmqT3iHTAD04J85CNWw2zd7i9oITMl+sox/OdsvJ54jy4Y0iGLMgM5
-         xQpmhGqv8XkoCsxEQPb6xTVUcqurpTfB8QGs4EjObDWSnRL3xaTkevjuB0SnpD2R+wtq
-         Bfo6ef7cKOHy73MchxRrN+Cgg9rzH/rawAGMvL5bf5/8WTpW40ru24dWu3OWjfcQjUkX
-         wGbt+6lpdkSUkU8xfF43w7214iCTYCGLcL35FJTaj5D6OumB1ayNmNIN6bN8I3gbQ5rF
-         Hr+Z2cTfX/LxQPpR8OdpSGu4r/8IBJ2bf05J7woxcfg5TFazDyrsqhleR8XUBLcGMmOJ
-         vKQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712834838; x=1713439638;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JPgHHwHJQUjcN9+ZETRpKSXHrtMV9qPUP/hzLNBulq4=;
-        b=W1J209P9Mduxeo/lsBZDjt6jeANIt/QALixH7NntpYP6NMkU6jjTK0cE4B0AXeJwlb
-         BEg2+FYqT/UbYIrN5BkQE9aVrM2ZIl6TLfC89S0no+X4F5/ERSZF35aULJQ9IbImQ46Z
-         K6NO1YIYoOyBluTwURdfzRJpzTwQ56pARMkQjIF1/rbpCeQJzutasiNgNfige8IQm5JX
-         XlwCL+O/UVIJFbNO0hTfLziivCXI1xncG6ISk3hIJHJ1ts12k01hgNkyosfkfVRe+sVR
-         vuMnySzNivdzKJNK8y85/v0+Wj/FU2refbCBYsA71Qr4knSiUhxmAfLbK30oKrsIBS6B
-         2qBw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0XIdkX5EAtJXWW58xIbWtEcX3+tBj1pyag3Zd571L8zmzcNpwaT0YXagN4UwnotVuwcfNi17/i2b8xDzyYjKdkRLn53ncwCKafJWjdpBS
-X-Gm-Message-State: AOJu0YyQ2lDVrpr4dQkpeiqTyd2E2sCRkv5aMItNpRwgprVsL6lPZzA8
-	UDzWNUa/Xh8AH9QDEZedOQJu/uomx8xq1/z4tO15bWUgxSj01mxANBzL1JmIgNE=
-X-Google-Smtp-Source: AGHT+IFwLt+iueu2j3MLe7sPxKEVm12o1woUYsl+DRSYf62oseMX9GHG+9X4QGSFZmjrEH6UfyAexA==
-X-Received: by 2002:a50:ab18:0:b0:56d:c4eb:6328 with SMTP id s24-20020a50ab18000000b0056dc4eb6328mr3413547edc.29.1712834837783;
-        Thu, 11 Apr 2024 04:27:17 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id er15-20020a056402448f00b0056e637f188fsm592949edb.11.2024.04.11.04.27.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Apr 2024 04:27:17 -0700 (PDT)
-Date: Thu, 11 Apr 2024 14:27:13 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Tung Quang Nguyen <tung.q.nguyen@dektech.com.au>
-Cc: "Colin King (gmail)" <colin.i.king@gmail.com>,
-	Jon Maloy <jmaloy@redhat.com>, Ying Xue <ying.xue@windriver.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"tipc-discussion@lists.sourceforge.net" <tipc-discussion@lists.sourceforge.net>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] tipc: remove redundant assignment to ret, simplify
- code
-Message-ID: <a9c41116-98b6-461b-b936-37995a343a51@moroto.mountain>
-References: <20240411091704.306752-1-colin.i.king@gmail.com>
- <AS4PR05MB96479D9B6F9EC765371AA8A588052@AS4PR05MB9647.eurprd05.prod.outlook.com>
- <ce0a63fc-1985-4e25-a08b-c0045ae095f4@moroto.mountain>
- <3011ca26-08d4-4b4e-847e-d68c0751f98d@gmail.com>
- <AS4PR05MB9647FC45E89AECEDC01068C388052@AS4PR05MB9647.eurprd05.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="I6ZlEQ2J"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1712835032; x=1713439832; i=markus.elfring@web.de;
+	bh=1MsBQoKPQBvY56tmOKQbngcG97IfyuuH90Ag15As1m8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=I6ZlEQ2JvSUikaceGmWfyc1DG7vRViPOuFxRwagGeKyzODQ8D2uybYbB+4aUFcgd
+	 laELh9hB1A2CEjKNLRWm+Dg1dM6WTATFL1kTi8rNVb2/TPinmNvrk+FTP7vWFcb/r
+	 T+vbA5bAw6UaS3IZ8NTeZfiPUzCEw670ZZzOetunK48vYAiq4yOx/80btN8fjSz++
+	 Ja1QPuAWOmvvBKnatMsZAh2YOaqy0OMVcGf+KskdV7ipgPS0pAQWSbP11eRNFiXEm
+	 dUjj0rkpjle0cFyxSts/qjPmcaEdap93vSs5GVj+sVMYezARcPEJ/ou/AONjcxRBg
+	 xYZy+Rnx6ZSQ47ydYg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mc1VF-1sUDBf1l3X-00dFah; Thu, 11
+ Apr 2024 13:30:32 +0200
+Message-ID: <505b6da5-93ca-481d-ab57-c246ad9a4eaf@web.de>
+Date: Thu, 11 Apr 2024 13:30:30 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AS4PR05MB9647FC45E89AECEDC01068C388052@AS4PR05MB9647.eurprd05.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+To: Richard Fitzgerald <rf@opensource.cirrus.com>,
+ patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240411103724.54063-1-rf@opensource.cirrus.com>
+Subject: Re: [PATCH] regmap: kunit: Fix memory leaks in gen_regmap() and
+ gen_raw_regmap()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240411103724.54063-1-rf@opensource.cirrus.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:G36xJVj5LcbfRx1/yNSc7IodjkuXRLfKxjiAdK0J1wkEvyjMcA7
+ a0SCDCGKuf1a/dwgB4C0emJJ89KheufFpvauj6S9bJev4yaJZZmii5q9zpYGji4+CZKn2XM
+ it3XzoHNSbkZrUDIHwqGoR8ncYxnjLhFXIkGFPGIyoTd2fHPbaXM4R9P4kx+xreGdSof93x
+ iDGd9SlADc2eAfurdJ5RA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:M614dYlKZ94=;o/oEVF9NGqD24Cfy52KMSmY5Qd9
+ WZRy8PZlqsv7dnNRTROG+xZhf7PvxvfC9KgxF/U0/SHKv5kPjZbVBUHPoDZRFfTKQdono69kR
+ DezKnsjGYrjC0unjqQIkRWzAjTw2fWhwTh0Dzvh8WakzG8XJ1uY7S0R87dTvbhPM3+JRzYn+s
+ rGxoBkU7FHGYPaDDpDu/dpESrMRSRlSTNWYRFzSImNhujATfEiuOrjljM3pXyV6zJHDmwNgCa
+ xIVkOVQ9sXR05/NOBu3fmLNQ7D5M655jIp4bJWard6BON3HNAUOz9jct+BpLsb8sWMjPCx1uv
+ 1bnk0obzE7UJgakmBvlRbu2Ylnm4duQrXKKnuP2As9qKr1ZIR4WIj3tOoLiQxNVsOMrQvCl6j
+ K0+RNcpEfnP1IEDXwRBBnTdNLb55vdtEecy8RgGafAEK6bHuXkkKizyTMXTehfkfF6eXmg4Yv
+ 2rU6Y54r/U/Gyy3ROisyHJaaEcnp8wmMzUBZxP0RGdQpUdzPA7JSmT9LH4P4XD6J1lpoWFET8
+ wWKR5htqpp+RwBlJW3dMP5LiQAJjUxDruB4djImsmvF408uSUdBTFjlxWNYYNhmtvLKGm1qGn
+ DTvQJvsqoIHja375XJ2qYR+9V8v7A+qLvxJWjFn7G/dpolkTnKg8YbqhcuO8vQlNrPdpNa0OB
+ J+DuX7BSYjBNdir56zNHwBlo4rzfyPdnkPY7ZJJnt5v7CMp/plZJVVxyHwJxHfXoOjRb+K313
+ KdnZ5dWdaTiN5aSlARby4YclPLyfO5xcwRUH8gy2zUUKg/NSNRdVl4kjBqWOlhMuGZ9+I3GWh
+ 6rB0ACqdv9dlJ8FT6sSFLWTTEjykNA+XoeK2Er5IQTJtQ=
 
-On Thu, Apr 11, 2024 at 11:04:15AM +0000, Tung Quang Nguyen wrote:
-> >Subject: Re: [PATCH][next] tipc: remove redundant assignment to ret, simplify code
-> >
-> >On 11/04/2024 11:31, Dan Carpenter wrote:
-> >> On Thu, Apr 11, 2024 at 10:04:10AM +0000, Tung Quang Nguyen wrote:
-> >>>>
-> >>> I suggest that err variable should be completely removed. Could you
-> >>> please also do the same thing for this code ?
-> >>> "
-> >>> ...
-> >>> err = skb_handler(skb, cb, tsk);
-> >>> if (err) {
-> >>
-> >> If we write the code as:
-> >>
-> >> 	if (some_function(parameters)) {
-> >>
-> >> then at first that looks like a boolean.  People probably think the
-> >> function returns true/false.  But if we leave it as-is:
-> >>
-> >> 	err = some_function(parameters);
-> >> 	if (err) {
-> >>
-> >> Then that looks like error handling.
-> >>
-> >> So it's better and more readable to leave it as-is.
-> >>
-> >> regards,
-> >> dan carpenter
-> >
-> >I concur with Dan's comments.
-> >
-> >Colin
-> I have a different view.
-> It does not make sense to me to use stack variable 'err' just for
-> checking return code of the functions (__tipc_nl_add_sk/
-> __tipc_add_sock_diag) that we know always return true on error.
->
+=E2=80=A6
+> - kfree() the buf and *data buffers on the error paths.
+=E2=80=A6
 
-I think you are trying to mirco optimize the code at the expense
-of readability.  It is unnecessary.  The compiler is smart enough to
-generate the same code either way.  I have just tested this on my system
-and it is true.
-
-$ md5sum net/tipc/socket.o.*
-f5ebea97eeb9736c5b8097158c2b12e5  net/tipc/socket.o.without_var
-f5ebea97eeb9736c5b8097158c2b12e5  net/tipc/socket.o.with_var
-$
-
-When you're doing these tests, you need to ensure that the line numbers
-do change so I have commented out the old lines instead of deleting
-them.
-
-regards,
-dan carpenter
-
-diff --git a/net/tipc/socket.c b/net/tipc/socket.c
-index 7e4135db5816..879a8a9786b0 100644
---- a/net/tipc/socket.c
-+++ b/net/tipc/socket.c
-@@ -3560,24 +3560,21 @@ int tipc_nl_sk_walk(struct sk_buff *skb, struct netlink_callback *cb,
- {
- 	struct rhashtable_iter *iter = (void *)cb->args[4];
- 	struct tipc_sock *tsk;
--	int err;
-+//	int err;
- 
- 	rhashtable_walk_start(iter);
- 	while ((tsk = rhashtable_walk_next(iter)) != NULL) {
- 		if (IS_ERR(tsk)) {
--			err = PTR_ERR(tsk);
--			if (err == -EAGAIN) {
--				err = 0;
-+			if (PTR_ERR(tsk) == -EAGAIN)
- 				continue;
--			}
- 			break;
- 		}
- 
- 		sock_hold(&tsk->sk);
- 		rhashtable_walk_stop(iter);
- 		lock_sock(&tsk->sk);
--		err = skb_handler(skb, cb, tsk);
--		if (err) {
-+//		err = skb_handler(skb, cb, tsk);
-+		if (skb_handler(skb, cb, tsk)) {
- 			release_sock(&tsk->sk);
- 			sock_put(&tsk->sk);
- 			goto out;
+Will development interests grow for scope-based resource management?
 
 
+=E2=80=A6
++++ b/drivers/base/regmap/regmap-kunit.c
+@@ -145,9 +145,9 @@ static struct regmap *gen_regmap(struct kunit *test,
+=E2=80=A6
+-	struct regmap *ret;
++	struct regmap *ret =3D ERR_PTR(-ENOMEM);
+=E2=80=A6
+
+How do you think about to use the statement =E2=80=9Creturn ERR_PTR(-ENOME=
+M);=E2=80=9D at the end
+instead of the extra variable initialisation?
+
+
+=E2=80=A6
+@@ -172,15 +172,17 @@ static struct regmap *gen_regmap(struct kunit *test,
+
+ 	*data =3D kzalloc(sizeof(**data), GFP_KERNEL);
+ 	if (!(*data))
+-		return ERR_PTR(-ENOMEM);
++		goto out_free;
+=E2=80=A6
+
+I suggest to reconsider the label selection.
+
+Regards,
+Markus
