@@ -1,108 +1,90 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506B24653C
-	for <kernel-janitors@vger.kernel.org>; Thu, 11 Apr 2024 22:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10803B2A8;
+	Thu, 11 Apr 2024 22:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712875207; cv=none; b=nk9tPKdeoEn/8z5pJwPE75wwHpxW3dtidPVuAcV4ZTi0vYp5b0zLmjxth2bn4ARpTmPVhfwtvjmAaO1I6uYcdSQip/TrC0qPekR5iTAULkPz3JerLWOLaYlLRVWa7kXd8l4iXsi/vpQYPaVXQkqmS91ekO/TjFNvmHKWFMYh+rw=
+	t=1712876269; cv=none; b=DYjjmgrJKx3jOTz5xMV13ByO/SsWOVdyapYSDEKMoLlyiUyJ8b3VZrUyebfzeLigu7VS2xgGm4nYiXkmyX5Kx3PMLqz/UgfB3omktns7CjorVtdHkAnahWibpLZ3c+wjpFQBVt14jIfnXieeraXFjEuWTpAIbvrGImUp8a9DjvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712875207; c=relaxed/simple;
-	bh=S4TnsFcjuXgA9nuQRAvIeS3/zSNBm8/9BgUmS0MLmqs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ukHZ8uZ8jpCauihr3lylKFKnrHi6TpSB0KnoNIbr+dnBu7pc5TyLeUU8c3W3e0/M/Xen8v6Lk3Kqwa/9buJJg5OpGW0I07TcGlafR1BXS2mqF8TtSqDEBWLqpW2wYgzt2i9cHtf8N1UxR6nYRrF34oQnig0E91eBefd3K6EvY4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=HrE7Vx3V; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+	s=arc-20240116; t=1712876269; c=relaxed/simple;
+	bh=3PvQYrDxu5lunns0NauurjuD19jwN9atvmFEz3SB8N0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ln1j7wjiAHNZCP6f9E7p4Vr8JjCXGInXwnhCLnarHbZP8qGJyJkrf7CI+mi5XYOob+yMrhZwlGsGuw6sZHssuCVneJhTBywqLccTgJ9ra5PosL0VTaBZ0QQ8FLwCKPgjEKwQyVIn8oO2d5C/1LHb2GvmKEuQ3b3R2ZMbq1AsX1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iGRR/YtR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="HrE7Vx3V"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-516d6e23253so393869e87.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 11 Apr 2024 15:40:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1712875203; x=1713480003; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S4TnsFcjuXgA9nuQRAvIeS3/zSNBm8/9BgUmS0MLmqs=;
-        b=HrE7Vx3VsjO9zx09zpOJKe5SAZpjbJiQlry9KLYoRT4w8RbuXZeMwwSh/XEXQESIck
-         gKMtNsMOwu9skWe5ekfDSLBm9kAKGi6YBVIC3zq9r8w2dIOlyjPm54EOXt6ohzfsymWF
-         cDzSb8jCYm4lcNa8gKha+9ObHZf9RrEPBm+D1TdrFVFbU1vkRKRrbxomgI18JDI02dXL
-         cnJEIiUlTz6UgXyGQUrkOXv+UjTQZKKbD9r7+S62qMAbE7sw33tjxBw+CrspLAqlSGlZ
-         MxDn6xfZu/vVjV2ou24iQm57Z6ry3iRc/F8pO+WVLF7OOEwOoFiggiVktAhIxaqG3Nwf
-         ilHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712875203; x=1713480003;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S4TnsFcjuXgA9nuQRAvIeS3/zSNBm8/9BgUmS0MLmqs=;
-        b=Sh3TG+JfC493diIa3Ybc2a+8Lf7G130OHADIc8ODajQlje0CCGRv+RRXlJmE2frPTb
-         uTIUV4TRf9M+XYNPQB7mcl0JJU4ccKuFNc2tjutQMeXwcr5Pk5uf0kzrhmlO66g2Moe3
-         tmq/Zz/L9CjVlL0LHQBcwvjumiZ2HeWazRNmf1U7OAa2eDoT2gyrm122VdjO9A3Htsla
-         21lRoiTtlpf7rP2fX2cIwDFM4pe8JiOz2OhSlNIBT+rCzfHAgId8vuFxa158cdq1kzfp
-         DHKWth/r57aMBkjjW2HHR1LTWX8u5n2v9DwxEMDmB/9MXAfc1OcUloTAhEzgXNv/hLEU
-         F83g==
-X-Gm-Message-State: AOJu0YzbvNVuTvmPrFxjr0QuTluRYMy6iP2FrxTgUyjft/atAD8d1qrZ
-	R42t2wEFrgplofaqoLwqhaHx3AQx2V2C7/NGWH+Iw8nFwJFtfA3Vk3bmONrTz7o=
-X-Google-Smtp-Source: AGHT+IGY8qJhojjfCfabFUjR9vvGK5A/WLCfM1Bk52OhJKElMImmd0eUpMrnmf84M99SmcErfv1epA==
-X-Received: by 2002:ac2:57db:0:b0:513:eeaa:8f1f with SMTP id k27-20020ac257db000000b00513eeaa8f1fmr649500lfo.47.1712875203340;
-        Thu, 11 Apr 2024 15:40:03 -0700 (PDT)
-Received: from smtpclient.apple ([2001:a61:10c6:ce01:a470:5d20:8e1a:464a])
-        by smtp.gmail.com with ESMTPSA id jx24-20020a170907761800b00a46aba003eesm1144762ejc.215.2024.04.11.15.40.01
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Apr 2024 15:40:02 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iGRR/YtR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8852C072AA;
+	Thu, 11 Apr 2024 22:57:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712876269;
+	bh=3PvQYrDxu5lunns0NauurjuD19jwN9atvmFEz3SB8N0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=iGRR/YtR1dsmPrG/414PoViHG8v9hGs7N/dQSej+xwSMIDqJ1Cfu2xJDxMJY6VeEq
+	 NVA2qyRbOWg/0tkLmjM4J+6HP0tOijXs+KsHD9/J2UXiEOnQ8dx2gb4KMIRrPEm8Wu
+	 5ub1HMvsd3KwD28RblmHBfSmMygicNQGpM0UkKJLONQ5cXVqz4TbhR0yHd0DFboTxd
+	 4KH2nwZRockj2MLgKqF1LIcYtc3UM9rSb6tnDIyZCnx1gjJpdM5dSCd3gk2TIFbROI
+	 PJZwsB1PiZ9u1f15pjNcH6Pr791qMKEwmMmWDoYyGxIryztZ+/uQ002PZL7dlotePX
+	 SMLxCJuVC4EFQ==
+From: Mark Brown <broonie@kernel.org>
+To: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+ Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240411083332.304887-1-colin.i.king@gmail.com>
+References: <20240411083332.304887-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] ASoC: codecs: tas2780: remove redundant
+ assignments to variable ret
+Message-Id: <171287626663.99929.5680912373005541173.b4-ty@kernel.org>
+Date: Thu, 11 Apr 2024 23:57:46 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH] treewide: Fix common grammar mistake "the the"
-From: Thorsten Blum <thorsten.blum@toblux.com>
-In-Reply-To: <0bd7ccc2-4d8c-455b-a6c2-972ebe1fcb08@moroto.mountain>
-Date: Fri, 12 Apr 2024 00:39:51 +0200
-Cc: kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-s390@vger.kernel.org,
- speakup@linux-speakup.org,
- intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org,
- linux-wireless@vger.kernel.org,
- linux-scsi@vger.kernel.org,
- linux-afs@lists.infradead.org,
- ecryptfs@vger.kernel.org,
- netfs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org,
- linux-unionfs@vger.kernel.org,
- linux-arch@vger.kernel.org,
- io-uring@vger.kernel.org,
- cocci@inria.fr,
- linux-perf-users@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <193B959E-60A3-499A-BFF3-EA7B2D0B6C12@toblux.com>
-References: <20240411150437.496153-4-thorsten.blum@toblux.com>
- <0bd7ccc2-4d8c-455b-a6c2-972ebe1fcb08@moroto.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev
 
-On 11. Apr 2024, at 17:25, Dan Carpenter <dan.carpenter@linaro.org> =
-wrote:
->=20
-> It's tricky to know which tree a patch like this would go through.
+On Thu, 11 Apr 2024 09:33:32 +0100, Colin Ian King wrote:
+> Variable ret is being assigned a value that is never read in a couple
+> of places. The variable is being re-assigned later on. The assignments
+> are redundant and can be removed.
+> 
+> Cleans up clang scan build warning:
+> sound/soc/codecs/tas2780.c:84:2: warning: Value stored to 'ret' is
+> never read [deadcode.DeadStores]
+> 
+> [...]
 
-The patch is based on the mainline tree. Should I have sent it directly =
-to
-Linus then?
+Applied to
 
-I'm relatively new here and therefore only sent it to the corresponding =
-mailing
-lists.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: codecs: tas2780: remove redundant assignments to variable ret
+      commit: 1d165c5a1c85747bf48f37a80636a4a73e1576a1
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Thorsten=
+Mark
+
