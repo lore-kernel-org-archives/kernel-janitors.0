@@ -1,118 +1,89 @@
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0B817C6A;
-	Thu, 11 Apr 2024 20:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E142317C8D;
+	Thu, 11 Apr 2024 22:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712867046; cv=none; b=IIMQHyOHU10964xjmyecUxwErI9ZpY/eI91Ixot2UDdSFdpv7jHg7H1EVzisTVU/dYlZ40M2o8xsbgGbKodzMmeTnLiqtJ82jfN9l8HVZfFgfjUEfZnGvQilGro0G5ufYaRytnNVDDzWRvtSeKYprFsYRKYgXVoIOreu3gtWaPQ=
+	t=1712874958; cv=none; b=mQQHxakZgzIDA7paw6+AypYUNyuGIjyzTG3M1YRhyopYUZZbUUe5IfTi6GgOPQ80l0lb6zC2bqmJfMg/8LTKDYGydOUmcw2LuDhI5uaCL+dXzrwRj1O98W4/qQiIsY2dJepPjaO9dqj4W/r2F9w/A9PXjrcsAaRQLgBqLFYKSGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712867046; c=relaxed/simple;
-	bh=QhmZqca6i4GwVv1XAcc9IrrgLk4abiFm/4Wl1hb/8sw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R+q9P76gGpRrO7rGHoG85kD3J5l/gsvHfEkVuueG62aNA6G1C4zDdkYK28ZIkguOhiKEKe/L2kRBWoXddGR7JsHx1jNhYT+6BVMJYCmuyDQLzw+N6Ezu3T5JAWXyM4XpHlGlQ6qQFE41Np724XIXvcodmv8Wzc+ZTMPSxT9ESbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=QMCudDh1; arc=none smtp.client-ip=80.12.242.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1712874958; c=relaxed/simple;
+	bh=ZgKCfsWFqENGu2Mnw8GcJWs4r368JeG6kTQENU1jAkw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=m8fk8gcAOEUY8xjn8ps/Et0xIIZrukR6PxawXaKaBvcMvjiPS0SEpsK58TT9m94B17HZ4QMq10J1i+fFuGQ/hRUhZKzVN8Ci4nZBV4vz4+XcV5HO3dK4pWbykMdQICvtw4IKZuowQiTbVIYZVGt2UqcX4T41eIXZ2oQWIItBEVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GOKeKENm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="QMCudDh1"
-Received: from [192.168.1.18] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id v0xXr4JUAqkPUv0xYrdLi7; Thu, 11 Apr 2024 22:23:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1712867034;
-	bh=v4sYyES8feRyP/YNHQ4HOBPVocESBHJ4p6aCiQtSavI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=QMCudDh14uA+N4VCUkUhGD3njd4hP+Nm+dZR+AHIvomm17cl8lhe+OEOieTe2tfCd
-	 CSwaIP3rEU56ONRmKGTfz4ao9J8mzI9LnAVCKVmuUmS//1uy7UrVyFnucM+4esuv/T
-	 oo+W9WibJxCGBDkR1ETwHvYgNw2WqclnTcAwFFkQCDIl+7Og0xYMtfR6Ce6O1eg8Xj
-	 TprE9TDFAvWBbHv9DdeSW7gw0cL9SbIVgyxiFM+NCmvp8psAM0yRbsFF/z/qBtmvhS
-	 tk8PC6grRGcBt957JhfI8k8joswKv/XfbhH8qO5/V5krr5vlKn6DDKJ1S1Ygk95Ha3
-	 gYl5m7R2w2/OA==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 11 Apr 2024 22:23:54 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <da50e56a-cb59-4815-800d-81742e5294df@wanadoo.fr>
-Date: Thu, 11 Apr 2024 22:23:45 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GOKeKENm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DD48C072AA;
+	Thu, 11 Apr 2024 22:35:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712874957;
+	bh=ZgKCfsWFqENGu2Mnw8GcJWs4r368JeG6kTQENU1jAkw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=GOKeKENm2iBE7FcHqURXogLvsi1VM/SOP+bnihaC34q1pf5cC0YxmAU3RB69q2IU7
+	 qRlB7GrGAhUthAcVE9Nb+kl2dD07dQreOwOlCWoM+EYYLtsT2X4qctULVfmYqEwa8i
+	 xBr9kt68BlyRlTaq8ueOR48JFobItbNt1zjQ7EKX7GxLn2cf5Hm/t+Z3FTgR5zaUH+
+	 p2dlk0GbzsCfoRVzOb5qPo8ISM5hSua+WNUC2KMfwSkYx7M3VcvHF/PXVjOHp75ohb
+	 ZXdVJ3aCvU4Y4NoFXN6tqIATZo0SncP7FXrA4HZs1SbEOVTKkduTIjYocK21umR2H3
+	 pbaVp7pVlDdqw==
+From: Mark Brown <broonie@kernel.org>
+To: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+ Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+In-Reply-To: <20240411075803.53657-1-lukas.bulwahn@redhat.com>
+References: <20240411075803.53657-1-lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in TEXAS INSTRUMENTS
+ AUDIO (ASoC/HDA) DRIVERS
+Message-Id: <171287495520.96963.7535991617111488759.b4-ty@kernel.org>
+Date: Thu, 11 Apr 2024 23:35:55 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] treewide: Fix common grammar mistake "the the"
-To: Thorsten Blum <thorsten.blum@toblux.com>, robin.murphy@arm.com
-Cc: cocci@inria.fr, dri-devel@lists.freedesktop.org,
- ecryptfs@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, io-uring@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-afs@lists.infradead.org,
- linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
- linux-wireless@vger.kernel.org, netfs@lists.linux.dev,
- speakup@linux-speakup.org, Randy Dunlap <rdunlap@infradead.org>,
- Tyler Hicks <code@tyhicks.com>
-References: <f2d1bb68-7ab7-4bbf-a1b1-88334ba52bab@arm.com>
- <20240411171145.535123-3-thorsten.blum@toblux.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240411171145.535123-3-thorsten.blum@toblux.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev
 
-Le 11/04/2024 à 19:11, Thorsten Blum a écrit :
-> Use `find . -type f -exec sed -i 's/\<the the\>/the/g' {} +` to find all
-> occurrences of "the the" and replace them with a single "the".
+On Thu, 11 Apr 2024 09:58:03 +0200, Lukas Bulwahn wrote:
+> Commit 8167bd1c8a45 ("ASoC: dt-bindings: ti,pcm1681: Convert to dtschema")
+> converts ti,pcm1681.txt to ti,pcm1681.yaml, but misses to adjust the file
+> entry in TEXAS INSTRUMENTS AUDIO (ASoC/HDA) DRIVERS.
 > 
-> In arch/arm/include/asm/unwind.h replace "the the" with "to the".
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
 > 
-> Changes only comments and documentation - no code changes.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-> Reviewed-by: Tyler Hicks <code@tyhicks.com>
+> [...]
 
-...
+Applied to
 
-> --- a/drivers/scsi/isci/host.h
-> +++ b/drivers/scsi/isci/host.h
-> @@ -244,7 +244,7 @@ enum sci_controller_states {
->   	SCIC_INITIALIZED,
->   
->   	/**
-> -	 * This state indicates the the controller is in the process of becoming
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-maybe: that the?
+Thanks!
 
-> +	 * This state indicates the controller is in the process of becoming
->   	 * ready (i.e. starting).  In this state no new IO operations are permitted.
->   	 * This state is entered from the INITIALIZED state.
->   	 */
+[1/1] MAINTAINERS: adjust file entry in TEXAS INSTRUMENTS AUDIO (ASoC/HDA) DRIVERS
+      commit: 82116e539ffb7ce0c317c208d53d2126cdcee687
 
-...
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-> index 3aa16e27f509..503244e8470a 100644
-> --- a/io_uring/kbuf.c
-> +++ b/io_uring/kbuf.c
-> @@ -731,7 +731,7 @@ struct io_buffer_list *io_pbuf_get_bl(struct io_ring_ctx *ctx,
->   	 * going away, if someone is trying to be sneaky. Look it up under rcu
->   	 * so we know it's not going away, and attempt to grab a reference to
->   	 * it. If the ref is already zero, then fail the mapping. If successful,
-> -	 * the caller will call io_put_bl() to drop the the reference at at the
-> +	 * the caller will call io_put_bl() to drop the reference at at the
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Not strictly related to your patch, but "at at".
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
->   	 * end. This may then safely free the buffer_list (and drop the pages)
->   	 * at that point, vm_insert_pages() would've already grabbed the
->   	 * necessary vma references.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-...
-
-CJ
+Thanks,
+Mark
 
