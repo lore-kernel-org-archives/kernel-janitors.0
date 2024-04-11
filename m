@@ -1,79 +1,112 @@
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5271BF6CC;
-	Thu, 11 Apr 2024 15:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F623BBC3;
+	Thu, 11 Apr 2024 16:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712849872; cv=none; b=mjjDqrDpYXNffbR9K/hmYohjcpjYafnqAEdBeCOnVTmO7v03soVaWtxtXA7eXY9eYtFD9xDv71kf36lVuofp0m6Tfc0TRDem/GFiHIEiJYW+IYkvs2YqL448Los7kai76d9036i3eFVkzrkJm03E0wOQq5zqGc4ifx7Dhv4JSHk=
+	t=1712852892; cv=none; b=VFFnMLv9kXj2c+ETnPFC55D8whmUxH27GlZzcj8XPZCiZGH5hpNndaPN5Vz1HuhmHxNwJ4jUFvkAEOiALl/8A0Q/fyhNLyXED7p3GBBcRbJK0V2z5NVb9Dj6WkbDeT19ogsMK/LVKdQ+isVqfxcZnpNnvDjTb1j0MNeO03Uv9Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712849872; c=relaxed/simple;
-	bh=WE1dyOcRCkdDKHVQSE8grhwnH0jVKprFA2u7hDTWTaw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VLu35FTtkolSraV1i8RltDV5hoSRbmBL7w3KUce111GrBzSmfzBXtEBl1d4kLJx0d7cnT4tXGu3Q3LRVLZPQVWQ67+AO0OlC+xzxaVc9sG1JxLATF59r97aWz+oxpK5gd0qkbSAJQ3IssufWTmvDAugY3WyCNhetNL1jjJcKNxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=xaU2NKBL; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+	s=arc-20240116; t=1712852892; c=relaxed/simple;
+	bh=3XlIAOs87uqlOBPMpqubX7mfWhYqIMI28TNCOjbin5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KCqpeyeyzXoI4fB1ObGEyh/S50RciSnqs/5en1qo+UCTqp+SGwu/c46UXb8wR0enBI2AEkixnJ2Sk1tqkjQiPKp6mqNezQX8CZw5Cn+h6hk386BCWZkZpV3JsAbPHYFxJF1Hbd2SzmYWD0ma/zEELFCpVN1a4nIJx+JI76bV09Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DdZoJw2r; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="xaU2NKBL"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=WE1dyOcRCkdDKHVQSE8grhwnH0jVKprFA2u7hDTWTaw=;
-	t=1712849869; x=1714059469; b=xaU2NKBLgr7Yn2tBHn2ek+3yEF9AP7G0ybp9rH/bKy0MrDs
-	EakNHnrWExF3wu5+mAsO/bYs+RlbF/ypk3VKmFlsyDGTccEuCmu5mq9b3zXV5P6Rupkl9hO5aQoeV
-	AS2hYnG07ZFPQGesyfbZPKg13eQbyk+3XEj0iFBJqK/xt4DwkAWiTQa/PshMGcBTbKDVUyyqrsvCV
-	0bzqmEXkxPlzdq6cRG7OCU3ogUg2p6kA3KDnndD1P/X2oLebFI0M8027Tfmn9kR804FHBFRFE9U7N
-	Z2ptAqRr9jcIRRli1XQxtl7jx7vyHLDBVb+LTWNNiLlzJmMotq02CucNtbtfwdAA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1ruwUh-00000002nXW-0s48;
-	Thu, 11 Apr 2024 17:37:43 +0200
-Message-ID: <d2a0cf345c7e049ffd76acd315e6b377d94a344c.camel@sipsolutions.net>
-Subject: Re: [PATCH] treewide: Fix common grammar mistake "the the"
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Thorsten Blum <thorsten.blum@toblux.com>, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-s390@vger.kernel.org, speakup@linux-speakup.org, 
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org, linux-wireless@vger.kernel.org, 
- linux-scsi@vger.kernel.org, linux-afs@lists.infradead.org, 
- ecryptfs@vger.kernel.org, netfs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org,  linux-unionfs@vger.kernel.org,
- linux-arch@vger.kernel.org,  io-uring@vger.kernel.org, cocci@inria.fr,
- linux-perf-users@vger.kernel.org
-Date: Thu, 11 Apr 2024 17:37:41 +0200
-In-Reply-To: <20240411150437.496153-4-thorsten.blum@toblux.com>
-References: <20240411150437.496153-4-thorsten.blum@toblux.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DdZoJw2r"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1712852890; x=1744388890;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3XlIAOs87uqlOBPMpqubX7mfWhYqIMI28TNCOjbin5U=;
+  b=DdZoJw2r/RtjVpxa7ykTqtcgj79Aoj4DRiBjCo+3gTNxv6jr4QmtoqH5
+   G/P+eCmdgozQftm8H7rH6CEMB+ltfxVH5cXBKY9d/P0Oadhe5VZPqnaHh
+   AasKz1iXCZ4kYuf9Cyq61qgT+4UuDiJ3cg3aBOvJrkTTArOXsVHDoEgJF
+   k0HdI1X8ZHVjCWrg/Ipl7rV+SWGlS2FfjKe6IoUu6YqfGu784M6Fqhw0K
+   WCwchtAiEp+/hIeWY3wf81YFQh2fUESb08/gJtpOhW63Gpdc3QSqiScvh
+   Vxc52ZhmRr64HgBCglF9Et4d4tjM1spuACFcVpiKLdzyxV61BIvdkM7fa
+   g==;
+X-CSE-ConnectionGUID: 0jMTWNdAS2aFaNOLUT54iw==
+X-CSE-MsgGUID: C5tGTc4JTjmMoJI+VZ//xw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11041"; a="18837131"
+X-IronPort-AV: E=Sophos;i="6.07,193,1708416000"; 
+   d="scan'208";a="18837131"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2024 09:27:42 -0700
+X-CSE-ConnectionGUID: eO0p8wtaQSW5ISEQjzvlNQ==
+X-CSE-MsgGUID: 0V9qqLyfQMOCzSrfOBR6XQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,193,1708416000"; 
+   d="scan'208";a="25422038"
+Received: from ntasneem-mobl.amr.corp.intel.com (HELO aschofie-mobl2) ([10.212.182.183])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2024 09:27:41 -0700
+Date: Thu, 11 Apr 2024 09:27:39 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Ben Cheatham <Benjamin.Cheatham@amd.com>,
+	Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
+	linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: repair file entry in COMPUTE EXPRESS LINK
+Message-ID: <ZhgPe5mDt2ocXovz@aschofie-mobl2>
+References: <20240411062443.47372-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240411062443.47372-1-lukas.bulwahn@redhat.com>
 
-On Thu, 2024-04-11 at 17:04 +0200, Thorsten Blum wrote:
-> Use `find . -type f -exec sed -i 's/\<the the\>/the/g' {} +` to find all
-> occurrences of "the the" and replace them with a single "the".
+On Thu, Apr 11, 2024 at 08:24:43AM +0200, Lukas Bulwahn wrote:
+> Commit 12fb28ea6b1c ("EINJ: Add CXL error type support") adds the header
+> file include/linux/einj-cxl.h, but then adds a file entry with cxl-einj.h
+> (note the swapping of words) to the COMPUTE EXPRESS LINK (CXL) section.
+> 
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
+> 
+> Repair the file entry in COMPUTE EXPRESS LINK (CXL).
 
-I estimated that this misses at least ~50 instances split across lines:
+How about stating the impact, something like:
 
-$ git grep -ih -A1 -e 'the$'|grep -vi 'the$'|grep -E -- '^[^a-zA-Z0-9]*the =
-'|wc -l
-51
+get_maintainer.pl can only return commit_signer history for file
+include/linux/einj-cxl.h because the entry in MAINTAINERS is wrong.
+Correct the entry so that the full MAINTAINER list is returned.
 
-And a bunch that have more than one space:
+It is interesting how you found it and I'm not suggesting deleting
+that.
 
-$ git grep -E '\<the\s\s+the\>'|wc -l
-20
+Thanks,
+Alison
 
-So not sure you should claim "all" ;-)
 
-johannes
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index edf6176a5530..03204db05027 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5415,7 +5415,7 @@ M:	Dan Williams <dan.j.williams@intel.com>
+>  L:	linux-cxl@vger.kernel.org
+>  S:	Maintained
+>  F:	drivers/cxl/
+> -F:	include/linux/cxl-einj.h
+> +F:	include/linux/einj-cxl.h
+>  F:	include/linux/cxl-event.h
+>  F:	include/uapi/linux/cxl_mem.h
+>  F:	tools/testing/cxl/
+> -- 
+> 2.44.0
+> 
+> 
