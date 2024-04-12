@@ -1,124 +1,89 @@
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538385B209;
-	Fri, 12 Apr 2024 13:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E8E85278;
+	Fri, 12 Apr 2024 15:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712927022; cv=none; b=I+8uop+HZ7gEETDG3Rv147qoGUXF1hwxbPt4uV55OwdVGFmatkHKg7Q0tvJpv0f59kYGZ7tGhDWnuaAvrc3Y1iykf8hHJeBXUJfXLpjB8Dus2vvifxO5Jwzi+TkaR+nnJm6Er2HRn9SkuK87Uppoip47gjyDJabXnXvOM5qeBJ4=
+	t=1712936583; cv=none; b=PGBmBmGB0FnE5cf2L+GrwTcxWv+lBSFI53t141kqi6NTzNyH//XHxNfXHBHgfdonpwRkMa8tkn9PnnxR9/QcVLE7YNVbwZajtfKIkrsQei48in/6Idq5SOFe3uG71qjfOB/Wyqgpqj4/HDkZDq0Rvy5HhWn8zqQyETsywhx1YDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712927022; c=relaxed/simple;
-	bh=0YhlaO/sZ/lNFpDfyQm508LIh6BokOglMf/3nuV3KFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QX+xMAVpO/NfFsAak1NLSqwmx5KA3LpNct2CVkD4c1esgtHWlmmfqCqkk5oPklEy3dy/3wPUmomzn168UsWvA9RuV57sMjwzXf9zMRlnUEtVGJGD4rs/Yhsz9XPqajqxaecitjfqe7bLb/vOdW0PZZ7B2gri8x4tacX3aaVpQYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=Ge9ufb63; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+	s=arc-20240116; t=1712936583; c=relaxed/simple;
+	bh=3FuAGNTlMzl0LTaHUSudmgttv4WTSlpHC791d8lPyY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YBx+So6qlMBxzjbmbIH5kvYJIeht4ZbXenxt0WpMuBHGdqpsvxmwkpKChFeew1ukKHMU6+EW1O8Jj/QUf4V7qPMv3LdEHXFvSEBQFKCRznlTQYeb8P0eiaPv8L34zCArSzdKT5Piq8oIzzsGwow4hQGsw9Wd51N7WUruf+p+xNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UxbilgA5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="Ge9ufb63"
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43C8iia5010918;
-	Fri, 12 Apr 2024 08:02:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	PODMain02222019; bh=HtpTjQV+kePvQ/cWjDO7/zh0v/lMKFoQUpCxIgN6XBg=; b=
-	Ge9ufb63T+FLn4Pru+/xqqxb5nkjIdp3H3el4FDOATIo/7XJ3NyOoTWmdh7TXApJ
-	jMkx3BE76gq/V/6CZfz8OKy7baicZfLmEfdT8Sga+98GmjRE5BmnxcTthZli1Ll4
-	l3kaTme3JhRGXbRZfdiGPeNo5JpDhvCntstm7qVhTncO/HScvs6zulHRFxw+PgKh
-	rnLeapAWZ01oDRWYR1GDlMnwe4lTzy5LSVWnvckQ0WWG/4FCqkIaB8G6bVr0jR8K
-	jwXGuEcgHmCjs+jxKEKVU/y0KgcMruESTgW9ZVZZu7yJ17ZESx2GUfgnVVnSC8xl
-	S8or50whM3m2yvMrEz1iDg==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3xf1q6071d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Apr 2024 08:02:21 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 12 Apr
- 2024 14:02:20 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Fri, 12 Apr 2024 14:02:20 +0100
-Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 1E4D8820270;
-	Fri, 12 Apr 2024 13:02:20 +0000 (UTC)
-Message-ID: <b66339af-1e07-4509-9fd8-12a927618172@opensource.cirrus.com>
-Date: Fri, 12 Apr 2024 14:02:20 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UxbilgA5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8675DC2BBFC;
+	Fri, 12 Apr 2024 15:43:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712936583;
+	bh=3FuAGNTlMzl0LTaHUSudmgttv4WTSlpHC791d8lPyY0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UxbilgA5x95+vEmMGikb4EOm5bFpgeGcXoyUVlCYzZDhgdwJLEAs9fAt3/tDQsdIH
+	 f52CBl3LK7VwUs29mw/davGhuF2msMZOIfeJ7MNwiL7/5K7yIWwJxBEff3AVRu971f
+	 yyPEZcdnA06fKQpgQdZco0Qmbutl6XFmGMNrIjtaG0HsGQ9vhcZ0ap5tiwp8U6Y0Mi
+	 hxth2hv8k8/4/yI9y8xSQ4THKLc1ipl7L2AlZemKaPS62TVBz78Ys+2DK5Yht81uzH
+	 ml2Sz1wEVw67lfL6F2i5nn/JkrhaQnGgFyuKFvFUMFl1CCiFtI+6SW0B4bYlPS0qjC
+	 DCl7kREwssSug==
+Date: Fri, 12 Apr 2024 17:42:59 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>, 
+	linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in ARM/LPC32XX SOC SUPPORT
+Message-ID: <j7qsoawx2d7elep35szjurw4owaccgs4itvtcfyxicyz5liruc@jn5bc3gx2453>
+References: <20240411050257.42943-1-lukas.bulwahn@redhat.com>
+ <bfjccttmurk7aajps2m7gcyl532rg7rnlutfhbvupsphxjk2pa@fx5onnkr7625>
+ <CAOc5a3P-LX0dkhLFxF-ggOxqkLqM0DJcXqccMJJqtF9U5rbEsQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ASoC: soc-card: soc-card-test: Fix some error handling
- in init()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <450dd21a-b24b-48ba-9aa4-c02e4617852f@moroto.mountain>
-Content-Language: en-GB
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-In-Reply-To: <450dd21a-b24b-48ba-9aa4-c02e4617852f@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: KH0pgunqufVkBEQtkVJJMIKs3hQ3mZVe
-X-Proofpoint-GUID: KH0pgunqufVkBEQtkVJJMIKs3hQ3mZVe
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOc5a3P-LX0dkhLFxF-ggOxqkLqM0DJcXqccMJJqtF9U5rbEsQ@mail.gmail.com>
 
-On 12/04/2024 13:07, Dan Carpenter wrote:
-> There are two issues here:
-> 1) The get_device() needs a matching put_device() on error paths.
-> 2) The "if (!ret)" was supposed to be "if (ret)".
+> On Fri, Apr 12, 2024 at 11:34 AM Andi Shyti <andi.shyti@kernel.org> wrote:
+> > On Thu, Apr 11, 2024 at 07:02:57AM +0200, Lukas Bulwahn wrote:
+> > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> >
+> > before taking this I just want to make sure the e-mail in the SoB
+> > is correct as checkpatch is warning me about 'lbulwahn' and
+> > 'lukas.bulwahn'.
+> >
+> > It's not about the warning, just double checking the e-mail
+> > address as often to mix my addresses up and looks also your first
+> > patch with the redhat e-mail.
+> >
 > 
-> I re-arranged the code a bit to do the allocation before the
-> get_device().
+> Thanks for the hint. And yes, that is a stupid setup mistake from my
+> side or at least from the email server's side.
 > 
-> Fixes: ef7784e41db7 ("ASoC: soc-card: Add KUnit test case for snd_soc_card_get_kcontrol")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> v2: add a put_device()
-> v3: move the kunit_kzalloc() to avoid a second put_device().  Btw,
->      kunit_kzalloc() is cleaned up automatically.
+> I joined Red Hat at the beginning of April and hence, it was my first
+> email with the redhat address.
 > 
->   sound/soc/soc-card-test.c | 12 +++++++-----
->   1 file changed, 7 insertions(+), 5 deletions(-)
+> lbulwahn is my 'official email address', lukas.bulwahn is an email
+> alias to the same mailbox. I actually want to have the commits in the
+> kernel carry 'lukas.bulwahn@redhat.com' and not 'lbulwahn'.
 > 
-> diff --git a/sound/soc/soc-card-test.c b/sound/soc/soc-card-test.c
-> index 075c52fe82e5..e4a4b101d743 100644
-> --- a/sound/soc/soc-card-test.c
-> +++ b/sound/soc/soc-card-test.c
-> @@ -134,22 +134,24 @@ static int soc_card_test_case_init(struct kunit *test)
->   
->   	test->priv = priv;
->   
-> +	priv->card = kunit_kzalloc(test, sizeof(*priv->card), GFP_KERNEL);
-> +	if (!priv->card)
-> +		return -ENOMEM;
-> +
->   	priv->card_dev = kunit_device_register(test, "sound-soc-card-test");
->   	priv->card_dev = get_device(priv->card_dev);
->   	if (!priv->card_dev)
->   		return -ENODEV;
->   
-> -	priv->card = kunit_kzalloc(test, sizeof(*priv->card), GFP_KERNEL);
-> -	if (!priv->card)
-> -		return -ENOMEM;
-> -
->   	priv->card->name = "soc-card-test";
->   	priv->card->dev = priv->card_dev;
->   	priv->card->owner = THIS_MODULE;
->   
->   	ret = snd_soc_register_card(priv->card);
-> -	if (!ret)
-> +	if (ret) {
-> +		put_device(priv->card_dev);
->   		return ret;
-> +	}
->   
->   	return 0;
->   }
-Reviewed-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> I have sent them out with 'From: Lukas Bulwahn
+> <lukas.bulwahn@redhat.com>' in my patch file; so, checkpatch did not
+> complain locally.
+> 
+> The gmail server however turns this into:
+> 
+> From: Lukas Bulwahn <lbulwahn@redhat.com>
+> X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> I will see what I can do and send out a v2.
+
+no need... I will keep things as they are; as long as I know
+these are the same mails I'm fine.
+
+Thanks,
+Andi
