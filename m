@@ -1,104 +1,71 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D24E53E14;
-	Fri, 12 Apr 2024 08:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8A7481B3;
+	Fri, 12 Apr 2024 09:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712912043; cv=none; b=rq+OHWrKHGBeCWtCCOU5P9IeVj/S2kO8o9DiET3gag2TtP2fkyuqLaU/ygrWmtSf++PTXPTqCCz2KGL+NjaaJ9AfNMNYYVWHyCSx7FJmPI0PXd5l/3kSGuRSppT6THO2g5ErpxiSoZUQ7Q0Ub5VAfybnLbnlQYsTwU138UcuhNY=
+	t=1712914469; cv=none; b=KJtkTgWgN64bPgQyr0YEWfp8DMuayJ/hs3C4qbxbB28/5xB7cYKddJf5WCjTX9C6YKFnvF9eoB9tYbbxC40400zTGk7jBjDnZJ6QFpPC7iApsw/z8m3f5Hxyd6VDDxiwXTsK+lJW+1iSUmqek/LYksC06HHeqAMlKNc9AEVHihg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712912043; c=relaxed/simple;
-	bh=3yjq8O1fvmVYBmCXtR/a8+GHrCslKZnP5yvQRyN6AnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TXZuyKyFV4YL1cNItJ02RSuf9dQ2PpoRXaVGSd7YEyvPYTfgrWxHmjMarabgma3i/J3gK1RBFwy2Wvvyl8FT8aefrzjoWLLmSIlUPS1TZBWlMzFc18W7O/XhGbtn6jMjGO1z2hra0tLY2p9xmIvD/hEMtIBQXAhH87LXCIPCjsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=3q2TCxFt; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1712914469; c=relaxed/simple;
+	bh=ekjoYkD7lQOJstANwtqzElMeEHZGNIQrCsQlyIAUsy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JyvGg10axQ53b88dSCdYNtC0mJlxVhmse8OWrk8n1pHaeIZZl1WLyPc8hADCmrcDgI5Yz5F/4Ak6QvFBpIti1RWb6mmJ88v67FM4LiOa9SuzZu7FlK688we57ihhwmTgZf0cH9A5D4v+O80wO5JbOON3FLf4kYktV0BYdV4SpME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qDEH2jr6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="3q2TCxFt"
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 43C8RL2t009700;
-	Fri, 12 Apr 2024 10:53:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=WjFgtosidiIyq2Zmcjtu8dtER2lY9hSTMSWSMhZ3Xas=; b=3q
-	2TCxFt8NbxX6zobRUXOLJRewuDgTt1BN3myoUYyhH9sDhS0f5EqUIsnxCc4vyRK1
-	e5RnWZgq0T6Qxn4IHCk9Q+MqpzuHzkcy35F+6OhcfwpcL9GBACuzt3fXeVlruiya
-	tuNV3dtKagQfB4J5uFWJmBEMxZmVMHmK3SFRcwpNoZmEsMVsboWDPnwQLIR5eCNZ
-	LQJzJ6n0C9qg+jqZPOV6icC49jOXQbtm0Irqq8+tUGQ7Kn01yuReBSGF7KmJOuZY
-	vSdcaNjGoHN4VcAZ1atP4hoJMmPn8NKIk2totehDNSByEPo4zuhwCgl/Vquf2eUx
-	gUvLjF+/e0bMCUhSRSTQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3xaw9d86vt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Apr 2024 10:53:34 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 70A6D40044;
-	Fri, 12 Apr 2024 10:53:30 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 80195210729;
-	Fri, 12 Apr 2024 10:53:07 +0200 (CEST)
-Received: from [10.48.86.69] (10.48.86.69) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Fri, 12 Apr
- 2024 10:53:07 +0200
-Message-ID: <abf316f7-f0c6-4eb3-aee2-fc5413d7c18b@foss.st.com>
-Date: Fri, 12 Apr 2024 10:52:49 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qDEH2jr6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7409C113CC;
+	Fri, 12 Apr 2024 09:34:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712914469;
+	bh=ekjoYkD7lQOJstANwtqzElMeEHZGNIQrCsQlyIAUsy8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qDEH2jr6VM1PESJtflhoFEjlVl5FA3ewXtR7gPa2/hS+xlWStBBk3fHdG7xJDPtxB
+	 h1WeLImKMlpSpJeFks0NPII8P5dV6eRFxKhFScJBxv0Qxt5198uYe/yiO/zal16N55
+	 inOeHaNjVLmOpTQlu9oLS7bUVkSNWmx6S2MOvhO5QAiroakjZ+0nsLHxJC3MB/T2oq
+	 yGc2SM8FeTpZRQsB0pl0wCHbTj9rqnm+L2BNAc07CdKzwnpAB2hzwv5zi0txuCpK1m
+	 MAXgJAnNWLIcPyUATZzv2IuXJC6Ancfwo1+yKjbANA0yxKP3P0E3NRQyOfd7MKajtx
+	 WXOZ7CQuI4inQ==
+Date: Fri, 12 Apr 2024 11:34:24 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>, 
+	linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in ARM/LPC32XX SOC SUPPORT
+Message-ID: <bfjccttmurk7aajps2m7gcyl532rg7rnlutfhbvupsphxjk2pa@fx5onnkr7625>
+References: <20240411050257.42943-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bus: stm32_firewall: fix off by one in
- stm32_firewall_get_firewall()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <17dce071-21ef-49f5-be45-f93bbf3642ec@moroto.mountain>
-Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <17dce071-21ef-49f5-be45-f93bbf3642ec@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-12_05,2024-04-09_01,2023-05-22_02
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240411050257.42943-1-lukas.bulwahn@redhat.com>
 
-Hi Dan,
+Hi Lukas,
 
-On 4/12/24 10:25, Dan Carpenter wrote:
-> The "nb_firewall" variable is the number of elements in the firewall[]
-> array, which is allocated in stm32_firewall_populate_bus().  So change
-> this > comparison to >= to prevent an out of bound access.
+On Thu, Apr 11, 2024 at 07:02:57AM +0200, Lukas Bulwahn wrote:
+> Commit 20c9819ccd9e ("dt-bindings: i2c: nxp,pnx-i2c: Convert to dtschema")
+> converts i2c-pnx.txt to nxp,pnx-i2c.yaml, but misses to adjust the file
+> entry in ARM/LPC32XX SOC SUPPORT.
 > 
-> Fixes: 5c9668cfc6d7 ("firewall: introduce stm32_firewall framework")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/bus/stm32_firewall.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
 > 
-> diff --git a/drivers/bus/stm32_firewall.c b/drivers/bus/stm32_firewall.c
-> index decb79449047..2fc9761dadec 100644
-> --- a/drivers/bus/stm32_firewall.c
-> +++ b/drivers/bus/stm32_firewall.c
-> @@ -53,7 +53,7 @@ int stm32_firewall_get_firewall(struct device_node *np, struct stm32_firewall *f
->   			return err;
->   		}
->   
-> -		if (j > nb_firewall) {
-> +		if (j >= nb_firewall) {
->   			pr_err("Too many firewall controllers");
->   			of_node_put(provider);
->   			return -EINVAL;
-Thank you.
+> Adjust the file entry in ARM/LPC32XX SOC SUPPORT after this conversion.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Reviewed-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
+before taking this I just want to make sure the e-mail in the SoB
+is correct as checkpatch is warning me about 'lbulwahn' and
+'lukas.bulwahn'.
+
+It's not about the warning, just double checking the e-mail
+address as often to mix my addresses up and looks also your first
+patch with the redhat e-mail.
+
+Thanks,
+Andi
