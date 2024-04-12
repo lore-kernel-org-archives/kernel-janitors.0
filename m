@@ -1,108 +1,102 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B2C481AA;
-	Fri, 12 Apr 2024 06:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344D12F52
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Apr 2024 07:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712904086; cv=none; b=FcEPPII0PjuyIcdaDdrNQgRGh0jHTZJ64CCC+El55BAD71bsFllRqYtMsxuiTRwmIH+6zZnvlB5y5AUl5wH3s1mCNb9YHQCKfE/+3nmyyCL49/KnMMSsVyiBZc7CZmYQuwVd73jZ75sEp6m8ftE0iY0OVcTg9b17N1jRVNm4YZ0=
+	t=1712905896; cv=none; b=quvfQnE5uTsPYUE3JI+VMlk01q6z2V+F1jDeZiroIAXcwpnPFZtsq21tJzeFCgzTWUgAeVKJGJRYkTsjIIxRZ9zYhzx32lMKy7Cm1eh+KNkX0VTq1JTA9AwaBP567tWw0s+2K0ijcdkq9L5WRVMmCMPE2U6JmN4IB4NDrppX/Rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712904086; c=relaxed/simple;
-	bh=nnftp3y20mnefQs/zA7rIGucHoCz77k4ThTY/2DnxXQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WqZ4u2bp1etrmGwN4LvsEPc5P8AJHqF7YOdeX3PUsI0f7yW5353sMQfumFije+dnpo+1RbsV2oEBzu3BzyCh7zMWMGVGqHnsEXXP8w5YLHiRn6isxA0DilztxWv482/N9jaaplh0LdXlp6iYChmbPWluqpwmjkDKYt0JX8kP8AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iSIG88PM; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1712905896; c=relaxed/simple;
+	bh=V9ySPHFHra331Yt/URq8+X+I4ysMrTRGrhBFu5T7R4g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=mJyaS/8FD/K2zzABKCXcqwAdVS9K2UkiUa3fAovC2/XRGkU1v8DrzfDPd26OJajANaqXEi4TwMxkNNOhCa5cJD6gEVldGpcgZIcrB4Fi6oqOav8K3wPUAkjelWMJdL6eX22+RdnjQF7wclxMrQ9Vmd0+ZC3UBDKQPcGuSAyyKn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NtfY6v6C; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iSIG88PM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1712904084; x=1744440084;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=nnftp3y20mnefQs/zA7rIGucHoCz77k4ThTY/2DnxXQ=;
-  b=iSIG88PM9b2YgdRQ4szSPTsiEdHfMD5rvawOOi/wLLg8jMk/6RvNaAhh
-   oT8MCDqfxNcRKZIaxcmdnyc5dZFarta68w/0F5iqI/qjN12Q0xqiv/d3W
-   MzpkPrK3w3Kcc1AHe6HVTykvzAnyMk67pILZRjDVT2hnvtRmoe/Cw2Fd+
-   /uyq9R6DLLbY1+VPi8oWLD8fXYhTK1fOKpK5axS7YL1HSBv2I+Lw0Wccf
-   fe1j1FKLmWJwforIh40KJUeHO8Jk2MX9Ubj2Z2DTWjc8yz7+KWokasxYk
-   5t7Q9ylV9NvBLIftWfB78uD0Vkjhd9A4DcbrwRJ02bVl04XgItkgpfDlz
-   A==;
-X-CSE-ConnectionGUID: Y0HDLEZfStSZpp9NVKZxxw==
-X-CSE-MsgGUID: /QL/ha6+TkaFPIYYcUqo0A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11041"; a="19059686"
-X-IronPort-AV: E=Sophos;i="6.07,195,1708416000"; 
-   d="scan'208";a="19059686"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2024 23:41:22 -0700
-X-CSE-ConnectionGUID: gXMdnuYmRRqCKEW6OOQMYA==
-X-CSE-MsgGUID: D1rZkMzDT4yyHA2nqy/ldg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,195,1708416000"; 
-   d="scan'208";a="21056020"
-Received: from gjantea-mobl.ger.corp.intel.com (HELO localhost) ([10.252.60.121])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2024 23:41:15 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Thorsten Blum <thorsten.blum@toblux.com>, Dan Carpenter
- <dan.carpenter@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
- speakup@linux-speakup.org, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-wireless@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-afs@lists.infradead.org, ecryptfs@vger.kernel.org,
- netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-unionfs@vger.kernel.org, linux-arch@vger.kernel.org,
- io-uring@vger.kernel.org, cocci@inria.fr, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] treewide: Fix common grammar mistake "the the"
-In-Reply-To: <193B959E-60A3-499A-BFF3-EA7B2D0B6C12@toblux.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240411150437.496153-4-thorsten.blum@toblux.com>
- <0bd7ccc2-4d8c-455b-a6c2-972ebe1fcb08@moroto.mountain>
- <193B959E-60A3-499A-BFF3-EA7B2D0B6C12@toblux.com>
-Date: Fri, 12 Apr 2024 09:41:10 +0300
-Message-ID: <87y19j3wxl.fsf@intel.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NtfY6v6C"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1712905893;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V9ySPHFHra331Yt/URq8+X+I4ysMrTRGrhBFu5T7R4g=;
+	b=NtfY6v6CSr779YYmjUMVkz1h47Bds4bL2MEksRAlvZhncEtGhPOvKOrkhvxC92qvuzAykD
+	B3PyFLQYlOqjldkxpeD6rre2NfhIxW6/00T6+DvwQ6SNmDv6J/dqxxOcEXwHJKJg+wfjYS
+	PhW78tutTntU89SdWv9ynkdl5ew1iwA=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-682-Hjo-KHqmMiWJFnLnsVYtTA-1; Fri, 12 Apr 2024 03:11:31 -0400
+X-MC-Unique: Hjo-KHqmMiWJFnLnsVYtTA-1
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2a5066ddd4cso590698a91.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Apr 2024 00:11:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712905891; x=1713510691;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V9ySPHFHra331Yt/URq8+X+I4ysMrTRGrhBFu5T7R4g=;
+        b=fHsnW9UlMQMZ4gdFYl11WtWIuRseEAQUF8I1Am0Pw6gnPZIHCY5vMMYQCRPTKTVHdv
+         yVBOwKvZvPyw5tBDz7aqbrkuzwGxef3wKKYibxV9k76gnPcbTEU0pANXJznD0KipkwBK
+         ckkqEAxVbce/gZ8dxz9fqPH6OfO7ZszlJMsyFdK79Gic6WaGhF3w3zalTXczaGzUz61o
+         FNB8buJeRGdDKxnRMGDxoTEB5fdnnurd9kqaQeWQMNGSyf297HoN/wvv5oVlnfKVPdOM
+         zhX+6zobm1sEgFSnnpxW442FB5faguP9A5Q6xEErtdYmVR9QeuSP20Qa4Ft8MVM4OPiu
+         8uTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBIlGQjHzendAmtGd+yH9hmkY0XxYsdHMkct4GZ/6BDmMk5FUoDOXDR4iw6YIhBT4o7eG8sWiY872z5esjwbRbpCDHgMkitqKd5zfUK+Mv
+X-Gm-Message-State: AOJu0YwDEmNfsA06mvlvNGs3vDcB0Xk2Ie6b/Wb1xtsoXKXVVVd7lJrf
+	TdtfSObubMMWMl1LBWkxayRQ+Yn7d/KoKloZBi4091d6wKPFia/W3wpuPCVrQcVR1Xvd3+gK4S7
+	L2Gi5CU97R8hUu6S8JIUgh6yTiTRrbOx1bWKHGFsT5+F5Nzryc24IALWzeo4gTW8ZOnnKHxH5Ly
+	O1LCec7wByOQLD/Unr551Ae/R6kVHLvKOfGv0w5PmL
+X-Received: by 2002:a17:90b:19d0:b0:2a2:2b53:892e with SMTP id nm16-20020a17090b19d000b002a22b53892emr1531771pjb.32.1712905890786;
+        Fri, 12 Apr 2024 00:11:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFhB8Fe6/Taq6ZeJsX79391aj4U5l0Wu4b9n+gMtxFfFf7avWd+jelzxqFd1vgXfo/L+4G6ZPyVKQslNCiOcoU=
+X-Received: by 2002:a17:90b:19d0:b0:2a2:2b53:892e with SMTP id
+ nm16-20020a17090b19d000b002a22b53892emr1531760pjb.32.1712905890476; Fri, 12
+ Apr 2024 00:11:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240411050257.42943-1-lukas.bulwahn@redhat.com>
+ <whpjtk2nmbft4dqndhealztzxh5du4uemqmmizguwvhmfa2htm@qcklwqf7j4d4> <xn4dyzwe4quhrpiqrvdikx4f46eucw25kmwfevcyt3s2mvggjl@enzbluravbt6>
+In-Reply-To: <xn4dyzwe4quhrpiqrvdikx4f46eucw25kmwfevcyt3s2mvggjl@enzbluravbt6>
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+Date: Fri, 12 Apr 2024 09:11:19 +0200
+Message-ID: <CAOc5a3Mi1_oAOrA9t-2=0TVbs9Xr_HPBr_O+L7FgyAiRdf8sPg@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in ARM/LPC32XX SOC SUPPORT
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	Lukas Bulwahn <lbulwahn@redhat.com>, Animesh Agarwal <animeshagarwal28@gmail.com>, 
+	linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 12 Apr 2024, Thorsten Blum <thorsten.blum@toblux.com> wrote:
-> On 11. Apr 2024, at 17:25, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->> 
->> It's tricky to know which tree a patch like this would go through.
+On Fri, Apr 12, 2024 at 8:45=E2=80=AFAM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 >
-> The patch is based on the mainline tree. Should I have sent it directly to
-> Linus then?
 >
-> I'm relatively new here and therefore only sent it to the corresponding mailing
-> lists.
+> > > -F: Documentation/devicetree/bindings/i2c/i2c-pnx.txt
+> > > +F: Documentation/devicetree/bindings/i2c/nxp,pnx-i2c.yaml
+> >
+> > Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+> >
+> > I guess this should go through the arm folks?
+>
+> Could be argued, but I guess it is easier if you take it (because the
+> conversion patch also went through your tree). Just 2 cents...
+>
 
-It's not just about mailing lists, it's also about changes flowing in to
-mainline via a plethora of subsystem and driver repos and branches. See
-MAINTAINERS. Or this old LWN page [1]. The development happens in those
-branches, and if you make treewide changes like this, it's not clear who
-should take it, and you also risk unnecessary conflicts if those places
-get modified in the individual branches. So it might just be easiest to
-split this up to smaller patches sent to the appropriate lists.
+... and I am creating my patches against some recent linux-next tag.
+So, the commit could really only be in your tree and the arm folks
+would not apply it because the referred commit is not in their tree
+yet (until the next merge window closes and they reopen a new branch).
+So, as Wolfram suggested: please take my patch in your tree on top of
+the referred commit.
 
-Anyway, all that said,
+Lukas
 
-Acked-by: Jani Nikula <jani.nikula@intel.com>
-
-on the i915 changes here.
-
-
-BR,
-Jani.
-
-
-[1] https://lwn.net/Articles/737094/
-
--- 
-Jani Nikula, Intel
