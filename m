@@ -1,35 +1,48 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from msa.smtpout.orange.fr (smtp-80.smtpout.orange.fr [80.12.242.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBABE1865C;
-	Sat, 13 Apr 2024 02:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44A93FBA0;
+	Sat, 13 Apr 2024 13:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712974231; cv=none; b=jR3GujpO6DZlGpBWXwp3Q1P8tQkfs8qyW8HZG6veBOgJ3rmfvQe/iZsZNjO/8eTTg0nAcbI4N2hHLNPnAskDFpXvQ3v+sc9Ik8xOl/5jUCNGVM+z82ICy6IUKtaY7Jj+wIz6V90rrQrSHxEYgK0HYWFwIGjiByXaMjv/ncYw0xs=
+	t=1713015979; cv=none; b=pAVHqT8DvGJFdTRFbUiTEQ884jEyM/jH46iBH2ZejNgVAQVENGMxxEYCJCBSlo8L8jxFEKegYt+iG+p3yozsEBF40eG4MY0DVJ4IYCWnKdmT++381KXyXVocCKOo2pAgeFLvFyN4kKWOeReaFV7yVc7pxuNkWs25/7hP8f9Uw7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712974231; c=relaxed/simple;
-	bh=aTzNc/ys01SKda28a/V7y+hIHa06tWV7oiAN7DcmzbA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=bY0U+n6ZfBdYrZI4HJXhPpbN2XxMfhnCDsqEQ8CbYG+xeQdJTH2W2TCh0AJBsaiOWCx8wgI/I0nXRwBF87NAmns8ZWEYSLC9NTrfF1Ex4PmkEIbVAYIU/lidke1rSm2WS8gtOKhLj6KycXIiGHjnv3ogSh8IzR1v025W5SkM/MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RV/9BEkf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713015979; c=relaxed/simple;
+	bh=OnfiB35imdR5sMCWt1WqIeixbXaY6poAeu8FP6exU1U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jz5n42Wg0B9vJpfAVRGnPgOxEIoU9e9WVKL2cFR0HRgh0pF56xxbGp7Ands9mMv1opTbqWqCsEqiXao5VSWy6dCMxz58nwk3fPLXsR20u0zv9vivJ/JZ75RiGln66xo/4nozfOJ1WXpV4iEndJsOLgDHq84VltbBhIXByOKhqvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=GMbop/sH; arc=none smtp.client-ip=80.12.242.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RV/9BEkf"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 97ED7C4AF0A;
-	Sat, 13 Apr 2024 02:10:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712974231;
-	bh=aTzNc/ys01SKda28a/V7y+hIHa06tWV7oiAN7DcmzbA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=RV/9BEkfuMIpO/UgLlVAQYBOpSqq1aw7yueapmq6BdFgMRxsDwx4NwdtFleGcutsk
-	 JQghqwzRTqvGIWENJsvRPnJtpJEPJ9LMlVccjm9seS4tKbWFdkga6pGOIDwZZGPc/a
-	 DKzWbhw5d+rSh/yAEKpfUz4QD2YJCRJhPdYxw2m3lE1bk2ggk1uEVUVxoT9aGEQ/2q
-	 eQAdLMYXow3JDBy33Xf3adJsdfazYdRsUB6SFtPXk7xJ928q3v+epDfRzT/ctOodf3
-	 MnYvpXuwmxkpXC1cLED8Wg8gbSTff0bS/mZp7bweaX0pTYFbKIxLIQwz7+Okw7ogqr
-	 pOqSn4iSh1Ang==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8DC25DF7859;
-	Sat, 13 Apr 2024 02:10:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="GMbop/sH"
+Received: from fedora.home ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id vdhtrWcZRReGpvdhtrWXe3; Sat, 13 Apr 2024 15:46:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1713015974;
+	bh=BzFLQk0tc7nJvHnWglQM8Su6e2Fg7qKNxgdXMkLp/P0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=GMbop/sHZEveuJhJRAEk17EMiI2jmrjk4CNgRAxP9QZNm1yXLqzck4InmZvXp0JWy
+	 SjrG2/6/uNj/tuIqDwnngzKO1spPwNNtqZW0mWwVFfMWT+x04rIaPWD+0DyvfKKEAP
+	 aykpC77FC4okV0InidXb+Tjzc/b72kEctRBhlxFnWLtlJpvdCJgDFVoXvCX6QptqJ/
+	 eN/3UXvaXUSQf4dl6oZN9p/v7+YueowTZPbY9cq+8sh6ikBbU80GQLaqB67vP7fbc0
+	 TnQ1qJVv8thydkwIvu8Fo3nz5bAvTuxdxoavFrScjqxXh+jPGBlJiHSPlgMF/GUDM0
+	 a/BeDnOkI+PDg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 13 Apr 2024 15:46:14 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: gemini: Remove an unused field in struct clk_gemini_pci
+Date: Sat, 13 Apr 2024 15:46:09 +0200
+Message-ID: <556770c7701868f9f1c0569674903bee3eff30cb.1713015940.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -37,43 +50,40 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] tipc: remove redundant assignment to ret, simplify code
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171297423157.31124.15059984816555021633.git-patchwork-notify@kernel.org>
-Date: Sat, 13 Apr 2024 02:10:31 +0000
-References: <20240411091704.306752-1-colin.i.king@gmail.com>
-In-Reply-To: <20240411091704.306752-1-colin.i.king@gmail.com>
-To: Colin King (gmail) <colin.i.king@gmail.com>
-Cc: jmaloy@redhat.com, ying.xue@windriver.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+In "struct clk_gemini_pci", the 'rate' field is unused.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Remove it.
 
-On Thu, 11 Apr 2024 10:17:04 +0100 you wrote:
-> Variable err is being assigned a zero value and it is never read
-> afterwards in either the break path or continue path, the assignment
-> is redundant and can be removed. With it removed, the if statement
-> can also be simplified.
-> 
-> Cleans up clang scan warning:
-> net/tipc/socket.c:3570:5: warning: Value stored to 'err' is never
-> read [deadcode.DeadStores]
-> 
-> [...]
+Found with cppcheck, unusedStructMember.
 
-Here is the summary with links:
-  - [next] tipc: remove redundant assignment to ret, simplify code
-    https://git.kernel.org/netdev/net-next/c/195b7fc53c6f
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
 
-You are awesome, thank you!
+Apparently, it has never been used. It is not a left-over from a
+refactoring.
+---
+ drivers/clk/clk-gemini.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/clk/clk-gemini.c b/drivers/clk/clk-gemini.c
+index ba0ff01bf4dc..856b008e07c6 100644
+--- a/drivers/clk/clk-gemini.c
++++ b/drivers/clk/clk-gemini.c
+@@ -67,12 +67,10 @@ struct gemini_gate_data {
+  * struct clk_gemini_pci - Gemini PCI clock
+  * @hw: corresponding clock hardware entry
+  * @map: regmap to access the registers
+- * @rate: current rate
+  */
+ struct clk_gemini_pci {
+ 	struct clk_hw hw;
+ 	struct regmap *map;
+-	unsigned long rate;
+ };
+ 
+ /**
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.44.0
 
