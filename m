@@ -1,49 +1,49 @@
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20F81AAC4;
-	Sat, 13 Apr 2024 14:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECF91CD0C;
+	Sat, 13 Apr 2024 16:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713017058; cv=none; b=UrfXhqbEUFjUJ2R2fsVZQ/gjR3G+abPvk2nBTf8a67qqzFTl4Vqx+M3MnBcxYKIovQXyE588fH82ogrr1LxEQdvGZIqgg8ViajZm6kuhxxMSgV1i/v4er3bw947Uhb8qQHiLPgyAhvALOrLz5/2HXCJDDiHTc4imI/lH20Til1k=
+	t=1713025258; cv=none; b=nz0VVdnP6XHSshq61Tj7K7Iq9QcrnoXxWmpyd0l4SYkgIUg5+E5YgjzyHnX7uu+7lsQjUcf1z9HNiS7ped4YhpMdNmBujLlJwlBa4j1URtMVHXQ5SMC9X3uvxSlntSuQBP/+v9iXsZrDCpUPU3aKPBGHqaM1aKNG7BMEys/1UUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713017058; c=relaxed/simple;
-	bh=5hJR7Ru+XomF3n9mKOm3xJbma6kZ/IDKC9EDikaVd44=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LClhMqAxkpBCp0Rw26AXM2HpQc90hWdOzo/MRlwKTZU35Iw0StdhaW2hkumLebCPHwsyhSf0Om7zp6VTDQMyzpxjpyHN3SnaHuMsmRICU5g5KZHve5Vl5+fmKGCEKBgcySiJ02Dedg9VUNoo6W57r/KnXUU+loS5TIxViK/bGk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Px4/kXuk; arc=none smtp.client-ip=80.12.242.25
+	s=arc-20240116; t=1713025258; c=relaxed/simple;
+	bh=417b/9d43ngFcbNVrFBgM4rmbkWOa98VnzaLc1bwHFg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SBcuHzgsoWV4jJYtx3pPX1e3HKymjWU67XbreaS62kxiewU17HFx5gC/ilaeWYN9qta8C5Ieeds38SaGlmcFX1lGlZZqil0VVkpHN4RqwcHcikU5xUpdZOHB2cccghYdLBXqtZzV7K7BOpH0qhxgeEWatn/asBO5E2AvEx8gcxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JbdgBJqb; arc=none smtp.client-ip=80.12.242.26
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Px4/kXuk"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JbdgBJqb"
 Received: from fedora.home ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id vdzDrkNrdPlGBvdzDrdQ2P; Sat, 13 Apr 2024 16:04:08 +0200
+	id vg6RrrzjkO6CFvg6RrPV6e; Sat, 13 Apr 2024 18:19:44 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1713017048;
-	bh=3oXb08cbb/bJvN3axG/lDrCM0AQ1pV4xL9cabkqd+XY=;
+	s=t20230301; t=1713025184;
+	bh=rLizR9RhE9tMh50jc6ZMXVKjpOwIq/OMFzbiVdRM4Js=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Px4/kXukbIVdawoPCnGeFXq5hFouWEazH/Vd0PDBOLsLIGmjy0ZTgwNyGJ29vNcA/
-	 Rm6qttTSqG7UrcPAgeYfg/rKzlqBlh4/bup6XJN8ZvnhP/zVhMwaToC3ZeqIZ+L5oF
-	 BovCUBT3Vnk/DyQ+VIcM/QDJbwTLH1p6PR/oSVoj3bvt6M4jPO/WwOH85p6UyFkJT1
-	 GTatqb8PuBBNgyrCckZ5rJGtDFBeYtAA/bi5Z6DrtkaAs3hN+m2y0Rm3Xk5YRCB6iq
-	 gGZ+i34W4xymcT/GQDUWWxRSbg4DfCbrqn7/adTBUNzHTtO+4mtFSFWOJwUjBKkvqx
-	 XbyaLAO4XPxlg==
+	b=JbdgBJqbvKLNmKlYXZ3QW99hVCWnpC6aB3SbBqhK3IQckB7U3u2pHv7Plng+RHEYD
+	 TRtdq5LVqNbjddwKgebQPb63sDFxjGFJ4bAxd0SzGtqwMo2SN/sJ45N0SSeUkLUpx2
+	 OP/msNKXsviqq9mKEkXCVShGFTa6Mg+JOzlhUBmPTiVaeAj/CVJi9yNj2UpHIxKUsj
+	 UIdeDqjYbP/kFu/R/6kQntdkg93fRdClcDkc9x9JdWUY5CT0Qtdf7d0d1YBLWnxv5e
+	 HM3YlFkWnTmyw5QFo6NGuOk+PI8NsL3sq3p4MVBXOXgnj4fEhMc9ho2tt41oTF5AVU
+	 PWcEY0eysMo6w==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 13 Apr 2024 16:04:08 +0200
+X-ME-Date: Sat, 13 Apr 2024 18:19:44 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Bjorn Andersson <andersson@kernel.org>,
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: qcom: rpm: Remove an unused field in struct rpm_cc
-Date: Sat, 13 Apr 2024 16:04:04 +0200
-Message-ID: <9f92330c717e6f2dab27b1307565ffb108c304a7.1713017032.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] clk: renesas: r8a7740: Remove an unused field in struct div4_clk
+Date: Sat, 13 Apr 2024 18:19:40 +0200
+Message-ID: <658e6b1b23d5b66646bb830361b8c55ccf797771.1713025170.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -53,9 +53,9 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In "struct rpm_cc", the 'rpm' field is unused.
+In "struct div4_clk", the 'flags' field is unused.
 
-Remove it.
+Remove it and update the 'div4_clks' array accordingly.
 
 Found with cppcheck, unusedStructMember.
 
@@ -64,23 +64,53 @@ Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Compile tested only.
 
 Apparently, it has never been used. It is not a left-over from a
-refactoring.
----
- drivers/clk/qcom/clk-rpm.c | 1 -
- 1 file changed, 1 deletion(-)
+refactoring. I don't if it is supposed to be used somewhere in the driver.
 
-diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
-index 745026ef4d9c..9da034f8f2ff 100644
---- a/drivers/clk/qcom/clk-rpm.c
-+++ b/drivers/clk/qcom/clk-rpm.c
-@@ -98,7 +98,6 @@ struct clk_rpm {
+Should it help the review, renesas/clk-r8a73a4.c has a very similar
+construction and also a struct div4_clk without this 'flags' field.
+---
+ drivers/clk/renesas/clk-r8a7740.c | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/clk/renesas/clk-r8a7740.c b/drivers/clk/renesas/clk-r8a7740.c
+index 3ee3f57e4e9a..325394b6e55e 100644
+--- a/drivers/clk/renesas/clk-r8a7740.c
++++ b/drivers/clk/renesas/clk-r8a7740.c
+@@ -32,22 +32,21 @@ struct div4_clk {
+ 	const char *name;
+ 	unsigned int reg;
+ 	unsigned int shift;
+-	int flags;
  };
  
- struct rpm_cc {
--	struct qcom_rpm *rpm;
- 	struct clk_rpm **clks;
- 	size_t num_clks;
- 	u32 xo_buffer_value;
+ static struct div4_clk div4_clks[] = {
+-	{ "i", CPG_FRQCRA, 20, CLK_ENABLE_ON_INIT },
+-	{ "zg", CPG_FRQCRA, 16, CLK_ENABLE_ON_INIT },
+-	{ "b", CPG_FRQCRA,  8, CLK_ENABLE_ON_INIT },
+-	{ "m1", CPG_FRQCRA,  4, CLK_ENABLE_ON_INIT },
+-	{ "hp", CPG_FRQCRB,  4, 0 },
+-	{ "hpp", CPG_FRQCRC, 20, 0 },
+-	{ "usbp", CPG_FRQCRC, 16, 0 },
+-	{ "s", CPG_FRQCRC, 12, 0 },
+-	{ "zb", CPG_FRQCRC,  8, 0 },
+-	{ "m3", CPG_FRQCRC,  4, 0 },
+-	{ "cp", CPG_FRQCRC,  0, 0 },
+-	{ NULL, 0, 0, 0 },
++	{ "i", CPG_FRQCRA, 20 },
++	{ "zg", CPG_FRQCRA, 16 },
++	{ "b", CPG_FRQCRA,  8 },
++	{ "m1", CPG_FRQCRA,  4 },
++	{ "hp", CPG_FRQCRB,  4 },
++	{ "hpp", CPG_FRQCRC, 20 },
++	{ "usbp", CPG_FRQCRC, 16 },
++	{ "s", CPG_FRQCRC, 12 },
++	{ "zb", CPG_FRQCRC,  8 },
++	{ "m3", CPG_FRQCRC,  4 },
++	{ "cp", CPG_FRQCRC,  0 },
++	{ NULL, 0, 0 },
+ };
+ 
+ static const struct clk_div_table div4_div_table[] = {
 -- 
 2.44.0
 
