@@ -1,46 +1,48 @@
-Received: from msa.smtpout.orange.fr (smtp-80.smtpout.orange.fr [80.12.242.80])
+Received: from msa.smtpout.orange.fr (out-69.smtpout.orange.fr [193.252.22.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B6423775;
-	Sun, 14 Apr 2024 10:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F532C848;
+	Sun, 14 Apr 2024 10:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713089434; cv=none; b=KPNr+vhKxihIdSLEQpzeR3AH/tsxnZ724XPehWScfUcZFdCCeTH0WcZm/bQNcsg5+7lTNvFAZu94AOsWU+JT1sDvc693jd1fODn/o5WA+rC57rl6kZEdPgFoWJfZtOApeBdS1sMLN7N5ZmkDYf6UIrXI0Hu/NLfc0n+j4idUM3M=
+	t=1713089535; cv=none; b=r+423BN1qS8ouhxvCvbxeaX83GTMWkabUh4snLW33+O8VxJCj4wqnwE9xCgz3NGG5ncaJG2aO+ijutQTIfssWAypJqvwbCcWcGiDtkrxms5jJ1Be68g/xbSkLwg2jfmBQBYvujuNFGgWIzOnepEAA7Gvv7+8m6yTdOESJbIGG3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713089434; c=relaxed/simple;
-	bh=8shkptN6BCt6VyCJqH6fotDYGKiXVOHoVHr094r3IlE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=olTyBQVmxOAwQ0KL/IeBH/dPQB7LTu2VpeiK9REZ+gYqfA0WE/hlZedF4uvO51ygHhYWGYtEAgig2AvFOLvf1yBmHTAJHIVYDa14MKbVJvKhpeaHuwB2S7Y/qqrhMIcplU9YjtRhBlqKxlCIckfs3hYV0ErrsFiZLYoXqPmMX0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=iFO39+bA; arc=none smtp.client-ip=80.12.242.80
+	s=arc-20240116; t=1713089535; c=relaxed/simple;
+	bh=lkq1lrzB9HxKNl03Hpci59UA0sfQ1vTlkLoKDGZGgc4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qBP7LbsC8vT45iLRAZp9pn/eD9el8c+i4SDGhie22casHLOBoeU367DA7yjedBtzkIUnClaX2dEbdyhkUmOnazCmIzbqCUmOM4GjFEsLSrvFDOeZ8s++Vzbb05CdVLdPTQ2sYt69Dv29x66fYPn1VT8OIE2UbmcD3svcjdXPKBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=afEGcyno; arc=none smtp.client-ip=193.252.22.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="iFO39+bA"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="afEGcyno"
 Received: from fedora.home ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id vwoZrbF702kxovwoZrX7vy; Sun, 14 Apr 2024 12:10:24 +0200
+	id vwhervJ5FwSN5vwherU9fE; Sun, 14 Apr 2024 12:03:16 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1713089424;
-	bh=JwLrWQ+V5JuU/PLiTy+zRyUXX9xaPMJzcCI5wAz3CRc=;
+	s=t20230301; t=1713088996;
+	bh=vJwVeMXmnUN8m7oxlGG0PhRilSD1pyJWjsrWEGLWca8=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=iFO39+bArTVOqkraSMJLyXXB+phwVyx3RNPYv1yXT5h1lwM0Rc15fS8FMz5/OMW39
-	 3Ok5W0wmvBIZZqPoFwp1sACM+YdnTz0CGFFh2usHN3d4ITRtX1yfbtgHrRYORRCkG6
-	 QVnu9g3IzRys4TpTtTB9137n85Uc3PiGLBwFmDTLEVO67PuDMxWBgOwac8Nt6cSrRa
-	 mK4qHdcdR7puoMq79wpYbFbXYWuWnDUpC2uOo+NKvC2Rt9uBCxUHTM+jLmkrVAPDlm
-	 Azwgj3eS27YaeCGbQNfRK8OUIbSzJr3KaE0Pdqk6s3kJEiHnNL3Cr0EiUm6ThEB2UG
-	 tzWIvie1aAbwg==
+	b=afEGcynoPMftMo0taM5DLQbyO5wId531Rxl3MdAcfn+qajL3mgP5c7PqKHAkz78s7
+	 ZQza+LIx3ob2WuE3j1pDK0ihGlBQ0hyKZvX2Q7nlO/phSkIR5+xPwbQZuqYHWG1E2v
+	 Q7BP0coNiSyuCCKuKixVvlKXtiHzaBX7bXO6zRKCWMzi9PlJEOM8kRqwNN98NS4xpN
+	 C0yiTasdHVeG3nkA18uBdDn3EiPgMcrfkQvcw3qnag0fkdnoL+ewoUsh2PWeRpw69/
+	 +Kw/7X6US5SNfVxdbV4soQuoGae1EGhYf1SJuNeJDprFewKdYDglyUk/EhBQT4aXZ2
+	 jcpClt8KvG7Ng==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 14 Apr 2024 12:10:24 +0200
+X-ME-Date: Sun, 14 Apr 2024 12:03:16 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: akpm@linux-foundation.org,
-	Rodolfo Giometti <giometti@enneenne.com>
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH RESEND] pps: Remove usage of the deprecated ida_simple_xx() API
-Date: Sun, 14 Apr 2024 12:10:17 +0200
-Message-ID: <9f681747d446b874952a892491387d79ffe565a9.1713089394.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-input@vger.kernel.org
+Subject: [PATCH RESEND] HID: sony: Remove usage of the deprecated ida_simple_xx() API
+Date: Sun, 14 Apr 2024 12:03:11 +0200
+Message-ID: <9b7684381f9d09a7cd5840caa2a160d7764d6403.1713088684.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -49,6 +51,7 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Message-ID: <20240414100311.9unSvl-p2vec3gOebJheXxm5zyAv96AuaIuClw53LXg@z>
 
 ida_alloc() and ida_free() should be preferred to the deprecated
 ida_simple_get() and ida_simple_remove().
@@ -86,44 +89,36 @@ https://elixir.bootlin.com/linux/v6.7.4/A/ident/ida_simple_get
 Thanks
 CJ
 
-[1]: https://lore.kernel.org/all/5065a9fe3101dcb7ee0a79bde0ec84de03c637ec.1702230047.git.christophe.jaillet@wanadoo.fr/
-[2]: https://lore.kernel.org/all/9bfe4d6b-d289-40bc-b9fa-bd34c08e6e03@wanadoo.fr/
+[1]: https://lore.kernel.org/all/9c092dc6db15984d98732510bb052bb00683489b.1705005258.git.christophe.jaillet@wanadoo.fr/https://lore.kernel.org/all/19b538bc05c11747a3dd9fa204fde91942063d52.1698831460.git.christophe.jaillet@wanadoo.fr/
+[2]: https://lore.kernel.org/all/a1af20a9-951f-4a5d-8a60-04ded8d6f9a0@wanadoo.fr/
 [3]: https://lore.kernel.org/all/ZaqruGVz734zjxrZ@casper.infradead.org/
 ---
- drivers/pps/clients/pps_parport.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/hid/hid-sony.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pps/clients/pps_parport.c b/drivers/pps/clients/pps_parport.c
-index 42f93d4c6ee3..af972cdc04b5 100644
---- a/drivers/pps/clients/pps_parport.c
-+++ b/drivers/pps/clients/pps_parport.c
-@@ -148,7 +148,7 @@ static void parport_attach(struct parport *port)
- 		return;
+diff --git a/drivers/hid/hid-sony.c b/drivers/hid/hid-sony.c
+index ebc0aa4e4345..55c0ad61d524 100644
+--- a/drivers/hid/hid-sony.c
++++ b/drivers/hid/hid-sony.c
+@@ -1844,8 +1844,7 @@ static int sony_set_device_id(struct sony_sc *sc)
+ 	 * All others are set to -1.
+ 	 */
+ 	if (sc->quirks & SIXAXIS_CONTROLLER) {
+-		ret = ida_simple_get(&sony_device_id_allocator, 0, 0,
+-					GFP_KERNEL);
++		ret = ida_alloc(&sony_device_id_allocator, GFP_KERNEL);
+ 		if (ret < 0) {
+ 			sc->device_id = -1;
+ 			return ret;
+@@ -1861,7 +1860,7 @@ static int sony_set_device_id(struct sony_sc *sc)
+ static void sony_release_device_id(struct sony_sc *sc)
+ {
+ 	if (sc->device_id >= 0) {
+-		ida_simple_remove(&sony_device_id_allocator, sc->device_id);
++		ida_free(&sony_device_id_allocator, sc->device_id);
+ 		sc->device_id = -1;
  	}
- 
--	index = ida_simple_get(&pps_client_index, 0, 0, GFP_KERNEL);
-+	index = ida_alloc(&pps_client_index, GFP_KERNEL);
- 	memset(&pps_client_cb, 0, sizeof(pps_client_cb));
- 	pps_client_cb.private = device;
- 	pps_client_cb.irq_func = parport_irq;
-@@ -188,7 +188,7 @@ static void parport_attach(struct parport *port)
- err_unregister_dev:
- 	parport_unregister_device(device->pardev);
- err_free:
--	ida_simple_remove(&pps_client_index, index);
-+	ida_free(&pps_client_index, index);
- 	kfree(device);
  }
- 
-@@ -208,7 +208,7 @@ static void parport_detach(struct parport *port)
- 	pps_unregister_source(device->pps);
- 	parport_release(pardev);
- 	parport_unregister_device(pardev);
--	ida_simple_remove(&pps_client_index, device->index);
-+	ida_free(&pps_client_index, device->index);
- 	kfree(device);
- }
- 
 -- 
 2.44.0
 
