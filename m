@@ -1,48 +1,50 @@
-Received: from msa.smtpout.orange.fr (out-69.smtpout.orange.fr [193.252.22.69])
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F532C848;
-	Sun, 14 Apr 2024 10:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCF22374C;
+	Sun, 14 Apr 2024 10:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713089535; cv=none; b=r+423BN1qS8ouhxvCvbxeaX83GTMWkabUh4snLW33+O8VxJCj4wqnwE9xCgz3NGG5ncaJG2aO+ijutQTIfssWAypJqvwbCcWcGiDtkrxms5jJ1Be68g/xbSkLwg2jfmBQBYvujuNFGgWIzOnepEAA7Gvv7+8m6yTdOESJbIGG3M=
+	t=1713089641; cv=none; b=PVnCQo6kbzvN5bbFhTc7eK3hRHHvMj4ObOMOSUwQSHJn0YKJhv625deOrlPzAKe0lF4EDLb7uUKYxoVtF8LS31b5fpz3FdeMi8hXAEPxjACrScFMROpH2a+BG/riHYoZ6fGosCUsAjy040xgh6XhbCwww1+zXhqp/12DcSs8Oto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713089535; c=relaxed/simple;
-	bh=lkq1lrzB9HxKNl03Hpci59UA0sfQ1vTlkLoKDGZGgc4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qBP7LbsC8vT45iLRAZp9pn/eD9el8c+i4SDGhie22casHLOBoeU367DA7yjedBtzkIUnClaX2dEbdyhkUmOnazCmIzbqCUmOM4GjFEsLSrvFDOeZ8s++Vzbb05CdVLdPTQ2sYt69Dv29x66fYPn1VT8OIE2UbmcD3svcjdXPKBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=afEGcyno; arc=none smtp.client-ip=193.252.22.69
+	s=arc-20240116; t=1713089641; c=relaxed/simple;
+	bh=wTUGgeFPL6oQbMhkQ07Xn7K8s7vcqSJwRTRQoc9gkOk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TJYFPkhVCnRU5KBjZC5EmQLiEEnnYIyVdOTEaZZpXM9Mg98foIa+NerzOl5wSliT8zid5c2JUrerx9NBDe/6L8mU6wLfGBacNBJ2gLvMQOgKSoWYhpiPamWuYw8RkmmoYEuJ/86glPyI/ijzJpoy0ZVeyJYq98P8kM+jbAJnvpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=oibIlkcH; arc=none smtp.client-ip=80.12.242.22
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="afEGcyno"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="oibIlkcH"
 Received: from fedora.home ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id vwhervJ5FwSN5vwherU9fE; Sun, 14 Apr 2024 12:03:16 +0200
+	id vwiyrPARNVYR4vwiyrSi3R; Sun, 14 Apr 2024 12:04:38 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1713088996;
-	bh=vJwVeMXmnUN8m7oxlGG0PhRilSD1pyJWjsrWEGLWca8=;
+	s=t20230301; t=1713089078;
+	bh=Wu3eqlNZ33DIowcdMPCmbQIFZiK8nMriLzGayBQf0uE=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=afEGcynoPMftMo0taM5DLQbyO5wId531Rxl3MdAcfn+qajL3mgP5c7PqKHAkz78s7
-	 ZQza+LIx3ob2WuE3j1pDK0ihGlBQ0hyKZvX2Q7nlO/phSkIR5+xPwbQZuqYHWG1E2v
-	 Q7BP0coNiSyuCCKuKixVvlKXtiHzaBX7bXO6zRKCWMzi9PlJEOM8kRqwNN98NS4xpN
-	 C0yiTasdHVeG3nkA18uBdDn3EiPgMcrfkQvcw3qnag0fkdnoL+ewoUsh2PWeRpw69/
-	 +Kw/7X6US5SNfVxdbV4soQuoGae1EGhYf1SJuNeJDprFewKdYDglyUk/EhBQT4aXZ2
-	 jcpClt8KvG7Ng==
+	b=oibIlkcH8xzA74tG14bNIc95dw9UMTiPq2/ZH1PEN04vNkXvakJMWi8NEYvyr8qMJ
+	 2sAG+CYsU3K8c5IDPPYvYUt2i1Sj1DFPLWueSs/HtN0ajbWqVCXQehJX3XheMAxS0y
+	 7D3HJ1rczDBOK4m8TBWsU/9CtIkehZJlaGCqgE6y+5hSGCiq35aDNXdfKiq+686Tj9
+	 b94OJw9qrzDAyNoHyy0tvWP+CwNpmEzyVp97ahEN5p5GT657VtTlSzIOfzbf6sTlHW
+	 M4O5dd0p4DHttexu8yM5AVwFdshbugyuzlJq6zzc8cUwg7pzFr6nhuhWIvGV4Ij1CF
+	 CWgLb9T6EHI1A==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 14 Apr 2024 12:03:16 +0200
+X-ME-Date: Sun, 14 Apr 2024 12:04:38 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: akpm@linux-foundation.org,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-input@vger.kernel.org
-Subject: [PATCH RESEND] HID: sony: Remove usage of the deprecated ida_simple_xx() API
-Date: Sun, 14 Apr 2024 12:03:11 +0200
-Message-ID: <9b7684381f9d09a7cd5840caa2a160d7764d6403.1713088684.git.christophe.jaillet@wanadoo.fr>
+	Simon Horman <horms@kernel.org>,
+	kvm@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	netdev@vger.kernel.org
+Subject: [PATCH v2] vhost-vdpa: Remove usage of the deprecated ida_simple_xx() API
+Date: Sun, 14 Apr 2024 12:04:26 +0200
+Message-ID: <67c2edf49788c27d5f7a49fc701520b9fcf739b5.1713088999.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -51,74 +53,49 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Message-ID: <20240414100311.9unSvl-p2vec3gOebJheXxm5zyAv96AuaIuClw53LXg@z>
 
 ida_alloc() and ida_free() should be preferred to the deprecated
 ida_simple_get() and ida_simple_remove().
 
-This is less verbose.
+Note that the upper limit of ida_simple_get() is exclusive, but the one of
+ida_alloc_max() is inclusive. So a -1 has been added when needed.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Simon Horman <horms@kernel.org>
 ---
-This patch has been sent about 3 months ago [1].
-A gentle reminder has been sent 1 month later [2].
+Changes in V2:
+   - fix a typo in the commit message
+   - Add a R-b tag
 
-Neither one got any reply.
-
-So, I'm adding Andrew Morton in To:, in order to help in the merge process.
-
-Context:
-=======
-All patches to remove the ida_simple API have been sent.
-Matthew Wilcox seems happy with the on going work. (see [3])
-
-Based on next-20240412
-$git grep ida_simple_get | wc -l
-25
-
-Based on next-20240220
-$git grep ida_simple_get | wc -l
-36
-
-https://elixir.bootlin.com/linux/v6.8-rc3/A/ident/ida_simple_get
-50
-
-https://elixir.bootlin.com/linux/v6.7.4/A/ident/ida_simple_get
-81
-
-Thanks
-CJ
-
-[1]: https://lore.kernel.org/all/9c092dc6db15984d98732510bb052bb00683489b.1705005258.git.christophe.jaillet@wanadoo.fr/https://lore.kernel.org/all/19b538bc05c11747a3dd9fa204fde91942063d52.1698831460.git.christophe.jaillet@wanadoo.fr/
-[2]: https://lore.kernel.org/all/a1af20a9-951f-4a5d-8a60-04ded8d6f9a0@wanadoo.fr/
-[3]: https://lore.kernel.org/all/ZaqruGVz734zjxrZ@casper.infradead.org/
+V1: https://lore.kernel.org/all/bd27d4066f7749997a75cf4111fbf51e11d5898d.1705350942.git.christophe.jaillet@wanadoo.fr/
 ---
- drivers/hid/hid-sony.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/vhost/vdpa.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hid/hid-sony.c b/drivers/hid/hid-sony.c
-index ebc0aa4e4345..55c0ad61d524 100644
---- a/drivers/hid/hid-sony.c
-+++ b/drivers/hid/hid-sony.c
-@@ -1844,8 +1844,7 @@ static int sony_set_device_id(struct sony_sc *sc)
- 	 * All others are set to -1.
- 	 */
- 	if (sc->quirks & SIXAXIS_CONTROLLER) {
--		ret = ida_simple_get(&sony_device_id_allocator, 0, 0,
--					GFP_KERNEL);
-+		ret = ida_alloc(&sony_device_id_allocator, GFP_KERNEL);
- 		if (ret < 0) {
- 			sc->device_id = -1;
- 			return ret;
-@@ -1861,7 +1860,7 @@ static int sony_set_device_id(struct sony_sc *sc)
- static void sony_release_device_id(struct sony_sc *sc)
- {
- 	if (sc->device_id >= 0) {
--		ida_simple_remove(&sony_device_id_allocator, sc->device_id);
-+		ida_free(&sony_device_id_allocator, sc->device_id);
- 		sc->device_id = -1;
- 	}
+diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+index ba52d128aeb7..63a53680a85c 100644
+--- a/drivers/vhost/vdpa.c
++++ b/drivers/vhost/vdpa.c
+@@ -1548,7 +1548,7 @@ static void vhost_vdpa_release_dev(struct device *device)
+ 	struct vhost_vdpa *v =
+ 	       container_of(device, struct vhost_vdpa, dev);
+ 
+-	ida_simple_remove(&vhost_vdpa_ida, v->minor);
++	ida_free(&vhost_vdpa_ida, v->minor);
+ 	kfree(v->vqs);
+ 	kfree(v);
  }
+@@ -1571,8 +1571,8 @@ static int vhost_vdpa_probe(struct vdpa_device *vdpa)
+ 	if (!v)
+ 		return -ENOMEM;
+ 
+-	minor = ida_simple_get(&vhost_vdpa_ida, 0,
+-			       VHOST_VDPA_DEV_MAX, GFP_KERNEL);
++	minor = ida_alloc_max(&vhost_vdpa_ida, VHOST_VDPA_DEV_MAX - 1,
++			      GFP_KERNEL);
+ 	if (minor < 0) {
+ 		kfree(v);
+ 		return minor;
 -- 
 2.44.0
 
