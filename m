@@ -1,141 +1,96 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF59928E11
-	for <kernel-janitors@vger.kernel.org>; Sun, 14 Apr 2024 09:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8A815E9B;
+	Sun, 14 Apr 2024 09:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713085793; cv=none; b=dQDsIgL3K8YvlbRKByoVUeHsBdLezkdUwY81gLMSrtlG59BxSq6/4a+hVr6wbf407rk8pEK0fD9E0ieMgSv1BX/U+CRMqRW1nzI5vy2QRCoeZQ8YQDMK/IHqxoUJWoguSfUNqOn4fIThcBvXxOjRAXphHrsh8EJ0YrNI5OlBSdE=
+	t=1713086589; cv=none; b=QhuyZIOSDiIUs2QTvupaNXp96pzbKpQHpY+TqFCJ8MzZwPIWNPpZnUovB2f7b9jOoupXFe6C9/xOK3raI3wgPEDdHFhtv6nLSoDpiUJq4praZRg3zVbp8YiSY33jdWdUyUNwnrUdcXOYrjsv7sMpEzM3tchviHLV1xtGYt4C/L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713085793; c=relaxed/simple;
-	bh=mx81azu7WGqDtDaPoKpPXOlm5ztzVujTkyngWrhVR+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s+yrw+Yg6mpA8hue8qlfThNj0IUwsGBRQyu7MgRL7z2F4TXDLlFw/S1hNyM6a7GI+w6lzZD1kegxeGT1x7t4VYCRU6a6PkI+hHj0byovRB3yJq5V3lHNbXGUfGbwpSSqmvBQUuG4JdzExad7MLGy8An1wAGT+eflpXUpwKj71As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vx7uI7K4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1713086589; c=relaxed/simple;
+	bh=CZbU5y5aS7bsN4EzHQELiX8tMKw5daTd36n4GBNvk8A=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Y0o/fN4nCQaCG2AfnhaA10UgHsEMSt0GxWeP+EvLcpKNeOClzAdpL6T/ZG6q6d690ThD2zH5Qy8GEs/VQyx7j/OhWzmqA1nuWSDrv2vlDny5/2eyQeRHDUsyo+F+CKfoZy3cL8NZyj+LKrcrZHVOHxbTNcgfuhlHPHWv9HQpPug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sIo/CsoA; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vx7uI7K4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713085790;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KDn9p0oKJIowoxHQ+QZq8N5Xvgpd2J6FJtOvcnaAQTg=;
-	b=Vx7uI7K4S6TFu/JWrl5OP6vn1eQcbi6w6ql8a+o0AYyaHsBcH4IFOOHouwxLuQGW/t8N9+
-	wIusonrIRoXEfT/ugS1xggQpyQvoabH2NGfQYL/fnGtpYmX7X2sLiOsxnuxxq4tohlWQRp
-	124/loK6efo7uAsZYDLo+8vr8zqrw60=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-358-YXa48Vu_MqumXHeYJZ7zAg-1; Sun, 14 Apr 2024 05:09:43 -0400
-X-MC-Unique: YXa48Vu_MqumXHeYJZ7zAg-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2d87dad1640so18034011fa.3
-        for <kernel-janitors@vger.kernel.org>; Sun, 14 Apr 2024 02:09:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713085782; x=1713690582;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KDn9p0oKJIowoxHQ+QZq8N5Xvgpd2J6FJtOvcnaAQTg=;
-        b=gu3aCmpHoNxsU5+adNuch6gJO285QuaL+mDAQNhxO/AqeiBZCGpENYKvPIAIfPGX44
-         wguKYHGVAq1QlL/GQ18TiJ0PetB9SAV6IAPpU1kcbaDGmBpIYvYJRYsOQObCsA7paFZl
-         8jfBvQCmerkWQ6e6junM5/1qEUOhhJAYIp2lRUHpr9IZVTAXGrScbODqIQJo/VLybe4I
-         YHSMB5+y+corPrbx3geF8dqECihO0Zpd9K3qriLazXh/zIuWmlfEIm2M8MyJOCjXeQRL
-         LKinNoqLgS3DTXsGvhmYJOg8tOPmEvTjaIAnTBqZabtK9w6hJHVYuDdj26oc+lV6fygL
-         JeMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfaRU8nhAlGKeix/uA/tT3EDe22yt3xqeu+FaP36m8a8N6eyR39DbDJ4teh3P3vKSz3zkgXSkK3WAUfxIBCU3eagfGRBGBITVUI1Mh4Ll7
-X-Gm-Message-State: AOJu0YzV/oqWrby+V1lYHs4PEqcCi459hGVLGZrwMwMfdbOunFitBtpx
-	nwSQhTzDWlI1Ft84uWcYTdYG0qC6CtuWeNC65Vc3aawBPEeJQ7X9Bigp5dJ4g2Vv3ldYwg7Jp2Q
-	nDodeddE14aki3qXjyEpGUYrcFcH8tbFznqPyq91LK1y0jDBAZkQ+s4fybuKn6NgQEQ==
-X-Received: by 2002:a2e:3509:0:b0:2d9:ecc1:6d56 with SMTP id z9-20020a2e3509000000b002d9ecc16d56mr4549908ljz.11.1713085782022;
-        Sun, 14 Apr 2024 02:09:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFnvXuyxDizZiI5lyVmq1CswBaXk7vrRoCt8wmpz3FQXQtnkzsP0CH3Qy864TeyyCiCUv5HDg==
-X-Received: by 2002:a2e:3509:0:b0:2d9:ecc1:6d56 with SMTP id z9-20020a2e3509000000b002d9ecc16d56mr4549901ljz.11.1713085781463;
-        Sun, 14 Apr 2024 02:09:41 -0700 (PDT)
-Received: from redhat.com ([31.187.78.68])
-        by smtp.gmail.com with ESMTPSA id u2-20020a05600c4d0200b0041668053ca9sm10311768wmp.0.2024.04.14.02.09.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Apr 2024 02:09:40 -0700 (PDT)
-Date: Sun, 14 Apr 2024 05:09:38 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, kvm@vger.kernel.org,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [PATCH] vhost-vdpa: Remove usage of the deprecated
- ida_simple_xx() API
-Message-ID: <20240414050922-mutt-send-email-mst@kernel.org>
-References: <bd27d4066f7749997a75cf4111fbf51e11d5898d.1705350942.git.christophe.jaillet@wanadoo.fr>
- <20240414043334-mutt-send-email-mst@kernel.org>
- <a7eceabf-12cb-41ff-8e2b-f3b21d789c17@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sIo/CsoA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713086579; x=1713691379; i=markus.elfring@web.de;
+	bh=s5ltjkK1gwJpndCII1TvY/cIdzI9eB2EsZ3Lgn3ig3E=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=sIo/CsoAdjQQW0jx9crXA5pN3OhvhfLJLyeJE59/lMnfMf2gWaFYmmMqCt3aaXdR
+	 c7SRfHGlSdN9SDlsxp2W0hqwmovU8CVNmKBm1+Knacpa31AxHAJR5LFl3vcdlLLh7
+	 P662qXPDnvbzxVgWq3O1Fe0XQTaU7c1fq7z7L+DHmYpxARpkFFuLhDK4XByUBTUF+
+	 RCfA6M3Sq7au+e1O3c4bfdu8Ery5ocUP/PDkpGk3nGv7DXgteQg9QlYeO5pxU07Y8
+	 G2YNkvBzy5cG5ZEzvIdjrYXyPIr+hBxwHCVGM04UK4NhBRrEfdmladuBkS4D62Z/m
+	 r598WQUQvqLAkwJbnw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MidDR-1sQqUJ45dn-00fQIp; Sun, 14
+ Apr 2024 11:16:49 +0200
+Message-ID: <22f324ce-552a-4f6a-b4e5-2d84a00010aa@web.de>
+Date: Sun, 14 Apr 2024 11:16:34 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a7eceabf-12cb-41ff-8e2b-f3b21d789c17@wanadoo.fr>
+User-Agent: Mozilla Thunderbird
+To: Li Nan <linan122@huawei.com>, linux-mtd@lists.infradead.org,
+ kernel-janitors@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Zhihao Cheng <chengzhihao1@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Hou Tao <houtao1@huawei.com>,
+ Yang Erkun <yangerkun@huawei.com>, Yu Kuai <yukuai3@huawei.com>,
+ Zhang Yi <yi.zhang@huawei.com>
+References: <20231208074629.1656356-1-linan666@huaweicloud.com>
+Subject: Re: [PATCH v2] ubi: block: fix memleak in ubiblock_create()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20231208074629.1656356-1-linan666@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:78p3dblrsqPURz0FRE4t9XDi/hn8Hkx9PEJPx94ac+U8J2gEHyd
+ ATSHvvuSo0/6ZUrt4X79V1sVdDHxzZV0Fk6+QX6uvvcat67jFNb9mOdBPiUm9ZTf5/42ipC
+ Iac82O8R4x7hKff4bxvwRukSDZSYCe5z5K42hTU7CBVN9OE5/DSMtHMxNUAmjsshKnCB8+3
+ 5jlJw7JL1UE6tfYrFbS/g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:78U8V0f2Fdo=;LGe4/JopxlNNRAM6CgWWkpkSAWk
+ 3BCmW5wTgs7oumhZCoEm4Y1cojBqUQKuJI4dMvn+e/l45aHnnkquuCwjd1De05C1dPE/XFMsX
+ XTqkYwNuGiO0XkJRKJaesoCF6tCpW6GKZfd5vChJi1nVpoO5QFQf3jek4qqhTySAjjA8Bk6Vm
+ bSIqCc+Q9SJ4m0fXkcOFdmA6b105pbuKHJdoAzLO0LspYHeFebZPerPwI2/9PXVpsTiCUwnWH
+ /+B4yn1M0HC5zDhFkC8OupQHU90jrQyDhlXKic64HZQUvI36dkVNlbw1z5S0vNWavZdtxk08U
+ rThHeDXYEDFK6NGGIgbxk1xOMHCpSue+LEqtBfmjhqVKSuHJqV+5rENU8+vEntxg6XDdxzO0/
+ HbkZn4RQo4zZq0vjzvWYaac6r0UEEEjqtxqPBfqJdAtVWXHWlntPS97h1xHchIct94poZpRt2
+ 8EtgDek1KDaB5bR5WXSRtGf/tbhz4AOMukxL3IqYlSX2tSCbnQre5qyGImR2IT9qc09S5p1M0
+ pzq0yi/3N+nhBL/xaf9nEK7thqKQI6Na7fx9z2lvRWkbz/rNDm7ueKzB69vUBIzbtCtBQ41ec
+ pHBnBNtv7LO4dMmiSwnTkPEerrnZEgR9BtQrXnde4MLLcJfcroxsmjdgoyFyUclZ9u+FGw6gj
+ PeBrpFhdHIDCsF6yMmzjqEmtAYdb3fyTwXWY1/qx/tbZvL/jJQ4elVFMqymIM2Nc7o4UKEDHd
+ 4irKba+X9tEk1L6pLoV9jTiqYY140iQP0eYgSVIWIDkRigouuXUw+gSm25ib2NcUm3pTvSnfi
+ V7nIUbVGbIwD2W0OSCIXIx0t1opC6iDl2qJ+5Vv81cZck=
 
-On Sun, Apr 14, 2024 at 10:59:06AM +0200, Christophe JAILLET wrote:
-> Le 14/04/2024 à 10:35, Michael S. Tsirkin a écrit :
-> > On Mon, Jan 15, 2024 at 09:35:50PM +0100, Christophe JAILLET wrote:
-> > > ida_alloc() and ida_free() should be preferred to the deprecated
-> > > ida_simple_get() and ida_simple_remove().
-> > > 
-> > > Note that the upper limit of ida_simple_get() is exclusive, buInputt the one of
-> > 
-> > What's buInputt? But?
-> 
-> Yes, sorry. It is "but".
-> 
-> Let me know if I should send a v2, or if it can be fixed when it is applied.
-> 
-> CJ
+Can it be nicer to use the term =E2=80=9Cmemory leak=E2=80=9D instead of =
+=E2=80=9Cmemleak=E2=80=9D
+in the patch subject?
 
-Yes it's easier if you do. Thanks!
 
-> > 
-> > > ida_alloc_max() is inclusive. So a -1 has been added when needed.
-> > > 
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > 
-> > 
-> > Jason, wanna ack?
-> > 
-> > > ---
-> > >   drivers/vhost/vdpa.c | 6 +++---
-> > >   1 file changed, 3 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-> > > index bc4a51e4638b..849b9d2dd51f 100644
-> > > --- a/drivers/vhost/vdpa.c
-> > > +++ b/drivers/vhost/vdpa.c
-> > > @@ -1534,7 +1534,7 @@ static void vhost_vdpa_release_dev(struct device *device)
-> > >   	struct vhost_vdpa *v =
-> > >   	       container_of(device, struct vhost_vdpa, dev);
-> > > -	ida_simple_remove(&vhost_vdpa_ida, v->minor);
-> > > +	ida_free(&vhost_vdpa_ida, v->minor);
-> > >   	kfree(v->vqs);
-> > >   	kfree(v);
-> > >   }
-> > > @@ -1557,8 +1557,8 @@ static int vhost_vdpa_probe(struct vdpa_device *vdpa)
-> > >   	if (!v)
-> > >   		return -ENOMEM;
-> > > -	minor = ida_simple_get(&vhost_vdpa_ida, 0,
-> > > -			       VHOST_VDPA_DEV_MAX, GFP_KERNEL);
-> > > +	minor = ida_alloc_max(&vhost_vdpa_ida, VHOST_VDPA_DEV_MAX - 1,
-> > > +			      GFP_KERNEL);
-> > >   	if (minor < 0) {
-> > >   		kfree(v);
-> > >   		return minor;
-> > > -- 
-> > > 2.43.0
-> > 
-> > 
-> > 
+=E2=80=A6
+> 'gd' will not be put anymore. Fix it by putting 'gd' directly.
 
+Would the following wording variant be more desirable?
+
+   =E2=80=A6 anymore.
+   Thus pass the variable =E2=80=9Cgd=E2=80=9D to a put_disk() call direct=
+ly.
+
+
+Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
+
+Regards,
+Markus
