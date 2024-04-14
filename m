@@ -1,40 +1,40 @@
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7A31AAA5;
-	Sun, 14 Apr 2024 08:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E0723763;
+	Sun, 14 Apr 2024 09:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713083726; cv=none; b=G/fvm1rQivUkM2IVQYvfPCyUpnOYczFOxbVLyUfFlTrMlVxSBmLMWv38AaQDVihpYgCjAQtRnB8CxXw/ziiNe4P7zfsRGlV4MWuzr0Juo41UmmYca4IcjUEbWWy75AeUzLfmvcnoDvrqm9rSXrqHIgOCwtLZ8MudVOYTnpE+U5A=
+	t=1713085723; cv=none; b=Gm41fXIbhL6B7ibynZFDqNtQZdlZwJUez4gMokTgK3vKa6JN9RR/9haYcZ9HrnEXxx8z97qiqNNrSYKWvzpYkHXGjSvkAvm8ZL7vowwRPqY0VE+didagcnfUImRyR3ZQdNqwsKa6+Ze+bIphSMfYdcwliip5Thx7yuWzrrMv9To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713083726; c=relaxed/simple;
-	bh=g9g7W9dRjFnnmcIhBA8COuq//kRWVgC968TWF7npr3A=;
+	s=arc-20240116; t=1713085723; c=relaxed/simple;
+	bh=9779tXEoKwtk0tBlvFrV6fyjZ+AwBifchZcZ26bQycY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iZsgQfV/a3CMXBFVfExyxxxj9wBLaCDeyp0XhF5Q2I8yWC2B4I3d6eMTZqfYA0Jv1sTAFIBRtidpeSKWRoGfcrwRARg9nBNUQkMgqhtqRHSLnw0ckUtt8JsDHzIkwW8waMxycRpA1N5bHduZtrIZl8Qxs911Mei39CY8aE0HoZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=t26R2MBY; arc=none smtp.client-ip=80.12.242.13
+	 In-Reply-To:Content-Type; b=e9jkGaWcNpZlSvbR97OroGE+I7N3jfzuOvApa4OrdcVuzzMm54H0ddtBJnJvwSinr6NnmHFXI2wmQjm9Ib0ofHqHzraJcyXrXPvJzW0lg3wD/Wgx7uGjky3f1fK6vrA3APsdNyrwuW5j6Xfeevy3hLcxmtr/3EMtMUi3I4CIuwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=AjSsfHjv; arc=none smtp.client-ip=80.12.242.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="t26R2MBY"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="AjSsfHjv"
 Received: from [192.168.1.18] ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id vvBdrWaH5A2vSvvBdrpztt; Sun, 14 Apr 2024 10:26:07 +0200
+	id vvharZVzm6xfSvvhar10vW; Sun, 14 Apr 2024 10:59:07 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1713083167;
-	bh=E/95b58pRdlETX2FBhKOQ8sHn6Id8wFl4e2YyFmV+PQ=;
+	s=t20230301; t=1713085147;
+	bh=Lg/QS1BhTQotDrjjhFPq2bEuJpWIpclvcNGCTr5a1hY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=t26R2MBYEryhnb3fr0GVe0bUrJSy66cl3pnhuzUjxJEHnCzJLilAmM2tmOQOLpU2r
-	 TB+MGsHq8MOHayvTnsqMJ7iioHNDMtW+/zRVjT4WsBp9Dka4Ej/CA3W3NfCTuZzkqs
-	 1a8dMOXIxnq9rL2PMHeJ0t8ImzTNivavt/3feGOIb6OcjG+NafjZkjM9LgG8BlqRvC
-	 /lKaH6iDFG83QiddAQatJ9/Dr3ZN4lrRnybefJcn2k4vSvOFaP+4KEhgNO/EiPnVA5
-	 A9vLR60pr7GsnLzK4psbK2GKL5jgkh0/AwH+POJtjbKVdQGhBYS0nQPGTBUH9nTE3O
-	 da8rtH49+TejA==
+	b=AjSsfHjv+lTSFM9oqHAYJLnszgFMIyk64VAYK85LEwPjsu7hgyv6P/vdkNVsKf1J/
+	 ypr49UhadsGYEaNvkdkpdKKTf5RL6Zn+H48Xf1fahaGjxqc0ZgECyF+cT9U00fthze
+	 9GNHEMBMojjVd51Kl8Mq3p4T6QIyGTeyVPFLu9cGXC9yo/8w12xhmPlzlU0LuEToXL
+	 2HeoXdwsML3AW9SIV0xXPY1B4+cdXK/4cE3ViylOde5hfpPiGo1zXwTWUBDBM/zPJl
+	 jU5S0xoO/My8G7QBpHgQX/QA7QPIYgZQdZPVylBDGyXQzX3v7iJfWXATtto79Tc1k3
+	 fzQ0WPtEW2RKg==
 X-ME-Helo: [192.168.1.18]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 14 Apr 2024 10:26:07 +0200
+X-ME-Date: Sun, 14 Apr 2024 10:59:07 +0200
 X-ME-IP: 86.243.17.157
-Message-ID: <93a3a465-01b1-4ca6-9b77-55d1024ae88a@wanadoo.fr>
-Date: Sun, 14 Apr 2024 10:26:05 +0200
+Message-ID: <a7eceabf-12cb-41ff-8e2b-f3b21d789c17@wanadoo.fr>
+Date: Sun, 14 Apr 2024 10:59:06 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -44,35 +44,72 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] vhost-vdpa: Remove usage of the deprecated
  ida_simple_xx() API
-To: Simon Horman <horms@kernel.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- kvm@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, kvm@vger.kernel.org,
+ virtualization@lists.linux.dev, netdev@vger.kernel.org
 References: <bd27d4066f7749997a75cf4111fbf51e11d5898d.1705350942.git.christophe.jaillet@wanadoo.fr>
- <20240116145727.GT392144@kernel.org>
+ <20240414043334-mutt-send-email-mst@kernel.org>
 Content-Language: en-MW
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240116145727.GT392144@kernel.org>
+In-Reply-To: <20240414043334-mutt-send-email-mst@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 16/01/2024 à 15:57, Simon Horman a écrit :
+Le 14/04/2024 à 10:35, Michael S. Tsirkin a écrit :
 > On Mon, Jan 15, 2024 at 09:35:50PM +0100, Christophe JAILLET wrote:
 >> ida_alloc() and ida_free() should be preferred to the deprecated
 >> ida_simple_get() and ida_simple_remove().
 >>
 >> Note that the upper limit of ida_simple_get() is exclusive, buInputt the one of
+> 
+> What's buInputt? But?
+
+Yes, sorry. It is "but".
+
+Let me know if I should send a v2, or if it can be fixed when it is applied.
+
+CJ
+
+> 
 >> ida_alloc_max() is inclusive. So a -1 has been added when needed.
 >>
 >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > 
-> Reviewed-by: Simon Horman <horms@kernel.org>
+> 
+> Jason, wanna ack?
+> 
+>> ---
+>>   drivers/vhost/vdpa.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+>> index bc4a51e4638b..849b9d2dd51f 100644
+>> --- a/drivers/vhost/vdpa.c
+>> +++ b/drivers/vhost/vdpa.c
+>> @@ -1534,7 +1534,7 @@ static void vhost_vdpa_release_dev(struct device *device)
+>>   	struct vhost_vdpa *v =
+>>   	       container_of(device, struct vhost_vdpa, dev);
+>>   
+>> -	ida_simple_remove(&vhost_vdpa_ida, v->minor);
+>> +	ida_free(&vhost_vdpa_ida, v->minor);
+>>   	kfree(v->vqs);
+>>   	kfree(v);
+>>   }
+>> @@ -1557,8 +1557,8 @@ static int vhost_vdpa_probe(struct vdpa_device *vdpa)
+>>   	if (!v)
+>>   		return -ENOMEM;
+>>   
+>> -	minor = ida_simple_get(&vhost_vdpa_ida, 0,
+>> -			       VHOST_VDPA_DEV_MAX, GFP_KERNEL);
+>> +	minor = ida_alloc_max(&vhost_vdpa_ida, VHOST_VDPA_DEV_MAX - 1,
+>> +			      GFP_KERNEL);
+>>   	if (minor < 0) {
+>>   		kfree(v);
+>>   		return minor;
+>> -- 
+>> 2.43.0
 > 
 > 
 > 
 
-Hi,
-
-polite reminder ;-)
-
-CJ
