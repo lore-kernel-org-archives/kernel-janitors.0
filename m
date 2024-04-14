@@ -1,41 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0244741A85;
-	Sun, 14 Apr 2024 11:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A141E53F;
+	Sun, 14 Apr 2024 12:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713095132; cv=none; b=QTIkVL4pVr5GJrQuIcKTN97bVT2VNgKpCAriNvwmn43TvKKgpgMIPpPOe3Fs4c2TmRMWHLEIV0+rRc3r0+uC7pXOEtgP476g4bvuROk4jCU5HvHCeoh8lHE0OpcZZtNY5EvOd1i0Xit+ceSVrp9ujdlbbDhaQAiI//naQmnVPrM=
+	t=1713096556; cv=none; b=qejIiKIZkwz3v7SKskzP+qQ6CoPXApVvAfUHYwWaMOF1bkMAjR74g4iOSqRSdI1PvGIUALx9PCamJeCusB8pGajrDrtQvRGyUbyNlZ6JgCr6D8lmFC0JTBxS0/olZKOS6ayIi6ngl/F42uhyH3b9XhYTpAYMGiOadScD0rQc2cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713095132; c=relaxed/simple;
-	bh=U0tpeTPOyTpPTe351qE8OA5AoJGCat0VCds9PVfXYDQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=MrKXYn+F/lcoIuhvk3pfyGWZJiYvq8wtIiXxGY+5rHl8u4WyS7E/fBZ1wLPa26lyH20eNDgUsZTWYITNhvXfsIzlj++XXhPQi0Fh6VZUjun8CdTX44DlYzuLnsRFKPoCIIMXJ7vr68xsC7noEcB2ZR5pWTurfQnolgPvhyF01wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QA0Q6OEN; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713096556; c=relaxed/simple;
+	bh=sZ6MvvpYLG2csFo5XgIBgIcSCOrtryJDcKj3GuzJ0Y8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=krZqjKDlywPvtgPqhHzuhzHvVJJc4Z/JoI0cfW+YGpm6AdDya2/vKZcXrVMTQK/1Qh3avUvW3Gkpms21GnQ6r+V1nvm1P+oMHcw5X9HNJPFjSYqLME+15KliKp+Rc+Gs0i5roc/YhK3Cf/rhGl43AMRZBvqupXaRIJKYmAAJP0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=AZRzS+fw; arc=none smtp.client-ip=80.12.242.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QA0Q6OEN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713095030; x=1713699830; i=markus.elfring@web.de;
-	bh=U0tpeTPOyTpPTe351qE8OA5AoJGCat0VCds9PVfXYDQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:Cc:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=QA0Q6OENUATU/abBO9zX2wIvluDcY8NFt4xBXbtZugnY4jdbgCebbMel1audTVCX
-	 PQ9qKQY/HOgzZqSWHpcSvNV/yoKEd0dXQfGyN4vnAk4GqzUAa/iC1prBpCexNK9m9
-	 CrcnUY73IR6viruwjyDvtFPLwteyfZ8GuO0gjgG5CXzMda9v+UCbgTDwzysZq4ewD
-	 lnX6KiK9XjYuBUaDgAjX/Kk0AybuZWPVA3CcDhqPkRdA7/46/9C73SMHMloH2ukh+
-	 CEbAlyjAHVvSx2mu+H3gmHPoiKSdWe6QRDLvMvIGjJmGsjhmVE2wS3uD+duvg2a3z
-	 XTQm447GhtcL3C+uSQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MDdyH-1s55LF0CKV-00ATJ7; Sun, 14
- Apr 2024 13:43:50 +0200
-Message-ID: <af56a3c3-d144-4d90-9f1e-c13a4122f8a7@web.de>
-Date: Sun, 14 Apr 2024 13:43:40 +0200
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="AZRzS+fw"
+Received: from [192.168.1.18] ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id vyfUrUVZekBJPvyfUrFamz; Sun, 14 Apr 2024 14:09:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1713096551;
+	bh=y4ec2/b3UC1Scrh9RirGlj8YTteHQuh4UxLRR7ROzEw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=AZRzS+fwP3bEkhXZWpY0zYNMG98IEvLCLDs+FxNFr9EK5hcWLkSEruhrpuFGXfEo1
+	 Eli5eiG8m4daOp+jhENuVikOeba67zSzDChHbuPjb7PwUvQcDqe/s7+VFEGEiBmabZ
+	 okPwjlAn6a/ZrqeTmRcTRn0p9y8EXNpmvkUNK3Z7RotML+Nxgmf2cdHM2rq7taNVHZ
+	 N13LGs0gyo3auQUowhWC8pFSPe6hlIfRl0M2VKPZQuEIWyEegYJvP9yHPnBjWvvEta
+	 LxtNWKGMSWYUffVma5r17nq3BrjHo2oCo0+2XKtR69+Nd/Hj7g2BDEZZaLkk33DyWc
+	 Pshryi+mvfBgg==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 14 Apr 2024 14:09:11 +0200
+X-ME-IP: 86.243.17.157
+Message-ID: <779bc8ae-0f24-4f34-8f20-633e6e6f2fc5@wanadoo.fr>
+Date: Sun, 14 Apr 2024 14:09:08 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,61 +42,107 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 11/12] perf dso: Reference counting related fixes
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@arm.com>,
- Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
- Colin Ian King <colin.i.king@gmail.com>, Leo Yan <leo.yan@linux.dev>,
- Song Liu <song@kernel.org>, Ilkka Koskinen <ilkka@os.amperecomputing.com>,
- Ben Gainey <ben.gainey@arm.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
- Yanteng Si <siyanteng@loongson.cn>, Yicong Yang <yangyicong@hisilicon.com>,
- Sun Haiyong <sunhaiyong@loongson.cn>, Ravi Bangoria <ravi.bangoria@amd.com>,
- Anne Macedo <retpolanne@posteo.net>, Changbin Du <changbin.du@huawei.com>,
- Andi Kleen <ak@linux.intel.com>, Thomas Richter <tmricht@linux.ibm.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- zhaimingbing <zhaimingbing@cmss.chinamobile.com>, Li Dong <lidong@vivo.com>,
- Paran Lee <p4ranlee@gmail.com>, Yang Jihong <yangjihong1@huawei.com>,
- Chengen Du <chengen.du@canonical.com>, linux-perf-users@vger.kernel.org,
- bpf@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20240410064214.2755936-1-irogers@google.com>
- <20240410064214.2755936-12-irogers@google.com>
-Content-Language: en-GB
-Cc: linux-kernel@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240410064214.2755936-12-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:mKDPIQbEDcmb5BrKUYjJr3Qfc9P8lnxxMTPWzBhrGyLcPxvCb4u
- dM8KAmhNo2HfYqk8DC+kHNx0slCaXqPBfha3rzlz82HUrwjIRdpI2KUvXM9N1TkyfBmDnZ3
- 7Pv5rYszyANAaMh1el0nH4fiOdX6ZF4Ve9D3SxShf07LS+6d3qlEWu9B1y67l+s8KRv6vGn
- 9p63EFqc0tr8lXDapVFFg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:8YTKCMYD3Sk=;yyymS+m1aex9L1SSrYC77ZiqZYT
- eqn7cbY+q3rw2pwdWaOvOStqkH1TCq2wzjIkRmRluUdQC6/tdYpNsH9rA9IxharfsfAOjSF08
- d2BthLti8KnaPwZfCE71v8QBsLM2R4iIzIURMNkaFUAUwzJ9+Wu9ZhX6fTphjntmj4LATB0xA
- NTlm/60G+DHNHLNigj3q91XL4jCFjVgD+AITqU8PvWuJP1k5seUuokzT12ALS+XNodq2BWxvg
- pJKLukd66zp5cokTe5cCLRjQVcXdUNnsjkVhTzOAmRDOv5xTkMt0tSOI7SltYpMITOLaqmBhB
- ANt8BYht2rbRmRSCd4+G2Sx28u2f/RUnYK+gHOu0L+3IZT/hZoMkECgW1l+bQwlXmKY1oYcS8
- 6YjBbr2xJNNau+Yitb2ttCfhpdyYibtDxW2hkNXf5/buOjDEUkzRQOpcl9Thb/wniQ23yxuzv
- 9UOMWCIcTxICFpq9PgcmofqcJ6P4zTX8JgebxTqC4uBNlNP4gIWXRtHR1+ld5iVEVr0p9dEyY
- yKb7IMDMEUAhScIX34pYw5uwF2ZLzVhE/PbhlxvhwAlCdENd92u+Sfi7tT8OMV3LJbXXrROx5
- Liz+jtdw1978LlDhavIs7gJhl6QwhW6HHhLWVbbyz15nuYh/322JYJvfWv68Fjf+zx8vq6mlN
- hlVc33CuzyqXUx3DmTween7BxzJsLCNgOnmPRBmzyKoUveUlyximPIA98y5eu5mbcJTkYgrl8
- IRSjb5D8G1NBuvTmNb+QqQ9pfCTz3JHHOWBr7ZjagCw8ZTYu7dc42vBvKkUm52YspCPK1xvDC
- Jt2gKxZhc4x9oSnIIh+o823SzsXbzAB3H8phvSyb94p9E=
+Subject: Re: [PATCH] usb: gadget: function: Remove usage of the deprecated
+ ida_simple_xx() API
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org
+References: <fb14757b434ebbad82c8771f19b73dc7ef81a91b.1705232365.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-MW
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <fb14757b434ebbad82c8771f19b73dc7ef81a91b.1705232365.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> Ensure gets and puts are better aligned fixing reference couting
+Le 14/01/2024 à 12:39, Christophe JAILLET a écrit :
+> ida_alloc() and ida_free() should be preferred to the deprecated
+> ida_simple_get() and ida_simple_remove().
+> 
+> Note that the upper limit of ida_simple_get() is exclusive, but the one of
+> ida_alloc_max() is inclusive. So a -1 has been added when needed.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+> ---
+>   drivers/usb/gadget/function/f_hid.c     | 6 +++---
+>   drivers/usb/gadget/function/f_printer.c | 6 +++---
+>   drivers/usb/gadget/function/rndis.c     | 4 ++--
+>   3 files changed, 8 insertions(+), 8 deletions(-)
+> 
 
-How do you think about to avoid a typo in the last word of this text line
-for the final commit?
+Hi,
+
+polite reminder.
+
+CJ
 
 
-> checking problems.
+> diff --git a/drivers/usb/gadget/function/f_hid.c b/drivers/usb/gadget/function/f_hid.c
+> index 3c8a9dd585c0..2db01e03bfbf 100644
+> --- a/drivers/usb/gadget/function/f_hid.c
+> +++ b/drivers/usb/gadget/function/f_hid.c
+> @@ -1029,9 +1029,9 @@ static inline int hidg_get_minor(void)
+>   {
+>   	int ret;
+>   
+> -	ret = ida_simple_get(&hidg_ida, 0, 0, GFP_KERNEL);
+> +	ret = ida_alloc(&hidg_ida, GFP_KERNEL);
+>   	if (ret >= HIDG_MINORS) {
+> -		ida_simple_remove(&hidg_ida, ret);
+> +		ida_free(&hidg_ida, ret);
+>   		ret = -ENODEV;
+>   	}
+>   
+> @@ -1176,7 +1176,7 @@ static const struct config_item_type hid_func_type = {
+>   
+>   static inline void hidg_put_minor(int minor)
+>   {
+> -	ida_simple_remove(&hidg_ida, minor);
+> +	ida_free(&hidg_ida, minor);
+>   }
+>   
+>   static void hidg_free_inst(struct usb_function_instance *f)
+> diff --git a/drivers/usb/gadget/function/f_printer.c b/drivers/usb/gadget/function/f_printer.c
+> index 076dd4c1be96..ba7d180cc9e6 100644
+> --- a/drivers/usb/gadget/function/f_printer.c
+> +++ b/drivers/usb/gadget/function/f_printer.c
+> @@ -1312,9 +1312,9 @@ static inline int gprinter_get_minor(void)
+>   {
+>   	int ret;
+>   
+> -	ret = ida_simple_get(&printer_ida, 0, 0, GFP_KERNEL);
+> +	ret = ida_alloc(&printer_ida, GFP_KERNEL);
+>   	if (ret >= PRINTER_MINORS) {
+> -		ida_simple_remove(&printer_ida, ret);
+> +		ida_free(&printer_ida, ret);
+>   		ret = -ENODEV;
+>   	}
+>   
+> @@ -1323,7 +1323,7 @@ static inline int gprinter_get_minor(void)
+>   
+>   static inline void gprinter_put_minor(int minor)
+>   {
+> -	ida_simple_remove(&printer_ida, minor);
+> +	ida_free(&printer_ida, minor);
+>   }
+>   
+>   static int gprinter_setup(int);
+> diff --git a/drivers/usb/gadget/function/rndis.c b/drivers/usb/gadget/function/rndis.c
+> index 29bf8664bf58..12c5d9cf450c 100644
+> --- a/drivers/usb/gadget/function/rndis.c
+> +++ b/drivers/usb/gadget/function/rndis.c
+> @@ -869,12 +869,12 @@ EXPORT_SYMBOL_GPL(rndis_msg_parser);
+>   
+>   static inline int rndis_get_nr(void)
+>   {
+> -	return ida_simple_get(&rndis_ida, 0, 1000, GFP_KERNEL);
+> +	return ida_alloc_max(&rndis_ida, 999, GFP_KERNEL);
+>   }
+>   
+>   static inline void rndis_put_nr(int nr)
+>   {
+> -	ida_simple_remove(&rndis_ida, nr);
+> +	ida_free(&rndis_ida, nr);
+>   }
+>   
+>   struct rndis_params *rndis_register(void (*resp_avail)(void *v), void *v)
 
-
-Regards,
-Markus
