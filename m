@@ -1,83 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0287B5473D;
-	Sat, 13 Apr 2024 21:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7608C15E9B;
+	Sun, 14 Apr 2024 08:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713044355; cv=none; b=jnxFMr6zTn72lzPudCBZhtEL1HVlOnYvDDocVIDep64molEnk+c8pPAUAb4EGRy4tLePLdrJsOtEakEYu5YuEJWjp3/NSJxWxpRFqyyOwdZfoM/MEEBRAydsKj1ND/KY9hItEAVkk/7GT59vzW7yk0VbqNKRdOkj+jvQMtaMXAM=
+	t=1713083086; cv=none; b=QupputSaQjQgliVnQORG7wa5KS5grGfIOaaqhX16NsNlb0QelvH6aEAhuZ2EAD9VD+lAgmNvZ+Akj4CXAGdKAJamgDENhwcaNPTg1QL/vqQzTXmg+fl18HWl/3/QWaoYk8h9aqZHevi7KXF4kgrIVo4HncA1a813BHy0M4xyL2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713044355; c=relaxed/simple;
-	bh=d/ixlUFZiWqS7w1S+uZ5bU3PvtJ6FPlMO8nl+D0Kuh4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=UZjh71N249wYX9OX/NJjZVS5Fux+Ak0FzIsBL6pdz+Cj8ss+6M4wxp0Uv30fqSY8CJr+sjRhC55YQv/SDzAzyCYcoSGWDggIl58/Knubq1QY4eAAWI0ebVcocac13PRGgzji9ETfz03nhUxV8njZYxmPMF7W8qG4Vp71wTJX++Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lvdjdO2u; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713083086; c=relaxed/simple;
+	bh=2Q+/4r+Qor5g10c5M5kZw06B/8Q720MWo5E/j+HaAsE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o8P3zhB851Tl0DLPdbP13xW6sindEJf+tS8spC40X8NPSimSTd+0XTtFW89KImHI2LFVbTKU2QbKKuCt0r7XjDUjq2nucGpfWc4PI1XjlLVCLxmItkyuOcYo8q+TxRMVnwmmB8e3fQcEjSLK31r/2dnDFq+uebqP40nljtI3W+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=othdOT1W; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvdjdO2u"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 922AFC2BD10;
-	Sat, 13 Apr 2024 21:39:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713044354;
-	bh=d/ixlUFZiWqS7w1S+uZ5bU3PvtJ6FPlMO8nl+D0Kuh4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lvdjdO2uoJHyEoPa0msweepPXLPKa3kP4G3Wva+G8EACxTjWM0wMwboqyW/uEQ+Vs
-	 knJyE5dZTYEBwXZ/OHmDWxO9PRIqMbEAShcxL86ZvENhYkvT3WZDxYlkZnRPUfpxJq
-	 IW1ouwhCv7VHqK5rRvvhi/qnYhdevAPyf5H6a1S61loycKN6J2zcBBWfritq+uxTPH
-	 uyc1SPKCyDBv6k66SabBflyqqxV/M7VnGFCVViDGNQ4kC92sdGAHU5Gz1VAJ6SLPAU
-	 UehF5TkAEBoqshNNQuJEotlatlknYDIG9fk+Rwh46cnihDITGCKd54Syl90hA1qc1+
-	 VzbB4H3ZOnYxA==
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="othdOT1W"
+Received: from [192.168.1.18] ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id vvAGrTmGTUGsCvvAHrYZlA; Sun, 14 Apr 2024 10:24:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1713083081;
+	bh=i9DFs5b+r7+eXYOXnNffp+stcM+i0qFnH109y2AB9uM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=othdOT1WNg/8WuUl6wXonjNE6QyUHShE9M7LtjoSUC8cA+5fXG0VauLhqFnHh2RTb
+	 CNTUSQ9cBlzJmIFT9K+eoG+ku/SF+tlZthI944dXWX46FRiaFGdcVQJoBWQJMQ3XpZ
+	 JybprpFYD61xlQkh8gnS0WDfVotziVwp/L9W2E6CIC03o5G5KlDYX5LbO7fEDSIQzo
+	 rYUCn6x/rcBOxS1pUbSL9BC1UHWZExbcSYsPehst3NWJafeog6QPAk3DhOJnRc/Gz2
+	 u/En++pS81pp+6bA+YxYTJm0zDbbUPYYSB2EcaCyExazTh9p0FsvzFfYmFB3Ag8mI1
+	 /q29lN+udhRHg==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 14 Apr 2024 10:24:41 +0200
+X-ME-IP: 86.243.17.157
+Message-ID: <4230d015-d9b6-4753-8957-717eab00d5cb@wanadoo.fr>
+Date: Sun, 14 Apr 2024 10:24:40 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 14 Apr 2024 00:39:11 +0300
-Message-Id: <D0JBJJ3ZOR1E.29NIB5RSEJRSL@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Colin Ian King" <colin.i.king@gmail.com>, "Peter Huewe"
- <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
- <linux-integrity@vger.kernel.org>
-Cc: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] tpm/eventlog: remove redundant assignment to
- variabel ret
-X-Mailer: aerc 0.17.0
-References: <20240411084913.305780-1-colin.i.king@gmail.com>
-In-Reply-To: <20240411084913.305780-1-colin.i.king@gmail.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bcache: Remove usage of the deprecated ida_simple_xx()
+ API
+To: Coly Li <colyli@suse.de>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-bcache@vger.kernel.org
+References: <2f038df3860c2f44d5c7f5d06d03ca663cdbc651.1705235398.git.christophe.jaillet@wanadoo.fr>
+ <y2c3dt325d4xzcknmwtyd6gungco6jqucz3fsrm6lsyjtiwpp4@ozmsw6vp67jk>
+Content-Language: en-MW
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <y2c3dt325d4xzcknmwtyd6gungco6jqucz3fsrm6lsyjtiwpp4@ozmsw6vp67jk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu Apr 11, 2024 at 11:49 AM EEST, Colin Ian King wrote:
-> Variable ret is being assigned and error code that is never read, it is
-> either being re-assigned in an error exit path or never referenced again
-> on the non-error path. The assignment is redundant and can be removed.
->
-> Cleans up clang scan build warning:
-> drivers/char/tpm/eventlog/acpi.c:145:2: warning: Value stored to 'ret'
-> is never read [deadcode.DeadStores]
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/char/tpm/eventlog/acpi.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog=
-/acpi.c
-> index bd757d836c5c..69533d0bfb51 100644
-> --- a/drivers/char/tpm/eventlog/acpi.c
-> +++ b/drivers/char/tpm/eventlog/acpi.c
-> @@ -142,7 +142,6 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
-> =20
->  	log->bios_event_log_end =3D log->bios_event_log + len;
-> =20
-> -	ret =3D -EIO;
->  	virt =3D acpi_os_map_iomem(start, len);
->  	if (!virt) {
->  		dev_warn(&chip->dev, "%s: Failed to map ACPI memory\n", __func__);
+Le 14/01/2024 à 16:16, Coly Li a écrit :
+> On Sun, Jan 14, 2024 at 01:30:16PM +0100, Christophe JAILLET wrote:
+>> ida_alloc() and ida_free() should be preferred to the deprecated
+>> ida_simple_get() and ida_simple_remove().
+>>
+>> Note that the upper limit of ida_simple_get() is exclusive, but the one of
+>> ida_alloc_max() is inclusive. So a -1 has been added when needed.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> It looks good to me. Add this patch into my testing directory.
+> 
+> Thanks.
+> 
+> Coly Li
 
+Hi,
 
-Thanks!
+polite reminder ;-)
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+CJ
 
-BR, Jarkko
+> 
+> 
+>> ---
+>>   drivers/md/bcache/super.c | 10 +++++-----
+>>   1 file changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+>> index dc3f50f69714..a2eecd1db126 100644
+>> --- a/drivers/md/bcache/super.c
+>> +++ b/drivers/md/bcache/super.c
+>> @@ -881,8 +881,8 @@ static void bcache_device_free(struct bcache_device *d)
+>>   		bcache_device_detach(d);
+>>   
+>>   	if (disk) {
+>> -		ida_simple_remove(&bcache_device_idx,
+>> -				  first_minor_to_idx(disk->first_minor));
+>> +		ida_free(&bcache_device_idx,
+>> +			 first_minor_to_idx(disk->first_minor));
+>>   		put_disk(disk);
+>>   	}
+>>   
+>> @@ -926,8 +926,8 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
+>>   	if (!d->full_dirty_stripes)
+>>   		goto out_free_stripe_sectors_dirty;
+>>   
+>> -	idx = ida_simple_get(&bcache_device_idx, 0,
+>> -				BCACHE_DEVICE_IDX_MAX, GFP_KERNEL);
+>> +	idx = ida_alloc_max(&bcache_device_idx, BCACHE_DEVICE_IDX_MAX - 1,
+>> +			    GFP_KERNEL);
+>>   	if (idx < 0)
+>>   		goto out_free_full_dirty_stripes;
+>>   
+>> @@ -980,7 +980,7 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
+>>   out_bioset_exit:
+>>   	bioset_exit(&d->bio_split);
+>>   out_ida_remove:
+>> -	ida_simple_remove(&bcache_device_idx, idx);
+>> +	ida_free(&bcache_device_idx, idx);
+>>   out_free_full_dirty_stripes:
+>>   	kvfree(d->full_dirty_stripes);
+>>   out_free_stripe_sectors_dirty:
+>> -- 
+>> 2.43.0
+>>
+> 
+
