@@ -1,46 +1,47 @@
-Received: from msa.smtpout.orange.fr (out-68.smtpout.orange.fr [193.252.22.68])
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6273D1AACB;
-	Sun, 14 Apr 2024 09:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6CC1AACB;
+	Sun, 14 Apr 2024 09:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713086903; cv=none; b=rY6/RZ2YGO7vrM5ye+kgkUFPGeNXEa1eQegYy+coSImHHdu2ZZNKvh0rAO7W9KpE/8dWTPPIdMQyTdwkouKVXBZgvbpWxrsPAz3cvDccnosfwK1LT6umNGavxq6qN40dUMJF3oLPwt+cuyZ6iY67ps9N94BZe+yKwga1+3+kauQ=
+	t=1713088797; cv=none; b=hOYb41iAmZtJxoedvEb9NdPFU2dL+2sWEwQXU5cKjhpxJjk6IBN5HDwPu1WsAQKyrtwuAxFU3r6b5IJlvdfaV8s3Pv0xNgVqYtMJAilmQCRVMCZKA/kVhUJHCK9vT/yj6DhnG+BPTckhKdpQTKm3DdrQSNMmEralDESRMtvgP+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713086903; c=relaxed/simple;
-	bh=SwFno6/zyg5+YPfqO27044qCoN7mde7l5fHl3+x/0MQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zb0D9NSm1m7azgOsZxgUc3vn+A0h4JQdlcdXJrxKqIt0T7Ljx5h34IoUCK3WvzKwrgt422N9KuYfh+OOjqFgQUFzv9eWNRqopQkbpmLzN1Sh+pDSLTZamfTThVXtC9Q+G/+Uyt1Ky8+RN1jEKfv4N6htZVMhizp0U6HxY3t16Cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=p2J3HcOQ; arc=none smtp.client-ip=193.252.22.68
+	s=arc-20240116; t=1713088797; c=relaxed/simple;
+	bh=lkq1lrzB9HxKNl03Hpci59UA0sfQ1vTlkLoKDGZGgc4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jQi27+QM3Ni/5porIh/nbXAnh2rYrtliDjMt0CXRynXQONyk9THfx8FRAq61WsYfxhwkalNweyIGweKWWfR38vNVnFiL4mcWbnP3oIfUZnNGq3yM/uzR9Z8YBsv33GK47X4UwJg+LEV9m0afuG2Y4x44TE9qdqwftcaLniid9tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=YaPgL0LB; arc=none smtp.client-ip=80.12.242.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="p2J3HcOQ"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="YaPgL0LB"
 Received: from fedora.home ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id vw9nrfdj8tTfTvw9orcZic; Sun, 14 Apr 2024 11:28:17 +0200
+	id vwdGrlEDlSoxzvwdGrpuSk; Sun, 14 Apr 2024 11:58:43 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1713086897;
-	bh=br64ne69Nk3JhZZXN1tyM5lQFY4iCsNufrWPd+JT82E=;
+	s=t20230301; t=1713088723;
+	bh=vJwVeMXmnUN8m7oxlGG0PhRilSD1pyJWjsrWEGLWca8=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=p2J3HcOQKImDyRyHCZqjWt5sZ1rfQObiAPANSd8CpT5QnEm29YQEtFJy6X2a21nxP
-	 DCzIeSqld4PWTB+gk41ttlC1RDOevMPW1ZosyfrH2vCxQF5GdAGrHn7OHDSGSAbkRX
-	 W6xNZesbTZPptSX6Q0aLkQTjmz1gSbOZuSlKXj0VO6xLX554Sh8aeX7HJacEE16zA4
-	 CXYmRW6SUnCbrftDr0o8Q/Ra6SRV6/yuCSTKe1OKpvzYRRVaCmz0gZ57cEXMu0gATG
-	 o5o+Xsr3FxTh5sXxCl+WPHquhykfUMDfzYWw1yEDndwvo4+NfMiNhttI1qgpvFztyP
-	 Gn290icfctTJg==
+	b=YaPgL0LBOAlUN3v3MGzWg5qQRiFtebPEH7cCRm2gGLDPw4G4Oi7+izNrlJtrcJ4pC
+	 7Qp7zK/WwUIBc5ZL5LaUXYZr0456fzjGVQdrUiaSLMIlzIUpt/yQksJAnAnhxP/oN2
+	 g3UhZitgMeMSkqqEB9Gp/LAxEyzYk64DiFYPo/wt3/xbrV7tn8UoLgvMD29UjuJWq7
+	 XI39HBfbLyUq7ynOcSF6AceeoYbpMIlCYZEX39PAQ+TI2KGNPJeFVX+zA2gVZOFSsQ
+	 nH4KtopZJOga5ot5z6HUAzpP7WEA6BkVvtRLQmWldGOBnbt86gwDZutJXBHNZ0aJ/m
+	 Anc7CIDkHMj7A==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 14 Apr 2024 11:28:17 +0200
+X-ME-Date: Sun, 14 Apr 2024 11:58:43 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: akpm@linux-foundation.org,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH RESEND] intel_th: Remove usage of the deprecated ida_simple_xx() API
-Date: Sun, 14 Apr 2024 11:28:13 +0200
-Message-ID: <2aca50a9d061faecfd4ded80b5874cd3be9b855d.1713086613.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-input@vger.kernel.org
+Subject: [PATCH RESEND] HID: sony: Remove usage of the deprecated ida_simple_xx() API
+Date: Sun, 14 Apr 2024 11:58:39 +0200
+Message-ID: <9b7684381f9d09a7cd5840caa2a160d7764d6403.1713088684.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -86,43 +87,35 @@ https://elixir.bootlin.com/linux/v6.7.4/A/ident/ida_simple_get
 Thanks
 CJ
 
-[1]: https://lore.kernel.org/all/9c092dc6db15984d98732510bb052bb00683489b.1705005258.git.christophe.jaillet@wanadoo.fr/
-[2]: https://lore.kernel.org/all/994d0c38-6307-4da0-8e9d-c70972372149@wanadoo.fr/
+[1]: https://lore.kernel.org/all/9c092dc6db15984d98732510bb052bb00683489b.1705005258.git.christophe.jaillet@wanadoo.fr/https://lore.kernel.org/all/19b538bc05c11747a3dd9fa204fde91942063d52.1698831460.git.christophe.jaillet@wanadoo.fr/
+[2]: https://lore.kernel.org/all/a1af20a9-951f-4a5d-8a60-04ded8d6f9a0@wanadoo.fr/
 [3]: https://lore.kernel.org/all/ZaqruGVz734zjxrZ@casper.infradead.org/
 ---
- drivers/hwtracing/intel_th/core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/hid/hid-sony.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hwtracing/intel_th/core.c b/drivers/hwtracing/intel_th/core.c
-index cc7f879bb175..86c8efecd7c2 100644
---- a/drivers/hwtracing/intel_th/core.c
-+++ b/drivers/hwtracing/intel_th/core.c
-@@ -871,7 +871,7 @@ intel_th_alloc(struct device *dev, const struct intel_th_drvdata *drvdata,
- 	if (!th)
- 		return ERR_PTR(-ENOMEM);
- 
--	th->id = ida_simple_get(&intel_th_ida, 0, 0, GFP_KERNEL);
-+	th->id = ida_alloc(&intel_th_ida, GFP_KERNEL);
- 	if (th->id < 0) {
- 		err = th->id;
- 		goto err_alloc;
-@@ -931,7 +931,7 @@ intel_th_alloc(struct device *dev, const struct intel_th_drvdata *drvdata,
- 			    "intel_th/output");
- 
- err_ida:
--	ida_simple_remove(&intel_th_ida, th->id);
-+	ida_free(&intel_th_ida, th->id);
- 
- err_alloc:
- 	kfree(th);
-@@ -964,7 +964,7 @@ void intel_th_free(struct intel_th *th)
- 	__unregister_chrdev(th->major, 0, TH_POSSIBLE_OUTPUTS,
- 			    "intel_th/output");
- 
--	ida_simple_remove(&intel_th_ida, th->id);
-+	ida_free(&intel_th_ida, th->id);
- 
- 	kfree(th);
+diff --git a/drivers/hid/hid-sony.c b/drivers/hid/hid-sony.c
+index ebc0aa4e4345..55c0ad61d524 100644
+--- a/drivers/hid/hid-sony.c
++++ b/drivers/hid/hid-sony.c
+@@ -1844,8 +1844,7 @@ static int sony_set_device_id(struct sony_sc *sc)
+ 	 * All others are set to -1.
+ 	 */
+ 	if (sc->quirks & SIXAXIS_CONTROLLER) {
+-		ret = ida_simple_get(&sony_device_id_allocator, 0, 0,
+-					GFP_KERNEL);
++		ret = ida_alloc(&sony_device_id_allocator, GFP_KERNEL);
+ 		if (ret < 0) {
+ 			sc->device_id = -1;
+ 			return ret;
+@@ -1861,7 +1860,7 @@ static int sony_set_device_id(struct sony_sc *sc)
+ static void sony_release_device_id(struct sony_sc *sc)
+ {
+ 	if (sc->device_id >= 0) {
+-		ida_simple_remove(&sony_device_id_allocator, sc->device_id);
++		ida_free(&sony_device_id_allocator, sc->device_id);
+ 		sc->device_id = -1;
+ 	}
  }
 -- 
 2.44.0
