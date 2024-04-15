@@ -1,106 +1,97 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from sonata.ens-lyon.org (sonata.ens-lyon.org [140.77.166.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89A912C538;
-	Mon, 15 Apr 2024 13:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7D283CB4;
+	Mon, 15 Apr 2024 13:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.77.166.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713186483; cv=none; b=FS0aS6dEpgyDlRcdFt0uar93plSaz+jPdGnI8YsK1ufUqg3Vb1iJF6MgzEU06gpI2hFZozvaS8Qfk/yGpiHyGPjJ/qY58lw4SEGzbfg7ebHw2uG9aFplzsp59apVegXcz5v/OoEPnkVkKN/MZ5ESpAGhckoasCDWyPlU4mDcunE=
+	t=1713187269; cv=none; b=rgoEidmJmNThm6PELDOhombkW9UlmXBSvksl/N1ySEkoz0qP0Wt8G6FtzyQJCMwh+7VEMw9V34YLP81tlTpCdEfk4RgLe+BqLbWrKqK2PeLDRVn9luSACgmRZpzpIYBxEnh6bEDH6jCecZ24TgKHfVbZzPnwSI3bicxw9gTz+bA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713186483; c=relaxed/simple;
-	bh=m0/I5+S6CSiilQW69yS2LbTSrey8p/oYlcMWnlsQ1J0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Anp6u6vQoun88I2pysGUkEjfkLQ4oY36X52EkMNBguQl0WUu1mnz21oIeFdrNjvGEwxo2UJT2MO32W2yPZ8ncFDV7M0ViBjgS3rIvhDNq/0Y30Axhhjn6XkzIUR3A1QNV+h0qxV+UkWHT/FLs2SiIIAdF4D1oK6j8DuvvFaEzSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=V6hLvTiW; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="V6hLvTiW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713186419; x=1713791219; i=markus.elfring@web.de;
-	bh=4q1T+fveRZjMHTvoEUqhMQBqnsOLA8vdGMrLNev6YzI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=V6hLvTiWwBcQMJjgKssj/YRycNHHayc9GY/F/ZOJhV6qRMUb5S4a4ZlFaki16AIy
-	 0TQ3G9D//AyAV6nRCb2fqGz65SJaBC1+qkM5a7LHIksupkkbBNRQrt2DRsucDePoF
-	 xmut1bsz2bo3057UG4ShP+eZqmIywbu0Lym0cPQWdV2IPR29olwBN5oKMrvq5V3Id
-	 tmglOZQ/U11PL3fQoYhfeCpInOTznaBM3M0snzoKIV6GcxLFHyUx8xPlSfuSWMjGn
-	 d72KdnTb9v9RAKdh8lWoX7sSUAq0/25NX+kWfTXkixMKKiQPs6GuwAnDdaVMSy2lX
-	 BNv93auRRxUnjuDVCQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mq1CC-1sacXB10a2-00nOEZ; Mon, 15
- Apr 2024 15:06:59 +0200
-Message-ID: <f1a38236-82fb-40e3-a7eb-bac913ba8f0f@web.de>
-Date: Mon, 15 Apr 2024 15:06:54 +0200
+	s=arc-20240116; t=1713187269; c=relaxed/simple;
+	bh=YX7hllbyiJmA8n7JHQzkLlbiw1r46OIwRrV5JFT8Yk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hm675OQA8jXg52dwYij1UKzurkwKl7KX0jaEI6+pSQSzP3S3lAikIMxpzg2KiaxHK03jKuqWklB8GTxyIVC9YHu9mg01MNSOKAdRm5sOs7km1lja5UXXx6RLwTa0Wjon1KCX9Jn+GObD5rs7tB294M7Ksph+Q9YrbaPm+OpGA2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org; spf=pass smtp.mailfrom=bounce.ens-lyon.org; arc=none smtp.client-ip=140.77.166.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bounce.ens-lyon.org
+Received: from localhost (localhost [127.0.0.1])
+	by sonata.ens-lyon.org (Postfix) with ESMTP id 14966A0356;
+	Mon, 15 Apr 2024 15:12:27 +0200 (CEST)
+Received: from sonata.ens-lyon.org ([127.0.0.1])
+	by localhost (sonata.ens-lyon.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 0ePUsKKeAeGk; Mon, 15 Apr 2024 15:12:27 +0200 (CEST)
+Received: from begin (unknown [61.199.131.154])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by sonata.ens-lyon.org (Postfix) with ESMTPSA id 4D97EA0326;
+	Mon, 15 Apr 2024 15:12:25 +0200 (CEST)
+Received: from samy by begin with local (Exim 4.97)
+	(envelope-from <samuel.thibault@ens-lyon.org>)
+	id 1rwM89-00000007bTI-0YTQ;
+	Mon, 15 Apr 2024 15:12:17 +0200
+Date: Mon, 15 Apr 2024 15:12:17 +0200
+From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: William Hubbs <w.d.hubbs@gmail.com>,
+	Chris Brannon <chris@the-brannons.com>,
+	Kirk Reiser <kirk@reisers.ca>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>, speakup@linux-speakup.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] speakup: Fix sizeof() vs ARRAY_SIZE() bug
+Message-ID: <20240415131217.t3zfjucclauc3rkz@begin>
+Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	William Hubbs <w.d.hubbs@gmail.com>,
+	Chris Brannon <chris@the-brannons.com>,
+	Kirk Reiser <kirk@reisers.ca>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>, speakup@linux-speakup.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <d16f67d2-fd0a-4d45-adac-75ddd11001aa@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Guanrui Huang <guanrui.huang@linux.alibaba.com>,
- linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org,
- Marc Zyngier <maz@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Shannon Zhao <shannon.zhao@linux.alibaba.com>,
- Thomas Gleixner <tglx@linutronix.de>
-References: <20240412021556.101792-1-guanrui.huang@linux.alibaba.com>
-Subject: Re: [PATCH v3] irqchip/gic-v3-its: Fix double free on error
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240412021556.101792-1-guanrui.huang@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:je1w6x2K7IgLg/YyCsujg70skuT5+UwFo/5EsgvyV0OKa75ON14
- gLXr96eR4s/F1aoHi3GMFu9cpnRnrefuHQ4f5Gtoql6ONnBPdisIgpigWf5smwap4c2VUwX
- 9fTijWZyBo/MiS1bL3BDAGJUkhZUqjwx1tKJJTbtZhTcLPcZPTPg849RRO+nekfa6sPfXAh
- j4Dz5XiZVKnipOor0dWEA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:rm1SAKFwmZ8=;fwAliXKSJZyg6ImW72zUAywwFPP
- ngNWHHnusHBQIVHgT+2fYTiGcLDsfgc7Jpn7QIidJLdANeBPzMvL/8ku0xm4iBB00kr2Yv7Xc
- IDML4Z6UKRXaNx6HlN9jOAOQRbv7gVlFbqn/OPjhTkJubMtY3JheowwdCA0CWosGeB7Nz0Za1
- ve26JZB3uuTkPF418kpZzW98NJ9DHlXhplm4hyY8Oyb8U0fjomdQCUJjFXzDu6lGkF9ma8IKy
- 6neuqOa/BIIoxxoqM0b6w3OhDBhfHs1e94Za5FZtxscROW0uDDndGZoZcceTkxY2s1O+xcOlR
- M1OSwLipi8gZtrGa3AX81vn762kIDj1ocNfPxcut9/XOueVhSX4oSo5Lg9HNdPswFWMhzuLew
- sVRhWeHLGPvfoSte7uKAUK+QbhzFJqBjnL6BzbAiHlILBGQWkENV14cnnq0ZYXfkM2AUbez2n
- 3EIEPC0Jw+LOlJRrQiJAUM2akKimJ1Qd+a3IJBOrzNoo/pfQdW8pvNoF3RdnpNnigZmnTOM20
- LsO+04tfYuLAnRmqe86XLgoqr3M3/dlSSfOSkY3YAWoMAhLccgvCu8costpi5bjXxaPPGL55n
- uBbDN3FTXRLOMY7i6pCfiXkR7VbP2uapW7NeBIqr+mkpoGqaaT1NfzXIuGbb9wPQw6y3wLmSI
- COc90LcDdj/4vM9SKXbFL1AZPafPZRKkKl+BaahFV0IzlGO7yTbQBirmH7GzbGBVQR5n7WpMp
- rEZMKUUjQcVbIhhqikZ6Vi350WkGD41xizgBbDFgeRvUT0HUDIBw8haLiE37y71rxR30wZcGj
- PW+yBx+e1AwtQQaPZyEEOz9Ffre/ALat/P/OTXQdKZFac=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d16f67d2-fd0a-4d45-adac-75ddd11001aa@moroto.mountain>
+Organization: I am not organized
+User-Agent: NeoMutt/20170609 (1.8.3)
 
-> In its_vpe_irq_domain_alloc, when its_vpe_init() returns an error
-> with i > 0, its_vpe_irq_domain_free may free bitmap and vprop_page,
-> and then there is a double free in its_vpe_irq_domain_alloc.
->
-> Fix it by calling its_vpe_irq_domain_free directly, bitmap and
-> vprop_page will be freed in this function.
+Dan Carpenter, le lun. 15 avril 2024 14:02:23 +0300, a ecrit:
+> The "buf" pointer is an array of u16 values.  This code should be
+> using ARRAY_SIZE() (which is 256) instead of sizeof() (which is 512),
+> otherwise it can the still got out of bounds.
+> 
+> Fixes: c8d2f34ea96e ("speakup: Avoid crash on very long word")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-I find this change description improvable.
+Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org
 
-Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
+Thanks!
 
-
-=E2=80=A6
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -4521,8 +4521,6 @@ static int its_vpe_irq_domain_alloc(struct irq_dom=
-ain *domain, unsigned int virq
->  	struct page *vprop_page;
->  	int base, nr_ids, i, err =3D 0;
->
-> -	BUG_ON(!vm);
-=E2=80=A6
-
-Please improve the patch granularity.
-
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc4#n81
-
-Regards,
-Markus
+> ---
+>  drivers/accessibility/speakup/main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/accessibility/speakup/main.c b/drivers/accessibility/speakup/main.c
+> index 736c2eb8c0f3..f677ad2177c2 100644
+> --- a/drivers/accessibility/speakup/main.c
+> +++ b/drivers/accessibility/speakup/main.c
+> @@ -574,7 +574,7 @@ static u_long get_word(struct vc_data *vc)
+>  	}
+>  	attr_ch = get_char(vc, (u_short *)tmp_pos, &spk_attr);
+>  	buf[cnt++] = attr_ch;
+> -	while (tmpx < vc->vc_cols - 1 && cnt < sizeof(buf) - 1) {
+> +	while (tmpx < vc->vc_cols - 1 && cnt < ARRAY_SIZE(buf) - 1) {
+>  		tmp_pos += 2;
+>  		tmpx++;
+>  		ch = get_char(vc, (u_short *)tmp_pos, &temp);
+> -- 
+> 2.43.0
+> 
