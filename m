@@ -1,154 +1,86 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB82878B50;
-	Mon, 15 Apr 2024 15:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84C471B3B;
+	Mon, 15 Apr 2024 15:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713193223; cv=none; b=Fdbe8dU8anWayI7Oy8iX+7qN1vDlJmXoLmZeJHnDi0iVPRyKl8UbCx6tExCJPXWiAwWi+jLSneWY8zNxp54dcFe3VedRxy+av7sW0ImTSJ05zQ1tVsNIorcAdTZ7qEZjBrmsrp0IhPQ9NlHER2dKA9Q2IEcf0hyxBtYgkroQD2Q=
+	t=1713193657; cv=none; b=BbmsrImOm/ClJntHsvcQ0I/E5E64SvpDsVrFAhYVvOEaX1Quj0VrKWnMYrh/n/9GFH959wlL4tPjuPC9Nli4KfdZdAkxY9jC08sNwmhj6dJSQhURGu9/Gs50oKDhT1a9Uw/3/GLpYPG7dnBHgkA0yfZluGUC5F3DjpYU1KYfFA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713193223; c=relaxed/simple;
-	bh=2WE10r71jQvyNYocCtd9QNiyivLI/QP6AtzHMGv8gVA=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=mCTrAk16HH3OiiS9X/KLYgdyTBC5jdI4M477Rysc0948MJGMSNrT1HAgziUaeY0xUEb1LEQlgyVqCDrgFlYpb3edtHlzdo4V31wR5TzQqCx0EkxTZC9QOFij6OmZ6QkdgSDl7X67QfBMLEMGmhGwcDJAdwqFEC03JzTwXOFAGS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EKsYIaPL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vR8Iy/Um; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EKsYIaPL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vR8Iy/Um; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1713193657; c=relaxed/simple;
+	bh=emgz6QBKDimwdJBAJ7LQ7441HPWa2vqJvQcWuqrELQ8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=TSYTAVOdg9H5qO6Jf+Zt0tAd3wrqP9OKMr0EBR8CXF8ikmq2Hy4AEd+cbGpD4oAFKxhjaod3xOXeCcl8WugfGJ2k+9b0RcyhyPoAlS/F9/2p0GO7fLaZVeN324u0zw/fIoo+jx9M4I+WFJOKDUxCfpr5/qkCmBL/DRJ4GkhVGu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=SBLSGHmK; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EKsYIaPL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vR8Iy/Um";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EKsYIaPL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vR8Iy/Um"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 00AAA5D124;
-	Mon, 15 Apr 2024 15:00:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1713193220; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2WE10r71jQvyNYocCtd9QNiyivLI/QP6AtzHMGv8gVA=;
-	b=EKsYIaPLqd21jbpNul9XdzHzETWowkni3lMuKYJ82hW9pXlhqN/ZF8CcoQoU8jxpI+36/Q
-	iFV9piyGfxtoFlCZ/0hxYi4twQFeMfQD3/69pr1K9Li0HqhoCl381pAbE/FQ7VcuhnS89F
-	ekl1pPOf2ZnJfosPzCvGj9CWtFfpub0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1713193220;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2WE10r71jQvyNYocCtd9QNiyivLI/QP6AtzHMGv8gVA=;
-	b=vR8Iy/UmLidMgsQZNDzBRqZBLsxWjzgtNnOehE12VIfAqzKQHsQvjcyJKCVbDKs2U37jUj
-	KbVt1xgdKJ6YMdCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1713193220; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2WE10r71jQvyNYocCtd9QNiyivLI/QP6AtzHMGv8gVA=;
-	b=EKsYIaPLqd21jbpNul9XdzHzETWowkni3lMuKYJ82hW9pXlhqN/ZF8CcoQoU8jxpI+36/Q
-	iFV9piyGfxtoFlCZ/0hxYi4twQFeMfQD3/69pr1K9Li0HqhoCl381pAbE/FQ7VcuhnS89F
-	ekl1pPOf2ZnJfosPzCvGj9CWtFfpub0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1713193220;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2WE10r71jQvyNYocCtd9QNiyivLI/QP6AtzHMGv8gVA=;
-	b=vR8Iy/UmLidMgsQZNDzBRqZBLsxWjzgtNnOehE12VIfAqzKQHsQvjcyJKCVbDKs2U37jUj
-	KbVt1xgdKJ6YMdCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 20C551368B;
-	Mon, 15 Apr 2024 15:00:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uI9EMQFBHWYlNAAAD6G6ig
-	(envelope-from <colyli@suse.de>); Mon, 15 Apr 2024 15:00:17 +0000
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="SBLSGHmK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713193633; x=1713798433; i=markus.elfring@web.de;
+	bh=emgz6QBKDimwdJBAJ7LQ7441HPWa2vqJvQcWuqrELQ8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=SBLSGHmKz2ARTmGyMPUv4aNk6Kv2dQPqVUSD6nmGNGP92hbXvHuf1dVZrK8essQj
+	 lBz+ZDBxOngb73DhFMzdiBREU1/+B3XtSR4vzRm7jsM21I83TANUjKRwGNbU9CBUt
+	 Bbk7wq4SFiAnMpVNRI0i5VxmskObA2lM2CNYsiWXSmdRie59zd/toQWE6L5oHi6Ki
+	 G/bFj30z99qqFBFwRByd0q+mRlbPGaWaQLGjPO75qvkP8Qo3/Qe2YchGG7rAw/VKz
+	 0i3iLRWr/L9NhOqVtHqTIvP5XPTBo/0s/hExvZbICpX4wrRmi8Tfhsn6RVzUky4BF
+	 B2LCYvfmjM/i1KcWTA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MCol0-1s5Dc10XuC-0095eM; Mon, 15
+ Apr 2024 17:07:13 +0200
+Message-ID: <99598b98-8550-4dca-beea-4c2d61d46f78@web.de>
+Date: Mon, 15 Apr 2024 17:07:09 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH] bcache: Remove usage of the deprecated ida_simple_xx()
- API
-From: Coly Li <colyli@suse.de>
-In-Reply-To: <4230d015-d9b6-4753-8957-717eab00d5cb@wanadoo.fr>
-Date: Mon, 15 Apr 2024 23:00:04 +0800
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org,
- Bcache Linux <linux-bcache@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Wenchao Hao <haowenchao2@huawei.com>, linux-scsi@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, "James E. J. Bottomley"
+ <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Hongxiang Lou <louhongxiang@huawei.com>
+References: <20240307144311.73735-1-haowenchao2@huawei.com>
+Subject: Re: [PATCH v4 0/3] SCSI: Fix issues between removing device and error
+ handle
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240307144311.73735-1-haowenchao2@huawei.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <E93A4C68-B846-4BBC-8778-EAC3DF97507A@suse.de>
-References: <2f038df3860c2f44d5c7f5d06d03ca663cdbc651.1705235398.git.christophe.jaillet@wanadoo.fr>
- <y2c3dt325d4xzcknmwtyd6gungco6jqucz3fsrm6lsyjtiwpp4@ozmsw6vp67jk>
- <4230d015-d9b6-4753-8957-717eab00d5cb@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+X-Provags-ID: V03:K1:izUBwOSRW+Fblv0kjxF4VBtGny4pVfwwEQZR41GrApqty52fkLo
+ pcNE+Hm7fo738bynpdceUAqqSpZEg6WAANQkO3/tC3hKfWYgjPHt7G9S6oUc7kz5febtJj7
+ DvnfhYX+RB4XdOnZZpB5fDdBmJb1prTXYbUTI40wDCF9TtpMpRda/QUIJeT2BEFvKk9HJmx
+ o7c0aSaaHUMVmKT03me6A==
 X-Spam-Flag: NO
-X-Spam-Score: -3.75
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.75 / 50.00];
-	BAYES_HAM(-2.95)[99.80%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MV_CASE(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.994];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[wanadoo.fr];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+UI-OutboundReport: notjunk:1;M01:P0:GG8nbAqW1m4=;6W/vM4M4GzDaZ9VGuYjUyRMcB8a
+ 1tu+Fm6SOAXcUPhDr+Phf3kvdIcY+uoAUkMGtmKI7gAREQ5Q2tTa0pxTdsRE4wox1cuZdV0VU
+ W1JOqc1f1snWTNHiQHAAYZ+0OyUMFukAB2XJ1UFvR0YV7OFaQgatjYjBm3VC9OG2dpIgm94vS
+ utp3NC9Q0yVxQnN3smCfGookJjxHjlsn0QfyEiktTsWfX4bSmS6Yovl+UIWC59ZYeppduMNY/
+ YcBJ0BbEikdFCXovRKDDB2rhkwdk6TxW8vL24mrRuvWAvFAcr2H2amUqel74KXg0kWK+VuxHO
+ XyOd2TVO9vDjzYFzC0pzQvmz/JOTGZ5jbpxa5f8o9wmfmpdPOoT6s7HXeDiU38ua5caj72SD5
+ TSLxWNeiOUtKGf9E51IEGVmKlsrGTER3jKtkusXOj6VY7PbWiROZuqZl7O90mY1Ul2LC6TuYb
+ kfEM7r8aWHrXCZBZ2RAcOG38y+D970FmQ/8h+Auo4hhcbv8m2++84up7DhegQZHrrQmWeZhfr
+ UaQtCp+8/0T3EefoYP1XK25FY4jXVvYkqIFCPobFvMbjcAJ+68mgMs7ccM2uzTX0mrQ/AGvut
+ lyLiXXr24BQWxufdbFfLw7xQqEOFH61LW/kvtWqzhbTesj+B8Vv6DabiPvwi2rfUlPk5BSyGs
+ VjyfNBpCUIzkUY9VUGta284VdY4NjOte3uYjl+20U+nNF/hBIQRjrUI9aQRzaxnzXqsMTVgSD
+ eVWU7GgzRS5n0qVUvAP9y8ba/aeSsO8jkN3gdZoW8nyg8Lh9LwbsNbu0oJ5GyAnxxV034w/ta
+ brRlFv85TyvzUwjquphj+c30WAVN8AX2a0aKksvaIXRpI=
 
+=E2=80=A6
+> These issues are triggered because devices in removing would be skipped
+> when calling shost_for_each_device().
+=E2=80=A6
 
+How do you think about to add the tag =E2=80=9CFixes=E2=80=9D to any of yo=
+ur patches?
 
-> 2024=E5=B9=B44=E6=9C=8814=E6=97=A5 16:24=EF=BC=8CChristophe JAILLET =
-<christophe.jaillet@wanadoo.fr> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> Le 14/01/2024 =C3=A0 16:16, Coly Li a =C3=A9crit :
->> On Sun, Jan 14, 2024 at 01:30:16PM +0100, Christophe JAILLET wrote:
->>> ida_alloc() and ida_free() should be preferred to the deprecated
->>> ida_simple_get() and ida_simple_remove().
->>>=20
->>> Note that the upper limit of ida_simple_get() is exclusive, but the =
-one of
->>> ida_alloc_max() is inclusive. So a -1 has been added when needed.
->>>=20
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> It looks good to me. Add this patch into my testing directory.
->> Thanks.
->> Coly Li
->=20
-> Hi,
->=20
-> polite reminder ;-)
-
-Yes, this one is included in my recent performance testing :-)
-
-Thank you.
-
-Coly Li
-
+Regards,
+Markus
