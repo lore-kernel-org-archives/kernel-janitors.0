@@ -1,98 +1,88 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800B780635;
-	Mon, 15 Apr 2024 16:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D791984A23;
+	Mon, 15 Apr 2024 16:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713198500; cv=none; b=GRnFyWV8Xf99h+2as2YBoigqu4516Et2SEcMOZVFV2hG2ySXWLl3yi3CsoDG0ShANzBBV6qePxbgtDf0VoL2YLX5oe8MoacBJK6g0DySJ11FdG4iXG5Lw26LNAw7tF+XXQTzPG56g0xpF6g55Ax9VoDA8roM2yIIYAac+geiJT8=
+	t=1713199035; cv=none; b=GsQnqzfiQ8FQsVG9GEDddFMwyVdwXfFJizEwBzsKL8Mbd5E6EmcppDph6IVjn5Sfh8Rn11rkGQwH+iZ1T7atG8rXMDP9sUubIl4xDuiaZ0t2mms07QuSGtmySR0NYlYRK3zz7a9xENpbex6yhn10EfAJ4TEf0VphzNcetD4gREY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713198500; c=relaxed/simple;
-	bh=U2/UnAEfxAjeQOls/oNn2mc+hH1lDCfv8DsHXxkohlI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bfnVl1z4IQiHJZB9lYlXmUbAeoiMHG5LRkfRR7ygZI9OaacBfW6rBiWLxyiUkZwyxAh/L+kEGVDnVbl/UfP0n6+hc85q/r4MinQvjy8hCdKd8QHPSxeZPurk0zt2c4cO1I1UfZpxcUaqWodFVcjabWD8SOyV56O9SYDGl+X8y8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jv5MCLyn; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1713199035; c=relaxed/simple;
+	bh=vhYf6guI1O7u9dAK5aGWMDqew1wEZWHlWA172sd6erU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=mSRx0xO1WjqKvrZ7ikN89Cmy8w0NbjGkCXVn+/+ALkiVs/ekC1UB2L4LINpn2f8e0k5KHNMzAK6LY2CqMZW76b1KtvH7772z/BVgxGDwAGJqIKHQSxgyqzOlVMxtgnbF0jNmcuKtlyum5HloooYGTV/QsxpcFFSUHPp1gEi+/Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=k+8pj30E; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jv5MCLyn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1713198498; x=1744734498;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=U2/UnAEfxAjeQOls/oNn2mc+hH1lDCfv8DsHXxkohlI=;
-  b=Jv5MCLynFyOF5xicsvuqQJ/of6LD/6D5yXlN7BX1IZn/PrOSujK3q/Ei
-   1wT80bnaTHcVqipbiNf05dbO/DhjKcB2xn5LScNl0Raixb9j1tJQD6wPr
-   CGWEHgX4FAnA/UMR8RVWq8tAuBTs1fULf7ug3arsLhY/6q/4ghNmNuwOJ
-   aGVxqSj+O5DDkJg5ghC0aj4Z7UTsPrbLZdkglWv1NA68cnI6Z1FmxWy4X
-   fuWRaQqrV44m7WDxt31xnlOPBzkuZjRMBbsLTZRqQ4Xlho7XEfSMk/f2D
-   a4DDPyL7MNYH3N/OXfELDCnTZNnZtmtBuQwbR+P13eYBWgBywRqBTrU22
-   w==;
-X-CSE-ConnectionGUID: vxCWpPVhR5KFzYswhUXgDA==
-X-CSE-MsgGUID: L4rurhbnTTakJOO3nImuyA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11045"; a="8708464"
-X-IronPort-AV: E=Sophos;i="6.07,203,1708416000"; 
-   d="scan'208";a="8708464"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2024 09:28:18 -0700
-X-CSE-ConnectionGUID: L67mHGv8TzCH4dF8pCaK4w==
-X-CSE-MsgGUID: GkjPkxbCQvartfrYdbKRIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,203,1708416000"; 
-   d="scan'208";a="26613854"
-Received: from rabinapr-mobl.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.27.254])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2024 09:28:17 -0700
-Date: Mon, 15 Apr 2024 09:28:15 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, nvdimm@lists.linux.dev,
-	linux-cxl@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] dax: remove redundant assignment to variable rc
-Message-ID: <Zh1Vn0iQk0AVTJHD@aschofie-mobl2>
-References: <20240415101928.484143-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="k+8pj30E"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713199018; x=1713803818; i=markus.elfring@web.de;
+	bh=rUHFv7hYTYZHryZJN+dw2KYFFC+hUd/h/JV+c50Rk6g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=k+8pj30EHWFTg2vPtZtYGsvdlwlg6dA4NJhjDzZA/dLP7QemXa1OuFNOHHl55xP7
+	 D0fbvUIBN8l52Ql7+P28K0C/MUQzd0+pJ3wSXq7hENcpScghA5ea/D3OrdFMOXDGz
+	 EEdkLZ3O2R1MVMXfOYuksZ5xYiVWImow9MYCqM3BDBssWSmfcGGYPdo6kmiWgFmDX
+	 UItTrGdndzZgHznQDRYgCCgg8jwWf+7q+v/euuSjn5IMR0J1+zXeC9FhPdb98qJoj
+	 LQgmtCp+Cp7o+L74NbS7SCs0ryelB+3/P4XiGvOz8IlcmlGcZsSxgx70Iyvxm5iXP
+	 DIm8w82FjTZjkUTEig==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Md6y1-1sW0vR3Lsp-00aEKI; Mon, 15
+ Apr 2024 18:36:58 +0200
+Message-ID: <0f7821f8-63f2-4cf4-8865-1ae0aaf42897@web.de>
+Date: Mon, 15 Apr 2024 18:36:53 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240415101928.484143-1-colin.i.king@gmail.com>
+User-Agent: Mozilla Thunderbird
+To: Zeng Heng <zengheng4@huawei.com>, linux-gpio@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Wei Li <liwei391@huawei.com>,
+ Wei Yongjun <weiyongjun1@huawei.com>, Xie XiuQi <xiexiuqi@huawei.com>
+References: <20240415105328.3651441-1-zengheng4@huawei.com>
+Subject: Re: [PATCH] pinctrl: devicetree: fix refcount leak in
+ pinctrl_dt_to_map()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240415105328.3651441-1-zengheng4@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:CXzh8Zjhgjw2ckngfzx4BF0HztIYni+4xFLEUVzEw8AscsoACLN
+ rQu7uyD2ZwHoTtPbFAviXKdUY81ROLPmCfibWAfSQTI8HYeCIUUrVJmVESlqal0gk/cDnGj
+ dbB3aXgEv2oz0pl5finSlISfesDTqt80AbrMtRGnVzHBwq73zieb8R5xLyQfNE07YltdkJz
+ AA+s8fV8EBFrH7xUOesrw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Aujf/A5q5vg=;d1vHN8azuLrGFggQg9H3eCGHuip
+ hFRL8CIohEdEgPciT3+yAOGxwW6oNcTWqo2CXNa3KTRivkNUmgoGA+oRyUE9oomiFImZ2yVg4
+ XsDHhtQBIZRKzf4WjzLGHseoz1EX6rlzkhkoAdwbrfWC7mbZzJo/YcUKkTzCqu6MZ+rhBy/uM
+ c6BNN1zK8QyG+xsIODu9JslW8u9XbUxpXooCVhJ6wgjF28YFhPpIdX15JrjcWtvPYKKbnMWef
+ hhx+4KFPwL64aIJt2nBx6fvbl2GnTDL2uGmtsP7t2Q4o/oo51WHsFn5U2URTcsjfI8xTN/aiU
+ NRphXf9J4AjM8uY5mDnT+JnZHwbv/tEIR0WF2IHl4DydJD02Cj6g0dtrXBIMlZGxM6KgVW+9B
+ t+po9J75Qgr3f3ElCjYCpxuj5v3RJshsg5GQ0kfHe3y1AMPmWWIgSedZqHJRT5v9Mxy2Nf6hv
+ mueEE01+H6/axTI5fyCbZuJymyofIimxIVWW5lOyXsOMh3F4lmg+A5RL1qCTGeuAE3rIEwGg8
+ NMgL4RPs+OG2Q7ZFeniEQq/QLH3r+NScwakSMZyK6a5p970tWHoOFiO2ZsuTMYeCimYj439eW
+ 73FN8xHgYBXaI4MD7O7UNXDqsXrl54ZRHWwUh2zygNFqCvTgX912BkG/HkJqP4Irb3m64TOwD
+ uA+8+GXO+xu09mI/jLnYij2M4j9484cAHRsle6iHbK7UbA6QM20yvaLESidNSx3VYnupw3hn3
+ 1TYttaHQa159LCRR7YCsIrT+RmKaiX64SeMn5ww3Idpr+com96B/spE6gcz1f4SqRmnq69xi2
+ R8E6PHeUez3bqRQEEwaJuY0q2pFT6L3ByZtqJ1P28mdLw=
 
-On Mon, Apr 15, 2024 at 11:19:28AM +0100, Colin Ian King wrote:
-> The variable rc is being assigned an value and then is being re-assigned
-> a new value in the next statement. The assignment is redundant and can
-> be removed.
-> 
-> Cleans up clang scan build warning:
-> drivers/dax/bus.c:1207:2: warning: Value stored to 'rc' is never
-> read [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+>                   =E2=80=A6 Because the pinctrl_dt_free_maps() includes =
+the
+> droping operation, here we call it directly.
 
-Reviewed-by: Alison Schofield <alison.schofield@intel.com>
+I find this change description improvable.
 
-> ---
->  drivers/dax/bus.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
-> index 797e1ebff299..f758afbf8f09 100644
-> --- a/drivers/dax/bus.c
-> +++ b/drivers/dax/bus.c
-> @@ -1204,7 +1204,6 @@ static ssize_t mapping_store(struct device *dev, struct device_attribute *attr,
->  	if (rc)
->  		return rc;
->  
-> -	rc = -ENXIO;
->  	rc = down_write_killable(&dax_region_rwsem);
->  	if (rc)
->  		return rc;
-> -- 
-> 2.39.2
-> 
-> 
+* How do you think about to avoid a typo?
+
+* Would another imperative wording be more desirable?
+
+Regards,
+Markus
