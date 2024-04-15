@@ -1,88 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpcmd14161.aruba.it (smtpcmd14161.aruba.it [62.149.156.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0483A848D;
-	Mon, 15 Apr 2024 02:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A466134A9
+	for <kernel-janitors@vger.kernel.org>; Mon, 15 Apr 2024 06:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.156.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713147976; cv=none; b=egIieX4GoC6/Ajct+1IsmxZVpda3pOvzCsrUq60UuLeOd7W54n0i7qyZFKEEVqCqBA7qqn+XQhIpn+zxMGf4tgBDl+SEFZ4ihucuAMcsxhkwW+qIzF3f0cuE+jxu68Ui6FceiYEeSKoXo6Ulmo3PG8lXv86oM9qZW+VeHQEzGuY=
+	t=1713162045; cv=none; b=EEVSj5hASV8z8Tn2yvLNW+BbDvyXCvZWq1VeJ9xXCCmefsciae3wth/96cJGDY4Zt969ggLpFtKRxtD/oZIwFopuIWYSjkbb09tAcraDuXdvcyx9Np5RhXyEnw8hlnKwRif8ETr36TlkSdRfyfZggBwE2tfAik9dKdbNnjItEOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713147976; c=relaxed/simple;
-	bh=d+sWxRJcFYWDfl1g1hpky8Wk0cZLGATyDM6LOemMcEs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=b7wJjcHLsgH+JZQ7/O26lf/aQsuY++iDJsnOieKghcwxZxZpvlEReElssWbClwvjZg9uJT9AAJ3D9gMtLGRo10t8Aw4GQw4Nv13fkex9XrIGeS+eOYKizidl1GOWi0WaBA+j0exkhIS8sxOkH5S+EWlCEGYaLk2yO6BAJ+RQNYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c7lZRSEd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713162045; c=relaxed/simple;
+	bh=hRccvfymK0MYtXuVZ/VMIXb9HGyqMY6Pf7SNH3wqQl0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h86unyXaD66oDy3frc2Yj3kor2smfOiNJOBiTsApQaknqPHstkSlObnwNEUbD0G6MpYIDhX5uI8+X78hw8lEaBjCPpXGzMsH1N2ln+aTxIgZHzy1ZxUVVKmthRj44/O3DY+k/MGZPJz9AHEBdEja6rjAXh4AFJCAe1Kes9K11cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=SG6b9iCE; arc=none smtp.client-ip=62.149.156.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c7lZRSEd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8306C072AA;
-	Mon, 15 Apr 2024 02:26:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713147975;
-	bh=d+sWxRJcFYWDfl1g1hpky8Wk0cZLGATyDM6LOemMcEs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=c7lZRSEdzsr9Nn7/FXaeq0JgYid1V+ueNmv08TM4w20O7u2isRkZaFyTN0gTv1gcB
-	 fqyHyfU+Syw8NJXZaye4+LLW6qH9bOu1knw/wzrFgBsFI+l6RdK1I7bPTDDDZILTsU
-	 NzQtbQDWnGgVSY96N9+CtIxVzw1JQRh2K1rPP+TkgRNEKohtaDRDZsegsptcIrSURD
-	 ZFUkqCUOXuv+ot8BgXOsraZFEoF5sZOox0htdfFumc+5wgfsJuQys10/rPg86RcrMP
-	 U31q/+ivTZ02F/DhCUhUcTm9tlU6pNKt6ydIAwGSoLhR9jhEw3C5q4ghIaf6YD+/OT
-	 4tr3KWl6/r76Q==
-From: Mark Brown <broonie@kernel.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <450dd21a-b24b-48ba-9aa4-c02e4617852f@moroto.mountain>
-References: <450dd21a-b24b-48ba-9aa4-c02e4617852f@moroto.mountain>
-Subject: Re: [PATCH v3] ASoC: soc-card: soc-card-test: Fix some error
- handling in init()
-Message-Id: <171314797306.1649319.17265441558891168082.b4-ty@kernel.org>
-Date: Mon, 15 Apr 2024 11:26:13 +0900
+	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="SG6b9iCE"
+Received: from [192.168.1.57] ([79.0.204.227])
+	by Aruba Outgoing Smtp  with ESMTPSA
+	id wFekrLhFwjEwewFekrpty3; Mon, 15 Apr 2024 08:17:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+	t=1713161851; bh=hRccvfymK0MYtXuVZ/VMIXb9HGyqMY6Pf7SNH3wqQl0=;
+	h=Date:MIME-Version:Subject:To:From:Content-Type;
+	b=SG6b9iCEVWvZC9LhZtyFCa5BjMiv75FBRmG+cYfe3DGzasAesr3TdnXvMEkXBhnN3
+	 xIgE0Gv04zoUUSbUsjVYHY1rXVsUhWvi8PF8X1krufO26wSI9R6KcVKz0/7Dycsiau
+	 lRmYhhYZ60WEjGgCeK9Yrh0TNjHtkFCrxFa5TQiFp1S9v/TMojA1p4KWmQaDwnWFFh
+	 bz8IusP021fZD8DbH7jkQq6WXcvGa01ueXqIxHYc+Le7wW2v7+k5n4jER1+kXw4VYP
+	 4pzSt8pQIjPOZdjZcl6i9+/bxRSJBe0NLGZzUF6exOdzQfZPsT4Q9IUIuQIEpgD6sQ
+	 ylNCpWisftAgA==
+Message-ID: <0fc6dd85-3ac1-40c0-aecf-01ee758e6893@enneenne.com>
+Date: Mon, 15 Apr 2024 08:17:30 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] pps: Remove usage of the deprecated
+ ida_simple_xx() API
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, akpm@linux-foundation.org
+References: <9f681747d446b874952a892491387d79ffe565a9.1713089394.git.christophe.jaillet@wanadoo.fr>
+From: Rodolfo Giometti <giometti@enneenne.com>
+Content-Language: en-US
+In-Reply-To: <9f681747d446b874952a892491387d79ffe565a9.1713089394.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev
+X-CMAE-Envelope: MS4xfBSfW+JSyfWbIVNrZ9xYK7Li14GoliImLM1U5pTheQp0oCbbgAb/qzr+FPqnhsl2TPRv4ab0Eo0hb1dKDjMwM54DuRExAOPPm1G+FmRODucpdB7OzRZI
+ IRTgelBEQGkY9Hlr2holVUDC//hEdyI7ZMBHxrGkpbhT+Su3yMWLQJ4kfAfWjEv/X1q/EyDgsz9rgG27P647ihEZWOm4EQ9q0DVTntdlBcdbJzNcePfQcNri
+ LFMrrckDbVO2QY87syrLZkKZ9eMIoals7KjjYkSQRhgRCc8KXj2e7q3a5DtN0V9lNtK0YWFpVqnGI7hoZsFwgNb+ib9N4nBOFXX6DzQGNh+O59n1+4c1A8S/
+ XjBj0f/ZJ7ytnuBpse+J3GzevjssjA==
 
-On Fri, 12 Apr 2024 15:07:01 +0300, Dan Carpenter wrote:
-> There are two issues here:
-> 1) The get_device() needs a matching put_device() on error paths.
-> 2) The "if (!ret)" was supposed to be "if (ret)".
+On 14/04/24 12:10, Christophe JAILLET wrote:
+> ida_alloc() and ida_free() should be preferred to the deprecated
+> ida_simple_get() and ida_simple_remove().
 > 
-> I re-arranged the code a bit to do the allocation before the
-> get_device().
+> This is less verbose.
 > 
-> [...]
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied to
+Acked-by: Rodolfo Giometti <giometti@enneenne.com>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+> ---
+> This patch has been sent about 3 months ago [1].
+> A gentle reminder has been sent 1 month later [2].
+> 
+> Neither one got any reply.
+> 
+> So, I'm adding Andrew Morton in To:, in order to help in the merge process.
+> 
+> Context:
+> =======
+> All patches to remove the ida_simple API have been sent.
+> Matthew Wilcox seems happy with the on going work. (see [3])
+> 
+> Based on next-20240412
+> $git grep ida_simple_get | wc -l
+> 25
+> 
+> Based on next-20240220
+> $git grep ida_simple_get | wc -l
+> 36
+> 
+> https://elixir.bootlin.com/linux/v6.8-rc3/A/ident/ida_simple_get
+> 50
+> 
+> https://elixir.bootlin.com/linux/v6.7.4/A/ident/ida_simple_get
+> 81
+> 
+> Thanks
+> CJ
+> 
+> [1]: https://lore.kernel.org/all/5065a9fe3101dcb7ee0a79bde0ec84de03c637ec.1702230047.git.christophe.jaillet@wanadoo.fr/
+> [2]: https://lore.kernel.org/all/9bfe4d6b-d289-40bc-b9fa-bd34c08e6e03@wanadoo.fr/
+> [3]: https://lore.kernel.org/all/ZaqruGVz734zjxrZ@casper.infradead.org/
+> ---
+>   drivers/pps/clients/pps_parport.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pps/clients/pps_parport.c b/drivers/pps/clients/pps_parport.c
+> index 42f93d4c6ee3..af972cdc04b5 100644
+> --- a/drivers/pps/clients/pps_parport.c
+> +++ b/drivers/pps/clients/pps_parport.c
+> @@ -148,7 +148,7 @@ static void parport_attach(struct parport *port)
+>   		return;
+>   	}
+>   
+> -	index = ida_simple_get(&pps_client_index, 0, 0, GFP_KERNEL);
+> +	index = ida_alloc(&pps_client_index, GFP_KERNEL);
+>   	memset(&pps_client_cb, 0, sizeof(pps_client_cb));
+>   	pps_client_cb.private = device;
+>   	pps_client_cb.irq_func = parport_irq;
+> @@ -188,7 +188,7 @@ static void parport_attach(struct parport *port)
+>   err_unregister_dev:
+>   	parport_unregister_device(device->pardev);
+>   err_free:
+> -	ida_simple_remove(&pps_client_index, index);
+> +	ida_free(&pps_client_index, index);
+>   	kfree(device);
+>   }
+>   
+> @@ -208,7 +208,7 @@ static void parport_detach(struct parport *port)
+>   	pps_unregister_source(device->pps);
+>   	parport_release(pardev);
+>   	parport_unregister_device(pardev);
+> -	ida_simple_remove(&pps_client_index, device->index);
+> +	ida_free(&pps_client_index, device->index);
+>   	kfree(device);
+>   }
+>   
 
-Thanks!
-
-[1/1] ASoC: soc-card: soc-card-test: Fix some error handling in init()
-      commit: a8cad4a4e431e250edc05242a8ca1be6e4b33749
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-- 
+GNU/Linux Solutions                  e-mail: giometti@enneenne.com
+Linux Device Driver                          giometti@linux.it
+Embedded Systems                     phone:  +39 349 2432127
+UNIX programming
 
