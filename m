@@ -1,103 +1,154 @@
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2E07F7E3;
-	Mon, 15 Apr 2024 13:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB82878B50;
+	Mon, 15 Apr 2024 15:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713187905; cv=none; b=AaneojalEIedUkrxVjnrYQowUA7c+SRwXit53v/O4Lg2vigehVL1Sb1H57v1CUhVfexGQAykTwPh2tXD0tI7GJL6zyLnhxzUSx7xZlFXz5LTr3MSv9ErS5NwWPPsKJBxJiprQ82CKcG4GvinrnBQm+0CS/wB/cGYHz9PxELmzKo=
+	t=1713193223; cv=none; b=Fdbe8dU8anWayI7Oy8iX+7qN1vDlJmXoLmZeJHnDi0iVPRyKl8UbCx6tExCJPXWiAwWi+jLSneWY8zNxp54dcFe3VedRxy+av7sW0ImTSJ05zQ1tVsNIorcAdTZ7qEZjBrmsrp0IhPQ9NlHER2dKA9Q2IEcf0hyxBtYgkroQD2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713187905; c=relaxed/simple;
-	bh=KkPyxTFMiUPTu/EeDsJJp5beF1fBZCRUeC4IMLbejTE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Z2HlrY2tDfy3xy+mV6jZ+txD1sZM13XjAt+0/XZQUDTENN7eSdbw1KHU6XOcz19FVyLjEY41XvA5Tde9hd4qsRt+OO/YmN9rfjH9rn65hmaQj8qjURLL0EWZnkeqPb799EyDc0nZ/trb9SQPA6wT0cCe1PCzfzQC8XzQjJigYR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=HdNiGgHY; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+	s=arc-20240116; t=1713193223; c=relaxed/simple;
+	bh=2WE10r71jQvyNYocCtd9QNiyivLI/QP6AtzHMGv8gVA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=mCTrAk16HH3OiiS9X/KLYgdyTBC5jdI4M477Rysc0948MJGMSNrT1HAgziUaeY0xUEb1LEQlgyVqCDrgFlYpb3edtHlzdo4V31wR5TzQqCx0EkxTZC9QOFij6OmZ6QkdgSDl7X67QfBMLEMGmhGwcDJAdwqFEC03JzTwXOFAGS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EKsYIaPL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vR8Iy/Um; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EKsYIaPL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vR8Iy/Um; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="HdNiGgHY"
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43F6nokl020159;
-	Mon, 15 Apr 2024 08:31:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	PODMain02222019; bh=1NJcAo3U9LsyvaqFbXPecrsCzqfre2QNbxquk49f8MM=; b=
-	HdNiGgHYeNXAepHA8IHW4FgMZ2mbHScXxrq4GvGkm3VgDSEoZwP4sj+TFhxPEuXW
-	X1iseqei+2XC9RlH7WTQ/0xj65GfFzcYaazjmCI4knc+GLLcG3xTtAWh+jhYbiIP
-	o4unFA0hQ0KSlLtS1y1RwHKzS3rRy7j1k79MSfFpE4v6jwwACh8ksYGco98KS4DF
-	WnnvCdEkFkrtAoP9WEuxdkpPQNrJ0vqi8OP/0z0P620KT2HwOXQGvTUA53AndXKf
-	FayLtNgj6vlsiebSeK2vBIm33KMSdC3xAEfPhGmGpxkx450j4aSAvHNFx9FEtJZr
-	EDQVS/2F0hO40l2q4M7ZAw==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3xfqey9fxt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Apr 2024 08:31:23 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 15 Apr
- 2024 14:31:21 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9
- via Frontend Transport; Mon, 15 Apr 2024 14:31:21 +0100
-Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 17697820244;
-	Mon, 15 Apr 2024 13:31:21 +0000 (UTC)
-Message-ID: <99ba78fa-1d09-4072-849b-f994c87c1db6@opensource.cirrus.com>
-Date: Mon, 15 Apr 2024 14:31:21 +0100
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EKsYIaPL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vR8Iy/Um";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EKsYIaPL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vR8Iy/Um"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 00AAA5D124;
+	Mon, 15 Apr 2024 15:00:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1713193220; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2WE10r71jQvyNYocCtd9QNiyivLI/QP6AtzHMGv8gVA=;
+	b=EKsYIaPLqd21jbpNul9XdzHzETWowkni3lMuKYJ82hW9pXlhqN/ZF8CcoQoU8jxpI+36/Q
+	iFV9piyGfxtoFlCZ/0hxYi4twQFeMfQD3/69pr1K9Li0HqhoCl381pAbE/FQ7VcuhnS89F
+	ekl1pPOf2ZnJfosPzCvGj9CWtFfpub0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1713193220;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2WE10r71jQvyNYocCtd9QNiyivLI/QP6AtzHMGv8gVA=;
+	b=vR8Iy/UmLidMgsQZNDzBRqZBLsxWjzgtNnOehE12VIfAqzKQHsQvjcyJKCVbDKs2U37jUj
+	KbVt1xgdKJ6YMdCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1713193220; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2WE10r71jQvyNYocCtd9QNiyivLI/QP6AtzHMGv8gVA=;
+	b=EKsYIaPLqd21jbpNul9XdzHzETWowkni3lMuKYJ82hW9pXlhqN/ZF8CcoQoU8jxpI+36/Q
+	iFV9piyGfxtoFlCZ/0hxYi4twQFeMfQD3/69pr1K9Li0HqhoCl381pAbE/FQ7VcuhnS89F
+	ekl1pPOf2ZnJfosPzCvGj9CWtFfpub0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1713193220;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2WE10r71jQvyNYocCtd9QNiyivLI/QP6AtzHMGv8gVA=;
+	b=vR8Iy/UmLidMgsQZNDzBRqZBLsxWjzgtNnOehE12VIfAqzKQHsQvjcyJKCVbDKs2U37jUj
+	KbVt1xgdKJ6YMdCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 20C551368B;
+	Mon, 15 Apr 2024 15:00:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id uI9EMQFBHWYlNAAAD6G6ig
+	(envelope-from <colyli@suse.de>); Mon, 15 Apr 2024 15:00:17 +0000
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] regmap: kunit: Fix an NULL vs IS_ERR() check
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <b32e80cf-b385-40cd-b8ec-77ec73e07530@moroto.mountain>
-Content-Language: en-GB
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-In-Reply-To: <b32e80cf-b385-40cd-b8ec-77ec73e07530@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 4tDq8_KeDrmZJQtAfhwhroJOkMY1XBhN
-X-Proofpoint-ORIG-GUID: 4tDq8_KeDrmZJQtAfhwhroJOkMY1XBhN
-X-Proofpoint-Spam-Reason: safe
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH] bcache: Remove usage of the deprecated ida_simple_xx()
+ API
+From: Coly Li <colyli@suse.de>
+In-Reply-To: <4230d015-d9b6-4753-8957-717eab00d5cb@wanadoo.fr>
+Date: Mon, 15 Apr 2024 23:00:04 +0800
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org,
+ Bcache Linux <linux-bcache@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E93A4C68-B846-4BBC-8778-EAC3DF97507A@suse.de>
+References: <2f038df3860c2f44d5c7f5d06d03ca663cdbc651.1705235398.git.christophe.jaillet@wanadoo.fr>
+ <y2c3dt325d4xzcknmwtyd6gungco6jqucz3fsrm6lsyjtiwpp4@ozmsw6vp67jk>
+ <4230d015-d9b6-4753-8957-717eab00d5cb@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
+X-Spam-Flag: NO
+X-Spam-Score: -3.75
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.75 / 50.00];
+	BAYES_HAM(-2.95)[99.80%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MV_CASE(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.994];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[wanadoo.fr];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 
-On 15/04/2024 11:34, Dan Carpenter wrote:
-> The kunit_device_register() function returns error pointers, not NULL.
-> Passing an error pointer to get_device() will lead to an Oops.  Also
-> get_device() returns the same device you passed to it.  Fix it!  ;)
-> 
-> Fixes: 7b7982f14315 ("regmap: kunit: Create a struct device for the regmap")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/base/regmap/regmap-kunit.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/base/regmap/regmap-kunit.c b/drivers/base/regmap/regmap-kunit.c
-> index 44265dc2313d..9c5314785fc2 100644
-> --- a/drivers/base/regmap/regmap-kunit.c
-> +++ b/drivers/base/regmap/regmap-kunit.c
-> @@ -1925,10 +1925,10 @@ static int regmap_test_init(struct kunit *test)
->   	test->priv = priv;
->   
->   	dev = kunit_device_register(test, "regmap_test");
-> -	priv->dev = get_device(dev);
-> -	if (!priv->dev)
-> -		return -ENODEV;
-> +	if (IS_ERR(dev))
-> +		return PTR_ERR(dev);
->   
-> +	priv->dev = get_device(dev);
->   	dev_set_drvdata(dev, test);
->   
->   	return 0;
 
-Reviewed-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+
+> 2024=E5=B9=B44=E6=9C=8814=E6=97=A5 16:24=EF=BC=8CChristophe JAILLET =
+<christophe.jaillet@wanadoo.fr> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> Le 14/01/2024 =C3=A0 16:16, Coly Li a =C3=A9crit :
+>> On Sun, Jan 14, 2024 at 01:30:16PM +0100, Christophe JAILLET wrote:
+>>> ida_alloc() and ida_free() should be preferred to the deprecated
+>>> ida_simple_get() and ida_simple_remove().
+>>>=20
+>>> Note that the upper limit of ida_simple_get() is exclusive, but the =
+one of
+>>> ida_alloc_max() is inclusive. So a -1 has been added when needed.
+>>>=20
+>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> It looks good to me. Add this patch into my testing directory.
+>> Thanks.
+>> Coly Li
+>=20
+> Hi,
+>=20
+> polite reminder ;-)
+
+Yes, this one is included in my recent performance testing :-)
+
+Thank you.
+
+Coly Li
+
