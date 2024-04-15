@@ -1,88 +1,105 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92AB1E896;
-	Mon, 15 Apr 2024 11:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E2067A01;
+	Mon, 15 Apr 2024 11:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713180109; cv=none; b=dFkBj9mNUfimJnJ0RZFdBmm85NJwR3rR/U81UzJlJ6ir9Ii0sGQ4TrJbRUfcuYK6hFshv+mngeR1W9MPFwvI0b4eX8c+KhF2CXCjy1TONT7w3HDDlVCiggiTdjySBlHyACU2r3Nn9M3hV2YA+ZBxmBiPNYQNLhpfsIW4aRytAT4=
+	t=1713180342; cv=none; b=LI+qMku9B91Dfv3mIr2mAhU6giI9pCqM2EL8A921E35+PcM/woNlNjaX2ETpzLnMq3V9aLlByKIB0Vgh0d19aC9eJjgSsz86dIqea8mE8io/stPGvdJBoGQs+geRNCvzhFFdrDb73vQneDVh/IMa9Z0V1/hYGmfhdKLe+VsSrDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713180109; c=relaxed/simple;
-	bh=sWIR7btRXBx7+IBOBxrzrqS7BWtoqCpvVr4Yb0Em0y0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=URTqFuL0052uvDfrZ7f9MclTLX/p5NWHE5HQBG51R7uiy0Xwyijyg1WKTO0NAavWzCVHntRMWGJy3IWd4zhmgdwtrx9eEpvoHQR99lXXT25rn+flcNcyMjcW+Mn8MoSB9nsPrW2e14dZireMg1a+ObhN5++lJDVpXOK+vF05Ec4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B4TCCscZ; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1713180342; c=relaxed/simple;
+	bh=9QKS3M7DS/KsSM721mf5dJ+Ca/wHULMChlgtx9OyE4M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CAF0h/By4jGLsKCBgzrTh0oKvsC+zDPtuRmma0Zwzfw9bHhxt1yMxXtPxn1K1bPayV6qIwl563buWcJfSxaIofN5FUKJxlTXRSpg5/kGlcP89qKT8gUHJbsGoFOcu9Lx034NtCVedKbFS+v80VkhNJWoVALxheg7xkpByg1YUP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=kSRxP7JX; arc=none smtp.client-ip=80.12.242.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B4TCCscZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1713180107; x=1744716107;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sWIR7btRXBx7+IBOBxrzrqS7BWtoqCpvVr4Yb0Em0y0=;
-  b=B4TCCscZLyPWqn9iCklvFYaGx7I5EkXSCEFVNwTtYBOEdAWAt4EfXCe7
-   9BkhS2c8rquDlot8lIqCgkd6qYQ6rh61W81Hz3sZ+MgCHa229cpIc3egG
-   MGeqZibLuJWbQDSaorsC1gvtWxr+T0Ky9kGrRs4yBsG1xhP5FrFLgJh2w
-   plLWqdBpPwa7Sybm8sUQUnhi3IxBlRGfzds60lu5pgLt/ExIQgORWuOIQ
-   RK9EEivyk4H4F6eOS3QtuVopIuP2u5lD4ba9zNcDlht/qVUMDwLcx4EBs
-   wbhibg8U/zze3CuKtlk1UmDzNw2shyL1CiUF9IfcUdTxygLuZC1YmLXe2
-   w==;
-X-CSE-ConnectionGUID: vpl/pwySRIOYngpyZ3YozA==
-X-CSE-MsgGUID: BEoS1rn2Rk6uN2FTjAfCqw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11044"; a="8784086"
-X-IronPort-AV: E=Sophos;i="6.07,203,1708416000"; 
-   d="scan'208";a="8784086"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2024 04:21:46 -0700
-X-CSE-ConnectionGUID: DK23tnP7QXaFNZtjvzC77Q==
-X-CSE-MsgGUID: Wl4Cc+QpROe5LKoBdFIsSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,203,1708416000"; 
-   d="scan'208";a="21956767"
-Received: from unknown (HELO intel.com) ([10.247.119.21])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2024 04:21:38 -0700
-Date: Mon, 15 Apr 2024 13:21:32 +0200
-From: Andi Shyti <andi.shyti@linux.intel.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/i915: remove redundant assignement to variable
- err
-Message-ID: <Zh0NvAwxl1xmyNFd@ashyti-mobl2.lan>
-References: <20240415095659.482989-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="kSRxP7JX"
+Received: from fedora.home ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id wKRerx2nqPlGBwKReriKR4; Mon, 15 Apr 2024 13:24:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1713180261;
+	bh=ub4eBCk8TBPNCwE8W3RDmCm3hBSXAehuhbWgGV6jTnI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=kSRxP7JX6jTcA8/uJSqnnk9ne7reFCXZZm1Mfa5+Xnymb251WK/qMJ6mCXM9NBsn4
+	 h8pZelhfJFAdPZwqeY+ljhvdmwxFyoBVtL09gzURZKmnIzfKrqvKydE+qI6ljA2DW1
+	 hkberrIoc28ydprnSygtlOyFW8Zk86A3eiWvOiya7U78rTsujl2rJAIRFnCNR9kaPF
+	 4BEe5wSLNgcZi2boq5I+tRauo96eqol87XDwHFJA/nAO1lN1L/k7lNPTpdDlAYMufm
+	 rH6evc+nXnSneuk+sHFlFzAG1DZMkIqPc+VA0E+JJr8vw/d+ATIiCQGJ9Ed8NZyPZZ
+	 tFRYenYaUgZ0g==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 15 Apr 2024 13:24:21 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Kalle Valo <kvalo@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Kang Yang <quic_kangyang@quicinc.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Kalle Valo <quic_kvalo@quicinc.com>,
+	linux-wireless@vger.kernel.org,
+	ath11k@lists.infradead.org
+Subject: [PATCH] wifi: ath11k: Fix error handling in ath11k_wmi_p2p_noa_event()
+Date: Mon, 15 Apr 2024 13:23:46 +0200
+Message-ID: <6ee80f65f736db1646f6f201f60816cf35b6f3fe.1713180046.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240415095659.482989-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Colin,
+if (noa_descriptors > WMI_P2P_MAX_NOA_DESCRIPTORS), there is a mix of
+return and goto. in such a case, 'ret' should be assigned an error code and
+the 'td' should be freed to avoid a memory leak.
 
-On Mon, Apr 15, 2024 at 10:56:59AM +0100, Colin Ian King wrote:
-> The variable err is being assigned a value 0 that is never read, the
-> break statement escapes a do-while loop and then the code returns
-> without referencing err. The assignment is redundant and can be
-> removed.
-> 
-> Cleans up clang scan build warning:
-> drivers/gpu/drm/i915/gem/selftests/i915_gem_mman.c:1075:5: warning: Value
-> stored to 'err' is never read [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+While at it, return 'ret' instead of 0 in case of error.
+This is actually harmless, because the only caller does not handle the
+return value.
 
-Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
+Fixes: 2408379f15a1 ("wifi: ath11k: implement handling of P2P NoA event")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/wireless/ath/ath11k/wmi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thanks,
-Andi
+diff --git a/drivers/net/wireless/ath/ath11k/wmi.c b/drivers/net/wireless/ath/ath11k/wmi.c
+index c74aa3f95658..589a1b5ec517 100644
+--- a/drivers/net/wireless/ath/ath11k/wmi.c
++++ b/drivers/net/wireless/ath/ath11k/wmi.c
+@@ -8657,7 +8657,7 @@ static int ath11k_wmi_p2p_noa_event(struct ath11k_base *ab,
+ 	const struct wmi_p2p_noa_event *ev;
+ 	const struct ath11k_wmi_p2p_noa_info *noa;
+ 	struct ath11k *ar;
+-	int ret, vdev_id;
++	int ret = 0, vdev_id;
+ 	u8 noa_descriptors;
+ 
+ 	tb = ath11k_wmi_tlv_parse_alloc(ab, skb, GFP_ATOMIC);
+@@ -8682,7 +8682,7 @@ static int ath11k_wmi_p2p_noa_event(struct ath11k_base *ab,
+ 	if (noa_descriptors > WMI_P2P_MAX_NOA_DESCRIPTORS) {
+ 		ath11k_warn(ab, "invalid descriptor num %d in P2P NoA event\n",
+ 			    noa_descriptors);
+-		return -EINVAL;
++		ret = -EINVAL;
+ 		goto out;
+ 	}
+ 
+@@ -8705,7 +8705,7 @@ static int ath11k_wmi_p2p_noa_event(struct ath11k_base *ab,
+ 	rcu_read_unlock();
+ out:
+ 	kfree(tb);
+-	return 0;
++	return ret;
+ }
+ 
+ static void ath11k_wmi_tlv_op_rx(struct ath11k_base *ab, struct sk_buff *skb)
+-- 
+2.44.0
+
