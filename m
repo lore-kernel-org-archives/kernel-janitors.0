@@ -1,101 +1,88 @@
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6220EEC5;
-	Mon, 15 Apr 2024 01:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0483A848D;
+	Mon, 15 Apr 2024 02:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713144730; cv=none; b=Cw5dreMFvhfev5HhWqdXzEe393+lhBN1+iscvTYP0EYjcfUy0MUIUtIUQDN498ic++UeirmKQvpx9gyu6JhEaLyPeK4Ny3+4y0uGzCwzHoDw7pXDGd9C66wpF9Mh2kcQgGQuc64pfpzVHR7tq/QHADh5LEz7475fH5MKJbYOxAk=
+	t=1713147976; cv=none; b=egIieX4GoC6/Ajct+1IsmxZVpda3pOvzCsrUq60UuLeOd7W54n0i7qyZFKEEVqCqBA7qqn+XQhIpn+zxMGf4tgBDl+SEFZ4ihucuAMcsxhkwW+qIzF3f0cuE+jxu68Ui6FceiYEeSKoXo6Ulmo3PG8lXv86oM9qZW+VeHQEzGuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713144730; c=relaxed/simple;
-	bh=VFW33vDHGTXeQaLA3wRaK502MGTYFMQVW63K4ku22JE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bi+ASYi7LFECBGZXATfSMQjWaDMrBgJIdxV5fFlgj2azN6mfWtsmdIjxfgBiw4AYxt0s0IxhtPsUUlLkAy5b0kFzLrvSCPDTx4R7ESaiTJ4WPPCTG4wCs2CE6jvnNRBFyz6RFyaHIJKcViDt3PadEzLzWpxGfI0oxAmNBeLpE6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VHqQZ4RPqz4f3kpC;
-	Mon, 15 Apr 2024 09:31:50 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id AB72E1A01D4;
-	Mon, 15 Apr 2024 09:31:57 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP2 (Coremail) with SMTP id Syh0CgAnmAuKgxxmNlDvKA--.9408S3;
-	Mon, 15 Apr 2024 09:31:56 +0800 (CST)
-Message-ID: <b8dbcc3d-f0ec-ba59-4ebc-01476029aa80@huaweicloud.com>
-Date: Mon, 15 Apr 2024 09:31:54 +0800
+	s=arc-20240116; t=1713147976; c=relaxed/simple;
+	bh=d+sWxRJcFYWDfl1g1hpky8Wk0cZLGATyDM6LOemMcEs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=b7wJjcHLsgH+JZQ7/O26lf/aQsuY++iDJsnOieKghcwxZxZpvlEReElssWbClwvjZg9uJT9AAJ3D9gMtLGRo10t8Aw4GQw4Nv13fkex9XrIGeS+eOYKizidl1GOWi0WaBA+j0exkhIS8sxOkH5S+EWlCEGYaLk2yO6BAJ+RQNYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c7lZRSEd; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c7lZRSEd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8306C072AA;
+	Mon, 15 Apr 2024 02:26:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713147975;
+	bh=d+sWxRJcFYWDfl1g1hpky8Wk0cZLGATyDM6LOemMcEs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=c7lZRSEdzsr9Nn7/FXaeq0JgYid1V+ueNmv08TM4w20O7u2isRkZaFyTN0gTv1gcB
+	 fqyHyfU+Syw8NJXZaye4+LLW6qH9bOu1knw/wzrFgBsFI+l6RdK1I7bPTDDDZILTsU
+	 NzQtbQDWnGgVSY96N9+CtIxVzw1JQRh2K1rPP+TkgRNEKohtaDRDZsegsptcIrSURD
+	 ZFUkqCUOXuv+ot8BgXOsraZFEoF5sZOox0htdfFumc+5wgfsJuQys10/rPg86RcrMP
+	 U31q/+ivTZ02F/DhCUhUcTm9tlU6pNKt6ydIAwGSoLhR9jhEw3C5q4ghIaf6YD+/OT
+	 4tr3KWl6/r76Q==
+From: Mark Brown <broonie@kernel.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <450dd21a-b24b-48ba-9aa4-c02e4617852f@moroto.mountain>
+References: <450dd21a-b24b-48ba-9aa4-c02e4617852f@moroto.mountain>
+Subject: Re: [PATCH v3] ASoC: soc-card: soc-card-test: Fix some error
+ handling in init()
+Message-Id: <171314797306.1649319.17265441558891168082.b4-ty@kernel.org>
+Date: Mon, 15 Apr 2024 11:26:13 +0900
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2] ubi: block: fix memleak in ubiblock_create()
-To: Markus Elfring <Markus.Elfring@web.de>, linux-mtd@lists.infradead.org,
- kernel-janitors@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Zhihao Cheng <chengzhihao1@huawei.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Hou Tao <houtao1@huawei.com>,
- Yang Erkun <yangerkun@huawei.com>, Yu Kuai <yukuai3@huawei.com>,
- Zhang Yi <yi.zhang@huawei.com>
-References: <20231208074629.1656356-1-linan666@huaweicloud.com>
- <22f324ce-552a-4f6a-b4e5-2d84a00010aa@web.de>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <22f324ce-552a-4f6a-b4e5-2d84a00010aa@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgAnmAuKgxxmNlDvKA--.9408S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw15WFW8Cw4Uuw18CFy5twb_yoWxKFgEk3
-	48JF97J34xtF10yanaga1fArnxWay3J3Wjva48JwnIg34fWFnxGFZxGr98Z3Z3Xas5ZFWD
-	Cr43t34Fvw1SqjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbaAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l
-	5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67
-	AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3
-	Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8Jr
-	UvcSsGvfC2KfnxnUUI43ZEXa7IU1VOJ7UUUUU==
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev
 
+On Fri, 12 Apr 2024 15:07:01 +0300, Dan Carpenter wrote:
+> There are two issues here:
+> 1) The get_device() needs a matching put_device() on error paths.
+> 2) The "if (!ret)" was supposed to be "if (ret)".
+> 
+> I re-arranged the code a bit to do the allocation before the
+> get_device().
+> 
+> [...]
 
+Applied to
 
-在 2024/4/14 17:16, Markus Elfring 写道:
-> Can it be nicer to use the term “memory leak” instead of “memleak”
-> in the patch subject?
-> 
-> 
-> …
->> 'gd' will not be put anymore. Fix it by putting 'gd' directly.
-> 
-> Would the following wording variant be more desirable?
-> 
->     … anymore.
->     Thus pass the variable “gd” to a put_disk() call directly.
-> 
-> 
-> Would you like to add the tag “Fixes” accordingly?
-> 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-The patch has already been applied:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=adbf4c4954e33e623897058a617c583d65a177f6
+Thanks!
 
-Thank you very much for your suggestion. I will pay attention to them in
-future patches.
+[1/1] ASoC: soc-card: soc-card-test: Fix some error handling in init()
+      commit: a8cad4a4e431e250edc05242a8ca1be6e4b33749
 
-> Regards,
-> Markus
-> .
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
--- 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
 Thanks,
-Nan
+Mark
 
