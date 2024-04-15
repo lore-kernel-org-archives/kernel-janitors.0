@@ -1,97 +1,98 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2A242072;
-	Mon, 15 Apr 2024 16:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800B780635;
+	Mon, 15 Apr 2024 16:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713197938; cv=none; b=q7VVSkmsO8MFhSeYx/kKk9rXBOYB+Q165STHHEAbNsJfkS+JK/lRkiSbytxk32/va/Kh5QhwUcKReIpxCA28xeFcnPizDmwNkCNQoAKohm603KTJR7Nb9t7vXKwQdbk4JamaSLtJiBN7EOllos9K+VtT79z2iYwHphUjwqoXEco=
+	t=1713198500; cv=none; b=GRnFyWV8Xf99h+2as2YBoigqu4516Et2SEcMOZVFV2hG2ySXWLl3yi3CsoDG0ShANzBBV6qePxbgtDf0VoL2YLX5oe8MoacBJK6g0DySJ11FdG4iXG5Lw26LNAw7tF+XXQTzPG56g0xpF6g55Ax9VoDA8roM2yIIYAac+geiJT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713197938; c=relaxed/simple;
-	bh=HRZ16pcKTsXfvuhSnVWDJ8KSOEd3+F59Kb2TPzi/bZE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=V5Tb4k4/d66aBrjfhxIpZ1NQ9dlyZmEWiMbn+iTXVqvQGcc94BBh1HvMG4Zke6Z6uLTItSdkKqGsSwB2oZtT37irJAQfO9Rh90jpWxwRJga4qlgliiKkSNHtyFkBpHPJ+gJsuTX+KnzNT5Nv5vDl71As+lrazlCd4n+ULuoUTx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lOBwJbrm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1713198500; c=relaxed/simple;
+	bh=U2/UnAEfxAjeQOls/oNn2mc+hH1lDCfv8DsHXxkohlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bfnVl1z4IQiHJZB9lYlXmUbAeoiMHG5LRkfRR7ygZI9OaacBfW6rBiWLxyiUkZwyxAh/L+kEGVDnVbl/UfP0n6+hc85q/r4MinQvjy8hCdKd8QHPSxeZPurk0zt2c4cO1I1UfZpxcUaqWodFVcjabWD8SOyV56O9SYDGl+X8y8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jv5MCLyn; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lOBwJbrm"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 43FFNNSG010273;
-	Mon, 15 Apr 2024 16:18:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=sZS5PybUDH+WqH6Sa8LywzS+Thk1uLag0/bFVQZopgY=; b=lO
-	BwJbrmnPXVU9u/Egkt8hJVnr1nt+D4hdseeSRvCl48NLaQAEv/Eu8sRxvQZ5Vklu
-	XtwLWEwtWUSTdgtyW+2uyH8dgColntQJW5AqQa+ssFjSiJr7tGhFsRwIqKQzQ4re
-	CKCVMYUGAMxV9DHRtOcGZu0c43fpNJ9XHPC2g6N8UwVS2U9Xkdma/ubp5sqomZBQ
-	qc2ZaYw6sdRD5WuDnGVd1IZ8chfuvssrki3nm4uIeDtITWO85ne7xDA8OzfXhSln
-	04OaEfI/Eo1TFiaAb/q7MZpg26Eex4xmUg7SL1U3K+Vab3efTSr7T0ZLDFJJIyCB
-	aTuyJevxiLr45SMPUW4A==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xh25ggx4a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Apr 2024 16:18:50 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43FGInwj023178
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Apr 2024 16:18:49 GMT
-Received: from [10.110.3.16] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 15 Apr
- 2024 09:18:48 -0700
-Message-ID: <b4c8a18c-286c-442f-a7e9-d4a0bb604083@quicinc.com>
-Date: Mon, 15 Apr 2024 09:18:48 -0700
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jv5MCLyn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1713198498; x=1744734498;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=U2/UnAEfxAjeQOls/oNn2mc+hH1lDCfv8DsHXxkohlI=;
+  b=Jv5MCLynFyOF5xicsvuqQJ/of6LD/6D5yXlN7BX1IZn/PrOSujK3q/Ei
+   1wT80bnaTHcVqipbiNf05dbO/DhjKcB2xn5LScNl0Raixb9j1tJQD6wPr
+   CGWEHgX4FAnA/UMR8RVWq8tAuBTs1fULf7ug3arsLhY/6q/4ghNmNuwOJ
+   aGVxqSj+O5DDkJg5ghC0aj4Z7UTsPrbLZdkglWv1NA68cnI6Z1FmxWy4X
+   fuWRaQqrV44m7WDxt31xnlOPBzkuZjRMBbsLTZRqQ4Xlho7XEfSMk/f2D
+   a4DDPyL7MNYH3N/OXfELDCnTZNnZtmtBuQwbR+P13eYBWgBywRqBTrU22
+   w==;
+X-CSE-ConnectionGUID: vxCWpPVhR5KFzYswhUXgDA==
+X-CSE-MsgGUID: L4rurhbnTTakJOO3nImuyA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11045"; a="8708464"
+X-IronPort-AV: E=Sophos;i="6.07,203,1708416000"; 
+   d="scan'208";a="8708464"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2024 09:28:18 -0700
+X-CSE-ConnectionGUID: L67mHGv8TzCH4dF8pCaK4w==
+X-CSE-MsgGUID: GkjPkxbCQvartfrYdbKRIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,203,1708416000"; 
+   d="scan'208";a="26613854"
+Received: from rabinapr-mobl.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.27.254])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2024 09:28:17 -0700
+Date: Mon, 15 Apr 2024 09:28:15 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>, nvdimm@lists.linux.dev,
+	linux-cxl@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] dax: remove redundant assignment to variable rc
+Message-ID: <Zh1Vn0iQk0AVTJHD@aschofie-mobl2>
+References: <20240415101928.484143-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: ath11k: Fix error handling in
- ath11k_wmi_p2p_noa_event()
-Content-Language: en-US
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Kalle Valo
-	<kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-        Kang Yang
-	<quic_kangyang@quicinc.com>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Kalle
- Valo" <quic_kvalo@quicinc.com>,
-        <linux-wireless@vger.kernel.org>, <ath11k@lists.infradead.org>
-References: <6ee80f65f736db1646f6f201f60816cf35b6f3fe.1713180046.git.christophe.jaillet@wanadoo.fr>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <6ee80f65f736db1646f6f201f60816cf35b6f3fe.1713180046.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: su9nS6VNfgFs0jlq66M3IlcC0Ecc_HWC
-X-Proofpoint-ORIG-GUID: su9nS6VNfgFs0jlq66M3IlcC0Ecc_HWC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-15_13,2024-04-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
- spamscore=0 priorityscore=1501 malwarescore=0 mlxscore=0 adultscore=0
- impostorscore=0 lowpriorityscore=0 mlxlogscore=999 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2404150107
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240415101928.484143-1-colin.i.king@gmail.com>
 
-On 4/15/2024 4:23 AM, Christophe JAILLET wrote:
-> if (noa_descriptors > WMI_P2P_MAX_NOA_DESCRIPTORS), there is a mix of
-> return and goto. in such a case, 'ret' should be assigned an error code and
-> the 'td' should be freed to avoid a memory leak.
+On Mon, Apr 15, 2024 at 11:19:28AM +0100, Colin Ian King wrote:
+> The variable rc is being assigned an value and then is being re-assigned
+> a new value in the next statement. The assignment is redundant and can
+> be removed.
 > 
-> While at it, return 'ret' instead of 0 in case of error.
-> This is actually harmless, because the only caller does not handle the
-> return value.
+> Cleans up clang scan build warning:
+> drivers/dax/bus.c:1207:2: warning: Value stored to 'rc' is never
+> read [deadcode.DeadStores]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-in that case it would be preferable to change this to be a void function and
-not return anything. that would be consistent with most, if not all, of the
-other event handlers
+Reviewed-by: Alison Schofield <alison.schofield@intel.com>
 
+> ---
+>  drivers/dax/bus.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
+> index 797e1ebff299..f758afbf8f09 100644
+> --- a/drivers/dax/bus.c
+> +++ b/drivers/dax/bus.c
+> @@ -1204,7 +1204,6 @@ static ssize_t mapping_store(struct device *dev, struct device_attribute *attr,
+>  	if (rc)
+>  		return rc;
+>  
+> -	rc = -ENXIO;
+>  	rc = down_write_killable(&dax_region_rwsem);
+>  	if (rc)
+>  		return rc;
+> -- 
+> 2.39.2
+> 
+> 
