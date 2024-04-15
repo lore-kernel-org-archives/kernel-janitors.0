@@ -1,105 +1,147 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8DD156672;
-	Mon, 15 Apr 2024 19:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB14271B50;
+	Mon, 15 Apr 2024 20:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713210428; cv=none; b=ZGxt5LaFsJWol95OhitRPFN288PZ+aj4ju6pZL5XCpP/9Z8jcPSFgdUKejWIuSiwTNCDQa7Ryv9PIB/oj9ZtOe9URs2/ihLAu0p8Uf2X1j837KvWYMQorRvAbxebWzCw4eJSOftIXJqF/zfMHouAvZ8sSkQ5S3qHfgyvySYGAgk=
+	t=1713212880; cv=none; b=AZlV2PqkNzt+skFzfmf2IgDyxpvqA5/ohTA1O6eOpkM1zAcDmz/MBBGtjNk3WeTYBi3fOP/bSM5vbKJsNYFQl3i1Y/jDgdjJrjcujhPhkfmtjvg0Xpxh+Iu9Y6eZe2UUgFGIlAVMENVsx2XFgxguZxulwc08AMP+uwfj8QZqs1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713210428; c=relaxed/simple;
-	bh=IR5twlEytFTNkH5gQ5ORDWxzjTbflwpz2VLnUrdumsI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P23rxX1gwmVrFj4jCu/caPNPILgoOwxyHKzQIKdo386NT8K6uzqYrfgeUCvWxw8xX+xsNmX7dhsv4MwBlwpVqu3pc0GleFHY2hByUJLn/cnJltyPcTNL7uszGnOHhhCoN2SG79k11Zh2/dtXaOo2zipx5TCx5u8m3lFtkWFADqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qYoquhNI; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713212880; c=relaxed/simple;
+	bh=20FFn4xWIkAMgaR8ZOBJJUqa2qzmnCc5kBb0iWBK/TY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r7C/0e+e5XgIOP06iYk40lMkzBakd8QsMyNi0waq5zP8Dhjf6RN5gzO3VJKvhg1+5FD0yI+Adz2Wvwya5DbbSNlFz2RWrdhYmUFhIXxWTnpe+8uYa5knehfbEBsiSn2lIBdSOYpqDeVhhkxk+cyw2wObVFAIWpDK5pi4+sloqps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=k1mUfXcy; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qYoquhNI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713210405; x=1713815205; i=markus.elfring@web.de;
-	bh=IR5twlEytFTNkH5gQ5ORDWxzjTbflwpz2VLnUrdumsI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=qYoquhNITVx87CrWIDsn1n75E4UuU3I3VuLDOuRugCP2qmvdSP2UoLOx0Qydqde/
-	 trKUrgZp6s6XMP5zT3DlgdZmy2q9cmXBypueOiCFY8KbWfQVMKm0v3eSeizq+BTQB
-	 f131skfZonSWNeaVeTgapII633/dguR56JMZTeyYTBwboLngE1CDItXNuF+mJ1v5E
-	 XpcIVxc2TpQ7DzCWQT1Wl9DqY9nk005tdvK9+8Xbeod5mGHPQeeCghTCC3ig6SAa4
-	 bKFA2br7PAciMxtuT0J04U8b2KJHjlc+tgPalPVr/7MaRgy02qpY21S1x7KmrudzU
-	 d6S6mM1HG7ticlGf/Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0ZsE-1shhI131SW-00womv; Mon, 15
- Apr 2024 21:46:45 +0200
-Message-ID: <8ae97386-876f-45cf-9e82-af082d8ea338@web.de>
-Date: Mon, 15 Apr 2024 21:46:44 +0200
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="k1mUfXcy"
+Received: from fedora.home ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id wSuarbPSmGdLLwSuar5one; Mon, 15 Apr 2024 22:26:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1713212805;
+	bh=D6eSL9AbemWWH5HHmLNd9+N8gZj7u/Hg1vi/mWHhr7o=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=k1mUfXcylQ5lbkfSJPUOF7WwKpk0Ekoys2XugPd1Ac7PjqNQCngJGGJFf2yi0v70+
+	 jR8KC7DcQg6BmOXgaAt8PL4HAyc5RWyA8/2teKMq6CHrviozSk3VuPZRQzSYmNwIEZ
+	 5rY/JJhivs+Snq20TYUw0qRCxXpLJhgEZkcU4x7wt26+VrMQEM9EP4T8I4B8fl+BSm
+	 f2UZ0zis6wAhaJmIdjfj83qDxvq5GgrJSg37A5GGSwwWBVBCoEMccVfM99Cc1gKn8A
+	 HDzEOcEJU+BTAPX3GQzS6ByPYU56f6uz6Th8aic2MfE7vwohGwHB9Qmfxa8FNwp9IN
+	 u2n1ZGiwTO5fQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 15 Apr 2024 22:26:45 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Kalle Valo <kvalo@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Kang Yang <quic_kangyang@quicinc.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Kalle Valo <quic_kvalo@quicinc.com>,
+	linux-wireless@vger.kernel.org,
+	ath11k@lists.infradead.org
+Subject: [PATCH v2] wifi: ath11k: Fix error handling in ath11k_wmi_p2p_noa_event()
+Date: Mon, 15 Apr 2024 22:26:41 +0200
+Message-ID: <07f1fc75b2d5b4173ae1b7bb1da5be7f6fc608c8.1713212781.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: bcmasp: fix memory leak when bringing down if
-To: Justin Chen <justin.chen@broadcom.com>,
- bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>
-References: <20240412181631.3488324-1-justin.chen@broadcom.com>
- <6881c322-8fbb-422f-bdbb-392a83d0b326@web.de>
- <9afad2b3-38a5-470d-a66f-10aa2cba3bab@broadcom.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <9afad2b3-38a5-470d-a66f-10aa2cba3bab@broadcom.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:gnuXHtYryBlPRJhrlOLehrxnO9M2/gNL8VR2cIDGl5QnN3+gMXV
- 58rk/yNOKrbFijp6ihArZVLrih+ffN0PDvBfAvIG6dZBK/rCuYlgNxXYdyCE6BSrJpdvqoU
- WNgVCLGBlERJQiJGqOop2InTiSG24OnTtDFVx5FIfRGqSkIbSA23KB+OXtAlwb5PPoiVoXT
- Xrt34KCmCnid8D5LEMlug==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:S8T540Ipflc=;Ag+vH+MJhY/z5VIYN3FC06g0dv7
- 3F0tY1VpAs03Hjg5xtDT6fb4Uf2V6LyH4lIHKZyU2eQJNNuAZcFEQ4S16N92jervJoeWw5x0/
- 9ADXzgZ1NPaUhCGt2LtLNrV+h7puyJbvU4C16cFxyvGKL7weE4badp+xrGIl8zfG236xwlBYP
- PbiVYpmebywddNhnYskEf7fRu189TBY9XmPP1obRtJNjHjNLyQS1rKhkoPe5Cw3wagcSXqtGe
- N+W/CacRf3n6LMWcwNwGSUAG3GVGYUR8txUNKIrvqvtSuPSgzXtpr/RucW1DwbAvGrSqvkmaU
- fdVd23Z22BoMpbNPmZuJ4echFJfggVMxiYwpuAGoS3OZab7aT2qdxZDpsAPlc5humaDw+34v/
- srimQ9xM7Ol4Gdu6S+G0mnlwELp8KCzMYAgqMzAscA3FALW8k7qEe0ZyUFOyLLmFtmbifJinQ
- MMSSpzxXsY3sDi5Jiazn64VZPq8iTEll/6bR1/mSRoiW7Y5WeJAYPMdMJ2s0JchFYBWjfNYII
- qGn41qTBXsW+JDAQ1IeCdt9eMyn/gczGFiipIreb+879LKH8QgFkr/mTzq0+TUclgUbfSLzZ9
- xJHQALDqIoSmcxF8x0+T0jQQmYbe6Jprp0X/5Oi6+bFN7OskBc8wZouKnwKQ3ueD3dvPSiufK
- QPkXeufM9j2TpvMvAkyTOP2AVTTC/emaJVVFax0HlAy1YSkgSTwDk7F3l7FYzd2iDBaVY9xdy
- eeSGs445JhoxbCotvNK/Rq2KQn4lILL9lWeqjRICoIKDy0yRKLzhgbjup8mC/ozknZerlAg5K
- ++MGpM49LCgg8BL4pQ9pjZmkrcHHQeWssgtPWmNfP0FPE=
+Content-Transfer-Encoding: 8bit
 
->>> When bringing down the TX rings we flush the rings but forget to
->>> reclaimed the flushed packets. This lead to a memory leak since we
->>> do not free the dma mapped buffers. =E2=80=A6
->>
->> I find this change description improvable.
->>
->> * How do you think about to avoid typos?
->>
->> * Would another imperative wording be more desirable?
->
-> The change description makes sense to me. Can you be a bit more specific=
- as to what isn't clear here?
+if (noa_descriptors > WMI_P2P_MAX_NOA_DESCRIPTORS), there is a mix of
+return and goto. In such a case, 'td' should be freed to avoid a memory
+leak.
 
-Spelling suggestions:
-+ =E2=80=A6 forget to reclaim =E2=80=A6
-+ =E2=80=A6 This leads to =E2=80=A6
+While at it, change ath11k_wmi_p2p_noa_event() to return void.
+'0' was returned in all cases, even in case of error and the only caller
+does not handle the return value.
+This is also more consistent with most of functions called from
+ath11k_wmi_tlv_op_rx().
 
+Fixes: 2408379f15a1 ("wifi: ath11k: implement handling of P2P NoA event")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Changes in V2
+   - Change ath11k_wmi_p2p_noa_event() to return void.   [Jeff Johnson]
+   - Update commit message accordingly
 
-Advices from a corresponding known information source:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc4#n94
+V1: https://lore.kernel.org/all/6ee80f65f736db1646f6f201f60816cf35b6f3fe.1713180046.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/net/wireless/ath/ath11k/wmi.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
-Regards,
-Markus
+diff --git a/drivers/net/wireless/ath/ath11k/wmi.c b/drivers/net/wireless/ath/ath11k/wmi.c
+index c74aa3f95658..e9ae305a8a61 100644
+--- a/drivers/net/wireless/ath/ath11k/wmi.c
++++ b/drivers/net/wireless/ath/ath11k/wmi.c
+@@ -8650,30 +8650,27 @@ static void ath11k_wmi_gtk_offload_status_event(struct ath11k_base *ab,
+ 	kfree(tb);
+ }
+ 
+-static int ath11k_wmi_p2p_noa_event(struct ath11k_base *ab,
+-				    struct sk_buff *skb)
++static void ath11k_wmi_p2p_noa_event(struct ath11k_base *ab,
++				     struct sk_buff *skb)
+ {
+ 	const void **tb;
+ 	const struct wmi_p2p_noa_event *ev;
+ 	const struct ath11k_wmi_p2p_noa_info *noa;
+ 	struct ath11k *ar;
+-	int ret, vdev_id;
++	int vdev_id;
+ 	u8 noa_descriptors;
+ 
+ 	tb = ath11k_wmi_tlv_parse_alloc(ab, skb, GFP_ATOMIC);
+ 	if (IS_ERR(tb)) {
+-		ret = PTR_ERR(tb);
+-		ath11k_warn(ab, "failed to parse tlv: %d\n", ret);
+-		return ret;
++		ath11k_warn(ab, "failed to parse tlv: %ld\n", PTR_ERR(tb));
++		return;
+ 	}
+ 
+ 	ev = tb[WMI_TAG_P2P_NOA_EVENT];
+ 	noa = tb[WMI_TAG_P2P_NOA_INFO];
+ 
+-	if (!ev || !noa) {
+-		ret = -EPROTO;
++	if (!ev || !noa)
+ 		goto out;
+-	}
+ 
+ 	vdev_id = ev->vdev_id;
+ 	noa_descriptors = u32_get_bits(noa->noa_attr,
+@@ -8682,7 +8679,6 @@ static int ath11k_wmi_p2p_noa_event(struct ath11k_base *ab,
+ 	if (noa_descriptors > WMI_P2P_MAX_NOA_DESCRIPTORS) {
+ 		ath11k_warn(ab, "invalid descriptor num %d in P2P NoA event\n",
+ 			    noa_descriptors);
+-		return -EINVAL;
+ 		goto out;
+ 	}
+ 
+@@ -8695,7 +8691,6 @@ static int ath11k_wmi_p2p_noa_event(struct ath11k_base *ab,
+ 	if (!ar) {
+ 		ath11k_warn(ab, "invalid vdev id %d in P2P NoA event\n",
+ 			    vdev_id);
+-		ret = -EINVAL;
+ 		goto unlock;
+ 	}
+ 
+@@ -8705,7 +8700,6 @@ static int ath11k_wmi_p2p_noa_event(struct ath11k_base *ab,
+ 	rcu_read_unlock();
+ out:
+ 	kfree(tb);
+-	return 0;
+ }
+ 
+ static void ath11k_wmi_tlv_op_rx(struct ath11k_base *ab, struct sk_buff *skb)
+-- 
+2.44.0
+
