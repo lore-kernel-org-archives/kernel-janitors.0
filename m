@@ -1,221 +1,101 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130E8134CFA;
-	Sun, 14 Apr 2024 23:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713138176; cv=fail; b=rdC4N2OBgwG+qxLcpFjRIu3K6pw/wX6VQrp5K2PSR1VXTsGG/sXrIC1bX5NXEXDwsazH7UuJgo3IY0Vu4V4wdKPzHNXJNB2HhDk7WpzNdtZFLNlxpt1W1NAVBPHukZpZRfMcpotJ2PWxiElhwLFr0hFNnIW0yBcwH1phQ17excE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713138176; c=relaxed/simple;
-	bh=CfqXTlMPpCPf0cXCb/UGik9UiuOXQbLB/rYvpzz6rmg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=NsZdfC4ZR0aEqOzR6T+VZJ5dQQERUbkzvy5trcXrD1r/yJgrvYtcTZv4G37JBiszw1AzJHD0xr7sIHz+f2YmZmdz+Y3GAgnt5Vo2y93Hvvf3gU9+7bUY44gjbL63vMxSjgSx6D1C+EkZv7Mmy1IN9ay9HIhnJfaVe+XJ9KiaUhU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hi4oIKgR; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hi4oIKgR"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1713138175; x=1744674175;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=CfqXTlMPpCPf0cXCb/UGik9UiuOXQbLB/rYvpzz6rmg=;
-  b=hi4oIKgRQgBU67sSlzM2V5tGoJ8lkJbe/GdJ5W4hCi98m1f8s8oUSNap
-   mXi4DUvUCl8FZBaDHY2kuxjy57st+I0PwG01z9DAeDDsTKpuzm5Wg5+VM
-   UtWqoXKO8jhY8q0GoDqdIlyT7tUdTNVhL4RoNM3XT7OsPjLHxyr9KTOLr
-   09InvB6iIzwAPUOZqiRnWaKvUe0NhmU2V7o4HkQZX86RN3oDRgWz/cdpS
-   SeLuID2g8WMjttsygYeyi3qRhWZta6e1J26Bf2tfXCEjBsWqs5JsPZ3Hw
-   T5YGQZrhUOi7c3GPmBs7ZOtHEC6cZnuMU7TZwkaScXCXwpSuzc+4isXM2
-   A==;
-X-CSE-ConnectionGUID: lzCCTzHOT/uYnqR+fcwySg==
-X-CSE-MsgGUID: /vooDNkSTNic/652BUvEcg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11044"; a="25973965"
-X-IronPort-AV: E=Sophos;i="6.07,202,1708416000"; 
-   d="scan'208";a="25973965"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2024 16:42:54 -0700
-X-CSE-ConnectionGUID: IvhlNFRqQi+ivL2IYxQnxA==
-X-CSE-MsgGUID: UapjFBPOT/ydkgwlwoU2og==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,202,1708416000"; 
-   d="scan'208";a="22323225"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Apr 2024 16:42:54 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Sun, 14 Apr 2024 16:42:53 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Sun, 14 Apr 2024 16:42:53 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.172)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Sun, 14 Apr 2024 16:42:53 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AsfCupmuDMdEkbe32QXD9m3/OJdf1Oko5j5SJ/xAJf/Fmfuy+zUYfTdafcJjjgX5u1VnnBxUh3vbE8KW6JyQjfLVHvN2c5Il1GEhJ4FGxHLxL80QsO0ojk37NdhBIM/3NKsX55jPfNbAISW7c/vJKo/R0tIOxiU22QZMrZbg4raLsG+9yihe1ljucWFqakYc+A6fEtaiz6HK3kp9e0Mv2+cakuAvBDP8OgIVkuA2ZFPJhoO4NSaM39GODs/NLTqWyKJidVF8v50RlvlT6jmJvLnD3aFosbAhfoevzGKiFwJiYg+sZ77GT1Qs6L6kKjF+Qnv5IhZeotnOvPJEbZcWIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RBqmYmmKzQ3kRUsgOIKpiadAgH1891ePDkx83ykHLqc=;
- b=PD5vQZLQAsY28RJ+AFBSTcyFPNJBw5UhxkYfQ5lW+kexj/ixQG3RCc8c/J3cANhXyAw9ljf1efzlDQSuBrfpGhFO+agOTv7qMee5RKpFghRZx1xfp653NACTcIcudrseCnCusdGlr3y+5sgClZFFt1JxPV5fNaNXclGydjoOCh5nthEWWiojtKORx8wH+fD7fw3XklA/QZd5nGUwAwT/44S89msDAgQOOyGAiQsGN3LcI2KnEsyNeqS/uWwZSj7F43+ix4wGbgy/penOu18UBNUoA5imO0EuyQlm5qo7SJ/FLz/rK5KrmQfawihshDRElkhPPJAviwgw4JnujZfvvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
- by DS0PR11MB7529.namprd11.prod.outlook.com (2603:10b6:8:141::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7452.49; Sun, 14 Apr
- 2024 23:42:51 +0000
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e7c:ccbc:a71c:6c15]) by PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e7c:ccbc:a71c:6c15%5]) with mapi id 15.20.7472.027; Sun, 14 Apr 2024
- 23:42:51 +0000
-Date: Sun, 14 Apr 2024 23:41:28 +0000
-From: Matthew Brost <matthew.brost@intel.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>, David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	<intel-gfx@lists.freedesktop.org>, <kernel-janitors@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH] drm/i915/guc: Remove usage of the deprecated
- ida_simple_xx() API
-Message-ID: <ZhxpqC9ynm34+00y@DUT025-TGLU.fm.intel.com>
-References: <7108c1871c6cb08d403c4fa6534bc7e6de4cb23d.1705245316.git.christophe.jaillet@wanadoo.fr>
- <ZbGlqD6zyyp4DsmH@DUT025-TGLU.fm.intel.com>
- <a788ee2e-ee51-476f-8aee-aa344f221f9c@wanadoo.fr>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a788ee2e-ee51-476f-8aee-aa344f221f9c@wanadoo.fr>
-X-ClientProxiedBy: SJ0PR03CA0111.namprd03.prod.outlook.com
- (2603:10b6:a03:333::26) To PH7PR11MB6522.namprd11.prod.outlook.com
- (2603:10b6:510:212::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6220EEC5;
+	Mon, 15 Apr 2024 01:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713144730; cv=none; b=Cw5dreMFvhfev5HhWqdXzEe393+lhBN1+iscvTYP0EYjcfUy0MUIUtIUQDN498ic++UeirmKQvpx9gyu6JhEaLyPeK4Ny3+4y0uGzCwzHoDw7pXDGd9C66wpF9Mh2kcQgGQuc64pfpzVHR7tq/QHADh5LEz7475fH5MKJbYOxAk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713144730; c=relaxed/simple;
+	bh=VFW33vDHGTXeQaLA3wRaK502MGTYFMQVW63K4ku22JE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bi+ASYi7LFECBGZXATfSMQjWaDMrBgJIdxV5fFlgj2azN6mfWtsmdIjxfgBiw4AYxt0s0IxhtPsUUlLkAy5b0kFzLrvSCPDTx4R7ESaiTJ4WPPCTG4wCs2CE6jvnNRBFyz6RFyaHIJKcViDt3PadEzLzWpxGfI0oxAmNBeLpE6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VHqQZ4RPqz4f3kpC;
+	Mon, 15 Apr 2024 09:31:50 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id AB72E1A01D4;
+	Mon, 15 Apr 2024 09:31:57 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP2 (Coremail) with SMTP id Syh0CgAnmAuKgxxmNlDvKA--.9408S3;
+	Mon, 15 Apr 2024 09:31:56 +0800 (CST)
+Message-ID: <b8dbcc3d-f0ec-ba59-4ebc-01476029aa80@huaweicloud.com>
+Date: Mon, 15 Apr 2024 09:31:54 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|DS0PR11MB7529:EE_
-X-MS-Office365-Filtering-Correlation-Id: d4bd77c1-c6f8-4089-9340-08dc5cdc992f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: IC+J3nnhK/7ihjdGV+GPWbHM9SIGYrk+DsPalIfNVWYUrcwjV4kQK2juWTG659NLIhTOYkGs+3S1ja9A6imIlsvZ+CZM1jUAwetgdFY7XYlsLyj+3COOGDcTuceQpLi2uXbFKqsqgIcvXVN8xtR+LYztM/r7/EXU8/2eWD1KrrWW+Tk9e3Mg+gXfNZi3c2TS0uLcMjJ7PhQ6UgARgPGKEJE4hFHWjfBtNcku6Ob5R4m/BBdJIM2hA14lLudzoK2mSRUsRXCxvOGkKVgf8Y11keVrJt5YPnthugTI8T815ayyXMSkX7tnVEp3HSSdvQh/D1BbONJnBA8hA7Lb8OiPYuex+cP0pvMNBVNTZeBLoW0Vu0UR9zQFoGC/gAhFm55UYALC8Sy5hZ73MD9drBdv+ImHmxU9K+X9847wI+ZRGSJR8jr4Yxz2EblA2Zz2tRcYNpFvpCOB1I1AuzbwAe/8yrhZ+70IITV05triuivmAq5i86MsBl2xOVeXU9bK7aXyRVu3Iu9+uCvYcH2kDMNHvwSuJZvUV7BiX/PMPW9eikvL0Rbn5mW6Lmfj5+TmlzIbXOdxnnFyZsfRMIxiWDEG6pUUAwp4JNFgKV3gm+pdxIu9/W/MmOHGAQx0OiXl/eaDLEIoKB+2BqxJjmgWGohMBSTkFe1swqa2jSIu30DJEog=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(7416005)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?PZV/BXBiQEnUZdw2te0o3953fBHRSP+Kc/La2DSGm6at78LxhZrTLhG9tx?=
- =?iso-8859-1?Q?T/p0NH8Hnv+NH5sfTGD86wMGg8uGDBo66sFwi62AjPYWsB71MhF1kyjpKX?=
- =?iso-8859-1?Q?JlJQlHyCxZwW36IEIjo6+wKr9gBjKnBD+U9Yj2N412tifRnnnh9EnPV2Ow?=
- =?iso-8859-1?Q?iutebm7vrkIOFhAFPn8cmXT0Zk+v8zLGjqrosfvwVY5Z/oLtUynSeQeisG?=
- =?iso-8859-1?Q?0Q449huZpQ4uJ/UKxdOrVXRQPDxBbiTJnWQ+hryTNIZeg+cC+8DPVgR/ni?=
- =?iso-8859-1?Q?rWxR/g04Z1oZl/0qa9/aa5tWGFEu0eR7ivSbeC2SjzHOuCotAh8hHWHUSk?=
- =?iso-8859-1?Q?JV7rf3x3kRFjoeo5KQpAHc58o2wkuPdzcrzDhxyhrmLjTylfdjaTpwE7NA?=
- =?iso-8859-1?Q?tYDr9t6gE/iaGK1nJLdAX2uWQDf/k7kKXkUrRgzoME5fP6Kn5RMjFNSKrp?=
- =?iso-8859-1?Q?Jn05oPDBK9CEtp6y0Jc66Bzu3+8T52tuEqO2vRJK899c0Q6PDyiKwsah9x?=
- =?iso-8859-1?Q?TdV46xZYrJH8Ta4Y/30fQ67RtU1kSswchZ6HibuGvmMdV5MiaawRwdCAXe?=
- =?iso-8859-1?Q?V2keX28v8SJHMjWritCLK5u+aCRSeYrF8QhojK1PhQqq55ukS9FTt0nd0U?=
- =?iso-8859-1?Q?WqihlkY3HZDojh39/YLR7ecasNBBaDmSpticvo25GEB1Hb4vt1joR6E8H9?=
- =?iso-8859-1?Q?5wsV6t56+fckJVVt5dFz9/wotb/lGdasU2KrwWWxFmnht3H18P9W0La5bp?=
- =?iso-8859-1?Q?5X/NdllUpFwn8HrvOmH3raVW0420Yz+w/4ryp8V8EVPptXxioyPkC/xGtk?=
- =?iso-8859-1?Q?v5U1jqSCBvzIQ9CKdhyejszKXaJRVUPHaEWzqgsdaxx+CfB+f+Su5MqCMa?=
- =?iso-8859-1?Q?mXz/Tmn+6DrzVjtv0vSC/Iks1/ot3Jn0bAjiO+1DgU8b8MHGqghbGuH/0P?=
- =?iso-8859-1?Q?Cy9ENAeGD5tS6Df2pvB3ix0JCrXAbd4xtuaLGpBx952iILC3q+ocqliP7m?=
- =?iso-8859-1?Q?4zk82Vb9gtd42W8j7aaWCq7AXUQY4nzFGmaOFmxHRxjTgObts+0JxlSZMV?=
- =?iso-8859-1?Q?7sT/LR0dSPsU2shB/NAV5qJF/rLMT8t5H7uw250zD6di3oQYOTvTnuQIWN?=
- =?iso-8859-1?Q?DWJ43n9xvIjEy7QnJ2eU4md8i+j3IoM0kKT/tbWFXj0Dx0DvB6qkBSWB0w?=
- =?iso-8859-1?Q?TVNjV9lXzDr4G3kiyeNR21hccj7de7fH6CferVKCs+ES0AAJCv7xHc3cWZ?=
- =?iso-8859-1?Q?59/yHlMc/V2DHdwphAwAGR+G6LWgBRzlERkucw4nxLDe/k2XO28Km0mXQA?=
- =?iso-8859-1?Q?bVt8IQhicWV2rg2T+QxIOaqkCYp9ZSH0vlEOu/3PPye03hIV8A4rIklOK8?=
- =?iso-8859-1?Q?VaG+Yo6qUmZe2+MQ5FMoWtzGqF5xZcH886vEKd2LM8WmNp9zzF8+cRQaK6?=
- =?iso-8859-1?Q?3cbhmsZ7iH6un0fd/s8RhR7Uw0kqGpN4WUaUvjb/DKvZnDTigf8uDWFpGQ?=
- =?iso-8859-1?Q?QspxmyO8MjemG4nSDXms2aUohymo4d72prbMo3LmcOQ62o3rudH/wkvqgO?=
- =?iso-8859-1?Q?q4SUWyMJkW6hl95UBs5nB5K9jwdXau1/F82+N7cTGbZWLIBBfvxUeXghmN?=
- =?iso-8859-1?Q?W4oWEgtKkK5E/MK4Qns6HQxemRdwO1FeOLdH1GVcwlXn1od7CvQqjJgA?=
- =?iso-8859-1?Q?=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4bd77c1-c6f8-4089-9340-08dc5cdc992f
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2024 23:42:51.3813
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9ChlNg2XwGViZ6ztID0nzi7bP71SGVSe5VW6dg3wKNTSK8kAkrJD5erZUEAaOz3dn6qqOW3E6l9pNtIqHP1IwA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7529
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v2] ubi: block: fix memleak in ubiblock_create()
+To: Markus Elfring <Markus.Elfring@web.de>, linux-mtd@lists.infradead.org,
+ kernel-janitors@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Zhihao Cheng <chengzhihao1@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Hou Tao <houtao1@huawei.com>,
+ Yang Erkun <yangerkun@huawei.com>, Yu Kuai <yukuai3@huawei.com>,
+ Zhang Yi <yi.zhang@huawei.com>
+References: <20231208074629.1656356-1-linan666@huaweicloud.com>
+ <22f324ce-552a-4f6a-b4e5-2d84a00010aa@web.de>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <22f324ce-552a-4f6a-b4e5-2d84a00010aa@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgAnmAuKgxxmNlDvKA--.9408S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw15WFW8Cw4Uuw18CFy5twb_yoWxKFgEk3
+	48JF97J34xtF10yanaga1fArnxWay3J3Wjva48JwnIg34fWFnxGFZxGr98Z3Z3Xas5ZFWD
+	Cr43t34Fvw1SqjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbaAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l
+	5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67
+	AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3
+	Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8Jr
+	UvcSsGvfC2KfnxnUUI43ZEXa7IU1VOJ7UUUUU==
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-On Sun, Apr 14, 2024 at 10:26:35AM +0200, Christophe JAILLET wrote:
-> Le 25/01/2024 � 01:04, Matthew Brost a �crit�:
-> > On Sun, Jan 14, 2024 at 04:15:34PM +0100, Christophe JAILLET wrote:
-> > > ida_alloc() and ida_free() should be preferred to the deprecated
-> > > ida_simple_get() and ida_simple_remove().
-> > > 
-> > > Note that the upper limit of ida_simple_get() is exclusive, but the one of
-> > > ida_alloc_range() is inclusive. So a -1 has been added when needed.
-> > > 
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > 
-> > Reviewed-by: Matthew Brost <matthew.brost@intel.com>
+
+
+在 2024/4/14 17:16, Markus Elfring 写道:
+> Can it be nicer to use the term “memory leak” instead of “memleak”
+> in the patch subject?
 > 
-> Hi,
 > 
-> polite reminder ;-)
+> …
+>> 'gd' will not be put anymore. Fix it by putting 'gd' directly.
+> 
+> Would the following wording variant be more desirable?
+> 
+>     … anymore.
+>     Thus pass the variable “gd” to a put_disk() call directly.
+> 
+> 
+> Would you like to add the tag “Fixes” accordingly?
 > 
 
-Merged. Thanks for the patch.
+The patch has already been applied:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=adbf4c4954e33e623897058a617c583d65a177f6
 
-Matt
+Thank you very much for your suggestion. I will pay attention to them in
+future patches.
 
-> CJ
-> 
-> > 
-> > > ---
-> > >   drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c | 13 ++++++-------
-> > >   1 file changed, 6 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c b/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c
-> > > index a259f1118c5a..73ce21ddf682 100644
-> > > --- a/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c
-> > > +++ b/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c
-> > > @@ -2156,11 +2156,10 @@ static int new_guc_id(struct intel_guc *guc, struct intel_context *ce)
-> > >   					      order_base_2(ce->parallel.number_children
-> > >   							   + 1));
-> > >   	else
-> > > -		ret = ida_simple_get(&guc->submission_state.guc_ids,
-> > > -				     NUMBER_MULTI_LRC_GUC_ID(guc),
-> > > -				     guc->submission_state.num_guc_ids,
-> > > -				     GFP_KERNEL | __GFP_RETRY_MAYFAIL |
-> > > -				     __GFP_NOWARN);
-> > > +		ret = ida_alloc_range(&guc->submission_state.guc_ids,
-> > > +				      NUMBER_MULTI_LRC_GUC_ID(guc),
-> > > +				      guc->submission_state.num_guc_ids - 1,
-> > > +				      GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_NOWARN);
-> > >   	if (unlikely(ret < 0))
-> > >   		return ret;
-> > > @@ -2183,8 +2182,8 @@ static void __release_guc_id(struct intel_guc *guc, struct intel_context *ce)
-> > >   							   + 1));
-> > >   		} else {
-> > >   			--guc->submission_state.guc_ids_in_use;
-> > > -			ida_simple_remove(&guc->submission_state.guc_ids,
-> > > -					  ce->guc_id.id);
-> > > +			ida_free(&guc->submission_state.guc_ids,
-> > > +				 ce->guc_id.id);
-> > >   		}
-> > >   		clr_ctx_id_mapping(guc, ce->guc_id.id);
-> > >   		set_context_guc_id_invalid(ce);
-> > > -- 
-> > > 2.43.0
-> > > 
-> > 
-> > 
-> 
+> Regards,
+> Markus
+> .
+
+-- 
+Thanks,
+Nan
+
