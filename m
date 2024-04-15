@@ -1,105 +1,110 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1968B38389;
-	Mon, 15 Apr 2024 07:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6DB47F4B;
+	Mon, 15 Apr 2024 09:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713167018; cv=none; b=W0yWPbzMjDMxGzA7IvH0Vo7pqqOwIAQ04j4/cRx97Fk79pqi5h6dksY5qipTunelc+KGivMjlH+udXh2gbz88A+U5pu0AMhm3xMlWuAnXoVe+cvROlLLnukR1RuGhCpUoGaih+TJQ9gNj9wfo8Gm0O6U0/nJHKHNc6pkIPgc8lc=
+	t=1713175024; cv=none; b=bXA3jAwnhpshvj8Xrz0EomBCr1J1lseyI2GZbPJsP4hUO30h5NCgeBHu2h2dCsz2K/ENIqO0n6W8VsIMpT7IuYIY7JWAZYjqMkgNCVh/fAVZnXLA3pe8Qggb1JQTigghTa91lVTzD6A5W4l0GR7ZUJw9cG6ii/wMI3tbGT3YPtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713167018; c=relaxed/simple;
-	bh=SfL54Q7DzvB74BgN0DZ2PxYEquQ2XlEdK13OFlmH4jI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=TsXKXl7F24kUuxAT7mGuW8PcmqinCz7n++MSbn6wZvAivPWh14FEJqTWSDNc/TMi/4+792aNkYXC8HGQ4/ubVpFuzbpWuqfWl78FB9kipOfwwHeB2jxnbckA73fHWkOoxxBYcQ/2khD1/7lxCTI2jPWyw//M1GI+ZS85IaJ7iQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=eryD4r6k; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713175024; c=relaxed/simple;
+	bh=D0/46h4JT2NcCeh2yJo41/KSOz5i68/5Tg5zz5p0fiE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ifADzpzNlOnc0EGKE1N6tlGxWoVTX1kpZ2OpE5fN6MoUT1zGKyU/qhMmMQ5gsS5OSOFi1y2FutZ6BA+0pBM8h/WgHqN4Imo+iIR9pipLjUggfX0z1SuqFAL3uI9xjS6C3iQyIXzeYPoR+4kPHJvKmpOoqSOG1As+No2w+UGjjdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K/3bwBgM; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="eryD4r6k"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713166994; x=1713771794; i=markus.elfring@web.de;
-	bh=Ehw3JP9/jH11oJR68DQOEghJBea6xoCh7eHWITgqHRM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=eryD4r6kmxWCnkLLaPtDkiFoBn4OIfitiMN4abV05fl8tNgD2k9xI8qIF6wmU2fM
-	 5Qk+Kwvs29iv33OOKUKVBnc1q96JO1eK+ybtB/FQCkrbw8r/7gKSrCPHQfHOVjBHj
-	 dwfO2VrUin92HOM2N4uDB0EuWZY5GrnZoV6tt77/WwvizHP6+OaU3/kMwQ16YIEyi
-	 cTGkwk2sxBaP0juO3kLKcPM6l8UwXLjsqxD36BwrBLwR2LVMPuc2VAG2ojIYF1+3C
-	 gasuNuKMVhOVmjaN1VDgJmf036H8mBNDPZHV+K3g9chcH51Id+xw7RnWmMw4vkCxG
-	 t0UXS7ElfAHoUM8Wuw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MLzin-1sE4zj2557-00Hz6h; Mon, 15
- Apr 2024 09:43:14 +0200
-Message-ID: <ee6022b8-3aeb-4e6e-99f5-2668dd344e0a@web.de>
-Date: Mon, 15 Apr 2024 09:42:53 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/3bwBgM"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-346c5b83c6eso2494653f8f.3;
+        Mon, 15 Apr 2024 02:57:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713175021; x=1713779821; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g/rKQn2i9AJe69a9IKOYTlsaBB0pLUNTFKMRgaL9iMo=;
+        b=K/3bwBgMw0KtpuFz2G64yZKmTMsSQCpPSIWj4iMjBWfazdXe3Q77YyrTwP4LvC+Mvm
+         O9YiX00MT7gdh4OeUszm3u1i/X2VsushNIqMqMOtIr9wvJehgvO+2iaM1+1LeExV7Dox
+         mMNMy+LgQtA1g4YUzfONVgOVltEA6SkvtF6jeqms++FMyM4sz3szEDxdGjcrttR5wxWQ
+         2wmT+pRmao0VShC5XQww4yD5jPVxVbInMCeZXEzkd707F/8QT15Q4yAo8mTBODGPYBDm
+         yw1jHn9P1djTg69h53jZ0X7Qm2fKkklLMh8hgTuvaikppuDFBYjGm+/2g5wZUbE9NnjI
+         enfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713175021; x=1713779821;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g/rKQn2i9AJe69a9IKOYTlsaBB0pLUNTFKMRgaL9iMo=;
+        b=nt42zTu772G2d0f6lqW4NNf0JcrrPC0x9CWY/CFIQpIAV1LwxG1x4N42KrfzIirkBw
+         xHgfRIpETOqOqNljNiZ/KvKvIIlhy56bx+08YBdAUsbXDDgw2D9jg4//eJDpDiiPkiTs
+         lCSpsx9NPBGm0cqeyDYQHVkvjv5nAhJEBYFDEKAcyx9mLz4WYKFVwrTUX76QzwONEWUx
+         f5Cpoz0YKjB1AomqYfH+zb8DhR5E2vPPRcut8SRBJgfzBzo3Xan7L3X1XM4FOXX/FWbg
+         CUys+ssOOD6eKwl6CH9k4c7CFPi8JlyeBjB6IMa6ywQoT0TFKGYQQQ0H40RraakwL3V9
+         Qexg==
+X-Forwarded-Encrypted: i=1; AJvYcCX0Q7K2t+O82lsuH85zHyRGT/z/N65kfEYdE5pPL01kQJzgj5NqM06+SDZwtem2yw0aw7wZqG4pgz66AA1gMtGOMc68gjLjCntmmK9k
+X-Gm-Message-State: AOJu0Yx1XTDebuc/qG8uFMNSuOt3nXjlP1Cv0e07Nos2Us0U5kwML6+q
+	R51f0lsAVGcSqgtMhieBrReU+cA9UG68RlT7LzFkHCQqgA8EIuR9
+X-Google-Smtp-Source: AGHT+IHGhS/R4L+sxaYFupE82/pGE1N4pIuX9FJHqwGuvGP7rG+SdGbXleJEfkjqdXjuMaDnzPQgCw==
+X-Received: by 2002:a05:6000:1743:b0:343:8994:313c with SMTP id m3-20020a056000174300b003438994313cmr5217871wrf.5.1713175021220;
+        Mon, 15 Apr 2024 02:57:01 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id c18-20020a5d5292000000b00341b451a31asm11537447wrv.36.2024.04.15.02.57.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Apr 2024 02:57:00 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/i915: remove redundant assignement to variable err
+Date: Mon, 15 Apr 2024 10:56:59 +0100
+Message-Id: <20240415095659.482989-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [0/2] powerpc/powernv/vas: Adjustments for two function
- implementations
-From: Markus Elfring <Markus.Elfring@web.de>
-To: linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Michael Ellerman <mpe@ellerman.id.au>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Nicholas Piggin <npiggin@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
-References: <7be66990-de9e-488b-ad6d-fafd1c7bb34c@web.de>
-Content-Language: en-GB
-In-Reply-To: <7be66990-de9e-488b-ad6d-fafd1c7bb34c@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:clWA/QkEMk1zwMQrfsyv96T78gaWC3LvgzWJUo1bf0wfhW8Ib83
- dTf4utj1Tw3KMQwJMwkvi+LGtQt2GBBMU6UbPuBwVyePLDUe3W71tPDnKSa9VsvT3sqgU2D
- caERPxmHaL4CoVKIpUQiXoj+F2s2abtVqYEeEsw4j8HcEgYEFMKkhherMm4g5b+S9nrXboa
- OH2uBab55WhqqaOsclLAA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:QIo4Ksqsr9g=;4Gg95QXmFO+zKJrVU0tNrlb2pZ5
- pO2yecCe36GJ78zuRFCpoCTROCAj9WCi7BuNDbDJ8y3kj82gVfEVqGPTCAS9GhAIR73fpgduD
- 4/mrWvqX9oWV5fXBI5/7mtZPuCuFJNcQgvX05PjCnK5Ti7OVvamI/rnfoLPUtd5rcl86mrXPZ
- jCHidQabVd49+ww84TFn+RgP3m8gp+FtgtkXjAi7WKLpBhwNrqa83EBoMxIlpmCeqToWEKJvp
- cxxY+u1c5Pw+C3/WDfXEhLb7BqufYxSpeAxhjnro2kKQmuHqkMVxyR7Hvyahbflt0A4phQDzI
- Gju1dKIO9H2W3Jr13NHRhzlwBg+0kPGUwtpgbxMQIamMXl35j3ubfoJHMGNkjVuis695Eju8M
- zv/DqNwtjWDYq1D9bTY5wITMIBNRTQ3a0BeAvpbjjiTq6rkKpz+4p9aKxOWE9t2EJEH3yyDkI
- OcD5mbSvFK08kIYHkFglwGAUwBP6I060u9mzW6dRtvEzqYCN7mOxEplcB1PMJMLVelyOdraK+
- Q5DnPfai0rumhfVNlngBon1Xp1APjwQwjdey8Q7s8Atb+UD/xTVcTps4BPT62puVFic8rRwml
- myVjvlVIsxz0IZ/GsfkfgLLILxTxeqRFYtYMVKchA4CwgUFF+QpiMhxyXLru/wjsbWc06mm1w
- DVk+a+F+hJ2dujOr+bsfc3sU958bOK+zpA/o8ZUIk51OmpVDqz8Kk4l5j+lbKu+PCOpcbuaCb
- ZAnA8S0crAjSHJ4c923RO7mEJUjzCyXPOkUK9E+5PbOqY4bp6KsKr+Y4j0QQjHOeSscgHgoyp
- xpECGR9p6xaDhBT7yMYifcVH2JwfnoPiZs7tpLrvq0e6A=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-> A few update suggestions were taken into account
-> from static source code analysis.
->
-> Markus Elfring (2):
+The variable err is being assigned a value 0 that is never read, the
+break statement escapes a do-while loop and then the code returns
+without referencing err. The assignment is redundant and can be
+removed.
 
-I would appreciate a bit more information about the reasons
-why this patch series was rejected.
+Cleans up clang scan build warning:
+drivers/gpu/drm/i915/gem/selftests/i915_gem_mman.c:1075:5: warning: Value
+stored to 'err' is never read [deadcode.DeadStores]
 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/i915/gem/selftests/i915_gem_mman.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
->   One function call less in vas_window_alloc() after error detection
+diff --git a/drivers/gpu/drm/i915/gem/selftests/i915_gem_mman.c b/drivers/gpu/drm/i915/gem/selftests/i915_gem_mman.c
+index 99a9ade73956..9ca9e9505244 100644
+--- a/drivers/gpu/drm/i915/gem/selftests/i915_gem_mman.c
++++ b/drivers/gpu/drm/i915/gem/selftests/i915_gem_mman.c
+@@ -1071,10 +1071,8 @@ static int igt_fill_mappable(struct intel_memory_region *mr,
+ 			if (err != -ENXIO && err != -ENOMEM)
+ 				goto err_close;
+ 
+-			if (size == mr->min_page_size) {
+-				err = 0;
++			if (size == mr->min_page_size)
+ 				break;
+-			}
+ 
+ 			size >>= 1;
+ 			continue;
+-- 
+2.39.2
 
-https://patchwork.ozlabs.org/project/linuxppc-dev/patch/1f1c21cf-c34c-418c=
--b00c-8e6474f12612@web.de/
-
-
->   Return directly after a failed kasprintf() in map_paste_region()
-
-https://patchwork.ozlabs.org/project/linuxppc-dev/patch/f46f04bc-613c-4e98=
--b602-4c5120556b09@web.de/
-
-
->  arch/powerpc/platforms/powernv/vas-window.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-
-
-Regards,
-Markus
