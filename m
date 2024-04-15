@@ -1,50 +1,41 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944CA1E877;
-	Mon, 15 Apr 2024 17:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8DD156672;
+	Mon, 15 Apr 2024 19:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713203759; cv=none; b=WuOIntjPbhiuWawRbOirVuFeuA1ZvmuFBnQum6h5ka5VLuMZFcXSROIbVzYXeHgvkEEfvbtx1hvPtgO9OfY0ANldfP4mjQPcj5JT0fGxtvngb0NoAkgj/uASYFYToZU/kx61v+cy88+WfsMWdGqE0mCIPuE8U1yp/FhsYA91agg=
+	t=1713210428; cv=none; b=ZGxt5LaFsJWol95OhitRPFN288PZ+aj4ju6pZL5XCpP/9Z8jcPSFgdUKejWIuSiwTNCDQa7Ryv9PIB/oj9ZtOe9URs2/ihLAu0p8Uf2X1j837KvWYMQorRvAbxebWzCw4eJSOftIXJqF/zfMHouAvZ8sSkQ5S3qHfgyvySYGAgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713203759; c=relaxed/simple;
-	bh=wGHIqI7PWV7ZdcWPIFjMMbCwsfBnDgl0tiBx3SXn5kw=;
+	s=arc-20240116; t=1713210428; c=relaxed/simple;
+	bh=IR5twlEytFTNkH5gQ5ORDWxzjTbflwpz2VLnUrdumsI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ywov1Mfd1hLe4LsPOa8SmuWdKhBjM+vh2GPqTPNKmLO9LgFIJKFJDUmbERi8Kpxm98VK+uYHD76tAuYrx3Nmzg/9YFONV764YQAK+AB++6qpBQziaq0+A7R5sGLpeF6sDMjlq0l8GD7WdDGSOdoZlPhkp4nQ5M9X64PvL8hsTDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TPJtt9pM; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 In-Reply-To:Content-Type; b=P23rxX1gwmVrFj4jCu/caPNPILgoOwxyHKzQIKdo386NT8K6uzqYrfgeUCvWxw8xX+xsNmX7dhsv4MwBlwpVqu3pc0GleFHY2hByUJLn/cnJltyPcTNL7uszGnOHhhCoN2SG79k11Zh2/dtXaOo2zipx5TCx5u8m3lFtkWFADqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qYoquhNI; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TPJtt9pM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1713203758; x=1744739758;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=wGHIqI7PWV7ZdcWPIFjMMbCwsfBnDgl0tiBx3SXn5kw=;
-  b=TPJtt9pM6hnLXlQZ2FnghpqHdjiF8DVRYKs0CUF7sxw3qJx7T/GdMlWA
-   Tio92bMIUuhd1xaUkB8edEaxC9uux89aUMHG230bB4zmkLqrMB2RBxN2K
-   VkwGxkRWVzQwNDAQuYCMq3uPWCV54ukEktuZKLNjXd8jtcX81b7XNOqHG
-   Y+RdI04XdP0GyJaDTa85ZeufLwkyXKqjRWsDGdgEec9QW/+v9/L31HoU1
-   pCtaT8oZpisvFEe1oLWGraNq51J26BzX6EeX/uq1awBFkO4R33AJsSeqI
-   bXiqVs7uYqN3uzt2MUnnJPUUZc38q6n56sVhp8ujzmzLx1IwaKWY21ciC
-   A==;
-X-CSE-ConnectionGUID: gr7p1BitTm+pHE8h+vn9Qg==
-X-CSE-MsgGUID: +S7fnQBoTUmAebujZV0lWw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11045"; a="8479988"
-X-IronPort-AV: E=Sophos;i="6.07,203,1708416000"; 
-   d="scan'208";a="8479988"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2024 10:55:57 -0700
-X-CSE-ConnectionGUID: XpkYSpxIT32q836X2EVJXA==
-X-CSE-MsgGUID: VN0WYoj+SJ6rZOY4lUVdRg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,203,1708416000"; 
-   d="scan'208";a="22573744"
-Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.212.61.52]) ([10.212.61.52])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2024 10:55:57 -0700
-Message-ID: <c62caa9d-f017-4aa5-9d9f-adf6c3b27f8f@intel.com>
-Date: Mon, 15 Apr 2024 10:55:55 -0700
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qYoquhNI"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713210405; x=1713815205; i=markus.elfring@web.de;
+	bh=IR5twlEytFTNkH5gQ5ORDWxzjTbflwpz2VLnUrdumsI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=qYoquhNITVx87CrWIDsn1n75E4UuU3I3VuLDOuRugCP2qmvdSP2UoLOx0Qydqde/
+	 trKUrgZp6s6XMP5zT3DlgdZmy2q9cmXBypueOiCFY8KbWfQVMKm0v3eSeizq+BTQB
+	 f131skfZonSWNeaVeTgapII633/dguR56JMZTeyYTBwboLngE1CDItXNuF+mJ1v5E
+	 XpcIVxc2TpQ7DzCWQT1Wl9DqY9nk005tdvK9+8Xbeod5mGHPQeeCghTCC3ig6SAa4
+	 bKFA2br7PAciMxtuT0J04U8b2KJHjlc+tgPalPVr/7MaRgy02qpY21S1x7KmrudzU
+	 d6S6mM1HG7ticlGf/Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0ZsE-1shhI131SW-00womv; Mon, 15
+ Apr 2024 21:46:45 +0200
+Message-ID: <8ae97386-876f-45cf-9e82-af082d8ea338@web.de>
+Date: Mon, 15 Apr 2024 21:46:44 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -52,46 +43,63 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] dax: remove redundant assignment to variable rc
-To: Colin Ian King <colin.i.king@gmail.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, nvdimm@lists.linux.dev,
- linux-cxl@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240415101928.484143-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20240415101928.484143-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH net] net: bcmasp: fix memory leak when bringing down if
+To: Justin Chen <justin.chen@broadcom.com>,
+ bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>
+References: <20240412181631.3488324-1-justin.chen@broadcom.com>
+ <6881c322-8fbb-422f-bdbb-392a83d0b326@web.de>
+ <9afad2b3-38a5-470d-a66f-10aa2cba3bab@broadcom.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <9afad2b3-38a5-470d-a66f-10aa2cba3bab@broadcom.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:gnuXHtYryBlPRJhrlOLehrxnO9M2/gNL8VR2cIDGl5QnN3+gMXV
+ 58rk/yNOKrbFijp6ihArZVLrih+ffN0PDvBfAvIG6dZBK/rCuYlgNxXYdyCE6BSrJpdvqoU
+ WNgVCLGBlERJQiJGqOop2InTiSG24OnTtDFVx5FIfRGqSkIbSA23KB+OXtAlwb5PPoiVoXT
+ Xrt34KCmCnid8D5LEMlug==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:S8T540Ipflc=;Ag+vH+MJhY/z5VIYN3FC06g0dv7
+ 3F0tY1VpAs03Hjg5xtDT6fb4Uf2V6LyH4lIHKZyU2eQJNNuAZcFEQ4S16N92jervJoeWw5x0/
+ 9ADXzgZ1NPaUhCGt2LtLNrV+h7puyJbvU4C16cFxyvGKL7weE4badp+xrGIl8zfG236xwlBYP
+ PbiVYpmebywddNhnYskEf7fRu189TBY9XmPP1obRtJNjHjNLyQS1rKhkoPe5Cw3wagcSXqtGe
+ N+W/CacRf3n6LMWcwNwGSUAG3GVGYUR8txUNKIrvqvtSuPSgzXtpr/RucW1DwbAvGrSqvkmaU
+ fdVd23Z22BoMpbNPmZuJ4echFJfggVMxiYwpuAGoS3OZab7aT2qdxZDpsAPlc5humaDw+34v/
+ srimQ9xM7Ol4Gdu6S+G0mnlwELp8KCzMYAgqMzAscA3FALW8k7qEe0ZyUFOyLLmFtmbifJinQ
+ MMSSpzxXsY3sDi5Jiazn64VZPq8iTEll/6bR1/mSRoiW7Y5WeJAYPMdMJ2s0JchFYBWjfNYII
+ qGn41qTBXsW+JDAQ1IeCdt9eMyn/gczGFiipIreb+879LKH8QgFkr/mTzq0+TUclgUbfSLzZ9
+ xJHQALDqIoSmcxF8x0+T0jQQmYbe6Jprp0X/5Oi6+bFN7OskBc8wZouKnwKQ3ueD3dvPSiufK
+ QPkXeufM9j2TpvMvAkyTOP2AVTTC/emaJVVFax0HlAy1YSkgSTwDk7F3l7FYzd2iDBaVY9xdy
+ eeSGs445JhoxbCotvNK/Rq2KQn4lILL9lWeqjRICoIKDy0yRKLzhgbjup8mC/ozknZerlAg5K
+ ++MGpM49LCgg8BL4pQ9pjZmkrcHHQeWssgtPWmNfP0FPE=
+
+>>> When bringing down the TX rings we flush the rings but forget to
+>>> reclaimed the flushed packets. This lead to a memory leak since we
+>>> do not free the dma mapped buffers. =E2=80=A6
+>>
+>> I find this change description improvable.
+>>
+>> * How do you think about to avoid typos?
+>>
+>> * Would another imperative wording be more desirable?
+>
+> The change description makes sense to me. Can you be a bit more specific=
+ as to what isn't clear here?
+
+Spelling suggestions:
++ =E2=80=A6 forget to reclaim =E2=80=A6
++ =E2=80=A6 This leads to =E2=80=A6
 
 
+Advices from a corresponding known information source:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9-rc4#n94
 
-On 4/15/24 3:19 AM, Colin Ian King wrote:
-> The variable rc is being assigned an value and then is being re-assigned
-> a new value in the next statement. The assignment is redundant and can
-> be removed.
-> 
-> Cleans up clang scan build warning:
-> drivers/dax/bus.c:1207:2: warning: Value stored to 'rc' is never
-> read [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/dax/bus.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
-> index 797e1ebff299..f758afbf8f09 100644
-> --- a/drivers/dax/bus.c
-> +++ b/drivers/dax/bus.c
-> @@ -1204,7 +1204,6 @@ static ssize_t mapping_store(struct device *dev, struct device_attribute *attr,
->  	if (rc)
->  		return rc;
->  
-> -	rc = -ENXIO;
->  	rc = down_write_killable(&dax_region_rwsem);
->  	if (rc)
->  		return rc;
+Regards,
+Markus
