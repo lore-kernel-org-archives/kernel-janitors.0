@@ -1,85 +1,100 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4D313698D;
-	Tue, 16 Apr 2024 15:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F1B44C6B
+	for <kernel-janitors@vger.kernel.org>; Tue, 16 Apr 2024 20:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713283099; cv=none; b=DhH2NdzD+y/Uryn0bwb8REObzmx+03pTe/fX3cPJKIlq3ALpC/52EFfhrNcf4whR1rHkb7JrOMQ98jsk5JHugCftX23mo8zQzleZZ1ipDF+6hwM+zyFvsJkrbgNE2uLaEfWNYmVa4V/huaEDCAtlIconPatADvelX2YPdghnwUg=
+	t=1713301045; cv=none; b=tVP5CQQUvCNqkcBFiQPCUtQ8hagFqpb7wDR5jbb14pDydmjUHEmwyuNaPIacFLcg0lTCI/JUndrN7tIklbKRGQsdhnRX6c1C07V4KgGog8fwCIUdlPWu9sgUlaIn9CSRGem7TB8uLF8qBZflpdpUFCN9QtHpY2cznejMc2MqxbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713283099; c=relaxed/simple;
-	bh=nllEtvvs6NqH5k5GLLTv3RLRUZlAuaXj2VxYKEvp3tQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=dvHtkXYKRwMpdob7SfRgd0Bzdg2qPP7Pe+XGeGX7t4f1pPDPqGWsXgaGnMLppBwoV4WfKYRJo0A3hXcbwdlPn2QyxY4O0fb+n1zW5BouAVmY2gqxWc9UP+y+8xF6yolxEIs/Jh268DC976iwTeO4PecoBG7U2H6fuQxiLRsbaHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=PqsFQpc8; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PqsFQpc8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713283065; x=1713887865; i=markus.elfring@web.de;
-	bh=nllEtvvs6NqH5k5GLLTv3RLRUZlAuaXj2VxYKEvp3tQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=PqsFQpc86gZnr20gXM0/CJH7lVBimxXIBRX8EskPX++2UUrD8+/3lDvtgYLPahLk
-	 FIF6KdHEOTrUTt9+UR0SUWv883QxV3d2STeApsWdWfG2mS0IwP+NxEUWKAzs9B+IE
-	 9IX3JTP+5+NEYn6VTfiwX4u1uRl+0845Rixknl+wNbnfA4CTq7sC0QQWOf40q3cdt
-	 ti0qNhF9FiEiJp9r8PrmDziND6XYHrQtIf6YC1399lFHisgsAVeuejkSZvFbnk1RR
-	 gbCApXWzzotEOwg/v5c/JQiuUcTV4IOhrv6+6fw/w9aPOItUbe8Qb8gAAU49BIbCJ
-	 IaIT61ZxYTQ5g/hEmg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MJnvf-1sCUca0uxV-00K5DT; Tue, 16
- Apr 2024 17:57:45 +0200
-Message-ID: <bf870914-3845-4d2a-b7cf-d7f9ef28e0b9@web.de>
-Date: Tue, 16 Apr 2024 17:57:33 +0200
+	s=arc-20240116; t=1713301045; c=relaxed/simple;
+	bh=vUKXpiDqyT8T8DxSVN8Hs7fJBHzb8ojHCrAFFhTGZv0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=T815+qOUGNp+r6HRIDTZig1OliqOGaEZxDUvUd30NBtimmsUAy7hLjPQXsUJIMgTilYxi8hfBfSp8j6nswiDhoEPVx7kfAM6tdhmNzsT/XKNlzUzkZHrYMoFG881JDtepAQci+lIF1CILq/1jh3Zw97zXhOpst6S++WBjCMFDRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-265-W1bCR735Ndq7Qsyjp7sOkA-1; Tue, 16 Apr 2024 21:57:20 +0100
+X-MC-Unique: W1bCR735Ndq7Qsyjp7sOkA-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Tue, 16 Apr
+ 2024 21:56:51 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Tue, 16 Apr 2024 21:56:51 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Al Viro' <viro@zeniv.linux.org.uk>, Christophe JAILLET
+	<christophe.jaillet@wanadoo.fr>
+CC: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: RE: [PATCH] seq_file: Optimize seq_puts()
+Thread-Topic: [PATCH] seq_file: Optimize seq_puts()
+Thread-Index: AQHaj3fscOebCwNNKkWKivYclXgg7bFrX8Cg
+Date: Tue, 16 Apr 2024 20:56:51 +0000
+Message-ID: <ba306b2a1b5743bab79b3ebb04ece4df@AcuMS.aculab.com>
+References: <5c4f7ad7b88f5026940efa9c8be36a58755ec1b3.1704374916.git.christophe.jaillet@wanadoo.fr>
+ <4b1a4cc5-e057-4944-be69-d25f28645256@wanadoo.fr>
+ <20240415210035.GW2118490@ZenIV>
+In-Reply-To: <20240415210035.GW2118490@ZenIV>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zheng Yejian <zhengyejian1@huawei.com>,
- linux-trace-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Mark Rutland <mark.rutland@arm.com>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240416112459.1444612-1-zhengyejian1@huawei.com>
-Subject: Re: [PATCH v2] ftrace: Fix possible use-after-free issue in
- ftrace_location()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240416112459.1444612-1-zhengyejian1@huawei.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:FFYeLD5kLXfbghX3LoP20kT5Jkoa52aNgyc4iVwSdKGw/0O7uyU
- qwv41NCR+Leot8428I/N1AGO/pXqoDpGaGutf3arxyq2WNvT//+LZxsdqEHovX0tzgxaM4t
- JGUclvFoGfsardn6fRzjqkh1Vj55sv0iYc1pXSEbWgqvFVd8ePKsMxbMomBQEx1ArU9vk0B
- Wluy8K0lUz00e6SMe4rJA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:1fbYECY+dng=;+1DYhBjlCdbR2Vf5//lqiN4Yw3R
- gNcEV/8sH0uXm44607oje8/jq9JLdXYw4Xe95o1zObM+k+7+0qaztqAGjgIychDdbU3x22SVo
- irESF06Lp4g/5+5RNK79CExkXtcXgZcUezK/62FDoRmI6d2W0J9QQRXKYta7wYbiqWZ3oSlYl
- FAzozpHm5bOnkhUGgZ1Un2yBujACqHbvhXSqY5UOLyF3oszp8PGdxj+F6+bx1Vr7jPzcdeNyi
- npHhH2KIHpfwCujIDx+uLJdAvPWLleA35IhjlydlWNBzl4UtY39BBT63gTUfV49Ir+9AgY9j9
- 9UgG+hI3AjoBGjc3keSsS7a8xhmxT2ZJ3yut5gI6Rr1TzeSqm/n1Sk4/weli/ujGgMokrd1kc
- XscO/DNqhvXHSKRyQdcwjdA0Ww/DYPZE4k9hba/0H6uPf+1VMF41XZugCHLMFq1Q4moxoDcAl
- HGGY+KAdh73GUDeadhB9smvRhMBpg8S5yXCEXnzu+QFMh+BJEcWQL+TFpWVL3Moz2b9pFYP+n
- KaMBJYrRmHcOcBW6+GT1slz0ze0vr6ThTvykO6y/welS9yT2kM2T2H3tQKGhC3qW3r28xweYl
- 2VQAJi/deb+TRNcURXJJ7vVbywo/tDW53wI4wN+3C90/eV9mr3GhceMNU4NY/FsnnX+ucXlqk
- ADGb+GVVmq5KAvcSfMzAcTgMsT6KHoBxQmlPwxYc6l3tJH6D6AXuI0Yc0EH927vWLIqFO/ubb
- B2ug/kiuhb3HjPxAYMyVs9WMjHk+fJ0rs9qxo0UNdeUx1/5h2WHuwLN5toOGr2GmJLuygsTr9
- G0f+3yWUUE0x99PN+ETGwDaTfYddLkaVplER19FeRlQQs=
 
-=E2=80=A6
-> To fix it, we hold rcu lock as lookuping ftrace record, and call
-> synchronize_rcu() before freeing any ftrace pages.
+From: Al Viro
+> Sent: 15 April 2024 22:01
+...
+> No need to make it a macro, actually.  And I would suggest going
+> a bit further:
+>=20
+> static inline void seq_puts(struct seq_file *m, const char *s)
 
-I suggest to convert this description into an imperative wording.
+That probably needs to be 'always_inline'.
 
-Regards,
-Markus
+> {
+>=09if (!__builtin_constant_p(*s))
+> =09=09__seq_puts(m, s);
+> =09else if (s[0] && !s[1])
+> =09=09seq_putc(m, s[0]);
+> =09else
+> =09=09seq_write(m, s, __builtin_strlen(s));
+> }
+
+You missed seq_puts(m, "");
+
+I did wonder about checking sizeof(s) <=3D 2 in the #define version.
+That would pick up the cases where a separator is changed/added
+in a loop.
+
+Could you do:
+=09size_t len =3D __builtin_strlen(s);
+=09if (!__builtin_constant_p(len))
+=09=09__seq_puts(m, s);
+=09else switch (len){
+=09case 0: break;
+=09case 1: seq_putc(m, s[0]);
+=09default: seq_write(m, s, len);
+=09}
+
+=09David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
