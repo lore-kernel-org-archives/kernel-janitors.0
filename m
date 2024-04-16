@@ -1,84 +1,144 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF25158DB0;
-	Mon, 15 Apr 2024 23:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2D07EEFD;
+	Tue, 16 Apr 2024 07:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713224596; cv=none; b=mF+X699dzbIMyLBknzt7rX6mXyGyl+x4MElxk4fbtQvB5G30nLhhL2hKn9qogF3GAqQshNtYb8n23/g2blmL1r/k/VQwNza/oXL2DF7viHzgKq9QJ2IyeumNrER5ecx+sUc02y7UGTgrQMxNONOSc2vJVnKDLuB3ILp3+3hwkNQ=
+	t=1713251132; cv=none; b=Q8sEBSDiF6dCWwnkxz8z6t7SEq9F2oeYmA++DsD9TpbaVCp5qtfq3Cr46FLf9Gk5oj3Okf3rUiG1hIuJMl9SbuwrjwOmBXwcHlvMF4J7uf8awNAdBSuXvCdQHZx3uN6diTpd6QYS8ljuqJEK0qslwgpu/WGTB0fT+90mgua7r8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713224596; c=relaxed/simple;
-	bh=X9nCD4qkBQfBS8dnQLJRtmMUHEovcEJatZMQOk0SGew=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WZagyP0tCltT5Hu5/vlG2mU7YcGaYFqnJAhde6q8i5yXR6dyPe4icAiOizpIl+2JT+qW23kHHq/CExbXe+GLR3P9Ecxy99qcC5Gs5pA37uZb0AfPcEOUDmSPyO1c4YJivYjENhXoWRO9tpb4Ij+q9cYZdt3gp7gWROMMc4dzuww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cd2+qi1s; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713251132; c=relaxed/simple;
+	bh=fpIr7vk9ma0F1Ajyvw7T8mvDHmQiafMnVUv8cVES/Q8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=pbkEDZxhkZLvYoVyF910qvs5e34ZpDev5m6tO4WEyRpE99ImAQMo4mt3vfmbrn1oSv4t9QDWcKQApg2pxyn408c1PDGEqzR/zxC5SujK2CGlch7uwhFETBC7RddPugDRdvp3YYRON8Gs7RaYJ1u4SjQgDozAOjoqr02+2SU+p+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=uYYpoJTm; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cd2+qi1s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4386CC32781;
-	Mon, 15 Apr 2024 23:43:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713224596;
-	bh=X9nCD4qkBQfBS8dnQLJRtmMUHEovcEJatZMQOk0SGew=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Cd2+qi1sdibVeoUlXsaxLhCQyPBmi8pKhJTauFRkTwlSLupXQeLatImiezIBSeoYT
-	 BFKeqIl55DJcit5pEpIi6WZgVviA5ayYgwHUlcRaV64kyi6MAN3utg8r3dKHoNdgqa
-	 NSmnd2Hyt10sfgl2KR1DutTaF8cb0Ihp2FqcIjHrlCMLR2bdB8oVmNKeIcmyDdQMfc
-	 L0JEhYsitvzJe4lxVxZXiFwRHqnP30vC/DGCXkKoDEvh7iRr9p/bqZjeifQn57X20u
-	 gP+FJ4HVsIF3RrD32yYZrVQvM/p5gJyca0PXpbn0t2MgwwS1nYFJ6t780AmTxif0Ix
-	 zarBZuunsxE3A==
-From: Mark Brown <broonie@kernel.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <b32e80cf-b385-40cd-b8ec-77ec73e07530@moroto.mountain>
-References: <b32e80cf-b385-40cd-b8ec-77ec73e07530@moroto.mountain>
-Subject: Re: [PATCH] regmap: kunit: Fix an NULL vs IS_ERR() check
-Message-Id: <171322459456.1659174.4759607099482706461.b4-ty@kernel.org>
-Date: Tue, 16 Apr 2024 08:43:14 +0900
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="uYYpoJTm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713251047; x=1713855847; i=markus.elfring@web.de;
+	bh=11Y55v0AlzuRPO7ifOFiCZQ7lrJESQhpZwvX7xtpFpc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=uYYpoJTmRqgk2fHBG3KnNz2CLPavpRrEfJtq6/fkxsSHPHo9hr9qcnbetfR4rbAv
+	 WWYYcMCU5QC3KoHYZsERO/uCRV2oxChX6X+Rafq4yYRbQohsxFKvostPltnlOgZUZ
+	 uF9kX12zxQQdi44vnDxMP2KDpxbIBaLpo5hqzClbmR4INeL93ovd+wCPNkORolTKA
+	 RsWEq1pb7kj6jurgWDs/BjuRAGZTklJtZ686dqKAidxv8QQmS4EmEZg2pw3cisyw+
+	 IuhR26xDJ4uJ6w3UN1gJ6I/LtVomRg8m99Raf/c0Fc4QVAeD0lf4ST2m6UyLR9hF4
+	 nOhZqEsl8lmkPGi/9Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mvspv-1smFwO1js7-010uHt; Tue, 16
+ Apr 2024 09:04:07 +0200
+Message-ID: <e0377059-4073-4779-8385-506b9b39301e@web.de>
+Date: Tue, 16 Apr 2024 09:03:36 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev
+User-Agent: Mozilla Thunderbird
+To: Ricardo Ribalda <ribalda@chromium.org>, linux-media@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Abylay Ospan <aospan@netup.ru>,
+ Alain Volmat <alain.volmat@foss.st.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
+ Dmitry Osipenko <digetx@gmail.com>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>,
+ Hugues Fruchet <hugues.fruchet@foss.st.com>,
+ Jacopo Mondi <jacopo+renesas@jmondi.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Martin Tuma <martin.tuma@digiteqautomotive.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+ Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+ Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Samuel Holland <samuel@sholland.org>, Sergey Kozlov <serjk@netup.ru>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Sylvain Petinot <sylvain.petinot@foss.st.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org
+References: <20240415-fix-cocci-v1-3-477afb23728b@chromium.org>
+Subject: Re: [PATCH 03/35] media: uvcvideo: Refactor iterators
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240415-fix-cocci-v1-3-477afb23728b@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:sHR+TeGSFgoxPZvFUHAPIEuDVzgT2GvvVwRx2R0bQhoUCLrY21q
+ 4aVwGDwLU20D7GafylHrOJidGYSPJoSoIzoqf+nPfG0K+ORf8VF8LHB5EhsUv86XaNhisus
+ 3kmBAPbDemt8Lc42bbQEjY39bQYWH3PtxU6pQC03uggivELLPehSfNoyDhXXBzC0UmXhKFx
+ xJrtOT5azfeT6A+OIpOdg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:03HI85af2Ns=;yQ8sKTONouBI76raH8Z58fLgdPG
+ cDRdjqAFM/3eXwECjUZI9h4p6mlw8k+SOXiyN6GfwXod9KAZJOxaNqbO06huy2pgBzYXWcxaK
+ 1yvcUyUm5nteIAvRh5GEJ6k2V8yU4C8rRXv94JjainnOHsSdDuPbk0aZXSWp65ziquDFaUUDN
+ YJZN7AsXSRRYZMDVispdvHubrvkMarfGAxoCn4+Sw/adTSJ9UOxI6QREc49RSDDGj50+NsVZA
+ I9/YrIlsRw4OeLnNC7dBSfeh2gas2lmTVPAdeZE5dk0sIs7aiTx7Cpr5FEHhCUFXrkReal3EO
+ gELP/4ATALLJIJbZL8oac+FZhSpqW5irTqlO//L3y6eUAaDcuOSIPWLoaYJ2J97IzS1c9eCBT
+ dPZVw6RcJR7I1g+6lDJwbla9AWsE0cHKjE7xI2z8RiMQz8Rg1JfobeDUi4lCAeun4aY23r5ct
+ YWwBdDrs6QXbNlkfk+vAwFpDgJQbH27hI7BnJLDoXByi4vvXAuZw1dpfEkQ80cUKCCCXCdn7X
+ PvxRBpoBI4VG9b+hFjsF5IAAMMrnv9iTADoQIOgnuUIHJ96lnDCSfdzxHRFAWt2M+05cdkCb1
+ Xd22EYiLsJxLnQ9xjjeW2wTuQRB2DVUy1LO2KuI3z2ZDeT+FU9j9vuFhJTTTlhlzwnv9ycOI2
+ FCqhmVe/n6PxH/5bS4hKkm4lYwNU/GheqGDyJrBHSbogo2OEAjGtEGI1SveFeBPQ/PKRQkiQ8
+ msmag1gLjDLzUZ3GnLIpmC2bTBr5sENz7Knm/uddln2TX5kDsFZDCPf9L9KYANSpzIuCxNgkh
+ +sdpCGJrmyr6dMFVvuLSI8fFEJx9x6/qw+iAMnV+HSLrk=
 
-On Mon, 15 Apr 2024 13:34:54 +0300, Dan Carpenter wrote:
-> The kunit_device_register() function returns error pointers, not NULL.
-> Passing an error pointer to get_device() will lead to an Oops.  Also
-> get_device() returns the same device you passed to it.  Fix it!  ;)
-> 
-> 
+I would find a hint for a variable change more appropriate in the patch su=
+bject
+instead of the word =E2=80=9Citerators=E2=80=9D.
 
-Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+=E2=80=A6
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+=E2=80=A6
+> @@ -2175,16 +2177,16 @@ int uvc_xu_ctrl_query(struct uvc_video_chain *ch=
+ain,
+>  	int ret;
+>
+>  	/* Find the extension unit. */
+=E2=80=A6
+> +	entity =3D NULL;
+> +	list_for_each_entry(iter, &chain->entities, chain) {
+=E2=80=A6
 
-Thanks!
+I suggest to move this assignment into the definition for the affected loc=
+al variable.
 
-[1/1] regmap: kunit: Fix an NULL vs IS_ERR() check
-      commit: 991b5e2aad870828669ca105f424ef1b2534f820
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+By the way:
+I see another source code adjustment opportunity in this function implemen=
+tation.
+https://elixir.bootlin.com/linux/v6.9-rc4/source/drivers/media/usb/uvc/uvc=
+_ctrl.c#L2165
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Can it be nicer to use labels =E2=80=9Cfree_data=E2=80=9D and =E2=80=9Cunl=
+ock=E2=80=9D (instead of =E2=80=9Cdone=E2=80=9D)?
+How do you think about to increase the application of scope-based resource=
+ management here?
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Regards,
+Markus
