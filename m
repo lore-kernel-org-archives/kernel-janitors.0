@@ -1,63 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B399C7FBC4;
-	Tue, 16 Apr 2024 07:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E84127B7A;
+	Tue, 16 Apr 2024 11:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713253893; cv=none; b=YaIfLgKhr1pzn3V6vRcvvfd6cSvqXAX3UvmeBD+YDJpH9dKYMaK4cXoWXHF0cbR9+oVOitjgX1Ut6ZKy3y7q2y6plIH3P+VP/ofWo02Y4Bel7MTZBiq2jFvEIX7dmLmm9EvbUFihvO941XxDsGm7FoupO2h9bRzIt4lOj/TxkdA=
+	t=1713265881; cv=none; b=c7QedGkXgNWoV/OyGVXDGkhdD3VMVhoGFfs81LOwjH3BVhYXCvQVKbAXl3/qIxcSt2gmYbaI3gOBtOcugguavUqfjKIn5+P8QC+ZISQyMkRztd8i7Dx6tOcqgWCxIrwT52dvoVTHsPsK9YN1HXQV5AZL+fo5g09pC/LB4wb8rEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713253893; c=relaxed/simple;
-	bh=0h12jKHwF4Q23zJdnmkVEYsybpaUrdzSGB8yYNi/mbc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=dikQqXzhPOb2TS//htyBoO8FnF9I0v7nNhFxLKolMz85bj553lvKVs942hsnkx6F9k4CcAFIqce/2Agpkk8ZvwinhkXu0vj9HEgxNBrtTnJ16i69wr7CajDTT0A4vez9FvwQubCUj+Embl+6qV2zk9tyzRtqGoZ24RNi03qtUQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cn65QYWc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713265881; c=relaxed/simple;
+	bh=qIhE4yT8vpU5aN3430H16P3kuNMvbZO8L7M2CXp/yKA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sCSdkqqo60FuYmeaDBmDZ/vCBJRdsQFyrLFYPAQkJyg0KnpCIdqr0pVhUQmiRrSpv/tHRRltuaEuLg2XodCMNCyB7qHjiaS2QopisgVMsQJjQI67R53HBv5W7Sb1yt4G4z0+lCFIsLSFwxrFhgdkJi+e7+0ml1S9N0Iegkd8SO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=LTB6+F04; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cn65QYWc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8FE5C32781;
-	Tue, 16 Apr 2024 07:51:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713253893;
-	bh=0h12jKHwF4Q23zJdnmkVEYsybpaUrdzSGB8yYNi/mbc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=cn65QYWcvAf+A9z2AnF8wbV2JvipO90GBBtQIGzJ7jkMarMz6lSrtFLPkkWZlNzxP
-	 8wlzInThxoqhkr4NQzGfxeyMPmuy6HS1KIZ36umOzETP7Ukk6efcuLgaw+/XyPwRa3
-	 dDnkFxTa+Kj5JdtGncwobVcX87wEHcjFwLv2pQK/EJpKJR3suFaceu891cz9AFhITr
-	 X+KIPgmXol+hIsBE2OTrcsvmLJyzwIKpxiE8+9JVPaJbMV0e6Zm/Is/Js9KrHmM5Qm
-	 /xi1GnjRVpuI4VW4jWCAibTu152/Y7XZBufWxRX6wX+lYzKjnOJC/bhDKk3WoteIu8
-	 EwAukX25HWA/w==
-Date: Tue, 16 Apr 2024 09:51:30 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-cc: akpm@linux-foundation.org, Benjamin Tissoires <bentiss@kernel.org>, 
-    linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-    linux-input@vger.kernel.org
-Subject: Re: [PATCH RESEND] HID: sony: Remove usage of the deprecated
- ida_simple_xx() API
-In-Reply-To: <9b7684381f9d09a7cd5840caa2a160d7764d6403.1713088684.git.christophe.jaillet@wanadoo.fr>
-Message-ID: <nycvar.YFH.7.76.2404160951040.5680@cbobk.fhfr.pm>
-References: <9b7684381f9d09a7cd5840caa2a160d7764d6403.1713088684.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="LTB6+F04"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1713265877;
+	bh=ZM/Kn+8UkuIqH7dSUrgkALqX2sFZu1tAf9iAD/x7XuM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=LTB6+F04dq0c2A9vGjdft01NvBtN7BE1s7hBFglEQeOgGLMZ8lhGSvwhgamz3zdUw
+	 3LOFOGAE8/69f5wjWDrFwFeywpUpkxUOsNTUPdSBqDxlizHom70fy+HGtKeWzbOmZE
+	 8ubI3+yDLj3N/2MnNLCuoA4+Aq8ZuD2XB8lHJavB2F/v4AgKxIuU7J4aUnkE/18pi5
+	 y2cVry8DRgTrqzpXW05YnuQ2MoPsb+3UECVYNA3zp20sf3yGFp6RARvbtTBUET+zd4
+	 8qw/x/HqneNONDno8GHtmrjjMlSabWz9T+pHjLGZ/DGvvazDUjzYg3oKs5SvnFWbUD
+	 T9duxh5ZTeljA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VJhDg5c14z4wd3;
+	Tue, 16 Apr 2024 21:11:15 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Markus Elfring <Markus.Elfring@web.de>, linuxppc-dev@lists.ozlabs.org,
+ kernel-janitors@vger.kernel.org, "Aneesh Kumar K.V"
+ <aneesh.kumar@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Nicholas Piggin
+ <npiggin@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+Subject: Re: [0/2] powerpc/powernv/vas: Adjustments for two function
+ implementations
+In-Reply-To: <ee6022b8-3aeb-4e6e-99f5-2668dd344e0a@web.de>
+References: <7be66990-de9e-488b-ad6d-fafd1c7bb34c@web.de>
+ <ee6022b8-3aeb-4e6e-99f5-2668dd344e0a@web.de>
+Date: Tue, 16 Apr 2024 21:11:15 +1000
+Message-ID: <87plupbm0c.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 
-On Sun, 14 Apr 2024, Christophe JAILLET wrote:
+Markus Elfring <Markus.Elfring@web.de> writes:
+>> A few update suggestions were taken into account
+>> from static source code analysis.
+>>
+>> Markus Elfring (2):
+>
+> I would appreciate a bit more information about the reasons
+> why this patch series was rejected.
+>
+>
+>>   One function call less in vas_window_alloc() after error detection
+>
+> https://patchwork.ozlabs.org/project/linuxppc-dev/patch/1f1c21cf-c34c-418c-b00c-8e6474f12612@web.de/
 
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
-> 
-> This is less verbose.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+It introduced a new goto and label to avoid a kfree(NULL) call, but
+kfree() explicitly accepts NULL and handles it. So it complicates the
+source code for no gain.
 
-Applied to hid.git#for-6.10/sony.
+>>   Return directly after a failed kasprintf() in map_paste_region()
+>
+> https://patchwork.ozlabs.org/project/linuxppc-dev/patch/f46f04bc-613c-4e98-b602-4c5120556b09@web.de/
 
--- 
-Jiri Kosina
-SUSE Labs
+Basically the same reasoning. And it also changes the function from
+having two return paths (success and error), to three.
 
+cheers
