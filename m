@@ -1,149 +1,94 @@
-Received: from PA5P264CU001.outbound.protection.outlook.com (mail-francecentralazon11020002.outbound.protection.outlook.com [52.101.167.2])
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5B512CD84;
-	Tue, 16 Apr 2024 12:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.167.2
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713269934; cv=fail; b=Si1AhzQXaCe+Xuj5eqY3AtQgK+Jx8H+P/eTs9ywEfJOix18/oPW7E7P/zhxTmCbvKdSNfn/27dRRyQFcnPzuKbcEX5vqtd0WqnprysDZ0NuTQF70AuypkMgzPn83Qb1Xs/qGpyWTzO+rs8kTmsyZjg0+/ozmtmO7lxRvVD3UD/s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713269934; c=relaxed/simple;
-	bh=kgtPOXB2qQt2znF/2RRaQn62w4opu9HQPZ+eNpVqWcY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=O/z14Ojb0ktiL4uiXRxrR1S1B1H4iKrBltCMEK0OeGDQpLJ2NZCrMg06eUKy1YQohORy7q2A9/OUBDCjpHNgNuIiji/1XNtPC2+l4+c156+9lh2HYQ+nfbiz58p9bsHm1/F//lg6MndheodLU2gKX7xSvYMS2+x/oXDaecypCn0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b=C3iayb6l; arc=fail smtp.client-ip=52.101.167.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36F5129A7B;
+	Tue, 16 Apr 2024 12:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713272217; cv=none; b=IUr/EV1Mts8iBWhobb8b+Yt1Jb4U1fzJXiA0r5WkoOR8My8HOIgtGH1OZfqUD2dikevHkjM/e9TZ/i/PSSsoWK1+Djw5UK2lqSzcv4vWhFUP3INSFYV/l82YdZp11c5jnjeyHxKP7QJ6IUAL6x1xX+fHmQgZJFhFczks4lGSsh8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713272217; c=relaxed/simple;
+	bh=SE7iXRSRUv3LNcIGi2TykYUAc4S8x29BhFlqFfsK0/Y=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=iUNnjmzs9V0VwJE9+5vGrEuMUjd0gqMmWtp8v6yC1tUuBUlUvjG8x34TlU3TBfyuETVMYpr8+h49/EG84aotaZF+gnsxfVuj23bE7g2lgCTAOr6IwBpPsPQZPsAg4PygURariEKB6SutWnP8wPQIBideMQwhfgy+elu2ETtuVmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=aNM5L+Vc; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b="C3iayb6l"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gfBj/n5RXh1mNoAWn7Ebl8iH0GB4PTNSgp3XJiR8Clok+jHL08Epv3Hl07rjuFH6IroNLCCM/ltHxQI4S7A4K7fXgeCzjWBobXEcR6/DIwx7BgIRr0W1TOUkKaPWpri36pHTsfAKtDi4C00X4asXUHldiDlbpQuzp+QtAknbyU45nzZEmbUJSwvtFZ8r1hAaQ95jYN7a8z/GOk25Ko6EMfGrTisQwphOk1ohTmRM42eY4oBNIN5yrC7VNO9LOo96+1u33/LAhlNv2pocNF9z9FY7VwZs3GL7EXrEcEXF+p3hSkv0FNz0fVqKfsKEXkoAmpq35Lco0D0E0klbRF79sg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kgtPOXB2qQt2znF/2RRaQn62w4opu9HQPZ+eNpVqWcY=;
- b=DikA7rfUcdYlnfCWEwq9YRZYRlwrceGB27KwcswnDLDyjvnTX/WFQkRvas9B/p2JD44oTOB/BGhOR13IL4o++TVBkAtj1ShZe4xrdmIHTNfHNT4Zx1MmImkbkZw6lpB499tKppxA8jUzIbBs4fiUNsD+Hwp0EP7QUq8PXmx+lMs0XBjtJAzX/ow3jA/CNrWwSOx8kdtTVFIMYQanm5GyWNLfrirG8Kfkhd25adpJTk7uDohfiwk/kqywc8TYiTnSCFCKdM1NYsbDFwwgcLnmr5jjSkwv6taJLBW3R9kMr3sEpBwIMroxVCpaV4I4kg4ueYgSu55RshzlbxOG/QFVCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=csgroup.eu; dmarc=pass action=none header.from=csgroup.eu;
- dkim=pass header.d=csgroup.eu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=csgroup.eu;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kgtPOXB2qQt2znF/2RRaQn62w4opu9HQPZ+eNpVqWcY=;
- b=C3iayb6ldD3YJ8Gb45Ww61XJPRfUybhczJNVJ98Z1wwbphFwwT2jBcmbtq+UIg9TQeab5rb4rVHfZwIdzlSJ3LDuQ+b/hC2sUhtEjyVsVMbhndgjxvQBRbmJQ1wUkUfz0RUrIFnnXnUqfloGuAkz/7vrmxmShVyuwvHtbaKSbGmQaF7/6cb0qN6kt625hA1sXavkZYEFW4mdvwXtHUWO3Sa2ndvG8gEpz7q9BDIeo9zyz13wT7i6GKFpDPWJS16o8wU4KiVlD7EfsCjCxY43RlkM9aB1mooiMK7lfuQcGqIIevUakzmknjCkhfVqnQMLqEzc2vQA2cQ5uybW0D1d8A==
-Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:31::15)
- by MRZP264MB2617.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:1c::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7452.50; Tue, 16 Apr
- 2024 12:18:49 +0000
-Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
- ([fe80::1f75:cb9f:416:4dbb]) by MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
- ([fe80::1f75:cb9f:416:4dbb%7]) with mapi id 15.20.7452.049; Tue, 16 Apr 2024
- 12:18:49 +0000
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Markus Elfring <Markus.Elfring@web.de>, Michael Ellerman
-	<mpe@ellerman.id.au>, "linuxppc-dev@lists.ozlabs.org"
-	<linuxppc-dev@lists.ozlabs.org>, "kernel-janitors@vger.kernel.org"
-	<kernel-janitors@vger.kernel.org>, Aneesh Kumar K.V
-	<aneesh.kumar@kernel.org>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Nicholas Piggin <npiggin@gmail.com>
-CC: LKML <linux-kernel@vger.kernel.org>, "cocci@inria.fr" <cocci@inria.fr>
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="aNM5L+Vc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=H21fvQtQ7WtagqXZixGpBpqK/Mf2KBTn3BMn7sI6Xwo=;
+  b=aNM5L+VcxO66+rnB0hrRLAaQ7ltle4u+tjVsgiIcGM/6+KSsIiVloa8h
+   6T5/bjbuUhkdmon2C/f4fRUxnH/0MxnwhPqEEHqJrqp5Pz9sASMNsGN47
+   eaViXdS0DYtY1iFSc2drIjE5rWOAbjxAEf3P5NybCbo0e6bzoSQz4uMLB
+   c=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.07,206,1708383600"; 
+   d="scan'208";a="84954712"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2024 14:56:51 +0200
+Date: Tue, 16 Apr 2024 14:56:50 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+cc: Markus Elfring <Markus.Elfring@web.de>, 
+    Michael Ellerman <mpe@ellerman.id.au>, 
+    "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, 
+    "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, 
+    "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
+    "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
+    Nicholas Piggin <npiggin@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 
+    "cocci@inria.fr" <cocci@inria.fr>
 Subject: Re: [0/2] powerpc/powernv/vas: Adjustments for two function
  implementations
-Thread-Topic: [0/2] powerpc/powernv/vas: Adjustments for two function
- implementations
-Thread-Index: AQHajwiUZ49WFhSb3kyGC8qA5pa//LFqv4eAgAAGBwCAAAuhgIAAATcA
-Date: Tue, 16 Apr 2024 12:18:49 +0000
-Message-ID: <3711cad3-a627-4a6e-8769-ce916c1919ee@csgroup.eu>
-References: <7be66990-de9e-488b-ad6d-fafd1c7bb34c@web.de>
- <ee6022b8-3aeb-4e6e-99f5-2668dd344e0a@web.de> <87plupbm0c.fsf@mail.lhotse>
- <795ca003-4231-45c0-8bb6-178597950fa5@csgroup.eu>
- <33a38d7e-26da-46e0-90d4-7137f9ec0c90@web.de>
-In-Reply-To: <33a38d7e-26da-46e0-90d4-7137f9ec0c90@web.de>
-Accept-Language: fr-FR, en-US
-Content-Language: fr-FR
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=csgroup.eu;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MRZP264MB2988:EE_|MRZP264MB2617:EE_
-x-ms-office365-filtering-correlation-id: b5dfc68f-f52c-4380-96ec-08dc5e0f5f1b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info:
- rA/uONqvfBvay2XDc+3oxBBVhn+Y1SVHzbA6D75KMPdOywyjtWqWv28JzxOTERwNm0t+/pzR2xl/JeH1hSd2OvP9UvN8g8I+iEqbiL/n6bUY9xF2Ce6FncVYl0Z855iSGa5s+arKGf0+J5Qb5CVKP95diPJl0YHfaYZUROCoJ6K78KpQm5dP7B4OV8xLLzeI8PbOmrS/5Y+jlgO+EiJhJPZJRTE7STd5Xp2iS9sSHejfu2FZ6rcZ59QYI9kgfqpAYddbrBnRfBHDxqhWLg4bnWAzKzEJMfp2kgBW4Kr5svyBa55SVwObqyBx1NmYRPQnX7Isj4j7SsavTk0MwIalwHx9M9lhQYsDdpDrT6nKrjm/41W4VsxA/iVQwxZ7wcZiZ4YUjhSd2CvArkkBmcnJKTyN5k0uFit84AhsyuZ9P77mG22SMAkBVcTnPE41MEqm/8QaGwM37sPZrsxr6JHvkcs5U6yiKp9oW1fRdWBU+6uGOmezeEh4a8KMjO2Knwl2DqvwDTx9cyA/RDMeX3Y0UR0EWq5BYwWHxfTo1+yNsBswpHFSkHzWk4634HoAwY3Tr8CGrbYuvkrxDCUIOk+tgKAuKIFi+ZjUxxhJWYBXWcJs7s7QC8jjFVl4HD48/n6hmRyF8yjz+9i+z8zQ+DQX63rDgpGGh9ecQ6IdPdAPcKqLWMhkknu8UcPpsQhaoCxOXOf3JdRkJXWtez1tuQ3Ng3kRAIE+V2hsq6aPpPUEuDY=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?aGRreXVQSXRha3h0OGt1MmlyWUxEa3BvZHFiSGF3dERmVkpoU1kwQ2h6djg3?=
- =?utf-8?B?bEkzR3VIRXRtelBqblQrU2IzWUxVN0F5M09wTkU1eHRTMDZUTDdzcnlyVU9H?=
- =?utf-8?B?Z2plbkpmc3IxSUFOZkxWdWlJMHlYT1pJdjhZY0EyUWF6ZDVyNFZGTEFIRWNH?=
- =?utf-8?B?YzVOdGkzSDREaHErc2lOR2RGQ0FLblNmVDN6d3BVNVFrSE5lT1BrMzhReGQ0?=
- =?utf-8?B?V3huSnUwVVpnR1pUUkZZMDA5bE4yb2tGelk0SFlueFpWNTZTaHFmV1grYU5v?=
- =?utf-8?B?U2dFUWNhc3hkOTVQNWk5N2hyOEh1ZUs3M0ZKeld6dUFjQThESkdGMTltLzUy?=
- =?utf-8?B?eS9BK1pzNDFIb1JxVmhaTDlzaHdaQWcrNGNOdnpIbVRWY3pRREl4MWRjVU9B?=
- =?utf-8?B?MDNoN3JaMnJTb1h5b0xjVHdldEFvdFBrZjAzY1pGbm5SKzYyMmdaWmxpcjdv?=
- =?utf-8?B?S0ZRVmlCUjhhZ3RSK0RicE5ZZG85VWhZWjFNN29HbUIzZzA5bHJjYTZDcUpC?=
- =?utf-8?B?ay9EYkRDZkEyWWxJZFMxWnY4N2NnMDd6ZmtvakhKRWRVbXNRbUVNUUo2SlQv?=
- =?utf-8?B?Q3pVMy80dlI4TkptYXlNbVVaR2pxKytvZGx0ZWFqTzFZbXoxakw0SzhwcnNk?=
- =?utf-8?B?bW1PVjdSZURNMWErenZ3d1VMd3AyY25GZzU5UnBzNjlGcXYyV0pWZm1qRExm?=
- =?utf-8?B?dWxYeVpNajJZdlJ3QXZBQUNlNTdkcXVlZnc3dmkyeHd3OS9uVEsyVUIyckNz?=
- =?utf-8?B?U2hmb2hpN2pIYXRqUDR5Tnk2TEl5VkVsV0orSEdpak1EV2hMNnVYTGROeHhK?=
- =?utf-8?B?VWd5VTVtNWg1dWJtNHcybm8xenFMNnMxeVBaZjVkVitIdUFCbS9oZzdyakNH?=
- =?utf-8?B?dlU2RVkvRVhYZzJRMHJrRmtBRWJ5QWZHNDJpRnVuMnR5ZG5hdFVVYzFhSUVF?=
- =?utf-8?B?SzBjSnBvL05xQmdTRkRiaFlaOHNJdVIwN1pTaVErclZKV3pyN2ZFTnpiMVhR?=
- =?utf-8?B?WU12TXBaaWNYY25LTEtjTUtOUHk3MFRDbUVwZndVZjhVcmxWZURWbUZEWUx0?=
- =?utf-8?B?NUIrM2RoT0JXYTZlYWtDa2lDQWhjZUZQQlF1aUI2eENTYUU4b2dNYWdnTHZY?=
- =?utf-8?B?dDQ1M1lpTkhkZkpLL2lDQ2lGUmhCOXorUmpPdDVIUnhzM3JhYTlpOHIxcE5k?=
- =?utf-8?B?UldsditzbGE1WmVETG45NDNkYkEyOWlLM2wzUE8vRUhGbWJzdVdLUUdieDhk?=
- =?utf-8?B?QzhuSG5rNzdpYlpHWlFKdkQvRUNUcHN1Vjhwa1o5UnVXRzMzVHBoZjlEblJS?=
- =?utf-8?B?VXhZbGo5UHhNemgrYytOTXFQbzgvLytCbHhpNEJjMmZ0VmVBYVI2SVJ0UmtW?=
- =?utf-8?B?L1psRHBSRG9wS0NiNTFBY3ZzRCtrUXBRc1dXRlhEL0ZERU03ZkMxR3dGdjNl?=
- =?utf-8?B?QmtwanlIZFRKRUE1RzFVWWhJY2g1Y3AxTVlZRzdwdno3dnpHTnJZcENldkRa?=
- =?utf-8?B?ZjlrQUI4SFg1VElIelYxbjc5MmxON3hzRDJxNlppTzlRTnROeUpFMm9IaGt3?=
- =?utf-8?B?dkE3d2dzSHZiNUxzUHlpVjJUT0M2S0VlTlZQUkZpbUZnMndxL0FBQW9wemtK?=
- =?utf-8?B?Sy9sS0haMVdkV0JnT0h3Q2srV0xvckp3eTFwZFpmeHhSSUJ6Sm4vcHoyNXZh?=
- =?utf-8?B?ZzFtVXhpRUtvZzdQdkN2ZHhlSUhQWXB1N0NoM2w5Vi9KVzhQM3Z6dmRtb29X?=
- =?utf-8?B?QkhPT3Z5U3ZMcm9sWkFVaDFUamdzTHcxTEtTTmo0MmdsRVU4ZDhNSTFhaDdJ?=
- =?utf-8?B?M04zN3JNeE5EaGlMS2dlTjIrUmR3ME10NVpEbThxNTFzUFRKN2pxNmxkbkUw?=
- =?utf-8?B?YlVEMHQ4YmF2ZFhPOGdxb2EranVTRmlyVWRBWko5d0I4S3VPUXp0YW5qQTJU?=
- =?utf-8?B?YytsN0dSZXFxcEZKSjFHK2VYanFLUEl5eVJ3S1AvTDBiclZGdDdnZWkvWVpC?=
- =?utf-8?B?bzMzSGhFZnBncmtBZi9wMC9wWVRzNE9sQjA4LzlJa2dvOWNIR2NRSWQ3ZGJi?=
- =?utf-8?B?NjJMSHRHa2RWM0xydjQyUkFRYmJNWVNDdjlGcmxSQjJKUXFGT1EyWVpsdnNV?=
- =?utf-8?Q?kVoDAELm0UR2SYL7thzri3+1u?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9D8A3C3A369B184FB72E6A16983EEC71@FRAP264.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+In-Reply-To: <3711cad3-a627-4a6e-8769-ce916c1919ee@csgroup.eu>
+Message-ID: <3f22920-9543-efd1-a32a-477ae18a2b2a@inria.fr>
+References: <7be66990-de9e-488b-ad6d-fafd1c7bb34c@web.de> <ee6022b8-3aeb-4e6e-99f5-2668dd344e0a@web.de> <87plupbm0c.fsf@mail.lhotse> <795ca003-4231-45c0-8bb6-178597950fa5@csgroup.eu> <33a38d7e-26da-46e0-90d4-7137f9ec0c90@web.de>
+ <3711cad3-a627-4a6e-8769-ce916c1919ee@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: csgroup.eu
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: b5dfc68f-f52c-4380-96ec-08dc5e0f5f1b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Apr 2024 12:18:49.2642
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 9914def7-b676-4fda-8815-5d49fb3b45c8
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 65CcY13glDu/wDP0h/HrIYlEjVbiL8K977h1JyT36KVne9J7nCp3kQZSM6B72xbWvnqgK62Dil9cWUx8P/ZqTAbpEslTcT3rlimw3ghc7P4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MRZP264MB2617
+Content-Type: multipart/mixed; boundary="8323329-563611295-1713272210=:3643"
 
-DQoNCkxlIDE2LzA0LzIwMjQgw6AgMTQ6MTQsIE1hcmt1cyBFbGZyaW5nIGEgw6ljcml0wqA6DQo+
-PiBUaGlzIGlzIGV4cGxpY2l0IGluIEtlcm5lbCBkb2N1bWVudGF0aW9uOg0KPj4NCj4+IC8qKg0K
-Pj4gICAgKiBrZnJlZSAtIGZyZWUgcHJldmlvdXNseSBhbGxvY2F0ZWQgbWVtb3J5DQo+PiAgICAq
-IEBvYmplY3Q6IHBvaW50ZXIgcmV0dXJuZWQgYnkga21hbGxvYygpIG9yIGttZW1fY2FjaGVfYWxs
-b2MoKQ0KPj4gICAgKg0KPj4gICAgKiBJZiBAb2JqZWN0IGlzIE5VTEwsIG5vIG9wZXJhdGlvbiBp
-cyBwZXJmb3JtZWQuDQo+PiAgICAqLw0KPj4NCj4+IFRoYXQncyBleGFjdGx5IHRoZSBzYW1lIGJl
-aGF2aW91ciBhcyBmcmVlKCkgaW4gbGliYy4NCj4+DQo+PiBTbyBDb2NjaW5lbGxlIHNob3VsZCBi
-ZSBmaXhlZCBpZiBpdCByZXBvcnRzIGFuIGVycm9yIGZvciB0aGF0Lg0KPiANCj4gUmVkdW5kYW50
-IGZ1bmN0aW9uIGNhbGxzIGNhbiBvY2Nhc2lvbmFsbHkgYmUgYXZvaWRlZCBhY2NvcmRpbmdseSwN
-Cj4gY2FuJ3QgdGhleT8NCg0KU3VyZSB0aGV5IGNhbiwgYnV0IGlzIHRoYXQgd29ydGggaXQgaGVy
-ZSA/DQoNCkNocmlzdG9waGUNCg==
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-563611295-1713272210=:3643
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+
+
+
+On Tue, 16 Apr 2024, Christophe Leroy wrote:
+
+>
+>
+> Le 16/04/2024 à 14:14, Markus Elfring a écrit :
+> >> This is explicit in Kernel documentation:
+> >>
+> >> /**
+> >>    * kfree - free previously allocated memory
+> >>    * @object: pointer returned by kmalloc() or kmem_cache_alloc()
+> >>    *
+> >>    * If @object is NULL, no operation is performed.
+> >>    */
+> >>
+> >> That's exactly the same behaviour as free() in libc.
+> >>
+> >> So Coccinelle should be fixed if it reports an error for that.
+> >
+> > Redundant function calls can occasionally be avoided accordingly,
+> > can't they?
+>
+> Sure they can, but is that worth it here ?
+
+Coccinelle does what the developer of the semantic patch tells it to do.
+It doesn't spontaneously report errors for anything.
+
+julia
+--8323329-563611295-1713272210=:3643--
