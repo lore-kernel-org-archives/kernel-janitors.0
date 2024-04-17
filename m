@@ -1,37 +1,42 @@
 Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 4E36458ADE;
-	Wed, 17 Apr 2024 08:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with SMTP id BA9607EF1B;
+	Wed, 17 Apr 2024 08:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713342739; cv=none; b=nygRaRPxJe3RGvKbXlUneT5dI5RonQ3AOQ/hRgykw/T9WCDWU/Db+RhQKf9ht5lv9kiF0L4r4rubSV+TIeeDAR5Pijow1A/Hxx+W9OFAME5vuC4Q/R7BGuDW1CtsH2E+2rJEd0eKs2VkaYSyXU/KmLGP7Z6xzvpBzekpU4/fR4c=
+	t=1713343209; cv=none; b=kzB1gYr1ABQu1uQQIPdTTSJRVR0YcpBfwkgj5XBetPPTVbEKPUPIl+7yuejNmdw4u76o/gO81SCQTpoIE4vJuM84mBdilwk/31LxYf8Up59Vw5/gNCrxF3fVII1PoX70ElT/z+4srOiZn0k16DCIcDbbWg+InZbLWR/PRSF/I6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713342739; c=relaxed/simple;
-	bh=iD9NnLJfAZU8fCgqT+cPRna6Exsx7/eFsEB1T7DYLNw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gv3eQ7OZh2hgvsQz/GdShj0DIxkQnGAF7gEY24hZEKFL35KJlee2sa1JWejos8/uVWbQTN/MiH1AnZwGU1Z0D1R/aoVxOhQ6LOCips+XaxLXQAqW9YO+Fz16W5ImH3HudHKDil7tCZJFRqFnddwYQVBJ0zOnKqUYDEprsFrzBYc=
+	s=arc-20240116; t=1713343209; c=relaxed/simple;
+	bh=bkdtrhw2AnU57Efat4BsX7bkcfARUcoIOhyRCKyW95E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aJY5sH6+eVR9vC0sK5CRQUqGW+YJiA9kdiYxSJ1852yluY4f1YfwqZERfUV4uHgC0rS4wa/3YAttUOFOWBszFLVQGMeXJjqBttbRIpmZ9GVVgKu4PcYb8+3CsS7lr5eoEN8gWNOZsSbZ0UoGE/FHUmffC6kIOb+gO09CfFdZBcw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
 Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 398FA6061BF44;
-	Wed, 17 Apr 2024 16:32:11 +0800 (CST)
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id BBB506061BF4E;
+	Wed, 17 Apr 2024 16:39:47 +0800 (CST)
 X-MD-Sfrom: suhui@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From: Su Hui <suhui@nfschina.com>
-To: nathan@kernel.org,
+To: kherbst@redhat.com,
+	lyude@redhat.com,
+	dakr@redhat.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	nathan@kernel.org,
 	ndesaulniers@google.com,
 	morbo@google.com,
 	justinstitt@google.com
 Cc: Su Hui <suhui@nfschina.com>,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	hch@tuxera.com,
-	linux-fsdevel@vger.kernel.org,
+	bskeggs@redhat.com,
+	airlied@redhat.com,
+	dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	llvm@lists.linux.dev,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] fs: hfsplus: fix an error code problem in hfsplus_sync_fs()
-Date: Wed, 17 Apr 2024 16:31:36 +0800
-Message-Id: <20240417083135.2245257-1-suhui@nfschina.com>
+Subject: [PATCH] drm/nouveau/disp: fix an error problem in nvkm_uconn_new()
+Date: Wed, 17 Apr 2024 16:39:21 +0800
+Message-Id: <20240417083920.2256027-1-suhui@nfschina.com>
 X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -41,31 +46,39 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Clang Static Checker (scan-build) Warning:
-fs/hfsplus/super.c: line 236, column 3
-Value stored to 'error2' is never read.
+Clang Static Checker(scan-build) Warning:
+drivers/gpu/drm/nouveau/nvkm/engine/disp/uconn.c:line 215, column 4
+Value stored to 'ret' is never read.
 
-Fix this typo error by assigning 'error2' to 'error'.
+Return the error code rather than zero when 'conn->info.type' has an
+unknown type.
 
-Fixes: 52399b171dfa ("hfsplus: use raw bio access for the volume headers")
+Fixes: 8b7d92cad953 ("drm/nouveau/kms/nv50-: create connectors based on nvkm info")
 Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
- fs/hfsplus/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nvkm/engine/disp/uconn.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
-index 97920202790f..5ee9cbccdff9 100644
---- a/fs/hfsplus/super.c
-+++ b/fs/hfsplus/super.c
-@@ -233,7 +233,7 @@ static int hfsplus_sync_fs(struct super_block *sb, int wait)
- 				  sbi->s_backup_vhdr_buf, NULL, REQ_OP_WRITE |
- 				  REQ_SYNC);
- 	if (!error)
--		error2 = error;
-+		error = error2;
- out:
- 	mutex_unlock(&sbi->alloc_mutex);
- 	mutex_unlock(&sbi->vh_mutex);
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/disp/uconn.c b/drivers/gpu/drm/nouveau/nvkm/engine/disp/uconn.c
+index 2dab6612c4fc..6a67d307bf79 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/disp/uconn.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/disp/uconn.c
+@@ -213,13 +213,14 @@ nvkm_uconn_new(const struct nvkm_oclass *oclass, void *argv, u32 argc, struct nv
+ 		default:
+ 			WARN_ON(1);
+ 			ret = -EINVAL;
+-			break;
++			goto err;
+ 		}
+ 
+ 		nvkm_object_ctor(&nvkm_uconn, oclass, &conn->object);
+ 		*pobject = &conn->object;
+ 		ret = 0;
+ 	}
++err:
+ 	spin_unlock(&disp->client.lock);
+ 	return ret;
+ }
 -- 
 2.30.2
 
