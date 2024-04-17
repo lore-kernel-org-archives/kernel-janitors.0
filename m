@@ -1,110 +1,115 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376A113AD38
-	for <kernel-janitors@vger.kernel.org>; Wed, 17 Apr 2024 10:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A36B13F44A;
+	Wed, 17 Apr 2024 13:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713348890; cv=none; b=PAji8Dfvv5QLl6+09nrVB8xUX3N/DNnhl0BpzNF0NZZsF+v03Xkq/d0UN3oz1qOvjCwg2Y/imqBTRzd0Ssp2MF9kHkMwgfsAGDXsViBqb4zLUvc+fYriunxJLvSfYSuurobgsCCKEfQql+KqRcrW6jDeSop9tOSMt8uL8TuaeFA=
+	t=1713361598; cv=none; b=Feb0B2kD0mCzvcLcnR1E6c270BlzkrKQoT+gnAVBw72c0+xFB+2jbWsDGchkHrQYwLX1hsOkpBHgqrKi5XCjUOAQgv2DMyYVFv1XLdA0zIdmyLObtE/xkkZt/WkNteJvNG+fYdRvbgqo3s//SIgJ+HernI/q/ZvDRMtxfBRopGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713348890; c=relaxed/simple;
-	bh=Nsjf4W046CIAEyOcmt/MlZoEUduqPetqmPDoVbBknjk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NFCmldM1cQQv0YGtWdrJyQI/6WUPCaU2unCwJBiyv00AAms8iofUWPCWNl4LvhGjsDM8Q1plCTs97Lx/gGAsOj348AGOOv8ZPPfTOc2mFCKSJYKDeRYAkaD3cGBQXmEOMBrnQiuH4FJOWjqntIVIuD90Vyl0u0xarb8kQu1AdXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VWC1jbih; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1713361598; c=relaxed/simple;
+	bh=G8N3Z0ToOnGx1r5XrvH9ejqq4sKfdkitetitwXzAYLw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UO78GbghoST8cYfz5BN3K2fbRGSpm6ice2Rh3PlEMyQUTNCRajcePbv7l3Z2eK0juygLhw9Nr/NB9OX7GJhvD3Z2jgDn2NXRwL4LEQMPnHPNTUKWOJgi1Yj1a+Cxkx7M+80OG4X7TB+j1eb9Gu3wEJqrrFkzABw1k7CxaC4epTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bCKJEMt1; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VWC1jbih"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713348887;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=mfznY1Xt+1agp915j30/FccRLbon5LKlLd7NU6tQjbY=;
-	b=VWC1jbihrlhykawVWWzGbX518hICl/ApFmJ8wEPiMoLVtISWkiuxpA/mfAAcCesWKYpW1R
-	lNLjwpZCTGHWL2jfIZ7pXQKIlPrFPUiP99Ke85Ft1QnyyKDse99/WB52dbJxEoN3A0yIZO
-	poSuG6mdm5Z0Ig9PLSfPiSHfYCHXFY8=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-235-UZdkUtw1PO-hJmw9l7odlw-1; Wed, 17 Apr 2024 06:14:45 -0400
-X-MC-Unique: UZdkUtw1PO-hJmw9l7odlw-1
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3c613c1c51eso4878543b6e.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 17 Apr 2024 03:14:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bCKJEMt1"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1e5b6e8f662so42454025ad.0;
+        Wed, 17 Apr 2024 06:46:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713361596; x=1713966396; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qsPVDr8MYadpf9OOAgciXbNWFblocQRX3lYmYadOpeI=;
+        b=bCKJEMt15zoGTp5QVk6fbyJCEKlKagV7ZjXGutLxZAWDHyK4clQmK/c/iuKnGyG4B0
+         a5A6DkSYaVDHm5E6Yq22ZWlLpwKxaQPW2tYeuDlCZxMtqOB/w0feNDdnx9kfJhJqJx2r
+         uzBcrCd4zOfETW+3RjNyClmLNfQ6Ky64t6fuVEPG5diDe7Z0Yn1l6L2HHNQADBwygOFF
+         mUQ4LP1aKMoaGqHXmK9vtzRDhCw4/A0Rm//Ti1Fz8fpm03iAljYnLX5w+k41LdGZZvA6
+         rZKACmBGLy1qYKb3o5u7lX9mfh126zrCg9Hm38nzRbewOypSZxfAfAGiT/YYtpCDRJf3
+         vcRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713348885; x=1713953685;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mfznY1Xt+1agp915j30/FccRLbon5LKlLd7NU6tQjbY=;
-        b=lpavqw0ydX3dyC165MKCUGsxR/4v3avWCiQn3Fd6gV2t4lI+yGSEHJ6eQW/kgvrRNi
-         dWWdu4eeuqX/5YTsYvvgq0JbkTNDRojm068kKpIOChFmQusmME/tEPbkPlLxWdqPuXAX
-         L//rPz/YvoFv72c21mXhg1BjPZna9f8ofK56xtupQNT7ru7txrm1hwjw7zkMvuF0ZNN+
-         yk6hX+nFkYxnPsUOV1CeGnD6XU8KGxoJpL09+WIBGJsoqOadqBye+LBN7+qFNrwPV8Z8
-         uWI3HqwpqxcBOkKpUSeNCVW/+hYhZB16giUTfO0sn1zCpcok7NqIf6QYFwZbLuscJzRS
-         lFJw==
-X-Gm-Message-State: AOJu0Yxu2YV5N3jzC94mUc2DZoxBUmZaYvRukS4ueZ5+kPevvwxyWvdI
-	WALe3uXJ9CwFTMdSKCctCg4epXwF12C4uWkgjYpEBMGjpe8CSJNAm2rqpff6i9A4lKdARD5Y6ZN
-	JBQPycx8QyK5t5ptZCsbJL8v3VoiX3Yp/Mn/1Y6qN6NfUblJkkFXetQ19nuYtQ6gPMQ==
-X-Received: by 2002:a05:6808:6243:b0:3c7:13fd:d878 with SMTP id dt3-20020a056808624300b003c713fdd878mr7873802oib.9.1713348885198;
-        Wed, 17 Apr 2024 03:14:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGDz0OAbOJqHdNWrsnzh2Aggk3FP1TUtJ619gQjpyPq9dPplYtFuLf0MpY36myUuCQuf7T1/g==
-X-Received: by 2002:a05:6808:6243:b0:3c7:13fd:d878 with SMTP id dt3-20020a056808624300b003c713fdd878mr7873788oib.9.1713348884914;
-        Wed, 17 Apr 2024 03:14:44 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id js7-20020a05622a808700b0043781985244sm71939qtb.59.2024.04.17.03.14.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Apr 2024 03:14:44 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Akira Yokosawa <akiyks@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: repair file entry in DOCUMENTATION
-Date: Wed, 17 Apr 2024 12:14:29 +0200
-Message-ID: <20240417101429.240495-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.44.0
+        d=1e100.net; s=20230601; t=1713361596; x=1713966396;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qsPVDr8MYadpf9OOAgciXbNWFblocQRX3lYmYadOpeI=;
+        b=OaFwyj904xSRPOVJnAbHq8aRpwJhIx5ahlAWOsmHFZ02oK/DU+VahT4GlJRHegFwtB
+         Tsr3AGFojP/t23lJSwfASj1ocWMPn7qOiT4yshEIzG3b/8fplJ4Ir67dDUq4NLYJIG+r
+         Ed51vR0XeugDIqtg0EKfknc2CY405XWTcBIfjSVivyKBit3EbBUgCtux83CFzvy7vFGP
+         c8vfHo6AqbjpqVlUOLr8Milc6J0g3qKw1l00pCji8+G468q0SipZ5vZQVL7EJ19iwF7j
+         Qc40PO4AlNlFiDKDxJ05jelgqQABGoF+3l7a/BwssaX3xPiiRsei5ZlnfLtivPh5Ts3E
+         qoXg==
+X-Forwarded-Encrypted: i=1; AJvYcCURVkmG41zha+M9+nIHoMA721/JCXGd8pClPZ0PIAFF59t7zbyPgB9s5H9o25Fxa/CritapgYw/U2fLsa4GEGwulv9ZeUky4+xOIiP10uzsddXQmELJGDltW7/hYKPuU9C18sHYZTJ3
+X-Gm-Message-State: AOJu0YzMFA5Mrx1Q7zJXzGXZHGXhiYKbhap+pL6j+dPTEjKkL393TEE6
+	8FmQGfe3KyUfIUPO5sHEmY7/UaK5AZuE/oOOh0crGIkbwUHK1bhN
+X-Google-Smtp-Source: AGHT+IGGeCeCAckqV604CKpG9NBNR+/OchdxzvOdwDnGTs0+urOSd5H2aEUxnUuxSc9N8Lj37YnsKg==
+X-Received: by 2002:a17:902:e5c6:b0:1e4:145a:ee19 with SMTP id u6-20020a170902e5c600b001e4145aee19mr17935591plf.50.1713361596324;
+        Wed, 17 Apr 2024 06:46:36 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
+        by smtp.gmail.com with ESMTPSA id p18-20020a1709028a9200b001e2b4f513e1sm11541755plo.106.2024.04.17.06.46.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Apr 2024 06:46:36 -0700 (PDT)
+Message-ID: <82275ef2-64c4-44ec-b95f-1d53f24ef550@gmail.com>
+Date: Wed, 17 Apr 2024 22:46:32 +0900
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: repair file entry in DOCUMENTATION
+To: Lukas Bulwahn <lbulwahn@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>, Akira Yokosawa <akiyks@gmail.com>
+References: <20240417101429.240495-1-lukas.bulwahn@redhat.com>
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <20240417101429.240495-1-lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Wed, 17 Apr 2024 12:14:29 +0200, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit 1e596d5eff3d ("docs: Detect variable fonts and suggest denylisting
+> them") adds the new script check-variable-fonts.sh and intends to refer to
+> it in the DOCUMENTATION section in MAINTAINERS. However, the file entry
+> refers to scripts/check-variable-font.sh. Note the missing "s".
 
-Commit 1e596d5eff3d ("docs: Detect variable fonts and suggest denylisting
-them") adds the new script check-variable-fonts.sh and intends to refer to
-it in the DOCUMENTATION section in MAINTAINERS. However, the file entry
-refers to scripts/check-variable-font.sh. Note the missing "s".
+My bad... :-/
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
+> 
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
+> 
+> Repair this new file entry in the DOCUMENTATION section.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Repair this new file entry in the DOCUMENTATION section.
+Thank you for the fix!
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Akira Yokosawa <akiyks@gmail.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4356b28ce625..250c8f8caa08 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6493,7 +6493,7 @@ S:	Maintained
- P:	Documentation/doc-guide/maintainer-profile.rst
- T:	git git://git.lwn.net/linux.git docs-next
- F:	Documentation/
--F:	scripts/check-variable-font.sh
-+F:	scripts/check-variable-fonts.sh
- F:	scripts/documentation-file-ref-check
- F:	scripts/kernel-doc
- F:	scripts/sphinx-pre-install
--- 
-2.44.0
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4356b28ce625..250c8f8caa08 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6493,7 +6493,7 @@ S:	Maintained
+>  P:	Documentation/doc-guide/maintainer-profile.rst
+>  T:	git git://git.lwn.net/linux.git docs-next
+>  F:	Documentation/
+> -F:	scripts/check-variable-font.sh
+> +F:	scripts/check-variable-fonts.sh
+>  F:	scripts/documentation-file-ref-check
+>  F:	scripts/kernel-doc
+>  F:	scripts/sphinx-pre-install
 
