@@ -1,92 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C62F84E14;
-	Wed, 17 Apr 2024 16:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801CA147C8D;
+	Wed, 17 Apr 2024 16:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713370778; cv=none; b=qzC5dq1sC94gEcWZp8YgQHVbf32+M9gelmBxKl+Re5NsmWalgjsI9XnwnChHj4G58DRHlLTrKdKJoAfcP/q5UJ+LlUYV99kWL+tK2V+GIbmeHK3dSocMB3W2+eOwKchJw44DGCZp1aN3byboUBFonJ69lYceFN3yS++dvKhn8Qw=
+	t=1713371980; cv=none; b=PHdWjka8UTXuu9FQa8GQ01AwXWEX71PHOCmv/jqHLl0fKwvId9DSJ924TPtOzGlfNoqUKSNdn9gUsi8cZZ86ZSIIMmU8WXWVj5NCVwhrfar1D/uYbk7CJIzpChALkeAin9BCZhfboE1CmyHJY7UuWwPMnF4XHBJkuli+jjdEheQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713370778; c=relaxed/simple;
-	bh=+IXw6cq41/KiaWXYS6v6T/R+F3lZu/uCGQeunZByk2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QjdEXQExw3wUKVnHbN9uWKcNrxVOlhLwSOeXekgtx9pZrTopSV3ttdflJTdcHy1YsQM3Hh4L91q2R1MS9ZMsLBMO01gaHn8qDkhDkzr55WOhAQ3I03FXpsMEDlUUhDIqfKb88qztZLV800xqLSStyTFhChuuaPPoubFSLD1TIhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oSwkGopk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713371980; c=relaxed/simple;
+	bh=aWTPDq9p7jQ/4H76/mW9C1YBC1szIVSw3Mc/rYRFAek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QOsrvk5Ee0KxtzuQxUU7zScMDWsAjWQ5Jl8MWyzVGo396kX/hBa4hkAPJVVHqZ47ygdxxgE8ZywgoBYh8OcINB1jUBNYBayYGtdmWuhyiPHi51e6mAr7S7n2iBWj5JO0LylizyxD5E7XPBMt9uqv35CJm5HNI+Asz+37suxfgcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g/AWQjr4; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oSwkGopk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32765C2BD11;
-	Wed, 17 Apr 2024 16:19:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713370778;
-	bh=+IXw6cq41/KiaWXYS6v6T/R+F3lZu/uCGQeunZByk2g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oSwkGopkw1aV1SHbTL93Jc9Rxh01yHEszIDHdobbxIhkRTYSAQZd2xTN5KVsDAvif
-	 +EwkB33fHgWvON/yBxc1LYR9D/qbuX8h3x/A6i/eATTwlBwbVcS26DVDF0VGstv7/+
-	 gXfBaXSGFttoL5ufG6rT55MgKoEOkM9sYnzvkc+JQeIefjdKt44SA21qymu77VyO3u
-	 SfQlNnDQVvHQe7ARIFUQXywWvR7L4nGeDMBSXKHmQitaRt/C8j4QEddDhOY077rntM
-	 g3AQ5BFhybooEGnICN784IOjvYH6jsTEVn/q3y2lJTvHHr9WKcwLb3KJ5DwbPYoZ+F
-	 W0iMNklAaKrhw==
-Date: Wed, 17 Apr 2024 17:19:33 +0100
-From: Simon Horman <horms@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Justin Chen <justin.chen@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH net] net: bcmasp: fix memory leak when bringing down if
-Message-ID: <20240417161933.GA2320920@kernel.org>
-References: <20240412181631.3488324-1-justin.chen@broadcom.com>
- <6881c322-8fbb-422f-bdbb-392a83d0b326@web.de>
- <9afad2b3-38a5-470d-a66f-10aa2cba3bab@broadcom.com>
- <8ae97386-876f-45cf-9e82-af082d8ea338@web.de>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g/AWQjr4"
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-5d3907ff128so4575668a12.3;
+        Wed, 17 Apr 2024 09:39:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713371979; x=1713976779; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I7Zh42cClUUxS34CpnuDLFTWaHNT2a1g8mM8QHZw6C8=;
+        b=g/AWQjr4sjil5Es/t8rl7gS7pSKKLHW/RzJ1zfqyNVKJ/zZkLWCKvdEp0DchKCfJc1
+         4weUsfQ8OfYWlL0C9GNDhrCsSPVnG2BWSoJ4441DXE7dBDRpKy/SObfu/qMbyiI9Cf8P
+         Oe859fgN/FCQ1l7yxYGRyPc2tDt8rQt+PEixRjsKzCZFXX3DE8TJtty4q+8iS/Ac+Ly3
+         M1n3DmlDOUkRMN23vDGKWzftlxV8V52NAFdDm1CxDk5ntUOnxyvdo9UvjnH+x+ugrlYT
+         r+ZAgLNxWksPuwgHp74hrSdEIS4XibmwiZPoXX5x0H+q2do8+LYZoI3l09XJuA+g/WLo
+         sImw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713371979; x=1713976779;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I7Zh42cClUUxS34CpnuDLFTWaHNT2a1g8mM8QHZw6C8=;
+        b=OjnPZ6E+0EUhmbin/Dyg0LfLSc4w9wzjJYI1QZkBmgQjsF1HWvEZCKVGRcF01B/0P6
+         +cOgoDn0UhC1vuF14o7ihxHoF9a0WOqW647tz4af2y2eiZ5FAgsSVkBmdNNka0shTCvU
+         eziadnaxcKBZvI4dmRaIJRjATZ5YuDNrEIM1lkJC6bIJPuLw96CIAVilvPlduxXCJH6W
+         VYjjEdZ9vCH6yxYr5B0LjaSGJU4aLoz1rgFaG1+mYJbiqYC+YHu7QzrVdkr/BsHPd9EA
+         VnQTz9yGZE4cKcdfjuPWFn8pU3oj2nWmYxAG+3BDB9EdcjA2/uICQDkEna25FyN5XtmZ
+         DGGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUA4LCFF62sI1CtVSUDzB0Rgv5RYLCtScuuE6+D0fNLhOGjuzw+IsuvBhXsVnxMis7mmlej918MoVe8FmoHAALZzVrOEzaawegCxyJRrqZ9kSVOcfniIsKUqCIZbUw1Tc15rcywBqXgNF1nG1zXxpHqPODtQKZYmt6pK+nHtyd31+LacDcPz6mdg==
+X-Gm-Message-State: AOJu0Yz9CUwpStCuhpUXbbckhCK4JRtzMFWPqC6/L0EO3Sj+niTUjcL1
+	Vgz03AcLIgjGGQjvQiDiCPA4C03+98uomjHIdXjsh51REENKrieRIbMrUtJMuBg=
+X-Google-Smtp-Source: AGHT+IFsgpgKF4MpNGRI12HFX8X1jR4fq2uA3v5uQF83Vql6HROO8gtLkEMXQdJU4OMr5Az/Juz0QQ==
+X-Received: by 2002:a17:90a:886:b0:2ab:99d5:ae11 with SMTP id v6-20020a17090a088600b002ab99d5ae11mr658653pjc.20.1713371978710;
+        Wed, 17 Apr 2024 09:39:38 -0700 (PDT)
+Received: from [0.0.0.0] (74.211.104.32.16clouds.com. [74.211.104.32])
+        by smtp.gmail.com with ESMTPSA id t1-20020a17090aae0100b002a2d8d34009sm1577329pjq.27.2024.04.17.09.39.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Apr 2024 09:39:38 -0700 (PDT)
+Message-ID: <1b8f0217-5c4b-4436-88d4-ec3c88ae7179@gmail.com>
+Date: Thu, 18 Apr 2024 00:39:33 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v4 0/3] SCSI: Fix issues between removing device and error
+ handle
+Content-Language: en-US
+To: Markus Elfring <Markus.Elfring@web.de>,
+ Julia Lawall <julia.lawall@inria.fr>, linux-scsi@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, "James E. J. Bottomley"
+ <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Wenchao Hao <haowenchao2@huawei.com>, LKML <linux-kernel@vger.kernel.org>
+References: <20240307144311.73735-1-haowenchao2@huawei.com>
+ <99598b98-8550-4dca-beea-4c2d61d46f78@web.de>
+ <b55da065-dbbb-4d8e-8baf-50807b507cc4@gmail.com>
+ <173b55ca-cde-ab3-be92-d9c8b4b6b5c@inria.fr>
+ <799944de-dcee-46a8-b43b-8876177c61a2@gmail.com>
+ <4b9a14d0-b4bd-4b91-8466-5f8849b0c08e@web.de>
+From: Wenchao Hao <haowenchao22@gmail.com>
+In-Reply-To: <4b9a14d0-b4bd-4b91-8466-5f8849b0c08e@web.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8ae97386-876f-45cf-9e82-af082d8ea338@web.de>
 
-On Mon, Apr 15, 2024 at 09:46:44PM +0200, Markus Elfring wrote:
-> >>> When bringing down the TX rings we flush the rings but forget to
-> >>> reclaimed the flushed packets. This lead to a memory leak since we
-> >>> do not free the dma mapped buffers. …
-> >>
-> >> I find this change description improvable.
-> >>
-> >> * How do you think about to avoid typos?
-> >>
-> >> * Would another imperative wording be more desirable?
-> >
-> > The change description makes sense to me. Can you be a bit more specific as to what isn't clear here?
+On 4/17/24 11:48 PM, Markus Elfring wrote:
+>>> Search in process/submitting-patches.rst for Fixes:
+>>
+>> These issues are introduced at first version of git record, which is
+>> 1da177e4c3f4 ("Linux-2.6.12-rc2"). I think "Fixes" tag should not added
+>> for this commit.
 > 
-> Spelling suggestions:
-> + … forget to reclaim …
-> + … This leads to …
+> I suggest to take also another look at information in a table
+> like “Releases fixed in v6.8” from the article “Development statistics for 6.8”
+> by Jonathan Corbet.
+> https://lwn.net/Articles/964106/
+> 
 
-Markus, let's cut to the chase.
+Thank you, I found some Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2") in this article.
+Then I searched in git log and found these "Fixes" tag too. 
 
-What portion of your responses of this thread were produced
-by an LLM or similar technology?
+> Regards,
+> Markus
 
-The suggestions in your second email are correct.
-But, ironically, your first response appears to be grammatically incorrect.
-
-Specifically:
-
-* What does "improvable" mean in this context?
-* "How do you think about to avoid typos?"
-  is, in my opinion, grammatically incorrect.
-  And, FWIW, I see no typos.
-* "Would another imperative wording be more desirable?"
-  is, in my opinion, also grammatically incorrect.
-
-And yet your comment is ostensibly about grammar.
-I'm sorry, but this strikes me as absurd.
