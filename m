@@ -1,80 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330BE6FC3;
-	Thu, 18 Apr 2024 15:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF5316C692
+	for <kernel-janitors@vger.kernel.org>; Thu, 18 Apr 2024 15:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713453635; cv=none; b=j/3TdAPC9pAUAQ/WIjZgpoybW+z0g+TgtqtSwy+B+VRMk/1fgy7ICfvt7s1H6cwv9yZtcnRqKCHa6OctFZmE8ssBMzJO7XkE9j7f7lVM1gMHJVnr0icZF02TmC4QDxWahWQmzNtjWNp7Orj7Tk/EuywLZ/RTfEJDUF0De81yWXc=
+	t=1713453698; cv=none; b=REfmjRb5nBll32myaGU9a48KBhb+uBZf0QUD/Rw4SL8T5dNMNjPix98+k3KLOfbA1AmYdsjvxUnn4v+Y1EbE7AEQODxYnWJJT519niilryvaxWiEO6FbVnDVaEhECFz9nmEHFPlfnnd2zt/xK9wFox+ZGDagEhHLPhgddcSCxdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713453635; c=relaxed/simple;
-	bh=/e1tInGkYUBdYm7yvZRxryugFAXscOsuzj1rVya6Oog=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=Ds1MXgSF5EW/tpzBuwmC8wrixvXzp6WVrMxTtDf81gxNqzLidRghYYqXAPF/Ku1qXxqJeKTi/yaEeyat/8VfHSfHQUwK59zWGpdWkEsCoraJ/g1SFFiUs5XocmETV77mhgSbP6hia41jb0CzV3MQXNm0KpoVWc8N536QQ+egasc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OIEUZqdX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713453698; c=relaxed/simple;
+	bh=CQohQLqvPc/tHvgWJq7mh9PQ9WJ3XLzzwtQN4cmxGqc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fNzV8OM/oTk+ZZRaS2tcdkAd8YCyxZ2VVRk4mD62k45y6fDI66fbuUF7scN3ptQXKfapGHNSSPZ1M9+X5WubbTNE+pBbDoDlFVab0xvb+TU9SL3v8M8wseP90W+4TQCf2LbV3eKRSWIVUXGHLODyLRhWYQyevtQc7rc8cuikR28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TUCv9OEb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OIEUZqdX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB43BC113CC;
-	Thu, 18 Apr 2024 15:20:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713453635;
-	bh=/e1tInGkYUBdYm7yvZRxryugFAXscOsuzj1rVya6Oog=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=OIEUZqdXtRzTWFAMtqknhihf1jrgD1+yPT4GM8WDLj0SbbYc83kKI9Rlp78TcqLVk
-	 N12Zxn1R1Dut8YqZz5tZO/2+X057JjRZiJSlVMtEcVjMrT8tcdzpsGBXJtpIrG52Vp
-	 U/1KK2sWteKaU+cb7FPUPclL5sAWYeVc+GO3OQPx1cgrY2m/GGgidb5iWOvhRH8Zi9
-	 gq6XtMhy5TPBLyLYcld/rpjxVHbSRxCLrGRQx2eBfVg991lQ/yPvybPplhsUXIPiv1
-	 fxKtHpFMuFFsOBAaEOQLDxV2RT11hox8dFUUY82WMIhLVzX/mtWbOOLX+B1Rh6wEjU
-	 NF4PWBZNuVO+w==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TUCv9OEb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1713453696;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CQohQLqvPc/tHvgWJq7mh9PQ9WJ3XLzzwtQN4cmxGqc=;
+	b=TUCv9OEbc/VwiFRchQLCoHUsxqu1pjymec/cKtmFJC1LSm9VtDI5Fz5ZbbJAPIgrWbOJe7
+	VdXFYGrfXDut4UY84b0u5EwiOdlCXjyyw56ffkoEc1mLmTpq0EFU/lYGb/OOZNr7AfrTYi
+	xsOKT3CxOAbgiK1mAXgJGGbtvJThanI=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-587-ocwa94ssO1ykLQLaW5Ubrg-1; Thu, 18 Apr 2024 11:21:34 -0400
+X-MC-Unique: ocwa94ssO1ykLQLaW5Ubrg-1
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-434eb00e185so13498551cf.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 18 Apr 2024 08:21:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713453694; x=1714058494;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CQohQLqvPc/tHvgWJq7mh9PQ9WJ3XLzzwtQN4cmxGqc=;
+        b=MglG4azh6DN9bcBJnNretUtRj8X3GVoWjUiMuXmqKYeheaocWtvKgOetjwWNgZm1My
+         SY1soVQvi5AX7VVHmH5+VY5coPQ1W4Jv46r3J297RZHnOZtrzeVZgXPgT/NVYInbwSFO
+         PyLCAcw1MiAKHTtC92XXqKaUuUY5Yy+1kSwpIbtwmGxeuRHRY0kRpInCXjcknivLzzGM
+         cl+8RzV+kmtnzyI5HCFuuxsYHqn/aYU27mDEOjpVufE6/BCu5M5eOIeNr4gD2ErJvDap
+         FlDZlJ/R9/0RE4NfmqZf/UO1THW9l/XgWy8NZMJGSJC2Bpbkvb3yQ6uyd7tMkL5jERsp
+         GfDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWtFcJ/ABqJ7Y3TGJhmCWz/1auMD73l/aZSVS7TSkWiWA3xzY/QMzyHvOY8xcZzSCtm7qT42lTSpEw7+WCRv9TacY+nTagPpBGSgbD0FS3Z
+X-Gm-Message-State: AOJu0Yzdz2/ay/Nzlekz/U+GcinZ6bwyAYoikqWs4UYBx3rwRlznkJ4p
+	VKKAnoz/sJTwRIhf0i5l6CCbOTHzz4Ph7W7kTA82T5RuE2SiPMLDrVLYE6u7WgFRjljTy36M9aY
+	pIjXBF6MMVskBri0gqovucGO6tT4GIaBdPxgoCv5LIvqi2eMrWiZCONsR9Otkj1znShyE1nDrio
+	WEsuca/KhwPwJbXXAFSgzq+wafoQSbmM1yXl7okNLB
+X-Received: by 2002:a05:622a:164e:b0:434:68ad:bc6d with SMTP id y14-20020a05622a164e00b0043468adbc6dmr3752453qtj.52.1713453694202;
+        Thu, 18 Apr 2024 08:21:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEYZwCA+06wOvVVCIasxw9xTrMHDeFH+2lLqLF9z2iIkb9Ub+iZ6WZb5a1fMomaWqQomkeAzQiYpEptyX8KM74=
+X-Received: by 2002:a05:622a:164e:b0:434:68ad:bc6d with SMTP id
+ y14-20020a05622a164e00b0043468adbc6dmr3752430qtj.52.1713453693884; Thu, 18
+ Apr 2024 08:21:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v2] wifi: ath11k: Fix error handling in
- ath11k_wmi_p2p_noa_event()
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: 
- <07f1fc75b2d5b4173ae1b7bb1da5be7f6fc608c8.1713212781.git.christophe.jaillet@wanadoo.fr>
-References: 
- <07f1fc75b2d5b4173ae1b7bb1da5be7f6fc608c8.1713212781.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Jeff Johnson <jjohnson@kernel.org>, Kang Yang <quic_kangyang@quicinc.com>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Jeff Johnson <quic_jjohnson@quicinc.com>,
- Kalle Valo <quic_kvalo@quicinc.com>, linux-wireless@vger.kernel.org,
- ath11k@lists.infradead.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <171345363078.934743.11630888726665265520.kvalo@kernel.org>
-Date: Thu, 18 Apr 2024 15:20:32 +0000 (UTC)
+References: <20240418131754.58217-2-wander@redhat.com> <b96697ff-3177-4559-a410-104ca3a1110f@web.de>
+In-Reply-To: <b96697ff-3177-4559-a410-104ca3a1110f@web.de>
+From: Wander Lairson Costa <wander@redhat.com>
+Date: Thu, 18 Apr 2024 12:21:22 -0300
+Message-ID: <CAAq0SU=HJ8nysYWBj6_FGbRv5QyetdV0xJJKpn2oy6Hub7-6QQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] kunit: unregister the device on error
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+On Thu, Apr 18, 2024 at 12:06=E2=80=AFPM Markus Elfring <Markus.Elfring@web=
+.de> wrote:
+>
+> > kunit_init_device() should unregister the device on bus register error.
+>
 
-> if (noa_descriptors > WMI_P2P_MAX_NOA_DESCRIPTORS), there is a mix of
-> return and goto. In such a case, 'td' should be freed to avoid a memory
-> leak.
-> 
-> While at it, change ath11k_wmi_p2p_noa_event() to return void.
-> '0' was returned in all cases, even in case of error and the only caller
-> does not handle the return value.
-> This is also more consistent with most of functions called from
-> ath11k_wmi_tlv_op_rx().
-> 
-> Fixes: 2408379f15a1 ("wifi: ath11k: implement handling of P2P NoA event")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
 
-Patch applied to ath-next branch of ath.git, thanks.
+> * Would another imperative wording be desirable also for this change desc=
+ription?
 
-6ef5b4c9598c wifi: ath11k: Fix error handling in ath11k_wmi_p2p_noa_event()
+It makes sense, I will change the comment description.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/07f1fc75b2d5b4173ae1b7bb1da5be7f6fc608c8.1713212781.git.christophe.jaillet@wanadoo.fr/
+>
+> * Will the tag =E2=80=9CFixes=E2=80=9D become relevant here?
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+I often forget this tag. I will add it.
+
+>
+> Regards,
+> Markus
+>
 
