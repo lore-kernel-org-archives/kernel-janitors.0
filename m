@@ -1,115 +1,95 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F60B171E68
-	for <kernel-janitors@vger.kernel.org>; Thu, 18 Apr 2024 17:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06C816191A;
+	Thu, 18 Apr 2024 18:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713460756; cv=none; b=DafVe8qJbpamlhOFFBJ2n7InlwR9ouT8D9gh8cnmqc08oL1+tS2VtPM2kkRwoK3zB9ZyCi96rN/wyTI015Imwu3zNVNeY6JJI3mfNqzmejsrofg+3sQJBR3pYrnoERAZDUUV53UZGY04nrQOxExRnLk/SaFMRN+GjxUM6o8CFfs=
+	t=1713463714; cv=none; b=OnsyW30yGlKtna7ID+p+dePHmn5xvhImnYVJbiTHPnYw8hDFmbEQEFR+bpYCuRubbjQtRbnqxnQaJ1XqBaS0anopu6nOz5rguDgaxpgwMHyazk3q65qOIfPt5EZEEFLNzTDcSM6+64XELofWkvNz8gkIotx5rSKHjkl2m+YBDzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713460756; c=relaxed/simple;
-	bh=z8deP5JiCX4tE0osRAabfU/ka6kCpJORJ3z3SrfiQSQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MweU74tHDMmHexjMqm6nHxNg51BEuIOEcTct13PeeNKmWVC7HPFcj6p/GKe+9KnUQacuni7Jk9tN12svYO1EUZGJiCVKWeNmGjR39ae7g/2+ur6gNTwhZdIEVuF/1gp4tgw3ul8TjlIZvh0gHAMlg7HpcKxuiJmdezye8WY5uMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SxJqzSj7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1713463714; c=relaxed/simple;
+	bh=TmjZljf0EWxiHwGWUm5LZmE5fNg+MFxFKT4Nc41DZ94=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mg8t7cwhEzmIMMuH3TXSVuhQHOCMbVD6SObcaWsIqNNXR0LB2nCzjjURMC9SHd5UefeomlauTrBIpDjNpqd2PjbNmy1wEaiFZIOgzZtAlwqh2wsXUOlJTZ33MrZtksUc2RLcNbcGsDSceU1ui91xxwobJR8pXjzAAY9J9Q5ez0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bEsc/JMu; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SxJqzSj7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713460752;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u5bV22Y6v5pDARLpQxuhoUtFKqLzg5Cehfkskiq3Udg=;
-	b=SxJqzSj7R9u0s2zf1ptS+nOKQ8jRCRjq5Km8Hf6YQNC5bCAt18v7TuPQBwGqA3vUkPMPfO
-	3f6pBiJguCc2kARezjcMDDjnocMbo61wnBfyVKwouRumIsK3cMSdllLRp1o/Rhi593kVa3
-	L5w0V73RbGMliDoknlDZAc3f6mh/B7Y=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-372-JHEj-PsjM1GHumN62O5tMw-1; Thu, 18 Apr 2024 13:19:10 -0400
-X-MC-Unique: JHEj-PsjM1GHumN62O5tMw-1
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-434c0b0684fso13565311cf.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 18 Apr 2024 10:19:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713460750; x=1714065550;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u5bV22Y6v5pDARLpQxuhoUtFKqLzg5Cehfkskiq3Udg=;
-        b=evVBqT/w+QsWJ4LrcLMSV4QSjxYVXiroPY1OpXUjUq4OqGxTYuPOOnYkNiERba4Nel
-         F8e2yAgKmAqim1y/AE0R+p6Bcx2zpq7laONo+oy9+tvlVorOI/OfltRZ/SBbEQrWWbqi
-         ballKWSOtXG0goCbaTD6V/5BjyrJCPI1I3nHe4nGeMlTfw25YtO4Jt9uX3AYgH0ReYeY
-         8ce94KS8glRWx3IXmXAmvOw/VHLZyUz7VWTm4rtnNPWx4BAUX3YTv4+LQCC2xiT3svXu
-         AHYPGBi/QO7wNn8IIhLAmN5vkqGVfdA7C+X8Kq6uiMUWENRDBmAthGbYU5rAzryAfFDI
-         VuUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEgkyaP+e9tvNSk2Xe/IeU2S0kHZ1JsaZsbOsiByGeZI7E2ksJqFV4uPKVC8BKL7revz+ksurBYPJ8mFXnt0ObDui4CX/MSd1hT/eIGLQ1
-X-Gm-Message-State: AOJu0YxcrLaWNw3N5O+uS3bRdR03Et8f9YfEdKXXT4P/jVs7VXTayghp
-	6CGqEMfsFt1SIQ/oxlmj8BLnwbxhbhEMghjkRg8CwAk6lTF+DIm1BDmPJylzvTDRQkwpUYCkJcU
-	KcECvyFy3JxBByZ8PyVpUBEtItFKwJmQ+k9nZjUnvQ/C7yb15pJoc19wehZZQhlpa2qIg8geDtD
-	4tqmS7K30N8sDGeKrDMNKMG9iUt6I+9QnPv3DcTJPc
-X-Received: by 2002:a05:622a:f:b0:436:ba2a:4aef with SMTP id x15-20020a05622a000f00b00436ba2a4aefmr4004836qtw.52.1713460750343;
-        Thu, 18 Apr 2024 10:19:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEKngSjSF6iWF1QhKj/ESh69oayLe4joJMZzFJEgkEVk0tUD3zJIsN6uNqpnXh8+kDRMgV0RR3zJNphOH8wO8g=
-X-Received: by 2002:a05:622a:f:b0:436:ba2a:4aef with SMTP id
- x15-20020a05622a000f00b00436ba2a4aefmr4004823qtw.52.1713460750106; Thu, 18
- Apr 2024 10:19:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bEsc/JMu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713463702; x=1714068502; i=markus.elfring@web.de;
+	bh=TmjZljf0EWxiHwGWUm5LZmE5fNg+MFxFKT4Nc41DZ94=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=bEsc/JMupATmoAxm8B2A8XriLdLySYnEDhNpv8wE/st8wORDbhodltsGTmTP6wLu
+	 fClEkK6ORgs/4GNFB54RIzTf48ZXd73AkiDP9sa/LYAnmxeRi+j3e9Rt2lsduzTAo
+	 sbtgODnPgslXvBEhPjOkZzPVNijIZdeTc/z9U4jOafss4T+OL30O3eazSYrUtJhEV
+	 38nVKv5NI0wiuPK87hBgAu/VJfURA97+48Q6O+YE4nLlSUsilz7+xpruDquw5gg73
+	 JRhyavlyyuBVZY3jiVtpaDz/DhY7TRb2BrUc0++aW5pIfJMVGcswiQeG3teDvREVv
+	 zeACTy2hl4RwOhfTKg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MgibY-1seaAE1hCG-00h5rV; Thu, 18
+ Apr 2024 20:08:22 +0200
+Message-ID: <24b3851a-b5c4-4c53-950f-bb5da1a32e11@web.de>
+Date: Thu, 18 Apr 2024 20:08:21 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240418131754.58217-3-wander@redhat.com> <9ff84256-c7d2-48e5-b06b-09a993db2c39@web.de>
-In-Reply-To: <9ff84256-c7d2-48e5-b06b-09a993db2c39@web.de>
-From: Wander Lairson Costa <wander@redhat.com>
-Date: Thu, 18 Apr 2024 14:18:59 -0300
-Message-ID: <CAAq0SUk7nJ80rrMG+zeVi-XReVJ7sdWTAT9fmi4E+LpYAYa=OA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] kunit: avoid memory leak on device register error
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [ 2/2] kunit: avoid memory leak on device register error
+To: Wander Lairson Costa <wander@redhat.com>, kunit-dev@googlegroups.com,
+ linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Brendan Higgins <brendan.higgins@linux.dev>, David Gow
+ <davidgow@google.com>, Rae Moar <rmoar@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240418131754.58217-3-wander@redhat.com>
+ <9ff84256-c7d2-48e5-b06b-09a993db2c39@web.de>
+ <CAAq0SUk7nJ80rrMG+zeVi-XReVJ7sdWTAT9fmi4E+LpYAYa=OA@mail.gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CAAq0SUk7nJ80rrMG+zeVi-XReVJ7sdWTAT9fmi4E+LpYAYa=OA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:twexNX9VepwTcqA7qEc4TIfag0nJfenHdpr/TiWekFjawHJGSxN
+ UUr+HHBRkY/Apa9ofmHZpr3Csc3bovvbecxtntMe788k+N3IWuLQGzQRRW0rKaGnJlYeHIj
+ ppNLvuzE6WpcQSiDXXU3JdvzbtVzZ2jfXz5+1ytMQTWp6qyXSsIr+ijR3ch9G5juztiKJd7
+ Hvd756os03ZgRZFgyWI3Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wtzbIy0zubc=;CAfGe7b8AUBGtrOaQUk906NOSiM
+ /egr2aEV5fEIAxAB6/DcT23IVyOssxCYTWGPpnEhIGzvqMoHWDky2wFlQ7fjc1bsc/BnsHAVN
+ f9RE6NlszPRTCj02791XHyZS5rXo8+FW5nmQWPSWb+gmUB3h5qwPgn6B2tUVEeg4SS7RRDQNz
+ 2nkCrRKunerBhuCDMQKkmfSBeQEM1bw/rOok1aAKklrDHV1MvL6fya0pg7fM7Vz8jEG7aHyu3
+ rGW9dDjqg6BKjIRAsfOlVy7hcxjY0uziI8bFGRkwEgjWLCTVuJVl38Wl3fV0XiHG6E+bZWkHJ
+ tTxSCI/QXypZNDUuqqvVqWLhzQ5W7NWQVMfgSZFJgwN5+8mmcgBqnM+kfaLo9+Kwi+amficaD
+ pOB8RlHjBqItq2c+xpfsEMCKi/ZB6b1aD5tDi5IMoCOQ5XUdQdjX4K24VgnWy887TEeCNpfWn
+ uvQXwAE+CP385JfSAQ2Cg1NNgLIGLWUtOrju0RKLEF12KGXjkZeQkYJZLRv9uT3+Tp9hqIlBs
+ AEBQMrr6oX72PooTPfK1EHK8CRSP96ftqRixYgas0AHWXP11G/A/HAsETGCnXtM9X6q7kPNF6
+ oSM7iDE/+B4tmC2963/qH3G4w3ghvQ/Nsqb9fdJID5M82/PBqIRFW8Qkj8ZDigXj64KDg+HZB
+ 2rysc18b/cnLjC/1WVAfgoGnA2GKwv3unrK8HSzn4VCQJTltymEXVyExLDimKUhg9iSXGUYJO
+ ddPQHDSxLA8mNrX1tv3OLd9S/vAkI0ZRuuEZCYakv9dPKcAQ4mDgkBqVBAdZu/8Jby9tOotZY
+ H4WAjOsXwib0JqA77BoVq4PEx+9uA0ED1Ks9eWJ3HoswM=
 
-On Thu, Apr 18, 2024 at 12:24=E2=80=AFPM Markus Elfring <Markus.Elfring@web=
-.de> wrote:
+>> Common error handling code can be used instead
+>> if an additional label would be applied for a corresponding jump target=
+.
+>>
+>> How do you think about to increase the application of scope-based resou=
+rce management here?
 >
-> > If the device register fails, free the allocated memory before
-> > returning.
->
-> * I suggest to use the word =E2=80=9Cregistration=E2=80=9D (instead of =
-=E2=80=9Cregister=E2=80=9D)
->   in the commit message.
->
-> * Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
->
->
-> > +++ b/lib/kunit/device.c
-> > @@ -131,6 +131,7 @@ static struct kunit_device *kunit_device_register_i=
-nternal(struct kunit *test,
-> >       err =3D device_register(&kunit_dev->dev);
-> >       if (err) {
-> >               put_device(&kunit_dev->dev);
-> > +             kfree(kunit_dev);
-> >               return ERR_PTR(err);
-> >       }
->
-> Common error handling code can be used instead
-> if an additional label would be applied for a corresponding jump target.
->
-> How do you think about to increase the application of scope-based resourc=
-e management here?
->
+> I thought about that. But I think the code is simple enough (for now)
+> to not require an exit label.
 
-I thought about that. But I think the code is simple enough (for now)
-to not require an exit label.
+Please follow a known advice (besides other recommended improvements).
+https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
+to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
+es
 
-> Regards,
-> Markus
->
-
+Regards,
+Markus
