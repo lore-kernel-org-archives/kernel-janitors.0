@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9469D15B98B;
-	Thu, 18 Apr 2024 09:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DB9433BF;
+	Thu, 18 Apr 2024 15:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713433272; cv=none; b=a0/Mf1cVq13CuOP/W7zWQS/UyYkkMahew3laPpK3cc5G43ahKUGwBoryqZO6dA31XuIhocuCQ4/EL5r0ir4iY+lw0AudeYoSsuMILSLkPZUMst1/P2mGpfVcPPvTAEJCax96efkucDzZsD4nZtvNWXWhicIcjeSF4ksv8L8xuas=
+	t=1713452456; cv=none; b=MX6gMeEMz+BeJRMSmi5h190ByPdWspZrJevSFU0wrrMAza66zHkVJKajfsLyW98oA9Ffr/oRiiP71ajracgvLlMNZiR2i9SEo210TakvbT9odvMmZzdOMkk2x+U2M+v55AAmp8VicLrDje73YHkRA9EFfCEBVp6gGyn5NaB3PxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713433272; c=relaxed/simple;
-	bh=AdahcIlgWLXAJKCG0JqEYzoHe+XLbYJ/FlvNan0T5gk=;
+	s=arc-20240116; t=1713452456; c=relaxed/simple;
+	bh=2ZW/FZ3LOYDS3w3KGCimfYqRztdugr0FidbJ2WNUZAw=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=N32R0yevh8isoiaZZ06oylB1NJnnZBHmflr4RYugF4iBPbKdYhwrIhj+5OVyd7lwJiL7cmNaEnVX22g8gufykroM6ckHHK+k4RcP0Hz3MQGC54I4XwEoWHDh9VTXbRZIQdoXUhfUnJwH1z2qQTMbIPNcJprhsw2EGUf7aSyFIFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JPtVj3UW; arc=none smtp.client-ip=212.227.15.14
+	 In-Reply-To:Content-Type; b=THHy28WDfKtFpcfNOPQTMtwbjXYo9E2uhTYcwKCZia50GKCrO6TVONlqlCb2sps2jA+U7iOfjj/EmZypMw0i6Tmnxu3PDFyFRwZCFyk+bGhRxvxza3wLqpfYMI6e2Clojgj0sU5ndn4Tra+TY/SsNettwflQ1Vhad2vWfeooYag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=p5Dfm7D6; arc=none smtp.client-ip=212.227.15.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JPtVj3UW"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="p5Dfm7D6"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713433236; x=1714038036; i=markus.elfring@web.de;
-	bh=AdahcIlgWLXAJKCG0JqEYzoHe+XLbYJ/FlvNan0T5gk=;
+	s=s29768273; t=1713452436; x=1714057236; i=markus.elfring@web.de;
+	bh=2ZW/FZ3LOYDS3w3KGCimfYqRztdugr0FidbJ2WNUZAw=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=JPtVj3UWRH/zitJgTYSWJ+X7L03KL9m8sCF6aMYs+2ZvKbh09iQ2dkfMjsHQ8xCK
-	 gjvci9uB1nxKSsluB4hxX2LkEiovi/0u4ySHwsCHPqkGvKj9ijCn8hOThfKJB4nEq
-	 9LMOtAEKK5EFVW5MHxHIQ+UTw/04wknLuqpEB/PhKh2vFhZUlhsVTW4ZQrnF9OK+Q
-	 gKHFLYah3X4Ac3+Y4E+41UzcV/jFNK0VlUleWib5oRwZdCzddZr4dCGocurRnGetp
-	 IaO4gTL8h7IDPTTJInDxD9623zbwHyx9OphQ5HozNLF60H7z2XOXHvrBOSqii3SW1
-	 0UTBDtuhKwXw6wb5nQ==
+	b=p5Dfm7D6SZwfH5wf9JB2c4KNQARwrMwTYL+iXeqAmXkLz3zphYOA7g74phSTnBV+
+	 1Wyy9Vrq8YYLEwUjicFT49xcu/XwfiP4gmZoJaaKuXmYBTqLIfdOGv9PAhQRoZyTk
+	 tf3uB9RgnIxutRVQ+yq3Torq1iux3EDbipsw/qh6FbbLxweOLKV5iqdg8AV3YjSto
+	 IWBcwlNdBJ5z4MYJUxdIf0UgW8HAB8doT/rorNDSxigPqo8Y9dp231w8vwkvGoFoe
+	 m820XYjl+IZvjj3N/z/c5yT+qTmtv9QRQ2kBn4isjizDrol5L6f4+2FROM7Ld2l8g
+	 QxvL4Kpv4iOV/cf+2g==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MODiX-1sLnxd2OXB-00OavU; Thu, 18
- Apr 2024 11:40:36 +0200
-Message-ID: <cb593f2a-7dbe-44aa-b9ff-7fc57a4bd70a@web.de>
-Date: Thu, 18 Apr 2024 11:40:26 +0200
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MPrPT-1sJnUN2vAJ-00OV5y; Thu, 18
+ Apr 2024 17:00:36 +0200
+Message-ID: <b96697ff-3177-4559-a410-104ca3a1110f@web.de>
+Date: Thu, 18 Apr 2024 17:00:17 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,49 +42,43 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Sean Wang <sean.wang@mediatek.com>, linux-bluetooth@vger.kernel.org,
- linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org,
- Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Von Dentz <luiz.dentz@gmail.com>, Marcel Holtmann <marcel@holtmann.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@kernel.org>,
- Chris Lu <chris.lu@mediatek.com>, Dan Carpenter <dan.carpenter@linaro.org>,
- Deren Wu <deren.wu@mediatek.com>,
- Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
- Manish Mandlik <mmandlik@google.com>, Miao-chen Chou <mcchou@chromium.org>,
- Michael Sun <michaelfsun@google.com>, shawnku@google.com,
- frankgor@google.com, jsiuda@google.com
-References: <da0859c4b24d314d9ff38179c26a58ee7e3f16d6.1713395895.git.sean.wang@kernel.org>
-Subject: Re: [PATCH RESEND] Bluetooth: btusb: medaitek: fix double free of skb
- in coredump
+To: Wander Lairson Costa <wander@redhat.com>, kunit-dev@googlegroups.com,
+ linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Brendan Higgins <brendan.higgins@linux.dev>, David Gow
+ <davidgow@google.com>, Rae Moar <rmoar@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240418131754.58217-2-wander@redhat.com>
+Subject: Re: [PATCH 1/2] kunit: unregister the device on error
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <da0859c4b24d314d9ff38179c26a58ee7e3f16d6.1713395895.git.sean.wang@kernel.org>
+In-Reply-To: <20240418131754.58217-2-wander@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:h60MNVHZTjz4/QmEHPXP1WbPwsusvY2fbKtPn9WCziwqPyptPlc
- ber44onTYjIxTlQrcfVbWexacjHT3eiioX3yg37VqYA/7nnuaSxwjFeHrhE74xvoYT64tc2
- 3Bx7x0020sHYynWpPs7rIOean2NNYeeYHgu9W3V01FD3Ay/7lpgcnd4zXRE3rnBDqHddr7i
- JELSN8JHpN9EF8kXS488g==
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:LoYR5OOkNO1IMk0/llpub1AYS06M9QEB/iRygIyFAo8pg5Sd5HB
+ cR3k/yJzI4bdUwtbFDI0041CcL+esda5DOoi53UItLnGW3Au1QPRL5R4EGUFU3Kx0bkLDk8
+ F4LX6kGJI24gAnvfeDbP4/yURGmTWuTq8aYcFmHTuOc44iIii03lYr7bpKezHsgA6YPpMif
+ P2+EPliUoupjZbJDcagzA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:41/oj+AA2Xs=;BgPgrSRQrxZusn4FIjnNLvOq+Zn
- Way5JznIXv0bGOXGZANPoP33fZwEyhiP+DOSSF0yK0z8jJqbR3cX9AChIL3SrlXTFm4DAcF9/
- tFk2IVrY5rnCwoxd5x2HigKs9h5/nX2uAYP52ITODcNEikAGbTQ4aAZIy8G1CX1eyHh9DelrR
- 4nynCbeFHXqBLiB+yXNHLUBNWnOqgNJGVxLk03of5/Mk4WAkVAXUjogHa8J86rr7K9Eq8Whyr
- YapxCrQDUXJiHMUwKnJ3RuCugV7Ri5epnCKIXTY69hZoCKZ3tOaHAtiL7JvBsv/SGH+BCWwh6
- lEn9fBWqiLN5rkO5pKNUlzMCR01jJESrS2ct2uFraGLwYryaw7wD3YmrvSgl5LThotXpeQ/Hi
- FKwefg4ucDvQUrWqnLOTj1ANy8bLeQ4nTpN5GNxtNHAkIpOKqLAcI7P61Xsg1rNWfIkQcg7cc
- urlooCIzuygFbycqHrOB/XbPhyb4KuAJtuMpRJew4GaN9F/iOCHR1MP2v4TyHrdBp/C4lPIRT
- Jrk5o/Z0CQFBlIa01eGMNPwKA6j8TBDk9yyjWstfNhcppz3ylybstDNOtb4ae50fcDpF5vb6R
- BeN0GXDGYIzMietT+DZpVUicx1nnQFo9gZHvQjDZY2ntgUZTn9CVoGA7x7Vr/uarJTicehone
- PljgWkykcNWS5ph6B8uytPnv7tzNcRMpxaXBN0Wux4qziUggrqWsZhYLPYDC3b3rt+tdrDOiU
- A6HJhsAjKoGnvjYabnleJ+B3pvP/2ieQmU4d+mtuSzI9rf/a9cb8AcotaKHy/J1wqbbDAt+5A
- 4FZhxvoQC0XbQrhJex5/2wk1KLUbc/lHwC8a4fD2CYjDU=
+UI-OutboundReport: notjunk:1;M01:P0:FUEOxYAIpJ8=;aRIxn8r1lavSmvU+iyLodHt+x1Y
+ me99TOMMRVlJsgPI2fqMpf5R2ss6vpa/+Zg88ZQxIrtU5ah2S9wTrDh0uvmPmpBLOTBrT66ZT
+ lg1rDe6MdbyT5/dIBuwyaQUwycUm7HyIJ3MjmBMhL8kUK2GWwNYP89YaGsgT6Eoio7ZEVlXvN
+ Nc6S9aSTOPXYjvMV3+H0OGHIFQIRfVfPN2TM6257Na6O60J4P4bxaCqvocETdrBzzBs/0fU4V
+ HK1JK/kmDXkFh1q3GMcVCtDED0YDjxZA7z4FR0pg/0SJV1zNouRW/5EIy/KoZvkvwqb48H0Ud
+ 9SXU1U1dEq1bhT3TbO9a8HIloESg/0AOYKO0nN1OAYiI6YVrq/5Yvw4TY+z9MPiLyYVpL71FH
+ Ai7PgpLcusdbvgrLDmX344E/H4u+KbldP9ZHmNCMalw8xUIm3U8tssJIJRikwPERJmX52cOIL
+ ccNHz2oRNAzFzly8TqU3rtOV6ftDqSVMogsnkRlTizEl6RCRSD7MyLFgjALwN7UqggmGHWv0Q
+ 6U25RUUp0Twsaci3Oi3me3Wt3jI5z/Vaqc4NE898yinRkiisp3X/kH8x70vSuq+fGVZFC/VMR
+ oQnApURhLsw2kwp1k3zYTostkcwZa4qe7Gi6f8fhAFmL8pzp9Kulji2uBDvlESPvhb0+77h1z
+ Ktn1WwzO612MKS7RC0rv4pqImahhRNc+oo8UH0r7FmUfjor320br87rhgYSk73Pq7o2efKpUe
+ wSsOFfz8OrQrkPcChhhqapxy452PauwhfRTAyd/7Wh8Iy2OgiOfMsWqQ+PUp9ePCflqjRbgTD
+ 7IwBeFQro85/HnbmFXZG0zVNwQqFwiycpZGWaL0YLfDu8=
 
-> hci_devcd_append() would free the skb on error so the caller don't
-> have to free it again otherwise it would cause the double free of skb.
+> kunit_init_device() should unregister the device on bus register error.
 
-I hope that a typo will be avoided in the subsystem specification
-for the final commit.
+* Would another imperative wording be desirable also for this change descr=
+iption?
+
+* Will the tag =E2=80=9CFixes=E2=80=9D become relevant here?
 
 Regards,
 Markus
