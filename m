@@ -1,169 +1,104 @@
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2070.outbound.protection.outlook.com [40.107.93.70])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F9C53AC;
-	Thu, 18 Apr 2024 04:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713412985; cv=fail; b=kN//bvLosepwvIkADlW0zZjjfCHwJfd42mHhsHdyIu2E5vSD/gd0jRLPhftDUAWrgxwjL37/NiYl9aSW961ZiiGG7ESJKcWlLZe//qwKQcUzuPBX4CjKrpd5Te/vFfD+SrxjL3u3Qu10glTNcda8UyhOn6M9ygtABpwE4TMS4Lc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713412985; c=relaxed/simple;
-	bh=kkmDxGycLRun+HZdMU8wq6w1xzT1G/d5ZvAglzwAqdM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=T9sN7bpcZB0CQNRGYhBF1lINCcMZCKcU9dZNrFouHZGPlhlqkyCwtW1Fe6ZxPH3gqaKc4yZ8Clflobz1Mv3Rwmcf+FVnx19E1AcOvvrrvv5mXh+BEuo3A4J1/L0S6spvq4tIGx4vwSy3q+do4E739iLa83fLr8k4glxkzBngd2Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PoS/p/6K; arc=fail smtp.client-ip=40.107.93.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4CB2561F;
+	Thu, 18 Apr 2024 07:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713426993; cv=none; b=hIkaYZHFKhb1IXDcUaZYetXC5dxHf7oyBWZNceSswnmqVsFTzKybjlcwLRVhfmU0ZwKFHV7kkA/Chwq0Uf7UZnm3PCSZ7oT9tTh1aqdJtGP1p0XQBBvhpxbU90ZKybQ/FrNpBZ/zrw0DuPd24Un17FWZt6fodc2HY0Agk+GRaCw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713426993; c=relaxed/simple;
+	bh=Mq64Yga/5Le5ofKIbHbo772juJ7fU0Y2p6pNDzewj9U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=r8e/jK+labwtRQaD1YXbKcnTN4FlfXBukTM+c9542SGJ+sHI2n8yT2cJaIJPVZS/ZWYBp7Gi9ZRHAaPPCD7byd4iYsVPXzhhI9RYjwgU1P7ny8fw/4SUEifa8LEmusvbh3YRF2OXZW+FlDV2T2Nokho3cri7xt5U3UBG8c4CFGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ws5E5j6u; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PoS/p/6K"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Z2julL1jJjg7YBeMe4fVEZhJQ5E5ygmI6RhY8RsvEN7MUnIE1yd5kOWS6sQSZSZiatwJEDBQEYk6KeN9MY59oRqRXYZXLW+muucFnlmZJcHkSEphitCJDJtp9MdhtiX+pNOI/rSVhI7i+3hDl9JmlTAEL87qfZGTWZlmQJ0mMvYUHfcJYfCFtnYQ68cD088rHj+4i+53bhKkNh7BF0D83zh+OJHH+BbAhd23f6UbBmi0BLqb1z7WjxdOgGe9v+YAEeFHLhzyJTascuj9WtxceKyZAP26qSgpc8JPkhTH6RzsfsJYDwHQmwwbCb8yFdxDSFcmH3/n70v75mqvbmMSWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xEByaC53qZDP1hH6a2G5ydBeVEcovqxDgccxX/Z6qZI=;
- b=Gav2S7qiVKZXXc2NFRkDrhqEpi25Gq5kbTLn/M95AETxaMYt5n6VQHhswRxHB4vpS22npbloia6LfSz3thZha8wiaVra13D2hVZybnFQZnpzUSBop9LJXJQpUzT80oSWWAmxfmN10PF8PRKD5q/lO28YUe4CTIbNLnVc52t7LGWV2BOt/6WjSvV2bYPQxIRjnjpXgEH6WhoNC4GGmj4aaJWmZ30baQFG1M8nbTnUhMwZAdQz9mfo024qZ/yoJb8ZGnLAdBcTi5HyA1DbWlFnkMbI7Jqx7ETAzqamwn+LWyLm0X48VXoUmgxnOzG//vSn8/aKJ48JtU0dV1Toh6stjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xEByaC53qZDP1hH6a2G5ydBeVEcovqxDgccxX/Z6qZI=;
- b=PoS/p/6KtpfW9aAq/LXy6fL6JOaaMT+8aoY4l5eVNEnU4/XEppKBbj/GFPZOl44lpEk5g89iIdoa/AgDTW82lDDAGEujqYd8bVqDb9st51Z2zMp/P4xpSeWQIGRo0omD3Rf5fEkdmpnQNQwV/gq4qrDg0mQV34W1s2ihL8t3eLs3XhMXPsgl+IJuVs5dLrQYnD0ICDOwgCTljn++drRyPfdghzpOBH4MvgCDN0vk+NhINtRj5Crrc/+5Iw48MMpDJPpfkCe8rZK4C0T/wu5EyzJvITvbFsynEwm4B4ETiLU3G3PDtQPOsV/WKI8gyveXxIybm75V9l9McTzA99MKVQ==
-Received: from SJ1PR12MB6339.namprd12.prod.outlook.com (2603:10b6:a03:454::10)
- by DM4PR12MB6613.namprd12.prod.outlook.com (2603:10b6:8:b8::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.39; Thu, 18 Apr
- 2024 04:03:00 +0000
-Received: from SJ1PR12MB6339.namprd12.prod.outlook.com
- ([fe80::e696:287d:3f92:3721]) by SJ1PR12MB6339.namprd12.prod.outlook.com
- ([fe80::e696:287d:3f92:3721%4]) with mapi id 15.20.7452.049; Thu, 18 Apr 2024
- 04:02:59 +0000
-From: Akhil R <akhilrajeev@nvidia.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller"
-	<davem@davemloft.net>, Thierry Reding <thierry.reding@gmail.com>, Jon Hunter
-	<jonathanh@nvidia.com>, "linux-crypto@vger.kernel.org"
-	<linux-crypto@vger.kernel.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
-	<kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH 1/2] crypto: tegra - Fix some error codes
-Thread-Topic: [PATCH 1/2] crypto: tegra - Fix some error codes
-Thread-Index: AQHakPLXFgrOV8qeM0eYRC1RnpmShLFtaBwg
-Date: Thu, 18 Apr 2024 04:02:59 +0000
-Message-ID:
- <SJ1PR12MB63391314C4D644EBA8A5E77FC00E2@SJ1PR12MB6339.namprd12.prod.outlook.com>
-References: <ec425896-49eb-4099-9898-ac9509f6ab8f@moroto.mountain>
-In-Reply-To: <ec425896-49eb-4099-9898-ac9509f6ab8f@moroto.mountain>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ1PR12MB6339:EE_|DM4PR12MB6613:EE_
-x-ms-office365-filtering-correlation-id: a0b71a11-301d-4100-99c9-08dc5f5c6fc9
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info:
- 2qfhl8WeDT9ANtAC3uxsQnDZeS/5qoMOGeGmMyfqUk7HWzybPd2GiXIrvTVEmTvjw22pQAOgZ3Bkuhwvl7jslIQVKwIMPcj6PrXclzYuwaGpeMPBRxWFydcC7RKL8nfFeCnYX8hv++2kVCtMZjyWj14znnVrsPGG3AnmWZ46xqAa6WJDgYlo9xIeyk5RmuBPaZffL+Op8a8vEhIuiHnzeRaKmxeWcezYIozXCBlX8jBbQmMfd/5RUQUFl3rj4KYBPYeu4qs/uaKvR5YwmiT3wwSPYKDofTf1ZoCZV3TQtK3mABjUhwmHy1+r4aJGWLYJYWH/vlkSmlsF/ihWSoa3ZZsYCHgdW0/OcWnu8KVb8LkXzeTDNYuCpenQ2dcomwZw0MAqFndf9rPcyFsMRzOFQFpDahkzRS5QeCTcqv86facXKNbXFAiC9/9NNUGRdKEi3JezThe603JZ+JHD2/uPqBBawyJDYJI2xBY8Qmaj7/4tr8Nl8vjNlPeCZE+3yFF0ETDuS4LxZpeRD16gFtnBSggBK+i8V/IiADJxGIS54hSGhYT0zDfShFumt8+zAPVvw7XEUqy3yWnvoAh1RSq+2URoKD+I7sqrYGqlYMeEMVH2srvW4ZS46GYW562P4LfIVIgH3Dg07rwwea2IzvPbsWhLwIuDV22B2ihT1UlSeAtkr6cqdc05jQ0xWM4zKEi6MR4f2m/Mo6AFpcFvxfwd4OT5VCS3K48+t/fHrvEoyIs=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6339.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?JXKgDgnq3sqhT8Fx6Sw0FyUWwDFu/Jrp4i+pe/yqYeig5D++HnFZ42zIDWim?=
- =?us-ascii?Q?K/2T5lXeqP4mPrSA0AA0uIXig++IFyA7BO7azNqHOMUrVYNxb1iRqkS5lzd2?=
- =?us-ascii?Q?rp51Smt5umSCTXZ/8Xe8xNwNDDy5RNVsEym/aENb5FQ/myDHHZtZCjocypaR?=
- =?us-ascii?Q?i070tXtanRPdTUTu1BHXKYrn7TzOo8mPpZQrHjWmLV2PweO6hBU80QK4wbzw?=
- =?us-ascii?Q?6erMGx8iW6KqrnUYgV2V7O8A4LPgx8g/g3EBUPXul6TIKjylsWUIGRzpTYEr?=
- =?us-ascii?Q?L0W67pPLrzR1/58CVY94AKABWkWeK2Z6LxZr9hMs5AxlKUSsa9aQN/G/Lz29?=
- =?us-ascii?Q?fhb2fXTJpDqjv1/VqIz8uRL3s9oecnW5gnd9widlqhZSLPVjT0CMZ9aFa/EW?=
- =?us-ascii?Q?tkMGAxJibgx36H0VGm+i20F98szK1GlutfBaSIxKgcoeEck589W96K5nRsZh?=
- =?us-ascii?Q?r0vkNtv5lAHaWMAkhdoiGCZIAcONg1f/TFr4+3k05w1SeCAwIx/mw0Gk4NnB?=
- =?us-ascii?Q?LURyAGol2J8x9e87L9JRjf3DWZt49ybZszr2SrHlyfSptrE9NU+XORTEXJR9?=
- =?us-ascii?Q?dA7MICO2rD2rAP3lpIQcrnhPbmUPimOS2Aq/lBHQScQesNXCLJ08hNp3wVor?=
- =?us-ascii?Q?s5h7v9Hm70119Xpd+BnFBxYj4DmVzsw1dHz+V+PV/CBx/5LQv/Ccvbv05aji?=
- =?us-ascii?Q?WrreZS79du90II/pfe7h56Tlihmm+duNOtpuqrEYpkGwMjcQ4lchGWXNx40o?=
- =?us-ascii?Q?kzuyyYMkVpCRNeGCyH9i//YXXEaQJnEj4HAWS6eMsH3SzrbKa6SWlgCqKa6K?=
- =?us-ascii?Q?uaoPFHT7orNNeV/rkdc/hKxWGGj/02F88N4KpSTKQQaaBpMsIi7XOm4HI9GO?=
- =?us-ascii?Q?b9fZgaQpjGG+1s5tx0DdnctpKtlHN+9KPICuSD0dBnElZcrcMUChI5az1B2x?=
- =?us-ascii?Q?D+8k2y1ulp4hi7aqCfhleIOReA8Xqg2soZaJADxUGK0ZTzj/qpArTQCLZVur?=
- =?us-ascii?Q?477ulk0h/AFIyCSGLGBl9xttFoOmUmFRKxYyHXYTums7gqJ489HPmP/aM1rF?=
- =?us-ascii?Q?d6YYh/P3gf0Z5dvkzkgXKjJWkO7Mvu1P8vlC8SEDe4Ph4LhXO8ECiYy+cLZ4?=
- =?us-ascii?Q?FxI6O7yovuMTOs9m2ewEMju9XoQgdU6J3hu+jxMMUf7MZcGBWuzeR0XmIeWV?=
- =?us-ascii?Q?aaIXlA364+EyxH5FDJpao/XCJtMiecdgl2gvw+WLP6+QhVi9lST7Iv0hGTFM?=
- =?us-ascii?Q?gP+1J06PojljFe7yU51mUvvVdq3bCgHk0ESIapueK/YVOesjp/oAJPQXsbcv?=
- =?us-ascii?Q?pPQv6rLbwtV2peEqyLSiV+2ukLC8C27shOBmA5OgQ+55exQSSoDEQkt+Dpri?=
- =?us-ascii?Q?CUqurIyD14YJj4FACMZHCv57fRcU3nTRKR0NoTdgB//XS1ryIuPhL5aIYacM?=
- =?us-ascii?Q?idBtiQe1QGCLdoxKCg3tIooQFRjJWf++4iPoWKuOUrhXEhZjJ422BdU/lTbu?=
- =?us-ascii?Q?vTLTG+zqG9ZNsTmYP3QUzuJEBhkKy7yIQs+k/JYnP6cQsDOacjWrEXe/fbjy?=
- =?us-ascii?Q?deoFyjY/C4bnwuSu84koz4aXOmjtmMBH3vIneG2b?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ws5E5j6u"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713426939; x=1714031739; i=markus.elfring@web.de;
+	bh=S5LbYc5u6ubQyPAzR54z+x8sjP3fqCyXFzNnN4fh8/w=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:Cc:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Ws5E5j6ua7QUO0x4V4RtZfwRKThzajC5iyb2F/kshR56DdfCIZDVpmLDSKVHa29g
+	 qNexSk5/MsBTsLn08vOQr12G2tQeiVITpNGinVYYC6mVrg8pmaRLerHtXlCyTQDlJ
+	 Oda7raZ1W5dNqSqL5dfuC7o2AAghI/kCoRP9jzF4TiAPK1zocvIIHM8J7Pm41pYpG
+	 8LScCyAdX8bFjpxTAkrlrWtWYr4cXAAAd9ocjmfAVOps7AnfOvCrrFj2yeEM+Gozl
+	 Iw4NQ74KHOFSBvaEzLb9Qji+ygFf+cRFuo0MEPfWKJefdo7hqmuip+2x1+OHLucGD
+	 PLviSm8Vx3HOAn8mKw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Myv72-1sst7B0agM-00wH5a; Thu, 18
+ Apr 2024 09:55:39 +0200
+Message-ID: <dd8cb3dc-8ac8-408c-845d-af60307d72e4@web.de>
+Date: Thu, 18 Apr 2024 09:55:29 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6339.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a0b71a11-301d-4100-99c9-08dc5f5c6fc9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Apr 2024 04:02:59.6862
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: aXaEQJ2az1DBNJ/5OTeJunNf8xBfemozOdM/go1JY+g1IXLWHsH1Pj3ipRphLEz6JJdpLsEY6iXxwnGWu8dScw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6613
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] irqchip/gic-v3-its: Fix double free on error
+To: Guanrui Huang <guanrui.huang@linux.alibaba.com>,
+ linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org,
+ Marc Zyngier <maz@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>
+References: <20240418061053.96803-1-guanrui.huang@linux.alibaba.com>
+ <20240418061053.96803-2-guanrui.huang@linux.alibaba.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Shannon Zhao <shannon.zhao@linux.alibaba.com>,
+ Thomas Gleixner <tglx@linutronix.de>
+In-Reply-To: <20240418061053.96803-2-guanrui.huang@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:PZdgHBN78wyizsyQQpAlel0izI1xBOV2XE/QQJ3lqSH/ApYzPKa
+ 1JuhYm46c0zVdGschPAk9CVNt6EULxTGXLVr824CjLk3SXKnKibf+7PmSSczPbWKL97JBjo
+ mXcrUvXu6XxguteaggAGT4bbWeUG1Jh7k10dFEC43QQDzDvmeFR+mNQo6ntUYKu6ccORgzn
+ CWafBsblbYkIVL6VtRSuQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:CByfIuwNzkY=;m0HxHAxu7d19iH5LThEdoCnWYDL
+ MpbkOmjDC/jWtmVA/jVcxNJDja7muhsw1KvR/1KT44kkItDXc0Fk8AZQfkQji9YqQnMpfVl16
+ RO/r+yDOgrjsC47rMPt/4OuARN/slGOiWO2WIjjO9lv8gDaSgI15oZPBmkXG/9qXIaeWYZXwL
+ 9IRuenbJARfLjkT/3yPymZ0KrhVp8PNGhA0Ezg/T8yAp+gPn6j2LFeOqajXJezKJGEu1yA57k
+ ipRWZvRpQDzxw6fWrFtHDkO7jTbafPKBKfXrNHSUPVIAjjnR9l5gS+qusA0a/660WgAgqI/Op
+ gWP7BCdFPkr+O4tl6+1kz5ArVXyaU5LSkdcZoR/+eFPxAfGhQzf9JQllUgqODTLzD4k7ScjJX
+ 38iQIvqKzuoScXIykgzSZOKFa0j4zEqGvRFTTdnsgLQDcRsJ/GZeLyyTpA57GHQmzEKybFELJ
+ a348mj/Tl262Hs8v1ozN2gMjIxN6JkQDFikppUQmAok504fdYiRHakSaP1I/x2IFjGr+AfQOc
+ uwgGxbTeSkrVJK923UZg2UuE8lxh2u4Jtmf8V0rjnGsEsgDQzi9j8i7v/FwQUoGuevvDuokyh
+ 6qdvPGOrFICNm4KlzAhHlONSHt6D24GhtnEVDYE74wqqUVJHnW4X7BJaJLNyvJgGebrSN1bp3
+ wo0mDXHtJoQfeypSgGr5zdYlpdjs0mNipZFpzRGOmjha7tLuo+f+S+8lCwAbaUGkNdZtsHIlS
+ T8K4y5WcFEWWF8k137SXYiASZFnjGEjscmL4iKEnzWDH/mldmZMmkOkNPGeM6Jse+hSDcHVnz
+ kSYpjI8VhbySvFYtkJ8lOqbSx3q3x8Pbmq7kNe60t++MA=
 
-> Return negative -ENOMEM, instead of positive ENOMEM.
->=20
-> Fixes: 0880bb3b00c8 ("crypto: tegra - Add Tegra Security Engine driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/crypto/tegra/tegra-se-aes.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/crypto/tegra/tegra-se-aes.c b/drivers/crypto/tegra/t=
-egra-se-
-> aes.c
-> index adc6cdab389e..ae7a0f8435fc 100644
-> --- a/drivers/crypto/tegra/tegra-se-aes.c
-> +++ b/drivers/crypto/tegra/tegra-se-aes.c
-> @@ -1156,7 +1156,7 @@ static int tegra_ccm_do_one_req(struct crypto_engin=
-e
-> *engine, void *areq)
->         rctx->outbuf.buf =3D dma_alloc_coherent(ctx->se->dev, SE_AES_BUFL=
-EN,
->                                               &rctx->outbuf.addr, GFP_KER=
-NEL);
->         if (!rctx->outbuf.buf) {
-> -               ret =3D ENOMEM;
-> +               ret =3D -ENOMEM;
->                 goto outbuf_err;
->         }
->=20
-> @@ -1226,7 +1226,7 @@ static int tegra_gcm_do_one_req(struct crypto_engin=
-e
-> *engine, void *areq)
->         rctx->outbuf.buf =3D dma_alloc_coherent(ctx->se->dev, SE_AES_BUFL=
-EN,
->                                               &rctx->outbuf.addr, GFP_KER=
-NEL);
->         if (!rctx->outbuf.buf) {
-> -               ret =3D ENOMEM;
-> +               ret =3D -ENOMEM;
->                 goto outbuf_err;
->         }
->=20
-Thanks for the fix.
+I propose to improve the commit message another bit.
 
-Acked-by: Akhil R <akhilrajeev@nvidia.com>
+How do you think about to append the text =E2=80=9Cin its_vpe_irq_domain_a=
+lloc()=E2=80=9D
+to the summary phrase?
 
 
+> In its_vpe_irq_domain_alloc, when its_vpe_init() returns an error
+> with i > 0, its_vpe_irq_domain_free may free bitmap and vprop_page,
+> and then there is a double free in its_vpe_irq_domain_alloc.
+
+Can it be nicer to avoid the duplicate specification of a function name
+in this change description?
+
+
+> Fix it by calling its_vpe_irq_domain_free directly, bitmap and
+> vprop_page will be freed in this function.
+
+* Can the phrase =E2=80=9CFix it by=E2=80=9D be omitted for an other imper=
+ative wording variant?
+
+* Would you like to separate sentences by a dot instead of combining them
+  with a comma?
+
+Regards,
+Markus
