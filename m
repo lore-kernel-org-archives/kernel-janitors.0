@@ -1,88 +1,115 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5CC16EC02;
-	Thu, 18 Apr 2024 16:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F60B171E68
+	for <kernel-janitors@vger.kernel.org>; Thu, 18 Apr 2024 17:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713459034; cv=none; b=bluiPUY8IVcX4jZjFHzy7CWk7rg4LeNH0IAWYkfK9bJr+vpNHuWVas5OJ1KBFfZVPETWRTZCw+NBRLbkr9saC/Wv89qbjlFdhEymcCYmV08b4nLqYEU0GO+UMVaw8fuscp11Puo66PqioHOHlHrEaq84KtVQTU4YMcR74NtxFhE=
+	t=1713460756; cv=none; b=DafVe8qJbpamlhOFFBJ2n7InlwR9ouT8D9gh8cnmqc08oL1+tS2VtPM2kkRwoK3zB9ZyCi96rN/wyTI015Imwu3zNVNeY6JJI3mfNqzmejsrofg+3sQJBR3pYrnoERAZDUUV53UZGY04nrQOxExRnLk/SaFMRN+GjxUM6o8CFfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713459034; c=relaxed/simple;
-	bh=gA7kr3P8rammQuVG8J+GOuRW2Trrize3tToG0qF1s44=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nP5aO6KdlUsujVQyFM725TTCIiEfo0pXrXEcUnFx5eh6PRwNxtm8M6TG3M00AYtNanPlvNyjyettbadHe/5adD5p57kdNVMvEdSBAEgPjyj92H5bp7TOmD0Z2XQPLneeUaWpBwY6XWMN7fvfhpuZujhkUJG6TMPMYXlly6BQkfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iUY9ASaY; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1713460756; c=relaxed/simple;
+	bh=z8deP5JiCX4tE0osRAabfU/ka6kCpJORJ3z3SrfiQSQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MweU74tHDMmHexjMqm6nHxNg51BEuIOEcTct13PeeNKmWVC7HPFcj6p/GKe+9KnUQacuni7Jk9tN12svYO1EUZGJiCVKWeNmGjR39ae7g/2+ur6gNTwhZdIEVuF/1gp4tgw3ul8TjlIZvh0gHAMlg7HpcKxuiJmdezye8WY5uMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SxJqzSj7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iUY9ASaY"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-418c1920313so9301055e9.1;
-        Thu, 18 Apr 2024 09:50:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713459031; x=1714063831; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gA7kr3P8rammQuVG8J+GOuRW2Trrize3tToG0qF1s44=;
-        b=iUY9ASaYi1OjXSdCHzq/+uPyCutSh1oIn7jNO4wtf8hmBqN1OSW3gvzSSE+UFqMd42
-         yMne/Fz7Oa0jJDa8rgNxVwzv4Ls2gVcRCgHe0+DGTSYfeEilJGfJ+jn9N2fld6SZF5y8
-         ckFNxEyEZ9eWMmqE93yC9HlTh+Vdt91SXMBpt/A+k2+OSbjHAAcDeapK+Lne4cz+3vUv
-         4r+D4xQbBYsICEC/iaStA0wXmLd6P7ITd6ftOI3sM/OW+ec7nqA8gKROUVSp6reVt8Oe
-         txN14lkpd1h1AKxBQPVo/77rQ61ixRK4p7J3WPaOKZuFOtHnKVHkBPTRlm1MVZ+1tQ/9
-         9XIw==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SxJqzSj7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1713460752;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u5bV22Y6v5pDARLpQxuhoUtFKqLzg5Cehfkskiq3Udg=;
+	b=SxJqzSj7R9u0s2zf1ptS+nOKQ8jRCRjq5Km8Hf6YQNC5bCAt18v7TuPQBwGqA3vUkPMPfO
+	3f6pBiJguCc2kARezjcMDDjnocMbo61wnBfyVKwouRumIsK3cMSdllLRp1o/Rhi593kVa3
+	L5w0V73RbGMliDoknlDZAc3f6mh/B7Y=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-372-JHEj-PsjM1GHumN62O5tMw-1; Thu, 18 Apr 2024 13:19:10 -0400
+X-MC-Unique: JHEj-PsjM1GHumN62O5tMw-1
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-434c0b0684fso13565311cf.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 18 Apr 2024 10:19:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713459031; x=1714063831;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gA7kr3P8rammQuVG8J+GOuRW2Trrize3tToG0qF1s44=;
-        b=axz0NWSrpYkcGgsTC6H6pJsDg2ze5g5Uq70pb0Ltkv+afuAL2cPKKcSER2aPlLpdYT
-         5Ujf9Kg3DEtebHC5F1ilY3lPNA1FZo7erj8bEuk1ramRWdyfOUZWMu5basujpT45gERC
-         3/0uh1+4rRgkW0VdhFgnI3Uh+L1dVqJH+u6zROYQoOG1OgO401cUlhV76uC+0JOiUoKy
-         /DRBlqq5vqZlFV6f03IvVdq9onUUizTHcRBYBhP1TmF2LUITTPK/vnl0C1aagNC4aLPP
-         0S76/SI65xYxS0XlHgUkfEOmE+8S+UHqVcD1LKYDmwljhTF6EH2xgTq0VaSHJIbIpGUD
-         oC7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVHB+511C1iQsayb8qEPiaTn9NKmRHsHw/sa4tJqC+zdLfp1tozw7OJQ8amKnv1qTEz5/j1QlglTPtI/6FRU1XIf7EClPPGLQQ4b5U14wtSIFJC2zyJtAGTNCtn/opJQFgdutu/DEwkiruTy+hhnrF7YpC2BARPHyU9fco8VShBzBo8x+4IGmBprz0YZI5qfgxvQ3BLip0r4yp3Qf+Dv2g=
-X-Gm-Message-State: AOJu0YxGxMX3sYSMf7J27WJqB/4YccK1b66qgj0Gj0AhTS3nulCi7b8N
-	dT+Zd7M5ouCh8+0qsIsumajm5Ie3yUx0IhBBrPSsnSt7yg94tD4K
-X-Google-Smtp-Source: AGHT+IHMfj38JoZUDpClMWDwQ5C3bc7yi/tNoR0G8uDumFXmFP2ZjAKxHbWtJ3fy5o0rdm/ner2vrg==
-X-Received: by 2002:a5d:4082:0:b0:346:305c:b0eb with SMTP id o2-20020a5d4082000000b00346305cb0ebmr2404081wrp.22.1713459030879;
-        Thu, 18 Apr 2024 09:50:30 -0700 (PDT)
-Received: from ?IPv6:2001:8a0:e622:f700:cffe:40a8:31d4:2e61? ([2001:8a0:e622:f700:cffe:40a8:31d4:2e61])
-        by smtp.gmail.com with ESMTPSA id cg3-20020a5d5cc3000000b00349bd105089sm2223076wrb.47.2024.04.18.09.50.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Apr 2024 09:50:30 -0700 (PDT)
-Message-ID: <e6b42e27b3fd4a0970904224d7bd32c52159a788.camel@gmail.com>
-Subject: Re: [PATCH] pmdomain: imx8m-blk-ctrl: fix suspend/resume order
-From: Vitor Soares <ivitro@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>, Vitor Soares
- <vitor.soares@toradex.com>, linux-pm@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, 
- kernel@pengutronix.de, Fabio Estevam <festevam@gmail.com>, Sascha Hauer
- <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Ulf Hansson
- <ulf.hansson@linaro.org>
-Cc: Lucas Stach <l.stach@pengutronix.de>, LKML
- <linux-kernel@vger.kernel.org>,  stable@vger.kernel.org
-Date: Thu, 18 Apr 2024 17:50:29 +0100
-In-Reply-To: <29e1a687-99f5-4e9f-a8c5-50154312cac4@web.de>
-References: <20240418155151.355133-1-ivitro@gmail.com>
-	 <29e1a687-99f5-4e9f-a8c5-50154312cac4@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        d=1e100.net; s=20230601; t=1713460750; x=1714065550;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u5bV22Y6v5pDARLpQxuhoUtFKqLzg5Cehfkskiq3Udg=;
+        b=evVBqT/w+QsWJ4LrcLMSV4QSjxYVXiroPY1OpXUjUq4OqGxTYuPOOnYkNiERba4Nel
+         F8e2yAgKmAqim1y/AE0R+p6Bcx2zpq7laONo+oy9+tvlVorOI/OfltRZ/SBbEQrWWbqi
+         ballKWSOtXG0goCbaTD6V/5BjyrJCPI1I3nHe4nGeMlTfw25YtO4Jt9uX3AYgH0ReYeY
+         8ce94KS8glRWx3IXmXAmvOw/VHLZyUz7VWTm4rtnNPWx4BAUX3YTv4+LQCC2xiT3svXu
+         AHYPGBi/QO7wNn8IIhLAmN5vkqGVfdA7C+X8Kq6uiMUWENRDBmAthGbYU5rAzryAfFDI
+         VuUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEgkyaP+e9tvNSk2Xe/IeU2S0kHZ1JsaZsbOsiByGeZI7E2ksJqFV4uPKVC8BKL7revz+ksurBYPJ8mFXnt0ObDui4CX/MSd1hT/eIGLQ1
+X-Gm-Message-State: AOJu0YxcrLaWNw3N5O+uS3bRdR03Et8f9YfEdKXXT4P/jVs7VXTayghp
+	6CGqEMfsFt1SIQ/oxlmj8BLnwbxhbhEMghjkRg8CwAk6lTF+DIm1BDmPJylzvTDRQkwpUYCkJcU
+	KcECvyFy3JxBByZ8PyVpUBEtItFKwJmQ+k9nZjUnvQ/C7yb15pJoc19wehZZQhlpa2qIg8geDtD
+	4tqmS7K30N8sDGeKrDMNKMG9iUt6I+9QnPv3DcTJPc
+X-Received: by 2002:a05:622a:f:b0:436:ba2a:4aef with SMTP id x15-20020a05622a000f00b00436ba2a4aefmr4004836qtw.52.1713460750343;
+        Thu, 18 Apr 2024 10:19:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEKngSjSF6iWF1QhKj/ESh69oayLe4joJMZzFJEgkEVk0tUD3zJIsN6uNqpnXh8+kDRMgV0RR3zJNphOH8wO8g=
+X-Received: by 2002:a05:622a:f:b0:436:ba2a:4aef with SMTP id
+ x15-20020a05622a000f00b00436ba2a4aefmr4004823qtw.52.1713460750106; Thu, 18
+ Apr 2024 10:19:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240418131754.58217-3-wander@redhat.com> <9ff84256-c7d2-48e5-b06b-09a993db2c39@web.de>
+In-Reply-To: <9ff84256-c7d2-48e5-b06b-09a993db2c39@web.de>
+From: Wander Lairson Costa <wander@redhat.com>
+Date: Thu, 18 Apr 2024 14:18:59 -0300
+Message-ID: <CAAq0SUk7nJ80rrMG+zeVi-XReVJ7sdWTAT9fmi4E+LpYAYa=OA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] kunit: avoid memory leak on device register error
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgTWFya3VzLAoKCk9uIFRodSwgMjAyNC0wNC0xOCBhdCAxODoyNCArMDIwMCwgTWFya3VzIEVs
-ZnJpbmcgd3JvdGU6Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg4oCmLCBhZGQgYSBkZXZpY2Ug
-bGluayBiZXR3ZWVtCj4gPiBibGtfY3RybCBhbmQgZ2VucGQgcG93ZXJfZGV2LiDigKYKPiAKPiBJ
-IGhvcGUgdGhhdCBhIHR5cG8gd2lsbCBiZSBhdm9pZGVkIGluIHRoaXMgY2hhbmdlIGRlc2NyaXB0
-aW9uIGZvciB0aGUgZmluYWwgY29tbWl0Lgo+IAoKVGhhbmtzIGZvciB5b3UgZmVlZGJhY2suCkkg
-d2lsbCBmaXggaXQgbmV4dCB2ZXJzaW9uLgoKQmVzdCByZWdhcmRzLApWaXRvciBTb2FyZXMKCj4g
-UmVnYXJkcywKPiBNYXJrdXMKCg==
+On Thu, Apr 18, 2024 at 12:24=E2=80=AFPM Markus Elfring <Markus.Elfring@web=
+.de> wrote:
+>
+> > If the device register fails, free the allocated memory before
+> > returning.
+>
+> * I suggest to use the word =E2=80=9Cregistration=E2=80=9D (instead of =
+=E2=80=9Cregister=E2=80=9D)
+>   in the commit message.
+>
+> * Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
+>
+>
+> > +++ b/lib/kunit/device.c
+> > @@ -131,6 +131,7 @@ static struct kunit_device *kunit_device_register_i=
+nternal(struct kunit *test,
+> >       err =3D device_register(&kunit_dev->dev);
+> >       if (err) {
+> >               put_device(&kunit_dev->dev);
+> > +             kfree(kunit_dev);
+> >               return ERR_PTR(err);
+> >       }
+>
+> Common error handling code can be used instead
+> if an additional label would be applied for a corresponding jump target.
+>
+> How do you think about to increase the application of scope-based resourc=
+e management here?
+>
+
+I thought about that. But I think the code is simple enough (for now)
+to not require an exit label.
+
+> Regards,
+> Markus
+>
 
