@@ -1,95 +1,111 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06C816191A;
-	Thu, 18 Apr 2024 18:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AF7199E87;
+	Thu, 18 Apr 2024 21:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713463714; cv=none; b=OnsyW30yGlKtna7ID+p+dePHmn5xvhImnYVJbiTHPnYw8hDFmbEQEFR+bpYCuRubbjQtRbnqxnQaJ1XqBaS0anopu6nOz5rguDgaxpgwMHyazk3q65qOIfPt5EZEEFLNzTDcSM6+64XELofWkvNz8gkIotx5rSKHjkl2m+YBDzM=
+	t=1713477127; cv=none; b=EJWgM0kZt+UOZ7wgneZxheM0JEFIoPDMEeSnzGiyL4m9zBLrURhqYp4801HoVDzHjjhgrLXvO1KFXrsCb7ZfhgRDtRanbg3izSIUjIZ/7vxGJYulsPhAoiDiNhNvFFaoKjqy3/Q+WQe6dIQO9M2pQk+Mu3aQh3FnOKpYxUuQGMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713463714; c=relaxed/simple;
-	bh=TmjZljf0EWxiHwGWUm5LZmE5fNg+MFxFKT4Nc41DZ94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mg8t7cwhEzmIMMuH3TXSVuhQHOCMbVD6SObcaWsIqNNXR0LB2nCzjjURMC9SHd5UefeomlauTrBIpDjNpqd2PjbNmy1wEaiFZIOgzZtAlwqh2wsXUOlJTZ33MrZtksUc2RLcNbcGsDSceU1ui91xxwobJR8pXjzAAY9J9Q5ez0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bEsc/JMu; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713477127; c=relaxed/simple;
+	bh=u9w0koOyrXHDNGQ2JZWlE7REzf/app2RdDcoENY+Es0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Iu60r6VSKoiT3WSpkxNacN6ryOZcq64sdAX9S67Jq8nHhck5Z4oJUGkXNbmrcamE4uC09nXfj+tvLvxHRXDpi8/LVRublgsBQ08zA/8L/C/P7R9ip6ikWr6T60laX2FWTUs63z5b0DyQ3Td+Pxb0cFQab44urKPweOSWrtlmXGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MIN38O6a; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bEsc/JMu"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713463702; x=1714068502; i=markus.elfring@web.de;
-	bh=TmjZljf0EWxiHwGWUm5LZmE5fNg+MFxFKT4Nc41DZ94=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=bEsc/JMupATmoAxm8B2A8XriLdLySYnEDhNpv8wE/st8wORDbhodltsGTmTP6wLu
-	 fClEkK6ORgs/4GNFB54RIzTf48ZXd73AkiDP9sa/LYAnmxeRi+j3e9Rt2lsduzTAo
-	 sbtgODnPgslXvBEhPjOkZzPVNijIZdeTc/z9U4jOafss4T+OL30O3eazSYrUtJhEV
-	 38nVKv5NI0wiuPK87hBgAu/VJfURA97+48Q6O+YE4nLlSUsilz7+xpruDquw5gg73
-	 JRhyavlyyuBVZY3jiVtpaDz/DhY7TRb2BrUc0++aW5pIfJMVGcswiQeG3teDvREVv
-	 zeACTy2hl4RwOhfTKg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MgibY-1seaAE1hCG-00h5rV; Thu, 18
- Apr 2024 20:08:22 +0200
-Message-ID: <24b3851a-b5c4-4c53-950f-bb5da1a32e11@web.de>
-Date: Thu, 18 Apr 2024 20:08:21 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MIN38O6a"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-34a32ba1962so618685f8f.2;
+        Thu, 18 Apr 2024 14:52:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713477124; x=1714081924; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Sta3zja1Zn6ZMjwAn2JaaKTmw+SVa+2lRhvrmyccIk=;
+        b=MIN38O6aDrnBnRJMFYVVHBP85NIq+Vu3Oc/8Y4LZgCNXIS3En12JC8bosptGI1N1xn
+         YbrxYcl3eFRxJlQRj6n/Xhq59rNenMc/0owqDNvND48ZXpMwiO1qZwTG9rqQKhb5cGTU
+         iptXw/7hvjJAeByykFtZJmQc3YSP0EIZkI3let+4SgTQj0A7shaH7kcqN3BF4suJISoe
+         sx4OQg7VPfv0rokmRQAnBONU7LYajAs74PY+uXIBJwcGpg7mCr4Bj5dgW7YTQgna2bXo
+         06AY8kHOn4ZUVu624m6I16ZWY9794rYvYnKEpZt+ZefoYyaEi1V5aUFbfkm7LAWidnTn
+         swyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713477124; x=1714081924;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6Sta3zja1Zn6ZMjwAn2JaaKTmw+SVa+2lRhvrmyccIk=;
+        b=IWXjNdHOqYu0fw/q091iQRdXbZ8gy/JliaOIazv0qEErW89ejrebxci2x/OhqmGuec
+         ivPUVctHcNfMcc9LCxNPNOun7PPnAUNsyTtbeozmka14MnRXli6j5i2OyPqNqgzkSI38
+         nJo/FyHEIUcfEb+IPc4ii6B6IXFwHS2vMXpZDGSWChHfSEtXxhPdpAqlQnmgaQHAE2/b
+         Akgo/SoaWEsZNgSMrH2xmtC8iZLDs41CpbeyRU6kE3St82x920AAeocfimoDa+pP8a3s
+         j5g7rURDqBuP6p+1wGhyvBucCFmfOj1Y5uC20CYogzdw1PQBclVXkjA1FD0vwFoXPnsJ
+         yGgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqiYo7HD7+yvQsmvRy22B8GJqEDsbpkctu4qfhOqRz6RrQz8Py6oDu0nrexbyfXMCMXmBq+sSRAHp4xKsnWO2VzVz6VDmixfKc0dQgb4mhMSyRnRnbccoQ1C4XBIlpw1ZdCg6CACxUimHIuk+LQYhM3w==
+X-Gm-Message-State: AOJu0Yyw6UwtQhEGEwO1HUH4xoxTQNH1+TbOVVNovSiZe0tdelyPq4yU
+	D4oVeuTtLwAif3jOcmBi9TAqHu3jQ0f+lf96Jq5MvlNhkh6LWTle
+X-Google-Smtp-Source: AGHT+IFv9XBzkNI6IupVn5uohmdkzdVgv7d5DKKbgI47BgV163ty4NmTXEpfVAe6SByXBXkJHXB5Yg==
+X-Received: by 2002:adf:e60d:0:b0:34a:4f5a:ac20 with SMTP id p13-20020adfe60d000000b0034a4f5aac20mr93512wrm.11.1713477124029;
+        Thu, 18 Apr 2024 14:52:04 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id x12-20020adfdd8c000000b00349f139dbe4sm2767019wrl.91.2024.04.18.14.52.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Apr 2024 14:52:03 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
+	David E Box <david.e.box@intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] platform/x86/intel/pmc: Fix PCH names in comments
+Date: Thu, 18 Apr 2024 22:52:02 +0100
+Message-Id: <20240418215202.879171-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [ 2/2] kunit: avoid memory leak on device register error
-To: Wander Lairson Costa <wander@redhat.com>, kunit-dev@googlegroups.com,
- linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Brendan Higgins <brendan.higgins@linux.dev>, David Gow
- <davidgow@google.com>, Rae Moar <rmoar@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240418131754.58217-3-wander@redhat.com>
- <9ff84256-c7d2-48e5-b06b-09a993db2c39@web.de>
- <CAAq0SUk7nJ80rrMG+zeVi-XReVJ7sdWTAT9fmi4E+LpYAYa=OA@mail.gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CAAq0SUk7nJ80rrMG+zeVi-XReVJ7sdWTAT9fmi4E+LpYAYa=OA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:twexNX9VepwTcqA7qEc4TIfag0nJfenHdpr/TiWekFjawHJGSxN
- UUr+HHBRkY/Apa9ofmHZpr3Csc3bovvbecxtntMe788k+N3IWuLQGzQRRW0rKaGnJlYeHIj
- ppNLvuzE6WpcQSiDXXU3JdvzbtVzZ2jfXz5+1ytMQTWp6qyXSsIr+ijR3ch9G5juztiKJd7
- Hvd756os03ZgRZFgyWI3Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wtzbIy0zubc=;CAfGe7b8AUBGtrOaQUk906NOSiM
- /egr2aEV5fEIAxAB6/DcT23IVyOssxCYTWGPpnEhIGzvqMoHWDky2wFlQ7fjc1bsc/BnsHAVN
- f9RE6NlszPRTCj02791XHyZS5rXo8+FW5nmQWPSWb+gmUB3h5qwPgn6B2tUVEeg4SS7RRDQNz
- 2nkCrRKunerBhuCDMQKkmfSBeQEM1bw/rOok1aAKklrDHV1MvL6fya0pg7fM7Vz8jEG7aHyu3
- rGW9dDjqg6BKjIRAsfOlVy7hcxjY0uziI8bFGRkwEgjWLCTVuJVl38Wl3fV0XiHG6E+bZWkHJ
- tTxSCI/QXypZNDUuqqvVqWLhzQ5W7NWQVMfgSZFJgwN5+8mmcgBqnM+kfaLo9+Kwi+amficaD
- pOB8RlHjBqItq2c+xpfsEMCKi/ZB6b1aD5tDi5IMoCOQ5XUdQdjX4K24VgnWy887TEeCNpfWn
- uvQXwAE+CP385JfSAQ2Cg1NNgLIGLWUtOrju0RKLEF12KGXjkZeQkYJZLRv9uT3+Tp9hqIlBs
- AEBQMrr6oX72PooTPfK1EHK8CRSP96ftqRixYgas0AHWXP11G/A/HAsETGCnXtM9X6q7kPNF6
- oSM7iDE/+B4tmC2963/qH3G4w3ghvQ/Nsqb9fdJID5M82/PBqIRFW8Qkj8ZDigXj64KDg+HZB
- 2rysc18b/cnLjC/1WVAfgoGnA2GKwv3unrK8HSzn4VCQJTltymEXVyExLDimKUhg9iSXGUYJO
- ddPQHDSxLA8mNrX1tv3OLd9S/vAkI0ZRuuEZCYakv9dPKcAQ4mDgkBqVBAdZu/8Jby9tOotZY
- H4WAjOsXwib0JqA77BoVq4PEx+9uA0ED1Ks9eWJ3HoswM=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
->> Common error handling code can be used instead
->> if an additional label would be applied for a corresponding jump target=
-.
->>
->> How do you think about to increase the application of scope-based resou=
-rce management here?
->
-> I thought about that. But I think the code is simple enough (for now)
-> to not require an exit label.
+The PCH names in the pmc drivers are incorrect in the comments,
+fix these.
 
-Please follow a known advice (besides other recommended improvements).
-https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
-to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
-es
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/platform/x86/intel/pmc/arl.c | 2 +-
+ drivers/platform/x86/intel/pmc/lnl.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Regards,
-Markus
+diff --git a/drivers/platform/x86/intel/pmc/arl.c b/drivers/platform/x86/intel/pmc/arl.c
+index 34b4cd23bfe5..e10527c4e3e0 100644
+--- a/drivers/platform/x86/intel/pmc/arl.c
++++ b/drivers/platform/x86/intel/pmc/arl.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file contains platform specific structure definitions
+- * and init function used by Meteor Lake PCH.
++ * and init function used by Arrow Lake PCH.
+  *
+  * Copyright (c) 2022, Intel Corporation.
+  * All Rights Reserved.
+diff --git a/drivers/platform/x86/intel/pmc/lnl.c b/drivers/platform/x86/intel/pmc/lnl.c
+index 068d72504683..ec89e7dda103 100644
+--- a/drivers/platform/x86/intel/pmc/lnl.c
++++ b/drivers/platform/x86/intel/pmc/lnl.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file contains platform specific structure definitions
+- * and init function used by Meteor Lake PCH.
++ * and init function used by Lunar Lake PCH.
+  *
+  * Copyright (c) 2022, Intel Corporation.
+  * All Rights Reserved.
+-- 
+2.39.2
+
