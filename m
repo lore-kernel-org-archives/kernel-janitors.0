@@ -1,124 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A8C1E48B;
-	Wed, 17 Apr 2024 20:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3822CA5;
+	Thu, 18 Apr 2024 00:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713386075; cv=none; b=ivOnWBSiaQIEmhIed6A9yT3sHMpFFD8OHCsBVmw57Ml7+V40XcXiv+8nma94BJ5LZ5Ppqti8wcJZCKf4aw74N/DJtVPdhHk9NWpSyZtuLQPRJ0EKk3utz9I4whcIb2o0y6AfCcVYd3eScAJsRe+kPaFe2gddAvq+6rHrgW30BPY=
+	t=1713401783; cv=none; b=TOQdnq04Zl0RJw2oo+tE0pJ6lDadl9pDc38wjEoz5DZy5136wAP1OVcYKd9lXDH8yJUmc4YMH21B5s8DwzoOyQsjMAvYOwYS/XUUNs3Ap3QW2KDNrPqH1cZYDWcAldng1PlRZEB++ZQWcu4KM6+/qH4IuQSZXvS4rOb0dIz4Rw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713386075; c=relaxed/simple;
-	bh=EtXU9c2X1rus7AR+E4QdwNGG0e/acH591nahmvg0zE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cQ0qmJlORzksu2SLIenqxmFxkUJDZ8zNwMydfFs3ZTzbfPa/Mb3BHat/GquZLF89pAZD5V6qy0E9t+zBo+uZsyZiShSBEabEquKebflfw/eQRYjY4pOaF3heATGSPI2TZDLsQRtS/OK71DaajpuW2ZJgA0mObTyDHMkPlmRKto0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UdCu2ba6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713401783; c=relaxed/simple;
+	bh=vL4BH11YiczMtA85AfUXDUCqO8U2VxAovNR9Q83/HtE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VMQKQ+Z8jUJUufwgbuWxnKjy6gtM9j+bbDGtQu3kVAUCtKaPtVg4qLJTsbaCaLa8tZqQqRYlkTfpEEf2cQM2DW5JXGqFLUZlbt78pWBp9cUd8+u2TjMvLAVn5VYnXGf2EqDMZnOFc5pJHtNEus/NGTuV8ple03PHhaO8OmiWx8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEmUFUP1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UdCu2ba6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A5F7C072AA;
-	Wed, 17 Apr 2024 20:34:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEmUFUP1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 565D6C072AA;
+	Thu, 18 Apr 2024 00:56:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713386074;
-	bh=EtXU9c2X1rus7AR+E4QdwNGG0e/acH591nahmvg0zE4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UdCu2ba6hcAPeyyocbmuIrgN5vfGx7tuIbgJfByfWkWqHYsEwRAIdQ6ytJq6qoujB
-	 bsbrHf2dKw7omIuXKr+I2wZYriYo0KCsj6bDBPo9czZMETYAxI0IMoiR1rM5F+PXNj
-	 CmY5wXIT5HnK0/PfHPLzkr0mx1qD5reZ0JPAiYjzHigqYf05CiIIkw3K+36Gzrmzo2
-	 kcI6tEMbG0iGw7aJPAmP4hANxV/JlUCIlvcu/XOST3DWZ0UCRvrSTq7Vw2Xmz6G6QZ
-	 OO6q+2/jDKduzXDMsXDZ5Wr8dvI6SHg3+chjSY+nu6MLu09Gh0BRoEqBa/ItI7f1ur
-	 88qMoDIwMeMtA==
-Date: Wed, 17 Apr 2024 21:34:30 +0100
-From: Simon Horman <horms@kernel.org>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>,
-	Justin Chen <justin.chen@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+	s=k20201202; t=1713401782;
+	bh=vL4BH11YiczMtA85AfUXDUCqO8U2VxAovNR9Q83/HtE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NEmUFUP1seirP89YaqGwC+l/pKXO5ht+Zx9+19+PYD8SuN6mDLD2EF5Y1OPfvZcOj
+	 LtL/07TI69eLBh7U5gMgGJ36/0QYR81nZUWAwxT7KrO7/p1qT45rtctc8MWKgsIx2Z
+	 isC2YLHaFsIk2Gutqq1erKWMf/67F9SJsK6MISot2PEKBtNceO2OCdNardYyoy2kh8
+	 VxGlj7h3pOBMcOC0+OdTAYpl/EpDQAfalOD/fT1Kh1XullYd/TbIB+QxWsPnni6Xci
+	 pGwAzj7xDqTU2I/3F3gqHrYhxAtNSnTYP48AQzlTqUJFzlcctcysk6D0QoO/3j1znu
+	 MZdKhyO2Rafyg==
+Date: Wed, 17 Apr 2024 17:56:21 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Justin Chen <justin.chen@broadcom.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Simon Horman
+ <horms@kernel.org>, Markus Elfring <Markus.Elfring@web.de>,
+ bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
 Subject: Re: [PATCH net] net: bcmasp: fix memory leak when bringing down if
-Message-ID: <20240417203430.GB3935777@kernel.org>
+Message-ID: <20240417175621.780cb1f8@kernel.org>
+In-Reply-To: <1f3131a4-fa84-4d25-8c1a-ab0023aace23@broadcom.com>
 References: <20240412181631.3488324-1-justin.chen@broadcom.com>
- <6881c322-8fbb-422f-bdbb-392a83d0b326@web.de>
- <9afad2b3-38a5-470d-a66f-10aa2cba3bab@broadcom.com>
- <8ae97386-876f-45cf-9e82-af082d8ea338@web.de>
- <20240417161933.GA2320920@kernel.org>
- <3a5cb80e-7169-4e82-b10c-843ff1eb0fd3@broadcom.com>
+	<6881c322-8fbb-422f-bdbb-392a83d0b326@web.de>
+	<9afad2b3-38a5-470d-a66f-10aa2cba3bab@broadcom.com>
+	<8ae97386-876f-45cf-9e82-af082d8ea338@web.de>
+	<20240417161933.GA2320920@kernel.org>
+	<3a5cb80e-7169-4e82-b10c-843ff1eb0fd3@broadcom.com>
+	<1f3131a4-fa84-4d25-8c1a-ab0023aace23@broadcom.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3a5cb80e-7169-4e82-b10c-843ff1eb0fd3@broadcom.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 17, 2024 at 09:52:47AM -0700, Florian Fainelli wrote:
-> On 4/17/24 09:19, Simon Horman wrote:
-> > On Mon, Apr 15, 2024 at 09:46:44PM +0200, Markus Elfring wrote:
-> > > > > > When bringing down the TX rings we flush the rings but forget to
-> > > > > > reclaimed the flushed packets. This lead to a memory leak since we
-> > > > > > do not free the dma mapped buffers. …
-> > > > > 
-> > > > > I find this change description improvable.
-> > > > > 
-> > > > > * How do you think about to avoid typos?
-> > > > > 
-> > > > > * Would another imperative wording be more desirable?
-> > > > 
-> > > > The change description makes sense to me. Can you be a bit more specific as to what isn't clear here?
-> > > 
-> > > Spelling suggestions:
-> > > + … forget to reclaim …
-> > > + … This leads to …
-> > 
-> > Markus, let's cut to the chase.
-> > 
-> > What portion of your responses of this thread were produced
-> > by an LLM or similar technology?
-> > 
-> > The suggestions in your second email are correct.
-> > But, ironically, your first response appears to be grammatically incorrect.
-> > 
-> > Specifically:
-> > 
-> > * What does "improvable" mean in this context?
-> 
-> I read it as "improbable", but this patch came out of an actual bug report
-> we had internally and code inspection revealed the leaks being plugged by
-> this patch.
-> 
-> > * "How do you think about to avoid typos?"
-> >    is, in my opinion, grammatically incorrect.
-> >    And, FWIW, I see no typos.
-> 
-> There was one, "This lead to a memory leak" -> "This leads to a memory leak"
-> 
-> > * "Would another imperative wording be more desirable?"
-> >    is, in my opinion, also grammatically incorrect.
-> > 
-> > And yet your comment is ostensibly about grammar.
-> > I'm sorry, but this strikes me as absurd.
-> 
-> Yeah, I share that too, if you are to nitpick on every single word someone
-> wrote in a commit message, your responses better be squeaky clean such that
-> Shakespeare himself would be proud of you.
-> 
-> There is a track record of what people might consider bike shedding, others
-> might consider useless, and others might find uber pedantic comments from
-> Markus done under his other email address: elfring@users.sourceforge.net.
-> 
-> Me personally, I read his comments and apply my own judgement as to whether
-> they justify spinning a new patch just to address the feedback given. He has
-> not landed on my ignore filter, but of course that can change at a moments
-> notice.
+On Wed, 17 Apr 2024 11:48:33 -0700 Justin Chen wrote:
+> I try my best to address feedback. After a bit of thought, I feel the 
+> feedback given was not out of good faith. I would like to keep the patch 
+> as-is unless someone else has feedback. That is if the maintainers are 
+> ok with that.
 
-Thanks Florian,
-
-On reflection, my previous email was inappropriate.
-I do have reservations about the review provided by Markus,
-but should not reacted as I did. I apologise to every for that.
-
+TBH the "if" in the subject gives me pause too, please respin.
