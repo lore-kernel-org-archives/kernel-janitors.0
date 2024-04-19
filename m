@@ -1,40 +1,40 @@
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E3ED268;
-	Fri, 19 Apr 2024 18:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245D777F13;
+	Fri, 19 Apr 2024 19:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713553174; cv=none; b=FrpM4YgSASJ4+Iu1tgHQOykOjn2z4EEdF/vdKgUYF/utibCwWr20ncq+/tnn6bdzH691NuCnZtZA4IRLw/OUB+J9fJDBeGi7qsHqxeqEzdn4TbmPbzf0tzgmgUzm1KhOeNA7biuQ1hQkMnzglT7ucvQ8nIE8tdXZt0F8DhhmbTU=
+	t=1713553452; cv=none; b=P2Zzaw515cg+usCkIUN3TmJ+zLP0OeuMh6vKRvPzVUYsf0TsyqtJvfBQNV+pD4ohWBc6pnZQ655owLV6tuUP4ow/+uraFjfkZegwW6m2vbErjf+D+nCfRJlNOue0avaj+9tKhSxSripADvIEUdAx9Eelu1Aa3lJhosoCJRFDxCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713553174; c=relaxed/simple;
-	bh=zc7hK6FmhDFh36aYZYPV5/Mr9PUKXJd7kPS4zb4mMvc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ejrSaHGlUKFsq4xjPw/yFbzHs27eFU2xryV9jgMqWnV8j8r9/xSHHdkT05xvjWbq3KchIUWn/++nYzwUOz7NBr0lwWMIGLWQCDfW7ZJKptZHmoQj9lxAz4MU6dEgLQqtNIEwn8BqaCR/iH5OkTWdEE/D7QZEttxsd/L1O5dX/Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Sd1KqtwO; arc=none smtp.client-ip=80.12.242.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1713553452; c=relaxed/simple;
+	bh=qBE2yyqSctW+YR1XWrzaQcihvJql1d+feDAhwjhB2Bw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Q9Huwldg6oZKGX5hVMplAo9qcSBoxvQ5aJR+fMvpjb9JP7T3LCIXrYSgQmdA/X3I4vm2/6nSVlynUxooYwfc+mhmQaemrXM8u2MqmX+Sg9mggQxuLem1QZG00ywyE5hkviWdphJQpuFWu7HnMB8JpfeA8phrVl7R7b1djqSZjbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MCpQ+vZ4; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Sd1KqtwO"
-Received: from [192.168.1.18] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id xtSDrOsn5GyaxxtSDrHjJe; Fri, 19 Apr 2024 20:59:22 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1713553162;
-	bh=2I3jLva1wdiI0o0x25jMo1zPcjOqTppfHxbSiAlKjg8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=Sd1KqtwO/Rb4T0qw82HGSZsYRymMWG/5jYRmGBZgv1LBFxlxicVu5Y/KiDq0UxPtA
-	 FZ3zbI5ji/wXRqwW2faLWd4iU/gBxGWhx8othrjCdlWXsjgR01nM3vjgrdopg3y1J3
-	 jVoyJTP5WyXwTxT0JmicNp80aUB2jTk4JQZOkWg4yRg+af9FnPeRKHWdyHuasH5vnt
-	 L7/peiyJJzfDMIlDJpxmIB+sk4TOmyzRZoa6UZGTgo/h+pLM/anuGSJRmMXO3pMYT3
-	 gK8ukZhFObXuVPfxBx25BWo3NjfSb3K9uUtcHGCkKaxhoBwjsHOSC9JADxF9gjS+Rj
-	 /frL5tAsu9qAw==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 19 Apr 2024 20:59:22 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <86920c17-13a7-4cc3-8603-ab6d757fef56@wanadoo.fr>
-Date: Fri, 19 Apr 2024 20:59:20 +0200
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MCpQ+vZ4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713553443; x=1714158243; i=markus.elfring@web.de;
+	bh=qBE2yyqSctW+YR1XWrzaQcihvJql1d+feDAhwjhB2Bw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=MCpQ+vZ4Uw1u2V/4xWXP5Dh9R72E/MzDtjijJJPhgEtTe4nbM94QIttiGyvvQwET
+	 g156Z8/7lNkE0tVDg6WA+9R7sat23UZjhfrw0uIbNVHV+fe3N9VZxGXXGP22wOQMN
+	 naIqd0ULkONK5jbHit0r8Pg8hMGLW/HvTMDjNwhO/biCEEdW3oM/cxER/P3Zr7dCE
+	 GCdrwcDnqjX2hMypPOb8pVWGqgvgCTo7nEqFWmOpm6FevcqVu8JP059gqTa21WIpm
+	 a09O2tGeEGLSCfFL2Ra+fjjp43MeRD2YcQlr76CI6do31cUzWMLfJ3TqjOmThHpJh
+	 Pkdc/VhghErkyKeVOg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N30ZN-1sjJF80nTZ-013Nf8; Fri, 19
+ Apr 2024 21:04:03 +0200
+Message-ID: <cd8ff4fc-f6bd-4834-b837-2a0d59c93648@web.de>
+Date: Fri, 19 Apr 2024 21:04:00 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,79 +42,45 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] seq_file: Optimize seq_puts()
-To: Al Viro <viro@zeniv.linux.org.uk>, David Laight <David.Laight@aculab.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <5c4f7ad7b88f5026940efa9c8be36a58755ec1b3.1704374916.git.christophe.jaillet@wanadoo.fr>
- <4b1a4cc5-e057-4944-be69-d25f28645256@wanadoo.fr>
- <20240415210035.GW2118490@ZenIV>
- <ba306b2a1b5743bab79b3ebb04ece4df@AcuMS.aculab.com>
- <20240417010430.GB2118490@ZenIV>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240417010430.GB2118490@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Daniel Okazaki <dtokazaki@google.com>, kernel-team@android.com,
+ linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240419183142.169963-1-dtokazaki@google.com>
+Subject: Re: [PATCH v2] eeprom: at24: fix memory corruption race condition
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240419183142.169963-1-dtokazaki@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:x/vF/xh/PZjJQryN3DceYuEZJQt0fvCrUORvR9v4mCMtdPaZH3T
+ VAA8OePyvwUhLukRVBbAxqjC9lusWoOoM8csaQWbbHSAl3YwvGI+VnDuyyW2aVPnuilI35L
+ 53rvtqJ5BWpV2gqF/ZwDIHzBedSz3HkgYC8TRePMV1vBB5LLOd5n1i6+EhLGP+l0zQh//Av
+ hKKb2Fpp6O4H++U5fneKQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:avNeIPiAZE8=;s718CUtrPhpkK2K3iLR0Wv98P/y
+ HOFnLl6NGq8XSVKrhrejUHCXEaVEV3NLoOmpAWlf2sppQOSjHap6qzOJcjiWepMxTfHdyhH2t
+ RSQeg8mawqv1jHgvXAvWHklPxEO0z7Q19Hdl6cdzmiV78NyqvSrW+7hw3gllWOFA35WtoUwQs
+ MCPsCcyddifw6pBTM4BPnqAuxCNNBzz7lLKe/+h48uOK6WyW0oN3LtYrhllkVkBCBRFvDvssE
+ xfTr/w5uqH9U447QaT7ZiOdWXF0/9/RP72c7e+fPpfB2rJ/C/osQzZqbElF5zYiGu32JGECrd
+ q9Qp+iVQJDeR0JDmaJNRJQO3zvwUtFOVl0vo/4xYiMwd/iKokBIfSJgPvnbgEaBGVxbKphXmV
+ tmN5R0cdVTGYOOEGF8owhBmOtmyGyACgRxL0EGYF8+Sc4OE7W+MfG08WpP5Iy7o0FHzLmjpRN
+ jGLEXAnFBRVkae/KZXqiPI6z6wBPIc0FFS+cKxMOXTefYfOFCG7zeDMjVQmx49nk9ZxxYeTLj
+ kl4FASRFpc4WytxqntdXIZqmC01QvHGKRZGKF4ATdDvo092blOUVcx7dA1bwENctW3TsZWPmK
+ IDiBjrhmAd7MSzUt9i4VA7sSR4sJKLsum0Rr7Zh6v8jTOJJY8fjzHrhCENR2lDlIndB8l2aTb
+ zyXDsU9CHRWRYJw7tCHCtEXNUxXr+45o5Q6PDmljSEF2fFynXcPkxh4GWUPte/Q3PrLeNadbA
+ 82VEgBWfrK5oVkgxcZY7ETSxmaX2zD30/m4Ad2df97LLTTXkp9+M/xSn9+n9ETmRPlDzlpwpw
+ 0DLaBaFJSL/dijk8t0oPORJWYKJXAkbk/+Z80w7DLizck=
 
-Le 17/04/2024 à 03:04, Al Viro a écrit :
-> On Tue, Apr 16, 2024 at 08:56:51PM +0000, David Laight wrote:
-> 
->>> static inline void seq_puts(struct seq_file *m, const char *s)
->>
->> That probably needs to be 'always_inline'.
-> 
-> What for?  If compiler fails to inline it (and I'd be very surprised
-> if that happened - if s is not a constant string, we get a straight call
-> of __seq_puts() and for constant strings it boils down to call of
-> seq_putc(m, constant) or seq_write(m, s, constant)), nothing bad
-> would happen; we'd still get correct behaviour.
-> 
->>> {
->>> 	if (!__builtin_constant_p(*s))
->>> 		__seq_puts(m, s);
->>> 	else if (s[0] && !s[1])
->>> 		seq_putc(m, s[0]);
->>> 	else
->>> 		seq_write(m, s, __builtin_strlen(s));
->>> }
->>
->> You missed seq_puts(m, "");
-> 
-> Where have you seen one?
+=E2=80=A6
+> Move the failure point before registering the nvmem device.
+=E2=80=A6
+> Fixes: b20eb4c1 ("eeprom: at24: drop unnecessary label")
 
-Based on results from:
-    git grep seq_puts.*\"\"
+Please use a longer hash for this tag.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9-rc4#n145
 
-there is no such cases.
-
-
->  And if it gets less than optimal, who cares?
-> 
->> Could you do:
->> 	size_t len = __builtin_strlen(s);
->> 	if (!__builtin_constant_p(len))
->> 		__seq_puts(m, s);
->> 	else switch (len){
->> 	case 0: break;
->> 	case 1: seq_putc(m, s[0]);
-
-missing break;
-
->> 	default: seq_write(m, s, len);
->> 	}
-> 
-> Umm...  That's probably OK, but I wonder how useful would that
-> be...
-> 
-
-Thanks all for your feedback.
-
-I'll send a v2.
-
-CJ
-
-> 
-
+Regards,
+Markus
