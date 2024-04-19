@@ -1,87 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EBCF79F9;
-	Fri, 19 Apr 2024 06:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B5B79F9;
+	Fri, 19 Apr 2024 06:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713508442; cv=none; b=g1WDdRpAWoWJqiExH4dlWVXUQX12CCk0dyki93YMgbPD2ck7m4IuwmRDkwSiWQJI9fsGhM/X+6jvaZIKD0MSXTmVgZnrO1FUS5mlDKQwWkH8J6MT48I4OFapPijzVkpO5qG6arLYidAfRJkpU6iySKftJXyyUU8E8M5n53Q6RJI=
+	t=1713509491; cv=none; b=BJ/XoXFBRgBCKd68FiLogqXopoGYenl2I99iTCfrB0gUQfxnmTfWfOaVYYAJBiW08Gx4N2nMqnQ4Brr09vmxJEDAh2AGEyahmrClozVVmzmDX3NW/17Bv6pqWQgX4+81AS5vNvHxNYaqxzmoFhPadhfSGK22cfKSdYwE1/EY5Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713508442; c=relaxed/simple;
-	bh=V427dVNaf8/qaI8BGACYOJtsWEOTY36TLQHbLwTxGeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kwzeL2q2jZWO/RSuhCYN/Egu4oCWnLRLJt9uE+aN3fGgv00b00h3owLSBDbZqhPt+kN5+P6LFYWX0Xm3EgNQG+MyRu+E+HJ2kehAo7/4YzHIo7HCJ+rZg+nVORYZhkHKWpD8xotk+4/ZV8o2EmnoPOL0YB3DmR351P5jnTYpPi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aICcYNMu; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713509491; c=relaxed/simple;
+	bh=kNV+Cr8IeaPgt0ekBbelYW4XAy06Z4dnET3H5hMF8OY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=Mu/j0TX1HAqCOPOmXvvTs/pwB7ltQA4nRSDTQVJxYCnGTEtEUoC5nUlJBpFycRb1OMIUsE/iRK36X/nF3GrTk9E5I4Zimy2PqCg8UqQofpEOBPmEP6DZ+JySD8Bp3kP9fh1rQqWOqJUrqQf5eMUHlnr1mJpa4njdruduBkMSNX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Hz7scD+I; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aICcYNMu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFB64C072AA;
-	Fri, 19 Apr 2024 06:34:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1713508442;
-	bh=V427dVNaf8/qaI8BGACYOJtsWEOTY36TLQHbLwTxGeM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aICcYNMujuqMbFyCMqjvdmwHys4mdXRRmDK9AVcWuVlEXYYGnJjuTpA9TklLC0cIQ
-	 ngbJsSJL2HIdFKWRc1sjWF9+FFqCXA8FTqDAD9FDTi9gJVjHy2RAuTEk4opSTIwlvt
-	 IxAzIjAK1AH2YbHhjeqeadVt3M6DndkgDvuLSZsI=
-Date: Fri, 19 Apr 2024 08:33:30 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Wander Lairson Costa <wander@redhat.com>, kunit-dev@googlegroups.com,
-	linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>, Rae Moar <rmoar@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] kunit: avoid memory leak on device register error
-Message-ID: <2024041919-untrimmed-palatable-1350@gregkh>
-References: <20240418210236.194190-3-wander@redhat.com>
- <b18c2e4b-bf61-41ad-b5f9-8e52d7651cca@web.de>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Hz7scD+I"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713509480; x=1714114280; i=markus.elfring@web.de;
+	bh=Tp4fDh1EM73eA9LppB8jCZQssdvVqY1VS8ada0xBL2I=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:Cc:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Hz7scD+I+gTR5ejWD3rX7rgAzJ2u/DHZkEq+PpdaB8wp2N7HJ8+CxD/vpxCY2svA
+	 bXbsciwuAxovyCMSnTBnsqPIaKDlc4qjBc8OuA2RjNuUNFcuv/p/U5uAK1otyyQ0T
+	 6vp3arBHXC4f2+Gbdh+LLtzaExr4Zkr0Vtrg6O1i6xrYOjRGisCZrHluok1heULtq
+	 kFNKoJk3kAi4udxJCejt3rpeKz6lohWvjnI2pivqhoSs+oBP/qjn298cSmUT2CEN5
+	 05uIRyQEhNIpYZRHJSoPOcG6rEivtvwKKcEBfESntD/DCuDN5PB/m0i17OvLA9Zks
+	 nZ4f/gKLUYKIQJnN/A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mhnvw-1sbQd61dvk-00gZyN; Fri, 19
+ Apr 2024 08:51:20 +0200
+Message-ID: <f1f47166-00d7-49f3-9b80-34aa7b7b5510@web.de>
+Date: Fri, 19 Apr 2024 08:51:19 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b18c2e4b-bf61-41ad-b5f9-8e52d7651cca@web.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cocci] [PATCH] coccinelle: misc: minmax: Suppress reports for
+ err returns
+To: Julia Lawall <julia.lawall@inria.fr>,
+ Ricardo Ribalda <ribalda@chromium.org>, Denis Efremov <efremov@linux.com>,
+ Nicolas Palix <nicolas.palix@imag.fr>, cocci@inria.fr,
+ kernel-janitors@vger.kernel.org
+References: <20240415-minimax-v1-1-5feb20d66a79@chromium.org>
+ <alpine.DEB.2.22.394.2404182255010.3213@hadrien>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <alpine.DEB.2.22.394.2404182255010.3213@hadrien>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ZqBxasO1k8IZLHBuzwDX0hZEP94LaRo3JlVkMX5m417nUWPFam5
+ JaWUOpVcL2/fEHCh67X0zRkV687+xjduWG5zNnNaorIpsL+Py5LGtjiJea+eFcdiOk8nwvx
+ ivZbmu4QpPs0M2TY+ArXMJrniBX+QNmYzdY/Zf5WzAbjnqZlvOMDp0Pnu6EtvNNbLPSoMVc
+ oc//e1kok5W4vhTL71wMA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:XpNQKZxqhRE=;nnLa+g7p9oEH0zrRsObeIx72MQP
+ 7vGqAqqLin1TpJLALxWnCj7UqWgZdegrKpV2m2h0nj7/u47fVVyz3boDtdSKm6nBfDxWzQXJa
+ eb/PMN9q0E6asMwSX7mqoCl9/hlTA3PYh4XgK8SJUrRqdZAyYBA5xM8zEOWxAgGlzyPY+ZfoV
+ p3rB7ctc2t3QqP5KnAa45QAJzyS+jrlTBEbAsx5gwqydgPCzGn/sF2N9x9wLPOakqFJ5UhwBx
+ kUrfl1/u0h/k0MQT6KCDYld0Dy8qJIYQbm7ZtuS4MyYYwA806K5DcyUEO7Kk+uz8hH/A2+uR7
+ kVsLP/bMpHoEMw5CaWx+pa+mAZ92pGG8xP4DE92iUIGqt4RyO8XauzyhMw8sQdyieFbQg80+X
+ 1SDIlZUeyoC2aC4Kzn3n1B8I0/9+CAjm27K+xcf9pMUTJMglKH2FSddfQMGO83+zo7/YAhHRe
+ JuHYzFXkXBjB0Zu4XTzJTAMfQbJhSiN5WoXeZYHV/jLdXF9U62h6iv1gNwEdFlU3tdxGrXzQS
+ G66Qg9LAAHxFw4A2gNl16HSo9jFTz2LCBNUUsErAcMQ2wU/eHZnivan72gRdx3Ymfq7nFBJg0
+ WUXLwOoCBmRS1jmK55wj0t5FJKm/alZRWLi3XZMi0VjhUYS94TCgl6NAM1cGzu6c6x5Mg+PxS
+ cShZkSOw4EuO+/9kI0Yy8aQWbcbTdmEYdV3hy35Z+pbGE9xwgl7nUsPme4qdJA9b2tR6QIJZy
+ cI+b2WpcGGmI1Eb1rC4+t6FDm8iwnOnRWalGIRwv6sZHUUMhxIHb7BYLKgMp8Pcr4xg3HDDlZ
+ YLXFqrrPPCIb3ZenwQewy76CYfwgMrB6oYu+lVKSah7Gw=
 
-On Fri, Apr 19, 2024 at 08:15:25AM +0200, Markus Elfring wrote:
-> > If the device register fails, free the allocated memory before
-> > returning.
-> 
-> Can a description variant (like the following) be more appropriate?
-> 
->    Free the allocated memory (after a device registration failure)
->    before returning.
->    Thus add a jump target so that a bit of exception handling can be better
->    reused at the end of this function implementation.
-> 
-> 
-> Would you like to replace the word “register” by “registration” also
-> in the summary phrase?
-> 
+>> Most of the people prefer:
+>>
+>> return ret < 0 ? ret: 0;
+>>
+>> than:
+>>
+>> return min(ret, 0);
+>>
+>> Let's tweak the cocci file to ignore those lines completely.
+=E2=80=A6
+> Applied, thanks. (Coccinelle for-6.10 branch).
 
-Hi,
+Was a planned code adjustment published?
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+=E2=80=A6
+>> +++ b/scripts/coccinelle/misc/minmax.cocci
+>> @@ -50,11 +50,26 @@ func(...)
+>>  	...>
+>>  }
+>>
+>> +// Ignore errcode returns.
+>> +@errcode@
+=E2=80=A6
+>> -// Don't generate patches for errcode returns.
+>> -@errcode depends on patch@
+=E2=80=A6
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+How does such a change fit to the usability of the coccicheck operation mo=
+des
+=E2=80=9Ccontext=E2=80=9D and =E2=80=9Corg=E2=80=9D?
 
-thanks,
+Should dependencies be reconsidered any more for the desired consistency
+of involved rules for scripts of the semantic patch language?
 
-greg k-h's patch email bot
+Regards,
+Markus
