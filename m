@@ -1,41 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684D5A23;
-	Fri, 19 Apr 2024 19:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB801BF3D;
+	Fri, 19 Apr 2024 20:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713556651; cv=none; b=pozvm8iG8pMYRTgzG0eKm0hA+hMI+PWdhvXaXcxdvXD6AJSXwoobCgrM46rIT5m7PlrRwnp+HVTMO944IbL0Gfl7+ZL6b5sA3Z0vw/5N8C6dn0yeyYM3uQZsjrrLUIpA2IndDpn7IVHDqi6hW/JRHcRkRDFSKUin/5iFm+i88NM=
+	t=1713559650; cv=none; b=nDYoTmJCEpr2ISye69KgV2/UUB2N3QVi+Gx2Vyk6KDuTTvvpjHXxL1IflYFsd3IhVwaQK7SGPkCgcmq35H989eojSlvpVMo9tr8KATJfOLCBOOaRw5/4gjlvxHHK88VcSt8SBSYSBIRFOYXsJtL+rFN/Wo73dB5wb8RWotMtL4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713556651; c=relaxed/simple;
-	bh=6Slvd9WP7U67G3VLT+aHOxvttY9ZS+l7ClciTen+Yuc=;
+	s=arc-20240116; t=1713559650; c=relaxed/simple;
+	bh=RGWo5cAReV5vNXbHaLvoR0Q1CkQ78gT22HxOCR6MmFA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CCUbTZ31aeHj1RlhgEBhXwgENEsuZ3xa8D6Dp+zZt/9qEN7ClSMtUwtJG+UCi+UKarsDj3V6N17WLAiBrChuwAkjFYNW5cCv5jF4hHkaQLmn+yz573A9wn1HyWDNjgQ4vf79I+d4QtThLT7wi3h/gYVdJ8X7j2E0jNigKCaYbb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=CLbRyo9d; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	 In-Reply-To:Content-Type; b=U0en4P3f1FfOC2ojFHKCQPFV5N1QjjeXweiTqrqhm2cWo3+uDpNs6+CUGYSeGmPpLe6tgJ7XDXM8x2s4/noz+/8lUZfSFa5EJRih4C3anrt8kGI1AwivU34hjnQqFkOYyoDaptc5itO15KXNi1k8YsEuUPRlYzlCOdWFNwOJeJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sq8kL1Q0; arc=none smtp.client-ip=80.12.242.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="CLbRyo9d"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713556618; x=1714161418; i=markus.elfring@web.de;
-	bh=6Slvd9WP7U67G3VLT+aHOxvttY9ZS+l7ClciTen+Yuc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=CLbRyo9dzVNhQ3oFILxFVfdLxwMaG3MUlxRpvJgCTD1G9ABfqDyZAaKKlca6DWgF
-	 sUH440ZnySvzqm3nJtym8DEy0RYN0RnysfrYqmQFYQQ2FUNZak8cf43dZpbEU/bGr
-	 VmzjnhSdI2yhmn+UpUdL/4LwsthQOrGwY62rWUTijMI7POVNa0bug5XwMvdQJe61z
-	 rTOxqYltHt5eV/V6oKrIXMcAThdlRjAFsvSWgLhhOJ98EuDaafNAK1rFGqHQpvhZD
-	 tgeFAz2X3LrfV+/HFE1+8Fen7LoGUnt3hpY+0v9VMgPNzhWvqCrQ1IHBHLijk2X89
-	 D/+Re9p4sJeT8oC19w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MHVaf-1rtptb2Crx-00DV2a; Fri, 19
- Apr 2024 21:56:58 +0200
-Message-ID: <0460d898-689f-4e9a-bd2a-a812ca54acc4@web.de>
-Date: Fri, 19 Apr 2024 21:56:56 +0200
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sq8kL1Q0"
+Received: from [192.168.1.18] ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id xuzvrCCwxiGtUxuzvrtdg8; Fri, 19 Apr 2024 22:38:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1713559096;
+	bh=nME8lOdkd1+x8VPwStcPPr6o4g/uIgFzm/OQJZC+ERg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=sq8kL1Q0xocF2YLzi8UH02TAqQB1HqTWQd7uRKq5s81YWxIEO4iUSP/QP3s0dlthk
+	 +2mzFZT4IBrhTBuW51X/VMW6qTZzo9oCFSOwYZ6ye8QjI8VNFihtslpZNaZFxuRmX/
+	 Jyxf+gzIrZ5bg+Lj/04ROJiJyWoBkqUp/0h5jBtl6ndVBgM7c2D6QTR05il9vskrJf
+	 wYeaT7vKj+OqqDINkDhhQQrlMDJs3PcqEidCVwvuPFvWXqiVaVsW53ZenkVpEpDIiu
+	 aBn+kMEzDf9bu0D+9cBzEiDkBL71YSURoGHUXZCzbrn2gGIgJ/6ld6mEYs+Hlmcrfz
+	 4OuooDveRulAA==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 19 Apr 2024 22:38:16 +0200
+X-ME-IP: 86.243.17.157
+Message-ID: <5e5cde3e-f3ad-4a9b-bc02-1c473affdcb1@wanadoo.fr>
+Date: Fri, 19 Apr 2024 22:38:15 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,58 +42,82 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Bluetooth: btusb: medaitek: fix double free of skb in coredump
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Sean Wang <sean.wang@mediatek.com>, linux-bluetooth@vger.kernel.org,
- linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Cc: Johan Hedberg <johan.hedberg@gmail.com>,
- Marcel Holtmann <marcel@holtmann.org>, LKML <linux-kernel@vger.kernel.org>,
- Sean Wang <sean.wang@kernel.org>, Chris Lu <chris.lu@mediatek.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, Deren Wu <deren.wu@mediatek.com>,
- Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
- Manish Mandlik <mmandlik@google.com>, Miao-chen Chou <mcchou@chromium.org>,
- Michael Sun <michaelfsun@google.com>, shawnku@google.com,
- frankgor@google.com, jsiuda@google.com
-References: <da0859c4b24d314d9ff38179c26a58ee7e3f16d6.1713395895.git.sean.wang@kernel.org>
- <cb593f2a-7dbe-44aa-b9ff-7fc57a4bd70a@web.de>
- <CABBYNZL1=RyzuXcDpAwcXyOe_8Bh4gJtDzKdS55-3ZF4rZRj7A@mail.gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CABBYNZL1=RyzuXcDpAwcXyOe_8Bh4gJtDzKdS55-3ZF4rZRj7A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:S8WVsoPLtqYG/ykvrpdfXwxTb9GQ6ddC7R7zsOQbPfIOAPVg5bH
- cMPj7nuSOAH+vCBx5OH4wb42KGMA6DWS72RdGxaVQ6GogDsV6zx1u9KXKVPQ6WDqKqmppbs
- vxrwA7C9+GYDicbVt/kTg85dLhkoRSq0ycv2rJslHIS1PtxilV0j5WC27ds1+k8kIdd178e
- Uw04abQuIawH3E6PHXxXg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:0SfpuT7Zf8o=;uZUyp+Nr+hFB7lgbCA8xf5U6SOd
- G6jAFLKGPouMeLYW4ECJ9Nj3ptXypcKX5dsGcaY4cgMYcFcjmm1XlEuevFyYL99tscs8ucgsb
- 2TCitR49unAcRFalK8OpUepLM+sxcAp8D85ZpEeiQjzGsQ09JyVdC7K3bOOX9azTYS+NJLuTH
- 2QS0weenCJIYoUNbGo5ibW5MTm57SYaxyqTbbzPw03xkWt3Ocl5Ggl6GhNVhsusXSbuBZvK1D
- /edJ3mSUaeEwXQm+2slS9GfpYmCm4HQS/MCt8/1thcYEF7urQCd7pJNfYag4CpESUib3cwygn
- GE/kqPk41/7ldFc4gUhfLRce35yrIzXg9W44EfjQVkPsxYTdEBWxV68yshYOo+pfr6GVsTFbC
- h6mxd3WUJx3j7rZUIykxOLFxoVSFL2bTDPMdyhlstEV+IaxoW5fxKe4RCJKBmNi4qgxuHq6RA
- JqtZkeI80XrK5wiEb0KLHj/uapL9LgO/JTh8dVBNkRr0F+qnAnRtepTQpMODMIAEv+ovtVv5c
- kdqZJ7u/YqZflNTruCf63ZvkjsvDyel/8TqnZ496NZNXTft8Rb+zflWEzJgOOXmxACrI7kvoB
- 7FidVNYsshtC2l+ebPjq7MB7ubEzlRtbIn6J86VKKkV2ST6v/fYbABAV47XHi1fHLg1X+EzPm
- ekgotMOoGSVlHZet9dCO4ydT7+Vc/dmku7qn2wBEV9r+sL3eV3L1XepaoYD4Yw8avZBtzV3VF
- ttrwDx8L+s3sQWwPHOOHeNgLe6LhEmT0YtDfRmwxl2b4yr7U9KHv4jv92Y25a3sbysuYYRbf/
- NNcKcS6YOo/M7ZUFUzPuFUuc4XphAToefC6dayaYh+mzw=
+Subject: Re: [PATCH] seq_file: Optimize seq_puts()
+To: David Laight <David.Laight@ACULAB.COM>,
+ 'Al Viro' <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <5c4f7ad7b88f5026940efa9c8be36a58755ec1b3.1704374916.git.christophe.jaillet@wanadoo.fr>
+ <4b1a4cc5-e057-4944-be69-d25f28645256@wanadoo.fr>
+ <20240415210035.GW2118490@ZenIV>
+ <ba306b2a1b5743bab79b3ebb04ece4df@AcuMS.aculab.com>
+Content-Language: en-MW
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <ba306b2a1b5743bab79b3ebb04ece4df@AcuMS.aculab.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
->> I hope that a typo will be avoided in the subsystem specification
->> for the final commit.
->
-> Are you talking about medaitek
+Le 16/04/2024 à 22:56, David Laight a écrit :
+> From: Al Viro
+>> Sent: 15 April 2024 22:01
+> ...
+>> No need to make it a macro, actually.  And I would suggest going
+>> a bit further:
+>>
+>> static inline void seq_puts(struct seq_file *m, const char *s)
+> 
+> That probably needs to be 'always_inline'.
+> 
+>> {
+>> 	if (!__builtin_constant_p(*s))
+>> 		__seq_puts(m, s);
+>> 	else if (s[0] && !s[1])
+>> 		seq_putc(m, s[0]);
+>> 	else
+>> 		seq_write(m, s, __builtin_strlen(s));
+>> }
+> 
+> You missed seq_puts(m, "");
+> 
+> I did wonder about checking sizeof(s) <= 2 in the #define version.
 
-Yes.
+git grep seq_puts.*\"[^\\].\" | wc -l
+77
 
-Do you prefer references for mediatek here?
+What would you do in this case?
+2 seq_putc() in order to save a memcpy(..., 2), that's it?
+
+It would also slightly change the behaviour, as only the 1st char could 
+be added. Actually, it is all or nothing.
+
+Don't know what is the best.
+
+Any thought?
+
+CJ
 
 
-> or is there another typo?
+> That would pick up the cases where a separator is changed/added
+> in a loop.
+> 
+> Could you do:
+> 	size_t len = __builtin_strlen(s);
+> 	if (!__builtin_constant_p(len))
+> 		__seq_puts(m, s);
+> 	else switch (len){
+> 	case 0: break;
+> 	case 1: seq_putc(m, s[0]);
+> 	default: seq_write(m, s, len);
+> 	}
+> 
+> 	David
+> 
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
+> 
+> 
+> 
 
-Not yet.
-
-Regards,
-Markus
