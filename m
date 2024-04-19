@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB5585629;
-	Fri, 19 Apr 2024 16:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E3ED268;
+	Fri, 19 Apr 2024 18:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713544341; cv=none; b=WbN1S88Ik5IJnWE8KueQ6iAa8Ul4dwZ5jr6ciikJ2fPLVd4WWnR2nfpDzpbo1F/LI3LEQg5ZaXogi6a/KUwbZ53fT1lBzGEHMDA8T+J1gSk18EDI8mX0gciJvd+kIzqBvDhpBQUFXkjcY+aCQ4vWCyaeV/fIZ7LliXR3W6c0gX0=
+	t=1713553174; cv=none; b=FrpM4YgSASJ4+Iu1tgHQOykOjn2z4EEdF/vdKgUYF/utibCwWr20ncq+/tnn6bdzH691NuCnZtZA4IRLw/OUB+J9fJDBeGi7qsHqxeqEzdn4TbmPbzf0tzgmgUzm1KhOeNA7biuQ1hQkMnzglT7ucvQ8nIE8tdXZt0F8DhhmbTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713544341; c=relaxed/simple;
-	bh=eIbxWlxAN7PmEn+bwco0CingzsHowjfYYbnjMadAdbM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=aLueTYU9pnEYhtLfu48gL98a8yyemgcY9noGNLPikQncbIKFVZ+/5n8j3Q4wR/jBLU6kALZQSuUHOX6E6SzLxx2D+rGZinjXv1e2jsX6y6EgsSJSWaeWzLoDNSS89kJd7TKkA4J4P8s+A+4lz6ah6eJzQezj3wWJGXJZaKt5BNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WQVnycxB; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713553174; c=relaxed/simple;
+	bh=zc7hK6FmhDFh36aYZYPV5/Mr9PUKXJd7kPS4zb4mMvc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ejrSaHGlUKFsq4xjPw/yFbzHs27eFU2xryV9jgMqWnV8j8r9/xSHHdkT05xvjWbq3KchIUWn/++nYzwUOz7NBr0lwWMIGLWQCDfW7ZJKptZHmoQj9lxAz4MU6dEgLQqtNIEwn8BqaCR/iH5OkTWdEE/D7QZEttxsd/L1O5dX/Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Sd1KqtwO; arc=none smtp.client-ip=80.12.242.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WQVnycxB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713544326; x=1714149126; i=markus.elfring@web.de;
-	bh=eIbxWlxAN7PmEn+bwco0CingzsHowjfYYbnjMadAdbM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=WQVnycxB9+t5If4iKSq2luaQjPMqh2YTkUMSVmv08Kzykb2b8bH6AC18Rx/NYJ2n
-	 Q3uiTmYE3z0Fqj9ovZgZDSmvXUK6/oG4sllc0Voe1GUA3NECqmxPwI5SKPLJpeQ8k
-	 zsWHyfabjsO76vWYFl0WzryURrc20iBmHWXXeZRW5ODWCQ8G4X7iTJLW+vNcGdYMk
-	 vw9ddwtPAR4TQE2WfwtIOeXpT40LEfG6ufCv+7ou+CWPGBmdtAhfHEddR0wltiJb2
-	 tiaR2qPMERlAKIKR4VNTCa5Q2p6WJMyXAElmfxtXi3FxajVD/B7yGR37N2s4AnvUj
-	 nz/S8ayMqBQnzcuGvA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MG9DE-1rwlEw2bBE-00GWVB; Fri, 19
- Apr 2024 18:32:06 +0200
-Message-ID: <bf0dc8a8-d5e9-4402-8305-5b7a954e6382@web.de>
-Date: Fri, 19 Apr 2024 18:32:05 +0200
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Sd1KqtwO"
+Received: from [192.168.1.18] ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id xtSDrOsn5GyaxxtSDrHjJe; Fri, 19 Apr 2024 20:59:22 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1713553162;
+	bh=2I3jLva1wdiI0o0x25jMo1zPcjOqTppfHxbSiAlKjg8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Sd1KqtwO/Rb4T0qw82HGSZsYRymMWG/5jYRmGBZgv1LBFxlxicVu5Y/KiDq0UxPtA
+	 FZ3zbI5ji/wXRqwW2faLWd4iU/gBxGWhx8othrjCdlWXsjgR01nM3vjgrdopg3y1J3
+	 jVoyJTP5WyXwTxT0JmicNp80aUB2jTk4JQZOkWg4yRg+af9FnPeRKHWdyHuasH5vnt
+	 L7/peiyJJzfDMIlDJpxmIB+sk4TOmyzRZoa6UZGTgo/h+pLM/anuGSJRmMXO3pMYT3
+	 gK8ukZhFObXuVPfxBx25BWo3NjfSb3K9uUtcHGCkKaxhoBwjsHOSC9JADxF9gjS+Rj
+	 /frL5tAsu9qAw==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 19 Apr 2024 20:59:22 +0200
+X-ME-IP: 86.243.17.157
+Message-ID: <86920c17-13a7-4cc3-8603-ab6d757fef56@wanadoo.fr>
+Date: Fri, 19 Apr 2024 20:59:20 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,50 +42,79 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Wander Lairson Costa <wander@redhat.com>, kunit-dev@googlegroups.com,
- linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Brendan Higgins <brendan.higgins@linux.dev>, David Gow
- <davidgow@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Matti Vaittinen <mazziesaccount@gmail.com>,
- Maxime Ripard <mripard@kernel.org>, Rae Moar <rmoar@google.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <2024041955-strangely-snack-b335@gregkh>
-Subject: Re: [PATCH v4 1/2] kunit: unregister the device on error
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <2024041955-strangely-snack-b335@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:stRam5aVtIuDvHM21SJEdP2eyrk/2IhupOPWo77UJqEdZj0lMjM
- 1kBBa93H53jLvhEicKH0EIcsnyhDgq4k/JqqZOj9b6fshRCXZaR5rJZys00OVaiA0FKlfp3
- 7EQfm7LfrEDW79nZv5OHCkqQ3QTnxi4SEQ5+kKxY9C+hiobcb2ksKG0magbesWswLM8jISr
- N7tyWaBMkpDPxqXb/wcNg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:dcJDmLSpQmg=;62Zr0Xznbtsg2eO6SE5TOHi9U9k
- EIia6P4/Stl6JX5AVZ5ObMPZdBsdwQFnWufZkVILT3fH2w48svA46fi5Dbd+tV9oaWVHix27g
- lDJksMgY9nbBWvoLHu5yEbB4ZRzNg3KgOfqKYlWV12UCLCMBDkcfHJk4wLV9TYaVPx7x9PCD0
- rGXRAsyJWhFo08PQpg84NiIM/yu47C0KehRSgF9uDyn139bBU2D2Jiw6tzcUQCt5eyhl8WfTM
- dURD2bzAZbnUONgtTz35Q8DarjuNUITZ71MkErUf70V9pz/EHrJw9PLQTffB1W5fv+jlTLdeE
- Ge4zd5qaJnBJa/o33ZQbIsDvi9BJjGAvDU/87K0+h4MaK25Rbzur/QZRoHbh9RHm2zMRS7LCj
- PAaVxz+TapnOvfqqDGZb3O3q5NEweFCnmaBHxhDpFh4XqN4+zlQczLxcd1KlzW7ZzStZUskII
- bs8ux9W/an4L5AKeiuSUPlii0kgTRjIkzPCel16/6WsujStS21czAd0iMJ3tZugIepvloRSyP
- znQYZI2e+PeAOtTyPmhHgqzuqAqaI0IzSsoSa45WVMnZpu+etU+7gohQWiPP7XKw3dAbGPYOa
- Yt6dImJsu5PJPjf0v1KtxUmzHAheMEandRW65wSuIE/HEXU+8smR7xhmtPkHnaiX8x1jKc+WZ
- zJIL3KcvIPa28jWgnxHNSd1usQShtvlPLxg758btAEM2yQ7YzENUGIQnk0UigLHxLw8loMWZM
- WUEL2qV/CGkvcnPrHATkyjnecf6RF8lYvWViWnj7xAvHBWUf3c8OVxqM0SMcDU2EukdshvgQG
- IXfQr2fwsjo1ifi9UYtSv0P9n1rbao2TxXvNN+Yx71bdQ=
+Subject: Re: [PATCH] seq_file: Optimize seq_puts()
+To: Al Viro <viro@zeniv.linux.org.uk>, David Laight <David.Laight@aculab.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <5c4f7ad7b88f5026940efa9c8be36a58755ec1b3.1704374916.git.christophe.jaillet@wanadoo.fr>
+ <4b1a4cc5-e057-4944-be69-d25f28645256@wanadoo.fr>
+ <20240415210035.GW2118490@ZenIV>
+ <ba306b2a1b5743bab79b3ebb04ece4df@AcuMS.aculab.com>
+ <20240417010430.GB2118490@ZenIV>
+Content-Language: en-MW
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240417010430.GB2118490@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> > kunit_init_device() should unregister the device on bus register error=
-,
-> > but mistakenly it tries to unregister the bus.
-> >
-> > Unregister the device instead of the bus.
-=E2=80=A6
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Le 17/04/2024 à 03:04, Al Viro a écrit :
+> On Tue, Apr 16, 2024 at 08:56:51PM +0000, David Laight wrote:
+> 
+>>> static inline void seq_puts(struct seq_file *m, const char *s)
+>>
+>> That probably needs to be 'always_inline'.
+> 
+> What for?  If compiler fails to inline it (and I'd be very surprised
+> if that happened - if s is not a constant string, we get a straight call
+> of __seq_puts() and for constant strings it boils down to call of
+> seq_putc(m, constant) or seq_write(m, s, constant)), nothing bad
+> would happen; we'd still get correct behaviour.
+> 
+>>> {
+>>> 	if (!__builtin_constant_p(*s))
+>>> 		__seq_puts(m, s);
+>>> 	else if (s[0] && !s[1])
+>>> 		seq_putc(m, s[0]);
+>>> 	else
+>>> 		seq_write(m, s, __builtin_strlen(s));
+>>> }
+>>
+>> You missed seq_puts(m, "");
+> 
+> Where have you seen one?
 
-Would you ever like to distinguish hardware register errors from
-item registration failures according to further improved commit messages?
+Based on results from:
+    git grep seq_puts.*\"\"
 
-Regards,
-Markus
+there is no such cases.
+
+
+>  And if it gets less than optimal, who cares?
+> 
+>> Could you do:
+>> 	size_t len = __builtin_strlen(s);
+>> 	if (!__builtin_constant_p(len))
+>> 		__seq_puts(m, s);
+>> 	else switch (len){
+>> 	case 0: break;
+>> 	case 1: seq_putc(m, s[0]);
+
+missing break;
+
+>> 	default: seq_write(m, s, len);
+>> 	}
+> 
+> Umm...  That's probably OK, but I wonder how useful would that
+> be...
+> 
+
+Thanks all for your feedback.
+
+I'll send a v2.
+
+CJ
+
+> 
+
