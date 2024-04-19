@@ -1,108 +1,95 @@
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BDA3A1CF;
-	Fri, 19 Apr 2024 07:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3EFF9CD;
+	Fri, 19 Apr 2024 08:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713510092; cv=none; b=eokUwuJEm3QPTlZ5FGzBtz10f6nJRks9K/9qKiWTfW8CcVMt9kVa4D/2bNc9EyyprCPUZJXFgnHVMeGdSo3s2gRfi2byv6L64i+O2m+szltdpUlBZ4z9uuhlzW1IjZbHYcIVkD3A3UatowrjAdALwP8tlBOPDnjD2qds9dSTZGM=
+	t=1713516732; cv=none; b=rUoj1Q6CtKzw7IQHZQ54lUQMKwYuOTIkz8ajVZXz7506uEytwOFq3I86iAqwNBIRxImgWmLWpbupuuxsJk7Vg+THqZnhDS98fpQT0ViueL8SaZWQWbhg9E3YP9npOP2Z+LTCXFh2B9yYtRH+xua1SxcUNbTVGr7eXq8EwhS8aM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713510092; c=relaxed/simple;
-	bh=hu5M/GWI+6j5XlPD+m5U1EPsKsY/dPwRT5nX2i3eaNI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Y1bs3v04ENKt+nbtV3C8d7FLhiKjZJUtwtaS7ciIkVRfsrNzlpVT2v9YA99I5UlKmfQWSyFfsG3BsOFhC2sJEOyzKCRvuOdW5Uqhh58DnrKfkvxufA7h1DZ/ukIjGIG9cOK+/jPQ9OeGzlRonOySy4R3kJuWIhiqWN1bnJZlRfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=oCh4lCzC; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1713516732; c=relaxed/simple;
+	bh=FAJo6bXc6VfCCiKWl8JRXUx3bAnkujOQezd5Z/Gr+UI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Dhgw1zdX/0cw0w3moz0tCar9Yl0rxdGY3UOfjBs4+TWL/HpN3Xm9eS3ySNPjehWVUkyLf4KYhBfx4f0ZPHc4XHTKJvvmSeQTD0+9AaZ/FN28eFaPX3kCb+GPCup4D2Hs4gAwK8dUbJl2dn/GCR3jFA9bduCiW1owHbyas6Wh8Dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZOhAolNj; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="oCh4lCzC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZOhAolNj"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-418c0d83e61so18923075e9.3;
+        Fri, 19 Apr 2024 01:52:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=lZKIvqMY0yDjmj+RCqXjIQ/hqzgZ/plMeZWor4/tnHs=;
-  b=oCh4lCzCaB7R0QO/V04lwiVU73U/Zo2jCNbiyE/o/OC+QqodUUY3CPTy
-   BH2N4kJIVz14Et7EVqH0NVWjaRr6JlwQ0VzCydDxlB4AltgQCGkB4uabX
-   Vc7b+zr2HDtXO/bV4H7uZggCl5IKCUhOWxQ9e61p9P2VTxiZJn3o/J98E
-   4=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.07,213,1708383600"; 
-   d="scan'208";a="85211701"
-Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2024 09:01:22 +0200
-Date: Fri, 19 Apr 2024 09:01:21 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Markus Elfring <Markus.Elfring@web.de>
-cc: Julia Lawall <julia.lawall@inria.fr>, 
-    Ricardo Ribalda <ribalda@chromium.org>, Denis Efremov <efremov@linux.com>, 
-    Nicolas Palix <nicolas.palix@imag.fr>, cocci@inria.fr, 
-    kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [cocci] [PATCH] coccinelle: misc: minmax: Suppress reports for
- err returns
-In-Reply-To: <f1f47166-00d7-49f3-9b80-34aa7b7b5510@web.de>
-Message-ID: <1530259-fe0-eb35-6f8a-58f272adef5@inria.fr>
-References: <20240415-minimax-v1-1-5feb20d66a79@chromium.org> <alpine.DEB.2.22.394.2404182255010.3213@hadrien> <f1f47166-00d7-49f3-9b80-34aa7b7b5510@web.de>
+        d=gmail.com; s=20230601; t=1713516729; x=1714121529; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y5LGjb2F9FFTJBbYNZWOBJ7u8v0HHb3dxA+L9Lp5Uwo=;
+        b=ZOhAolNjNttFl9B6WMlNywyEkQzg1kQebqY4Ngjb9zRfOhiGyASYvl1t/z9axw08SI
+         etSBgDYVKKeHfKFcRAPawMvFzTpq+jiBGOWMd6PvQrgKgMJ7lGPXRtkaunXxIvzEyvxz
+         uAnkRsDcgB2jh5OMj8KfpOl9eaaZrCBxVKwKBVxnTpQP4qUBqorQMOU1MUZ9wqFov8C7
+         BG73ReFLExnKShRSi/jzwBPlSxFx3PBbTk/62IK9Dy+DWQIUtB+yIKA9QBZx00fC5SEi
+         tgkiPTqWxkZRg+TJKjy0121URr0WHL8fUgjSILaiUt10yXt1o9aLwZUIkYLk+05iSXqA
+         AUMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713516729; x=1714121529;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y5LGjb2F9FFTJBbYNZWOBJ7u8v0HHb3dxA+L9Lp5Uwo=;
+        b=eABLVPbrtcVeAVRXOsn3Nhkx7Vi4F6pRb5pvdt7XaTjfKtAyz5/3JF03HhB/syksXZ
+         npC1LxdTNyzGoBbMulWGeLY/WkIzoMPqtS4NVuIOzZ5YTMUiKgktfLIKpqJBc+sGs9uD
+         JgGO7crU4Qam6sVERM5zPQ11RPvC5hG4Lgzqe6ieJJCB+Y0i9g0JaKOAVH+eW4PDqoBh
+         tAtUXmffyMyMlLzf5ixgKsF6wDusGIAgw1olDdS8D37jd8ffiyk3LVN+ic8W1PADgpRD
+         xz8FYMxW2C5jmDjG6ES7q+91AWPYKRehVctMg0hC1ROgUCh6UQpZGDhviyZbPTFpuuDv
+         iPxA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6l2c9Yo6D59SM9HncYzDDk9k3rExMcIyI1rSCsh6xLcX0+w/DZZdWZJodPfkUfdXKP3bjsdNqTTcwNQEvCspZKMMtbTxnZeIlEfrN
+X-Gm-Message-State: AOJu0YzXJWhXExlAazsHPszHjiC8YUayHKozDppqPIELJ0Q3UuIlbv2j
+	ACzr8aLboIxRqRo5VK1GxOA04B3bOLee0ryUkFDPgUTNL2lD13NL
+X-Google-Smtp-Source: AGHT+IFAVjENaP6mjBDpze9INfmCIbwyjNdRH9Jc2GJLrSjfn8Trae1QHtNdTtuEVFDzpvWL1+KVvw==
+X-Received: by 2002:adf:f085:0:b0:348:104c:c105 with SMTP id n5-20020adff085000000b00348104cc105mr1072630wro.46.1713516728513;
+        Fri, 19 Apr 2024 01:52:08 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id h15-20020a05600c350f00b00418d68df226sm6373876wmq.0.2024.04.19.01.52.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Apr 2024 01:52:07 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Baoquan He <bhe@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>,
+	Dave Young <dyoung@redhat.com>,
+	kexec@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] crash: Fix spelling mistake: "crahskernel" -> "crashkernel"
+Date: Fri, 19 Apr 2024 09:52:06 +0100
+Message-Id: <20240419085206.888416-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-533158061-1713510082=:3432"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+There is a spelling mistake in a pr_warn message. Fix it.
 
---8323329-533158061-1713510082=:3432
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ kernel/crash_reserve.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
+index 5b2722a93a48..7c87b5efcc81 100644
+--- a/kernel/crash_reserve.c
++++ b/kernel/crash_reserve.c
+@@ -132,7 +132,7 @@ static int __init parse_crashkernel_mem(char *cmdline,
+ 			cur++;
+ 			*crash_base = memparse(cur, &tmp);
+ 			if (cur == tmp) {
+-				pr_warn("crahskernel: Memory value expected after '@'\n");
++				pr_warn("crashkernel: Memory value expected after '@'\n");
+ 				return -EINVAL;
+ 			}
+ 		}
+-- 
+2.39.2
 
-
-On Fri, 19 Apr 2024, Markus Elfring wrote:
-
-> >> Most of the people prefer:
-> >>
-> >> return ret < 0 ? ret: 0;
-> >>
-> >> than:
-> >>
-> >> return min(ret, 0);
-> >>
-> >> Let's tweak the cocci file to ignore those lines completely.
-> …
-> > Applied, thanks. (Coccinelle for-6.10 branch).
->
-> Was a planned code adjustment published?
-
-There is no "planned code adjustment" if there is no patch.
-
-I can check the dependencies again.
-
-julia
-
->
->
-> …
-> >> +++ b/scripts/coccinelle/misc/minmax.cocci
-> >> @@ -50,11 +50,26 @@ func(...)
-> >>  	...>
-> >>  }
-> >>
-> >> +// Ignore errcode returns.
-> >> +@errcode@
-> …
-> >> -// Don't generate patches for errcode returns.
-> >> -@errcode depends on patch@
-> …
->
-> How does such a change fit to the usability of the coccicheck operation modes
-> “context” and “org”?
->
-> Should dependencies be reconsidered any more for the desired consistency
-> of involved rules for scripts of the semantic patch language?
->
-> Regards,
-> Markus
->
---8323329-533158061-1713510082=:3432--
