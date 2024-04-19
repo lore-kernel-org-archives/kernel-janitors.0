@@ -1,111 +1,89 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AF7199E87;
-	Thu, 18 Apr 2024 21:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714437494;
+	Fri, 19 Apr 2024 05:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713477127; cv=none; b=EJWgM0kZt+UOZ7wgneZxheM0JEFIoPDMEeSnzGiyL4m9zBLrURhqYp4801HoVDzHjjhgrLXvO1KFXrsCb7ZfhgRDtRanbg3izSIUjIZ/7vxGJYulsPhAoiDiNhNvFFaoKjqy3/Q+WQe6dIQO9M2pQk+Mu3aQh3FnOKpYxUuQGMU=
+	t=1713505287; cv=none; b=c5nkRRaSIauR0Om3TtCK9RBXt2ZYuYRYrdv2XfF/fT8jCIeL+xjOpZkXGwz2GsQjB7qhEpH4MQUgH4lHnFLEFRPnrI881wKrYxuoVrF39Ddvgxz+x/O0wSKZHfFGDg6cHmB41rUkkpuvsvLuiWiXtLkq8oUJz0z6E+KexqaD9PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713477127; c=relaxed/simple;
-	bh=u9w0koOyrXHDNGQ2JZWlE7REzf/app2RdDcoENY+Es0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Iu60r6VSKoiT3WSpkxNacN6ryOZcq64sdAX9S67Jq8nHhck5Z4oJUGkXNbmrcamE4uC09nXfj+tvLvxHRXDpi8/LVRublgsBQ08zA/8L/C/P7R9ip6ikWr6T60laX2FWTUs63z5b0DyQ3Td+Pxb0cFQab44urKPweOSWrtlmXGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MIN38O6a; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1713505287; c=relaxed/simple;
+	bh=dxRSEz5EcO0H9V9Pir7Cuzg5aLS6zX2g3zh3ZnaYBRY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=FDhiU/Ril/q3Rzlno1xxItp+s3GshaxNhrIfdi8QnblVI0hyfWH/HK63TSQ/IAA0aZeIrrkzyl5r4CgO2zetyKcI+VNaKEY9w7WnEpuy82Om+kI3mpcNrnF4XGquYLDVdIAbP5pXulWVu6QqeyvzLAG99TL/FdT5NtDJW2/ERKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=fkzF8foB; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MIN38O6a"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-34a32ba1962so618685f8f.2;
-        Thu, 18 Apr 2024 14:52:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713477124; x=1714081924; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Sta3zja1Zn6ZMjwAn2JaaKTmw+SVa+2lRhvrmyccIk=;
-        b=MIN38O6aDrnBnRJMFYVVHBP85NIq+Vu3Oc/8Y4LZgCNXIS3En12JC8bosptGI1N1xn
-         YbrxYcl3eFRxJlQRj6n/Xhq59rNenMc/0owqDNvND48ZXpMwiO1qZwTG9rqQKhb5cGTU
-         iptXw/7hvjJAeByykFtZJmQc3YSP0EIZkI3let+4SgTQj0A7shaH7kcqN3BF4suJISoe
-         sx4OQg7VPfv0rokmRQAnBONU7LYajAs74PY+uXIBJwcGpg7mCr4Bj5dgW7YTQgna2bXo
-         06AY8kHOn4ZUVu624m6I16ZWY9794rYvYnKEpZt+ZefoYyaEi1V5aUFbfkm7LAWidnTn
-         swyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713477124; x=1714081924;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6Sta3zja1Zn6ZMjwAn2JaaKTmw+SVa+2lRhvrmyccIk=;
-        b=IWXjNdHOqYu0fw/q091iQRdXbZ8gy/JliaOIazv0qEErW89ejrebxci2x/OhqmGuec
-         ivPUVctHcNfMcc9LCxNPNOun7PPnAUNsyTtbeozmka14MnRXli6j5i2OyPqNqgzkSI38
-         nJo/FyHEIUcfEb+IPc4ii6B6IXFwHS2vMXpZDGSWChHfSEtXxhPdpAqlQnmgaQHAE2/b
-         Akgo/SoaWEsZNgSMrH2xmtC8iZLDs41CpbeyRU6kE3St82x920AAeocfimoDa+pP8a3s
-         j5g7rURDqBuP6p+1wGhyvBucCFmfOj1Y5uC20CYogzdw1PQBclVXkjA1FD0vwFoXPnsJ
-         yGgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqiYo7HD7+yvQsmvRy22B8GJqEDsbpkctu4qfhOqRz6RrQz8Py6oDu0nrexbyfXMCMXmBq+sSRAHp4xKsnWO2VzVz6VDmixfKc0dQgb4mhMSyRnRnbccoQ1C4XBIlpw1ZdCg6CACxUimHIuk+LQYhM3w==
-X-Gm-Message-State: AOJu0Yyw6UwtQhEGEwO1HUH4xoxTQNH1+TbOVVNovSiZe0tdelyPq4yU
-	D4oVeuTtLwAif3jOcmBi9TAqHu3jQ0f+lf96Jq5MvlNhkh6LWTle
-X-Google-Smtp-Source: AGHT+IFv9XBzkNI6IupVn5uohmdkzdVgv7d5DKKbgI47BgV163ty4NmTXEpfVAe6SByXBXkJHXB5Yg==
-X-Received: by 2002:adf:e60d:0:b0:34a:4f5a:ac20 with SMTP id p13-20020adfe60d000000b0034a4f5aac20mr93512wrm.11.1713477124029;
-        Thu, 18 Apr 2024 14:52:04 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id x12-20020adfdd8c000000b00349f139dbe4sm2767019wrl.91.2024.04.18.14.52.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Apr 2024 14:52:03 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
-	David E Box <david.e.box@intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	platform-driver-x86@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] platform/x86/intel/pmc: Fix PCH names in comments
-Date: Thu, 18 Apr 2024 22:52:02 +0100
-Message-Id: <20240418215202.879171-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fkzF8foB"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713505263; x=1714110063; i=markus.elfring@web.de;
+	bh=kAavMo0zT0MnjGzC6Vpu4OCbYey8NotUhupnbX9R08M=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=fkzF8foBx8/grg7hI21gs11g7sfyC1ETQwpvom97YiOx2C04hSSsmcQoImtbSt6M
+	 AOHtP24pcYbyqy21KCEBFmNZrzD0O8KLIYu/OL8MAr3VE9WIjgWPOw6JLUaZHyiEl
+	 Zh0ryIyaEx2bQHQZ3aCNl4txTVPiCIzZM+zgb+zE/BMN4YGIyUYUO+74PP9ZQWOZp
+	 4R1dbbo3NqbEanaVBioc06f7b/Ihe61icF3Yo32yDr1AIzlzz19G/R74CwbzI4Poo
+	 DR9BN2Rz2FHsLrso2DvUFJPzYfI15U8OR25GtA8/GMn+b3nXyc8PqxGfHHswujuX2
+	 hHD8w/w70BDC8YOYQw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MMpCS-1sGSpX2Hrw-00Iodt; Fri, 19
+ Apr 2024 07:41:03 +0200
+Message-ID: <405247be-09e9-4a2d-9363-93b5862fc615@web.de>
+Date: Fri, 19 Apr 2024 07:40:43 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Wander Lairson Costa <wander@redhat.com>, kunit-dev@googlegroups.com,
+ linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Brendan Higgins <brendan.higgins@linux.dev>, David Gow
+ <davidgow@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matti Vaittinen <mazziesaccount@gmail.com>,
+ Maxime Ripard <mripard@kernel.org>, Rae Moar <rmoar@google.com>,
+ Shuah Khan <skhan@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240418210236.194190-2-wander@redhat.com>
+Subject: Re: [PATCH v3 1/2] kunit: unregister the device on error
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240418210236.194190-2-wander@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:/detqtdc+F1ysEKuBRbVEjDKPuYX8yypEqNgRwClaU8w5xI0iV/
+ j94OaIuGK7iIETaDob4X7ivWKE4WkMywvNC6/iAtSWE3n+PyLoVWozxq7WqegA2JC0RH7f6
+ d0JplDAUwKKv0bcpBTZHxuQo5GsJ6VU4v4lSdygq4Uu6tfgJR5kRN0jWa/zRdmIP9Gndxee
+ fwjzZghoNg0Rit17kWyYQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:faEoMuu3f2A=;uSRy3bbRQp6ZsYIBxt02ZewLhkK
+ 89AoODOOFw6GOAujBoUoyoVZoBab9gfXx+c2CQeFDymkM2021ffh3Cpg4SX12QGAt8kCn0enH
+ c6DOY9NEPrh0hDlypP4ihw3kcElJaziHg7QwS3nA1fbA82d8JuI5gbunQUwJmKQCMGSr+Vm4f
+ BL3h2yOc6gs5mhRjo6KH5Fz4oR7ShKBVQZei0RD4/YEkiee2XY3N9eZ8sWRxpyMolMt8/TwWx
+ n10TspMr0lM8FnUU3Fbit5YcN54SgTdRb7Y2HvkV1RwknR3q7tG4TM80K9QAo7vqHZvU6kuda
+ OmbJyY6QpMhUjSvuUM/OxwJEPODf4u/nXQImZi9DVwSOOL98O+AOLLy/AePV3AgIKBOrAJRLJ
+ czuRf7ANMFaX6ubQd14SovGMxf13Hq26B36nMeb8JH6zwvJ+9WfkXoNPRx7En6e74H8P2i+lN
+ DS60Aep4Gkwobj7tCvWlE2IlUJcoUf10Vk2GVPaNS/r02FoBZrYHSLPhd26F2If/+P5aNBdPZ
+ hYaLZBop4OInQ3Mw7hH9tnSfdBd4hx6lWGScJExGPtOc2+mPRFXKZ5uzlNqWUv7MttrxJj1QK
+ +880eogH4nzY3HmpycnH+ALHqPpEq3nktIAfCf+MsApQ/j2fwEI38Ir/nAMJnNQ0PQSNYgsh3
+ UV82Z+osnrOLStciSXfad2i7QDd80s+JjbpDQBxexTEmwf6SJiDlaXbL71S3toY3PWz3UeEuV
+ NRXdtfdF2R45Vms7KbwuhgovGhjrU6WQQbJIL3xQz38zfT+gcuPhyhVCMDsHSJaTYecOoE2w+
+ Khyu0eMu4k3cYQBCFBut7NX+cYiFNEwIw6axbpY97OaUY=
 
-The PCH names in the pmc drivers are incorrect in the comments,
-fix these.
+> kunit_init_device() should unregister the device on bus register error,
+> but mistakenly it tries to unregister the bus.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/platform/x86/intel/pmc/arl.c | 2 +-
- drivers/platform/x86/intel/pmc/lnl.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Would the following description variant be more appropriate?
 
-diff --git a/drivers/platform/x86/intel/pmc/arl.c b/drivers/platform/x86/intel/pmc/arl.c
-index 34b4cd23bfe5..e10527c4e3e0 100644
---- a/drivers/platform/x86/intel/pmc/arl.c
-+++ b/drivers/platform/x86/intel/pmc/arl.c
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-  * This file contains platform specific structure definitions
-- * and init function used by Meteor Lake PCH.
-+ * and init function used by Arrow Lake PCH.
-  *
-  * Copyright (c) 2022, Intel Corporation.
-  * All Rights Reserved.
-diff --git a/drivers/platform/x86/intel/pmc/lnl.c b/drivers/platform/x86/intel/pmc/lnl.c
-index 068d72504683..ec89e7dda103 100644
---- a/drivers/platform/x86/intel/pmc/lnl.c
-+++ b/drivers/platform/x86/intel/pmc/lnl.c
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-  * This file contains platform specific structure definitions
-- * and init function used by Meteor Lake PCH.
-+ * and init function used by Lunar Lake PCH.
-  *
-  * Copyright (c) 2022, Intel Corporation.
-  * All Rights Reserved.
--- 
-2.39.2
+   kunit_init_device() should unregister the device on bus registration error.
+   But it mistakenly tries to unregister the bus.
 
+
+Regards,
+Markus
