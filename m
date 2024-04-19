@@ -1,48 +1,40 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F7E12D76E;
-	Fri, 19 Apr 2024 15:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A92130A5B;
+	Fri, 19 Apr 2024 16:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713539380; cv=none; b=lHH5KIamlGoxx60R4NH4fCkATCdo3p1LBu55AM3FjUzDeFf2eT077BSUaI6eYA5rF0KAU/+7gsKF0MTrFn/qNBwIsKnKCkn5eC7+2tk2sOVNSuKu95fpZkOSRm/dP6axb7Np7oa/X+QR5EIr4wYsB96gvh+2Ye7OKjW4xohJWCs=
+	t=1713543521; cv=none; b=SkkR65gDiN8aoBPTNwMGNevkyciu/ON5A4bTAVabxPcMtLxP7nMnLdQSMhqc4sb5VeBNiUj588YpBLHru0CFJiULYQttzEtQLsTQ7QleRUReYJVVdb95x/Vj5DXpF+ElLZzOAltPAWTVwY9B9jeIbbY5PoFFl9quFcSrFiEE7FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713539380; c=relaxed/simple;
-	bh=Ai9vvd25xbI32P9Xuhu2sj+HcwENCVnunu370YRHYH8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XQcK65er94Bb2GOLmUo1am4mlHnb5uQn5JJH6GkfYxELcIbIv++jRmlkebYr1Mam5k7WP42qNuUOFEPHpEn9he+jGUpR1o/RoKCvfkG3C6FhdxhUZpF7Pt3faK/tlhLqdLJG80woEiYqg/Hbb86VQ8w1H63RfucmlLYjPAZYUrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GwY54oRW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1713543521; c=relaxed/simple;
+	bh=d5n73mg0TsW5GuosMrClZ4WiLXJso87FcN0NbBIHvS4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=bg+iT/TQzxNLGwDBbxRJFueC9gPb9GD938qV+m3MLjJL4KWG2IaHPUfZSufF6EqFIfWT1S+mt5XCHoQhCUvTRo55c6L3a8l23dmLR0hZ0WShc2PwfRp64U5VZcdmKh8TKo39/HuKzwr4fXOqH9Ij23tezOocX0JJ+zieKkNtRus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=O8L8D7FD; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GwY54oRW"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 43JDggXX025508;
-	Fri, 19 Apr 2024 15:09:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=9Wo8SmDNArByT9MfsI6PAGKm5TIESVSuSSafxP6REhs=; b=Gw
-	Y54oRWvDGd22r7sN4dDr70BSS6ZuTzpeHt8tZSLRSyvB0AqgvKpVP7UWQS2RKnh6
-	zMOA8nzYNulnCtu+m1Gj/Qw3zGnUNemcUDqtZdnBsyW+cuI9nUuFH8JCvzjgC1XT
-	uJNJt3bJONyZKzkOV5V2pM5vQjgWWTRn9iR+7tLJvfxUHXRqQb1kythLwUFAZ5c9
-	b9oOVF1/6B76zSAwScJ84088I6LdIula+tngT0aGUb+WoIaNJ7XdxJXVy06MpFj7
-	Em0Y0t2yD76wlwgpvN6kCz3dtCmUu2TqZ3uwHae8uxk3tUyUeKtU0whc0UUJrwj3
-	aQL28/Ip7Onba68fL6rg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xk9s7a51f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 19 Apr 2024 15:09:27 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43JF9QpM020996
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 19 Apr 2024 15:09:26 GMT
-Received: from [10.110.56.161] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 19 Apr
- 2024 08:09:25 -0700
-Message-ID: <a4c2cb8c-dd80-457f-82b5-2eb58a9b55b5@quicinc.com>
-Date: Fri, 19 Apr 2024 08:09:24 -0700
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="O8L8D7FD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713543503; x=1714148303; i=markus.elfring@web.de;
+	bh=cp7wx4staeqTlQLIoJHFIJDuZ7q4wbooJhXwZ3E13aI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=O8L8D7FDvRzDbQx8Uv7WkfIulajzVOibFPeUxPDc6Xs2LXI4t1algojKdWOz2YHy
+	 1eTWEDvYcWXwM1UCsco8RPjsUsv+9tR2X/wu0s+7XQ1sd/ZMYmoNFh5hVNcCVqeyJ
+	 s/p9VaWAyXAetjaXLMfUB0YlS44SZHk8VBcEDQLfU6S0/FRWAsFarlIL3dXfPmN/1
+	 UT3CJAbBoNAio01TVgky9ssXyl2Dxv7iO8y2VFtXP0mCTHN03SDqrOsBzIIA7nJvS
+	 PRVUTPW2F3tQEgsO6XjetSf1hvsy7/YvFb2HvsbV/guLM+y7Igz37mZZAK1BPCDHx
+	 MBqAzwXwa6TCKaEqUg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MXGOI-1sDsxt1yZS-00YjnS; Fri, 19
+ Apr 2024 18:18:23 +0200
+Message-ID: <4dd9babe-1e4d-46d9-b3dc-cc8978e74e5f@web.de>
+Date: Fri, 19 Apr 2024 18:18:22 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,89 +42,49 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH wireless] wifi: ath10k: Fix an error code problem in
- ath10k_dbg_sta_write_peer_debug_trigger()
-Content-Language: en-US
-To: Su Hui <suhui@nfschina.com>, <kvalo@kernel.org>, <jjohnson@kernel.org>,
-        <nathan@kernel.org>, <ndesaulniers@google.com>, <morbo@google.com>,
-        <justinstitt@google.com>
-CC: <c_mkenna@qti.qualcomm.com>, <linux-wireless@vger.kernel.org>,
-        <ath10k@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <llvm@lists.linux.dev>, <kernel-janitors@vger.kernel.org>
-References: <20240417081736.2226586-1-suhui@nfschina.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240417081736.2226586-1-suhui@nfschina.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rJl189pniCvvvdIHyH8iJmr6ShUY7FCy
-X-Proofpoint-ORIG-GUID: rJl189pniCvvvdIHyH8iJmr6ShUY7FCy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-19_10,2024-04-19_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
- phishscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
- impostorscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
- bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2404010003 definitions=main-2404190114
+To: Wander Lairson Costa <wander@redhat.com>, kunit-dev@googlegroups.com,
+ linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Brendan Higgins <brendan.higgins@linux.dev>, David Gow
+ <davidgow@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matti Vaittinen <mazziesaccount@gmail.com>,
+ Maxime Ripard <mripard@kernel.org>, Rae Moar <rmoar@google.com>,
+ Shuah Khan <skhan@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240419132504.9488-1-wander@redhat.com>
+Subject: Re: [PATCH v4 0/2] kunit: fix minor error path mistakes
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240419132504.9488-1-wander@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:dZ1kl0cheQ9TcwOAvAzY8L/APqrmRjRzbU5lO0gAxDHka065H8N
+ jaOTnJd72niJ6S/+s763D3sNhi3yfHXE2vALXIkKhaC6OW9GtLyA507HEEILJuDrQBnfPyH
+ WCdA25Y5nnpALcb3Xe8hxui96dWz3pqQ1xZroX+wjBQ+LDCfueLlq+gzfeSJm9RXc+n+33o
+ dFMuJ+/lPohZnkYYJq/xQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2XhgTCe4k7s=;H2Vad0xjTrY2+MTRzxpgG+Hi6Tt
+ RukFgRsyr5MMsS/DW9DZkbkG+glCdye7rzl2Bj9T2/jGLrmIOvBRqd+3DZDRb9DxsXDutwjG6
+ 4leCNG4FwnsPGKTnkcOK9fTkYZSl/cY18Kk6GAP/cHDoSYRU7NLz9+rrPshf3hE+ZlukL0A99
+ xRZRwH1Y2KrkI2U0BkPw7yox3ae7JBiKcpbFpefuTAt0ejo67SW7Gc5FZeurCpxa+7IY7ZuSA
+ 4xxcjs5n3hspeD4a1Dv04J8rMlriYpG778RcAknu661W5gHUAYFYhosi/vvp0kP5iiKjHJ7L/
+ P0MyGUcCb+ChAB759btrRTigx3vM9QWictiymqrDKAMQ3yXMpIsntjBE/7WcZki+45NWx0hZT
+ K6GeTi/uqPBPPAQTos9yf7VZrjP5biuhlL/4Ho59KzMNIU0iXhU8tV+q0mwPstZNA1+Xl2K0N
+ JpKRxPTaE3v1VOU+beg6Xb74fAd5ms20ehEMIO13AY5CLsyAJn5o9kd7OEaSXZaZU96Hfo/aZ
+ maOStfC0x7ljsgSI88HgbKSlRS9Ephv8CANBpTsqSTocXEELgNW8c8ptAmoFwWZnTWU6mH6RP
+ zJJurdqJX52FrdKRYh5MvhaKINIuvD2A4B7aX37P4k/H0DfXfpAvWmbYdO+N8caQbzTWz53ky
+ 7ysAfGFZ9jsyOTE6lhQxx7iL9aIe/Ya4JJ8BWvnfliMh6BdiC7cb9Q/RPOPyQvFgkJm7Ms93r
+ O4c0IA5HLELgzXCnFmxR4n7onhe6/wTmDVC/3x1l3o1p5ksPYanvsIYA1eb3oRduHBaognZa1
+ u/bB0lyz03QMtDvI98B2cPNx9BD2Sdo9kHOIldYI8O4Sc=
 
-On 4/17/2024 1:17 AM, Su Hui wrote:
-> Clang Static Checker (scan-build) Warning:
-> drivers/net/wireless/ath/ath10k/debugfs_sta.c:line 429, column 3
-> Value stored to 'ret' is never read.
-> 
-> Return 'ret' rather than 'count' when 'ret' stores an error code.
-> By the way, remove some useless code.
-> 
-> Fixes: ee8b08a1be82 ("ath10k: add debugfs support to get per peer tids log via tracing")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  drivers/net/wireless/ath/ath10k/debugfs_sta.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath10k/debugfs_sta.c b/drivers/net/wireless/ath/ath10k/debugfs_sta.c
-> index 394bf3c32abf..5525dabe390a 100644
-> --- a/drivers/net/wireless/ath/ath10k/debugfs_sta.c
-> +++ b/drivers/net/wireless/ath/ath10k/debugfs_sta.c
-> @@ -415,7 +415,7 @@ ath10k_dbg_sta_write_peer_debug_trigger(struct file *file,
->  	struct ath10k_sta *arsta = (struct ath10k_sta *)sta->drv_priv;
->  	struct ath10k *ar = arsta->arvif->ar;
->  	u8 peer_debug_trigger;
-> -	int ret;
-> +	int ret = 0;
+=E2=80=A6
+> * Remove some changes requested by Marcus Elfring,
 
-this is unnecessary since this will be written in all paths that lead to the
-return that reads it
+I became curious how affected software components can evolve further.
 
->  
->  	if (kstrtou8_from_user(user_buf, count, 0, &peer_debug_trigger))
->  		return -EINVAL;
-> @@ -432,14 +432,12 @@ ath10k_dbg_sta_write_peer_debug_trigger(struct file *file,
->  
->  	ret = ath10k_wmi_peer_set_param(ar, arsta->arvif->vdev_id, sta->addr,
->  					ar->wmi.peer_param->debug, peer_debug_trigger);
-> -	if (ret) {
-> +	if (ret)
->  		ath10k_warn(ar, "failed to set param to trigger peer tid logs for station ret: %d\n",
->  			    ret);
-> -		goto out;
-> -	}
->  out:
->  	mutex_unlock(&ar->conf_mutex);
-> -	return count;
-> +	return ret ?: count;
->  }
->  
->  static const struct file_operations fops_peer_debug_trigger = {
 
-I'd suggest as an alternate solution that this function is a good candidate
-for the the cleanup.h functionality. By scoping the mutex_lock() you can
-simply return at each error location, and remove the explicit mutex_unlock().
+>   as I was alerted he is a known troll.
 
-But I'd accept this with the initializer change removed as well since I don't
-think ath10k has any cleanup.h usages yet.
+I would appreciate if this interpretation will be reconsidered somehow.
 
-/jeff
+Regards,
+Markus
