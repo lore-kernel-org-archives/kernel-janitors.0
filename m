@@ -1,89 +1,79 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714437494;
-	Fri, 19 Apr 2024 05:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F077C121;
+	Fri, 19 Apr 2024 06:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713505287; cv=none; b=c5nkRRaSIauR0Om3TtCK9RBXt2ZYuYRYrdv2XfF/fT8jCIeL+xjOpZkXGwz2GsQjB7qhEpH4MQUgH4lHnFLEFRPnrI881wKrYxuoVrF39Ddvgxz+x/O0wSKZHfFGDg6cHmB41rUkkpuvsvLuiWiXtLkq8oUJz0z6E+KexqaD9PE=
+	t=1713506828; cv=none; b=kxD5dF4zadK8qUOoebkK4rmt+XDhqpCy903NwFRodDd4rQO1hbGh0sSsF/SV7pVEjg548UJYb6qfDwmOwJGz9EZ1VZqJyni7iwQ9RgCUJ4hWv8LyeKzFM4IweWdOJMVBwZRxSCQaf7+UhQHclDzUY/za3WXBgsZ6gVAKW6HjBEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713505287; c=relaxed/simple;
-	bh=dxRSEz5EcO0H9V9Pir7Cuzg5aLS6zX2g3zh3ZnaYBRY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=FDhiU/Ril/q3Rzlno1xxItp+s3GshaxNhrIfdi8QnblVI0hyfWH/HK63TSQ/IAA0aZeIrrkzyl5r4CgO2zetyKcI+VNaKEY9w7WnEpuy82Om+kI3mpcNrnF4XGquYLDVdIAbP5pXulWVu6QqeyvzLAG99TL/FdT5NtDJW2/ERKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=fkzF8foB; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713506828; c=relaxed/simple;
+	bh=q/7us5n3dTmlIJdrg9CFZY9TJi5va1SRXgR2lP4H0mY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QErT8QvQ+5Ul7XRg7jmhlZS4glxBy2XJMN1ThSNIhnGVkEskMyamzAX3T9l9eKqo7iYmt4yFieBC2R78L2dfWZ19092IarjYGRy0C2+LTv5cTDFbzN44qDR0hmFPeyThnAViz0HqyHjPCtI5p8FaDom+XkYMzwE20YdA7EZT+zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WNlDWGD6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fkzF8foB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713505263; x=1714110063; i=markus.elfring@web.de;
-	bh=kAavMo0zT0MnjGzC6Vpu4OCbYey8NotUhupnbX9R08M=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=fkzF8foBx8/grg7hI21gs11g7sfyC1ETQwpvom97YiOx2C04hSSsmcQoImtbSt6M
-	 AOHtP24pcYbyqy21KCEBFmNZrzD0O8KLIYu/OL8MAr3VE9WIjgWPOw6JLUaZHyiEl
-	 Zh0ryIyaEx2bQHQZ3aCNl4txTVPiCIzZM+zgb+zE/BMN4YGIyUYUO+74PP9ZQWOZp
-	 4R1dbbo3NqbEanaVBioc06f7b/Ihe61icF3Yo32yDr1AIzlzz19G/R74CwbzI4Poo
-	 DR9BN2Rz2FHsLrso2DvUFJPzYfI15U8OR25GtA8/GMn+b3nXyc8PqxGfHHswujuX2
-	 hHD8w/w70BDC8YOYQw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MMpCS-1sGSpX2Hrw-00Iodt; Fri, 19
- Apr 2024 07:41:03 +0200
-Message-ID: <405247be-09e9-4a2d-9363-93b5862fc615@web.de>
-Date: Fri, 19 Apr 2024 07:40:43 +0200
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WNlDWGD6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66657C072AA;
+	Fri, 19 Apr 2024 06:07:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1713506827;
+	bh=q/7us5n3dTmlIJdrg9CFZY9TJi5va1SRXgR2lP4H0mY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WNlDWGD6iNGT6PbaoXLOdz2U8frQN5uu+XH9/a305fwMcZ+YW6LM3StUJal4BnEsl
+	 zurirrLPoWLcU45cp9pIVZstKy3XZ1WNko1G5WY5kqKfkFKmVwb5mZUAHdKUO9CrL8
+	 wXrxf31NkhOdV5NLXji5TSN0G3sgcA75CnCaVXXM=
+Date: Fri, 19 Apr 2024 08:07:04 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Wander Lairson Costa <wander@redhat.com>, kunit-dev@googlegroups.com,
+	linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>, Rae Moar <rmoar@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] kunit: unregister the device on error
+Message-ID: <2024041949-print-cried-85fd@gregkh>
+References: <20240418210236.194190-2-wander@redhat.com>
+ <405247be-09e9-4a2d-9363-93b5862fc615@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Wander Lairson Costa <wander@redhat.com>, kunit-dev@googlegroups.com,
- linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Brendan Higgins <brendan.higgins@linux.dev>, David Gow
- <davidgow@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Matti Vaittinen <mazziesaccount@gmail.com>,
- Maxime Ripard <mripard@kernel.org>, Rae Moar <rmoar@google.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240418210236.194190-2-wander@redhat.com>
-Subject: Re: [PATCH v3 1/2] kunit: unregister the device on error
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240418210236.194190-2-wander@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:/detqtdc+F1ysEKuBRbVEjDKPuYX8yypEqNgRwClaU8w5xI0iV/
- j94OaIuGK7iIETaDob4X7ivWKE4WkMywvNC6/iAtSWE3n+PyLoVWozxq7WqegA2JC0RH7f6
- d0JplDAUwKKv0bcpBTZHxuQo5GsJ6VU4v4lSdygq4Uu6tfgJR5kRN0jWa/zRdmIP9Gndxee
- fwjzZghoNg0Rit17kWyYQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:faEoMuu3f2A=;uSRy3bbRQp6ZsYIBxt02ZewLhkK
- 89AoODOOFw6GOAujBoUoyoVZoBab9gfXx+c2CQeFDymkM2021ffh3Cpg4SX12QGAt8kCn0enH
- c6DOY9NEPrh0hDlypP4ihw3kcElJaziHg7QwS3nA1fbA82d8JuI5gbunQUwJmKQCMGSr+Vm4f
- BL3h2yOc6gs5mhRjo6KH5Fz4oR7ShKBVQZei0RD4/YEkiee2XY3N9eZ8sWRxpyMolMt8/TwWx
- n10TspMr0lM8FnUU3Fbit5YcN54SgTdRb7Y2HvkV1RwknR3q7tG4TM80K9QAo7vqHZvU6kuda
- OmbJyY6QpMhUjSvuUM/OxwJEPODf4u/nXQImZi9DVwSOOL98O+AOLLy/AePV3AgIKBOrAJRLJ
- czuRf7ANMFaX6ubQd14SovGMxf13Hq26B36nMeb8JH6zwvJ+9WfkXoNPRx7En6e74H8P2i+lN
- DS60Aep4Gkwobj7tCvWlE2IlUJcoUf10Vk2GVPaNS/r02FoBZrYHSLPhd26F2If/+P5aNBdPZ
- hYaLZBop4OInQ3Mw7hH9tnSfdBd4hx6lWGScJExGPtOc2+mPRFXKZ5uzlNqWUv7MttrxJj1QK
- +880eogH4nzY3HmpycnH+ALHqPpEq3nktIAfCf+MsApQ/j2fwEI38Ir/nAMJnNQ0PQSNYgsh3
- UV82Z+osnrOLStciSXfad2i7QDd80s+JjbpDQBxexTEmwf6SJiDlaXbL71S3toY3PWz3UeEuV
- NRXdtfdF2R45Vms7KbwuhgovGhjrU6WQQbJIL3xQz38zfT+gcuPhyhVCMDsHSJaTYecOoE2w+
- Khyu0eMu4k3cYQBCFBut7NX+cYiFNEwIw6axbpY97OaUY=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <405247be-09e9-4a2d-9363-93b5862fc615@web.de>
 
-> kunit_init_device() should unregister the device on bus register error,
-> but mistakenly it tries to unregister the bus.
+On Fri, Apr 19, 2024 at 07:40:43AM +0200, Markus Elfring wrote:
+> > kunit_init_device() should unregister the device on bus register error,
+> > but mistakenly it tries to unregister the bus.
+> 
+> Would the following description variant be more appropriate?
+> 
+>    kunit_init_device() should unregister the device on bus registration error.
+>    But it mistakenly tries to unregister the bus.
 
-Would the following description variant be more appropriate?
+Hi,
 
-   kunit_init_device() should unregister the device on bus registration error.
-   But it mistakenly tries to unregister the bus.
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
 
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
 
-Regards,
-Markus
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
+
+thanks,
+
+greg k-h's patch email bot
