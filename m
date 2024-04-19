@@ -1,39 +1,48 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BA612F378;
-	Fri, 19 Apr 2024 14:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F7E12D76E;
+	Fri, 19 Apr 2024 15:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713535754; cv=none; b=KrZ5O5CgFf9EuGXfMIfA5FRJdYI26a4yMLo4pM+Gp4IISdZABIQ+kHvsTs3/d6d6+jmOinKCe9P2qLAper4gT5+bH6o/6a//aXY4vloSDOYcsMRsM878ip2kvbDvDsZNbH5lHk/cHJHDZsI5qHvuRlo4sXTrjZ7hkC0TRC13KGQ=
+	t=1713539380; cv=none; b=lHH5KIamlGoxx60R4NH4fCkATCdo3p1LBu55AM3FjUzDeFf2eT077BSUaI6eYA5rF0KAU/+7gsKF0MTrFn/qNBwIsKnKCkn5eC7+2tk2sOVNSuKu95fpZkOSRm/dP6axb7Np7oa/X+QR5EIr4wYsB96gvh+2Ye7OKjW4xohJWCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713535754; c=relaxed/simple;
-	bh=lykCOLKqJjRDe+8Set3BA8BLXqNMhZRHNwizcwwY1R8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=ubsQzStFZtMGG3SdXh1jWiYmzLexQJSPJTU/NCxmwT4yEjW6MQ3vftUfvxNZm5BxuMyuiwg4cq6ykzOrz2uMkkC6XczYRGBvwgY7oJyMXWec8SYMVMlTM2NHvCkebFPjAoVkUG0OqQ4vZ60BlGDbVxrUTgItRJjlXu6H33UFqX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BXrL+qy7; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713539380; c=relaxed/simple;
+	bh=Ai9vvd25xbI32P9Xuhu2sj+HcwENCVnunu370YRHYH8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XQcK65er94Bb2GOLmUo1am4mlHnb5uQn5JJH6GkfYxELcIbIv++jRmlkebYr1Mam5k7WP42qNuUOFEPHpEn9he+jGUpR1o/RoKCvfkG3C6FhdxhUZpF7Pt3faK/tlhLqdLJG80woEiYqg/Hbb86VQ8w1H63RfucmlLYjPAZYUrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GwY54oRW; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BXrL+qy7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713535720; x=1714140520; i=markus.elfring@web.de;
-	bh=lAS9mTVpLnalSm5EePWLAsejXsUvIKNzzANCk7Zyh88=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=BXrL+qy7fKZKSy7vXMNGYc7EmhjKtAJ5OjAQginqikx1Pp94g+yz7C0WAZW9POva
-	 Phxn9z46+j3Trvz4xkZp/TchUKQBgINAmCUBTZB+BL6CUaMbReuXDBfAYww1gAvQi
-	 vikPRSBVxbCDVZ0Yo9nXMUkFSOQxukR69hLSZ1zsEzsJv6FPZKVuIs5xifpuhx1HJ
-	 8YMZ1EuE2YG1fzH0RtxH9ZAOxUW8w3MI6gy42wSOvh9a09uId+uKykhFOI2qelq65
-	 KucGTGQtZjtz/vvI6G7xgUMt/zpB1E0RvYkOoIHqnPUNmTGmFJG+xWTuUNyH6XXQl
-	 fQakCVTh9NuX0nmHNw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mo6O7-1sUcQV2IAN-00mvrD; Fri, 19
- Apr 2024 16:08:40 +0200
-Message-ID: <4cff158d-b5ac-4dca-9fbb-626237c1eafe@web.de>
-Date: Fri, 19 Apr 2024 16:08:33 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GwY54oRW"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 43JDggXX025508;
+	Fri, 19 Apr 2024 15:09:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=9Wo8SmDNArByT9MfsI6PAGKm5TIESVSuSSafxP6REhs=; b=Gw
+	Y54oRWvDGd22r7sN4dDr70BSS6ZuTzpeHt8tZSLRSyvB0AqgvKpVP7UWQS2RKnh6
+	zMOA8nzYNulnCtu+m1Gj/Qw3zGnUNemcUDqtZdnBsyW+cuI9nUuFH8JCvzjgC1XT
+	uJNJt3bJONyZKzkOV5V2pM5vQjgWWTRn9iR+7tLJvfxUHXRqQb1kythLwUFAZ5c9
+	b9oOVF1/6B76zSAwScJ84088I6LdIula+tngT0aGUb+WoIaNJ7XdxJXVy06MpFj7
+	Em0Y0t2yD76wlwgpvN6kCz3dtCmUu2TqZ3uwHae8uxk3tUyUeKtU0whc0UUJrwj3
+	aQL28/Ip7Onba68fL6rg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xk9s7a51f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Apr 2024 15:09:27 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43JF9QpM020996
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Apr 2024 15:09:26 GMT
+Received: from [10.110.56.161] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 19 Apr
+ 2024 08:09:25 -0700
+Message-ID: <a4c2cb8c-dd80-457f-82b5-2eb58a9b55b5@quicinc.com>
+Date: Fri, 19 Apr 2024 08:09:24 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,69 +50,89 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, "Aneesh Kumar K.V"
- <aneesh.kumar@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Haren Myneni <haren@linux.ibm.com>, Jakub Kicinski <kuba@kernel.org>,
- Michael Ellerman <mpe@ellerman.id.au>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Nicholas Piggin <npiggin@gmail.com>, Nick Child <nnac123@linux.ibm.com>,
- Paolo Abeni <pabeni@redhat.com>, Rick Lindsley <ricklind@linux.ibm.com>,
- Thomas Falcon <tlfalcon@linux.ibm.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] ibmvnic: Use -EBUSY in __ibmvnic_reset()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:wHaYprIvoklgpYvLAHaNj+zV2sUobvP/1+QGxB/jpFxwfLQ3/qn
- 32vCTsyWO3nPL2VCwhbpCMJR8j7UPW1FscxEpo8oGbSL/aAgV/PX6Vpr+VEtuUd39Fl9Wwi
- C04dNziBBise3+TfaEabuRF7AP8kexSpDRo+9sw4iZ7FlHoVp7pytc0thcBAO/GXLQfi2ot
- HsTWBbbb3UTXqwH16qzxw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:J02Z7QBpCOg=;z+trVArPa8/FGsp1KNJLJcillff
- hRcWIsH8BcyVEgycHUM44aOJtRmtzAwN6ouXaz79v3pTmbM9d7GSKWrRZ6wnWy6i+vKj0djKA
- mU+vnmEikbKvaQBqUWsRZzp1MQxOLxf9psQ01whhYma8tGSY7u92a50OvXBn1IlRsngOvttjY
- qBUZP7pjSVzwwhd3h5QEpCyYQjDC3yDZbs32q8+6WrY7LJcSy7MoDCugO+FpXK/445fvX0Wv5
- 2qc1FLNzJac7LHzXbyXOSf6AC54e03yo3XF6qf0YXl1xswPXZQ9D/tt/a8upC9tzNlGm30GxY
- zmJLGtljbL+2GCEzBazjBrhIMvYfEMhTMEury3fLz/7Cef/6VJaNEkTf1H7PfxNMwmxrCSWAN
- SKexmvUTmcZt233uMeQcGmc5S3BroHa9QxNTKot1ydzi6RdYzJxnuv/5DJN8UFa1T3IFXTyyX
- aksxT0fyEwkmLDaB0MRhIhhsYteo88NDd2hIJS9LER0OsRgK0J0HSy0lWELkQmF1NNmxNUSGS
- umUOZ7XUzok6jX+BtbH7DAVIHqgy/IyLQXqBcThg6uHSizSVvXWpbqbztrVByJ1mCyz0bYHWi
- AtAIYC8SQS5xVRj5E33RR/+BT3xkqVBZSvioSSa25LrG2MHLROt0CAPteRYW0nnZAZHDeZVzN
- 8WfcVE+jXneHVHX9SGaL5GEHcFNxv6jK1W5TUTD8uqrFnuyRMg81483evRi2wy48cRdUjrbh7
- NW6pVBHGE6UvKCOYRhyE6xE2mjRUg20S+N3bC0houl+NYlZy9c5Gv9/oRUIrvK/w3mR3+VXbs
- CyioRbpVKMsnV52g2zH3aKGPSwPO3629RXSYANKTwAWbE=
+Subject: Re: [PATCH wireless] wifi: ath10k: Fix an error code problem in
+ ath10k_dbg_sta_write_peer_debug_trigger()
+Content-Language: en-US
+To: Su Hui <suhui@nfschina.com>, <kvalo@kernel.org>, <jjohnson@kernel.org>,
+        <nathan@kernel.org>, <ndesaulniers@google.com>, <morbo@google.com>,
+        <justinstitt@google.com>
+CC: <c_mkenna@qti.qualcomm.com>, <linux-wireless@vger.kernel.org>,
+        <ath10k@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <llvm@lists.linux.dev>, <kernel-janitors@vger.kernel.org>
+References: <20240417081736.2226586-1-suhui@nfschina.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240417081736.2226586-1-suhui@nfschina.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: rJl189pniCvvvdIHyH8iJmr6ShUY7FCy
+X-Proofpoint-ORIG-GUID: rJl189pniCvvvdIHyH8iJmr6ShUY7FCy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-19_10,2024-04-19_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
+ phishscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
+ impostorscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2404190114
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 Apr 2024 15:46:17 +0200
+On 4/17/2024 1:17 AM, Su Hui wrote:
+> Clang Static Checker (scan-build) Warning:
+> drivers/net/wireless/ath/ath10k/debugfs_sta.c:line 429, column 3
+> Value stored to 'ret' is never read.
+> 
+> Return 'ret' rather than 'count' when 'ret' stores an error code.
+> By the way, remove some useless code.
+> 
+> Fixes: ee8b08a1be82 ("ath10k: add debugfs support to get per peer tids log via tracing")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+>  drivers/net/wireless/ath/ath10k/debugfs_sta.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/ath/ath10k/debugfs_sta.c b/drivers/net/wireless/ath/ath10k/debugfs_sta.c
+> index 394bf3c32abf..5525dabe390a 100644
+> --- a/drivers/net/wireless/ath/ath10k/debugfs_sta.c
+> +++ b/drivers/net/wireless/ath/ath10k/debugfs_sta.c
+> @@ -415,7 +415,7 @@ ath10k_dbg_sta_write_peer_debug_trigger(struct file *file,
+>  	struct ath10k_sta *arsta = (struct ath10k_sta *)sta->drv_priv;
+>  	struct ath10k *ar = arsta->arvif->ar;
+>  	u8 peer_debug_trigger;
+> -	int ret;
+> +	int ret = 0;
 
-Add a minus sign before the error code =E2=80=9CEBUSY=E2=80=9D
-so that a negative value will be used as in other cases.
+this is unnecessary since this will be written in all paths that lead to the
+return that reads it
 
-This issue was transformed by using the Coccinelle software.
+>  
+>  	if (kstrtou8_from_user(user_buf, count, 0, &peer_debug_trigger))
+>  		return -EINVAL;
+> @@ -432,14 +432,12 @@ ath10k_dbg_sta_write_peer_debug_trigger(struct file *file,
+>  
+>  	ret = ath10k_wmi_peer_set_param(ar, arsta->arvif->vdev_id, sta->addr,
+>  					ar->wmi.peer_param->debug, peer_debug_trigger);
+> -	if (ret) {
+> +	if (ret)
+>  		ath10k_warn(ar, "failed to set param to trigger peer tid logs for station ret: %d\n",
+>  			    ret);
+> -		goto out;
+> -	}
+>  out:
+>  	mutex_unlock(&ar->conf_mutex);
+> -	return count;
+> +	return ret ?: count;
+>  }
+>  
+>  static const struct file_operations fops_peer_debug_trigger = {
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/net/ethernet/ibm/ibmvnic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'd suggest as an alternate solution that this function is a good candidate
+for the the cleanup.h functionality. By scoping the mutex_lock() you can
+simply return at each error location, and remove the explicit mutex_unlock().
 
-diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm=
-/ibmvnic.c
-index 5e9a93bdb518..737ae83a836a 100644
-=2D-- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -3212,7 +3212,7 @@ static void __ibmvnic_reset(struct work_struct *work=
-)
- 		    adapter->state =3D=3D VNIC_REMOVED) {
- 			spin_unlock_irqrestore(&adapter->state_lock, flags);
- 			kfree(rwi);
--			rc =3D EBUSY;
-+			rc =3D -EBUSY;
- 			break;
- 		}
+But I'd accept this with the initializer change removed as well since I don't
+think ath10k has any cleanup.h usages yet.
 
-=2D-
-2.44.0
-
+/jeff
