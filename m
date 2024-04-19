@@ -1,115 +1,108 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B5B79F9;
-	Fri, 19 Apr 2024 06:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BDA3A1CF;
+	Fri, 19 Apr 2024 07:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713509491; cv=none; b=BJ/XoXFBRgBCKd68FiLogqXopoGYenl2I99iTCfrB0gUQfxnmTfWfOaVYYAJBiW08Gx4N2nMqnQ4Brr09vmxJEDAh2AGEyahmrClozVVmzmDX3NW/17Bv6pqWQgX4+81AS5vNvHxNYaqxzmoFhPadhfSGK22cfKSdYwE1/EY5Hc=
+	t=1713510092; cv=none; b=eokUwuJEm3QPTlZ5FGzBtz10f6nJRks9K/9qKiWTfW8CcVMt9kVa4D/2bNc9EyyprCPUZJXFgnHVMeGdSo3s2gRfi2byv6L64i+O2m+szltdpUlBZ4z9uuhlzW1IjZbHYcIVkD3A3UatowrjAdALwP8tlBOPDnjD2qds9dSTZGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713509491; c=relaxed/simple;
-	bh=kNV+Cr8IeaPgt0ekBbelYW4XAy06Z4dnET3H5hMF8OY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=Mu/j0TX1HAqCOPOmXvvTs/pwB7ltQA4nRSDTQVJxYCnGTEtEUoC5nUlJBpFycRb1OMIUsE/iRK36X/nF3GrTk9E5I4Zimy2PqCg8UqQofpEOBPmEP6DZ+JySD8Bp3kP9fh1rQqWOqJUrqQf5eMUHlnr1mJpa4njdruduBkMSNX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Hz7scD+I; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713510092; c=relaxed/simple;
+	bh=hu5M/GWI+6j5XlPD+m5U1EPsKsY/dPwRT5nX2i3eaNI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Y1bs3v04ENKt+nbtV3C8d7FLhiKjZJUtwtaS7ciIkVRfsrNzlpVT2v9YA99I5UlKmfQWSyFfsG3BsOFhC2sJEOyzKCRvuOdW5Uqhh58DnrKfkvxufA7h1DZ/ukIjGIG9cOK+/jPQ9OeGzlRonOySy4R3kJuWIhiqWN1bnJZlRfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=oCh4lCzC; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Hz7scD+I"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713509480; x=1714114280; i=markus.elfring@web.de;
-	bh=Tp4fDh1EM73eA9LppB8jCZQssdvVqY1VS8ada0xBL2I=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:Cc:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Hz7scD+I+gTR5ejWD3rX7rgAzJ2u/DHZkEq+PpdaB8wp2N7HJ8+CxD/vpxCY2svA
-	 bXbsciwuAxovyCMSnTBnsqPIaKDlc4qjBc8OuA2RjNuUNFcuv/p/U5uAK1otyyQ0T
-	 6vp3arBHXC4f2+Gbdh+LLtzaExr4Zkr0Vtrg6O1i6xrYOjRGisCZrHluok1heULtq
-	 kFNKoJk3kAi4udxJCejt3rpeKz6lohWvjnI2pivqhoSs+oBP/qjn298cSmUT2CEN5
-	 05uIRyQEhNIpYZRHJSoPOcG6rEivtvwKKcEBfESntD/DCuDN5PB/m0i17OvLA9Zks
-	 nZ4f/gKLUYKIQJnN/A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mhnvw-1sbQd61dvk-00gZyN; Fri, 19
- Apr 2024 08:51:20 +0200
-Message-ID: <f1f47166-00d7-49f3-9b80-34aa7b7b5510@web.de>
-Date: Fri, 19 Apr 2024 08:51:19 +0200
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="oCh4lCzC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=lZKIvqMY0yDjmj+RCqXjIQ/hqzgZ/plMeZWor4/tnHs=;
+  b=oCh4lCzCaB7R0QO/V04lwiVU73U/Zo2jCNbiyE/o/OC+QqodUUY3CPTy
+   BH2N4kJIVz14Et7EVqH0NVWjaRr6JlwQ0VzCydDxlB4AltgQCGkB4uabX
+   Vc7b+zr2HDtXO/bV4H7uZggCl5IKCUhOWxQ9e61p9P2VTxiZJn3o/J98E
+   4=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.07,213,1708383600"; 
+   d="scan'208";a="85211701"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2024 09:01:22 +0200
+Date: Fri, 19 Apr 2024 09:01:21 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Markus Elfring <Markus.Elfring@web.de>
+cc: Julia Lawall <julia.lawall@inria.fr>, 
+    Ricardo Ribalda <ribalda@chromium.org>, Denis Efremov <efremov@linux.com>, 
+    Nicolas Palix <nicolas.palix@imag.fr>, cocci@inria.fr, 
+    kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [cocci] [PATCH] coccinelle: misc: minmax: Suppress reports for
+ err returns
+In-Reply-To: <f1f47166-00d7-49f3-9b80-34aa7b7b5510@web.de>
+Message-ID: <1530259-fe0-eb35-6f8a-58f272adef5@inria.fr>
+References: <20240415-minimax-v1-1-5feb20d66a79@chromium.org> <alpine.DEB.2.22.394.2404182255010.3213@hadrien> <f1f47166-00d7-49f3-9b80-34aa7b7b5510@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cocci] [PATCH] coccinelle: misc: minmax: Suppress reports for
- err returns
-To: Julia Lawall <julia.lawall@inria.fr>,
- Ricardo Ribalda <ribalda@chromium.org>, Denis Efremov <efremov@linux.com>,
- Nicolas Palix <nicolas.palix@imag.fr>, cocci@inria.fr,
- kernel-janitors@vger.kernel.org
-References: <20240415-minimax-v1-1-5feb20d66a79@chromium.org>
- <alpine.DEB.2.22.394.2404182255010.3213@hadrien>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.22.394.2404182255010.3213@hadrien>
+Content-Type: multipart/mixed; boundary="8323329-533158061-1713510082=:3432"
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-533158061-1713510082=:3432
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ZqBxasO1k8IZLHBuzwDX0hZEP94LaRo3JlVkMX5m417nUWPFam5
- JaWUOpVcL2/fEHCh67X0zRkV687+xjduWG5zNnNaorIpsL+Py5LGtjiJea+eFcdiOk8nwvx
- ivZbmu4QpPs0M2TY+ArXMJrniBX+QNmYzdY/Zf5WzAbjnqZlvOMDp0Pnu6EtvNNbLPSoMVc
- oc//e1kok5W4vhTL71wMA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:XpNQKZxqhRE=;nnLa+g7p9oEH0zrRsObeIx72MQP
- 7vGqAqqLin1TpJLALxWnCj7UqWgZdegrKpV2m2h0nj7/u47fVVyz3boDtdSKm6nBfDxWzQXJa
- eb/PMN9q0E6asMwSX7mqoCl9/hlTA3PYh4XgK8SJUrRqdZAyYBA5xM8zEOWxAgGlzyPY+ZfoV
- p3rB7ctc2t3QqP5KnAa45QAJzyS+jrlTBEbAsx5gwqydgPCzGn/sF2N9x9wLPOakqFJ5UhwBx
- kUrfl1/u0h/k0MQT6KCDYld0Dy8qJIYQbm7ZtuS4MyYYwA806K5DcyUEO7Kk+uz8hH/A2+uR7
- kVsLP/bMpHoEMw5CaWx+pa+mAZ92pGG8xP4DE92iUIGqt4RyO8XauzyhMw8sQdyieFbQg80+X
- 1SDIlZUeyoC2aC4Kzn3n1B8I0/9+CAjm27K+xcf9pMUTJMglKH2FSddfQMGO83+zo7/YAhHRe
- JuHYzFXkXBjB0Zu4XTzJTAMfQbJhSiN5WoXeZYHV/jLdXF9U62h6iv1gNwEdFlU3tdxGrXzQS
- G66Qg9LAAHxFw4A2gNl16HSo9jFTz2LCBNUUsErAcMQ2wU/eHZnivan72gRdx3Ymfq7nFBJg0
- WUXLwOoCBmRS1jmK55wj0t5FJKm/alZRWLi3XZMi0VjhUYS94TCgl6NAM1cGzu6c6x5Mg+PxS
- cShZkSOw4EuO+/9kI0Yy8aQWbcbTdmEYdV3hy35Z+pbGE9xwgl7nUsPme4qdJA9b2tR6QIJZy
- cI+b2WpcGGmI1Eb1rC4+t6FDm8iwnOnRWalGIRwv6sZHUUMhxIHb7BYLKgMp8Pcr4xg3HDDlZ
- YLXFqrrPPCIb3ZenwQewy76CYfwgMrB6oYu+lVKSah7Gw=
-
->> Most of the people prefer:
->>
->> return ret < 0 ? ret: 0;
->>
->> than:
->>
->> return min(ret, 0);
->>
->> Let's tweak the cocci file to ignore those lines completely.
-=E2=80=A6
-> Applied, thanks. (Coccinelle for-6.10 branch).
-
-Was a planned code adjustment published?
+Content-Transfer-Encoding: 8BIT
 
 
-=E2=80=A6
->> +++ b/scripts/coccinelle/misc/minmax.cocci
->> @@ -50,11 +50,26 @@ func(...)
->>  	...>
->>  }
->>
->> +// Ignore errcode returns.
->> +@errcode@
-=E2=80=A6
->> -// Don't generate patches for errcode returns.
->> -@errcode depends on patch@
-=E2=80=A6
 
-How does such a change fit to the usability of the coccicheck operation mo=
-des
-=E2=80=9Ccontext=E2=80=9D and =E2=80=9Corg=E2=80=9D?
+On Fri, 19 Apr 2024, Markus Elfring wrote:
 
-Should dependencies be reconsidered any more for the desired consistency
-of involved rules for scripts of the semantic patch language?
+> >> Most of the people prefer:
+> >>
+> >> return ret < 0 ? ret: 0;
+> >>
+> >> than:
+> >>
+> >> return min(ret, 0);
+> >>
+> >> Let's tweak the cocci file to ignore those lines completely.
+> …
+> > Applied, thanks. (Coccinelle for-6.10 branch).
+>
+> Was a planned code adjustment published?
 
-Regards,
-Markus
+There is no "planned code adjustment" if there is no patch.
+
+I can check the dependencies again.
+
+julia
+
+>
+>
+> …
+> >> +++ b/scripts/coccinelle/misc/minmax.cocci
+> >> @@ -50,11 +50,26 @@ func(...)
+> >>  	...>
+> >>  }
+> >>
+> >> +// Ignore errcode returns.
+> >> +@errcode@
+> …
+> >> -// Don't generate patches for errcode returns.
+> >> -@errcode depends on patch@
+> …
+>
+> How does such a change fit to the usability of the coccicheck operation modes
+> “context” and “org”?
+>
+> Should dependencies be reconsidered any more for the desired consistency
+> of involved rules for scripts of the semantic patch language?
+>
+> Regards,
+> Markus
+>
+--8323329-533158061-1713510082=:3432--
