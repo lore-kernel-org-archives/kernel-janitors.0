@@ -1,86 +1,100 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245D777F13;
-	Fri, 19 Apr 2024 19:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8611425740;
+	Fri, 19 Apr 2024 19:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713553452; cv=none; b=P2Zzaw515cg+usCkIUN3TmJ+zLP0OeuMh6vKRvPzVUYsf0TsyqtJvfBQNV+pD4ohWBc6pnZQ655owLV6tuUP4ow/+uraFjfkZegwW6m2vbErjf+D+nCfRJlNOue0avaj+9tKhSxSripADvIEUdAx9Eelu1Aa3lJhosoCJRFDxCY=
+	t=1713555736; cv=none; b=TnCgna6bvkHDB3owRexXiRte+y8WshN1OAjzPpChpTnMLUvjyBqRPg2qJwR7/oNiqnZewmJAoqXCtv4NAfoqGO/9WPKSf2jc2i44UNGl3rCWIfulzYeIEL/hKYk7+GXUPUpjghuZl8/F2Hsbz/UIjXxEYnMK6/6GTMgY0vnB5QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713553452; c=relaxed/simple;
-	bh=qBE2yyqSctW+YR1XWrzaQcihvJql1d+feDAhwjhB2Bw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Q9Huwldg6oZKGX5hVMplAo9qcSBoxvQ5aJR+fMvpjb9JP7T3LCIXrYSgQmdA/X3I4vm2/6nSVlynUxooYwfc+mhmQaemrXM8u2MqmX+Sg9mggQxuLem1QZG00ywyE5hkviWdphJQpuFWu7HnMB8JpfeA8phrVl7R7b1djqSZjbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MCpQ+vZ4; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713555736; c=relaxed/simple;
+	bh=uyMz+5agVBSVEi4Ga+1h11jGQlr5IOfzTQGb7A2+i6c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oMSW9k3TK8Gct5hS0vK7iu1DO/IYnHONEtleJ27K5/hMnZ3Bb4jvB13QWgk4ZmuLWzXEEWaXRvLC1fFI/GtWy1OUXJ3gSdRkNamMNE7ZkbBJjHKZ/kbSwJl0rIHbbYpy5qFAvb+PAhl6U7Hd8GKbVhb/8i0SXjx9OsDuWNYOhjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YooUtFDp; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MCpQ+vZ4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713553443; x=1714158243; i=markus.elfring@web.de;
-	bh=qBE2yyqSctW+YR1XWrzaQcihvJql1d+feDAhwjhB2Bw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=MCpQ+vZ4Uw1u2V/4xWXP5Dh9R72E/MzDtjijJJPhgEtTe4nbM94QIttiGyvvQwET
-	 g156Z8/7lNkE0tVDg6WA+9R7sat23UZjhfrw0uIbNVHV+fe3N9VZxGXXGP22wOQMN
-	 naIqd0ULkONK5jbHit0r8Pg8hMGLW/HvTMDjNwhO/biCEEdW3oM/cxER/P3Zr7dCE
-	 GCdrwcDnqjX2hMypPOb8pVWGqgvgCTo7nEqFWmOpm6FevcqVu8JP059gqTa21WIpm
-	 a09O2tGeEGLSCfFL2Ra+fjjp43MeRD2YcQlr76CI6do31cUzWMLfJ3TqjOmThHpJh
-	 Pkdc/VhghErkyKeVOg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N30ZN-1sjJF80nTZ-013Nf8; Fri, 19
- Apr 2024 21:04:03 +0200
-Message-ID: <cd8ff4fc-f6bd-4834-b837-2a0d59c93648@web.de>
-Date: Fri, 19 Apr 2024 21:04:00 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YooUtFDp"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2db6f5977e1so32478141fa.2;
+        Fri, 19 Apr 2024 12:42:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713555732; x=1714160532; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uyMz+5agVBSVEi4Ga+1h11jGQlr5IOfzTQGb7A2+i6c=;
+        b=YooUtFDpnmMqJfbzYtfkP+FB0ik/r0q2tAHtx39qLyDau4IqMcAVcQxvkNKTrL7Ae+
+         O+nCgBlL6Lh/qfayPTkbCipb1SnrI0T7f1eahcn8CxxZJVYr7mPqhwgy02wql6L91Fsv
+         YAzYd0ASIV6tzCD+v8dwi/OoowjMHicIJMwOCRuiywy3ZhbL5yIFfPit2DVM0d81wDAm
+         VQjgSPbcqa3ZMaaHnQ9vn9HPaAY+5vi5iDfoChJ0erKKhLIk3xHIeVd9AxJ5GXtpun2K
+         TZuOaXV3iIrjS3xrvM8LwzEuzluRJzAHhFBXi1rN1uy+KYOypAi+dGCL2McNNG4YvrZ6
+         HyoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713555732; x=1714160532;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uyMz+5agVBSVEi4Ga+1h11jGQlr5IOfzTQGb7A2+i6c=;
+        b=MxAIhMtGlC97uGD+XFvVJUKitsSX1AmRBbvkyPxNYA0vFuzMDfJcwlItehJKV+/cO4
+         uApN3emU0kvs8OGe2kI3biUMPUwtoCmx2rFOyiNe6fwwO8XMDr1w0+GS33freqa4Uy4N
+         m6EI/A77yA6/4jjDfFgAC63ZGQ/s4ql2WysOd/h45lswOnY4gt15MGpkyzRoNtt4iV16
+         xWefm09i/Qo08rgJCXTa94K4hU4kA6vJfl0R/b2mrEYFo5osqnfh2Qsya2US9lW7ckM9
+         AISo+VLqJ6db/MPuV26w+DXMz6vuYPn/7zI3SkB8GFW9foPUrBWchw4i+NHwTZ+f9AWH
+         LIVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdzjc3I5/uDtb2yqp5AYs24P8Kb++UFv2riiWsNf/LwTXJW2WmQNwnGazCVliAaOQIG077TMyVIOdNd0qsyEkxu5K90G1cIM5FNv0t+OiMRuPj+qrtQfhT2lqhPBi3dy8uRBS1W0m3Cy0a8l8+APUN/25Ga1wnEGjt8Se5ju+Vkm1pCUcKpI4PvWQBwdNH
+X-Gm-Message-State: AOJu0Yyownk1XenY8+r6oBjpG1xqiXjIQ9dO4vQw/+acYUySJnPKpJ6w
+	PB2us4IJdMCkLQvBK9bPSbtBMvXjACjyllrisufMYoL38EfcC174SvY8ymPMzGWU93rVLVuo/HA
+	XEIcVOAfjS+anbGe5M0DKbWe8mJc=
+X-Google-Smtp-Source: AGHT+IHLNy/Po1edLygtZJom4CsUlR5CbZo3KM1lH6iARm4i+Imm8HaxPbs6daWiXd49JGyav9kIvcytqWm3A2N6lPs=
+X-Received: by 2002:a2e:bc19:0:b0:2da:6b4:8b16 with SMTP id
+ b25-20020a2ebc19000000b002da06b48b16mr2152099ljf.29.1713555732487; Fri, 19
+ Apr 2024 12:42:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Daniel Okazaki <dtokazaki@google.com>, kernel-team@android.com,
- linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240419183142.169963-1-dtokazaki@google.com>
-Subject: Re: [PATCH v2] eeprom: at24: fix memory corruption race condition
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240419183142.169963-1-dtokazaki@google.com>
-Content-Type: text/plain; charset=UTF-8
+References: <da0859c4b24d314d9ff38179c26a58ee7e3f16d6.1713395895.git.sean.wang@kernel.org>
+ <cb593f2a-7dbe-44aa-b9ff-7fc57a4bd70a@web.de>
+In-Reply-To: <cb593f2a-7dbe-44aa-b9ff-7fc57a4bd70a@web.de>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Fri, 19 Apr 2024 15:42:00 -0400
+Message-ID: <CABBYNZL1=RyzuXcDpAwcXyOe_8Bh4gJtDzKdS55-3ZF4rZRj7A@mail.gmail.com>
+Subject: Re: [PATCH RESEND] Bluetooth: btusb: medaitek: fix double free of skb
+ in coredump
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Sean Wang <sean.wang@mediatek.com>, linux-bluetooth@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org, 
+	Johan Hedberg <johan.hedberg@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@kernel.org>, 
+	Chris Lu <chris.lu@mediatek.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Deren Wu <deren.wu@mediatek.com>, 
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Manish Mandlik <mmandlik@google.com>, 
+	Miao-chen Chou <mcchou@chromium.org>, Michael Sun <michaelfsun@google.com>, shawnku@google.com, 
+	frankgor@google.com, jsiuda@google.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:x/vF/xh/PZjJQryN3DceYuEZJQt0fvCrUORvR9v4mCMtdPaZH3T
- VAA8OePyvwUhLukRVBbAxqjC9lusWoOoM8csaQWbbHSAl3YwvGI+VnDuyyW2aVPnuilI35L
- 53rvtqJ5BWpV2gqF/ZwDIHzBedSz3HkgYC8TRePMV1vBB5LLOd5n1i6+EhLGP+l0zQh//Av
- hKKb2Fpp6O4H++U5fneKQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:avNeIPiAZE8=;s718CUtrPhpkK2K3iLR0Wv98P/y
- HOFnLl6NGq8XSVKrhrejUHCXEaVEV3NLoOmpAWlf2sppQOSjHap6qzOJcjiWepMxTfHdyhH2t
- RSQeg8mawqv1jHgvXAvWHklPxEO0z7Q19Hdl6cdzmiV78NyqvSrW+7hw3gllWOFA35WtoUwQs
- MCPsCcyddifw6pBTM4BPnqAuxCNNBzz7lLKe/+h48uOK6WyW0oN3LtYrhllkVkBCBRFvDvssE
- xfTr/w5uqH9U447QaT7ZiOdWXF0/9/RP72c7e+fPpfB2rJ/C/osQzZqbElF5zYiGu32JGECrd
- q9Qp+iVQJDeR0JDmaJNRJQO3zvwUtFOVl0vo/4xYiMwd/iKokBIfSJgPvnbgEaBGVxbKphXmV
- tmN5R0cdVTGYOOEGF8owhBmOtmyGyACgRxL0EGYF8+Sc4OE7W+MfG08WpP5Iy7o0FHzLmjpRN
- jGLEXAnFBRVkae/KZXqiPI6z6wBPIc0FFS+cKxMOXTefYfOFCG7zeDMjVQmx49nk9ZxxYeTLj
- kl4FASRFpc4WytxqntdXIZqmC01QvHGKRZGKF4ATdDvo092blOUVcx7dA1bwENctW3TsZWPmK
- IDiBjrhmAd7MSzUt9i4VA7sSR4sJKLsum0Rr7Zh6v8jTOJJY8fjzHrhCENR2lDlIndB8l2aTb
- zyXDsU9CHRWRYJw7tCHCtEXNUxXr+45o5Q6PDmljSEF2fFynXcPkxh4GWUPte/Q3PrLeNadbA
- 82VEgBWfrK5oVkgxcZY7ETSxmaX2zD30/m4Ad2df97LLTTXkp9+M/xSn9+n9ETmRPlDzlpwpw
- 0DLaBaFJSL/dijk8t0oPORJWYKJXAkbk/+Z80w7DLizck=
 
-=E2=80=A6
-> Move the failure point before registering the nvmem device.
-=E2=80=A6
-> Fixes: b20eb4c1 ("eeprom: at24: drop unnecessary label")
+Hi Markus,
 
-Please use a longer hash for this tag.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc4#n145
+On Thu, Apr 18, 2024 at 5:40=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> > hci_devcd_append() would free the skb on error so the caller don't
+> > have to free it again otherwise it would cause the double free of skb.
+>
+> I hope that a typo will be avoided in the subsystem specification
+> for the final commit.
 
-Regards,
-Markus
+Are you talking about medaitek or is there another typo?
+
+
+> Regards,
+> Markus
+
+
+
+--=20
+Luiz Augusto von Dentz
