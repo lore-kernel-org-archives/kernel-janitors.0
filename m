@@ -1,40 +1,41 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FB913C904;
-	Fri, 19 Apr 2024 19:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684D5A23;
+	Fri, 19 Apr 2024 19:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713556121; cv=none; b=sFDeexaUAnqbydQTOGnVwyFSps1LBMKrPsat420iaEGhGsB4wezsx2WRXQrzw3izi28SnyGacZHLB+eqikkZVou4h6bdJIbGCFx+AA/eKYD9IXcnxZ8qxQ+85MNJYTybXEwkUCISHib2BEBHxxd+JNQ07LjPsUoswamJsRAy524=
+	t=1713556651; cv=none; b=pozvm8iG8pMYRTgzG0eKm0hA+hMI+PWdhvXaXcxdvXD6AJSXwoobCgrM46rIT5m7PlrRwnp+HVTMO944IbL0Gfl7+ZL6b5sA3Z0vw/5N8C6dn0yeyYM3uQZsjrrLUIpA2IndDpn7IVHDqi6hW/JRHcRkRDFSKUin/5iFm+i88NM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713556121; c=relaxed/simple;
-	bh=lcYzSMtqXOjiD9TMdZ2hUP6czF1+f1hwlL9IUcWlkcY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=K+dzHOzFlBkeAplRpSwWmL7qqXHZBU5B/kHnZfqq8wqH4DeF6MPx99gXlwgh5oTtlcUm0G4+IZMgwYhc0s9ffFAnG02pGQ4pG95qH66TT/VgBET4dEQrVhksYaiZT3/aKInldghIS8DfMRnUFWYHmTRVQpUtmAKib56uPp9rc5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=TAwcgaIr; arc=none smtp.client-ip=212.227.15.3
+	s=arc-20240116; t=1713556651; c=relaxed/simple;
+	bh=6Slvd9WP7U67G3VLT+aHOxvttY9ZS+l7ClciTen+Yuc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CCUbTZ31aeHj1RlhgEBhXwgENEsuZ3xa8D6Dp+zZt/9qEN7ClSMtUwtJG+UCi+UKarsDj3V6N17WLAiBrChuwAkjFYNW5cCv5jF4hHkaQLmn+yz573A9wn1HyWDNjgQ4vf79I+d4QtThLT7wi3h/gYVdJ8X7j2E0jNigKCaYbb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=CLbRyo9d; arc=none smtp.client-ip=212.227.15.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="TAwcgaIr"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="CLbRyo9d"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713556065; x=1714160865; i=markus.elfring@web.de;
-	bh=0Uhmvl5HH++g4NG6yHvutmuZjckI/vNIFAeTfiT5pCY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=TAwcgaIrNVdSRhgld6TxOdBMpR9dXAZBz6UohtK4Z/yAIHwqBxI/PlKJ3AEvstFN
-	 +nr71guGIJxqUf+b8edLprQioYOq6LuHVG6nZsQezfn7iw6KVc7nFXGCII++dvL2l
-	 XPoHngYDlkNfqW9ENLe6SD2z4iUHvY6C187YIFp7809i3yDrso3DWKWTFXiLfKoro
-	 iyjQJ/9F48pkETV2W02alPn5J1vXQd0QXZz2elFhb4sveF+0ocOQEFUl+4MX9/ehX
-	 NXxyO7R27082E2R1ovBFdFF+Xmz/vwQP45RpXoPCIFjW5LNxznKsCfgoBojozxLQh
-	 rB0orFaLTrOgfyRyxQ==
+	s=s29768273; t=1713556618; x=1714161418; i=markus.elfring@web.de;
+	bh=6Slvd9WP7U67G3VLT+aHOxvttY9ZS+l7ClciTen+Yuc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=CLbRyo9dzVNhQ3oFILxFVfdLxwMaG3MUlxRpvJgCTD1G9ABfqDyZAaKKlca6DWgF
+	 sUH440ZnySvzqm3nJtym8DEy0RYN0RnysfrYqmQFYQQ2FUNZak8cf43dZpbEU/bGr
+	 VmzjnhSdI2yhmn+UpUdL/4LwsthQOrGwY62rWUTijMI7POVNa0bug5XwMvdQJe61z
+	 rTOxqYltHt5eV/V6oKrIXMcAThdlRjAFsvSWgLhhOJ98EuDaafNAK1rFGqHQpvhZD
+	 tgeFAz2X3LrfV+/HFE1+8Fen7LoGUnt3hpY+0v9VMgPNzhWvqCrQ1IHBHLijk2X89
+	 D/+Re9p4sJeT8oC19w==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MIL0C-1ruf5B2Vuu-00HBKU; Fri, 19
- Apr 2024 21:47:45 +0200
-Message-ID: <4938c547-04c1-448a-8435-1193e9c37595@web.de>
-Date: Fri, 19 Apr 2024 21:47:31 +0200
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MHVaf-1rtptb2Crx-00DV2a; Fri, 19
+ Apr 2024 21:56:58 +0200
+Message-ID: <0460d898-689f-4e9a-bd2a-a812ca54acc4@web.de>
+Date: Fri, 19 Apr 2024 21:56:56 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,62 +43,58 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Aleksandr Mishin <amishin@t-argos.ru>, dri-devel@lists.freedesktop.org,
- lvc-project@linuxtesting.org, kernel-janitors@vger.kernel.org,
- Robert Foss <rfoss@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Aradhya Bhatia <a-bhatia1@ti.com>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Jani Nikula <jani.nikula@intel.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jyri Sarha <jsarha@ti.com>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Nikhil Devshatwar <nikhil.nd@ti.com>,
- Quentin Schulz <quentin.schulz@free-electrons.com>,
- Rob Herring <robh@kernel.org>, Swapnil Jakhade <sjakhade@cadence.com>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Tomi Valkeinen <tomi.valkeinen@ti.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Yuti Amonkar <yamonkar@cadence.com>, Zhu Wang <wangzhu9@huawei.com>
-References: <20240419113637.25745-1-amishin@t-argos.ru>
-Subject: Re: [PATCH] drm: bridge: cdns-mhdp8546: Fix missing mutex unlock on
- error path
+Subject: Re: Bluetooth: btusb: medaitek: fix double free of skb in coredump
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Sean Wang <sean.wang@mediatek.com>, linux-bluetooth@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Cc: Johan Hedberg <johan.hedberg@gmail.com>,
+ Marcel Holtmann <marcel@holtmann.org>, LKML <linux-kernel@vger.kernel.org>,
+ Sean Wang <sean.wang@kernel.org>, Chris Lu <chris.lu@mediatek.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Deren Wu <deren.wu@mediatek.com>,
+ Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+ Manish Mandlik <mmandlik@google.com>, Miao-chen Chou <mcchou@chromium.org>,
+ Michael Sun <michaelfsun@google.com>, shawnku@google.com,
+ frankgor@google.com, jsiuda@google.com
+References: <da0859c4b24d314d9ff38179c26a58ee7e3f16d6.1713395895.git.sean.wang@kernel.org>
+ <cb593f2a-7dbe-44aa-b9ff-7fc57a4bd70a@web.de>
+ <CABBYNZL1=RyzuXcDpAwcXyOe_8Bh4gJtDzKdS55-3ZF4rZRj7A@mail.gmail.com>
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240419113637.25745-1-amishin@t-argos.ru>
+In-Reply-To: <CABBYNZL1=RyzuXcDpAwcXyOe_8Bh4gJtDzKdS55-3ZF4rZRj7A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lLMzIzXyrO29Y4hG5MWHuBvr7iCi/ITtAQTGuj37Qq1b+mSzK7k
- LLRmjMVCsrJdk+Vx/D1rpDJN4vVbC0ucZdP/jBD+M6TyBlcHNntJdeiz4syK5VildrZszk5
- p6meGtq65UIbDm8ccaCA6nBhSau9XOec2PdFAFDJrsJqU/1asG4s8Dv5gSW/5/d6WSLGaLI
- LNRFLhW4NfSJslqxpnn4A==
+X-Provags-ID: V03:K1:S8WVsoPLtqYG/ykvrpdfXwxTb9GQ6ddC7R7zsOQbPfIOAPVg5bH
+ cMPj7nuSOAH+vCBx5OH4wb42KGMA6DWS72RdGxaVQ6GogDsV6zx1u9KXKVPQ6WDqKqmppbs
+ vxrwA7C9+GYDicbVt/kTg85dLhkoRSq0ycv2rJslHIS1PtxilV0j5WC27ds1+k8kIdd178e
+ Uw04abQuIawH3E6PHXxXg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:56fI1Z9/xMg=;4MPoBHay5UWyp6BGOVng1VQFd1C
- nuxzNn4tPSYOiKdI7QHjlj2+DShWuHk9rk6BIUg28B1ZBzNaZG/vf7aM+M4BzJfw3XnTHR4RP
- zIXUww/hja/+I9QIx0pYR/Z7KFOTsYUdbXRiphtfaF00zmYg1Lz6tfehgFdhZybgwJ0qHK/KF
- teS4xL5Gpwyl9K4ts3ijG3t3Sl8oVRyd9yCkmfsNYLDxTMeOPRIkVwALYDVCtuONduOMCA6VN
- TtTUQeTaWs96eesI6ShpdewfyvRZIn7M0nBWOtcfCITnocajHKn70d6+lRqq55bwVG4GiDYFC
- v/Khidfc0iUm4TCAF3Cw6ZtKk6f2zWbO7HiyaLpJYKgIvWovGkmRBe/U/Bf6kVc9YAq/3UjLd
- qfuwypqLZePdDBDmBg/QZGPkQKUpy+aUX6vNqrCEgEIuzSpxJVL3KrJhnjnHX2OAeMRUpwcFa
- IJpVVM0jgWCjRmMrlgw1bd5lxLhl+FJpfSEMl6Y0+uHJsEDZE/YStj7zWYPpKE+TRvhL5VSsS
- kfvoAa8RMSV+7dvHWFvObXWwXHJRmMU6hgaeZPX26wHHbzp6wPkUEK9ol/5uOjQvXBsATBi/r
- pghavEOyWe6lOqeuMKmiebYqWAK94l8OE3mKQriy+1Zy8mE6zjL5K41XQ1MAe2oiqEBnYX7Wm
- Ke2h6HTVjDyIFHu3jfvCvovoKR4voSwqMX3gQ0sXI1IuaZLI76BlJKkOsAbtLf8u6aOfS0lKb
- e5PxR4QIqT+Oaprj/PYAtOnk2iU7oev+9bxVkUzMyo1jYv5jfCJl5yxyMNN/uFlmxpGhC07bE
- sbbWwtvvdVEnZ8TtlfQTcOB0PJ8j5Q4gFcPDzcVd0SSB8=
+UI-OutboundReport: notjunk:1;M01:P0:0SfpuT7Zf8o=;uZUyp+Nr+hFB7lgbCA8xf5U6SOd
+ G6jAFLKGPouMeLYW4ECJ9Nj3ptXypcKX5dsGcaY4cgMYcFcjmm1XlEuevFyYL99tscs8ucgsb
+ 2TCitR49unAcRFalK8OpUepLM+sxcAp8D85ZpEeiQjzGsQ09JyVdC7K3bOOX9azTYS+NJLuTH
+ 2QS0weenCJIYoUNbGo5ibW5MTm57SYaxyqTbbzPw03xkWt3Ocl5Ggl6GhNVhsusXSbuBZvK1D
+ /edJ3mSUaeEwXQm+2slS9GfpYmCm4HQS/MCt8/1thcYEF7urQCd7pJNfYag4CpESUib3cwygn
+ GE/kqPk41/7ldFc4gUhfLRce35yrIzXg9W44EfjQVkPsxYTdEBWxV68yshYOo+pfr6GVsTFbC
+ h6mxd3WUJx3j7rZUIykxOLFxoVSFL2bTDPMdyhlstEV+IaxoW5fxKe4RCJKBmNi4qgxuHq6RA
+ JqtZkeI80XrK5wiEb0KLHj/uapL9LgO/JTh8dVBNkRr0F+qnAnRtepTQpMODMIAEv+ovtVv5c
+ kdqZJ7u/YqZflNTruCf63ZvkjsvDyel/8TqnZ496NZNXTft8Rb+zflWEzJgOOXmxACrI7kvoB
+ 7FidVNYsshtC2l+ebPjq7MB7ubEzlRtbIn6J86VKKkV2ST6v/fYbABAV47XHi1fHLg1X+EzPm
+ ekgotMOoGSVlHZet9dCO4ydT7+Vc/dmku7qn2wBEV9r+sL3eV3L1XepaoYD4Yw8avZBtzV3VF
+ ttrwDx8L+s3sQWwPHOOHeNgLe6LhEmT0YtDfRmwxl2b4yr7U9KHv4jv92Y25a3sbysuYYRbf/
+ NNcKcS6YOo/M7ZUFUzPuFUuc4XphAToefC6dayaYh+mzw=
 
-=E2=80=A6
-> Add a mutex unlock call.
+>> I hope that a typo will be avoided in the subsystem specification
+>> for the final commit.
+>
+> Are you talking about medaitek
 
-How do you think about a wording variant like the following?
+Yes.
 
-   Extend the exception handling so that the missed mutex_unlock() call
-   will be performed finally.
+Do you prefer references for mediatek here?
 
+
+> or is there another typo?
+
+Not yet.
 
 Regards,
 Markus
