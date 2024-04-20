@@ -1,103 +1,76 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6F5179AB;
-	Sat, 20 Apr 2024 09:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A99B17BA2;
+	Sat, 20 Apr 2024 09:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713604295; cv=none; b=SU2JuoznDzryI6lzsd/PNqqFGRQuUG7BekjnE5CPEpAamqhXuCR9A8r5jOKi+3DXCCld3pELs3zff/m0AsKXp75b+2SY7GV5Q3FlnkpVE175zNZ2sRzoE0pzRRFc/Ao2Vx/km8tEjvCCbqkVaXBXgD0SQ9TkiN3fV7YmbG0GJ80=
+	t=1713607005; cv=none; b=qPVWIAXMRDvdf3TthWARkW9AjlFxKPRriC01H6q782ORuDO55I7mJN9NKAjCdOkFKuJ7CtwTj69xJMiAZQtFLpgEB8WMcBiwGRFlctlshJiMD8Lr4L23iTWBNwB+JAIY678H0HcbQOqsdaR7JVwQqUc7G9Nup7+cQaAFZI3+fCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713604295; c=relaxed/simple;
-	bh=98ZquFlgNTsj+YxCtBFDDfmiJltAPDOmWeaNu2nkd5g=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=fIEEgGrKLiqHTC72y3RrjKib7S1elYDPm9RUPupORgdyHv2mUCEveoSeLrPgZdPYiQTQrfsvwBTs4C/RMtVeEw4HpTzeSID1Ht380/3zEjkbzBQbj0XgjcPx3y0h46ieYl7nfGL3BpniHDCFLrMpiyFT+y85qvkIOu5tazPslVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EQNVL3d3; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713607005; c=relaxed/simple;
+	bh=YnDJ9iQswre7+Wp5XM9k/4hBgmOQZWPn8D89KIrVcUY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e1vKlg/2zksQRvPRNziN1TaoFFpivIUPZHgZ1r/FGlw7bh0D4CAW+OXHUaswcImE8B2oOzDPTIDw5AExZILGPShMiDU8H5EGff4s88i8LXtEd03zgB3fbetoUJGxKUVKJv1TRtnnSYWfIAp3srpKUitwTU6P4gnZiKrhlVisSg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=EIP+zP69; arc=none smtp.client-ip=80.12.242.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EQNVL3d3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713604279; x=1714209079; i=markus.elfring@web.de;
-	bh=98ZquFlgNTsj+YxCtBFDDfmiJltAPDOmWeaNu2nkd5g=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=EQNVL3d3cf0cG98eZi3ymeMLlojm3J4pzRoDoE/KzK0qLfF7PmtTWXO+JjjrVus4
-	 D+p2PhPMuuqlxHQ8kTaeairyuPb81BtMtLBaYcIBz9enRGJ3QSc7hR6zP+b9Mw1V6
-	 Kfbq5J1RLSntdOHMHruqoq12mSF8TKL4V8yEjHdOWGbeLV3tUbqtuEqZdl2xzNyX1
-	 UH0jC3t+Eh0K1r+z7bHvxv6DVt5MLTIDk08DeUFYSS46Ht2X/MmnYvGdl3HWBMOiA
-	 NQygxv/CoYdUyYH/rollZFUG8N9U88c+j1AWzmg+K8Y0NfAVKWJSJRqlrfG1TlxvC
-	 mpkMkBzfKf3Zkg1kHg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MCGSW-1ron4v2LWU-009eQz; Sat, 20
- Apr 2024 11:11:19 +0200
-Message-ID: <939095cb-b9c0-4214-9429-7b45f9a31f36@web.de>
-Date: Sat, 20 Apr 2024 11:11:05 +0200
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="EIP+zP69"
+Received: from fedora.home ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id y7STrmGoLbyODy7STrLNUG; Sat, 20 Apr 2024 11:56:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1713606994;
+	bh=iIdz/SjudWPu/QGXeFWNz+lXR/mtDYvMXAN2tDXR2p8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=EIP+zP698o4SomTdn3e2e0YBXn9Tf4u7QeLCQ0QDmcI+oppT3+dlRY5lnmqn/6aOu
+	 PPgKdwYlNoZ/ZonTIHvLOmm9XMHZqaDsVBt2ByEp4/13d8UK4D1lta7r20OA8DXWAK
+	 NA4E8FidjfabQNfASxm3lJV6/0+6uQEwTF3kVR6qTe7VQ9YlKkm81moUhn5hiYX9aF
+	 XRx1VJB7qUwY08ZGCmQ5G/cCxvhrMpaUagH6OyUuw51sPAGBIH9wLzuCtdReMDhpwD
+	 VBQkfYWAjBGZtktBZknkMHzX4CxDpknqi6HRaO0u5O5OqXo4z5QrcXlHY5687ahhuo
+	 yDfOIqmsVqm9Q==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 20 Apr 2024 11:56:34 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] nvmem: Update a comment related to struct nvmem_config
+Date: Sat, 20 Apr 2024 11:56:30 +0200
+Message-ID: <032b8035bd1f2dcc13ffc781c8348d9fbdf9e3b2.1713606957.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Daniel Okazaki <dtokazaki@google.com>, kernel-team@android.com,
- linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240419191200.219548-1-dtokazaki@google.com>
-Subject: Re: [PATCH v3] eeprom: at24: fix memory corruption race condition
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240419191200.219548-1-dtokazaki@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:5FpNBpIEF4HqcnHpOVcfL7OBZmrVR26r01H8uPNsFDuUOJ2BIEE
- EFNQRdnKzol2xho8scQUiM8+fnKLoV65gz3zMczDBgc/mTXtVxO0FLzpUbD5hMkTsKxx49a
- kq5EeXPxPZziesCkkHWPnVHgFGKbUJPhY1O3U0jNzYOXopX9rwa8APyxiKSwT07PPhHE1hm
- PNNfIw6nSQSOxO+ulBqZQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:okgtqk/UjXg=;U/1/owzj2wxDF1M/Gp2nPZhPQu3
- g9XTvPZPb6tS6SOTXHwUySHE197XLl928un6nIxTyoqZWVX+hgbCkCQS3mHIimdBlIwQDnVCY
- Hh8SIau0BYmK2I6gg/ZDGD9cMHVXi9DHFBAHr4w9zcWGt6pY8cPf250v5X7VV0OD2sjaf4nsp
- 8ELlQwYxQXJDu3P5SMwk49YtSXcdcXuusIW8fYQcIkL3cJUw68LGcC/pFkrbT28ibNrA5PWay
- 2S+FSrbZ2zVwZ8SKFmVTNVCsxAZTd4R2y1ur159RBURDBKYXbJ3KrzW1MTV3fn8gG3q4iwc6W
- Ew/MpmBUI4rRbnz9aGhvJMyvM3+7lADgNmxpRslT+3bAdutLzje0KlWqHx3rl9br8wQXk+oqn
- jXfBLRh12/2KTM7LnAASxuhn2OlxC9PQR7DThj3uVvVRWQgWtOF9I8ENB9ShFRZNVoT2fy/zc
- ZHEllJBW7Na0cTbS16X3m/71XPg7xCR8S7c2FQnDu/fXqmlbH92A1WtFXT7I5R/cNUf+bTn33
- 7n4Y9wCyjahdTPNolyvD5JnE6nXymqnditlzfPK1stEkCyDNxt97tFOWgcGGek1X0UA7J4YEd
- KSEKZZ6oD237gevr0RCj+0MLTqyD5RgL+xX0BlmamNxbd9Z66vCadHLekVJi8CZVP8GKjbOGZ
- RptttGeG17PotR/03Nm3786dzZZ0Ey9rsXVX34caCrYBQP88W/SEZBD9wcTTg3sXXFawgq7Ai
- 3R48J4YyhjsHvlFZB78hRzRoJCgujhd5I6HSZc+yliPwPGHiqNOsr8VWMdiXEnJMnJj6iKn3o
- G+Nivvoi/jH7TiHsxpD4pIefD8oJ6bJzG2b3r07hOofGs=
+Content-Transfer-Encoding: 8bit
 
-> If the eeprom is not accessible, an nvmem device will be registered, the
-> read will fail, and the device will be torn down.
-=E2=80=A6
+Update a comment to match the function used in nvmem_register().
+ida_simple_get() was replaced by ida_alloc() in commit 1eb51d6a4fce
+("nvmem: switch to simpler IDA interface")
 
-Can it be nicer to present the introduction for failure conditions as an e=
-numeration?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ include/linux/nvmem-provider.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
+index 3ebeaa0ded00..9a5f262d20f5 100644
+--- a/include/linux/nvmem-provider.h
++++ b/include/linux/nvmem-provider.h
+@@ -103,7 +103,7 @@ struct nvmem_cell_info {
+  *
+  * Note: A default "nvmem<id>" name will be assigned to the device if
+  * no name is specified in its configuration. In such case "<id>" is
+- * generated with ida_simple_get() and provided id field is ignored.
++ * generated with ida_alloc() and provided id field is ignored.
+  *
+  * Note: Specifying name and setting id to -1 implies a unique device
+  * whose name is provided as-is (kept unaltered).
+-- 
+2.44.0
 
-> Move the failure point before registering the nvmem device.
-=E2=80=A6
-
-I would interpret the diff data more in the way that a devm_nvmem_register=
-() call
-should be performed a bit later in the implementation of the function =E2=
-=80=9Cat24_probe=E2=80=9D.
-How do you think about to mention the affected function also in the summar=
-y phrase?
-
-
-> ---
-=E2=80=A6
-
-Please add a version description for your change approach.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc4#n713
-
-Regards,
-Markus
