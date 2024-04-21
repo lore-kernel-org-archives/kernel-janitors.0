@@ -1,70 +1,77 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EA714016;
-	Sun, 21 Apr 2024 16:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744B429CF3
+	for <kernel-janitors@vger.kernel.org>; Sun, 21 Apr 2024 17:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713715630; cv=none; b=FyHLJbFRX8FrtexVo5QREeD7ba7KZg3ztD7qWsEH0CpWJfMqmIjOhowTCVWl/eP2A9fX/w08s7OkH9BKTJbFVkq3zq3KcxRpRFhwP72A/CNcmVsz+ZnB5vX6UrcMUAmwNZO71wmct6eEXZA8nPu+EHPl2jG/plbsgCdrhoxa4yM=
+	t=1713720140; cv=none; b=RQGKEOy4zdyXFlMOzKFhhSkDGdDZ24c4fpnTGNXepe2zyvpisw5rX1XnbbkEkTZvLpXYsiGv81pBhb5vL3iD11HgmqhK90wTOC1qGrKrqi7mIgfUFKf6QTBFhPsjYxUO0M/ATWRokNPrG7QgOzsR+bWQk2QrKoY9nxqRwJEwEco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713715630; c=relaxed/simple;
-	bh=ImHv/bG6shQ1Qj8+3ZcGmH84yLXalRxyRDI4k4x5UJg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CuVJoxZ3/7f4PiDVvWZm9StDA4rv9b6M40FQBaGMKEMLpn1kCDfwkgckS1T2C4Vgiqsvb+uI1/pZX21aJAheEz1/J1+/9K916od0SmEwnw8qsOg4N+H7CMMPouXi/LMf6V+vadoXwUg+4A+LI6SPsfII1vFAE+B5LDkFRK02gW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tpX1VbLi; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpX1VbLi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C2C0C113CE;
-	Sun, 21 Apr 2024 16:07:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713715629;
-	bh=ImHv/bG6shQ1Qj8+3ZcGmH84yLXalRxyRDI4k4x5UJg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tpX1VbLipDzGfEBxijgju5ugX5OAU1LUDgyDE1q0bJloo0AgH8IpahYGkaXrCLdUI
-	 YQytPAwp9E5IcXf7GsZrOh5kaF3azxgG+Iu2fozxZ2GAQ5+Laj0zaRsOtssChWvh4d
-	 rDi/RPlCno3HMakNPS1mkRtB15HzcTjGoKyY9t7rZOwIzOA19o75HWqaRfze9xy3ud
-	 YkmYSbRtLw+NjFRIic7dVFQvaTf0LVGflCaUeCqvy26w4MJj/g2yGmDGXVJpb+eMXg
-	 ixE9lFlbcb3YeG1NbsRApJ4gXDd/H7l0u0wB3reO3UNMofLbDw/T2LmvGdiPsnsk9s
-	 IW013CV0jj5ng==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: rpm: Remove an unused field in struct rpm_cc
-Date: Sun, 21 Apr 2024 11:07:02 -0500
-Message-ID: <171371562477.1174524.10669986726753023382.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <9f92330c717e6f2dab27b1307565ffb108c304a7.1713017032.git.christophe.jaillet@wanadoo.fr>
-References: <9f92330c717e6f2dab27b1307565ffb108c304a7.1713017032.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1713720140; c=relaxed/simple;
+	bh=E1Nho4TNCkRiQ+1z/eEfslZqH0CAmLGWXWNzWODCxYU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=ej/xfVqYdOA7r5I1EhJZkZdxGYIrS5ZHKaPpFwsXxcADmOTKAe99u2dW8t0GUuBNgzzAxu0dtKfwiA0xvFNotsXoqJEBAAq38+jK3VhK1M0IRkxvxqigDlkAjy28zprOxzjLL96YNZ9d6HJOvoHFf+JPpldnHt7ZJhFS0Q6nkO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-130-wqOpvSleMPWkRxXpPk1rMw-1; Sun, 21 Apr 2024 18:22:05 +0100
+X-MC-Unique: wqOpvSleMPWkRxXpPk1rMw-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 21 Apr
+ 2024 18:21:32 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 21 Apr 2024 18:21:32 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Christophe JAILLET' <christophe.jaillet@wanadoo.fr>, 'Al Viro'
+	<viro@zeniv.linux.org.uk>
+CC: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: RE: [PATCH] seq_file: Optimize seq_puts()
+Thread-Topic: [PATCH] seq_file: Optimize seq_puts()
+Thread-Index: AQHaj3fscOebCwNNKkWKivYclXgg7bFrX8CggASjjoCAAvw6MA==
+Date: Sun, 21 Apr 2024 17:21:32 +0000
+Message-ID: <e3b8b5d4c43d4d6d88bc8e6d516c1d41@AcuMS.aculab.com>
+References: <5c4f7ad7b88f5026940efa9c8be36a58755ec1b3.1704374916.git.christophe.jaillet@wanadoo.fr>
+ <4b1a4cc5-e057-4944-be69-d25f28645256@wanadoo.fr>
+ <20240415210035.GW2118490@ZenIV>
+ <ba306b2a1b5743bab79b3ebb04ece4df@AcuMS.aculab.com>
+ <5e5cde3e-f3ad-4a9b-bc02-1c473affdcb1@wanadoo.fr>
+In-Reply-To: <5e5cde3e-f3ad-4a9b-bc02-1c473affdcb1@wanadoo.fr>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
+RnJvbTogQ2hyaXN0b3BoZSBKQUlMTEVUDQo+IFNlbnQ6IDE5IEFwcmlsIDIwMjQgMjE6MzgNCi4u
+Lg0KPiA+IEkgZGlkIHdvbmRlciBhYm91dCBjaGVja2luZyBzaXplb2YocykgPD0gMiBpbiB0aGUg
+I2RlZmluZSB2ZXJzaW9uLg0KPiANCj4gZ2l0IGdyZXAgc2VxX3B1dHMuKlwiW15cXF0uXCIgfCB3
+YyAtbA0KPiA3Nw0KPiANCj4gV2hhdCB3b3VsZCB5b3UgZG8gaW4gdGhpcyBjYXNlPw0KPiAyIHNl
+cV9wdXRjKCkgaW4gb3JkZXIgdG8gc2F2ZSBhIG1lbWNweSguLi4sIDIpLCB0aGF0J3MgaXQ/DQo+
+IA0KPiBJdCB3b3VsZCBhbHNvIHNsaWdodGx5IGNoYW5nZSB0aGUgYmVoYXZpb3VyLCBhcyBvbmx5
+IHRoZSAxc3QgY2hhciBjb3VsZA0KPiBiZSBhZGRlZC4gQWN0dWFsbHksIGl0IGlzIGFsbCBvciBu
+b3RoaW5nLg0KDQpEb2luZzoNCglpZiAoc2l6ZW9mKHN0cikgPT0gMiAmJiBzdHJbMF0pDQoJCXNl
+cV9wdXRjKG0uIHN0clswXSk7DQoJZWxzZQ0KCQlfX3NlcV9wdXRzKG0sIHN0cik7DQpXb3VsZCBw
+aWNrIHVwIGxvb3BzIHRoYXQgZG86DQoJY2hhciBzZXBbMl0gPSAiIjsNCg0KCWZvciAoOzsgc2Vw
+WzBdID0gJywnKSB7DQoJCS4uLg0KCQlzZXFfcHV0cyhtLCBzZXApOw0KCQkuLi4NCgl9DQphcyB3
+ZWxsIGFzIHNlcV9wdXRzKG0sICJ4Iik7DQoNCldoZXRoZXIgdGhhdCBpcyB3b3J0aHdoaWxlIGlz
+IGFub3RoZXIgbWF0dGVyLg0KQnV0IGl0IG1pZ2h0IGJlIHVzZWQuDQoNCglEYXZpZA0KDQotDQpS
+ZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWls
+dG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMp
+DQo=
 
-On Sat, 13 Apr 2024 16:04:04 +0200, Christophe JAILLET wrote:
-> In "struct rpm_cc", the 'rpm' field is unused.
-> 
-> Remove it.
-> 
-> Found with cppcheck, unusedStructMember.
-> 
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] clk: qcom: rpm: Remove an unused field in struct rpm_cc
-      commit: 3cb55215479f04940240792479c60fad53c2d202
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
