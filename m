@@ -1,86 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7B2625;
-	Sat, 20 Apr 2024 13:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4D879FD;
+	Sun, 21 Apr 2024 13:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713619211; cv=none; b=tx4lIyu54wTgGqDvOC/z1xSdVIm1eAcNwzmRt333kKemEOK9CHb8yX8rbwhg+SloIBEy50jwqP29Sazy0vh+iDYcqvxPr6buHOR1l++NFW0qeJJ/EzMNaAZniPQArpdio0ovITLzegetjbYuoC25eCrPsVGZGpo5t+/vSLWCZV4=
+	t=1713705709; cv=none; b=hj2yp4KDtJChJpd9OG72NX0bbu/a7YFS5mFdVxCI1z5ksIaDKdD5tK4LWQqSL5Wmh4hM6pOtPFtnWzzYZz9DBdXerAdVl2fnPDosvfn3N+1ZdEqO+2WX3eRsPoDEgzrov6KQkVaIZ2XlnOwT4jbwYqHc/2wPgPjHo6AuZpm26jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713619211; c=relaxed/simple;
-	bh=Xlegqb+NHNk2snlw+uC2jpp9KfrY4Egw4o7LZfUbZ8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YQHmh6QbVIyd3klXlzcKPRZzx7m5/FGn7PCCwGBtUXERJkG18OqgWM4ULj4Yd7WcGM1w2+W9/w6dIrJT0BkE0tOjBuBjVJkXKS6bhb8iKtOR+3vM9ZNoL4E8BZk+0A6btzoQv+imyIUwFNPEWylURWbxOBdutDmVSWq0/d5f768=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ddEQwPfo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713705709; c=relaxed/simple;
+	bh=evdFeQD/L6zQL0Vd61pp1Z/7nDj1MNxAxQVGWpoT+5Q=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=FfoVVud94txZxnyYXpRei18+n7ev2DIUrFd7VS5iwVH+E0GL0ZECNkUOpUBrLERnyrmODMBwTjPS0bf2UNMMDeoP7Ny6CAPyCMPEc0kDddxhqvZ7AXcG3uhhkWh5vICfd16P4gwhEgvlcucGsVGSTgpjS9x8BVtQoAr5Jj/QBrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wSbQqbr1; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ddEQwPfo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 041B9C072AA;
-	Sat, 20 Apr 2024 13:20:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1713619210;
-	bh=Xlegqb+NHNk2snlw+uC2jpp9KfrY4Egw4o7LZfUbZ8k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ddEQwPfo0RVLM/2l9o1NRgV0zEEyg2YtVLLLdmfmVJRnVu/vnS4VD9GcIGXo2J+3E
-	 42aGHUgoz9qUto913qpZw2fpevHAk4e9Z7k49K+rItyF+NvgW37ZlODlgUjzIpgIU8
-	 ofH8IOBOozBvdGlLgeJQ8z5ndxfEO5ykrWCxRNa0=
-Date: Sat, 20 Apr 2024 15:20:01 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Jameson Thies <jthies@google.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Benson Leung <bleung@google.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Rajaram Regupathy <rajaram.regupathy@intel.com>,
-	Saranya Gopal <saranya.gopal@intel.com>
-Subject: Re: [PATCH 1/4] usb: typec: ucsi: Fix null deref in trace
-Message-ID: <2024042056-shortlist-grope-0216@gregkh>
-References: <20240419211650.2657096-2-jthies@google.com>
- <aa12c80c-9769-424a-ba2b-8c0f68b1c1e6@web.de>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wSbQqbr1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713705647; x=1714310447; i=markus.elfring@web.de;
+	bh=evdFeQD/L6zQL0Vd61pp1Z/7nDj1MNxAxQVGWpoT+5Q=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=wSbQqbr1RYsm3tjLf190P21u4mfqY5aRfGWHBCzP1Tz+qjJbOZNzusg383orT8WI
+	 tSzdWXRHMEiwSiFpRqoAZlK2q3ooF06CVAShhoh9FDKzJ7lO8AVijWqJrghP3TqjE
+	 0CBARr3a/umf8F79eZvsTVGkG9sjPSZGc7nJIhLmlAHuZm0PT9F8+NAZhZBc/8JHc
+	 2UNOy1XBc2dA1dXwhRMgAh9OMOoW2TbZX8ry3KKlJ6o37U61JfoXnLc5thhP6xQ7O
+	 LurcAQzJ57IXNComwOPeRrOpYUYPpfUMzVV8kVAuyMwp6oXEM+g+072xqnSzrm7XA
+	 KIgAy+B5QXtJEpR4xA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MG994-1rvGOR2UaS-00Gm0I; Sun, 21
+ Apr 2024 15:20:47 +0200
+Message-ID: <de7d846a-01d9-4fdf-bc9c-86de86daf4a5@web.de>
+Date: Sun, 21 Apr 2024 15:20:34 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aa12c80c-9769-424a-ba2b-8c0f68b1c1e6@web.de>
+User-Agent: Mozilla Thunderbird
+To: Ricardo Ribalda <ribalda@chromium.org>, linux-media@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
+ linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Abylay Ospan <aospan@netup.ru>, Alain Volmat <alain.volmat@foss.st.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
+ Dmitry Osipenko <digetx@gmail.com>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>,
+ Hugues Fruchet <hugues.fruchet@foss.st.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Martin Tuma <martin.tuma@digiteqautomotive.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Samuel Holland <samuel@sholland.org>, Sergey Kozlov <serjk@netup.ru>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Sylvain Petinot <sylvain.petinot@foss.st.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240419-fix-cocci-v2-23-2119e692309c@chromium.org>
+Subject: Re: [PATCH v2 23/26] media: venus: vdec: Make explicit the range of
+ us_per_frame
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240419-fix-cocci-v2-23-2119e692309c@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:MbmB4lbr0en+rNEVuMVQKHm+9+SobHtxinkTBmRYl4i4b+31EqI
+ eDwjrXrIaKZp+/JDMGyO9mK7R38liq/GAdwkTbVh4sU1ZIHKBPZL6Gz352kCK8X+Ott1p0I
+ Zv1ZyMxrJePW9LRPcsVaIQBR5rTY4R57i5DKnUO1EgZCWx2pdd7i/yiO++WyTX9PkWwOwgX
+ MxKtk9/Gp6Qa/8l3U6jHQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dATBYSaFibE=;Jyz5Mi9ajE9LhE5N43qTaPY70xl
+ gVnbMBqQ5QAVpzMNHzeG1wkunna8DaKO0ymMAIZrSDfx0FleIE5fYhcVDypdKp8lR0v4WHcJj
+ bF1xILN9gvohbueA/zfLRvRWF/gnoBdL1aWPZIPYB6kW2aEMGTFMghdmtL5DzlX7WZWxY85WW
+ 7/rtRlA3gxcuo0iB5+M6gRylehhBreCGYF7EHnbs8rT3Qcx1II3k2Dyqm8RBDtSXvU7dv1N6U
+ wajFglzV/nmJbI63wkecxwZpApsrBBwyGVnTzWSBdoBfU3C4RujxPe3Y17PUEOT3Qfcr+lWft
+ Spgzxaaq6PmSulrGutImZxLGx6OdJEuFSUMxgD+J+EvG6t/pjkHn+vOgN3GI/ReQMP3/AaEI3
+ DPD60h7q/Pfljd4BWJDamWuEcR+oILfmcG5AxOGnq3FQjtZH0ODtrTt96/lbKRZ81vYH+CXDU
+ 8hAuZwDshKlLcPUF2fWSJ9ntrW3rHm2W1nJQqIqZYiPZ8TEAYD2X0816c/Ntrsq+7FzTN/6tE
+ juSDURgQk1ei57P0vsoouKErDTufZMRKnfag2p9ne6EeSN9khMGduG/U+G+v+uFKk8ERONGSO
+ +6CgcGekJA/w17fJKphVwZPdG45Dp1ebt2C8pS6Nexw+Jhi+ko/DkvucwTGBphBPr8jlq4zHw
+ RAOu1GUx/DwMa53tKCYa9ud2jOpt5G23ikqn34bwaNYhEBmgXqWZYY0SUcrMjJssH12bp8Mnm
+ KyOHm0Qd0TkYbjXImY8P4Mo7M0Itn4iAxgjNzq5zbjtPyhRSe+ycsO/K8UZEm1x8LUST+Tq7H
+ N6Tf56yDUtKLeIYD1zeJEW4KcLnGLGsBFNG6+hHWAgeA4=
 
-On Sat, Apr 20, 2024 at 03:15:16PM +0200, Markus Elfring wrote:
-> > ucsi_register_altmode checks IS_ERR on returned pointer and treats
-> > NULL as valid. This results in a null deref when
-> > trace_ucsi_register_altmode is called.
-> 
-> I find that the change description can be improved further.
-> Is another imperative wording desirable?
-> 
-> Can it be nicer to use the term “dereference” for the final commit message?
+> Unless the fps is smaller than 0.000232829 fps, this fits in a 32 bit nu=
+mber.
+> Make that explicit.
 
-Hi,
+Would it be more appropriate to move the word =E2=80=9Cexplicit=E2=80=9D t=
+o the end
+of the summary phrase?
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
-
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
-
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
+Regards,
+Markus
