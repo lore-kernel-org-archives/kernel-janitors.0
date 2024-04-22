@@ -1,77 +1,90 @@
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744B429CF3
-	for <kernel-janitors@vger.kernel.org>; Sun, 21 Apr 2024 17:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 3E4984C97;
+	Mon, 22 Apr 2024 03:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713720140; cv=none; b=RQGKEOy4zdyXFlMOzKFhhSkDGdDZ24c4fpnTGNXepe2zyvpisw5rX1XnbbkEkTZvLpXYsiGv81pBhb5vL3iD11HgmqhK90wTOC1qGrKrqi7mIgfUFKf6QTBFhPsjYxUO0M/ATWRokNPrG7QgOzsR+bWQk2QrKoY9nxqRwJEwEco=
+	t=1713756810; cv=none; b=oj9ZsHgOZzJqnP9CobZnMP2vaaGehDpX/CdR49kuAKQmBsriEGT36DEF7Ay8QKFnSpwXi9MzCWAVd1GP66nIL+epHx8vnfBnZLaoIH7X0RsGwxqNArKPxW3tmfAwBLAjJFa7AqN+BY+HphHkx6ndkUbsGymqjH9yUc/+BUsUUhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713720140; c=relaxed/simple;
-	bh=E1Nho4TNCkRiQ+1z/eEfslZqH0CAmLGWXWNzWODCxYU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=ej/xfVqYdOA7r5I1EhJZkZdxGYIrS5ZHKaPpFwsXxcADmOTKAe99u2dW8t0GUuBNgzzAxu0dtKfwiA0xvFNotsXoqJEBAAq38+jK3VhK1M0IRkxvxqigDlkAjy28zprOxzjLL96YNZ9d6HJOvoHFf+JPpldnHt7ZJhFS0Q6nkO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-130-wqOpvSleMPWkRxXpPk1rMw-1; Sun, 21 Apr 2024 18:22:05 +0100
-X-MC-Unique: wqOpvSleMPWkRxXpPk1rMw-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 21 Apr
- 2024 18:21:32 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 21 Apr 2024 18:21:32 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Christophe JAILLET' <christophe.jaillet@wanadoo.fr>, 'Al Viro'
-	<viro@zeniv.linux.org.uk>
-CC: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH] seq_file: Optimize seq_puts()
-Thread-Topic: [PATCH] seq_file: Optimize seq_puts()
-Thread-Index: AQHaj3fscOebCwNNKkWKivYclXgg7bFrX8CggASjjoCAAvw6MA==
-Date: Sun, 21 Apr 2024 17:21:32 +0000
-Message-ID: <e3b8b5d4c43d4d6d88bc8e6d516c1d41@AcuMS.aculab.com>
-References: <5c4f7ad7b88f5026940efa9c8be36a58755ec1b3.1704374916.git.christophe.jaillet@wanadoo.fr>
- <4b1a4cc5-e057-4944-be69-d25f28645256@wanadoo.fr>
- <20240415210035.GW2118490@ZenIV>
- <ba306b2a1b5743bab79b3ebb04ece4df@AcuMS.aculab.com>
- <5e5cde3e-f3ad-4a9b-bc02-1c473affdcb1@wanadoo.fr>
-In-Reply-To: <5e5cde3e-f3ad-4a9b-bc02-1c473affdcb1@wanadoo.fr>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1713756810; c=relaxed/simple;
+	bh=zI6AXceJfEK/L8fmn63vHcXTweS/N0utaLuM9iw/3cc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=g7cdl5usLabn9l1TlgG0xlL+r79iQvT6WMEb386A5uucdp1Z28leWV9bYgd/iPgEGkvLMvfP9SndsNGMNnGGetsnysfh6c2eAo4XQs3z+nCnTXwUqpMWZAUmvGZlK7UMWWwLYqH3jXXYRjkcwJUkVYDGdaqVdsWokZlSNNWDa8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 0B5136068094E;
+	Mon, 22 Apr 2024 11:32:43 +0800 (CST)
+Message-ID: <6d311a40-05b9-3958-673d-e4c4d154ce4f@nfschina.com>
+Date: Mon, 22 Apr 2024 11:32:43 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH wireless] wifi: ath10k: Fix an error code problem in
+ ath10k_dbg_sta_write_peer_debug_trigger()
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, kvalo@kernel.org,
+ jjohnson@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
+ morbo@google.com, justinstitt@google.com
+Cc: c_mkenna@qti.qualcomm.com, linux-wireless@vger.kernel.org,
+ ath10k@lists.infradead.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <a4c2cb8c-dd80-457f-82b5-2eb58a9b55b5@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-RnJvbTogQ2hyaXN0b3BoZSBKQUlMTEVUDQo+IFNlbnQ6IDE5IEFwcmlsIDIwMjQgMjE6MzgNCi4u
-Lg0KPiA+IEkgZGlkIHdvbmRlciBhYm91dCBjaGVja2luZyBzaXplb2YocykgPD0gMiBpbiB0aGUg
-I2RlZmluZSB2ZXJzaW9uLg0KPiANCj4gZ2l0IGdyZXAgc2VxX3B1dHMuKlwiW15cXF0uXCIgfCB3
-YyAtbA0KPiA3Nw0KPiANCj4gV2hhdCB3b3VsZCB5b3UgZG8gaW4gdGhpcyBjYXNlPw0KPiAyIHNl
-cV9wdXRjKCkgaW4gb3JkZXIgdG8gc2F2ZSBhIG1lbWNweSguLi4sIDIpLCB0aGF0J3MgaXQ/DQo+
-IA0KPiBJdCB3b3VsZCBhbHNvIHNsaWdodGx5IGNoYW5nZSB0aGUgYmVoYXZpb3VyLCBhcyBvbmx5
-IHRoZSAxc3QgY2hhciBjb3VsZA0KPiBiZSBhZGRlZC4gQWN0dWFsbHksIGl0IGlzIGFsbCBvciBu
-b3RoaW5nLg0KDQpEb2luZzoNCglpZiAoc2l6ZW9mKHN0cikgPT0gMiAmJiBzdHJbMF0pDQoJCXNl
-cV9wdXRjKG0uIHN0clswXSk7DQoJZWxzZQ0KCQlfX3NlcV9wdXRzKG0sIHN0cik7DQpXb3VsZCBw
-aWNrIHVwIGxvb3BzIHRoYXQgZG86DQoJY2hhciBzZXBbMl0gPSAiIjsNCg0KCWZvciAoOzsgc2Vw
-WzBdID0gJywnKSB7DQoJCS4uLg0KCQlzZXFfcHV0cyhtLCBzZXApOw0KCQkuLi4NCgl9DQphcyB3
-ZWxsIGFzIHNlcV9wdXRzKG0sICJ4Iik7DQoNCldoZXRoZXIgdGhhdCBpcyB3b3J0aHdoaWxlIGlz
-IGFub3RoZXIgbWF0dGVyLg0KQnV0IGl0IG1pZ2h0IGJlIHVzZWQuDQoNCglEYXZpZA0KDQotDQpS
-ZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWls
-dG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMp
-DQo=
+On 2024/4/19 23:09, Jeff Johnson wrote:
+> On 4/17/2024 1:17 AM, Su Hui wrote:
+>>   	u8 peer_debug_trigger;
+>> -	int ret;
+>> +	int ret = 0;
+> this is unnecessary since this will be written in all paths that lead to the
+> return that reads it
+Yes, this is my fault. I will remove this in v2 patch.
+>>   
+>>   	if (kstrtou8_from_user(user_buf, count, 0, &peer_debug_trigger))
+>>   		return -EINVAL;
+>> @@ -432,14 +432,12 @@ ath10k_dbg_sta_write_peer_debug_trigger(struct file *file,
+>>   
+>>   	ret = ath10k_wmi_peer_set_param(ar, arsta->arvif->vdev_id, sta->addr,
+>>   					ar->wmi.peer_param->debug, peer_debug_trigger);
+>> -	if (ret) {
+>> +	if (ret)
+>>   		ath10k_warn(ar, "failed to set param to trigger peer tid logs for station ret: %d\n",
+>>   			    ret);
+>> -		goto out;
+>> -	}
+>>   out:
+>>   	mutex_unlock(&ar->conf_mutex);
+>> -	return count;
+>> +	return ret ?: count;
+>>   }
+>>   
+>>   static const struct file_operations fops_peer_debug_trigger = {
+> I'd suggest as an alternate solution that this function is a good candidate
+> for the the cleanup.h functionality. By scoping the mutex_lock() you can
+> simply return at each error location, and remove the explicit mutex_unlock().
+
+like guard(mutex)(&ar->conf_mutex)?
+
+Maybe I can send a separate patch for this,  because there are more than 
+one candidates
+
+for the cleanup.h functionality.
+
+> But I'd accept this with the initializer change removed as well since I don't
+> think ath10k has any cleanup.h usages yet.
+
+I will send v2 patch soon , thanks for your reply!
+
+Su Hui
+
 
