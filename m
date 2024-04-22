@@ -1,215 +1,140 @@
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7869613E3E5;
-	Mon, 22 Apr 2024 10:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9461314F9E1
+	for <kernel-janitors@vger.kernel.org>; Mon, 22 Apr 2024 13:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713781531; cv=none; b=ibzXr+AwBO1RYVjD+YeuoNYlED7fgME/OcafyxqVm0ko9o9Nzo4c17C1BXCv6r4cCn8kB6d8aSVGFZDfw7CnWGWDC7tEfIaqG1rO+0fCOufVKSLUww91SUy8ATrloDE6t28ToG4qmf4C1H3VTRLZMc9tRRTCr+5C3qT+m0OP7gU=
+	t=1713792720; cv=none; b=A823kNdfV/gWNqdv+L78FzZrY6A8Q0PW6ZeJaO/IGx7YGfKqsfU8i87asyssMJkzd8SpJv1Qa5ejDx+GDc4WPDYv514fXhXeUJNyaEt3CaG58dNrPuStXA+ccxXJpRgGsGvwJvvdk1O6JgRjFFKkx4ibtuNYJfYeFMQp08yNjQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713781531; c=relaxed/simple;
-	bh=PEe4CtOIrKOA5J/Q+3pJlXyDw+pimrK40GN8HRR88Cs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ga4KxYfVisOteTzu4ky3FGJ6y2V0EWYdGGNC4DfFXQ0StfmImdTta/HKyDFT0pU6KMnCFWjRNZdQADbsW8PkowDfI10FxJ1VOL2z5PgG3DtDp8pXhxTetvvFz4liBOHeaGRNX/N5g7kvlLhMnZrIPzM+GQ6QGR9VViMotpua6zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=kaQ9gEiM; arc=none smtp.client-ip=80.12.242.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1713792720; c=relaxed/simple;
+	bh=awX5B76+HzKgX2w5I2DsXCUaJAK/mYe3tND15fSkqMY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t7tdMWNdlg/XGg5Qc2pzOStgS7OcAO/8CPbwfZB8Tao98VeX8CddYXh2ppLWTUeSxm/lsrw2oVVyhFNrY2J9HNhFTPMiJJzcD5w1iFHRStyQXTm/3QekMQTtSvV0gt2fbdquDx1fUNUFlPD469vHpMllaCnc1KQCqAOn9eqLZ44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HeI52t5p; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="kaQ9gEiM"
-Received: from fedora.home ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id yqqPr8npHhQSByqqPrJn2k; Mon, 22 Apr 2024 12:24:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1713781458;
-	bh=WDS/cJIF3u/b8hKGhrIR45S+kJmGLDvRuuuBC4I4XyY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=kaQ9gEiMqMz2fUPdb+cygTCdJytCqki5fJpgw8E/zgZZfy5hc6+RBYeHtX9LMYzie
-	 0kn0DwUKqBwFgbA0DwkQBf9JkRHVGrq3z7ypX+hquI7Gu6yhU5Q16ZdmNvAHUmcoJ0
-	 6rs/y47hUKC6w4EKdBR9Oa1BaergyneOdGsQk0cX5njFtod7RsiMk3F/OSNIQshhzh
-	 at0DKr6ME9bQ4nGZI4K8vNPtUbxDaFBSX3EYuWRC2mBYk4FqTv/xszsxUrI4G2/14l
-	 WjEb2MwDgQXFuZhDTDbA8lGX0S7CqBGS3HxkAqf2Xp8XEWJUojGiSXbUDtZc4mFBRl
-	 pU5P603po9jbQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 22 Apr 2024 12:24:18 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: David.Laight@ACULAB.COM,
-	rasmus.villemoes@prevas.dk,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 1/2] seq_file: Optimize seq_puts()
-Date: Mon, 22 Apr 2024 12:24:06 +0200
-Message-ID: <a8589bffe4830dafcb9111e22acf06603fea7132.1713781332.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.44.0
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HeI52t5p"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1713792717;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ANX+xaTgZeaaXkTxg9wkNgDys/2r+xl16Yffp7Qdk4w=;
+	b=HeI52t5pmDLAUOI7ed32Q4LZxYVb8qc097HSrgD+/hAE0KluPwbqj/fPlLPMt4QIoEqHNS
+	GVAvhOpivNcoaTrKCgVZJBnTOAmstokZINDaaHVL7AvZg+Mpjq7sSWSRruep8wya3qzeNM
+	Pnd+i7+Tu29ZiT15z0fIUC/fpu8jLVU=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-634-tPHV3FwoPXClnDmywPoYsQ-1; Mon, 22 Apr 2024 09:31:56 -0400
+X-MC-Unique: tPHV3FwoPXClnDmywPoYsQ-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a51a2113040so210576666b.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 22 Apr 2024 06:31:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713792715; x=1714397515;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ANX+xaTgZeaaXkTxg9wkNgDys/2r+xl16Yffp7Qdk4w=;
+        b=UxmRCg3KFY/b4pGdcX6v5reBrLQNcD0PqRbDgd8TxtH1qUzd+OenF/U8Py02SMTI6d
+         CDw+2Y92W7G41U3Qy0ddMKgD+rIm5UVIfHHKf1z0CCpdePu3g95RvH3BTRvD+r5qXoVX
+         V+IuGIs6ZOlmm6KTv5LPBmRVNGw+ygg6F32WFMlRzLPvMn6kwy0Iwe0Q1RspPIA4sp9c
+         K1BFqh6eNmXyjMw7FCgYsstxufGI68ydUV5aJ76ciRF16mj0ze4N3qsexsVkH3oNmeOn
+         MHk7sg6+yscTeZXVJPSKsABfViMSsrV6ryoqdP2tnpQINa2YqVAvx/ov/zWWqTpOBTiy
+         i5uw==
+X-Gm-Message-State: AOJu0Yzce4Swy9DAGtCfkneh1SDGJ9v+lbUzIm5Z/0Jgs0yoXOgh8e20
+	a3OBUSY+OHo8zx3sovjtS+7fx8oiqyfjKvtjCxbd0bQl8Ox4IRNEj6RpDQE7CGGPszOanDSiuVs
+	lqp2Mnmk47RLCkk6QKkM9BOHkByNNzWyQkGl0NfHBiGSc4PoMy3nOPAh4HG0RsAx3LQ==
+X-Received: by 2002:a17:907:94cb:b0:a55:b272:ea02 with SMTP id dn11-20020a17090794cb00b00a55b272ea02mr2618065ejc.75.1713792714911;
+        Mon, 22 Apr 2024 06:31:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG82ZH8/Jtju0mhAdG8/PW4XqvBdwQxaB7D0jxdPhLmOnBwNV/D0nX8zuy+43rjCw52vpCfaQ==
+X-Received: by 2002:a17:907:94cb:b0:a55:b272:ea02 with SMTP id dn11-20020a17090794cb00b00a55b272ea02mr2618055ejc.75.1713792714632;
+        Mon, 22 Apr 2024 06:31:54 -0700 (PDT)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id bk2-20020a170907360200b00a55a8ec5879sm2130351ejc.116.2024.04.22.06.31.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Apr 2024 06:31:54 -0700 (PDT)
+Message-ID: <25965583-4d8a-4e7a-9a2e-83ec2faa4187@redhat.com>
+Date: Mon, 22 Apr 2024 15:31:53 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] platform/x86/intel/pmc: Fix PCH names in comments
+To: Colin Ian King <colin.i.king@gmail.com>,
+ Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
+ David E Box <david.e.box@intel.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240418215202.879171-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240418215202.879171-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Most of seq_puts() usages are done with a string literal. In such cases,
-the length of the string car be computed at compile time in order to save
-a strlen() call at run-time. seq_putc() or seq_write() can then be used
-instead.
+Hi,
 
-This saves a few cycles.
+On 4/18/24 11:52 PM, Colin Ian King wrote:
+> The PCH names in the pmc drivers are incorrect in the comments,
+> fix these.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-To have an estimation of how often this optimization triggers:
-   $ git grep seq_puts.*\" | wc -l
-   3436
+Thank you for your patch, I've applied this patch to my review-hans 
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
 
-   $ git grep seq_puts.*\".\" | wc -l
-   84
+Note it will show up in my review-hans branch once I've pushed my
+local branch there, which might take a while.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Changes in v2:
-   - Use a function, instead of a macro   [Al Viro]
-   - Handle the case of 1 char only strings, in order to use seq_putc()   [Al Viro]
-   - Use __always_inline   [David Laight]
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
 
-V1: https://lore.kernel.org/all/5c4f7ad7b88f5026940efa9c8be36a58755ec1b3.1704374916.git.christophe.jaillet@wanadoo.fr/
+Regards,
 
-
-Checked by comparing the output of a few .s files.
-Here is one of these outputs:
-
-$ diff -u drivers/clk/clk.s.old drivers/clk/clk.s | grep -C6 seq_w
-
- .L2918:
-@@ -46072,10 +46073,11 @@
- 	call	clk_prepare_unlock	#
- # drivers/clk/clk.c:3438: 	clk_pm_runtime_put_all();
- 	call	clk_pm_runtime_put_all	#
--# drivers/clk/clk.c:3440: 	seq_puts(s, "}\n");
-+# ./include/linux/seq_file.h:130: 		seq_write(m, s, __builtin_strlen(s));
-+	movl	$2, %edx	#,
- 	movq	$.LC94, %rsi	#,
- 	movq	%rbp, %rdi	# s,
--	call	seq_puts	#
-+	call	seq_write	#
- # drivers/clk/clk.c:3441: 	return 0;
- 	jmp	.L2917	#
- 	.size	clk_dump_show, .-clk_dump_show
-@@ -46200,7 +46202,7 @@
- 	leaq	128(%rbx), %r15	#, _97
- 	movq	%r15, %rdi	# _97,
---
- # drivers/clk/clk.c:1987: 		__clk_recalc_rates(core, false, 0);
-@@ -46480,15 +46482,17 @@
- 	call	seq_printf	#
- 	jmp	.L2950	#
- .L2946:
--# drivers/clk/clk.c:3315: 		seq_puts(s, "-----");
-+# ./include/linux/seq_file.h:130: 		seq_write(m, s, __builtin_strlen(s));
- 	call	__sanitizer_cov_trace_pc	#
-+	movl	$5, %edx	#,
- 	movq	$.LC100, %rsi	#,
- 	movq	%rbp, %rdi	# s,
--	call	seq_puts	#
-+	call	seq_write	#
-+# ./include/linux/seq_file.h:131: }
- 	jmp	.L2947	#
- .L2957:
- # drivers/clk/clk.c:1903: 	return clk_core_get_accuracy_no_lock(core);
--	xorl	%r14d, %r14d	# _34
-+	xorl	%r14d, %r14d	# _35
---
-@@ -46736,21 +46740,22 @@
- 	call	__sanitizer_cov_trace_pc	#
- 	leaq	240(%r12), %rdi	#, tmp101
- 	call	__tsan_read8	#
--# drivers/clk/clk.c:3355: 	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware                            connection\n");
--	movq	$.LC104, %rsi	#,
-+# ./include/linux/seq_file.h:130: 		seq_write(m, s, __builtin_strlen(s));
-+	movl	$142, %edx	#,
- 	movq	%r12, %rdi	# s,
-+	movq	$.LC104, %rsi	#,
- # drivers/clk/clk.c:3352: 	struct hlist_head **lists = s->private;
- 	movq	240(%r12), %r13	# s_10(D)->private, lists
--# drivers/clk/clk.c:3355: 	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware                            connection\n");
--	call	seq_puts	#
--# drivers/clk/clk.c:3356: 	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id\n");
-+# ./include/linux/seq_file.h:130: 		seq_write(m, s, __builtin_strlen(s));
-+	call	seq_write	#
-+	movl	$142, %edx	#,
- 	movq	$.LC105, %rsi	#,
- 	movq	%r12, %rdi	# s,
--	call	seq_puts	#
--# drivers/clk/clk.c:3357: 	seq_puts(s, "---------------------------------------------------------------------------------------------------------------------------------------------\n");
-+	call	seq_write	#
- 	movq	$.LC106, %rsi	#,
- 	movq	%r12, %rdi	# s,
--	call	seq_puts	#
-+	movl	$142, %edx	#,
-+	call	seq_write	#
- # drivers/clk/clk.c:3359: 	ret = clk_pm_runtime_get_all();
- 	call	clk_pm_runtime_get_all	#
- # drivers/clk/clk.c:3360: 	if (ret)
-@@ -57943,7 +57948,7 @@
- 	subq	$88, %rsp	#,
- # drivers/clk/clk.c:5338: {
+Hans
 
 
-The output for seq_putc() generation has also be checked and works.
----
- fs/seq_file.c            |  4 ++--
- include/linux/seq_file.h | 13 ++++++++++++-
- 2 files changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index f5fdaf3b1572..8ef0a07033ca 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -669,7 +669,7 @@ void seq_putc(struct seq_file *m, char c)
- }
- EXPORT_SYMBOL(seq_putc);
- 
--void seq_puts(struct seq_file *m, const char *s)
-+void __seq_puts(struct seq_file *m, const char *s)
- {
- 	int len = strlen(s);
- 
-@@ -680,7 +680,7 @@ void seq_puts(struct seq_file *m, const char *s)
- 	memcpy(m->buf + m->count, s, len);
- 	m->count += len;
- }
--EXPORT_SYMBOL(seq_puts);
-+EXPORT_SYMBOL(__seq_puts);
- 
- /**
-  * seq_put_decimal_ull_width - A helper routine for putting decimal numbers
-diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
-index 234bcdb1fba4..8bd4fda6e027 100644
---- a/include/linux/seq_file.h
-+++ b/include/linux/seq_file.h
-@@ -118,7 +118,18 @@ void seq_vprintf(struct seq_file *m, const char *fmt, va_list args);
- __printf(2, 3)
- void seq_printf(struct seq_file *m, const char *fmt, ...);
- void seq_putc(struct seq_file *m, char c);
--void seq_puts(struct seq_file *m, const char *s);
-+void __seq_puts(struct seq_file *m, const char *s);
-+
-+static __always_inline void seq_puts(struct seq_file *m, const char *s)
-+{
-+	if (!__builtin_constant_p(*s))
-+		__seq_puts(m, s);
-+	else if (s[0] && !s[1])
-+		seq_putc(m, s[0]);
-+	else
-+		seq_write(m, s, __builtin_strlen(s));
-+}
-+
- void seq_put_decimal_ull_width(struct seq_file *m, const char *delimiter,
- 			       unsigned long long num, unsigned int width);
- void seq_put_decimal_ull(struct seq_file *m, const char *delimiter,
--- 
-2.44.0
+> ---
+>  drivers/platform/x86/intel/pmc/arl.c | 2 +-
+>  drivers/platform/x86/intel/pmc/lnl.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/intel/pmc/arl.c b/drivers/platform/x86/intel/pmc/arl.c
+> index 34b4cd23bfe5..e10527c4e3e0 100644
+> --- a/drivers/platform/x86/intel/pmc/arl.c
+> +++ b/drivers/platform/x86/intel/pmc/arl.c
+> @@ -1,7 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * This file contains platform specific structure definitions
+> - * and init function used by Meteor Lake PCH.
+> + * and init function used by Arrow Lake PCH.
+>   *
+>   * Copyright (c) 2022, Intel Corporation.
+>   * All Rights Reserved.
+> diff --git a/drivers/platform/x86/intel/pmc/lnl.c b/drivers/platform/x86/intel/pmc/lnl.c
+> index 068d72504683..ec89e7dda103 100644
+> --- a/drivers/platform/x86/intel/pmc/lnl.c
+> +++ b/drivers/platform/x86/intel/pmc/lnl.c
+> @@ -1,7 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * This file contains platform specific structure definitions
+> - * and init function used by Meteor Lake PCH.
+> + * and init function used by Lunar Lake PCH.
+>   *
+>   * Copyright (c) 2022, Intel Corporation.
+>   * All Rights Reserved.
 
