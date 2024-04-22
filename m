@@ -1,40 +1,48 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE35153572;
-	Mon, 22 Apr 2024 15:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D92153837;
+	Mon, 22 Apr 2024 16:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713800351; cv=none; b=K3nY0g6VAFtid8R12sUKdLVDlcBAOXOoN3k/JGWCB0eFKCbGtNYBQ5Vo0SUqCI+W0mVjwu7QTlGcQtGfWYsbGpjc4uoS0hGpTFhczvpMqrQKoqcGUiK/9UR4C1EISrILKp/5uD9x3Ca+/NpuezQVV6kGd3kx7kG+R0e4UEzUCzI=
+	t=1713802881; cv=none; b=u2CPU9Qg7CG7jxJnaWnEQ+IC9R40XCQ5CGl43FuWpqt8ve+ZnHwiyEdCdd61DaIuXNXFE0xBOQYb482rEFfftRwY52iLY0T22j/yHR972eEJ8sNHXNcfoBYiD+gmPYajUkb+Ty5U7rxYjJV2w7wx+0m6bqWLjt3KOtAJWEa3+GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713800351; c=relaxed/simple;
-	bh=10FfD4ZHzSFQEH8sQUELtpgULLzge1X9Q8xRaKqG1Ik=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=P0pFvqAdhaDlelC0x22kKU2lo1qcvGO0BBuRE5D5jQ1YX3WtVRCuhe2o1woOCtJLt8v3nKax/V80Ou73Oq9K1qIKEKFrp6IcgGqc1J27NlqO3gO0BW3HAq40C5NJBIlGfyk/1aCKP9xZoP66MCh1ZC7b01cFJFaGYGdqhwOyps8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=uYqDgZv8; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713802881; c=relaxed/simple;
+	bh=0UobfBGE+SyjW5hpf/zsJLUNrWOzqshbd4AmR8Z7g9Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JiegcIsxaOuUWoF9SEWHZOAGxXoDKHrusFu+K2zkfDT5b1Gr22UVQcYUTW98+zmJaDbqghZ/FURfkNGqx1NV4iC6vJmT+CpEVkaapuL0Sp52R6wE4X6jTNizvZ8gMTt3RkfG49PJybGJw1GYtbwYcpUKkYEvT/67yy0ECkKw2iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZIMCKvpL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="uYqDgZv8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713800333; x=1714405133; i=markus.elfring@web.de;
-	bh=PvxrtFdGZmRXnr/yFq+g2FFB8EV93GFvYY78jv7kXYQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=uYqDgZv8KFXEZOk27ftPEcnks5OVY+wyu+FtwLjpnJB7ovOhSoX9o6TnB+of5UUx
-	 6P7/48RH0fqRy4GbZs1UlzbbbK5G7sXp1mMAbmlrMP4nANpHNL6pQtMaG6xb3sxqE
-	 lig6k0TV/sJS3SGWYOAJR4Di9Zg1tiXeF2lmBagBM2yB3BlkjRZIRB6QY+ZiOIF4i
-	 xtllarxKTdx77l+/sMFPm6Tmu35o8eVjr3PE//RG0A9il8Zr3lBa5ajYzqNh7exkK
-	 xKWaTfTY/C0Q9IKk04FIOoDjh0HoqqKh4Bc4n47HTBomWGpeNOYVFNL+Hz695sTwr
-	 2AnxM2aOHY+VRLf+Vw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MumNL-1spO180rnH-00tQ77; Mon, 22
- Apr 2024 17:38:53 +0200
-Message-ID: <964c9987-ea86-4167-899d-3bd3442ebfdb@web.de>
-Date: Mon, 22 Apr 2024 17:38:43 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZIMCKvpL"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43MFfaaI008025;
+	Mon, 22 Apr 2024 16:21:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=BeB6ld/0x9MpnPNJNCXzKwtz17XBbhkY2cn9Yw1AGC8=; b=ZI
+	MCKvpLQmoLhxmEjIgFn4mexrYRZ9l6voRX8g2Zwukc2crYxm8nuv/dFZ4yDLUoJb
+	GpfeUs7CrET0JYFfXIG6HIVLkS6oe1HNFYgdLwFGbHJD74TZDSJavzuPGWW9H77N
+	EexLlBUKDZ90/0OlZ3OAnbRe7p9ofYj+iEMyPtmiQ005ZHuvWCS+V+TkhxLzXJnZ
+	NCv1c+yqZ0G+ceH0r2FZPcuM1017vTHFBmU+X2NCBHj0X4u5eDtJK14DF6sC424d
+	i/9T2RBZf/fZxix+Wtz/sIN9eMi0rrf+n+rlmIC9Fmu9LmoIwdbVky8aMBqx/RPH
+	MWUEhp4RTAEoJOjubQwg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xm4qdd2a2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Apr 2024 16:21:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 43MGL2X7027898
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Apr 2024 16:21:02 GMT
+Received: from [10.227.110.203] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 22 Apr
+ 2024 09:21:01 -0700
+Message-ID: <9fc9866b-b2fb-40ee-97ea-0e819f05dc15@quicinc.com>
+Date: Mon, 22 Apr 2024 09:21:01 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,67 +50,43 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Jose Fernandez <josef@netflix.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
- Alan Liu <haoping.liu@amd.com>, Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Fangzhi Zuo <jerry.zuo@amd.com>, George Shen <george.shen@amd.com>,
- Hamza Mahfooz <hamza.mahfooz@amd.com>,
- Harry Wentland <harry.wentland@amd.com>,
- Ilya Bakoulin <ilya.bakoulin@amd.com>, Leo Li <sunpeng.li@amd.com>,
- Leo Ma <hanghong.ma@amd.com>, Nasir Osman <nasir.osman@amd.com>,
- Nicholas Kazlauskas <Nicholas.Kazlauskas@amd.com>,
- Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Wenjing Liu <wenjing.liu@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240410043433.12854-1-josef@netflix.com>
-Subject: Re: [PATCH] drm/amd/display: Fix division by zero in setup_dsc_config
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240410043433.12854-1-josef@netflix.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ImWj6NNFf54sdIU5jTB8RmmUgnJSM4ABxpBdpnbmrgQZxjocuvw
- xKz8NFS87E2HoZuS5ACRStYdZEpf3LwT7Ayfbgi511rH7Jqm1wmew0+1L2n6Ryy8tnv3mgh
- 9OgnL+aZNfBvVRhTOuVYL4kuPl8JiHNVjHBwfbsO4u2o0NOuns/wGgkqKmxeYhxxjIILqVa
- XIBI1QPzz+XcsrdIu//bw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:xFRexao3ArU=;5HQx+6cRQUkVuVF3ZgAFuJexcw8
- xt19fkO9itbevDWaxVlDInmziCgR00uiPUPVziaSor3KwtbRGg2J73bFlvlXJIqcHQh0v3YVK
- H30Ny9zBA3Ifc9LFVZ8KQZWJnL+agr3/spWHA5EUZ4DmQp8kd2+3NHWg5j3RWdTPI4O8GkMTD
- d4DdpO0C5vDlqHNUl4fQQxVG0mcSxU5vdKvzfnro+oWr8O8xSSgMq078KUWsy1QACwNJtMFR6
- QGdbbn3lOoaefXaE5TazGIqCURhu3ISLHM6CGpvjloCGdLc6vFYjpyRXnc1mFNmp6JEhEfj0K
- CE44hN3bMl5yjsCoCfcX7gjqv+KVIBBbQtzwXx5vLSKVuWe1AQbUDy2HmOq3TewvdqN/TcenH
- 7ex3tulwgahTgk+8I6o2nr4UPfpdXAROeajEVcsODZWz4Sq51spMZ3KkfYlB7ld3gGhHhmdMm
- OgCWlfbKVH349NzeDa+OXxeEyQNc0b3h29SwKXFKzq5eZiSXJwI/stQZFcKRcLXHaJ2PVswHB
- 0Ylh8L3bLQ50AbLNNjtas62bLe50k+neX38hlDyXID1q8tCVbCLhiKRSRc60bqW4T7bulyXVT
- LJ3+FD7i3nWV91K3nYr3zvphcr0Jd4vYjCbMG7Up3KWP2Qh81EDiCpf1bA3PNs42xhN7dAtYh
- FbriIOpdgvCL8aiO6lXnFbDnO/kKz043WSXgSTyy0wEaKwiqLcM8GDUa08TJnzZHBnH5LdH6g
- Sn7rJ3iOIe/31FfJk7KSeMZTWp2xswKO4u15yo6A8oy33RxTvaJ5uiYoh7OCEP+YsgRT5f10U
- Za7/Mqa8MiFVJBIsuUZN2ZUCf0Kl7see7XjK83huxQk7E=
+Subject: Re: [PATCH wireless v2] wifi: ath10k: Fix an error code problem in
+ ath10k_dbg_sta_write_peer_debug_trigger()
+Content-Language: en-US
+To: Su Hui <suhui@nfschina.com>, <kvalo@kernel.org>, <jjohnson@kernel.org>,
+        <nathan@kernel.org>, <ndesaulniers@google.com>, <morbo@google.com>,
+        <justinstitt@google.com>
+CC: <c_mkenna@qti.qualcomm.com>, <linux-wireless@vger.kernel.org>,
+        <ath10k@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <llvm@lists.linux.dev>, <kernel-janitors@vger.kernel.org>
+References: <20240422034243.938962-1-suhui@nfschina.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240422034243.938962-1-suhui@nfschina.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 0A8r2vmO4FIBEAzjcwXp__E0KoBsziKC
+X-Proofpoint-ORIG-GUID: 0A8r2vmO4FIBEAzjcwXp__E0KoBsziKC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-22_09,2024-04-22_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0 adultscore=0
+ mlxlogscore=762 bulkscore=0 suspectscore=0 malwarescore=0 clxscore=1015
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2404220069
 
-=E2=80=A6
-> +++ b/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c
-> @@ -1055,7 +1055,12 @@ static bool setup_dsc_config(
->  	if (!is_dsc_possible)
->  		goto done;
->
-> -	dsc_cfg->num_slices_v =3D pic_height/slice_height;
-> +	if (slice_height > 0)
-> +		dsc_cfg->num_slices_v =3D pic_height/slice_height;
-> +	else {
-> +		is_dsc_possible =3D false;
-> +		goto done;
-> +	}
->
->  	if (target_bandwidth_kbps > 0) {
->  		is_dsc_possible =3D decide_dsc_target_bpp_x16(
+On 4/21/2024 8:42 PM, Su Hui wrote:
+> Clang Static Checker (scan-build) Warning:
+> drivers/net/wireless/ath/ath10k/debugfs_sta.c:line 429, column 3
+> Value stored to 'ret' is never read.
+> 
+> Return 'ret' rather than 'count' when 'ret' stores an error code.
+> By the way, remove some useless code.
+> 
+> Fixes: ee8b08a1be82 ("ath10k: add debugfs support to get per peer tids log via tracing")
+> Signed-off-by: Su Hui <suhui@nfschina.com>Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-I suggest to take another coding style concern into account.
-Please use curly brackets for both if branches.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/coding-style.rst?h=3Dv6.9-rc5#n213
-
-Regards,
-Markus
