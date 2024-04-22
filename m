@@ -1,64 +1,40 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9461314F9E1
-	for <kernel-janitors@vger.kernel.org>; Mon, 22 Apr 2024 13:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE35153572;
+	Mon, 22 Apr 2024 15:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713792720; cv=none; b=A823kNdfV/gWNqdv+L78FzZrY6A8Q0PW6ZeJaO/IGx7YGfKqsfU8i87asyssMJkzd8SpJv1Qa5ejDx+GDc4WPDYv514fXhXeUJNyaEt3CaG58dNrPuStXA+ccxXJpRgGsGvwJvvdk1O6JgRjFFKkx4ibtuNYJfYeFMQp08yNjQs=
+	t=1713800351; cv=none; b=K3nY0g6VAFtid8R12sUKdLVDlcBAOXOoN3k/JGWCB0eFKCbGtNYBQ5Vo0SUqCI+W0mVjwu7QTlGcQtGfWYsbGpjc4uoS0hGpTFhczvpMqrQKoqcGUiK/9UR4C1EISrILKp/5uD9x3Ca+/NpuezQVV6kGd3kx7kG+R0e4UEzUCzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713792720; c=relaxed/simple;
-	bh=awX5B76+HzKgX2w5I2DsXCUaJAK/mYe3tND15fSkqMY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t7tdMWNdlg/XGg5Qc2pzOStgS7OcAO/8CPbwfZB8Tao98VeX8CddYXh2ppLWTUeSxm/lsrw2oVVyhFNrY2J9HNhFTPMiJJzcD5w1iFHRStyQXTm/3QekMQTtSvV0gt2fbdquDx1fUNUFlPD469vHpMllaCnc1KQCqAOn9eqLZ44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HeI52t5p; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1713800351; c=relaxed/simple;
+	bh=10FfD4ZHzSFQEH8sQUELtpgULLzge1X9Q8xRaKqG1Ik=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=P0pFvqAdhaDlelC0x22kKU2lo1qcvGO0BBuRE5D5jQ1YX3WtVRCuhe2o1woOCtJLt8v3nKax/V80Ou73Oq9K1qIKEKFrp6IcgGqc1J27NlqO3gO0BW3HAq40C5NJBIlGfyk/1aCKP9xZoP66MCh1ZC7b01cFJFaGYGdqhwOyps8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=uYqDgZv8; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HeI52t5p"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713792717;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ANX+xaTgZeaaXkTxg9wkNgDys/2r+xl16Yffp7Qdk4w=;
-	b=HeI52t5pmDLAUOI7ed32Q4LZxYVb8qc097HSrgD+/hAE0KluPwbqj/fPlLPMt4QIoEqHNS
-	GVAvhOpivNcoaTrKCgVZJBnTOAmstokZINDaaHVL7AvZg+Mpjq7sSWSRruep8wya3qzeNM
-	Pnd+i7+Tu29ZiT15z0fIUC/fpu8jLVU=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-634-tPHV3FwoPXClnDmywPoYsQ-1; Mon, 22 Apr 2024 09:31:56 -0400
-X-MC-Unique: tPHV3FwoPXClnDmywPoYsQ-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a51a2113040so210576666b.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 22 Apr 2024 06:31:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713792715; x=1714397515;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ANX+xaTgZeaaXkTxg9wkNgDys/2r+xl16Yffp7Qdk4w=;
-        b=UxmRCg3KFY/b4pGdcX6v5reBrLQNcD0PqRbDgd8TxtH1qUzd+OenF/U8Py02SMTI6d
-         CDw+2Y92W7G41U3Qy0ddMKgD+rIm5UVIfHHKf1z0CCpdePu3g95RvH3BTRvD+r5qXoVX
-         V+IuGIs6ZOlmm6KTv5LPBmRVNGw+ygg6F32WFMlRzLPvMn6kwy0Iwe0Q1RspPIA4sp9c
-         K1BFqh6eNmXyjMw7FCgYsstxufGI68ydUV5aJ76ciRF16mj0ze4N3qsexsVkH3oNmeOn
-         MHk7sg6+yscTeZXVJPSKsABfViMSsrV6ryoqdP2tnpQINa2YqVAvx/ov/zWWqTpOBTiy
-         i5uw==
-X-Gm-Message-State: AOJu0Yzce4Swy9DAGtCfkneh1SDGJ9v+lbUzIm5Z/0Jgs0yoXOgh8e20
-	a3OBUSY+OHo8zx3sovjtS+7fx8oiqyfjKvtjCxbd0bQl8Ox4IRNEj6RpDQE7CGGPszOanDSiuVs
-	lqp2Mnmk47RLCkk6QKkM9BOHkByNNzWyQkGl0NfHBiGSc4PoMy3nOPAh4HG0RsAx3LQ==
-X-Received: by 2002:a17:907:94cb:b0:a55:b272:ea02 with SMTP id dn11-20020a17090794cb00b00a55b272ea02mr2618065ejc.75.1713792714911;
-        Mon, 22 Apr 2024 06:31:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG82ZH8/Jtju0mhAdG8/PW4XqvBdwQxaB7D0jxdPhLmOnBwNV/D0nX8zuy+43rjCw52vpCfaQ==
-X-Received: by 2002:a17:907:94cb:b0:a55:b272:ea02 with SMTP id dn11-20020a17090794cb00b00a55b272ea02mr2618055ejc.75.1713792714632;
-        Mon, 22 Apr 2024 06:31:54 -0700 (PDT)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id bk2-20020a170907360200b00a55a8ec5879sm2130351ejc.116.2024.04.22.06.31.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Apr 2024 06:31:54 -0700 (PDT)
-Message-ID: <25965583-4d8a-4e7a-9a2e-83ec2faa4187@redhat.com>
-Date: Mon, 22 Apr 2024 15:31:53 +0200
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="uYqDgZv8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713800333; x=1714405133; i=markus.elfring@web.de;
+	bh=PvxrtFdGZmRXnr/yFq+g2FFB8EV93GFvYY78jv7kXYQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=uYqDgZv8KFXEZOk27ftPEcnks5OVY+wyu+FtwLjpnJB7ovOhSoX9o6TnB+of5UUx
+	 6P7/48RH0fqRy4GbZs1UlzbbbK5G7sXp1mMAbmlrMP4nANpHNL6pQtMaG6xb3sxqE
+	 lig6k0TV/sJS3SGWYOAJR4Di9Zg1tiXeF2lmBagBM2yB3BlkjRZIRB6QY+ZiOIF4i
+	 xtllarxKTdx77l+/sMFPm6Tmu35o8eVjr3PE//RG0A9il8Zr3lBa5ajYzqNh7exkK
+	 xKWaTfTY/C0Q9IKk04FIOoDjh0HoqqKh4Bc4n47HTBomWGpeNOYVFNL+Hz695sTwr
+	 2AnxM2aOHY+VRLf+Vw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MumNL-1spO180rnH-00tQ77; Mon, 22
+ Apr 2024 17:38:53 +0200
+Message-ID: <964c9987-ea86-4167-899d-3bd3442ebfdb@web.de>
+Date: Mon, 22 Apr 2024 17:38:43 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -66,75 +42,67 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] platform/x86/intel/pmc: Fix PCH names in comments
-To: Colin Ian King <colin.i.king@gmail.com>,
- Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
- David E Box <david.e.box@intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- platform-driver-x86@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240418215202.879171-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240418215202.879171-1-colin.i.king@gmail.com>
+To: Jose Fernandez <josef@netflix.com>, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+ Alan Liu <haoping.liu@amd.com>, Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ Fangzhi Zuo <jerry.zuo@amd.com>, George Shen <george.shen@amd.com>,
+ Hamza Mahfooz <hamza.mahfooz@amd.com>,
+ Harry Wentland <harry.wentland@amd.com>,
+ Ilya Bakoulin <ilya.bakoulin@amd.com>, Leo Li <sunpeng.li@amd.com>,
+ Leo Ma <hanghong.ma@amd.com>, Nasir Osman <nasir.osman@amd.com>,
+ Nicholas Kazlauskas <Nicholas.Kazlauskas@amd.com>,
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+ Wenjing Liu <wenjing.liu@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240410043433.12854-1-josef@netflix.com>
+Subject: Re: [PATCH] drm/amd/display: Fix division by zero in setup_dsc_config
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240410043433.12854-1-josef@netflix.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ImWj6NNFf54sdIU5jTB8RmmUgnJSM4ABxpBdpnbmrgQZxjocuvw
+ xKz8NFS87E2HoZuS5ACRStYdZEpf3LwT7Ayfbgi511rH7Jqm1wmew0+1L2n6Ryy8tnv3mgh
+ 9OgnL+aZNfBvVRhTOuVYL4kuPl8JiHNVjHBwfbsO4u2o0NOuns/wGgkqKmxeYhxxjIILqVa
+ XIBI1QPzz+XcsrdIu//bw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xFRexao3ArU=;5HQx+6cRQUkVuVF3ZgAFuJexcw8
+ xt19fkO9itbevDWaxVlDInmziCgR00uiPUPVziaSor3KwtbRGg2J73bFlvlXJIqcHQh0v3YVK
+ H30Ny9zBA3Ifc9LFVZ8KQZWJnL+agr3/spWHA5EUZ4DmQp8kd2+3NHWg5j3RWdTPI4O8GkMTD
+ d4DdpO0C5vDlqHNUl4fQQxVG0mcSxU5vdKvzfnro+oWr8O8xSSgMq078KUWsy1QACwNJtMFR6
+ QGdbbn3lOoaefXaE5TazGIqCURhu3ISLHM6CGpvjloCGdLc6vFYjpyRXnc1mFNmp6JEhEfj0K
+ CE44hN3bMl5yjsCoCfcX7gjqv+KVIBBbQtzwXx5vLSKVuWe1AQbUDy2HmOq3TewvdqN/TcenH
+ 7ex3tulwgahTgk+8I6o2nr4UPfpdXAROeajEVcsODZWz4Sq51spMZ3KkfYlB7ld3gGhHhmdMm
+ OgCWlfbKVH349NzeDa+OXxeEyQNc0b3h29SwKXFKzq5eZiSXJwI/stQZFcKRcLXHaJ2PVswHB
+ 0Ylh8L3bLQ50AbLNNjtas62bLe50k+neX38hlDyXID1q8tCVbCLhiKRSRc60bqW4T7bulyXVT
+ LJ3+FD7i3nWV91K3nYr3zvphcr0Jd4vYjCbMG7Up3KWP2Qh81EDiCpf1bA3PNs42xhN7dAtYh
+ FbriIOpdgvCL8aiO6lXnFbDnO/kKz043WSXgSTyy0wEaKwiqLcM8GDUa08TJnzZHBnH5LdH6g
+ Sn7rJ3iOIe/31FfJk7KSeMZTWp2xswKO4u15yo6A8oy33RxTvaJ5uiYoh7OCEP+YsgRT5f10U
+ Za7/Mqa8MiFVJBIsuUZN2ZUCf0Kl7see7XjK83huxQk7E=
 
-Hi,
+=E2=80=A6
+> +++ b/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c
+> @@ -1055,7 +1055,12 @@ static bool setup_dsc_config(
+>  	if (!is_dsc_possible)
+>  		goto done;
+>
+> -	dsc_cfg->num_slices_v =3D pic_height/slice_height;
+> +	if (slice_height > 0)
+> +		dsc_cfg->num_slices_v =3D pic_height/slice_height;
+> +	else {
+> +		is_dsc_possible =3D false;
+> +		goto done;
+> +	}
+>
+>  	if (target_bandwidth_kbps > 0) {
+>  		is_dsc_possible =3D decide_dsc_target_bpp_x16(
 
-On 4/18/24 11:52 PM, Colin Ian King wrote:
-> The PCH names in the pmc drivers are incorrect in the comments,
-> fix these.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-Thank you for your patch, I've applied this patch to my review-hans 
-branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
-
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
-
-Once I've run some tests on this branch the patches there will be
-added to the platform-drivers-x86/for-next branch and eventually
-will be included in the pdx86 pull-request to Linus for the next
-merge-window.
+I suggest to take another coding style concern into account.
+Please use curly brackets for both if branches.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv6.9-rc5#n213
 
 Regards,
-
-Hans
-
-
-
-> ---
->  drivers/platform/x86/intel/pmc/arl.c | 2 +-
->  drivers/platform/x86/intel/pmc/lnl.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/intel/pmc/arl.c b/drivers/platform/x86/intel/pmc/arl.c
-> index 34b4cd23bfe5..e10527c4e3e0 100644
-> --- a/drivers/platform/x86/intel/pmc/arl.c
-> +++ b/drivers/platform/x86/intel/pmc/arl.c
-> @@ -1,7 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /*
->   * This file contains platform specific structure definitions
-> - * and init function used by Meteor Lake PCH.
-> + * and init function used by Arrow Lake PCH.
->   *
->   * Copyright (c) 2022, Intel Corporation.
->   * All Rights Reserved.
-> diff --git a/drivers/platform/x86/intel/pmc/lnl.c b/drivers/platform/x86/intel/pmc/lnl.c
-> index 068d72504683..ec89e7dda103 100644
-> --- a/drivers/platform/x86/intel/pmc/lnl.c
-> +++ b/drivers/platform/x86/intel/pmc/lnl.c
-> @@ -1,7 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /*
->   * This file contains platform specific structure definitions
-> - * and init function used by Meteor Lake PCH.
-> + * and init function used by Lunar Lake PCH.
->   *
->   * Copyright (c) 2022, Intel Corporation.
->   * All Rights Reserved.
-
+Markus
