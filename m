@@ -1,55 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F0122F11;
-	Tue, 23 Apr 2024 10:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BEF12F585;
+	Tue, 23 Apr 2024 10:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713866984; cv=none; b=ozR64S9/NY/VE7kDnM5xeC15E3eAT2Z0OvA5sXKlMlQ7tXvWK3DG8udokJQxw7umoo/sGNyL6ZQ54fWA2OPMM7U3WWg9yTbRj7m16FJO/27ELim2okKJhc8x9iSHN38QNF/9JncimFrSRtWlTn3neSfDQ+K6uTkU94Iow9NY6C0=
+	t=1713869183; cv=none; b=CjHciFAqJZfVC8Q5sA03GHAj0p46mxWVkiJGBkRKLH2shPqXdFfZ33yc/vBVOjqKyVVWUOvbJspcQv0mT+X2clD2dai33Fzn+IeEnKcKntGuyyYq/HU+cSRERjxcF5PJF/yBZcGRNfjfkZPGNzznLnRZ/0OQWjQOjrmovDhesHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713866984; c=relaxed/simple;
-	bh=SDrP4kaBL1QTqOrq543JUsX6/r4rmoGEDKqDVQE2Tgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cDp50JHhXjRA3dETYxPmjjvSn26tZV0zZ26ZJKT+AGoo+mSd3JJMrq1EgGrvWz983vF0vyWaIQKSsvPM83DveifRWPgNqAXSaYRZx579wFksVQGm1FDYaAhWlwSuUSkxK4yWCAmvzxQ7bLDeHvOvc1QiQTDGNbfZSuqwSlvfo34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GSxihSSu; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713869183; c=relaxed/simple;
+	bh=mmjotz2m/s2wCzaIz5vGpF6Ju6kc+foSpiaBrorBsdg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=EOJ88/iTVglr5lmE+8pvjfrKMim0wo2FVEaHquQ5h2o21IvRhMHpdQ3XZPP7lCgo6X1p7L1G6rUilndWcWdBeWnsJb5SJjxcUbt/ll+fqPBRhaDidQsSY3zuG+oytYtIqyLKFHIquZGOXzFQOPAZnCqEClkksd2nmPwGM6cRHcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=cmbeqjF9; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GSxihSSu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E739FC116B1;
-	Tue, 23 Apr 2024 10:09:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713866983;
-	bh=SDrP4kaBL1QTqOrq543JUsX6/r4rmoGEDKqDVQE2Tgs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GSxihSSuCrj6KKttZSw/JNkDPUFhhLj2FBO1e4hQu5taz0qhfXUBNtIvw8cSJqmWC
-	 D0HXkavl5zSdIVVvtYMhD70mrfufXVG/ZSGYh4YWTeYdISd7LNmSH3sjmUJEpACd8m
-	 ZWQEjln7HvMXu5H/VG8iqdZH+Hn8aq9fRbuj120c2/gMdNR04B94iNQtc86jehBegJ
-	 OZYphnfv/LdxSX6mOJ6qUrH7C3sFGLvisOcLzhYnRDSlntWGaKO2DBTlQzyYcNC92w
-	 YV/dAfXwSpxyjvskBXGbOODhbMBNnK1ZPhjiWMyJswEsio3yl2EA/ICnJpVOisyS/y
-	 IHL0AwpmhrdnQ==
-Date: Tue, 23 Apr 2024 11:09:39 +0100
-From: Simon Horman <horms@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crash: Fix spelling mistake: "crahskernel" ->
- "crashkernel"
-Message-ID: <20240423100939.GH42092@kernel.org>
-References: <20240419085206.888416-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="cmbeqjF9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713869161; x=1714473961; i=markus.elfring@web.de;
+	bh=Z2QfoNYsNXaask8xcpoAL8dlyuCS+LFLGRl6vuwhzKs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=cmbeqjF9MI/4Xc/cWfQvZU4+GjT1LN+3fohkWCFX1fVX7qGZFUI3WyZhRGRzzgz6
+	 SBcwU3rH2wvfa9QG1QMKAhP3JlELYBNEoDz6YTlm4eXjJ9MuFe667qbJSBj0sMKf/
+	 MZ5TSLbujJJcrnyw9E+NS2n+eM5qbaiCOnpqaLmc5kgd1kRZBN4z5BYFeBfecdidS
+	 +pxRD7OQyTs2eZk/ChX9Njo+BFAFud0LxFUW3QP/RoaHkq6CzIU6bWB+IEDM3nZaa
+	 8rPeFCH1ehIcGWqkd1HewCblSY6geGGmmRxhmicU5zAKM9HGeyq3IYj1Zw+/of5k7
+	 3FbGLrVVJ/bGcpNa1w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MALeR-1rrq3m0BfH-00BpJG; Tue, 23
+ Apr 2024 12:46:01 +0200
+Message-ID: <878bf83c-cd5b-48d0-8b4e-77223f1806dc@web.de>
+Date: Tue, 23 Apr 2024 12:45:58 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240419085206.888416-1-colin.i.king@gmail.com>
+User-Agent: Mozilla Thunderbird
+To: Kunwu Chan <chentao@kylinos.cn>, linux-kselftest@vger.kernel.org,
+ kvm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
+ <seanjc@google.com>, Shuah Khan <shuah@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <kunwu.chan@hotmail.com>
+References: <20240423073952.2001989-1-chentao@kylinos.cn>
+Subject: Re: [PATCH] KVM: selftests: Add 'malloc' failure check in
+ test_vmx_nested_state
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240423073952.2001989-1-chentao@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:n0vG778YO3AlCLa1Kkm9T2tHkc4o+LBjG5klT6TJdU77Jh8Dora
+ QFIaJiH85W6Xc7fjQoiRabVVD44o4/UHu0iWfxFwNJowQmmXfs0A6Zn3Qys8CPRvwkLLNsu
+ whyjAWIuocz1zh22880mu8XUXCZp6MUK0I8Zj8OZLMETQNwHawKPxzyHeTfXq0gEPLqycpa
+ mH4Kkq7K0eOyfe9mfJ+ng==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:RYvcZeMOHFQ=;vIuz/LWBBbAEi+MLP3uR5HcF0S2
+ fKZlZqWia6HX2nKjYaSheqvvCWSVJV9WAWF8z6c1ycLowSt34X3TIYZIGzw/tsXNfX9C/Qm8W
+ 2O0oDDLWY1lkZ/WiwmhlEwXOMHFVBegFFdRNfI5dwg/p9Is4PS7W5wyb0W+Wodwzi9AG2AAcl
+ FzaxKtx7aeMfzoXu7TytaH5hkA4LQrqmKtGc71tM2IZtDz4f1xYy9p7IoMWZ/UI4cgk1xGRcI
+ Qpz5gKeK0ZHibwOxRsZ4kwiHzEWl+m+5uu5+gndOvc9QtMF1HCm0/wyT8M/wPdqhQpWfFrkZf
+ srcFX4IdTU9rrMRYlEAMOU8APeEk/ePBp8sqRDxJGK7Q3HwrAf1vfqiQvBnmy31jVjcn5tavj
+ 1chOk5dyfcpLXeG20VJo+OXde0ot7jumObxz4Ba5RtkakzOg7T+tyhfgfYnqdyMDcgiqvrpQw
+ ZVlqlggxlj+STKT1+/QAnY7LqOWkFNU+xPP6WLe7OB1T7zF8YlfnTaUnTP5erR0T68Sl40K0M
+ KkVDpeJQu8hH8fWw1x3YQG7FEbc5iXANOK5FmE8yHzCubDlz0uKKdhp0zQDPIJRhkFjUVbKJF
+ a0NbfPGE8ArC+miv6ZN6F/JuH277QhWYLZUtM5X8FVFPJSO/YWqfQDw6yBtAKmbZupBIfvoHd
+ Gx6uKztEiPZj0goQVz5KmDmhA82JwhiMugOl8xJMKjDu4vU4vpa6o6RDppRgvQZlIUOXYZf7Z
+ hq4MTWC2LtvIfYgXECGjFrb0fgkYWWRF8JQvlX8CLY97yJgavGFGxjnS96jI8PKl1N62SnUK6
+ 56j7kMp+kepa+px+bg02Nkzo2DG+BXdhxfc7N+CiS0w2Q=
 
-On Fri, Apr 19, 2024 at 09:52:06AM +0100, Colin Ian King wrote:
-> There is a spelling mistake in a pr_warn message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+=E2=80=A6
+> This patch will add the malloc failure checking
+=E2=80=A6
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+* Please use a corresponding imperative wording for the change description=
+.
 
+* Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
+
+
+=E2=80=A6
+> +++ b/tools/testing/selftests/kvm/x86_64/vmx_set_nested_state_test.c
+> @@ -91,6 +91,7 @@ void test_vmx_nested_state(struct kvm_vcpu *vcpu)
+>  	const int state_sz =3D sizeof(struct kvm_nested_state) + getpagesize()=
+;
+>  	struct kvm_nested_state *state =3D
+>  		(struct kvm_nested_state *)malloc(state_sz);
+> +	TEST_ASSERT(state, "-ENOMEM when allocating kvm state");
+=E2=80=A6
+
+Can =E2=80=9Cerrno=E2=80=9D be relevant for the error message construction=
+?
+
+Regards,
+Markus
