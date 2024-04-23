@@ -1,114 +1,97 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A037A225CE;
-	Tue, 23 Apr 2024 06:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABFE47796;
+	Tue, 23 Apr 2024 07:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713852965; cv=none; b=UcEjgOnZUKnQ9DZRz/ZsCrD7YHiCoizrZRbRe81oX5Tch5fIyDZ0Q3mzLQR7GevfZpsU1nwM4GJdtLkJwWv2d0foSP7BqT1CtC2hFXgJczDFZEOWuHWRH48k3ktjwZ9Jk4hQNMB/FoZ31KNbStG3x4Fs/IXW6lgLkWj90frhTaw=
+	t=1713858273; cv=none; b=seazVZXg2oKpHWZwJYHD1MwTax6txwYEmIRZQ7GzgD5ItNbHt15gH9yqfLLOlYsJcuYCn14Lx4gINuxUvEoxEJfETVCEgDOO9+3W28mcQPX6S1XWF3y8e1ESDe06jO8600nXDakkq7CVlhwVL9Rp4FGYWYCV1SdEIxN+7/RVyJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713852965; c=relaxed/simple;
-	bh=8HZOokaf2e/urC9+j/zg8HM4yzJXhpo+pSuikz395pg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=CPqlyFZcFDdWOtxwWg2w34cNifvnv8m7twzL1hS4TdMo/ZuIsIRtG5axF/V2vQ1idU4TanssJcId3lmhAKuPBdMXaOlc7ypM5zT05rRL/n1NuZ/e2Mt+za8xb+ugF9uPy7SAyyZRgakGCzaWiHGr++JPmU/IaQ7zKFQvzgDl5jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ftJtTVSg; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713858273; c=relaxed/simple;
+	bh=HItHqTRaUd0d1MV6aM34J5b3KIbtrvkExB8EEd+pcws=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=c7dg71aKSUGOFkIkup5Lu4KSk/FD8XwyzxXLYfGLrhyneHiX8b69ZjUV7m4GsXpcgNaFWCgFF0E4oKSEjRCt8ExcA9soI0K8RNzlIkjqv2wnkOeRKYdQeoX2cjewrPR9maS/KRDUbDCjJG7Mh13ad0GR0HbN1hnonzE+RELN8U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XQYWBDjI; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ftJtTVSg"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713852948; x=1714457748; i=markus.elfring@web.de;
-	bh=8HZOokaf2e/urC9+j/zg8HM4yzJXhpo+pSuikz395pg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ftJtTVSgNVSoDHfc+KAZQ7ywNskxloDYgJiUoHLnkVP3tPP2dDEI9tXC885mfawh
-	 o5Lt8/LTLMwyYp/99oA/SaCkHW90HqkM31+Nyt1uRcPz6DBHtPxD/tttdQJ3aU/9W
-	 cDgb1HpGDptwG2t298K9fN9qSsoq2Q4lkBud2WZT3nZSyTIMQ50H6WHPAsjvCrXcy
-	 2pVjkL4bPzJkx7yiljCwg306//ZE8hHACiiD7l2+kZLhtdRViot/gNzyigRzh9qPk
-	 fePF2N4qkCft0MFduYl1HMosF79SEifLQqoMVzqo8ZHibnLtQnUOj4saeZBfwJFWX
-	 m8yMm0djuIskLi5kCw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MYLmq-1sBkNl3eWg-00VgwC; Tue, 23
- Apr 2024 08:15:47 +0200
-Message-ID: <ac9cae80-cd9d-4ae0-9f27-b4b424304cbb@web.de>
-Date: Tue, 23 Apr 2024 08:15:33 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQYWBDjI"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-343e46ec237so4508528f8f.2;
+        Tue, 23 Apr 2024 00:44:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713858270; x=1714463070; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ICxLxoqLCPkVAEm/gWy9vaIt+Q7OZ1cgkkw+GcO4MNQ=;
+        b=XQYWBDjINoOiuI6QckJxUby8VbeecY5M+OqUMFzXgK4T214zAsYq707qS4lbYPkQC/
+         zzoCv/Z8Z3oHhpV3MX8kdwz8sqe7mntqP/ZeDGe+hLs9wCLWJ730QH2nAhYoGQIOxBGD
+         f+Rebqs3wMuyUzh3pVrI+18AlCZsPkmyzLjpTJjkUTL26o0F3n5S02t8MvVv7mbGp293
+         JK5ZeaTA36GIkK9/5b5gua8E+eI03R6JiqFj+VYKjl4rkZk78T5GfiOGs945MXJS1c5s
+         JLK/NmF4XZ+HDSGUDGongHqEIBDGyi2ImGbTh0yBVsfg8ZTVfcT1jcNHnpLV+sBSLWvT
+         VtWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713858270; x=1714463070;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ICxLxoqLCPkVAEm/gWy9vaIt+Q7OZ1cgkkw+GcO4MNQ=;
+        b=k490jooS1+ifb08dkjDRZY1Q8qiJqFwBogs0fTUAiZ3dHE9JxT1PaDX29seVDVIYlm
+         rwXNhzb4oxAP1KdBjB6KAzkMiI+mPjAjG8gJosja4fjCREswowQD6P3FvRGVO9MDYnUh
+         wBdpjplapw1SmSiNAiUAVyHI5mSjZR2kSMOVMKEuHzt587XTUFOgdfieNMrj09tyrk25
+         BW0XtNEt+ZU20ZEvZHeUxqUVyCz7JFYLW1nntUjNmREIAbZTjg9cju4KTC54u0uDy7dp
+         c7KIly9Y0bXRXtVV3nhsAmZH6TZezJxdl5dohkWNz1oMcCzoZCHjQJ97D1Z9Km1oIGx1
+         0KKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2ISyryo4NWFLe1qBHi5nr/6yuE+S5rOntDAelyNIKhw8zMF20qmMKryMSKCJc9oBDhjvKTbmLGd1D14FUCqi2LLv4zBtFIGkjbEJPor8/2AV/hqa7KUu+CKWWzTj+KEYwX+gHsY5RxQc=
+X-Gm-Message-State: AOJu0Yy12/ZYqGHBvXJmxGc/pQsSxxI+/t7MsbzPlKcsTkSLKkA3Mqdw
+	NLQuwlLtIrWt6Cdc+9pVU7ZlMQVKfTIMDuOFjk2zZuTqeLGrM034c8p69w==
+X-Google-Smtp-Source: AGHT+IFM2SP8Nqxd1gHbttKIRjBJ47wvuHrP3Q9C4XUEFUGwVwtSO8/ZoFlInGPGW3r3ZGej1QYpkQ==
+X-Received: by 2002:a5d:444b:0:b0:343:e02f:1a46 with SMTP id x11-20020a5d444b000000b00343e02f1a46mr9466936wrr.2.1713858270055;
+        Tue, 23 Apr 2024 00:44:30 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id e5-20020adfe385000000b003455e5d2569sm14079241wrm.0.2024.04.23.00.44.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Apr 2024 00:44:29 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Shenghao Ding <shenghao-ding@ti.com>,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoc: PCM6240: Fix spelling mistake: "deley" -> "delay"
+Date: Tue, 23 Apr 2024 08:44:28 +0100
+Message-Id: <20240423074428.1313777-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Daniel Okazaki <dtokazaki@google.com>, kernel-team@android.com,
- linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240422174337.2487142-1-dtokazaki@google.com>
-Subject: Re: [PATCH v3] eeprom: at24: fix memory corruption race condition
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240422174337.2487142-1-dtokazaki@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:HueGTE6pDjjGq6fr0JtQFXMnH0PkSUwOeI6TKKF/rFse2NdxFMM
- js2RHiBMVQ4ZEw9p/zQQnMPF2/BR8XJ180yRoFmLISekyoprHvcYM+dBWTCSZcAIaGdh62E
- K1N18NIQrC+Zapvle9oC3ZshKQ6eHLqbSe4GN/VaIthN8ZLkKrwSPRFzHO8RD9Vy2v88Mpj
- W6OzuJxwp1MDtub7V8ZdQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4UEACg2W1e0=;Xo4SzAXl0+sOQrC9KIxB9Mp5BBt
- /M8O5awMH88Oa8RtLXfshSJ6REZ79IZxchV4eATXnuq420jXN5S1zxOOAv3fZJOzkfP7zGN8l
- ENLvrRDOUmfh3x6soqg6sdaJuWj+24BYK80hOAmlHloP5cuy+9rAcZQvIgdKcWwj5MxhEhqRX
- soXe82Kj0zi1Dwlqsfj0PyDeo5z2JaJJ/iNGI1IfQwZ8/ZEZeh9rg8MbLyB3JqG5d75SfsLnO
- dh2ikNGQkDYN0U+oXCp+VwDY58JsezaZVQ2NZwCLfdnUTlfggpZnzg6axK0VKJ4wTXfe6HNcc
- JvgsbrzQJVK2x5EGeVeDqqML2HYh/s99DV+ff2iw8kmlQ879LJhHuDY2IEdNqkfixbxCZSZTc
- x+0lnwrZMEoHUe8ONPqIGuSnRaaRYuCePx0mXshY4sWa8qRckhfogkU4SI3WVqbPeQCtVCleA
- S0dRmDn3bNXzTajU8Y6bMvNJt58kTBdoKManKg/xH/DcGHVyVoShR9C+fKbTRe8qU1Tr9B8Y4
- SqOuezeF0IEUH6gCcvr+FaBBQfPOsWb5CpCHQBOre36+qNjAb93vI4+U+ubwvK936cLoy9UTn
- BCAAvvH2uNKCYhJzBJaE1dQceEUj6qiV1LMQLHIsE5ayrVyuM3nopGw1W2/Fv1xUdyIk5i8Ae
- 7PULxdGhPpHu/TdpIJJhRaxemeNm5tKk3YCkTkuc+NJvBnK6wp2k20gr2pPaDQdMrg6wJcPVm
- mKCaYc3RwKDVBg6QpqFnyCNYRoKli1g7cwqdZssuc/sgxLq3LpgGQoe91mhVQDlsotimQwVuu
- BmyZwKIMXSYpp+uFDEEK2Lvv24ylFxlUL7Dyy/LSIvE3E=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-How do you think about to increase the version number for your attempt in =
-the patch subject?
+There is a spelling mistake in a dev_err message. Fix it.
 
-See also previous contribution:
-https://lore.kernel.org/lkml/20240419191200.219548-1-dtokazaki@google.com/
-https://lkml.org/lkml/2024/4/19/946
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/codecs/pcm6240.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/sound/soc/codecs/pcm6240.c b/sound/soc/codecs/pcm6240.c
+index 93d592dbee66..86e126783a1d 100644
+--- a/sound/soc/codecs/pcm6240.c
++++ b/sound/soc/codecs/pcm6240.c
+@@ -1772,7 +1772,7 @@ static int pcmdev_delay(struct pcmdevice_priv *pcm_dev,
+ 	int offset = 2;
+ 
+ 	if (offset + 2 > sublocksize) {
+-		dev_err(pcm_dev->dev, "%s: dev-%d deley out of boundary\n",
++		dev_err(pcm_dev->dev, "%s: dev-%d delay out of boundary\n",
+ 			__func__, devn);
+ 		return -EINVAL;
+ 	}
+-- 
+2.39.2
 
-> If the eeprom is not accessible, an nvmem device will be registered, the
-> read will fail, and the device will be torn down.
-=E2=80=A6
-
-Please present the introduction for failure conditions as an enumeration.
-
-
-> Move the failure point before registering the nvmem device.
-=E2=80=A6
-
-I would interpret the diff data more in the way that a devm_nvmem_register=
-() call
-should be performed a bit later in the implementation of the function =E2=
-=80=9Cat24_probe=E2=80=9D.
-How do you think about to mention the affected function also in the summar=
-y phrase?
-
-
-> Changed sha length to 12 in description
-
-A specification was adjusted for a tag.
-Please add a version identifier here.
-Will version descriptions be extended another bit?
-
-
-> ---
-
-I suggest to use blank line instead of a duplicate marker line.
-
-Regards,
-Markus
