@@ -1,95 +1,83 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D653115381E
-	for <kernel-janitors@vger.kernel.org>; Mon, 22 Apr 2024 16:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id C2BB710949;
+	Tue, 23 Apr 2024 01:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713804261; cv=none; b=Cu062aTDZlJ1cLjC7YGvKXUbgEPZTYX1nhYAtbF8ljj7qjdOt2ALehbEcKt6MWUx7JlhLzH6YrvORMrj0QyToUfsnTsluQ8bG4NF0cBeET39e2NDKPjV67bILx88QQOJGn9R2wubwR0ZkUQd5E9HJa81UsPdtzS0FhdAD2S1NhY=
+	t=1713835286; cv=none; b=D4TNkmIXOKSfoN5OYWll78fN02EgJ4dtlPBkUp2k7QXmSlDoDR/rzzKTEkMoRjpaGuppsUpDvGbepq9+b991O7sBaTLRX9uWiZkIwltDLTwIwW6TsuQR2S5Cz2cUHBEq9N5FaZ8zYFEnGaf/faTHvjp6KQtlfWdM6MEevc+1SMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713804261; c=relaxed/simple;
-	bh=OLIXdSdWyYDbVVGKfMKB5COs4TOKhQUHpd4n73zkPmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VwcAjL24NUfmfCjjWnfxDEVjV6OBt6Hto362u/KhwEvxVZwoIxwVgddEnUwmeJXQbjk75bRW5HyOkQQfYrIG2gjltzgxxrxXjkyoLT91pKkdT3sSqhCZYH+TQSvtrOl0Wth1sHxWt5tCCB2e0MAMdUhDmTi2UciTrmlp5+JUSFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ClmOenp0; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ClmOenp0"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-346406a5fb9so3722012f8f.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 22 Apr 2024 09:44:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713804257; x=1714409057; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=z6Igkul0EwY2j/aQPEzUDfSBugLceVua3YOJOdTVDis=;
-        b=ClmOenp0YzTqL6CvF3y0p5zORolypxIV0C+NopHZUi6RkUdgzcjzePk3gs5WVveTI1
-         Uo6iP+WGTGq6X/lS65dIdAicQlANZH5rQjC8lzj+4wF8XLO6yjFGwyOHXOXndCkNfgGp
-         z5mjYZBn0+Paw6gnrbYKl2IuycnT5gbHJbRq24yBLc+gboWC1wgs5vTtp1AlQE387xHj
-         n2g46hFrlYGwHuMqDoNmALsNsoBXbk6FgHgZJ9dDquFNp6L31y+FTbWqUThAD1y1ZSIA
-         xUaMIRAI8WEBCw77R+95aUEPSDBz/gOjylu37HOfSunW29Vl+NFcTT8+IRTw+2EQNGnz
-         zicQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713804257; x=1714409057;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z6Igkul0EwY2j/aQPEzUDfSBugLceVua3YOJOdTVDis=;
-        b=GBIz9k/1BAA9lhxQPe6Kxgoke1oz7h9HKYIy13508ysScdwJjKUxgRADGOfFWIPJgt
-         SWym1L6/KhwPiYQUT7fvG7JBL8Nx8WIW5wOuKldTqOKbOBGO3q7x9O7jTAjMZQvnZaq5
-         8HpLWjp7YN3F3RV/HqzXMqfna2/raA3HO6f7v575r0cq2xLzbJgzrlPCSitoCz91s3CR
-         MCBTunf+BOVKo8t/MJakrldil1NBZeLmvZm+joaAmg0vXriNA23O3O2RuZDmeN7bkvEU
-         P0yjMlnkqmqAZJrOcdSiKwpgZxAI8DzT13qrSi4IbC5kIbAYsUIICDBFhJgKmcgkgsGW
-         RJbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlb6EAeNTMVjeHazlgbtcDL02spATkTdU9qN2/4kDeGYh7isQq6yp7L8iprYqMbmhvVqljGc6hFEYeGPZp87Tx9mYxyEfqLojxxz246kJn
-X-Gm-Message-State: AOJu0Yxctg6Y+xzM9ceeMel8WogGVHwoKDF5Ungqv2ANO73mD0MDQPzY
-	9WPKnlxmUJWheGjO6UOok334SGuCCBnH7k+VpH8q9pKko0Om7MbpTwW+6IAIFvw=
-X-Google-Smtp-Source: AGHT+IF2L5+lrLgaqC7ydR1b2YumbNI161DVVAbfMpg1U1grbIoqOICMThHm60FmuT1h116XNolFUw==
-X-Received: by 2002:a5d:6acf:0:b0:346:d2c0:7682 with SMTP id u15-20020a5d6acf000000b00346d2c07682mr5989895wrw.30.1713804257244;
-        Mon, 22 Apr 2024 09:44:17 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id d4-20020a5d6dc4000000b00341ce80ea66sm12414035wrz.82.2024.04.22.09.44.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Apr 2024 09:44:16 -0700 (PDT)
-Message-ID: <8fcac485-d280-4753-88af-b9b8c58bbb64@linaro.org>
-Date: Mon, 22 Apr 2024 18:44:16 +0200
+	s=arc-20240116; t=1713835286; c=relaxed/simple;
+	bh=VTGFvad64cVAJMNUZ8WORJx7AJhyjOaOK5Po0AOfSHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=VWKAzWYQwBifHktcMKooq1WUAB6y7FLbXjBINhRvVCzHHXmFrTHXy+bQ4ZeLMCQrb75F83blIspszuISgkGz3lOe/pCKWcuczxHp75nGbiJK3pA36vGXzI2wHv8IN9mNx47dM1Z/1ikmuXCQvJNWBV3f5bMNnVR8k6oFA6VNvqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.11.106] (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id E0A936083C8B3;
+	Tue, 23 Apr 2024 09:21:11 +0800 (CST)
+Message-ID: <3621bf61-732a-c2bc-c135-fbba299f8f57@nfschina.com>
+Date: Tue, 23 Apr 2024 09:21:11 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] thermal: k3_bandgap: Remove some unused fields in struct
- k3_bandgap
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH wireless v2] wifi: ath10k: Fix an error code problem in
+ ath10k_dbg_sta_write_peer_debug_trigger()
 Content-Language: en-US
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <206d39bed9ec6df9b4d80b1fc064e499389fc7fc.1712687420.git.christophe.jaillet@wanadoo.fr>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <206d39bed9ec6df9b4d80b1fc064e499389fc7fc.1712687420.git.christophe.jaillet@wanadoo.fr>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: quic_jjohnson@quicinc.com, jjohnson@kernel.org, nathan@kernel.org,
+ ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
+ c_mkenna@qti.qualcomm.com, linux-wireless@vger.kernel.org,
+ ath10k@lists.infradead.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <878r15j3bt.fsf@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 09/04/2024 21:56, Christophe JAILLET wrote:
-> In "struct k3_bandgap", the 'conf' field is unused.
-> Remove it.
-> 
-> Found with cppcheck, unusedStructMember.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+On 2024/4/22 14:53, Kalle Valo wrote:
+> Su Hui <suhui@nfschina.com> writes:
+>
+>> Clang Static Checker (scan-build) Warning:
+>> drivers/net/wireless/ath/ath10k/debugfs_sta.c:line 429, column 3
+>> Value stored to 'ret' is never read.
+>>
+>> Return 'ret' rather than 'count' when 'ret' stores an error code.
+>> By the way, remove some useless code.
+>>
+>> Fixes: ee8b08a1be82 ("ath10k: add debugfs support to get per peer tids log via tracing")
+>> Signed-off-by: Su Hui <suhui@nfschina.com>
+>> ---
+>> v2:
+>>   - remove the initializer change.
+>>
+>>   drivers/net/wireless/ath/ath10k/debugfs_sta.c | 6 ++----
+>>   1 file changed, 2 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/net/wireless/ath/ath10k/debugfs_sta.c b/drivers/net/wireless/ath/ath10k/debugfs_sta.c
+>> index 394bf3c32abf..c1198e9027ae 100644
+>> --- a/drivers/net/wireless/ath/ath10k/debugfs_sta.c
+>> +++ b/drivers/net/wireless/ath/ath10k/debugfs_sta.c
+>> @@ -432,14 +432,12 @@ ath10k_dbg_sta_write_peer_debug_trigger(struct file *file,
+>>   
+>>   	ret = ath10k_wmi_peer_set_param(ar, arsta->arvif->vdev_id, sta->addr,
+>>   					ar->wmi.peer_param->debug, peer_debug_trigger);
+>> -	if (ret) {
+>> +	if (ret)
+>>   		ath10k_warn(ar, "failed to set param to trigger peer tid logs for station ret: %d\n",
+>>   			    ret);
+>> -		goto out;
+>> -	}
+> Minimal changes with one logical change per patch, please. I'll remove
+> this part in the pending branch.
+>
+Sorry for this, thanks for your help!
 
-Applied, thanks
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Su Hui
 
