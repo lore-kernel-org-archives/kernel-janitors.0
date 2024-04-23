@@ -1,87 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FBC1C2BD;
-	Tue, 23 Apr 2024 09:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C480F56B9D;
+	Tue, 23 Apr 2024 09:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713863520; cv=none; b=XFByoA8rTSk2XmhlVi5VBg/6OX1FeyFzPMHKjmjn0JsHpRwfMQ2hR18rFtSIOWgc8oo/iYAIKs1DWre1vqsuo8nZCw9WNE0jSCHR2F4pf9ucOU4YuP+MW+uLO9WjXNbQrqGiKTCCwIosIsnKG2yXLjAgJfb4GIEcjD4kwoW1Oi0=
+	t=1713865544; cv=none; b=cPBlr+IkZ+23k8QXM8100ZhkJz67U3AscoaR08vwLXVa1Tv5Y7cSD2ixoFpMUtb5xCaSCIRSEk+ZA0w63RczfcKaygkSEi8ViLW36mkUG1+tOlwr9xjhOK+1SE5Tz1nVSun8rA3gRdXHX42rnw2KM603FDlZI4A9Pq2c/NLahQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713863520; c=relaxed/simple;
-	bh=DbSe3xJTG/wsJlhVHw+X4gsBLue00y+X3lq4gNx/WHw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FjmGK4x8VVswNXS/jvz4Z1HVNZiAFRxs+g3wRYcpEJiGLNxqggWlYB1hFNoNdnfAsU4D9eL9vZ3wPQgVi9F727o1Cy/2hO6LY9tsN/PnqqvUZY8CyTsKOrd1snOEsmmpk1ru5cmSvWaiox+8mepK/47S2GGGgf5ffVS3Tq25+Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9W7i5X9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713865544; c=relaxed/simple;
+	bh=unf/IKr9VmLOe/XGqyE5/FCvp/8jpLFn08Ee3ayn9vE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=FNtpK30RyIdq+cDU1VwbpG5a0C/1h5jEBDNloEsrb4wxb+/xkuNYqsNqPkncySX6rONuz95NldPlHCNJ7IUBE04A4f6DxJ+8M/GQbm8EUMom4mdGnUOx77XgkKfrYYak474tFlw1pld6dEV7F3QaTLbA8cdwwEGvlulW7OZ2NLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Tr6T8d3n; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9W7i5X9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D928FC116B1;
-	Tue, 23 Apr 2024 09:11:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713863519;
-	bh=DbSe3xJTG/wsJlhVHw+X4gsBLue00y+X3lq4gNx/WHw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=A9W7i5X9gGu1js6nvhetxsI4lWSZAwqYGnb5vvIH+zJNaY7Oj/6rfGTv2QAMYfRuI
-	 sha9hXhYyLE3uQEUzPD6tIfxGhh67d5lvUd1UbqdH6s+BVA9rjbsJPCPuIO0aPGLAI
-	 IzglsUZNfFzEXExHr/r1VttHxaPvO2ovvB46n0QVk0yMk1Hcqw1TgJ8t2ghtGR/05a
-	 oMUHZB6NZNxwauuCJnnpv5rh3EJBArNqJzkWxeU1b7TYgjvOeSGYIHbk05FFbXVGg0
-	 NEkPXcE3IcMUm7YPaPTAm5YFPrZvM7YVh2CeWsfXVZBhASHDsTImU9J9rRwMEB1l2p
-	 oiw+QFtL4bF4w==
-From: Mark Brown <broonie@kernel.org>
-To: David Rhodes <drhodes@opensource.cirrus.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: James Schulman <james.schulman@cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, 
- patches@opensource.cirrus.com, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <1ee32bfb-6f6c-4b61-887b-6f655abbfc47@moroto.mountain>
-References: <1ee32bfb-6f6c-4b61-887b-6f655abbfc47@moroto.mountain>
-Subject: Re: [PATCH] ASoC: cs35l41: Delete unnecessary condition in
- cs35l41_pcm_hw_params()
-Message-Id: <171386351644.1781735.13200288316295785566.b4-ty@kernel.org>
-Date: Tue, 23 Apr 2024 18:11:56 +0900
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Tr6T8d3n"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713865502; x=1714470302; i=markus.elfring@web.de;
+	bh=unf/IKr9VmLOe/XGqyE5/FCvp/8jpLFn08Ee3ayn9vE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Tr6T8d3n2Z6QotE4Ah2/GuNN+n+H0MPh+Rib8eT9ZHFctn5z9bzoGFJa7fBLb89w
+	 PgQSmRGgsBjwGxyWM3dUQx9cV91Gyy03JNqIXHJD941+Q+JIy1cTMlKHnFTv8URBk
+	 aCkZG187W/mp6/Ao9Gq/vnfDdpZsL6tp0MgIH2U3ZLRkfziVmLk/K9rbSSeaGzfPZ
+	 0DpZdTl/aOTM7bLgeXM+oGSPj8MW/1aS1SugoA8Qts8gWt6BDO1LsJWjazsx6qdM3
+	 DyPkUTdCAzSjJNsCniEOBibmjgLqFuMU2JteTOxv8XLi6USby5YIHlu2R2xOFdgkp
+	 HQS/2Woaz2DrPKY/Qg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjPQ6-1sR9k73YkM-00hArN; Tue, 23
+ Apr 2024 11:45:01 +0200
+Message-ID: <1f15f7e3-32ff-486f-8e6f-bbe9183b05e5@web.de>
+Date: Tue, 23 Apr 2024 11:44:55 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev
+User-Agent: Mozilla Thunderbird
+To: Huacai Chen <chenhuacai@loongson.cn>,
+ Jiantao Shan <shanjiantao@loongson.cn>, loongarch@lists.linux.dev,
+ loongson-kernel@lists.loongnix.cn, linux-arch@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Guo Ren <guoren@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ Xuefeng Li <lixuefeng@loongson.cn>, Xuerui Wang <kernel@xen0n.name>
+References: <20240423074257.2480274-1-chenhuacai@loongson.cn>
+Subject: Re: [PATCH] LoongArch: Fix access error when read fault on a
+ write-only VMA
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240423074257.2480274-1-chenhuacai@loongson.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:5aAF/++CnrqQb4hr3ZNQgDjqdbWXV8FiY70vkX5EAL9c+pMnohp
+ sKY5V/AoYCKJqdNqip9JJNcWrXuJfNvdZwzjZaLSkSq/mUjGiu4hVt3P/fBig1peL/Gl+cb
+ P9HLBr4deryChgh/8nLct4XJM5XFQhZZlSkCVcum+5nO9kdvpMy22gS7NFaLB9t6SKz1hft
+ wvb8Rwojp2UmKg/xrsVeA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:uxmvR4l/YWM=;moCV0Xu1L3eQa1QE3ayecdIt6yI
+ TFwIiOzdVBTn1XS7iqW/d+WA80gDD8hWX8R458DMLrZWMWJkL887aXirdoajoDlX2j0/7aA6/
+ 5E2CEn2U2K9LWRORqLHkA/YhmUh0uBf3z7Eny3RmQMW46PgDKa6zUC0m0RP1gjMdDBn1ll1i9
+ 3Gqg763E+MrPz/V47ZIyEfaM8O7xzUkYjev1P0pqAXQ9I73mJtT9+gTe9tAGbPnQjvB0pPXD1
+ C6mkWZZuWdo9upJG0F48diq83XqbiJqFpQlkt3yAfBlNQ+XJhuqjMajL0kyVrRwwJALlj3tlE
+ 4Q8CkFfl5ADIzGL6SHlfwwr7mjyuWMsKpsTqDTtk3pe+B2bl4n0xiIoMAzcHrQ9WaPkTZkkdG
+ yP9U7Tn0DewYHscBzIpn09XDQhGsmNpYJTThlKudftUe2eCgX+5emdmWG1R0uTwMv/2yrRqcp
+ gZWrinbZ0kRNYdOwCDHH02bewpnMIAdAp4rYKlvHREaktT5yubOy7j0nVyvgJal5r6g8dnvYZ
+ ijYq/jrG2Sssc4Y3pBNOm9U8YkHY4hS2TpQRDdYoD817pOjto7TRBBxzwFThBkbNZ5abFT84F
+ l++U4l98nVtct94Q/Yf8TfRsYEghVt1Zae4crHi9dDqyX7c5fmroIOk0yB44XfTQzfTtbJ23x
+ TNlHEayPqfruBhlthohHs92c8hjE8wko5nY+O8WBklVGv2IvywPlmrdxNKJffBDGI/eeRGBlU
+ +CaJx/7Cxcw1/HwK0wgEs4nbGwqaF5lpSHGpzpd2lxs7J0MDrjuBoi4hboaEMirmIt7ZgZRkV
+ T7RbDHhJ1JomBCsixaL4mpI2UXiN7Mtbp9w5t1KWc/CTE=
 
-On Wed, 17 Apr 2024 12:52:34 +0300, Dan Carpenter wrote:
-> This code returns -EINVAL if "i" is out of bounds a few lines earlier.
-> Delete this unnecessary check and pull the code in a tab.
-> 
-> 
+> As with most architectures, allow handling of read faults in VMAs that
+> have VM_WRITE but without VM_READ (WRITE implies READ).
+=E2=80=A6
 
-Applied to
+Will the tag =E2=80=9CFixes=E2=80=9D become relevant here?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: cs35l41: Delete unnecessary condition in cs35l41_pcm_hw_params()
-      commit: 181d58cfe90f6a2ad53f6811d318fbc7149df8c1
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Regards,
+Markus
