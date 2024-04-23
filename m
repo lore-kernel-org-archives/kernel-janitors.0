@@ -1,89 +1,87 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B7255C3A;
-	Tue, 23 Apr 2024 09:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FBC1C2BD;
+	Tue, 23 Apr 2024 09:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713862925; cv=none; b=JhZnrIQd52Alun98AtJO8ms3YwzhLSaPOXYFtIJLBTmMDlIsh3DPixYmpfsYELhZloCvnFpqOBIt4KA5dzwRZZ03Q+xN0H0SxhD/WBONz/+iujpAB98plfeT3mnxt77wYCzr5qrlavmVjw1d3PxVVdxnOukOWF5+xX4KybnvmuI=
+	t=1713863520; cv=none; b=XFByoA8rTSk2XmhlVi5VBg/6OX1FeyFzPMHKjmjn0JsHpRwfMQ2hR18rFtSIOWgc8oo/iYAIKs1DWre1vqsuo8nZCw9WNE0jSCHR2F4pf9ucOU4YuP+MW+uLO9WjXNbQrqGiKTCCwIosIsnKG2yXLjAgJfb4GIEcjD4kwoW1Oi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713862925; c=relaxed/simple;
-	bh=S+8tLFz8PqdpmPk9GLNuV9GGLXz9ZgJvD9u5g+3nVz4=;
-	h=Message-ID:Date:MIME-Version:To:References:Subject:From:Cc:
-	 In-Reply-To:Content-Type; b=DOQJ8W39Girs7s6bXbH+dDMZW6tYlvOWAxykjENJFFiobu6KlHNbieYdqNNNgZEBj2oZnmnacWFyvruMokMxeQx5suYRpouoqttbr86+jj7NwBLeS61lWf7+QtUb0bt9fjlJFmFccjip8Ha91JT2YQitwONNjFdQA3qQNsWArtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rxrni5g7; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713863520; c=relaxed/simple;
+	bh=DbSe3xJTG/wsJlhVHw+X4gsBLue00y+X3lq4gNx/WHw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=FjmGK4x8VVswNXS/jvz4Z1HVNZiAFRxs+g3wRYcpEJiGLNxqggWlYB1hFNoNdnfAsU4D9eL9vZ3wPQgVi9F727o1Cy/2hO6LY9tsN/PnqqvUZY8CyTsKOrd1snOEsmmpk1ru5cmSvWaiox+8mepK/47S2GGGgf5ffVS3Tq25+Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9W7i5X9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rxrni5g7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713862869; x=1714467669; i=markus.elfring@web.de;
-	bh=S+8tLFz8PqdpmPk9GLNuV9GGLXz9ZgJvD9u5g+3nVz4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:References:
-	 Subject:From:Cc:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=rxrni5g7R2mjSxucArVegFiiAHh9HEn6QCeJ62wj1p/Qa1zUkuivKGAkipySQeXb
-	 zuFsp28xrw0yeVE1GPb70h3ish/l18kzD0x7ndBqn94ik9gLD8BL17g0tQOgeMT+9
-	 jFPP3I416qtO7oHHloMIU8olBTLX1KbanSJCYIijS6Uaf4tOhOyYzqiVtBwxWS9hq
-	 tKL8IwIjCegbLGivfzB+927Z/0iJFu3PC4gk2sCrxUcYW0b3CwdMrf/yIQRDVUJDl
-	 +u6XHd7/8OdkA/MsjlwKyxzyNapMbEZabl3OMiic91/dyocjrm6IywAGvkeDyydfN
-	 KDTBtdVWkYcRO3W0HA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MIc7N-1rtN8S2RBl-000hsm; Tue, 23
- Apr 2024 11:01:09 +0200
-Message-ID: <75cb62a7-d77b-47c4-9b49-9e1ef1a5de1a@web.de>
-Date: Tue, 23 Apr 2024 11:00:52 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9W7i5X9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D928FC116B1;
+	Tue, 23 Apr 2024 09:11:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713863519;
+	bh=DbSe3xJTG/wsJlhVHw+X4gsBLue00y+X3lq4gNx/WHw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=A9W7i5X9gGu1js6nvhetxsI4lWSZAwqYGnb5vvIH+zJNaY7Oj/6rfGTv2QAMYfRuI
+	 sha9hXhYyLE3uQEUzPD6tIfxGhh67d5lvUd1UbqdH6s+BVA9rjbsJPCPuIO0aPGLAI
+	 IzglsUZNfFzEXExHr/r1VttHxaPvO2ovvB46n0QVk0yMk1Hcqw1TgJ8t2ghtGR/05a
+	 oMUHZB6NZNxwauuCJnnpv5rh3EJBArNqJzkWxeU1b7TYgjvOeSGYIHbk05FFbXVGg0
+	 NEkPXcE3IcMUm7YPaPTAm5YFPrZvM7YVh2CeWsfXVZBhASHDsTImU9J9rRwMEB1l2p
+	 oiw+QFtL4bF4w==
+From: Mark Brown <broonie@kernel.org>
+To: David Rhodes <drhodes@opensource.cirrus.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: James Schulman <james.schulman@cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, 
+ patches@opensource.cirrus.com, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <1ee32bfb-6f6c-4b61-887b-6f655abbfc47@moroto.mountain>
+References: <1ee32bfb-6f6c-4b61-887b-6f655abbfc47@moroto.mountain>
+Subject: Re: [PATCH] ASoC: cs35l41: Delete unnecessary condition in
+ cs35l41_pcm_hw_params()
+Message-Id: <171386351644.1781735.13200288316295785566.b4-ty@kernel.org>
+Date: Tue, 23 Apr 2024 18:11:56 +0900
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Kunwu Chan <chentao@kylinos.cn>, linux-kselftest@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Catalin Marinas <catalin.marinas@arm.com>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Shuah Khan <shuah@kernel.org>, Will Deacon <will@kernel.org>
-References: <20240423082102.2018886-1-chentao@kylinos.cn>
-Subject: Re: [PATCH] kselftest: arm64: Add a null pointer check
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <kunwu.chan@hotmail.com>
-In-Reply-To: <20240423082102.2018886-1-chentao@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:TSDQS3DL0hGaVNjPgU+obuZkEZoMMiyjQaBK1gsN+be2j5u+Q9O
- U3NR194Pvh2OhhxfIOdUC8WYI8voMGR5sQlTeuL1ThUG3ED9O6gvPtK0XdzkFyhmPnz0EBX
- EStVyQS6KCN1/fk5IyMv6/FLrW9KJ5g36O0dLZcqqFsz4yZnTvQmsxFttXB7PX4ZIwPwGNX
- /YsmOyVUeoHUlQJzgOMaw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:u351e5//zzU=;/xRPCb3L/L16rXzLLrZwlNZBJpv
- GwbW2AeYe9WWa7sreBvHTYQIh5NRYb6VjGdlkmreYAoriLmTDrJNWaCl5Eln4uuPHditeB5Rn
- MwGfnEgeTP0z1OpdbfhQRhxfzK5CzlbiAgUlvtWtD1P723GNx/4lLj6FufNDZ0p9nLmSshVmK
- JJFM6hUgdAgiEiDo7zcladJvCdfetpvZhq+L8XzS1WpcFUrSfJ+qS2zEjRYyC4VX/Fe/c4zg7
- 0g4ouGnkqNQfl28OUYwGFjo9dRGtGUHsbKhKG/AfvV2Nmrobs6PFzZixYR737vL+q6r7qPcQg
- uR9W8XpKXB0shb4tqKF8XCMnUGPiL8Hgi6Y3XcW6T4nHHXg0TIUDLWv0DmK8rJ+VCF6Fjv5uF
- zvEzcbZhGT+k618t9YIMlFkqQeQVYyGksuyLXpQ5NPvvOxXrlWPpR+jwoRsg7ZbmR0uj5/bS2
- 84nBl/v6n7DiJGq0hV9rpkoSVDgaDgeP1Y8ioX5uffAU575w2KZ7V+4qgQuH+wX9Ofq/x0d/V
- MaVzairF4Up3VoQT8tOvS4IVt5Jy51tYLvp5wF37GJ1u4GyYh6MtP52XSftAnMbwyKjYKlxWH
- PAt7B6UFFJH3EdZF40XLg6TKRTgt3Ip7QwCcUyn5RrVqpMYhs0vN+a709P0IW4Qr21g0SHD0e
- AIW0KL0r/P987qGI5AQ4+V0YTCC8glJL6Lb2+lCkl5QIB3+eOYhUoZpzMW6PH3UjEu30ciubq
- K8YKvETi2LcMFPBlRd9SZQxtuFqusjOCEIol4UAUFB0YpA7ChQlBmkrwK1eif4430KyuPmw6I
- Fn+y9mrOMC3Cz9qfCNEMwwP7Ms9LCjqMD04ddJkWXTq2g=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev
 
-=E2=80=A6
-> This patch will add the malloc failure checking
-=E2=80=A6
+On Wed, 17 Apr 2024 12:52:34 +0300, Dan Carpenter wrote:
+> This code returns -EINVAL if "i" is out of bounds a few lines earlier.
+> Delete this unnecessary check and pull the code in a tab.
+> 
+> 
 
-* Please use a corresponding imperative wording for the change description=
-.
+Applied to
 
-* Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
+Thanks!
 
-Regards,
-Markus
+[1/1] ASoC: cs35l41: Delete unnecessary condition in cs35l41_pcm_hw_params()
+      commit: 181d58cfe90f6a2ad53f6811d318fbc7149df8c1
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
