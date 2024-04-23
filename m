@@ -1,170 +1,101 @@
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089E813E031
-	for <kernel-janitors@vger.kernel.org>; Tue, 23 Apr 2024 19:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501D229429;
+	Tue, 23 Apr 2024 22:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713899752; cv=none; b=Y2ULbnb7BNvC2t7HjrU5uWRnkepHDXaFIp8lbHelwOo5XGWKk2XeK/ZHC9mi7YN3yp5wyQSsGqyfCV+dM7b9QcfW4hUzP/F6TPZbPTcBb2o+zXaNgo0utFTA/yk2K8ISLmgTPoEO7Kk28mH0yZUUnq85XOQCGoa6c/qGY5cPkMI=
+	t=1713911423; cv=none; b=MWt7OAGk8cQ93ix3ggsVNXFgMhsvufO8hmBDmwdmikR0jdlKmCaykZwg0z2b4YAUwVcc6Y3+i0f3PzWYFrQ38u+jZteJFjKIdwZdZibO3KRcztNp8vKZaU3o331w0tK0FB5k5dADJkO1E57ZuBamSlDAn68qbQJ0n1A8P5613Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713899752; c=relaxed/simple;
-	bh=pyZkFd0ABGXFz76xB8ZWfDAQUqX2Kd3JVR9/s4wDQ0Y=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fgc5qLe+1wwt5qe36N3CujpNEE/Qm6cGOiX46XjuMyPY3xuX0VaRFWZVe9XBMRkHwMZayLKEQ4JrEaiFJZ8i+ciaiEZ466UelGiIJlTlHpmTEvN7axxdp7mgaqwaT19WNvPW7SGA8p8no+zViSttR67tDAQj7cwhQG8MhtRIIwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H91vs80+; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+	s=arc-20240116; t=1713911423; c=relaxed/simple;
+	bh=AuQ+SQkDeUgELtorzKrgNQtQFOOdwGtzbtOT14WSWCs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=kbuOz/hSC1Of5wsXJ5+QYnLZPVOT/SoOMR+6SIPNXBpqJIvhHwgEqNImKaBI6aqXdRDv/mW90imjwpEssDpWV9xcRYRNG/LCWbm/S5VrI+6ql4SLeLQhYIGPmKnjva+gok4qp7tQwcfb5HIBi2lNB9OydcrNOReWidNg5Vbzzjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=etJ3xW4T; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H91vs80+"
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61ac32822bcso129724637b3.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 Apr 2024 12:15:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etJ3xW4T"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-343d2b20c4bso4949033f8f.2;
+        Tue, 23 Apr 2024 15:30:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1713899749; x=1714504549; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tK2a7Yr/IypNmsegnHAW+Bnt+5x2FeODOQAPDg+FlVY=;
-        b=H91vs80+0vhLlQRld5mKn0esvXzuo53+damSa4uR9KQk3+XTq7XIfiHK7tixMkn6Nh
-         mvTytOiFPvDlordDYdYMFT0xAFTdBvgEqF0xd6mWrg/9+bjFznB5YYT2VULbt494w6mj
-         Ln5GDvEqcw8uaYc8edieTZKSlIEXOEEsHD8P3F63tLh0o8S0owdhnEI6cklZGVtXVxkI
-         ER+xFbFkzBn+WGCwKYJ6gs3ZOZkmQUrzavGU4zvCGqN6g4sh0eZsRLRoSO9gCN4/p60D
-         QDPQwoBjvhrq8vfQhA0NfbEBZ19M5EMGV1BCF8pJIDenLFhZebVXnW7aikXenjIbHI/y
-         nYPw==
+        d=gmail.com; s=20230601; t=1713911420; x=1714516220; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=66Uz4GRic3IGdZE7sf+U5tu1ETLXCRIKBepd9JZ9A+U=;
+        b=etJ3xW4To5Hr1hBCnDjA1Ju3lMGhp5shghLfUeZZiNupNOT9L4MUudbMp8oLOVU4xb
+         ijMxftHza828H8pOZ2aHYOLapxsmupy4/q48rq6y1sQpcd9gM3jf240NCVfORAG2KpCr
+         P88P27svM8K15EyqlgcgqWdBPsnr/PU+MGV11Y+dAX+KPWAhhM80oHT+sL6hGKZD4DD3
+         ExlCq4wNdYtXeMRhEo5+DrncoTwhbcTGDo/aDGXbD/1l4q7pb2YnVFd6c1BPxUj8ow4c
+         o/tdr5CUYV3TlhF6qOHcYPHNFDnS+kSUBBSFidEJpr5XESNXKjUSb33KfTI/2gWXlK2/
+         A1uQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713899749; x=1714504549;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tK2a7Yr/IypNmsegnHAW+Bnt+5x2FeODOQAPDg+FlVY=;
-        b=XM+D32W0DJTTVp0Fd9UtfcKvfOriip4Qbx/Adzv+4Dtgq4n/sf4L7EhRb1Aia5Cm2B
-         ivqIXM2WyJYn/IjM3GrcM9Dih/ZQ/IA74ORg28X4+riENaRLT26LkeUTLaMxB1N9F6mN
-         YE6rBMTdJBPhyRgn2FdxKvIgjKAPnhZKPYAgXGVdrzLZFN/YXWwC2KHuQYQSXr9F3ztA
-         j9JtwykOvR8GY44ZIRggXfkjXPoEG7ffyF12WcGknGTBhDpQfhIJ4tZur45kqTeCsjEC
-         lZtLPsI7EvWqHmM+ESQMPyi6LVTrxXQcULH09p4RW3/PJFNbUNh4ziK/UxfjDtj+jNCD
-         Pfqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVn9dYJR2L5g0xHaLm27GSqdu5I8NRmPW9CvvziVMsJxuEl9jra3ekrWNkFxpcteVDCcyZyXQpnYaqL7oT9kG66C6gbGKxfeyL/UMU2Z8zc
-X-Gm-Message-State: AOJu0YynME6wMMHXTwGnnFtgqmlntlGFBG2RuTntTBcJ8F6scF2ONJcd
-	HPU586XeJGRxEpcKiIMGtTedOJyqRiYsAee4h8mNcQx1qJPOMpJLYaVyQJTM4p3vSIsKN17PZRV
-	iew==
-X-Google-Smtp-Source: AGHT+IEvSlfNjEiKtO0MizSy6GuLnGVpFnCxv9glIn50ZYKyRHDelAswgazaeeQioA8vby3KBnB39hEe4k8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a81:52d1:0:b0:61a:d420:3b3e with SMTP id
- g200-20020a8152d1000000b0061ad4203b3emr106057ywb.5.1713899749077; Tue, 23 Apr
- 2024 12:15:49 -0700 (PDT)
-Date: Tue, 23 Apr 2024 12:15:47 -0700
-In-Reply-To: <20240423-0db9024011213dcffe815c5c@orel>
+        d=1e100.net; s=20230601; t=1713911420; x=1714516220;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=66Uz4GRic3IGdZE7sf+U5tu1ETLXCRIKBepd9JZ9A+U=;
+        b=JxMW+QDswYw9uxYwh6Ssi+9CtQC6Jr3ljlbF7nnf4PIG7e+7n/570yjMaRSRqAwyU+
+         18jSFsMHpXzeRr0tf54zfHhV3aQuZ4JG19E52uH4atrbwGH5MkPhl+rE/Y5fZFnzUGOp
+         5CBZWYXETAe1n1TM5y656M3SZ+G9yNxoj0BckUzjtmN4BSpOlAwexKJPp49+6Wow44cQ
+         MYRyRETCip1DNhvYDMjCW8Ezo+NAJo4y2vlNnt+bvPNtt0V4qqeJ3U6OH2c872EwxEff
+         M6BrMNd4dBG2jslOOB33zWEwmQumsSKM9Ad+9V3N0UppWOm8vJQBeXubqYTtczjft/wK
+         j/rw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHq2kExFJizKyNpHQgfBqZ+ttC2VY/nibg+lRUidL9cxDYZCQgGjubIYFTqoDDY8Fd3l3w1JAU3D+zUbMvf0topXEQ8GcxPItsTrlZ
+X-Gm-Message-State: AOJu0YyKpPcCV101YWB8gigSLBGAHv7vYmtAwplc61GEsq12moeszCqv
+	+a/S55VSjlmUze6//otnfyXQUiujm8L1bNLUoMPZz/GsUr1tU9/R
+X-Google-Smtp-Source: AGHT+IFcYjeSexBiXa/qAM2MmNnEH9f267vXL2TPkUjnoVI7tPI8s28Zm3TvA6aFiqv2VAgFYFiNTw==
+X-Received: by 2002:a5d:5691:0:b0:341:72b8:83b9 with SMTP id f17-20020a5d5691000000b0034172b883b9mr368623wrv.68.1713911419577;
+        Tue, 23 Apr 2024 15:30:19 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id b4-20020a5d6344000000b00347363b77dasm15466238wrw.33.2024.04.23.15.30.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Apr 2024 15:30:19 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Mark Fasheh <mark@fasheh.com>,
+	Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	Heming Zhao <heming.zhao@suse.com>,
+	ocfs2-devel@lists.linux.dev
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ocfs2: remove redundant assignment to variable status
+Date: Tue, 23 Apr 2024 23:30:18 +0100
+Message-Id: <20240423223018.1573213-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240423073952.2001989-1-chentao@kylinos.cn> <878bf83c-cd5b-48d0-8b4e-77223f1806dc@web.de>
- <ZifMAWn32tZBQHs0@google.com> <20240423-0db9024011213dcffe815c5c@orel>
-Message-ID: <ZigI48_cI7Twb9gD@google.com>
-Subject: Re: [PATCH] KVM: selftests: Add 'malloc' failure check in test_vmx_nested_state
-From: Sean Christopherson <seanjc@google.com>
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, Kunwu Chan <chentao@kylinos.cn>, 
-	linux-kselftest@vger.kernel.org, kvm@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Kunwu Chan <kunwu.chan@hotmail.com>, Anup Patel <anup@brainfault.org>, 
-	Thomas Huth <thuth@redhat.com>, Oliver Upton <oliver.upton@linux.dev>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 23, 2024, Andrew Jones wrote:
-> On Tue, Apr 23, 2024 at 07:56:01AM -0700, Sean Christopherson wrote:
-> > +others
-> >=20
-> > On Tue, Apr 23, 2024, Markus Elfring wrote:
-> > > =E2=80=A6
-> > > > This patch will add the malloc failure checking
-> > > =E2=80=A6
-> > >=20
-> > > * Please use a corresponding imperative wording for the change descri=
-ption.
-> > >=20
-> > > * Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
-> >=20
-> > Nah, don't bother with Fixes.  OOM will cause the test to fail regardle=
-ss, the
-> > fact that it gets an assert instead a NULL pointer deref is nice to hav=
-e, but by
-> > no means does it fix a bug.
-> >=20
-> > > > +++ b/tools/testing/selftests/kvm/x86_64/vmx_set_nested_state_test.=
-c
-> > > > @@ -91,6 +91,7 @@ void test_vmx_nested_state(struct kvm_vcpu *vcpu)
-> > > >  	const int state_sz =3D sizeof(struct kvm_nested_state) + getpages=
-ize();
-> > > >  	struct kvm_nested_state *state =3D
-> > > >  		(struct kvm_nested_state *)malloc(state_sz);
-> > > > +	TEST_ASSERT(state, "-ENOMEM when allocating kvm state");
-> > > =E2=80=A6
-> > >=20
-> > > Can =E2=80=9Cerrno=E2=80=9D be relevant for the error message constru=
-ction?
-> >=20
-> > Probably not, but there's also no reason to assume ENOMEM.  TEST_ASSERT=
-() spits
-> > out the actual errno, and we can just say something like "malloc() fail=
-ed for
-> > blah blah blah". =20
-> >=20
-> > But rather than keeping playing whack-a-mole, what if we add macros to =
-perform
-> > allocations and assert on the result?  I have zero interest in chasing =
-down all
-> > of the "unsafe" allocations, and odds are very good that we'll collecti=
-vely fail
-> > to enforce checking on new code.
-> >=20
-> > E.g. something like (obviously won't compile, just for demonstration pu=
-rposes)
-> >=20
-> > #define kvm_malloc(x)
-> > ({
-> > 	void *__ret;
-> >=20
-> > 	__ret  =3D malloc(x);
-> > 	TEST_ASSERT(__ret, "Failed malloc(" #x ")\n");
-> > 	__ret;
-> > })
-> >=20
-> > #define kvm_calloc(x, y)
-> > ({
-> > 	void *__ret;
-> >=20
-> > 	__ret  =3D calloc(x, y);
-> > 	TEST_ASSERT(__ret, "Failed calloc(" #x ", " #y ")\n");
-> > 	__ret;
-> > })
->=20
-> Sounds good to me, but I'd call them test_malloc, test_calloc, etc. and
-> put them in include/test_util.h
+Variable status is being assigned and error code that is never read, it is
+being assigned inside of a do-while loop. The assignment is redundant and
+can be removed.
 
-Possibly terrible idea: what if we used kmalloc() and kcalloc()?  K is for =
-KVM :-)
+Cleans up clang scan build warning:
+fs/ocfs2/dlm/dlmdomain.c:1530:2: warning: Value stored to 'status' is never
+read [deadcode.DeadStores]
 
-I like test_* more than kvm_*, but I'm mildly concerned that readers will b=
-e
-confused by "test", e.g. initially thinking the "test" means it's just "tes=
-ting"
-if allocation is possible.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/ocfs2/dlm/dlmdomain.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-The obvious counter-argument is that people might also get tripped by kmall=
-oc(),
-e.g. thinking that selftests is somehow doing a kernel allocation.
+diff --git a/fs/ocfs2/dlm/dlmdomain.c b/fs/ocfs2/dlm/dlmdomain.c
+index 2e0a2f338282..2018501b2249 100644
+--- a/fs/ocfs2/dlm/dlmdomain.c
++++ b/fs/ocfs2/dlm/dlmdomain.c
+@@ -1527,7 +1527,6 @@ static void dlm_send_join_asserts(struct dlm_ctxt *dlm,
+ {
+ 	int status, node, live;
+ 
+-	status = 0;
+ 	node = -1;
+ 	while ((node = find_next_bit(node_map, O2NM_MAX_NODES,
+ 				     node + 1)) < O2NM_MAX_NODES) {
+-- 
+2.39.2
 
-I almost wonder if we should just pick a prefix that's less obviously conne=
-cted
-to KVM and/or selftests, but unique and short.
-
-Hmm, tmalloc(), i.e t[est]malloc()?  tcalloc() gets a bit close to Google's
-TCMalloc[*], but I suspect that any confusion would be entirely limited to
-Googlers, and I'll volunteer us to suck it up and deal with it :-)
-
-[*] https://github.com/google/tcmalloc
