@@ -1,86 +1,55 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C480F56B9D;
-	Tue, 23 Apr 2024 09:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F0122F11;
+	Tue, 23 Apr 2024 10:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713865544; cv=none; b=cPBlr+IkZ+23k8QXM8100ZhkJz67U3AscoaR08vwLXVa1Tv5Y7cSD2ixoFpMUtb5xCaSCIRSEk+ZA0w63RczfcKaygkSEi8ViLW36mkUG1+tOlwr9xjhOK+1SE5Tz1nVSun8rA3gRdXHX42rnw2KM603FDlZI4A9Pq2c/NLahQQ=
+	t=1713866984; cv=none; b=ozR64S9/NY/VE7kDnM5xeC15E3eAT2Z0OvA5sXKlMlQ7tXvWK3DG8udokJQxw7umoo/sGNyL6ZQ54fWA2OPMM7U3WWg9yTbRj7m16FJO/27ELim2okKJhc8x9iSHN38QNF/9JncimFrSRtWlTn3neSfDQ+K6uTkU94Iow9NY6C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713865544; c=relaxed/simple;
-	bh=unf/IKr9VmLOe/XGqyE5/FCvp/8jpLFn08Ee3ayn9vE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=FNtpK30RyIdq+cDU1VwbpG5a0C/1h5jEBDNloEsrb4wxb+/xkuNYqsNqPkncySX6rONuz95NldPlHCNJ7IUBE04A4f6DxJ+8M/GQbm8EUMom4mdGnUOx77XgkKfrYYak474tFlw1pld6dEV7F3QaTLbA8cdwwEGvlulW7OZ2NLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Tr6T8d3n; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713866984; c=relaxed/simple;
+	bh=SDrP4kaBL1QTqOrq543JUsX6/r4rmoGEDKqDVQE2Tgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cDp50JHhXjRA3dETYxPmjjvSn26tZV0zZ26ZJKT+AGoo+mSd3JJMrq1EgGrvWz983vF0vyWaIQKSsvPM83DveifRWPgNqAXSaYRZx579wFksVQGm1FDYaAhWlwSuUSkxK4yWCAmvzxQ7bLDeHvOvc1QiQTDGNbfZSuqwSlvfo34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GSxihSSu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Tr6T8d3n"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713865502; x=1714470302; i=markus.elfring@web.de;
-	bh=unf/IKr9VmLOe/XGqyE5/FCvp/8jpLFn08Ee3ayn9vE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Tr6T8d3n2Z6QotE4Ah2/GuNN+n+H0MPh+Rib8eT9ZHFctn5z9bzoGFJa7fBLb89w
-	 PgQSmRGgsBjwGxyWM3dUQx9cV91Gyy03JNqIXHJD941+Q+JIy1cTMlKHnFTv8URBk
-	 aCkZG187W/mp6/Ao9Gq/vnfDdpZsL6tp0MgIH2U3ZLRkfziVmLk/K9rbSSeaGzfPZ
-	 0DpZdTl/aOTM7bLgeXM+oGSPj8MW/1aS1SugoA8Qts8gWt6BDO1LsJWjazsx6qdM3
-	 DyPkUTdCAzSjJNsCniEOBibmjgLqFuMU2JteTOxv8XLi6USby5YIHlu2R2xOFdgkp
-	 HQS/2Woaz2DrPKY/Qg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjPQ6-1sR9k73YkM-00hArN; Tue, 23
- Apr 2024 11:45:01 +0200
-Message-ID: <1f15f7e3-32ff-486f-8e6f-bbe9183b05e5@web.de>
-Date: Tue, 23 Apr 2024 11:44:55 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GSxihSSu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E739FC116B1;
+	Tue, 23 Apr 2024 10:09:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713866983;
+	bh=SDrP4kaBL1QTqOrq543JUsX6/r4rmoGEDKqDVQE2Tgs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GSxihSSuCrj6KKttZSw/JNkDPUFhhLj2FBO1e4hQu5taz0qhfXUBNtIvw8cSJqmWC
+	 D0HXkavl5zSdIVVvtYMhD70mrfufXVG/ZSGYh4YWTeYdISd7LNmSH3sjmUJEpACd8m
+	 ZWQEjln7HvMXu5H/VG8iqdZH+Hn8aq9fRbuj120c2/gMdNR04B94iNQtc86jehBegJ
+	 OZYphnfv/LdxSX6mOJ6qUrH7C3sFGLvisOcLzhYnRDSlntWGaKO2DBTlQzyYcNC92w
+	 YV/dAfXwSpxyjvskBXGbOODhbMBNnK1ZPhjiWMyJswEsio3yl2EA/ICnJpVOisyS/y
+	 IHL0AwpmhrdnQ==
+Date: Tue, 23 Apr 2024 11:09:39 +0100
+From: Simon Horman <horms@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crash: Fix spelling mistake: "crahskernel" ->
+ "crashkernel"
+Message-ID: <20240423100939.GH42092@kernel.org>
+References: <20240419085206.888416-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Huacai Chen <chenhuacai@loongson.cn>,
- Jiantao Shan <shanjiantao@loongson.cn>, loongarch@lists.linux.dev,
- loongson-kernel@lists.loongnix.cn, linux-arch@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Guo Ren <guoren@kernel.org>,
- Huacai Chen <chenhuacai@kernel.org>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
- Xuefeng Li <lixuefeng@loongson.cn>, Xuerui Wang <kernel@xen0n.name>
-References: <20240423074257.2480274-1-chenhuacai@loongson.cn>
-Subject: Re: [PATCH] LoongArch: Fix access error when read fault on a
- write-only VMA
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240423074257.2480274-1-chenhuacai@loongson.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:5aAF/++CnrqQb4hr3ZNQgDjqdbWXV8FiY70vkX5EAL9c+pMnohp
- sKY5V/AoYCKJqdNqip9JJNcWrXuJfNvdZwzjZaLSkSq/mUjGiu4hVt3P/fBig1peL/Gl+cb
- P9HLBr4deryChgh/8nLct4XJM5XFQhZZlSkCVcum+5nO9kdvpMy22gS7NFaLB9t6SKz1hft
- wvb8Rwojp2UmKg/xrsVeA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:uxmvR4l/YWM=;moCV0Xu1L3eQa1QE3ayecdIt6yI
- TFwIiOzdVBTn1XS7iqW/d+WA80gDD8hWX8R458DMLrZWMWJkL887aXirdoajoDlX2j0/7aA6/
- 5E2CEn2U2K9LWRORqLHkA/YhmUh0uBf3z7Eny3RmQMW46PgDKa6zUC0m0RP1gjMdDBn1ll1i9
- 3Gqg763E+MrPz/V47ZIyEfaM8O7xzUkYjev1P0pqAXQ9I73mJtT9+gTe9tAGbPnQjvB0pPXD1
- C6mkWZZuWdo9upJG0F48diq83XqbiJqFpQlkt3yAfBlNQ+XJhuqjMajL0kyVrRwwJALlj3tlE
- 4Q8CkFfl5ADIzGL6SHlfwwr7mjyuWMsKpsTqDTtk3pe+B2bl4n0xiIoMAzcHrQ9WaPkTZkkdG
- yP9U7Tn0DewYHscBzIpn09XDQhGsmNpYJTThlKudftUe2eCgX+5emdmWG1R0uTwMv/2yrRqcp
- gZWrinbZ0kRNYdOwCDHH02bewpnMIAdAp4rYKlvHREaktT5yubOy7j0nVyvgJal5r6g8dnvYZ
- ijYq/jrG2Sssc4Y3pBNOm9U8YkHY4hS2TpQRDdYoD817pOjto7TRBBxzwFThBkbNZ5abFT84F
- l++U4l98nVtct94Q/Yf8TfRsYEghVt1Zae4crHi9dDqyX7c5fmroIOk0yB44XfTQzfTtbJ23x
- TNlHEayPqfruBhlthohHs92c8hjE8wko5nY+O8WBklVGv2IvywPlmrdxNKJffBDGI/eeRGBlU
- +CaJx/7Cxcw1/HwK0wgEs4nbGwqaF5lpSHGpzpd2lxs7J0MDrjuBoi4hboaEMirmIt7ZgZRkV
- T7RbDHhJ1JomBCsixaL4mpI2UXiN7Mtbp9w5t1KWc/CTE=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240419085206.888416-1-colin.i.king@gmail.com>
 
-> As with most architectures, allow handling of read faults in VMAs that
-> have VM_WRITE but without VM_READ (WRITE implies READ).
-=E2=80=A6
+On Fri, Apr 19, 2024 at 09:52:06AM +0100, Colin Ian King wrote:
+> There is a spelling mistake in a pr_warn message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Will the tag =E2=80=9CFixes=E2=80=9D become relevant here?
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Regards,
-Markus
