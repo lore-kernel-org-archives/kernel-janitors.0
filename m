@@ -1,221 +1,166 @@
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8A6328DB;
-	Wed, 24 Apr 2024 04:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.156.173
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713934667; cv=fail; b=jDKlQw/auwnlaYfxRTGd9a4nqtBvBQP+/lw96nZepnZKWrxGF/yD+rDqgOcCLTaWiS+PQPHANRJ5acZjwQu8dvBaI3wqwdqJqkoRf0V1pcxhLm9i2n51zxCNqOHy+dwllLy72uOpVRxBkCfcDl8ds16nJeC6uC8d0j8bSS1+r18=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713934667; c=relaxed/simple;
-	bh=JVrKW4bNdLQneX2vQUkBOzxfHOQ9y33I48I+zQfq2i4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aNyOXJT2E++KG0mNoYQu3x60OgYjJcgqJaps3hVyPkLuglpyqXY+lh+AhFyyJ9IyPsi3iAo+3RboNluOtBogu1XzQw7jrVbEBklehOlZZm/zSz+k0FReZ1cFkq7RXn4IhfJz04ip9s36eGcI0GetUsYq6CPuovIx5TdIxecymkU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=KBAeczAP; arc=fail smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC1213CFAD
+	for <kernel-janitors@vger.kernel.org>; Wed, 24 Apr 2024 05:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713937305; cv=none; b=Hoy3eOyos7a6nPFT6i5MmMfvf2KiV5B3nHVPh1XVTADHMNJrqUEn3P/9/RQ6o7Yyfw1YhZDr6gh5uSY5rexXJudz0f/OlCucjZMGbdQDmRLTNd/crGyU6IBK00+YxuZpRm1i0qahz8cNsF+M25g6uvX7K7N0h/ubvc6Ltv1ldxM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713937305; c=relaxed/simple;
+	bh=IyElVXqzTyQ3aKo0ohOGapMAuFHTguATuxVWkpi0DWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C2K9H3NaCm1XMiEqTN0ASfTjpcQrKYVPH+7YG4WDa9oAapDBZN/Q2U/ef4nOupqxqDIJ0UTz7qN1s3wUMWTJJ6p5oK9dwl1PfK23jnQVt+GMRuShC+Uv8jZuMCAGLrEb3+oo0VXPiZZa33F9Of4Of76BA6CcEXBdvLGgZVYpGp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WFF4Abbs; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="KBAeczAP"
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 43O0qaXl022561;
-	Tue, 23 Apr 2024 21:57:30 -0700
-Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04lp2169.outbound.protection.outlook.com [104.47.73.169])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3xmd7gmh31-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Apr 2024 21:57:29 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ngzukK3OHozIxrYSZ66pZAa6TSNM0njXMC+M19c9qG5cOdXnHKO/1t8Sz7N0ZO2daZZ8X4azcerRXlF3yO3FiciP0kw3VppTTb70zVU8WIzfpGSe601uHE4Z30rvVl+IdJ1b+ZgElmqImEYiZJp/SoQ0g5VEyWIhfEynS92oeS3g9CKgvUNhfMx2qqThItHsWhS3sNWIDZH4dlYuPb4cLa5J7RoDEvreLw+5Pmx2pWNiKS0E7qH+e85YJLX9yKpAX9GgEf+KG1hVmpo9N6KxVWGD9xBPf2KBOpjegBDkNrq6LhtGuvJOkLWTEgHQq/i7JMvm5+PkJUnzhSg4EBrXYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JVrKW4bNdLQneX2vQUkBOzxfHOQ9y33I48I+zQfq2i4=;
- b=OoqTuKfkTwNrf3aHsN0T9fe9hmoS2CjR1aGTx+EiZ7IQYPiLZP4o69cFpNMnUMOfM4OLIpg+ElmoZP/WKs8pfcE9NVF/QKVhB0TvkPVeRqvw8XM1He55GKkO63MB8k4NfSuc4L2iDgcFH1gxCsqEHPQRHvxm2QlNI5kYUoVOY49PfFTbltg9BfMOIhgAyUVGWL+ldrgTQ9GCCz3AXRn3eA7xkEXGBVHRZpfJvbwLAOjxbX05/DJnP9H1Bzzyzyc1GmY/s5G2i8pX3oThn3+hqgnuw/XcPs9rLVak2oyLffFtfUBL8bb9g2VVyGDrmBnZ+YmhMLMhxln7m+LJrz9xlQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JVrKW4bNdLQneX2vQUkBOzxfHOQ9y33I48I+zQfq2i4=;
- b=KBAeczAP60bFC4ixJkjyXyJTs53vbKftrfN8EoCP+h/wN0fVCyq3XeOUNU7yAX5gz56xde9qDJI9h2l3ZDh15cPPOO63zuXTwcz/SXQkV8eTwRWyIHzVOPjUU7dHfBuc7LOef2X/J2aeEBhN7UdA4MV30FZmYMzzn4BWMtL6Nnk=
-Received: from PH0PR18MB4474.namprd18.prod.outlook.com (2603:10b6:510:ea::22)
- by CH3PR18MB5548.namprd18.prod.outlook.com (2603:10b6:610:1a8::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.44; Wed, 24 Apr
- 2024 04:57:26 +0000
-Received: from PH0PR18MB4474.namprd18.prod.outlook.com
- ([fe80::eeed:4f:2561:f916]) by PH0PR18MB4474.namprd18.prod.outlook.com
- ([fe80::eeed:4f:2561:f916%5]) with mapi id 15.20.7452.049; Wed, 24 Apr 2024
- 04:57:25 +0000
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>,
-        Su Hui
-	<suhui@nfschina.com>
-CC: Sunil Kovvuri Goutham <sgoutham@marvell.com>,
-        Linu Cherian
-	<lcherian@marvell.com>,
-        Geethasowjanya Akula <gakula@marvell.com>,
-        Jerin
- Jacob <jerinj@marvell.com>,
-        Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com"
-	<edumazet@google.com>,
-        "kuba@kernel.org" <kuba@kernel.org>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "nathan@kernel.org"
-	<nathan@kernel.org>,
-        "ndesaulniers@google.com" <ndesaulniers@google.com>,
-        "morbo@google.com" <morbo@google.com>,
-        "justinstitt@google.com"
-	<justinstitt@google.com>,
-        Suman Ghosh <sumang@marvell.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: ] Re: [PATCH net] octeontx2-af: fix the double free in
- rvu_npc_freemem()
-Thread-Topic: ] Re: [PATCH net] octeontx2-af: fix the double free in
- rvu_npc_freemem()
-Thread-Index: AQHalgPm/eDubODqs0aQDZSekpMRQA==
-Date: Wed, 24 Apr 2024 04:57:25 +0000
-Message-ID: 
- <PH0PR18MB4474BFBF06C699039D669D2ADE102@PH0PR18MB4474.namprd18.prod.outlook.com>
-References: <20240424022724.144587-1-suhui@nfschina.com>
- <CAH-L+nMUhn0n=RmDTi0_5iXAsP=tkr-AbwnYoCnQ+_Q9apW98w@mail.gmail.com>
-In-Reply-To: 
- <CAH-L+nMUhn0n=RmDTi0_5iXAsP=tkr-AbwnYoCnQ+_Q9apW98w@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR18MB4474:EE_|CH3PR18MB5548:EE_
-x-ms-office365-filtering-correlation-id: 2a1afc4e-67e7-462e-2e46-08dc641b08d2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- =?utf-8?B?MXVaL0ZhakNKdVdWb0Raa2FlelhYMFgxNFdiazNINjJ2aWN3dTJHaGFJSHVR?=
- =?utf-8?B?cC95N3BxUVJ6S2dXZDV1SklZbHRMa0xTZE5mK3FvTExuR21hOHFQOEpRdytN?=
- =?utf-8?B?cndycXQzK3NTc3RabmY3NjRUL09hQk9yUmdldmJ0M0tvUlNRd2xha0Rhb1Uw?=
- =?utf-8?B?eGRBOThOTmRHdEJTUEtkMUp1VjZ2SGFMR1BITWN5cFhBSmR4emdoRlY5MVE5?=
- =?utf-8?B?UnVVZmhWQlFVdVJqMDUwa2xqWEVja2JUUU1FYVRYK1hxcDA2dGZ3MjBOejBK?=
- =?utf-8?B?MTZpZ2VoeW1YVFZNUEtrRTVzb0RSZGJXZjBuaTAzMVFwbUtLcVIwUks5SUh5?=
- =?utf-8?B?bFB2WXJkMFV3N01IKzZQb1owWEZacVMzME0vMEh3MmYwZVdRcWhtRklxMTBl?=
- =?utf-8?B?N1FDNnBjL3l6cURub0U0d1dyZGVUdjF2bC9jUWlreUNjaXVXekpvKzFubmhI?=
- =?utf-8?B?ai9BSmJ4ZURkdW1wUm4vRlViWUZiam43ZllHYVJBakwyZHVlbmppMlJid2xL?=
- =?utf-8?B?M0FoVkVTd01FSkdsTHNibFJER2VkK3JzN2NxeFlVd1ltaDZ5N3F4U1NnN2Zn?=
- =?utf-8?B?YUxaTUhZMHlSZEJIdU9HWnE3MmloUllacHA1ZWJPSUhSVEdwVFc2T0Q5MkI1?=
- =?utf-8?B?dGRiQUlHWU9IbEI5SmNDOWZITTVsOGEwOGFvYVk3cDVvQ1dzNjhpeHJrajdk?=
- =?utf-8?B?V3JUcEFxSWNxa3hObloxbFpjQ3RoZTg2b3RhQk1aa2s0MlBEeWo5eENFTkJO?=
- =?utf-8?B?ZnhnbjRzRkhPbTlIMzlwd091SEg5amdEdC9VOXNQMzNCbmR0Yi9rK0lpSzNr?=
- =?utf-8?B?R1hleWlQUDJvZVdvNmNyaThWdDZ0L3lJakhSSDlxdHhma2VmQmw4bmpHb0d3?=
- =?utf-8?B?OGhMbzF3MGpVWTFqSnFUeFJIaXJCS3BGcjQ3TTVxamppMmJaVEhNc3lIdlpG?=
- =?utf-8?B?VEx6NjFGTEpFNkNWTkZIcW1zZ3czZkwwSjM1MkJIb0JndGdZK1lndE91bzFr?=
- =?utf-8?B?NEJsS1hONE1Odk1NREJUVU5ubG1qVWhwUTY4bzBiT01QNzlsRXZTSk9Ta2Ra?=
- =?utf-8?B?VnRpd1d1eVNYQ3ZOZ1V5MDB1aGlNajlqVmc4SXo3QlBHbnJLQUtNcjVvMDhD?=
- =?utf-8?B?ZGNWT1hOeEZyZ1ErbE5MYnh3blJYSWozdUFnYlhZbld6TC9hWVYvc0dQcTV4?=
- =?utf-8?B?YjZKdVFJWVJwVXRoT09PTThFekgxMmY5cEZxcFprajJGazNTYzVib2Nvd1Jx?=
- =?utf-8?B?djNMRVRrZ2tvL21RcU5YZjZnMldzNENiQVN0ZHdkR0pSelZlQ1hkcDcvTzFT?=
- =?utf-8?B?clRoM0svUlEyY1VsL25UYnkxUzJ2ZUlDZUJ1TUsrRHJGWWQzcTk1ODJ3d2dj?=
- =?utf-8?B?RUtZWFRKckpsM2VJUlM3Y3lnaHdzYW0zdzRVeUJnaHpKSG0yS2xOK0UrMUZE?=
- =?utf-8?B?Qjl4c3RHRW50V3RCdjdLb0NHN05jcW9jRVhnU2lqZlNkSFhTZjhQWTcwR2Z4?=
- =?utf-8?B?UCtDdTh0MUhMMVE4MVgxWlpTVUc2T2hRYVIxVzdJRGxpaUVQektZY0hiSXRv?=
- =?utf-8?B?MDZWbGZsbjJUZjlGVjN3cUpqcmp6TndERUZPR1JzaGRuYVhESGlMUEQxSytD?=
- =?utf-8?B?ZDNJaUZDK0F2TXhucDNSK2pxYWlVQnlCbDBmbHFKK3RJdldHaTRjdk90ZGhq?=
- =?utf-8?B?OVBlYUhldk5KRml6K25Yd1BMQmFKSlJ2OG1Ub3VQcWtsTEJYaFJvaE5KZWZH?=
- =?utf-8?B?K0tjNlVzaEJpU3p6dGlwOE9PSnlMQ2sxdFZ4VVpFOURKN1JQWDVGWS9PdWJK?=
- =?utf-8?B?cXpBVHc4Ylk1YjdGUDFOZz09?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR18MB4474.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(7416005)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?MDE1cnlaL2RodjBFa3lHVXhGZjZnR080ZzJCQXJad0ZwZ2dTRDB5Si9IOWJI?=
- =?utf-8?B?ZWxYbHNMcnJoNzBmS3VPbXRsU3JFTEs0enZNcW5nUFVQMUYvcmZSMHFrSVRq?=
- =?utf-8?B?UnptbFV4bExkNHRkV0F0QTVzdTY1d0czczQ1U1hYNGZaaXZBeVlWNmxXWnor?=
- =?utf-8?B?YzNaZjN6UGtFV2pITHQxQ0lRbDR0a1k4eTJZdWZ5eXFuKzdvK0EyU05vK0xY?=
- =?utf-8?B?ZEk1TGdGMCt4RG1JQ2V3eGFpSENzRGlXejJnamIrcE5NcDFxSHo5b2J1cmlD?=
- =?utf-8?B?bWRmNENoNzd1QkU4c0lsNjBBWDIvSVdYam9Kek5jRlFLMkZzTHRqRkJSZzJm?=
- =?utf-8?B?TXk1aDFQRUwrOU01YjQ1NVNZS3U1L0lNVEpLc0V6cjUrVllFRlRza285VDRT?=
- =?utf-8?B?NU9HUmp3L3drWkJ6dFd4UzgwQk1seUhiaHVuemY5YWJRQjRjaHMxdjIyYjAx?=
- =?utf-8?B?N1BLTUdaYUF4NE1ORUxhdmlRaFJWWHBSTzlSTlRDbDE2SkE3M3NYcXBRbjly?=
- =?utf-8?B?SkpTUDZTRjJzKzcyRWkvT3hVcVNrb3QxY09Gek05cUlza0VjRnlTK1dVQi84?=
- =?utf-8?B?SXRBVDl3UWEyK2NsVXQ0WFdnRm95TTVscDduTnE5Q3o4QzBucWk3c1FYZTVP?=
- =?utf-8?B?WGVjaHQ3NnZjZTBkSERXMW5vRkdETHovamFabnNUYm1TNnRMcTA2WXhwLzZT?=
- =?utf-8?B?Y1ppb1NxS3JjdFhJV0xPRDlHQmxJeUhubzQrUmJWN1pvaGlrMEZ0T2IrSUJz?=
- =?utf-8?B?Ynh3UWQ1YVBvTUoxNzVsRkxKQ2NkK051dUV3cFYrM2tSQm5hL21MM3czbC81?=
- =?utf-8?B?YWxkR0luZmVCTjNXYkNXbldQVU5aWTFJRGNiQXkzZ1lnVFpFWGhleTVsUzln?=
- =?utf-8?B?VlE5VHB0dERXbStJcHI2S3M1Z25DSGpRV2FLODFvbDgxckIxbzk1eTlEaVNZ?=
- =?utf-8?B?V2hHUHFjdjlxQ0FGL0NJYlhRbEZ6UEtERHFDNUpWenI0YktOMUVKdnpzYnJ6?=
- =?utf-8?B?YTZZQ3ZKdzYzU2J1NC9IQjVkQXV0dHRrYk5FOXdaUXd2aStKNElKZnlYUXpu?=
- =?utf-8?B?WE15Q0VUcW1aV1F2YWpzTjZaOFJncCtIakF3end4YkpPNW91NnJXYndMRGJh?=
- =?utf-8?B?SEZHcmIvdTBFS0xtZFpjS0J2ZW1KYkMraW45Y2YvS3ZxSWdYTkFyYWVScGRv?=
- =?utf-8?B?d0FrU3BZQ05rMjYrdkpZTXZhY09sbmd1NVlETzZmaGRaZWdrZ2x3VGlMbkRU?=
- =?utf-8?B?Tk1ZcTNydHRCeWozQzlzL1hUSWlCd2JydDgzYWE2MERZOGh0RFFKbTlDRER0?=
- =?utf-8?B?YVd5UkRxVFR1TzY4a05ZNnM1cjhHUE5yTVJyWXdlU3MrS0JVdnJ6UjR5LzIy?=
- =?utf-8?B?akZlRDRzME13SVFtTGFsQkR2QUhWUmNHZTZMRWFsem9sWDlEVDVhVmNyR2xM?=
- =?utf-8?B?dloxeGFJeDhXT0xCY0FCNUhreWxmOURUQ210N01HSkdPdlVzS0x3Uk9ocTky?=
- =?utf-8?B?WVUxMXdQUXU4dGlWQTBUUEVNbjhXYWFqcC91UEF6cVp1UWJmTXZFbXRkRzJz?=
- =?utf-8?B?dVUxeXlSVGFkaXFpQ1NnWE5aVUd6K0JuU3Z1MDJRZUliT1FSYWJISHBLcVV2?=
- =?utf-8?B?Vi95S24wa00xK2pkcnNZZ0RYMzdrTnBwYmRQTjIvT3djTUxRYklHVWFNMHJN?=
- =?utf-8?B?dUtHQmFaK0ROV3RpRDVEVVZuUFVPYlovQjlmYlYzRzc2bWRJd3NRRkQzM3Nl?=
- =?utf-8?B?WTdCb21rUHVpc2JyR1YzUWRCT2VjSWlWa3JWTVhOUWp6cFdRRy9GaERNd2Nt?=
- =?utf-8?B?M2h2R1MrbitDMlM4cHhwam1zOC9SV2ZmQmI2SzFmUjlVZFVmV0Z1M0hyUFhk?=
- =?utf-8?B?SFVKLzdUVjhhMG9aVXFwTDBQRzc1ZWQ2by83VE5vZ2xLSTdlM1o1dVdCSHpw?=
- =?utf-8?B?eGdNZ3JpMTk0UVpUNU9wZUJRbC9CZENRZU9ySEFYUUxiM2FZYnIwMTlXL0hy?=
- =?utf-8?B?WXAxNCtHREVVSnlOZnUxRStwbnRQQTU2R20yZ3FjaExpSnZRS2dvTUhNWmY2?=
- =?utf-8?B?VXBYR2dFSlJNK2NXRC9NMG9oMFdjY1QyT05aRGZQNUkzUTZUUzBtZmpUQWc1?=
- =?utf-8?Q?AGNw=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WFF4Abbs"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-34665dd7610so3293504f8f.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 Apr 2024 22:41:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1713937302; x=1714542102; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2UrQ3g5twb3BBJ4fBE47g+swAJMT+h6KnPSpx3YI5X0=;
+        b=WFF4Abbs7E16RYrXIM9ggmREHhJbrusKL6X9mFsx14GWvFMiCh6ldWscjhHj8fdzPE
+         ywrAb//GYZmmfOFxKjCcb4rlpcQtwaKb0KKI3ByNMMNBm4Vq/USsto3jD+u6F/pu+/sp
+         +ZDl7rQ52A/NdiSYOidzNNioSX3BEqtR0h8jWEMMwF0pupvnztvK6eWEM/kAEA1QC+fs
+         Jrh5iamokbwh5PEz+p4sxn8eJ3ZFXrGnMxwpw68pzUjWwQOpuRlTdVDvSpwCOlYuabds
+         mVRVTxk+bAoro99mgLOoVRAfKZiN+kr22ziT3B3Vp+qEe+MsLGL5XH9+Ndeq6g/8KjAG
+         0Wig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713937302; x=1714542102;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2UrQ3g5twb3BBJ4fBE47g+swAJMT+h6KnPSpx3YI5X0=;
+        b=qzs7lmGCtXVnk9ZDpZ+C7jdD0/3OagJOry6BZBfUS4K2XAuMv3JX+dweu8uzxbMYbn
+         tRBQo486ol/8KPLxhs1mMrPRLxFhkkhF1u5yL2d5p7t2SsoORFf5JPvqbch0y+ig33C5
+         1T/PaBvF1uwZCKC0g+pCwm+sWHGHUDTLKoOtF12yln0ON75KkAnpHNSmqREnmBSHuWM3
+         J6wqWv7XHrJ+u4ei31jRkIHHtBqeigqE7LyKVt+D0BB2duT6IHzRo6O2DHSIAlzaATy6
+         HxLvJZnQz1GkAXAQgnFwS90ETF4S1kAy7iER9fG1Z3/ASjLeQnqC7ucLLcovqICeTchR
+         s5tA==
+X-Forwarded-Encrypted: i=1; AJvYcCXr8YO5r+MPXbDmVTLNPr0fYDBNKrVuFMq3V7MQx31HIiruj+sDVdg4THg0FFVRrgpXDyyXMSHdvWNMXgwwH1w57RnzqeuaH4F0G4kyhOMN
+X-Gm-Message-State: AOJu0Yz1dwTXFaqrRGI/fjcmyGiIj83sVk+19yS9QiT7zFBgUKVjH/La
+	E1OAhfKlU84939XH6Y7HDdFwFMk5O7F/KxJ8Rl3J+UT4zux4cGRLnc2gNYrT8vo=
+X-Google-Smtp-Source: AGHT+IGm3SzufQ8qmVUjMugp1zOSYoDMSOXVbTv38V7zcneIa30Z0wti+n3pHXkYuoPQi5lqYjjsjg==
+X-Received: by 2002:a5d:4fc4:0:b0:348:1ee3:48fa with SMTP id h4-20020a5d4fc4000000b003481ee348famr846511wrw.47.1713937301787;
+        Tue, 23 Apr 2024 22:41:41 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id l6-20020adfa386000000b00349e2fab2a2sm16376427wrb.12.2024.04.23.22.41.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Apr 2024 22:41:41 -0700 (PDT)
+Date: Wed, 24 Apr 2024 08:41:36 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Andrew Jones <ajones@ventanamicro.com>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	Kunwu Chan <chentao@kylinos.cn>, linux-kselftest@vger.kernel.org,
+	kvm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Kunwu Chan <kunwu.chan@hotmail.com>,
+	Anup Patel <anup@brainfault.org>, Thomas Huth <thuth@redhat.com>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [PATCH] KVM: selftests: Add 'malloc' failure check in
+ test_vmx_nested_state
+Message-ID: <9f67df9d-ab27-40b9-8849-3069649dc082@moroto.mountain>
+References: <20240423073952.2001989-1-chentao@kylinos.cn>
+ <878bf83c-cd5b-48d0-8b4e-77223f1806dc@web.de>
+ <ZifMAWn32tZBQHs0@google.com>
+ <20240423-0db9024011213dcffe815c5c@orel>
+ <ZigI48_cI7Twb9gD@google.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR18MB4474.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2a1afc4e-67e7-462e-2e46-08dc641b08d2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Apr 2024 04:57:25.4048
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: LCqVrnUOrpPaQ2tEUIfFvY9lUKCTbexY9lhj1tF7a2OUK+YHRIybdoJ9+TiN8/3Es2UGA79bbNzSDig40Blm2Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR18MB5548
-X-Proofpoint-ORIG-GUID: NBJfAzw-Sf9AyOnsGvwljoTBMPe7cvm_
-X-Proofpoint-GUID: NBJfAzw-Sf9AyOnsGvwljoTBMPe7cvm_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-04-24_02,2024-04-23_02,2023-05-22_02
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZigI48_cI7Twb9gD@google.com>
 
-DQoNCj4gT24gV2VkLCBBcHIgMjQsIDIwMjQgYXQgNzo1OOKAr0FNIFN1IEh1aSA8c3VodWlAbmZz
-Y2hpbmEuY29tPiB3cm90ZToNCj4gPg0KPiA+IENsYW5nIHN0YXRpYyBjaGVja2VyKHNjYW4tYnVp
-bGQpIHdhcm5pbmfvvJoNCj4gPiBkcml2ZXJzL25ldC9ldGhlcm5ldC9tYXJ2ZWxsL29jdGVvbnR4
-Mi9hZi9ydnVfbnBjLmM6bGluZSAyMTg0LCBjb2x1bW4gMg0KPiA+IEF0dGVtcHQgdG8gZnJlZSBy
-ZWxlYXNlZCBtZW1vcnkuDQo+ID4NCj4gPiBucGNfbWNhbV9yc3Jjc19kZWluaXQoKSBoYXMgcmVs
-ZWFzZWQgJ21jYW0tPmNvdW50ZXJzLmJtYXAnLiBEZWxldGVkDQo+IHRoaXMNCj4gPiByZWR1bmRh
-bnQga2ZyZWUoKSB0byBmaXggdGhpcyBkb3VibGUgZnJlZSBwcm9ibGVtLg0KPiA+DQo+ID4gRml4
-ZXM6IGRkNzg0Mjg3ODYzMyAoIm9jdGVvbnR4Mi1hZjogQWRkIG5ldyBkZXZsaW5rIHBhcmFtIHRv
-IGNvbmZpZ3VyZQ0KPiBtYXhpbXVtIHVzYWJsZSBOSVggYmxvY2sgTEZzIikNCj4gPiBTaWduZWQt
-b2ZmLWJ5OiBTdSBIdWkgPHN1aHVpQG5mc2NoaW5hLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IEhhcmlw
-cmFzYWQgS2VsYW0gPGhrZWxhbUBtYXJ2ZWxsLmNvbT4NCj4gDQo+IExHVE0NCj4gUmV2aWV3ZWQt
-Ynk6IEthbGVzaCBBUCA8a2FsZXNoLWFuYWtrdXIucHVyYXlpbEBicm9hZGNvbS5jb20+DQo+ID4g
-LS0tDQo+ID4gIGRyaXZlcnMvbmV0L2V0aGVybmV0L21hcnZlbGwvb2N0ZW9udHgyL2FmL3J2dV9u
-cGMuYyB8IDEgLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMSBkZWxldGlvbigtKQ0KPiA+DQo+ID4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L21hcnZlbGwvb2N0ZW9udHgyL2FmL3J2
-dV9ucGMuYw0KPiBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L21hcnZlbGwvb2N0ZW9udHgyL2FmL3J2
-dV9ucGMuYw0KPiA+IGluZGV4IGJlNzA5ZjgzZjMzMS4uZThiNzNiOWQ3NWUzIDEwMDY0NA0KPiA+
-IC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L21hcnZlbGwvb2N0ZW9udHgyL2FmL3J2dV9ucGMu
-Yw0KPiA+ICsrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L21hcnZlbGwvb2N0ZW9udHgyL2FmL3J2
-dV9ucGMuYw0KPiA+IEBAIC0yMTgxLDcgKzIxODEsNiBAQCB2b2lkIHJ2dV9ucGNfZnJlZW1lbShz
-dHJ1Y3QgcnZ1ICpydnUpDQo+ID4NCj4gPiAgICAgICAgIGtmcmVlKHBraW5kLT5yc3JjLmJtYXAp
-Ow0KPiA+ICAgICAgICAgbnBjX21jYW1fcnNyY3NfZGVpbml0KHJ2dSk7DQo+ID4gLSAgICAgICBr
-ZnJlZShtY2FtLT5jb3VudGVycy5ibWFwKTsNCj4gPiAgICAgICAgIGlmIChydnUtPmtwdV9wcmZs
-X2FkZHIpDQo+ID4gICAgICAgICAgICAgICAgIGlvdW5tYXAocnZ1LT5rcHVfcHJmbF9hZGRyKTsN
-Cj4gPiAgICAgICAgIGVsc2UNCj4gPiAtLQ0KPiA+IDIuMzAuMg0KPiA+DQo+ID4NCj4gDQo+IA0K
-PiAtLQ0KPiBSZWdhcmRzLA0KPiBLYWxlc2ggQSBQDQo=
+On Tue, Apr 23, 2024 at 12:15:47PM -0700, Sean Christopherson wrote:
+> On Tue, Apr 23, 2024, Andrew Jones wrote:
+> > On Tue, Apr 23, 2024 at 07:56:01AM -0700, Sean Christopherson wrote:
+> > > +others
+> > > 
+> > > On Tue, Apr 23, 2024, Markus Elfring wrote:
+> > > > …
+> > > > > This patch will add the malloc failure checking
+> > > > …
+> > > > 
+> > > > * Please use a corresponding imperative wording for the change description.
+> > > > 
+> > > > * Would you like to add the tag “Fixes” accordingly?
+> > > 
+> > > Nah, don't bother with Fixes.  OOM will cause the test to fail regardless, the
+> > > fact that it gets an assert instead a NULL pointer deref is nice to have, but by
+> > > no means does it fix a bug.
+> > > 
+> > > > > +++ b/tools/testing/selftests/kvm/x86_64/vmx_set_nested_state_test.c
+> > > > > @@ -91,6 +91,7 @@ void test_vmx_nested_state(struct kvm_vcpu *vcpu)
+> > > > >  	const int state_sz = sizeof(struct kvm_nested_state) + getpagesize();
+> > > > >  	struct kvm_nested_state *state =
+> > > > >  		(struct kvm_nested_state *)malloc(state_sz);
+> > > > > +	TEST_ASSERT(state, "-ENOMEM when allocating kvm state");
+> > > > …
+> > > > 
+> > > > Can “errno” be relevant for the error message construction?
+> > > 
+> > > Probably not, but there's also no reason to assume ENOMEM.  TEST_ASSERT() spits
+> > > out the actual errno, and we can just say something like "malloc() failed for
+> > > blah blah blah".  
+> > > 
+> > > But rather than keeping playing whack-a-mole, what if we add macros to perform
+> > > allocations and assert on the result?  I have zero interest in chasing down all
+> > > of the "unsafe" allocations, and odds are very good that we'll collectively fail
+> > > to enforce checking on new code.
+> > > 
+> > > E.g. something like (obviously won't compile, just for demonstration purposes)
+> > > 
+> > > #define kvm_malloc(x)
+> > > ({
+> > > 	void *__ret;
+> > > 
+> > > 	__ret  = malloc(x);
+> > > 	TEST_ASSERT(__ret, "Failed malloc(" #x ")\n");
+> > > 	__ret;
+> > > })
+> > > 
+> > > #define kvm_calloc(x, y)
+> > > ({
+> > > 	void *__ret;
+> > > 
+> > > 	__ret  = calloc(x, y);
+> > > 	TEST_ASSERT(__ret, "Failed calloc(" #x ", " #y ")\n");
+> > > 	__ret;
+> > > })
+> > 
+> > Sounds good to me, but I'd call them test_malloc, test_calloc, etc. and
+> > put them in include/test_util.h
+> 
+> Possibly terrible idea: what if we used kmalloc() and kcalloc()?  K is for KVM :-)
+
+That's a legit terrible idea...  It probably would trigger more static
+checker warnings because the general policy is kmalloc() is kernel code
+and we *have* to test for errors.
+
+To be honest, I would have just rejected the first patch.  You
+obviously know this and have said this earlier in the thread but just
+for the other people, this is a userspace test that runs for a short
+time and then exits.  If it gets killed because we don't have enough
+memory that's fine.  It would be better to just fix the static checker
+to not print pointless warnings or educate people to ignore warnings
+like this.
+
+Creating the test_malloc() to silence the warning also seems like an
+okay idea as well.
+
+regards,
+dan carpenter
+
