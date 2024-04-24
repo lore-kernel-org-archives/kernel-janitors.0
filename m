@@ -1,94 +1,99 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413DF1581EE
-	for <kernel-janitors@vger.kernel.org>; Wed, 24 Apr 2024 07:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B15815667D;
+	Wed, 24 Apr 2024 07:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713945032; cv=none; b=Vs4Ajcyeu9DqYhR6j1vC/3T0NIaCVy2PXZ+WRKX90qutRj+H/e5GF+0wJ3aCwYnoxUMoA87RIKTq4LRejnSbOVX+5M/WNZrYvtMeOoRgaSI3e+UIzgLYOBhE66j4R+r7ENGjJU9NLxKQZD9xzmMF7FoD09NsJreugiucbRhCd50=
+	t=1713945422; cv=none; b=PHgMmfbECP0A/m4jtQ2MR//murJXB+YVAT879a2QL0mhiztZVj5HCPw86cOScHwsA30kBiFd54E1Rk9Ns3b2mFSmOnaEXeB2Bk0eTNbRS8P03VYmzQClkaIt04SM/5FUHK4Oneo5Pp5trAQ1vinSuuv+3UBhzmgYnBezVYFa6Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713945032; c=relaxed/simple;
-	bh=g/Er6GYXVGaNH7JDBFXh3LSSvzcGk3gWsJG0AOM4CTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QfrNygCd0ZH/C9V1uc5wNVRlYofp+IAXHVvGbL7RTY8k6eIsULmh+J5z4mJEKrLrRuqI50iY7puVs4D20ZT4usXckCHx7vSL3cxp8Zg3SkDPZL3QSGC1O4Emi7mzZtOQEfY/z/bpuCwlBvvnts6FK197a+LSN4k4TKhV/VUtPAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Hptc5V2+; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+	s=arc-20240116; t=1713945422; c=relaxed/simple;
+	bh=Rzu4SBjLS02QTDYwFVyXfcT/Uwk5T24ZqCQO9sZXhu8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=dFojqek6unmeyUEOPqpVf5rgm9OJNGmtUBM2p7bPyA1WpSuMkaFzWsYH3UeRfcyJvczGy8cgtarV2T4BCimYV94+orHl1baMXz+R/mKei8lKXOnVXaaMtcVJBsSOXbfseU5JKewzAGUDBNowMF1UcLrVdIR3AYsv0nGd/ku2UOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QfY0sKM3; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Hptc5V2+"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2db2f6cb312so112273881fa.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 24 Apr 2024 00:50:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1713945029; x=1714549829; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=g/Er6GYXVGaNH7JDBFXh3LSSvzcGk3gWsJG0AOM4CTw=;
-        b=Hptc5V2+rnXXJTqWm5x2+cw4imBiLFVePvUqflhfHQ8cZF1sfv395V+XBa/xs7y3kg
-         v+7r8jKZXa/hoyWrRl+ROXH9O6LWDyCtWBnKlIBSVJ0gv4VxlPuxf/g/xHoUXOEgX3iT
-         y2wqeV74cy0r/R8GD5JSO4qHrwoIMWsYv032SHQwkahIXm9mMf9aoFcvzmXI6QmglkZP
-         EHTsTrQnqxKFdbXj3AJmv2kboJUQlPkb6t5c5GHQ7OgZsb1d45HdAlLcjRVMVhiZqvgl
-         NK1sJTr/yYf6K0Xn+GpyY/07ebCkkurUSMkF5GQd38vS8FPC/oUzOCQFuTPaza+Qto+v
-         znOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713945029; x=1714549829;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g/Er6GYXVGaNH7JDBFXh3LSSvzcGk3gWsJG0AOM4CTw=;
-        b=AtOVNzqRAtjs2Xp0NhPZ3Gp67vYCgGKfDghDO3fQcif4YBGkXDj6xysJ2w2/GjcTl8
-         SLUyiYk98Z7wYTD42zGs9e3vPwzZpeGDBuXPZoJAispXmMVOuXXz4vQKeFBBvD34HJkh
-         Bh5O2CyZeWfWUodtqfWcsCV9h2yd1gsvjYE1srgFN3azzL4SZT4JFx7C84xuREI6UKy2
-         3toLehNNnb6DVypzZzY4MUFWwAdsv0U2ywNKIkl3x2oiIEgJjktpKAgNXVfDV+/p90UR
-         o4FmdSsEHrsc1MT//dvqr4URFbRi+zllMo/Qt96iLIVCT95vTMRi1dUkgnuMy4PQySro
-         J/0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWpNI239fQcn9TxgW2e49KWKqMd8JroMR7C/BCRGTRdJYoFlgpH/vhcEeR+xvxSI6q7TApKQAjN1k0dFj3n5hNqL7pQgl1gPoyFsJDq1i2o
-X-Gm-Message-State: AOJu0YzXV3DkvFTp6D7KCBsdveGKvivCnoK8T1cvKYfR2OwzctDjXcY2
-	1iuheXc/XQctsd0/EMdRCAZi5sDRL2K7KgsEhTYSQ3GMPlCL7C5v0Tpwhv68DfM=
-X-Google-Smtp-Source: AGHT+IHIgFIs/HtMioD9CZgIp71sOpN4oVb9nF69ng3WYESdlcm1/4O4CiXzS4QWI0WKmvheznXTlQ==
-X-Received: by 2002:a19:7413:0:b0:516:d09b:cbe4 with SMTP id v19-20020a197413000000b00516d09bcbe4mr1517679lfe.53.1713945029369;
-        Wed, 24 Apr 2024 00:50:29 -0700 (PDT)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id q26-20020a1709066b1a00b00a53c746b499sm7957520ejr.137.2024.04.24.00.50.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Apr 2024 00:50:28 -0700 (PDT)
-Date: Wed, 24 Apr 2024 09:50:28 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, 
-	Kunwu Chan <chentao@kylinos.cn>, linux-kselftest@vger.kernel.org, kvm@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, Muhammad Usama Anjum <usama.anjum@collabora.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <kunwu.chan@hotmail.com>, 
-	Anup Patel <anup@brainfault.org>, Thomas Huth <thuth@redhat.com>, 
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [PATCH] KVM: selftests: Add 'malloc' failure check in
- test_vmx_nested_state
-Message-ID: <20240424-e31c64bda7872b0be52e4c16@orel>
-References: <20240423073952.2001989-1-chentao@kylinos.cn>
- <878bf83c-cd5b-48d0-8b4e-77223f1806dc@web.de>
- <ZifMAWn32tZBQHs0@google.com>
- <20240423-0db9024011213dcffe815c5c@orel>
- <ZigI48_cI7Twb9gD@google.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QfY0sKM3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713945391; x=1714550191; i=markus.elfring@web.de;
+	bh=qRmF7DnpL7qNBRELjA91gY2iF7VctkOvTYP4sr98G5g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=QfY0sKM3EYhSmjmxfK8qpL7AyWHN6Du8epO9vSbxeWsUb9vSTTJC7p+X5nRryKzc
+	 L0AVe1rUPl1yjHVY3FSVkexy6omOF7VzhB4LiI7ByvoNE8q6PkuKwAU2Fge9xNGRt
+	 JBMsB3x/sjuo7YJ9ZulIK1aPALiapZFELSE3N9yBLOLwiRGvX96ocXDf+2SvfjtK7
+	 kGQldLKTQgI9fowLE0odP4slUt9X9xXN1dFcBthH/faJhjw5Tdw2M0n54cM9vNH2h
+	 1UwhzxwePuBuXcuPiVSVSKTGZwuoc7KOCkqKSic0B6SP4rJtcStUJaom6W9MWKTan
+	 8vkFIWH5fKS7DVJzQg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M7usy-1s4TAy3Ieo-005YaZ; Wed, 24
+ Apr 2024 09:56:30 +0200
+Message-ID: <7ed5b3e0-933a-4a6c-a07c-3cdc8a9cc680@web.de>
+Date: Wed, 24 Apr 2024 09:56:11 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZigI48_cI7Twb9gD@google.com>
+User-Agent: Mozilla Thunderbird
+To: Su Hui <suhui@nfschina.com>, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Bill Wendling <morbo@google.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Geethasowjanya Akula <gakula@marvell.com>,
+ Hariprasad Kelam <hkelam@marvell.com>, Jakub Kicinski <kuba@kernel.org>,
+ Jerin Jacob <jerinj@marvell.com>, Justin Stitt <justinstitt@google.com>,
+ Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>,
+ Linu Cherian <lcherian@marvell.com>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
+ Sunil Kovvuri Goutham <sgoutham@marvell.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev,
+ Suman Ghosh <sumang@marvell.com>
+References: <20240424022724.144587-1-suhui@nfschina.com>
+Subject: Re: [PATCH net] octeontx2-af: fix the double free in
+ rvu_npc_freemem()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240424022724.144587-1-suhui@nfschina.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:nT36HYLdKEbIjiVuaW46eZ9S5z7J5R9kXNtayTUk7ufBZ3Y8Nkg
+ xsIUZM68XSUdGE//c2dUTeLDirA2xkdIJSysKIuJ3gmxszEH0g1LIe2hh7gWMM2F0V4Roeu
+ 5G4X3ylMJByMdq3k2jlvmOAMl4QDVvQsoREtzEF/xGWUjvgOJ87HUSTB5GZbYJ5WTfxwmsI
+ nDZvhkDhy+mqvY5TG6yig==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:vGnzurFDixo=;ASgHWtmKV/3l2acJxRhw44gfzm+
+ 1xpKJvmduNrAGCUK3fTjVRJdQSqtLjagolnnKRBJudv5CWO1Gjjq+I6mtBB1oDZcWck2j/H52
+ 6ZSQviJztJT1yRIXQDWSrjqs1yb1MId6jXk8MddVFz2aX2HFa2zSlp9QChnnwbE7OKar56Xix
+ BTPnSx5oGcjqEXyQmOVyGI0G5nJ/dRR+pANIRCTtSOyQObvC8NvniKC15CvNaCYmP7O9sv0SI
+ L1buLj6iZPCoZV8O6uqQ2ydLqtEl+6r0/7C0LADwf8ctgwLe8i8XKsLcHcN4OlFHp7QJko1Ee
+ ZFAAqskYaoe8ULiFBxk6yTpjbnalCQ4Ypm4RzYY4greCAkJk20S+69A2zqrce4IvtB9+H92EG
+ 1676U0sI16Ujw+tFGMOxH6+M9iQfa4EMmuE/sQajFJ2SFqf4enqWM+RDiav60pse1RtRlLC7Z
+ tMDOtTOpg+mms+pCJYinLeqKgaIrN+KOXpvFGqBmNu+2ZLE/akleugm3fdOrR1SiudJTf2V7H
+ VZqYTpG9C608zZlyirTT77WigVe+Jt0Q/wQ9icYpPb2EfDD3B5KhhfS8BtkKyGjtfJXLOhuAq
+ gcBSYZAk3sy7O4uRnmtei4uQc6GE2nquwblwThHbRKYBHaIYr4PWvzRWbO21BRYkueOfQkYRj
+ Ghu5VPMmtOsOKgjyDZD/poiaKPorPr3LUliTZSV4lDMmPUYn0lPh832vBQtimP2AnnHTBXjx4
+ l7cdgex48qgceFKEm+IMtzgEyIrp/hhYYGwvwtVNGGYKh6/tKRTbaosQQtSwg3jpFgk6uq3vp
+ mCaaYoM3rMCk3UQ5klrykVvBZoGnSbAp54BknvHa3AR84=
 
-On Tue, Apr 23, 2024 at 12:15:47PM -0700, Sean Christopherson wrote:
-...
-> I almost wonder if we should just pick a prefix that's less obviously connected
-> to KVM and/or selftests, but unique and short.
->
+=E2=80=A6
+> npc_mcam_rsrcs_deinit() has released 'mcam->counters.bmap'. Deleted this
+> redundant kfree() to fix this double free problem.
+=E2=80=A6
 
-How about kvmsft_ ? It's based on the ksft_ prefix of kselftest.h. Maybe
-it's too close to ksft though and would be confusing when using both in
-the same test? I'm not a huge fan of capital letters, but we could also
-do something like MALLOC()/CALLOC(). Eh, I don't know. Naming is hard.
+Can a wording variant (like the following) be a bit nicer?
 
-Thanks,
-drew
+   The object =E2=80=9Cmcam->counters.bmap=E2=80=9D was released during th=
+e execution of
+   the function =E2=80=9Cnpc_mcam_rsrcs_deinit=E2=80=9D.
+   Delete a subsequent kfree() call to fix this double free problem.
+
+
+Regards,
+Markus
