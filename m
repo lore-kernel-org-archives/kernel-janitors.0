@@ -1,48 +1,40 @@
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C5C15885C;
-	Wed, 24 Apr 2024 08:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68410156C6D;
+	Wed, 24 Apr 2024 08:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713947306; cv=none; b=kA8lKIRmXIPUXpHqDTz2c62JV4f5qbQW74av/4ufZWQCUXqfoUdQL5dE6OiyuPvGzWKntXWzWQS2v4mreVt+r/vzTFtsP18TX0VbzYVKnefkJtQdFte/+TOVolum6dmmkdryx1KEvsNUoC0O5ckOKzQV02bLsBiXX9K4DhvUnHc=
+	t=1713948360; cv=none; b=IhiNMbHqWcZycmSJs7H2rTzJzIwaPhgXRZ21n7fNA1JuL3THNPvH2II1pI10+qAQhr05HIKXa0WIo2zGT6lNr3qzzngoyvVTdnyTFbwH3CQXXb1mmErsfEI3eOxrkpi7SQ56ExIKSCrYFTGlz6ULWEXXRP9elMTrS7d46ekyVCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713947306; c=relaxed/simple;
-	bh=9dKslndYqqRusj/yH1aNNs2IzvBLatzMNa4buer5ZeY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AElihs9P7PkH+0Zw/En0HYED219RQzdMh/i0zu4ezrzdsYl3CEnDBlX8h3iU8PsVU9LWjkojG2F2OKe48ObPrkmYUbg/nDXJbHvpCWoENtea9s+u95BMcjuSbdd9wcSMMFmpqUsPheDxtM5VnbWYGrRPW4JY3iliDOYK4e2ZPGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qPaV+0N8; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1713948360; c=relaxed/simple;
+	bh=uEdlRl8Jc4JFRBA1J8W5/TuzeZ48w8/YmJIGgstTKCY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Q6P+s+ZSbehO8GqsUPPWKq4GzJdo791kVP27ytLbRA9ZY9e0SoyXK/28X2gyIzUmnOiSyx43CxTbZ7j6TRzBRT/rzqb3cLsnofenvNmFv9b+lsmmreH2O6gIEpSquYMLmzrx3flmiyfwKdPsSGKMJilyYmwX2MEVcydDPfaswY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MFiEXoG1; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qPaV+0N8"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 43O8S717091864;
-	Wed, 24 Apr 2024 03:28:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1713947287;
-	bh=WDJAPZScJOMpBY9g8xP0a01blxFcMfNH5IknQ7zpWPM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=qPaV+0N8Xb2YHqZoVP0dyxcZ1aPobSolNZcWccxaryHUnKPzlOOYa1DDOODOs4FLw
-	 LlLHgdVMmutEFgPoACFXuDZfSObjQeYf0gKpb6nGEMcv4Slrsdc7R/QdTUjeCWa/GY
-	 iRVmnmWVGG2nFSuF7CZOnK9kGSz4qTldhPrCi7dY=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 43O8S7df112708
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 24 Apr 2024 03:28:07 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 24
- Apr 2024 03:28:06 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 24 Apr 2024 03:28:06 -0500
-Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 43O8S14V096709;
-	Wed, 24 Apr 2024 03:28:02 -0500
-Message-ID: <a837ef60-d209-4f97-81b3-e29945f20f28@ti.com>
-Date: Wed, 24 Apr 2024 13:58:00 +0530
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MFiEXoG1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713948319; x=1714553119; i=markus.elfring@web.de;
+	bh=uEdlRl8Jc4JFRBA1J8W5/TuzeZ48w8/YmJIGgstTKCY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=MFiEXoG1hzCEcxtx7TtI8kVWf0uqPNtc9pn0AB4w/yv74v6F1V75DrqF59zGkAJL
+	 V2ABrdxV0EIfN6gj8aSwQmTSX9QXEmwUWIfETIAHwXXM4Z99iXItNllbq2Z6+/+a2
+	 vIXfrhUvUcSZOytcyxN6FVww+WWaQ0vyWXNoUmBdqERHCAR0QmlaQWlxWhIQzcKTF
+	 tMPwFYrjO4HJOSYBQCxtuk6gc9Hhf5tffa/thHsv0vAthVZZqFNFAIuEEH1pHKeQt
+	 Mus5w8+rkZKDlGGesKAldss6Z3RNiTtnoEuxGIqe2NRlceEEdSLDygbKcHydSMgqw
+	 chlsoy9g+yk+lSD+5w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M91Po-1s5bzN12XO-006MWT; Wed, 24
+ Apr 2024 10:45:19 +0200
+Message-ID: <f74fdb82-5d66-48f2-830e-3874570f022e@web.de>
+Date: Wed, 24 Apr 2024 10:45:15 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,44 +42,46 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: ti: icssg-prueth: Fix signedness bug in
- prueth_init_rx_chns()
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>, Roger Quadros <rogerq@ti.com>
-CC: Roger Quadros <rogerq@kernel.org>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn
-	<andrew@lunn.ch>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Diogo Ivo
-	<diogo.ivo@siemens.com>, Rob Herring <robh@kernel.org>,
-        Grygorii Strashko
-	<grygorii.strashko@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <05282415-e7f4-42f3-99f8-32fde8f30936@moroto.mountain>
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <05282415-e7f4-42f3-99f8-32fde8f30936@moroto.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>, linux-sh@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, kernel@quicinc.com,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Rich Felker <dalias@libc.org>, Rob Herring <robh@kernel.org>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+References: <20240423233150.74302-1-quic_obabatun@quicinc.com>
+Subject: Re: [PATCH v2] sh: Call paging_init() earlier in the init sequence
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240423233150.74302-1-quic_obabatun@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:oDDtZE5QTI6HgZu8daXqlXif8l0UZyjgE5+bLaur5LHSocjnwgO
+ gW8Txa5Nd4nJ75hAUuaxWnY9MzsjWpqOPbeZEX7XZ10oQ8b1E5N07MklbKEJN1YgeHPwU2V
+ +Vhqvz7XtI9gcdrkagJw5i+8MzzhSXIpNNH4sH0mq0srUTygmIXNolv55XD1gzn1KZNwmeq
+ g0yzkx/OYUSEDOevdAMlA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:SwlBNNsRryw=;QZ+WI6pzzujKucnH37AACiHDU6m
+ 841de6/jPxCFDZdlmZRYUS+CbeWgZ/2NJk4zt09xZ+o30kbvVnUh+rK8NCa9SQ0pMYm9YCzAa
+ KfP9oIGLqC2oN196WGO5yQpyMMXZvYow6G/Idozre+37/CQGTbdTJoTW5Y74uW5KR5H649DsA
+ VTT6KGMar4aUN63NVNjSjRHvvFR8RncYTTK2xNO5EU5Q0FRVOF0K4OPrlsj5jHzd8OckydOKV
+ HvsrELG9AVx31IX9SVq+JeRMcN5prh1nkH6DN2SENsdFSRy+Ai3MZmquSV9A4cRTnV0yntCVw
+ 3mvZqjEOSOwqLmTZnsw66C+Wc68IjsBwJP86MT4aw7TJJAFiCiHFNwEYr2Gi063AYakwUa+ZK
+ TAn6OdQG04K/4be03arZxAZVzaojQebjKxuqvn4FKO7hymOf+TPVfUh5nu8J9lm9pMyca51OZ
+ bkZcrd7uUgp9cYYxdRI8nWDL3glhLjEZjFK6rH4/ALUdVigOTmhIOK16jxLyHUGGDuTeVPXp3
+ 8ZiPjhkzTdpIiwEbm1WOvSGR6GXX9WEQblPX+TAwyA7CueV1YjtQgUdDhQ0x5S2pVVbCE4t3R
+ nF1jEV1XNfwG7kOI6165FfNqPXFzIRe8wlejNNHblzXb9sFX5SFDHQu+z83V5ON6tUw3kgv5A
+ lloQUn8ybcU0L79enEGqyJZAp8x2JK4QtvDeR3lirlkt8pmdm6tdQsZ8FdDCCogAHsCY2xOxR
+ NIlkuwEXinyerk+1pezD0bInB/pOzK+Q+BDLZy3ov2IK1uUKI2649IrXV73SeGjKmciqs5ufU
+ mzfOFgYh6n4+yzqFe0t8keGN1HJzNgzhWiuNqjdz8Xugk=
 
+=E2=80=A6
+> Hence, move the call to paging_init() to be earlier in the init
+> sequence so that the reserved memory regions are set aside before any
+> allocations are done using memblock.
+=E2=80=A6
 
+Will the tag =E2=80=9CFixes=E2=80=9D become relevant here?
 
-On 23/04/24 9:45 pm, Dan Carpenter wrote:
-> The rx_chn->irq[] array is unsigned int but it should be signed for the
-> error handling to work.  Also if k3_udma_glue_rx_get_irq() returns zero
-> then we should return -ENXIO instead of success.
-> 
-> Fixes: 128d5874c082 ("net: ti: icssg-prueth: Add ICSSG ethernet driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: MD Danish Anwar <danishanwar@ti.com>
-
--- 
-Thanks and Regards,
-Danish
+Regards,
+Markus
