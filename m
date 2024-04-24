@@ -1,40 +1,33 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D1F156C4F;
-	Wed, 24 Apr 2024 06:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903F2D29E;
+	Wed, 24 Apr 2024 07:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713938880; cv=none; b=HfeuPZ1xvMdY5zqDcq2YyN0ppdSetm4ofi9JvL0jMt1Yuw7tVqll4vkpyRTPAnAtOBw6U0mem4oFHlSPAu2WEgmuQkAQvAGbeov5OXu1cu5gnm/iYMwv/KbPpCwt++C7x5QyGwcPHJas4YSYHp/sK4YlKs3S/fV89uQ+M7mi4fA=
+	t=1713943681; cv=none; b=QYAmfEtxoBBsoOgS65xOGqoRof0lSmQ1fMUd88MXaf2ZXt+nYK2TB1VcvR8Wdg9rtK0kmxDa8NGyMUcrThwbS4+oW1QhzYgknXrzVFIFNjwrPHW/70CdALIqef0yV/mBuV0iCbEQ/JiqtvLVxoNU6z+d3vTgLG/jYOiNGsV21C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713938880; c=relaxed/simple;
-	bh=Jd6FI6x901LXxbVZ58YQZYnxrAAST8jfAjB6KyEmr5A=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=s5k7yi3hSV6yxcWXCeOma6EZtZXoZvqLG/Yll7p1PoyIM4wQFXnUcW6G8tHwtONjFaU79CWAqK0ZTemwmUPF8LSSOnCSQWusBjda3CRtAewsjP4jdkI33pkkWcfFayOs2XCKnaZ8yd/zy/Yhw+nVfnzfhV/Iw/1BN1k7HMl9Cz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GiVXuaHm; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713943681; c=relaxed/simple;
+	bh=U+9Jy2HriAOq6JXv5BGv9/GxjLWl2uRiHVloYWp9ZZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tomxKFOgrTlWuRoDjBXBkbtwN9vPaxXbs5H8TC+A6X0CxWeRtXF6Pa2H5s9q5GtIzv49HZUnCQxPR8D7mbFQ43cmvkJft+RyFS7geTPL/rLiAMsyWw/n7MDsFhdx88LVmBP4JuUHU7hm9PfXA1yQcF0AsZ2Qx0D3lFS+l5JB3o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KxUUqjRh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GiVXuaHm"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713938835; x=1714543635; i=markus.elfring@web.de;
-	bh=Jd6FI6x901LXxbVZ58YQZYnxrAAST8jfAjB6KyEmr5A=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=GiVXuaHmCGvEIbo6HrKtTICQxdYMunna9F3dlqxkiD3oW1ibCN+dwD8j/gaF2OC4
-	 9GKUrRqCWp9jbHzcBtJK1tUyJjgxI3ROisUHxR6gTS/7m0VxAfKXn4Y5IdavocaUo
-	 +jpk3+Kr4VU3AnGm3YvsXVfPYrbInFxS84h7IBiFK8PIC5Hbr/b3dZiMKlN+FOnjR
-	 6o6Z6I/obvUwyKreqWmSl8Ydp68M6AqFimj9PU8JMbe5MFNuvankkFTuR4FqeSGa7
-	 Ooh1xV32HJfKNmoxC165bC1/TzVzCbDQC0wrEej9xOL+qq9yuj+RLcCjhLZIb1Xqf
-	 JDXuI6tonXctlpoPzQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MIL0C-1rwCP90hMq-000ywL; Wed, 24
- Apr 2024 08:07:15 +0200
-Message-ID: <1b2b9d87-893e-4bfb-873a-68c5b269f04d@web.de>
-Date: Wed, 24 Apr 2024 08:06:47 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KxUUqjRh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 100A7C113CE;
+	Wed, 24 Apr 2024 07:27:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713943681;
+	bh=U+9Jy2HriAOq6JXv5BGv9/GxjLWl2uRiHVloYWp9ZZU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KxUUqjRhBW+OETFzFCjR+bkMsSiWfWuuPcQk3Up9p9/DJtc2Vu/LcHY5lQxenI9E+
+	 ScjKkspowKMEIm0JGDIDY+kc7SpyC4GRwrveXMd3V4VSvz9upW/TcEoeg8fpSj0D0S
+	 UEcKiRv9J4Y3d5X6J88+Ia6wBt9+okihtgae9NAb6aSySo1lttI9IOhJ7KrAPvVTuX
+	 thKOG3RP39eUAAygVORjrSHj3l+twr+shTdb8Q9OVL7Mbl+S7lBW86+JsTAOpvgG+P
+	 h8orAMZAS49pfbfBBl+c5xTo+Pz+q7ZfFUr1B99BWUt+Tmrwwi6YDFQwhQga1sccMn
+	 oKi5+/K9+eQPA==
+Message-ID: <8d69e3dc-97e9-4672-a741-d31daeaf8388@kernel.org>
+Date: Wed, 24 Apr 2024 10:27:53 +0300
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,49 +35,33 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Yuxuan Hu <yuxuanhu@buaa.edu.cn>, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org,
- Francesco Dolcini <francesco.dolcini@toradex.com>,
- "David S. Miller" <davem@davemloft.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Johan Hovold <johan@kernel.org>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jia-Ju Bai <baijiaju1990@gmail.com>,
- Si-Jie Bai <sy2239101@buaa.edu.cn>, Yuxuan Hu <20373622@buaa.edu.cn>
-References: <20240422080408.1639247-1-20373622@buaa.edu.cn>
-Subject: Re: [PATCH] nfc: pn533: Fix null-ptr-deref in pn533_recv_frame()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240422080408.1639247-1-20373622@buaa.edu.cn>
+Subject: Re: [PATCH net] net: ti: icssg-prueth: Fix signedness bug in
+ prueth_init_rx_chns()
+To: Dan Carpenter <dan.carpenter@linaro.org>, Roger Quadros <rogerq@ti.com>
+Cc: MD Danish Anwar <danishanwar@ti.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew@lunn.ch>, Jan Kiszka <jan.kiszka@siemens.com>,
+ Diogo Ivo <diogo.ivo@siemens.com>, Rob Herring <robh@kernel.org>,
+ Grygorii Strashko <grygorii.strashko@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, linux-arm-kernel@lists.infradead.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <05282415-e7f4-42f3-99f8-32fde8f30936@moroto.mountain>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <05282415-e7f4-42f3-99f8-32fde8f30936@moroto.mountain>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:T0GOxI3ph3jcg7WrBMBqclEkC4lZekQN+PZLv/AKJt2p8vaCJzo
- IO27y+/52FQYKLn42n1s6i+4wq7rS5SbVNvynI/vfdPRSYqkw5WHhpI6txDd196PE8cqoZs
- 9Jj/XFL4W1+t80SK7mpcn1qHg5acVt1BT8DUq/mfYdGmWGpUNye/oeoExHxyaIOxxZ74+DQ
- GQ3z6l+EefRKlHizD+d9w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:hrYKoWGzCYg=;WQx1GhyRnGRtRRDbANvbS1pLmlK
- lhaz1VfjQqT1epft+hvVTpOw1Anz65I2qESg26NqKVFosEefDDZrBvsURvfYSlAx6daJh/TkP
- u4qRhZBxHH5lqFTISZxJmKFWUfe14ejHmpQCstcbIWQMTUrC1povUXIzJhiXwAOEuE9ajkyZc
- COKC5E2ewP7AD3tolUzfMtuYKmT19PGQYala489AVdT2Ac+KUhxgUd/LnCFHIqumx0SsmvX2G
- gJIMksIkNWo/wyEElMcO7WxqaTNGrjxYe+8wBxoZgdwq6R6X9GnvB9zsvrCG27xB7BVkQempz
- c+RAvGSHMuXvFfFWQw5a+SPTJTWuv/D55V7BUB2RGcfeuTkBLUr4AM3dLs5qE3CwSXNV4RivF
- MD1RFa2Ma6u8VgD1dSVBoUZEn4yvYitE2lWOyBeVUfp+JDIQ7ZCY3pQqn0TyuAO8mNFZ83giC
- Ms/1QfkKFQ5QeYfZTT526vjOKeWlGvvlDhvvIJNtjIA0qkgCfi52bVUV5xRmRGl4A55hOpGHd
- BQtnefidtUQ4LZX9xU1V5/mdtkNvnX8Dc6aBpoVVNixcIHgjB9jS4oR+XmHJzd/spD481BwBQ
- ITD6SlSPt4VFJpOnBU4f0sQY3GcpbR93XWPB9vvwiUs3Wk7hHO+/zM/8ikUWMSTqVOBQuHdq5
- RKmiUiy5DUU85CzHEb7Tydrosl8/aYsyyDrx9Xy9GI+FsWmhI4f4uPHbg0WjS9IB6q7Iwswrl
- jq99ai75On4pMhcMJjwUH5UqSD7r1+i+QPTuwkWzhk3fH1k8YGqv7ukZ2qi0ABTqKl0FH2iHt
- Sp3uixIX+E7qHmUPpi8Byp58WpI3gtVZo6ezY0EiPnsiI=
+Content-Transfer-Encoding: 7bit
 
-> Our fuzzing tool found a null-ptr-deref in function pn533_recv_frame
-> (/drivers/nfc/pn533/pn533.c) in kernel 6.8.
-=E2=80=A6
 
-Can it be nicer to use the term =E2=80=9Cnull pointer dereference=E2=80=9D=
- for the commit message here?
 
-Regards,
-Markus
+On 23/04/2024 19:15, Dan Carpenter wrote:
+> The rx_chn->irq[] array is unsigned int but it should be signed for the
+> error handling to work.  Also if k3_udma_glue_rx_get_irq() returns zero
+> then we should return -ENXIO instead of success.
+> 
+> Fixes: 128d5874c082 ("net: ti: icssg-prueth: Add ICSSG ethernet driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Roger Quadros <rogerq@kernel.org>
