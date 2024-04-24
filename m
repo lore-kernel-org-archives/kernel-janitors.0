@@ -1,90 +1,127 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF6313DBB2;
-	Wed, 24 Apr 2024 15:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B1A1635D1;
+	Wed, 24 Apr 2024 16:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713973993; cv=none; b=shpI6HKoTwnRdA6pb+NgWa5CMjFvGGAlswLqbYKTOXvdhPTxr+yA7r7cdqCDCvyU+DZpGPYb7p7nyjRAMfJhI07GmAgku2SwyQt1lQTENQ8MAUV6iHgp0fs/brEsMR++2JC4MsfWYhsV18BIp7cBMTfbg+UcW9lbJ5MVJpjksRI=
+	t=1713975122; cv=none; b=nRMafbGhH5KyEXtGHiD8II5t8DDjC7Uax2L+x5pmHqBAYkuWI4jMzQ1zAcfqoWOaxTunxWhUPk2OlCfBd7HWmPwYa40rW754c4nnQVFIsMQ3uKi0XqkeBPzbGLtUvoDdCnav+1AsVFmwdZcAgchxdbmcKfvqCUMRQ928OUyTeYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713973993; c=relaxed/simple;
-	bh=cqQlTJYlnxpdMp1tQKkUwfXxp9N7FIOvRmzCX75X7js=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LlpxOscILPTWY2s9vNkcCHF2ImJbJMwV48J7ju6t8kJESXBhfdhguXx3I6xh4lSxbKJz7BkE2ongSAM0PAjrB481lfuY7FuCw9PSXT2fdm8eiV+PrU4lFLA0INuV17u7MCBc4k4tln+kX5WogFfh5eGHRI9nEXrXIJRwPh2Y8Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 709531063;
-	Wed, 24 Apr 2024 08:53:39 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D0143F73F;
-	Wed, 24 Apr 2024 08:53:10 -0700 (PDT)
-Date: Wed, 24 Apr 2024 16:53:07 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Yangtao Li <tiny.windzz@gmail.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Chen-Yu Tsai
- <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
- <samuel@sholland.org>, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: sun50i: fix error returns in
- dt_has_supported_hw()
-Message-ID: <20240424165307.16f45b21@donnerap.manchester.arm.com>
-In-Reply-To: <9bfe5703-b39b-4d98-9995-f6a7d0ea558d@moroto.mountain>
-References: <9bfe5703-b39b-4d98-9995-f6a7d0ea558d@moroto.mountain>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1713975122; c=relaxed/simple;
+	bh=hWNae6vbnA4iCNH0utg1R+YhNmf1tQWghhuQryyve40=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=OfDkuT7dAgCt9wehf3szGYLi/Z3fIkfYdrrwria2RwX0kmV/X4Pvk3519XOD+H3tdjdroHmJ18X0Jdk03J3+sFZi6fA7daS3Ymm+d+Xkh8EfsgeYaXo4VMpnXJ6r4du1BW9Qp0ooIlTwkM8Csp5FAhUYQXx3/z5E89DlZHGvfkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AJDsKM5c; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJDsKM5c"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-343c7fae6e4so6233148f8f.1;
+        Wed, 24 Apr 2024 09:12:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713975119; x=1714579919; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=l7fwhYCByqsyxtduNgA8zx5Qp4wn8aktE/VYg2R/KyU=;
+        b=AJDsKM5cwaMPuaKUHp1NwBgjyjOhDjBhdjkj7/s/sLPcVGI5zQFYeYFqlXqYLUZ0ew
+         LvHRYv4fqquyfN7MYCIUP+do4bqBXC9nAhp9HjNRY1tz7Sgz9K9uOKeLj7bmNZB/GVsJ
+         Bwnjso5LBDFkB3tZCid1SbkQjnUW0fe+NHgKqkXwJeKwqkbYlwGYc0InsAtpDfNk96WG
+         eP9A/1AUMUkUeM5OTZV0dviMLDxk+HzfLl7QNZZHdZFMfGNmEvCXui+Dv6QLS5omq0O7
+         ECFvipY7FKkDs2WcUhzBkcrVmoj5Q6boFtvHBjXIRe6J/Ngt4L8lkFNe9/xm4HFlZ7sJ
+         GF4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713975119; x=1714579919;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l7fwhYCByqsyxtduNgA8zx5Qp4wn8aktE/VYg2R/KyU=;
+        b=L+IywMx+uHBk4PF6D8bUkkDAUzy410mzyRJ4SZA09N4QryFTWl0ohn3Pbob3zCQTlX
+         HU2OR0BiYt26yKpea7Q3X2CyWPlZaYiTJOD8B+5BeIUN5kwlvjs/uOfg9/YHzvK9jJab
+         eQKIUyAPctsTgzSEoP1yLPZ/d+akvnVngXYep7PqJHnm8VRA5lEC54nl4lVvjJBqAmFs
+         jl6dOlnD3zSkw06YAJfmWqsS7qmibUiLE5tndBEEtKh2YQwYNHHPSQy/feioKPFqGwuI
+         PXoOjS9+VNQ++vK5FGQsLjNMcNzTDrtc9iOvj7234umxpVXo7D01wldqhfsr4NnQd1Vj
+         6wOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXM0iaOWW66J1g2mQ+BQNmACben9f0ALKWeYQvQts4UCLEK5r5T6+NLjL5g5ajwyqQvQyrj8zIM9RXmO0MsvKn03OirEZvs6mur/52T
+X-Gm-Message-State: AOJu0Ywx87ahUdrH55qzTy41IXzLZFdxNf0NQRFoz1BoVtwv36gnosXs
+	eEvI0KBtC+Ut2Pcz+6P1ht+9smZHC5waykL9V9pJqUuQNufXpjLp
+X-Google-Smtp-Source: AGHT+IH3jYf42AlOaYiK+FEIyw3LbLPxAlyd2I+vNCGrces4wHDtdBSa9HS2eMuzoJpicBrPQ5yBVw==
+X-Received: by 2002:a05:6000:4e6:b0:34b:3f27:89cd with SMTP id cr6-20020a05600004e600b0034b3f2789cdmr1584655wrb.71.1713975118431;
+        Wed, 24 Apr 2024 09:11:58 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id l1-20020a5d4bc1000000b0034ae73a8b25sm9639884wrt.37.2024.04.24.09.11.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Apr 2024 09:11:56 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Xinhui.Pan@amd.com,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/amdgpu: Fix spelling mistake "PRORITY" -> "PRIORITY"
+Date: Wed, 24 Apr 2024 17:11:55 +0100
+Message-Id: <20240424161155.3946451-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 24 Apr 2024 14:40:11 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+There are spelling mistakes in a literal string and enums, fix these.
+Currently there are no uses of the enums that got renamed in this fix.
 
-Hi Dan,
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/amd/amdgpu/mes_v11_0.c        | 2 +-
+ drivers/gpu/drm/amd/include/mes_api_def.h     | 2 +-
+ drivers/gpu/drm/amd/include/mes_v11_api_def.h | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-thanks for having a look!
-
-> The dt_has_supported_hw() function returns type bool.  That means these
-> negative error codes are cast to true but the function should return
-> false instead.
-
-Ouch, of course! I refactored the function during development, but missed
-that part.
-
-> Fixes: fa5aec9561cf ("cpufreq: sun50i: Add support for opp_supported_hw")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-
-Thanks,
-Andre
-
-> ---
->  drivers/cpufreq/sun50i-cpufreq-nvmem.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/sun50i-cpufreq-nvmem.c b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> index cd50cea16a87..0b882765cd66 100644
-> --- a/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> +++ b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> @@ -136,11 +136,11 @@ static bool dt_has_supported_hw(void)
->  
->  	cpu_dev = get_cpu_device(0);
->  	if (!cpu_dev)
-> -		return -ENODEV;
-> +		return false;
->  
->  	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
->  	if (!np)
-> -		return -ENOENT;
-> +		return false;
->  
->  	for_each_child_of_node(np, opp) {
->  		if (of_find_property(opp, "opp-supported-hw", NULL)) {
+diff --git a/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c b/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
+index fbe31afad1d4..44f1af6da21e 100644
+--- a/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
+@@ -111,7 +111,7 @@ static const char *mes_v11_0_opcodes[] = {
+ 	"RESUME",
+ 	"RESET",
+ 	"SET_LOG_BUFFER",
+-	"CHANGE_GANG_PRORITY",
++	"CHANGE_GANG_PRIORITY",
+ 	"QUERY_SCHEDULER_STATUS",
+ 	"PROGRAM_GDS",
+ 	"SET_DEBUG_VMID",
+diff --git a/drivers/gpu/drm/amd/include/mes_api_def.h b/drivers/gpu/drm/amd/include/mes_api_def.h
+index bf3d6ad263f9..ed479575df18 100644
+--- a/drivers/gpu/drm/amd/include/mes_api_def.h
++++ b/drivers/gpu/drm/amd/include/mes_api_def.h
+@@ -54,7 +54,7 @@ enum MES_SCH_API_OPCODE {
+ 	MES_SCH_API_RESUME			= 7,
+ 	MES_SCH_API_RESET			= 8,
+ 	MES_SCH_API_SET_LOG_BUFFER		= 9,
+-	MES_SCH_API_CHANGE_GANG_PRORITY		= 10,
++	MES_SCH_API_CHANGE_GANG_PRIORITY	= 10,
+ 	MES_SCH_API_QUERY_SCHEDULER_STATUS	= 11,
+ 	MES_SCH_API_PROGRAM_GDS			= 12,
+ 	MES_SCH_API_SET_DEBUG_VMID		= 13,
+diff --git a/drivers/gpu/drm/amd/include/mes_v11_api_def.h b/drivers/gpu/drm/amd/include/mes_v11_api_def.h
+index 410c8d664336..5b8fd9465cf3 100644
+--- a/drivers/gpu/drm/amd/include/mes_v11_api_def.h
++++ b/drivers/gpu/drm/amd/include/mes_v11_api_def.h
+@@ -54,7 +54,7 @@ enum MES_SCH_API_OPCODE {
+ 	MES_SCH_API_RESUME			= 7,
+ 	MES_SCH_API_RESET			= 8,
+ 	MES_SCH_API_SET_LOG_BUFFER		= 9,
+-	MES_SCH_API_CHANGE_GANG_PRORITY		= 10,
++	MES_SCH_API_CHANGE_GANG_PRIORITY	= 10,
+ 	MES_SCH_API_QUERY_SCHEDULER_STATUS	= 11,
+ 	MES_SCH_API_PROGRAM_GDS			= 12,
+ 	MES_SCH_API_SET_DEBUG_VMID		= 13,
+-- 
+2.39.2
 
