@@ -1,86 +1,113 @@
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D800158211;
-	Wed, 24 Apr 2024 10:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD38158D79;
+	Wed, 24 Apr 2024 10:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713954262; cv=none; b=hgSc0Te/E42RiSAy3KD1aUJp/VyZ4mM8n0QR3NW3X834juIdqVYpywISvYYeHCxZOenpBsDmzW1jhaOsUIHhZB1P4GDHOW9rQ/1C9GzwXgPsQqs85HklCwT6lrKbPR92GuB0EDgLb4uR86G9ZQXOnjpocnpSkDbUSccuM/Z8caI=
+	t=1713955286; cv=none; b=FCJWHOKTUpULE5MdbazFoMtlYpIyuUeyv3kCYCPm9+qMt09n6OTfvzTTAiwyWFrgfYUuZWqb0dgn3QT01cpWoc0vWv73aTDd7zrMYpsgp6OJOlAdKUGJirZs5Zm8ErSNHWJCJA+EBxMLPBgwXGjf/Prx0Ej9y+wB46e18EeHIUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713954262; c=relaxed/simple;
-	bh=Dr5dwzcjqw7dSzyi89UvoPy4zSpLCzrvPxvOavEG0FI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iEfz9+6fvJ5pSHbT/enfyPyJUHjRGaqsTVFrxrYrtpdrFrrSN8qfIUKhgxCvKhdCmRFd6fS8X2sHyBr+1bzPiVsLIVgTjDYTgXmgn/XH9i0BQL9z/uHgVsY8yKuqY70bxtrZ5bvqRjGB7zdrCCu3BFDj8ziEHzsiBwXhZULNij4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=Cs4Jp7Hd; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+	s=arc-20240116; t=1713955286; c=relaxed/simple;
+	bh=gsav1q+OWEOJtX/pSWXDQyWAdTBjh5T232CUi+Qjpqg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=KqjH/fDb7h73dkM+caU2jFp3mbt9ZZF5SZAjqde4dTiHg8VqwNSnUf2W5W4K4pNZ2wnMtMpRmTzpflqvidIGd818CQ8Ch6KVVp+mTNfhFvc9xvsiAGackmmvY2DjIvick6o4Zf82wQ+fbku4cyxwy5LZj7Qw6NbceoqpZzm1d5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bOecWuZf; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="Cs4Jp7Hd"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=d/MD22uaUm8+BoL9TbUyYnjmK+2qYuIFAbrMDBfUVbA=; t=1713954259; x=1714559059; 
-	b=Cs4Jp7HdCyicJnycDLC4R7+83WTpkwmSTYKtstZd73WXn35NDWHYm4s5pg0N6PzIpFIUBzNDz0T
-	API3bAm2+NZz8KI7yAADJqZS5d19EijRkMFzzN1hucKXuhX7o8SFu7n8BrEyUoWpczraZmt1Vqteu
-	gIRhrJIcic/KWwIlOs6KDxfeNJR5SIgeVfj3Ig02Iwmoust/nYDF18Zb6/OTVMoLTUMAgbcRJBz+O
-	JOFWlmBFqyQXwOoK0cz3ZukHW5hNMn1FgiN5AA2Ud3Z+WNRhP+XAyBvBk2SM89YnsFV+dFLZlGoqP
-	gSMx1C1SVWlT3zQQPjOltSW6aVAe/eb+1vSg==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.97)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1rzZnU-00000000GUH-0cmV; Wed, 24 Apr 2024 12:24:16 +0200
-Received: from [80.95.105.245] (helo=[172.16.2.143])
-          by inpost2.zedat.fu-berlin.de (Exim 4.97)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1rzZnT-00000001u5A-2sRA; Wed, 24 Apr 2024 12:24:16 +0200
-Message-ID: <7dd171cc41474871408f06326aea5cb87923e454.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v2] sh: Call paging_init() earlier in the init sequence
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Markus Elfring <Markus.Elfring@web.de>, Oreoluwa Babatunde
- <quic_obabatun@quicinc.com>, linux-sh@vger.kernel.org, 
- kernel-janitors@vger.kernel.org, kernel@quicinc.com, Rich Felker
- <dalias@libc.org>,  Rob Herring <robh@kernel.org>, Yoshinori Sato
- <ysato@users.sourceforge.jp>
-Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Morton
-	 <akpm@linux-foundation.org>
-Date: Wed, 24 Apr 2024 12:24:14 +0200
-In-Reply-To: <f74fdb82-5d66-48f2-830e-3874570f022e@web.de>
-References: <20240423233150.74302-1-quic_obabatun@quicinc.com>
-	 <f74fdb82-5d66-48f2-830e-3874570f022e@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.0 
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bOecWuZf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713955247; x=1714560047; i=markus.elfring@web.de;
+	bh=rZct520GkxHWSg4fBJJGCvQQErp8qMa+Y2cRVIRPDzw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=bOecWuZf3P3HntuFAd6jzLSgMN4NiW2pdxshFrw601Co4ORc86riKP8aU0Q6KkPT
+	 kbkYasTJjW8k2rrN0+NqX68pwexygZsVWR6D+fzjzl2rrBG0Bz8xcVnFVvHMKA6GJ
+	 i7I6vxyv97eBC4gy8+15lr6bEPm1d3/y4TdsK0d20VMBeqndSC7YA68mKKoDLbf2G
+	 TKwEGLwCTFiTaFg9P4312qIMJJrnEDTURuV1gLBmkwjZ5wtySBdXeivsgL3NgMKCF
+	 bSLsvyjS1fQJyaOIu/rcPK0k8m1h5hzfd2FAHu3kWxY/BhgKw1hqhrL4SsfDVUOA2
+	 A9zpvIq0s4MLXeOT6g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MwR0J-1srY5K2o4L-00sA6C; Wed, 24
+ Apr 2024 12:40:47 +0200
+Message-ID: <94b34c96-da3b-44ee-9d7e-8daadba52aa6@web.de>
+Date: Wed, 24 Apr 2024 12:40:42 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+User-Agent: Mozilla Thunderbird
+To: Kunwu Chan <chentao@kylinos.cn>, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Eduard Zingerman
+ <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+ Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+ Yonghong Song <yonghong.song@linux.dev>
+Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <kunwu.chan@hotmail.com>
+References: <20240424020444.2375773-4-chentao@kylinos.cn>
+Subject: Re: [PATCH bpf-next 3/4] selftests/bpf: Add a null pointer check for
+ the load_btf_spec
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240424020444.2375773-4-chentao@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:xxCxRGV5wfBGsiC7m2RkEkH+vBPfmQhlEtFngofT2wXCyKxvoOo
+ ldhyXJ1+fr1rh1HBJ3RCfeLhoaWPkng8IVsJ00riwBiPfx5TQ0Ng3836wBHoBx+Zl1KPH7d
+ ogCIM/rDvpYOOqcsHTDY6q8/Sxj7Hqi+mhfGY1Uu7UEiXxvSo33HhET3ZSb5//POb/9iV1d
+ B2lQw8OtThP87oCtyfD+w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:iKQsKfhqij0=;BCBZmIUY3JHFGpTp6Fp5sVT606A
+ SmjWFzy5tu6Ka3klf9Tnlpo1B/hJi5x3dFuRkJSZSS4jzEy0WqkIX+HIlXf/g2OzqIZM9oQ54
+ NscOy5igVn5e3GXPXL4zDGgcUboLGGTrl35A7c1UwbcS9pJybw+Mx55Te0+wGnXjsQntNpe3b
+ dHruKg38SPOAVJ+U9ORFIqb6jlmgLA0ug3cAjIE28TG1GWi4xWFN263csmTsyZesg/7tLVmAF
+ dmu9M2ZVIfxqeQWkc1Wzns7QZhC90+FdN9ePYQQOM0ZUbGGbYLWPbv2GEfb02c8WnohG2WfmP
+ LNBfMAtCM9gOkIO51FW1IfZpzww1cl/GwcOjc74BWhTJ2BeCcc0T93bz6tFvJlfKNfgOMHD6N
+ vjTvJoUKm+gPfvZp00uzF8r2zi4g4pQoVhAA7zsiERUWeC4eKwHZuHANe2EZk56YI5BnA/vwC
+ mMfoRi3svAcjxYt/FyfA87lU18us9yY2c15DiZXd2tzosb3ByMuRv8cb6H2klkUos2pju07Y+
+ l9UPluL2GFe/NLia/MokMOUGapBVqAxy//9v0pKWVGt9zCu94hwqdLOW5H16owHWRfSSFPomo
+ nGYC6CyHoe3Xb6xti3kLwqZDLIaxnWW51Yvh1rI9EzbGwCObrvj36bUyp0LJWNug6o6/hoVKC
+ rVD5dapFoTx/ym8fi0qQXodUX8amP1fK4M8cZVXQ05r07ID459NegPRevOpkEQvX85My7AvnV
+ zKcH+kqQla/bXMxYkihsoSmWeL+DAfFpHAHemEP/VfaWVOIc9PqJln3oShg9krYAQEbk0kXqE
+ fyMVERCMuOqHkLcEP14wmhtN5YHIVfftz1dnuEyziQye4=
 
-On Wed, 2024-04-24 at 10:45 +0200, Markus Elfring wrote:
-> =E2=80=A6
-> > Hence, move the call to paging_init() to be earlier in the init
-> > sequence so that the reserved memory regions are set aside before any
-> > allocations are done using memblock.
-> =E2=80=A6
->=20
-> Will the tag =E2=80=9CFixes=E2=80=9D become relevant here?
+=E2=80=A6
+> Add the malloc failure checking to avoid possible null
+> dereference.
+=E2=80=A6
 
-I'm not aware of any bugs that have been reported in this context.
+How do you think about the following wording variant?
 
-Adrian
+   Add a return value check so that a null pointer dereference will be avo=
+ided
+   after a memory allocation failure.
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+
+Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
+
+
+=E2=80=A6
+> +++ b/tools/testing/selftests/bpf/test_verifier.c
+> @@ -762,6 +762,8 @@ static int load_btf_spec(__u32 *types, int types_len=
+,
+>  	);
+>
+>  	raw_btf =3D malloc(sizeof(hdr) + types_len + strings_len);
+> +	if (!raw_btf)
+> +		return -ENOMEM;
+=E2=80=A6
+
+How do you think about to reuse the variable =E2=80=9Cerrno=E2=80=9D in su=
+ch an error case?
+
+Regards,
+Markus
