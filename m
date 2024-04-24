@@ -1,78 +1,79 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D89D129A9C;
-	Wed, 24 Apr 2024 03:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B9F13340B;
+	Wed, 24 Apr 2024 03:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713928310; cv=none; b=KeJBAt3QHFE+u4JlRBGwp6KjzknYWz7lSs5HUySwHVOZc5j3KfWOke61z/K8tzNxiVchoQGZgBXrrsDlHEGC7ERffsEGLM8vtDW9JhI0O2BBiETS/ptljNsrlM3dcUtx/x+gffGIz2pI2iAaB+7pNKp7OGU68XdY8Pg0HNe6v9Q=
+	t=1713929459; cv=none; b=Ljq6sndsozzbgj2Zfe8XvcLXhzGDVQ7HKLOz04AMtIqRzQpKYlTXOGCKCwNaTiaIRcGCVyVE7CKifrD2yf6rY2Z/BZzKqRdQof79FN7MWiYLWj8joXOZ4zHrHFuV89bTAJbamSRtCCTTj2cKUrb0y7usWoGyMfg2tCaw49/Jts0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713928310; c=relaxed/simple;
-	bh=UyarDLJm818fh1aTpD2RkbQ0/HhxARpsVNwSkNoBwEc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b+GqRPk6GSmbRclnivtfOVyVUm+FQCkcafVs95KQD5xKTIehm3TsAdH7kR61l0oYD//UOWUzrniE5fGnrfRbRW5I/gy4wBgmsi0pj0utj983noyUOWMHL4/KKJLSTZghGugYTlk/Qatga94DyaT/XahhfeUpaN6jccznW6gVFr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uADnoj4X; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713929459; c=relaxed/simple;
+	bh=rKi6NN48wepECtBpXiA7bU1rkNQhpJjd3bV4sNW0FT0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Oayst/9mEd7ELbpWnmGrXk87ogmImp8HKT1quEfsp4o28K7suQzZ3sCK2/c0n71QefnWgMHeNM0l8vURqBmINONAWpvuxBCdC6XL83GTWj76t+XdzvTsjXdx4Z6E+K9x/BSQnlKJZiF5aZHRxuvtgZZ91jj9qccq+t4RrrkfWns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ti+9iZ2b; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uADnoj4X"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A834C4AF08;
-	Wed, 24 Apr 2024 03:11:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713928310;
-	bh=UyarDLJm818fh1aTpD2RkbQ0/HhxARpsVNwSkNoBwEc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uADnoj4XNWf+GOdHb5EFyKOs++TfjS8KFG1vqAIQZHPzvRglW84F9pN9KkGBcecK8
-	 mPRMa76d55ZCO8p/g8aXmSYg8KPrP2Xe/WOdHDKtL3CC6SJm0v4vSZVEzaIhT5Z7SV
-	 lur7NZEeu3dzI9ylNvFtjKMw63O4hCkdy2coKJgth+rydXTfTAMv6fU7YOYZBbr8c6
-	 0FPQYjuMDxs8msTdO/N5rNjgYgC5lMNMCcKYogVtVmGEow9gdUd/xwC2jEYWKZR+P/
-	 k+fe0tD0ECwC8IQYdrgPk3/t2h/hmiPtKjewL9ErhznaABAMx2uaolBWbIl9JoOtbE
-	 AW0uEju1Jnwww==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-518a3e0d2ecso9501930e87.3;
-        Tue, 23 Apr 2024 20:11:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVjWqgtsQBZsiFBcv7zpXaxA41fMXo6AHBHrEeQ00wzkf2E23jOfmclhRig9R9RJEdaaj+OZHMkg7g4+jRK3gbtNYRsF5Km0kjs/6/xP27oitoF9CpWD4JyidfW6ORP12v2F5k9yl1Ghw4z+gmeMkOjnmmFmzC0JiV6IGRTwL4Y/75b7YbCVMXg5w==
-X-Gm-Message-State: AOJu0YwiWQQ4NI4KaDDHcLHccYWGArTckfP3T9RetoPz0f3rnnflJSbZ
-	VOoElwOPJff5zOqrCPJWiTe7Njzt7e6kYcNEMGhMoSEwxH7OerI5Lmu9jUcjZONFGU3dcHUp14l
-	rSRktmEi4KjfKrPUiZOOEHe60Wbo=
-X-Google-Smtp-Source: AGHT+IHV7f/90zOMTYFIY3BIf0OhGjiubsdyuLJlkyqQzhzjXWf4I96WT55HKfcE9PHwaMb0sTgdojt5rUIeb84uoq4=
-X-Received: by 2002:ac2:44a6:0:b0:513:d5ec:afb with SMTP id
- c6-20020ac244a6000000b00513d5ec0afbmr992362lfm.40.1713928308279; Tue, 23 Apr
- 2024 20:11:48 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ti+9iZ2b"
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1713929454; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=RAITW8Q5G1SlFKuL2iNYgoTd3KgsFZ6WJdYB4NCuFC4=;
+	b=ti+9iZ2bA6B9Huev8dpdGwNDZf+NL0ixy4jp7fJkSJnzsV3oCMN17SQSZiyqzHJwZR0FZ7JDo1raq2fAZPoVO1BxO2wrF2CnGn7wv4DfWJUJcxccnG5NrHvBV8LFZItcaUC7+AlfSiGZO4iGReGFkMgjndlXTq3wQbsk4DQKSOk=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R351e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0W5AojMt_1713929452;
+Received: from 30.221.128.184(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0W5AojMt_1713929452)
+          by smtp.aliyun-inc.com;
+          Wed, 24 Apr 2024 11:30:53 +0800
+Message-ID: <a4d38a49-9629-4ee0-9eba-4d45abace30d@linux.alibaba.com>
+Date: Wed, 24 Apr 2024 11:30:52 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240423074257.2480274-1-chenhuacai@loongson.cn> <1f15f7e3-32ff-486f-8e6f-bbe9183b05e5@web.de>
-In-Reply-To: <1f15f7e3-32ff-486f-8e6f-bbe9183b05e5@web.de>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 24 Apr 2024 11:11:36 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5V9_Q-YH-GPevgeqH-2Vd3cyOcVzMiD-F1_gZsYpj5-w@mail.gmail.com>
-Message-ID: <CAAhV-H5V9_Q-YH-GPevgeqH-2Vd3cyOcVzMiD-F1_gZsYpj5-w@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: Fix access error when read fault on a
- write-only VMA
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, Jiantao Shan <shanjiantao@loongson.cn>, 
-	loongarch@lists.linux.dev, loongson-kernel@lists.loongnix.cn, 
-	linux-arch@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	Arnd Bergmann <arnd@arndb.de>, LKML <linux-kernel@vger.kernel.org>, 
-	Guo Ren <guoren@kernel.org>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-	Xuefeng Li <lixuefeng@loongson.cn>, Xuerui Wang <kernel@xen0n.name>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] ocfs2: remove redundant assignment to variable
+ status
+To: Colin Ian King <colin.i.king@gmail.com>, akpm <akpm@linux-foundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ocfs2-devel@lists.linux.dev, Mark Fasheh <mark@fasheh.com>,
+ Joel Becker <jlbec@evilplan.org>, Heming Zhao <heming.zhao@suse.com>
+References: <20240423223018.1573213-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20240423223018.1573213-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi, Markus,
 
-On Tue, Apr 23, 2024 at 5:45=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> > As with most architectures, allow handling of read faults in VMAs that
-> > have VM_WRITE but without VM_READ (WRITE implies READ).
-> =E2=80=A6
->
-> Will the tag =E2=80=9CFixes=E2=80=9D become relevant here?
-Yes, you are right, thank you.
 
-Huacai
->
-> Regards,
-> Markus
+On 4/24/24 6:30 AM, Colin Ian King wrote:
+> Variable status is being assigned and error code that is never read, it is
+> being assigned inside of a do-while loop. The assignment is redundant and
+> can be removed.
+> 
+> Cleans up clang scan build warning:
+> fs/ocfs2/dlm/dlmdomain.c:1530:2: warning: Value stored to 'status' is never
+> read [deadcode.DeadStores]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> ---
+>  fs/ocfs2/dlm/dlmdomain.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/fs/ocfs2/dlm/dlmdomain.c b/fs/ocfs2/dlm/dlmdomain.c
+> index 2e0a2f338282..2018501b2249 100644
+> --- a/fs/ocfs2/dlm/dlmdomain.c
+> +++ b/fs/ocfs2/dlm/dlmdomain.c
+> @@ -1527,7 +1527,6 @@ static void dlm_send_join_asserts(struct dlm_ctxt *dlm,
+>  {
+>  	int status, node, live;
+>  
+> -	status = 0;
+>  	node = -1;
+>  	while ((node = find_next_bit(node_map, O2NM_MAX_NODES,
+>  				     node + 1)) < O2NM_MAX_NODES) {
