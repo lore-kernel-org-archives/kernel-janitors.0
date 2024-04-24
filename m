@@ -1,57 +1,59 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B1A1635D1;
-	Wed, 24 Apr 2024 16:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FAC161338;
+	Wed, 24 Apr 2024 16:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713975122; cv=none; b=nRMafbGhH5KyEXtGHiD8II5t8DDjC7Uax2L+x5pmHqBAYkuWI4jMzQ1zAcfqoWOaxTunxWhUPk2OlCfBd7HWmPwYa40rW754c4nnQVFIsMQ3uKi0XqkeBPzbGLtUvoDdCnav+1AsVFmwdZcAgchxdbmcKfvqCUMRQ928OUyTeYI=
+	t=1713976095; cv=none; b=s7RwYNgIKutM5R3fLRGnDkmudMLi1BdV3VK+OjXx93tdZk14CNNQPsToC/5/dk/x5ERCTA6+IGvWEjf33bADYtcOcKrnvIXyoqo1zJY0RaKFpLK//DxSs2JfyQqLHpN09nnv+gbdQrzAS5KDL8UCaQwydPccWk72Tbg9gEJMAng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713975122; c=relaxed/simple;
-	bh=hWNae6vbnA4iCNH0utg1R+YhNmf1tQWghhuQryyve40=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=OfDkuT7dAgCt9wehf3szGYLi/Z3fIkfYdrrwria2RwX0kmV/X4Pvk3519XOD+H3tdjdroHmJ18X0Jdk03J3+sFZi6fA7daS3Ymm+d+Xkh8EfsgeYaXo4VMpnXJ6r4du1BW9Qp0ooIlTwkM8Csp5FAhUYQXx3/z5E89DlZHGvfkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AJDsKM5c; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1713976095; c=relaxed/simple;
+	bh=NQcaleV1DawBwUHhy+dB/t7rpwoabLqXSqjQb/XtsfU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=rYkkfU/rCaL71jTplol8Mt9p5wkHRg16S4CKN0f/2+RkhrJ/6YnxoJEdm9UO4Zdo0/TNeJ+4reaaGArYMpT7j50kyppZnKj9SuPxi/w1p93r5X6FwbXlfrLkqtni0V7zIiHqncNRbfrDzy/ekIVGgyYFg8HeKrMD2sVbhs6xt7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VOJ5+UIv; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJDsKM5c"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-343c7fae6e4so6233148f8f.1;
-        Wed, 24 Apr 2024 09:12:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VOJ5+UIv"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41adf155cffso161315e9.2;
+        Wed, 24 Apr 2024 09:28:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713975119; x=1714579919; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1713976092; x=1714580892; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=l7fwhYCByqsyxtduNgA8zx5Qp4wn8aktE/VYg2R/KyU=;
-        b=AJDsKM5cwaMPuaKUHp1NwBgjyjOhDjBhdjkj7/s/sLPcVGI5zQFYeYFqlXqYLUZ0ew
-         LvHRYv4fqquyfN7MYCIUP+do4bqBXC9nAhp9HjNRY1tz7Sgz9K9uOKeLj7bmNZB/GVsJ
-         Bwnjso5LBDFkB3tZCid1SbkQjnUW0fe+NHgKqkXwJeKwqkbYlwGYc0InsAtpDfNk96WG
-         eP9A/1AUMUkUeM5OTZV0dviMLDxk+HzfLl7QNZZHdZFMfGNmEvCXui+Dv6QLS5omq0O7
-         ECFvipY7FKkDs2WcUhzBkcrVmoj5Q6boFtvHBjXIRe6J/Ngt4L8lkFNe9/xm4HFlZ7sJ
-         GF4Q==
+        bh=JGTvGTdmOEkfpJBObdVGs6RBZIv2agsPt8BWCLj0PV0=;
+        b=VOJ5+UIvAnnAMs77bp/VumXjnZWPcome8DwJO6rzvias98TF+CHxo5pa8h41YZ0OEW
+         oJS6gP6YzFqk7aXzah4m/+8WDUoA9XplU25QUnf9HDM1B6xFfD4fwqnnfsMZSGCgB2mI
+         XAgjePsfMFxToQnGYhAezTsLuQ8QIVcvdU7sv4A2Oks4ZLGsfKlb/4OfkZZW8hv5xswu
+         69QoI0WOgRotsiYAnk/v7Nn+q1HaO1NRxF0UQJ208ZCcyeC5LKalTOWJ2azatopQlbDj
+         t7VZFdp3T3FgKmUX8AVVfNjDhwSBpC5mXKzKupOcEQ0hZIfDInI9TyGF1BihOguTJS0l
+         0P/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713975119; x=1714579919;
+        d=1e100.net; s=20230601; t=1713976092; x=1714580892;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=l7fwhYCByqsyxtduNgA8zx5Qp4wn8aktE/VYg2R/KyU=;
-        b=L+IywMx+uHBk4PF6D8bUkkDAUzy410mzyRJ4SZA09N4QryFTWl0ohn3Pbob3zCQTlX
-         HU2OR0BiYt26yKpea7Q3X2CyWPlZaYiTJOD8B+5BeIUN5kwlvjs/uOfg9/YHzvK9jJab
-         eQKIUyAPctsTgzSEoP1yLPZ/d+akvnVngXYep7PqJHnm8VRA5lEC54nl4lVvjJBqAmFs
-         jl6dOlnD3zSkw06YAJfmWqsS7qmibUiLE5tndBEEtKh2YQwYNHHPSQy/feioKPFqGwuI
-         PXoOjS9+VNQ++vK5FGQsLjNMcNzTDrtc9iOvj7234umxpVXo7D01wldqhfsr4NnQd1Vj
-         6wOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXM0iaOWW66J1g2mQ+BQNmACben9f0ALKWeYQvQts4UCLEK5r5T6+NLjL5g5ajwyqQvQyrj8zIM9RXmO0MsvKn03OirEZvs6mur/52T
-X-Gm-Message-State: AOJu0Ywx87ahUdrH55qzTy41IXzLZFdxNf0NQRFoz1BoVtwv36gnosXs
-	eEvI0KBtC+Ut2Pcz+6P1ht+9smZHC5waykL9V9pJqUuQNufXpjLp
-X-Google-Smtp-Source: AGHT+IH3jYf42AlOaYiK+FEIyw3LbLPxAlyd2I+vNCGrces4wHDtdBSa9HS2eMuzoJpicBrPQ5yBVw==
-X-Received: by 2002:a05:6000:4e6:b0:34b:3f27:89cd with SMTP id cr6-20020a05600004e600b0034b3f2789cdmr1584655wrb.71.1713975118431;
-        Wed, 24 Apr 2024 09:11:58 -0700 (PDT)
+        bh=JGTvGTdmOEkfpJBObdVGs6RBZIv2agsPt8BWCLj0PV0=;
+        b=guyDEa9FEDSwTQOEttPXv1ibWYGgf5GvDQ3nCvTNW9kvjicn9cTzUZN7dpcOC3A2pY
+         xz98OLcmB7gFaIVLkNpOxH0a6JHQ7k7ACetAPOq50mzDOn0BKgYo/4tvrvgyz/he0TcN
+         iknxP74O//GbpYjoEim8UQ2k4anJtEJ29sNz/lksStC3nN0pQkAqNSduLaL/48EKeb5a
+         YGSKtoVEAh4KXNflFTyb7TO8OL2A07fmE7r4PktAM/fGldqHSchrVY9TPwqo6YGvlAD7
+         3/PxUL5mKmtsNv92uJkre/w7XtF/ZS124BISH97TrEd0T0cuTWTQo03i6J35B/DBXF9Y
+         aG8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU8P3TopxBLOiQJpKB85AhKBjVWjr4OGDhbb+9/oCsktEs4ISbWrSspq92b1y/YbUIZ8LXYggu/HqFkklrnW0VzZ9Q2qC4pJb3iZYdC
+X-Gm-Message-State: AOJu0YxXwRpsBSMsbGArzbcOBYHYG/h+35IHoWGs/uBM9coB0WdM8pvU
+	xHOJy1hoil4aP5BD1Qz4IrcV8wZhvhP8BeGsnU2gfsZfwpZHdqVA
+X-Google-Smtp-Source: AGHT+IFdyfgobu/a315DB2FtmY2cDEDxZGBYPtzRDMgTf+H7kT/QhdAaIfpMUsGqdQEDXdl5Xf1h1Q==
+X-Received: by 2002:a05:600c:4f93:b0:419:cc9b:420a with SMTP id n19-20020a05600c4f9300b00419cc9b420amr2380021wmq.1.1713976091917;
+        Wed, 24 Apr 2024 09:28:11 -0700 (PDT)
 Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id l1-20020a5d4bc1000000b0034ae73a8b25sm9639884wrt.37.2024.04.24.09.11.56
+        by smtp.gmail.com with ESMTPSA id t13-20020a05600c450d00b00417f700eaeasm24543125wmo.22.2024.04.24.09.28.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Apr 2024 09:11:56 -0700 (PDT)
+        Wed, 24 Apr 2024 09:28:11 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
+To: Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
 	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
 	Xinhui.Pan@amd.com,
 	David Airlie <airlied@gmail.com>,
@@ -60,9 +62,9 @@ To: Alex Deucher <alexander.deucher@amd.com>,
 	dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amdgpu: Fix spelling mistake "PRORITY" -> "PRIORITY"
-Date: Wed, 24 Apr 2024 17:11:55 +0100
-Message-Id: <20240424161155.3946451-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] drm/amd/display: Fix spelling various spelling mistakes
+Date: Wed, 24 Apr 2024 17:28:09 +0100
+Message-Id: <20240424162809.3948457-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -73,55 +75,76 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There are spelling mistakes in a literal string and enums, fix these.
-Currently there are no uses of the enums that got renamed in this fix.
+There are various spelling mistakes in dml2_printf messages, fix them.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/amd/amdgpu/mes_v11_0.c        | 2 +-
- drivers/gpu/drm/amd/include/mes_api_def.h     | 2 +-
- drivers/gpu/drm/amd/include/mes_v11_api_def.h | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ .../dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c      | 6 +++---
+ .../display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c  | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c b/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
-index fbe31afad1d4..44f1af6da21e 100644
---- a/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
-@@ -111,7 +111,7 @@ static const char *mes_v11_0_opcodes[] = {
- 	"RESUME",
- 	"RESET",
- 	"SET_LOG_BUFFER",
--	"CHANGE_GANG_PRORITY",
-+	"CHANGE_GANG_PRIORITY",
- 	"QUERY_SCHEDULER_STATUS",
- 	"PROGRAM_GDS",
- 	"SET_DEBUG_VMID",
-diff --git a/drivers/gpu/drm/amd/include/mes_api_def.h b/drivers/gpu/drm/amd/include/mes_api_def.h
-index bf3d6ad263f9..ed479575df18 100644
---- a/drivers/gpu/drm/amd/include/mes_api_def.h
-+++ b/drivers/gpu/drm/amd/include/mes_api_def.h
-@@ -54,7 +54,7 @@ enum MES_SCH_API_OPCODE {
- 	MES_SCH_API_RESUME			= 7,
- 	MES_SCH_API_RESET			= 8,
- 	MES_SCH_API_SET_LOG_BUFFER		= 9,
--	MES_SCH_API_CHANGE_GANG_PRORITY		= 10,
-+	MES_SCH_API_CHANGE_GANG_PRIORITY	= 10,
- 	MES_SCH_API_QUERY_SCHEDULER_STATUS	= 11,
- 	MES_SCH_API_PROGRAM_GDS			= 12,
- 	MES_SCH_API_SET_DEBUG_VMID		= 13,
-diff --git a/drivers/gpu/drm/amd/include/mes_v11_api_def.h b/drivers/gpu/drm/amd/include/mes_v11_api_def.h
-index 410c8d664336..5b8fd9465cf3 100644
---- a/drivers/gpu/drm/amd/include/mes_v11_api_def.h
-+++ b/drivers/gpu/drm/amd/include/mes_v11_api_def.h
-@@ -54,7 +54,7 @@ enum MES_SCH_API_OPCODE {
- 	MES_SCH_API_RESUME			= 7,
- 	MES_SCH_API_RESET			= 8,
- 	MES_SCH_API_SET_LOG_BUFFER		= 9,
--	MES_SCH_API_CHANGE_GANG_PRORITY		= 10,
-+	MES_SCH_API_CHANGE_GANG_PRIORITY	= 10,
- 	MES_SCH_API_QUERY_SCHEDULER_STATUS	= 11,
- 	MES_SCH_API_PROGRAM_GDS			= 12,
- 	MES_SCH_API_SET_DEBUG_VMID		= 13,
+diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
+index 846b0ae48596..2dea5965d02f 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
++++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
+@@ -5566,7 +5566,7 @@ static bool CalculatePrefetchSchedule(struct dml2_core_internal_scratch *scratch
+ 		dml2_printf("DML: Tvm: %fus - time to fetch vm\n", s->TimeForFetchingVM);
+ 		dml2_printf("DML: Tr0: %fus - time to fetch first row of data pagetables\n", s->TimeForFetchingRowInVBlank);
+ 		dml2_printf("DML: Tsw: %fus = time to fetch enough pixel data and cursor data to feed the scalers init position and detile\n", (double)s->LinesToRequestPrefetchPixelData * s->LineTime);
+-		dml2_printf("DML: To: %fus - time for propogation from scaler to optc\n", (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime);
++		dml2_printf("DML: To: %fus - time for propagation from scaler to optc\n", (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime);
+ 		dml2_printf("DML: Tvstartup - TSetup - Tcalc - TWait - Tpre - To > 0\n");
+ 		dml2_printf("DML: Tslack(pre): %fus - time left over in schedule\n", p->VStartup * s->LineTime - s->TimeForFetchingVM - 2 * s->TimeForFetchingRowInVBlank - (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime - p->TWait - p->TCalc - *p->TSetup);
+ 		dml2_printf("DML: row_bytes = dpte_row_bytes (per_pipe) = PixelPTEBytesPerRow = : %u\n", p->PixelPTEBytesPerRow);
+@@ -7825,7 +7825,7 @@ static bool dml_core_mode_support(struct dml2_core_calcs_mode_support_ex *in_out
+ 	dml2_printf("DML::%s: mode_lib->ms.FabricClock = %f\n", __func__, mode_lib->ms.FabricClock);
+ 	dml2_printf("DML::%s: mode_lib->ms.uclk_freq_mhz = %f\n", __func__, mode_lib->ms.uclk_freq_mhz);
+ 	dml2_printf("DML::%s: max_urgent_latency_us = %f\n", __func__, mode_lib->ms.support.max_urgent_latency_us);
+-	dml2_printf("DML::%s: urgent latency tolarance = %f\n", __func__, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kbytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)));
++	dml2_printf("DML::%s: urgent latency tolerance = %f\n", __func__, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kbytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)));
+ 	dml2_printf("DML::%s: ROBSupport = %u\n", __func__, mode_lib->ms.support.ROBSupport);
+ #endif
+ 
+@@ -10603,7 +10603,7 @@ static bool dml_core_mode_programming(struct dml2_core_calcs_mode_programming_ex
+ 				if (display_cfg->plane_descriptors[k].immediate_flip && mode_lib->mp.ImmediateFlipSupportedForPipe[k] == false) {
+ 					mode_lib->mp.ImmediateFlipSupported = false;
+ #ifdef __DML_VBA_DEBUG__
+-					dml2_printf("DML::%s: Pipe %0d not supporing iflip!\n", __func__, k);
++					dml2_printf("DML::%s: Pipe %0d not supporting iflip!\n", __func__, k);
+ #endif
+ 				}
+ 			}
+diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c
+index 0ef77a89d984..d1d4fe062d4e 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c
++++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c
+@@ -2023,7 +2023,7 @@ bool dml2_core_shared_mode_support(struct dml2_core_calcs_mode_support_ex *in_ou
+ 	dml2_printf("DML::%s: mode_lib->ms.FabricClock = %f\n", __func__, mode_lib->ms.FabricClock);
+ 	dml2_printf("DML::%s: mode_lib->ms.uclk_freq_mhz = %f\n", __func__, mode_lib->ms.uclk_freq_mhz);
+ 	dml2_printf("DML::%s: max_urgent_latency_us = %f\n", __func__, mode_lib->ms.support.max_urgent_latency_us);
+-	dml2_printf("DML::%s: urgent latency tolarance = %f\n", __func__, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kbytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)));
++	dml2_printf("DML::%s: urgent latency tolerance = %f\n", __func__, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kbytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)));
+ 	dml2_printf("DML::%s: ROBSupport = %u\n", __func__, mode_lib->ms.support.ROBSupport);
+ #endif
+ 
+@@ -8174,7 +8174,7 @@ static bool CalculatePrefetchSchedule(struct dml2_core_internal_scratch *scratch
+ 		dml2_printf("DML: Tvm: %fus - time to fetch vm\n", s->TimeForFetchingVM);
+ 		dml2_printf("DML: Tr0: %fus - time to fetch first row of data pagetables\n", s->TimeForFetchingRowInVBlank);
+ 		dml2_printf("DML: Tsw: %fus = time to fetch enough pixel data and cursor data to feed the scalers init position and detile\n", (double)s->LinesToRequestPrefetchPixelData * s->LineTime);
+-		dml2_printf("DML: To: %fus - time for propogation from scaler to optc\n", (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime);
++		dml2_printf("DML: To: %fus - time for propagation from scaler to optc\n", (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime);
+ 		dml2_printf("DML: Tvstartup - TSetup - Tcalc - TWait - Tpre - To > 0\n");
+ 		dml2_printf("DML: Tslack(pre): %fus - time left over in schedule\n", p->VStartup * s->LineTime - s->TimeForFetchingVM - 2 * s->TimeForFetchingRowInVBlank - (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime - p->TWait - p->TCalc - *p->TSetup);
+ 		dml2_printf("DML: row_bytes = dpte_row_bytes (per_pipe) = PixelPTEBytesPerRow = : %u\n", p->PixelPTEBytesPerRow);
+@@ -10994,7 +10994,7 @@ bool dml2_core_shared_mode_programming(struct dml2_core_calcs_mode_programming_e
+ 				if (display_cfg->plane_descriptors[k].immediate_flip && mode_lib->mp.ImmediateFlipSupportedForPipe[k] == false) {
+ 					mode_lib->mp.ImmediateFlipSupported = false;
+ #ifdef __DML_VBA_DEBUG__
+-					dml2_printf("DML::%s: Pipe %0d not supporing iflip!\n", __func__, k);
++					dml2_printf("DML::%s: Pipe %0d not supporting iflip!\n", __func__, k);
+ #endif
+ 				}
+ 			}
 -- 
 2.39.2
 
