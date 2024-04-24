@@ -1,72 +1,63 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35111E480
-	for <kernel-janitors@vger.kernel.org>; Wed, 24 Apr 2024 11:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C06A1E480
+	for <kernel-janitors@vger.kernel.org>; Wed, 24 Apr 2024 11:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713958915; cv=none; b=DKfXvsNR6+UMF5oTbRai0+tBuxTuOdszylzjeFARdWxayT7jr7sGhzUDEiXWF5b5wumMHv+EZ92RyUQycZb0LMqjjKJDb2c+LxdVut2ZhYRz+mxKbrsSJPvMVY9ss1JUm449TW5hRYKjdfkziT1TrbJ2nXlXrkAwbPCJ3FJrSaA=
+	t=1713958973; cv=none; b=nhoZsfDYdebBySH6MZb6cY4CU9QIa+jCYhW+sORX5Rxl/RIfK25XS94dL0pgsw1bCNSUzEm28ATGnTSngTVWV4kHyF8Yrajnw5aQzkgkeJDQ3gTtx1aernJBxlWxuVK2FRVm6aN5vyAefb0611F4+1z1PggCBq83q4qESfsJ0Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713958915; c=relaxed/simple;
-	bh=4lS/KiB1vKWPZ84j/8jQAV+eVGXVWrV4Nf28Lpy9ZII=;
+	s=arc-20240116; t=1713958973; c=relaxed/simple;
+	bh=LjqvDUtZmVAzGUJviYvub5dECgtHavs/7iS97QqYmoU=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=n4XX/9kNwcssLSye9ClldDMxy5fjKE68tHwUnq4BdqS2NfJ4iDFyZJyEfPkaccfR1c+AgEj67bI15ElOz+oec9BT0ZWnA2bzAVgePvxnjaQHlE2ZEISyWm1XpvYgnBaH1awuURCEe916NMHbg+kxpJSFiHzL4AajBPdLVYatmkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Csq1Ih4x; arc=none smtp.client-ip=209.85.128.45
+	 Content-Disposition; b=bImhTGGiOzwpdBqaP3ZQI+kFTsVDaaH+sO20KNY/03gSV6PN6GFpZQ8FAjJ9YKaWRoZjJJRSbBsnZ/luaHuCcYhNneK1To6qAhcTkEcgNLbFnNrCxtC1lMb5wv2yucDx/0XYpkewGAdZ7nqNMnZ3G9PwVzUCmAizh/UMrnCCFfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BH/bbbvm; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Csq1Ih4x"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-41b2119da94so843785e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 24 Apr 2024 04:41:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BH/bbbvm"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-41b1ed3ffd4so1247295e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 24 Apr 2024 04:42:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713958912; x=1714563712; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1713958971; x=1714563771; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ELudIBLkjdgxS0elp1PUtkat+hOoPGI1SePmaBawDG4=;
-        b=Csq1Ih4xHZLXJEHbz63w3zqUXyHjKJ4Bhn4Ie7fawmCGhdOOerM/rfzHzwZYAlyqVT
-         jkEkExX/RXzmbwkxcxl1kLLg3wRbCT3JwcBHWTBa1fTWv2W8N0vB+7beE5W28Mb+VjhP
-         yFkHrB43CfhOY1bXbQ0Gn+Jt53Or7dVFcWo+I2+ckvelQkUridMIEgnN9Q+Z+FnM3BP9
-         +UXR5+N3ZZoeiITE+lAkSDQq5mrthyEHe2sey6kn8iEA4AV4oYYEA12kIS19s64tye+F
-         AfqgNfYwYvhQKB5K7q8v/M5cYeBMHQGK3EMDzVddW5v16MXXjI/y1rXVvpCTm1UAc7Jb
-         SmiA==
+        bh=/p5xEC+QNfkoqFIrbne/L0mxnmolg90yRpPIRqFDoaY=;
+        b=BH/bbbvmTAI8em0b7wb4kx6H49tMUbxF53WuSTE82vaViPZ7iKMsi2Rgm+dkyJMC3i
+         Ndp1NrIanoY+W/jOd1bBOC9kxd5nXUXnyyeS08rZq5GNg6k52P6vaw+IQzXvFkW4LqMu
+         jb/hTBOOF58DSGBYPcVBKgTkHl51NcLPPXCqk1Bj5UVX5HQDRmAUJ0tuc3BKmdUPrnWV
+         arJS4EJdF/6NbuMFm0PEGOyeRkE7H59VRE9frmD0EHE468Keelg7lCy3kRwhvekpJUTM
+         9/6Nzq14NOU7dahX3g1QZvdXkH+lwBmu7NyrHOGOfE7xozvEobba0Ok11AlwcUOZtGJF
+         QKvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713958912; x=1714563712;
+        d=1e100.net; s=20230601; t=1713958971; x=1714563771;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ELudIBLkjdgxS0elp1PUtkat+hOoPGI1SePmaBawDG4=;
-        b=SMTwyFwaYHvKmbywN63ii5XL8dwVOn0kr3oj82xcyHT7KufcfE0HdXaPRy3QO0zZFw
-         vX01anoF+BFXB41kWj/NOi3QgKmY5LgDxwQlYCFonDnVZ/YKFsnlaNE8fcPYVDvj95qe
-         bvIqzWc5RAWhBFu2ia5/cDv3aqIyNNmnU0A9ieXE90VTQSV5az441WS2MryJixvYbcEv
-         lUc28omCVsf5A0q1mooQzA9OTGRAD+No0YO1MinFzCoUnGw2gvuRY2/47X1ajvq54NDk
-         j2R6r3FUIfCzRAbqm2zquRBmA5SltQbaQ2ykjuSzND1iibN0X/u6KuSgeluSsQYa4o3f
-         D/2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVNEIJd5FNkPRtjFUvOl2KMLfr3Psutf1rQoB7jEGPe/W7/gYRpzfVY9KLaSl6YF8USO4aqpRBO/mUKa59ptYlAskzILrOW6EHwxKuiMPVN
-X-Gm-Message-State: AOJu0YxaPa890bEkrKdmj2zPiNBJkIH6DYHR0ur57ksrXn5NWTcRprF+
-	4k5MK7u9IRwZyGND7tq4l/YKem6y6a99AcUU69/ocCrTDZl7eQn8OFQHWjDE29U=
-X-Google-Smtp-Source: AGHT+IFC3Xn9CFwEPi+nZrUxwB85rOXzdnYEMUpkC1nwbPG2hnf4U7btQl9yxJcgwUfAxP5VTsmFNw==
-X-Received: by 2002:a05:600c:450a:b0:41a:e5f5:9a4a with SMTP id t10-20020a05600c450a00b0041ae5f59a4amr1690065wmo.9.1713958912043;
-        Wed, 24 Apr 2024 04:41:52 -0700 (PDT)
+        bh=/p5xEC+QNfkoqFIrbne/L0mxnmolg90yRpPIRqFDoaY=;
+        b=NvQCBN1IEZQgbHg/juM6Iby4DV8oWwVAomgB3ruMc1TDC4kTXZlGvxHLywx583S0Fg
+         5A27KJQyVTF9frXMzjMwfGMz22I2mIMxwi8Dba1Je55SKU4+NA0dZNdJlk6n+gO5x4c3
+         WuJzbWABKBUEvVPhSxyKFgb35Dflg2Sfh6HcWalMQTt2xZoA1GC+dSIE0AAXOPrXxam3
+         RmijvTlC7YOLMe//McCH9nHHsdAWn1XrNoUKcUCFA8EXY/c06VB9TV6qovOGrbdYsGPn
+         rDhaIMIixgrLEsiJvnEfwvx6cNjggSCmPNx8YN0MW0DBsE9jaQUeSsMAG1FcmN82FUvg
+         Su/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUbNdo8HxKccSP65F2ut0/gkndZOeBjg1oX8I8fi8NCqPNe2QJJtR+49Rg9GJ5jFgGHObm6UABO91DYAUSk0DljQktPPlN/EfnaY42Vkqfk
+X-Gm-Message-State: AOJu0Yw9rebvR1GKtKMPufNwXTED+klYban66tBxydvPPPQ09IOcbDeA
+	4eG09YdzCaYt9qjwNChl3HgCBgvqA1SgID6EcRlpw6BdWI8M8Vo2bMrcmGDOUoU=
+X-Google-Smtp-Source: AGHT+IEuDDTDOp6nrVspCs313QlQ+BLrwhk8yHmVsdozM7Mct2igZhyLOPAei4HREOaQFZD/RxCk/w==
+X-Received: by 2002:a05:600c:468d:b0:418:f307:4b82 with SMTP id p13-20020a05600c468d00b00418f3074b82mr1649916wmo.39.1713958970614;
+        Wed, 24 Apr 2024 04:42:50 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id h3-20020a05600c314300b0041abdaf8c6asm5404240wmo.13.2024.04.24.04.41.51
+        by smtp.gmail.com with ESMTPSA id o3-20020a05600c4fc300b00418f7605249sm21455887wmq.24.2024.04.24.04.42.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Apr 2024 04:41:51 -0700 (PDT)
-Date: Wed, 24 Apr 2024 14:41:48 +0300
+        Wed, 24 Apr 2024 04:42:50 -0700 (PDT)
+Date: Wed, 24 Apr 2024 14:42:46 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Harry Wentland <harry.wentland@amd.com>,
-	Charlene Liu <charlene.liu@amd.com>
-Cc: Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Alvin Lee <alvin.lee2@amd.com>, Wenjing Liu <wenjing.liu@amd.com>,
-	Jun Lei <jun.lei@amd.com>, Tom Chung <chiahsuan.chung@amd.com>,
-	Dillon Varone <dillon.varone@amd.com>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/amd/display: re-indent dc_power_down_on_boot()
-Message-ID: <e5f538ab-ebc8-400b-8104-4642b8089b4f@moroto.mountain>
+Subject: [PATCH] spmi: pmic-arb: Fix of_irq_get_byname() error checking
+Message-ID: <53c31752-c8a2-4098-837e-2f84f03c8748@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,32 +68,42 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-These lines are indented too far.  Clean the whitespace.
+There are two bugs in this code:
+1)  The "irq" variable needs to be signed for the error handling to
+    work.
+2) The of_irq_get_byname() also returns zero on error so change the
+   comparison from < 0 to <= 0.
 
+Fixes: 932282f154ac ("spmi: pmic-arb: Register controller for bus instead of arbiter")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/spmi/spmi-pmic-arb.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
-index 8eefba757da4..f64d7229eb6c 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
-@@ -5043,11 +5043,10 @@ void dc_interrupt_ack(struct dc *dc, enum dc_irq_source src)
- void dc_power_down_on_boot(struct dc *dc)
- {
- 	if (dc->ctx->dce_environment != DCE_ENV_VIRTUAL_HW &&
--			dc->hwss.power_down_on_boot) {
--
--			if (dc->caps.ips_support)
--				dc_exit_ips_for_hw_access(dc);
-+	    dc->hwss.power_down_on_boot) {
+diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
+index 0a17ff02c827..791cdc160c51 100644
+--- a/drivers/spmi/spmi-pmic-arb.c
++++ b/drivers/spmi/spmi-pmic-arb.c
+@@ -1672,7 +1672,7 @@ static int spmi_pmic_arb_bus_init(struct platform_device *pdev,
+ 	void __iomem *intr;
+ 	void __iomem *cnfg;
+ 	int index, ret;
+-	u32 irq;
++	int irq;
  
-+		if (dc->caps.ips_support)
-+			dc_exit_ips_for_hw_access(dc);
- 		dc->hwss.power_down_on_boot(dc);
- 	}
- }
+ 	ctrl = devm_spmi_controller_alloc(dev, sizeof(*bus));
+ 	if (IS_ERR(ctrl))
+@@ -1721,8 +1721,8 @@ static int spmi_pmic_arb_bus_init(struct platform_device *pdev,
+ 		return PTR_ERR(intr);
+ 
+ 	irq = of_irq_get_byname(node, "periph_irq");
+-	if (irq < 0)
+-		return irq;
++	if (irq <= 0)
++		return irq ?: -ENXIO;
+ 
+ 	bus->pmic_arb = pmic_arb;
+ 	bus->intr = intr;
 -- 
 2.43.0
 
