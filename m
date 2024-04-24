@@ -1,98 +1,118 @@
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBFB16D4CA;
-	Wed, 24 Apr 2024 17:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985832BAE9;
+	Wed, 24 Apr 2024 19:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713979147; cv=none; b=M+iyT5AAeA9j3LtBL9/Uq5isQrkJKW9A6ReUbJrJ/qPeGpXaNTGt8lESbr02vsScFVcbDYZ/AYte/4ai+AWW5YM1mphgKVXKd8TNrUJRJyLWQcj4ZeY6edZbbVDCOJvs0DKbaGcL7WvBl5xXJVnoC6Mh0hscQOFeSeovolLpsfw=
+	t=1713985283; cv=none; b=CNxvGcknYoGjnWXJ+iLU8AOWxSLDIG3Elcev6iIi7362oNJj6SriVGuP0J8qoqviwX8itqIVd8RaCMSGwqOdu8VXTkT8rfsqjIJo80HUu5QAULH7OO9T1isrDV7x0IEd2xCO5R2zwjx0TqUxSgCxRhyuCJBkxeE/VtP3eBk7llY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713979147; c=relaxed/simple;
-	bh=fzUP5jXS3/ennNTINiF3XeycfhJxeMlYoYeWebVYLrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r5a4fP3jJK9hCxixgif+EoRnH5TXVDP1vN8c2pWbJ4d+ABDVEFUU/u9GUKzMQdVZ9kTHOEw/8Sp51TuHytdIQsUH6+J8vzYBMQhdtsSH1V+fR+8Cb3jDQE+2hPK7pTW7rEynjLX5HakiOm4c3F2X3i7iCVNj9zlbfsGAqFKx/nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PsCtRx8a; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1713985283; c=relaxed/simple;
+	bh=wEniXoUp5G9HRaTQlppl6YOqzKstdjiCVhjp8WFbrik=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B/zfHpAB13hIHWNuQb6I3ENETY2xh6ZjFFAu9aDqnNZxnulsJ2JDQ8+m+Z8tNch+y/5MBTrthigYGjTDdGtKgLXQ5d2fIctaHpg9u7EhCTYxsnSkOwa4l/FmpmCaD6cKTx6OMv4saAlfmCuEaWxyGSBWX5ajV988J+13dvC7uk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZYB1BOAu; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PsCtRx8a"
-Date: Wed, 24 Apr 2024 10:18:57 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1713979143;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MPnSCqBZNeTYi6Yq+K5T2lPK1pkupPn4Yzg+HFxV4RA=;
-	b=PsCtRx8aCSAoweOsm30ih69vNYVTRPodlMVcmiUBkctOGzu3pRGbw1sE5GGh7nsoNHVM5h
-	5QOF1Z7R8cBa1l8TH1edsuJdhO/kJb3MMCiOmD1nDIQZWbQLOr280pl0WKUUtvCtbe/b/D
-	kbfVKJFn8471rDFj+eFGUfHVrQqeYr8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Andrew Jones <ajones@ventanamicro.com>,
-	Markus Elfring <Markus.Elfring@web.de>,
-	Kunwu Chan <chentao@kylinos.cn>, linux-kselftest@vger.kernel.org,
-	kvm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Kunwu Chan <kunwu.chan@hotmail.com>,
-	Anup Patel <anup@brainfault.org>, Thomas Huth <thuth@redhat.com>
-Subject: Re: [PATCH] KVM: selftests: Add 'malloc' failure check in
- test_vmx_nested_state
-Message-ID: <Zik_Aat5JJtWk0AM@linux.dev>
-References: <20240423073952.2001989-1-chentao@kylinos.cn>
- <878bf83c-cd5b-48d0-8b4e-77223f1806dc@web.de>
- <ZifMAWn32tZBQHs0@google.com>
- <20240423-0db9024011213dcffe815c5c@orel>
- <ZigI48_cI7Twb9gD@google.com>
- <20240424-e31c64bda7872b0be52e4c16@orel>
- <ZikcgIhyRbz5APPZ@google.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYB1BOAu"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a55ab922260so27810466b.3;
+        Wed, 24 Apr 2024 12:01:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713985279; x=1714590079; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sYb6lahma9ESsvjNNop/lnhNH+5GGNP092pV3MTMbcg=;
+        b=ZYB1BOAu+a4sZghXiYC2eCwuV3UTKza5sCLf/4sxZexeI5jQFFmn9szf/dtgoTL6OW
+         7cPOTP4ChaJGMY1Jy0yM1NMYBFkojp9kaZJC03plT7dtQ4zqFB4+a4UQ3WsV5fxVHZg+
+         n91fKgnYqE4kQWRLLP5naWjwrumMIH9JlxfWjvslzBwHSA/qxfKLl9WkwslBYafg98TD
+         OkjPZzD7k2IO2KO2ND2B4K59wpCgzUtxNmuK9wtzPSwMODTFzo7GofzHZl3bV4jkC1Gp
+         GaFeWPRDO9VKVCcxq+pTUs+w1gp+veRsQX1DRRZwF3QKCKsiDloKJpZ+2TMELrV0Qpqw
+         PKeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713985279; x=1714590079;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sYb6lahma9ESsvjNNop/lnhNH+5GGNP092pV3MTMbcg=;
+        b=Wp3porqkTeHtSCXFzF/dwtN19xer/C9SIrJ6tRqALcYZynyZthYIemhjT4IT66NJM9
+         8d0F2nrzrX8px7HJPIHJ509Mo8qmbib1rJ/QSX9jHTtD+4sueDx5qR+QeLnYdI2j4IcX
+         RNHgrsKLjvM5xdUrh5l6md8J+29CARy/4JWMKsY8gfsPwOdzLt4p03d/Ksa4nX7tdDvF
+         0PiB9ldxsejVbhJap5YpBuSHdUIHaNi3GhR/KntEvbE3sYT1fdZiyi4iJm9kt9q4Ndj4
+         GKlIQ2og/QurdWqWdLVgFrxX6+3SINZWFsTVzPqN+VpsPAEUjryyNodRETFsYXwZLL7i
+         J8xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgxCrtzEkoAgFwhFvFmW4beY7rV84VqcVBRBgYTgnW/dapbQVzCocoFC20IuIZXhDGeNppxWLuYjNTEUezKR1cdSclb2en14SzZUSt/zNYP0I7W/OvXqkwfVqtQ+FPB8XE/0LOEip9+b1wI6DE8PcwBoVbQ1AZbUfSbzeTTlZphRZtwyomjJQ=
+X-Gm-Message-State: AOJu0YyfqFfWpcrW+PWrkOfPSgOIXqxhTaKPoywIrPsdw8ZOWR91cCiE
+	usY9BIoqXmHfMeft8yoQ2d/tmDzAaD4CJ8VnnJqTr8UKvvblVjLt
+X-Google-Smtp-Source: AGHT+IGU+Yholg1eeeqBHS1/XbClARTXKkmiXuj6aUAvmgHd37s0Jp93MObOLF9sK0NFXS2Ld+XqaA==
+X-Received: by 2002:a17:907:7241:b0:a58:a2f7:85e9 with SMTP id ds1-20020a170907724100b00a58a2f785e9mr1130309ejc.34.1713985278550;
+        Wed, 24 Apr 2024 12:01:18 -0700 (PDT)
+Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
+        by smtp.gmail.com with ESMTPSA id hg7-20020a170906f34700b00a4e5a6b57a2sm8624325ejb.163.2024.04.24.12.01.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Apr 2024 12:01:17 -0700 (PDT)
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Andre Przywara <andre.przywara@arm.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Yangtao Li <tiny.windzz@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject:
+ Re: [PATCH] cpufreq: sun50i: fix error returns in dt_has_supported_hw()
+Date: Wed, 24 Apr 2024 21:01:16 +0200
+Message-ID: <1882679.tdWV9SEqCh@jernej-laptop>
+In-Reply-To: <9bfe5703-b39b-4d98-9995-f6a7d0ea558d@moroto.mountain>
+References: <9bfe5703-b39b-4d98-9995-f6a7d0ea558d@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZikcgIhyRbz5APPZ@google.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-Hey,
-
-On Wed, Apr 24, 2024 at 07:51:44AM -0700, Sean Christopherson wrote:
-> On Wed, Apr 24, 2024, Andrew Jones wrote:
-> > On Tue, Apr 23, 2024 at 12:15:47PM -0700, Sean Christopherson wrote:
-> > ...
-> > > I almost wonder if we should just pick a prefix that's less obviously connected
-> > > to KVM and/or selftests, but unique and short.
-> > >
-> > 
-> > How about kvmsft_ ? It's based on the ksft_ prefix of kselftest.h. Maybe
-> > it's too close to ksft though and would be confusing when using both in
-> > the same test?
+Dne sreda, 24. april 2024 ob 13:40:11 GMT +2 je Dan Carpenter napisal(a):
+> The dt_has_supported_hw() function returns type bool.  That means these
+> negative error codes are cast to true but the function should return
+> false instead.
 > 
-> I would prefer something short, and for whatever reason I have a mental block
-> with ksft.  I always read it as "k soft", which is completely nonsensical :-)
+> Fixes: fa5aec9561cf ("cpufreq: sun50i: Add support for opp_supported_hw")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-I despise brevity in tests, so my strong preference is to use some form
-of 'namespaced' helper. Perhaps others have better memory than
-I do, but I'm quick to forget the selftests library and find the more
-verbose / obvious function names helpful for jogging my memory.
+Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-> > I'm not a huge fan of capital letters, but we could also do something like
-> > MALLOC()/CALLOC().
+Best regards,
+Jernej
+
+> ---
+>  drivers/cpufreq/sun50i-cpufreq-nvmem.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Hmm, I'm not usually a fan either, but that could actually work quite well in this
-> case.  It would be quite intuitive, easy to visually parse whereas tmalloc() vs
-> malloc() kinda looks like a typo, and would more clearly communicate that they're
-> macros.
+> diff --git a/drivers/cpufreq/sun50i-cpufreq-nvmem.c b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
+> index cd50cea16a87..0b882765cd66 100644
+> --- a/drivers/cpufreq/sun50i-cpufreq-nvmem.c
+> +++ b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
+> @@ -136,11 +136,11 @@ static bool dt_has_supported_hw(void)
+>  
+>  	cpu_dev = get_cpu_device(0);
+>  	if (!cpu_dev)
+> -		return -ENODEV;
+> +		return false;
+>  
+>  	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
+>  	if (!np)
+> -		return -ENOENT;
+> +		return false;
+>  
+>  	for_each_child_of_node(np, opp) {
+>  		if (of_find_property(opp, "opp-supported-hw", NULL)) {
+> 
 
-Ooo, don't leave me out on the bikeshedding! How about TEST_MALLOC() /
-TEST_CALLOC(). It is vaguely similar to TEST_ASSERT(), which I'd hope
-would give the impression that an assertion is lurking below.
 
--- 
-Thanks,
-Oliver
+
+
