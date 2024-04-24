@@ -1,95 +1,106 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C652159903;
-	Wed, 24 Apr 2024 11:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD951E480
+	for <kernel-janitors@vger.kernel.org>; Wed, 24 Apr 2024 11:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713956833; cv=none; b=awKwMAOMTj0uIJzQ72zDw13NF35zDAFID201WmHfv7figmoAWDEKzSPP9QawQZGJZ5OROpbz7atoA7RmiamJ1ajqEUmsn7IdW7tYckXj4bwsLRMe49esEx9Rfn8flcimHLWojAcRUoiGVVPHycALYUch8EegeqWWPKBAvjhuT34=
+	t=1713958821; cv=none; b=VeU5c5wpU74aq7TW7LGtBeszl36DtIZeLUcAlJLq4ku+XeOL7adI9MGi3V7UsLDtOdkt8b/pf5yXyKruAI+eW/yCuyKoYGrVRjr3H/gXVsSS66xO/DPXYAm+2YeKUmMs6qZ2aJDFq5ag8yvPw6LonHz+LXjOnnUQCP3pc0PMXZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713956833; c=relaxed/simple;
-	bh=HIuZMhY7gmL38f+1HRFPKHO8EAylymTaSV39MZkYuXw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZTLyzHzbU2DiqReVKx6QD9f/zKkJIJAV7fjzUe/Ve5EeIoATQw1GEFKGLewFhG8Q3NQrAGRpra8FmuvNLmKitznMVkMjJJYvZIIMTqqnYry9ojSL7rnk4dQ4oLs6vXRfM2hr0F5YV5qjjp13piU+NsZjQUfrLa31AeFBfE8teBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ZTnGkGzy; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713958821; c=relaxed/simple;
+	bh=uPxQKTFjx1OojfL3XIvuRwqZqEHhetjhGQ/QNoCE0cs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=exOvcDr0Qc8lbxrcPEaLc96XJRmi/MWLXfIRL4xEQR0hl5NfAjOikn2oe2ddN/JB0Gcb51LyV6ZeZQJZGq6NZVyUhMe0uRrcCn7kFsE9RU+Oqadq4Ig0OX3Z8M8I1BSfRohTdjqclL1W3EYNyQPJcrMYFzRNdYOYqi8DZ9DP/7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=edKYD9Dn; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ZTnGkGzy"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713956788; x=1714561588; i=markus.elfring@web.de;
-	bh=HIuZMhY7gmL38f+1HRFPKHO8EAylymTaSV39MZkYuXw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ZTnGkGzyZ0PmSZaEiDOLvObJG2eYu2o07Dfxyro+gYNe4IYOg42S41aWvW1SgEOX
-	 d0v5CPMVvoidaHS/CbI6UwqujiWmn3lO/stFEr+GY3abiuiqfBVBCQsKZWGsChUEk
-	 l3yUrG+sfX9VgOOEUYxJV1Yy1RKY/2qtnyf75cUf8tKCnI2iBQhZmm8HBWHKirwkr
-	 aEtmK46przSiiCooJl68oC589FzPubfD8uTbJQjC3G5bpMBKTwOlVeBdFINdvjdrE
-	 G0LH+0Mu7B6frOOULFiu2+NAzvhz+4U/jqHNIc4Ny4rWVOj9p2ixjsSER2Zx7JqwN
-	 Jn+yvPqUNKvz7SZj1A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N79N8-1skfFo0Gui-016yeo; Wed, 24
- Apr 2024 13:06:28 +0200
-Message-ID: <a89a7147-57b3-4881-86e0-410eab56a91d@web.de>
-Date: Wed, 24 Apr 2024 13:06:26 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="edKYD9Dn"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-346b146199eso5347276f8f.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 24 Apr 2024 04:40:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1713958817; x=1714563617; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lWMfbfXnYK3fqv0yrgeedC9giNqOZfecY/EM1i6Y9pw=;
+        b=edKYD9Dn7FaCWOBjpHdZh4kLOcScK13PKLKG9a8zuh+rux5j/0bEp7lbhlhu+P27pk
+         SujBXnQa7jgAn4MzXbVLXsYf0nkEzHgn7hbwkuDpFnxLmwq2lD47B6/yxtRTBIJD/sK0
+         NDCPjDHmye2Cfg8oVuOs6YYRu1h6sfuxvdTr1ruM6+8jFNjFCCAFWqt3Ss4iD4yTfCy6
+         SwouGHq5Ym4i9/2O0zDcQpq/bR5GrWghp/es4enWAe8Quj6XtEUah889VLl7GJ7TjIMg
+         d4SZbm0PK6cRsdRlR38QXJLdvgFJ+TMIloQ0+QYICRDoVGjn5DDHSOovoSZ27sXe3tYa
+         EhTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713958817; x=1714563617;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lWMfbfXnYK3fqv0yrgeedC9giNqOZfecY/EM1i6Y9pw=;
+        b=e9qhxsIc+DQtUm+/687Y5ZM/uZKjLhnx038uBMZ5JPHNchKm6b9aC7fJoH31Uo1bQi
+         EG096U7VRmrl9WEGcDCIpN5lNK7Nl2jbqTWz1v2llL4jJRHNZ1VmeI947wQ7IHDU6Xa8
+         htS9jTXCny3fkTYmRltUw4CHOc+01DSSYauVVtOg6ShIg9xsAtRN9YsfuZAjh7LJ5Gcg
+         k9d0+Mkzp/BbUUmrXHbKLhTa+yEexXY5397h124B6970PkhOyu+5G+WXFqovz3d7OAeY
+         D8SLCSeeqtZjzdnzWUoDFcJCbu1SfYUGCmmmV2bRpzb4lN8CccBSx//cmWWFnZJLIHpp
+         OC+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVz29m2Rq3NSZPf0Hp+H9r3CFsSy+GSHyVX7+dPe2J7msCUV4R1bHY918PIQrOIVCu5eebdvBrTkfJFsxoocWcZdDbZ+X/ppe9A7OkHn9nD
+X-Gm-Message-State: AOJu0YwBZyC64UtWiEfaO3OvwluUJMZscYPJJyrfT2sD9fKU1eXT9tin
+	DggV2uHkwM84fIuh1Gcnvz0gcR7jp2O2OUZ0HvE26WPXO63eJOtx0l3uet7GjYM=
+X-Google-Smtp-Source: AGHT+IEWJT/8VK6y4z/3yPVqZFVfOmJf5zYfnoJ8CK24bfiYAkNVefNagGs454ZH+JH0euJmK90N9w==
+X-Received: by 2002:a5d:568d:0:b0:34a:9b75:cb95 with SMTP id f13-20020a5d568d000000b0034a9b75cb95mr1449964wrv.37.1713958816645;
+        Wed, 24 Apr 2024 04:40:16 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id d4-20020adfe2c4000000b0034a3a0a753asm15306805wrj.100.2024.04.24.04.40.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Apr 2024 04:40:16 -0700 (PDT)
+Date: Wed, 24 Apr 2024 14:40:11 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Yangtao Li <tiny.windzz@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>, linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] cpufreq: sun50i: fix error returns in dt_has_supported_hw()
+Message-ID: <9bfe5703-b39b-4d98-9995-f6a7d0ea558d@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2] sh: Call paging_init() earlier in the init sequence
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Oreoluwa Babatunde <quic_obabatun@quicinc.com>, linux-sh@vger.kernel.org,
- kernel-janitors@vger.kernel.org, kernel@quicinc.com,
- Rich Felker <dalias@libc.org>, Rob Herring <robh@kernel.org>,
- Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>
-References: <20240423233150.74302-1-quic_obabatun@quicinc.com>
- <f74fdb82-5d66-48f2-830e-3874570f022e@web.de>
- <7dd171cc41474871408f06326aea5cb87923e454.camel@physik.fu-berlin.de>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <7dd171cc41474871408f06326aea5cb87923e454.camel@physik.fu-berlin.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:zRNMe9qrU5aJRpoCAfC5rz7EUjw5g56wfPskauKuNvH3ZMG5EEZ
- P8nP8/oqVw4ue8jYew8HIpRoghFb6hsUIi51KaduMss+ekyviVrdfraIlD2lN5ffL0bL8rC
- YbdAMzq6yiBptALvY8hMKpXQ2is5lA35FX76LL3M8qt4R7UA8FI+FEoRaf4BlDkXAplQ9dl
- mUCM7hqO/XHtIjBtEjY7w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:QllExh7Fwoc=;bjfyI7DOEdkwOJ0LEZi2g3NyULL
- hKf7pVdwBQpHfkUeAIq+sGCyuhCZFB9oxhB+lEfwqiSCUPK5IwTDZ/4yBj5+PdCkhLe3/O0k0
- ACbMfd4XSDcsQWLFm9faOre3A+4H3+AaluNhfviqTy2Bx1pPdc1Pkj/cE1W5VMO3td94e2Uo5
- GiDogpomprcEyRT9DfqQJkblyrHAyVgI5KozmnfAd84y0553AwSlWAz5JnqRNyMNllCmib33I
- ZfMjEk378K/iFdzV1KnAY7sLkuilc7TWB/kqft4pQRZ3ufe5AiYyCmoJ7kKZEdZkjFQqPrlYE
- pIt2HmEHzWtWwh13yPNsJ1ZS3Mfl/gI9sJATaPlBKQjzVnmle/s1svJZT4s6UHULmeyWKsBkm
- wCNsqZ62PYQB25h11NYbWBNys/yeUBtmBVXOHlaYnTC32WkLniN6KEeVlzofTJoqBJ/Wr9G0A
- /l2MfMCj2HEZRfHXCpb3KJfwhSbYnRd6Dt93E6YF9Goc2Kf3oOg9ExdH++8SJKnBivguKI4sY
- aPhryC5XfXrpTDKwYfjdwpSPqnrFtsrtm1TKTlmukyLSVa1hS8g6DI0Z25ks0h5ZtuKfPyr6Q
- cvLAP0+eSvPJg45YtV+LarDmRgpPO6X9bIPYHFr82r+Pdn6h1obq8AgfXBAi0IMmNqrHcL7fh
- 6eJKdR3/0+oLSZLW8fzKcQ7J6JRqTiEi5MUvjCJue2ItvBzaTUOXs9hcVNEduaBtUhCjPkR7I
- VeEW4y5co+kMd5pd7g3Y9kYChZFMS1309aEOwlML7hkZFzinm7s8f74Dmq+17EMbGswumnmKQ
- 8w3ljYhjMjgZFygpClytMyLS7ncClPU0ocTBieZaGmOTk=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
->> =E2=80=A6
->>> Hence, move the call to paging_init() to be earlier in the init
->>> sequence so that the reserved memory regions are set aside before any
->>> allocations are done using memblock.
->> =E2=80=A6
->>
->> Will the tag =E2=80=9CFixes=E2=80=9D become relevant here?
->
-> I'm not aware of any bugs that have been reported in this context.
+The dt_has_supported_hw() function returns type bool.  That means these
+negative error codes are cast to true but the function should return
+false instead.
 
-Can the mentioned questionable function call ordering be interpreted
-as a programming mistake?
+Fixes: fa5aec9561cf ("cpufreq: sun50i: Add support for opp_supported_hw")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/cpufreq/sun50i-cpufreq-nvmem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Regards,
-Markus
+diff --git a/drivers/cpufreq/sun50i-cpufreq-nvmem.c b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
+index cd50cea16a87..0b882765cd66 100644
+--- a/drivers/cpufreq/sun50i-cpufreq-nvmem.c
++++ b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
+@@ -136,11 +136,11 @@ static bool dt_has_supported_hw(void)
+ 
+ 	cpu_dev = get_cpu_device(0);
+ 	if (!cpu_dev)
+-		return -ENODEV;
++		return false;
+ 
+ 	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
+ 	if (!np)
+-		return -ENOENT;
++		return false;
+ 
+ 	for_each_child_of_node(np, opp) {
+ 		if (of_find_property(opp, "opp-supported-hw", NULL)) {
+-- 
+2.43.0
+
