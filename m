@@ -1,40 +1,41 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5DB3EA66;
-	Wed, 24 Apr 2024 10:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C652159903;
+	Wed, 24 Apr 2024 11:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713955764; cv=none; b=KSjt6QNduziLR2PweJEhSu/JVxU1+drhLpXj5UKWW2ic8PZ30exCORpEuNM9Wc6Mo+lJRxRkx7fxBrMN6ysmZoMyVkyko8DejixAeeVGccjXmlmRBqnxeYfUua0drdiTSl4GiTzATKOQgx0kagzF0qsDZNj5W9EJvQfldCSnKaE=
+	t=1713956833; cv=none; b=awKwMAOMTj0uIJzQ72zDw13NF35zDAFID201WmHfv7figmoAWDEKzSPP9QawQZGJZ5OROpbz7atoA7RmiamJ1ajqEUmsn7IdW7tYckXj4bwsLRMe49esEx9Rfn8flcimHLWojAcRUoiGVVPHycALYUch8EegeqWWPKBAvjhuT34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713955764; c=relaxed/simple;
-	bh=Yee0/Osb8LuV3ZB2AQuxep76YOpKew5FVBEd5LX1IP0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=g6AsjhaG48kDI5i1DRtoMKNyJ9Z5WoYYwtxpNFBZGBMF9DqFB5tUPD7wZ3b7LqUINkYPWLvzqosuNvubTSslW0E33Pmi2MjMkzf6ef8QL5XIpULm/LdqzEvx5Y6SNZBIb0OfzGZ3sdIIVz4xTATZBvRiZvVYlBQ4ourWFwnh9v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HZWPnBpY; arc=none smtp.client-ip=212.227.17.12
+	s=arc-20240116; t=1713956833; c=relaxed/simple;
+	bh=HIuZMhY7gmL38f+1HRFPKHO8EAylymTaSV39MZkYuXw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZTLyzHzbU2DiqReVKx6QD9f/zKkJIJAV7fjzUe/Ve5EeIoATQw1GEFKGLewFhG8Q3NQrAGRpra8FmuvNLmKitznMVkMjJJYvZIIMTqqnYry9ojSL7rnk4dQ4oLs6vXRfM2hr0F5YV5qjjp13piU+NsZjQUfrLa31AeFBfE8teBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ZTnGkGzy; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HZWPnBpY"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ZTnGkGzy"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713955735; x=1714560535; i=markus.elfring@web.de;
-	bh=Qk2Z9Ur/axCDf3ITMI3JPxcQXOHmAKvjUk3aT8fYJig=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=HZWPnBpYG78wi6FtGgGW3nJxdpOlFMEO+jprXyl+stSY2M6NWD90qe16+McfvgpC
-	 o6lXPzI2TjHFnCyQ5FySjnsIelOoHiir71RG6MBagMPIJJ1NLL8CfBrsMvCetMswa
-	 qNqA13j1gXp9ovCSuuXpqYz6T6ixxCnSHolZm5dTEVid+pzZ2wrd5LtHT2ioEOA7T
-	 aNt+2zWlxkUApJtNNuYPiEgSbLdqQnI8u88a96IgK6tWF5gxhfRp9Mn315ELA4njF
-	 6DBuWWTweleB4i5mLhc85HeDIoEPiFrNihua+Hbe4RSVuWUuOShiwz5r3d35qU4jB
-	 FoAKx/wrycVpbbfqfA==
+	s=s29768273; t=1713956788; x=1714561588; i=markus.elfring@web.de;
+	bh=HIuZMhY7gmL38f+1HRFPKHO8EAylymTaSV39MZkYuXw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ZTnGkGzyZ0PmSZaEiDOLvObJG2eYu2o07Dfxyro+gYNe4IYOg42S41aWvW1SgEOX
+	 d0v5CPMVvoidaHS/CbI6UwqujiWmn3lO/stFEr+GY3abiuiqfBVBCQsKZWGsChUEk
+	 l3yUrG+sfX9VgOOEUYxJV1Yy1RKY/2qtnyf75cUf8tKCnI2iBQhZmm8HBWHKirwkr
+	 aEtmK46przSiiCooJl68oC589FzPubfD8uTbJQjC3G5bpMBKTwOlVeBdFINdvjdrE
+	 G0LH+0Mu7B6frOOULFiu2+NAzvhz+4U/jqHNIc4Ny4rWVOj9p2ixjsSER2Zx7JqwN
+	 Jn+yvPqUNKvz7SZj1A==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N62yY-1sjZ4I3ftQ-016hUt; Wed, 24
- Apr 2024 12:48:54 +0200
-Message-ID: <bf6e727e-a28c-4605-8a47-ac33550ebb10@web.de>
-Date: Wed, 24 Apr 2024 12:48:53 +0200
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N79N8-1skfFo0Gui-016yeo; Wed, 24
+ Apr 2024 13:06:28 +0200
+Message-ID: <a89a7147-57b3-4881-86e0-410eab56a91d@web.de>
+Date: Wed, 24 Apr 2024 13:06:26 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,57 +43,53 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Kunwu Chan <chentao@kylinos.cn>, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Eduard Zingerman
- <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
- Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@google.com>,
- Yonghong Song <yonghong.song@linux.dev>
-Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <kunwu.chan@hotmail.com>
-References: <20240424020444.2375773-5-chentao@kylinos.cn>
-Subject: Re: [PATCH bpf-next 4/4] selftests/bpf: Add a null pointer check for
- the serial_test_tp_attach_query
+Subject: Re: [v2] sh: Call paging_init() earlier in the init sequence
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Oreoluwa Babatunde <quic_obabatun@quicinc.com>, linux-sh@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, kernel@quicinc.com,
+ Rich Felker <dalias@libc.org>, Rob Herring <robh@kernel.org>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+References: <20240423233150.74302-1-quic_obabatun@quicinc.com>
+ <f74fdb82-5d66-48f2-830e-3874570f022e@web.de>
+ <7dd171cc41474871408f06326aea5cb87923e454.camel@physik.fu-berlin.de>
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240424020444.2375773-5-chentao@kylinos.cn>
+In-Reply-To: <7dd171cc41474871408f06326aea5cb87923e454.camel@physik.fu-berlin.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:c7wSIBl9mvxe/oo1tdl2vCRED6SYaYM8u6v4WauSkzejejYjAAt
- np5HfYpoZymH9VE+IZbNGK7UqHxxYOoeUNdeHlUWsqagJoj7pULCM6DnYHOSFT7WVDt91ul
- agYKJlHPB1bpxlkv27osy0n4hLtJv25QQFmLZR/q4HZ3wmS+4Iuj4o0oBrxiFbHlhoBgknI
- ktcCV5r86GvRaGWcBc6NA==
+X-Provags-ID: V03:K1:zRNMe9qrU5aJRpoCAfC5rz7EUjw5g56wfPskauKuNvH3ZMG5EEZ
+ P8nP8/oqVw4ue8jYew8HIpRoghFb6hsUIi51KaduMss+ekyviVrdfraIlD2lN5ffL0bL8rC
+ YbdAMzq6yiBptALvY8hMKpXQ2is5lA35FX76LL3M8qt4R7UA8FI+FEoRaf4BlDkXAplQ9dl
+ mUCM7hqO/XHtIjBtEjY7w==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:H46wqUsSReI=;BwoCsKVvVwzyZjotKK3Nz6BIaFO
- X/dcVBjZ2kBDBNMpqeYhSD5fE4tCWcZ5jrxWULfBXJAr2EutOXOpgl1G0qu2H3JLazNGIZVPS
- PM3RpIj+qFRp+vdy3Ekyl05Ku4BzhxAToEeppc2Sv2tTdwxTHyMf/mCeXrQMdsidwROXDXLvp
- Cu6rZ90AVRNrMFDZLaPWZlpOT2cXZmxhC2waj+amMoPIGSxaT+FaIZKmSRdkT7SUXoRSOTdTo
- TEMcOXkYh4hwLboXRK06KVbg8ZT2D7xqBiwJKuFNFYeJqwSPLwdgaKvNwMT+Pz4d6BM1bcLh0
- HbXWTr41j4LCOCkZ8lhAipr05tDtXE1tZp57zSVaJItwuy8zEGYUB5cggXlscrTIOBU6wN800
- AMloERz30e2+6F7R4AaD2gDpqUZVAK2EwW9C5wjxvQ+Yvp2tadPg6SG3b6BI/HM0wUTCUNsvz
- Ni1pVUsjoAjvqWRsJiBAMVv81/lU1vNujxtgJxIeukmuxGBspmv3pxl+FH/MPalJL680Ekb+w
- Ka+hYTjJk9qkGtisXZx9m8hNtlnZjvr/jKNG5ZS64tSKMvuRJN4sm3n5nXn3e3neO2LHewWus
- Vj84ewHD4KZiRzHWtEyU7FVismC0UQ7sQm4nWC7uGj+0854UawZM24d+FvjDho0Nijsx/DJHw
- GB2ZLGjCyZwR1q7Ok1SbWRlaZGegWyTnvNHv7OpKBLv2Og5WTpnK27cvgmEMhUTEnXpIBHz7m
- Ad+oF+tdWJDq0DGgfDmy5cXeSPD8fuIVmylzy1pfQGotMlo8T5P8/VlFztNfRdmyc5P7i3fks
- ltS7ZFjcRL36hJQsO/0M8GegraZ6hIMpp0ZHvYwIvjQug=
+UI-OutboundReport: notjunk:1;M01:P0:QllExh7Fwoc=;bjfyI7DOEdkwOJ0LEZi2g3NyULL
+ hKf7pVdwBQpHfkUeAIq+sGCyuhCZFB9oxhB+lEfwqiSCUPK5IwTDZ/4yBj5+PdCkhLe3/O0k0
+ ACbMfd4XSDcsQWLFm9faOre3A+4H3+AaluNhfviqTy2Bx1pPdc1Pkj/cE1W5VMO3td94e2Uo5
+ GiDogpomprcEyRT9DfqQJkblyrHAyVgI5KozmnfAd84y0553AwSlWAz5JnqRNyMNllCmib33I
+ ZfMjEk378K/iFdzV1KnAY7sLkuilc7TWB/kqft4pQRZ3ufe5AiYyCmoJ7kKZEdZkjFQqPrlYE
+ pIt2HmEHzWtWwh13yPNsJ1ZS3Mfl/gI9sJATaPlBKQjzVnmle/s1svJZT4s6UHULmeyWKsBkm
+ wCNsqZ62PYQB25h11NYbWBNys/yeUBtmBVXOHlaYnTC32WkLniN6KEeVlzofTJoqBJ/Wr9G0A
+ /l2MfMCj2HEZRfHXCpb3KJfwhSbYnRd6Dt93E6YF9Goc2Kf3oOg9ExdH++8SJKnBivguKI4sY
+ aPhryC5XfXrpTDKwYfjdwpSPqnrFtsrtm1TKTlmukyLSVa1hS8g6DI0Z25ks0h5ZtuKfPyr6Q
+ cvLAP0+eSvPJg45YtV+LarDmRgpPO6X9bIPYHFr82r+Pdn6h1obq8AgfXBAi0IMmNqrHcL7fh
+ 6eJKdR3/0+oLSZLW8fzKcQ7J6JRqTiEi5MUvjCJue2ItvBzaTUOXs9hcVNEduaBtUhCjPkR7I
+ VeEW4y5co+kMd5pd7g3Y9kYChZFMS1309aEOwlML7hkZFzinm7s8f74Dmq+17EMbGswumnmKQ
+ 8w3ljYhjMjgZFygpClytMyLS7ncClPU0ocTBieZaGmOTk=
 
-=E2=80=A6
-> Add the malloc failure checking to avoid possible null
-> dereference.
-=E2=80=A6
+>> =E2=80=A6
+>>> Hence, move the call to paging_init() to be earlier in the init
+>>> sequence so that the reserved memory regions are set aside before any
+>>> allocations are done using memblock.
+>> =E2=80=A6
+>>
+>> Will the tag =E2=80=9CFixes=E2=80=9D become relevant here?
+>
+> I'm not aware of any bugs that have been reported in this context.
 
-How do you think about to use the following wording variant?
-
-   Add a return value check so that a null pointer dereference will be avo=
-ided
-   after a memory allocation failure.
-
-
-Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
+Can the mentioned questionable function call ordering be interpreted
+as a programming mistake?
 
 Regards,
 Markus
