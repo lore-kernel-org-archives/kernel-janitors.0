@@ -1,58 +1,56 @@
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFC615E5BE
-	for <kernel-janitors@vger.kernel.org>; Wed, 24 Apr 2024 14:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB34C15ECDE
+	for <kernel-janitors@vger.kernel.org>; Wed, 24 Apr 2024 14:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713970045; cv=none; b=ftLLkhCR98czljFNKcFJv2H8tZDa2TAR1u7naKvMOcXiGE/bg2Bv2UVcFMEo4FAIxllhSbCmnbL12trVQwKkqPoL6ghOPHkA6mhn8i1l/Cxg820gK5s8+j+/xgtZQ1UB1MzUccga9gaEzY1Qg8JjfdpLuZ3wKwc0ruq7YyxQJgE=
+	t=1713970307; cv=none; b=YpD2156jen9LTvz4dsOh8gC9BKU4kAxGu0IkuLOH7tqnUZ2aAh3A43YfYAEkvs2W+nJ4yKOvDENEuEiaWKxmNy14iycBgvhR+fRlRvK1XxALNimqsGGVus+hnqRKfrW308rynbb+gVD4SzTzDQLiaESevZMiIgiK4qWf9UOjyVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713970045; c=relaxed/simple;
-	bh=jJfd4IpFSTzCj1thfurDYFV0ttjhLiG1qEH9ToU7uvk=;
+	s=arc-20240116; t=1713970307; c=relaxed/simple;
+	bh=L5PgwQXqh35ljEV/QfjmAhY+dATTVZXtCGt9GLB66PA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NW2SJwwa4Ie9cPVRVy0vHsmwNYu02gVS3J8IjPyD+iVOrJ7LIOFaLld+D8K6aiw2WoXhDNZ46RIqXYnKPthnUEZ6u2O4bCHSyBvmL45frLZUgtu6j88Ybu7/+m/bnZvK9lslhEYA8+9UplZNjuhUOA5bWy6PUSfswk7ZWvFxCnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gLHT0Dix; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=T5/RTTS3lQYMyH2eICiIrGvF3ISEew9QUdtq1geZi+gGyCID8P9GPK4UqdK6/iB0VWaBz9ZYo+zm7TN1fHWsv4Wj8HHOoqljTV52/rlCgIT+7pyYiS29SGjeJFUAtXIiJdVCjAF7Y30u+nAAeFZAVxCk/F1iVPXwxEezdKtv6K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X78OGA4f; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gLHT0Dix"
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61b2abd30f9so113517357b3.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 24 Apr 2024 07:47:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X78OGA4f"
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ae9176aad8so2277878a91.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 24 Apr 2024 07:51:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1713970042; x=1714574842; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lBUMF9M0aXotFfthPHhv12Yga6tlL0sQVtn3IgcNIjg=;
-        b=gLHT0DixEIxV/L64q27Ss1sTGExF3Aum3m+EfcR2beLbl8Se9X1mGMXUryQayXTDFg
-         RLMG2fWpsiR2VD11DDaq89AFocj4WUR/BSX6H0cxCS7JpzZc0SrHNGpZwfF9DbOxopJr
-         t3oRxSCgD/tR2V4aZG55aTebrICmBqUaO+YFY4GKt36pcqOb7EIicstFYozXL8sYMru2
-         1d1yO2+BsT/FeNGqAkbSiD9ohhAH8bJTX6TvBpeh23aqu4Yh7UCVe3UXvqb72dUqYp99
-         f7r5aXvguNBRZ27ZW9Kbc2XNBaSMhJv8ZJRvTpfIdeIhcl+1N6w5xjUxbpPIC5iuE9hy
-         PUTw==
+        d=google.com; s=20230601; t=1713970306; x=1714575106; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CI1RTUkbvNrBSkw+K5Z39nzZbpfRzSvThM/4gtY5VFY=;
+        b=X78OGA4fwe0/X+KjwaAwYyNgu+35YHb0vTrhK7LdBdREAUTNLhIidK7p4XiJuHKZ81
+         Qe/87ErcEWReDflfs7bIzsVt8t5zNZzeBfw4zdxhfh9YONQwgcD/95LmhAVah6txl0mi
+         36cPnqW0mIY3wfpor/TJA36iN1JfTlMEKwzLZK5Crw+cDWAwgHbElwzwtZnyOnfRHuvg
+         RaQCcXFzJJ9d8yq2m6ctIQf0CRfonqe+1BAquEjLISrBJKbcIP6NnR26/6cROr4UHIm5
+         dj+Jf1P/mmlbKwOPEwO4t0tvn0q6NqL9AvZ3Yf1Zfrbl4/asZ5wi2wzaJ/e5Zkngj83/
+         nKSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713970042; x=1714574842;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lBUMF9M0aXotFfthPHhv12Yga6tlL0sQVtn3IgcNIjg=;
-        b=V/z81hdNdTVu5kkFjxu24/4icMrb6vro2FXidmLeIHKbnk5Uy5SLVMr+vSoNhQM14+
-         Lzjem1c+AfpjRv7ZxYwb2vRJXIStrQiHwn6DeEbG38k5ZOOu5vooSpRbyvvyFNqhfvJ1
-         sIq5Y3vFOCs6hxjLBNzpO67azpUBxuMqneQEVK6SGDv8RfNp6wCEMqXqyT0nG7GwqlVT
-         vzeqmBAu+GaQX5yxqqEanzlEYaP0oh5MX/+EO/5dvbbqLelf0CbxUSyPo4azHBiicNQo
-         Sxt6UR0DpuPX+6933vVYoDNi6+5PTCpQDCp6KDFPPZylB6RUkXvS+LOpg5LFiHDVgars
-         AJJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXQNaX7A69W/X16lazkP15DKhItP63W6AfRg4UtClt2nYa/QHZavCJlGMAJzoVj0Jz7L56lPXh9VetpEazhP230jj/Ra466L5auPu48Q29
-X-Gm-Message-State: AOJu0YwHFt6jKP99iokyJq3o9SfdUd45bX7wnDtOH1iWAsiEkSzQyzV7
-	9KZXpobV1fV4A+2QnHC4sPcGmFSd5939InvFRJwMITvAd0LWaTxmF3RNaHxxuUYXIUCGwnX87JZ
-	P0A==
-X-Google-Smtp-Source: AGHT+IEs3VfA7KQdtkyHqJd0ahaIMhMEZs/CAyL0Jvui8r441EvbKI7ZhQcG9gTr1SgicGN29+v/lqbme1g=
+        d=1e100.net; s=20230601; t=1713970306; x=1714575106;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CI1RTUkbvNrBSkw+K5Z39nzZbpfRzSvThM/4gtY5VFY=;
+        b=pUFmgn5bXl8zek6lu9d2e1wNFwq0tsyfiZp13FgSfLVk4iupQZBPtXq6NOIPzERhsX
+         MFaH41SknVFGPN1RxpV18Nc4TXOaUl+fgn2vei+tEkOzPw8F109CxiXuPz3xhedtJ2sp
+         zNBQVaRCfhe0nZPXixsv+UYmgQLBAVyVf9Kj7gzFFh9ohoCvOxAMPxRWCxCJA2xRGspC
+         9/W+r7zVCjHgOL7AcnzfOhOIi/Mb0Xc56HM+ehy9MOGI0h8SpIGmBhUSJ1UYzYwD0REr
+         8/GNF18Gq51jsmGC09p/BQMm+aeFi52Jfh9kb81ZuYsQt5N6zjg8L/j9eBzRRT0Y4cXg
+         SFBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWhlBme9EiTROlVKS6uZyNImjns/5OXZxH99cOaB9OC+lJGPj39DNh8iwoKAMDcZ6AOuqhp0Lmfn959yGewD9fCPUGw132beEcdnTn+Zq3P
+X-Gm-Message-State: AOJu0YwPC7TdGngrMfkeclLBDQQP68ZvRD0t5yZt0pgN7m/A7iJyEA4i
+	pisalXkjrrV1REG1ax8oycFH5H2u8psCRqKwthh9DdtOMLbvu6VwjGRY7pidxptdFenPGp3qAan
+	53Q==
+X-Google-Smtp-Source: AGHT+IEkGEBGl103CCfB1x44lCEAhqJw73hICMcBVrYM5jo0ROCAmB4Ygu81wDS3jT7KCqkV6HSuf6vVHaE=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:1027:b0:de0:ecc6:4681 with SMTP id
- x7-20020a056902102700b00de0ecc64681mr234395ybt.1.1713970041911; Wed, 24 Apr
- 2024 07:47:21 -0700 (PDT)
-Date: Wed, 24 Apr 2024 07:47:20 -0700
-In-Reply-To: <9f67df9d-ab27-40b9-8849-3069649dc082@moroto.mountain>
+ (user=seanjc job=sendgmr) by 2002:a17:90a:9f8d:b0:2ae:cb7e:b5b3 with SMTP id
+ o13-20020a17090a9f8d00b002aecb7eb5b3mr10285pjp.6.1713970305856; Wed, 24 Apr
+ 2024 07:51:45 -0700 (PDT)
+Date: Wed, 24 Apr 2024 07:51:44 -0700
+In-Reply-To: <20240424-e31c64bda7872b0be52e4c16@orel>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -61,131 +59,38 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240423073952.2001989-1-chentao@kylinos.cn> <878bf83c-cd5b-48d0-8b4e-77223f1806dc@web.de>
  <ZifMAWn32tZBQHs0@google.com> <20240423-0db9024011213dcffe815c5c@orel>
- <ZigI48_cI7Twb9gD@google.com> <9f67df9d-ab27-40b9-8849-3069649dc082@moroto.mountain>
-Message-ID: <ZikbeCsIom80tDPR@google.com>
+ <ZigI48_cI7Twb9gD@google.com> <20240424-e31c64bda7872b0be52e4c16@orel>
+Message-ID: <ZikcgIhyRbz5APPZ@google.com>
 Subject: Re: [PATCH] KVM: selftests: Add 'malloc' failure check in test_vmx_nested_state
 From: Sean Christopherson <seanjc@google.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Andrew Jones <ajones@ventanamicro.com>, Markus Elfring <Markus.Elfring@web.de>, 
-	Kunwu Chan <chentao@kylinos.cn>, linux-kselftest@vger.kernel.org, kvm@vger.kernel.org, 
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>, Kunwu Chan <chentao@kylinos.cn>, 
+	linux-kselftest@vger.kernel.org, kvm@vger.kernel.org, 
 	kernel-janitors@vger.kernel.org, 
 	Muhammad Usama Anjum <usama.anjum@collabora.com>, Paolo Bonzini <pbonzini@redhat.com>, 
 	Shuah Khan <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
 	Kunwu Chan <kunwu.chan@hotmail.com>, Anup Patel <anup@brainfault.org>, 
 	Thomas Huth <thuth@redhat.com>, Oliver Upton <oliver.upton@linux.dev>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Apr 24, 2024, Dan Carpenter wrote:
+On Wed, Apr 24, 2024, Andrew Jones wrote:
 > On Tue, Apr 23, 2024 at 12:15:47PM -0700, Sean Christopherson wrote:
-> > On Tue, Apr 23, 2024, Andrew Jones wrote:
-> > > On Tue, Apr 23, 2024 at 07:56:01AM -0700, Sean Christopherson wrote:
-> > > > +others
-> > > >=20
-> > > > On Tue, Apr 23, 2024, Markus Elfring wrote:
-> > > > > =E2=80=A6
-> > > > > > This patch will add the malloc failure checking
-> > > > > =E2=80=A6
-> > > > >=20
-> > > > > * Please use a corresponding imperative wording for the change de=
-scription.
-> > > > >=20
-> > > > > * Would you like to add the tag =E2=80=9CFixes=E2=80=9D according=
-ly?
-> > > >=20
-> > > > Nah, don't bother with Fixes.  OOM will cause the test to fail rega=
-rdless, the
-> > > > fact that it gets an assert instead a NULL pointer deref is nice to=
- have, but by
-> > > > no means does it fix a bug.
-> > > >=20
-> > > > > > +++ b/tools/testing/selftests/kvm/x86_64/vmx_set_nested_state_t=
-est.c
-> > > > > > @@ -91,6 +91,7 @@ void test_vmx_nested_state(struct kvm_vcpu *v=
-cpu)
-> > > > > >  	const int state_sz =3D sizeof(struct kvm_nested_state) + getp=
-agesize();
-> > > > > >  	struct kvm_nested_state *state =3D
-> > > > > >  		(struct kvm_nested_state *)malloc(state_sz);
-> > > > > > +	TEST_ASSERT(state, "-ENOMEM when allocating kvm state");
-> > > > > =E2=80=A6
-> > > > >=20
-> > > > > Can =E2=80=9Cerrno=E2=80=9D be relevant for the error message con=
-struction?
-> > > >=20
-> > > > Probably not, but there's also no reason to assume ENOMEM.  TEST_AS=
-SERT() spits
-> > > > out the actual errno, and we can just say something like "malloc() =
-failed for
-> > > > blah blah blah". =20
-> > > >=20
-> > > > But rather than keeping playing whack-a-mole, what if we add macros=
- to perform
-> > > > allocations and assert on the result?  I have zero interest in chas=
-ing down all
-> > > > of the "unsafe" allocations, and odds are very good that we'll coll=
-ectively fail
-> > > > to enforce checking on new code.
-> > > >=20
-> > > > E.g. something like (obviously won't compile, just for demonstratio=
-n purposes)
-> > > >=20
-> > > > #define kvm_malloc(x)
-> > > > ({
-> > > > 	void *__ret;
-> > > >=20
-> > > > 	__ret  =3D malloc(x);
-> > > > 	TEST_ASSERT(__ret, "Failed malloc(" #x ")\n");
-> > > > 	__ret;
-> > > > })
-> > > >=20
-> > > > #define kvm_calloc(x, y)
-> > > > ({
-> > > > 	void *__ret;
-> > > >=20
-> > > > 	__ret  =3D calloc(x, y);
-> > > > 	TEST_ASSERT(__ret, "Failed calloc(" #x ", " #y ")\n");
-> > > > 	__ret;
-> > > > })
-> > >=20
-> > > Sounds good to me, but I'd call them test_malloc, test_calloc, etc. a=
-nd
-> > > put them in include/test_util.h
-> >=20
-> > Possibly terrible idea: what if we used kmalloc() and kcalloc()?  K is =
-for KVM :-)
->=20
-> That's a legit terrible idea...  It probably would trigger more static
-> checker warnings because the general policy is kmalloc() is kernel code
-> and we *have* to test for errors.
+> ...
+> > I almost wonder if we should just pick a prefix that's less obviously connected
+> > to KVM and/or selftests, but unique and short.
+> >
+> 
+> How about kvmsft_ ? It's based on the ksft_ prefix of kselftest.h. Maybe
+> it's too close to ksft though and would be confusing when using both in
+> the same test?
 
-Roger that.
+I would prefer something short, and for whatever reason I have a mental block
+with ksft.  I always read it as "k soft", which is completely nonsensical :-)
 
-> To be honest, I would have just rejected the first patch.  You
-> obviously know this and have said this earlier in the thread but just
-> for the other people, this is a userspace test that runs for a short
-> time and then exits.  If it gets killed because we don't have enough
-> memory that's fine.  It would be better to just fix the static checker
-> to not print pointless warnings or educate people to ignore warnings
-> like this.
+> I'm not a huge fan of capital letters, but we could also do something like
+> MALLOC()/CALLOC().
 
-This particular patch may have been motiviated by a static checker, but I d=
-oubt
-static checkers are responsible for all of the many sanity checks on malloc=
-() in
-KVM selftests.  And while I agree that the sanity checks don't and much val=
-ue,
-deleting the existing checks and preventing checks from being reintroduced =
-would
-be a never ending battle.
-
-> Creating the test_malloc() to silence the warning also seems like an
-> okay idea as well.
-
-Yeah, it's not exactly my first choice, but the reality is that people writ=
-e KVM
-elftests by copying an existing test (often literally), and so the best way=
- to
-educate developers on the preferred approach/style is to have all existing =
-code
-adhere to a single approach/style.
+Hmm, I'm not usually a fan either, but that could actually work quite well in this
+case.  It would be quite intuitive, easy to visually parse whereas tmalloc() vs
+malloc() kinda looks like a typo, and would more clearly communicate that they're
+macros.
