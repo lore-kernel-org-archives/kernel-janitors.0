@@ -1,94 +1,86 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A8F158211;
-	Wed, 24 Apr 2024 10:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D800158211;
+	Wed, 24 Apr 2024 10:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713954135; cv=none; b=Eo0ug7v3m5W0Jcr2gc1BeCNYs2bJurckkUjkGH1WR51wV+pHQmKZaq4qGetd9vJ5p/ckpst6VMTSvS4B5hsU5fiIkjTUb6SJQD7vZqgW0G0hFAkQKDhagX1xgXjF1B3Nv0mO4tA7n+HUBTyG9NphheP05pjAwTKUHCfTy2ITA+E=
+	t=1713954262; cv=none; b=hgSc0Te/E42RiSAy3KD1aUJp/VyZ4mM8n0QR3NW3X834juIdqVYpywISvYYeHCxZOenpBsDmzW1jhaOsUIHhZB1P4GDHOW9rQ/1C9GzwXgPsQqs85HklCwT6lrKbPR92GuB0EDgLb4uR86G9ZQXOnjpocnpSkDbUSccuM/Z8caI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713954135; c=relaxed/simple;
-	bh=S+8tLFz8PqdpmPk9GLNuV9GGLXz9ZgJvD9u5g+3nVz4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=G02ayHH+0dbX3pR5utmcKISz+gCumIZDhKoZCrRPWJew2p2FU2H5Z5g6k5IPj02yXKmdtfLShA0xRGHC/hAkxCfDYRbCa6ZNJAgfRfcLHOd5Pjqe4KGb1/Z0wHhVPRfnouSyVCzIZ3i9HZy4EAkToo8br7HMRpsZed1JvhEl68Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=W5M6XgWc; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713954262; c=relaxed/simple;
+	bh=Dr5dwzcjqw7dSzyi89UvoPy4zSpLCzrvPxvOavEG0FI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iEfz9+6fvJ5pSHbT/enfyPyJUHjRGaqsTVFrxrYrtpdrFrrSN8qfIUKhgxCvKhdCmRFd6fS8X2sHyBr+1bzPiVsLIVgTjDYTgXmgn/XH9i0BQL9z/uHgVsY8yKuqY70bxtrZ5bvqRjGB7zdrCCu3BFDj8ziEHzsiBwXhZULNij4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=Cs4Jp7Hd; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="W5M6XgWc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713954088; x=1714558888; i=markus.elfring@web.de;
-	bh=S+8tLFz8PqdpmPk9GLNuV9GGLXz9ZgJvD9u5g+3nVz4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=W5M6XgWcQc6NXXpuPIsS+Oi3sjLW++hq1HDl8tUfSqkQjZ5yy3ZFhJbTqRn/zEUt
-	 cdSISmCgYgY8mJce4JIgmjPdHeqKXyPMlmSNeBrt446rqdgFvpoz7YR4IFTMk033K
-	 cx7UnhDlDawodbRD3EPM25VmmNJNArxvcJ5mVrAXZevs9xxnf4wD3VePOILWHS4ah
-	 EGVW0F0rImyKsWFzwCYZ2M0GPpZrswv1goFC3N9QtrxStelrcKjiLIS//Gn342RPX
-	 p2o+I6f7x/Vh8TzKTJu7cQ/mFigI9W+RENw7iHA8UAcTWgh2hbdGuWN+2DX1xA3J7
-	 P+2FQyWxVUG8D9CZtw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MTfol-1s7VBN2fK1-00TV25; Wed, 24
- Apr 2024 12:21:28 +0200
-Message-ID: <ba66425f-d164-4c95-a5af-4b8fc7bd93fe@web.de>
-Date: Wed, 24 Apr 2024 12:21:20 +0200
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="Cs4Jp7Hd"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=d/MD22uaUm8+BoL9TbUyYnjmK+2qYuIFAbrMDBfUVbA=; t=1713954259; x=1714559059; 
+	b=Cs4Jp7HdCyicJnycDLC4R7+83WTpkwmSTYKtstZd73WXn35NDWHYm4s5pg0N6PzIpFIUBzNDz0T
+	API3bAm2+NZz8KI7yAADJqZS5d19EijRkMFzzN1hucKXuhX7o8SFu7n8BrEyUoWpczraZmt1Vqteu
+	gIRhrJIcic/KWwIlOs6KDxfeNJR5SIgeVfj3Ig02Iwmoust/nYDF18Zb6/OTVMoLTUMAgbcRJBz+O
+	JOFWlmBFqyQXwOoK0cz3ZukHW5hNMn1FgiN5AA2Ud3Z+WNRhP+XAyBvBk2SM89YnsFV+dFLZlGoqP
+	gSMx1C1SVWlT3zQQPjOltSW6aVAe/eb+1vSg==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1rzZnU-00000000GUH-0cmV; Wed, 24 Apr 2024 12:24:16 +0200
+Received: from [80.95.105.245] (helo=[172.16.2.143])
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1rzZnT-00000001u5A-2sRA; Wed, 24 Apr 2024 12:24:16 +0200
+Message-ID: <7dd171cc41474871408f06326aea5cb87923e454.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v2] sh: Call paging_init() earlier in the init sequence
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Markus Elfring <Markus.Elfring@web.de>, Oreoluwa Babatunde
+ <quic_obabatun@quicinc.com>, linux-sh@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org, kernel@quicinc.com, Rich Felker
+ <dalias@libc.org>,  Rob Herring <robh@kernel.org>, Yoshinori Sato
+ <ysato@users.sourceforge.jp>
+Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Morton
+	 <akpm@linux-foundation.org>
+Date: Wed, 24 Apr 2024 12:24:14 +0200
+In-Reply-To: <f74fdb82-5d66-48f2-830e-3874570f022e@web.de>
+References: <20240423233150.74302-1-quic_obabatun@quicinc.com>
+	 <f74fdb82-5d66-48f2-830e-3874570f022e@web.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.0 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Kunwu Chan <chentao@kylinos.cn>, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Eduard Zingerman
- <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
- Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@google.com>,
- Yonghong Song <yonghong.song@linux.dev>
-Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <kunwu.chan@hotmail.com>
-References: <20240424020444.2375773-3-chentao@kylinos.cn>
-Subject: Re: [PATCH bpf-next 2/4] selftests/bpf/sockopt: Add a null pointer
- check for the run_test
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240424020444.2375773-3-chentao@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:KC6bNGqm6X3itQnerJETpmr4GAAO8pJRrAeWhMYeh8rhXZtT7ln
- gEOJqQMgnHXenqg22lUjHfm6UKnKN7DpfcDp2WkY+arEQ1GxXKQ3GCyblAhvv8/c3yNS3lI
- 0+TMfcMXcfYSxoxWmlUE8IW1DBAiAzqt/kHoPT8yG+OvoFBqBNMzAwikWUrRpkkUDN+SLO0
- /hLsQV33Y07Fcj0Qr6ucg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:hJUp4csJDOQ=;KIkK5uVgFabHMkVvLjvlayCilyp
- Zzdkeze4299HSKaYXMVNIoFgQPKwroFjH0BAh+0BsKnkbKTtDwXpDA1sdmvbUgu7hk9buvu1C
- DX92oe3A8dFwQbpzKv4sjMdLX/qV+q5O2ra8+uuIGH+L61BU1Qyrw5qHseO0JdngndFKCPuh5
- OmztHZSG1XjEYFfPuoSZl/AtYyZ8+K+x1wAeeXjKkTcxdXoph97EdYQYCMZwVtS4kastsiUqn
- KgTcd06RdHLhmaNZH9JOk/AGZ1/79Mm5Ra1jawJqV4GeU08Y9covCfHulHElpJBNjVoOBOdIZ
- Ro4bbq0ytbcINtFO2/Xx3QM18JxBqJFxu21/MYk55kfVOY2rT4M11jHhJtYzZu0ERMP4AjMJE
- 6w7vn+jAVbAKe8vBsYLQXRpBLUt9lJ5RT8czoRKgff9y90IoQmJcOHz0qokJ4gr8HkGdFUrjX
- sNgM4Q7yycl1b23okDV2IWU9YM8+XkkgLjtGwQqqadAC/zvuHnIFn2+G93QmtleTwOU8/a3bu
- 73GIu4fu8W6NwzZwLQBVFcDpLKo6eIv/oUAhXTpEAuV6Vj7iQzrxyjXIKetbWSQVtoKXCQVPo
- Te6uDYfY08CNqLzflLuCjnGKrXEoCM5JGGCwYsJkPT4N0hgk9iFGbpLHgkmM+7cCQktOSggit
- Kgw0Dtj6PscxaF4GraezkgRc+39Pk7Mw6nFyRgPUNKpPdmQFM5KErjtn5IDpMVKMCgHcTEI9T
- xS2H3clKTtPcoAD+9QYs82KcJKeQ8/f5wDpT+Zu5WdyoQqqojzuUkuH1RF7DualhA5nLdIcgc
- IV+MizNFTlkZfvTlw+wC+1gfAlgukK/m0wCJ6QwIbFyV0=
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-=E2=80=A6
-> This patch will add the malloc failure checking
-=E2=80=A6
+On Wed, 2024-04-24 at 10:45 +0200, Markus Elfring wrote:
+> =E2=80=A6
+> > Hence, move the call to paging_init() to be earlier in the init
+> > sequence so that the reserved memory regions are set aside before any
+> > allocations are done using memblock.
+> =E2=80=A6
+>=20
+> Will the tag =E2=80=9CFixes=E2=80=9D become relevant here?
 
-* Please use a corresponding imperative wording for the change description=
-.
+I'm not aware of any bugs that have been reported in this context.
 
-* Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
+Adrian
 
-
-Regards,
-Markus
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
