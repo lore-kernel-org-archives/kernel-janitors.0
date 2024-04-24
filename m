@@ -1,75 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E741422AF;
-	Wed, 24 Apr 2024 15:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF6313DBB2;
+	Wed, 24 Apr 2024 15:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713973225; cv=none; b=hOdWGvAJ0K2vObTjkL4llivvkNWDP6wm8K1Yknk6FZ8SDJf1bU97xiGW1HU5caRd6LXgBdStlSdPWz2nKxI4vABWdPo8oRWhwEMGLyguQhDvmy4QcQky6pJE84rE0h2zgwPclJOqEhaBwvmslttTyLCtSdS8ukGuxY1p91ewTBw=
+	t=1713973993; cv=none; b=shpI6HKoTwnRdA6pb+NgWa5CMjFvGGAlswLqbYKTOXvdhPTxr+yA7r7cdqCDCvyU+DZpGPYb7p7nyjRAMfJhI07GmAgku2SwyQt1lQTENQ8MAUV6iHgp0fs/brEsMR++2JC4MsfWYhsV18BIp7cBMTfbg+UcW9lbJ5MVJpjksRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713973225; c=relaxed/simple;
-	bh=AC95m6JL1F7JZG8sItYB3WOCvHcTlGuxSvUXzc4cQXo=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=ja+JXnbjBIlVZ7TXGgz4hGe5vKEIcmtQrYTMe+JK4pJzXmdEFM0JxyAymF1vROZLTB+TQBTfdJMBrB4/iHeiJvD54e14hAxMZLn98LqgM6dZVhOnyHE9+tjy38etL7tW2I4ogF66z8QYI2xVXqNDz/n4NSEoEatFOSANW+WtlhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AXzZwUfS; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AXzZwUfS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96481C113CD;
-	Wed, 24 Apr 2024 15:40:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713973224;
-	bh=AC95m6JL1F7JZG8sItYB3WOCvHcTlGuxSvUXzc4cQXo=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=AXzZwUfSlS63aY5NOuVanxUFc/7T2ibF20bWJKX5r7af+OvugTESTc8663kvPxhQv
-	 qyX2aUQXJUbWwyxmKga4BZ6Is04QHw9kUbxIThssBEtwu1ts2ZaNFJztqwnmh/zhiD
-	 G+s0mBzyM1uFIwFqd6FrXMjFWZa6ELu8hIUPi9gpx2iHulSbOp/jd2HA4kPlrqxnVB
-	 NXKEIn3g7LRh3oh89GFmbZ4LXf/HYT9A20nwKidgZ2JjiIs4ENj9uJGgTHdaah57le
-	 mW12s6BkIw8IYPiUXUoVDGI+V9LnICatyTiFSG/+g1SnQQMVMSC8MZl+cmjYHtziej
-	 5DmIXM0WF1dRg==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1713973993; c=relaxed/simple;
+	bh=cqQlTJYlnxpdMp1tQKkUwfXxp9N7FIOvRmzCX75X7js=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LlpxOscILPTWY2s9vNkcCHF2ImJbJMwV48J7ju6t8kJESXBhfdhguXx3I6xh4lSxbKJz7BkE2ongSAM0PAjrB481lfuY7FuCw9PSXT2fdm8eiV+PrU4lFLA0INuV17u7MCBc4k4tln+kX5WogFfh5eGHRI9nEXrXIJRwPh2Y8Gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 709531063;
+	Wed, 24 Apr 2024 08:53:39 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D0143F73F;
+	Wed, 24 Apr 2024 08:53:10 -0700 (PDT)
+Date: Wed, 24 Apr 2024 16:53:07 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Yangtao Li <tiny.windzz@gmail.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: sun50i: fix error returns in
+ dt_has_supported_hw()
+Message-ID: <20240424165307.16f45b21@donnerap.manchester.arm.com>
+In-Reply-To: <9bfe5703-b39b-4d98-9995-f6a7d0ea558d@moroto.mountain>
+References: <9bfe5703-b39b-4d98-9995-f6a7d0ea558d@moroto.mountain>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH wireless v2] wifi: ath10k: Fix an error code problem in
- ath10k_dbg_sta_write_peer_debug_trigger()
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20240422034243.938962-1-suhui@nfschina.com>
-References: <20240422034243.938962-1-suhui@nfschina.com>
-To: Su Hui <suhui@nfschina.com>
-Cc: quic_jjohnson@quicinc.com, jjohnson@kernel.org, nathan@kernel.org,
- ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
- Su Hui <suhui@nfschina.com>, c_mkenna@qti.qualcomm.com,
- linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
- kernel-janitors@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <171397321994.2567832.9996590005061868676.kvalo@kernel.org>
-Date: Wed, 24 Apr 2024 15:40:21 +0000 (UTC)
 
-Su Hui <suhui@nfschina.com> wrote:
+On Wed, 24 Apr 2024 14:40:11 +0300
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-> Clang Static Checker (scan-build) warns:
+Hi Dan,
+
+thanks for having a look!
+
+> The dt_has_supported_hw() function returns type bool.  That means these
+> negative error codes are cast to true but the function should return
+> false instead.
+
+Ouch, of course! I refactored the function during development, but missed
+that part.
+
+> Fixes: fa5aec9561cf ("cpufreq: sun50i: Add support for opp_supported_hw")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+
+Thanks,
+Andre
+
+> ---
+>  drivers/cpufreq/sun50i-cpufreq-nvmem.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> drivers/net/wireless/ath/ath10k/debugfs_sta.c:line 429, column 3
-> Value stored to 'ret' is never read.
-> 
-> Return 'ret' rather than 'count' when 'ret' stores an error code.
-> 
-> Fixes: ee8b08a1be82 ("ath10k: add debugfs support to get per peer tids log via tracing")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
-
-Patch applied to ath-next branch of ath.git, thanks.
-
-c511a9c12674 wifi: ath10k: Fix an error code problem in ath10k_dbg_sta_write_peer_debug_trigger()
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240422034243.938962-1-suhui@nfschina.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+> diff --git a/drivers/cpufreq/sun50i-cpufreq-nvmem.c b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
+> index cd50cea16a87..0b882765cd66 100644
+> --- a/drivers/cpufreq/sun50i-cpufreq-nvmem.c
+> +++ b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
+> @@ -136,11 +136,11 @@ static bool dt_has_supported_hw(void)
+>  
+>  	cpu_dev = get_cpu_device(0);
+>  	if (!cpu_dev)
+> -		return -ENODEV;
+> +		return false;
+>  
+>  	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
+>  	if (!np)
+> -		return -ENOENT;
+> +		return false;
+>  
+>  	for_each_child_of_node(np, opp) {
+>  		if (of_find_property(opp, "opp-supported-hw", NULL)) {
 
