@@ -1,40 +1,48 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B15815667D;
-	Wed, 24 Apr 2024 07:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C5C15885C;
+	Wed, 24 Apr 2024 08:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713945422; cv=none; b=PHgMmfbECP0A/m4jtQ2MR//murJXB+YVAT879a2QL0mhiztZVj5HCPw86cOScHwsA30kBiFd54E1Rk9Ns3b2mFSmOnaEXeB2Bk0eTNbRS8P03VYmzQClkaIt04SM/5FUHK4Oneo5Pp5trAQ1vinSuuv+3UBhzmgYnBezVYFa6Mo=
+	t=1713947306; cv=none; b=kA8lKIRmXIPUXpHqDTz2c62JV4f5qbQW74av/4ufZWQCUXqfoUdQL5dE6OiyuPvGzWKntXWzWQS2v4mreVt+r/vzTFtsP18TX0VbzYVKnefkJtQdFte/+TOVolum6dmmkdryx1KEvsNUoC0O5ckOKzQV02bLsBiXX9K4DhvUnHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713945422; c=relaxed/simple;
-	bh=Rzu4SBjLS02QTDYwFVyXfcT/Uwk5T24ZqCQO9sZXhu8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=dFojqek6unmeyUEOPqpVf5rgm9OJNGmtUBM2p7bPyA1WpSuMkaFzWsYH3UeRfcyJvczGy8cgtarV2T4BCimYV94+orHl1baMXz+R/mKei8lKXOnVXaaMtcVJBsSOXbfseU5JKewzAGUDBNowMF1UcLrVdIR3AYsv0nGd/ku2UOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QfY0sKM3; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713947306; c=relaxed/simple;
+	bh=9dKslndYqqRusj/yH1aNNs2IzvBLatzMNa4buer5ZeY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AElihs9P7PkH+0Zw/En0HYED219RQzdMh/i0zu4ezrzdsYl3CEnDBlX8h3iU8PsVU9LWjkojG2F2OKe48ObPrkmYUbg/nDXJbHvpCWoENtea9s+u95BMcjuSbdd9wcSMMFmpqUsPheDxtM5VnbWYGrRPW4JY3iliDOYK4e2ZPGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qPaV+0N8; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QfY0sKM3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713945391; x=1714550191; i=markus.elfring@web.de;
-	bh=qRmF7DnpL7qNBRELjA91gY2iF7VctkOvTYP4sr98G5g=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=QfY0sKM3EYhSmjmxfK8qpL7AyWHN6Du8epO9vSbxeWsUb9vSTTJC7p+X5nRryKzc
-	 L0AVe1rUPl1yjHVY3FSVkexy6omOF7VzhB4LiI7ByvoNE8q6PkuKwAU2Fge9xNGRt
-	 JBMsB3x/sjuo7YJ9ZulIK1aPALiapZFELSE3N9yBLOLwiRGvX96ocXDf+2SvfjtK7
-	 kGQldLKTQgI9fowLE0odP4slUt9X9xXN1dFcBthH/faJhjw5Tdw2M0n54cM9vNH2h
-	 1UwhzxwePuBuXcuPiVSVSKTGZwuoc7KOCkqKSic0B6SP4rJtcStUJaom6W9MWKTan
-	 8vkFIWH5fKS7DVJzQg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M7usy-1s4TAy3Ieo-005YaZ; Wed, 24
- Apr 2024 09:56:30 +0200
-Message-ID: <7ed5b3e0-933a-4a6c-a07c-3cdc8a9cc680@web.de>
-Date: Wed, 24 Apr 2024 09:56:11 +0200
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qPaV+0N8"
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 43O8S717091864;
+	Wed, 24 Apr 2024 03:28:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1713947287;
+	bh=WDJAPZScJOMpBY9g8xP0a01blxFcMfNH5IknQ7zpWPM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=qPaV+0N8Xb2YHqZoVP0dyxcZ1aPobSolNZcWccxaryHUnKPzlOOYa1DDOODOs4FLw
+	 LlLHgdVMmutEFgPoACFXuDZfSObjQeYf0gKpb6nGEMcv4Slrsdc7R/QdTUjeCWa/GY
+	 iRVmnmWVGG2nFSuF7CZOnK9kGSz4qTldhPrCi7dY=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 43O8S7df112708
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 24 Apr 2024 03:28:07 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 24
+ Apr 2024 03:28:06 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 24 Apr 2024 03:28:06 -0500
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 43O8S14V096709;
+	Wed, 24 Apr 2024 03:28:02 -0500
+Message-ID: <a837ef60-d209-4f97-81b3-e29945f20f28@ti.com>
+Date: Wed, 24 Apr 2024 13:58:00 +0530
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,58 +50,44 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Su Hui <suhui@nfschina.com>, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Bill Wendling <morbo@google.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Geethasowjanya Akula <gakula@marvell.com>,
- Hariprasad Kelam <hkelam@marvell.com>, Jakub Kicinski <kuba@kernel.org>,
- Jerin Jacob <jerinj@marvell.com>, Justin Stitt <justinstitt@google.com>,
- Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>,
- Linu Cherian <lcherian@marvell.com>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
- Sunil Kovvuri Goutham <sgoutham@marvell.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev,
- Suman Ghosh <sumang@marvell.com>
-References: <20240424022724.144587-1-suhui@nfschina.com>
-Subject: Re: [PATCH net] octeontx2-af: fix the double free in
- rvu_npc_freemem()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240424022724.144587-1-suhui@nfschina.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:nT36HYLdKEbIjiVuaW46eZ9S5z7J5R9kXNtayTUk7ufBZ3Y8Nkg
- xsIUZM68XSUdGE//c2dUTeLDirA2xkdIJSysKIuJ3gmxszEH0g1LIe2hh7gWMM2F0V4Roeu
- 5G4X3ylMJByMdq3k2jlvmOAMl4QDVvQsoREtzEF/xGWUjvgOJ87HUSTB5GZbYJ5WTfxwmsI
- nDZvhkDhy+mqvY5TG6yig==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:vGnzurFDixo=;ASgHWtmKV/3l2acJxRhw44gfzm+
- 1xpKJvmduNrAGCUK3fTjVRJdQSqtLjagolnnKRBJudv5CWO1Gjjq+I6mtBB1oDZcWck2j/H52
- 6ZSQviJztJT1yRIXQDWSrjqs1yb1MId6jXk8MddVFz2aX2HFa2zSlp9QChnnwbE7OKar56Xix
- BTPnSx5oGcjqEXyQmOVyGI0G5nJ/dRR+pANIRCTtSOyQObvC8NvniKC15CvNaCYmP7O9sv0SI
- L1buLj6iZPCoZV8O6uqQ2ydLqtEl+6r0/7C0LADwf8ctgwLe8i8XKsLcHcN4OlFHp7QJko1Ee
- ZFAAqskYaoe8ULiFBxk6yTpjbnalCQ4Ypm4RzYY4greCAkJk20S+69A2zqrce4IvtB9+H92EG
- 1676U0sI16Ujw+tFGMOxH6+M9iQfa4EMmuE/sQajFJ2SFqf4enqWM+RDiav60pse1RtRlLC7Z
- tMDOtTOpg+mms+pCJYinLeqKgaIrN+KOXpvFGqBmNu+2ZLE/akleugm3fdOrR1SiudJTf2V7H
- VZqYTpG9C608zZlyirTT77WigVe+Jt0Q/wQ9icYpPb2EfDD3B5KhhfS8BtkKyGjtfJXLOhuAq
- gcBSYZAk3sy7O4uRnmtei4uQc6GE2nquwblwThHbRKYBHaIYr4PWvzRWbO21BRYkueOfQkYRj
- Ghu5VPMmtOsOKgjyDZD/poiaKPorPr3LUliTZSV4lDMmPUYn0lPh832vBQtimP2AnnHTBXjx4
- l7cdgex48qgceFKEm+IMtzgEyIrp/hhYYGwvwtVNGGYKh6/tKRTbaosQQtSwg3jpFgk6uq3vp
- mCaaYoM3rMCk3UQ5klrykVvBZoGnSbAp54BknvHa3AR84=
-
-=E2=80=A6
-> npc_mcam_rsrcs_deinit() has released 'mcam->counters.bmap'. Deleted this
-> redundant kfree() to fix this double free problem.
-=E2=80=A6
-
-Can a wording variant (like the following) be a bit nicer?
-
-   The object =E2=80=9Cmcam->counters.bmap=E2=80=9D was released during th=
-e execution of
-   the function =E2=80=9Cnpc_mcam_rsrcs_deinit=E2=80=9D.
-   Delete a subsequent kfree() call to fix this double free problem.
+Subject: Re: [PATCH net] net: ti: icssg-prueth: Fix signedness bug in
+ prueth_init_rx_chns()
+Content-Language: en-US
+To: Dan Carpenter <dan.carpenter@linaro.org>, Roger Quadros <rogerq@ti.com>
+CC: Roger Quadros <rogerq@kernel.org>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn
+	<andrew@lunn.ch>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Diogo Ivo
+	<diogo.ivo@siemens.com>, Rob Herring <robh@kernel.org>,
+        Grygorii Strashko
+	<grygorii.strashko@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <05282415-e7f4-42f3-99f8-32fde8f30936@moroto.mountain>
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <05282415-e7f4-42f3-99f8-32fde8f30936@moroto.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 
-Regards,
-Markus
+
+On 23/04/24 9:45 pm, Dan Carpenter wrote:
+> The rx_chn->irq[] array is unsigned int but it should be signed for the
+> error handling to work.  Also if k3_udma_glue_rx_get_irq() returns zero
+> then we should return -ENXIO instead of success.
+> 
+> Fixes: 128d5874c082 ("net: ti: icssg-prueth: Add ICSSG ethernet driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: MD Danish Anwar <danishanwar@ti.com>
+
+-- 
+Thanks and Regards,
+Danish
