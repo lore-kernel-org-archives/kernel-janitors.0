@@ -1,109 +1,94 @@
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB24815AD9D;
-	Wed, 24 Apr 2024 12:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AED615B133;
+	Wed, 24 Apr 2024 13:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713961727; cv=none; b=PvdNWgbQGZeo9lxjgAxR93GFENO21+pIdxKLU5YT6UlkOqfKxCN/uJl1bi9pwyYSfxI287gzYLEHozHaBnogzapoagHXX5pKvEWgTfQKEFhj1meK2+l4vEBESPT4eftDPTwLy6sPo3fgtDXZzH5xIp1i59rUldPvWdSF8GCJst0=
+	t=1713964109; cv=none; b=k/SkUSULbIuS0IAKKfYJRwZLGvCQdzZPWlrrdpJfezPE5hXo82ysRPXQHGwQFBNGJ4oXuzsy6lpx6Kp4kQ/Wjd5Q7SZoMZUJg1K74zBVXjHiqK3wDLtVTXyF7suqSe9sU7zRoVO+hpU8iMbvs3AE6XuagbBYokWndjZLZ+A4EkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713961727; c=relaxed/simple;
-	bh=BE7LvHhy1jcP9dVf2+G9dk0Puo2poqCn/ow8d+Ul8Rs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i2QiUpvxK/hGRc+r4SAOqAf+ZYSwAZKTkwACRl09ml4xtQ1oAzq8R8JQj7xqBdCcjLbZrq5RgKWFHdBYkvMZz9oUNeinaRVFXpEz66gcn/hzJoUvyHv6nQKC15FSpyGiKUme5TAXYiCY/7BWWJPEDuiYKceWHVQroEN+NGU1n+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=kjCKQRgS; arc=none smtp.client-ip=80.12.242.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="kjCKQRgS"
-Received: from fedora.home ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id zbijrKEx3tES9zbijrejgW; Wed, 24 Apr 2024 14:27:32 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1713961652;
-	bh=0euCcEnVXaCbghlJdcYSkVKJP6L0D104GpN/D1rVMRM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=kjCKQRgS5F+ta/B+KkLL4Abevv9pFTJrXd1PrbjwS9rhV7Eura+IHlVS+CjZ2U0ru
-	 b3QTqFYgY8EHvdzXrgKHx6LwR1h9OLKklY4cdbRZ8ZISpgk7iA2w8TTZtB0dd+0eaz
-	 SWzOVpPkuiUNvOePgKOGo4o3bWsBT3B6Quccjg9WjJf9T7fu7EpgGSnaKpfYT7gUz/
-	 Ws296KA4IigfMYQVrKGjGye3BQbP4SIrij3dLoDn2toV4VVbC69E9fx9hnjDAloULi
-	 rblZ7RUqyJWpg5eZlskUP+BhybPXkJ/ukSb7k2A8cwigtRpv63MZqTIedkjpzvtupr
-	 ctOtp4GVEOXtw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 24 Apr 2024 14:27:32 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Bryan Tan <bryan-bt.tan@broadcom.com>,
-	Vishnu Dasa <vishnu.dasa@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jorgen Hansen <jhansen@vmware.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] VMCI: Fix an error handling path in vmci_guest_probe_device()
-Date: Wed, 24 Apr 2024 14:27:23 +0200
-Message-ID: <a35bbc3876ae1da70e49dafde4435750e1477be3.1713961553.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1713964109; c=relaxed/simple;
+	bh=3fuD80C0yX/OfK7PbQv1+C5LFnM/rJsnB/YJ4shBc40=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l/FGyAa5lQDJwPR9aocG27/teSBhf3O3JcbyyZ6bkI2epxHSL48leod3AMo7ndbaAx1woOz3vOpR6a4TiJqBh/C70DeK4a4ZLZFvepXC9lME9G1cZqpQVbUPTq8ucaSXTSvA0a2L9/4bT3ydz8dYOD8EpokWLE3CBR/6sP7KZkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-de47485532cso6767279276.3;
+        Wed, 24 Apr 2024 06:08:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713964106; x=1714568906;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oJ5BaNcJprdgWoCnp6hifCqMZXethulac/N0JRYezqc=;
+        b=nWqLFOmC0KkPWxirPdqYWwNRPuQT4sFL6ilAkDMLOozpGTH4wqsMP+RSCUxer0ZGtE
+         in5yFLIZyeS+uNTcp9Ej0nzQkAachjTVOTPE8VgIgZpgakXJSQ1AX0Uya04eEBihxcJd
+         QQ+nFZchC/eOkq8qHp/g+sw+WqJx6HxzeKxotHpq1kFEoFsqawfH9cZDxcWtdCeLcsMI
+         sFkxmzzgn9sqNhgpcMh3U0vJA4b40Lm0uEtvWladNHDyKC90n5CTsVyj7Vtt7y88HLrI
+         tpO2JsiopS0ya+sJaNV/Ab/XOIK+ZXLEvWCFlOpPLIjER2lTMo8LlKfg9rMPjxYoEb2I
+         5x1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWny6uf315iyDjREG6Lk5ofvKF7ZKjbCp/tp6MjQqQoG4IB/1Ij8gRt4zEXlfqNp/u8JvSE2IjMfzoE3D4MompvGBz7uBk9l0FC6CpXp3ATVIafsn8WAOwizPrKOn0DeeXo5zWhShr5kW5c1CWhgFq2HpBOoOzX3c7CEYWrepSKg+uZpXViN3WOpOwTVlrSUmB1a4B178OI2GZiIVrMLy0zJttoi33OHwe84W0=
+X-Gm-Message-State: AOJu0YzsDJZCsRZH+WSSuaPnvtoK5njXROv1jnRpQJXfGqYjPHX08w6E
+	LBWKDLSoKki5PwRgvrfL93vCb5rgDgkmrSprGA2vBrfOIU/m+pmnTEPHKKvr
+X-Google-Smtp-Source: AGHT+IHbtuXioDSTdMMCWEC0d6JTra4ZL3MywkCb1c+6NwLJBwwXPHyYQ4s0oOHWjqA/RrDCdDSBMw==
+X-Received: by 2002:a25:9007:0:b0:dc8:5e26:f501 with SMTP id s7-20020a259007000000b00dc85e26f501mr2335788ybl.61.1713964105938;
+        Wed, 24 Apr 2024 06:08:25 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id x3-20020a056902102300b00dcc0cbb0aeesm3054498ybt.27.2024.04.24.06.08.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Apr 2024 06:08:25 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-de56d4bb72bso824676276.2;
+        Wed, 24 Apr 2024 06:08:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU2iKYg8qorvBN+dQENDMcQ3IyKMLOROmOmEWtwZgo3Y6jdAuqlRZ73jNLuhIsXqwx8Sy5O5YQtnPfnALonwje9f8ng/P6TT3xUW5wijT6Ft9NGlyVP+10X2QAgHFxiENl3ih0PuPfunSPIGkWcpu6iG9OHBnTycPcNC5dxHeul0rh5/txtHfLnMiVyZsRiZ3jhV9QcN9ryw1I1HeLQFsl3h3bq7h7BwD6K81s=
+X-Received: by 2002:a25:ab8c:0:b0:de4:7603:e888 with SMTP id
+ v12-20020a25ab8c000000b00de47603e888mr2549826ybi.29.1713964105488; Wed, 24
+ Apr 2024 06:08:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <658e6b1b23d5b66646bb830361b8c55ccf797771.1713025170.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <658e6b1b23d5b66646bb830361b8c55ccf797771.1713025170.git.christophe.jaillet@wanadoo.fr>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 24 Apr 2024 15:08:13 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW0G_Sdvq8RTR1y8xRPqCiZi-u_FbbYdbS3g+k9YnFZvQ@mail.gmail.com>
+Message-ID: <CAMuHMdW0G_Sdvq8RTR1y8xRPqCiZi-u_FbbYdbS3g+k9YnFZvQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7740: Remove an unused field in struct div4_clk
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-After a successful pci_iomap_range() call, pci_iounmap() should be called
-in the error handling path, as already done in the remove function.
+On Sat, Apr 13, 2024 at 6:19=E2=80=AFPM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+> In "struct div4_clk", the 'flags' field is unused.
+>
+> Remove it and update the 'div4_clks' array accordingly.
+>
+> Found with cppcheck, unusedStructMember.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Add the missing call.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The corresponding call was added in the remove function in commit
-5ee109828e73 ("VMCI: dma dg: allocate send and receive buffers for DMA
-datagrams")
+i.e. will queue in renesas-clk for v6.10.
 
-Fixes: e283a0e8b7ea ("VMCI: dma dg: add MMIO access to registers")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/misc/vmw_vmci/vmci_guest.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/misc/vmw_vmci/vmci_guest.c b/drivers/misc/vmw_vmci/vmci_guest.c
-index c61e8953511d..476af89e751b 100644
---- a/drivers/misc/vmw_vmci/vmci_guest.c
-+++ b/drivers/misc/vmw_vmci/vmci_guest.c
-@@ -625,7 +625,8 @@ static int vmci_guest_probe_device(struct pci_dev *pdev,
- 	if (!vmci_dev) {
- 		dev_err(&pdev->dev,
- 			"Can't allocate memory for VMCI device\n");
--		return -ENOMEM;
-+		error = -ENOMEM;
-+		goto err_unmap_mmio_base;
- 	}
- 
- 	vmci_dev->dev = &pdev->dev;
-@@ -642,7 +643,8 @@ static int vmci_guest_probe_device(struct pci_dev *pdev,
- 		if (!vmci_dev->tx_buffer) {
- 			dev_err(&pdev->dev,
- 				"Can't allocate memory for datagram tx buffer\n");
--			return -ENOMEM;
-+			error = -ENOMEM;
-+			goto err_unmap_mmio_base;
- 		}
- 
- 		vmci_dev->data_buffer = dma_alloc_coherent(&pdev->dev, VMCI_DMA_DG_BUFFER_SIZE,
-@@ -892,6 +894,10 @@ static int vmci_guest_probe_device(struct pci_dev *pdev,
- err_free_data_buffers:
- 	vmci_free_dg_buffers(vmci_dev);
- 
-+err_unmap_mmio_base:
-+	if (mmio_base != NULL)
-+		pci_iounmap(pdev, mmio_base);
-+
- 	/* The rest are managed resources and will be freed by PCI core */
- 	return error;
- }
--- 
-2.44.0
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
