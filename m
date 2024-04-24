@@ -1,118 +1,90 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63B0154BF4
-	for <kernel-janitors@vger.kernel.org>; Wed, 24 Apr 2024 05:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D1F156C4F;
+	Wed, 24 Apr 2024 06:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713938055; cv=none; b=MfDLGNL5A0baqScVYEI40KiB3/s584AGsyNLp3mOo38Maf5o/bj5LEQrhI1rhlLaqKL5hP//DF+kZ2k4XRivDAmVfkS6L5JBhvD5iRTenpZLrmv2cUP9jF9SDqEAQw3XNL5gywuKaJRFEi6B+76eldWLm+33fvn2MkzBwzKxPJ0=
+	t=1713938880; cv=none; b=HfeuPZ1xvMdY5zqDcq2YyN0ppdSetm4ofi9JvL0jMt1Yuw7tVqll4vkpyRTPAnAtOBw6U0mem4oFHlSPAu2WEgmuQkAQvAGbeov5OXu1cu5gnm/iYMwv/KbPpCwt++C7x5QyGwcPHJas4YSYHp/sK4YlKs3S/fV89uQ+M7mi4fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713938055; c=relaxed/simple;
-	bh=8GCqrEZYtdL9iyU/wkrfGbyINGSWQcdRxW8/g63tUnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L2/KcGEpbc1yECgm1hnJVlakIdMJGCIFNheevV5vDPms0IeG+kP5K9DpQxiwhwxDrfcay2GLBBDUShK7cdYDg484msCM3DrKF/TMZLBtiTI5ZMGgqOZUbx5OwJupBlM5Pp1tnamV0r+UFFE611pbAxOq65PmzqpwRlvrrUawioY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bkuaOiAx; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1713938880; c=relaxed/simple;
+	bh=Jd6FI6x901LXxbVZ58YQZYnxrAAST8jfAjB6KyEmr5A=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=s5k7yi3hSV6yxcWXCeOma6EZtZXoZvqLG/Yll7p1PoyIM4wQFXnUcW6G8tHwtONjFaU79CWAqK0ZTemwmUPF8LSSOnCSQWusBjda3CRtAewsjP4jdkI33pkkWcfFayOs2XCKnaZ8yd/zy/Yhw+nVfnzfhV/Iw/1BN1k7HMl9Cz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GiVXuaHm; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bkuaOiAx"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-41aa2f6ff2dso15010235e9.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 Apr 2024 22:54:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713938052; x=1714542852; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BoSq6xCai+FLaIoay/b3hm+lCkx9rjx+ZUFol25m3gU=;
-        b=bkuaOiAxH1KtxgIcFl1wIoQntjwsKKw36Kypdzb/27nnPn5wxj0Cmao709Y4Q5HLNK
-         AJ/2Vye5Zs8DCAaN5ZrngJWFsPSpXpD3IRRaMzGazs4v7pm/SLJIGMhRejUXgXqeJw3q
-         Cv1RDaCwCUZTsy76nSJNboiNfpZ0weDnIhsBGbp7omI9r8ExGlC5/davRkpaQW0b0Ksy
-         BR5Dgkpcm5qGkDCJCqz2hlKV0+pfGUmSaaJAQOiZkPLq2gJ+vU5fvrQl2kBODpdzHp5d
-         fYwRxA/W/diuaiI/FDLE7JWoZKPA0rgRuHDFE5RyLZXtDlIeBXrM3YK2joe8Wg6qJF6f
-         /bKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713938052; x=1714542852;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BoSq6xCai+FLaIoay/b3hm+lCkx9rjx+ZUFol25m3gU=;
-        b=rRrRzXLGDlZvevXrNAVH3A3683YtWxN7jqhReRd9y/dePO66ORpAgE6Z8F0xGJ1Fsg
-         gzfpLsrDYEKpjLQGjsQjGT1JlAlWxYjkO7oFRsHGOsPbt/WVemG9NyIm2IImFOSuEtrX
-         FoWywSrwlw8FviaqLqssP7g53FknTaaRJfoHltHV9SbMwqsVMCSsvwIqS+HMF0wdxJN5
-         rwRv197SVSqEh6WpCLwfPxzdFi7GirLJ2NNnE7CNavSCw9ujXRW/YgdLL2JHK5d+5FlS
-         XlTfFToM3fxTCfGdsYZ28qMDPTWodlbVNJtwwK1yWUg+55gyKYQWxwWzpmOpRKRbrEH/
-         eUiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhCjtw1ABUNlsStz0KCRUESXQlVtQTGuDn7azwfpRaRG2Bw4q3qJXbiz7IGp7uSxYlBQXCkxG0ruXbAMR1ti5t9o1Gl5dn6twHBpXdjquS
-X-Gm-Message-State: AOJu0Yw2e3f8H3WGBtUTgiv9HpxdtR5QE7jJnG+kbfHjsuuStkegmf/h
-	OFLkk6XIO6Er61NJYm6ayPnrQjye/Wi/oBgNfiqShw6WhDFWUm0V80J2hkADyAs=
-X-Google-Smtp-Source: AGHT+IHSoA4kuaa1pj84ZD/gkZiYcDWhAuzxgGc3Xu20mSyfhUb+ZD1UXptCBsBSyikGCveqvLeU7g==
-X-Received: by 2002:a05:600c:19ca:b0:41a:141c:e199 with SMTP id u10-20020a05600c19ca00b0041a141ce199mr1063594wmq.8.1713938052064;
-        Tue, 23 Apr 2024 22:54:12 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id n18-20020a05600c4f9200b004169836bf9asm26306085wmq.23.2024.04.23.22.54.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Apr 2024 22:54:11 -0700 (PDT)
-Date: Wed, 24 Apr 2024 08:54:07 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Heming Zhao <heming.zhao@suse.com>
-Cc: Colin Ian King <colin.i.king@gmail.com>, Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	kernel-janitors@vger.kernel.org, ocfs2-devel@lists.linux.dev
-Subject: Re: [PATCH][next] ocfs2: remove redundant assignment to variable
- status
-Message-ID: <25bc03e3-1caf-43d6-9a9e-74f5c2093c06@moroto.mountain>
-References: <20240423223018.1573213-1-colin.i.king@gmail.com>
- <8e22e6d4-4c62-4b78-9809-5648537af775@suse.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GiVXuaHm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713938835; x=1714543635; i=markus.elfring@web.de;
+	bh=Jd6FI6x901LXxbVZ58YQZYnxrAAST8jfAjB6KyEmr5A=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=GiVXuaHmCGvEIbo6HrKtTICQxdYMunna9F3dlqxkiD3oW1ibCN+dwD8j/gaF2OC4
+	 9GKUrRqCWp9jbHzcBtJK1tUyJjgxI3ROisUHxR6gTS/7m0VxAfKXn4Y5IdavocaUo
+	 +jpk3+Kr4VU3AnGm3YvsXVfPYrbInFxS84h7IBiFK8PIC5Hbr/b3dZiMKlN+FOnjR
+	 6o6Z6I/obvUwyKreqWmSl8Ydp68M6AqFimj9PU8JMbe5MFNuvankkFTuR4FqeSGa7
+	 Ooh1xV32HJfKNmoxC165bC1/TzVzCbDQC0wrEej9xOL+qq9yuj+RLcCjhLZIb1Xqf
+	 JDXuI6tonXctlpoPzQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MIL0C-1rwCP90hMq-000ywL; Wed, 24
+ Apr 2024 08:07:15 +0200
+Message-ID: <1b2b9d87-893e-4bfb-873a-68c5b269f04d@web.de>
+Date: Wed, 24 Apr 2024 08:06:47 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e22e6d4-4c62-4b78-9809-5648537af775@suse.com>
+User-Agent: Mozilla Thunderbird
+To: Yuxuan Hu <yuxuanhu@buaa.edu.cn>, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ Francesco Dolcini <francesco.dolcini@toradex.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Johan Hovold <johan@kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jia-Ju Bai <baijiaju1990@gmail.com>,
+ Si-Jie Bai <sy2239101@buaa.edu.cn>, Yuxuan Hu <20373622@buaa.edu.cn>
+References: <20240422080408.1639247-1-20373622@buaa.edu.cn>
+Subject: Re: [PATCH] nfc: pn533: Fix null-ptr-deref in pn533_recv_frame()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240422080408.1639247-1-20373622@buaa.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:T0GOxI3ph3jcg7WrBMBqclEkC4lZekQN+PZLv/AKJt2p8vaCJzo
+ IO27y+/52FQYKLn42n1s6i+4wq7rS5SbVNvynI/vfdPRSYqkw5WHhpI6txDd196PE8cqoZs
+ 9Jj/XFL4W1+t80SK7mpcn1qHg5acVt1BT8DUq/mfYdGmWGpUNye/oeoExHxyaIOxxZ74+DQ
+ GQ3z6l+EefRKlHizD+d9w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:hrYKoWGzCYg=;WQx1GhyRnGRtRRDbANvbS1pLmlK
+ lhaz1VfjQqT1epft+hvVTpOw1Anz65I2qESg26NqKVFosEefDDZrBvsURvfYSlAx6daJh/TkP
+ u4qRhZBxHH5lqFTISZxJmKFWUfe14ejHmpQCstcbIWQMTUrC1povUXIzJhiXwAOEuE9ajkyZc
+ COKC5E2ewP7AD3tolUzfMtuYKmT19PGQYala489AVdT2Ac+KUhxgUd/LnCFHIqumx0SsmvX2G
+ gJIMksIkNWo/wyEElMcO7WxqaTNGrjxYe+8wBxoZgdwq6R6X9GnvB9zsvrCG27xB7BVkQempz
+ c+RAvGSHMuXvFfFWQw5a+SPTJTWuv/D55V7BUB2RGcfeuTkBLUr4AM3dLs5qE3CwSXNV4RivF
+ MD1RFa2Ma6u8VgD1dSVBoUZEn4yvYitE2lWOyBeVUfp+JDIQ7ZCY3pQqn0TyuAO8mNFZ83giC
+ Ms/1QfkKFQ5QeYfZTT526vjOKeWlGvvlDhvvIJNtjIA0qkgCfi52bVUV5xRmRGl4A55hOpGHd
+ BQtnefidtUQ4LZX9xU1V5/mdtkNvnX8Dc6aBpoVVNixcIHgjB9jS4oR+XmHJzd/spD481BwBQ
+ ITD6SlSPt4VFJpOnBU4f0sQY3GcpbR93XWPB9vvwiUs3Wk7hHO+/zM/8ikUWMSTqVOBQuHdq5
+ RKmiUiy5DUU85CzHEb7Tydrosl8/aYsyyDrx9Xy9GI+FsWmhI4f4uPHbg0WjS9IB6q7Iwswrl
+ jq99ai75On4pMhcMJjwUH5UqSD7r1+i+QPTuwkWzhk3fH1k8YGqv7ukZ2qi0ABTqKl0FH2iHt
+ Sp3uixIX+E7qHmUPpi8Byp58WpI3gtVZo6ezY0EiPnsiI=
 
-On Wed, Apr 24, 2024 at 09:40:33AM +0800, Heming Zhao wrote:
-> On 4/24/24 06:30, Colin Ian King wrote:
-> > Variable status is being assigned and error code that is never read, it is
-> > being assigned inside of a do-while loop. The assignment is redundant and
-> > can be removed.
-> > 
-> > Cleans up clang scan build warning:
-> > fs/ocfs2/dlm/dlmdomain.c:1530:2: warning: Value stored to 'status' is never
-> > read [deadcode.DeadStores]
-> > 
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > ---
-> >   fs/ocfs2/dlm/dlmdomain.c | 1 -
-> >   1 file changed, 1 deletion(-)
-> > 
-> > diff --git a/fs/ocfs2/dlm/dlmdomain.c b/fs/ocfs2/dlm/dlmdomain.c
-> > index 2e0a2f338282..2018501b2249 100644
-> > --- a/fs/ocfs2/dlm/dlmdomain.c
-> > +++ b/fs/ocfs2/dlm/dlmdomain.c
-> > @@ -1527,7 +1527,6 @@ static void dlm_send_join_asserts(struct dlm_ctxt *dlm,
-> >   {
-> >   	int status, node, live;
-> > -	status = 0;
-> >   	node = -1;
-> >   	while ((node = find_next_bit(node_map, O2NM_MAX_NODES,
-> >   				     node + 1)) < O2NM_MAX_NODES) {
-> 
-> This mail cc linux-kernel@vger.kernel.org, it would be better to only
-> cc ocfs2-devel next time.
+> Our fuzzing tool found a null-ptr-deref in function pn533_recv_frame
+> (/drivers/nfc/pn533/pn533.c) in kernel 6.8.
+=E2=80=A6
 
-I used to tell people that, but Linus Torvalds disagreed with me.  I
-also used to filter LKML from my own patches but then I ran into the
-issue where a couple subsystems use LKML as a source for patchwork and
-they get annoyed when it's not on the CC list.  In one of the threads
-for last year's kernel summit people said you should just use
-get_maintainer.pl and keep LKML on the CC list.  So I think that is the
-rule now.
+Can it be nicer to use the term =E2=80=9Cnull pointer dereference=E2=80=9D=
+ for the commit message here?
 
-Except for maybe in networking.  I still edit the CC lists there.
-
-regards,
-dan carpenter
-
+Regards,
+Markus
