@@ -1,80 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8436414C5A4;
-	Thu, 25 Apr 2024 15:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E6414B08F;
+	Thu, 25 Apr 2024 15:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714059630; cv=none; b=q55RzXgF3iORynwaMW1GkerGIQdMUl77K1tMuz4rWDQ+mObBGezrx9r6O13Qeif72ByRfM3lEXqLnO0CYQDgOde8DXYGKmnD8PFhGY9qxItRwb/AB6FWituSPp4XGbfa+5cBYfE91q77wmhQYrtltYwwjkL5/vZNAoeYHBS8Fig=
+	t=1714060658; cv=none; b=uSti427uWI62Z+KI0DUWUbX3k1uW7drzb7pQ+Q+qsYIgVMLqGXG/hP9AFupIxn4rQjCIuGhj95FeGzvp7dCls24tV7KDFK+/eQlSoVHq1uWzwFMcKi4NKgHpc8h/HIRn14oLBW0+gTgWnp5L/f/9a/KingVCMihiis7kuy+xihw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714059630; c=relaxed/simple;
-	bh=3ybUVqEEGzUyKinz8YKEBg22A3kfpANtEE8tiKHbjn8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=KdPSiX51wsUJtxcZgecslIUOXYwAgT51yIa7FS5e024z1zYAU/HnwMHNqdoj5++5BprYHcNSsfEtT+EXj5dWMrPA42vsWQ0ykcthAAsMOCq6ROkIbmj4YRmZXZZ3iyHdO6uMuWh4ZkK8n3n2dco09DN2QuVYF6ryCUQTrClOimo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n0j+ubtl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714060658; c=relaxed/simple;
+	bh=xp/u9E8lqrYHDy7ZttytiOWmxGZSKR2QflsGnvBD7Zw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=kJgvnZ+un7ilRIMCybde1Fr++mpW2i1h05SRERDZq2f+e/rPeR082ltMpuRkXbJEWYLvXDme6gEVKKJZfIYUodi9y+xix+IfHcWC5O/j/41+tDOeu5QbViHQw3YR37RpQn8yQDdjud+zzJO52tOMzY5RK5MB+J9GZF84oRPbK60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SHNmKsX9; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n0j+ubtl"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 315F8C4AF09;
-	Thu, 25 Apr 2024 15:40:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714059630;
-	bh=3ybUVqEEGzUyKinz8YKEBg22A3kfpANtEE8tiKHbjn8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=n0j+ubtls4hqHLXyurwGM9s1uJLxwJRNUrf2GU3qf7LfFLurLWCGR7g2JxziShxaD
-	 3AAH4DSE0uKjZnjaW/QVHlihaVmMJ2QM4iEqnQ5q328kRG8DDK6EhBXAOukITjb3ND
-	 OSPQllINlW7eFyiX9lBtjZsG8VTDN3+9N3SiZdiqWx6JrkgEG6Mh305p6GzAg6T6de
-	 Q5ZrvqNh4f33fTLPmI6vGbmRa3wLfzHD2ad6Z3oMxSzu94jbgnmRs4andOTabHJaN+
-	 vJ4OftBEc3vbrVFXytJ+nXRyDP/ZT7GkzVBXuDzs3e9mHhyrwwgOQlg4H3klcZ0NH0
-	 bCItniUxVCYuQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 19B01CF21C3;
-	Thu, 25 Apr 2024 15:40:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SHNmKsX9"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41adf3580dbso7250365e9.0;
+        Thu, 25 Apr 2024 08:57:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714060655; x=1714665455; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZWIDlM3skqmviOGyQzKHYQKwZg26rYhvxBIOzuWaC4M=;
+        b=SHNmKsX9c3ju/PD0NAuXt0MnYhuuqqwybxyzYgPlN3/EdhSeO1xHqIqmW1TADMIiqK
+         PidPDi3lotkECfBh8BSWfbQXYdG9RqaTDRsnCisMnZVsxAu51haQQ0pjFpmy3pQtON/e
+         XS2XMx6eHexSQfQT+251lTfWy6RCCAq7tOkZJTZq7qwtC25k6yoQYGg9pfCc17FluD6Y
+         BSRGVtOyAy9XlvUJttf/AGvQUlnoyxbscP/PZVHIEj+rvXR7H2F0UyBDpT8sOWo7CZB0
+         wpqYN0sFU79LDHyVheKvvPtI+wLwgz1HIlTwIjexNFGzKNx1bz/cC1rtW9mVAdMnhV2p
+         7Rmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714060655; x=1714665455;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZWIDlM3skqmviOGyQzKHYQKwZg26rYhvxBIOzuWaC4M=;
+        b=cw7lLXLYo+fdeisqGbM5tWBDhCt57+7poml6Nd58bgqFOprcsFhwKENPznEQrHHcn3
+         3L4rKet7qA9ekpnjMSw0pkfzl75ldljO1Kw4bqeMi2Mk8YKfWsfiP5jg+QLKdu0jiaXC
+         sn/Cv5J8BhiYYeMbbHopgkKTO2Gf6kbiqfrGq6nsdCYsXM2JD0ZRNMCEl0421M0qr9FP
+         WuzOJq6cM2RsOeHWE/HCMzO/BDe2C/3kJVtmGHv+qo+o+2MkGeU08qjEOt527ChAeOxK
+         OVQC4AjIXM5A7sAnFw6zJATPD3tqAuSwkQu5OIV+J8Dqec4edYIrZAVjuGBfkJPdCq4T
+         G9WA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhbC1Y8oET0uI/KDwXLvH9uQmiRDZEI9iwW/8obhRvnnTZe2E9NDU234VlujbVzkbrOO8unouCvHmJTY2aTxAxD+q4PeVI0U7uR4rJr0ePBp/NntDM2RxGC6iY1OJ1T5lSjUW8V1CczGRLyDk=
+X-Gm-Message-State: AOJu0YwegSrMxOsumvuMBJ4fkwXDVh01mIC3VGrmBfnSnAwGqoZwds4D
+	F71TPcRRS7jdlLToa8VATlpj9A0KU5e+g75oVwylqVjvUHyjRRPY
+X-Google-Smtp-Source: AGHT+IGHN98h4hd/cOWqFkCJCVdijy1N1kO6cKmT4goq4/ZvLxsODGUwryYAgd3HoGnHKA6vu+o/GQ==
+X-Received: by 2002:a05:600c:3c9e:b0:41b:34d3:42a5 with SMTP id bg30-20020a05600c3c9e00b0041b34d342a5mr186450wmb.1.1714060654705;
+        Thu, 25 Apr 2024 08:57:34 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id t13-20020a05600c450d00b00417f700eaeasm28159076wmo.22.2024.04.25.08.57.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Apr 2024 08:57:34 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Ping-Ke Shih <pkshih@realtek.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Su Hui <suhui@nfschina.com>,
+	linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] wifi: rtlwifi: rtl8723be: Make read-only arrays static const
+Date: Thu, 25 Apr 2024 16:57:33 +0100
+Message-Id: <20240425155733.114423-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] octeontx2-af: fix the double free in rvu_npc_freemem()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171405963010.10966.4709994529923785893.git-patchwork-notify@kernel.org>
-Date: Thu, 25 Apr 2024 15:40:30 +0000
-References: <20240424022724.144587-1-suhui@nfschina.com>
-In-Reply-To: <20240424022724.144587-1-suhui@nfschina.com>
-To: Su Hui <suhui@nfschina.com>
-Cc: sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
- jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- nathan@kernel.org, ndesaulniers@google.com, morbo@google.com,
- justinstitt@google.com, sumang@marvell.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
- kernel-janitors@vger.kernel.org
 
-Hello:
+Don't populate the read-only arrays cck_rates, ofdm_rates, ht_rates_1t and
+channel_all on the stack at run time, instead make them static const and
+clean up the formatting.
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ .../wireless/realtek/rtlwifi/rtl8723be/phy.c  | 45 +++++++++++--------
+ 1 file changed, 26 insertions(+), 19 deletions(-)
 
-On Wed, 24 Apr 2024 10:27:25 +0800 you wrote:
-> Clang static checker(scan-build) warning：
-> drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c:line 2184, column 2
-> Attempt to free released memory.
-> 
-> npc_mcam_rsrcs_deinit() has released 'mcam->counters.bmap'. Deleted this
-> redundant kfree() to fix this double free problem.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net] octeontx2-af: fix the double free in rvu_npc_freemem()
-    https://git.kernel.org/netdev/net/c/6e965eba43e9
-
-You are awesome, thank you!
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/phy.c
+index 094cb36153f5..13e689037acc 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/phy.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/phy.c
+@@ -1110,16 +1110,22 @@ static void _rtl8723be_phy_set_txpower_index(struct ieee80211_hw *hw,
+ void rtl8723be_phy_set_txpower_level(struct ieee80211_hw *hw, u8 channel)
+ {
+ 	struct rtl_efuse *rtlefuse = rtl_efuse(rtl_priv(hw));
+-	u8 cck_rates[]  = {DESC92C_RATE1M, DESC92C_RATE2M,
+-			   DESC92C_RATE5_5M, DESC92C_RATE11M};
+-	u8 ofdm_rates[]  = {DESC92C_RATE6M, DESC92C_RATE9M,
+-			    DESC92C_RATE12M, DESC92C_RATE18M,
+-			    DESC92C_RATE24M, DESC92C_RATE36M,
+-			    DESC92C_RATE48M, DESC92C_RATE54M};
+-	u8 ht_rates_1t[]  = {DESC92C_RATEMCS0, DESC92C_RATEMCS1,
+-			     DESC92C_RATEMCS2, DESC92C_RATEMCS3,
+-			     DESC92C_RATEMCS4, DESC92C_RATEMCS5,
+-			     DESC92C_RATEMCS6, DESC92C_RATEMCS7};
++	static const u8 cck_rates[]  = {
++		DESC92C_RATE1M, DESC92C_RATE2M,
++		DESC92C_RATE5_5M, DESC92C_RATE11M
++	};
++	static const u8 ofdm_rates[]  = {
++		DESC92C_RATE6M, DESC92C_RATE9M,
++		DESC92C_RATE12M, DESC92C_RATE18M,
++		DESC92C_RATE24M, DESC92C_RATE36M,
++		DESC92C_RATE48M, DESC92C_RATE54M
++	};
++	static const u8 ht_rates_1t[]  = {
++		DESC92C_RATEMCS0, DESC92C_RATEMCS1,
++		DESC92C_RATEMCS2, DESC92C_RATEMCS3,
++		DESC92C_RATEMCS4, DESC92C_RATEMCS5,
++		DESC92C_RATEMCS6, DESC92C_RATEMCS7
++	};
+ 	u8 i;
+ 	u8 power_index;
+ 
+@@ -2155,15 +2161,16 @@ static void _rtl8723be_phy_iq_calibrate(struct ieee80211_hw *hw,
+ 
+ static u8 _get_right_chnl_place_for_iqk(u8 chnl)
+ {
+-	u8 channel_all[TARGET_CHNL_NUM_2G_5G] = {
+-			1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+-			13, 14, 36, 38, 40, 42, 44, 46,
+-			48, 50, 52, 54, 56, 58, 60, 62, 64,
+-			100, 102, 104, 106, 108, 110,
+-			112, 114, 116, 118, 120, 122,
+-			124, 126, 128, 130, 132, 134, 136,
+-			138, 140, 149, 151, 153, 155, 157,
+-			159, 161, 163, 165};
++	static const u8 channel_all[TARGET_CHNL_NUM_2G_5G] = {
++		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
++		13, 14, 36, 38, 40, 42, 44, 46,
++		48, 50, 52, 54, 56, 58, 60, 62, 64,
++		100, 102, 104, 106, 108, 110,
++		112, 114, 116, 118, 120, 122,
++		124, 126, 128, 130, 132, 134, 136,
++		138, 140, 149, 151, 153, 155, 157,
++		159, 161, 163, 165
++	};
+ 	u8 place = chnl;
+ 
+ 	if (chnl > 14) {
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.39.2
 
