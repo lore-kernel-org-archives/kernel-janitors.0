@@ -1,110 +1,97 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCB322616
-	for <kernel-janitors@vger.kernel.org>; Thu, 25 Apr 2024 11:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40B612A177;
+	Thu, 25 Apr 2024 11:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714044092; cv=none; b=RJ9ZPEmWndYCNB+PnPIVXklGU8EKEz+CFQiXt3Z4AwtjLPX6AyqPTxwkGzheVULx6mr7AQi59PzYEXNZJANT6Pk6/rNaYCNDFUkXvRNpuOQnGCc5ve98F4QE+O0+pvcsbbQsNKx8EY89a9NgmVA66MyQaoNxbGU39CVdeRyFxPs=
+	t=1714044699; cv=none; b=F/dlZlUbEcWbdcd6sjAFYK2OyzjP7p/qrkYAZfAnINlcB7VpMtTHrK/KhyldfYgZHhwHJyOEEQUz26U5bZ02w0HWytkurZ4NrsI3cFrup4eZZRM6HGIV8dNpxXqq8sIhsDsJVE5vYDh7XDfExLMxaQoGrN4zAdpur4o22hZk4Ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714044092; c=relaxed/simple;
-	bh=4BR2yt7PuNf7nuqyNYPN52XbQh4Y95X32ylutoJfD80=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Tv6951kKMi+LWi1dNka/WhYOB+CF3wyLSmQWjxTsOALtRbbyQfswG9nqTiBPQv744X51CBEurBSN8cOo5Em2EKQCquFzkYhj8xmP0NyO0JqgUL9VP0SMPz6AVBjNChyPkC7dde0CRhmzV207PZTAHTkB3WxMq1Li41k63TpqWaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uK2Ud/uW; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1714044699; c=relaxed/simple;
+	bh=Ez2bxHXu5SIbri+3JxnQYlp/HhXRtM9O9+3SjmOrYl8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=O33qsR8ibg1LI0os2moBUnbHPgVWFPRbXN1sw47IHfr8Yh9R8um6EQAcGeUbXVBB5pWDTgYu/cx8Qd8+zgMEXy0hwqW/RgjtBEVdn6/CP391+/pY95hAgV4WdhaZhHHh9tuA0LoDrdRXcTXbOEgqi4ViFrsisCwzzSnXYVf5SYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JDgv6BOS; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uK2Ud/uW"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-41a77836f16so6673915e9.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 25 Apr 2024 04:21:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714044088; x=1714648888; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cXBdVhclN8iRuqar3CwvdUJWpfJdsgIEIzFUbTS5W/4=;
-        b=uK2Ud/uWi8eyvOoN06ptc0FYctiY0yjQ8101hpCp4Oy3FJO5jPg12ehY5dKP74HG4D
-         LoqyCVYoCLKomQpkVdICCbCYqtm79ib8d2kermN8RfNhi3gqZdnbVNnkU5BytJDg9bei
-         tIyZaa6ZozT/GE+YUeEhhNFgyeyEIgBPC2NnJwxOWoXAfzV6F2xMUtZVML2WzjNP0rq1
-         Y7oWW8OjKmFhElyH4Gn3vmjFYwvbi2jOSXSN6Ej0PtVLlqedpIjPKYOh2sVDqBAmJ22a
-         8/hVF4bzHdb8GdjzZsQP2CfUUtq6PedPOVnC5dNZlWHZIhk+5W5/WeyZFdsJao5jx7nM
-         bZNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714044088; x=1714648888;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cXBdVhclN8iRuqar3CwvdUJWpfJdsgIEIzFUbTS5W/4=;
-        b=ebglA8bD7NqAzCFmmTK4iAjj1dqrMhEKkc18SeY0jUZQ2g9PZeTvJpjpxOChxHB8ZZ
-         P+HlP+8ReNYN/4RBihFtdOuEkTrMgIlhAXiTueViOLcfJPft40BilZukTkMGr9Ng0tm9
-         H4DZcGSyxmdJsAWR2WRB+rx1I7T7uwRfINlPt5nA8AMcmNh5qUKu045aknq3QZOwvgqy
-         VVh8ehFuf5jR9yWxyiTs3vntZ6AeE+ExevMVaMSyaIIOuYgQpyPGS4zeIrBOLkoZpGQi
-         bPNgDPXvG4mYAc/6y97u4XOBciKcx5Nu0V1deujKU5GDhud8AS7rcaHRnxCjdrq3er59
-         JyWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrfnvUPfSlsHua07Q/zsrrmsiwRu2kzWemaJpvwedKZQbQb6oQnNrw2Hz0wvwd6OInpI/N1uWTeIq8Hcz+c8forJcK5zWhdVS8QEB+8ega
-X-Gm-Message-State: AOJu0YymsofRWSFRCqLz1L9ysH8SCGhH32PE3UJ9mArQAk9+ObK3zfir
-	u244xw0CwD+drugpK2kxkuqK7urxEfeB2356t9gpwNZaHz7E1FJCbjykT528Mr4=
-X-Google-Smtp-Source: AGHT+IEkRzF902REA9b5+gdCdVfVhX1mEE+4IWBK9dgathGvN8Vw5Fx6OzS2pvtmCTAMrqcKfcYtzA==
-X-Received: by 2002:a05:600c:470d:b0:418:5e80:b7af with SMTP id v13-20020a05600c470d00b004185e80b7afmr5104977wmo.36.1714044087693;
-        Thu, 25 Apr 2024 04:21:27 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id d15-20020adffbcf000000b0034b1bd76d30sm9826105wrs.28.2024.04.25.04.21.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Apr 2024 04:21:27 -0700 (PDT)
-Date: Thu, 25 Apr 2024 14:21:22 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Harry Wentland <harry.wentland@amd.com>
-Cc: Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Alvin Lee <alvin.lee2@amd.com>, Wenjing Liu <wenjing.liu@amd.com>,
-	Jun Lei <jun.lei@amd.com>, Tom Chung <chiahsuan.chung@amd.com>,
-	Aurabindo Pillai <aurabindo.pillai@amd.com>,
-	Dillon Varone <dillon.varone@amd.com>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] drm/amd/display: re-indent dc_power_down_on_boot()
-Message-ID: <ad54bf29-cb70-49bd-a89f-c51ef7abb3ee@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JDgv6BOS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1714044671; x=1714649471; i=markus.elfring@web.de;
+	bh=Ez2bxHXu5SIbri+3JxnQYlp/HhXRtM9O9+3SjmOrYl8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=JDgv6BOS+3ptpfg/FGSvGR/jwOZ0ShR0z/Ulf/cX78rpae/JrXHyi8q/qGmGYhuS
+	 BWP18nkCLwBOKchkwCEYFlt1qQETat3VpvGnC1QXEnyGC15lZMLK2Nt4m3Bb+vQjV
+	 eVq4n4CqAQywhoK3NyPcMgCEWBGQp1UjyOQiz0qpuVyE2chuEoGQEJ9jUGkEgsljP
+	 XBSkuQk9zBFk2SieVGMS63owBH303N62ElWcaUm827xRu6w/lU6a413yKwMp3XFTp
+	 MTfuktHH1/tM3eTjstdY1oSDYCT6/AsvGQZtYRjKXU+ByHonjrodUY3l547eAwJgl
+	 ZlMKrBwm26a2YvYxXw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MtPvm-1spIDR1Tgs-00utGA; Thu, 25
+ Apr 2024 13:31:11 +0200
+Message-ID: <443fb75b-948b-430f-be33-170e6f592280@web.de>
+Date: Thu, 25 Apr 2024 13:31:02 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+To: Yongzhi Liu <hyperlyzcs@gmail.com>,
+ GR-QLogic-Storage-Upstream@marvell.com, linux-scsi@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ James Bottomley <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Nilesh Javali <njavali@marvell.com>, Saurav Kashyap <skashyap@marvell.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Himanshu Madhani <himanshu.madhani@oracle.com>, huntazhang@tencent.com,
+ jitxie@tencent.com
+References: <20240425093744.22207-1-hyperlyzcs@gmail.com>
+Subject: Re: [PATCH] scsi: qla2xxx: Fix double free of fcport in error
+ handling path
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240425093744.22207-1-hyperlyzcs@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qgYE2j9FnfcZ5w3AGFM0qf7qU03OwoE/pxhkXiYg3RKajS0rl5K
+ Er/6ZWmyWgSnhtwheqS4bpaCVVti+dEhPCKrdBJYq+CJVeFcLGCpfX55k/aTZvC0MN4w9HA
+ ZlkAed4Vnf8E6zgeIpUL99xEJm9pN9z2c4wTluiRn+d5TeUyacUTWCu/bymspQA9DF9mVa5
+ Au9bHiXP6t8t8UbEcZQBw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:gRl9QCJFNIU=;d8YLuQIeac7D/k7QKBPPGe8MT+R
+ pE5GZJ+hXkDYikK+jF5vES6Rva2pvjw8U1lDsnkNN//V/z7fNAOIrLv8SY2659RNMzu8BnBjw
+ vCqaZpgMI1Rmvr1qU1C4sRya9mZAHzDDOcCcRIElQ3qdMr10qRJD0/xloF3oiZtOH2N1Krx9f
+ 7zfgmJrCYpqUGfLbbPvNplIokWKpa409Q4kLEX5lL2EhLP55L/3+YZnWrTxnfktNiGflIVf7K
+ 88FY0Q0Xr1zaqeuvoEtpXFVmnQFVXv075e+jLAKs4hM5l0WLRINF2mlXFY3tTqbD8UbdjSlp0
+ Fz0PeNhI23FGzLwXznEGgxhn5PGu70qyWNZwu1xkcEL9iEsVq06rn9gRiXZRFzS4bH/Ib7JPP
+ p3sFKdd5mKgl8I+C0agY6bdWSaR7shVDM5QkiJvlmvABwASnVKmPabC2mPYha1jn1Uc7nQWfv
+ 2KOMgOG8DVPw6Ldg4ULsSmvqOR9UtdjOyCP6v7UnQklsbCFITaxNbOcWSHrQOEQtZDrks1cnk
+ mbi7Xo3461cPhQr1UwWpYPv5d5Ry4TiPXRHDxllD6yGI9nuqIm37ACTclNFlpqNz65jen4KTw
+ 9x9iO0Ixft8Q7J5CkkSYgynAioedrD++itK4gNw8aCwfv1lIeEUz9ZNV1Un2QtT51QXJcZm0S
+ FQDUWDI0e7LBy5lUrpglb/L1KcPl9284hZG51GjqaXJqn9lkiNJyPWAlmWj0z/ZDmLc6tXYAZ
+ 0tW8RzO9pcQEih4f/Qv77TZchm0wQNMjXw4H+Ygdr2/qOvjHxBd7RQrS+USSIVuZpN87uUPMN
+ ugW/tcp9X+ouUI2tyc4AvQcRYH9vCltfNNxlshR4bJEV0=
 
-These lines are indented too far.  Clean the whitespace.
+=E2=80=A6
+> Fix this by cleaning up the redundant qla2x00_free_fcport().
+=E2=80=A6
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: Delete another blank line (checkpatch.pl --strict).
+I suggest to avoid duplicate error handling code a bit more
+also for the implementation of the function =E2=80=9Cqla24xx_els_dcmd_iocb=
+=E2=80=9D.
+https://elixir.bootlin.com/linux/v6.9-rc5/source/drivers/scsi/qla2xxx/qla_=
+iocb.c#L2751
 
- drivers/gpu/drm/amd/display/dc/core/dc.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+See also:
+https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
+to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
+es
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
-index 3e16041bf4f9..5a0835f884a8 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
-@@ -5192,11 +5192,9 @@ void dc_interrupt_ack(struct dc *dc, enum dc_irq_source src)
- void dc_power_down_on_boot(struct dc *dc)
- {
- 	if (dc->ctx->dce_environment != DCE_ENV_VIRTUAL_HW &&
--			dc->hwss.power_down_on_boot) {
--
--			if (dc->caps.ips_support)
--				dc_exit_ips_for_hw_access(dc);
--
-+	    dc->hwss.power_down_on_boot) {
-+		if (dc->caps.ips_support)
-+			dc_exit_ips_for_hw_access(dc);
- 		dc->hwss.power_down_on_boot(dc);
- 	}
- }
--- 
-2.43.0
-
+Regards,
+Markus
