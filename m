@@ -1,97 +1,88 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from msa.smtpout.orange.fr (out-69.smtpout.orange.fr [193.252.22.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D377F486;
-	Thu, 25 Apr 2024 08:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C8A12C463;
+	Thu, 25 Apr 2024 09:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714035174; cv=none; b=aYGpJc6AmtUGwE+Vl/bGXKhjbCz/r1/BBjFVKIfTcA4outpucsnb8oGfdx7WO+krrmVRJag3LV4EaitOHTaJ/7aLSqRGIMWtgsPuQPlLKVncDrhvREyvC1yHSPR0E+bMAdSbYYYAYhTnDcpU1de5xx12kmZ26BiEPpqyuxFv3WI=
+	t=1714036940; cv=none; b=EsUNzV2Lgbqbbb6iTblvpl4lEB76nihqxMpC9KAreIaaeiPzQ6taeZfehpuiNXkYoMCMz/VDJYrTjJjdKFud75jy8ffy+7QbcKj7Ns9Xgls4QXjv/jTU3ZaPYCVDE3VkO2a7gZ6Eir1X0Q50tSSdbHO32GTY27MwXIk6lDqpI/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714035174; c=relaxed/simple;
-	bh=2ii76LUBj9Ob19+f2whv+RVZumtvMFFoj0WwOmyLIt0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ao5sl5IWpyoDek6F6JF+utecVMQCIUsmDzAT0xk/pvp/QYfwIg71IfJ4EQs/FMhNcEmpt5/HWnrcpEaqdOzCYv6HltYDkyQ90JMtos+7zlwTi6wl/iXoioI0QEid6C8flc8PDcY6PuyDb2TP4Bl5lZPhS76Qo6on+G8p9tG3USs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dIfdBXPI; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1714036940; c=relaxed/simple;
+	bh=RYYr6S3bqZ2+QnlX4wSrGo/4TtP3354taVowvs3jNII=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UXCCymyVtN+oKJSaA9La/8H2Csi6N+Dz6Cf6RP/b9HG49l3aLPJRNs36jhIegvMuVkF1Cr37YWjMzVdbn1suafCWvj2nXq/4tZF8G2KpfGJ7u++QXTWs/E+DUzgWVZ3N9Rledc5tN2/sPkZrkouK+SjkE4if8Zp0mnhv7OHuBZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=SQCW1HKM; arc=none smtp.client-ip=193.252.22.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dIfdBXPI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714035117; x=1714639917; i=markus.elfring@web.de;
-	bh=2ii76LUBj9Ob19+f2whv+RVZumtvMFFoj0WwOmyLIt0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=dIfdBXPIujAhwTh6VZnWtncvA1XWiKqV9vpmVx6mtVKkAZ7C8ihefH1HCRvrH5ep
-	 I+sZZEO/50ZvJcBLfa9cg1dIuGapn7oIVC/UKYrWQT9fJlUQGqisN3JMVLrsS2k8C
-	 lxYiUrwi4R9M9J1/J9KJnFryPFEZgCzK/PvUXqBa55tzsBGo3ttIqzqMS47M0YmFU
-	 XjsufLLyLN9ZdVyHpVCPqJIIwFqgrBOkPrzMnZKGzk2F0NPOkJP2zBAHXHkUF/wI9
-	 /203G0Qb5/JOkJdR/f/1VFCLWJU5VZKDahErizDNM9HMhGZYoXoivB/ENICtwOG+W
-	 gYjApMmG+MBiuJNjIQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MRW2D-1sNLPF40Qf-00NUmb; Thu, 25
- Apr 2024 10:51:57 +0200
-Message-ID: <6e028bfa-9063-42ac-b40f-cf17a81c2af2@web.de>
-Date: Thu, 25 Apr 2024 10:51:53 +0200
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="SQCW1HKM"
+Received: from localhost.localdomain ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id zvJ0rM6x8hCCizvJ0ro486; Thu, 25 Apr 2024 11:22:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1714036935;
+	bh=0dK7ZlaT22HaVkIUWpHsgyaYXot/beEkT5cEKEbeojE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=SQCW1HKMP2RBYzYCQ9nkbddK3Vl/LthtQ7dKCnfdETna+aKi4FfaaUqhjWm6ayYGY
+	 NyQ4QSZgttrMpJaFgSiNKL/EO/xWEOt/dxiqX1HjBzOp9mgMzBQRTx5LAOUTWNGDfp
+	 9hRD7JheJKT0+eIUYLv715wKaiAbiHbJO3bL8Uzvekczvv1mCZPRYH73c+yZg8ry+c
+	 dHtgpWcG/bksAZVi5Mhx7jcle7xYOxdY4O74umVekR1zqmvvIsjqxw0fPQ1kuM9FvG
+	 FVgrGw8kwGuqIw29mw9A5Zwes+wur4j6leRnzax6zFgSo2riqMmOpz6862PPva/e1K
+	 YJLdTPqn8H7rQ==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 25 Apr 2024 11:22:15 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+	Kalle Valo <kvalo@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com
+Subject: [PATCH] wifi: brcmsmac: ampdu: remove unused cb_del_ampdu_pars struct
+Date: Thu, 25 Apr 2024 11:22:03 +0200
+Message-ID: <fa3b190b6e9cba65ecc36fc93121c6ed8704f704.1714036681.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
- linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Jameson Thies <jthies@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Benson Leung <bleung@google.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Hans de Goede <hdegoede@redhat.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Prashant Malani <pmalani@chromium.org>,
- Rajaram Regupathy <rajaram.regupathy@intel.com>,
- Saranya Gopal <saranya.gopal@intel.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-References: <20240424014821.4154159-2-jthies@google.com>
-Subject: Re: [PATCH v2 1/4] usb: typec: ucsi: Fix null deref in trace
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240424014821.4154159-2-jthies@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:MWIAd9tfE9Cl5DWSBlawdxc9rLXN4r3w9oVfMsROo9DFxAP9QSb
- dAN5xhx39A6eJxpcr09q4YAV5nIQda6BWSBQrr3iHiQ9Y6JZm0SFInuOSpWh/yELwxqOoob
- 9yiOlZC1rEZLPD//da/dOOGv0mPtYh2Q+7Quv9Zzg6a2dDM8q2XN3iutK6lkbuRhoLxDduv
- Dovre41suigX1sdGsANlA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:82+JCbADl/Q=;8624TNLGloARLOYQ/BOLV+yGdVj
- tRYpiSQQIjL3i73JQ6pzaVWf4ROTq73TDcxAFVMTQivqidd3asU5pIHmHYQ21sgSYa2DWuM1u
- Ask9GZR9uCK5j43oaBoHQmvv2kWliElxtpcOMlZe1ZdXTaAudOnLQGewybrzEV7Av44h0qh9J
- UG54OdL/iJwJP4UcwgwN0AKGTf7GCAWd5LKEDrYpAY/5HmMqegr4x6WUb8XhNJJaXIIA1g5+L
- asGyFg2JlK6QcAkMa6n4fOWhNXjyGjgkhM1OpR/jQaskTU+xIuyLqppuGLKCnbE1yIUTolRyO
- ETCHoNDJDJJkcdnmlQ4J/R+y/aDC7ieB5LVLzJURXLmyjCK+UtYcQ/bnPrjaoljlsK7kIoVEx
- 6qqtnmvq0VovcVOWntybaAu89CdGzsZ0BKCcGjMk1tHV3ZYtbwk8YSPXQQft1nxV1wCKSBg0r
- NNVR2gB4LFQkgtV0SMk5GGgRnI0//fxAO+Zb/cukiRXpXgqgyyQC99CjxQ1daa4kEPTXxDcz/
- iOAIev88+eyHDm23vE3vGj11niorw5Xn34hsnCc/sHBbeDbr6IvZcIVQg9CnVcwXGYTOULCSp
- j4kCYRCah/NPB1B1wHa6re98hlx7vmblpTn3QXXD1J6i3EfXch2X193YY5EBJ9kg0OCaOGrKh
- ld+zLLhNeRMAlExFy5EUOTxSW+0anFoKlmXp17hTPHuEVH/G8Rc9BpVjWwmP0qB3jLIRMlH9A
- TYlmjYdkTH/22/XwVSbc+NqcwFl2Pr5zv6Xnd19LbOl4ZmExDVvdDk5Qq16Um3oSLCjaMsrAA
- k6gea/TJZQ0IAvFXJQuTYftUJZTX+oALHCqiquNotVzQ8=
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> ucsi_register_altmode checks IS_ERR on returned pointer and treats
-> NULL as valid. This results in a null deref when
-> trace_ucsi_register_altmode is called.
-=E2=80=A6
+struct cb_del_ampdu_pars was added in the initial commit 5b435de0d7868
+("net: wireless: add brcm80211 drivers") and its only usage was removed in
+commit e041f65d5f00 ("brcmsmac: Remove internal tx queue").
 
-Can it be nicer to use the term =E2=80=9Cnull pointer dereference=E2=80=9D=
- for
-the commit message here?
+Remove the structure definition now. This saves a few lines of code.
 
-Regards,
-Markus
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/ampdu.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/ampdu.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/ampdu.c
+index e859075db716..c3376f887114 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/ampdu.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/ampdu.c
+@@ -143,12 +143,6 @@ struct ampdu_info {
+ 	struct brcms_fifo_info fifo_tb[NUM_FFPLD_FIFO];
+ };
+ 
+-/* used for flushing ampdu packets */
+-struct cb_del_ampdu_pars {
+-	struct ieee80211_sta *sta;
+-	u16 tid;
+-};
+-
+ static void brcms_c_scb_ampdu_update_max_txlen(struct ampdu_info *ampdu, u8 dur)
+ {
+ 	u32 rate, mcs;
+-- 
+2.44.0
+
