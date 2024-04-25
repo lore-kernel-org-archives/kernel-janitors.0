@@ -1,93 +1,54 @@
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4654684FA9;
-	Thu, 25 Apr 2024 10:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEE178C67;
+	Thu, 25 Apr 2024 11:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714039435; cv=none; b=pN/kjsZ9PrBRh1+D05nvR5VYUlocbQ3gN24sPrdc7Cm4VZCg15HWev19Fd4jY6SnjvF091BEJQ2OR3llAXt6Vldc0ry+2+0aTy/UMe/oa9vfKbV/hUtFl/CJZRTTj0cjGOohNtforxCJditFSLdg7EtTT7Y6yCI+lRqd6s1M/WI=
+	t=1714043692; cv=none; b=us73YEfVFLZDW2cjnJPKvvQLmt9r89w1wDMRgR9B+xPhOepigKfDA3sMTZH0IDf4GAGiGTFIUNNP4MJY0XC6LH0Wveo38loWLBylYLldBUeP5QgcX8EbmYeHIlH92C6EfYvoErJoWRGyrO+zLebeMHinfXYiDc/tXx8Ekd9+0JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714039435; c=relaxed/simple;
-	bh=7GYrDHi2wc98+LxSD11rnonpx3B7ff5rAPOELGHgubk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FCaTz8+Kfxc3h5qa7LrxzCSng1ZD7EsDQbCrrzyGbkorTVFVgflZPSprfDONwRkUqaGvwrMQQdWc3LvlszRNIRkRJuAlxvqwh2lHz2yVXS1EpAt/qApTtpAV6wsZWMH5yze7Fw/jc0zBKkzVlIOVqk2K0u94sPaxnOYJAjEAm+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=QlStIszc; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="QlStIszc"
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id zvxAr3Z51CEcGzvxAryaUS; Thu, 25 Apr 2024 12:03:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1714039425;
-	bh=4dV+3BwCxRrU83DUCeOBwVJF38fNi8MvgvnSmXXVELI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=QlStIszc4Xr3fHlScsb3ATG/XjVV5B9xVmfLF6iB1o7JoWR0q8XYFM7FE3eMFe0Op
-	 xPGV5wq9+VY0SF/Fm2CO/kLK+VE6dqkVKW2jNJOrzni20viGhc0ORVD7gr/Z12D4WX
-	 s1JxBsRX0vkLfI3eXcbeiEPO6yhw1f3mY9EjjZ0/rdf/jjIGnfPo19KutPamSsRije
-	 I6UiAXYy6S6ZxVr1U4A+NTmMsckpci6Y2Ne002NU+AHp/MGRy1Hqg9eq9UULY3paRi
-	 6/RIuzaisV0Oc+csj4vopJNZU9TcB8g/84a+udD5r8FMtOfW/tjbUXNSL3aE+YOO2q
-	 vPoe4D0iZepPw==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 25 Apr 2024 12:03:45 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
-	Kalle Valo <kvalo@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com
-Subject: [PATCH] wifi: brcmfmac: remove unused brcmf_usb_image struct
-Date: Thu, 25 Apr 2024 12:03:18 +0200
-Message-ID: <23afd8c1733ad087ce2399a07a30d689aef861d5.1714039373.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1714043692; c=relaxed/simple;
+	bh=UgA8dMiala3oqxSvtPA3bGboHqIvR4pTUBZLP6CH08o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d3I+PFMiZXQTbtBNcbyOormH+7azxEA+GatvSzZPodhCuc1M/HETdlROCOzxgFEz5R2u0ofqx0c+/iiIjzpYxOP9L+n0yRzh1BP3FbTFTMor0+CPVrmtS9+MAnDBLE6rb1hRGVdNidW6WROEtofG6G8WdUFP1+mZDDG3u8ebPFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B4B211007;
+	Thu, 25 Apr 2024 04:15:18 -0700 (PDT)
+Received: from usa.arm.com (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C634E3F7BD;
+	Thu, 25 Apr 2024 04:14:49 -0700 (PDT)
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] firmware: arm_ffa: fix memory corruption in ffa_msg_send2()
+Date: Thu, 25 Apr 2024 12:14:42 +0100
+Message-ID: <171404365976.1369555.7389182143116745860.b4-ty@arm.com>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <cd5fb6b5-81fa-4a6d-b2b8-284ca704bbff@moroto.mountain>
+References: <cd5fb6b5-81fa-4a6d-b2b8-284ca704bbff@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-struct brcmf_usb_image was added in the initial commit 71bb244ba2fd5
-("brcm80211: fmac: add USB support for bcm43235/6/8 chipsets") and updated
-in commit 803599d40418 ("brcmfmac: store usb fw images in local linked
-list.")
+On Wed, 24 Apr 2024 14:40:43 +0300, Dan Carpenter wrote:
+> The "msg" pointer is a struct and msg->offset is the sizeof(*msg).  The
+> pointer here math means the memcpy() will write outside the bounds.
+> Cast "msg" to a u8 pointer to fix this.
+>
+Applied to sudeep.holla/linux (for-next/ffa/updates), thanks!
 
-Its only usage was removed in commit 52f98a57d8c1 ("brcmfmac: remove
-firmware list from USB driver").
-
-Remove the structure definition now. This saves a few lines of code.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c | 7 -------
- 1 file changed, 7 deletions(-)
-
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-index 0ccf735316c2..9a105e6debe1 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-@@ -117,13 +117,6 @@ struct bootrom_id_le {
- 	__le32 boardrev;	/* Board revision */
- };
- 
--struct brcmf_usb_image {
--	struct list_head list;
--	s8 *fwname;
--	u8 *image;
--	int image_len;
--};
--
- struct brcmf_usbdev_info {
- 	struct brcmf_usbdev bus_pub; /* MUST BE FIRST */
- 	spinlock_t qlock;
--- 
-2.44.0
+[1/1] firmware: arm_ffa: fix memory corruption in ffa_msg_send2()
+      https://git.kernel.org/sudeep.holla/c/ddfade88f49d
+--
+Regards,
+Sudeep
 
