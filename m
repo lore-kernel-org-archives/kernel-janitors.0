@@ -1,33 +1,40 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFB241757;
-	Thu, 25 Apr 2024 06:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17CB6D1AB;
+	Thu, 25 Apr 2024 07:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714027079; cv=none; b=kyt+FmDjEfS6L9/nX/B+gSAdfa2MyzLoqJG0j78XuzthLpwJV3xApeDdjMnIMcskvEip/EuvdA++iJlQBlkQDoDhK2KmLuN1a6KGKeCVmghWb3YCf/zFHz+n8kSe0uJsu6qKquc0u0sF9yIKZdudHNSCL+q/bnm8DixK0zhhQr8=
+	t=1714029557; cv=none; b=eXtVOz3iOrrMFn+c7eLPRBwuYwnufdKqE0QuqcxEbPx9y8J+BFN8020YZ/k6xJDXpgyz8i1Uf94G1wOUBHzYUG+mfUH1j0IwM3q1wnhFvmI3w3mbRtZ/N0R4tt0HXs8v95Au9KyZWahJYlmZTBz+wjnzWx4hbRQM6NBkZHVUpWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714027079; c=relaxed/simple;
-	bh=v5UhDezQrgaGxA0azv+XR1T5U+isFYlYg3qnj+sRLIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J65kbYsBFK6JppCNv6z0oHwE2OB17YoVwTwiS+nzmGj54dkcGLZmTOXr/ZxOhRh2NOLmib2Rxk1cI6nNaf2KyJmbjV6z2BW9NZzYcJW/CNmXK068Af1EbLHxy3FU3PhqGLGLyopd+qrkHWsX3Uyl7khYaTMiyr0Rye7vViUNRqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=a4+367cX; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1714029557; c=relaxed/simple;
+	bh=CkiPK6tPqwTWT75wFXMOzJWbLEmZiPmM/GP+SAqz6Rg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ju2xhfyUQQcGVuDmFGQrZti2E9111CoSPDeBSK+uYaq3FmgWZv+yU9d44I1HgE7P9zjdwMEfr+niXvlnTr1iEOlwhmjGgMA38wJS3HX+brkTZF9FxkYPEtcR2Y1ymGQtFXkDcan8Y+N2Gddqv8BkN0k7OHeLTWxklBP2O+nmxWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EM9lWjBC; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="a4+367cX"
-Received: from [192.168.1.106] (unknown [103.86.18.137])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3C2F5674;
-	Thu, 25 Apr 2024 08:37:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1714027022;
-	bh=v5UhDezQrgaGxA0azv+XR1T5U+isFYlYg3qnj+sRLIg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=a4+367cXIUj7G5UbHNKAqmBQPJvdLaZTBgNhBDt2Ec9G3MZ5QN4QbA2z6+zhpFOSS
-	 h423/e88mmhRpn2FYNn3SN+moslUy4VtdtgkWbdSoTpo/g86BzViGGUoYYiHfNYgw+
-	 pMvDL5oP883DpO4CHKc3XqnsYw1XYt3tiLDU3jto=
-Message-ID: <9cd4919c-657e-4533-8f11-521d31e60123@ideasonboard.com>
-Date: Thu, 25 Apr 2024 12:07:47 +0530
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EM9lWjBC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1714029523; x=1714634323; i=markus.elfring@web.de;
+	bh=UG4sKAfbqH7myYcMHGqgIq6lkAMmjpUkaFC72KScITI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=EM9lWjBCK2tncZmJ6ss0AUjKryv5ckQ3zFJmosZZMH0dV1Wve5jdAWECUt8b9fTZ
+	 q/1YSuw2XxtIvH/At79iHCBSRXhwNIKqo05iESwcZVkb0xqai2OCRQ4IO2gWgOfLd
+	 Aa+9WrK5QJMC2S4lPi7Hr+5FGjozkvSwVOHrI6MVKT4CJzLEvKbhngXwBYSaARbb4
+	 5BKxXsPtXhNXwEKTvrRnW/SKrXcw2UVjArQ5wgUhRN2hxDrZfSzIcQ8Z3EOHraubR
+	 SKW0MQY5y08aqi6HHZn4WGfdwHNnJf0aSXYUfxSu2cP0ufdiG0MrQeRnpwnCgUEq1
+	 Oo3nyXh15FexYUh/EQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MTvrs-1s8F613Vre-00RZYm; Thu, 25
+ Apr 2024 09:18:43 +0200
+Message-ID: <e68e09e0-75f3-43b8-b947-22cc0d1a0dae@web.de>
+Date: Thu, 25 Apr 2024 09:18:29 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -35,52 +42,60 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: vc04_services: Delete unnecessary NULL check
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Stefan Wahren <wahrenst@gmx.net>, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <526ec2ff-6277-4d5d-b2d9-63b087a97c7c@moroto.mountain>
-Content-Language: en-US
-From: Umang Jain <umang.jain@ideasonboard.com>
-In-Reply-To: <526ec2ff-6277-4d5d-b2d9-63b087a97c7c@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Song Gao <gaosong@loongson.cn>, loongarch@lists.linux.dev,
+ kernel-janitors@vger.kernel.org, maobibo@loongson.cn
+Cc: LKML <linux-kernel@vger.kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+ Paolo Bonzini <pbonzini@redhat.com>, Tianrui Zhao <zhaotianrui@loongson.cn>,
+ Wang Xuerui <kernel@xen0n.name>
+References: <20240424091813.1471440-1-gaosong@loongson.cn>
+Subject: Re: [PATCH v3] LoongArch: KVM: Add PMU support
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240424091813.1471440-1-gaosong@loongson.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:00Jnv0z4yJ3cAcza9B6oPnCQFtB1U6bhddC/nn2ON13kEk8asxJ
+ A8n3AEZDTno08y/MUZOejQT3W3Q+sZtxhuInM0aWNc5MJZmvxS4DKqpgcM67HqJBeox83S5
+ D+Wgj18GUmiAZXMg0vETLEYHuUqzA4HVDjZ2QaW3nSAemdEZwGAvUlxXggZ07IawQnWhfab
+ c/GRv7IXWjghmnvzlJ7Qw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:55oR3qD1Jro=;h76wbUubNa2cPLWxoDAUCdSVh/R
+ HZV3wZCsGKlbF+GFp5NQCRx9PudSBVq/iBF/mM3cJoE5xK0+II0QYCUSdG9qmqkfdMoYSE2Ks
+ /XyMF0mksHOwr0GZ/x0XE/F0HtyBl4ta9PpHyhjNvSLqIZHnFDcDGQTYAqI5x1d/CjYJkJnSF
+ VJpWNLYfGweFqKTzftiIExPJ+Lbf2eswnEp+cfKL1YFX/BpL19MRsiNzfvD5oKoCNVf26jpmT
+ jVf79c2H+93zqUmtRn8jbfGeLGOCRq6oT5o+31WCEZrIOjFMUtYZmhUWlkIk2RQKLR5CaIm69
+ r33ionVKW56gbB4tHvLBTKMkFjceBGF773Fik1uTFCaIq4Zx0XzThgu1LV5kN5D6vLSnEgmEZ
+ lkPLiR4pTqSWFtGod/ZA2tEAPwu/uGogFoPdnNITXIGmc/EcoHEbfnvdJ7PKx6yRc4hGza8+M
+ OwqPN/5vLJiClKIOyNV6s9oJXTvWXG/c8hFwAlBr1Sli5f/Dmukb0eANOCzLq/3/JUuy/KBAG
+ /EV+2vSh6be3MbUqdMld5hvo3kNUP9GyGZZWDW0Pf0eZlBNp90BxIzO0TDq528vwFPHpu64bB
+ 3lAf3xaST8iBcR2FlsZNk/+VddgupadL4Au5xTulx//fQvffUWJGc2ENX+xWWuRyYEkwuoDy6
+ tpEWB/tRnomO1SzEmxcNiOnaElc4cXjG3Xcw2nhiuDV1GublthXK9qxg0cvpSYC9Pm1nDixLT
+ vCJULBSOqdSqEAopNbqucg8s1uJeaRNWEaMH1QsTbnYiYH63uXVrG9auv1pOLSxRkV9t44/xo
+ 0NLbPw6EDuf/Kzs5/Tn2h4liqsOi0pHxlS3eUwLblQ1Zs=
 
-HI Dan,
+=E2=80=A6
+> On KVM side. we save the host PMU CSRs into structure kvm_context.
+> If the host supports the PMU feature. When entering guest mode.
+> we save the host PMU CSRs and restore the guest PMU CSRs.
+=E2=80=A6
 
-Thank you for the patch
+I suggest to reconsider the usage of a few dots in such a wording approach=
+.
 
-On 24/04/24 5:13 pm, Dan Carpenter wrote:
-> The "state" pointer points to an offset in the middle of the "mgmt"
-> struct so it can't possibly be NULL.  And also we dereferenced it on the
-> line before.  So this NULL check is pointless.  Delete it.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Reviewed-by: Umang Jain <umang.jain@ideasonboard.com>
-> ---
->   .../staging/vc04_services/interface/vchiq_arm/vchiq_dev.c    | 5 -----
->   1 file changed, 5 deletions(-)
->
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-> index 9fe35864936c..3c63347d2d08 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-> @@ -1170,11 +1170,6 @@ static int vchiq_open(struct inode *inode, struct file *file)
->   
->   	dev_dbg(state->dev, "arm: vchiq open\n");
->   
-> -	if (!state) {
-> -		dev_err(state->dev, "arm: vchiq has no connection to VideoCore\n");
-> -		return -ENOTCONN;
-> -	}
-> -
->   	instance = kzalloc(sizeof(*instance), GFP_KERNEL);
->   	if (!instance)
->   		return -ENOMEM;
+=E2=80=A6
+Signed-off-by: Song Gao <gaosong@loongson.cn>
 
+v2->V3:
+=E2=80=A6
+
+* Please put your version descriptions behind a marker line.
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.9-rc5#n713
+
+* How do you think about to avoid the repetition of version identifiers he=
+re?
+
+
+Regards,
+Markus
