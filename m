@@ -1,93 +1,86 @@
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7739F1E492
-	for <kernel-janitors@vger.kernel.org>; Thu, 25 Apr 2024 05:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFB241757;
+	Thu, 25 Apr 2024 06:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714021713; cv=none; b=DrguDBQiejwpT1G6DqgcTx/WMUkREs/+XZ9gzE6lrut3unba0r72QGXscZ9A7N6nxAXkscWxuBZOQPwDNvUc/yjGqCLrtp0WChTB2fvxS102+L9tdktyCngZ6gWvOerosveW0QL4fSyYfbXTxCIQvZGMHJneWVs6cuO65Fyy5sg=
+	t=1714027079; cv=none; b=kyt+FmDjEfS6L9/nX/B+gSAdfa2MyzLoqJG0j78XuzthLpwJV3xApeDdjMnIMcskvEip/EuvdA++iJlQBlkQDoDhK2KmLuN1a6KGKeCVmghWb3YCf/zFHz+n8kSe0uJsu6qKquc0u0sF9yIKZdudHNSCL+q/bnm8DixK0zhhQr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714021713; c=relaxed/simple;
-	bh=N4Ty+El9tAcjw3QBXTN044KOd3tT2Ym9s58oTkqWx9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZwgMJSphCbgmpn+VCXJPaAIQLiCA2LzsIW98CPRw/5RGbhlhWcC+Ns7Ks4lSxeBbBGCzBDkMqWKgcMKMKX7f256LZPFBc3f9QutCuIG9blNxmVTP4d/oR10twsIakaLUhwZf0Rlxz+mHGuzP8qmmF3IEf5aY+Fn2rlBkd5epvOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=otpfreBf; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1714027079; c=relaxed/simple;
+	bh=v5UhDezQrgaGxA0azv+XR1T5U+isFYlYg3qnj+sRLIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J65kbYsBFK6JppCNv6z0oHwE2OB17YoVwTwiS+nzmGj54dkcGLZmTOXr/ZxOhRh2NOLmib2Rxk1cI6nNaf2KyJmbjV6z2BW9NZzYcJW/CNmXK068Af1EbLHxy3FU3PhqGLGLyopd+qrkHWsX3Uyl7khYaTMiyr0Rye7vViUNRqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=a4+367cX; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="otpfreBf"
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1eab699fcddso2090735ad.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 24 Apr 2024 22:08:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714021711; x=1714626511; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qrmw5y3+0dGAzUFADTeqpuhqYtgOQVDO3UIxdvuDfY8=;
-        b=otpfreBf0w1nb2icaPBDebv3Ur0n/ujJLJXh4Ssq3Rxdnky44X4rra0r6vKU+Vxx5I
-         PoAAk30oB8tmLw9LRO5HupzJEIeCvP88ZpVlYr4Y9LtY4si0aBikZXuCBbcG2H2PKpld
-         j8hg/XUbkaXhgoe9X15jPaY6y9MERgP+Q2fQ0vRbBqPw9CgpujHk8uEc9kwArQXq1SOb
-         BfU4gx0h3gcLN72BOCCMrKFLLvgXt6YPt8a2wVNjga+SD/qbfCoLIE+Bpk9RHJrUEW77
-         bO3cEjkeyd4QYWOIvI30MO9EMVNu6s5qkR1nNNeqMOxqZ/dmpKb/LEskc42uAXxGHCpL
-         NjSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714021711; x=1714626511;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qrmw5y3+0dGAzUFADTeqpuhqYtgOQVDO3UIxdvuDfY8=;
-        b=KUW5ylMinvfeme32wi1E5sWRS1txMLQIcdF2F1Td19RysJW419W89MpX3VS9zAhEN3
-         oNSsH5ml54kollwO97S0nAeglNybMTqqzySxMy/jWn1nWLCsF7UvRkiEEjphGrZ9ch+0
-         Q8ZuXiYKeplWDckBm3Hea9g+C96fbIpMtCrlffyOaQ4MKHBT7hS5zMtH8GqXG03rALta
-         Y6fgVl2fmmpAW7U6+5cbyjit+NhcBgZnFJRA+AGRhDt51nSNbbKaqGIh2Kih37LpL0H2
-         voccS6240Vln88ndMxMLYYEcuEnOL9KbldkMTGzMP6omHnbIJxGZOGZmpN1AcTNXBm3S
-         yf1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVKHNO0nxQqtw0hPB0ggruofcvzo0UYHpiAGMIwM6liXeuZNUG+lf+y2QXl6X9BTWfmsUsPAmO3rYgUhfkm1KNNibMDrNNz4NxF+8YBniub
-X-Gm-Message-State: AOJu0Yxw1dW4DtJxy4ZH1WKjb7Lh+qZ0DhEAhmjT+EeOUJDatQRp49NE
-	BsL/wgXUewHK7JmmcZY6kCcXCk8d/fPTIhiRgGvGKsgSwOyJZzIbNtla/pX7L1A=
-X-Google-Smtp-Source: AGHT+IH96vmh25j6BBEQazt7ICu3yODBTiA7HitL6kUOUPKSDrXvwY+WRBVCOtppGPgOl5/xC362JA==
-X-Received: by 2002:a17:903:41cf:b0:1e3:e1e8:bb5 with SMTP id u15-20020a17090341cf00b001e3e1e80bb5mr6077593ple.28.1714021710657;
-        Wed, 24 Apr 2024 22:08:30 -0700 (PDT)
-Received: from localhost ([122.172.87.52])
-        by smtp.gmail.com with ESMTPSA id y17-20020a17090322d100b001e5572a99c3sm12756023plg.207.2024.04.24.22.08.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Apr 2024 22:08:30 -0700 (PDT)
-Date: Thu, 25 Apr 2024 10:38:28 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Andre Przywara <andre.przywara@arm.com>,
-	Yangtao Li <tiny.windzz@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: sun50i: fix error returns in
- dt_has_supported_hw()
-Message-ID: <20240425050828.iqs7cjslxvb2fzn5@vireshk-i7>
-References: <9bfe5703-b39b-4d98-9995-f6a7d0ea558d@moroto.mountain>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="a4+367cX"
+Received: from [192.168.1.106] (unknown [103.86.18.137])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3C2F5674;
+	Thu, 25 Apr 2024 08:37:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1714027022;
+	bh=v5UhDezQrgaGxA0azv+XR1T5U+isFYlYg3qnj+sRLIg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a4+367cXIUj7G5UbHNKAqmBQPJvdLaZTBgNhBDt2Ec9G3MZ5QN4QbA2z6+zhpFOSS
+	 h423/e88mmhRpn2FYNn3SN+moslUy4VtdtgkWbdSoTpo/g86BzViGGUoYYiHfNYgw+
+	 pMvDL5oP883DpO4CHKc3XqnsYw1XYt3tiLDU3jto=
+Message-ID: <9cd4919c-657e-4533-8f11-521d31e60123@ideasonboard.com>
+Date: Thu, 25 Apr 2024 12:07:47 +0530
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9bfe5703-b39b-4d98-9995-f6a7d0ea558d@moroto.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: vc04_services: Delete unnecessary NULL check
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Stefan Wahren <wahrenst@gmx.net>, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <526ec2ff-6277-4d5d-b2d9-63b087a97c7c@moroto.mountain>
+Content-Language: en-US
+From: Umang Jain <umang.jain@ideasonboard.com>
+In-Reply-To: <526ec2ff-6277-4d5d-b2d9-63b087a97c7c@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 24-04-24, 14:40, Dan Carpenter wrote:
-> The dt_has_supported_hw() function returns type bool.  That means these
-> negative error codes are cast to true but the function should return
-> false instead.
-> 
-> Fixes: fa5aec9561cf ("cpufreq: sun50i: Add support for opp_supported_hw")
+HI Dan,
+
+Thank you for the patch
+
+On 24/04/24 5:13 pm, Dan Carpenter wrote:
+> The "state" pointer points to an offset in the middle of the "mgmt"
+> struct so it can't possibly be NULL.  And also we dereferenced it on the
+> line before.  So this NULL check is pointless.  Delete it.
+>
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Umang Jain <umang.jain@ideasonboard.com>
 > ---
->  drivers/cpufreq/sun50i-cpufreq-nvmem.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>   .../staging/vc04_services/interface/vchiq_arm/vchiq_dev.c    | 5 -----
+>   1 file changed, 5 deletions(-)
+>
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+> index 9fe35864936c..3c63347d2d08 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+> @@ -1170,11 +1170,6 @@ static int vchiq_open(struct inode *inode, struct file *file)
+>   
+>   	dev_dbg(state->dev, "arm: vchiq open\n");
+>   
+> -	if (!state) {
+> -		dev_err(state->dev, "arm: vchiq has no connection to VideoCore\n");
+> -		return -ENOTCONN;
+> -	}
+> -
+>   	instance = kzalloc(sizeof(*instance), GFP_KERNEL);
+>   	if (!instance)
+>   		return -ENOMEM;
 
-Applied. Thanks.
-
--- 
-viresh
