@@ -1,59 +1,40 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F32F14533F;
-	Fri, 26 Apr 2024 12:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C74F14535C;
+	Fri, 26 Apr 2024 12:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714133143; cv=none; b=i6b0c9jbxEFaB8OXJOYC2+x/CzybjiYVh+ECNS8B+rZ35dsvtcof0KdHQU8hLJ3pFik2vpjRR4vSvb+5Lyrt3e9YMnv0cse99oM/rvmuxjA/rW//d6Q1GrWrr650A3tPI2lMQ0RKQMaG9zL9QEJ7pVDq0APIyslHxx7SfY7hEgU=
+	t=1714134558; cv=none; b=KDede91p+vC/O5Wg5xWS6w21+wzInr5mQZUez3UZw6Tr0rQBLTH1yQDa9hu+2Y0IEDajJYGardPhXkMbOk2DcVNZjlZ3jUVx6inUz+YUdnnqkP9kDPf4CIxl6rus8WaumI0Tvej8VtzL5lapUOTE37eH8rNXIJdlJWTOiez7JN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714133143; c=relaxed/simple;
-	bh=VZ4dyN6HsEQTrAuuWJizHwgtH2IUGnz23LHLcnDqNXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=FNiQf8EvZ0fvdXAZffGL6TxZGA0MgK0U0pKDDjEekNEDAaqs2JkcLHI12H7u9pEUzTh1+5nd6QuQLqn1dzMQqgRFF759I9/EZkfEec0I5lX1wFWlskaugF9Qn4ErqJKnoLkXNCf+MNTRga7jRphUk7ZA1s23EFYaS3KiWHYlz9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T/99TpxJ; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1714134558; c=relaxed/simple;
+	bh=H4p73NShfY5YEqWp7dPCAHt3mIwIFXwsuZPdnZOnwYc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=NQm42F/rtqU0y8x73aNIgW/YljeYp8kobLar3CArNxZigFCe6ydeMeugCH/3HhcoGIWq4cmhVlH1VRdVDm8ggkbWha7G1tlGGmXU2ynKmvHygtG9Ra57D0x0foganLqC8OxGAvEGxCRvr6mX9kudccdH8oxTtJaArjA29oifR/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=q4EABXFn; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/99TpxJ"
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2dd80401e81so4791371fa.3;
-        Fri, 26 Apr 2024 05:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714133140; x=1714737940; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=IFRgbloGhVnIKWuDRlSJQNjAIv7cIETH3l3I8D/RWn0=;
-        b=T/99TpxJQ+o7rKczf5e7s3PcFO1hyjncMqloVg1ECYnr+swynjeq45H4KkyemaEtDN
-         JrFGInHVrqTttNL63shSOeRcXxO7TqHbJGL1Pmy7ekIERifgg+sgpsmfstMeOIPh88ud
-         xvGSK+HH8qaeLRiRBz2NWsUC58D5Rjgl96h1CHAa5QefuO0JFnHqpyhUIHSZqWOGPhKx
-         tehh8Y8Hf238eeGR+5HS0au6ySs7VR/TZynmVnwimcPrkkGElU/jzi02gbfE5fQdxBmy
-         ZZPVtSIBB+u1/m9B1FpRGzEWYYrEynO75LR1lKzFv2muvPMuuZjr0fuOF4ylEPLnN0AV
-         CBdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714133140; x=1714737940;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IFRgbloGhVnIKWuDRlSJQNjAIv7cIETH3l3I8D/RWn0=;
-        b=SJWxFoK0TW2g2iBitbViKC+VM+k4DUSLAr0Fg/+8NnrrO08H9eAQBISrdDv3tVisKh
-         fklvXjp2XFNRtDsRo6XgsgsX5b35O/xSB3hSHCtbxH+KGCeHi2Bkp3KZZtO8bFwqmPDB
-         Eve+WPTYTnC4hne7+X/WRNpPibtWaob74D4QxAjxb/zkk4hMmb1bbdxOKoMg5isAZdIc
-         AgJWVjaIKcsqcfMEQRioBU9Fzthuim3nhXKoYnvTjnskmA+0Ypvb3C96zbXtJIOgilxr
-         SOvuQ6lqLqE9ttASKSIrXILYTU86YN4ksrdD2YpxsKPfvFaVvwK5L5EONt4rVR/YYC1P
-         u2rA==
-X-Forwarded-Encrypted: i=1; AJvYcCUV58/Xui6L7AfEuHx6NewiiNxoEX0ZoIk/lFlX8FVkzxlu5eBF29plLpGakKPQDjECtgvkSoVcTl1oP/PMlQUHTfgE5T07+OSb/Fc5wWwDwwRCZyfroJzD6NPawExeXeA4494PkPCDkJWek7Oo9nBXNl1fwhZJI1PhQIc9jkUC+jA2VwMrFM3tq94=
-X-Gm-Message-State: AOJu0Yyeg1mmqXyaKSg2HBz+oqzHRvpD7qPwK9jyunZ5mDgQbNRLHS2q
-	BNNoa91HiGvce4rWDO6ORfgDcxHFKSrJ9z8zBCb6oh76Mr8Nt4M/
-X-Google-Smtp-Source: AGHT+IEe8mldUM2Wv5ZRNT6Twg6RekMttRFRq1NWmP7m1iCts+MYJNSTfm41RqGdQjLEgw0/c8z1VQ==
-X-Received: by 2002:a2e:b61a:0:b0:2dc:759e:981 with SMTP id r26-20020a2eb61a000000b002dc759e0981mr1615343ljn.4.1714133139789;
-        Fri, 26 Apr 2024 05:05:39 -0700 (PDT)
-Received: from [172.16.102.219] ([167.98.27.226])
-        by smtp.gmail.com with ESMTPSA id k41-20020a05600c1ca900b00417e8be070csm30937272wms.9.2024.04.26.05.05.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Apr 2024 05:05:39 -0700 (PDT)
-Message-ID: <81a9e3c2-2c44-406e-af19-90d9dcfe4a92@gmail.com>
-Date: Fri, 26 Apr 2024 13:05:34 +0100
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="q4EABXFn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1714134525; x=1714739325; i=markus.elfring@web.de;
+	bh=mST+U+wJ6B+mYy57rbG1uACdL69LsS+O3Z/CbYAv0JU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=q4EABXFnG7Gexe7YQbV/SxHcb8p68+yWYEecI7nzT3pzxaTW9SYDoRKxFtA5t0Vb
+	 D4fjPL6A1vffMLxFburoAjTnXKU2EjGRLbOjZdR8QsiKQbCXpW+puTAOQPs/LezXm
+	 kLSQU685FeA4ZAzheYsMnbVnVnIHKogAu00V9BhPVC/ozhVwGRWFWCZ/l0sCkjSjj
+	 XKjz7wMlqYPNImHE/zgAs18H7mYeba6yk3J2MeBc+rt/jUs/mCnHIVFpGScNuR8AG
+	 aVabMd7mcmqTUXuq5WJRiA8HV+ZvQVA8dRgEZ0ftIJTQHvAPA8TVYLTQ4vCS05vw0
+	 NTOqRnC+sip3q81BoQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N4eGJ-1siZB40xrb-00vGRE; Fri, 26
+ Apr 2024 14:28:45 +0200
+Message-ID: <42c5d1f0-d16a-483b-8bb1-4c5768aa3a8c@web.de>
+Date: Fri, 26 Apr 2024 14:28:43 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -61,57 +42,65 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] ALSA: kunit: make read-only array buf_samples
- static const
-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
- Colin Ian King <colin.i.king@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240425160754.114716-1-colin.i.king@gmail.com>
- <20240425232250.GA205425@workstation.local>
-Content-Language: en-US
-From: Ivan Orlov <ivan.orlov0322@gmail.com>
-In-Reply-To: <20240425232250.GA205425@workstation.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: lumingyindetect@126.com, linux-serial@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Jiri Slaby <jirislaby@kernel.org>
+References: <20240426114716.1275085-1-lumingyindetect@126.com>
+Subject: Re: [PATCH] serial: 8250_lpss: Fix memory leak in lpss8250_probe()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240426114716.1275085-1-lumingyindetect@126.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:K0LIFsUWA2FDQcBUvUBsrmBxoRuc2xMc+8BbJxJCbdF3i89gYsF
+ 9JA6MRNdjpgs0PYw4y+BQOYyF4/HiU5YcFrUn7kr1I5OetyYxtAacJFehMEqerevYi7fNht
+ ZiQ4/fIiDjZVYxf/o0CM36ZvVFF9soYFUw8l4x7/uAsVIcKl/YTi2zSmGe4bVM3TYvnxYA7
+ cHV5ymDNWdnT9D6mnoRYQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ciZyN5Jlt8Q=;C/Iie5z125EquYpm2Q+F+1hhRhp
+ aGR3YA2W4MZY1uaMUVFv8JV6rfuEvho3081LHhC/lsxsrPqf3YIB98uKcCqoIjEYyK9WyBqDA
+ aH0IXzswPU4b++xjmqJJdXmFmhV0Zb9IHoyFMEZT7ruP88B12Bmw4clemsR+WGDhbKiVaQIXl
+ LgiJUC06k5aGDWFTqmjRBof1DqVNJkUR138NlaIYb3aPrPVOztN2MwylFYuarUT1ZZ+COjKz4
+ AjkLJWuHBNzzZs6syH3uy2d8iOx/XE6/TjTOC6iyv3j3oo8ZRstx7gVC3GY4nCvrtY6PQ56WT
+ 30qcmFx81DMJxFZ3AybdBz5IxJKUravLMt6Ds0vesZCnhJ9aN+ojoJcA4BDM7V/LlxKWzxjas
+ B+/AJMo+RvbnR8gl6UlbC6y2Ss/nx4AN8/e599niUqbXdqVz+twj2m3J1KttrP58uEoGaNBgd
+ d49vgpgx5NgUfKSwhuVouRwf9hssrB7Xly82/7qz/QicrSQvlZlfts1q7vKJPh3ry4EC1pViA
+ ScT9fSK2lqrMbpnJZ5IRWOES9Vm9iss69+KXmuBSslYo3KxC9CgT+lIAt2KuqpyNnb+U2uMOI
+ NWLR0iLEcXoj9ESAjxN67+1mtF2gnjrC4zPU5sssk7kltZRyyQZffocVUywvZVHCCKvKgKGZw
+ t5lza2RksqXK0nSejuudvvU4U0HATorWOIDgOCeSufkUpUjsQifqMhkTK0aEYvvCRBqWvtPJR
+ 37A70Niu5iuu4EE9b/QlSU76IlneLCnoeQKRD5Cd9AivrP2faHyMehWz2UDNI/jogcgGYNVyZ
+ E2tztddjhlApeKqWtPRLI1oUumG0RQT5jnRCJoxQ0IsuU=
 
-On 4/26/24 00:22, Takashi Sakamoto wrote:
-> Hi,
-> 
-> On Thu, Apr 25, 2024 at 05:07:54PM +0100, Colin Ian King wrote:
->> Don't populate the read-only array buf_samples on the stack at
->> run time, instead make it static const.
->>
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->> ---
->>   sound/core/sound_kunit.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/sound/core/sound_kunit.c b/sound/core/sound_kunit.c
->> index eb90f62228c0..e34c4317f5eb 100644
->> --- a/sound/core/sound_kunit.c
->> +++ b/sound/core/sound_kunit.c
->> @@ -167,7 +167,7 @@ static void _test_fill_silence(struct kunit *test, struct snd_format_test_data *
->>   
->>   static void test_format_fill_silence(struct kunit *test)
->>   {
->> -	u32 buf_samples[] = { 10, 20, 32, 64, 129, SILENCE_BUFFER_MAX_FRAMES };
->> +	static const u32 buf_samples[] = { 10, 20, 32, 64, 129, SILENCE_BUFFER_MAX_FRAMES };
->>   	u8 *buffer;
->>   	u32 i, j;
-> 
-> Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-> 
-> We can see the other similar cases in the kunit file. I'll post the fix
-> later.
-> 
+=E2=80=A6
+> In the lpss8250_probe() function, I added a label named "free_irq_vector=
+s" to release the dynamically allocated memory region pointed to by the va=
+riable pdev, and replaced the two return statements mentioned above with g=
+oto statements to this label.
 
-Hi Takashi,
+* Please improve the word wrapping according to line length preferences
+  for change descriptions.
 
-Hmm, correct me if I'm wrong, but I don't see any other significant 
-allocations on the stack in the test.
+* Please choose corresponding imperative wordings.
 
--- 
-Kind regards,
-Ivan Orlov
 
+> Fixes: e88c4cfcb7b888ac374916806f86c17d8ecaeb67
+
+Please add a commit subject for this tag.
+
+
+> Signed-off-by: LuMingYin <11570291+yin-luming@user.noreply.gitee.com>
+
+I find the author email addresses suspicious according to the Developer's =
+Certificate of Origin.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9-rc5#n398
+
+Would other email addresses be more appropriate for desired patch communic=
+ation?
+
+Regards,
+Markus
