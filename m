@@ -1,88 +1,99 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB98485624;
-	Fri, 26 Apr 2024 13:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4C7147C81;
+	Fri, 26 Apr 2024 13:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714137094; cv=none; b=kDfB7GCheYWKLJL7S6tJuLwJveTl4OlTI6A3GBvaMgidb/2N1x20vNcPbYpDBvt2vLqy6+9tLZ7rfh5OFP9xUuo9gJZvtUaQBLTYUkAXJ8gd6TEGGcKzBMbbyD2NYuFHfsN3kCZ2NG5ft98uRA9qhnb3NCxF//8BKeoH2RE6ZSA=
+	t=1714139506; cv=none; b=EUmgD6L35YcIZlEkDvxRUQULZniIBrYJCD2oZ9YSZa1/4aDcT+VOD7sH/ywGgqyuM6vQW8e9GnSl+B720hnevDLNtBMRj/wCTPRjrTBZrnUnR5+Lhdflckgvo2aNQ7VWupbPKwT1jhAofMiyUpjnxNYUsH7YA21cER4tHPL0X1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714137094; c=relaxed/simple;
-	bh=/UFE2tDaNmf2j4moyUP8Rwbzpwd1yZuB0QRkfQ1nl7Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EI1lCai/F1XWVQydLp3ysVMdFtVfte1jDl4pB7Xne41Vwgz7jEzIaRI4WdGXrgEipXvMQQfvGt9sZ6pu4wxJCex3yCDZ6TbPbqzZlrzbXzPoDOc7xxG4AbCJV6XmSF8+AghWgRLfDUqek6FJrDTqYpgvJIOw6pv/EipxzIzuMsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AS4TV73U; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1714139506; c=relaxed/simple;
+	bh=sfPc8vA1asOT4uhPnXFYAb1MYP7/75SGuCAI7eNLkxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JHuKeyiLatg0gdk1o7ZS/AxJSJ/XUw8yMH0WHmDBndfYSi7bFowEv7YK9nZuq8EM1qghU3uSWJwb2GxuwxfNQ55ZCJeD+L3BJ/2nXq74YZxpNC6aLBc1u73qDKnPTLWvLV4xbGosiC54xkUz0Q99wzWN4Q1Xz8cxWWVQOU3vzUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dbft3gR5; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AS4TV73U"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714137093; x=1745673093;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=/UFE2tDaNmf2j4moyUP8Rwbzpwd1yZuB0QRkfQ1nl7Y=;
-  b=AS4TV73UzgTYfUNU0XT10VBy0qXeOk+VJY8LjG/5thqbu+1zxZXzBuWO
-   ML/AoP9A8Li37v8Y0fvdrTkobKbSmidL5ZTdMRJ0++GBbA9WGd9z6Xi8h
-   up9jdzCB9rAl48tFxYeUM6lEc2YVfGRrr1gO64dlhLDSiWfvgPfYfQXZw
-   4X1yxdJ4+38f7Ng/iXxJpVHGeJgzHJfdvNcbUuykhouMGgkEE24m5KIqM
-   MyyLvIacYDkikyk7lPX19vesZQFUXt013G63nQ2/awO3a+jnMUM1wo6XH
-   LGMh3Guq1BNw88Db6TSPhNmW4ftJUJnBIZw/a9+q4nJg45X//8wXRmap6
-   w==;
-X-CSE-ConnectionGUID: HV1rz/ARTM+N7eOs3t14pQ==
-X-CSE-MsgGUID: 89gCp6T6QEayN01u/qLZ7A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11056"; a="9796898"
-X-IronPort-AV: E=Sophos;i="6.07,232,1708416000"; 
-   d="scan'208";a="9796898"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2024 06:11:32 -0700
-X-CSE-ConnectionGUID: 7DirwTB3QyG176RdgkR2Sw==
-X-CSE-MsgGUID: P+xVloUzRFyKGYA33/EkLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,232,1708416000"; 
-   d="scan'208";a="25416985"
-Received: from lucas-s2600cw.jf.intel.com ([10.165.21.196])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2024 06:11:30 -0700
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Oded Gabbay <ogabbay@kernel.org>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	Colin Ian King <colin.i.king@gmail.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/xe: Fix spelling mistake "forcebly" -> "forcibly"
-Date: Fri, 26 Apr 2024 06:11:51 -0700
-Message-ID: <171413710466.3189116.492328462949220625.b4-ty@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240426094904.816033-1-colin.i.king@gmail.com>
-References: <20240426094904.816033-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dbft3gR5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1714139474; x=1714744274; i=markus.elfring@web.de;
+	bh=sfPc8vA1asOT4uhPnXFYAb1MYP7/75SGuCAI7eNLkxs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=dbft3gR5I9p9ervltEZx+omyOiwLyxFKXShxNiup9mHSMcJ/zHQsGTU0dBH6RNkE
+	 Rw3qZpUt+zG+YEHw7BqN4numkvzMBtU9k/6/Q3cV9Yc+vGsXxrMq0J9UZjXcR8ytQ
+	 y2hU2C2q+xtTVVTlKig80ST1hsWMmAOCGVjyBinfWu6M76QkA77GnVABTAJH8laHC
+	 k3EkqSNPiE4hUsq3Kl3pXLASl7bPrUC3rNPy0OeKX5/uia+bx96MwL+2hVfGlmaQ5
+	 UXDeSJwX8XmMFvxQXUqGtJIMHP8TWGgBo0GkhbKCCCBPHYwDKdGccp9ZLltmofWSd
+	 FGRx5BZrByfzEjDd0Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MFayw-1ruGeC2EL0-00H4ZR; Fri, 26
+ Apr 2024 15:51:14 +0200
+Message-ID: <801e8f98-7e26-429b-9601-9e42d0e304e7@web.de>
+Date: Fri, 26 Apr 2024 15:51:10 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: serial: 8250_lpss: Fix memory leak in lpss8250_probe()
+To: lumingyindetect@126.com
+Cc: linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Jiri Slaby <jirislaby@kernel.org>
+References: <20240426114716.1275085-1-lumingyindetect@126.com>
+ <42c5d1f0-d16a-483b-8bb1-4c5768aa3a8c@web.de>
+ <4e6966e0.a07e.18f1a7f7863.Coremail.lumingyindetect@126.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <4e6966e0.a07e.18f1a7f7863.Coremail.lumingyindetect@126.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:44/Zkz0wQLU2wdmqoRfUmes0z8Qej6S5BBJmxijUrzSXSpyNFAQ
+ +E5Eem4AzytWFighTHTFnb4PMQu8lzwJwYw80dFkexUl9AGGTfHAKZBMewyY1Fu4VfarQVY
+ 8MKJR+641KXxt+iz99ddMO3fEwye3/y2T6QJHBccizzd6lbAm4ZHsPUjyF7MxPtpMZ+H0bR
+ 9Ai3cJ198zZ75ZUKyOpZw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:hrkOPrdjhYQ=;JoqKRc4NrL4MMWqyzGtOVb24Aa3
+ YG/73oK/MqpKXnEUjtpn+3lyeU7akHH2X2080bFuXrIWfhRgIV6qE/ok/R5XOWt+3EsPqaWOv
+ g2nFBs+aHFd1DwKl1OKsNnLJQjS/6BaCIjiLTNNXnuMOD8rSoYiuJRCnj97kr2juvqrvQnRzg
+ nVTRXx0+ynxLiQNmloU2Yb7XFLK8gXQ/fEzZfvx0/bzvAsSAWHwbLUVxDW0jb5eRw4QS1sUyU
+ D5nkNYUHaQwjKk3ip2UCcf/kYgjbR/0U4lMGfH5vhtRmjF/d2YjlZgT0xPjEr//xp3Z9ox+kb
+ ngzbpViIJtpqHcv2sWBS6Ts9Aw750AULXuCcDCiS4vAztl0/FTqtajjlo8MOkASd7BQdCjTTL
+ mosK27aACUBn4FsXAxCjTL9ZZ2olX6MIZeY4wl+JaFhhkDtel7GOsEfMelzmJVfYNlF4hdC5C
+ PeUu/aUAbyWpHofEkrTeQcem77DT7Yg/+vTPD1El9dAqRCtwzGuq4K2lg6tQoOKj2fG7q36L8
+ CN58dy86BtEZ5/daUhTEd3+3n6QwBpP0wwayhkkrMRdD4FcsA1aNAYxT3Ype+G+jjgW6/za8T
+ HAqegjPT0sjnI/XzPjvwxENUtkOLmRCvv62hGJ1hSc3dkyGZD8Q4yCytIeMD6a8fCJgftYAd+
+ 9XDYDYJFQZSv/2zImY1EEtjTYmYNbuf54s9Ft7b/vX7tTVrFOPLCmIJaLMQvcEBYK/vUmz7CB
+ 4Df+35/FErG/Haz3PUH1tPNhpLJeZhWKr/xn/82paZN8CVtlkpb8GPf6c0zr8PWy0KV6RPhUU
+ ALfoATZPUtpYyBk5pu7pVcCoI/cHIguujWGzW3mqxr6Rg=
+
+> This is my first time submitting a patch, and I haven't fully understood=
+ the meaning of "add a commit subject for this tag" yet.
+
+Would you like to take available information from published information so=
+urces
+better into account?
+
+Please take another look also at advices from the section =E2=80=9CDescrib=
+e your changes=E2=80=9D.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9-rc5#n145
 
 
-On Fri, 26 Apr 2024 10:49:04 +0100, Colin Ian King wrote:
-> There is a spelling mistake in a drm_dbg message. Fix it.
-> 
-> 
+By the way:
+Did you try the development tool =E2=80=9Cscripts/checkpatch.pl=E2=80=9D o=
+ut for your change approach?
 
-Applied, thanks!
-
-[1/1] drm/xe: Fix spelling mistake "forcebly" -> "forcibly"
-      (no commit info)
-
-Best regards,
--- 
-Lucas De Marchi <lucas.demarchi@intel.com>
+Regards,
+Markus
