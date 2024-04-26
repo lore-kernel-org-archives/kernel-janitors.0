@@ -1,41 +1,59 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18FF13C9A7;
-	Fri, 26 Apr 2024 10:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7424B142621;
+	Fri, 26 Apr 2024 10:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714125704; cv=none; b=Fj7ceY4yDS6t9M3SyXPwiGN7K6AZqlrFlnPFYW7qVWP69qHCxkyjcrt51+nz2c0aXhPqRNy3pBakysG+sGUW9IwMGTm9k6M50tMIyQzVoJbINt0zmIGMu6hqMbJO1IbPeg6iJPD89fOloEj3GEDocC0DIAF9x/gBpOfwgtp9J1U=
+	t=1714127012; cv=none; b=g35bJbV3fzDNLM312754Zh7tT2cRNULc6fOxR75Z+p6sFzIsLyOSRNpxRlUbQO79lWz2+pA6ngI0Pp6j5Kgoz4ZRlA5CAKkOxTW+CHPishhWLDFrG5YnARB7mZPF/6SzOF9yCyO/C1NlhKF5WJpqSgmg2VEUEhYNM5q/heRYpf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714125704; c=relaxed/simple;
-	bh=YpTE09Jdj7TFL3FQrJpjOfExP0eacSSODBHGOgrYr9U=;
+	s=arc-20240116; t=1714127012; c=relaxed/simple;
+	bh=dSaUlQxpkYSG9t64O77hJy2hL1wLPGYBXMMSLyVDkkE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LhSaiACaytnwt0U2mmxDRRIb1bQejrrM+HdNGz8HsWhkBKwQx7QF3O9KH/irN5ENg4xx7Zb1OVQic6XYXGVw3Tx8usaQR7lYrRRyznqnIMnDnRcv7Gmo2XoowDeJabvibKnvCUas2x+5ODOJQNXkUG/n9QXnsLQBB94x5LwCgBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Co7f2fmq; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	 In-Reply-To:Content-Type; b=WCwMTYcqHhJshjgbKYQn8QFylFPRwhtQd7I9A4eAaPDThk1V29t3YpLnkHhGbde65uzldXg5uUcA5zIXmDs8WCMXqZKd/f5MfD3MnFqwhHwGWxpBTHoDgN8cDsNAh5rE1XG+1OFns/Z5qf4wmXti1fwq17Uo54fdInPay4YX5SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YPPbeAeB; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Co7f2fmq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714125683; x=1714730483; i=markus.elfring@web.de;
-	bh=IkxQuklyV6oYuexLU2ovnPEuT39tlloBO1TIHfNZ42Q=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Co7f2fmqpY5WVoPJCLyEXwpjQqAK+/Y1RHnxD+nuWsvAUpOioKoAhw6PTBGaq384
-	 tPi2ZuUeAWTxej4h21QvC521Q31N2ql6ONZK8lndwLw9WlaFS1uJYUXJ8kxfhP3vB
-	 BybDzi1joEE3kisLh0txIGDAm4J8KZZQkpL4rKOAnthCY5WY+B8Ll4jCqLNGr0+25
-	 C7kMNathdZo9CKlwHiJHxKGDgLD6q1//SrW2HCVMxOSl0aYnkUYU0c/rYyA4lfZqA
-	 kNX+nViTBhhO5z4pdeHxaH8IoQcUtYVuFlhtinmvYTTtfApHc9hdegfNm/NMraXs2
-	 AY04gtzyRPKdesmUMw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MbCI8-1sXQHy42q8-00bZXW; Fri, 26
- Apr 2024 12:01:23 +0200
-Message-ID: <9d186852-9ac0-4cbf-b9df-54d433b3483c@web.de>
-Date: Fri, 26 Apr 2024 12:01:20 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YPPbeAeB"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-349a33a9667so309324f8f.3;
+        Fri, 26 Apr 2024 03:23:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714127009; x=1714731809; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ErKC1DJY0VpHeLwTsb/v59LZhBRdBYfq9YYqdX84OHA=;
+        b=YPPbeAeBdNVCU9bSjdY3GmGdEg3V07I6EqL/RwmPk8ui8ijsa6gCA/2LbXctCh2m5U
+         eFDpdvjz+wraO/P2N9SzXgUuQITOYpp+1+DY7rhMnXKKzqmLkkD+rUwqZfdTg+G0qiZ2
+         y0xCTgTBBCAKXFAXApNt83V3r+D7ksvS3NoLJpZnex/cR7UJkATPvx4btdweOUfvCUoW
+         jwQQp20DTg7TD9UnTKSxnCs0qK5RZljeZWiTuLhA1/RjP4ealr/Fst6xFnp+IECj2ko1
+         jPQtTJHx4jZ58xd4fl0JmBDRn9UIvM9HtguidwlDjKOvzmIbDuR0ThL4tF2OFTuo1o6M
+         oCXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714127009; x=1714731809;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ErKC1DJY0VpHeLwTsb/v59LZhBRdBYfq9YYqdX84OHA=;
+        b=u0FW+ZxV7mQB25beBtLHHCOqR5AlVrGmsZPRyP5kN6eQkSDaw8ftx3yKR9GzdMc2NW
+         XMrTeiYOIW93CDQsGnRSOGmR2xApLVG/eiauqZAEgk8Ep6yfhlaNxrAIfjQ40eokYnqX
+         JTVv+KSposYSgwjJxPLgOD+Z8DE46JB160rsDdq42iI+9fGPMjBTAGFStqOBoVERlJvm
+         1n9kz6Egn/UMBoyfMbyoPzrIF4duOjjWoJRVjoD6lHBskujD/J96dMA0jYLhoyDqwKLW
+         pa4zhL0QM0tJImSt6dZyb+IgjrqvGzbmU5VMUOY2KOUv1fb8zGhdlgvLLQMJBVxjIWtB
+         WcXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ4K9tqZcS6dx30UMiZuU8UzT16LK4hzZyKMbXlNO2waLX1lEFKVgao80oSiyLtik5L22FtTgr9bJkiYOOnfA0/ovaIFZBeSZpe8bT7d+wCMVamqdX6ztbi0nOmWMsLJmXGPdaGEHGZxs=
+X-Gm-Message-State: AOJu0YwJ6Y6aUaW6HvvllO/mi8rejL15X5Xq7Q66UCbUk+h/pX6g989n
+	+Jsr3FwmT0h1wZUkt8xpfWkEKSQDURe3dzNd4WOmZupMTAxxFtb9QENY/g==
+X-Google-Smtp-Source: AGHT+IER+zTu22RykLhtlZnWcnvPrKERAd8cxK+eIm1my+RfqDoYY/RbgcsAD1hSqqNV6o0l69Zbfw==
+X-Received: by 2002:a05:600c:3b96:b0:41a:c4fe:b0a5 with SMTP id n22-20020a05600c3b9600b0041ac4feb0a5mr1494943wms.4.1714127008526;
+        Fri, 26 Apr 2024 03:23:28 -0700 (PDT)
+Received: from [172.16.102.219] ([167.98.27.226])
+        by smtp.gmail.com with ESMTPSA id q12-20020adfcd8c000000b00343cad2a4d3sm21883976wrj.18.2024.04.26.03.23.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Apr 2024 03:23:28 -0700 (PDT)
+Message-ID: <75e82637-9e09-4bf5-a3d4-c3c2001c63c9@gmail.com>
+Date: Fri, 26 Apr 2024 11:23:23 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,71 +61,48 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Bluetooth: L2CAP: Fix slab-use-after-free in l2cap_send_cmd
-To: Dan Carpenter <dan.carpenter@linaro.org>, Sungwoo Kim <iam@sung-woo.kim>,
- linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, "Dave (Jing) Tian"
- <daveti@purdue.edu>, Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Marcel Holtmann <marcel@holtmann.org>
-References: <20240426072006.358802-1-iam@sung-woo.kim>
- <964b0005-3a9d-499b-91d3-171a3c917b4a@web.de>
- <CAJNyHp+WFONaNbZVK3tPcT=9obEiuE3MvQzJK++HP-ffNdfX0w@mail.gmail.com>
- <dd466a68-f3ae-4dc1-8389-6adc463735db@moroto.mountain>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <dd466a68-f3ae-4dc1-8389-6adc463735db@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:zbR8CpACKr2MhVcZfbZ4Vyyw5ox2/rZDQ0i6PsfsA9gbTcmkhOF
- z8/OeK4ftOJUk+MH4bsnXb5JzuWRchlCKr4YlHhWg/VmRwksLBSMX+74We4Z+vi0kYv3YCb
- psd1D+lbfUg2WsUEoJgsWTGReobu5e69qfcNBRPymiM3Cot52JH44gsyGs1M0BReCX6YiSH
- 1iEsHhowgVyJDEzgRCOGA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:bLtSnyTF/EU=;NiuCW/MPI7cO+pZqqCaXj7a4Xg0
- KwzItyN/vlPSBWN7h3UFsmlLgPI7HdCb7APHi2krTY/bo23RJfVviHRdmruD2qAjxV150dKMf
- 7ROLDmBwblmhP6Ii8HAQ+JWlxUpc636RqUh5pq/ZR1qU64vts/9tadGVA31APyzk3nB+ykMmF
- W9zYuvq/bKxHSZPYbLHIp2PjhYxaKJUaoPupkGpxl4OfrpAuT8OMkwfxGCLyFk/M3ediwR8zg
- HuJ35+vMrOuIotZe4jX70Jdojis3RYFX97s3g6Kv83jb+F9zeIe2eMSXsNBVKIwrxhwEEenT7
- Wx/3jZwJH9ksI60PSa+xge8a2V+SrL8FjEGjlrWvkv7RhdUcV+JrmFd+kG8xM8BwArY/vcHvg
- A7g4b/p8YZdnI9GPlnroxQwQ8jw7BNemiV2L+Xjxjb9HtnXkTGO5+RSVOBD0Su5lHWG6F6jhZ
- JFClQofKeEYvl8kQO5YowVeTcxkK/kAUDtBVNolcVSaluIuyyaAMSUehIeReyK5A2nvuUG+a5
- +/DLgnZVSRApXk7maf4sIus/d6lRWz+a6/F8BPrslU/xsHdvJSg3GAOf6Y+jkSw+PFdnXeXjU
- a/JwYRRvuZaA/ORvyFcZSb/7Ok7wmaSS3sRfy6Djww7rjxvIjLalVH7WIw/xpvzHzh7RIfgol
- vdjxJXh9WlUzeLg0Db4q7va1quNkXBr2Nw8syKF6EV3axcwVtQUrBd1Pp2ZRBlA8G7eJwCf22
- ftU+K/LjXTCCw5oTvrhAlZTYLbiLtPNmdw0VDogEKV0FWeqP6EHQ0a1a+SyLHCBGSu2zFvWIj
- XrOKxXAOL5rS5IgGoerhCxM8xxDgTAJLRzqwNVActaGhQ=
+Subject: Re: [PATCH][next] ALSA: kunit: make read-only array buf_samples
+ static const
+To: Colin Ian King <colin.i.king@gmail.com>, Jaroslav Kysela
+ <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240425160754.114716-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From: Ivan Orlov <ivan.orlov0322@gmail.com>
+In-Reply-To: <20240425160754.114716-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> 1) It doesn't matter at all if there is anyone in the To: header.
+On 4/25/24 17:07, Colin Ian King wrote:
+> Don't populate the read-only array buf_samples on the stack at
+> run time, instead make it static const.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>   sound/core/sound_kunit.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/sound/core/sound_kunit.c b/sound/core/sound_kunit.c
+> index eb90f62228c0..e34c4317f5eb 100644
+> --- a/sound/core/sound_kunit.c
+> +++ b/sound/core/sound_kunit.c
+> @@ -167,7 +167,7 @@ static void _test_fill_silence(struct kunit *test, struct snd_format_test_data *
+>   
+>   static void test_format_fill_silence(struct kunit *test)
+>   {
+> -	u32 buf_samples[] = { 10, 20, 32, 64, 129, SILENCE_BUFFER_MAX_FRAMES };
+> +	static const u32 buf_samples[] = { 10, 20, 32, 64, 129, SILENCE_BUFFER_MAX_FRAMES };
+>   	u8 *buffer;
+>   	u32 i, j;
+>   
 
-I suggest to reconsider this view according to proper selection of message=
- recipients.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc5#n231
+Hi Colin,
 
+Thank you for fixing this issue.
 
-> 2) You are allowed to ask questions.
+Acked-by: Ivan Orlov <ivan.orlov0322@gmail.com>
 
-Yes, of course.
+-- 
+Kind regards,
+Ivan Orlov
 
-But we are looking more for =E2=80=9Canswers=E2=80=9D in consistent and im=
-proved change descriptions,
-aren't we?
-
-The placement of related wordings can be adjusted another bit.
-
-
-> 3) Yes, the commit message will need to be changed but first fix the bug
->    and then we can worry about the commit message.
-
-Will such a suggestion trigger further clarifications for the desired patc=
-hing process?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc5#n77
-
-
-I hope that recurring communication difficulties will result in helpful id=
-eas.
-
-Regards,
-Markus
