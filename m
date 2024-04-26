@@ -1,127 +1,95 @@
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14411148841;
-	Fri, 26 Apr 2024 15:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D64114901C;
+	Fri, 26 Apr 2024 15:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714144412; cv=none; b=Iy7EU3SiYSm82Jfjfk7AfxJcF2ZlOJi+AtQ5eLA13yfPp6FsgCJxr1+IHWlhAi2PC8KpKe0JZrGS/BpUE/l/pc+QvvSobo+w3zMUiklh1KusY3mrZDktVGchMyhvJDsqhujPCgAGE0btv7/B6pJTozIjHPgNrXgW+PPK/NCll5U=
+	t=1714144774; cv=none; b=XQJKDZjRtqSB/1DX+bpgRsBWsUd91yS1+TZG2ZQ9toM6PkPBtA5FPjRkOXEYH61OfpYrLdu2as3DF/S4YjoAZOu8MgiIH23YB933fp0y45EJ8WuDymOt1eb44mSbIvmLdp+fRJ92ugwn4pHq7uh/U66bGfHl1L/D5H+S+8NpL+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714144412; c=relaxed/simple;
-	bh=OVAcxKVWCr0cVxx6IPinXqZ82ZD2FZUL7lrWQzu5m3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g4lJQiKzKKhxm2tPukZ6yEMbK4ripCO7FvJGLvAss+LB1xkDwKFrOqMbVtiFTsw4Ubd2Ov9pgXuVn99N+I2MorOWbHmvtF5h6e4vIX5K0ONA+P/ayOPB/q5qfVwn88P/9URHmFFEouv74mCe8RQp0wtZuUg7dG2NzGUQewUbPnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=ABHvjftG; arc=none smtp.client-ip=212.227.126.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+	s=arc-20240116; t=1714144774; c=relaxed/simple;
+	bh=vxidtu2EwXjRXAhjK64ieOGkWMabWQIvC6Il/Dcmuwo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Ipnd2nqPKV818/4b2aW75Cmj8dLKjJzRwvQ6JUCAwBI1nW/2SJ8P6BAUd/D91PNajD9xQ4As6IY3XRXw3BTIbLgB/rhLiTKAK5P6S7W8ZBhjHcqwv6C/493ZhSSfVDnRjL1MOcfYNZ+HbuHxhQDYslseKD2JbDzKGfjWcapHl4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mTCujyM0; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="ABHvjftG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1714144403; x=1714749203; i=christian@heusel.eu;
-	bh=OVAcxKVWCr0cVxx6IPinXqZ82ZD2FZUL7lrWQzu5m3A=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mTCujyM0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1714144741; x=1714749541; i=markus.elfring@web.de;
+	bh=vxidtu2EwXjRXAhjK64ieOGkWMabWQIvC6Il/Dcmuwo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=ABHvjftGT0Nk3HBK1fiPfDov+IDVymBD7H7YU7emp8EJf43BI+/DVBuovADzBOQy
-	 9E5D6DGsGbW9sSZwkRYZ+l6+u9+ZtfopSdi/q03blpgmHOQ/D8rDRXSnpC4ACIl/R
-	 o/Dh4as+a9ZEYmCm9b+YpzVKA9G9cOzuZs9aJxDO1gnUKeWEsDR1ayilUwY7VkY3r
-	 atlM687qTOxjmh4d2I0XP08IZaRZTMPpvPKTo7TbdHSLwWHyeP2FeHVHNM6+JRqYN
-	 Hvgi99PhkmXK3q7y4Gc8nzazJYWXbS0EpJMEELjMleXcJEsKR3dsqaWi3lZIXYR7k
-	 zcfFeqVUvJx7hqQ/Bw==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([80.187.67.249]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MZTa2-1sE6gn1Mk2-00WUQI; Fri, 26 Apr 2024 17:07:31 +0200
-Date: Fri, 26 Apr 2024 17:07:29 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: lumingyindetect <lumingyindetect@126.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-serial@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH] serial: 8250_lpss: Fix memory leak in lpss8250_probe()
-Message-ID: <xoqjkheigkwozgpckrdpyrfwzw33gjs564plbhbujzfdqwhcti@bsvrni5a624e>
-References: <20240426114716.1275085-1-lumingyindetect@126.com>
- <42c5d1f0-d16a-483b-8bb1-4c5768aa3a8c@web.de>
- <4e6966e0.a07e.18f1a7f7863.Coremail.lumingyindetect@126.com>
+	b=mTCujyM0oewNuoXHvx7VcyZ//4b/QOs7jf8jIT8FQU8GhANIY/BzPbECljQmBWLB
+	 T0PacSl34ZmmdTKRWXxW4mhYiuYm6AyPC7P/jV/TVkhwLOnrYRQ0F6sKHHT46Bg5R
+	 NgeKkTE3WcbTVOS1vKLVgWuPwCa9j+2jVpzKoIuTx0ggIGKZOCwWZabMSVM1NXtgA
+	 edK2qlp9LoHEJQQdNcC5nhS3MoNqMwhSz34Xpm51oVV5idNov/46sW+m4l2qdOFcu
+	 6pTftFSwGD+P7MPlXFdP3YoOGa2DHk+d7aP7OjdX8SP5bry9/WOhe2my13dXenvTj
+	 UX5VIcKSU6DBpaw6gA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N9431-1smtAA3783-0169wT; Fri, 26
+ Apr 2024 17:19:01 +0200
+Message-ID: <0c3cb2a1-a0b3-4a98-9bfc-3bf540c0eb78@web.de>
+Date: Fri, 26 Apr 2024 17:19:00 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qlpmab66ws2khlm3"
-Content-Disposition: inline
-In-Reply-To: <4e6966e0.a07e.18f1a7f7863.Coremail.lumingyindetect@126.com>
-X-Provags-ID: V03:K1:BJSzN70N91LqLh0w0cohyxHpkNGCi7Es93xSvdmob6OTS6JRc7N
- MrZOLp8DUt0HrkNl9f/Xy05GJi2sWIaO8IH7epsxbrri/Jqgn8XcT0e4usgLQTImX5HSYgD
- jlUpl2v9E1wJNSejsg/F1RKvL6rtiNFavCu/B8lVVLebP+eyuGPeSyoZN1WANsqR8rGENTt
- IH8gomiSalf5ki+mzCyng==
+User-Agent: Mozilla Thunderbird
+To: lumingyindetect@126.com, linux-trace-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Steven Rostedt <rostedt@goodmis.org>
+References: <20240426091343.1222770-1-lumingyindetect@126.com>
+Subject: Re: [PATCH] tracing/probes: Fix memory leak issues in
+ traceprobe_parse_probe_arg_body()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240426091343.1222770-1-lumingyindetect@126.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:m6aIXWBUMnVwzLp30Zzzf9uS1KMKRZDZ4MzulBa72/k4CcmUebY
+ 4s0Ehh5JSYtre7wZPwQjFdzyTXr+67wIFXa7k1ZDRK+PY4TrcKtvVkNLVMOmjswV2tRKNCh
+ K+ubcsXJLD02iDZ+iyfxOHzVTCxPt4Ld1k2PB0cJS7eqrmvirwZqan9FNkjmUIJcn32bv4i
+ WcNpBo1+W8ledRrG34HTQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:h0eGSJvPrfo=;l9RT6DJoa/wuUZb+AfO1LhYfqsG
- 8zK2nxNUJ7iTDdqdNlgO739LoW+B6kaMm9721WjnhF+TNhOYkVhppWGyCEgplLJyzc+vC/woY
- FjFdmjC7Ju9+sbKh+88Rx69Ec+BH6v0U2PXcEMMY8NxsEgHE+JEiqczKYCjyEyPPn0Tx5YMp9
- fgIlrIS+4wbFSEDawzCG1uur08+ofjTUSSt6bBCtEpqWVgCYeX5dpa/JMBdEU1AiCB2nNzdX5
- qouexPsDVbL+jLlF+SUoYGSj63Sg0GxbxguUOgI4wMnvArS1vrUApopNOgvJJiKe0WPPbtcdA
- DI+II290Levat0yfMCzmCjsdvF+gjFx+lqrkmkSpG1LjcC2rlPhM11z3XJLXr7GSj6r2aTfTR
- Qo1nD7sb7IZ62RqsQ/bIXBlvBXNugps7XQhRdTY/RJ1BSXsy7mLLlAvqFWvM3iNoVvf9iuiB8
- lfqVvlYDD0j7YoeQJ8YnUn+oh4l7/Z8UTlAJXfbWjyjabQBz+rpGOO0BYSK5majISxwxjQDQD
- JBHwfSdtuEYcjRAG2Af8kwvWRy0ubseGYVQ/uo/c6tgLY8ZYNb0b3fTDHyJIDwRF3IS/OXech
- NkuY7OyVKXEmsAKnn0H9Aoeo2ty3Qn/zDdQbskUorb/JMedb3a87oRe7shB2LVwOr8qhcchyx
- 80SMKAqW8NOtCc2hNuJYIHq8b6/PjtTOLwMSSDqL9h4iCZwLmapP3N9CdbOZAW2yDlDUzryMO
- rtMEx6tWk1Fnya9EtYfGR5+lFBSAZWJsRDw8gCfoNy20aZQILHSkHY=
+UI-OutboundReport: notjunk:1;M01:P0:ClBff8ldaUU=;MeOJKjlOUSdZ4oxpAHnlRDxBb2X
+ tgV7Dk6mq79k6D5LD/jIl3g5lsLcMGxX0Hxjhhasha2yrbmJNJrFSjg/VLaFJD/4YCufbmJAg
+ 4PlCKRNempEXpLyGzMRlNqobBRNXxOuNcY8L+UpUv0k5h67nQqkQ84o+ekHOGG3vMK2EbJrUj
+ zLA7ouqu0cEmvEEgvlparnWYPCBNNnC7xSqogsipjGtEXTDDdTNEvUF29gRZ1Ww9avIjZqmbL
+ B0Dvkn878Nj4DSKz2dncXqYNL09ZXkjiUnL+ypw6OzJD8J5zRNmYWYjeDDH8R4fx+WYVHyjTJ
+ 9LMLBV6MbtV4GuLHMInnFbujEk3CpDSTaA8j/0AvbqrhE7MPIu+/LDO28XKkLkTGZ+5GBLlNW
+ 6bGI1ZrKX1OET0B/j3X6Owkr1f9ClKA4+aySNudwBLgj6IAK9K6fSAzdtqyQPoU8vgkHjuwRz
+ hMrWv4/0tisuqRsRg8aRRWCjOU+tmUTxG36L9ppeMeH1x2KWGzXUOkTpQeJSwHh68Z5kr4tzx
+ B64HuMtnSCamrNNjhqAz0RvwdE/I03W/bMygxQJ2+lURV5zd8RDhOxhFviSsjdw501gy66Jq+
+ 6WLHB+xM7C3BoT4BI0252TXx9J0MSk6aOknKgriq4DWCONEvTOx7GKLffP7oiyNuMq0Z1E9c6
+ soPiX9UfIuG7zDMl30ncvQ07D/f/kNTBM0uCTWEgJdm71fMw9rBnE301MkVdydE0EJRh3D740
+ gEmn/oYu5G68awHk8wS0ef5vxBgjrF3627Exiy9Wk0f2kzilrtXMZ44CdiwCT7WzXsAgcwli2
+ 3vQ5PVqZsTU/vvJ65fQBfnaDDw0OhMlsaAGEKa/XdIaSw=
 
-
---qlpmab66ws2khlm3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On 24/04/26 09:01PM, lumingyindetect wrote:
-> Dear Markus,
+=E2=80=A6
+> Therefore, the program should jump to the fail label instead of the out =
+label. This commit fixes this bug.
 >
-> Thank you for your patient guidance and advice! This is my first time submitting a patch, and I haven't fully understood the meaning of "add a commit subject for this tag" yet. Could you please provide some examples or guidance on how to add it? I appreciate your help!
->
-> Best regards,
-> LuMingYin
+> Signed-off-by: LuMingYin <11570291+yin-luming@user.noreply.gitee.com>
 
-Hey LuMingYin,
+Please improve your patch attempt considerably.
 
-just for your information that while he means well the advice from
-Markus is not always shared by other maintainers and their inablility to
-adapt to such feedback got them banned for a while on lkml. See i.e.
-https://lore.kernel.org/all/2024042547-shimmy-guileless-c7f2@gregkh/
-for an instance where greg is sending a relevant reply to one of their
-requested changes / feedback to patches.
+See also:
+https://kernelnewbies.org/FirstKernelPatch
 
-So just evaluate for yourself whether the feedback makes sense and just
-go along of the official documentation[0] and feedback you get from the
-relevant subsystem maintainers.
 
-Cheers,
-chris
+Are there further change opportunities to take better into account?
+https://elixir.bootlin.com/linux/v6.9-rc5/source/kernel/trace/trace_probe.=
+c#L1403
 
-[0]: https://www.kernel.org/doc/html/v4.17/process/submitting-patches.html
-
---qlpmab66ws2khlm3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmYrwzAACgkQwEfU8yi1
-JYVbMxAAvKybMp/z4Oapf3lItgsKsaqCqtaaeTpi3qPqwtX8ZUkbpJh2QxJ5dUph
-YPJ+7HSMRtEY9S19Qt8d5GnTG2L/wXEPk5bMVIrizs/5tXfT5Gp05wfbKUKHZUqF
-3m5n2Y1O9deSaFAKngJxwtM9qdRfRlF7Oef5+pX9IpooxNf1hgSwq9xlNryv0yhF
-8wxT9e3e/4EdQcPeJl6S/lUr6KDH32+sotVipPEUevqNitr8h0MsP+H5CLj3B2Cr
-9OxmbMTmuhla2dEzJuTFRJdrc424LaKml3qMARpGrsuLH8NbIQBGWmm2CeaCpQd3
-5qYnlrsf/IFR2t2+dCc9TVbYdOHYFazcc6NVclNI5Eaifnsh1gGiDTxNGK7kChKU
-1g6USkDOTicC9mLO/+hHDkoI4NzgulriDLHuZJF0mBzBlMXQm4H65TZ4ubIO0Vva
-YFAKuGJ/D46gPuWGIKxSykZKMLOgn0hoIsvY3FPriUXTWEzsh0aQQafzZlO0aPHW
-uk/Nz0yw4Ot5krRNltpAed4kuQd/24tQNrkEIwbkivzLIfd4MkFUD3q7DN2Bzkru
-7mXcE6hUNDN+LSGd4mctl4xQe++mKbUw9N8OM9hliry8G7nS+pIpCZIvXlcoFEIO
-yPRtXTgFGYZ32ctg/baGBtGgXxbC4qgo5j31wVZUFZuQuto692M=
-=iecE
------END PGP SIGNATURE-----
-
---qlpmab66ws2khlm3--
+Regards,
+Markus
