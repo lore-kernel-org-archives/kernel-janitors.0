@@ -1,99 +1,132 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4C7147C81;
-	Fri, 26 Apr 2024 13:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7603149007;
+	Fri, 26 Apr 2024 15:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714139506; cv=none; b=EUmgD6L35YcIZlEkDvxRUQULZniIBrYJCD2oZ9YSZa1/4aDcT+VOD7sH/ywGgqyuM6vQW8e9GnSl+B720hnevDLNtBMRj/wCTPRjrTBZrnUnR5+Lhdflckgvo2aNQ7VWupbPKwT1jhAofMiyUpjnxNYUsH7YA21cER4tHPL0X1U=
+	t=1714144034; cv=none; b=NiteJTDYmY7b+iAMGjxo/PXeDwc553fsJZPEXPsq/sjz2c9Ezr2uLmfxs+c1BZajNg4m0cn6uI+VguzF/87oUcYvIBnXdUCwYJFqr1Bv0m+/65spBD17fiTrfBrWlxJOBq0iuDU1c1Lsdoh1iTEDaYUgSdZPo0lArp97GFRAsT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714139506; c=relaxed/simple;
-	bh=sfPc8vA1asOT4uhPnXFYAb1MYP7/75SGuCAI7eNLkxs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JHuKeyiLatg0gdk1o7ZS/AxJSJ/XUw8yMH0WHmDBndfYSi7bFowEv7YK9nZuq8EM1qghU3uSWJwb2GxuwxfNQ55ZCJeD+L3BJ/2nXq74YZxpNC6aLBc1u73qDKnPTLWvLV4xbGosiC54xkUz0Q99wzWN4Q1Xz8cxWWVQOU3vzUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dbft3gR5; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1714144034; c=relaxed/simple;
+	bh=P1j9CF8rNKFfzwB14P3a4NdCNMWR8w49UK9+jltcIf0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Tu+Gd96vW6toi6DYkYKcqaMClTS7ZTwem4HyThyprYpRiUvO+X1FokMdFY/6d9SgBZaVW5GevTZ5blK/dQQ/cMZtYnAYARkvGJXcDZnFMvwbTSEeLOQvSWsjD/ejjZDqErtXn29Wx+DhI5HP4PzuueMMHfK2FQkzj9ea7pOtUWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NjMIgi9L; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1Q6gv7Zn; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NjMIgi9L; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1Q6gv7Zn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dbft3gR5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714139474; x=1714744274; i=markus.elfring@web.de;
-	bh=sfPc8vA1asOT4uhPnXFYAb1MYP7/75SGuCAI7eNLkxs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=dbft3gR5I9p9ervltEZx+omyOiwLyxFKXShxNiup9mHSMcJ/zHQsGTU0dBH6RNkE
-	 Rw3qZpUt+zG+YEHw7BqN4numkvzMBtU9k/6/Q3cV9Yc+vGsXxrMq0J9UZjXcR8ytQ
-	 y2hU2C2q+xtTVVTlKig80ST1hsWMmAOCGVjyBinfWu6M76QkA77GnVABTAJH8laHC
-	 k3EkqSNPiE4hUsq3Kl3pXLASl7bPrUC3rNPy0OeKX5/uia+bx96MwL+2hVfGlmaQ5
-	 UXDeSJwX8XmMFvxQXUqGtJIMHP8TWGgBo0GkhbKCCCBPHYwDKdGccp9ZLltmofWSd
-	 FGRx5BZrByfzEjDd0Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MFayw-1ruGeC2EL0-00H4ZR; Fri, 26
- Apr 2024 15:51:14 +0200
-Message-ID: <801e8f98-7e26-429b-9601-9e42d0e304e7@web.de>
-Date: Fri, 26 Apr 2024 15:51:10 +0200
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NjMIgi9L";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1Q6gv7Zn";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NjMIgi9L";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1Q6gv7Zn"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D817434F1C;
+	Fri, 26 Apr 2024 15:07:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1714144028; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K4oUvXBlx37Fg431v/r9M3PlkZEuJo6qfb7xxW5BqWk=;
+	b=NjMIgi9L3j53ukDkFttWJ//Jqo43feiBLgVE7grPMGVnNgOu0katBBUgmrCe33f3dI3uZH
+	eMm3Ur93Y7SPYuTD+ThrdDnOIWi2Dyjjh0FlCEELcDzPApe52W0O+bmbTi2A33YgfFJW8Z
+	jET3jiHfaN9GsYr0ifA+8TJl29EEZpM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1714144028;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K4oUvXBlx37Fg431v/r9M3PlkZEuJo6qfb7xxW5BqWk=;
+	b=1Q6gv7ZnFV2P2z0to2fE8fiieLiQpO//jC0kmZcanlgdXLJxucnzYyfykgCN9lDmEWP3c2
+	1y5YlZL0L7cc3lBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1714144028; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K4oUvXBlx37Fg431v/r9M3PlkZEuJo6qfb7xxW5BqWk=;
+	b=NjMIgi9L3j53ukDkFttWJ//Jqo43feiBLgVE7grPMGVnNgOu0katBBUgmrCe33f3dI3uZH
+	eMm3Ur93Y7SPYuTD+ThrdDnOIWi2Dyjjh0FlCEELcDzPApe52W0O+bmbTi2A33YgfFJW8Z
+	jET3jiHfaN9GsYr0ifA+8TJl29EEZpM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1714144028;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K4oUvXBlx37Fg431v/r9M3PlkZEuJo6qfb7xxW5BqWk=;
+	b=1Q6gv7ZnFV2P2z0to2fE8fiieLiQpO//jC0kmZcanlgdXLJxucnzYyfykgCN9lDmEWP3c2
+	1y5YlZL0L7cc3lBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9A4C91398B;
+	Fri, 26 Apr 2024 15:07:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LsIsJBzDK2aMfAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 26 Apr 2024 15:07:08 +0000
+Date: Fri, 26 Apr 2024 17:07:19 +0200
+Message-ID: <87jzkk2me0.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Ivan Orlov <ivan.orlov0322@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] ALSA: kunit: make read-only array buf_samples static const
+In-Reply-To: <20240425160754.114716-1-colin.i.king@gmail.com>
+References: <20240425160754.114716-1-colin.i.king@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: serial: 8250_lpss: Fix memory leak in lpss8250_probe()
-To: lumingyindetect@126.com
-Cc: linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Jiri Slaby <jirislaby@kernel.org>
-References: <20240426114716.1275085-1-lumingyindetect@126.com>
- <42c5d1f0-d16a-483b-8bb1-4c5768aa3a8c@web.de>
- <4e6966e0.a07e.18f1a7f7863.Coremail.lumingyindetect@126.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <4e6966e0.a07e.18f1a7f7863.Coremail.lumingyindetect@126.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:44/Zkz0wQLU2wdmqoRfUmes0z8Qej6S5BBJmxijUrzSXSpyNFAQ
- +E5Eem4AzytWFighTHTFnb4PMQu8lzwJwYw80dFkexUl9AGGTfHAKZBMewyY1Fu4VfarQVY
- 8MKJR+641KXxt+iz99ddMO3fEwye3/y2T6QJHBccizzd6lbAm4ZHsPUjyF7MxPtpMZ+H0bR
- 9Ai3cJ198zZ75ZUKyOpZw==
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.03 / 50.00];
+	BAYES_HAM(-2.23)[96.34%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[gmail.com,perex.cz,suse.com,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Score: -1.03
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:hrkOPrdjhYQ=;JoqKRc4NrL4MMWqyzGtOVb24Aa3
- YG/73oK/MqpKXnEUjtpn+3lyeU7akHH2X2080bFuXrIWfhRgIV6qE/ok/R5XOWt+3EsPqaWOv
- g2nFBs+aHFd1DwKl1OKsNnLJQjS/6BaCIjiLTNNXnuMOD8rSoYiuJRCnj97kr2juvqrvQnRzg
- nVTRXx0+ynxLiQNmloU2Yb7XFLK8gXQ/fEzZfvx0/bzvAsSAWHwbLUVxDW0jb5eRw4QS1sUyU
- D5nkNYUHaQwjKk3ip2UCcf/kYgjbR/0U4lMGfH5vhtRmjF/d2YjlZgT0xPjEr//xp3Z9ox+kb
- ngzbpViIJtpqHcv2sWBS6Ts9Aw750AULXuCcDCiS4vAztl0/FTqtajjlo8MOkASd7BQdCjTTL
- mosK27aACUBn4FsXAxCjTL9ZZ2olX6MIZeY4wl+JaFhhkDtel7GOsEfMelzmJVfYNlF4hdC5C
- PeUu/aUAbyWpHofEkrTeQcem77DT7Yg/+vTPD1El9dAqRCtwzGuq4K2lg6tQoOKj2fG7q36L8
- CN58dy86BtEZ5/daUhTEd3+3n6QwBpP0wwayhkkrMRdD4FcsA1aNAYxT3Ype+G+jjgW6/za8T
- HAqegjPT0sjnI/XzPjvwxENUtkOLmRCvv62hGJ1hSc3dkyGZD8Q4yCytIeMD6a8fCJgftYAd+
- 9XDYDYJFQZSv/2zImY1EEtjTYmYNbuf54s9Ft7b/vX7tTVrFOPLCmIJaLMQvcEBYK/vUmz7CB
- 4Df+35/FErG/Haz3PUH1tPNhpLJeZhWKr/xn/82paZN8CVtlkpb8GPf6c0zr8PWy0KV6RPhUU
- ALfoATZPUtpYyBk5pu7pVcCoI/cHIguujWGzW3mqxr6Rg=
 
-> This is my first time submitting a patch, and I haven't fully understood=
- the meaning of "add a commit subject for this tag" yet.
+On Thu, 25 Apr 2024 18:07:54 +0200,
+Colin Ian King wrote:
+> 
+> Don't populate the read-only array buf_samples on the stack at
+> run time, instead make it static const.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Would you like to take available information from published information so=
-urces
-better into account?
-
-Please take another look also at advices from the section =E2=80=9CDescrib=
-e your changes=E2=80=9D.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc5#n145
+Thanks, applied now.
 
 
-By the way:
-Did you try the development tool =E2=80=9Cscripts/checkpatch.pl=E2=80=9D o=
-ut for your change approach?
-
-Regards,
-Markus
+Takashi
