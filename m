@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17A039AF9;
-	Sat, 27 Apr 2024 06:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F20C653;
+	Sat, 27 Apr 2024 09:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714199818; cv=none; b=LqwVQ9HSmzG5udYoeAVBy99DNyFx9aP/4E/cmc9kGpvmgjnfKteoHic0jU4VexMnw5oj06hVTKQqmjItAO7r7wKXja+wI/XAuacqfd2JChbakLO5V9HKHgAtRhb7iMgKjmlu0euMFQEAmUyLu+fK/nNv0u6HH2pm9eEIWULv6Vw=
+	t=1714209152; cv=none; b=UmwRgF57Z73Xv7cKCqBU3VzMfaVML0g3f/7s/5+cQGHqxp1FwuRf1baqbs3VZogG/LQW047zyp3ZpG6eorKvLHm82+Xn/TWHjHB7eH/V9D4aTBMI672YOUATZ4Jl/ElRzZQUWIFkQUpSY91/QpEWeD00sus781YgEuzg+kS+YYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714199818; c=relaxed/simple;
-	bh=HSKhQc6ckcGem0dz8qIg/OUHhvnOqChu5U7keQ38ZIg=;
+	s=arc-20240116; t=1714209152; c=relaxed/simple;
+	bh=/xUk67PN/piLmYuiK8bKqr13B/hDGBvoKwdPCUFkcB8=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=XdvsgHbl8FFg6/VKTx9QFgS91ikxqdfaUzyDPzzAGJs9lUM8yb4VOjFdmyS250Dm4a3WdAyKf/aBgtWZTxVijuo8AmhmptIk4zHkCz2x7YaD4ILwUMR8OasP7XGg7sIZUOasoX+M5DX9QMflHbeYZ8O7fEvRFJ1oCkZXcEmIX0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tNag+jeM; arc=none smtp.client-ip=212.227.15.4
+	 In-Reply-To:Content-Type; b=tX8XI087iFbweLkiWII6G9eZQupzlzX/0o38XJ+ye1PdhV+7XGsePyxsViFfz3M3Dd5uPEfVctDgxHwwt12LSmVhjqGltqKhZP1DU6+aO/UrqpWj0pwKwZASYXZW7YqMhpgmjq/XHpp+T7U4YY+VSzQrZuIX/OgNIZtnuIaX31c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MTobUfBT; arc=none smtp.client-ip=212.227.17.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tNag+jeM"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MTobUfBT"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714199795; x=1714804595; i=markus.elfring@web.de;
-	bh=Yqjkf7H0JSFQpEQ4/+tdhmqoI63l4XI1RiiuG834KEA=;
+	s=s29768273; t=1714209108; x=1714813908; i=markus.elfring@web.de;
+	bh=bGYRi4hDpraTh6L96Bqc9vwhRnZcF9ttS5i++hemawk=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=tNag+jeMgnSNOhv6sovKbWDqS3fEQ/CQwTBgBSL0L43jHbzyFZSPtYXW2XX4qKQl
-	 NL4Y5ykom1G317bseGi/EL5Bqis8ugiLYTrgbMYSkKfmf2X8/Qmy6E4UlBBvrHuSv
-	 U1WGXZrqxbursuTWac+pse/ElyhsU0QJgZq8qPNDlL86xc2HfzikRq9FFBMauWrSh
-	 qVNBZ37FTuMtm7V+h3ULXFCgi3BLZUel+kEbvUnKYpp3SRqdLhEe+hZH8Hm9vkAgu
-	 0dO9JdzwmpM1IVRUVtwWbqUrxiC7fTqVvZesu29TQq7RxjTnDl9ypywDpkZ9/9X1a
-	 Ajf1t9SGoLAwOYhq2w==
+	b=MTobUfBTQdxdpqyAvUGudIE6VMHg9DZt/tMxsB8wNadfPrY9F2BHB5BYAEdxOHW8
+	 IYPpRculOWRjnbvIFaFzhPUUqeVC+1hugwQDyzATe5T/RS5ahMh5beezqX33PfpkF
+	 UNhQ5fptNUIqs/32PwHgk5t+ZDoZ7LOW+oBPvIJWC7Lf6JvWzEY3lHB25DoNhYMFd
+	 Y0jG32ei7EG34GbyIUK0opci/dpAx/jF2AW3gJaECaBwZOF/5ETCZ9FdirHYKv33x
+	 U7gOyRLVEP2Do15o/FcAhHtWlU3dnR0kX7lkY1um3z0PC+A3HzGz5viXIQA6+JjtM
+	 Cc0N1KgovzJL4HpVTQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N9LEG-1slqYp1hDg-00ri4O; Sat, 27
- Apr 2024 08:36:35 +0200
-Message-ID: <29b2bd7d-303c-4ac9-8638-38959f177316@web.de>
-Date: Sat, 27 Apr 2024 08:36:17 +0200
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MZSFY-1sDHfO0MTO-00Wnc6; Sat, 27
+ Apr 2024 11:11:48 +0200
+Message-ID: <d1ff7c50-7810-45ef-b31b-9189348fa09b@web.de>
+Date: Sat, 27 Apr 2024 11:11:44 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -47,55 +47,51 @@ To: LuMingYin <lumingyindetect@126.com>, linux-trace-kernel@vger.kernel.org,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Steven Rostedt <rostedt@goodmis.org>
 Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240427025720.1321211-1-lumingyindetect@126.com>
-Subject: Re: [PATCH v2] tracing/probes: Fix memory leak in
- traceprobe_parse_probe_arg_body
+References: <20240427072347.1421053-1-lumingyindetect@126.com>
+Subject: Re: [PATCH v3] tracing/probes: Fix memory leak in
+ traceprobe_parse_probe_arg_body()
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240427025720.1321211-1-lumingyindetect@126.com>
+In-Reply-To: <20240427072347.1421053-1-lumingyindetect@126.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:uGlf/lKNskOomISg1g58Lnnv79W7jHlElge4NaHOfwNxFN2r9yo
- HHeX3mGvqhirUz/XKB93Dqn97owdFV70XPcITcCT0rr7VuHp7j4THmyEatGl2ymCj1hjvy3
- Dv2m8ZF+S+cNPbHM/OT0taTlCguhNtVTgnI5Z1Jl4JTiaMwQN8SXeztkQkO5gZxu0LzkBhF
- qsNy+QMy+bDuV0S4X9Lew==
+X-Provags-ID: V03:K1:3aCTPfz1dpBnXB33+rL9kND9c3ORiQ5rZM12p8HdfHGENMgrPv+
+ Z+QTZVXdS+wyF1fOSJWBNa2GB/sHSPH/0fb0bBcwLdrYAYo1LsBxxoHByC+Ojl6tWNwz3ta
+ QEnqarjVscY5IRkqY072mGY9mYTSGDgxtDmnCfDdkwQ84HfYyV5hxFUQ6e9T+cEBa5LMfJ1
+ BStiO9P/ZyoXKLky245yA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LKMQUbkQfbc=;u43u9kSrPjt8jg0ya98W5ZyQT37
- UZ3hghvOW+2yrkFPx5LRpGz/Gz+OYLiwXtjR0QAGaBIhnqdoK3eREVPuRoJJ7FVq9/P+04WbT
- 6kZUIjACYlqoAPgYzLTa5Y79dirTWAqUNB4E5eZloQg2GpyTQGzVhOJghx7LSxq+NPcB2ND16
- lFffuWnmSYF6bqURjqQMMTFFcIFZV0B9uLryncE09Pvsz45iRtvpKN+xrBcRFAa6UxwaatMFD
- Az0Vm8/ZBnIV+E9d56Wo06mCFbyfq2vcbcPZCu/u8eLi9BnWMxTn2YLyx8EmEraZKiD/RaDxt
- T2sl95b/w8+DjFZv/OoWFFi05rOvOr6rnc7963dHBglnipgt3QflDAKEV7Zbi2O9PO3vAzHzG
- slweGmHo4OHyf30Cp8PyE633RqAC1vcJP3wg5eS5+OmVvv5x64t488BC8wTcSCt/gv5Bqsyro
- /GmjO2DUGbVwhIynTcYbcmz4iYODHNsTbP2lgVFIW4M6BGAhWkHGKnksuMNxnrMHiCYkTlhie
- 2syoLl9bmPk+0KOL2AsVPnPljVMjV7FNI+7iOhwe7W7zvgsxDHztgQZR2zfE8Kz+tjwAb8KzM
- an5YnGxL0Qpf1WtM0iBk0r2q15wljK/DyXfVtmI7hFr9L5f5zKs/gWbxPt4zYug6kfqlq7sk6
- YhAM/ksaHorpkvIjiUkKDiu+uOgbNdcqapiJbbkg/CK++13cuHhHFINTTN+xAyCVVALhzrQ9J
- Xw7eQfWQbR8EH0J69NdhPlCPXOd3h32d7BJULon3r3xjjeZrb4Rg/g6rHW1S1fMvhWnOL/AmB
- NrYRl2JaIvRf0Bn2W5kWYtTEB/iwC688C8CAthp6Hc908=
+UI-OutboundReport: notjunk:1;M01:P0:w7Cxg2AAj9I=;MwCHZFhO6hZnCo+5SjFy+Grky69
+ zp4OIak+X7dizzbj1m1mbD1CUlCo6ZqGbnsG9ama6+Pf56jZFiF3T37cqPFqsvmfqou51UCvp
+ J5ymLWIATymIUwb6JtMGyb9uHPxwJ9Twp6VqIVUVnbShFpo3jk/2/VinPzQ2+NzDA68RSyuEK
+ UQ2l10Rba3x7lqOZFpXMDqG9vlAxjF62pqlg8hAzguwHG5CQNKYIIKQYf9opCtUYREsLIZaVQ
+ ty9zGLC93kSX1E8vutKnhwzh+WW/wjj2revIx7Kf+8qthbCj3ypP6PC5N4yeSVSPheWmahQ7x
+ D1sN8hzkCmT8ShibGD2NNWAdbB9JLPJVJtjuqcH3eUzvtH7u15duTnsrfLdbEAjCditN9kHNW
+ rJezN9qa+mrqXqGh/I+XvnSjHmYks7kxJCYLQMP4yxZMx8N+/17vE4RWgi60RVjBwYXODl609
+ KU72gX5MSH7PFfdbHCWxx9uhHmEUUhAU0PNC1hfrmkb6yuIm5XHsItTsr38EIEA4pqenYF/dH
+ 8LOWOquyMGiAeAU2iJ/r3Im1Q4n9M7xrQKd/QggCOeUFf8bgOCY2kjrmbtfLwUlkEeSPQ8lkC
+ swE9PZjFcaR4OJALxRQwRcbUJ1pQje5Ub3Uy9mctMHb+ax7Aul8YfYQOnd7G1RaEeeVWcN4yv
+ Qcej+hpbvr93zbOrzVAGz3HKWiwSISlYgoncD70jJCBIDC35Bt3tVdJ3nsPdyXaAVGg/1EJ+h
+ X1ONviOAae0Zc2rwmlE6MoglMXvw3WHWuC3qjCGx2Fc+CqmEDvPgfgr/1Z2GNUqMABo4hxMRo
+ QpqD9UzJHsllNJ2i8kOeSZovJNaSGR58eSNYX8qN7O0ds=
 
-I suggest to append parentheses to the function name in the summary phrase=
-.
+>                                             =E2=80=A6 by mistake.In the =
+result,
+=E2=80=A6
 
+I propose once more to start the second sentence of this change descriptio=
+n
+on a subsequent line.
 
-> If traceprobe_parse_probe_arg_body() fails to allocate 'parg->fmt', it
-> jumps to 'out' instead of 'fail' by mistake. In the result, in this
-> case the 'tmp' buffer is not freed and leaks its memory.
->
-> Fix it by jumping to 'fail' in that case.
+> ---
+> kernel/trace/trace_probe.c | 2 +-
+=E2=80=A6
 
-I propose to improve such a change description another bit like the follow=
-ing.
+Unfortunately, you overlooked to add patch version descriptions behind the=
+ marker line.
 
-   If traceprobe_parse_probe_arg_body() failed to allocate the object =E2=
-=80=9Cparg->fmt=E2=80=9D,
-   it jumps to the label =E2=80=9Cout=E2=80=9D instead of =E2=80=9Cfail=E2=
-=80=9D by mistake.
-   In the result, the buffer =E2=80=9Ctmp=E2=80=9D is not freed in this ca=
-se and leaks its memory.
-
-   Thus jump to the label =E2=80=9Cfail=E2=80=9D in that error case.
-
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9-rc5#n713
 
 Regards,
 Markus
