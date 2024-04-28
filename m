@@ -1,127 +1,103 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE14F516;
-	Sun, 28 Apr 2024 12:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2501F653
+	for <kernel-janitors@vger.kernel.org>; Sun, 28 Apr 2024 12:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714308838; cv=none; b=F7oU5BJWCCgKSVlWAbDTs49piKTj9OGVoC/nG1Bb41G+4fvWMTzPQUB8asmGwHSbvbxlKk/0AgN2dIb/fwhzNNlSMbbLALvih2l9LWuRZlyM0zXVp2xGPVlE7n3UsazR887r+siVdXQtd1DugN5/nAjExLjCg4n19FJISZp+Up8=
+	t=1714309027; cv=none; b=H0JWCzJ+w1qwrTEPoGnh599aO94w2SjGFcPNZ7NT6Pe8QL4KCidzAjdDDLJQTx9UpFxBShtDUA2mklDjn6Ve6NFjVvyxnhk/efkhv2AlUROPhP9l8O0N0RElJ28Y/93RNsFj7orVTKcXvZPm9wgWQIybUkvf9D/X1cfgbWIns3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714308838; c=relaxed/simple;
-	bh=PObusAyonphNfE4wWT8tWyu3dftMdnrVBH0CtYfXnJg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WgpijFVrsksqjEy30FESAicRUdFoyeZgE9hQA5w2RdV2xmommGXLhzkltcgQ13ZtxharNrBbK71O8Pn4jC7hO1D5tOqCiRi/V4R6wN/33uiAz2yVVs92SnywqDo1uN3TmRuOCyMPmjMXA1QlU7cKJmpQlclf6TrFDFh8ETOVqNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WBlpdREm; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1714309027; c=relaxed/simple;
+	bh=5Sg1IcsOjbxjfL3zgZHh2k8pdabOaB6L3F2mPfSkFPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DKwSxFvIB1kCVxAMT8eLkhM3MGc8zSYQnEX1oSA+wO3sbiKyM7C+imxr7zGEwbUnjODyo0+usVYJgGtVID7fsvoKDF8AUeqZFW3+NYo7r3PVLPzGv+zNURXA5SFiclK8JZm676ClWpHztCMdnemWD080++Q8eZoHhkl1HGS12nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sE9CJOcT; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WBlpdREm"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714308807; x=1714913607; i=markus.elfring@web.de;
-	bh=pytEz1hBiZhR3/33BHamZLo8u9WQHaEHaKOnyS1MB/I=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=WBlpdREmeF8bEmsXc1pVzXOmwVopIrJtx64k5WaQHpGZD3WbfVqZ911KXlC9IZ3l
-	 Y/f1g9xytio8pm6LpbBr57gcCk8relXRPyYE5+AUQkeYV9Dya5OhFAQ6GTQrQFtEA
-	 IsZfQ8P+MYqCXUkx8jdQ+GWKcEPIHBQsGknXbi5gUPaolhzTZJyEhYiYk/Zoap4Ex
-	 kyvuYMfxjzlePs/99nr/xlgHEu8WOiOadKjsciR+XFe+yUSAp4mbZBEQREwx49KUE
-	 GOKRt9T/Kop1DqKRU+lfcTKj9MncgqqCTnSWrUqd6oCrbo3Rvbm+1i1iEpNA7k8e3
-	 pTRnJvTthas0RUYrcA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MnX5F-1sQo0g1qab-00e9OP; Sun, 28
- Apr 2024 14:53:27 +0200
-Message-ID: <63caf898-8072-48fe-ba7a-2e10e5b2d8ab@web.de>
-Date: Sun, 28 Apr 2024 14:52:50 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sE9CJOcT"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a58eb9a42d9so111605066b.0
+        for <kernel-janitors@vger.kernel.org>; Sun, 28 Apr 2024 05:57:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714309024; x=1714913824; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ng058NZ9Nj+W4KweKWLHemyFc1EwGYUwsROdFC21IRA=;
+        b=sE9CJOcT4tFXVkZUd6c8SdGiywZQLrjiI9duzOei9SJXz4GOZJ0JgNyfzi40tgF4Qf
+         39/sy9EjEYQhrXzUXnbhR4U2i5Ji93JKfRAd47JnBjK1saojxsew0rTNoNam26a2q7de
+         /sSy2Nocj3pA7O/FNHBNvKTXqoo7wrSwTQ3h7zigP/X6VJQzSBbaXsb6/fjG7GLpgn7T
+         PVBjn2YE/tCWI5In00rEKLp/pMVntJfAjYbI7bkrt8dxSSq8BHHm6e5ZD4mL9p1HYNZR
+         4yxkRGN69iJkxcGRHctKXAlGwkXPWC7tZBPidOc+b8Kq03uCLOKJuvzhdxP5KFo7r/bQ
+         UZLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714309024; x=1714913824;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ng058NZ9Nj+W4KweKWLHemyFc1EwGYUwsROdFC21IRA=;
+        b=PmZEtU9td1tI0IR7pf4GEU78rr520/coVkItTo7z/NgYlp8dN4Rj1SxzjvBKWoIX4+
+         Fq9cqyH/kI7kHssTZlGMKIUdMgLmDNDlYOwBqa1+A6hLICdZVA/dsAjZ4qIR2vnUkt+N
+         c3Urt2IceRKZBLKWYgf05A9gDfiKmp2HCfWHscXznmpIqu/nveTs8375CcLseMGuYbn4
+         +/0FOTduMNaUtSJSQSvYkzvIxXpbKNo2e/v3VxtP2TEHRsZYF8UaN4+OQB1W1dLzyI59
+         NZvNSyp+e9JQQPxbY0TUayA6YcPzhT+7e1LiYtYkRUEpYox5X0WDxeQ4KVyGE49g8UwB
+         DOIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWfXB2miakymzFRNRNj+8HPdj1cXNLva7cQ1H8wjfKSU28tbP7hDUaGFAU2Kk9pSyYjU6xeylue0VQRSdmQIjmv3WY04lHNKqtB8DMA6HJ/
+X-Gm-Message-State: AOJu0Yy+ShQBTFAQFQQrOvjPlRZnSIvRMXyFEkrR2i5Yg69hBtDPX5Fy
+	MF3F9ciAld6Sy7nBwKG5mHaYaonsMUJsvbpOoNy2qLTA3NHd0DtWSUNBPeVWLQM=
+X-Google-Smtp-Source: AGHT+IF2bconLYEiVsCFSWzXhwOMR/6nTlbaxbFyyM1sjiNBblck1WsWiEU8lcUPzjFP3RiywB5d8Q==
+X-Received: by 2002:a17:906:13c9:b0:a58:8fa6:df18 with SMTP id g9-20020a17090613c900b00a588fa6df18mr4813693ejc.41.1714309024203;
+        Sun, 28 Apr 2024 05:57:04 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id e20-20020a170906315400b00a5591a644c8sm10726019eje.17.2024.04.28.05.57.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Apr 2024 05:57:03 -0700 (PDT)
+Date: Sun, 28 Apr 2024 15:57:00 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Bob Zhou <bob.zhou@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Felix Kuehling <Felix.Kuehling@amd.com>,
+	Hawking Zhang <Hawking.Zhang@amd.com>,
+	Guchun Chen <guchun.chen@amd.com>, Le Ma <le.ma@amd.com>,
+	Lijo Lazar <lijo.lazar@amd.com>,
+	Shashank Sharma <shashank.sharma@amd.com>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/amdgpu: Fix signedness bug in
+ sdma_v4_0_process_trap_irq()
+Message-ID: <afb229a9-3f18-44cb-b305-5fbb2e1b4ee3@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [PATCH V2] scsi: qla2xxx: Fix double free of fcport in error
- handling path
-To: Yongzhi Liu <hyperlyzcs@gmail.com>,
- GR-QLogic-Storage-Upstream@marvell.com, linux-scsi@vger.kernel.org,
- kernel-janitors@vger.kernel.org,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Nilesh Javali <njavali@marvell.com>, Saurav Kashyap <skashyap@marvell.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Himanshu Madhani <himanshu.madhani@oracle.com>, huntazhang@tencent.com,
- jitxie@tencent.com
-References: <443fb75b-948b-430f-be33-170e6f592280@web.de>
- <20240428113404.12522-1-hyperlyzcs@gmail.com>
-Content-Language: en-GB
-In-Reply-To: <20240428113404.12522-1-hyperlyzcs@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:DHaY0Tigrkl34GXVyr7bpiaZ8EZhWqneFXFznlSn8aMn2Z+1yr6
- hN/aKvbBLI7GRrxAz+ybXXkzeJdCQctKZ783I2AIz34mI7R14J6Fm8o5hW5hbpOqMfNaVet
- pkH4+1xpHF38NcOu+ovlH+S+/7BcupE7PoG5dkc8vdYBXqpU4zLqGx/eNTjuGPutv9vu7wS
- 1EqJwVPPanWOZoFeXRaKQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:uN1xlcZIsZ4=;Kp96PXXBw11iC5UJInr9kZBNFbD
- 8uGa8Ndl+XmLvn51uh7YA7tsGevYJHBOwl2no8hX441QxuvSd/LBeQT5OfDYb4rvDvS/obKAQ
- T16xCKTl3ectKG6QTp13MJEIN4Fa0654OiAfs4jB1qkb1+ofUHRLTorC1xzxDMBh6gcAjifn0
- PNbg8LKEdXru+OeOKJREsKIVBiqnjqmIg9R/l98I7GYE64IjVdK2kItcJUeXmWzZ5fgoSLc2s
- Zlyx6p5FVxR4FTHsvGcMt/S6eKyD0CKmfB4L+dOfXuJe85FvnlH89QKTkCYlGzw94WJf1WpcQ
- 37lvhIn6AYuYt31IZAJSwLuEm7LjjIlXyXEohRkpXHpG/JTVjhuJU6AAY0XRbIpLQAuDqIRJv
- 0w9lQC7w9xUiZ8pkpQsWdTG2AFwPd8QRkbURyDKJgWpmz/0u71G7dv99yAO210t4DPKoEYhhV
- g8xroe8aejAb8oG0Y77XTj8loGSKTft1d6OEBv543PYJrvfmNCLdfwbuFULGZPVQkYLxMmMF4
- PO2Hk+Q3nG1311JD8AXIP4OZDxdVSr/HLWi0WOXDGSAABEAYetgEzwucQ3dsAwELBMtZta3sm
- hli9nsYp8tLj5Spm1W7wVzrQJqUcnhjdhmWehrKvkJ78I6yMn4pAUuY+Jqc3Pr35lfuPHRSsL
- zR4c6rOn6Ax/SYr7k49pdo7ep/YGTT+XjjqZ4YVxKc9l0FZxZBS7wtZWney/5qmb3jYDEDG96
- XVcPmBz0/eDK3IUBCx0Q+SlCyzVhM83sG0hc4prtUnr7okqkhO0THEd/489P976GP3nl2XSAq
- gMJQrl5HyzToEFnrxMb7QVjyuD+MrlkidO8QiMkQEEb5E=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-=E2=80=A6
-> Fix this by cleaning up the redundant qla2x00_free_fcport() and
-> replacing error handling with a goto chain.
-=E2=80=A6
+The "instance" variable needs to be signed for the error handling to work.
 
-Can the following wording approach be a bit nicer?
+Fixes: b34ddc71267a ("drm/amdgpu: add error handle to avoid out-of-bounds")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   Thus clean duplicate qla2x00_free_fcport() calls up
-   and use more common error handling code instead.
+diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
+index 101038395c3b..772604feb6ac 100644
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
+@@ -2017,7 +2017,7 @@ static int sdma_v4_0_process_trap_irq(struct amdgpu_device *adev,
+ 				      struct amdgpu_irq_src *source,
+ 				      struct amdgpu_iv_entry *entry)
+ {
+-	uint32_t instance;
++	int instance;
+ 
+ 	DRM_DEBUG("IH: SDMA trap\n");
+ 	instance = sdma_v4_0_irq_id_to_seq(entry->client_id);
+-- 
+2.43.0
 
-
-
-> ---
->  drivers/scsi/qla2xxx/qla_iocb.c | 13 +++++--------
-=E2=80=A6
-
-Unfortunately, you overlooked to add a patch version description behind th=
-e marker line.
-
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc5#n713
-
-
-=E2=80=A6
-> +++ b/drivers/scsi/qla2xxx/qla_iocb.c
-=E2=80=A6
-> @@ -2787,6 +2783,7 @@ qla24xx_els_dcmd_iocb(scsi_qla_host_t *vha, int el=
-s_opcode,
->
->  	wait_for_completion(&elsio->u.els_logo.comp);
->
-> +free_sp:
-
-* I suggest to omit a blank line here.
-
-* How do you think about to use the label =E2=80=9Cput_ref=E2=80=9D?
-
-
->  	/* ref: INIT */
->  	kref_put(&sp->cmd_kref, qla2x00_sp_release);
->  	return rval;
-
-
-Regards,
-Markus
