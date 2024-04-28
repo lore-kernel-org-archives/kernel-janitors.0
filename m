@@ -1,100 +1,118 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103A51E48A;
-	Sun, 28 Apr 2024 15:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41FE6E5EF;
+	Sun, 28 Apr 2024 16:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714318756; cv=none; b=m62tnnLRzeIH2KIF1ctSTSwKkrdrVqlXmNo+dOve3rU78JgZimYqpr7hnFoV80upD3/OQZZYCu4l/wHHq5KnZyLdSVCn6agWHx2W/vu+kyfY1W/qihT+/YkGKdv9GLyBRlsrgJwYuVyvfMu4tVv8WwcIHKJe6WCE+1H965CIyrs=
+	t=1714320402; cv=none; b=hDRzvoNlpxZZPlj9dt4+VQFWwatB/MgjR4XHJb5zXQiVvVwo+8Vu1z1FZL7v88wKiBh/FdRDL13X6TAgDw3IkZJZpMy/Hv7QWsABJlRgSVn5C1FafBpOxZIFF7aUI39WkaYy+ZMzCHrs2XTGnp8iH1AYwcH4u3LBi3nZbX6yRxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714318756; c=relaxed/simple;
-	bh=ViyQZTMIcF5v+1IYQTvuXRzOzG85wmh4Y3HOHwhO5gY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=NjyQRgXfgBSv2ykHPLRPlNWc45WDUnU1KyXQun5VicjxDyFHbt15h35r3a7nVdqnDwxmrY/pzlKlqmI3EngEAoCTSD1asjdryauo+CTQ/+hYTyElMNQbo0nv7a0LORLAQQ+7d5f7ACH4AnTwZMsqSBtGg1FtNBYcrIgoejvcn9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QHSaNfVF; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1714320402; c=relaxed/simple;
+	bh=PNrlWlDt9TaAMiyqW+EragMJTkTq2ddIWeLDKoeOEjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Hn/+AouNz30oQvAZaSQejwaAB+t3C1UX6KxzYOW/DeYAWJSJ+V87oIMcasGvmNYJdA4pdR8qGJV/Qdwb/CYxELulTR8EApD0VV4aIijJKhGZl8lK41ou9lV2ov3rQ+wlfA+M1X7UNU97vHMdz2duFVDErdb7RSeGCBsm4jLWk8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MlsmEHWW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QHSaNfVF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714318718; x=1714923518; i=markus.elfring@web.de;
-	bh=g4JtHB0LA6rj2gdM0a7dzQ25Ozs54psB2cq0Nnk5tUs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=QHSaNfVFBHPPh6QlbqU+9gPPj6bEDthUZd7Dpp0YrSmhPme/e0Oc6+N6bugbjUF2
-	 HQJdTl9d5tMomQ17HRA0yzbvyo1NDHzO8IODYZITJGzQ2AWyC3vsmNNnbzHskBktU
-	 DUdmc9k8pEjOQzzMs6E5fhvO58y9U9auXFyjwH//PA0aC3rKh+ylBUqGoDAdsTZxL
-	 BHSU1AlbSchjgPR5CKaseiaIPZEzGyLMBUDOZqv04dC8CQBnk2zV/UJiiRsE4VTYK
-	 7+Af6WLVDzKDzEBk6Vmpb/qExS2w1JLmBXZB+OF/P4m8AeivgqfhIkp+HbzwzEj5J
-	 gThzWZCkiLOWbNqYcg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MNORC-1sKIPn3wR0-00UEVD; Sun, 28
- Apr 2024 17:38:38 +0200
-Message-ID: <d3f389e2-7a72-4ce0-9f05-245c4f34f829@web.de>
-Date: Sun, 28 Apr 2024 17:38:35 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MlsmEHWW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38BB8C113CC;
+	Sun, 28 Apr 2024 16:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714320401;
+	bh=PNrlWlDt9TaAMiyqW+EragMJTkTq2ddIWeLDKoeOEjE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MlsmEHWWuFsTFEVNQtQGvfhEZv1yft6vbR8febqMaPdQBMCsLgYr39Mnf0S+nmk28
+	 N5OWbljTp3vBAqAmwkH5RuZPxUM9vok88eLKENWzx7Gd8+Eeptxgg+qLChp61MHBmc
+	 AuXaFxYoIT3QhfJoz9pAI4I27Cz6BiuYsNYVQVeLHQlQvWffU2mfTwLfU9zjO4eUaI
+	 kQ6sSqB5QYw7VSjy2wNsTOQVfEkdC4WFXVbRlKNRJZ72qUHMlxZ5erkv2R21WD9IzB
+	 ReTAKSN619+iA+FUgmT2F8UrcBJdx6fqqX9rcFm0l+egwkIJvaXe0ELfkVFxxFqO4K
+	 kTxv/gofYXHAA==
+Date: Sun, 28 Apr 2024 17:06:30 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Nuno Sa <nuno.sa@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich 
+ <Michael.Hennerich@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: dac: adi-axi: fix a mistake in
+ axi_dac_ext_info_set()
+Message-ID: <20240428170630.265f099d@jic23-huawei>
+In-Reply-To: <87c6e65dadbb3ed0c9b4506e809eb3976b12f204.camel@gmail.com>
+References: <df7c6e1b-b619-40c3-9881-838587ed15d4@moroto.mountain>
+	<87c6e65dadbb3ed0c9b4506e809eb3976b12f204.camel@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Kunwu Chan <chentao@kylinos.cn>, Will Deacon <will@kernel.org>,
- linux-kselftest@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kernel-team@android.com,
- Kunwu Chan <kunwu.chan@hotmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Shuah Khan <shuah@kernel.org>
-References: <171429017935.1716809.10906291781915903062.b4-ty@kernel.org>
-Subject: Re: kselftest: arm64: Add a null pointer check
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <171429017935.1716809.10906291781915903062.b4-ty@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:OPEqQzbV7tCKfsZZw9Vc6Y9TOgOxLJenJ4U/zPHrydyN5r+4bVD
- 9VMg1yI2DNsetpNcFGGaRR0mJYV2rK/HLnRoo7P5Y8E479Oj8CzsY5yfUA+AyI7txW/0u80
- T+4HgJB13Rhz4cy4Q+wwcP3sQpPvSNosVJom4hTKg0qgPkcyvPg4+WDLcDmHDIU1kW4QIl9
- nEyt4QCfKytD3iPPA2x1g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ohnDtBiNdL8=;gPBrqtU8Z9IHlSkwLLAp9xiAZvd
- W6Ux4CMAEPEQs5QZKO1ETdkfczDxIJZh81DXWIb9LsS4nUESIEnMIA+B1Ho+PJmYW0j0ExWfm
- kcEcDNmZt560gyijImr4jfjivl2Gb8bIT3IPpahVWquRTE5oKSqEKTHcJ3nUHye0YrL1IaEYe
- 0yf7FHpJq4UAPCwb5VDL5S6E39PJLxQoc9yqS9kFQTzzuQFrYZKsqcxIodR3Iylgr2FSzrcP8
- ++pWvOv6ZTdQXhB145021a0wP84PIUUYYUfcK7INs89g1Se/x1r0hRaAICmcHyD11GwemTdjJ
- 1lrnJY844dIpF5puNdfeFFYi16PeTv1O+Upy8Ivh6A4/14djFbWw0ZbKPubAW97Q4KAtOcRSI
- 4o8WMPQIXXw0LewsgH97qhpdT7BiyHIHIig4epfbWkNwmnZvViC6MMZfC6cP3oKvJUdg/7zC2
- tABA0V5Cp+XHce7vtqTTbtUPXWqQ2Y8sZGpBB3+1NnNZgMQBRSwn3nYqpFnl/I9Msr5Hwltq2
- A06fpQJ00IGowo/YBZGGI0aufyDem/F2eBx5AUNp3GW9kmbuymRfuWIE7yqSdnBXQhNN+/iCj
- skgoGigwuu2PsHqvsR70ABTMLKFQzg6ueStZoy+sntgxlF040H/ST/50A6XjuliKAhYvwgc9p
- 9fmYph0mZzp9KTeFdgLy2XyAiFvV4Q6xLPdP+/YDMuPjl34V4zD5QyMSYIHSjTE/ZOjRE0TvG
- 9Tj2wsZW+i5MJdywmQ/Zve6J0uQrNPy+fXdmae7OP6uCKjPVYR+RRhrWEjW0acIUKd1iPSBiy
- uEdzHHs+ELIHKPO2sP+VKM3r34fAlWYfTFfhf6SBE9biI=
 
-> > There is a 'malloc' call, which can be unsuccessful.
-> > This patch will add the malloc failure checking
-> > to avoid possible null dereference and give more information
-> > about test fail reasons.
->
-> Applied to arm64 (for-next/selftests), thanks!
->
-> [1/1] kselftest: arm64: Add a null pointer check
->       https://git.kernel.org/arm64/c/80164282b362
+On Wed, 24 Apr 2024 14:30:02 +0200
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-Why did you not adhere to known requirements for such a change description=
-?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc5#n94
+> Hi Dan,
+>=20
+> On Wed, 2024-04-24 at 14:45 +0300, Dan Carpenter wrote:
+> > The last parameter of these axi_dac_(frequency|scale|phase)_set()
+> > functions is supposed to be true for TONE_2 and false for TONE_1. The
+> > bug is the last call where it passes "private - TONE_2".=C2=A0 That
+> > subtraction is going to be zero/false for TONE_2 and and -1/true for
+> > TONE_1.=C2=A0 Fix the bug, and re-write it as "private =3D=3D TONE_2" s=
+o it's
+> > more obvious what is happening.
+> >=20
+> > Fixes: 4e3949a192e4 ("iio: dac: add support for AXI DAC IP core")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > This is from code review.=C2=A0 Untested.
+> > --- =20
+>=20
+> Auch, good catch! Agreed that private =3D=3D AXI_DAC_*_TONE_2 makes it mo=
+re
+> readable.
+>=20
+> I guess Jonathan may just squash this in the driver (was pushed this week=
+end).
+> Anyways, FWIW:
+>=20
+> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-* Imperative mood
+Missed the pull request, so will have to follow it in next pull.
 
-* Addition of the tag =E2=80=9CFixes=E2=80=9D
+Applied to the togreg branch of iio.git and pushed out as testing. Thanks,
 
+Jonathan
 
-Regards,
-Markus
+>=20
+> > =C2=A0drivers/iio/dac/adi-axi-dac.c | 6 +++---
+> > =C2=A01 file changed, 3 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-da=
+c.c
+> > index 9047c5aec0ff..880d83a014a1 100644
+> > --- a/drivers/iio/dac/adi-axi-dac.c
+> > +++ b/drivers/iio/dac/adi-axi-dac.c
+> > @@ -383,15 +383,15 @@ static int axi_dac_ext_info_set(struct iio_backend
+> > *back, uintptr_t private,
+> > =C2=A0	case AXI_DAC_FREQ_TONE_1:
+> > =C2=A0	case AXI_DAC_FREQ_TONE_2:
+> > =C2=A0		return axi_dac_frequency_set(st, chan, buf, len,
+> > -					=C2=A0=C2=A0=C2=A0=C2=A0 private - AXI_DAC_FREQ_TONE_1);
+> > +					=C2=A0=C2=A0=C2=A0=C2=A0 private =3D=3D AXI_DAC_FREQ_TONE_2);
+> > =C2=A0	case AXI_DAC_SCALE_TONE_1:
+> > =C2=A0	case AXI_DAC_SCALE_TONE_2:
+> > =C2=A0		return axi_dac_scale_set(st, chan, buf, len,
+> > -					 private - AXI_DAC_SCALE_TONE_1);
+> > +					 private =3D=3D AXI_DAC_SCALE_TONE_2);
+> > =C2=A0	case AXI_DAC_PHASE_TONE_1:
+> > =C2=A0	case AXI_DAC_PHASE_TONE_2:
+> > =C2=A0		return axi_dac_phase_set(st, chan, buf, len,
+> > -					 private - AXI_DAC_PHASE_TONE_2);
+> > +					 private =3D=3D AXI_DAC_PHASE_TONE_2);
+> > =C2=A0	default:
+> > =C2=A0		return -EOPNOTSUPP;
+> > =C2=A0	} =20
+>=20
+
