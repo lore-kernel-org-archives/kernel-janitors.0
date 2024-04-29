@@ -1,90 +1,131 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB24B651B6;
-	Mon, 29 Apr 2024 13:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADB985275;
+	Mon, 29 Apr 2024 16:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714398944; cv=none; b=fSK0XtiF1odeoLGO0IrJbeud5lxybakyJohiThX8KZ9kjTx0nd4qtEItTyxvVclHEEND0x+lKH9G2m0XAQmh/nrgzAkGOgE7anp6hFymK+uVVcYBKDtoeWSkKG3jlVFKE9REShV37haWnGD/HnVcNJDDOslG32oEn4/0z9QkARg=
+	t=1714407267; cv=none; b=IF0+vCORp4/W8z8LaR7ywSLS0oodL5s/rB8fchb2Ds3CkhQ5i3QiMvVFrsv1un9YeZk9529hxsKvg+73aDr4hiQ4dTmfrGtphWDOe0EjvPOqAPQBSFrhTKuDXPavbK+EuUPydWb7SMHMOzqv5cXS7vL72Fvxq0Sq3l0guJcol2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714398944; c=relaxed/simple;
-	bh=XSJsf20eNnV7BEcDZzdsGnYbMkeK5RV0qpSiv7XC7ag=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=m0Yp386VGSHTKSY+NyKh3cHnMbnKb0eTtL2wfpUUmzwNbUvDdJ1sggG6ZKC3D9ij4TYfshkAA0nHI7SCNXpzgDasZcvQAf1NB0/OWc0BpDbMwdaukgR9lU3mMPCoU/rbGDsIchtkQBtSP+ULovO/3t+iLIjJb8v5PI8A7zZiagg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=h0/YhDaz; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1714407267; c=relaxed/simple;
+	bh=CR/y2tnZiy//zXySTW4b91MXql772mzEYZf3A+Efy+I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZUEGk+MBXakD1L7Mo2qUjpqxAEqNjQzHgAa38mpyNnsJGROEUh/jZ7d957LIhq8uQ4jJt5UTO1TVH4ZT+bfrHtjxBakVAKZvGxYS0ilEGwZLVppWrSgb0WyXw7jKbPjdwQBhRVBn8Gcg//ds3AvuMPJb/A8obTWG15SmzPgTmtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IQ0gAp/h; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="h0/YhDaz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714398913; x=1715003713; i=markus.elfring@web.de;
-	bh=XSJsf20eNnV7BEcDZzdsGnYbMkeK5RV0qpSiv7XC7ag=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=h0/YhDaz25fEFbtdMS26njkuwDuciPI8VpioSVHR0OOLexol0dsf2W4evlR46f9i
-	 Ac/7BlEqvcC7XKaCl43wsaZLJepSQA+CvlXe9zNbqg+yOvUhcRE6munMsq1WBVsBM
-	 DSjDZ9iTPiZ/JKlzOnWyWfaEIWoom2KPH4I1nIgAEqvblIEVHb914Q9TEUgwIDm5E
-	 +Xtu9zjSiJzCD6zzpZ31cdR79Qslo/vw+35K/O8X8vHChkyFZZ8qiCsmNN+NH6rID
-	 ToEzjXiMSnAW06nDozoY/m1s3SVxu+Yyst2f0uMpodcghDph7y2bB+HuLP6oO+/aM
-	 WrJykArcgmCmpS0CRw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M3m5B-1s0cGA0pLX-0013K7; Mon, 29
- Apr 2024 15:55:13 +0200
-Message-ID: <909dde28-019e-4f53-b5d5-a5fe9956dfc4@web.de>
-Date: Mon, 29 Apr 2024 15:55:09 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IQ0gAp/h"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2a2d0ca3c92so3278074a91.0;
+        Mon, 29 Apr 2024 09:14:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714407263; x=1715012063; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uf+IdRgb927i0JxCWv/ngKuUP45B0rhv7CgotNlHqq4=;
+        b=IQ0gAp/h2uBw+Q+dVdt1eEDdtBkbXs2GqpLKLGfyXWa2v4v1QRkjFK5yPtEnZqWt3e
+         k8Zv+Y3WBYn/jxT6cyuPPBLGgRTgbMq3POYzMC2Sq72eTtbFOKa4OMKgc+K5WNLv/uUr
+         PC/f0SCY497eg7tgK+L7ylL2GLw0u4TnOGkL/M8hockyT8a7Zto4/bhFYxO/30Zg54OB
+         7k5tiOScRd7WcFAKdKT9BcGOW4EkpW9vwpjxVlvjYXSUogcxxD/pWGDGuT36xkvBl/Qi
+         RQXzsW3jp3iiYXk4Y37r2ETskTzii6yz4w+wwSQe8Qdbw60jF/T0rLlMCYi/pMTbbA87
+         yWpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714407263; x=1715012063;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uf+IdRgb927i0JxCWv/ngKuUP45B0rhv7CgotNlHqq4=;
+        b=OlbfkMWBUKK2tZyTlH/gWRFEY19fp/ehwoel/2dWn+Z6nb8Uc/inqC7Ny5CeJFi5qF
+         5pDTsccx04xgAcjSl+giMCdYlEW8lXZQEId9LxuvCQB7wEWq6rRdYJO4EFvj0SfARaTe
+         +Wgbj9D8umDZqKj63p34wUfMivWrDQo+CPtiw8dNKOmb5vLZcNkD4cxYiFwuXmMmKj22
+         dGtx1j4QiENyOylpchFTrn5imvECFMPV/TW2QWwbRyux1v/iEsRmRBpltHubTb4DNqEa
+         eJgyCKOwKpTtrDI3sfW0nxhsjh/R2ybfF+o98l7Xxq26ikXH55mVZoOidvPcLKZhoPjH
+         KD2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVkioZN0rOAh5CAZ7QJGyU0wiM/qAx+TGhysLkBeG6A8hCgTIDU9O/xyAwfIHmQIJD4gkPiEtkQZjPelH1HxhNjAVenGkIpAtbTOpXwYYM3wDyodwtzNmhmPjlltnAtYjihuUA/t5pPFnrlWSIi
+X-Gm-Message-State: AOJu0YyHfpYHr3UCN/6l7mDKPS8ckp9nf1edHCL1gG0OBzwGkxwo0mYa
+	OJfN7Y55iO1zum2H01vSSX6Z3/FAfS8uLANuVZytESRwXNCbhRtAQ+xN7Mz5ZfuVaoso/niUCck
+	REIwxpXnetnDYuDN0FpFRjNRI/18=
+X-Google-Smtp-Source: AGHT+IG2B2nx6bmugj+Ci4mKUZM0wGBXzxrm1KAJlrCGW9qVvtEKi0H28eOfwvOwV2BggQL03pq5kA8s/A6ylUd2IIM=
+X-Received: by 2002:a17:90a:d685:b0:2af:de3:f0e3 with SMTP id
+ x5-20020a17090ad68500b002af0de3f0e3mr126396pju.23.1714407263053; Mon, 29 Apr
+ 2024 09:14:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Masami Hiramatsu <mhiramat@kernel.org>,
- LuMingYin <lumingyindetect@126.com>, linux-trace-kernel@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Steven Rostedt <rostedt@goodmis.org>
-References: <20240429222941.12d3b774bebef484e605d095@kernel.org>
-Subject: Re: [v3] tracing/probes: Fix memory leak in
- traceprobe_parse_probe_arg_body()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240429222941.12d3b774bebef484e605d095@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+References: <afb229a9-3f18-44cb-b305-5fbb2e1b4ee3@moroto.mountain> <CO6PR12MB53946126A02595B4FDF76525941B2@CO6PR12MB5394.namprd12.prod.outlook.com>
+In-Reply-To: <CO6PR12MB53946126A02595B4FDF76525941B2@CO6PR12MB5394.namprd12.prod.outlook.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 29 Apr 2024 12:14:11 -0400
+Message-ID: <CADnq5_NQPgW-xmebV5OS-8v_-vY07hP4NYJemYLOC4iCydkxLw@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Fix signedness bug in sdma_v4_0_process_trap_irq()
+To: "Zhou, Bob" <Bob.Zhou@amd.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, 
+	"Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, 
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	"Kuehling, Felix" <Felix.Kuehling@amd.com>, "Zhang, Hawking" <Hawking.Zhang@amd.com>, 
+	Guchun Chen <guchun.chen@amd.com>, "Ma, Le" <Le.Ma@amd.com>, "Lazar, Lijo" <Lijo.Lazar@amd.com>, 
+	"Sharma, Shashank" <Shashank.Sharma@amd.com>, 
+	"amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:V03fvnGC5qRcKCTwAHkHSloSGt/P+kbUlcDGh/owlakpddJI8KW
- PSCqzuEGuuls4kplrjUM6rgYtAszRo2NZZ0c2vAt7kWPJLz/EB25IDC4Jasipa8nq8MQYml
- 5wlZUDAsjEOsMKCJCPNXFEQM5yoqwLtc991q85X2YQx2Mq6Aj2aSVbaiLXFOQ61SQY82F4Z
- k9ikhW+eOFzqTsqc3lWIg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:w3epDiW0+Bs=;8ajEl4URGqBFwrxqcgtygi59WkG
- h2vjmIX2M85jI0nuBQMj43UTS+1lVrPOjDoO1j13mt29CKwrDIcGNDIqDbVM41u2/sI00zMGY
- C5SVzRIldNurkZ4GElO/Uh8YM4HsBwl3PxnTPhSv7CWr2L2n2NGOXWq0MFfl6ybD/t6ZShXJP
- 2LxUQhdaQL/jXaFaqYEM4CVoQcYXicuzOtm+bTmigdvvJVIvDWiSVrh6srO7wxlVg5syCOYXe
- Ar6wwJvOkn97iEsj4FonuymwN2zk4LVeih/aHK/vN7lF+/XGhnt8lZJz6VaKlJKFl1baoTS9G
- YFIShydCG3F6Dhqwrko6q9pQTQRqXDionRm4ajR/b8H03BXs1bDbssdg1OrJBqc+43s0irvld
- 2a0z39JEqBbiYWUQAHxZxmJvQsCSrK8BXYROpJLvlyz/Pw60E4Q2+UYhdI2lbMVYlACxwtoJk
- 5hQLREOebzA/YblpEKNyl+Ew7SG0j8hgBW9qD7AnYyQgNqeS0ZwfILXe3gXt0ARnkkUf92q3g
- uvrz7T7gjgSXZA+zcaxw5tdbH05HCrc9krAIMiCbf1d03mw0bKh6ZsM9Eay61BxpvzZc2x5GN
- NXa+lmt9ninWJHMpUIeHvcYS8cizkFf0hbtUFwL+I7oqfAb6XRGK5cuZjMThD0bq8WucQrVgk
- ENdtDka22ZfY3Zx2VYnofmzNRlcFSo12+SzcD3m8933hBiFHX4pl4JoZVzc+CQZnGJzLIq6OH
- vKpYfn1LnDITsmbMGrGKidKxtTFd+HJkzechuCcfcR4TGu0QJzrU+8sonsXqjE4S36jroX0Mj
- Ju4wtuzY2lCeCRDwswSBvt52DMQsTtjajbP7cypjckr7c=
 
-=E2=80=A6
-> > it jumps to the label 'out' instead of 'fail' by mistake.In the result=
-,
-=E2=80=A6
+Applied.  Thanks!
+
+On Sun, Apr 28, 2024 at 9:32=E2=80=AFPM Zhou, Bob <Bob.Zhou@amd.com> wrote:
 >
-> Looks good to me.
-
-* Do you care for a typo in this change description?
-
-* Would you like to read any improved (patch) version descriptions (or cha=
-ngelogs)?
-
-Regards,
-Markus
+> [Public]
+>
+> Reviewed-by: Bob Zhou <bob.zhou@amd.com>
+>
+> Regards,
+> Bob
+>
+> -----Original Message-----
+> From: Dan Carpenter <dan.carpenter@linaro.org>
+> Sent: 2024=E5=B9=B44=E6=9C=8828=E6=97=A5 20:57
+> To: Zhou, Bob <Bob.Zhou@amd.com>
+> Cc: Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian <Ch=
+ristian.Koenig@amd.com>; Pan, Xinhui <Xinhui.Pan@amd.com>; David Airlie <ai=
+rlied@gmail.com>; Daniel Vetter <daniel@ffwll.ch>; Kuehling, Felix <Felix.K=
+uehling@amd.com>; Zhang, Hawking <Hawking.Zhang@amd.com>; Guchun Chen <guch=
+un.chen@amd.com>; Ma, Le <Le.Ma@amd.com>; Lazar, Lijo <Lijo.Lazar@amd.com>;=
+ Sharma, Shashank <Shashank.Sharma@amd.com>; amd-gfx@lists.freedesktop.org;=
+ dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org; kernel-jani=
+tors@vger.kernel.org
+> Subject: [PATCH] drm/amdgpu: Fix signedness bug in sdma_v4_0_process_trap=
+_irq()
+>
+> The "instance" variable needs to be signed for the error handling to work=
+.
+>
+> Fixes: b34ddc71267a ("drm/amdgpu: add error handle to avoid out-of-bounds=
+")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c b/drivers/gpu/drm/amd=
+/amdgpu/sdma_v4_0.c
+> index 101038395c3b..772604feb6ac 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
+> @@ -2017,7 +2017,7 @@ static int sdma_v4_0_process_trap_irq(struct amdgpu=
+_device *adev,
+>                                       struct amdgpu_irq_src *source,
+>                                       struct amdgpu_iv_entry *entry)  {
+> -       uint32_t instance;
+> +       int instance;
+>
+>         DRM_DEBUG("IH: SDMA trap\n");
+>         instance =3D sdma_v4_0_irq_id_to_seq(entry->client_id);
+> --
+> 2.43.0
+>
