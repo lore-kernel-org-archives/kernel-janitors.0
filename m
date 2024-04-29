@@ -1,92 +1,115 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C9F14AA8;
-	Mon, 29 Apr 2024 07:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06B814A8D;
+	Mon, 29 Apr 2024 07:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714376968; cv=none; b=RFpOOMsQzftvEzwdxLtBIs9XkZyCcma61DJM8TJDkOVjZmvtcE8LnJN85Qu7CX4vR+VTZ8Ibm+/94gIHlgsUh0ckQpM4xprQkfc2wi1W6Nmi01siSjP8a/G6csUL/dQCpc0dKVP4i6/uMUyFZVxzE1mUC07TT6AuZkgRN4Jt9IY=
+	t=1714377062; cv=none; b=bHUh8h5xyIHKAv5iTXvBbRQE5+CtqXYTHYSym2dsVdpKEXya3Fau7hZNjCAB2TLEvaCl0LWgYGPPeQGmDmnAD3g5DUC/EGtgSKI9m44z0vURuunaYFntCaMbbHz+xBxzrYU+PmcsldzQLXst5ZzX+2nZ1AgzU8hOSb0aCYdo1IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714376968; c=relaxed/simple;
-	bh=eIsAkO2TaiFHfV1YDVy7nO5WUNEWgR9F+gnZBrWDgvY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=MtSaa1ibKYnOPTU/RMuaoNcwYNNXUzjbunCQNGB+5U30mv5/ioisQw+gWKlodRYpXiqpe47POPvmSWO31BuUTdQk4+nU2Eybc0B49T5+zeQqD9EvPaNL4buFIcqB2zx1weXkhsyJKHebJUEEt6mrsb+BmTmpsiIbxfKExkb8MIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VfSPIQv7; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1714377062; c=relaxed/simple;
+	bh=o3lSfrItv9/X+b/XFKMfQD5nbXMPoTZ50KGLPNc6OGE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=l1nB9geywAR8I+qIyWvFgVngyFR4fyHMD6O/X6Fmir6W/kbUh9kAEZ7XSUomDlIVTMQmBVeRUNNP5Al9OiR9/E/xK1zzJtBaOxoqvOnY/QozpE05QKSX8ukD9WWrvIwr+HLoDFOpeDTaj1hvKRymRfoYC5pnkXKo9vYaadfv794=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FarfbKJu; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VfSPIQv7"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51c077cfc09so4788698e87.2;
-        Mon, 29 Apr 2024 00:49:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714376965; x=1714981765; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VZ8iERLxVujR+lilVZE+rixuOHmFfYyTXZLkb3Z1d30=;
-        b=VfSPIQv7RQibwIA2859Wj53dL7CQPtfjVV96r1Lc5fJay8bboYeBYmCPzic79NY24W
-         BUkfi8r9CF41KyNwFy9TWcD88frI5W6Zzzi+FDaUcGrtSWef63mgSE8oFeW5htyFk1QY
-         O9x5H5kKpXq4VXj6KKf2Uo8AMqbYzeOzSs6UvMQCoBsPHM9l4BT83cP7xsq/teJ1+2rr
-         JQyjNG3SlEZIG65RcyduVgKFL/Eipsv/vM29HOd2+K2AEk22WKc7aSDbRcH+NMvIurYF
-         V+GW/T3Sj/uteVPBNGk625Ny/1oA4AtoB3tnl2IIm/fPO8lfpxbAocqQ0luxjIFP0CoM
-         k7YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714376965; x=1714981765;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VZ8iERLxVujR+lilVZE+rixuOHmFfYyTXZLkb3Z1d30=;
-        b=LRU9Ddz70Q1atBZGFld/8VFhph29//r966M8ZUxx/sTD6Q5m0gDvKJ/nEcpcJdDT4R
-         SX6E2aUTk4KNDU2j1gcUyuraBXtJJB/ThtqrkeYSejtOlJSy+QzX567/2t5AW8Ql8lKB
-         fFyz73A5e1eBYMbHDDWOidEZBHvL1M7j2BgUrbKoCGe8G3Pl2aWFLKrc32qvmDlrdtW3
-         h8tuGBH6QPbksMWmdP4nqKPenYT+GQgkpLd5xacIU8P1zQscWHUtpwhUzPZtREedSLDC
-         wUW2khnaqUfams7swqIczQa8yxVLHiamzl8QVoopA2Zn4Ri8KprTmUNm6WUCYx4bNBzw
-         M1Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCUfRl9gVf8Bbktlrp6TWMtjHmC67Hqxd9WavR+4hJyaI37Qu6LA5VyE7RdDll7xZpldx41f1OnD1Q3IoloB0CC1n+/4lQ39LOgNSrZix0SR2H0++I+OQBcvHqrMZXNVpL5Vm02+pwBopNU=
-X-Gm-Message-State: AOJu0Yz846TNkMcbv3y8SXBKkrC2YPiVoV/MoPe5JKp4/qajA8lCRMPf
-	0ZoLHXHB53tQ3Jlras9KeNABa61VCIOLu48mJ8VjJFLmpekf9C8raG9t6g==
-X-Google-Smtp-Source: AGHT+IEPTPDS0rpVdTT2tVoI5hHxdAvWRCL5Tgcnc6seAdr3EX2dbLgzsV6uEnPdWlaGA0RGcdBEKw==
-X-Received: by 2002:ac2:4542:0:b0:51c:66eb:8a66 with SMTP id j2-20020ac24542000000b0051c66eb8a66mr5134593lfm.67.1714376964681;
-        Mon, 29 Apr 2024 00:49:24 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id cs7-20020a056000088700b00346cdf48262sm28965784wrb.2.2024.04.29.00.49.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Apr 2024 00:49:24 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	linux-hwmon@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] hwmon: Fix spelling mistake "accesssible" -> "accessible"
-Date: Mon, 29 Apr 2024 08:49:23 +0100
-Message-Id: <20240429074923.1073720-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FarfbKJu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1714377037; x=1714981837; i=markus.elfring@web.de;
+	bh=PwgbfZv/QKuas8oXbIWGJWatANQIrG/1UIMV8+ZSv1Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=FarfbKJupRCGXP0R8oQtmIYHvwMhx4ft5+v3MVRfBpzzZRKVotKNsM51gJc/YwVR
+	 ltfcT19nSkWwmVDrl2Xw90bxilKSxjrvGBLh9Ji3zZNPolljUaSb5egBp9jNCiGBx
+	 N43VQ87a6YmUxVGoiGTg+s8nJf4qOIVFFpFdW8irUvQZ7Dzp33SSFEZ4Szspca9Lb
+	 0WzGnlJqJVq7J1zaiZue3riFEwJQWmPLZvO8jpfguvfLNJgfyjkqOZ0+EreLGT63W
+	 OFg7hSK3Yom0IWqyiZqaJVAMWw9Mcor/4f9H+SKMmGCBxnKs0nyKxXQWezHV5jVKD
+	 MPMhSbuV1uA3T/KeIg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mo6Nt-1sTHxG36eB-00q8PB; Mon, 29
+ Apr 2024 09:50:37 +0200
+Message-ID: <1df4e8d4-733f-43d9-a9d7-3764b6df7ed7@web.de>
+Date: Mon, 29 Apr 2024 09:50:36 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Li Zhijian <lizhijian@fujitsu.com>, linux-cxl@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ Alison Schofield <alison.schofield@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Davidlohr Bueso <dave@stgolabs.net>, Ira Weiny <ira.weiny@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Vishal Verma <vishal.l.verma@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240429013154.368118-1-lizhijian@fujitsu.com>
+Subject: Re: [PATCH 1/2] cxl/region: Fix potential invalid pointer dereference
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240429013154.368118-1-lizhijian@fujitsu.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:/YgV0cA6lKGixm8+QuV2vBOSOM230psviYgQtCMgXsfzK+y0HVv
+ NNnrBJriTCJRUoGnKcQNOEpO22Xg1cEfBZn6TbygF+fAexxqK8urnbC2mylPaocWLIH1tAk
+ s6OWYF+JCmlEp8Z1E1RuSfGXj2xDbxySCoGip+a/p0YSfXzoELdoChrdTZa5lMbvaSifT2i
+ Kkm1t/RtAiLLjl6OgNC3A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:5AUYALFlqcs=;5IN+RQpPqc6kRVvvKWiU6Ggjxpw
+ Tks4v5dEKYql2S9K/LSiubnVjaA89gOJRCsQ3CxVSMec1F157wgvZl8gcdH1g01WV8fGrDWp8
+ 19kKNVKyhUxA0vZT7+mtOuOSPMLVaSFwlJz+2Q1mryG9tTyBtUaSG7ibhOCCc7a9uOkP9gUyc
+ GKjOP4DeNBtmVBPHuG+HGCRUoXt1DNEPlL6YaSunFi8jodUF8L/L69lUG/xBr0avRkyUyQBLz
+ MvGe3jzGef4UzPKwB+J9U7Hn7UsSczgkTQcv64VQdV7A1+vOWNCUgaIEgj3F6SVDV27QHYsXh
+ +FjoJDUqLPO41CtGlRX3Eh1dQnLWoY/SlTIkmSWlNcSZX+9IAoeS2RMuDoefbLzEVt6+g2nqC
+ lPDCcZ3xNENYMxnIlILc25WCD9pFRjXJ2olx2/f5fgHAYIl1n/+ijAfDKq5o6kXqUqL6x+1a/
+ aJ+4hl+dUH3u9zFr7FNQAFR+03ecBpythDE2/h4DEtRxVa+NghOHnW0BOuF7WvcqLit90d7V5
+ R2V8cEu2rg7zWJv1bRAV76rZfhQYafkGtjWWK190Ovc74eg7SM6G4MmgDqWxxuWJj4cYpHq6L
+ 6W6cJUpJ02EvgvPXPGV3qtUYGJHXflpv+pIfnlAILVXycrqOUkdHr9PHWHKD2GzIUzV0/P+00
+ RfKNoWmiQWqFTdwbzOf6b0eW4JIHBetHCOk0Crd0Y/NeYcmk5oPX9BvhAxXsNgo5RvpgZ6LAH
+ rh413SXfTRHE+XbNxs66eRGroq7Z0JJ9ykeG6WbEr90BeYyTYUBECnWZfTr9c/qG7EuLPIh2K
+ UlShrw0Ppg93zthB4oCI4xecmzODj6/fZ3cnho8qIe6Z0=
 
-There is a spelling mistake in the module description. Fix it.
+I would usually expect a corresponding cover letter for patch series.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/hwmon/lenovo-ec-sensors.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/lenovo-ec-sensors.c b/drivers/hwmon/lenovo-ec-sensors.c
-index 50adeb82468b..143fb79713f7 100644
---- a/drivers/hwmon/lenovo-ec-sensors.c
-+++ b/drivers/hwmon/lenovo-ec-sensors.c
-@@ -598,5 +598,5 @@ static void __exit lenovo_ec_exit(void)
- module_exit(lenovo_ec_exit);
- 
- MODULE_AUTHOR("David Ober <dober@lenovo.com>");
--MODULE_DESCRIPTION("HWMON driver for sensors accesssible via EC in LENOVO motherboards");
-+MODULE_DESCRIPTION("HWMON driver for sensors accessible via EC in LENOVO motherboards");
- MODULE_LICENSE("GPL");
--- 
-2.39.2
+> construct_region() could return a PTR_ERR() which cannot be derefernced.
 
+I hope that a typo will be avoided in the last word of this sentence.
+
+
+> Moving the dereference behind the error checking to make sure the
+> pointer is valid.
+
+Please choose an imperative wording for an improved change description.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9-rc5#n94
+
+
+=E2=80=A6
+> +++ b/drivers/cxl/core/region.c
+> @@ -3086,10 +3086,9 @@ int cxl_add_to_region(struct cxl_port *root, stru=
+ct cxl_endpoint_decoder *cxled)
+>  	mutex_lock(&cxlrd->range_lock);
+>  	region_dev =3D device_find_child(&cxlrd->cxlsd.cxld.dev, hpa,
+>  				       match_region_by_range);
+> -	if (!region_dev) {
+> +	if (!region_dev)
+>  		cxlr =3D construct_region(cxlrd, cxled);
+> -		region_dev =3D &cxlr->dev;
+> -	} else
+> +	else
+>  		cxlr =3D to_cxl_region(region_dev);
+>  	mutex_unlock(&cxlrd->range_lock);
+
+I suggest to simplify such source code by using a conditional operator exp=
+ression.
+
+Regards,
+Markus
