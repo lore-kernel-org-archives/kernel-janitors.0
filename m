@@ -1,82 +1,123 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3880F1171A;
-	Mon, 29 Apr 2024 07:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE38883D;
+	Mon, 29 Apr 2024 07:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714374780; cv=none; b=BjPFES2KicmC9R98Th/jWsMXIk68NRdEZQ1Kd+J1K3wMMR1CZrJUgk1chY/30XTLzr2VsYYYpyEo+tbt9q3vq6dKh+abun/cCz8jBYAhskLgIrO54ZlCGFrv5rEOIGUl+6T/asUXZQz1BPGRYsQRbwASzxIsU27ZB5M4+QRFlpU=
+	t=1714375943; cv=none; b=t2XJ+yBvo6O7NpHjMUlYZUce50wHaX15rh93TiV0gKwav58DBt5b0LH/wvXNj/f89kgTwpEjyMfNJQCbDOd0ZgDLMO0LMU7h2AdniEQTHeWPC1uUSv6jmbbLxRfp8+X9xSjlkqnzSQlA8Rw3NiUrc7XHv+jYrIqwXuDunAbVkl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714374780; c=relaxed/simple;
-	bh=cKHaXt/I8WPuopNGGK37DV9Mh3drbMUoA92wfwM4SNA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=EUdzEk6wwWjJRznvDhgacnYceVFgKpTV1TUqwjPczqKEyg1nTd0tO1iUw4hr+5N9IMNC7xIOGOUxtUovgmcH/Cxf3ZvZMXn99cIFdVzWVzHQMdvpvaivOyL0pmR3YZRKBDVCFCShD60IJqbUrWU6rLsXFSTgnTFLQ1rsoLWTqkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XOChPBrA; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XOChPBrA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714374735; x=1714979535; i=markus.elfring@web.de;
-	bh=cKHaXt/I8WPuopNGGK37DV9Mh3drbMUoA92wfwM4SNA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=XOChPBrANaJvzlQiToMYqVWv6qNpwgignwvtIKGVUMKhfqguMh5MrvFUVRzqDvlw
-	 KqoDcOzszQisixUQG+5ZnB/tWuztzYVe4xfg4TBe9MDzD5FTRP8dDUanqA23duAcr
-	 mcCQObUZftTpfxLBLXU0Ja97krz1qup5q+t+IyuD9Phq8QMTH0SPeta037iZQLT3A
-	 gr4rexBDVHi76BovifIZxEH+SB/we1E7AO2QQ+prNpU63C2OUqrVCjYRH1zO+ky8o
-	 uymInGv8rBMTSssBgz8GqXO3UQmiGVYi4DmX/c/FCys8hU3cQYMiryKoqQj/CtAwo
-	 NVwYqnsu0wH6jVAyag==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mx0Ij-1stapZ3dt5-00yCGV; Mon, 29
- Apr 2024 09:12:14 +0200
-Message-ID: <a7db79ae-71a4-4d73-a7a3-7bd19f8e57ba@web.de>
-Date: Mon, 29 Apr 2024 09:12:12 +0200
+	s=arc-20240116; t=1714375943; c=relaxed/simple;
+	bh=XRXKieqHp1DvJ7IC6w1mftvCxe3LJrs0wxu9R+nqtiU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=HRjI3q5BpKcassNFLD656p3/tXhKToe0lFhDbgwyWSQRrtTkb9D+QbsizZPaZSzoo4wRT1p7p6ClLj89q9hjFcfxY+77Qg87j/wUntW7Peuuu6g+Qch540N1B4lGrmN9SeoI1l5cIHgBcMVI1jZkAAh649qBg4edpSXveNWPxiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.239])
+	by gateway (Coremail) with SMTP id _____8BxSfH9TC9m1tUEAA--.16844S3;
+	Mon, 29 Apr 2024 15:32:13 +0800 (CST)
+Received: from [10.20.42.239] (unknown [10.20.42.239])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8CxIlb5TC9meN8JAA--.7916S3;
+	Mon, 29 Apr 2024 15:32:11 +0800 (CST)
+Subject: Re: [PATCH v3] LoongArch: KVM: Add PMU support
+To: Markus Elfring <Markus.Elfring@web.de>, loongarch@lists.linux.dev,
+ kernel-janitors@vger.kernel.org, maobibo@loongson.cn
+Cc: LKML <linux-kernel@vger.kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+ Paolo Bonzini <pbonzini@redhat.com>, Tianrui Zhao <zhaotianrui@loongson.cn>,
+ Wang Xuerui <kernel@xen0n.name>
+References: <20240424091813.1471440-1-gaosong@loongson.cn>
+ <e68e09e0-75f3-43b8-b947-22cc0d1a0dae@web.de>
+From: gaosong <gaosong@loongson.cn>
+Message-ID: <b8818597-2770-f2a3-03bd-1653cd26fc78@loongson.cn>
+Date: Mon, 29 Apr 2024 15:32:09 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: wangkaiyuan@inspur.com, kernel-janitors@vger.kernel.org,
- Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240429024547.27724-1-wangkaiyuan@inspur.com>
-Subject: Re: [PATCH] mfd: axp20x: convert to use maple tree register cache
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240429024547.27724-1-wangkaiyuan@inspur.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:+ex+6mR/cmisVHjn8CZ7fbSTvZxd+aUYo9nwceQUXzdy5MSYEFT
- W03K7xXgx/QInLXQTbToUWUtyplK8/l1y7ye2DxEryr17BDQgJYsv75l4Ojp1IR/slT0Fza
- /2mVTVyHTcRdtjl0o+p4EKR2+qo7mUt1U/YnDERPiKN6Lp5KrocreJGSs1GJTQgwrwqUnAb
- bQ1fh5C2kjfXy9gDLRn3A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:IOWEFONViw0=;skTsCsuHzNzLV0ykAw7JqW+9vrM
- RthpdFBIl7VRw54gmL2DnxATPU/UEzT1bApXvK2zn1+mP6ddtVQB6PzA5EpYTUznD4raK9yTw
- /1nnIMR1lTkxuLeNKU8k2q2IzCnseDwlfZbk8z4CYAZXlTRHSUKiDDFrQcPLhldnTlSnYkWCP
- mEZWr0DDMt1tlWeItw+6mslaIRoru0H5gP/0XPPQ8G1hbD6RDsZq8ChuJGrDHsnssD3VNF4cO
- Eg9h57ETPkJ4p8+siO59hcE0dYrmesaRtWskZqcGxXqJZSV6JWHdCytdGWlyJaXPMt5fjZlCx
- Woo/+76HMfPgrQNCeOcVQ8RV3kLvifr9MHbOTJtKsJps0BZLdK2Y6xxp63oHD1+spDmVW5TkK
- BuBWzC2t1h49SimDYw3WOZCWlwtQATfbdqoFCU/D2aZwGkWMPOdysl8P3LFNSxYs9+kIVUTo7
- TnQmMv9lVypS03YLObUyZeg9XuNjgZBwUsuE331U4QIbKqqrSReRM3/ZRy1pHG0K0VI1TdnWo
- d7vKslbQ/qcCIh4ETFcYPMv69FeHRN+/1T3Vp3/sUdvbXOwEiSPpYNJCBw/N3QFO4Krqj+6T4
- ZG3RaWlzd3YJyMehYXIYVtfqjkhsMEMSofFR2K7gp6aVxNXP0AUbPY+pGzqt1BM6945SXvC/x
- o1yPt3NgZzTIukzrbpF9sT1DGAiMv82wCX27lEHhWTOXFSY98EZbA+mhD5lVnHwZHCqsMU5E3
- Aywnr9gEkwVc8UOOdK1FTbwgYxdAvwbj7l0/M/Yi396BFG51eIIND1hZG6ug0NjfTRJ4kxiTX
- zd8yh9N4r5W2soOryf1PDSgD1zihJA+t4h3LwA6BH7Qi0=
+In-Reply-To: <e68e09e0-75f3-43b8-b947-22cc0d1a0dae@web.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:AQAAf8CxIlb5TC9meN8JAA--.7916S3
+X-CM-SenderInfo: 5jdr20tqj6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7WFW3JF15ur13GFWUJw15WrX_yoW8ArW3pF
+	4ruan0y3yDtF10kw4kX3yvyry7WrZ8Jr13urn7X3Z8JrZ8ZwnYvr1fZr1agFyDZ34rKFW2
+	q3Z3ArWF9FyDtFgCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
+	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
+	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zw
+	Z7UUUUU==
 
-> The maple tree register cache is based on a much more modern data structure
-> than the rbtree cache and makes optimisation choices which are probably
-> more appropriate for modern systems than those made by the rbtree cache.
+在 2024/4/25 下午3:18, Markus Elfring 写道:
+> …
+>> On KVM side. we save the host PMU CSRs into structure kvm_context.
+>> If the host supports the PMU feature. When entering guest mode.
+>> we save the host PMU CSRs and restore the guest PMU CSRs.
+> …
+>
+> I suggest to reconsider the usage of a few dots in such a wording approach.
+>
+>
+> …
+> Signed-off-by: Song Gao <gaosong@loongson.cn>
+>
+> v2->V3:
+> …
+>
+> * Please put your version descriptions behind a marker line.
+>    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.9-rc5#n713
+Got  it,  thank for you suggestion.
+> * How do you think about to avoid the repetition of version identifiers here?
+I'm new to this, is the following example correct?
 
-Please choose another imperative wording for an improved change description.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.9-rc5#n94
+[...]
 
-Regards,
-Markus
+Signed-off-by: Song Gao <gaosong@loongson.cn>
+---
+
+v4:
+   - Use the macro kvm_read_clear_hw_gcsr to optimize the code
+     and remove redundant code.
+
+V3:
+   - When saving the PMU context, clear the CTRL register
+      before reading the CNTR register.
+   - Put kvm_lose_pmu() in kvm_handler_exit().
+
+v2:
+   - Add new vcpu->request flag KVM_REQ_PMU. If we use PMU,
+     We need to set this flag;
+   - Add kvm_check_pmu() to kvm_pre_enter_guest();
+   - On _kvm_setcsr(), after modifying the PMU CSR register value,
+      if we use PMU, we need to set KVM_REQ_PMU.
+
+Patch v3: 
+https://lore.kernel.org/all/20240424091813.1471440-1-gaosong@loongson.cn/
+Patch v2: 
+https://lore.kernel.org/all/20240417065236.500011-1-gaosong@loongson.cn/
+Patch v1: 
+https://lore.kernel.org/all/20240410095812.2943706-1-gaosong@loongson.cn/
+
+---
+
+[...]
+
+Regards.
+Song Gao
+>
+> Regards,
+> Markus
+
