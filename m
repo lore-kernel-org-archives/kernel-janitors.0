@@ -1,103 +1,81 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB05ED28D;
-	Mon, 29 Apr 2024 05:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDD7DDB1;
+	Mon, 29 Apr 2024 05:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714367605; cv=none; b=BED3j11u8ahbVT5su3cN0MuY1gpRpcbLxzQXehEA1nT7n6k66CsvbOHRJ/ZtNC8mwbEdN48X1IXEBY/wvUOln3d2HBH5IvCuKYjJ148Ov8J6+aDLfHenWP3HkRq6HEYnkBn7q4Kb4SDLagiwi8GGtyIihXg8i/Q3jo7IZ7MIe6g=
+	t=1714370086; cv=none; b=HGh6J94B7U+Jqhj6cqL5/kdkBEDeBtmWMl8eAVfF3qfywo4xYqhy9OY7pT4l44E8aCGir05uNWZUr20hHY+zsImK63yi1Ssnrr16LCPybcgigrAy2ia0tmC3SZr5eq++OKTFmRcNB6t/SfwiOhvijjkcOmPtZSrOYMLkTBqgIeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714367605; c=relaxed/simple;
-	bh=6MCnqWatVGDcoOaSP4XU/7z/EyzaAOWkNis5N5nlYaM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EwpGxhVS2BGxLqataUAgGAhUkYKWBDjIC14cMjvaY0lpl/zlvIalyV2fW+RXlb8ddSWLj+/kIiREj8ANaEwUjzGcoqTwZvumfF9jt9n2xTfOmWWhARFTYhO+gcLLfP2Y3G5mxKMX6rcR/wKqZPCtV6qQFKuMkvaHiy6AgsCIfeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ggtbx8GZ; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1714370086; c=relaxed/simple;
+	bh=KygCcw1hhniytw++trr1oIl8MgJAAzVCuTLV+BjlSfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YOfotNDSBuCW0yVclyABt8nSVDYEpMihAtuxhgzCKzk3Ariibp6pLkC6nClgZuVXagvZ5blGJfHWJ9JrGrPJcpIGIwUCYa98PN34VahlO10aA/UZHP0r7fpb7T8A0LLtU3KBrh8TxjI1yKsx34m+nzbGZKUx1sCA9FgoMv3xoAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JeumaphG; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ggtbx8GZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714367581; x=1714972381; i=markus.elfring@web.de;
-	bh=6MCnqWatVGDcoOaSP4XU/7z/EyzaAOWkNis5N5nlYaM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ggtbx8GZyoxvcRXMXVSA4+UD1FYD6gKjIJKwXeOBPgHQQiw2WpgTUKxSAIMPmP5U
-	 ja/Vg6xCGt9KSSjV46bo4eY7tdG4BUnU8BNy5ARLoUzuuKL1HdN0bxAEbH4KF/uaO
-	 RM+ZJFppmeQAuiKmtNZ+trpL02zSL9jEndRcDU6lnsMV7jDFQhj79f9fmHpmRbRxg
-	 L/cSC/gzGT1CoZRkFv1VYB0HfYnwEx+Mj0FodfGmiS+7JucAI7EwxaEggYJDPe5qT
-	 L2jqnwzPNRmPk7nHRnms53No3nAhsNYuZb06eRCgB8B89aXdPfXJln5Y1yTW3PUtB
-	 uJcOwt2zGvubhdCfig==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M4sbr-1rzNuc2MmV-00DN2m; Mon, 29
- Apr 2024 07:13:01 +0200
-Message-ID: <9c711441-6e79-422f-9405-ee271929e77c@web.de>
-Date: Mon, 29 Apr 2024 07:12:17 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JeumaphG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714370085; x=1745906085;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KygCcw1hhniytw++trr1oIl8MgJAAzVCuTLV+BjlSfo=;
+  b=JeumaphGQTAb7+4YH46KXBuFgNB+t2ezhoAcoUrFaxO5sSYXK/aoXS31
+   vdYvCk+P/GvP0o99sQIaGvAuN4Uy4zdEiYbi1upOkfk1HF1PmGPlzlsLL
+   gYIGhxDYI1HXW8x72J+pucD5zpaT3OHdewUhUDh8kO0LZX63s3j0kPpnx
+   S+wPq3Ckd/ubU5/X+fUXgJag+10E1WY4DLFlMwUmHspqxPXwMpD/9SEX8
+   fXnmGFRbqyVU8UAt0BQmY5JlbdFJjzuDx0TfipPdRITQQXO61ekhWarrP
+   OKWSJy4hjQ8v/KEcmZ/BaIyJJfVB840IYkN2WIUzZVrMNVqh08qfY2KqA
+   g==;
+X-CSE-ConnectionGUID: Xr5sjo2EQr6DvAfR0NzZAg==
+X-CSE-MsgGUID: QySg7LLsR3Wfo0LkHstnWg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11057"; a="10129318"
+X-IronPort-AV: E=Sophos;i="6.07,238,1708416000"; 
+   d="scan'208";a="10129318"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2024 22:54:44 -0700
+X-CSE-ConnectionGUID: 6o34SmsNQRaOBDnFFVaOlQ==
+X-CSE-MsgGUID: LigLZAAERTqT919KFbD8qw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,238,1708416000"; 
+   d="scan'208";a="26410927"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2024 22:54:42 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id EC81311F830;
+	Mon, 29 Apr 2024 08:54:38 +0300 (EEST)
+Date: Mon, 29 Apr 2024 05:54:38 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: Re: [PATCH] device property: Fix a typo in the description of
+ device_get_child_node_count()
+Message-ID: <Zi82Ho69tYm8Hyu6@kekkonen.localdomain>
+References: <369e7f6898c4a442d45aa15d7d969131d61e9cee.1714323747.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] scsi: qla2xxx: Fix double free of fcport in error
- handling path
-To: Yongzhi Liu <hyperlyzcs@gmail.com>,
- GR-QLogic-Storage-Upstream@marvell.com, linux-scsi@vger.kernel.org,
- kernel-janitors@vger.kernel.org,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Nilesh Javali <njavali@marvell.com>, Saurav Kashyap <skashyap@marvell.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Himanshu Madhani <himanshu.madhani@oracle.com>, huntazhang@tencent.com,
- jitxie@tencent.com
-References: <443fb75b-948b-430f-be33-170e6f592280@web.de>
- <20240428113404.12522-1-hyperlyzcs@gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240428113404.12522-1-hyperlyzcs@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:RuBQhBXJ9LkR6nSLm4sThUW+g2XoGD7/LUNVqS786SrnlYGBLVV
- C5U/OXjjhn4AEinIdtRTdTjpUrvc8f/QFW8YY37sKQ5Wpy0nlvayt60g1xRdSAhO1PP8QhP
- 2Iio2UYT65lSCOuW5E0cFskmlk85yMF2mWQVoPEOLT2uAXicawGIa3ds7PD7o5SfPyzFCgl
- eMPBPzYHOszZTfwxkL6ZQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+YnWFr0EOwE=;N+eqH2g0sE03ptK/f70HTfP0LH9
- 0yWmlGSL4qjaK8f16suCY1Taqs/oigN+Nubl2NkXlCGapzcb5/zO6jrJVOQJdDVKEtZZREZB+
- pn9CUFptwZtJ3PTZK4XOw+EX9btyaqzTvLNgejrEtcWleAM9Ph4DgzUnyO6v7jV0IZFaIRG6O
- +9dus4XM6r3DWH6m3DWF0bKMWvojk3SuluS6lswz2fjIc46VHNogJJgaYfZKosX0i4lIf0nTJ
- Xry+McXnhmVfw44FMR6Ixcpcu68jX7QO6imEWfga1sp0K6iR0NSNZ0OiglNa8e/j2G82acQ6U
- WW5UBCy7ICCX+NKZKocCG9m+Jm0q4JgXgZMP7NYrMv4xD/6fNJ/6jzUIM66drfvpve/VkuL9X
- SufAaia7oXJJkuh3/52uiV6nookfzS7uQ/5DsOwEBOsm4zQxaDCN6tBGyUCvdqovyAllbOS0/
- 7QdrRRnrK9NSeoe9bJZDPYONWKUYa9Pz0D8w+XomK/m44bE0nY0b2YrF5zwhRvAW7DESuGGHD
- VwElIyZAWbGltFGD3/VoU0ls+MCQzXiqv309F02XFd7F01vCw25f57zNlUkdLMXzjRqyonf17
- xPeVI5OSqldMdZqBoiOhPStVRG7n9RO81quKpbh7VRHiChSNcbdxLhCCm6GV9CGqESQ5/bgex
- QhUzLz27k4F+3Zd7IdW0z1zeKonAjyw+Oh9FmqD52IhPaR0r0A9FYSWyW/xf32s47LWoM9CXj
- 3B8WvVVrw5Q6R5miY7KH2gpEkxqiyLySysapCMMGzJnuu8ZOZAgkNDuTPT1wO/5SdrQgEZwdl
- VmkL/a0ZiLem96avyLciboD4SL64BgYXCokLj2wSI2GBI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <369e7f6898c4a442d45aa15d7d969131d61e9cee.1714323747.git.christophe.jaillet@wanadoo.fr>
 
-=E2=80=A6> Fix this by cleaning up the redundant qla2x00_free_fcport() and
-> replacing error handling with a goto chain.
+On Sun, Apr 28, 2024 at 07:02:37PM +0200, Christophe JAILLET wrote:
+> s/cound/count/
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-I imagine that there can be a need to provide the desired software adjustm=
-ent
-as a patch series with two separate update steps.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc5#n81
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-* Deletion of inappropriate function calls
-
-* Optimisation of exception handling
-
-
-
-How do you think about to refer to the affected function
-(instead of the hint =E2=80=9Cerror handling path=E2=80=9D) in the summary=
- phrase?
-
-Regards,
-Markus
+-- 
+Sakari Ailus
