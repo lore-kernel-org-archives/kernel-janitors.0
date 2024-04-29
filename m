@@ -1,123 +1,92 @@
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE38883D;
-	Mon, 29 Apr 2024 07:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C9F14AA8;
+	Mon, 29 Apr 2024 07:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714375943; cv=none; b=t2XJ+yBvo6O7NpHjMUlYZUce50wHaX15rh93TiV0gKwav58DBt5b0LH/wvXNj/f89kgTwpEjyMfNJQCbDOd0ZgDLMO0LMU7h2AdniEQTHeWPC1uUSv6jmbbLxRfp8+X9xSjlkqnzSQlA8Rw3NiUrc7XHv+jYrIqwXuDunAbVkl0=
+	t=1714376968; cv=none; b=RFpOOMsQzftvEzwdxLtBIs9XkZyCcma61DJM8TJDkOVjZmvtcE8LnJN85Qu7CX4vR+VTZ8Ibm+/94gIHlgsUh0ckQpM4xprQkfc2wi1W6Nmi01siSjP8a/G6csUL/dQCpc0dKVP4i6/uMUyFZVxzE1mUC07TT6AuZkgRN4Jt9IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714375943; c=relaxed/simple;
-	bh=XRXKieqHp1DvJ7IC6w1mftvCxe3LJrs0wxu9R+nqtiU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=HRjI3q5BpKcassNFLD656p3/tXhKToe0lFhDbgwyWSQRrtTkb9D+QbsizZPaZSzoo4wRT1p7p6ClLj89q9hjFcfxY+77Qg87j/wUntW7Peuuu6g+Qch540N1B4lGrmN9SeoI1l5cIHgBcMVI1jZkAAh649qBg4edpSXveNWPxiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.239])
-	by gateway (Coremail) with SMTP id _____8BxSfH9TC9m1tUEAA--.16844S3;
-	Mon, 29 Apr 2024 15:32:13 +0800 (CST)
-Received: from [10.20.42.239] (unknown [10.20.42.239])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8CxIlb5TC9meN8JAA--.7916S3;
-	Mon, 29 Apr 2024 15:32:11 +0800 (CST)
-Subject: Re: [PATCH v3] LoongArch: KVM: Add PMU support
-To: Markus Elfring <Markus.Elfring@web.de>, loongarch@lists.linux.dev,
- kernel-janitors@vger.kernel.org, maobibo@loongson.cn
-Cc: LKML <linux-kernel@vger.kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
- Paolo Bonzini <pbonzini@redhat.com>, Tianrui Zhao <zhaotianrui@loongson.cn>,
- Wang Xuerui <kernel@xen0n.name>
-References: <20240424091813.1471440-1-gaosong@loongson.cn>
- <e68e09e0-75f3-43b8-b947-22cc0d1a0dae@web.de>
-From: gaosong <gaosong@loongson.cn>
-Message-ID: <b8818597-2770-f2a3-03bd-1653cd26fc78@loongson.cn>
-Date: Mon, 29 Apr 2024 15:32:09 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1714376968; c=relaxed/simple;
+	bh=eIsAkO2TaiFHfV1YDVy7nO5WUNEWgR9F+gnZBrWDgvY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=MtSaa1ibKYnOPTU/RMuaoNcwYNNXUzjbunCQNGB+5U30mv5/ioisQw+gWKlodRYpXiqpe47POPvmSWO31BuUTdQk4+nU2Eybc0B49T5+zeQqD9EvPaNL4buFIcqB2zx1weXkhsyJKHebJUEEt6mrsb+BmTmpsiIbxfKExkb8MIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VfSPIQv7; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VfSPIQv7"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51c077cfc09so4788698e87.2;
+        Mon, 29 Apr 2024 00:49:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714376965; x=1714981765; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VZ8iERLxVujR+lilVZE+rixuOHmFfYyTXZLkb3Z1d30=;
+        b=VfSPIQv7RQibwIA2859Wj53dL7CQPtfjVV96r1Lc5fJay8bboYeBYmCPzic79NY24W
+         BUkfi8r9CF41KyNwFy9TWcD88frI5W6Zzzi+FDaUcGrtSWef63mgSE8oFeW5htyFk1QY
+         O9x5H5kKpXq4VXj6KKf2Uo8AMqbYzeOzSs6UvMQCoBsPHM9l4BT83cP7xsq/teJ1+2rr
+         JQyjNG3SlEZIG65RcyduVgKFL/Eipsv/vM29HOd2+K2AEk22WKc7aSDbRcH+NMvIurYF
+         V+GW/T3Sj/uteVPBNGk625Ny/1oA4AtoB3tnl2IIm/fPO8lfpxbAocqQ0luxjIFP0CoM
+         k7YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714376965; x=1714981765;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VZ8iERLxVujR+lilVZE+rixuOHmFfYyTXZLkb3Z1d30=;
+        b=LRU9Ddz70Q1atBZGFld/8VFhph29//r966M8ZUxx/sTD6Q5m0gDvKJ/nEcpcJdDT4R
+         SX6E2aUTk4KNDU2j1gcUyuraBXtJJB/ThtqrkeYSejtOlJSy+QzX567/2t5AW8Ql8lKB
+         fFyz73A5e1eBYMbHDDWOidEZBHvL1M7j2BgUrbKoCGe8G3Pl2aWFLKrc32qvmDlrdtW3
+         h8tuGBH6QPbksMWmdP4nqKPenYT+GQgkpLd5xacIU8P1zQscWHUtpwhUzPZtREedSLDC
+         wUW2khnaqUfams7swqIczQa8yxVLHiamzl8QVoopA2Zn4Ri8KprTmUNm6WUCYx4bNBzw
+         M1Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCUfRl9gVf8Bbktlrp6TWMtjHmC67Hqxd9WavR+4hJyaI37Qu6LA5VyE7RdDll7xZpldx41f1OnD1Q3IoloB0CC1n+/4lQ39LOgNSrZix0SR2H0++I+OQBcvHqrMZXNVpL5Vm02+pwBopNU=
+X-Gm-Message-State: AOJu0Yz846TNkMcbv3y8SXBKkrC2YPiVoV/MoPe5JKp4/qajA8lCRMPf
+	0ZoLHXHB53tQ3Jlras9KeNABa61VCIOLu48mJ8VjJFLmpekf9C8raG9t6g==
+X-Google-Smtp-Source: AGHT+IEPTPDS0rpVdTT2tVoI5hHxdAvWRCL5Tgcnc6seAdr3EX2dbLgzsV6uEnPdWlaGA0RGcdBEKw==
+X-Received: by 2002:ac2:4542:0:b0:51c:66eb:8a66 with SMTP id j2-20020ac24542000000b0051c66eb8a66mr5134593lfm.67.1714376964681;
+        Mon, 29 Apr 2024 00:49:24 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id cs7-20020a056000088700b00346cdf48262sm28965784wrb.2.2024.04.29.00.49.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Apr 2024 00:49:24 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-hwmon@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] hwmon: Fix spelling mistake "accesssible" -> "accessible"
+Date: Mon, 29 Apr 2024 08:49:23 +0100
+Message-Id: <20240429074923.1073720-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <e68e09e0-75f3-43b8-b947-22cc0d1a0dae@web.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:AQAAf8CxIlb5TC9meN8JAA--.7916S3
-X-CM-SenderInfo: 5jdr20tqj6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7WFW3JF15ur13GFWUJw15WrX_yoW8ArW3pF
-	4ruan0y3yDtF10kw4kX3yvyry7WrZ8Jr13urn7X3Z8JrZ8ZwnYvr1fZr1agFyDZ34rKFW2
-	q3Z3ArWF9FyDtFgCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
-	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
-	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zw
-	Z7UUUUU==
 
-在 2024/4/25 下午3:18, Markus Elfring 写道:
-> …
->> On KVM side. we save the host PMU CSRs into structure kvm_context.
->> If the host supports the PMU feature. When entering guest mode.
->> we save the host PMU CSRs and restore the guest PMU CSRs.
-> …
->
-> I suggest to reconsider the usage of a few dots in such a wording approach.
->
->
-> …
-> Signed-off-by: Song Gao <gaosong@loongson.cn>
->
-> v2->V3:
-> …
->
-> * Please put your version descriptions behind a marker line.
->    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.9-rc5#n713
-Got  it,  thank for you suggestion.
-> * How do you think about to avoid the repetition of version identifiers here?
-I'm new to this, is the following example correct?
+There is a spelling mistake in the module description. Fix it.
 
-[...]
-
-Signed-off-by: Song Gao <gaosong@loongson.cn>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
+ drivers/hwmon/lenovo-ec-sensors.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v4:
-   - Use the macro kvm_read_clear_hw_gcsr to optimize the code
-     and remove redundant code.
-
-V3:
-   - When saving the PMU context, clear the CTRL register
-      before reading the CNTR register.
-   - Put kvm_lose_pmu() in kvm_handler_exit().
-
-v2:
-   - Add new vcpu->request flag KVM_REQ_PMU. If we use PMU,
-     We need to set this flag;
-   - Add kvm_check_pmu() to kvm_pre_enter_guest();
-   - On _kvm_setcsr(), after modifying the PMU CSR register value,
-      if we use PMU, we need to set KVM_REQ_PMU.
-
-Patch v3: 
-https://lore.kernel.org/all/20240424091813.1471440-1-gaosong@loongson.cn/
-Patch v2: 
-https://lore.kernel.org/all/20240417065236.500011-1-gaosong@loongson.cn/
-Patch v1: 
-https://lore.kernel.org/all/20240410095812.2943706-1-gaosong@loongson.cn/
-
----
-
-[...]
-
-Regards.
-Song Gao
->
-> Regards,
-> Markus
+diff --git a/drivers/hwmon/lenovo-ec-sensors.c b/drivers/hwmon/lenovo-ec-sensors.c
+index 50adeb82468b..143fb79713f7 100644
+--- a/drivers/hwmon/lenovo-ec-sensors.c
++++ b/drivers/hwmon/lenovo-ec-sensors.c
+@@ -598,5 +598,5 @@ static void __exit lenovo_ec_exit(void)
+ module_exit(lenovo_ec_exit);
+ 
+ MODULE_AUTHOR("David Ober <dober@lenovo.com>");
+-MODULE_DESCRIPTION("HWMON driver for sensors accesssible via EC in LENOVO motherboards");
++MODULE_DESCRIPTION("HWMON driver for sensors accessible via EC in LENOVO motherboards");
+ MODULE_LICENSE("GPL");
+-- 
+2.39.2
 
