@@ -1,58 +1,98 @@
-Received: from gentwo.org (gentwo.org [62.72.0.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8ECD8529A;
-	Mon, 29 Apr 2024 16:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FB683CBA;
+	Mon, 29 Apr 2024 18:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714408791; cv=none; b=tDZKXyCZtI+pgEPWUl/ZAtSZNHqwPFirVObLYX62hj9FB/BDSPlFB/0SOJCbyspElj1fvT0bNsgiBSPhelMw2ek41nmsScoZ0ZMVXP808jgdzvFF3Vj3d5KLzwlyTGGPIIUcN8Ad29F1UKAO04MOBr1Pt4xFEg7oXb6X0HSPy/8=
+	t=1714415577; cv=none; b=s5TKqHFJh0MoNh2GkNeXPm4qv7saVxUj2RG0/LQHj8TA27/3dzejdj+XaiheW0JLv74xkEDzBuVqvdCQp1yKvTqFs6ZBTRNmklRn5l4nzI+Vp1dVD8HrEbCzGek9IlASfhthLqVWwD2n/SxH3wJHd/dmCT+TGsN2iIj0QyXNEPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714408791; c=relaxed/simple;
-	bh=Wev12OxkAqraQWDSuLMLLN8uGNu7UeGEQlPZxgQavJM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=WcOFuevvp1G8T6I5VWe19GHLumRoPMhC4u0ua0ICioea732Z6evyNCUYmd1/e3tJGFYAwl0KzysuIivZU7TWGuHpDzFxl6iHDtue/3QDj19j8ePeJECailxUtKhpXfcbz3RkYYxRvbsBEYMkPo8Nyc/Le9Qs3ywUipNfEXUVFKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=fail smtp.mailfrom=linux.com; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=linux.com
-Received: by gentwo.org (Postfix, from userid 1003)
-	id B9A7240A98; Mon, 29 Apr 2024 09:29:58 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id B8E7140A94;
-	Mon, 29 Apr 2024 09:29:58 -0700 (PDT)
-Date: Mon, 29 Apr 2024 09:29:58 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@linux.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-cc: Matthew Wilcox <willy@infradead.org>, 
-    Peter Zijlstra <peterz@infradead.org>, Pekka Enberg <penberg@kernel.org>, 
-    David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Vlastimil Babka <vbabka@suse.cz>, 
-    Roman Gushchin <roman.gushchin@linux.dev>, 
-    Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
-    linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-    Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] mm/slab: make __free(kfree) accept error pointers
-In-Reply-To: <571761df-fe50-49e8-8d56-65fbdec9a185@moroto.mountain>
-Message-ID: <6406512f-12de-1ab6-05c9-4583c0cb01e6@linux.com>
-References: <285fee25-b447-47a1-9e00-3deb8f9af53e@moroto.mountain> <Zi8N66yehahl6D59@casper.infradead.org> <571761df-fe50-49e8-8d56-65fbdec9a185@moroto.mountain>
+	s=arc-20240116; t=1714415577; c=relaxed/simple;
+	bh=km++YSXFjLJWolJR5xpxNqeUcqNq1cJFCz/rYworjU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AAw0SRRp/lJ/4TsrOkmpbjXMdCBO6UptcWnHrGgmAK53DlB4O2bq7hqdDG+/VmdNK5lyeaWa60YD7biVfcwgXdyqcK7vxQowx4t8j8rbqs8VvarZsHeZOJGdTatACHlHWX4auFS9urTivU3OKQY9362YjtluLyEa4j+AK7saCPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=amzwYIlz; arc=none smtp.client-ip=80.12.242.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="amzwYIlz"
+Received: from [192.168.1.37] ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id 1VmksUnBSiGtU1VmlsQI2r; Mon, 29 Apr 2024 20:31:32 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1714415492;
+	bh=2kpOLjd1RsRGoMgjZcS9EsszKwG0ZQhgAo+c26was84=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=amzwYIlzPbcKaAQJXOdD545sUIppqdGaR/8v1JITt97n7KazHFyAzCgHaFyuN7LWe
+	 iOxrYE7qhUuW20IWvMWtioSxORH+y48F7Q3yy2cc5F8Ql6FpEHY36vMboQ7ufkO/3L
+	 y5wn2hGZUXQFKtjaxzi9v+1LQWJ0BJMiS4rtAlQV0lV+PtY2Y2gC2albLo0NqR9qTL
+	 a7xYq7aH5nQyi17j1wkrFAaJM6Ji3qPAjctofHLJqOOn5Nv78NuwmeoEpzOTULElV4
+	 lWsBbCy/xzDvcn0ZjBZdOpSXbi3nLsrYiyD4aSiW9unMNxET/z90DHbWfn96WEgGvk
+	 IZJdstbFJyloQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 29 Apr 2024 20:31:32 +0200
+X-ME-IP: 86.243.17.157
+Message-ID: <d526b169-0385-4f23-8806-17bc73c2507b@wanadoo.fr>
+Date: Mon, 29 Apr 2024 20:31:30 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] leds: mt6370: Remove an unused field in struct
+ mt6370_priv
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <e389be5e1012dc05fc2641123883ca3b0747525a.1714328839.git.christophe.jaillet@wanadoo.fr>
+ <16df315e-8a05-49a4-ac07-d1ed150c9317@collabora.com>
+Content-Language: en-MW
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <16df315e-8a05-49a4-ac07-d1ed150c9317@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 29 Apr 2024, Dan Carpenter wrote:
+Le 29/04/2024 à 10:13, AngeloGioacchino Del Regno a écrit :
+> Il 28/04/24 20:27, Christophe JAILLET ha scritto:
+>> In "struct mt6370_priv", the 'reg_cfgs' field is unused.
+>>
+>> Moreover the "struct reg_cfg" is defined nowhere. Neither in this 
+>> file, nor
+>> in a global .h file, so it is completely pointless.
+>>
+>> Remove it.
+> 
+> Sure
+> 
+>>
+>> Found with cppcheck, unusedStructMember.
+>>
+>> So, remove it.
+> 
+> Again?! :-P
 
-> I've always thought freeing pointers that have not been allocated is
-> sloppy so I like that kfree() doesn't allow error pointers.  We always
-> catch it before it reaches production and that teaches people better
-> habbits.  Personally, I like how free_netdev() only accepts valid
-> pointers.
+Yes. This way we safe twice the memory space :).
 
-kfree() already checks for NULL and ZERO pointers. We should add these 
-checks in *one* location.
+> 
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> 
+> Anyway, this commit misses a Fixes tag; please add the relevant one, 
+> after which,
 
-Maybe issue a WARN_ONCE() and simply treat it as a NULL pointer if an 
-error code is passed?
+Will do, but this patch does not fix anything.
+It is just a clean-up.
+
+CJ
+
+> 
+> Reviewed-by: AngeloGioacchino Del Regno 
+> <angelogioacchino.delregno@collabora.com>
+
