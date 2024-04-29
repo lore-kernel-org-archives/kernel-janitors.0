@@ -1,98 +1,79 @@
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FB683CBA;
-	Mon, 29 Apr 2024 18:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E4883CBA;
+	Mon, 29 Apr 2024 18:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714415577; cv=none; b=s5TKqHFJh0MoNh2GkNeXPm4qv7saVxUj2RG0/LQHj8TA27/3dzejdj+XaiheW0JLv74xkEDzBuVqvdCQp1yKvTqFs6ZBTRNmklRn5l4nzI+Vp1dVD8HrEbCzGek9IlASfhthLqVWwD2n/SxH3wJHd/dmCT+TGsN2iIj0QyXNEPs=
+	t=1714415675; cv=none; b=WMpnFF4Pr5FWNisy3Xrk9udVT/1sI+9NDsp0VtwwmAmN7BbEXYsZfQX/nTgSjuQQ20AzkM0TVL8kqR5JKDvEfWx5P1Y30ekgdH7tS36m9sto9XNWOVW5exjQ4L++/rNRGG+R0Sbq5ASnUKudUI7kHaI74oxc55cEHBoW553YjZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714415577; c=relaxed/simple;
-	bh=km++YSXFjLJWolJR5xpxNqeUcqNq1cJFCz/rYworjU8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AAw0SRRp/lJ/4TsrOkmpbjXMdCBO6UptcWnHrGgmAK53DlB4O2bq7hqdDG+/VmdNK5lyeaWa60YD7biVfcwgXdyqcK7vxQowx4t8j8rbqs8VvarZsHeZOJGdTatACHlHWX4auFS9urTivU3OKQY9362YjtluLyEa4j+AK7saCPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=amzwYIlz; arc=none smtp.client-ip=80.12.242.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1714415675; c=relaxed/simple;
+	bh=lDZGWAziRokGy+VN6nOa0Kj92phXfS5Zq58Fyuy6tQA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aQtf2rmE4wLLgcSiiflfAQTJ72zl+NAWtkBLEcwMmw8IOgeeGqmsUMB+IeLJBaduHDVvgNHlcZm0H9RvZSoDigLmVhTMAx4sOtTLQANTzrRgMTWx0X53Me2Mc9UAw9ZAAoZNJ1B65eYvvUCOTqdwD9DKgLpyxzUr8e6I6RMqKaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DknZsuwz; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="amzwYIlz"
-Received: from [192.168.1.37] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 1VmksUnBSiGtU1VmlsQI2r; Mon, 29 Apr 2024 20:31:32 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1714415492;
-	bh=2kpOLjd1RsRGoMgjZcS9EsszKwG0ZQhgAo+c26was84=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=amzwYIlzPbcKaAQJXOdD545sUIppqdGaR/8v1JITt97n7KazHFyAzCgHaFyuN7LWe
-	 iOxrYE7qhUuW20IWvMWtioSxORH+y48F7Q3yy2cc5F8Ql6FpEHY36vMboQ7ufkO/3L
-	 y5wn2hGZUXQFKtjaxzi9v+1LQWJ0BJMiS4rtAlQV0lV+PtY2Y2gC2albLo0NqR9qTL
-	 a7xYq7aH5nQyi17j1wkrFAaJM6Ji3qPAjctofHLJqOOn5Nv78NuwmeoEpzOTULElV4
-	 lWsBbCy/xzDvcn0ZjBZdOpSXbi3nLsrYiyD4aSiW9unMNxET/z90DHbWfn96WEgGvk
-	 IZJdstbFJyloQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 29 Apr 2024 20:31:32 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <d526b169-0385-4f23-8806-17bc73c2507b@wanadoo.fr>
-Date: Mon, 29 Apr 2024 20:31:30 +0200
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DknZsuwz"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jC6bSyr5oonwWrDWbGBbEJAkPCiv04wjoLO2Q3L5KgU=; b=DknZsuwzHHHEgR7uIz155aKKoP
+	muMbKntDvFIhGVgxlwB1C3G37ruqpiueUsgPiHrKoEhreK3riyfPmzgWGNjgs1wFl0IlCa0vfZnM1
+	jTsbtPZUkATj20Fw7uE3hFa/uzFsAEXNYsvL6WZiAl+WgFMN8urqS1pj73wY2OXulo4c2jbFpI8z0
+	eeLeLq8GYnZG1TqcwORanP2M47MM59gYy1PSaHDKRPnl0ObM8dH3IYSbvW8dAdfcgVVjhADuAU6g9
+	ZMUqox2L5PCr3y+RdssQKDID7ATf7KF/C4zvM6HwGrKKZrBAZvUr0jQVWnn3JXZBHWJHZKggn+1F7
+	6t/VgbWw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s1VpY-0000000D53Q-3aYH;
+	Mon, 29 Apr 2024 18:34:24 +0000
+Date: Mon, 29 Apr 2024 19:34:24 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Christoph Lameter (Ampere)" <cl@linux.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] mm/slab: make __free(kfree) accept error pointers
+Message-ID: <Zi_oMFn7HxwC1by4@casper.infradead.org>
+References: <285fee25-b447-47a1-9e00-3deb8f9af53e@moroto.mountain>
+ <Zi8N66yehahl6D59@casper.infradead.org>
+ <571761df-fe50-49e8-8d56-65fbdec9a185@moroto.mountain>
+ <6406512f-12de-1ab6-05c9-4583c0cb01e6@linux.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] leds: mt6370: Remove an unused field in struct
- mt6370_priv
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <e389be5e1012dc05fc2641123883ca3b0747525a.1714328839.git.christophe.jaillet@wanadoo.fr>
- <16df315e-8a05-49a4-ac07-d1ed150c9317@collabora.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <16df315e-8a05-49a4-ac07-d1ed150c9317@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6406512f-12de-1ab6-05c9-4583c0cb01e6@linux.com>
 
-Le 29/04/2024 à 10:13, AngeloGioacchino Del Regno a écrit :
-> Il 28/04/24 20:27, Christophe JAILLET ha scritto:
->> In "struct mt6370_priv", the 'reg_cfgs' field is unused.
->>
->> Moreover the "struct reg_cfg" is defined nowhere. Neither in this 
->> file, nor
->> in a global .h file, so it is completely pointless.
->>
->> Remove it.
+On Mon, Apr 29, 2024 at 09:29:58AM -0700, Christoph Lameter (Ampere) wrote:
+> On Mon, 29 Apr 2024, Dan Carpenter wrote:
 > 
-> Sure
+> > I've always thought freeing pointers that have not been allocated is
+> > sloppy so I like that kfree() doesn't allow error pointers.  We always
+> > catch it before it reaches production and that teaches people better
+> > habbits.  Personally, I like how free_netdev() only accepts valid
+> > pointers.
 > 
->>
->> Found with cppcheck, unusedStructMember.
->>
->> So, remove it.
+> kfree() already checks for NULL and ZERO pointers. We should add these
+> checks in *one* location.
 > 
-> Again?! :-P
+> Maybe issue a WARN_ONCE() and simply treat it as a NULL pointer if an error
+> code is passed?
 
-Yes. This way we safe twice the memory space :).
-
-> 
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> 
-> Anyway, this commit misses a Fixes tag; please add the relevant one, 
-> after which,
-
-Will do, but this patch does not fix anything.
-It is just a clean-up.
-
-CJ
-
-> 
-> Reviewed-by: AngeloGioacchino Del Regno 
-> <angelogioacchino.delregno@collabora.com>
-
+Did you even read the initial patch?  The point is that this new automatic
+destructor path can pass error pointers to the destructor for completely
+valid code.  Warning would completely defeat the purpose of this exercise.
