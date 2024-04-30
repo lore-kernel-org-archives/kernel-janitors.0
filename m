@@ -1,56 +1,58 @@
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A535D1BC59;
-	Tue, 30 Apr 2024 19:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2524612B73;
+	Tue, 30 Apr 2024 19:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714503804; cv=none; b=YuKUypEYMbtnWZ9hULOP+xrHLwBhDOX7pYdtN1DbGonB6wZ8nGRj4a0ujHnLuMf+KLQScXGkWdC2WBPXMC5WzqH+9oFbN9Klhhw92i17l8fmSKkQ/eiGWMmb884xACBtBpPt111wb1QR5HSjfaH7b9mud0bHHAtOy4HUV97xayw=
+	t=1714505839; cv=none; b=gzARsr8ehsalsgOo33vcrO9OWdPEpjqMhYi867NcIc3z+/69BJLwI5eurVdpqCxVqNNmJVTFSmBUxBE1kZDPjbbZwhsL6qOqkcGop6uNworHg+pyCser3RYluMZ1XSEoRTkqmVG9bLUFQsb/NkHDbNg7R2a58HXYg+3NhOLWHYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714503804; c=relaxed/simple;
-	bh=A/3jgo7B0Ak18AEd05J73EHmxvmTkgnPJzFGXe2ZTuQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ij0h22QLUfAz8PJDEpNDFtCSAXIHP5DLnyg/IFcQ7Jx31YKjBtkIyMgcvu/R0NK3f96EgrjlnebAt4oL2Er+vdUIOploG8jbymSsOGRCL57hKTM8Nc3QVpe3rnNn6WT3kz8KXYVDv4h6Zf2eI3oFjoZj66VmyNye6WkBkXoppWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FqFvg2W7; arc=none smtp.client-ip=80.12.242.20
+	s=arc-20240116; t=1714505839; c=relaxed/simple;
+	bh=u6JMWq3KGYar+o2HDcMvI/GFxB4sUHEoyhTzUKj4zXk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WkhklNYEbq8i92GRKMXL41BcihBiwig3Mr6fM09Yxa6/NdgVK3ZvN50BL8Wtxs89Fevze2P19dSOlXPs/Ds6eBG6jrmwR8NYKwvtX8SQfhAyszxmESqJB3B/ztS0V6+BSVSdTYJas95eDz+7/K9urGkX5rlJsZ5/mcwdnUzyV00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=e9vL+6Zr; arc=none smtp.client-ip=193.252.23.217
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FqFvg2W7"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="e9vL+6Zr"
 Received: from localhost.localdomain ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id 1skxsYnM1PWAk1skxsYEec; Tue, 30 Apr 2024 21:03:14 +0200
+	id 1tGXsqFYLGyax1tGfss3e5; Tue, 30 Apr 2024 21:35:58 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1714503794;
-	bh=VEKXdsrN4FCUT2d2eWfWEpHgGeD3ZeJqsDSnHgARRQc=;
+	s=t20230301; t=1714505758;
+	bh=KS+TeFbjBWX9rgIDk409K2MoYqtyjLkv3GQe1jxfQhU=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=FqFvg2W7mwZwu3pd8aMBdiabZL+lLxGETx8aDFjgfSAYIVqZeJHGXaWc5IHQVTnP2
-	 9BNFKKRrxu+4nCH4x7IFk3lBu+89i3N4xdVVP0hWqGqGMclO5VUTOOZM5BNeyKeTI/
-	 ZI8Hkh57B0qnHXFLbgBctIaeTYxnQuQOHV7Cpwg2OP4IU+Ya1Nri8gY4Luai/nnydL
-	 Uhj0o4DfaBcEmH5Oy+FaQ08CALqKpbQF8uXCtbpc1xIvmua8aU7Irb5X3D5y96GV3J
-	 JEtgV6xojiG/ya/AJHoq1EQyU/ZYS/Qy94vaMh5z2sPJ/yOlmoylaqq46AHZat3XRW
-	 8UZ6OXjSVQ6dA==
+	b=e9vL+6ZrgjJ68/ouUB/vmJWJpMlplejctB6eF/dWgiHgPT4QjCTGD5HI4dMFlX7qf
+	 bea9axvhuGIBqjh92H+7+85/GE/lg+dGQrLXFRQsfrYhtnn0vod6lhglae4o+Phnml
+	 /DUG0aTQvR2K+X4R6KSOONbyAR4j+L9dlTOFmFczhtO8ruaO9HuYHUOHvD52n07Fkd
+	 dQ41jZV1e6kTI0OFmn54cQcKZc6LyR5GUA+7sfXNpo7W0Ye5BH1I4ohtPxsUgdX6wr
+	 rzuDyr3xW8R8T6YE/NHSpHdgUsUQe9MziyZiJ3Ha4OpSEXS5bsru9oDj5pOCei5OdM
+	 vsV9NjI9XVLmw==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 30 Apr 2024 21:03:14 +0200
+X-ME-Date: Tue, 30 Apr 2024 21:35:58 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	ChiaEn Wu <chiaen_wu@richtek.com>,
-	ChiYuan Huang <cy_huang@richtek.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Alice Chen <alice_chen@richtek.com>
+To: Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>,
+	Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-leds@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v2] leds: mt6370: Remove an unused field in struct mt6370_priv
-Date: Tue, 30 Apr 2024 21:02:22 +0200
-Message-ID: <22704991f7acca6c2e687ff4bec7822087e1305a.1714503647.git.christophe.jaillet@wanadoo.fr>
+	openbmc@lists.ozlabs.org,
+	linux-hwmon@vger.kernel.org
+Subject: [PATCH 2/2] hwmon: (npcm750-pwm-fan) Remove another unused field in struct npcm7xx_cooling_device
+Date: Tue, 30 Apr 2024 21:35:38 +0200
+Message-ID: <2ff738663d40ac5ae3d0b4d2e688ff7e36032be8.1714505655.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.44.0
+In-Reply-To: <74eee8aa739f94b8c6425ce3e37a427ca92243ea.1714505655.git.christophe.jaillet@wanadoo.fr>
+References: <74eee8aa739f94b8c6425ce3e37a427ca92243ea.1714505655.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -59,43 +61,45 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In "struct mt6370_priv", the 'reg_cfgs' field is unused.
+In "struct npcm7xx_cooling_device", the 'pwm_clk_freq' field is only
+written and never used.
 
-Moreover the "struct reg_cfg" is defined nowhere. Neither in this file, nor
-in a global .h file, so it is completely pointless.
+Remove it and update npcm7xx_pwm_init() accordingly.
 
-So, remove it.
-
-Found with cppcheck, unusedStructMember.
-
-Fixes: 5c38376ef5b4 ("leds: rgb: mt6370: Add MediaTek MT6370 current sink type LED Indicator support")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
 Compile tested only.
-
-Changes in v2:
-  - Tweak the commit message   [AngeloGioacchino Del Regno]
-  - Add a Fixes: tag   [AngeloGioacchino Del Regno]
-  - Add a R-b: tag
-
-v1: https://lore.kernel.org/all/e389be5e1012dc05fc2641123883ca3b0747525a.1714328839.git.christophe.jaillet@wanadoo.fr/
 ---
- drivers/leds/rgb/leds-mt6370-rgb.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/hwmon/npcm750-pwm-fan.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/leds/rgb/leds-mt6370-rgb.c b/drivers/leds/rgb/leds-mt6370-rgb.c
-index 448d0da11848..359ef00498b4 100644
---- a/drivers/leds/rgb/leds-mt6370-rgb.c
-+++ b/drivers/leds/rgb/leds-mt6370-rgb.c
-@@ -149,7 +149,6 @@ struct mt6370_priv {
- 	struct regmap_field *fields[F_MAX_FIELDS];
- 	const struct reg_field *reg_fields;
- 	const struct linear_range *ranges;
--	struct reg_cfg *reg_cfgs;
- 	const struct mt6370_pdata *pdata;
- 	unsigned int leds_count;
- 	unsigned int leds_active;
+diff --git a/drivers/hwmon/npcm750-pwm-fan.c b/drivers/hwmon/npcm750-pwm-fan.c
+index 6d92a3b89198..bc8db1dc595d 100644
+--- a/drivers/hwmon/npcm750-pwm-fan.c
++++ b/drivers/hwmon/npcm750-pwm-fan.c
+@@ -196,7 +196,6 @@ struct npcm7xx_pwm_fan_data {
+ 	void __iomem *pwm_base;
+ 	void __iomem *fan_base;
+ 	int pwm_modules;
+-	unsigned long pwm_clk_freq;
+ 	struct clk *pwm_clk;
+ 	struct clk *fan_clk;
+ 	struct mutex pwm_lock[NPCM7XX_PWM_MAX_MODULES];
+@@ -691,11 +690,12 @@ static u32 npcm7xx_pwm_init(struct npcm7xx_pwm_fan_data *data)
+ {
+ 	int m, ch;
+ 	u32 prescale_val, output_freq;
++	unsigned long pwm_clk_freq;
+ 
+-	data->pwm_clk_freq = clk_get_rate(data->pwm_clk);
++	pwm_clk_freq = clk_get_rate(data->pwm_clk);
+ 
+ 	/* Adjust NPCM7xx PWMs output frequency to ~25Khz */
+-	output_freq = data->pwm_clk_freq / PWN_CNT_DEFAULT;
++	output_freq = pwm_clk_freq / PWN_CNT_DEFAULT;
+ 	prescale_val = DIV_ROUND_CLOSEST(output_freq, PWM_OUTPUT_FREQ_25KHZ);
+ 
+ 	/* If prescale_val = 0, then the prescale output clock is stopped */
 -- 
 2.44.0
 
