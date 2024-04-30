@@ -1,65 +1,124 @@
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BAEFC02
-	for <kernel-janitors@vger.kernel.org>; Tue, 30 Apr 2024 09:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F56128816;
+	Tue, 30 Apr 2024 09:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714469427; cv=none; b=a0nYUMK8Y2R6MWZztB1Tu41MMcnJCcheknJk4e0krLePUSQv70w+NMFTgox7S9EVGwKHXHcbjMxfaj7ELmOSsmMccbZyLM6204qRfqpId0TT/1xwJhxH6q2Ux+3Z1nfKMrxir9mzMIDc3dM7QE8mlHtuHCAD03NodZpQB5pWu3o=
+	t=1714470955; cv=none; b=Qj0Xk3TuljMrW6YqLUpAiElFULMVeR/9+Hfwm87HUeo7ywJIA5b0ynETJBvmKCK5PrQ9MXXqmRtBDE1MxiwoVrig/OJDWhZFuHz6wT8JzJehTQ0OQGVar6wL7pcCg9/icDsFq+6VLEdmR8Yno3Q4WCCCCc9pCcuHQWSjLiSW7Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714469427; c=relaxed/simple;
-	bh=lC3I7ZBJaD+fg9kzuIidBBEutjLohficzyxGQXhxxlA=;
+	s=arc-20240116; t=1714470955; c=relaxed/simple;
+	bh=+PUXHtgYh9FKYDiZd8KDZ2yAOK6C6Lie2+Mixx+MvJk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GLsOk6XsA31Zniqp8Uv/wE/TNGIHcX0XHKjTufDRMEGifB0QTVxnF3QAs/C++7zPg5auqsy+8UGaNYJvOh6CsbBxaYoq/GWkK5c6PFWDEOANl60aO9P610Z7xDsRzHM6Sp+wxzYL7PPpJUuT7Lg0af4yU3g8UNZ9PSdQZ6W2jCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=L9KOUEVH; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	 In-Reply-To:Content-Type; b=GyMIZxmMRbmAX8hcpwUT7i2NOIEz2AtY0BWTJmwRDEtpd/YZhA4Uo787xHSQlGMTgqZF6UsADV/gTEcfJzqr3wkzuAGArJeMP1MwKsorSxwIbKZLlBCcvxypmfKo6BS7uoKx3PyCYLWttKZjnVrEhfrxqdSdF4HKrW+DGgcHJ0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WP3D70cO; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="L9KOUEVH"
-Message-ID: <89354794-c53a-4935-a961-818710ba2fd3@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1714469423;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lC3I7ZBJaD+fg9kzuIidBBEutjLohficzyxGQXhxxlA=;
-	b=L9KOUEVHAb9nJPSEIiH9SMTkMWT9y+C2fYeSRTKOnztJoXFFijlJ0IaRzxCQ+4vzV4Py3i
-	TEJwMOyMW83eL/y2MxsN3jPpBr06bFybhmyWNu0QNRap6kyotLUepdUzpP2pk8Xdd74Wvs
-	Q4LB9nZlGKu+UEMgYRwC+7WOybcrqcM=
-Date: Tue, 30 Apr 2024 17:29:54 +0800
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WP3D70cO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1714470934; x=1715075734; i=markus.elfring@web.de;
+	bh=N7SA7MPcICDmmkKmu7E2XaGuN9QOw+7JhRdGPcVHTYI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=WP3D70cOsvnaFmUPf9hOCxO9Xt5zfEGk69OfK3Egf8X9Sgk12WTlkjfCrY9ZRQu+
+	 ryIMS5GgWmQrhLPYV5csvdEHRo18+I0G82cgnJMm35v8uuic18GvcmsBGVBwulU07
+	 M1IqWFJGUXc7kypCbMOXQZJwlM3cCR+UjYW8XexY5bxgob6pmPBm05zBnuvQ5IXAJ
+	 NxwNK8JpWu5dqPT7t71BnXZDENGEMFEwDQGooQGHnxc2lJf7nGsPV+J9ECAbkb9gb
+	 06Vw/clP0uhAHN6p8g+uSv6j8PMktGlPP6Auswfu+v6eV8ZVkjTeBhuu/TIVyFrhK
+	 t4rtHZQbYwdiHpAd+A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mfc4q-1sYdBO1FYe-00mAqT; Tue, 30
+ Apr 2024 11:55:34 +0200
+Message-ID: <54e83ce6-0f9d-45c2-92c7-a41fdb812314@web.de>
+Date: Tue, 30 Apr 2024 11:55:31 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: bcachefs: Fix error path of bch2_link_trans()
-To: Markus Elfring <Markus.Elfring@web.de>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- Youling Tang <tangyouling@kylinos.cn>, linux-bcachefs@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <ww5fcxuzfcgttglsr6cpnrxufeusw4ixe76iqp7mab3djlyfje@zozue6qvxhzy>
- <7d4a29a1-26d2-4b22-8823-ce8e7f9ac534@web.de>
-Content-Language: en-US, en-AU
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <7d4a29a1-26d2-4b22-8823-ce8e7f9ac534@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 1/2] scsi: qla2xxx: Fix double free of fcport in
+ qla24xx_els_dcmd_iocb
+To: Yongzhi Liu <hyperlyzcs@gmail.com>,
+ GR-QLogic-Storage-Upstream@marvell.com, linux-scsi@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ James Bottomley <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Nilesh Javali <njavali@marvell.com>, Saurav Kashyap <skashyap@marvell.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Himanshu Madhani <himanshu.madhani@oracle.com>, huntazhang@tencent.com,
+ jitxie@tencent.com
+References: <9c711441-6e79-422f-9405-ee271929e77c@web.de>
+ <20240430091144.10744-1-hyperlyzcs@gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240430091144.10744-1-hyperlyzcs@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:M4mgAuj24p5GXrYB+rUdjCKuxKH4dN/z01KrH1d3E0ue+DGv4aW
+ ciE0r0Po8gooDJByIU2N0O4m+E4NnnFzhkomcnsUpvF6HpBKkC4GBM+9Te2RREyDamkgXyo
+ /EJjYbd6S27KVLeB51UXi7S5aINbNVvnqe8dvsG5pPZ/JU8uY4WDtrKza/j5jQ2/MoMTjGT
+ A0/ze+laE4ct9UkDmaGgA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xnnnl6+YVLE=;xeE/n0XHGDxpJQ0CevP9kGdutxS
+ g9btpkvaRhOiJE77U3pw5fnljnnFQH5pYAiN57vcaB0xwO/ye21AA3dpkRmyQnEUMKjDa3hzg
+ YNMLArheBftq8dfeDGepO6hKgjf1iI0BMwQ0236O1g4lPjR0UgilvYWEzC2J4stt5ywAJ5ItS
+ kRsGiBJ4sOq7V6Vm2ef0FHjA5V1fB1ojNMh4MX0SL7YCvSkMY2v/P3Ie7a2bBTWL9/5ykJked
+ B4/2KtCI6/awJROqlVzPJuoVnpO1tMkp0HD4cv6Bs1iyArwZK/I1dt8usaLUMWFP4/2ywx1D6
+ JXXpmgVA8J+qI0kfWoK0/NwctXyn1L7J+i+0SFz/AedV65ufZySDqiibDLCMwty31Kf6hQrTt
+ 6sIFwnTkBeROeaE5JQrY86FLt9PcnyZRgqN9ktaEz1KQMNe0U/OfF2CDZnD9Nj4ZUoQWLmQwa
+ Y/yP33X1P7ScmoJETMjT2FQ4kDe9anKrLsWz0Gi9O1L7elMAEwfD1DYxXfd7mLIcvlYuoiXHM
+ EgwbOofMXMGPDX23RS/1MO4Q3seL8V/MsOX8myvcL67IOymIgBTETFxlQ8vGMzFOzDGE3DxKu
+ UQmyguuJ8cXH/exswoBFtTg7qdm/VXO1EP2VoUypNzdV4VPVI73KliEtcU6152Z5oWu28Ljsd
+ gpnUkuwhjgKbGDuH4mr2+lFi2se7Jc1MGBFeoHHgMfwNvERfDtTAXE3pVLJHokP0/GsdXuTyo
+ bl9SAx0xtRoQOcJ98p+PTl14BTnbsWLKNAKVQVMgU0fi7GRiioHls6AsdWFOtupXwWG0xUD9t
+ leX0Wk3PVCqeiNvGOK4cTRKZk8fTtR/L+Tdi0koODolGA=
 
-Hi, Kent
+* I would usually expect a corresponding cover letter for patch series.
 
-On 30/04/2024 17:18, Markus Elfring wrote:
->>> In bch2_link_trans(), if bch2_inode_nlink_inc() fails, it needs to
->>> call bch2_trans_iter_exit() in the error path.
->> Thanks - applied.
-> https://evilpiepirate.org/git/bcachefs.git/commit/?id=d04db1c7653dee5ee5f918ce951c05eefddad7eb
->
-> Would it have been nice to add the tag “Fixes” (besides an imperative wording) accordingly?
-The following labels can be added:
-Fixes: 962ad1a7666 ("bcachefs: Don't BUG_ON() inode link count underflow")
+* Would you like to add parentheses to the function name in the summary ph=
+rase?
 
-Thanks,
-Youling.
+
+> When dma_alloc_coherent() or qla2x00_start_sp() return an error,
+
+                                                  call returned?
+
+
+> the callback function qla2x00_els_dcmd_sp_free in qla2x00_sp_release
+> will call qla2x00_free_fcport() to kfree fcport. We shouldn't call
+
+                                     free =E2=80=9Cfcport=E2=80=9D?
+
+
+> qla2x00_free_fcport() again in the error handling path.
+
+                                                    paths?
+
+
+
+> Fix this by cleaning the duplicate qla2x00_free_fcport() calls up.
+
+Would the wording =E2=80=9CThus delete duplicate qla2x00_free_fcport() cal=
+ls.=E2=80=9D be a bit nicer?
+
+
+=E2=80=A6
+> ---
+> V2 -> V3: Improve patch summary and provide a patch serises with two sep=
+arate update steps
+=E2=80=A6
+
+* How do you think about to avoid the repetition of version identifiers
+  (according to the selected enumeration style)?
+
+* You would probably like to avoid another typo here.
+
+Regards,
+Markus
