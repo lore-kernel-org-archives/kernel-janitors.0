@@ -1,54 +1,47 @@
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+Received: from msa.smtpout.orange.fr (msa-213.smtpout.orange.fr [193.252.23.213])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20F2194C9D;
-	Tue, 30 Apr 2024 19:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C371A38C3;
+	Tue, 30 Apr 2024 21:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714506289; cv=none; b=uGqetebOp5hhi3gn8zC0+iWB5TO+7ZUj5zbd/68TBOMMYwYQGDROwcY0gKwfmjOBtN7e3licKXKx/VxjJax17CLgPEr6QRTVeUwIGE7r+C45mHB+/neb3VYAjqHIIEUhmJ0CsTlQMQJPrhyOENud/tLlNCs2Gcm1npzMpgC5bZY=
+	t=1714511370; cv=none; b=iwswWYKDDI7F+9Qu3aynMo4sRvdwKJyKg7kusrJfUh7PbPGBmiSJ91tPEcEwyHfKgG6YyXnL6NGoC0JesdKI+SfM6mhAuHDg2/7qxhBmeIBq5vL520MyX7kCeytHuy/NynYUtwemLX0QhwQA2Em3qX2OGZ8U/TnbSOeLApF/0B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714506289; c=relaxed/simple;
-	bh=Yh/0kVomvA82YnCAEzDosws8iXCLFew+YFzQx0chFOY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HFFWHWAFDhUePmCUObxjVzJm5Gfdjq+PNgl2NNFjqR+rJtSdLwsc6NPU71zGw+z62tZOU/DqqqXeA9zPhkE1e9fituLAH6d+M1bFBS0fvoLukqM1rDHiPyC/7fXhRfdOX6k1TUcPXz5jyMW7ZnOXdwudzaMmS+65/nWDK8i5R1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Y6qkihPR; arc=none smtp.client-ip=80.12.242.27
+	s=arc-20240116; t=1714511370; c=relaxed/simple;
+	bh=UfJuu82F6jpw8gEeR1fW/N2CyCIsDOh7I6WOZiEsJ9o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pylPqKFvAGhGeGMoqUkmEMm96M4ozNNGx0vrVoOFogsgWPKxcZigvOEHnpa1Mo2XN6Ku6pM47n+4j96lz9qUHQfD7mXJFzusysSH0ezyxBsy5xCe8r5MaodcxZ+Ju/R4E4ZuQVmJArgANrbrHizaCXoOKUzKAHM/hOtPX6OBazA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=D4rF0c/K; arc=none smtp.client-ip=193.252.23.213
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Y6qkihPR"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="D4rF0c/K"
 Received: from localhost.localdomain ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id 1tGXsqFYLGyax1tGXss3dW; Tue, 30 Apr 2024 21:35:51 +0200
+	id 1uj0sOnduq0Jb1uj0sIsK2; Tue, 30 Apr 2024 23:09:19 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1714505751;
-	bh=skKo5kEoG79r6I+m+tXF3MUHJgIN3Agmwa3aOsSEA5o=;
+	s=t20230301; t=1714511359;
+	bh=cm4oXpsDK4IVPaMOHCgAbDDgettPN75Y4z00AU4xToo=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Y6qkihPRSdTI4mGkFmI3rkql6GZAFYWajX5CbOBz7NPrpMB0fZaaMx1OU0j4milP/
-	 nBPv4d1a3bzLe6GaH6/mVP6jypYcEFUD9oI9eQVNlwEoSzipjv6GzGh2ZxUZ0HdL+b
-	 soQNlzkUmREM+hqL4f8iYZjoEkOUDVKz+3FEhTyDaVCJn2hrtCH5lV/+yz1SiYf6PO
-	 wcilfOX7XPFSrqVWGPPUb5ilCM6jtGv6DV+b7QHBrB4DAmK871udognHxQV57EZXxS
-	 We9vC8Pzli4CGyFrum4lO/Lyo4Zn2qE7KT3mPfVSyM9dTRVyVJd4b96TJy9Knh/eX6
-	 DXiY6czAp7JQw==
+	b=D4rF0c/KGAmLacclz6jplDFH2l2Y4zdpHGMYCTIvUZvFdiob/KhFFT0C7ifBcHjfu
+	 Wm+WzjQ9sdoOTYcEh3wTIpxVIIoH+IlUoEMWb7+aI6Gyg+UrDXdk63QfWkFhZqBjqn
+	 PMMbDXRdqtdkEAeZULw5S8cdmU+gemxOT4hHYMo88lfhPUi9vbSDBJjPGs9SMRxvrU
+	 IyUMZ64BLSFy2O+PUK0BiKqNInztjkEhMrEJ7x0N0Y163Zu0aZzwBJdWRfGQNxqf4P
+	 Gk0Ms43xN9cfT2vwFUBX7d5Cj4Rb0ip+xYNJ9znpfhM/zMMi5bkq6lLQtrkRw96N9l
+	 HjCBPEmnx0CpA==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 30 Apr 2024 21:35:51 +0200
+X-ME-Date: Tue, 30 Apr 2024 23:09:19 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Patrick Venture <venture@google.com>,
-	Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>,
-	Jean Delvare <jdelvare@suse.com>,
+To: Jean Delvare <jdelvare@suse.com>,
 	Guenter Roeck <linux@roeck-us.net>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	openbmc@lists.ozlabs.org,
 	linux-hwmon@vger.kernel.org
-Subject: [PATCH 1/2] hwmon: (npcm750-pwm-fan) Remove an unused field in struct npcm7xx_cooling_device
-Date: Tue, 30 Apr 2024 21:35:37 +0200
-Message-ID: <74eee8aa739f94b8c6425ce3e37a427ca92243ea.1714505655.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] hwmon: (stts751) Remove an unused field in struct stts751_priv
+Date: Tue, 30 Apr 2024 23:09:07 +0200
+Message-ID: <94ccf9caaa6b0101351bf381f09f4428c5e0835c.1714511322.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -58,7 +51,7 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In "struct npcm7xx_cooling_device", the 'fan_clk_freq' field is unused.
+In "struct stts751_priv", the 'smbus_timeout' field is unused.
 Remove it.
 
 Found with cppcheck, unusedStructMember.
@@ -67,24 +60,24 @@ Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only.
 
-This field was added in the initial commit f1fd4a4db777 ("hwmon: Add
-NPCM7xx PWM and Fan driver") but was never used.
+This field was added in the initial commit 7f07ec0fa17a ("hwmon: new driver
+for ST stts751 thermal sensor") but was never used.
 ---
- drivers/hwmon/npcm750-pwm-fan.c | 1 -
+ drivers/hwmon/stts751.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/hwmon/npcm750-pwm-fan.c b/drivers/hwmon/npcm750-pwm-fan.c
-index 904816abb7c4..6d92a3b89198 100644
---- a/drivers/hwmon/npcm750-pwm-fan.c
-+++ b/drivers/hwmon/npcm750-pwm-fan.c
-@@ -197,7 +197,6 @@ struct npcm7xx_pwm_fan_data {
- 	void __iomem *fan_base;
- 	int pwm_modules;
- 	unsigned long pwm_clk_freq;
--	unsigned long fan_clk_freq;
- 	struct clk *pwm_clk;
- 	struct clk *fan_clk;
- 	struct mutex pwm_lock[NPCM7XX_PWM_MAX_MODULES];
+diff --git a/drivers/hwmon/stts751.c b/drivers/hwmon/stts751.c
+index 847c99376930..867410afa4f8 100644
+--- a/drivers/hwmon/stts751.c
++++ b/drivers/hwmon/stts751.c
+@@ -91,7 +91,6 @@ struct stts751_priv {
+ 	int event_max, event_min;
+ 	int therm;
+ 	int hyst;
+-	bool smbus_timeout;
+ 	int temp;
+ 	unsigned long last_update, last_alert_update;
+ 	u8 config;
 -- 
 2.44.0
 
