@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1039714AA9;
-	Tue, 30 Apr 2024 07:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C561A129E6E;
+	Tue, 30 Apr 2024 09:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714462427; cv=none; b=NxMJy6ve49iirmDnnZFsbEY588yuJarvk4AbuCKVFlL6g+iGLdmJnDQ+Zj8ymqiveno6mkeMyyjxAMG2LkHmX9C7gYObBx5GgCNf3W1uUfQuEp9ELBRrw2rtHCWHWCWRulPvCXiRepokNs+tIEydN4XJ0NHn/YGBd8ODdxu/vEE=
+	t=1714468751; cv=none; b=Yl2JZSaAIHK0f6Rt+1hc9sjeBHpA4cXDaEWoHK9ED+iUmDt7LB9oqlf4BgyjGnEAris//qEwfJxjoWt7gETtL1uteZpxB4FDy1wd3dMGkTcX6bF0oibDTlYK0ptG9U3XVUvq5ANdBB3kmb63hXtsgpbYCeKfwlfnkIrNFdFwqIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714462427; c=relaxed/simple;
-	bh=7dyCd+XT/wrQkCsgsqTU/+v+pFnIA0EzpEmxVk6QQ7Y=;
+	s=arc-20240116; t=1714468751; c=relaxed/simple;
+	bh=nJLw8ZzNkHNxUi0RWmfswS2AiqmNNWu4fMk4lAvCziY=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Fjl+Y1hPqlp2FmEFY2yLLBLaZ33eVKAe5VRYCwGyuJctRVb63BpuuM8oPWe/DIHv+9sBYzJFIDchAaSCg831sSmxF+f8OUevCmAFCD5t5Ek4L0fOaySWMzU/lEwXH76Dz5tN3cDVZGzRueoeCfDloerNgqZ+gLji0k+3Zv7vzrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=W8siq2RI; arc=none smtp.client-ip=212.227.15.3
+	 In-Reply-To:Content-Type; b=sbRPBteVbfUpCI2fXJ7LMcLsOgsdkm70TcKFgDtkom9Syok+y8kMXUkvRZu+WGJRwOSYeX3b9LgNn+SqaFEPBzcWGsKf8S3tknHhN5w2GhqSllDEKmbOGBGcZ0qF1MZfiw5KCDb6lPlx36AZTA0SdtASNenhkD93Y4QJVoIvl3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YA/7nQ35; arc=none smtp.client-ip=212.227.15.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="W8siq2RI"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YA/7nQ35"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714462412; x=1715067212; i=markus.elfring@web.de;
-	bh=7dyCd+XT/wrQkCsgsqTU/+v+pFnIA0EzpEmxVk6QQ7Y=;
+	s=s29768273; t=1714468721; x=1715073521; i=markus.elfring@web.de;
+	bh=nJLw8ZzNkHNxUi0RWmfswS2AiqmNNWu4fMk4lAvCziY=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=W8siq2RIuAF9aG5uFEjllD1snUDaT/M9pQ8Ok9h+rku2TmMh6KVg3YF+Gpm5cE2C
-	 X8m2UDjP6GEVUSOOVcXas/i6arH+8SfxGzhqdByJbExVLm2Hog1nS6CLACd8XZjh/
-	 dFXTy1rzwvC0q7ef7YNomfofgXEPUSAq0V29na13JPrEWtuTBXpu6GZrN6In7O01f
-	 hHrnHcr/C1X6pFJb6AfllU0xhL3L6hWYBufcStG9+K+DjaYRLOJjUSWzDTFtUkiV+
-	 nz3iM3YnlyptKA7O3mWEudwLpFoBzPtbxhqcA7AbpmbaWimoE/4wjkh4WhU1mGUmf
-	 kwMJPTsOmeBujuhHtQ==
+	b=YA/7nQ35u0kJEg0FSF8UrZNkzte5ooB3jtBpE2Rdi+zYdC3hgcy8exhdzfyApNjY
+	 58hitwap4e8JN6RQmFY9Dlu+yms30IyXqgcL+/a1xWiWGMWgQF0K5Z1lEtoJb7UWj
+	 hYmOL5WXrqGWkbvsh6CBFD7UXUQeL4GBPSG5/HfzYzXFJnewkLeN9x6i1/bIdoxfy
+	 4YuOSxp3HX+q/dpsc3+5LdYDfJs037p1fM3WEc/rxR624GOfxZgQutsJKXZ9orgjS
+	 uaddWT4fKxTILEwNx5ynqbFnJP1GaKUyxooWuGH3wbMI3qMYhHfiFbXjy4XD87RLM
+	 M3aVQOiBt3vyTww0JQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MPrLL-1sFmbX1LT1-00McyD; Tue, 30
- Apr 2024 09:33:32 +0200
-Message-ID: <8b274e8b-ca1b-47a6-90f9-eb2c9d4a538e@web.de>
-Date: Tue, 30 Apr 2024 09:33:14 +0200
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MwjK2-1sqnog3znW-00yQhv; Tue, 30
+ Apr 2024 11:18:40 +0200
+Message-ID: <7d4a29a1-26d2-4b22-8823-ce8e7f9ac534@web.de>
+Date: Tue, 30 Apr 2024 11:18:32 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,52 +42,46 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Sungwoo Kim <iam@sung-woo.kim>, linux-bluetooth@vger.kernel.org
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+ Youling Tang <tangyouling@kylinos.cn>, linux-bcachefs@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Dan Carpenter <dan.carpenter@linaro.org>,
- "Dave (Jing) Tian" <daveti@purdue.edu>,
- Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Marcel Holtmann <marcel@holtmann.org>
-References: <20240430063209.584244-1-iam@sung-woo.kim>
-Subject: Re: [PATCH v3] Bluetooth: L2CAP: Fix slab-use-after-free in
- l2cap_connect()
+ Youling Tang <youling.tang@linux.dev>
+References: <ww5fcxuzfcgttglsr6cpnrxufeusw4ixe76iqp7mab3djlyfje@zozue6qvxhzy>
+Subject: Re: bcachefs: Fix error path of bch2_link_trans()
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240430063209.584244-1-iam@sung-woo.kim>
+In-Reply-To: <ww5fcxuzfcgttglsr6cpnrxufeusw4ixe76iqp7mab3djlyfje@zozue6qvxhzy>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:QvHTTJRCPvNgpxwGrd1n/gHVdpelP5AGgJB+Cx7Am88MdC5hGOo
- 2mwAeUwHGVS+XCPonspE35PEzsPaApe94hAcBynnJ7GCfp/vT0s7xsasBEI0AS5SelaID1s
- aDo70ATno5bAcOMhAHGHe4BRViDwq5d5vKfb14rWiBb1X6gL73xbjim2FvCVpHEe69TPrGJ
- lIKBSzzCAMsWETn80R8Eg==
+X-Provags-ID: V03:K1:8JGAxKe1KPyVXekngDfxeASqhnsNJcNDH5Oi18Aw2cRMyhF6Jt3
+ iEPn4suDWuGcgZp7U9kX7SZpuaSz2PtLj9PCd9KWByfLbn0sudLzTEApmkJ8Z5QJEVfVr+Y
+ oarf2KbY23l1hLnQKWf0P2wOIAWwK0NzF2WNuA29iKKW1nKn17bdveWhnVDt+UW1GdslcMS
+ 7EqHUHolqPCCVF9cyHZvg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:SDzHgZwpg38=;uxcivH2DTMrR2XSBCJLrLol/OUT
- lHdQ/sOmsEO7kKMCaOu6SbuLXpdTX4aNSpvMOSswlXqIML8PRrdsmLgJr/XmLvVfQAEU3GTUi
- W0ersz6ZMJNGqH5A4olwFWo+SHcTjgjFA1NKwxxCRq/z1KqZivm3J7vD+tsyWFOolhV0T0BZ4
- DxYtm2pyoijArs3Y3WMZ+tgI2ER178eaPd2Yl9W3J8aMvVjnXG+z2on1J+dVoBXefvNGVMWzb
- Xd291QhjI5+UCMzJG4ZwrDxh+ygxDai3WiI3iKAh0lPQ0xQ9QNpd3eJtTP3GryjPnP9b266hy
- LJbz5tjpUomPjSkBB/2Qx/ilo4vFjWR6TWY9jtlguqdCC4q6lIgMzu3xlE8f0XEx/pzIIlgtT
- xFTln/MTv3urzrQlY8yS74EyTJxv0RxfIqaVwt/zg+N+Qsqq59ZJxyr7/25OtF2WmHdQ8Knj+
- pClv2Z2dG4f8WDOXwh2Ss08f/FWwzPBXErxkHED05JcXYm2D+19uDiNbLhF5AhHSO+de3fusN
- OUDsB3G2wgQkfNEmRjLMKveAEMdDPuDQk+1kYLovVBRSQfgxekWLRaK+y+md2c6qysrqRAX18
- wfwcSl4KMuRei5rlX4+7sPWmm0+p08nh5FDrdxhi9FkFXlc89pqlX/mHd4xC51dr+yc0jLQ2E
- p+TPndSp3cUWHCskGEBT2tbltHuMH11QvNNFBINBtS81frCnGpammjaNy3XUi3dLSyXmuHjmv
- bHu/OPs+VEUs2McE8Mh94qAU+UcEXyx8dfuUAkJHCRwIc1N2aZgxM1tArnaTgXivcMKUCilCY
- hN0ft07K9i5t/OUXZr1QpDPKbjsNfvtv+628aOa+YKgno=
+UI-OutboundReport: notjunk:1;M01:P0:kBKqZET/k9s=;aI40zUrPaZ3NOHwVe3EQtPL9N1H
+ /GkmdmvCi5AY9YcgBQ08ZmsUeH3QI8YFvHJTzlyAv/IxOryjtLMQ4nSApcn9Lp90I1XfvFSRQ
+ u4GSol2OxMeW1ixGekmVsNys8n9aG76Z3ooJ3KmTVwo2h+7tBZeemWLDBWxrk9S/lBdRhmMtc
+ 1R0Yu9boNGtBs9ODrAg5v2OlUH1H5HxLVxz3XSuEeimH6g8Ujz+V0ihp4owzBrkoFiEO4uHbQ
+ 0sRbdolTa+gAHThUOpG1ExGOIyV0oKiIAksFZgx8k1yz/VUrLKeMzWdsTJeXMrqcO+hBWHqny
+ xZdBn+UINmy1mZoIwYCuwYEH21G2gj1wOEGWbJhykamWm26xb2JkfE+XGwdOj7S/7IWysr0wO
+ h5cf3vsPpk9WpJaxU2fqhAtHeMRh0D38SV/RkvJxDU6O+Z+Xta0QseHdax8hapz7LytPcxckS
+ uNdxfBtuYpBj69or8gUQ9TwhuLzDWBJQ7DWtU5zIdsY6zLqm1WS0EkpeoCEbLSJBRCXn9I6Qm
+ CZl8NR5rk+RdTLgDRXORyomg7DE+SANCNH8DAairTHrKJovLubZumvphLhBlVjOpMrDBSksJR
+ AV5jbHoKaxyq9Wh1QREfpBsB16tk9rkJX7LAi4Td+UAfoH62y1f0Mgx/6VpZcV2BIjqkBoiYs
+ /TSuSK6l/lEzmx9dG2cMo95biXxql0oGipEnvFEWJNEYYE5TikNWbSEPmWfjJh67ADJ8fYghU
+ LOaMEJ02dxztEsLKOZorvAcIA+jvVBIjZFSByRxafAollnLFVyI7s+bIopS0fCCcZz5Lqt64p
+ mEVSNkWBJo6xLeZ7MJp9hoLjhQfOi/N+oBY73qkI1cuBA=
 
-> Extend a critical section to prevent chan from early freeing.
-=E2=80=A6
+> > In bch2_link_trans(), if bch2_inode_nlink_inc() fails, it needs to
+> > call bch2_trans_iter_exit() in the error path.
+>
+> Thanks - applied.
 
-Such a data processing improvement is nice.
+https://evilpiepirate.org/git/bcachefs.git/commit/?id=3Dd04db1c7653dee5ee5=
+f918ce951c05eefddad7eb
 
-
-Will an other distribution of email addresses over recipient lists be more=
- helpful?
-
-Can you imagine that the usage of the message field =E2=80=9CTo=E2=80=9D w=
-ould occasionally be
-more appropriate for subsequent patch communication?
+Would it have been nice to add the tag =E2=80=9CFixes=E2=80=9D (besides an=
+ imperative wording) accordingly?
 
 Regards,
 Markus
