@@ -1,48 +1,50 @@
 Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26C51D68F;
-	Wed,  1 May 2024 05:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E60481A3;
+	Wed,  1 May 2024 05:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714540460; cv=none; b=LeeoovMrAL3sy8Ebh0idhywLrN/vx81h0Kj6DNQVCCoABqr/08BJdeb77srvgWf3Tpoc8k30U/cc3xku0kt7JXemIsEO3gK59sajHLdyMg7KX0wO6/ToXRRpkoKuafe4vo5hGDmcxeTKkKocBA0VLTJOmmH55vt3hz4wfzuISIA=
+	t=1714541543; cv=none; b=UY2UtZ4sFK5Mv5iWjwffKD88BPTEFdRUc1kGkGWLUuHODWfFUbKr57y7i+kwFu279rRqfIDe3ZQWamBDJG+dHLfjKeWFfFntPoJxkRcD/cnqdAUa2YSEjhV7r0thglt+rXUlkugrVoJ2WGEsvGQ3ZXyrykgmbBII8yRF/UQozKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714540460; c=relaxed/simple;
-	bh=RMWyAyYlUlSp9U/kE6nFI9ssssdGhoQ6D+bwcNf6+fg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P4OkQm8zlTVfoI+lUbx40mEpn7PWBC9D6LX63QYrEAJ0TqvY9LjbMq0WEflSq+xGe60o526sbUKNn/mTVWkD2kYJsvXg31IVWJZxnvXR5zipklcpJ709/mDJ2tTepkuKyWzky/UjXuyPQ/jQkkY5ofDchiseNCHfK5Xbyj1s3WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=PS2aASDV; arc=none smtp.client-ip=80.12.242.18
+	s=arc-20240116; t=1714541543; c=relaxed/simple;
+	bh=ArOXPy7P1rDCISOetC7udZv3vahyD59OFDoMpu2TJss=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Vb3XbVpkKmZkDTizkLPwiEi/s3zXBEBcsTskVtGpZhQ7H2JHWFUWouSRvA1BDsocEsQISoaBL+pndV82kTcB3sh+Dri2SdRjxR9N40pJRWd0rdtf85SO0AOeukU2XPyQnRRgA3+Iz4IAu+g9J6OMJgP0Al7szn06zduJF9M/Edg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=qwz3qeDO; arc=none smtp.client-ip=80.12.242.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="PS2aASDV"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="qwz3qeDO"
 Received: from localhost.localdomain ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id 229estbE3rs7M229esvot9; Wed, 01 May 2024 07:05:18 +0200
+	id 22YcsEsBRAF5O22YosxtZt; Wed, 01 May 2024 07:31:18 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1714539918;
-	bh=X1z/GNaSSMDxojxmVN0YxGfbCezIrv1/qyN8UGm7TgE=;
+	s=t20230301; t=1714541478;
+	bh=PKg24I0LA3FDiDUWAMdwYK2Up/UUtvN46WwgU2Vuv+U=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=PS2aASDVNpLMOlRQ6EseNQ4ojnelR4JnXF0fuFJLIQdROzbT2X5jB2I5boEh12y3u
-	 YoAqw1DtZPnSRkmbp1x/SZFexfGOW1Mj4S/2LVquZTYvFXbBj/A/iv2ZY2rpXSzMtw
-	 ZCGL/KF1QGpghD9W40HGjdh0qaT25rSaG+dGyIlpUxmd5gMfE2ZNwXYM44uWx3oiA/
-	 15NpG/dlq82E9YiK5yeyN1R8VgPW6dK7/8F1dj1vZCBrvxT4+eDXlHd3/0Tq12uZHX
-	 zOml8gQVz5+Y89aw26IXU8/QQE8X5ENR8DQs+/A2ixDRyhWPi+hRn5GfqepXen3MFx
-	 asoAR9ryPtFoQ==
+	b=qwz3qeDOGFZtq2o1uiGHa2FXUydYvXEJCRia7jopwBrhcbjIOfFU0aKIOz5OjJBwl
+	 VlqhfRhpiK2pMCjHkOjpGjmBfm739M2qcXOaGlD1rsA7v/KDI7x4v0k4fblgNKdLhh
+	 VJb4+wX2NxcpVblrZTNGg4utZFgiKqSdmh2RJidzE5HlzzSQBHjrjaxXQPW0w8p3fI
+	 SLDGXVHMbJOm/BYWOSdwfc3Cim32m5/1Kdm7yo26ScUJSbTlxpko6RlDShJpSAiVBE
+	 jzGYY2zM/1H62BLeqh4FxxfQpA/hWQYnO00uyv0lecRt6Q7ChPTpCKoan+gmhTp67Q
+	 2AJIG5SBL0mzQ==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 01 May 2024 07:05:18 +0200
+X-ME-Date: Wed, 01 May 2024 07:31:18 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Support Opensource <support.opensource@diasemi.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	linux-input@vger.kernel.org
-Subject: [PATCH] Input: da7280 - Remove an unused field in struct da7280_haptic
-Date: Wed,  1 May 2024 07:05:05 +0200
-Message-ID: <ac251b456933bcc6fe297b738f9304bd259185c1.1714539865.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 2/2] Input: tca6416-keypad - Remove unused struct tca6416_drv_data
+Date: Wed,  1 May 2024 07:30:55 +0200
+Message-ID: <3e6fd1d0875ef3c90ecaab7adf7fd4a5e8e6f708.1714541432.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.44.0
+In-Reply-To: <926c0f40040671565dcc54d5146a8f9511fb6d46.1714541432.git.christophe.jaillet@wanadoo.fr>
+References: <926c0f40040671565dcc54d5146a8f9511fb6d46.1714541432.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -51,7 +53,7 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In "struct da7280_haptic", the 'legacy' field is unused.
+"struct tca6416_drv_data" is unused.
 Remove it.
 
 Found with cppcheck, unusedStructMember.
@@ -60,24 +62,28 @@ Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only.
 
-This field was added in the initial commit cd3f609823a5 ("hwmon: Input: new
-da7280 haptic driver") but was never used.
+It was added in the initial commit 30ba3ead0576 ("Input: add keypad driver
+for keys interfaced to TCA6416") but was never used.
 ---
- drivers/input/misc/da7280.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/input/keyboard/tca6416-keypad.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/input/misc/da7280.c b/drivers/input/misc/da7280.c
-index c1fa75c0f970..1629b7ea4cbd 100644
---- a/drivers/input/misc/da7280.c
-+++ b/drivers/input/misc/da7280.c
-@@ -230,7 +230,6 @@ struct da7280_haptic {
- 	struct i2c_client *client;
- 	struct pwm_device *pwm_dev;
+diff --git a/drivers/input/keyboard/tca6416-keypad.c b/drivers/input/keyboard/tca6416-keypad.c
+index 044401d01bf6..fbc674d7b9f0 100644
+--- a/drivers/input/keyboard/tca6416-keypad.c
++++ b/drivers/input/keyboard/tca6416-keypad.c
+@@ -32,11 +32,6 @@ static const struct i2c_device_id tca6416_id[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, tca6416_id);
  
--	bool legacy;
- 	struct work_struct work;
- 	int val;
- 	u16 gain;
+-struct tca6416_drv_data {
+-	struct input_dev *input;
+-	struct tca6416_button data[];
+-};
+-
+ struct tca6416_keypad_chip {
+ 	uint16_t reg_output;
+ 	uint16_t reg_direction;
 -- 
 2.44.0
 
