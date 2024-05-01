@@ -1,115 +1,86 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B1512DDB0;
-	Wed,  1 May 2024 13:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E0110958;
+	Wed,  1 May 2024 14:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714571816; cv=none; b=t/y4UwR295KIY8pSV5K6rLAX2IwhtJgFF8LV/vTsPVeLEb3ytjA6E1hvK9VATycMYSL8q8+OCMl6VfP1wGSALDkfGJReSvrAJ/n22fOln46Y91Xk3LuH2stRRpyZ/cVNc0SjX9cqmavG1b1RMKYl9LGOkSrpBHfKtdjMi2keP80=
+	t=1714574757; cv=none; b=g273wY/tAjsJzD5ui9bYrl/v6pN4r9Y7EVRzpeJRN8gvQ6uGxRsWgc2x4mcaw7RL/vEsyNagcpBU/5f87flKwUXVNRbXlg6bHROy+8+cwAFuZttrXhgTRAJXBMcP+Qwv3byooANg8ERSoEO35lO0LEd5xF3CfeeBi9JP7wSodGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714571816; c=relaxed/simple;
-	bh=pFNsRounutZ0watyT0vICiz4MZiX/bMl6TXERH4tJEA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=UlrlGHft3SyNxUHfc185eLyNxbiPoM5xT+4TgVWD5ePxXJFc6nfmSI19mgEfAJpDhMTgZ6eS8faKslIGwB7b7mas9Mc0JbZyYL+scfIB3WWIM2DFfNuUPwb7w47Pva82ku1fzNizhxMeEwwgu6bcG7zmTgBCf0f5arABlC7WsLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sj0Zz4Z7; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1714574757; c=relaxed/simple;
+	bh=Lr+zIgo/OtAUC7MfUUAOJmSsXwP++T+/RCsxrw4DNQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GfUDDn6U2yILyRdz0t1rU8SkQFlCCjqiHcnWIWwQb0O2KzNzkBlfV8hKdLZ/4HKON8qtTAlYAUiS9viREwVc7XbIjnN6C7khf5qxLC+oqb/3cBzVQr3+E91LpoAkOaiIuI0WT35fWwUZmDOE7hIuyBe0e+5iPjHeT9qBOQZ2iuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OlKIQudv; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sj0Zz4Z7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714571742; x=1715176542; i=markus.elfring@web.de;
-	bh=tQlEmKt/yFE6pJw5QP1IkuqC5w2AGb1cHSuCQpauzPE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=sj0Zz4Z7WwehrcScZnEP2j/CtHXElTLzUJbSFf43oTyrmvSs3qxxoNKvJTfjy9kf
-	 eKyVPlU2C6mXjSjLzgg9NwZ+D/jolsDD4ic9/8raeX3Ssde3i5mfhHz6QDH6YIMbU
-	 yvyND/btLfkkfD9txKHYPJi0F9z8izKAPGtmfbb6JbeeeK4KXiESJuPeWVqlr0Car
-	 nQ+MtAjgB1frlBE4a8H3oiGCKSPLbna5cdtv1t4Dzn1Nqd5BBPvJK+xfwKg6wdoGC
-	 hxFK3xu0EI79y5TASZvz7tMAr7M+x8LC7pIKJTNX+GcwAFxPeMBc2r6eEdlGuOzaV
-	 aXcilABJudedHnwFEA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MDvDi-1ruVT82i28-00A9tM; Wed, 01
- May 2024 15:55:42 +0200
-Message-ID: <745cc56b-0ef4-4cf9-9051-cae318866672@web.de>
-Date: Wed, 1 May 2024 15:55:32 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OlKIQudv"
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-6f07de6ab93so6437540b3a.2;
+        Wed, 01 May 2024 07:45:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714574755; x=1715179555; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pn4mAEpkg9DsE8kn0GNq/PDutzyas5mpgXUYzPQmPvQ=;
+        b=OlKIQudva2dChMPjTTbRHLzUCKU8G4MbiM+NsTsEtkoVmshiyTtEpTtaSCek+E2G80
+         TbEbM2IDd56HbtTzbma//E6Hd9MSPTdBmJHAFSsrl/h59UMML7jUZG3Ti01rZMDEFhDp
+         0Go/U3rIZhicJSn1aWrKHxXtmW4asVg0NdFb8myV4s7JZFa5skJrTKrHFUa4mRcic+5H
+         Z7N8ymY7xFbvpOINboSnRg6WytoaymQRIuVQTRDAP7ChGhHemKPD1uWAjfLBqUjXkRj5
+         ih4kKm6dg0jaXhlMf0z896Wp8azELST2Yl1w1HT2/mE5CG7aHelpyCvtu80tIhb5P4SW
+         ivyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714574755; x=1715179555;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pn4mAEpkg9DsE8kn0GNq/PDutzyas5mpgXUYzPQmPvQ=;
+        b=LCn43VaF/Nl8l5sAkPAU9oc4iKtN9fSF/qEtDHWZnWp06Q2br2WVW+IGNqRX6O8Npk
+         7x3+nWgrCC2srDQcjhGWcw1DHlAQrr88WCTYEIbvhgOi3lG7JmbOYmk/6HuPrvqWYriK
+         lsRcruUxJx0bLHKdhQEtvC/mFb7HJbBljQr7BhCwZ8xgm2MHlctvT2+dXZxekfsQsHNG
+         xF8FxPPc3yaQBWLqmov00UVitHV0wK730MiE1G7AY9fB+efIWVzK28MEqx5lupG4oQp8
+         2ZelW01dgUGizWL2/0MxgaNyBT7yKFMFbR+soXriaQBMN+CDTbxS9ZTVD9rhXctwoJNV
+         DSYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGspQSeEm1a8mTrs+18NrLxxT/tBDHOgh96Dsa8wK+MqypC3xnLN9051D5flmW3eOAPYHYtFRfXHag0q1TsEoF7Pwim3z5GvOgKSRBM9XqP5jf8/n5se6jEpm6snzH44midBlHfHJQf9Q8iS8o9kwg330yWOK9tT+qQpE2SQqwa/7Aikd8o203c0g=
+X-Gm-Message-State: AOJu0YzYZH1lFc+t7Q1JDx9mYnXqih5o1jgCnG8eEvXiy5QbvtGoybsy
+	YwRgNteif7u0P7WCb07MsJBrgyJ5hP4O6UWzpTluKaDKcWzGqLdS
+X-Google-Smtp-Source: AGHT+IEd17PNu6VWr4on732WJPeqS9YY7Rqn2dZvUyvqUH1SH3YwjPwLUaYwyzziTXY8J9oUN9HbQg==
+X-Received: by 2002:a05:6a00:938a:b0:6ec:e726:b6f5 with SMTP id ka10-20020a056a00938a00b006ece726b6f5mr3670773pfb.26.1714574755014;
+        Wed, 01 May 2024 07:45:55 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id c22-20020aa78816000000b006f3f9e4dfd4sm6384477pfo.60.2024.05.01.07.45.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 May 2024 07:45:54 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 1 May 2024 07:45:53 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (stts751) Remove an unused field in struct
+ stts751_priv
+Message-ID: <d5df8bd5-7de0-4d13-ac62-069ab5b05501@roeck-us.net>
+References: <94ccf9caaa6b0101351bf381f09f4428c5e0835c.1714511322.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Shenghao Ding <shenghao-ding@ti.com>, alsa-devel@alsa-project.org,
- kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Baojun Xu <Baojun.Xu@fpt.com>, Baojun Xu <baojun.xu@ti.com>,
- Bard Liao <bard.liao@intel.com>, Bard Liao
- <yung-chuan.liao@linux.intel.com>,
- Cameron Berkenpas <cameron.berkenpas@gmail.com>, Gergo Koteles
- <soyer@irl.hu>, Jaroslav Kysela <perex@perex.cz>, Kevin Lu
- <kevin-lu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Liam Girdwood <liam.r.girdwood@intel.com>, mimperial@lenovo.com,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- Shenghao Ding <13916275206@139.com>, Takashi Iwai <tiwai@suse.de>
-References: <20240501122252.1215-1-shenghao-ding@ti.com>
-Subject: Re: [PATCH v2] ALSA: ASoc/tas2781: Fix wrong loading calibrated data
- sequence
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240501122252.1215-1-shenghao-ding@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:qpHfSCuTjsAcWFdlirrfvRAu9pQCfSGHdw+3AD0m9n0syVrYE01
- R0K/9DdBU5eFNpmX04d7WSAGNRDTpKJ/6hxJ/zTBfzxWHfsz/Izx9X1gQrl0j+yDj3Ngmpn
- UFC8JXaQKSBfrnf7D/rkdHjGtUSQOA7G8l5zFMedtOvx6e9QxFMnTOP5Twu4GKKHd7Ralsr
- hPHDH+DVFFXa5U2bhLYPg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:G76/HUMR6xA=;H06TuOOrw5lW9fWGLZgvBGyaf8X
- O1nq13maYQPevtHwMcJueYQQnADEojURhq9Ki8CXofg8Kpfyy4zGwoeXqpmJezdrA3PvgwE++
- 26hRi0FlMEt7ORTlluriHHZkiJRTv9ZC+sBkX5733AV30RwBktyo6GN6qvpisGrvuxFZRTPy6
- no1JScLRuH8tZd4T+DXG+UZaAPV41IvhVRnicrEkxaNx9/wt8vdBu8F0xQBSS1ghL7F1cPqaD
- kQeYBbXIVdIlLaeXe8nNNHeh9mP3FhY0mxGzisw+lw8zBqTSfztw/KwSYLNKcTqcZswlAxXRz
- 4yDbFEtiZVG6GBUHi4a3OctfsYfVmYfnfvNh0Nk/pHcj9D9bOkrOg6mEA6/XB5DZemuYr+5pl
- E5W1c0nzTkaBwVlZPKWz3fxFlX9oaS3TJEd8PwI7BLuWOkLX6656IsFVoO1WvZPT56kugP0dv
- zrFf5QOhX7SL8hMLRP6OC/oyMAsyZ2wTGCoDndMgc7pYBd7nPJ4jILDBJMFtAkhRkXlNxm03p
- yt7ewUmPXSpC/rosJKrx+zyVvUfDBtv1RDKK2dQ///3a84vOICk7VFUNwDMNu9Z8aP8JKn9xI
- /0TjDpkz6c6bxNAhUexgqmfboi9CqiFZPhu4ewUT7q6X3iV1erUfSenTQ/MQY7pbMDa7HWObX
- LUoSfIO8Qi7sJvhjjfRnw+KEr/ui3HKlZS3HC+wPn61FSLSi91KJre8lCxAK7XUt47tKsiz7x
- oeIPRW0plNaRYG/9uvsjsyrbNlRbqwAjRlxGJAU2ATXPAL0+khcdGd4GVS3fDFLzwODcPgeN6
- Vc91a+7LcKArYW7CIqRAROJgzhm/yil/EUmulyTZFgR18=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <94ccf9caaa6b0101351bf381f09f4428c5e0835c.1714511322.git.christophe.jaillet@wanadoo.fr>
 
-=E2=80=A6
-> +++ b/sound/soc/codecs/tas2781-fmwlib.c
-=E2=80=A6
-> @@ -2151,6 +2151,20 @@ static int tasdevice_load_data(struct tasdevice_p=
-riv *tas_priv,
->  	return ret;
->  }
->
-> +static void tasdev_load_calibrated_data(struct tasdevice_priv *priv,
-> +	int i)
+On Tue, Apr 30, 2024 at 11:09:07PM +0200, Christophe JAILLET wrote:
+> In "struct stts751_priv", the 'smbus_timeout' field is unused.
+> Remove it.
+> 
+> Found with cppcheck, unusedStructMember.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Please put the second function parameter into the previous line.
+Applied.
 
-
-=E2=80=A6
-> +	if (cal_fmw) {
-> +		struct tasdevice_calibration *cal =3D cal_fmw->calibrations;
-> +
-> +		if (cal)
-> +			load_calib_data(priv, &cal->dev_data);
-> +		return;
-
-Would this statement be redundant at the moment?
-
-
-> +	}
-> +}
-
-
-Regards,
-Markus
+Thanks,
+Guenter
