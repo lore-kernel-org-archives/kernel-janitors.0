@@ -1,84 +1,114 @@
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F002E645;
-	Wed,  1 May 2024 09:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B329D48CE0;
+	Wed,  1 May 2024 11:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714557063; cv=none; b=VOZnjUtxAF+FUZzEPAFQowypar7R2fcu9z2x+0AFZoJ7WrmTyyww5oCWpt59MjNyVqfNiepqRSRureIY7YlL1GcHQ2g0wHByv5OIDjAhNodcW7UpaZAvxpsO5Mn4y1yWQ+z/LeXqvHpsIO0IsFxQ9qJRhlTIVkTFf7lWBhyU1/w=
+	t=1714562464; cv=none; b=rFn2NMbh+DBbbJQFRbU3AjONgKFfW/WFX4SD8hTF6NNaa/hn4DoOYLi031YAd1gri31kKbsON6jn8RlRw8ZRoccHk2Je32YFDAlfFWVckg+h77h4L+uwkvBKJstb1QU495MiXcFf81rFvSsHFsvZDO4CTmY3MGjeRPUITdv/BM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714557063; c=relaxed/simple;
-	bh=vvylw6nHMRwLM+9gl4nry8f4/NOWGRkQIZOZBNuzl2o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rXXMqJhdUICMi1E4Y5dri+7OnpT53GOFuzJaPSUqsnboDC9FtnFnyuOlRfbIZENMQU32pUo7ZFVKcDDpUZz36JlFRNet7MwxP83ESFIBMO7NlGfJqDdzAJDZJRBhmVLCdIdfw79wW3Fy552e0RrmTCWXGi8jczMSrI6u1XbJDeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Mdp18xET; arc=none smtp.client-ip=80.12.242.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1714562464; c=relaxed/simple;
+	bh=3M3Wnl/h2raSpsy6VCZxZzdAzQMNJsqJJU3/6NMSVjQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Cj+hdZsmMdFGZYuGzgOZxXe4ulFZn9JC/p52JHpWiHzyOe1VJ07TC3EbBEXZpfVgnfkVOk/z7I9qWBVYu2VQ0asSzZCLIbqUGYIxESrkWMuyFwkkoJ1LEEV6PopbofixDRNltkg3E4J8RjFoytcGg7fbt7/DNns2JxqcPhxcwv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fW2nEUfX; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Mdp18xET"
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 26TUsv4R8rs7M26TVswXrR; Wed, 01 May 2024 11:42:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1714556525;
-	bh=ihCvMaCJ1TBCxY0a/aMCQRyN7JfGY+w7nfdzuRre2yE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Mdp18xETnmsMenUVoZrWFluvlKQYzatXX8PVmttk5gqXUkGJmUVmf+27K08lRONih
-	 9ne2w5Oayq4N1lE47ayVek3AW38LvPAJOLXIWWYkY+EDMZE73GlSxd/Nw7MmAWxiAg
-	 dCUghnZwQQNw5ReWb71IeeyMvieGtgx/SscbK3vWze5VrVJN5pikTAaomrte2hYLsi
-	 PXiqagxfo6Ct8TLy8cdScQtLj2iY3bfh1DYLAlNpQDw6Th+LBr/NWTePyEkHLDGrHj
-	 2Rr8hA1kmhdaehLI2tp2iMN27/UW7xIqgqULiEvB759FZABwA7BMfk+a2JxNSid0Of
-	 4omHN6Y0RK21Q==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 01 May 2024 11:42:05 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Peter Rosin <peda@axentia.se>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-iio@vger.kernel.org
-Subject: [PATCH] iio: multiplexer: Remove an unused field in struct mux
-Date: Wed,  1 May 2024 11:41:54 +0200
-Message-ID: <7bb04abdc2815caf090a6c9ecab2a51d837792a7.1714556499.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.44.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fW2nEUfX"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-41b2119da94so51980205e9.0;
+        Wed, 01 May 2024 04:21:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714562461; x=1715167261; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qq4XqB6hBIbawz6bEQ9yMFUln9F1VDqBqpK6RBvlwPM=;
+        b=fW2nEUfXzIjViKuY77EqD0IqkrAV4DNJZMKaWzvbLU/2Ryw5p6GRCxbrOd/uEcalRE
+         oP9XrSwrCCEZQtUFZko9UL4cZb1rucUCYKjHy0qkj4XU52l5JP3tSG+sLBVdPE0rAfAq
+         Fefen3lHRGy7mhwzctqPcsiDDg8EsUSQx98dMDc5hdBkjZYHRDSb4NkbIuaVyoNTt5Ej
+         k9YiB2/Z8STkO8/CIMqO46J00VanmEPDza0u0mNx3BV2a+2U2vCmZp5HrondkocFqP/0
+         dw1cE1SrNueiuTIwyMWRJrt3+eRyQPVV/qyGW+UD676ZFiZCI8vh8ffTmWEv9Xcd+mC4
+         Qxdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714562461; x=1715167261;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qq4XqB6hBIbawz6bEQ9yMFUln9F1VDqBqpK6RBvlwPM=;
+        b=pT/da/WohQ2IGD4KYvWdssTyH4gw4S8JF/qVQ6iS5X0wqPYOY0oBEF1iet9eWPKBVB
+         g/qo5tWlmeYP1OIIRxJLVUZHuoN54wuDn8tJ//khre/PI6pigyEcWIj/wPGl5DxmPBTO
+         PACwA1SaEwjKluElGwOjGGE/fuj4hK8UT+Xbp78QwVY7IW39MQG7UrTjp0ZAgh6jxuTn
+         xcCyDPAlnMfIJW3lUARsDSykWcPeVYLCIPgWF+trHW1V1UdvvN6SHueVyEWh5gv8URmt
+         N/f0kKIW3RqVlKjHP7kWrZoA5pt8Ajkn0WaDbYHSI9TUXpaw7sjL0ApPOGAWwIPYIKwN
+         jAAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWeCX+hZtczUfY2ZDluHLjfdUt0bKSemT8db7jHVakmK5t3s7Qz6lIb5dGCBqErNhlNLSzBe36FyFXCx2OsEZBLzvgfok3NnsW4XCmSGB92TD2IVFtFdmrp7+HXPgKrgVqhKUigufgtmRVt/SeBF74oKu/coHLYl+5g4uEdfMX65n1
+X-Gm-Message-State: AOJu0Yy7LnE87JOfoHE5SG0U25iYwrH69hZcriM2jovsInSz+N3seNtR
+	bEjIrtVwrOtomty8xzbGFoBZTYhEfI4FSBPdTKRAN8g4pHk4Ip+h
+X-Google-Smtp-Source: AGHT+IH6M5+jC4MHPn/cHXX4xJnlJS7nu6wiILZSJkRaZS8YtKJ8bZOzpCSMaw/rWyJBWAI4FuqZ6g==
+X-Received: by 2002:a05:600c:1e09:b0:41a:7065:430a with SMTP id ay9-20020a05600c1e0900b0041a7065430amr1702106wmb.41.1714562460801;
+        Wed, 01 May 2024 04:21:00 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id hn25-20020a05600ca39900b00419f419236fsm1864481wmb.41.2024.05.01.04.20.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 May 2024 04:20:59 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] selftests/bpf: Fix spelling mistake "{GET|SET}SOCKOP" -> "{GET|SET}SOCKOPT"
+Date: Wed,  1 May 2024 12:20:59 +0100
+Message-Id: <20240501112059.1348423-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-In "struct mux", the 'indio_dev' field is unused.
-Remove it.
+There are two spelling mistakes in .descr literal strings. Fix them.
 
-Found with cppcheck, unusedStructMember.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-Compile tested only.
+ tools/testing/selftests/bpf/prog_tests/sockopt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-It was added in the initial commit 7ba9df54b091 ("iio: multiplexer: new iio
-category and iio-mux driver") but was never used.
----
- drivers/iio/multiplexer/iio-mux.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/iio/multiplexer/iio-mux.c b/drivers/iio/multiplexer/iio-mux.c
-index edd8c69f6d2e..2953403bef53 100644
---- a/drivers/iio/multiplexer/iio-mux.c
-+++ b/drivers/iio/multiplexer/iio-mux.c
-@@ -30,7 +30,6 @@ struct mux {
- 	int cached_state;
- 	struct mux_control *control;
- 	struct iio_channel *parent;
--	struct iio_dev *indio_dev;
- 	struct iio_chan_spec *chan;
- 	struct iio_chan_spec_ext_info *ext_info;
- 	struct mux_child *child;
+diff --git a/tools/testing/selftests/bpf/prog_tests/sockopt.c b/tools/testing/selftests/bpf/prog_tests/sockopt.c
+index eaac83a7f388..ecf5a7a047a4 100644
+--- a/tools/testing/selftests/bpf/prog_tests/sockopt.c
++++ b/tools/testing/selftests/bpf/prog_tests/sockopt.c
+@@ -933,7 +933,7 @@ static struct sockopt_test {
+ 	/* ==================== prog_type ====================  */
+ 
+ 	{
+-		.descr = "can attach only BPF_CGROUP_SETSOCKOP",
++		.descr = "can attach only BPF_CGROUP_SETSOCKOPT",
+ 		.insns = {
+ 			/* return 1 */
+ 			BPF_MOV64_IMM(BPF_REG_0, 1),
+@@ -947,7 +947,7 @@ static struct sockopt_test {
+ 	},
+ 
+ 	{
+-		.descr = "can attach only BPF_CGROUP_GETSOCKOP",
++		.descr = "can attach only BPF_CGROUP_GETSOCKOPT",
+ 		.insns = {
+ 			/* return 1 */
+ 			BPF_MOV64_IMM(BPF_REG_0, 1),
 -- 
-2.44.0
+2.39.2
 
