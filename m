@@ -1,93 +1,90 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6148153379;
-	Wed,  1 May 2024 14:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBE4C2FD;
+	Wed,  1 May 2024 15:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714574849; cv=none; b=Zn90dMAXmYXHYHohDO00eMUbDXzCb6OlRkn9TVkveJspx5kOUsPARX8UlapGT6GNPKbNd+helNT9lHia3wkHBL8Ci7lLgNLjli6XOnSlt5czcElq7BdkAXboSd22pHMS1Z5wDTzKdYQFqJ64Cmyr4YsEA1aRqClqvEMa4wwuIK4=
+	t=1714577900; cv=none; b=Yr1jSX7GnWxHHX4R0NfEbqjckl39bbuahUCE8uOGDbbUwm6KyqUAgVdN6I+bkjt2416erdZpuquuuQRXfnBfr/kXDoLLIXrWpJXNyn8JcVODy4zFXCD36tl4y2KDwHiZCV4XjN3L2Aq6IYCXeZGHBGlQ+MEsmKvepG9i5ygBVu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714574849; c=relaxed/simple;
-	bh=pjboBw7lbIXB1VFaVWC0GZOCQcohZM/vA6aD8MfesL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VljqhCkYMrs281Z6w48UzRG1TLSQVHcBsH8O9mxLlUUm4kDVbj097NQiE11iG0fCsX8PSR1F1gOj1HxQI1GxKQniEyLgYvalCw6HgWqFvQ770kHUbHBgkkRSIp9BV7CmjU1LsyaZWLFjZWDMIU7PKit7jWcHwLVnONU6DVGIDw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g56enQL0; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1714577900; c=relaxed/simple;
+	bh=eDoeRon2FNe588ZUGUZc3+AJ6puekYfMV5lxqbbJ3gE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=qHuBJhCAeslGsOsR977u9ifMK/P0gyVP0R+yG6iHRupG9w7SLRO4FDwb7fosyslU+O6ZR0xA0dplH2rhBosq/XmNnDKxR8NzJUXPyzRVMZEad9KOMkXjEx+S5rAChcNudR5JA/hidp72DWbYuizA32p+v+PTZkW6ItFeN5Q3rbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=arNoMv24; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g56enQL0"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ec69e3dbcfso12489595ad.0;
-        Wed, 01 May 2024 07:47:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714574848; x=1715179648; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1Fl+fLmRZyiDNW/6JyUoRJz4DQMZ9LCyXCbw+ImdrLo=;
-        b=g56enQL0sKt4/xiXD74rfeQyrracArurMFCV/FF3D9LcfMpyPqyP87L4km0kuDUsDE
-         CZlQBj8IGP6cfjv/okOJDT4fqzBR7D1HJMh8K4+aOyqm6YG0I5lP3yq4ER1bsc3VYo1q
-         lc5jUglErEQFDkr9jsYrDs13aYhcXNvX3ZWhBL+ZJ/gUpoyl7ca1v+WWsp5SF1ETPSQd
-         RCCD9YbMfODYYAq2QwQ4eikG1VtZRQ/Z4DgsHiWd2s3KCEvRJUCjjEM63ohLBJYRVrmo
-         5mpv3phYXD8pnApEAMJ1x2TkVtmlygKtJRtYYhaHJs1HISW6PcK4BNe0ytAYSarbCWUj
-         AN7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714574848; x=1715179648;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1Fl+fLmRZyiDNW/6JyUoRJz4DQMZ9LCyXCbw+ImdrLo=;
-        b=wddduA/kq6VlCVtVvZM5BOiC4tNKJ3A1hLWaKLlw5OGju2jDwz1FEMXk2j43Hi6N/F
-         u4V8slA3cZ+r29U5OyegE09aUgP2eNPaRURlzeThmE5yUTG6v2X6zKhlvk7ZBIjAaB1W
-         U3U7ZDjO0JRyaS/lNVddH6zU8YyU+jrDzZBKSORuZtuJPHFYXCkfRscZkzCZgUnKsZR3
-         RaCAOo/K1dhxWGVX6/xZq6XeY3b9YPJP+ZDEWU6TsqgtzntqBy4nUyLzdfab5olEzxIQ
-         jVBv+hkF3gjsZAz0dvhir8ClsRMkk3U1KKhImhnLul0zwGg6LBioJ60RzPn8d8KscuNj
-         75VA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVPHewHcXwpt2ULbrr10hxPrufdqz4PH6vSP6FSrWbbiA4gwk7jxflMdKESmQio3y+6XdbWnYZ3tCWkE+73aNEzQzfBFJYEUun5MBvc+Fm7m8TJjtajjLyAXZahXKlsrHJgsv0v5y+sQ/gPcf4/T6f2C7n/AKWZ6+YzsT0+XTCZHDSM1UtlEQ2CIc=
-X-Gm-Message-State: AOJu0Yxhno2m+T78Mn0YaHv34Z8QZ6Ad6hgQYyN8MkrrnKs7jUEIxAml
-	6m3aboWX2ntMj7KIzaC4oS8R+8mjgsywJyjimKQnH9T/hYAL+DxR
-X-Google-Smtp-Source: AGHT+IGgpIAXcFz1mMO9Yvnre1zeYuS5SHuvMtJ2mjS8Nwz+CACsWDEtmKwlEEfZxFUJp/H/q+7CNQ==
-X-Received: by 2002:a17:902:ea86:b0:1ea:a87f:bd2c with SMTP id x6-20020a170902ea8600b001eaa87fbd2cmr2593775plb.68.1714574847597;
-        Wed, 01 May 2024 07:47:27 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id q17-20020a17090311d100b001e904b1d164sm21162840plh.177.2024.05.01.07.47.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 May 2024 07:47:27 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 1 May 2024 07:47:26 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>,
-	Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, openbmc@lists.ozlabs.org,
-	linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH 2/2] hwmon: (npcm750-pwm-fan) Remove another unused field
- in struct npcm7xx_cooling_device
-Message-ID: <68a66010-97ca-4278-8dcf-95f01fec9d45@roeck-us.net>
-References: <74eee8aa739f94b8c6425ce3e37a427ca92243ea.1714505655.git.christophe.jaillet@wanadoo.fr>
- <2ff738663d40ac5ae3d0b4d2e688ff7e36032be8.1714505655.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="arNoMv24"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1714577820; x=1715182620; i=markus.elfring@web.de;
+	bh=eDoeRon2FNe588ZUGUZc3+AJ6puekYfMV5lxqbbJ3gE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=arNoMv246RrlBebVKPsArQ2tTWPM3YvFF/URq94nk+24URwTNiIDjTRwrM4kRD9j
+	 KJj9LQDUTzvR6cbeRlOQSVxs3+tNtP9TTAMDi/IzkgfKLiIAXx4/RPDvohGIHEPlF
+	 1spumDATTDeKTIrhZkZ28IrT8DTMeCyJOQiSLZWLNkN4a7RtN/NdXCkYq80LQynGc
+	 IOrvRfBLodljkRNVjEZljVUGVwBv0mJxtJUD9N8LDZGR+PMhHUxT8Shesf43/Q3/q
+	 I2/daoFcaA/JtU1MlJ3ap+w4IVXCMY0B4KrUH8JROXRpDUwfNmjM4c/d0jqRYL2We
+	 OuF/dizoGo0wzUZ1aA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MS17h-1sCp9M3Yrb-00U3Xg; Wed, 01
+ May 2024 17:36:59 +0200
+Message-ID: <1cdce712-f007-495b-80ef-0efe67dd5e20@web.de>
+Date: Wed, 1 May 2024 17:36:54 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2ff738663d40ac5ae3d0b4d2e688ff7e36032be8.1714505655.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla Thunderbird
+To: Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org,
+ cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-team@meta.com,
+ Chengming Zhou <chengming.zhou@linux.dev>,
+ Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Tejun Heo <tj@kernel.org>,
+ Yosry Ahmed <yosryahmed@google.com>, Zefan Li <lizefan.x@bytedance.com>
+References: <20240501100620.1461685-1-usamaarif642@gmail.com>
+Subject: Re: [PATCH] selftests: cgroup: remove redundant addition of memory
+ controller
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240501100620.1461685-1-usamaarif642@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:V37OePDYSXHrrNlgIy/91VHaZf4oW15rKVNXlr0apLkPnPgkYvj
+ QVG0wyXvdoM0h6ld1A848+F4MW34V7/OMLkhLq4t1w4S9Pkrhgk9SDkmePtrNe02qzCN2+3
+ c71O9PYKCuBiE6dacslGkPT1tMrTBKbrerG2rS6Fdyn6viqfl4PHjbFVJjZfNU0ytUy4vsy
+ xzi5BouNuUXv8e66Bu+yA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:kH699/Ne5mE=;WP0scAqvZ/5b5l0T3EdGVB0lKEt
+ JDPTry589asK0ZpypIUQdoLm2ejtlhOcekQzTJJxPyYZs40l9muiY1bC1UMCEfxHCcl7MzLT8
+ zmcZm16mnYhpo6jZIp8PvgDCuPDMt/HdonGgw1XuF0A5C58W2wmyBMQY8NnuDCFOE8alpLf2C
+ MZACMjJT2fdw+mbIdi7FeWSOrgIKUryMMqVNAD+1GsQrjsw/jKBllCyx9MRZ3yDOCsPFXTJy1
+ kKK0zfgSsMoKSIEamcbcD8Ke4CbiT7Ls6WpHFBblaZo8wp7BCcOLLC6SGj4uNHSMT7nMc1yfw
+ ytlvrIbEOxp9m09u+PVuK834KlRayVJp9ARXiXP1929AbICWTvWEhCkKMM8dCYF/Ixr3/l67D
+ CXoWJYE2+UO8h6pvQ7RvsjLLgkN5VuEvW796SQXu81SkMWVvxsIkqtSTja3NB331zgxYZRwlz
+ qa42mJUWgW0+2emKkYNIO4DYUCzyZ6MQJV7GbOOVgjt9+hM4qXb6jDpSHTqBeBO+oN6Uq3qne
+ mSL2SKlALeQlpGuiawl0k2tj8dIEBmbs7UTRdRHjdIji5rmFPltTxi+H3i9cYfgbg9X3aJvcg
+ CoJXyKj4iVvBLbg1OPX+3UJxVUZqtV86x3Bmijadhq8GDzRvyQo50JAL1pQfjoYqoBKW0Dxfy
+ CqSlulvB2/liu+XHnD4iCtQpHwvWv5hYCIFMyNfESSM5UYtTngdp1XEvuZ29T2ODUb8lXVrTy
+ 1TtRnUMzSHTYt5oLAnBEavJkgLl+LapqwMxVuvi15sgWk4MDGXeAQlpIBnBfvbr/oK01Hdi41
+ dI8WGg0SRL6OcFl+fMSjMauPU60UbfSFtaWfIuvNWpZeY=
 
-On Tue, Apr 30, 2024 at 09:35:38PM +0200, Christophe JAILLET wrote:
-> In "struct npcm7xx_cooling_device", the 'pwm_clk_freq' field is only
-> written and never used.
-> 
-> Remove it and update npcm7xx_pwm_init() accordingly.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> This is already done in main.
 
-Applied.
+Please improve this change description.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9-rc6#n45
 
-Thanks,
-Guenter
+Will the tag =E2=80=9CFixes=E2=80=9D become relevant here (besides an impe=
+rative wording)?
+
+Regards,
+Markus
