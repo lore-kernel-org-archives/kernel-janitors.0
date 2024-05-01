@@ -1,40 +1,40 @@
 Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBE4C2FD;
-	Wed,  1 May 2024 15:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DE712FF67;
+	Wed,  1 May 2024 16:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714577900; cv=none; b=Yr1jSX7GnWxHHX4R0NfEbqjckl39bbuahUCE8uOGDbbUwm6KyqUAgVdN6I+bkjt2416erdZpuquuuQRXfnBfr/kXDoLLIXrWpJXNyn8JcVODy4zFXCD36tl4y2KDwHiZCV4XjN3L2Aq6IYCXeZGHBGlQ+MEsmKvepG9i5ygBVu8=
+	t=1714580774; cv=none; b=tWsSHCdCseuCQ4d6hDlWAhSILNloKYUqFkBUqbtVvddNLmYnCSNNOd22CL5BxwDq/O5eCu8pPOW2vcmZ+cSY2WQaHvdc1ri17oEo+cDoT+BhVjsGL8JE/zPWc5NWhwUdnn8nhVemmSQ7O1guniMUawDD4qWXO0lRxLFLZXpg+NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714577900; c=relaxed/simple;
-	bh=eDoeRon2FNe588ZUGUZc3+AJ6puekYfMV5lxqbbJ3gE=;
+	s=arc-20240116; t=1714580774; c=relaxed/simple;
+	bh=lzRGZEj9Cwp2HA/pc1N+/ydMiaJGgfFfNX+FdTWmxA0=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=qHuBJhCAeslGsOsR977u9ifMK/P0gyVP0R+yG6iHRupG9w7SLRO4FDwb7fosyslU+O6ZR0xA0dplH2rhBosq/XmNnDKxR8NzJUXPyzRVMZEad9KOMkXjEx+S5rAChcNudR5JA/hidp72DWbYuizA32p+v+PTZkW6ItFeN5Q3rbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=arNoMv24; arc=none smtp.client-ip=212.227.17.11
+	 In-Reply-To:Content-Type; b=YKYUJqUEeVLcDRLswCPlajsczKrajt4A9SaNeCAVktrGPWTkaLaYKwy8XX24+iV5iysNBi/oWSx1Bct11479UqOnGp5B3Hbdr5jgunM9YK+GnEYSJYRPnlhUXK8yBwSW6a2/TkM6rs4i8j2iAg0iRrocJFnEPkNysMkiEzE7R9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iQ7TUAsw; arc=none smtp.client-ip=212.227.17.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="arNoMv24"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iQ7TUAsw"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714577820; x=1715182620; i=markus.elfring@web.de;
-	bh=eDoeRon2FNe588ZUGUZc3+AJ6puekYfMV5lxqbbJ3gE=;
+	s=s29768273; t=1714580758; x=1715185558; i=markus.elfring@web.de;
+	bh=Yz2vQ8pzkeNI7IfTDAQnX8L3w5ojgahuffZfFwQuwV0=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=arNoMv246RrlBebVKPsArQ2tTWPM3YvFF/URq94nk+24URwTNiIDjTRwrM4kRD9j
-	 KJj9LQDUTzvR6cbeRlOQSVxs3+tNtP9TTAMDi/IzkgfKLiIAXx4/RPDvohGIHEPlF
-	 1spumDATTDeKTIrhZkZ28IrT8DTMeCyJOQiSLZWLNkN4a7RtN/NdXCkYq80LQynGc
-	 IOrvRfBLodljkRNVjEZljVUGVwBv0mJxtJUD9N8LDZGR+PMhHUxT8Shesf43/Q3/q
-	 I2/daoFcaA/JtU1MlJ3ap+w4IVXCMY0B4KrUH8JROXRpDUwfNmjM4c/d0jqRYL2We
-	 OuF/dizoGo0wzUZ1aA==
+	b=iQ7TUAswltGrgH/s9Dngg1S2ctH2AquXOy2S5LRioXaYkZhLwpzJVJ1h3TIJdut+
+	 yw6ypjtAh+2RWii9xJqBOT/djTUrL4Zb3d6zaNGD1JMzoeEZvyWbSHp6WivWXbyQY
+	 WjSqVfYwDunkF9y4lwI4ERCsQwAVRSoqFzg1GVPPbxcMsTdpaMVwugiBN/k67GQCy
+	 +Y9DQZ72qWVv+yP/G+ITXClDhF1asIFohY2NW0FjY64epFU+BomgqTpo4Nai8KoD9
+	 vNL21ApexmrVuOJTnyovuy62zQhkFx1lH4khWoi0O8EwD6K7/dYiil5kQ/O4u1boh
+	 XagUK8XzIdkptJ7i9Q==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MS17h-1sCp9M3Yrb-00U3Xg; Wed, 01
- May 2024 17:36:59 +0200
-Message-ID: <1cdce712-f007-495b-80ef-0efe67dd5e20@web.de>
-Date: Wed, 1 May 2024 17:36:54 +0200
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N3oz4-1skEnF3kY4-00zejV; Wed, 01
+ May 2024 18:25:57 +0200
+Message-ID: <f5272fc5-8d79-4717-9ad8-c503d8abda87@web.de>
+Date: Wed, 1 May 2024 18:25:54 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,49 +42,48 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org,
- cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-team@meta.com,
- Chengming Zhou <chengming.zhou@linux.dev>,
- Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Tejun Heo <tj@kernel.org>,
- Yosry Ahmed <yosryahmed@google.com>, Zefan Li <lizefan.x@bytedance.com>
-References: <20240501100620.1461685-1-usamaarif642@gmail.com>
-Subject: Re: [PATCH] selftests: cgroup: remove redundant addition of memory
- controller
+To: Yongsu Yoo <yongsuyoo0215@gmail.com>, linux-media@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Hyunwoo Kim <v4bel@theori.io>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20240308121021.1732-1-yongsuyoo0215@gmail.com>
+Subject: Re: [PATCH] media: dvb_ca_en50221: Fix a bug for detecting CI MODULE
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240501100620.1461685-1-usamaarif642@gmail.com>
+In-Reply-To: <20240308121021.1732-1-yongsuyoo0215@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:V37OePDYSXHrrNlgIy/91VHaZf4oW15rKVNXlr0apLkPnPgkYvj
- QVG0wyXvdoM0h6ld1A848+F4MW34V7/OMLkhLq4t1w4S9Pkrhgk9SDkmePtrNe02qzCN2+3
- c71O9PYKCuBiE6dacslGkPT1tMrTBKbrerG2rS6Fdyn6viqfl4PHjbFVJjZfNU0ytUy4vsy
- xzi5BouNuUXv8e66Bu+yA==
+X-Provags-ID: V03:K1:NYP9A02ksDnqr5mO5h7+9Zn5xo9ajjorC+WD0GoLE8b7+uPalRj
+ plCOxjqHsTfaCdTS/THOxNWeCKaRw4CqZ/wLF7gBb4mnt36GFSO5OQi6LXWJjY0Yk6NACH6
+ /mv0U0F2wZzI4/8b4puJF1bumsSvURp2/00FIxwkvTAKtMGRjglgwXJ0HzPbLVCWRB4Fyjw
+ aUnSOAffddmlvVngUzHlQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:kH699/Ne5mE=;WP0scAqvZ/5b5l0T3EdGVB0lKEt
- JDPTry589asK0ZpypIUQdoLm2ejtlhOcekQzTJJxPyYZs40l9muiY1bC1UMCEfxHCcl7MzLT8
- zmcZm16mnYhpo6jZIp8PvgDCuPDMt/HdonGgw1XuF0A5C58W2wmyBMQY8NnuDCFOE8alpLf2C
- MZACMjJT2fdw+mbIdi7FeWSOrgIKUryMMqVNAD+1GsQrjsw/jKBllCyx9MRZ3yDOCsPFXTJy1
- kKK0zfgSsMoKSIEamcbcD8Ke4CbiT7Ls6WpHFBblaZo8wp7BCcOLLC6SGj4uNHSMT7nMc1yfw
- ytlvrIbEOxp9m09u+PVuK834KlRayVJp9ARXiXP1929AbICWTvWEhCkKMM8dCYF/Ixr3/l67D
- CXoWJYE2+UO8h6pvQ7RvsjLLgkN5VuEvW796SQXu81SkMWVvxsIkqtSTja3NB331zgxYZRwlz
- qa42mJUWgW0+2emKkYNIO4DYUCzyZ6MQJV7GbOOVgjt9+hM4qXb6jDpSHTqBeBO+oN6Uq3qne
- mSL2SKlALeQlpGuiawl0k2tj8dIEBmbs7UTRdRHjdIji5rmFPltTxi+H3i9cYfgbg9X3aJvcg
- CoJXyKj4iVvBLbg1OPX+3UJxVUZqtV86x3Bmijadhq8GDzRvyQo50JAL1pQfjoYqoBKW0Dxfy
- CqSlulvB2/liu+XHnD4iCtQpHwvWv5hYCIFMyNfESSM5UYtTngdp1XEvuZ29T2ODUb8lXVrTy
- 1TtRnUMzSHTYt5oLAnBEavJkgLl+LapqwMxVuvi15sgWk4MDGXeAQlpIBnBfvbr/oK01Hdi41
- dI8WGg0SRL6OcFl+fMSjMauPU60UbfSFtaWfIuvNWpZeY=
+UI-OutboundReport: notjunk:1;M01:P0:9BKkzP7ZYVc=;QJKRR2TIwnd/Jk/po6j0IxJdlmp
+ 0c8GZ8fIPad4GL9bCyly3BpILOJKxGizCIWv+uuF9S0i8KVjOWJk+qJwWJB2+l+R0SfQZ7Wpc
+ eAQEcge2bE/f+JObz44jRtr+PyAiUwELgmhfRM6j6mkYGromfqbYJzZGXAqX1dm7Fwjqc8lUc
+ t9dJzOGKIAnn7i1G6IrDltnlVPFrF4HSRCuohdD2paIIInssYgy4GO0DQFPicKPdEW2uQ2n9t
+ yThpcbJtaCPZevsXDsI6k9/LSL4Y8EzF6xz/WcLyXFP34BNjYVEQO3MjFDSNhuOFfR9intw4I
+ wuhn02Mxsm2j6uJOOsoKhVhly4UGCGnxAxIdrbqh33jwUG8Se2rP6pl4/b6I5RPktphpXADYv
+ IsTzxMAbBvYg2LyEiuX14yr0tR+Iexdw3Ax00eamwN+DCL3yzGx5ec7BO3SPdf+qIPbMaVkBV
+ XdF7ln7EIndlat2UjA14lqA3k8XlpyMGfOjPOjGsglfV3f9jeM8V59frItSWgwO8/nPU/HeG9
+ 5eC0cd852Azkm4ctV29PvkyxcHZRIuBKxJDESQeZCjDESwJXMVKsOS8qWrH/IZ9AXOkTU8KjJ
+ 6mmcc4ugorbpS5xb2VdVfn6bb3k0vPQt1ChY9tHZCSjoPPWh38xmpjNRhrowBWfU/wCZNa5Ox
+ YeL8cCJovEB3P+3Dfgv1NHF0/LLsAx6raQ34qllfrAei7410Nw4QvbeDPfKvlEkLFXyXyV22c
+ RDuyf+Ntmt1A7uIVQxO0wCANhpwlDnzNqX02KlflSv+J8JbCvBzKKEEMwGsLrR8yIQPINOzYz
+ JwB9JGNUZdKD84PYRC4L8kfc+gkN29sELuvXe7xgbSRh4=
 
-> This is already done in main.
+=E2=80=A6
+> really connected on TV. This means that the CA_GET_SLOT_INFO ioctl
+> does not return right informtion. This is a Bug. We fix this bug.
 
-Please improve this change description.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc6#n45
+1. I hope that typos will be avoided for subsequent change descriptions.
 
-Will the tag =E2=80=9CFixes=E2=80=9D become relevant here (besides an impe=
-rative wording)?
+2. How do you think about to improve the patch further with a correspondin=
+g imperative wording?
+   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/process/submitting-patches.rst?h=3Dv6.9-rc6#n94
+
+3. Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
 
 Regards,
 Markus
