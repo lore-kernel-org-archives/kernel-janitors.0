@@ -1,46 +1,47 @@
-Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E424D1E52C;
-	Tue, 30 Apr 2024 21:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26C51D68F;
+	Wed,  1 May 2024 05:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714513376; cv=none; b=DTHyADzdwSwZuspxgit9Sxt+bJKNWZudhaqpoxqkinIJEcfkjcNqth/ETrsI84P54YixY+MHneQCRQneQfQ2iupioEv5LFF8xEitWUA6fVlOXba8OSwiQAa1Z+HP5hZ2yjL2vS8apdi68hGcT41YD4IZl9AeLIUf5z7nnYUaZE0=
+	t=1714540460; cv=none; b=LeeoovMrAL3sy8Ebh0idhywLrN/vx81h0Kj6DNQVCCoABqr/08BJdeb77srvgWf3Tpoc8k30U/cc3xku0kt7JXemIsEO3gK59sajHLdyMg7KX0wO6/ToXRRpkoKuafe4vo5hGDmcxeTKkKocBA0VLTJOmmH55vt3hz4wfzuISIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714513376; c=relaxed/simple;
-	bh=B5czF32/U9N9vGMTqBvMRHfCgK49Nbyky7mC+RM7k/o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fh2mlNgItEyl1DbrJm2rLretYhgW4ca8rAsy6oBESV1kblKimdoZqWWCCGBpGHM4057lQbne+yaDYdnV3HOG/HRzxHBC3XSmcWENS2T6YKRkwkwpawgaFx8CPgE6I4eTceBLcTn5QxkmGdG+qWkAPFrLhqdhoOgtYaqiJXTHMbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=I6NNafXX; arc=none smtp.client-ip=193.252.23.217
+	s=arc-20240116; t=1714540460; c=relaxed/simple;
+	bh=RMWyAyYlUlSp9U/kE6nFI9ssssdGhoQ6D+bwcNf6+fg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P4OkQm8zlTVfoI+lUbx40mEpn7PWBC9D6LX63QYrEAJ0TqvY9LjbMq0WEflSq+xGe60o526sbUKNn/mTVWkD2kYJsvXg31IVWJZxnvXR5zipklcpJ709/mDJ2tTepkuKyWzky/UjXuyPQ/jQkkY5ofDchiseNCHfK5Xbyj1s3WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=PS2aASDV; arc=none smtp.client-ip=80.12.242.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="I6NNafXX"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="PS2aASDV"
 Received: from localhost.localdomain ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id 1vFSs68mphCCi1vFSs6HMy; Tue, 30 Apr 2024 23:42:51 +0200
+	id 229estbE3rs7M229esvot9; Wed, 01 May 2024 07:05:18 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1714513371;
-	bh=Yrun8hUYJhumlCa7N6N8TuH8dMPV0MxY7xh8upjtGIU=;
+	s=t20230301; t=1714539918;
+	bh=X1z/GNaSSMDxojxmVN0YxGfbCezIrv1/qyN8UGm7TgE=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=I6NNafXXfR0xR6qCpV+x5Lv+B1Zlc2v4cHd2F5W5ctMI6PYxq/8GJKc6ZH5NPXzhv
-	 g4GLE0cn7BePDXJM0KRONwv4UM3bZwRnXzbYxx3ErrG7+Iae7HyzNPeWzuVC+YCTc0
-	 oOmVTcGc+fs2L+dU/fbq9TtYsTNADW9fRTjo9QQ/Cq+Kiut0I7hKeLmcDAeN/mJXTy
-	 diL7SntVzgRP+cJo5zHBPRjSsSfGMiJkphOF39OmsbkUGSHAE3x81Soj5hi+iiCnkM
-	 S0//0VnZ1EYNf5Sa60E1FA3zss7ZITRGtIj/EL5ptpLJoWCR924TW74BS32gTceLg1
-	 pfQA26NhyNkgA==
+	b=PS2aASDVNpLMOlRQ6EseNQ4ojnelR4JnXF0fuFJLIQdROzbT2X5jB2I5boEh12y3u
+	 YoAqw1DtZPnSRkmbp1x/SZFexfGOW1Mj4S/2LVquZTYvFXbBj/A/iv2ZY2rpXSzMtw
+	 ZCGL/KF1QGpghD9W40HGjdh0qaT25rSaG+dGyIlpUxmd5gMfE2ZNwXYM44uWx3oiA/
+	 15NpG/dlq82E9YiK5yeyN1R8VgPW6dK7/8F1dj1vZCBrvxT4+eDXlHd3/0Tq12uZHX
+	 zOml8gQVz5+Y89aw26IXU8/QQE8X5ENR8DQs+/A2ixDRyhWPi+hRn5GfqepXen3MFx
+	 asoAR9ryPtFoQ==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 30 Apr 2024 23:42:51 +0200
+X-ME-Date: Wed, 01 May 2024 07:05:18 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>
+To: Support Opensource <support.opensource@diasemi.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] clocksource/drivers/timer-ti-dm: Remove an unused field in struct dmtimer
-Date: Tue, 30 Apr 2024 23:42:39 +0200
-Message-ID: <c9f7579922c587fce334a1aa9651f3189de7a00b.1714513336.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-input@vger.kernel.org
+Subject: [PATCH] Input: da7280 - Remove an unused field in struct da7280_haptic
+Date: Wed,  1 May 2024 07:05:05 +0200
+Message-ID: <ac251b456933bcc6fe297b738f9304bd259185c1.1714539865.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -50,7 +51,7 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In "struct dmtimer", the 'rate' field is unused.
+In "struct da7280_haptic", the 'legacy' field is unused.
 Remove it.
 
 Found with cppcheck, unusedStructMember.
@@ -58,22 +59,25 @@ Found with cppcheck, unusedStructMember.
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only.
+
+This field was added in the initial commit cd3f609823a5 ("hwmon: Input: new
+da7280 haptic driver") but was never used.
 ---
- drivers/clocksource/timer-ti-dm.c | 1 -
+ drivers/input/misc/da7280.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
-index 56acf2617262..b7a34b1a975e 100644
---- a/drivers/clocksource/timer-ti-dm.c
-+++ b/drivers/clocksource/timer-ti-dm.c
-@@ -129,7 +129,6 @@ struct dmtimer {
- 	void __iomem	*func_base;	/* function register base */
+diff --git a/drivers/input/misc/da7280.c b/drivers/input/misc/da7280.c
+index c1fa75c0f970..1629b7ea4cbd 100644
+--- a/drivers/input/misc/da7280.c
++++ b/drivers/input/misc/da7280.c
+@@ -230,7 +230,6 @@ struct da7280_haptic {
+ 	struct i2c_client *client;
+ 	struct pwm_device *pwm_dev;
  
- 	atomic_t enabled;
--	unsigned long rate;
- 	unsigned reserved:1;
- 	unsigned posted:1;
- 	unsigned omap1:1;
+-	bool legacy;
+ 	struct work_struct work;
+ 	int val;
+ 	u16 gain;
 -- 
 2.44.0
 
