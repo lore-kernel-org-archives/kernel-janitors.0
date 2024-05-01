@@ -1,48 +1,47 @@
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E349D5A4CD;
-	Wed,  1 May 2024 11:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E862E152795;
+	Wed,  1 May 2024 12:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714563472; cv=none; b=jkvzcbW7Ad/mn7i3mmNz/HWjz4i0fDOjGlrAncKcHkJfPrGxv6AFUYV/boMzjl3FIu9ZyK/tIinrJ3sM/19XIf07OCSHVISbsQ/OJLvcOfMKoK9DZZzjUcNGt4zyRyqJ6zTyX9Gfb0zwxtHrntx0PXxuwJRMbhhwBjxQWbCYPNU=
+	t=1714568144; cv=none; b=jFIfFlc6Qs+MAUP+FpxA9yxui4u5joIg6YQxelPaRJf7WT5BRxxI2ZkrR7b3hH9LUMgkiFAfOWP08B+a8xkamFt/D/qSbzoECpUTo70Jwg42dNZhrz50H93SxsVM9Ta0qBtfrKWqELH97x6F2aR0e1WF14hppkeHuFjmZ4p+6qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714563472; c=relaxed/simple;
-	bh=5PygkcuyBUAwRIUORJnEko9R4njhlZJJ/lQkQ/6nwtk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AdrWu7JcpY6Q68MkxajX5drE63gmBkDHisJ5FM77R30UiHSf6HMw/haSpigAYhK3mkqBSL+ExQfVbeclEwS7yQiPSaCM06DgIVwK7QGOmfpz2n+UBbyIOUhia27P7QVcfVArfO4Du57fE+WxlGL9GLy5oTGAZS0dDTwA/Dw3k74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=reAEfJUA; arc=none smtp.client-ip=80.12.242.25
+	s=arc-20240116; t=1714568144; c=relaxed/simple;
+	bh=NBgYdcHUCJr2zggLECCR21wmsZRkdOrh4ygOHWbMBS0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KUZQ7vQj8v136Vj3TOuqqr0YaO7k8/7GbrZJ6OJnKttT3Pgh70aUUTHJ+VgQ13KACGdfVdmUcTfBqdanSLSxJ+yHHATZ8QqvFKft6ZMDRrPeW054cSlmCIHuszIjc04rOyv+80DVgoy2JK4uyWUEDBjrl7SLkaUR1vf+Mwokt+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Vxryiura; arc=none smtp.client-ip=80.12.242.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="reAEfJUA"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Vxryiura"
 Received: from localhost.localdomain ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id 288ws0LoSn00P288ws2F8X; Wed, 01 May 2024 13:28:59 +0200
+	id 29Uesw7dCrs7M29Uesx1c2; Wed, 01 May 2024 14:55:37 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1714562939;
-	bh=UX/wu/RLILUA2125zmuAeWndUa2Tzy8BmAzyIuX2a+k=;
+	s=t20230301; t=1714568137;
+	bh=ifjDig8VZYbrit5qHyl96IjDpPnIKF9bUdbgNbDrla4=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=reAEfJUA8LXqgKp8cz7LdG6qlni18euoRbsIoCeDdhDwomJt9JhRMWIfRAivA067S
-	 JOXF9qQv0AYSPgvMbBsXt/Nq50WQ6O0bANCynxI2OwGt+GPjJuemJlxz8q/urhHNuD
-	 kWORNwkKZ1Yt8kvR7Yc+EJ7EEn9dKiTEA2i85c49gZi+P9BiDyVsKMwWOvSzknBupl
-	 GJBg+8DVvKnpLL47NgFXzH1MBxba3SulC+9UChmR3RoE3lkpLnPPJjU11bf843r8qQ
-	 DKL/pRtjD9U7nfr6F2QgIMn2tJCKx5fwNT4DuuaKiMnvIvpSg0LE0BW5yP7grub/Ws
-	 45ikphYXwxJ7Q==
+	b=VxryiuraRCb6MD5kJqlKoAh6UecY/ITM0dK/ouJipgfYDtNNymscBI9/JrgbOcrc/
+	 A+0pilTBHyd5yZQGss4dnIeUUgHl9D0yGaexL+HdwZqxQosX2oXjr3YHstLwZbuzjc
+	 aV3AbhP+lTRtuXapLuzxk+m3Z8zJFACx818ILEaCpRsSlfeaHrWoM3JRWL7B5LdZWW
+	 KA95KS3MXD9HhQ6iXC+0hrM91jZekryfeboH4OGOCZkIxxko8Xs2tZilNxz4c77hGn
+	 5hMXMn/QUQzhO7PFX3OUIG3pobi2VcHhwswRB0v3MA8jvJxA0MkzU3gInFOnPaK2o4
+	 ilwenAetXU6TQ==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 01 May 2024 13:28:59 +0200
+X-ME-Date: Wed, 01 May 2024 14:55:37 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Gerald Loacker <gerald.loacker@wolfvision.net>,
-	Jonathan Cameron <jic23@kernel.org>,
+To: Jonathan Cameron <jic23@kernel.org>,
 	Lars-Peter Clausen <lars@metafoo.de>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	linux-iio@vger.kernel.org
-Subject: [PATCH] iio: tmag5273: Remove some unused field in struct tmag5273_data
-Date: Wed,  1 May 2024 13:28:50 +0200
-Message-ID: <7bd16d7fea12c64b6b3dc3cd32839cfce145bcf3.1714562912.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] iio: light: gp2ap020a00f: Remove some unused field in struct gp2ap020a00f_data
+Date: Wed,  1 May 2024 14:55:17 +0200
+Message-ID: <57e9f29c7062d1bb846064bf6dbd7a8385a855e7.1714568099.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -52,8 +51,13 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In "struct tmag5273_data", the 'scale' and 'vcc' fields are unused.
-Remove them.
+In "struct gp2ap020a00f_data", the 'pdata' field is unused.
+
+Moreover the "struct gp2ap020a00f_platform_data" is defined nowhere.
+Neither in this file, nor in a global .h file, so it is completely
+pointless.
+
+So, remove it.
 
 Found with cppcheck, unusedStructMember.
 
@@ -61,28 +65,24 @@ Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only.
 
-It was added in the initial commit 866a1389174b ("iio: magnetometer: add
-ti tmag5273 driver") but was never used.
+It was added in the initial commit bf29fbeaa13d ("iio: gp2ap020a00f: Add a
+driver for the device") but was never used.
 ---
- drivers/iio/magnetometer/tmag5273.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/iio/light/gp2ap020a00f.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/iio/magnetometer/tmag5273.c b/drivers/iio/magnetometer/tmag5273.c
-index 218b1ce076c1..4187abe12784 100644
---- a/drivers/iio/magnetometer/tmag5273.c
-+++ b/drivers/iio/magnetometer/tmag5273.c
-@@ -118,11 +118,9 @@ struct tmag5273_data {
- 	unsigned int version;
- 	char name[16];
- 	unsigned int conv_avg;
--	unsigned int scale;
- 	enum tmag5273_scale_index scale_index;
- 	unsigned int angle_measurement;
- 	struct regmap *map;
--	struct regulator *vcc;
+diff --git a/drivers/iio/light/gp2ap020a00f.c b/drivers/iio/light/gp2ap020a00f.c
+index 9f41724819b6..9a476697aa1f 100644
+--- a/drivers/iio/light/gp2ap020a00f.c
++++ b/drivers/iio/light/gp2ap020a00f.c
+@@ -237,7 +237,6 @@ enum gp2ap020a00f_thresh_val_id {
+ };
  
- 	/*
- 	 * Locks the sensor for exclusive use during a measurement (which
+ struct gp2ap020a00f_data {
+-	const struct gp2ap020a00f_platform_data *pdata;
+ 	struct i2c_client *client;
+ 	struct mutex lock;
+ 	char *buffer;
 -- 
 2.44.0
 
