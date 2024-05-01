@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C580F17C9B;
-	Wed,  1 May 2024 17:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E83EAF6;
+	Wed,  1 May 2024 19:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714584863; cv=none; b=eZ3RaD36qRbhoDE9z8UqnQ8yCgxIEKvZHhqKHklxijIzPAlLSzVdZCA0uJg2lbJzM424z8eXEKBUTbQBmVweSK+oe5weeUX+o1QkZLSSW3xEQZuiVrtx6TqcKjYYP+UPzEZWdT2f8G5dP0lqjBIomApLaKiCBkCTn2DD+pBvvWQ=
+	t=1714591419; cv=none; b=SUga2qzeIiBOsscheiPcaMkJmI2CHGRP1FX2GqiqQpHXLZ8doi7qTgZRUkhlXlQ10ko88ag6o3WNCCtId8dzPEbuEp7swptOnQmxIbBDSC4mit1JfiWgtqXJ1auF6G8wclWhQ/7/4b54HW7k6ugZVloGGgvAVaUoI3iqWdL5bxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714584863; c=relaxed/simple;
-	bh=yOqewtbEvLvJUxLkGDrjVjmDrRj+y1aLBrnh6oYMjJs=;
+	s=arc-20240116; t=1714591419; c=relaxed/simple;
+	bh=WgZXapr0v/CdZ4lJn13J0ptgvUQhGg3IHPNnu6AmuXQ=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=cyaUkpVKvJWeUvq1uUtpXF5kuItWiuwWYvyradSULex7nFuOTpOqmOStSIUb7QnEv5GI4YQbUxPkOI7jugL7dVKB93tzxy6hiuoh3KhQmuVHSnsMXjrJms9ld6ofk5DJRwZ46A0hiYNs+czyjeCKrBDQzBDPLi6bMZvlxhiKYAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iJMAy+Tz; arc=none smtp.client-ip=217.72.192.78
+	 In-Reply-To:Content-Type; b=XhhRd8no13IjEZfmyJsRAOYuALVJZHgsxLrmabURaQKynBab1JzZlXwYST+XVrfCKX7nwpSH4FZB4gdYEa0sdrFHgu7oh8b8kyOU2U4WqWxD6N5M70Ql4i8Nm2Ead2abSxJkCjLb4cFP29PQgyVk9Uev0RDhSP7CsxJTfHMuXZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=axSUFWsB; arc=none smtp.client-ip=212.227.17.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iJMAy+Tz"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="axSUFWsB"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714584823; x=1715189623; i=markus.elfring@web.de;
-	bh=gO4YnLVa8TvAJ1FCzBqXMrZgFrD5LQKEdYPyOsmQK/o=;
+	s=s29768273; t=1714591395; x=1715196195; i=markus.elfring@web.de;
+	bh=/OzIEN8wYE8/xcGiwbU+dTt00S833gZJ8vZlKH2nXNM=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=iJMAy+TzxT006XpYKO2wp5st01dt40T4i5pLswwAwPKv6RGEI/y/A9m91YMhyLH3
-	 jhP8L4FYkaS92Rd3Y1qIBRI41GdJPFLxny1ZQfInnK58p1P+PKq9jO0UCX+kdj5WW
-	 anziNI9yiIPwACZdRPkTjyYiDUgNCm+VLBi/kXm/qhoMn35fS8qxvu56FhO5+5ulH
-	 h0eRR8cl++sGNIVvYKrhW97GQ77gABWAqFNm6LhILUDA45Husf4JoFQpInqCoWUCR
-	 DWC376lhFfDhCZIqRFznkFk4D/twW34pBqLkXFgJat96senvKLStxeq9+MzIXPoGG
-	 CrlU5ikr+cEivmWejQ==
+	b=axSUFWsB4NOlK4yB+jQ+wR92elH6D45V0USLzzge2n8VkSoRSNgwCr594VQ2cL1a
+	 woA0rQaDX2c01haPFMjvY3QU9qjNTHvDC1v66KvtRGUT/PfAsIpNBryAebsgbeO54
+	 /AxC7bq3AxTBOelxif+w4R0Gf81PWiCdfMJZ4vfCVIrP6Ew+S/Ek7SNIJaH7iLjoV
+	 nMiBa+lpdmTHABtzlobPQo8dCWJHiKPD8M0WWEHKk0A//EBJyHHfACCnunKH9GstG
+	 unzEPXXADB1sn60H5RKFsyMqVVOlpMXRtbM40mSSYWGVazdRjAfZlHo9/Xht5UFqc
+	 r6J++oxUkWysNJBvnA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MIya8-1sLOaD2zUY-00L183; Wed, 01
- May 2024 19:33:43 +0200
-Message-ID: <b73a1728-cd92-468f-ba1d-c384de382979@web.de>
-Date: Wed, 1 May 2024 19:33:38 +0200
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MSqXM-1sDu8b0cJy-00URfx; Wed, 01
+ May 2024 21:23:15 +0200
+Message-ID: <44d81ab4-e3e8-4552-ba0c-209adb53aa21@web.de>
+Date: Wed, 1 May 2024 21:23:12 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,52 +42,53 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Duoming Zhou <duoming@zju.edu.cn>, linux-hams@vger.kernel.org,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, =?UTF-8?Q?J=C3=B6rg_Reuter?=
- <jreuter@yaina.de>, Paolo Abeni <pabeni@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Dan Carpenter <dan.carpenter@linaro.org>, lars@oddbit.com
-References: <20240501060218.32898-1-duoming@zju.edu.cn>
-Subject: Re: [PATCH net] ax25: Fix refcount leak issues of ax25_dev
+To: Li Zhijian <lizhijian@fujitsu.com>, linux-cxl@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ Alison Schofield <alison.schofield@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Davidlohr Bueso <dave@stgolabs.net>, Ira Weiny <ira.weiny@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Vishal Verma <vishal.l.verma@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240428030748.318985-1-lizhijian@fujitsu.com>
+Subject: Re: [PATCH] cxl/region: Fix cxlr_pmem leaks
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240501060218.32898-1-duoming@zju.edu.cn>
+In-Reply-To: <20240428030748.318985-1-lizhijian@fujitsu.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Q0QhNBaMa5wsLnpEh01pGkGo+xGa7Cmhxz5H6RrtyyM1UCtb266
- MENHUAJ3pjNkyy7z2g0p8IuP6RBVGWJIA/pbToaMAfyjmwna3i46gliOoy9sYp7BEqPikOf
- Owi/C0JaBSl1f2Xv2n9jLOkN8ujhQzNDiDa0JGw93LfvF8uP0+/X/Ojmnr5kz2IpKV8Pf+M
- SCbvIAUuckYK4DHfqnSCA==
+X-Provags-ID: V03:K1:XEvMWRPs4OkmQfzTBKzTarEa4TnOG7EMBSHd7V4F8Fbt+EmT2R6
+ lo5wtWziM0498hgVReKPl8EviA9vt1VdyPaIL1Vr9vvK1WqXmRR5gvlyDndncwod0JUrydn
+ 3KJ/3Ur0rFK/wKbgea1ZsPDQHqxca9IzxFwu475Pg94EdXVSIOtjRcKnBSQj9NP9WlkEiUC
+ IpXWeNxGOE83J02oN1dEw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:tombYyYfHGc=;q0SvgptX4FfL0yXKTtYa0WBtWaL
- A0PVcly7GxD4W6LEDLzOQrmouOVs+GoOSoMqvFHXz9WjrnD8LVD7qGKkt7kkwaBlVU0tzD6sX
- 2zBfGPrzZJ8WlDS+iDQcT2D5pnyR3tPMm+4W1wIq90CC+KbOgCASnDyLfU64DcDfTvRzgxbyf
- KM6t3SLRS0FCbDZXMzXdmsUBEMc+NRZ8mOd7eFsNr5ndYCLwURnKfiOtCll5yU2cW9AibrDcz
- vakM4GBfK5+w+CW+QmDkFNvLhY5WQ8ebRsvFIcYWS2UorylJnQrydy+xJB7APvSDC3rpj6Jki
- dnrBvKvyrMxvPn69mAEuoNl4E6bLxbCUFmCh/jlw+pyt68JZia44FP3lmuy6XRTBjQDK1OCQx
- Gbhl3M2f0FSnQY8DNpttxHaTXmK5WmMRe3x3fVJZPq9fpFHL3/Z7hEOrjVENvNW6tIkQW7aaY
- Eko/oIOG9DceyF3zaTEU4Rmcl6U8CfEgb1NW9+a9BY5hv9j6SpAAv+4vjch4S8W/ub1JPeu/X
- d1H4Ym34Uzow6OjiT9CM2pgs1TTbdn6SMvFsJJwNZrPPLZi1IAlK9PmkYHo3Z2FNdQfXZtZCo
- dR44WvI+U2cwRJN9RDJcVQA4RtUk7iB7SqhYhtLfBrlLyiVM8N5P2eg6ggLbYaL3206UDlSjO
- 1+eYdzoX9qCj0P3blbfhxYTUESzW3QSraskFtVVp8jpCQdHhX/1WQXfU9X1JkufMG7GnPvWUn
- d8PsgEz1wuyqGxJstqlB2+/cKtkshFBxAsGVnyyZz9mgY4RQ65WA9In4dQwxJJc3gIiMekNpw
- UKuo+YMTq7c5E30nme3YSe/wUZpEFGXRI1Ki79eTZCaWo=
+UI-OutboundReport: notjunk:1;M01:P0:19MG9NbR1DQ=;wLcBwn45VN2Z/0qpaigxH8Rs44Y
+ AHD83VXPZJnK9DW/AE1HWPxEbaGEERu/pHKJOMjIlUPoLFJOFhHJIuJEiQA0SIeSn5nMk1Dvk
+ gVpycZkOX+u8El+0Egp5t25jSBu3dVN0EyvH3h4FJf1JbwL4f68Y3BPD04ewS745x1eEgI5pu
+ +NQVHVA4NYORMcR+E1iwy4XpA0mqNo2dpvA7+142/a1pSQpfjN0k3bwYJPVEMfvfXUa5QXP9N
+ 8dA21Uh2Bc+w3Wqg7La1Ng+OfwOiNCGpAqIKqs8wMceFI0Iadmtl6t3xP1ffWhoKOwBKG1Uwv
+ RCIYIp5Kxzq3ba8bFJ6rgTNvf8adqMnACVIT/LaSbbFkFvWwDeDSt2cYH+DKTHUKXzR40OjV/
+ qSHKPjV7JW6oCjmgb6um0bkbWyo3M5ZLS0gJP2O8nPBFpR3eo2/9xGuf/N/avhLRja7r+Nw3k
+ CH/0tEasuQlRBuKkViOc957H400HcLNfsy1AEWZ8ySHFaiDVlVOeM/fSP/mI/DroQVCSGr5zA
+ 2I7hZ43LgtqMgDYpP3uq+RDv0YmgBwVo4fb8/nnM3MjQXgZFYgvz5KluMFAkWBHfReXQgC5bL
+ EAF2hq22XvtEuJP3j57AE5e1O9H3wixt753Hz6bEhK11FV0hlsNlkJWiHVhnHWPrargpA3D1W
+ 0xm1xx774jxjERjk1Td15iMdssDDCyNRvKQqiUdIAFHjUlYbNWzHXQSkUNj2A4tmrgV8OYEV2
+ dM7eoNu5u+9WDq/SpkWt0hCAxAB6rNMW9dcCpzx1gjLIujZtgIMs+0C9yZyuNfIA4dAJ1DjDs
+ nNL3Bxhl/8wgx31NW1lfwHP9oGD8deNLusoyRSWZfDDpI=
 
-=E2=80=A6
-> In order to mitigate the above issues, only increase
-> the refcount of ax25_dev when the ax25_dev is added
-> to the ax25_dev_list and decrease the refcount of
-> ax25_dev after it is removed from the ax25_dev_list.
-=E2=80=A6
+> Before this error path, cxlr_pmem pointed to a kzalloc() memory, free
+> it to avoid this memory leaking.
 
-* I suggest to use more than 53 characters in lines of such a change descr=
-iption.
+Can the following wording be a bit nicer?
 
-* Can it be nicer to mention also the term =E2=80=9Creference counting=E2=
-=80=9D for
-  an improved commit message?
+   The local variable =E2=80=9Ccxlr_pmem=E2=80=9D referred to dynamically =
+allocated memory.
+   Free it in one error case before it is reset to an error pointer.
+
+
+Would the summary phrase =E2=80=9CFix a memory leak in cxl_pmem_region_all=
+oc()=E2=80=9D
+be more appropriate here?
 
 Regards,
 Markus
