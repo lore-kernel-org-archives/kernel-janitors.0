@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DE712FF67;
-	Wed,  1 May 2024 16:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C580F17C9B;
+	Wed,  1 May 2024 17:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714580774; cv=none; b=tWsSHCdCseuCQ4d6hDlWAhSILNloKYUqFkBUqbtVvddNLmYnCSNNOd22CL5BxwDq/O5eCu8pPOW2vcmZ+cSY2WQaHvdc1ri17oEo+cDoT+BhVjsGL8JE/zPWc5NWhwUdnn8nhVemmSQ7O1guniMUawDD4qWXO0lRxLFLZXpg+NA=
+	t=1714584863; cv=none; b=eZ3RaD36qRbhoDE9z8UqnQ8yCgxIEKvZHhqKHklxijIzPAlLSzVdZCA0uJg2lbJzM424z8eXEKBUTbQBmVweSK+oe5weeUX+o1QkZLSSW3xEQZuiVrtx6TqcKjYYP+UPzEZWdT2f8G5dP0lqjBIomApLaKiCBkCTn2DD+pBvvWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714580774; c=relaxed/simple;
-	bh=lzRGZEj9Cwp2HA/pc1N+/ydMiaJGgfFfNX+FdTWmxA0=;
+	s=arc-20240116; t=1714584863; c=relaxed/simple;
+	bh=yOqewtbEvLvJUxLkGDrjVjmDrRj+y1aLBrnh6oYMjJs=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=YKYUJqUEeVLcDRLswCPlajsczKrajt4A9SaNeCAVktrGPWTkaLaYKwy8XX24+iV5iysNBi/oWSx1Bct11479UqOnGp5B3Hbdr5jgunM9YK+GnEYSJYRPnlhUXK8yBwSW6a2/TkM6rs4i8j2iAg0iRrocJFnEPkNysMkiEzE7R9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iQ7TUAsw; arc=none smtp.client-ip=212.227.17.11
+	 In-Reply-To:Content-Type; b=cyaUkpVKvJWeUvq1uUtpXF5kuItWiuwWYvyradSULex7nFuOTpOqmOStSIUb7QnEv5GI4YQbUxPkOI7jugL7dVKB93tzxy6hiuoh3KhQmuVHSnsMXjrJms9ld6ofk5DJRwZ46A0hiYNs+czyjeCKrBDQzBDPLi6bMZvlxhiKYAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iJMAy+Tz; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iQ7TUAsw"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iJMAy+Tz"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714580758; x=1715185558; i=markus.elfring@web.de;
-	bh=Yz2vQ8pzkeNI7IfTDAQnX8L3w5ojgahuffZfFwQuwV0=;
+	s=s29768273; t=1714584823; x=1715189623; i=markus.elfring@web.de;
+	bh=gO4YnLVa8TvAJ1FCzBqXMrZgFrD5LQKEdYPyOsmQK/o=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=iQ7TUAswltGrgH/s9Dngg1S2ctH2AquXOy2S5LRioXaYkZhLwpzJVJ1h3TIJdut+
-	 yw6ypjtAh+2RWii9xJqBOT/djTUrL4Zb3d6zaNGD1JMzoeEZvyWbSHp6WivWXbyQY
-	 WjSqVfYwDunkF9y4lwI4ERCsQwAVRSoqFzg1GVPPbxcMsTdpaMVwugiBN/k67GQCy
-	 +Y9DQZ72qWVv+yP/G+ITXClDhF1asIFohY2NW0FjY64epFU+BomgqTpo4Nai8KoD9
-	 vNL21ApexmrVuOJTnyovuy62zQhkFx1lH4khWoi0O8EwD6K7/dYiil5kQ/O4u1boh
-	 XagUK8XzIdkptJ7i9Q==
+	b=iJMAy+TzxT006XpYKO2wp5st01dt40T4i5pLswwAwPKv6RGEI/y/A9m91YMhyLH3
+	 jhP8L4FYkaS92Rd3Y1qIBRI41GdJPFLxny1ZQfInnK58p1P+PKq9jO0UCX+kdj5WW
+	 anziNI9yiIPwACZdRPkTjyYiDUgNCm+VLBi/kXm/qhoMn35fS8qxvu56FhO5+5ulH
+	 h0eRR8cl++sGNIVvYKrhW97GQ77gABWAqFNm6LhILUDA45Husf4JoFQpInqCoWUCR
+	 DWC376lhFfDhCZIqRFznkFk4D/twW34pBqLkXFgJat96senvKLStxeq9+MzIXPoGG
+	 CrlU5ikr+cEivmWejQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N3oz4-1skEnF3kY4-00zejV; Wed, 01
- May 2024 18:25:57 +0200
-Message-ID: <f5272fc5-8d79-4717-9ad8-c503d8abda87@web.de>
-Date: Wed, 1 May 2024 18:25:54 +0200
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MIya8-1sLOaD2zUY-00L183; Wed, 01
+ May 2024 19:33:43 +0200
+Message-ID: <b73a1728-cd92-468f-ba1d-c384de382979@web.de>
+Date: Wed, 1 May 2024 19:33:38 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,48 +42,52 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Yongsu Yoo <yongsuyoo0215@gmail.com>, linux-media@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Hyunwoo Kim <v4bel@theori.io>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-References: <20240308121021.1732-1-yongsuyoo0215@gmail.com>
-Subject: Re: [PATCH] media: dvb_ca_en50221: Fix a bug for detecting CI MODULE
+To: Duoming Zhou <duoming@zju.edu.cn>, linux-hams@vger.kernel.org,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, =?UTF-8?Q?J=C3=B6rg_Reuter?=
+ <jreuter@yaina.de>, Paolo Abeni <pabeni@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>, lars@oddbit.com
+References: <20240501060218.32898-1-duoming@zju.edu.cn>
+Subject: Re: [PATCH net] ax25: Fix refcount leak issues of ax25_dev
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240308121021.1732-1-yongsuyoo0215@gmail.com>
+In-Reply-To: <20240501060218.32898-1-duoming@zju.edu.cn>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NYP9A02ksDnqr5mO5h7+9Zn5xo9ajjorC+WD0GoLE8b7+uPalRj
- plCOxjqHsTfaCdTS/THOxNWeCKaRw4CqZ/wLF7gBb4mnt36GFSO5OQi6LXWJjY0Yk6NACH6
- /mv0U0F2wZzI4/8b4puJF1bumsSvURp2/00FIxwkvTAKtMGRjglgwXJ0HzPbLVCWRB4Fyjw
- aUnSOAffddmlvVngUzHlQ==
+X-Provags-ID: V03:K1:Q0QhNBaMa5wsLnpEh01pGkGo+xGa7Cmhxz5H6RrtyyM1UCtb266
+ MENHUAJ3pjNkyy7z2g0p8IuP6RBVGWJIA/pbToaMAfyjmwna3i46gliOoy9sYp7BEqPikOf
+ Owi/C0JaBSl1f2Xv2n9jLOkN8ujhQzNDiDa0JGw93LfvF8uP0+/X/Ojmnr5kz2IpKV8Pf+M
+ SCbvIAUuckYK4DHfqnSCA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:9BKkzP7ZYVc=;QJKRR2TIwnd/Jk/po6j0IxJdlmp
- 0c8GZ8fIPad4GL9bCyly3BpILOJKxGizCIWv+uuF9S0i8KVjOWJk+qJwWJB2+l+R0SfQZ7Wpc
- eAQEcge2bE/f+JObz44jRtr+PyAiUwELgmhfRM6j6mkYGromfqbYJzZGXAqX1dm7Fwjqc8lUc
- t9dJzOGKIAnn7i1G6IrDltnlVPFrF4HSRCuohdD2paIIInssYgy4GO0DQFPicKPdEW2uQ2n9t
- yThpcbJtaCPZevsXDsI6k9/LSL4Y8EzF6xz/WcLyXFP34BNjYVEQO3MjFDSNhuOFfR9intw4I
- wuhn02Mxsm2j6uJOOsoKhVhly4UGCGnxAxIdrbqh33jwUG8Se2rP6pl4/b6I5RPktphpXADYv
- IsTzxMAbBvYg2LyEiuX14yr0tR+Iexdw3Ax00eamwN+DCL3yzGx5ec7BO3SPdf+qIPbMaVkBV
- XdF7ln7EIndlat2UjA14lqA3k8XlpyMGfOjPOjGsglfV3f9jeM8V59frItSWgwO8/nPU/HeG9
- 5eC0cd852Azkm4ctV29PvkyxcHZRIuBKxJDESQeZCjDESwJXMVKsOS8qWrH/IZ9AXOkTU8KjJ
- 6mmcc4ugorbpS5xb2VdVfn6bb3k0vPQt1ChY9tHZCSjoPPWh38xmpjNRhrowBWfU/wCZNa5Ox
- YeL8cCJovEB3P+3Dfgv1NHF0/LLsAx6raQ34qllfrAei7410Nw4QvbeDPfKvlEkLFXyXyV22c
- RDuyf+Ntmt1A7uIVQxO0wCANhpwlDnzNqX02KlflSv+J8JbCvBzKKEEMwGsLrR8yIQPINOzYz
- JwB9JGNUZdKD84PYRC4L8kfc+gkN29sELuvXe7xgbSRh4=
+UI-OutboundReport: notjunk:1;M01:P0:tombYyYfHGc=;q0SvgptX4FfL0yXKTtYa0WBtWaL
+ A0PVcly7GxD4W6LEDLzOQrmouOVs+GoOSoMqvFHXz9WjrnD8LVD7qGKkt7kkwaBlVU0tzD6sX
+ 2zBfGPrzZJ8WlDS+iDQcT2D5pnyR3tPMm+4W1wIq90CC+KbOgCASnDyLfU64DcDfTvRzgxbyf
+ KM6t3SLRS0FCbDZXMzXdmsUBEMc+NRZ8mOd7eFsNr5ndYCLwURnKfiOtCll5yU2cW9AibrDcz
+ vakM4GBfK5+w+CW+QmDkFNvLhY5WQ8ebRsvFIcYWS2UorylJnQrydy+xJB7APvSDC3rpj6Jki
+ dnrBvKvyrMxvPn69mAEuoNl4E6bLxbCUFmCh/jlw+pyt68JZia44FP3lmuy6XRTBjQDK1OCQx
+ Gbhl3M2f0FSnQY8DNpttxHaTXmK5WmMRe3x3fVJZPq9fpFHL3/Z7hEOrjVENvNW6tIkQW7aaY
+ Eko/oIOG9DceyF3zaTEU4Rmcl6U8CfEgb1NW9+a9BY5hv9j6SpAAv+4vjch4S8W/ub1JPeu/X
+ d1H4Ym34Uzow6OjiT9CM2pgs1TTbdn6SMvFsJJwNZrPPLZi1IAlK9PmkYHo3Z2FNdQfXZtZCo
+ dR44WvI+U2cwRJN9RDJcVQA4RtUk7iB7SqhYhtLfBrlLyiVM8N5P2eg6ggLbYaL3206UDlSjO
+ 1+eYdzoX9qCj0P3blbfhxYTUESzW3QSraskFtVVp8jpCQdHhX/1WQXfU9X1JkufMG7GnPvWUn
+ d8PsgEz1wuyqGxJstqlB2+/cKtkshFBxAsGVnyyZz9mgY4RQ65WA9In4dQwxJJc3gIiMekNpw
+ UKuo+YMTq7c5E30nme3YSe/wUZpEFGXRI1Ki79eTZCaWo=
 
 =E2=80=A6
-> really connected on TV. This means that the CA_GET_SLOT_INFO ioctl
-> does not return right informtion. This is a Bug. We fix this bug.
+> In order to mitigate the above issues, only increase
+> the refcount of ax25_dev when the ax25_dev is added
+> to the ax25_dev_list and decrease the refcount of
+> ax25_dev after it is removed from the ax25_dev_list.
+=E2=80=A6
 
-1. I hope that typos will be avoided for subsequent change descriptions.
+* I suggest to use more than 53 characters in lines of such a change descr=
+iption.
 
-2. How do you think about to improve the patch further with a correspondin=
-g imperative wording?
-   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/process/submitting-patches.rst?h=3Dv6.9-rc6#n94
-
-3. Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
+* Can it be nicer to mention also the term =E2=80=9Creference counting=E2=
+=80=9D for
+  an improved commit message?
 
 Regards,
 Markus
