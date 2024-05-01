@@ -1,36 +1,36 @@
-Received: from msa.smtpout.orange.fr (msa-210.smtpout.orange.fr [193.252.23.210])
+Received: from msa.smtpout.orange.fr (msa-213.smtpout.orange.fr [193.252.23.213])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773BF48781;
-	Wed,  1 May 2024 05:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33432210EE;
+	Wed,  1 May 2024 05:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714541551; cv=none; b=Gy6hAC5yBlZpi0qjlO/kewC0HqfhocqVwfEJlW4jNOLsyZqYXowfdfLXDadcBbtAKZ3pooyTYP9sFMoxoEkyIlvIzAXqMb6aivsRcvcIwA8g18aWkcUaTe/9QcWph5zmXR5Yzl0OiNRxeGRSlJzICI7lpMwYoO1W1r3sfYtzgb8=
+	t=1714542164; cv=none; b=k71h1l+Uy2uWYH7S8svrxuu6GAWy0b6OfQ4+pfpAGtzQa+QTkHviUrgXz2qBFXtjdtf6/84fBGs9BfpivZy2MVKNu/bVTW+JgoMG2pJkQMC2UAfkXxH8clMCbsfWdwF+/ftF4kN05wfk9WEeaDYfMOXDtgTigrBqKYYiMbkP3xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714541551; c=relaxed/simple;
-	bh=XGnwqzGVRVLKMqUxqhbPMjTk3pC1cEJXJekJTprHVbY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q7B8smJc+qBygTaL16I1elJwy8dYDPwqJtGvk9XFclyiqfjztidnY55l8rsQ3ObJC4Gbux0z5OIzKD6Mqabdz1xZ8TZ4iGgjuKG1KL3LqOEXUILF+VuLPmeWvHpWXRJGTTiYEZkeF5ThFszi8jVEvc5qUCk+1DCmRtcr6ctgG4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Su0SsbPE; arc=none smtp.client-ip=193.252.23.210
+	s=arc-20240116; t=1714542164; c=relaxed/simple;
+	bh=/bfHl25T1ErekIGpv7GqhWKjHMj3kURow4DUhvA1XuU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ucNSW4qncJMqo9XNqTrsPdAkGTZMgjxdXHIjWwIV65J8MhP+CZWhQeZv8WlHvDMG8ZxzN+gu2VfE3h+/vmhxzfujB6iktz9HFar/DjxZcoPQZI4V5+Cyqqx4KiGaU+11l30p0q6nl0t3l+n+jt+hFVPVvXucZ9xGGp+bi83p+eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=jmps/2J9; arc=none smtp.client-ip=193.252.23.213
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Su0SsbPE"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="jmps/2J9"
 Received: from localhost.localdomain ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id 22YcsEsBRAF5O22YcsxtZ3; Wed, 01 May 2024 07:31:09 +0200
+	id 22ihsnjwQ2DIx22ihsslTp; Wed, 01 May 2024 07:41:31 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1714541469;
-	bh=gkHbjdcpVGhYwhArziDiurlEAkgTgXQtE1ztZgQ3NT0=;
+	s=t20230301; t=1714542091;
+	bh=GrXhC34dkfPzEz4DZ6QAKxewlmGX1gPA1Hzs/EClZkY=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Su0SsbPEuir6j/Zux1shoe7hWU5cHbMmAjZeNs+AcGlPQSQzH6xK4g3hpG/lvEYMo
-	 4PIs7R86sjYyJBuc8U4bGpMUTnaiLPi7jJq1qJYqDndXtMdUsG+Bg3UiMlYt2oEqzH
-	 uLz1xQciAnlGsatK1tLkvNwo02V0pHtM7GQNygrpGOB443fIH8qyHwoLKojrFXi/hV
-	 1AhKneC8872Xdz8T3HJkWr/NEf91mmgnvUyuPlBQuTTZdAbnsBAnJ39g5dghr/OGVn
-	 ZvyOT1V7D551eaLhKwrldwt3LZdXQKLu0YFve9CyrMVNwAL5PfinnDdg+zo5Xt7nkI
-	 ylq36OpLmWmHw==
+	b=jmps/2J9fr/NqaIQGN8fIXN4GY6Y7XSLJhVlkhDNSleMCucp7sEJ6y6HJDl/iVzIj
+	 hVOctkISIgjfIQPd4omQ79rR2TcrT44uFA+9vMMP+qnitfKLU8f0Lk/DkLME6LRWkR
+	 ySms2KPSQ143zHxwabp3cQcg/hnxBtneRz1uCbP+q21iCEd86c/X0SLcgjN+Q+PFgX
+	 BhvSRVtyzztWL0L+iMnlXhh9DC8eBPIQ1EVVptMF6t7xFFNq0/HyKiw9bCTyocDTFA
+	 rVWaBI1gqB1gCNBaJ2Q7LI5eFnSSiwdYFM/GvP8ZhrkwLhM1bFYzq+iaPyCBuq9Tz/
+	 Eo9ZJgrsSqYlw==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 01 May 2024 07:31:09 +0200
+X-ME-Date: Wed, 01 May 2024 07:41:31 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
@@ -38,9 +38,9 @@ Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	linux-input@vger.kernel.org
-Subject: [PATCH 1/2] Input: tca6416-keypad - Remove an unused field in struct tca6416_keypad_chip
-Date: Wed,  1 May 2024 07:30:54 +0200
-Message-ID: <926c0f40040671565dcc54d5146a8f9511fb6d46.1714541432.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] Input: matrix_keypad - Remove an unused field in struct matrix_keypad
+Date: Wed,  1 May 2024 07:41:21 +0200
+Message-ID: <4f1a946789445500b6118b9ee1d6ef5255f8c696.1714542052.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -50,7 +50,7 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In "struct tca6416_keypad_chip", the 'irqnum' field is unused.
+In "struct matrix_keypad", the 'gpio_all_disabled' field is unused.
 Remove it.
 
 Found with cppcheck, unusedStructMember.
@@ -59,26 +59,25 @@ Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only.
 
-It was added in the initial commit 30ba3ead0576 ("Input: add keypad driver
-for keys interfaced to TCA6416") and its users were removed in commit
-687fe7dfb736 ("Input: tca6416-keypad - always expect proper IRQ number in
-i2c client").
+It was added in commit fb76dd10b911 ("Input: matrix_keypad - add support
+for clustered irq") and its users were removed in commit 8cf4b3683a71
+("Input: matrix_keypad - consolidate handling of clustered interrupt").
 ---
- drivers/input/keyboard/tca6416-keypad.c | 1 -
+ drivers/input/keyboard/matrix_keypad.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/input/keyboard/tca6416-keypad.c b/drivers/input/keyboard/tca6416-keypad.c
-index 677bc4baa5d1..044401d01bf6 100644
---- a/drivers/input/keyboard/tca6416-keypad.c
-+++ b/drivers/input/keyboard/tca6416-keypad.c
-@@ -45,7 +45,6 @@ struct tca6416_keypad_chip {
- 	struct i2c_client *client;
- 	struct input_dev *input;
- 	int io_size;
--	int irqnum;
- 	u16 pinmask;
- 	bool use_polling;
- 	struct tca6416_button buttons[];
+diff --git a/drivers/input/keyboard/matrix_keypad.c b/drivers/input/keyboard/matrix_keypad.c
+index 695c03e075b5..7a56f3d3aacd 100644
+--- a/drivers/input/keyboard/matrix_keypad.c
++++ b/drivers/input/keyboard/matrix_keypad.c
+@@ -37,7 +37,6 @@ struct matrix_keypad {
+ 	spinlock_t lock;
+ 	bool scan_pending;
+ 	bool stopped;
+-	bool gpio_all_disabled;
+ };
+ 
+ /*
 -- 
 2.44.0
 
