@@ -1,82 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032BC15E7F4;
-	Thu,  2 May 2024 17:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7661802BE;
+	Thu,  2 May 2024 20:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714670096; cv=none; b=qnNxsW12F/lUFg+4ZwGHmcJHOjUb2mfjWqWGPCdPCCw7F8+LMCBtxuFvCvnGZGHP2fjozFhenMkmyOAWX4e2Lz3d+Cry89VIuwJ9f+7mdzTKLCXwXBuWTygg09nyHo8k976AsSoeG2zQqrZhYyJxlQPwgVVHGL6i6G+0mlQ9uk4=
+	t=1714680095; cv=none; b=m/V8HIFnGFc2AlzjL0VJm3nlTWDP1N2jA9VZRvUsYnh30u5uBTPhtTAY0Q0j3NdDO3AiKHTEyV9fEq0ofHt4kQqNS8vygK/G5pH2M29CrpZy4itqs4EjBbScV85igkgQzEgzf2/0EUTBMRvVoxmPjJm7zXPUvbrgPCLM/o5QNtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714670096; c=relaxed/simple;
-	bh=N5HHrMygWqjBvhvqTPXKIRh02+LNnMgHkw3e9eLY0ew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D0YfPSndBxG4lp1Ec+E526TlAFvtWaykP82dBSBJWnsjxPIqOKi6/tC15osf/vPHVC1fJK4gKaGZHbW8kEj6fbUfTWaJKoig+Gr+ceGvMSiGFQ9bJofju6W03X1RkKtxXIlJrSsw7MPy0KhlaVAxZH5MRyE4MZVST0Mi6JCdUno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/YGbibJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714680095; c=relaxed/simple;
+	bh=EM9PQ0+jpznznKXXf9DM0GjqB6Lbm2/vk2ex+XeL0sw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=MKeic+HqBM5lLz0EO88zKiODorer3hP1E+X/iP8oafc2wR1LNd8ZYe82G/GNLXKaQ/b8gL4YhT5DVdvTDMChSqaB7kJBdAG/kwmeOP1Z88u2emzAUQnas5G70UmjtSrX18c+2kPOD2uq1voBD2ERvNsaSz2wyUEPkeHuU9ohjkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Xu2xQqpE; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/YGbibJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABF56C116B1;
-	Thu,  2 May 2024 17:14:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714670095;
-	bh=N5HHrMygWqjBvhvqTPXKIRh02+LNnMgHkw3e9eLY0ew=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m/YGbibJzsWR0UG2me+jlP7N6NbtsfyxLPs94dUbAHBdUosFWZ3fAbXfTudpooG5q
-	 Ou4W/VP8l/jtDiya8wSkyrYLgbLWid4J2VMgBoX2JsBvXVcjHQ3CeE2xFjkX6BoOG/
-	 InKwP3CAB+6vC8c3g+hkcGAjQGOihD7y05OIHD9dYo9LeXIT5Du260ncYPhvibd0NW
-	 7n6RFjWUXJ6r4wX00sG/puIqaOvx23EBX59y8xyp04Y7R1+T+YVcHAKrkHvqY9Kx9H
-	 sHj8kgTXofB2P1/Pfxe+yxImR09iGrQF4B1qoVlGVt886zcdLlK9nJyHGmr590YuCH
-	 O7uGRlvkCb3DA==
-Date: Thu, 2 May 2024 18:14:51 +0100
-From: Lee Jones <lee@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Pavel Machek <pavel@ucw.cz>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] leds: mt6370: Remove an unused field in struct
- mt6370_priv
-Message-ID: <20240502171451.GE1200070@google.com>
-References: <e389be5e1012dc05fc2641123883ca3b0747525a.1714328839.git.christophe.jaillet@wanadoo.fr>
- <16df315e-8a05-49a4-ac07-d1ed150c9317@collabora.com>
- <d526b169-0385-4f23-8806-17bc73c2507b@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Xu2xQqpE"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1714680065; x=1715284865; i=markus.elfring@web.de;
+	bh=EM9PQ0+jpznznKXXf9DM0GjqB6Lbm2/vk2ex+XeL0sw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Xu2xQqpEWCvUFCbbW0roNkMalj80dV3TYsg0xyiKFP/JnQYofxDKQ4Nkv/iFpcaT
+	 /+N5UUT1wn+5rhDlk2emkj3qhf283y/kN0cja5LFmNGISFk0cxGgKisrZPDKHWcxG
+	 7PNZaEW+4D/krASG8hil4VBsfQX01qZoyhrY/LhKuM1cwUQRh1Vhf9yaitPo7bHHt
+	 OE5hWg4w+VcRseB/2UNCZOSbxiBkGmuvlP2+YsKHEZlXIxbQ6b9dUnYG0lMH9u63H
+	 JbuK7Bay9IYV8R7YrJJUazCE64+fZLgQ1N7RJBpO/97yS7Zy/FT8TfWpm5d6WwZbk
+	 DuoGw3mFmW1zX6UZSA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mx0N5-1sqBGl3q8p-01319C; Thu, 02
+ May 2024 22:01:04 +0200
+Message-ID: <068b6038-d784-451b-b43b-41b94c24fb29@web.de>
+Date: Thu, 2 May 2024 22:01:00 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d526b169-0385-4f23-8806-17bc73c2507b@wanadoo.fr>
+User-Agent: Mozilla Thunderbird
+To: Duoming Zhou <duoming@zju.edu.cn>, linux-hams@vger.kernel.org,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, =?UTF-8?Q?J=C3=B6rg_Reuter?=
+ <jreuter@yaina.de>, Paolo Abeni <pabeni@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Lars Kellogg-Stedman <lars@oddbit.com>
+References: <cover.1714660565.git.duoming@zju.edu.cn>
+Subject: Re: [PATCH net 0/2] ax25: fix reference counting issue of ax25_dev
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <cover.1714660565.git.duoming@zju.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:mvbvX8/mivlMFaAOxEjDeoSrVy3J7goo3lJNTbo3VA2LZdwh5O0
+ 6y0nBDxB48mgLVjPdzWMBrmCgLJ9yDEl3HLkYS2IepAhtnMLc2ocQogu9oPp3mkTwgtCJdo
+ KdkG6PTkS7YPrP4x/RCmQgs2lRfW9rnm7hZlniNr5pfSv3+B6AoanvPUDF9WZFVECuyQQqe
+ tFVP0+JVRPUK8LiqtFHEw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:JBpLSAZ04ic=;LgKLxYkfMEg6PdZW/tP4hxW9kYL
+ miSii5dpI48R17cNPTXQswm4nIUlSIs/JFJHlBlaAKj3Bc8VEdHH1JJZ+S1x5tFBDdOhbuOhG
+ s+pAUetGdKFCSbIjrtzzMsxYaAfiAuEsQh+enKuObKstyVyd1Aveb9sPa0MvDICxCIqVv2G4i
+ FpuYkU8O7jGbpwzAs+QmKkINKkdsxH3KfVnJ89Wr7bRHf9x9/vL+UTFLJKSxpqqcJwplli4Wb
+ E3Y0yyq0SODl2LEX5F3v97mGoUE48GadH5R4VcQHwjmmHos9QakEa3J4Bfbh40Xfjma6gLkMB
+ oETiO1zqIiUxkL3F7ZTtWMs9gybsIaCBORiK5QcCUCz87IqpedMJDMnDLWs5/RIb5wpJ2v0fh
+ 2oLktCqJG6loroEazfLkIw52J0sbwZKcaQ5n1iHd42z8f4fOfIW5zcQcE4qpto6lzJq44MkZK
+ CUwmNCwbPSZRCYuJG+P/F7ggtWm7uvyGWgZkYAAaNjmphFBgZq8BlBQFrgEwwYc8AbMKfKIT6
+ dsP6XXpnx0anbsFnhPi3nnlDQ5AccCPB5z6nxIUS8HnFLJ6xX63I1NPHIQ6R1E60rNFKMPhiA
+ L32auVtE2AixCKZVWJLIAFEoeLevPu6ex2dPb1bNKnkWGCsicIR0je9NXofgH2zdAlUitFjFk
+ zx+YaCBl6TrfPnOBIZj0xsjDRj+1W8S/5vIItMV2tkwKM/NTBCN+57IJ4izF4xE8rJbNeFFEg
+ 0ezIxXlEmaC7IXlWzPc7aM2AP9DHcxTriq/yAMv603EBkLLA8533w0B7KUAIwmFEmnWGLKviK
+ DIKr28TIKwCZgdDfwuDCPchNyxHm53cwq5PsLH2UmmTf0=
 
-On Mon, 29 Apr 2024, Christophe JAILLET wrote:
+> The first patch changes kfree in ax25_dev_free to ax25_dev_free,
 
-> Le 29/04/2024 à 10:13, AngeloGioacchino Del Regno a écrit :
-> > Il 28/04/24 20:27, Christophe JAILLET ha scritto:
-> > > In "struct mt6370_priv", the 'reg_cfgs' field is unused.
-> > > 
-> > > Moreover the "struct reg_cfg" is defined nowhere. Neither in this
-> > > file, nor
-> > > in a global .h file, so it is completely pointless.
-> > > 
-> > > Remove it.
-> > 
-> > Sure
-> > 
-> > > 
-> > > Found with cppcheck, unusedStructMember.
-> > > 
-> > > So, remove it.
-> > 
-> > Again?! :-P
-> 
-> Yes. This way we safe twice the memory space :).
+I find this description confusing.
+Would you like to refer to a ax25_dev_put() call?
 
-I changed all of the commit messages in this disjointed set to flow a
-little better.  No need for a Fixes tag either I feel.
 
--- 
-Lee Jones [李琼斯]
+> because the ax25_dev is managed by reference counting.
+
+How do you think about to link also to previous change approaches?
+
+Regards,
+Markus
