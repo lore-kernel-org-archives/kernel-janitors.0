@@ -1,41 +1,59 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1D78002E;
-	Thu,  2 May 2024 10:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC91459B68
+	for <kernel-janitors@vger.kernel.org>; Thu,  2 May 2024 10:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714646499; cv=none; b=CpsORReql2cG2GPIagrAx5T26gEHa4vviBZKXd9ALF18yhkL1ieNI3oPVzrA7wtnn3o11aXvWhbnk3/DrvyiSWcq0OcvuhknIZP2UZ2KKX9I8Hm9igqtHnNy5Dx/Y+7Gb0+MI2ZuS3s6sqP5Gez0g2you/sCCs10cXx/pjQys/g=
+	t=1714646850; cv=none; b=cwVLeL0zWynDaACgPnISAIPnmEix1EVkFfnLNJkHBHPh4TKO10SxsbBicsAIPMo0rFxxgZWalvcMFqp1EZLoRrhoPMll4BwkGIpNHOi0//vg/ynU2vWox3sxn5AcoUEdg3ahgP6NfIuf/zrEn6ovqicZcA/8/QhB32VYCsll2vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714646499; c=relaxed/simple;
-	bh=CV2wtbkzE8Y3B81hMOY4be2ADXpu61Py3qMbxiAQcYE=;
+	s=arc-20240116; t=1714646850; c=relaxed/simple;
+	bh=0snrwj/IadpQ05qbdQCyEP+zwd+JBxii2GMgzUKIB/k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bl0EZ4jg2ROEz9cXWWXEFDxS4ts0iyCBWEb7cwDU8KVz2GX0YB2bg0OGCCAnI22BlXQw+T0ln8FwN/IfJ/OFKsZJSfLFKTDx0SrIKnQkrTeuWlV+1Z2ZKAs/Rap1Lw/AVqpicaEF/W4sK9rC2wUtNNfJUAuDFGo6Vz2Stt1v8X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qrNyE+n6; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	 In-Reply-To:Content-Type; b=Inp9cIsnGImzof2AYQYh4ZoUu24lWQBL9MeVdYEpym/TCrrL/TafO/WU6vCWyAxV2VUJ22qhuwaTJGOLYBuMcaMW1ZmOiXnzpLmWtr6El9oW/O80mRtIWiHSoQ4bsDZUz1B8ne+foQXOaLVqxyGOPYrHTWWTbPFM6kXRW6M4ZY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ngeCUwC1; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qrNyE+n6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714646466; x=1715251266; i=markus.elfring@web.de;
-	bh=CV2wtbkzE8Y3B81hMOY4be2ADXpu61Py3qMbxiAQcYE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=qrNyE+n6bzmNcM4GotOsI7AQLr8mIoM5KHNtXeDlljv2a+MrxwV/litOSHBhgz9r
-	 IatcozJgfw2bY1DsqGjc5IijxI/fiIuBezyiRO12D7Uf6BQqXjDOJGC2ibEohflC1
-	 IRixXNI+vZCgHkgLeps3VZ3vW18xFLC8xNdHF9dALJ9mPJP1HpRPSd9afJSYf/W7N
-	 M4WnOgwi2PKfpYOntE9fln1ihOFFmRDtQqrs1Ec9DXMf5pU6Kbht4NlqcHxJ6zqhi
-	 I9Ri8K+ja1unWtLcsbfl2RvBNMyGPA1hX5AgAlHkWGefRjej3RDJm6ggXGc5XGjpb
-	 M3F9F+S/8DC33NjBfg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M28WT-1s4OcN0Lyj-00HEd4; Thu, 02
- May 2024 12:41:06 +0200
-Message-ID: <6f1fbc13-af76-4e24-a788-b5c2a52aa519@web.de>
-Date: Thu, 2 May 2024 12:41:04 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ngeCUwC1"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-41b4ff362a8so72582295e9.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 02 May 2024 03:47:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714646847; x=1715251647; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nJZoBD0R+PUXOUgPNDoGdJNquKDNmlZwcM5ObQ89ibM=;
+        b=ngeCUwC1Dw6rwH14OdDQe5zFyhil2+iOuLQpkd4pUN4TNiQE2txc6BUaGD1lRR/cPU
+         diescJjH9ARwP1E4gy0GWWMr84ig16JPYNTqHlwkjPmGQ+wYp/7M1z5GgX/9IP1vLI4j
+         xg6HJXVPui76Uy1vb26THunqC0h5Uiz3iLTXvdGOpLfMcI7liR9+F/XgnfM8S6+fQdBu
+         WyeE9pXhOxNH2OXsxuVl5qt3B2qh8hQCp8ZxpoKqpA6Fh8eE9OvYYofMB1/lsa98zcjT
+         lcOzSDxWtOeQ8zlz3BacSGYL/pTd2I9popbEEgu/WXzW7UOJqIC4xGaHakHsmjSxqHUn
+         VkEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714646847; x=1715251647;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nJZoBD0R+PUXOUgPNDoGdJNquKDNmlZwcM5ObQ89ibM=;
+        b=BZvYmipWkbFSlN7wTiD86SRG1KW7J0jrW49n9IlRC7HpYovXRZAZxzz0LADJIJOdf0
+         umGL9GIuL6s12XNtfQRYJXxitPDH2by1Yd06dljHhDPoq1EmqW3O041xLoMPjq3m1fgG
+         I5RKiku1NPiMEkzWUIaH3C2toKPN+uBSUaGAho2G3+of5ikKKRspyV0hN3cmVPPZ4cp6
+         2z20h1gXZ9CoqevqHD+BaMqNuvoutE/tatC4kSjXw3FoKmmEeBlgAmDMcJ2UhQfTeg9c
+         G2LCb98ppQerydXoXrhMu/fvKei5RsHTkmN5o4t8Eu+fWzPNnSU8GlLxZ8pb8RKjuvB8
+         by4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUqvp0QUFbCZAmqtN9uzfn9IGAim/j0tZPlk++ZN8h5bysNCGGOG/8IVzZvQuSWSuYtlXonYFoIeOb/x5ijRFFLIPAwmC63+5Kbb7WCThzt
+X-Gm-Message-State: AOJu0Yy21qhE/dhe9sZhaueSV1r83ZF9X9LaGsXju/6MdDNOlHiWcSAz
+	WFORFiCq0DhkZf7wUkbhgK+aFMZzazJmpJCF8TY3O4gqJXrjpv+QfFuk3EWuTbM=
+X-Google-Smtp-Source: AGHT+IHYcTmM8b1pD4V0PoReRNQd+u9RU4mMwpYBZRoy8NI6vUsWmFxNt7MUWFZQQqQdDGVwLcgQbw==
+X-Received: by 2002:a05:600c:4f52:b0:41a:adc3:f777 with SMTP id m18-20020a05600c4f5200b0041aadc3f777mr4552975wmq.16.1714646846928;
+        Thu, 02 May 2024 03:47:26 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id hn26-20020a05600ca39a00b0041a68d4fe76sm5943076wmb.0.2024.05.02.03.47.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 May 2024 03:47:26 -0700 (PDT)
+Message-ID: <74f5abc6-4f79-4dd8-bc36-b37669652573@linaro.org>
+Date: Thu, 2 May 2024 12:47:25 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,61 +61,33 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: mfd: axp20x: convert to use maple tree register cache
-To: Lee Jones <lee@kernel.org>, wangkaiyuan@inspur.com,
- kernel-janitors@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240429024547.27724-1-wangkaiyuan@inspur.com>
- <a7db79ae-71a4-4d73-a7a3-7bd19f8e57ba@web.de>
- <20240502093316.GI5338@google.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240502093316.GI5338@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:a9phrvGIvGnKucv9fbnDFnYvdyIe+o8E6QCueFncNLhqS4VUlZ6
- HvuNh6FFD8dkHx8gRuBTfuv6RcWnJDTxx1USXb5o57MnSR/e/HabdjvvIiuYlG6BRnJtGp3
- fzJ6fs6UPJjDkq+7kGkz10GxhOW2Bwn10fAAUWh9FZwjlnL4DyjQdhWptpW5CTMKzZbHrK3
- LxMreKwaAATPlxVZr+PEg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:7cl7PQjaUrE=;vIel+TKL9PJNH4MedUOaBSzH+5+
- cJkThgf3RfHXjEpxonE32RsrsuYIGeTgikKxiHOOFdZ4oioOPldg7XvlJVEDlzs7AN3CsPldz
- qYL3R5gv8X+A/l0WaxZ1L4Li4NJV2vw0f3EUrCLBize3C5hM6/5U0SFQBalh/P3Fa7I+OEOuR
- gXJiuJwMZyot/3SMlc7Li2sDuwzoyAAfECUlvZQ12yrkaZqNSij9gQ5/CwF8EVTkVGdYk/qvj
- uHmVXIPaoY+tG/df2w8zSWaEKOkhZ32CLx4Dw77QNx6iQNd5V8LraXf5mjLf2layoFh/wgum+
- 1hYvJdN+Tor3MJ3WCMhJoM73TwYSMgN9pU0gkCyo3o63UmymjnwpJL7+qIniFhDJTsE4iyXaG
- rqq4ZjAVClOSuy3rkyxFTYsyQDMIp3V8rJ9fvNth15GvtAdyYExbDf3Y4CuwWyWYx/zOxwwd/
- FNAxLE0vBsJxhQe9iOepFCfyO8tezJmAXMEixmIHwRlsku3P4yPT55U0I8ljip/eb3b1dcqY+
- giDMvWisxGJYh4DJCqvdDq+1tdGzEL7xuRpu++RAGDvtXrZLx6XDz3P5SGFBcDQzKvzSKAPZQ
- K4ivkhe39ycSoTfmRGljdnhH30OV1Fh+2HM9y6Zk/6tYrJuiwHcDyI6+U3gQdSWtYNik3J9wd
- WNUkrxVPW40dvQBKHCs6liAzCamPvMxXR3Doy2B/219xwRubUAv2vW7Ya2cMoAUFrvVNNDPZD
- tEIt/z89Odlp5e6d38bCAExuER5oJ/kQBxdNRnWLIGmxko3hzNDjO6/9fRQyFTGlVIh+2HBrp
- EftXtrc63snuRZFVFwMSsDLjxdnw3jcINB4M8iEceCQsc=
+Subject: Re: [PATCH] clocksource/drivers/timer-ti-dm: Remove an unused field
+ in struct dmtimer
+Content-Language: en-US
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <c9f7579922c587fce334a1aa9651f3189de7a00b.1714513336.git.christophe.jaillet@wanadoo.fr>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <c9f7579922c587fce334a1aa9651f3189de7a00b.1714513336.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
->>> The maple tree register cache is based on a much more modern data stru=
-cture
->>> than the rbtree cache and makes optimisation choices which are probabl=
-y
->>> more appropriate for modern systems than those made by the rbtree cach=
-e.
->>
->> Please choose another imperative wording for an improved change descrip=
-tion.
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/process/submitting-patches.rst?h=3Dv6.9-rc5#n94
->
-> This review comment is seldom helpful.
+On 30/04/2024 23:42, Christophe JAILLET wrote:
+> In "struct dmtimer", the 'rate' field is unused.
+> Remove it.
+> 
+> Found with cppcheck, unusedStructMember.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-* Does such a feedback indicate a questionable communication conflict?
+Applied, thanks
 
-* Are you still looking for a better wording suggestion?
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-> You may as well stop using it.
-
-Should patch reviewers and further contributors care more for the complian=
-ce
-with known development processes?
-
-Regards,
-Markus
