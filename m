@@ -1,108 +1,95 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2ECB13959B;
-	Fri,  3 May 2024 07:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7697714BFBF;
+	Fri,  3 May 2024 09:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714721949; cv=none; b=rUxyk6km67/5TUG0UxL/HZ0nA6MdNODRYi19jfbT67R9B55a16JHmomews9FeicoAmLwKgxcoM7UJNIsOo9H/TwDjn+yG2j38yarVwvu5dgmV251hxpcRF+tXWvAwMU+ZebVMuPsmfmZDrTOVAaCtwKYikrrOZVhKnwEyQkE3nw=
+	t=1714729251; cv=none; b=X4zPpeLTQ+cfd6n9IIy3E1bQuHXJYHPQJl7Yv03g/NjAisQgdZ/KKxWxB1p82/zLcmWMmFL+8wahRLVwYpDkZ+tzpCsX/fxI6hTi5Eab5PVE+Fqpul+ox3TzUhH1xgO+gi+zBHahg32lf5Fdy4N2gKOJiOaNXxN3IvsMkk6QDQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714721949; c=relaxed/simple;
-	bh=phooMRarU/0xrivjAwCBcwnpeJiTRTePATT7ls23gHU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=danJ/ES8E1sMh/BfhRtC/fVZK1udAOF9njseWmfQCOJPrRRmxSsO5ISAuVP5dFyERBbQEwyA8hP7Fpi2o3TvcX72FGlytU5+9sZ0RRqC9hcziPh0ERpxWyOL3VtKrIeFGAvyQD5sSAVnHz/gdtmZ4WRpzxzVUC31BFvqVULVQpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LXOkw9CO; arc=none smtp.client-ip=209.85.128.171
+	s=arc-20240116; t=1714729251; c=relaxed/simple;
+	bh=39A8OWlUv3UHFjQvm5veN9ZOLUCUQiJrOOD153SpmyI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GE/d//afzv26eSvUMF7eJSxWJtuCZ6/CltunBH3mb4ZsoG0vLXlF1+smD0GwJFLHoNtHGOBv0JPysQYQckHdA3QP8OyrRRU/ds1OS00meIHPwkKPTBCRMuKkPPKBiXAebgvtXyMmvfDe43xFV+ZlTGwU4bvol23twHvMaagMSiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQDlFno/; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LXOkw9CO"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-61e0f733e8aso17721257b3.0;
-        Fri, 03 May 2024 00:39:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQDlFno/"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51f174e316eso1944918e87.0;
+        Fri, 03 May 2024 02:40:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714721947; x=1715326747; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EPEvS0qK5UcK4PLaAgghQY6fqmdqWcs7u1b/vENJXdw=;
-        b=LXOkw9COuzFSAkwzFcJsXsWO28zSFjfdNl6XVc3pPgL2Rg+vfJuFyTFq7yfhiCZj7T
-         3HJgJp8t5oCYOkghfIGoMOJIX0+ohC6uGDRSbqdYDieEg2GVKMsTa72kMZ4ouC4LMhJj
-         0ulF2iuN39pmtMfNANKNV5crWrbUo1pK/8eMmFQ9gYEj5ofQz67JN5xcarQFwia0i7JM
-         0euBKQALCqxiltZx0BwWYoFdPQWulXJipSw6u9kcz67f3PwkxwYJQmqBoxJhIjxngCji
-         rn001czXYF8rJJAqyP2rqCwP9tXzZukMsjoExy0mLq37YL6YnEE92nCqkF2sG/8sbvjA
-         FP6A==
+        d=gmail.com; s=20230601; t=1714729248; x=1715334048; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b9gO1v4sXfXdAITvo0BN7gOXupM7E3E+qa7nXDHVYeI=;
+        b=cQDlFno/TX6BZuiftdQM7AQb2g87c1a+46b0ArciDE9O7xkuTXmkbzf/yW3Qcy059c
+         OWLYdItV4MZKe5nIh3iU0AviS6zz259iA+QVgxGHJl5r/Sr8s3DCpiXBiVoDDTJS34Ci
+         lJTqqu0f8o3IVby6VR4vDr/jOMCo1KuuJ+79BYGf9y85jJ0wGCU22MCrb/8GgAFELSI7
+         svgb1yfCmxBURheHByeZp9ZDm9m+UOvy/4TKaYg1ITmQfqgsNL5rzR4c6df6fHcBwb9k
+         ZvrlOaMSqzT1OlnJZdnQqmKm2QihWxL24X1NnAyUMpEcnWfVBQn7rAmYBlXTiBVMKmWA
+         AxZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714721947; x=1715326747;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EPEvS0qK5UcK4PLaAgghQY6fqmdqWcs7u1b/vENJXdw=;
-        b=JoVcDvFlispNq6ghK77VWDpBixoHyQC2eYCo9czbA6psUBdUmL5i3Amwvg9qId4xUB
-         8KdA1csEC5NDpMO6sVi4lyGSzfi7PE+sNFPlxAKmVGYOAJnzDDtL5v8QU2VQUku5qgj7
-         QY2zlLDFYhaGszxampH2RrcyV4uqrCgzO/v251YP35dGqQDLJpk9J/KeHLKYRP6yR/KT
-         +oObtPg3QQON2iUtTlkIW3fXz7FG85byQ3/pxXHpKlxNdr/3KypUwzhh+bZ5P72UaCoF
-         PBz2eoyBTyHR3yvlVolMc/nE99lHLzf3VPRkB9pzYL4O3Q8qAxpz6J23GGPgtQ623IXe
-         +ppQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/kD0U0BOoJCszOMYFMER1q/I1Q6zbOg0zT6Sotgj7KNpe1RDcyorum9PGlLmy0S13MfUJVoebYY0gdzQFpNkWnUnXtNJ5AQ92F6vskcOfKRwagXMTFBO5pLlGRoke7uFh5IjmLccnM0vhn/h0
-X-Gm-Message-State: AOJu0Yxf7NyKu1wNM6uxNxJoGBUCX2fdNQJGvNzL/rL69wFtPHuwLXmz
-	iixj49k+yCs8ddvZR4i4+e0gHYqXEqGPnA8tg6fn2Pbgh6IavgljkiaAYnw0tEg4J6IZ/A254Wl
-	Lbsv2DG9vDKScbWFA4QJuOMJXd08=
-X-Google-Smtp-Source: AGHT+IGliypnZWfDbUdqOvUUIpgR2+a0zXwhwmSmDCfGwN97GTEOSPRd0xLYH1khdRiq550wJGDKrBovrHPT2uWWIAY=
-X-Received: by 2002:a0d:dd88:0:b0:61b:33b6:41dd with SMTP id
- g130-20020a0ddd88000000b0061b33b641ddmr1739009ywe.37.1714721946830; Fri, 03
- May 2024 00:39:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1714729248; x=1715334048;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b9gO1v4sXfXdAITvo0BN7gOXupM7E3E+qa7nXDHVYeI=;
+        b=S2M4EigGlI6XzzF3TiGl8xo85gynYr577ZEP6y9tpgKqIxvgEmRxAmy8JAnUTVJMJF
+         c95fCnB9i91XVlgrhh9uOkUtTMFn1tZ0Y7outUfJW6+T3+eaYfpugbydB0/K60GLjIBr
+         uwWb2nq1gtxz528s5vIhVNpMI7CeemG/EOCEG3SkMTKgp1Owzh/PItR/E+SmhZ45MHHp
+         kRNHbN3ie4/oOz/4cCeD1B6oLIFDGl3xttdtikSo2RtmKr8BxE+mL7j2ngFWpsEunhEH
+         szP0jNbM5tbc8Mz4DiKQd7N3mX04Y624QqeTtgWdrEBGMHcxyAiXFg8Diw9rIVeDHAhJ
+         iJZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKRrUTeAKoLxel5KWPCFFAi3qcFE0s0ILOROMyW0iT518x9L/tx9KGJJNyvkY1nvSfKIOZD/ZFrEEz6ZKIscT8XiwN1nYAVHIsEj4hIh4Hm58UNf2BUbBQzjkQbpwBsRcMcJF9OJMNzsI=
+X-Gm-Message-State: AOJu0Yy8ybGOt5zJdednbYxD+gDuOOhBjesMwk5LkFqdP7w8Za6GOE81
+	BsguiMiTEWRcnyo2Nf6sXkXxPq0KGY/i/MTUtmsZpIL3BDp1kX4O
+X-Google-Smtp-Source: AGHT+IGEMJv3fOcAWHTovUp3S5CuQ55ZULKUeY4/+3V4Dqn+tcro3oKC6xYCBsyM8UR7dEUmI4dU5w==
+X-Received: by 2002:ac2:4e83:0:b0:51f:4dba:d331 with SMTP id o3-20020ac24e83000000b0051f4dbad331mr1258629lfr.67.1714729247323;
+        Fri, 03 May 2024 02:40:47 -0700 (PDT)
+Received: from localhost (host81-157-180-37.range81-157.btcentralplus.com. [81.157.180.37])
+        by smtp.gmail.com with ESMTPSA id bf9-20020a0560001cc900b00341b451a31asm3327791wrb.36.2024.05.03.02.40.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 May 2024 02:40:46 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] btrfs: Fix spelling mistake "decompresssed" -> "decompressed"
+Date: Fri,  3 May 2024 10:40:40 +0100
+Message-Id: <20240503094040.2712326-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240314163511.2372458-1-colin.i.king@gmail.com>
-In-Reply-To: <20240314163511.2372458-1-colin.i.king@gmail.com>
-From: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Date: Fri, 3 May 2024 09:38:55 +0200
-Message-ID: <CAMeQTsZKk-af5xhnnb=PfHiCNWzBK7VnEc1iBevfYdnyxrXDfA@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/gma500: Fix spelling mistake "patter" -> "pattern"
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 14, 2024 at 5:35=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
->
-> There is a spelling mistake in a DRM_DEBUG_KMS message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+There is a spelling mistake in a btrfs_err message. Fix it.
 
-Applied to drm-misc-next
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/btrfs/zlib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks
-Patrik
+diff --git a/fs/btrfs/zlib.c b/fs/btrfs/zlib.c
+index 518d05b00a20..d7e5f681bc32 100644
+--- a/fs/btrfs/zlib.c
++++ b/fs/btrfs/zlib.c
+@@ -435,7 +435,7 @@ int zlib_decompress(struct list_head *ws, const u8 *data_in,
+ 		struct btrfs_inode *inode = BTRFS_I(dest_page->mapping->host);
+ 
+ 		btrfs_err(inode->root->fs_info,
+-"zlib decompression failed, error %d root %llu inode %llu offset %llu decompresssed %lu expected %zu",
++"zlib decompression failed, error %d root %llu inode %llu offset %llu decompressed %lu expected %zu",
+ 			  ret, inode->root->root_key.objectid, btrfs_ino(inode),
+ 			  page_offset(dest_page), to_copy, destlen);
+ 		ret = -EIO;
+-- 
+2.39.2
 
-> ---
->  drivers/gpu/drm/gma500/cdv_intel_dp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/gma500/cdv_intel_dp.c b/drivers/gpu/drm/gma5=
-00/cdv_intel_dp.c
-> index dd1eb7e9877d..cc2ed9b3fd2d 100644
-> --- a/drivers/gpu/drm/gma500/cdv_intel_dp.c
-> +++ b/drivers/gpu/drm/gma500/cdv_intel_dp.c
-> @@ -1547,7 +1547,7 @@ cdv_intel_dp_start_link_train(struct gma_encoder *e=
-ncoder)
->         }
->
->         if (!clock_recovery) {
-> -               DRM_DEBUG_KMS("failure in DP patter 1 training, train set=
- %x\n", intel_dp->train_set[0]);
-> +               DRM_DEBUG_KMS("failure in DP pattern 1 training, train se=
-t %x\n", intel_dp->train_set[0]);
->         }
->
->         intel_dp->DP =3D DP;
-> --
-> 2.39.2
->
