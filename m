@@ -1,95 +1,101 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7697714BFBF;
-	Fri,  3 May 2024 09:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B3615218F
+	for <kernel-janitors@vger.kernel.org>; Fri,  3 May 2024 11:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714729251; cv=none; b=X4zPpeLTQ+cfd6n9IIy3E1bQuHXJYHPQJl7Yv03g/NjAisQgdZ/KKxWxB1p82/zLcmWMmFL+8wahRLVwYpDkZ+tzpCsX/fxI6hTi5Eab5PVE+Fqpul+ox3TzUhH1xgO+gi+zBHahg32lf5Fdy4N2gKOJiOaNXxN3IvsMkk6QDQ8=
+	t=1714736009; cv=none; b=fzZ2FCkL6ow6zdUcfOvXS0fE8DaPDA5GJIldOef7VrQITgKsxzuz0lxfXFesdOgsgyphYRxOnmFW1u5NYy0JELXyUYdqIJ/atbR3iv4AeQfda/AhNady+LOMJLNy0J7SdTR3jmwSKOlGtI2zMMgT99/7CveJ+nhJ/pTznOKWcTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714729251; c=relaxed/simple;
-	bh=39A8OWlUv3UHFjQvm5veN9ZOLUCUQiJrOOD153SpmyI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GE/d//afzv26eSvUMF7eJSxWJtuCZ6/CltunBH3mb4ZsoG0vLXlF1+smD0GwJFLHoNtHGOBv0JPysQYQckHdA3QP8OyrRRU/ds1OS00meIHPwkKPTBCRMuKkPPKBiXAebgvtXyMmvfDe43xFV+ZlTGwU4bvol23twHvMaagMSiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQDlFno/; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1714736009; c=relaxed/simple;
+	bh=jdNr9HzoVl94UbxT5ZLc4/b71AkBZCNGvQPd4k/6VVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A7fz/d0l8U5umW1p3CcjESRuY6/T7ZwcvF7rc9AiGLWBRURcp0gvnkp1Y7ngjTjqF8j9e02oiMakcKG/ujRBAN4JEvmrII0RnBfd/w7qfLRmhFtoO0P3GISfwUQaRdT2zI8rl5V5iwM/giJRbMVd9FZITwrrxuCrbV6BjY8AW88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aX6+khFg; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQDlFno/"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51f174e316eso1944918e87.0;
-        Fri, 03 May 2024 02:40:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aX6+khFg"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-34c8592b8dbso5689576f8f.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 03 May 2024 04:33:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714729248; x=1715334048; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=b9gO1v4sXfXdAITvo0BN7gOXupM7E3E+qa7nXDHVYeI=;
-        b=cQDlFno/TX6BZuiftdQM7AQb2g87c1a+46b0ArciDE9O7xkuTXmkbzf/yW3Qcy059c
-         OWLYdItV4MZKe5nIh3iU0AviS6zz259iA+QVgxGHJl5r/Sr8s3DCpiXBiVoDDTJS34Ci
-         lJTqqu0f8o3IVby6VR4vDr/jOMCo1KuuJ+79BYGf9y85jJ0wGCU22MCrb/8GgAFELSI7
-         svgb1yfCmxBURheHByeZp9ZDm9m+UOvy/4TKaYg1ITmQfqgsNL5rzR4c6df6fHcBwb9k
-         ZvrlOaMSqzT1OlnJZdnQqmKm2QihWxL24X1NnAyUMpEcnWfVBQn7rAmYBlXTiBVMKmWA
-         AxZQ==
+        d=linaro.org; s=google; t=1714736006; x=1715340806; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mYKYS9o1+tjlc9KHGfIXM8/wUGmn4enyO6luvWTQQAI=;
+        b=aX6+khFgh+CeP33k/2ejGxcRvPrNgJBxbG1aQEw2jM/euYyG+FT81Q8MnnLk2hBGQP
+         xacVrsvA3gmt4KGrKNQxuZLmG/+Rp+AG1hAyjz7bt4/O9sVgw9JRj8y8+TFK3pkqUkUP
+         B054UUt4JAOmxsRgSTBYO9JZf5SKjlj+dUH41heBFrYyXp0hR263qYTJhuFeohzokVFl
+         FUn+MkNI9ctzQ0f0CxBGuCaYVFVFsD6I7HOUpb8DHNxcpfCA+jaLaWQgnKJGJpAMKdkW
+         86I4SYjtQuc3DIComMMvkOMtk6YPwXNKvu8nq4TKwQvgoULL98G8u60suGsmN1urIzIh
+         4eaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714729248; x=1715334048;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b9gO1v4sXfXdAITvo0BN7gOXupM7E3E+qa7nXDHVYeI=;
-        b=S2M4EigGlI6XzzF3TiGl8xo85gynYr577ZEP6y9tpgKqIxvgEmRxAmy8JAnUTVJMJF
-         c95fCnB9i91XVlgrhh9uOkUtTMFn1tZ0Y7outUfJW6+T3+eaYfpugbydB0/K60GLjIBr
-         uwWb2nq1gtxz528s5vIhVNpMI7CeemG/EOCEG3SkMTKgp1Owzh/PItR/E+SmhZ45MHHp
-         kRNHbN3ie4/oOz/4cCeD1B6oLIFDGl3xttdtikSo2RtmKr8BxE+mL7j2ngFWpsEunhEH
-         szP0jNbM5tbc8Mz4DiKQd7N3mX04Y624QqeTtgWdrEBGMHcxyAiXFg8Diw9rIVeDHAhJ
-         iJZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKRrUTeAKoLxel5KWPCFFAi3qcFE0s0ILOROMyW0iT518x9L/tx9KGJJNyvkY1nvSfKIOZD/ZFrEEz6ZKIscT8XiwN1nYAVHIsEj4hIh4Hm58UNf2BUbBQzjkQbpwBsRcMcJF9OJMNzsI=
-X-Gm-Message-State: AOJu0Yy8ybGOt5zJdednbYxD+gDuOOhBjesMwk5LkFqdP7w8Za6GOE81
-	BsguiMiTEWRcnyo2Nf6sXkXxPq0KGY/i/MTUtmsZpIL3BDp1kX4O
-X-Google-Smtp-Source: AGHT+IGEMJv3fOcAWHTovUp3S5CuQ55ZULKUeY4/+3V4Dqn+tcro3oKC6xYCBsyM8UR7dEUmI4dU5w==
-X-Received: by 2002:ac2:4e83:0:b0:51f:4dba:d331 with SMTP id o3-20020ac24e83000000b0051f4dbad331mr1258629lfr.67.1714729247323;
-        Fri, 03 May 2024 02:40:47 -0700 (PDT)
-Received: from localhost (host81-157-180-37.range81-157.btcentralplus.com. [81.157.180.37])
-        by smtp.gmail.com with ESMTPSA id bf9-20020a0560001cc900b00341b451a31asm3327791wrb.36.2024.05.03.02.40.46
+        d=1e100.net; s=20230601; t=1714736006; x=1715340806;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mYKYS9o1+tjlc9KHGfIXM8/wUGmn4enyO6luvWTQQAI=;
+        b=YmzFt04+RsAbjrwGIMrQ+CHokFZxsiUJ3S2UWM1KcRywFiAS+qmGYJPI03H48T71Qv
+         pnXXwHOVytCzkX9JAFC+rMnjxw8jPPoU0Q+xCfNAYryxHse9NakF4x6SO1N5QZ9GOvT7
+         FJQcKbbFm0ypTZMGf9RD5Usa/jbn/JM4FM23wwOTuChS1k2nixwc4geE5wUxZChWkJGL
+         +xxSnW9cKtFhqKXkTRNzfcr4DMvhCKaK7dWSCRMt+7rmNrn6JmjfIRpTxMYB6rTIojRG
+         yt4qiLZ7gB42dHCVYjoQrhJW3H0NO+8jWGXgZQfwnxc9PwqCZiUlobtFO03Bm/6WFQmn
+         s2eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTzJU3gHjjZqYxJw86L+Ad1J6fj1pxCu0kZeYt7JuNpcDS6SV39ruJQfqqaZNR2EN/gG3LF31ZZyv2uS8hTaS/B7csy+U4ZUqZfXtO/MWn
+X-Gm-Message-State: AOJu0Yydw6hEjZNHW4+s8Nry6B1tchEO9sea2ThmVHn2+ZRTxUcy5lDf
+	xxf6gzGQF17kegomjJccPaUFqTXHe+TMilhe1cIFsq9e2EYJXQJ2ecCPp35RHXY=
+X-Google-Smtp-Source: AGHT+IHFM8Y9OVCT1J9cntIkypVbedCqaexA3eFHwjLabOtU69YxG+ZsibaJ11feF8n/Zsf4r27DdQ==
+X-Received: by 2002:a5d:4f8f:0:b0:34d:7fbb:e93b with SMTP id d15-20020a5d4f8f000000b0034d7fbbe93bmr1833665wru.14.1714736005539;
+        Fri, 03 May 2024 04:33:25 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id p13-20020a056000018d00b0034e229a7d5bsm3576100wrx.7.2024.05.03.04.33.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 May 2024 02:40:46 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] btrfs: Fix spelling mistake "decompresssed" -> "decompressed"
-Date: Fri,  3 May 2024 10:40:40 +0100
-Message-Id: <20240503094040.2712326-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Fri, 03 May 2024 04:33:24 -0700 (PDT)
+Date: Fri, 3 May 2024 14:33:20 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Duoming Zhou <duoming@zju.edu.cn>, linux-hams@vger.kernel.org,
+	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	=?iso-8859-1?Q?J=F6rg?= Reuter <jreuter@yaina.de>,
+	Paolo Abeni <pabeni@redhat.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Lars Kellogg-Stedman <lars@oddbit.com>
+Subject: Re: [PATCH net v2 1/2] ax25: change kfree in ax25_dev_free to
+ ax25_dev_free
+Message-ID: <4ec281f4-f7f8-436c-af0e-c8410ba79139@moroto.mountain>
+References: <cover.1714690906.git.duoming@zju.edu.cn>
+ <81bc171fb2246201236c341e9b7d799f509d7dd4.1714690906.git.duoming@zju.edu.cn>
+ <89f07a73-90c6-4a81-9cec-7a1b7d61ea6b@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <89f07a73-90c6-4a81-9cec-7a1b7d61ea6b@web.de>
 
-There is a spelling mistake in a btrfs_err message. Fix it.
+On Fri, May 03, 2024 at 07:36:54AM +0200, Markus Elfring wrote:
+> > The ax25_dev is managed by reference counting, so it should not be
+> > deallocated directly by kfree() in ax25_dev_free(), replace it with
+> > ax25_dev_put() instead.
+> 
+> You repeated a wording mistake in the summary phrase from a previous cover letter.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/btrfs/zlib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yeah.  That's true.  The subject should be changed to:
 
-diff --git a/fs/btrfs/zlib.c b/fs/btrfs/zlib.c
-index 518d05b00a20..d7e5f681bc32 100644
---- a/fs/btrfs/zlib.c
-+++ b/fs/btrfs/zlib.c
-@@ -435,7 +435,7 @@ int zlib_decompress(struct list_head *ws, const u8 *data_in,
- 		struct btrfs_inode *inode = BTRFS_I(dest_page->mapping->host);
- 
- 		btrfs_err(inode->root->fs_info,
--"zlib decompression failed, error %d root %llu inode %llu offset %llu decompresssed %lu expected %zu",
-+"zlib decompression failed, error %d root %llu inode %llu offset %llu decompressed %lu expected %zu",
- 			  ret, inode->root->root_key.objectid, btrfs_ino(inode),
- 			  page_offset(dest_page), to_copy, destlen);
- 		ret = -EIO;
--- 
-2.39.2
+Subject: [PATCH] ax25: change kfree() in ax25_dev_free() to ax25_dev_put()
+
+Another option would be:
+
+Subject: [PATCH] ax25: use ax25_dev_put() in ax25_dev_free()
+
+Otherwise the commit message is okay as-is.
+
+regards,
+dan carpenter
 
