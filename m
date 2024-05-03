@@ -1,89 +1,82 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7CD1CD13;
-	Fri,  3 May 2024 16:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9B1D51A
+	for <kernel-janitors@vger.kernel.org>; Fri,  3 May 2024 19:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714754156; cv=none; b=i3ocWtnAKep8xKy7ebaEI8kbfr0s5698KMTZeeNAZCb5rP7XtJ0z9OIneHWtMDdbAxE0StwmH9ixCQ/uxZO+JUBQXQQ5/NvjlwpurNeoTT1Iu+P53GmYk+cMwcusjfQm2tLtXLe59brxP3bXb/yMqq1gN6zRwF5Xg36r0SbRTX8=
+	t=1714763136; cv=none; b=h0FKh+1Uw7I639bVO/NmxLePyMdDhOq8IeoU/PoeafKkTFjn1Dg0fpIdLoZJ0hme7buxGWM2dYri848tLOjvAzXS5toXZPWiA66BrpNOSbeulWPjdGO8dGlb0Te9vxU4gTdkpjNMHVRu2N0s8oC2G2+Ih/EpjmioAoKOIfmPz8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714754156; c=relaxed/simple;
-	bh=n/9hFbF2+WfiltNRFRaTIEsLys/9NeHlNk4TTNWPjak=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=c+JR0ddiKupOGwfucdDgRSXRK/sq17tJ4owQNNfaHmvZouaTtB0eUhQrugJFo5Wtueqx1j+RguDHR8WazQSeNXfB6CqY+yNSNPc7PHrsIQTzqxm57TFWwlqS5SerRXKSpRG3pNxwBCRxYungXo793l1iAwPtAD3Wm7iHSD5WLYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mRmu+22o; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1714763136; c=relaxed/simple;
+	bh=TMPkLz1Rk5l8hUIGUHp3SUhVgs+0VIwtmvyAzaSQHtw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b/7NOKsimakb/rVfHzRWZn8lb6soyvKJfNt2HHaU6WvQVQW+7MMIAnL+48XoGWsEBLCl3JUsLDhc3kTdJKZqoT4EJq0UgdMmNRn8gOTkxYfWw1/gukBOX3sf+uHtURoLijySy7288l0xzMKmGXiFUk1doxJCYO1ZDrl7OVRhCOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dAn9lVUd; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mRmu+22o"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714754150; x=1715358950; i=markus.elfring@web.de;
-	bh=qI/wYC/RyotTKQTORqzcTsleWbiY2bQQMWYFl52q9fg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=mRmu+22oI2IxkJ3K3kyXSwinr4iSATeihekuX9WevI8XHo3NwEcDE++Qsz17gNhu
-	 sXO7TWcmScQcJ/eb/dMVmFzkwn+VhdjkE+HbuAEk2J2v+a+0Ff8IOc+3vI9lkg1/y
-	 v5di9nQgH9jC7AZ18vbMTjJnadwY4gPfeD42QZWbf5PzWypSrAd2KFx/+X7nMw6ob
-	 /HLvRFMoDvtFZMc+JwiXG/GZZxmae4C6FI8BF8tcC7Gsagwqe8XmvAO40pWrDRGm4
-	 IjhA1P3JbMbmszAMnVFMw9uMqn7sBNHjiiVVCVl7F74MOKwSJfDqPfTCMGHZNS8vx
-	 jJJf1H7qjEQMDxSY4A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MkVsa-1sVAPu28Ew-00kLVd; Fri, 03
- May 2024 18:30:16 +0200
-Message-ID: <f616ab40-68a1-4f80-9bb9-c80214d087c5@web.de>
-Date: Fri, 3 May 2024 18:30:12 +0200
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dAn9lVUd"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41bff91ecdcso12145e9.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 03 May 2024 12:05:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1714763133; x=1715367933; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TMPkLz1Rk5l8hUIGUHp3SUhVgs+0VIwtmvyAzaSQHtw=;
+        b=dAn9lVUd3da+FdxDry6DJiNayIO1O0j43Q4Tgly0Xb6jyXi6iUdbn8gXVw8FpLCSSy
+         E4XtAPtbzREcB9ylS9itaJRmWvzd1ZOalJDrVNBqrwBDCUCZv2ocjvZGo3ahD9vvCnBa
+         kh5SW1FHkLUSclDnunN3dywDLiiCY2+S1YPaeUefqv7roM2IhuhBrfqyZMtYDt2Y7CLo
+         oKBlUH/Q8IAIbLIpwh5Gw1Pvyrrt2IOVBzaPyLjHU123FhyoqmcQ4ikfZnKDNQuw7p/f
+         /bf94328qS/slGUpGUNFJardfW5+Z/ITb8gRLYuVLb2Z2VdrL/gIZ4/zHCJxq84gQ4B1
+         wWNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714763133; x=1715367933;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TMPkLz1Rk5l8hUIGUHp3SUhVgs+0VIwtmvyAzaSQHtw=;
+        b=reaHPDr05NAmOTale6F+3hmJH4r3ZcMadSbbUhZfvNQ2MHDzeP2FOYDVZeDHmVSiUd
+         e4H0aA/j0zd0D3jG1fQn+77et3NaqnuUiXT5XH+1E81iQczpkiwKX7L7uoX3GCKkN9Y2
+         9EGdeNTllAsyS4McHdHYuz23Vei5OhSowfdsJxwIIn4oxvMT2B8dyX4biIvikJM/nhzq
+         +Yi9Ku4SrMOQKF/UToq6ibOJLIQSnSVPUU9uSKScwKIohBEFAF2jJtoSrn9qEnsiL7XN
+         cQOqbxV/CYAQtuT8yl4hyqtWgVsveqwF9SDuZBlveHEEDF+23rkI90iDhmZS0IQc0ZYY
+         cFow==
+X-Forwarded-Encrypted: i=1; AJvYcCW8rww9q5X3YHJgvNI6+Rdh4JKQ/dvBjK5luL9VB88RSN0Hyn5YQq7fKsEcGHU5spnBXkdBGTiJn5msu70kUwwzRy31esZxAS/nv7B0dK92
+X-Gm-Message-State: AOJu0YzlFKxUliEMYX3ho5zxu9Ydvafv/nUVYNhIPKhD4UztfOxQsB3U
+	EqlvlipsgQAOelf/ubdgi+cZiTdPIiy/MY4iaxzMQYTUiRjj7Bgsl9gUbNx59EOsSAnE2eVkvo7
+	+hGZyVwvk30Zv9cYSqYxj4dVWCT+eJr/IYs52
+X-Google-Smtp-Source: AGHT+IHZ8sS4fieprHPXKuhNEWGMwXDOzkCGeSsHEiwmvbVydjjUM/n4xrCSSVc3A4FP0QOHDXDRNSYqyHY5Wg9pFM4=
+X-Received: by 2002:a05:600c:511e:b0:41b:4c6a:de7a with SMTP id
+ 5b1f17b1804b1-41e5b0eb9aemr195745e9.3.1714763133013; Fri, 03 May 2024
+ 12:05:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jim Liu <JJLIU0@nuvoton.com>, openbmc@lists.ozlabs.org,
- linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Bartosz Golaszewski <brgl@bgdev.pl>, Dan Carpenter
- <dan.carpenter@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jim Liu <jim.t90615@gmail.com>,
- KWLIU@nuvoton.com
-References: <20240429070523.3160248-1-JJLIU0@nuvoton.com>
-Subject: Re: [PATCH v3] gpio: nuvoton: Fix sgpio irq handle error
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240429070523.3160248-1-JJLIU0@nuvoton.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:QfKikTXkYDmDVNk692GaHnGmUB3CSL6kLdR/8/PnieOW7UxBWoN
- 47KNl2ajuHpuJLCtpbBBDwt7Lr3lrpaZbDP1tn1T0OT59g9x0L4UG6Fy+CnvWiN4SsRbqUD
- 7Sw+m7P8kK3KEJ9kXF0ku85VB61tTE7pO3f61+vu9KTacvPF0b1V7mx7KXpI1KdwetuI4mb
- 7b9hmyaOHSogHJ9D3zDOA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:x+oB7poDoL4=;Fp4/4SF+NcCiCPwDW32AjIruY/b
- HvF7r2yPgZ9jp8si72j5ehHd6Ll5Zvz4n4NsB77OhMpyW2YDDcWr3rTSqRcDh5in99rTTOEPp
- cOSUFS5ZO06XvapCJ8pXURmp9C0VTBAfEM4jEpSn387i+1Ty0cHPM0UhStY8uOqzE0im7wdl9
- a8EC//6WkzFOU2ODnlVzSZfsFfqx5FibtN5h1GXdVfY68GpqW5eUF4cxnYJxd05uLmB6AxrR8
- t+VZPf8FAs45D3USO26MNlgSLDqEKID4kLgdje5tygwRbc5wMzi4rsb00EwahhUwGNl9kLCkD
- 40xv5N7fPLdg3m/g8DVWzWbn9TrdE6/Z2oogwca49SQo+we2to/YwHo6X8hsRf2Jy+gw3kgGf
- 8oi8SMA/9jqzLeR6tUTde93sy/Zf0BXN9Q4m6E4M8lQRQfD4Twb8LoWptEBm/VABHzDjHDxrh
- GGzVB1TvOZh7BfW0DeP2i+gzpAbTV4fYvnr2216ga4K128p5FSMoB7GkwD9GiPQT+2V4IXCCi
- GQUgXklxFm+FRbaosCRW0+iJ+HPXhLnYGEM0BD+rhIEyvzMcUJt6RK+9GAUvI4OG7L3+VJaH5
- S+lnBaYkSQRmy/sJDfBWJ7zRSO9QjLDmD7grFm5Lu9+os+Vo9vEwIZR9juCLOx7VNh2As9yxQ
- g206lN9uw69rjbY0dkmo6L5s0faPrLsReiDjk1jCuOoNchDUtNUdVb9h3kBvbznR2WteutOZc
- 0XlsKbXGwbufBkG40g/Oqeb78G4AnKiduGw1sNzwK4VhWH8WY+AuhBdA8luG6dG4xP3VEZdB/
- QybCV6ZG5BEOHvYOVDsRusUZzhref2nv0YbIYyYfXzGyZ89GoH2NWV4wmByxZvEo3g
+References: <20240503003920.1482447-2-jthies@google.com> <96d63b0b-3258-4bf6-b75a-06eb4f4253bb@web.de>
+In-Reply-To: <96d63b0b-3258-4bf6-b75a-06eb4f4253bb@web.de>
+From: Jameson Thies <jthies@google.com>
+Date: Fri, 3 May 2024 12:05:19 -0700
+Message-ID: <CAMFSARdhyWAFWr6qjsabPN6k=sK9LLxOaoSNkVLyTKNE=drSpg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] usb: typec: ucsi: Fix null pointer dereference in trace
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, linux-usb@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, Benson Leung <bleung@google.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans de Goede <hdegoede@redhat.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
+	Rajaram Regupathy <rajaram.regupathy@intel.com>, Saranya Gopal <saranya.gopal@intel.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-> The generic_handle_domain_irq() function calls irq_resolve_mapping()
-> so calling irq_find_mapping() is duplicative and will lead to a stack
-> trace and an RCU stall.
+Hi Markus,
+thank you for catching the typo. If I upload a v4 patch, I will fix it
+there. I don't think it is necessary to mention changes to the commit
+message in the section below the commit message.
 
-Can a wording approach (like the following) be a bit nicer?
-
-   The generic_handle_domain_irq() function calls irq_resolve_mapping().
-   Thus delete a duplicative irq_find_mapping() call
-   so that a stack trace and an RCU stall will be avoided.
-
-
-Regards,
-Markus
+Thanks,
+Jameson
