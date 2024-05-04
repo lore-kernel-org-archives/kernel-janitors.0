@@ -1,149 +1,86 @@
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328F45234;
-	Sat,  4 May 2024 09:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5988A1799B;
+	Sat,  4 May 2024 10:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714816074; cv=none; b=HDglfoD/Db2lfA6ziiZMouDiPCZVw4BiW0TPX/SZAl3SXkZha4VNtsjBvz8tgVdn9xDEAW6msNuY6eY+uoHNc7NdKl/7NfcrNGmaxx+4McztgkHtwaOI7jP1g+OF/d28UISXxZ31WYIhR+YnxqFp5V9a5101Z2O05tMvFoAZVMg=
+	t=1714817407; cv=none; b=aPf5Sht7vfyHcwm9FILJ9NuDeTDn2fv49bdtfYuWkzg2cp1y+cg1HrSZM5PI8iEdx8yCVahYog2RVwlS110Xl3onuReSW7W3lf/d/TlNn/pr2v4hORq8EnRMhf5dTLtrBm923txZvcXezjkuQfK/KWNka1DE/IFUY7pMXCEKcKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714816074; c=relaxed/simple;
-	bh=0RAXrA9ddTunKzQ27o/B/H26iN61m5JOjlIACCixexs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EenVVEiJW1UilZBkGoHWdOFrIi/UXwO+u0vtWZKNabIIbi597ERFuJL2WsV0JnI3nfsSuHO0Q7YaQ9nh7099qEgddUGEzEiTgf1C2SxoLe9XISOhR4p+G4qG/aUcVxrPiBAoOy6oMkt2ay9GfzYCSOqW8UzYskCUWJwbivIM1BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=qXMsbgQr; arc=none smtp.client-ip=80.12.242.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1714817407; c=relaxed/simple;
+	bh=ueLGNJesIDc6zrJhj37NZFgvuqYhoxbM1MhXf6eg94M=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=lgVmeqWMRkDQ3C9wXAGNaijPRCJYDpYSYgba/0ecArBwsJ6urcCrK38mbQD78VC1o0eSdYNRCD+M9TZRGlUTRHm5IOkJhzC8+Fvage9iKKqt5jgw/BYglNZ7Hk2AAWnW7StbNBYehdtHuoa3dg4JguUcdmd8jgYcqVWHSDuky7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Q+ElHPU4; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="qXMsbgQr"
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 3BzasNrmCn00P3BzasC921; Sat, 04 May 2024 11:47:43 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1714816063;
-	bh=+sxsfrfYccN7R5PHA2bf4kljLQPC2B5E2Xz86Gbnl54=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=qXMsbgQrYWfIaNijqNG3tjPKyVfI1+F11JfJnUUJLhwE4yxS3CcyRmvr0X4GwlSGq
-	 UHxO9k4aSt7BUvCHEWiQrt6CUGrj5+OEw5K4aBM4nNYZWqgBTIwx74v3IEYoKwBkZi
-	 Y/+PplttYcmno9WfdZKVJPVHf1q39sCfLdPV5+HjLoPER5NWjfbDWWSigG3MzaV216
-	 l0SEntzJt6EqDqxPzo3lbyNxev8urLdyTTTZRi0vWrN9jdfTGNeBFKcgxpz+7Bu1Pq
-	 zVW1J7kGjdvxb9hzCWSjzDV9pWkLOrreex3DMyh3AlwXV8VxLNTy579d8NCloIN0+s
-	 eJVLebX5kCnLw==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 04 May 2024 11:47:43 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-usb@vger.kernel.org
-Subject: [PATCH] usb: core: Remove the useless struct usb_devmap which is just a bitmap
-Date: Sat,  4 May 2024 11:47:05 +0200
-Message-ID: <1d818575ff7a1e8317674aecf761ee23c89fdc84.1714815990.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.0
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Q+ElHPU4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1714817383; x=1715422183; i=markus.elfring@web.de;
+	bh=ueLGNJesIDc6zrJhj37NZFgvuqYhoxbM1MhXf6eg94M=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Q+ElHPU4+kbFN/vnCpu+9rOrgjxLkzmpX94gvn2JtkVLULB84aXeNEUw7fDCmIXv
+	 0V0Sa0Ppxl1RCuVDZ67/Gx+s4aW8tf8FGAyZkKcgRhd1MR4TlsmQMCTO05WmyFnl8
+	 nBoH/+cNPQ1ChSEdtiIzZ8WsMwwy55zX9TmZGLeTj/8z2h5fUuJ/VEaeMjWqRiHWq
+	 VOgzpy8kqNn+6uDY/WTLuk9ORyiVI+kdkczj+qXFfPZDSPGqXdEYnr6iPApLW9WUq
+	 sWYiQ4zauiMBDFGEV8e0S7J9k5kQvU6Nj/6nMiACKVBt2oc3krTCwGqTU0PpW5U3r
+	 fzDUNmNAIapJSSCcwg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M4sXt-1s1pQG300V-001wW4; Sat, 04
+ May 2024 12:09:43 +0200
+Message-ID: <a664e0fe-1430-455a-9436-65ae8ae014bb@web.de>
+Date: Sat, 4 May 2024 12:09:21 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Levi Yun <ppbuk5246@gmail.com>, kernel-janitors@vger.kernel.org,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240501195116.62669-1-ppbuk5246@gmail.com>
+Subject: Re: [PATCH] time/timgr: Fix wrong reference when level 0 group
+ allocation failed
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240501195116.62669-1-ppbuk5246@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:XJmTtw2TDp6kHImcmWMYMYIacmp8My4CR+16WlaLqPW70vn+ry3
+ tXqS0PZRvnkXZcEVSoEZQ2CeESF+QKBWAgv2GmaIrHtOuNhSunUf3Z1OLPgRIk9o8GfnkJ6
+ Xc5mAGpWpHfVQI7GLUJnoFCW/GGKZgFscuuTX+9pj/NdPRRQO0665M/sjG2CNJaVmg+Hl0o
+ FHV/FcXnzkZPuFKNphv1w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:yutoUNxinkM=;cwHsPz0FR0jSvryOIBbW5cHUCkI
+ GEWV6MHSTB8JC6Nl0bONainTA3CRIl+AZwTRUCc1p/evQqlFz6iAMJvhZXvD90GMlv+z2BWC2
+ 9QvnnwCy6+R8sFAJp0LF2j3Ilyr8Odbxaq6JC1zzD76y0wC+v1umybOiaqDclEy25veNYtyOQ
+ 09z8FKyru79pfNqSbmvmUQR+YAdrJk2lVeScSoNOliPATux6vr6nt7wGq4X0ldtMai/LlRAMv
+ 1bsv4L+BoozukXFuYQnTMACKz73V6HfOG8qDBivqXksAttluRtktVbGorkZ4kQTyQmwFwSBrm
+ sHGmUQrk4nmw+asa/9s8d+2F215EjIrX05zl4Jkrrwq7XjtDFpqIoMh1RK1g1i6kxrriR4fY6
+ GH2i8qIdchuGD24p7fxrQRf8mce33xgtYZFDg6aaRVbtFpiQ09ABNKyQwcanHDMNK3KyGzeqs
+ A8ZCkSMUlvq8E//v7HPVUm0c1u8osrgu6ms3w+Vy40Hs8eYys86mLc04GfMUvRuoHBRVcLEnh
+ 3yiARLB8Vh393Av/x9KBGHEDdhNvkH4GpkcUf81vsLRvHwwt2w07uIqjtbWBnMNPCqtEqSFbx
+ VsuomeSZ/YgfFxKZvkD6WMS3482MDqlqFPWDeKT8LGkO7R1XoP1orFnncd/JWmf6cJZ48CzqS
+ YHpNtCzj696zbuP90IOau40nFfWJPXGoayWXonB5VcK8bmewplgIFB/JJllePhoJekx2H4kSI
+ kHhU/kqjNZN/r9RU+Q/9aFnZhmnEAb7NS+LKlbRCrVEo51p46EVTe2416yEMTZk4JY8aIaaPg
+ mxK4PNuNOtoHt9n18QiE764ShJ5syCvbbznhr6WiuvIXbcpTYMUOsAF2MsGwDw2v8H
 
-struct usb_devmap is really just a bitmap. No need to have a dedicated
-structure for that.
+> Changing group init do while loop with while loop to fix this problem.
 
-Simplify code and use DECLARE_BITMAP() directly instead.
+* Please convert such a change description to an improved imperative wordi=
+ng.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
+* Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
 
-I've re-used the comment related to struct usb_devmap for the devmap field
-in struct usb_bus, because it sounds better to me.
----
- drivers/usb/core/hcd.c | 4 ++--
- drivers/usb/core/hub.c | 9 ++++-----
- include/linux/usb.h    | 7 +------
- 3 files changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index c0e005670d67..e3366f4d82b9 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -866,7 +866,7 @@ static int usb_rh_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
-  */
- static void usb_bus_init (struct usb_bus *bus)
- {
--	memset (&bus->devmap, 0, sizeof(struct usb_devmap));
-+	memset(&bus->devmap, 0, sizeof(bus->devmap));
- 
- 	bus->devnum_next = 1;
- 
-@@ -962,7 +962,7 @@ static int register_root_hub(struct usb_hcd *hcd)
- 
- 	usb_dev->devnum = devnum;
- 	usb_dev->bus->devnum_next = devnum + 1;
--	set_bit (devnum, usb_dev->bus->devmap.devicemap);
-+	set_bit(devnum, usb_dev->bus->devmap);
- 	usb_set_device_state(usb_dev, USB_STATE_ADDRESS);
- 
- 	mutex_lock(&usb_bus_idr_lock);
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 8939f1410644..4b93c0bd1d4b 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -2207,13 +2207,12 @@ static void choose_devnum(struct usb_device *udev)
- 	mutex_lock(&bus->devnum_next_mutex);
- 
- 	/* Try to allocate the next devnum beginning at bus->devnum_next. */
--	devnum = find_next_zero_bit(bus->devmap.devicemap, 128,
--			bus->devnum_next);
-+	devnum = find_next_zero_bit(bus->devmap, 128, bus->devnum_next);
- 	if (devnum >= 128)
--		devnum = find_next_zero_bit(bus->devmap.devicemap, 128, 1);
-+		devnum = find_next_zero_bit(bus->devmap, 128, 1);
- 	bus->devnum_next = (devnum >= 127 ? 1 : devnum + 1);
- 	if (devnum < 128) {
--		set_bit(devnum, bus->devmap.devicemap);
-+		set_bit(devnum, bus->devmap);
- 		udev->devnum = devnum;
- 	}
- 	mutex_unlock(&bus->devnum_next_mutex);
-@@ -2222,7 +2221,7 @@ static void choose_devnum(struct usb_device *udev)
- static void release_devnum(struct usb_device *udev)
- {
- 	if (udev->devnum > 0) {
--		clear_bit(udev->devnum, udev->bus->devmap.devicemap);
-+		clear_bit(udev->devnum, udev->bus->devmap);
- 		udev->devnum = -1;
- 	}
- }
-diff --git a/include/linux/usb.h b/include/linux/usb.h
-index 9e52179872a5..1913a13833f2 100644
---- a/include/linux/usb.h
-+++ b/include/linux/usb.h
-@@ -440,11 +440,6 @@ int __usb_get_extra_descriptor(char *buffer, unsigned size,
- 
- /* ----------------------------------------------------------------------- */
- 
--/* USB device number allocation bitmap */
--struct usb_devmap {
--	unsigned long devicemap[128 / (8*sizeof(unsigned long))];
--};
--
- /*
-  * Allocated per bus (tree of devices) we have:
-  */
-@@ -472,7 +467,7 @@ struct usb_bus {
- 					 * round-robin allocation */
- 	struct mutex devnum_next_mutex; /* devnum_next mutex */
- 
--	struct usb_devmap devmap;	/* device address allocation map */
-+	DECLARE_BITMAP(devmap, 128);	/* USB device number allocation bitmap */
- 	struct usb_device *root_hub;	/* Root hub */
- 	struct usb_bus *hs_companion;	/* Companion EHCI bus, if any */
- 
--- 
-2.45.0
-
+Regards,
+Markus
