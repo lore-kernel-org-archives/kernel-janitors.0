@@ -1,93 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B3017577;
-	Sat,  4 May 2024 11:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D038F6D;
+	Sat,  4 May 2024 12:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714823059; cv=none; b=a5x0ImtR2RUX5vmL+S6uf8GIbPnUzGtRyXfV3H4/dfk5y4pRmn0KsOm8bxuT6VYfXuotigpI70ZB+vpYBdsQT2CIUXG7TaV0TQVHe+UioGDZ+9+K7kooPharFffo1Ssu65jQMLw7efm8gozA+9FbvSM9N1O7rUwR5dvNZoUamLM=
+	t=1714826083; cv=none; b=W+whtp+z59pdbYCmPOIDBdUHXnNbz43CdMRR5jMMTO3hdaMx3AF096Y5HIbNPyiLlZy/RbrMaFIsaYXUnxM5TVCg6HXEYXBE9P3X7igQlK+EklJ85XyLlZrCw5YnOHevVpO3w5/mq7yHa/RYQ/NifalcKTPFkELTZkJdNK75fEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714823059; c=relaxed/simple;
-	bh=nhPPpbOqhYfSHBSbXUHRoGUDplochmKW9eJvPRWtz/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ESXcGAXYY/orG/MtHYdoDbCSEHh1r5GwZPzuLqZa0vSIeFoCHfbmcKyGjwLj0BVlwT1mWK5GxzJ3eJtWeXlLLgIVs+JNRQOr2p8w9tUgstewAic/UgT2vZljOoPPcn+on+rLAJHgdb4UFXEf/VspjMj9QPvDSqkcJLBISP8mm0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SdodTOiw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714826083; c=relaxed/simple;
+	bh=Yoe79Eg/PZgOm5Mey4BVO1eNMWWZbUND/eB3W2VBhP8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=o5WTWhdbmtEJaUNKfwoePOiUVTUX831bxgJMeYOM81qhunzvx8vlxMxX+PeX6ioJ40G7ZnCsVqfsPu/M1zL5aBPAkWFab/CudkID2SuYiQOLaGWvkW6mPwjKAje7YVrtmXkv5HB2x5JKv9nghLCqeUvm/tkLqprYcTexQP42TEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LBWlm1z+; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdodTOiw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7E5C072AA;
-	Sat,  4 May 2024 11:44:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714823058;
-	bh=nhPPpbOqhYfSHBSbXUHRoGUDplochmKW9eJvPRWtz/Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SdodTOiwwafOYFjvddOqmNk4bECY9u/MWGWPgX0XjO+XKZXF5kI/cc/74NeSCECRD
-	 IYFnQLaik9GXt2WXY04hKUD3SbnN4WV1ZVjeEX8tW5b+ybfIMipEdWChg0/XI0mcSU
-	 qd1/YWG/yFSV2ibQIYCclAUQnL0eLhkqWtn+DDj3NtKUan6Zqih/iGSOzcX2/uxjCE
-	 S4+YqXAMkWYgnRne6y0W9Svd09SkAbe7XB7oz/YCewb1IG4v1NtBgNPMHnUR94LQLs
-	 yA5jceGG4maEM3S8NbZUv4AbVxjGRJc8rItNHG2/NWmBwZGMLyF0o1qS0lmlaEp8qu
-	 WteNqIxbwGBcQ==
-Date: Sat, 4 May 2024 12:44:07 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH] iio: light: gp2ap020a00f: Remove some unused field in
- struct gp2ap020a00f_data
-Message-ID: <20240504124407.1ac6f07e@jic23-huawei>
-In-Reply-To: <57e9f29c7062d1bb846064bf6dbd7a8385a855e7.1714568099.git.christophe.jaillet@wanadoo.fr>
-References: <57e9f29c7062d1bb846064bf6dbd7a8385a855e7.1714568099.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LBWlm1z+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1714826050; x=1715430850; i=markus.elfring@web.de;
+	bh=Dw0wxRu3LYsn0DKAaT4XAl0e0WxvZkPx1TNVOzFQ9z4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=LBWlm1z+TprBHaq4hs79isSLqS/7ZZKPiUAyhPGMUmrLBvgIPqJYiXvDb/4M9aDo
+	 I0LlL/JqCBK1Jc5PI+nf6d3Z/a4Di3++4FMhidtA14SPfnyrQzV4Y2VtM/p5kBohW
+	 Q62yhVaGcxUJUAjPaR/xVWgQJKz4z0X8SZySOeZ7+ZeV4uHASE+9u8x472MiUDPzm
+	 ysTC/8rjbHe3wdFEuRKlI2umwgDTTO59xikSXGKgeGmzyOBvB+bQy+Fuf1x4E2NHr
+	 8HkDKrKI+ct06Fj1eFMq7WqfMauVukbHZZBfqeXz2ZiXf3DnoEwvA2h1m/VM2kS11
+	 1Ex4y/2O5vD21YkTJA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MkVsa-1sUHQC0gOs-00kLda; Sat, 04
+ May 2024 14:34:10 +0200
+Message-ID: <182b7a9d-73f7-4529-b053-463eb3684c3f@web.de>
+Date: Sat, 4 May 2024 14:34:06 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+To: Levi Yun <ppbuk5246@gmail.com>, kernel-janitors@vger.kernel.org,
+ Ben Segall <bsegall@google.com>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Suren Baghdasaryan
+ <surenb@google.com>, Valentin Schneider <vschneid@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240226211237.48415-1-ppbuk5246@gmail.com>
+Subject: Re: [PATCH v2] psi: Fix avg trigger being fired unexpectedly.
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240226211237.48415-1-ppbuk5246@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:rbevdbydq7HBhBf18M2b49EYFp3SFfcSm82k3YedcewesMYIJFA
+ bA0cfw5Nwvcmwl8PVRIcVDOBkGehMObENLRnOtVdB0GeiOpFLnqJPFYLV4+WUn6OsWKgp5i
+ Ei3gh6pE+54goZDG4vyeckTFocPCcitbiSGoRwG8a+5SDcwVtSx+2hDP43K15Dkwy67c0LK
+ 46gF6tkwZq74qWU5y+Xpw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:di5ere2P8Pw=;Jtoe6CFNxGvFyXGjU+gQK4mcbUy
+ OK+75fDBaCYatvTn0ly7SlBYmqKxCW1WS8j1hy/tZ1wS/wMxdG6/2TkFJijNHYntd0ewK4Ta7
+ mt2RFAnXXPGPJ8EFP1/G3sN4dPSOPRDrVW7m7/xl1BZw8yT/dKaiPdGRmrIa0ENc2PVg3O+OA
+ 0RjyEFR55HU9+4R51rCTsycWkFQzlApJ/c6LrXL4u+z9EKA04ah/+VvKpUsNhv8aLSvTVzOp3
+ xEzXtV36J8dTV2TULz1954CAjC2DTA0t2TE78jcLC71f2czJh14gD/AIqm9o2vNnP50MCSkre
+ 1KABePaUvHEJx8fL/mzyH8jE+E08id8ZxDJDElYC56xB0kn5f8Z3DXrJ1fhy+uMVb0gDdQVT9
+ 3X16oSR7O1WBdy2d3kzt0349esNYW3PBgQ64aCm3orlGvnkXzcYLV1K19aTjxQxSRsVixh6Lz
+ SRt+xYM8ZFJg79qs2K1x7J1b7tP0ZpS7SXfvxreODu0xJQ9Z7L42f6NFZ1uRGi1ehU4Ba9cPh
+ EHRr8sx7qoJmDe6HmNT4/AsssLueBQEmjeWNqsjDbYGjIN8ugg970UKawnqL2gYeiul64Y9st
+ wqhsGuQrvGebEFdrbVtkFvOAACJwYamNWQUHBQ8tWkzqcxf6vXEUEmjn6MNhizwUo4k26QiwO
+ IOzWPKLugD4Cgrb3Ej28uy1zCZ+n0Jv7efjXnOWHQLEVtqxHNG0zwwQBf/WOhzoWKbeoFNKfw
+ sMREHfuufTkwwDq3tTNjS8TL4J5bueFyyVjRJ7datzWfSi0uyxYz4nShi34hMVbBBn1q74Abg
+ 0P/424JN2UP9wuD+LztZVu5OWbs/qlbV/LuZ4cnjOuwwUpYCem602sTzUprwI9yZDr
 
-On Wed,  1 May 2024 14:55:17 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+=E2=80=A6
+> But, for PSI_AVGS, win->value should be initialized with group->total[PS=
+I_AVGS].
+> Moreover, to get exact initial value for win->value, it should be set
+> under each trigger lock to avoid concurrent changes to group->total[].
+=E2=80=A6
+>  kernel/sched/psi.c | 8 +++++---
+=E2=80=A6
 
-> In "struct gp2ap020a00f_data", the 'pdata' field is unused.
-> 
-> Moreover the "struct gp2ap020a00f_platform_data" is defined nowhere.
-> Neither in this file, nor in a global .h file, so it is completely
-> pointless.
-> 
-> So, remove it.
-> 
-> Found with cppcheck, unusedStructMember.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Applied to the togreg branch of iio.git and pushed out as testing to let
-the bots play with it.
+* Can imperative wordings be desirable for such a change description?
 
-Note I'll be rebasing that tree on rc1 once available.
+* Is there a need to perform proposed adjustments as separate update steps=
+?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.9-rc6#n81
 
-Thanks,
+* Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
 
-Jonathan
 
-> ---
-> Compile tested only.
-> 
-> It was added in the initial commit bf29fbeaa13d ("iio: gp2ap020a00f: Add a
-> driver for the device") but was never used.
-> ---
->  drivers/iio/light/gp2ap020a00f.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/iio/light/gp2ap020a00f.c b/drivers/iio/light/gp2ap020a00f.c
-> index 9f41724819b6..9a476697aa1f 100644
-> --- a/drivers/iio/light/gp2ap020a00f.c
-> +++ b/drivers/iio/light/gp2ap020a00f.c
-> @@ -237,7 +237,6 @@ enum gp2ap020a00f_thresh_val_id {
->  };
->  
->  struct gp2ap020a00f_data {
-> -	const struct gp2ap020a00f_platform_data *pdata;
->  	struct i2c_client *client;
->  	struct mutex lock;
->  	char *buffer;
-
+Regards,
+Markus
