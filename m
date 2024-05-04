@@ -1,86 +1,62 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5988A1799B;
-	Sat,  4 May 2024 10:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2C45258;
+	Sat,  4 May 2024 10:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714817407; cv=none; b=aPf5Sht7vfyHcwm9FILJ9NuDeTDn2fv49bdtfYuWkzg2cp1y+cg1HrSZM5PI8iEdx8yCVahYog2RVwlS110Xl3onuReSW7W3lf/d/TlNn/pr2v4hORq8EnRMhf5dTLtrBm923txZvcXezjkuQfK/KWNka1DE/IFUY7pMXCEKcKw=
+	t=1714819902; cv=none; b=nxZk9XLBdpSR3sXuqpx8uTuOyG3u3rzKzKLDBfzDVJUvOdGN860aHsP0gqpf2js02FpRWHwzPIOnjgG/EFtLQNEHn6PRO3zHC9FxoAX83/EobocZBmrChjYdlwyDRV5AkzwL67M+MklxNru2wFnewfy5/BHyyiWuOz7GKDX9PRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714817407; c=relaxed/simple;
-	bh=ueLGNJesIDc6zrJhj37NZFgvuqYhoxbM1MhXf6eg94M=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=lgVmeqWMRkDQ3C9wXAGNaijPRCJYDpYSYgba/0ecArBwsJ6urcCrK38mbQD78VC1o0eSdYNRCD+M9TZRGlUTRHm5IOkJhzC8+Fvage9iKKqt5jgw/BYglNZ7Hk2AAWnW7StbNBYehdtHuoa3dg4JguUcdmd8jgYcqVWHSDuky7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Q+ElHPU4; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Q+ElHPU4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714817383; x=1715422183; i=markus.elfring@web.de;
-	bh=ueLGNJesIDc6zrJhj37NZFgvuqYhoxbM1MhXf6eg94M=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Q+ElHPU4+kbFN/vnCpu+9rOrgjxLkzmpX94gvn2JtkVLULB84aXeNEUw7fDCmIXv
-	 0V0Sa0Ppxl1RCuVDZ67/Gx+s4aW8tf8FGAyZkKcgRhd1MR4TlsmQMCTO05WmyFnl8
-	 nBoH/+cNPQ1ChSEdtiIzZ8WsMwwy55zX9TmZGLeTj/8z2h5fUuJ/VEaeMjWqRiHWq
-	 VOgzpy8kqNn+6uDY/WTLuk9ORyiVI+kdkczj+qXFfPZDSPGqXdEYnr6iPApLW9WUq
-	 sWYiQ4zauiMBDFGEV8e0S7J9k5kQvU6Nj/6nMiACKVBt2oc3krTCwGqTU0PpW5U3r
-	 fzDUNmNAIapJSSCcwg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M4sXt-1s1pQG300V-001wW4; Sat, 04
- May 2024 12:09:43 +0200
-Message-ID: <a664e0fe-1430-455a-9436-65ae8ae014bb@web.de>
-Date: Sat, 4 May 2024 12:09:21 +0200
+	s=arc-20240116; t=1714819902; c=relaxed/simple;
+	bh=X4Il8DnsZvuxyI5MynZ0dTBzMmmyjgraR9bTmVYz6dE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Na4YP6i8FKXVT1+QkTUelDsIF3jz6oU7sQU4gkUtz4o68brzptAy84jkqcwGFvAFaqYcK1Xnk/csr8jvzs3Egc95QcVbypOPhEVYjyvBcwa42K5dHIrrXN3WgDOGH6ZAT6VJF1MKkXl1kDVUt5inQo6wCmKU3JuPUmAWnRxPdHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875b5d.versanet.de ([83.135.91.93] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1s3CzM-0001m9-Ud; Sat, 04 May 2024 12:51:33 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel-janitors@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: rockchip: Remove some unused fields in struct rockchip_mmc_clock
+Date: Sat,  4 May 2024 12:51:30 +0200
+Message-Id: <171481988029.3538483.14745694145472160421.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <410bc0f86c7b9f1c80f8a4e9a2a028a9a6ee1ec0.1713970085.git.christophe.jaillet@wanadoo.fr>
+References: <410bc0f86c7b9f1c80f8a4e9a2a028a9a6ee1ec0.1713970085.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Levi Yun <ppbuk5246@gmail.com>, kernel-janitors@vger.kernel.org,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240501195116.62669-1-ppbuk5246@gmail.com>
-Subject: Re: [PATCH] time/timgr: Fix wrong reference when level 0 group
- allocation failed
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240501195116.62669-1-ppbuk5246@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:XJmTtw2TDp6kHImcmWMYMYIacmp8My4CR+16WlaLqPW70vn+ry3
- tXqS0PZRvnkXZcEVSoEZQ2CeESF+QKBWAgv2GmaIrHtOuNhSunUf3Z1OLPgRIk9o8GfnkJ6
- Xc5mAGpWpHfVQI7GLUJnoFCW/GGKZgFscuuTX+9pj/NdPRRQO0665M/sjG2CNJaVmg+Hl0o
- FHV/FcXnzkZPuFKNphv1w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:yutoUNxinkM=;cwHsPz0FR0jSvryOIBbW5cHUCkI
- GEWV6MHSTB8JC6Nl0bONainTA3CRIl+AZwTRUCc1p/evQqlFz6iAMJvhZXvD90GMlv+z2BWC2
- 9QvnnwCy6+R8sFAJp0LF2j3Ilyr8Odbxaq6JC1zzD76y0wC+v1umybOiaqDclEy25veNYtyOQ
- 09z8FKyru79pfNqSbmvmUQR+YAdrJk2lVeScSoNOliPATux6vr6nt7wGq4X0ldtMai/LlRAMv
- 1bsv4L+BoozukXFuYQnTMACKz73V6HfOG8qDBivqXksAttluRtktVbGorkZ4kQTyQmwFwSBrm
- sHGmUQrk4nmw+asa/9s8d+2F215EjIrX05zl4Jkrrwq7XjtDFpqIoMh1RK1g1i6kxrriR4fY6
- GH2i8qIdchuGD24p7fxrQRf8mce33xgtYZFDg6aaRVbtFpiQ09ABNKyQwcanHDMNK3KyGzeqs
- A8ZCkSMUlvq8E//v7HPVUm0c1u8osrgu6ms3w+Vy40Hs8eYys86mLc04GfMUvRuoHBRVcLEnh
- 3yiARLB8Vh393Av/x9KBGHEDdhNvkH4GpkcUf81vsLRvHwwt2w07uIqjtbWBnMNPCqtEqSFbx
- VsuomeSZ/YgfFxKZvkD6WMS3482MDqlqFPWDeKT8LGkO7R1XoP1orFnncd/JWmf6cJZ48CzqS
- YHpNtCzj696zbuP90IOau40nFfWJPXGoayWXonB5VcK8bmewplgIFB/JJllePhoJekx2H4kSI
- kHhU/kqjNZN/r9RU+Q/9aFnZhmnEAb7NS+LKlbRCrVEo51p46EVTe2416yEMTZk4JY8aIaaPg
- mxK4PNuNOtoHt9n18QiE764ShJ5syCvbbznhr6WiuvIXbcpTYMUOsAF2MsGwDw2v8H
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-> Changing group init do while loop with while loop to fix this problem.
+On Wed, 24 Apr 2024 16:48:29 +0200, Christophe JAILLET wrote:
+> In "struct rockchip_mmc_clock", the 'id' field is unused.
+> Remove it.
+> 
+> Found with cppcheck, unusedStructMember.
+> 
+> 
 
-* Please convert such a change description to an improved imperative wordi=
-ng.
+Applied, thanks!
 
-* Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
+[1/1] clk: rockchip: Remove some unused fields in struct rockchip_mmc_clock
+      commit: 947b8f2a8b5155f6e9560af07ed65b3cc9aecd75
 
-
-Regards,
-Markus
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
