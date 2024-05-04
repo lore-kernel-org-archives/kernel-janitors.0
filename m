@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67881BF3F;
-	Sat,  4 May 2024 16:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279F611711;
+	Sat,  4 May 2024 17:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714841184; cv=none; b=Z2TevppPcZYDPBI473XPWSo5gmQb1hRB094WU/930yaVfJldgVlGeoibOkG9559lU9OW1kmhLcd5zTBa7k+hfedEeE4mh/iCMc5hEzUUQlj2DVxxFAvAvUhtGns1ZYrBSlywWrA8M88aOzSYIujOKV72o7mV8jQiecPJbR1nAoQ=
+	t=1714842857; cv=none; b=Wa428OUzm7csB73/yNq4P5dCFuVPGNUEFH3sX0+Lgg6sthjYeZcRXHlA+PTYC2IvCmWczb8n30RiH+G/WpwgWwfIrzz2zQQgJZWicO4xp+NNSU32rn59cT2uo8/9+la4E8rxkA1mLBxnlOtBLLnj8SdpHgC0w5VfOatMkhWSfIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714841184; c=relaxed/simple;
-	bh=5jxx8V+nNPqKmPVWdV0+0Ox5zWIAkOpJRRMZFuNa6L4=;
+	s=arc-20240116; t=1714842857; c=relaxed/simple;
+	bh=yYvpe30TBewlUx2P65x67BzzKgnMGIyCSOp63jycRHQ=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=MGgyvq03l2uvaSqPIwOGEMfraie+FuSNCXZuGKJ7u8MHMRWzWyEQbssQ3Ps8cPVbWgtUHfDRnGcMq1HMnFgTB5++G4qpnELDaD+cSIitSZ5b+DIovARxAZg4wwblCzcd9qtFYeRwMB4jbeCPBkZoN1jTGfcqTHd+bFAtA8NUKKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BKy5KWWY; arc=none smtp.client-ip=217.72.192.78
+	 In-Reply-To:Content-Type; b=c4OPhPQmi7b8niKuiB5heFWgv+SjLp7v84vlUMOnrFqN5zK/w5pGv2K7BL3ry0TgHuZk57hfLU3gH1ITE/i+gCJF9JKEssRezbEgpKobb7nc78Co19bD0q5Oc5YEV7ZZwbDDcZgVkwDndk4b1HtTb1itLn9lP4e0UUvqYJkFPE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lFJy5wQ7; arc=none smtp.client-ip=212.227.17.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BKy5KWWY"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lFJy5wQ7"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714841165; x=1715445965; i=markus.elfring@web.de;
-	bh=5jxx8V+nNPqKmPVWdV0+0Ox5zWIAkOpJRRMZFuNa6L4=;
+	s=s29768273; t=1714842825; x=1715447625; i=markus.elfring@web.de;
+	bh=8EY+oLHPDjY0oukUia2BXNUBXF5grFb2F8ZohoyJXik=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=BKy5KWWYhp5xPKRLCm1dqGHCjFhujx3RlkpaXhrD70QS8DO5vjrL/V/iuWz9X6SF
-	 62Qd9tMVeC1OjKoTf5GLMI+2b8Id9EjmbleREhzOTIxlose+2PSEPFgHcuhkxAAdl
-	 iLBcxTznnowpYS4qEL1Wu+CdMLxtvpmdiUBJ8cRYamTSMadsgHrSQFPKjlM2SdKGr
-	 5DyuYocr8zAoOCE3Ox45uukGBmvC8QLnJB1MkVIDju5nmL2IG0LaBv1oEOyO5j5fa
-	 boIfuMwh2msdXY8yv+iG7ws8a2A7EzqtLCchfeQaDF0Z9yxMz0N567FtkbcehmLeZ
-	 vWZM+H5gEIUhLYYTwQ==
+	b=lFJy5wQ7li0zCL65typnZJYkMNLu6NmXUhGreLZGe1vrXe48H1EIy3awM0iJACmc
+	 Hb+i5CqeGkHyIjQvhLU88SFQLdIc9wilwJYAZzv0LBVmMLrjE2uc4dQQ5WvKfuVeY
+	 VNcoXT/FEpf9gF2M2hDFW8MGRP9Qhol30x3hRMYsAniHB8aIp5wpR3uXNjNX2+u/Y
+	 SQAF4sLmKpld+Toe/qKMNTZm7Oar4yR4hpo/RjHFUHTGDiARzdNvopa0XVjAfd/Rm
+	 Gk+zVq9x039xBGgVxZsyj7ml72uOe4cBH/vfEAYV3O3cDLEZ4fuydRBuCIFCT9oKC
+	 9qBFRf/Qm5TuaR+0+Q==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0Icn-1soOtu0n8Z-00xKWI; Sat, 04
- May 2024 18:46:05 +0200
-Message-ID: <264d605d-b7ff-4d92-925d-30332aa2e2bf@web.de>
-Date: Sat, 4 May 2024 18:46:01 +0200
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MALeD-1rwOH53y1L-00BtK8; Sat, 04
+ May 2024 19:13:45 +0200
+Message-ID: <d56a6e3f-1371-4bb7-8947-1c2468e4d677@web.de>
+Date: Sat, 4 May 2024 19:13:32 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,41 +42,47 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Dan Carpenter <dan.carpenter@linaro.org>, linux-xfs@vger.kernel.org,
- kernel-janitors@vger.kernel.org, "Darrick J. Wong" <djwong@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Chandan Babu R <chandan.babu@oracle.com>
-References: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
-Subject: Re: [PATCH] xfs: check for negatives in xfs_exchange_range_checks()
+To: Dan Carpenter <dan.carpenter@linaro.org>, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ Evan Quan <evan.quan@amd.com>, Jesse Zhang <jesse.zhang@amd.com>,
+ Lijo Lazar <lijo.lazar@amd.com>, Ma Jun <Jun.Ma2@amd.com>,
+ Tim Huang <Tim.Huang@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ruan Jinjie <ruanjinjie@huawei.com>
+References: <502fda28-fde7-4851-b17f-4d48848955bc@moroto.mountain>
+Subject: Re: [PATCH] drm/amd/pm: Fix error code in vega10_hwmgr_backend_init()
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
+In-Reply-To: <502fda28-fde7-4851-b17f-4d48848955bc@moroto.mountain>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:I1VDS+lXT8gPAkRX4ICsp9DC98KkcW1J2SOrbYqnZK4U7XuEr6x
- ta2sLJYEHpbLUqb6Mo3aohVYyanJlWiC0n+AUIGOZtpZiEpxZTP3vgwrKPpiZeOfGAYpIrL
- MPCO/gXUQgJxrXi/joS1XDeU6S1TgkRuYpuMxP7JFogjpWV4vmQmBaAbRN0d8iqINbzhQWT
- +2WyLNN3XycudG3O0d6lg==
+X-Provags-ID: V03:K1:R4Feujz3Sedv4K1I8WBs3oUsw+U9QOY1XAljRflhO2ZnewvfQOp
+ pJcpDcxO7H96nyn7GHcdNBx8WOHb4Q1DHBNge0eq7YoqkC9nl8d2R4hxh8pkEYOA5LVkLXR
+ 6W9tDhP9UzdwArPm1T5GCkAsmFu7PaZrtFWFvjjQHU5DG5F8mkbpT+jKKOhtWp/snom2AQR
+ UOLrtdC2WYCqoexOk3lmA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:D29nIzUQi/o=;V1kZDU1H7JScLyyRryYo39rd6oA
- q+BedEOjm8FNn5256Izh9+IZgsamG8t8DmYxGQwNHAngTz1ZM5uJBwcbZZ0HXRxitbNWlnqOx
- teF3WKL9jMlEyGVtKDYxY+Hzk+ScEvyfELvTa+yuaWn7GJS2Cm05xvmS9b7JB9WAQPjnuCjI7
- OMxYrUBEl1lCS3hvUcWl0OI/mGjcQr+ZWYYc9goqTo3KR1Lo3V46rAow7zhoaE+hnUs8pE/Kh
- 71stxNA8+D/blFtGx8cAV218xDnLIFidqMAP6uax4VWk551DG9A14/J7Vp9J65gm3AeyHk+1h
- 2kvyGni2B/WyFgBcIs3wyYJdBZiNcWR0e/P5M8cquNLJsG4IVrdRb99gg2P3LI1sDLmEE5Noj
- AZzzbRyFa63hdk3ysMHg582Tu7zZ5rkOHfVr8e0Q9Iw/yRlBTTMi+I7DIZp63YH9WUZS9BwRb
- ttkNV65utRgl1XmRUDwIG6c6UKLhuUfmJWwpXvHvQoBHiN78B73QfxpmKm/7zEpYYBGcXGham
- 3h1MO6gYu7Y6cK8P53tfPltFMP60B4NIaBAbACDFNwuz7Fy7QBnq3zMzsZn/5SUVxERA7QOow
- gBeXFXqkzkabf/G+he7EAHwTZn3ff6Jz6EMc4lPg3PUhTqFA8CWNXUSycEdXDn9xD60eBui6L
- vHX/5JlWjILwKy9xXzyXbwphNpWUGEuBs6Ut0wmfo8zLjxzMT5hB70lv8CxTYgK29Tk4oaOpI
- 32po344ssSKv/a2b4Vhc4tyj1TcPdARqOi+l//2DTB26+MV4JxkRtY7E8v9oLnZ0SgEiMTitg
- 0AZ5hYG96szpqG+RoJ6uDpSnEw4v7UgS/zu1BhjoQdgNja3tERVh+buqIKWplyHOjr
+UI-OutboundReport: notjunk:1;M01:P0:bvJwyzYaISI=;TfPnbEQAbzZWhKUj8mDkvxLSi0u
+ owQKLx5owrGXInY2H374796VziZcc1vXJbLik9xYXVt5ACSCG0vyaosPn6bo8Bf8DfjM03v/N
+ 5DC3NJC8GKGIURIBc7+iCurS1iEpjhhPlPicdkIFWsahlT00Vk84WWCM63d47y6HQdTf+o67n
+ Hk2f5CMY0HUDWfSPiweNVntet0BFhdavzZSitC4mohUzCGYe/Djd4lCGwEUuDGrgRMokuZWdO
+ 5lzLz43pnVpEiSn11u9u9iVt9pb8RmzmL/uCKMM8eTO2/0BtjJwciEaiut65jbUIbVgnBseEn
+ rYY1XMGwAc2ZiVDkTaorDvdO1Gb+s/wj4a6pzBkVDfI3crSHRjR7s/k/UZ2yEqZ1NeGfiWIyI
+ 0KJZDGDVTQi49k0cOB57qQZhRAlat1O/z6dQkiNt6mnj38IcaO+X0+xkXsrxLcet85fIw87Nh
+ WRa2A2mgahgA7Q4dbUQAd8/2mhGrkxId2i5IfGbY0U9xvep7tTDfmTXhzB8e+KzjAi7RbYkAA
+ g1vXndabM3+rxB7ePjlL2XTGZ3l3MiOgM0SRqQTkJYV2Kya1Q+CASy94O8oziUrCBMjMJyUHv
+ RGeUwzun1mQefuZFluThXjsi2I0aCTR2iGJblVpiwTNszSfYTgfWu8uXU9+D4YT2pAd1HHnhe
+ mC7CwVnT9erz/SBPRR5HGnQ+EoDdHVdtxx5uJnXkVSih0DvYN3zlZeuyBGxQVqTfnHTAPl2rJ
+ fydvQmcx/I4efhQP2JFycLl9bJca695kTCUcysvWc7X3XP2j2uAJfljTuexNKh50t0xinvs78
+ ugG7ioFEDSOvS2XsfdtbtMtRRFZJV902hayI3Ec3MCnf4IFa54Oov++uSYAP9ALJed
 
-=E2=80=A6
-> Check the they aren't negative.
+> Return -EINVAL on error instead of success.  Also on the success path,
+> return a literal zero instead of "return result;"
 
-Would you like to use the word =E2=80=9Cthat=E2=80=9D (instead of =E2=80=
-=9Cthe=E2=80=9D) in this sentence?
+How do you think about to omit the initialisation for the variable =E2=80=
+=9Cresult=E2=80=9D
+in another update step?
 
 Regards,
 Markus
