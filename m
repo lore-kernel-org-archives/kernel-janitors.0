@@ -1,86 +1,137 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20884A1C;
-	Sat,  4 May 2024 13:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id EFBAE2D022
+	for <kernel-janitors@vger.kernel.org>; Sat,  4 May 2024 13:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714827965; cv=none; b=Wt+/UHtZcP+taqqCAz+7PLxoJkn47KkFQiG5cOy4Bq+SEZNWBJJv5JSmyvHyzDzzLn2MqCx0ja39X2oxhwDWDUE7lwPX7kN+cPEMQL3s9DZEbkTev5Ui/0x+44sHg0h3Napxwy8GDI0+02tHyp4uLmb5loRaKNQcKcEYiaJBJ8A=
+	t=1714831163; cv=none; b=dGTvvTh093vgWL8/C//nE/OGO8kSHtCCY7MVlj9ZT9DkwSDquqI9qmbcY5NyYnZ5DhDQsBlsGLNHLhuCTwTpKTzU7jWhNKsWLiqfBRZTTGZlF52Py7Ksz8bkigMGDZi8gINREzRKN8u99Zs0sV9FGAFyR8diMKJfphCJbIZZWFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714827965; c=relaxed/simple;
-	bh=rm7S5XO0N8eppi9nmL2W1Piw3+dLivBrLKsKCCKFKyg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=kp5XwhF4H7+lojiLdQPQJV3Uw7VN+nt/hbL2SaN2g6j3hdhS480EgJ+5IPASQRERqGGnAWqTWWQakexBPif2ZPnyQTjuGskS0K1oP/D0VpZhCwA70tCzZlOjoc5CY0umaJlpajEqtoQadQl7fnjJRrPICDURaHCPHcYqZa6MVSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aWzKdYoN; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aWzKdYoN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714827955; x=1715432755; i=markus.elfring@web.de;
-	bh=rm7S5XO0N8eppi9nmL2W1Piw3+dLivBrLKsKCCKFKyg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=aWzKdYoNGt84UoCaMpAxp6uEC+Pozw5Cd8/9EcH+Qn7ykMw3jEOJ+8sP9pwDtELr
-	 Ug1TIYkwew6yYLc0evu/evZ59q5HZ7PAfCXTmk9TYUirK47n3O3/X0U/G1x4XNeta
-	 6xPS1OjM6b6QT1A3Js5LuCUPCNLQiJE58yPVXj8Dj37Bu7MR+N3ymaZgZobvaJAhE
-	 FqamEUQLeXnZJTaLCHEImnWoc73dnoB5W4iQ/pGX3UK8JiNC87+mkfeIsdOX8lhRF
-	 n4vfnz7D+LDwvYpgpknWm31lvFDAPPo02pZ5dY9q99Zvbvh1ISY3pItaXnpHzC9wc
-	 swItuOdo7SBVS6EpOA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MpU1u-1sQRHL2WcO-00psPT; Sat, 04
- May 2024 15:05:55 +0200
-Message-ID: <6d2dc0e6-e32a-4c47-92e5-bfb916dbeee0@web.de>
-Date: Sat, 4 May 2024 15:05:54 +0200
+	s=arc-20240116; t=1714831163; c=relaxed/simple;
+	bh=A21xCyv6exiNvBZK0gTwjNFunBWRe/n4lX+encVLPEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UFsIhC5c0q2CAGkCKJVNpxVdLUSWhEDQAfFQCfYmiCePVa69GYzYx93aDgs4S3wID9dBzs0atK2kcZ5CaoFQ/NHXbRhouft8CJABn6fp6q5G1VnXADgcaQFkUsj91UveDRhnPTqp0pIwB/eqHcHW1Lx6H7LTcYRwPTrnG+RKoho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 805310 invoked by uid 1000); 4 May 2024 09:59:12 -0400
+Date: Sat, 4 May 2024 09:59:12 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+  linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+  linux-usb@vger.kernel.org
+Subject: Re: [PATCH] usb: core: Remove the useless struct usb_devmap which is
+ just a bitmap
+Message-ID: <1126b27f-c672-4d13-b4ce-baf720624823@rowland.harvard.edu>
+References: <1d818575ff7a1e8317674aecf761ee23c89fdc84.1714815990.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Levi Yun <ppbuk5246@gmail.com>, linux-mm@kvack.org,
- kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240126152556.58791-1-ppbuk5246@gmail.com>
-Subject: Re: [PATCH] kswapd: Replace try_to_freeze to
- kthread_freezable_should_stop.
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240126152556.58791-1-ppbuk5246@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:7rUmHQbZFBJe+Vs3XzpJjKQH/XoTgUe3sTSmqk1ejiThXGI3AoI
- 5GGO/CurzVJ1Au8Vk3F/y86KSddpAkF5Y/6EbjbHrEkOhvtWoTcyTTsMWPMcmxwU2rz1Kb8
- Ce7ZWJ6m+xhI0BD2rf0VTTWGCdtbnl14fcndePw2QCa2GrTX0epJj8DXTMDdVOeOumMXuQy
- CGDNmBOCj4jTaqhGeogmw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:xxtRwIJ4vh0=;rhYShkHGJVZAI2gvklGkUC2/+NW
- ez9wpkYG3wwptBN3wlNzbfsF0dnBbly1pk5uTZk4HnnrtjIfR2tecmxi6VAqy15K9u1vgiGOE
- u/DYpSVAZxK1mRUS6eaLwBTYqMnkri70Z98Q1j5bVD12h8P6kYyKemRymo1bIkRCy0MYAK8cQ
- 5djfK/rQbjpGLYAWbpCERqZM+T/vShSv8cJyjxryfCTOL06s96cpLE9HJ7t/80TUSNmrdPjpR
- l3X8gBlFYvX6qJz+RH/3YL5sFukLjS1w+CLwkXMebtcX/B9OHfwpPG2nNb7++49biRkhFB9hY
- pWgrVaIQfQu9WlMFwVxvXOnmSAH89ngOGrKsuPp3tG+s55X17Iy5B5Nd13acBfmzWSdj7E/Jm
- ZaAB0WM2XI2XgusdoXzhlEpLxjLATdZolGLkNcZuO1tCtR575dNpLqOV8GM3FynO1p54YCkmY
- kz5pI1/M1Lf/OjVSHSn3yCJTG0HT7wAZYsAhuDBhXrnIFcK86CPwQPnf/Litz3H2z5U8g3WHZ
- bXZJzcos6SYAjV2qmACqZyu34jKjwu+yhUNW65Mbnwzoj51yN5C9bmmSUnqrNKfTeRkcDhCGd
- Ki7+gh6gGnG+dlX3OOMPUKs9XImgrKt7LmXwbceudh22jglWmRTmd7GU8qgiYWK+PVJWmahvd
- 3sD9Xwb4VXgS74EqIDJBoFxkUG221ux89PbVMBccT38wJjmPV/jmOLMwSHuUJqq3Ghit+4wYV
- PcQRUwphPcIyUkAn4pzcKZrw9SmGtzBT5jWYPAhHOPwvUv28duOOnmBDVlPGQqO8phCCcjXg+
- jxHLjrtBRP+JiUbLX5fjbTswJVa2kjCyzAgaVG9diLXukJVnvxrElZubv8xy4Qb3uS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1d818575ff7a1e8317674aecf761ee23c89fdc84.1714815990.git.christophe.jaillet@wanadoo.fr>
 
-Will an adjustment become relevant for the summary phrase?
-Would you like to append parentheses to mentioned function names?
+On Sat, May 04, 2024 at 11:47:05AM +0200, Christophe JAILLET wrote:
+> struct usb_devmap is really just a bitmap. No need to have a dedicated
+> structure for that.
+> 
+> Simplify code and use DECLARE_BITMAP() directly instead.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only.
+> 
+> I've re-used the comment related to struct usb_devmap for the devmap field
+> in struct usb_bus, because it sounds better to me.
+> ---
 
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 
-> Instead of using try_to_freeze, use kthread_freezable_should_stop in
-> kswapd.
-> By this, we can avoid unnecessary freezing when kswapd should stop.
-
-How do you think about to add the tag =E2=80=9CFixes=E2=80=9D?
-
-Regards,
-Markus
+>  drivers/usb/core/hcd.c | 4 ++--
+>  drivers/usb/core/hub.c | 9 ++++-----
+>  include/linux/usb.h    | 7 +------
+>  3 files changed, 7 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+> index c0e005670d67..e3366f4d82b9 100644
+> --- a/drivers/usb/core/hcd.c
+> +++ b/drivers/usb/core/hcd.c
+> @@ -866,7 +866,7 @@ static int usb_rh_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
+>   */
+>  static void usb_bus_init (struct usb_bus *bus)
+>  {
+> -	memset (&bus->devmap, 0, sizeof(struct usb_devmap));
+> +	memset(&bus->devmap, 0, sizeof(bus->devmap));
+>  
+>  	bus->devnum_next = 1;
+>  
+> @@ -962,7 +962,7 @@ static int register_root_hub(struct usb_hcd *hcd)
+>  
+>  	usb_dev->devnum = devnum;
+>  	usb_dev->bus->devnum_next = devnum + 1;
+> -	set_bit (devnum, usb_dev->bus->devmap.devicemap);
+> +	set_bit(devnum, usb_dev->bus->devmap);
+>  	usb_set_device_state(usb_dev, USB_STATE_ADDRESS);
+>  
+>  	mutex_lock(&usb_bus_idr_lock);
+> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> index 8939f1410644..4b93c0bd1d4b 100644
+> --- a/drivers/usb/core/hub.c
+> +++ b/drivers/usb/core/hub.c
+> @@ -2207,13 +2207,12 @@ static void choose_devnum(struct usb_device *udev)
+>  	mutex_lock(&bus->devnum_next_mutex);
+>  
+>  	/* Try to allocate the next devnum beginning at bus->devnum_next. */
+> -	devnum = find_next_zero_bit(bus->devmap.devicemap, 128,
+> -			bus->devnum_next);
+> +	devnum = find_next_zero_bit(bus->devmap, 128, bus->devnum_next);
+>  	if (devnum >= 128)
+> -		devnum = find_next_zero_bit(bus->devmap.devicemap, 128, 1);
+> +		devnum = find_next_zero_bit(bus->devmap, 128, 1);
+>  	bus->devnum_next = (devnum >= 127 ? 1 : devnum + 1);
+>  	if (devnum < 128) {
+> -		set_bit(devnum, bus->devmap.devicemap);
+> +		set_bit(devnum, bus->devmap);
+>  		udev->devnum = devnum;
+>  	}
+>  	mutex_unlock(&bus->devnum_next_mutex);
+> @@ -2222,7 +2221,7 @@ static void choose_devnum(struct usb_device *udev)
+>  static void release_devnum(struct usb_device *udev)
+>  {
+>  	if (udev->devnum > 0) {
+> -		clear_bit(udev->devnum, udev->bus->devmap.devicemap);
+> +		clear_bit(udev->devnum, udev->bus->devmap);
+>  		udev->devnum = -1;
+>  	}
+>  }
+> diff --git a/include/linux/usb.h b/include/linux/usb.h
+> index 9e52179872a5..1913a13833f2 100644
+> --- a/include/linux/usb.h
+> +++ b/include/linux/usb.h
+> @@ -440,11 +440,6 @@ int __usb_get_extra_descriptor(char *buffer, unsigned size,
+>  
+>  /* ----------------------------------------------------------------------- */
+>  
+> -/* USB device number allocation bitmap */
+> -struct usb_devmap {
+> -	unsigned long devicemap[128 / (8*sizeof(unsigned long))];
+> -};
+> -
+>  /*
+>   * Allocated per bus (tree of devices) we have:
+>   */
+> @@ -472,7 +467,7 @@ struct usb_bus {
+>  					 * round-robin allocation */
+>  	struct mutex devnum_next_mutex; /* devnum_next mutex */
+>  
+> -	struct usb_devmap devmap;	/* device address allocation map */
+> +	DECLARE_BITMAP(devmap, 128);	/* USB device number allocation bitmap */
+>  	struct usb_device *root_hub;	/* Root hub */
+>  	struct usb_bus *hs_companion;	/* Companion EHCI bus, if any */
+>  
+> -- 
+> 2.45.0
+> 
+> 
