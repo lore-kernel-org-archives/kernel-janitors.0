@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A51210A3D;
-	Sat,  4 May 2024 11:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B3017577;
+	Sat,  4 May 2024 11:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714822904; cv=none; b=dyxFYRAMjho/1GxH8mpRLmXUrC5NdtGTQBRpd/3p4EcDseJug34BIwSfw07HqHqCqN2FVuCG7fhx3LwB8pX30qfe6orVoN33YhvChylpkHII6wnLTAkT4h4/1EaboUSZ28VnYCe9fWJV/tJ7NtVg8vwiKQ3zpHwX+Mj1WQpRV8I=
+	t=1714823059; cv=none; b=a5x0ImtR2RUX5vmL+S6uf8GIbPnUzGtRyXfV3H4/dfk5y4pRmn0KsOm8bxuT6VYfXuotigpI70ZB+vpYBdsQT2CIUXG7TaV0TQVHe+UioGDZ+9+K7kooPharFffo1Ssu65jQMLw7efm8gozA+9FbvSM9N1O7rUwR5dvNZoUamLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714822904; c=relaxed/simple;
-	bh=RbSToE/SPz2M6tN7QkqPPKcGZsMzIJzMKsTKU9zMKD4=;
+	s=arc-20240116; t=1714823059; c=relaxed/simple;
+	bh=nhPPpbOqhYfSHBSbXUHRoGUDplochmKW9eJvPRWtz/Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WMoQ4eWdE96WWzyj9diiwLiUw3Y3UZ/lFvGAJzlQLUF/zI0gJEeMs3nVj56fm5hSbMMvFVzOAqWBICTuY27zG+75GYMFeKP29AHRDpT8mNHv5DbndnXb6PrBSzGV47r1Ex169JCXC8N6jZVwn49eFcLbT+H74M3nM+Et8BxN5Co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qySZHPI3; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=ESXcGAXYY/orG/MtHYdoDbCSEHh1r5GwZPzuLqZa0vSIeFoCHfbmcKyGjwLj0BVlwT1mWK5GxzJ3eJtWeXlLLgIVs+JNRQOr2p8w9tUgstewAic/UgT2vZljOoPPcn+on+rLAJHgdb4UFXEf/VspjMj9QPvDSqkcJLBISP8mm0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SdodTOiw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qySZHPI3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D96AAC072AA;
-	Sat,  4 May 2024 11:41:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdodTOiw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7E5C072AA;
+	Sat,  4 May 2024 11:44:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714822903;
-	bh=RbSToE/SPz2M6tN7QkqPPKcGZsMzIJzMKsTKU9zMKD4=;
+	s=k20201202; t=1714823058;
+	bh=nhPPpbOqhYfSHBSbXUHRoGUDplochmKW9eJvPRWtz/Y=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qySZHPI35YIJeqrOlhqMSJnYrI5Sh9csLXtqWrmnRZs2hy4rQD8wLZpCxME+TvYtc
-	 JToTa+nUgzJ5tyyOBxnvL/DxcWnfAhvbhhfqtTlInoOfEgPN8a1D9q1ot2CRuCGj6S
-	 rxG53f6djeuIEpPSvKJqCJiM3u/oBCblekjxTdYxZPw/EDbRYSkaVq5xjD+Es0Zv1+
-	 T531NRncUPiBLsDOVQ/3BOfPU8vUHXTUfZvIqz/bMNG+bPujjXNyvdhpfch+2972d+
-	 WO12OtA8V7ncdTqTkPydJPsEjHHzCFqyhkvyh4nLw5Ac8vE2vpWVXxpo0sH9nvwrgk
-	 wd0im14MIUTzA==
-Date: Sat, 4 May 2024 12:41:31 +0100
+	b=SdodTOiwwafOYFjvddOqmNk4bECY9u/MWGWPgX0XjO+XKZXF5kI/cc/74NeSCECRD
+	 IYFnQLaik9GXt2WXY04hKUD3SbnN4WV1ZVjeEX8tW5b+ybfIMipEdWChg0/XI0mcSU
+	 qd1/YWG/yFSV2ibQIYCclAUQnL0eLhkqWtn+DDj3NtKUan6Zqih/iGSOzcX2/uxjCE
+	 S4+YqXAMkWYgnRne6y0W9Svd09SkAbe7XB7oz/YCewb1IG4v1NtBgNPMHnUR94LQLs
+	 yA5jceGG4maEM3S8NbZUv4AbVxjGRJc8rItNHG2/NWmBwZGMLyF0o1qS0lmlaEp8qu
+	 WteNqIxbwGBcQ==
+Date: Sat, 4 May 2024 12:44:07 +0100
 From: Jonathan Cameron <jic23@kernel.org>
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Peter Rosin <peda@axentia.se>, Lars-Peter Clausen <lars@metafoo.de>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-iio@vger.kernel.org
-Subject: Re: [PATCH] iio: multiplexer: Remove an unused field in struct mux
-Message-ID: <20240504124131.6c6e3e8e@jic23-huawei>
-In-Reply-To: <7bb04abdc2815caf090a6c9ecab2a51d837792a7.1714556499.git.christophe.jaillet@wanadoo.fr>
-References: <7bb04abdc2815caf090a6c9ecab2a51d837792a7.1714556499.git.christophe.jaillet@wanadoo.fr>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH] iio: light: gp2ap020a00f: Remove some unused field in
+ struct gp2ap020a00f_data
+Message-ID: <20240504124407.1ac6f07e@jic23-huawei>
+In-Reply-To: <57e9f29c7062d1bb846064bf6dbd7a8385a855e7.1714568099.git.christophe.jaillet@wanadoo.fr>
+References: <57e9f29c7062d1bb846064bf6dbd7a8385a855e7.1714568099.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -46,38 +46,48 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed,  1 May 2024 11:41:54 +0200
+On Wed,  1 May 2024 14:55:17 +0200
 Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-> In "struct mux", the 'indio_dev' field is unused.
-> Remove it.
+> In "struct gp2ap020a00f_data", the 'pdata' field is unused.
+> 
+> Moreover the "struct gp2ap020a00f_platform_data" is defined nowhere.
+> Neither in this file, nor in a global .h file, so it is completely
+> pointless.
+> 
+> So, remove it.
 > 
 > Found with cppcheck, unusedStructMember.
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Applied,
+Applied to the togreg branch of iio.git and pushed out as testing to let
+the bots play with it.
+
+Note I'll be rebasing that tree on rc1 once available.
 
 Thanks,
+
+Jonathan
 
 > ---
 > Compile tested only.
 > 
-> It was added in the initial commit 7ba9df54b091 ("iio: multiplexer: new iio
-> category and iio-mux driver") but was never used.
+> It was added in the initial commit bf29fbeaa13d ("iio: gp2ap020a00f: Add a
+> driver for the device") but was never used.
 > ---
->  drivers/iio/multiplexer/iio-mux.c | 1 -
+>  drivers/iio/light/gp2ap020a00f.c | 1 -
 >  1 file changed, 1 deletion(-)
 > 
-> diff --git a/drivers/iio/multiplexer/iio-mux.c b/drivers/iio/multiplexer/iio-mux.c
-> index edd8c69f6d2e..2953403bef53 100644
-> --- a/drivers/iio/multiplexer/iio-mux.c
-> +++ b/drivers/iio/multiplexer/iio-mux.c
-> @@ -30,7 +30,6 @@ struct mux {
->  	int cached_state;
->  	struct mux_control *control;
->  	struct iio_channel *parent;
-> -	struct iio_dev *indio_dev;
->  	struct iio_chan_spec *chan;
->  	struct iio_chan_spec_ext_info *ext_info;
->  	struct mux_child *child;
+> diff --git a/drivers/iio/light/gp2ap020a00f.c b/drivers/iio/light/gp2ap020a00f.c
+> index 9f41724819b6..9a476697aa1f 100644
+> --- a/drivers/iio/light/gp2ap020a00f.c
+> +++ b/drivers/iio/light/gp2ap020a00f.c
+> @@ -237,7 +237,6 @@ enum gp2ap020a00f_thresh_val_id {
+>  };
+>  
+>  struct gp2ap020a00f_data {
+> -	const struct gp2ap020a00f_platform_data *pdata;
+>  	struct i2c_client *client;
+>  	struct mutex lock;
+>  	char *buffer;
 
