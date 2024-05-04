@@ -1,69 +1,66 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3607C182B9
-	for <kernel-janitors@vger.kernel.org>; Sat,  4 May 2024 11:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A7D1C694
+	for <kernel-janitors@vger.kernel.org>; Sat,  4 May 2024 11:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714821979; cv=none; b=Wlcd9o+9aIp0PjfVUyvjEPBIBmVIbkkY+f8ZWL31HF+eWQkTyfiR/iLZTq0+Mc4q7PzNhyzdY6FApgvdk+Oifcx0Ehv9gXAq7W6rWwAPYR3+/3sYlv7LlO153tos3juKkOlDJgkCtXFnD80VKGWxo1jvJVhKZxy6cA86iVnX2dE=
+	t=1714822013; cv=none; b=pM7lmfyfkiJOXedwyzbTDMOHC1eSAkZa+8URO+nlIztAMCOZ5YKQ/dmQ5a+1RBr6BkZNwVUgRAzRYOIoT5efc1wyHI2X7OThHhA64kh6nuaqvLKIUTtTBvaHqzZV1UWy8kYuACUOrDECMmujIsqHg2rqBmjB+NAIN5Fk55j9t2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714821979; c=relaxed/simple;
-	bh=q9hMV1BT9OJQ7HePS+PG9LFG1oZyrdoizmQncp9kOz8=;
+	s=arc-20240116; t=1714822013; c=relaxed/simple;
+	bh=ppFfFH2Xic9iAVwfgNcWsVQ85IK5kVSydtT3vRbOtKs=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=klZL0h/8pWkC4Ifxbvw41ibUS0Fb0HV1kkW0JCYQcPqOdpDC/dBekf4y+9PO786HV4aMpGQcUhv6LUliGni1O2iSN/Nx3grb5hVCNkBNaUQ+HnGupzaLDxtKLx1+kM5GwgUUi+RpPZcyGka39PHIIrXHrJpeSBYgO05N/5NwBeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u8tIGbUm; arc=none smtp.client-ip=209.85.221.43
+	 Content-Disposition; b=Y/66KssYNrOX2OIVJ2vlb6T85XPHM35Vodoig9vVDgbhVmjCWvmG2vepPDzc1bcrB3I44RHYxvgLOfevrYhOtivd0WINxR6z9ZBF+kSsUrYfTeL4gG+4HS+ui85vLmRPbUIRc2ws/BTctd3dX++mjidGcccjl6Bh9edwny++2IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WYdEVS30; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u8tIGbUm"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-34d7d04808bso336513f8f.0
-        for <kernel-janitors@vger.kernel.org>; Sat, 04 May 2024 04:26:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WYdEVS30"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-41ba1ba5592so3378575e9.1
+        for <kernel-janitors@vger.kernel.org>; Sat, 04 May 2024 04:26:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714821976; x=1715426776; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1714822011; x=1715426811; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=acScVzoT0UgSxQf+NXyCSZ3pQCph88n8DycCWGq+e7Q=;
-        b=u8tIGbUmyYcGQntLcsxP8rRqauFoGukkjBqCzpRqW9uRldZbIUV5I8z4Vw3Y1sOrm2
-         v/5KfgeKMXyeSr+KF6zRcAEfPPaWEJ98zJfPHs5Lb0Dz8GHuBLjinsgGQyjzlvfPAUQr
-         eXO/wIe3RmpkS3vshAl1DswEtuuruCd6kmIema1I5HR8fYhNaqpraYsYh6i0y9E7/aU7
-         RPMcGGFvKVckpEjynT/KTuQXdM4JI3wPR4B/iidowQmfD5T6i814X1hxeS7nLVcK87pQ
-         aQk8GqMVT1xMITFfppPUVR3Hch1JOAYh2Dq776UCQbOJj0Qim/Y7ywG7OO4HjLvDICkF
-         kF2w==
+        bh=tV/srAsSb/6dhMxlpXH3Ch1iy2rebWL62TcHi8lGmvY=;
+        b=WYdEVS30HM7KTDlgLgubFM/W4RTcrUan/ZI3d6SDmUOc77JyCzbPJFah0XqjPIEByO
+         v2kfLAdcNGBQagU8an1IZo6lJvQivefab7cvA1DrT1dKDS6ZTC3qoMpaXwH+SU1embep
+         C8rujm3FjRgevjqUkbivPywsKzwuPcR8a2350uNIAhbDKPGkmsyBFstVSDvui5TTds3Q
+         AulbFrSgekGo7jJZEkpmUAlt2TdPWauguF2njrIpjTg5P6cmToKLKH8lbPyjzi5xk5Cj
+         5Fhxwt93z2HyL1lftZHjAidBRudX8+fm75xvfN2KNMhoJ8hCtFwnTgh3fHXXZlhm0Z3z
+         pfSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714821976; x=1715426776;
+        d=1e100.net; s=20230601; t=1714822011; x=1715426811;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=acScVzoT0UgSxQf+NXyCSZ3pQCph88n8DycCWGq+e7Q=;
-        b=KyXQN5Q2cyaMehXLK6ISObiE6+Nk2MBM8vQxj7APU7Bt2Ktm2QMKfVhNUlUvLaHD5W
-         JqVd6qDC76pkiFYVTNMTsTb2IQ8dFgkPrSXN67BncwMIx21ZtIaOL9Vc12IJAi5skETq
-         7gdwX1HRN/5oBebbJ0UAQQ6XTsXnmPk+/r2rWC55MctCBZVZ5qVdD3z2jdJhN9IENy3l
-         hOO2F/m9GqE4oz4b7lBgjK8CaFM5mMcZlR9nYys61NHR5OxDI4MgysWoUw/GLGei2wo0
-         EpHqC8Z573CPaD2B9GGqxIdV/SNGK8s7/WPzqrbgEYu8f7rJRscZRLK3rRraVmGKSpr1
-         ywpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXugsvUBYFSbug5P6wJX/bpw4lKjkIiw5JOnja47essUVtyukT8EV9tMUL3K2nsnqBym+3eu3EVQUsVZmBnoKd5/0T3xPkAXD/j765RINel
-X-Gm-Message-State: AOJu0Yyn+JcIi/1N8NOfiMgyI86j5KhtCPk+g7OWcvvHnuyZTfuhGC9a
-	HHkC8zLs0EBwkdb2XHDw9G/JcP2IYMOHRVoHP2jmKKVnZkr1xC74+VYdNCV372A=
-X-Google-Smtp-Source: AGHT+IFhfIrzcRrSB3PRVXEa7IfD64x3DWvrLyolPJso7AtMaTEliUXy1Di5c3Y9F+bGsvZnwecfpw==
-X-Received: by 2002:a5d:5542:0:b0:34d:1d09:f06d with SMTP id g2-20020a5d5542000000b0034d1d09f06dmr4990315wrw.13.1714821976417;
-        Sat, 04 May 2024 04:26:16 -0700 (PDT)
+        bh=tV/srAsSb/6dhMxlpXH3Ch1iy2rebWL62TcHi8lGmvY=;
+        b=F/jaMje6mpPIkXxuIYsIfqeHhI0lNzsR0PnP+Ma42FNPNHBXAu0zcFsA11yUqFxkl0
+         OThyo8F6Lc2p9LWjJ5VzjcZ4APHAxlYWGFIU2alChUe1tpmGByV+eITVejyXVestx4by
+         O0MTEo8wn80ubgfZcIL9RsZo7STKTgntBKF0sZHfpEvaW+iOfGKJ3yppZBff1oDqn3Bc
+         mPNQy2L0vlmtA+tkwA02mxqp9zwL3WUxuP//9jC6VS2EOEeEU12hAKHLi33rb7wnM2cJ
+         vdHsTfqahojS4UJNGvxg1+BgXSBOFhBanVHxUpzk+zlC58SKW1Dcju4QT3WotDc3y+hk
+         Bxjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVp7gAraNcem+lwSujtVJvG1Kpg76DX0HXwSIqJICbW2Opqz8DldP29hnf3s9YYt/nubeBB6QEyHX9co4Gv33Aamo4aWNEkao3Rhn05Rv5P
+X-Gm-Message-State: AOJu0YwvvsjLeOQn2q+pQXkV8ExTj0vOhxXgQ9MO7AJnVagWbqrEUpNv
+	VfseRsfjbP4+E8mIFKo8V+fzhtP1lZ1+lSbRW9YQ6RErdTj4/fn7ZsAS8WSZmGk=
+X-Google-Smtp-Source: AGHT+IE3ubSq/wuPsXCd+SyHjRU511lcaaoiLbDliJjNVBEkZCScLOt8UDgKVnn0wXxEtm0TJxiXFg==
+X-Received: by 2002:a05:600c:4f52:b0:41b:7c07:cfeb with SMTP id m18-20020a05600c4f5200b0041b7c07cfebmr4493542wmq.40.1714822010816;
+        Sat, 04 May 2024 04:26:50 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id p8-20020a5d4588000000b00341ce80ea66sm6013320wrq.82.2024.05.04.04.26.14
+        by smtp.gmail.com with ESMTPSA id u17-20020a05600c19d100b004186eb69a55sm8958487wmq.25.2024.05.04.04.26.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 04:26:16 -0700 (PDT)
-Date: Sat, 4 May 2024 14:26:04 +0300
+        Sat, 04 May 2024 04:26:50 -0700 (PDT)
+Date: Sat, 4 May 2024 14:26:46 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Evan Quan <evan.quan@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Tim Huang <Tim.Huang@amd.com>, Lijo Lazar <lijo.lazar@amd.com>,
-	Jesse Zhang <jesse.zhang@amd.com>, Ma Jun <Jun.Ma2@amd.com>,
-	Ruan Jinjie <ruanjinjie@huawei.com>, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/amd/pm: Fix error code in vega10_hwmgr_backend_init()
-Message-ID: <502fda28-fde7-4851-b17f-4d48848955bc@moroto.mountain>
+To: Olivia Wen <olivia.wen@mediatek.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-remoteproc@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] remoteproc: mediatek: Fix error code in scp_rproc_init()
+Message-ID: <b2114e3c-fa64-4edb-a1ff-d2009e544c3f@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,37 +71,27 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Return -EINVAL on error instead of success.  Also on the success path,
-return a literal zero instead of "return result;"
+Set the error code to ERR_PTR(-ENOMEM).  Otherwise if there is an
+allocation failure it leads to a NULL dereference in the caller.
 
-Fixes: e098bc9612c2 ("drm/amd/pm: optimize the power related source code layout")
+Fixes: c08a82494500 ("remoteproc: mediatek: Support setting DRAM and IPI shared buffer sizes")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega10_hwmgr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/remoteproc/mtk_scp.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega10_hwmgr.c b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega10_hwmgr.c
-index 37c915d7723c..9b9f8615070a 100644
---- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega10_hwmgr.c
-+++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega10_hwmgr.c
-@@ -924,7 +924,7 @@ static int vega10_hwmgr_backend_init(struct pp_hwmgr *hwmgr)
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index e281d28242dd..b8498772dba1 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -1156,6 +1156,7 @@ static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
+ 	scp->share_buf = kzalloc(scp_sizes->ipi_share_buffer_size, GFP_KERNEL);
+ 	if (!scp->share_buf) {
+ 		dev_err(dev, "Failed to allocate IPI share buffer\n");
++		ret = -ENOMEM;
+ 		goto release_dev_mem;
+ 	}
  
- 	data->total_active_cus = adev->gfx.cu_info.number;
- 	if (!hwmgr->not_vf)
--		return result;
-+		return -EINVAL;
- 
- 	/* Setup default Overdrive Fan control settings */
- 	data->odn_fan_table.target_fan_speed =
-@@ -947,7 +947,7 @@ static int vega10_hwmgr_backend_init(struct pp_hwmgr *hwmgr)
- 			"Mem Channel Index Exceeded maximum!",
- 			return -EINVAL);
- 
--	return result;
-+	return 0;
- }
- 
- static int vega10_init_sclk_threshold(struct pp_hwmgr *hwmgr)
 -- 
 2.43.0
 
