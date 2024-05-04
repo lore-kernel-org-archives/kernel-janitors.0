@@ -1,66 +1,62 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A7D1C694
-	for <kernel-janitors@vger.kernel.org>; Sat,  4 May 2024 11:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B4218C3D
+	for <kernel-janitors@vger.kernel.org>; Sat,  4 May 2024 11:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714822013; cv=none; b=pM7lmfyfkiJOXedwyzbTDMOHC1eSAkZa+8URO+nlIztAMCOZ5YKQ/dmQ5a+1RBr6BkZNwVUgRAzRYOIoT5efc1wyHI2X7OThHhA64kh6nuaqvLKIUTtTBvaHqzZV1UWy8kYuACUOrDECMmujIsqHg2rqBmjB+NAIN5Fk55j9t2M=
+	t=1714822064; cv=none; b=DcUA1z1hBJomUvigH0XLZVEySCgkwW62O1cHwmLwtCOoctBoc2ubBR+zic2lWteCsX5vLqUcGMOOvHy1nYeri1P8TgL9mhhByFQU9ZoWdQigEHnv0YojTVUTnxDQqU+W3qspm8VHtiuYye6BqS7gVuzoNp3Oq9yGu7T2XnJi2Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714822013; c=relaxed/simple;
-	bh=ppFfFH2Xic9iAVwfgNcWsVQ85IK5kVSydtT3vRbOtKs=;
+	s=arc-20240116; t=1714822064; c=relaxed/simple;
+	bh=mG1J1A2jIPnJf3tOoKB1yMswAzjzXb2TIar27Fc09n4=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Y/66KssYNrOX2OIVJ2vlb6T85XPHM35Vodoig9vVDgbhVmjCWvmG2vepPDzc1bcrB3I44RHYxvgLOfevrYhOtivd0WINxR6z9ZBF+kSsUrYfTeL4gG+4HS+ui85vLmRPbUIRc2ws/BTctd3dX++mjidGcccjl6Bh9edwny++2IA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WYdEVS30; arc=none smtp.client-ip=209.85.128.44
+	 Content-Disposition; b=LU8Bsj+839qT1jpRMjXJJkNfCh8cp74EoOWpvy6obXmgib4CwxEcUxF4pMg4pxAkcQcboh+48MOC5RU+xMod+jmMe4t8XSRkE1rKcc1khEEz0sxIHVy5+XhkLRs2/DyEbMnTJQC2XAkZJ49eeRlIMH4GO0UExSd6vxGajTxylTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=prEqzzzh; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WYdEVS30"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-41ba1ba5592so3378575e9.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 04 May 2024 04:26:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="prEqzzzh"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51f8211c588so482045e87.0
+        for <kernel-janitors@vger.kernel.org>; Sat, 04 May 2024 04:27:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714822011; x=1715426811; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1714822061; x=1715426861; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tV/srAsSb/6dhMxlpXH3Ch1iy2rebWL62TcHi8lGmvY=;
-        b=WYdEVS30HM7KTDlgLgubFM/W4RTcrUan/ZI3d6SDmUOc77JyCzbPJFah0XqjPIEByO
-         v2kfLAdcNGBQagU8an1IZo6lJvQivefab7cvA1DrT1dKDS6ZTC3qoMpaXwH+SU1embep
-         C8rujm3FjRgevjqUkbivPywsKzwuPcR8a2350uNIAhbDKPGkmsyBFstVSDvui5TTds3Q
-         AulbFrSgekGo7jJZEkpmUAlt2TdPWauguF2njrIpjTg5P6cmToKLKH8lbPyjzi5xk5Cj
-         5Fhxwt93z2HyL1lftZHjAidBRudX8+fm75xvfN2KNMhoJ8hCtFwnTgh3fHXXZlhm0Z3z
-         pfSg==
+        bh=5Pmu0YEcGf7H38ntSIh2K6f/volabjADstC17jZkDWU=;
+        b=prEqzzzh0PG+atud1WccLtx4yM4oQ5rlOtPxOzeoTPtfIHmRU3QOYfBR6pc2qZdfyY
+         v0cs+dJCN2cdrFTwYrKCRFlQMSNaj75VwVcYHX50qAUypWnZ/MjVdv4CDBg0XBwDa6PP
+         8i/ILVY5IJPLMmvs8TbmPCbiC2qgoQi5lleYbHcJoLThbCUxOJN7wWZovhtsVIV9G+A8
+         0dKf56jW/qSZgWa5xA07aCSyQ+GV0b/y/JLAlNeg1dCmNveIATC9u48lb8m+igF9bBdS
+         IU9JejvTlBM9xShWT/cX6Vx4dIMAQCkD5GE9YGAxYDQXZbpmKVoRilgbbkIAFCYfthQZ
+         OoIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714822011; x=1715426811;
+        d=1e100.net; s=20230601; t=1714822061; x=1715426861;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tV/srAsSb/6dhMxlpXH3Ch1iy2rebWL62TcHi8lGmvY=;
-        b=F/jaMje6mpPIkXxuIYsIfqeHhI0lNzsR0PnP+Ma42FNPNHBXAu0zcFsA11yUqFxkl0
-         OThyo8F6Lc2p9LWjJ5VzjcZ4APHAxlYWGFIU2alChUe1tpmGByV+eITVejyXVestx4by
-         O0MTEo8wn80ubgfZcIL9RsZo7STKTgntBKF0sZHfpEvaW+iOfGKJ3yppZBff1oDqn3Bc
-         mPNQy2L0vlmtA+tkwA02mxqp9zwL3WUxuP//9jC6VS2EOEeEU12hAKHLi33rb7wnM2cJ
-         vdHsTfqahojS4UJNGvxg1+BgXSBOFhBanVHxUpzk+zlC58SKW1Dcju4QT3WotDc3y+hk
-         Bxjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVp7gAraNcem+lwSujtVJvG1Kpg76DX0HXwSIqJICbW2Opqz8DldP29hnf3s9YYt/nubeBB6QEyHX9co4Gv33Aamo4aWNEkao3Rhn05Rv5P
-X-Gm-Message-State: AOJu0YwvvsjLeOQn2q+pQXkV8ExTj0vOhxXgQ9MO7AJnVagWbqrEUpNv
-	VfseRsfjbP4+E8mIFKo8V+fzhtP1lZ1+lSbRW9YQ6RErdTj4/fn7ZsAS8WSZmGk=
-X-Google-Smtp-Source: AGHT+IE3ubSq/wuPsXCd+SyHjRU511lcaaoiLbDliJjNVBEkZCScLOt8UDgKVnn0wXxEtm0TJxiXFg==
-X-Received: by 2002:a05:600c:4f52:b0:41b:7c07:cfeb with SMTP id m18-20020a05600c4f5200b0041b7c07cfebmr4493542wmq.40.1714822010816;
-        Sat, 04 May 2024 04:26:50 -0700 (PDT)
+        bh=5Pmu0YEcGf7H38ntSIh2K6f/volabjADstC17jZkDWU=;
+        b=ZyaLtKD+xkN9ETibx6+gncI3DKiEpjfwPhj8K0fPCwb8SaWzayuGHBMaGAfG9SEW+k
+         N1aEVf5z2ia+k4LjM+MxiYIyhpt6wY61NSyllTyMx6CUZOUnDSAx9lh44TEwYS9uZ2Nu
+         c60RbLo5Pr/hI5L+Rc58SX1/EUem0LYkB6FtW6K9roToh3ruEXmM6rzzZbA1BzX00AYp
+         UvZOm3y466ldG2HHPBYvlXSHxpF2w1uiLwEsnj7XpqQGob5A5e3iipG0EpdDq6AYNamr
+         s0jbMOq16SKqmzOopQe+amn1Ta2tq93ughi3JqMu+ldc03Y93GdzmCvx2FbG8u2/9yUg
+         phZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVG1SGhyg9F/TV7h4HROOgv8kxXhMag+Y8Gs7nRvuLo2YuE+qNYlarMm0LTBQy3/oxZ/5weDuWZWzpN2dpWyG9ipXf3dT/txCSkLOMmOtTp
+X-Gm-Message-State: AOJu0YxHG67NQkAphom3y1rHNylj6em2Ipj5PEFhGQpAXKux0q0RKQ6Q
+	0GlViHu8X/bAGD67dWI/2HFAnDjbqKWv/yY8DOciusxzyZyiHANNqSHib2IBvmI=
+X-Google-Smtp-Source: AGHT+IGflfEXs8kdkz28xNJC43CYFzY4D71i04lz4IE4xTdRC7EA2bcfAOv1A0BvNhzHrreOhzAxGw==
+X-Received: by 2002:a05:6512:1390:b0:518:e69b:25a2 with SMTP id fc16-20020a056512139000b00518e69b25a2mr4357763lfb.45.1714822060160;
+        Sat, 04 May 2024 04:27:40 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id u17-20020a05600c19d100b004186eb69a55sm8958487wmq.25.2024.05.04.04.26.49
+        by smtp.gmail.com with ESMTPSA id dd22-20020a0560001e9600b0034d829982c5sm6052982wrb.5.2024.05.04.04.27.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 04:26:50 -0700 (PDT)
-Date: Sat, 4 May 2024 14:26:46 +0300
+        Sat, 04 May 2024 04:27:39 -0700 (PDT)
+Date: Sat, 4 May 2024 14:27:36 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Olivia Wen <olivia.wen@mediatek.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-remoteproc@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] remoteproc: mediatek: Fix error code in scp_rproc_init()
-Message-ID: <b2114e3c-fa64-4edb-a1ff-d2009e544c3f@moroto.mountain>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Chandan Babu R <chandan.babu@oracle.com>, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] xfs: check for negatives in xfs_exchange_range_checks()
+Message-ID: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,26 +67,31 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Set the error code to ERR_PTR(-ENOMEM).  Otherwise if there is an
-allocation failure it leads to a NULL dereference in the caller.
+The fxr->file1_offset and fxr->file2_offset variables come from the user
+in xfs_ioc_exchange_range().  They are size loff_t which is an s64.
+Check the they aren't negative.
 
-Fixes: c08a82494500 ("remoteproc: mediatek: Support setting DRAM and IPI shared buffer sizes")
+Fixes: 9a64d9b3109d ("xfs: introduce new file range exchange ioctl")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/remoteproc/mtk_scp.c | 1 +
- 1 file changed, 1 insertion(+)
+From static analysis.  Untested.  Sorry!
 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index e281d28242dd..b8498772dba1 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -1156,6 +1156,7 @@ static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
- 	scp->share_buf = kzalloc(scp_sizes->ipi_share_buffer_size, GFP_KERNEL);
- 	if (!scp->share_buf) {
- 		dev_err(dev, "Failed to allocate IPI share buffer\n");
-+		ret = -ENOMEM;
- 		goto release_dev_mem;
- 	}
+ fs/xfs/xfs_exchrange.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/xfs/xfs_exchrange.c b/fs/xfs/xfs_exchrange.c
+index c8a655c92c92..3465e152d928 100644
+--- a/fs/xfs/xfs_exchrange.c
++++ b/fs/xfs/xfs_exchrange.c
+@@ -337,6 +337,9 @@ xfs_exchange_range_checks(
+ 	if (IS_SWAPFILE(inode1) || IS_SWAPFILE(inode2))
+ 		return -ETXTBSY;
+ 
++	if (fxr->file1_offset < 0 || fxr->file2_offset < 0)
++		return -EINVAL;
++
+ 	size1 = i_size_read(inode1);
+ 	size2 = i_size_read(inode2);
  
 -- 
 2.43.0
