@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B4C40C03;
-	Sat,  4 May 2024 16:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67881BF3F;
+	Sat,  4 May 2024 16:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714838921; cv=none; b=V51RGXuRbjYjXEoSGoMbGnQH43cvm+9yZbVWHEn8HnFclf8vNTwnmIaSdX7EhscnyiEJGOd/M7R/qRphspVRbMbUrtRstoeCRikznY9vHWVLIJvIdrVFUAuIWdqN4Kk9sW7nHD8KZkfPxqUbzEpMjPlYAN0fVZxn6rd3KB4m3iI=
+	t=1714841184; cv=none; b=Z2TevppPcZYDPBI473XPWSo5gmQb1hRB094WU/930yaVfJldgVlGeoibOkG9559lU9OW1kmhLcd5zTBa7k+hfedEeE4mh/iCMc5hEzUUQlj2DVxxFAvAvUhtGns1ZYrBSlywWrA8M88aOzSYIujOKV72o7mV8jQiecPJbR1nAoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714838921; c=relaxed/simple;
-	bh=CB5nxguzQ/abdMOLQ0vP5QKBOqXDtL8p9+UDyZXBqAo=;
+	s=arc-20240116; t=1714841184; c=relaxed/simple;
+	bh=5jxx8V+nNPqKmPVWdV0+0Ox5zWIAkOpJRRMZFuNa6L4=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=PAKtyWWf3KXPrgjP3gTWu0wK+5+6wJv1s4SY9R87utY1P6LKTzanNwDzDUVC8PKUoF+Wv6RCySx9JVFjHc74BMvSMR9tu3Xkbpx/tgd/il+MfkcfyOldvbhUeiyhpgzLeKAhn/2iQgwa3PJoZtJLyBmAIGZFkq+X9HhcNTOU408=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YkXYRX+S; arc=none smtp.client-ip=212.227.17.11
+	 In-Reply-To:Content-Type; b=MGgyvq03l2uvaSqPIwOGEMfraie+FuSNCXZuGKJ7u8MHMRWzWyEQbssQ3Ps8cPVbWgtUHfDRnGcMq1HMnFgTB5++G4qpnELDaD+cSIitSZ5b+DIovARxAZg4wwblCzcd9qtFYeRwMB4jbeCPBkZoN1jTGfcqTHd+bFAtA8NUKKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BKy5KWWY; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YkXYRX+S"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BKy5KWWY"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1714838891; x=1715443691; i=markus.elfring@web.de;
-	bh=CB5nxguzQ/abdMOLQ0vP5QKBOqXDtL8p9+UDyZXBqAo=;
+	s=s29768273; t=1714841165; x=1715445965; i=markus.elfring@web.de;
+	bh=5jxx8V+nNPqKmPVWdV0+0Ox5zWIAkOpJRRMZFuNa6L4=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=YkXYRX+SsalO/beBUJnywGogNd1ud4Uz0iYtyXevIwRfJiSfZtC7iljt629iKEM3
-	 0lLWg6JOs9VAmhbpFKxLIpahRhRSE5hWRoMd5zm/SQ4syuxy8kEsd91OjCtuZNEF8
-	 wgz+rdL9Cgh5FH+QjDPi1lDgdrhqLW1bd3DfJ5e7XutsiTSXduVMj5pIFSsFfOE64
-	 rlNOl1IvOis+xUXxgt8PC07eBbyysI8FNDNKkpZhbvam3myhks234/8p2DfEnMwES
-	 Bp/l58z1b/nplbGw0mK1dMWdVzQC6Bqhf5QGRUzNHML7oeOov95jWqUrGxbXl4LPT
-	 gU9WLQFJ60O5yWFqSg==
+	b=BKy5KWWYhp5xPKRLCm1dqGHCjFhujx3RlkpaXhrD70QS8DO5vjrL/V/iuWz9X6SF
+	 62Qd9tMVeC1OjKoTf5GLMI+2b8Id9EjmbleREhzOTIxlose+2PSEPFgHcuhkxAAdl
+	 iLBcxTznnowpYS4qEL1Wu+CdMLxtvpmdiUBJ8cRYamTSMadsgHrSQFPKjlM2SdKGr
+	 5DyuYocr8zAoOCE3Ox45uukGBmvC8QLnJB1MkVIDju5nmL2IG0LaBv1oEOyO5j5fa
+	 boIfuMwh2msdXY8yv+iG7ws8a2A7EzqtLCchfeQaDF0Z9yxMz0N567FtkbcehmLeZ
+	 vWZM+H5gEIUhLYYTwQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MC0LH-1rvsrm2ViP-00CQyk; Sat, 04
- May 2024 18:08:11 +0200
-Message-ID: <321b2cdb-95e1-4bfb-9811-a853245beb17@web.de>
-Date: Sat, 4 May 2024 18:08:08 +0200
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0Icn-1soOtu0n8Z-00xKWI; Sat, 04
+ May 2024 18:46:05 +0200
+Message-ID: <264d605d-b7ff-4d92-925d-30332aa2e2bf@web.de>
+Date: Sat, 4 May 2024 18:46:01 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,46 +42,41 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Jorge Harrisonn <jorge.harrisonn@usp.br>, Lais Nuto <laisnuto@usp.br>,
- linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240501215724.26655-2-jorge.harrisonn@usp.br>
-Subject: Re: [PATCH 1/2] iio: adc: ad7606: using claim_direct_scoped for code
- simplification
+To: Dan Carpenter <dan.carpenter@linaro.org>, linux-xfs@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, "Darrick J. Wong" <djwong@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Chandan Babu R <chandan.babu@oracle.com>
+References: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
+Subject: Re: [PATCH] xfs: check for negatives in xfs_exchange_range_checks()
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240501215724.26655-2-jorge.harrisonn@usp.br>
+In-Reply-To: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:TMeWClk2hCaquekmmyaU5QdHKlXEicCa872NxIwUstjhWnnqzWq
- h9Op9cZuwuie+E6bNvVgFHY4TqerNX1p2YmiRVCCQtqV7ZoLcJIP2XuL/LZK4CzuS/n67la
- 2gnAX6WS4OZAfz4ZWT6PKU6671zx43OIJRxqpEGt73rvwLUDpr6dL5yXtINCcHjbyPk6tIE
- BAuCPcPuaF+AIOPahhEew==
+X-Provags-ID: V03:K1:I1VDS+lXT8gPAkRX4ICsp9DC98KkcW1J2SOrbYqnZK4U7XuEr6x
+ ta2sLJYEHpbLUqb6Mo3aohVYyanJlWiC0n+AUIGOZtpZiEpxZTP3vgwrKPpiZeOfGAYpIrL
+ MPCO/gXUQgJxrXi/joS1XDeU6S1TgkRuYpuMxP7JFogjpWV4vmQmBaAbRN0d8iqINbzhQWT
+ +2WyLNN3XycudG3O0d6lg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:tt0HV3/HUI0=;BbJtvOtM/nU3xrTiM14k0iuNubn
- ecvSBdxcAetmK438gIkp3W1fY7+EH665/EBHq/WV2Sa7hxhzpbCTKEpE9Sr8pFqg0rFOrTYGF
- 1NU+rvShJz7PTE9IkMxEwaNrey3GerXj/PJQXkAblFoBJamqfwMDrKIaV13/CoKC7YkYKHwhe
- 7C215dMnnlaiJXt+QM4q80oPyYfHDYCLN6RAXA9pTjS+gHmwfYDEPWp52cgP/I2CMuOAJmdeD
- K6vlmDpBWpNBOCYn+LhEtFZY0mv2Qo8J08FGN8DQK7GvPT9Dp/DufBt9Wzyr/Qw2mddHUJbFP
- PR3WKpFUi/t6ZxBxoahDpPM84tq4pC6Ad5P9Uex4RWLt8eKL2aoblm/t0i9I3GqzcruALki0o
- Z38EQ6uGypjtyCt+6G+1/vII3WQnhOxceXy5SrfdxV/ox1ore4wy7v/2VrxUWU0jvwQ/3sMTk
- EbleZSki4mncuIPOpVLomsLZ5m6h7A/gAcp77zwSeJCGrZaN8er7njaqp0uY1I5Rx+eeijx4i
- YBSxHmgvMs4YWgiG1z5x7yzzb4CIbgxIrZ6BSM8vynI+Z0w4Y2yTU7QfpDnlyi7hgAGNm8See
- JpRVCeUJ7vNnQ8oSrNB75hAUKG/WLD4xHQoXKL4BpOjXZ5OSM8Oawagc9J0m8u2otxqVfVfri
- Ain27mFfGw04wYrHqmVScgUriTFfSc9g7mm3StsNu5O/iMOlmnZOC2eouOIsP/PiaZzWLBLKy
- qy2es/nInyzi9ytgbmPEGI+hPVfRQbh2tfKoCYonB4uYhhSB1QyP8SwHVcTw4pqureO4hTCmH
- ZprI9/k31+BIPGpz8KZu4TfQPEVPzme4KLDrLWQ45qXquPsvugkiqC1wQwLvS0gSDt
+UI-OutboundReport: notjunk:1;M01:P0:D29nIzUQi/o=;V1kZDU1H7JScLyyRryYo39rd6oA
+ q+BedEOjm8FNn5256Izh9+IZgsamG8t8DmYxGQwNHAngTz1ZM5uJBwcbZZ0HXRxitbNWlnqOx
+ teF3WKL9jMlEyGVtKDYxY+Hzk+ScEvyfELvTa+yuaWn7GJS2Cm05xvmS9b7JB9WAQPjnuCjI7
+ OMxYrUBEl1lCS3hvUcWl0OI/mGjcQr+ZWYYc9goqTo3KR1Lo3V46rAow7zhoaE+hnUs8pE/Kh
+ 71stxNA8+D/blFtGx8cAV218xDnLIFidqMAP6uax4VWk551DG9A14/J7Vp9J65gm3AeyHk+1h
+ 2kvyGni2B/WyFgBcIs3wyYJdBZiNcWR0e/P5M8cquNLJsG4IVrdRb99gg2P3LI1sDLmEE5Noj
+ AZzzbRyFa63hdk3ysMHg582Tu7zZ5rkOHfVr8e0Q9Iw/yRlBTTMi+I7DIZp63YH9WUZS9BwRb
+ ttkNV65utRgl1XmRUDwIG6c6UKLhuUfmJWwpXvHvQoBHiN78B73QfxpmKm/7zEpYYBGcXGham
+ 3h1MO6gYu7Y6cK8P53tfPltFMP60B4NIaBAbACDFNwuz7Fy7QBnq3zMzsZn/5SUVxERA7QOow
+ gBeXFXqkzkabf/G+he7EAHwTZn3ff6Jz6EMc4lPg3PUhTqFA8CWNXUSycEdXDn9xD60eBui6L
+ vHX/5JlWjILwKy9xXzyXbwphNpWUGEuBs6Ut0wmfo8zLjxzMT5hB70lv8CxTYgK29Tk4oaOpI
+ 32po344ssSKv/a2b4Vhc4tyj1TcPdARqOi+l//2DTB26+MV4JxkRtY7E8v9oLnZ0SgEiMTitg
+ 0AZ5hYG96szpqG+RoJ6uDpSnEw4v7UgS/zu1BhjoQdgNja3tERVh+buqIKWplyHOjr
 
 =E2=80=A6
-> _claim_direct_modeand later callingiio_device_release_direct_mode`
->
-> This should make code cleaner and error handling easier
+> Check the they aren't negative.
 
-* Please avoid typos in such a change description.
-
-* Can imperative wordings be also more desirable here?
-
+Would you like to use the word =E2=80=9Cthat=E2=80=9D (instead of =E2=80=
+=9Cthe=E2=80=9D) in this sentence?
 
 Regards,
 Markus
