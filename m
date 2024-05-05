@@ -1,47 +1,46 @@
-Received: from msa.smtpout.orange.fr (smtp-73.smtpout.orange.fr [80.12.242.73])
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDB263A5;
-	Sun,  5 May 2024 07:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338C14430;
+	Sun,  5 May 2024 07:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714892634; cv=none; b=AN0A3jiCB6I1Ew3LSSOG5cFNDWg/H+4bi79ACAvZfuaAKlztuFaHHxnauAh1PiGlOVySm4BWe8haO6qkk6VYmQM55ikl82ldLg2vgioOdce583PTRQ2iWd6UfDyHx4rPEeBCbsv2mqAYd3j8+rOnEVnvV+5aqbSmkUpH+anNABg=
+	t=1714893866; cv=none; b=rboKUbVNmML/TW1UiPTIBbcgTT2oxJWduAdKkjvXaRaxGtA3rVc1ZpaEZ53ClEBwjRdEeO5sdVTFVwIU5UcLFTjfPa5PKtMMfqv3cxtGczALho4+4+3Roi4Qxy3yn7Ao1lrzYngrzYkxoNWgWA43mhtfoeWVXAgFD0azTCdWWQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714892634; c=relaxed/simple;
-	bh=f/q3nMrO7XMwlLCGTSws8gHkh4NhAd0ArKeiJmSJAQM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aUaHXVvoISL5wMvNdC+3Z+xFRWkJRDQSS5SU6YGelCVeOUbmHMLpNnCt4isJ1oi2U254oD15CW75v6fVjYssUyfWYlYWU61YpVjUhusPVfBW5T0AJ0wv+K6o4wmwsugELXame0CHGMZYybSSWYO6WqmXfVQc7jnHhOogKAP/D5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VtxyHnJG; arc=none smtp.client-ip=80.12.242.73
+	s=arc-20240116; t=1714893866; c=relaxed/simple;
+	bh=MOWx9PMjovRITw6DYoO+/7nH9pLJzDASajlevipqP2M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qbSRCwfUko7DMhl9pFV7Zh8DqI2dVHXynmkEHZnpK9BBqLr2Tp3WfdMLveUqOjgEqGc1x21MuoQEWH018gREYpu4SbOKgKQwXSHbH0jJHNrodZSbLhINOTfgSbopP/xh0tSlFeX/5QEL4tPQtROCiod1Pi99AR5MI8S/+rH+c9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=e7a2bOpQ; arc=none smtp.client-ip=80.12.242.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VtxyHnJG"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="e7a2bOpQ"
 Received: from localhost.localdomain ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id 3VuNsRaqlrs7M3VuNs9A6s; Sun, 05 May 2024 09:03:43 +0200
+	id 3WEJstpJiUMqY3WEJsdYuL; Sun, 05 May 2024 09:24:15 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1714892623;
-	bh=DBQKhsJ4mDyVp3IvupeuQ5SJkA9A1uQpu4XWLEOftUw=;
+	s=t20230301; t=1714893855;
+	bh=ARbxTy58EQYluvEH4/oGZHENQAGLJeF+Yi1IYCHP7nI=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=VtxyHnJGWGr3j8fB3UR8kqOOrgCuE3V6JuhSjgtXTc14Mz7o+9p4tkmSeJTAnMqkw
-	 kD02vNCyo3vtFwja0JsGNQ5GQocOxIFDoK4TwM59FD+o/3UMsRy8kYBfRA5crpxam4
-	 u0u8/2SM/6afGWWcCqpxoaRcdB0iIahCaNOinE0Gtjqga7y+I+i6h439I5RwqfUAO2
-	 qQWcPi1UXuhwmkkHfjdj9t4z9zS+GY7Amnf+ec3D4wRzvmi/JjYzN0LiFQC8z9RO6o
-	 NNKpxSp1pGtKcN4uqMoEkeAIhPUolss/Qbf5fsAcPzGFoE+SCLlr85EJtbdLNxbH08
-	 0Gqk7e2SmbgDA==
+	b=e7a2bOpQaoP0syn2kk0u7X9gkkEkeODWWbHn4U2kd9QjXONmzFwLmKzP1Wz+CWuBP
+	 rhiVB2Ns++Y8MubfJ1wRgQarQ79D7cR5Sa1vmfVxP2r74zPXy+7rMmpNiqiMSQRpJg
+	 XNWXRQTA79zzs0c36I5kRte0HGZN/I4yn9VArEQ8D/jrg8Is2PXZkmrG62kO1o4UfT
+	 0nK8ghzfcrXFLJOWAQiMBhjOeVl+tbAp/vQPRckJQuaS9Ke9g3mpyzgAED4AZvv5ws
+	 hG/9BdueMK+6ZifepzdJxTUgoUJmjy7eBqJ35kvXcG85IV6DZq6kbfIzMD2R1aZGpZ
+	 w1azK8EQhUVRw==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 05 May 2024 09:03:43 +0200
+X-ME-Date: Sun, 05 May 2024 09:24:15 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-leds@vger.kernel.org
-Subject: [PATCH] leds: is31fl319x: Constify struct regmap_config
-Date: Sun,  5 May 2024 09:03:32 +0200
-Message-ID: <82a5cb26ff8af1865a790286bdbc3c4a2bd149f1.1714892598.git.christophe.jaillet@wanadoo.fr>
+	linux-media@vger.kernel.org
+Subject: [PATCH] media: i2c: tvp5150: Constify some structures
+Date: Sun,  5 May 2024 09:24:02 +0200
+Message-ID: <119b3ec62e6305c83ffadc7f40cbda9fc3d5be11.1714893773.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -51,8 +50,8 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'is31fl3190_regmap_config' and 'is31fl3196_regmap_config' are not modified
-in this diver and are only used as a const struct regmap_config.
+'vbi_ram_default' and 'tvp5150_config' are not modified in this diver
+and are only used as a const struct.
 
 Constifying these structures moves some data to a read-only section, so
 increase overall security.
@@ -60,39 +59,39 @@ increase overall security.
 On a x86_64, with allmodconfig:
 Before:
    text	   data	    bss	    dec	    hex	filename
-  13827	   2002	     32	  15861	   3df5	drivers/leds/leds-is31fl319x.o
+  57197	   2936	     36	  60169	   eb09	drivers/media/i2c/tvp5150.o
 
 After:
    text	   data	    bss	    dec	    hex	filename
-  14467	   1370	     32	  15869	   3dfd	drivers/leds/leds-is31fl319x.o
+  57517	   2608	     36	  60161	   eb01	drivers/media/i2c/tvp5150.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/leds/leds-is31fl319x.c | 4 ++--
+ drivers/media/i2c/tvp5150.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
-index 66c65741202e..5e1a4d39a107 100644
---- a/drivers/leds/leds-is31fl319x.c
-+++ b/drivers/leds/leds-is31fl319x.c
-@@ -140,7 +140,7 @@ static const struct reg_default is31fl3190_reg_defaults[] = {
- 	{ IS31FL3190_PWM(2), 0x00 },
+diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
+index 64b91aa3c82a..0fe6a37bdb7f 100644
+--- a/drivers/media/i2c/tvp5150.c
++++ b/drivers/media/i2c/tvp5150.c
+@@ -514,7 +514,7 @@ struct i2c_vbi_ram_value {
+  * and so on. There are 16 possible locations from 0 to 15.
+  */
+ 
+-static struct i2c_vbi_ram_value vbi_ram_default[] = {
++static const struct i2c_vbi_ram_value vbi_ram_default[] = {
+ 
+ 	/*
+ 	 * FIXME: Current api doesn't handle all VBI types, those not
+@@ -1812,7 +1812,7 @@ static const struct regmap_access_table tvp5150_readable_table = {
+ 	.n_yes_ranges = ARRAY_SIZE(tvp5150_readable_ranges),
  };
  
--static struct regmap_config is31fl3190_regmap_config = {
-+static const struct regmap_config is31fl3190_regmap_config = {
+-static struct regmap_config tvp5150_config = {
++static const struct regmap_config tvp5150_config = {
  	.reg_bits = 8,
  	.val_bits = 8,
- 	.max_register = IS31FL3190_RESET,
-@@ -178,7 +178,7 @@ static const struct reg_default is31fl3196_reg_defaults[] = {
- 	{ IS31FL3196_PWM(8), 0x00 },
- };
- 
--static struct regmap_config is31fl3196_regmap_config = {
-+static const struct regmap_config is31fl3196_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
- 	.max_register = IS31FL3196_REG_CNT,
+ 	.max_register = 0xff,
 -- 
 2.45.0
 
