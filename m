@@ -1,164 +1,92 @@
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D34566A;
-	Sun,  5 May 2024 09:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C814B66F;
+	Sun,  5 May 2024 10:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714899993; cv=none; b=iOTlz5K6Wo3yVZM+rVIiP3FqsjpNjKJrantzP8HYGkAvnSk18W/D7Q9/JfYKkAcI4vvSKLpVfiMPHILvUU2rA7+8G3ZCJfCEwyCg7eT74q3mnPkwA5y1s/8lTc4/oOEhlaUTiCzrddR89QT2VQOFNzSPQmAU60q+Rnn83EHnpQk=
+	t=1714904659; cv=none; b=NWkE4dmdwuH20DUH8qP/CQznis5MURdutdADHXoFoBdK9nhP4PrzNWg9a0lktY77mhadPIXKtkK4fC/F0kPQQsRCD3/M7fC/atzuGUm+CmKz6PQ92R1KJn9tyJN8+JmhGxlsWuUj9TnT1L63eLqb2fXqOMc9vX2k4v0jLahqPHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714899993; c=relaxed/simple;
-	bh=Oh1k6vjiKtFaFfOeSm2f1cOY0uN6C0bEQ3sYUKgAErU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=hkc/6Tdob1MpIRfz+0jLPFSbn8aASH08hX3LwOEynAvcqbpF1lW2127jUoKFz5ep6ItYZkVnvL1oo0hOxHFlAIylbC/6FVdetGXDFB7eZxGIWRB/viS6EKTQw4Cu35LclkqWra/RnjRz6FMCm5CyhcanwWMSBIHF8Hs4kFFLvqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=acy4RS18; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1714904659; c=relaxed/simple;
+	bh=krTWrmldQ9hOktxpGyHo8fR/YGfYNwVsJObJ5dbGFro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=efHVWbv0243LCIVP9dAAXKB0HxbZZSG20XtAQshCkEbzhPa8d3cvO34KExEZ53cahZYROPzKY9Y+wtqhXuaNEHH7LKG4Em2ngcyzFvvDZ86a65K4wg0zOq+QTwseHLMfW5CcKftYR1bNtTDY/7A7cWpXMyjlPPKmeNXYDfx6F1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DIeLuyK+; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="acy4RS18"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=RiBDRjpnVwWZ/L4d65VWLNETY36x2v5A1qooU4xt2mw=;
-  b=acy4RS18ot7FCBRUmPvjBMnII/FVeyHyf2QUT5r9M18nHfXMHVEwHh/m
-   UsabrJkQOMLXkXk4h4yl2o6qkghHZj3uwiQf26WvNp5a2zGr7H0lDAd9e
-   xabMgx28gWNcAR36c510ISxXurYbTaVdQTe2Et0ntP1tCzbzBD6oA2lVH
-   M=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.07,255,1708383600"; 
-   d="scan'208";a="86396322"
-Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2024 11:06:21 +0200
-Date: Sun, 5 May 2024 11:06:20 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To: Markus Elfring <Markus.Elfring@web.de>
-cc: linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-    Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-    Marcel Holtmann <marcel@holtmann.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Bluetooth: qca: Use common error handling code in two
- functions
-In-Reply-To: <fd9f738e-8e78-4afb-96fd-907f72fb4e13@web.de>
-Message-ID: <alpine.DEB.2.22.394.2405051105000.3397@hadrien>
-References: <fd9f738e-8e78-4afb-96fd-907f72fb4e13@web.de>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DIeLuyK+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1714904640; x=1715509440; i=markus.elfring@web.de;
+	bh=krTWrmldQ9hOktxpGyHo8fR/YGfYNwVsJObJ5dbGFro=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=DIeLuyK+QCNfAEghChMwrOp+o/4CZ+/XPgqzKs+Sk+J6cOOSWZgKOeEh3k1jAfIe
+	 STOeAYE35Eg5CdC9lEPoy3/ziJA2tLs8GqCaBuulO+ZWpTPRJJaWm84tnhMbE7Xgi
+	 bv6FUChjWbG6O8MSnsqEr7+bVpH46QYEJ2PdlrV0/3Bt/CBc6rojd5JVxjKF5WW7+
+	 ufav35TIh8kjKkGSOFqXrF2fmYQmUVBVdO3sARIfazGIlA7ok0wcx0lLSKkQr4EbN
+	 afIFBlrHYav+IceTPMk+vWBrHF+hnMIwXYPHQtp576s1j6CBSiZEqCyU/UQfxdLS9
+	 D6IU8vctnpUHNRhCdw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MXXRF-1s8Anv2iSN-00XNA7; Sun, 05
+ May 2024 12:24:00 +0200
+Message-ID: <49994298-fefc-447b-a074-c6c91f8e5ca9@web.de>
+Date: Sun, 5 May 2024 12:23:59 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] time/timgr: Fix wrong reference when level 0 group
+ allocation failed
+To: Levi Yun <ppbuk5246@gmail.com>, kernel-janitors@vger.kernel.org,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240501195116.62669-1-ppbuk5246@gmail.com>
+ <20240505085709.82688-1-ppbuk5246@gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240505085709.82688-1-ppbuk5246@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:GvLWzrw9r8AKC0L7sIhMcKF7LOng8CO/cP0UN6Yw4m7v3YyMoip
+ pFM+9004v1BTv8kct7/GlHp3C7gVW5cIXeEo1cuSLdSjlxC/ULPclA8kdPYVEgCOALbVTIM
+ N4Ptgo/FFsS+CixJgzioCcHxLwMGJkUrY4XJVEa/bcdQDMZMZBD/DwY8+hIvyWhO9ZJTF+p
+ KcGI7dxtw1bI6LBIhm9TA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:OaNKdLpxgE0=;02+G7YloTW1SHi3V81iLEnVVklR
+ ziBaNpvBI2PJSyU4etnU5LkDXKjACCJlEuow+vrW3SsVHeHx1pGRU9rZyraxA+U4RMWOSkUcD
+ tAw1hfymQ4Cun07cwMqRrOWyAERKw1C0oIPv13+AbzHjl75c75sTB1YyvHPs6TCBcJeLdR6t3
+ 0RQXIIvZeImehNDzL6OyjAYH1FjISJiWPDycDkmCCZpKVnf6NHfA70w1R7NSJDDcj68XrBq1S
+ ogevNiUT6Akt+tgxiRmfQukauhEUv7UFsVmkwszH/G0Ip/fn6hFmEZqXrumkBdyZys0p8TvW3
+ OC1twOxPYQnDZUtpd8a6erPa0VgiaFw465u9HQFUHqdJlDdLyWxCDj2q+EkQYnkkvqudPJTts
+ ZU6rSodfgGikF6zKAQ6YereKHEOwxlrYbDgujbeTy3tRZsfbDf+XO9/emtOqm/xAaaDtgc2dj
+ A2SgFUrmhmCrH+DSKQwXaoln3qs7lZTAMB3I8GvZrrB9qMmZvxx8D37+LurIXfHKh0/Qau5Vc
+ Lfsw3KzWq6eaoJ2VJGcYEuQPbQyU8h/16v4OzVn7/MJjfnqJeJeqZn6I5cZg69GOwylP9Yl6C
+ r8wKaIpPuKmYNo/Ppqy1INa7a9WT4BbByG7K6ZdnaCpjzqafpTnQz2Zv8XTcciTgEJwd1VcM5
+ L4SZ2x3kcyZ0e8ZcfopeZZFxMWx3VZphka+ijea3SEVqxBHR8fDsZU5hqqMcrA61nU8qO/tQx
+ jfkXSCID3MfL0us5sWgAxYFLDLgodf3qKSDQysSnxcPdlqOSIm3+KB6aUelFM1eS469K/LiqN
+ HW4XhC9z9nCEGV82jhhQSqYmCh9h+5Z1Q/hDRlqdlhdLRfvCxHx7TE3vbPh27u6xRp
 
+=E2=80=A6
+> To prevent this, Check loop condition first before intializing timer hie=
+rarchy.
+=E2=80=A6
+> Fixes: 7ee988770326 ("timers: Implement the hierarchical pull model")
+=E2=80=A6
 
+Does this change approach represent a subsequent patch version instead of =
+a =E2=80=9CRESEND=E2=80=9D?
 
-On Sun, 5 May 2024, Markus Elfring wrote:
+How do you think about to add a patch changelog accordingly?
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 5 May 2024 10:30:28 +0200
->
-> Add a jump target so that the setting of an error code can be better reused
-> at the end of these function implementations.
->
-> This issue was transformed by using the Coccinelle software.
-
-This reduces readability, and backwards jumps are rarely desirable.
-
-julia
-
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/bluetooth/btqca.c | 35 +++++++++++++++++------------------
->  1 file changed, 17 insertions(+), 18 deletions(-)
->
-> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-> index cc61014ffbc9..1833aaa6d87b 100644
-> --- a/drivers/bluetooth/btqca.c
-> +++ b/drivers/bluetooth/btqca.c
-> @@ -108,10 +108,8 @@ static int qca_read_fw_build_info(struct hci_dev *hdev)
->  		return err;
->  	}
->
-> -	if (skb->len < sizeof(*edl)) {
-> -		err = -EILSEQ;
-> -		goto out;
-> -	}
-> +	if (skb->len < sizeof(*edl))
-> +		goto e_ilseq;
->
->  	edl = (struct edl_event_hdr *)(skb->data);
->
-> @@ -123,17 +121,13 @@ static int qca_read_fw_build_info(struct hci_dev *hdev)
->  		goto out;
->  	}
->
-> -	if (skb->len < sizeof(*edl) + 1) {
-> -		err = -EILSEQ;
-> -		goto out;
-> -	}
-> +	if (skb->len < sizeof(*edl) + 1)
-> +		goto e_ilseq;
->
->  	build_lbl_len = edl->data[0];
->
-> -	if (skb->len < sizeof(*edl) + 1 + build_lbl_len) {
-> -		err = -EILSEQ;
-> -		goto out;
-> -	}
-> +	if (skb->len < sizeof(*edl) + 1 + build_lbl_len)
-> +		goto e_ilseq;
->
->  	build_label = kstrndup(&edl->data[1], build_lbl_len, GFP_KERNEL);
->  	if (!build_label)
-> @@ -145,6 +139,10 @@ static int qca_read_fw_build_info(struct hci_dev *hdev)
->  out:
->  	kfree_skb(skb);
->  	return err;
-> +
-> +e_ilseq:
-> +	err = -EILSEQ;
-> +	goto out;
->  }
->
->  static int qca_send_patch_config_cmd(struct hci_dev *hdev)
-> @@ -224,8 +222,7 @@ static int qca_read_fw_board_id(struct hci_dev *hdev, u16 *bid)
->  	edl = skb_pull_data(skb, sizeof(*edl));
->  	if (!edl) {
->  		bt_dev_err(hdev, "QCA read board ID with no header");
-> -		err = -EILSEQ;
-> -		goto out;
-> +		goto e_ilseq;
->  	}
->
->  	if (edl->cresp != EDL_CMD_REQ_RES_EVT ||
-> @@ -235,10 +232,8 @@ static int qca_read_fw_board_id(struct hci_dev *hdev, u16 *bid)
->  		goto out;
->  	}
->
-> -	if (skb->len < 3) {
-> -		err = -EILSEQ;
-> -		goto out;
-> -	}
-> +	if (skb->len < 3)
-> +		goto e_ilseq;
->
->  	*bid = (edl->data[1] << 8) + edl->data[2];
->  	bt_dev_dbg(hdev, "%s: bid = %x", __func__, *bid);
-> @@ -246,6 +241,10 @@ static int qca_read_fw_board_id(struct hci_dev *hdev, u16 *bid)
->  out:
->  	kfree_skb(skb);
->  	return err;
-> +
-> +e_ilseq:
-> +	err = -EILSEQ;
-> +	goto out;
->  }
->
->  int qca_send_pre_shutdown_cmd(struct hci_dev *hdev)
-> --
-> 2.44.0
->
->
->
+Regards,
+Markus
