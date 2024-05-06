@@ -1,75 +1,139 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C48D156F28;
-	Mon,  6 May 2024 17:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0F815749A;
+	Mon,  6 May 2024 17:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715014828; cv=none; b=WIoB1R6JfFW46xkMAzHxnWp40MamcY6IVMVbHfx28R4TSWD3YAXRt4tO/GOSSKp/yYTa4pfSo1gnM4sx2Wdq21nxrwP72t4y7SCVaz0w5sLmuYttOKFynGtYo7hOqmtyRNEGcvjbWRiiUAzDuogO5/O6MsHedo25E6GM+pnfFeI=
+	t=1715017545; cv=none; b=hoWrSsAq/UkYx6A6p/pZ/OXJvX5xUWVBCDHE6HPHQ68B4JzyQC3QMbs8CjrX+5tlCfDx5XYh8kLYu9NwKuEr4D7R3fovtuEFE27ttJwKk1D4q8J0A8izRtB4UkCA6DHuMS5hyzXPohBZlO4pAfDLh+SfBnetTLbePwX30I9/Gdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715014828; c=relaxed/simple;
-	bh=vHsd79PfUgA+GN+RxuaEzU8r6S6xHi+0vSNnyqST6lY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=DV8HKJUjLMw/ctVLJR+EsNrqP3e+2QDewFgoprghFBAdOCH9z3QFLf5H1b+UnwiaLX9+yOJPHmktCop+zukN99Rsra37ErNdi0UzAwx7Y+Z/R21CrskwWKQCB7aSNqMgWNJNTBLzTbH1V+7uAkY+Zgot1DMaqMjiAZc443Qwdxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqDK3McT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715017545; c=relaxed/simple;
+	bh=SnuVaKANezsK89xhLaJCVZPrBbMHyA1Px7Ry2U4l1t8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dt1mfcM944rRPyoW74bBq1aZVc3slSlBxY1wrCQ7x8wEgIXFUk6+azrBZkcTx94RKFxGwgJmK0zyNgpVJTB/U8sN+CbROrwLmMYgs90J4bmf94Ac/PN/RUMivKfJLMe2nIxZDP7NB3ytM/hVlg0x8iu5zq8XTfwMGde933/Be/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hM9Ug9rK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HMILEJsY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hM9Ug9rK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HMILEJsY; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqDK3McT"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2DED7C4AF63;
-	Mon,  6 May 2024 17:00:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715014828;
-	bh=vHsd79PfUgA+GN+RxuaEzU8r6S6xHi+0vSNnyqST6lY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=FqDK3McTEmy2OxsBFq+TTyRx++hYJR2WekDzaa51hu47/lHm4wVm6QODtzKIGknaL
-	 +HH8WT/RHmIk0MigC5chldc7cUQ+LW77Tm+oHUHeN7KJ11Wrt9Yoz6UTomG3CGtnVI
-	 9WoUrTW7AMEdE1Rs3mnnMVdhj5EaynmY9Ukzivj2mqUSIcE0+GG83Qfickr+XYsptZ
-	 cvWbchE57Y5x023TrJjz3t2DgFVw8AL6AwUjrCbmtviQvWSZhcN1iL9k39kxRNNwLm
-	 3hytvy5von0qTeZqembbZOCVWCkgd3ejk8UdfDAdvpLLlTyCF7NUXilfYC8xb8uqhd
-	 Aa+FggLzRI1tg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1910CC43337;
-	Mon,  6 May 2024 17:00:28 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hM9Ug9rK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HMILEJsY";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hM9Ug9rK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HMILEJsY"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 874172197F;
+	Mon,  6 May 2024 17:45:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715017542;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=poHDJP5x9pFXKSGFxv6b+OoTvegRQpkqsTgZ4FwrCws=;
+	b=hM9Ug9rKRsgNpYl++rSDDkd+Grp9WSTCevgoNZGR7+6H0MADW5ZcEylme6CgFuuFoGqmzr
+	7ucZTjP4BTs0WIbMSFxm12cigm16aD8wCLSBgjor90gG9qxJrhTng28rUhJdB/GuUL7JnQ
+	9Xec4kZ49hiDqnaYYhqYERd3taq96es=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715017542;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=poHDJP5x9pFXKSGFxv6b+OoTvegRQpkqsTgZ4FwrCws=;
+	b=HMILEJsY4oEupbOF+SEgaWaJF+Qazyypsvqo1cgrKzHAarNlrSDGrZetTb8zL/GloYCmuL
+	Uo94IpaLa3HZsGBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hM9Ug9rK;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=HMILEJsY
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715017542;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=poHDJP5x9pFXKSGFxv6b+OoTvegRQpkqsTgZ4FwrCws=;
+	b=hM9Ug9rKRsgNpYl++rSDDkd+Grp9WSTCevgoNZGR7+6H0MADW5ZcEylme6CgFuuFoGqmzr
+	7ucZTjP4BTs0WIbMSFxm12cigm16aD8wCLSBgjor90gG9qxJrhTng28rUhJdB/GuUL7JnQ
+	9Xec4kZ49hiDqnaYYhqYERd3taq96es=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715017542;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=poHDJP5x9pFXKSGFxv6b+OoTvegRQpkqsTgZ4FwrCws=;
+	b=HMILEJsY4oEupbOF+SEgaWaJF+Qazyypsvqo1cgrKzHAarNlrSDGrZetTb8zL/GloYCmuL
+	Uo94IpaLa3HZsGBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5B17313A25;
+	Mon,  6 May 2024 17:45:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nL2sFUYXOWZsNAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 06 May 2024 17:45:42 +0000
+Date: Mon, 6 May 2024 19:38:24 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Boris Burkov <boris@bur.io>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] btrfs: fix array index in qgroup_auto_inherit()
+Message-ID: <20240506173824.GG13977@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <a90a6d6b-64c7-4340-9b3d-7735d7f56037@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Bluetooth: qca: Fix error code in qca_read_fw_build_info()
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <171501482809.13196.7620199307769330029.git-patchwork-notify@kernel.org>
-Date: Mon, 06 May 2024 17:00:28 +0000
-References: <515be96c-4c44-44d5-891f-fe57275e9f47@moroto.mountain>
-In-Reply-To: <515be96c-4c44-44d5-891f-fe57275e9f47@moroto.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: johan+linaro@kernel.org, marcel@holtmann.org, luiz.dentz@gmail.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a90a6d6b-64c7-4340-9b3d-7735d7f56037@moroto.mountain>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Flag: NO
+X-Spam-Score: -3.95
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 874172197F
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.95 / 50.00];
+	BAYES_HAM(-2.74)[98.88%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 
-Hello:
-
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
-
-On Sat, 4 May 2024 14:25:43 +0300 you wrote:
-> Return -ENOMEM on allocation failure.  Don't return success.
+On Sat, May 04, 2024 at 02:38:41PM +0300, Dan Carpenter wrote:
+> The "i++" was accidentally left out so it just sets qgids[0] over and
+> over.
 > 
-> Fixes: cfc2a7747108 ("Bluetooth: qca: fix info leak when fetching fw build id")
+> Fixes: 5343cd9364ea ("btrfs: qgroup: simple quota auto hierarchy for nested subvolumes")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  drivers/bluetooth/btqca.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> >From static analysis.  Untested.
 
-Here is the summary with links:
-  - Bluetooth: qca: Fix error code in qca_read_fw_build_info()
-    https://git.kernel.org/bluetooth/bluetooth-next/c/0ae8d9b9ea1e
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+A real bug, thanks. Patch added to for-next.
