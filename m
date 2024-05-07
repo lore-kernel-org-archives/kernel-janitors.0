@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E6A548FE;
-	Tue,  7 May 2024 16:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9141F15E804;
+	Tue,  7 May 2024 17:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715100761; cv=none; b=qVIBZ4jo0SQwkvuZKPDeWoBeqs3BDMZ6E+Gfb6PULvEp6GmqMu7ShQV265VTOhJ1iB08b/cQYNwoRJOZbrqu3TBSm8WdkRvXSXmGnyZNry4aLYLpYrOSwZVdhiF15Yy/sQKyZIdsoPnKjR69m+Gr+CAmWbASE3stn1HlajMf3B0=
+	t=1715101764; cv=none; b=m8FwSkpFxt1aGAtgMc5ggkFCBya5RFAuCGE5eOvY92jabhmZsA7TpfhSW0rrw9547ej4WalPUvvL16oub/D7rnRuD9rCSkf/F/IwG2OhHe1o9YXudZXR+oLdatbMfVKDBVaSNaH/xs8Ioq9hVQjYZLN32wWepXVwPxjxTq2ez2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715100761; c=relaxed/simple;
-	bh=S8A9zsnRsFYYjDKBdks2TE6fJGheoskRphy9HwhTQOg=;
+	s=arc-20240116; t=1715101764; c=relaxed/simple;
+	bh=BXFYAuK2f3o9ZbfPuARv2bct8DASWQ4QtSWWePDLILA=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=DWgTItOxNNlx9eMDTJ67rMboS5Fh/ZUh8DGNxekvNuT+G0PmzIOaHUJbkVJZagL8j+GFDzu/9ecLb1utvoJ/+ob2RpbdW2VRrzmQVr8Kexu7VkUod74E4N3E7hXCsqXsxyHXGcZfqXS1OiYMgyyCuwGt4f5ZzEwXBxU/pZ5w4y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=uuzIcpPP; arc=none smtp.client-ip=212.227.17.11
+	 In-Reply-To:Content-Type; b=T+hHawMJuim3Yurxrsw9S5uMhruTJc3W5kZyZL5V2b8IBiU55tdzhGitqgMZScMqYqdBSedr0Wss9pc6o2qlMg72EkJTsxL74MvYdh1IOKGGwyiMLqdsBPgxslhDxM/dXe0spKbXM5VIElktKJSGtIZYg4D/KvBYY3poneYEEYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=P4D67cMQ; arc=none smtp.client-ip=212.227.17.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="uuzIcpPP"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="P4D67cMQ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715100705; x=1715705505; i=markus.elfring@web.de;
-	bh=gPUDrs/Mk0znPw+v9wYlZjQS2DlLDMlwrHz+7dh3yU8=;
+	s=s29768273; t=1715101724; x=1715706524; i=markus.elfring@web.de;
+	bh=BXFYAuK2f3o9ZbfPuARv2bct8DASWQ4QtSWWePDLILA=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=uuzIcpPPdkuzMaFIFNHuTDo3KPjg0p9VsEVyFkRO+CEp6qg9UXDwynzi1VvTmgZM
-	 lcC9U9SltotoIGrc7SQTze+ffZy635bKF8w+KXO71MNna2ENdenz7Fx+t8V1Z66fI
-	 8Qj8MZqRARZ7bYoWIEvgOMqfI18yzFMnC7wBvBO+lAa1dXkdlJqJC8YpFfkJToxWZ
-	 PRl94zQzihewm1PivvJjFbb61Vco5jLnRE5GgCjpBXmmwEANysBSxifxzU09dSh7q
-	 w5z+wBvalO4TnWG4+jwdzVTIRpdZJuOu7L8M2Y5VtkUpP7Ico5Vsmchuvx0oIXTxZ
-	 nG41BkKNSOoiNAVhkg==
+	b=P4D67cMQVeeab/N0U1pzK1DF6NNjV/4s6DcTSzdvZBd9g3dTEtwC1P3rUgBrOQJu
+	 xg3hQbO9PW2VoBOhqTXTJnlrNNfIk2CHr0pkL6SG4pC68RjRHO9BF6QWNDxBERlL6
+	 sEMCAD1wAMieXt4A50SESvQtc0ea86Punik3hzxVgly7FECT2LYp/BIxnBS1Edhhy
+	 ej6jduge9FF5tQ3kpVTkR8KwIyfT1BJMOBHiRBUF2dW0RxBRIUeBuf5dH2ok82mac
+	 Bc1MvCZCosQ/0zfKYK3rajl/9h3h18lw63uWmChNqPArEatWcqjcA0H2RssjkNjPL
+	 8MPfZi3tpW0mF6Edgw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MQgl2-1sI3312TjC-00M7Wc; Tue, 07
- May 2024 18:51:45 +0200
-Message-ID: <73a1dc2e-cd7c-4fb0-a2cd-181155776490@web.de>
-Date: Tue, 7 May 2024 18:51:40 +0200
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M2PdU-1s2kwU2XyI-002FNj; Tue, 07
+ May 2024 19:08:44 +0200
+Message-ID: <bb650760-576b-4ad0-b026-13f29ae45db0@web.de>
+Date: Tue, 7 May 2024 19:08:40 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -53,57 +53,39 @@ Cc: LKML <linux-kernel@vger.kernel.org>, Hao Chen <chenhao418@huawei.com>,
  Jie Wang <wangjie125@huawei.com>,
  Przemek Kitszel <przemyslaw.kitszel@intel.com>,
  Yonglong Liu <liuyonglong@huawei.com>
-References: <20240507134224.2646246-2-shaojijie@huawei.com>
-Subject: Re: [PATCH V3 net 1/7] net: hns3: using user configure after hardware
- reset
+References: <20240507134224.2646246-3-shaojijie@huawei.com>
+Subject: Re: [PATCH V3 net 2/7] net: hns3: direct return when receive a
+ unknown mailbox message
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240507134224.2646246-2-shaojijie@huawei.com>
+In-Reply-To: <20240507134224.2646246-3-shaojijie@huawei.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UAwRMbroh29s0Ez/VJv3gNYhlAe7D0+EmM7MDCRqf2rzqwcTcdd
- yO8GQFmHLsRZLGrEVaLJG4NDNHbqF0f+KVyxEWLRrVILkcZUMhFIuFHcZdzp4ywbrVA0iHG
- MqcaXAZwsCxH9ZYyUNq18EnRcDJ+Kq94k67l21FyxX7l4i1PFmfnLmbL+YDTnYEgfXAK1Hd
- nKN90sEHcYCYzDyIJhKSg==
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:t0WGCuJXSyPFZ+yLpUa/X3W/lBAx/QRKxussUmTsJVFq7hTkIib
+ vGjFeS0FOJZ9Kdo1bQdiYW65SoBaF5/RqockWidxxPQoSUyFWjYs71U2FpRwcwJhNi1K3PZ
+ Urnl22cPirVCFha0vaHzMxhXJw/GYwdJfAbsezZuvj0SKbc79FJjlwW/Lad9B8kCi4D1mqc
+ HWkA+pwCJPiSLzQzCW4HA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:d0Dcnv/9yPU=;PR+45TPLCU2DRnEStC3sDhDpyIP
- CuwRSfv2z1JUdNyItnEpGQXuUpll9EWP2BjNKPu0oba5Io0tDwfuJcoVHXJLJWu2TaUVWJoUp
- 5dDPiuzJ54TQVe1Z4qWyCjGK/lwnvq67Ru0UB4ldjAsdpafA3VJDKTjqJdxsiYKjOJVhaWdEd
- y/0w09TrkQzp0xMrx0bIVyCR3YkvgRMcdWqCpVh4UcpJmPFjTuIdQRtRtH5MzMAnpS0CGB9SX
- 0qJyT8Q6UIicIj7oJ24Who0vEp1Km+uX+kdPAbK0cUeCPnkp6SfJu6U4FUhdDXZuChFvwE7vx
- Amk+z3hUk/8NrorkRXuOuAW+ssQbyOb/dIOZDUdHKI1M6Y6rR+eVgCTxVrB6aQONihAMHwWL0
- nSbTrNx/5FtJ8MOYu1mySxzuT9FEXn02abK8+duWnv6Ra+v2hNm7OvSNizsKVbR00SWcgrJ98
- 4jG7U5Os0apeykSJYwpm9YOqW0hFDi66E9+pg2X4J9XsxY6+vhVfO8tODSwKYKP0s7rnsdKaK
- 7KFMC5C+A7Y+hKU/4BonV28/cNgvdsDmTXMKi9RwUO1ufve/HbiQ2JnoPfIoQ9zf5B2Kk/ZEI
- sdnoBkP7FA2uvIIjcvgJU9IC10+QAM9yN0paM12rdxGVQIqyXGHxGNE1SHejrCovpvW2jyO2l
- WqaKFZbeCWFuyDZ24r0VNGV0NogEL0GOSbFCqJxqJ/snQALk3rk5kId1Ns1BHNyDZ0oBuCssY
- mnbbzP9Yh8oqk7b7zHaAmhMjUQcl6WSrJt4ASENjFqv8Y6NtdhODfQv+JF3J2J9rOYHCRH8fs
- KQ9L0M0TKcNZUyqcnNVun+UZEZUxubACqGPpvppFL6G4Y=
+UI-OutboundReport: notjunk:1;M01:P0:OkuV9a7nTNE=;ORNzrwDdGTlNAh0neGWJUejWE1o
+ X7HiuVJCJTdpp4Mj54fS0UpLQQY7BJxDfleyI6pROQ0SaDCLFQ5YkvHuaqn1vh0D97G6xQU6d
+ QPXqfA8l1HQSJ5MP2Yj5Hp+B6dvbHFxpWDlAXp+fIRAOElOdJ4XOEqOVtDy9qHNXg5UFu26ss
+ AGXwWYuTrV1dm+RkEhALXxZeJV7zsUrtzE2KBtiSr64F5hMkdfxzZ3RIJXSSnYnvJukhWk6r4
+ aihygLofWAbULGwrP3xcdDeWcuS+OHQ+tB5sJoQHu/ogXDR92YSgOVUd11skj/gY9gLij+EhJ
+ 3vTxaLserPX7A2uDrWlFSUdUTsZ07o1L4WMLDWRVjdsLrCeAW2F4aP/0Eo11B6dQpnIhLZM3H
+ o1QGtXT43LrR0h9+EIrBXXXLDzI6Nwx/lwuoQVWiYrEGaSTpDbWBj2riDdEajTcLweSkmxS6r
+ 0Ua9P8fhdBurfPj77rRloX/2MKsfW6RDbHrDZvBIBq8dtahkA3p2j7GFKiDlL7waJYQgsq8ue
+ HQwZyTTdcn519VU35gFB4KVu4idkqkkAdKlrDx/SEahGRVTQJH95Usn6eqIoE5koBIZw7Qyd+
+ 9fNDxqJEl/EtEFSLoCL4x4cEksOqzMAc4ZnPfnO184Rx9eYSYCym6xAU9ambIgaIAdziLpqOm
+ p9Tn0aBzC6VqYcEQXUEZA+MS4j2S27DnimFj7mk6mEweGW0tUT8Wgi5duZ5qWHEgW3MZbjZd9
+ t19voLg8rd8Ai3v3lOqWBsSCtrxwLQMsL5LWJ9IzKYqVnA1dK9PcA0s5hA8o6Uf5aCAuLS2jh
+ TxEsWnjHc0vLoqMWnIfSrD3PLqdJJfg5RK3aTb7T30phg=
 
-Can any wording adjustments be a bit nicer?
+> Currently, the driver didn't return when receive a unknown
+> mailbox message, and continue checking whether need to
+> generate a response. It's unnecessary and may be incorrect.
 
-
-> When a reset occurring, it's supposed to recover user's configuration.
-
-An user configuration should be recovered after a reset occurred.
-
-
-=E2=80=A6
-> and will be scheduled updated. Consider the case that reset was happened
-
-and the schedule will be updated. Consider also the case that reset happen=
-ed
-
-
-=E2=80=A6
-> To avoid aboved situation, this patch introduced =E2=80=A6
-
-* Would you like to avoid another typo here?
-
-* How do you think about to use imperative wordings for improved change de=
-scriptions?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
+Please improve this change description.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.9-rc7#n94
 
 Regards,
 Markus
