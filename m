@@ -1,40 +1,40 @@
 Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A70A16C854;
-	Tue,  7 May 2024 17:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281941635A6;
+	Tue,  7 May 2024 18:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715104321; cv=none; b=usg2c30oY/0Ga0KUMv2weD8OfQ1Sa5EcMhJj+gr4p7SWjYmDioxAm0FGuoJFM22/pqBXkiZJ+DpQcYSJqhLsF3nnLKo00Z2JNNmT1wavbdWZJ0jBf8s/Qj/fEfsQoO+UG1yuCiqaTHAtrk7evSTd2q8uEFA+TDlpBBqPZHcbMSE=
+	t=1715105155; cv=none; b=uk/KpDWVPObsgfIQIdxqoSWXMGs9jbDlIKMx1qFdMkOGRfjSYfb/eXJmrJgTkcjolxipluojBbcbEWPmRZa3XwPPpTaLTys+NenixqULejaRnCGXrbf+Z3Qtxwz7Zwf+2sPUwpb7ttlXEMdveM5GNQB3O7S0L1alpoLKjckZGF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715104321; c=relaxed/simple;
-	bh=GY3MBfwuO10L82PUAiXJzgv81jWZBClNChn/m41ZtcA=;
+	s=arc-20240116; t=1715105155; c=relaxed/simple;
+	bh=KwgLxBAb3iwpt/iHMxBuGpes7bPXDJu6zekRMK5A15g=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=eMBOeM1ZNTVBwz2V5qafspAaOHt4rUgpCOFsqVKIJBprBDzJ/40UXWsE1LGTghyJLnQKokRKd50f4fuhiUh8TLuxE+S6rDyahL8enD8NRpNhvofYYvnUGBPgY4/fWoKapIEWmQP5JHymW5ZsDaHK/6Vdxe/IX8Sb09IGRIP8lug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aKRIcrzc; arc=none smtp.client-ip=212.227.17.12
+	 In-Reply-To:Content-Type; b=Wjs73+g8leUoB/Ia5ZGXkNaJPRZ6KWy6d+8Y/7o9OiMPRBD8JjfDx85jVQSzs9keA/cV7Bf93Zhw4fthiH7a9Dgq6c4zqAynCRXj1B6MVGNRf4Uknkrb9eDiAM4CmEiwVfZpgeSj1uYY7ABDIdRBdnu0myvqC2qiK2jQBeiTIgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FKPkDXTu; arc=none smtp.client-ip=212.227.17.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aKRIcrzc"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FKPkDXTu"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715104288; x=1715709088; i=markus.elfring@web.de;
-	bh=xvGl9zg4bC/oN/5QMDwRD8vK477Q2XXZGmLCg9b9k3E=;
+	s=s29768273; t=1715105114; x=1715709914; i=markus.elfring@web.de;
+	bh=KwgLxBAb3iwpt/iHMxBuGpes7bPXDJu6zekRMK5A15g=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=aKRIcrzcx8N58iwithOFmR/DZtGvGfJKN11C2CUxVlWKN02Oca8FViV8VZMeD6js
-	 GnUoC+10QjWG7uXDJ1TG65uLRfu4+3Cbx/axJ92j5snYH7e4Q17hsjw25LYzupOlL
-	 z3S67MPg8cbyQQOCRt4y1dJzz37ve3cgvwb8AJwl6BLTUxY73Fa8jsjwfZhxTlTxc
-	 2FI3BqZhL2+bVt0pLMxi4Vt74SFOPHiz08mmlI4LTowdCqQFBzf5ea9njs8C6fBCi
-	 PN+aumtvT+6ONm7f4Y2qxrc5r4wvM2pp3JXV8Ve8gNbvQ/BhPvYnfyzxKNs6Pk0Gu
-	 lk7cXrQGkpqwTBt9ww==
+	b=FKPkDXTuO6UzJyDNra68QLidcEjaQ6FMzZNRo1DMKZsyINUfwpOKuodSvLjFTTih
+	 S/cMyK7la5OzQLlREXvjRtJA329VqmujRTV4eA5YSxVTXdEiVxReh90aICANGzTxq
+	 uz+NMCW2TxxmznQN8S9wSSg2zNXjMMFUTpdn86DoHIgsbMCFcVH7uTJnwz0+M0b1C
+	 kjhBDiC3i9kMaQ7Mf9DaxBU5hjRitZV6kKyn8dE4K0vKK2CzzIbZCe8gPLJozEGDD
+	 x7phrhq+uX9fNUjaK1rUZAGBm/uM5qA1C6wjGUu9fDZCPgzhAyftY0X7llogQrqWt
+	 UuV8nAx3wvJdGjoZ6Q==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N01Zk-1srRCA17Nm-00vSKI; Tue, 07
- May 2024 19:51:28 +0200
-Message-ID: <1c3856f2-94dd-4947-a3c7-e011181283c8@web.de>
-Date: Tue, 7 May 2024 19:51:26 +0200
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MOm0r-1sGAL71mVb-00ObnB; Tue, 07
+ May 2024 20:05:14 +0200
+Message-ID: <1c658f95-d3ed-489b-b000-d219e125604c@web.de>
+Date: Tue, 7 May 2024 20:05:12 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -51,45 +51,37 @@ To: Jijie Shao <shaojijie@huawei.com>, Yonglong Liu <liuyonglong@huawei.com>,
 Cc: LKML <linux-kernel@vger.kernel.org>, Hao Chen <chenhao418@huawei.com>,
  Jie Wang <wangjie125@huawei.com>,
  Przemek Kitszel <przemyslaw.kitszel@intel.com>
-References: <20240507134224.2646246-7-shaojijie@huawei.com>
-Subject: Re: [PATCH V3 net 6/7] net: hns3: fix port vlan filter not disabled
- issue
+References: <20240507134224.2646246-8-shaojijie@huawei.com>
+Subject: Re: [PATCH V3 net 7/7] net: hns3: fix kernel crash when devlink
+ reload during initialization
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240507134224.2646246-7-shaojijie@huawei.com>
+In-Reply-To: <20240507134224.2646246-8-shaojijie@huawei.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:sftMbWoZIxbDBpbVsIOYNDzevExKQuQKOfTM9MBs3QdgTtma/kv
- 9oITSvN4DvQi2An/EEt1hGI/F/JWaKUyyiNegkOsR9FEz9lbPQitxV1xkXAVB4fs4JG0cTp
- Oz5+NKFx4d7LTNOxwFnuiGr2zXLk6PRt9VTJvU4hOUBJ1HansZBWN7kOSfIG3ONDZKoNhhQ
- SDtTQC/uBt5eZ46nvk1lA==
+X-Provags-ID: V03:K1:4ljOFxrLOUDQYHqD33BOOnE6MAXLQQm3Fqqr5teS3PZBCUUulsw
+ QggAeDCg5mo8zcK5o8VNtct3Vkq5yW8aw3wrvDyxJUPiqsQhAZHUX5hZ1on1hdw1j9kSgUn
+ Mefhg4WlgjuJSv1+yvBFJiP8iOqVFl+5mAWB43+FiZO/xd7AiQcVv6vFR27uK1DlHvRwr4X
+ 9ErYPcasZ2fSapJJs1juQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:b40jeLTvkj0=;FvF090lHEDLVj+pkFpO+hodhSbJ
- zyinFBXQY7ZbhZyNq1XlnSsaadG++YLmBX30Y6f0q6Fwkz3Gbu+409dsYx611B9flLC0Q5slY
- 77Y0lla7GwX5rWOYtOGqIPoLPjogk8ZfeE1Pj4xeVc3G9e/ErH/QoTunomfmSY5Q/flc1ac3J
- IDLPHZUA40MZ57DpkCBNsbIHyEpEHW5emXR7nfS3R45I6nymJjgi8vZ4VQGT+R884X+olU1an
- cdSHu7P6OI0pTRCix8fPD3PZZ5cBYJ8eup9tJKoVHl7v9G2rQ1J0c0YVX6mB7Il5Y7E7yFqYT
- wZmQ8rK5dXUN2mbUyySVWqPUTU+LoGKYlM8Av7qtUZjwbGARIQ4gpOd+sF8prqF1Sue2rME8j
- mCDouhReBHqa2FnC1H9udDHmhlmNO+412+PA2yOk9508BJrAa1h+T4gJzGVyrAkYpdXCvBn/j
- lSyUFCLq2lWAXXGDofVooySWFDLtEiF3mGQYmrOcZSXnWcqPzDF+kB4Xs5bUUQxk/Mr0MFWzp
- KVOOJY70YjrIZCmp/b5UEY9gepwIqLVgdZWc4CL2s1RuSxw1BA8QDf/uBpkNCN2fFa7AWPooQ
- CZShpnfZJhSx9MaysTNSwBo2J+WN5wHQc4e7+ZA/lEp7+h4K8nPjac6tA2yCknjTr/fnD7iWs
- d/qvy6DbgWNfjboUHynFPj2RGXjAVhLiN2ezK/cCLKsNesL1HvJEBzV3ZVlF2A5dP/dQNxlPB
- BZhYa1BnBvO6SXpJlN12WjuF7xd/X0KSVoe0sqtf17dAQcaBNiTKDkHtoRfCSGOBEo/V20++l
- GtsW3Kapw9haNLbF4vit04qLxybyMuwbNaIa5saGHQ4zI=
+UI-OutboundReport: notjunk:1;M01:P0:rzAuSBM7lXY=;LxDZWg3qyJ1os83KwKjeM6yvo8M
+ KKgD/J/19ip7fW1np5A7wRtzk+R+liuH99FaGk6fv8Cb/Rm4BsxUeMsaLKp6KW4oK4IlULaKB
+ yhrzDemgc+3ZAiz2xPfBpay1suA6ia/bV3M+RSPeB2ESIrZxY9a/oTascqWfMDb/0QH+3UF7g
+ nrdmUSTwmBLXcy/aHqbhJ2swu0s+lkzMgBaim9R+PTsQHljnSSDmeeF2x4gFxDW0hyEC59LcD
+ 1avZtZuVF7vZmf7L/+7crlD0ubp+5eCFyQkJT8K9Rpkm7E+lmvczzcTSsPqIyxpihC2xk1Dto
+ /omDTr9h7kpX94sV5+BElY65sjs7hFCGAU3xmNMqr3bI2A9gmcSeY4yYlPr66Op8J5a5i9a9A
+ 3u9PBZtMryk+4LKH274u0jou1TgJ8/tIsKNW88T0fI+UENEszJ3BB08bGpIunw/YzoBMTqaMw
+ 7iv1Gn+1MbU4g8pX3dJ1G+HAf4hHtnDi+jvF88Fe2Cei0c2XmVQ06ClXvvNLzf4OQDjdTsz9I
+ O+iGV19+6T+4OzAOJ5zmXo7g+uAYhrYl1HXQoYYP75JpXrKFg9tJpy5guFvPMqrQRfYV+HyJJ
+ lWqgjfi7jwyk7DMDcUtZBl0S+ODU1nbadbDEyWRRWPmYy2/qJzRNpaW4tcbrQF77xZb2OLWl9
+ JXfsIfDYv41pPSfT7tqnbNIOtV4bioT6rpXkbkYxzdfvfNjIZMGyar3LH2Kzwo71a4gsqRkq2
+ yRTlj9uZFsTG+iMcfAkt3fWKGh5uoDjG1vWrLGGJMecVaNd52TypecIeCqKkP0HbYSy7hXcIX
+ /tHq6Q8CzXJHFKib/gUOL0qb914398dMfq8BwG60v3ctQ=
 
 =E2=80=A6
-> will not update the VLAN filter state,  and the port VLAN filter
-> remains enabled.
+> This patch fixes this by registering =E2=80=A6
 
-I suggest to use more than 64 characters in further lines of such
-a change description.
-
-
-> To fix the problem, if support modify VLAN filter state but not
-> support bypass port VLAN filter, =E2=80=A6
-
-I find a few wording adjustments helpful in this changelog.
+Please choose an imperative wording for a better change description.
 
 Regards,
 Markus
