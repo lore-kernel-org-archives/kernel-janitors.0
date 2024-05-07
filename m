@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF43014D710;
-	Tue,  7 May 2024 09:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC328821;
+	Tue,  7 May 2024 09:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715073947; cv=none; b=UGkr8mPKTUAchFre+SRNpv89OiOW2RmZGRMVoSOAKVXm4TG86MFX25cEp5VasXbr0EP6AJ0kHHo8/AhmKiYadczidSjhdXDoInReuueRV4SoZNC62gJYomaa+KpJIO8q9YLrBFsD1zPa9sX+nMXnk1crLkvDd3iviCAt+OhIc64=
+	t=1715074979; cv=none; b=kcd5kda9hnDvM33WhrFUKcB1s6iF9oDzatarFCUXjRyWjr70W0DAURWvfb6K3+EUsMH8/dbXGmQD3Fczxg7GZFebMcmWiUzowfp4f9Qh/KNxTJ6DELfQOoHehEnWuR0xY12dMZ3eEO2u+GNJvx4fv9ow8Oe0n/f6g1S5Dss8PSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715073947; c=relaxed/simple;
-	bh=vSeJbkIMICdQAl1glvGGycQMjGSoLDGjVinLmisZB9E=;
+	s=arc-20240116; t=1715074979; c=relaxed/simple;
+	bh=+nDEuH5Ssq5bYvy+3zosscDSP7Lvm/QwrqbbeTHFOLI=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=uL1x0krhba5dkZPs6rUUdqMKnyaYv5rX82F8IB94HLItnnNbKo0ZPOChbs3tmwGICb7R8hulcuu6YhHA+RJAcKJr8eNcNKEu82EvxHKfxqj+BzgSixYadZGFqhAYcozFLHmrXjQWoufbR/x17by/w0XADJy1ivjSI8fzxHdXAMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=M3/FZZjA; arc=none smtp.client-ip=217.72.192.78
+	 In-Reply-To:Content-Type; b=C2AXAB3w7od8hJcs5rOfDHcbMzc0Wdp3+qNMH8CUrC7Z6q9qjsK0FUoWBYeZKBuszde1bFRr0/03lOoU7ZmXW6gfKVEVt77fuj0Oua27y9uxBMD6aDyiY6BhpKulJvou1qxBSkg5hcI5T4IIiSVE9VSktClf6KarzujljNH5kqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=nKBqsw0o; arc=none smtp.client-ip=212.227.17.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="M3/FZZjA"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="nKBqsw0o"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715073921; x=1715678721; i=markus.elfring@web.de;
-	bh=vSeJbkIMICdQAl1glvGGycQMjGSoLDGjVinLmisZB9E=;
+	s=s29768273; t=1715074954; x=1715679754; i=markus.elfring@web.de;
+	bh=r5NM6ZMZAAS7E+M7pm2Z6LYVfm8zSH5Ol4T7cTS539Y=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=M3/FZZjAx73zkY/yPxjQ895+NCl082NCcX+avLWlv4RPMPPr3zFj2b/rBn77/fq2
-	 bt/ZOQA6mtSqI/75X2NTMQL5fY5cXUF9R9JRjWu/7HzY1vbihXk5bVozMdAo1rCQ8
-	 d/3RMEZ6nxAZO9N0oIu8xHZoNctp3+vZ7vC1Rh0C1PFD7dUflREpU71haCw7lwr7A
-	 C4wjHmyX0G1sSJ4muY0aKVRtqrMcoxpuT2VAXQcdY0rHFx+1tffBYqjK8NHdA/SKI
-	 z/tAsgocwli91S8vA7hfx2ecJEePnC6A/tkQA+44nmvitUIrXxwv9qMsPhpq1rUR2
-	 NjEgKH3FnyHkGcoiNw==
+	b=nKBqsw0oAKDdVsM6Jj5ohfvf5oZ9bOf5AX3U3i7JjkMLfrecLADdiGLI+8uB4kjC
+	 jY9dhdnqebyZBlg93wEWyIPryKfO44WQkySseyVc1fvr+1ulilua5lSId7Q5st2OP
+	 aVTNN+JuZ+28QUWvQuATNLVJpH4sh43ImzMMrklk/NSZ6nNHghfUtv74edXRdFZAJ
+	 qs/Lecur6n/ZVtvfjSv56ueyFtTOZafD/Rj97kbk0fywOnij83XGr0pvktsOwSa5q
+	 VV6dL+WODaN0QqtDlYIPZZfxV60P8BfophFpExDMY4F+2Y2WMXGZt9BRuUFuVsYdH
+	 0fDeypTMNxcUa9fpwQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MVaYw-1sE4jU3sAu-00R14J; Tue, 07
- May 2024 11:25:20 +0200
-Message-ID: <7cc71e11-a484-4b5d-a3dd-a8b84c432977@web.de>
-Date: Tue, 7 May 2024 11:25:19 +0200
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MDv9a-1rwXaI1nMK-009LgC; Tue, 07
+ May 2024 11:42:34 +0200
+Message-ID: <dd736c19-ee7e-4040-aeba-6b79ec15f266@web.de>
+Date: Tue, 7 May 2024 11:42:32 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,39 +50,40 @@ Cc: "David S. Miller" <davem@davemloft.net>,
  =?UTF-8?Q?J=C3=B6rg_Reuter?= <jreuter@yaina.de>,
  Paolo Abeni <pabeni@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
  Lars Kellogg-Stedman <lars@oddbit.com>, Simon Horman <horms@kernel.org>
-References: <c1d18fcf1bf6ef65264ba992172ea1636dbf5431.1715065005.git.duoming@zju.edu.cn>
-Subject: Re: [PATCH net v5 3/4] ax25: Fix reference count leak issues of
- net_device
+References: <5c61fea1b20f3c1596e4fb46282c3dedc54513a3.1715065005.git.duoming@zju.edu.cn>
+Subject: Re: [PATCH net v5 4/4] ax25: Change kfree() in ax25_dev_free() to
+ ax25_dev_put()
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <c1d18fcf1bf6ef65264ba992172ea1636dbf5431.1715065005.git.duoming@zju.edu.cn>
+In-Reply-To: <5c61fea1b20f3c1596e4fb46282c3dedc54513a3.1715065005.git.duoming@zju.edu.cn>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:EvViN+aWJfnlUWfbeSptumUZpkz1hRT43xIcsGsraksgWefTirR
- 1qhK4MRgc6ZmxsGzPD4Kxmz1RgK6xJ9Lay8ipCqBOJ/HzA1bVM55Kg9KZ29XWLGLuSm42pW
- nafRPfJ0gP14LS47ZFxpi7/RLesqJids2+znTW22wdERYorMcE2ZgpGLLr4wRcp9LQtUl+L
- MvVAUC58/XASnG4lwQLhg==
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:+pdHRZr7m21n7xLmFkZBY95nM+/t80yhgyKvXQ93ITu5O3mm8uG
+ XaGOT59O3eUQWzDy/AZkainCMmuSFVxftcplkLa6sF3jrelLvvPzdpdGOFmAcGVy5CBhlhz
+ OtEgrpt0m00ojq6Tg+yh688lPq991nOuHx9R55AjsYjClPZ47j9+6j12RSOgjx/ohGB/MSj
+ QHTPoPj4A8MEEWkZ8kgmA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:eHzY7tsbTC0=;ywjjrQhRZCbWvmysFOg+GM/ODeM
- axDWGTwsrSWSa6g0to3P4Sd145vXKDvthSeHbEYYiPxrcCB8T8ekS5Cec7ozHldHxdr6i1hFr
- +Ap4XGpvoUMoSKRvZITfRkDwwtnHECHtVpvq5gt1/B/KGEQYureNKFTEL8FjWVvuhnYbWO86D
- NcTnSvA4MrnZlMAVR3DHioe9j2qJRIDumDx5c/Br7xMGSVqj3gFjuj/CfcIcn1Y9aD9vk29Db
- eoqIa5LaUF2AXQHhVsQ152LK06I9f6MLqtobA8yvZejIdueySMpgUbclxuzdnaeJXZVjPiXLK
- 483s5sw7EzxaRVqqHv9tyNCSZ3llJZHLLeT0VtBl+FjCHUiqWxm0Uga4ll/oWH7jUgn4NxSYc
- UNHN1twdljMIlcwn4jL14PpT6LQUU+sXO0TYs2y4sa0y3ebBxEW09EFdPjRTRQoWR9taw/I/k
- pRqDfHvdCZ9WKXwn+VXQHZhWSzNpvjYHKg55TutNb/M9mCL+eZfWL2W+B/uQLj6U3yMjkV9yC
- UnzrsAm8p3ENr/gpnCXXv31MPhTa1thk5p0jijg0ByYsO7ljzCoW7rT3F8ROISJe8l7vKcmwa
- O6Clu0bDjYOJOnpV9S/P9Zu9CX1EXIe6NZnm76zXquIB0l8ZZHH8jQ/hLYNW04Ydvmvx17Mr0
- v+CHwtuqLX1VlNDz35QrYeN0EzIrTyYyGq8+1HltAWU0bRveCArvOZW9LOv3fooFggEepnCcQ
- mhJjWAJuHBIlbOsEOIIMwWnsFRJqfUYo5JoBu2ig2B5bMEef+hcwy6pKZHih5lgGy0qZXLf44
- E+g4KnD6P3QxCLWZ70fY22VLdUQRuNnPqtFzArg6uES1s=
+UI-OutboundReport: notjunk:1;M01:P0:oT1Lk3+spDI=;sGvZy0c3wuS6usgKSYG8TBtSNlT
+ vPzS14FAqAzkjIjurTFX7iaYYVAd6Iy9Aqi/3PbOCmIh/isjRaWV1blXGf3CXh/dmhNhdfnyp
+ iAcR6t6FSn6BHN6BEGpN8a8Ir7t/fRPm/LRrdiK0whDesYL4iXaIKoewYz95cForHUYB61h1L
+ 3nAwJQEfW4jNlEdq5O47Mb5qGzBeyPzwznbtScsZl6emJikicj8HKF5EySb0WGOKo9VPESLuG
+ /Vp1J+1DMfMriq2zRajTg1mLkOdaj4RG5b+iMO1G3oG85T53I3XUau7VOm90rZZvXQdnqZdll
+ sxKCtW0JGG6rlRDNeyBJfzsoCE7G5RTb7ZjSF9F9hoI8Dcc2/2DGrtwciAxcGrjvu5u9oUf/8
+ e9OnEmtF3f5uQorLS7Xp1Du8DKX3JE0t5+GdvrFN8mfVQBWnpXc7HiHdHzyuDQY8S9EQ/5Rj5
+ 1qIdT5plALgCaAEYDBL0nik5/ARmN5aqJTenHoeHf3hXUMfld++uAaaPuT+1QWeMyLDR8uUje
+ xWtvC4D/d3SziQVSswMoeCWnLjexSRI3CF0YgkSfTV6iucqztQW9khPYGpZxP4lwJr/nWheZ7
+ rPtqqgXi3onjNM6SzDOqqEjzfrBE6AYgcofIJa8STAh+f8WyIb3QHSLwp5IhMZLMHH/Q3S6uv
+ zGzNgB5rHuAm7pn6bqFYXUdtd6RRlGyOxNETHjhwbeEJQ2EDOjnBYo/83wreFJui0Ta+d4zV4
+ oMdrEWJx2zpzfN3cOcolrqpSslWMCivQ5di/cb1g5TeHkooVsOyfchbv+3WlZ+PuyS8svwh9j
+ Z0Wv5QB5mfwOSKgZS6OaZjkESngH8oN2C1vS9S+sq0bJQ=
 
-> The ax25_dev_device_down() exists reference count leak issues of
-> the object "net_device". When the ax25 device is shutting down.
+>                                          =E2=80=A6 in ax25_dev_free(). R=
+eplace
+=E2=80=A6
 
-* Please improve this wording for the final commit.
-
-* Do you refer to a single issue here?
+Can word wrapping look a bit nicer if a single word at the end will be mov=
+ed
+into the subsequent text line?
 
 Regards,
 Markus
