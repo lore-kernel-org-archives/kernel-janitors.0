@@ -1,75 +1,89 @@
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E5B7E798
-	for <kernel-janitors@vger.kernel.org>; Tue,  7 May 2024 23:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA63785954;
+	Tue,  7 May 2024 23:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715123056; cv=none; b=BKTeKkWjKSlJrVesiSszal4NJXxfznC7OaN31K12GRGid6kvhbQgw8NcSeyk5afrA1OwQekN+hD/MrTtJZbVrTTTQf317lbuBan4wPqjLTQDDnssMwnd6qrA0xbyA1AsGY0bycYnO+B9yLZcmnVfKQ9rrJdc0Q6HMnQLKVv2+EE=
+	t=1715124821; cv=none; b=pjVcWSFTuKCuQPIHd0V3a6Oj1MOYXIxngAwG/m32HbmvwCKJ7Kt5xR4OaBbSXnN8gDnvGUckpcsQdEQFBH20MthCQB8lGhzLPpV7Q8WcsfM2OdEb6s8zlo4ZKpNl+JIzb6r6LzLrMRuICMvsq4attK0RBWnuPlH6x9W/x/z5Spg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715123056; c=relaxed/simple;
-	bh=aRJ5eOavtxFoeQm1a6aVCBNYqrvRZt62HRm6bVv8Ny0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f585lcsL62e1xlacmeziBkMdakrb8Yz+nnxAhXgh9YPSpVazrxANRVojNesFOQ7TXgpYJao0800ZHOw1vM2dMpF9VLaQ94KXsbOjFKKvevMwnJisyynif4sMl5MaC+BgjzGjDf92nZTVvhOIQmZYd5pFrNDzjR/4K3NC4BpGT+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=cIynFjfY; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+	s=arc-20240116; t=1715124821; c=relaxed/simple;
+	bh=PclPuy1ZqHey3h95txPW76r0ZRBiORIW7rQ8fV8cKq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pba67XTh1QgGg/kG0txqawNpLLkjigQj5WnIM+QTjOcDtRd8cGCJh9CeVDaPz0spNkFPDoBJlnm+xlZaRbfG575RKN+BWTpMfi6JVSBRdTFFDLIlLfyOZ3nXzRqEj8mv/4jMd3NcF0ZfoC5ho2n630qeozWF5++QBKdLMm6w9NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iy9+eVeA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="cIynFjfY"
-Received: from cwcc.thunk.org (pool-173-48-113-2.bstnma.fios.verizon.net [173.48.113.2])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 447N40sJ026165
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 7 May 2024 19:04:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1715123043; bh=BrnPvZaXuhBO9HN4Y46xIKgyPSVHIWkzEKshZvIldG4=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=cIynFjfYTyECIo2HKBZpMvLi82qvbCKbOalj4zG4fUoLOvq4FDkH4ZCO1Hj6LtBfr
-	 Rq4Hq+acRsdkwHoswLqPL155lqRDqYg1gB25kL76a734MAlduBecQuSsl89LLsHunK
-	 IAtei87uSWL/FyErzv47NmJo14L8nX+8rdLGyfvEy7HzlR9RdHDi/g+B7ABCSN9fbt
-	 2SoWVx9i/mM5CyFCT5rBiTLMAVMe8cLvxYiJPMbB4Ph7TKqykasZ0oE+kAAjTHZLQc
-	 dmEgGmTf6905q2Q36s/QKeSNN+4Oxv3UdCcfCQ7cqjE8S9Dez7cpnPI2yQGzwIj18A
-	 LPex+qo2jLv5w==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 0AE6B15C026F; Tue, 07 May 2024 19:04:00 -0400 (EDT)
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ext4: fix potential unnitialized variable
-Date: Tue,  7 May 2024 19:03:50 -0400
-Message-ID: <171512302197.3602678.10166283423942285304.b4-ty@mit.edu>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <363a4673-0fb8-4adf-b4fb-90a499077276@moroto.mountain>
-References: <363a4673-0fb8-4adf-b4fb-90a499077276@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iy9+eVeA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69685C2BBFC;
+	Tue,  7 May 2024 23:33:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715124820;
+	bh=PclPuy1ZqHey3h95txPW76r0ZRBiORIW7rQ8fV8cKq4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Iy9+eVeAx1Bycgiv30bsEt7gyMfNeBX/yunTmm9lmprmh2zVaIyVuH/FM3+bDhrqy
+	 ve8JjpyYLJEay1yibV4sOUdwd+5qB5uALBoYLtx7Dw3Z/Z+Qz2PMg0hKWkhq5RndJA
+	 coh6PFzJYoM3vRb8GQoVPIVE9ldjfS1HKilhlWUid78WoHVchRlB1iVfMc9Cc7ZgEn
+	 Zt8dVcUJ0V1C7+AJ9Six6wGuFM1Y/sd04mD2LmW4oicDAo+JVlEO/GpLrEkXZUdDos
+	 VTA5UsWp1+tCSOjcmUX47WDDZ8be86cn+CMvPo1Jb/XuKq1ug6xD0B4zUEj5uhv9Gx
+	 koEO9nccC73dA==
+Date: Tue, 7 May 2024 16:33:39 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Chandan Babu R <chandan.babu@oracle.com>, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] xfs: check for negatives in xfs_exchange_range_checks()
+Message-ID: <20240507233339.GY360919@frogsfrogsfrogs>
+References: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
 
-
-On Wed, 17 Apr 2024 21:10:40 +0300, Dan Carpenter wrote:
-> Smatch complains "err" can be uninitialized in the caller.
+On Sat, May 04, 2024 at 02:27:36PM +0300, Dan Carpenter wrote:
+> The fxr->file1_offset and fxr->file2_offset variables come from the user
+> in xfs_ioc_exchange_range().  They are size loff_t which is an s64.
+> Check the they aren't negative.
 > 
->     fs/ext4/indirect.c:349 ext4_alloc_branch()
->     error: uninitialized symbol 'err'.
+> Fixes: 9a64d9b3109d ("xfs: introduce new file range exchange ioctl")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> From static analysis.  Untested.  Sorry!
+
+Not a fan of this        ^^^^^^^^
+
 > 
-> Set the error to zero on the success path.
+>  fs/xfs/xfs_exchrange.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> [...]
+> diff --git a/fs/xfs/xfs_exchrange.c b/fs/xfs/xfs_exchrange.c
+> index c8a655c92c92..3465e152d928 100644
+> --- a/fs/xfs/xfs_exchrange.c
+> +++ b/fs/xfs/xfs_exchrange.c
+> @@ -337,6 +337,9 @@ xfs_exchange_range_checks(
+>  	if (IS_SWAPFILE(inode1) || IS_SWAPFILE(inode2))
+>  		return -ETXTBSY;
+>  
+> +	if (fxr->file1_offset < 0 || fxr->file2_offset < 0)
+> +		return -EINVAL;
 
-Applied, thanks!
+but this looks right to me.
 
-[1/1] ext4: fix potential unnitialized variable
-      commit: 3f4830abd236d0428e50451e1ecb62e14c365e9b
+If you actually test your changes, then
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-Best regards,
--- 
-Theodore Ts'o <tytso@mit.edu>
+--D
+
+
+> +
+>  	size1 = i_size_read(inode1);
+>  	size2 = i_size_read(inode2);
+>  
+> -- 
+> 2.43.0
+> 
+> 
