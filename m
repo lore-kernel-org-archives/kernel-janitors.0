@@ -1,87 +1,106 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD01116078B;
-	Tue,  7 May 2024 14:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595051607B3;
+	Tue,  7 May 2024 15:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715093910; cv=none; b=EhOMjUVk8MuRbd3IrC9QNB9ZwNaWvdP3I/JiqXFmxB/g5LT1n4kVH60XWP2JzWTYwSbHmsWDV/frJkaYqNDyKCdyhjPGinaRMAIVggPwxWBbY2eaLFT2nGkBz0xAeTKG7dlh9Tjjp7GM6EATNE/aJeK6cj/3UM2Bcydx3w8JH04=
+	t=1715094226; cv=none; b=LgJJ7WtVByYp85xVpGa/R/0jib5+zrn8pMjVL/4bXOYbkuw3ARbf6c6lUmLt/ix+lyIwdm892rb+A2Zu/TxEEbfSlZVEs4CZg0AwKfwi/7lWXslBMLOvWi2Qb550qIAe5mJ5QGdDXcqzAc34NT9DH8QB1s0RS/UKPLx9fFa/JXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715093910; c=relaxed/simple;
-	bh=LcHM3+qVcLH5nuxebh+JFQGeN3ugF3r3mXDF97hD8sc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LbgMnTKuK92pDRgnaJ0JEzjLVRPNff0JVhjAEXc6ZKooeMXDxjjNctOQTz1oCRguLzy2vr38JylRam557gWLhp0IRIjAv3/AxrO7E2fIXeij9Rohg/YGXW3DuTAOBGVpaSbWJ+vkZKxtodiWW5MLVFQS5L7fZUH+45VodoFC40s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZ8hFTSd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715094226; c=relaxed/simple;
+	bh=MbmDftGVEcl1tzW7ssue2yk77QxgL041vPBYpsaVx04=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BYAIDHmJOHJSB9xmwP4tv6B45KyFt67zA+kdEUV7aipXQPx0W+mgBW5NhayZ613qqH1Nd1/z4cS0kxqWjGEDcl/5h/EPd5LBnGvMBcFpPi5Wv+YkxEpk71Bl5HrE0HyPlo/Hp1zfLz1yIuQAh8kBA9mQS3p40CrjCNpH1mra4Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWR7EFJm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZ8hFTSd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA117C2BBFC;
-	Tue,  7 May 2024 14:58:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWR7EFJm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EE65C2BBFC;
+	Tue,  7 May 2024 15:03:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715093909;
-	bh=LcHM3+qVcLH5nuxebh+JFQGeN3ugF3r3mXDF97hD8sc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=AZ8hFTSdhpSZFV07v+QLagy42rPEykgVfcH2J7Zbf+UujgCqnwDlTAeqS42G6pIj1
-	 I/KEDwWXhc6tv0Z1XvWdwmQiwnZgRq78xbl1D/wA0gX35KelhTgXWssXI8eosIsj3t
-	 46SFZCVaZU7x2QLI874PEx02LiLI03juBXX13a7mcZjSgxwr1zSI0yaHRh5j+c+Vxh
-	 uSMx9jI/i5XR8IWioS1HDKp/XHt7Gtb26v99GmSXuLiV//iYPC1zIWi51KWifU2+0S
-	 3fPmBTZCL/5XGzxiQpqZtr+oS3swLLoR/mAKXbYDAPkB0+nFAVXIPxvVl3ZIbb4Ye/
-	 8MxZHgaHbW1+g==
-From: Mark Brown <broonie@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <5e039cd8fe415dd7ab3169948c08a5311db9fb9a.1715024007.git.christophe.jaillet@wanadoo.fr>
-References: <5e039cd8fe415dd7ab3169948c08a5311db9fb9a.1715024007.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v1] regmap: Reorder fields in 'struct regmap_config' to
- save some memory
-Message-Id: <171509390823.1990981.2169918651206303551.b4-ty@kernel.org>
-Date: Tue, 07 May 2024 23:58:28 +0900
+	s=k20201202; t=1715094225;
+	bh=MbmDftGVEcl1tzW7ssue2yk77QxgL041vPBYpsaVx04=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fWR7EFJmjgl1nmydz+VLZ/DgMNPCZP0AnMzt1Imu3UrYRfgIYuQ68QCcnYctBBoxB
+	 q+3C57QRYmGJmsQB/GARWfTjNSG7vDxQfB4pMbfr98A33HhEvCsVuN1odMHx0Rvf7O
+	 6VbXRRN0SJALQNIeBo+Phz9uKsR4mDmurlLfmpXnsr9WGa2qRdXWrmFc4AMnD3g3o+
+	 CSVcEUSpr0FLnsP6Knm6t2894IuPl/QxIVvx5FJNLNVLV/loiyHvJRP4f/x3MyHYyr
+	 ZKluGVNOxQ5ws1axRdCQige4rw0KB14+fyKAexhwoFGehAG3ns4DSF9It/P7MiyRPR
+	 irHKV+ZNLeyBg==
+Date: Tue, 7 May 2024 17:03:42 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Ray Liu <ray.liu@airoha.com>, Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: repair file entry in AIROHA SPI SNFI DRIVER
+Message-ID: <ZjpCzj0rd0yhy_9o@lore-desk>
+References: <20240507141449.177538-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="QhsBNwH5vosXnXpm"
+Content-Disposition: inline
+In-Reply-To: <20240507141449.177538-1-lukas.bulwahn@redhat.com>
 
-On Mon, 06 May 2024 21:33:33 +0200, Christophe JAILLET wrote:
-> On x86_64 and allmodconfig, this shrinks the size of 'struct regmap_config'
-> from 328 to 312 bytes.
-> 
-> This is usually a win, because this structure is used as a static global
-> variable.
-> 
-> When moving the kerneldoc fields, I've tried to keep the layout as
-> consistent as possible, which is not really easy!
-> 
-> [...]
 
-Applied to
+--QhsBNwH5vosXnXpm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+On May 07, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>=20
+> Commit a403997c1201 ("spi: airoha: add SPI-NAND Flash controller driver")
+> adds a new section AIROHA SPI SNFI DRIVER referring to the file
+> spi-airoha.c. The commit however adds the file spi-airoha-snfi.c.
+>=20
+> Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about=
+ a
+> broken reference.
+>=20
+> Repair this file entry in the AIROHA SPI SNFI DRIVER section.
 
-Thanks!
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
 
-[1/1] regmap: Reorder fields in 'struct regmap_config' to save some memory
-      commit: 9b1fe0510494c989ab6a131ce8b97cdd02a1c869
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index ca79616a4836..2fe4506f9fe8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -689,7 +689,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated fo=
+r non-subscribers)
+>  L:	linux-spi@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/spi/airoha,en7581-snand.yaml
+> -F:	drivers/spi/spi-airoha.c
+> +F:	drivers/spi/spi-airoha-snfi.c
+> =20
+>  AIRSPY MEDIA DRIVER
+>  L:	linux-media@vger.kernel.org
+> --=20
+> 2.44.0
+>=20
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+--QhsBNwH5vosXnXpm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+-----BEGIN PGP SIGNATURE-----
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZjpCzgAKCRA6cBh0uS2t
+rLJCAQD13z4TKLQftjJXpU4GxKidV6Thf4FprqUZgpvWaz+PagD/ZpcAx2Xh75wu
+GeUTm6LcNsRlW6KBEUApMvLJVpBKWQ0=
+=89Vk
+-----END PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--QhsBNwH5vosXnXpm--
