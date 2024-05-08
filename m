@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DB022089;
-	Wed,  8 May 2024 10:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF5581ACC;
+	Wed,  8 May 2024 12:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715163808; cv=none; b=FTb/oWJCrAJiyw1Ln0/3txz+64JRxESJjfohRawZ4ExVF+cmJIJAfhj8VzT6bpLiar4dLMerxBciVoozAfNGOgQosWwaKE0G9zwDBr0oMDdVXzD1Xf7ntkMabSlNAz8cSpZF6wn3KUSzc+PSLspUVKPAXiLeOet3XvF1YH1XgzE=
+	t=1715170069; cv=none; b=fBC+SIXIjgcWhigaJKk39i6K7+JJJiofCVAKSVNQM813LdGBjtVZNmtwZijLUT/NVedBMeTKO/ktBSHUapOr0EoX3LFC0w1jh+6hy9NAPOC4GGAU6mxeTbU7uN+7tkrXKAhCRhnAoNAI5kgxQZMOOS3+alpJF8DmoxfJGjB+m8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715163808; c=relaxed/simple;
-	bh=9u8e8s1R/YF6MXMjCBn6+TrL3a/2KyHI6/+JT09yEu0=;
+	s=arc-20240116; t=1715170069; c=relaxed/simple;
+	bh=ktcidu+FHa+WtZ/ugeKJFFvB5nUAHpFhqK+OYz1rTOI=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=LClugt0OTII95daBYfEcOeOfmjnexnUFJY/Gc2wiWkDqnQCbV8aBSaszIRjNK+AibvaUup18o4DswXehyFdAdATUxhPKzIz+6yH86+MP76qNyh9jXId+BNMqZETXC4hHRHtplsoTT37O9sZt/cpgT/RAK2ItRjYpznk2Ja3kE20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QyeQ2Eo7; arc=none smtp.client-ip=212.227.15.3
+	 In-Reply-To:Content-Type; b=uyD5tu2h0DGP2A5J3s3jkwUq5IuJjlrsp1Le3magzZin4pRvJGtLMgeiF+Qq66YDyRhvp6kuypZfflwDkdj9T8dR7jUwKGvZvLFMEnzl6s2ndwpqN6IkWyh0yFHtoohIB8LcRlvyz5UgqW+MnelAR5CTFTE7C6IR/fpDPOQKvMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MlCVQ+rl; arc=none smtp.client-ip=212.227.15.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QyeQ2Eo7"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MlCVQ+rl"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715163773; x=1715768573; i=markus.elfring@web.de;
-	bh=9u8e8s1R/YF6MXMjCBn6+TrL3a/2KyHI6/+JT09yEu0=;
+	s=s29768273; t=1715170047; x=1715774847; i=markus.elfring@web.de;
+	bh=ktcidu+FHa+WtZ/ugeKJFFvB5nUAHpFhqK+OYz1rTOI=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=QyeQ2Eo7XFGASiZJxlq49RshFXFLs1Uw0vy/nCme8V6lxX18Bqkld/3LPql71Re6
-	 JZQ82wg8O1Yj6uFop4cn4iaIxxKZTOMoXpQ49+c9L9JZdYw7aRpahBwEtoxW9Q8fo
-	 2hZpNU5sCY7wRYg6j/N+S90E2xWCkBfCeUFhiBpsXmg+6PHDPKKFVv8Hn4k9Mv6Tc
-	 A58CiPhnDq8o7vxMjRvJxStMPhnLJhAYzJmoe67bwX+qZWBWAB0Mc0GaVEwOpoYbE
-	 TJIMLIuqjEMvt4CQ7rSZfM22M+QYs7BnyrshVsxRN8shHPjua+n/DAXFEQ0CNYAxG
-	 C1CF9DNxzyIR1OuuZQ==
+	b=MlCVQ+rlY8lr8z1PVLklKJH0zc1LcmooWgSG3eywkoYgEPjGfpCPZOdhMXvZcOor
+	 YNzniVuKXdwO7OlI8wHAjYTBt3fET8srJO+Sfr5KEBRzfZFvgZPMRWfad7vSllnfC
+	 vfz4NJ6JVCjHQtVrrlEw9kCwsYHyWFHY5OsJ05sLv78CiDO8XGp9/TKgflL3BHWPH
+	 t207QCfkMi4fkjjVnJ0JA5CKqrHF4Xdq4axZHHCpSZCL/J5abtFz/JXYq/HdIhorb
+	 8btcy+JUCRkmj2jmLwOFLPRF+ooXKlswHHTyfgVYZ9HPQBOns//uv6H664blPnNM0
+	 n6Bu6u8biYQrwOncXA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MBjMO-1runbd23HI-00CIR6; Wed, 08
- May 2024 12:22:53 +0200
-Message-ID: <662d3052-d0ab-4034-84d3-fff4f985875b@web.de>
-Date: Wed, 8 May 2024 12:22:52 +0200
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1My6pf-1spEHY1yCF-016g89; Wed, 08
+ May 2024 14:07:27 +0200
+Message-ID: <f10e8993-3b99-4fde-b7e6-cc459b7b6021@web.de>
+Date: Wed, 8 May 2024 14:07:18 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,43 +42,52 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Jonas Karlman <jonas@kwiboo.se>, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- kernel-janitors@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-References: <20240508070611.4153602-3-jonas@kwiboo.se>
-Subject: Re: [PATCH v5 2/2] arm64: dts: rockchip: Add Radxa ZERO 3W/3E
+To: Ziwei Xiao <ziweixiao@google.com>, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Praveen Kaligineedi <pkaligineedi@google.com>,
+ Willem de Bruijn <willemb@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Jeroen de Borst <jeroendb@google.com>,
+ John Fraker <jfraker@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Shailend Chand <shailend@google.com>, rushilg@google.com
+References: <20240507225945.1408516-2-ziweixiao@google.com>
+Subject: Re: [PATCH net-next 1/5] gve: Add adminq mutex lock
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240508070611.4153602-3-jonas@kwiboo.se>
+In-Reply-To: <20240507225945.1408516-2-ziweixiao@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:FsK33dhQ+/BU0M0PjUpaQsMlcz5Garq5LIVOLVXlfoMnIbJyiOA
- WdEBFvyV6/bHKxib005lnuAyGPBx3RXAWxWLhOPJh0w9C8ZdOXl83uBPKinOrLh+BwiRmd+
- LlEMmnsS3AdrkHS1aZtUQXt4FP67Y9CoRKdDYf4ulGMDRfoC8+OoqEBNtNX10p//ECYnOJk
- lACFPbs1zkNDkR7Xui+7Q==
+X-Provags-ID: V03:K1:FOFIB3IXAeSXdWvJtGDw20e63TAhcSPqs2ZAKkOBk0aJPgwCJJx
+ 62wjyB0bWpmuWgKAdRcSFAcTsBFz+QxTjdheKq6I9PWn4iVCIafKdyUMPgYDtiv5osRNvqL
+ 0x6KT2x73iXSvLv2lj9XOWcuIwZ5JnguGaVrDZxxzqFjAorNkBKJeOLIOEF4e+t2UiJmyEX
+ 3OjAC2pZoXBvX0Gpi3I9A==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:sGs5kl6ytS8=;F4gMryC1X7nOoBR1b4G2CyVhvfp
- Tz1ybSjP4qqM8ZdG9HYzf7KlITPTQlcLCohaYkvskhcCnuia2MJFKy7bNQKvT0SjGEI+Afe9v
- wzv/H/bP1HWK04bEGyyi/iLf0N0REPPzfLcWx245ssTL9CrXV+eHmf1Is+rRLNU/CBSevl7dK
- 9bAs97mEJl0k8yoX4XcV+a3IcxCDfL7UFO6pxGenU3YNDTGA87NeCSRshClF4bdBujrKRkMt4
- vFChGYBUqySsgdYleGWza+sbEuN9FXHC7WI3F7gZsgIj46Hv5I6UkNVwCbsit2WPZ+xDRXpCO
- M0NkDjjfEDnFAQtgFRRXBnNiz/nupPMmbA5aigUWhSOqV1fFRttUPPpgTi3Khv5Cl7c0uz4W6
- d2LpSfrvJvtN1psw4r0PcaAdnhxOMggtulyhJNfHfgCSRZUi7BkrIKQ2NoCa2/y1g736Mqb0J
- CkZPYwJtjthyyUm2sviIyNeypINZO3OXcspNJjrPZn//pdnUiZZaa7HhZWSvXo56OYnEg8YyI
- xVV6/OYIpv5va9WUadwuZMjFf0fCFw1B2KjES4kQiqCSIGyy3TQY7uLEDg9fc/WqEIF7U9F7z
- E3ujhvlK69Y5veMpK3I/N2nqIfxnvBnV9boUPdCXDeGoPa8tRI0eGLlG2KfanJT0XmwNDkyHg
- p3Pz9ecTH5ba+Ve4I1kjKBkUGzU7rjlu5hyly31AkSGc9i/Ran9wAjNuHoWjcaUsUaHMFvLh6
- xgKPsPAigFmcRUOLsCqQ5YkStl6i1qC1U8Bzd2tTOhvB1IURe+kVcyKHBhqpfUwNqdqZnJVDM
- 68BsW15+pivFnjiAEoSQJqY3oBTi29N/zQnx3WocHPx9c=
+UI-OutboundReport: notjunk:1;M01:P0:ZezT6UXmAkM=;6PZqZF92EhoPAFXEZwGOb8JPglj
+ yBAvDsZVMfjWy7n7LevkqvPrc7s6pT/uw9BQ1Zm5ghTZBasNkSaJaNSYh62p/Q75zBW2xzFEY
+ VMQZrcKo6ASRdBgdk3roQSDTOAbGtHV0ZCFKoyXv3I1sbB4noClijgGf8nXYmukEj5488v/uR
+ KfkTiODu+qposlhyd1dHjhqJAwJPQ7Ygjn8rU5SMdscYRoflSH4bqLZ1WlOEYcAlwmYbKePxx
+ +rzLXFjbT1pToNyBt0d1UXfyRjdzf0bag+FQuIhQonQx/lFZpdX3nt5eFepJ5sC9H8BYBAYlD
+ 6Xjx2daR7VpnFTlxZ5GN6EYZt3N8FyQ3unBXGHgUa6UCGXN9jLSTOM3gLLOkJ+I+rTFDFAglk
+ qVx/b/+eCj5Yq8Wd3JQdrHW1Q3XRD0+jEZKLLpv92wWU4cYqMLs5agvX88h4i+q9w26YqG1lo
+ cS8jmZe1ATsnhB+/DCij/CxBvX0tpUhH1yP3V8YKRH+EiGdJ6Mgj4U1Knl+XjDmf7MZ+3tnNf
+ TC4H3YrwL36Vce8yMpGYMeX78Mjx+/qvRjBAFqIHE9EXCNdBqphb0Pgnm8RwbKEtpq1KUxTVb
+ Ik2Gco25ZoW8EhSWGQQB+xloDOeiN1HqlRkhBGyii40J1eTW1+Az1jJzkJm9jFjXmCHkbqCa6
+ oP61e8iUACXY5quT/W74GjPCI1T2BTClX2/T9wkaOltdDVoTikNmfb++ke0oFFGkXzlHgI+Ff
+ Vc9P6lkwWpjl6yq5RhdtAAZ3Cb7O3PUV+o/ehDpR6fbFX8Uyqk55ThqwuvdcoLh1bW68aXUNn
+ YFiIXYOsSVICdX2mGFOJvaqL4a7o7VihWzQxdkGWjsh94=
 
 =E2=80=A6
-> This adds initial support for =E2=80=A6
+> the rtnl_lock, such as the upcoming flow steering operations. For such
+> situations, it can temporarily drop the rtnl_lock, and replace it for
+> these operations with a new adminq lock, which can ensure the adminq
+> command execution to be thread-safe.
 
-Please convert this change description to an imperative wording.
+Would you like to use imperative wordings for an improved change descripti=
+on?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
 
 Regards,
 Markus
