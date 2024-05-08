@@ -1,115 +1,93 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D97654746
-	for <kernel-janitors@vger.kernel.org>; Wed,  8 May 2024 09:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6850773514;
+	Wed,  8 May 2024 09:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715158829; cv=none; b=Uwng2vWSeyfkLb/4um8VFTzWD/kEZk91gb3CvDM1D9Sw2obnSMsJuY2oqrggfWvszAMSqCq5uUXjm3PuGC263XevFj4nryrO8LNMIRnBxEvTgbkZUCHt02N5PNlHvEt7+wJIfmE0sS+q+YDv8Vr8v/r01oa5vRZ/endjjgxbTmc=
+	t=1715159917; cv=none; b=IlEcnhHox13yIRLdfyDI2nYDHYYeDo30KjxbdGjfxSPZZlJD41L7kYPK9oJljB/Ntfb7BCnLh0Brk/X67Ed1laVt+HNoudZvFaoT+NWfOKn6W0uXap0GFCYsJnnQpcObCMv+R+XfIJHPOArbgEiWTjDP3/2XslnAchZcy9Z3cAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715158829; c=relaxed/simple;
-	bh=Wxt+FgQ2Q0/G0tMMTGNeP/Ut1RZaG35u4YYFO9Y7mpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZZ12VSdTsGzFQJvehl1KZ+y59T2zHzB3jODbSfhDgJTaw0h/bnrdb6jgTIBhb1BIqr+NO2rtCXAGyVMY6A+S4A68qfnnnF/Ruw1Pdv4YxDesMp0sKzuuE7WCIYJRAaRx25uHWEChOgbZMnuFHH1rS/TD62JFpBvrw3DdfS80s8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1s4d9x-0002vH-Ia; Wed, 08 May 2024 11:00:21 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1s4d9x-000F6z-45; Wed, 08 May 2024 11:00:21 +0200
-Received: from mtr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1s4d9x-000ZAB-07;
-	Wed, 08 May 2024 11:00:21 +0200
-Date: Wed, 8 May 2024 11:00:21 +0200
-From: Michael Tretter <m.tretter@pengutronix.de>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-media@vger.kernel.org
-Subject: Re: [PATCH] media: platform: allegro-dvt: Constify struct
- regmap_config
-Message-ID: <Zjs_Jcin0QJ54luy@pengutronix.de>
-Mail-Followup-To: Michael Tretter <m.tretter@pengutronix.de>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-media@vger.kernel.org
-References: <01b9b16b2f86f4d16d9871a29dcda9245512a1f7.1714894086.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1715159917; c=relaxed/simple;
+	bh=8zQKtPW1eJ2InIOMVxNlIQdRptMqkAuQ8gi1ij+1u6o=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=asO0XeAZXGLCZwXs+C0cEa7lcLsGLIrJBJl/Jv5ylTgWajGtxykhHhkPyhayOu7ACwmch+v+ZREYtpjG8Krr/L+RASB2shOHaCLsWhFWpyC8/aRoxTzP4rHloCgY36LdmzCPQiGYpZlIvfbWHy3wgGGbLqhQghhNljRWnSfwObo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=L2RQNJRE; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="L2RQNJRE"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715159905; x=1715764705; i=markus.elfring@web.de;
+	bh=4K+0QbeFUqlSoTdyOHsVRQqCKg/ZfP7fePshKaGtvTI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=L2RQNJRERCq0H1NdTRdJLCDvzTQaY0RmBdlY+m0an8VmpKh5awoUoQHlDmr/inYM
+	 9P2CGB419ykVBD3W5/QdIr3b8XjlQyuS5kopMU67iTHa2ojjbSodhyDZnvXVw1HAY
+	 vZCAArJzTYMyyOTKHkVmhYqTgbjyYXdFrQbCbeYVI0PrGPj7FGJOwZCUx3Sp8krCi
+	 upQm3eGl1db+7Mvro69ttEIeIP/+HqTQpXWxv9K9n9inwp2JfQt8jBYMBYK8mcx+Z
+	 HLWmGrxx2GAzZmAF0RLGaSBKLI/X0VC9kCmuJXnj/rgb3LaU6beC8TaBT+aN32g28
+	 d2sCBVvlG3EAloTkxQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M6pYY-1ryc6Z24TO-008Our; Wed, 08
+ May 2024 11:18:25 +0200
+Message-ID: <67be5fa1-3b5e-4ec9-ad8e-1e230e618e98@web.de>
+Date: Wed, 8 May 2024 11:18:24 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <01b9b16b2f86f4d16d9871a29dcda9245512a1f7.1714894086.git.christophe.jaillet@wanadoo.fr>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+To: Levi Yun <ppbuk5246@gmail.com>, kernel-janitors@vger.kernel.org,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240506213150.13608-1-ppbuk5246@gmail.com>
+Subject: Re: [PATCH] time/tick-sched: enable idle load balancing when
+ nohz_full cpu becomes idle.
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240506213150.13608-1-ppbuk5246@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:uRfiZVpxWGiezQy+aEUvp20o1nVajWnd9TIyhD5Au2rp/3Objou
+ fpVE/oTBzeXsHkqOohuaD5aOLfaE+DakiQkQ3sc4d9w7LHkT1DYh8b5cpaNLtWn1eEaVJdr
+ eDZ/BaOmViO+AkA77vkJl+RF+R0IIDkV98ciZBMdfQV32gGBWhgF9zCoe+9i167hQJnC99n
+ FaB9Q84m1OfqRVUyUOyHQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:CYkllL4xYGg=;4YI41hZYeO8UyocHIJITssqvgDF
+ UPCIp3xlETBUWHEEJVkb9fNgjeXSjgj2O26vwQgBTmWFt9DvshPcZ148ebqR5dgWQlYAEBCO3
+ oVUMPyilquloVdhNRcGZrMj6mv/Bd0Fmg68VpvB7z4rHupAsrMKlerjl39sfxXNY21lPau5Oj
+ xj9CKlsY916UnSprwoT+6PfQm0AOhJm09pLWmHDLGAKqPfIhVwAYvmk+NGNDzWhNHCBBXYVRj
+ ZDNWjULzQTYrQwmoHVcWj5FpI3D8GoeTBeOSBYTcNgxNwV4S4gvI9UGrDqxvOD39gfz5JUD7X
+ DGaxZWCQK4tb6I4wMLOEcwfI6dmJtu0h3rKeGzfnbmmBY8ZUlIjC0Ud+wNqVssmeMZyutYl7B
+ 4PQnaduWmGdyIIFadk4lyu1N6DflRUZA01zoNCPFMLSTAbtUc0LH/S8fEbhERBZtcePRadR9P
+ 1tVDb7yaOLH80rhg1DUF7ovSLtOrrhSPFI7GWSzU5kJbE0YD+ijF/It+/SYF8TW2f77g8hqB6
+ H/k0YZ+Fifh6yaqvwqa3DDv315OLKniJQIR0DPtyHKyOm6jD2GQhb7/fQWQC/1A+v3jC9w+ST
+ gtoztJLUkbWOJObW8b/rywpdLaN+WfvSvVQyHbkm250E/TBbsSedbipZQzy0AD+xlDZ6JOJ70
+ wTBdXfmguLgV3s1nOiI03D9PisXu/lVN8ZQmPGpIugw1AuWUeT6M7ugTgab03HWHDpWsMajFJ
+ yzm9Ri3xu0zswfnjPQprfn9bUP2lWV30IOpvZHnj/INm6Yo3WrugpUArDxzbrWVVMA+vRg9f+
+ 2axfeyzEmw6PcGQWD56aSkP7BCGxhgFqXEesb6Z1t6r2U=
 
-On Sun, 05 May 2024 09:28:25 +0200, Christophe JAILLET wrote:
-> 'allegro_regmap_config' and 'allegro_sram_config' are not modified in this
-> diver and are only used as a const struct regmap_config.
-> 
-> Constifying these structures moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   79587	   3706	    116	  83409	  145d1	drivers/media/platform/allegro-dvt/allegro-core.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->   80219	   3066	    116	  83401	  145c9	drivers/media/platform/allegro-dvt/allegro-core.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> When nohz_full CPU stops tick in tick_nohz_irq_exit(),
+> It wouldn't be chosen to perform idle load balancing bacause it doesn't
+=E2=80=A6
+> So, nohz_balance_enter_idle() could be called safely without !was_stoope=
+d
+> check.
 
-Reviewed-by: Michael Tretter <m.tretter@pengutronix.de>
+* Please avoid typos in this change description.
 
-> ---
->  drivers/media/platform/allegro-dvt/allegro-core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/allegro-dvt/allegro-core.c b/drivers/media/platform/allegro-dvt/allegro-core.c
-> index da61f9beb6b4..1a19fef62e81 100644
-> --- a/drivers/media/platform/allegro-dvt/allegro-core.c
-> +++ b/drivers/media/platform/allegro-dvt/allegro-core.c
-> @@ -179,7 +179,7 @@ struct allegro_dev {
->  	struct list_head channels;
->  };
->  
-> -static struct regmap_config allegro_regmap_config = {
-> +static const struct regmap_config allegro_regmap_config = {
->  	.name = "regmap",
->  	.reg_bits = 32,
->  	.val_bits = 32,
-> @@ -188,7 +188,7 @@ static struct regmap_config allegro_regmap_config = {
->  	.cache_type = REGCACHE_NONE,
->  };
->  
-> -static struct regmap_config allegro_sram_config = {
-> +static const struct regmap_config allegro_sram_config = {
->  	.name = "sram",
->  	.reg_bits = 32,
->  	.val_bits = 32,
-> -- 
-> 2.45.0
-> 
-> 
+* How do you think about to add the tag =E2=80=9CFixes=E2=80=9D?
+
+* Would you like to use imperative wordings for an improved changelog?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
+
+Regards,
+Markus
