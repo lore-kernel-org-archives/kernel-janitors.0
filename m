@@ -1,85 +1,88 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57B22563;
-	Wed,  8 May 2024 02:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E358715E85;
+	Wed,  8 May 2024 02:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715135192; cv=none; b=e/nhHVeh1Dh72tJTiOgUoULopxDZFNaKm5DaIo8M987j2yWSc8xsWMNBvTXBfvIEZ8RJ9X7sdtGhDhxyJJcWbUPhlDksG52ug4Bfjd5sEkK84W9kOLWrwuHOBk4SccerG3IbfC/u3vF3iDrmCcqDaIdfOo0em3uxHQfPYEfNyBU=
+	t=1715135946; cv=none; b=mPmNjpxqwEuN/jkkehato22V7ALUSqXc7cU9LR5+gVKa6ZRPp7mDW3WoK8/mI+NuqWGE9wDzwnU2F3UGcS3zKDr7a4NBCUBrCHklBZfioF+/5MkMr7tTVpbAojmuayc2v9UIJN1ZYr0ahqyc21c15f4HNrv/5HatwPUFey67Y58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715135192; c=relaxed/simple;
-	bh=gQBDHlJVjn9IyeGe/AMBB67ceGlqQXb/p8wQRVumnQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XbZltV+kvkVmvubBuf1da+fNDIz+VebITDhOumzFCCNbCuJT+p+zBsVTysV1Lnp5C45mZMhP1F7/fvmzL3zLTKzTrLABKTngj6zAbH3IVg1VjjwaOnrfg0+JDp5RQYLfmrSp84AyDeqyMOZneOUd/fr7IeAymJa2xtl55oTNZfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCYEKP4Y; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715135946; c=relaxed/simple;
+	bh=WHbkXeHPne7pZYmCpb8C4jJqEdLJmDFm2qxEFJuckhw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=dUV5h71/DTcOYU2ug79/+uyipFkQMyJVY3Rlo/IPgxqrhHrWn7m7vn1qiNE7cHOeAvlTxxGZcXiGDLERR9V85ZSt5wnfkoQFn/5hnBjdPDlbwodvSRZbXfedmJWhQBXSYpxu/HB0B710ZRXGZtMIOmZ9w5cUgK3j2UrIKP9EQIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LY2rH4y5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCYEKP4Y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C627C2BBFC;
-	Wed,  8 May 2024 02:26:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LY2rH4y5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7271C3277B;
+	Wed,  8 May 2024 02:39:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715135192;
-	bh=gQBDHlJVjn9IyeGe/AMBB67ceGlqQXb/p8wQRVumnQg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iCYEKP4Y46BnvDzYK0hkbvNOSYpuVwJuXnNVAgtsNfMwNr0Nbu1zZ2lgViUzZwE3k
-	 qTdUcf+Il5IPruDUmVvuvxzO8PHki8fWPsMFIk8pOlKYvqCE0ZLmw6UIGIK6fQUC49
-	 GKdaTyuuCswsKHhqORs5EMQi0++o9wqjNUdMHURuncKNhwDbSb2clxfONybevdcpEl
-	 gXGz27boGIWIturmt+7w4CuHY2zaPQiDFp9mSf7vAgvi+MhXEHQ3PBRy9OGYE6kldU
-	 8XU4AH8REH8RT1lapYgwLgUbW8EoJd7jwAodysljoALXEZ/eIxCa5rlLgf0IkP7lt9
-	 3Hxa2q4woEqAg==
-Date: Tue, 7 May 2024 19:26:31 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Chandan Babu R <chandan.babu@oracle.com>, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xfs: check for negatives in xfs_exchange_range_checks()
-Message-ID: <20240508022631.GF2049409@frogsfrogsfrogs>
-References: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
- <ZjrVaynGeygNaDtQ@dread.disaster.area>
+	s=k20201202; t=1715135945;
+	bh=WHbkXeHPne7pZYmCpb8C4jJqEdLJmDFm2qxEFJuckhw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=LY2rH4y5UWktchIat98KPe61Lo9H2YkB2g5afuXP7bhIiW+W1s+Lp62/JWEAeQl06
+	 iZuvsJ6cX/CVuNukqa8n+GutC4r7eAUnGgVIYBPl2j4mfO3MvgJoWMJyJcQBaMLvkg
+	 IPseagVk7w0s3PpdDZNED1t2JbjbCLF3JUO+9gpn66tpPfRH/pdCs4ymdfByu5A4Sv
+	 27575xD2k/KS6YiF9RoLJHXD26I6kZ1sZlramyxZAOB3tQvIdfdcJBXDQvIfcuJkv0
+	 02d0a2hkl237weAjc2N+DNUEyN5pu/jWyFr8nKMiuZrPk7nG/eXKuKQwYov2uWQG9u
+	 LcttfWEBrhEDw==
+From: Mark Brown <broonie@kernel.org>
+To: Lorenzo Bianconi <lorenzo@kernel.org>, Ray Liu <ray.liu@airoha.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org, 
+ Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+In-Reply-To: <20240507141449.177538-1-lukas.bulwahn@redhat.com>
+References: <20240507141449.177538-1-lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: repair file entry in AIROHA SPI SNFI
+ DRIVER
+Message-Id: <171513594308.1998064.12450268139510361452.b4-ty@kernel.org>
+Date: Wed, 08 May 2024 11:39:03 +0900
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjrVaynGeygNaDtQ@dread.disaster.area>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev
 
-On Wed, May 08, 2024 at 11:29:15AM +1000, Dave Chinner wrote:
-> On Sat, May 04, 2024 at 02:27:36PM +0300, Dan Carpenter wrote:
-> > The fxr->file1_offset and fxr->file2_offset variables come from the user
-> > in xfs_ioc_exchange_range().  They are size loff_t which is an s64.
-> > Check the they aren't negative.
-> > 
-> > Fixes: 9a64d9b3109d ("xfs: introduce new file range exchange ioctl")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > From static analysis.  Untested.  Sorry!
-> > 
-> >  fs/xfs/xfs_exchrange.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/fs/xfs/xfs_exchrange.c b/fs/xfs/xfs_exchrange.c
-> > index c8a655c92c92..3465e152d928 100644
-> > --- a/fs/xfs/xfs_exchrange.c
-> > +++ b/fs/xfs/xfs_exchrange.c
-> > @@ -337,6 +337,9 @@ xfs_exchange_range_checks(
-> >  	if (IS_SWAPFILE(inode1) || IS_SWAPFILE(inode2))
-> >  		return -ETXTBSY;
-> >  
-> > +	if (fxr->file1_offset < 0 || fxr->file2_offset < 0)
-> > +		return -EINVAL;
+On Tue, 07 May 2024 16:14:49 +0200, Lukas Bulwahn wrote:
+> Commit a403997c1201 ("spi: airoha: add SPI-NAND Flash controller driver")
+> adds a new section AIROHA SPI SNFI DRIVER referring to the file
+> spi-airoha.c. The commit however adds the file spi-airoha-snfi.c.
 > 
-> Aren't the operational offset/lengths already checked for underflow
-> and overflow via xfs_exchange_range_verify_area()?
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
+> 
+> [...]
 
-Oh, yeah, they are.  I was just thinking surely I wrote some tests to
-pass in garbage offsets and bounce back out...
+Applied to
 
---D
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+Thanks!
+
+[1/1] MAINTAINERS: repair file entry in AIROHA SPI SNFI DRIVER
+      commit: eab80a2ee46bb362e2c4434cf0da96d3a6bda544
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
