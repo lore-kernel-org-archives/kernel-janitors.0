@@ -1,41 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A49171B6;
-	Wed,  8 May 2024 06:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3AB1DFC7;
+	Wed,  8 May 2024 07:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715150333; cv=none; b=eNGOhQC9ZKjZqJ9flAfXumzfc/nmgtHt9fbsgRzQ+JfC3ONIQyeZJOaXQU5b3zQAwEHohsSVQAoPWzkNWLzasaPEDWp18azl8e7A5jwbmgM3fdSm9bMqUgJndeObqF3mE6Cto+QG6hOjSFyevYU2wWJX9KvRXx7rIbKrHDowVYo=
+	t=1715153870; cv=none; b=QIRI/wDB5JN7XWBGA/e4zRPhAF6LO0LPBB5FFioDTRNub5h9sRXiSv/EMXzdN+77Zy8e+RvYG271gO680D2Dz9UL19XMUetddgM0qbuni8BuNK3GXtIY54gyprXKmFLN3y8oXCJn2iFPUT/Vpliy7vKy0txq8NKkSu0z8sa0+L0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715150333; c=relaxed/simple;
-	bh=A+PJVgDVE8sTEvBSrfqKil2ejz4LkNUS/yxQcNdS1gQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DnKeWaequ/IlXh68qqnTL3NF4ic6o8pI3VtwF7vsu6SVVIVx6nYnE2TxaBvXCzVKvqYc1jBO+nBEcUN+4DE/7DQgDrx83l9grX1IY2V2prEgBjtgJdigRGyKz7SgfsyKlXqHPndsX1rs9TpsKbvCCZmnXkXDqT1MqBrtzhkhrko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Cndb51xc; arc=none smtp.client-ip=212.227.15.4
+	s=arc-20240116; t=1715153870; c=relaxed/simple;
+	bh=kjymmrxtJnbENdbBxRaFYN4T1ytF+h/wvUQvibBNOmM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=MA6Ly62jS7+5LVEGicbXRE+JwRj/25b/NCf1qPJAuzdPRfvxI4J8vgKOVPPnWCPOGYGs/9B2stMsvDn24dJOL4kXCbl9bTW1bta0EMFAyDoqXPjLtkz17qFTbqWn/+EBxUv7r2rNdP5o4aGM3C76U5xB5qJVPgRLUbMLlm5PJ0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=u8KZiHzU; arc=none smtp.client-ip=212.227.15.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Cndb51xc"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="u8KZiHzU"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715150301; x=1715755101; i=markus.elfring@web.de;
-	bh=9nmIhydlWpp+VskLYPtmBE63mu4+9KImaXkDmeMoLtY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Cndb51xcVx2MFXruzuS2M3HvLbHNpQOx/diZ7ZjNUXumKHRvhYIoVvHrX4WsDnuw
-	 7YXkZuhN3wDmQYrGv/48OptjHfW1+fadhlSFkMwil0hOVMH5ilmwYZ6CL6DLJql+o
-	 f3oXU4esgCUxy4jYCKew+QcTrfLoCaBWligiOhTWAqhtaODXKm1f4PcZmsLl3Dvg8
-	 ggZoBK4NQfulrKSdu0OctgW3iE2lO2t3UpjQp6GfP8d7KoG/rmgHJCMnJfNXgXloD
-	 Gwo+UnKq+aGOe2rieFhWHzTJFVpj9usYocdy5sUT5e0ewXFnvuoC3RV+LU8IMn8Qn
-	 Q8XwTnMh8ZFaM6BVsw==
+	s=s29768273; t=1715153855; x=1715758655; i=markus.elfring@web.de;
+	bh=kjymmrxtJnbENdbBxRaFYN4T1ytF+h/wvUQvibBNOmM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=u8KZiHzUrO1bkzjdExhf6DJk5ewDvyDgxLFXItWbsQbjXP7h8xN/v/PadObmkfeR
+	 OeFpmGhJPKe9TY4rzS6JQakC2oQR7bXSs/Rq4KH2ytDXfAS2ExUVnpVqs2KCy+90I
+	 +WiSWSrMUNQGs5WYw0HRS4ZnsF7MpUG7YZs9W8TOHkmqusbwyQEgIGJI7ffNZtH6Y
+	 g9wwqDEXjTzo/OKnO+A7WjLMbo0Ogxw5KSFjgUSOkEdhgrw7fi2Mj0SkGpkKzxEme
+	 DSRcPBTdrPLXyZiyE0D5lFNRR4CRUxvaf3WJ2fby28OYfltvRKyhdLIQwUGbhsdN8
+	 k+NnUH8vnk4iLX7Ong==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MtPre-1stw6l2zKI-016aBE; Wed, 08
- May 2024 08:38:21 +0200
-Message-ID: <1617bc1b-5966-45d8-ae3d-25c6e11a032c@web.de>
-Date: Wed, 8 May 2024 08:38:21 +0200
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MMpCS-1sNNjn0SSC-00IvXH; Wed, 08
+ May 2024 09:37:35 +0200
+Message-ID: <f136ac86-5005-404f-b834-e1b0a41c5758@web.de>
+Date: Wed, 8 May 2024 09:37:29 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,56 +42,47 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [v3] time/timgr: Fix wrong reference when level 0 group
- allocation failed
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>, Levi Yun <ppbuk5246@gmail.com>,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-References: <20240505085709.82688-1-ppbuk5246@gmail.com>
- <20240506041059.86877-1-ppbuk5246@gmail.com>
- <ZjisiuqiR9p76YcJ@localhost.localdomain> <87seys4yn1.fsf@somnus>
+To: Caleb Connolly <caleb.connolly@linaro.org>,
+ ~postmarketos/upstreaming@lists.sr.ht, devicetree@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alexander Martinz <amartinz@shiftphones.com>,
+ Luca Weiss <luca.weiss@fairphone.com>
+References: <20240508-otter-bringup-v1-1-c807d3d931f6@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: arm: qcom: Add QCM6490 SHIFTphone 8
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <87seys4yn1.fsf@somnus>
+In-Reply-To: <20240508-otter-bringup-v1-1-c807d3d931f6@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:gdEVndsCrAEtnuIVmhtjmSp0KuU+wodZDrdmAlvkjLCoLE1SfmI
- VjLwjvx4FMJT2dmBZ0Mg6DUBVnEoGn8IwMxnPfPEnriyNxdPIZJhEIj/BXUKlgaKxxMOE70
- 5lAYb9Kgax00hI2foDSZEsfmR1ZeVYpG4NdK305g+FBAjexLxqPnU/YD3y3cbwfhELt8AL5
- x5DKAyOl/kX+hzLNPGlxQ==
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:2OXHLDwn/2ONXEUS2H0kBYcGb8/agWCTFmshIKaPd5XwfPltFhG
+ 0XxlGGZkww1r/vWw/X1CNWhFKgAve9qX86eshB4qzSMWHXza/g3uv3u9DLDB+7LEEub3Ler
+ 6TFi4G0gRV29+vEHz+ddOAL86DXki36LcHfO5lZCRksiuec1GxHP5EAfj+oZKpbSX1lUPqf
+ ZEMxUXBc2W3lRdNpYIRBA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PIJEPIvcphw=;T4OJJsqv1WrvnN7UKjTLeIJBMmh
- lWzJTWyx4nF3aByranlTxHu5JOAsFRJNVwYJWyroGgWBFhNarxMEJ60Z3dERKyOLIYqZkOqvB
- 5wZ6C1bFIACna39/aN1VRLar6uC+G/JESIPA9MujqM6B1laDZnoDrhDJZmGKoWbx+sXfbuA3w
- HFZ/syjtcv71K12Uj6xdTSEvQIyXbhl7iI52OfdVQPLFdyhPcXZZRFNi9kj+RAGTQ6sS1zvBj
- RP56MlTepQhKrFDDwvkvFddikRde5xOO9gdqJBjOnyT5UxKLhk06yCFZ/h/qk48UKaHUZQ30O
- TWnctfKc1xKtytpK9Oc/jPXQVQNw1/xXE4cM2CMxKSOlTFRghtpyKZEcdj/GzHi29dR+A61xp
- 0zRxyKfAQ26AqwFhxOSnH586qu1VA36BwOPz2B49RULj++PNAGJBR0M9NA9vlcKMPuP+tSdyz
- kClf4ogmddXdgqeQdoKVx2+yvsSM1w78w7GLr+kvXMLDQugslr9FAv6boCv9QmtmeRBePXAj5
- 7bcy0nRkaO0h5ODJKR0MACYMcxWn9Y8dEnGvnm7UtrMisRgncnQ66WhdtaVuP6zypExRKtnf1
- AD2SpdEgwgmZTrw744xkwVPL6P1zcZZ9LQIZrMpE52UcruTP6BMHxVJOrZ3HPk2S8qpuw6OSH
- KDCPya08tugmjB5U10r4ABpr/TvEH+3lDWY9A4DXRL7RmQfXgwjXCtYE5h6pPQfam7FtlWZUR
- EIYUwe0pAp+dqqoesx9XMfhzzpl4kJH7IYXgRrifXXy6DLEWlKJcXz4DF3S15R8elzin6RkpG
- /9H9XZwx9s2p1dTlcSkyVl4lP/pqlukvD2WdVL2wx2ipE=
+UI-OutboundReport: notjunk:1;M01:P0:bwAxRZ44HAg=;h1h8H6NbuOr3//A5qfN0HkAzmCf
+ 01W1Flr62numc4uvTGUgLp3RTNbNVPCOJe5tnbYaXsk+NWm1vj1RJfrA4k+p0rWcq78DmWMRl
+ iKwE1lin7kC8Kvuf9ZR/bTxl3fNdsFx5D9pDooJVwstitQ5iT2tO5QxSRd0oFao3NQ5JfPviz
+ COytUl+ZrTCL4sDBVcnivB/UwxHOchUCEnyHnEcrQA0L50CZgvgU6iB182hzl3ORyVzltwY+D
+ nYWze0uJVNaDlLHZ2lISFi3c/fMRzq7TrgG7nMj0aO/K7m7g3dOSL/Y5x3hOQpDImc5JyEYTC
+ CDhMx3VD1kU68n2jWUXtDm2hnwRNsp2AQdT1xPE+N+eGQR4xUFaUURWpv8DgEtgFxvnUzyMfa
+ A7iU7Wa9g/7W8LjV2M/5AO4QRRF4+X4q+bwGYSZs80FQCgdaUjHiw6WJYWMASovI4HMEaGAIB
+ x0/xBD90sOHN/oG9u/jLg5FrV6N4YdpaYRehl8V3BjCr1041b7HRQOBv0tqgZo+ngV+N+7Y/B
+ ZaJVeqU5Nah8TEL10fB/4i5s6RK02sme7AFrdCfMO6KAL4JaWnA1ewD116sdZfsHQgP5+OZDc
+ mOEm+OHVyl90/cjujZ8sgm9uVUyQvv1gGu/ZnCcg+UzrGYKuvrqDGTqIpB7okRsGo86KXcW9R
+ G6E7KEUx5AO2c/mrPTtT/R6OhvpHvVM1DHhFgMFSHKqVLEMC1cml8l8Vind2jB6iu6ZkkBFzk
+ /mniR+qOD9H3USlJpjC06kjcgrTv7A1fpp4FunKfxAggMW3a/t1DhAJFqyCzZK1CNYbCP+VHa
+ 7kv/yKeRecb1pL9htIYpIhGyOuF6cqC/AH3dg6ivNZsws=
 
-=E2=80=A6
->>> To prevent this, Check loop condition first before initializing timer =
-hierarchy.
-=E2=80=A6
->>> ---
->>> v3:
->>>     - Fix typo.
->>>
->>> v2:
->>> 	- Modify commit message.
->>>
->>>  kernel/time/timer_migration.c | 4 ++--
-=E2=80=A6
-> Reviewed-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> The SHIFTphone 8 (codename otter) is a smartphone based on the QCM6490
+> SoC.
 
-Do you find any remaining wording concerns less relevant fur such a change=
-log?
+* I suggest to move the last word into the first text line.
+
+* Please add an imperative wording for a better change description.
 
 Regards,
 Markus
