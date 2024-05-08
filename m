@@ -1,90 +1,96 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FD1450FA;
-	Wed,  8 May 2024 07:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20EA3FBB1;
+	Wed,  8 May 2024 08:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715154703; cv=none; b=VM8wFJB1ujQpeEJPXh+r4kzxVW1GoMXjDWEM6FHoS1w+iwksAIFhlQwVBRlYTKFK4Wma6Nzk5bSDimSBWjnWNcht5++FpX90zSJx9Lf89BPBSpI9CxSFKi7ExTsCoqqz7cRFZfunj0PVR1L4QEvkJsg9gYxm3wHSWDa5ExYaRcU=
+	t=1715156238; cv=none; b=anq8ZTjZXJOgPndMr+f0qdv308blUanrEMy2iy8CVKepM1G7HrNsFKikR+Ocp4FiiWHYicg4nTjns/mKdGTz/aZVVYex8TPJU0gGBe5HpmVmjoex9Psvjwujjh3oUnLhuLNZutL4YvbT70eer42GTzOa5ZF9NfzSFPcAlfZEjoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715154703; c=relaxed/simple;
-	bh=A1cL+trfWd+1YzVAvl7toR22FR7A/lXoS2Ld4mzp0Qs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Nv04dBiXO07XsaOVuMHtyZFnjkhrq+I6ypOji2598QnHwdDqJY9Cg5Rxx+fpFgl5tnGT+JaAgMaycWn4mvJMuqrmZQyTny679RKc+Z5Xl9OYt66UtM7WlbAPel5By+87nuT4c319/j6kpjwiQQZF/l9u1JgPYE+5gEady463LW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sOUQHNNS; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1715156238; c=relaxed/simple;
+	bh=90DPNvTKk/61EKaroqF5/ctsM6XMfjDkwTO+ek1k5Bo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=O7HqbgnUxndbPA0i3eIyRtufDuLJ+4hP7WgfSqN0Im80atEo+F4FvGsJyOBgBWXqmDL22Am8Ps5ElLZcZfjqj+Nze5EwacOT5q4Z1IFtHUT9fvYMeEACrGmhwxD5eAp8eJWtoMplOKypPdib058GzfUKqbOMzCFKWsELbGAudJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gt3HJsS2; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sOUQHNNS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715154690; x=1715759490; i=markus.elfring@web.de;
-	bh=A1cL+trfWd+1YzVAvl7toR22FR7A/lXoS2Ld4mzp0Qs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=sOUQHNNSFahruIAWs+7seJXeu3bOUjNFMuyGGkmy4GOcD8jE3NiQEmDpgvI1F/Rq
-	 St4dOslJc4cV2ifTRq7ls2xvFDTHDlrhD2+oAAHQ4o2pM1dMdLZZXX6kO+rPIpzjK
-	 9S4bfjCwZUijdJqTBNB78tVW8QJErXmur+N0JrgrpXL7WqnVEZ4UedOaF4OVtvdSv
-	 PhgXGj57Ca4GyNP843+SHkalMwVmZDy53C2ZXmRkjTlhMCNPleFLqYaKLF33w9etX
-	 4VNnRaoTNHwuISQD0Pha2gT2ChSicLr92w7vWzsL3/J6SZ0O7l5NIeCHaHhdLoLBD
-	 CH2DCJgqQcQQy80KoA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mfc4q-1sXMGg0Vo0-00mBl9; Wed, 08
- May 2024 09:51:30 +0200
-Message-ID: <0fdad323-ff72-4e20-8fb9-65d4181b1ae0@web.de>
-Date: Wed, 8 May 2024 09:51:29 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gt3HJsS2"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41bab13ca81so42295795e9.1;
+        Wed, 08 May 2024 01:17:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715156235; x=1715761035; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6kKiaeh6idYVV5u3iGDfXnjpgKpmSWJxA9vCD2GpJnM=;
+        b=gt3HJsS2F3TSLEhm2XkEiDCBS5YDepdEqg06QAz6hmjHVYZ3ZLkUqBFrDcsOaH/kjo
+         aVTb60qRQrU25V2YSDN+0rAN6AqOEjV+mwKoY7DQ3EXWfENuBwdZB9Oxde+nDVL1P7yJ
+         fDkdqJ6HjUyFsvat3lDkKpsHsOmRFJgWEj0NtUYnN6NG2GaNQoOmtK4dsDadrT+P/RLj
+         RbQ9A/aCqWSVD+jDRBJ1RyML/7ncKmodRpM/lGv9Fd6u3lpAg6uWphHdRZMjWmwG3h/n
+         g9oJTeOwS33cU8a45HyZ8wjytSwvLTIxGm2Z/saF5lY3LrSKU3dDp+ibAh+nxla/O5oa
+         IMcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715156235; x=1715761035;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6kKiaeh6idYVV5u3iGDfXnjpgKpmSWJxA9vCD2GpJnM=;
+        b=FI3T6WJjjdhgiLLH9fa3WSFJBwgHIPetjuF4D7cyiNqpg+mfmv036Mea9xZkYLWMze
+         f1F3KeVgTDnPzhjB9EYv2qx3JfZwFR6Jb4FH/hvR6BC+Xjq1SL88+DwgXkT7puHg6FRi
+         IGCqEc+BWy/ak4Dcctln4plyoFYvSR252Lyy1efN41slP3xzleq5IeRVRg71maaMg3tw
+         UeLeEQ7azf1EMhPRkomzxoWP1mIOyR7yshT3zSDahxhzTrG6+jMMZ9VpqRPy8FBhZu0g
+         5SjfJ6FtKqEWcsBoxFgzbVG4HWjKdKBT4XHWZ+wNGLYePTDf18cKB/qnOoN27eJmNHKW
+         IxoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAb//MzhulEdK75wOqn3DJMSeQoaDHERpgZr1Uzx0DWZtqty9z//HO35x5XmekRFv7zjnYJ8gis4h+5BXBD7Qvcrbamns/owbAlHfAuQxKJUDTFAJfUvmanlpxuib/q5b80jsusLs3o2w=
+X-Gm-Message-State: AOJu0Yz/90JYbWgXHYPn0X/BVizCW3YkYqWFjav2qgQ+kANi6zIQy3ng
+	y1RO44QGN2cce2i9sqdsDAcwyI+IhZxNkLX/21UGn1JvDGVkPyc+tI+kHQ==
+X-Google-Smtp-Source: AGHT+IGahfijjEz447rKpNw9CltyPhLlHKfTOAF556oy99EfklwoqHsljht2OrI3ywXqY9k9v5FgyQ==
+X-Received: by 2002:a05:600c:190f:b0:41e:a90d:1216 with SMTP id 5b1f17b1804b1-41f71302e7emr21788915e9.3.1715156234933;
+        Wed, 08 May 2024 01:17:14 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f882089cbsm13845675e9.48.2024.05.08.01.17.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 01:17:14 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] media: intel/ipu6: Fix spelling mistake "remappinp" -> "remapping"
+Date: Wed,  8 May 2024 09:17:12 +0100
+Message-Id: <20240508081712.2868257-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Caleb Connolly <caleb.connolly@linaro.org>,
- ~postmarketos/upstreaming@lists.sr.ht, devicetree@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alexander Martinz <amartinz@shiftphones.com>,
- Luca Weiss <luca.weiss@fairphone.com>
-References: <20240508-otter-bringup-v1-2-c807d3d931f6@linaro.org>
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: add QCM6490 SHIFTphone 8
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240508-otter-bringup-v1-2-c807d3d931f6@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:zH6xSo4N3GyqA27EDnWMOXSunaYdn47GzAB4KMzYHxNZIje+UeK
- ncRl2LUHJPnjqGP6t3q1OoAG/7SmTZRNbA8vV0vH8KlwSrR2cr9MHVvoJ6VUfGd1him8Zcp
- P0DnUQBlQ0VjCxFmdo+LYb7tmowsYfWtprQ9agF/oNQTz+zOeD1tztBIp+CNviO/i8CHPEf
- A44mw4j+p6K7oJtyqDwNw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+EdKx6qCwV0=;/dqqmM23NDee+dzZ/yCQZuHuAyh
- pAFHPaTaZe1iuEcVp3gv3AcPsTFwSP0ss5HnNCC5Edw49QMgDPesmbZB+OLsFnLyGGnUotjxF
- Tsx3HiaN92bDOBn4RfaiNGMmd1ArF4C+KGG8pZ++Gyy2nOVaI1Ueg9rqzT2MHvyM6geT/5qs8
- 70VPlXTRxE3w4fyoa8xKiP9zAsI1em3wF50uTEY9MgWhd3Ej/v82mYxjgkHMarZeT5IMqe5I/
- PJMDRGyQ4QVE8ICOmPe60GsON+xjFIRbEvGYj5tnTk2sGz6k2Jeh4pX9PiHCPpaw4uvkJvWnr
- 7XcRCxkOf3pGjItbJM+ZDpMY9RUzI2n8+2FST4KRdSiuX6O1L3te+6cUu05WEIHE5rSxUZvCN
- nK9ClzHp4OdJdg+hOXIOIn506Ytw/EXSVF83Tbvtpi+4Obj4JYFhf0NuG4SOCyesB2BuwFeIp
- 6TtcLxnxqGpiVOBvC/iUYAdsnFeU9HC1Q5sPvKDK59PfJeCqG1MRrDGZvKJxMDhwFiFiqXucy
- KaSXO/A41g2OA5YSMQz2T55lw34UiUBuNKeuHO5+HJrbtHAwgjHpcUomVc/WQAnwDtwLqe5AQ
- iJ4xCe+FuM5H2FReTKjVKVjzttwBOcNkxjiaqf4MxWpEfyCTcuLeFYy+q8eQ+7jxsmFR/yOTi
- 8+hAY+CYlzkqTjTdL6Do2ODbtwbqvmOx2LUNewUpZfaMCp44RjGHJhDAowfD+IK3r0H+3QBxg
- gcmyi2DT0amJmztMZB5YtbU2BLhVk8hp/9vq8StQjNjm/z8bweNGtF6TJ2C78/vuNl89ALgh2
- 0RwPbfdEr3NqWdbvhn1M4KyeblSTNBK/Ap2bCV/VxU1E4=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> Initial support includes:
-=E2=80=A6
+There is a spelling mistake in a dev_err_probe message. Fix it.
 
-How do you think about to use imperative wordings for improved change desc=
-riptions?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/media/pci/intel/ipu6/ipu6.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/drivers/media/pci/intel/ipu6/ipu6.c b/drivers/media/pci/intel/ipu6/ipu6.c
+index 2cf04251c9e7..d2bebd208461 100644
+--- a/drivers/media/pci/intel/ipu6/ipu6.c
++++ b/drivers/media/pci/intel/ipu6/ipu6.c
+@@ -530,7 +530,7 @@ static int ipu6_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	ret = pcim_iomap_regions(pdev, 1 << IPU6_PCI_BAR, pci_name(pdev));
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "Failed to I/O mem remappinp\n");
++		return dev_err_probe(dev, ret, "Failed to I/O mem remapping\n");
+ 
+ 	isp->base = pcim_iomap_table(pdev)[IPU6_PCI_BAR];
+ 	pci_set_drvdata(pdev, isp);
+-- 
+2.39.2
+
