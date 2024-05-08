@@ -1,88 +1,94 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786061272BB;
-	Wed,  8 May 2024 15:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E800685639;
+	Wed,  8 May 2024 15:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715180884; cv=none; b=nZscJYOpU709RsCX9Ybwd8L4pKcSUPUzeU0zCl8wCPJs9LoHwh52gL0yVlkiovi3+lVVC+40xMC2wtq2Hkdux9SnLF64VgZN00neh7y6mHfb/tIS6+zo3LhmxSoSeVUdoFR6t4k8VQaF9bWT9uY0iYmxL0FNoF398Xe/UW0Dm9k=
+	t=1715181096; cv=none; b=AhKbtPjYw7VzPokwPTcPGAnVwRIcXmSzP7ggYdqJk6ZmikZRZW/MmUymao6CFp4w+B7RXzxiiYDrUylbnJUGnv7OYmpbjG8blLqGquTNW/i+hqhxKNFpQzJReCuId2nwUlMXNUnMQMcEqQd05iFG4lEoP8yQOP8jStkoG2TaXWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715180884; c=relaxed/simple;
-	bh=8hHikQJgKvHrF6+f83Hf7hW04VKGZyT8FIIZHg2JC88=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=axZkfccJO8olAB2dU8ydhxfDZHecT5QRcJaANBJSKwKepbcirsDackmjrziOO3qZ7ZC2zzxI4Ph32caR3r1EVBpK1zBPK7iuxRx0DPG4jKtQCT0hsEjTUooF+EVspdCZjPddEYZfOT1dD2m7UlgK3MLFCR0KNcNA+BZSoyVnkQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=T7xueD9W; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1715181096; c=relaxed/simple;
+	bh=L1DLWHvuPyu7zexdapTcMb+vtU8XUKPHrxxeMYCyJgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fUYqDZIyJNKecsp9trq1MvjDlbmB9N1wLJvDFIMtyXlohRSTGLfyICF3BN/5rM/eY7vFlea9fL6DLlUwmTYwkOPAiVarep7k+hpryz3OwrjtjqypFDChI58eusCYwqJoLeRILVtO91Bg5EoSRxIhwrek9YTM/qc6zQ3dl0CmzAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=IsChGjrj; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="T7xueD9W"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715180541; x=1715785341; i=markus.elfring@web.de;
-	bh=8hHikQJgKvHrF6+f83Hf7hW04VKGZyT8FIIZHg2JC88=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=T7xueD9We+EV7NMRzFieIVmDcOAqa4EH2FwMGOtod5U3f+vdiEfRzeEceAtDB4k1
-	 qjdSON+Z9a8WiqlOKBl9unTGiOms/7K4M4a3/JbKukPFmDlX/FPQctUFnPD/YNPsi
-	 CEbnrmmgNudxryF7mYYMdhubz0pOKC49EFNmEDgxQYmMtT786faX9+P6V265np4/p
-	 rxTPBLypBogyJuNHUqm42cHter328/Jrs4KNi97ABDYwlLGQQx5QG0NJSqLJG8k1x
-	 fLDkXQbz0NjML8xrWwJMULHD0OPCh64Y9oajsWG8E1VLpq4Csd/uMR3yfJ+9Z3Sr1
-	 Bx/uHhj4PtczwGtMhg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M7Nmq-1rzDYf18Ga-007qvg; Wed, 08
- May 2024 17:02:21 +0200
-Message-ID: <34c08d45-a0fe-49c9-b7ba-de6a79d46ebc@web.de>
-Date: Wed, 8 May 2024 17:02:14 +0200
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IsChGjrj"
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B5712FD6;
+	Wed,  8 May 2024 17:11:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1715181090;
+	bh=L1DLWHvuPyu7zexdapTcMb+vtU8XUKPHrxxeMYCyJgQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IsChGjrjUwRqYdCT81KCqbvvuiqqnsLCh2bfSQ1T2vbvXuJqbP7GhhmflprMyLigj
+	 50rG3Rj9GbQSqH0019jJSMGNZlWImoGZ+HCWmOW5Ce4tuXcev+rNal1f5cliRRXlr2
+	 xt6LOVzdFhH/yIV6ne6CH4dyRFQnYR5G9YdxS5sg=
+Date: Wed, 8 May 2024 18:11:24 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] media: bcm2835-unicam: Fix a NULL vs IS_ERR() check
+Message-ID: <20240508151124.GB19625@pendragon.ideasonboard.com>
+References: <fbbe7862-2820-44eb-81cb-7f33b99cca35@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zhang Yi <yi.zhang@huawei.com>, linux-ext4@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.cz>,
- Ritesh Harjani <ritesh.list@gmail.com>, Theodore Ts'o <tytso@mit.edu>,
- Yu Kuai <yukuai3@huawei.com>, Zhang Yi <yi.zhang@huaweicloud.com>,
- Zhihao Cheng <chengzhihao1@huawei.com>
-References: <20240508061220.967970-3-yi.zhang@huaweicloud.com>
-Subject: Re: [PATCH v3 02/10] ext4: check the extent status again before
- inserting delalloc block
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240508061220.967970-3-yi.zhang@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:P3bhoIr5hklyJjfO6yQONug9t3uau7D9hknXlpPWcdyJLCwtBz1
- X0JBciOtO6QFCY7nGG5nZsd7eCMgfgF1BY/EWkLZmoSNxqatE6jLKbZHvODMOiVHk9vyeSf
- px0/lWQZd/oRx+GEVIfwrxGU1LvV4TdL1a2i2L9zyxlbdwor7gT8udJs1p29ZZh4BzMyuhM
- 94Gv6AkPsMtR9+OymzzYQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Zd6Rz4IAoAQ=;IlMHiD3mE+kv8VkXfvELousQr3H
- czyT66RkzWwCJlAFrIUXiduc37YMO7ARkFJvMkhsR3GF6GWJpdxdfbkTd40R4vRcTZzHeJGds
- 7k2ZECVfYyibjABGf6rfhPbmRDPJC21HYlEJvbnjqc1tyxeh8s9eIY+CSBtjJb2m5uGI+buoM
- z/IuFRdiaJDxVLA2zi0u7lnJHWWQuLlnHwNS68sbXfxbYlTTBWc+5Su0TQofcyEk9mZDcczlg
- 3rk8huvYYL7fhpqfTUxU3GrjRpBK3JCT/7tBJzrN5ExF8jBjvmUqZOavP8B5USLYTi0JGFbJw
- 0yJORcSNuRi/h1gPO6MO8oqYmUzZXMFUPUzXlO/1H7Z3u3ndstyMnve7oYNJdYkQGn43xKC/K
- iUhUT9UiPmfRqwhsherXWr8oYMYV7SjPE7w6YkbEG48we7fiE4R76DBH/JRYT3FHkxlyUaO2Y
- d1wRq5rFN8W52rmgUeXXRbO7b1SuB+EARlk64zHuzCXZxCPx0rwafMQiRpFgmf5rw0eVJ+2DQ
- irkC1wQPTKpXqHtuN0xkn45bPRwKo11J4YctfIhFhDV1JgKPfW3uVbSW6SR2xSAVNvBojOVtZ
- zogXYiJy7bcKORDYgEbsramlT5PkN1uxq/3WGYf+KXwo0gKrEvg8UL5K680uv3r5unmZEMuWp
- 3NtF/yfuE6i7XGGe6GH7jwPhvzOpBENG4GFPe2MDy8NNOxSTD2O4xG4s8Lpyu1WRKSJ9A9vu7
- 7Sigyxzla53lTMRARvHAxB3FKTrI0V9ivW41eDEQy831hoLmvmyckiQiB7vTve6OA2esnY7HM
- lYyhc2uSlT4qtWv/bfXZLADLgTTHolUjJyyujZRLP6Ob0=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fbbe7862-2820-44eb-81cb-7f33b99cca35@moroto.mountain>
 
-=E2=80=A6
-> This patch fixes the problem by looking =E2=80=A6
+Hi Dan,
 
-Will corresponding imperative wordings be desirable for an improved change=
- description?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
+Thank you for the patch.
 
+On Wed, May 08, 2024 at 03:31:00PM +0300, Dan Carpenter wrote:
+> The media_pad_remote_pad_unique() function returns error pointers, not
+> NULL.  Update the check accordingly.
+> 
+> Fixes: 392cd78d495f ("media: bcm2835-unicam: Add support for CCP2/CSI2 camera interface")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/broadcom/bcm2835-unicam.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
+> index 3c7878d8d79b..ad55fc930e5b 100644
+> --- a/drivers/media/platform/broadcom/bcm2835-unicam.c
+> +++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
+> @@ -2433,9 +2433,9 @@ static int unicam_async_bound(struct v4l2_async_notifier *notifier,
+>  		return ret;
+>  
+>  	source = media_pad_remote_pad_unique(sink);
+> -	if (!source) {
+> +	if (IS_ERR(source)) {
+>  		dev_err(unicam->dev, "No connected sensor pad\n");
+> -		return -ENOTCONN;
+> +		return PTR_ERR(source);
+>  	}
+>  
+>  	unicam->sensor.subdev = subdev;
+
+-- 
 Regards,
-Markus
+
+Laurent Pinchart
