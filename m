@@ -1,102 +1,112 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259CA39AD6;
-	Wed,  8 May 2024 18:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3B01E507;
+	Wed,  8 May 2024 19:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715193556; cv=none; b=bA0f2farMVXeQ0O+pcddmpnw81kuJJQNJb/lbqPHNQOjf6kRrBwMeuDcuNGtR8rlDGk8ZELdXS2miuN8eaKs77I6SO86hfEIU/T4+AOUrGtl+HKf+zjv7qyuV85i8XCW06EFcIA57tuYOybEy9pLJyVm7L3uEOF/+ysSrkNJdNQ=
+	t=1715195733; cv=none; b=SyTQebuPpG4MwRI5zvY8ZjFBBYJC8npci2cgIKhVkeMATuzCx2rg/wHEF+3y8qgFx5P2PUXe9kp1gnNQVPEVIXFHu1g2v8cXrws0pxblQu1t1FDVLqF9gVjYDlkWs7T4MzExCYAJk1D6U8jkhTFBK2OlSzvCynv8aPvcTCzB5dE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715193556; c=relaxed/simple;
-	bh=HhXpmjqMcV9Nx3ElggKSa1+qM5Zo87YAlC4YZwg7Ypw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hwdfdbNEBjc9f6RpJ13oR0Xs2JBuNtljQySGJI1ScChD9dBJjfJcAkUTHLnqq0Pt255N7ykN/fzjmQzoqodUOn0/T6VRgkzSk6DMPSoTMfxiop6nMnrVJMaL2EuWFjdnvJmEt0oIkvzCNQWjvNt9OO5nuq6acEsM3oLHPT/UsU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=b3OiFtcx; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1715195733; c=relaxed/simple;
+	bh=RhSbY/92CIKP3Dcwy+tLlipMgT+IQsxVR6Q6StuwXXU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qZuVt1x4sPVvZ7xnW/uo3YDX9Z+gZOVVgmXl2JoGPzhCjPCkbcv1B5i7KMM2RkSngBWAIG9a777g+RDMWFP3aMSK1sXMpZkAwzwSEXQ8SM9EKPNO3zm/blr7FUl3FVUIPMxVAUHWFSBi44joxnTqs6wtEmvtzsEume4WdZ5RZGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UtXNL3/K; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="b3OiFtcx"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715193537; x=1715798337; i=markus.elfring@web.de;
-	bh=mnjR+bhkQyg2ec9mqTa65YQGCETC7UMatVLhvFCuAbg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=b3OiFtcx6X3TjYMtdp2PagOy+8aZ2FuRTMUL2uN2hq5zVR5rnEMTVN4VjjkpQvCs
-	 bl2a19TndjNoeF7a5Uhkv0nJB5Eid628TWuzKmLf3/W47lX0WiEuEibo5KU5OwCjL
-	 lFTDckkbeGcbvK8US/qPtS4NuVbwMzEs1fdJo5S/NEYPnuXZKEZRTDtPSxTWvlwz1
-	 YaUJDYrRMP15oDKcVaxz84tYjK6y7fC5SDkRLIHEBz96vNqfoIg/n45cyEdIFmPBG
-	 3SvrdVZx+vIkAl54CzPRWksSIbmgY60r64KLk/e5ZCS11uW71w4jdxK+I234sN/q0
-	 G8XrKmhFM08u/Wg9+Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MRk4e-1sAnWt0RKc-00THTI; Wed, 08
- May 2024 20:38:57 +0200
-Message-ID: <b4156f2a-ea8d-483a-b485-db4b5a80b1fe@web.de>
-Date: Wed, 8 May 2024 20:38:56 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UtXNL3/K"
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5b1ffd24c58so57830eaf.2;
+        Wed, 08 May 2024 12:15:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715195730; x=1715800530; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wnFBQZ8bl+ybs2X68JMZ+NUByUkUZbKJDs1KtxJ0X5s=;
+        b=UtXNL3/KzuhDNG0eie9+mg/TO5NUDoECQu8yery0tQWgTDx8QJe7k7INihdfK02S9c
+         qa+XX0biokW62At/Jj2uF8lkWQKmAZMnSuRNviTyNDVbxShdZBM4uljOpYFENwUieJJg
+         buasKHONRgB23dCigm5dN2K9Wz6gRNrCAIqFztkiPzST4SHcwc+lBjm2twSklJM6IDZY
+         CBwGSFvp5m7VejfPZ1lsytY5iXyNizGCjSFFAfC7uI3rf4O1lgEar8BDBoCADHROBt+o
+         Ab6aWiTrcfmtSsWRrg4Tff9aSBMAyM1XU5eCXUgWobUH7szwu/HLG3OQBywHR7W0lNJ4
+         DjGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715195730; x=1715800530;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wnFBQZ8bl+ybs2X68JMZ+NUByUkUZbKJDs1KtxJ0X5s=;
+        b=KBll0QaDPPQa9x/l2Gutak6qgP29A5uLBQTgr7lI7HuU6Yss+fQ3NFFV7r8h0lwz5v
+         66WqY6zhf1e4C7nh3Y6YwDBUtzuL5L0BG9GAePRKY7e65SaW4v9rge0RlXJCX+Em6B0C
+         5lsR+aTGQFn4uOMJcGafJYIuTtmpaNaMhAUlDq2LxkBvvA3AVkrLWAoDJLW4JhrkNS36
+         67af9y5BPqi8oW3teVOlCGTncxDeUKwjWLPRt7jFhbZ6z60lMQZGuBDyKGaSM52K8BF+
+         k56QzHc8+PzNtqNw+lIEu5n4fIZRu51//KtJ/f83ntSPLg/SQw2frUox6dtEY68e0dbf
+         dIHA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9Vwue1hVaMpTwkp4c9UbRzmDaF+3oSvLgYs7Q1FYGLDHeUTTGhUM2h5RWZfm1KagDjwqlPkBOTvvDK07Kk/KIKsE/UteLIy2m001npa7U
+X-Gm-Message-State: AOJu0Yxvs4i0kurMg/G4BBSpuux3/lE5WYs1sc6AIdHwzHmBfX/3CCPn
+	VDR2R0P2pBUGD72Gb2/i0ntE4jRjrTfmtuxFIoW8OsADh0EtPeSTlBvvkYXIGCcApe2OEksXm67
+	AjVd+yZ4G94ybYvelfYqr1Y5DVuQ8KlfR
+X-Google-Smtp-Source: AGHT+IFHTRj1dO43YyodAbQ1Xb/7ZFIpmwOMIn7PVGMuN75k1HoWYZe3huk5HUDxC8/ex3uyWPwaXQ6S2OFsh81NNsM=
+X-Received: by 2002:a4a:ba81:0:b0:5b2:5661:5c61 with SMTP id
+ 006d021491bc7-5b256617cf0mr2128306eaf.2.1715195730518; Wed, 08 May 2024
+ 12:15:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+References: <20240506213150.13608-1-ppbuk5246@gmail.com> <20240508172621.30069-1-ppbuk5246@gmail.com>
+ <b4156f2a-ea8d-483a-b485-db4b5a80b1fe@web.de>
+In-Reply-To: <b4156f2a-ea8d-483a-b485-db4b5a80b1fe@web.de>
+From: Yun Levi <ppbuk5246@gmail.com>
+Date: Wed, 8 May 2024 20:15:19 +0100
+Message-ID: <CAM7-yPRts2tZYGBvC7=eFZzemvFq9p_p4FDpidjq27q55m+9Vg@mail.gmail.com>
 Subject: Re: [PATCH v2] time/tick-sched: idle load balancing when nohz_full
  cpu becomes idle.
-To: Levi Yun <ppbuk5246@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>
-References: <20240506213150.13608-1-ppbuk5246@gmail.com>
- <20240508172621.30069-1-ppbuk5246@gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240508172621.30069-1-ppbuk5246@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:vI0kdZc8ldOBS71LgW9lNsV9hIjeBDgy5VG+o8EqSRdvzzm/Ez1
- Gyd7FSGlOMEhu8Mj97kVRXLLyxH1t1wBzcgu68xNrsgrVGZV14gT8ZuQoVLWK+QabaQ4QQt
- DOUrHmPD9+Z8XT8JS0UAo5oUXifT/wJIgc0KylJ6o1wdmpszLlP5v5oT32SQ7LT8AfA2xqm
- 0TszyLniKWkoBGvWhq89w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:dN2KT5UCWdI=;MbB77xwG94SuuOHmvmM+pT+Bte+
- CqtUXorw9/w8qR0RZMTmJ9f9LV0TyX0UWkvMHtEEHIijOKXVg8DKHYfdSw+jWhVYDpFsAKbek
- jdDuIwTjUIWUDiqThpQ271rzc3sxkAhS7eGSgjXGToxKmiUCbR9bJ+RgMaJ30YF7fte5ottjz
- pNNifhI8T3v3+gP0dDr9cq1+n33gqWUXDJqdIZvRVTpzo9uEU2vmEsDPPPGW2MdYc0aAR+IQg
- 0yZ202VejmVrXlSRaP/bIzDzpa6uGI905ZE+o9G7P6YfY9fCpV9Pdvf75i5u08CQULnn2HjmL
- drkhLb6+iNydOg1j2lRrfXFcTF6mU/yg5muBpK3wgV3LHznyl7pu8z8Pki16jhSIlxRJiccNE
- aTHCLLXezwvyRXZ4k0s/CxohZtQlt6nvQTw20C9EbQ+ho5YlT0DFpl5j27rfY7sVhAhdzbsr5
- gRIHu0HFp/QETKlv7p5xpS+8pZ1zgpbGpVy3fNE2NVxrindwGLOo6Jy6u6zqnzApnhU7zSU3u
- Por3efO3kviRUbYf5n3JGpxbmuOx2YuI1jFrqiBwvefVGV6YPHQGUPzyYJmkPCPO9sbj2J7Ho
- fF7FnNFIOheQ8hYRRfVFZv8AeG1S7lxz+IhZi33nnVx/OSycmkr4IlGiTdwFc0HQGDztWGgVW
- RyJNG03vNw8v4mdFZv1vTsmv5W/5LfFP1U29nDSrmpgKK6yoMz6mBZ/omRSEzr8KyGI5Hwuqv
- mzbyZ8ZAlmtGVp/6bBFKOB9jPaCOv5GgUTPl9zjIWM+2dlA/Y/3C/1s3eoU5O3QeMrE9Kza4q
- JPvpm0uuQaGsqvxrDHiq/Q6WPxPMJLyQ/Ke/IGR1j0/Ww=
 
-> When nohz_full CPU stops tick in tick_nohz_irq_exit(),
-> It wouldn't be chosen to perform idle load balancing bacause it doesn't
-=E2=80=A6
-> So, nohz_balance_enter_idle() could be called safely without !was_stoope=
-d
-> check.
+Hi Markus.
 
-* Why did you repeat typos in this patch iteration?
+> * Why did you repeat typos in this patch iteration?
 
-* Would you like to take the relevance of imperative wordings for changelo=
-gs
+> * Would you like to take the relevance of imperative wordings for changel=
+ogs
   better into account?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
 
+Sorry for my mistake, I've fixed it but, I sent an old one :(
 
-> ---
->  kernel/time/tick-sched.c | 6 ++++--
+Thanks
 
-Will further patch version descriptions become helpful behind the marker l=
-ine?
-
-Regards,
-Markus
+On Wed, May 8, 2024 at 7:38=E2=80=AFPM Markus Elfring <Markus.Elfring@web.d=
+e> wrote:
+>
+> > When nohz_full CPU stops tick in tick_nohz_irq_exit(),
+> > It wouldn't be chosen to perform idle load balancing bacause it doesn't
+> =E2=80=A6
+> > So, nohz_balance_enter_idle() could be called safely without !was_stoop=
+ed
+> > check.
+>
+> * Why did you repeat typos in this patch iteration?
+>
+> * Would you like to take the relevance of imperative wordings for changel=
+ogs
+>   better into account?
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
+>
+>
+> > ---
+> >  kernel/time/tick-sched.c | 6 ++++--
+>
+> Will further patch version descriptions become helpful behind the marker =
+line?
+>
+> Regards,
+> Markus
