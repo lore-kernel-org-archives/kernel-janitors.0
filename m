@@ -1,96 +1,92 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20EA3FBB1;
-	Wed,  8 May 2024 08:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF2B47A7D;
+	Wed,  8 May 2024 08:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715156238; cv=none; b=anq8ZTjZXJOgPndMr+f0qdv308blUanrEMy2iy8CVKepM1G7HrNsFKikR+Ocp4FiiWHYicg4nTjns/mKdGTz/aZVVYex8TPJU0gGBe5HpmVmjoex9Psvjwujjh3oUnLhuLNZutL4YvbT70eer42GTzOa5ZF9NfzSFPcAlfZEjoc=
+	t=1715157169; cv=none; b=FIngEPfuuG2W4Jipq9b9rh8DVkidczSOazS6cbiUcoCDZD0vWAYcYBm5ONt16QX4bkm7TXIwKLmHvnPLf3H6/a8iVmFaXLHnHyo6wdU/spXlhIeqfgxGrCqUjdq9DvBQ/4vziEgwwA6PoQ35ZZQydpsok557W2CLS0dL9khMAYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715156238; c=relaxed/simple;
-	bh=90DPNvTKk/61EKaroqF5/ctsM6XMfjDkwTO+ek1k5Bo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=O7HqbgnUxndbPA0i3eIyRtufDuLJ+4hP7WgfSqN0Im80atEo+F4FvGsJyOBgBWXqmDL22Am8Ps5ElLZcZfjqj+Nze5EwacOT5q4Z1IFtHUT9fvYMeEACrGmhwxD5eAp8eJWtoMplOKypPdib058GzfUKqbOMzCFKWsELbGAudJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gt3HJsS2; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1715157169; c=relaxed/simple;
+	bh=X1F71bqUTtnwDXgkh1tSC4NNTNLQREiEi0F6wYWTtJU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=u0jOswOWfNV/nH4+quRtj/ieBLQLPjAD8gFwzRSRcYf0d0ehyHD9WR9GFTVwezLihtRNN8Apd5v6e7+Qlmcwz1dUyz0TSnpF01xYN2dg1yRGPEIF24g0qZEU4brotbS2/y9U6UMJIPjms+2mtcNd2aNepauPEGFwmmloFpokaWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aaXBsLvx; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gt3HJsS2"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41bab13ca81so42295795e9.1;
-        Wed, 08 May 2024 01:17:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715156235; x=1715761035; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6kKiaeh6idYVV5u3iGDfXnjpgKpmSWJxA9vCD2GpJnM=;
-        b=gt3HJsS2F3TSLEhm2XkEiDCBS5YDepdEqg06QAz6hmjHVYZ3ZLkUqBFrDcsOaH/kjo
-         aVTb60qRQrU25V2YSDN+0rAN6AqOEjV+mwKoY7DQ3EXWfENuBwdZB9Oxde+nDVL1P7yJ
-         fDkdqJ6HjUyFsvat3lDkKpsHsOmRFJgWEj0NtUYnN6NG2GaNQoOmtK4dsDadrT+P/RLj
-         RbQ9A/aCqWSVD+jDRBJ1RyML/7ncKmodRpM/lGv9Fd6u3lpAg6uWphHdRZMjWmwG3h/n
-         g9oJTeOwS33cU8a45HyZ8wjytSwvLTIxGm2Z/saF5lY3LrSKU3dDp+ibAh+nxla/O5oa
-         IMcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715156235; x=1715761035;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6kKiaeh6idYVV5u3iGDfXnjpgKpmSWJxA9vCD2GpJnM=;
-        b=FI3T6WJjjdhgiLLH9fa3WSFJBwgHIPetjuF4D7cyiNqpg+mfmv036Mea9xZkYLWMze
-         f1F3KeVgTDnPzhjB9EYv2qx3JfZwFR6Jb4FH/hvR6BC+Xjq1SL88+DwgXkT7puHg6FRi
-         IGCqEc+BWy/ak4Dcctln4plyoFYvSR252Lyy1efN41slP3xzleq5IeRVRg71maaMg3tw
-         UeLeEQ7azf1EMhPRkomzxoWP1mIOyR7yshT3zSDahxhzTrG6+jMMZ9VpqRPy8FBhZu0g
-         5SjfJ6FtKqEWcsBoxFgzbVG4HWjKdKBT4XHWZ+wNGLYePTDf18cKB/qnOoN27eJmNHKW
-         IxoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAb//MzhulEdK75wOqn3DJMSeQoaDHERpgZr1Uzx0DWZtqty9z//HO35x5XmekRFv7zjnYJ8gis4h+5BXBD7Qvcrbamns/owbAlHfAuQxKJUDTFAJfUvmanlpxuib/q5b80jsusLs3o2w=
-X-Gm-Message-State: AOJu0Yz/90JYbWgXHYPn0X/BVizCW3YkYqWFjav2qgQ+kANi6zIQy3ng
-	y1RO44QGN2cce2i9sqdsDAcwyI+IhZxNkLX/21UGn1JvDGVkPyc+tI+kHQ==
-X-Google-Smtp-Source: AGHT+IGahfijjEz447rKpNw9CltyPhLlHKfTOAF556oy99EfklwoqHsljht2OrI3ywXqY9k9v5FgyQ==
-X-Received: by 2002:a05:600c:190f:b0:41e:a90d:1216 with SMTP id 5b1f17b1804b1-41f71302e7emr21788915e9.3.1715156234933;
-        Wed, 08 May 2024 01:17:14 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f882089cbsm13845675e9.48.2024.05.08.01.17.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 01:17:14 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: intel/ipu6: Fix spelling mistake "remappinp" -> "remapping"
-Date: Wed,  8 May 2024 09:17:12 +0100
-Message-Id: <20240508081712.2868257-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aaXBsLvx"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715157143; x=1715761943; i=markus.elfring@web.de;
+	bh=oZq37vWiGR286Tk/fZJLDQiM5qL995HLhi4rMYm4rMI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=aaXBsLvx+tLaMWB8G5Z2hqM4X8WdzCPD27gxIR8yiW1636fa18jeF0RbebkVhi49
+	 0i/YYyP4zL0pVHs1o3mPISDbhH+wJEANiQX2sfGqTFtaD+yAszC2lRqUK+tp7n2to
+	 M5EF5cDaYzTsa9B14SeTbbhr8uvRnVJFxzHrlxVPH2eX4EObBT4MoqrmZ29Ww0VyB
+	 HusPK6krbWuYXslsTqXg+5UhXuX6Xu4hOfVuBD6ffT7Xb21bePsxQwSFwmkndWQGJ
+	 djR4i0Q9rwArLc9+mfhgpH4zancmdpnHDiIkN9qLtktskXtHVjpc+oIxbnlofnIIf
+	 bW+41b6IM8eg2R3+MQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N1d7s-1skaH046f2-011vUc; Wed, 08
+ May 2024 10:32:23 +0200
+Message-ID: <f9c7f7ba-fa82-422a-be3c-fd5c50a63bfb@web.de>
+Date: Wed, 8 May 2024 10:32:20 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Hariprasad Kelam <hkelam@marvell.com>, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Geethasowjanya Akula <gakula@marvell.com>, Jakub Kicinski <kuba@kernel.org>,
+ Naveen Mamindlapalli <naveenm@marvell.com>, Paolo Abeni <pabeni@redhat.com>,
+ Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
+ Sunil Goutham <sgoutham@marvell.com>
+References: <20240508070935.11501-1-hkelam@marvell.com>
+Subject: Re: [net-next Patch] octeontx2-pf: Reuse Transmit queue/Send queue
+ index of HTB class
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240508070935.11501-1-hkelam@marvell.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:hb9y0tp9rjg17HHnW1+x8wRVtZ65ElgYZSlLkpFxUps330sVZvJ
+ oQQUmV7oa5j/CpWReGwkMfFVmSDe0WO9RyEscWdTYJIQZ/a8Qni4JBFnjkLBF1g0lHzfZ5w
+ 5baPMh5R4DhKW1KKQp1TRbZh/szGxeMDY3y57WxMOMwqCSGibuuYzmOwyEAFJNeHWHmgRWU
+ gMGN+aKYzBeCnykATsc/A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:6fQw/0olnSU=;t43d8NKPSWZy3gPseridGy4BOx+
+ c9LmDvQWnotDKUktUXgnnji0TL2usg1Jxp2JGoCi1zi3KMm5hkGOYa2kfIpWc0aosKO3+/F2z
+ Xj8PFHa6QH1hoyCSNLXJ0KwWCQigIQJ/gs43gszCNnSQUpypDkaBmSSehNHz6PDiJzsT6IG24
+ RBSQFdJ3KbCdoGRBRnBIWFzbFZJpN+gMn6SElOWTN50T4l/4LkOI2mNBTmZKpWTcLjTd7eqTz
+ WRP1Bw3QrdA/xezGhSAfmv8HPOGZv+IL7qjhBlrydomx89B2xCB11dQQsq1ON1NL26+PwGEB/
+ jyr7fHasG0pNfmMQTK7QU/qcw/WEUlN42Ir/SeqEhgGDTR0pThMR9Tlfp3yTl0x7cqXpCFF9v
+ PdPGkvf0c3CmygNYFHZbTUJ/CZ4FP30SBF/Dubr9cW+JehRTTIyN9pl0dOUS04yloPybQCL8n
+ zB8DGGIVAqFGOmx0fIVjxSyR7qoVDfcjU//WP2shKaM2qfFdeu/vNIPD15iqq/9Y2whYJqz8d
+ MrjA8VEZtRAX2Vf0DoHbhgg4rOFBJ/GWfcAc5rtqDlGc5nMxnRiJUpPaUFdJbV8zy+nGk9YBI
+ IpPG26aM22OC63TkwNdohl1G3TSYHi9+BEc0pGzRdZoogAKNLu8DNIn8T4I2IavWefgVNZ0Co
+ ip4F6xjpqkpFam3gX9zjJZh4V5vVM332IH8nTj+CMMoqXrQT6/BwE+4Hsh+vF59gL5mfVIQ69
+ tItgNqa4bo+bKBjWInhhFlDMY7oWZwcy0o0GmuQs3Q6lNiDQL5oQfAN9ywpjC0UGXR0jetbfl
+ 5x/calVUK4JwWpi18nVUF6T4o7sSOc5pmAT090LsbRqWk=
 
-There is a spelling mistake in a dev_err_probe message. Fix it.
+=E2=80=A6
+> This patch solves the problem by assigning deleted class transmit
+> queue/send queue to active class.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/media/pci/intel/ipu6/ipu6.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+* How do you think about to add the tag =E2=80=9CFixes=E2=80=9D?
 
-diff --git a/drivers/media/pci/intel/ipu6/ipu6.c b/drivers/media/pci/intel/ipu6/ipu6.c
-index 2cf04251c9e7..d2bebd208461 100644
---- a/drivers/media/pci/intel/ipu6/ipu6.c
-+++ b/drivers/media/pci/intel/ipu6/ipu6.c
-@@ -530,7 +530,7 @@ static int ipu6_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- 	ret = pcim_iomap_regions(pdev, 1 << IPU6_PCI_BAR, pci_name(pdev));
- 	if (ret)
--		return dev_err_probe(dev, ret, "Failed to I/O mem remappinp\n");
-+		return dev_err_probe(dev, ret, "Failed to I/O mem remapping\n");
- 
- 	isp->base = pcim_iomap_table(pdev)[IPU6_PCI_BAR];
- 	pci_set_drvdata(pdev, isp);
--- 
-2.39.2
+* Would you like to use imperative wordings for an improved change descrip=
+tion?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
 
+Regards,
+Markus
