@@ -1,40 +1,41 @@
 Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A9DDDB2;
-	Wed,  8 May 2024 17:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259CA39AD6;
+	Wed,  8 May 2024 18:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715187821; cv=none; b=Tuxl0RkyvDBXmTsfroIICKa0E8rbh71BF2bjyKO7O/xnTA7KKp5OEzCOhhcjQS0yLw3jrEv2+la2LlSyKnzSJwMmGtECx9NGS/qWmycYtvNyFqN4jlQUTZfTELjLTRzHidMoaWBEUL4boEfHzWEMs32UAf2vw/gcj4P26O5NGLQ=
+	t=1715193556; cv=none; b=bA0f2farMVXeQ0O+pcddmpnw81kuJJQNJb/lbqPHNQOjf6kRrBwMeuDcuNGtR8rlDGk8ZELdXS2miuN8eaKs77I6SO86hfEIU/T4+AOUrGtl+HKf+zjv7qyuV85i8XCW06EFcIA57tuYOybEy9pLJyVm7L3uEOF/+ysSrkNJdNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715187821; c=relaxed/simple;
-	bh=u+FDl3tH7RdzNgAMG/vr0jZH4Fdz2u+wV1+KsTqh1uM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=SsogKdBPUtnGVgPZ0hWheakLF2PzfiKI98uJm9D6+lyD6xGcG0lX60cFZ64mhGCOQ6a2/pL7Rrvt1XGG+fnrikYB02u+o2d9XMq86x8fvOMJf4SFNRn/IcmIx36fRwYGYR0kO0HyLqoQeLxa4eXbXM8HwhXq4j6qogWWSaAkWqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sPoUqj4s; arc=none smtp.client-ip=212.227.17.12
+	s=arc-20240116; t=1715193556; c=relaxed/simple;
+	bh=HhXpmjqMcV9Nx3ElggKSa1+qM5Zo87YAlC4YZwg7Ypw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hwdfdbNEBjc9f6RpJ13oR0Xs2JBuNtljQySGJI1ScChD9dBJjfJcAkUTHLnqq0Pt255N7ykN/fzjmQzoqodUOn0/T6VRgkzSk6DMPSoTMfxiop6nMnrVJMaL2EuWFjdnvJmEt0oIkvzCNQWjvNt9OO5nuq6acEsM3oLHPT/UsU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=b3OiFtcx; arc=none smtp.client-ip=212.227.17.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sPoUqj4s"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="b3OiFtcx"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715187771; x=1715792571; i=markus.elfring@web.de;
-	bh=AjnPyjnsrQDPJYZ9uhUAt6VHnSPdsHQWUWsa/Smbu2E=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=sPoUqj4soztmQ7fatgrCape28SO9n8goudCMAKjg7u+XImp8dStpAehLDR/MgXR6
-	 haguGkkEHZh+EKDSnNUBbDhYc8CspXkpfidNj0S7TyzjMksL+IQldbx5qSMMqcSLP
-	 FMPy6Homya/3UQYgd5bgdQ5tn4cvqGXs4sFs/q20PG9uMyD4hliNkazEad/5uXtyp
-	 wyLl/yb8HavPMYA7RNTms8LnDxTEcNxj4+wdWSfX2Kac0Y1Ef4J7+4+FlLb/X2Nuu
-	 ABHgZOGnNNbrwNS3JVuobH2PfX0MQmQjyrS6fvxJxQ3aZma+A5Z0gZ7zfjSAj8w5r
-	 3eTDNpGQX6B0f7MNag==
+	s=s29768273; t=1715193537; x=1715798337; i=markus.elfring@web.de;
+	bh=mnjR+bhkQyg2ec9mqTa65YQGCETC7UMatVLhvFCuAbg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=b3OiFtcx6X3TjYMtdp2PagOy+8aZ2FuRTMUL2uN2hq5zVR5rnEMTVN4VjjkpQvCs
+	 bl2a19TndjNoeF7a5Uhkv0nJB5Eid628TWuzKmLf3/W47lX0WiEuEibo5KU5OwCjL
+	 lFTDckkbeGcbvK8US/qPtS4NuVbwMzEs1fdJo5S/NEYPnuXZKEZRTDtPSxTWvlwz1
+	 YaUJDYrRMP15oDKcVaxz84tYjK6y7fC5SDkRLIHEBz96vNqfoIg/n45cyEdIFmPBG
+	 3SvrdVZx+vIkAl54CzPRWksSIbmgY60r64KLk/e5ZCS11uW71w4jdxK+I234sN/q0
+	 G8XrKmhFM08u/Wg9+Q==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MFayq-1rprls3eiE-00H5w9; Wed, 08
- May 2024 19:02:50 +0200
-Message-ID: <4294f69b-a317-4f09-b775-52439e2ea6fc@web.de>
-Date: Wed, 8 May 2024 19:02:35 +0200
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MRk4e-1sAnWt0RKc-00THTI; Wed, 08
+ May 2024 20:38:57 +0200
+Message-ID: <b4156f2a-ea8d-483a-b485-db4b5a80b1fe@web.de>
+Date: Wed, 8 May 2024 20:38:56 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,51 +43,60 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Leo Yan <leo.yan@arm.com>, linux-perf-users@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Ian Rogers
- <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
- James Clark <james.clark@arm.com>, Jiri Olsa <jolsa@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Namhyung Kim <namhyung@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240505202805.583253-1-leo.yan@arm.com>
-Subject: Re: [PATCH] perf maps: Process kcore maps in order
+Subject: Re: [PATCH v2] time/tick-sched: idle load balancing when nohz_full
+ cpu becomes idle.
+To: Levi Yun <ppbuk5246@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20240506213150.13608-1-ppbuk5246@gmail.com>
+ <20240508172621.30069-1-ppbuk5246@gmail.com>
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240505202805.583253-1-leo.yan@arm.com>
+In-Reply-To: <20240508172621.30069-1-ppbuk5246@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:LKnRS7MuSAFl/he+bteY1QUAX2irvK6smzp2qbkyj/kinqwqi1h
- uyyAA7lhXKQ8dzcgnzmhStr3IDlsazri2nVcIio+qU5tvQfBICx6crITmo1j6CkDuVAvKLB
- WA1ezTunRPLbh44c96ZL73BpM+lbxtp1WtrTpjipWi1MarX3eCK2gn3Tjgu+T9qzkadlFcC
- x6xERPm/oQeLX2dvLSfbw==
+X-Provags-ID: V03:K1:vI0kdZc8ldOBS71LgW9lNsV9hIjeBDgy5VG+o8EqSRdvzzm/Ez1
+ Gyd7FSGlOMEhu8Mj97kVRXLLyxH1t1wBzcgu68xNrsgrVGZV14gT8ZuQoVLWK+QabaQ4QQt
+ DOUrHmPD9+Z8XT8JS0UAo5oUXifT/wJIgc0KylJ6o1wdmpszLlP5v5oT32SQ7LT8AfA2xqm
+ 0TszyLniKWkoBGvWhq89w==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:qSMLRAMRP6o=;dv54UHQvXakuD/tl3CKU+TJdKIQ
- MjUdd/DPFvsHI5t5Z/a9ZFZmNcSOwGpNcrYWkYwFbn6y6DUP/7CWv0v6ENrve711O6X3RmTpx
- 3lh0/7dmMmAnZixj492qxd3y7EWs+563WYmD4EoRKyPWo53R2v3KH0kW+bdPqK0ip7KSkhC5X
- KQzb9lB5WUc5d4LIqeyRgm3ZMUtE6Xa3KNFR4AHhev5OkMDeDey7dtOv8PLHfpTGXxwjKJ3XJ
- lSD/2B8uMQcp8h61ywNoF3O2Z7xfwbUgKiYQqB4n+Ni44djPrCNTqTbwoJ5l8cv4m9jVqkEt+
- vB+xIUjGC4Zw5wQRpoOaSrAQLLFk9cTeFGGInR+D/c794ucUjuRVDcJz6jdMfUWjT5xWynJgu
- BqJ+F1H8iW/ruPCdDzJiKUwLayUNXmoOtc5w/9f7Kgjkh3Zoquv8AGwGsYRg3+wfO0Da/TfOs
- HNYz0uM+datnl6gDzrKrurkaXV5+OWenf2TVWUQRP06fC+L6P9b+nHU5Pib0UHQRVirsba7QM
- XKCvObBvAAtip+2NRJ4K7sBDrSn2oClvu/kpP7ste/UjqXsnItUg5f/213DyAcQO5M2rAlNvw
- k4KBqbjy/9j3XyUtkNlQqvbZOErBcebq5XxV1ddsrbwGfcVTc9lKqjrVmFsP4pEwGgcpQfVog
- DYtr08VEljzkQMTs/XmyplJSnHTFmqZULdyH6/5BHHIYlfMYt63zsA0drgb1wZj5KUcR16Mtj
- aVkpH31CXuvmvzi1cWEx0cgq5+xbEZw02xKpbSEaQD5oYlR09r8TQc8VIMOuZi8EnpuT59+kT
- 7Sj9dkTaCa2J86I8zzRor92VuqZC5BfVPU9g8wlN8p914=
+UI-OutboundReport: notjunk:1;M01:P0:dN2KT5UCWdI=;MbB77xwG94SuuOHmvmM+pT+Bte+
+ CqtUXorw9/w8qR0RZMTmJ9f9LV0TyX0UWkvMHtEEHIijOKXVg8DKHYfdSw+jWhVYDpFsAKbek
+ jdDuIwTjUIWUDiqThpQ271rzc3sxkAhS7eGSgjXGToxKmiUCbR9bJ+RgMaJ30YF7fte5ottjz
+ pNNifhI8T3v3+gP0dDr9cq1+n33gqWUXDJqdIZvRVTpzo9uEU2vmEsDPPPGW2MdYc0aAR+IQg
+ 0yZ202VejmVrXlSRaP/bIzDzpa6uGI905ZE+o9G7P6YfY9fCpV9Pdvf75i5u08CQULnn2HjmL
+ drkhLb6+iNydOg1j2lRrfXFcTF6mU/yg5muBpK3wgV3LHznyl7pu8z8Pki16jhSIlxRJiccNE
+ aTHCLLXezwvyRXZ4k0s/CxohZtQlt6nvQTw20C9EbQ+ho5YlT0DFpl5j27rfY7sVhAhdzbsr5
+ gRIHu0HFp/QETKlv7p5xpS+8pZ1zgpbGpVy3fNE2NVxrindwGLOo6Jy6u6zqnzApnhU7zSU3u
+ Por3efO3kviRUbYf5n3JGpxbmuOx2YuI1jFrqiBwvefVGV6YPHQGUPzyYJmkPCPO9sbj2J7Ho
+ fF7FnNFIOheQ8hYRRfVFZv8AeG1S7lxz+IhZi33nnVx/OSycmkr4IlGiTdwFc0HQGDztWGgVW
+ RyJNG03vNw8v4mdFZv1vTsmv5W/5LfFP1U29nDSrmpgKK6yoMz6mBZ/omRSEzr8KyGI5Hwuqv
+ mzbyZ8ZAlmtGVp/6bBFKOB9jPaCOv5GgUTPl9zjIWM+2dlA/Y/3C/1s3eoU5O3QeMrE9Kza4q
+ JPvpm0uuQaGsqvxrDHiq/Q6WPxPMJLyQ/Ke/IGR1j0/Ww=
 
->                                                        =E2=80=A6 To fix =
-it, this
-> patch adds kcore maps in the tail of list, =E2=80=A6
+> When nohz_full CPU stops tick in tick_nohz_irq_exit(),
+> It wouldn't be chosen to perform idle load balancing bacause it doesn't
+=E2=80=A6
+> So, nohz_balance_enter_idle() could be called safely without !was_stoope=
+d
+> check.
 
-* How do you think about to add the tag =E2=80=9CFixes=E2=80=9D?
+* Why did you repeat typos in this patch iteration?
 
-* Would you like to use imperative wordings for an improved changelog?
+* Would you like to take the relevance of imperative wordings for changelo=
+gs
+  better into account?
   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
 Documentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
+
+
+> ---
+>  kernel/time/tick-sched.c | 6 ++++--
+
+Will further patch version descriptions become helpful behind the marker l=
+ine?
 
 Regards,
 Markus
