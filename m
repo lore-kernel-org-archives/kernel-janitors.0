@@ -1,92 +1,84 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB9C101E3;
-	Thu,  9 May 2024 09:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0923614AD24
+	for <kernel-janitors@vger.kernel.org>; Thu,  9 May 2024 09:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715248518; cv=none; b=MQrAJ8/Im2JjQ1pImaOTOanynGnqXazJXrUDLOJgnEoPJY4tkx8DJt4ms4ZVjabv1gIn5AfJe96lAi7bo7VFGsnNlHiMWIW+Ex41wwdhq5nYUtFwdoTZQ+gCEJXgvCBKlw1FrmhkwfI/YmhFTCeQxS2AMU3njV27EP66p6ZjOyY=
+	t=1715248791; cv=none; b=sf6EZ99gNSkUlJ5I5b4OmCRRKXGDB0oAi/NHXzh8Y+krdvqeFl7XaH8JEfOjR9IkQIbdj+CVBEhClyUL5k7XlvudQdg2eAOiWEMoeccsvg3wopQT9pti2LW6zqvtisY5397MtgjSsAj+NUJzBb1UOn4DiQK1yb2+Evmw+Jw/Q9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715248518; c=relaxed/simple;
-	bh=yrD/QtiUP7raTVg4YwCBZ7H+mXiDO6gGM1MH4II/Grs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WfuIVNB8mAoJipHe+ZUwfxAdnNoWS0AZQI8T2kFqV4zKFsvb7t1pTxL35shJWeuizMgcVn6OIB++m67tEkR3UDNgoyKVrAYg6lFnpLk/obNiR1hYwlgGe1ke3dgcuHqrWuvUihtrEVlvXVQJ35joz41+VzorVNwDkAC4NRM+bwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jaNb/HMB; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1715248791; c=relaxed/simple;
+	bh=vAA13b7P3kVq/+RAFJXOYAjvaVdl9qZ3lyYPS5otTnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LLCx9xl5O61lVMJRa8MnLIH/Zy4hxRrB8Ls6yiD+uz32i5fzfqNlibcEcff3m4a5LQe4oXHOKRNcA1WMWfIEaXz+0/NrBNekZcjSv2N/Y9UDULRw0TSasFjkD4n/2SwuHa0z1/zg81CYCaisVfh/Ulxg0y1AwruRJXH1+JDurEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W2qOQS6E; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jaNb/HMB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715248509; x=1715853309; i=markus.elfring@web.de;
-	bh=yrD/QtiUP7raTVg4YwCBZ7H+mXiDO6gGM1MH4II/Grs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=jaNb/HMBNLDiJ0b8Dl6mr92ZZ0B0zDlSF7+nWkGvI8ZtKQnk16FAvCQNj3AdrIn9
-	 RuGBMIE1ou5FP+NBIVt88QMevCscbvO3Ed1c20v7gBkNaDkxszQ4LqY5Rlk0AynY9
-	 CoUtJN/O9COYLQg/+rnf6aDDfcEINoSZ5hq463dO1kUUixYTFuN0b0TtYbhYs9iAX
-	 dJ/iqrYYdOzgZjE4KpVccE7iOKS7AkUnIYfKGXEeOU1OOJFc6/wHbozwy8CWlL9gg
-	 d0pEiEeOeFWDZLcQhdeGzoJLFZDMCDlm5gnQdmIyQXW8NVt+T7XCeTb+TStKm1SgZ
-	 OXXzRyK3MSPda1/0HQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N2BI2-1skD2J0L2U-00tG1W; Thu, 09
- May 2024 11:55:09 +0200
-Message-ID: <336c0653-9876-4268-a798-3e316b3d7f26@web.de>
-Date: Thu, 9 May 2024 11:55:08 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W2qOQS6E"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59cf8140d0so151642366b.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 09 May 2024 02:59:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715248788; x=1715853588; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vAA13b7P3kVq/+RAFJXOYAjvaVdl9qZ3lyYPS5otTnA=;
+        b=W2qOQS6E3K4ahREBr8hrdQOAHM9nHaEvvnxWIm0vGbhDtw858+Wz1xTe3MbFdnnLN3
+         pTMNcsk9YyuFp5XONQBIj2lkmoxOyyiojnOWrFJXKyYbdu2ILlDrI1HEr8vRuevBjkw1
+         uKDsy4MSZGqaoi7s+pyGv71HhBmDTU1jRxbY7+BUMkuA/gFyyOYKrEslN2fbXBHMb5Cz
+         f8kXxPTf84fm45XSoOMAZhrt6P4Qz5prOJOVneJk9V3wcWXLHLhFt+LiW5nSr6HW3FZ7
+         Aai1jIoOR2mh2rk2N04Yz8rBqy7XYHyMbNrk61QX3qY2L1T0V5qMFJRiaLpnqAbLGDZg
+         tpXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715248788; x=1715853588;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vAA13b7P3kVq/+RAFJXOYAjvaVdl9qZ3lyYPS5otTnA=;
+        b=cPQfkcS8ZS5utv33akOXlWnXoMW+EsuKFhQYYIw3mmoxGKRXY3bx6ttA8YZ32lLosr
+         QfgHm+6EGxJzHHA05gMLUSrDz9oLDzrT59AYWe3ooumoxZvwDc7AHymLRqADs9TTa458
+         lZBDDW3fxaagcRvf+VcLCrcj73rTfcvjLX2dMddq8eERlNJ565k6voMzzGStFQZVUF6/
+         aD5r/XY+KceHjv9Pt0nLUPye/rLlCONUvpZhZwyHeZABYXHIpWWyzFl9i2F5/NNHeyJJ
+         bq2Mz4JXD5RHUlxdf7eOEcxb7Qywdb1WIgz/+tu079ZPgfnBTHoVFEuFnwSR4R0YE3gv
+         jJrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYa+8ZcLJLPyVQp218gA0A28BBromJg3iDdJ01FAuZXL9cLiG1SH7bzBgD3gWHSAJutfnvo1YTxTlHA7oU080n54XritVjIGgUhKjjWzFp
+X-Gm-Message-State: AOJu0Yxi8W6W2vpgLeYywbbyb8BwR90hUkFkO6+u+aabberuOBMlchdN
+	Fw1qf7ekAoUd7978cQZWNsAlEAYIZUaoQWH8uNJH3NhHV59uyiMs2uQKxXqlBr1QduWKaqtIKc1
+	r
+X-Google-Smtp-Source: AGHT+IG6R7BLV/bmTcIFwSbDC1bMFzF1pWWCeqzJAHPNppoxKmA+Nqmks67h6FPVR0skwmyHv2tJtg==
+X-Received: by 2002:a17:906:3296:b0:a59:9ad4:6f42 with SMTP id a640c23a62f3a-a59fb9b8298mr343794666b.58.1715248788259;
+        Thu, 09 May 2024 02:59:48 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b0193dsm54636866b.169.2024.05.09.02.59.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 02:59:48 -0700 (PDT)
+Date: Thu, 9 May 2024 12:59:44 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Levi Yun <ppbuk5246@gmail.com>, kernel-janitors@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] time/tick-sched: enable idle load balancing when
+ nohz_full cpu becomes idle.
+Message-ID: <c01a0e7b-96f6-42cf-9e71-8118640abf5b@moroto.mountain>
+References: <20240506213150.13608-1-ppbuk5246@gmail.com>
+ <67be5fa1-3b5e-4ec9-ad8e-1e230e618e98@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v4] time/tick-sched: idle load balancing when nohz_full cpu
- becomes idle.
-To: Levi Yun <ppbuk5246@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>
-References: <20240508172621.30069-1-ppbuk5246@gmail.com>
- <20240509092931.35209-2-ppbuk5246@gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240509092931.35209-2-ppbuk5246@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mRsGSphSdKcWayvWVJ8HzFyaVhXjvqms4KqJYG9jxLLE5kKokYt
- 6XsL5ElLYFFMyvBNNDUJktAouATyTnhVZlgdpxQTSbVaYHbKzPfOuZkjXmpFuWggPsZ7QNk
- KkRtsaXW+OmHizladr4q2IgVsOflIyRshulQ/2f77PkwtBLmmzqx2pYfNo6A7iSsKuOINme
- gNsSZW+r8hUjMex0KUnkg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:h0gNp7QchA8=;mkdnxuLzwbR+meQwfmi7wvbFJkF
- WjBo3X7sPLvGnyTzK90ALKbRw3erYTYuZSEUGzDd87W7vgSita2a/Spc2KzdrpT9Q5ISN9avy
- m6lqsKZ03fj5wLVVq0kqhSeAOEvYxsmvVbigRwOxEAums2W1nUJgEcHxXPGFQ45zxe87Ijjli
- ONVDsHVFAF3qpaPvSgtPHJUph668FGGiuNMV/UMcw/jgGHXDN/+p+84w8DTd2jbrewf3Zs1pj
- OPhqjFKC40iIbRZF0dEXigDPnEWPNTrNIyAH+nKpqrvCrbVunJyHwzamp+j4E/8L4S5MyIcAU
- /iboN7T7HlJKjXqjbL8oNvSr5KcCGTIJonTbv1Wi8DfeLIQ2W+moMJBzA/kgdbnW5KdOXniDY
- jXZ0l2kzTJ1NtM7o9Q4AY+YoKr5bAI28N6MWxqvMueVkM7g851rdzg+OgRDli1jpqtxXhMGWY
- BhdMDGyvy11edasnQGAs3OZQlmu7Z01cx7XDdyi3JOOw4KZEtuYP0541MeBim2pTYcus3NJmx
- 9RiLQOXAQyMOKP9yuZfTj9V8KarA+pMOfx80SbznENVnfV3a6WTffxPwHgKcDFhs/M+qhZagA
- s3xMiZyi3c8GB7ftBw1j9h5ui7acchw7djLFGIU1s9v8aL4MfUDy4C9NC0FpNR/NaDeZu5gvb
- DG3fRh8yjOzUj95jXkMwLUvLH9+URCLM+Jyfkhnqk/GOp0qgTz4kAfTpyJVkqqZoLsWM2vBpC
- 7kEscGIjRyRScq9gj2tad+chCQ6Z53LF9v6dGzSPqV1h7dE/zghpBEYpu0s5hclRsba05DVu8
- W+cKT9Y2qnnPiFUlHIu3DrbU9Mw9HgHVyfUpQ1UlXGFaw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67be5fa1-3b5e-4ec9-ad8e-1e230e618e98@web.de>
 
-=E2=80=A6
-> Currently, tick_nohz_idle_stop_tick() is only called in idle state and
-> it calls nohz_balance_enter_idle(). this function tracks the CPU
-> which is part of nohz.idle_cpus_mask with rq->nohz_tick_stopped properly=
-.
-=E2=80=A6
+Markus, kernel-janitors doesn't need to be a part of these discussions.
+Could you please stop adding us to the CC list?
 
-* How did you notice improvement possibilities for such data processing?
+regards,
+dan carpenter
 
-* I hope that a few remaining wording =E2=80=9Cweaknesses=E2=80=9D can be =
-adjusted accordingly.
-
-Regards,
-Markus
