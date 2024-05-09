@@ -1,71 +1,66 @@
 Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0923614AD24
-	for <kernel-janitors@vger.kernel.org>; Thu,  9 May 2024 09:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397B412F38B
+	for <kernel-janitors@vger.kernel.org>; Thu,  9 May 2024 10:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715248791; cv=none; b=sf6EZ99gNSkUlJ5I5b4OmCRRKXGDB0oAi/NHXzh8Y+krdvqeFl7XaH8JEfOjR9IkQIbdj+CVBEhClyUL5k7XlvudQdg2eAOiWEMoeccsvg3wopQT9pti2LW6zqvtisY5397MtgjSsAj+NUJzBb1UOn4DiQK1yb2+Evmw+Jw/Q9g=
+	t=1715251664; cv=none; b=UR0ad+8sTagA5CQo4/dDBz62j2Dq4dP7hY0tKV7IBTyZqtyfJ6UvE+vzIsm6CAZ5pdBI/hmZmebUSd1zQNl6TlYTZB4Nb7XijCcvx08uaaSLq8ANs9NDjlbe85uwc7zIWNL2VGb1b7j/FezKPMF1uoQwvE7ZCwrusq6tQVuUypw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715248791; c=relaxed/simple;
-	bh=vAA13b7P3kVq/+RAFJXOYAjvaVdl9qZ3lyYPS5otTnA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLCx9xl5O61lVMJRa8MnLIH/Zy4hxRrB8Ls6yiD+uz32i5fzfqNlibcEcff3m4a5LQe4oXHOKRNcA1WMWfIEaXz+0/NrBNekZcjSv2N/Y9UDULRw0TSasFjkD4n/2SwuHa0z1/zg81CYCaisVfh/Ulxg0y1AwruRJXH1+JDurEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W2qOQS6E; arc=none smtp.client-ip=209.85.218.54
+	s=arc-20240116; t=1715251664; c=relaxed/simple;
+	bh=rm5tKlmmzDvxykhjXtAahnY24hMhcwI+5x2kT/7OVE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=l+GiPyjTVvgL+q5X17ULfaoo9sbwXQBFAoLHs6jtDhBPBHCs/z5/4nYLK5IjR8W1AAldDqtRIrUje2cAlvYGHx+Z1d8b/TiBQ3eqx+opcvXH5tNEKBfRoprnEuY6yuRxe+dO1W1V0cn0KaKrOZ4Q/J/LZH5B8a6+k/0mL8r1S7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vq3Jmpyh; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W2qOQS6E"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59cf8140d0so151642366b.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 09 May 2024 02:59:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vq3Jmpyh"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59a17fcc6bso167827666b.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 09 May 2024 03:47:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715248788; x=1715853588; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vAA13b7P3kVq/+RAFJXOYAjvaVdl9qZ3lyYPS5otTnA=;
-        b=W2qOQS6E3K4ahREBr8hrdQOAHM9nHaEvvnxWIm0vGbhDtw858+Wz1xTe3MbFdnnLN3
-         pTMNcsk9YyuFp5XONQBIj2lkmoxOyyiojnOWrFJXKyYbdu2ILlDrI1HEr8vRuevBjkw1
-         uKDsy4MSZGqaoi7s+pyGv71HhBmDTU1jRxbY7+BUMkuA/gFyyOYKrEslN2fbXBHMb5Cz
-         f8kXxPTf84fm45XSoOMAZhrt6P4Qz5prOJOVneJk9V3wcWXLHLhFt+LiW5nSr6HW3FZ7
-         Aai1jIoOR2mh2rk2N04Yz8rBqy7XYHyMbNrk61QX3qY2L1T0V5qMFJRiaLpnqAbLGDZg
-         tpXg==
+        d=linaro.org; s=google; t=1715251660; x=1715856460; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1rUGSw1BOvy4nSCnLDtXwjmmz6sz4Fg4JvkDjn2tH+U=;
+        b=vq3JmpyhZRc3TR4cEjBGRDbyb7flDs1B9zCrNJi8ceyjfew37YYFlILBv7Y4aOX3NN
+         QzeIZuLN4JjUglakAYoh2qa0uWv7E8ZsGChseMCjfvQCU6m8CaERDYjKiFSdtJNOTH5T
+         9QdlQPQJuuM3+22NubkXiFgC4RXmot0Awl+etVOpw6Q/UePzy2Nhgokt5n51Zw+uXLW1
+         fApW7tHj88rCSIlbqk76hpwS6MdMl4h4JKxU8GGOwur7EwZOIA1d4LhZecY5Z2dg7lNf
+         Z31Me0l785CTrTJ602WjYqgMDTEe6z5NHLEuQVyFmydKASh2Eed5LrWKebbClikTIlu1
+         K/UA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715248788; x=1715853588;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vAA13b7P3kVq/+RAFJXOYAjvaVdl9qZ3lyYPS5otTnA=;
-        b=cPQfkcS8ZS5utv33akOXlWnXoMW+EsuKFhQYYIw3mmoxGKRXY3bx6ttA8YZ32lLosr
-         QfgHm+6EGxJzHHA05gMLUSrDz9oLDzrT59AYWe3ooumoxZvwDc7AHymLRqADs9TTa458
-         lZBDDW3fxaagcRvf+VcLCrcj73rTfcvjLX2dMddq8eERlNJ565k6voMzzGStFQZVUF6/
-         aD5r/XY+KceHjv9Pt0nLUPye/rLlCONUvpZhZwyHeZABYXHIpWWyzFl9i2F5/NNHeyJJ
-         bq2Mz4JXD5RHUlxdf7eOEcxb7Qywdb1WIgz/+tu079ZPgfnBTHoVFEuFnwSR4R0YE3gv
-         jJrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYa+8ZcLJLPyVQp218gA0A28BBromJg3iDdJ01FAuZXL9cLiG1SH7bzBgD3gWHSAJutfnvo1YTxTlHA7oU080n54XritVjIGgUhKjjWzFp
-X-Gm-Message-State: AOJu0Yxi8W6W2vpgLeYywbbyb8BwR90hUkFkO6+u+aabberuOBMlchdN
-	Fw1qf7ekAoUd7978cQZWNsAlEAYIZUaoQWH8uNJH3NhHV59uyiMs2uQKxXqlBr1QduWKaqtIKc1
-	r
-X-Google-Smtp-Source: AGHT+IG6R7BLV/bmTcIFwSbDC1bMFzF1pWWCeqzJAHPNppoxKmA+Nqmks67h6FPVR0skwmyHv2tJtg==
-X-Received: by 2002:a17:906:3296:b0:a59:9ad4:6f42 with SMTP id a640c23a62f3a-a59fb9b8298mr343794666b.58.1715248788259;
-        Thu, 09 May 2024 02:59:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715251660; x=1715856460;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1rUGSw1BOvy4nSCnLDtXwjmmz6sz4Fg4JvkDjn2tH+U=;
+        b=J8GR+Bjg756uJplcskHEuaHk3IZW8tydg7nBvoVtXJwxVqHcWh051WSVG4JIOPlA1C
+         +l1/6tb+6QiAPKgGC8yA3GGpuBZ1p/ifLIJ+XwzZE0cIQAnPoygmvCfQMiy/CCRSWa8v
+         cgwnMIVVK7B8c4nQs2l2Y98RPagyl7cW8LvJijJwvTdVNV1HvQRm3H2UOYuljj6k423T
+         Qt09bO+M9ztHw+3h8X+Irmq5VlTiB9cVNqxRaElsv4+HnCSXtWRS4I6VYZeIzFpBFWA0
+         toK/osiPpfOpD01CAS13feDYllSM6nHQ34RlsSm/xGDvLq4xW3N1Uo9F4jedvs1hx0G8
+         ggzw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3DYAYd3Xgq9sLf5tPTIeU5Y3MV8lnw/0Baus83U91WqRPQXQ+qfY4AHEaoVrcO/LNvVZl83GBvxRa9IYt3vAYYhve5wwpqpm70FwVqQG6
+X-Gm-Message-State: AOJu0YwKkG3zjqqhPBafhcZb4UBCK60Hw0w5aJpvs1MZv8PJavOY5fXe
+	ewKmSMoFc15TY4SYpVtskvtPpCDvisUEjOWgGF+fgATgTyUDvrHjmVv9754A17U=
+X-Google-Smtp-Source: AGHT+IH93eb6t4ZGZhsfBVUwyJEUTNQ9gpPokGEI/RTskChoPPUKWX5A9Rf3MAwsN76xfbFTLzj1Sw==
+X-Received: by 2002:a50:8d41:0:b0:571:bed1:3a27 with SMTP id 4fb4d7f45d1cf-5731da9edfdmr3363456a12.38.1715251660386;
+        Thu, 09 May 2024 03:47:40 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b0193dsm54636866b.169.2024.05.09.02.59.47
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bebb6bfsm564708a12.28.2024.05.09.03.47.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 02:59:48 -0700 (PDT)
-Date: Thu, 9 May 2024 12:59:44 +0300
+        Thu, 09 May 2024 03:47:40 -0700 (PDT)
+Date: Thu, 9 May 2024 13:47:36 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Levi Yun <ppbuk5246@gmail.com>, kernel-janitors@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] time/tick-sched: enable idle load balancing when
- nohz_full cpu becomes idle.
-Message-ID: <c01a0e7b-96f6-42cf-9e71-8118640abf5b@moroto.mountain>
-References: <20240506213150.13608-1-ppbuk5246@gmail.com>
- <67be5fa1-3b5e-4ec9-ad8e-1e230e618e98@web.de>
+To: Trond Myklebust <Trond.Myklebust@netapp.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+	Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH 0/2] NFSD: prevent integer overflows
+Message-ID: <332d1149-988e-4ece-8aef-1e3fb8bf8af4@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,11 +69,20 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <67be5fa1-3b5e-4ec9-ad8e-1e230e618e98@web.de>
 
-Markus, kernel-janitors doesn't need to be a part of these discussions.
-Could you please stop adding us to the CC list?
+There is a potential for integer overflows in svcxdr_dupstr()
+and svcxdr_tmpalloc() and XDR_QUADLEN().  I believe the fixing the
+overflow in XDR_QUADLEN() would fix the bug, but it's safer to be
+more thourough.
 
-regards,
-dan carpenter
+Dan Carpenter (2):
+  SUNRPC: prevent integer overflow in XDR_QUADLEN()
+  NFSD: harden svcxdr_dupstr() and svcxdr_tmpalloc() against integer
+    overflows
 
+ fs/nfsd/nfs4xdr.c          | 12 ++++++------
+ include/linux/sunrpc/xdr.h |  3 ++-
+ 2 files changed, 8 insertions(+), 7 deletions(-)
+
+-- 
+2.43.0
