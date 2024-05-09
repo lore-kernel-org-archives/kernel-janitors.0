@@ -1,121 +1,101 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52A0147C6C;
-	Thu,  9 May 2024 06:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9379BDDD9;
+	Thu,  9 May 2024 06:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715236142; cv=none; b=OU9kWjH81BcamILvBv4SdlD4g5Nh5bf/UJ1v8whg9o4ljFFus3JKhOJ1nsuPwAHj/Zydvi/DqTxQ9IJgU8ek897eDEi0mW/EZVItQB+H6MKNVXWbM0AknoBzlfQ1SeDnRXpuzTodkj5U0HPIpItLPH+Kw+YKEchWc+Z/q+GZ+aM=
+	t=1715237428; cv=none; b=FrDZyYu7YvPUIPfozpePZQV0yrJ0qzHic1WF9irAG9NzLtdTjyAUo/n7Q8QhEWB1h1uDHmu0XPvwlcXpO+suDvDsTwM/rWHQtOeVcE9zmQdCHH0gjYi4/WnmLP1zGZUYToIyKliYHc1K/+U2CF0F3lrETr4frTY1c1ggF7Bf1Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715236142; c=relaxed/simple;
-	bh=6ez9Lqfhbd340o4y9vgQktizgcEqn2zc2QMhtm6j9Oo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iuBvBK1OQuh/xfh2L4/rMY58n84e3gl9D7CeKYe72BZqQqRMI79ksplxL9nkTuY1LYyR2+N4XcMoEGWdy9i5CBNvskHPT/GyBnU4PM7To5WwBeqOCCwBbunrWZN/BJ+MkZMP+9rRrL6sSjgH2T77IzsqpmA9ULjL5T4QDhqpaZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qXwiv2Qh; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1715237428; c=relaxed/simple;
+	bh=RSeqe6ed4ewdO4stMEjsqV83ww4odGvJX+LQ9kccDDw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Nq5/uhK6jJ8zpow/53Lyj/0bQmBbXJCSXcG7vcSRQ7xZNfMsifxedsXSqQSEkt+CVUitWij3iI/FsUR1WI3u04TOz6nDkDfETzDHko3E+q2rMbjlJzGULLJit1yEVDWLRmi8YehmVPJ+gh/tEQUDJ+VNR2UvQcWi1OaosRghgiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zez3NFdM; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qXwiv2Qh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715236122; x=1715840922; i=markus.elfring@web.de;
-	bh=qI8eEoxlnq/rtJxkh/NHiyGK6SIHgwqdPIuCrkX4CoQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=qXwiv2Qhg5/TJ4AAAjT5N1MKgf9mFaEG+C14/pgVfisSI2hwSX05+UjTah4vnLiq
-	 4NpJgN+ORlNXsSolT9ymxW5TL9hr5BRjCJT+sAKPwtNiBNFID4RUhc7hl4TWUgT4I
-	 P+2HopVLTX7NTocrdJrXhB7WN/nQ7bq4kKU8WW+SspO5KeyvLSm8lpNEyWHD+oDXI
-	 Pkb5c24nhjdqeR8Il1hDHvTwjdBTWydacXzpJz3ZE9a/a9/JGOPqJLt39wS4eHjiX
-	 4ck8D6fCXUPZrXLeB9aKQ/0fXb6UVlJOq7lnaIXBP6ovtYr5wgOhjDq9hdQIqItwz
-	 +UaZh/R+p5ij3kIaEA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mcpuw-1seqJk2QXi-00ZlrX; Thu, 09
- May 2024 08:28:42 +0200
-Message-ID: <a407d12f-6845-4f51-a112-6bdc17641ff1@web.de>
-Date: Thu, 9 May 2024 08:28:21 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zez3NFdM"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e4b90b03a9so6674971fa.1;
+        Wed, 08 May 2024 23:50:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715237425; x=1715842225; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2UOhhsJgb99pm27SXHK1pVf/ykOOg5LTm9pRGDO0Fjs=;
+        b=Zez3NFdMeQnGYCiu7MmJe5nvUMEpBYbwDLmI/ZdVXg2qrU+MbE9/7u2BPsam9iPzB0
+         kD/GdYtPlX1Jyy5rMA7ez0Bm3BFclvBm3/LEGSkpcIbtTilFfgXD3wz9pqMba273qCcS
+         fHqtOC8RpJpOMhTiOM02vIMseqf4smHY6CWT8/Be4OoMWqRkgarc0yOvtcwrgud6pkzr
+         /WXQU91iYi9IKcd2L4ATJTPLkhAc7AcTuEYCsR1c16vqqX17T7CGSVlyuvD5AfQnmnC2
+         YpBOJHAfMN/w3Ms5tfvAKKNENqhZ+dU29dl1hLdwM3AtI8P8sggwQD0f39pH9FZlZaBa
+         03dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715237425; x=1715842225;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2UOhhsJgb99pm27SXHK1pVf/ykOOg5LTm9pRGDO0Fjs=;
+        b=SPbGLQQ4l6fT5is9jtKcVwXdkWVu6cpz3iqO9+izVYRFsx+s1agge0ldT6dC4SoJ+U
+         y6sahXsQxOn+ClmfPJo3i3YDSSlXJm8gBvcu1urkPh/fZEROmNX22Kcucj+9qpnc1/yg
+         qxTJHn+hnbggCyNx8YYY6PteA97HTtEiyVDZSF3voztakY2zBiOlZXr/xoOBvKs6J6Uv
+         Phmrem8iY3lxQwEQniCVmImIOm+E2/Ilo5uGkrp/4P59aFm6051nyOgkFXIj/QqODQj3
+         1f7USZBnh94bGTuAk7CbECz6ZsqA/JmMm0BRI/pOYSXWUZbos01BmwcynC3Yx2m5LrMl
+         am5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWMq3YRte85F4Smc8eWU+uQIRZGBjdnfNFe/S1NVJ+5n0PtcRsbHlYmNegbTJmgmBmGxwiBC7/2dl8s8drYCdiH0nYMl0FmeXMMOQJJLoB5JyrZYwd8H7K6LzEGAU0tFgk3keUT
+X-Gm-Message-State: AOJu0YxiWMyJUAcWRFR9rrscM4/XrMqpDvFGxC37np7I0a5YSCwfl+iv
+	MroaIu+Md0NvI4oKfAIzsD4xhX7W1HANSeQDr4oxb0QOAOjgQP//
+X-Google-Smtp-Source: AGHT+IFdtu14ZmyI84Ks3pnhLvcdac1FmVj0U13JvxDP7AMPhUTOAmsM9uMthlsZwwvco4EdRUWDNQ==
+X-Received: by 2002:a05:651c:b29:b0:2e2:db99:c35e with SMTP id 38308e7fff4ca-2e44738a829mr35982021fa.12.1715237424463;
+        Wed, 08 May 2024 23:50:24 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fa9dbab53sm31431165e9.13.2024.05.08.23.50.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 23:50:23 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Woojung Huh <woojung.huh@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net: dsa: microchip: Fix spellig mistake "configur" -> "configure"
+Date: Thu,  9 May 2024 07:50:23 +0100
+Message-Id: <20240509065023.3033397-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] time/tick-sched: idle load balancing when nohz_full
- cpu becomes idle.
-To: Levi Yun <ppbuk5246@gmail.com>, kernel-janitors@vger.kernel.org,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240508172621.30069-1-ppbuk5246@gmail.com>
- <20240508192213.31050-1-ppbuk5246@gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240508192213.31050-1-ppbuk5246@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:1INbcY5FfjRWXmY7EYIG9fWe0ZA28urskb0AEX0UuqmQknXemwo
- 6aL7b5TTk9/I0Gq8p1gIcWoAUP/G3niPjwib9Sig0BWttoixFQvRLxbKjNV9dBk7zKIYhJi
- v+W7P/vWbDs+x/PrUgA29lskoAaW2PGNURzk1DufKAc86pSEZ/IGtv2E8rX0BhEW3POx9vu
- PXdA5mvm+X5m+vXhK5DmA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VQqKqKPXP9Q=;Sy19RzSEH5REP179ojt6y9bn5Af
- BTmggMFcoXwYL8dH2hFzuVMCMnDbn7MLLkAn4AEh7But3T+25jYFixSfMhySXKAvhDXx6LSsi
- tz727qrk10Yh9SrZlk4Ogy1IzfZX/fbnkW7aNIefNUWyJEF9icPkrLVTv0Ik3cjIHJR0vRN8P
- 1YWrekTjWsTp2b4VxXqZkqn/OFnyhsyL1Ecm/F5kazpWcI0r5AD4gaTr1xX9VHwmMmUw1iUeg
- qv5eNYpLM12MNeIhuBaoqlS/72ODEsQO0QVONndEmide0XlBDA7Mmx3X+6UCgRQol/B+uwBZb
- 2Ln/r4kYnS8aVPDBCzqd32xWVdnf6PJFQObMeh0BSF61X2Kuu8HyObfoPGdoD6042UG1+GlOw
- Xn7LyaZSUHjLAmx4s9Dn4tthOrFfe7b9CUJaxKjz1l8yW9H8D84zm/EdmY79kr4BuSQvXnZ8n
- 4faw5yO0DQ8C0lUjdjAby+B4lzSwGJth1KSSk6nWcO/jb79o6T/IYkj0Syr9W3NvgAbypVIhg
- KVt+FYIWQpr3uUZDUNLQSSRWhtY0phzS2eF57fyu64pS7xb1sjVqGRO4QBx8IOoY/8Pkg1aA4
- 5rH3MbucpnyH0ywlSWu7QZDTJvfF/ITJbsViZwrMhyiMfvkh3FM/SnCJV2GR2MRI3dpVBuKDP
- Xtjf+mHdMH3rHC1ZoN8LzWDdzpX87WUjz/LIsNetEcuZOh9uO8GS1RGtmRQDHSDvN7E9kQ3Zh
- ghlYDellhGOpEss9Ivp/7IdqTcIghO/KlkVROU19jgNf9Q7yM/+zggEAgQ29anYCfXpm0UDmo
- aJx6axTv+tU4PomGjVrRJeTBbseOSV7DJ/4nwILB3+cFg=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-> When nohz_full CPU stops tick in tick_nohz_irq_exit(),
-> It wouldn't be chosen to perform idle load balancing because it doesn't
-> call nohz_balance_enter_idle() in tick_nohz_idle_stop_tick() when it
-> becomes idle.
->
-> tick_nohz_idle_stop_tick() is only called in idle state and
-> nohz_balance_enter_idle() tracks the CPU which is part of nohz.idle_cpus=
-_mask
-> with rq->nohz_tick_stopped.
->
-> Change tick_nohz_idle_stop_tick() to call nohz_balance_enter_idle()
-> without checking !was_stopped so that nohz_full cpu can be chosen to
-> perform idle load balancing when it enters idle state.
+There is a spelling mistake in a dev_err message. Fix it.
 
-Would you eventually like to add the tag =E2=80=9CFixes=E2=80=9D once more=
-?
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/dsa/microchip/ksz_dcb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/dsa/microchip/ksz_dcb.c b/drivers/net/dsa/microchip/ksz_dcb.c
+index 5e520c02afd7..484945a9c5fb 100644
+--- a/drivers/net/dsa/microchip/ksz_dcb.c
++++ b/drivers/net/dsa/microchip/ksz_dcb.c
+@@ -220,7 +220,7 @@ static int ksz88x3_port_set_default_prio_quirks(struct ksz_device *dev, int port
+ 			return ret;
+ 
+ 		if (!(port2_data & KSZ8_PORT_802_1P_ENABLE)) {
+-			dev_err(dev->dev, "Not possible to configur port priority on Port 1 if PCP apptrust on Port 2 is disabled\n");
++			dev_err(dev->dev, "Not possible to configure port priority on Port 1 if PCP apptrust on Port 2 is disabled\n");
+ 			return -EINVAL;
+ 		}
+ 	}
+-- 
+2.39.2
 
-=E2=80=A6
-> +++ b/kernel/time/tick-sched.c
-> @@ -1228,8 +1228,10 @@ void tick_nohz_idle_stop_tick(void)
->  		ts->idle_sleeps++;
->  		ts->idle_expires =3D expires;
->
-> -		if (!was_stopped && tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
-> -			ts->idle_jiffies =3D ts->last_jiffies;
-> +		if (tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
-> +			if (!was_stopped)
-> +				ts->idle_jiffies =3D ts->last_jiffies;
-> +
->  			nohz_balance_enter_idle(cpu);
->  		}
-=E2=80=A6
-
-I interpret these diff data in the way that you propose to reorder
-two condition checks.
-
-But I wonder still how =E2=80=9Cgood=E2=80=9D the presented change descrip=
-tion fits to
-the suggested source code adjustment.
-
-Regards,
-Markus
