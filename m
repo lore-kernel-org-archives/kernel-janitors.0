@@ -1,66 +1,68 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E56912F5B6
-	for <kernel-janitors@vger.kernel.org>; Thu,  9 May 2024 10:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D4E12F582
+	for <kernel-janitors@vger.kernel.org>; Thu,  9 May 2024 11:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715251716; cv=none; b=N9b1cKTE3UEAUVf9t23S2rPmSyyPelP/89LHRQD4OeiIRRyu3I8vhyB08p+2KLuFfoRUOkDDdyei21LCJNKSmaPMRqSqn3bg9flUX2yrhWMB13qgs3IzfBjoUBWbQIA9Jo1uEH3GVd8OS9JhizTyYNbRt2F+BISGxE/hwcjsHmE=
+	t=1715252426; cv=none; b=l2MEYG7ki+GXbspvpAfdN+VaTVbP+s+ATZcCFHP6Qz+7fwCb9/rdAMKEVubOiLPEyB/oVLYBG21FyPeWXn5X/iuhSv/PESojPSYr4/YG519yyrCWrMRY2ZnPNK/3zH42popv9OTvfyq4iXQll51wyF/d384msn1RYgbwCeR4Mfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715251716; c=relaxed/simple;
-	bh=VctdIYRcYMl7yCi7G1Sb3DLUqDmPUVxcD0SKJgmAr9I=;
+	s=arc-20240116; t=1715252426; c=relaxed/simple;
+	bh=oiYrFcVXcIdeJNQt0Vt+Wqd2amviAN+UyppH8WlBQG8=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Z6/tKfceOqAcemiL6fmd8Wzd4CC3hq5O+bSyVaPQ60FV0nZc2x0VJ4VnyiM7xczw7DzrXb1W6mWwJQH/UA9q92beth7BECERc+LR+I7SVs8WRtLMlpbSrQlmBP5eEsbBOpLlfnWAhEjFXn+UFzhjCTfNMzEA6QDC/UGVlRguspM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bGqMW6j+; arc=none smtp.client-ip=209.85.208.54
+	 Content-Disposition; b=iNjprsNxciaP1hABDrAy2KiwnbyHbv9pAI1CV6p5lEcYLLjMF1WujdBuT90YD+P/BhQNspFmmAWOwQzKA44BiUqYI60zNAha0h7z9Mj/6R8/Jv8nZ7vAQrOlmvIaineYJ7P21rLv3bEwubR9lodzhrgDHRj+67M9vK4kbhj8F0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bel+ZxZF; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bGqMW6j+"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-572c65cea55so1318907a12.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 09 May 2024 03:48:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bel+ZxZF"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59a609dd3fso129465566b.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 09 May 2024 04:00:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715251712; x=1715856512; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qD5o65PhiAwg7/piV822tTYM++wRvUpFA3lGrCXfalk=;
-        b=bGqMW6j+jXVuenXgpVoj/r7W/X56zuyNfYC59cTEW0HJZj4lGTfPsXe/OAONJFGEAK
-         iKq2VgfwIyHesubOBkMzd52cI4esnDHVKfGbI0ffenAY7civHWX24qWb3DsszQrzWbAH
-         kaTJif5rSzm0IBtZXte39/nUjtS3tkzbK3VrUHrg/GHaYF//pvFiw4ynWOZ0dDgA06Zv
-         a8JBOCuZAmXCOYZj2sI7xVcpRCdFo88LvNGU6wUz179MHNheYKJp1jybGo31mcY6XGBe
-         +ZWgEkPK+KtfJHm1HEZXVlG/XPVyy0Ubn9Wc4EovauKzzFgKA9XVquo1z8L4epzdJvER
-         /ALw==
+        d=linaro.org; s=google; t=1715252422; x=1715857222; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dAA13ePi94GJNPEs4FpOTYd6Pg0GRkX3LYO1veVyWjs=;
+        b=bel+ZxZFQdUntv97u2uqZuFKZJjU4k6joe/dAJppuESxanrW75CwqvTYi2OwOPgvsv
+         tLmkleVSZSxrT5O2ksdOAV2R9ow26mCqIrfwrwDvv3W4TwngvGsdbOWCUJm9a6ONe0Vl
+         /JUpyDD/ea3dUfqO782iTtczG95W2iN3Qa8H8sYrqC7CAWzgJnWy7kVhdjGqwu09GBL6
+         B/tb8svZdb3AtfnadNQqDCcpB1aURNea/2xCdOpbZQI1KwxnMmWaqU9K3D7bJJTJAWi+
+         4A9traFl3O9luKheCzIIdNNYAb6BfrH01+AUbWH3VtZKoHXkucHOKx9PpDtog8e1aaKc
+         VMnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715251712; x=1715856512;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qD5o65PhiAwg7/piV822tTYM++wRvUpFA3lGrCXfalk=;
-        b=Eo0Dxuz+uZQr4JStiCwE/DVwTPlD0uct7Z1dhkaiemGQ8FrUwgrjmN110HCj93tDY0
-         ISEx/+FY0Wjo8JAs5e7bIqoZ27kuj9wF8imaKmvwKuy+Bw7mB4ZI/ZxQ9gH5kfR1Q1mG
-         0kW8nmUoVSK59EEkdNOL2H4JB5Co2DrsNBGN60Un2yBrGT8jjNC6oI5EpsE8+nXVWCr7
-         ZvVsTIDpCbtrjHkCTsHfMYvujQ7fD/vBPM11djO4rGF8KIIXPYFyU23tFMAF/dh4LE56
-         q4EcKJIQakX/aO8bxbls3xKnrsTGrAM61AO54SXFsHecHMj0NX08AV1y6mNFXJzqts+p
-         R2Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFH1UIxC0XwOp1k3AI+sgpy4xgGp/AShJ4DK7r2gAzp8GLxl/KPl0/b35QibnbBIYIl5YGnBGc2Z/8XBpmwwhwmeTU6fszTbQGbwSuEIju
-X-Gm-Message-State: AOJu0Yy17bhj5fbD0Kg6ZNUFJq6H4XiG8bia1KMz4ljMaXH8eK3V8hpr
-	8SK53xszjiEzkQKkHK8A5uS0j6yfPdXBqiOsQgDSMUF5s+1JOqxq0T7ZHjbU0So=
-X-Google-Smtp-Source: AGHT+IGqDgXNiTu5L0LP3FiH0Qhn/LQ5EXyCt8R1SOSC3IM0XZ62ypkMejfMBZXujtcgLGfguVX/ig==
-X-Received: by 2002:a50:d696:0:b0:572:a6fe:f7e7 with SMTP id 4fb4d7f45d1cf-5733294be26mr1553752a12.20.1715251712324;
-        Thu, 09 May 2024 03:48:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715252422; x=1715857222;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dAA13ePi94GJNPEs4FpOTYd6Pg0GRkX3LYO1veVyWjs=;
+        b=YxTiHcuL59EUpl8DDtzMgH1Mgk9bmfTtFL1kzyi7lL3EEnN9d3GzOEBz42IFx2zpnJ
+         QqqEElHBCtbIt2nj5FnKKACF35qD2eq1cTzqIWd5H02hXCAj42P+2jEFh2ye8rWcaDF6
+         t6nOAu+jM8lz6ZmcJh4KS6nO49xrqqXrD+gwfEOZWHVXmSgYgB8V7J+ntgLvQ+g1eZtU
+         7LnXFbLjX55lMTvmkgtz9LR+LteGqimrjaApxT051bEXlG+1HPbR0+XdcLNRwzmi60wv
+         Yx7PwXhKZ67W0PeWQAA8UAMbLk2lfZEQb/BUisVHnT/a5FfCf8sT4vL6Dj9y0Brhw9hl
+         2Prw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCFaVVxSEswK7JSxQlA1c5FWTgzsY5zJ8PjNUUdvT5dCVrLrr5gTdaIb4Yfz1amXiQK7Wjfv4Swsr7ujC9Q9Zk2GjAkZJU4xsssh+/L5TR
+X-Gm-Message-State: AOJu0YyKd+Mg9vWurxckX6CoXCX3oW5vmyZiaVIMj0+TUVDh3Kjn4OV4
+	nXrr1crF83QOE4oWigfp4CpSwRn6lOX/05j3JkVrE/scUoDij6e7zjo6a1oyrl0=
+X-Google-Smtp-Source: AGHT+IGbK+NqgxFz2Fj31M2oeH3+j6qnkR+cgqHhABgu7n8femfrqEdq3aeg1PWdIgkZis5QTbZqvw==
+X-Received: by 2002:a17:906:2bd3:b0:a59:a1b1:2978 with SMTP id a640c23a62f3a-a5a116ece99mr175295866b.20.1715252422057;
+        Thu, 09 May 2024 04:00:22 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c2c7d79sm570649a12.59.2024.05.09.03.48.31
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7d70sm60549766b.125.2024.05.09.04.00.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 03:48:32 -0700 (PDT)
-Date: Thu, 9 May 2024 13:48:28 +0300
+        Thu, 09 May 2024 04:00:21 -0700 (PDT)
+Date: Thu, 9 May 2024 14:00:18 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH 2/2] NFSD: harden svcxdr_dupstr() and svcxdr_tmpalloc()
- against integer overflows
-Message-ID: <babdb32b-3f3a-4e46-8cbb-26f0ca49cc61@moroto.mountain>
+To: Shay Drory <shayd@nvidia.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Moshe Shemesh <moshe@nvidia.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH net] net/mlx5: Fix error handling in mlx5_init_one_light()
+Message-ID: <a2bb6a55-5415-4c15-bee9-9e63f4b6a339@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -69,76 +71,59 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <332d1149-988e-4ece-8aef-1e3fb8bf8af4@moroto.mountain>
 X-Mailer: git-send-email haha only kidding
 
-These lengths come from xdr_stream_decode_u32() and so we should be a
-bit careful with them.  Use size_add() and struct_size() to avoid
-integer overflows.  Saving size_add()/struct_size() results to a u32 is
-unsafe because it truncates away the high bits.
+If mlx5_query_hca_caps_light() fails then calling devl_unregister() or
+devl_unlock() is a bug.  It's not registered and it's not locked.  That
+will trigger a stack trace in this case because devl_unregister() checks
+both those things at the start of the function.
 
-Also generally storing sizes in longs is safer.  Most systems these days
-use 64 bit CPUs.  It's harder for an addition to overflow 64 bits than
-it is to overflow 32 bits.  Also functions like vmalloc() can
-successfully allocate UINT_MAX bytes, but nothing can allocate ULONG_MAX
-bytes.
+If mlx5_devlink_params_register() fails then this code will call
+devl_unregister() and devl_unlock() twice which will again lead to a
+stack trace or possibly something worse as well.
 
+Fixes: bf729988303a ("net/mlx5: Restore mistakenly dropped parts in register devlink flow")
+Fixes: c6e77aa9dd82 ("net/mlx5: Register devlink first under devlink lock")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-I think my patch 1 fixes any real issues.  It's hard to assign a Fixes
-tag to this.
+ drivers/net/ethernet/mellanox/mlx5/core/main.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
- fs/nfsd/nfs4xdr.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index c7bfd2180e3f..42b41d55d4ed 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -118,11 +118,11 @@ static int zero_clientid(clientid_t *clid)
-  * operation described in @argp finishes.
-  */
- static void *
--svcxdr_tmpalloc(struct nfsd4_compoundargs *argp, u32 len)
-+svcxdr_tmpalloc(struct nfsd4_compoundargs *argp, size_t len)
- {
- 	struct svcxdr_tmpbuf *tb;
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+index 331ce47f51a1..105c98160327 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -1690,7 +1690,7 @@ int mlx5_init_one_light(struct mlx5_core_dev *dev)
+ 	err = mlx5_query_hca_caps_light(dev);
+ 	if (err) {
+ 		mlx5_core_warn(dev, "mlx5_query_hca_caps_light err=%d\n", err);
+-		goto query_hca_caps_err;
++		goto err_function_disable;
+ 	}
  
--	tb = kmalloc(sizeof(*tb) + len, GFP_KERNEL);
-+	tb = kmalloc(struct_size(tb, buf, len), GFP_KERNEL);
- 	if (!tb)
- 		return NULL;
- 	tb->next = argp->to_free;
-@@ -138,9 +138,9 @@ svcxdr_tmpalloc(struct nfsd4_compoundargs *argp, u32 len)
-  * buffer might end on a page boundary.
-  */
- static char *
--svcxdr_dupstr(struct nfsd4_compoundargs *argp, void *buf, u32 len)
-+svcxdr_dupstr(struct nfsd4_compoundargs *argp, void *buf, size_t len)
- {
--	char *p = svcxdr_tmpalloc(argp, len + 1);
-+	char *p = svcxdr_tmpalloc(argp, size_add(len, 1));
+ 	devl_lock(devlink);
+@@ -1699,18 +1699,16 @@ int mlx5_init_one_light(struct mlx5_core_dev *dev)
+ 	err = mlx5_devlink_params_register(priv_to_devlink(dev));
+ 	if (err) {
+ 		mlx5_core_warn(dev, "mlx5_devlink_param_reg err = %d\n", err);
+-		goto params_reg_err;
++		goto err_unregister;
+ 	}
  
- 	if (!p)
- 		return NULL;
-@@ -150,7 +150,7 @@ svcxdr_dupstr(struct nfsd4_compoundargs *argp, void *buf, u32 len)
- }
+ 	devl_unlock(devlink);
+ 	return 0;
  
- static void *
--svcxdr_savemem(struct nfsd4_compoundargs *argp, __be32 *p, u32 len)
-+svcxdr_savemem(struct nfsd4_compoundargs *argp, __be32 *p, size_t len)
- {
- 	__be32 *tmp;
- 
-@@ -2146,7 +2146,7 @@ nfsd4_decode_clone(struct nfsd4_compoundargs *argp, union nfsd4_op_u *u)
-  */
- static __be32
- nfsd4_vbuf_from_vector(struct nfsd4_compoundargs *argp, struct xdr_buf *xdr,
--		       char **bufp, u32 buflen)
-+		       char **bufp, size_t buflen)
- {
- 	struct page **pages = xdr->pages;
- 	struct kvec *head = xdr->head;
+-params_reg_err:
+-	devl_unregister(devlink);
+-	devl_unlock(devlink);
+-query_hca_caps_err:
++err_unregister:
+ 	devl_unregister(devlink);
+ 	devl_unlock(devlink);
++err_function_disable:
+ 	mlx5_function_disable(dev, true);
+ out:
+ 	dev->state = MLX5_DEVICE_STATE_INTERNAL_ERROR;
 -- 
 2.43.0
 
