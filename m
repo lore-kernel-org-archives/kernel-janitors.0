@@ -1,98 +1,86 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6198215FD03;
-	Fri, 10 May 2024 08:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF3421340;
+	Fri, 10 May 2024 11:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715330896; cv=none; b=mQe+V81HqvkNyV6zn5xr5CQceW7jxEIZUjFiqWW7H2Blik1ZK1k4v0LRtr4mB6l3n93mobD18AhyBU8x5w+ViD//9IJjYj8m/mEkAiPV1P5U05WbBViq5Vu52L2cmWrIcER5qO7wwvX1V9S/0JsSXv0Mu0g1Mhdwc66NFqi+dDA=
+	t=1715339562; cv=none; b=oICWDdnbDGrecbm47OmwLXFedCXtoYEX7RaMlY+2V83skyDmCGuvQn7X/zwQ+1d1Siul1XlnZ0vVfhSd1ne5jL4/UrWJm0AsqpLqjn6vGmy7V0QmixvW3qiti0e99aP3udvQQTryov2wCbKytWh1O7AuRCOnHrRClE8C5xVNCbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715330896; c=relaxed/simple;
-	bh=YwWoSGlLIoFU199bT7cNXYZ8yB+nQBY+wMA4w6hUZu8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Pr6F3lssa2/yDQ2QQ2e/wUQ882mY5jTiXCRxj8cvyWWontV3I960WUJC5LPIzCqeeu2rC7JK0YsPO0lvEOn1mbBSfePaP+lPnBLYYuVf+7ukM9UzsigAcKyJuGbbL/f9dMf+4DKvakIsoccTKSCfEQJq8lTsvvUM1yqJPrc++Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R7KdH4hj; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1715339562; c=relaxed/simple;
+	bh=I9klVlPuitLf8Kzw1WYldY7WjUrzz4F6V62ejcvIfso=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Px1fYYUZvUZAzEr0p+VCteFT9POCpHwsnsZh9c9qMKhWfXOdShEtVCNlZt5/IO8T1Gh5vOlpAiwKXVAmIH4trcuE1K7M9Jse2LUxIEx1Foys+CPxXsXv8FLeBpvcVqvCVtEHYz9QazKuRgyaKy40I1ZgOXxOPwr7hd2jkOfzDRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=B+7SKH4l; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7KdH4hj"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-41ffad2426eso2721745e9.3;
-        Fri, 10 May 2024 01:48:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715330894; x=1715935694; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VolhuYhozBmZNG1Kf46/MgpdEY1r+F/GHz7XyCKXqc0=;
-        b=R7KdH4hjS+jcwpHN4dGOujfKNjKDz/aJ8RkmawaWX24ft+nJ6pnPe2wkvISdrrk4my
-         p1ROj6RCED5eL9mzJlxIZ3Qci06Tdh2Lkx/qkU2HtrBfgMk/z5KQJZ1vKLm2gm2y32WU
-         u57J4qjvYk9KIsaGVlOGwPvVw336iBauXtndxZ50NY8xz3e+zhEDAFoDTk39kk5nO1y6
-         PoLwfPZLnne6L5nAhk1tiC2VhOt126PvO8+HSfQzCQ3tZKGFppdvCBS5fHSFkJcKq1lP
-         yzd2KxguARyogtx8EpIVKhSo9YpnU9/2N3G3CTnGM+bheC2NEAb5lW5Kw9RNJYzVnlMZ
-         v/Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715330894; x=1715935694;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VolhuYhozBmZNG1Kf46/MgpdEY1r+F/GHz7XyCKXqc0=;
-        b=bBd4Gy8Rieoeg2cPbhaNHTpqMFIZfh6pdncVFLdGVFVrobQrfFuZE0lK+sDqCEjID+
-         CpVW7B0UEKWOLThIjr+a2//FyUEio0ZUaqJq0sIpeMYm+YwqDf02FG0SznYShgfYN8hQ
-         MVN6A1RC9SH5VNMX+56hNfeyo5SZQNTI/9weM0xmkTahue02oyywRJp3G4APcHAZDicv
-         8b6ZTgBlAglQjbPoD1Zqe7iOdYsA6oYslLDRJRmuEm3IqFyzaFky3w9JMNc/QepKIa/H
-         TxPVuSFKDx0JE2hGO4VUFyhrMiGTh4SD7/UJorA5cQjfRhhaXyn0OoXR+SJcJcev8Ahy
-         r7lg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGZ5lcx9bBkZ9fwRHEF7dC/U83RwS4NwWdT1hHQxeGQWXQRIsOgW2GgLGL3AYVoGaqAOl8yT5uMH+zV1F0OZF6egl/WFS8L72wPbas7RTPxJf+aeBH7BoZklcFtNy9S/GCVhp5GrkGhlwNJr5gufLHWJsSr5r3SB0LleURk4GsN7xGfbe/
-X-Gm-Message-State: AOJu0YwFS8YOFvHZDxKnL82tWfPIcJp6N7pWtlkWsJwITGNyAmbW0sM8
-	9ElQquin+EMowzRMYPtxOgBXqY16mmnU0iNnxO6iDSbfI0xDNYzY
-X-Google-Smtp-Source: AGHT+IFylAv7LOFuzY145nB/4IYG4/bbhSBLCA1Eg1Scf4HzbayFRvNarWugAMyAu0IKfah1845XwQ==
-X-Received: by 2002:a05:600c:3508:b0:41b:f116:8868 with SMTP id 5b1f17b1804b1-41feaa38a79mr21592845e9.12.1715330893439;
-        Fri, 10 May 2024 01:48:13 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccbe8e3csm55952055e9.1.2024.05.10.01.48.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 01:48:12 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] selftest: epoll_busy_poll: Fix spelling mistake "couldnt" -> "couldn't"
-Date: Fri, 10 May 2024 09:48:11 +0100
-Message-Id: <20240510084811.3299685-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="B+7SKH4l"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715339548; x=1715944348; i=markus.elfring@web.de;
+	bh=I9klVlPuitLf8Kzw1WYldY7WjUrzz4F6V62ejcvIfso=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=B+7SKH4lBtukg1ck2oIxzN4vnk80FfuUfFwj+V5r7wXs+A92+6sRz4AZrEAi62e/
+	 krxbUR+4US6qp0gvw9bbHCSw0lKj6hiWviSl4G/mfo+48/+5RRokHboDvDZ2c8XDN
+	 97WjY+GSLvIeN0H41n2MkL7/ybAbZYrHfdvq3BluyWY2U8ycrqhviyEu+bqULM5w4
+	 DwnV1gSDFl7CzwoZzRx8uGeb9xACVY0U+pfuAmAfsGNaLZYEp/rzwrFh/ihISMCcI
+	 EgJRturRoigVlcwJ253BkzSPWamqY2lWgBIsEMC5MFAXk04iDvvRqmoZrY2lF+PKN
+	 x0XAsvH+6kyNC7Z7VA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N2BI2-1sjnDm1ts6-00tG15; Fri, 10
+ May 2024 13:12:28 +0200
+Message-ID: <50d10f0b-d108-4057-be9c-a90e2398e810@web.de>
+Date: Fri, 10 May 2024 13:12:26 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Thorsten Blum <thorsten.blum@toblux.com>,
+ platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240508094628.308221-2-thorsten.blum@toblux.com>
+Subject: Re: [PATCH] platform/x86/amd/pmf: Use memdup_user()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240508094628.308221-2-thorsten.blum@toblux.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:rkzafPnxwMJ01b5SowshcheSLDCTpRRagb8m/lxjo6P+yIQuUXZ
+ 5eZ1QvLa2lGEEkeoBv1h1AXbFGPDotI8/r/pi9BpwzmfNbEbyW1AC8EWQ6Xff8tyxH1o5fd
+ bKmkb0KTxYhSoV19AFS4tIEBMIXOm8Sz4lYj5DSVgd8xoaySJCSPywrIGvRdO5nOqUNvGDN
+ y8zqfhbyHlubUIoBLeKTQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:rzIe93eWvF0=;aYkUJd6p6D2P5UVVmfqDLcTzpGf
+ iw77QzfSs5z7SGcM2NaY9AMxaf3Ux5VBacsJ0h8zT+ryL1qmRz7oB+scl7mz7Qsx2Eet+xMBA
+ wHiwLVM6irCVDYIvgBHt4w1xE0hjZrleT37LKWxflWXwsLBXoxKGXi/n1gh3/m3PCDit51WB5
+ UsP/xv+uMDUXlI89x4bBfLcXi/LMQkoQVpnyyS/XWTV2qVMfDB4lQ97t4zGYkrjEASNgJCpS+
+ +lCV3JrlPLTszoEOiyuhinRLXlUCmLjZquSljSqEmaEIEAUQTJi0Gbw9ORTxp+AV1E4HcEZ42
+ Jrvg3oM9C0DMFAXvv4FAY4XJBmd3MYrGRyi1zdo28kqCQD6qG0LsVFyNm+kTcJ/Bs2i91BMOS
+ PaUp2fdP/kSl2X0NfB64DCa0G880Sf5EaHmsUhfkU4brr7E+UL4b0c4DaOjOT5FIV3dgnRuSB
+ a7AER4srizX6y2z/OS1/ybASSXVv1n70xWtq0F04+6sLnF/zv7sXFy+20liMIWxtaOkGRXpFW
+ At+BqHyuSZq42Z6VwHe1SO5slP8tO7eAXDNJzrvNriFMWa13LLNIdpw8a81wfbOs7v6O4lxin
+ 9i2xhsnWTrS5OaGUbB4RfCxJvYBNqwabt+QDcMk7J92XOxd9fO1G0Ed6yuyaSnE4miWn7gkh5
+ gN06rVSJsaqNe4bSbjZQ6sR6JWpZwHeBEkwYV4WzU98RxDufpsB7hxZARQqYrTe7ZmOx9Q4bM
+ bDgBenGX+HW/bmI3KujIedtRAPOI5CJXvZQS2Gd0N8kG9wo2/Bi10yBD6h5d/LolZ0/ds0Wge
+ xViMdNj6Ko7Bcj2pRq29yTx6rz2GwE2J7SckQBTjO85XU=
 
-There is a spelling mistake in a TH_LOG message. Fix it.
+=E2=80=A6
+> Fixes the following Coccinelle/coccicheck warning =E2=80=A6
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/net/epoll_busy_poll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Would a corresponding imperative wording be more desirable for such a chan=
+ge description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
 
-diff --git a/tools/testing/selftests/net/epoll_busy_poll.c b/tools/testing/selftests/net/epoll_busy_poll.c
-index 9dd2830fd67c..16e457c2f877 100644
---- a/tools/testing/selftests/net/epoll_busy_poll.c
-+++ b/tools/testing/selftests/net/epoll_busy_poll.c
-@@ -232,7 +232,7 @@ TEST_F(epoll_busy_poll, test_set_invalid)
- 
- 	ret = cap_set_flag(self->caps, CAP_EFFECTIVE, 1, net_admin, CAP_CLEAR);
- 	EXPECT_EQ(0, ret)
--		TH_LOG("couldnt clear CAP_NET_ADMIN");
-+		TH_LOG("couldn't clear CAP_NET_ADMIN");
- 
- 	ret = cap_set_proc(self->caps);
- 	EXPECT_EQ(0, ret)
--- 
-2.39.2
-
+Regards,
+Markus
