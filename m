@@ -1,111 +1,61 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF72716E894;
-	Fri, 10 May 2024 11:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A67216F0EE;
+	Fri, 10 May 2024 12:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715341960; cv=none; b=lAVQXgqpeEU73SmQm0kz9MAnCwEV31q3orKu0Qcm3U9R9UbvsdhqeuLcX5gSJNcPetn/Xb65Imx7zkNSCBlXaA8YitB/TsT5OmsSfXL2ijZ2L3Iu8P2Bg89Ve3NNXiBdNQenAz9NmTRSn7h5VzZHD964riAs0+LJCQsM4bf1tNc=
+	t=1715343820; cv=none; b=roOpn5PeuSx1sXWTE2yiK1WHOunBtZtgtH1OksJqze1rtBk6Xcn5Cb/FGOgoSk8KAdStfuDX8Z2Q86z0SzgNoCUKhk0O4Va6Hqpy0vtEZcJSFVEzljHc+Lq65I3oRznfOyPzXp0rkRvuGI1bnQe7dJ4IK0gm3SJ6jVsuNXM25ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715341960; c=relaxed/simple;
-	bh=Guh5VZYFKjMQLQAhP0rT6QQW4U6WTlMZkptsToslItY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=MAvgN+iFsVcWWVx6ZNwvXJr9I11RuCuJCfx6OO6RRtgNupJt8INXfVgMjZwHqueB5TEh6UeGQdrIxogRCEqwijdINK/GgbbRkRs/bpjpssD+AUH4Ie1aBWH7ZnRblm32PgvkSYgVtvUTubLDGCV2eZ+FVx7shq/nj0WlHyMwtsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XLgQjyR8; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1715343820; c=relaxed/simple;
+	bh=y7dJaaI5df0DcwFh4y63s/191kBy/jFRwdA9FnaZHV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dwhMe50dFqHkVDR7aTeKwOmQtFYyV5gW/qz7IyMtRfTJNeyeOscH+HBP57TBnwPe5BV8BOUbN6o+mZoDzBnPw5irNAYCznKvmZ46itSj44JPGtdGtrjzuI/GOS8tmHQtc3lbRzwinaoG206KDVv9CuSa6MFWtCo5DOG8cvQXKM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XPfKtJFb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XLgQjyR8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715341932; x=1715946732; i=markus.elfring@web.de;
-	bh=Guh5VZYFKjMQLQAhP0rT6QQW4U6WTlMZkptsToslItY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=XLgQjyR8o5LvICfsb0u5ZSGz0WKBZuQObQz1CC4A/RdHQC1mkUNuRFDq0RKWOuX2
-	 4Vh3Z2E8fTlYIQFr1KQ3xcre7plemsno4ihzvGIck1oIxlJJ6DhrXgzIeASaN8S9m
-	 mLDt2Sx9kU4xDSwuCoy00ahXy6HFJB38wwQZbhkPmL0Ka7xIZ76CfzIvusjeMT3Dp
-	 ElCJETM8faTfjNepQhplv/sQck65JKd1sC2J/Kc1D8unQqvhXDvbM+j30AgImo2bC
-	 DWYql6S+3ZqMZYzriInlgdVW7frjtXr2KmpgQKKu6KAYHJqM4yel4kJee38/EzjBB
-	 FcZpzegQ2PeHE29OJg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M3Euv-1s2N3R1q17-003k5f; Fri, 10
- May 2024 13:52:12 +0200
-Message-ID: <51d46ce7-ea0f-401d-ad72-4bfb3f2474c5@web.de>
-Date: Fri, 10 May 2024 13:52:11 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPfKtJFb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71CE0C113CC;
+	Fri, 10 May 2024 12:23:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715343819;
+	bh=y7dJaaI5df0DcwFh4y63s/191kBy/jFRwdA9FnaZHV0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XPfKtJFb9m/QvpyElofqVmM697Q80kESzjsaSZFsWd7H46KgLSzT2++mgcXZcjsyX
+	 Aaf2QOnpMtaqgz14H02iuv1GV5r+C7pzhWIsr+PckbSepLC6bWt/o7D38okqyO++b+
+	 Fyf39WdgM0TaaPaOm04GAPQHp1tMlElCzZzV7d4m20xIZGXiHd43cqaNPst2riBd0d
+	 t76iiRXcqc5j4wl9mNpjj0/kCjtaTDFuZqKd/JR5Y4LeCLdn1yd07va2OaCvpKghPV
+	 kJSbTOgIPBn0y+bHFUCBs0MwTuQbIfX/Ex+/WHroIc01tiVDJlnyz8j07VZ5Adx8kR
+	 Yd16eghe+JpTw==
+Date: Fri, 10 May 2024 13:23:33 +0100
+From: Simon Horman <horms@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] net: dsa: microchip: Fix spellig mistake
+ "configur" -> "configure"
+Message-ID: <20240510122333.GU2347895@kernel.org>
+References: <20240509065023.3033397-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Caleb Connolly <caleb.connolly@linaro.org>,
- ~postmarketos/upstreaming@lists.sr.ht, devicetree@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alexander Martinz <amartinz@shiftphones.com>,
- Luca Weiss <luca.weiss@fairphone.com>
-References: <0da17f9c-29bd-443d-882a-69c339288a02@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: qcom: Add QCM6490 SHIFTphone 8
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <0da17f9c-29bd-443d-882a-69c339288a02@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:+WcrWbrfOAtjFAQjN239/ZcsvvDaUEx+Q4x5acrBpy64bQb1nOh
- E6PdwlrmT01+dEVPBsaCLXuMBZNrf7UAdTQccD+EFN82VlS6TkmmH5t4vPB6UrgjI4n7zS7
- QPstY3HUPIroifjvAMswTqtwrXminHtVff6OpkTSqjeodvnQG+h/44kre1oaYlpJI25WfZa
- 6C+6vf/RV7zRkNgj7zvHQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:eu5yCl4Qhw8=;9WFX63WP+SrIbyhdZy92EN5NqFx
- yWzDMhqCDgtX/Go3i31xOtdil+FjrqfQOWNO4V8z2JNbFbk+PSUR6/lB0CC40fQ+KXjC4KeJg
- cpNcdbYJFPOoiVogowpRhrBLDECsvLC6m3jT4zNLD6YGcjvl7Q3/0AAVR6c5e+nOt6Rs9r2vu
- bT/Hyi2bRoGm+AX7v91XTMwRbAOSW+GcO+10J+RBrc7fk3hMie2slICEzUCgb2I+paRZAL1rr
- OTvpZW1VXpoSZC4sBGk82rQfi/aAz11K/GkA0w+vRa9Eg4B7XnGA7AXcOg30pansLyndKDRO0
- buIwN1GAIHAp2hl04wa4LNmd6l10rV7/t04U29NL0RKG9z25A4+/TkIuSO6PkjV1SOsxTjSpg
- OwdjvzZp62SM1MOf34ej1Jg75yHzgHqyXfotV526k42dZ1YCRiqMe1TQCtvb6zfmF8YHke3wp
- OdKxJx2eB5LbiDTW19xQgh+qLkf0z3o8/6UGbcSZbOWYBAn6tEEVvD351MrH+0/dO+PxHqP/+
- f7s9It1cVy0XNNMRXg52xvv5pQTF0JubBv2RVCNTmhYLhEzfXDqJlyagZu5EAXsoORWLJlc/d
- YcKJyf/auc/hDdCuTRj8TMNDOWRmK8ODfoImURSy8ZFfH4SlooOHebTPGmwdFqhXhOBhENwbp
- NlMwxSIAEpSpXhqPtcMzq2Uj+8Nqk8XVYzlJW5ZmUyTxetKJf5aBXLWpVEmH91IGDsKfxDcGY
- TSGp1+cExGP5fJJSjyLke0aYq/qGrgON/pRNp0cX8EFhyPUv4IZenyelbw+5Uk77hastQ/QdB
- ncShkFn1iE7t/InH/cSnMIkmFR34jLcHcEmLdY1nGaNWU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240509065023.3033397-1-colin.i.king@gmail.com>
 
-> > > The SHIFTphone 8 (codename otter) is a smartphone based on the QCM64=
-90
-> > > SoC.
-> >
-> > * I suggest to move the last word into the first text line.
-> >
-> > * Please add an imperative wording for a better change description.
->
-> Feel free to ignore all comments from Markus
+On Thu, May 09, 2024 at 07:50:23AM +0100, Colin Ian King wrote:
+> There is a spelling mistake in a dev_err message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-I hope that such a hint can be reconsidered.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-
-> (or implement them - up to you).
-
-This would be nicer also according to another known information source.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
-
-
-> He is banned from mailing lists
-
-This was the case for a while.
-
-
-> and ignored by most of the maintainers.
-
-Several contributors occasionally adjust their change tolerance,
-don't they?
-
-Regards,
-Markus
