@@ -1,65 +1,70 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F250171645
-	for <kernel-janitors@vger.kernel.org>; Fri, 10 May 2024 15:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2632171E5D
+	for <kernel-janitors@vger.kernel.org>; Fri, 10 May 2024 15:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715354580; cv=none; b=unA7r3qOwWGTXLAR9cftTikgH69EGzlgAgvAsjlJHxbQKLUtaPNPSN8YMCaQuOu3LwgnZBA3IR7SIVNj+S/mZJdQHu3PvUEEmoA40hYBiMXQhnHDj8DnKrQkI1TJDY6uILxirxrw95qvnR4dXRZjNJqH0qUF1ujh6tXuxegTgj0=
+	t=1715354863; cv=none; b=GxLOKeW1O28iU9fTVbqtkoH+BHw5kLCWtixmstJwm9nbzqi1sG8ucmjXpkTdjy5k9AgkvA2/2BZJWolKdbVd5lycoZg5CaaJah3D9anMpPNIQPkLSl9577ea58CH3ORGYF6wt4ty9dxxOhnkEZEHd1A+/R4XQxRcZO4BntuhRpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715354580; c=relaxed/simple;
-	bh=xDmeGB3ZsvbdC9b0Eap8RfCmxjnpKodqPjIW7iJ+0cA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=sUSh76vIv5dDdb+C13kR3xPhXFHfP+rR+LF1p0j4D9zfR63pt/N5E3TKh8a8oP5w7Ij6SKtX84cF3k267scBgS7oMsK6dtHj2ORDIqf8JydK7BT3E3V6zSVHV+YAaEXPQRdwxSoF7GSD9VvP1y/vosTMbU0qrTecBHXAMU8xTWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wdjjvtrz; arc=none smtp.client-ip=209.85.218.52
+	s=arc-20240116; t=1715354863; c=relaxed/simple;
+	bh=Jzdc2H2hNULa1a9dJybZhyaGjAWp+NC8/yUTJ8Z3H5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kqA74TKCSEqNhUWtMITSz7g87zW1Zn2AnQQXZg4I5ekBHWIdkypt2oSCwIS/gUhIUES2PC9i8ZrFeeyGcUF4b4R3gA7DQwTPwonjK7+6pqk0QHDPME5oCbioiTslZu+zYarDY3EP/8to30RvHzMaavz7+xLHoSkozNlK/LnK0mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=faBOMB8o; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wdjjvtrz"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a59ae3efbb3so235200366b.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 10 May 2024 08:22:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="faBOMB8o"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-51f1bf83f06so2502553e87.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 10 May 2024 08:27:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715354577; x=1715959377; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BP4hiObhnrJXL+AshuqLMzgV0aIGD7OqswBGKEywkcQ=;
-        b=wdjjvtrzfxJbVJe2qYnLGpcFGHz2/giNsfEJFuWLweXJnUQbvKqZ4QQI19WYVAAybq
-         NBdfPRAoOakva1F1pSWjYhEK5YuytDZUzE5CxE4HzDwM9PizaFGkrLSwaWvw+6RybydK
-         91UScMG8dLLsNcWJ12QCvOAyjiNas7ScLh1qaqyS4dF+BMiaHUECUEZBOVXJwgfzvWDJ
-         lEJCd8GUR/2hVCfaGYjU3yCAX4/hb0PeaeB1/tZx+OmMntjoIYiYEK396G+UQmZ/BNcn
-         NtV+5dauAyWI54DjTnvJ8kiD0EKKLEp0xZwJtsWgEw/B9am0kauGhBSH2l5bAUKHHCmB
-         cb1g==
+        d=linaro.org; s=google; t=1715354854; x=1715959654; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=a5FOttH9EQLp2QP0x59iAJre7V/D35J8XRWRgV60AP8=;
+        b=faBOMB8o6QE81pOcKmx0/FRnSBMxxpDIhA0Wq/pd5m8P6lNAVaMjIL6AD0jAFA6FHS
+         hiP6IcpyjBUdLL0qg6Bd3liXJ8yZrUpQba38xyf3jXZ15YWgtjH35imQPJJOItmXXb88
+         UHW5TRX0b3HtZPDNBIcn5GKMYC01FUfXdpKdZ4qRMR7yrH93LALT369PYJF4nvsSvatX
+         mvt2bCzP6Td172qdgBNG1Q92K0Di4rORIWuCi0Ea2ox4iXhJJhT7NmIVEAWkcGDOoa7P
+         Rr1t5ObpwJ/egOVxY2cVbQU8510scxMk1xS+MRY60A1u4EJaYp48+v/Y0WJCG3DpgWGi
+         HoNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715354577; x=1715959377;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BP4hiObhnrJXL+AshuqLMzgV0aIGD7OqswBGKEywkcQ=;
-        b=gJUVZpIs6dgdWtB/+2zvWQmUcw80Njtd+wV+U2bNwu3mR/03YsFjKxYh1UeARA+sUg
-         xZZ0ZejQFRKnTVwfhqv11Bb+BV5khq+92C7QOvBBs2uttTM3EG9IesK/e3gTwypABXLi
-         5RCu9m5CRw9NTgVjajqMjixklrRVbbf9TCwgOTOJ968Tfm3XnO2byu8S8/AfNKvzkh3V
-         c+cP320rKAZetRTRXI38kH+rVKJDGkoqyUbYeOtgUEkOKrLO3MVYU0exyYY6OjNMEvTv
-         CP1GQq8jiRBnZeyOljv4mFcWnemJExFMPjwl8GepaCr0YJtogPCGTGCsm2EOXUF6DVgD
-         KsBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWImFDxt0Am3yeyXbdxeAjWyMp6o7C0uCwfQnIpNOMcRMjmcYYWxZQMwqjzOIq87T3d6NFrEz4C2EnlpueIzBSjkozBaZGUOvY2OZcmqYY
-X-Gm-Message-State: AOJu0YyGlkA+OCzDUEfvcOmqAHVfWXIx9GCVRDnmKAJ5KEORRJ5wj/pj
-	qnw9gIwhiYxos0RTTtA1cH2+gk9uw9FQymZTYuTk3Sj2pKBodY2bNEQSzfKv1fg=
-X-Google-Smtp-Source: AGHT+IECyncmlyBZlx8POXK4gXnXiaTjEWCp1Q9Ts1yOT/JsMxgrlDRoEy7sB5jOG9XSuixGma2Gug==
-X-Received: by 2002:a50:9ea5:0:b0:572:a731:dd18 with SMTP id 4fb4d7f45d1cf-5734d5c2570mr2746612a12.18.1715354576789;
-        Fri, 10 May 2024 08:22:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715354854; x=1715959654;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a5FOttH9EQLp2QP0x59iAJre7V/D35J8XRWRgV60AP8=;
+        b=i+h/FIF6J1+74dsHNf+gDsEGPdln4rqbuJ2owFzhnMroTgoEK1Q+ZdI2U0VJhAO4an
+         6dEF5AErCVg0h+W+iWHKxdU0MiI2EykDL69bM43u9yoKdNANN0cKMpmiqZxxByMNN9NE
+         x4kEAmKuj2azTcNOuRScNYuPMxUmA0cxR5k47wFhiS14mARQSlISeh4kLBj0y1W5wkrz
+         +Ry7pYT1yGMAkNzKXsa6/4qSTo1tJqGFph5l2f+Pmwo/MdtjZWeTqUQL0b4TOCEOACr1
+         f7gZ0IN0eXCXmcMrLv5ShIBjHGL+ylJ98ifT+cTemWXCBOdekdhystv10tF3BgH+UwVQ
+         2UIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHuMq2e0EyVUqmbt3IOCdIRUkPKjgDu9Rco1oxpR9TNU/LkyrSfvbKvhIySMn/bPLcIrTcsBGOYGF+ENVG8eeDMLm9b5eKo1jaityGShBc
+X-Gm-Message-State: AOJu0Yx0vY6+AqfyRUXfjQ+5IjAl9TuDM/SRpsXjiST4Cik/Xw6zvBAw
+	Mz98X99Zkuq6qu9MNvhkdoqUSepKuScvkQh6PE9ppfuBt0gj+1kpuxqGRFT+uwc=
+X-Google-Smtp-Source: AGHT+IEMgujKR3JXFlI9/r1eu8jHtRxxNrK/qiE+3cimxYuBLDPv4NYPwk0taMgIyW3VjMHaTPlVFA==
+X-Received: by 2002:a19:a40f:0:b0:522:f6:9268 with SMTP id 2adb3069b0e04-5220fc7eed8mr1735865e87.31.1715354853669;
+        Fri, 10 May 2024 08:27:33 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c2cb52asm1925091a12.74.2024.05.10.08.22.55
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d553sm195973166b.43.2024.05.10.08.27.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 08:22:56 -0700 (PDT)
-Date: Fri, 10 May 2024 18:22:53 +0300
+        Fri, 10 May 2024 08:27:33 -0700 (PDT)
+Date: Fri, 10 May 2024 18:27:30 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bingbu Cao <bingbu.cao@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] ext4: fix error pointer dereference in
- ext4_mb_load_buddy_gfp()
-Message-ID: <eaafa1d9-a61c-4af4-9f97-d3ad72c60200@moroto.mountain>
+Subject: Re: [PATCH] media: ipu-bridge: fix error code in ipu_bridge_init()
+Message-ID: <4ade89f8-cbd3-4dbf-81fb-0e9a4269dc0f@moroto.mountain>
+References: <71dad56e-0e2f-48ba-90bc-75096112a1ba@moroto.mountain>
+ <Zj46vpwTbfde4YX2@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -68,31 +73,36 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <Zj46vpwTbfde4YX2@smile.fi.intel.com>
 
-This code calls folio_put() on an error pointer which will lead to a
-crash.  Check for both error pointers and NULL pointers before calling
-folio_put().
+On Fri, May 10, 2024 at 06:18:22PM +0300, Andy Shevchenko wrote:
+> On Fri, May 10, 2024 at 06:10:37PM +0300, Dan Carpenter wrote:
+> > Return -EINVAL if "bridge->n_sensors == 0".  Don't return success.
+> 
+> ...
+> 
+> >  	ret = ipu_bridge_connect_sensors(bridge);
+> > -	if (ret || bridge->n_sensors == 0)
+> > +	if (ret || bridge->n_sensors == 0) {
+> > +		ret = ret ?: -EINVAL;
+> >  		goto err_unregister_ipu;
+> > +	}
+> 
+> I would split:
+> 
+> 	ret = ipu_bridge_connect_sensors(bridge);
+> 	if (ret)
+> 		goto err_unregister_ipu;
+> 
+> 	if (bridge->n_sensors == 0) {
+> 		ret = -EINVAL;
+> 		goto err_unregister_ipu;
+> 	}
 
-Fixes: 5eea586b47f0 ("ext4: convert bd_buddy_page to bd_buddy_folio")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/ext4/mballoc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It's always hard to know which way to go on these...  I wrote it that
+way in my first draft.  It's my prefered way as well but not everyone
+agrees.  I'll resend.
 
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index 648989c125f2..9dda9cd68ab2 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -1717,7 +1717,7 @@ ext4_mb_load_buddy_gfp(struct super_block *sb, ext4_group_t group,
- 	return 0;
- 
- err:
--	if (folio)
-+	if (!IS_ERR_OR_NULL(folio))
- 		folio_put(folio);
- 	if (e4b->bd_bitmap_folio)
- 		folio_put(e4b->bd_bitmap_folio);
--- 
-2.43.0
+regards,
+dan carpenter
 
