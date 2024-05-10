@@ -1,101 +1,101 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5221212D1EB;
-	Fri, 10 May 2024 14:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6816A12C53F
+	for <kernel-janitors@vger.kernel.org>; Fri, 10 May 2024 15:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715351048; cv=none; b=D8N56fSR6L5Fe42WobuSvcRbJacmw7b1m76XGWYxdJegAeZvwGRR+TOwKS8SyRtzHYE4jwt3jHHsKz4S4uQvNurNYLK2gn6mv1Egjl+TYAPSce/4K+1jqHBH1Apwx4OWiOfdH8hcLXm2X1pIV0RrLge3PLnivmjhqTSX6lTQY2s=
+	t=1715353845; cv=none; b=FvUhDhIMm7ewxPdzFVH3Ys3MVmx+hkXVm/VOe+BV9D4mE1jvObkGpA9Bf3ENqUjTcjwlX23l7i/kL4TD3ZYn0zJ5paG9ju4+9c6ewZfon7KuLuGvD4ShwwQ8rrK6VLZddPYqgz6b//sd1n1r075MBDtV07IZqbC60ynMP8ctiM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715351048; c=relaxed/simple;
-	bh=c/JCSSt35mbjMJ//E+sxG04fSIhKxLeG+9OlxBi7444=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=AAIdKXOmaG9EZnNOwC6J535UBSPRXhfpfB5L73z0HgJi0Wbb2OmAfPpFUQ1ofaeI5bgrgGuz44YXmZmP4NqhW4g1Z63fMPV0DhSVtsICz+qvX9FzWk7iEduD+dAZVkIUxVP9kQFFdN9x6Vjkcr29jTG8lXdK/LDllyTnxDSUA0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NMxYQ0mO; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1715353845; c=relaxed/simple;
+	bh=+6E1QWCdVlRF2Y2CqF81C3CJFrg1T9UMcvxSi9JgmAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=dKKq3vg3Ie0+BQiBp9pRcqZSqdZXQU+G/r8q/NU/I2coUKroD6+hfyE5Zj8rv6M/HIse6uRVhK0z0GoH19b+lyxJAipn9D8NcGBLJ4Ia9yeSsAU6cqPReshRzVPOwoxNnL7yqtTFPUtd96WcdUeHPpI6F7YcW8Aw9iqEkApT+2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OcWpxyUZ; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NMxYQ0mO"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44A2tjZE009522;
-	Fri, 10 May 2024 14:24:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:date:subject:mime-version:content-type
-	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=aBt
-	pUrTb6nW56PWpG40EJQXJ+qbrHBCgV+FF0VYkQsI=; b=NMxYQ0mOHv2/HdRRijd
-	/8XbIbkAgPv8FKIPUgSjLNFWRf4fhAzTxyX7eG1GBTde820Db9+epZZwPO7HhO6L
-	e/kQTI2rI1YazoZxKOFSh+O1p9v0h8SScZRfUSWUr8OUw5MVSJ6dV1xm8A0p4tmD
-	eao8PBMOuTePgVTURz3UZYorO6VL9vdtxAdjDmQVo4Vj2nz20B+ijLCGZSuGpV9y
-	b2tSPc7Ju1HDrids1QIFyy7Z7Pp3yPgGc9CL0YjdSMyIiEwTXc3yrny4FoBXnIY5
-	STcrk69RGB/tidHDJhAJ4IJ96Z9U30oCmgCpn21i3MGnmsBIAyHmsCwMiWS3podK
-	hkg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y16w29qfy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 May 2024 14:24:06 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44AEO48v013886
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 May 2024 14:24:05 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 10 May
- 2024 07:24:04 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Fri, 10 May 2024 07:24:03 -0700
-Subject: [PATCH] dca: add MODULE_DESCRIPTION()
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OcWpxyUZ"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a59c448b44aso567395566b.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 10 May 2024 08:10:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715353842; x=1715958642; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S0b7Me9PZDwaqOlHu5lGpvnIETDgfY8E0wv6t+cYznU=;
+        b=OcWpxyUZfXPfg0uKeVjmrIhMlYImkiA2cJ1kanM10vMrZY0LTU4VDGUAWVkHrqr29U
+         MMZ2s7W+8/Q2tTz4XrZqlmCNEPLiVM/j3Mb0sP3Sc7Stbq+zw4eD+ILv8yugNAyoOocQ
+         DUHXOCtl1QMd0tHyANLLDWCTBLNKfrMWAGl6nNAke2EGt7V6IOwl5IL4kDMVmJMJAnu5
+         +0wOmRmjc0OJ5O7Zodxv7NtV1hvJvKiGJBOn5kmQ4tcZUF5QcI63CWUXc6uQrLYAbj4A
+         XAElsmFwdwTQHlw4SdG278Ccc+uzkTDxub9BMy1V5jGSBl+6VffJWSxoUwIuwOXF0vvb
+         ACvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715353842; x=1715958642;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S0b7Me9PZDwaqOlHu5lGpvnIETDgfY8E0wv6t+cYznU=;
+        b=Qvm9/8ER/EVwREu0C60rkdnswylRhsgGQ/hvH2JWO329ZJvL/BJ80DQ94Btolfl57Z
+         DjXFWOf3D4m49O4p7gZv9Dt4bhbjICdTQnRiVNecyu5Pq8OAmjEqew/a9Do32E3BxCQs
+         bddUvgSL4NR6oG2PQsTjJaI8hHgf4JkbBfOX7jByjZsRaJpW1EXAX3Teh7/9ZDZLaAGR
+         JOHY+XocYSyagoSTVBLtFTQtCo6jze+UkKpLlwWSpwMh5e1/vXkAh28ygimM94OQ9VbX
+         4TLSmAxb4UrQr0fj2eYaOxyDL1mMaD8F4+L2+tcOospCWFecBBf2yA/KEbqJXrtOam7f
+         3Y0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVc3WLGj0sRMBRzhAFVfAxQwTHEFv+3MvqY48cmPhzhBMsP1vALmu3tg/xE4yMGr85yB02Wc16paJzzOPNlNMiN2jlO5386QeGos/CIBEN0
+X-Gm-Message-State: AOJu0YzBf9/CxflordYCJsAPOzFOwEpr+uaSFlWYcBc+XUfv/wGvFb1I
+	eGvadFAfpSqe+ouStfyj9smMYSsY+F4iqiHoIhexIFdHpdPW5HISyewlVRrrTK8=
+X-Google-Smtp-Source: AGHT+IE278hcS/Jr47z3kbE/00DWI4mUA+YI1L1n39yqUw2ZRvvYK93xTf7orCqbrqmfdjKjhusspQ==
+X-Received: by 2002:a17:906:aad1:b0:a59:c23d:85d2 with SMTP id a640c23a62f3a-a5a2d66b4b8mr183158966b.55.1715353841538;
+        Fri, 10 May 2024 08:10:41 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01932sm189826266b.168.2024.05.10.08.10.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 08:10:41 -0700 (PDT)
+Date: Fri, 10 May 2024 18:10:37 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Bingbu Cao <bingbu.cao@intel.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] media: ipu-bridge: fix error code in ipu_bridge_init()
+Message-ID: <71dad56e-0e2f-48ba-90bc-75096112a1ba@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240510-dca-md-v1-1-d532a0757090@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAAIuPmYC/x3M0QrCMAyF4VcZuTbQ1SrVV5FdZG22BVyVZJPB2
- LtbvfzgP2cHYxU2uDc7KH/E5FUq2lMDaaIyMkquBu98cJfWYU6Ec8ZzDNHH6y2FHKDGb+VBtv/
- Ro6vuyRh7pZKm3/wpZd1wJltY4Ti+aefQ5ncAAAA=
-To: <kernel-janitors@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: a9HDPPXYZwzHC0YNudcJtLaADvbNs81x
-X-Proofpoint-ORIG-GUID: a9HDPPXYZwzHC0YNudcJtLaADvbNs81x
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-10_10,2024-05-10_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 impostorscore=0 priorityscore=1501 malwarescore=0 phishscore=0
- adultscore=0 suspectscore=0 spamscore=0 clxscore=1015 mlxlogscore=864
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405100102
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Fix the make W=1 warning:
+Return -EINVAL if "bridge->n_sensors == 0".  Don't return success.
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dca/dca.o
-
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Fixes: 881ca25978c6 ("media: ipu3-cio2: rename cio2 bridge to ipu bridge and move out of ipu3")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/dca/dca-core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/pci/intel/ipu-bridge.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dca/dca-core.c b/drivers/dca/dca-core.c
-index ed3dac546dd6..f5cedf816be1 100644
---- a/drivers/dca/dca-core.c
-+++ b/drivers/dca/dca-core.c
-@@ -17,6 +17,7 @@
- #define DCA_VERSION "1.12.1"
+diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
+index 61750cc98d70..a009ee73e26f 100644
+--- a/drivers/media/pci/intel/ipu-bridge.c
++++ b/drivers/media/pci/intel/ipu-bridge.c
+@@ -839,8 +839,10 @@ int ipu_bridge_init(struct device *dev,
+ 		bridge->data_lanes[i] = i + 1;
  
- MODULE_VERSION(DCA_VERSION);
-+MODULE_DESCRIPTION("Intel Direct Cache Access (DCA) service module");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Intel Corporation");
+ 	ret = ipu_bridge_connect_sensors(bridge);
+-	if (ret || bridge->n_sensors == 0)
++	if (ret || bridge->n_sensors == 0) {
++		ret = ret ?: -EINVAL;
+ 		goto err_unregister_ipu;
++	}
  
-
----
-base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
-change-id: 20240510-dca-md-38482869c4d4
+ 	dev_info(dev, "Connected %d cameras\n", bridge->n_sensors);
+ 
+-- 
+2.43.0
 
