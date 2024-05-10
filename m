@@ -1,124 +1,191 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11olkn2080.outbound.protection.outlook.com [40.92.19.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902021DA53;
-	Fri, 10 May 2024 06:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715323554; cv=none; b=CUOaxauZsQ8XCKamIFSCwe4cQcE1w6lx1C/63Mqu8pOX+9T9Fuan0NalLbySE4jm7D1gnOGlKCXEN+tnr58/hZRxBYA9XybrTXT9ODwG5prL62CwYck/F0n5XX2BctgC3J/5Br4+Ek4ZteWDN+Jxa6u8NpM6ut010rNYUpPEroY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715323554; c=relaxed/simple;
-	bh=E37wzb7Oc2j7nExYXW6yhBwO5jY3WIFEbE3c2OVZvbk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dg/MlMmOmjSR6IBAbIVZb5GF8kpxaFXpqaDgd8zu/Xh9VF29mZmEpSfc26GEtKwCimUiLOoT+WphCaZnR9H5YZhFx3GaAWB8bpj0UonqH7TckLoCd8mmiryp1W5lhsFf7GTh8+38OoTuSMFxU186hby4ZtopYlKEUT4ffk7nA98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=W2fa3IWe; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34EA15F322;
+	Fri, 10 May 2024 08:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.19.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715330443; cv=fail; b=Gz3/rz2pb3PBJbnQPc+6RWuHXbWcK/62M8flIBc6qxoeLAfektljYITgvlMXmX7tf9O6lV5Ht/kfqWXFTrmYYMsDBfsef0+anX+LNSqE2UTAoPuNbKPu/T3SPI4qJv+qm7zjAb/+SQmOmKdqwW99DekmReESZoFls6F2mRzl+gM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715330443; c=relaxed/simple;
+	bh=GNGk/GfuFG78DxLRXoXKIe9xrnlyICBPCFXJ06m10WQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=bD3mnRPQcvFSEJqLFKNO+v4NsHy+KnGKr5pPZ2mOCU0cxpElYYN45nBw+bAdMD13gNIZ6wgOuX26qsFX2jNE+yvuqWshd1CahPxA4SQVFioB7RRGBeKiez+1zds2Og94BZYIVbIutR3CsPMUDHBLxoSlNzhHf1fH2oB4I6Og8w0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=DLL4VGX0; arc=fail smtp.client-ip=40.92.19.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="W2fa3IWe"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715323521; x=1715928321; i=markus.elfring@web.de;
-	bh=2A9f1JkH3YiV7UuUkIXTZjRmYrYTSco0Pa5dRp+sG9w=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=W2fa3IWelkldCoyYVac8jhdTQPoIpq5RyMpf7AmrMh0lGs152MKOxPFk0GfWZYNC
-	 40+5U8UukREBA7F/bQFtp80hrjQIV+9p+xKaw941I4jyl2/fvlyFiEJW/PrdJKFBH
-	 BZA3aKEZNlvLhAzeFMiPwaOxmbzpJHIwy7mPoGP/GVjIS1MzecN6rR/nptywII34y
-	 3udC+ndwZoeqpr4ZA1qd6sTC1OHUoan8tOWFa+B/3vFR9990XbtdY20BK0v4wEgiH
-	 J5l/BENfusb9noy9AKkxoDJjr9JhfYTZueIm2d8KyI1DvkoxBSA3Zw18inr5G0HUB
-	 IEcVLnAr5LXGTQtPDw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MLzmv-1sMZuK2WFl-00SQIJ; Fri, 10
- May 2024 08:45:21 +0200
-Message-ID: <a9868190-676e-40a4-93de-2a6f9978e89f@web.de>
-Date: Fri, 10 May 2024 08:45:20 +0200
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="DLL4VGX0"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=D6goZZHiag1gH4odHoC9LU26qu+nXqjmhg8usAs1gNHEegqvTavxZ2fcXhwu4ppL7YHDanoHe32kiSfcYN0NFDobr5e9yqjsCLeAtmCGe/a6UOWnzjXxpl5TFTvUwpQE9Sc+GuTKup2mq16yY6FG7mzo9pvs3aNIZXlTF9zQW98EmctIlLQoIgkM5qoU/+3SJpCcDOg2CCA4o2uHPWTAI8dFh/pzn3rqb3Py6kBT85CJefA3GZQ5GoP+8xLdBHIQ6Cufi48XbtkV9UwSE6sx9fDmodQ+foE5egfmRPXhOlymOjPQ2EbXlgOQBQtK9Ec6OsmyU1+j7bXJV9P8j9yQAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LJamwaEH7nd2OCAr9ujkttRmD+eEpB5DydR4Ywn+qPQ=;
+ b=RG9pIufZWPBfssBEhVclPFJ9vn5LfXbS5cx+W52JxBSRXSzWPmNZQbOZGDEqmcow54UtwqZp65FV4GIoCOI4OQAXADBp6CDqz6oAHn/IPY4wKneawcxcYY7T+lHFaolWR5TqqjngN83N4lonnnJF/wVt6peATZGiauyqSC9NFiRAfVyAxgQiCHAQ0Oa9b9dhm//r0YBBgpxMrAsKOfh880wz3Ua7nrjb6ZjjIxcZYKC76czupTFTKw7+L+RWcY3oFyJJH8puY5+Pv50db2ykr5R6qxtTIRegF5UCkMkY2pQmoP9A1O5YoLuUsw5SBrms0fmSVZ8Kk4cUc/E58pKw5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LJamwaEH7nd2OCAr9ujkttRmD+eEpB5DydR4Ywn+qPQ=;
+ b=DLL4VGX0oT4wqebxMeJjwPqDkeRAvQxg7OCO9OWM8ShC6OnpaW7yDt3ibgmvJx513948Sg0XyPUZDCseUPwuwT5Ntf+gtAUC7TSHHSbY7aryUrSz4wdB526s0AilvrlDNhsVZGUmJZsv+ri3aKTYzyBRiNKVPANFwpHLVo419QmTUdVln59AbVXb48qoVugMDO18d6sEhIdjHUchZnvEulbrl5etYh9+O5IGfMoJK5ajut5BuiE3Yp44sWJEbWFqChM9NmRvD87LI4cy9Dj4aeFVYQSO9UQS88s2eSLQJmeQ9avt9DRmlTycIZqypxJ0abrgD9YwUzGnA6Kfj9vhsQ==
+Received: from CY8PR11MB7779.namprd11.prod.outlook.com (2603:10b6:930:77::22)
+ by LV8PR11MB8606.namprd11.prod.outlook.com (2603:10b6:408:1f7::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49; Fri, 10 May
+ 2024 08:40:39 +0000
+Received: from CY8PR11MB7779.namprd11.prod.outlook.com
+ ([fe80::9aa5:422d:f716:1402]) by CY8PR11MB7779.namprd11.prod.outlook.com
+ ([fe80::9aa5:422d:f716:1402%4]) with mapi id 15.20.7544.048; Fri, 10 May 2024
+ 08:40:38 +0000
+Message-ID:
+ <CY8PR11MB777929A2326482E8F5F00F6B97E72@CY8PR11MB7779.namprd11.prod.outlook.com>
+Date: Fri, 10 May 2024 16:40:30 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: selftests: Add 'malloc' failure check in
+ test_vmx_nested_state
+Content-Language: en-US
+To: Sean Christopherson <seanjc@google.com>,
+ Oliver Upton <oliver.upton@linux.dev>
+Cc: Andrew Jones <ajones@ventanamicro.com>,
+ Markus Elfring <Markus.Elfring@web.de>, Kunwu Chan <chentao@kylinos.cn>,
+ linux-kselftest@vger.kernel.org, kvm@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, Anup Patel <anup@brainfault.org>,
+ Thomas Huth <thuth@redhat.com>
+References: <20240423073952.2001989-1-chentao@kylinos.cn>
+ <878bf83c-cd5b-48d0-8b4e-77223f1806dc@web.de> <ZifMAWn32tZBQHs0@google.com>
+ <20240423-0db9024011213dcffe815c5c@orel> <ZigI48_cI7Twb9gD@google.com>
+ <20240424-e31c64bda7872b0be52e4c16@orel> <ZikcgIhyRbz5APPZ@google.com>
+ <Zik_Aat5JJtWk0AM@linux.dev> <ZiqEFqomGLmDR7dg@google.com>
+From: Kunwu Chan <kunwu.chan@hotmail.com>
+In-Reply-To: <ZiqEFqomGLmDR7dg@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TMN: [HoJQAhhZY1jHxCy6948iISefv/aRSyMANkZIURfhIkg=]
+X-ClientProxiedBy: SI2PR02CA0022.apcprd02.prod.outlook.com
+ (2603:1096:4:195::23) To CY8PR11MB7779.namprd11.prod.outlook.com
+ (2603:10b6:930:77::22)
+X-Microsoft-Original-Message-ID:
+ <54505156-c27f-44a3-8420-ec1e5e6e687a@hotmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 5/5] gve: Add flow steering ethtool support
-To: Ziwei Xiao <ziweixiao@google.com>, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: Jeroen de Borst <jeroendb@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Praveen Kaligineedi <pkaligineedi@google.com>,
- Willem de Bruijn <willemb@google.com>, LKML <linux-kernel@vger.kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, John Fraker <jfraker@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Shailend Chand <shailend@google.com>, rushilg@google.com
-References: <20240507225945.1408516-6-ziweixiao@google.com>
- <3e10ff86-902d-45ed-8671-6544ac4b3930@web.de>
- <CAG-FcCNGsP3FnB6HzrcQxX4kKEHzimYaQnFcBK63z_kFTEQKgw@mail.gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CAG-FcCNGsP3FnB6HzrcQxX4kKEHzimYaQnFcBK63z_kFTEQKgw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:z0bArOj9RiMuvpRRNSk/7wZyQWP+/BZSS8rcUExDu3P8IiiepMZ
- sNHr8k0qejvxDaR+QQ+mOpNkfcBBNF7DbkDp2Eo+p7QGIZR5Hitd1SFfyCyh7IOJlCg9jtx
- kabwG6cXZ5EMoyGaYSEEr9jcdWkQNRMbzww5l8ocF9MIrOFG4uZ54HExna7TJ/KD8YuX8Kr
- I+Dn3EH32ILdzS3YayQAA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:mp12yI6FNfE=;p95rRIu2sD/CMUq04nJNzMAK26N
- TBmPoBNnUhwG3Ac5LBBYZXTYlWklwKVrKaZpwbtasJr5XsGh8yntbIMZBzUxhPX92NEdJFcLT
- 5V/o36egFnJ49qpY2PB8k/NeFr7s9QPMyaO5XZNiO3DJB/4nPEDI6evCyii8LEfViDsY4xaJL
- E7rxsGh1eOsy3efRIR05YvZkDkflm7u59go4ivYGWn9i2JmvyVfhfdkMJgNBgUVTvCXVjHAvH
- pB9jxeslFNKzPRSm0rvqJFAMMd0j3zmY3g4c66DfpO6X5okFAHP/asgMJvL1GCGWoA3nLtFiF
- 8GsEiyuTd4NKPjedaVNtWfLYnxAgKTxgfaMZhw8RjdT9e6IrVDuRMkm/cMXZFYQ2FC07YI1IJ
- AmKx7UsPOHhNam4ujOwuXHmBDnN1ZGZP8InYlUCY0Nrg23dM4Phfkkpavhnbe/G87kiZP8WnT
- ZH0rMSnHNMqV48ZMZKFJbOpOslJ5gz/9nlpL1LTPSO/chRFK37hN9z1blVz6MHduuJBeEgdfp
- 6v1yjlfNy6QZCTihTp3VfSnSyD1RfxubTsZtQxClarYR1/yuaQfhMmmjadvMkC/zKJN6OEj93
- 6YTPcl1s3hkh49xhpBQvnPjXUiE2Fm44o+43Rv23Y2cGTM1Fo40vrsVsfBb7AwzYHIJyvwHOo
- EPh2LHzCe/4iVLD+KMXTIHNEQTVZvH06QRcZ/1+3g84NipVke0vgDozt8NLWvK8dASqxAxlNN
- OCccPaEs2fzmd8ATREuHKEPVgbWdKLuh/8IggtgXeVyk+XTowUkd+Ty6AgqbEJAxU4x0EbX/+
- 1I6awWZyXAnEJ6wkUa4eOtjgVx3zhYMRHSPuj5S2BOz3A=
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY8PR11MB7779:EE_|LV8PR11MB8606:EE_
+X-MS-Office365-Filtering-Correlation-Id: 92cbe149-3663-40b7-edb1-08dc70ccde11
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199019|56899024|440099019|3412199016;
+X-Microsoft-Antispam-Message-Info:
+	y41/ccBnYJ6AOy6vMqVzHl43hlrfwjFIqJZqE17gNBrTYK12b9y0jEjPd8LikJBa++p1G8Cx54XhEyMfgm6C6G8iovv9e+lmEZlEHzrSZo9V7dBDj5Vi9eyEDlb2gzzrGMKoL111bN2CWoXbb/ZfJOXJD3uwi+otoGL1EiMnv6V7VEtczkgSsOLcdqKcQiXado+6rZ8LSjKwOqhwzPPD0wOhLXtiMAT8b3dKaNyNKfu3ZazwjxzdX8MOLg3WsaksZvMN0aNnnRkTD3R8M7qwQLiqloP4GoJKF1T+zL6+0sEevHHJSSkoRs1z888Z2cyN+SxpXvJM/SHfIsWxuaE89jeT+VEHyYFdEu3KrvA/q48F2ddQZVCjKdnmnXK+JLOaCO2XldXGGFe7z9gOLPyyjJqg3Ij8A3jTZMaGJGdAsDO41PfryoS2DY2ixY/b4wBY1MQtPEo/Vg8WGzxudmnf9OU3O+2TOu4LWmMqoVh/kv9v8K6tJRB+HXgCGzs3JCSZaxPZtcHIN5WN+0k/Rdf14CNGdKBw/TNLybaqkgKWZhddisZGZ52qfb+NxDX952G8
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SU9XTmNGdzVjSWdtU1pTbUFpeHg0K2pndUtiRjI0VmhSTlFNNFdOK01DU1dV?=
+ =?utf-8?B?RzNEeDFRVGVLQjE2T2pSQTFMbTVMaldGam5Oazdrc0RpZWZXejJGZUMvbytp?=
+ =?utf-8?B?dlNvUXhnWk10c21pbG1SWjRXVnczRVhOQ21rT2FyY0RUOXpZcGFtZDkyeUVI?=
+ =?utf-8?B?TmNob3BhVkVHcXBjV3M0YU1uS0grd2tydE0yY1FMSURacGZrVWlNSm5IZHdW?=
+ =?utf-8?B?cW5sK1ZJY2JwVExkRUE5QlRqSHQ3ditTMFpiblRhT2RYK2NCcmJpejV5c0d2?=
+ =?utf-8?B?b1lvSmkwOHoyazhFUHJNYVpRODVuQktzeGZSTUNEZkI5cXovaXB3Y0l1Q3Nm?=
+ =?utf-8?B?MWFxNEtNVWtaQXBtaHJaRkpPTUtPR0d5aDk4MHNNWm5ub1NHRi9lbnhINHli?=
+ =?utf-8?B?SWVrT3ZNNnRpeGhBNkJKVzBPYTZtWUg5MllsS2Yvc0pNRnIycDRURTNiSGlQ?=
+ =?utf-8?B?eFN4aFpqMmVYK0N1Z3FMZE00QUIrTlhtYWNuL1VUVDJkNEVpSTE1bDNkMzFi?=
+ =?utf-8?B?aEZhd3l1RS9SbHprTUxrcFlGTERxUER1OTlHNFJKMkRvRXNlbEdSbjRPS3Er?=
+ =?utf-8?B?Y1daNTh4RzhxMytwcUkxa3JOQ0xyT05DcXRIeHp2RW41dTI5eitpbUtUZG5x?=
+ =?utf-8?B?OTZuckxKUVBpR29MNVF3Vm1lTVB5M09LaXNDSEJ4SVBPc09qOHVJajFPa2lu?=
+ =?utf-8?B?d3JBVXlWdlhpWU41MGpiWmM0UjAzdGNmWUFFbzdOR0pxSG1uRzhSRkxEYXp5?=
+ =?utf-8?B?Smd6c2N4S3drbkV3emo4T2EyZWp0V2txdFVRVHpUYWl1b3dtZFZXWHc4K2Jy?=
+ =?utf-8?B?TjBuYzI2S1RqUzhSMEo3VUpuZXY0RHp4Q1E3WWJ5UFBJUGRneDQxUUF5NHB6?=
+ =?utf-8?B?NkpPUWMvcThuZFk0aWN0bEo5R1hrd05XZWtrMitEZzhBcjFJWDNjT1NOZFB6?=
+ =?utf-8?B?T3k0TG1iQnY4b2ZiZ1FJWG1ENjR1R0E1MkowaDd1cGlKWmRaVEU0OXo2cXF2?=
+ =?utf-8?B?NlZ6VVdFbGd3ZUt3TmZYaGN1SFRaWnlscXFVL0NSZW1ieW0zVVlmYi9zNjIz?=
+ =?utf-8?B?a2orOFhXMHN6bjJjRUNSWFhEUmpZT3Yrcy9HeWxEQk5wZDIvOXhuMWVVby9E?=
+ =?utf-8?B?Y0ltd2Z4eHpoL3V2N1ltcTVEL2MrK083WnB6YStpeU55WTFESHEzOS9wTWxG?=
+ =?utf-8?B?WW5GZStoOXdEOTFQajlUWkhteXExY3BHckp0eWVlWHovdWlXb2UwWHN5UldW?=
+ =?utf-8?B?bVRBekl3eWF1YXhhNXZudGljV2VwVFlBOEFGLzhaWmlnRm5wa1dJdzk3aVFl?=
+ =?utf-8?B?M2tmLzVCb1p3Y052Mms0aWxPQjQ3N2h1NDZCRlFSS0kxTHJqdFc5ZlBLSUxl?=
+ =?utf-8?B?Y3Nyb2VXS0JBcU83Um9rU09kMm1nWFl0T01iaUI0cFR1R081R21sQ0dYSUpl?=
+ =?utf-8?B?VHFLdnUxenVHOGx3cEhkSndudGpyNGovZjlpOHl1L1NTMTNNN1pDWmtYa0lX?=
+ =?utf-8?B?QjQxNldmYlpZWlBpOUt1VU1tUGVTeWVIRmlZSnY0bWNXa3lBaDd5dEZmVVkw?=
+ =?utf-8?B?VDdOd1UrY0ZYZkF2UTdqejRqNlhuL0k3UGJwaHRJR2VTK0JsaityNS9xcFJu?=
+ =?utf-8?B?MUd2T0hzNU1Sb3ZTblhsK0k0RjBST0ZLZHpYZ0pYTVpiTG9RakVkdFQwK1RE?=
+ =?utf-8?Q?2/hi3fodrsWGkwoAknTu?=
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-e8f36.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 92cbe149-3663-40b7-edb1-08dc70ccde11
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7779.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 08:40:38.3479
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8606
 
->> =E2=80=A6
->>> +++ b/drivers/net/ethernet/google/gve/gve_ethtool.c
->> =E2=80=A6
->>> +static int gve_get_rxnfc(struct net_device *netdev, struct ethtool_rx=
-nfc *cmd, u32 *rule_locs)
->>> +{
->>> +     struct gve_priv *priv =3D netdev_priv(netdev);
->>> +     int err =3D 0;
->>> +
->>> +     dev_hold(netdev);
->>> +     rtnl_unlock();
->> =E2=80=A6
->>> +out:
->>> +     rtnl_lock();
->>> +     dev_put(netdev);
->>> +     return err;
->>> +}
->> =E2=80=A6
+Thanks for reply.
+
+On 2024/4/26 00:25, Sean Christopherson wrote:
+> On Wed, Apr 24, 2024, Oliver Upton wrote:
+>> Hey,
 >>
->> How do you think about to increase the application of scope-based resou=
-rce management
->> at such source code places?
->>
-> Is the suggestion to combine dev_hold(netdev) together with
-> rtnl_unlock()? If so, I think there might be different usages for
-> using rtnl_unlock. For example, some drivers will call rtnl_unlock
-> after dev_close(netdev). Please correct me if I'm wrong.
+>> On Wed, Apr 24, 2024 at 07:51:44AM -0700, Sean Christopherson wrote:
+>>> On Wed, Apr 24, 2024, Andrew Jones wrote:
+>>>> On Tue, Apr 23, 2024 at 12:15:47PM -0700, Sean Christopherson wrote:
+>>>> ...
+>>>>> I almost wonder if we should just pick a prefix that's less obviously connected
+>>>>> to KVM and/or selftests, but unique and short.
+>>>>>
+>>>> How about kvmsft_ ? It's based on the ksft_ prefix of kselftest.h. Maybe
+>>>> it's too close to ksft though and would be confusing when using both in
+>>>> the same test?
+>>> I would prefer something short, and for whatever reason I have a mental block
+>>> with ksft.  I always read it as "k soft", which is completely nonsensical :-)
+>> I despise brevity in tests, so my strong preference is to use some form
+>> of 'namespaced' helper. Perhaps others have better memory than
+>> I do, but I'm quick to forget the selftests library and find the more
+>> verbose / obvious function names helpful for jogging my memory.
+> Hmm, I generally agree, but in this case I think there's value in having the
+> names *not* stand out, because they really are uninteresting and would ideally
+> blend in.  I can't envision a scenario where we don't want to assert on an OOM,
+> i.e. there should never be a need to use a raw malloc(), and so I don't see much
+> value in making it obvious that the call sites are doing something special.
+>
+>>>> I'm not a huge fan of capital letters, but we could also do something like
+>>>> MALLOC()/CALLOC().
+>>> Hmm, I'm not usually a fan either, but that could actually work quite well in this
+>>> case.  It would be quite intuitive, easy to visually parse whereas tmalloc() vs
+>>> malloc() kinda looks like a typo, and would more clearly communicate that they're
+>>> macros.
+>> Ooo, don't leave me out on the bikeshedding! How about TEST_MALLOC() /
+>> TEST_CALLOC(). It is vaguely similar to TEST_ASSERT(), which I'd hope
+>> would give the impression that an assertion is lurking below.
+> Yeah, but it could also give the false impression that the macro does something
+> fancier, e.g. this makes me want to peek at TEST_MALLOC() to see what it's doing
+>
+> 	cpuid = TEST_MALLOC(kvm_cpuid2_size(nr_entries));
+>
+> whereas this isn't quite enough to pique my curiosity.
+>
+> 	cpuid = MALLOC(kvm_cpuid2_size(nr_entries));
+>
+> So I have a slight preference for just MALLOC()/CALLOC(), but I'm also ok with a
+> TEST_ prefix, my brain can adapt.  One of those two flavors has my vote.
 
-How much collateral evolution did you notice according to information from
-an article like =E2=80=9CScope-based resource management for the kernel=E2=
-=80=9D
-by Jonathan Corbet (from 2023-06-15)?
-https://lwn.net/Articles/934679/
+According to the previous discussion, so which method do we need to use now?
 
-Would you become interested to extend the usage of resource guards accordi=
-ngly?
-https://elixir.bootlin.com/linux/v6.9-rc7/source/include/linux/cleanup.h#L=
-124
+If you have a consensus, if necessary, I can continue to do this work.
 
-Regards,
-Markus
+We had many different way in selftests to check the null pointer or fail 
+state, such as 'ksft_exit_fail_*' 'ASSERT_*' 'CHECK*' or just use if 
+statement.
+
+If we add a new macro, whether these old usage should be changed as well.
+
+
+
