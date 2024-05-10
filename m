@@ -1,144 +1,89 @@
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8A0171670;
-	Fri, 10 May 2024 15:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD32912C49A;
+	Fri, 10 May 2024 15:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715356004; cv=none; b=uy0735e1JnCBbkruIHQf15IxniNKQMKigChB8N13ncAVq1NU3cw7KcPclOtSxqbIWXpgBY09i1sPHkqYlf7tyPBth+r3VJJ0jmqnM6Nan/mH+fjaIa7SjOEmBz84vAraO9HRglcRhZhgae1W8A8ywhBDO1S84H5ZoZKgeciCVro=
+	t=1715356527; cv=none; b=E9XzjwaHQPpL2IYy2a/vL4GtVkojul3kyFOxSw/nbjJTeNHD9MxKf96jpzWlXI9Hzstg4vXTj+syJck0avliYUqvyyv00gJhU2pxPMgkMAlyBjH2k1TjHzCivOBvJTmvDYnvBm4ybwPBlXHwoo6jn7dcC404scLXaHL+RWemn5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715356004; c=relaxed/simple;
-	bh=5mXhnCqJ2AHPpTx22stP2AT18mivdzg6/hVWBtafrx8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SSza75xwrWTzGV1RisEitppi80RRMmXzRL+NpeFJYpCJiBMJaoNuUCPQ+e93fAEuymxtgEBVUz8nZJ66hFUg0wGWsKvbbO2fopPRe4gjoa3iUL/u9XZQ7YkVe+OsgW0QMhTMuIOsrf7yn47RNed99ygbWYI84V9tyYPyCPtjLRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=WRelRGEX; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1715356527; c=relaxed/simple;
+	bh=j+PEZx8467CAXDutqvKyg1G+wTPrUXhPSpI3yRUttds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NI4+5FUgG5psGjQ4QWdi1KbMlB9/tLYBbBqlMASmjA8JvqUqq6EuUQkQePRqgNODwa3pth058ecyrNzV8w6raDAp/8K4kIGgarv+K+//x3boItegJy1mTP1r6lcJtLzA+TzFAYFWoocbb+hbrr36FAEmSSD+oIK0/yYUUpF5XYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a3EJexqL; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="WRelRGEX"
-Received: from [10.8.193.2] (unknown [50.39.103.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id C236F4113A;
-	Fri, 10 May 2024 15:46:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1715355992;
-	bh=h2pF02eYY0Wz11xpxaBf2EA2zHqbk7efV7XetK4ocVA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=WRelRGEX+uRRfdNqHPs+onuWy1HucK7ZuhhwzlPelgo/0N4O800IhzFV7ITUqNUOh
-	 ysf2vOuwcYwHL5BxhY97q64zUE9mYvcEoscZndRAuqBi73Ouk2CBFiNMt7C1JmURnz
-	 XuDUbKzO+WMpteaP59Q5YcUSVNhH+AzO4z9AebZHn8+tY//AvoXxrPGR/oWRSSoxI8
-	 gMNsN+nD0gXgx7T+f40utUfvsVIWJpHTjXu7AlOT7NXXZgXjbMTMjGgj3z3lh8ueBT
-	 4fyDJ2owKXHLxqSBZV+ZyHJDNmb1Rb8zou0OiQzPNLCNtFDUHMFhNL981Bf6pBTsjQ
-	 SIw6T+OGD7f7A==
-Message-ID: <6200bc6e-6903-4a01-a3d9-74f90c6de2b7@canonical.com>
-Date: Fri, 10 May 2024 08:46:25 -0700
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a3EJexqL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715356526; x=1746892526;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=j+PEZx8467CAXDutqvKyg1G+wTPrUXhPSpI3yRUttds=;
+  b=a3EJexqLq9CD85OUp8dGYNvQUSFs7yaVCTv2JhFAhWRTcYLYj6PDSkh5
+   r9HRGGGLEzUOG3ytgk0aleoI05KBlqk7KJnTWz1O6Y9Wsp3LsB8wvCO0l
+   zQFBwp7qgHewerXiBASSAraBKwMHzRRFh1v/xf+evOwuLFbzZXlguZMVY
+   62O6we5WqvCq9ndEgzAsXosCyCHYWXlg2hAQXYt+EWmmT7+qeW+DqZzFt
+   O+t2MCUzhGrqXh/nbZZl/r7bSJTXINET+PLHU36yuAksOXQTH0kn97WGa
+   C73fZkk9ttaKW52Ls//h2pPFgolHcuDyVDt9Brvxr3rsShSiOd3gCYUHv
+   w==;
+X-CSE-ConnectionGUID: Ay0D0ftWT4Stikvob9tD9w==
+X-CSE-MsgGUID: O0V4t7U2TheHwv2J9t1w0w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="15156304"
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="15156304"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:55:25 -0700
+X-CSE-ConnectionGUID: whxk1HeLTWmDvmtnEXGwlQ==
+X-CSE-MsgGUID: eJFq66uXTs2bxZHOT4FK7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="52869228"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:55:23 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s5Sae-000000069Ys-0KtG;
+	Fri, 10 May 2024 18:55:20 +0300
+Date: Fri, 10 May 2024 18:55:19 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Bingbu Cao <bingbu.cao@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] media: ipu-bridge: fix error code in ipu_bridge_init()
+Message-ID: <Zj5DZ4ORVfeCZSsV@smile.fi.intel.com>
+References: <f468c4ac-0629-41b5-b5d1-e26f70e44800@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] apparmor: remove useless static inline function
- is_deleted
-To: Colin Ian King <colin.i.king@gmail.com>, Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E . Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240304163655.771616-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- xsFNBE5mrPoBEADAk19PsgVgBKkImmR2isPQ6o7KJhTTKjJdwVbkWSnNn+o6Up5knKP1f49E
- BQlceWg1yp/NwbR8ad+eSEO/uma/K+PqWvBptKC9SWD97FG4uB4/caomLEU97sLQMtnvGWdx
- rxVRGM4anzWYMgzz5TZmIiVTZ43Ou5VpaS1Vz1ZSxP3h/xKNZr/TcW5WQai8u3PWVnbkjhSZ
- PHv1BghN69qxEPomrJBm1gmtx3ZiVmFXluwTmTgJOkpFol7nbJ0ilnYHrA7SX3CtR1upeUpM
- a/WIanVO96WdTjHHIa43fbhmQube4txS3FcQLOJVqQsx6lE9B7qAppm9hQ10qPWwdfPy/+0W
- 6AWtNu5ASiGVCInWzl2HBqYd/Zll93zUq+NIoCn8sDAM9iH+wtaGDcJywIGIn+edKNtK72AM
- gChTg/j1ZoWH6ZeWPjuUfubVzZto1FMoGJ/SF4MmdQG1iQNtf4sFZbEgXuy9cGi2bomF0zvy
- BJSANpxlKNBDYKzN6Kz09HUAkjlFMNgomL/cjqgABtAx59L+dVIZfaF281pIcUZzwvh5+JoG
- eOW5uBSMbE7L38nszooykIJ5XrAchkJxNfz7k+FnQeKEkNzEd2LWc3QF4BQZYRT6PHHga3Rg
- ykW5+1wTMqJILdmtaPbXrF3FvnV0LRPcv4xKx7B3fGm7ygdoowARAQABzStKb2huIEpvaGFu
- c2VuIDxqb2huLmpvaGFuc2VuQGNhbm9uaWNhbC5jb20+wsF3BBMBCgAhBQJOjRdaAhsDBQsJ
- CAcDBRUKCQgLBRYCAwEAAh4BAheAAAoJEAUvNnAY1cPYi0wP/2PJtzzt0zi4AeTrI0w3Rj8E
- Waa1NZWw4GGo6ehviLfwGsM7YLWFAI8JB7gsuzX/im16i9C3wHYXKs9WPCDuNlMc0rvivqUI
- JXHHfK7UHtT0+jhVORyyVVvX+qZa7HxdZw3jK+ROqUv4bGnImf31ll99clzo6HpOY59soa8y
- 66/lqtIgDckcUt/1ou9m0DWKwlSvulL1qmD25NQZSnvB9XRZPpPd4bea1RTa6nklXjznQvTm
- MdLq5aJ79j7J8k5uLKvE3/pmpbkaieEsGr+azNxXm8FPcENV7dG8Xpd0z06E+fX5jzXHnj69
- DXXc3yIvAXsYZrXhnIhUA1kPQjQeNG9raT9GohFPMrK48fmmSVwodU8QUyY7MxP4U6jE2O9L
- 7v7AbYowNgSYc+vU8kFlJl4fMrX219qU8ymkXGL6zJgtqA3SYHskdDBjtytS44OHJyrrRhXP
- W1oTKC7di/bb8jUQIYe8ocbrBz3SjjcL96UcQJecSHu0qmUNykgL44KYzEoeFHjr5dxm+DDg
- OBvtxrzd5BHcIbz0u9ClbYssoQQEOPuFmGQtuSQ9FmbfDwljjhrDxW2DFZ2dIQwIvEsg42Hq
- 5nv/8NhW1whowliR5tpm0Z0KnQiBRlvbj9V29kJhs7rYeT/dWjWdfAdQSzfoP+/VtPRFkWLr
- 0uCwJw5zHiBgzsFNBE5mrPoBEACirDqSQGFbIzV++BqYBWN5nqcoR+dFZuQL3gvUSwku6ndZ
- vZfQAE04dKRtIPikC4La0oX8QYG3kI/tB1UpEZxDMB3pvZzUh3L1EvDrDiCL6ef93U+bWSRi
- GRKLnNZoiDSblFBST4SXzOR/m1wT/U3Rnk4rYmGPAW7ltfRrSXhwUZZVARyJUwMpG3EyMS2T
- dLEVqWbpl1DamnbzbZyWerjNn2Za7V3bBrGLP5vkhrjB4NhrufjVRFwERRskCCeJwmQm0JPD
- IjEhbYqdXI6uO+RDMgG9o/QV0/a+9mg8x2UIjM6UiQ8uDETQha55Nd4EmE2zTWlvxsuqZMgy
- W7gu8EQsD+96JqOPmzzLnjYf9oex8F/gxBSEfE78FlXuHTopJR8hpjs6ACAq4Y0HdSJohRLn
- 5r2CcQ5AsPEpHL9rtDW/1L42/H7uPyIfeORAmHFPpkGFkZHHSCQfdP4XSc0Obk1olSxqzCAm
- uoVmRQZ3YyubWqcrBeIC3xIhwQ12rfdHQoopELzReDCPwmffS9ctIb407UYfRQxwDEzDL+m+
- TotTkkaNlHvcnlQtWEfgwtsOCAPeY9qIbz5+i1OslQ+qqGD2HJQQ+lgbuyq3vhefv34IRlyM
- sfPKXq8AUTZbSTGUu1C1RlQc7fpp8W/yoak7dmo++MFS5q1cXq29RALB/cfpcwARAQABwsFf
- BBgBCgAJBQJOZqz6AhsMAAoJEAUvNnAY1cPYP9cP/R10z/hqLVv5OXWPOcpqNfeQb4x4Rh4j
- h/jS9yjes4uudEYU5xvLJ9UXr0wp6mJ7g7CgjWNxNTQAN5ydtacM0emvRJzPEEyujduesuGy
- a+O6dNgi+ywFm0HhpUmO4sgs9SWeEWprt9tWrRlCNuJX+u3aMEQ12b2lslnoaOelghwBs8IJ
- r998vj9JBFJgdeiEaKJLjLmMFOYrmW197As7DTZ+R7Ef4gkWusYFcNKDqfZKDGef740Xfh9d
- yb2mJrDeYqwgKb7SF02Hhp8ZnohZXw8ba16ihUOnh1iKH77Ff9dLzMEJzU73DifOU/aArOWp
- JZuGJamJ9EkEVrha0B4lN1dh3fuP8EjhFZaGfLDtoA80aPffK0Yc1R/pGjb+O2Pi0XXL9AVe
- qMkb/AaOl21F9u1SOosciy98800mr/3nynvid0AKJ2VZIfOP46nboqlsWebA07SmyJSyeG8c
- XA87+8BuXdGxHn7RGj6G+zZwSZC6/2v9sOUJ+nOna3dwr6uHFSqKw7HwNl/PUGeRqgJEVu++
- +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
- p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
-Organization: Canonical
-In-Reply-To: <20240304163655.771616-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f468c4ac-0629-41b5-b5d1-e26f70e44800@moroto.mountain>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 3/4/24 08:36, Colin Ian King wrote:
-> The inlined function is_deleted is redundant, it is not called at all
-> from any function in security/apparmor/file.c and so it can be removed.
-> 
-> Cleans up clang scan build warning:
-> security/apparmor/file.c:153:20: warning: unused function
-> 'is_deleted' [-Wunused-function]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Fri, May 10, 2024 at 06:43:31PM +0300, Dan Carpenter wrote:
+> Return -EINVAL if "bridge->n_sensors == 0".  Don't return success.
 
-Acked-by: John Johansen <john.johanse@canonical.com>
+LGTM, but I leave the main Q "Is it really the error case?" to the maintainers.
+I would imagine the use case where either from the following may happen:
+1) the sensors are all new and not listed as supported;
+2) there no sensors connected for real.
 
-I have pulled this into my tree
+In both cases I don't see this as a critical error that we can't enumerate
+the bridge itself.
 
-> ---
->   security/apparmor/file.c | 13 -------------
->   1 file changed, 13 deletions(-)
-> 
-> diff --git a/security/apparmor/file.c b/security/apparmor/file.c
-> index c03eb7c19f16..d52a5b14dad4 100644
-> --- a/security/apparmor/file.c
-> +++ b/security/apparmor/file.c
-> @@ -144,19 +144,6 @@ int aa_audit_file(const struct cred *subj_cred,
->   	return aa_audit(type, profile, &ad, file_audit_cb);
->   }
->   
-> -/**
-> - * is_deleted - test if a file has been completely unlinked
-> - * @dentry: dentry of file to test for deletion  (NOT NULL)
-> - *
-> - * Returns: true if deleted else false
-> - */
-> -static inline bool is_deleted(struct dentry *dentry)
-> -{
-> -	if (d_unlinked(dentry) && d_backing_inode(dentry)->i_nlink == 0)
-> -		return true;
-> -	return false;
-> -}
-> -
->   static int path_name(const char *op, const struct cred *subj_cred,
->   		     struct aa_label *label,
->   		     const struct path *path, int flags, char *buffer,
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
