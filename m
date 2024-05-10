@@ -1,108 +1,98 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B23C46444
-	for <kernel-janitors@vger.kernel.org>; Fri, 10 May 2024 00:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D7E13B7A9;
+	Fri, 10 May 2024 01:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715300355; cv=none; b=XgJmN5TRZh+5sC3wsTXQH4k5Walllrhi2QKwNYwZbEnig78tIL2vQ7TYwJJRahQIpYQ22lwtGey6EZ/FQQzk0sQJYI1P9jpXRxAefcGmSH0zdxDddzcnHE3CxdgP/+S7zIjrMHkpvoSESOkR5EFXptG+NlxvXqJvkEPVXtv+Dok=
+	t=1715305490; cv=none; b=A5anhp5c9di4r+AR0EBiVLqpzAZUOkUjrzK4dQ/VFHqQFOHtBRc5D4OZlsLBjJsPSvTWsb62WgC/yteGOADLuAV3/t5b88zMErNmseRZSFywpnDbvG6v4tkdgc8a5kKggtnrKvFHG/9gphrW3Hd9WCli7O05P8wZY68zG+NAM/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715300355; c=relaxed/simple;
-	bh=0XTehdgnUAu0DffyW0Hg/Nc8qFCKbP9Br4UL88WMW8E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z4+XnG9xGc6IDUia7bwhiJvVyr6X98RMyyGxFqpfBHbWji5NHUUrUNBKQtp4D7pp14V2/uLZtwpuUj8oVyUpSmE1NMjrQZnwkkNvohL5U/WMwNsKFZ7nHIWvKnLWzKJoVf7JVyuM/2mPXXY/TeMEu4kU7RHof8R+FzgZwUAQsDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=38gz8D87; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1715305490; c=relaxed/simple;
+	bh=Z5zOkeaCJzSf4qW8zcrMf+qzgg5FfZa15nOgZLkWxwk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=iBHhprqVnK1lrM+mZuEN+ycHTreX9t16Y78gFdPmspMKEN4XuZmybAyqGUOUBA/vKks38qtCnljZqSAtMheOuva7AdBnWB7YM0yAuwKzgBAqZRq20Wc3Lw1jlQYXQoBbgYjoHSZtRSsM1MvRPKzUfpbujsck853ecfpRHxH+vAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ob/HyBld; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="38gz8D87"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-41fe54cb0e3so5839305e9.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 09 May 2024 17:19:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715300352; x=1715905152; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zDkg740tjVRPA7muszLKzifx+lB1m07et3SmwF5+y0o=;
-        b=38gz8D87AKgDP25titIU0RdCBhX5qbc9/dtCMMNs0YHRdy9f7XQwahJ4mqJwTr0ilx
-         QoVW4Idwe9XkVXtNDRsuMWNLXWvgkCdZemQDVL0ZJqlAkce2DTieFpT5mkyxGwMFsQOZ
-         QmlvEtcJrAf/c4JL/2Qn3Z4bFRfoPojF6GZmqmHq5VnkykdPqWKnH/KuM1JliGfMypo/
-         J8PK66W0AB+NANa9IJw5vbchEslM4SSHlRxxb9Ug81uhdEui5ESadoP3EM8xBTMoSzAQ
-         QBsiebr37SFDVxW75PFUa8o2TRsyS+5KhR82VDbt5n+bYcKNm0ivkUMMm9YssMH6XS2f
-         50OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715300352; x=1715905152;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zDkg740tjVRPA7muszLKzifx+lB1m07et3SmwF5+y0o=;
-        b=e57355wQa//kSTKUOPO8aH8ftPdh61rvWsTi6LQ0F6JvJIMFpuRqra40GSflzu7dRF
-         PoJPVJ+KozJJDomx5zCYoaZMHdFrrKZTPcAu5PE4687Qlj4IEOz+Yd5twmd1gtxPwQ5E
-         JKDRsPtWQ1B3WQik/2g6BYYS7FckxQCclkxRFEgESaWYvUfkXQvWSxRo9oxZAOTUZMze
-         +BT1YEwFlioeWLqhPB1oQc1oL7uf7zfn9qW0V+1hcPzsMv4+pHyY37kiSwwXUahjs+R/
-         /btQ9+3cauzL21gQbR03fpSsNC5W6j844oo139iQ4TMxDt6LdNFbf6G4buJSUMqLvwru
-         7MDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWO7IyUKjUL1waeLwNweSYjKt3rR754sGM+jj7uEHsYrQf+gGeUgxj1cDdoGqubDPLwXcB9Bfy2T088LJhLpxRU3mBEjo0EImkCONb5H/7l
-X-Gm-Message-State: AOJu0YzlcCtVu7UMC7nIfbHez61JAAhV1nEpu+0Sz03njZrhGjVlvoA2
-	/DJI/WcU1y6zXC0Shqk0+6Q+bkY1YFnwjMxidH6YtOM9CgL3elqFUmLoSVX8o3zzurByEEfruOS
-	PRPkwyscxpFDLPDzkP1qMJGXabgN8+gkBrmDN
-X-Google-Smtp-Source: AGHT+IHoymcx9p+FVAYDd+bxTKN3u67a8ICRxPdR9lToM+b7TuJWleoDYOV7HKWLMYCbcEXS6FL9j7W1pp3wwxvc5ms=
-X-Received: by 2002:a05:600c:4f42:b0:41e:8894:3f48 with SMTP id
- 5b1f17b1804b1-41feac59d64mr8641395e9.27.1715300352187; Thu, 09 May 2024
- 17:19:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ob/HyBld"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44A1B9U5023950;
+	Fri, 10 May 2024 01:44:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:date:subject:mime-version:content-type
+	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=WEr
+	kBehGRZvL1gta8obGebWnnhjP+Z4r5zimA1rTDBE=; b=ob/HyBldpq82e4aLxrQ
+	g972I+8tmz3V+3cCJAR0qQBI6FtF+eTTurmGB2RhA1/rE4/nqQYdssRr+zb8fgnm
+	D1iBeYxEYtsXzbUWtnFxZv87epDe/DH5g0XdrNScajLdVano9DDscr5KCdJYXQEc
+	q/w8jN0hc92dmclY4iJN3YfmhXhBs6FjAgUNNrtyOO4zcljOvjr6CmvmnjCs7sGZ
+	23W0Oo/BfLvBHWWRipqf7THcgCrQZeWFaSvssIRrl0J/0g5m1Sn4IImr/HHo1be6
+	GrFF43myBwxiGVaaTHXIxY3P0tYpHElblpuvk+Y79NTX0uC14wDIU5c7VGeX9P1X
+	2Kw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y16w0raf4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 May 2024 01:44:42 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44A1igge024784
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 May 2024 01:44:42 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 9 May 2024
+ 18:44:41 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 9 May 2024 18:44:41 -0700
+Subject: [PATCH] platform/goldfish: goldfish_pipe: add MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507225945.1408516-6-ziweixiao@google.com> <3e10ff86-902d-45ed-8671-6544ac4b3930@web.de>
-In-Reply-To: <3e10ff86-902d-45ed-8671-6544ac4b3930@web.de>
-From: Ziwei Xiao <ziweixiao@google.com>
-Date: Thu, 9 May 2024 17:19:00 -0700
-Message-ID: <CAG-FcCNGsP3FnB6HzrcQxX4kKEHzimYaQnFcBK63z_kFTEQKgw@mail.gmail.com>
-Subject: Re: [PATCH net-next 5/5] gve: Add flow steering ethtool support
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Jeroen de Borst <jeroendb@google.com>, netdev@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
-	Willem de Bruijn <willemb@google.com>, LKML <linux-kernel@vger.kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, John Fraker <jfraker@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Shailend Chand <shailend@google.com>, rushilg@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240509-goldfish_pipe-md-v1-1-acb513276263@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAAh8PWYC/x3MTQrCQAxA4auUrA2koy7qVURkftJOoJ0OiUqh9
+ O6OLr/FezsYq7DBrdtB+SMma2noTx3E7MvEKKkZHLkLXWnAaZ3TKJafVSrjkrBPHB2FdPYDQcu
+ q8ijbf3l/NAdvjEF9ifk3mqW8N1y8vVjhOL5vIsFJgQAAAA==
+To: <kernel-janitors@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: cBNx5G4JhF4Y5uckTK5biZKp5u8HlQnO
+X-Proofpoint-ORIG-GUID: cBNx5G4JhF4Y5uckTK5biZKp5u8HlQnO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-09_12,2024-05-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=999 clxscore=1011 suspectscore=0 impostorscore=0
+ malwarescore=0 lowpriorityscore=0 adultscore=0 bulkscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405100011
 
-On Wed, May 8, 2024 at 7:09=E2=80=AFAM Markus Elfring <Markus.Elfring@web.d=
-e> wrote:
->
-> =E2=80=A6
-> > +++ b/drivers/net/ethernet/google/gve/gve_ethtool.c
-> =E2=80=A6
-> > +static int gve_get_rxnfc(struct net_device *netdev, struct ethtool_rxn=
-fc *cmd, u32 *rule_locs)
-> > +{
-> > +     struct gve_priv *priv =3D netdev_priv(netdev);
-> > +     int err =3D 0;
-> > +
-> > +     dev_hold(netdev);
-> > +     rtnl_unlock();
-> =E2=80=A6
-> > +out:
-> > +     rtnl_lock();
-> > +     dev_put(netdev);
-> > +     return err;
-> > +}
-> =E2=80=A6
->
-> How do you think about to increase the application of scope-based resourc=
-e management
-> at such source code places?
->
-Is the suggestion to combine dev_hold(netdev) together with
-rtnl_unlock()? If so, I think there might be different usages for
-using rtnl_unlock. For example, some drivers will call rtnl_unlock
-after dev_close(netdev). Please correct me if I'm wrong. Thank you!
+Fix the make W=1 warning:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/goldfish/goldfish_pipe.o
 
-> Regards,
-> Markus
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/platform/goldfish/goldfish_pipe.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
+index 061aa9647c19..c2aab0cfab33 100644
+--- a/drivers/platform/goldfish/goldfish_pipe.c
++++ b/drivers/platform/goldfish/goldfish_pipe.c
+@@ -946,4 +946,5 @@ static struct platform_driver goldfish_pipe_driver = {
+ 
+ module_platform_driver(goldfish_pipe_driver);
+ MODULE_AUTHOR("David Turner <digit@google.com>");
++MODULE_DESCRIPTION("Goldfish virtual device for QEMU pipes");
+ MODULE_LICENSE("GPL v2");
+
+---
+base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
+change-id: 20240509-goldfish_pipe-md-1dec20bd3a90
+
