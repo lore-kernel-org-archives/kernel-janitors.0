@@ -1,65 +1,69 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD32912C49A;
-	Fri, 10 May 2024 15:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FE2172BCF
+	for <kernel-janitors@vger.kernel.org>; Fri, 10 May 2024 15:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715356527; cv=none; b=E9XzjwaHQPpL2IYy2a/vL4GtVkojul3kyFOxSw/nbjJTeNHD9MxKf96jpzWlXI9Hzstg4vXTj+syJck0avliYUqvyyv00gJhU2pxPMgkMAlyBjH2k1TjHzCivOBvJTmvDYnvBm4ybwPBlXHwoo6jn7dcC404scLXaHL+RWemn5s=
+	t=1715356759; cv=none; b=GpTz1QcaVizZaBDenoKskjEu3mpI2fEFTdDZ2SA6TTYJ5M93yDbLOqh+OzFzGgE3eVXbPSpM/EKLpOdadKCdR6U3B1m82ExEqQDOG7VpfLJZa7b0cbSPo9PBF0kWlYwfUg6BQb0KRY3eOXyVuCyLv+zIf6ySn9vbEiVvmku05jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715356527; c=relaxed/simple;
-	bh=j+PEZx8467CAXDutqvKyg1G+wTPrUXhPSpI3yRUttds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NI4+5FUgG5psGjQ4QWdi1KbMlB9/tLYBbBqlMASmjA8JvqUqq6EuUQkQePRqgNODwa3pth058ecyrNzV8w6raDAp/8K4kIGgarv+K+//x3boItegJy1mTP1r6lcJtLzA+TzFAYFWoocbb+hbrr36FAEmSSD+oIK0/yYUUpF5XYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a3EJexqL; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1715356759; c=relaxed/simple;
+	bh=J+92hXnaFjj8CDjvSEIof2zLpu6lXiMuInC1wXs3yNw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=MQ5Qp6woTl5993GwtTzGwSZHE9sawDOF/Rj1nH33XZFp7X5NnUysT4c6GvTQKoj/d47KRLTwqfpBQmabpoZpiXO6XHVibri77jTF3KTGWc4JWn9jPj9w6OGDXj4ahjjwSxFElzndbGTkLh+d3wh+dJqigKavdXn9eC9dQEwDeC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PSofYpy8; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a3EJexqL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715356526; x=1746892526;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=j+PEZx8467CAXDutqvKyg1G+wTPrUXhPSpI3yRUttds=;
-  b=a3EJexqLq9CD85OUp8dGYNvQUSFs7yaVCTv2JhFAhWRTcYLYj6PDSkh5
-   r9HRGGGLEzUOG3ytgk0aleoI05KBlqk7KJnTWz1O6Y9Wsp3LsB8wvCO0l
-   zQFBwp7qgHewerXiBASSAraBKwMHzRRFh1v/xf+evOwuLFbzZXlguZMVY
-   62O6we5WqvCq9ndEgzAsXosCyCHYWXlg2hAQXYt+EWmmT7+qeW+DqZzFt
-   O+t2MCUzhGrqXh/nbZZl/r7bSJTXINET+PLHU36yuAksOXQTH0kn97WGa
-   C73fZkk9ttaKW52Ls//h2pPFgolHcuDyVDt9Brvxr3rsShSiOd3gCYUHv
-   w==;
-X-CSE-ConnectionGUID: Ay0D0ftWT4Stikvob9tD9w==
-X-CSE-MsgGUID: O0V4t7U2TheHwv2J9t1w0w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="15156304"
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="15156304"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:55:25 -0700
-X-CSE-ConnectionGUID: whxk1HeLTWmDvmtnEXGwlQ==
-X-CSE-MsgGUID: eJFq66uXTs2bxZHOT4FK7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="52869228"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:55:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s5Sae-000000069Ys-0KtG;
-	Fri, 10 May 2024 18:55:20 +0300
-Date: Fri, 10 May 2024 18:55:19 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bingbu Cao <bingbu.cao@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Daniel Scally <dan.scally@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PSofYpy8"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-51fea3031c3so3079603e87.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 10 May 2024 08:59:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715356755; x=1715961555; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kaC1FX9IaWOSYR6DDBjH2nZIpL4z+ve32+mPw2UdL5w=;
+        b=PSofYpy8tvGE5zb3ymsZk9L69zp7ezzNQCuG7ObpKZfXzfTeldyQLCfGIuHwu9LhbK
+         7coOwZ/LG5Xfuf9PE8DQOo5gjG8+YBYLR/XKYk8E+B3MbDsxGyRNWo+tgseMVlockNgw
+         i2SjRnv/tU69R7Kv+s7OBUJhwQaaBjxYDM/07SR15Tp+6PevlTqsEb0RTNfNY7joTAdP
+         EVF62fbV2Xnq36R6V9P1bnwgU+D50J+/9RLpn/h/KGZQ+mik1wWRRl107Jm9q2ir/xcc
+         4R3jEnWP6ehvfh6JgXLdnzvIijP3DBmU/+uUJZ+H/HZV+QoNB6+dXe7d3JL+GVI1+P4Q
+         YsJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715356755; x=1715961555;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kaC1FX9IaWOSYR6DDBjH2nZIpL4z+ve32+mPw2UdL5w=;
+        b=nqrwdmZBYOmIKeej13QRjPSCvnS4soL9Wz3Wu2RLXov/R1u3srNKV+3jzdyyzrefmB
+         4ekni+bV0BDEgld7g+nnYZhlsyjGQfqFCzC29RDdCRiNJvqgF5keFeANwtA4CKKHWZN+
+         /CIiLIm+4k+3DpLSGXF2yD9L3bCSsH9EVsCiotpvaapPH66elvLT+izPQrufn/ABS9Nb
+         GpxDaKVZ4Cfc2eCxiaEWu4mYJcBBDglLQFtv+5b0n/v964vDBmcZIadwy+4KM+mLM5md
+         65HkQ8BL4HeN2TYhFiKVUNIKVYa4PI+foYVMQCi2uacuc8E0pCmCcCl6H+eOhPtxUQaP
+         2O2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUNNgVfO83ljoW9ZPboc6We+BRyO5lWGDxHQoKIxsxUmVEasc3OvbvaYbBtxqCF3VRRp9OCZsLkf9vo7jFZXIfjpCfB2a/RE9a/kHNvaNmH
+X-Gm-Message-State: AOJu0YygNC679Fjo9wO5YdJuwaVvZZaR9GVwfIQEns9J6Y+w5wPLzNZI
+	eY6WG2xpniiYUrdCOeFCwKGSAFD0p57JJXLcCBIKU6hogX8SqcjpaEoF7f/5AQ0=
+X-Google-Smtp-Source: AGHT+IEM5bdqaeGgx8w3nkjhWpAJfZyjTMZG+ycwOpy9UjbCyzEqZdbDt8dL5b4mlC40ps7Lrh/MMg==
+X-Received: by 2002:a05:6512:4003:b0:522:221:d19d with SMTP id 2adb3069b0e04-5220fd7bfccmr3137814e87.15.1715356755115;
+        Fri, 10 May 2024 08:59:15 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b0125bsm199199366b.143.2024.05.10.08.59.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 08:59:14 -0700 (PDT)
+Date: Fri, 10 May 2024 18:59:10 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Miri Korenblit <miriam.rachel.korenblit@intel.com>
+Cc: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
+	Gregory Greenman <gregory.greenman@intel.com>,
+	Ilan Peer <ilan.peer@intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Avraham Stern <avraham.stern@intel.com>,
+	Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] media: ipu-bridge: fix error code in ipu_bridge_init()
-Message-ID: <Zj5DZ4ORVfeCZSsV@smile.fi.intel.com>
-References: <f468c4ac-0629-41b5-b5d1-e26f70e44800@moroto.mountain>
+Subject: [PATCH] wifi: iwlwifi: mvm: fix uninitialized variables in debugfs
+ code
+Message-ID: <466baaa2-4996-4193-b681-d847d181a961@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -68,22 +72,36 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f468c4ac-0629-41b5-b5d1-e26f70e44800@moroto.mountain>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Mailer: git-send-email haha only kidding
 
-On Fri, May 10, 2024 at 06:43:31PM +0300, Dan Carpenter wrote:
-> Return -EINVAL if "bridge->n_sensors == 0".  Don't return success.
+The sscanf() function doesn't return negatives, it returns the number
+of the number of input items successfully matched.  Fix the error
+checking to avoid some uninitialized variable bugs.
 
-LGTM, but I leave the main Q "Is it really the error case?" to the maintainers.
-I would imagine the use case where either from the following may happen:
-1) the sensors are all new and not listed as supported;
-2) there no sensors connected for real.
+Fixes: e5bf75dc46e1 ("wifi: iwlwifi: mvm: add a debugfs for (un)blocking EMLSR")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/debugfs-vif.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-In both cases I don't see this as a critical error that we can't enumerate
-the bridge itself.
-
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs-vif.c b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs-vif.c
+index 17c97dfbc62a..88e78c798017 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs-vif.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs-vif.c
+@@ -762,11 +762,9 @@ static ssize_t iwl_dbgfs_esr_disable_reason_write(struct ieee80211_vif *vif,
+ 	struct iwl_mvm *mvm = mvmvif->mvm;
+ 	u32 reason;
+ 	u8 block;
+-	int ret;
+ 
+-	ret = sscanf(buf, "%u %hhu", &reason, &block);
+-	if (ret < 0)
+-		return ret;
++	if (sscanf(buf, "%u %hhu", &reason, &block) != 2)
++		return -EINVAL;
+ 
+ 	if (hweight16(reason) != 1 || !(reason & IWL_MVM_BLOCK_ESR_REASONS))
+ 		return -EINVAL;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
