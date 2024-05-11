@@ -1,123 +1,79 @@
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160221865A;
-	Sat, 11 May 2024 16:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE6E17588;
+	Sat, 11 May 2024 17:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715445262; cv=none; b=GA6/xe33fNwNsF9g5rQuUkPH5DrjW/ROXk7Va4GHO7svZvbGmBdTj1gCOw1qH4zYxpp9T6eX0fn4dzkGDFXwunvIV/h/Q9W0PuvdjiKbFqIcrtV0b1gbNayWDGl0m70ry+G4eiQ/dNVd8LGNpAjTkZGDQK3cB+uMI5BXs4DnWdA=
+	t=1715450014; cv=none; b=YlkWYI/ZRhlFB+kWLC5DV9/VAhB5ORKwhmdpIpFRzSf7Bzj2H8PsCmJ+T6LxKYoteeNk1jpoksUcRMQGtEGFxIUqJSX31H5zBw/bcjDF0X2rzGWdpS0Qd2jZ7EfDbO5pT+3dy4XIXOhU31jFCHdJzygsORyD51yzUTjEBZzaXI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715445262; c=relaxed/simple;
-	bh=E/NeqwYMuReaGCRnYcp3vdJpyEggLPpb2HSYcSmn0H0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r+4Wa64TENSZ0T3AUaSq0zifgIwW9rG3TV/nCysmkmdT5W2LHi1tpI+q5vEiHLYeB0pufkR49dSCc5uuddMaWBwBUPclOoICOPkdDgTbWOMFCEx4OcOveYw+x69LqI+TPDktEmrmqHA3+l7x/7e/7jeeXwFd3csdQOo73+cSWQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=LYtIxpYv; arc=none smtp.client-ip=80.12.242.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1715450014; c=relaxed/simple;
+	bh=35okiB1iB8bZt1zztcxMY+1mWKZVmAt1sMm6fXCVHRU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LbuTypLY98lsWNkT922arSd6Gdzn4MXx5gif3Nu4GP9ZCbOJ02cQrWl1xr7g0DXVAWfxwBKqkzWLFZBlhBf5KB+jbAVPuKooqCwp+Pwl0zQPLfTyXpHR+bxbZrCCexJ2q4R0JFrkIm7PQAytS2yVxbxM+dKb0OyMsEKjIBpeub0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bg3OttkP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="LYtIxpYv"
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 5peUsjqa5MXQT5pepssoaT; Sat, 11 May 2024 18:33:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1715445195;
-	bh=/+Vnyk4wWnOEN53vv8Rub/cXhWL4Rx9rMTvs0vfgDg0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=LYtIxpYvbz0/6xuqRvbNnYxPfEUX0OJnpc+WarLHOIXk+rgQV+sckBP6q8m5YzYgt
-	 gfcmJetuB4jp0695j3qD803csDTnoHRQtdAs55qpbd5UQQqna1HTBRP3a4wu82j9em
-	 2cmARqZF4kgIgEVzUsuAcuywo9vZRCqtV0GKH7C4I84TIUCYiCStO9OycjS6inr3D/
-	 yQeSVkxIZEmuP4L5Q7ItBPkqyEJrS/JUX3Vuiig5tRcAqozV0FBoHQgaYfVU8YpkI1
-	 8LFxtKxurjxwIPHXhY0Pav68lyiunnsBmFldKJET770kIEnf6K1H8WXXURZdPr9K16
-	 CmPufTyU2+Jhg==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 11 May 2024 18:33:15 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: gregkh@linuxfoundation.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	johannes@sipsolutions.net,
-	philipp.g.hortmann@gmail.com,
-	tdavies@darkphysics.net,
-	garyrookard@fastmail.org,
-	straube.linux@gmail.com
-Cc: linux-staging@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 3/3] staging: rtl8192e: Constify struct lib80211_crypto_ops
-Date: Sat, 11 May 2024 18:32:40 +0200
-Message-ID: <81be9eb42a2339eaa7466578773945a48904d3b5.1715443223.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <cover.1715443223.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1715443223.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bg3OttkP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A705AC2BBFC;
+	Sat, 11 May 2024 17:53:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715450013;
+	bh=35okiB1iB8bZt1zztcxMY+1mWKZVmAt1sMm6fXCVHRU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bg3OttkPGY5388kU5cRBN8zJrPnSYv4QnuR6ArCOC6Jb6bvj4UifjggL8mJqDD+mC
+	 xUuHqSxQXamYha0GlLqw3n5k1ACfUbwMAdYTeUFN4wco5/TMaUzz2mtTv99riFSCKk
+	 IB98jI7lWiGOOaIRJRyEXS1LinqUwneHHdTux7DByvW03ZXCCZMwuiwRHXA0BY9bAE
+	 q1Xyk9t7ljOy+JgV5jxzDiK2WXIKboS1ny7SFNCF4iTtj3tEXq4NwpylMtzgncG/6T
+	 KpKTVSqsR9ASfYguvWPbJGKK3t1jvDA5ZOMgKsq48MMj2fH1BOn9dhTaHSmg7UeZ81
+	 LYKiaU3BoX3wA==
+Date: Sat, 11 May 2024 18:53:27 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] virtio_net: Fix error code in
+ __virtnet_get_hw_stats()
+Message-ID: <20240511175327.GT2347895@kernel.org>
+References: <3762ac53-5911-4792-b277-1f1ead2e90a3@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3762ac53-5911-4792-b277-1f1ead2e90a3@moroto.mountain>
 
-Now that functions in lib80211 handle "const struct lib80211_crypto_ops",
-some structure can be constify as well.
+On Fri, May 10, 2024 at 03:50:45PM +0300, Dan Carpenter wrote:
+> The virtnet_send_command_reply() function returns true on success or
+> false on failure.  The "ok" variable is true/false depending on whether
+> it succeeds or not.  It's up to the caller to translate the true/false
+> into -EINVAL on failure or zero for success.
+> 
+> The bug is that __virtnet_get_hw_stats() returns false for both
+> errors and success.  It's not a bug, but it is confusing that the caller
+> virtnet_get_hw_stats() uses an "ok" variable to store negative error
+> codes.
+> 
+> Fix the bug and clean things up so that it's clear that
+> __virtnet_get_hw_stats() returns zero on success or negative error codes
+> on failure.
+> 
+> Fixes: 941168f8b40e ("virtio_net: support device stats")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Constifying these structures moves some data to a read-only section, so
-increase overall security.
+Hi Dan, all,
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
----
- drivers/staging/rtl8192e/rtllib_crypt_ccmp.c | 2 +-
- drivers/staging/rtl8192e/rtllib_crypt_tkip.c | 2 +-
- drivers/staging/rtl8192e/rtllib_crypt_wep.c  | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Strictly this is doing two things.  But I agree that the "ok" variable in
+virtnet_get_hw_stats() was very confusing, and I'm not sure how long it
+would have taken me to grasp the fix without that change being here too.
 
-diff --git a/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c b/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
-index cbb8c8dbe9b0..ce02204ac1ba 100644
---- a/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
-+++ b/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
-@@ -378,7 +378,7 @@ static void rtllib_ccmp_print_stats(struct seq_file *m, void *priv)
- 		   ccmp->dot11rsna_stats_ccmp_decrypt_errors);
- }
- 
--static struct lib80211_crypto_ops rtllib_crypt_ccmp = {
-+static const struct lib80211_crypto_ops rtllib_crypt_ccmp = {
- 	.name			= "R-CCMP",
- 	.init			= rtllib_ccmp_init,
- 	.deinit			= rtllib_ccmp_deinit,
-diff --git a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
-index 0244b524a7d4..be8060ecaecd 100644
---- a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
-+++ b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
-@@ -678,7 +678,7 @@ static void rtllib_tkip_print_stats(struct seq_file *m, void *priv)
- 		   tkip->dot11RSNAStatsTKIPLocalMICFailures);
- }
- 
--static struct lib80211_crypto_ops rtllib_crypt_tkip = {
-+static const struct lib80211_crypto_ops rtllib_crypt_tkip = {
- 	.name			= "R-TKIP",
- 	.init			= rtllib_tkip_init,
- 	.deinit			= rtllib_tkip_deinit,
-diff --git a/drivers/staging/rtl8192e/rtllib_crypt_wep.c b/drivers/staging/rtl8192e/rtllib_crypt_wep.c
-index 21c2b7666d6f..55c5199a25ea 100644
---- a/drivers/staging/rtl8192e/rtllib_crypt_wep.c
-+++ b/drivers/staging/rtl8192e/rtllib_crypt_wep.c
-@@ -209,7 +209,7 @@ static void prism2_wep_print_stats(struct seq_file *m, void *priv)
- 	seq_printf(m, "key[%d] alg=WEP len=%d\n", wep->key_idx, wep->key_len);
- }
- 
--static struct lib80211_crypto_ops rtllib_crypt_wep = {
-+static const struct lib80211_crypto_ops rtllib_crypt_wep = {
- 	.name			= "R-WEP",
- 	.init			= prism2_wep_init,
- 	.deinit			= prism2_wep_deinit,
--- 
-2.45.0
+Reviewed-by: Simon Horman <horms@kernel.org>
 
