@@ -1,77 +1,108 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2B31F932;
-	Sat, 11 May 2024 02:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEF828689;
+	Sat, 11 May 2024 04:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715394634; cv=none; b=HnN9Aozp167uwIZDhauT7yTtSWwaoVBC3SIWnDqoNUs0ZesLeDnJm7XOSdL2BMoc0b6EkR64L6nMjy0rDFLiAkd09haYVJrK1BxBUzdtbKluM9MoE87pYSOUkKTg6t1gc0WmE6CrBHXjDd6xqXDh5AaefmYnWnP/H37tUppyn3c=
+	t=1715401918; cv=none; b=IUFARE9snkzPDvJIVmPcNluKUDS0WicDFxtk1vlEhdDiAJZIBdcSJov64B6W/tDLGZR6jN3cR9ScLwAxnc+ADKBCQkW+K9L+va4inJiILsN9GEa44ev+4siQo9qfRsjrgXu0UwoIwbcAKZVloHr4imVvTejjd1BIF/tGsxvH+u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715394634; c=relaxed/simple;
-	bh=Jy5e/l4R8+rP+Y0tsCZq77IwV97Y2/tAMH0BUVFQ9EE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=DSiRCaTUx1Sp3c7Te+8jmfble9WybOOCvgl0XXh5xUx2ursaSk772TUi/lOJQn34vOhleCbbWyhs6Efvjh94xdPcskQJwRqXXCm213N3+GtizARhw8SHu9zRb1T0R4hCakXABqO+neJel4q6kO3vvS1uAQQGY/NVBv/uvT8T5CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=liY6R/Yn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715401918; c=relaxed/simple;
+	bh=pOHd2qw5bf9nP0s8s0oQXvG+Jy9rv8Fsa9Dig9FNGJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OVGAzUo5afYwL1xX4rOFMWMQhgTwmv11/sOZXK4a+/97fipLpyEVA367s/QA0HOoDn1bhw8hVh7589VlCJo1BV4tbolLlqH++P6ewx333zFJwQYwVQjmHNAhe7UBKK7/xc1gjRmjukTFQ0Ku5vFFuExdGzYze+xTtX1TcJL0r8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyZudwWW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="liY6R/Yn"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7B248C4AF11;
-	Sat, 11 May 2024 02:30:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyZudwWW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39CCBC2BD10;
+	Sat, 11 May 2024 04:31:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715394634;
-	bh=Jy5e/l4R8+rP+Y0tsCZq77IwV97Y2/tAMH0BUVFQ9EE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=liY6R/YnpsQMNREGsffC50PDDai3APeuIdceNQTXWDG/CpnC+gpcT8Q3xS+9i0SaY
-	 u8I38fqpguN2ZeTn2jajc86XpoElkG4x1V7AX1lvGaYLjIgcCYvwpLX5Ayhh3dj0YO
-	 13Ml0UD1WrReSZSWEAkfBEb4sc/Dlh8z0lN/NrbrNO817Cyu29mIo2JnXbi2EXNv3I
-	 dwXV7depNhbkEaT24vyaFr34WdJkq1zN5VvAKq9Q/+s4CVsERN1spm928cS0tasKqP
-	 SxU0KY6oDpxxxI4X49H9WMZY5DszTKuao9OAJzIt0A/38B+iwqnqVzSo4gtV2AiY48
-	 t0tdTtjpPrBxw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 724C2C54BA1;
-	Sat, 11 May 2024 02:30:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1715401918;
+	bh=pOHd2qw5bf9nP0s8s0oQXvG+Jy9rv8Fsa9Dig9FNGJ0=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=kyZudwWWrULxP1VkiwQ47rlUiQTtFT+LQbY6yxz3H8XUhL5qC3/ZZN5M1UG/97SB5
+	 F06sypVkvR9aL+O6FmfWicTnB3ePyNfCecj/hVa5DNkuzKGZ2R8uJK4p25BwIM8vEd
+	 muAq17+/2mXjMgayZWTnAvGe1X7kevbw7200KChyR/93EOwpQCFSrInXkeTgepsXFS
+	 PZ8hGr6ghumgXO2/k2a8J2ZMrw+aLyFrFz074hhLE482XiOc3hZ7bQU+Cxm55c7wPr
+	 Iy08VkCMV6SHq7f2Gsrpv9dVs1WHFyEHmjCQp296tYN/0IbsM5ZUuu8O8H3PyoUUxH
+	 g7sdTsbNhHr6g==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id D6839CE094C; Fri, 10 May 2024 21:31:57 -0700 (PDT)
+Date: Fri, 10 May 2024 21:31:57 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	David Riley <davidriley@chromium.org>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] time: add MODULE_DESCRIPTION() to time test modules
+Message-ID: <779507fe-8794-47f8-9c9c-9dbd5cbe899f@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240510-time-md-v1-1-44a8a36ac4b0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] net: dsa: microchip: Fix spellig mistake "configur" ->
- "configure"
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171539463446.29955.16064733624227057249.git-patchwork-notify@kernel.org>
-Date: Sat, 11 May 2024 02:30:34 +0000
-References: <20240509065023.3033397-1-colin.i.king@gmail.com>
-In-Reply-To: <20240509065023.3033397-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: woojung.huh@microchip.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch,
- f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510-time-md-v1-1-44a8a36ac4b0@quicinc.com>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu,  9 May 2024 07:50:23 +0100 you wrote:
-> There is a spelling mistake in a dev_err message. Fix it.
+On Fri, May 10, 2024 at 05:24:25PM -0700, Jeff Johnson wrote:
+> Fix the make W=1 warnings:
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/clocksource-wdtest.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/test_udelay.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/time_test.o
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+
+From a clocksource-watchdog-test perspective:
+
+Acked-by: Paul E. McKenney <paulmck@kernel.org>
+
 > ---
->  drivers/net/dsa/microchip/ksz_dcb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Here is the summary with links:
-  - [next] net: dsa: microchip: Fix spellig mistake "configur" -> "configure"
-    https://git.kernel.org/netdev/net-next/c/089507a67921
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+>  kernel/time/clocksource-wdtest.c | 1 +
+>  kernel/time/test_udelay.c        | 1 +
+>  kernel/time/time_test.c          | 1 +
+>  3 files changed, 3 insertions(+)
+> 
+> diff --git a/kernel/time/clocksource-wdtest.c b/kernel/time/clocksource-wdtest.c
+> index d06185e054ea..62e73444ffe4 100644
+> --- a/kernel/time/clocksource-wdtest.c
+> +++ b/kernel/time/clocksource-wdtest.c
+> @@ -22,6 +22,7 @@
+>  #include "tick-internal.h"
+>  
+>  MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("Clocksource watchdog unit test");
+>  MODULE_AUTHOR("Paul E. McKenney <paulmck@kernel.org>");
+>  
+>  static int holdoff = IS_BUILTIN(CONFIG_TEST_CLOCKSOURCE_WATCHDOG) ? 10 : 0;
+> diff --git a/kernel/time/test_udelay.c b/kernel/time/test_udelay.c
+> index 20d5df631570..783f2297111b 100644
+> --- a/kernel/time/test_udelay.c
+> +++ b/kernel/time/test_udelay.c
+> @@ -155,5 +155,6 @@ static void __exit udelay_test_exit(void)
+>  
+>  module_exit(udelay_test_exit);
+>  
+> +MODULE_DESCRIPTION("udelay test module");
+>  MODULE_AUTHOR("David Riley <davidriley@chromium.org>");
+>  MODULE_LICENSE("GPL");
+> diff --git a/kernel/time/time_test.c b/kernel/time/time_test.c
+> index 3e5d422dd15c..2889763165e5 100644
+> --- a/kernel/time/time_test.c
+> +++ b/kernel/time/time_test.c
+> @@ -96,4 +96,5 @@ static struct kunit_suite time_test_suite = {
+>  };
+>  
+>  kunit_test_suite(time_test_suite);
+> +MODULE_DESCRIPTION("time unit test suite");
+>  MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
+> change-id: 20240510-time-md-0f1514019230
+> 
