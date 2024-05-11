@@ -1,44 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEF828689;
-	Sat, 11 May 2024 04:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80F8537F8;
+	Sat, 11 May 2024 14:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715401918; cv=none; b=IUFARE9snkzPDvJIVmPcNluKUDS0WicDFxtk1vlEhdDiAJZIBdcSJov64B6W/tDLGZR6jN3cR9ScLwAxnc+ADKBCQkW+K9L+va4inJiILsN9GEa44ev+4siQo9qfRsjrgXu0UwoIwbcAKZVloHr4imVvTejjd1BIF/tGsxvH+u4=
+	t=1715437391; cv=none; b=XK3123Co9bAL6DE4VorGJhmQMt7+EWCNb940BfHpLuTGagATSjb4Hdg2TMfR3OBut+/RbdkwJSANRDektFHYUvY3V7kU0XMtqEZFLqwIGx2ZfDjGhO5Cc10TWy/slrC929mTBbADRP1ZfCHsLXCXKUQ7+u0evo8u8oACC6jpAeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715401918; c=relaxed/simple;
-	bh=pOHd2qw5bf9nP0s8s0oQXvG+Jy9rv8Fsa9Dig9FNGJ0=;
+	s=arc-20240116; t=1715437391; c=relaxed/simple;
+	bh=Qr8OpivSWnfs8bmKLMFIrsKgWu6HXAneyPPW5cVew7E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OVGAzUo5afYwL1xX4rOFMWMQhgTwmv11/sOZXK4a+/97fipLpyEVA367s/QA0HOoDn1bhw8hVh7589VlCJo1BV4tbolLlqH++P6ewx333zFJwQYwVQjmHNAhe7UBKK7/xc1gjRmjukTFQ0Ku5vFFuExdGzYze+xTtX1TcJL0r8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyZudwWW; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=kX4Q+59i6ciW9ESxzypQqbQjRWgJ2mcKBcBEluf/4j79PHUoNpCxn0Za+DGXLnoAmdu49+EJvQfqIxdTYLeyljSmf1idQCbVBdtZCekRRjhAduWFKcmxvqL9qLkJrfamIxemUqU+tea5yxd/hOOVmryQHxldSPJ+sVnXY4AY+NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZ4ulFkd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyZudwWW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39CCBC2BD10;
-	Sat, 11 May 2024 04:31:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZ4ulFkd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6E9BC2BBFC;
+	Sat, 11 May 2024 14:23:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715401918;
-	bh=pOHd2qw5bf9nP0s8s0oQXvG+Jy9rv8Fsa9Dig9FNGJ0=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=kyZudwWWrULxP1VkiwQ47rlUiQTtFT+LQbY6yxz3H8XUhL5qC3/ZZN5M1UG/97SB5
-	 F06sypVkvR9aL+O6FmfWicTnB3ePyNfCecj/hVa5DNkuzKGZ2R8uJK4p25BwIM8vEd
-	 muAq17+/2mXjMgayZWTnAvGe1X7kevbw7200KChyR/93EOwpQCFSrInXkeTgepsXFS
-	 PZ8hGr6ghumgXO2/k2a8J2ZMrw+aLyFrFz074hhLE482XiOc3hZ7bQU+Cxm55c7wPr
-	 Iy08VkCMV6SHq7f2Gsrpv9dVs1WHFyEHmjCQp296tYN/0IbsM5ZUuu8O8H3PyoUUxH
-	 g7sdTsbNhHr6g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id D6839CE094C; Fri, 10 May 2024 21:31:57 -0700 (PDT)
-Date: Fri, 10 May 2024 21:31:57 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	David Riley <davidriley@chromium.org>, linux-kernel@vger.kernel.org,
+	s=k20201202; t=1715437391;
+	bh=Qr8OpivSWnfs8bmKLMFIrsKgWu6HXAneyPPW5cVew7E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kZ4ulFkdNsrM7k7LM1jL5rioqRbHu1PZmHoCDp2vK8uLoX4HjbiGskqQuy25zJW/Q
+	 P4OiwrJL7eBs/ydGg6dzsacLJeu9NXOVLzMpueRnCC/ZXOcHk3PeLZ6YicfHr9PACQ
+	 Y99ZdSUFZ6lRaedOktxIifDlCPzTbL5A31nnsJ+DYepknjqmBXRUjYC9phHKucV6V5
+	 8rW/kDUR2AYxN758gD+8iaokNdeTVXamk1iKLF6yI35hoiBVVk13fdeDtu4tmducYp
+	 YQuTS6Vx4o546E5lTdtjY6V8NxNDA92+bOH1BeojsY19YedJvh/wcRfDV5eAhnXw65
+	 57XnoW++ZtrZg==
+Date: Sat, 11 May 2024 15:23:04 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Shay Drory <shayd@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Moshe Shemesh <moshe@nvidia.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] time: add MODULE_DESCRIPTION() to time test modules
-Message-ID: <779507fe-8794-47f8-9c9c-9dbd5cbe899f@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240510-time-md-v1-1-44a8a36ac4b0@quicinc.com>
+Subject: Re: [PATCH net] net/mlx5: Fix error handling in mlx5_init_one_light()
+Message-ID: <20240511142304.GH2347895@kernel.org>
+References: <a2bb6a55-5415-4c15-bee9-9e63f4b6a339@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -47,62 +48,28 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240510-time-md-v1-1-44a8a36ac4b0@quicinc.com>
+In-Reply-To: <a2bb6a55-5415-4c15-bee9-9e63f4b6a339@moroto.mountain>
 
-On Fri, May 10, 2024 at 05:24:25PM -0700, Jeff Johnson wrote:
-> Fix the make W=1 warnings:
+On Thu, May 09, 2024 at 02:00:18PM +0300, Dan Carpenter wrote:
+> If mlx5_query_hca_caps_light() fails then calling devl_unregister() or
+> devl_unlock() is a bug.  It's not registered and it's not locked.  That
+> will trigger a stack trace in this case because devl_unregister() checks
+> both those things at the start of the function.
 > 
-> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/clocksource-wdtest.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/test_udelay.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/time_test.o
+> If mlx5_devlink_params_register() fails then this code will call
+> devl_unregister() and devl_unlock() twice which will again lead to a
+> stack trace or possibly something worse as well.
 > 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> Fixes: bf729988303a ("net/mlx5: Restore mistakenly dropped parts in register devlink flow")
+> Fixes: c6e77aa9dd82 ("net/mlx5: Register devlink first under devlink lock")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-From a clocksource-watchdog-test perspective:
+Hi Dan,
 
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
+I believe that after you posted this patch, a different fix for this was
+added to net as:
 
-> ---
->  kernel/time/clocksource-wdtest.c | 1 +
->  kernel/time/test_udelay.c        | 1 +
->  kernel/time/time_test.c          | 1 +
->  3 files changed, 3 insertions(+)
-> 
-> diff --git a/kernel/time/clocksource-wdtest.c b/kernel/time/clocksource-wdtest.c
-> index d06185e054ea..62e73444ffe4 100644
-> --- a/kernel/time/clocksource-wdtest.c
-> +++ b/kernel/time/clocksource-wdtest.c
-> @@ -22,6 +22,7 @@
->  #include "tick-internal.h"
->  
->  MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("Clocksource watchdog unit test");
->  MODULE_AUTHOR("Paul E. McKenney <paulmck@kernel.org>");
->  
->  static int holdoff = IS_BUILTIN(CONFIG_TEST_CLOCKSOURCE_WATCHDOG) ? 10 : 0;
-> diff --git a/kernel/time/test_udelay.c b/kernel/time/test_udelay.c
-> index 20d5df631570..783f2297111b 100644
-> --- a/kernel/time/test_udelay.c
-> +++ b/kernel/time/test_udelay.c
-> @@ -155,5 +155,6 @@ static void __exit udelay_test_exit(void)
->  
->  module_exit(udelay_test_exit);
->  
-> +MODULE_DESCRIPTION("udelay test module");
->  MODULE_AUTHOR("David Riley <davidriley@chromium.org>");
->  MODULE_LICENSE("GPL");
-> diff --git a/kernel/time/time_test.c b/kernel/time/time_test.c
-> index 3e5d422dd15c..2889763165e5 100644
-> --- a/kernel/time/time_test.c
-> +++ b/kernel/time/time_test.c
-> @@ -96,4 +96,5 @@ static struct kunit_suite time_test_suite = {
->  };
->  
->  kunit_test_suite(time_test_suite);
-> +MODULE_DESCRIPTION("time unit test suite");
->  MODULE_LICENSE("GPL");
-> 
-> ---
-> base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
-> change-id: 20240510-time-md-0f1514019230
-> 
+3c453e8cc672 ("net/mlx5: Fix peer devlink set for SF representor devlink port")
+
+-- 
+pw-bot: rejected
