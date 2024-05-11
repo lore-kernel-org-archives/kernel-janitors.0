@@ -1,75 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80F8537F8;
-	Sat, 11 May 2024 14:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990E34A39;
+	Sat, 11 May 2024 16:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715437391; cv=none; b=XK3123Co9bAL6DE4VorGJhmQMt7+EWCNb940BfHpLuTGagATSjb4Hdg2TMfR3OBut+/RbdkwJSANRDektFHYUvY3V7kU0XMtqEZFLqwIGx2ZfDjGhO5Cc10TWy/slrC929mTBbADRP1ZfCHsLXCXKUQ7+u0evo8u8oACC6jpAeA=
+	t=1715445247; cv=none; b=WjUmFx+McFxd9g2Lzp19JyYnmsvLj04Oi0wuaQJTFe5TB7qE8exocMlFYvrr2rmJeRBnXuMbosrqkH3uVrovgc9U2z7d4GAgjZzjv3JmuRPqKncsZSHr+fFWXww90hpdBDdkjztQgHvvhza8r1NGLZwkRVfkbubCu7a2IQqXX8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715437391; c=relaxed/simple;
-	bh=Qr8OpivSWnfs8bmKLMFIrsKgWu6HXAneyPPW5cVew7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kX4Q+59i6ciW9ESxzypQqbQjRWgJ2mcKBcBEluf/4j79PHUoNpCxn0Za+DGXLnoAmdu49+EJvQfqIxdTYLeyljSmf1idQCbVBdtZCekRRjhAduWFKcmxvqL9qLkJrfamIxemUqU+tea5yxd/hOOVmryQHxldSPJ+sVnXY4AY+NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZ4ulFkd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715445247; c=relaxed/simple;
+	bh=Iv617nSHxfFn8mG/1prVYlXPiE/zW6Z5PPRt+mc8e50=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MCLhdkpJkAPbISmn9Md/VhNn6XN8P21H1kENEDH5TO5iZtDN6qi18NOok8iQeuvF96yy4Z2iiYaMop0McTtoCarePdXO9mNdgxcjVjK7inqCB/yjpQLcyccKdmsHxlVtG5ejl4Z/6ySfhyghQb0wg4Bb2G06AyquhtI5KiKGzIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XDymT0I1; arc=none smtp.client-ip=80.12.242.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZ4ulFkd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6E9BC2BBFC;
-	Sat, 11 May 2024 14:23:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715437391;
-	bh=Qr8OpivSWnfs8bmKLMFIrsKgWu6HXAneyPPW5cVew7E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kZ4ulFkdNsrM7k7LM1jL5rioqRbHu1PZmHoCDp2vK8uLoX4HjbiGskqQuy25zJW/Q
-	 P4OiwrJL7eBs/ydGg6dzsacLJeu9NXOVLzMpueRnCC/ZXOcHk3PeLZ6YicfHr9PACQ
-	 Y99ZdSUFZ6lRaedOktxIifDlCPzTbL5A31nnsJ+DYepknjqmBXRUjYC9phHKucV6V5
-	 8rW/kDUR2AYxN758gD+8iaokNdeTVXamk1iKLF6yI35hoiBVVk13fdeDtu4tmducYp
-	 YQuTS6Vx4o546E5lTdtjY6V8NxNDA92+bOH1BeojsY19YedJvh/wcRfDV5eAhnXw65
-	 57XnoW++ZtrZg==
-Date: Sat, 11 May 2024 15:23:04 +0100
-From: Simon Horman <horms@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Shay Drory <shayd@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Moshe Shemesh <moshe@nvidia.com>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] net/mlx5: Fix error handling in mlx5_init_one_light()
-Message-ID: <20240511142304.GH2347895@kernel.org>
-References: <a2bb6a55-5415-4c15-bee9-9e63f4b6a339@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XDymT0I1"
+Received: from localhost.localdomain ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id 5peUsjqa5MXQT5peUssoYd; Sat, 11 May 2024 18:32:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1715445172;
+	bh=3b7/z6XLiDoS2qLZLRUO85qwKU6ZlvHpSybGTWjg1HM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=XDymT0I1WGs+i/KIj4lSkhEw4cQqjWvpGW9hwM0sU/4HQVUtZ8ItkzlIL1ZrWgkjJ
+	 lhvhAkO9YYd5ePvexnNS6fXCj2zizb8fYaRjDAA+0yKspCvmN3ai/iEjwV+Fplkx+G
+	 WbNO2QJscGsxngGerrwMOw1CGMSFQF5wJOz8SO/2Qsx+6eyg8RBu3l3CQJFe3NM433
+	 xF63Kz9FLvPb+r4uF6enBEeTDPbdvVYezwFokJB+Ha8bPwjOrDM9shq82gSuYaIKmT
+	 nroEYTQwu1JnuRibM1h+6A2k1IN75qM9UzLY1A6ChP+c5NrxpjXdvWb9/V8xxdl7NO
+	 71QXGnhnKRv4A==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 11 May 2024 18:32:52 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: gregkh@linuxfoundation.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	johannes@sipsolutions.net,
+	philipp.g.hortmann@gmail.com,
+	tdavies@darkphysics.net,
+	garyrookard@fastmail.org,
+	straube.linux@gmail.com
+Cc: linux-staging@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/3] lib80211: Constify struct lib80211_crypto_ops
+Date: Sat, 11 May 2024 18:32:37 +0200
+Message-ID: <cover.1715443223.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a2bb6a55-5415-4c15-bee9-9e63f4b6a339@moroto.mountain>
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 09, 2024 at 02:00:18PM +0300, Dan Carpenter wrote:
-> If mlx5_query_hca_caps_light() fails then calling devl_unregister() or
-> devl_unlock() is a bug.  It's not registered and it's not locked.  That
-> will trigger a stack trace in this case because devl_unregister() checks
-> both those things at the start of the function.
-> 
-> If mlx5_devlink_params_register() fails then this code will call
-> devl_unregister() and devl_unlock() twice which will again lead to a
-> stack trace or possibly something worse as well.
-> 
-> Fixes: bf729988303a ("net/mlx5: Restore mistakenly dropped parts in register devlink flow")
-> Fixes: c6e77aa9dd82 ("net/mlx5: Register devlink first under devlink lock")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+This serie constify struct lib80211_crypto_ops. This sutructure is
+mostly some function pointers, so having it in a read-only section
+when possible is safer.
 
-Hi Dan,
 
-I believe that after you posted this patch, a different fix for this was
-added to net as:
+The 1st patch, update some function prototypes and data structures in
+lib80211.
 
-3c453e8cc672 ("net/mlx5: Fix peer devlink set for SF representor devlink port")
+The 2nd patch constifies some struct lib80211_crypto_ops in lib80211.
+This moves some data to a read-only section, so increase overall
+security.
+
+The 3rd patch does the same for staging/rtl8192e.
+
+Note that the functions have looked in staging/rtl8192e look really
+similar to the ones in lib80211. Maybe it could be removed in favor of
+the latter.
+
+
+Each patch in the serie has been compile tested ony.
+
+Christophe JAILLET (3):
+  lib80211: Handle const struct lib80211_crypto_ops in lib80211
+  lib80211: Constify struct lib80211_crypto_ops
+  staging: rtl8192e: Constify struct lib80211_crypto_ops
+
+ drivers/staging/rtl8192e/rtllib_crypt_ccmp.c |  2 +-
+ drivers/staging/rtl8192e/rtllib_crypt_tkip.c |  2 +-
+ drivers/staging/rtl8192e/rtllib_crypt_wep.c  |  2 +-
+ drivers/staging/rtl8192e/rtllib_wx.c         |  2 +-
+ include/net/lib80211.h                       |  8 ++++----
+ net/wireless/lib80211.c                      | 10 +++++-----
+ net/wireless/lib80211_crypt_ccmp.c           |  2 +-
+ net/wireless/lib80211_crypt_tkip.c           |  2 +-
+ net/wireless/lib80211_crypt_wep.c            |  2 +-
+ 9 files changed, 16 insertions(+), 16 deletions(-)
 
 -- 
-pw-bot: rejected
+2.45.0
+
