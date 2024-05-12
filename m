@@ -1,119 +1,106 @@
-Received: from out.smtpout.orange.fr (out-18.smtpout.orange.fr [193.252.22.18])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28240B64B;
-	Sun, 12 May 2024 07:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800E9EEB3
+	for <kernel-janitors@vger.kernel.org>; Sun, 12 May 2024 08:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715498748; cv=none; b=XYEgfe2gvUjqG6DQzNnbo8gjOzqAPruAQIkcNsReoSsU08YkNO5WL/eCdFJvDB6OOPNYFugu5OaNLGW3efaJMwz2uJi4tkLPgH4ZbiTlINBopkNnIbguxis31Ji6cmmuo/Yleu9olaNznoaKDaHahSn4I+FQEBYgvdjyKxuq95c=
+	t=1715502049; cv=none; b=OmTPvr87eOGxdW9Gv9synYs0VpNsPNjMJqBH5EaTDrXFhCL8VXwYk6meKPnmK894aE1HSjqrueFLzIdDemQhClOvLmiMxlGm7MUhs+HRycYaHVjHGywq7MY6HCYQgFQ1U1fVJGq7FrQpDTuVTO9s3hXyrExbR7yNIDhT01KWDCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715498748; c=relaxed/simple;
-	bh=PPOMNBV3Glw3iN++/hQQpbxp0F4wKqd1XkP6JbbUKcY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LcBsDFjhGODUZdbw6etwUQtZIlQK/cPxLd+bMtZWwveUMlXpakm8pkoQIebqPkacfx8BCVALpoZgzeT0CArEebPwCE/dL9/Fr/Cg8whUKcT9rEqInNqqpmX1ATFM0wq8reqdVBfQUDNE60yZExQBwDO18cmwpb+cosSjAdPpRPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ltzOaz+m; arc=none smtp.client-ip=193.252.22.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1715502049; c=relaxed/simple;
+	bh=57aIvZSlXvHd2XNr6XUvBTj1SaQbsmoHThuid5rkxjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QprKl056+EZ74yyJaKjsE9BVIDq+Jufby/rzP2nX5EfwOH4yRao5Mygeu8e18WqWtmn/873bmFVki1Sr97HCX2cbtJBSSJjP7ayrAX+3eioC9aP7d2z2rDlJhNsWmq6ZHeEE9ypBDqRDXBZosagIDvWHQKCrq9AaTMQfR1gdrnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EP4NhPXr; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ltzOaz+m"
-Received: from [192.168.1.37] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 63aWscRyh5iYZ63aWsqXbh; Sun, 12 May 2024 09:25:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1715498744;
-	bh=RtPvSUrEN3BQtMhBvVSB3q+A6lvRVAHJyIYgMiIAyuA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To;
-	b=ltzOaz+mHuccNQ8uLvFrW8QIw/2+AI910JD6hnDR0t7mSWSePkhzjJhHCf04FjjDc
-	 GB1RxrMy1mk+wtP5VzJ9FR9yLKC5+GiaNtPwm1w52FE09HWTIbgfF7ofgHVIbKS1xa
-	 8gZa8zWHMyAo4QV7QfjkYwLYIDAtf/g64Blpoz/uVg1+MD9rzSlJgwZoVUv3v0cUmG
-	 opuqrjsWyx1j8lCmRn5BF6ygtl8Vgn6VP8Sqn9Ok7wjDN7jrZI/q1jZiaKTftvNe5t
-	 DvlVTDSgycQrNobLKdSOCuzsaOV7vvGFShjShTj3/tKsQxBmQ5j1w3yVNjQ8kjLKPY
-	 bXSso4icrIOtg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 12 May 2024 09:25:44 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <5dd2eceb-4108-4071-b7b5-1fcac0a9d2ef@wanadoo.fr>
-Date: Sun, 12 May 2024 09:25:40 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EP4NhPXr"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59ce1e8609so766657266b.0
+        for <kernel-janitors@vger.kernel.org>; Sun, 12 May 2024 01:20:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715502046; x=1716106846; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aA2OPIGe9/26kCTNuDnbmS99Q0tmMHaLiwj2IVXEJuE=;
+        b=EP4NhPXrgCh0Y+nCrC/A+xOYfqnHp3W77DPdncZCfvE/5ZlUzliAKU4SgrbH6uaU/f
+         JvOclsTe9KLMxcpaV2B7wEum5yskQ3samvYxcydNV6OhJi2gRZUtnERhovVBk3QHPPdI
+         fBdeGsrH93lAMjqtcP03S331ukgQ9M1AEWqrQBEBoPW8QXtDWrLoAeunquR+9X1MDkdI
+         Vteh+s9fD+SDe5Y91NzIe78od3RSswcb8k9AZLM6H4xPg8W9fT1pds6U0AYgipQFpYgj
+         2gq4xzsWEV3oWP4wP3ijrtxi095VJxjviTQbP9YWEBx0NMAqVQ7p1C+FhzcnyCYRBDx1
+         zNFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715502046; x=1716106846;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aA2OPIGe9/26kCTNuDnbmS99Q0tmMHaLiwj2IVXEJuE=;
+        b=O7NBNYp1jPXcsONz61e5iSVtHlXHa0FDmQPYtmYwdZnxBDltBo9ulh6PqRNv0slLR5
+         KmUo7Ow54g1w3iShcfYcO6eGqnyY0ZBLta0T4sAV1m4xyUS6ce3dmSL4Kb8CcrjJEIOx
+         Alzg2j6ht9bu5LRCsM6S7DzNuYvko9OzEO7iUR1jiqGDr/AjcatCGhWATfhJl2Iekv7b
+         KyqkNXNs73kaEptsGytdmGFXfaj7erJpjSy/7K3aLduDo1HZcXBxLPYVvAxmRwgi5vSD
+         73STJF5XqgVliVi5DFUEtRTDxMUbUYUC5D1ejSZD7O3OOtGveQw/By5/hjMJE8C2y2kd
+         kGWg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4J7XR+aLV2Ccr5USyYQCwuNvfVeOfQTUFDuD8zu3flsnhnSVcSYIMKKsm3nTvmrakOsUYhYrzRA8kQy0mGRSTHYrjSHsy5P6F013+OB5s
+X-Gm-Message-State: AOJu0YxqvGFnWFF6zxUc420/aqoFzM4hH9xWtxXs3D6RfKVuSeU4dNmn
+	8Hki8Eqi41rMKTnPHuCaaWEw4wP8kJtzGStm+gJey0mmA9VSBM0sGw4417LHvaA=
+X-Google-Smtp-Source: AGHT+IH8IAAcuq0uwpTf6fMx0D8wB462+TGmZE1W/D5t26zWbQkpZSc39eY03aIz5zXbSAbXfLd1/g==
+X-Received: by 2002:a17:906:57d4:b0:a59:ba34:f047 with SMTP id a640c23a62f3a-a5a2d1de87dmr521612466b.22.1715502045535;
+        Sun, 12 May 2024 01:20:45 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01399sm438058766b.172.2024.05.12.01.20.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 May 2024 01:20:45 -0700 (PDT)
+Date: Sun, 12 May 2024 11:20:40 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Simon Horman <horms@kernel.org>
+Cc: Shay Drory <shayd@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Moshe Shemesh <moshe@nvidia.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] net/mlx5: Fix error handling in mlx5_init_one_light()
+Message-ID: <38283c14-c8b2-4274-9e34-9d5951816a59@suswa.mountain>
+References: <a2bb6a55-5415-4c15-bee9-9e63f4b6a339@moroto.mountain>
+ <20240511142304.GH2347895@kernel.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] lib80211: Handle const struct lib80211_crypto_ops in
- lib80211
-From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Simon Horman <horms@kernel.org>
-Cc: gregkh@linuxfoundation.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, johannes@sipsolutions.net,
- philipp.g.hortmann@gmail.com, tdavies@darkphysics.net,
- garyrookard@fastmail.org, straube.linux@gmail.com,
- linux-staging@lists.linux.dev, netdev@vger.kernel.org,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <cover.1715443223.git.christophe.jaillet@wanadoo.fr>
- <d6306f7c76015653e9539ddbcd1ed74d1681a98f.1715443223.git.christophe.jaillet@wanadoo.fr>
- <20240511203104.GW2347895@kernel.org>
- <b6042eae-88cd-4f95-88d8-d1812c2930de@wanadoo.fr>
-Content-Language: en-MW
-In-Reply-To: <b6042eae-88cd-4f95-88d8-d1812c2930de@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240511142304.GH2347895@kernel.org>
 
-
-
-Le 11/05/2024 à 23:47, Christophe JAILLET a écrit :
-> Le 11/05/2024 à 22:31, Simon Horman a écrit :
->> On Sat, May 11, 2024 at 06:32:38PM +0200, Christophe JAILLET wrote:
->>> lib80211_register_crypto_ops() and lib80211_unregister_crypto_ops() 
->>> don't
->>> modify their "struct lib80211_crypto_ops *ops" argument. So, it can be
->>> declared as const.
->>>
->>> Doing so, some adjustments are needed to also constify some date in
->>> "struct lib80211_crypt_data", "struct lib80211_crypto_alg" and the
->>> return value of lib80211_get_crypto_ops().
->>>
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>> ---
->>> Compile tested only.
->>
->> Hi Christophe,
->>
->> Unfortunately allmodconfig W=1 build on x86_64 with Clang says:
->>
->> .../libipw_wx.c:587:6: error: assigning to 'struct lib80211_crypto_ops 
->> *' from 'const struct lib80211_crypto_ops *' discards qualifiers 
->> [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
->>   587 |         ops = lib80211_get_crypto_ops(alg);
->>       |             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> .../libipw_wx.c:590:7: error: assigning to 'struct lib80211_crypto_ops 
->> *' from 'const struct lib80211_crypto_ops *' discards qualifiers 
->> [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
->>   590 |                 ops = lib80211_get_crypto_ops(alg);
->>       |                     ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>
+On Sat, May 11, 2024 at 03:23:04PM +0100, Simon Horman wrote:
+> On Thu, May 09, 2024 at 02:00:18PM +0300, Dan Carpenter wrote:
+> > If mlx5_query_hca_caps_light() fails then calling devl_unregister() or
+> > devl_unlock() is a bug.  It's not registered and it's not locked.  That
+> > will trigger a stack trace in this case because devl_unregister() checks
+> > both those things at the start of the function.
+> > 
+> > If mlx5_devlink_params_register() fails then this code will call
+> > devl_unregister() and devl_unlock() twice which will again lead to a
+> > stack trace or possibly something worse as well.
+> > 
+> > Fixes: bf729988303a ("net/mlx5: Restore mistakenly dropped parts in register devlink flow")
+> > Fixes: c6e77aa9dd82 ("net/mlx5: Register devlink first under devlink lock")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > 
-> Hi,
+> Hi Dan,
 > 
-> I'll dig more tomorrow, but I don't see this error (with gcc), even with 
-> W=1.
+> I believe that after you posted this patch, a different fix for this was
+> added to net as:
 > 
-> The following part of the patch is here to avoid the exact compilation 
-> error that you see.
-> 
-> Strange.
-> 
-> CJ
+> 3c453e8cc672 ("net/mlx5: Fix peer devlink set for SF representor devlink port")
 > 
 
-Ok, got it.
-Thanks for the pointer.
+Ah good.  Plus that patch has been tested.
 
-I don't know how I missed this one. :(
+regards,
+dan carpenter
 
-I'll send a v2.
-
-CJ
