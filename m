@@ -1,134 +1,127 @@
-Received: from msa.smtpout.orange.fr (smtp-80.smtpout.orange.fr [80.12.242.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD711CAAF;
-	Sun, 12 May 2024 11:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D184282E5
+	for <kernel-janitors@vger.kernel.org>; Sun, 12 May 2024 13:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715512372; cv=none; b=KVNbWTM1WOzBC7lpLkX5nfUgw1SRS0oU2/VYsdW9++D2IGi9K+ItfBbt6RW7qHMos9zrKd1ZY8+8d3+SHWrH/kgmEehUEkOjttt7uhFuI9c9xXlPpsdDHjsoNb9eTyONFJYuoXXjc36bIQLFtw/XKsqFrpXab/mLNTQpXyX+cHo=
+	t=1715522124; cv=none; b=ocIVopg4KWRGkU2dbBtooqUQasSO35cmbwW+OopO4H7MKbwles0jpdK0OMD+TrhmPGjNO6S0rQ4ElMd29GmlryLTyrZHvUGuGKAiMjPP4jl1aHRya1E6gS2F5/HpFgb25aI9fsnAq5AnDP3559MT5BW6cblZ2WYmXTT/bpWPWqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715512372; c=relaxed/simple;
-	bh=a0SHuP6qCCie92ITUzTLst/XaoPMKeSO9S3jgl5l1rQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ho/YR3Mu+UPx7NJpIu95EK6vwNkaN0/kcPSLcePXo6hSt65TFiZoP/jeEp9m/QM6bb+FAmsyEyfZrNEY26jGFtrAAW0na9bZOEvfDaObuDgkPBmk5fjM/zWDZ7thdEPWfaOuTR1ur88X3YOeilIjxKxk8jswkAQ0KEMJJcTQV28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=IEvwEGKA; arc=none smtp.client-ip=80.12.242.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1715522124; c=relaxed/simple;
+	bh=QzWIjhiIW1aFIbIhMjmlJIAZhe/Sp3sb9SM0pcpMXm4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V7bJ6NO3ej6U8lXi1xcPXuX5lAUCRdGdwgwRVjdQgNxgSNwvi771WpuqOdNq+/djzz8Oc+g0cIjtNk09jeBJUVl1xfkBNH7IedhyUKY12g92N613ZnGVBAiMnUkuiZSjKC4EOQUaUtUYk0GacM/UVG04wMX3/+hIH/wMoUnENgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JDEqEiKQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="IEvwEGKA"
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 6774sdNpdxEVb6774sbR5R; Sun, 12 May 2024 13:11:31 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1715512291;
-	bh=ESHOboVimNxtbiSAZemdp0pLxtpUq4uYogx/byVem9I=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=IEvwEGKA1WCt51777fRkDu7o3oWAuJexJHAMiwKCY5xIPde/u/h6+KAK3utF+40bs
-	 GlzXAXpPN0wRr0eKzX2iK2LfVL19sGCTH1yzZ9kvMQzEHqCCMI6uy29HaJFusyjIv6
-	 /3jE9N70cdKKH7zxMCOPAjswFuhj4q3rofK4Z+elz3y4zSGdpETzNY4JEXZRvZm7JL
-	 zkthV7VmWMzQeVkRPoDIlxGwyG0sfm2/qTgb58+/Q4a1cMBIWSiiyRYr3MC1HpcxWk
-	 kEmFatMhv5/AVd7h/na1hlISLCIxUaK/nlByqfKGLcasA1FnX/vsL2Jr0x4H1VUdSP
-	 aDfHLkVEDZ6cQ==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 12 May 2024 13:11:31 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] regulator: consumer: Reorder fields in 'struct regulator_bulk_data'
-Date: Sun, 12 May 2024 13:11:21 +0200
-Message-ID: <35c4edf2dbc6d4f24fb771341ded2989ae32f779.1715512259.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.0
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JDEqEiKQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715522121;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N/r0A7TPkHZGpSI3kSzq0XZsCei4tDjmUynzk4cOnsI=;
+	b=JDEqEiKQmrqP+BO9BbuFngLrbx3SliZjNt2NTTrDIInOam57A4dqNfDf5v1+6uNQsckuPZ
+	UAt/ZD9c1XB78wk2H+sldx25KkuuEG4xA2bHOkGPxr93JRdPjkBJclUQFi3lw5tLX8HteE
+	6c3kTzhIU0BdXK+Z5Nx1hrnIShn+6kI=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-556-MYmOqwe_MUCfFYS5N5exGA-1; Sun, 12 May 2024 09:55:14 -0400
+X-MC-Unique: MYmOqwe_MUCfFYS5N5exGA-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2e1e7954970so28719071fa.2
+        for <kernel-janitors@vger.kernel.org>; Sun, 12 May 2024 06:55:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715522113; x=1716126913;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N/r0A7TPkHZGpSI3kSzq0XZsCei4tDjmUynzk4cOnsI=;
+        b=GvM5DiYlwMGW1CRqtZBTmueL81ZCtba3QoccDW0wbDcPEe+mAOzDT69+hgbmqL/7iE
+         1aK4veDvzfkJSL6wV2XqbTFaL2XrU8D5FFm2DFcBtsFPLPJxQLLTjwP2xCcBye0LSeb6
+         DOVgVVq4Bdju1CBMdstaDgxXnSxSTyWu+iPGJhygkOYknjXs6tNhArn9i6/qb7IJS5qP
+         n8ykXNjYc3qc5+7uZzn3ShtDQhS6P78PqwGNpJeSF7SJgsTsrSLABEuazDyaC/TIehiQ
+         ztWyx4E62k32y/Rkg74/wxbvwfRpqycGvMFIbKzB8XpCaGROca45jcR+C7OE2jCwiGl1
+         HqiA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+PpHYiQLSeWGUTYAzl0w8+yQ5LLMAmzRmJAQpHWG4X81m+P8C/golu1f3W77ivVz0RLz58TXWrzn7Q7/z/bbOHHc9329syDUJEfBgokSj
+X-Gm-Message-State: AOJu0YxyV8pZsG+yB0o+BUXroCV+JfN3M/h2YAYzEILh2oHwm+KTqRP3
+	jIi/H7/jMwA+weAJwdsDb+Ii2xVxPuKw4x4WHKaH5JzSoxEfjxC0FeI00v5vjaZK5IxuXq+n3WB
+	Ce7ko74ZyMxhKabOkHK/u0EFe78fbZlTgOt/uA9SVhY6pQzPoT3Xn0gxJlLPC/vmROA==
+X-Received: by 2002:a2e:954c:0:b0:2e5:6957:187a with SMTP id 38308e7fff4ca-2e569571f3amr35927991fa.4.1715522113220;
+        Sun, 12 May 2024 06:55:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGhPImeqHdj7RC0ZYwwkh8BAqDqXDeq0j+HJ2a85twhLE+tGMBO4C8LqXyu6uCaufPlp77uZQ==
+X-Received: by 2002:a2e:954c:0:b0:2e5:6957:187a with SMTP id 38308e7fff4ca-2e569571f3amr35927831fa.4.1715522112795;
+        Sun, 12 May 2024 06:55:12 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1787c699sm458503866b.53.2024.05.12.06.55.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 12 May 2024 06:55:12 -0700 (PDT)
+Message-ID: <dd84ba87-b546-41ec-9cbd-9e6d0fa35476@redhat.com>
+Date: Sun, 12 May 2024 15:55:11 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Input: chipone_icn8505 - remove an unused field in struct
+ icn8505_data
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-input@vger.kernel.org
+References: <37443a675ca07c91c5f0118ce255406e6e3c08f5.1715502304.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <37443a675ca07c91c5f0118ce255406e6e3c08f5.1715502304.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Based on pahole, 2 holes can be combined in 'struct regulator_bulk_data'.
+Hi,
 
-On x86_64 and allmodconfig, this shrinks the size of the structure from 32
-to 24 bytes.
+On 5/12/24 10:25 AM, Christophe JAILLET wrote:
+> In "struct icn8505_data", the 'wake_gpio' field is unused.
+> There is also nothing about gpio neither in this driver nor in the
+> data-sheet.
+> 
+> So, remove it.
+> 
+> Found with cppcheck, unusedStructMember.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-This is usually a win, because this structure is often used for static
-global variables.
+Thanks, patch looks good to me:
 
-As an example:
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   3557	    162	      0	   3719	    e87	drivers/gpu/drm/msm/dsi/dsi_cfg.o
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-   3477	    162	      0	   3639	    e37	drivers/gpu/drm/msm/dsi/dsi_cfg.o
+Regards,
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Before:
-======
-struct regulator_bulk_data {
-	const char  *              supply;               /*     0     8 */
-	int                        init_load_uA;         /*     8     4 */
+Hans
 
-	/* XXX 4 bytes hole, try to pack */
 
-	struct regulator *         consumer;             /*    16     8 */
-	int                        ret;                  /*    24     4 */
 
-	/* size: 32, cachelines: 1, members: 4 */
-	/* sum members: 24, holes: 1, sum holes: 4 */
-	/* padding: 4 */
-	/* last cacheline: 32 bytes */
-};
-
-After:
-=====
-struct regulator_bulk_data {
-	const char  *              supply;               /*     0     8 */
-	struct regulator *         consumer;             /*     8     8 */
-	int                        init_load_uA;         /*    16     4 */
-	int                        ret;                  /*    20     4 */
-
-	/* size: 24, cachelines: 1, members: 4 */
-	/* last cacheline: 24 bytes */
-};
----
- include/linux/regulator/consumer.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
-index 59d0b9a79e6e..e6f81fc1fb17 100644
---- a/include/linux/regulator/consumer.h
-+++ b/include/linux/regulator/consumer.h
-@@ -128,11 +128,11 @@ struct regulator;
-  *
-  * @supply:       The name of the supply.  Initialised by the user before
-  *                using the bulk regulator APIs.
-+ * @consumer:     The regulator consumer for the supply.  This will be managed
-+ *                by the bulk API.
-  * @init_load_uA: After getting the regulator, regulator_set_load() will be
-  *                called with this load.  Initialised by the user before
-  *                using the bulk regulator APIs.
-- * @consumer:     The regulator consumer for the supply.  This will be managed
-- *                by the bulk API.
-  *
-  * The regulator APIs provide a series of regulator_bulk_() API calls as
-  * a convenience to consumers which require multiple supplies.  This
-@@ -140,8 +140,8 @@ struct regulator;
-  */
- struct regulator_bulk_data {
- 	const char *supply;
--	int init_load_uA;
- 	struct regulator *consumer;
-+	int init_load_uA;
- 
- 	/* private: Internal use */
- 	int ret;
--- 
-2.45.0
+> ---
+> Compile tested only.
+> 
+> It was added in the initial commit e7330fa032bb ("Input: add support for
+> ChipOne icn8505 based touchscreens") but was never used.
+> ---
+>  drivers/input/touchscreen/chipone_icn8505.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/input/touchscreen/chipone_icn8505.c b/drivers/input/touchscreen/chipone_icn8505.c
+> index b56954830b33..c1b4fc28fa8d 100644
+> --- a/drivers/input/touchscreen/chipone_icn8505.c
+> +++ b/drivers/input/touchscreen/chipone_icn8505.c
+> @@ -68,7 +68,6 @@ struct icn8505_touch_data {
+>  struct icn8505_data {
+>  	struct i2c_client *client;
+>  	struct input_dev *input;
+> -	struct gpio_desc *wake_gpio;
+>  	struct touchscreen_properties prop;
+>  	char firmware_name[32];
+>  };
 
