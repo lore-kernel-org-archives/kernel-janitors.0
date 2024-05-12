@@ -1,46 +1,46 @@
-Received: from msa.smtpout.orange.fr (smtp-71.smtpout.orange.fr [80.12.242.71])
+Received: from msa.smtpout.orange.fr (smtp-80.smtpout.orange.fr [80.12.242.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769B21C2AD;
-	Sun, 12 May 2024 09:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD711CAAF;
+	Sun, 12 May 2024 11:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715507973; cv=none; b=I3zJUiZUWl8Ds3jAevzR4IkDbZteNAprT2cIosvxhFK4mlUmGKboWBGQD14zt/QhV7OdYHoH2M+QPby4q5ZhHy1k6QatudSenhX5Ys6L8TLDs/ida+8zws5VYW16Qv7lWhA4nbTr8BiqrGDI74Ji17rwFpNOgBzNg8I57Dfvk3s=
+	t=1715512372; cv=none; b=KVNbWTM1WOzBC7lpLkX5nfUgw1SRS0oU2/VYsdW9++D2IGi9K+ItfBbt6RW7qHMos9zrKd1ZY8+8d3+SHWrH/kgmEehUEkOjttt7uhFuI9c9xXlPpsdDHjsoNb9eTyONFJYuoXXjc36bIQLFtw/XKsqFrpXab/mLNTQpXyX+cHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715507973; c=relaxed/simple;
-	bh=8FO2pFl3lkJJbZeEoxEUP35Je1WWVwtKCL9O+iPwV/M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ewYyYCTpMOfz9Oyv96yVRqt1u53rQhJZng/G1La1pXDe46FRT4QX/+7qs/bxg5UHGZxrfuzlyXoUeYvK+Nw44ZXG4+RWZLghvGDyX4kiOXTo9XEPULgBStG03+DfRrrmAkdHQVNZ8jsVoKs0u2lTxLMAe49LvBCCrvqga63VKpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XWh1fYaN; arc=none smtp.client-ip=80.12.242.71
+	s=arc-20240116; t=1715512372; c=relaxed/simple;
+	bh=a0SHuP6qCCie92ITUzTLst/XaoPMKeSO9S3jgl5l1rQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ho/YR3Mu+UPx7NJpIu95EK6vwNkaN0/kcPSLcePXo6hSt65TFiZoP/jeEp9m/QM6bb+FAmsyEyfZrNEY26jGFtrAAW0na9bZOEvfDaObuDgkPBmk5fjM/zWDZ7thdEPWfaOuTR1ur88X3YOeilIjxKxk8jswkAQ0KEMJJcTQV28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=IEvwEGKA; arc=none smtp.client-ip=80.12.242.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XWh1fYaN"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="IEvwEGKA"
 Received: from localhost.localdomain ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id 65y5sl8nbps3t65y5sKfZD; Sun, 12 May 2024 11:58:10 +0200
+	id 6774sdNpdxEVb6774sbR5R; Sun, 12 May 2024 13:11:31 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1715507890;
-	bh=QeVJXEiY1Oon2HgNphnIfoNk7xFyqVbQ0qMzYFx+tac=;
+	s=t20230301; t=1715512291;
+	bh=ESHOboVimNxtbiSAZemdp0pLxtpUq4uYogx/byVem9I=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=XWh1fYaNBjRRqIrGr7bVdGScLFrdVssVwtuJUPA8N+VXm6Uhf5TZDSFaNEAi3sC7h
-	 EcjjYCoFZQjARhO6GBZuAmGTwOnOzOf/iDnBF7AEHsX7lH1nIRZgkSYxTN/RznqepJ
-	 Zs0v0G1NW6fJ/2HtM6ff9kzlN4rSNW1ZLN6cfYXKtohF/v80kh3oXmY+lLE9oUTvmf
-	 HpYsAxBEpTW5tMvHIXcFMoZF7Bgi3+pIxMROex8LqcrsBTTRzHzn27cKOB8PyXaq9w
-	 KauHc2Fe0MoGt4SH9H9feM8OngtyDF7GFxNPccTCfLLvzYrbMU4jwBn9y6liuFlrsM
-	 PFHpcNLoG/IdQ==
+	b=IEvwEGKA1WCt51777fRkDu7o3oWAuJexJHAMiwKCY5xIPde/u/h6+KAK3utF+40bs
+	 GlzXAXpPN0wRr0eKzX2iK2LfVL19sGCTH1yzZ9kvMQzEHqCCMI6uy29HaJFusyjIv6
+	 /3jE9N70cdKKH7zxMCOPAjswFuhj4q3rofK4Z+elz3y4zSGdpETzNY4JEXZRvZm7JL
+	 zkthV7VmWMzQeVkRPoDIlxGwyG0sfm2/qTgb58+/Q4a1cMBIWSiiyRYr3MC1HpcxWk
+	 kEmFatMhv5/AVd7h/na1hlISLCIxUaK/nlByqfKGLcasA1FnX/vsL2Jr0x4H1VUdSP
+	 aDfHLkVEDZ6cQ==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 12 May 2024 11:58:10 +0200
+X-ME-Date: Sun, 12 May 2024 13:11:31 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-input@vger.kernel.org
-Subject: [PATCH] Input: zet6223 - remove an unused field in struct zet6223_ts
-Date: Sun, 12 May 2024 11:58:00 +0200
-Message-ID: <3065d885341e2730dd3e7905d75514796a8c25e4.1715507858.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] regulator: consumer: Reorder fields in 'struct regulator_bulk_data'
+Date: Sun, 12 May 2024 13:11:21 +0200
+Message-ID: <35c4edf2dbc6d4f24fb771341ded2989ae32f779.1715512259.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -50,35 +50,85 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In "struct zet6223_ts", the 'vcc' and 'vio' fields are unused.
+Based on pahole, 2 holes can be combined in 'struct regulator_bulk_data'.
 
-So, remove them.
+On x86_64 and allmodconfig, this shrinks the size of the structure from 32
+to 24 bytes.
 
-Found with cppcheck, unusedStructMember.
+This is usually a win, because this structure is often used for static
+global variables.
+
+As an example:
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   3557	    162	      0	   3719	    e87	drivers/gpu/drm/msm/dsi/dsi_cfg.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+   3477	    162	      0	   3639	    e37	drivers/gpu/drm/msm/dsi/dsi_cfg.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Compile tested only.
+Before:
+======
+struct regulator_bulk_data {
+	const char  *              supply;               /*     0     8 */
+	int                        init_load_uA;         /*     8     4 */
 
-It was added in the initial commit 83f66a6f08fa ("Input: add driver for
-Zeitec ZET6223") but was never used.
+	/* XXX 4 bytes hole, try to pack */
+
+	struct regulator *         consumer;             /*    16     8 */
+	int                        ret;                  /*    24     4 */
+
+	/* size: 32, cachelines: 1, members: 4 */
+	/* sum members: 24, holes: 1, sum holes: 4 */
+	/* padding: 4 */
+	/* last cacheline: 32 bytes */
+};
+
+After:
+=====
+struct regulator_bulk_data {
+	const char  *              supply;               /*     0     8 */
+	struct regulator *         consumer;             /*     8     8 */
+	int                        init_load_uA;         /*    16     4 */
+	int                        ret;                  /*    20     4 */
+
+	/* size: 24, cachelines: 1, members: 4 */
+	/* last cacheline: 24 bytes */
+};
 ---
- drivers/input/touchscreen/zet6223.c | 2 --
- 1 file changed, 2 deletions(-)
+ include/linux/regulator/consumer.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/input/touchscreen/zet6223.c b/drivers/input/touchscreen/zet6223.c
-index 1a034471f103..ec3fca4a48c0 100644
---- a/drivers/input/touchscreen/zet6223.c
-+++ b/drivers/input/touchscreen/zet6223.c
-@@ -25,8 +25,6 @@
- struct zet6223_ts {
- 	struct i2c_client *client;
- 	struct input_dev *input;
--	struct regulator *vcc;
--	struct regulator *vio;
- 	struct touchscreen_properties prop;
- 	struct regulator_bulk_data supplies[2];
- 	u16 max_x;
+diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
+index 59d0b9a79e6e..e6f81fc1fb17 100644
+--- a/include/linux/regulator/consumer.h
++++ b/include/linux/regulator/consumer.h
+@@ -128,11 +128,11 @@ struct regulator;
+  *
+  * @supply:       The name of the supply.  Initialised by the user before
+  *                using the bulk regulator APIs.
++ * @consumer:     The regulator consumer for the supply.  This will be managed
++ *                by the bulk API.
+  * @init_load_uA: After getting the regulator, regulator_set_load() will be
+  *                called with this load.  Initialised by the user before
+  *                using the bulk regulator APIs.
+- * @consumer:     The regulator consumer for the supply.  This will be managed
+- *                by the bulk API.
+  *
+  * The regulator APIs provide a series of regulator_bulk_() API calls as
+  * a convenience to consumers which require multiple supplies.  This
+@@ -140,8 +140,8 @@ struct regulator;
+  */
+ struct regulator_bulk_data {
+ 	const char *supply;
+-	int init_load_uA;
+ 	struct regulator *consumer;
++	int init_load_uA;
+ 
+ 	/* private: Internal use */
+ 	int ret;
 -- 
 2.45.0
 
