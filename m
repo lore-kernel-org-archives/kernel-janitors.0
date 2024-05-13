@@ -1,76 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF0080BE3;
-	Mon, 13 May 2024 21:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFDF80632;
+	Mon, 13 May 2024 21:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715634031; cv=none; b=ScP0+CRHAmLVAxOBM5RsZitMXhKc50X084zygDBgaVYjm87mbGt6ele8cw9UjEGqaLoiH3QPCv6Peff/0td279P9r9N3keNPnsQ37h/xCpfrNlBwukBrcP64+PCVkgFZAsKs6FQUUyRigQdksL8vfk+qRE8SgZII93WTjfKaTpI=
+	t=1715635472; cv=none; b=n+16VkGykQOlv0DoDRz7J1WGs3liEUwUaB9Jy2D5uvPxNcIIpHGO8LLR//7uMtK0pokHfTetq9DJ0g0hSTKvXp88f7MNL1s6klT4nJ8SJAPnkLoAgX1oo/exkaczn33V1gXGCF12esPUpHZYeu5ogJIntEAPs+eAGPfycr3pFZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715634031; c=relaxed/simple;
-	bh=Bl3VxXGVratxwfDnVG4jwWP7nX50ZfRcID+p2155ZIk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=JnhMcnp955RVy7WXvkYb0+yRt9/Wuo2cB42Yztl6dtSh/aap0nOuP1HAovOG+NhoKPYLEd0tVIiIrh1dbymlQRKYV5lcSS+qBQQ2PfgDly4SboxF0Emk6kHNJVpvnNsBxsZRTId/B/IHSiO+UJW4KwzJsy4Lg6dkhcfcpoibpYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bGlEGCUJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715635472; c=relaxed/simple;
+	bh=g0tquPyBnB9ZKUWCbyY2Gv+Ch+/IkbPiP2fjbFNt0M0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K/0QENHrqip4CDUhfuOINYbtDJ8bszWoluBnIP4FONK/49OHc7maKKsoZMqUGgQ2JpyQxfn+XFVZDtdxwfwsWw2p8HZFUMMCkrrRKCynmq0ithJlJsYX9+q3OWV+ux6GSkkUEoPA7yesVbEnnagR1vANMyg9YNNn+QETUhB0vcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=me4zizEK; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGlEGCUJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C2E7EC4AF08;
-	Mon, 13 May 2024 21:00:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715634030;
-	bh=Bl3VxXGVratxwfDnVG4jwWP7nX50ZfRcID+p2155ZIk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=bGlEGCUJtsNEDBcijuKqPlAUvovqb9fN/tO3RDbmVKHGHT5I293E+fPyNwqPhqn14
-	 PVSZw7T9lXJNJp+OoR0JjWvKVzyQLSZSgLRXN25nIU8077nwJeVxva2RvI1bpQycAz
-	 7fSYG/uySRZYrZs+AW6xZtKVPhxaSE218HK2pnHFoystd3PLulMszs89vueN4CreoO
-	 DEzXM6uHZgneedpLax8BHrv6GsGO+Qsdd5ZWU9vgAqSicOvxZ/rAMuzQpaG9ytnAWu
-	 nDZYtOvbB3T9BCet4aFEj9Qr3oEPMd/3gIhxcHE6Vj7tJMjT6SINFgRhtaS+ZxYIIa
-	 Q6+a5ej7VS6AA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B276CC43446;
-	Mon, 13 May 2024 21:00:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="me4zizEK"
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6f45020ac2cso3759911b3a.0;
+        Mon, 13 May 2024 14:24:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715635471; x=1716240271; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tkebl0jBAL/LeiWK6znMTpewl2t+3gSc47YMeKJXsfw=;
+        b=me4zizEKcdXtMfyvKKIDRKee8LiH4v7/AoLUhnEthlDa5qeWy9p9As6EXho7OhXFH5
+         1Bk75R9gSbn6y9VCeKAXiBDBS2Adse4Lntn4a0q/ESTiH5mnzB5EThUU6aQ/AtjOILw5
+         cCvJR/cLQb+zHocrrQ5h4iIRQpc+NX/U0xd4lXHAoysjewLIOaB/4Vi4LYT/UhkO/Y7Q
+         jNib7N1hSbCxO+lsdKtg7YQmjUhGwG5QLJozkbIizgT2OdoNygULmQie9nmN+IU9Yyy2
+         EXbx4JQwUJ2KmBGUFYquY8qeiuJ2rFc6UUQVxcWRf5UVfC1q+ZBS36Ts8n6ZkP0CmF//
+         ekXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715635471; x=1716240271;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tkebl0jBAL/LeiWK6znMTpewl2t+3gSc47YMeKJXsfw=;
+        b=H08NMVETRyeci6OHhmzzz67eC+Ma69RwB9E2mjCeS3YSwxfy18GaWfTpfQVezyRREt
+         jqld88FTYCAG/yf73WTHa22cLKM/e/77Qmoqb1fLAvHtQvf1jWE5UIWtAMU9dQd+K3r1
+         rktYUOXZlOxvJgTYkNbWCA3NOaSJhspGLMPU3t4WX5CBf120g9BiZmLNeX84lyBtBn6o
+         HiqKNSclMCGkDIgTZnGor76rJa0qa/TZi6kaHjq84wjQY9mIv3qvxX1cM/Z3v7bheHoF
+         Chv843dGNDX6fqHzcAC2aNLt2ByzaR8xjxXH1PgfRjm5PxqjDhR6d91cImm/MmovtmXu
+         4IGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFe6axg5sCYm+ynvCqrWdfbDlH85Rz0L+OTpB8heGN6UwlUQZwBOoRzdzwqq5kQGLrZBp6UHYjuvvVaoBjcVMs4aEHKwU3Z7YFh8W71k9w11p+D/MW9X4aQSgDxExZXpUsU8993lSkZ5n1JkMoPKLD1yj+EUCGA8Cj6dXJO2eGgjm5cbPdvSxV/XY=
+X-Gm-Message-State: AOJu0YzJBIkOH5Mpj7FMftz8lCIbfuvfMdQpMhTD4vWQlueyR5FR2l2h
+	pBBYoap3YFpO2cQ4xg93RnAICbNCSoQLSS8BYdbh+HvSCRO/I+WO
+X-Google-Smtp-Source: AGHT+IHRNDn3oPqmpTkW+LMyp8KJezXOHQDR+hYIcNBlq+zvA+bozIPOtynqB1zQV0sXgjyBl1uniw==
+X-Received: by 2002:a05:6a21:2709:b0:1af:d240:2c14 with SMTP id adf61e73a8af0-1afde0a9c02mr11177149637.6.1715635470821;
+        Mon, 13 May 2024 14:24:30 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:7704:86a9:2c56:6794])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340a632608sm7172489a12.5.2024.05.13.14.24.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 14:24:30 -0700 (PDT)
+Date: Mon, 13 May 2024 14:24:27 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH] Input: chipone_icn8505 - remove an unused field in
+ struct icn8505_data
+Message-ID: <ZkKFCxnDHKpF1_xb@google.com>
+References: <37443a675ca07c91c5f0118ce255406e6e3c08f5.1715502304.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] selftest: epoll_busy_poll: Fix spelling mistake "couldnt" ->
- "couldn't"
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171563403072.25832.9322227128298571251.git-patchwork-notify@kernel.org>
-Date: Mon, 13 May 2024 21:00:30 +0000
-References: <20240510084811.3299685-1-colin.i.king@gmail.com>
-In-Reply-To: <20240510084811.3299685-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, shuah@kernel.org, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <37443a675ca07c91c5f0118ce255406e6e3c08f5.1715502304.git.christophe.jaillet@wanadoo.fr>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri, 10 May 2024 09:48:11 +0100 you wrote:
-> There is a spelling mistake in a TH_LOG message. Fix it.
+On Sun, May 12, 2024 at 10:25:17AM +0200, Christophe JAILLET wrote:
+> In "struct icn8505_data", the 'wake_gpio' field is unused.
+> There is also nothing about gpio neither in this driver nor in the
+> data-sheet.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  tools/testing/selftests/net/epoll_busy_poll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> So, remove it.
+> 
+> Found with cppcheck, unusedStructMember.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Here is the summary with links:
-  - selftest: epoll_busy_poll: Fix spelling mistake "couldnt" -> "couldn't"
-    https://git.kernel.org/netdev/net-next/c/f37dc28ac6e2
+Applied, thank you.
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Dmitry
