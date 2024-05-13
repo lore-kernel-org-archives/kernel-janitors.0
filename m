@@ -1,108 +1,96 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C21153576;
-	Mon, 13 May 2024 13:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FB41CF8B;
+	Mon, 13 May 2024 17:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715607718; cv=none; b=Gd8rmEKF6hcz5Tw+Mkdq8Ln4ntjHORQkfIHiA80hh5pE2WKR12mLJ1Cv2ob6t8GQwHRVFJv0lDYUjSqO7ZVetbP5LATdoIJD640JdzDC2aKTNMbmwqNLQzFtauwblDAfc2KbxePzDiuJMzo3KrX8OsXnA2vUm/Br0egOxKfhwSU=
+	t=1715619669; cv=none; b=lBLwMaY16A+RgRR+byMtrpBB1OPCsRTnvOkpg9qPDbYKEMtXRqvD884NSWvfHY869j6Dr98jG0kNi0JsRDGer7K2dLG67BHck4JHa1l9Dkribz9COV61z11DTjSPldmqI3vbDo0iscCC7vOe/c3T0EfBodcujvGZRldjvGTjRFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715607718; c=relaxed/simple;
-	bh=NHGPLgtCUqCEfcn2vaIa5U959E4/fnbBgnnTfKGDUhM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PHFbDKrsCF3me2mVHlZLD2Y9nFljpywXqdFqSulWuO1RPJ1B+2NTGwqRrKUaZb3SPMet3/yOh0FVhSE8pY2q0qs3wxStSvbOSA5Jl6fZvfW+c2w9MbCwWqmNSdrmM/XvC4z+8jo/5SwdsqnfsJ9BDSwufg0dqo5nghkFkbJakfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F7n7ktId; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1715619669; c=relaxed/simple;
+	bh=z4tPhX+s7QYkqBxhFqtjNDO8qlvAQd0ektMTJgJI2Fk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sOso+Ss4t40MqszqDVFNZV+O0kZh/bECiu592EWrCT+eLWY3DnqoTR2KTJBxb4/hxTcbqeNdMQKfQALO4+ohaWPMxwYt5Jr81gipQ4XBC2Ki1HeVtsjDBzCw8WitHZ/Vhw2Chdl+t91E7jH41tiSKaNgT2maZaE22B6Juwy6mrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ytm5Iiil; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F7n7ktId"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715607717; x=1747143717;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=NHGPLgtCUqCEfcn2vaIa5U959E4/fnbBgnnTfKGDUhM=;
-  b=F7n7ktIds1fessChL6a9WvgGOS0WmeC15lJ92clTX8C9NjDm8aF6Zn/m
-   i9yNOI+pWHQLCa1Efp1hufnhQyh+39Bxa0ff5NXPLpaA6QpxeDtscZVTJ
-   BzJeh91P3wXWJDRY/iFLIbVE/4WVHPPBxLQ55jdW9qoVzF6S+KUa00VM3
-   itmG5vTC0iqMgNItCWzXQOacQpjtqQpR9VdD0cqZQ+bstYYbHnBBh0uJ8
-   FZJXgYTIM3HVC3jWto17io9uJG9VLIn+oHD8QtwLTVPeV7OcIsypEIpNN
-   w+zsoGiQmnHsdkGqLil9brY4HPFO37zMz+6WYg4XIAtN5k/9zFeVQOgz9
-   w==;
-X-CSE-ConnectionGUID: nYxQqSqXT3WXr+bt45KwGw==
-X-CSE-MsgGUID: 5uFUxJ+uQ2iXowJ/hTdB3w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="34055952"
-X-IronPort-AV: E=Sophos;i="6.08,158,1712646000"; 
-   d="scan'208";a="34055952"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 06:41:57 -0700
-X-CSE-ConnectionGUID: IDlEf8a7Qt6kUtLIFkGQJw==
-X-CSE-MsgGUID: kcqS9LquTyiO6UeF+3ehCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,158,1712646000"; 
-   d="scan'208";a="30323298"
-Received: from sgoshi-mobl1.amr.corp.intel.com (HELO [10.212.69.71]) ([10.212.69.71])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 06:41:56 -0700
-Message-ID: <88e6bbe3-94a2-4b50-b462-eb27376698c4@linux.intel.com>
-Date: Mon, 13 May 2024 08:41:55 -0500
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ytm5Iiil"
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6f4302187c0so3834987b3a.1;
+        Mon, 13 May 2024 10:01:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715619667; x=1716224467; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zjyrbOMAEeAhSgORyPVPJODgsoTk91oJWHq0SRUfKJw=;
+        b=Ytm5IiilJN5XCxh4dQiqK7NnUl9VTnEYgVRoHNhwJF+ewSiGGLhKrWKM+cV0mxx7ru
+         daACmw8Lh6dIE802gb7YlaCiDTpBVKDjWHnYxqcNL979au9DCAd0XFFqZK7XwLTbyHSg
+         6BndxUfP0Io+JlhLt/Xt1xWWGpsHSy9z0l+92ahfTSsUImvSnZaQzaTvZOMUT8DUFskj
+         sFKW5WUyHb0rxXCnB4sntdYYIYrk+hE+0IVwBTROSV0DgrbtTflpraL1ZWSvC30ZWzYT
+         JwhaUO5P1yZ+r1vHhUlNwAr26IaAVJvVTvOISaOi+vzAoVTQKHxcKqwtfuDsJUHWjaEz
+         PLNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715619667; x=1716224467;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zjyrbOMAEeAhSgORyPVPJODgsoTk91oJWHq0SRUfKJw=;
+        b=OV2o65GvWLLaWqTjAs8AEskBSeQNt2gxjwgF17BSX38YOSsHaYYvk3w8VRb1ITHfut
+         GRIjJmV8ZJvHjm7vcGoByUWF9dAn3JVQaGl2ay5HTbstTSdJQW2tM2L5uq8PUQ9/OcSs
+         zU7o3UxQdbDGsO4ND1UxGHZo/GvCkLHDppVmLkJOto32r7AO7YpZ8Ma2OglQzVcfEUSF
+         7Gvbh9mpfqNJU9b8mONTueWSU8HPBVX2INHTKh7V6uQMOmyl/u+HWto5oP+1qaj/4YKV
+         LiZUXjWknpUrxuLQWX4tYUtNhv9dm5/MTszArBQTiALfa4g9pvNJ/pBpK5l9ezcjQpjp
+         c6aA==
+X-Forwarded-Encrypted: i=1; AJvYcCUItM+Shwb62ukm1SzZ1OoQTxXJm/8ubxTJragiazgrWZynuJOZxtUF89JdOu9W8/XX+7g5dqGTGPdOMclsFnKYnisfem/Mz6y+AT21VqyVGg1xI3E/bmw/vde4zhmC4BZDQITp7sPATMPH4OId60oWNOYfprwoH5asmschcJ596Y+M+WZNi2vLbEsunrsirvDj2hWJKiH0ZXtOejVm7bqf0w==
+X-Gm-Message-State: AOJu0YySFrcoNEWqs9CjSa8jq55nHf+jBBNAvfcLGWHnmyxlgxWGtJza
+	ebmD/1iYHVXv2rOUTYYHgK8RsGp7VDWgC7MuhasM05pwciDkN++T
+X-Google-Smtp-Source: AGHT+IF+HKRteWFX1nu/JhxanTGlUgwXpxwtCzZP1u4kEXer1USTBTds1a7jqu3AuSmZCNS1jjqFzA==
+X-Received: by 2002:a05:6a21:627:b0:1ad:7f1e:eac9 with SMTP id adf61e73a8af0-1afd1482da7mr15746264637.30.1715619666695;
+        Mon, 13 May 2024 10:01:06 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-63411346d96sm6942717a12.81.2024.05.13.10.01.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 10:01:06 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 13 May 2024 07:01:04 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Illia Ostapyshyn <illia@yshyn.com>
+Cc: Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>, cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] docs: cgroup-v1: Update page cache removal functions
+Message-ID: <ZkJHUNILS4VLL_PK@slm.duckdns.org>
+References: <20240507103426.544488-1-illia@yshyn.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: intel: Constify struct snd_soc_ops
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Cezary Rojewski <cezary.rojewski@intel.com>,
- Liam Girdwood <liam.r.girdwood@linux.intel.com>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>, Mark Brown
- <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
-References: <242aef53b5b9533ae4cca78148622f5fe752b7ee.1715452901.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <242aef53b5b9533ae4cca78148622f5fe752b7ee.1715452901.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507103426.544488-1-illia@yshyn.com>
 
-
-
-On 5/11/24 13:42, Christophe JAILLET wrote:
-> Constifying "struct snd_soc_ops" moves some data to a read-only section, so
-> increase overall security.
+On Tue, May 07, 2024 at 12:34:27PM +0200, Illia Ostapyshyn wrote:
+> Commit 452e9e6992fe ("filemap: Add filemap_remove_folio and
+> __filemap_remove_folio") reimplemented __delete_from_page_cache() as
+> __filemap_remove_folio() and delete_from_page_cache() as
+> filemap_remove_folio().  The compatibility wrappers were finally removed
+> in ece62684dcfb ("hugetlbfs: convert hugetlb_delete_from_page_cache() to
+> use folios") and 6ffcd825e7d0 ("mm: Remove __delete_from_page_cache()").
 > 
-> This structure is also part of scripts/const_structs.checkpatch.
+> Update the remaining references to dead functions in the memcg
+> implementation memo.
 > 
-> As an example, on a x86_64, with allmodconfig:
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->    6315	   3696	      0	  10011	   271b	sound/soc/intel/boards/ehl_rt5660.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->    6379	   3648	      0	  10027	   272b	sound/soc/intel/boards/ehl_rt5660.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only.
-> 
-> I hope that it can be applied with this single patch because all files are
-> in sound/soc/intel/boards/
+> Signed-off-by: Illia Ostapyshyn <illia@yshyn.com>
 
-Doesn't apply for me, can you rebase and resend?
+Applied to cgroup/for-6.10.
 
-CONFLICT (content): Merge conflict in
-sound/soc/intel/boards/sof_maxim_common.h
-Auto-merging sound/soc/intel/boards/sof_maxim_common.c
-CONFLICT (content): Merge conflict in
-sound/soc/intel/boards/sof_maxim_common.c
-error: Failed to merge in the changes.
+Thanks.
 
-Probably a result of all the changes in this directory...
-Thanks!
+-- 
+tejun
