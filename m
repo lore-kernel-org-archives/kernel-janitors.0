@@ -1,116 +1,91 @@
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B736F7483;
-	Mon, 13 May 2024 02:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278E3145B16
+	for <kernel-janitors@vger.kernel.org>; Mon, 13 May 2024 03:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715566797; cv=none; b=LnKfAwimnOV0WS/MmEdiKAyXQ5o+3577zVuJqGARDZs44tSo1yfNdEKLzoZd8nbX3qTmkjc6FlC65VBXGvKaI0A8dDSakN/ClOOj0LR9417aUepshGRYblrBlMVb/s2G4LxoZFM1sciImdifH/JyqZjt1WbUgIajj4eVlBcPRAk=
+	t=1715570772; cv=none; b=L5KJ9maIwFV8Ukiy9m1V/+9alvC1UXJGTQkUnbLaU1uGl1HKL4ZyYpCZ/RQbhiunl7aRKC/xB7Kjh02MQPtDwfKhMjAL/bvO0xt8ABssvpXU770Yg+5YCCuAeg1Hdmmj4Q7uFXNaugxXJs331CbQ52qvy0jWM/Biy7RHM0Hs5o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715566797; c=relaxed/simple;
-	bh=nLF3UxM7MjtqZfnysVw+O3InSkNqMGsxV6LviZSaZnY=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=hy1MxmZEeb1Vk8yuwYK6PPkq8TiljBCJPdscXZzypw7edqONTBleeBDSxYsTj60HQyGLPhe+tuJxu/VyO3TgPe9cy8qRXBnt4W4sQw2gLQo//LjitADE9IQZz9SRDlSGmzuQ84KDTfNAqlcFx8DAMfi8YsW7ujYH7YWo/f9Wfxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hSYrJAIc; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+	s=arc-20240116; t=1715570772; c=relaxed/simple;
+	bh=WJOoQomm8SXfTN6sfPBVf9l1CpvTu8SVl1505d7YD1k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sp89FVXFxqcCvTQMBrsBacYHbzMGE8g5MtQI2KDA/97fs+mtgJyo8ZXOpUsD7FWfyQYq2a1CejU/O3qu65eVHeWtlePrm3luK8HhMM7ny0B4K286yosNN8urSP7OPAcex3tNaESAj6/a9bFxcJl65JHF1jqddcI6K9DeOTP4BQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZkBxs0GF; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hSYrJAIc"
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1715566786; h=Message-ID:Subject:Date:From:To;
-	bh=+Ibcgk1wyvyT1sLlBJMhxYkwNZUy81Vb4Yk6knvBeK0=;
-	b=hSYrJAIch7ALWRr6LJwU9cKteYSF4qkbwNW4QOfTU/jmKS1wlcmAGQUuWzJwdtKTrlCrBe3XPB+VckXTmNOVPtkre9/MBwej6CMjO6iN6ezVS2Hao820MTDwHjLE7rscF/kYDQR5SRCPYNs8T2lR6XHUwdLH672RyzVc7vc+hQ0=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0W6Gqhnu_1715566783;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0W6Gqhnu_1715566783)
-          by smtp.aliyun-inc.com;
-          Mon, 13 May 2024 10:19:45 +0800
-Message-ID: <1715566739.6868987-1-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH net-next] virtio_net: Fix error code in __virtnet_get_hw_stats()
-Date: Mon, 13 May 2024 10:18:59 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>,
- "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- virtualization@lists.linux.dev,
- netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <3762ac53-5911-4792-b277-1f1ead2e90a3@moroto.mountain>
-In-Reply-To: <3762ac53-5911-4792-b277-1f1ead2e90a3@moroto.mountain>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZkBxs0GF"
+Message-ID: <b574c8d6-c000-8673-74de-a7cc092057ad@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715570766;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R5SPCLBdMmPm9x+0WvDC9Xwe8BqG9DYDcZU8TqCuQFw=;
+	b=ZkBxs0GF88gg721lGUEhujUhTssE2xljMxlpWlVTdoeRomLgnIgifTBddf4mc6DuyqcUDB
+	LOhi94bqMxOnb2OA5/PtUVjM/iztYySR78IR7C3rFABwA6sd+POCa+u0xajGu/A4M76c/8
+	eu91iM4uS1OcVYb0mm0pei+nbr0ZgN8=
+Date: Mon, 13 May 2024 11:25:38 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Subject: Re: [PATCH] eventfs: Directly return NULL to avoid null point
+ dereferenced
+To: Markus Elfring <Markus.Elfring@web.de>, Hao Ge <gehao@kylinos.cn>,
+ linux-trace-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240511024255.34767-1-hao.ge@linux.dev>
+ <34c7ffeb-1fe9-4e89-a7b6-c6a8be17df90@web.de>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Hao Ge <hao.ge@linux.dev>
+In-Reply-To: <34c7ffeb-1fe9-4e89-a7b6-c6a8be17df90@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 10 May 2024 15:50:45 +0300, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> The virtnet_send_command_reply() function returns true on success or
-> false on failure.  The "ok" variable is true/false depending on whether
-> it succeeds or not.  It's up to the caller to translate the true/false
-> into -EINVAL on failure or zero for success.
->
-> The bug is that __virtnet_get_hw_stats() returns false for both
-> errors and success.  It's not a bug, but it is confusing that the caller
-> virtnet_get_hw_stats() uses an "ok" variable to store negative error
-> codes.
->
-> Fix the bug and clean things up so that it's clear that
-> __virtnet_get_hw_stats() returns zero on success or negative error codes
-> on failure.
->
-> Fixes: 941168f8b40e ("virtio_net: support device stats")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-That confused me too.
-
-Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-
-Thanks.
+Hi Markus
 
 
-> ---
->  drivers/net/virtio_net.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+Thanks for your review.
+
+
+在 5/13/24 01:12, Markus Elfring 写道:
+>> When the condition ei->is_free holds,we return NULL directly to
+>> avoid update_events_attr to use NULL point about ei.
+> * Please avoid typos in the summary phrase and the commit message.
 >
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index 218a446c4c27..4fc0fcdad259 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -4016,7 +4016,7 @@ static int __virtnet_get_hw_stats(struct virtnet_info *vi,
->  					&sgs_out, &sgs_in);
+> * Would you like to use an imperative wording for an improved change description?
+>    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.9-rc7#n94
 >
->  	if (!ok)
-> -		return ok;
-> +		return -EINVAL;
 >
->  	for (p = reply; p - reply < res_size; p += le16_to_cpu(hdr->size)) {
->  		hdr = p;
-> @@ -4053,7 +4053,7 @@ static int virtnet_get_hw_stats(struct virtnet_info *vi,
->  	struct virtio_net_ctrl_queue_stats *req;
->  	bool enable_cvq;
->  	void *reply;
-> -	int ok;
-> +	int err;
+> …
+OK, I'll study it,
+>> +++ b/fs/tracefs/event_inode.c
+>> @@ -346,8 +346,7 @@ static struct eventfs_inode *eventfs_find_events(struct dentry *dentry)
+>>   		 * doesn't matter.
+>>   		 */
+>>   		if (ei->is_freed) {
+>> -			ei = NULL;
+>> -			break;
+>> +			return NULL;
+>>   		}
+> …
 >
->  	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_DEVICE_STATS))
->  		return 0;
-> @@ -4100,12 +4100,12 @@ static int virtnet_get_hw_stats(struct virtnet_info *vi,
->  	if (enable_cvq)
->  		virtnet_make_stat_req(vi, ctx, req, vi->max_queue_pairs * 2, &j);
+> How do you think about to omit curly brackets here?
+You are right, I will make changes to it in future versions
 >
-> -	ok = __virtnet_get_hw_stats(vi, ctx, req, sizeof(*req) * j, reply, res_size);
-> +	err = __virtnet_get_hw_stats(vi, ctx, req, sizeof(*req) * j, reply, res_size);
->
->  	kfree(req);
->  	kfree(reply);
->
-> -	return ok;
-> +	return err;
->  }
->
->  static void virtnet_get_strings(struct net_device *dev, u32 stringset, u8 *data)
->
+> Regards,
+> Markus
+
+Best Regards
+
+Hao
+
