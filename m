@@ -1,37 +1,36 @@
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+Received: from msa.smtpout.orange.fr (smtp-77.smtpout.orange.fr [80.12.242.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80305339A1;
-	Mon, 13 May 2024 17:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741632C1A0;
+	Mon, 13 May 2024 17:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715621873; cv=none; b=vA1nW6LYEPTK5nmDKHHwu7jAsO+p+lo57Bj/dPegaYOYU2S3N7Mw93sgimB/wNt0f5UtxrONdCqf+PfV5Pms+tearZlMpTenH9+twMsOyKCRhIBLdbZJeUDRYcE1j2vq4d8AgKgdLAJw586lwM9byVhb/yRwuXti7KUQvNg8/bw=
+	t=1715621937; cv=none; b=pfJU4+ZsPDnrBFvQSBk3TNJ9K3cBH+/cM1PYrCnE84tlOc55wvQJ/HNWMToqVGkL//wCsDzoM9k44KhkafTgpJ2FkqAeFmHS3uMuuXrb5WPRtx2ZLoWi2W1VQTYCqDG3arWKnS0VbwmZ+Fo/o0l95EziySktYVBxpJgZ7TIBO/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715621873; c=relaxed/simple;
-	bh=5NI70CwdCr6ds3UXpAse5bSY/w2S2qX7EJ/03/SHaBA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hjRdjKEGl0Yn7G1XSpPD45ac9hcn6GL2i9cqwZsWkiPm6MQMSb5JmnfuBxNl6Nb4GpOXYA5cy6BO59fo4bThQILth/bFZwUq4VpHg8XTjOrTKPumAaLaxK1VnQXQm6HS35+tZPXtWsdu2EgviNS/hHTd5StZrcpiaUZY0aWQ3MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XWQayaUl; arc=none smtp.client-ip=80.12.242.24
+	s=arc-20240116; t=1715621937; c=relaxed/simple;
+	bh=Ze4YnXQ9+Ruy/YlREfo5kfMqxowQDPvZTQDp2yrWKWk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nDBM45R/YW/Z0bjmndlO+TO3szcvTk6BtCbPcCOSPkcpt1+GyYfbPZbM0URZ7ZCcvIwojO+QldE/buSgIHZMJhgzq0f4ROqDxACDHGXmWNb6xTUA9MbYjyGAySW/iKWb5rs9aQMydUhWbQxEv7sgweaQA23NIG0RZycclcVnxns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=NMO3deRZ; arc=none smtp.client-ip=80.12.242.77
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XWQayaUl"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="NMO3deRZ"
 Received: from localhost.localdomain ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id 6ZcDs0lh7ME2z6ZcNsL821; Mon, 13 May 2024 19:37:44 +0200
+	id 6ZcDs0lh7ME2z6ZcDsL7zL; Mon, 13 May 2024 19:37:36 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1715621864;
-	bh=tArMz3CXGARffdI7GxCeEXs4RlHzAXyCNuBRtNfPV0w=;
+	s=t20230301; t=1715621857;
+	bh=mUQBjk+s3SNdJ92QJBlXrlaeh+q14MQJ4sqID/f3sz8=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=XWQayaUl7WTsSQ5YM4kr8gQgm3qMIo2et81SM55AGN8EHTknUjJSUpj7xQgEorIfj
-	 DZZKp+bwgM9AZ1sZbI6vdNeIVUpfeq1TdYFqCuAWrzGTfnHxSIndH6ykKyqmx49ZQv
-	 jRWlYChvnRad263+ngdk3IM+02SqNMmSmYz3vyvVxVuCrDCQpDf9O3vLAk/xsZHCBE
-	 RbH2p5/tC5iwGfuJTqWO7WMCcAHiX6jS4LxkAiu6mEWGSJJa2G9U/td4xAI46ONVCA
-	 UrqCRtoobwviGkpEGdSt3fdbiEQjYrRa/2NJOCX/8pR6OioW5xKWtQTRE8S1h0ngfF
-	 0PWWuO4oLY+KQ==
+	b=NMO3deRZtCm5rDDebG9M7A7LwCm4uV4f+sAz704wyybGDhXxX8Or/waFg25iNWZ48
+	 KC88iB5AnZCkLGd4/ejfRKI6lDxfivEGiy42vwPOPvgV7EOAtmconRrWNG5abdIKP1
+	 NhsMyrL4lniKsWUSNxIvFs44Y9rs/14Zmq6w/TRgJpkkwBsrPrz0ETpc6LzgxDoU4A
+	 5s61tRwo132xm/WP5fXuHOWw2iZA5No1lav/OhJBGhdX3V9m9hsTOwdjjLwMw7KTb9
+	 a3t18nt/SSvlN5CCYR30dwt96vmTn2rkH/NYZSHs22JRiOBs44XiGLVgNDJTCrF7rQ
+	 sttZOFEvI3jxw==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 13 May 2024 19:37:44 +0200
+X-ME-Date: Mon, 13 May 2024 19:37:37 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: lgirdwood@gmail.com,
@@ -53,12 +52,10 @@ Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 5/6] ASoC: SOF: topology: Constify struct snd_soc_tplg_ops
-Date: Mon, 13 May 2024 19:37:24 +0200
-Message-ID: <2d9f5b75e979eb38b6f3baf85dfa1f0fdb3447ef.1715526069.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/6] ASoC: topology: Constify an argument of snd_soc_tplg_component_load()
+Date: Mon, 13 May 2024 19:37:20 +0200
+Message-ID: <f2f983e791d7f941a95556bb147f426a345d84d4.1715526069.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.0
-In-Reply-To: <f2f983e791d7f941a95556bb147f426a345d84d4.1715526069.git.christophe.jaillet@wanadoo.fr>
-References: <f2f983e791d7f941a95556bb147f426a345d84d4.1715526069.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -67,47 +64,52 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Constifying "struct snd_soc_tplg_ops" moves some data to a read-only
-section, so increase overall security.
+snd_soc_tplg_component_load() does not modify its "*ops" argument. It
+only read some values and stores it in "soc_tplg.ops".
 
-On a x86_64, with allmodconfig:
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  44519	   2888	     48	  47455	   b95f	sound/soc/sof/topology.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-  44839	   2552	     48	  47439	   b94f	sound/soc/sof/topology.o
+This argument and the ops field in "struct soc_tplg" can be made const.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Compile tested-only.
----
- sound/soc/sof/topology.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/sound/soc-topology.h | 2 +-
+ sound/soc/soc-topology.c     | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/sof/topology.c b/sound/soc/sof/topology.c
-index da182314aa87..b54382131991 100644
---- a/sound/soc/sof/topology.c
-+++ b/sound/soc/sof/topology.c
-@@ -2278,7 +2278,7 @@ static const struct snd_soc_tplg_bytes_ext_ops sof_bytes_ext_ops[] = {
- 	{SOF_TPLG_KCTL_BYTES_VOLATILE_RO, snd_sof_bytes_ext_volatile_get},
+diff --git a/include/sound/soc-topology.h b/include/sound/soc-topology.h
+index f055c6917f6c..1eedd203ac29 100644
+--- a/include/sound/soc-topology.h
++++ b/include/sound/soc-topology.h
+@@ -178,7 +178,7 @@ static inline const void *snd_soc_tplg_get_data(struct snd_soc_tplg_hdr *hdr)
+ 
+ /* Dynamic Object loading and removal for component drivers */
+ int snd_soc_tplg_component_load(struct snd_soc_component *comp,
+-	struct snd_soc_tplg_ops *ops, const struct firmware *fw);
++	const struct snd_soc_tplg_ops *ops, const struct firmware *fw);
+ int snd_soc_tplg_component_remove(struct snd_soc_component *comp);
+ 
+ /* Binds event handlers to dynamic widgets */
+diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+index 90ca37e008b3..b00ec01361c2 100644
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -73,7 +73,7 @@ struct soc_tplg {
+ 	int bytes_ext_ops_count;
+ 
+ 	/* optional fw loading callbacks to component drivers */
+-	struct snd_soc_tplg_ops *ops;
++	const struct snd_soc_tplg_ops *ops;
  };
  
--static struct snd_soc_tplg_ops sof_tplg_ops = {
-+static const struct snd_soc_tplg_ops sof_tplg_ops = {
- 	/* external kcontrol init - used for any driver specific init */
- 	.control_load	= sof_control_load,
- 	.control_unload	= sof_control_unload,
-@@ -2433,7 +2433,7 @@ static int sof_dspless_link_load(struct snd_soc_component *scomp, int index,
- 	return 0;
- }
+ /* check we dont overflow the data for this control chunk */
+@@ -2334,7 +2334,7 @@ static int soc_tplg_load(struct soc_tplg *tplg)
  
--static struct snd_soc_tplg_ops sof_dspless_tplg_ops = {
-+static const struct snd_soc_tplg_ops sof_dspless_tplg_ops = {
- 	/* external widget init - used for any driver specific init */
- 	.widget_ready	= sof_dspless_widget_ready,
- 	.widget_unload	= sof_dspless_widget_unload,
+ /* load audio component topology from "firmware" file */
+ int snd_soc_tplg_component_load(struct snd_soc_component *comp,
+-	struct snd_soc_tplg_ops *ops, const struct firmware *fw)
++	const struct snd_soc_tplg_ops *ops, const struct firmware *fw)
+ {
+ 	struct soc_tplg tplg;
+ 	int ret;
 -- 
 2.45.0
 
