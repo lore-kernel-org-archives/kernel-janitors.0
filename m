@@ -1,99 +1,143 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB0F1474A0;
-	Mon, 13 May 2024 07:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4643E14D2B2
+	for <kernel-janitors@vger.kernel.org>; Mon, 13 May 2024 11:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715587036; cv=none; b=IF0nOo0W7d3D3kqClvzCX7zHS3s7bY9bmoHBoyl9px0ocfY6m/bsHIbLIn8aTqH22p8A9xfbOp7+fTz7iIgsErH9bdNISP884yKF0Kn3+/MT+jhRI1yTf6ITMkl9y0VDyYuJ+Sv3o2TFZb4fiq/NkoMhq3vvH/QW5au+NRph4P8=
+	t=1715601378; cv=none; b=JJa19gPcsIQbCUsmOuekWCPzBiGwQP8Tnwvm5LevZ7mdYUfW7D5xePyYfal/rirfjsvWhyesbO6ze35mn4gch1Bx07OCeucYKYIK71tY1xSxFrskpiSvP1z0yvPjavu+5PgeIFBfXiIC7futw6Xyhd4Rfz47vEfYtT02ofXpAh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715587036; c=relaxed/simple;
-	bh=b2qyThKrEXROa5UsqCfJs5RqQ6LvqWVkpGEAlf5h7zo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=YjkBVway6VVWvGq5Cn5VBXewdzbYEG69Vl4++Eo/HzhN3nxupUZaFW8sBWVWNFIv1nOl3kCrOwGTCqbaWK2a5gOUFS+NNeHbnRsOvN1iKTE5JB4kB/zp7iX03ZQuU6etgOMa3tv276tJ3BUenDH/lzpa3kltfyjS1R+rDz5pWWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JD9XVGjf; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1715601378; c=relaxed/simple;
+	bh=/K5+pcbqvHdmlKOIY6EGxlQYW8ZajxPOAOvXpRv0FbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cMIdBNHIdlthl90/T+CP1Rjf3Te3WQMbMSxmc0X9Lpd2lAlLoPuugkR4x88vxuTGnJSZ2DMeXlWef/G2uHKuhzb3fxOHX591HUkodIu2vL50fEjZ7KIoij11bXxQsTtKoiIl8eDkt3qG9Yc7pSl6fppLnvidXQkIbTv67hLVkJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Kew62/v5; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JD9XVGjf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715586792; x=1716191592; i=markus.elfring@web.de;
-	bh=afouwgxXsDL3wwqwmPj0DrSGZAI4iej4a0NwiQc/opQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=JD9XVGjfwWsXwGsMNEne9Laq2+6O9huzgUeHey/rSmtqC1sDyiZw0hxTqAFObbV6
-	 MhOQvONjmLNumTiKm+lnuBCEd6R7gZ9Lof7IV0AUm9mgQej4jJrb+HJmgARBhDnxs
-	 UKUYvPK8mHAGrcdbybejEcigTdtqxhpygmzq8lyi0HWWWpIx5W4pSA8AVNihKvso8
-	 1G69wmB5F0qWhJg/kIsjWAc3gQbgmPRva2bZmuO76XziGwH7a41vJlbWYnyuLjMPp
-	 Pe6kbekSxDg8YeYjFjkTnUkNnAi4sQTAuFhx3cxOsFIHT4+OGEDCcfe5ypdWY9yI6
-	 rNltlO36/0IrtKMeDg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M1JEu-1s9BNi2VuE-002mNB; Mon, 13
- May 2024 09:53:12 +0200
-Message-ID: <5dca19e5-6dd2-40f3-ae54-a4154e7d00be@web.de>
-Date: Mon, 13 May 2024 09:52:57 +0200
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Kew62/v5"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-420180b5897so4551735e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 13 May 2024 04:56:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1715601373; x=1716206173; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SVjlWqAdfLnp41PpnyNhWZSZIhghyWvNnJwtCIztyEM=;
+        b=Kew62/v5idseMPnkp4F3MIDryaF9FFyCBe5IoHp8kdaIv6s/GZeDW0KGqOLqak6pH6
+         vcER/yR77fsBwjMmEo5E6WugXHxSkbK0gRbnml211CHOyWG0Fx+tVLP07fjYDFVO6Qim
+         25V7eS6KfLRDl106PkmJdncPCcR1PTEmidqk3mjaS/ggoe869ELFKrIwjrlcJpOI5hrE
+         4SRwHicZx6qaFmaCmAHU5I5gX1jPTii/a7t0+p8tKWfALRLBFsZcCM5SAwE5mDuKxEGa
+         c39mY99OHk2VkgwuLTh7rU0JKXBRjYFSYp5SVDWNh/2/uZY3PzaVPMFC7MWGUrJJIeBJ
+         Dy7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715601373; x=1716206173;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SVjlWqAdfLnp41PpnyNhWZSZIhghyWvNnJwtCIztyEM=;
+        b=KuQ95dw11eNhMxAGTG1ygFuNVTJ7vo46hm9a7QRu8mghT8e1s42YOim4GNWS4W2YGW
+         QfapJF43pMRFBxsjHR4ED1lTyZHkqMCaNnqIKpf6okblXQgFyUGwoN365uEirSqvvqLX
+         /Z5pO+yt16vf0Zkg2Q9JDT8RRDEIr4WiIMUeQQlX+2p4xD7lN3IEV0P5vXEPh6/qxudD
+         YRqXc5Vr3OEaUwquZlgnhIn2mjwUcI8a8RxBJDjmeUG2v1bHUm61wLBNeGH74M/6O6N9
+         NGUioUkz+YlgmKnDFNTrI9LdB6XV6mpb06CWLav3Tjxr/lrh5xlawHsjRVC8RTU53ex+
+         s3uw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1grJLh0+xRVLu6fxgwEIFWo/qpDSQKyy4vh36XbFqRjP73NMtrJ5sLTYdmaYPoQBw9WX8YdvSAM/QQJsMI9SUAIEX+aODnxuLC7ufsMmB
+X-Gm-Message-State: AOJu0YyoQrngkcUQ6pGYxl6GTSrBAHbrD3ycreAqfWXCLvL2I2vABOq/
+	NywnW8wGpLSrxaxSyzNBQAIay+jcuJMi5iW60H89vEA+kmWBMSA8G/tnI149tpI=
+X-Google-Smtp-Source: AGHT+IFgswfetSuy8fSnW1jZdJ739NMwh+RprYAmO4yJuBB3g7hQJgzPn7f9sw3vDrnKs/BAr/2Q8g==
+X-Received: by 2002:a05:600c:3b26:b0:41f:3ee0:a302 with SMTP id 5b1f17b1804b1-41feac55f70mr66726895e9.30.1715601373573;
+        Mon, 13 May 2024 04:56:13 -0700 (PDT)
+Received: from linux-l9pv.suse ([124.11.22.254])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccee9335sm154180975e9.29.2024.05.13.04.56.09
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 May 2024 04:56:13 -0700 (PDT)
+Date: Mon, 13 May 2024 19:56:05 +0800
+From: joeyli <jlee@suse.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Justin Sanders <justin@coraid.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Chun-Yi Lee <joeyli.kernel@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jens Axboe <axboe@kernel.dk>, Kirill Korotaev <dev@openvz.org>,
+	Nicolai Stange <nstange@suse.com>,
+	Pavel Emelianov <xemul@openvz.org>
+Subject: Re: [PATCH] aoe: fix the potential use-after-free problem in more
+ places
+Message-ID: <20240513115605.GE4433@linux-l9pv.suse>
+References: <20240410134858.6313-1-jlee@suse.com>
+ <11361de9-b145-41c0-8d5e-5312cd710124@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Kunwu Chan <chentao@kylinos.cn>, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Eduard Zingerman
- <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
- Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@google.com>,
- Yonghong Song <yonghong.song@linux.dev>
-Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <kunwu.chan@linux.dev>,
- Kunwu Chan <kunwu.chan@hotmail.com>
-References: <20240510095803.472840-2-kunwu.chan@linux.dev>
-Subject: Re: [PATCH bpf-next v2 1/4] selftests/bpf: Add some null pointer
- checks
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240510095803.472840-2-kunwu.chan@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0qk556X1UoKRP1d2KUauvi0VtAOXwmbAC6L/EY2Q15ZO1iJRJbc
- d77Fky6GThq/k9gouG6fF5OqxAIIpSXeG10tGR0S5QoBNvLPYG2wQT6YO3Qk7igdkuqqk4e
- ZxadIQ1wbisRXc93q7N7bwqh9e3MLrHwwKhOfSrKXtiRMsMhq9LnbvOfH3WhhL6ElMcCmAA
- 4yvCu1pRWJJIOj6hMtH9Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ul5fiYkhqWw=;Diwge/DZwN1fc5Y2JRQzn3zMuVW
- 6Cl3u/3RgS0oPiw/6ht2sQxev4EFBdf+leywX1BBO6WQ4KcwZCzN7pABbqVbIvDXnCYRK3jLt
- /srMMw+mJm2Q0KQzj3cqZIBfAcIR/RI/3CYtNJ1IJgdBDB0S3tzDkPm00yzaeu2plrfyO5to1
- tjZkRH5y+o2S0fagXOUsyKmRtN8RJtcJGHWe0AxAqgnMKPQrkSZRZes6AqBpT9aXPu0MdQSbh
- Ff47a7jTW7SbeS5MQQZcvCfAuTDsbfdKUPbVJTFpV+dypRjBARI+34+d5l/eBx2hxDeXNoMR+
- FVjuKzc5yAt4XT3SBt1zO2wgoswdbZ7bRcks7qh82GJLu0Nju5IJdnYiP4Y+8yfnTrrL81Z6H
- xKqrkyDQxVECSsMovYbultCBK3fZcOAuUGmFyhtAy3JIuHb1pspU+070rD1SD3Ir84ec1DRIY
- IJssxTAaabqD0q/9pijMDbLe3re2HBZDgQ4fnjeJtZWTPwOjKJxMEgK3cO9mkitQMYaUVMMgd
- x6J2bl0jRz/rjHB9AMxRrkmJ8bF1dNF5c2mZS6+dtZBuwSs20+V46yg2lrYcDi7ch+uiDG5nt
- mFXko9o4+PQdZI6FaHuc9fpCedvn3p/tn9o6GsgKc5CeeC9wFZrTdn4dG8mNekPiqrKhElEmD
- LRV0TBl3B1AjVOE0p6dBbmlS39hSFpVdSvvFyRg+ty3otrdAWvyoAELJfKKMrMhc7flJW5muE
- CLW8Z+g1uQUCandg5gT04LzUiyNhbBXD1wd+ZK9eX9gcFVoUfIxyApw7OwfzTK/gTrxgl0z3a
- XOwM3SelmRf7DkjQbk5uWgcqzuqCSceiZbOsltYfgsFBw=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <11361de9-b145-41c0-8d5e-5312cd710124@web.de>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 
-> There is a 'malloc' call, which can be unsuccessful.
+Hi Markus,
 
-                  two calls?
+Thanks for your review! I will send v2 patch.
 
+Joey Lee
 
-> This patch will add the malloc failure checking
-=E2=80=A6
-
-Please use imperative wordings for improved change descriptions also in yo=
-ur patches.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
-
-Regards,
-Markus
+On Tue, Apr 30, 2024 at 06:16:00PM +0200, Markus Elfring wrote:
+> > For fixing CVE-2023-6270, f98364e92662 patch moved dev_put() from
+> …
+> 
+> Please add a subject for the mentioned commit hash.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.9-rc6#n99
+> 
+> 
+> > This patch adds dev_hold() to those functions and also uses dev_put()
+> > when the skb_clone() returns NULL.
+> 
+> Please improve this change description with a corresponding imperative wording.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.9-rc6#n94
+> 
+> 
+> …
+> > Fixes: f98364e92662 ("aoe: fix the potential use-after-free problem in
+> > aoecmd_cfg_pkts")
+> 
+> I suggest to omit a line break for this tag.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.9-rc6#n145
+> 
+> 
+> …
+> > +++ b/drivers/block/aoe/aoecmd.c
+> …
+> > @@ -401,7 +402,8 @@ aoecmd_ata_rw(struct aoedev *d)
+> >  		__skb_queue_head_init(&queue);
+> >  		__skb_queue_tail(&queue, skb);
+> >  		aoenet_xmit(&queue);
+> > -	}
+> > +	} else
+> > +		dev_put(f->t->ifp->nd);
+> >  	return 1;
+> >  }
+> >
+> …
+> > @@ -617,7 +622,8 @@ probe(struct aoetgt *t)
+> >  		__skb_queue_head_init(&queue);
+> >  		__skb_queue_tail(&queue, skb);
+> >  		aoenet_xmit(&queue);
+> > -	}
+> > +	} else
+> > +		dev_put(f->t->ifp->nd);
+> >  }
+> >
+> >  static long
+> …
+> 
+> Should curly brackets be used for both if branches in these function implementations?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.9-rc6#n213
+> 
+> Regards,
+> Markus
