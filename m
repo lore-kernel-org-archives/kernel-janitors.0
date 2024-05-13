@@ -1,102 +1,115 @@
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875492EAF9;
-	Mon, 13 May 2024 18:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AC17E77B
+	for <kernel-janitors@vger.kernel.org>; Mon, 13 May 2024 20:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715626040; cv=none; b=KbyotiAG55rq+kNPh9NQ8oRukyXaRb17hZrumGGu+ANqmb7mpSnjEjwcMlLzBFYwzm9y9VOP8Yys9J+tYqP487LJ1w9SUO5HRl02r9jgd5u/0qiU1SiZDNDA54xlOIILt3dLIjfd8pNVx8fEQwc5DTB49htC/lKHDLwcQGusEH4=
+	t=1715630585; cv=none; b=eS8+U9fsFTb6Acsz4xN4HbPSydNP+2eVOzMwTfZ745uUXo+ycmYWW6dlNVjK/Zc9WFfe3drjFQQyAl0yNFPQQ3TQ9u7UkUwQ3TPCtO0nTRi9UxyAD93bsKiBV5McGbPgvlZhB16WGgMWZrwKDflO+ZyP+p5jYmY6x2N+rozkyUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715626040; c=relaxed/simple;
-	bh=vLa9r7gEYQHbvTWv5xGb15CT21heekDIFFUmT7aBdq4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qOl5jBjfpAFj8dcgafqi1VEq28Fe2z5HTbJvIsLUYfDJdTE11bSlMZmFeSFrMF55z8xd2dIwtBuxWhKG6YmmyvrxzQ0J42BHP+xPGrBmb9h+hKOfwRMPOCr0Qi63VOOd1CjyODcRU/1SjPBMdS75omkv/543wzi+JdeBhKtMLZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Cj9/Cz8c; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1715630585; c=relaxed/simple;
+	bh=s1hXVf6tyL8uq55NXv8OQrk/qgk5wctwVrIENTgbzus=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XEwcMTItx8bbZk8HWmYW/z072GJHMxkoUsRodXpof2UjESNE5yKhfir+5Te6cfZJvSlxoH/O6A4OPBbBpoGTWyH9YHeFNIIluepq47hmIkN1Wx1dg+2G/+qXPPIzlo5m5QjtU4ZpH4OM47n17u2njCAhVm/fSTfb9Qp5w+4h9ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=melexis.com; spf=pass smtp.mailfrom=melexis.com; dkim=pass (2048-bit key) header.d=melexis.com header.i=@melexis.com header.b=RfVuyz35; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=melexis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=melexis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Cj9/Cz8c"
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44DHhYQA014344;
-	Mon, 13 May 2024 18:47:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-11-20; bh=ivk+y8EJmO2v0vPw4T0GwAz5Cxuq4eW7Wwl86rwxKb0=;
- b=Cj9/Cz8cvtJTx1jUC1UsFHuKMtSyEbFS5trLOQHTrcQtEch8MKWJc1IZnohCEqhKx9pB
- W43OIRAlZoSFZJGx776k0vuBsmieh2vgeNTX0hIcBn6sfrr5tLsuRLlxRIRfXvrA7UAS
- a4WTpArbWS0xxFh2zlomHL20VF+ePZGBKVJh1G2QHgkHJGsfamXOhvJXobBhqpzOzb7C
- JT1kbF+DmF4QBukc8x+mkJm4kvXeADhaA/9iTGXoM4VtN+10xRrA4McWQL8eIzUy5tW4
- DADVoIsv36uYw/6Tk0kC+54La/+zxgxkJ5x8VOD02pXhycHZeJuzqgGxJQJ/RXWlHR4x wA== 
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y3qgv051t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 13 May 2024 18:47:00 +0000
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44DI1lbr038367;
-	Mon, 13 May 2024 18:45:18 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3y24pv149k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 13 May 2024 18:45:18 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44DIjISH027732;
-	Mon, 13 May 2024 18:45:18 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3y24pv148x-1;
-	Mon, 13 May 2024 18:45:18 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, harshit.m.mogalapalli@oracle.com
-Subject: [PATCH] iio: temperature: mlx90635: Fix ERR_PTR dereference in mlx90635_probe()
-Date: Mon, 13 May 2024 11:45:14 -0700
-Message-ID: <20240513184514.3200222-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=melexis.com header.i=@melexis.com header.b="RfVuyz35"
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5b28c209095so1981686eaf.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 13 May 2024 13:03:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=melexis.com; s=google; t=1715630583; x=1716235383; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z/mC8iHyEmlHpwqktNUilmvaxLB5nXIdCTUQODGPwBk=;
+        b=RfVuyz35LfglAVOIwUtsA9iQZYEWDGQTmQEh6h2L4OPk2VqLbrWnDWFrE5heLsGTaJ
+         8mKkQnBoY5rttBzbfPUqmmggKu4gO4QbEcBKcu8zGWtTSuX9Qvj0K9j8rteqlkR1PB6o
+         y9FLJIpN4sBLLxUsMUn6Pcxq3h8CMmyTXRHTlM5uztiYsJSyXfo1O85tmdECBqdVmR+G
+         PtQG4Rkv/jLeVVcZfVfiONnYBlK4Tpjc8GGzK2pnGyUT1DOHDghAGYWJV2PxhiaaK61f
+         24GnvLpCXClUCfAC60XEQ/8JLYLrM9X/uD0FBZ+Py90j+WF73hoXPl5Cc1cAVRYSywaZ
+         9p1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715630583; x=1716235383;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z/mC8iHyEmlHpwqktNUilmvaxLB5nXIdCTUQODGPwBk=;
+        b=rFyJD4y3ENfJV/kNJMHeOimo3GmSLxzvoCxGWfZjPmvUdme1jRSxxansjqyse+0z+m
+         RDdtOFLsar0H9LrYcXDpoBLsEuncoZyJ+LxGax1LPj/5q501ZfkHbePL67zsNsfWOBLe
+         DJtXKhPt1yI0xBlGmesBzn2NYeR5u0L+8T973GRoNU2LYCat74/uYWKFtVhLDJ/1E+1C
+         Xc84ciLYBQOlfDwacp/kW8i3753SZEB6dzvhuP/eIaAaXwDgu609yUCRZfM3pxr5iC83
+         q/5SBGQY5YK/FOjUSFORAYLzSLOJjhZBQ1f+n2TNVErUiW8IY59xFW1GQp05CcwORr53
+         2w0g==
+X-Forwarded-Encrypted: i=1; AJvYcCVSz4AecSusiI1LCD1tJ+kZsxS5LeNmj5rhB6r39QdQF9lQvYDsxiUIksh4GjeIXneKl7LGDWEIgEqkgHf8zVEBslii0C/aLSc9aQGENlIn
+X-Gm-Message-State: AOJu0YyNzembVwkEhbDEx7SeHSHHGX5Rtaxm4aaEamF2EQVYgh5XjiOZ
+	EKlHUz5e/VbfMElnP1g9Wy2JvYu90WtUj3Rkdh5Bni9Qt12+ig7U0CEij8fkIDjm0moKuiW12t+
+	H8IM8/+iEc6phZbodU+SH57mmXN/gQT4Rb5qYml0GeV3iRCBIUw==
+X-Google-Smtp-Source: AGHT+IHMvY4NwUqw059de60Gzl/JLpgWiP6Cdv3/1rHDK4v1S2yPxePJas+PW6SFNOzXbZEEw2kevniOpnmdQuaVQcA=
+X-Received: by 2002:a05:6871:b27:b0:244:bb9e:bdbc with SMTP id
+ 586e51a60fabf-244bb9ed677mr6392251fac.10.1715630582870; Mon, 13 May 2024
+ 13:03:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-13_13,2024-05-10_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 mlxscore=0
- spamscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2405130126
-X-Proofpoint-GUID: bFDzWDMJpvIAmwyimUriWtgSZuMJkb_5
-X-Proofpoint-ORIG-GUID: bFDzWDMJpvIAmwyimUriWtgSZuMJkb_5
+References: <20240513184514.3200222-1-harshit.m.mogalapalli@oracle.com>
+In-Reply-To: <20240513184514.3200222-1-harshit.m.mogalapalli@oracle.com>
+From: Crt Mori <cmo@melexis.com>
+Date: Mon, 13 May 2024 22:02:26 +0200
+Message-ID: <CAKv63uvAe=RkZ6ytWfNkM5exy5ys5n2NwcJER=VMVAP+61-+rw@mail.gmail.com>
+Subject: Re: [PATCH] iio: temperature: mlx90635: Fix ERR_PTR dereference in mlx90635_probe()
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dan.carpenter@linaro.org, 
+	kernel-janitors@vger.kernel.org, error27@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-When devm_regmap_init_i2c() fails, ragmap_ee could be error pointer,
-instead of checking for IS_ERR(ragmap_ee), regmap is checked which looks
-like a copy paste error.
+Hi,
+I agree it is is copy-paste error. Minor remark below and a few typo
+fixes in commit message. Thanks for your contribution.
 
-Fixes: a1d1ba5e1c28 ("iio: temperature: mlx90635 MLX90635 IR Temperature sensor")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is found using smatch, only compile tested.
----
- drivers/iio/temperature/mlx90635.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Crt Mori<cmo@melexis.com>
 
-diff --git a/drivers/iio/temperature/mlx90635.c b/drivers/iio/temperature/mlx90635.c
-index 1f5c962c1818..2b61489d5ee0 100644
---- a/drivers/iio/temperature/mlx90635.c
-+++ b/drivers/iio/temperature/mlx90635.c
-@@ -947,8 +947,8 @@ static int mlx90635_probe(struct i2c_client *client)
- 				     "failed to allocate regmap\n");
- 
- 	regmap_ee = devm_regmap_init_i2c(client, &mlx90635_regmap_ee);
--	if (IS_ERR(regmap))
--		return dev_err_probe(&client->dev, PTR_ERR(regmap),
-+	if (IS_ERR(regmap_ee))
-+		return dev_err_probe(&client->dev, PTR_ERR(regmap_ee),
- 				     "failed to allocate regmap\n");
- 
- 	mlx90635 = iio_priv(indio_dev);
--- 
-2.39.3
+On Mon, 13 May 2024 at 20:47, Harshit Mogalapalli
+<harshit.m.mogalapalli@oracle.com> wrote:
+>
+> When devm_regmap_init_i2c() fails, ragmap_ee could be error pointer,
+When devm_regmap_init_i2c() fails, regmap_ee could be error pointer,
 
+> instead of checking for IS_ERR(ragmap_ee), regmap is checked which looks
+instead of checking for IS_ERR(regmap_ee), regmap is checked which looks
+> like a copy paste error.
+>
+> Fixes: a1d1ba5e1c28 ("iio: temperature: mlx90635 MLX90635 IR Temperature sensor")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> ---
+> This is found using smatch, only compile tested.
+> ---
+>  drivers/iio/temperature/mlx90635.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/iio/temperature/mlx90635.c b/drivers/iio/temperature/mlx90635.c
+> index 1f5c962c1818..2b61489d5ee0 100644
+> --- a/drivers/iio/temperature/mlx90635.c
+> +++ b/drivers/iio/temperature/mlx90635.c
+> @@ -947,8 +947,8 @@ static int mlx90635_probe(struct i2c_client *client)
+>                                      "failed to allocate regmap\n");
+>
+>         regmap_ee = devm_regmap_init_i2c(client, &mlx90635_regmap_ee);
+> -       if (IS_ERR(regmap))
+> -               return dev_err_probe(&client->dev, PTR_ERR(regmap),
+> +       if (IS_ERR(regmap_ee))
+> +               return dev_err_probe(&client->dev, PTR_ERR(regmap_ee),
+>                                      "failed to allocate regmap\n");
+
+Maybe fix her would also be to this regmap error message to include
+regmap EEPROM?
+
+>
+>         mlx90635 = iio_priv(indio_dev);
+> --
+> 2.39.3
+>
