@@ -1,85 +1,124 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AC280632;
-	Mon, 13 May 2024 21:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564FF11717;
+	Tue, 14 May 2024 07:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715635483; cv=none; b=CxHG5EcHqNqsx1SBWBwNCiiSQe35gL2MgwjMu5ynMRBw8J4unQtx5AAXgwa4TLmhvQz4EJ8tcix3yRO32wJZ0JFDZVzD1wdDc5uzGCltCXVzf+LIwMoWUPkzz5g8rWySY42UaMQm9XLxHhnM4gaj/rpGdvTxdZI2kMc/vxsBH8w=
+	t=1715671451; cv=none; b=o6yT6aHOrX5Eoc7Cl6DKurT3p76A5bSdHk+73TrJSgIufZco8hJiI1d0pfbCQpU+B0fWbpxznBC9wJAb7dYYRLPCbHIAVIrvDJw9r1vt1+2pdceo4fOxEwPG/RocmK6fMNjKyEaJiTAtDOVphHYGWSaSluSLr+gT0dQry1KLVFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715635483; c=relaxed/simple;
-	bh=6Wi8SuDncGO89olr7UORpVYzgctp9MimmYXjjT2CaN8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GYIH/JsjftiaqgMumP+TbVF8D37IM0dzL8YSkjRjiVnrC+1WhWrTXPZ08fJAxQZuJENp65UCJ9jiN2JkC4nc/y4GGkxLU4O44ppqyHdf1ga4TSOlpHAyrFw9oq0iYhW7C/9btVnXr1CkjLkkvWSRaDIKZcPwiIwIwcdlgd1j7co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cqtXa5l4; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1715671451; c=relaxed/simple;
+	bh=BOZXDlQW/ALMT/v+vXYr+gzuWqxOzMY84psbe2mKH9g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dKocnQoVtSgkmaxAMra+sBQupohmvo0/hNd6WuXANPyozpERcH+5qWuopVahj7IyxoJsggxlj93MH+23zJ7fttE8piFOY3Sitzv3Q5fepPsbM2y2i4NvHk2t8ZMLKurCMc+wnx+gvQCrwE+HO72h/o/xhZC1RumecWRhSi4CvkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eLzPCiiC; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cqtXa5l4"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-6f467fb2e66so4368707b3a.1;
-        Mon, 13 May 2024 14:24:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715635481; x=1716240281; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PORprU8bkH3+jRmliwhcEJQRxyTm9W/+V5Isa8KUnac=;
-        b=cqtXa5l48WbX6JuXsqQVcwCkRhlnJsHqXZnhV6fUJDZZhtjlhS0yj7z7Nc3+5T1+D8
-         4ls08T3+qlwciWTVLHdSvD/NVelw4TbmSVGA+obrwQLS3tB8wkiNYuAHzzckhfbYRxpD
-         AycfHs/RliUpFEzOCYVznIJo8SaI0+cZLjTzPQjBxUkkNc/h3HTmOxjTE7dPs48en/bb
-         zeKqRtriKZfolJJ0aAihLpVn/p90rgl8+a55Dof4Rc9Ar2ItSE4J88NZ+rQfCPtfifXy
-         scXN9kce+kr1PaDF7iEhs3igPwM7NVOAUXQvwkn3WHAapizfNtCJuc2DxB5R9Z52vOIf
-         jASA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715635481; x=1716240281;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PORprU8bkH3+jRmliwhcEJQRxyTm9W/+V5Isa8KUnac=;
-        b=sbuU93eH3JhQEUJCnA5l7hCfeWvf6g13D2bYy6UCwVhX3znWKQPFd+lnJQm1NTzwrV
-         oOQGfEBKkGZWUuIWlYW5x2/DAVmZKiA4QUIn02cDOv4V45YgASnZSlr8M/ZAlPJL22yX
-         JPvvJRCGyvX4ivvCtnPub5vFKnc1SvIOHmSe2OJ9nUf0GeJHxuneqsOLSiEjHQUmSTu0
-         kUwmifvbt9YbCbPcst6c9cORqkKFwXTHsKrzOQgpnEi963To9b34z20ivPplzMQR63Yp
-         ZTT8ejgMdpAc+5AZKnG6CZNLGGcrINSTw+Y1OrnpRZ9UYV/KM93+PrNusRBMp/WDxQ2q
-         BwEw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdmdUKmF+OUDgXDCkQMvXHUHuUZupIeewOkXT/JEpRmnVCMP89CZr6I8/8Kk9qkTyR4JR56SFpGujhvHE3hj5rDzE1HVIHKA5cK8cDzNC/N66i57ZSRHSePfgtTMyG0S5pAYWGYeVNCNH6mrs=
-X-Gm-Message-State: AOJu0YxFyCWUetlcrUGIeLOYWhyFoWlq/+s/ADZ9OY9K54TWnfwE+car
-	tQWEiR10UqAAUrzYmB2ufZrQoP8A0HCgLd5EHWrb4xz4qb3ny7m4
-X-Google-Smtp-Source: AGHT+IFcSk7BRVyasEhaoxZsZqp5+AXWeZ/VWSo7j/2PsK8BQznxUYxkd2rhLKusLNTRsDAy7jqngA==
-X-Received: by 2002:a05:6a00:2404:b0:6f0:28a4:a6ac with SMTP id d2e1a72fcca58-6f4e02aafb8mr14678110b3a.8.1715635481409;
-        Mon, 13 May 2024 14:24:41 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:7704:86a9:2c56:6794])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340c99bce1sm7148361a12.49.2024.05.13.14.24.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 14:24:41 -0700 (PDT)
-Date: Mon, 13 May 2024 14:24:38 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-input@vger.kernel.org
-Subject: Re: [PATCH] Input: zet6223 - remove an unused field in struct
- zet6223_ts
-Message-ID: <ZkKFFocEUYUjCfPl@google.com>
-References: <3065d885341e2730dd3e7905d75514796a8c25e4.1715507858.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eLzPCiiC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715671450; x=1747207450;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=BOZXDlQW/ALMT/v+vXYr+gzuWqxOzMY84psbe2mKH9g=;
+  b=eLzPCiiC6YZVrc4Mn2MGeHGgEG12yflyIa2VbrB7fRNy6HR7YRLgZY1D
+   x3lAGlZ/yq9dLkmj5gQ/erzw7avB2GQKDivMgqfYIMgHhh7zuge0wpu2V
+   2eN8CQutZlY8BxhQ2Zos30m8v60YRswSUQBzd+92ZHcvunvdCxOu1ayto
+   +fp5OYLmgMEuHSWdoXWk8Sks66ddyyetjhDq1RBvR8FJuq2E96n1GK5P9
+   0yF4aTUhZq+Q3inTG+t8MsbPETofbD2vonJ/W5aRSKBnFI4QB3a+CgJ28
+   7uS851VOooRnvVLhyN0y38mUgBHudmVs36oPE+HRytgsoQd3HAogkOz+s
+   w==;
+X-CSE-ConnectionGUID: SeUZwr38Tv2f98s2vMWRPg==
+X-CSE-MsgGUID: j0XPceK8S22UlZCrDQfdbw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="11488953"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="11488953"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 00:24:04 -0700
+X-CSE-ConnectionGUID: TKg2A2hNQSW6FXkQNLQQpA==
+X-CSE-MsgGUID: NEldkTQUSX6In4azeNWRZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="30638103"
+Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.32.104]) ([10.94.32.104])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 00:23:58 -0700
+Message-ID: <9a34ea33-1294-4356-b9c4-295709a86cd2@linux.intel.com>
+Date: Tue, 14 May 2024 09:23:56 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3065d885341e2730dd3e7905d75514796a8c25e4.1715507858.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] ASoC: topology: Constify an argument of
+ snd_soc_tplg_component_load()
+Content-Language: en-US
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, lgirdwood@gmail.com,
+ broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+ cezary.rojewski@intel.com, pierre-louis.bossart@linux.intel.com,
+ peter.ujfalusi@linux.intel.com, yung-chuan.liao@linux.intel.com,
+ ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com,
+ srinivas.kandagatla@linaro.org, bgoswami@quicinc.com, daniel.baluta@nxp.com
+Cc: linux-sound@vger.kernel.org, alsa-devel@alsa-project.org,
+ sound-open-firmware@alsa-project.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <f2f983e791d7f941a95556bb147f426a345d84d4.1715526069.git.christophe.jaillet@wanadoo.fr>
+From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>
+In-Reply-To: <f2f983e791d7f941a95556bb147f426a345d84d4.1715526069.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 12, 2024 at 11:58:00AM +0200, Christophe JAILLET wrote:
-> In "struct zet6223_ts", the 'vcc' and 'vio' fields are unused.
+On 5/13/2024 7:37 PM, Christophe JAILLET wrote:
+> snd_soc_tplg_component_load() does not modify its "*ops" argument. It
+> only read some values and stores it in "soc_tplg.ops".
 > 
-> So, remove them.
-> 
-> Found with cppcheck, unusedStructMember.
+> This argument and the ops field in "struct soc_tplg" can be made const.
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>   include/sound/soc-topology.h | 2 +-
+>   sound/soc/soc-topology.c     | 4 ++--
+>   2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/sound/soc-topology.h b/include/sound/soc-topology.h
+> index f055c6917f6c..1eedd203ac29 100644
+> --- a/include/sound/soc-topology.h
+> +++ b/include/sound/soc-topology.h
+> @@ -178,7 +178,7 @@ static inline const void *snd_soc_tplg_get_data(struct snd_soc_tplg_hdr *hdr)
+>   
+>   /* Dynamic Object loading and removal for component drivers */
+>   int snd_soc_tplg_component_load(struct snd_soc_component *comp,
+> -	struct snd_soc_tplg_ops *ops, const struct firmware *fw);
+> +	const struct snd_soc_tplg_ops *ops, const struct firmware *fw);
+>   int snd_soc_tplg_component_remove(struct snd_soc_component *comp);
+>   
+>   /* Binds event handlers to dynamic widgets */
+> diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+> index 90ca37e008b3..b00ec01361c2 100644
+> --- a/sound/soc/soc-topology.c
+> +++ b/sound/soc/soc-topology.c
+> @@ -73,7 +73,7 @@ struct soc_tplg {
+>   	int bytes_ext_ops_count;
+>   
+>   	/* optional fw loading callbacks to component drivers */
+> -	struct snd_soc_tplg_ops *ops;
+> +	const struct snd_soc_tplg_ops *ops;
+>   };
+>   
+>   /* check we dont overflow the data for this control chunk */
+> @@ -2334,7 +2334,7 @@ static int soc_tplg_load(struct soc_tplg *tplg)
+>   
+>   /* load audio component topology from "firmware" file */
+>   int snd_soc_tplg_component_load(struct snd_soc_component *comp,
+> -	struct snd_soc_tplg_ops *ops, const struct firmware *fw)
+> +	const struct snd_soc_tplg_ops *ops, const struct firmware *fw)
+>   {
+>   	struct soc_tplg tplg;
+>   	int ret;
 
-Applied, thank you.
+Yes, makes sense to me.
 
--- 
-Dmitry
+Reviewed-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
