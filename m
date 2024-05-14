@@ -1,102 +1,101 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE4B10949;
-	Tue, 14 May 2024 07:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E548594C;
+	Tue, 14 May 2024 09:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715672594; cv=none; b=TQjPN7S/9ovXLldLWXRMrjQ/g+cDbhQ37Dsbvx6hkt0ur1PeLMCwPB1HlIINV9xTzw31V7F2nWaw8fIghm/xMJ17VzWk7oS5JQ5u2gxeBdGs71hK+gd983we8oMtrtAiaGKPMuIqyrWMFFF6tG5GWgOihzGD4hD5u2LqRovlj4E=
+	t=1715678831; cv=none; b=RiczRvfUPZlW9p4khkEwgb62jhi7VTSzRvYaT3GI8JjRqF26rW1rSLZKfORUmg0I9zJGLmeOaTKf/EcrAFJ47O/zuPfwWSg60PT4sqnSSC3lLCzLVv9vGKIcCByB9ygr799hPcG6xfabnnO4pUit2Ch9EtPxJfQ3tqrzDOwV7HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715672594; c=relaxed/simple;
-	bh=xIgik0zA2zjBXDJKdFRqlH5x+cgMRBqk7Ror5EhZ4Ic=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LbJOJgNEpHPUCIGto5Bm98OvMcNv6iYn6VXeGPmGO4E0mHt8way65NBaqcnsfafyfRwKujw/2Nl5CnQfVkJh9YG4ZlxmZjzRAKkYDZZSg/FC0kZFleZWR97yhi6int3BbH+esPzLaCaOdC9GJIpAK+K0mbuTDZWdP+NGbxmOPn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=gKLOAC5s; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1715678831; c=relaxed/simple;
+	bh=f0vhqTJlo3GrNwq7oMCL69kDglVDcDSeIiyOh+f1hAI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WrptMCEl0aWI2P9+9HSH2TyV2z648vECpME5doJMIEbOGJ8yGSIUn5TcCKrI6VWxOULfalYk5lt5aeUXMJBH4aetqERL+zOSjIfMZ6NwS0FN6/X/V/fIlevpNebvrlL2bHxpPM33om5nSttPCz52pmT7I6yYtyyF/Q8NWNBfvkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=lteb3vDU; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="gKLOAC5s"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715672580; x=1716277380; i=markus.elfring@web.de;
-	bh=xIgik0zA2zjBXDJKdFRqlH5x+cgMRBqk7Ror5EhZ4Ic=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=gKLOAC5srdxebxFMnFQrRFawlnUsEYlZIKY3gty8iTg2w7NQKqwErUosuK3jobaF
-	 RaVF5vr8MiOumQBiPJrw3+RayISaNmeD1V/TNH+PslAAW2Sz+U50jJho1TCBCazEv
-	 Vo4Lk+pDwTduJTI+VqviFz2Bpohd0uYClakZVJH4U1ivyu2loALDhBfBhMaL35E4y
-	 KJtkF8YJsQ+49uvxn5DJjvWwq1JjLZixEIcZVD5HjAc5IdYgz99Z0cqeY8zpBNist
-	 C8ffiSTxG6Kw0rO8f3RRJ3JUDeS7qpQAVnqMsiuWTBhJAEVpcJuGK5IG6KbLH5gtc
-	 xaTdwqNDI2t/8GiulA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MNfYN-1rv1OZ1mhv-00YRev; Tue, 14
- May 2024 09:43:00 +0200
-Message-ID: <d18294d0-7274-4786-a443-24e7cb79c66d@web.de>
-Date: Tue, 14 May 2024 09:42:14 +0200
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lteb3vDU"
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44DNhrf3009080;
+	Tue, 14 May 2024 09:27:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-11-20; bh=EOnvSakafw7ICIBOPK7or2yl1cJGUDOAxJowGa/hfiQ=;
+ b=lteb3vDUxsowy0i/tsak+CV8DzhTWvaAoyEP2EnyntQM+LkrGd9yaqWQA08W69ys6CyL
+ Vhfn9ggn1nns3cmGt6v7ukwAr1r9xPMz+B0Mt19Bb5ccHJpncVZwgcs4Nge1GbECIFWF
+ wDKYLLC5JOllc3GywxBngxNj77uHmkRgufc8n2N4g01/HmX+0MDOPhq9xdnaA8vEwrp1
+ X88pcUazdWd6Fl9sdrFwYTTTn654ZyGRaSMoyc5F44BiRC9ZFQzcc9b4tdTw2Jb6w6W3
+ KL4q9WHknRp1yl9iNM4UpPYK0oXODymTvtvxyMHA5Kan23u03tIkiyF/g2UOaTGiwsOD 6A== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y3rh798wx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 May 2024 09:27:00 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44E9PtJB019149;
+	Tue, 14 May 2024 09:27:00 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3y3r84h92w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 May 2024 09:26:59 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44E9QxLt019297;
+	Tue, 14 May 2024 09:26:59 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3y3r84h928-1;
+	Tue, 14 May 2024 09:26:59 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Zhang Rui <rui.zhang@intel.com>, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH] platform/x86: ISST: fix use-after-free in tpmi_sst_dev_remove()
+Date: Tue, 14 May 2024 02:26:55 -0700
+Message-ID: <20240514092656.3462832-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] aoe: fix the potential use-after-free problem in more
- places
-To: Chun-Yi Lee <jlee@suse.com>, linux-block@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Chun-Yi Lee
- <joeyli.kernel@gmail.com>, "David S . Miller" <davem@davemloft.net>,
- Jens Axboe <axboe@kernel.dk>, Justin Sanders <justin@coraid.com>,
- Kirill Korotaev <dev@openvz.org>, Nicolai Stange <nstange@suse.com>,
- Pavel Emelianov <xemul@openvz.org>
-References: <20240514054214.924-1-jlee@suse.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240514054214.924-1-jlee@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:DGjkXyi2KlCMQRSTOVqzP8gfkfTT0kNd0N2Qw9GVKhXl4BSfnoz
- gpJJnMvWxsX6OOjAgZ5DFSjNVaMlt3dVoghWEVr2yb2wQHaC1C62GRxAxs69smC1n4lhsxw
- kFSG4ztiZG327F93i4a3ZjCEdL5j7hpklwaZiR75+KtbR9CEPxR8Xsw2T1XME838RIPo83j
- KX6T95gIS9EzQ+SeWBtmg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:uYv8A1Ly0n4=;IAiyijM2BQxduskgcWiCxwjQzA5
- J3y/osG8FjbEpfV8qhdEGN+6Oj/0BeJxWIFJXB43L6Pb9c2FrFIgkEOd5Pn6cdpVhX9yg8SZL
- o64LELRG1aY3rMG9u8cC6LOgbF8Ix80qB5POOgHtlcecLud5VJY6cjptLwcs8wARS85s0mOUL
- 0837LdEJ1CIHA+U8Dw4cl1rGbF7r1EzNLKj9PPekzcZVE3EkqW4ctvkUIj9uAlyqfBTnSRSPl
- NGI4nEJnTkp9AEsUzEIh+mMpsGaPwo4mFVi0Bx6lodDy3A4Ev0WTCiZVsXLofvXCxWxpUohCN
- CUrUOOT7ffjQH2L6QpkEect0VEndv3wJJ7eaZINrCYOPvsQR2SEMfaLAS1bZUpNBXgP0qZPbS
- afW2+E4C01Bx97TRoP0cSkKvlRkP4OC8If9U4hCmNrwzrxsqriZO4qO/VnTNVHMgZfQiyMaNq
- 7o/AwMDedTfihGGO2i5+n+AegS+62/nxBv1FmZy4fyxIhiH7TuNPxtCTaA7yddnNdj4BKVg5b
- qbwxNyrSzH5kopy+7gHVeCLdRLmzq8WzmzWuqYhTYszAeUTwRaYruhVAGdyAJueE0vUChf6xa
- U14rqN6B6QXaP+KrljrzNqCYqjoG6XIv8O1YV44ehN50i5tJXdoOmYgfuDGfqRDnhT11E/ALK
- 5GQ/AwdSqGtXpB6BPz0p0Vpty0kWpHVNFE5r9dr8+T0seDxOcRegSZotYgdUZuI4zQEG/P5Vl
- lP7WZC49SGvxMMEftLBs486wbjv9F555Cz5ApLlFkFoZLwoouVP5VK1MctI2syLVTeTLKNQS1
- wRwk6kC3WvGxEcKGSNX6zzRKovGQ0u8B+1oPxWr0xPvcM=
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-14_03,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0
+ mlxlogscore=999 spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405140065
+X-Proofpoint-ORIG-GUID: JZmlLvsklTuzA2lkYH56v9AXtcTyUbu9
+X-Proofpoint-GUID: JZmlLvsklTuzA2lkYH56v9AXtcTyUbu9
 
-Please add a version identification to your patch subject.
+In tpmi_sst_dev_remove(), tpmi_sst is dereferenced after being freed. Fix this by reordering the kfree() post the dereference.
 
+Fixes: 9d1d36268f3d ("platform/x86: ISST: Support partitioned systems")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+This is found by smatch and only compile tested.
+---
+ drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-=E2=80=A6
-> This patch adds =E2=80=A6
+diff --git a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+index 7bac7841ff0a..7fa360073f6e 100644
+--- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
++++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+@@ -1610,8 +1610,8 @@ void tpmi_sst_dev_remove(struct auxiliary_device *auxdev)
+ 	tpmi_sst->partition_mask_current &= ~BIT(plat_info->partition);
+ 	/* Free the package instance when the all partitions are removed */
+ 	if (!tpmi_sst->partition_mask_current) {
+-		kfree(tpmi_sst);
+ 		isst_common.sst_inst[tpmi_sst->package_id] = NULL;
++		kfree(tpmi_sst);
+ 	}
+ 	mutex_unlock(&isst_tpmi_dev_lock);
+ }
+-- 
+2.39.3
 
-Please use imperative wordings for improved change descriptions also in yo=
-ur patches.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
-
-
-> v2:
-> - Base on submitting-patches.rst document to improve patch description.
-=E2=80=A6
-
-* Was any information overlooked here?
-
-* Such version descriptions should be put behind a marker line.
-
-
-Regards,
-Markus
