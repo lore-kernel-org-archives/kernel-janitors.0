@@ -1,41 +1,66 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48951E480;
-	Tue, 14 May 2024 15:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1BB17F397
+	for <kernel-janitors@vger.kernel.org>; Tue, 14 May 2024 15:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715700934; cv=none; b=BFe4Br46jsIaOn8fbwjmzDFhmzS+ljunCZpq28+/zSpPGcgpxo0v2jLmejbIU25j0OV7EziNetds25Z4QoMS0I8m1wvUBmvDHtcspf1IJPLmldXSSZBFo98E86w1jTrqKau6xY6wg8KwNAXUWH/+cVkEhK417J1rxjcztz1Kljc=
+	t=1715701152; cv=none; b=pzYRGomcb+NAhSaaIWVsHthzqot9hvdbKuU0C6SzXWLXKNpTF7dH2QI5IhHRrT3nvlK0VUTx5vvxajJ2iqgwgj8ZMBVnq9Ez8fnFILlhVvA2L9sUMy9axZEMorIDLfquNvpuyXhIPBdsBGSJFImOlRXABX7LVuAvstERPZgU4jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715700934; c=relaxed/simple;
-	bh=SoQbPUWxjuqB+n6gFAZO19Vdp2vroZPMEa/RFMCFvbg=;
+	s=arc-20240116; t=1715701152; c=relaxed/simple;
+	bh=iAbHNd7mgRq7oUO67Du6wjpeeQPoT8tIG4U0JNdY+v8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kmWVmj3iWskrXZ+bQHdCeiNMu8ug/T8nKHjQIMzJiyJg2BekjXa5wVy0Y5f489gBu3k8k94Sf0p6Dn7cQmYERnAgz+3+jPyxsiBFcZSvETXYwU5O+HCkYGWXf7jGkJDY9U/vrTSCn/pn0V5c3PJUcA0hBnAfF3UsF+7cve7aE7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YPkQtHr0; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	 In-Reply-To:Content-Type; b=eTdPh4MPzeVjGo3TZTG7fTx9LZ8rVVxskvDzil7I/Ka6OeHHtU3/gnuVIH4a5eu8VYRtE0nbhPLINAQ/0aITZa8bCnT5Id4fO7iJ6NTgniGZRofK9vdjuxJW/gyYYmYb0SB0hpkmw21lmT5WPXHr3CvP9ICTHaSPkbx5W7JO3EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QEk1QxrB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YPkQtHr0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715700914; x=1716305714; i=markus.elfring@web.de;
-	bh=SoQbPUWxjuqB+n6gFAZO19Vdp2vroZPMEa/RFMCFvbg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=YPkQtHr0zu+SIwBO7X/Ck26TsRZiCSr0mGja7XWK5C7HjtYAhICMVTUOu839walo
-	 0QdbYiEfDLAv8pRa6IFt/mu/kieWx9+4rgfdTi1wqtkFnOQ6VGEREkBDOBg8slNCZ
-	 bdfJrqSuBaXsK0pSCLpfDnuhURh2pXksEzbN7PsrxltTssud6hIJ/5RZHAyeHLaFE
-	 0ZuQOvobgftzt/WzMVHlSDllO/bws1V/je/yW5LwteuFH0QBRfKjqgVXSfw8JOfQ2
-	 HtDhIUg6Y1SSGkjKSJnUvZnTRMhniOSdcC57RJ2TGhbUoQGGODmO7EN71QVtvkvgY
-	 RlK0CbQfIA5NC6gfQA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mmhnu-1spLXQ1gfO-00jham; Tue, 14
- May 2024 17:35:14 +0200
-Message-ID: <e8331545-d261-44af-b500-93b90d77d8b7@web.de>
-Date: Tue, 14 May 2024 17:34:57 +0200
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QEk1QxrB"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715701149;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rbW4AqFrMaISOC2LX0H+2PlSbMomBOm3GeVdMfM6+Gc=;
+	b=QEk1QxrBfAVq4Ri1ILLELuwLW1Ur4ht38Ssbn9WBb/zsqLL9jHJOft5M74GlVeZprHdnGy
+	B0g29glpTOYs2Z2zuEg713/rD/esX9DpRGfDgnZwedygxQrb1RQCzpL0QflMvxlFRqtV5e
+	d5tWYfO8PSeoIfUjktHfi9rMs2yfNcU=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-599-z5Kh5iKXPxmRxz1bjJ0iBw-1; Tue, 14 May 2024 11:38:48 -0400
+X-MC-Unique: z5Kh5iKXPxmRxz1bjJ0iBw-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a5a8f3bc8e0so24310266b.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 14 May 2024 08:38:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715701126; x=1716305926;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rbW4AqFrMaISOC2LX0H+2PlSbMomBOm3GeVdMfM6+Gc=;
+        b=LiymSCrZa2qnb2MUb2GE7bcKU1r/+F7xPKDut2eHToYAZRxuRH4dr7ZBbAy2mpmwE2
+         86fBu1Dk3jmyPh2m6mLevJzTrGFwf7HMImpK4q70LoT1tjJckgpXd5O6vIK0FM9fBpNk
+         v9WoUDwdHtKpveRCfY+5j/6wSi9082IzqIiJoOa3BJIS+sZzW2HUcYr0CRxsO5lS+ePj
+         C6QPftwWYadILcO+9viGvn5kWOKVMK5rbjGZJWmJ9Gh66JReTAcdBzWjwGRcT/RwGOMm
+         iMVVMFGWBqJwpDvgxnqXK+5P6Tq2fz4GTo4TZ+zmQ/knaPi2iQcAcMBgoAeFFAGdEh5k
+         /EbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgSmQJSVWNVtF5Z7jL+BS3r6VfnVej4VO3cTDmZmT8YSK2QlxwKbSlLALUlq969KmAFO487/09a1iPSf3l1f91Xt/Hs0aTi6YFWkAFOH9t
+X-Gm-Message-State: AOJu0Yyz/ePhwZnl1JL/g18MG3gx83JEPX6KDV+JxdY+x1vSa7+Kw8CV
+	P5TH2Ap0qNpOXHCCDJohFOZJbWD39wEJKgESpsCaQlYdBacWD5y6edubhHmuHLNQ8OPzA98oDDc
+	jM5w8P5juGHeL/fqbCb7T0E7EM0MWYpgjJGSbkt5gx9cmjZV60AY7aba8E1M2LK2jFlJjkuicpA
+	==
+X-Received: by 2002:a17:906:8315:b0:a5a:d6c:a30b with SMTP id a640c23a62f3a-a5a2d65f265mr915834566b.58.1715701126604;
+        Tue, 14 May 2024 08:38:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEpzNVie/tGXiTgKB6/FpHbCOQeaspSL5sLUiSvss9/S6ulsnG3niwPgLtjnNrjiabiLgi7TA==
+X-Received: by 2002:a17:906:8315:b0:a5a:d6c:a30b with SMTP id a640c23a62f3a-a5a2d65f265mr915833766b.58.1715701126281;
+        Tue, 14 May 2024 08:38:46 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c80f4sm743539866b.142.2024.05.14.08.38.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 May 2024 08:38:45 -0700 (PDT)
+Message-ID: <d2d71851-691f-45cf-9d52-1d16ede09b2b@redhat.com>
+Date: Tue, 14 May 2024 17:38:45 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,66 +68,52 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] aoe: fix the potential use-after-free problem in more
- places
-To: Chun-Yi Lee <jlee@suse.com>, linux-block@vger.kernel.org,
+Subject: Re: [PATCH v2] media: ipu-bridge: fix error code in ipu_bridge_init()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+ Bingbu Cao <bingbu.cao@intel.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Daniel Scally <dan.scally@ideasonboard.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Chun-Yi Lee
- <joeyli.kernel@gmail.com>, "David S . Miller" <davem@davemloft.net>,
- Jens Axboe <axboe@kernel.dk>, Justin Sanders <justin@coraid.com>,
- Kirill Korotaev <dev@openvz.org>, Nicolai Stange <nstange@suse.com>,
- Pavel Emelianov <xemul@openvz.org>
-References: <20240514151854.13066-1-jlee@suse.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240514151854.13066-1-jlee@suse.com>
+References: <f468c4ac-0629-41b5-b5d1-e26f70e44800@moroto.mountain>
+ <ZkN2Ow6hASmKvHlz@kekkonen.localdomain> <ZkOBaUW1uLw6ildS@smile.fi.intel.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <ZkOBaUW1uLw6ildS@smile.fi.intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:fcZPHpdMdYfE0uS8qeE7j3Ylbn43JMopNHDsYQV+r0PbpW6+1c/
- L+M7MUop3bLNG66Gth86c9Io6zCZ4SYcOsn3PVFw+lfR5R9t8HPo+HglFxBbM/beKqXwV+A
- rMZA2ORzZBI20Shg3pfCK2lZqGWixL9zqeUytlAlRD2j9s8FMlqkmZTwiEGBuc/4NCDtett
- rPDW4HYm03VeeqT/4543A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:6I+Qgqut20Y=;KKxnByEwbtSb0a0f5l0OIb+jA57
- ISpL5Glnx4xcxK/cbpCLrpfZPApEmvrY3m1ELObL28qHVdWIddKDjE65ovaIaxM/j7MLizFLe
- kcarZUePKtUGaKOO+X1or58PvGcmH+XldnM0KJgow9JS9RGBJIkmdWXvT1WVtmB2GF3113rA+
- xUV0EUQjLfLBYBnKtRHIFdr/e0orijwC+pq0IZtWHLEEGgVWM6RS5HoKWACgN13KdLIN4Yx6n
- 5VGpJG45YnGAQyv3XFpIkPdRakHnubSXU9e6Ws4ZaKxkujqVevA3wX4A9cN+/Jd7IxUCiwCSQ
- y919thdyBNGzLnLrzw5tqf/07bZFmPfuC2roipZfJCWktRedaSyUi+jKVWoZwMfNbuD6C7RLo
- YOqsrS/pEQORAPZUOuUr3uplYLMdQvNONN8deicyW0xaiuidQVrJuaSMS4hbuuCfQXOhSKJLc
- /c3pd1wWEuJuBn2w/mpirHqTSx0p/UC8pxf4ZTJHVNjewbTtqdgnu+qVHiHTUmSk1uT7kdUUF
- OeqcRCnWYB9S2BCNCubglzl26TjtS8tfsdHDg0E8OazOqEnDKuM7ej6dvC6dprHrreEThJWIc
- z/Hxpx7Ner8sXKsYXc0UWp/Ed5s1Wnt/zA0JrdvB1crdKsQMEQkPwRNb1PThUb+YRZFd+Ja70
- ZifucfsgnWMsFu3ybYWRK4F4QDqNV4grt2EZOEBe8ZmAVPP2Rt0vcSfVn8//A7IWE3vo35R8x
- NrYky8OFntbpBtsq3+OKOeGFJyXWYskCg8Hv2JEz2N7BbFsVwb7NU+/e8KriGYZzEY7Tjrk8T
- mxFHr62of0Y/RLm6oNayW2dQSnXmQw1euLShpvKrHfK+w=
+Content-Transfer-Encoding: 7bit
 
-I suggest to reconsider the version identification in this patch subject
-once more.
+Hi,
 
+On 5/14/24 5:21 PM, Andy Shevchenko wrote:
+> On Tue, May 14, 2024 at 02:33:31PM +0000, Sakari Ailus wrote:
+>> On Fri, May 10, 2024 at 06:43:31PM +0300, Dan Carpenter wrote:
+> 
+> ...
+> 
+>> Neither IPU3-CIO2 or IPU6 ISYS drivers should be of any functional use
+>> without sensors. But the power states of the devices could be affected by
+>> this: the drivers should power off these devices but without drivers they
+>> maybe left powered on. I haven't made any measurements though.
+> 
+> FWIW, Hans mentioned AtomISPv2 case with somewhat 7W consumption on top of
+> the idling machine. That's why we have a stub driver in PDx86 exactly for
+> the purpose of turning it off when not used.
 
-=E2=80=A6
-> This patch makes the above functions do =E2=80=A6
+I'm not sure if I ever mentioned the 7W, that seems a lot. But in
+the atomisp case the SoC will never reach S0i3 when the ISP is not
+properly turned off. And in this case the ISP is special and just letting
+PCI / ACPI put it in D3 is not enough it needs some special writes on
+the IO-Sideband-Fabric to be turned off.
 
-Do you stumble still on wording challenges for improved change description=
-s
-in your patches?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
-
-=E2=80=A6
-> ---
->
-> v2:
-> - Improve patch description
-
-V3:
-???
-
-V4:
-???
-
-Would you like to include issue reporters in message recipient lists?
+I don't know if something similar applies to the IPU3 / IPU6, but
+the bridge code is used by the atomisp code now too. So at a minimum
+if an error gets returned when there are no sensors then this must be unique
+enough that the atomisp code can check for it. Maybe -ENODEV ?
 
 Regards,
-Markus
+
+Hans
+
+
