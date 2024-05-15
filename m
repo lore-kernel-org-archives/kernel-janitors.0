@@ -1,109 +1,111 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C66B1DFFD;
-	Wed, 15 May 2024 09:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27C915572B
+	for <kernel-janitors@vger.kernel.org>; Wed, 15 May 2024 14:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715766655; cv=none; b=jIRblhvVXBW10+9BxaO0XciwZI79CLItZkg9Uwo9+BGxPw5rpOe36z6HrHTUhH4E3K0ekDv2Xmp9GMfy/CQ9leN0FIhSsxRRsEKBicc68BLTjvnETMZu+fVvtwmTapuvn2L6tclgcPJURZg7JcrkElpxx2u8hjq89w86lZmYNYY=
+	t=1715784653; cv=none; b=BxoBKcIOCUicEDeWZ8rYVGMhG+l3s9K12PSQH6+sggjFWh1mJHI0v44TXRxvpKdZkQ1Zo1gzqT4VI5yWq7Apw/zwHrs9abD7BgsPO6uGimIZSbC0laR/pHOfng6ZzXGIgf3Vm4uMebAb1MHgojyu7Vgkj/SzYKLSEA1shuDK+Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715766655; c=relaxed/simple;
-	bh=DDg4R40TccKAJUix20z509ItiOhu6/f0gMNcrGMRpuo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=qE88qpDWyY0yzYyyzq5d8CRaQZLFugAFcQccea3BaNNVvgfhhXGCXB4we3tyGnMYEusXPdF/UyhLMw61hSglZ+OWg57EiUSzZdDq3E3SGTwVFC4hXz8fPya3AhZP0AIxtpTCD1uV+xH4IClpoz0hJkvKPtzV3XGjh5I8IAgrRGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iaz+Kt6f; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1715784653; c=relaxed/simple;
+	bh=5TCp5CXvuptPmYaBhT5jPeD5TXNBV/1+PLyuz7yUB3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tuWkPgNSGa0PX9Ua/K1tQheCDDkSOZk+ZDl3u+1l2ugGqj2b6mcIYqGndWtSTNIHM/fF/3BK0CyITVbmNr8qi0/hTNS0RoKQoqqHyfgGarYd9q4lFo0YCM/FldA6UK1LAJ4/pcQnMFmwwznrWg/5uny5XG018qwoXk+4QyQnGwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zbx7+7IS; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iaz+Kt6f"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715766620; x=1716371420; i=markus.elfring@web.de;
-	bh=SqxkZvoN9xImjR8xkMwC+V+NgpQ/yJZtwSs0BJUtt7g=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=iaz+Kt6fMpL217FzXfk2gk1GKgPQof91/TUnFK1Gm0RG+gp578YvmL2rE5nwqi7h
-	 kFIpdLZeIR98oY6zFF1pGygsh4EbSyDIWoONoHSCvxU3sPlcIrta+9grWwxMPm+j5
-	 2J1zejUMl+T8bojWCSfOXRbzcR4OXNG1YTm9UrXdq4+1+cQXAbB0Z8kIc7xEEW5VD
-	 0HBzEZpCq+zDQeon8eVoDkDIEmCt2INwg7PpD8YAHE+xWwo4bMpNxowBwlhMuNUus
-	 ugQXqKxmO7OKwQVq9AvTiSDXk9CTxrJlmWAaoDfU4aEP0+shYyEDIiFu+Q6U7nmXb
-	 Pv4yBMwJxTudCXGXBQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MBjMO-1sH7RI2yU8-00CIiy; Wed, 15
- May 2024 11:50:20 +0200
-Message-ID: <b0c57221-25d1-418e-85ce-d5a8d31a674f@web.de>
-Date: Wed, 15 May 2024 11:50:17 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zbx7+7IS"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-420180b58c3so23847285e9.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 15 May 2024 07:50:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715784650; x=1716389450; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mm2oQckW7dl+Jy0xL0CP8kgBBxNAcYsRe32+op0a91g=;
+        b=zbx7+7ISHCCqkG5AC7HaiHzS71Te2zaBV42OUjPY+ceSz5DlR3aljW28eUu26s/wPk
+         KHGaig/Rns+tZjWhTmXWRMkCxoVu3iduVgLpiT9YxmJGyrLGCJESQ8ESQ03you9uuwsE
+         hxRZMelNgjxZ6NbH9BvbjrC5Zlywz9P0VmzSTst62t0bJFxXBzXiUZen0RypWLwtUTqB
+         mdN0+yUeEUEblHWb5QwFgs1Ep2AAYan2XKQmnida/kjxA3P8gbZVG0ZvFjLa7h0zcIl5
+         uq9t3KsXbcisEjDA2zJ7o68MiE0VsbhV9DFlNHLDBEJo1n6GOT3OEBfi/kHknyABvNd6
+         Qq/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715784650; x=1716389450;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mm2oQckW7dl+Jy0xL0CP8kgBBxNAcYsRe32+op0a91g=;
+        b=KT+/oaCEMWqzTXQRxj5fOCX7/PtBaZ9fFvuJsjng4EXQNtkfyMyV8A1fEbjE9RtEg5
+         vlBF4/bR05fzQcWN/6lWLz6EtWGtOvfudXLsporoO4/vC70rrEmNjHfeacaARGW13Fx0
+         GHx60OGXLk3AMueOuiXjoGk5kM/gtXNQ4T3Dbf9C/gGwDO0QOMK/n14xmcFLGYzPmU8y
+         qsWw3n7t7ajrs9v/UwPJbFNpXFkq2L/T2Xf22xar0fcT9XzrTGkh+UMAk9C87hQRCYBw
+         rk30cTyNU0qZ//ZD/kZLNjH6a3rHd5AHOOqdlepd1jxusZtAIPvVGIYYVeR5sfso0/7a
+         TJjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXxJkzkVDCJB2NlUU5hq4I6T09cDxEbsUQ2sHE1AVvVaGvfuFtl7S+vQwZ+40Q+7DvS0SAFzXYOuFh14PZ6RinfbhhVaNfGmDRoCyH3vC3y
+X-Gm-Message-State: AOJu0YxDM8LFcUW5DbGM0z9owV2vFq6VnHtXWRMiv2FBlvlGM7SnbqOu
+	F5JGIH7jqAH6OEHm51x1Q+Vejnzqi4LcUoBeF3tcarxLjzdhgpXPa/upofhqsGA=
+X-Google-Smtp-Source: AGHT+IHc88s0jQf5xDyEKdeY62SQPNAtebdb3EiQmKtKM1DRT1aZC4sH7hbL/Wt0Qqg56kktMNhVNQ==
+X-Received: by 2002:a05:600c:3502:b0:41f:d4e1:5abc with SMTP id 5b1f17b1804b1-41fea927ea9mr107194485e9.8.1715784649874;
+        Wed, 15 May 2024 07:50:49 -0700 (PDT)
+Received: from localhost ([149.14.240.163])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41ff063d8cesm202702315e9.46.2024.05.15.07.50.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 May 2024 07:50:49 -0700 (PDT)
+Date: Wed, 15 May 2024 16:50:48 +0200
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] virtio_net: Fix error code in
+ __virtnet_get_hw_stats()
+Message-ID: <1682873e-eb14-48e4-9ac6-c0a69ea62959@suswa.mountain>
+References: <3762ac53-5911-4792-b277-1f1ead2e90a3@moroto.mountain>
+ <20240512115645-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Kuro Chung <kuro.chung@ite.corp-partner.google.com>,
- dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Allen Chen <allen.chen@ite.com.tw>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
- Kenneth Haung <kenneth.hung@ite.com.tw>, Kuro Chung <kuro.chung@ite.com.tw>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Pin-yen Lin <treapking@chromium.org>, Robert Foss <rfoss@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>
-References: <20240515072328.1010920-2-kuro.chung@ite.com.tw>
-Subject: Re: [PATCH v8] drm/bridge: it6505: fix hibernate to resume no display
- issue
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240515072328.1010920-2-kuro.chung@ite.com.tw>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:CJ6RIIFqLGJvulUgVtl5ZxlIfTQd+O+AlqIfJkYaxdN0UrkuvhZ
- p+3W7No3kexCVFkkFUqpdiFEREbi+W45nGGTCN45G6dfQNjHXcFJ7FjZEsiaIPtus2nsQJI
- Nc5uD9VmIbYLNr/ssagNb1CqjZypULVq4yeO4kWUxmB/NytyMBUlOsEN7nPjZojAhf0PLyt
- y7Jp6cwOip1O2zrPvWobw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ydA1YKoQGlM=;e3sVT5ewC1KaQdhHnhDcc8hXaVX
- +nnDYQid5AnAn9MnFY2N5XBbD9OXnz/Oy2TUMaTtjJcXgEge9DKJ8VG6++k4NT0eDtXooRX8/
- siG7V3wr7X0yJkLQ3WXkxxgMLBCUpdAy2PnyqX0S8/und8qWyA/ad51lPFXVl9igaDNOxQeLS
- o8kZ3N6ZNSFMMMwp1YU4D5PEbRQFJVgwgHTsE2NqCDyb64HhLg2hJnMtGNec7LiV9Bs97srNk
- mngBaieLEOLN0BB3sXppwD4MLIuYNJtoy7D0hG08OFVpWZ10NwTGGFy2NTOPJRCyshgsquh3D
- +wAh+Ovl5zGjZ1eTjCTysufezWeJE12ZJtB1pGzvn1abSlWfTu49VOXNxzVe3DBkE7kraFg5a
- z5JJfl/oPrQrCTb862Xdl4w/hQYprlRTer0uQVml30WJJDQOosyTL1ViovMGGswdwvEzYbtt5
- t+t7xymeiIf9bdhT4jhqlAM7g+S6VSbiezbF/pOHAntPWZ6cC7CdBndgzvm/wAAlBk0BD3pQ6
- UXq0QQ5P/4pfynRsbfPA32+uHbZYcDJcDRHGWVdFU/LAWu+ehC0vDmzijLRy+OfqDf3C1W0LG
- mmHTuGEYHWjQvW4dN//di0gTfRgPYwH+V7mBAdvj0Aw/NOccGV9RSyeulL2U/cxm3IiXdfevu
- v2wqc6luPg1kQkdfB6oumrFK5M3pI//oTUGWrkCu1jLMOOZ3lU5b1O5UvoJE6yjiB/N/ysiXw
- McVohdygQTwbiHNLBfOgTM4c0Clt3jPl3G8Nh9YSJ+mZQlknFMdTMjSdN7mjtpjCuk8JCGGoX
- v5dkszirEFKutw1o7YlfuZhxBnFMOu/FUDYckXgptkJUI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240512115645-mutt-send-email-mst@kernel.org>
 
-I suggest to reconsider the distribution of email addresses over recipient=
- lists
-once more.
+On Sun, May 12, 2024 at 12:01:55PM -0400, Michael S. Tsirkin wrote:
+> On Fri, May 10, 2024 at 03:50:45PM +0300, Dan Carpenter wrote:
+> > The virtnet_send_command_reply() function returns true on success or
+> > false on failure.  The "ok" variable is true/false depending on whether
+> > it succeeds or not.  It's up to the caller to translate the true/false
+> > into -EINVAL on failure or zero for success.
+> > 
+> > The bug is that __virtnet_get_hw_stats() returns false for both
+> > errors and success.  It's not a bug, but it is confusing that the caller
+> > virtnet_get_hw_stats() uses an "ok" variable to store negative error
+> > codes.
+> 
+> The bug is ... It's not a bug ....
+> 
+> I think what you are trying to say is that the error isn't
+> really handled anyway, except for printing a warning,
+> so it's not a big deal.
+> 
+> Right?
+> 
 
+No, I'm sorry, that was confusing.  The change to __virtnet_get_hw_stats()
+is a bugfix but the change to virtnet_get_hw_stats() was not a bugfix.
+I viewed this all as really one thing, because it's cleaning up the
+error codes which happens to fix a bug.  It seems very related.  At the
+same time, I can also see how people would disagree.
 
-=E2=80=A6
-> But the input FIFO reset will also trigger error interrupts of output mo=
-dule rising.
-> Thus, it6505 have to wait a period can clear those expected error interr=
-upts
-> caused by manual hardware reset in one interrupt handler calling to avoi=
-d interrupt looping.
+I'm traveling until May 23.  I can resend this.  Probably as two patches
+for simpler review.
 
-* Please reconsider also the usage of word wrapping in such text lines.
-
-* Will another imperative wording be desirable for an improved change desc=
-ription?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.9#n94
-
-* Would you like to add the tag =E2=80=9CFixes=E2=80=9D?
-
-
-Regards,
-Markus
+regards,
+dan carpenter
+ 
