@@ -1,87 +1,75 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E745A10B;
-	Wed, 15 May 2024 20:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC74139F
+	for <kernel-janitors@vger.kernel.org>; Thu, 16 May 2024 02:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715805429; cv=none; b=XC+sRuJtHy1Ji0oWU4We6OSXGS/rOPsO95tiU/irsnCccoeJ9npJ3/rSDQFAGiq6/gblHGet60fv97Z11ttRU1jV9iuWmGg6JE8Bo0YWYjooGqiEu1PhS1O8hFS8tTJccI8Zdf0MkCeAF2EQmK7sx9bG0hrVT9hrGbukktGqoBA=
+	t=1715826578; cv=none; b=HlnHmUEr94+Fo6tdNSIRjluZE63cbq4Wu4EmBBUkQ66ZV0/tt8Y2NTrJw+CGCsHwPpBZmqpgcEcA0TSkmvxp+pyp+WwKMovHauEoUUdl3LmqNAVvpabAg3TV2XRbmvLXR5I6uU51Df85SUW80XhQ2Ub+pO4I+18ePllOWFGyHvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715805429; c=relaxed/simple;
-	bh=sdz3zA2QNS5KCDlhoi4KnGrlOMS53U2mLcRDwFndvR8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=FZcf5eWBHYukahbZejF7n9B1NXjQCqYWlHTFGGyq0oMmaQJ/MBsJPv11d4zQYNKBSCH8Az3knQwsdLOj9F+9gKbrXpXO/oY4Z4/2s4ucMkA2rwqK4zQfjoKBAYPsnnGR0CvraiR6o/3VVfKUeZZIsGemCIRJc3XRd3yVzwMRnk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vYdauxoZ; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1715826578; c=relaxed/simple;
+	bh=64eqbHF30pFDvZplJnmy2dWsn/ELyqHpe4QH89CQlOw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pOWJg0Sjvox1gcNIT1M84GKPnHqgZrfzw7YKOc3OqLgbNCn6sYXRnwoNsfqYeYeU1upFprgDtgeYp476BasvviZLUvCGg9ngvpy+qYBik0hStzbvPxIXHF1Qk2iQxoyTPwug8TN6LsMkqm9JhGYzC9RVH0rHulFewgZJ61vyyAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=W6AFsVHd; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vYdauxoZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715805425; x=1716410225; i=markus.elfring@web.de;
-	bh=sdz3zA2QNS5KCDlhoi4KnGrlOMS53U2mLcRDwFndvR8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=vYdauxoZ2l0R+13LAPojHUlUNojL5xXfUB965op6QLzdaaP9fho5DU1N4hnzl13W
-	 tF40NS4qcklm11RD6Juvgsr3w3hYFjcpqX+AxMZftEQyugojdC7fD41yZVo0yUCi5
-	 KtdYMAlxsXafU77pDKPtcRov6qS2qxoRs1zpinHTt+iyFQ2pP1T8YS1fE2MK2asOc
-	 p9Y75Se0CzwSHMzuJZH1FqSuGgdWEF9kDsocZdqS3Dj60q0bsPMCwd0HrPPj+yZVy
-	 U/S8+C0QROP84+rcrf/wtM/ScUEscc1nZFRloYczdqXAhZiGnaovyQWUui7u6CYA/
-	 ENiDu383iIjyrt8qBA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MElV3-1sN1Pa1w5b-00GH4W; Wed, 15
- May 2024 22:31:01 +0200
-Message-ID: <fe55ddf4-b86f-4d9f-aac4-373c5f2a46ac@web.de>
-Date: Wed, 15 May 2024 22:30:52 +0200
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="W6AFsVHd"
+Message-ID: <f90a46dc-8842-47a2-a269-826367f991fb@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715826574;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=POjo41Qty2BYUDgH9m3H+3cml12oIPmG9DVVmyYHKx8=;
+	b=W6AFsVHdGQnW0sZExoT5TvfA/u6N2+D9Hv5YDhe5+QkE3S/K1Ccn3GZOlNW5uQkXqSlLIu
+	q/Vw4SGlKr+0G0E8IaCsMQDj9w9/wVkI1/jlza8rB2HAsAGDI+8owaDIceKTvGYBUtPlow
+	PGfiHkX9qfYZUe83PEw9XBDQcsQI4nc=
+Date: Thu, 16 May 2024 10:29:26 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Sui Jingfeng <sui.jingfeng@linux.dev>, dri-devel@lists.freedesktop.org,
+Subject: Re: [PATCH 1/3] drm/loongson: Add helpers for creating subdevice
+To: Markus Elfring <Markus.Elfring@web.de>, dri-devel@lists.freedesktop.org,
  kernel-janitors@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
  Thomas Zimmermann <tzimmermann@suse.de>
 Cc: LKML <linux-kernel@vger.kernel.org>,
  Sui Jingfeng <suijingfeng@loongson.cn>
 References: <20240513001243.1739336-2-sui.jingfeng@linux.dev>
-Subject: Re: [PATCH 1/3] drm/loongson: Add helpers for creating subdevice
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240513001243.1739336-2-sui.jingfeng@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:w0F7NCoqBz6nd2t2/BLUjMjeh0EdR38pQr4i8RHXlrv9MsVW1ym
- eqfZd01UP6inoqqkFcXgoH6gV/kkoOD3LH0MRqjuHlwCpBYBn7cicw663GLcGCNRF0rdXqT
- +hxNNKu9EN0qhOLuFCH6Fglo8Hl0YuPoOPDcD+q3Kjkx9Q5H45n8E3ubw5YIyT5LLfcIe2b
- Ib6t4olqGEvLcz9rwxHWQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:hg4gcWxOf5Q=;fe9NF0WpG2V3r/gNoSHv5mNklxV
- LhtyQ55wMFVyT5w71N4HHCY5B7CgbJx0el1jc96XlFUH5fqnd4r5bPbdSYQsS1r+SAenDdycj
- BMhlqTJcTa33TQh2uYZzpEova5Pn0j8uxusvQnmYBLbR1cqLAN/4URb2OF4/uRLBZOxu7G7mw
- XDVP7yXUlOhKc/xPGhsYNuMMbF0D8jlMbT5oAdtJ7i4CUb3wUll8f8cgYaw+ZAYCRdnUQTQF7
- NET+oSzcZu2PT46SZrClxFB/0aEq3DvmSSfIaIfdjxwa9xleMlwtwCwK2oRfofd+lMrxjmjF0
- phll674F79zSr6I4+5tUPaNIIBle6mq+3BxdO1rGhgwIFtnZpKhOZE144EJ9B6Ez+T0QgnkAH
- VvGnTogvGqTjVk76ebUvDN7eAmYHuvpYck1jn1NaUDtY5a+Ec7CbLsoak9ZJG39T309LGbGou
- x2KzSIPnH9V3M7prFFQ/OIwKmLLTZZA4cbVHjaMkd49AsY6I0+244oNk3TUellL5VaUwsNkKu
- vLUZZ+vMz3+yJuASdbUcFUy+HudzUF4RWq5++exRWT8sbkNE5WhMGawICKy3Yg0yFypkBOLG/
- iF6wcrwETlaNTr4XluuxuvX6s4MaM+WF92BeZHBHppD7XD+5Xne4olnwqG6vdxoIMJqvNXqAK
- QPwZ5Od//oZH6R11XLHcVAQMar1zuV/C+JUEMZ4Ik6dpNzqI+3w0n3Ht0sZzeCW3Q32n2hBV7
- /bUIOIKuz6yDe1UEPNxxs8NHZC8Ty2WrdRnXzutpSFLsOBcox/6nSBqP6o4Jx60Y3Z13RdxwN
- BZ07MzO7fo7qo3iGlbsFL4XtmJ9yROLfqVaSxrVkf0uQ8=
+ <fe55ddf4-b86f-4d9f-aac4-373c5f2a46ac@web.de>
+Content-Language: en-US, en-AU
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <fe55ddf4-b86f-4d9f-aac4-373c5f2a46ac@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-> In some display subsystems, the functionality of a PCI(e) device may too
-=E2=80=A6
-> of the functionality into child devices can helps to achieve better
-> modularity, eaiser for understand and maintain.
->
-> Add the loongson_create_platform_device() function to pove the way =E2=
-=80=A6
+Hi,
 
-Please avoid typos in such a change description.
+On 5/16/24 04:30, Markus Elfring wrote:
+>> In some display subsystems, the functionality of a PCI(e) device may too
+> …
+>> of the functionality into child devices can helps to achieve better
+>> modularity, eaiser for understand and maintain.
+>>
+>> Add the loongson_create_platform_device() function to pove the way …
+> 
+> Please avoid typos in such a change description.
 
-Regards,
-Markus
+
+I was too hurry, sorry, my bad.
+Will be fixed at the next version.
+
+
+> Regards,
+> Markus
+
+-- 
+Best regards
+Sui
