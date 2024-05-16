@@ -1,40 +1,40 @@
 Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8C32137E;
-	Thu, 16 May 2024 06:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AF910A23;
+	Thu, 16 May 2024 06:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715839324; cv=none; b=aZHkrrW9yXUWRQApHLM4vphwReCYlbWsfzLvfoYoUfNS4Bnad1XTF3AtliwMRMIL9TZdKlhOkGK3CHeku0hh574xUBgRfvCFFs7rQFZybLDFpuiVPRDUc6IoR+FrZeJyp1NTD4EOoQ4LtocUeH6NY3F2kBBhYEdWa7BNQwXyjqE=
+	t=1715840836; cv=none; b=E2o/36+j6BEjpg4SryNGL/m2VmBYQOBG56Ekm/ACHc0tGClFfM3HBS9UVMNOB5ZeG9w/YYqUF9nv51MaDuGmR4P+nV2aEj4FV88sIC2F8GuMO0ecyYvzFnlSi8WDYsINqkA7MnppxB9Thr2PKw9dQ3WOF6s+FCLflMHmn0/6q1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715839324; c=relaxed/simple;
-	bh=8Yz8hdYO1zO5H+gdWNA7xLnI/GiTkNJbeKAXjlzwnzk=;
+	s=arc-20240116; t=1715840836; c=relaxed/simple;
+	bh=AhiXkddz6p5J2ObTU8vOAMVtgLyhmptM7Fpfrrb0TMk=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=urrdpKErgGaeIbzJbSWrP5GREKP6bu67NyCceyttMUtm8LDLUrnj5PLZwC5lVz5j+CBFY2Y8crmSK/O0aQvsJfnZcnlAM/goOSKC/3W96fMKoIwVrSipTjKsC6uSxVkZkyKqo6+c53R7zbY2DNUyt4HGVyzJtUfSzPRKKHORHlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=eyN+MCwh; arc=none smtp.client-ip=212.227.17.11
+	 In-Reply-To:Content-Type; b=DgLl5cVq52WztrKBpd+cP9/3IaWe/5KXI4JoWCKwyCiMpzNYE7JycQCGec6Jo39hbpKmlgYwWVeiRLt/KIeCv2AgqRFhEnBkI8U/qCiw+2e1o0Oy4uR7H4+xPCTMoi8kJY9ahMU6zVxBcWGib3opAeNRln6bBIiRpG52mIPPTg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JOFcCl99; arc=none smtp.client-ip=212.227.17.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="eyN+MCwh"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JOFcCl99"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715839283; x=1716444083; i=markus.elfring@web.de;
-	bh=Cyh+eg/yRQoUJohGczjwN4WgfqvUfMeQ6xYM9LQpmSM=;
+	s=s29768273; t=1715840812; x=1716445612; i=markus.elfring@web.de;
+	bh=AhiXkddz6p5J2ObTU8vOAMVtgLyhmptM7Fpfrrb0TMk=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=eyN+MCwhadgWF7AkhcROllHdp96/idsb7fQuCeahUz4X1pcYx8Lrvrndo4lCH8WK
-	 OHBGvrUzuGH6/uviHkA1Mr04siqg8WoJt2j2ZsaoNRqU2xioFOcPOHV6kjDbkEADr
-	 sWaJavXhxwl8xzgjncmvIp4ATu7Hp5MNau7QNCopjcNOr6JLbzh16nBBamx8/BSCK
-	 bfJCp1VR0FXIMGTWgeV7zNzIup+ta0NDhCYfWI6jDxS0InYm//VFOkZeMC2yrDzAP
-	 qvcWeKhkqh8dQYUAJLUeAjLiXArfnReNpgzmdaBKjfY1SUfcS4d+0VcGsPK0Frmh7
-	 Knp5DXs8IeZe257v7A==
+	b=JOFcCl99H0ff51oT5D0nAzsbXsnIK4c9uCO7EPsqPLPCT/ZKcxOC1y+JUfrs2BKR
+	 yipgx0OfTmmVkd4NG89wiK6+ysVigUr8ocUc9IMPaJ8H1SKrDJLaweftCLsdjnf6u
+	 AJ26V2bPx+QqZZZWM+YtTq2WZWUIkUOJ6ODqO77DFFR7m3qpYDT4TFL2xlMqPsU4f
+	 gMixLSjczZU8BarCrQy8HaqQJ0bNQRaEPukgCc3KTY/L5ur+nHXBfHNvp40US+cFQ
+	 yzvFQ+ABgf+WpnGYegee3E/1TBl6t/lIUblpc/hW5VimyESFCTmqrcd/N3byTVebV
+	 ZqtF3g05cVcq+ktkLw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MI3tF-1sJqdQ35Xz-000szD; Thu, 16
- May 2024 08:01:23 +0200
-Message-ID: <68b2d167-6241-44af-b50a-feb4257e5a78@web.de>
-Date: Thu, 16 May 2024 08:01:07 +0200
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MHEbq-1sKfr239bk-00DEk4; Thu, 16
+ May 2024 08:26:52 +0200
+Message-ID: <dc34d171-dc47-4817-a6f0-9f23a3afb8e7@web.de>
+Date: Thu, 16 May 2024 08:26:51 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -47,38 +47,39 @@ To: Sui Jingfeng <sui.jingfeng@linux.dev>, dri-devel@lists.freedesktop.org,
  Thomas Zimmermann <tzimmermann@suse.de>
 Cc: LKML <linux-kernel@vger.kernel.org>,
  Sui Jingfeng <suijingfeng@loongson.cn>
-References: <20240513001243.1739336-3-sui.jingfeng@linux.dev>
-Subject: Re: [PATCH 2/3] drm/loongson: Introduce component framework support
+References: <20240513001243.1739336-4-sui.jingfeng@linux.dev>
+Subject: Re: [PATCH 3/3] drm/loongson: Refactor lsdc device initialize and the
+ output port
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240513001243.1739336-3-sui.jingfeng@linux.dev>
+In-Reply-To: <20240513001243.1739336-4-sui.jingfeng@linux.dev>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:TaIRuGzWCIt3tYqyHddJHcD7QI6a0iTTV8jXc9ueJegtw2j5MEg
- nYPLHiwDo6jdy3YGU8XkshijPrVdV1WsKEHB8GDRC6x03m5ur9t2DlC2JvuzOi9Q5G3LiaN
- zDmIarFJ/Y5QJ7b/edk3MEbfiKJT/+raoY8RuKmH2NzqvakVvamhPZdW705v4tOBqdS2WVd
- J/jCz453Xh2mFc4bEEeag==
+X-Provags-ID: V03:K1:Loziv5bD/koA51c/p3tvL9gE/MpR4TQk+S/VP786GZJ+8WmSCp7
+ zTZth7QHAFUuzcwLIngaqOldY208Wkeo+YOoK9oCWbvNxC6tbZXLVdvdCpH28iQQVKltGSD
+ vZIm535XdzKoBDaFg+wow82PQvX2tjbHvXorOHeeWour1l6i5JHFUGW1mguq4kAXeWd1Ed7
+ EfgWI0VtvZmQm5uJyBp6Q==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:FVEYT3FbxY4=;tNVf7Y6TSTVEAMpSIU5NAdbOy6u
- PaQpOQ7d1Ixbm1+WQK3wUNYpulXmpRDZpsaD8ZKbKWALzgNAp6RCngttJrH/czd48VXpLiHx6
- XRMjCE4m6T658yi4i4ZXoZed/PtOFxjCqRWyZU/yVmX3bqS6JVpPTLvzvYqS/mf5FmVLUOYuE
- nVMdiqYw8pGhaPJOLp3DpUisfdqTGqLG4q+MH/WvQ/xXNlFJZolfDrLComS8aaPxFFndwbaus
- 8CVJHyRWrwHZOIudo7dGmroM2D1ix/YafcyXGyhhtJz6JANqmJcq1FXhjrTMmWBRcw9d4ou3o
- OKkHXJul4zs8OIZzHjlsO0LKuhVwOISGaVZ6/8QQGime9lw9bXphgPZhjeC92vppL7f0qzEJ+
- G6LT9E3qeT/xLaY+0377Abq3l8IE6Ngl2toI7J4+x33kYqa5SpEl5rwiQRWH1gSsSUTAKkOjy
- lc/FzJiq5dJhiDKuFNr1v1THHQkE1bvc213rFnj+CjQP+/lnLFNxSelm5/2CLatf+TPuUInwX
- fu7udLsTvDbdzZ56EnLdQlVARdpt/5nmSfG+8wTl3kqdlrtrn6A8t6aklLnBKIPAlWupmbCzG
- GVLab7fs1NuwUz/0nxzvagACquiQGPScrl07NG8jzL6/mwGCGSh6reEZUMDcg25PFXiodvOOR
- w6jRZANacKFdAKacMWZyGp3n2B0JrIrGkmsXIQHevR0sjCjGO3KzVyYpzCFkQEvLn6nou2qKY
- uq0O82yz55o2m4bjww+9G/o6ZGwwQRT0GunUE9iN5ETZNg7kMxpkBw72CcFPJTOpANxWmtbBc
- al/RSSajyeUyjyB6sM3EPCcGUHFaIl68qd5hE7mAs+VZ4=
+UI-OutboundReport: notjunk:1;M01:P0:Gx7SC3to8nQ=;LSmx9V9mEgt0EpEx3IBuuCHPNRJ
+ p5swDHeF8XIY2A12qd3gh4b5WP9qrxrGiZp2UD3wuiibHW0G9AJe8N1K6FAALOFtC4VEhISgI
+ 4PRRE25RWUJvx3QMJ4XlwJjxbxj21iW72sBpK0qZedRKUgOTdee18ei7bawD9hrN74QmJNs4s
+ SiyPHIDWjNmiS/GoNJuUZR8DCKirP2HmMs7H3BDfdsmB5JimUsWnS5ZU6WqZvCjpMA845DUrI
+ 4AUWDqedw0QzQImxEvhyU04XoJoqSQvPsRKOjAzfUkP7GCunTC/KGpuceYX9Yik8bs4ycL2qx
+ D+JMIMLvtkfdCToxzlViMHiDpAVTux96T6ylaAhYHTSy4R2iAe1jiJhveiu9cjfkg2GAGfLR2
+ 39HIVEBenqHas+BcUDL96eXicBKC1pNt9d3tbpeGClm4P86psT4Hx0rioPmkxT5QkFFZUwAhd
+ SU7zaYvDWYV83hZ4C+uNtyjVFgIFbNI0pvLELd/b0u2r9FRA7FdSqLPec/albTUQwkRSjkCr8
+ 0ylUCi9Q+Kf+n0G2uMdmfkqxoenYVzGRfBpeoW3FD2IAEt+bE4DdQ63V91W7kaTFNuCxWDdW4
+ EY9of1jpTvZDmq0x4h7dD66YAM08GGmozXwxEsoE0UkLfIdjOPf79suX7npalsa+etENHimqg
+ OHOMWaaoKFDYSDGvCJET4wG9tuN41BRb6pDelpcFpLfTSZqcl/ong+sb6z12dmvAZH/guXvqj
+ blBgkk3UTO/U+7UW3ReA+S+Nj1+oKVOoLnhazCnP5cSBzPt4a2HNZQ4X7g1auVaqlScNylFbO
+ guTCuetUgxDG2sQC3KYvC+WPPwOmC6WcBfTZgDOvEqGWc=
 
 =E2=80=A6
-> The idea is to devide the exterinal module dependent part =E2=80=A6
+> fullfill the implement under the new framework.
 
-                 divide | separate the external?
+fulfil the implementation?
 
-Please avoid typos in such a change description.
+Please improve your change descriptions another bit.
 
 Regards,
 Markus
