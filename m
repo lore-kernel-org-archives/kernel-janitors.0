@@ -1,108 +1,114 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F0A1A2C19;
-	Fri, 17 May 2024 18:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA6713DDB6;
+	Fri, 17 May 2024 19:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715971019; cv=none; b=sKdjkuKV4Updu0NkmV+ZEk/cMjz+PHHMwjs666qPe4BUwkvQoXIb8k1u6a94Rux5FaNvUn9HIwUon2Y6RdGXgzjqdoYJoxIu2xt+mLgYLAcUCYctEVQ3oc3y8jYgPwrHU/oeSsc2YKVzfnt+z9olghEQ4CHEHzIdGwozhkfWNIc=
+	t=1715974234; cv=none; b=hL3udg3hanKr6i9eynq8vDKt1e8OOmM+1aBz2tx1cdP8Uob2S1xPQqVbpmOjQgDGFBf8bn+0TP3cj/1o5peaHW84FmOxkS/Gep3FtcDbhumTz7ElBG2LWEx+Ond5PHt+e+PDqbhoHFY046tgOZmsq8rJX4k5iMHrxGa+ppQmFMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715971019; c=relaxed/simple;
-	bh=4PkvaAcvVDH1aF/nkp65UXl1KU5DOp/JS+CYf98ASLQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=HMs0UZr//VlZ2sZxZN2fCjVw9RZ5RsxO6Xk4deM6wbYLBZ4xTli9bg/U4IcCLD03HH/eYhZGzySF9PANE4Ee1qEk2plDUSB18ciOyLPs5ylQIEzOPT7aiDdwGG25pK3Tw2qoNLOXsJ5lBr1t90xHt9NWzktBfVnvfLofHaXjmOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=UBhaBSo6; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1715974234; c=relaxed/simple;
+	bh=xF6UKemZvaSoGr9T7LbwJUMiuww6NUchpCXO1mMNK0A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Q/6ThBwcK+qwQYfsmiykUIPau7Vm8VPkZhLwtO69aY19NcyFOjqjmo/s2Yd9mAc84g36mHj9acCv1wV/p5O292HQpZgQjIrnjYMdA+KCwCesAj+yc2kVN+BlUiOlpcYSs4WNMPxGTKbGBWTmTlMZP3zbbklxFllX1Y6NFOIftoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dlDIvAae; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="UBhaBSo6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715971014; x=1716575814; i=markus.elfring@web.de;
-	bh=fB7RALjxdRF1G/aDESbEsQC4h5dPoGC+cUZHy0syvLs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=UBhaBSo608yj3CTtHieEr0D2XH77Qz0NO3rHY3B9BxkngkjjIN8pnackHDC2BjGo
-	 /DhLJf4Jfiw03YjkkF4pwUxbZh8YL7rkCSCr/9pHOMS/gkaJ0BPjsz03K/GII6CnM
-	 wEEoZH3mo77GWLbS2x/4r8VOyXWHXT7A5RYzDyD7yA3b2pg0Ck76BpDjQSeS/yQz3
-	 xDDRinhS5FeCqubUDktyvfGLkH2XLEyTQcAB4uJX3jehhV9AV0B6qVtyYaT559Wzq
-	 J4PwSRcsu/hcGuG6+59FC89w/v4q+AiZjKYf6R/ETSfr1OFd0KM89Tsi0P3OmRXUN
-	 RSL0Qv8SdxdPzib9/Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N9cLR-1sbNc00Sxx-00wGrB; Fri, 17
- May 2024 20:30:53 +0200
-Message-ID: <94ef2d0b-15d0-4c40-ab52-a5d88a666b3c@web.de>
-Date: Fri, 17 May 2024 20:30:49 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dlDIvAae"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44H9hkt4025967;
+	Fri, 17 May 2024 19:30:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:date:subject:mime-version:content-type
+	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=VOI
+	NPK4KPgHsYAeEGQ/kh90Sbkf9gkMSJhlYJH2uwkg=; b=dlDIvAaedgXM/mKbcNc
+	PwUsx1yS4U/62hywOpa1t1PvYwjEXH65+xRkme9Qi+xKfvEdnEon7rBMZVVY8C/a
+	hiecoNbutZzwmEvaMRjJS/vRLFjMHEQMmSnmjyIftE79Z/zYDRwN2Cv+YAkGMiFx
+	m96TgvtF5IYrBOciCDFT7poZGnmdYl2d72wWbBEKNM5JxfG41MvtqtqWR+6NcxYr
+	AM8TooDVHfB3eVJQrSsIfnozOgmePGCCBbehNo5YwiVnqpWsI77KVTcC56pIDWfV
+	7O43Tp1pt9QC8FxDnWqyG1nhxREjj1kaKfw03wGjBHEQsY9CrawvZdhuK7IDe7BG
+	I5g==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y49ft9364-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 19:30:13 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44HJUCNe010582
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 19:30:12 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 17 May
+ 2024 12:30:12 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 17 May 2024 12:30:11 -0700
+Subject: [PATCH] leds: bcm63138: add MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Kuro Chung <kuro.chung@ite.corp-partner.google.com>,
- dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Allen Chen <allen.chen@ite.com.tw>, Daniel Vetter <daniel@ffwll.ch>,
- David Airlie <airlied@gmail.com>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jonas Karlman <jonas@kwiboo.se>, Kenneth Haung <kenneth.hung@ite.com.tw>,
- Kuro Chung <kuro.chung@ite.com.tw>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Pin-yen Lin <treapking@chromium.org>, Robert Foss <rfoss@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>
-References: <20240517021654.1034218-1-kuro.chung@ite.com.tw>
-Subject: Re: [PATCH v9] drm/bridge: it6505: This patch fixes hibernate to
- resume no display issue
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240517021654.1034218-1-kuro.chung@ite.com.tw>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ocxBC3UDqeM5nCY06kslqg/TVkMQrEhNuG0Dw/kVCwd4cxuSw2Q
- UY3HZYeg4IlBOVMNqRCOIb6/Tj75wO5vXhe+IL9ld1VtsU3G7M0uzhgWkrawRN7mNroeE9w
- XJ9WDv2uYT9Eo3XIxssXaBh89q/0hHQDYbMu8BWLEJJXRtTFJXq9wWtX/koY8zbr59j/DC4
- abhIH/nm+k+2HmFBA/jTg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:o4IVAo/uwds=;mnSJRXK9U0TVbhq8uY4qds84468
- 73aA5R3mQSqaP/LbaXvzB6ckDIb7fFooJF8MAOvJdnQpBtTFgd9uvG47fvqB0haSaHacKrhYV
- 3peY/dB9TqB1ai1JxsYdTpn/cQzhd6yv0XnaQjCOoaFVHqz7IdR6FqlMidrJN17p5XzKJ24Tv
- vlUjKSp0mF54hG+uNziQDZtf4IwF5+redH18RN6YeFziGyEzvD2leU4CgwAbP+KjiihAIBZEB
- il/FYQNrSx4cqHD+YAp7uXznYbvI2ks0S/0pyMKmgUd9fCh6iHb5r24rKXZ3OlMbIbI6hIGBG
- miuVPsHVgCLHGrgUQ41YooKucFpp4JfDwCudBCWToRM0wlMeJb8coWa/v/OfJMUZaHl0Sr0Dq
- 1gq7OZkxRZgjWY/HEIwcyg6ecBBhc3VkzlgaRwbdAXwvObXZLNP6mj8iwkKkrkty6FqmGIS8x
- gMWP6/upxUJarf5FNWdtBfQlbkMS4iv3d7otkdkVkGrIUoyqK6JpUyaeEyKAbL6fdFbOGCa0g
- BVTHTjF8qROAzTmqZs7mqHVJUDzwaLzzu+kd1gJS/qDh6PX5cD60gYF4BiOANFm300xEDRNim
- SssePW/vAB0gJFfTxDDlf7efipUK+nXxL041ZBTTgt9b0tdHFL2S3KkwNicklEbFk28AqpR1w
- ZeIOysJRmWzrLou5F2IaBvWrN00kCpDketEr4pYxQoezHUcFHSmIvjQSHVIQ6AZg+yCW6LFut
- 3PIxUFnqICRUkHQaJCujjpjySnEWqTLX7hRt2+DK2N76wWV26BEQA2JfS83/htFdPXhJF6OTh
- XJClDAodXuY+V4lKy5XT8ax96Xm18S3zM4P4fIGGuQkEw=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-ID: <20240517-md-leds-bcm63138-v1-1-247b7302edb6@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAEKwR2YC/x3MywrCQAyF4VcpWRuYi23FVxEXc4k20BlLolIpf
+ XdHlx+c82+gJEwK524DoTcrP2qDPXSQplDvhJybwRl3NL0dsWScKSvGVAZv/QmtT8PYm2ScI2i
+ 3RejG6z95uTbHoIRRQk3TLzRzfa1Ygj5JcPm0Kez7Fz5J1oSHAAAA
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        William Zhang
+	<william.zhang@broadcom.com>,
+        Anand Gore <anand.gore@broadcom.com>,
+        "Kursad
+ Oney" <kursad.oney@broadcom.com>,
+        Florian Fainelli
+	<florian.fainelli@broadcom.com>,
+        =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?=
+	<rafal@milecki.pl>,
+        Broadcom internal kernel review list
+	<bcm-kernel-feedback-list@broadcom.com>
+CC: <linux-leds@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ONN4WLRpdLqJfmUstXPrQ9t5faSk8t5m
+X-Proofpoint-GUID: ONN4WLRpdLqJfmUstXPrQ9t5faSk8t5m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-17_09,2024-05-17_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 spamscore=0
+ suspectscore=0 mlxlogscore=999 mlxscore=0 clxscore=1011 phishscore=0
+ bulkscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405170151
 
-Please omit the word combination =E2=80=9CThis patch=E2=80=9D from the sum=
-mary phrase.
+Fix the 'make W=1" issue:
 
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/blink/leds-bcm63138.o
 
-=E2=80=A6
-> But the input FIFO reset will also trigger error interrupts of output
-> module rising.Thus, it6505 have to wait a period can clear those
-> expected error interrupts caused by manual hardware reset in one
-> interrupt handler calling to avoid interrupt looping.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/leds/blink/leds-bcm63138.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Please improve this change description another bit.
+diff --git a/drivers/leds/blink/leds-bcm63138.c b/drivers/leds/blink/leds-bcm63138.c
+index 2cf2761e4914..3a5e0b98bfbc 100644
+--- a/drivers/leds/blink/leds-bcm63138.c
++++ b/drivers/leds/blink/leds-bcm63138.c
+@@ -303,5 +303,6 @@ static struct platform_driver bcm63138_leds_driver = {
+ module_platform_driver(bcm63138_leds_driver);
+ 
+ MODULE_AUTHOR("Rafał Miłecki");
++MODULE_DESCRIPTION("Broadcom BCM63138 SoC LED driver");
+ MODULE_LICENSE("GPL");
+ MODULE_DEVICE_TABLE(of, bcm63138_leds_of_match_table);
 
+---
+base-commit: d75ca803d4950826f6a1227f9ece9eec44b2f360
+change-id: 20240517-md-leds-bcm63138-13c6750c022e
 
-=E2=80=A6
-> ---
->  drivers/gpu/drm/bridge/ite-it6505.c | 73 +++++++++++++++++++----------
-=E2=80=A6
-
-You may present version descriptions behind the marker line.
-
-Regards,
-Markus
