@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A4412D201;
-	Fri, 17 May 2024 15:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4E51DDF8;
+	Fri, 17 May 2024 16:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715959892; cv=none; b=SccCWLKoHj2DyQRkaFndJ9Q6slOOjFPU826+bgvH7cSrxnlRLglbYakwE8dnQVjAEuckHyQJ5FSQzHhgKHfNO+ktqKE+pMvOhf2j+jtLf64d2ZY64A2pVjypmONAFb/nA2zdXJNU10xiijt50A4zTrcEGgRZU6El6zm2d+VqfOY=
+	t=1715962830; cv=none; b=PCPzR4JvHZNUA4Fui696Ey9q5JcKheQC5FFnAcqECFNa5VACQgaCNfv2yzGRS5aS2OKJuxFK01xSj2Y93kCEjymYFndmnfIkPH6+yOLUtQkVKdNUsVgQ+hOV6dKr+secs8X04+DR3/GruVc2l+PpRo+FAxVmXPm70GlHdSl9qpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715959892; c=relaxed/simple;
-	bh=my1yI7WyUJlHky5ciUBO3WQJ1JZ37Sarb+33aKXJfSs=;
+	s=arc-20240116; t=1715962830; c=relaxed/simple;
+	bh=MhCqEObRQqnJSR8w68mFYmxXWm1UO8FSzDLr2vj0eLc=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=rqk4MMPOLD/JouX3pTRJt4h3rjuoRYDuvGd8lSFO/cd4/pZFxYEcUa6g93d71XsVyjYLdLYnGDmhhY+x+VikDI1l9vmsTAKq7nxwfovDr/6+jdWPW0d0p27PlANa0losaFgQPRiZiD9KU2S/nUlwbRGYLaIk1nnxqU0dbryiMBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WJjLJWEo; arc=none smtp.client-ip=212.227.17.11
+	 In-Reply-To:Content-Type; b=GJokXUluehgjrS7mcpqa1WDUPm9IIa8KgPnJTy5medOm9KEEy9bNUkiIQ3b31jKZ7FC0CCKBrAtI72R84fY1hO2jkg7aXSM8DvfpeipaxatlUXa4BJr+XS1FmNnedn9qqP5J1VZ9bhtJA26l/pSiSbHt90RKBRqJnLuLmFanb2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EAbYwBLS; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WJjLJWEo"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EAbYwBLS"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715959862; x=1716564662; i=markus.elfring@web.de;
-	bh=my1yI7WyUJlHky5ciUBO3WQJ1JZ37Sarb+33aKXJfSs=;
+	s=s29768273; t=1715962787; x=1716567587; i=markus.elfring@web.de;
+	bh=MhCqEObRQqnJSR8w68mFYmxXWm1UO8FSzDLr2vj0eLc=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=WJjLJWEoutNXwVtnRjLJOLjtT2ZTn2LrmHMHqvAe5DWaXx2RiZe+Zpae/6Xo0Qip
-	 jvgUR1HgMSiFUVjqBD84+JC4U9bVgmjzHpFRy/Ep2TJT/cDLBNKVFHZxxX0Wwwfbn
-	 xoglMS0ELpDSgu88LHjmJC84k19TGodU57/pT7A6hWB8qqM1BnCBm3FWE0gqJ8yT8
-	 5rT0KO/NKp8carPVqKg/9pW8X76RyKQhMhS3GaVL6T4rhw5Q6exuocEWZLV/IF650
-	 TixdPVtqUZLYZZ5O3D3FeVQlarL0oNHaUw1BNO1fOj7TF5HaiqAPu3gIocwoYIHM/
-	 dGzDHL80GUAnev6lWQ==
+	b=EAbYwBLSfbaP7DUcjywthjOZ92Z/m36nPCmGIKQAc0JYoap6mHV8CBWNqrmPu5DC
+	 FSkEtomqyovcoyzEvZgpAEdaQt+PYjcVQW9AmBXm271ODYR/Lc340/bSKz2M2q0lU
+	 KEkVBc4zmZwk8O+FGXA+jPoMz+BAgfNb1djJFImVUMgAa76k/wMxbjqFeDpB5kKOd
+	 msh95+aHkOE7mkPUc52b0H6HXhBYQI6hXRdB6iuW6qR1vViBanX7aBpE+aCrb7cle
+	 9k5IUcorUHcF94cPooaWm+/RHRAi9txj0DpZMh3x2jQ24q1jd0bFu5xfuHL5QxrWo
+	 /Oyelh2Gd98WUhEqeQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M9qhD-1sB0LY1tDR-0096Pm; Fri, 17
- May 2024 17:31:01 +0200
-Message-ID: <d313e351-6697-4d4f-8950-2b784a2de9f0@web.de>
-Date: Fri, 17 May 2024 17:30:57 +0200
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mvbn2-1sNt0130zO-00sfle; Fri, 17
+ May 2024 18:19:47 +0200
+Message-ID: <3dbe3c6f-e700-42d8-b2b7-574a3fd1da85@web.de>
+Date: Fri, 17 May 2024 18:19:44 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,49 +42,45 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Dimitri Fedrau <dima.fedrau@gmail.com>, linux-iio@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Hepp <andrew.hepp@ahepp.dev>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-References: <20240517081050.168698-2-dima.fedrau@gmail.com>
-Subject: Re: [PATCH v2 1/2] iio: temperature: mcp9600: Provide index for both
- channels
+To: Zhang Yi <yi.zhang@huawei.com>, linux-ext4@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.cz>,
+ Ritesh Harjani <ritesh.list@gmail.com>, Theodore Ts'o <tytso@mit.edu>,
+ Yu Kuai <yukuai3@huawei.com>, Zhang Yi <yi.zhang@huaweicloud.com>,
+ Zhihao Cheng <chengzhihao1@huawei.com>
+References: <20240517124005.347221-2-yi.zhang@huaweicloud.com>
+Subject: Re: [PATCH v5 01/10] ext4: factor out a common helper to query extent
+ map
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240517081050.168698-2-dima.fedrau@gmail.com>
+In-Reply-To: <20240517124005.347221-2-yi.zhang@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ElMMYmA2XlfZzpyqH5Dw55ie/6kAanw3hh9beo+i9gPpusngUxM
- uC+0CWnSGidmtUXIeGz6B6Khq/IyB+0QGFYiEIMHKX0KbziFUyrn++Sf483bsgVu1ILwdIu
- MEE7hsHyXjviSR3MfGNZMEXCOu/Bg0wlkC1Zx8n5eWdnkmGIovLzbMOhmo8jau2YMgXurrs
- I4dEVpmqSu3VVx2A6dVPg==
+X-Provags-ID: V03:K1:dlvnttXyEIHdwQMV4dHCwXlZtMglBNz+cRMJQ456ZO/CNNYl2oF
+ JVULUzrvhC9rwRvHuywnHesK3jkgQgO6xF1FAStHzMURC6XmvCKdRgG+0agTPk+H+ILWw/r
+ Oed/KRVPdfx+7kZlydrvDZEs1oVEp1XVt0zB9/nGP/7g/YSla4WflkAT7zOjnQeMu5Q+Pwr
+ /BSrI804tjZ17uSh1KXTQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fdmUXQ6Y9qE=;vVvbMdsKruheBqTfrwIDY27MbI3
- KZKWTVWnqZMrFqWmJNIV6Xow8XnPgzJWsNizHWBJ9xUFwTmb3QJe2ypGUOQNfB2n5Rga67BID
- NkKnMl1iuZhiIDNzq4S1dxnafRPri1wXkpqnlGisW+ztiBZScB+Qs4YLRqKAD1RGwB4efYvt3
- tYAWqbAmb9YN638R1n2GDwGhvWWfs91wdgAjPywSmDSrQ/36b2pX33uweGwOh4BY8it6cZ8Po
- h0+cAGdq1goQdyar8o6NUIG5qDah4A3OhkTCppH05PEKog2E9i585Ow693FxeOzt3ybg8aRIh
- UcfzbVtjN7B/Xx45sf6jE+eZbvjSa9f1Hphld9EUZ6CjiX3+7RYSeFqfF2OS2ykyiu2iJllh4
- mYDO8yisTTgjxP5tMSLIP2x1zWLRcztbm1rrjQ0rclUuvkRBcqfdGNTGlJadDPxAKy2vD7M6R
- LnwRiKZ4A3hu0nZPLLSWnN0twIKItwSXGbNBhqAL2xh29OijoUvU/e0BTurjjKpOTkUXOUiUk
- rXsp9tg5cxuHKZCg59Ii3ib4q1e65WMgsdLUObNie94Q+3ZlSHSx5BBq5pT+Fh9404u+PkpEo
- MoCs1jxRWkHyL09HrSoK0+uFu+JD3bTQixH/zvQPxWn7VdKSKv6dBQzb2fNeZY3oDr5LtVPxv
- dR684XoDFhone2wr+6+tkOyNPEJH0Y8PslhIzcjh9NLjZwIKLzhmZwEKx+2UHi4/loYyI+6u+
- ePhMgia/hlB+3PxqFO7vRpC18I79UoAptLxfJoUidXNSmJ/YRyS3OjxhP9bJq9LD2l/zGoi1G
- 9QAXpxuA6MRjTcw18RzwKafmbPtIkts/3wDZAvzYp6WZk=
-
-I suggest to reconsider the distribution of email addresses over recipient=
- lists
-once more.
-
+UI-OutboundReport: notjunk:1;M01:P0:b0Ifs6EglUs=;qCx0L091tWWSokjyvY9KnHZSVDb
+ tIRIQesyVLuF9y0J7GZ2CMp0cDDrmQXjsVDq20ukGgxlvcmr5rqC7upj8cScR/RFmUzRXjUZG
+ rnIvaEaww1MbcCXR7n89sRPox2le36W6+e0WFqwHdjQ5kwTxIUWxbKMl9ncR3wxlL4qo0N48E
+ G08D+uZZGFTJERJPlHoqupfg5yZlnRhMJZrSFErdWkho/bH9xeqjsWDWKqDrYF7sp1fG00Ex2
+ 0OLHce6ltAWjD8Y9/xo9ok9OnjmRxZlyTWt7nqyEeHzll/h7xgXH07Ng6tgSkAqYQJLzXmkk1
+ OVf4+7LIABFzWteFAtzyQLYilDLWR2zgC8F/Ln4MikYEhhoWDD79Y/mQHJ56lKGPDSUnbHAMw
+ gSBs2OVP7R2zDlw78cQ0fyjvcNSBv8GTSU6m4K+XNPIyg+s0pW0PNc64mScEx2WvxmvikcHob
+ 7EaGEw0OMtIy8d3BaRJ2XGFrFuYZ8F7rPBxoxMxbcSkGiIqbKrX14gbRrmVmIxMUKF0LBhoa/
+ VbZNjz5rlwYGK3bqlgiSLy1rWf25cLNyr3+VgppgbwM+my+P34GcEajQIN7UofpSqyT1uDXO1
+ J4NUD37s8dqsLpg0gPm2P+6IE3L9XY5bnydbUaqbvaezeRNW20W5TmMNHZimYyCx8Szz3ee7s
+ KCQalqzLce1iT2BAmDa7a+U51RoetM/2dYe2JdDMkppHNfewxJXGulxvVHB6G4TVHZexFbQxE
+ HVofm+I/8EF74t4Ghd7rvlc45r+MHzZA+9ancN7OvRQg6T1W6Qngqjl5+a8icS7EJuN26Srun
+ r+y+05wNZWLoN9M2aNJLLDn6ycz5NHGBcCuHzdm6LDzBI=
 
 =E2=80=A6
-> We provide an index for =E2=80=A6
+> ext4_da_map_blocks(), it query and return the extent map status on the
+> inode's extent path, no logic changes.
 
-Please improve the change description with an imperative wording.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
+Please improve this change description another bit.
 
 Regards,
 Markus
