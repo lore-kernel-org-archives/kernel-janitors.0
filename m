@@ -1,114 +1,90 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA4E1F93E;
-	Fri, 17 May 2024 15:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A4412D201;
+	Fri, 17 May 2024 15:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715958962; cv=none; b=dLTaEkQzIImfvaXAjUURISVbUzvWfLTaNMbGhVc7u3smi9ZNurNcTgVwv/YGKOeh4ru+KcVayLNzaAcK8VLruCpbKI3PZk1LHo9g5LmxvaBl4EAdpsb4AHbLXkn+/MU2ktjijamP6/FwYtuaNqpgUryKJ0vPUU/fRaDX2Au+lnM=
+	t=1715959892; cv=none; b=SccCWLKoHj2DyQRkaFndJ9Q6slOOjFPU826+bgvH7cSrxnlRLglbYakwE8dnQVjAEuckHyQJ5FSQzHhgKHfNO+ktqKE+pMvOhf2j+jtLf64d2ZY64A2pVjypmONAFb/nA2zdXJNU10xiijt50A4zTrcEGgRZU6El6zm2d+VqfOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715958962; c=relaxed/simple;
-	bh=6SGRzemzE222vlrc/5jANNd2vwMs0qyJ0hvxeF436QA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dWBk58dCBrAOckYUmMlrKZ9C5nTwfDf5sIpQibDZLVu4ghMT2iabG9S5zQE3u1Yu6lOSEz3zsG/4MD6TUgCe6kRG8BNXMD/WVo9v6zYuMFLZDfTpMl8tMDMu16AhzZZ6FjhZGCaA50pzg06rDXoNRsyiSCYycpWh2K8O70IXpzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gx2NzsEH; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1715959892; c=relaxed/simple;
+	bh=my1yI7WyUJlHky5ciUBO3WQJ1JZ37Sarb+33aKXJfSs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=rqk4MMPOLD/JouX3pTRJt4h3rjuoRYDuvGd8lSFO/cd4/pZFxYEcUa6g93d71XsVyjYLdLYnGDmhhY+x+VikDI1l9vmsTAKq7nxwfovDr/6+jdWPW0d0p27PlANa0losaFgQPRiZiD9KU2S/nUlwbRGYLaIk1nnxqU0dbryiMBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WJjLJWEo; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gx2NzsEH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715958960; x=1747494960;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=6SGRzemzE222vlrc/5jANNd2vwMs0qyJ0hvxeF436QA=;
-  b=Gx2NzsEHBwqaqqkpa1B63TuzUcem3cJCbWOHPZuq5lRgAkxvwA5pUHy1
-   5eVFIL88CkwlpvqCj9mn4ATu0aE+jIeOwSZ8E42r55KgSf2nGAZop2gaC
-   qzKzZZhag9rQVKgYz++bh0Ea4l8zZn1+ZEGxhzCqlkiFAiuryGHhWMkTl
-   pcNbhOp2jzgK9KUu6TvZ+NOB/+0E3EhQSYj9mKlqe94VuewxXQdiopff9
-   AxV6j+zX9vg9xDUURVdqxJ5G0wB6gBCP8J6JV+p8xEPhfWU1F5rEUn/Xp
-   onUFcdroO1bGSKk2A5Sw07cqgh4O7V0m0GcuXFnr55HPYKkFg5pX3ZoWf
-   g==;
-X-CSE-ConnectionGUID: FQrkQWcVSCmaTr1yWS4YJQ==
-X-CSE-MsgGUID: tfjDikL/Q9WrGHzas6TmGA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="23279378"
-X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
-   d="scan'208";a="23279378"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 08:15:59 -0700
-X-CSE-ConnectionGUID: Tb8kRrpgRgSE/FtMnbu54w==
-X-CSE-MsgGUID: 1WreihPMQVOPVhn5DjrZag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,168,1712646000"; 
-   d="scan'208";a="31743028"
-Received: from velpulaa-mobl3.amr.corp.intel.com (HELO spandruv-desk1.amr.corp.intel.com) ([10.212.227.54])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 08:15:59 -0700
-Message-ID: <9293c51c7d502843bfff90c5664be00bfe112e8d.camel@linux.intel.com>
-Subject: Re: [PATCH v2] platform/x86: ISST: fix use-after-free in
- tpmi_sst_dev_remove()
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>, Hans de Goede
-	 <hdegoede@redhat.com>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
-	 <ilpo.jarvinen@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org, 
-	error27@gmail.com
-Date: Fri, 17 May 2024 08:15:58 -0700
-In-Reply-To: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
-References: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WJjLJWEo"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715959862; x=1716564662; i=markus.elfring@web.de;
+	bh=my1yI7WyUJlHky5ciUBO3WQJ1JZ37Sarb+33aKXJfSs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=WJjLJWEoutNXwVtnRjLJOLjtT2ZTn2LrmHMHqvAe5DWaXx2RiZe+Zpae/6Xo0Qip
+	 jvgUR1HgMSiFUVjqBD84+JC4U9bVgmjzHpFRy/Ep2TJT/cDLBNKVFHZxxX0Wwwfbn
+	 xoglMS0ELpDSgu88LHjmJC84k19TGodU57/pT7A6hWB8qqM1BnCBm3FWE0gqJ8yT8
+	 5rT0KO/NKp8carPVqKg/9pW8X76RyKQhMhS3GaVL6T4rhw5Q6exuocEWZLV/IF650
+	 TixdPVtqUZLYZZ5O3D3FeVQlarL0oNHaUw1BNO1fOj7TF5HaiqAPu3gIocwoYIHM/
+	 dGzDHL80GUAnev6lWQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M9qhD-1sB0LY1tDR-0096Pm; Fri, 17
+ May 2024 17:31:01 +0200
+Message-ID: <d313e351-6697-4d4f-8950-2b784a2de9f0@web.de>
+Date: Fri, 17 May 2024 17:30:57 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Dimitri Fedrau <dima.fedrau@gmail.com>, linux-iio@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Hepp <andrew.hepp@ahepp.dev>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+References: <20240517081050.168698-2-dima.fedrau@gmail.com>
+Subject: Re: [PATCH v2 1/2] iio: temperature: mcp9600: Provide index for both
+ channels
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240517081050.168698-2-dima.fedrau@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ElMMYmA2XlfZzpyqH5Dw55ie/6kAanw3hh9beo+i9gPpusngUxM
+ uC+0CWnSGidmtUXIeGz6B6Khq/IyB+0QGFYiEIMHKX0KbziFUyrn++Sf483bsgVu1ILwdIu
+ MEE7hsHyXjviSR3MfGNZMEXCOu/Bg0wlkC1Zx8n5eWdnkmGIovLzbMOhmo8jau2YMgXurrs
+ I4dEVpmqSu3VVx2A6dVPg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:fdmUXQ6Y9qE=;vVvbMdsKruheBqTfrwIDY27MbI3
+ KZKWTVWnqZMrFqWmJNIV6Xow8XnPgzJWsNizHWBJ9xUFwTmb3QJe2ypGUOQNfB2n5Rga67BID
+ NkKnMl1iuZhiIDNzq4S1dxnafRPri1wXkpqnlGisW+ztiBZScB+Qs4YLRqKAD1RGwB4efYvt3
+ tYAWqbAmb9YN638R1n2GDwGhvWWfs91wdgAjPywSmDSrQ/36b2pX33uweGwOh4BY8it6cZ8Po
+ h0+cAGdq1goQdyar8o6NUIG5qDah4A3OhkTCppH05PEKog2E9i585Ow693FxeOzt3ybg8aRIh
+ UcfzbVtjN7B/Xx45sf6jE+eZbvjSa9f1Hphld9EUZ6CjiX3+7RYSeFqfF2OS2ykyiu2iJllh4
+ mYDO8yisTTgjxP5tMSLIP2x1zWLRcztbm1rrjQ0rclUuvkRBcqfdGNTGlJadDPxAKy2vD7M6R
+ LnwRiKZ4A3hu0nZPLLSWnN0twIKItwSXGbNBhqAL2xh29OijoUvU/e0BTurjjKpOTkUXOUiUk
+ rXsp9tg5cxuHKZCg59Ii3ib4q1e65WMgsdLUObNie94Q+3ZlSHSx5BBq5pT+Fh9404u+PkpEo
+ MoCs1jxRWkHyL09HrSoK0+uFu+JD3bTQixH/zvQPxWn7VdKSKv6dBQzb2fNeZY3oDr5LtVPxv
+ dR684XoDFhone2wr+6+tkOyNPEJH0Y8PslhIzcjh9NLjZwIKLzhmZwEKx+2UHi4/loYyI+6u+
+ ePhMgia/hlB+3PxqFO7vRpC18I79UoAptLxfJoUidXNSmJ/YRyS3OjxhP9bJq9LD2l/zGoi1G
+ 9QAXpxuA6MRjTcw18RzwKafmbPtIkts/3wDZAvzYp6WZk=
 
-On Fri, 2024-05-17 at 07:49 -0700, Harshit Mogalapalli wrote:
-> In tpmi_sst_dev_remove(), tpmi_sst is dereferenced after being freed.
-> Fix this by reordering the kfree() post the dereference.
->=20
-> Fixes: 9d1d36268f3d ("platform/x86: ISST: Support partitioned
-> systems")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+I suggest to reconsider the distribution of email addresses over recipient=
+ lists
+once more.
 
-> ---
-> v1->v2: Add R.B from Hans and fix commit message wrapping to 75
-> chars.
-> This is found by smatch and only compile tested.
-> ---
-> =C2=A0drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git
-> a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> index 7bac7841ff0a..7fa360073f6e 100644
-> --- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> +++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> @@ -1610,8 +1610,8 @@ void tpmi_sst_dev_remove(struct
-> auxiliary_device *auxdev)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpmi_sst->partition_mask_=
-current &=3D ~BIT(plat_info-
-> >partition);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Free the package insta=
-nce when the all partitions are
-> removed */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!tpmi_sst->partition_=
-mask_current) {
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0kfree(tpmi_sst);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0isst_common.sst_inst[tpmi_sst->package_id] =3D NULL=
-;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0kfree(tpmi_sst);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mutex_unlock(&isst_tpmi_d=
-ev_lock);
-> =C2=A0}
 
+=E2=80=A6
+> We provide an index for =E2=80=A6
+
+Please improve the change description with an imperative wording.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
+
+Regards,
+Markus
