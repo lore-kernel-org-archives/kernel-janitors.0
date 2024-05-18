@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44EB2A8CD;
-	Sat, 18 May 2024 15:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3206523D;
+	Sat, 18 May 2024 17:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716047289; cv=none; b=Uao3Xnzm5d3eQYI6PRsiQQLS2YJ7wo5lDOU490tBKvN5+Bn4m6accJnU9SmOeLTWKpBu9fiD9LeLONHN4rTcu7BBEHX81SweKMhec4h8pwh7J70iUQyeH8HR1ZJfiC+B44hWEeGuBGfqxqcKroN9WrCJ6llTMD/ho93yFEQMGv4=
+	t=1716053478; cv=none; b=Y2NK6iRiZh98LtgrPt/zZv7V1/XGzI37sEj3ecVPZC1M/gmAGWDL4jroDT0qrFMDirSzT7MoYvtSOHxpiQSCnYKe5emrbygyLN79i3zmNoFxefqCZsZKGPO1fqXB6fpOtTPOGFJUwQJasKTjS6P89jdudnlwQMEabIEVj2QRctI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716047289; c=relaxed/simple;
-	bh=6CQBI/V+OTu0DG9J0ueZD3P2Z4L50xI4hu465oEEtDk=;
+	s=arc-20240116; t=1716053478; c=relaxed/simple;
+	bh=2O1miVT/XdPJihc2p7u6IVNMBH44PACXdBxKaONkQJQ=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=stXfKOsc0RxzFB2oKnYr/ex3hJLL05+vBRPWXkM1yc7o2galrVmDTZOn76um/+iqmdr+Jm5K5pse5iikXiZ18lO7HBVoPEZrrn5StX3gzhHMy4Dzs6u458qh80N2CoprePYewc6evnRDkJbn8DQV3pm3LAFZLFK+W7mdb0ahf0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YFYszTAW; arc=none smtp.client-ip=212.227.15.14
+	 In-Reply-To:Content-Type; b=Q+WrOgpDEa0d5IJO6n1ojwtiJ4YWTW4nsUI8gl9XTjRzZU5b7zKUqNWzZSImkjl/uR03O/qgF5UtSxjcUkpb4k4LC41V0VfqTiIbNWmXb2FojgainXMIAeP/Jpxvs/veDZqsfkc6S6qQF/VZwrQXv5GSP8KHV56IWT/q2qXkDys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WhZLLQUG; arc=none smtp.client-ip=212.227.15.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YFYszTAW"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WhZLLQUG"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716047263; x=1716652063; i=markus.elfring@web.de;
-	bh=6CQBI/V+OTu0DG9J0ueZD3P2Z4L50xI4hu465oEEtDk=;
+	s=s29768273; t=1716053455; x=1716658255; i=markus.elfring@web.de;
+	bh=eL4hjgQlJMPcDPrPSHtb6xEr5P5bjeF8euR52SltdNI=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=YFYszTAWHMhh+ZHmXEI0ZXxi2StQvVxNr4rdSFrLLFITsbEFiUeKsmxtdxoo9wzU
-	 0G9T0gmbIyZJAR+hR3ZUJMVrMkm+iVRp1lzzWX0gfz00l4tbnVnDm1xk+uSu7P2yM
-	 s2ESAGDBgfpHdHSeX7mc0F7J/os6DfGbmCZMqp8h8s77962OPpl2BMCVX0ncy/Syg
-	 tQrbzGJroGm/UdXGPXLUFzkcUCW7zIHF9isVQ8mzfsotkfUgWM34mTv9WvRq5OJbE
-	 x7qRZOm16ELDs9KdCK4UFXGcGqLHAQEnSdP7XeNgZsLlCXUIGe8y8ZmIK3RQtyCI/
-	 VstJO+0Wl8HJuU9Tkg==
+	b=WhZLLQUGXaPVoCXSnthEKRaLu83Cyv2AFWYayatMQyjMnGc62y9qGhGHp9T6SoJF
+	 qFL86Jp3+VB+Gs+B8BrzLvBUX4mzwn6B21btfig6J9/uSaNGyoUf9ICCD9xbd0g9T
+	 /kJ9bUIonaS6zVoL+BWFLoOsVF22cQnXcBdQjqJsCtuvKEUuAqETxUGrJI+ydQ3Pv
+	 1z9O+MgX5SDRDbqj0KsM6o4U5rFNCl91k01+HRQFqFV0stdGZZ4vfEjAmmw8YTWr8
+	 dfJA1sAx3Q66EsBI/r+O6uougAind5tvMJHgQUgObCdZ3ZZ8LjN7cxXvI8rLCL7NL
+	 ApPM0V+TCSomHM9puw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MK52w-1rq88n1oMw-00SgTM; Sat, 18
- May 2024 17:47:43 +0200
-Message-ID: <d97d966e-bc95-4d43-83ad-b368ed7d7e71@web.de>
-Date: Sat, 18 May 2024 17:47:12 +0200
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MftC1-1sjwZT43mD-00qfNx; Sat, 18
+ May 2024 19:30:55 +0200
+Message-ID: <d5203ff5-8ed4-48ea-8e58-a2e6680b0542@web.de>
+Date: Sat, 18 May 2024 19:30:52 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,55 +42,65 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Andrea Mayer <andrea.mayer@uniroma2.it>, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, David Ahern <dsahern@kernel.org>,
- David Lebrun <david.lebrun@uclouvain.be>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+ platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>
 Cc: LKML <linux-kernel@vger.kernel.org>,
- Ahmed Abdelsalam <ahabdels.dev@gmail.com>,
- Paolo Lungaroni <paolo.lungaroni@uniroma2.it>,
- Stefano Salsano <stefano.salsano@uniroma2.it>
-References: <20240517164541.17733-1-andrea.mayer@uniroma2.it>
-Subject: Re: [net] ipv6: sr: fix missing sk_buff release in seg6_input_core
+ Dan Carpenter <dan.carpenter@linaro.org>, Dan Carpenter <error27@gmail.com>
+References: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
+Subject: Re: [PATCH v2] platform/x86: ISST: fix use-after-free in
+ tpmi_sst_dev_remove()
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240517164541.17733-1-andrea.mayer@uniroma2.it>
+In-Reply-To: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kQX8iIydzzNB+PxhL2aj41fD8pK1oP6Q2Gruh58RP4/WeX3kQkh
- JiagPXRe8fZbeAjMIjHQ5pc9Hwpg0ES+Y0lxolmHTdGL/s2PUfsYzGD9sXDJ5E+HnVo/woB
- xWMvnicO+gnpNj0oGhGzg4Xz0rxclgpefY8NlDicCvKPLnwUXPAHr/UfzZBOUAMn5GU6AID
- sG4CtCie1jU+ry8j9nNew==
+X-Provags-ID: V03:K1:rnBboJFir9DtIyAcFr96chGI/SWtCrTRevdQBvM2Et6HCRy5at4
+ jlzD1pKQuJOKJ3+hYrehCC2mfaI8BRWG22hZNaebPz3L+ATBDLrlXEWWx9q5upL000jjbVm
+ 8aqQnC92yS1oyOkyGy0u0kbFnkOPL27aLhd84l7KFoHht+wRJ4Gk2p7mTrMD31QIBEnuAVg
+ lHWZHNbK2YrySI6kRoAOQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/bf+4/7Ejmg=;nfNAGY9G9W60Ha9S8uKelk0KCyd
- WJxVb92xqA6cyrG9etcs1ZNUOrbnakEpZub5FVPxPK6u7s4zeI55QTTcef6ymopaYSDKVfHeX
- Jm+TJDZw8vbGjr787ZfAUsMnJo48DF04qL34VTTBJhiarn2TQ0PvqNiKzJ77QLrIVwPCKhOTn
- 8oOvtFXq+UlDeD6QwQwLmF/uHKdCy32cFo6ACPv6x3GaXjhRHz4whgsrm+15Ds9m94/ZXQnK/
- bQz9pmgjStKVfrz3ZeAcLwbpN15vTw5tGHBexzpTMOV4ExU0lUhi+4PT3VBINpKeyJ+ZBh9pc
- RKE4ApA/o32gqdlJptPOi9d2/TN20WAZlFPh8AFmgkHARpT8GZdH/0DI/J6dSgqnsYdnhFMhb
- 1GTSnV5RBrudagX3qtjJH2gxbNDkIBse1iVoO9tO/TPpBFObRFDxvKPpbc6929aDWzgZSI/No
- 5jisMsigX79fXOpTNwxyUvBcI1Qxy7s90nD8leXX7LIXZm5Z+q/I1DTd8YTKoiH9Ou+DJXJcj
- RM7ZSpWElouS7xzNpogs8rqgzCZdToTC3olaOQu2pfypy0iD2xtVa1fCulkDTOJsLb5QCWgDA
- 9PUZFjnXMhq2iFjzWCZ395XkK+dxCFam61opKehPUwiPjNO4KxT7svV3VBUVZPxW8NNPjHY7C
- 7B6NM5Flf2LDSYnW0MN+iXCE8g6AUZR96LOKl4N1iJfRsS/kUGUA4s+TJXgJ8v7Ql9sZDJ5Fr
- RrJ3I4JXc04RlplAStyC3uGb5Zu8uamBCSCWhx4BvuRaPNezljncIbdmiWTx4Lh3iTVOlhefn
- mCwqlYl49FoNSXKg+EpIp1XV52W9VmBWxIwElD6nMLd7I=
+UI-OutboundReport: notjunk:1;M01:P0:DfBb7UC+ayw=;bDrtiI4iaWO6Kmt6J5roTCey+6w
+ ktRlRw0eJ2WSYQMap0AIOQp5EZTSXGwEV1Q0gR1uI2TXkLL+L6fMlLTAuJ3tMV+EwVsnJs+Cg
+ y5ppDUxQ7HJC6EErT+b5vkiceI+tgZWAN3CPQGh+jpfcgchcKsvYzvhtiMikA3ZNElX1+KLzN
+ xjpp27fOlhp3+DK6PuOBA+xwY+4UiNisaXxDERuS9f6oyFqP75jREXS3kTi5Rvq8Pdr4Ef5Zw
+ 61cVLQus0PCulVP/Xqfs86pKLueX6rIB4cbOqC/HBYh0NEVE5G+PkYzN9JM+oYPzyzOtOzawW
+ cfmdVd/qZ/4wizmsLKMny6pn3Y4WzDvzODELTZp0XAo5feScx3iVPqXJL2aG13EzaGWHsnhl7
+ Y1II3buUY4C76Sr0h2PeorxFRFvGaOtumNfo5F3ERrD4l7sdxA7Yv40JBPvw59fgW1cJcuXhe
+ Osmhj7AWNP/kQMeVmIXpv+/YtmV4N902ESjAUILoIgp7n9qVURDFggs+N6Ao4Swn8imP0sJfW
+ JZqlzSfl1VDL2xFd04U9PGAyt250igD8EsLlqGa8mxluQmUOV3skmyUX7CKdCKDGnyAwkpW+o
+ lNcljx6k1BapQAoSybAL4ZZXnxzn4Xffi9UrEyAv6W9TAQ+ow3OfOXAhy03b3aWPLwBi+cfdx
+ GGsrMuzcGnhlyFjlHkk2qKzjTcBUqAntSxwpoiRHkw+V4DRSKtd30VEr2891LcJI0ycZqt6qx
+ aHUznkuSYzCBo3pLqUbNqXwhecPcxYDUgnWK9BbNAzLTcRbgmxOAorKKC/6hJXxaHjz1YyMDv
+ OEM5GeoMGVPB2phmRohynMMFuLoNSFJb0Avrls6Ym7yeo=
 
-* The message subject would have been a bit nicer with the key word =E2=80=
-=9CPATCH=E2=80=9D.
+=E2=80=A6
+> Fix this by reordering the kfree() post the dereference.
 
-* How do you think about to append parentheses to the function name?
+Would a wording approach (like the following) be a bit nicer?
+
+   Move a kfree() call behind an assignment statement in the affected if b=
+ranch.
 
 
 =E2=80=A6
-> The proposed patch addresses the identified memory leak by =E2=80=A6
+> ---
+> v1->v2: Add R.B from Hans and fix commit message wrapping to 75 chars.
+> This is found by smatch and only compile tested.
 
-Will a corresponding imperative wording be more desirable for
-an improved change description?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
+* Can it occasionally be nicer to use an enumeration also for
+  version descriptions?
+
+* Is it helpful to separate additional comments by blank lines?
+
+
+> ---
+>  drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 2 +-
+
+How do you think about to omit a repeated marker line here?
 
 Regards,
 Markus
