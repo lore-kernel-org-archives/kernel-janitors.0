@@ -1,106 +1,148 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from msa.smtpout.orange.fr (out-68.smtpout.orange.fr [193.252.22.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3206523D;
-	Sat, 18 May 2024 17:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99641773A;
+	Sat, 18 May 2024 17:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716053478; cv=none; b=Y2NK6iRiZh98LtgrPt/zZv7V1/XGzI37sEj3ecVPZC1M/gmAGWDL4jroDT0qrFMDirSzT7MoYvtSOHxpiQSCnYKe5emrbygyLN79i3zmNoFxefqCZsZKGPO1fqXB6fpOtTPOGFJUwQJasKTjS6P89jdudnlwQMEabIEVj2QRctI=
+	t=1716054458; cv=none; b=lK++MeKQK5w5A625KqAvo5bkjw0041O+8+B64j9q/gSQz1EVH+Eq/zYRWi2ytg0CuNSEULsmuydUHhzRXuje194Xk+RZjKtFPV036jhKpY9pNBkR9l2EI95nf2Qcaszude7QXxFz8xFlGMnLVhlzG3Zr0P4TeA1n+k1XbsLb59s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716053478; c=relaxed/simple;
-	bh=2O1miVT/XdPJihc2p7u6IVNMBH44PACXdBxKaONkQJQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Q+WrOgpDEa0d5IJO6n1ojwtiJ4YWTW4nsUI8gl9XTjRzZU5b7zKUqNWzZSImkjl/uR03O/qgF5UtSxjcUkpb4k4LC41V0VfqTiIbNWmXb2FojgainXMIAeP/Jpxvs/veDZqsfkc6S6qQF/VZwrQXv5GSP8KHV56IWT/q2qXkDys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WhZLLQUG; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1716054458; c=relaxed/simple;
+	bh=39FrFZdoaAFSVoOAUBw1hybAn/wiSL2XQGAV3UrNVW4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AfW60neZJ+Rpuo4BdDW2hvzBWY6QBvOl2I2ivEikST2L+mZob5UO/MTzqQUWrUUnFNSzDW9nu5VvLpH5y7JQPZ6ITzW8VclbiMv+Ogk6D7ERJrreQYGFwnSoyraHwuSgj4Jk0CC64PWM5E6D/4k1V35ePYniWPiZsVczcX2TWuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Gkmlorq0; arc=none smtp.client-ip=193.252.22.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WhZLLQUG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716053455; x=1716658255; i=markus.elfring@web.de;
-	bh=eL4hjgQlJMPcDPrPSHtb6xEr5P5bjeF8euR52SltdNI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=WhZLLQUGXaPVoCXSnthEKRaLu83Cyv2AFWYayatMQyjMnGc62y9qGhGHp9T6SoJF
-	 qFL86Jp3+VB+Gs+B8BrzLvBUX4mzwn6B21btfig6J9/uSaNGyoUf9ICCD9xbd0g9T
-	 /kJ9bUIonaS6zVoL+BWFLoOsVF22cQnXcBdQjqJsCtuvKEUuAqETxUGrJI+ydQ3Pv
-	 1z9O+MgX5SDRDbqj0KsM6o4U5rFNCl91k01+HRQFqFV0stdGZZ4vfEjAmmw8YTWr8
-	 dfJA1sAx3Q66EsBI/r+O6uougAind5tvMJHgQUgObCdZ3ZZ8LjN7cxXvI8rLCL7NL
-	 ApPM0V+TCSomHM9puw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MftC1-1sjwZT43mD-00qfNx; Sat, 18
- May 2024 19:30:55 +0200
-Message-ID: <d5203ff5-8ed4-48ea-8e58-a2e6680b0542@web.de>
-Date: Sat, 18 May 2024 19:30:52 +0200
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Gkmlorq0"
+Received: from localhost.localdomain ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id 8O9WsISRlQOWM8O9Wsvlrw; Sat, 18 May 2024 19:47:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1716054448;
+	bh=UcEQtuE56kOs4tsCCaoGQju/nr916DkGkkvfsJQQWpE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Gkmlorq0ugnc3zwFK8MZXPXZN6UPrE4zoMggZlvYunBiE3Ya9e77/9iN42aea/llF
+	 i0xDwilOiIdEMFCvThSIkDJZ7QvIjr3McGuJW8B88QtXyrOCZLLarSyueStalElclH
+	 ZPGMZd+jIRp9PjU0eKNagNwvQE2vN5fDbpiXZ0vd1IlxWaj0dwmf3kcpb/efD4iFmo
+	 YsTFu+Nue9te4ci0k8UX/6yoEpqIg4gNQu5+YYtq7Yy4nawOlBpQ2zGKiKKyWcaXax
+	 7WUoKAeRShDUyHoWYIGECREk+9owyMgEcnQHJ8TOrDEzB46iYIDwhIPDQAcTRjiYCZ
+	 ohxtGOqC2C6DQ==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 18 May 2024 19:47:28 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Sumit Semwal <sumit.semwal@linaro.org>,
+	Gustavo Padovan <gustavo@padovan.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] dma-buf/fence-array: Add flex array to struct dma_fence_array
+Date: Sat, 18 May 2024 19:47:02 +0200
+Message-ID: <d3204a5b4776553455c2cfb1def72f1dae0dba25.1716054403.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
- platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Dan Carpenter <dan.carpenter@linaro.org>, Dan Carpenter <error27@gmail.com>
-References: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
-Subject: Re: [PATCH v2] platform/x86: ISST: fix use-after-free in
- tpmi_sst_dev_remove()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:rnBboJFir9DtIyAcFr96chGI/SWtCrTRevdQBvM2Et6HCRy5at4
- jlzD1pKQuJOKJ3+hYrehCC2mfaI8BRWG22hZNaebPz3L+ATBDLrlXEWWx9q5upL000jjbVm
- 8aqQnC92yS1oyOkyGy0u0kbFnkOPL27aLhd84l7KFoHht+wRJ4Gk2p7mTrMD31QIBEnuAVg
- lHWZHNbK2YrySI6kRoAOQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:DfBb7UC+ayw=;bDrtiI4iaWO6Kmt6J5roTCey+6w
- ktRlRw0eJ2WSYQMap0AIOQp5EZTSXGwEV1Q0gR1uI2TXkLL+L6fMlLTAuJ3tMV+EwVsnJs+Cg
- y5ppDUxQ7HJC6EErT+b5vkiceI+tgZWAN3CPQGh+jpfcgchcKsvYzvhtiMikA3ZNElX1+KLzN
- xjpp27fOlhp3+DK6PuOBA+xwY+4UiNisaXxDERuS9f6oyFqP75jREXS3kTi5Rvq8Pdr4Ef5Zw
- 61cVLQus0PCulVP/Xqfs86pKLueX6rIB4cbOqC/HBYh0NEVE5G+PkYzN9JM+oYPzyzOtOzawW
- cfmdVd/qZ/4wizmsLKMny6pn3Y4WzDvzODELTZp0XAo5feScx3iVPqXJL2aG13EzaGWHsnhl7
- Y1II3buUY4C76Sr0h2PeorxFRFvGaOtumNfo5F3ERrD4l7sdxA7Yv40JBPvw59fgW1cJcuXhe
- Osmhj7AWNP/kQMeVmIXpv+/YtmV4N902ESjAUILoIgp7n9qVURDFggs+N6Ao4Swn8imP0sJfW
- JZqlzSfl1VDL2xFd04U9PGAyt250igD8EsLlqGa8mxluQmUOV3skmyUX7CKdCKDGnyAwkpW+o
- lNcljx6k1BapQAoSybAL4ZZXnxzn4Xffi9UrEyAv6W9TAQ+ow3OfOXAhy03b3aWPLwBi+cfdx
- GGsrMuzcGnhlyFjlHkk2qKzjTcBUqAntSxwpoiRHkw+V4DRSKtd30VEr2891LcJI0ycZqt6qx
- aHUznkuSYzCBo3pLqUbNqXwhecPcxYDUgnWK9BbNAzLTcRbgmxOAorKKC/6hJXxaHjz1YyMDv
- OEM5GeoMGVPB2phmRohynMMFuLoNSFJb0Avrls6Ym7yeo=
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> Fix this by reordering the kfree() post the dereference.
+This is an effort to get rid of all multiplications from allocation
+functions in order to prevent integer overflows [1][2].
 
-Would a wording approach (like the following) be a bit nicer?
+The "struct dma_fence_array" can be refactored to add a flex array in order
+to have the "callback structures allocated behind the array" be more
+explicit.
 
-   Move a kfree() call behind an assignment statement in the affected if b=
-ranch.
+Do so:
+   - makes the code more readable and safer.
+   - allows using __counted_by() for additional checks
+   - avoids some pointer arithmetic in dma_fence_array_enable_signaling()
 
+Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments [1]
+Link: https://github.com/KSPP/linux/issues/160 [2]
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
 
-=E2=80=A6
-> ---
-> v1->v2: Add R.B from Hans and fix commit message wrapping to 75 chars.
-> This is found by smatch and only compile tested.
+Also, I don't think that 'cb' is a great name and the associated kernel-doc
+description could certainly be improved.
+Any proposal welcomed :)
+---
+ drivers/dma-buf/dma-fence-array.c | 10 ++++------
+ include/linux/dma-fence-array.h   |  3 +++
+ 2 files changed, 7 insertions(+), 6 deletions(-)
 
-* Can it occasionally be nicer to use an enumeration also for
-  version descriptions?
+diff --git a/drivers/dma-buf/dma-fence-array.c b/drivers/dma-buf/dma-fence-array.c
+index 9b3ce8948351..9c55afaca607 100644
+--- a/drivers/dma-buf/dma-fence-array.c
++++ b/drivers/dma-buf/dma-fence-array.c
+@@ -70,7 +70,7 @@ static void dma_fence_array_cb_func(struct dma_fence *f,
+ static bool dma_fence_array_enable_signaling(struct dma_fence *fence)
+ {
+ 	struct dma_fence_array *array = to_dma_fence_array(fence);
+-	struct dma_fence_array_cb *cb = (void *)(&array[1]);
++	struct dma_fence_array_cb *cb = array->cb;
+ 	unsigned i;
+ 
+ 	for (i = 0; i < array->num_fences; ++i) {
+@@ -168,22 +168,20 @@ struct dma_fence_array *dma_fence_array_create(int num_fences,
+ 					       bool signal_on_any)
+ {
+ 	struct dma_fence_array *array;
+-	size_t size = sizeof(*array);
+ 
+ 	WARN_ON(!num_fences || !fences);
+ 
+-	/* Allocate the callback structures behind the array. */
+-	size += num_fences * sizeof(struct dma_fence_array_cb);
+-	array = kzalloc(size, GFP_KERNEL);
++	array = kzalloc(struct_size(array, cb, num_fences), GFP_KERNEL);
+ 	if (!array)
+ 		return NULL;
+ 
++	array->num_fences = num_fences;
++
+ 	spin_lock_init(&array->lock);
+ 	dma_fence_init(&array->base, &dma_fence_array_ops, &array->lock,
+ 		       context, seqno);
+ 	init_irq_work(&array->work, irq_dma_fence_array_work);
+ 
+-	array->num_fences = num_fences;
+ 	atomic_set(&array->num_pending, signal_on_any ? 1 : num_fences);
+ 	array->fences = fences;
+ 
+diff --git a/include/linux/dma-fence-array.h b/include/linux/dma-fence-array.h
+index ec7f25def392..a793f9d5c73b 100644
+--- a/include/linux/dma-fence-array.h
++++ b/include/linux/dma-fence-array.h
+@@ -33,6 +33,7 @@ struct dma_fence_array_cb {
+  * @num_pending: fences in the array still pending
+  * @fences: array of the fences
+  * @work: internal irq_work function
++ * @cb: array of callback helpers
+  */
+ struct dma_fence_array {
+ 	struct dma_fence base;
+@@ -43,6 +44,8 @@ struct dma_fence_array {
+ 	struct dma_fence **fences;
+ 
+ 	struct irq_work work;
++
++	struct dma_fence_array_cb cb[] __counted_by(num_fences);
+ };
+ 
+ /**
+-- 
+2.45.1
 
-* Is it helpful to separate additional comments by blank lines?
-
-
-> ---
->  drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 2 +-
-
-How do you think about to omit a repeated marker line here?
-
-Regards,
-Markus
