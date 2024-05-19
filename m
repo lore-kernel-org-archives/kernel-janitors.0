@@ -1,52 +1,50 @@
-Received: from msa.smtpout.orange.fr (smtp-70.smtpout.orange.fr [80.12.242.70])
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BE115AC4;
-	Sun, 19 May 2024 07:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7896D4C8E;
+	Sun, 19 May 2024 08:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716104205; cv=none; b=S5n34EAQKauEE+SZzw4Uz8nkvRm+1SZbl3EYD0pJ1EfdpNZHkm++rqht0rehL3U1oSb5wgPqo8iQM4Ftq2lM+4ZdAocqpUT5NsIGr6rixwaQJBCezmDKTIKfaHpwKkL9zN5V204abDBXGwxPIh+Kf0lrFw29q71t+Mdi7EWAxf8=
+	t=1716105971; cv=none; b=pqch8FohxpqOzv+erkG2wHCGUoj+MJfWq890EjhsIezfpXiT6RwEymL9Zc93R/UVlaKkBWBK8BbTpKTlkqfbVFUogpy7l7fqY0PzkXGwtT+YDh12rOw44kHauPO6DQ4eAunizxiu2jB5l94fwue3Sk1LtpoBTB6wqLhYM8FuEp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716104205; c=relaxed/simple;
-	bh=EvmQQWNeJGwNqewjsCWVicRfAYaNcgdeLiLjrEetQbE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AVMpLh2CoHaHPITJbPvaiPGAXKa+no//qK2VzxnEc6azHCAEKVbjRhA+keS4j5fpg/U5fYjG5bkuRU9lk4pLSRz84uyrM1OlY8Nl6fP5GtPLswXF9uE5aKulaqipPJCqep9/NoyhWkNEuEnh4PpXeYuGtxZ9ArSVCzHLPO8KVS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=laMt+PtV; arc=none smtp.client-ip=80.12.242.70
+	s=arc-20240116; t=1716105971; c=relaxed/simple;
+	bh=PBVa6gwyfI7ikzqB0Jg4jElxnuzleVFC8ZWnH20UwdA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jpc7EKiDkG/x4SoHbAzn99vNk18Cpf6m1l+Ld+fbne3fhdmH3wHmdeXUqcqdbFnGxkxWvV389Wt42XtcN/bVwv3I3WPVrVHd69DWnM2D6kZ72aoQgmN4ZLOJTINBE5+JfNhF/lilvy1gNAEFK2GPMArQUTH5igJjda1LbnUHROo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Q2JEOcG5; arc=none smtp.client-ip=80.12.242.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="laMt+PtV"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Q2JEOcG5"
 Received: from localhost.localdomain ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id 8aYusLlTw69OH8aYusyjjq; Sun, 19 May 2024 09:02:30 +0200
+	id 8bYQsFlLZyBie8bYQsSbPx; Sun, 19 May 2024 10:06:04 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1716102150;
-	bh=DpV324OF1N6KWvT4lJQi/tT98cIN5IcDh30eoiZYvd0=;
+	s=t20230301; t=1716105964;
+	bh=17wjD51cm+BPeBrAvICXXERovsnzXo7hkI8s3mqy7uc=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=laMt+PtVCBzsbS0whtoPwaW+J+XwtrmW2Nl3RA2gKV94y/I0bEpUVtDm2QEr1x6X4
-	 3bNbLg8hPALHUdhBB+piZyiuMXEGjPbTIaS9/SryDTbieWwtwfwpbDrwvnItMnwwgI
-	 i403EWtgKbooMY70cFtTvgzzYh7GcQmSYX4jBx8KXcZMPMI/432UEj9TMWjKB/l0d0
-	 CHr0DwCpGvIgOiVmWsopRcLDYeKIfVmlbbbiLLW8+xOJvghTLOkn9k3k1z1RuzbRbG
-	 NcCsZO0vZ9MZH21WeAiY3pLlQTWrvoKj//5A2BPfQe7EmLWp+OHEamjbGcsY2/730G
-	 csRzU7MOETESg==
+	b=Q2JEOcG5SYy7MaeNp+AoUSFfvDgpj6jv4aQ8JPEhtoD6Fqejjf/03tlor+Hs0Hgz+
+	 ttC+w+LEBXXo6v8ClbDUKcx0mrG6tzsPHV/KBKbMpwOVZ0uth9bTs3JKAHgniSWyIR
+	 wnKILMeWfNEGiyTFyrJ9Mi5b3q4p1W8OzHmQ/XxFQP8FnXJdZDjqDxDccwgL+VbkJ/
+	 yIStTF0YoHQAhoPyFF6sj6X/b9tuBi+Ht/4rIid9YBdj4s1QAtwho0+umhi21qjJKb
+	 zr63SHmRS8foi1/i7KD5CWmUpF+i5u249ytQjdTRsR1J5wnIpDK+bs1/ieaXgRH4EM
+	 8Ogx66LxGWlgg==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 19 May 2024 09:02:30 +0200
+X-ME-Date: Sun, 19 May 2024 10:06:04 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Mustafa Ismail <mustafa.ismail@intel.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Saurav Kashyap <skashyap@marvell.com>,
+	Javed Hasan <jhasan@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-rdma@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] RDMA/irdma: Annotate  flexible array with __counted_by() in struct irdma_qvlist_info
-Date: Sun, 19 May 2024 09:02:15 +0200
-Message-ID: <2ca8b14adf79c4795d7aa95bbfc79253a6bfed82.1716102112.git.christophe.jaillet@wanadoo.fr>
+	linux-scsi@vger.kernel.org
+Subject: [PATCH] scsi: bnx2fc: Use a flexible array at the end of struct bnx2fc_cmd_mgr
+Date: Sun, 19 May 2024 10:05:54 +0200
+Message-ID: <e98b5759ef34ce00fdb83eeec4d7c27dfe47cc7f.1716105874.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -56,32 +54,71 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'num_vectors' is used to count the number of elements in the 'qv_info'
-flexible array in "struct irdma_qvlist_info".
+The 'cmds' field in "struct bnx2fc_cmd_mgr" can be turned into a flexible
+array.
 
-So annotate it with __counted_by() to make it explicit and enable some
-additional checks.
-
-This allocation is done in irdma_save_msix_info().
+This:
+   - makes the code more readable and safer because struct_size() can now
+     be used
+   - saves the size of a pointer when allocating struct bnx2fc_cmd_mgr in
+     bnx2fc_cmd_mgr_alloc()
+   - avoid some pointer arithmetic when computing "cmgr->cmds"
+   - saves an indirection when using the 'cmds array
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/infiniband/hw/irdma/main.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Compile tested only
+---
+ drivers/scsi/bnx2fc/bnx2fc.h    | 2 +-
+ drivers/scsi/bnx2fc/bnx2fc_io.c | 7 +------
+ 2 files changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/infiniband/hw/irdma/main.h b/drivers/infiniband/hw/irdma/main.h
-index b65bc2ea542f..9f0ed6e84471 100644
---- a/drivers/infiniband/hw/irdma/main.h
-+++ b/drivers/infiniband/hw/irdma/main.h
-@@ -239,7 +239,7 @@ struct irdma_qv_info {
- 
- struct irdma_qvlist_info {
- 	u32 num_vectors;
--	struct irdma_qv_info qv_info[];
-+	struct irdma_qv_info qv_info[] __counted_by(num_vectors);
+diff --git a/drivers/scsi/bnx2fc/bnx2fc.h b/drivers/scsi/bnx2fc/bnx2fc.h
+index 7e74f77da14f..dfe7e0e8fdbd 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc.h
++++ b/drivers/scsi/bnx2fc/bnx2fc.h
+@@ -281,7 +281,7 @@ struct bnx2fc_cmd_mgr {
+ 	struct list_head *free_list;
+ 	spinlock_t *free_list_lock;
+ 	struct io_bdt **io_bdt_pool;
+-	struct bnx2fc_cmd **cmds;
++	struct bnx2fc_cmd *cmds[];
  };
  
- struct irdma_gen_ops {
+ struct bnx2fc_rport {
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_io.c b/drivers/scsi/bnx2fc/bnx2fc_io.c
+index 33057908f147..8e381081e487 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_io.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
+@@ -213,7 +213,6 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
+ 	struct bnx2fc_cmd_mgr *cmgr;
+ 	struct io_bdt *bdt_info;
+ 	struct bnx2fc_cmd *io_req;
+-	size_t len;
+ 	u32 mem_size;
+ 	u16 xid;
+ 	int i;
+@@ -231,10 +230,8 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
+ 	BNX2FC_MISC_DBG("min xid 0x%x, max xid 0x%x\n", min_xid, max_xid);
+ 
+ 	num_ios = max_xid - min_xid + 1;
+-	len = (num_ios * (sizeof(struct bnx2fc_cmd *)));
+-	len += sizeof(struct bnx2fc_cmd_mgr);
+ 
+-	cmgr = kzalloc(len, GFP_KERNEL);
++	cmgr = kzalloc(struct_size(cmgr, cmds, num_ios), GFP_KERNEL);
+ 	if (!cmgr) {
+ 		printk(KERN_ERR PFX "failed to alloc cmgr\n");
+ 		return NULL;
+@@ -257,8 +254,6 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
+ 		goto mem_err;
+ 	}
+ 
+-	cmgr->cmds = (struct bnx2fc_cmd **)(cmgr + 1);
+-
+ 	for (i = 0; i < arr_sz; i++)  {
+ 		INIT_LIST_HEAD(&cmgr->free_list[i]);
+ 		spin_lock_init(&cmgr->free_list_lock[i]);
 -- 
 2.45.1
 
