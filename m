@@ -1,124 +1,121 @@
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7896D4C8E;
-	Sun, 19 May 2024 08:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987842D627;
+	Sun, 19 May 2024 08:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716105971; cv=none; b=pqch8FohxpqOzv+erkG2wHCGUoj+MJfWq890EjhsIezfpXiT6RwEymL9Zc93R/UVlaKkBWBK8BbTpKTlkqfbVFUogpy7l7fqY0PzkXGwtT+YDh12rOw44kHauPO6DQ4eAunizxiu2jB5l94fwue3Sk1LtpoBTB6wqLhYM8FuEp4=
+	t=1716107950; cv=none; b=lYqgudnHWw8ZVMZRoryUR2ghW3swyMHTexk7HxWauQ5D4DFqlHaAsVESjkcdhMYYDOyBUtRVoGeSKHo5dTp5qadNPTk1YUtAXT0y65fFXnqrvToZce+4igz1UdD5dlTf2TthbsIMmrHSwDOfZUniEAd1VULANqFao4vWTQkEw84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716105971; c=relaxed/simple;
-	bh=PBVa6gwyfI7ikzqB0Jg4jElxnuzleVFC8ZWnH20UwdA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jpc7EKiDkG/x4SoHbAzn99vNk18Cpf6m1l+Ld+fbne3fhdmH3wHmdeXUqcqdbFnGxkxWvV389Wt42XtcN/bVwv3I3WPVrVHd69DWnM2D6kZ72aoQgmN4ZLOJTINBE5+JfNhF/lilvy1gNAEFK2GPMArQUTH5igJjda1LbnUHROo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Q2JEOcG5; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1716107950; c=relaxed/simple;
+	bh=OG/tFUAqoYY73IiNQhTa9yMsYkxiqOkEshKJYuZoq3E=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ikDKBhXnkou23IiaKEXu3kFSLtkDllY6oZtqACwCFd8o6IIZU7NyXeTCcDu/8s1VjnnG1M6iQBzNDJgCCm4O7E+nJ4bJLZZJG2Ac6ZoasMeBOaE3rv+GSLmpXG12UPZuc5KyV3RLhqPlmFL3XD6SBj4XL2E4mv2UoS2S+NrFj+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FdK/25nw; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Q2JEOcG5"
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 8bYQsFlLZyBie8bYQsSbPx; Sun, 19 May 2024 10:06:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1716105964;
-	bh=17wjD51cm+BPeBrAvICXXERovsnzXo7hkI8s3mqy7uc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Q2JEOcG5SYy7MaeNp+AoUSFfvDgpj6jv4aQ8JPEhtoD6Fqejjf/03tlor+Hs0Hgz+
-	 ttC+w+LEBXXo6v8ClbDUKcx0mrG6tzsPHV/KBKbMpwOVZ0uth9bTs3JKAHgniSWyIR
-	 wnKILMeWfNEGiyTFyrJ9Mi5b3q4p1W8OzHmQ/XxFQP8FnXJdZDjqDxDccwgL+VbkJ/
-	 yIStTF0YoHQAhoPyFF6sj6X/b9tuBi+Ht/4rIid9YBdj4s1QAtwho0+umhi21qjJKb
-	 zr63SHmRS8foi1/i7KD5CWmUpF+i5u249ytQjdTRsR1J5wnIpDK+bs1/ieaXgRH4EM
-	 8Ogx66LxGWlgg==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 19 May 2024 10:06:04 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Saurav Kashyap <skashyap@marvell.com>,
-	Javed Hasan <jhasan@marvell.com>,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-scsi@vger.kernel.org
-Subject: [PATCH] scsi: bnx2fc: Use a flexible array at the end of struct bnx2fc_cmd_mgr
-Date: Sun, 19 May 2024 10:05:54 +0200
-Message-ID: <e98b5759ef34ce00fdb83eeec4d7c27dfe47cc7f.1716105874.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.1
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FdK/25nw"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716107907; x=1716712707; i=markus.elfring@web.de;
+	bh=mR4LJmey+5na5DaqpNGAQY1Gu3MobXSjLTQaXj5651M=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=FdK/25nwCvjaX13KoqZoWlurT3IZ9dAoxgkegtddMSWYTyAPkUk7x//SUGcen6Lb
+	 s6lgMZRQ8N6FaKKD6uk1R9VCJgUPa/l8vtZtZwPLaUXeJrWHlfRBlyLLdQrpiIjTd
+	 A4ZYzrucF+hkGpCIeLbR7TlEf/yNBZrtfsLa5Kw4SsS+oQfas+HawLjpgNz8ujnqE
+	 bwBPuhN6ZfA0v+0AudY3+DwEW+AVkwJajuVlhG2lt6Z2eGpqC9G91CZet+MIZatf2
+	 9NSWHmrjARBt97meKlK41stWWv7GQ4ogCtBAm0McHaWwNeaGIY4B8LIo6wAIbq2b+
+	 LAPqqw2Ol9zpphyoMg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mvbiu-1sRnL32Qh4-014m8l; Sun, 19
+ May 2024 10:38:27 +0200
+Message-ID: <feb239b1-7a14-479a-87f2-dcbf9966bffd@web.de>
+Date: Sun, 19 May 2024 10:38:25 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+ devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Alvin_=C5=A0ipraga?=
+ <alvin@pqrs.dk>, Emil Svendsen <emas@bang-olufsen.dk>,
+ Andi Shyti <andi.shyti@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jaroslav Kysela <perex@perex.cz>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>,
+ Takashi Iwai <tiwai@suse.com>
+References: <20240517-a2b-v1-1-b8647554c67b@bang-olufsen.dk>
+Subject: Re: [PATCH 01/13] a2b: add A2B driver core
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240517-a2b-v1-1-b8647554c67b@bang-olufsen.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:+6aU5u5VKwcLLXESSCJnF8xsuqpIE4g1lYcdN79aqgrSALLuexV
+ j6Q5oFkmlN/KYjYzP7dplTs7qHuPeGQBbm7zkFL+9Z4rnhJxax6j5KVSpVitC/FZHwjfI6l
+ wsh3pVpgGGnuOcIIaXbKVrvGQjEOd5kMwOUDKKiRSzPTKMfDZftdiap5yCPTMTfvbN7ViNr
+ svwuIKbYz8wHYMxbZ8QIw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:QPkp+V2A4MU=;+NWHWxpxk3xHAm8+4xiGSlOB4tM
+ 7WPwNZ9QuFxh0hJOGJNhkSGyMMS7iLRiBpNtAa8RNVGKSWNjJnv0aOIh9OrKciin8e6nRal/x
+ Y1rOFQSpzVYl09hmuxnBO1eEK+wVx7Q7AXUZcyDXTHfKkiCThEv6+UcTG1sUjSOd4ub3vlyXh
+ FmmPjsCqAjOPVjUaDzKkW4jc6Or8tT/6KoCSiaz3sdhFJcvDjlNeFOXHumT5TS2/2VgxyiZXF
+ ejk6XR6qR5zHIRH4INdUXWMOJ1bBnEGD7AhjF/rkC5o6X2YjWdGzyfQs8bxgJQYmO6X8SyR9A
+ vVNTWqRhVgkF5ghyKYp0uzLFBZISOZgQii/ThBxWv8NR1ZW6kW6PIIsBOFWtJNG15xnYNDjeR
+ JCHfzHFpQSI6qHbytEA4IDRoPpOPildfBP/WXHiSIyhwRElDJ2iE0n5JKxlizz7P4MeM0WyWz
+ OPXGlbh3TIOKMEyuNJCOdjO2c/H6mD+n/dV2F572A/Xvz7SodLy/YgYK6R3wqHzQvronbEJTx
+ U5IXnAG4bAer+UfbUOWGa9FdD9MaxySPKbh61outhJubVL4svBXdSumGrjysEtyBZD3CF6gvW
+ 1J6cTLwG0ULEe4FqtrmQA6reQNdQs4gznoZPnWr/rM0b1FkxEDQR7i/9lNltW/VejKorZrVcm
+ WYtLC/PKJDhdpCKlqRFL9civ5Q6ltwAMxULKgZKkSz0NS8Jb6ZpUszJI+LUDYNr47/M2IWTDQ
+ 4yquGs5L1GMJNWX5LvjnYkiJzrphbcGksTV41Y39NhlQMgkQKW+TW8mj5nFLPY/Ng8kLUZgTo
+ +MfcBALkcdpdpW8z1HQaEnIkoImLtRzo1Fsd4A1kkJPxE=
 
-The 'cmds' field in "struct bnx2fc_cmd_mgr" can be turned into a flexible
-array.
+=E2=80=A6
+> +++ b/drivers/a2b/a2b.c
+> @@ -0,0 +1,1252 @@
+=E2=80=A6
+> +static int a2b_bus_of_add_node(struct a2b_bus *bus, struct device_node =
+*np,
+> +			       unsigned int addr)
+> +{
+=E2=80=A6
+> +	node =3D kzalloc(sizeof(*node), GFP_KERNEL);
+> +	if (IS_ERR(node))
+> +		return -ENOMEM;
 
-This:
-   - makes the code more readable and safer because struct_size() can now
-     be used
-   - saves the size of a pointer when allocating struct bnx2fc_cmd_mgr in
-     bnx2fc_cmd_mgr_alloc()
-   - avoid some pointer arithmetic when computing "cmgr->cmds"
-   - saves an indirection when using the 'cmds array
+Please improve the distinction for checks according to the handling of err=
+or/null pointers.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/scsi/bnx2fc/bnx2fc.h    | 2 +-
- drivers/scsi/bnx2fc/bnx2fc_io.c | 7 +------
- 2 files changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/scsi/bnx2fc/bnx2fc.h b/drivers/scsi/bnx2fc/bnx2fc.h
-index 7e74f77da14f..dfe7e0e8fdbd 100644
---- a/drivers/scsi/bnx2fc/bnx2fc.h
-+++ b/drivers/scsi/bnx2fc/bnx2fc.h
-@@ -281,7 +281,7 @@ struct bnx2fc_cmd_mgr {
- 	struct list_head *free_list;
- 	spinlock_t *free_list_lock;
- 	struct io_bdt **io_bdt_pool;
--	struct bnx2fc_cmd **cmds;
-+	struct bnx2fc_cmd *cmds[];
- };
- 
- struct bnx2fc_rport {
-diff --git a/drivers/scsi/bnx2fc/bnx2fc_io.c b/drivers/scsi/bnx2fc/bnx2fc_io.c
-index 33057908f147..8e381081e487 100644
---- a/drivers/scsi/bnx2fc/bnx2fc_io.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
-@@ -213,7 +213,6 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
- 	struct bnx2fc_cmd_mgr *cmgr;
- 	struct io_bdt *bdt_info;
- 	struct bnx2fc_cmd *io_req;
--	size_t len;
- 	u32 mem_size;
- 	u16 xid;
- 	int i;
-@@ -231,10 +230,8 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
- 	BNX2FC_MISC_DBG("min xid 0x%x, max xid 0x%x\n", min_xid, max_xid);
- 
- 	num_ios = max_xid - min_xid + 1;
--	len = (num_ios * (sizeof(struct bnx2fc_cmd *)));
--	len += sizeof(struct bnx2fc_cmd_mgr);
- 
--	cmgr = kzalloc(len, GFP_KERNEL);
-+	cmgr = kzalloc(struct_size(cmgr, cmds, num_ios), GFP_KERNEL);
- 	if (!cmgr) {
- 		printk(KERN_ERR PFX "failed to alloc cmgr\n");
- 		return NULL;
-@@ -257,8 +254,6 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
- 		goto mem_err;
- 	}
- 
--	cmgr->cmds = (struct bnx2fc_cmd **)(cmgr + 1);
--
- 	for (i = 0; i < arr_sz; i++)  {
- 		INIT_LIST_HEAD(&cmgr->free_list[i]);
- 		spin_lock_init(&cmgr->free_list_lock[i]);
--- 
-2.45.1
+=E2=80=A6
+> +	ret =3D device_register(&node->dev);
+> +	if (ret)
+> +		goto err_put_device;
+> +
+> +	return 0;
+> +
+> +err_put_device:
+> +	put_device(&node->dev);
+> +
+> +	return ret;
+> +}
 
+Did you overlook to release the node memory after a failed function call
+at such a source code place?
+
+Regards,
+Markus
