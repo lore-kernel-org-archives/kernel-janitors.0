@@ -1,40 +1,40 @@
 Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2619F33D5;
-	Sun, 19 May 2024 05:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6661C2E;
+	Sun, 19 May 2024 05:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716096363; cv=none; b=neRi58iLgm8SRkJb3N3IPRUn8fDuxNBq8oT8NXKr7Cehd5bDmY2viMHr5k+AV/jMk4ClhLoMaeZARkQlLJ1FHJcF9i1yWYe/FFXAnUcJYeKc2W8ufzw09Fc+uNNOgcUepmPZocnn7LiIVsX7ojgAybfaJRA2qNKXpwkv/VI5cHc=
+	t=1716097831; cv=none; b=rD8J8CwMF74rALt+iYZot6oGO9WMHXchrpQKWS+T8s1/4csYn9XJ7kU05T8ERUr/gKnHsYVEZJkzwNzGXVQTfTEijOv8Lctz6rqhwnlOzxmP7wf+FU46poPQs0hdyybJg6mHaFEIoPTFK7h0ig0TCzAn7RVsT26IKFadMRAHK+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716096363; c=relaxed/simple;
-	bh=ZFrmNUxtsmYdUc3cQmt52uM4wMxGux6XqZ1iap+SKes=;
+	s=arc-20240116; t=1716097831; c=relaxed/simple;
+	bh=0yvbC3YWgtKvkehK3zxwUez8A5+kamVe/0eOYjtGMTE=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=MT3z54Mqmm5nxG14EbL7FLLkj90SN/38i0ovqPlvPB74gN4/OuWFoPSzP/+xe1DlWhlJ7zIrz7mvO2CmMs5cWvhukY3WotM7pWZWY4fZAuf8Uh4peAOcJ0ez3TxZ+duZoPPCK18PFE897hA59iAf/fD0hPBge8h9nTO/nTjGGZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Qk50wyx1; arc=none smtp.client-ip=212.227.17.11
+	 In-Reply-To:Content-Type; b=H+fKHUZwfEPWLwtdzmefkcJYnXgXCpFc0a7Ir/jd7gelWANkG/IZcRmVCIhKxgf1m4hCmj0Ge2GMgLZEIAfTpJXStwVp4Sfqc9KdGSOMAvtaSD1vLYwYKuuyuJiIymWFYK285xbX6jAxKUAdqvTTEUPhE8FfOjeU4L1zmzaK6tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MBvHwGn5; arc=none smtp.client-ip=212.227.17.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Qk50wyx1"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MBvHwGn5"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716096339; x=1716701139; i=markus.elfring@web.de;
-	bh=ZFrmNUxtsmYdUc3cQmt52uM4wMxGux6XqZ1iap+SKes=;
+	s=s29768273; t=1716097818; x=1716702618; i=markus.elfring@web.de;
+	bh=0yvbC3YWgtKvkehK3zxwUez8A5+kamVe/0eOYjtGMTE=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=Qk50wyx13wLvGfife7KAhFcMZ9tTn8lEstgAUxChlAOWSypOIWwkcelbN1UzwWUj
-	 LmWxXJjwjXDNWulQXFerBS8w6jAS41/W8PvJJnnGXHIVuRWsUSZjUvTaeerVfIGCd
-	 bmTq+sSGNGjn7LJjzlB1h61+VHLculoz3iqhj+FIMGBMDxPsW9/32kmODj07LajwJ
-	 Dh88yt6obeSgHM0Qc51FVqsW9FyNUeZ8+SBt32V1heTfkAap/H1S9FbftASnwwQQ8
-	 BXYsaHCkOCn7fUmJp694iV4SB+81PE07+TyhuG3v+cXQaxs1mdMGNKT1DcJ1aElFv
-	 FHpJZPUuG3dD8iAadQ==
+	b=MBvHwGn5D8wKrTfcIuMVWEPKNyz5OGw8+xk6J8t5zAX0lxUX4IhLAQ3OR4OIzOsh
+	 gww8LHPLafO2HtjL62UG+vuNpd+a12PVSsjgYgou2453FMBw/TpW1usdkFuE31zMy
+	 +aih5j7EPMSxuM459acLa8LauxwitxrleQlu+jKnOjJkDXYlFCqFqwQg3pAyay5vM
+	 AXv+faCJJKk3CEho8601znrbi3e0DOLcBOliwyauzhH60cf2N600/LuJI3STqC6n4
+	 Qpv5tEiM1Lg2HI+GxVn5r39CkWthmbQcONv5wTXiFvpcEFod0jnXpLsYacegdCUTy
+	 3Gk8z7QQJujvjFk4NA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MK56y-1rqTPB2pN0-00LXsS; Sun, 19
- May 2024 07:25:39 +0200
-Message-ID: <6eee1069-81ae-495a-850f-7f526006db8b@web.de>
-Date: Sun, 19 May 2024 07:25:15 +0200
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MGxQX-1sM3hZ1kpf-001zNa; Sun, 19
+ May 2024 07:50:18 +0200
+Message-ID: <76413d53-4572-4a38-baff-8b01f6179c8e@web.de>
+Date: Sun, 19 May 2024 07:50:14 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,44 +42,42 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.com>,
- bsp-development.geo@leica-geosystems.com, linux-i2c@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
- Peter Korsgaard <peter@korsgaard.com>, Thomas Gleixner <tglx@linutronix.de>
+To: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-coco@lists.linux.dev
 Cc: LKML <linux-kernel@vger.kernel.org>,
- Grygorii Tertychnyi <grembeter@gmail.com>
-References: <20240517191000.11390-1-grygorii.tertychnyi@leica-geosystems.com>
-Subject: Re: [PATCH] i2c: ocores: set IACK bit after core is enabled
+ Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
+References: <20240513181928.720979-1-michael.roth@amd.com>
+Subject: Re: [PATCH] KVM: SEV: Fix unused variable in guest request handling
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240517191000.11390-1-grygorii.tertychnyi@leica-geosystems.com>
+In-Reply-To: <20240513181928.720979-1-michael.roth@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:6oA+99mdUNDDUSA01G21YEo+PC4BnDqvvY2xvbVENWHN5HVRnyT
- gcS8BXd+/i3aOSecsvib068rNEm3k9dI62B4BZkTmEuItrd2pTNb9CXxoQTKsBo8vmBRGgG
- R5AfHpOTfYaA+MYGbe3yYissxQsWg3KjoIIhOdELLHUkBcC7SrKH9QG+c8yCGiYhucxB3yq
- i1bPNCr9cr+QloDweQOcA==
+X-Provags-ID: V03:K1:86xkhBNlc093D6q3cjQlgFMXciyeSHTew5huDwPDpF/M1QEcniy
+ OoNcSNgh8nUXAwTF+r4oqO6RME/I3KJ1ET7oiMUWh2Hycqsd4C9LIym7n9Y8U54aUv6evK/
+ LLFEm+nRuJqGGeCorG4SCSKPKBQ1+XmTaK/cOpSloGbCIQYC1UpQWSQBThymHXd5Rt95vkI
+ GbZ9C5mA7mzozKI+V5Z+g==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:j1e7MMVA6lo=;vdsdIj3621+iotpg125XlCQEuSI
- bCASiOv0rPsrGZ50gGf+vRjYeGqGgh5BWzegSMxAp8M1GyujAJYBaI5Mxxqfq82TRRwsqqDW1
- KSkFKpNjDSvZgnpteFGR64uF2WZRLLZEz18FmpLI4BQ3cIqdnrxQ/ZiEN9TUcehFMU19V8+gi
- Ecpl5tgIxJPVwnwKnjX0GmP9pzv+T8o0D8GaSkbx9bvPAiDSPMMnjkN1WbXIt+GpvzlK6SGga
- o1uv+XKrmTO1SsaJpgBHnASrlvyaCSO1oDLEtb7/fBVRYw+p5HkTOmljRCgM5ILXR1OgKq8ds
- fSjICc917ozo9Kp+yi7a0Hnj0uBL1+sRMd//BW4Ox8yaURZn3nRnTFUElzbgSnHUsnsN/G8e3
- 1yR6K8pugKFljZdixGVYKFXLhpOnjCaCVKSBwngo7AmKlAESQh9F5QC8UAHC+UJ2SAHXYTiWr
- O5VftgphFiuOQyN7C8zbuptAXHaG1icc9FlCDoKpg+jgyzJZzSYqKPV6DE3sy+xAkv96jpKKY
- gjbrmRZ/LU6Kedz7zTxVvIYDiG7AwxBKpy4e01Ew06pV1v81sfIK6odnuh0+ebYxP1Mgp82Qe
- KrzEsHG4jdVQFXk0fI62lJrVpzsUjZYzQRLt4rm4AZYKjcFruneYp76XHUQOXsh+xywi79bw4
- lH/U639XZ2uNijiuRj2jHsOxi0W7w4GasOByPtJKE+XKRrtC5sBBLP7oMWZWBqDxaaClSEMdF
- raM7oXlsg1bDf1tVRPfroL9PopaDimaHxRlmQ82hqlJRA8uG6PkP4Zh8Rb+EH8rbT64QALEXE
- FlQLf827KddMQUgG4YlTrtEaBNXVsdFEV6stj7wOKGLe8=
+UI-OutboundReport: notjunk:1;M01:P0:lcVEq/oY1Bg=;kyVlebdxuhJMfY0uiZgFoH+b0rv
+ QCfP9AOimSDxeM/p8p95KyMqLiTHTDa9tkZFsExgYnrxg65G5hNaBKI5ulbaNmawy5qHAQbOv
+ 78IuREnkD0tDqo7etBb8zhSC2lty5SpkRflP8iiPe3gwVPwvO+2QZy+R7TSZjSitDrh2t/OZY
+ dWrItoYRshEIq7OenouiAMDCWMVcmCdx97p4FI7MQ/Ev4cAYqgqseAX/uimQe77TJ9lKkGYEW
+ dG1EMAva0LjNPZQ1g4Zf3stRdQ6/Ap0DS0+VROBupSIJSTsX/NVuSW+1l3mXuYt+K8jhXiGiN
+ wqhF9xDEyfxDwmqayab5GqchHSYeYES4hWxmfWr3Mf4eiubuMEfo59DWs8T161zjBEuDyfEeG
+ lyt1OMLA7jt3tLGV5OAw6fZ9JzE3T7NvX7MG/LtY0ek7yX6stDbfhGHioKPO5ZPkMqZZDli4i
+ N111LrJu5WJfvmczOvDVCZLAtqXe4jJ3/ae4Q33f6GeRDFFyHGVIlAdDCH2dk2ZDQBKWRRRin
+ BPxJV2qcAVhtryGoc4jBgEAD3+oYI846ol8J9NjgFwX85a/yE1epAponyWvMT4//rDDkWyBe/
+ Gln1KmBxG9VdKGrha2wESWE5s4Ae0kaB5sZNaEILB96yiMIOdR5cRaULndKww/sJbhn8H6/5P
+ yUQlNCROzbYrPPTZ2p85wdq0d1O5MiPjV4Zf+rH0kSMRO/wI/3kEgWUr4DE7tcRJO3Mjprkr9
+ xRTzyJDdqKQKapMazVyvPVgKPvqXiL7GG5QOSt80uvJXQaumDmOjkzHoaYXZr8UzUxTnUd+6C
+ lekuPcNLkXK00WxnCmdM04R7zrc0siPY2OJuXisq5U5C0=
 
-=E2=80=A6
-> Sometimes it causes failure for the very first message transfer, =E2=80=
-=A6
+> The variable 'sev' is assigned, but never used. Remove it.
 
-Does such an information indicate the need for the tag =E2=80=9CFixes=E2=
-=80=9D?
+Would it be a bit nicer to use the word =E2=80=9COmit=E2=80=9D instead of =
+=E2=80=9CFix=E2=80=9D
+in the summary phrase?
 
 Regards,
 Markus
