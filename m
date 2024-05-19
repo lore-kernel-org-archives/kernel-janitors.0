@@ -1,120 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CCC2744A;
-	Sun, 19 May 2024 19:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C584335C7;
+	Sun, 19 May 2024 23:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716145266; cv=none; b=b4Q75WPdTsZRfoYKhVvdcVfEFTQUzBzOYveZ4SO2WEOhDgTzEAtzRd8HOCg0y4z3cjxhtdEdJCHujCu+PGn+vpsLJ1n31jXTENfJwqYAoAOQomeWXhqdw/NI02KY+yncQo4FD+PorbzD8mggv0IBhyh61KvdnfRDn3AcRuAtvGE=
+	t=1716162146; cv=none; b=mjgppmhooG63hjfxLtowfM76HpZonwAj5AMg6DbY5RMekIfqJ0ETzE+lu2I2r+xMq44+oQsVeMXXH57f7gLuGh1PbtAj7FIIyV+tnrkUbjhAGbp35fBP4+Oq97euwt6ZDczOwIZbWz1VbWBzd4dRtujVFn6QoCo6M7ZnjRtlMy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716145266; c=relaxed/simple;
-	bh=+NTM2AFV/JYg98I3O8bGHst8v5arhPNwUTtTa3tWfY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N1zH2OnY0CvzjNu2FLySF1AZrZIwcij95onOu57NZ6h2zwg5iSmIC4LSrGEG8V2PkznS8Xn9CW43jRDYVinDEjn6ogVLa6RTwdehTcMVsYzQeIPLW+0jkkQGSo/2KBdd2IGDwqMhxcQHvj1CYT2kgOt7KTmuqgawDv8V6PdbLJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WkDpWN0u; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716162146; c=relaxed/simple;
+	bh=MRLtAIxUxdbSkN7sNm3p+9MsecTxswlihueoor4HZEo=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=QJeYKgGhxkXUUkV1Ju6oPi8HetYsVKX+cErsd+8C6BtmJH8czrHUbnUm9MC7oQ4YaJSCD6EchfL0kO5HnArSIzE3HXMJ8QdMfPgI+thw9Ev+MyowIYd2Ex16CBRMgiKVD0fxw/wdNtHd7X11b4NMiIsrTdzWBx1gzpjOhIo2ZKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lEq1SIwD; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WkDpWN0u"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FE31C32782;
-	Sun, 19 May 2024 19:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716145265;
-	bh=+NTM2AFV/JYg98I3O8bGHst8v5arhPNwUTtTa3tWfY8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WkDpWN0u2reyaLj3i7CshFz8cj0YJiQy9QsrYy+2Bnpo2+dEgt7MpqqzQP0eTaUkb
-	 Mp6owEfPAyudlg7H1ZRkf47updK1krUdqPnCi9az+MQlm91f+lode/OI2uPxPZrsO0
-	 DdSIonO+cwtmfePzIp9F+qn2HEH1fIBWJoP+lEJA7nlWd/Ew4h0j2HOqNnOMKEiAHr
-	 BmCYjmMuxkiLbVscfhU3X0PD3e1Jj7JTqQqhy5QJ2cBR9+jcts372f8GH04IMgwgKd
-	 CdJjxL9pCEyTTcTP1UBJ9NqhYtQ/2ttH4BpfUL3NA+tcoWCaHoIb3/09ZPTzlItnSa
-	 LYd0efhomaxfA==
-Date: Sun, 19 May 2024 20:00:53 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: Crt Mori <cmo@melexis.com>, Lars-Peter Clausen <lars@metafoo.de>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
- error27@gmail.com
-Subject: Re: [PATCH v2] iio: temperature: mlx90635: Fix ERR_PTR dereference
- in mlx90635_probe()
-Message-ID: <20240519200053.3ad535ae@jic23-huawei>
-In-Reply-To: <b6f1d062-5f09-4d57-aa24-e8515c5cebcf@oracle.com>
-References: <20240513203427.3208696-1-harshit.m.mogalapalli@oracle.com>
-	<20240519132940.3714e57b@jic23-huawei>
-	<b6f1d062-5f09-4d57-aa24-e8515c5cebcf@oracle.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lEq1SIwD"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1ecd3867556so60783795ad.0;
+        Sun, 19 May 2024 16:42:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716162144; x=1716766944; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iLRcrBmm/JNzbHllRISeYqb+Gjt9Xm96VzYCUAqr+4o=;
+        b=lEq1SIwDxswVwnNlP3VynCvstaJ1tUtMXbdjE+C0UUyVdil1aiPDkHtJZI0dHbbA9X
+         pcoHUm6TtrqviIS6TUS5eAdD9v0kEpllNkPuN3OuN1/VUjaK/18kLUnq5hf0QUVbxHTU
+         WnmkOi1FLcK/JFbtHdqMo5DV1XXIM063GAohafF521TAWmd2slt6uoItnPNNQD4TvYIq
+         rGYpuf5g3csACPb6jMsDdMBUbEZ/chBztFlcvvk859yB7T4qwKE5T2evTD51LqK5C1VS
+         P/mUyyONE/YWN0kx+ISPGUbb/ZI/Bj7JnjgwSOTqw7dgG4a2+HFtzyYGXt+OMrel0sZo
+         IwYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716162144; x=1716766944;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iLRcrBmm/JNzbHllRISeYqb+Gjt9Xm96VzYCUAqr+4o=;
+        b=HeaQVsiX5IFO6Lm7Y4IiyX7ljJwFl1/B7tSOWo/YA2M2JXltHFHmZdinzIoUv3GMaA
+         RarCWpPC93/qAxF6rBODUwTMJQtVXPFqp/TEi26UzNRqVO+7bZe758vRoMaItTMAVNtc
+         /fw4CScCTGY+4bHyGJFVG56QKb5hbSXzZWoaA4jP2TVFT2jn2OMCpjVUU65K6FErs3UY
+         7r+nd8q1qhE0EY6CiT1W+ntxRa5w4MdKqJ96U5+lKTT/9xNJ+SkWvz9A2UiP6ycyuwtQ
+         5ihvq75GFRR3YwDhq/KfbFIgUwLnwvMMDuqaWA91LitQOH7xu+oR1sk0yLJK/hg7Nfp6
+         j28Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVoU2mkaBNtTYxkSSnbZxlepXr0G+5jQdAFYAnBuAkXn74CbZvWY8ec7XLvU7of43+To+i2+RuQmc5kH+E6AUxGedG/PtzhHNN4oS4D2zRsIQKXNA/nYdileX0/FPJb3MS0uJNRZ330oGSqvhh+
+X-Gm-Message-State: AOJu0Yw2v/M3Jnl1NpbOBtR73BeWF6kYsmC17amVO2hrHPr793fw7yHK
+	/iDFWSVy6Qu3sV3wlkF58sPHeC/fO0iKshGdeqo0cDqP36MI9hlU/3FVQ+sDdYw=
+X-Google-Smtp-Source: AGHT+IEKF2ZABsZ3AtRKDb6oyc/rsvkCjgo/aLmta88PM2JCfnw03GunJZVajzG8z8yH5bZzaoc5ag==
+X-Received: by 2002:a05:6a00:2289:b0:6e5:43b5:953b with SMTP id d2e1a72fcca58-6f4e02ad963mr29305301b3a.14.1716162144322;
+        Sun, 19 May 2024 16:42:24 -0700 (PDT)
+Received: from smtpclient.apple ([59.37.8.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2af2a77sm18675298b3a.144.2024.05.19.16.42.21
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 19 May 2024 16:42:23 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH] livepatch: introduce klp_func called interface
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <0f78a187-5c64-4d95-a6e8-2b5c42f0c253@web.de>
+Date: Mon, 20 May 2024 07:42:07 +0800
+Cc: live-patching@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ Jiri Kosina <jikos@kernel.org>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Miroslav Benes <mbenes@suse.cz>,
+ Petr Mladek <pmladek@suse.com>,
+ LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <7DCD3D59-461E-4898-BDAA-FD40D168C243@gmail.com>
+References: <20240519074343.5833-1-zhangwarden@gmail.com>
+ <0f78a187-5c64-4d95-a6e8-2b5c42f0c253@web.de>
+To: Markus Elfring <Markus.Elfring@web.de>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-On Sun, 19 May 2024 19:06:55 +0530
-Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com> wrote:
+OK, I will optimize my patch=E2=80=99s changelog in my next patch.
 
-> Hi Jonathan,
-> 
-> On 19/05/24 17:59, Jonathan Cameron wrote:
-> > On Mon, 13 May 2024 13:34:27 -0700
-> > Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com> wrote:
-> >   
-> >> When devm_regmap_init_i2c() fails, regmap_ee could be error pointer,
-> >> instead of checking for IS_ERR(regmap_ee), regmap is checked which looks
-> >> like a copy paste error.
-> >>
-> >> Fixes: a1d1ba5e1c28 ("iio: temperature: mlx90635 MLX90635 IR Temperature sensor")
-> >> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>  
-> > Please make sure to pick up tags given on earlier versions.  You dropped
-> > Crt's Reviewed-by without giving a reasons. I've put it back.
-> >   
-> 
-> Sorry, I thought we should not add tags as v1-->v2: is for addressing 
-> the reviewers(Crt's) comments.
-> 
-> I will keep this in mind.
-It's a case of judging if they are likely to mind the changes.
-Here Crt had confirmed he was, so easy decision!
+> On May 20, 2024, at 02:05, Markus Elfring <Markus.Elfring@web.de> =
+wrote:
+>=20
+>  I suggest to take preferred line lengths better into account
+>  also for such a change description.
 
-If you drop a tag, just say why below the --- in the patch.
-
-
-
-> 
-> Thanks,
-> Harshit
-> 
-> > Applied to the fixes-togreg branch of iio.git and marked for stable.
-> > I'll be rebasing that on rc1 once available. Until then it won't be visible.
-> > 
-> > Thanks,
-> > 
-> > Jonathan
-> >   
-> >> ---
-> >> This is found using smatch, only compile tested.
-> >> v1->v2: Address Crt's comments.
-> >> ---
-> >>   drivers/iio/temperature/mlx90635.c | 6 +++---
-> >>   1 file changed, 3 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/iio/temperature/mlx90635.c b/drivers/iio/temperature/mlx90635.c
-> >> index 1f5c962c1818..f7f88498ba0e 100644
-> >> --- a/drivers/iio/temperature/mlx90635.c
-> >> +++ b/drivers/iio/temperature/mlx90635.c
-> >> @@ -947,9 +947,9 @@ static int mlx90635_probe(struct i2c_client *client)
-> >>   				     "failed to allocate regmap\n");
-> >>   
-> >>   	regmap_ee = devm_regmap_init_i2c(client, &mlx90635_regmap_ee);
-> >> -	if (IS_ERR(regmap))
-> >> -		return dev_err_probe(&client->dev, PTR_ERR(regmap),
-> >> -				     "failed to allocate regmap\n");
-> >> +	if (IS_ERR(regmap_ee))
-> >> +		return dev_err_probe(&client->dev, PTR_ERR(regmap_ee),
-> >> +				     "failed to allocate EEPROM regmap\n");
-> >>   
-> >>   	mlx90635 = iio_priv(indio_dev);
-> >>   	i2c_set_clientdata(client, indio_dev);  
-> >   
-> 
 
