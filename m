@@ -1,40 +1,40 @@
 Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6661C2E;
-	Sun, 19 May 2024 05:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9046FB666;
+	Sun, 19 May 2024 07:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716097831; cv=none; b=rD8J8CwMF74rALt+iYZot6oGO9WMHXchrpQKWS+T8s1/4csYn9XJ7kU05T8ERUr/gKnHsYVEZJkzwNzGXVQTfTEijOv8Lctz6rqhwnlOzxmP7wf+FU46poPQs0hdyybJg6mHaFEIoPTFK7h0ig0TCzAn7RVsT26IKFadMRAHK+0=
+	t=1716102960; cv=none; b=rF2CmOCWg3JnMJ4RVLdd5LMtPUPzy262dB2tKmIkUz4Nh0UHKgbFxMqG06tMvCo1uQmVDrgUPTJuBdDN12PfJdS28dS5EhJLbt0HWo0qwClwMonjH4CCFit4ax9Gryre4deTLIMHs14ewkAL8mdHljrt7u6oaC39S6QIuCt6nLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716097831; c=relaxed/simple;
-	bh=0yvbC3YWgtKvkehK3zxwUez8A5+kamVe/0eOYjtGMTE=;
+	s=arc-20240116; t=1716102960; c=relaxed/simple;
+	bh=3Ib/4jVZX15fK3hvYNLAJEDzsJyGYYDvKxm3yexwV/M=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=H+fKHUZwfEPWLwtdzmefkcJYnXgXCpFc0a7Ir/jd7gelWANkG/IZcRmVCIhKxgf1m4hCmj0Ge2GMgLZEIAfTpJXStwVp4Sfqc9KdGSOMAvtaSD1vLYwYKuuyuJiIymWFYK285xbX6jAxKUAdqvTTEUPhE8FfOjeU4L1zmzaK6tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MBvHwGn5; arc=none smtp.client-ip=212.227.17.11
+	 In-Reply-To:Content-Type; b=dO58ejgtk4GMENwalpis2MtPvyB/FqE5DzDrzYuzbXGRpuEV8+rhIrMO+dz35EH+3DVILrFLlktcRPm+csBMazuTWTia1ye0kWaPxYjXl23Ns4vnhGE4me+QCFS4/ayGYCnYwF2rkOLxJCm73IZFDUNfBwh2+Vzqv/g6FFM7Rc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=O6OwOLue; arc=none smtp.client-ip=212.227.17.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MBvHwGn5"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="O6OwOLue"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716097818; x=1716702618; i=markus.elfring@web.de;
-	bh=0yvbC3YWgtKvkehK3zxwUez8A5+kamVe/0eOYjtGMTE=;
+	s=s29768273; t=1716102924; x=1716707724; i=markus.elfring@web.de;
+	bh=awBD3TGD+O80uOUmxCjUFbBY5uYZxYKTob1I/UkA+vE=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=MBvHwGn5D8wKrTfcIuMVWEPKNyz5OGw8+xk6J8t5zAX0lxUX4IhLAQ3OR4OIzOsh
-	 gww8LHPLafO2HtjL62UG+vuNpd+a12PVSsjgYgou2453FMBw/TpW1usdkFuE31zMy
-	 +aih5j7EPMSxuM459acLa8LauxwitxrleQlu+jKnOjJkDXYlFCqFqwQg3pAyay5vM
-	 AXv+faCJJKk3CEho8601znrbi3e0DOLcBOliwyauzhH60cf2N600/LuJI3STqC6n4
-	 Qpv5tEiM1Lg2HI+GxVn5r39CkWthmbQcONv5wTXiFvpcEFod0jnXpLsYacegdCUTy
-	 3Gk8z7QQJujvjFk4NA==
+	b=O6OwOLueNplf1cccVOoDKe+1IWy74wk7u2b2KBJL+76S9QRpUBJPmmZRZlWoT3Sy
+	 Dp39K4Zwr2Mj3WAwXLiz6OwEP8sgVZhmOFNAStu0oa6KzCmoqhXiK26g41p4jY3tB
+	 FMW6gbMV1gVmaq921lzi0aJ2KJtLxyWBmmc4u041MAxwNwRX3M1RH5Q6IDs08N28M
+	 a3d7PLvqWk94gVCNW25vFAzzPHZLyM+UUMOEwZS2FjaT9RLr8Yjc3yLtAhqlYseCa
+	 wW4XNr2JwIeYhC2u4Yw4zV+GJh8E5w/mtJTtj0xPBLlx3d59W4/z1u46gSS41041j
+	 X52gqx+vItakwwc38g==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MGxQX-1sM3hZ1kpf-001zNa; Sun, 19
- May 2024 07:50:18 +0200
-Message-ID: <76413d53-4572-4a38-baff-8b01f6179c8e@web.de>
-Date: Sun, 19 May 2024 07:50:14 +0200
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N9LIc-1seOuF3JBM-015Ky5; Sun, 19
+ May 2024 09:15:23 +0200
+Message-ID: <43f4acb9-4409-4b51-9cb6-543bcf42f0ba@web.de>
+Date: Sun, 19 May 2024 09:15:19 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,42 +42,62 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-coco@lists.linux.dev
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
-References: <20240513181928.720979-1-michael.roth@amd.com>
-Subject: Re: [PATCH] KVM: SEV: Fix unused variable in guest request handling
+To: =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+ devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Alvin_=C5=A0ipraga?=
+ <alvin@pqrs.dk>, Emil Svendsen <emas@bang-olufsen.dk>,
+ Andi Shyti <andi.shyti@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jaroslav Kysela <perex@perex.cz>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>,
+ Takashi Iwai <tiwai@suse.com>
+References: <20240517-a2b-v1-1-b8647554c67b@bang-olufsen.dk>
+Subject: Re: [PATCH 01/13] a2b: add A2B driver core
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240513181928.720979-1-michael.roth@amd.com>
+In-Reply-To: <20240517-a2b-v1-1-b8647554c67b@bang-olufsen.dk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:86xkhBNlc093D6q3cjQlgFMXciyeSHTew5huDwPDpF/M1QEcniy
- OoNcSNgh8nUXAwTF+r4oqO6RME/I3KJ1ET7oiMUWh2Hycqsd4C9LIym7n9Y8U54aUv6evK/
- LLFEm+nRuJqGGeCorG4SCSKPKBQ1+XmTaK/cOpSloGbCIQYC1UpQWSQBThymHXd5Rt95vkI
- GbZ9C5mA7mzozKI+V5Z+g==
+X-Provags-ID: V03:K1:NEkB/gm/kIFqYDsQ8gGsUusFhiSrnLq0i2UUuLPVIe+oePa5zTf
+ fkVCMhH4sItWIoH/iCPB+hN6FpWGVHAcPkKh82G6vgUD9Jk+guNKQ4BEKH1Avm249Ihhr3P
+ Dcx0z+T555vWJCQsByKRjkd9j1VijpPhrZBXd4oqs3lPmrlobaDZdEBo2YQ5BR1Aul0jWye
+ t79NiTVhdvkwIknnthtTA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:lcVEq/oY1Bg=;kyVlebdxuhJMfY0uiZgFoH+b0rv
- QCfP9AOimSDxeM/p8p95KyMqLiTHTDa9tkZFsExgYnrxg65G5hNaBKI5ulbaNmawy5qHAQbOv
- 78IuREnkD0tDqo7etBb8zhSC2lty5SpkRflP8iiPe3gwVPwvO+2QZy+R7TSZjSitDrh2t/OZY
- dWrItoYRshEIq7OenouiAMDCWMVcmCdx97p4FI7MQ/Ev4cAYqgqseAX/uimQe77TJ9lKkGYEW
- dG1EMAva0LjNPZQ1g4Zf3stRdQ6/Ap0DS0+VROBupSIJSTsX/NVuSW+1l3mXuYt+K8jhXiGiN
- wqhF9xDEyfxDwmqayab5GqchHSYeYES4hWxmfWr3Mf4eiubuMEfo59DWs8T161zjBEuDyfEeG
- lyt1OMLA7jt3tLGV5OAw6fZ9JzE3T7NvX7MG/LtY0ek7yX6stDbfhGHioKPO5ZPkMqZZDli4i
- N111LrJu5WJfvmczOvDVCZLAtqXe4jJ3/ae4Q33f6GeRDFFyHGVIlAdDCH2dk2ZDQBKWRRRin
- BPxJV2qcAVhtryGoc4jBgEAD3+oYI846ol8J9NjgFwX85a/yE1epAponyWvMT4//rDDkWyBe/
- Gln1KmBxG9VdKGrha2wESWE5s4Ae0kaB5sZNaEILB96yiMIOdR5cRaULndKww/sJbhn8H6/5P
- yUQlNCROzbYrPPTZ2p85wdq0d1O5MiPjV4Zf+rH0kSMRO/wI/3kEgWUr4DE7tcRJO3Mjprkr9
- xRTzyJDdqKQKapMazVyvPVgKPvqXiL7GG5QOSt80uvJXQaumDmOjkzHoaYXZr8UzUxTnUd+6C
- lekuPcNLkXK00WxnCmdM04R7zrc0siPY2OJuXisq5U5C0=
+UI-OutboundReport: notjunk:1;M01:P0:A6h29kzZZCU=;scPHcuHdNkNc6ycjFNwFZucbAhY
+ MprszvjeRvSwg/FEKzeionPG512gGR6psy9f/yzvvH7DWIGiber5m3EwPhXs3JrkqNYLJGe4A
+ 1ms8rKNzdCQ7BwZqNLQD0FBHykLpgVqUqBcaLbWCZ0WBfBweg4rqTMBdg3MKf/sWfDVGvIBe6
+ 9gp4Ev/kLjPwj5+m6VhmfSgMKVz+CDTZjVbwqfXet6gCVbK2YMP6MHJDz2dOsRwaXzWpOTkDX
+ Ohe0pZxbrtH35P391zmfXEC5BWfxyjES6IHlbsCrmS5K7gDETbcGMVEOpUvmhGofwOLZzIPDP
+ BJ670qzI4gtrMl972fFbchNKJ9Mc2HTL+ZeW/HgIaIOSp3hj1mPxcImQbtdmoJl70W6EF+sus
+ HtkSYgUpG9r2j7Fu0xZzYEEu91ozDmMSisS8CPphewaXu6ld999NyGnKJia2iYBksUsZWb/W0
+ JwNdNsByuQzaN6/YTNZqNT+Fpzk3sffP3z9ivtwMCwKc+OXxvowQxUjgwjTfrxMR4g+7+pT5T
+ oxj10kVao94VNqVyKrNgN5sKyDSIWPp5osh9wEb2nfcFCbbcCwU3ntl1py863QCQfPgaq2Eij
+ EnIa+K5QqXtH5s9G24TGflxdSj7771aQ9ycTJ2dnnoXNHUIWNs/HWPrYZxpcGP2XePtxH9XME
+ ZPQCwIWyLvHJtxyqWnU/EEaua1iN2ZLKpytT6Pcgf5SCALXQs4UC6W/FJrLxZQ1OQMysh//84
+ TIisovgFrB+t66GFLmp9mm09R6bkJJMiu0WvSh4w/91RKFaFUO/j3Rbfvgu5vDB8szLpek0Pz
+ o8JUoIa7qfLNAcvTWhEhhTWGvBs6Af68W2s7u951lPgzo=
 
-> The variable 'sev' is assigned, but never used. Remove it.
+=E2=80=A6
+> +++ b/drivers/a2b/a2b.c
+> @@ -0,0 +1,1252 @@
+=E2=80=A6
+> +#define __a2b_bus_for_each_node(__bus, __node, __i) \
+> +	for (__i =3D 0; __i < A2B_MAX_NODES && (__node =3D __bus->nodes[__i]);=
+ i++)
+=E2=80=A6
 
-Would it be a bit nicer to use the word =E2=80=9COmit=E2=80=9D instead of =
-=E2=80=9CFix=E2=80=9D
-in the summary phrase?
+I suggest to reconsider the usage of double underscores for identifiers.
+How do you think about to avoid that this software depends on undefined be=
+haviour?
+https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
+efine+a+reserved+identifier
 
 Regards,
 Markus
