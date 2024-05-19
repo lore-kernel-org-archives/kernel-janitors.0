@@ -1,118 +1,89 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EFA364;
-	Sun, 19 May 2024 00:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7A91870;
+	Sun, 19 May 2024 02:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716079524; cv=none; b=D/TS+hzx3HTBYz6XYM/zXUTSQdLDdvx9XqfUv22oCEfEa611Th3/Ronjbvx80JXaOU4hhBd2OBlL4gI7nZC1SmUjAbsUNWQNH4HZmAfZqWiL2XhpfQCy8YUxKdkwIf8KWwq9ZXPekHFJvmMGCfYT4KHQk6D67B112iC92kB9qwA=
+	t=1716087268; cv=none; b=LSkPnZAnuPtM5iGM+OS6PhhboYDS9ZIjsFxoqDRAdttH3wOfdnFqdMujYqXUw/R1d9cNWDS2r7aQMvI7KsIrd/On3FlvXdsvCh63IsNxTxR0uGLKa1DSJE2BE2WUI/+4aL/Cvtvg5Nc29VB9vDjvP1RKT3SRF86oau20hxcuFes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716079524; c=relaxed/simple;
-	bh=CDiwX7uYM/03fsSkqWnBADpK5A0y5jAmb5ErXmdDe98=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kmbK3wNADKLcxMjBcMSQ4c6Tjy5iymWEH2lGmQ+Jx365sUUDUjTXhP/Tg8Yx80D47F9LV7itz69lTLdLNaU1t5C+4uIdjpmpo6juIhedyyzDkCvWXqvoO++kUoG07/ZZ8GpyngXVfsSxsWr3GRSSpW3RauEPdOywHZ6SP5W10O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CHIgveOB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716087268; c=relaxed/simple;
+	bh=WunisLTOGe0gk918aPPfVny/lzuRRrtQfgukDSsiixU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=UxePob2YrsqX7DW0PZ2LqRKyTBAoQnlLRGPOddE4lj68uW5DCV+JkhdGhIt5yfu4nx58a5wTXnvSQVLaIY5Uw4/vwyyf80q5pkd1KUpNEeS8MbA4wdrYQ6y/mtksr6UPBW/5oeVj4f8t9M3rsekiFlU4JD1J/ak0euVbg/Vldyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TSrsl+dL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CHIgveOB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0215EC113CC;
-	Sun, 19 May 2024 00:45:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TSrsl+dL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4777C113CC;
+	Sun, 19 May 2024 02:54:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716079524;
-	bh=CDiwX7uYM/03fsSkqWnBADpK5A0y5jAmb5ErXmdDe98=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=CHIgveOB2cg/CdOrZ7myK1jYV99avnHtx5hSRIPmjkTS+Oc/TM1Mwe6qPXw0MZ/x9
-	 f/vltBZN1iwqdm5OQDQe9H+cz9mYKae9B+Hr26U/TU5wyQbTfpNMDQKSW4cs3zkPFf
-	 v9lVZPqdx9FqU0VgNZDzuL7nTO1L0sLKfYk7cBqSrI6hnsppXy4GXZZfbM6GasEQ9c
-	 E6ahPFTPymHy9ln4G5sasqiCIniw8z7sb7q0ic4RlFSzdX5FLv64ljLe/tKvD78kzg
-	 9x6xG08dhJIhxlF3rtEjh6pEyTWxslIl2nXn6sge2qoAFZ2PbLeaaOuaou80FQ6zl1
-	 Y0FhBAidcK5Gg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 8DD03CE0C3C; Sat, 18 May 2024 17:45:23 -0700 (PDT)
-Date: Sat, 18 May 2024 17:45:23 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
+	s=k20201202; t=1716087267;
+	bh=WunisLTOGe0gk918aPPfVny/lzuRRrtQfgukDSsiixU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TSrsl+dLVpbXo7/vEIpXQYd7IQJjMUdjR6IXtvvW7q7JCOlvHvPMB7Xnfom5Dx2tN
+	 wLqoCXEY2gCrF4ufVt+RGZGnaZ4n1Dnq2bTBOC3qej/Dme6NMoh4fkSOtJv0nWNFvB
+	 UnWH3sAqfl7gBVp8nf6fS2kcgiHWRVJoCe/skARm8upFE6oygrt/Mt4tgyNwxcXr0J
+	 HqEtYon9Gatzuob2Np7j7MiNA7WVkSEgfcct5QTYzQr9frjfvNFnrMUm2BQ6JHSYDH
+	 rgWvZx7zKYGRYZ2BYtKPyUgH5jiYbTk+ydLmjmpSekSNg+QSk5gWcpGXBZhBmMHgCz
+	 GDutcCq1IBmbw==
+Date: Sun, 19 May 2024 11:54:23 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] rcu: add missing MODULE_DESCRIPTION() macros
-Message-ID: <59e0cbee-16b8-4251-af9e-a9b47c029155@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240518-rcu-v1-1-086a30b96877@quicinc.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, <linux-kernel@vger.kernel.org>,
+ <linux-trace-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] kernel: trace: preemptirq_delay_test: add
+ MODULE_DESCRIPTION()
+Message-Id: <20240519115423.f89db5ecf2fb336dc2f4ecb1@kernel.org>
+In-Reply-To: <20240518-md-preemptirq_delay_test-v1-1-387d11b30d85@quicinc.com>
+References: <20240518-md-preemptirq_delay_test-v1-1-387d11b30d85@quicinc.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240518-rcu-v1-1-086a30b96877@quicinc.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, May 18, 2024 at 04:28:08PM -0700, Jeff Johnson wrote:
-> Fix the following 'make W=1' warnings:
+On Sat, 18 May 2024 15:54:49 -0700
+Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+
+> Fix the 'make W=1' warning:
 > 
-> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcutorture.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcuscale.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/refscale.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/trace/preemptirq_delay_test.o
 > 
+
+Looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Fixes: f96e8577da10 ("lib: Add module for testing preemptoff/irqsoff latency tracers")
+
+Thanks,
+
 > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-
-I applied and pushed both patches, thank you!
-
-							Thanx, Paul
-
 > ---
->  kernel/rcu/rcuscale.c   | 1 +
->  kernel/rcu/rcutorture.c | 1 +
->  kernel/rcu/refscale.c   | 1 +
->  3 files changed, 3 insertions(+)
+>  kernel/trace/preemptirq_delay_test.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/kernel/rcu/rcuscale.c b/kernel/rcu/rcuscale.c
-> index 8db4fedaaa1e..b53a9e8f5904 100644
-> --- a/kernel/rcu/rcuscale.c
-> +++ b/kernel/rcu/rcuscale.c
-> @@ -42,6 +42,7 @@
+> diff --git a/kernel/trace/preemptirq_delay_test.c b/kernel/trace/preemptirq_delay_test.c
+> index 8c4ffd076162..cb0871fbdb07 100644
+> --- a/kernel/trace/preemptirq_delay_test.c
+> +++ b/kernel/trace/preemptirq_delay_test.c
+> @@ -215,4 +215,5 @@ static void __exit preemptirq_delay_exit(void)
 >  
->  #include "rcu.h"
->  
-> +MODULE_DESCRIPTION("Read-Copy Update module-based scalability-test facility");
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Paul E. McKenney <paulmck@linux.ibm.com>");
->  
-> diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-> index 807fbf6123a7..b0d8d06ab7a8 100644
-> --- a/kernel/rcu/rcutorture.c
-> +++ b/kernel/rcu/rcutorture.c
-> @@ -51,6 +51,7 @@
->  
->  #include "rcu.h"
->  
-> +MODULE_DESCRIPTION("Read-Copy Update module-based torture test facility");
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Paul E. McKenney <paulmck@linux.ibm.com> and Josh Triplett <josh@joshtriplett.org>");
->  
-> diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
-> index 2c2648a3ad30..f4ea5b1ec068 100644
-> --- a/kernel/rcu/refscale.c
-> +++ b/kernel/rcu/refscale.c
-> @@ -63,6 +63,7 @@ do {											\
->  
->  #define SCALEOUT_ERRSTRING(s, x...) pr_alert("%s" SCALE_FLAG "!!! " s "\n", scale_type, ## x)
->  
-> +MODULE_DESCRIPTION("Scalability test for object reference mechanisms");
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Joel Fernandes (Google) <joel@joelfernandes.org>");
->  
+>  module_init(preemptirq_delay_init)
+>  module_exit(preemptirq_delay_exit)
+> +MODULE_DESCRIPTION("Preempt / IRQ disable delay thread to test latency tracers");
+>  MODULE_LICENSE("GPL v2");
 > 
 > ---
 > base-commit: 674143feb6a8c02d899e64e2ba0f992896afd532
-> change-id: 20240518-rcu-7d1939bd9205
+> change-id: 20240518-md-preemptirq_delay_test-552cd20e7b0b
 > 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
