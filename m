@@ -1,97 +1,120 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AF22233B;
-	Sun, 19 May 2024 18:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CCC2744A;
+	Sun, 19 May 2024 19:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716141941; cv=none; b=Xn3K3talARnpIp0dRrLF/V9NnpoKhCE08Fr3uRIeERO4ttfOeVxGrlJBE+NZ9S/3XEGrLwodOTXsHufwM6bS0fMrwl48OVEP8U73D7yEOxH3XkOs95U/bFUbD5Q4FC95LtbdI2IF7jNe5pPAU2z2b4JQeduCz2yfaizvxAEf0jA=
+	t=1716145266; cv=none; b=b4Q75WPdTsZRfoYKhVvdcVfEFTQUzBzOYveZ4SO2WEOhDgTzEAtzRd8HOCg0y4z3cjxhtdEdJCHujCu+PGn+vpsLJ1n31jXTENfJwqYAoAOQomeWXhqdw/NI02KY+yncQo4FD+PorbzD8mggv0IBhyh61KvdnfRDn3AcRuAtvGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716141941; c=relaxed/simple;
-	bh=27zJDYQNrBc3/Hgn0QfIK4lLVEOUFVMA6YO0B6tgoeM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ugHJvwf0dLbL8ZAaq0/Ykt0mCSSeBp0WxrxCCF8ak8ZqlMoGBZ+BAxHL3qzEDUhLofsbvtZ9+d+1SD1glxDowg+9G+LgFwu7nhcGmOPtVwm7yUN8qVIfUs4kTpvNtRGE4UO0gIU7YtvxKzo+zLJ78jpMlaIZm4F01Yk98DHwptI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=T+ciulGu; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1716145266; c=relaxed/simple;
+	bh=+NTM2AFV/JYg98I3O8bGHst8v5arhPNwUTtTa3tWfY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N1zH2OnY0CvzjNu2FLySF1AZrZIwcij95onOu57NZ6h2zwg5iSmIC4LSrGEG8V2PkznS8Xn9CW43jRDYVinDEjn6ogVLa6RTwdehTcMVsYzQeIPLW+0jkkQGSo/2KBdd2IGDwqMhxcQHvj1CYT2kgOt7KTmuqgawDv8V6PdbLJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WkDpWN0u; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="T+ciulGu"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716141928; x=1716746728; i=markus.elfring@web.de;
-	bh=9pY7nZaq1fyJ1tTGdLEQrtwNkEiGqx7yo3oChVDxHLw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=T+ciulGuxb/TPkzLfXIxCqZ2o0nI6XR16AJkrXKJGT8XYJNCwyo3828sPsxG0ls3
-	 a1/W3Pt7uNMsZ5I/55eumefhoyeIqwsto4CbEA9JBn2bmrxineehLs2rqIeYJBw0q
-	 mjzm6gMS8B2kWqm2DgFIyJgoib0oJZb6dS2sbiieVbhUCRViRBBMfpWHpc4PpxAPG
-	 F2KVCmMZFYirz4nf8I3igUfloRyO/SypSMl3TSo/G3A/datAEhKVOQwX1XKk+45L6
-	 ztGNCQ/WU7Fp1kgbeREI4k4CitwrKeGXnjnWwiAmt1A+L22aenjKDMMtRVJy0icjO
-	 0INfHWHAFShSQbrz7A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N6JxT-1sbm2z2hM9-016izA; Sun, 19
- May 2024 20:05:28 +0200
-Message-ID: <0f78a187-5c64-4d95-a6e8-2b5c42f0c253@web.de>
-Date: Sun, 19 May 2024 20:05:22 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WkDpWN0u"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FE31C32782;
+	Sun, 19 May 2024 19:01:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716145265;
+	bh=+NTM2AFV/JYg98I3O8bGHst8v5arhPNwUTtTa3tWfY8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WkDpWN0u2reyaLj3i7CshFz8cj0YJiQy9QsrYy+2Bnpo2+dEgt7MpqqzQP0eTaUkb
+	 Mp6owEfPAyudlg7H1ZRkf47updK1krUdqPnCi9az+MQlm91f+lode/OI2uPxPZrsO0
+	 DdSIonO+cwtmfePzIp9F+qn2HEH1fIBWJoP+lEJA7nlWd/Ew4h0j2HOqNnOMKEiAHr
+	 BmCYjmMuxkiLbVscfhU3X0PD3e1Jj7JTqQqhy5QJ2cBR9+jcts372f8GH04IMgwgKd
+	 CdJjxL9pCEyTTcTP1UBJ9NqhYtQ/2ttH4BpfUL3NA+tcoWCaHoIb3/09ZPTzlItnSa
+	 LYd0efhomaxfA==
+Date: Sun, 19 May 2024 20:00:53 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: Crt Mori <cmo@melexis.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+ error27@gmail.com
+Subject: Re: [PATCH v2] iio: temperature: mlx90635: Fix ERR_PTR dereference
+ in mlx90635_probe()
+Message-ID: <20240519200053.3ad535ae@jic23-huawei>
+In-Reply-To: <b6f1d062-5f09-4d57-aa24-e8515c5cebcf@oracle.com>
+References: <20240513203427.3208696-1-harshit.m.mogalapalli@oracle.com>
+	<20240519132940.3714e57b@jic23-huawei>
+	<b6f1d062-5f09-4d57-aa24-e8515c5cebcf@oracle.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Wardenjohn <zhangwarden@gmail.com>, live-patching@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
- Joe Lawrence <joe.lawrence@redhat.com>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
- Petr Mladek <pmladek@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240519074343.5833-1-zhangwarden@gmail.com>
-Subject: Re: [PATCH] livepatch: introduce klp_func called interface
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240519074343.5833-1-zhangwarden@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:n1DLcPSd88hho6RTJCi/Ky4agc+v51xTm6fH0J9qsDGvMSA192g
- YH4M6HmPkcexPpMgU8+T3MvYMVK6WK+UGmlyFj5tSgSwgp+uctXpmsGRK9cbqbLm5fZP8t6
- Tc/mTk26VqY3KD7qBF0DiYfIFyZvaRKwL2k9vwOOQbzA24WuDco9C1wEyT9HX0M2hvE5EqQ
- QKxZej+3C7Vglx4kC8L4g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:W9a7sCBMbpc=;fox0FO2AaYDVCTzkA2bWav5YlhG
- d7g8XG0CfKsejGDPLeB8/W7mPbph2E/XDTrW/R09X2X3Oo2AyhZ9fAhlywTgMDZbXs8AaWYDy
- gqdZEImiY9Cz58nipKQJGlfVSdWfRsXfnzo8G+CJd4BtpNtVLPHjm8neiasEF3RxZGvs1K/ae
- frEIfNhPJ2Wf2/KawV/JGg59iDpPldEtXENo2276YF8kRtHfixVl5K3l3AHWdW7fTVtgti7wT
- sHlL7TCNFnoIA7fWmz8xHyrRjKO4PdTx9jJxc49kvfADJLApwQkFIdqIX4ElqmNMq/oM/LmC7
- HKt/DBdU1ghg/5hQR0wviy6CdYoVLNx9PKkN5mPAPHwvZFy2VLSCvROlRu2/90/JhiFybRA1O
- Ap/zu6F/AJltQaj+Jmj5KRf41YdEe5HmFIIgdZ/j3ICzuKA/e1PWbf1xBkbBoodNcfn1543AL
- lmLUIh/zrsz5YZwFlQ1+tdfxVylQMMUfPJcL9YdhdzkSDy8UQ+Sl5srVNuqyeHCBSKnxyLr2p
- yhUjy7qA8frkhflT7uGeUZwHT90XRIP4N5GQauGm75kfdSKOz1PgCNHLWZqB9IllUUz/Rz2OB
- XwJrnfZoIusJK4v/kLQpwVb+Fl8oQaYEwDKXIsDMx9EZQriwynDtH0j7179N1JhwIXdFGR+fM
- T88+3GyGbEUNga1GmHbmHYO1MM1RmadEeJcz0b7zaLNmOKisdwUHNnekkL01hHFAPcxA1jUXV
- IvPNKsjyZaGtwZYMy9m7K6duj9qOFt1TbSRclD2sBPfJkl/tiWptCG23/jTMhMSs4fJzEHoeu
- 0yw2JWUN3pNGSvNHWAXT9Z4QzO2YkTVEycRRupXTmIr8A=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-=E2=80=A6
-> This commit introduce a read only interface of livepatch
+On Sun, 19 May 2024 19:06:55 +0530
+Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com> wrote:
 
-Please improve the changelog with an imperative wording.
+> Hi Jonathan,
+> 
+> On 19/05/24 17:59, Jonathan Cameron wrote:
+> > On Mon, 13 May 2024 13:34:27 -0700
+> > Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com> wrote:
+> >   
+> >> When devm_regmap_init_i2c() fails, regmap_ee could be error pointer,
+> >> instead of checking for IS_ERR(regmap_ee), regmap is checked which looks
+> >> like a copy paste error.
+> >>
+> >> Fixes: a1d1ba5e1c28 ("iio: temperature: mlx90635 MLX90635 IR Temperature sensor")
+> >> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>  
+> > Please make sure to pick up tags given on earlier versions.  You dropped
+> > Crt's Reviewed-by without giving a reasons. I've put it back.
+> >   
+> 
+> Sorry, I thought we should not add tags as v1-->v2: is for addressing 
+> the reviewers(Crt's) comments.
+> 
+> I will keep this in mind.
+It's a case of judging if they are likely to mind the changes.
+Here Crt had confirmed he was, so easy decision!
+
+If you drop a tag, just say why below the --- in the patch.
 
 
-=E2=80=A6
-> find out which function is successfully called. Any testing process can =
-make sure they
-> have successfully cover all the patched function that changed with the h=
-elp of this interface.
 
-* I suggest to take preferred line lengths better into account
-  also for such a change description.
+> 
+> Thanks,
+> Harshit
+> 
+> > Applied to the fixes-togreg branch of iio.git and marked for stable.
+> > I'll be rebasing that on rc1 once available. Until then it won't be visible.
+> > 
+> > Thanks,
+> > 
+> > Jonathan
+> >   
+> >> ---
+> >> This is found using smatch, only compile tested.
+> >> v1->v2: Address Crt's comments.
+> >> ---
+> >>   drivers/iio/temperature/mlx90635.c | 6 +++---
+> >>   1 file changed, 3 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/drivers/iio/temperature/mlx90635.c b/drivers/iio/temperature/mlx90635.c
+> >> index 1f5c962c1818..f7f88498ba0e 100644
+> >> --- a/drivers/iio/temperature/mlx90635.c
+> >> +++ b/drivers/iio/temperature/mlx90635.c
+> >> @@ -947,9 +947,9 @@ static int mlx90635_probe(struct i2c_client *client)
+> >>   				     "failed to allocate regmap\n");
+> >>   
+> >>   	regmap_ee = devm_regmap_init_i2c(client, &mlx90635_regmap_ee);
+> >> -	if (IS_ERR(regmap))
+> >> -		return dev_err_probe(&client->dev, PTR_ERR(regmap),
+> >> -				     "failed to allocate regmap\n");
+> >> +	if (IS_ERR(regmap_ee))
+> >> +		return dev_err_probe(&client->dev, PTR_ERR(regmap_ee),
+> >> +				     "failed to allocate EEPROM regmap\n");
+> >>   
+> >>   	mlx90635 = iio_priv(indio_dev);
+> >>   	i2c_set_clientdata(client, indio_dev);  
+> >   
+> 
 
-* Please provide the tag =E2=80=9CSigned-off-by=E2=80=9D.
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.9#n398
-
-Regards,
-Markus
