@@ -1,127 +1,111 @@
-Received: from msa.smtpout.orange.fr (smtp-83.smtpout.orange.fr [80.12.242.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC6812B8B;
-	Mon, 20 May 2024 07:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC707EAF1;
+	Mon, 20 May 2024 08:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716190940; cv=none; b=IrME58nnxlOKMfJ+qE3Q9qjBkj3sSz0+SZviaoXiq+iy17gn2DmVlQSnigcicT7pZI76QXQTbqhXuyTI4CcDji4gBui5aFEZnNW+qOwF11IJ+ElbUNc2hEVxcPxBM4+rmDkPxEZe2SOdskLlOJ5FfxiySknF5kQdBTkpx5slFIk=
+	t=1716192068; cv=none; b=r2tpzdGJHrHoA5SdwoyyjKYnmypt1jTTkEWFfF9EhY0KDM6W3UEJYSp+UI93eUfZVhDpJLFZFdeXTTRFhWSnCBsQNc7z7BTwPme8KVK3d8Di8YRZCyjp6bR9zyOcwN/XSH2VLfGrIEfl/b8qzOQ8ZeEjOtmFg6kJeHoe4SCQoDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716190940; c=relaxed/simple;
-	bh=k4k9NEelRcoi98SI9g7103KMZ9H3Z/pFf+PgoWGfjy0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HZscgJqH5i4WVKZFKzdtwfoMARRvkW/54r3Fozqle8EsssbqWA2bl4mbLjgL8BD33GaDE45Plx4wnHU8joE+fLvtRxTWgqt9VPTWxGbIAGW5uJ7hm5A8NEd/cY3MW2enk2yi5NzmFZpe1rcPZHRdgFJevQacmLO3chInj2uV3fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=t+8vRIjd; arc=none smtp.client-ip=80.12.242.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1716192068; c=relaxed/simple;
+	bh=HXoQhPqpAkaWlPvx77/Pe7iK4py1z16RYmHwOBdQZ2A=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=aWlORHQLaqEuZQY6ZcxKYikcev1KYZ2MZEXSX5PWe6MFdsnHeSBWjyh/lS4dW8Zb288ZYmfGv8XAVVnr5KgORi8UJEK4WQzyyQN/rKypcTUE0qddTtydQL8NyeV45vIWJxsfZDvbImfx+ORByudbwmWs/BiDUx/UytmOOJ9o6No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JYRRQFeP; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="t+8vRIjd"
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 8xeqsglyjml3s8xersCxfy; Mon, 20 May 2024 09:42:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1716190930;
-	bh=bdxbRY6DhIfGliSzM5MbeLiBdRI38zgyGW9MM+5fHeE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=t+8vRIjdGyNISv2Dq+QABq/jhNPkpgpmtCbCrZAauIfXEEJEm4/kSoSCe2uw1oE9H
-	 k3jvy8TEzmnOPH2k5pjGrM89Pv3MKBvuG2rOC84uZ2NAdsMRR5iMI80IommRPUFKdT
-	 vs8xkqHkDt+1H7wfBfFej7bXLLGEYVu2CuLVmdf7wQlHMwd8L7VK5yTYB/gsbbVyXU
-	 whAvKBMETZ7KKN7ftm6kOqBjwohTVXGGvLcFhay5ypfK9OL1CRPJKQcWSR9/z+/Hp/
-	 FmEPifZ8kgskWWoj6sQP0Vz2HY/1t08Qq1JTvG7hDluDPgw93lVKDxHq6v26KtdeRb
-	 oO6h4KFyha2ew==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 20 May 2024 09:42:10 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Tedd Ho-Jeong An <tedd.an@intel.com>,
-	Kiran K <kiran.k@intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-	linux-bluetooth@vger.kernel.org
-Subject: [PATCH] Bluetooth: btintel_pcie: Fix the error handling path of btintel_pcie_probe()
-Date: Mon, 20 May 2024 09:41:57 +0200
-Message-ID: <692b4749f4267436363a5a8840140da8cd8858a1.1716190895.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.1
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JYRRQFeP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716192042; x=1716796842; i=markus.elfring@web.de;
+	bh=m1O7qNjpXbTiSLCciZWoL6HuYyWekxoXYSN0Bs0YSVk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=JYRRQFeP0/4DMi3qsoF1n3FfHCwGxDwcKsyqbBcBn9SV8qUHBAGiF4tO51y9XjuV
+	 ZAskPOtGuwjEZF8X/MGsd9MKJ3kd0f7gsSJ/levuu/OoxzHkO2B23MkdlA/MIWIPF
+	 JqE03HK6Id18+KCJsnxM5sp0yAU26yp6ZN4gZWCpKzgDirB2jyn8kxzyyPzcDi9yt
+	 Ar9TDKuXO9D72sltOGpB2Lq4aEE/apnSisodYkSHJcrP0MXyFMc/Ol6Yr4WBEEdeO
+	 lhZ7ykS333jIqDMJhb7JRnMStuxVMxYXAUpf6F3xa/V+vsAO375QsFRNSxP+2qQLP
+	 q6dGZ2Rs7ZOtLg+CyA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N1Lwd-1sWaOX2lcB-00udIW; Mon, 20
+ May 2024 10:00:42 +0200
+Message-ID: <eb464408-5567-4130-b899-90ba9756adc1@web.de>
+Date: Mon, 20 May 2024 10:00:27 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Wardenjohn <zhangwarden@gmail.com>, live-patching@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+ Joe Lawrence <joe.lawrence@redhat.com>, Josh Poimboeuf
+ <jpoimboe@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+ Petr Mladek <pmladek@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240520005826.17281-1-zhangwarden@gmail.com>
+Subject: Re: [PATCH] livepatch: introduce klp_func called interface
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240520005826.17281-1-zhangwarden@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:DPRWWeXpFsZQ3K8p/zgQYyEDxVHbzbT/j6qkc2eSiAfrb40kCD5
+ Z3V1upljGa97oHvOt1Etual6WudEUL2Tf3HFY0ZyVJuEdv0GleLOcRJb4clI+YDTTr66fPJ
+ y1vYPfwTt2eGCjNB+H6KJf7QKFW/y8eFwoNXKVHF47gKKs/JwV7T8sxWcAp3jq0mBOiOHVT
+ p2bCZMPnn8mDt/Atys3cA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2fVKSG8kbUc=;Yc9XRMoFlr+JvngYg8kDNyIu42d
+ myrlfj1TUqSklkp8aKjC+xn6RtDf7mvqPN7/BSLc6EsFxonT1y5zdSt2rPtbXspqwx2G/+r6m
+ VNNvJkbm/TRF6TmeWh5x0mlp+wmyCz2oxTiujdrOXsaEWwcid3OqOdj//GoUziUV6TOA9+ZNo
+ RNoPj9qQf/JzgvNHQm9QCLIEw7aFq8vQ0IFUziiLmIKliRDGcAc4SqP3rCpYeoVOgbTKLXNTt
+ rlsW5FWuJqNVwhyaSHszUZZBei/+KkApPssS1kpkIPVjPc5+o6JoEGdw1LJ3hjvaZIMMviDLJ
+ UMggv8BRS8dBrBDEqrBqSIUvyjEZkKVs17g2MFkIXlVdkK9gqvksAvHJX20ZQ2L+nT1I7pA//
+ A03nYNzFAftVXpm75/D8oOBVzH8jwx9pDn/OSbU+5xxTiM2q0T9VpHuKHNdVaH2mJVF320z+B
+ wO8fbx4w+67l+apQBAPP8q2F82GptqLa7jjGihyERVx6p2l434tUE4ff8rde05beGpKSql5Sp
+ mn/goIPYveDBm7ja9RfsF3k01ryaCmdG8j45k83gqz8kGKIU6wBZgLyWki8TEqWDHtgO/gxTf
+ e/ctsUNtW0NulgM9FvAP3mU0h2YPIoJIPjzPa743EGd/oYWBwbJdS7yMJ7xSFaYQ99te9QbIv
+ 96a+sZev8Jkg9RG/AzNV1X0KrCZMk78w/bm9nPl5YdS51UFpsjoVrRk+pHfV0GpGs4PRCJN4Q
+ 60ypiW7ROGMmxPut+Zcb6YpwvGLTCjyOwloaoY7cHa0lxA8GMOta8xKvwTeMj9fwO1+K+FlDY
+ SD6YbM7PvwZz62SGHJ0Buc6WOymOUe9pxNb2ErMOoCrgs=
 
-Some resources freed in the remove function are not handled by the error
-handling path of the probe.
+Please add a version identifier to the message subject.
 
-Add the needed function calls.
 
-Fixes: c2b636b3f788 ("Bluetooth: btintel_pcie: Add support for PCIe transport")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
-Maybe incomplete.
----
- drivers/bluetooth/btintel_pcie.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+=E2=80=A6
+> If the patched function have bug, it may cause serious result
+> such as kernel crash.
 
-diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_pcie.c
-index 5b6805d87fcf..d572576d0dbc 100644
---- a/drivers/bluetooth/btintel_pcie.c
-+++ b/drivers/bluetooth/btintel_pcie.c
-@@ -1280,17 +1280,17 @@ static int btintel_pcie_probe(struct pci_dev *pdev,
- 
- 	err = btintel_pcie_config_pcie(pdev, data);
- 	if (err)
--		goto exit_error;
-+		goto exit_destroy_worqueue;
- 
- 	pci_set_drvdata(pdev, data);
- 
- 	err = btintel_pcie_alloc(data);
- 	if (err)
--		goto exit_error;
-+		goto exit_free_irq_vectors;
- 
- 	err = btintel_pcie_enable_bt(data);
- 	if (err)
--		goto exit_error;
-+		goto exit_free_pcie;
- 
- 	/* CNV information (CNVi and CNVr) is in CSR */
- 	data->cnvi = btintel_pcie_rd_reg32(data, BTINTEL_PCIE_CSR_HW_REV_REG);
-@@ -1299,17 +1299,25 @@ static int btintel_pcie_probe(struct pci_dev *pdev,
- 
- 	err = btintel_pcie_start_rx(data);
- 	if (err)
--		goto exit_error;
-+		goto exit_free_pcie;
- 
- 	err = btintel_pcie_setup_hdev(data);
- 	if (err)
--		goto exit_error;
-+		goto exit_free_pcie;
- 
- 	bt_dev_dbg(data->hdev, "cnvi: 0x%8.8x cnvr: 0x%8.8x", data->cnvi,
- 		   data->cnvr);
- 	return 0;
- 
--exit_error:
-+exit_free_pcie:
-+	btintel_pcie_free(data);
-+
-+exit_free_irq_vectors:
-+	pci_free_irq_vectors(pdev);
-+
-+exit_destroy_worqueue:
-+	destroy_workqueue(data->workqueue);
-+
- 	/* reset device before exit */
- 	btintel_pcie_reset_bt(data);
- 
--- 
-2.45.1
+Wording suggestion:
 
+   If the patched function has a bug, it might cause serious side effects
+   like a kernel crash.
+
+
+> This is a kobject attribute of klp_func. Sysfs interface named
+>  "called" is introduced to livepatch =E2=80=A6
+
+Under which circumstances will imperative wordings be applied for
+another improved change description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
+
+
+=E2=80=A6
+> ---
+>  include/linux/livepatch.h |  2 ++
+=E2=80=A6
+
+You may present version descriptions behind the marker line.
+Would you like to indicate any adjustments according to your change approa=
+ch
+(from yesterday)?
+https://lore.kernel.org/lkml/20240519074343.5833-1-zhangwarden@gmail.com/
+
+Regards,
+Markus
