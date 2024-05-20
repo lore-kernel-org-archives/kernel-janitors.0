@@ -1,123 +1,126 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E411C1BC43
-	for <kernel-janitors@vger.kernel.org>; Mon, 20 May 2024 09:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55192468E;
+	Mon, 20 May 2024 09:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716197521; cv=none; b=nJsBnk6ocHrNgLr0ps4LUZa+7RDSiUzv4g414Jzs3Eq7hqdTf6JZwoc4ukyFWYZk8Ba/dhDbPp831o1sldlv3AQCO+XyGNRhtkxlsctsYFzFfI7g9BU+PnuZIoetN/cKFcERPoX4AnmdhFDay4IB1mciKBatZu/H1wbf+Rey/6g=
+	t=1716197669; cv=none; b=VILilq0h1zKsouxozy3qthGN7W18wtMcSeHOpGMaVYzIoRm4/WafbfjYA13x95jFz+SRuDVKLf37ZnmU5QrbMpSIZsrPzlHgQDvaL8Gq1KEJjj6EsHme7i0BcPQY13Sj7gSwNT6N6KcMBNdcrowkbuS7G39hHTsC5vgP7XeMVbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716197521; c=relaxed/simple;
-	bh=fAwbFrhZucuUROZuu6MGO86O8/hvc7iTiETnrY7aFhc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GCVEeYpqZIjHUvl/TGcw5EPP7ZKiZhoZ8qdPRnYpExkXLhBvMgPGxW+2PMyu8p2o8YOXXkpNU09Vqx1sUHGhfD1Oeia3tlGh4aQufCjkZ8AvOWvRMcSU6AeD2p8uKMT4YCPlP4V5m1cP4q16+dmEz/tpR69VrFJ954roXcQXy1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mdwplcUz; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1716197669; c=relaxed/simple;
+	bh=Zjn1F07rtTniBpTF31UU+SvXqEBiG8xGCtaMgsAMhmo=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=G0GO2Ybtgs3Gk//udFg3phGD5fJBYH72QIX/mdGwPvzkSMD6b7Yw+M9zq/kfh+BVe1eSk+bIHsimE9A0kEQS4rss4vMK2avS167fzTPF2jtKzyTmFz8t4qPS/wYuGFozeJnd3bbuugevSdJnWgrMtBCzUB65r27NYGOy9iPdQ1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KaXg0zs7; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mdwplcUz"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1ec92e355bfso78350705ad.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 20 May 2024 02:31:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KaXg0zs7"
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-23d477a1a4fso2019745fac.3;
+        Mon, 20 May 2024 02:34:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716197518; x=1716802318; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gXcTr17OnY8F+y7pmTPTBCYGtlM1VN1xAJVrjdqU4FQ=;
-        b=mdwplcUzhjzfcshi8DefU5V6JxPFbVR29v/II0Yag5Xn0aBEQX0xTs8XE2OAJEpRrs
-         vSmmYr7NxNBs8CkLQFQqnS1aylkznKnHiL/LuwTLoRlGHCjY9BGPG1VlLdEJO++cZwsS
-         fYYfzm6KxtgRL80o0Ioc4nnUdVsYKjTVoMt2QeOxwT8BULP2nW4J0H4DpEzblrVJpJ6l
-         BV2oZsnGknsx1s0VrLfIBxOekGntydFvHZxfLjEszKi/CwxnGRuzPr5ap1cQcj0+MLIq
-         /WgxoOEW+swmatM3A9J7XxOHnd/G8gs1hppWjFY1EE633eLRPrE88jYdlTgpB83H255y
-         AeEQ==
+        d=gmail.com; s=20230601; t=1716197667; x=1716802467; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4eZ825pnSzBKL6Z+MD7+agBNrXJhAhcfuzn1pCYFodw=;
+        b=KaXg0zs7c1kS7NLLfsg206bYjY+5T8NVIgKhvwB3i9k+7KIfJ2bjMxuWu67pD85BAk
+         Zr2ZQ9per9aGw+/KPa31Y5p/JbZTFOqRD2EaUgtTWHW1iu0cmYvYaKSR9Jup22/h4Sg2
+         NkGmkoBSDuLBUmEoBK1DHf4DLdUoo+G15/G6+OQC2LC0Us6hnkhUCoYanX7S6SSa9M2b
+         bWSL+GUudwkqjUP4+V98zMSXeiRCdL25xWSLynzCr3Hdyjrz1RqHiGF2YfjrduaOT3Bn
+         0wVnHJMMGdzus5AnctX2fMYu7o8u03PkdnZbBzqwh6fSxF92zg2N1wuAp8lDXsDebL4V
+         so7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716197518; x=1716802318;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gXcTr17OnY8F+y7pmTPTBCYGtlM1VN1xAJVrjdqU4FQ=;
-        b=ODwzd0hdcDHETcUS9/ZhsrelgQlPPig+60H7Fi+D+OOP9GG3BiAdVrGH54KoM7LwV/
-         zoQWqJftb3bkdBQJdruSZWnJDiBjKU2D67Ej1XkTsZ6srN/jRqc91QXe5CpkN5w0hczl
-         8lXDhyI8JVU2UeOYE8vnvL45o/PjMGia03lYc/8Y5tc8MeL4rIoaDEO7y82uF/9TjdF5
-         VYX+cjvTBFDZst0GHPC+p1SXuScpl9QWgKawijcbbiBjyfISJBP5upPLgp4S2/gf8dTl
-         zO67kDdGAmy+XlczAN/ioRgL7UjZAvfZ1H/IU+yMF+s6Iqw47rc3KTZrTm6BXieOBukN
-         J7hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUj8V1nzfsEuSllS9/eXGy+ZCObYVAgp8TOMR5JHh89WJ7vaAMzG9Ax8F4ZwbiV3yfY1Wu4N5XyfC11LqUN1jw9j+suFyeTX5tFYtRtE7+0
-X-Gm-Message-State: AOJu0YzKPpTRZBReGI6M449JnU9xBTbKQwygddLPA3eB0jmY47bf472p
-	muCd0p/IAsIL1x2zfxsCiLWN4fmVMik34vq6bP0W9urHgFMzqqP2HYtu2NJdWmw=
-X-Google-Smtp-Source: AGHT+IGMHTUCwV4E0Ap2p7ORxGvqyBKBjNs1RXtEdI5wPX18pjSwCUiOZO84RIQPeHBKQrbbAVVGHA==
-X-Received: by 2002:a17:902:c40b:b0:1e8:6614:51cc with SMTP id d9443c01a7336-1ef43d0acb6mr329578705ad.5.1716197518171;
-        Mon, 20 May 2024 02:31:58 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c15d516sm199167955ad.274.2024.05.20.02.31.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 May 2024 02:31:57 -0700 (PDT)
-Date: Mon, 20 May 2024 15:01:55 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Yangtao Li <tiny.windzz@gmail.com>
-Subject: Re: [PATCH 2/2] cpufreq: sun50i: replace of_node_put() with
- automatic cleanup handler
-Message-ID: <20240520093155.bn4m7lpvkagopxve@vireshk-i7>
-References: <20240520083522.vvga3aqjg4w3adkj@vireshk-i7>
- <fb6ee370-54d7-4eff-8a44-ee7cf2d13e61@web.de>
+        d=1e100.net; s=20230601; t=1716197667; x=1716802467;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4eZ825pnSzBKL6Z+MD7+agBNrXJhAhcfuzn1pCYFodw=;
+        b=ZV64LHLjSnXXz4r6fB/wflGxXXN7/Vj8Bio3ks6MNDQhx7zOljhzSHbDhoquRzISS4
+         Da+5uxvFbprtRhlAdnrAKYOtA3dgkAaUTolByRT3q2JwJDTFwhMvhTV9KjyyoZJDk5TS
+         DYefDCSuB+++SiGCJ1uizKiBy5qNLFVADY2lQ3hUwLWz1L2uCSLNcZnPlMO6qDE4EYq1
+         KUmYZwgCvf3h2eyHYPUwGg1P17ikVR9+VWxbUd0ToS7WEIPSlHuA3HlDYOSzxAgqFLnE
+         SghxDCogPkwMd1xUdxrEqw3ULbarOxgztG8lgGDCwxmHatnashQ4UsISNA9QTWBcuzBJ
+         Y/bw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzPHw4ZqHwj31Lar9XKKWBepiu/iwnNgwT3DIiAtRB09Kd7tiBGJLtAXY7EbkHeYHeOriWOUQNPEeiRoJPQP2zlawYPgiF4CnVB5Pxqq/tPkYcOiBMOY/NdReSK7X/it0BAEMMYZZ9IJSuikgD
+X-Gm-Message-State: AOJu0YwuD/YTH6IAW73OJbQ6IsPVgJPX/Hqz0zhr1rUVOukhoM0r8kWW
+	9oFCS0zFeFbp72dYfefSVx5V/ABqJwrJn5o64LKIqq7m9NkqaV+i
+X-Google-Smtp-Source: AGHT+IHZpWo5mmzw/yMUCdQ4hm6LqOJHS0i7yylA7xFh8dTisfm7nyBUhZxtLmWQ2W4TSBBDIA7TnQ==
+X-Received: by 2002:a05:6871:207:b0:221:96b2:5a4e with SMTP id 586e51a60fabf-241731118d4mr40095508fac.58.1716197667424;
+        Mon, 20 May 2024 02:34:27 -0700 (PDT)
+Received: from smtpclient.apple ([47.246.179.0])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-63411346c12sm16640737a12.80.2024.05.20.02.34.24
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2024 02:34:26 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fb6ee370-54d7-4eff-8a44-ee7cf2d13e61@web.de>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH] livepatch: introduce klp_func called interface
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <eb464408-5567-4130-b899-90ba9756adc1@web.de>
+Date: Mon, 20 May 2024 17:34:12 +0800
+Cc: live-patching@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ Jiri Kosina <jikos@kernel.org>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Miroslav Benes <mbenes@suse.cz>,
+ Petr Mladek <pmladek@suse.com>,
+ LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <7F8BE9D1-D68E-4560-8D5C-9025122963B4@gmail.com>
+References: <20240520005826.17281-1-zhangwarden@gmail.com>
+ <eb464408-5567-4130-b899-90ba9756adc1@web.de>
+To: Markus Elfring <Markus.Elfring@web.de>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-On 20-05-24, 11:28, Markus Elfring wrote:
-> …
-> > > > +++ b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> > > > @@ -131,14 +131,14 @@ static const struct of_device_id cpu_opp_match_list[] = {
-> > > >  static bool dt_has_supported_hw(void)
-> > > >  {
-> > > >  	bool has_opp_supported_hw = false;
-> > > > -	struct device_node *np;
-> > > >  	struct device *cpu_dev;
-> > > >
-> > > >  	cpu_dev = get_cpu_device(0);
-> > > >  	if (!cpu_dev)
-> > > >  		return false;
-> > > >
-> > > > -	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-> > > > +	struct device_node *np __free(device_node) =
-> > > > +		dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-> >
-> > Won't that result in build warning, mixed code and definitions now ?
-> 
-> I suggest to take another look at a corresponding information source.
-> 
-> [PATCH v3 04/57] kbuild: Drop -Wdeclaration-after-statement
-> https://lore.kernel.org/all/20230612093537.693926033@infradead.org/
+OK, I will try to optimize my description after the patch is reviewed. I =
+am sure there are something still need to be fix for that patch.
 
-Ah, I wasn't aware of this one.
+> On May 20, 2024, at 16:00, Markus Elfring <Markus.Elfring@web.de> =
+wrote:
+>=20
+> Please add a version identifier to the message subject.
+>=20
+>=20
+> =E2=80=A6
+>> If the patched function have bug, it may cause serious result
+>> such as kernel crash.
+>=20
+> Wording suggestion:
+>=20
+>   If the patched function has a bug, it might cause serious side =
+effects
+>   like a kernel crash.
+>=20
+>=20
+>> This is a kobject attribute of klp_func. Sysfs interface named
+>> "called" is introduced to livepatch =E2=80=A6
+>=20
+> Under which circumstances will imperative wordings be applied for
+> another improved change description?
+> =
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
+>=20
+>=20
+> =E2=80=A6
+>> ---
+>> include/linux/livepatch.h |  2 ++
+> =E2=80=A6
+>=20
+> You may present version descriptions behind the marker line.
+> Would you like to indicate any adjustments according to your change =
+approach
+> (from yesterday)?
+> =
+https://lore.kernel.org/lkml/20240519074343.5833-1-zhangwarden@gmail.com/
+>=20
+> Regards,
+> Markus
 
-> See also:
-> https://gcc.gnu.org/onlinedocs/gcc-13.2.0/gcc/Warning-Options.html#index-Wdeclaration-after-statement
-> 
-> 
-> Would you like to stress a scope reduction for the affected local variable
-> by adding any curly brackets?
-
-No, it looks fine.
-
--- 
-viresh
