@@ -1,102 +1,87 @@
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 9C74B200CB;
-	Mon, 20 May 2024 09:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+Received: from msa.smtpout.orange.fr (out-71.smtpout.orange.fr [193.252.22.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3C8481AA;
+	Mon, 20 May 2024 09:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716198118; cv=none; b=TNeiP4uVF1Fru+DVhY8zHNQT7CJFuWlA3rBifqZ5WPf3NDBt4FcUafQQERl4+7Xd1hXrSxQHeIZLEmM42HRDs8G3ZebnYh59vp48gf8OY49bnMSbu9v/LIcYWzmvrtHOOyqOOv7FB2uCsvhq0EiEtDqbJOMuZnkTknV1WeolKbs=
+	t=1716198973; cv=none; b=swlmgUDTckhAEiQMuduBurrTOzi/HULsp6SeCdF9kEVS4ZyqgL/S/+SaD0TWO94ETQBQLp717x95efQZC2rJEzhf64SmLdXxSG9JtSxcSMf91zbE5GGTyG2XIXfmocYryGiFXoziZDSMz/vxiDSX3EZLGtFSIy5fyY+VDAaZng4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716198118; c=relaxed/simple;
-	bh=MSwJRE4bNdzB4NsI2nyECb0QTcxBA2yfxV2+VmIveKg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type; b=LTUm9JLfumWBJq4kVFauPf08wVcntioDnI5r/697wQ6jsfScp+rJQkGPyS82QDAUugmrWJ9R3OIzUbIO1MBHaZfQ4oQz/fe0WUK1x8oKNDwqvmR4OJ5+yIEIidEYZ8HRzduwFa3WxlRpB5WePTF0+OIatx1d9G5PZqZSKg1Llik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from [172.30.20.101] (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 32A546028428D;
-	Mon, 20 May 2024 17:41:50 +0800 (CST)
-Message-ID: <317ee58d-b435-0d79-cc57-ea28ae0fff3f@nfschina.com>
-Date: Mon, 20 May 2024 17:41:49 +0800
+	s=arc-20240116; t=1716198973; c=relaxed/simple;
+	bh=8pN9+dZPsIe+Zp9h68CLnh+ugMClUzOnDxV9mWnTvS8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QW649owKu7xNVInGuDif8TN3CkPG/5w4v+5xiyylF2Nrq8zlavKL6IzkxDktmg+DbWjYznKp0pVR0WKdX8Q2DMzzDp8/yPa2/CnP3ZlDQR9VEDxQa0Ro6Kk1C3o6J9gnvn8C+HXsy55ZU1K7bgomEXiwVVyXWd3/8MGzDgIiJcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=p5pk6DQb; arc=none smtp.client-ip=193.252.22.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="p5pk6DQb"
+Received: from localhost.localdomain ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id 8zkSsPtMlFWfB8zkTs2sLr; Mon, 20 May 2024 11:56:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1716198966;
+	bh=grLk96lCrEC21k00xQkJtYdNWTj170Ht3ul8K1nz6dA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=p5pk6DQbYbKbK3DM+7H1QiHCOS28wb2JGj6lff//z844isqef6EJcGjnQ0t9OKShd
+	 8msdT59fxLoKPBRA8xeU3iSKYqVeMLKPgIbPZXdFu7C4ftw6ug6ki68z0T6CJROUh+
+	 DJf3mBEm2wqDhyEGHp01XyCUtbw9ku0UwsjFnNYNlQdw2wNsRMhiu9ywgumgV70QzU
+	 SW3MHVLXqv938UswKDuZshl/HAK0mBdqXlQfGT08d9bryPe5PaVI+coluoi39Z4LE6
+	 kaKj8KhIufPeR/wsr6jV+XSC5rs1d522olCsf9Xzwoiurynf0meQjNdMf3q3kXL3dj
+	 Xbs5IkTGAMNDg==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 20 May 2024 11:56:06 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-media@vger.kernel.org
+Subject: [PATCH] media: intel/ipu6: Fix some redundant resources freeing in ipu6_pci_remove()
+Date: Mon, 20 May 2024 11:55:54 +0200
+Message-ID: <33dbf7b5c1b1b94d64a13441b69e1ff976caaa62.1716198935.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Subject: Re: [PATCH 1/2] Bluetooth: btintel: remove useless code in
- btintel_set_dsm_reset_method
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, nathan@kernel.org,
- ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-Content-Language: en-US
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-In-Reply-To: <28196c54-3c65-4646-84f6-76da79368f8e@molgen.mpg.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2024/5/20 13:12, Paul Menzel wrote:
-> Dear Su,
->
->
-> Thank you for your patch. Some minor comments.
->
->
-> Am 20.05.24 um 04:16 schrieb Su Hui:
->> Clang static checker(scan-build) warning:
->
-> Please add a space before (. Noting the version of scan build would 
-> also be nice.
-Sure, I will add this in v2 patch. By the way, the scan-build's version 
-is llvm-17.0.
->
->> drivers/bluetooth/btintel.c:2537:14:
->> Value stored to 'handle' during its initialization is never read.
->>
->> No need to repeatedly assign values to 'handle'. Remove this useless
->> code to save some space.
->
-> The plural “values” is misleading to me. Maybe just remove the 
-> sentence, and say:
->
-> Remove this unused assignment.
->
-> For the summary, “useless code” could also be more specific:
->
-> Bluetooth: btintel: Remove unused assignement in 
-> btintel_set_dsm_reset_method()
-Yes, it's better for me.
->
-> Maybe also add a Fixes: tag.
+pcim_iomap_regions() and pcim_enable_device() are used in the probe. So
+the corresponding managed resources don't need to be freed explicitly in
+the remove function.
 
-It's a cleanup not a bug fixing, so I think Fixes: tag is unnecessary.
+Remove the incorrect pci_release_regions() and pci_disable_device() calls.
 
-Thanks for you suggestions! I will send v2 patch after the CI tests done.
+Fixes: 25fedc021985 ("media: intel/ipu6: add Intel IPU6 PCI device driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/media/pci/intel/ipu6/ipu6.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Su Hui
+diff --git a/drivers/media/pci/intel/ipu6/ipu6.c b/drivers/media/pci/intel/ipu6/ipu6.c
+index d2bebd208461..f587f609259d 100644
+--- a/drivers/media/pci/intel/ipu6/ipu6.c
++++ b/drivers/media/pci/intel/ipu6/ipu6.c
+@@ -727,9 +727,6 @@ static void ipu6_pci_remove(struct pci_dev *pdev)
+ 	pm_runtime_forbid(&pdev->dev);
+ 	pm_runtime_get_noresume(&pdev->dev);
+ 
+-	pci_release_regions(pdev);
+-	pci_disable_device(pdev);
+-
+ 	release_firmware(isp->cpd_fw);
+ 
+ 	ipu6_mmu_cleanup(psys_mmu);
+-- 
+2.45.1
 
->
->
->> ---
->>   drivers/bluetooth/btintel.c | 2 --
->>   1 file changed, 2 deletions(-)
->>
->> diff --git a/drivers/bluetooth/btintel.c b/drivers/bluetooth/btintel.c
->> index 0c855c3ee1c1..f1c101dc0c28 100644
->> --- a/drivers/bluetooth/btintel.c
->> +++ b/drivers/bluetooth/btintel.c
->> @@ -2542,8 +2542,6 @@ static void btintel_set_dsm_reset_method(struct 
->> hci_dev *hdev,
->>           RESET_TYPE_VSEC
->>       };
->>   -    handle = ACPI_HANDLE(GET_HCIDEV_DEV(hdev));
->> -
->>       if (!handle) {
->>           bt_dev_dbg(hdev, "No support for bluetooth device in ACPI 
->> firmware");
->>           return;
