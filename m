@@ -1,87 +1,102 @@
-Received: from msa.smtpout.orange.fr (smtp-70.smtpout.orange.fr [80.12.242.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91714320E;
-	Mon, 20 May 2024 09:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.70
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 9C74B200CB;
+	Mon, 20 May 2024 09:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716198063; cv=none; b=eCSlYo/F3zdV7PvEHsSIMYBqR7RX7Nr6xS7ZfQjGl29J2kVa1AfCI5tJHUf8GKwFEe3yh4aNHTtOcT4HgXt+LdDiPnB7DDS7FQGURDC16wuP3Y6ArvTCpEsiU7tz8pTIgK7Wrk3B/xsQEoKNXPhyrobVwh91HbW8SiDxHWN2ShI=
+	t=1716198118; cv=none; b=TNeiP4uVF1Fru+DVhY8zHNQT7CJFuWlA3rBifqZ5WPf3NDBt4FcUafQQERl4+7Xd1hXrSxQHeIZLEmM42HRDs8G3ZebnYh59vp48gf8OY49bnMSbu9v/LIcYWzmvrtHOOyqOOv7FB2uCsvhq0EiEtDqbJOMuZnkTknV1WeolKbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716198063; c=relaxed/simple;
-	bh=nVF0WvM42TTEecOP0ATh7bXHJ+8LpyzwZuXYehCdffM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dUXM3of07wCtXoqqEIH7piH1cSdwhYfCKvLewhcvv+Jfdsr9swmkofQ+1MxNsAFaz0z3HPsEfroL03fkV/L/BizJX7hix44OS7M8RxTtxLv+kkafGL92mVuVgBU5uSdnXISotyMhJJpOBNcf56LaP+n6D0Y+KLtHNKG0fZuEKcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=L+2yBEhh; arc=none smtp.client-ip=80.12.242.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="L+2yBEhh"
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 8zVgsQHohrcIM8zVgsAdfk; Mon, 20 May 2024 11:40:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1716198053;
-	bh=3kjknBbjqfJQ6eLw8k3gflhIVcgh33eEwLFPSws9YCE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=L+2yBEhhgXi5xu2+LX9rSSwCMEbjT5QHl4m86H69IUBp1fMCGwNDcI+Uk5cNUKJwO
-	 B5A0GHGgSK3/XSJWXi1qZ+pCVqUX4832Ujg5925ZFmBOsmXN8l5PNZ6/f1C8YjOFrB
-	 ZJ/Q6dJ5aa6zqvnYVCJH/VvJnnclhbgGMuv3uSVpUgE5jX6i3Zah9nfranCk+lXFDM
-	 msfF8qGUAEfd6fTYV3OLoDLqRyRf8yiY+n6b62yr4VutEUjhw8Yv6qGqbEmCh+3XOo
-	 jLgNLXk+QFwblsvPg6jKAIvZKRFLOS0mjQCjeOkwAtE1hmy2EEhkmaq7zDJpXLCgLb
-	 EDrvMFjLxmxlQ==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 20 May 2024 11:40:53 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Michal Simek <michal.simek@amd.com>,
-	Sean Anderson <sean.anderson@linux.dev>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] drm: zynqmp_dpsub: Fix an error handling path in zynqmp_dpsub_probe()
-Date: Mon, 20 May 2024 11:40:37 +0200
-Message-ID: <974d1b062d7c61ee6db00d16fa7c69aa1218ee02.1716198025.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716198118; c=relaxed/simple;
+	bh=MSwJRE4bNdzB4NsI2nyECb0QTcxBA2yfxV2+VmIveKg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=LTUm9JLfumWBJq4kVFauPf08wVcntioDnI5r/697wQ6jsfScp+rJQkGPyS82QDAUugmrWJ9R3OIzUbIO1MBHaZfQ4oQz/fe0WUK1x8oKNDwqvmR4OJ5+yIEIidEYZ8HRzduwFa3WxlRpB5WePTF0+OIatx1d9G5PZqZSKg1Llik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.101] (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 32A546028428D;
+	Mon, 20 May 2024 17:41:50 +0800 (CST)
+Message-ID: <317ee58d-b435-0d79-cc57-ea28ae0fff3f@nfschina.com>
+Date: Mon, 20 May 2024 17:41:49 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Subject: Re: [PATCH 1/2] Bluetooth: btintel: remove useless code in
+ btintel_set_dsm_reset_method
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com, nathan@kernel.org,
+ ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+Content-Language: en-US
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <28196c54-3c65-4646-84f6-76da79368f8e@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-If zynqmp_dpsub_drm_init() fails, we must undo the previous
-drm_bridge_add() call.
+On 2024/5/20 13:12, Paul Menzel wrote:
+> Dear Su,
+>
+>
+> Thank you for your patch. Some minor comments.
+>
+>
+> Am 20.05.24 um 04:16 schrieb Su Hui:
+>> Clang static checker(scan-build) warning:
+>
+> Please add a space before (. Noting the version of scan build would 
+> also be nice.
+Sure, I will add this in v2 patch. By the way, the scan-build's version 
+is llvm-17.0.
+>
+>> drivers/bluetooth/btintel.c:2537:14:
+>> Value stored to 'handle' during its initialization is never read.
+>>
+>> No need to repeatedly assign values to 'handle'. Remove this useless
+>> code to save some space.
+>
+> The plural “values” is misleading to me. Maybe just remove the 
+> sentence, and say:
+>
+> Remove this unused assignment.
+>
+> For the summary, “useless code” could also be more specific:
+>
+> Bluetooth: btintel: Remove unused assignement in 
+> btintel_set_dsm_reset_method()
+Yes, it's better for me.
+>
+> Maybe also add a Fixes: tag.
 
-Fixes: be3f3042391d ("drm: zynqmp_dpsub: Always register bridge")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/gpu/drm/xlnx/zynqmp_dpsub.c | 1 +
- 1 file changed, 1 insertion(+)
+It's a cleanup not a bug fixing, so I think Fixes: tag is unnecessary.
 
-diff --git a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-index face8d6b2a6f..f5781939de9c 100644
---- a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-+++ b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-@@ -269,6 +269,7 @@ static int zynqmp_dpsub_probe(struct platform_device *pdev)
- 	return 0;
- 
- err_disp:
-+	drm_bridge_remove(dpsub->bridge);
- 	zynqmp_disp_remove(dpsub);
- err_dp:
- 	zynqmp_dp_remove(dpsub);
--- 
-2.45.1
+Thanks for you suggestions! I will send v2 patch after the CI tests done.
 
+Su Hui
+
+>
+>
+>> ---
+>>   drivers/bluetooth/btintel.c | 2 --
+>>   1 file changed, 2 deletions(-)
+>>
+>> diff --git a/drivers/bluetooth/btintel.c b/drivers/bluetooth/btintel.c
+>> index 0c855c3ee1c1..f1c101dc0c28 100644
+>> --- a/drivers/bluetooth/btintel.c
+>> +++ b/drivers/bluetooth/btintel.c
+>> @@ -2542,8 +2542,6 @@ static void btintel_set_dsm_reset_method(struct 
+>> hci_dev *hdev,
+>>           RESET_TYPE_VSEC
+>>       };
+>>   -    handle = ACPI_HANDLE(GET_HCIDEV_DEV(hdev));
+>> -
+>>       if (!handle) {
+>>           bt_dev_dbg(hdev, "No support for bluetooth device in ACPI 
+>> firmware");
+>>           return;
