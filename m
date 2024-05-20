@@ -1,83 +1,104 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCAA54789;
-	Mon, 20 May 2024 13:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE9C53815;
+	Mon, 20 May 2024 13:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716212497; cv=none; b=h8vJ/eB6FqgOlaZ9Sd8szV7QRRuefh46fdlgt+U9l4S7QakPdLtiWrWr52JFXdQYy7VrP3GGirNEGjT6qkoFKtv55Uv24iwhrIQWR5KkF0XAEAPfOqQnr9T6WvKMB17mTxIusxSUNPwLl9k80G40slWLH1jbyM6hvv5NWXxKDGQ=
+	t=1716212944; cv=none; b=Fwk1IIO524prynlUMuLuHm3Hdoj7V9/UVGl6VJE86QmUS2BtxKZFg7GfRqnPd/aBl/SNb4W63I8ZiUx723qbSaECx2ac6O3UI5vGXTu203agVXLQ3qUzuTKQlKVtrzEPl5/OoJerPjf70mA3og72qiRXRBn0PSpBIjXUhO+Io3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716212497; c=relaxed/simple;
-	bh=tDiANetDoW1pQLr/KuXUjU82Zacm1RZP8bbd93enBmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oom3q+9BUtjhj80I2ihIfbAKX8cyQV079d1LW6NkMbYmeIJHe1lwmgPKknU5UtA2611F8aP8Bhsvv42xDkjLDU6v7pPaSVrHY/lWoUq9Cae6amgK8U4VUmCkrWov3JCh9OvL4whdOFp9t/e+e1/qQZHsPOatP3kzL3TCyHXrPL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=dFQrREXY; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1716212944; c=relaxed/simple;
+	bh=6gAQwjlt1Lf6/xnYJFSYyzHnBMyQlxfbiPdG5vR45kM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rhiXcH3dRdjnECSKfJLow5DWA6IhwdlSRxcMv2VlF7axIGk2NBhZIx5WnkhsjitcKvMGcox0+dj1y8to3ytZhLhdHQxNv6T3vzujZzkctLNlWJF2FxZoSNnbHXiX/reVmCIaUf4s3ToucwhHhOC6iVftPABAazwmBS/xj37Qiyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MKPOp2UP; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dFQrREXY"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=GgIHxPkfIqu3jiSSto02RWnKkf1y+ggjPEgehOTqsBM=; b=dF
-	QrREXY6vZiR7rSNZCz+DDVvWrxiUt1oPG78n7yje788+FHEnXJ8BmFIV88pJ3EShJ75hMA3r3TLPR
-	g/B/4O20JEgiWctoXWmIif9WSIQ19NJQCr+vsSkqZ7w/ZOn5oc6QB0iG6OrImNMEQMDgbMHJZYtVQ
-	UdZWtpTuGv2TuzE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s93Gc-00FhSS-9z; Mon, 20 May 2024 15:41:30 +0200
-Date: Mon, 20 May 2024 15:41:30 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: grygorii tertychnyi <grembeter@gmail.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>,
-	Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.com>,
-	bsp-development.geo@leica-geosystems.com, linux-i2c@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Peter Korsgaard <peter@korsgaard.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] i2c: ocores: set IACK bit after core is enabled
-Message-ID: <a42d75ad-8065-49f0-906a-c8ae3761457c@lunn.ch>
-References: <20240517191000.11390-1-grygorii.tertychnyi@leica-geosystems.com>
- <6eee1069-81ae-495a-850f-7f526006db8b@web.de>
- <CAGFuAuyXhBT8Nkvz5qN8iejeoHMFmx1b86tTNmpVfQ2xqjMtLw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKPOp2UP"
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-6f12d22331fso1610036a34.1;
+        Mon, 20 May 2024 06:49:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716212942; x=1716817742; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6gAQwjlt1Lf6/xnYJFSYyzHnBMyQlxfbiPdG5vR45kM=;
+        b=MKPOp2UPQhr1D92GmxXvdsrnRaOeKM0rlEAaaiVVPe38zrHDGtYUYNr4Uxc2wGE/5Y
+         vNjN1yO06/dwX5753eSJVVNN/em2d507tNPhdTqbWLRQNfCB3V6BBi0iPMwKaDi8M0hw
+         dN+R2CJirAduvB2t4K+XZ8roXq/qVA+TzwZrmZWxa/ow1Tva4B5GPinznwf2/URE81Fk
+         vo0fGooMCWQ96n2nZ1MmHN7q5B8qzr9AO6/77BiCnd2VtLX77hgSpYp6Lsw50a1onQR2
+         7T/z2Hv9ZsiHLeveEvX3rsZkxQGgyfxVT+INEQfcdQNd77+IoW6LMgowQMqRo/5+m5/F
+         di3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716212942; x=1716817742;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6gAQwjlt1Lf6/xnYJFSYyzHnBMyQlxfbiPdG5vR45kM=;
+        b=HF6rzqfaMBX0OvlO3ZFB1pPZ2N6BNUP6qcdkg1LhiclAYflpFEYrWC708rjElvi9zl
+         c0ftzyjvzNEAgE/gDdp+OIbV4gI1yUi2m/ATRtbTRubt/kHjkdPfDznV3/OxZnz4s+nY
+         jkL/1Ec5SCIDTeWUtyyrSIJ6XgmZOlzG0JQSxuF9v8wf3A09zvkyiOi415qgiHfcUERF
+         UrRjItD45Y8wZQp0vN8J99fNrm5f1/qNKqkCgsVBH2eTHb5faZlDVjk/L9U1MiTnDan/
+         QfCi3cAeF2WOLB1rXan++Gof1CnanF7sSEgi8cTzQVw4XAFE8VgNm8n0MA8LZDzW/Wrc
+         2d+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWaQwRERi/jRvihcUX7tT8oh1MIgsNEYGaVI6FHSHLuyOuJIlA1Fy3Vxi1q8OWBc1bK8ciHHBYQS4t76Nnmj3iY6DHFc6UoNiT/QXLFdfoyPk2rhSPj6KYvytK0DwotQx+hMOLE
+X-Gm-Message-State: AOJu0Yx4VHWYrbfNIn+bgIIkU8946vo0+lWPAt2inRQiGnWlDwyVOiDY
+	24gWVIru5Y/Rm5f1EOnKP4MHjDotxXqLZxVGbKSkXFo3ScC83c8Z
+X-Google-Smtp-Source: AGHT+IGKZLu/Z9N+xI6zYc7/lPYsbvLG0rFYVkPMmquhfoFbH4AYb6GNldD6sgF8oVfnen71ZoObwA==
+X-Received: by 2002:a9d:63d0:0:b0:6f0:e54b:d968 with SMTP id 46e09a7af769-6f13d83ba47mr2554300a34.16.1716212942395;
+        Mon, 20 May 2024 06:49:02 -0700 (PDT)
+Received: from ?IPV6:2603:8080:2300:de:a9f0:3fbf:c113:e332? ([2603:8080:2300:de:a9f0:3fbf:c113:e332])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f10bdfab8csm2872239a34.28.2024.05.20.06.49.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 May 2024 06:49:01 -0700 (PDT)
+Message-ID: <cfdf1ee1-41a3-46f1-9a71-ad09894ee931@gmail.com>
+Date: Mon, 20 May 2024 08:49:00 -0500
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: SEV: Fix unused variable in guest request handling
+To: Markus Elfring <Markus.Elfring@web.de>,
+ Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-coco@lists.linux.dev
+Cc: LKML <linux-kernel@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>
+References: <20240513181928.720979-1-michael.roth@amd.com>
+ <76413d53-4572-4a38-baff-8b01f6179c8e@web.de>
+Content-Language: en-US
+From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+In-Reply-To: <76413d53-4572-4a38-baff-8b01f6179c8e@web.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGFuAuyXhBT8Nkvz5qN8iejeoHMFmx1b86tTNmpVfQ2xqjMtLw@mail.gmail.com>
 
-On Mon, May 20, 2024 at 03:30:43PM +0200, grygorii tertychnyi wrote:
-> On Sun, May 19, 2024 at 7:25 AM Markus Elfring <Markus.Elfring@web.de> wrote:
-> >
-> > …
-> > > Sometimes it causes failure for the very first message transfer, …
-> >
-> > Does such an information indicate the need for the tag “Fixes”?
-> 
-> I'm not sure: the original initialization order was introduced by the
-> very first commit
-> 18f98b1e3147 ("[PATCH] i2c: New bus driver for the OpenCores I2C controller").
+Hey Markus,
 
-https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+On 5/19/24 12:50 AM, Markus Elfring wrote:
+>> The variable 'sev' is assigned, but never used. Remove it.
+> Would it be a bit nicer to use the word “Omit” instead of “Fix”
+> in the summary phrase?
 
-  It fixes a problem like an oops, a hang, data corruption, a real
-  security issue, a hardware quirk, a build error (but not for things
-  marked CONFIG_BROKEN), or some “oh, that’s not good” issue.
 
-Your description of the very first message transfer failing sounds
-like a data corruption? Using the commit which adds the driver is also
-fine, some bugs have been there all the time.
+I can find many instances of "Fix unused variable" in the history of the
+kernel:
 
-Remember to add a
+ubsan: fix unused variable warning in test module
+x86/resctrl: Fix unused variable warning in cache_alloc_hsw_probe()
+octeontx2-pf: Fix unused variable build error
+etc...
 
-Cc: stable@vger.kernel.org
+but not a single "Omit unused variable" commit.
 
-    Andrew
+
+>
+> Regards,
+> Markus
+
+
+Thanks,
+Carlos
+
