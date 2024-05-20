@@ -1,111 +1,94 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFEA5381D;
-	Mon, 20 May 2024 11:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF64A2D;
+	Mon, 20 May 2024 13:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716206060; cv=none; b=NynKaHeZZjCzkLA1YhWrxTlxeIjW1Mx2iFcfJvE0OO5QCuIxCHVhXG2brEWUa2UVXzRZanReXnYONU0OVlWogBL+AUL/U3VPom8Qy8LENDoygfSRNjFWuItqyAllc7iVTHB7GygKQBOo83arThYBGxn2ekSNN7Cg2ZYdZjELaSw=
+	t=1716210811; cv=none; b=oMcBnlJlreHvg+i7a14pVU+WSNGrnG4ltJb4IZeFgXqWvWJRELT8Agc21/BvE2RpYemi8H1hgBmHfosrRumcOflBQ6CxOz6/cI9mqYRhwsHpjK0VajVPDgn0cWEzvRWpzBGsqizeGah/THW2wKXivKKNwRW3Hk4xqxxDLp0fng4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716206060; c=relaxed/simple;
-	bh=6T/LxFwDsB4C2hzVBPcuFqDMYHoW8Lwuk7UjmrI9QgA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=JwZvAYOcZPe8pRmchDLXMnIK7bPimJIrFdY1bRL7fl0P1KxXLyfzg/HW2mbZzylaZq6ijFTPzqT9itwnbJK/qUTnd3qFKwYKsjwgblQHbPHTmXKZ7g3NHUNw8rGoWh41eZbmzBxlBxhosQildPuzkYxQb+Yy43Iok7CrMnmPEDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NKKDURXJ; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1716210811; c=relaxed/simple;
+	bh=f7zIlcknMaJuKJEVnpdofgraR6IhmhMEOVN5APWMJaY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=awJ1IV3tx4Nn2eO5RfPlujjlvCYmbRmsk6azarTmkFikmm0dBRFsdr4G5VPRjNgBD2i9ThGo9M2LIw1ujY3Nl1Wj9fCBr5uOwkNzKU8UHDnaieoTGvJOVbZzWZQqzdvtK2viaGHV0Cj/C9c0zRyq9NeCXEfBZKG1H4hrxtGoMGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rRKX+eZW; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NKKDURXJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716206059; x=1747742059;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=6T/LxFwDsB4C2hzVBPcuFqDMYHoW8Lwuk7UjmrI9QgA=;
-  b=NKKDURXJbsyK6Aoz7WththbLZi/ahkE6TCBdNFPyLH3xBfzAKQEqzFyb
-   1rXQKkMO+tFRSdOfN7m3V2NrmW8hTEObT1OuO/fG1xMq2ZZrXfTBb3ljq
-   CTpydVYjPZpsgn5Yl6q27NN3pHtbOcEiUr+dzo0vBGPgMHwqJOYpXYIjP
-   91SCaqpQZGo+wLn8/nI50Uo7JkrMcMoT3MwOUK9kGtyE6oTbsZo7B99dr
-   A/KT5+ziXkjEoMzq0YqfrTBpxOXLb4sr+NOLdPuwlejjazCMbi7TFKvUR
-   1Oaq+owYgl1wUEKADY9KUfek6A50MDVKpZJKbffPZYbrmV28B+5RgjiPT
-   w==;
-X-CSE-ConnectionGUID: FjFjdSZ6QDiLP3pgY1Fzrg==
-X-CSE-MsgGUID: tYOrlzFvQyS1B1mwlY+qmg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11077"; a="12548085"
-X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
-   d="scan'208";a="12548085"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 04:54:18 -0700
-X-CSE-ConnectionGUID: OQ0wOBEZSIOqHfbBhUgPSQ==
-X-CSE-MsgGUID: DUvUtQmjSwi8l+LY38rq8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,174,1712646000"; 
-   d="scan'208";a="32950757"
-Received: from ipu5-build.bj.intel.com (HELO [10.238.232.136]) ([10.238.232.136])
-  by orviesa006.jf.intel.com with ESMTP; 20 May 2024 04:54:16 -0700
-Subject: Re: [PATCH] media: intel/ipu6: Fix some redundant resources freeing
- in ipu6_pci_remove()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-media@vger.kernel.org
-References: <33dbf7b5c1b1b94d64a13441b69e1ff976caaa62.1716198935.git.christophe.jaillet@wanadoo.fr>
-From: Bingbu Cao <bingbu.cao@linux.intel.com>
-Message-ID: <f622051b-7ccd-e261-a311-2073c293602e@linux.intel.com>
-Date: Mon, 20 May 2024 19:54:41 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rRKX+eZW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716210778; x=1716815578; i=markus.elfring@web.de;
+	bh=f7zIlcknMaJuKJEVnpdofgraR6IhmhMEOVN5APWMJaY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=rRKX+eZW4YisSpqIwURkjHdrCoQ/cTALVkoumsDk8JeHbsMRgIsJ5fvEE49HoKAd
+	 /w3jBufKysgBSEiEnBOR05kdvySaQe8G/pzEZlsc0SsBm5plG+ZQf4nUTaN5f2UD/
+	 IPGwTQDfaPu51nbR19f5sKgRjt8iEnpeQhoEmKdeqchHmVW/08zmo1c3rVIMM7Hzw
+	 5sv2M8+qOZvtH5/2fPJzZsS5qqZg4qchEsn/wUot7o6HHEBTwTa1JD+jRv7xKXgBa
+	 V86Ly+rUqRzU+IarWJw9xhhaiIK6Q+75rKgJQUuWzQx8xkZjrgt9Qobv3Uh3GVNfM
+	 gOn2coD7PS8iKnYpFg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M6HKG-1sBFju1vkO-006kUJ; Mon, 20
+ May 2024 15:12:58 +0200
+Message-ID: <303106f2-181c-46d7-9f76-223f9cf9e4aa@web.de>
+Date: Mon, 20 May 2024 15:12:54 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <33dbf7b5c1b1b94d64a13441b69e1ff976caaa62.1716198935.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+To: Kuro Chung <kuro.chung@ite.com.tw>, Hermes Wu <hermes.wu@ite.com.tw>,
+ dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Allen Chen <allen.chen@ite.com.tw>, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Kenneth Haung <kenneth.hung@ite.com.tw>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Pin-yen Lin <treapking@chromium.org>, Robert Foss <rfoss@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+References: <20240520070409.1044236-1-kuro.chung@ite.com.tw>
+Subject: Re: [PATCH v11] drm/bridge: it6505: fix hibernate to resume no
+ display issue
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240520070409.1044236-1-kuro.chung@ite.com.tw>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:cLdn9iPKctZqvcO23ZhFt2x4JHo3hW6ETj0a6+vbqB0ZbV28ic8
+ 7/ebCRl5ftwg62yCO/c/Oy8hkeWmPJfa9y5ilNGf+mK6zzohSpEH7PgJqXhrJTxmfN809fo
+ t1KFv5atAjdOcNNktb3JJYcE4B2eA5Xz8sbOMebkQvvjdV7XGnUhYEX0dvSoI+ArkOu+Qfr
+ utsmq8XtdLCGBoO+K12uA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:1V/0Y0MN62s=;C5nde+mng12X55c4UQ1OmScX4o9
+ 62fZhHFqQHumjOwBfAgOQGH8TOTeCBZhPDfPqPXEYL2bq07M/72kT2X1fC9cjpeXHvBgY09KC
+ iuGHYs0lWKc1XfS7t4zsdzym5PAspEgfR2jKWgiiilkCNoHuY7nbdrTpa2QpsWSPZVM4804aP
+ LXeF6d0EtN8zmIpwl85oj8Ao0jsOoLg4TiMyBvvw6EeNjHAIoXW98y72MXQWLcWYy4CrJA8c3
+ StDqaXR1HiTPw/J29AmhsX16zKBcbw4g4IE/A/fwMnSAAyEjPbIfGlNhgZ2VSZuaZ2uJizBhe
+ n1Q+c95IJk9GpzASZ+/zWqxl0z3ExaQGsO9CtKEhj4G+cG4a5SsK61yLs+4OpUwvkTDIHsLCv
+ /PxDWDIkZXdJyhZgAnEVqz0Q+673xkjONKuAwFZxGL/FCTzCoyA5pmDVEjv0sWY3j67pbFk1h
+ JrRPmvuxyE4FMoHOkk18NYXKUhzu+lyHcLj3Jt4FX9dCns4Id5VpWtuMVmQb71710WJFh63uJ
+ wkQvqfswUYOCmHxtp+jqTyy2hxx8NXL4C0RHcPSOK1ic7/NhhOpEOx91bgCq4YTZu+X8b6VJP
+ yH6fkAIga675dl/DetfRnlXS1nRX3xVggla7eZYM1/CComh361T7KwSpVAu1Kpy6T1ZtkkMqG
+ DFbmP5QlKsyhaEa04wgIZLciYGa1eV6xiRTZ9WNgLtRZOoY2SF2ntKyNMxCVacA4FKL00FguS
+ i+Z1qJhtFwUFDQ3X7oaGwWjnSI4swldtQ+8Qd6WUJDsBAzsXq87LBitc/fQ5X6bZGBjbibvIa
+ 7GFvn80/XjzoowhlhqBycOtWQEs2ThBArhkR5GI2LZ9xk=
 
-Christophe,
+> =E2=80=A6 This patch has been implemented to prevent =E2=80=A6
 
-Thanks for the patch.
+Under which circumstances will imperative wordings be applied for
+another improved change description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
 
-On 5/20/24 5:55 PM, Christophe JAILLET wrote:
-> pcim_iomap_regions() and pcim_enable_device() are used in the probe. So
-> the corresponding managed resources don't need to be freed explicitly in
-> the remove function.
-> 
-> Remove the incorrect pci_release_regions() and pci_disable_device() calls.
-> 
-> Fixes: 25fedc021985 ("media: intel/ipu6: add Intel IPU6 PCI device driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only
-> ---
->  drivers/media/pci/intel/ipu6/ipu6.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/media/pci/intel/ipu6/ipu6.c b/drivers/media/pci/intel/ipu6/ipu6.c
-> index d2bebd208461..f587f609259d 100644
-> --- a/drivers/media/pci/intel/ipu6/ipu6.c
-> +++ b/drivers/media/pci/intel/ipu6/ipu6.c
-> @@ -727,9 +727,6 @@ static void ipu6_pci_remove(struct pci_dev *pdev)
->  	pm_runtime_forbid(&pdev->dev);
->  	pm_runtime_get_noresume(&pdev->dev);
->  
-> -	pci_release_regions(pdev);
-> -	pci_disable_device(pdev);
-> -
->  	release_firmware(isp->cpd_fw);
->  
->  	ipu6_mmu_cleanup(psys_mmu);
->
-
-Reviewed-by: Bingbu Cao <bingbu.cao@intel.com>
-
--- 
-Best regards,
-Bingbu Cao
+Regards,
+Markus
