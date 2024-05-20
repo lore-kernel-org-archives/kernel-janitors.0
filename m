@@ -1,74 +1,101 @@
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 4285B9474;
-	Mon, 20 May 2024 02:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D24412B73;
+	Mon, 20 May 2024 05:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716171596; cv=none; b=g9vDRz96yxZau7aYMrVULWB2bRjTCk/Wf/YgDbp31OE6N/48RCx4EyB2oCRdEg+GNgWY0YCALtYYUzJy9kxFyOMSmZFcajE3+IqtczmzvE+TCOpcAoKQBNTJPZ8xjo+2Dgciotq5TriWFxftNWIiEgAZUa8RHcn/NuJiuCZ7TkE=
+	t=1716181975; cv=none; b=IeXZVU5DKo/x2i2pDNehVU3YKY3tpubJvVw46KvALionpAyN2IYN1J8ff2/CdHMoTSH/CKTR3xtKRg6zujyVItk1VmfG1Ygew8k5L1cbmojqZjEqpbn8g7GcRKVBAeHWb5V91IJkDh/DOMERvXiI54uN3cXbMof2TKf0D6c3X5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716171596; c=relaxed/simple;
-	bh=rB7dD75CY84ry20/0r/cpYaVwib9bJIdMevmIkkR3EE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cdnLeTaW7Pq/7u1vlzZEo3Mtk5DZJKQS1vGLyXoKuSUNF8curYB7YsfzPv5WbZ0rSHLJdlyr/w0wEvOaF/a9NJFTPdZ4nx6UemuOc3M9h2Ch16qLmeYFHsHn+na/yHMNvcI6/5UFMNvtPs7UjAlgRV3nmeE2gqZsEFWm8FHQzko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 4F0696026E8D1;
-	Mon, 20 May 2024 10:19:44 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: srinivas.pandruvada@linux.intel.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	nathan@kernel.org,
-	ndesaulniers@google.com,
-	morbo@google.com,
-	justinstitt@google.com
-Cc: Su Hui <suhui@nfschina.com>,
-	rui.zhang@intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] platform/x86: ISST: fix use after free problem in tpmi_sst_dev_remove()
-Date: Mon, 20 May 2024 10:19:35 +0800
-Message-Id: <20240520021934.113877-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1716181975; c=relaxed/simple;
+	bh=E9qDEFQY1grBMvG2pLW44IhOXhR0mVV6WnchLTdLq6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RGBQv09KtSVIeIrJIRbssRa42TM61/MhaEFoQiKpEEAfrT5gjMRllgVCjV1IsVfRtxJzACZRSO9pl4/tozLU19BptIuenvXyF10fibbOYvggf9v35x20XNnFaHT0ypMplzBbt4Rh0Lo1zifjPWT/JN2pzBXhPbCx52ImhEsKD64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.3] (ip5f5af1d0.dynamic.kabel-deutschland.de [95.90.241.208])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id CADD861E5FE06;
+	Mon, 20 May 2024 07:12:09 +0200 (CEST)
+Message-ID: <28196c54-3c65-4646-84f6-76da79368f8e@molgen.mpg.de>
+Date: Mon, 20 May 2024 07:12:09 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] Bluetooth: btintel: remove useless code in
+ btintel_set_dsm_reset_method
+To: Su Hui <suhui@nfschina.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com, nathan@kernel.org,
+ ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+References: <20240520021625.110430-1-suhui@nfschina.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20240520021625.110430-1-suhui@nfschina.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-clang static checker (scan-build) warning:
-drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c:1614:24:
-Use of memory after it is freed.
+Dear Su,
 
-Using 'tpmi_sst->package_id' after releasing 'tpmi_sst' causes this
-problem. Change the order of releasing 'tpmi_sst' to fix this.
 
-Fixes: 9d1d36268f3d ("platform/x86: ISST: Support partitioned systems")
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you for your patch. Some minor comments.
 
-diff --git a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-index 7bac7841ff0a..7fa360073f6e 100644
---- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-+++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-@@ -1610,8 +1610,8 @@ void tpmi_sst_dev_remove(struct auxiliary_device *auxdev)
- 	tpmi_sst->partition_mask_current &= ~BIT(plat_info->partition);
- 	/* Free the package instance when the all partitions are removed */
- 	if (!tpmi_sst->partition_mask_current) {
--		kfree(tpmi_sst);
- 		isst_common.sst_inst[tpmi_sst->package_id] = NULL;
-+		kfree(tpmi_sst);
- 	}
- 	mutex_unlock(&isst_tpmi_dev_lock);
- }
--- 
-2.30.2
 
+Am 20.05.24 um 04:16 schrieb Su Hui:
+> Clang static checker(scan-build) warning:
+
+Please add a space before (. Noting the version of scan build would also 
+be nice.
+
+> drivers/bluetooth/btintel.c:2537:14:
+> Value stored to 'handle' during its initialization is never read.
+> 
+> No need to repeatedly assign values to 'handle'. Remove this useless
+> code to save some space.
+
+The plural “values” is misleading to me. Maybe just remove the sentence, 
+and say:
+
+Remove this unused assignment.
+
+For the summary, “useless code” could also be more specific:
+
+Bluetooth: btintel: Remove unused assignement in 
+btintel_set_dsm_reset_method()
+
+Maybe also add a Fixes: tag.
+
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+
+
+Kind regards,
+
+Paul
+
+
+> ---
+>   drivers/bluetooth/btintel.c | 2 --
+>   1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/btintel.c b/drivers/bluetooth/btintel.c
+> index 0c855c3ee1c1..f1c101dc0c28 100644
+> --- a/drivers/bluetooth/btintel.c
+> +++ b/drivers/bluetooth/btintel.c
+> @@ -2542,8 +2542,6 @@ static void btintel_set_dsm_reset_method(struct hci_dev *hdev,
+>   		RESET_TYPE_VSEC
+>   	};
+>   
+> -	handle = ACPI_HANDLE(GET_HCIDEV_DEV(hdev));
+> -
+>   	if (!handle) {
+>   		bt_dev_dbg(hdev, "No support for bluetooth device in ACPI firmware");
+>   		return;
