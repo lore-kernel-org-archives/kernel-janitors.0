@@ -1,102 +1,109 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3450E47F7A;
-	Mon, 20 May 2024 10:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6F91643A;
+	Mon, 20 May 2024 11:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716202631; cv=none; b=YVjer0j8eU5XrT5Jds0kyT5vUQqrc8MVQQuLyWEgUzFK3cAk572UoLscVtZKtMoC6ktLxaw37NKUSPHCIM9MnRP0qt0yNZF+A+LAiJHzCn2l8TGTEymH3buplAmuh/8bZP2P6WbPSFvI91vPxM5I5kdFstkhY87dxMWpw2Nv5Xc=
+	t=1716202944; cv=none; b=OxmpgkwL6mwBQ+GSEm5W6GhTChOrdtiDj4T6Uj4AnrWy4tbCrXAEsc7vwqdBqZyR8Kul6y6BaBseqVhbd3y2as3epukca/80y0H9LhcqslzLno7CzW9P2Q/y7oEW4Oyigfxe9qI5VC9NXjnZh1//5GJoR6eZm+FxVsM/KJXK+T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716202631; c=relaxed/simple;
-	bh=BQNqP06GSDVu9Tj7mjQBhg/YiCoC2CZpovKQ8iNqmMA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gG4nX8GcbJ0Jh13MuvQbk5lC/7Bds69SuSx3evHer8jtsnCIVsD/KSlgHUdSCq3kcUfJfRXhmsuve+vduo6TXosjisNHqOw+ChpAfJKhQfH2m7tVawJt7RdaWLrwb5eHxQ3wU0q97OKs0Ct3uG8WB28x2QvmeoVJKOlRPI7XrM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KmOC9yKG; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1716202944; c=relaxed/simple;
+	bh=fBMRsCfYJyR6hIrSKyh6obRGMiWNwGySypQNPgZYSl4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GgeiBdN8YJ67UsBqyHCZINrIL2bBbY14hOe3rpEEzF/s0/k5AlpY43/od6CB4oGwh8u1exoDmHD0t+SelWDXboitRSJHE/xZHtib2OW68RD0pbRshkC0m96HblqIOVCeSA8FLwZbMmPVIwdCfsRD2P4EFhNydWlJ92zUVFwyAo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y76dXG6F; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KmOC9yKG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716202605; x=1716807405; i=markus.elfring@web.de;
-	bh=H/QNGg2nPKB3k0BAOpxM+Ifc86MNlXrZFK5zBs5qBoo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=KmOC9yKGBhzvYELm1tRODItKY5//687PzHHqxOKX6hjZ6u3g0ZB6srKQCBmbdQUQ
-	 QzeqRO/M2FrNrvn0B0FEfUkQFla8jDb7EePmcj3W3OaYZclssz5EKGTVhcuUntY8N
-	 VJAzlhSScB2zz2AgkXHa2ikC18Lfx3ScmQYPCUG828w7zzEOKHqaYi2RyNoZ9qpca
-	 S3l1J9Ldkmglj2I8Q47+CyI03BLbXJiiSRT9fwTnC4CkkoI3Ez4+qHzsSsRHfO8YM
-	 dzw//1B7vjbvkRdzK5cnUMJyvMoyDhKY0HHSBUv+GQc6I3QzTk+PjrzlMY4mZ5Jp/
-	 3Tr5xkGi/vmVfjIYAg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N5lnT-1say2A02jD-00z0Rl; Mon, 20
- May 2024 12:56:45 +0200
-Message-ID: <d73fe99b-dea3-4792-aa1c-c3317f296003@web.de>
-Date: Mon, 20 May 2024 12:56:42 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y76dXG6F"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4CF6C2BD10;
+	Mon, 20 May 2024 11:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716202943;
+	bh=fBMRsCfYJyR6hIrSKyh6obRGMiWNwGySypQNPgZYSl4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y76dXG6Ff9lU0BseLExi/9Goan23DJwqM6QOWeL9VrauQ1i65KbvD2B7xRGnzJIRV
+	 c7iZLWDvaQAi9T46TWXS/chVnyHoRXS1UtoSh+xBXJjokGvwcxb8aN5tkIqakxaZ4m
+	 X1RL6xx5vDTWiJ0FnvEwIHgQWPg3Fe0UAtmWImTePIoPF1/805iDB5w0H54KD1+qG8
+	 HgTSoOKYMT6QKZ+78TF6cRznbBFLe1O8DdeskLvn64kLH2d8QQLxPHbJRnkldDQAmA
+	 MZ+n+z8GrIkUyvbBAki/9hXnltYr35GW/nUXxy67F3izkKlOeJ/ukglEFNi7HSvAkG
+	 hv2boHYgq8JUw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1s90mZ-000000003iD-1MbO;
+	Mon, 20 May 2024 13:02:19 +0200
+Date: Mon, 20 May 2024 13:02:19 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Tedd Ho-Jeong An <tedd.an@intel.com>, Kiran K <kiran.k@intel.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+	linux-bluetooth@vger.kernel.org
+Subject: Re: [PATCH] Bluetooth: btintel_pcie: Fix the error handling path of
+ btintel_pcie_probe()
+Message-ID: <Zkstu34CQYwKdtfr@hovoldconsulting.com>
+References: <692b4749f4267436363a5a8840140da8cd8858a1.1716190895.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2] platform/x86: ISST: fix use-after-free in
- tpmi_sst_dev_remove()
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
- platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Hans de Goede <hdegoede@redhat.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Dan Carpenter <dan.carpenter@linaro.org>, Dan Carpenter <error27@gmail.com>
-References: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
- <d5203ff5-8ed4-48ea-8e58-a2e6680b0542@web.de>
- <6d1bf351-77cc-7fe9-2d62-8bd99789e4f1@linux.intel.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <6d1bf351-77cc-7fe9-2d62-8bd99789e4f1@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:pfLN6CMvnUjrP+O0uWbfRLmfnDfUkusv7tZFMmo22vPJY1J2G+F
- yramd7VFmb14bsvzhEhgLcesiEW2PiIA9B6mM+yPY6QTa6+MuH86oUHoJ2rzHeIsJegYiJC
- RWH9Utq0BrO/lr5AapGNAADaVcjwY4kMbtc5TIaSNTfDrL4+7KFWmpXdgR0xtmuIZRF5ojP
- QgEb8eoO7hG4kxxmGTerw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:C0KQzvZ1nKk=;nia2MjUjZuwUDmG5dg9TwFSygQ+
- wsoSr1YEPEENN3zJTOQnY7vHSWMeIHUICr1tVqUCWLvIdZ9uBy6rVNrEn0cUc/92tYMn09mHn
- dkei85Gy5d6zRSDbt4P53PSeCFndBTyf7XTf87TpwPIM9PGyJc7hpmGfXdB2L2GmS/rd5Yfh9
- AMqWtmo51RMpNFRgKdC63p855fjAjdk1PPwzVP8nLdvlbGUat22S3qpFqy3UUg3oNeEotdMZx
- QCVo3blGgODPvizq0y9czegjRqX/9bMWA3+NKcfdJYgknSASgW3LqyMzY/IgS0Tk8YUq6MqEW
- s1ia1Kzw+cdNBO06S73CsRJnw13mFv5/QFEZ3eqrP4jjD9qdDt8isWS3VqHJ9tKVYpnOhIZTL
- BaVaKLUnYv2xx0DNKP+9dmIERoWzicsHMQgJWDVckx80DSg5qoGl/l5fghUExOtacKt9S3Cda
- HLATBY9P6TdbJ3E+th4dKuv8zCpsGnwS01kg27WuMxugO/4GcKPSakzHMO4+5eWCQShvgEkud
- /7MH/KJU6EzRyMF0x7TtEyO0aETkjS7oPVwHXwxyXDJVbddE+BQ6nmp1PS/yk/nS/iDRvxHnj
- Poxo2Ox5uIczpLNJ3EiJNdWIPHsj2Ob4PYYTNZUIc7KPd2oqFVo7JSqi9hAdG574I7I2fX+c6
- xE2gLyrnoMijMqIgumkeOVX1KQ9EGJtjbtoj9eQ5aqTwydyzDxgyrBvOvrRvruf9uCDkc31n/
- K9dVcUqYdqzfUw6Ys3TnuaFxzpzemgg+r8ibM8fq1tMlC1W2DZ1/aGYjNzL5SbR/HfUcrREMS
- OAZcTL9tUJPUMwdBjaUHGZBizgiB9uSdpDLCHJsOK/0nE=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <692b4749f4267436363a5a8840140da8cd8858a1.1716190895.git.christophe.jaillet@wanadoo.fr>
 
->> =E2=80=A6
->>> Fix this by reordering the kfree() post the dereference.
->>
->> Would a wording approach (like the following) be a bit nicer?
->>
->>    Move a kfree() call behind an assignment statement in the affected i=
-f branch.
->
-> No, the suggested wording would make it less precise ("post the
-> dereference" -> "behind an assignment") and also tries to tell pointless
-> things about the location in the codei that is visible in the patch itse=
-lf.
+On Mon, May 20, 2024 at 09:41:57AM +0200, Christophe JAILLET wrote:
+> Some resources freed in the remove function are not handled by the error
+> handling path of the probe.
+> 
+> Add the needed function calls.
+> 
+> Fixes: c2b636b3f788 ("Bluetooth: btintel_pcie: Add support for PCIe transport")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only.
+> Maybe incomplete.
+> ---
+>  drivers/bluetooth/btintel_pcie.c | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_pcie.c
+> index 5b6805d87fcf..d572576d0dbc 100644
+> --- a/drivers/bluetooth/btintel_pcie.c
+> +++ b/drivers/bluetooth/btintel_pcie.c
+> @@ -1280,17 +1280,17 @@ static int btintel_pcie_probe(struct pci_dev *pdev,
+>  
+>  	err = btintel_pcie_config_pcie(pdev, data);
+>  	if (err)
+> -		goto exit_error;
+> +		goto exit_destroy_worqueue;
 
-Would you eventually like another wording variant a bit more?
+typo: workqueue
 
-    Thus move a kfree() call behind a dereference of an invalid pointer.
+[...]
 
+>  	bt_dev_dbg(data->hdev, "cnvi: 0x%8.8x cnvr: 0x%8.8x", data->cnvi,
+>  		   data->cnvr);
+>  	return 0;
+>  
+> -exit_error:
+> +exit_free_pcie:
+> +	btintel_pcie_free(data);
+> +
+> +exit_free_irq_vectors:
+> +	pci_free_irq_vectors(pdev);
+> +
+> +exit_destroy_worqueue:
+> +	destroy_workqueue(data->workqueue);
+> +
 
-Regards,
-Markus
+Please use an 'err_' prefix which is shorter and clearly indicates that
+these are error paths.
+
+I'd also drop the newlines.
+
+>  	/* reset device before exit */
+>  	btintel_pcie_reset_bt(data);
+
+Johan
