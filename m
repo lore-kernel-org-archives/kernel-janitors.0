@@ -1,50 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B99155E43;
-	Mon, 20 May 2024 21:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2BF1369BA;
+	Mon, 20 May 2024 21:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716240803; cv=none; b=Orc25bBncQ5WLjt/3P4tYcCiasQ8cWatIycAP+mcDGOq2qvWc9s32vlQ/ZEEUIgaKuVzRFsP6XO7M24jVSt2AYUkN5BVD2gUfzWEuEtroz2XkY56W44V/LaStvDVFwZgGCMMcvjvVxWtmDxDIzcpEZ/enNb2NyH8AiEHDz7khVQ=
+	t=1716241139; cv=none; b=YfLcLKu6pVlvYHmqVNl/1q31IF1T29iKzYklvmKzmpOTT8d9eDGsFJ1gBEtgtIsPs80SJJGzNGiI5HPD/02sEfXitZm9kKQD/Woe2zi8kjHMvY5J2ZoJKf4Nn245TdDv7X5NM/KDDML1Ln6UT2neXhAMk4NrlSXltZqNPfcnXsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716240803; c=relaxed/simple;
-	bh=WrZ5Vf7Jh3/G3dGoiHMd/08geH9pMlfqTaIaOal5dMk=;
+	s=arc-20240116; t=1716241139; c=relaxed/simple;
+	bh=yw2rCIrCQibFXCP4yX81inyprqmfwEEpDAwGlUMhIJY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nj+kq1WT9bcxXdX9+rErM2Pq5ShIPkKf2Lugsu/X58C8F9ybl6aqCaJtW2gxd40td0zFHu8c/FYk3wKtYsJgtL/UwVm4cVmHIIBwRHkgjZwDZVedeNWK4w5tjD3NaPoXlzL6lrGD65TaAw/uFILcCGZDm7pWSfYy+nSGZETboQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V5Wzp9Gt; arc=none smtp.client-ip=192.198.163.8
+	 In-Reply-To:Content-Type; b=ci+av9u+G1frLXKJ5qVnCZn2WZa6z26euidktkhQGA9DGla6n1vlspwOCRI/cDPKWku6sxjc/ATuW+QXcQ/tyhvam7frLQ7cMHHSoHJikdAbnvi1tKAsaJzx81dS7R6IcYLFTLdb03Q1EZ7oSbKjIM/86MGz4K9AGBDKESbyTlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZUHisKTI; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V5Wzp9Gt"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZUHisKTI"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716240801; x=1747776801;
+  t=1716241138; x=1747777138;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=WrZ5Vf7Jh3/G3dGoiHMd/08geH9pMlfqTaIaOal5dMk=;
-  b=V5Wzp9GtkDD2fl2Lm++oOkRByBXm96g35566eB9y/WYYt/cXSDz012j/
-   YbKZIgrF8aMtPwAuqEz3UWXFtL6Z8aXSFV4Tg60nW7h46OzVeN+jmDjrV
-   g/BE9LkO2cwQFH6vp4DkMY4i65Xi7fFVCumNZNTkSXU+6Ure3rs2byWO+
-   TFEyxCwlNe/54JpD9ibahN5YAWaaEwxGYhXWlr7qLwrhKXd0cEdhW7G5Z
-   4UkukPGYcK909lmSzHrQoDo9pkqQAtJdx5RXYO2Zrp+kztGSEDjxb4RMs
-   TK9IySuP37LcSxGg/TNQgTon5PTJkgoGFWpQ0+O5m13NHpr45cdZ3w8dd
-   w==;
-X-CSE-ConnectionGUID: yMwj0lMERqiEp9aimUQ61Q==
-X-CSE-MsgGUID: mKCjX4ZAQSeGK6Coh4EJmg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="29922096"
+  bh=yw2rCIrCQibFXCP4yX81inyprqmfwEEpDAwGlUMhIJY=;
+  b=ZUHisKTIz38vSvQ1ClUt9pFSyv5xd4wDlQ1p9p9CV86gh/zCyt4SAEJV
+   WG6FL85exbt8/erL7IslWt/w5wE54dsemDwLgb6CLbU0wq8mtKGYLL5wC
+   WPVDRvjfv+76uiZY/o5caImCuhpXqDR7Nw6ACsrj2DLF7DxStCf0DX7dC
+   Oc2jMYDb6NO73vuHNmW+qZVTX4ibbB+NT2Ytu/6bYxMBmZV31TouvEw8i
+   1FsRokfPh66har7CmuSjCC7BBeyL3CDNOPFq8lb6LvPOJPOrBCeZd4RKM
+   k4xtn58cNmtSk4Kes+JKvQPuu1tlXbEphkTjSvOiE28k/VhQVHHxdhe+d
+   g==;
+X-CSE-ConnectionGUID: hn5TJ6scSuSC/ZAqkwPcrA==
+X-CSE-MsgGUID: GZFCZkNVSd6yIsOQFEwy/A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="12585216"
 X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
-   d="scan'208";a="29922096"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 14:33:19 -0700
-X-CSE-ConnectionGUID: u4AE7DrRRte9dwLdiod1Kg==
-X-CSE-MsgGUID: K2cU40uRQLSWHZ62riEPiA==
+   d="scan'208";a="12585216"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 14:38:56 -0700
+X-CSE-ConnectionGUID: DGQ7yuvzRpeP50GVaMCv6w==
+X-CSE-MsgGUID: 0MqdF6MhR2ehoTcJGZj5ig==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,176,1712646000"; 
-   d="scan'208";a="32552694"
+   d="scan'208";a="70084551"
 Received: from daliomra-mobl3.amr.corp.intel.com (HELO [10.125.109.51]) ([10.125.109.51])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 14:33:19 -0700
-Message-ID: <4884ef78-2b86-4dcd-bec4-d6e111fa5455@linux.intel.com>
-Date: Mon, 20 May 2024 16:33:17 -0500
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 14:38:55 -0700
+Message-ID: <c683b42c-f75c-427e-b6b0-66babce9b55e@linux.intel.com>
+Date: Mon, 20 May 2024 16:31:31 -0500
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -52,47 +52,47 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ASoC: intel: Constify struct snd_soc_ops
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Cezary Rojewski <cezary.rojewski@intel.com>,
- Liam Girdwood <liam.r.girdwood@linux.intel.com>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>, Mark Brown
- <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
-References: <2f0613bf4c6018569cdaac876d0589e49cf38a80.1715622793.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH 1/6] ASoC: topology: Constify an argument of
+ snd_soc_tplg_component_load()
+To: Mark Brown <broonie@kernel.org>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: lgirdwood@gmail.com, tiwai@suse.com, cezary.rojewski@intel.com,
+ peter.ujfalusi@linux.intel.com, yung-chuan.liao@linux.intel.com,
+ ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com,
+ srinivas.kandagatla@linaro.org, bgoswami@quicinc.com, daniel.baluta@nxp.com,
+ linux-sound@vger.kernel.org, alsa-devel@alsa-project.org,
+ sound-open-firmware@alsa-project.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <f2f983e791d7f941a95556bb147f426a345d84d4.1715526069.git.christophe.jaillet@wanadoo.fr>
+ <1fb69d24-03af-4742-9f44-5a93704f5cfb@sirena.org.uk>
+ <b736e11e-430a-462b-898a-d5e1dcf7f74a@wanadoo.fr>
+ <baf1789a-a573-470f-b816-ca9bb0d7f299@sirena.org.uk>
 Content-Language: en-US
 From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <2f0613bf4c6018569cdaac876d0589e49cf38a80.1715622793.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <baf1789a-a573-470f-b816-ca9bb0d7f299@sirena.org.uk>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
 
-On 5/13/24 12:57, Christophe JAILLET wrote:
-> Constifying "struct snd_soc_ops" moves some data to a read-only section, so
-> increase overall security.
+On 5/20/24 08:24, Mark Brown wrote:
+> On Sat, May 18, 2024 at 10:34:33AM +0200, Christophe JAILLET wrote:
+>> Le 14/05/2024 à 12:21, Mark Brown a écrit :
 > 
-> This structure is also part of scripts/const_structs.checkpatch.
+>>> As mentioned in submitting-patches.rst when submitting a patch series
+>>> you should supply a cover letter for that patch series which describes
+>>> the overall content of the series.  This helps people understand what
+>>> they are looking at and how things fit together.
 > 
-> As an example, on a x86_64, with allmodconfig:
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->    6315	   3696	      0	  10011	   271b	sound/soc/intel/boards/ehl_rt5660.o
+>> Ok.
+>> I usually do, but I thought that the subjects were self-explanatory enough
+>> in this case.
 > 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->    6379	   3648	      0	  10027	   272b	sound/soc/intel/boards/ehl_rt5660.o
+>> Do you want me to resend?
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only.
+> It's fine this time.
 
-We don't test all the boards in CI but I don't see any issues with
+no issues with
 https://github.com/thesofproject/linux/pull/4993, so
 
 Tested-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
