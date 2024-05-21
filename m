@@ -1,107 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818864F88A;
-	Tue, 21 May 2024 07:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D206A6CDA9;
+	Tue, 21 May 2024 10:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716277054; cv=none; b=fgMu2NNBULwCWuFsj+bOx9NXOaYFQY0W0bA+7DMRqWG3hEOiPfPsbWGGdfjaS7nSMVIookaAvH6LbE8aSms5hIuxb4ss2UcmJDOHo56TRelw6sxEyyNOnyonbyTPWlFRpu039V9Gyv7NLP/vDFlgZpNt3wxL3AQNOCNXag71bXc=
+	t=1716285981; cv=none; b=PmT6cZxjwDd5u8aUh6LsTCXlL74wEvHbHLgW2cxBhptwMGoZQQPNMpzM41VkM8GMmEy4yWFmXKsio6q4Qhi1hJlniU9k1ZWLatWf/CHUh0HEmQjgDWmmlpxe5dq/qpuPedZvU14wRL5fQYJkKVrizrM+PzunSNI6ObU7DDQYxHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716277054; c=relaxed/simple;
-	bh=RN8I5CgBWEareyxEJP4IkpgAm7z5y/urYtXZ/8ompBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CmrLvigURIyTf168QC+3BVuOqXQbTLRHevgP4Hvx5xy2AVn+GlxkZLTBr5EQihrdw3VxOzWaECGkgxgUfee6BWdelstWSGx8MuDEHcey39nHUKW/tclkvRW9HzYDJcK80WSXYhfLB7BON+v+Xf4+SQu49zfNH2+9+P+9SZu4yGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=w+h3wPb3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716285981; c=relaxed/simple;
+	bh=+vjdGl/tKKsIdLFQbXKLivW1r7u2/NUdIM52A3fWY44=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=L41k5Jvgrpl8/WB8/Xul0DdfWNBEntGErp0LGYXXBiERLMVrGcrTuGKqhfhE157IT0kQ0nm5kkVAwMFr6rzj1lW4KH7jUdRSAGbtnx/fv77Ubn/ZgTNnWq9fRbKLtIisQ8F5I+KIxZz7ou0TZ4TJcv4QakPEljUQdo4xVn9sXtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=El4DwKT/; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="w+h3wPb3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77DF1C2BD11;
-	Tue, 21 May 2024 07:37:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716277054;
-	bh=RN8I5CgBWEareyxEJP4IkpgAm7z5y/urYtXZ/8ompBo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=w+h3wPb3d5y6PqxztT/3uSjmCzHd8j91s3v55vG0W9UzvecyWPU9rHEKyyGVd6iwS
-	 OfD85bH15kzgNuq9PWN5gtEA1i91+BS8YCQldzB7xLEWFafRV5cqN2Jd/H5laBE/i8
-	 qO8Kj8qNl8dX/qxQlF754LJD2smyTcePz5Vv3uQY=
-Date: Tue, 21 May 2024 09:37:31 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="El4DwKT/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716285980; x=1747821980;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=+vjdGl/tKKsIdLFQbXKLivW1r7u2/NUdIM52A3fWY44=;
+  b=El4DwKT/Tv4Wkl3eFg2AL1QAbFqYUdxEPUejVszycr8eIgbi52/XIMZc
+   zopcQTeY/F/xT7CEKtVr37F0M6+cHysKH9UnO951TbARoEWMW5CfoXkRb
+   fU6pe6MIldN9CRrr+fZQGSWihVbAynUWyKAGrReKbk78YKQlSYBcGCfYw
+   rH2xzG8HtNB4AHvvTE5NSoECDOSX9l0QFAIGOpI7SITJEwcyCxMDuCOzg
+   LbEnX/Iq6GnSTmJd0vmM4nnWQ+KdwVWc89nWmaZmPG6sZgYFioFuSYpi0
+   QJhPYfTttT+IRl4ooBKCbZI/kciJp6UlAXgY/6MKosyFUA0afsmpwex2f
+   g==;
+X-CSE-ConnectionGUID: PBC2vmqtRhKc9lL5aUOtag==
+X-CSE-MsgGUID: OmNfA2CiRieXyqfKuz+x3Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="23067399"
+X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
+   d="scan'208";a="23067399"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 03:06:19 -0700
+X-CSE-ConnectionGUID: 3vMrjM31QMSOrua434uyRw==
+X-CSE-MsgGUID: L43b2EtyQumh1LIylzF27A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,177,1712646000"; 
+   d="scan'208";a="70283266"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.117])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 03:06:16 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 21 May 2024 13:06:11 +0300 (EEST)
 To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Alvin =?utf-8?Q?=C5=A0ipraga?= <ALSI@bang-olufsen.dk>,
-	devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>,
-	Emil Abildgaard Svendsen <EMAS@bang-olufsen.dk>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Brown <broonie@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stephen Boyd <sboyd@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Subject: Re: [PATCH 01/13] a2b: add A2B driver core
-Message-ID: <2024052125-washroom-hardened-820a@gregkh>
-References: <20240517-a2b-v1-1-b8647554c67b@bang-olufsen.dk>
- <feb239b1-7a14-479a-87f2-dcbf9966bffd@web.de>
- <alv4rqrrnjqw3fb5vsw5r4f6lv7ymvuatcqovt7ddxi5ich5on@aan7wybzrzru>
- <7ffeb91e-97b7-4f60-851e-120062b63c17@web.de>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>, 
+    platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+    Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+    Zhang Rui <rui.zhang@intel.com>, LKML <linux-kernel@vger.kernel.org>, 
+    Dan Carpenter <dan.carpenter@linaro.org>, 
+    Dan Carpenter <error27@gmail.com>
+Subject: Re: [v2] platform/x86: ISST: fix use-after-free in
+ tpmi_sst_dev_remove()
+In-Reply-To: <51368bcf-d2e3-42cc-a112-a1a485f29c73@web.de>
+Message-ID: <a8eb3ba6-eeab-6c0c-7b57-4fde508853ed@linux.intel.com>
+References: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com> <d5203ff5-8ed4-48ea-8e58-a2e6680b0542@web.de> <6d1bf351-77cc-7fe9-2d62-8bd99789e4f1@linux.intel.com> <d73fe99b-dea3-4792-aa1c-c3317f296003@web.de> <5287fc2e-91c5-442b-b66c-6eb1fe334ce4@redhat.com>
+ <51368bcf-d2e3-42cc-a112-a1a485f29c73@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7ffeb91e-97b7-4f60-851e-120062b63c17@web.de>
+Content-Type: multipart/mixed; BOUNDARY="8323328-2126140094-1716285753=:1027"
+Content-ID: <73fe5b09-d14a-6e05-f359-409948eb0554@linux.intel.com>
 
-On Tue, May 21, 2024 at 09:33:51AM +0200, Markus Elfring wrote:
-> >> …
-> >>> +++ b/drivers/a2b/a2b.c
-> >>> @@ -0,0 +1,1252 @@
-> >> …
-> >>> +static int a2b_bus_of_add_node(struct a2b_bus *bus, struct device_node *np,
-> >>> +                            unsigned int addr)
-> >>> +{
-> >> …
-> >>> +     node = kzalloc(sizeof(*node), GFP_KERNEL);
-> >>> +     if (IS_ERR(node))
-> >>> +             return -ENOMEM;
-> >>
-> >> Please improve the distinction for checks according to the handling of error/null pointers.
-> >
-> > Right, I think it returns NULL on error.
-> 
-> Do you see possibilities to reduce “confusion” about the properties of such a programming interface
-> any further?
-> https://elixir.bootlin.com/linux/v6.9.1/A/ident/kzalloc
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+--8323328-2126140094-1716285753=:1027
+Content-Type: text/plain; CHARSET=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <665ca344-ac2c-979a-bbcb-5839511e72c4@linux.intel.com>
 
-Hi,
+On Tue, 21 May 2024, Markus Elfring wrote:
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+> >>>> =E2=80=A6
+> >>>>> Fix this by reordering the kfree() post the dereference.
+> =E2=80=A6
+> > The original wording of the commit message really is fine as is,
+> > I see no need for Harshit to send a new version and I plan to
+> > merge this as is.
+>=20
+> Are there opportunities remaining to improve the discussed wording?
+>=20
+> 1. https://en.wiktionary.org/wiki/post#Etymology_1
+>=20
+> 2. https://en.wiktionary.org/wiki/reorder
+>=20
+> 3. Function call indication?
+>    https://elixir.bootlin.com/linux/v6.9.1/source/mm/slub.c#L4371
+>=20
+> 4. Rephrasing of =E2=80=9CFix this by =E2=80=A6=E2=80=9D?
+>=20
+> 5. https://en.wikipedia.org/wiki/Dangling_pointer#Cause_of_dangling_point=
+ers
+>=20
+> 6. https://wiki.sei.cmu.edu/confluence/display/c/MEM30-C.+Do+not+access+f=
+reed+memory#MEM30C.Donotaccessfreedmemory-AutomatedDetection
+>=20
+> 7. https://en.wikipedia.org/wiki/Code_sanitizer#KernelAddressSanitizer
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+We'll not waste our time in wordsmithing commit messages to perfection,=20
+the current one is good enough as was stated to you already.
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
+--=20
+ i.
+--8323328-2126140094-1716285753=:1027--
