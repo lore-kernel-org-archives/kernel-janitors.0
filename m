@@ -1,92 +1,101 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C516EB5D;
-	Wed, 22 May 2024 15:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20C828F0;
+	Wed, 22 May 2024 20:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716393218; cv=none; b=hr0+wGpcN9Lbt9mjnEFwQoEtEVHQBluUnkATtwsvY/EYNW8u9yGzhmJmFYozlHu9zLMBcReit5iaFb1OsD1+1sBWT0xK63T7jfbgolOPq/TJ6xtjpqg6deea094t5ZcmXjfSe78ThxTOdVno4UZ+1xx9h9I+PuWL8ioFlrcjC/c=
+	t=1716409533; cv=none; b=d/1B3H4trBfX7iA5ytkfW7NjDpzxa2Ant1hWj/4N590Wa6ViB4LUE1nI4KoG3eoLoa5axgVMEq5S2Rp3xcuXBH9RzCYLJiWKUtjEXoc5jevw+uuC9Ik7s3Q2HN1xIdE/RY4TxSAb0zDLmboGSTUc6itX8GSBvTcA5GXI5X5xjaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716393218; c=relaxed/simple;
-	bh=A/ZS2NtINBxthxwqs5PcU2EkST+CNjfZ5b8/iFOfEhU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r3Noggr9Awp4EVuJe0+0aFRen4X6+Sxg+gl0tNkRb2xkuyiUkYENjNMyyZSp2Nu3DA1CiLtKt+u5sqolKi6JhdMmR7niP/Sm7kAVdNtMaZuimiqiUBolSiUD1zqBKleSh8/wsHQsGtJ9437lJ62VUfOeH2PqzsYLldTh1xOMrgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=IelD6NNy; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1716409533; c=relaxed/simple;
+	bh=i5YeBElyyeAgBzFvmLeCign/ZZTOXVpIXph9q9KRSNU=;
+	h=Message-ID:Date:MIME-Version:To:References:Subject:From:Cc:
+	 In-Reply-To:Content-Type; b=BO8OFbjY7kVCEtuzkeqYwlT4AiDcZdno4ZLwkZTawNPOSwdUsZ3Y8CYG8bhvLIJtVDjXaFgBqNczIug7dXSEHTkA4GU1Au3SkHhc+uRUdKyNrhIgOk3sJp97mR5JlHkwIFUhHMaVx8mJi5twfrDrLVLExlWSDZv3Wo0rgRcE96Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=l6pyeiSJ; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IelD6NNy"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BBF1BC67;
-	Wed, 22 May 2024 17:53:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1716393202;
-	bh=A/ZS2NtINBxthxwqs5PcU2EkST+CNjfZ5b8/iFOfEhU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IelD6NNycUfvoHK84yZHpxTn7nh6WN1bSc/gKsWdz6CnuXUTf38HWwaPvr6+f46Ev
-	 fjdBnlhyT0LQC+YAMTDIFZiq82rAMQu7V+IdNFjhjB2SHACSsutM/PVjn7kdz7liPg
-	 7gHxp3CUdzihFfVj4PCTsnbiMKo42t2Ig5Ag5XDQ=
-Date: Wed, 22 May 2024 18:53:26 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Michal Simek <michal.simek@amd.com>,
-	Sean Anderson <sean.anderson@linux.dev>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	Anatoliy Klymenko <anatoliy.klymenko@amd.com>
-Subject: Re: [PATCH] drm: zynqmp_dpsub: Fix an error handling path in
- zynqmp_dpsub_probe()
-Message-ID: <20240522155326.GC9789@pendragon.ideasonboard.com>
-References: <974d1b062d7c61ee6db00d16fa7c69aa1218ee02.1716198025.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="l6pyeiSJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716409520; x=1717014320; i=markus.elfring@web.de;
+	bh=HkwD7TSpNFck9Pz42Pa/zrMVWZu+W0Oh5FLIwzj9QLg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:References:
+	 Subject:From:Cc:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=l6pyeiSJrV1Szt1VVh7n6lgikHN6RLpaXjpXFxs41UzLOU5cZ3kCivjkKCAD/klM
+	 fthgmVJjSSrjneDGE8+ot7Aa1h3EqKmxtm1KukElsk/vaZ51kSkZCv1CWMA/MAUn0
+	 RknIhrJ5n9F7//j9xJYBacAQ/Nm8CSznXoetiraxQWeD0mOKAtq4MHXisUvkpUEmi
+	 5vXbySkZxwF6WTTDFdljaBoF54GTRkkkEuQYOAKsxVLFPhjZmWpX08YhEmlsrQVpq
+	 62fqBdg0SkoaNGbotSvD1mqvUqlQHYQYnB8wkJlXg1HNBOjg7Z+vJaNM5cCfpw/2U
+	 O5yXxvYOV2kOrlQs2g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MmQYX-1ssK4s3ojB-00iK6Q; Wed, 22
+ May 2024 22:25:19 +0200
+Message-ID: <5ed339a9-82cb-403d-92fd-fdcb18653f72@web.de>
+Date: Wed, 22 May 2024 22:25:17 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <974d1b062d7c61ee6db00d16fa7c69aa1218ee02.1716198025.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla Thunderbird
+To: John Keeping <jkeeping@inmusicbrands.com>, linux-input@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20240522100341.1650842-1-jkeeping@inmusicbrands.com>
+Subject: Re: [PATCH] Input: ili210x - fix ili251x_read_touch_data() return
+ value
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+In-Reply-To: <20240522100341.1650842-1-jkeeping@inmusicbrands.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:hCnH6YciGuPD/GgNskigEv6YNstG+WJ2woxlLKGBJXmNkJsC0ja
+ rZ2LmOdFKo+44VhhVAW4pfU75My0zLSWzoGt6qAlKcyqILvKDwxiopEple6/pk55Es9fMiL
+ eZE2DvGlVPxI+2I976W/O0Dt8VNQWjAuQwpBzckbFn+E6mkCFi6htpw0ot3rSsZZkQjzQIc
+ P5ZfbOC9mHrftrDY2/heA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:bEXtXTs4R90=;egPiOca3X35QYWaxy65sV6JrrHD
+ bF1FNBgp0aY082IBCstnJrg0arJuqdYiV3/f0fc4wlqSYEnLKpIulQbfoiNnptFUWlplsIGTs
+ 6qi7KMXZ5k9Iq1L4UzrG4NlHa0rifdci9MNKPagknLxagUfCoPajvQkpkNYrJUO56Ct77+p9+
+ YeBEzUvD0YBgHuGG7D7BunoXOaTS6iKY4E02r05wniJbaoUY0POTNg2FiDXzHuQYAHZ+ZZbyK
+ NRxf5ngk5d9eQH2iwELHhtfVxFmRS8Qj3F378pj7xmJ7Bl1D0yDHHzr69qGc4S/msjWm5En1Q
+ lfpkpfp1l9Y8JBuDcJlJSU3lGemZEGOa0bwAA5dfqPfS0+zaB/OAUDtbHE4kSnbrstnkhzZz1
+ xuLlGP7bQD+/yWDXzGpB0DuVHXoP1P1VS29v2XR0HsUHxFubdebuoyqJ3QEbR0QNypLHvsIvB
+ NgkF3yS/62Q3P3LOjM5Xs7KW3yJhBs2lw4ix8p8ZSCfkwf7ymZnWOuAxvUBoAuG9V57+rz1xw
+ wCWQccFYWVPfgq5ZBhWnTMQkXe8T0ISZm5UPoQUpx0NjxkIYOwrccZzKIdR5DXIBOl1AzQIR7
+ rNmfeV9Ayb2vM63Kz4as3kpO2Y2XuHFjWGOcjyQS2PUCthvgm7spLrDFvbdRKqFWHW4r3EhDI
+ YNorHHp/6b6GzhV/cTrxqXC1XMoGuKxoVRJSSWnqtYmSL2CedadkzhboxGwuWgG+82KFFA36U
+ 6yT0C9S3kBt+2pdWp+IFaLABYESPFpiWsN1fe9nNzwkFloyfbhTyMhsCGN0Ri0cJ3azMJ4zNl
+ AH1Z4YOmLo2WtNqRJmGVdO16cjEuPGWdFBuaVYZUmtEco=
 
-Hi Christophe,
+=E2=80=A6
+> This fixes touch reporting when there are more than 6 active touches.
 
-Thank you for the patch.
+Does such information indicate a need for the tag =E2=80=9CFixes=E2=80=9D?
 
-On Mon, May 20, 2024 at 11:40:37AM +0200, Christophe JAILLET wrote:
-> If zynqmp_dpsub_drm_init() fails, we must undo the previous
-> drm_bridge_add() call.
-> 
-> Fixes: be3f3042391d ("drm: zynqmp_dpsub: Always register bridge")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+=E2=80=A6
+> +++ b/drivers/input/touchscreen/ili210x.c
+> @@ -255,14 +255,15 @@ static int ili251x_read_reg(struct i2c_client *cli=
+ent,
+>  static int ili251x_read_touch_data(struct i2c_client *client, u8 *data)
+>  {
+>  	int error;
+> +	int ret;
+>
+>  	error =3D ili251x_read_reg_common(client, REG_TOUCHDATA,
+>  					data, ILI251X_DATA_SIZE1, 0);
+>  	if (!error && data[0] =3D=3D 2) {
+=E2=80=A6
 
-> ---
-> Compile tested only
-> ---
->  drivers/gpu/drm/xlnx/zynqmp_dpsub.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-> index face8d6b2a6f..f5781939de9c 100644
-> --- a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-> +++ b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-> @@ -269,6 +269,7 @@ static int zynqmp_dpsub_probe(struct platform_device *pdev)
->  	return 0;
->  
->  err_disp:
-> +	drm_bridge_remove(dpsub->bridge);
->  	zynqmp_disp_remove(dpsub);
->  err_dp:
->  	zynqmp_dp_remove(dpsub);
+I suggest to define the variable =E2=80=9Cret=E2=80=9D in the shown if bra=
+nch.
 
--- 
 Regards,
-
-Laurent Pinchart
+Markus
