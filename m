@@ -1,178 +1,134 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6A555E43;
-	Tue, 21 May 2024 11:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7617B3E5;
+	Wed, 22 May 2024 11:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716290912; cv=none; b=Ba3VUc6zRmhxFN04hDos5qJRQ7sv0rwV9BzjURO56xYWvtafS7bObG/4ZXImuRQr65t6EwvjA1Um/SqLIYdJOVt3kWTJBJsATN+3aor2AKNmzRo6UMNNeUUFCfwHqGmK+cbVc67rFDJEkyal0V/AhLCyFKFu10bVaU0Nst175zw=
+	t=1716375611; cv=none; b=KVqhPLpCno7uFGVK3R7edR11DQXiQb8B3lvsJw6jWG5QGMAzgKFfVEIcHGYVVRbCKdBBliC2aSQRlvghHm76NwPTcUuEnEg3kqbaAT7INb1YncN2QtkQ0Y0D+/UMeg3aLuUhHPVnnTGk6NLjnWEm2Hz3rJClXXIqDnwYgu19CUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716290912; c=relaxed/simple;
-	bh=bu9mG/J79Ff9Zu/2l4MGoCMW5kuONCzPTI1mTCBFbqc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bHc+RR2peYAsViSWZ1vJ1WwE4CpbeSIwocRqe7umRluDjgGJH1Rc1fSbN8reM4NjuigqVn67lkeB/DqneepqaLXB6q0h/19BOoKpyFvJPvogVxYtxtrQYjNeOShGhaVmL9g85nG7yrMyZj1f4TlPr8hUFhUAP2KlJqpOfJ9mwwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d31k/vWT; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1716375611; c=relaxed/simple;
+	bh=TqD4OytzgPEadIqGGVU3qm9CXN7Qx8GAU331ohgKHbQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=odbogxulRSrqeiNsfhKGo6tzbG4tahk2Ts9pMg2YvYfiG5mLSTX2ATusXPZEnH6Fe/NPPxZz4za1jEKOmjb7UyYzN9wrM7rIQQXuVhHRDjBcegjA8fRxn0lOT/zLKp+9HYN2/yUtsTBAcHlhdOt8n/h4FV15gxLkZ0sWmoZ+N1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=OBaF0sEk; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=YidkbUz3 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d31k/vWT"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42011507a54so19585405e9.0;
-        Tue, 21 May 2024 04:28:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="OBaF0sEk";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="YidkbUz3"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716290908; x=1716895708; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QCvn53QZqHKbd8wXZQruum5PyX2Xyujq+z5EaypRXU8=;
-        b=d31k/vWTuGTKp+v/JaFUWgrKmCkctIxs6h/sY9q83k387DfLGbX9GuFWjQa6+Fms3+
-         Jjo2SKFxYaYIYKUj1BKkcHdY9tN8uT9vNYivXnJLiBEymwHVxGcpq9SZjfjP64kwR6Sr
-         I19Akgs2BAduj+jnpIHcaYO8KDQmklnIo3ELrqCIRfoPBlljFtDFCdaR2u4KdmaADETg
-         t75Wzs/etb1R5Udr1ZE5+Ofx3odZqWylLhsa71UwVfnm9I59gqp5KDsavNmiKBKF4QLE
-         QrcuyoZEuNaxRf93y0BzgKa4ZMP/DI8Nk/16a3wVnW1ca/p7x/osLT7TZ6fFOJdcbku4
-         Utzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716290908; x=1716895708;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QCvn53QZqHKbd8wXZQruum5PyX2Xyujq+z5EaypRXU8=;
-        b=YpYaMKtEk3A0aMWlWHzpcXi1kLBtw7cOUVajzWHylnOGhqdtQWYoBqe2ZaQi3+c92V
-         NdLAVaZIDXvTos4Dh5JO+tCkaVG5HMmJNP3el1ZSyxrDENFDMYCBiBAhp4O1a+3wOAoH
-         2pSoEwL25Auun4Xd14rCcTZPOAtN6iEDbmOaSzZi2U8xhPmkBMld31ENRT9fuVZe4l0D
-         TeinizP9dkVVzSACZOh6Bod91uFsesvukY9pG2EovEn3HkMniHJCSIFltmKeqbm18uWy
-         ri16RemBK6HxqNaDkvi4kxEnvHaiwNg9LbzGvxzK31XfuIzk1HmLrzpsu33NA04T7mg3
-         BAbg==
-X-Forwarded-Encrypted: i=1; AJvYcCVcUp6OQQutS/qT/K6J1wQFtM1/LDqP9VRIFN1YPV1s9B8o4UL3hZmSIXNITPECLC+X/DmYVx+sS4bv1aC6AWYAEfbIGkpVZSUtS2VHJhdkD8UG0lQxIfWmpFXixxEZDRCFIgN7cjsZBUbb+W/yygFrq09XYZ0z4q9juyFOpYyPoB/nZ5OQMMlTIswmtIs=
-X-Gm-Message-State: AOJu0YxePyTEK/UBMMfRJgzD5vjuIG3gi7kgvoVOkBkfOttq+fwtOOXH
-	RtfwySIOlTpaXIrJlH/kwQvMaE7OYjRyE/RzXtpkdafmWT8I1wb0
-X-Google-Smtp-Source: AGHT+IFpeGZ9iCxLuTlFb+Vd1m76hVZ2lgoagmtHznB8dVhlERYFGSRgpPrkzrTynhee6VbDMgb7Rw==
-X-Received: by 2002:a05:600c:4f49:b0:420:12df:1f7e with SMTP id 5b1f17b1804b1-420e19e46d4mr76021715e9.9.1716290908433;
-        Tue, 21 May 2024 04:28:28 -0700 (PDT)
-Received: from [10.254.108.81] (munvpn.amd.com. [165.204.72.6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccbe8f8asm460922885e9.10.2024.05.21.04.28.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 04:28:27 -0700 (PDT)
-Message-ID: <473b5f9b-da6d-425b-93c0-5bb6bb49a9bc@gmail.com>
-Date: Tue, 21 May 2024 13:28:25 +0200
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1716375607; x=1747911607;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Bs8t0R9bLzRft+rJOe3kI6rRBc2Mcl6G2jRlHgmUXRM=;
+  b=OBaF0sEkktEgUeTwJRPH/yH+fmolOrL9g2GiwxdwzLQdKnaNTmArkgin
+   ucfpqiF7Dp4yR5CYtm3lUfOhcEez+WOYdZ/K/wCqRcPBG0zdYCAkjV3zb
+   IctPkywe8WmWMsG3aVrJp5BgdclXoOyvP5e2tHAC1Q5GDi2bF+8X3dfNc
+   Tgi0dS+TGidY5tUKz97DfWCrSN0Eidtk7MhTOqDR6aIotMOkXqSzq8Y5v
+   FpKqZ9LEFPCfp8iEd7vQJJCoUj9u08rIm/jddDdrF0gYJubgpznKq2UrA
+   Dx9yLjfmCKUuCz2i3nilETiJRarB/qp3aizG4hdbo0OTxgBAPVMNbZ5ch
+   Q==;
+X-CSE-ConnectionGUID: 3J4gVbk6T2u3qIrKMJQgEw==
+X-CSE-MsgGUID: I6l1ZvO9Q3S93d07qZTrRA==
+X-IronPort-AV: E=Sophos;i="6.08,179,1712613600"; 
+   d="scan'208";a="37012904"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 22 May 2024 13:00:05 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7DD9C160DAA;
+	Wed, 22 May 2024 13:00:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1716375601;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Bs8t0R9bLzRft+rJOe3kI6rRBc2Mcl6G2jRlHgmUXRM=;
+	b=YidkbUz3bNcBvAADcMmS9j9G2gTyetHnGore/MdBWjT0mSro8xHuuQYMVlg48vn11r9bii
+	Sq5cjFxPhhGt+CSZqtQgLxtfepuz5HL8Xo3DkM2sdtyLwMwF513/KGRCJKC+kpPR7GeBZK
+	eblSPPLGYV5otOL1/eSQexrVgt2HjD9MovLYBufFCholfq0V9w+wkkg8UMIl/q3q/4DJGA
+	FGNigY7Mo/d+FvbwSEupT/3O4GLa1tnknzEPSY0r/YW5Cfzc23aLDlIRMDEqjy6I7AzmH6
+	byJ+mRJB4Ls6lEKcFb/lF92xeHz+EuBayOR5NcZQEvePIsBlJtjXqTMCNY6kCQ==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, Markus Niebel <Markus.Niebel@ew.tq-group.com>, Lee Jones <lee@kernel.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file patterns in TQ SYSTEMS BOARD & DRIVER SUPPORT
+Date: Wed, 22 May 2024 13:00:08 +0200
+Message-ID: <2741024.mvXUDI8C0e@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <7803640.lOV4Wx5bFT@steina-w>
+References: <20231123113245.23542-1-lukas.bulwahn@gmail.com> <7803640.lOV4Wx5bFT@steina-w>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Linaro-mm-sig] [PATCH] dma-buf/fence-array: Add flex array to
- struct dma_fence_array
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Sumit Semwal <sumit.semwal@linaro.org>, Gustavo Padovan
- <gustavo@padovan.org>, =?UTF-8?Q?Christian_K=C3=B6nig?=
- <christian.koenig@amd.com>, Kees Cook <keescook@chromium.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, linux-hardening@vger.kernel.org
-References: <d3204a5b4776553455c2cfb1def72f1dae0dba25.1716054403.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
-In-Reply-To: <d3204a5b4776553455c2cfb1def72f1dae0dba25.1716054403.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-Am 18.05.24 um 19:47 schrieb Christophe JAILLET:
-> This is an effort to get rid of all multiplications from allocation
-> functions in order to prevent integer overflows [1][2].
->
-> The "struct dma_fence_array" can be refactored to add a flex array in order
-> to have the "callback structures allocated behind the array" be more
-> explicit.
->
-> Do so:
->     - makes the code more readable and safer.
->     - allows using __counted_by() for additional checks
->     - avoids some pointer arithmetic in dma_fence_array_enable_signaling()
->
-> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments [1]
-> Link: https://github.com/KSPP/linux/issues/160 [2]
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only.
->
-> Also, I don't think that 'cb' is a great name and the associated kernel-doc
-> description could certainly be improved.
-> Any proposal welcomed :)
+Hi,
 
-Ah, yes. That was also on my TODO list for a very long time.
+Am Donnerstag, 29. Februar 2024, 15:50:04 CEST schrieb Alexander Stein:
+> Hello,
+>=20
+> Am Donnerstag, 23. November 2023, 12:32:45 CET schrieb Lukas Bulwahn:
+> > Commit 77da3f22b3d5 ("MAINTAINERS: Add entry for TQ-Systems device trees
+> > and drivers") adds some file patterns for files in arch/arm/boot/dts/, =
+but
+> > those patterns do not match any files in the repository. Hence,
+> > ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about brok=
+en
+> > references. The files of interest are actually in the directory
+> > arch/arm/boot/dts/nxp/imx/.
+> >=20
+> > Adjust the file patterns to match the intended files.
+> >=20
+> > Fixes: 77da3f22b3d5 ("MAINTAINERS: Add entry for TQ-Systems device tree=
+s and drivers")
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+>=20
+> any feedback? Can this be merged?
 
-> ---
->   drivers/dma-buf/dma-fence-array.c | 10 ++++------
->   include/linux/dma-fence-array.h   |  3 +++
->   2 files changed, 7 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/dma-buf/dma-fence-array.c b/drivers/dma-buf/dma-fence-array.c
-> index 9b3ce8948351..9c55afaca607 100644
-> --- a/drivers/dma-buf/dma-fence-array.c
-> +++ b/drivers/dma-buf/dma-fence-array.c
-> @@ -70,7 +70,7 @@ static void dma_fence_array_cb_func(struct dma_fence *f,
->   static bool dma_fence_array_enable_signaling(struct dma_fence *fence)
->   {
->   	struct dma_fence_array *array = to_dma_fence_array(fence);
-> -	struct dma_fence_array_cb *cb = (void *)(&array[1]);
-> +	struct dma_fence_array_cb *cb = array->cb;
->   	unsigned i;
->   
->   	for (i = 0; i < array->num_fences; ++i) {
-> @@ -168,22 +168,20 @@ struct dma_fence_array *dma_fence_array_create(int num_fences,
->   					       bool signal_on_any)
->   {
->   	struct dma_fence_array *array;
-> -	size_t size = sizeof(*array);
->   
->   	WARN_ON(!num_fences || !fences);
->   
-> -	/* Allocate the callback structures behind the array. */
-> -	size += num_fences * sizeof(struct dma_fence_array_cb);
-> -	array = kzalloc(size, GFP_KERNEL);
-> +	array = kzalloc(struct_size(array, cb, num_fences), GFP_KERNEL);
->   	if (!array)
->   		return NULL;
->   
-> +	array->num_fences = num_fences;
-> +
->   	spin_lock_init(&array->lock);
->   	dma_fence_init(&array->base, &dma_fence_array_ops, &array->lock,
->   		       context, seqno);
->   	init_irq_work(&array->work, irq_dma_fence_array_work);
->   
-> -	array->num_fences = num_fences;
->   	atomic_set(&array->num_pending, signal_on_any ? 1 : num_fences);
->   	array->fences = fences;
->   
-> diff --git a/include/linux/dma-fence-array.h b/include/linux/dma-fence-array.h
-> index ec7f25def392..a793f9d5c73b 100644
-> --- a/include/linux/dma-fence-array.h
-> +++ b/include/linux/dma-fence-array.h
-> @@ -33,6 +33,7 @@ struct dma_fence_array_cb {
->    * @num_pending: fences in the array still pending
->    * @fences: array of the fences
->    * @work: internal irq_work function
-> + * @cb: array of callback helpers
->    */
->   struct dma_fence_array {
->   	struct dma_fence base;
-> @@ -43,6 +44,8 @@ struct dma_fence_array {
->   	struct dma_fence **fences;
->   
->   	struct irq_work work;
-> +
-> +	struct dma_fence_array_cb cb[] __counted_by(num_fences);
+Another gentle ping. Just noticed as [1] was not sent to our list.
 
-Please name that callbacks, apart from that looks good to me.
+Best regards,
+Alexander
 
-Regards,
-Christian.
+[1] https://lore.kernel.org/all/20240520060222.2980-1-zajec5@gmail.com/
+
+> > ---
+> >  MAINTAINERS | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index df7a57ac864e..1e439b08d5d4 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -22084,9 +22084,9 @@ TQ SYSTEMS BOARD & DRIVER SUPPORT
+> >  L:	linux@ew.tq-group.com
+> >  S:	Supported
+> >  W:	https://www.tq-group.com/en/products/tq-embedded/
+> > -F:	arch/arm/boot/dts/imx*mba*.dts*
+> > -F:	arch/arm/boot/dts/imx*tqma*.dts*
+> > -F:	arch/arm/boot/dts/mba*.dtsi
+> > +F:	arch/arm/boot/dts/nxp/imx/imx*mba*.dts*
+> > +F:	arch/arm/boot/dts/nxp/imx/imx*tqma*.dts*
+> > +F:	arch/arm/boot/dts/nxp/imx/mba*.dtsi
+> >  F:	arch/arm64/boot/dts/freescale/fsl-*tqml*.dts*
+> >  F:	arch/arm64/boot/dts/freescale/imx*mba*.dts*
+> >  F:	arch/arm64/boot/dts/freescale/imx*tqma*.dts*
+> >=20
+>=20
+>=20
+>=20
 
 
->   };
->   
->   /**
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
