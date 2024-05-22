@@ -1,134 +1,116 @@
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7617B3E5;
-	Wed, 22 May 2024 11:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2CB2E419;
+	Wed, 22 May 2024 12:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716375611; cv=none; b=KVqhPLpCno7uFGVK3R7edR11DQXiQb8B3lvsJw6jWG5QGMAzgKFfVEIcHGYVVRbCKdBBliC2aSQRlvghHm76NwPTcUuEnEg3kqbaAT7INb1YncN2QtkQ0Y0D+/UMeg3aLuUhHPVnnTGk6NLjnWEm2Hz3rJClXXIqDnwYgu19CUk=
+	t=1716379456; cv=none; b=b+vIseNORUMq39heqU6WCO6XEnuzJcbY780/ce1WL/5+0nrY7J+qwubADi2Gf2wo3vawFrcU06ts7hZ9ptke4x7R3Ie5TZPXNCC0BcuGrcHF9oM29XkTvom+4AsvOsAA+K2IPljcBeY5XgITjfEvX6ZMBVuFOyOEvJRaU0z3MEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716375611; c=relaxed/simple;
-	bh=TqD4OytzgPEadIqGGVU3qm9CXN7Qx8GAU331ohgKHbQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=odbogxulRSrqeiNsfhKGo6tzbG4tahk2Ts9pMg2YvYfiG5mLSTX2ATusXPZEnH6Fe/NPPxZz4za1jEKOmjb7UyYzN9wrM7rIQQXuVhHRDjBcegjA8fRxn0lOT/zLKp+9HYN2/yUtsTBAcHlhdOt8n/h4FV15gxLkZ0sWmoZ+N1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=OBaF0sEk; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=YidkbUz3 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1716379456; c=relaxed/simple;
+	bh=aYyVv3xyc7WpUrD4DYcfbWhn6/SYDmpkIQ+qEZAfycI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mazstfnk0DMxJ/0l5423P81LnwFLvVoyVuZE83BF3ra3+BkYgP6eVaqPUg7ZxYgGOEFb5koJkTf8+3urAin91CfUYh/Kjwtq9gBXIxV2x1tzNNqC5pZtIq3ADz/9pf0sdKTOYdg2orcL490vVeAbJ9LIqQD1K+wWsNQgyDvkV6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UucpckXE; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="OBaF0sEk";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="YidkbUz3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1716375607; x=1747911607;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Bs8t0R9bLzRft+rJOe3kI6rRBc2Mcl6G2jRlHgmUXRM=;
-  b=OBaF0sEkktEgUeTwJRPH/yH+fmolOrL9g2GiwxdwzLQdKnaNTmArkgin
-   ucfpqiF7Dp4yR5CYtm3lUfOhcEez+WOYdZ/K/wCqRcPBG0zdYCAkjV3zb
-   IctPkywe8WmWMsG3aVrJp5BgdclXoOyvP5e2tHAC1Q5GDi2bF+8X3dfNc
-   Tgi0dS+TGidY5tUKz97DfWCrSN0Eidtk7MhTOqDR6aIotMOkXqSzq8Y5v
-   FpKqZ9LEFPCfp8iEd7vQJJCoUj9u08rIm/jddDdrF0gYJubgpznKq2UrA
-   Dx9yLjfmCKUuCz2i3nilETiJRarB/qp3aizG4hdbo0OTxgBAPVMNbZ5ch
-   Q==;
-X-CSE-ConnectionGUID: 3J4gVbk6T2u3qIrKMJQgEw==
-X-CSE-MsgGUID: I6l1ZvO9Q3S93d07qZTrRA==
-X-IronPort-AV: E=Sophos;i="6.08,179,1712613600"; 
-   d="scan'208";a="37012904"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 22 May 2024 13:00:05 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7DD9C160DAA;
-	Wed, 22 May 2024 13:00:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1716375601;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Bs8t0R9bLzRft+rJOe3kI6rRBc2Mcl6G2jRlHgmUXRM=;
-	b=YidkbUz3bNcBvAADcMmS9j9G2gTyetHnGore/MdBWjT0mSro8xHuuQYMVlg48vn11r9bii
-	Sq5cjFxPhhGt+CSZqtQgLxtfepuz5HL8Xo3DkM2sdtyLwMwF513/KGRCJKC+kpPR7GeBZK
-	eblSPPLGYV5otOL1/eSQexrVgt2HjD9MovLYBufFCholfq0V9w+wkkg8UMIl/q3q/4DJGA
-	FGNigY7Mo/d+FvbwSEupT/3O4GLa1tnknzEPSY0r/YW5Cfzc23aLDlIRMDEqjy6I7AzmH6
-	byJ+mRJB4Ls6lEKcFb/lF92xeHz+EuBayOR5NcZQEvePIsBlJtjXqTMCNY6kCQ==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, Markus Niebel <Markus.Niebel@ew.tq-group.com>, Lee Jones <lee@kernel.org>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust file patterns in TQ SYSTEMS BOARD & DRIVER SUPPORT
-Date: Wed, 22 May 2024 13:00:08 +0200
-Message-ID: <2741024.mvXUDI8C0e@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <7803640.lOV4Wx5bFT@steina-w>
-References: <20231123113245.23542-1-lukas.bulwahn@gmail.com> <7803640.lOV4Wx5bFT@steina-w>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UucpckXE"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716379455; x=1747915455;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aYyVv3xyc7WpUrD4DYcfbWhn6/SYDmpkIQ+qEZAfycI=;
+  b=UucpckXEdk7xrW7Skg/ZeNn2IN/OAqtAPfIgDk6bKwYeEmHCmQ7A6Cd+
+   KmnPDeHt+MBtinRtQDwvexZHpBl29otuBEyTdu/UKglmlUyfm/lG5Xd75
+   ztPwTFA77npW3FjK1xUCyulkFR+vIjBckRu3eCM7WvU77oAuaiZHQA0F6
+   boZnVyCTCgdwMWu72ns8I3T1+of7Bj8S0k/yTo9y0qdinsg5hF5un+7Rq
+   RZVJ/bRcXA02ocwtADskvHU6coT0/fdDyAOo7uZ3JN2KalkregCTNBx14
+   /LPHkAuUesST9MrzjX+FIPWpfygpTcLud45vC1/IYAAb5/ykbdOxWBmya
+   A==;
+X-CSE-ConnectionGUID: iqplMzPbQJ6Y+q3LQgXEvg==
+X-CSE-MsgGUID: 5JevbbASRGOgAKB85+n6ww==
+X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="38008330"
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="38008330"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 05:03:42 -0700
+X-CSE-ConnectionGUID: AoWu/YYFRCSNZq9VnTjePw==
+X-CSE-MsgGUID: RJJl0RkXRxemNU4yKjFDNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="64490169"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 05:03:40 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 020C011F82A;
+	Wed, 22 May 2024 15:03:37 +0300 (EEST)
+Date: Wed, 22 May 2024 12:03:37 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] media: ipu-bridge: fix error code in ipu_bridge_init()
+Message-ID: <Zk3fGRS4FQDW7BTW@kekkonen.localdomain>
+References: <f468c4ac-0629-41b5-b5d1-e26f70e44800@moroto.mountain>
+ <ZkN2Ow6hASmKvHlz@kekkonen.localdomain>
+ <ZkOBaUW1uLw6ildS@smile.fi.intel.com>
+ <d2d71851-691f-45cf-9d52-1d16ede09b2b@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d2d71851-691f-45cf-9d52-1d16ede09b2b@redhat.com>
 
-Hi,
+Hi Hans,
 
-Am Donnerstag, 29. Februar 2024, 15:50:04 CEST schrieb Alexander Stein:
-> Hello,
->=20
-> Am Donnerstag, 23. November 2023, 12:32:45 CET schrieb Lukas Bulwahn:
-> > Commit 77da3f22b3d5 ("MAINTAINERS: Add entry for TQ-Systems device trees
-> > and drivers") adds some file patterns for files in arch/arm/boot/dts/, =
-but
-> > those patterns do not match any files in the repository. Hence,
-> > ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about brok=
-en
-> > references. The files of interest are actually in the directory
-> > arch/arm/boot/dts/nxp/imx/.
-> >=20
-> > Adjust the file patterns to match the intended files.
-> >=20
-> > Fixes: 77da3f22b3d5 ("MAINTAINERS: Add entry for TQ-Systems device tree=
-s and drivers")
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
->=20
-> any feedback? Can this be merged?
+On Tue, May 14, 2024 at 05:38:45PM +0200, Hans de Goede wrote:
+> Hi,
+> 
+> On 5/14/24 5:21 PM, Andy Shevchenko wrote:
+> > On Tue, May 14, 2024 at 02:33:31PM +0000, Sakari Ailus wrote:
+> >> On Fri, May 10, 2024 at 06:43:31PM +0300, Dan Carpenter wrote:
+> > 
+> > ...
+> > 
+> >> Neither IPU3-CIO2 or IPU6 ISYS drivers should be of any functional use
+> >> without sensors. But the power states of the devices could be affected by
+> >> this: the drivers should power off these devices but without drivers they
+> >> maybe left powered on. I haven't made any measurements though.
+> > 
+> > FWIW, Hans mentioned AtomISPv2 case with somewhat 7W consumption on top of
+> > the idling machine. That's why we have a stub driver in PDx86 exactly for
+> > the purpose of turning it off when not used.
+> 
+> I'm not sure if I ever mentioned the 7W, that seems a lot. But in
+> the atomisp case the SoC will never reach S0i3 when the ISP is not
+> properly turned off. And in this case the ISP is special and just letting
+> PCI / ACPI put it in D3 is not enough it needs some special writes on
+> the IO-Sideband-Fabric to be turned off.
+> 
+> I don't know if something similar applies to the IPU3 / IPU6, but
+> the bridge code is used by the atomisp code now too. So at a minimum
+> if an error gets returned when there are no sensors then this must be unique
+> enough that the atomisp code can check for it. Maybe -ENODEV ?
 
-Another gentle ping. Just noticed as [1] was not sent to our list.
+-ENODEV is also used for a number of different conditions. Different error
+codes are also returned by functions the ipu bridge calls and they seem to
+be passed onwards as-is mostly.
 
-Best regards,
-Alexander
+Maybe add an argument to ipu_bridge_init() to tell whether to fail if there
+are no sensors?
 
-[1] https://lore.kernel.org/all/20240520060222.2980-1-zajec5@gmail.com/
+-- 
+Regards,
 
-> > ---
-> >  MAINTAINERS | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index df7a57ac864e..1e439b08d5d4 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -22084,9 +22084,9 @@ TQ SYSTEMS BOARD & DRIVER SUPPORT
-> >  L:	linux@ew.tq-group.com
-> >  S:	Supported
-> >  W:	https://www.tq-group.com/en/products/tq-embedded/
-> > -F:	arch/arm/boot/dts/imx*mba*.dts*
-> > -F:	arch/arm/boot/dts/imx*tqma*.dts*
-> > -F:	arch/arm/boot/dts/mba*.dtsi
-> > +F:	arch/arm/boot/dts/nxp/imx/imx*mba*.dts*
-> > +F:	arch/arm/boot/dts/nxp/imx/imx*tqma*.dts*
-> > +F:	arch/arm/boot/dts/nxp/imx/mba*.dtsi
-> >  F:	arch/arm64/boot/dts/freescale/fsl-*tqml*.dts*
-> >  F:	arch/arm64/boot/dts/freescale/imx*mba*.dts*
-> >  F:	arch/arm64/boot/dts/freescale/imx*tqma*.dts*
-> >=20
->=20
->=20
->=20
-
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+Sakari Ailus
