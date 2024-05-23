@@ -1,66 +1,41 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A7A28F5;
-	Thu, 23 May 2024 19:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4396F29AB;
+	Thu, 23 May 2024 19:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716490878; cv=none; b=N0iBzhNLUI0/ivX1CKk2dVtIGmbUx2uvuyzC0G+qGqqtgstir1h6c7u2wgib83kXT6X3i3O0rN4K8n7rwFAEYVWJplWBrJhQ/me+aCKEHZBwTW7gWv9PijAukzAYcHEUi7txgpHvvBRA0oVJ1/cXo04YqO/AECUPvQrqUFW4Grc=
+	t=1716492678; cv=none; b=p6BiFkJZPJrCiOuMd9d6h1HNjAqJZIiOwWK+PUXEV2KZB7+hoGYjKh0BDWJAIpAZKTOPnaNFKk5z9oKaAHI+vWEyUlPQLx2M+skpHu+1PgRowR+SOXSQZRhin0DSp+6zTbFslVEPSV4hTcm+kDD4VOwAyuBiphDqdCpMI2Jjlfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716490878; c=relaxed/simple;
-	bh=3EiyLqgYby63BWgHIZFCD3c4sW1g12fHPqHi9WFjwdk=;
+	s=arc-20240116; t=1716492678; c=relaxed/simple;
+	bh=TK0k/etgn4gRoJ/jFUnhfFck0IgfY5juULg0GsXhWCA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dZUG0OdqdrdeWvOyAKw6N5Ppv3qiCjVMTwooQJZ71cUHw0O52WcakkcfYfDHmKyBy1FOOqnAitMd3aTbiA7wtjwjmWWnPV2M1ExCvG5Ehr+Q/SxFkmPywNPZMIRaouSLdr5y6sJLVdSIaWM5EFg6s2ocPwyM4TsUbfDaWDRDJtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nIS/d4Lq; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	 In-Reply-To:Content-Type; b=MX3pcJftx9OaXGsyYtri1PFRB5/Nt01IaF+vIWMnzLP5FPLqLbO74PL4xRClOA2Cl5v0ecOxdlRwKWGVSK78B0SR5QF/E97sY9FATyV8LBKy5W2WXJomufUwGXSqk+tnSLJeld2GFEyJ/oI+x8BABo8z4EzeqiEdIPgq+Alz4AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=IU5MAlBk; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nIS/d4Lq"
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44NIlAWp024151;
-	Thu, 23 May 2024 19:00:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=bAaqPBMTRdF77PtXGmWOWLFomk8hgMqj951WpPyFeM8=;
- b=nIS/d4LqR6kwfPCrHzTykgmzlJsA2MhUQFTJb/+rdm0aaOVJN/ORmWKIBYNYGU4yCl2y
- IMejNabF9C5FOVkeWnNH8WNN2HneYeXWdfHnSxr+vIrkgrc4FeY4y+hKM7Us4RhB3/CW
- XYJ+9dWivzpqBO7FkwA5Q23cKSMzEb9dV2lgrtULn0ttfuIXmJq20d+oGuWEYqZ07L/X
- gRKfUlobgWnz+ArSUhaOV3KaBF4lWSjUFwcC2wJgZBN+/W15niJtmp6gKncV1qvgY9F/
- Au9bO6mxaVFF5f54e5xWifvC6IcHZSZ4K5Moz/wOjCegFyfJo0m8JwKp9Kz1UlcaNnJX MQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yabcn80uy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 19:00:31 +0000
-Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44NJ0UJg013258;
-	Thu, 23 May 2024 19:00:30 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yabcn80uw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 19:00:30 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44NI0Grn026474;
-	Thu, 23 May 2024 19:00:29 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y785mun5k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 19:00:29 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44NJ0Ptp16908898
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 23 May 2024 19:00:27 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CAC5A58077;
-	Thu, 23 May 2024 19:00:23 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 037865807C;
-	Thu, 23 May 2024 19:00:23 +0000 (GMT)
-Received: from [9.61.104.209] (unknown [9.61.104.209])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 23 May 2024 19:00:22 +0000 (GMT)
-Message-ID: <910b18b7-3717-4087-b028-fcaf5f2a604b@linux.ibm.com>
-Date: Thu, 23 May 2024 14:00:22 -0500
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="IU5MAlBk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716492658; x=1717097458; i=markus.elfring@web.de;
+	bh=TK0k/etgn4gRoJ/jFUnhfFck0IgfY5juULg0GsXhWCA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=IU5MAlBkygKlyE/FJFR795c2AV5JmiM+5/V75BfZhIj+xqR0jb0X0xzbnSiUx9Fb
+	 4JVOw/WkZXUwK+4g7ujtGM6Z8cUHm1RONLnCsLmgECMWNofAxsrG5/YRlKgYSZBEP
+	 kpWEJh461RMrRibNkwLWE2Tu6HnovKMMyOi1ziupgqdNwJRPhnTBZm2rF2L9VZOBC
+	 yNfgzTi33Hg5Z09BiANFInRI+tEhnc7GQj58IMSi8DIvxk+6ljYLLPeZHUs1ad1G8
+	 kNzqQNw8rXA2LqPCd8lGG7HFYLJlkfOw6XeRlm7Siqn5Ckw4b1kXFKmB6FizkRK0g
+	 nzk4iPzZ/YYLPAMHUg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MWQuP-1s2sfJ1Fwx-00XwPl; Thu, 23
+ May 2024 21:30:58 +0200
+Message-ID: <398bf753-6701-4925-b814-781a68a75cc5@web.de>
+Date: Thu, 23 May 2024 21:30:55 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -68,47 +43,63 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 17/20] ARM: dts: aspeed: Add IBM Huygens BMC system
-To: Markus Elfring <Markus.Elfring@web.de>, linux-fsi@lists.ozlabs.org,
-        linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+Subject: Re: [v6 17/20] ARM: dts: aspeed: Add IBM Huygens BMC system
+To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org,
+ linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-        Andrew Jeffery <andrew@codeconstruct.com.au>,
-        Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Lakshmi Yadlapati <lakshmiy@us.ibm.com>,
-        Mark Brown <broonie@kernel.org>, Ninad Palsule <ninad@linux.ibm.com>,
-        Rob Herring <robh@kernel.org>
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Lakshmi Yadlapati <lakshmiy@us.ibm.com>, Mark Brown <broonie@kernel.org>,
+ Ninad Palsule <ninad@linux.ibm.com>, Rob Herring <robh@kernel.org>
 References: <20240522192524.3286237-18-eajames@linux.ibm.com>
  <2fe45df6-01a2-488b-99fb-5ee20491554c@web.de>
-Content-Language: en-US
-From: Eddie James <eajames@linux.ibm.com>
-In-Reply-To: <2fe45df6-01a2-488b-99fb-5ee20491554c@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: DaHk4BGi1JnBbJEcYTxavb7ks4_-OLx7
-X-Proofpoint-ORIG-GUID: lzx1m2_L4JsKlNwhIn4n44hDV1LcZcty
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-23_11,2024-05-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- spamscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
- clxscore=1011 impostorscore=0 phishscore=0 mlxlogscore=849
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405230130
+ <910b18b7-3717-4087-b028-fcaf5f2a604b@linux.ibm.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <910b18b7-3717-4087-b028-fcaf5f2a604b@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:DAGnwtib86FkvFWf5Ytb4zfOvEDuQlQ1LfywcVNule/e6md8cTj
+ cZ81CNDimlWAJHud38f4peWZFqWRBbK2Baop2QNPyneIHFsRkJ9KrYRBmbjQ0uQDkhxgXCZ
+ dYlQ4D+X5r6RN2N2TWQaiuS4uBeDqtyw7tMHMFmbvhAU0QY/STpENG0YggEXjHAlK08pKr2
+ PlTJtlKhF3m6iXBICcECg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:AvAUgeT2+NE=;92TPdx7IhOKSe1vyjO3YA8PfoWa
+ wzrEU9QnhnZQGo73Zhn8I5Sqdkbp25SsbeS8Z02pMV2BNysdZDsOaNOTnof+7z87NAtoEWv6N
+ 8d8pKYf7xRyloijiXNSDcwt+eknm4+WUFhFp6SRAsaRPnq+p3t0KcTVqrw2wgmGc3jiqe88z3
+ soX5Ky0VnQ53AU9qJbXHaSu9uuo+8s0GF+emLYmv7caQYZxy/HEna+VYuO9apa1HD/5CzvGsf
+ BxrgcB7H2hqvH5iQ/KTYkycbi4dsJO8T97sd9qXdeA6dcQHKmYjQTCq/ABzI+Q7cXqXib3MSE
+ FUyN/GcKcbhRO6WPeWMef8VUFP/bYkrTCYd8gIWdDjKfaHQVnUK5Q/QIvdHBx2PuOdb3Ol/Fj
+ xb7FvqkLGCXp1MS9UkeBc0pUDXoPnqV0NUQG/D+GkuvAtXytJ+qrg8H+wSt6q3BuYxcg24VZd
+ TvCiA997y0F+NYclHLXF24tQNkGOhC0GbvoRuLAEMuH23arU5zaTZ6FajoQBnLDYTQsYakRhD
+ FIZTvhJSvFfoC8gu/0ygVhZcgmMa3jSwXdc5cExperNWqQhTX7Ut0/pCkVYuWBPAR3bF0kezZ
+ 83GVaUSOcBqbDBorLCwpzSjrRLrQuxjnOc/+dgrBClYK1Qdem8GI2eYq+f/sZ1Mo8wkWjX4b2
+ fG51IQOVVM8Q4KGxv5lk3V0zKtB2w6Ye/wi6fMKjd0mb7iSjK6gR7TuTqVHqOSTHkl203mOIV
+ lqUHb0wMjGbSbdmhQq/YovQX434I2QJgtbtuDvoTcMKnH0f4DrrZyTWtnWdB9XauuGnydRs6e
+ N0D37WL9Z/2AO/szkiJ5UgnNjIyVVi9tpRdVj3wH+RBUc=
 
-
-On 5/23/24 13:45, Markus Elfring wrote:
->> The Huygens is a Rainier with modifed FSI wiring.
-> Will imperative wordings become helpful for a better commit message here?
-
-
-This statement is a description of hardware. I cannot word that 
-imperatively. The commit message is imperative - "Add Huygens system".
-
-
+>>> The Huygens is a Rainier with modifed FSI wiring.
+>> Will imperative wordings become helpful for a better commit message her=
+e?
 >
-> Regards,
-> Markus
+>
+> This statement is a description of hardware. I cannot word that imperati=
+vely.
+
+Please take another look at corresponding improvement possibilities.
+
+
+> The commit message is imperative - "Add Huygens system".
+
+This information fits to the summary phrase.
+
+Would you like to mention in the changelog that a hardware description
+should be extended anyhow?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
+
+Regards,
+Markus
