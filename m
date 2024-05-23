@@ -1,72 +1,86 @@
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0775C2C1AC
-	for <kernel-janitors@vger.kernel.org>; Thu, 23 May 2024 16:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AC7762FF;
+	Thu, 23 May 2024 18:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716482738; cv=none; b=UisHacHDT1647yTLVPDgZBAVrICiPfpc/TAjwOCnzeAyt19e3598uAqcG/8TgqYs5hU21hQl8k387jO/nRE3cj+L1K81UKVcZ86bBsGCqW5atH8kKTtlkZRTKgqmCWcUXS6qycnsd2+egRKteoodfsxBsjcbnSga3aYEUw16fow=
+	t=1716490176; cv=none; b=QDww97ZiH6RxDHZHJnQ39wdk50RVV7tg+gnXi/50nyzUt/wx17c40yHh+frRbqAgy+hXv1ui2OowQd1BFgRBDk7nKRSNW+bLOb0UfYESoeZIQeEVXy1BCiUSmO1ahsget5h7cRou5VxMN4srJg7wbNz/ZQwpmX1g0ePv9zniM50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716482738; c=relaxed/simple;
-	bh=PeE2Iv1cUElnBiThT4jIFU1ihOHGm8Z1qxGwKgRJTAE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rql7//EnKoLiRNZs2VolmGbtYQX20UA58ZoiBPIci5rL2OnZSEzIGI/h0QMdi01E+D7HH3h3HiZuI1lKiFO27CQsFwmbo6PKQAxwQ/r1GB08L1m/aNVn8TYvoKyE4OlN8h/4AKWeMvvqjEhvfBfmn+GbmGah5dy/Zcmwq7vbU14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=kcl3eoyE; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+	s=arc-20240116; t=1716490176; c=relaxed/simple;
+	bh=1/DkOOQ4p76I7N1cOX3SyNy1SPrQRKac+fkgkHwVk6M=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=WvseADdqDr2CdmgpuNrSDKvZIniusKQ0Eu++ZyXJbakPWfPbrsmWaWNUQ+0TExI86jxnqOsmvQGFSOCNI+mSdwoxaoGaWG8H76tAGrjpSsKxEF0gTc9d68Uy7hcEekktnI/SGIkMzRY/0VrUvBBvbE7XbdfvOORcTCy1u1JbO0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=s1eVKv++; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="kcl3eoyE"
-Received: from cwcc.thunk.org (pool-108-7-50-195.bstnma.fios.verizon.net [108.7.50.195])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 44NGjJlI031728
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 12:45:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1716482722; bh=76A2SchJx/XQs3JI5IruaZJ74cXb24Hwn2+K3+4a8+k=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=kcl3eoyEwTqIqwlQ+1yfhnlEuUVOR+ebptXPpIwcNZjZxh0DsqTXIH+B4SMWoy3YU
-	 Jvjy4Lf4duH+yEuQMuLMdZOn1t4IHxW3RtrizNYNv9fbpjKRIRPOpke6chKK7V+nAC
-	 WTec0mnUr5r9cQ2lbKiPBPUKCFBuTTJyNi/IRMjLo/QuNmpFC7AmR2UoAIRhdS8SGu
-	 gVoGr2bSAea3BqQC3rb8TO+FwVp9j8y47UZ+LgdltsylDRxOsLBf0A5sEuul9U6KpF
-	 LbzdLJh/sn34Dv8tqLVbMnbIRi/M8a67AF//y1wElGyqRF/63QrgnPZ0L/h4N4w4hg
-	 p8xss9mQEH6Jw==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 9E62715C0225; Thu, 23 May 2024 12:45:19 -0400 (EDT)
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Matthew Wilcox <willy@infradead.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ext4: fix error pointer dereference in ext4_mb_load_buddy_gfp()
-Date: Thu, 23 May 2024 12:45:16 -0400
-Message-ID: <171648267844.923789.4231199989954274163.b4-ty@mit.edu>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <eaafa1d9-a61c-4af4-9f97-d3ad72c60200@moroto.mountain>
-References: <eaafa1d9-a61c-4af4-9f97-d3ad72c60200@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="s1eVKv++"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716489931; x=1717094731; i=markus.elfring@web.de;
+	bh=1/DkOOQ4p76I7N1cOX3SyNy1SPrQRKac+fkgkHwVk6M=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=s1eVKv++fc+IwvW54Uw73nfZWda+mNvKUummXp8coUqwW9HDA6CvuZL5IAnNZ+AJ
+	 D/1fHo4aRuomZP55p09D/XTF4P8O1uSlPRPcCFXfiFc/D7DDTSvuXtZUdRQWcEU/d
+	 S6xzi7iwAL9cK/9jSybRzQ7B/4or2+N2w88SeOU4rTiXcboJNBLpjvefMT0OT475u
+	 +YQRGC+HLbLHrqquIFKo/rDH0FYkxq1qA7L2bkh9MqDytIy4RhFkSx/rARwW6y0bj
+	 LDb0yqDcYR0z/Pk1ByRUDPZHbRUt3iSsnzR38onSuqBo/ILmSCbp8/DaCbCOpEY8V
+	 jGk8mnLSW8uaOKN+hQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MnG2Q-1sr0O70paW-00jHkR; Thu, 23
+ May 2024 20:45:31 +0200
+Message-ID: <2fe45df6-01a2-488b-99fb-5ee20491554c@web.de>
+Date: Thu, 23 May 2024 20:45:28 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org,
+ linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Lakshmi Yadlapati <lakshmiy@us.ibm.com>, Mark Brown <broonie@kernel.org>,
+ Ninad Palsule <ninad@linux.ibm.com>, Rob Herring <robh@kernel.org>
+References: <20240522192524.3286237-18-eajames@linux.ibm.com>
+Subject: Re: [PATCH v6 17/20] ARM: dts: aspeed: Add IBM Huygens BMC system
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240522192524.3286237-18-eajames@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:FTGLkl+0enI/p1XJo7ZYK9LDrqNcg7b95/RXLCF0nXZ68DUQmlS
+ iC7OTWqBrdhVzfK8t14Oai0zRoXTIqXjxUBLL0eq4ajmSllyoBqEhyia4p55PZZJiJEZr9b
+ 05Py2bbsvv3gqPowLi4lkqommtD0oK3RaiC38w0vQvuWe2qrfZBxVPJ3afDNWacBxveWpyr
+ T4QGfXQX8Ybt5JAQobbRA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:1VX0rS2Imqo=;0iFIBxOIEJruT1gIhSJRlAUIV2o
+ tFYgI/LeHVdXNXLpS24mCZL0a+GLOzMLP1NsCnoO507izamlEG9b3D75OJMOA3ZHeAWAEban5
+ niWzLmdAA5GQeIyrkeKI3MCisB+uDDMKbLxqTovcD6YI6+jnPh5ZgdfTbte6YZwAnHZrZWsmy
+ 972frGfk2DJF7Kr9yADERe9ti59Zu+hbb0J4a4h05C5eFahLvbJVQT+oC0jqdLfQZryowssxU
+ QNa/MjQQdOqXkX7S4um1Jn/xyK9X5AQtANyGm9Mr+YhZiJ2mfJ9S6fGfU+PPFbqch0JQGIT/d
+ XQR957FHDLbcd0gyn2iwi0uAYB2MDBMAJ27/Q9gzMoIVUYouOtU1XpP9tqhnyJdWRi9IKiR2V
+ +ANocfPHhJ7CEj4ehQxta/AZZK+NEpbTh2p2IeuIliEwKyJNGsdS/jq98XVKEVy+H0H5c1wyP
+ Fe3Ye9vA21R3MemhzSENqAfN6HyHb94oWcrNPviMgUt2EDZ2qX8GV/WXfRHZtZOCQKv00ZEVs
+ aeev7JpQyLyi850aQC/t9kKi6RzwRFoM9Mdj3MAZYXoBb5+e7g4EvDJn2U4TNDqgvedn/rLL9
+ yPg6sukD554R6FHhNkbXMoZ8KTUj7t49/QAhuBAhHivl3+bV961bacwJmAmmADdkIHaV0nXjn
+ lWlgKQNaP4lm0SA5SZS04WP6L3Qz4Wpwuq70ukfdeOOqLIKwmQK/e+YA/1O2NmTtG7azMzp59
+ Y8yFCRDTyr7eSWxWpKOHeE1M+M8f/GC1QWYUf7CL5RL0pPMwLCSlzqXxTl7c0QXalNDJ5gQEi
+ B/y1EGEUwBLSbTNuEpZbHDRkG+y09LFLmiJDBTvtFahlI=
 
+> The Huygens is a Rainier with modifed FSI wiring.
 
-On Fri, 10 May 2024 18:22:53 +0300, Dan Carpenter wrote:
-> This code calls folio_put() on an error pointer which will lead to a
-> crash.  Check for both error pointers and NULL pointers before calling
-> folio_put().
-> 
-> 
+Will imperative wordings become helpful for a better commit message here?
 
-Applied, thanks!
-
-[1/1] ext4: fix error pointer dereference in ext4_mb_load_buddy_gfp()
-      commit: c6a6c9694aadc4c3ab8d89bdd44aed3eab1e43c6
-
-Best regards,
--- 
-Theodore Ts'o <tytso@mit.edu>
+Regards,
+Markus
