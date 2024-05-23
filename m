@@ -1,188 +1,147 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCAD83CBE;
-	Thu, 23 May 2024 19:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFA383CBD
+	for <kernel-janitors@vger.kernel.org>; Thu, 23 May 2024 20:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716493668; cv=none; b=cAxlQOAwuGZVDVc/GI3DBgtPIledFPLIN6/2X+S74NlDrhKasd6fjvaWHlVyR1pzNqLp+6bGzCVEWJYXfbX5Ltjeu2SAiHQMRELrVlxO+Pfeo0AJaBEjCaqEExng1PDvs5wxaCxESJrwAfc8l0sqEFVTDG9wNRNChWwORNCZElM=
+	t=1716495856; cv=none; b=iYxLl2RQd3MAqAbb2IRQ7ffPZjrhJgNHDcBLchckBJSPgT7Ab2P0Tvm8w6+WWji60DSY0mZpM49HgxbCSPJzwqmP0ITzSb5DmDUd1zNs1zArFHs6e1UBrTa7bhz+mS4n6VK5LUWRSsWz/8dDY1uPQ3DVQwqGlYSwFDc69a9hNJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716493668; c=relaxed/simple;
-	bh=GA52NJWp+1h8u4tby4+gGoB82JoXzqIxQTsoH7PKXfA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=E3TE0U8sxFr0/2cud+0mRExzqEaJp9hJG3YS/Hz5Bn+e6bCGa6MHNYWbTYNgYT9zlzun9I00FDE2t4886/lSB5BRBaFqd7J7YsiH7tnub3w8lTezjFlr1AZxZ6MKCMYBLL8VMrk0E3x4CRn6mZyDs4pAlLjFIVfGryXTixTTk/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WTIc1S3M; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1716495856; c=relaxed/simple;
+	bh=trLp/zqMsxPkYHNpAoOaUAFirZpTDPAcqutqKmdqkvo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SIJXx2kkUeNpFZCUckuN/3IkJAzMaQuqHo5RfHM4Xt4JwC+8U0HZ01+DXc+kQxyFzauxzSZ4+wkon7FrmxaxTSupUSbth5ClTMTy00/Az0uqMNhaEugnRloz8HyFOxA0BeBw6VaAEeDMq69ds3c9eSwwUHGFAr16Z9idXoSJ5AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LtVdXSrZ; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WTIc1S3M"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44NHTpDn020409;
-	Thu, 23 May 2024 19:47:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=ol9wNVVAuaiGKkQ9S3XpDe
-	s5jFnSQ+wjUvQI60yY5m4=; b=WTIc1S3M4PvjohxCi2lIePT+XntJi9PJtuTw1f
-	b9vZgzDd1igQ6wg8qYcKzGAU5y4gnjPDoTkr2BO7UE7Ctd9vGwxs11fxzt16RW9t
-	uFfSAW1OZzFUswGyQDGlqZqQl217guEIbg35YNyWj6uM7eTirVrNFhonznMyQFEX
-	rntCyglP61DV4BRmWYr4zMPhAKwvox9EC/xEe6Rzc9yIdurzAp6bp1DUNRboLPLI
-	n5I4g3H7Kmv46ClxIgHb24mJRrSeL4GCue57Wl76yPkBy+0WhDj5HYr8dGONtXwJ
-	z01DWe/Dd4NoTJ9SjA5YzwOep6EXuRzs9TsXMdLNVzP/8sIQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaa8kg973-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 19:47:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44NJleLi013435
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 19:47:40 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 23 May
- 2024 12:47:40 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 23 May 2024 12:47:39 -0700
-Subject: [PATCH] crypto: Add missing MODULE_DESCRIPTION() macros
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LtVdXSrZ"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57851e8b891so164496a12.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 23 May 2024 13:24:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716495853; x=1717100653; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=pLYxifaBnTwd6v2VqQzlnZWV2Y1C/HZmXP7m6TLRDnI=;
+        b=LtVdXSrZMCsgOfKYNo2WYLkvO1759Y+cusrAS9k2xrDkeNqvtzMlLJQxBO2wbN82Lf
+         Xh7O5lY33oQ/PIm26Hg82Ouevq8T44F5UikezP1CMGMQId5w0gWKnnT354eWdNk4XBpf
+         nVwfcgOEUmFOGEW2ntp0i7mby9p1ihLYLQhqlPhs3li++/7c2EgSVzi7jDls/UkaAGLr
+         FeYFrLC+cvG6gxQF9939PoJh68k6xedj1QoY87zVlQQneEU67QbhocwBtbVn3WqUqdNT
+         kkk4QuNE/+BB4ydsWQKGcKAp5axPV4KH+brd/fOEbyuJ6eUAuD5Mi3eyBl1ZAJwCMI99
+         zxeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716495853; x=1717100653;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pLYxifaBnTwd6v2VqQzlnZWV2Y1C/HZmXP7m6TLRDnI=;
+        b=oFhNAJmGhA3fKbIy0ToU6Y0wIFWjnUkV2wmesuvA5vzBEVohC38US5idcM4zvWmnLV
+         q95xK6gJ++kVNsrYL1lK+ZeR/2ipGalj6oVGlTCLhau5xzp0Wj3v2ChOfo+r4UX7eokA
+         zCA6CfJzWY4A33aR/npGU/anmJ7K5QTzCutyR5B8NeB118fhtM/yzmdkUkHZY34p8wMJ
+         UwiTubrZfIzKodIyKnz6m2CtZImckj241WXy85jtMF+EuegLGSZSQVGrjJJIDgTeQlMd
+         JOfHj570CTsXykBvbzANnQwMXsTZF83Zu+95oBRoWYNt3PJ5lWlJsmpFmQjXheM8nAsl
+         WaRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqZgDP7udhNiQnXOIEhgAqVpfiItRilLjr1vkZup9nVsmVzkQ7v6SVXaeJP4gVzqjF143UzKPP5iSGV3tFlK3g1yhl/1E70PiZ+mr9dW8+
+X-Gm-Message-State: AOJu0YwPqGE/Qq1QZPlQzzL9pj34Hjfr4nnlRUc++hN9J93GLlKOE1oE
+	/4hhl5ecrdIvYK1O9pS3HzBWG5wHKL9fU2abhYV1aqITyhp9ejU5rHhM8a1zu3I=
+X-Google-Smtp-Source: AGHT+IEpQcnn/MO2wXSF2wIEtLlbmHIff5/dN2bTkKyHBGbFjuDdyMLgtnQ37NUeIArnmaObSLQcJw==
+X-Received: by 2002:a17:906:34d3:b0:a59:ac10:9be5 with SMTP id a640c23a62f3a-a626250e4dfmr40903166b.27.1716495853059;
+        Thu, 23 May 2024 13:24:13 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cda5698sm5134066b.205.2024.05.23.13.24.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 13:24:12 -0700 (PDT)
+Message-ID: <acced98c-79fb-4c32-abf3-66fe93031f36@linaro.org>
+Date: Thu, 23 May 2024 22:24:10 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 17/20] ARM: dts: aspeed: Add IBM Huygens BMC system
+To: Eddie James <eajames@linux.ibm.com>,
+ Markus Elfring <Markus.Elfring@web.de>, linux-fsi@lists.ozlabs.org,
+ linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Lakshmi Yadlapati <lakshmiy@us.ibm.com>, Mark Brown <broonie@kernel.org>,
+ Ninad Palsule <ninad@linux.ibm.com>, Rob Herring <robh@kernel.org>
+References: <20240522192524.3286237-18-eajames@linux.ibm.com>
+ <2fe45df6-01a2-488b-99fb-5ee20491554c@web.de>
+ <910b18b7-3717-4087-b028-fcaf5f2a604b@linux.ibm.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <910b18b7-3717-4087-b028-fcaf5f2a604b@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240523-md-crypto-v1-1-eb68e4aa5592@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAFqdT2YC/x3MQQrCQAxA0auUrA2MY0XwKuIik6Y2YKdD0kpL6
- d0dXT74/B1cTMXh3uxg8lHXKVecTw3wQPklqF01xBDbcI0XHDtk28o8IdEtSUsxcM9Q+2LS6/p
- /PZ7ViVwwGWUefoe35mXFkXwWw7LVFI7jCy8u8laAAAAA
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>
-CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: GOnCjqdKltJlcKC13t2aAjMTqsYyPci-
-X-Proofpoint-GUID: GOnCjqdKltJlcKC13t2aAjMTqsYyPci-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-23_11,2024-05-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
- phishscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- malwarescore=0 adultscore=0 mlxlogscore=999 spamscore=0 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405230136
 
-Fix the 'make W=1' warnings:
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/cast_common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/af_alg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/algif_hash.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/algif_skcipher.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/ecc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/curve25519-generic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/xor.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/crypto_simd.o
+On 23/05/2024 21:00, Eddie James wrote:
+> 
+> On 5/23/24 13:45, Markus Elfring wrote:
+>>> The Huygens is a Rainier with modifed FSI wiring.
+>> Will imperative wordings become helpful for a better commit message here?
+> 
+> 
+> This statement is a description of hardware. I cannot word that 
+> imperatively. The commit message is imperative - "Add Huygens system".
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- crypto/af_alg.c             | 1 +
- crypto/algif_hash.c         | 1 +
- crypto/algif_skcipher.c     | 1 +
- crypto/cast_common.c        | 1 +
- crypto/curve25519-generic.c | 1 +
- crypto/ecc.c                | 1 +
- crypto/simd.c               | 1 +
- crypto/xor.c                | 1 +
- 8 files changed, 8 insertions(+)
+Feel free to ignore all comments coming from Markus (or implement,
+entirely up to you).
 
-diff --git a/crypto/af_alg.c b/crypto/af_alg.c
-index 18cfead0081d..0da7c1ac778a 100644
---- a/crypto/af_alg.c
-+++ b/crypto/af_alg.c
-@@ -1317,5 +1317,6 @@ static void __exit af_alg_exit(void)
- 
- module_init(af_alg_init);
- module_exit(af_alg_exit);
-+MODULE_DESCRIPTION("Crypto userspace interface");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS_NETPROTO(AF_ALG);
-diff --git a/crypto/algif_hash.c b/crypto/algif_hash.c
-index 7c7394d46a23..5498a87249d3 100644
---- a/crypto/algif_hash.c
-+++ b/crypto/algif_hash.c
-@@ -471,4 +471,5 @@ static void __exit algif_hash_exit(void)
- 
- module_init(algif_hash_init);
- module_exit(algif_hash_exit);
-+MODULE_DESCRIPTION("Userspace interface for hash algorithms");
- MODULE_LICENSE("GPL");
-diff --git a/crypto/algif_skcipher.c b/crypto/algif_skcipher.c
-index 02cea2149504..125d395c5e00 100644
---- a/crypto/algif_skcipher.c
-+++ b/crypto/algif_skcipher.c
-@@ -437,4 +437,5 @@ static void __exit algif_skcipher_exit(void)
- 
- module_init(algif_skcipher_init);
- module_exit(algif_skcipher_exit);
-+MODULE_DESCRIPTION("Userspace interface for skcipher algorithms");
- MODULE_LICENSE("GPL");
-diff --git a/crypto/cast_common.c b/crypto/cast_common.c
-index 9b2f60fd4cef..fec1f6609a40 100644
---- a/crypto/cast_common.c
-+++ b/crypto/cast_common.c
-@@ -282,4 +282,5 @@ __visible const u32 cast_s4[256] = {
- };
- EXPORT_SYMBOL_GPL(cast_s4);
- 
-+MODULE_DESCRIPTION("Common lookup tables for CAST-128 (cast5) and CAST-256 (cast6)");
- MODULE_LICENSE("GPL");
-diff --git a/crypto/curve25519-generic.c b/crypto/curve25519-generic.c
-index d055b0784c77..68a673262e04 100644
---- a/crypto/curve25519-generic.c
-+++ b/crypto/curve25519-generic.c
-@@ -87,4 +87,5 @@ module_exit(curve25519_exit);
- 
- MODULE_ALIAS_CRYPTO("curve25519");
- MODULE_ALIAS_CRYPTO("curve25519-generic");
-+MODULE_DESCRIPTION("Curve25519 elliptic curve (RFC7748)");
- MODULE_LICENSE("GPL");
-diff --git a/crypto/ecc.c b/crypto/ecc.c
-index fe761256e335..af698f8852fb 100644
---- a/crypto/ecc.c
-+++ b/crypto/ecc.c
-@@ -1715,4 +1715,5 @@ int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
- }
- EXPORT_SYMBOL(crypto_ecdh_shared_secret);
- 
-+MODULE_DESCRIPTION("core elliptic curve module");
- MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/crypto/simd.c b/crypto/simd.c
-index edaa479a1ec5..2aa4f72e224f 100644
---- a/crypto/simd.c
-+++ b/crypto/simd.c
-@@ -523,4 +523,5 @@ void simd_unregister_aeads(struct aead_alg *algs, int count,
- }
- EXPORT_SYMBOL_GPL(simd_unregister_aeads);
- 
-+MODULE_DESCRIPTION("Shared crypto SIMD helpers");
- MODULE_LICENSE("GPL");
-diff --git a/crypto/xor.c b/crypto/xor.c
-index 8e72e5d5db0d..a1363162978c 100644
---- a/crypto/xor.c
-+++ b/crypto/xor.c
-@@ -165,6 +165,7 @@ calibrate_xor_blocks(void)
- 
- static __exit void xor_exit(void) { }
- 
-+MODULE_DESCRIPTION("RAID-5 checksumming functions");
- MODULE_LICENSE("GPL");
- 
- #ifndef MODULE
+Markus is banned from mailing lists and most of maintainers already
+ignore him or already marked as spam.
 
----
-base-commit: 5c4069234f68372e80e4edfcce260e81fd9da007
-change-id: 20240523-md-crypto-aa7be4a20cfc
+Best regards,
+Krzysztof
 
