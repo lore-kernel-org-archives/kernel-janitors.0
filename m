@@ -1,92 +1,172 @@
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9D584D3B;
-	Thu, 23 May 2024 20:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DA77E766;
+	Thu, 23 May 2024 22:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716496440; cv=none; b=G0GzDjYMVOdIszpe/fOqVbk2KQJIB8BnXuZM0zyBHV9riPgSrO5ur2S5a1rhNIVBHfawCJ5ZZFOSOXli6/jiUjSamuR2ApIevumr5BkJm0tKK0ZddpdBDZts48mQd2ZRcmGlpWVguqDWYzFuBR20dbaOne00UF20WfmVkeSL09E=
+	t=1716503949; cv=none; b=EjI+2yiij1tKkYpwAsa9vsMneuUoGDRTv2GIZWZV5tXOvfMEkis2o2BspaseKF36SWsuxECtEX8T3iq6JUwx9oADrH66bZmaF0lVJde9xqf9yYdwvsQbORoAf9IKidDP9hWw3edHS+IP1djGw+SVaIkyrl2FbAh5JJlEe5/wGIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716496440; c=relaxed/simple;
-	bh=+4B+O3Aw4Sfg8AK5WRHfCt9FlwQ2zU3xpqnsewfYaD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MnKonR3E2OTBYkFrKh0drLl1pkbVTCU3EKKc6ieaIDwWuuX4TnT5OHAvtnc3uJTz9L5D0ET/Oc7k4ELcWFZL7zrZZTKgkLTyVOkBqUxmbDXpK0MGeP2rXK8y05Lq36NKFMeIm3cxqpNGo/YNtRMabW4uVNh9YJJMc0o8MPjdysg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=v5SIrry9; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	s=arc-20240116; t=1716503949; c=relaxed/simple;
+	bh=pnbF9bbWu3CYe1fqPSxNRmank0cVx5cpuMcSN1/JeK8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=buKp7QGWNdN+ffVnLm8QjVO/xJKgHOc+r37UN8PW8zTkJwS1QzOQQAV6YhzkSu2BsZ4Pu0VLMxPWxNRSC27Zb1cI3YefIjJkjNAhQJluPQvGp2lvZWCpq/unTS1wt+8uNJe4iLgVdCWyxGZ9xm9WvAh/HWM4ACmdrCFlBDDYnQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bgRHcyjs; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="v5SIrry9"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=izeBpVR9zkGYZYzcEzW+5qmgjUEU7HHob31bUa9JVsE=; b=v5SIrry9+IaF99OePM7YUdRyno
-	cVsnEhHNr06WRsn3NW3lZXPn3htbxeR9HAUu6+CDRP+jAmogdmV5o1iUD5U/Th9lL7Oliw+sE2dfI
-	x6nkflNw4E8ORRP3CMNmMdgBsn79rBkZD0FJ438NyPEhhtMQImA8vBHAqGnjWeMtKkJlEAd1R7tQi
-	ek+ntVHCA9RYzp8MdYd07xm0rgABte/5PVRL9cBFude4gJiAmHofpkSCogAkWv7UXym/J1wPgbM5Y
-	Aj+L4JCdSWpJ6X+BYhnUwdp4xiHAfp+89RISTbqoPXXfjBIKLr6yJXw3Hc7fUH8DzfFwFmwuz+0ga
-	Uvu5+nEQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1sAF88-003rgV-03;
-	Thu, 23 May 2024 20:33:40 +0000
-Date: Thu, 23 May 2024 21:33:39 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Conor Dooley <conor@kernel.org>, linux-fsi@lists.ozlabs.org,
-	linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Eddie James <eajames@linux.ibm.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Lakshmi Yadlapati <lakshmiy@us.ibm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ninad Palsule <ninad@linux.ibm.com>, Rob Herring <robh@kernel.org>
-Subject: Re: [v6 17/20] ARM: dts: aspeed: Add IBM Huygens BMC system
-Message-ID: <20240523203339.GS2118490@ZenIV>
-References: <20240522192524.3286237-18-eajames@linux.ibm.com>
- <2fe45df6-01a2-488b-99fb-5ee20491554c@web.de>
- <910b18b7-3717-4087-b028-fcaf5f2a604b@linux.ibm.com>
- <398bf753-6701-4925-b814-781a68a75cc5@web.de>
- <20240523-rinse-sturdily-7c78d8517884@spud>
- <d6289d1c-deae-49a3-9fc9-98a2f2e57802@web.de>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bgRHcyjs"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44NHafiW026662;
+	Thu, 23 May 2024 22:39:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=5oDcmIuni4HOcVlebVG0Ak
+	wbpA2Qbg0h6ew16BKwo7o=; b=bgRHcyjsNxvyewnRo3qBPjrtkAEORAKm9BdEG2
+	dRnZWHSscg6l0j47yDXgkyzxTS4VdWf3P412DTkDRh6xzUsaVaCwjoSeA8VqppQQ
+	Fl+Kn3l19O6lD1gUUNVOIbCu08tzbmAcejdvygBNh+BdQo60mp2X79oN5F1Fnw71
+	UlSlI3bU2ci0CXGUWwu/wmzLU0Je0nP5+buI3IdXfJJa8rVasKn/lkvjHNLBiI9q
+	BzyejY8rQEhE11Xpegq3a0qnTy1RMFBY/3jTBKawNgryySH4GqqpZYumEvyA+RiT
+	Y+9NAm8hzn8l/DcQSo+ZiHBgoSEjDHkYYqphjsX5v0mcAEog==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaabq0jhb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 May 2024 22:39:04 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44NMd3In027845
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 May 2024 22:39:03 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 23 May
+ 2024 15:39:03 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 23 May 2024 15:39:03 -0700
+Subject: [PATCH] uio: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d6289d1c-deae-49a3-9fc9-98a2f2e57802@web.de>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240523-md-drivers-uio-v1-1-3ae9ea481670@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAIbFT2YC/x3MQQqDQAyF4atI1g3oaC32KqWL6KQaqKMkKhbx7
+ k27/OC9/wBjFTa4Zwcob2IyJUdxyaAbKPWMEt0Q8lDl11DiGDGqbKyGq0zYlKG5VVxQoBr8NCu
+ /ZP8HH093S8bYKqVu+GXektYdR7KFFeePT+E8v8Rzjy+FAAAA
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: sDGY7mxRLWoiQfS64EPDu8asiQi9dyMz
+X-Proofpoint-ORIG-GUID: sDGY7mxRLWoiQfS64EPDu8asiQi9dyMz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-23_13,2024-05-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 suspectscore=0 bulkscore=0 impostorscore=0 malwarescore=0
+ spamscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405230156
 
-On Thu, May 23, 2024 at 09:46:48PM +0200, Markus Elfring wrote:
-> >> Would you like to mention in the changelog that a hardware description
-> >> should be extended anyhow?
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.9#n94
-> >
-> > You are talking absolute crap here. Stop harassing contributors with
-> > your inane comments.
-> 
-> Why do you interpret my patch review contributions in this direction
-> when the official Linux development documentation provides special advice
-> on affected wording details?
+Fix the 'make W=1' warnings:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_cif.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_aec.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_netx.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_pruss.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_mf624.o
 
-Your "contributions" are garbage in general, and this thread is not an exception.
-More specifically, you are picking an advice that is inapplicable, transforming
-it into a question and "contributing" the result.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/uio/uio.c       | 1 +
+ drivers/uio/uio_aec.c   | 1 +
+ drivers/uio/uio_cif.c   | 1 +
+ drivers/uio/uio_mf624.c | 3 ++-
+ drivers/uio/uio_netx.c  | 1 +
+ drivers/uio/uio_pruss.c | 1 +
+ 6 files changed, 7 insertions(+), 1 deletion(-)
 
-And your entire modus operandi fits that pattern - you spew random garbage and
-expect the contributors to spend their time and efforts on checking if your
-(contents-free) "advice" happens to make any sense.
+diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
+index 009158fef2a8..7f041433293d 100644
+--- a/drivers/uio/uio.c
++++ b/drivers/uio/uio.c
+@@ -1131,4 +1131,5 @@ static void __exit uio_exit(void)
+ 
+ module_init(uio_init)
+ module_exit(uio_exit)
++MODULE_DESCRIPTION("Userspace IO core module");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/uio/uio_aec.c b/drivers/uio/uio_aec.c
+index 64eafd59e6e7..8c164e51ff9e 100644
+--- a/drivers/uio/uio_aec.c
++++ b/drivers/uio/uio_aec.c
+@@ -144,4 +144,5 @@ static struct pci_driver pci_driver = {
+ };
+ 
+ module_pci_driver(pci_driver);
++MODULE_DESCRIPTION("Adrienne Electronics Corp time code PCI device");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/uio/uio_cif.c b/drivers/uio/uio_cif.c
+index 653f842a1491..1cc3b8b5a345 100644
+--- a/drivers/uio/uio_cif.c
++++ b/drivers/uio/uio_cif.c
+@@ -130,5 +130,6 @@ static struct pci_driver hilscher_pci_driver = {
+ 
+ module_pci_driver(hilscher_pci_driver);
+ MODULE_DEVICE_TABLE(pci, hilscher_pci_ids);
++MODULE_DESCRIPTION("UIO Hilscher CIF card driver");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Hans J. Koch, Benedikt Spranger");
+diff --git a/drivers/uio/uio_mf624.c b/drivers/uio/uio_mf624.c
+index 5065c6a073a8..790412f8dfd5 100644
+--- a/drivers/uio/uio_mf624.c
++++ b/drivers/uio/uio_mf624.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+- * UIO driver fo Humusoft MF624 DAQ card.
++ * UIO driver for Humusoft MF624 DAQ card.
+  * Copyright (C) 2011 Rostislav Lisovy <lisovy@gmail.com>,
+  *                    Czech Technical University in Prague
+  */
+@@ -221,5 +221,6 @@ static struct pci_driver mf624_pci_driver = {
+ MODULE_DEVICE_TABLE(pci, mf624_pci_id);
+ 
+ module_pci_driver(mf624_pci_driver);
++MODULE_DESCRIPTION("UIO driver for Humusoft MF624 DAQ card");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Rostislav Lisovy <lisovy@gmail.com>");
+diff --git a/drivers/uio/uio_netx.c b/drivers/uio/uio_netx.c
+index 2319d6de8d04..a1a58802c793 100644
+--- a/drivers/uio/uio_netx.c
++++ b/drivers/uio/uio_netx.c
+@@ -170,5 +170,6 @@ static struct pci_driver netx_pci_driver = {
+ 
+ module_pci_driver(netx_pci_driver);
+ MODULE_DEVICE_TABLE(pci, netx_pci_ids);
++MODULE_DESCRIPTION("UIO driver for Hilscher NetX based fieldbus cards");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Hans J. Koch, Manuel Traut");
+diff --git a/drivers/uio/uio_pruss.c b/drivers/uio/uio_pruss.c
+index f67881cba645..c1d6f29cdbc3 100644
+--- a/drivers/uio/uio_pruss.c
++++ b/drivers/uio/uio_pruss.c
+@@ -249,6 +249,7 @@ static struct platform_driver pruss_driver = {
+ 
+ module_platform_driver(pruss_driver);
+ 
++MODULE_DESCRIPTION("Programmable Real-Time Unit Sub System (PRUSS) UIO driver (uio_pruss)");
+ MODULE_LICENSE("GPL v2");
+ MODULE_VERSION(DRV_VERSION);
+ MODULE_AUTHOR("Amit Chatterjee <amit.chatterjee@ti.com>");
 
-That.  Is.  Worthless.
+---
+base-commit: 5c4069234f68372e80e4edfcce260e81fd9da007
+change-id: 20240523-md-drivers-uio-932974e1a2a6
 
-According to people who'd met you in person you *are* a member of our species,
-and I can't exclude the possibility that in some other environments you might
-be capable of sentience.  Unfortunately, the kernel development is clearly
-not among those.
