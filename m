@@ -1,114 +1,90 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF3D1170F;
-	Thu, 23 May 2024 15:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9DE12E55;
+	Thu, 23 May 2024 15:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716478867; cv=none; b=jSPnn3GR8tpORcUgIghlCrmgAF9F8J53VZOrdWUMKEJL9QWvauS/WaJhrokZCzS0YYlCFt/M+56b+YFFdNN9sQPSk6CU3H8WQnSemqYFwaMzoLVn91MSitGAaOBC8cRe0WOsdi4kprfXuD8IdqPyVnNaiSFAq266Pcz1SGhvQ4U=
+	t=1716479745; cv=none; b=EZDf1NHEC1ljfMxDSnQ2SwbBsq2rgf/23jgUWdzYJYO7Z32ujOOS0WKbOnYVtN/WvThrYj6r0pKfFZgbPGDtFgfg9q6OOHOyuUvR/4F9/Q/PJmomB0Nw2o0dxi9yYHCUtffxMDSPWkzIpwd9Lmlzt1WoLVgRuzTJaIvtNK9sT2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716478867; c=relaxed/simple;
-	bh=yJgeKp2USP9hyFWHB6DyX7h+mt/gXrBpRhUYxVDXLak=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=rUZIWssetgxnQhLyS9ddnDSHMJOnGyNUWUKWgbfOWYjOePOvkvo7RAVJVI86TgS8tbVrMOmyoPby9YpuC3vMCI+NUS+pnwdyvLVgmPJUKRXO2xf/j9RZOdTxR+f8Lsft+Y4bVGLY8NSk5F/piwT9bLsDih6Bmtk4vG3toAMFxYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T86A/Y/Q; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1716479745; c=relaxed/simple;
+	bh=TIMNJk57A3yArfkP5l/Y5yU0QttkwhGd1NhmgzcFI2o=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=uI75QZ7IEyG+WUMnwh28Tj3+EIeJjAaWPol84BMY73k27FYNFMRd2aFym1BiB6ZKMFQCCGtdEy8u7XmmnQDcQcpxbCZ/M9+3lpeZdSyse+LewGCj71QX4XdD/PAmlTY0qSjRWQUH1PW6dswsKv4+3aDa38AO/QVu0zwEzOEqMZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=AvAAI6Ka; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T86A/Y/Q"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42102c51524so4971505e9.1;
-        Thu, 23 May 2024 08:41:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716478864; x=1717083664; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N0T/0BOLbQiEg7zkcIb/GRTDdLTeXOCbl42VLf5DDY4=;
-        b=T86A/Y/QYuk42Li4lOWU7gbBLqqvpyJScTGQNHjktZ4p3WedMnwR84W7icxDLrgs67
-         kUrVFd2mH0qF0Yk9/04u6mPhTnJvK798otVXCp1hjYC/L2C7DidPNMOZooctwplvezhq
-         MbHxfmifDZELn9Y3iFNIXD/OubXrjoaGn8PCpE5StoFa+7FditzmFthibZIoZvi7L1QU
-         ldEnParIG5/7fc4Jkm4qFoDHAsWo3Z9UQdz9QyW/fHAHbbq/AGFWo/9YmdIK7wGdqWvg
-         0BH4RCwbyE568ZizLMh29Whm91hm/phKdyMPRMf/9sJTE/1sv3JVIdjKM2h0eHvgMRot
-         rORQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716478864; x=1717083664;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N0T/0BOLbQiEg7zkcIb/GRTDdLTeXOCbl42VLf5DDY4=;
-        b=eNL7SMtTDyUS3BH1G0DShxp9FEP9PZNfKTQvmzK8CRJUXyUA9AZ+HkMMTT4j5QXNlv
-         UD7YVJYf9pyYV0IEI1rnhLBNHqpZwG3fZUf8radc6om2cpq1TAjqLOKoGGfbofqtQ0h9
-         P87IIjyjdJq4XXLUDJ9kSU+G9hLzbAuq+jXFpsVyHQP8WnnZ9Iv+5WVEwttaQhNp9egr
-         XHY+q484jzVxuLaGdP+cUcD4Ckda3D0w3g5HTLbhEGdL5hLeY5Gd9I+HwBhHpii8pFeR
-         Zr8yPQCAw3d4SwchBuJoXr4TuCw9uM9sWenZivAid+ZS4dKMeabAqtQYdF58o3sXC9lX
-         Pg+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUCO2AhsH0xyIdnqTXWUSm3gDYH6ZpIUeFcY1vLMwDRhZjL9+Rhm37PwFcQGUz8wbKL+bl2of8DjQEBVZerX4JneRTDiIx/o0/1dHHnNY5Vazz+cK4jXC+ghdeTQQU1Du69l45fSqlM/jFhj9dzVC25BiNBhH+lljQ6AtBbr64c7se0
-X-Gm-Message-State: AOJu0YwelbNNTPghYQrMkpD5P0+W9RA5w3WxmYQKWb6iLFmtearBoZUQ
-	iCSj7UwS9gzsKp/0ouPOtMB++iI14IqlOW4Pa8GZWxJuz75Uq6eX
-X-Google-Smtp-Source: AGHT+IEWXVf9qKaCwbnz/ddAncvRecD6EHwq3qDLQWks4lfRFKJXN6Zj4ogMsTsAkLKRi/EovgDXOQ==
-X-Received: by 2002:a05:600c:4709:b0:415:ff48:59fc with SMTP id 5b1f17b1804b1-421015af252mr23109415e9.8.1716478863738;
-        Thu, 23 May 2024 08:41:03 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fadd72sm28467225e9.31.2024.05.23.08.41.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 08:41:03 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next][V2] selftests: kvm: fix shift of 32 bit unsigned int more than 32 bits
-Date: Thu, 23 May 2024 16:41:02 +0100
-Message-Id: <20240523154102.2236133-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="AvAAI6Ka"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716479721; x=1717084521; i=markus.elfring@web.de;
+	bh=TIMNJk57A3yArfkP5l/Y5yU0QttkwhGd1NhmgzcFI2o=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=AvAAI6Ka4N7YFLX0MPVtAicws2w/QAs75oJnQdVN12zS1qZEAhhaA/nnt28hYuXk
+	 a3OSzrhxae97ysBkSuvvSDDj32SC+15BjPm5790DSrMXQZU/CNhS/trt01eBTuwTW
+	 IcMov35Hg5yy/8QKTGaOjx1FZxrhOjfHZwPVFx6T5gyPU2L4Q8H6Xhek54v+hSpce
+	 2G67Ccf2iggw9pnyR1v8c3t1UxgL8v4a7cdO+4lvE7j7wMQG6wEFFFv6zkKnBtT73
+	 tGZw46TIgpsqfLzdtyjZgEPuHhTeM7zptoHnSUME7d3PKO6aiAo1wF0pHvT+ujTJr
+	 QCpK2ERoew70BcxYdg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N01ds-1sUbHz2lsM-00x3aZ; Thu, 23
+ May 2024 17:55:21 +0200
+Message-ID: <05b7feb3-8184-43c3-a4c8-fd30f13a5bab@web.de>
+Date: Thu, 23 May 2024 17:55:19 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org,
+ linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Andrew Jeffery
+ <andrew@codeconstruct.com.au>, Conor Dooley <conor.dooley@microchip.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Joel Stanley <joel@jms.id.au>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Lakshmi Yadlapati <lakshmiy@us.ibm.com>, Mark Brown <broonie@kernel.org>,
+ Ninad Palsule <ninad@linux.ibm.com>, Rob Herring <robh@kernel.org>
+References: <20240522192524.3286237-6-eajames@linux.ibm.com>
+Subject: Re: [PATCH v6 05/20] dt-bindings: fsi: Document the IBM SBEFIFO
+ engine
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240522192524.3286237-6-eajames@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:JKuuEv/GLKvsh8G4/NwfhilnBuQyABiO/YwRlE1q/KxZRSNL2pL
+ M1xrX0qbHL0raBK1u4y7Z1NnJ/n3Dtqj578oar2HYQwKTi8ydNWeVeOlIb6gtos9vg0914n
+ f25Wu3KQn0DJRIJQ1YpHug4CVfLb+SbRHfIal9zgcFEh/x3b0VgGrF6+RxGXOBmVEtowFvi
+ Ku0qRv6iHzmWMg/5z23wA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Th7Bo8htPYk=;SvhlPm571o5u3zKwYGIfflRrhE8
+ xpsFGkgYOMd9Cyux9u2x1isOABxvKR9q38ig0PF41M6Lj8pODm/oLBX/F52hGE8ZQK0qpLTEa
+ z/hGEmvaQmK0ArG5iEy+rNRUDCDnLGmFyP4uXvmLYXn7fhhgOsSCa4UTs+siVzdfmUzXRyknI
+ fydS45RA+7Z7TePx3LA9m/dqERpCTrFbdwj6ato3EoYygpYYXDTunLRcPfBg3pATcWxOK8PqO
+ 8h3bEGmSizbwdGvF++6VAf7M/ZBJjUAon8cDO8BdF/IaLRgP6twu/uU1dfRluEY5CP1Q9/BQf
+ fuG+Jvpoc92vJqD/plwFt7zdqogLLtoXXvIwvRuD3NQ4aK2rTY9SX4fFgYEgg6tTA9BQjGgO7
+ vT+ckHw/GwgxpWcIomZaHw+IIsjFkdwDc6ZBq4ht/8oXLkuJT1h3u6E6+FjgE88AQeyAra9Eu
+ x3l97o4jcMRxv4EcNHc61gJ/DZOFeLhy7wjKamh6eu2K6Nm8wVdYy6tV2Js9VAS0g2aYtwzXo
+ 2Ft9AnuYEzLVuL3OMkVOqvwmbpk5/jvhYaUaLJpIFSKwTLKlqtH8KbtlWujb0fWpLQUpP29v0
+ hIMzXWnNoIzep2SGwsEahn1w//tAshGv55IIVOWozrzpwiO0aBurCqArDVPeXV+7D66x9oKky
+ H7CKmB9vxWjisSHKZAhcoIrTqNcvwhB+p6Xvrd1/wx8XrkBo0835ldT5eKbqvRFgcWRqnFrvi
+ zy1nGzZjBN+H/jt17PQ+asfj7gKud12T9EvZn1ccMEB44Pg8U/rfOS/V8MdEReuOMpTgf7UU5
+ k1ywHlitSrGvFDh33uXRifu5Yb4IWa19Y6+S4nty3SW28=
 
-Currrentl a 32 bit 1u value is being shifted more than 32 bits causing
-overflow and incorrect checking of bits 32-63. Fix this by using the
-BIT_ULL macro for shifting bits.
+> The SBEFIFO engine provides an interface to the POWER processor
+> Self Boot Engine (SBE).
 
-Detected by cppcheck:
-sev_init2_tests.c:108:34: error: Shifting 32-bit value by 63 bits is
-undefined behaviour [shiftTooManyBits]
+Under which circumstances will imperative wordings be applied for
+another improved change description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.9#n94
 
-Fixes: dfc083a181ba ("selftests: kvm: add tests for KVM_SEV_INIT2")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
----
-
-V2: Fix incorrect variable in 2nd BIT_ULL(), kudos to Dan Carpenter for
-    catching this error.
-
----
- tools/testing/selftests/kvm/x86_64/sev_init2_tests.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c b/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c
-index 7a4a61be119b..ea09f7a06aa4 100644
---- a/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c
-+++ b/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c
-@@ -105,11 +105,11 @@ void test_features(uint32_t vm_type, uint64_t supported_features)
- 	int i;
- 
- 	for (i = 0; i < 64; i++) {
--		if (!(supported_features & (1u << i)))
-+		if (!(supported_features & BIT_ULL(i)))
- 			test_init2_invalid(vm_type,
- 				&(struct kvm_sev_init){ .vmsa_features = BIT_ULL(i) },
- 				"unknown feature");
--		else if (KNOWN_FEATURES & (1u << i))
-+		else if (KNOWN_FEATURES & BIT_ULL(i))
- 			test_init2(vm_type,
- 				&(struct kvm_sev_init){ .vmsa_features = BIT_ULL(i) });
- 	}
--- 
-2.39.2
-
+Regards,
+Markus
