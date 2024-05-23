@@ -1,108 +1,96 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05BE13D2A8;
-	Thu, 23 May 2024 11:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E082713B7A3;
+	Thu, 23 May 2024 13:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716464287; cv=none; b=cunp3pFuntE9SfLYXLx/qbuCUI9WvZk+knLgIe3O6TCz4vHCs8hLqCymDzAeB5cddrAvhhcPCUSe7ma1HAxRVzJ2lL3YRJQv6PRk40UgY5An8CnPwXIRaZAC2yWU5BBO+ZDPFhRvxk1QA7EwWUOxgErGEeQBLpZ0fDyrCCp02iI=
+	t=1716469909; cv=none; b=IP9Cdj8reQ/SDF4qv81kUEWbthCsdrF/Nyse1NrNXrrl7pOqnSnyrqHGivpXLpJWL7UiqUGQJ6GnNq2daboonsDT6sjSLoUv3QShe3iki4c6UUgGvCIBpMFqm/kMwAdXxVqx5Ru123JmOeE9hBkg/BfClX0+4RQIDYsfFnPTx2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716464287; c=relaxed/simple;
-	bh=18slTayNbrDxXRTDHctjnSZxYHIh7ey5nRzuUlCOa8w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Qxx8JqcvkdIF1KgM+QajhHjsF3rtr+IG1NRPdrTVnGSNDexuXXtsD8yOuOuCsdsc+o7ftdSnVs95Jxv8FIexqd/xGuJFSgwk1zfzmq311/dimi7HMvGiSVhtzlI1s5NAoayuKA3IDTral2jnUEIy/fQk5XVnixjhCenyijGleE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PaI7MKYJ; arc=none smtp.client-ip=209.85.221.52
+	s=arc-20240116; t=1716469909; c=relaxed/simple;
+	bh=CTAi7uAh3hw0fyc/JAGHfY4QmcgVYQ7mafxfjLDxk7k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jkajT7mPmiPHNcS/jfXO1c62QoqItE2h+vhiJqSvvKfnnZV1EkcXmSp4KC7Q2fGFYJfghtUKccC+iILeFNJMcLEkmQ6el1nbabQtIaAjv/nZKtgnuMVegPNzsxsoCi+lRQeLc8Hz7GJxLNc+O0PrWWuBLwJWl/7c2uzWTH40l1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=czZ5TzqR; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PaI7MKYJ"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-354f6ab168aso434814f8f.1;
-        Thu, 23 May 2024 04:38:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="czZ5TzqR"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2bd8e2fba43so2039221a91.1;
+        Thu, 23 May 2024 06:11:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716464284; x=1717069084; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aqT4y2vS8dNyIczJ8/6qqGRpO0964EMbDkWUyIXs2l4=;
-        b=PaI7MKYJeA+XzTHNq89c1OyRRQ1D+/xYWl0bpmS3pgoW3Ij+exl0ZM79sQk7GvNa6i
-         343hRoMxOHvppM00b7P3J46TTSj3U+RVbJcBdd9zd98dJYVNTvL+WoQj/kj5BpUjFW9Q
-         T5xQTGWKq6V2VXkHRttmCeJcWeU3JLZcGjbv2AVoWj2BMpAGwTMW1fS7/dNHhSH1PlOp
-         prb6A0SkGDAnwdH9C/MBXJ3AjpfY65ly3YuSDDVW8sZJF8t4JpnJ9Nefuo1jN2Wu9852
-         YuJS17mf6OplleZBI2/JDUnwHF0hjB/P8qT4CH13P6oejg5DZmqtgw0fIHh0gbZJVrFC
-         95Hw==
+        d=gmail.com; s=20230601; t=1716469907; x=1717074707; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2DhGhb3qaQgpGCEagQ9gosBYwgoeJqPd2hTqiYo9NIw=;
+        b=czZ5TzqR2QuTOXxuAHGuHasbpvaORPK6phObJKc6P/BUZhkcwafVDZZ4Rb1UQ/VyOb
+         G5yk566a318HWzNo3vBOrFgyUR6o8VU0sC7spb4boq+ESrS4503zfVwlnC+p7MR74tX7
+         CltXFNl+hilFsnLlDzkdADrCvhRhSnp0kLT+x+a+eUqt0Io/90e2nDqY+TAhbT0yysqD
+         8OXOTWPE44AIWh2rQneYhMqYD67SZ76d+V6Pe+iWBUT1IgKz3R+Y6cBesHFEKawlJQfP
+         +7e0ZyTxs0Z92X5OnOhQFF89qr652fE9+1g2zSgfNBdbLoHfd5MX+xpvfaDCwmcq5I6Y
+         EOWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716464284; x=1717069084;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aqT4y2vS8dNyIczJ8/6qqGRpO0964EMbDkWUyIXs2l4=;
-        b=SNwmHygMg28nRHh6Lzz6Zd4+1q4aDqbwW5A3iVBVU7a2t/EIKxhlDDEbirsFnrjynh
-         hsSktfm1tz0IdXXJoTRrp9l2sl8k7lDkwhXcouIeKr9rAmt7b8Td5PXstY0aVQEisjs6
-         FNpgMXtnpY+NCtTAidttS2CwMSVViPZPta+noVMrCGiv0QysShUy11dYknSWJ5Attl9A
-         xsHVIlZfFDFsVFDngGmDiZNYnkrJQ+IXAtqhw2MGy+Yz+a3GBsiu1mFCmsJdbR24IugC
-         AFHmakO++isoNa84xBnS0l8MnlOTtNjiQLMi6VCJZRAGxL4Vky0subjgFJxyjx6aXurg
-         yQYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuS6ci0if0HyCRxlbwC7XuNqo1q0hHUz/CSmuTlZ3BnCKg/zbSnzzzhu7Nh/JKo10qacaD0bAQcIABU0Oqx0gXWgt2muyFBx/EW0eh+6kVXUSggaZOuF55Yh9VuTukzHevAfITIfLoQLG5GMvJTAmoqKfdVgt4PJmWiEVV9DvoC42M
-X-Gm-Message-State: AOJu0YzgMtMQJ9frvNNjE0yMYN7e+/8TRXf9KoY97CVxVYxAtIji9OSj
-	QFaMKyzE6YLr6F5fgXJ5hJNcD6GeXqUoKDj49DSmr+o7F2J+Vo3E
-X-Google-Smtp-Source: AGHT+IF0zOUS4HcsGOW8XOAHOsMjR5/9orrWORqY68lF8DKEooBrJ/0B1LJhJnM5j8Xmn6sFwitvJA==
-X-Received: by 2002:adf:e7c8:0:b0:354:f248:4aa8 with SMTP id ffacd0b85a97d-354f75218a2mr1796665f8f.18.1716464284075;
-        Thu, 23 May 2024 04:38:04 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b8a77easm36377801f8f.53.2024.05.23.04.38.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 04:38:03 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests: kvm: fix shift of 32 bit unsigned int more than 32 bits
-Date: Thu, 23 May 2024 12:38:02 +0100
-Message-Id: <20240523113802.2195703-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1716469907; x=1717074707;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2DhGhb3qaQgpGCEagQ9gosBYwgoeJqPd2hTqiYo9NIw=;
+        b=rx5m1/Z87OYj8fy/L8ANvjD/7iJ/GY2qmgs5fqLMc4SxKQJ4ny2Dq36kOxs5kmqxlN
+         S0DAutEXPhxW5awolGN2CO4UDJ8vRrqkqfxrPNNhvbw1t7XAl0ziYlgy6ISPoI92ms/t
+         9FhPlDizkHzVq8zGcX70tj85r8keEKSjrnhi+wYbBoriYYAJFfDrRfc4YWtKXR1dC8wz
+         kezLQWun3Y6SnJjomZ/3gchLSsAgasOsiUObUzAwqtju9BwLRbecQnlA1Y5H1P6FXN+p
+         jhBzMD3VS0F+ozJfmGzfyikep5xEdXw+1uO9d6egD4x2jMLvO2zU0NaIjefZrIUz8cIn
+         0lBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXcGpV+8Pb06bCgZqmKytRgX3G9tbKK497k3k/Gk6Oxs3ZV0byZ9MqmusotBgly/x6mXYgspDtoRQLrgMMdjwRZB/P8J0oohd+J+mkr1G2jYb+JgkmhWUFcjE6sRp0LUs7aU6znpIpMLRc4fpW
+X-Gm-Message-State: AOJu0Yz/9uQWRgsIGlCFNI6S79kuvmr2fnd9gfX/9Tf0zJfiexhPZ6Im
+	eKehGipz/z9v+D1gUTTytBJiX+fGcgBLDmpwYUnEXztwy9KW4QOOf26oe4H3jvHmbxKAeEdSPZ7
+	w/lL3ErVrKmaWZHagaAwGhptCyEex9neE
+X-Google-Smtp-Source: AGHT+IGK+NIx15YUTmkJXHDilfoMMwZMHnFNcL/O+LXfRaWUbZOkx9O1XfTtWk6TG4ApmDtdA1FSKbrsr5PFoyySTME=
+X-Received: by 2002:a17:90a:8d02:b0:2bb:b23e:14cc with SMTP id
+ 98e67ed59e1d1-2bd9f5bf56dmr6074131a91.42.1716469907088; Thu, 23 May 2024
+ 06:11:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20240308121021.1732-1-yongsuyoo0215@gmail.com> <f5272fc5-8d79-4717-9ad8-c503d8abda87@web.de>
+In-Reply-To: <f5272fc5-8d79-4717-9ad8-c503d8abda87@web.de>
+From: YongSu Yoo <yongsuyoo0215@gmail.com>
+Date: Thu, 23 May 2024 22:11:36 +0900
+Message-ID: <CANXPkT59y5k_DXgk6DDHbGuR6aqwLN1ugeLhFrEmk=c246i9zg@mail.gmail.com>
+Subject: Re: [PATCH] media: dvb_ca_en50221: Fix a bug for detecting CI MODULE
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, Hyunwoo Kim <v4bel@theori.io>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, yongsu.yoo@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currrentl a 32 bit 1u value is being shifted more than 32 bits causing
-overflow and incorrect checking of bits 32-63. Fix this by using the
-BIT_ULL macro for shifting bits.
+Dear Markus Elfring
+Can you explain what I shall do more ?
+1. What is the "typo" ?
+2. Can you take some examples which show the "Imperative wording" ?
+3. Can you give me some examples for adding "Fixes" ?
+   Do I have to use "Fixes" instead of "Fix" ?
 
-Detected by cppcheck:
-sev_init2_tests.c:108:34: error: Shifting 32-bit value by 63 bits is
-undefined behaviour [shiftTooManyBits]
-
-Fixes: dfc083a181ba ("selftests: kvm: add tests for KVM_SEV_INIT2")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/kvm/x86_64/sev_init2_tests.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c b/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c
-index 7a4a61be119b..ea09f7a06aa4 100644
---- a/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c
-+++ b/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c
-@@ -105,11 +105,11 @@ void test_features(uint32_t vm_type, uint64_t supported_features)
- 	int i;
- 
- 	for (i = 0; i < 64; i++) {
--		if (!(supported_features & (1u << i)))
-+		if (!(supported_features & BIT_ULL(i)))
- 			test_init2_invalid(vm_type,
- 				&(struct kvm_sev_init){ .vmsa_features = BIT_ULL(i) },
- 				"unknown feature");
--		else if (KNOWN_FEATURES & (1u << i))
-+		else if (KNOWN_FEATURES & BIT_ULL(u))
- 			test_init2(vm_type,
- 				&(struct kvm_sev_init){ .vmsa_features = BIT_ULL(i) });
- 	}
--- 
-2.39.2
-
+2024=EB=85=84 5=EC=9B=94 2=EC=9D=BC (=EB=AA=A9) =EC=98=A4=EC=A0=84 1:25, Ma=
+rkus Elfring <Markus.Elfring@web.de>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> =E2=80=A6
+> > really connected on TV. This means that the CA_GET_SLOT_INFO ioctl
+> > does not return right informtion. This is a Bug. We fix this bug.
+>
+> 1. I hope that typos will be avoided for subsequent change descriptions.
+>
+> 2. How do you think about to improve the patch further with a correspondi=
+ng imperative wording?
+>    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
+e/Documentation/process/submitting-patches.rst?h=3Dv6.9-rc6#n94
+>
+> 3. Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
+>
+> Regards,
+> Markus
