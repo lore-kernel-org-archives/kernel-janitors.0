@@ -1,55 +1,50 @@
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309F842AB7
-	for <kernel-janitors@vger.kernel.org>; Fri, 24 May 2024 14:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A7012C462;
+	Fri, 24 May 2024 15:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716561512; cv=none; b=DuRoceqgt1DFQ87BAwFzafn6UIU/P0OJIFMFBvkspznW7AXSc3/wlovamyzVASjXMk125NYGtq+EV7V+LmTSNZEKViNob7K8+ZDwGWrhHiFB5p32u1qfddz00fwo2rMe1QgItkDCrf74fDl2UrFloMNts6fzJfUBfnSYTG20cDI=
+	t=1716564999; cv=none; b=F1RCM7z5x68yc+ig0vRhYRyDCvnVeYOhsZ8M0FCUWM12u/lSvBGVv3uyNLWe/9ofND1m+YKgfGBNwLntC+c8zGtZGrdxstAtML5VsEoV+iuK7RD4HaLvolMgOH4lHx0y3PGJUL8K9QRhmeKevPMyU5j+T2GFxrJMU77P8mrmxmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716561512; c=relaxed/simple;
-	bh=P0oGiXPwUYgxEc8MMGLYiqhD0U1U/yW8vDU6/y/HYA4=;
+	s=arc-20240116; t=1716564999; c=relaxed/simple;
+	bh=BTkrqG5m/TTiVu6LqJP5g2aggKorDUogMn333Zc5T6M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZvIZyLUKwRNl/X+AUXup9xC5r+IhO6+j4sWEM8+m+MfF29xERoHTt7D6klun4eYLwqNNAbHr2IVtUxMyYnIQ3q3iSaJi97AfHn5HwJOjdTgWBrH6Afgd5fKFzelrA+IDMnAvjTe0CB3QCf3Nz9VdENzyqNCabDQ8k7Xv/+JMcFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=W+6sNU+8; arc=none smtp.client-ip=95.215.58.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	 In-Reply-To:Content-Type; b=KIyJxzGppw4ZY1zryckQ9uGnjc8RHNuxf20KbeOqvwvmi5egO1Oeb3mJRCs8/OlZuHbjsKjHLW+J3U57UJ8FTa7QlOlzaJBoYdvQvGAZza+U8IbyHYdXCjfRaa982Gu3AwrRU05LUwvfnCXvxGqzdBcmcQcF8XvrTKChXXvWDVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=n7IxgBTS; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="W+6sNU+8"
-X-Envelope-To: markus.elfring@web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716561508;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KNBYTib7bUrTL43Ki1euUCce0RgdF7TpezQWmMPaS+0=;
-	b=W+6sNU+8P+CQXEFhRbBWKO7eHkid0PNn/SrR8Ctd1eIuq/OVVzJbS8HWe469L3WfSuZSvW
-	jv4AxCVIjSyIS1kVjuGpkGKjBhOvGeJEQhIYV9e3TFpCIX+JY6NIHRPZ+ibvMr8f8ZuqD4
-	f2QaMZbCPnVfA+1kzyv6TuGv0jbQqYg=
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-pci@vger.kernel.org
-X-Envelope-To: kernel-janitors@vger.kernel.org
-X-Envelope-To: kw@linux.com
-X-Envelope-To: lpieralisi@kernel.org
-X-Envelope-To: robh@kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: bharat.kumar.gogada@xilinx.com
-X-Envelope-To: bhelgaas@google.com
-X-Envelope-To: lorenzo.pieralisi@arm.com
-X-Envelope-To: michal.simek@amd.com
-X-Envelope-To: michal.simek@xilinx.com
-X-Envelope-To: thippeswamy.havalige@amd.com
-Message-ID: <ad8da38a-5e3d-4f79-8744-66acf73703af@linux.dev>
-Date: Fri, 24 May 2024 10:38:23 -0400
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="n7IxgBTS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716564943; x=1717169743; i=markus.elfring@web.de;
+	bh=EgHVt4XXKFDHUxcOb8J/XG57mTgDTrmuiUOaJp+R4ME=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=n7IxgBTSf+tr3P1HeACzL6MdWey6JSwkcy5D6it6Q2xFqxxwcLpRKsjgCnmYII4E
+	 tmHvAjw4gJ4XvozXycpkuCK8/q5+Y+sAs0hKRnr5Z4ssTCTeO7bainwf0a2eFUCZI
+	 tfMhwBDDW/Wh/xdGebO1ip3mdB92S88Bn8f4VZMuZ8lIekZ49mxVjO6S6A9wEk+Yu
+	 c8CFvQb9ON2i2TBaD8o2ja1qfccUuPJvkLPgwkhogU0Fa/VQnMWz0IugpCyIG2y1g
+	 y/rprAMxO3eLAncHAoyodzINV+EUimmLEafBhPNApptqBAYmBiiA42r07L9rq16v0
+	 uftn/l8SdO3+GIODbg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MRW2R-1rpxfe2uAP-00NRSf; Fri, 24
+ May 2024 17:35:43 +0200
+Message-ID: <986ff09f-212c-4905-ab06-35f85e20e9cf@web.de>
+Date: Fri, 24 May 2024 17:35:42 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 6/7] PCI: xilinx-nwl: Add phy support
-To: Markus Elfring <Markus.Elfring@web.de>,
+To: Sean Anderson <sean.anderson@linux.dev>,
  linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
  kernel-janitors@vger.kernel.org, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
  <kw@linux.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
@@ -62,45 +57,76 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
  Thippeswamy Havalige <thippeswamy.havalige@amd.com>
 References: <20240520145402.2526481-7-sean.anderson@linux.dev>
  <89d6acd5-5008-4db3-927c-d267be7b9302@web.de>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <89d6acd5-5008-4db3-927c-d267be7b9302@web.de>
+ <ad8da38a-5e3d-4f79-8744-66acf73703af@linux.dev>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <ad8da38a-5e3d-4f79-8744-66acf73703af@linux.dev>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:gJUJXEMKQUFiGMbz3M0ULlfnyt+9fEzK7WHHYjcz9PovLiekA76
+ 3fzZ94GZ7nQqGyDmFujanLgy9qs89MbW4Os4YDoKEN00r5QVjF90AxH1vrQnuohvhK1fK7u
+ pWMeSZdqsoN/S4ufLdKyUAaVcOg7mpGxr7aVW+eVoxb6DABUNfd2Rjavhepc6lfYBzOCdUB
+ qZ+VoW4fGZxSFkH28HPww==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:MffDudX7RIU=;LNJIor3P3ZYNHqEcGfIy6j9Lgy6
+ 0ofHhn7tENA9tLTqn5f0/ErUO2saZZAXoqkaUVV2vMXi9g614R+lzhHND5AlbkWRQ5P+XffbM
+ LPqvQdqUuvpr+7ThPrU03huvlxdt/lzBxHGUIsEqKoUTEZaW0MEuJCwqrgnO8AnqugT0toa8N
+ K/pQ/b2nMNH5MTUvg6URusq+HGAmAVSijgS4lAcqGpanTAzxQgIG6k5+P6EK54Cm097x36fTM
+ Jrm/Tz07jXCg6BAG4mTamJEkXL59La8c61pCrANqdFHzIe+KatTb5KUL4qcNfcUTxB4uJThu3
+ o5st+PwGb9sKVYJYi1TRb7Nm+GuRXpGbZK61sY/7b44cy2TuTP3S3o5IMJ31aQ4N2jn9u8kDT
+ s49f7AT1Fdz/WQ92/7ktxlGornX9FwHV8+OZS2zXbweDoCWd1qfy1vmff5QCsV9peTTt6Of1z
+ aHGerICR3unzQbW0Ni8S6JfBBTiPtZJIqw6DvCpLJ3QReoggZqc3QvyBDJPqE9Ez3pQEHnfio
+ Gwwfpc1asFqPfsUywG0aN5mAwieHazvvmclqmRJaKTxXmNZWZvXhrrLFeKf0VrnyZa5YlLCkJ
+ ojIxClLIlECffR5lGba9gi2T46dKk7anjNOsgIicHL6n5JutVaWGCd4p4246+/yy9Y8azy3M/
+ 8jY90GG0ZV0tEFboR0EaOszFd0Mldfi5ZRE1ozu672KL/X7Sn5R5RDZT9kU7su/T2akSXs2HQ
+ MFbnICx8g9x8bzwYA3vfN0ncYxLVLWRiifIROUw9uYaSuEj7YuizJxUNs0EXvXjcJQEfL2yp9
+ EynXqyShjC90/zScnvTJUGKTLPVv1qGNFun7EKSamaJdU=
 
-On 5/24/24 04:16, Markus Elfring wrote:
->> Add support for enabling/disabling PCIe phys. We can't really do
->> anything about failures in the disable/remove path, so just warn.
-> …
->> +++ b/drivers/pci/controller/pcie-xilinx-nwl.c
-> …
->> @@ -818,12 +876,15 @@ static int nwl_pcie_probe(struct platform_device *pdev)
->>  		err = nwl_pcie_enable_msi(pcie);
->>  		if (err < 0) {
->>  			dev_err(dev, "failed to enable MSI support: %d\n", err);
->> -			goto err_clk;
->> +			goto err_phy;
->>  		}
->>  	}
+>> =E2=80=A6
+>>> +++ b/drivers/pci/controller/pcie-xilinx-nwl.c
+>> =E2=80=A6
+>>> @@ -818,12 +876,15 @@ static int nwl_pcie_probe(struct platform_device=
+ *pdev)
+>>>  		err =3D nwl_pcie_enable_msi(pcie);
+>>>  		if (err < 0) {
+>>>  			dev_err(dev, "failed to enable MSI support: %d\n", err);
+>>> -			goto err_clk;
+>>> +			goto err_phy;
+>>>  		}
+>>>  	}
+>>>
+>>>  	err =3D pci_host_probe(bridge);
+>>>
+>>> +err_phy:
+>>> +	if (err)
+>>> +		nwl_pcie_phy_disable(pcie);
+>>>  err_clk:
+>>>  	if (err)
+>>>  		clk_disable_unprepare(pcie->clk);
 >>
->>  	err = pci_host_probe(bridge);
+>> I got the impression that some source code adjustments should be perfor=
+med
+>> in another separate update step for this function implementation.
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/process/submitting-patches.rst?h=3Dv6.9#n81
 >>
->> +err_phy:
->> +	if (err)
->> +		nwl_pcie_phy_disable(pcie);
->>  err_clk:
->>  	if (err)
->>  		clk_disable_unprepare(pcie->clk);
-> 
-> I got the impression that some source code adjustments should be performed
-> in another separate update step for this function implementation.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.9#n81
-> 
-> You propose to extend the exception handling here.
-> Does such information indicate a need for another tag “Fixes”?
+>> You propose to extend the exception handling here.
+>> Does such information indicate a need for another tag =E2=80=9CFixes=E2=
+=80=9D?
+>
+> Huh? I am only disabling what I enabled...
 
-Huh? I am only disabling what I enabled...
+* Was a resource deactivation accidentally missing in a previous release
+  of this software component?
 
---Sean
+* Can repeated checks be avoided a bit more by a design approach which we =
+tried
+  to clarify for the update step =E2=80=9C[PATCH v3 5/7] PCI: xilinx-nwl: =
+Clean up clock
+  on probe failure/removal=E2=80=9D?
+  https://lore.kernel.org/lkml/bb9e239f-902b-4f52-a5e9-98c29b360418@linux.=
+dev/
+
+
+Regards,
+Markus
