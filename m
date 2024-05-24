@@ -1,132 +1,133 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A7012C462;
-	Fri, 24 May 2024 15:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999D94642B;
+	Fri, 24 May 2024 18:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716564999; cv=none; b=F1RCM7z5x68yc+ig0vRhYRyDCvnVeYOhsZ8M0FCUWM12u/lSvBGVv3uyNLWe/9ofND1m+YKgfGBNwLntC+c8zGtZGrdxstAtML5VsEoV+iuK7RD4HaLvolMgOH4lHx0y3PGJUL8K9QRhmeKevPMyU5j+T2GFxrJMU77P8mrmxmw=
+	t=1716576503; cv=none; b=bkaYXcXlxWCiW4HMGuexkRVuyKWxHLhTlso6mKCQtN4KI/jajn4zrq5+rUby1riVi5rdN7c5z3loGkNBZL+DYqnLvSmtnOM5RkL3ndZrctCGxxSS1oYqtBhJOdZONJUwTIfNkaNCJjFopH7IvvGdOfinw6IZWRP6g1chkLZ9sQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716564999; c=relaxed/simple;
-	bh=BTkrqG5m/TTiVu6LqJP5g2aggKorDUogMn333Zc5T6M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KIyJxzGppw4ZY1zryckQ9uGnjc8RHNuxf20KbeOqvwvmi5egO1Oeb3mJRCs8/OlZuHbjsKjHLW+J3U57UJ8FTa7QlOlzaJBoYdvQvGAZza+U8IbyHYdXCjfRaa982Gu3AwrRU05LUwvfnCXvxGqzdBcmcQcF8XvrTKChXXvWDVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=n7IxgBTS; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1716576503; c=relaxed/simple;
+	bh=SnDU0pGVxgci1LL9UROqqRYtN2WSgpN4SI/1K7x4WQM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=B+vyMhcnmU38S+PgFT055JF13X6kr+6pDBKc7K6VQ2lBQBmh0M+4czMEcvtvSReiGZFDFhd27RuxaiQrVEV/jXpT0icYLcQRudl3MxxcdUBQm8DRBXGJj8pglOCe6wdFlvcBkpR5d2aO5zyLO1noUFPiUtFJ9bSj4e1B1ICFvyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TE37dC61; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="n7IxgBTS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716564943; x=1717169743; i=markus.elfring@web.de;
-	bh=EgHVt4XXKFDHUxcOb8J/XG57mTgDTrmuiUOaJp+R4ME=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=n7IxgBTSf+tr3P1HeACzL6MdWey6JSwkcy5D6it6Q2xFqxxwcLpRKsjgCnmYII4E
-	 tmHvAjw4gJ4XvozXycpkuCK8/q5+Y+sAs0hKRnr5Z4ssTCTeO7bainwf0a2eFUCZI
-	 tfMhwBDDW/Wh/xdGebO1ip3mdB92S88Bn8f4VZMuZ8lIekZ49mxVjO6S6A9wEk+Yu
-	 c8CFvQb9ON2i2TBaD8o2ja1qfccUuPJvkLPgwkhogU0Fa/VQnMWz0IugpCyIG2y1g
-	 y/rprAMxO3eLAncHAoyodzINV+EUimmLEafBhPNApptqBAYmBiiA42r07L9rq16v0
-	 uftn/l8SdO3+GIODbg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MRW2R-1rpxfe2uAP-00NRSf; Fri, 24
- May 2024 17:35:43 +0200
-Message-ID: <986ff09f-212c-4905-ab06-35f85e20e9cf@web.de>
-Date: Fri, 24 May 2024 17:35:42 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TE37dC61"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44O9LdCx026374;
+	Fri, 24 May 2024 18:48:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=8l2Emop1qAQF+HZ7Y2wdL0
+	/32jzzi597XdPe0758sgw=; b=TE37dC61a0OQl+x/Q8pCm66ZnN1Lmd2VE8fuAF
+	4sAlDUUfXZDktwsDfcgVBWmNGWCrlCdCG4m2WlYXO87lmpPaoxCeT2zBnevRQY6x
+	KxtGt8tBufszx9q0chh3nmFvMmE4M0dzVI1Q8Wbf5Grn9EMBK/s2iup547eNZXBS
+	c0Xw/j6Tzm82Zv2XxqSTMycIUEmAZHfgDiOD6MEfGy/l0ZczMxiySUzp2Au/jTLQ
+	tnuU90/3hRdan4PShA4oG9fl2KE3EF+ifEHio3LlWKOjhq1BWA4t0dhcLXNEBQH+
+	Z7YoMNQ8lQskLgz/AAD85Gv8vgmQwtsEh22Q1umMwG5MoBrQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaa97baue-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 18:48:17 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44OImGkw031129
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 18:48:16 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 24 May
+ 2024 11:48:09 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 24 May 2024 11:48:09 -0700
+Subject: [PATCH] unicode: add MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/7] PCI: xilinx-nwl: Add phy support
-To: Sean Anderson <sean.anderson@linux.dev>,
- linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- kernel-janitors@vger.kernel.org, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kw@linux.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Michal Simek <michal.simek@amd.com>, Michal Simek <michal.simek@xilinx.com>,
- Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-References: <20240520145402.2526481-7-sean.anderson@linux.dev>
- <89d6acd5-5008-4db3-927c-d267be7b9302@web.de>
- <ad8da38a-5e3d-4f79-8744-66acf73703af@linux.dev>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ad8da38a-5e3d-4f79-8744-66acf73703af@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:gJUJXEMKQUFiGMbz3M0ULlfnyt+9fEzK7WHHYjcz9PovLiekA76
- 3fzZ94GZ7nQqGyDmFujanLgy9qs89MbW4Os4YDoKEN00r5QVjF90AxH1vrQnuohvhK1fK7u
- pWMeSZdqsoN/S4ufLdKyUAaVcOg7mpGxr7aVW+eVoxb6DABUNfd2Rjavhepc6lfYBzOCdUB
- qZ+VoW4fGZxSFkH28HPww==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:MffDudX7RIU=;LNJIor3P3ZYNHqEcGfIy6j9Lgy6
- 0ofHhn7tENA9tLTqn5f0/ErUO2saZZAXoqkaUVV2vMXi9g614R+lzhHND5AlbkWRQ5P+XffbM
- LPqvQdqUuvpr+7ThPrU03huvlxdt/lzBxHGUIsEqKoUTEZaW0MEuJCwqrgnO8AnqugT0toa8N
- K/pQ/b2nMNH5MTUvg6URusq+HGAmAVSijgS4lAcqGpanTAzxQgIG6k5+P6EK54Cm097x36fTM
- Jrm/Tz07jXCg6BAG4mTamJEkXL59La8c61pCrANqdFHzIe+KatTb5KUL4qcNfcUTxB4uJThu3
- o5st+PwGb9sKVYJYi1TRb7Nm+GuRXpGbZK61sY/7b44cy2TuTP3S3o5IMJ31aQ4N2jn9u8kDT
- s49f7AT1Fdz/WQ92/7ktxlGornX9FwHV8+OZS2zXbweDoCWd1qfy1vmff5QCsV9peTTt6Of1z
- aHGerICR3unzQbW0Ni8S6JfBBTiPtZJIqw6DvCpLJ3QReoggZqc3QvyBDJPqE9Ez3pQEHnfio
- Gwwfpc1asFqPfsUywG0aN5mAwieHazvvmclqmRJaKTxXmNZWZvXhrrLFeKf0VrnyZa5YlLCkJ
- ojIxClLIlECffR5lGba9gi2T46dKk7anjNOsgIicHL6n5JutVaWGCd4p4246+/yy9Y8azy3M/
- 8jY90GG0ZV0tEFboR0EaOszFd0Mldfi5ZRE1ozu672KL/X7Sn5R5RDZT9kU7su/T2akSXs2HQ
- MFbnICx8g9x8bzwYA3vfN0ncYxLVLWRiifIROUw9uYaSuEj7YuizJxUNs0EXvXjcJQEfL2yp9
- EynXqyShjC90/zScnvTJUGKTLPVv1qGNFun7EKSamaJdU=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240524-md-unicode-v1-1-e2727ce8574d@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAOjgUGYC/x3MywrCQAyF4VcpWRuo4wxaX0VczCW1AZuWiZVK6
+ bsbXX5wzr+BUmVSuDYbVHqz8iSG46GBPER5EHIxg2udb4PzOBZchPNUCP3lFM59Crl0HdhhrtT
+ z+o/d7uYUlTDVKHn4JZ4sy4pj1BdVnD82hX3/Ak+N3/aBAAAA
+To: Gabriel Krisman Bertazi <krisman@kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: BdLzRcCcrN_PB4PsLOagSb4ZYdw6TYs2
+X-Proofpoint-GUID: BdLzRcCcrN_PB4PsLOagSb4ZYdw6TYs2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-24_06,2024-05-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ priorityscore=1501 adultscore=0 mlxlogscore=999 lowpriorityscore=0
+ mlxscore=0 clxscore=1011 spamscore=0 phishscore=0 impostorscore=0
+ bulkscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405240133
 
->> =E2=80=A6
->>> +++ b/drivers/pci/controller/pcie-xilinx-nwl.c
->> =E2=80=A6
->>> @@ -818,12 +876,15 @@ static int nwl_pcie_probe(struct platform_device=
- *pdev)
->>>  		err =3D nwl_pcie_enable_msi(pcie);
->>>  		if (err < 0) {
->>>  			dev_err(dev, "failed to enable MSI support: %d\n", err);
->>> -			goto err_clk;
->>> +			goto err_phy;
->>>  		}
->>>  	}
->>>
->>>  	err =3D pci_host_probe(bridge);
->>>
->>> +err_phy:
->>> +	if (err)
->>> +		nwl_pcie_phy_disable(pcie);
->>>  err_clk:
->>>  	if (err)
->>>  		clk_disable_unprepare(pcie->clk);
->>
->> I got the impression that some source code adjustments should be perfor=
-med
->> in another separate update step for this function implementation.
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/process/submitting-patches.rst?h=3Dv6.9#n81
->>
->> You propose to extend the exception handling here.
->> Does such information indicate a need for another tag =E2=80=9CFixes=E2=
-=80=9D?
->
-> Huh? I am only disabling what I enabled...
+Currently 'make W=1' reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8data.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
 
-* Was a resource deactivation accidentally missing in a previous release
-  of this software component?
+Add a MODULE_DESCRIPTION() to utf8-selftest.c and utf8data.c_shipped,
+and update mkutf8data.c to add a MODULE_DESCRIPTION() to any future
+generated utf8data file.
 
-* Can repeated checks be avoided a bit more by a design approach which we =
-tried
-  to clarify for the update step =E2=80=9C[PATCH v3 5/7] PCI: xilinx-nwl: =
-Clean up clock
-  on probe failure/removal=E2=80=9D?
-  https://lore.kernel.org/lkml/bb9e239f-902b-4f52-a5e9-98c29b360418@linux.=
-dev/
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+Note that I verified that REGENERATE_UTF8DATA creates a file with
+the correct MODULE_DESCRIPTION(), but that file has significantly
+different contents than utf8data.c_shipped using the current:
+https://www.unicode.org/Public/UNIDATA/UCD.zip
+---
+ fs/unicode/mkutf8data.c       | 1 +
+ fs/unicode/utf8-selftest.c    | 1 +
+ fs/unicode/utf8data.c_shipped | 1 +
+ 3 files changed, 3 insertions(+)
 
+diff --git a/fs/unicode/mkutf8data.c b/fs/unicode/mkutf8data.c
+index bc1a7c8b5c8d..77b685db8275 100644
+--- a/fs/unicode/mkutf8data.c
++++ b/fs/unicode/mkutf8data.c
+@@ -3352,6 +3352,7 @@ static void write_file(void)
+ 	fprintf(file, "};\n");
+ 	fprintf(file, "EXPORT_SYMBOL_GPL(utf8_data_table);");
+ 	fprintf(file, "\n");
++	fprintf(file, "MODULE_DESCRIPTION(\"UTF8 data table\");\n");
+ 	fprintf(file, "MODULE_LICENSE(\"GPL v2\");\n");
+ 	fclose(file);
+ }
+diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/utf8-selftest.c
+index eb2bbdd688d7..f955dfcaba8c 100644
+--- a/fs/unicode/utf8-selftest.c
++++ b/fs/unicode/utf8-selftest.c
+@@ -307,4 +307,5 @@ module_init(init_test_ucd);
+ module_exit(exit_test_ucd);
+ 
+ MODULE_AUTHOR("Gabriel Krisman Bertazi <krisman@collabora.co.uk>");
++MODULE_DESCRIPTION("Kernel module for testing utf-8 support");
+ MODULE_LICENSE("GPL");
+diff --git a/fs/unicode/utf8data.c_shipped b/fs/unicode/utf8data.c_shipped
+index d9b62901aa96..dafa5fed761d 100644
+--- a/fs/unicode/utf8data.c_shipped
++++ b/fs/unicode/utf8data.c_shipped
+@@ -4120,4 +4120,5 @@ struct utf8data_table utf8_data_table = {
+ 	.utf8data = utf8data,
+ };
+ EXPORT_SYMBOL_GPL(utf8_data_table);
++MODULE_DESCRIPTION("UTF8 data table");
+ MODULE_LICENSE("GPL v2");
 
-Regards,
-Markus
+---
+base-commit: 07506d1011521a4a0deec1c69721c7405c40049b
+change-id: 20240524-md-unicode-48357fb5cd99
+
