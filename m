@@ -1,125 +1,97 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC94823BF;
-	Fri, 24 May 2024 08:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998AE85923
+	for <kernel-janitors@vger.kernel.org>; Fri, 24 May 2024 10:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716538638; cv=none; b=FN32z03rFqRR/Z9bJS7xSAFRNd+EBRCtFONeL72BxuL+Juq6BLvBDZda3Z9Wvc+a5hXijkjOIcKZ+IqfWSUPiK4wdXQGc/BbD3MRSTboVkJgCgGK5B1dyhfWBZooyFCYb9nf1mdTK/FeDQfJfc2aFU+liYKRvLm8Tm5yrFgGVVY=
+	t=1716545651; cv=none; b=p1PzHEIE11rOVGzBqaDH65Rm8YSLmuKVYs7SS6DoN2IB5jlctsFpynKmJ+NerUT1ojBxlV+JhxorNoTvA4fGhiPoJGjyjZGfqu3c2ju0fiDcwcvOasMCA0zN6NhPiNuzpaxMwBt/XZCsq3AuGomvWli1uMGKcOScNovIai62f6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716538638; c=relaxed/simple;
-	bh=MxVQUC14yschSSMleujjxz9d8txwkDZPaW0ma//Zd/4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=VwwfU41954olfhDIJ0Ft8PHfz+k9lQ/QPVzpa55OEsgnPqjrIRjbdCxrWKfE/mxGMw6Bf9wjlSuWuhQrjBQt9oF0FoYH2KlA1VxiOqiLZ6xXETDOF9a/dMCWuQXsU4iqPsUlh343SThyrmCSIgFJc+Qf9dNEaPly2UJbox2wwDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=asy8Zhyx; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1716545651; c=relaxed/simple;
+	bh=sDQFYTVbNT2/K9iVIl5y4i/52Li/sV3v7epjRryjwUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qq02nXpLcbUhhzkxJ6f7YU4QSoszGUVK4YxdG2t5c+kNf3Q2JyTX2aaomtt+iAEcyTwvcCt8Sk5eZ6zqIXAOat4HQcl17bV74RfI7FsmnqDeugEyvi6nbKp4rkA0koF9fIBYzLwKzKHiWRVLP2sUhzr1/RS44zF4awJ+IxiKCJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NIhCGedn; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="asy8Zhyx"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716538601; x=1717143401; i=markus.elfring@web.de;
-	bh=LRPr7yjZvhwm7ZLpTstw9sTNj/eN71td1oPbmzelILU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=asy8ZhyxYGB+uRRwYY6s+TGZzAti3roXldrGgbTA9rvExSzYv7MT9Q99zKjk+lUI
-	 G1Co2taD2EhV6x58W6mcucbbdBN4yUe3TQ1CySVQzMVxKKSUJC1mqt+YhlYT0BCzI
-	 HN1W+8dxiPCuZYF7g5FS0oWlcSCLt2bvtZ2NtE95+tGor05xvahMeUtlAFJCyNhaO
-	 zSEeuAohaQsvW9ygZvcIRa3O8VM5bGo2bVt0f4BLrAwP6nPisEBgEcq3N9OWAl9vo
-	 Zykj9aj9z2LU96VHYy0oJigvCjNXEwZVznSiIC7OcQBdwt8iWAJJlN1AXpbAv2pt+
-	 VtkVelNwT54jZnWeuA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MSqXM-1s5QOt28MA-00UNap; Fri, 24
- May 2024 10:16:41 +0200
-Message-ID: <89d6acd5-5008-4db3-927c-d267be7b9302@web.de>
-Date: Fri, 24 May 2024 10:16:39 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NIhCGedn"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42011507a57so66318185e9.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 24 May 2024 03:14:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716545647; x=1717150447; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IM+l9b+Ddr6zhT1mzkxDkWWP6YYG+wKMelFtyjWWBDQ=;
+        b=NIhCGednBxy/TivUBT20zMCtZTtJE2oeeglyMkW8Lx+QRDznGRUa3ntltDS30L22fp
+         XGjjpAvx3B+SXCVH9z+VvvU8rnu8cEoiGURcCfppYw8UB76P/IL8UHgzJxeUY/mgtzib
+         AeRJV2TYl88rame2w6i9cvFWevaMNrR+p6tGlyvoa+MjIVpVNx5RHUXIY3B35nWLz06c
+         G4i3A85kfzEx8rNKns3L4jL9G9YwEuXsmpGcCmaX8RvzJidjeE6ZgEu78/oAxHb38iNd
+         OOWeAesmljUOnu+X/X+e7o88IkUC2fn8WxE3cKQAsXcRPbK+/PoN6dW9GcBzBlWQHGGL
+         AiAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716545647; x=1717150447;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IM+l9b+Ddr6zhT1mzkxDkWWP6YYG+wKMelFtyjWWBDQ=;
+        b=VuHuYrcEA1+wP4bzRMKYWNm7QFFvT3GAIltYnEIHA4Dzg6w+uJ6nNeciO0FzCKyMok
+         sb5+ZXYynCnziHISE6DCRV5sOrsAXYRd5nuQ1X9lwRFWu4BUGL9hIwAJQPai3QoccOFK
+         YRmzYY8WxF9nkPA0XiFrRCa/e2uzLB20u97yiwDMjGZ8+2gRUVulfXY7Ze2Rz6Yc25kR
+         s4T8blRnwF6wntKM3BCBfWQ/NQ1U+xX82g/wOYHwHEFKcJtt3UoCeEgwmlujd/FSFsay
+         k5coiPZbJYVGfw23CbGTotA9K/qsEI8cPxQhw6Xy/VqlsFjRiKWP67Lm4hY1CE/c4NGu
+         VcdA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1HCDz3SNLFP2Cv2VP0OBjNq/8XolByHK+f745ijNDXawjjWMqVLOodaKXSERhvbFNai3RalR5dnXQGfVWbP0VOP8rZQTqCrugb2G51mcx
+X-Gm-Message-State: AOJu0YxIH5V89t5GGBO2pgYv9ZtGERY/BPZEhh4C97JDIClPsl0JccwP
+	JnH70lLhI0To0QnndU3VSBT18a/PQKWpG3VFEr4t2AxYVt95RicR1pRgoCbDE9c=
+X-Google-Smtp-Source: AGHT+IFCqr13Uicxve2AP2QOtfOfD7tHQdd+OMCD8G33EQHCrhyPN3FgroHGrS3bmoEBT/VkcRutVQ==
+X-Received: by 2002:a05:600c:444e:b0:420:14fb:de1f with SMTP id 5b1f17b1804b1-42108a5965fmr11697145e9.14.1716545646781;
+        Fri, 24 May 2024 03:14:06 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f759f0sm48224445e9.28.2024.05.24.03.14.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 03:14:06 -0700 (PDT)
+Date: Fri, 24 May 2024 13:14:02 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] Bluetooth:  MGMT: Uninitialized variable in load_conn_param()
+Message-ID: <819ed9b8-8790-4d15-b2a0-20929328d582@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Sean Anderson <sean.anderson@linux.dev>,
- linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- kernel-janitors@vger.kernel.org, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kw@linux.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Michal Simek <michal.simek@amd.com>, Michal Simek <michal.simek@xilinx.com>,
- Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-References: <20240520145402.2526481-7-sean.anderson@linux.dev>
-Subject: Re: [PATCH v3 6/7] PCI: xilinx-nwl: Add phy support
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240520145402.2526481-7-sean.anderson@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:cE4BK/TlEIWznR0yJJG1Mw+1L/RvLYJpbxs5JJibDf8v7I4j1xq
- qtWAG8K0r13kdXIyb0dbR32q+FjS6ztm5L9L3V05pq18A2TRdQnBgChivDZIs/LHo0nDh8g
- n5KUmmSJTL9IxMbSK77kVHPJmhoTtOp+6kN6AYkrC/Gpf3cYaG8NtPWKPAAREec+9Clvofv
- Chp3luokxr4/MS23rIpNA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PN1gnFD9Q7Y=;tVJwVm/MenJkE3GK4r0Z5NzJ9vE
- /kRwKidoUc3CPlt0JlzsngMpQWWHmYQdrPrvXgau8aeU25/xL7t1TEUX0C1p7bKnyPD0tU/gP
- o7rk/0RtmOM91vQR1+U4D3cwt/eQalo4dHzPI6Amio8kkgpx6m3q6fa+9lffjBGrlLISjEHSw
- /YzjWmiPDb+g5K3OkYjrZBhBbYDyyXMPc6kITl0EhwshPCHGmqpHYPfKsDMRmuR/g7fWB8wD4
- 9lbiZY1+FEnow9ZnRuCeGNtKW671tY0rlYj5V30wyz3Slg+1LTq56zjGNgH40DPNg6qSaymke
- Oh2XQj2RgJCFv0jQGe18Zr3mvF9woULE3kSUheXq9OG2Bw/P5b9pAt/XAxnm+5NxY8M3dJhpU
- yJTWXAmmbFbJ7XT8WwMjaxWnjrJ1pM/+prMQBjewMtxkrOSr+NW9ENfL3YqDOjR2HajazIzD2
- fLGBdITrZT4zxXftsuT5AEUk/Y5ijoY6zJvNxyZbUUY2OP4em5tlLZeZtXqyd8tdDa71ikMQK
- xhtmQBOhtUU/bcuvxRXbbwm/T+Ur77XvCy9Rcp6B/izskWUVE8KTN91NDCiXhau1J8gBggXrn
- +Z0bVgb+ICmdhOp4MOEFnVKRLht+1XuZeTNzP7wr0eGkIrXwPLK28gGnn2mK8gqAhatRGx2Bk
- iJpGEjoidsy7eANSmmQBoK6G0N33d88UYQi9UnGLdNhcySvcd8XWFnu5DoS3mtfgc9O7ajBUt
- GVFBgYGFvRQhd3rr9wejSmrKowkPQmlWCMkvUgTU7mE8tUcKA0FDfG584CD4tPBu2VfffUMNn
- 8fWkQei5QWyecRJ2z0OfQwtk6f91Ttr1or7h59G23USmQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-> Add support for enabling/disabling PCIe phys. We can't really do
-> anything about failures in the disable/remove path, so just warn.
-=E2=80=A6
-> +++ b/drivers/pci/controller/pcie-xilinx-nwl.c
-=E2=80=A6
-> @@ -818,12 +876,15 @@ static int nwl_pcie_probe(struct platform_device *=
-pdev)
->  		err =3D nwl_pcie_enable_msi(pcie);
->  		if (err < 0) {
->  			dev_err(dev, "failed to enable MSI support: %d\n", err);
-> -			goto err_clk;
-> +			goto err_phy;
->  		}
->  	}
->
->  	err =3D pci_host_probe(bridge);
->
-> +err_phy:
-> +	if (err)
-> +		nwl_pcie_phy_disable(pcie);
->  err_clk:
->  	if (err)
->  		clk_disable_unprepare(pcie->clk);
+The "update" variable needs to be initialized to false.
 
-I got the impression that some source code adjustments should be performed
-in another separate update step for this function implementation.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9#n81
+Fixes: 831be422f3bb ("Bluetooth: MGMT: Make MGMT_OP_LOAD_CONN_PARAM update existing connection")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ net/bluetooth/mgmt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You propose to extend the exception handling here.
-Does such information indicate a need for another tag =E2=80=9CFixes=E2=80=
-=9D?
+diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
+index 20eca8a9c681..3ab1558ff391 100644
+--- a/net/bluetooth/mgmt.c
++++ b/net/bluetooth/mgmt.c
+@@ -7865,8 +7865,8 @@ static int load_conn_param(struct sock *sk, struct hci_dev *hdev, void *data,
+ 		struct mgmt_conn_param *param = &cp->params[i];
+ 		struct hci_conn_params *hci_param;
+ 		u16 min, max, latency, timeout;
++		bool update = false;
+ 		u8 addr_type;
+-		bool update;
+ 
+ 		bt_dev_dbg(hdev, "Adding %pMR (type %u)", &param->addr.bdaddr,
+ 			   param->addr.type);
+-- 
+2.43.0
 
-How do you think about to increase the usage of a corresponding goto chain=
-?
-https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
-to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
-es
-
-Would you become more interested in the application of scope-based resourc=
-e management?
-
-Regards,
-Markus
