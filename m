@@ -1,97 +1,99 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998AE85923
-	for <kernel-janitors@vger.kernel.org>; Fri, 24 May 2024 10:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF5E1AACC;
+	Fri, 24 May 2024 10:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716545651; cv=none; b=p1PzHEIE11rOVGzBqaDH65Rm8YSLmuKVYs7SS6DoN2IB5jlctsFpynKmJ+NerUT1ojBxlV+JhxorNoTvA4fGhiPoJGjyjZGfqu3c2ju0fiDcwcvOasMCA0zN6NhPiNuzpaxMwBt/XZCsq3AuGomvWli1uMGKcOScNovIai62f6k=
+	t=1716545955; cv=none; b=FY+20d2ZScULraP7uLgIwDMzCJoZwJzrqtBi2PQSaqBVSc8zCena754UomWI+VEDRApg7Y+rmv0wtwUKX3Gw+gGRTFtWeFCfix2KDJXDoJcf5czPjtopDaszTGx9GckEB+WM8e9ZvvzJN+q+AyCDGBum6lT617B3doyEkVKXnZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716545651; c=relaxed/simple;
-	bh=sDQFYTVbNT2/K9iVIl5y4i/52Li/sV3v7epjRryjwUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qq02nXpLcbUhhzkxJ6f7YU4QSoszGUVK4YxdG2t5c+kNf3Q2JyTX2aaomtt+iAEcyTwvcCt8Sk5eZ6zqIXAOat4HQcl17bV74RfI7FsmnqDeugEyvi6nbKp4rkA0koF9fIBYzLwKzKHiWRVLP2sUhzr1/RS44zF4awJ+IxiKCJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NIhCGedn; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1716545955; c=relaxed/simple;
+	bh=nReJdwDjYKcKtI9FDKajlqqInbmssOMeKltqgga7Xe8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=epKc+2e2i7tckegAsPWB5HgVhMX2LiAxwT1Mg95n0Kgus2o8eAitu6fPvWZPdJDThcy0t7W+Q9FmznKHZ/Bi9Gyn7cG5r5hEm/3YzdaOzcyJta4x2DrCW059gmCmgVDOVGRGvGyvUyIouHmcRwWW+payZ2X0qo56V3hb/pshEgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JGm9A3oG; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NIhCGedn"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42011507a57so66318185e9.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 24 May 2024 03:14:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716545647; x=1717150447; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IM+l9b+Ddr6zhT1mzkxDkWWP6YYG+wKMelFtyjWWBDQ=;
-        b=NIhCGednBxy/TivUBT20zMCtZTtJE2oeeglyMkW8Lx+QRDznGRUa3ntltDS30L22fp
-         XGjjpAvx3B+SXCVH9z+VvvU8rnu8cEoiGURcCfppYw8UB76P/IL8UHgzJxeUY/mgtzib
-         AeRJV2TYl88rame2w6i9cvFWevaMNrR+p6tGlyvoa+MjIVpVNx5RHUXIY3B35nWLz06c
-         G4i3A85kfzEx8rNKns3L4jL9G9YwEuXsmpGcCmaX8RvzJidjeE6ZgEu78/oAxHb38iNd
-         OOWeAesmljUOnu+X/X+e7o88IkUC2fn8WxE3cKQAsXcRPbK+/PoN6dW9GcBzBlWQHGGL
-         AiAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716545647; x=1717150447;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IM+l9b+Ddr6zhT1mzkxDkWWP6YYG+wKMelFtyjWWBDQ=;
-        b=VuHuYrcEA1+wP4bzRMKYWNm7QFFvT3GAIltYnEIHA4Dzg6w+uJ6nNeciO0FzCKyMok
-         sb5+ZXYynCnziHISE6DCRV5sOrsAXYRd5nuQ1X9lwRFWu4BUGL9hIwAJQPai3QoccOFK
-         YRmzYY8WxF9nkPA0XiFrRCa/e2uzLB20u97yiwDMjGZ8+2gRUVulfXY7Ze2Rz6Yc25kR
-         s4T8blRnwF6wntKM3BCBfWQ/NQ1U+xX82g/wOYHwHEFKcJtt3UoCeEgwmlujd/FSFsay
-         k5coiPZbJYVGfw23CbGTotA9K/qsEI8cPxQhw6Xy/VqlsFjRiKWP67Lm4hY1CE/c4NGu
-         VcdA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1HCDz3SNLFP2Cv2VP0OBjNq/8XolByHK+f745ijNDXawjjWMqVLOodaKXSERhvbFNai3RalR5dnXQGfVWbP0VOP8rZQTqCrugb2G51mcx
-X-Gm-Message-State: AOJu0YxIH5V89t5GGBO2pgYv9ZtGERY/BPZEhh4C97JDIClPsl0JccwP
-	JnH70lLhI0To0QnndU3VSBT18a/PQKWpG3VFEr4t2AxYVt95RicR1pRgoCbDE9c=
-X-Google-Smtp-Source: AGHT+IFCqr13Uicxve2AP2QOtfOfD7tHQdd+OMCD8G33EQHCrhyPN3FgroHGrS3bmoEBT/VkcRutVQ==
-X-Received: by 2002:a05:600c:444e:b0:420:14fb:de1f with SMTP id 5b1f17b1804b1-42108a5965fmr11697145e9.14.1716545646781;
-        Fri, 24 May 2024 03:14:06 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f759f0sm48224445e9.28.2024.05.24.03.14.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 03:14:06 -0700 (PDT)
-Date: Fri, 24 May 2024 13:14:02 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] Bluetooth:  MGMT: Uninitialized variable in load_conn_param()
-Message-ID: <819ed9b8-8790-4d15-b2a0-20929328d582@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JGm9A3oG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716545936; x=1717150736; i=markus.elfring@web.de;
+	bh=eD4aGK2cX9KrbvG0DJp/VpQLhAY1GKGKoM5iZey2/S0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=JGm9A3oGw46GtDQxgiMe6SJkDlIhUFIIrYCXNM6YFzCp7eLHLmiOKbaNZQhfv2sN
+	 2ly3Jwz9pWwxaUUJ23wq+BRtBEBxsrSlooKJPfaieIPrS5HaQsBZZefSjY3uc7FYU
+	 S9w6xYsASGIP0yrf1nIa/oDd8ale6aOxBwUL0jX+l2mEM3tliXal+1M/1OPLxBBXa
+	 AuzExC1vrXoKAukT0An3WsMzLhDrlJOG6FHW4MrDBIOIj5wNAfI5YkWIQ+LwG9pMJ
+	 eZlIJJy9WEZVOhJi9MDvi1M+ddtG7heig6K44Me1ah/u0KZ92OCteodpO89w1wDQE
+	 muEpFuQdb++Ryx2CFg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Ml46w-1svqWq15m0-00fyCw; Fri, 24
+ May 2024 12:18:56 +0200
+Message-ID: <5da17b58-c407-498b-a666-be98584c8011@web.de>
+Date: Fri, 24 May 2024 12:18:46 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, abaci@linux.alibaba.com,
+ linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Ping-Ke Shih <pkshih@realtek.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>
+References: <20240524075819.2789-1-jiapeng.chong@linux.alibaba.com>
+Subject: Re: [PATCH] wifi: rtw89: chan: Use swap() instead of open coding it
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240524075819.2789-1-jiapeng.chong@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:yvXSYyhRuNt+LnoNZgQSyhtIG2CajJYTbJ54zQb2j9ihrzwk4Pe
+ 1DzaZo4XB7QvBgPvQWnxsXj7VAmFzOHddLOad549auPmJDBozB+Svf16EyN72B4lzzbyDu3
+ 3dJXtPSCEOY1LduvsqTyG/yiSvTJPQeGn7vKP3wKPUX24TpDoKDDFfScN5/zM0A1i6V4udp
+ ypd3eQOUAr69eJTHP67+w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:K1LvBUbMTqI=;Q0kze4LcBNm3U2z2itILblmvdPJ
+ 951ScoDbyuiZpj7qZqrDf1xpDhwK+JhD+s358K85Nppdu95mlXGBENgmDlWz6dsswaMbEhUzd
+ b/EkiPRyyMyKCiWMefrpBzYAZeUAorgvXzfMdCmZWa5uHf/D1leUlr6gXLQy7Z+aQKe2g5GRn
+ 7uAIsHuVQMwTF6gIqJNDEsecIqYqs6MNrLCkfQr9RfLQDgGYr37gaYS8J8MHL/schh28ufKNw
+ gLXs2sUYPbVuufPptIlmsaWJtjlI4bVxBKk1b8UJpA+gurAe1Io9WsxUTeeZLdZMRBWyMRMaC
+ a18BDpIQNU0IS1hM5jKgcQUVcdQ0DCYqEth7NV0ybXBx1m1GHuBOkFZVY+EF4qHA2qqw851zI
+ tahAd3iBeorjX/cnffLpIPyKELH7GfNqebc2Vj3ZGPnoXB/QD39h52G97k2vZfXOaV60dW+9f
+ 33Q0skWotM5G3O0nRHcVn2Ur8IM3oNwAwGe5+lvphe3ik8dYGKnUegWwjpQ+9mv7UW7LQbf7E
+ EsF/3liVEJkbTnTVXwsV31/hB2pFOrOjfiEZaafjtuaBJO6oBvt7hrCQ77G+myZHqbwOBcGe7
+ DuDJthCywqSfP8tMXwK9goULnOR5R3hzFUQrcnnMqzudJVWr9XZuDNbwDqdjNVjQnXd6YY49G
+ A7BKfyhWAagHYolOfdN9J6RMll7/VgfcVGHffzOancIhLGS8ASj/QKjaRHFxHth//TAq/pAVF
+ 14J11CJidodCQ0j3bEursWSvH+LbcGz5P86bTeCxqf6h8TBevd6rBkTgSdPRMt1zDTMA4TNAU
+ OqN+JHC9FCxfa+T6HxPfuMbeJIxyMgJll8b3WyuAy+cDA=
 
-The "update" variable needs to be initialized to false.
+> Swap is a function interface that provides exchange function. To avoid
+> code duplication, we can use swap function.
 
-Fixes: 831be422f3bb ("Bluetooth: MGMT: Make MGMT_OP_LOAD_CONN_PARAM update existing connection")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- net/bluetooth/mgmt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Would a wording approach (like the following) be a bit nicer
+for the second sentence?
 
-diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-index 20eca8a9c681..3ab1558ff391 100644
---- a/net/bluetooth/mgmt.c
-+++ b/net/bluetooth/mgmt.c
-@@ -7865,8 +7865,8 @@ static int load_conn_param(struct sock *sk, struct hci_dev *hdev, void *data,
- 		struct mgmt_conn_param *param = &cp->params[i];
- 		struct hci_conn_params *hci_param;
- 		u16 min, max, latency, timeout;
-+		bool update = false;
- 		u8 addr_type;
--		bool update;
- 
- 		bt_dev_dbg(hdev, "Adding %pMR (type %u)", &param->addr.bdaddr,
- 			   param->addr.type);
--- 
-2.43.0
+   Use existing swap() function instead of keeping duplicate source code.
 
+
+How do you think about to apply the summary phrase =E2=80=9CUse swap() in =
+rtw89_swap_sub_entity()=E2=80=9D?
+
+
+> ./drivers/net/wireless/realtek/rtw89/chan.c:2336:32-33: WARNING opportun=
+ity for swap().
+>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D9174
+
+Would another indication be helpful for the involved analysis tool?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/sc=
+ripts/coccinelle/misc/swap.cocci?h=3Dv6.9
+
+Regards,
+Markus
