@@ -1,136 +1,134 @@
-Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC83F3BBC0;
-	Fri, 24 May 2024 03:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254CA2207A;
+	Fri, 24 May 2024 06:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716522027; cv=none; b=RxE1smQSlU0g2Rp/LcCwTFFNfh+00qcxQXZAI6J0bA1xXKAeXjxJrSKK/BcQTv/eKRji++p760OVL7CxNsPvz5lsFc/wFgRtXymC2OFfWLteUBaZBZD+SBF8qiZmn3Q79AaqS55PtrJBz7AZgjSvwLUs8pFDRMkqr+DpumNT4oM=
+	t=1716532736; cv=none; b=OJDHpQXv+jb3xK3mwo9H7Ldjihh4H1rcj6uEn9VEwleHUYiDZPnXIrZ077Gr7sAFJI/WIedxrpQOk44sIRTy7iHmNXH+9OLPCmu3ElEoE8/BBM/XWKFIR74NJ1UelMON5XYE0Np3Xp9UJybqyViWpK1xxrjTTHYXPFAjBBWTQmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716522027; c=relaxed/simple;
-	bh=Foi+rLSNwjZREewBC4ipev5MaL7oc9IlmyDRpDyf0DY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uUD+AU9dhpmtIVeTS154b+nNu1RYWaa1+3M0belmW5ahzgRBELcShdPxZCKA4YGsLd3YD0igrU34zAQnsJLAYEGXM1+J3btf028xGARaso8TtiT8fHo7QAQI6ewmCjWTrNrXlpfgDoiNx4sEsx8y4cjn9npGcYz6sa5b8/ryz8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=AMrGHsF1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HGbjbReB; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+	s=arc-20240116; t=1716532736; c=relaxed/simple;
+	bh=/zgxCyuQmfba06hzzw8jaE81x2r+bW7Tb1LVqVcwEgA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vw9SJh1FprXghkPK41yOrSaAICquU2hSsy/xj5ETXYg0AVBtmTCAlQMvxwJGIAKgoLOeijOX3kNTAIwEAG/X76mgtun+Gf/4EjQKGzqaR5o/acxkVnYi5x4KCMMYTJ7HpMXTKlG5l1Arju8PoeDd9ivNl/Aaes/O7UvRUcP9atY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sOpAnTvY; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="AMrGHsF1";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HGbjbReB"
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id D54651140218;
-	Thu, 23 May 2024 23:40:23 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute7.internal (MEProxy); Thu, 23 May 2024 23:40:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1716522023; x=
-	1716608423; bh=nJg3BRJ9fLaFbQuErZUwdRHtpE0NqZPJNW5qvN3YXN8=; b=A
-	MrGHsF13baaIv8VyDJMA8a4jZHX+9esb+FRYzcf+VPOZxD2fvJA3jeuIu41iYK5X
-	5YCMOUDDo9bQg4ESQQCtWN9l3ZZdQn8EcsakgsQWiswOYSEvWpvh3+bL6xH0Umsq
-	ej7VcC040Irrpec1D/ic3Gy8qAEB3IL+5YrB6i/B4yCgmdM2SRf40C669YN/ix81
-	yIn7B8lMZ4UiJd79xQHrvPKCrGUYEOKjSPxClEhSwXlmxjSVFgcOJtdLp7fdzXS8
-	2jj/wtnpVVXDvNMxGp2PEJW4SMrzWC9kYLX3bqqmOzpPG9G2FfczWvKST35bCGnc
-	UJDe0t6typOEfdRhCYb1A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1716522023; x=1716608423; bh=nJg3BRJ9fLaFbQuErZUwdRHtpE0N
-	qZPJNW5qvN3YXN8=; b=HGbjbReBid14Y+3VU+ljAqIRymKMhkh+FYGDH2a4KQ5C
-	3QdnupR+ejxS4fNFtNbD/QHVZkhYfx64JoXnF0tDyqiSPFirtLxTdzYXtUqAM47i
-	JAKzCRn8Jg0ZDWmvYTJPeblyNWY3f0qpppjBAOj6No9PzEtGgq0IIbRMIbsLSQyW
-	9F2q4758S0ZL/5ykzPtm0rSNqgQ13sL13SK2LmrdsTaSR/xf2gkRCkMyPltlDyFD
-	nSrpEb3xkqLV+ojRSX+KLWvSLvMHb41kwe5WpPvCiIHznbWytXlJYFEzo+82Wz4g
-	7LWXFANUg1McpMrryM+d2dx2xYNFQ3R7T3+crbevqw==
-X-ME-Sender: <xms:JwxQZsLsYNR9m99rTo0rqoGRDm3-eUmczu7szB6NJQtfKnICDv21Dw>
-    <xme:JwxQZsI2yUimfP9h3pqSx2cL_Ro5CUO-IShY6WaZc0Y_MtyRSoRImGvWrUx-gQjji
-    16dL4AIy98w_nVG0rE>
-X-ME-Received: <xmr:JwxQZsv0FnPjfF7Cf580FPcrdkZJl7-dISr2zVKI90XuBoGmzvgw8djZe_wGzal7wBgMW1POzJFlrmnHhZnVPOmY7srIA9wEIXM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeijedgjeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfgrkhgr
-    shhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhird
-    hjpheqnecuggftrfgrthhtvghrnhephefhhfettefgkedvieeuffevveeufedtlefhjeei
-    ieetvdelfedtgfefuedukeeunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjph
-X-ME-Proxy: <xmx:JwxQZpYIvJrayzpI7Akrlq1JYmr9MxwM9UrP-i9xx1-qjC8SVYK4Iw>
-    <xmx:JwxQZjYwUgz98HaJLCJcwIhmixL67PmDF69RntdX-WnTABWbyBJhAQ>
-    <xmx:JwxQZlCn_dwltP-tHeF9aReKxQRuvZjQEASC4Q9kexWASxUFGQ9zgA>
-    <xmx:JwxQZpaurwyQ1jAtp6Zu68vsRLcqvv3w2hvrZS04UBntSJIHYuIIkQ>
-    <xmx:JwxQZiU6tHoIlQrKwwc6J_yp6xfBedy8nMeHc2Vkiteh7METJAVL-IFV>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 May 2024 23:40:22 -0400 (EDT)
-Date: Fri, 24 May 2024 12:40:19 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] firewire: add missing MODULE_DESCRIPTION() to test
- modules
-Message-ID: <20240524034019.GA276112@workstation.local>
-Mail-Followup-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
-	linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-References: <20240523-md-firewire-uapi-test-v1-1-6be5adcc3aed@quicinc.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sOpAnTvY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716532702; x=1717137502; i=markus.elfring@web.de;
+	bh=Umioa2mJKM7ga4XuEYMOnM1K4xmUwt4dK5hfLV9jtS8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=sOpAnTvYvGjPTY8/5f/WIwlpSkgsAsOjUR3CloKRJQ4PoF3WFicyV7+gQsZWei/T
+	 tpbqfNZrvMg+7CiGDrUUphgSuiV3Rf0Nu4RNaxTXMXVQzMp1K87p1oJlfobkGAFqj
+	 QWHAoNHhsvsOnMt1EktHXGCeaxJuzXKT9A2YzgNMtbvKow+CyjbxF8VpRKBRuT03j
+	 a/i94/92lZ2EcKxDtTq9wil6NtsghS9nW4jsqZBzC2KK5j4pch70K1ucPeF27B7Gm
+	 TStm14AT7sXVYWIHfvmJF+DDni6ThkVX5UyMMtdc3TyDHrf8sv5QMRDDKOU8hphAC
+	 OPxH6WNhzhx8fc9KlQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjBRZ-1sggNX0bbB-00eylk; Fri, 24
+ May 2024 08:38:22 +0200
+Message-ID: <8a92a08c-2a57-454d-a7ff-3edb3528b78e@web.de>
+Date: Fri, 24 May 2024 08:38:08 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523-md-firewire-uapi-test-v1-1-6be5adcc3aed@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v6 17/20] ARM: dts: aspeed: Add IBM Huygens BMC system
+To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsi@lists.ozlabs.org,
+ linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: Eddie James <eajames@linux.ibm.com>, LKML <linux-kernel@vger.kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Lakshmi Yadlapati <lakshmiy@us.ibm.com>, Mark Brown <broonie@kernel.org>,
+ Ninad Palsule <ninad@linux.ibm.com>, Rob Herring <robh@kernel.org>
+References: <20240522192524.3286237-18-eajames@linux.ibm.com>
+ <2fe45df6-01a2-488b-99fb-5ee20491554c@web.de>
+ <910b18b7-3717-4087-b028-fcaf5f2a604b@linux.ibm.com>
+ <398bf753-6701-4925-b814-781a68a75cc5@web.de>
+ <20240523-rinse-sturdily-7c78d8517884@spud>
+ <d6289d1c-deae-49a3-9fc9-98a2f2e57802@web.de>
+ <20240523203339.GS2118490@ZenIV>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240523203339.GS2118490@ZenIV>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:r06ohMYipjx7MaDK2OvRnKAwkIBVsS5fvyAmsplcvM21XF7HMAm
+ A0Src/BHL8flyhJsz3MdFdif8NmB9aq/3fPsFxXcV0kugN2P4baA5bybyQbqJ/d6dNe9V+y
+ KfQwRn3SQK5W6mReVOGkQ2OSBIazmuosZVNLZ33w5EUM3wEEBDegS2xAFsb1BzNwauzEvv0
+ 3DSCxroZyv2XOPlUjbbcQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:kCE3UA8E6+4=;ji6T0ME+UaTyDdrzMP3bhGy4KvJ
+ x6/ZMWjLm/maIjQj8faQ8jaaXxne+4RWYF2gWiwqpZFSRptL6UemOufq0G5J/LuJUqlKprCRO
+ /gLLi2bzQNuv7L5dPd+cQ+jDFNVKlL7COeE1EczqTQNoUOdebG5s43B/sjNI5vSfEx5m+gvlS
+ uD7wXufB3FmjWU1Npmatn16cvxxNHci4pYVniVX/jOaqtsE14DiOzrf1vIl2+IbmdBTuMovrd
+ WxLSMdoOW98/tOqyFBxx0LUmyqKFdUBB5P7vBkGLRoqesA71fZYv3VGAco4KGWNAwmEYHVGCA
+ 8KZH7zZsPHUaEcLJQxXiX2IxyCnEFxsZ5hKfgqbfIyUDom/zuAw/nrTu5O26LEs9sg3cNqoNz
+ Ajd+7kqFOY761H+OmpG+4Sh4ZWhOqZOP57ngiqhhLXQp1HXL6D7pUaOZH/SISHpJ/KUpvwyc7
+ CsCwY1rlgRzt8OHnhhwCwXFX8rEjGdFZ/lzuTtkxo2kul297iEZvM16PdEERo8xWSxnEwZK6C
+ y8Vnc245eoWOZTxRh45sPoCL56j69Guxz2NZNENIG6egmMLAVdDPmkeHkerpC805YEUMT9iYj
+ jaQhBbtwrOeFTQc0CB3MmF/cdeR/gJKQ/vhnIRKf9HX0T3u9jfKOkbhtVyqQHPKJXSqztp3iy
+ X+x2+EfCK7jIjHqRl1Q2EG1lYoAWnE+UwXvkc4XoUoecguH4JfaURbK+vljt7vZPoWrpqV5+i
+ H9MsnTFswl8dXlkNEs3OhuYN6yAHkdSiSBptLw6RwEyfZcUZzOVClcorvQ4n9TEtIwDJxpp4W
+ mLutMFCP5rXz2JvcO73g1uR3r6UH0Y2DHPF5Y7mCr2JYQ=
 
-Hi,
+>> Why do you interpret my patch review contributions in this direction
+>> when the official Linux development documentation provides special advi=
+ce
+>> on affected wording details?
+>
+> Your "contributions" are garbage in general,
 
-Thank you for your sending the patch.
-
-On Thu, May 23, 2024 at 04:22:34PM -0700, Jeff Johnson wrote:
-> Fix the 'make W=1' warnings:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firewire/uapi-test.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firewire/packet-serdes-test.o
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/firewire/packet-serdes-test.c | 1 +
->  drivers/firewire/uapi-test.c          | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/drivers/firewire/packet-serdes-test.c b/drivers/firewire/packet-serdes-test.c
-> index f93c966e794d..e83b1fece780 100644
-> --- a/drivers/firewire/packet-serdes-test.c
-> +++ b/drivers/firewire/packet-serdes-test.c
-> @@ -579,4 +579,5 @@ static struct kunit_suite packet_serdes_test_suite = {
->  };
->  kunit_test_suite(packet_serdes_test_suite);
->  
-> +MODULE_DESCRIPTION("FireWire packet serialization/deserialization unit test suite");
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/firewire/uapi-test.c b/drivers/firewire/uapi-test.c
-> index 2fcbede4fab1..bc3f10a2e516 100644
-> --- a/drivers/firewire/uapi-test.c
-> +++ b/drivers/firewire/uapi-test.c
-> @@ -86,4 +86,5 @@ static struct kunit_suite structure_layout_test_suite = {
->  };
->  kunit_test_suite(structure_layout_test_suite);
->  
-> +MODULE_DESCRIPTION("FireWire UAPI unit test suite");
->  MODULE_LICENSE("GPL");
-> 
-> ---
-> base-commit: 5c4069234f68372e80e4edfcce260e81fd9da007
-> change-id: 20240523-md-firewire-uapi-test-08fb0a9e18de
- 
-In my opinion, it is not so urgent. I would like to postpone sending it
-to mainline until closing the current merge window.
+My contributions are also varying (as usual) through the years.
 
 
-Thanks
+>                                              and this thread is not an e=
+xception.
 
-Takashi Sakamoto
+It is just another example for involved communication challenges.
+
+
+> More specifically, you are picking an advice
+
+Some development activities are reminders according to known information s=
+ources.
+
+
+>                                              that is inapplicable,
+> transforming it into a question and "contributing" the result.
+>
+> And your entire modus operandi fits that pattern - you spew random garba=
+ge and
+> expect the contributors to spend their time and efforts on checking if y=
+our
+> (contents-free) "advice" happens to make any sense.
+
+Do you express special concerns here which can be reconsidered because of
+advices and requirements from software development guidelines?
+
+
+=E2=80=A6
+>                           Unfortunately, the kernel development is clear=
+ly
+> not among those.
+
+How does such a view fit to an other data representation?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/?qt=
+=3Dauthor&q=3DElfring
+
+Regards,
+Markus
