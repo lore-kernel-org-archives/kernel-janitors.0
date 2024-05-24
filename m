@@ -1,161 +1,75 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518295BACF;
-	Fri, 24 May 2024 19:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486B139ADB;
+	Fri, 24 May 2024 20:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716579584; cv=none; b=NSOIbWvR6+nlI3dFNuq/5WIYXkuvha0OM977FCu1de5iDaYemIv54iW97l0DXtnDaCz2AmhbUJOsr4PVcB8JBaQm1fVhK7diZ8aDAhjmazxla+oWNmi1vGqGeGFSjQxW4wCYgwoQUmixIJgjScktEFLwe2I9f/o6CNrz58Lfrbo=
+	t=1716580830; cv=none; b=WvVRH5mMMaq2PtIMbFkyh3cZC1VU09ZLgz07JNgCImM9S8PvlsAojqLiQl+N71hCdHvE74bfgQy5FDDLjCwekh144zw1RV6tQikT2p26W2qknS/cvQzfaXijzVSGR2ItEw0FoQ3Za1IXyryrgRfyaJN3pX0HUTyL9mdKslXL3XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716579584; c=relaxed/simple;
-	bh=AO6flEiY5GN86OBnbWq/A3cQxhOqbBj/HG/J6IbbzR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=edXwNp2Y2tiQjlN+JncbXnfGuSfby9R5EdAtJ2Zzkfb3zbtSdIhty2sCRmLYZlv/g6K1m9qGMQRrOTFmYY5jZRE3ik8Jpkwbx3RPCBGI32heE0bRTPreZleuEwVWrkMkJb6Z7ir79ghEePtKvtQHuJoAPrxHfwDjel1iyw85URA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fpNqhp7m; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1716580830; c=relaxed/simple;
+	bh=pyAGi8octoMcFhKKOiNrCFOsbeRCbTUlZAwIwrRUJx0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=b2jhjEvsUBrVVbz5ftfOZqV05sHlitKmu0GZTMKxJzyVXey5Lg3oQ8GCn8YHR7Fv7sFPPileCRHwrhgHglYlKR6pBKQt7Wlf0mC2sb09ooE5koBVU/4VuM+9ubHVB9tzse0ovqlP4xje8voTTOJ611e8RCy+XjkigTHEvRecLys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T1MAEQ6B; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fpNqhp7m"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e719bab882so79656891fa.3;
-        Fri, 24 May 2024 12:39:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716579581; x=1717184381; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vvA1TEXJy8UZ30B8rAec5iNH0YYUOMkxldrbK8cu0os=;
-        b=fpNqhp7mEyZmRsonidx1iLVfgQMsxODqXHqFQjtcwik/bVS71vfMR6ppE/l89inEPu
-         SRX7D0j7QtYGPIn5aLjlthMNKz+AKLjt0bwuibRD6btcgml0ddsaQoKK4fKhTwRBU1Oc
-         c28aOzgg0VBS6zhMBWX40hAj6AQrsNCzKcu2PZjCuRJ8l2R8Qo8zTqHYX4QiilDF1C/V
-         U/Q9qmQCYjREc11Vc+fIbh7P6FzSM01OdVL6G+BsiUr2h+S/lGD71KrE5Sv4vIIAo0gx
-         q2y9mxwQohBdoLWrO13NyA7UeVq+Afdn2fsfE4cMA/aFiT4hz6DYmcF6dVgFG/uBStP6
-         PN1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716579581; x=1717184381;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vvA1TEXJy8UZ30B8rAec5iNH0YYUOMkxldrbK8cu0os=;
-        b=Fae0I5QoxJoANM9sPV8YVhZUoDgTdziSR2QdvEWorII8T7MMgNrY3dNCTOdnzf7/OD
-         1knUTRM3ty8S7P0HsRC6My9aregaTJOgbHMKsjPs3wa3dmUoorwrtx0hv0BHG0tVeVWq
-         A52QLJvlKPyJ2FCT1RCrIG19Eblxb7BmvggUTofUa+hTAdmg619f0h2xS0triu9L7EyF
-         qzJ9Xk6MCBcR0RU3bW6uM+jvXx6K52owbpzutC3IL63jraGOxwOVsSbujd3o+4aBgATJ
-         BNxzPxgjsmLZ88rDGOf87f88ZjX1Udw6+NtSZkVCvsYB34CWxSZJDRJ+JNN0RrCrWVee
-         lU5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWTeRBbECuQWhmUpCoKyAx0pj2rPch445fKkoqXy73PL6j0FnlTloM2Y5n+oCIn36kcq88FkPw/nJ4xjgwQk9T/Ef6u8xgh4PpWfZDOWOJ3XgJkH1VzSatgSTc7FityEaUO3UeEr0gvcUT0EaSI0V1I6SHyUqMzpM5AR1KT9FUuTREb8Olv0QmXhvmFb45l
-X-Gm-Message-State: AOJu0YxiD5V+6eo1e38VrQ6Y7FnwqvwKiDeGdMlDwUrvKHMyXiJOtau/
-	GKc3HjdcXoO1sjLypMvdqQwWQF/+HqZqlniYSHCONzMQq0iKwMsSK/6JMsRdtpE474RMyBu2EhR
-	yCmuhWMvFh1F3eaiHOpWzO+0Q9kqwvQ==
-X-Google-Smtp-Source: AGHT+IH/Fts2MZ9JzhPQTFc1u/R6qIz3bkV8n8VX15J9OkSYxcuMJAlWmONNhgDMZkSm5Y85aUEXz0rqzNRZEaB/Riw=
-X-Received: by 2002:a2e:b74c:0:b0:2de:8685:d07b with SMTP id
- 38308e7fff4ca-2e95b2cf26bmr17130481fa.46.1716579581149; Fri, 24 May 2024
- 12:39:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T1MAEQ6B"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DD8D2C2BBFC;
+	Fri, 24 May 2024 20:00:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716580829;
+	bh=pyAGi8octoMcFhKKOiNrCFOsbeRCbTUlZAwIwrRUJx0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=T1MAEQ6BgEbJ0/8OMoz8FvtdPnuSPCSHHZYYBn1yhfp9t1+1xosA1Mcdvolb9nPpD
+	 qwo2X2HOXkJ1qeJJHdawSFS56Bn1IZWXaAyFzA3AMYlFJFgD6fovUeAqOKJVJyjUoR
+	 ETP1EoYmFdW8V+5Ai4Vcp0Cs4G3KW3dc0X5FtY2aoMYBiaOhD7vnhOhk66UOOpzDNz
+	 ImLIwsJcKG5Vr1vI0UY2kaXQ5TLKJBkkxMSGLY6Y5OsqTpSsbS7Jz3tqOQpr/XKzbR
+	 nM6s/E83iRmnGxJpiho5NhiPXm6TV+bTx32hfGGLB23jPE5S8Ir+djqPqxIggMlnMD
+	 ohm4n+qDgA+/A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C9926C4332E;
+	Fri, 24 May 2024 20:00:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <692b4749f4267436363a5a8840140da8cd8858a1.1716190895.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <692b4749f4267436363a5a8840140da8cd8858a1.1716190895.git.christophe.jaillet@wanadoo.fr>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Fri, 24 May 2024 15:39:28 -0400
-Message-ID: <CABBYNZLeM7MQrBuGE49KN9Xm1EQ-cFK3nR57sg2hWB0jOUFn7A@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: btintel_pcie: Fix the error handling path of btintel_pcie_probe()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Tedd Ho-Jeong An <tedd.an@intel.com>, Kiran K <kiran.k@intel.com>, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, linux-bluetooth@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] Bluetooth:  MGMT: Uninitialized variable in load_conn_param()
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <171658082982.8511.1384944537099920085.git-patchwork-notify@kernel.org>
+Date: Fri, 24 May 2024 20:00:29 +0000
+References: <819ed9b8-8790-4d15-b2a0-20929328d582@moroto.mountain>
+In-Reply-To: <819ed9b8-8790-4d15-b2a0-20929328d582@moroto.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: luiz.von.dentz@intel.com, marcel@holtmann.org, johan.hedberg@gmail.com,
+ luiz.dentz@gmail.com, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+Hello:
 
-On Mon, May 20, 2024 at 3:42=E2=80=AFAM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Some resources freed in the remove function are not handled by the error
-> handling path of the probe.
->
-> Add the needed function calls.
->
-> Fixes: c2b636b3f788 ("Bluetooth: btintel_pcie: Add support for PCIe trans=
-port")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+
+On Fri, 24 May 2024 13:14:02 +0300 you wrote:
+> The "update" variable needs to be initialized to false.
+> 
+> Fixes: 831be422f3bb ("Bluetooth: MGMT: Make MGMT_OP_LOAD_CONN_PARAM update existing connection")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
-> Compile tested only.
-> Maybe incomplete.
-> ---
->  drivers/bluetooth/btintel_pcie.c | 20 ++++++++++++++------
->  1 file changed, 14 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel=
-_pcie.c
-> index 5b6805d87fcf..d572576d0dbc 100644
-> --- a/drivers/bluetooth/btintel_pcie.c
-> +++ b/drivers/bluetooth/btintel_pcie.c
-> @@ -1280,17 +1280,17 @@ static int btintel_pcie_probe(struct pci_dev *pde=
-v,
->
->         err =3D btintel_pcie_config_pcie(pdev, data);
->         if (err)
-> -               goto exit_error;
-> +               goto exit_destroy_worqueue;
->
->         pci_set_drvdata(pdev, data);
->
->         err =3D btintel_pcie_alloc(data);
->         if (err)
-> -               goto exit_error;
-> +               goto exit_free_irq_vectors;
->
->         err =3D btintel_pcie_enable_bt(data);
->         if (err)
-> -               goto exit_error;
-> +               goto exit_free_pcie;
->
->         /* CNV information (CNVi and CNVr) is in CSR */
->         data->cnvi =3D btintel_pcie_rd_reg32(data, BTINTEL_PCIE_CSR_HW_RE=
-V_REG);
-> @@ -1299,17 +1299,25 @@ static int btintel_pcie_probe(struct pci_dev *pde=
-v,
->
->         err =3D btintel_pcie_start_rx(data);
->         if (err)
-> -               goto exit_error;
-> +               goto exit_free_pcie;
->
->         err =3D btintel_pcie_setup_hdev(data);
->         if (err)
-> -               goto exit_error;
-> +               goto exit_free_pcie;
->
->         bt_dev_dbg(data->hdev, "cnvi: 0x%8.8x cnvr: 0x%8.8x", data->cnvi,
->                    data->cnvr);
->         return 0;
->
-> -exit_error:
-> +exit_free_pcie:
-> +       btintel_pcie_free(data);
-> +
-> +exit_free_irq_vectors:
-> +       pci_free_irq_vectors(pdev);
-> +
-> +exit_destroy_worqueue:
-> +       destroy_workqueue(data->workqueue);
-> +
+>  net/bluetooth/mgmt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-This looks a bit messy, perhaps we should really be calling
-btintel_pcie_remove instead and adapt it to check if a field has been
-initialized or not then proceed to free/cleanup/etc.
+Here is the summary with links:
+  - Bluetooth: MGMT: Uninitialized variable in load_conn_param()
+    https://git.kernel.org/bluetooth/bluetooth-next/c/8e8f72ff2710
 
->         /* reset device before exit */
->         btintel_pcie_reset_bt(data);
->
-> --
-> 2.45.1
->
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---=20
-Luiz Augusto von Dentz
