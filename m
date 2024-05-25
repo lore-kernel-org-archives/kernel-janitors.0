@@ -1,40 +1,41 @@
 Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9164A171CC;
-	Sat, 25 May 2024 10:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82395DF62;
+	Sat, 25 May 2024 12:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716632550; cv=none; b=PYorbGsUeaNUurjErLRYYHBjrr5UO/WGRtXxDhLm99345u7D1cEBfzaFbjO0el8Rll5+FBkVz/Tr2huXdyobXHu86N0x+Sysdrn8GETDeFbnEh2gcUXN/JDmcWpKmzq+PbROoOM/ElEa6safTw21lgKCN6yayQxbJngB+INVpd8=
+	t=1716640879; cv=none; b=dJl4stIeuBuR4sVc5t3EaC6MjtKBWSTmkm/UWYTzKSNhL6/uplW7wthp3ckP9Vb2RmYP+q2PqXnsPReHlxBAkG99mpvVCg4dQhbGDRaq7gShiPD4/LsWolw5m1ODKTkNNq6WZzD/UUQGDTJFWKg410CqKCN3w6XuTkI1och3bto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716632550; c=relaxed/simple;
-	bh=YNsy0eiDe4FNlCTPePDFDDRv38WnUx+b+e1glkTNzGQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Z+EwB71w68P+XCtMInZsLZebffy8ixjILPI4JW+WLboQwodDqm6GgMT0u5NJEjndSJ4H4nkVx6Mbqp0CpSb9ocy3fAsSO6owD+j2C2YI9zicXB8ZyOm0EGjtsM+qul4QOUZhaNC+9DHw+K6U1dps27s+505ETRpxgbDaqTJjn9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XZqrWqKQ; arc=none smtp.client-ip=212.227.15.14
+	s=arc-20240116; t=1716640879; c=relaxed/simple;
+	bh=7ZviCUB/6lSFNWCT4XaECeaxvcTOrRra9ubMc9FPOP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QJRcaO/+b19LUfdW+F7XX912q9YOvOXbz/DbS6pJxZW8gen8bdoKnDRIVL8BVPBZ3b6aQZ59aH45Uwk9CaR+DTCS/p+kG1jvnpPIowneXvNnc4eak5C2b1jtnlygU9Z+eZ01DLBjZ9Aftl2XjioAj0dheWj3iQ8oNyGq6fHQKsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wgneB7Q/; arc=none smtp.client-ip=212.227.15.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XZqrWqKQ"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wgneB7Q/"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716632527; x=1717237327; i=markus.elfring@web.de;
-	bh=YNsy0eiDe4FNlCTPePDFDDRv38WnUx+b+e1glkTNzGQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=XZqrWqKQ5I+Rvo192FgMqh9MJRz0NpYsHJo9CcyUFt5ad68a6Ns+fTVVfAItVQCF
-	 ILU1VUzBkJkdivvYVZVZ4ShWDFBKrwQuXOs6d6qecu35ffaDxH+aEMVPffhl7xbkQ
-	 utoE+ZoGR1U/fSnW2+T96y6NsGiQIy7AsbBbe180VZiqtYfmMmFoiFnBS3dazu4re
-	 sm2tD+g4e0GkEX2i7uipMF456QDA2ICM+Dc5YksOnXrM6HqgdCbkITkhmm8NWm07N
-	 EbLbSKY6tbn8d+HM8B5hV9fwY7UvKRVVKBpP6r9J8ZBDe6EK+WlUGuek79JSxb2iT
-	 8sLC51Q4VIfGNo3wYw==
+	s=s29768273; t=1716640862; x=1717245662; i=markus.elfring@web.de;
+	bh=7ZviCUB/6lSFNWCT4XaECeaxvcTOrRra9ubMc9FPOP4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=wgneB7Q/+jVmeHNdKGzQxIHu4OkyOgIjaer+RuHSun7lABKV9b92tPk8BL7OoAGD
+	 gs3lhU89WmbTxA5x09HbJ9CfojMgMxAng0FxGwBd3dUzaWLO9mcjEfwYNZx/G0QKL
+	 ytKsxOBiz1UcGyQ0QGcpRh26xiVew946O9xXEbS3vuB26kPyavFwCS3ysn2lr5wHm
+	 RQ2GBm8zgyUPoO5l1y3WOulWZSs1emvTJXnTM5KUZ59AdM8vGM7wy0M+PIYr+btm9
+	 1X7HixKKVzu/URFT++M1DFUjC4z0Pl8xmDcJUhMNNBpdz0YaS+BPhQHAJfHyKR3cz
+	 AzvqNkxIcViNNNeANg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mfc4q-1sheFj1ZbU-00qOAP; Sat, 25
- May 2024 12:22:07 +0200
-Message-ID: <ea971463-c43b-4524-bf43-ce4d05ec0db3@web.de>
-Date: Sat, 25 May 2024 12:22:06 +0200
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MWzD3-1rzW1U49Yv-00QEPd; Sat, 25
+ May 2024 14:41:02 +0200
+Message-ID: <3aeb3813-9a82-4b1f-9dd6-5baad2d45f2e@web.de>
+Date: Sat, 25 May 2024 14:41:01 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,47 +43,74 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: dicken.ding@mediatek.com, tip-bot2@linutronix.de,
- linux-tip-commits@vger.kernel.org, x86@kernel.org, stable@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <maz@kernel.org>
-References: <171654826399.10875.17851209724801691980.tip-bot2@tip-bot2>
-Subject: Re: [tip: irq/urgent] genirq/irqdesc: Prevent use-after-free in
- irq_find_at_or_after()
+Subject: Re: RISC-V: add Star64 board devicetree
+To: Conor Dooley <conor@kernel.org>, Henry Bell <dmoo_dv@protonmail.com>,
+ linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor+dt@kernel.org>,
+ Emil Renner Berthing <kernel@esmil.dk>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <IPHlm5mOKUzYfwGy0auyufx-oPkSrtQjUjiQLbtvspD69UPX9O98iB8P2mqM8ahNaerz0yUa009f4XABRniq7aj2PUp83hbRVVhhKmqT0Ss=@protonmail.com>
+ <1b55aad1-1442-41a5-acc6-16baab90c021@web.de>
+ <caCBlFpvjmhO9G1A1_2qHImmuoGai2NoPYonB5RCVftq4zIrSxlP8Msh9z_FX9GwQXzfSrB40dRxy1zfxZesOJENeebWQsERa03sDvArzec=@protonmail.com>
+ <20240525-dumpster-bootlace-10123081a6f2@spud>
+ <b52685a3-127a-4367-b11a-54ab88467dcf@web.de>
+ <20240525-shirt-scratch-6708b2a4f63b@spud>
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <171654826399.10875.17851209724801691980.tip-bot2@tip-bot2>
+In-Reply-To: <20240525-shirt-scratch-6708b2a4f63b@spud>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:yZlp2qNBCCyPQtANKc+yVQwq1uB7RafszQ4bA+CLIimc76fvE9j
- byliV4Ex/S8EG3wJFf2YZKIlA6AvmbeBB8sBOSIY7vtmACI7LP2xzX6E3J/NYGcLcUUaUBk
- I/TxkunGsCC+IYoEtXhLhUdy+U6/zy9l+9i335qE7Trq2AviGX1XpZQWDHFVw2W2M2Vv1W7
- pqOfzLvi+dplU/7cMdczw==
+X-Provags-ID: V03:K1:CxPNXD7l6EM9E57TBcClo6tiFuHrL+82ELChilSGwI5G+i6gBZ6
+ /5SsVq1xUBJVOQCDKy1aYKX//RozpMRI4fznh6el42YVnrr3ZEzIloNMgvW2BWuRlmVchCE
+ N28MO4QJZzdMdC5+XLEEhZPJhVeXQVOF8LPXzKS37ILeLbRMgeGTW4lPt6T/LZMklvMsRX+
+ e2/QXchk8/MjP/lQ2dTDQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:EAMcd4seoSU=;dhwW3IiT8O+SC9rWgKgYf3rBbFh
- pKdBsFNKDZ+6QSe4xEg6S0wfMKgwD7NkCGTnpgo5Oybrc0FfTMeBzjViO9cIcX8UeFkZ3dley
- NQ/lsf5OK91AZHyrfy4ifkcsXOU9DAX8G7gK8sPuLkBsgxeDBZKmB/qXwsrlycTwGllOYbzc5
- TXP8C40SkZ86iRhJ1LKgmawL+r3BU3RGyFpLYuZznA/B1c+mY+nIe/oNwqsL3/JEJbAjk6cvJ
- /Crp9GSQkRWJ1f7vRaTCb6Pj4DJz0wjRpIlMlmCGbDc7N7RCpQnOrysNoBKZrG31cXhvuOUTJ
- WRKofpxV/0FjoTiYlFQ2YSWbEjKMfayxWurvA1IF6LnZVyQSaUD4+FbkCb/n518wdyA2hs29r
- vlyoUlRyNC7FEN/Jbg+i2cc1MZ73KQenYWecXLLTA5wpyZQAuvKSDxVdXlC6WJ/o7pghQzlWC
- 1JpNDYU6YPBoBKMXHoFoHxXnOJXatBlI9KEiYc8CVbmI3bNFr/iytn/km3CU3Mdgg9EEiRfGx
- lkMLcqCuDk4xeXwZJMRpq3HODc1gtNNUvzkuNxZSnvnj4Jr9fi2aKebdC6XeNwZlaeptFU7Tl
- L1vefo04fYmOpKCO4t2ue+jLMO+mOEWoNkKrH/n9EHNQiTRPIcY1yaMsJKIPlVTGj9mm3T4Ww
- r9zDokW+79A9uZ7SoapNSRHQfK7rmPvs3RHMgQ0QQ45/K33nvcyxqmlWTun0kD8DoMCZgeycB
- QFVxwWjq277xyTbD9fo7sjAngEvEcQhzn9pDbH/ncIDVo1qrHM/jHUZKajDxk7C5aEi+afcf7
- fUuU1kqTarFTIDIkGH8UjsResSZn5v8rLux4imuUrMp7Y=
+UI-OutboundReport: notjunk:1;M01:P0:jkgHsTc38j8=;eVO6GgRHlUgM/p7JnxdTdFAMzkE
+ Rxbk08XB7XnfNSsOOWF8BNoumfxz9zwuDS2JYe7rfFV/R7zKCbEpo7galTmlwzeOTxSkVM+Gt
+ Ejgp6/RVrUxAoj0/HU783BraiZ+OpA53MMcpLcPRUvpwOCyRfKlwIC07olO55pUxzbumeOswL
+ Ch7fsHgvCmVxgfdcm9OYHwQ0gp5sBtTHNkS+IPEPVxrhHOJSEdCEYzLNXW9SdYMPllAnEbByN
+ GytMFzm3DJCqnsOlQgEzk0lAmw6Odq1qQTyB77+R7KwM4AGswc7mY0skGIMctqmk0KiSzeyNL
+ wwruCAnhMnw+vgDS9UaZlS8+uqGja8tKI11+tv4HxO32S8JDFKsdsBLcASMlr4x1TzUgWanp1
+ YCwFKmbNXeDChNNNdj8UiKeX1JnEYw6NhtAVA2xqDQ9eSbHwr3zGSCx7xZ1QXQCa+DlkkI8Be
+ so49rILwDUx6KyJjcKGg6nll3RMJVUg4rstg/2/2tMGf5BLbtHS4b4xZbAKye10hjESyAOp7x
+ RiQmN3P8zq/HB/hvrUlO9VIJltKa9I6bggaWrvC3bqTtQsQh8xBGH/jiVcS9REOWTetADP76t
+ 4yVMSA2xXO6APwftKb7JwVElXjAPYZodqEfMJssRbru/PdlXsqQZRzQFBHh4xKzTWtptUGOiH
+ 8YgadPhbRN/KI+6zziOAXNC6nEnleAkzfAeGmEV/FOlO7QXoPNIXefKhrweyCMH0rhEhwn0nO
+ tGS2cj8WWLEembz1gb7D2UVUjHKKzXYXI0zcxBzOwED+Qxpn7J48efclCcbruToh3irG5++vY
+ 5UE2lby9AUDj0Rp1PbmP4wm0j6ymRIkAZsJ5/pvS+WN9M=
 
-=E2=80=A6
-> Fixes: 721255b9826b ("genirq: Use a maple tree for interrupt descriptor =
-management")
-> Signed-off-by: dicken.ding <dicken.ding@mediatek.com>
-=E2=80=A6
+>>> Don't worry about Markus, most maintainers (myself included) ignore hi=
+s
+>>> comments on patches. The commit message here is fine.
+>>
+>> Would such a response mean also that you are occasionally ignoring requ=
+irements
+>> from a referenced Linux development guideline?
+>
+> I do ignore it from time to time, yes. Being a stickler to the
+> guidelines wastes everybody's time (just like this discussion).
+> That said, the tense used in this patch is perfectly in-line with the
+> guideline you reference.
 
-Would a slightly different author name be preferred here
-according to the Developer's Certificate of Origin?
+Partly, yes.
+
+
+> "Add Star64 board devicetree" is in the imperative
+
+This information fits to the summary phrase.
+
+
+> and the commit message body contains additional information about
+> the board's configuration.
+
+I hope that further contributors can follow the recommendation better
+also for the imperative mood in changelogs.
 https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9#n438
+cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
 
 Regards,
 Markus
