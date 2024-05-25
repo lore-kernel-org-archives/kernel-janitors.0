@@ -1,103 +1,81 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC90B23A6;
-	Sat, 25 May 2024 00:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FF52913;
+	Sat, 25 May 2024 05:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716596314; cv=none; b=oWOroC+hCxJUelVOHLyvO92BTODZl8MmD2n1OLYcRfhT11V7GrPJbsukw+aHXe6GJO6brb25doTfI9NnG/80pLkt04fFmkNzrsqXpH764oiQonyqOFHCNRs3jXhRFB/x2kJb4jRGwdk44w4rHjuukBZT/QwjYgtwNdhkutLConA=
+	t=1716613319; cv=none; b=TWaQ72MIUfEJ8UcINTrncfaIwxWMFBVaPkgZN8NtBPgI69v9EYMYIZ80mAvKr1tGVR8sf0/3u8CjwRgGBKtghcm6DmZWg2TYj0tIbdke1poz1GBFthaFxQLJR2wHhBkS7srUpnBo2aPHBpzKkoUZAOABQBZwkOswpTG+Kk4wCNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716596314; c=relaxed/simple;
-	bh=Jyn4jAbRuGdM44eiA9NtkmXAWbafGmI0Ts8NoXoCfeU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=MCfkDSWdq9vPbG0SiLZm6owwc9beNFHIbOADR1veeLu/k39c5+bUBE9nW+g88Cr1JZscBUn3aHE6zzjRf81G4s6shOiGGgJj5ywhOOabZbisgcvf/mZs034TGmMuBHFufmco/szrJuYj/jC3ACzEGoAmuIPtv1y1TePfv2nDJqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YsvWdc31; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1716613319; c=relaxed/simple;
+	bh=J9LYVGzOxQPYwrVOWTVSxCqfC+l4YKyMKpoA0Q5Tdn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=snLyYoRUrRNe61ZxwOkqlt5miYEfOx5+XK9tf8KkzjNHf50UTAZGEkrjNB7zRBWruqcwtjp8KhQOgyq3sTdVlk19vZCss6inAxjXHnCYxwO71LibdUeR05YaZOs9hUaScWxkPbb1ojF6M/a4LMdsfNeoZ5N6qOyxW8a+vEEovPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlCMP2mz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YsvWdc31"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44ONbljH012387;
-	Sat, 25 May 2024 00:18:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=FGQ8MrW01xyesdBHaxcRfq
-	h4doWeQc0kXoJl20ZTBT4=; b=YsvWdc31wDp8H9RDNukvHnTgC8eStqVVEkkKtm
-	nLTE41z9mIGLnCrkl3elEigTAKalUp59EJnYIT6OKhT5s2YlOCyPPzpEBOlxaQsP
-	1XMoW3k5DtiZqXPsbRFLjWatsKSfU7HHMIReLfgyviSUB1xzWiC5YnUTqVrv+kjj
-	3itwV1tz7rvfd74JsDFPBkx5W3nbXTAg9t/ANSsX7gCIJ7P9vzWlliVwtfZuIOfl
-	ZNlJSntsjkTIKjaIxTAO1HwQFpu1NuPXUXwghrgTO0X1xM6Td/b+lLCPKpHHxzF1
-	/5FV3hkuAgEL2HEF4er2Tlg1vgjY5OVZhmVfMQV+0OSComIw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaa8hup0a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 25 May 2024 00:18:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44P0ICaU024223
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 25 May 2024 00:18:12 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 24 May
- 2024 17:18:11 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Fri, 24 May 2024 17:18:11 -0700
-Subject: [PATCH] locking/ww_mutex/test: add MODULE_DESCRIPTION()
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlCMP2mz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FEB1C32782;
+	Sat, 25 May 2024 05:01:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716613318;
+	bh=J9LYVGzOxQPYwrVOWTVSxCqfC+l4YKyMKpoA0Q5Tdn0=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=SlCMP2mzmlwCDrUejywY+td+Chdr7OCXYJTVD2IALDS/cmpxakEF3fAzG3mASfOwC
+	 fe9SHGvL1juyc0/cAerYXrAeSJyEUCd/1a632X2KFEFIl0C/LyqVMDd4BMvh2IKbGo
+	 U2111VpOjKPTD678A6oECG4lIxYfxz6aPG/KUmXr+JNKQsY7poYYfS+/PiZa0XbiD7
+	 WWT3dNC4+wlwwM1NUpro2n5A09muPd/IROybC2bWVKXEFeaQEqqFJhCY8t1Jbibtt2
+	 s5OA5QaOC+qyCf1MtKTcOOYVKO4BdOvd4VRfaOFzEvKNyAlivFZzOTKx1lEyjo+jxg
+	 Hz2CNH9jsoWiA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 1D012CE2A84; Fri, 24 May 2024 22:01:58 -0700 (PDT)
+Date: Fri, 24 May 2024 22:01:58 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+	Josh Triplett <josh@joshtriplett.org>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] locktorture: add MODULE_DESCRIPTION()
+Message-ID: <b05ea477-cecc-4745-9c74-e78b21e7a37b@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240524-md-locktorture-v1-1-f84c5d07b1ab@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240524-md-test-ww_mutex-v1-1-4fb8c106fe21@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAEIuUWYC/x3M0QrCMAyF4VcZuTawdVWGryIibRddwNbRdK4y9
- u5GLz84599AKDMJnJsNMr1Z+JUU3aGBMLn0IORRDaY1tj0ai3HEQlJwXW9xKVQxdEMwp94HO/S
- gtznTnes/ebmqvRNCn10K0y/05LRUjE4KZZw/OoV9/wKpaj0khwAAAA==
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-        Boqun Feng
-	<boqun.feng@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: GkuCSJeifeMtFpNxsLR7WNpGQ77_Nizf
-X-Proofpoint-GUID: GkuCSJeifeMtFpNxsLR7WNpGQ77_Nizf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-24_08,2024-05-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- adultscore=0 priorityscore=1501 bulkscore=0 malwarescore=0 clxscore=1011
- impostorscore=0 suspectscore=0 mlxlogscore=925 lowpriorityscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405250000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240524-md-locktorture-v1-1-f84c5d07b1ab@quicinc.com>
 
-Fix the 'make W=1' warning:
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
+On Fri, May 24, 2024 at 05:17:24PM -0700, Jeff Johnson wrote:
+> Fix the 'make W=1' warning:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/locktorture.o
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- kernel/locking/test-ww_mutex.c | 1 +
- 1 file changed, 1 insertion(+)
+Queued for the v6.11 merge window, thank you!
 
-diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
-index 78719e1ef1b1..0fab96137ddb 100644
---- a/kernel/locking/test-ww_mutex.c
-+++ b/kernel/locking/test-ww_mutex.c
-@@ -695,5 +695,6 @@ static void __exit test_ww_mutex_exit(void)
- module_init(test_ww_mutex_init);
- module_exit(test_ww_mutex_exit);
- 
-+MODULE_DESCRIPTION("API test facility for ww_mutexes");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Intel Corporation");
+							Thanx, Paul
 
----
-base-commit: 07506d1011521a4a0deec1c69721c7405c40049b
-change-id: 20240524-md-test-ww_mutex-c18c263bc483
-
+> ---
+>  kernel/locking/locktorture.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
+> index 415d81e6ce70..de95ec07e477 100644
+> --- a/kernel/locking/locktorture.c
+> +++ b/kernel/locking/locktorture.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/torture.h>
+>  #include <linux/reboot.h>
+>  
+> +MODULE_DESCRIPTION("torture test facility for locking");
+>  MODULE_LICENSE("GPL");
+>  MODULE_AUTHOR("Paul E. McKenney <paulmck@linux.ibm.com>");
+>  
+> 
+> ---
+> base-commit: 07506d1011521a4a0deec1c69721c7405c40049b
+> change-id: 20240524-md-locktorture-6d431f82aa24
+> 
