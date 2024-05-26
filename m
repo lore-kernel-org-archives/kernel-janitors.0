@@ -1,68 +1,164 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from msa.smtpout.orange.fr (msa-208.smtpout.orange.fr [193.252.23.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A896E2905;
-	Sun, 26 May 2024 06:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD767462;
+	Sun, 26 May 2024 08:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716706576; cv=none; b=EvqGMyNqraMdI9+gkEI1sMsIXwEAfR6k5oan1mpH6IBt/e7IzxFdsRag9qpcvLpLd9oSf+whnolV2WIR3fuCJ7GiVDbyBQi+OeMAy+6mQBvRgJqIb2z8zsACnZx9b/zE2/baHfCq2fPqbztYMYPfoBaMOBmh85v3rYfDvPcMEsI=
+	t=1716710490; cv=none; b=UE4LRd0kFiy1XXOFVC5MeEIz7bLW9yUgHGR2aTMbSEQRCKZrG/zIcfbgd1ge/E7Y800FvP7JXg38QZdMa5u1zytVmKbDtjCSnYf/B/u/asZo1TSANTyVGNfACJrM10SHZPtQyVcTk/jSM7DqczoOvvBlT4+54lUO7qlTEqYGU/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716706576; c=relaxed/simple;
-	bh=iDflbs2DKVpnTi/ynlss6l/cZ3iQIxPqW+zBEqhqjx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EUV4HY8O1TA80Wi0oEvakQEqlzcuNp4dep90w4ir0ztZWDGU8UyLYlUNjq0a47rtebgXNdU6NSqMs67/xqkzdvArPTwyrHlpQmv23wW5kplVZCF//qySlSX5jvkIU5GTKL4KY7/dGl6TfLi2fTdYBLJMIx+VqfGi6C/dk3wr8Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=F0xixKiF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716710490; c=relaxed/simple;
+	bh=YceaYbK69STYG1+34LgP3lcfEJ/qdP71K3CN/adN8Uc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DoiZPQuizG/2xI6UahJ3H34H/usQwMA19ItBGz8jv3uL2Uf8RogQTGtdyVFHiAmfX8LpSopRgcStIC+3gSy3IpNorp7/ZjH+o3ISwsA53dP5UXgMcjo0/t3pk0lGQUagp6hkjmoP/G6iVYtjMFN1rmIcaRuXC0tJ9GZJc+Oceuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=HU6QDevo; arc=none smtp.client-ip=193.252.23.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="F0xixKiF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB9FCC32781;
-	Sun, 26 May 2024 06:56:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716706576;
-	bh=iDflbs2DKVpnTi/ynlss6l/cZ3iQIxPqW+zBEqhqjx4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F0xixKiFSa4PGHtezhve88RoU29l2yzZji+CKboJinmupm97Sa5J3wO7VKyN7E+4P
-	 vtdvaDm9orKHsQzKuLttLgLRra34WQjAOV2xk8/xs+x0z+FIpNr40+PTysXcX1Ak5u
-	 c8hU6cx03FxDyg1boNUDJOpZM50Tc6tZ9E6cyRo8=
-Date: Sun, 26 May 2024 08:56:17 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Shichao Lai <shichaorai@gmail.com>,
-	usb-storage@lists.one-eyed-alien.net, linux-usb@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="HU6QDevo"
+Received: from fedora.home ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id B8nVshp7epUD1B8nVsPLZD; Sun, 26 May 2024 10:00:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1716710408;
+	bh=hCZf5B7Epe9+DdIH1wmQifOFMMbDVPfjY6bD0iQQskA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=HU6QDevomlXJ4SNuMksWg9zoDyFOIVAe1o5eMzgLYS8SIbuKQ06Hysame496qhyxD
+	 ts1E1A29UuIAbP06wMyoiAdVylOFEZJWTkD3QuWsWjlHGK/9PuxDn3QoWvyG7VTzf1
+	 n1K68OInv4vpPcy+lNWaq011Je5+eFNQT4zMAOz8MlzUASHS1wYOuQAI6BuMl6MeOB
+	 t6QlYgUiT7m/ezXBs1cq8CjXbopiiezH4LMTaAiCiqQeTKmiXAP1M71gU3JXav2K2q
+	 Vx4+2Dt+m+cKxgudkYrinv9NhSH7LtWbdYaDqqrzaxPg0bRZGbuwBs9hR8xxIH3lWV
+	 sBLRh7uWF62hA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 26 May 2024 10:00:08 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: sakari.ailus@linux.intel.com,
+	bingbu.cao@intel.com,
+	tian.shu.qiu@intel.com,
+	mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl,
+	hdegoede@redhat.com
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Alan Stern <stern@rowland.harvard.edu>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Oliver Neukum <oneukum@suse.com>,
-	Xingwei Lee <xrivendell7@gmail.com>,
-	Yue Sun <samsun1006219@gmail.com>
-Subject: Re: [PATCH v6] usb-storage: alauda: Check whether the media is
- initialized
-Message-ID: <2024052647-battle-sacred-83b3@gregkh>
-References: <20240526012745.2852061-1-shichaorai@gmail.com>
- <79ba60d2-357a-45f0-93af-78879b9f4b02@web.de>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 1/2] media: intel/ipu6: Move isys_remove() close to isys_probe()
+Date: Sun, 26 May 2024 09:59:56 +0200
+Message-ID: <15a056198775689cb533a7b0ea7e100559a2465d.1716710255.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <79ba60d2-357a-45f0-93af-78879b9f4b02@web.de>
 
-On Sun, May 26, 2024 at 08:49:02AM +0200, Markus Elfring wrote:
-> …
-> > Fixes: e80b0fade09e ("[PATCH] USB Storage: add alauda support")
-> 
-> How do you think about to omit the text “[PATCH] ” from the tag summary?
+In preparation to fixing a leak in isys_probe(), move isys_remove().
+The fix will introduce a new function that will also be called from
+isys_remove(). The code needs to be rearranged to avoid a forward
+declaration.
 
-Then it would be incorrect.
+Having the .remove function close to the .probe function is also more
+standard.
 
-Again, Markus, please STOP sending review comments that are obviously
-wrong.  New developers do not know who to ignore and you are telling
-them things that are wrong and not helpful at all.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Changes in v2:
+  - new patch
+---
+ drivers/media/pci/intel/ipu6/ipu6-isys.c | 70 ++++++++++++------------
+ 1 file changed, 35 insertions(+), 35 deletions(-)
 
-Please stop reviewing patches, this is not ok and is actually harmful to
-our community.
+diff --git a/drivers/media/pci/intel/ipu6/ipu6-isys.c b/drivers/media/pci/intel/ipu6/ipu6-isys.c
+index 5992138c7290..7ce2047a09b5 100644
+--- a/drivers/media/pci/intel/ipu6/ipu6-isys.c
++++ b/drivers/media/pci/intel/ipu6/ipu6-isys.c
+@@ -925,41 +925,6 @@ static const struct dev_pm_ops isys_pm_ops = {
+ 	.resume = isys_resume,
+ };
+ 
+-static void isys_remove(struct auxiliary_device *auxdev)
+-{
+-	struct ipu6_bus_device *adev = auxdev_to_adev(auxdev);
+-	struct ipu6_isys *isys = dev_get_drvdata(&auxdev->dev);
+-	struct ipu6_device *isp = adev->isp;
+-	struct isys_fw_msgs *fwmsg, *safe;
+-	unsigned int i;
+-
+-	list_for_each_entry_safe(fwmsg, safe, &isys->framebuflist, head)
+-		dma_free_attrs(&auxdev->dev, sizeof(struct isys_fw_msgs),
+-			       fwmsg, fwmsg->dma_addr, 0);
+-
+-	list_for_each_entry_safe(fwmsg, safe, &isys->framebuflist_fw, head)
+-		dma_free_attrs(&auxdev->dev, sizeof(struct isys_fw_msgs),
+-			       fwmsg, fwmsg->dma_addr, 0);
+-
+-	isys_unregister_devices(isys);
+-	isys_notifier_cleanup(isys);
+-
+-	cpu_latency_qos_remove_request(&isys->pm_qos);
+-
+-	if (!isp->secure_mode) {
+-		ipu6_cpd_free_pkg_dir(adev);
+-		ipu6_buttress_unmap_fw_image(adev, &adev->fw_sgt);
+-		release_firmware(adev->fw);
+-	}
+-
+-	for (i = 0; i < IPU6_ISYS_MAX_STREAMS; i++)
+-		mutex_destroy(&isys->streams[i].mutex);
+-
+-	isys_iwake_watermark_cleanup(isys);
+-	mutex_destroy(&isys->stream_mutex);
+-	mutex_destroy(&isys->mutex);
+-}
+-
+ static int alloc_fw_msg_bufs(struct ipu6_isys *isys, int amount)
+ {
+ 	struct device *dev = &isys->adev->auxdev.dev;
+@@ -1167,6 +1132,41 @@ static int isys_probe(struct auxiliary_device *auxdev,
+ 	return ret;
+ }
+ 
++static void isys_remove(struct auxiliary_device *auxdev)
++{
++	struct ipu6_bus_device *adev = auxdev_to_adev(auxdev);
++	struct ipu6_isys *isys = dev_get_drvdata(&auxdev->dev);
++	struct ipu6_device *isp = adev->isp;
++	struct isys_fw_msgs *fwmsg, *safe;
++	unsigned int i;
++
++	list_for_each_entry_safe(fwmsg, safe, &isys->framebuflist, head)
++		dma_free_attrs(&auxdev->dev, sizeof(struct isys_fw_msgs),
++			       fwmsg, fwmsg->dma_addr, 0);
++
++	list_for_each_entry_safe(fwmsg, safe, &isys->framebuflist_fw, head)
++		dma_free_attrs(&auxdev->dev, sizeof(struct isys_fw_msgs),
++			       fwmsg, fwmsg->dma_addr, 0);
++
++	isys_unregister_devices(isys);
++	isys_notifier_cleanup(isys);
++
++	cpu_latency_qos_remove_request(&isys->pm_qos);
++
++	if (!isp->secure_mode) {
++		ipu6_cpd_free_pkg_dir(adev);
++		ipu6_buttress_unmap_fw_image(adev, &adev->fw_sgt);
++		release_firmware(adev->fw);
++	}
++
++	for (i = 0; i < IPU6_ISYS_MAX_STREAMS; i++)
++		mutex_destroy(&isys->streams[i].mutex);
++
++	isys_iwake_watermark_cleanup(isys);
++	mutex_destroy(&isys->stream_mutex);
++	mutex_destroy(&isys->mutex);
++}
++
+ struct fwmsg {
+ 	int type;
+ 	char *msg;
+-- 
+2.45.1
 
-greg k-h
