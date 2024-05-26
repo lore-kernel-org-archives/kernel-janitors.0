@@ -1,198 +1,69 @@
-Received: from out.smtpout.orange.fr (out-17.smtpout.orange.fr [193.252.22.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9CA8F4E;
-	Sun, 26 May 2024 10:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07608D524;
+	Sun, 26 May 2024 11:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716720003; cv=none; b=pStvoKFyII9eBxeLfiClRU82lhGRhuZTgU9sf/MJSar67LS/cGZFWxJGcyLBfX27houkQU42pLA3apDdGHpARtqi2rP688XKwjgzpE+lZlI47qoY6SkeGNrYphJjmaG/Wd713ue9qHfWZMtxBr3H60Xsqsq9q9LRPSeJVZ5RhxI=
+	t=1716723823; cv=none; b=odimQaAD3C36yU4G5Z2PB17O3+Xjjf21ufeu2cjp/+mX2TmywDClSQ5vFVXC5RA9midyKev2ueSnyyj2JBQiQHI0AUje7YfsD6JPEW4hhDyop4j8l/M7/imOcoMy5L0VIaqjJIjXG4iCiSwoE1Iovwy0WMVTIBEbb+7drUTmZhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716720003; c=relaxed/simple;
-	bh=ABKkFQje7ZO0Xq2B2Vy/IfAlIAoW0dsuFwwptNEUZ1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t3mFuODbd043MByHNeIjaqMxxIuBwFB6CyzamK4ERjmFpsreeL/lbSjPd9OGdNOXf3chZIqADRHylt0Ku4Ah8MnMm7bV26O6WoCg4ecATn2sZg2IcCsHFOeTCM44P4/xJE/I58NKdT9eTLDGQHgXFkAAYxyzPoqXT9uvr4j1XCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=CVuMyDRI; arc=none smtp.client-ip=193.252.22.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1716723823; c=relaxed/simple;
+	bh=rqHuiOvWxVMRZFLKsP2j06Dn7RS12NEGCqXnMDNN+6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VtMLa1dRlq6H94y2zEawynJ5xgsJm4R3cxO5GSfOryOlrqUF4vOhKi2Nl+YdN6xLWpP1YHRjlTM/Ui/2pqDpOv+YoDu9Elx0Om+MUQAio2t5PMGXe9lpv0zptV4VL0tApPKwxyJi//lvTKgFBWkm7BHViAxFSfBPR2yG7zUdiK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EWUGtPpD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="CVuMyDRI"
-Received: from [192.168.1.37] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id BBH5su3rUWLctBBH5sRads; Sun, 26 May 2024 12:38:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1716719928;
-	bh=RZoKiF0VbGitkMBWjUFlo2g+BnlJQuteJAm55UMz3vQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=CVuMyDRIr84fG3FaKPfFroOvIXOd3eJvkBd2gegI2vB4BztPsDfmJiTNbiCP5u1Tv
-	 dDEoBj6aw7dDQiOWC/dRHbpo0Tfd9X/4q8A+0OyDflaBSWvkBSGbeJBfVE9apx7wnW
-	 vyXWX2fzltPe/tyOw4e5mWVUKdhOQ5nYWjWf9JM+iLnbBxcE8OnWW59eFyjq8Jqv27
-	 sNZ24iRWQ9c508bqVyjfE9Z+YslefAeHd9gLAoFj4vee/sAM0jeHF1f8ph7fR2dQqw
-	 iUJ7DggAFGrm6euvkBNR74lXuyHNxuXpvslE85QOj4ao5rCXQlJebplywuqolB/3wM
-	 BYJw6kKfWacDg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 26 May 2024 12:38:48 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <45007327-9d45-4a4e-b88f-ebb9a195e76c@wanadoo.fr>
-Date: Sun, 26 May 2024 12:38:46 +0200
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EWUGtPpD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2237FC2BD10;
+	Sun, 26 May 2024 11:43:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716723822;
+	bh=rqHuiOvWxVMRZFLKsP2j06Dn7RS12NEGCqXnMDNN+6o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EWUGtPpDJsnO8SlczgT68Atd3NKmghBz591zxzCkElvJFDmRAnDIX8z4vTs1IQ9qd
+	 Rv/gmzxR+SfJJ75ygmyRLTPvRXw8GvtE2NMhg/xy4sq/pgkZ9LXi7cFDi5YTzjBSB1
+	 HDrQDhc1T94pJP71k9JhBY5mFhcdlczRnJHHVkh4=
+Date: Sun, 26 May 2024 13:43:39 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Shichao Lai <shichaorai@gmail.com>,
+	usb-storage@lists.one-eyed-alien.net, linux-usb@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Alan Stern <stern@rowland.harvard.edu>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Oliver Neukum <oneukum@suse.com>,
+	Xingwei Lee <xrivendell7@gmail.com>,
+	Yue Sun <samsun1006219@gmail.com>
+Subject: Re: [v6] usb-storage: alauda: Check whether the media is initialized
+Message-ID: <2024052632-refund-basis-a9f6@gregkh>
+References: <20240526012745.2852061-1-shichaorai@gmail.com>
+ <79ba60d2-357a-45f0-93af-78879b9f4b02@web.de>
+ <2024052647-battle-sacred-83b3@gregkh>
+ <ce266282-029f-4333-9ef8-6ddce64e661f@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: btintel_pcie: Fix the error handling path of
- btintel_pcie_probe()
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Tedd Ho-Jeong An <tedd.an@intel.com>, Kiran K <kiran.k@intel.com>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
- linux-bluetooth@vger.kernel.org
-References: <692b4749f4267436363a5a8840140da8cd8858a1.1716190895.git.christophe.jaillet@wanadoo.fr>
- <CABBYNZLeM7MQrBuGE49KN9Xm1EQ-cFK3nR57sg2hWB0jOUFn7A@mail.gmail.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <CABBYNZLeM7MQrBuGE49KN9Xm1EQ-cFK3nR57sg2hWB0jOUFn7A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ce266282-029f-4333-9ef8-6ddce64e661f@web.de>
 
-Le 24/05/2024 à 21:39, Luiz Augusto von Dentz a écrit :
-> Hi Christophe,
+On Sun, May 26, 2024 at 11:20:23AM +0200, Markus Elfring wrote:
+> >> …
+> >>> Fixes: e80b0fade09e ("[PATCH] USB Storage: add alauda support")
+> >>
+> >> How do you think about to omit the text “[PATCH] ” from the tag summary?
+> >
+> > Then it would be incorrect.
 > 
-> On Mon, May 20, 2024 at 3:42 AM Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
->>
->> Some resources freed in the remove function are not handled by the error
->> handling path of the probe.
->>
->> Add the needed function calls.
->>
->> Fixes: c2b636b3f788 ("Bluetooth: btintel_pcie: Add support for PCIe transport")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Compile tested only.
->> Maybe incomplete.
->> ---
->>   drivers/bluetooth/btintel_pcie.c | 20 ++++++++++++++------
->>   1 file changed, 14 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_pcie.c
->> index 5b6805d87fcf..d572576d0dbc 100644
->> --- a/drivers/bluetooth/btintel_pcie.c
->> +++ b/drivers/bluetooth/btintel_pcie.c
->> @@ -1280,17 +1280,17 @@ static int btintel_pcie_probe(struct pci_dev *pdev,
->>
->>          err = btintel_pcie_config_pcie(pdev, data);
->>          if (err)
->> -               goto exit_error;
->> +               goto exit_destroy_worqueue;
->>
->>          pci_set_drvdata(pdev, data);
->>
->>          err = btintel_pcie_alloc(data);
->>          if (err)
->> -               goto exit_error;
->> +               goto exit_free_irq_vectors;
->>
->>          err = btintel_pcie_enable_bt(data);
->>          if (err)
->> -               goto exit_error;
->> +               goto exit_free_pcie;
->>
->>          /* CNV information (CNVi and CNVr) is in CSR */
->>          data->cnvi = btintel_pcie_rd_reg32(data, BTINTEL_PCIE_CSR_HW_REV_REG);
->> @@ -1299,17 +1299,25 @@ static int btintel_pcie_probe(struct pci_dev *pdev,
->>
->>          err = btintel_pcie_start_rx(data);
->>          if (err)
->> -               goto exit_error;
->> +               goto exit_free_pcie;
->>
->>          err = btintel_pcie_setup_hdev(data);
->>          if (err)
->> -               goto exit_error;
->> +               goto exit_free_pcie;
->>
->>          bt_dev_dbg(data->hdev, "cnvi: 0x%8.8x cnvr: 0x%8.8x", data->cnvi,
->>                     data->cnvr);
->>          return 0;
->>
->> -exit_error:
->> +exit_free_pcie:
->> +       btintel_pcie_free(data);
->> +
->> +exit_free_irq_vectors:
->> +       pci_free_irq_vectors(pdev);
->> +
->> +exit_destroy_worqueue:
->> +       destroy_workqueue(data->workqueue);
->> +
-> 
-> This looks a bit messy, perhaps we should really be calling
-> btintel_pcie_remove instead and adapt it to check if a field has been
-> initialized or not then proceed to free/cleanup/etc.
-> 
+> I find this view interesting.
 
-Not sure it would be that easy / readable.
+It is not "interesting" when you tell people things that are flat out
+wrong and trivial to prove wrong.  You are doing nothing to help here,
+please stop or we are going to have to ban you from our community,
+again.
 
-It would look like something like:
-static void btintel_pcie_remove(struct pci_dev *pdev)
-{
-	struct btintel_pcie_data *data;
-
-	data = pci_get_drvdata(pdev);
-
-	btintel_pcie_reset_bt(data);
-	for (int i = 0; i < data->alloc_vecs; i++) {
-		struct msix_entry *msix_entry;
-
-		msix_entry = &data->msix_entries[i];
-		free_irq(msix_entry->vector, msix_entry);
-	}
-
-	if (data->alloc_vecs)
-		pci_free_irq_vectors(pdev);
-
-	btintel_pcie_release_hdev(data);
-
-	flush_work(&data->rx_work);
-
-	if (data->workqueue)
-		destroy_workqueue(data->workqueue);
-
-	if (data->dma_pool)
-		btintel_pcie_free(data);
-
-	pci_clear_master(pdev);
-
-	pci_set_drvdata(pdev, NULL);
-}
-
-The added tests don't always look related to the function call just 
-after it :
-
-   - data->alloc_vecs vs pci_free_irq_vectors(), ok why not
-
-   - data->dma_pool vs btintel_pcie_free() does not look that really 
-obvious.
-
-
-There is also another issue in the remove function. We call free_irq() 
-on irq allocated with devm_request_threaded_irq().
-
-I'll try to see if more managed resources usage and/or some 
-devm_add_action_or_reset() could help.
-
-CJ
-
->>          /* reset device before exit */
->>          btintel_pcie_reset_bt(data);
->>
->> --
->> 2.45.1
->>
-> 
-> 
-
+greg k-h
