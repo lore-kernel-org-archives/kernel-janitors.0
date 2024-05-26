@@ -1,104 +1,106 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7561773D;
-	Sun, 26 May 2024 15:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57400C8DD
+	for <kernel-janitors@vger.kernel.org>; Sun, 26 May 2024 16:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716738771; cv=none; b=oI/Fg5uTONfktlRmx5ahAhcoMSixfUb4n1ZR7uWoIpKSTmZ8Mk/mdgq6syqG0ZJ9mSvfntwSjlP+0N3Fm7/+azJRzpuiuoP5j9UQd5KwsNevTj4PR87pnJWxLzpK6Sh6PRbKFEzsSu+2BB4ObspOQXiQVZ2N5hMxOrru6u3B66Y=
+	t=1716741274; cv=none; b=grx466PDTVt2KwXPh0SzMuMOKxtwpEvZSyqiGmFyqboWZ0r1lzmM+MVJzE2/xKCq+TRkwzGU1uSbByNf80vTzWv9TM2trDqCGahDKE0LS7WYoy1Ox4TWylovt3KkzHrhBg2o/Tc4y3lQSIGIjbG+Ad5nbrmuGmkDDs9SKu+b8Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716738771; c=relaxed/simple;
-	bh=UpVOttyA/UnQTEE5Cc1EgmophjwkU+XEArMRL6occfA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=gua4Gn6Vb3GjNby7AvqdVHIpy0EDwvw4pXuUKaXp90fqGar6IpfkbPWeTu/UUHMmC9XFJpq8+UNxTFLHm+HPBMc4G/4prI8j2riwPSUSCxsMrHeXiClcEEtlnEeTpbURsUTp09YQoWL+GOSOnzE9NL1RbXq8E5D27VJX10pwzQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D/6+JF2c; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1716741274; c=relaxed/simple;
+	bh=CeSht70Q481t89okFGEJz8KJIkfkhm+b1kqEDnmSDCA=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=K703N14ha3yxLzEQtlhSVR4VUXhKLbsRbZyO265JcCooKztxa/1vdmM88gE59GyLxiHcr5speqtkxKsYgQ3nYw3y+gsJL19IM5Tj2IEEN8PKqLYt/ibWgzP0xLsdPzRu9bvaQzu5lA4HzgalALkW4rDBlcv/TXRFOLys/xPXtsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EGGbFf4l; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D/6+JF2c"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44QFhG6P026382;
-	Sun, 26 May 2024 15:52:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=oS6Fr4nqr96rPUiETgcOjA
-	Wzr7B2lqg1ufTni7x5aIs=; b=D/6+JF2crLdd/oVHsI+WrPzjngdmFyQn6rzxzs
-	kcUs/WJ7ZZdbmiR6yljILG6EJd22g3Qkgrswfx+VTtZcSiEGd6uhz2ZJoRKM8Wpk
-	32r5aaBCakg2tuN4bhQjGLaPSs7ymnOW3Yq6F4BftImq1MOT9jBw5/IvVmxqdV7w
-	twPaauSjbF5o/0R/ZX5Z6ZPp+28TEjHls6CX4GyVqUlqSe53CVahnSFFAoeuTXDb
-	HbQ5BxxbdQe6ns5SsGsywgBtPpy7EPukoxfEEfI3gooy0eBcrTCyjttX85+uzl9U
-	WcYWGNMgHp8sr7lggblrwmyPajw8+lTXosd5pTJuhjln7xkg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0q9vna-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 26 May 2024 15:52:39 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44QFqbAK006008
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 26 May 2024 15:52:37 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 26 May
- 2024 08:52:37 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 26 May 2024 08:52:36 -0700
-Subject: [PATCH] testing: nvdimm: iomap: add MODULE_DESCRIPTION()
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EGGbFf4l"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716741268; x=1717346068; i=markus.elfring@web.de;
+	bh=HkaZnmEzcOJk6LYUaZQ6mhN0oNEcrvHRDz4epjy8g4k=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:From:Subject:
+	 Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=EGGbFf4lDtn1iL3J8T6FwCyqiIOcmbV79uCQ05Gbq35I6OEjbEg1H2j+HdjUXBfI
+	 gOSGMTRFOmWsb2p9lfS2QPqwg/7Uueo7A4oUkQ4g8ga8SNHbXZIjNkZNQVual8t67
+	 kAOlKVwM9lUTieueco2bGSy+D8E0fjwvMQwfWGbQvZLVJo9FHxfKH3dA8j/hmlL2m
+	 gLo4ixW+IwnWgKcEIu0hpIdumhf39ISqezCGgvIEYrdsnY5Od7G8s5+AX4JXSZqOR
+	 QyuJ1AexjPjhGNiYh89A/vVR0vlJNAIaZOuRPIUU+JH/gJwgQ/GeppP0G5T6k6eYL
+	 sqDgrzagPgZuhSv1Yw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Ml46y-1swfsN3UcO-00c8iV; Sun, 26
+ May 2024 18:34:27 +0200
+Message-ID: <7eb9626c-da7b-414d-bf50-da1eed27be31@web.de>
+Date: Sun, 26 May 2024 18:34:27 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240526-md-testing-nvdimm-v1-1-f8b617bb28e1@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAMNaU2YC/x3MQQqDMBCF4avIrDuQBhtpr1K6SMyoA81UMlEs4
- t2buvzgvX8Hpcyk8Gh2yLSy8kcqrpcG+snLSMixGqyxrblZhyliIS0sI8oaOSU0NtxbY13XeQf
- 1N2caeDubz1d18EoYspd++pfeLMuGyWuhjPO3TuE4fhl5c86IAAAA
-To: Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma
-	<vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, Ira Weiny
-	<ira.weiny@intel.com>
-CC: <nvdimm@lists.linux.dev>, <kernel-janitors@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: TMT595saEGXmjn2yA6wAmQlln5f7iZTU
-X-Proofpoint-ORIG-GUID: TMT595saEGXmjn2yA6wAmQlln5f7iZTU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-26_09,2024-05-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1011 mlxscore=0
- mlxlogscore=999 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405260132
+User-Agent: Mozilla Thunderbird
+To: cocci@inria.fr, kernel-janitors@vger.kernel.org
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: Increasing usage of mutex guards (with SmPL)?
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:WenWFZ/QirNitzimPB6U2RpkUo+GsVf2PqRfzThyEmQv9BamDtz
+ wYcyMW+vk+FzkEFC+xT7JlGnK7GPRDwbVRsx3AVNG14RfBxuKCrx3Q27tLTx+biyCmmxjIN
+ 3AYzdW04c6XJCOMkBRE+81QYJFkCo7J3ri6yM889M61nWD1djeE90Gj9kDXU1ydsI44UiUd
+ wZLDTPp0KR8RPNtNXL94w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:bOaTM5Eqsus=;LIQy42UP4X6VIwsWHxeFawTRug8
+ g/JcZ1OGTJIVKNprQZ6giudMXyyMK92fZ4N8Sm+uiZDcIZCrYXEjeAYhg1oe+kMqH0xTZ/4Vt
+ MwesNxJbtnpwPgLCGy5rS/CyhBPasEPFHSndV94b6oo+K1I7ElFsWE3I8kNrVbbXwQ0jvzgNX
+ O/RRixkKZw4NQssfkqlG+xRKbca/HNPcbzx9dcL6i0bStS1KaqTqh8rLoaT/ib0i+ANhBft/I
+ Z4j/1kv0hz5gShVmUhEG1n9oUgUfYEuwbULR8aN8Ue+5kHZELnzi9+pf2TaL/o8HIejKNIaFv
+ opjaWYf79PAdVr440DrJFFBRHTZK33W9JYPM8Dbfnjvpzin3xNHs47vhO/i7xnfjCKuRUlStg
+ A4Ou8OOG3TlDjw0qY3Yx7fuNb0ADJdWeu6vVj9Wc2bSKzoEV1/e5O/ppHQYNCajxuH/RG0DLF
+ 722mzkzcXBYctZnFYFK7klm2CqZ2VnnTCw7ahv/sVjxsByKBMhWuTjq2djZ8LGEhq/rOMP1OH
+ qxtiAdrua/usfDnLyZRZtpVrdu2mPnmomI7X8Rq/ApIfb1u3bOvZW3CdvrKDjRcK6Tu8pNHbK
+ c+f042l6362SyEh7Cu8IwbZ7XH+rsEqrYOkDOGUqiGVxNjsixmkaFEm9m3iPLE6H/mtC1LFxj
+ 333g++29op8khHUwP3768HJCgwNA7v9sO/QIIO9ioq0uJJLxS8nz34XyOJY8ijVa6XiW1kLa0
+ mGm2SQFabva/Y8Fcyqzs7O5ANqT9JNSEQqcnq+5Z6g8dAalO4vTeOIMcJ2c0LNkPz2syUrpZf
+ muYEK85gWuRp5Asmwj6fetYXuKeC4IfKwwcMwn2yjYTYc=
 
-Fix the 'make W=1' warning:
+Hello,
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/../../tools/testing/nvdimm/test/iomap.o
+I constructed another small script variant for the semantic patch language=
+.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- tools/testing/nvdimm/test/iomap.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/tools/testing/nvdimm/test/iomap.c b/tools/testing/nvdimm/test/iomap.c
-index ea956082e6a4..e4313726fae3 100644
---- a/tools/testing/nvdimm/test/iomap.c
-+++ b/tools/testing/nvdimm/test/iomap.c
-@@ -407,4 +407,5 @@ union acpi_object * __wrap_acpi_evaluate_dsm(acpi_handle handle, const guid_t *g
- }
- EXPORT_SYMBOL(__wrap_acpi_evaluate_dsm);
- 
-+MODULE_DESCRIPTION("NVDIMM unit test");
- MODULE_LICENSE("GPL v2");
+@replacement disable decl_init@
+expression action, e, value;
+expression list el;
+identifier rc;
+@@
+-int rc;
+ ... when !=3D rc =3D value
+     when any
+-mutex_lock
++guard(mutex)
+           (&e);
+-rc =3D action(el);
+-mutex_unlock(&e);
+ return
+-       rc
++       action(el)
+ ;
 
----
-base-commit: 416ff45264d50a983c3c0b99f0da6ee59f9acd68
-change-id: 20240526-md-testing-nvdimm-02b9402677a6
 
+I tried this SmPL script example out on source code from the software
+=E2=80=9CLinux next-20240523=E2=80=9D.
+425 source files were found where some function implementations could be a=
+djusted
+also according to the application of mutual exclusion.
+
+
+Will it become helpful to offer further SmPL script variants which can be =
+used
+together with the tool =E2=80=9Ccoccicheck=E2=80=9D?
+
+Regards,
+Markus
