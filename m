@@ -1,46 +1,71 @@
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from mail.alarsen.net (mail.alarsen.net [144.76.18.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0068917E8E3;
-	Mon, 27 May 2024 15:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D56BA33;
+	Mon, 27 May 2024 15:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.18.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716822061; cv=none; b=FKYj7ioemt/FHV249qk6wIiAp9th5d7ZbsDIJiUYsSlMyIIdp5Ys9y3O2VYToOpHS/AwLJBtjCLS513kbjgJI6wbTJZUmfovlEVt5DvR/UqU4QogRoatnMQ6vQyhDtKcTX1cSwKKezdJHj6zyWpzJcb3UPkwfwrhkPUMjCTngtU=
+	t=1716822479; cv=none; b=bO2JMLtrPOGNSFFwZ2DWWHF2dFSDuXBqseO+F1/A+tKk7S3i1cz1h0U9XXeGup9DN3oY3epexvYx40a8KpJr3AA+/lV6ymx4Jpqct5ua8Zvs4vspfBtmCIXPsDnNRHqo2CxoenSiv2ceNn8q3HUZpIEbUBUi4vhIxT98zSn8ivA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716822061; c=relaxed/simple;
-	bh=oQ2Oy2vE4Y+KSIGzjxEVBp2pts3FTmVlEXlZ7nc293g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gdisPLVrMbGZvHhvTi5ud7aGvfRedvnvixLaucd+uqxL+twAS+OLTSgq26i1O7Fon+HLgxPklySlvYHTpcPcaiSqdkVbAY549nL/2G4mudVWNEwq1sKpA2Dl0Lai1roT7iQ1ll5LCIMiuRpRXE2IohF/e1IFW25GnpP+GK/qHN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id CE2DE68BFE; Mon, 27 May 2024 16:52:38 +0200 (CEST)
-Date: Mon, 27 May 2024 16:52:38 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
-	Petr Tesarik <petr@tesarici.cz>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] Documentation/core-api: correct reference to
- SWIOTLB_DYNAMIC
-Message-ID: <20240527145238.GA9113@lst.de>
-References: <20240527131314.22794-1-lukas.bulwahn@redhat.com>
+	s=arc-20240116; t=1716822479; c=relaxed/simple;
+	bh=WNlVgPq/9ZcAYvijasjpBAubvV+mz+ZO9zMYVUgIqGM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gy0tPy4nId7cyiE9a78XMU7HdWQGym874YKgrTOy6pW73D5oaUkQhvs4tvUC1pIBKr5T78T9PSxlqx9+t3H1YbcXm8lZ8R1tbfmfJKGuVeE1PmfTJGNTwulTXIcYeGXL2OdC/wvWH/KBxZqGmzFhqlXow3nptfpvMXCSe6byd4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alarsen.net; spf=pass smtp.mailfrom=alarsen.net; dkim=pass (1024-bit key) header.d=alarsen.net header.i=@alarsen.net header.b=LZqN+ugL; arc=none smtp.client-ip=144.76.18.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alarsen.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alarsen.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=alarsen.net header.i=@alarsen.net header.b="LZqN+ugL"
+Received: from oscar.alarsen.net (unknown [IPv6:fd8b:531:bccf:96:a7dd:89dc:47d6:b438])
+	by joe.alarsen.net (Postfix) with ESMTPS id 1050F180ADC;
+	Mon, 27 May 2024 17:01:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alarsen.net; s=joe;
+	t=1716822081; bh=g4El62Z0PvcpYS27xbh7IP+TvBK/gM8B4NRi7BDDHR0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LZqN+ugLepx6631caBgOJ0QyRuxitYJ9LsHg0RSuJfiLaXPdVBMa77zO6jjlSMkQt
+	 1I7IKkSgG/f74csXPnC3kHgU9T1AMkwp5W++neY3t0sAPIL6WbwKGF8m3lS+XQ+1kJ
+	 nYJnmBBo0z3NbztF8fV38CVYJc+QzdxQbQGvAG/U=
+Received: from oscar.localnet (localhost [IPv6:::1])
+	by oscar.alarsen.net (Postfix) with ESMTPS id EE1EF1CA7;
+	Mon, 27 May 2024 17:01:20 +0200 (CEST)
+From: Anders Larsen <al@alarsen.net>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jeff Johnson <quic_jjohnson@quicinc.com>
+Subject: Re: [PATCH] qnx4: add MODULE_DESCRIPTION()
+Date: Mon, 27 May 2024 17:01:20 +0200
+Message-ID: <2881626.mvXUDI8C0e@oscar>
+In-Reply-To: <20240524-md-qnx4-v1-1-5ae060082e5f@quicinc.com>
+References: <20240524-md-qnx4-v1-1-5ae060082e5f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527131314.22794-1-lukas.bulwahn@redhat.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Thanks, applied.
+On 2024-05-24 22:51 Jeff Johnson wrote:
+> Fix the 'make W=1' warning:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/qnx4/qnx4.o
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  fs/qnx4/inode.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/qnx4/inode.c b/fs/qnx4/inode.c
+> index d79841e94428..e399e2dd3a12 100644
+> --- a/fs/qnx4/inode.c
+> +++ b/fs/qnx4/inode.c
+> @@ -430,5 +430,6 @@ static void __exit exit_qnx4_fs(void)
+> 
+>  module_init(init_qnx4_fs)
+>  module_exit(exit_qnx4_fs)
+> +MODULE_DESCRIPTION("QNX4 file system");
+>  MODULE_LICENSE("GPL");
+
+Acked-by: Anders Larsen <al@alarsen.net>
+
+
+
