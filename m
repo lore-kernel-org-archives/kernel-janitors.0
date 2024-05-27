@@ -1,65 +1,41 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1574E13A269
-	for <kernel-janitors@vger.kernel.org>; Mon, 27 May 2024 09:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6B013A890;
+	Mon, 27 May 2024 09:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716802190; cv=none; b=MidvVCv4KMWyPVy0i3JLc1LEh/g+RUKrRduahnwoi6aR4LO+KzhTQQlQRAa/2dxX+pfZanbGHkIu42MF8+Jz0Luk06JXTD1yMqcNDKqTQqtE7vZwr8WFpCIDkWSaHSrVKPLDBgqLeSA+XNoidy6dsByAapz3n/bH/2PNLAmzpE8=
+	t=1716803168; cv=none; b=nV/X20sSno2zzEgEQGqIfyK6AoTcTUzOsehr8USdcVwckwtiurLxJ+BMeG/lvlejZRKlVUwwxUtIJIh2+jz8yxQ4YlCgIhI/qDsjtUKCfRpB+kb5qOtXH6lf6bxN4GMZRolVUgL9hwEQfvc7GPWphnujNIOuAObTlPDqhy/LDRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716802190; c=relaxed/simple;
-	bh=GVk5OV/h2v884ljEBZx1wxeGLOe6kBRIDF8Asd89Iyk=;
+	s=arc-20240116; t=1716803168; c=relaxed/simple;
+	bh=Qg/8XDQ2y4nz1E3KZ78FVxwmzL8QMPbzuLqJUGrZKek=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SG9+mprkm2qEoW/iNZ1NVD3zp3ENOfnU54QrloTgPEdfhqVoXJDLo32zQdzQ+XdnKOgQJiPHwjmLrMjAeqF9JMOwaMKMBLAfFPYtXqxmQQbNyo9H5jU69hBbe2wsHuHkLtxp12YWcXKfVPHqcKOT3thkcShXvqj/uwSoWExn/P8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IQWi7Vcs; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 In-Reply-To:Content-Type; b=nyP8yO5Ts3799PM7CINhjlXx9IyMGNiT9VJRMlUBt92HsRZiLARi/sdNtCHRbjPPzsAVF/F1WDFQOWAyp5t1LjNjZHZP3s06T+SI1iUU1uJ+iOPVChdUOteRkMb+MenyvwFB/fKPUIXsUJ39Y4J7p8ppxJ5AqhM1XZNvIY1G30M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GZjfPuYJ; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IQWi7Vcs"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716802188;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a2KHdQxlr+nCK+72i7BoiThRuJXfjIGAcKBIGrSIL78=;
-	b=IQWi7Vcs9qZtK6mqVO6Xd04tUU8nAeuA9GOxwIFBaE1wDbp2tuClkIPyaBa2NdfuDDXlPQ
-	p3/STW7YBFVr9jxUOP0ZqhNjNurBnAJwwZCWjX86ZxK48wThXp1+tEQFXi8lG3+qhlLPIu
-	+UX2SX8UiA+HDGpUuYxDfvlFgPChQLg=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-295-S1J8fKJ2N5aGkMixgBmgmA-1; Mon, 27 May 2024 05:29:46 -0400
-X-MC-Unique: S1J8fKJ2N5aGkMixgBmgmA-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a5a84e7c884so286549266b.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 May 2024 02:29:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716802185; x=1717406985;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a2KHdQxlr+nCK+72i7BoiThRuJXfjIGAcKBIGrSIL78=;
-        b=KW0DZ8LPuhtIp1Vo9omlvdxtHc7Pyd7m5DZmKbKHdwGaUIJXMfVOpJbiOMBv6aFR0Z
-         ge2PnKrI9tT2etkv2EYlnA/mNy/Wfw9HwBFuoFDa/6t6VkTnhwB2XKcSqtCpihsTL2e4
-         vU/2JidEsOllYBYJ6MBy66MYO0Tn2baYYNJFN8LnghWRn0f+v8F1tN1zWHyA9NHeINN6
-         RWgHmkEUfhxoAVA1f7/mFGgRlyAinLSydFTqxMMQDX4ZD5LRdcKHqrMncEx++Tee9I32
-         s37gR2yuNhgGv0Y1gAiRghs4bMM97GKr/inIDh40fEH4LTIREDx841kJ6JpSOFxOmiuL
-         XDAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqxJYYHYP8B+rsfwKhXVykn+tnpM503z6f8WPLrX/F5j531V4vW7EynFaDxVg0tv9XdETNED93mK/sJzbPe6IKNqCLtZHAizfbLRwmPh9G
-X-Gm-Message-State: AOJu0Yyp3hNfxf6Vvi/RqCmc8LYjdMZiou6aQuJIKLJ7Uk5TPJZmaJj/
-	ptdXFZZ+DelxqBd94cf4VRJUgxcNcJRyeFSqYPDutlb8A0OVlQHQnFuhhsQuUyBznSaAlaPRwZS
-	EMi2SqtW6IgwxO32E2RV/Klzg0qI7RZ6Do9/qD/S4M4Rl4QKjUxYsG/BlU4LhxSnoJg==
-X-Received: by 2002:a17:906:b15:b0:a5a:15f6:157f with SMTP id a640c23a62f3a-a62641b42fcmr573358166b.14.1716802185024;
-        Mon, 27 May 2024 02:29:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEY7hYRzJQt/K0T3Xo6dt+GVQ6bfmi9PMBGZAhv1A5DH1gxbNqtbSUlQN9ac3tQ+gdHgt1I2Q==
-X-Received: by 2002:a17:906:b15:b0:a5a:15f6:157f with SMTP id a640c23a62f3a-a62641b42fcmr573356966b.14.1716802184553;
-        Mon, 27 May 2024 02:29:44 -0700 (PDT)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c9376edsm466532366b.59.2024.05.27.02.29.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 02:29:44 -0700 (PDT)
-Message-ID: <e6db0add-e290-4fac-b90c-da264939693d@redhat.com>
-Date: Mon, 27 May 2024 11:29:43 +0200
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GZjfPuYJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716803136; x=1717407936; i=markus.elfring@web.de;
+	bh=b0hWRCQXVgCjXUi18BLPuJgUdQMZo6dOE/TxIyOa5qE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=GZjfPuYJWaALaaTQHYbcyIs00O6+Ji7r6Sx+7MHU7QwP/199r8reePOjg2nXJ9sV
+	 qsAHcxbKcEZuPo6NJRnjRQZUaSL11hHJ3zWh08BHZYV6qMzhY8dtvvzOozzo5oDjv
+	 5iiX9ZApyBvvehaD2femcX33EsUUMtcIMj7/9zS4xT7ZcNtgFSUrsKyuJfmEGxypZ
+	 NziUfLAh/+YKOeX+Cfm+JRDQU5O8ElpCBUawx1f2/EXFRhmhU+RX5hYE87/iW9D7r
+	 +JZSA8Tj3ycm+jdpOzDIUDz15wQE8a3U0g4aNs3bCc7WAOHClAxHijT2V3YEE2D49
+	 HnJ0HjpDBdKonqu92Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MODmV-1rrvjK41IP-00U476; Mon, 27
+ May 2024 11:45:36 +0200
+Message-ID: <568162b8-563e-4ec7-8f31-bd16f329b245@web.de>
+Date: Mon, 27 May 2024 11:45:34 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -67,68 +43,93 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] platform/x86: ISST: fix use-after-free in
- tpmi_sst_dev_remove()
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
- error27@gmail.com
-References: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240517144946.289615-1-harshit.m.mogalapalli@oracle.com>
+Subject: Re: [PATCH v2 3/3] drm/loongson: Add dummy gpu driver as a
+ subcomponent
+To: Sui Jingfeng <sui.jingfeng@linux.dev>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20240526195826.109008-1-sui.jingfeng@linux.dev>
+ <20240526195826.109008-4-sui.jingfeng@linux.dev>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240526195826.109008-4-sui.jingfeng@linux.dev>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:QBWQBXE9g1+Sf2ppixiXzVQP3Rkay7qyHC4DgAIEj4DyWUs46yv
+ wOIsyoWViQeITi8HOTwcOdse/1pCAu1/TbBlr7O+Ytl95ibvCbyJuYZ6VucOGA8qMmcqJeM
+ GhsHUC3ej/dQQJu+/zwqtRlOT5OlSmlrbdR5hHbnoHO8p1Mnh2mM1FHgp1LjN3pqPtt7Dxg
+ zrq1vYLhsdm2eAEC+2J2Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:NYLnz5L0av4=;5CfIPCZ4HKcxCI2iE3OBU+9r8Bt
+ w5qKMdMZfB67NYxwP5F1YmER+TqhJqLpK6o3i50no16Ges0MRsRcxMC3HUhKeMiqgrnmZSHkk
+ fHzHpaEk6Cr0yXYSuRgdicvOer7cIAJW91+8rgiQPqX0Ary0ci/LAHwxIllS5Z3NO/s2CufuP
+ 0iv4MwA2Uw4uFRU7az5H/dvVzI6MHe11dQ82PCD8ltsJuZ1wDAwdDapX4oALNzDrEuMrBWkvd
+ uHi8d7AYgEwcmssD07f9MiiHUFwgcTb0iZ+ZI2eglFxqGR3UGAtUn3SBRy81Sy7+XYrPlZY6r
+ w+n5GD+ZgiAS1f85rq/ABDBRdn2sIzIKebfQIEzmr6SHqX3n0HcD5izWZxne4MXNxDw8KqMIt
+ 0OS7gfL4nirEwf2ElcWKV5uPDgbpkHa530WofBRh+CSbcVqMTYAR+ljji8eWJ1atLmuz/fwza
+ FWZtQUw3uikcg/Xd+05b5B+wO+9RKDg7/nz4umi1z1CL3MVm+bLZwGyy1rabDzGx6UwWWWp0A
+ Euau3irXtpGFPwACV/ApUq/uqdljH+YyaBmmzRnNIfCOxHQe5RnQeqaUpyY/Qff31A/KWR1Ft
+ LD1R2h7W4ApeREWynbYTfQGdck9Yo/aEUOskFLPLRO9dDliETE+4X3yMrrh0IYDGnHGVuQ4FI
+ UJ97DTe2CbktgSf1nLFfh7jjhTDbx7chHyZrY1AtFN3r5VRf5DkuQCJifHnFW9Bc8sIqrYwTd
+ Bd44se47iXPe/+dANwGYsL+/lb0C90+TpNG616vpjOD97T3DZMa0RUF9d78aJfahQeo0xWwnk
+ 71koy2ilJNryfj+61v34WbPNAM5lMEwA8Ozl77HYetsO8=
 
-Hi,
+=E2=80=A6
+> loose coupling, but still be able to works togather to provide a unified
 
-On 5/17/24 4:49 PM, Harshit Mogalapalli wrote:
-> In tpmi_sst_dev_remove(), tpmi_sst is dereferenced after being freed.
-> Fix this by reordering the kfree() post the dereference.
-> 
-> Fixes: 9d1d36268f3d ("platform/x86: ISST: Support partitioned systems")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Thank you for your patch, I've applied this patch to my review-hans 
-branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
-
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
-
-I will include this patch in my next fixes pull-req to Linus
-for the current kernel development cycle.
-
-Regards,
-
-Hans
-
+  use loose?          should?          work together?            an?
 
 
+=E2=80=A6
+> Add a dummy driver for the GPU, it functional as a subcomponent as well.
 
-> ---
-> v1->v2: Add R.B from Hans and fix commit message wrapping to 75 chars.
-> This is found by smatch and only compile tested.
-> ---
->  drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> index 7bac7841ff0a..7fa360073f6e 100644
-> --- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> +++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
-> @@ -1610,8 +1610,8 @@ void tpmi_sst_dev_remove(struct auxiliary_device *auxdev)
->  	tpmi_sst->partition_mask_current &= ~BIT(plat_info->partition);
->  	/* Free the package instance when the all partitions are removed */
->  	if (!tpmi_sst->partition_mask_current) {
-> -		kfree(tpmi_sst);
->  		isst_common.sst_inst[tpmi_sst->package_id] = NULL;
-> +		kfree(tpmi_sst);
+                                     is?
+
+
+Please improve your change descriptions considerably.
+
+
+=E2=80=A6
+> +++ b/drivers/gpu/drm/loongson/loongson_module.c
+> @@ -29,8 +29,15 @@ static int __init loongson_module_init(void)
+>  	if (ret)
+>  		return ret;
+>
+> +	ret =3D pci_register_driver(&loong_gpu_pci_driver);
+> +	if (ret) {
+> +		platform_driver_unregister(&lsdc_output_port_platform_driver);
+> +		return ret;
+> +	}
+> +
+>  	ret =3D pci_register_driver(&lsdc_pci_driver);
+>  	if (ret) {
+> +		pci_unregister_driver(&loong_gpu_pci_driver);
+>  		platform_driver_unregister(&lsdc_output_port_platform_driver);
+>  		return ret;
 >  	}
->  	mutex_unlock(&isst_tpmi_dev_lock);
+
+How do you think about to use another goto chain for common exception hand=
+ling?
+https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
+to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
+es
+
+Would you become interested in the application of scope-based resource man=
+agement here?
+
+
+> @@ -43,6 +50,8 @@ static void __exit loongson_module_exit(void)
+>  {
+>  	pci_unregister_driver(&lsdc_pci_driver);
+>
+> +	pci_unregister_driver(&loong_gpu_pci_driver);
+> +
+>  	platform_driver_unregister(&lsdc_output_port_platform_driver);
 >  }
 
+I suggest to avoid blank lines for this function implementation.
+
+Regards,
+Markus
