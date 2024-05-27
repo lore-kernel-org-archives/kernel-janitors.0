@@ -1,119 +1,113 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97EB13B285
-	for <kernel-janitors@vger.kernel.org>; Mon, 27 May 2024 10:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6468A7D405
+	for <kernel-janitors@vger.kernel.org>; Mon, 27 May 2024 13:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716806342; cv=none; b=Clovftls0Sz5GUvHe2BYmm7GZZz9z/MVFWO5/F69pa2v1FJ3bBG5Tfd18wbThG0+3FRlLLnkpzclT/qnLJI5xhtqnHdA3/dlRB0SB1nJ68PGpHQZw3WrJ3QK60+40+3ieGJOZ4FQu2P2kpiutK0dQhRRIN9HT8i5NA4T/PZn5BI=
+	t=1716815614; cv=none; b=OAmj4F21mfNrt8nSZmaHYA+vhTl13O1dDnXEJLXtwp8Qe8WlAc88DdVrQuWIJoEpZGoTGwfAhnu+1IXeMuNPxohmCWk08cIQdHpCxwnlv2dG7ZeslUBV1nPW/mHr+a9XsRH70P6YBDNsq4acUepVRCV7Su1gk5kJ0ULn+H6kueQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716806342; c=relaxed/simple;
-	bh=IkwzgdfTNU+klIMnbkfTrq2KFgzEpaYiBSPhQKWeC18=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PphcP5LmsjiCD8JyIL6ox6Al6yz8cyZzu2efTHIl+cosucz95whtfXajPyWHu0NltdRuxdFhBycIpilPJrPZRl38efPvpyIN9Q82x3yzJr+tHhvgRN6XmCg7+BrCiya5MFPcMWFYHSYL8RIyIyYj2nbuob5XpMOF+/77H1WeB0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S3dAV3UR; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1716815614; c=relaxed/simple;
+	bh=3DuU6HAXXUEpFj1/CbH0w2NMI18Jg5p4m14poKJ7EVw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q9PTR4eAsFMFgxwT8TdI0H26E2NZIMaHKUNYCHXFzKvO54XCRbfgBipLCuG1p7IDXBbyUjgW2i/oNAJBC4NP1BwxNGJP7eQ28641SSZ+2bBh0579W5Iw99CDqqz0eFSgze16V5X0k8c+CsLE4828Bza5ScQOxQRYpbbA8MSK+Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RsRhc4wD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S3dAV3UR"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5785c1e7448so2755003a12.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 May 2024 03:38:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716806338; x=1717411138; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kcLzu4LJ9QZeVn/MsZTmbDQWrB/tBNmh+KmvIiHdD0g=;
-        b=S3dAV3URpEeeh+kAK28/WStp5EO2XRakJ4DD2Jo+s4fm+ABsEjVsiga7+hSK36DSCh
-         Ve+e9r/doqHufS73QoGmQ1+uEWF/RKXV2J9rDS8z3Rx5Zm8X151ibFgbiLOGMFLYc52J
-         TU8TZkN3sMWKOFFURfOtX2ZnOr6Hqa9soRjl8SWxGUhnJfzLS8Zb0GM2CX3afXic0OXm
-         /bun8zvVcfBEjO9CHkF6L0Dg6I1t/cYWVheVfYDaLeMR1d9T0LZCSDEkxlmDdzq5BnFE
-         503SwuH3DeC4MY/v+FgIWVfjLSOGtAX/K6KHvjP8dD93cBx4ODiJVnxB65YC70DOgnAI
-         LkaA==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RsRhc4wD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716815612;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ug/+QrBJ1fn4jt7nmsB6WVOTnZkvl361r4prquvMN4U=;
+	b=RsRhc4wD7+tWkCFUkoy4RNrpl3j1VRZGHChIEJGnCRU3X8uDm5+YzoRbTWGv7n+Vs+uBLF
+	CmaGk5H/zoOGx+IoWtH9dgar2CinlChsi/WS4RusZx/Yk51UJiqC2SSpzXd2GPPGnBUtes
+	SAMTP+Iwrplds5pWqJ67OlxOKDNJhbY=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-222-E5uRFGihNvi1UQxNWsvyfA-1; Mon, 27 May 2024 09:13:29 -0400
+X-MC-Unique: E5uRFGihNvi1UQxNWsvyfA-1
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6ab9e01225eso59400256d6.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 May 2024 06:13:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716806338; x=1717411138;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kcLzu4LJ9QZeVn/MsZTmbDQWrB/tBNmh+KmvIiHdD0g=;
-        b=klEhenBbmprPFXpy8Ei7dJXRP5PZh49CaV0XvVSZjls1Ky1g/IDa9KLRzQHzWFr/MM
-         JbqsAwrSYoqUNZCbLxdBFKrNBRyEfLtQyYmICdeSCk7YkxpoDapTcS+W3C2I3a8gUO2M
-         b2pxtxOW61IRfznr4JnWqIENECfKKCxhH7oniQDFHXgQSHkbGAuphM8KEJ0YRVtllUZ3
-         12cwk7PIfotnDi9//9J0ygrI6lBHPDjyujh708mQyBsPdrIIdJb+IiDqO2yw3jCdjV02
-         R6zLNm7C9/1Zu5wz8Tz8taCrPllnGMcPR5iMwTPFTKf6Z1CQQnmUnR5jQgqLluY2FKES
-         QrSA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0m8WTT0Pt9XB3tjen4LZ1KN+W9IdewzB9R7ucdQk8qOlSWKE9RDPDIfxsi7idMQJFQxeisIQOV9aBS7cqdLG0F6tsWAmB6+ubvYkW2R34
-X-Gm-Message-State: AOJu0Yx7EDhSYi8ij2ZfFyg2eXEC1DJvct6itkBVj0q8vzK80HPwkh2I
-	5Cu2qURZMCE0MW5Z0aKCqiM9UTgPRxHoOQh+0QUybnZisu7V41sHY8CAUpgejCs=
-X-Google-Smtp-Source: AGHT+IFvBQngBXOPW4ETq9VVybyALDmbeyIBaNOM9Vy8P40JUkXq/WTpcP2GigRERW9VwEVl6tOalg==
-X-Received: by 2002:a50:bb41:0:b0:578:3336:92b with SMTP id 4fb4d7f45d1cf-57851796edbmr5061953a12.0.1716806338089;
-        Mon, 27 May 2024 03:38:58 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5785238d355sm5635915a12.31.2024.05.27.03.38.57
+        d=1e100.net; s=20230601; t=1716815608; x=1717420408;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ug/+QrBJ1fn4jt7nmsB6WVOTnZkvl361r4prquvMN4U=;
+        b=gJSFwmYvUbfwttM81VXzfFedF2DKCb+JPScwHH80Z+tvHIJEWnd+4bgFD1OfQSnAz8
+         BZq4yJmLKOHjZ27OoB+OkNtWZ9xDAzISBTuJ1QCyQeIY+CdAGMX09aBh/xhE5euf2ZoF
+         Jjp0u6qfv05MpV7lD86irSD6Fs3BGgGzfuG+BvhyH8ZAHsBkLU0HkGzMfKDZ4o0ZmJo/
+         6wdpRZhyO5oIX7JFYkkMvnDpUU7fdBhYnJ/T1rp1gNAPg+iD+NI3S/agwQR5mtn3xG8z
+         kuqlEtEkXL7ephml63WfDTQ399yPuc1lpC/KAmxJTIL+JsMvjXxfY6k3oa1qE2u593sM
+         WAjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIfltkjxNaXXOojdRpU0MUAUtc5BTrwW5sTil4UoUKec58/QKkZuBghlmEBvntdvB6AA8yzihE6ztVphbKuvJrOn2Ita3EV7qfJdotqzxb
+X-Gm-Message-State: AOJu0YwNGlYxaRnPX8P+wdjDKfHfAX3IKWZrYxQ6LdbN0j/wOJTViZo4
+	gOrfMZbsp28MEd6LOnS9mWymWJYXE//YyHf43g04FzuYKrJDSjr7V6M4H01FouHjtJUln1peXIb
+	QhdQr3vSNLyUNNnxwZPc6XdwVLnzXuEdYa+bWLMIQMebhycs4suLPYK99L+cD0rVoFw==
+X-Received: by 2002:a05:6214:76b:b0:6ab:7ab4:f309 with SMTP id 6a1803df08f44-6ab8f327f9fmr190114716d6.1.1716815608547;
+        Mon, 27 May 2024 06:13:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFFvp62B55LpZG06oDjDs9C9JeEguHSawvpfFEUQJhPnKmdJaNhFrrUX9ZGDUsNJSeBscO1kA==
+X-Received: by 2002:a05:6214:76b:b0:6ab:7ab4:f309 with SMTP id 6a1803df08f44-6ab8f327f9fmr190114306d6.1.1716815608133;
+        Mon, 27 May 2024 06:13:28 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:833c:88f3:25a9:d641])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ad742b3663sm19273786d6.60.2024.05.27.06.13.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 03:38:57 -0700 (PDT)
-Date: Mon, 27 May 2024 13:38:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: markus.elfring@web.de, Shyam-sundar.S-k@amd.com, hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v2] platform/x86/amd/pmf: Use memdup_user()
-Message-ID: <4c2c8a76-17c7-4dbb-96ff-8488c8e953ff@moroto.mountain>
-References: <50d10f0b-d108-4057-be9c-a90e2398e810@web.de>
- <20240527083628.210491-2-thorsten.blum@toblux.com>
+        Mon, 27 May 2024 06:13:27 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev,
+	Petr Tesarik <petr@tesarici.cz>,
+	Michael Kelley <mhklinux@outlook.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] Documentation/core-api: correct reference to SWIOTLB_DYNAMIC
+Date: Mon, 27 May 2024 15:13:14 +0200
+Message-ID: <20240527131314.22794-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527083628.210491-2-thorsten.blum@toblux.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 27, 2024 at 10:36:29AM +0200, Thorsten Blum wrote:
-> Switch to memdup_user() to overwrite the allocated memory only once
-> instead of initializing the allocated memory to zero with kzalloc() and
-> then immediately overwriting it with copy_from_user().
-> 
-> Fix the following Coccinelle/coccicheck warning reported by
-> memdup_user.cocci:
-> 
-> 	WARNING opportunity for memdup_user
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> ---
-> Changes in v2:
-> - Update patch description after feedback from Markus Elfring
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Markus always CC's kernel-janitors even though I have asked him not to.
-:(
+Commit c93f261dfc39 ("Documentation/core-api: add swiotlb documentation")
+accidentally refers to CONFIG_DYNAMIC_SWIOTLB in one place, while the
+config is actually called CONFIG_SWIOTLB_DYNAMIC.
 
-> ---
->  drivers/platform/x86/amd/pmf/tee-if.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/amd/pmf/tee-if.c b/drivers/platform/x86/amd/pmf/tee-if.c
-> index b438de4d6bfc..1b53cabc9aa2 100644
-> --- a/drivers/platform/x86/amd/pmf/tee-if.c
-> +++ b/drivers/platform/x86/amd/pmf/tee-if.c
-> @@ -301,14 +301,9 @@ static ssize_t amd_pmf_get_pb_data(struct file *filp, const char __user *buf,
->  		return -EINVAL;
+Correct the reference to the intended config option.
 
-This -EINVAL check could be made stricter.  Instead of checking for
-zero it could check for the limit from amd_pmf_start_policy_engine():
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ Documentation/core-api/swiotlb.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	if (dev->policy_sz < POLICY_COOKIE_OFFSET + sizeof(*header))
-		return -EINVAL;
-
-Also this check isn't great:
-
-	if (dev->policy_sz < header->length + 512)
-
-header->length is a u32 that comes from the user, so the addition can
-overflow.  I can't immediately see how to exploit this though since we
-don't seem to use header->length after this (by itself).
-
-regards,
-dan carpenter
+diff --git a/Documentation/core-api/swiotlb.rst b/Documentation/core-api/swiotlb.rst
+index 5ad2c9ca85bc..cf06bae44ff8 100644
+--- a/Documentation/core-api/swiotlb.rst
++++ b/Documentation/core-api/swiotlb.rst
+@@ -192,7 +192,7 @@ alignment larger than PAGE_SIZE.
+ 
+ Dynamic swiotlb
+ ---------------
+-When CONFIG_DYNAMIC_SWIOTLB is enabled, swiotlb can do on-demand expansion of
++When CONFIG_SWIOTLB_DYNAMIC is enabled, swiotlb can do on-demand expansion of
+ the amount of memory available for allocation as bounce buffers. If a bounce
+ buffer request fails due to lack of available space, an asynchronous background
+ task is kicked off to allocate memory from general system memory and turn it
+-- 
+2.45.1
 
