@@ -1,77 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E5379F5;
-	Mon, 27 May 2024 03:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D47D4C85;
+	Mon, 27 May 2024 03:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716779226; cv=none; b=MhZS4zgcJfmQsrD2VWDrOuldlqRRcVrQ2kKeHiiTNMD1gU3VZZZsF+d51/r9SeE5lyM0FebCmnCOm1LWQP6SD7OeMKQsUxAc4hF9Ab9qEY32VHx6Go2fcrLbf+JIiBeSFuOr3PDGEMo8v6vBYmnEwa2UDKm6Z3T3kGJK2lOTscs=
+	t=1716781421; cv=none; b=tMjDYA4beERmCQe5biVDLyty2/E1alwkmABAC6bYe1CtlT4wVnrIQ9MiiQe2Xdi8b6cd3xR7YRZuxijbpvOp8uNBqtvriYL1LCFBKg6sFCDECXmmznpQmP4AEWogoIAHJV+4A77hf1blrurQdVG9d76ZmYEbzh0nUNjfZZAhh70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716779226; c=relaxed/simple;
-	bh=mkomIXN6pzO9hx2rumxV0LvfWlO256pCZqTQ8w4ZMdI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=m5iE5OnWyPDkHFWuAj8Tro3cwocbPa+82mXB/uYiwCgoZVNUXK/H4DlZPC6X+PM2Fim2TxtaHDQPq/1VVEDjYSrKA6pk6z1j+95RX4GHWQ+gHozwqyNTgWduBixLsjHdEEop7HQrurOTQL8ZKzU1UigXzvbw4N0VjUxppcAa0XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s1MuILI/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716781421; c=relaxed/simple;
+	bh=53XFiw3wcH5MEHYvmgoOoQBcB9x5uThYREaPmL4h+tI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kpXzzQcGz14V0/R0CtUDL37T8f3JQzo/xX6WKrJqpqZ0HJYSP40pLbFpQfonlhghl7kEpjrG4pakRlavO3M57eOKrQoRkGGFdRpN/6HiLqZOfApoe/ednxYdi7AHBpOP0/WNWHZMeCqzWuvP9DhWTz9ut0hGKkma4osmIOQchr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z5oKuML4; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s1MuILI/"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 09702C4AF0B;
-	Mon, 27 May 2024 03:07:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716779226;
-	bh=mkomIXN6pzO9hx2rumxV0LvfWlO256pCZqTQ8w4ZMdI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=s1MuILI/d20Z7r2wAbDepbguQer2hhl+fXrJiYW9S6ABVevaZXgV70GpB5Uw9nYIc
-	 7DtuE7pWhbvOBAOugNN9HwSCayO4A3Kt1aak+xsBhM9gd+DeQQOZUgWw+rrEsoRrQi
-	 9d2G+1vAKCI5New51Elxi/1RRsYfReHmLrVesrlmVWxSi5kIFRIzGT3/a917Ugnz9V
-	 FfqVpIjt/lvJeVRRRbwxmBWOybeykpJiN5sOUFvmsDYKgKPdjVAwNjvb5mFlKFiFR6
-	 O24k9xUlVXXvlQtEplj11v43p5mPiDoq/sK0CDDGL3WnoG3HG4AQEOOQjXw9rjO/fv
-	 1/9Xy53k8eSpg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id ECA59D4F15D;
-	Mon, 27 May 2024 03:07:05 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z5oKuML4"
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3737b281d89so13548525ab.0;
+        Sun, 26 May 2024 20:43:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716781419; x=1717386219; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JRrRcXmuLZcVS0a1HI//2b0lm2ojNew43pXaiTtTIT0=;
+        b=Z5oKuML4msXzlF0gJWN8Gr/LCqzyGTGj7bmkLAczzn4ykIpoBk64OLOu/UiD0wAsQz
+         EZyWvjKOlY1zE7KUWDVqHRLpZ9CMhKc2EsxDellGShNCpC9KxfewtzrPWZdA0X8+vcSw
+         DzhgpZ8z9eWPBVEMqkdojlBXKMLRDPUFUHFEP4qqmPP94PKWxplu+zUpdkWNkHKVqKB1
+         Sp25yMMknNqcJfGUthnXLjp3yAgu7ig+TcSqoA5D+tMOd/ZTXd0JUs9Iw8TUjMYcTxfk
+         +d9Te43YrWhG+67YiWFno9cKYANztXmWfBOrBm7Jb5PcVtclvftJ5rDBiuuZBNLPvu88
+         CqKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716781419; x=1717386219;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JRrRcXmuLZcVS0a1HI//2b0lm2ojNew43pXaiTtTIT0=;
+        b=RHADU8GqFXDXXj7Qsw53KNFnbDp7O5TS84CGTr56WAfK3YzVPT2bgBqnb6N0iUlQc9
+         nYxhf01HvhL5s/ooPq/t903ePXpEBEGpceEBpGy4wimKPxZqL2LFGY2N1dB4m2MpEAgr
+         N0MFQCveVh3/3vyl9RXo2DX4bXBrSg2637t3FBOZiG+O8FacRz/Uslwrp8nHwpXdDXkP
+         hRDaE5o1ppxbMmOa2lmF6wEs9NaHieGL1Q1JWX5+u/QVi0R9drvbbxv2ZrOyKAwFfXtY
+         wug3GE1+nQYt0UzSMfxSmV8/N6Q1VDi6G8KkGaoyoMX4mnZplsfzYly3VUNtNo37CIj1
+         e9+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUO28xAHfh6WfoKYO1xtM7k5llEk+KhmfOk8JCFD7ostNPvIOVKIpHCZXWMqWHxh2rtC4ppiBBk256AVfE0L/GHWArsdqw7orVWUDd5zbqlsICWUun+W+jrhXuhovwhQJMYi2hP6rl6SvBb5veq6pKByR4b3ZU9E23tSUC/M9OoSEfkGtvf7A+ameY/zVc2nB6P48P4/eSmJrcT4ohvAV2BrIcvKg==
+X-Gm-Message-State: AOJu0YzoOt56PxQGGg1NTjr7yK+8M3svxb8CT9SzxYoC6+fmS1SpDA/2
+	vu45D88Tia3Z7S/q6TvMej8F93doGBkoRLQYSreODjQdP+4GmwpURp9lf9YFO7DDYuZaCusVmBo
+	9gw5+nH11NSDe1n9XiF+ePHPg3dE=
+X-Google-Smtp-Source: AGHT+IFer+okIhIMWyZ3KDB5sub/J3A98AWgoEcUO098+9PFGoUSKu3O2L2vhwhC/BxcGv8gjuJlt8qOcDZPXnhr1ww=
+X-Received: by 2002:a05:6e02:1c07:b0:371:252c:d8f6 with SMTP id
+ e9e14a558f8ab-3737b3032f7mr94193515ab.11.1716781419196; Sun, 26 May 2024
+ 20:43:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Input: cros_ec_keyb - Remove an unused field in struct
- cros_ec_keyb
-From: patchwork-bot+chrome-platform@kernel.org
-Message-Id: 
- <171677922596.1901.2861363430804951826.git-patchwork-notify@kernel.org>
-Date: Mon, 27 May 2024 03:07:05 +0000
-References: <6bab1449c01c4537aa2d9cb4481e1d5da8aa2389.1714546173.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <6bab1449c01c4537aa2d9cb4481e1d5da8aa2389.1714546173.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: dmitry.torokhov@gmail.com, bleung@chromium.org, groeck@chromium.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-input@vger.kernel.org, chrome-platform@lists.linux.dev
+References: <1716458390-20120-3-git-send-email-shengjiu.wang@nxp.com> <4c53b063-ad12-405d-b088-9b992284ba08@web.de>
+In-Reply-To: <4c53b063-ad12-405d-b088-9b992284ba08@web.de>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Mon, 27 May 2024 11:43:28 +0800
+Message-ID: <CAA+D8ANu6S1vrmAD4FU2X7=9U-B6SwnZu245mu4dXTfgetjDEA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/5] clk: imx: clk-audiomix: Add reset controller
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kernel-janitors@vger.kernel.org, imx@lists.linux.dev, 
+	Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Marek Vasut <marex@denx.de>, 
+	Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, kernel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Sat, May 25, 2024 at 3:27=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> =E2=80=A6
+> > The reset controller is supported by the auxiliary device
+> > framework.
+>
+> Would you like to add an imperative wording for an improved change descri=
+ption?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
+ocumentation/process/submitting-patches.rst?h=3Dv6.9#n94
 
-This patch was applied to chrome-platform/linux.git (for-next)
-by Dmitry Torokhov <dmitry.torokhov@gmail.com>:
+ok, will update it.
 
-On Wed,  1 May 2024 08:49:47 +0200 you wrote:
-> In "struct cros_ec_keyb", the 'keymap_data' field is unused.
-> Remove it.
-> 
-> Found with cppcheck, unusedStructMember.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+>
+>
+> =E2=80=A6
+> > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> =E2=80=A6
+> > +static int clk_imx8mp_audiomix_reset_controller_register(struct device=
+ *dev,
+> > +                                                      struct clk_imx8m=
+p_audiomix_priv *priv)
+> > +{
+> > +     struct auxiliary_device __free(kfree) * adev =3D NULL;
+> > +     int ret;
+> > +
+> > +     adev =3D kzalloc(sizeof(*adev), GFP_KERNEL);
+> =E2=80=A6
+>
+> May the following source code variant be applied here?
+>
+>         int ret;
+>         struct auxiliary_device __free(kfree) *adev =3D kzalloc(sizeof(*a=
+dev), GFP_KERNEL);
 
-Here is the summary with links:
-  - Input: cros_ec_keyb - Remove an unused field in struct cros_ec_keyb
-    https://git.kernel.org/chrome-platform/c/5128de84d8fc
+ok, will update it.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+best regards
+Shengjiu Wang
+>
+>
+> Regards,
+> Markus
