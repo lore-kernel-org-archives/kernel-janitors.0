@@ -1,41 +1,41 @@
 Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9ED433C8;
-	Mon, 27 May 2024 09:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707F1139CFC;
+	Mon, 27 May 2024 09:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716800887; cv=none; b=pCR2ZitePmEkPuLDGkJToLESW4LuNhLPCEHaX5VxH1GWi6epK8jUXQ0SeumOn8Xc4ieleuO9ytjbYV4YTqsM3bKcgwANfk+iV5Qv3Rhufdrd1osD57cl1UboOmjT5hl9BodVzaoaZ2wELSkutAagMawRKOZA7IzLS2c3hqOg0e0=
+	t=1716801773; cv=none; b=TSrkTbWFM27M5hpbRr/Hg8KIFUm77wnGigWIMGeg8utmH6iN+LbWncVsF3ETCvVj84NvHGO1IZQHl/x80u7VJLqFJlObEg1P660ZtO6RRjm8Xihuj31fjOOOscMEcR3rPQq72pOmwdcbWiWqhgEHde9E4rPIOA5TsjP61e7mx6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716800887; c=relaxed/simple;
-	bh=SNmeK7mCWTtFSvWO8eh0/lnLnjP3/m8V0C0ApJhbfYI=;
+	s=arc-20240116; t=1716801773; c=relaxed/simple;
+	bh=sPpYKX6e2tu3TT0zTxK282y8SKfHEdgc9wUY0M5CiN0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DX2UdV0fLaLsWno/+VX2v2xpkScrAemDgssTj0XlFYH1wvLAHMv2t/LmqmAxLLLYcfyoDOAXbLQvASrt/2RoSxxgPHhrrRzQf7RxGohYIKvH7W0NWQiZTlQ6t9GcTlkULWzGbD3whfp1ZZv6munGtuOX6pCCJcAbYDlHLvlXfBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ogl7VKwz; arc=none smtp.client-ip=217.72.192.78
+	 In-Reply-To:Content-Type; b=mpyQo8WR95S0Hn25A+7+a0NiuE4wbveHzzlOWH7pv9L5d6Hw3Up4g1TSmbVu0g/mlQSJ2qQ6uVcB6IYtN1NBE5HC5u5vSlDSQ4qDojaqHo6/o4weTPB20eMXDOjaoK0AfndpXbUor8HwZUU9eGUzp+SoZPUf3sNOlmo5/gFDV7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hTkj12tC; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ogl7VKwz"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hTkj12tC"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716800863; x=1717405663; i=markus.elfring@web.de;
-	bh=cQmjal3CjS/j+6M+2XYTIrwdOTGkVSbVdktpb0tEJ1Q=;
+	s=s29768273; t=1716801756; x=1717406556; i=markus.elfring@web.de;
+	bh=Rb/B2ovHnZ6QCVFezt1gZmqIJ3Eo3AhrdizD4T2BxdQ=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=ogl7VKwzEbqPYLbKarHyZcbWvGUqfFUr8Ca2b/xaom/NHzUeFoaGb16QiFT/W6uS
-	 bhAnjYXo6VEDaYXj8R7erFdHDFc7d1M7/OiIpQ7tieAwLVnLm79dqoCe3SlSSU5Uz
-	 9DTXGLFzEieAKXCEMnZFg/8l7QFIdXGveTKtQ3lmfbNX3h7BbYaN/Mrwgf27QWu9G
-	 hC8pr7gBJr5r5uzjxRYZK79SC7tCBP+7GCL0NURrP4vkn7RFHmtyctrXyjyXvLCps
-	 PDY/df7+p+Be/YzhlCb84Jtd6Uv3Nv7jIHptMvMoF4VAoPUdkGL6LdgCZebIbrdgV
-	 afeCMGEs/IeDdoZc0g==
+	b=hTkj12tCBX3HI66imhYWRFCG4rSHyzcmExs38b+aGk/TttJG7wwTvamyTok0aLL1
+	 kbbYkfhrl+OvHU9NpXmt6g5n7AjApV94E6I/kfg7P1VcRKaRyMHxrq/Uame3tRq10
+	 TdgdwgRSoAxaYEMtFSbKn8USNelXdplk62x/00LrOh3+69MdE3BN+KHLjI2Q2V6l9
+	 QU9/wFhsT8t4vs+tmpe/DvRE78rpJGwXdul63tmfztUzxlGuMAqhgk2eEIEUbNaQ0
+	 Gbt+yJFBHHFI8kgfsu+328q4FNkMySomc9z4zERR8u3h4finQn4VzEw6xKWEBE2hV
+	 i6cp5kbRtGEWX8uG8Q==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N4vRm-1sauyp37Bs-010xJV; Mon, 27
- May 2024 11:07:43 +0200
-Message-ID: <6ee0b36c-5ea0-4a0a-9d30-865f5b823e78@web.de>
-Date: Mon, 27 May 2024 11:07:42 +0200
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M3m5B-1sCLuR0mkV-000qYL; Mon, 27
+ May 2024 11:22:36 +0200
+Message-ID: <e6762978-d35f-4356-beac-bcb8b36d3ee2@web.de>
+Date: Mon, 27 May 2024 11:22:35 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,108 +43,64 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] drm/loongson: Add a helper for creating child
- devices
+Subject: Re: [PATCH v2 2/3] drm/loongson: Introduce component framework
+ support
 To: Sui Jingfeng <sui.jingfeng@linux.dev>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
  dri-devel@lists.freedesktop.org
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 References: <20240526195826.109008-1-sui.jingfeng@linux.dev>
- <20240526195826.109008-2-sui.jingfeng@linux.dev>
+ <20240526195826.109008-3-sui.jingfeng@linux.dev>
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240526195826.109008-2-sui.jingfeng@linux.dev>
+In-Reply-To: <20240526195826.109008-3-sui.jingfeng@linux.dev>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:fuak37MKdt1gdQD3nd04PvrGf9PL1iGX348e3REJD+6AlRnnm4i
- H9i03KpL3MUnrdt47SQs446hFV10lycuGT5nmaqo36Bc+hdPZ1nqQDEK88yYhae24RJbrqw
- j1DT3hB0OKdZPo7gB8bNhfybJE0uZDjt9oupAP6FiLJDb/3h/X5xictayypvsAmq7SIcvE7
- AiK2U8XMEPG52POAFy4TQ==
+X-Provags-ID: V03:K1:xat59LEQihQ6e/FrLPV3GI+wzB7H+wFr4geqZy205A9JyyREx0J
+ cjeWo3zCyOMWbeJiSfuU3OLNPTAnTaC4MEkK6agdN/2aQbVPPmmD2/ActAPjc0pF9PKvuSl
+ 2UuAeM0yYBXQXWR32hpFx01ThUFbP9/tXtaVzRkttjgc/ufNoB+dpVszVpeNobklc9fVb3a
+ Bqxkc5Ff836eLeysjExsA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VxbJ0CWmErI=;qQHNln+YdOL5+hTp4xFs7wOhdNy
- BMgj1Cupf1AM7vTsTmRw2ZSmOQdGUHcMQmleC/pUMNIegxO+qXek3mKE5+Y6Pj+v9x0dAa0+Y
- UgFDK7rxsBswrsjaLOTbJjy20AmRmA4jOef6O8SX0/EvtArHz/1WUHsN2GSbLYoZ7hbzV37eI
- gnFjuKZX9CkdzWIvYelT935uOsN2WwwS8h8jaXMlveNJZ7wqYlFheCdrgMGsHqqcQ3oiPkBXo
- PkCkv2VDB3bNLOg1YRF2SUkAEQUqSsfMLXcY1209FXOPJ+pqlsLjwiuduj+GmpUrOzMz3A1X/
- 2X39BmEG9Uvx0P9zkn3LLo0GyvHTVKqn4UQmviWw0OjLlTtbgUZQPRJXiecKIeIonaGmdSLfx
- 8VWdiwjRaxnogzL/dY5nqb+KSiD1tHXOpO7s6r1Bg8BZNdpdREnaoNeuXjzh887SYUUqaEL1n
- nZw8hXDz1WCgeHaHkuAv03Ukhr1jnXuPfs5iYWBuLrqFBd4YmVkCgya/vvWKKff7dnHoO3dhc
- PL8clYoUdsvcvCsAWL5oCY/x2DWmSMS2uaanSvGyD/PbPqHft1wEWPWkeAGMz8HG3XR4TZFaC
- omXr2oyXGCgTrZfjRGIhcbT6xbFaAS0h8iH5mBJoVLga0x9OzI6UkjobdmbEFBM64RxoQojtu
- auk8E1tBq4FdGmjd5ydVv6iFL/nes6AqQbxpNm5wxHU3m7uZhq8eC07IXfcMpR9V0uC12nX/k
- rv79ZlJV6Ku1f8H2NxYrh0ShB/uLwuWxaiSYjzuARKCckMbddLL3k34XDr+hoo5Vr3L0+Wswo
- Mq89d+XGjKBJ+ltSkdNCOY5g858ZoY7ew52hn6qAK0+jk=
+UI-OutboundReport: notjunk:1;M01:P0:A3PTnOl92B4=;nAi17OmfVJQD5ZwFF3RBuJzcxff
+ T6p4Rls6Tp+X/czicoT0qucygzSBqbDHmhMrpd1XdpVpLgHsEe1EuK8lsEig2xSygyFg9qTxV
+ U4Hnb7gntzPZ5SKF8F04ruBjvOgoEuSzcaDdia7WPh5zZt7C9ZivRrcgArBVa7untyLvUsS+L
+ FXBEtr+zGGek9pnlxwNv87qKZW+bNpkoCHhhJ/3sdFhbQ9TOlCD29aw48JoNDZFPrJAhikLWk
+ ahcaHiE0HeIXXmMoYOrSW0EEdBhUM36VM2pJzW0EPm1Ghehqqf1zj+u1/QjuapU5LV+uVoWSb
+ TiQYvE6uTPtI4ALpeMw5paHjwTwIdBPcvQ+lgRrEKpVvjnpHK3k7pTK30e1Rh3tnnZ7HKiiTD
+ Tlyg3WfFaQPJTtkQR0ZWdrU7psPSveQeH+M2EzHdCoQJ9m5P2uCWaJnfJ4O8e84eAWO6H1+G/
+ 1HHaFt3wRZI5YoEC7n2h8xJFqSIJXKnLtxUxVKIkP3guCRBPjTStdXDwanqixyL68yXc5n5L8
+ UqK2rdsB4xiFlCVYVbeoDpXEp1a/UxUgFRD9YDiriX1/p8ViRrU1T4tjMCt1iVoYJ+pyd4iiL
+ 4VyvYwd23V1BXRrajdnGcV457xTrTUNsLXqNB8+szP2iXuKa7tIuDqemToVoQYYuny4wZrOkf
+ cKgcEjUr7coCkEHtpA0oXuhfmDRdCgXfWmFPIKElx2E0pOWQ0xBbrz3zvBY+4mqu3z9fW/euM
+ TwAWDpsWRbOUot4+WGTWkIE3T9Fd3LTOkYUAKb2x85Ks7KovJdjEOT3GQFN7u7LuPQ96TlFT8
+ qMJs2PqxRAZVqKbibpS2hzmuS3TZIzsrd/McQV+YO+xAc=
 
-> In some display subsystems, the functionality of a PCIe device may too
+=E2=80=A6
+> However, the driver needs all of the subcompoments ready to use before
 
-                                                                 might be?
+                                       subcomponents?
 
 
 =E2=80=A6
-> into child devices can helpful to =E2=80=A6
+> goes with the PCIe master, sinch they has no dependency on exterinal
 
-                         be?
-
-
-> Another benefit is that we could migrate the dependency on exterinal
-
-                                                             external?
+                             since they have no dependencies on external?
 
 
-=E2=80=A6
-> and rising cyclic dependency problems if not process correctly.
+> modules.
+>
+> While the outputs drivers, such as encoders and conectors, may has some
 
-                                               processed?
+            output?                               connectors, might have?
 
 
 =E2=80=A6
-> driver to create sub-devices for it. The manually created decice acts as
-
-                                                            device?
-
-
-> agents for the principal part, migrate the potential issue to submodule.
-
-  an agent?
+> if it need to do so, the master drvier won't bind until all submodules
+=E2=80=A6
 
 
 Please improve your change descriptions considerably.
-
-
-=E2=80=A6
-> +++ b/drivers/gpu/drm/loongson/loongson_device.c
-=E2=80=A6
-> @@ -100,3 +101,44 @@ lsdc_device_probe(struct pci_dev *pdev, enum loongs=
-on_chip_id chip_id)
->  {
->  	return __chip_id_desc_table[chip_id];
->  }
-> +
-> +int loongson_create_platform_device(struct device *parent,
-> +				    const char *name, int id,
-> +				    struct resource *pres,
-> +				    void *data,
-> +				    struct platform_device **ppdev)
-> +{
-=E2=80=A6
-> +		ret =3D platform_device_add_resources(pdev, pres, 1);
-> +		if (ret) {
-> +			platform_device_put(pdev);
-> +			return ret;
-> +		}
-=E2=80=A6
-> +	ret =3D platform_device_add(pdev);
-> +	if (ret) {
-> +		platform_device_put(pdev);
-> +		return ret;
-> +	}
-=E2=80=A6
-
-Please use a goto chain for common exception handling.
-https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
-to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
-es
 
 Regards,
 Markus
