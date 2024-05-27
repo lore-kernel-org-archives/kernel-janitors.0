@@ -1,99 +1,93 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from pb-smtp2.pobox.com (pb-smtp2.pobox.com [64.147.108.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2E361FE9;
-	Mon, 27 May 2024 18:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F405BD518;
+	Mon, 27 May 2024 18:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.108.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716832955; cv=none; b=vDLoIlly27Y122iRE8mRISwmhFcQuQ/xiN3h+kVohFqHsYCEpaQes4HoJ8BiyjtYpURlm/K6+hOFE2VpI1PQWvF4fIjRyCgfFN08nH9Xl0gFFbLJ7KLFNCHvCjox5JcvEMhsH20NH03IVbn/koj3ZMw0RDpvtL4ovjX8vjJaJf8=
+	t=1716834539; cv=none; b=J/1dpVnu9tkSY5DR3wpJLK5mDN7f6iz0o0yZrNDEZNHj1CsCpt2uzyXZR/G//oJ2T7uXe8gINbVPfZ2C/96YaSzcFoXIU5Jfmyg7iaTZ43KIXR4oLiQcS032SWfzzn8rTArTjPQ/KTAVY0GDtPQfb9SVBuDpG4XSeQCwWvKb714=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716832955; c=relaxed/simple;
-	bh=wa1L9VoauTTKHEa6vX1CApzuEJe1DfRB/MC0GiWaPWc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=M9GTDlR49vbNOeTn6JcQqWOGd+qa0ISMaVZ9pccI5LdNSGUjQ6oK9MwgOftqShHKbI+PhiiIAasFJLWoyV7Wi4Rg0WKC/pxTRVfIqMr5QHYnsaEGnbPBNgrkbiv1i+6ulEnIX9dealAeTvuoNpkBzQ/CIApwth+nDMKcpkDsfQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Vkj85MON; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1716834539; c=relaxed/simple;
+	bh=66j4hp7bp81kgzUG6Keoj1O/LgXXDWQutiaSpZCU8DM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=qDJoHUuFaXdXqV7tfL4P5HEOK8uT3n6EhVwEzMq/nFjnHCaDpuOB/SWlg5BzjS+WdXvl9TspClxyqPbfCPrp3UbY7sBcCyPRAaJShZxNnaqSymQlFIJh1psSm0qasRtWDMCtxzQEBa7mKWeIfXHdj/JT4Ei1SrL0U6RCylhnhBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b=OgmCWSW/; dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=wYP1mGPJ; arc=none smtp.client-ip=64.147.108.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Vkj85MON"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44RAlher030409;
-	Mon, 27 May 2024 18:02:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=+smRZOrjGfOTzzOqwIb7JZ
-	geZcDu6DdS6uzLgh10RxI=; b=Vkj85MONbnI3KwdC9ctoucvC0gMyVzmHy2Ccp7
-	6ZATlXZXYj7hpQwIl7jvg9aEnezOSFCVWFCykgXS+tN5K5SPcrOt66cpqCgRzLVp
-	+7Rrp3hl4FiEgSeq+fHl1DUCTkzBAO/Whrpn9W1ZeKuZLpPbwEFVHt1C1TkGQQzJ
-	nZIlz/OgofJq1/cXzwgCgn7kRXszWmwpNShEqFG4jkZuYC76zkTdnpnCeE+qbQ9G
-	odNXeBDSykxEwQkZo+jNAnrh05Dnm8LBaWBI/0O2pXffENtbY9TqdY4LyCoE4MqF
-	MgFjd0ENeavY5jRvYYvSkKIOXvzIsGgV6NqGl6Bx1212orTQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yb9yj4dh7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 May 2024 18:02:31 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44RI2UJM009567
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 May 2024 18:02:30 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 27 May
- 2024 11:02:29 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 27 May 2024 11:02:29 -0700
-Subject: [PATCH] fs: ext4: add missing MODULE_DESCRIPTION()
+	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="OgmCWSW/";
+	dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="wYP1mGPJ"
+Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
+	by pb-smtp2.pobox.com (Postfix) with ESMTP id CFAC3332FE;
+	Mon, 27 May 2024 14:28:56 -0400 (EDT)
+	(envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=date:from
+	:to:cc:subject:in-reply-to:message-id:references:mime-version
+	:content-type; s=sasl; bh=66j4hp7bp81kgzUG6Keoj1O/LgXXDWQutiaSpZ
+	CU8DM=; b=OgmCWSW/T7T+Z9QhuOImpu+4MLdn14A/keuomDewXz2DU0JtMCKViK
+	1pqrWxSRHWpSumcgXDJcJt9VdOgALnIymH+8mjyoobW33RaaVE+m5CARrqQ2aovQ
+	NzhfJhVNDkrWHB5s++aelsFS2ccVnGdXlgtkK4ZQPRPQKjfTmN7nE=
+Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
+	by pb-smtp2.pobox.com (Postfix) with ESMTP id C62DA332FC;
+	Mon, 27 May 2024 14:28:56 -0400 (EDT)
+	(envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
+ h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=66j4hp7bp81kgzUG6Keoj1O/LgXXDWQutiaSpZCU8DM=; b=wYP1mGPJqHWDh88S8V7+MJGODsV8ZHFrhiwdxOS4e51jJ7MsthZrFiSvEirEv9WVjl4f9tvL+N8y9RBqJdTGyiBwGsR/WXIBVAsSh293nglvPDHLdzMwiUQxxJ92HGnhB7m37GH6qb4/DD0eyIsu6YzRxUSxaxR7b64XkcAHaIQ=
+Received: from yoda.fluxnic.net (unknown [184.162.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by pb-smtp2.pobox.com (Postfix) with ESMTPSA id 4097F332FB;
+	Mon, 27 May 2024 14:28:56 -0400 (EDT)
+	(envelope-from nico@fluxnic.net)
+Received: from xanadu (unknown [IPv6:fd17:d3d3:663b:0:9696:df8a:e3:af35])
+	by yoda.fluxnic.net (Postfix) with ESMTPSA id 291B7CCC583;
+	Mon, 27 May 2024 14:28:55 -0400 (EDT)
+Date: Mon, 27 May 2024 14:28:55 -0400 (EDT)
+From: Nicolas Pitre <nico@fluxnic.net>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+    Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+    kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: cramfs: add MODULE_DESCRIPTION()
+In-Reply-To: <20240527-md-fs-cramfs-v1-1-fa697441c8c5@quicinc.com>
+Message-ID: <9o69oo79-34ns-ns70-1138-79pq20436188@syhkavp.arg>
+References: <20240527-md-fs-cramfs-v1-1-fa697441c8c5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240527-md-fs-ext4-v1-1-07aad5936bb1@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIALTKVGYC/x3MQQqDMBBA0avIrDtgg1HSq5QuEjPRgZqWGZWAe
- HfTLt/i/wOUhEnh0RwgtLPyJ1fcbw2Ms88TIcdqMK3pWmsGXCImRSprhy5aE3tnXQo91OArlLj
- 8Z89XdfBKGMTncf4t3py3govXlQTO8wIB9cznewAAAA==
-To: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>
-CC: <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Z1wj6_RaWP8OBYbPW8270hS66Edy0niW
-X-Proofpoint-ORIG-GUID: Z1wj6_RaWP8OBYbPW8270hS66Edy0niW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-27_04,2024-05-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 mlxscore=0 phishscore=0 mlxlogscore=882 spamscore=0
- clxscore=1011 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405270148
+Content-Type: text/plain; charset=US-ASCII
+X-Pobox-Relay-ID:
+ FA3D352A-1C56-11EF-9D8C-25B3960A682E-78420484!pb-smtp2.pobox.com
 
-Fix the 'make W=1' warning:
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ext4/ext4-inode-test.o
+On Mon, 27 May 2024, Jeff Johnson wrote:
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- fs/ext4/inode-test.c | 1 +
- 1 file changed, 1 insertion(+)
+> Fix the 'make W=1' warning:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/cramfs/cramfs.o
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-diff --git a/fs/ext4/inode-test.c b/fs/ext4/inode-test.c
-index f0c0fd507fbc..749af7ad4e09 100644
---- a/fs/ext4/inode-test.c
-+++ b/fs/ext4/inode-test.c
-@@ -279,4 +279,5 @@ static struct kunit_suite ext4_inode_test_suite = {
- 
- kunit_test_suites(&ext4_inode_test_suite);
- 
-+MODULE_DESCRIPTION("KUnit test of ext4 inode timestamp decoding");
- MODULE_LICENSE("GPL v2");
+Reviewed-by: Nicolas Pitre <nico@fluxnic.net>
 
----
-base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
-change-id: 20240527-md-fs-ext4-9d52d6959fb6
-
+> ---
+>  fs/cramfs/inode.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
+> index 460690ca0174..d818ed1bb07e 100644
+> --- a/fs/cramfs/inode.c
+> +++ b/fs/cramfs/inode.c
+> @@ -1003,4 +1003,5 @@ static void __exit exit_cramfs_fs(void)
+>  
+>  module_init(init_cramfs_fs)
+>  module_exit(exit_cramfs_fs)
+> +MODULE_DESCRIPTION("Compressed ROM file system support");
+>  MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+> change-id: 20240527-md-fs-cramfs-10e1276a3662
+> 
+> 
