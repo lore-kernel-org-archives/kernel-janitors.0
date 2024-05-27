@@ -1,71 +1,64 @@
-Received: from mail.alarsen.net (mail.alarsen.net [144.76.18.233])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D56BA33;
-	Mon, 27 May 2024 15:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.18.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5852573460;
+	Mon, 27 May 2024 16:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716822479; cv=none; b=bO2JMLtrPOGNSFFwZ2DWWHF2dFSDuXBqseO+F1/A+tKk7S3i1cz1h0U9XXeGup9DN3oY3epexvYx40a8KpJr3AA+/lV6ymx4Jpqct5ua8Zvs4vspfBtmCIXPsDnNRHqo2CxoenSiv2ceNn8q3HUZpIEbUBUi4vhIxT98zSn8ivA=
+	t=1716828031; cv=none; b=KYUS0DuqLLQpGVc5MDNlWTndDZZnIf+keQcyQWmpKccX3gF/ryWx0O/7p1V249YEBpQgAkg6q2NjZhJ3bJcPYdSliWauSIpoX5VI52kD5A4bMWtmsch/qW8FXhlR/94HY3KKhoR5PtbGF0DtTL3mDtvWkl/TmycdCzcYoUeT9dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716822479; c=relaxed/simple;
-	bh=WNlVgPq/9ZcAYvijasjpBAubvV+mz+ZO9zMYVUgIqGM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Gy0tPy4nId7cyiE9a78XMU7HdWQGym874YKgrTOy6pW73D5oaUkQhvs4tvUC1pIBKr5T78T9PSxlqx9+t3H1YbcXm8lZ8R1tbfmfJKGuVeE1PmfTJGNTwulTXIcYeGXL2OdC/wvWH/KBxZqGmzFhqlXow3nptfpvMXCSe6byd4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alarsen.net; spf=pass smtp.mailfrom=alarsen.net; dkim=pass (1024-bit key) header.d=alarsen.net header.i=@alarsen.net header.b=LZqN+ugL; arc=none smtp.client-ip=144.76.18.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alarsen.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alarsen.net
+	s=arc-20240116; t=1716828031; c=relaxed/simple;
+	bh=Y3vGyr2vK5IG2TkK9KPklsBR/1F7GPtB/P0U+1sIMrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T0SXRY+9BbDo1+/ZqFcOdOGPLWQ8Asi+R2R0MG4w2hD8dUi5j8w6hqEOuzHER3MByTBdprwM/6oecyb5byLeGXNS6Y2t5TBAFVed9elbDUWXMSSLHDmRVo3hidshqxypV8eDbbATSvdXUI8ovKwTMcizALOWiL3ggJVb175Ejws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OlL25Yit; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=alarsen.net header.i=@alarsen.net header.b="LZqN+ugL"
-Received: from oscar.alarsen.net (unknown [IPv6:fd8b:531:bccf:96:a7dd:89dc:47d6:b438])
-	by joe.alarsen.net (Postfix) with ESMTPS id 1050F180ADC;
-	Mon, 27 May 2024 17:01:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alarsen.net; s=joe;
-	t=1716822081; bh=g4El62Z0PvcpYS27xbh7IP+TvBK/gM8B4NRi7BDDHR0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LZqN+ugLepx6631caBgOJ0QyRuxitYJ9LsHg0RSuJfiLaXPdVBMa77zO6jjlSMkQt
-	 1I7IKkSgG/f74csXPnC3kHgU9T1AMkwp5W++neY3t0sAPIL6WbwKGF8m3lS+XQ+1kJ
-	 nYJnmBBo0z3NbztF8fV38CVYJc+QzdxQbQGvAG/U=
-Received: from oscar.localnet (localhost [IPv6:::1])
-	by oscar.alarsen.net (Postfix) with ESMTPS id EE1EF1CA7;
-	Mon, 27 May 2024 17:01:20 +0200 (CEST)
-From: Anders Larsen <al@alarsen.net>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jeff Johnson <quic_jjohnson@quicinc.com>
-Subject: Re: [PATCH] qnx4: add MODULE_DESCRIPTION()
-Date: Mon, 27 May 2024 17:01:20 +0200
-Message-ID: <2881626.mvXUDI8C0e@oscar>
-In-Reply-To: <20240524-md-qnx4-v1-1-5ae060082e5f@quicinc.com>
-References: <20240524-md-qnx4-v1-1-5ae060082e5f@quicinc.com>
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OlL25Yit"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Z12lgDOLiDKrQA+yDtMKt0dB9MAdd+J3m/YUsfJBCAY=; b=OlL25Yitp1tNmKHCjlaNT3EPCL
+	TFNE5lifw++0CPK0tQJqDcHoCPP5CGAYd5eMZlKeDHFMqH/+mfjnvCHGb34nqhf/mo5tJIPtHQfg7
+	bAQmyTQWkbAep1kqr57dBv1icF5+n17oPMgFtx9x/KuBRVW3De9LuS/oKo2P/vrnOeLoM0vpChuRc
+	XgTAuxqR79YF9vpaO1g8ALfURe5smQ3UrlEAKdLyvSj3J5kUlZRYUes8ws1H6UA016C6I76QrgcKL
+	KH6KZvnvVitJI0gvwL9e9fou/xJ1VgT0tQkGbTOmGK5Wl+2YSYqmMJT7cULsyEmUQXKjln+cdNjcL
+	72oGCpfA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1sBdOY-00Dpro-1a;
+	Mon, 27 May 2024 16:40:22 +0000
+Date: Mon, 27 May 2024 17:40:22 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs/adfs: add MODULE_DESCRIPTION
+Message-ID: <20240527164022.GE2118490@ZenIV>
+References: <20240523-md-adfs-v1-1-364268e38370@quicinc.com>
+ <20240524-zumal-butterbrot-015b2a21efd5@brauner>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240524-zumal-butterbrot-015b2a21efd5@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 2024-05-24 22:51 Jeff Johnson wrote:
-> Fix the 'make W=1' warning:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/qnx4/qnx4.o
+On Fri, May 24, 2024 at 03:13:04PM +0200, Christian Brauner wrote:
+> On Thu, 23 May 2024 06:58:01 -0700, Jeff Johnson wrote:
+> > Fix the 'make W=1' issue:
+> > WARNING: modpost: missing MODULE_DESCRIPTION() in fs/adfs/adfs.o
+> > 
+> > 
 > 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  fs/qnx4/inode.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/qnx4/inode.c b/fs/qnx4/inode.c
-> index d79841e94428..e399e2dd3a12 100644
-> --- a/fs/qnx4/inode.c
-> +++ b/fs/qnx4/inode.c
-> @@ -430,5 +430,6 @@ static void __exit exit_qnx4_fs(void)
-> 
->  module_init(init_qnx4_fs)
->  module_exit(exit_qnx4_fs)
-> +MODULE_DESCRIPTION("QNX4 file system");
->  MODULE_LICENSE("GPL");
+> Sure, why not.
 
-Acked-by: Anders Larsen <al@alarsen.net>
-
-
-
+Might make sense to move those into a separate branch, IMO (and feel
+free to slap ACKed-by: Al Viro <viro@zeniv.linux.org.uk> on those -
+AFAICS all of them look reasonable).
