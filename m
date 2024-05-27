@@ -1,119 +1,150 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365805FDA5
-	for <kernel-janitors@vger.kernel.org>; Mon, 27 May 2024 08:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9ED433C8;
+	Mon, 27 May 2024 09:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716799029; cv=none; b=g4i8GhC5N4m46k1rg/Gxg1wdwOc3jYRqnJtLVhX3KjijWwr3EGxJ19IbsLmkVdMDHZLifz1ezYKNQ7ibnfrhm0q19bREpt39F6o8hYpau2q2Py+5TqxgE37jJM8VpLINnKkpN2KZGH1RBTzwiAfhf/Z76iS5X/hvzs6kP9mjF7A=
+	t=1716800887; cv=none; b=pCR2ZitePmEkPuLDGkJToLESW4LuNhLPCEHaX5VxH1GWi6epK8jUXQ0SeumOn8Xc4ieleuO9ytjbYV4YTqsM3bKcgwANfk+iV5Qv3Rhufdrd1osD57cl1UboOmjT5hl9BodVzaoaZ2wELSkutAagMawRKOZA7IzLS2c3hqOg0e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716799029; c=relaxed/simple;
-	bh=RbipRVg2tNyaG/cNib+sJw6bO31urPkoIZPQqa/oGQk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C8iU7VfLfF9B3gzK83GfAzeP4R7EX5Wp34JGBQibDf9crfb64QuCFCfhlmRYmU1l/dtGMb3uyJPCwHTNb26DDeoQcEGgFT9ivF02uY01+IjqyTHfDrPFiSZ3R6XmkWxx8NOsemec0YIX7y7UhauPxjeaMQlDGvch5wNrWW9pPZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=DOoj805X; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+	s=arc-20240116; t=1716800887; c=relaxed/simple;
+	bh=SNmeK7mCWTtFSvWO8eh0/lnLnjP3/m8V0C0ApJhbfYI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DX2UdV0fLaLsWno/+VX2v2xpkScrAemDgssTj0XlFYH1wvLAHMv2t/LmqmAxLLLYcfyoDOAXbLQvASrt/2RoSxxgPHhrrRzQf7RxGohYIKvH7W0NWQiZTlQ6t9GcTlkULWzGbD3whfp1ZZv6munGtuOX6pCCJcAbYDlHLvlXfBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ogl7VKwz; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="DOoj805X"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6269ad7db2so341539966b.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 May 2024 01:37:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1716799024; x=1717403824; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6ewc2LUQ94iYhmeL+MlQNu0aDN9jkcSs6LpUL6X+zlA=;
-        b=DOoj805XSVFbKD3bZVlHXVl8s32C7iAYJCcCknY/L3SNIeVgbM5YvY9q6fuOkl4N0S
-         Ia/23DbBjbuhibIq0rAadV99BO2SMFXQaD7sL1CrI8h7n8d+2H8Amm/3Bw2oInRoxMKu
-         8f+l83vPRHrjaBDT1x3ceLWHPSXhy8U4zXb1Freno6koiRkPG9ryFTnScaIMO0kNOi7W
-         yx0vU6cifcDLlUW/Nd45FT/QycyQcbFgtVwmhXdEia0zN8wofoB7G2PXP7PX6L/4Mjbh
-         Ebc5riB/8hqyq7JzhzcIsVe2dyElc/T6879XDZNChMhDSvWV89O0qmCSnmbDgLGmX+3t
-         UggA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716799024; x=1717403824;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6ewc2LUQ94iYhmeL+MlQNu0aDN9jkcSs6LpUL6X+zlA=;
-        b=rUDFgoGiTEmBfC1qSlqzH7vBVHrZHm07QSi7rJWLj+oa1wSPST5mBDuLiY5q+VfNbb
-         IALrM4WP76VF5k3jB/CwGZNILCLxt6VNTcS1vjqtOTq7Qr9y12Ug/D91NSnASaCl76zE
-         AOE1JdrqIAeQPUpstDoFXhD0U7F7j/SOirrkqqoXy03FxfJn2qxRO9zI6aZ5V1cO/SNG
-         GDFdYBQ4BhM+Aw5pjVRk8/DCcaCr3YHw9FH6i8f2jzlJxPhk9fc7mYDqTT/e9whz+iST
-         9EPEV2XplryvzGBBPZ/I1KQbvygoL8fhTFO5iV8ZEEjbPFXb5qN38XKgaxPKyV6j1hdZ
-         reow==
-X-Forwarded-Encrypted: i=1; AJvYcCVjEsojINE8iVi7Httl6lXR5GnM5Sgct24aiSjmcd67jHe7E0nEiM8wYKL6sKIcbIpwJdQzcC1hmkglfoQiLpjFAYo+NL0rTQwWuu3rYEih
-X-Gm-Message-State: AOJu0Ywk8stHg19ZRDa9ORaVEh4NM77qoRBjl1opXw21oH9XSRybW7hL
-	FduOJdlVZ1mpkj7coKwHWvz62UD8LHjV6fTUBRBVCNGk/z3r9AnI4ZkqvgaJfGI=
-X-Google-Smtp-Source: AGHT+IGZ58gmMolIHMHhK1a1HogNCuIa2Saz0HAtP5KiJLECmvcEN4FxWyc89b3s9DUSyiyQJ3gt8w==
-X-Received: by 2002:a17:906:2a8b:b0:a59:9b8e:aa61 with SMTP id a640c23a62f3a-a62643e1448mr582253266b.35.1716799024362;
-        Mon, 27 May 2024 01:37:04 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a62f546025esm91292366b.56.2024.05.27.01.37.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 01:37:04 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: markus.elfring@web.de
-Cc: Shyam-sundar.S-k@amd.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	thorsten.blum@toblux.com
-Subject: [PATCH v2] platform/x86/amd/pmf: Use memdup_user()
-Date: Mon, 27 May 2024 10:36:29 +0200
-Message-ID: <20240527083628.210491-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <50d10f0b-d108-4057-be9c-a90e2398e810@web.de>
-References: <50d10f0b-d108-4057-be9c-a90e2398e810@web.de>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ogl7VKwz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716800863; x=1717405663; i=markus.elfring@web.de;
+	bh=cQmjal3CjS/j+6M+2XYTIrwdOTGkVSbVdktpb0tEJ1Q=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ogl7VKwzEbqPYLbKarHyZcbWvGUqfFUr8Ca2b/xaom/NHzUeFoaGb16QiFT/W6uS
+	 bhAnjYXo6VEDaYXj8R7erFdHDFc7d1M7/OiIpQ7tieAwLVnLm79dqoCe3SlSSU5Uz
+	 9DTXGLFzEieAKXCEMnZFg/8l7QFIdXGveTKtQ3lmfbNX3h7BbYaN/Mrwgf27QWu9G
+	 hC8pr7gBJr5r5uzjxRYZK79SC7tCBP+7GCL0NURrP4vkn7RFHmtyctrXyjyXvLCps
+	 PDY/df7+p+Be/YzhlCb84Jtd6Uv3Nv7jIHptMvMoF4VAoPUdkGL6LdgCZebIbrdgV
+	 afeCMGEs/IeDdoZc0g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N4vRm-1sauyp37Bs-010xJV; Mon, 27
+ May 2024 11:07:43 +0200
+Message-ID: <6ee0b36c-5ea0-4a0a-9d30-865f5b823e78@web.de>
+Date: Mon, 27 May 2024 11:07:42 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] drm/loongson: Add a helper for creating child
+ devices
+To: Sui Jingfeng <sui.jingfeng@linux.dev>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20240526195826.109008-1-sui.jingfeng@linux.dev>
+ <20240526195826.109008-2-sui.jingfeng@linux.dev>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240526195826.109008-2-sui.jingfeng@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:fuak37MKdt1gdQD3nd04PvrGf9PL1iGX348e3REJD+6AlRnnm4i
+ H9i03KpL3MUnrdt47SQs446hFV10lycuGT5nmaqo36Bc+hdPZ1nqQDEK88yYhae24RJbrqw
+ j1DT3hB0OKdZPo7gB8bNhfybJE0uZDjt9oupAP6FiLJDb/3h/X5xictayypvsAmq7SIcvE7
+ AiK2U8XMEPG52POAFy4TQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:VxbJ0CWmErI=;qQHNln+YdOL5+hTp4xFs7wOhdNy
+ BMgj1Cupf1AM7vTsTmRw2ZSmOQdGUHcMQmleC/pUMNIegxO+qXek3mKE5+Y6Pj+v9x0dAa0+Y
+ UgFDK7rxsBswrsjaLOTbJjy20AmRmA4jOef6O8SX0/EvtArHz/1WUHsN2GSbLYoZ7hbzV37eI
+ gnFjuKZX9CkdzWIvYelT935uOsN2WwwS8h8jaXMlveNJZ7wqYlFheCdrgMGsHqqcQ3oiPkBXo
+ PkCkv2VDB3bNLOg1YRF2SUkAEQUqSsfMLXcY1209FXOPJ+pqlsLjwiuduj+GmpUrOzMz3A1X/
+ 2X39BmEG9Uvx0P9zkn3LLo0GyvHTVKqn4UQmviWw0OjLlTtbgUZQPRJXiecKIeIonaGmdSLfx
+ 8VWdiwjRaxnogzL/dY5nqb+KSiD1tHXOpO7s6r1Bg8BZNdpdREnaoNeuXjzh887SYUUqaEL1n
+ nZw8hXDz1WCgeHaHkuAv03Ukhr1jnXuPfs5iYWBuLrqFBd4YmVkCgya/vvWKKff7dnHoO3dhc
+ PL8clYoUdsvcvCsAWL5oCY/x2DWmSMS2uaanSvGyD/PbPqHft1wEWPWkeAGMz8HG3XR4TZFaC
+ omXr2oyXGCgTrZfjRGIhcbT6xbFaAS0h8iH5mBJoVLga0x9OzI6UkjobdmbEFBM64RxoQojtu
+ auk8E1tBq4FdGmjd5ydVv6iFL/nes6AqQbxpNm5wxHU3m7uZhq8eC07IXfcMpR9V0uC12nX/k
+ rv79ZlJV6Ku1f8H2NxYrh0ShB/uLwuWxaiSYjzuARKCckMbddLL3k34XDr+hoo5Vr3L0+Wswo
+ Mq89d+XGjKBJ+ltSkdNCOY5g858ZoY7ew52hn6qAK0+jk=
 
-Switch to memdup_user() to overwrite the allocated memory only once
-instead of initializing the allocated memory to zero with kzalloc() and
-then immediately overwriting it with copy_from_user().
+> In some display subsystems, the functionality of a PCIe device may too
 
-Fix the following Coccinelle/coccicheck warning reported by
-memdup_user.cocci:
+                                                                 might be?
 
-	WARNING opportunity for memdup_user
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
-Changes in v2:
-- Update patch description after feedback from Markus Elfring
----
- drivers/platform/x86/amd/pmf/tee-if.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+=E2=80=A6
+> into child devices can helpful to =E2=80=A6
 
-diff --git a/drivers/platform/x86/amd/pmf/tee-if.c b/drivers/platform/x86/amd/pmf/tee-if.c
-index b438de4d6bfc..1b53cabc9aa2 100644
---- a/drivers/platform/x86/amd/pmf/tee-if.c
-+++ b/drivers/platform/x86/amd/pmf/tee-if.c
-@@ -301,14 +301,9 @@ static ssize_t amd_pmf_get_pb_data(struct file *filp, const char __user *buf,
- 		return -EINVAL;
- 
- 	/* re-alloc to the new buffer length of the policy binary */
--	new_policy_buf = kzalloc(length, GFP_KERNEL);
--	if (!new_policy_buf)
--		return -ENOMEM;
--
--	if (copy_from_user(new_policy_buf, buf, length)) {
--		kfree(new_policy_buf);
--		return -EFAULT;
--	}
-+	new_policy_buf = memdup_user(buf, length);
-+	if (IS_ERR(new_policy_buf))
-+		return PTR_ERR(new_policy_buf);
- 
- 	kfree(dev->policy_buf);
- 	dev->policy_buf = new_policy_buf;
--- 
-2.45.1
+                         be?
 
+
+> Another benefit is that we could migrate the dependency on exterinal
+
+                                                             external?
+
+
+=E2=80=A6
+> and rising cyclic dependency problems if not process correctly.
+
+                                               processed?
+
+
+=E2=80=A6
+> driver to create sub-devices for it. The manually created decice acts as
+
+                                                            device?
+
+
+> agents for the principal part, migrate the potential issue to submodule.
+
+  an agent?
+
+
+Please improve your change descriptions considerably.
+
+
+=E2=80=A6
+> +++ b/drivers/gpu/drm/loongson/loongson_device.c
+=E2=80=A6
+> @@ -100,3 +101,44 @@ lsdc_device_probe(struct pci_dev *pdev, enum loongs=
+on_chip_id chip_id)
+>  {
+>  	return __chip_id_desc_table[chip_id];
+>  }
+> +
+> +int loongson_create_platform_device(struct device *parent,
+> +				    const char *name, int id,
+> +				    struct resource *pres,
+> +				    void *data,
+> +				    struct platform_device **ppdev)
+> +{
+=E2=80=A6
+> +		ret =3D platform_device_add_resources(pdev, pres, 1);
+> +		if (ret) {
+> +			platform_device_put(pdev);
+> +			return ret;
+> +		}
+=E2=80=A6
+> +	ret =3D platform_device_add(pdev);
+> +	if (ret) {
+> +		platform_device_put(pdev);
+> +		return ret;
+> +	}
+=E2=80=A6
+
+Please use a goto chain for common exception handling.
+https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+go=
+to+chain+when+leaving+a+function+on+error+when+using+and+releasing+resourc=
+es
+
+Regards,
+Markus
