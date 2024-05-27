@@ -1,41 +1,41 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101774594D;
-	Mon, 27 May 2024 08:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA72169D31
+	for <kernel-janitors@vger.kernel.org>; Mon, 27 May 2024 08:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716797154; cv=none; b=QTlOd8VKHvCnQj8+q+2VnVep8lA7aRe26h5/ViK8IIpgFJLBjRarAJkUSb97QAgYTSm7/Mmc+MP9mCnl8oeSiVQndqm4N5C+iQ6SBzuUTU2NM5zJgwCl1pbIMlChmFq4cBE1ABw0ZbOdQWfoAY8AhZfK4Fo21wY4K1kejpXzDYs=
+	t=1716798164; cv=none; b=XhQcLxmOp/XzzT4dyH5HXTvjag6wUgeymgZp0LD9mkMdt1IKp7UWr20QRr7nRtaiY0Zw3rnm/FiN3eBRMMoDmeuJ18sFLPxkFNdCWLywsc+iFyk3L7eysl8rW3rqMdPXWJWcNp1u3/mncie/9Uuu9ed7+Cd+/ZKyvZ1g9KogSiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716797154; c=relaxed/simple;
-	bh=lac9lF8UnVVtLrC5XrfcvjJCJwnsqZLBWyURynO0wXw=;
+	s=arc-20240116; t=1716798164; c=relaxed/simple;
+	bh=Gw6GplGBlHErMainbZV2yODa5V1658ZeFDKNXkuIgNw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LDTtdz/aZuUrli0O6CWPSWEJIUALryn2nL85yCHds5pM5ucz0VTlN59rgbOCgegj+IS0UBxeYsw7nhIHKT+V4i9rJx/Q4jjNDgxEChLN0ldpInEzph7NQQSfHN6ZvoYWIs3OKMrf6xljNdnCOw1SOfibT/f9fdKKJNAukYxngN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pgZWwmqF; arc=none smtp.client-ip=212.227.15.3
+	 In-Reply-To:Content-Type; b=JGA6Ul06AnL06mQo00b8gCAdm07nGutNxDUcC4E2EL33oQWSI46l17HFNWRgbvI64NKMP5Ks7Qo4tTWl7c7qifaLKbjFwAkhwDb6VLAb6HarX4K6TsscfE76CPzKQc/1vPN451oTtoTCOp3kRWohOSFUs1+Ba+K+TNMro0JDjDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ba55Mkh9; arc=none smtp.client-ip=212.227.15.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pgZWwmqF"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ba55Mkh9"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716797137; x=1717401937; i=markus.elfring@web.de;
-	bh=tUhLW3gSQMrfMGYIaJy3UrTLpWoedEqeyBGARH45gtQ=;
+	s=s29768273; t=1716798150; x=1717402950; i=markus.elfring@web.de;
+	bh=4WqulsVYitokYPFU6nTMWplVI2Z0sKTb41EjmG9PPl8=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=pgZWwmqFhg/WGxzKaBPPNy/YH6jENnjw3g9zB9rmapBCAR1YFSIfCVBAEnt5Tl8g
-	 Eb4njblgMVITtrJEuiecbFk99whE2mr+H+Y6aONYhqwY3njOeXke3/FuiulU43QOa
-	 Rj2ANTms0NmnP9tNUGwgGNbn8vDUTUK1id0rRk+kSWE6u6tkXPYkkWfg7XHdx+7st
-	 2/f69hVPh6a2C3J8eq99No+6MDQsEE4HCRdTKUkxl8C6GUclFjTmRSevnjexjbFL6
-	 xRUyKvQ5Jcunp08Aly+8lqyGI1dJjf4SZYIz/jfX1cdsBkGbNMj9zERvwVtHVKYUY
-	 9MbmOgCh+FCPU49lqQ==
+	b=ba55Mkh9GwocQ7REJXK6DQ8tDl4fT5dOKKsN80LM75h9TEQ1QSWFLRyAzK2WIj0Q
+	 rTiKRsBSlTpJHn98OTzCeLw+AGbFpjPfR9MuOE6eTqnMbtQ40WLZNtMSHvAgqBgXe
+	 LO1q0NsYrfNGBl9xTZNSbXD1TjJG7wOwmVbqexr2pCBZUwza3pOobvAFh94x4Z+Qv
+	 nS+Nh3ZSLcC7Ufqxs8ztyaxSNhEPe9GvdLHG3LF75U7mWWwwIrgIfZxGYP0zsk9zH
+	 BaxeAsi8Ug3K432z9f0lWL8c1qwhK9LZvXO82MseqKAesr08C4Hnr1379jmsj15Eh
+	 b2vcZFa99FKeZqIniA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N5CUb-1sbFK82KVZ-00rtDW; Mon, 27
- May 2024 10:05:37 +0200
-Message-ID: <9023736c-9200-4eb6-a254-8e7d0e0204fb@web.de>
-Date: Mon, 27 May 2024 10:05:28 +0200
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Madzi-1snbGW0e7u-00lSKk; Mon, 27
+ May 2024 10:22:30 +0200
+Message-ID: <5f48bbf9-f110-470d-8e3a-8b2316821bad@web.de>
+Date: Mon, 27 May 2024 10:22:29 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,71 +43,53 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] drm/loongson: Introduce component framework
- support
-To: Sui Jingfeng <sui.jingfeng@linux.dev>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20240526195826.109008-1-sui.jingfeng@linux.dev>
+Subject: Re: [cocci] Increasing usage of mutex guards (with SmPL)?
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Julia Lawall <julia.lawall@inria.fr>, cocci@inria.fr,
+ kernel-janitors@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+References: <7eb9626c-da7b-414d-bf50-da1eed27be31@web.de>
+ <alpine.DEB.2.22.394.2405261847380.16852@hadrien>
+ <75137a20-aef6-4a40-85ce-879983decb83@moroto.mountain>
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240526195826.109008-1-sui.jingfeng@linux.dev>
+In-Reply-To: <75137a20-aef6-4a40-85ce-879983decb83@moroto.mountain>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Dz0NBNGIB9FBnJYsIivyNBdzqCc1nQQZfrq1t+MPBBgHP6v7Q5S
- BajyHOAUvekc7piKf/IUwwgyCpNYQj3BFg7Cm9vBw3FHFZFd0hlsrewUi6G+KPiUwAWCwpd
- XKrTHEpzkNYLrVtXAti9iBKLj71ST2yWUR+vRO86UHdwfnN4A6NlT2cZvOYVtyWamLjYFi1
- YWI/Y+XcE3mppx6aEYkkg==
+X-Provags-ID: V03:K1:lFwdxTKGmorAJlakl1Yseuk1sySIy903TjSnml1Op/cUiYb8Zme
+ zp6h/bzHhtlaS6Lr3wsfh8VkkioVTa2K3WBR6VXhRDDzsYw+62Cva/6IpxyQwukwt9+MGkV
+ loLJPDdXnKyM4aUsBTdaFsfGP47VV6II85y1G6rrFF/dKywvW3XmGNN7aRhLDraJ36wpdB4
+ +yR5TSAnDj43zAFKMb14w==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:9Rnuh3skm0Q=;abL3an1p3naxwBsoYmxawzf6ScG
- GJ5s+hV5VMsODidBf4XAK76lA0szbq/jrorSHShcNSgJajZeZt+n+HsJKKG1EjXRMPf5x35Tw
- uP4jH2S7rkxo3BK8KVyhkSJ1DJql+50jWSX8Lz7J+DkLqGPjsW2TVPKauZxamZa8fR59T63VO
- rwy9Ew7yZk6x/D4UozSKkkXxB/9urBcRIqBpxXve4T4UtOnqHg/luSk/9HREOZL5haVFoKAUN
- 6OTu/wLwNnNQ93+sCaP7k484y+JZIofX5c9o7Uqv6S+zE39m73i5R42wskidJ0SZtZwO5P2Re
- 1mr+x9ddvijLJPF1bOGUxZ23ZEWqVsqOBFkIlQmWrgC+TTcEK8yMZHzNtE4QhvHMM+fmNr2yV
- P8xnbR1fqmpme34ti1qKd+OfD0Lmvs3dpOd86PePTYMp27m/KfQmWNYs237FRoDXH3/7kc0rz
- Mx6BsTSpU3fULwyM9lvReaIIzApxxUgAIgROD9tgvv0umLr1TDTOD/x5prGQTz7wFMpgkBGOe
- yCKWFXLo5PRUIZDegTXexmrs2npxiux3xSWM9XlwOgoeuGo9R3oQTCkf0wePmrS6AMIuhIAtB
- 1dMevqFuuzZyQA//mCwEa8ScVUEnffn4rZiURvRVMUtj+IcmLi7207ixCmR7zWKhj3esGIHDP
- 02lF1svbdC0GzTq39UJQQxp7wKm5HKf/9v/upUpEDbUsQDxHFg8kr5GJ7eH5D1RxIS4hwNqIj
- Nfu4HYkRNl0M8M2d6X1YeV3NeM0tcFz4GNkYrtCogvws7QkPxcWgYenEJ+91b8GvyBr2ReCFp
- SKMOHnpZv3/qZPsXFH80NyBOtUHzNkyUr/sSL8fNfTihM=
+UI-OutboundReport: notjunk:1;M01:P0:eiGxDlRacKM=;VnoAlMN4eKC71A0YmtPlxt8xDD7
+ GYexmCXBLZs9UOyRfwl+lEuaqYQwg9FN5NrvR8DS7aPh8TBjazmYvpnz87dnzoIhYrl9fgKFa
+ tzYRibmXRZFzl+ikbcD1tuyCsJZwNWdtb7vc8o9W1Ag/ANewcL4ZI9u5nPNZ1/5RHJPjkuUW3
+ 3CinC7BcHOVcDRIraKRTjXGBjHN86k0ib+3KRFPY8/JBWsCVWUAt3UHzHU7TcHsCrYPlh4dPd
+ 7+HQvLtprhZc0UUQwBD5OJcv7Gr//xeWnuYEaRLQ0jI/0nShQ4v2HjTviqPyqnheeIwuZYv7N
+ 9EZBmSEzH2s87muS8aJd3S7OSihDNf34udW2hre1qy8x8MpCuWu9rSeNh3ODLJQfjbilPHHmF
+ 9C9xBmEyTwt70yA+Qx/9oWJTJr3b84fRTTzmgqiuErz+jKSVcb0bu9ucauHloMNEie8FBFNOr
+ PQUzOIboiLX0q6SiniENAS2W3TD3sUT3R6j/nlocQhRuPtY1P4gMmczS3mio2HBPqx14s/eUg
+ GdtYLixM80VBFuHzNKiFWJ5Jo+yhQKzJgUzhCEi9eS/30nTwQ23pFCWRawI8ckRKpLs8S2wTe
+ P4b5VonMCgr/Tg0q40n1lkW32WuIoCj844syhCHAX4fFXMmfj8h5eJ8gmXAPAiFLJwUxrNowo
+ duo5m6wKD4ngky47aFSv9B4oNanWG4c/2pE8cUwBhxVAmcpFCdo5EnxiBazqOJoJVJnGytRyl
+ bDWQ/fiuY7ODruQneLXpOzpYNWaiYEL+lp2Jwh+szHN3aIJYE09gDLjx4TNBfYxM8p0jmvdeS
+ FiLZJTPvQyBkVbt1W4FaZUI4Xf+qHyID1LfauG+cfDQqk=
 
-> Introduce component framework to bind child and sibling devices, for bet=
-ter
-> modularity and offload the deferral probe issue to submodule if it need =
-to
-
-                                                                     needs=
-?
-
-
-> attach exterinal module someday. Also for better reflect the hardware
-
-         external?                 Reflect the hardware layout better?
-
-
-> layout.
+> Different subsystems are taking different approaches to the cleanup.h co=
+de.
 =E2=80=A6
-> consists of encoder phy and level shifter. Well, the GPU are standalone
+> It really does change how you review code, so mass conversion patches
+> probably aren't welcome.
 
-                                                           is stand-alone?
+* Can any contributors (with a better reputation) achieve corresponding
+  tree-wide source code transformations?
 
+* Would any software design =E2=80=9Cadvertisements=E2=80=9D help for adju=
+stment chances?
 
-=E2=80=A6
-> for the master, it could return the -EPROBE_DEFER back to the drvier cor=
-e.
+* Will the support grow for the usage of SmPL script variants especially
+  in combination with the tool =E2=80=9Ccoccicheck=E2=80=9D?
 
-                                                                driver?
-
-
-> This allows the master don't have to tear down everything, thereore
-
-                                                             therefore?
-
-Less typos would be nicer also for such a cover letter.
 
 Regards,
 Markus
