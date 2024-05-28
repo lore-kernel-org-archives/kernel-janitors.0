@@ -1,46 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B978117E8F4;
-	Tue, 28 May 2024 10:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881BE16C85B;
+	Tue, 28 May 2024 11:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716890955; cv=none; b=MFbqecOb34lvqbv3Sp0JozKsCXZmHlUHXhFA6ReCNoFn+JQWEVIMG/YhKhGhlUVLfnTNFh/RvjiVx4kDuW0zRGLGMSADqbybElws4eBspmG5lxVD5TA8DSLbk4ts4RCYT+4+hKBArK+6OqShqbA0kVpkbSEMQxb1GkWL/Gw+06M=
+	t=1716896082; cv=none; b=j5tPMZkSxnPxBHn/N9VN9DlWjHUmuDtJ7GlYsyDPE3lhjxCN2xZyUTm4WjsLyi3SUYXCNHN570fbX9j4R+4XDElDb8l6cF1/TG6XeT6bJi95efeS3WgCtikAQTiy2qE7W7Q/CMDkJ2tLpmEnkTqEGf0l8hhOs2wkeqt/INEPfyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716890955; c=relaxed/simple;
-	bh=u0H4aL4Zr2+tv0WfZ/TAAEYj4LV89tFQZguReEdgKUQ=;
+	s=arc-20240116; t=1716896082; c=relaxed/simple;
+	bh=9wGuHehGZ7Wo4wMIu99WxMw87OmZSZO2EPyqVpgkf2I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=et7m0Jv8D8axPd+xFdHlkHPRr+h1pyGWzaoVD7It6x2zyQF914idaWbEw786liQ8pBN3OuovSmab4PbOliPyl2Iff4xAhaU9NcVsADntdL3DuLjAQdSgfpwh4oQcHIBXhV3mFiue9i7abKOf95T2GM1jqBvbvivUDJmOVIMbkSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iDRpmt/5; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=qlxWMCR6bDf0pdcmdcYfZfGaPASier2rd51kHFVOxlWAgTPWHVZJI89zd07LpxObIfuxSpk7LoHkEy6db6D9UUgQJHS7r6rknwZEgOGX8yCyMMqK2WvSqsoY3mwh30iPLdd7uOrGKzE+9dXO/SgheoR3gVU0nAul1A9baegTxGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jqZiX/QN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDRpmt/5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80B3DC3277B;
-	Tue, 28 May 2024 10:09:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jqZiX/QN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56F1BC3277B;
+	Tue, 28 May 2024 11:34:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716890955;
-	bh=u0H4aL4Zr2+tv0WfZ/TAAEYj4LV89tFQZguReEdgKUQ=;
+	s=k20201202; t=1716896082;
+	bh=9wGuHehGZ7Wo4wMIu99WxMw87OmZSZO2EPyqVpgkf2I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iDRpmt/5lxhvelyALqnhGPuhOwpTfS48hFraVk2K58w5jNmpB+NMnMMLQ1Q5pQCZ/
-	 C7OcVV7qBaYo8J3Yb43Mx03LfsYQUCEvJyAPuNBOp+eUPTHrR1uUYR/EcsGqb6WA/m
-	 Hw8Wlk8FL5Iki1xocRntw7E+WoV/xng/qLco3qCDgLfd/96tyIDvqYnKbmEbuNtjsV
-	 dVwzVUb/idB714hSNlwgRf59s10eJVNCYWckIyqdC6ENpLx0OJNhciAxtTsZboUC2H
-	 xcQbjK4uUWgncJv7o340sZ/53r7RhKYSgsoIgCF8UTbKDBjkzHZpve6LvTllkwvZba
-	 cZB1EAk5b0d2w==
+	b=jqZiX/QNADwaqFb4PkQw2ythPLEnt9ZL4nNfdZGbgR0GeGXOMGktu2ZN4MSQm++M8
+	 uSx9ev6S/3odjVwcqsNXBLB9CNI/BrSVPYQZ2sHrCJUkOyh+cqINKUKJmxvyPdXL/N
+	 v8xqxexxvZDIoLF28NW8VMS4QvYsF0typq5soeZfSs331sA0//32qdXban1M/slOmN
+	 zJenUlKiGPg18WUCbtnc/TK17IwnWstvFQ+lz723oBPOclJ1/QBPu+0lPRfSmZAFEZ
+	 BPzLi60+mu4L73AGDPy2uql0M0U/kxp0/P3m1zMk/mjPjftKsHpFUTgmx3lSgRz9E3
+	 FUTDMW4aVot/w==
 From: Christian Brauner <brauner@kernel.org>
 To: Jeff Johnson <quic_jjohnson@quicinc.com>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
-	autofs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Ian Kent <raven@themaw.net>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
 	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] fs: autofs: add MODULE_DESCRIPTION()
-Date: Tue, 28 May 2024 12:09:04 +0200
-Message-ID: <20240528-umwegen-specht-0d7e82bb5ed3@brauner>
+Subject: Re: [PATCH] fs: fat: add missing MODULE_DESCRIPTION() macros
+Date: Tue, 28 May 2024 13:34:27 +0200
+Message-ID: <20240528-februar-astronaut-3908de3fa2c4@brauner>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240527-md-fs-autofs-v1-1-e06db1951bd1@quicinc.com>
-References: <20240527-md-fs-autofs-v1-1-e06db1951bd1@quicinc.com>
+In-Reply-To: <20240527-md-fs-fat-v1-1-b6ba7cfcb8aa@quicinc.com>
+References: <20240527-md-fs-fat-v1-1-b6ba7cfcb8aa@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -48,13 +47,14 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=891; i=brauner@kernel.org; h=from:subject:message-id; bh=u0H4aL4Zr2+tv0WfZ/TAAEYj4LV89tFQZguReEdgKUQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSFrnVu/e/wYrv71jpW4zJBrhbXE51/9ef9TupbZ1q9J 1B7y9eMjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlkZTIyXFzjJey/5ahZz+UX +ewL7r5q+ft2pSW3w4/c6TuqzCUmCDP8j60wYH7OKGy17t1WuSwPmVNPFaa/qJExKC+KeJH5itW KCQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=997; i=brauner@kernel.org; h=from:subject:message-id; bh=9wGuHehGZ7Wo4wMIu99WxMw87OmZSZO2EPyqVpgkf2I=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSFHvS8GG/KVnP4X+v7OYuFWu4fmsOQk/543/G9zf/dt 6btieVa2VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRTT2MDCfXTncMu/Tkypev 8ucEtR1kUuZ+9e659euEotCx7d0zQkUYfjF/PF4X5jyL786a8NTiXLtPe7fyaP5u/pCkwZdz8HV lHAMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Mon, 27 May 2024 12:22:16 -0700, Jeff Johnson wrote:
-> Fix the 'make W=1' warning:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/autofs/autofs4.o
+On Mon, 27 May 2024 11:00:40 -0700, Jeff Johnson wrote:
+> Fix the 'make W=1' warnings:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/fat/fat.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/fat/fat_test.o
 > 
 > 
 
@@ -73,5 +73,5 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: v6.10-rc1
 
-[1/1] fs: autofs: add MODULE_DESCRIPTION()
-      (no commit info)
+[1/1] fs: fat: add missing MODULE_DESCRIPTION() macros
+      https://git.kernel.org/vfs/vfs/c/9101026fc35c
