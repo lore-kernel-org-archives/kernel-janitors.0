@@ -1,121 +1,72 @@
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D68161306;
-	Mon, 27 May 2024 20:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5CA3D0A9;
+	Tue, 28 May 2024 03:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716842467; cv=none; b=CaoNmuA3Qkj0BXtc+lNbi59dAB8/KaQ8SU49aD6umpNQ3Ff9Z0LRnNIahd8/gGSJkwYv3gJPm8JVcNFAAZYGxsAYfBH0bbBBZrbEgHcYiptJPhNngW2CuGzbQ3UOtn+wfcJ4CKcXVw+Kv+MO3LdmcKLstQJKQYDyuWN69o5dlVc=
+	t=1716867165; cv=none; b=mZKSS4KRFBBQWEppGuC39rT0tqhjVdJ1Yxf+eWk5koCMuFkXCJjNQF1iCHRzBXH84L1OhwZHSsJC5pcTdq6Y1vJphJgQ/bU80w6EReNsOod15jyu42dr5VAqMmhgzUEU3WYAuGT5303F4fvQCWTGK3t7gjXf0GnVD0bvrn+Ekr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716842467; c=relaxed/simple;
-	bh=NbXY2Kk4FGwSPszns2tNOssIhDlhmg+90rK9jIm+aWE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Y2E8Z5lLGjGRnfP9oTqF4+gdCjriWvSTZx8XBKQlmBKEQItS9sHJ7x0dlubnuW+2XBadjsRDsuVT/2KLl/M1xjQmRtD8RsTb4l/7BiALMnAe3jC+gG4a9vtrnKYG7OfgJHQ3OTJmDigwKaXHoY/sCPwaqa5OwofqMt+zwkNV7wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=SQy5Nhjr; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
+	s=arc-20240116; t=1716867165; c=relaxed/simple;
+	bh=xqR/ykcZzXNkdbRAVwaOEVJjZcLA5foqzYOMf+83rms=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kCnsOdGOfHgIx29UwajsmSn90t0qAIhDkjsDvcH4fKym4EHhfS/2FAGkjbq29NJaOxtz7QNF4CFZb/Ao/IJZ5NgGHcfXyrwtzVUxNmVSwphhn9bPj5m1rlP+AfuRm4Vn3eLE+qezS8t5EmppBvQ+X7ADlURYl5JVqj1pZbLDkjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmZBDBrN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="SQy5Nhjr"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 58AB11C0002;
-	Mon, 27 May 2024 20:41:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1716842460;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nfH6b5pwYJEOTT3sLSjSrRNYvJ7fdHrC/cOseFcXPFE=;
-	b=SQy5NhjrknphnSRui48ouVOppbA5yPQyJceM4GNRtWRx8km0pI4ni/fN8rt7xB+jSThrGd
-	VsB42Z4aZU5hlx4SN5aCESYYaIrnGobEq6fWLhOTACQQHKzcAZUMQ15MaaqjpqSQhtmYa+
-	fDfJpdZGgQrM9SJCvif4Hf6+7qKADy7Oc1wvkqnlS4psCsVn/Xc/LmrHirx2R5xpJqlLyj
-	4ThlDYLuzkaOg7Al0UTJRuHFRXlqw6lUt699TnIcwudJo8uIAkQ7WGGGzI0J3hK+g5XkFL
-	CAHWnlLn0qPJTX7sT+fsEuLlbjbkgaaoXCNSGyQyR3SW4Mk0Tw0Gb1poA3vnsw==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Gabriel Krisman Bertazi <krisman@kernel.org>,
-  <linux-fsdevel@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] unicode: add MODULE_DESCRIPTION() macros
-In-Reply-To: <20240524-md-unicode-v1-1-e2727ce8574d@quicinc.com> (Jeff
-	Johnson's message of "Fri, 24 May 2024 11:48:09 -0700")
-References: <20240524-md-unicode-v1-1-e2727ce8574d@quicinc.com>
-Date: Mon, 27 May 2024 16:40:47 -0400
-Message-ID: <87y17vng34.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmZBDBrN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 238D5C4AF0B;
+	Tue, 28 May 2024 03:32:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716867164;
+	bh=xqR/ykcZzXNkdbRAVwaOEVJjZcLA5foqzYOMf+83rms=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=mmZBDBrNKQm3zt7Pe8UoX9j5lLUXnwfztoqCOR9CvpvDs4v6KbUMLiMIPJBkCeJBX
+	 g9vdtlag7iUoce6LLJvw6vRsjDZ+wxMRPxKRox/uUXe5xi6YUojT0xVXboqaJwum73
+	 bmN8OCYXGzL2M+AZ7Z5dhBk+xPf0lf/zc059mWHA5MtDVj1lWMSb5PetssvNMzpnmM
+	 pOWLOexhunyqsGom51iATAM/CQPEzBpNqj8cPPScD1646hkaf2V1+xPLr1E/48zT7Z
+	 XrGvJR9Y8BGEPeMCBFhJz68iAqoMwILCfYCKws3NDbaXe51wz2YPKbO0UawOtkJWV1
+	 vtpdeR/vLhQuA==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: Constify struct pll_vco
+Date: Mon, 27 May 2024 22:32:11 -0500
+Message-ID: <171686715155.523693.8017271555149377998.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <c3c9a75ed77a5ef2e9b72081e88225d84bba91cd.1715359776.git.christophe.jaillet@wanadoo.fr>
+References: <c3c9a75ed77a5ef2e9b72081e88225d84bba91cd.1715359776.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-Sasl: gabriel@krisman.be
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Jeff Johnson <quic_jjohnson@quicinc.com> writes:
 
-> Currently 'make W=1' reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8data.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
->
-> Add a MODULE_DESCRIPTION() to utf8-selftest.c and utf8data.c_shipped,
-> and update mkutf8data.c to add a MODULE_DESCRIPTION() to any future
-> generated utf8data file.
->
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> Note that I verified that REGENERATE_UTF8DATA creates a file with
-> the correct MODULE_DESCRIPTION(), but that file has significantly
-> different contents than utf8data.c_shipped using the current:
-> https://www.unicode.org/Public/UNIDATA/UCD.zip
+On Fri, 10 May 2024 18:50:00 +0200, Christophe JAILLET wrote:
+> pll_vco structure are never modified. They are used as .vco_table in
+> "struct clk_alpha_pll".
+> 
+> And in this structure, we have:
+> 	const struct pll_vco *vco_table;
+> 
+> Constifying these structures moves some data to a read-only section, so
+> increase overall security.
+> 
+> [...]
 
-Thanks for reporting this.  I'll investigate and definitely regenerate
-the file.
+Applied, thanks!
 
-The patch is good, I'll apply it to the unicode code tree
-following the fix to the above issue.
+[1/1] clk: qcom: Constify struct pll_vco
+      commit: fcd9354ceb7ae52b11a93e8ac990ad4a8c3a0da7
 
-> ---
->  fs/unicode/mkutf8data.c       | 1 +
->  fs/unicode/utf8-selftest.c    | 1 +
->  fs/unicode/utf8data.c_shipped | 1 +
->  3 files changed, 3 insertions(+)
->
-> diff --git a/fs/unicode/mkutf8data.c b/fs/unicode/mkutf8data.c
-> index bc1a7c8b5c8d..77b685db8275 100644
-> --- a/fs/unicode/mkutf8data.c
-> +++ b/fs/unicode/mkutf8data.c
-> @@ -3352,6 +3352,7 @@ static void write_file(void)
->  	fprintf(file, "};\n");
->  	fprintf(file, "EXPORT_SYMBOL_GPL(utf8_data_table);");
->  	fprintf(file, "\n");
-> +	fprintf(file, "MODULE_DESCRIPTION(\"UTF8 data table\");\n");
->  	fprintf(file, "MODULE_LICENSE(\"GPL v2\");\n");
->  	fclose(file);
->  }
-> diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/utf8-selftest.c
-> index eb2bbdd688d7..f955dfcaba8c 100644
-> --- a/fs/unicode/utf8-selftest.c
-> +++ b/fs/unicode/utf8-selftest.c
-> @@ -307,4 +307,5 @@ module_init(init_test_ucd);
->  module_exit(exit_test_ucd);
->  
->  MODULE_AUTHOR("Gabriel Krisman Bertazi <krisman@collabora.co.uk>");
-> +MODULE_DESCRIPTION("Kernel module for testing utf-8 support");
->  MODULE_LICENSE("GPL");
-> diff --git a/fs/unicode/utf8data.c_shipped b/fs/unicode/utf8data.c_shipped
-> index d9b62901aa96..dafa5fed761d 100644
-> --- a/fs/unicode/utf8data.c_shipped
-> +++ b/fs/unicode/utf8data.c_shipped
-> @@ -4120,4 +4120,5 @@ struct utf8data_table utf8_data_table = {
->  	.utf8data = utf8data,
->  };
->  EXPORT_SYMBOL_GPL(utf8_data_table);
-> +MODULE_DESCRIPTION("UTF8 data table");
->  MODULE_LICENSE("GPL v2");
->
-> ---
-> base-commit: 07506d1011521a4a0deec1c69721c7405c40049b
-> change-id: 20240524-md-unicode-48357fb5cd99
->
-
+Best regards,
 -- 
-Gabriel Krisman Bertazi
+Bjorn Andersson <andersson@kernel.org>
