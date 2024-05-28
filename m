@@ -1,79 +1,109 @@
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795CC31A89;
-	Tue, 28 May 2024 18:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFDB2FB2;
+	Tue, 28 May 2024 20:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716919435; cv=none; b=EUq6VYFHy1+a6oy7o09Atv2vEOuTPUUQ0kOLa4Gie8kSRU7OVdtOwx07emeX+8L5d7iclH374IimXZWBU6/pE7Bewao06v27gLrp0KwAqCOY77s2hE9vxeqPqdKvPnbZll+4dHpm4GrgrQ0aVMJn8aLRrQ1WD3oI6uIqUL5Ly1k=
+	t=1716927383; cv=none; b=Prh3HzzDn2R8aDz7BN53U74SjQZ5uF8Fh2k3/D89tnYmWkIGMTnOVn9FP/cXreBFqXQrOm2aNZ5W6VVSz8LZS3c9hKDeU6jgNtY2DLtLtmcYQX8hik+j6KXr+LI2NxxGtxEGNYsAaklyVakprzG6Q/lzucQXlD0oAfsCMjY2n0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716919435; c=relaxed/simple;
-	bh=/j1IUjr35lFJqMmnOuoDoQFcoTuliNZna5PrE9w03YI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NzbAyUvp2jrk2Zy7gkztAehiiiiQHPgqGJST3S1AUw8aSelhNYqCn5ky6lGV0vJCafHe2oocJ/40vrflIBNH9vXJKVcqFJ8svQ/mjQGY0JF+Ltef79O4ZWOWql2L7DG0jpQnF1lrXFhCgDGgdxmuQiDy/KSX988Dxrr7Rg1CAzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=u5KdfSxa; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	s=arc-20240116; t=1716927383; c=relaxed/simple;
+	bh=SDM3T88aKtVS+Ug/fU9kGhfpCs3h4GTd1KHJIR+20Jo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SPb76G8xeXvYdEBj5xpEfM2VGsmunw8AKaC0ge4a63xMjijvcpVPIP8Ahi9yQKlr0qJnmHr1X5a6txJEVEIAofi6vSlhvUQaTYsaBSBj7KFkSf7X8us1Z6NAgRRXz0p7DIJUvmdAnELtag4U0uiD+5aKY5gKUKELpLsQQZXgfSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UDgGz4cm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="u5KdfSxa"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=PQA5T3SuEDuXN0oaw3uvLJ8JZyZw0rtYCLSIm8NIRPc=; b=u5KdfSxa4k6ljBqG3fGTcMGRGu
-	HN+tG+VleU9vWJMJsAsYGG8/1kN/n2NFvVprfYtDvC32WaItYAT5vYlclWk4k4zA0cKAK6UvIORJ0
-	B2fdm/zsCk3cz91zf/R7ffPZJMYMbFXyzDl68Hq6MBVZzHGXovquugPH2Sr8namfxaSR/LoJQ4Nvk
-	cHXPtuIQyuPMXpN0fBTUhfN535/Yn/10pfGvxW+9MpKGXrYul9+u2gWBlshmh7NhydDwptbNfpe0y
-	oMFyp8z0HsrljZeYpGQRS0R5KxouQFhtuxeM4Xk48DgAtJt3jAj7nAot15iUp4AEDDvYcPrhnQcBD
-	5TYyP7Rw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1sC1Ao-000u1L-0I;
-	Tue, 28 May 2024 18:03:46 +0000
-Date: Tue, 28 May 2024 19:03:46 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, linux-fsdevel@vger.kernel.org,
-	autofs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, Ian Kent <raven@themaw.net>
-Subject: Re: [PATCH] fs: autofs: add MODULE_DESCRIPTION()
-Message-ID: <20240528180346.GG2118490@ZenIV>
-References: <20240527-md-fs-autofs-v1-1-e06db1951bd1@quicinc.com>
- <20240528-ausnimmt-leise-4feb91054db2@brauner>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UDgGz4cm"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SBNawN025892;
+	Tue, 28 May 2024 20:16:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aAxBwMD0lZhhNbg0upNk5vseG8fs7A2eLML6WG5ZKxM=; b=UDgGz4cmCE0OGa76
+	lUSM8a7Ft9KsCD46Gw7KTpBVsyTX/OAy98fwKbQaQaTy+FwdjqKa0R9HMir8rrta
+	L3YHuJiL6NKPN/0Wssto6xy+8LsSxlyr+G8qpVcSYca24qe10PGa9SqSLQAnPDXx
+	jbLqe01zeYUcB5lIpqVcXEbar7tdoZdXH92gLgm0Ll51QQaegkxUGUuKDMSpXXLh
+	t398zMGAyKz0kGDtUhgaB2IjjeRzyXWoIChj0dIc92U4Fc0pdGVYw42qlfeF8V5Q
+	Tjfr4BdszBqAkJCknZ5PFwUVPTLnp4jtrtj+tYXcY98m6QdfpufTOhE7eDkt22Ju
+	oQN77Q==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0x76hf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 20:16:13 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SKGCgP016550
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 20:16:12 GMT
+Received: from [10.110.122.222] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
+ 2024 13:16:11 -0700
+Message-ID: <1d256e7d-2b39-42ce-ab19-94b8a48b90cc@quicinc.com>
+Date: Tue, 28 May 2024 13:16:10 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528-ausnimmt-leise-4feb91054db2@brauner>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] locking/ww_mutex/test: add MODULE_DESCRIPTION()
+Content-Language: en-US
+To: Boqun Feng <boqun.feng@gmail.com>
+CC: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20240524-md-test-ww_mutex-v1-1-4fb8c106fe21@quicinc.com>
+ <ZlYbst1xppRKBxwm@boqun-archlinux>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <ZlYbst1xppRKBxwm@boqun-archlinux>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 4dyoSxBmA7tYAMpall_vAwoI1VprRk-8
+X-Proofpoint-ORIG-GUID: 4dyoSxBmA7tYAMpall_vAwoI1VprRk-8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ mlxlogscore=999 priorityscore=1501 clxscore=1015 bulkscore=0 phishscore=0
+ malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2405280151
 
-On Tue, May 28, 2024 at 01:39:03PM +0200, Christian Brauner wrote:
-> On Mon, 27 May 2024 12:22:16 -0700, Jeff Johnson wrote:
-> > Fix the 'make W=1' warning:
-> > WARNING: modpost: missing MODULE_DESCRIPTION() in fs/autofs/autofs4.o
-> > 
-> > 
+On 5/28/2024 11:00 AM, Boqun Feng wrote:
+> On Fri, May 24, 2024 at 05:18:11PM -0700, Jeff Johnson wrote:
+>> Fix the 'make W=1' warning:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
+>>
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>> ---
+>>  kernel/locking/test-ww_mutex.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
+>> index 78719e1ef1b1..0fab96137ddb 100644
+>> --- a/kernel/locking/test-ww_mutex.c
+>> +++ b/kernel/locking/test-ww_mutex.c
+>> @@ -695,5 +695,6 @@ static void __exit test_ww_mutex_exit(void)
+>>  module_init(test_ww_mutex_init);
+>>  module_exit(test_ww_mutex_exit);
+>>  
+>> +MODULE_DESCRIPTION("API test facility for ww_mutexes");
 > 
-> Applied to the v6.10-rc1 branch of the vfs/vfs.git tree.
-> Patches in the v6.10-rc1 branch should appear in linux-next soon.
 > 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
-> 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
-> 
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: v6.10-rc1
+> This looks good to me, but seems to me MODULE_DESCRIPTION() is usually
+> placed after MODULE_AUTHOR(), could you reorder it a bit? Thanks!
 
-*Ugh*
+Sure, no problem. v2 coming up.
 
-Free advice: avoid mixing tag and branch names.  git tries to do the
-right thing when it runs into ambiguities, but it's really asking for
-headache.
+(I had automated placing an empty MODULE_DESCRIPTION() before MODULE_LICENSE()
+since every module has a license but not all have authors).
+
+/jeff
