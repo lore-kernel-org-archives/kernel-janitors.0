@@ -1,76 +1,59 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA11D16ABEA;
-	Tue, 28 May 2024 11:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F438173339;
+	Tue, 28 May 2024 17:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716896461; cv=none; b=r4LhWewKvKzb0qu4YZ4NvvesGZEmBIAwJmku9PyaFWxS9O3DPZMXA3cMDsP0GZAu5fmze6cs7V0A04t7ksiWYbVPGHDfHgj0oXhAslz5nAqOaALf+H+6uMDyxWlEtkFkp2SVkV0Tv+5eTv+pojJ9N+wt5KToeiWyoqaXdPkC5yI=
+	t=1716916207; cv=none; b=ezN2E4EIo0OqxRj4BHDLBzxycbEzxH2EhrdvzIMtz4jNVlWnaTFf5TYA2kec1DogowDW4J5GcGO5aFoWGeCceEYvfTThPtJfWOYf24Wwxbky9WeontrWNbb4J6m09YzUTKM3ULupz9aXaZKrvRZ8SJWGGv6BiOEuelfGhto+BJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716896461; c=relaxed/simple;
-	bh=nTnqqSYa4I/AgFNmPv6khCzjQUGlr5Fq9ioqus63Z5A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QAPvD2KNsaYY8bx3duTSiTEijzQpHJ89m1OuU5x5JIPTGVGTXacvujighx65rIFJk9XXaAuOefO76VGbikyt3Y0aI/+beSkXHrtyIrko0ZxlnS6ci8OZ5PdKZwodq8Yr/1iiseFOyRxnQ+jQQ3w2TmZd/IPbzWq+mSD3EpvrtLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZr8Fovm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716916207; c=relaxed/simple;
+	bh=B3E/QGp7FngdO9p2TYdzPNibioEyg6tO73saBRqMObQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KmMtXD2fnEkn3bMQ3jROpr7ooWb6Hhp2dp0uqAPBwczCJiDYwf4hXavSNTgY3UGCOIXk+Imaah+d6Mn5ocm08dVj8XD2IOjhy/QbjJXzACNkbFLtLSiLSOiSx8+4fN4BvpU8XYjNWL8BxkT7RK5WOq2T3UJsAX4JXM3mKmgV1rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZszT1Oq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZr8Fovm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57B10C3277B;
-	Tue, 28 May 2024 11:40:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZszT1Oq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA1F9C3277B;
+	Tue, 28 May 2024 17:10:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716896461;
-	bh=nTnqqSYa4I/AgFNmPv6khCzjQUGlr5Fq9ioqus63Z5A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UZr8FovmS/oz14uLYlsog1dq/IVopZHHLKcV8JaTHcDNSah+0mVTqL2UyZDJlRi1e
-	 w1j0n+1xQTvoR7lxMWzcddVY2NQ5wjwYlrSX9uMB4rZlhoc90fn/RRvQF28YJgMi63
-	 014eO+1e6j5uln2HzSl6xCoHiDX5iqQ4Y9Iq2/B5YLMcDBPuSzaQzAkwUFQ8sNzfb1
-	 dE0R7PLssMexeZdyLPaB8trqnD6ztT9TAqi7+vk86IhAx+Pzl/CjKjRxv9JI7vK1pt
-	 eG3DmbhOQnkGatkw7Piou1TsK+UmxNAGNNBNJJOBb1azXlOIH/i7ZpZvcav1gNUhKb
-	 /t/Q+ayaNRtsw==
-From: Christian Brauner <brauner@kernel.org>
+	s=k20201202; t=1716916207;
+	bh=B3E/QGp7FngdO9p2TYdzPNibioEyg6tO73saBRqMObQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cZszT1Oqv0rSz3TCQkigMNv88tsjNRt8vwCYNLz8Ze9Sqm1JP6bcGHs/eWE6yMbQF
+	 QE1IjMRfNOanoudkJx3mtsFT7tcsMZVgPhidmjWmMUIhNEiQilfD5M0twZqbMUzB9k
+	 E9Iim+56ZXUt3EyQwEGFVFw2VM4PTjWxQfcvRgI7c1uXXQ7uRxpBhcjpW5Jki/ejRo
+	 IfLeOyZp/7apcCEqOOzzMC5BXqn/Oyp30XEU6HQ1vAasgBs6FXqKkAd2I/7MLOQloL
+	 Y3G0xcU0HVKiCC/6xytApk5SsoMvwKWgER7T9esYCxM//vstN4voACukuTh7Ij8gMG
+	 3NMnFuU6ulMAQ==
+Date: Tue, 28 May 2024 12:10:05 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nicolas Pitre <nico@fluxnic.net>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] fs: cramfs: add MODULE_DESCRIPTION()
-Date: Tue, 28 May 2024 13:40:42 +0200
-Message-ID: <20240528-genutzt-wohnprojekt-74654ae5d3ab@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240527-md-fs-cramfs-v1-1-fa697441c8c5@quicinc.com>
-References: <20240527-md-fs-cramfs-v1-1-fa697441c8c5@quicinc.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH] of: of_test: add MODULE_DESCRIPTION()
+Message-ID: <171691620162.977890.15152918673691934863.robh@kernel.org>
+References: <20240524-md-of-of_test-v1-1-6ebd078d620f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=919; i=brauner@kernel.org; h=from:subject:message-id; bh=nTnqqSYa4I/AgFNmPv6khCzjQUGlr5Fq9ioqus63Z5A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSFHjqyeNb3mNpvoturfPjXMExPePn4IfvJ/3Jfja5f/ ly8xvfk4o5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJKG1m+O+su+Zewe89k9bv v3v1ZmulZd+hY/JsxvX6pborVdo3iexlZGjt2Z6akG78oLDmMmuiZ7Pe/kJhvk3snrsLuzp6XKf e5QIA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240524-md-of-of_test-v1-1-6ebd078d620f@quicinc.com>
 
-On Mon, 27 May 2024 10:55:02 -0700, Jeff Johnson wrote:
+
+On Fri, 24 May 2024 16:58:26 -0700, Jeff Johnson wrote:
 > Fix the 'make W=1' warning:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/cramfs/cramfs.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/of/of_test.o
 > 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/of/of_test.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-Applied to the v6.10-rc1 branch of the vfs/vfs.git tree.
-Patches in the v6.10-rc1 branch should appear in linux-next soon.
+Applied, thanks!
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: v6.10-rc1
-
-[1/1] fs: cramfs: add MODULE_DESCRIPTION()
-      https://git.kernel.org/vfs/vfs/c/9149a57dd525
