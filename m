@@ -1,76 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D60038F96;
-	Wed, 29 May 2024 07:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CFD169385
+	for <kernel-janitors@vger.kernel.org>; Wed, 29 May 2024 12:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716968755; cv=none; b=NVZtz8ournNeXDhyph7NN3X6cGseCVJcH2q+OGxpubFqOy6GBienJx3mBNzcxXW6x7y1zJq0v6id3D02/JA/IlANESO0f3pF1a6bSo/3IS+F6po527V7WXRSZ2bgvLX5xeGLWxdfV8qYEZhP+rvp/dRx8H6f+pJsfXOYfHAdJlw=
+	t=1716984673; cv=none; b=Ex8CVOlLoOCfkuy/UquqhbqBd0YmFIxncw1ngC1hzFOScrd0CdHFuGsc8CLzDicHF73aNB8RelVhrhmpikxX1pd4Kgk1n89k8phpMTYNGbEwuBAC6hT446WVYgCN3Yuvr9zEg1/H4SIFXAsjwOAKSV47yzYoOTq+KSqbd1j8Vns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716968755; c=relaxed/simple;
-	bh=CwmwE3Bwwqq+qF+BJH7iFpufE32KFVNoA+yw0gGGhOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r3m/XAukw/jF6QBHCR9S1Rj7kyz/R9dEguZ/6zdd6Li8pZIxLfA0F3pw2nkot0W4xbU+sgRCtN9Kg95/DF9COQAQ8ZmQA5Q+p9bDZiJjs8OvraUe2Dq/KPAENQj+mJ6jdJdYXbCtsZZa3dQ943sxraMbjkdKR5xyLa7i6vmODXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JGPPCyzs; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716984673; c=relaxed/simple;
+	bh=Ru863ZDNNkNexAR3UTGrc56hh8W7AeBpyMyTBfHTT28=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=RnCPZvo8RFzXapFJR5WcZL7pN7k+BrMcelmw/ToouBbUBFPBGJhFVDx6sv22FroAnO2g4Ce+1Pzh2c9kq+YRcRmdnuEb96AKdpjQxmCv0vBrtWIXz1XrssDsKCAtSjQr6t9vR6wLgYOSk3K9QXl2fTK/p0ZmbWiQynCM7l3bhpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ZevaaE4q; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JGPPCyzs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DBFEC2BD10;
-	Wed, 29 May 2024 07:45:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716968755;
-	bh=CwmwE3Bwwqq+qF+BJH7iFpufE32KFVNoA+yw0gGGhOg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JGPPCyzsiMPXJA2IjrwefTa1HKplRceJ+rgi4CZiwysWm96diugbLLYvqeVS18V9U
-	 ywJCLe1ygfdGMol4hxRVFIsTwb/22SoWYIMNM5la3x+0U7q2+cB9Yx9mxLiNkXbwrb
-	 Y38neuN1HgeMDnggA4C4JuKoPo1sKF25MxYxYgYPDctunA1ubmuwOtndjE1FKrdQrO
-	 Y6nwua5Ro5sB+4DOWUt57Z6lforBWEuh5h4umlMjwupBu94oZ9PipfE8OiwBRjme1P
-	 LngWndvL+gsahCnet3AO8ZbHUeT8l1Z4tfrabhUvbkn0BxxkfacoXXxDx4MSBIyNKw
-	 CI3J/seL5jHVg==
-Date: Wed, 29 May 2024 09:45:50 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, 
-	linux-fsdevel@vger.kernel.org, autofs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, Ian Kent <raven@themaw.net>
-Subject: Re: [PATCH] fs: autofs: add MODULE_DESCRIPTION()
-Message-ID: <20240529-gesund-heerscharen-d811e424d9d3@brauner>
-References: <20240527-md-fs-autofs-v1-1-e06db1951bd1@quicinc.com>
- <20240528-ausnimmt-leise-4feb91054db2@brauner>
- <20240528180346.GG2118490@ZenIV>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ZevaaE4q"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716984662; x=1717589462; i=markus.elfring@web.de;
+	bh=44LtRPpJS9k50xR6wW/+Q9GMBsFbqhXkcW4HPHoBVP0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ZevaaE4ql5oMwDeAtKax+8qVeshkazxM7zf3aPBQMnRX8SCS1VXgqk/Urf5m/rFj
+	 iZJPSDEYvrKpz97VsMCrrzTXBz5DwErGU+rW70IWyF0e7SwSVHNk6GV1M7EtYlSq7
+	 TkkYLzz6uhIcBweXpuqo51fOD2VTvj3xvmbcxMTiIYFZ3cKa75DeEI4JWE8Q0T9HG
+	 vwSo86L8LB+LE3lusuIojFISdZLGKTOJLG8slK5PpksGslTUPLhGJzfNj8hmg4Psi
+	 dEhCpf/n2VdjDo3rqHsA98AuEgQkzTk1c6cf9bnryFxsKIp5tYdAX0P+DJ+QvdoRC
+	 j1eXYrjUsHJCNIgsIA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MidHZ-1sfHph0OkJ-00iz9j; Wed, 29
+ May 2024 14:11:02 +0200
+Message-ID: <2dc6a1c7-79bf-42e3-95cc-599a1e154f57@web.de>
+Date: Wed, 29 May 2024 14:10:50 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240528180346.GG2118490@ZenIV>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cocci] Looking at guard usage (with SmPL)
+To: Julia Lawall <julia.lawall@inria.fr>, cocci@inria.fr,
+ kernel-janitors@vger.kernel.org
+References: <7eb9626c-da7b-414d-bf50-da1eed27be31@web.de>
+ <alpine.DEB.2.22.394.2405261847380.16852@hadrien>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <alpine.DEB.2.22.394.2405261847380.16852@hadrien>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:zZ9hv8fYAElNjOlZxlxgzZ5uTXJPSXI0yJ7CY9+cj+rh1R4+JUB
+ w9Si27EzJB3aXTEaUeUEPYIg6j3KDz8JdT7b1ddjpYEVqtyLFX2u0595L/hEO9pZd7TfB0u
+ YWhFU74wW9yLFcUELBx+bzj0yeWIESk8hVrM83cS1mYGnQMTnsqVHwVi8gOFoPMwl0XuszY
+ tZFnexDE+zKLOHudZpwJA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:utnD1sW6RAo=;WksEr1mpu6wx0BhlcFPjESewXKD
+ /uWhdhKiIGoWO1Pm3MLwnae72M37VMqSYCf6EhMPLgF+J/bHiaqJZgORB9ErpWpxkbSPJtV5U
+ d173krFB0NrrU0sUY4Z2poosFVMxesEhypj9nHhX3xs9YnbfTOIhVfZzEEhXXd4kfcF6FhyKs
+ bftPhtjh/xNt0ABTtTjqnuDylIcQvo5xHAfle036uFbTP+xsmUJl2i61XsLThDzymceAUuloy
+ v7vohESg11FDPBHkuHABus8M/TUhFgn/H67r2VKNrJN6EEnnBLSFA0nstLi1SfMvWZ2ffscvS
+ Cl5hA8Fye9yP0GInM3VdLncICTc2q7kz47YBW0zoKzMona6rvqTUXTfTA/1bgxYaSWgePi1Zh
+ Es/Tm7p1U47E3aLIdIL4IEFNkLTToruk4ou6CHLelfi0RATWcBhQn5rdnmR3IHt9r7aYUm+uz
+ bjSpFcEOULoH6iVC2Mfy+MnJqdgdPHoi0MDLiE3OxhFn9vdUTvt7A68SoTmONAtpozHFmBGYH
+ bp8VIfHfPuklIr0D322JyQd194s5xmnJbLmYMe7XQuQhY/ngGVbVzuN1s/O/DHhUIU+e8h2Ry
+ 6yrt9TYzJr0o+ueDSMZa4a3tj1B6Bi6TIAa6EjeZ0EFlq7loHKEgS5Smck2ou2/y9JrVJfMuS
+ BOPFNaFSC7pWdvmV0Gjg0K4q5AuAwel2IoF+RvEwblwhNoWgP8by9p4a8yop7nSH8SlWHkVZv
+ zPRNlt6/XFotpvkvsZOhFk6EK4PtrrkO/TvqhnaD38P/H1jLkqWLwdKUmy0wbFmsVpYRvlho4
+ CHb+Q5KGZKQoXoEYV3B+7uvglPS9w+irmlNcAA4xf6mPA=
 
-On Tue, May 28, 2024 at 07:03:46PM +0100, Al Viro wrote:
-> On Tue, May 28, 2024 at 01:39:03PM +0200, Christian Brauner wrote:
-> > On Mon, 27 May 2024 12:22:16 -0700, Jeff Johnson wrote:
-> > > Fix the 'make W=1' warning:
-> > > WARNING: modpost: missing MODULE_DESCRIPTION() in fs/autofs/autofs4.o
-> > > 
-> > > 
-> > 
-> > Applied to the v6.10-rc1 branch of the vfs/vfs.git tree.
-> > Patches in the v6.10-rc1 branch should appear in linux-next soon.
-> > 
-> > Please report any outstanding bugs that were missed during review in a
-> > new review to the original patch series allowing us to drop it.
-> > 
-> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> > patch has now been applied. If possible patch trailers will be updated.
-> > 
-> > Note that commit hashes shown below are subject to change due to rebase,
-> > trailer updates or similar. If in doubt, please check the listed branch.
-> > 
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> > branch: v6.10-rc1
-> 
-> *Ugh*
+> I'm not the one to decide whether we should use cleanup for mutex locks.
 
-That was a bug in b4 which seems to have selected the wrong branch. The
-is as I said elsewhere #vfs.module.description.
+Would you get further development ideas from another bit of source code an=
+alysis
+which can be performed also with the help of the following small script va=
+riant
+for the semantic patch language?
+
+
+@initialize:python@
+@@
+import sys
+delimiter =3D "|"
+
+def format_data(places, item, input):
+   for place in places:
+      sys.stdout.write(delimiter.join([item,
+                                       str(input),
+                                       place.current_element,
+                                       place.file,
+                                       place.line,
+                                       str(int(place.column) + 1)
+                                      ]))
+      sys.stdout.write("\n")
+
+@find@
+expression list el;
+identifier item;
+position p;
+@@
+ guard@p (item) (el);
+
+@script:python output@
+input << find.el;
+item << find.item;
+places << find.p;
+@@
+format_data(places, item, input)
+
+
+
+Thus it seems that special =E2=80=9Cguards=E2=80=9D are used at 678 source=
+ code places
+of the software =E2=80=9CLinux next-20240529=E2=80=9D.
+https://elixir.bootlin.com/linux/v6.10-rc1/source/include/linux/cleanup.h#=
+L124
+
+Will interests accordingly grow for further collateral evolution?
+
+Regards,
+Markus
