@@ -1,80 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE632837F;
-	Wed, 29 May 2024 22:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EE26AB8;
+	Wed, 29 May 2024 23:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717020975; cv=none; b=lyNbahqw6HaS0+qNKRaPF4QeqEWL2YpMsFL8gpISL2MuiE0r9AqO7DwK8y8A9CY5Vaqkza/+tVU8e3VOxlbGUVGVv19HgiDya9upopkoeXpU/+VxUghc/nRKsjkkcCmvKqvxl8k2gtbE6NuGWsPsULOBKbJNSqwVv5zzSUm2n7U=
+	t=1717025525; cv=none; b=ct/eCGhM6l9BEZ2oHeaIY9tWJa8rT4eidk02xhD1rWwbLvfEUWyvwqhMUiJCXKMwfFjnhDACmz5f4724/wFZqvmuWm5n+gSKpyWU4caJev0SLtrP9Iv/VXVHYu4918PifOKzLBvNE8uw/K9erraphFSzG1M9hTdRMsbVfXck0UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717020975; c=relaxed/simple;
-	bh=zqXplLo3IUyebn6TUaamzkysme61Xk/+JDrVtVNmDRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ryKycvVvCTx7VmcWoo/YftgY525kyrmMEvxFnSyOrTFtpF6sTQtvG4C4y/fisiD667Z9DiTv1PQJC3dRIrPrXMJ8x1HRaFUF6OgyjC4KY/w7w0DYF6ont9QeFSBAG8LWYAHDgBU9TAp1CL9KJOsIsLksjr29C+WfIhJ0P+xkOLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SqrzuXnS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717025525; c=relaxed/simple;
+	bh=4mKxqehj52IvxkEGVqhXNt6WptidXy0S3B7dAFZnIZM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Ijm3miXJF47uAV01T9vPOWRyOkuf55nUom0RC+Zf59aEb4Qo6RfNj6EzSoeTpRM/0l+/yY687o6s8eleptyrtjzKHq0JxSzi3s1zKLfZ7QWs/kFxDtddCmwO1qLRgLAllSXih3znw3TfZBgyD65tAOVD2z/tM7jKxX+OccpHWtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k//smB2i; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SqrzuXnS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18EECC113CC;
-	Wed, 29 May 2024 22:16:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717020975;
-	bh=zqXplLo3IUyebn6TUaamzkysme61Xk/+JDrVtVNmDRI=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=SqrzuXnSUwZZkHiF8SX74ogMREIZxNa/mUcmU/A4Oqgoa1IjGuYkMV8BO5KE0GZDd
-	 sNp76eLfHWDL0bpFljmGZfJXNoVB51cFhMTBtmsTKRllQ6ww8RJpGF10E/Ma2XRg8T
-	 NE5Fu1n0cgh6ufkfpyk2h+AMGIb0ZijFpOPrDgdL9hOMAyPeYYLHz8OjSS7AWPB0QW
-	 drNJoN3uIX4Lhg+yfARq+/qTGu8MlcEX2Q4PBm1Lj3eyWmI+YhUnxx7x5LhfT5R0jR
-	 UO+iH6notw5mS68L7p1kPysRo23eQxVuMgbcfInR70WcG3WIAyN9aMy4BH2p3yBa95
-	 /ZvBUfPLF+cfw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 99D53CE0EE0; Wed, 29 May 2024 15:16:13 -0700 (PDT)
-Date: Wed, 29 May 2024 15:16:13 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] scftorture: make torture_type static
-Message-ID: <aa151486-2166-427a-a82f-3f5ed7e6b278@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240529-static-scftorture-v1-1-b0ceaeefebaa@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k//smB2i"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44TJne5M000498;
+	Wed, 29 May 2024 23:32:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=aocjmcSyEYUc6gNKmBCW7k
+	6+aHjWPJTQ7E+fx5JOMfU=; b=k//smB2irEnyq1uh/Vh2dSBzHQf6XsrQlsj+s/
+	IdWAVdb3lTecyIabZEw0DKLEhpv0kav3+UBopSa5OnjPL+EsSLgJNV6PRX8HME/t
+	srePae8xDlkVMfYIjzTxp6gPuabcLr7i1VaZs63K6WLzmxBbmOPhNPY/Iz9y7rup
+	QPoSWyfyDk3DMFHF+CoCcDfKuzLBG4tchFL0NIyftRruU6KS8nXA8wgKteXZLGOb
+	OY/llB1F4jn0yrcz8Ez5M57miSU31LRkLhcViVLyYRHdXdegjnxrVPUja/xyH6gh
+	Sqgkii2qN4wcAZ5ClRqocGZdv638gA7gYJXdnL4k3iTmoTSA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2ptmtr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 23:32:00 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TNVx3u015767
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 23:31:59 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 29 May
+ 2024 16:31:59 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Wed, 29 May 2024 16:31:58 -0700
+Subject: [PATCH] resource: Add missing MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240529-static-scftorture-v1-1-b0ceaeefebaa@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240529-md-kernel-resource_kunit-v1-1-bb719784b714@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAO26V2YC/x3M0QqDMAxA0V+RPC8QiyLbr4wxapvNoNaRWBHEf
+ 1+3x/Nw7wHGKmxwqw5Q3sRkSQX1pYIw+PRmlFgMjlxDrbviHHFkTTyhsi1ZAz/HnGRFatouEtX
+ UdwQl/yi/ZP+v74/i3htjrz6F4TecJOUdZ28rK5znF7Kwn2uJAAAA
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>,
+        Andrew Morton
+	<akpm@linux-foundation.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: dU00OP-p4wFyV_IWma38yQB1RHgS-fCk
+X-Proofpoint-ORIG-GUID: dU00OP-p4wFyV_IWma38yQB1RHgS-fCk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-29_16,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 spamscore=0 adultscore=0 clxscore=1011 bulkscore=0
+ mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 mlxlogscore=904
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405290169
 
-On Wed, May 29, 2024 at 01:45:40PM -0700, Jeff Johnson wrote:
-> Fix the 'make C=1' warning:
-> kernel/scftorture.c:71:6: warning: symbol 'torture_type' was not declared. Should it be static?
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Fix the 'make W=1' warning:
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/resource_kunit.o
 
-I queued both this and the scftorture.c fix, thank you!!!
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ kernel/resource_kunit.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-							Thanx, Paul
+diff --git a/kernel/resource_kunit.c b/kernel/resource_kunit.c
+index 58ab9f914602..0e509985a44a 100644
+--- a/kernel/resource_kunit.c
++++ b/kernel/resource_kunit.c
+@@ -149,4 +149,5 @@ static struct kunit_suite resource_test_suite = {
+ };
+ kunit_test_suite(resource_test_suite);
+ 
++MODULE_DESCRIPTION("I/O Port & Memory Resource manager unit tests");
+ MODULE_LICENSE("GPL");
 
-> ---
->  kernel/scftorture.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/scftorture.c b/kernel/scftorture.c
-> index 59032aaccd18..13ad348143ca 100644
-> --- a/kernel/scftorture.c
-> +++ b/kernel/scftorture.c
-> @@ -67,7 +67,7 @@ torture_param(int, weight_many_wait, -1, "Testing weight for multi-CPU operation
->  torture_param(int, weight_all, -1, "Testing weight for all-CPU no-wait operations.");
->  torture_param(int, weight_all_wait, -1, "Testing weight for all-CPU operations.");
->  
-> -char *torture_type = "";
-> +static char *torture_type = "";
->  
->  #ifdef MODULE
->  # define SCFTORT_SHUTDOWN 0
-> 
-> ---
-> base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-> change-id: 20240529-static-scftorture-c86eccd9e30e
-> 
+---
+base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
+change-id: 20240529-md-kernel-resource_kunit-0457d0010b70
+
