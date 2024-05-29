@@ -1,136 +1,163 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from wfout4-smtp.messagingengine.com (wfout4-smtp.messagingengine.com [64.147.123.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB2022089;
-	Tue, 28 May 2024 23:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38741F176;
+	Wed, 29 May 2024 00:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716940173; cv=none; b=MtP/IA8AqTDJzbEfmnqP4VuwO7n+jXGrBUSftJDyJcxKX1ZjcDXul73sv6lzVzekmMNV1zwkDe3idvNXM2vTgcAlTzlnctVqwsXifatusITIfBzQNsiW083qoh3WCQAKYUN4E7Z3hbtCgJHJ8uV2I1w1WP1IJEztSPc65eG13OE=
+	t=1716943745; cv=none; b=JaEnCPGqzFdu3/O7WHwS3NngMdv8gkorYf+vbKUd6KpSpabg46yBqENdKoPs0zeN8sCg1I0xTvkjzfhHBssXjek7f5GRsqnBgetA9KY7+qb5Y+FHPBmtEc1TMWtWnC6Qiu/UrMcidmSgt47re/FKRvr3e/rkSoNnaepJFMbmCf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716940173; c=relaxed/simple;
-	bh=J1EVgTuwrB1/ySa+nzHrhrWiG3u4AZwOSCUgS03zuLw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=BhSvAt+4sq7di1n9oOlGsVrTITuSn0TbXxpSFGyupjXn43hLaO9UwnPTll80iMnqX4yHrImiOVlMueB5q7RHVcxwPl/lX+U2X+jM0wF2D3TcTsiXqONeS0qDsVJL8uyhWI+oeq1zkS0gVhii7exVdf1QRBmimqr9eWX8KjLyUlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m7G5NiJI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1716943745; c=relaxed/simple;
+	bh=bgIEuVK50e0M341nriPYsSyg1MHxN/drqYZF32jYgCs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RZIyQdz5VDVFpZ5SGddh3jilUYoHQFg8oEgZf8zC6MdlzLiYrM6KwkTOmnY5IY9T+Jke05iGV1VH6hokYDwYab9y7aMcCvb6almtwWTt9P67SdCV54Rh4d3pPKAbhkeU9yfDQaDTRVirhjAQiFTBlhP7Jf5HdVjJDZg76QZ7XSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=none smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=jzfEwTP/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WSS9pTAc; arc=none smtp.client-ip=64.147.123.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=themaw.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m7G5NiJI"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SKh8wX001482;
-	Tue, 28 May 2024 23:49:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=I3gCoeHpm6zr3IgjiQNbpm
-	ifqhZJpb/+eZbFbmBhDwU=; b=m7G5NiJIwxUDaEYRyDfX2nHTCWhNlJJHScV2MG
-	DPQ2LFkcLFueOt0Hhj6vpt+AA42cWy7U8sJ5Gc/WfhKjTyIGgJbRNoOVoipZKBpi
-	OdsCKWbDN2z5NlCjTl0N73c6jZJoAIg7EVM47UPYqdKH8jR//hJx0kgG5fud3i0w
-	eroYU6SQ6oGtkmHF/jENLMVyhgxQUJMigvU12zndSa3xTv2FjenWU3m4rnQtbI6Z
-	FpgAv0dYuRNSPFaLXNaTbxXA457rECHQF/3EtVVC4TmqOspmCsLyMVt05lVzbfSK
-	tLtVRDetExKa/vR8vr7ogC0YRv/Cfyt/S2T4nS2TNTv1XYQw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba1k7k9w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 23:49:28 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SNnS4s029343
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 23:49:28 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
- 2024 16:49:27 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 28 May 2024 16:49:23 -0700
-Subject: [PATCH] lib: crypto: add missing MODULE_DESCRIPTION() macros
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="jzfEwTP/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WSS9pTAc"
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.west.internal (Postfix) with ESMTP id C62B11C0016A;
+	Tue, 28 May 2024 20:49:02 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Tue, 28 May 2024 20:49:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1716943742;
+	 x=1717030142; bh=Rjchn31EWNLaPBTnuCkNHo37bS2rZlgzRtco4dQJSis=; b=
+	jzfEwTP/2aaVBieOXB2dUgb5z3RWWDwiFutlGB4h9IAf3GOqgDvIG7VGEDEzTsf/
+	P+LjLfyMDyh1tXzgHLp1AbYBzu6VsURPKwgQnFLjbVg+3Ve9kustCLuQNLM6gEce
+	RWvZmV1xBEiydGkevadh3mMT5RqFHG1uRINLboZ0RPjaqWW9I7i39WFWlEI6MKks
+	uwE6veRbCYvcYqw4fpT1QSZIaq+KsJS14qQL1ktdQmNdlFHeESE7iqtc6a573p1Y
+	wKcEP/Hcg6TZRxuFoqVt2AdVZ5gJP+Q6LjAywnXqwiFbdKJ8DkUvSyMhbaS6qP9x
+	X6fD7AgCPnIla0PH4F4Mrg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716943742; x=
+	1717030142; bh=Rjchn31EWNLaPBTnuCkNHo37bS2rZlgzRtco4dQJSis=; b=W
+	SS9pTAcLHlT+zR+lITK8yHxiOPwCwWmmSj+BuN3LNsE2QMbo0G93bFKI7nlebn3k
+	JVD7Ty1cdRl+/tgBokZQxd/1yx6Fp7ioXvWfJPrAuEN5WWQ2Gms4njphowMrGSIa
+	UJb53se0vmESVnoVpVxErqRKdLfNWqLh2/MaNbxNdTfFeunDCvlU2KzkqA6tHkzT
+	YYbe/TZMjm3HvnFmgKpRx5+fLDx5zF4hzt6DDavz0FrU1IavKCCUOqujqipPx1Ew
+	X98n0Rb29NEsAHuamHPh8nKZIoehYXhA97kRFb1fFoDAFV7mLRQFkzQpd2L5sIC5
+	2EG42fceX4MJOoNcZBCNw==
+X-ME-Sender: <xms:fXtWZgyYhdBnc6LeAHWEOteIjXrYjnnhGg-GnW9-5as8nUxbq6U6fg>
+    <xme:fXtWZkShgqrhpq4YVih2j_Jqp_5XsZfRbbJcCqbrvRFDaRcmEKuAKXMWxcr2lH_9T
+    KGnUGvcMk6s>
+X-ME-Received: <xmr:fXtWZiUakpA1fMnV3tTLBFuaEvoPG70eVDKq6hituZYWhVOQukC0QvzyF5OWJIReGx_YiXfjmX72Vs4Q3SU9tOv6vp7LBCzdwDeD65wXRNukiEv3gNx75j89>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejledgfeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefkrghn
+    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
+    epfeekhfegieegteelffegleetjeekuddvhfehjefhheeuiedtheeuhfekueekffehnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
+    esthhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:fntWZujLsUYHF7JHKK8Pyq_eCY6ti5qIfts3ulV7GwRPbqng42ox6g>
+    <xmx:fntWZiAGCj0b8bWBXDe46pyL4UpPiQj4Myr6ZWtLRgv3E4bwExGQew>
+    <xmx:fntWZvL3K-WclgGUL0OMD3SBdJkIxNmaVfkSUsrMLbc75eq1dtx1-w>
+    <xmx:fntWZpCPMfZlQ4DF-Dm5a3SduiY8rwuGGa_ZpeM-l7sVyG7hlOHR5Q>
+    <xmx:fntWZk0Y-Q3xoYuEosaikpQ2mLDyrRWG2_AqsSy7UfT8wNcdKZApQUrJ>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 28 May 2024 20:48:59 -0400 (EDT)
+Message-ID: <7b4f0e3d-9c37-476e-bc83-087db8f964ca@themaw.net>
+Date: Wed, 29 May 2024 08:48:54 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: autofs: add MODULE_DESCRIPTION()
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, autofs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20240527-md-fs-autofs-v1-1-e06db1951bd1@quicinc.com>
+Content-Language: en-US
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net;
+ keydata= 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
+In-Reply-To: <20240527-md-fs-autofs-v1-1-e06db1951bd1@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240528-md-lib-crypto-v1-1-840e468d118b@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAINtVmYC/x3MTQqDMBBA4avIrDuQBk1/rlJcJHFSBzTKjC2Ke
- HfTLr/FezsoCZPCs9pB6MvKUy64XiqIvc9vQu6KwRpbm8becexw4IBRtnmZMDXW3B7O1S4lKM0
- slHj9/15tcfBKGMTn2P8uA+fPiqPXhQSO4wRHNi+nfgAAAA==
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>
-CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: rYLM8a7Ol5Ss4jqRbu31lU5yystkKifj
-X-Proofpoint-GUID: rYLM8a7Ol5Ss4jqRbu31lU5yystkKifj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_14,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- suspectscore=0 phishscore=0 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405280175
 
-Fix the allmodconfig 'make W=1' warnings:
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libchacha.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libarc4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libdes.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libpoly1305.o
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- lib/crypto/arc4.c      | 1 +
- lib/crypto/des.c       | 1 +
- lib/crypto/libchacha.c | 1 +
- lib/crypto/poly1305.c  | 1 +
- 4 files changed, 4 insertions(+)
+On 28/5/24 03:22, Jeff Johnson wrote:
+> Fix the 'make W=1' warning:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/autofs/autofs4.o
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>   fs/autofs/init.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/fs/autofs/init.c b/fs/autofs/init.c
+> index b5e4dfa04ed0..1d644a35ffa0 100644
+> --- a/fs/autofs/init.c
+> +++ b/fs/autofs/init.c
+> @@ -38,4 +38,5 @@ static void __exit exit_autofs_fs(void)
+>   
+>   module_init(init_autofs_fs)
+>   module_exit(exit_autofs_fs)
+> +MODULE_DESCRIPTION("Kernel automounter support");
+>   MODULE_LICENSE("GPL");
+>
+> ---
+> base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+> change-id: 20240527-md-fs-autofs-62625640557b
+>
 
-diff --git a/lib/crypto/arc4.c b/lib/crypto/arc4.c
-index c2020f19c652..838812d18216 100644
---- a/lib/crypto/arc4.c
-+++ b/lib/crypto/arc4.c
-@@ -71,4 +71,5 @@ void arc4_crypt(struct arc4_ctx *ctx, u8 *out, const u8 *in, unsigned int len)
- }
- EXPORT_SYMBOL(arc4_crypt);
- 
-+MODULE_DESCRIPTION("ARC4 Cipher Algorithm");
- MODULE_LICENSE("GPL");
-diff --git a/lib/crypto/des.c b/lib/crypto/des.c
-index ef5bb8822aba..9518658b97cf 100644
---- a/lib/crypto/des.c
-+++ b/lib/crypto/des.c
-@@ -899,4 +899,5 @@ void des3_ede_decrypt(const struct des3_ede_ctx *dctx, u8 *dst, const u8 *src)
- }
- EXPORT_SYMBOL_GPL(des3_ede_decrypt);
- 
-+MODULE_DESCRIPTION("DES & Triple DES EDE Cipher Algorithms");
- MODULE_LICENSE("GPL");
-diff --git a/lib/crypto/libchacha.c b/lib/crypto/libchacha.c
-index dabc3accae05..cc1be0496eb9 100644
---- a/lib/crypto/libchacha.c
-+++ b/lib/crypto/libchacha.c
-@@ -32,4 +32,5 @@ void chacha_crypt_generic(u32 *state, u8 *dst, const u8 *src,
- }
- EXPORT_SYMBOL(chacha_crypt_generic);
- 
-+MODULE_DESCRIPTION("ChaCha stream cipher (RFC7539)");
- MODULE_LICENSE("GPL");
-diff --git a/lib/crypto/poly1305.c b/lib/crypto/poly1305.c
-index 26d87fc3823e..5d8378d23e95 100644
---- a/lib/crypto/poly1305.c
-+++ b/lib/crypto/poly1305.c
-@@ -76,3 +76,4 @@ EXPORT_SYMBOL_GPL(poly1305_final_generic);
- 
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Martin Willi <martin@strongswan.org>");
-+MODULE_DESCRIPTION("Poly1305 authenticator algorithm, RFC7539");
+Acked-by: Ian Kent <raven@themaw.net>
 
----
-base-commit: e0cce98fe279b64f4a7d81b7f5c3a23d80b92fbc
-change-id: 20240528-md-lib-crypto-f520796646ff
+
+Ian
 
