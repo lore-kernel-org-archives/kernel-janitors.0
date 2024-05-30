@@ -1,98 +1,114 @@
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7222212E6D;
-	Thu, 30 May 2024 16:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B68D14B96F
+	for <kernel-janitors@vger.kernel.org>; Thu, 30 May 2024 19:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717087625; cv=none; b=jm/bJB1pCRlTdx1gHboF/NdLptB2SqrtEvIoUbH65aADPpXsndflOAx8WXtaweOCJk4i5ISzwSRgz1kB+P9sgRAstU3pIkOeIdXEXj1ROdlVPDA96ZuLICCNI+fgGeaYPe9/fWjTtHaA9FVsYNTryXScgV8NFpxMP55AF9U5nN0=
+	t=1717097323; cv=none; b=kjY9EHXnFnpn7y4osyXxq43HVc7Zvh++qVTbbFTqzK7om1PMrVyCfi2nCUxCq4O9vQPHkXXYG3iDJAyFoOkGjcTUnJavu7h4pDzIQiEnpFpU+Fe0sCGFihh6hiQ0+a4Zh3KpqaehNHcJc/0v+Yqm7d6sjwJFt4JmBJwt/cTb/go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717087625; c=relaxed/simple;
-	bh=tu5BfUUBc30BLBUzVrp9b6Xi5nxO17CyLvZGzIbmMGE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=g5nEq4Dh0aHGhs2l/k0PPELSqRNPw9eBp+qp3BMKjh+psn0ZXV6RSrxihS5XjuFad7dLGEBCA13ndMxJ/vmfoDut8grr7liCmRSbFyNsAbbL4Fn8gBeMevT+hXi2E5MTzbgJAQhI2wMEMKnrlGJvKYTggtqM0iMXTKdBBxfgd+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RhrC0ofV; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+	s=arc-20240116; t=1717097323; c=relaxed/simple;
+	bh=JJhS1pPURI+aQlYnA8wo8o0Excof0LOY618hx1VqTvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cL0LsraCv5lzjC+BrMCzJVZhC7qbFLA470iYtvaU9a1qFoq68+SpL7lk5dqvnri2H5CYob6kq2r1+VJY1dgbQ5A8QhAiY+inX7RuXjkrZrzpgAwYZIRDOaz/lwbp5TEn/rEy5Vp7VbbDk/L0Fub/9rTBEvKb0a4dF3ZRyyIKP2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fSOloOcX; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RhrC0ofV"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CFBA740E019B;
-	Thu, 30 May 2024 16:46:57 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id TCuf2bHIsw_9; Thu, 30 May 2024 16:46:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717087614; bh=RIE8A6E1KgHX+2udCSMXQi2ZYnPIEXKt4Ri2S2VuaKs=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=RhrC0ofV8YSQHAmGr8+Kguq/kJQmREmz9cnAz8rI6zbPBKte7Rc2SaCajqTqs9gQs
-	 M/0r62Eo1wuwHlYF5wP+177IrVUjGmdcx1mqaORrEtGRYGYVMcyVj8rz9TbyyRe3vA
-	 8Y/jtxA/+p8lE6BC0BTm4pL9JgUpStXvfjvdrHxYPfu/W7hChTpvc23FXXVexv/adq
-	 OLcXaSdZOctUssZ8GtLrGsVUkej/JQhgt55x32H+TMJRhYguqmE6BYMkiLgOWjlml1
-	 63Hnk+EECSu0XtDGcZNXFfn0/p2s/4XbO4xent8Pw9blFtssLk73qnl0n4q5vKR5Hr
-	 +tSzfwa8aQx1U8qMA46v3do309WRMCZKpTCMOO+vTlIo5mgQu2HMldlTh3SsPnwzDo
-	 dwgzexQ0oSysjBmik0Le4wIya03hvWJGvpiJAWBoZzasTQvt8DCqq1C96t3euB+SJg
-	 AWOP4hXu09lQ6Me+IGYOH9nf94JR0iFjE5MW92Of80P8bMg4ZmiN1wG6shDQdNlycT
-	 U2tvF4UmvTLDANQrvNPGvBZE7jS9IJx57NiU/5skcitq24M5JytlHOUeyrPMJYX0LE
-	 3ZcCfZd9yswza//T6TPEtipJBz+PallKxn2GMNNVjHq/Mq3xnCzD8LjL6B4gm0WABx
-	 554+NjvbdMUd05fFZ4kIqE94=
-Received: from [IPv6:::1] (unknown [IPv6:2a02:3038:20f:938d:41e9:261d:4ad2:487c])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ADAE940E0177;
-	Thu, 30 May 2024 16:46:42 +0000 (UTC)
-Date: Thu, 30 May 2024 18:46:39 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
- Nikolay Borisov <nik.borisov@suse.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, Kees Cook <keescook@chromium.org>,
- "H. Peter Anvin" <hpa@zytor.com>
-CC: linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
-User-Agent: K-9 Mail for Android
-In-Reply-To: <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
-References: <20240529-fortify_panic-v1-1-9923d5c77657@quicinc.com> <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com> <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
-Message-ID: <5658B525-6642-43A2-B14C-BC4AA916FBCC@alien8.de>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fSOloOcX"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e96f298fbdso13304281fa.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 30 May 2024 12:28:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717097320; x=1717702120; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DkBHvViNRUO3vQPOWF9hByywaR4nvfvUm5Gui6RAYuk=;
+        b=fSOloOcXNXYxjmiGVNhuY9XV2m89Kq35vZE6kqgq3+cvDLroE+jm6izLHUcJIjEMe0
+         ZHZgTYLFndK5txYHWfNEaFyqthvanH/pwRQqXLZXRA94wEZs0iqRwmuEGjRwLqL5rvFU
+         hNLiKC+Qv0JeDWL/BMbjOol1e8T3HcwotIOpAchxK4s1hKA7aL2B6DxJ2xwzzbkhFl2q
+         QTFjN2fgApUF1U6e4xRof73xvvfNVhmw1wtfTCwN2TmfI8WmCV+aDvC3WFQS+/8ebHKH
+         EZv7qbWYmEdrvy5lkGhze+LwqviVAbeN+xwk3VAt4nFYRRmryley0+c3rg4yHKzlXFDF
+         m8qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717097320; x=1717702120;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DkBHvViNRUO3vQPOWF9hByywaR4nvfvUm5Gui6RAYuk=;
+        b=iTdQHMmiLSFQ/S4yRxWUCAVUAOCabeuh9WQSZ2f5b1YhZxwL4NDrYX9rmu15QNlNuM
+         3P3Kmh8mZ8Y8BLYSNIlx1UuMHTrQJ1lDt+LMF1LVAY9um+DH6dXRhxbD0nhZNJH5BBqS
+         afO16U1Ih/Rk9wOGZFsrlBBcTQYYBH6pBieWWEssCT10a2PPYnBm+o4xwkhBl2pgoTH6
+         Fwie0QQQ4PkZxYyMWy2ukoCbIthnXNyd2zROWt/M/Jp6UtUG78Ww6I/Ya5jblRTn5UCT
+         fbYyUvitEQakfHG4d9xcoz6CPY2Iy1gA1xK+Hwena8+FOoUgACWrBCESmm0QNe5SrTXS
+         ZE6A==
+X-Forwarded-Encrypted: i=1; AJvYcCW8dx7r++KU6hPskD0vwZTSsb1oPQnMkXvk1tIBE8AS4xjQ4R9OmW2MhXlrmxJYug+VDu69kylXgUQpRCmZxdRge5Z9Dp1hkELxFgLTGxDe
+X-Gm-Message-State: AOJu0YwP1S5phnjm97KEFVcTBE5AEgUBTxyz3jvqXy9utYBceMoaXIbZ
+	V5DDKF9/a0fBqc6LK3EkpCi2W4ldXm4QI/g+lUxBi7i+a74KyAvG3evHZFBUBpY=
+X-Google-Smtp-Source: AGHT+IF/S3+edrbcvaVlQXG/c5PQFdSIR94fq5kVS7yYYPf+3CZ7HSU+p3YnKFoMkQ0CRC40m/czSQ==
+X-Received: by 2002:a2e:8792:0:b0:2ea:83c9:2560 with SMTP id 38308e7fff4ca-2ea848493c5mr17255771fa.46.1717097319718;
+        Thu, 30 May 2024 12:28:39 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31c6d4b6sm131122a12.74.2024.05.30.12.28.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 12:28:39 -0700 (PDT)
+Date: Thu, 30 May 2024 22:28:34 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: markus.elfring@web.de, Shyam-sundar.S-k@amd.com, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v2] platform/x86/amd/pmf: Use memdup_user()
+Message-ID: <1512f46e-112c-47ef-8620-add0f04ce86d@moroto.mountain>
+References: <50d10f0b-d108-4057-be9c-a90e2398e810@web.de>
+ <20240527083628.210491-2-thorsten.blum@toblux.com>
+ <4c2c8a76-17c7-4dbb-96ff-8488c8e953ff@moroto.mountain>
+ <1D5BDE66-ABB3-41D9-ACB0-FBAC207D55DC@toblux.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1D5BDE66-ABB3-41D9-ACB0-FBAC207D55DC@toblux.com>
 
-On May 30, 2024 6:23:36 PM GMT+02:00, Jeff Johnson <quic_jjohnson@quicinc=
-=2Ecom> wrote:
->On 5/30/2024 8:42 AM, Nikolay Borisov wrote:
->>=20
->>=20
->> On 29=2E05=2E24 =D0=B3=2E 21:09 =D1=87=2E, Jeff Johnson wrote:
->>> As discussed in [1] add a prototype for __fortify_panic() to fix the
->>> 'make W=3D1 C=3D1' warning:
->>>
->>> arch/x86/boot/compressed/misc=2Ec:535:6: warning: symbol '__fortify_pa=
-nic' was not declared=2E Should it be static?
->>=20
->> Actually doesn't it make sense to have this defined under =2E=2E/string=
-=2Eh ?=20
->> Actually given that we don't have any string fortification under the=20
->> boot/  why have the fortify _* functions at all ?
->
->I'll let Kees answer these questions since I just took guidance from him =
-:)
+On Thu, May 30, 2024 at 04:15:51PM +0200, Thorsten Blum wrote:
+> Hi Dan,
+> 
+> On 27. May 2024, at 12:38, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > Also this check isn't great:
+> > 
+> > if (dev->policy_sz < header->length + 512)
+> > 
+> > header->length is a u32 that comes from the user, so the addition can
+> > overflow.  I can't immediately see how to exploit this though since we
+> > don't seem to use header->length after this (by itself).
+> 
+> How about
+> 
+> 	if (header->length > U32_MAX - 512 || dev->policy_sz < header->length + 512)
+> 		return -EINVAL;
+> 
+> to prevent a possible overflow?
 
-The more important question is how does the decompressor build even know o=
-f this symbol? And then make it forget it again instead of adding silly pro=
-totypes=2E=2E=2E
+I've been thinking about this and actually we could do something simpler:
 
+	if (dev->policy_sz < size_add(header->length, 512)) {
 
---=20
-Sent from a small device: formatting sucks and brevity is inevitable=2E 
+> 
+> header->length is used in the next line
+> 
+> 	dev->policy_sz = header->length + 512;
+
+Yeah, but it's not used by itself.  The "header->length + 512" has been
+verified as a valid value whether it overflows or not.  Only
+"header->length" is wrong.
+
+> 
+> and if the addition overflows, we end up setting dev->policy_sz to an 
+> invalid value.
+
+regards,
+dan carpenter
+
