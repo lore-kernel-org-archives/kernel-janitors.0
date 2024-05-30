@@ -1,114 +1,100 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B68D14B96F
-	for <kernel-janitors@vger.kernel.org>; Thu, 30 May 2024 19:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12651581E6;
+	Thu, 30 May 2024 19:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717097323; cv=none; b=kjY9EHXnFnpn7y4osyXxq43HVc7Zvh++qVTbbFTqzK7om1PMrVyCfi2nCUxCq4O9vQPHkXXYG3iDJAyFoOkGjcTUnJavu7h4pDzIQiEnpFpU+Fe0sCGFihh6hiQ0+a4Zh3KpqaehNHcJc/0v+Yqm7d6sjwJFt4JmBJwt/cTb/go=
+	t=1717097979; cv=none; b=Pd7U2zrpJhFW/gskCKrfwx1+w1MMdv86EuAMZJiIHcW/0gmtzxVEXzPmx1fzMhmXb/bzB2NylwBJqsaMplpTl2FpmRNpHK1dCUDfFAwKOk2s30uRe3TJCLLOEiyM6zUU7pnYFGMUaB5QlyfqM+4WbkscuXnp1kz0LgrTAfPDKd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717097323; c=relaxed/simple;
-	bh=JJhS1pPURI+aQlYnA8wo8o0Excof0LOY618hx1VqTvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cL0LsraCv5lzjC+BrMCzJVZhC7qbFLA470iYtvaU9a1qFoq68+SpL7lk5dqvnri2H5CYob6kq2r1+VJY1dgbQ5A8QhAiY+inX7RuXjkrZrzpgAwYZIRDOaz/lwbp5TEn/rEy5Vp7VbbDk/L0Fub/9rTBEvKb0a4dF3ZRyyIKP2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fSOloOcX; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1717097979; c=relaxed/simple;
+	bh=wUld6fDYM1OOaXYHHFwLLRyYEIOykO8t+EULeUJsVwQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=lqHcbIhkehxzqdEYmMDKxnaNfbL/9iHcPgMJ2Ub4EW2qDFdUJvES6zjZ24N6KPFrijGhytcb8JFc1TYW6WX2SX9cQ22/ZRG49oj5DgpQ8BnT8P3jusKzTnYr6usyi6lmCEbGS9izZhl2gpM/HTumrhcFmUqowmTkIFh0Pq6clKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kGAodZpT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fSOloOcX"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e96f298fbdso13304281fa.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 30 May 2024 12:28:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717097320; x=1717702120; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DkBHvViNRUO3vQPOWF9hByywaR4nvfvUm5Gui6RAYuk=;
-        b=fSOloOcXNXYxjmiGVNhuY9XV2m89Kq35vZE6kqgq3+cvDLroE+jm6izLHUcJIjEMe0
-         ZHZgTYLFndK5txYHWfNEaFyqthvanH/pwRQqXLZXRA94wEZs0iqRwmuEGjRwLqL5rvFU
-         hNLiKC+Qv0JeDWL/BMbjOol1e8T3HcwotIOpAchxK4s1hKA7aL2B6DxJ2xwzzbkhFl2q
-         QTFjN2fgApUF1U6e4xRof73xvvfNVhmw1wtfTCwN2TmfI8WmCV+aDvC3WFQS+/8ebHKH
-         EZv7qbWYmEdrvy5lkGhze+LwqviVAbeN+xwk3VAt4nFYRRmryley0+c3rg4yHKzlXFDF
-         m8qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717097320; x=1717702120;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DkBHvViNRUO3vQPOWF9hByywaR4nvfvUm5Gui6RAYuk=;
-        b=iTdQHMmiLSFQ/S4yRxWUCAVUAOCabeuh9WQSZ2f5b1YhZxwL4NDrYX9rmu15QNlNuM
-         3P3Kmh8mZ8Y8BLYSNIlx1UuMHTrQJ1lDt+LMF1LVAY9um+DH6dXRhxbD0nhZNJH5BBqS
-         afO16U1Ih/Rk9wOGZFsrlBBcTQYYBH6pBieWWEssCT10a2PPYnBm+o4xwkhBl2pgoTH6
-         Fwie0QQQ4PkZxYyMWy2ukoCbIthnXNyd2zROWt/M/Jp6UtUG78Ww6I/Ya5jblRTn5UCT
-         fbYyUvitEQakfHG4d9xcoz6CPY2Iy1gA1xK+Hwena8+FOoUgACWrBCESmm0QNe5SrTXS
-         ZE6A==
-X-Forwarded-Encrypted: i=1; AJvYcCW8dx7r++KU6hPskD0vwZTSsb1oPQnMkXvk1tIBE8AS4xjQ4R9OmW2MhXlrmxJYug+VDu69kylXgUQpRCmZxdRge5Z9Dp1hkELxFgLTGxDe
-X-Gm-Message-State: AOJu0YwP1S5phnjm97KEFVcTBE5AEgUBTxyz3jvqXy9utYBceMoaXIbZ
-	V5DDKF9/a0fBqc6LK3EkpCi2W4ldXm4QI/g+lUxBi7i+a74KyAvG3evHZFBUBpY=
-X-Google-Smtp-Source: AGHT+IF/S3+edrbcvaVlQXG/c5PQFdSIR94fq5kVS7yYYPf+3CZ7HSU+p3YnKFoMkQ0CRC40m/czSQ==
-X-Received: by 2002:a2e:8792:0:b0:2ea:83c9:2560 with SMTP id 38308e7fff4ca-2ea848493c5mr17255771fa.46.1717097319718;
-        Thu, 30 May 2024 12:28:39 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31c6d4b6sm131122a12.74.2024.05.30.12.28.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 12:28:39 -0700 (PDT)
-Date: Thu, 30 May 2024 22:28:34 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: markus.elfring@web.de, Shyam-sundar.S-k@amd.com, hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v2] platform/x86/amd/pmf: Use memdup_user()
-Message-ID: <1512f46e-112c-47ef-8620-add0f04ce86d@moroto.mountain>
-References: <50d10f0b-d108-4057-be9c-a90e2398e810@web.de>
- <20240527083628.210491-2-thorsten.blum@toblux.com>
- <4c2c8a76-17c7-4dbb-96ff-8488c8e953ff@moroto.mountain>
- <1D5BDE66-ABB3-41D9-ACB0-FBAC207D55DC@toblux.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kGAodZpT"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UGpGxU024728;
+	Thu, 30 May 2024 19:39:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=G3LhfMYXLod+WXyf4kdGO/
+	jHODsxn9J3pVc37hfWDsY=; b=kGAodZpTwWYkwEBVdPEUJz2E1FDOJNwQxzvj6T
+	IFhFCRegim8E8nAlrQ7L7V+Wf6u58oLJEzp2o2xnzaN0xm3eqKBBYpyDrCgCOKSa
+	F8Um25XZwq7hDLwJAWck9qBBt1ZfPpklHN5FhfnUa4F3SUy9i3SnMIvIPXz6BQD+
+	Qh7NIgKDmmho3VKj4GCuzLosKDlerVbk0II1YK5TP/0WR9DwHKMagoDn+DU6peIR
+	XGpaXYXf7KMgn5lNve4iJveErH9sHvMYmxd9mg+lzqo/9qHtOJVwKlioKpb43/Ba
+	8fPddLiDCD5D+hcFZVUtVEwzVAYN4Q+RmRbNxWdXwfvAgG4Q==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0qmyvw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 May 2024 19:39:32 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44UJdVmU011554
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 May 2024 19:39:31 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
+ 2024 12:39:30 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 30 May 2024 12:39:26 -0700
+Subject: [PATCH] kcsan: test: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1D5BDE66-ABB3-41D9-ACB0-FBAC207D55DC@toblux.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240530-md-kernel-kcsan-v1-1-a6f69570fdf6@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAO7VWGYC/x3MywrCQAxA0V8pWRuYPgYZf0VczCPa0DZKolIo/
+ XenLs/i3g2MlMng0myg9GXjp1S0pwbyGOVByKUaOtcNzvcOl4ITqdCMU7YoGM7B5+B9W/oEtXo
+ p3Xn9H6+36hSNMGmUPB6fmeWz4hLtTQr7/gMZhQwLgAAAAA==
+To: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>
+CC: <kasan-dev@googlegroups.com>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: p3zlZjerhl5YzVcwUELOeuVp3a5BI-Jf
+X-Proofpoint-ORIG-GUID: p3zlZjerhl5YzVcwUELOeuVp3a5BI-Jf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-30_13,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=999 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405300145
 
-On Thu, May 30, 2024 at 04:15:51PM +0200, Thorsten Blum wrote:
-> Hi Dan,
-> 
-> On 27. May 2024, at 12:38, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> > Also this check isn't great:
-> > 
-> > if (dev->policy_sz < header->length + 512)
-> > 
-> > header->length is a u32 that comes from the user, so the addition can
-> > overflow.  I can't immediately see how to exploit this though since we
-> > don't seem to use header->length after this (by itself).
-> 
-> How about
-> 
-> 	if (header->length > U32_MAX - 512 || dev->policy_sz < header->length + 512)
-> 		return -EINVAL;
-> 
-> to prevent a possible overflow?
+Fix the warning reported by 'make C=1 W=1':
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/kcsan/kcsan_test.o
 
-I've been thinking about this and actually we could do something simpler:
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ kernel/kcsan/kcsan_test.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-	if (dev->policy_sz < size_add(header->length, 512)) {
+diff --git a/kernel/kcsan/kcsan_test.c b/kernel/kcsan/kcsan_test.c
+index 0c17b4c83e1c..117d9d4d3c3b 100644
+--- a/kernel/kcsan/kcsan_test.c
++++ b/kernel/kcsan/kcsan_test.c
+@@ -1620,5 +1620,6 @@ static struct kunit_suite kcsan_test_suite = {
+ 
+ kunit_test_suites(&kcsan_test_suite);
+ 
++MODULE_DESCRIPTION("KCSAN test suite");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Marco Elver <elver@google.com>");
 
-> 
-> header->length is used in the next line
-> 
-> 	dev->policy_sz = header->length + 512;
-
-Yeah, but it's not used by itself.  The "header->length + 512" has been
-verified as a valid value whether it overflows or not.  Only
-"header->length" is wrong.
-
-> 
-> and if the addition overflows, we end up setting dev->policy_sz to an 
-> invalid value.
-
-regards,
-dan carpenter
+---
+base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
+change-id: 20240530-md-kernel-kcsan-9795c9551d3b
 
