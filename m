@@ -1,101 +1,104 @@
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B5B17276E
-	for <kernel-janitors@vger.kernel.org>; Thu, 30 May 2024 11:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB8117D8A9;
+	Thu, 30 May 2024 14:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717069626; cv=none; b=JzO5VkTXH3QWd7RQ3xsR4MrG8tcNxMvGd8TbyuAR4EjLluFCRokfsb50Riy95eNsm7hszHbfyvOfShfYlS2sYO242JZEE37qeH886pOK2mo/uMRvd/+MxJfUKANEew1gpgvhPka0dmBUNuVBH0tjM3exVxiNjL9YZtUL49eEIPY=
+	t=1717078099; cv=none; b=MIGaK3e6rN0x0WeMzVtGyCnxU7USCKLQ8yXHV8pjzpnwF0qhlWVMJGwFzd7RUJ0MWgHiTltdmWsDECtzAolLFW6wQQxGpCiC/uTLR75L925njG5648D8tESalyn/6olPD+Y/KaBOb+ZIuwCdmwn96OGFbAiWS8kvyvYqbt73W7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717069626; c=relaxed/simple;
-	bh=H4n5tiajAuLybl32eLwpqqCgT1Th1gLfLoCWVPXN0QI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YeCXXRbSmIf7BKoXsKLqgwIMDNjKwZKT8ewkcHCH2FlhyiWjx4oAKN+faF79M5RhUwY6ZeVaA0GpdNtccQnFHmK+zsuTL1qBJnZtNC6qfgLQ/xLZqyMaKRRuzF5wHCU5cNFsLoQaPU2lQDlFb3RQgeydpB+tXb0WRnlzuD3cNzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=LtTJx2ZD; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+	s=arc-20240116; t=1717078099; c=relaxed/simple;
+	bh=EZ6CNDZ/17E/DkuT+VWNmITW9/kfR2rHBbFL3oFnVPw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RckPjLl2p8ueT0WnxINvBllUNQBcX2SAgJYZcFrt81v97kPN2W7xpTTS9MOHyWQYn50QxOPrV7yL4fjk4ZQW/iOSK5ERf68zYUoeLnAmji42p+M1T2ktLJTs1h2eMjyZv8XEVog/jMQcHD/udl8ZNpkZIMSCDD5K0ADF5ZbKlD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WTopETGU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="LtTJx2ZD"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=73plU5nPl0YP8aLX+ho3SAJc5O3ORK+fUok+bCc6Xvo=; b=LtTJx2ZDJQiFRvK5
-	Q4FntvQ/cN0iK0gUxnwJLGsDUwXwksgEw4Jqn5vhlxWtrAOzil0qSe0Y+6DiToYXqup4bBY85HiX5
-	GtxR2x95c1jpt032c1CJEU+OySnpZZNrqVHROKuFDcDyIsrG8gi42H8M/r08hek+m3C3gC2h7i6DU
-	AYx+FDVv+2mwlmG0A39jOlBR5dcE1Ot8QlUsfuXb57wZY1/WUwWQnEHHWS1hJ+nlNZciDIE4mQy8q
-	OW9Pb2FAtJfv8FMa6LfHDCHgbUgEnRxYn4XI1AYReCKG55WAWN1qXOsE7u2euKTiCaXrSkDkjAiFz
-	FzXDkggS+hkpo2H0Ag==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sCeFJ-003M1A-0O;
-	Thu, 30 May 2024 11:47:01 +0000
-Date: Thu, 30 May 2024 11:47:01 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: cocci@inria.fr, kernel-janitors@vger.kernel.org,
-	Julia Lawall <julia.lawall@inria.fr>
-Subject: Re: [cocci] Looking at lock scopes (with SmPL)?
-Message-ID: <ZlhnNYzYHF59Ke56@gallifrey>
-References: <7eb9626c-da7b-414d-bf50-da1eed27be31@web.de>
- <alpine.DEB.2.22.394.2405261847380.16852@hadrien>
- <2dc6a1c7-79bf-42e3-95cc-599a1e154f57@web.de>
- <Zlckg1LH-2TBew85@gallifrey>
- <e6de2b59-c9c5-4714-8a4d-5c5970b9fad4@web.de>
- <ZlfIl39GRcXKFRn6@gallifrey>
- <b9fbac02-a1eb-460e-80f0-07b32e704bb2@web.de>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WTopETGU"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44U5hH0r015684;
+	Thu, 30 May 2024 14:07:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	s5xSVs/mPJRwYaKkrhVOTQmXac0Ej6Efg8321SwZZhI=; b=WTopETGUSoLaAfHj
+	yzsAv5EnJuQB+SALUtOVsJow/qAJHrbdkYAprpyf7UIizMkBFCzkQ94ZvaQGnRZr
+	gzl2DvXF2XFoGTR/+tIf+66a5EkkMkuSJdEb2KXJ1gvfJ5RRtLO1pHhHu2wb4ieL
+	pCi81c69EI2HcKNz5rd+3QFPjER0FJQUQ8HVZDPTfJ4i97x4ceCwxLKZYaJ0YIux
+	cZ+HCFxzGTRbPz1XvphL2iEkEzJH/NztJ61mFvbzP8osozOrny18z7T2ERFcFIn2
+	wqldoairb4vsR7cRDB7D2vBgdqAjvX6LUE44zy6vQSkYVh4XjIuV5pISQFn+CnNA
+	3xW74A==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ydyws3uyu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 May 2024 14:07:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44UE7qYU018637
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 May 2024 14:07:52 GMT
+Received: from [10.110.109.163] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
+ 2024 07:07:50 -0700
+Message-ID: <18ca9445-588c-4c41-b274-8f7f0ea589b5@quicinc.com>
+Date: Thu, 30 May 2024 07:07:49 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <b9fbac02-a1eb-460e-80f0-07b32e704bb2@web.de>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 11:45:24 up 21 days, 22:59,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KEYS: trusted: add MODULE_DESCRIPTION()
+Content-Language: en-US
+To: Jarkko Sakkinen <jarkko@kernel.org>,
+        James Bottomley
+	<James.Bottomley@HansenPartnership.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, James
+ Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+CC: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20240529-md-trusted-v1-1-56c9a0ae8e28@quicinc.com>
+ <D1MQK4XPVIUW.2EUDV0050EY5L@kernel.org>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <D1MQK4XPVIUW.2EUDV0050EY5L@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 0eo2TFYGszRQoY_vu6BJyUxnh2959CFl
+X-Proofpoint-GUID: 0eo2TFYGszRQoY_vu6BJyUxnh2959CFl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-30_09,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ malwarescore=0 impostorscore=0 suspectscore=0 mlxscore=0 mlxlogscore=819
+ priorityscore=1501 spamscore=0 lowpriorityscore=0 bulkscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405300107
 
-* Markus Elfring (Markus.Elfring@web.de) wrote:
-> >>> Is there a way to look for functions that have a lock, followed by unlocks on
-> >>> multiple error paths?
-> >>
-> >> Probably, yes.
-> >> https://cwe.mitre.org/data/definitions/667.html
-> >>
-> >>
-> >>> IMHO the nicest thing with guard is simplifying lots of error paths, and
-> >>> innevitably someone forgets to unlock in one of them.
-> >>
-> >> Would you like to improve the support anyhow for more complete and succinct
-> >> resource management in affected software areas?
-> >
-> > I was just suggesting a perhaps more targeted approach rather than
-> > just looking for all cases of lock/unlock.
+On 5/29/2024 10:39 PM, Jarkko Sakkinen wrote:
+> On Thu May 30, 2024 at 4:02 AM EEST, Jeff Johnson wrote:
+>> Fix the 'make W=1' warning:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/trusted-keys/trusted.o
 > 
-> How would you like to handle source code analyses if lock scopes
-> would occasionally be distributed over different function implementations?
+> Maybe instead:
+> 
+> """
+> KEYS: trusted: Add the missing MODULE_DESCRIPTION()
+> 
+> kbuild reports:
+> 
+> WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/trusted-keys/trusted.o
+> 
+> Add the missing MODULE_DESCRIPTION() macro invocation.
 
-It depends on the aim:
-  a) If you want to find some cases to replace with guard, then I'd
-    only do the simple case where there is nothing distributed across
-    functions.
+Can do, v2 coming...
 
-  b) If you're trying to prove/detect failures then that needs
-    to look at the hard cases I guess; but I think there are other
-    tools doing that??
 
-> Will development interests grow also for checking combinations according to
-> other pairs of actions?
-
-This is only a suggestion from me; I wouldn't drive too much off it.
-
-Dave
-
-> Regards,
-> Markus
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
