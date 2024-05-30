@@ -1,47 +1,47 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47C346521;
-	Thu, 30 May 2024 20:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D082925634;
+	Thu, 30 May 2024 20:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717099977; cv=none; b=bD5YAQeC4XudEGrJJ5yo2C/ib06IdSPSscfNnRuqW9FA7Nxpb570MCAxwlPnzYF8fsZwTy7rsediCqtdH7YeJ5SFYmElcYIRJdZWaoO9v2bhRX8F1Sgk1dgo9kd5mvA6xeiC2upKKjXNSCBviNMUIZXbXfPS5iDKJ/XdUWlr6e8=
+	t=1717101798; cv=none; b=WlEsPRWMUKNgLlga7qbBTuhwQYIzLb0ryBqq4CxO/fyFtgHnqTKf2bpMWgi6JABWqZMOLIo5tDUuXsY47kHr2OL6bjZnYm/b88U68KsaGhj0CaIHiTOrvAJiFLpAa6PRb49aUG7s9mMyYpHPksxTVX3P/8c+li3CEna7UNnvhb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717099977; c=relaxed/simple;
-	bh=1vL07RCqj3kFTFg3bYnNnRy8fhnzA3ra/UaxnGk4vyI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=RmqEFtR5RLNxOeELzDY/NmptztVMgIcClAMPmqR2pRkzzAv65LCtbOa5AlJC+GwJUU5/8cO8FEJ2Rsym2SfSzb/GVPd7VUQTfUtCVCNNqUz19zimTzjMkIB0jkFOOQW6jizo82uvnpAGygH/42tmSy8JWHqjUORQuH0MraDNbso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BRoAtNLK; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1717101798; c=relaxed/simple;
+	bh=b6+9QcaqPR6eKd7vhRCL3IX8thga/VHY8xqdaoMG6a8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=IauSOvwdVNCYoaSt/B8fG+pbuWZx7gt8m2c77d0jm6PxR3/mvsxr/g0mdXYecI54dXGAwZfo+APgUNYKL7oMV/HCGAa3+nDuJCajHeln8VFumACUqUjN77BetRiKmDqc+kj8WrYgFT6KUB28xC7ymqsoSVMoVbuSvD6Ypy47eU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JkHVRxM8; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BRoAtNLK"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UDu6Eb006618;
-	Thu, 30 May 2024 20:12:07 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JkHVRxM8"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UJPcrp015856;
+	Thu, 30 May 2024 20:42:54 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=pq5XmJfJwcsuxLIpo5U6KX
-	z1UY1KjzFzxBckgzVuShM=; b=BRoAtNLKzVEMEJ96rQj66NUURQccCrzvhMCP/x
-	VU2OJADSDYM9zuF8smc4N0hk54/0hE87n0TD9lpfI4hc/KPTkyV9WT+nxjGeKGK7
-	JF8HJms7SOmMBOo8zSAo3Y6yEI3Cu5DMgQDHiOZEnzeDlcIf7oZt+mSedT3u65UU
-	KlX444YgYg191nbFUZSdERLq46K7mcnihe1YxXG77asonK9h1X4CPAgKyrrKCBS5
-	DoC/A8mPQaoq92mFlgV4SE10WsAxmHIp+Rj+NU1c1qtmfl3ct4k83Av0qfU7OpdX
-	ZP96fcEG+JHPfogxLAdlCIwMgEQJrKN6jjeghTeNusNopKkQ==
+	:mime-version:subject:to; s=qcppdkim1; bh=jA5uTw0t5SGe/0e2eS5aqq
+	8ToPbks7henFGLd7/wDGE=; b=JkHVRxM8fyYtzNCZUKgw1g4gDCicSOAbzodrRF
+	XYG5GNPsuywp8Q6gn64Ma4EBGfSQueKpStmLKMDFcnRUBKPdvLWz1e7N5RNqVjZn
+	gaX2XDc9WP+MX2KtVIYObtWcnFHTb7dN6osBbhyBDWqHALT7Hr8DoxSs9v4sqrKq
+	R6D/Qleo8h2h6PnhNaT9eTiYMolqRUFIyXYZS93YpO1QkLieKv286mtO3P3Vo0yr
+	Y6n171px//wsQV8UQbZwSDxMeN1Sl0k2WfOQ7c76cG8De/CFCZuQBG8Ke5hY5TA5
+	dMTjn6IJnZPwYyWze9QEDLQ8IvnulYnp6UG8u90lhKuGsgZA==
 Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ye96bk9hr-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2pw6dy-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 20:12:06 +0000 (GMT)
+	Thu, 30 May 2024 20:42:54 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44UKC5V8008633
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44UKgrvH012330
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 20:12:05 GMT
+	Thu, 30 May 2024 20:42:53 GMT
 Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
- 2024 13:12:04 -0700
+ 2024 13:42:51 -0700
 From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 30 May 2024 13:12:03 -0700
-Subject: [PATCH] perf/x86/rapl: add missing MODULE_DESCRIPTION()
+Date: Thu, 30 May 2024 13:42:51 -0700
+Subject: [PATCH] perf/x86/intel: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,10 +50,10 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240530-md-arch-x86-events-v1-1-e45ffa8af99f@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAJLdWGYC/x3MQQqDMBBA0avIrDuQRiO2VyldJHE0AzUtM1YC4
- t2bunyL/3dQEiaFe7OD0MbK71xxvTQQk88zIY/VYI3tjGsNLiN6iQnL0CNtlFfFW+tctF0/BDt
- BDT9CE5dz+nhWB6+EQXyO6b96cf4WXLyuJHAcP9c2A4eDAAAA
+Message-ID: <20240530-md-arch-x86-events-intel-v1-1-8252194ed20a@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAMrkWGYC/x3MQQqDMBBA0avIrDuQxFZCr1K6iHFsBjQtM1EC4
+ t2bdvkW/x+gJEwK9+4AoZ2V37nBXjqIKeQXIU/N4Iy7mltvcJ0wSExY/YC0Uy6KnAstOA/eRW9
+ N76yFln+EZq7/9ePZPAYlHCXkmH7DhfNWcQ1aSOA8v5d7FQKJAAAA
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Namhyung Kim
@@ -76,39 +76,54 @@ X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: qU2X86iXi3KjpsQyUgMtIeztTM9ZL6Hm
-X-Proofpoint-ORIG-GUID: qU2X86iXi3KjpsQyUgMtIeztTM9ZL6Hm
+X-Proofpoint-GUID: PoUOubvu90PmO8mGUpyGGHTz7Prt8fhJ
+X-Proofpoint-ORIG-GUID: PoUOubvu90PmO8mGUpyGGHTz7Prt8fhJ
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
  definitions=2024-05-30_17,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=999 spamscore=0 clxscore=1011
- priorityscore=1501 impostorscore=0 malwarescore=0 suspectscore=0
- bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405300150
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 spamscore=0 adultscore=0 clxscore=1015 bulkscore=0
+ mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405300154
 
-Fix the warning from 'make C=1 W=1':
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/events/rapl.o
+Fix the 'make W=1 C=1' warnings:
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/events/intel/intel-uncore.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/events/intel/intel-cstate.o
 
 Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
- arch/x86/events/rapl.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/events/intel/cstate.c | 1 +
+ arch/x86/events/intel/uncore.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
-index 46e673585560..0c5e7a7c43ac 100644
---- a/arch/x86/events/rapl.c
-+++ b/arch/x86/events/rapl.c
-@@ -64,6 +64,7 @@
- #include "perf_event.h"
- #include "probe.h"
+diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
+index e64eaa8dda5a..9d6e8f13d13a 100644
+--- a/arch/x86/events/intel/cstate.c
++++ b/arch/x86/events/intel/cstate.c
+@@ -114,6 +114,7 @@
+ #include "../perf_event.h"
+ #include "../probe.h"
  
-+MODULE_DESCRIPTION("Support Intel/AMD RAPL energy consumption counters");
++MODULE_DESCRIPTION("Support for Intel cstate performance events");
  MODULE_LICENSE("GPL");
  
- /*
+ #define DEFINE_CSTATE_FORMAT_ATTR(_var, _name, _format)		\
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index 419c517b8594..c68f5b39952b 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -34,6 +34,7 @@ static struct event_constraint uncore_constraint_fixed =
+ struct event_constraint uncore_constraint_empty =
+ 	EVENT_CONSTRAINT(0, 0, 0);
+ 
++MODULE_DESCRIPTION("Support for Intel uncore performance events");
+ MODULE_LICENSE("GPL");
+ 
+ int uncore_pcibus_to_dieid(struct pci_bus *bus)
 
 ---
 base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-change-id: 20240530-md-arch-x86-events-9355c2468b2f
+change-id: 20240530-md-arch-x86-events-intel-f682c8103211
 
