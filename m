@@ -1,104 +1,83 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EE26AB8;
-	Wed, 29 May 2024 23:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1256AB8
+	for <kernel-janitors@vger.kernel.org>; Thu, 30 May 2024 00:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717025525; cv=none; b=ct/eCGhM6l9BEZ2oHeaIY9tWJa8rT4eidk02xhD1rWwbLvfEUWyvwqhMUiJCXKMwfFjnhDACmz5f4724/wFZqvmuWm5n+gSKpyWU4caJev0SLtrP9Iv/VXVHYu4918PifOKzLBvNE8uw/K9erraphFSzG1M9hTdRMsbVfXck0UQ=
+	t=1717029019; cv=none; b=EHnm1ItHxwRph4bKtI/RqLFXPbkm+ULj/qhwP+jJYNWnliC2SAXt0072ZoZQPuu61zkCLoX8zIR5YMYmaVGNzEJzy24DPmguVl9rwBGmUUw3ib9I8gZJHyNoZG8HFwEwuufnUyfb8xWAmOylwLI6+FNihQsZexpbjlnRro7XfwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717025525; c=relaxed/simple;
-	bh=4mKxqehj52IvxkEGVqhXNt6WptidXy0S3B7dAFZnIZM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Ijm3miXJF47uAV01T9vPOWRyOkuf55nUom0RC+Zf59aEb4Qo6RfNj6EzSoeTpRM/0l+/yY687o6s8eleptyrtjzKHq0JxSzi3s1zKLfZ7QWs/kFxDtddCmwO1qLRgLAllSXih3znw3TfZBgyD65tAOVD2z/tM7jKxX+OccpHWtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k//smB2i; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1717029019; c=relaxed/simple;
+	bh=a+csLBKh7vG86Q4VxWgkaELUneHoYdn+iWGrbBlVnvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ddF49TL0EX/9flVy58hW42mYJ5IU/kefdNmOfo3JRIH5IF4FIvLv0t+Ebyotw9viTFhIFjI2CX0LZ0HuvIDWfgWCcLrPF3cRzDf8VaL1FzPA6TamuCYSEF+VX/rJIUPpjD8MUhpDWtWFHiI0vwo78ztIer/iP0E1nKqyRSKJ33g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=inqQ30BR; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k//smB2i"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44TJne5M000498;
-	Wed, 29 May 2024 23:32:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=aocjmcSyEYUc6gNKmBCW7k
-	6+aHjWPJTQ7E+fx5JOMfU=; b=k//smB2irEnyq1uh/Vh2dSBzHQf6XsrQlsj+s/
-	IdWAVdb3lTecyIabZEw0DKLEhpv0kav3+UBopSa5OnjPL+EsSLgJNV6PRX8HME/t
-	srePae8xDlkVMfYIjzTxp6gPuabcLr7i1VaZs63K6WLzmxBbmOPhNPY/Iz9y7rup
-	QPoSWyfyDk3DMFHF+CoCcDfKuzLBG4tchFL0NIyftRruU6KS8nXA8wgKteXZLGOb
-	OY/llB1F4jn0yrcz8Ez5M57miSU31LRkLhcViVLyYRHdXdegjnxrVPUja/xyH6gh
-	Sqgkii2qN4wcAZ5ClRqocGZdv638gA7gYJXdnL4k3iTmoTSA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2ptmtr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 23:32:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44TNVx3u015767
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 May 2024 23:31:59 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 29 May
- 2024 16:31:59 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 29 May 2024 16:31:58 -0700
-Subject: [PATCH] resource: Add missing MODULE_DESCRIPTION()
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="inqQ30BR"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=mDHsrjmsSKuGJOxFPdYl7R9DdKesdciFyou/vLDH22Q=; b=inqQ30BRY9KrFCAN
+	bv/llnrdQnVsCQtsb9c9BeObB5g7c8e2PJJO0nD3jCjLOPzxc9b2x874nARHyqI/qdVaVcykfxT1O
+	DUT3DX3yaq58jspV71rQPtxWvSUv9dGNaSp/YdREWO7fZwDfODLlAFEwHnD82Jhd3h+T/EJn11KF5
+	kPPXl/M8Pby6m308g2vIVH9tkVppD3/+susPHyjZEHjoQPr+bidh5+950+PQlGvmB584TAjapXVyx
+	6moNpG1CxD7o407YFHz35PVG3yfjgxeQe2Mxi1qRQsqn0rronUta56+Pn7mC1jlhNxTQsci8NvvcQ
+	iy0VaXWCirn9Gb33+Q==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sCTgN-003HaV-0i;
+	Thu, 30 May 2024 00:30:15 +0000
+Date: Thu, 30 May 2024 00:30:15 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: cocci@inria.fr, kernel-janitors@vger.kernel.org,
+	Julia Lawall <julia.lawall@inria.fr>
+Subject: Re: [cocci] Looking at guard usage (with SmPL)
+Message-ID: <ZlfIl39GRcXKFRn6@gallifrey>
+References: <7eb9626c-da7b-414d-bf50-da1eed27be31@web.de>
+ <alpine.DEB.2.22.394.2405261847380.16852@hadrien>
+ <2dc6a1c7-79bf-42e3-95cc-599a1e154f57@web.de>
+ <Zlckg1LH-2TBew85@gallifrey>
+ <e6de2b59-c9c5-4714-8a4d-5c5970b9fad4@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240529-md-kernel-resource_kunit-v1-1-bb719784b714@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAO26V2YC/x3M0QqDMAxA0V+RPC8QiyLbr4wxapvNoNaRWBHEf
- 1+3x/Nw7wHGKmxwqw5Q3sRkSQX1pYIw+PRmlFgMjlxDrbviHHFkTTyhsi1ZAz/HnGRFatouEtX
- UdwQl/yi/ZP+v74/i3htjrz6F4TecJOUdZ28rK5znF7Kwn2uJAAAA
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>,
-        Andrew Morton
-	<akpm@linux-foundation.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dU00OP-p4wFyV_IWma38yQB1RHgS-fCk
-X-Proofpoint-ORIG-GUID: dU00OP-p4wFyV_IWma38yQB1RHgS-fCk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-29_16,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 spamscore=0 adultscore=0 clxscore=1011 bulkscore=0
- mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 mlxlogscore=904
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405290169
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <e6de2b59-c9c5-4714-8a4d-5c5970b9fad4@web.de>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 00:28:43 up 21 days, 11:42,  1 user,  load average: 0.06, 0.04, 0.01
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-Fix the 'make W=1' warning:
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/resource_kunit.o
+* Markus Elfring (Markus.Elfring@web.de) wrote:
+> > Is there a way to look for functions that have a lock, followed by unlocks on
+> > multiple error paths?
+> 
+> Probably, yes.
+> https://cwe.mitre.org/data/definitions/667.html
+> 
+> 
+> > IMHO the nicest thing with guard is simplifying lots of error paths, and
+> > innevitably someone forgets to unlock in one of them.
+> 
+> Would you like to improve the support anyhow for more complete and succinct
+> resource management in affected software areas?
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- kernel/resource_kunit.c | 1 +
- 1 file changed, 1 insertion(+)
+I was just suggesting a perhaps more targeted approach rather than
+just looking for all cases of lock/unlock.
 
-diff --git a/kernel/resource_kunit.c b/kernel/resource_kunit.c
-index 58ab9f914602..0e509985a44a 100644
---- a/kernel/resource_kunit.c
-+++ b/kernel/resource_kunit.c
-@@ -149,4 +149,5 @@ static struct kunit_suite resource_test_suite = {
- };
- kunit_test_suite(resource_test_suite);
- 
-+MODULE_DESCRIPTION("I/O Port & Memory Resource manager unit tests");
- MODULE_LICENSE("GPL");
+Dave
 
----
-base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-change-id: 20240529-md-kernel-resource_kunit-0457d0010b70
-
+> Regards,
+> Markus
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
