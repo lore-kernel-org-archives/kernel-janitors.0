@@ -1,45 +1,51 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37B7168DA;
-	Fri, 31 May 2024 21:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF9F2C1AE;
+	Fri, 31 May 2024 21:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717189477; cv=none; b=T9pHlp69E1fBMRlVOWuZVO25gUJFFTlnIw7Xaqn4t+hAjHWviEokWfTcuI64yUjCUZ9NFeFGci/aMg4e9UkHJqMt+bt/rhBUbcC7RlMLmUaASDMoY9EdVsqScXNFhZTE3rzjQ9VaUkw56gsZnCs426127CRb30JH1Zt8o7EmoDM=
+	t=1717189609; cv=none; b=jgKrzG4jr4VfSf+ClUUBTTnDdPhecDL3nE0N8oThWGO7njEtOGdkPLZlZC/SuStQG7Yhkh8MKYP2nUhVCrcH64yHyU6T98KfwntbnSBkgQSzroFd1EZjafZMym7azNmXIA54Twt6+vfEsBIzy20JO1fcfw7Xby5UvDfDL0IZveI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717189477; c=relaxed/simple;
-	bh=nlf2Py+keWPZWb2WEcXyuXnPsjey2AglcXUUfxlnR8I=;
+	s=arc-20240116; t=1717189609; c=relaxed/simple;
+	bh=wy7ME3NK+NpCINbYpHDrtrVy3m+OPYt3joS/LqYwsBQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ODmlVKDgNFJL5ty+d5IugHTyuHkDFg2mTAHkceq4EwGJ5RV6jKhMoqdbaprFth3PDsbKUs6JE2M6lpW27hD4hKKzldaiBfGi1Bms3bSbi3Mfv//4Ko6iEkOQW4RGuMsXNOIa9XOu4NE880Esa1SQpfLe9/vKf+cdSaMmYgmoC/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nO3fy8fg; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=f+Cu2Z1ithDBj0GWBze3ewWoE1mJGkIm4f0UULnTwq+4ufYJye/4DPoE7h4ApEXTvuPvbO/vFXtmUbc2mqP2MatL6lc7nDLVU7dEw76QAAh2s8UPWxcAfUb/ABv3bD9T24sIiCV7MTeY2SKH5zdwTduZzLwa4E8i2X6Uwt/T92w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZewBY5t/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nO3fy8fg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39EC0C116B1;
-	Fri, 31 May 2024 21:04:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZewBY5t/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A692C116B1;
+	Fri, 31 May 2024 21:06:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717189477;
-	bh=nlf2Py+keWPZWb2WEcXyuXnPsjey2AglcXUUfxlnR8I=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=nO3fy8fgQWn0NjyZ8qCpS1EbBXel6/8sp/s2m7QTRhjbVh2L3lh6BQqV45wV0NGnQ
-	 NUwO6NMl/83GNmFtwZDl0TiF+pVcT2VyYqFsyk9kMFWk/W/ISrDPvrB8RD6sGLjahn
-	 5oOjXG8qKT8D22/7KKNuSnCz2ZrXTbDQR1Tv1hTRCBOP1eTTvM34WkgbyR0wVTJhHB
-	 5OQkpTBLSl50CWfoRhIKhdvZF75NVtqTdJ5zGmF5yGdi5LaVmsGi8aoYAqzKtTZFke
-	 tGTVzBp3iSiWKeQYHauYzewx9ClsPafPWCpyPBPjK2SBhSFO6Y/Llgd1SM+HkChLXL
-	 k68EsIKPxl5mQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id D2E67CE1347; Fri, 31 May 2024 14:04:36 -0700 (PDT)
-Date: Fri, 31 May 2024 14:04:36 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] kcsan: test: add missing MODULE_DESCRIPTION() macro
-Message-ID: <2fae7fe7-1e4f-467a-b03d-3fcd6025d144@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240530-md-kernel-kcsan-v1-1-a6f69570fdf6@quicinc.com>
- <CANpmjNN1qf=uUnetER3CPZ9d5DSU_S5n-4dka3mDKgV-Jq0Jgw@mail.gmail.com>
- <e9b4a22f-1842-4c37-8248-4f715d70a6c1@quicinc.com>
+	s=k20201202; t=1717189608;
+	bh=wy7ME3NK+NpCINbYpHDrtrVy3m+OPYt3joS/LqYwsBQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZewBY5t/gjrzWBfnaqyXsvegO39ZktPzm+Cyll3Afn2d87/YSXcnGd6lqJWDbGopt
+	 9lSE0QoRzfYavhED7N5Fu2Ug3FBtE3gVNMJFHYbTd0qqSYnrPMHKga6kksHET5fLH0
+	 G/PYefNDRJlCqIgTMVo5bys/KF0qAXQIFg/0dlsiH5ZONRvJHNVMlRCj/JFna0w0IJ
+	 Dkr9P3KnKnio5topk/oA1uuvOUfWr+nEx9tolQq5prm/5AsXxFd48FF/ozVu0d8R4C
+	 lKZJAdoqpunIoX0cdCQNIHk0p5PuX7VRjqcVXtS6md1vYrLoK6zHe1fnEOXk6/V0pw
+	 O5/jgLT4WFUMw==
+Date: Fri, 31 May 2024 14:06:48 -0700
+From: Kees Cook <kees@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
+Message-ID: <202405311359.EFC7345EC@keescook>
+References: <20240529-fortify_panic-v1-1-9923d5c77657@quicinc.com>
+ <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
+ <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
+ <5658B525-6642-43A2-B14C-BC4AA916FBCC@alien8.de>
+ <202405310951.56D9BD5C41@keescook>
+ <20240531190816.GLZlogIGgpc5maOeLN@fat_crate.local>
+ <202405311345.D91BF6E9@keescook>
+ <20240531204947.GNZlo367G0YXVbOk1I@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -48,25 +54,48 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e9b4a22f-1842-4c37-8248-4f715d70a6c1@quicinc.com>
+In-Reply-To: <20240531204947.GNZlo367G0YXVbOk1I@fat_crate.local>
 
-On Fri, May 31, 2024 at 06:54:03AM -0700, Jeff Johnson wrote:
-> On 5/31/2024 12:47 AM, Marco Elver wrote:
-> > On Thu, 30 May 2024 at 21:39, Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
-> >>
-> >> Fix the warning reported by 'make C=1 W=1':
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/kcsan/kcsan_test.o
-> >>
-> >> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> > 
-> > Reviewed-by: Marco Elver <elver@google.com>
-> > 
-> > Jeff, do you have a tree to take this through?
-> > If not - Paul, could this go through your tree again?
+On Fri, May 31, 2024 at 10:49:47PM +0200, Borislav Petkov wrote:
+> On Fri, May 31, 2024 at 01:46:37PM -0700, Kees Cook wrote:
+> > Please do not do this. It still benefits from compile-time sanity
+> > checking.
 > 
-> I don't currently have a tree. Kalle is in the process of relocating the
-> wireless ath tree so that I can push, but that is still work in progress.
+> Care to elaborate how exactly it benefits?
 
-Queued and pushed with Marco's Reviewed-by, thank you both!
+Because when new code gets added that accidentally does improper string
+handling, fortify will yell about it at compile time. e.g, if someone
+typos something like:
 
-							Thanx, Paul
+
+#define BUF_LEN_FOO	16
+...
+#define BUF_LEN_BAR	10
+
+struct foo {
+	...
+	char buf[BUF_LEN_FOO];
+	...
+};
+
+...
+
+void process_stuff(struct foo *p)
+{
+	...
+	char local_copy[BUF_LEN_BAR];
+	...
+
+	strcpy(local_copy, p->buf);
+	...
+}
+
+or refactors and forgets to change some name, etc. It's all for catching
+bugs before they happen, etc. And when source string lengths aren't
+known, the runtime checking can kick in too. It happens x86 boot doesn't
+have any of those (good!) so __fortify_panic() goes unused there. But
+that's a larger topic covered by stuff like
+CONFIG_LD_DEAD_CODE_DATA_ELIMINATION, etc.
+
+-- 
+Kees Cook
