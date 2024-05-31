@@ -1,71 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7A37D3F4;
-	Fri, 31 May 2024 10:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19B154673;
+	Fri, 31 May 2024 10:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717150020; cv=none; b=IgTCsrUb0I9bJvIHPKP5a91oydU26bZsFL1FfGmUXf5mLbHAhYO4X/xgnyM3y+GPuYkvGJy2Vhzet0gbp1B2PLsAkTy6Y6P04eas6dXWmtlJc4QnDz8ByHhFDq+z3cnYcZONpYoXwiAo1BImBH/eONep3RQ8gFOVXrGsQtsBOzU=
+	t=1717151053; cv=none; b=a76tEUwKeKA41Uf1LmtdYSYtDwm05jQwnwppZNB1nbef9OlD46Bzibfld+A4hZYsQH/W5RBno4zqS6R9Ks2nkW4EpPJTmTJs/LkrWRvjTcKwLS2D2BML0a7uPPzq7olqGvsr5sQCr/LNjQUvKxvP43NuYdukURV9bPPhsZ1cewE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717150020; c=relaxed/simple;
-	bh=x6YrxgCuIC9cb+82N6X0rKHyCVymfCkKvZeGU9Wr/kI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qg1q/udpMSUDm77tkg3aYmzjLZ1sZnQNPpIuFf6B6M5Ft+LfNB3h3DrVDpv1XkWwZkKCUfJaD8VhS2ZhjkJR8ktrUUnzYWqIpWg8jETPyf9O3mm1sFFjkL/KQll3Y0luEzLyUcJjCXJFhCDZe7ObkyJlKF/UTk/2kgHwPtqjigE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NBDaNdj5; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBDaNdj5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C3AC32786;
-	Fri, 31 May 2024 10:06:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717150019;
-	bh=x6YrxgCuIC9cb+82N6X0rKHyCVymfCkKvZeGU9Wr/kI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=NBDaNdj5VTAI3zuvwIlhOXV34jecHBKVG3bTmGLGc8ZvnMUG1XLsEePOV1i2wcsSz
-	 1J9GRbqQhaldUZBfC+PHFkORUyfFoPYvCf6YPmM2cPo/HPi9EACHOw6wxLN3zmiwRr
-	 SQE0+7YocVgnleIRxUyziE/IGbS0Fng/CZhU0fEEIruX9EUS0FYNubjLsh1lMY8BpB
-	 Nc7LxW+ZVQ8k9B0wkVcxnUmwMYGk+SKjOtB1KEx9CKPWa0Yqfw/oWAX8WWbSKfZyH6
-	 1Z+dAugxq71B7cMyjINg0DRngdFvzxu0JzGCVf8RL9gvcgj1Hh7gX2x+vAqtCqV+p5
-	 M3fTVWoH43YKg==
-From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-leds@vger.kernel.org
-In-Reply-To: <82a5cb26ff8af1865a790286bdbc3c4a2bd149f1.1714892598.git.christophe.jaillet@wanadoo.fr>
-References: <82a5cb26ff8af1865a790286bdbc3c4a2bd149f1.1714892598.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: (subset) [PATCH] leds: is31fl319x: Constify struct
- regmap_config
-Message-Id: <171715001807.1011393.13624879216621879090.b4-ty@kernel.org>
-Date: Fri, 31 May 2024 11:06:58 +0100
+	s=arc-20240116; t=1717151053; c=relaxed/simple;
+	bh=TnxfUSFytuBgiNFeRF6e16Fh5bmiFPHnISSe1fs+ZH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sHPvMRC6l3JIQg9I4KjcNcR6B7Bj0qWeqe9hzWvCPj3IFE/I2psrL6un1wahJYmXy416YxEZp9O3wTCu0spQpZ64gdk/TtVdpQKUBuqdJG4K4b25LTg9/PEBLu7toPiyZaQVrIQJ/CZIZdSWXmac8q5VOTA2aa0ArxPsl5Wcyw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sCzQZ-004Ao7-25;
+	Fri, 31 May 2024 18:24:04 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 31 May 2024 18:24:05 +0800
+Date: Fri, 31 May 2024 18:24:05 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] crypto: Add missing MODULE_DESCRIPTION() macros
+Message-ID: <ZlmlRf6bMK3tIVHO@gondor.apana.org.au>
+References: <20240523-md-crypto-v1-1-eb68e4aa5592@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.12.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523-md-crypto-v1-1-eb68e4aa5592@quicinc.com>
 
-On Sun, 05 May 2024 09:03:32 +0200, Christophe JAILLET wrote:
-> 'is31fl3190_regmap_config' and 'is31fl3196_regmap_config' are not modified
-> in this diver and are only used as a const struct regmap_config.
+On Thu, May 23, 2024 at 12:47:39PM -0700, Jeff Johnson wrote:
+> Fix the 'make W=1' warnings:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/cast_common.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/af_alg.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/algif_hash.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/algif_skcipher.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/ecc.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/curve25519-generic.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/xor.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/crypto_simd.o
 > 
-> Constifying these structures moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->   13827	   2002	     32	  15861	   3df5	drivers/leds/leds-is31fl319x.o
-> 
-> [...]
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  crypto/af_alg.c             | 1 +
+>  crypto/algif_hash.c         | 1 +
+>  crypto/algif_skcipher.c     | 1 +
+>  crypto/cast_common.c        | 1 +
+>  crypto/curve25519-generic.c | 1 +
+>  crypto/ecc.c                | 1 +
+>  crypto/simd.c               | 1 +
+>  crypto/xor.c                | 1 +
+>  8 files changed, 8 insertions(+)
 
-Applied, thanks!
-
-[1/1] leds: is31fl319x: Constify struct regmap_config
-      commit: eccf45fdbfcbc9890a02d53c0a6c45271c37969e
-
---
-Lee Jones [李琼斯]
-
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
