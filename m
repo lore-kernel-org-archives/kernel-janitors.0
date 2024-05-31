@@ -1,115 +1,85 @@
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E571946F;
-	Fri, 31 May 2024 20:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2737E24B4A;
+	Fri, 31 May 2024 20:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717186434; cv=none; b=ER4qO4XcdzAROO+kn3NzqA7dKbet/mE0VgTVizkmwiHsm4Nhtkx8sYVM+PcjwXuHiXMpNSKfLh8YZZZupZpDLWYGtW6JlM8sDP9TQFiHFvbtnMiN8dz3jwmPciOmx5zEGWVTWpRgofMRqZMYqwXctX8xUR5+0o2oiiZcf3u0HnQ=
+	t=1717188399; cv=none; b=aZO2ncjuAulC2pgubdkpzDSEOkwBSFC7SClnwcuYqUjZv+I74u5WUEOhZFJCflwcJCgSO3b3FnQeWf6nMsvsmaYc5cxLkGU8SX2BzR1CIJc+ZwwjQY49akpEplUmMqaoCkfToPXpdFqQP4w8S0nxZPwVDLKeEtY9cODCkm2l1wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717186434; c=relaxed/simple;
-	bh=w6X6T/ksufCsAz4gKWToTB/1NUfx2HyXeF6R64j7EVQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CjS2ik28eY+E1TNPbJoOJDEfl6hEVVSkxpz20Qf2Nam9LD0p1Z482UA+c0mvyLvDVT6SPemfLfUVaG6y+rGbiWFG6G5s6nHj5lHS9xLKYAOqp2P4TJaeU/s6YqCdNY55rApouyYaAj8bJ74FPbfCCHR3W+VVPoNHndJebn67wjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Up9l4fE+; arc=none smtp.client-ip=80.12.242.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1717188399; c=relaxed/simple;
+	bh=5v6WEVFSG+niPJT/ta0D1bzUViAOVqkrK/1t7rXf4ns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D/ssJcxb0tmnKKXze/gWzyr/gqqQ+/he17EUfYvvT4yaOmHgr82J3mjnMNJnm2rVGlYT/ybWnqw590PEJJdU7/Gq1vgiya2HzjvbpZ+eHxwIEpOieOSuLLsLnVxsULzMrjvlVSDHquXOPIR3NgktwshDZkwDnooEuOpjtZGWyvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hqZqYxRo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Up9l4fE+"
-Received: from [192.168.1.37] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id D8UfsaUbIp3DQD8UfsPBfT; Fri, 31 May 2024 22:04:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1717185896;
-	bh=IMWkqEz3tcT2fpRarPXYT4LJHuLYonGiraVHDo/QMJA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=Up9l4fE+1Acu5z0JyIgdduw8EDNsBJpvZBzn+1QGM8ZH+B1vhLvhfrbHVYkCl7ele
-	 oxCAPYYjwh+PvWEKKWurdX8Gs8d7BmbEDWRsm2Lqw3XqIsusbpNhaZAfXl3/YX5vMx
-	 eVxjnXtmSuWftN0V56LBawSd2aXq6XQENGC+13UYvIAXU8YqN/a9fdobJOeLsXGyGG
-	 x37iBNUR0Bj3g+zjyoTMJaaxL1HSpkjLJgItZCgL1zG3ZJn4fVqO1eF3eaUQT3bpkr
-	 YXm8efQ+aFxsTFdtcdGVh+3XyGBI7tX98vTi+pMUJTaDY4c0n9Uis1pYXhiqtKFVK4
-	 4afmwchI27h6w==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 31 May 2024 22:04:56 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <95572851-8750-4a1f-8034-443e0bc9c6b8@wanadoo.fr>
-Date: Fri, 31 May 2024 22:04:52 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hqZqYxRo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A23B2C116B1;
+	Fri, 31 May 2024 20:46:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717188398;
+	bh=5v6WEVFSG+niPJT/ta0D1bzUViAOVqkrK/1t7rXf4ns=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hqZqYxRovnC0m4WQ8+Ca+THQmZ4x2MfUnPaxMot6GWx5nRptmI9lolz3Ex0YJiGtz
+	 KRvmaCatWZ9eLaOK8I4yDkWZYoURfZthXL1tqgw9ElF4pIrzcIx229LnRDOGujvXtF
+	 pZQpGfKBQpMj/wpcjfkWH+2BnD05/X8SAlrrzvMvsbyCln8JbRMcCcLP/z+mwbzhP9
+	 h0ueQCrwwPXPmIw6WTCjwcr4JVh6TlKx5qiAjm6qywFuyVeCxEeHMXRmHmYHgBQkf5
+	 buPXqnFFgKNo+2VFggMMGDZs20INQLwE1ymRs6BdI0BHwvHSnEy9qKDsCGSTZIRnn2
+	 1BQoZNZX0MiKQ==
+Date: Fri, 31 May 2024 13:46:37 -0700
+From: Kees Cook <kees@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
+Message-ID: <202405311345.D91BF6E9@keescook>
+References: <20240529-fortify_panic-v1-1-9923d5c77657@quicinc.com>
+ <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
+ <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
+ <5658B525-6642-43A2-B14C-BC4AA916FBCC@alien8.de>
+ <202405310951.56D9BD5C41@keescook>
+ <20240531190816.GLZlogIGgpc5maOeLN@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crypto: tegra - Remove an incorrect iommu_fwspec_free()
- call in tegra_se_remove()
-To: Akhil R <akhilrajeev@nvidia.com>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Thierry Reding <thierry.reding@gmail.com>, Jon Hunter
- <jonathanh@nvidia.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
- "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <ea775b351a3dbe4cef4056ea89da25084f73df22.1716650050.git.christophe.jaillet@wanadoo.fr>
- <SJ1PR12MB633943D654272A0612695F1DC0F22@SJ1PR12MB6339.namprd12.prod.outlook.com>
- <Zllexnetg3eu6dSW@gondor.apana.org.au>
- <SJ1PR12MB633958B0DC8504F1D7868CA0C0FC2@SJ1PR12MB6339.namprd12.prod.outlook.com>
-Content-Language: en-MW
-From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <SJ1PR12MB633958B0DC8504F1D7868CA0C0FC2@SJ1PR12MB6339.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531190816.GLZlogIGgpc5maOeLN@fat_crate.local>
 
+On Fri, May 31, 2024 at 09:08:16PM +0200, Borislav Petkov wrote:
+> On Fri, May 31, 2024 at 09:53:28AM -0700, Kees Cook wrote:
+> > Under CONFIG_FORTIFY_SOURCE, the boot code *does* still uses
+> > fortify-string.h. It lets us both catch mistakes we can discover at
+> > compile and will catch egregious runtime mistakes, though the reporting
+> > is much simpler in the boot code.
+> 
+> From where I'm standing, we're not catching anything in the
+> decompressor:
+> 
+> $  objdump -D arch/x86/boot/compressed/vmlinux | grep __fortify_panic
+> 0000000001bec250 <__fortify_panic>:
+> $
+> 
+> Sure, in vmlinux proper (allmodconfig) we do:
+> 
+> objdump -D vmlinux | grep __fortify_panic | wc -l
+> 1417
+> 
+> but not in the decompressor which is special anyway.
+> 
+> So we can just as well disable CONFIG_FORTIFY_SOURCE in the decompressor
+> and not do silly prototypes.
 
-Le 31/05/2024 à 07:36, Akhil R a écrit :
->> -----Original Message-----
->> From: Herbert Xu <herbert@gondor.apana.org.au>
->> Sent: Friday, May 31, 2024 10:53 AM
->> To: Akhil R <akhilrajeev@nvidia.com>
->> Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>; David S. Miller
->> <davem@davemloft.net>; Thierry Reding <thierry.reding@gmail.com>; Jon
->> Hunter <jonathanh@nvidia.com>; linux-kernel@vger.kernel.org; kernel-
->> janitors@vger.kernel.org; linux-crypto@vger.kernel.org; linux-
->> tegra@vger.kernel.org
->> Subject: Re: [PATCH] crypto: tegra - Remove an incorrect iommu_fwspec_free()
->> call in tegra_se_remove()
->>
->> External email: Use caution opening links or attachments
->>
->>
->> On Wed, May 29, 2024 at 06:53:42AM +0000, Akhil R wrote:
->>>> The only iommu function call in this driver is a
->>>> tegra_dev_iommu_get_stream_id() which does not allocate anything and
->> does
->>>> not take any reference.
->>>>
->>>> More-over, what is freed is "se->dev" which has been devm_kzalloc()'ed in the
->>>> probe.
->>> I did not completely understand what is being tried to convey here.
->>> If I understand it right, iommu_fwspec_free() does not do anything
->>> with the "devm_kzalloc"ed variable.
->>>
->>> It would probably be a good idea to remove this line from the commit message.
->> I think he means that as the memory was allocated via devm, it will
->> be automatically freed by the kernel and the driver does not need
->> to (and should not) free the memory by hand.
+Please do not do this. It still benefits from compile-time sanity
+checking.
 
-
-Yes, that is my point.
-
-> Ya. But iommu_fwspec_free() does not free the memory allocated via devm.
->
-> I think iommu_fwspec_free() is expected to be called in symmetry with
-> iommu_fwspec_init(). So, I do agree that the SE driver does not allocate
-> what is freed by iommu_fwspec_free(), but I feel this line is a bit misleading.
->
-Yes, I spoke too fast.
-What is freed is dev_iommu_fwspec_get(dev);, not dev. So the sentence I 
-wrote makes no sense and should be removed :(
-
-
-CJ
-
-
+-- 
+Kees Cook
