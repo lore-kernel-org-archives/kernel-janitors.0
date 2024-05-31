@@ -1,69 +1,94 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04740158DB2;
-	Fri, 31 May 2024 13:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A368D158D8D;
+	Fri, 31 May 2024 13:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717162941; cv=none; b=vELitDPeDCmJmzl5y91ohhUZtNwOD9E/mSZGm+ZyuEv/BXXdUH+DQmIrlY1jyZhSCNE0tXiOL8TokoRWQDJzwSvd0CouMjknb4u6O/sYOpZIbcA2S7NrECFqwrtJFSzv9XODMSWl53VSuKL3OciXf2YWnpBSLMEn7eHfijeJJ/0=
+	t=1717163655; cv=none; b=BYZA06Yeci5VJiMcrpnXWGAVL7j8y49harVfOWInsIcRZpfVEF+bqMbLumWx2Cb1ClLbrPAkoE5SmA/YwvINs9nCxP9VjOXglXC+e0N/QwFx6S2fuEvZvCojd4swwZqdJ3fGHfIubSM7vFRxJaY9Z3foVZ7lthH3Z+m+69PD2RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717162941; c=relaxed/simple;
-	bh=b9S2xdTagJqtJy7lo3gX33GfXgvExyw7AL6CaLo9qxM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gB6V2/C+sWH/nRB6IS4r0dNP0Dpp4z/C67CwfjBBO+zy647D8yJiEXWLMzwNwSztPSirgCx8RiDiGZrrKrxZch+ue8Uv5rd9+3wQngWDPRqkyR4rkTDTEQ3L8r62OslJ+wfFF2IlmHP86cAeILRZrjyshBR4J3W+NkG/HVDhQIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIkUYd0N; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717163655; c=relaxed/simple;
+	bh=LDx6sVphNqG2qDDMXf0EfdREtXoPzkD03mMjA+svKnk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XkPo6wEPIFfX2IRhzs+qQYHEUnZ4Uljb82kqnvyAIXrJvzPZo5mbhG0FXXcw7N49ebEvyMaeE3k5R3IFKcXdN7/3LNM1lTMH7lhVTyR2T514J2o+LHMJzBCk+dqeNfRN9aiWaBCbQeHt1DYn5+OIrp8WEXPTJcTEbzhOvdA9mk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b8ZktriU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIkUYd0N"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F7D8C116B1;
-	Fri, 31 May 2024 13:42:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717162940;
-	bh=b9S2xdTagJqtJy7lo3gX33GfXgvExyw7AL6CaLo9qxM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=fIkUYd0NkEchhhPswrxENPywvVfCYZRbdDaJdm8znojYGgOkUzcoVaR6nG3npzVdq
-	 xJAVDK2vXDV631Zlf8zVT5QavUHykjVN0FQIlHeIAwlmESHS10dx2OQKrY3QWnvLpM
-	 PrwZd85lGo+aowSz79UGFpc9ojpWVS7twWW704REP1uinAIv0x4i2qDkifBD7gCkr+
-	 9tlOM/ACeTM2adJMV8fMpD0SfXLQ5Nnov9+wbfwRvz1u3o7uaUGq2vssoiLj7MbxJp
-	 RKHm5nac2jUsqApaheh3Yb3ctKuVyrlprVMkwTxe4ZHsfkU82oHavuZztcP0bqD6/8
-	 BpFUDVx4gokpQ==
-From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- William Zhang <william.zhang@broadcom.com>, 
- Anand Gore <anand.gore@broadcom.com>, 
- Kursad Oney <kursad.oney@broadcom.com>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <20240517-md-leds-bcm63138-v1-1-247b7302edb6@quicinc.com>
-References: <20240517-md-leds-bcm63138-v1-1-247b7302edb6@quicinc.com>
-Subject: Re: (subset) [PATCH] leds: bcm63138: add MODULE_DESCRIPTION()
-Message-Id: <171716293807.1100598.8552000581890950344.b4-ty@kernel.org>
-Date: Fri, 31 May 2024 14:42:18 +0100
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b8ZktriU"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V711r5001099;
+	Fri, 31 May 2024 13:54:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PYcMr99pnsmRTjwDC+d550mFjpzxJZe2o8cYFN49Ej4=; b=b8ZktriUdY2wvENV
+	jiT2m3dgmGRp1jz0+d+r6rvzU87bsCBwNBNCuMgxhj2csdh6wvKor1uyURPtAlBl
+	GI6Huw5zfcEfSkIalhVz+/rEjcgFlS/xC3ajda/VJJoy1z75fWsY/Kl0Sz3kWmEp
+	YmsAdtBbGWleGINgo8Ss390BkTNUC7F9LF2zUVaedvyZJhUTMaDk6IAhgbBia+mq
+	xJZu1otBL4XGsmjLi0p9C+qx5IMoMBc/7h+pUAnIWUV8yg+t6KmoF6mImqhoakas
+	aR6nCCq/tPXyFHQRPMrQ28a597VtbZ54QB+Sr/nIsj4EfqlqJmXRU4O0PNfK29Tr
+	Fizofw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yb9yjf43t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 13:54:07 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VDs6vH013000
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 13:54:06 GMT
+Received: from [10.110.11.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 06:54:05 -0700
+Message-ID: <e9b4a22f-1842-4c37-8248-4f715d70a6c1@quicinc.com>
+Date: Fri, 31 May 2024 06:54:03 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.12.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kcsan: test: add missing MODULE_DESCRIPTION() macro
+Content-Language: en-US
+To: Marco Elver <elver@google.com>, "Paul E. McKenney" <paulmck@kernel.org>
+CC: Dmitry Vyukov <dvyukov@google.com>, <kasan-dev@googlegroups.com>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20240530-md-kernel-kcsan-v1-1-a6f69570fdf6@quicinc.com>
+ <CANpmjNN1qf=uUnetER3CPZ9d5DSU_S5n-4dka3mDKgV-Jq0Jgw@mail.gmail.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <CANpmjNN1qf=uUnetER3CPZ9d5DSU_S5n-4dka3mDKgV-Jq0Jgw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: PtadWKTq_N_dP2OxVw0_73w4rDO_TUW9
+X-Proofpoint-ORIG-GUID: PtadWKTq_N_dP2OxVw0_73w4rDO_TUW9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_10,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 mlxscore=0 phishscore=0 mlxlogscore=874 spamscore=0
+ clxscore=1015 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310103
 
-On Fri, 17 May 2024 12:30:11 -0700, Jeff Johnson wrote:
-> Fix the 'make W=1" issue:
+On 5/31/2024 12:47 AM, Marco Elver wrote:
+> On Thu, 30 May 2024 at 21:39, Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+>>
+>> Fix the warning reported by 'make C=1 W=1':
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/kcsan/kcsan_test.o
+>>
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > 
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/blink/leds-bcm63138.o
+> Reviewed-by: Marco Elver <elver@google.com>
 > 
-> 
+> Jeff, do you have a tree to take this through?
+> If not - Paul, could this go through your tree again?
 
-Applied, thanks!
-
-[1/1] leds: bcm63138: add MODULE_DESCRIPTION()
-      commit: 819bddcd196b1c5df6aa78b1c28ec7f0cccce5e3
-
---
-Lee Jones [李琼斯]
+I don't currently have a tree. Kalle is in the process of relocating the
+wireless ath tree so that I can push, but that is still work in progress.
 
