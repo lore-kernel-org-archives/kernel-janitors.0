@@ -1,142 +1,131 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A40158A28;
-	Fri, 31 May 2024 15:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F93C57CA7;
+	Fri, 31 May 2024 16:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717169870; cv=none; b=nUocHXXiq1tMxGcxV6DZPRq9rDY7pYmlWmhNicDFlgoucW7MteX1Ca14x1VhLcxNvhlbQ2SF3wG2WpNEF9UeuBv1uu2QtxncVo95xuOouYFscwqiygjU0CfkGpH4Zp1JY0BCr+IpX/XgkkS3TsPH0VjpEI/K2rjLYYkN3taKd/M=
+	t=1717171402; cv=none; b=t5VwiGYTJ8z7RV8xZnoDOrQNz0UWyZJwn6y0kTpLZMQHyaDBs/5fNKHQ69y4ulMuq2ipiSsnX3SDowyj27jdcYBHm5nXgalkJyxfs1c4HKl7cCb9gyJNk96iYvxKizQlD6lUOaULp0jITEMUrw5M+/qgZgTlaegrjSF3XKvwTjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717169870; c=relaxed/simple;
-	bh=mUXO2DdblDfnX/yel6rUCY+aqhfc76OrpEirW+mvnIY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lv3Iv7KPbkGNGKHIquKemWyiu1y7yi7i93OG6NeNCO12ygDgAXksCdPdLkjiXGIPolYf3riZlJrWzXcM5QJ6J8ZZenjBchvskY6f2Iq9J4aNNd1MaoyARpC7R90lbL0EPJ2GQX3yWudoCWVM9ekVW2Tm/JNO3mxsVHkwVYMPCfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mB1YfGVF; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1717171402; c=relaxed/simple;
+	bh=bMFv7xDnJL+hw/p29GL/YYNnQd909xblIrlSOzQjKyk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=rCJvNpsJnhsWAbaiTpUP6/ZT5+2NNZPYukWQFyhyZvz8Kwd15h70eVc1Lq978FGfdjA7KKr1+QQZiCzjVSRkryqXrbWn6CjXgDAfiB5LxncvCbS6b/Wl/emkmg7j/m/e68F+ZPh0QJQSoBHKYouKQjwaOQRdZ0kuMklhpMODf1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YGOxBPX/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mB1YfGVF"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=BK0lac02MNaStyn+3Zy8cAwlufhllQe54r3zrUsXI1M=; b=mB1YfGVFyFVWCtPAGvOyLQLQUA
-	ZQXOmYELgdul8Go9nJYOtWA4sAYG5BCcfKcultVk7arYl4pkXCwXblTWNEFoRhJjNUH61cbdKT8qm
-	yk5XfX/j6Prz0MtAFaWDmSbeuJIDXp7ZnREJvAMaFBsBwo6oGFaSoUVcTLQmr0sL0UsIIgAh3gJ0o
-	kufgW6LN1Vk1F3AbP3/XD5L/RwHidE6lONY0rGfp7H+hgoG9nebL2Pt/jk0DOB8cqPKA8lsinrZPa
-	KZE0CNKo8njhBwTe5yqghny425aB9ft+O4NKAaQ4wSxDHqssWwiU3ZGg5LeaR+29tEGkdJokDpHZs
-	Y4jKFG7Q==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sD4KA-0000000AiH7-3OIG;
-	Fri, 31 May 2024 15:37:47 +0000
-Message-ID: <833fac2c-91f9-4e9a-9b9e-da2db955a488@infradead.org>
-Date: Fri, 31 May 2024 08:37:45 -0700
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YGOxBPX/"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V9C7O0015967;
+	Fri, 31 May 2024 16:03:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=vCUZllc4TeUKj1QZG2IYPG
+	qKIcTqIzUjXXYoUoV18pY=; b=YGOxBPX/7HmBp3VROPCSFF68p6+wAvGR9HWzLv
+	Sx5tYSquzjraiQCY1S3/lZOMwF/HoAPs5/LIYvKollLCfptxE10B4VJ9yyCqGhmu
+	Yt06wY8jTxog66ZZjKkT4aY44R1Zy1JkY2PXPACvV+5MMUhhBACip1XZ2jyDT7Wc
+	mWFpbhS+nH68fr7dUNLiVwSY8eeYHmj+i7Kw9Yvhxd0hIwf2FEAnZFoh8RY213gd
+	U6BVItugiCNFVjet+L1H2I523IX2+pbyEYMR7atYlirMWbU6zMraIwzFtptFTcHW
+	cqcHncHSdY9Mp7KCMjy9ZWeY2jgPXqFCCbr+qsC6LXu267eg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yf23st5qt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 16:03:13 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VG3CdF025759
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 16:03:12 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 09:03:12 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 31 May 2024 09:03:11 -0700
+Subject: [PATCH] lib: bitmap: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] drm/amd/display: Fix a handful of spelling mistakes
-To: Colin Ian King <colin.i.king@gmail.com>,
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
- Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Xinhui.Pan@amd.com, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Alex Hung <alex.hung@amd.com>,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240531093211.498880-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240531093211.498880-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240531-lib-bitmap-v1-1-45a782cf3686@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAL/0WWYC/x3MwQqDMAyA4VeRnBew1a2wVxk7pG02A9pJokMQ3
+ 32dx+/w/zsYq7DBvdlB+Ssmn1LhLg2kgcqbUXI1+Nb37bVzOErEKMtEM4bEt5Cjzy50UINZ+SX
+ bOXs8qyMZY1QqafgvRinrhhPZwgrH8QNLhfIZewAAAA==
+To: Yury Norov <yury.norov@gmail.com>,
+        Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: tudb-G3CITrWrkZe_6E_8r8iMT-plcJR
+X-Proofpoint-GUID: tudb-G3CITrWrkZe_6E_8r8iMT-plcJR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_12,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ adultscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501
+ impostorscore=0 phishscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310120
 
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/find_bit_benchmark.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/cpumask_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bitmap.o
 
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-On 5/31/24 2:32 AM, Colin Ian King wrote:
-> There are a few spelling mistakes in dml2_printf messages. Fix them.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+This is the subset of "missing MODULE_DESCRIPTION()" which fall under
+the scope of the BITMAP API entry in the MAINTAINERS file.
+---
+ lib/cpumask_kunit.c      | 1 +
+ lib/find_bit_benchmark.c | 1 +
+ lib/test_bitmap.c        | 1 +
+ 3 files changed, 3 insertions(+)
 
+diff --git a/lib/cpumask_kunit.c b/lib/cpumask_kunit.c
+index a105e6369efc..6b62a6bdd50e 100644
+--- a/lib/cpumask_kunit.c
++++ b/lib/cpumask_kunit.c
+@@ -152,4 +152,5 @@ static struct kunit_suite test_cpumask_suite = {
+ };
+ kunit_test_suite(test_cpumask_suite);
+ 
++MODULE_DESCRIPTION("KUnit tests for cpumask");
+ MODULE_LICENSE("GPL");
+diff --git a/lib/find_bit_benchmark.c b/lib/find_bit_benchmark.c
+index d3fb09e6eff1..402e160e7186 100644
+--- a/lib/find_bit_benchmark.c
++++ b/lib/find_bit_benchmark.c
+@@ -194,4 +194,5 @@ static int __init find_bit_test(void)
+ }
+ module_init(find_bit_test);
+ 
++MODULE_DESCRIPTION("Test for find_*_bit functions");
+ MODULE_LICENSE("GPL");
+diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
+index 6dfb8d46a4ff..65a75d58ed9e 100644
+--- a/lib/test_bitmap.c
++++ b/lib/test_bitmap.c
+@@ -1486,4 +1486,5 @@ static void __init selftest(void)
+ 
+ KSTM_MODULE_LOADERS(test_bitmap);
+ MODULE_AUTHOR("david decotigny <david.decotigny@googlers.com>");
++MODULE_DESCRIPTION("Test cases for bitmap API");
+ MODULE_LICENSE("GPL");
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+---
+base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
+change-id: 20240531-lib-bitmap-7ce67db2d173
 
-Thanks.
-
-> ---
->  .../dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c      | 6 +++---
->  .../display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c  | 6 +++---
->  2 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
-> index 8062144a5a6d..e7e6751f4477 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
-> @@ -5731,7 +5731,7 @@ static bool CalculatePrefetchSchedule(struct dml2_core_internal_scratch *scratch
->  		dml2_printf("DML: Tvm: %fus - time to fetch vm\n", s->TimeForFetchingVM);
->  		dml2_printf("DML: Tr0: %fus - time to fetch first row of data pagetables\n", s->TimeForFetchingRowInVBlank);
->  		dml2_printf("DML: Tsw: %fus = time to fetch enough pixel data and cursor data to feed the scalers init position and detile\n", (double)s->LinesToRequestPrefetchPixelData * s->LineTime);
-> -		dml2_printf("DML: To: %fus - time for propogation from scaler to optc\n", (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime);
-> +		dml2_printf("DML: To: %fus - time for propagation from scaler to optc\n", (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime);
->  		dml2_printf("DML: Tvstartup - TSetup - Tcalc - TWait - Tpre - To > 0\n");
->  		dml2_printf("DML: Tslack(pre): %fus - time left over in schedule\n", p->VStartup * s->LineTime - s->TimeForFetchingVM - 2 * s->TimeForFetchingRowInVBlank - (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime - p->TWait - p->TCalc - *p->TSetup);
->  		dml2_printf("DML: row_bytes = dpte_row_bytes (per_pipe) = PixelPTEBytesPerRow = : %u\n", p->PixelPTEBytesPerRow);
-> @@ -8268,7 +8268,7 @@ static bool dml_core_mode_support(struct dml2_core_calcs_mode_support_ex *in_out
->  	dml2_printf("DML::%s: mode_lib->ms.DCFCLK = %f\n", __func__, mode_lib->ms.DCFCLK);
->  	dml2_printf("DML::%s: mode_lib->ms.FabricClock = %f\n", __func__, mode_lib->ms.FabricClock);
->  	dml2_printf("DML::%s: mode_lib->ms.uclk_freq_mhz = %f\n", __func__, mode_lib->ms.uclk_freq_mhz);
-> -	dml2_printf("DML::%s: urgent latency tolarance = %f\n", __func__, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kbytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)));
-> +	dml2_printf("DML::%s: urgent latency tolerance = %f\n", __func__, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kbytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)));
->  #endif
->  
->  	mode_lib->ms.support.OutstandingRequestsSupport = true;
-> @@ -11089,7 +11089,7 @@ static bool dml_core_mode_programming(struct dml2_core_calcs_mode_programming_ex
->  				if (display_cfg->plane_descriptors[k].immediate_flip && mode_lib->mp.ImmediateFlipSupportedForPipe[k] == false) {
->  					mode_lib->mp.ImmediateFlipSupported = false;
->  #ifdef __DML_VBA_DEBUG__
-> -					dml2_printf("DML::%s: Pipe %0d not supporing iflip!\n", __func__, k);
-> +					dml2_printf("DML::%s: Pipe %0d not supporting iflip!\n", __func__, k);
->  #endif
->  				}
->  			}
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c
-> index f2e2250d28d3..6eb3fec87ec1 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c
-> @@ -1988,7 +1988,7 @@ bool dml2_core_shared_mode_support(struct dml2_core_calcs_mode_support_ex *in_ou
->  	dml2_printf("DML::%s: mode_lib->ms.FabricClock = %f\n", __func__, mode_lib->ms.FabricClock);
->  	dml2_printf("DML::%s: mode_lib->ms.uclk_freq_mhz = %f\n", __func__, mode_lib->ms.uclk_freq_mhz);
->  	dml2_printf("DML::%s: max_urgent_latency_us = %f\n", __func__, mode_lib->ms.support.max_urgent_latency_us);
-> -	dml2_printf("DML::%s: urgent latency tolarance = %f\n", __func__, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kbytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)));
-> +	dml2_printf("DML::%s: urgent latency tolerance = %f\n", __func__, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kbytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)));
->  #endif
->  
->  	mode_lib->ms.support.OutstandingRequestsSupport = true;
-> @@ -8131,7 +8131,7 @@ static bool CalculatePrefetchSchedule(struct dml2_core_internal_scratch *scratch
->  		dml2_printf("DML: Tvm: %fus - time to fetch vm\n", s->TimeForFetchingVM);
->  		dml2_printf("DML: Tr0: %fus - time to fetch first row of data pagetables\n", s->TimeForFetchingRowInVBlank);
->  		dml2_printf("DML: Tsw: %fus = time to fetch enough pixel data and cursor data to feed the scalers init position and detile\n", (double)s->LinesToRequestPrefetchPixelData * s->LineTime);
-> -		dml2_printf("DML: To: %fus - time for propogation from scaler to optc\n", (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime);
-> +		dml2_printf("DML: To: %fus - time for propagation from scaler to optc\n", (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime);
->  		dml2_printf("DML: Tvstartup - TSetup - Tcalc - TWait - Tpre - To > 0\n");
->  		dml2_printf("DML: Tslack(pre): %fus - time left over in schedule\n", p->VStartup * s->LineTime - s->TimeForFetchingVM - 2 * s->TimeForFetchingRowInVBlank - (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (double)p->myPipe->HTotal)) * s->LineTime - p->TWait - p->TCalc - *p->TSetup);
->  		dml2_printf("DML: row_bytes = dpte_row_bytes (per_pipe) = PixelPTEBytesPerRow = : %u\n", p->PixelPTEBytesPerRow);
-> @@ -10959,7 +10959,7 @@ bool dml2_core_shared_mode_programming(struct dml2_core_calcs_mode_programming_e
->  				if (display_cfg->plane_descriptors[k].immediate_flip && mode_lib->mp.ImmediateFlipSupportedForPipe[k] == false) {
->  					mode_lib->mp.ImmediateFlipSupported = false;
->  #ifdef __DML_VBA_DEBUG__
-> -					dml2_printf("DML::%s: Pipe %0d not supporing iflip!\n", __func__, k);
-> +					dml2_printf("DML::%s: Pipe %0d not supporting iflip!\n", __func__, k);
->  #endif
->  				}
->  			}
-
--- 
-#Randy
-https://people.kernel.org/tglx/notes-about-netiquette
-https://subspace.kernel.org/etiquette.html
