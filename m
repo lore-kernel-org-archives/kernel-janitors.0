@@ -1,47 +1,47 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B75D36AEF;
-	Fri, 31 May 2024 04:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52B54405;
+	Fri, 31 May 2024 05:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717131342; cv=none; b=R1glJ0nhN28Kw795GjhebAGXNiib25f53nJTIQISqQT74gOOFIFvTVdVmRnsueskBrpYO4YJwoVeM6JYyJh7+hJPS1XL1qRWfzhmeIyFkWt0t435DJDAi28dSz5Ex3VBxP8YLdedK9Eus0BMN6qBN/3pZpJDZKdzSygGRIxMi2M=
+	t=1717132606; cv=none; b=oc+0Rhf1g7LU6LJmSGB/mNUaQHXccu9dKnFpTZ9AunZ55nR065CjSAiiiMEuxDPlYkyp0su0f2ki9WNbkrd8yTMows06FbEZdSgWid7tSSIhaT6oyIRdDkTnv5ez5fj8WKf422oxTVGAZFT7DLMqGfUAav+FWLI+77QRhYV4z6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717131342; c=relaxed/simple;
-	bh=jruFbjeLwi5gzunY1kCfVsAyhAsfUAjXxkz6//R84v4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=G7cbbfIve1TTfFvDXm1RjG6bujfymEqAH+vGquwSELzxBPkqST7Vvn7CvlO+NHbY7+WvVT5QxS3amVytitG91eobwcCQaLbX/tMqf64Y7ItK7gSpmbsFVYsqSQKq2zzD4+0U4lsS/5W9q1AanzhoZ+Cw564wJzre4zQmv8/tLVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yb6GaNAz; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1717132606; c=relaxed/simple;
+	bh=rc9coK1EQVuMySMkXLylr5VmrSIA6HyYoHiydHI2IjE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=KgwUS6eDAmS7VwwMN1ApX6GY++dJcAXo1Arp3q4SI3Va1thXCFc1uSVcv5qnULj9QNbUVIGsPXu7zpJS7B+ijwWHsPjmt2ktkYgvfLBOcY0TKvsJ1m1HJgnKCG3FFEZHXGxwh7v+t5NRniHseuU+c5P03cP8/zX+P9kTBnjPhtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RR5iUIL0; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yb6GaNAz"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UGsnwa001099;
-	Fri, 31 May 2024 04:55:37 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RR5iUIL0"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UGrmlB019268;
+	Fri, 31 May 2024 05:16:08 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=eyb07Mj282ja+9iwaBTaMR
-	f2T377XDF4HIwuTEVQOI4=; b=Yb6GaNAzdLPgmAnGJK7l2KceInFnVgO1BwnCWZ
-	NcE4ytA5jHME/3h7aw0//1r6WaRne+UmLPRna/+1k9fniSVWchBYJ3UrVjS7RS+Z
-	WZTQqrLkGPOCtKfHm1s8JbJjjb8X59iVjpeGKnwOUBlF8GuZb2obpTAwldU7yUh+
-	V96Age7WSC0YE9N4L6Y7w3lyLUQU672qjjiXx5ekaYB2TmS/H95m4eP6p9oKHkyD
-	DOQo+km98Rl43b6oqmOsc+/zCK3bM/uIOYMptGa+dPSxoMmMisp5rruqN18flvX5
-	UfR07FbbZvdsYLmfzDGsEyXECrOhWidj1FlA4zz3WYSEX9Sw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yb9yjdyj8-1
+	:mime-version:subject:to; s=qcppdkim1; bh=TB351GK1yk9ksnTo9pyYUF
+	IaEZ/tPZBjG4F83Nt1RJw=; b=RR5iUIL0zxd/MJJt4HLuaanWfAB/R2BaeMU707
+	E2qvrczFGdyRImVtS55yQ8IVd0EMWHw5vEw61Qhto351dFkLcaOnX97je18+WL5L
+	A8kebgv6/B8GKdnUd1C5OguKDWQmc+KSetd3jfiLV5nflT5agrI+JxH8ocduUjBs
+	HxZICfu4aiznPVbOlV4xmYnFCyzqGZjumFyl2NT+70TtSy434criub9tw+MhZDUH
+	fPvnc+sh5Ycltzpt7p1IvEEGyM35HMXp4O3PvacTr6eTNVMi3h0rowGHQa/6IBwJ
+	9LPbQrSb04HF4u2k54oSYYPKLLjV+tVtFfaZbpjBVOdN6Ihg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0ge3jv-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 04:55:36 +0000 (GMT)
+	Fri, 31 May 2024 05:16:08 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V4tZr4018938
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V5G6n2003381
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 04:55:35 GMT
+	Fri, 31 May 2024 05:16:06 GMT
 Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
- 2024 21:55:35 -0700
+ 2024 22:16:05 -0700
 From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 30 May 2024 21:55:33 -0700
-Subject: [PATCH] intel_th: msu-sink: add missing MODULE_DESCRIPTION()
+Date: Thu, 30 May 2024 22:16:04 -0700
+Subject: [PATCH] nvme-apple: add missing MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,52 +50,59 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240530-md-intel_th_msu_sink-v1-1-ae796336e7b9@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAERYWWYC/x3MTQrCMBBA4auUWRtI0xaqVxEJ+RnNYDNKJpVC6
- d2NLr/FezsIFkKBS7dDwQ8JvbihP3UQkuMHKorNYLQZ9TRolaMirrjYmmyW1QrxU/Um+vPop6D
- nGVr6Lnin7b+93pq9E1S+OA7pN1uI101lJxULHMcXM1q+QoUAAAA=
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
+Message-ID: <20240530-md-nvme-apple-v1-1-b8b7ca569660@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIABNdWWYC/x3MywqDMBBG4VeRWXcgtQrqq5QucvlbB0waJlYE8
+ d2bdvktzjmoQAWFpuYgxSZF3qniemnIzza9wBKqqTVtZ/qb4Rg4bRFsc17AMAhudOPgu55qkxV
+ P2f+/+6Pa2QJ2apOff5dF0mfnaMsKpfP8Auu9pCt+AAAA
+To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+        "Alyssa
+ Rosenzweig" <alyssa@rosenzweig.io>,
+        Keith Busch <kbusch@kernel.org>, "Jens
+ Axboe" <axboe@kernel.dk>,
+        Christoph Hellwig <hch@lst.de>, Sagi Grimberg
+	<sagi@grimberg.me>
+CC: <asahi@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
 X-Mailer: b4 0.13.0
 X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ozhjk8mBTVVxE3EI9dSeqhAkd-Vs3sMs
-X-Proofpoint-ORIG-GUID: ozhjk8mBTVVxE3EI9dSeqhAkd-Vs3sMs
+X-Proofpoint-GUID: mP3ETysDdDj1tLBnR_cxY8-ywO1_2p3-
+X-Proofpoint-ORIG-GUID: mP3ETysDdDj1tLBnR_cxY8-ywO1_2p3-
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
  definitions=2024-05-31_02,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 spamscore=0
- clxscore=1015 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405310035
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 lowpriorityscore=0 clxscore=1011
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310039
 
 make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwtracing/intel_th/intel_th_msu_sink.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvme/host/nvme-apple.o
 
 Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
 Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
- drivers/hwtracing/intel_th/msu-sink.c | 1 +
+ drivers/nvme/host/apple.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/hwtracing/intel_th/msu-sink.c b/drivers/hwtracing/intel_th/msu-sink.c
-index 891b28ea25fe..256ce3260ad9 100644
---- a/drivers/hwtracing/intel_th/msu-sink.c
-+++ b/drivers/hwtracing/intel_th/msu-sink.c
-@@ -116,4 +116,5 @@ static const struct msu_buffer sink_mbuf = {
+diff --git a/drivers/nvme/host/apple.c b/drivers/nvme/host/apple.c
+index dd6ec0865141..0cfa39361d3b 100644
+--- a/drivers/nvme/host/apple.c
++++ b/drivers/nvme/host/apple.c
+@@ -1602,4 +1602,5 @@ static struct platform_driver apple_nvme_driver = {
+ module_platform_driver(apple_nvme_driver);
  
- module_intel_th_msu_buffer(sink_mbuf);
- 
-+MODULE_DESCRIPTION("example software sink buffer for Intel TH MSU");
- MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Sven Peter <sven@svenpeter.dev>");
++MODULE_DESCRIPTION("Apple ANS NVM Express device driver");
+ MODULE_LICENSE("GPL");
 
 ---
 base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-change-id: 20240530-md-intel_th_msu_sink-12db94b5c088
+change-id: 20240530-md-nvme-apple-e0edb9b98c45
 
