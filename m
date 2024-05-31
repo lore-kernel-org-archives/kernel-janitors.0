@@ -1,87 +1,72 @@
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC6379DC7;
-	Fri, 31 May 2024 20:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37B7168DA;
+	Fri, 31 May 2024 21:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717188611; cv=none; b=QC5IhGIWWTXOzWCJKC2LI+qRnrgieq/xRxG+0nBp1te4fr5Fizqe+gMIyY3X+q5K7mTgIraRj4iJxPy4RWhiX7wNdmVSkO7aBt2VLAFXqDKQ7D2X2d7VmoG+jI7e3iEO5jLEeF+dovRy2c6SIuTOBQSzHw/sXQoZNSVod+aKR7w=
+	t=1717189477; cv=none; b=T9pHlp69E1fBMRlVOWuZVO25gUJFFTlnIw7Xaqn4t+hAjHWviEokWfTcuI64yUjCUZ9NFeFGci/aMg4e9UkHJqMt+bt/rhBUbcC7RlMLmUaASDMoY9EdVsqScXNFhZTE3rzjQ9VaUkw56gsZnCs426127CRb30JH1Zt8o7EmoDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717188611; c=relaxed/simple;
-	bh=CqlIzLo28saVuf9DPW5SY4U8PePcJgM43whMLoV3lrY=;
+	s=arc-20240116; t=1717189477; c=relaxed/simple;
+	bh=nlf2Py+keWPZWb2WEcXyuXnPsjey2AglcXUUfxlnR8I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XYZ941sLRP4/Yw3wR0L2Ai/W94++8i8Z0Pe0bJXE8yHJG4VUS7E8IfDIL7HCqBhskOBeP1FmgJMONuYfErAOqIk/6qRXVSW+Auxcp/Hkc2wJ6nYT160EfxADYVftmDT7/L4d1EMbuhgzOFM1Cq0rnpYQPGdjDCMlysTcZRJl/yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=exWSKQon; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+	 Content-Type:Content-Disposition:In-Reply-To; b=ODmlVKDgNFJL5ty+d5IugHTyuHkDFg2mTAHkceq4EwGJ5RV6jKhMoqdbaprFth3PDsbKUs6JE2M6lpW27hD4hKKzldaiBfGi1Bms3bSbi3Mfv//4Ko6iEkOQW4RGuMsXNOIa9XOu4NE880Esa1SQpfLe9/vKf+cdSaMmYgmoC/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nO3fy8fg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="exWSKQon"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 45DB340E02BA;
-	Fri, 31 May 2024 20:50:07 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id glGpxI6KoY2X; Fri, 31 May 2024 20:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717188604; bh=2eSJr/KNAbeYvj9YM7r9Ad2wggiAI2ZKgJwZBFOE4BI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=exWSKQont0SSjJ4Q+5EBEcsbrJZ3Y82KeK151Kt49xsWaE+8KHEzOEGWxPmDm0SUr
-	 ejxfRJwoxK5jF/w0XDarZmUz9HZ3hh08Ma0VFfmx6NnHQvnXCvaukvakDRBnw3ioSG
-	 dkCHJm7xsLaXpGUuh9fOIoIySoemnVTd/bBmMyQB4iY2y/O6EJGcIyvDfYS6Cv5N0I
-	 j3hON/a4AT6Xj/4QWDe39scfvq8iUOzOrLF0ufATlBKTDzPd2wlmJQC06RmhBaHvm7
-	 sqtD30CBDLVo7CHtt47ov8qjOrLwkSBzS4t6GrSn/U27BJR9DCLM/6HNBlLFNTjWHb
-	 0VMY6/u06gLDQjSOtITh9T9dGULIWC+00FsRfU0UG9WLufO0kaj8qPrAiG9Vpol7UW
-	 FUjeQ/R4Rw/CROk4R/s5FD3gi+Z0ENuDX6B7YJrfl2BP9985MQ4p5zhDctnElyrkZt
-	 fvzzq0xnfl+MioiVyUhHYP21whoTaHqUJNxAhauGfmDXgNE0SziR9inRm/nuuuRWqF
-	 rD3eITYn1WnXSA2iq1vL7oMqoJB5M/vq095HPhEQOa4voSKwb6bvMTSI6SuIZxPsLN
-	 VyV5AdGzOBdFoKy0SnyKedwgJ1KjkewcLUxZ3Pq5Gf+nmfMQt9U8yAMpzob30qDgAY
-	 wSw/pRhVixcRVIqP19cXVu0w=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1A7C840E02B2;
-	Fri, 31 May 2024 20:49:53 +0000 (UTC)
-Date: Fri, 31 May 2024 22:49:47 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Kees Cook <kees@kernel.org>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
-Message-ID: <20240531204947.GNZlo367G0YXVbOk1I@fat_crate.local>
-References: <20240529-fortify_panic-v1-1-9923d5c77657@quicinc.com>
- <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
- <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
- <5658B525-6642-43A2-B14C-BC4AA916FBCC@alien8.de>
- <202405310951.56D9BD5C41@keescook>
- <20240531190816.GLZlogIGgpc5maOeLN@fat_crate.local>
- <202405311345.D91BF6E9@keescook>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nO3fy8fg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39EC0C116B1;
+	Fri, 31 May 2024 21:04:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717189477;
+	bh=nlf2Py+keWPZWb2WEcXyuXnPsjey2AglcXUUfxlnR8I=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=nO3fy8fgQWn0NjyZ8qCpS1EbBXel6/8sp/s2m7QTRhjbVh2L3lh6BQqV45wV0NGnQ
+	 NUwO6NMl/83GNmFtwZDl0TiF+pVcT2VyYqFsyk9kMFWk/W/ISrDPvrB8RD6sGLjahn
+	 5oOjXG8qKT8D22/7KKNuSnCz2ZrXTbDQR1Tv1hTRCBOP1eTTvM34WkgbyR0wVTJhHB
+	 5OQkpTBLSl50CWfoRhIKhdvZF75NVtqTdJ5zGmF5yGdi5LaVmsGi8aoYAqzKtTZFke
+	 tGTVzBp3iSiWKeQYHauYzewx9ClsPafPWCpyPBPjK2SBhSFO6Y/Llgd1SM+HkChLXL
+	 k68EsIKPxl5mQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id D2E67CE1347; Fri, 31 May 2024 14:04:36 -0700 (PDT)
+Date: Fri, 31 May 2024 14:04:36 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] kcsan: test: add missing MODULE_DESCRIPTION() macro
+Message-ID: <2fae7fe7-1e4f-467a-b03d-3fcd6025d144@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240530-md-kernel-kcsan-v1-1-a6f69570fdf6@quicinc.com>
+ <CANpmjNN1qf=uUnetER3CPZ9d5DSU_S5n-4dka3mDKgV-Jq0Jgw@mail.gmail.com>
+ <e9b4a22f-1842-4c37-8248-4f715d70a6c1@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202405311345.D91BF6E9@keescook>
+In-Reply-To: <e9b4a22f-1842-4c37-8248-4f715d70a6c1@quicinc.com>
 
-On Fri, May 31, 2024 at 01:46:37PM -0700, Kees Cook wrote:
-> Please do not do this. It still benefits from compile-time sanity
-> checking.
+On Fri, May 31, 2024 at 06:54:03AM -0700, Jeff Johnson wrote:
+> On 5/31/2024 12:47 AM, Marco Elver wrote:
+> > On Thu, 30 May 2024 at 21:39, Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+> >>
+> >> Fix the warning reported by 'make C=1 W=1':
+> >> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/kcsan/kcsan_test.o
+> >>
+> >> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> > 
+> > Reviewed-by: Marco Elver <elver@google.com>
+> > 
+> > Jeff, do you have a tree to take this through?
+> > If not - Paul, could this go through your tree again?
+> 
+> I don't currently have a tree. Kalle is in the process of relocating the
+> wireless ath tree so that I can push, but that is still work in progress.
 
-Care to elaborate how exactly it benefits?
+Queued and pushed with Marco's Reviewed-by, thank you both!
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+							Thanx, Paul
