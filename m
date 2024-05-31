@@ -1,107 +1,105 @@
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF96AD59;
-	Fri, 31 May 2024 21:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862E57C6D5;
+	Fri, 31 May 2024 22:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717191969; cv=none; b=geUZeM4z6GrvXg0K20ZeA6MVjAH7Ko1aKDoyzJMSTBkBGAJSVRqalJVEMIZDTWzFEx9CCrrXQZM4320t1+tiyJtkEMaJ3fSrDYszZiWkYSUN+sPLGBWghO3PHrTY3jIpDG8/V6dXv+zP2SB2rf39h2x+63zA+psZXF7V2iwgW6c=
+	t=1717192890; cv=none; b=aKkpnO8Gn+Qnw813/osKHz69mKwBSjEAYFtZ9jVrtESHd3Bar0nOJWTT1t82djL/mgbZgpx0mQsIFcqQzfktls/btYgHXfrBju9/KhO8YnujD891R+FXPIrizlEMZxg3cfk2wmt5DtDm/gnor0HU8WFfBymiOcW4tNSUdsSrfXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717191969; c=relaxed/simple;
-	bh=gghBl4JNIy95VfLrfwUP2Off8V0JTaP9S92vAyIBtpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pUogEvR+MEuWjgBF3l/3KzSys+lw8trAwiDdlTq4pc1HhDoENiGX82RRrBTAjhjGxoSvEglW6GsW1LfjO+NnGYwL5lJS/7YdD41ouvKLfV0ut7ZzXUdOw/hAZwDle8J5rXPvSYF49lGLC1SHVoPU/CT+VUh36vpeRi8urGhlfg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QMfXA6y7; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+	s=arc-20240116; t=1717192890; c=relaxed/simple;
+	bh=GEv0qDvfvODZ6seXHQ7UUUQ4eKVs2Wh3/3XrNIWWv7E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ZtaSwkxSacaZMywalBu6X2h9EaEeLaYXGxYAwBdr7XX8O98kDx3pmaSRCztocEZdPFhqBhSRPSytDnIvHNmjwjepptyFEVx3QapnXAUEqYYRNFs6Klf9a3PV9PdwdWm0ZdveTLX60xSV7S5kwuY9eB8jXV2BWioeLxuWpp5dNyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L1oAFopk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QMfXA6y7"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E46A540E02BA;
-	Fri, 31 May 2024 21:46:04 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id mp9dd_f_l4Ta; Fri, 31 May 2024 21:46:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717191961; bh=EB3b0oK1NO82II0HvxGp1gnqwn/B2ARuYc6PW/E4a7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QMfXA6y7f3Wu0gHnuLb7og3I+KNwp73rGCOQrSpTYXYF+Hg9Eu5qWu6GUrWIe6kj8
-	 5aaXWWbU0YxSm+yLfWZp3CA4SS1Saw+W+8gkPylwes3iA3HIlRnWXo65h5pllRglXF
-	 WrEwA4ELVEp21OMiFsbRw+6U6LtNqw0Cr4ToQJJ3kRNV29lJwmF8Qwbn1DcG1HwFWk
-	 DZq3Dnbdw10d814C7kg0VqbwvXikIXFXBYcVNFy2t03hbl4gbj/ZTQqaDMDvb/7vbY
-	 o0H3w5gozMLcYeyMc5R4irUnvw5xp/IzbFHXRy4uuQzBWABd1ZGYQPUIjpTmWD9i2G
-	 qwHN7xOgE7eB0rN2f+lAXwu8jIgDexgZJcIEqf3TDblDhVFh7uoYK7G9S6HUz8tebO
-	 a9rzJsxyiwC+0DUebmLkOEfHAP5Zj6xZvjrwEEhXSKtUO5fxd9PT7lSrhrdWE59Mn9
-	 WfnHXtOvWNQOsB0RxMBXNIn3cKdpvFixSoQ4PK9uQcmLe+RXPWch5T3tTqr/Z/HR0L
-	 pFD0mmxZx1SEFa8m9mlW6JjkXXoktNbYHCYpQCDNahe3+7hwSt16Dx+GYDLwcIhdjS
-	 upNpTLaoBiVNfHPMMzmRJtw1u9n2kucfbWt7wJuyIqpbPP6x4D96mso/A7eUMNcPpy
-	 y4/wWrdmJ9q8fAMUy+tJe2sg=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AAB5340E02B9;
-	Fri, 31 May 2024 21:45:50 +0000 (UTC)
-Date: Fri, 31 May 2024 23:45:45 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Kees Cook <kees@kernel.org>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
-Message-ID: <20240531214545.GPZlpFCaXtTGinbcfl@fat_crate.local>
-References: <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
- <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
- <5658B525-6642-43A2-B14C-BC4AA916FBCC@alien8.de>
- <202405310951.56D9BD5C41@keescook>
- <20240531190816.GLZlogIGgpc5maOeLN@fat_crate.local>
- <202405311345.D91BF6E9@keescook>
- <20240531204947.GNZlo367G0YXVbOk1I@fat_crate.local>
- <202405311359.EFC7345EC@keescook>
- <20240531212009.GOZlo_CV0lxZ1xviQW@fat_crate.local>
- <202405311431.BF9FE3F7A7@keescook>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L1oAFopk"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44VHP8OE016293;
+	Fri, 31 May 2024 22:01:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=IUh6ggCC9Qril41TpwYvch
+	5CFUtO1Qcti3THYUHCXiU=; b=L1oAFopkQab/MC4oV5beJy2m2ZvXWgRvE+uJ8+
+	YpfAY3rGtfk9ByKFxEOc43c8EiTMYotI3m6aAx3iil7BamNLnuRxo913BFQI1kvt
+	Oz/6z8z/3XhPFmsS1oQbzK4qOH6w9W21L/iqPBjkGp2A25yMZQkmKLCXmEScgSVD
+	DkecXVl628NsLpLvwieofPp1rRO4IWyUmkDMvCd51PXkBhXdrmhEzFfmYrtTqrh9
+	myOIQ+4265upBUqzPGQ03O3xminfKa0LpvAUdajyy+bU5A5oOjBQniiC+4G6o52l
+	Lkzvj/ZpgqEZJeePOq9CNPaO3iZtvgV1bsQvJqYOjxNPZthA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2n8ax3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 22:01:16 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VM1FV6032364
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 22:01:15 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 15:01:14 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 31 May 2024 15:01:14 -0700
+Subject: [PATCH] dyndbg: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202405311431.BF9FE3F7A7@keescook>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240531-md-test_dynamic_debug-v1-1-2194b477f55e@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAKlIWmYC/x3M0QrCMAxA0V8ZeTawrRuCvyIymjZuARul6WQy9
+ u9WH8/DvTsYZ2GDS7ND5reYPLWiOzUQFq8zo8Rq6Nt+aEfXYYpY2MoUP+qThCkyrTNSdI5HCmf
+ iAWr7ynyX7f+93qrJGyNlr2H53R6i64bJW+EMx/EFvpS/W4YAAAA=
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Jason Baron
+	<jbaron@akamai.com>, Jim Cromie <jim.cromie@gmail.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BECvLFVWUARQCasFl5wp_Ldsfukel1MJ
+X-Proofpoint-ORIG-GUID: BECvLFVWUARQCasFl5wp_Ldsfukel1MJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_14,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 adultscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0
+ malwarescore=0 spamscore=0 bulkscore=0 mlxlogscore=992 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310168
 
-On Fri, May 31, 2024 at 02:34:07PM -0700, Kees Cook wrote:
-> On Fri, May 31, 2024 at 11:20:09PM +0200, Borislav Petkov wrote:
-> > So I get an allergic reaction everytime we wag the dog - i.e., fix the
-> > code because some tool or option can't handle it even if it is
-> > a perfectly fine code. In that case it is an unused symbol.
-> > 
-> > And frankly, I'd prefer the silly warning to denote that fortify doesn't
-> > need to do any checking there vs shutting it up just because.
-> 
-> If we want to declare that x86 boot will never perform string handling
-> on strings with unknown lengths, we could just delete the boot/
-> implementation of __fortify_panic(), and make it a hard failure if such
-> cases are introduced in the future. This hasn't been a particularly
-> friendly solution in the past, though, as the fortify routines do tend
-> to grow additional coverage over time, so there may be future cases that
-> do trip the runtime checking...
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_dynamic_debug.o
 
-Yes, and we should not do anything right now either.
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-As said, I'd prefer the warning which actually says that fortify
-routines are not used, which in itself is useful information vs shutting
-it up.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ lib/test_dynamic_debug.c | 1 +
+ 1 file changed, 1 insertion(+)
 
--- 
-Regards/Gruss,
-    Boris.
+diff --git a/lib/test_dynamic_debug.c b/lib/test_dynamic_debug.c
+index 8dd250ad022b..77c2a669b6af 100644
+--- a/lib/test_dynamic_debug.c
++++ b/lib/test_dynamic_debug.c
+@@ -162,4 +162,5 @@ module_init(test_dynamic_debug_init);
+ module_exit(test_dynamic_debug_exit);
+ 
+ MODULE_AUTHOR("Jim Cromie <jim.cromie@gmail.com>");
++MODULE_DESCRIPTION("Kernel module for testing dynamic_debug");
+ MODULE_LICENSE("GPL");
 
-https://people.kernel.org/tglx/notes-about-netiquette
+---
+base-commit: b050496579632f86ee1ef7e7501906db579f3457
+change-id: 20240531-md-test_dynamic_debug-bd33e5bc7be4
+
