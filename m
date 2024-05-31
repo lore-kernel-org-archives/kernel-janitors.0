@@ -1,236 +1,151 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5877017CA03;
-	Fri, 31 May 2024 18:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D92F17D352;
+	Fri, 31 May 2024 18:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717179643; cv=none; b=GP1rltx+EHCJ+UQAQbKNZlWCOpffMDjxPjJLY2zHlpfn9IgzRXyb75UBJmY/ML7SNYaHUM2XrpOh0vwN+Lmd8sp0UYWXQBaLWXBnU4+BnsuznrzVHAMBPpVqTZYtZs9GOg9/4MSiZOFzALfNKAAHKuYm4D7igJFxtEWGWWgR4mw=
+	t=1717180158; cv=none; b=tdWu//FQInQBHDIn3sVBTMKVlpU+7G/p/i3Zn5BjQV0La2bVFAys2NFc+tfTWqC+AoMOjr9qubwX8YzfFXPFpzdyNx1QuulzYbER+QHvku/utHsJ8Y2p3pwoCZaCvRBD/B3vKFS/JbRmaJzFVCAG+fDCX4G5/dlTziGplVrZeK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717179643; c=relaxed/simple;
-	bh=H6k9KopKfaFWOB0CAQg8qAB9APDD+0DUxxv1gA1s2AQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hpwzk166asd6D1++d8PfaJmmO3YVkRclOYQUYz+JojkyDE2ghQBZMewUGIbw5v/KEhGQy+rgyzNwl4dXRzzE8fAMaQlPs10rOYlwOG4FjazF8oewRijDfCYUxkg5kb1d4X1e6WiPTS30j3hmSr2ZpLTjW5dBB5RDMlv60L5KysY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SoW73p0Q; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1717180158; c=relaxed/simple;
+	bh=u9zusHs8iZfduvp0RRZolTeGcxZDFHG8eD1tE59rWqM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=d//0e0vuMkXRJJHDty6YQ3uAI1CCRQSNKOEbOiJtygsnysaQqjpPStZBHp946mDcV8b9uH2SxijNrJRX7zCa7MdbsNL6ymlV+3QcHosmSdTHOj68/qmlvggZ3ndGXYq/FgJc4eWdSUkgZJ8J47gcWQB0oyG7Hr4oTPGnpzK7P1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mObYwxs7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SoW73p0Q"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f47f07acd3so21190505ad.0;
-        Fri, 31 May 2024 11:20:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717179641; x=1717784441; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6doFFCcSTAte6ymfy+Igul1WrbfPbryjlzogNwwZ8rc=;
-        b=SoW73p0Qjz5jLJzxWbjj6AO6GXjyN+TmkVgjfOdAsSAffsvSrws03n+qyK8ceiinfS
-         tOigU80HGsH59BOlBGSol77xxenUoQg4l2zaYW8Uh5oTQfvLfVZPK5TXFx6TbjCdWQQF
-         AVWAscWR50YCP2btJx+5R+rrrbRppl8Q14zRCtfPAG2V5Chq3v9Anw/bfugzzxYr/zzA
-         tyhs2DL9/d9qxFDTBraIIaL9ttd0wiEQHr+jo0EGfvlxcZBKwo4+Kg4KEoikTe5djpic
-         wlHVlA8sxVTH+TjZo5Nn3c7RXSPArhJbX3VzZkHxvJokjzZjSmvA6TUrz6/UaanTivBX
-         nGSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717179641; x=1717784441;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6doFFCcSTAte6ymfy+Igul1WrbfPbryjlzogNwwZ8rc=;
-        b=GEBY9ESCjXgoqJENENbS+fzM+5RJRl7gy6ImKFCDHsFbQW8BPaxnvcd6JnjE2BxAwZ
-         napq0V195NfFcwIMHK7/U3m3Yk4reNzr8Iq9RPb6tKcisA0gOaRhevhdOxFL4Y4nb52/
-         PDE0hhexf3OtxwlWzwBO1/pZ4P5g6/2SUFCorU6kk2i7cLBNg5ho/GnJ6DJ0t6hPzAoY
-         b7CXXusd4LsSbZtARwkdyN+sJKwU/MqAdkUp17M1/i0Z8tUnOybM7vH9+WRjlu031ltE
-         Zv8siSNk5+wDjDpgQni8Q4r7rAC0Lszwf8S7fMp5Iw0m9wAV/akjiq1lpQMk+w/Mc+Do
-         h3lg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxhhKpAY0WWlTsVlvWduNVH7jFbDuXZIB+EHoC8nCB6bSnt6zAhOJ+pD8Lc+1HggC7YlDpXqfc6e+9hPAeFs+Y2Pr/taGGqGIhRAhblvbgbv1X06g2W6+LYCe9BFa9OiOL7Vv98f1taqe411Nd
-X-Gm-Message-State: AOJu0Yy9BDFmFNmXHn58ocTCBaEuQ6mmLRAHGdByXAcA4aiDVTYlbugQ
-	A/xDnhDgTt1Awl1Of02hMIl8d931/bwCZUpf8orujDjTFHOFjI+ZLPcAPxApyEL5/ENg5k5HlIp
-	1kwYko1azPzH8qs5fGCQRsI0IidI=
-X-Google-Smtp-Source: AGHT+IFm/2TDsh9LMWk94O1lQr2/13xsjHvxYZ/V/XYrcs9yi3UE8PDmZqtliFdCgZmSTEh5hgjlk0ut9L+Hwo3E9co=
-X-Received: by 2002:a17:902:f7c5:b0:1f4:8363:a6fc with SMTP id
- d9443c01a7336-1f6370203aemr24549975ad.25.1717179641457; Fri, 31 May 2024
- 11:20:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mObYwxs7"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44VEUVGd015681;
+	Fri, 31 May 2024 18:29:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MUcVFMrpKY1dztBaKj7dGwSNTpNh6Q/jOBtrF11FzjA=; b=mObYwxs7d204TzJo
+	yyfz4m5Szp5Qg9hZ5uJiuzpev6mA+QSaHwEX/41tClFBTeBU/RwEi2VxLsSNr/rG
+	OX7k/mwvQW4qov/avwnkF1OPl2J2bQu3Z06kV54OR998AR5FryxRicX6+E/yWDA/
+	XmmwfTokXNINGI5iCH/Qa4cQkiw9ZZrhBonT/VlJ0Mo5fWF1doELlSWtSFNl46GF
+	EKcaNqKbiKS+FgCEtETzuUfT+ZmR1ZlXOiGMxC9hIDPNLVCwjnb9AJXAXNYIWJ1C
+	4cy2pTIuVjKhgjgVkBKxKs0bwpA0uQpGpQsWzOXpNzuDnfOwJdzxFmSmm+nZsgSB
+	qsmIkw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ydyws7ksd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 18:29:00 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VIT0Zs013830
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 18:29:00 GMT
+Received: from [10.110.11.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 11:28:59 -0700
+Message-ID: <c19aa2df-adaa-463e-b3a4-843f04538a2b@quicinc.com>
+Date: Fri, 31 May 2024 11:28:58 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531093211.498880-1-colin.i.king@gmail.com> <833fac2c-91f9-4e9a-9b9e-da2db955a488@infradead.org>
-In-Reply-To: <833fac2c-91f9-4e9a-9b9e-da2db955a488@infradead.org>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 31 May 2024 14:20:29 -0400
-Message-ID: <CADnq5_NCA31yex7Ye=hoVbMkpCzbgpBJvGrGub+AQ1jQBcCeCA@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amd/display: Fix a handful of spelling mistakes
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Colin Ian King <colin.i.king@gmail.com>, Harry Wentland <harry.wentland@amd.com>, 
-	Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui.Pan@amd.com, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Alex Hung <alex.hung@amd.com>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
+Content-Language: en-US
+To: Kees Cook <kees@kernel.org>
+CC: Nikolay Borisov <nik.borisov@suse.com>,
+        Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov
+	<bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, <linux-kernel@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Dan
+ Carpenter <dan.carpenter@linaro.org>
+References: <20240529-fortify_panic-v1-1-9923d5c77657@quicinc.com>
+ <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
+ <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
+ <202405310923.78257B2B3@keescook>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <202405310923.78257B2B3@keescook>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 8QYmh73Z0jEAn_7gfYKIWx9EKMsE4QDb
+X-Proofpoint-GUID: 8QYmh73Z0jEAn_7gfYKIWx9EKMsE4QDb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_12,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ malwarescore=0 impostorscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999
+ priorityscore=1501 spamscore=0 lowpriorityscore=0 bulkscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310140
 
-Applied.  Thanks!
+On 5/31/2024 9:28 AM, Kees Cook wrote:
+> On Thu, May 30, 2024 at 09:23:36AM -0700, Jeff Johnson wrote:
+>> On 5/30/2024 8:42 AM, Nikolay Borisov wrote:
+>>>
+>>>
+>>> On 29.05.24 г. 21:09 ч., Jeff Johnson wrote:
+>>>> As discussed in [1] add a prototype for __fortify_panic() to fix the
+>>>> 'make W=1 C=1' warning:
+>>>>
+>>>> arch/x86/boot/compressed/misc.c:535:6: warning: symbol '__fortify_panic' was not declared. Should it be static?
+>>>
+>>> Actually doesn't it make sense to have this defined under ../string.h ? 
+>>> Actually given that we don't have any string fortification under the 
+>>> boot/  why have the fortify _* functions at all ?
+>>
+>> I'll let Kees answer these questions since I just took guidance from him :)
+> 
+> Ah-ha, I see what's happening. When not built with
+> CONFIG_FORTIFY_SOURCE, fortify-string.h isn't included. But since misc.c
+> has the function definition, we get a warning that the function
+> declaration was never seen. This is likely the better solution:
+> 
+> 
+> diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+> index b70e4a21c15f..3f21a5e218f8 100644
+> --- a/arch/x86/boot/compressed/misc.c
+> +++ b/arch/x86/boot/compressed/misc.c
+> @@ -532,7 +532,9 @@ asmlinkage __visible void *extract_kernel(void *rmode, unsigned char *output)
+>  	return output + entry_offset;
+>  }
+>  
+> +#ifdef CONFIG_FORTIFY_SOURCE
+>  void __fortify_panic(const u8 reason, size_t avail, size_t size)
+>  {
+>  	error("detected buffer overflow");
+>  }
+> +#endif
+> 
+> 
+> Jeff, can you test this? (I still haven't been able to reproduce the
+> warning.)
 
-Alex
+Adding Dan since this comes during:
+  CHECK   arch/x86/boot/compressed/misc.c
 
-On Fri, May 31, 2024 at 11:37=E2=80=AFAM Randy Dunlap <rdunlap@infradead.or=
-g> wrote:
->
->
->
-> On 5/31/24 2:32 AM, Colin Ian King wrote:
-> > There are a few spelling mistakes in dml2_printf messages. Fix them.
-> >
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->
->
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
->
-> Thanks.
->
-> > ---
-> >  .../dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c      | 6 +++---
-> >  .../display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c  | 6 +++---
-> >  2 files changed, 6 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dm=
-l2_core_dcn4_calcs.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_c=
-ore/dml2_core_dcn4_calcs.c
-> > index 8062144a5a6d..e7e6751f4477 100644
-> > --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core=
-_dcn4_calcs.c
-> > +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core=
-_dcn4_calcs.c
-> > @@ -5731,7 +5731,7 @@ static bool CalculatePrefetchSchedule(struct dml2=
-_core_internal_scratch *scratch
-> >               dml2_printf("DML: Tvm: %fus - time to fetch vm\n", s->Tim=
-eForFetchingVM);
-> >               dml2_printf("DML: Tr0: %fus - time to fetch first row of =
-data pagetables\n", s->TimeForFetchingRowInVBlank);
-> >               dml2_printf("DML: Tsw: %fus =3D time to fetch enough pixe=
-l data and cursor data to feed the scalers init position and detile\n", (do=
-uble)s->LinesToRequestPrefetchPixelData * s->LineTime);
-> > -             dml2_printf("DML: To: %fus - time for propogation from sc=
-aler to optc\n", (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (d=
-ouble)p->myPipe->HTotal)) * s->LineTime);
-> > +             dml2_printf("DML: To: %fus - time for propagation from sc=
-aler to optc\n", (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (d=
-ouble)p->myPipe->HTotal)) * s->LineTime);
-> >               dml2_printf("DML: Tvstartup - TSetup - Tcalc - TWait - Tp=
-re - To > 0\n");
-> >               dml2_printf("DML: Tslack(pre): %fus - time left over in s=
-chedule\n", p->VStartup * s->LineTime - s->TimeForFetchingVM - 2 * s->TimeF=
-orFetchingRowInVBlank - (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScale=
-r) / (double)p->myPipe->HTotal)) * s->LineTime - p->TWait - p->TCalc - *p->=
-TSetup);
-> >               dml2_printf("DML: row_bytes =3D dpte_row_bytes (per_pipe)=
- =3D PixelPTEBytesPerRow =3D : %u\n", p->PixelPTEBytesPerRow);
-> > @@ -8268,7 +8268,7 @@ static bool dml_core_mode_support(struct dml2_cor=
-e_calcs_mode_support_ex *in_out
-> >       dml2_printf("DML::%s: mode_lib->ms.DCFCLK =3D %f\n", __func__, mo=
-de_lib->ms.DCFCLK);
-> >       dml2_printf("DML::%s: mode_lib->ms.FabricClock =3D %f\n", __func_=
-_, mode_lib->ms.FabricClock);
-> >       dml2_printf("DML::%s: mode_lib->ms.uclk_freq_mhz =3D %f\n", __fun=
-c__, mode_lib->ms.uclk_freq_mhz);
-> > -     dml2_printf("DML::%s: urgent latency tolarance =3D %f\n", __func_=
-_, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kb=
-ytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)=
-));
-> > +     dml2_printf("DML::%s: urgent latency tolerance =3D %f\n", __func_=
-_, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kb=
-ytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)=
-));
-> >  #endif
-> >
-> >       mode_lib->ms.support.OutstandingRequestsSupport =3D true;
-> > @@ -11089,7 +11089,7 @@ static bool dml_core_mode_programming(struct dm=
-l2_core_calcs_mode_programming_ex
-> >                               if (display_cfg->plane_descriptors[k].imm=
-ediate_flip && mode_lib->mp.ImmediateFlipSupportedForPipe[k] =3D=3D false) =
-{
-> >                                       mode_lib->mp.ImmediateFlipSupport=
-ed =3D false;
-> >  #ifdef __DML_VBA_DEBUG__
-> > -                                     dml2_printf("DML::%s: Pipe %0d no=
-t supporing iflip!\n", __func__, k);
-> > +                                     dml2_printf("DML::%s: Pipe %0d no=
-t supporting iflip!\n", __func__, k);
-> >  #endif
-> >                               }
-> >                       }
-> > diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dm=
-l2_core_shared.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/=
-dml2_core_shared.c
-> > index f2e2250d28d3..6eb3fec87ec1 100644
-> > --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core=
-_shared.c
-> > +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core=
-_shared.c
-> > @@ -1988,7 +1988,7 @@ bool dml2_core_shared_mode_support(struct dml2_co=
-re_calcs_mode_support_ex *in_ou
-> >       dml2_printf("DML::%s: mode_lib->ms.FabricClock =3D %f\n", __func_=
-_, mode_lib->ms.FabricClock);
-> >       dml2_printf("DML::%s: mode_lib->ms.uclk_freq_mhz =3D %f\n", __fun=
-c__, mode_lib->ms.uclk_freq_mhz);
-> >       dml2_printf("DML::%s: max_urgent_latency_us =3D %f\n", __func__, =
-mode_lib->ms.support.max_urgent_latency_us);
-> > -     dml2_printf("DML::%s: urgent latency tolarance =3D %f\n", __func_=
-_, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kb=
-ytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)=
-));
-> > +     dml2_printf("DML::%s: urgent latency tolerance =3D %f\n", __func_=
-_, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kb=
-ytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)=
-));
-> >  #endif
-> >
-> >       mode_lib->ms.support.OutstandingRequestsSupport =3D true;
-> > @@ -8131,7 +8131,7 @@ static bool CalculatePrefetchSchedule(struct dml2=
-_core_internal_scratch *scratch
-> >               dml2_printf("DML: Tvm: %fus - time to fetch vm\n", s->Tim=
-eForFetchingVM);
-> >               dml2_printf("DML: Tr0: %fus - time to fetch first row of =
-data pagetables\n", s->TimeForFetchingRowInVBlank);
-> >               dml2_printf("DML: Tsw: %fus =3D time to fetch enough pixe=
-l data and cursor data to feed the scalers init position and detile\n", (do=
-uble)s->LinesToRequestPrefetchPixelData * s->LineTime);
-> > -             dml2_printf("DML: To: %fus - time for propogation from sc=
-aler to optc\n", (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (d=
-ouble)p->myPipe->HTotal)) * s->LineTime);
-> > +             dml2_printf("DML: To: %fus - time for propagation from sc=
-aler to optc\n", (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScaler) / (d=
-ouble)p->myPipe->HTotal)) * s->LineTime);
-> >               dml2_printf("DML: Tvstartup - TSetup - Tcalc - TWait - Tp=
-re - To > 0\n");
-> >               dml2_printf("DML: Tslack(pre): %fus - time left over in s=
-chedule\n", p->VStartup * s->LineTime - s->TimeForFetchingVM - 2 * s->TimeF=
-orFetchingRowInVBlank - (*p->DSTYAfterScaler + ((double)(*p->DSTXAfterScale=
-r) / (double)p->myPipe->HTotal)) * s->LineTime - p->TWait - p->TCalc - *p->=
-TSetup);
-> >               dml2_printf("DML: row_bytes =3D dpte_row_bytes (per_pipe)=
- =3D PixelPTEBytesPerRow =3D : %u\n", p->PixelPTEBytesPerRow);
-> > @@ -10959,7 +10959,7 @@ bool dml2_core_shared_mode_programming(struct d=
-ml2_core_calcs_mode_programming_e
-> >                               if (display_cfg->plane_descriptors[k].imm=
-ediate_flip && mode_lib->mp.ImmediateFlipSupportedForPipe[k] =3D=3D false) =
-{
-> >                                       mode_lib->mp.ImmediateFlipSupport=
-ed =3D false;
-> >  #ifdef __DML_VBA_DEBUG__
-> > -                                     dml2_printf("DML::%s: Pipe %0d no=
-t supporing iflip!\n", __func__, k);
-> > +                                     dml2_printf("DML::%s: Pipe %0d no=
-t supporting iflip!\n", __func__, k);
-> >  #endif
-> >                               }
-> >                       }
->
-> --
-> #Randy
-> https://people.kernel.org/tglx/notes-about-netiquette
-> https://subspace.kernel.org/etiquette.html
+What version of smatch are you using? I'm using v0.5.0-8639-gff1cc4d453ff
+
+In the build where I'm seeing this issue I have:
+CONFIG_ARCH_HAS_FORTIFY_SOURCE=y
+CONFIG_FORTIFY_SOURCE=y
+CONFIG_FORTIFY_KUNIT_TEST=m
+
+So that conditional compilation won't make a difference.
+
+Also note that misc.c doesn't include the standard include/linux/string.h but
+instead includes the stripped down arch/x86/boot/string.h, so fortify-string.h
+isn't included.
+
+This seems to come back around to the question that Nikolay asked, which part
+of the boot code actually needs this?
+
+/jeff
+
