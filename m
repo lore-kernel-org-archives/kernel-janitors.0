@@ -1,102 +1,115 @@
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F70B7F7D1;
-	Fri, 31 May 2024 19:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E571946F;
+	Fri, 31 May 2024 20:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717182516; cv=none; b=noD1gpg1tOlMlf4xlbCf5guAVF4xLTT7hh4io+sObAmAGxqirzMQX8aut5DlXLbGdWjOfe/qwMq3oppEpwI8GdtS8TPuOpx1uK5NkyZq8azemv34tlRWD+97hDi1VXiiutOQDjSC4qN3KXDtpAOC3dLtQFzvy5U+KuaygOvzxoE=
+	t=1717186434; cv=none; b=ER4qO4XcdzAROO+kn3NzqA7dKbet/mE0VgTVizkmwiHsm4Nhtkx8sYVM+PcjwXuHiXMpNSKfLh8YZZZupZpDLWYGtW6JlM8sDP9TQFiHFvbtnMiN8dz3jwmPciOmx5zEGWVTWpRgofMRqZMYqwXctX8xUR5+0o2oiiZcf3u0HnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717182516; c=relaxed/simple;
-	bh=+ZwA3B3uUTKPcLPMQO8JUOutJEuWTiTxesZp1gVR1FQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q0vOkUI4vJ3qr7/Xo+kpNaEOSeJZ06h1pdSYUFvbYeeXMdntbX/YxlxtVtTKQsxEw/8ixx9MTuKIb1Z2vt71SJmrXjFyd6dP9XIQ92nIGIAnRPY+IPYde6Rh17PnfKQWUGO3yUWGqiBBedZD6TKxUrPcO2Io4qPOXdQNYRtmpUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ePRI7kWs; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+	s=arc-20240116; t=1717186434; c=relaxed/simple;
+	bh=w6X6T/ksufCsAz4gKWToTB/1NUfx2HyXeF6R64j7EVQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CjS2ik28eY+E1TNPbJoOJDEfl6hEVVSkxpz20Qf2Nam9LD0p1Z482UA+c0mvyLvDVT6SPemfLfUVaG6y+rGbiWFG6G5s6nHj5lHS9xLKYAOqp2P4TJaeU/s6YqCdNY55rApouyYaAj8bJ74FPbfCCHR3W+VVPoNHndJebn67wjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Up9l4fE+; arc=none smtp.client-ip=80.12.242.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ePRI7kWs"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2E73040E02B2;
-	Fri, 31 May 2024 19:08:32 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id YQHt5Fn7dxfN; Fri, 31 May 2024 19:08:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717182509; bh=NzGpXJTXbKmIHkjFqSrkePeRDdQz6l3rbrrmmm9dbpU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ePRI7kWsGmRmTVawaSnCct4KAy/HrsK/Pzu/KHZ4mfC11QekKZnaOyenXZEpRswrp
-	 lhP6Pa94Up/ZB7itrz03ai3HxwQczJCUQvhb0/FjVv7da4GE9MuhSeHEcdgsPC5eOY
-	 WdW2Kl6vzRK6j2ARwwBlkNIeilAfF2YIu3bQ2n3igvI87CSdZ3CF/b7oMFQp0/r33L
-	 AQCoZ5KNOQXb4cMJ0giIwm3flBqhSLVJiTXvuFH5FvHkY2M1NwyMfuV3JjaagNTNlS
-	 +MkFjxUzkj6F0qGgfFPsOL8jkka2dc8WUKyg7Uj7Y6n1w3U5Iyql5J7Qx0FS+Ha5HL
-	 Yr69FvCWXeWdjJfGGNlDJclRhwEUqlnAqTESegYP1TxWflFGv83OwZLYHe3cQE5nN7
-	 dMk2l7QSZj9bPg6WYj+6gCP7igIkWPXE1pT+/hgNisiyAKeNLk1qjeNszVA2rw31fm
-	 UY004yI84iTb/ZhpZD1BOZsmGP9A3VXJmeFgzspnYUcZt75utGJxP0ffSEfwVPzfQk
-	 cCKMSCtwd9k2kLJcI+Y6shL0E+lXcObGhO5gTjfVJV/HoSEHOxffQx93LF5N6Mqxa9
-	 8H/Fhpi05qDU4ulmyxj4vWEyytITjWdOuXQXoSQBCsJZzCHUezc+nYk224QPfM03sH
-	 QFhAQFG5dZEwK468C5iUzMqo=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DA77240E02B9;
-	Fri, 31 May 2024 19:08:17 +0000 (UTC)
-Date: Fri, 31 May 2024 21:08:16 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Kees Cook <kees@kernel.org>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] x86/boot: add prototype for __fortify_panic()
-Message-ID: <20240531190816.GLZlogIGgpc5maOeLN@fat_crate.local>
-References: <20240529-fortify_panic-v1-1-9923d5c77657@quicinc.com>
- <0d3f7c58-7fc0-4e8b-b6fb-c4d0d9969ce7@suse.com>
- <e42c4984-d4a2-45b1-b93d-7471000766b7@quicinc.com>
- <5658B525-6642-43A2-B14C-BC4AA916FBCC@alien8.de>
- <202405310951.56D9BD5C41@keescook>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Up9l4fE+"
+Received: from [192.168.1.37] ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id D8UfsaUbIp3DQD8UfsPBfT; Fri, 31 May 2024 22:04:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1717185896;
+	bh=IMWkqEz3tcT2fpRarPXYT4LJHuLYonGiraVHDo/QMJA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Up9l4fE+1Acu5z0JyIgdduw8EDNsBJpvZBzn+1QGM8ZH+B1vhLvhfrbHVYkCl7ele
+	 oxCAPYYjwh+PvWEKKWurdX8Gs8d7BmbEDWRsm2Lqw3XqIsusbpNhaZAfXl3/YX5vMx
+	 eVxjnXtmSuWftN0V56LBawSd2aXq6XQENGC+13UYvIAXU8YqN/a9fdobJOeLsXGyGG
+	 x37iBNUR0Bj3g+zjyoTMJaaxL1HSpkjLJgItZCgL1zG3ZJn4fVqO1eF3eaUQT3bpkr
+	 YXm8efQ+aFxsTFdtcdGVh+3XyGBI7tX98vTi+pMUJTaDY4c0n9Uis1pYXhiqtKFVK4
+	 4afmwchI27h6w==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 31 May 2024 22:04:56 +0200
+X-ME-IP: 86.243.17.157
+Message-ID: <95572851-8750-4a1f-8034-443e0bc9c6b8@wanadoo.fr>
+Date: Fri, 31 May 2024 22:04:52 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202405310951.56D9BD5C41@keescook>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] crypto: tegra - Remove an incorrect iommu_fwspec_free()
+ call in tegra_se_remove()
+To: Akhil R <akhilrajeev@nvidia.com>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Thierry Reding <thierry.reding@gmail.com>, Jon Hunter
+ <jonathanh@nvidia.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+ "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <ea775b351a3dbe4cef4056ea89da25084f73df22.1716650050.git.christophe.jaillet@wanadoo.fr>
+ <SJ1PR12MB633943D654272A0612695F1DC0F22@SJ1PR12MB6339.namprd12.prod.outlook.com>
+ <Zllexnetg3eu6dSW@gondor.apana.org.au>
+ <SJ1PR12MB633958B0DC8504F1D7868CA0C0FC2@SJ1PR12MB6339.namprd12.prod.outlook.com>
+Content-Language: en-MW
+From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <SJ1PR12MB633958B0DC8504F1D7868CA0C0FC2@SJ1PR12MB6339.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 31, 2024 at 09:53:28AM -0700, Kees Cook wrote:
-> Under CONFIG_FORTIFY_SOURCE, the boot code *does* still uses
-> fortify-string.h. It lets us both catch mistakes we can discover at
-> compile and will catch egregious runtime mistakes, though the reporting
-> is much simpler in the boot code.
 
-From where I'm standing, we're not catching anything in the
-decompressor:
+Le 31/05/2024 à 07:36, Akhil R a écrit :
+>> -----Original Message-----
+>> From: Herbert Xu <herbert@gondor.apana.org.au>
+>> Sent: Friday, May 31, 2024 10:53 AM
+>> To: Akhil R <akhilrajeev@nvidia.com>
+>> Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>; David S. Miller
+>> <davem@davemloft.net>; Thierry Reding <thierry.reding@gmail.com>; Jon
+>> Hunter <jonathanh@nvidia.com>; linux-kernel@vger.kernel.org; kernel-
+>> janitors@vger.kernel.org; linux-crypto@vger.kernel.org; linux-
+>> tegra@vger.kernel.org
+>> Subject: Re: [PATCH] crypto: tegra - Remove an incorrect iommu_fwspec_free()
+>> call in tegra_se_remove()
+>>
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On Wed, May 29, 2024 at 06:53:42AM +0000, Akhil R wrote:
+>>>> The only iommu function call in this driver is a
+>>>> tegra_dev_iommu_get_stream_id() which does not allocate anything and
+>> does
+>>>> not take any reference.
+>>>>
+>>>> More-over, what is freed is "se->dev" which has been devm_kzalloc()'ed in the
+>>>> probe.
+>>> I did not completely understand what is being tried to convey here.
+>>> If I understand it right, iommu_fwspec_free() does not do anything
+>>> with the "devm_kzalloc"ed variable.
+>>>
+>>> It would probably be a good idea to remove this line from the commit message.
+>> I think he means that as the memory was allocated via devm, it will
+>> be automatically freed by the kernel and the driver does not need
+>> to (and should not) free the memory by hand.
 
-$  objdump -D arch/x86/boot/compressed/vmlinux | grep __fortify_panic
-0000000001bec250 <__fortify_panic>:
-$
 
-Sure, in vmlinux proper (allmodconfig) we do:
+Yes, that is my point.
 
-objdump -D vmlinux | grep __fortify_panic | wc -l
-1417
+> Ya. But iommu_fwspec_free() does not free the memory allocated via devm.
+>
+> I think iommu_fwspec_free() is expected to be called in symmetry with
+> iommu_fwspec_init(). So, I do agree that the SE driver does not allocate
+> what is freed by iommu_fwspec_free(), but I feel this line is a bit misleading.
+>
+Yes, I spoke too fast.
+What is freed is dev_iommu_fwspec_get(dev);, not dev. So the sentence I 
+wrote makes no sense and should be removed :(
 
-but not in the decompressor which is special anyway.
 
-So we can just as well disable CONFIG_FORTIFY_SOURCE in the decompressor
-and not do silly prototypes.
+CJ
 
--- 
-Regards/Gruss,
-    Boris.
 
-https://people.kernel.org/tglx/notes-about-netiquette
