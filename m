@@ -1,65 +1,106 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2583914F9EF;
-	Fri, 31 May 2024 08:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6168374E09;
+	Fri, 31 May 2024 08:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717144641; cv=none; b=Y+d5EtOpsV3ktOEjv70xFtWPBoQUEOWxuMuQDOsP0jHAk6BU/DuzLDSrNr6m4YneG60mYAn4nAK0kj5T6NGK9OLlB14wniSHKi0TnFJ2r8Vav2fa7tP8sWRHjkR2tXs0OEsgJnHRWfdXt7Pswb5p/6utGvujbeqMDCS8zPjINf4=
+	t=1717144725; cv=none; b=H6UYUtd0gVQqDgOvuw4JqBmi8Xosj3wbuFPpn2rhsijxVNz47th3MKivai61s1bmieH2GSpK4u9TRwDFFcHPY4aAIkbks5IVm4t+YzjxDJqWGQqfqJ/UoSW6452IHaGB0truxKA+7xONKo2KWg+acEkZHj7DqwT7YrzY8SuIfPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717144641; c=relaxed/simple;
-	bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=abdXR1P+ihPugg7FwvrYHuK469K9f89dnUt8XlAGc1ISZ70sCesgDBugrgU3/dvm7xSanWc4PeYv3CUig1Eq/+aCsfKn3tnJU3gJDpAa3GRjxyozQ9Rx+zIzbim8wco/DOyLYYvM+l7qIuHWTHBoRFBe+N65iztKubBYZZOPuZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4212b102935so678245e9.2;
-        Fri, 31 May 2024 01:37:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717144638; x=1717749438;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-        b=ucvxFaOwB62sqDtaCYcaortqOjRDVBbeNJ/pe7ggSP9i600lPZ6wBID3w9C2eZ4OrJ
-         BXhVzCNHIJoWfG2cD+uEAJqNXjj3LKl7m9hiXeFNsUa1ejDlKbhpV6g+tld4ozbBOhGu
-         wpnA4t1GEyWfmNDhTN5bNtFqNDMkFlYhlnZBmozY6yZvADdfGriDb1Uivp2iOy6hQfwU
-         0uS7ZHJl9z7BdkIUFlYRil/ArmHGarsVjyNZhSg87puny0nZxtPyzCv4j8oYB7AoiaVK
-         C0WjqI6r1Jv2RgP9gBsSfU1pq/9X2Ybhtt9x6vnG5LqQjmfSPifRg+S/SbZk9F6UVrHc
-         HHbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7I9TJJ42OuLZqnltYWfn+3mlvoxg3+tWZgSRcedFNF5yMJZisA8WLq1j/8TErbzCD14QoRYR6bgz8C9kVLljs3MgAum6rZfyhfogmGwcEo45xgUnEEZhzAB9FMbbwJiiNe9xzZk/ITwS6DZOT
-X-Gm-Message-State: AOJu0YzpiXLXAVf/gGocze2uI6X917jxNhpa3LlmjUlh4BdM1RATxRXq
-	2Pdz2tGCb9GMnC1Ij7x7oqxE25ttqL7Q3Id9FxgzgUeNlA7ZI+vX
-X-Google-Smtp-Source: AGHT+IEcMZB90PK3n/9rMQxD7m9IN3Nt4bzySZUbYfywqxlzdNOgXH/47NR1pw7f8r7XCWcMKZ23iw==
-X-Received: by 2002:a05:600c:3b0c:b0:421:2918:3d9a with SMTP id 5b1f17b1804b1-4212e006132mr9155745e9.0.1717144638185;
-        Fri, 31 May 2024 01:37:18 -0700 (PDT)
-Received: from [10.100.102.74] (85.65.193.189.dynamic.barak-online.net. [85.65.193.189])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212b8afe40sm17955285e9.40.2024.05.31.01.37.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 01:37:17 -0700 (PDT)
-Message-ID: <746bdba5-8826-4069-8f3b-08891d78321d@grimberg.me>
-Date: Fri, 31 May 2024 11:37:15 +0300
+	s=arc-20240116; t=1717144725; c=relaxed/simple;
+	bh=MG6LYpllHmnJXtgJOt/alUy0Z1+D5pDhglGk5gH5q64=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=Cr7N3m8o2sC3O8s2f8IP9V2ekx2ali6IVFUatDexGKFfCzUFSlkk500+hD0xZkZpOgXJw7IjHRnrTT/kwb69LDbUak3XiMWRpwOVPrkRAUJ8I9Tw4mRFQ4m65IWg7tyXCn25gONlFS5u5djR6OM4ghagoz6AqtmLm6qRDHwMR8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=DWDORLjd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=chlzhL2A; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="DWDORLjd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="chlzhL2A"
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 7E22B1380150;
+	Fri, 31 May 2024 04:38:42 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Fri, 31 May 2024 04:38:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1717144722; x=1717231122; bh=MG6LYpllHmnJXtgJOt/alUy0Z1+D5pDh
+	glGk5gH5q64=; b=DWDORLjdbmk4tl1FU59msoRJmHQGiFrXHMPkuNI15jaUogpy
+	bKkJBA9BaP9GGdlVujXHJQcMCdyxmo/3UuQmv0vNw8NCNzQZ1kELKLtACAeNVMv/
+	6ZKnJzsjhzehmzS68T8Yx/av0urEkSfqhLX1DTx1YtPZgbSUvcLvOKwWleCgwsoq
+	sfnjwOMdXN7yqUpMURKiEFnLXQBCSqdCV8Icziq42lx0OGaJvBrnVdwAipfHUJpP
+	aBR3FWbBt4G3jpxovuvFBLYlDkAolQp4wj13yRjOAdv5NrfpR3bdBsV8qS54XV8I
+	uD1TJ4ZPIdKhdej1iY2sevFuU2731FLxvbEiUQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717144722; x=
+	1717231122; bh=MG6LYpllHmnJXtgJOt/alUy0Z1+D5pDhglGk5gH5q64=; b=c
+	hlzhL2A062qJIl6SaoPmO/xGl9XwZ2fygnJudOYlfUzA4cefi/nz9+VbU8wYJfdG
+	/cL8dIOxd0ka7BmCQJOYE/ZeyIhcdxvAHfDw27C6maXN2BV/LRyXFo3DDAqecKAt
+	wDdjCejignjSk/UErTjdVvAdITAUyEee1S9Nw5sejinDQPU6xyG0AGMEEsoeZmGP
+	I/5B7CLAXa9wBcsJdj+lOLNjh496FUXUktWtpe0cagCrvxH6p2QeX2Z0nnRkUAYU
+	gc9u1lwMeWb5zM/vVpcwOWwF4x9iYRdaSnZ7XqWex3nwkDnc3uBOUwGxuCokGZ2Q
+	csiof3Y5zSe6U6oMj6Ghg==
+X-ME-Sender: <xms:kYxZZjQZybnWdagLKRyq5wu3Vlj694bJ1DlN5vM_Y6qlrQSBixNjxA>
+    <xme:kYxZZkyPKmM_tapOuPeo5fWRiaaqA7_1MLFlw9MogW-Ke7m_lu44MCqByDYKIC6DT
+    i9AiVJyV_aa4z8Lyig>
+X-ME-Received: <xmr:kYxZZo2jTW9cGswgRt1VHIklVETmwA7Ok7TM5DGQ-LcI_eQ_Sgj12Oyu4YSQFvU6mKrYFsS1D_MAB-vUKHLfifgtCrhyUmuco6H4sXwBzrkVPOCvbFIFywOs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekiedgtdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurheptgfghfggufffkfhfvegjvffosehtqhhmtdhhtdejnecuhfhrohhmpefuvhgv
+    nhcurfgvthgvrhcuoehsvhgvnhesshhvvghnphgvthgvrhdruggvvheqnecuggftrfgrth
+    htvghrnhepvdfhtdduuddvueejueffgfdukedvfeevgfeuieeivdeltdehgeeivefftdet
+    kedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsh
+    hvvghnsehsvhgvnhhpvghtvghrrdguvghv
+X-ME-Proxy: <xmx:kYxZZjC93nUGwlXDKszUwMtwIgbwTDrHKXp0RKodNQN4YuNUcrEIQQ>
+    <xmx:kYxZZshxU5LiQn-YdhIcw93ZdLxWx4RAENapjv1MT5JMvT5Hfx3BUg>
+    <xmx:kYxZZnq-Bxsn3m7hCHTqlitekPxDxXhSjXBH4Oq04dn2sb6GidzAzw>
+    <xmx:kYxZZnhHg06x4apEEznsdQcOWD_3n3AipBxUAMBJtB8GUPYrJus7Cw>
+    <xmx:koxZZtYV8P44-h6v_o0yn23f6Hc8gbJtmPAeMTcdZjeZ1453k_veuEvZ>
+Feedback-ID: i51094778:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 31 May 2024 04:38:41 -0400 (EDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: Sven Peter <sven@svenpeter.dev>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+Mime-Version: 1.0 (1.0)
 Subject: Re: [PATCH] nvme-apple: add missing MODULE_DESCRIPTION()
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Hector Martin
- <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
+Date: Fri, 31 May 2024 10:38:25 +0200
+Message-Id: <F36A6A33-240D-4F88-B0D9-5C08E35DBC8C@svenpeter.dev>
 References: <20240530-md-nvme-apple-v1-1-b8b7ca569660@quicinc.com>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
+Cc: Hector Martin <marcan@marcan.st>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Keith Busch <kbusch@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 In-Reply-To: <20240530-md-nvme-apple-v1-1-b8b7ca569660@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: iPhone Mail (21F90)
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+
+> On 31. May 2024, at 07:16, Jeff Johnson <quic_jjohnson@quicinc.com> wrote:=
+
+>=20
+> =EF=BB=BFmake allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvme/host/nvme-a=
+pple.o
+>=20
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>=20
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+
+Reviewed-by: Sven Peter <sven@svenpeter.dev>
+
+
