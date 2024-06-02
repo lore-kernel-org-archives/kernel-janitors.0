@@ -1,56 +1,51 @@
-Received: from msa.smtpout.orange.fr (msa-208.smtpout.orange.fr [193.252.23.208])
+Received: from msa.smtpout.orange.fr (msa-210.smtpout.orange.fr [193.252.23.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC53444366;
-	Sun,  2 Jun 2024 14:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51862AEE0;
+	Sun,  2 Jun 2024 14:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717337955; cv=none; b=lCla5qBpR+4OX5STzl/C7p7FvhQXnPKugyjF1LWa6p2RxFfvzS3HvHC/HWSFnoB7caD/HRbYN8mguewOva98R7PbGn9J2xLOl9rwQTw54f5TmTD+ZAD0uTUAcHrQcZBkC1rKcKHkuDbnJtnrpnaN56X5x6VLVhxJIL/hi9HSBMQ=
+	t=1717339087; cv=none; b=MdiWH1GT+ZfwWC9AkCkeulfs8KWKpqHrLvl0ueqYBdgtOdrRYQofyqLp/9JqkyjMx6oCYLj9ZW7nzAdvq+3ye40VluYKAj+7vA2TcombHucWvsPxRNv31UrrOtSSpnSrxwPN4FeDKEWXKarGTrUc97khaJiqBu6E05Xjn/7pmR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717337955; c=relaxed/simple;
-	bh=/ie5zhTuzVnG6guZfln69UgguCT3/wECkJkH3j8zbpM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ba34cMqCRhJY+KUHm6tYy93yFwLqsM9xe+wCznovdmE8/cmnI+JYMfbglL0QflDZAOOVpODAxuascq/EPxTG/pvGL0CKIfdxmoOvM+LejQVjhTnmbHRgzCvic4bqhAtNXa26xft2qtr+DUV5Q6J3cfRN1hgcvHw2RW9UPnomPIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FM1O1hTM; arc=none smtp.client-ip=193.252.23.208
+	s=arc-20240116; t=1717339087; c=relaxed/simple;
+	bh=LVysQP63kxgkOPJHDyBMkif3ydpiiR5UrzTv9VFOl8M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PbStoFn79rYOap8TCWHYaNF2qLEdhQm5f42AvsgA8KX+Ap0Mj2tbk2G9jsWpY+Z0lgc5qOQMWMNoo927GOKJwYhzooS+NYOY0gAGDOnQ9E+EU+NPiffe8lrY2E09tsHcU8wEMY/+fJ59nc9mC7ljpiDt9fszqw+O4sXJg83IiFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=LIWkbNCd; arc=none smtp.client-ip=193.252.23.210
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FM1O1hTM"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="LIWkbNCd"
 Received: from fedora.home ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id Dm2ns8x2vLmxrDm34sLKU9; Sun, 02 Jun 2024 16:19:02 +0200
+	id DmCns7nHE13tqDmCnsrjoC; Sun, 02 Jun 2024 16:29:07 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1717337942;
-	bh=8DCrRJgxsQW+5+97dKa8ee3w1WqnGfGM17kPgJs0kHQ=;
+	s=t20230301; t=1717338547;
+	bh=dcmvFoYnZSeTd8Kj+AiRlBV6qhwSnFlJXOzqirkIDKI=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=FM1O1hTM4WFxAG79oe1B7VmaCBJfo7x0hhU2ROmG5cyAqvPfzGfh46VLnVHeII7tj
-	 cIY7TAldPUG3qnbl3Wrv32zSOljsiR0BiJEYsAmXFwxYEkxg58neQsVKkSmOOnAL+x
-	 BNLzJmLKi0e21ihiR7TAzIpG24KV13eUnJAn0DVGTM9O+HYl90/vp3WfpZkOJBNpiK
-	 YS0qUpnZoUT7JvIzhvQ01INDqU038cGhcqRUFPMvxcreeUwixpkvntsGxTc5JcBaIv
-	 2VrPmEIDp1eh1NmcvbloUjVf1QRC6hp6WkYMuRCOYMXLS2+/UeiKa7crSP46kYbPnp
-	 cK/knB7LyZQxw==
+	b=LIWkbNCd6zg0rtja3DStnWdGogy3nvoA9T+e2ySWipMxQ9jydRKgLoHXT/kDBMLQY
+	 CbLbVJHriAfr6I94ftpHLQpJYuAVzTTRGk9u9pohxEP9CrgVlCr4z3fgsW+89cH0IO
+	 447SIjK5yUp5tzZ4Hxsnghpj+d4uvtJjz8/tQ6LpDYT9nbwk6pBk9FBTBzQJDdG0J+
+	 sy8h1EvOzojsc8fI7NeXV1MzBswZE+7/vqy0CsoQhWfwlRD4Amo6aI6SxP91i90pAQ
+	 7zvWE1s/BPtThw82pWhoCrqOLREqTi4HjcWEmVA1i98UpHR4o6EgE3zmzBgmi4nDpz
+	 +OTZSaCoEB+mQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 02 Jun 2024 16:19:02 +0200
+X-ME-Date: Sun, 02 Jun 2024 16:29:07 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: idosch@nvidia.com,
-	petrm@nvidia.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	jiri@resnulli.us
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2 net-next] mlxsw: spectrum_router: Constify struct devlink_dpipe_table_ops
-Date: Sun,  2 Jun 2024 16:18:53 +0200
-Message-ID: <6d79c82023fd7e3c4b2da6ac92ecf478366e8dca.1717337525.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-media@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: [PATCH v2] media: venus: Constify struct dec_bufsize_ops and enc_bufsize_ops
+Date: Sun,  2 Jun 2024 16:27:34 +0200
+Message-ID: <9bc4b24a55c42fa49125cae0304c8b0f208550b1.1717313173.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.1
-In-Reply-To: <cover.1717337525.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1717337525.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -59,67 +54,122 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'struct devlink_dpipe_table_ops' are not modified in this driver.
+"struct dec_bufsize_ops and "struct enc_bufsize_ops" are not modified in
+this driver.
 
 Constifying these structures moves some data to a read-only section, so
 increase overall security.
 
 On a x86_64, with allmodconfig:
 Before:
-======
    text	   data	    bss	    dec	    hex	filename
-  15557	    712	      0	  16269	   3f8d	drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.o
+  12494	    822	      0	  13316	   3404	drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.o
 
 After:
-=====
    text	   data	    bss	    dec	    hex	filename
-  15789	    488	      0	  16277	   3f95	drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.o
+  12766	    566	      0	  13332	   3414	drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Changes in v2:
+   - Add missing prefix in the subject
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c
-index ca80af06465f..fa6eddd27ecf 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_dpipe.c
-@@ -283,7 +283,7 @@ static u64 mlxsw_sp_dpipe_table_erif_size_get(void *priv)
- 	return MLXSW_CORE_RES_GET(mlxsw_sp->core, MAX_RIFS);
- }
+v1: https://lore.kernel.org/all/9bc4b28a55c42fa4a125c3e03d4c8b0f208550b4.1717313173.git.christophe.jaillet@wanadoo.fr/
+
+While looking at lore to find the reference above, I found that this
+patch had already been sent by Rikard Falkeborn <rikard.falkeborn@gmail.com>
+See: https://lore.kernel.org/all/20211212123534.4473-1-rikard.falkeborn@gmail.com/
+
+So, if applied, credits should be for him.
+So feel free to add a Co-Developed-by:, Reported-by:, Suggested-by: or
+whatever makes sense, including removing my Signed-off-by: to put his if
+it sounds better to do it this way.
+
+ .../platform/qcom/venus/hfi_plat_bufs_v6.c    | 20 +++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c b/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c
+index f5a655973c08..6289166786ec 100644
+--- a/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c
++++ b/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c
+@@ -1063,51 +1063,51 @@ struct enc_bufsize_ops {
+ 	u32 (*persist)(void);
+ };
  
--static struct devlink_dpipe_table_ops mlxsw_sp_erif_ops = {
-+static const struct devlink_dpipe_table_ops mlxsw_sp_erif_ops = {
- 	.matches_dump = mlxsw_sp_dpipe_table_erif_matches_dump,
- 	.actions_dump = mlxsw_sp_dpipe_table_erif_actions_dump,
- 	.entries_dump = mlxsw_sp_dpipe_table_erif_entries_dump,
-@@ -734,7 +734,7 @@ static u64 mlxsw_sp_dpipe_table_host4_size_get(void *priv)
- 	return mlxsw_sp_dpipe_table_host_size_get(mlxsw_sp, AF_INET);
- }
+-static struct dec_bufsize_ops dec_h264_ops = {
++static const struct dec_bufsize_ops dec_h264_ops = {
+ 	.scratch = h264d_scratch_size,
+ 	.scratch1 = h264d_scratch1_size,
+ 	.persist1 = h264d_persist1_size,
+ };
  
--static struct devlink_dpipe_table_ops mlxsw_sp_host4_ops = {
-+static const struct devlink_dpipe_table_ops mlxsw_sp_host4_ops = {
- 	.matches_dump = mlxsw_sp_dpipe_table_host4_matches_dump,
- 	.actions_dump = mlxsw_sp_dpipe_table_host_actions_dump,
- 	.entries_dump = mlxsw_sp_dpipe_table_host4_entries_dump,
-@@ -811,7 +811,7 @@ static u64 mlxsw_sp_dpipe_table_host6_size_get(void *priv)
- 	return mlxsw_sp_dpipe_table_host_size_get(mlxsw_sp, AF_INET6);
- }
+-static struct dec_bufsize_ops dec_h265_ops = {
++static const struct dec_bufsize_ops dec_h265_ops = {
+ 	.scratch = h265d_scratch_size,
+ 	.scratch1 = h265d_scratch1_size,
+ 	.persist1 = h265d_persist1_size,
+ };
  
--static struct devlink_dpipe_table_ops mlxsw_sp_host6_ops = {
-+static const struct devlink_dpipe_table_ops mlxsw_sp_host6_ops = {
- 	.matches_dump = mlxsw_sp_dpipe_table_host6_matches_dump,
- 	.actions_dump = mlxsw_sp_dpipe_table_host_actions_dump,
- 	.entries_dump = mlxsw_sp_dpipe_table_host6_entries_dump,
-@@ -1230,7 +1230,7 @@ mlxsw_sp_dpipe_table_adj_size_get(void *priv)
- 	return size;
- }
+-static struct dec_bufsize_ops dec_vp8_ops = {
++static const struct dec_bufsize_ops dec_vp8_ops = {
+ 	.scratch = vpxd_scratch_size,
+ 	.scratch1 = vp8d_scratch1_size,
+ 	.persist1 = vp8d_persist1_size,
+ };
  
--static struct devlink_dpipe_table_ops mlxsw_sp_dpipe_table_adj_ops = {
-+static const struct devlink_dpipe_table_ops mlxsw_sp_dpipe_table_adj_ops = {
- 	.matches_dump = mlxsw_sp_dpipe_table_adj_matches_dump,
- 	.actions_dump = mlxsw_sp_dpipe_table_adj_actions_dump,
- 	.entries_dump = mlxsw_sp_dpipe_table_adj_entries_dump,
+-static struct dec_bufsize_ops dec_vp9_ops = {
++static const struct dec_bufsize_ops dec_vp9_ops = {
+ 	.scratch = vpxd_scratch_size,
+ 	.scratch1 = vp9d_scratch1_size,
+ 	.persist1 = vp9d_persist1_size,
+ };
+ 
+-static struct dec_bufsize_ops dec_mpeg2_ops = {
++static const struct dec_bufsize_ops dec_mpeg2_ops = {
+ 	.scratch = mpeg2d_scratch_size,
+ 	.scratch1 = mpeg2d_scratch1_size,
+ 	.persist1 = mpeg2d_persist1_size,
+ };
+ 
+-static struct enc_bufsize_ops enc_h264_ops = {
++static const struct enc_bufsize_ops enc_h264_ops = {
+ 	.scratch = h264e_scratch_size,
+ 	.scratch1 = h264e_scratch1_size,
+ 	.scratch2 = enc_scratch2_size,
+ 	.persist = enc_persist_size,
+ };
+ 
+-static struct enc_bufsize_ops enc_h265_ops = {
++static const struct enc_bufsize_ops enc_h265_ops = {
+ 	.scratch = h265e_scratch_size,
+ 	.scratch1 = h265e_scratch1_size,
+ 	.scratch2 = enc_scratch2_size,
+ 	.persist = enc_persist_size,
+ };
+ 
+-static struct enc_bufsize_ops enc_vp8_ops = {
++static const struct enc_bufsize_ops enc_vp8_ops = {
+ 	.scratch = vp8e_scratch_size,
+ 	.scratch1 = vp8e_scratch1_size,
+ 	.scratch2 = enc_scratch2_size,
+@@ -1186,7 +1186,7 @@ static int bufreq_dec(struct hfi_plat_buffers_params *params, u32 buftype,
+ 	u32 codec = params->codec;
+ 	u32 width = params->width, height = params->height, out_min_count;
+ 	u32 out_width = params->out_width, out_height = params->out_height;
+-	struct dec_bufsize_ops *dec_ops;
++	const struct dec_bufsize_ops *dec_ops;
+ 	bool is_secondary_output = params->dec.is_secondary_output;
+ 	bool is_interlaced = params->dec.is_interlaced;
+ 	u32 max_mbs_per_frame = params->dec.max_mbs_per_frame;
+@@ -1260,7 +1260,7 @@ static int bufreq_enc(struct hfi_plat_buffers_params *params, u32 buftype,
+ 		      struct hfi_buffer_requirements *bufreq)
+ {
+ 	enum hfi_version version = params->version;
+-	struct enc_bufsize_ops *enc_ops;
++	const struct enc_bufsize_ops *enc_ops;
+ 	u32 width = params->width;
+ 	u32 height = params->height;
+ 	bool is_tenbit = params->enc.is_tenbit;
 -- 
 2.45.1
 
