@@ -1,43 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FEE15A5;
-	Sun,  2 Jun 2024 02:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D3028E3;
+	Sun,  2 Jun 2024 03:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717295423; cv=none; b=p4Lxre+1WenRhq5oJcFxptdRZIfR8jnEaS8SBrGdKkMyibfCKqAMJEL/dpM9ZH1IQJRRmQSZ3PZvfd9c2WgYgNkzktU1Dv7wxsfyQN3E+DM8b0wd6jK2CNvDplZLHo6pNyDBnMXhkWETd/6X/S8B9XyhL9CkDP2chb5CC25g9vc=
+	t=1717297293; cv=none; b=uywjucs5ojkkktEiAdS2Rv39HH2JVO89SWLUhs8Zf48ei2aeAOc+nq3qvuU1QsMfIAsfwjvAy6rKzmlNT1QDjBbA6f/gvwUJftngcImF9erGNAu2ZUcIY0wi3ujjOWlNacU0ieQLpTPiW3juoPNwPqoj8wYTDZhgYl9OhNb60qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717295423; c=relaxed/simple;
-	bh=Q8AdSr1763igBtiPbv1oDsgkW6kA1BrMNzTsklnYWUI=;
+	s=arc-20240116; t=1717297293; c=relaxed/simple;
+	bh=JdO1pla7RFG+6UHfAeQ916BDviLKRzz6j8TGIcyMfZM=;
 	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=aRyHNrO9To+yUfAkAPSzhIhASkgPulBff9b+/i4+LKhF7MJsVOrMtfTMJcA0sAmq2q4xIDFyniZhPENEZqpckS3jmjjWylR7nJYIzO4iV8k9lkrx6uTPyprT/MpBwYqUr1Ij0isf6sTyiOJVlDby4NTLY3F1p2ABos0Movy/i6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GwbaPxo7; arc=none smtp.client-ip=10.30.226.201
+	 Mime-Version:Content-Type; b=i+EgZXbfRJL4jyFvd1UO8smI484UAOLmXHdGVjnJnZsB4b5MsjU4LG2NNwQCkCzXSKopLAWdeSY0P8NG1AxYSbd1IdBWxRO13JqVySLTpjy5mhn77tVyldbP6u68n2Yli2dyvKcB+llqAqPgiUz+tkq57qRdsBjBp9y/4z0kkIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a5FFX5TN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GwbaPxo7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E0E3C116B1;
-	Sun,  2 Jun 2024 02:30:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a5FFX5TN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D261C3277B;
+	Sun,  2 Jun 2024 03:01:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717295422;
-	bh=Q8AdSr1763igBtiPbv1oDsgkW6kA1BrMNzTsklnYWUI=;
+	s=k20201202; t=1717297292;
+	bh=JdO1pla7RFG+6UHfAeQ916BDviLKRzz6j8TGIcyMfZM=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GwbaPxo7rP3jOFHeu0n9LEAascOGpMyZ23uKGhMfYsvSf5ZM8QMwgQerJCnIueyCL
-	 EJBO8oTq2mWsB1ocYr69oY1/cUJ8QXgQZBewaBmEVrPmfzNig656RPjdqnt/IB5B2R
-	 hnmULCZTne9KSUaZ7tltST9tPSU+QkHnm2YVMOGbUKQ1sp4wYadHHh/5wrs3Oh/xhc
-	 vO736mtGi6GK2XkHRoYxMdQdGa/T3StL98HTlLrT+4c7FSUZenoqK9WD3gPNgjsgS0
-	 tlm9XMdR038ymLyWd5ce9+NITd88OK08SanBPxYUIYJISZziI3kavw63vsogYlr6q8
-	 1uXtZsVoquy0w==
-Date: Sun, 2 Jun 2024 11:30:18 +0900
+	b=a5FFX5TNC2FhkIDarq92cTIX2ri7hHaT0ONJHUJYOePg3zFsOHgDvb4HbRvRaRUnP
+	 IzlSeY5xswSEltgPTdKymaesNJ5aflLRtTP60evxbCAHSTVYk+qXpRyHzInrPlm0Hy
+	 rytVtWBUbarh/3dJUc9YoZDxbuxKzmGAS5voa8Ui0dy2CYO8tAM9095fX7w7oNZO1i
+	 HqX0t4QoDEcbJoa4KGHjKcq+yLBN8WmSaDqOrfnfRS++jRrrUMvTUt5MvV+SJZBBMg
+	 RrL7/vooAQTszcN26E1JoT++g5hbjuh7uufyH1v4FRBlV7beeAVlR2wO2s4Fn0RFxc
+	 NNJtgMc0PmiVw==
+Date: Sun, 2 Jun 2024 12:01:26 +0900
 From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Anil S Keshavamurthy
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Naveen N. Rao"
+ <naveen.n.rao@linux.ibm.com>, Anil S Keshavamurthy
  <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>,
  <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
  <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] samples: kprobes: add missing MODULE_DESCRIPTION()
- macros
-Message-Id: <20240602113018.4771521d3651150422919cef@kernel.org>
-In-Reply-To: <20240601-md-samples-kprobes-v1-1-b6a772353893@quicinc.com>
-References: <20240601-md-samples-kprobes-v1-1-b6a772353893@quicinc.com>
+Subject: Re: [PATCH] KUnit: add missing MODULE_DESCRIPTION() macros for
+ lib/test_*.ko
+Message-Id: <20240602120126.bdf79b0a209ad016f8a91a73@kernel.org>
+In-Reply-To: <20240601-md-lib-test-v1-1-a728620e37d8@quicinc.com>
+References: <20240601-md-lib-test-v1-1-a728620e37d8@quicinc.com>
 X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -48,51 +49,51 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Sat, 1 Jun 2024 18:31:55 -0700
+On Sat, 1 Jun 2024 15:19:39 -0700
 Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
 
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kprobes/kprobe_example.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kprobes/kretprobe_example.o
+> make allmodconfig && make W=1 C=1 reports for lib/test_*.ko:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_hexdump.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_dhry.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_firmware.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_sysctl.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_hash.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_ida.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_list_sort.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_min_heap.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_module.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_sort.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_user_copy.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_static_keys.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_static_key_base.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_memcat_p.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_blackhole_dev.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_meminit.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_free_pages.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_kprobes.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_ref_tracker.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bits.o
 > 
 > Add the missing invocations of the MODULE_DESCRIPTION() macro.
 > 
-
-OK, these are also good to me too.
-
-Thanks,
-
 > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
->  samples/kprobes/kprobe_example.c    | 1 +
->  samples/kprobes/kretprobe_example.c | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/samples/kprobes/kprobe_example.c b/samples/kprobes/kprobe_example.c
-> index ef44c614c6d9..53ec6c8b8c40 100644
-> --- a/samples/kprobes/kprobe_example.c
-> +++ b/samples/kprobes/kprobe_example.c
-> @@ -125,4 +125,5 @@ static void __exit kprobe_exit(void)
+[...]
+
+> diff --git a/lib/test_kprobes.c b/lib/test_kprobes.c
+> index 0648f7154f5c..e707f7b3a366 100644
+> --- a/lib/test_kprobes.c
+> +++ b/lib/test_kprobes.c
+> @@ -400,4 +400,5 @@ static struct kunit_suite kprobes_test_suite = {
 >  
->  module_init(kprobe_init)
->  module_exit(kprobe_exit)
-> +MODULE_DESCRIPTION("sample kernel module showing the use of kprobes");
->  MODULE_LICENSE("GPL");
-> diff --git a/samples/kprobes/kretprobe_example.c b/samples/kprobes/kretprobe_example.c
-> index ed79fd3d48fb..65d6dcafd742 100644
-> --- a/samples/kprobes/kretprobe_example.c
-> +++ b/samples/kprobes/kretprobe_example.c
-> @@ -104,4 +104,5 @@ static void __exit kretprobe_exit(void)
+>  kunit_test_suites(&kprobes_test_suite);
 >  
->  module_init(kretprobe_init)
->  module_exit(kretprobe_exit)
-> +MODULE_DESCRIPTION("sample kernel module showing the use of return probes");
->  MODULE_LICENSE("GPL");
-> 
-> ---
-> base-commit: b050496579632f86ee1ef7e7501906db579f3457
-> change-id: 20240601-md-samples-kprobes-efb32cbcc8dd
-> 
+> +MODULE_DESCRIPTION("simple sanity test for *probes");
+
+nit: Could you make it "simple sanity test for k*probes" ? because
+there is test_fprobe.c.
+
+Thank you,
 
 
 -- 
