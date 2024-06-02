@@ -1,105 +1,161 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D674171A5;
-	Sun,  2 Jun 2024 04:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6475D2837D;
+	Sun,  2 Jun 2024 07:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717303474; cv=none; b=kIpUwGL0JtoLPcmskRWdR8ewFQ4pGZ4g5ck+M3gUJtQtpzKEBn9FmLabNnlYlsSCzz1pyGi/TBY7cjH9hnmsTKNuisGVzCbgOfwc24KtqsSLpMwFdc4Lc+89Ao+j15/FMAfjlOYaAPhtRUKh3My9js8eeCiTcwCxXMRhYqHPW08=
+	t=1717313223; cv=none; b=cNx+p+PAcEN/wzUKpsfsSCw+VkytnU9/iZZui2uTP/+Lu5obFbpddUaXkB1ZNHM4G9fRMLzxJ17rxYOkRLKfdVn3nsd/IuGmCEcUVf8YzL1zoRnT1+ZtGEc/gRt/KFspK8I9f788lyatZVNVc+YyrHVl0lZBZPKayVxCQzwa5Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717303474; c=relaxed/simple;
-	bh=tcFWKldo0RI0JL1/1dQ+E5e/BJuI3bIOoLoqyG6veIo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=SmT2/Ovenmb+5uTIHFZw6fnAj9lV0GSOxT9pPuVjRmeTq7L6hHFwYPQuZCOPZjETPp+c6hzyfRRHpO859JGaJswRTBEIYjfvYqW2yfBs/m/xTd58U80ETDelmx9+05JTzRBcbJWsOi3cq0Wc9Bi7lNSg7hghaKDcgV5hwy83Mo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EJu4CtrY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1717313223; c=relaxed/simple;
+	bh=5vU+UUp8i0XytBBbtP1BYFK/1J0LMLna6iSlUbFykX0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mdvPQMkK6wR6osYeGMKJDFyVsiF+zc5f4dVewbtL6s4PkywA7SvochQBlUVPKQVmPcPiIf/NdM8Hh+jUwMNITfatcRm3+KvfynbeIrEh8xG/Wf0g5uqDmEVdze6vLNX808duoNGhWAqbBcjy42NKIfk2Tc9FJgLHYZRvNfIbne8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=U6QQ9w/s; arc=none smtp.client-ip=80.12.242.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EJu4CtrY"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4524VraK025385;
-	Sun, 2 Jun 2024 04:44:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=6tcUcaGv7JGo2XBUVsbn9R
-	w9/Ef8KQb6jKCpkZinco8=; b=EJu4CtrYkWcdcy86yCv7AK7BXYxGZkuho0Tl4H
-	pjUcOOUaPSUNJXdnpdFhYXYi8lyfsu3ekM5ZeDfitlZYdGFHxUcJETnUfLOi/LHZ
-	ad0/eayrCIc2Dqoke5JuAM58mEATNC7B+g4c3sdHo5KBz+aV67QDHjnVbJHM7RCO
-	/lrWTs2m+GnzX7rGbn07K0qszmcL1DID6U3oXm6NclU41O/ticHB0h6JcUZMkeNZ
-	onXrpdJPVQNcr8sHP2w9biMjzCLu4Lth2GcJHb2vFo7ubdDL1M2r6Fq/nkHMeHhc
-	Yh9pLg9CmmWlqCUcixwVo66+FejKsGYdY+tYEC41ZlzYwymQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw42sq14-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 02 Jun 2024 04:44:24 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4524iNsT010117
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 2 Jun 2024 04:44:23 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 1 Jun 2024
- 21:44:22 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sat, 1 Jun 2024 21:44:22 -0700
-Subject: [PATCH] clk: sophgo: add missing MODULE_DESCRIPTION() macro
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="U6QQ9w/s"
+Received: from fedora.home ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id DfcBsRFnPRv3WDfcBsxUGF; Sun, 02 Jun 2024 09:26:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1717313212;
+	bh=uZOPGxZkjH03hL+S3wWEoYW4v++R64OY2Pp65PCtFlk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=U6QQ9w/sy8dhSwP67oABpb93JfZHE6zv46FYWd4eAcxy7/WC+20cN8S/iUlgeVPT6
+	 BrxY5tvmE4cOItOwlqRSxDqDaSrKP7N/2EajXwsDxWpfRHs1muyZUyh+uMb9EUVYif
+	 rs3obQ88J6BmyqfEpNsqrZ/WarFgsGLvTw4xfaw3G0g3iaH0xNyotq5OikjA/EawBu
+	 Ad98CNSv0AqPb7xHzupSqDLU3ATAT8Jt1lo1ENR6d9uKcbDwwVmClczb+QQ20NxDBb
+	 7TsOEygf34r1lPkcsdnEoHxKa+i0Hdq3/NYFhVwH5tyVDAyERf/tDoreNaiDl1+syS
+	 uPd0+Gcrt3lVA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 02 Jun 2024 09:26:52 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-media@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: [PATCH] Constify struct dec_bufsize_ops and enc_bufsize_ops
+Date: Sun,  2 Jun 2024 09:26:45 +0200
+Message-ID: <9bc4b28a55c42fa4a125c3e03d4c8b0f208550b4.1717313173.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240601-md-drivers-clk-sophgo-clk-sophgo-cv1800-v1-1-8e00d8c3a87b@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAKX4W2YC/1XNQQqDMBCF4avIrDuQSJC2VyldxGQ0QzXKjA2Ce
- Pem3XX3vs3/DlASJoV7c4BQYeUlV9hLAyH5PBJyrIbWtM50xuIcMQoXEsUwvVCXNY3L3yz2agw
- 6N9y6GK03LkKtrUID77+nx7O690rYi88hffsT5/eOs9eNBM7zA/9NjiKYAAAA
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
-        Inochi Amaoto
-	<inochiama@outlook.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Gp0o1UD4mX-ExkFxHSvd6uZEXqbBmQTC
-X-Proofpoint-ORIG-GUID: Gp0o1UD4mX-ExkFxHSvd6uZEXqbBmQTC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-01_19,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- impostorscore=0 mlxlogscore=947 clxscore=1011 bulkscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 malwarescore=0 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406020036
+Content-Transfer-Encoding: 8bit
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sophgo/clk-sophgo-cv1800.o
+"struct dec_bufsize_ops and "struct enc_bufsize_ops" are not modified in
+this driver.
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Constifying these structures moves some data to a read-only section, so
+increase overall security.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+On a x86_64, with allmodconfig:
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  12494	    822	      0	  13316	   3404	drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+  12766	    566	      0	  13332	   3414	drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/clk/sophgo/clk-cv1800.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../platform/qcom/venus/hfi_plat_bufs_v6.c    | 20 +++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/sophgo/clk-cv1800.c b/drivers/clk/sophgo/clk-cv1800.c
-index 2da4c24621cf..e0c4dc347579 100644
---- a/drivers/clk/sophgo/clk-cv1800.c
-+++ b/drivers/clk/sophgo/clk-cv1800.c
-@@ -1534,4 +1534,5 @@ static struct platform_driver cv1800_clk_driver = {
- 	},
+diff --git a/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c b/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c
+index f5a655973c08..6289166786ec 100644
+--- a/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c
++++ b/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c
+@@ -1063,51 +1063,51 @@ struct enc_bufsize_ops {
+ 	u32 (*persist)(void);
  };
- module_platform_driver(cv1800_clk_driver);
-+MODULE_DESCRIPTION("Sophgo CV1800 series SoCs clock controller");
- MODULE_LICENSE("GPL");
-
----
-base-commit: 83814698cf48ce3aadc5d88a3f577f04482ff92a
-change-id: 20240601-md-drivers-clk-sophgo-clk-sophgo-cv1800-44f96dd1a04d
+ 
+-static struct dec_bufsize_ops dec_h264_ops = {
++static const struct dec_bufsize_ops dec_h264_ops = {
+ 	.scratch = h264d_scratch_size,
+ 	.scratch1 = h264d_scratch1_size,
+ 	.persist1 = h264d_persist1_size,
+ };
+ 
+-static struct dec_bufsize_ops dec_h265_ops = {
++static const struct dec_bufsize_ops dec_h265_ops = {
+ 	.scratch = h265d_scratch_size,
+ 	.scratch1 = h265d_scratch1_size,
+ 	.persist1 = h265d_persist1_size,
+ };
+ 
+-static struct dec_bufsize_ops dec_vp8_ops = {
++static const struct dec_bufsize_ops dec_vp8_ops = {
+ 	.scratch = vpxd_scratch_size,
+ 	.scratch1 = vp8d_scratch1_size,
+ 	.persist1 = vp8d_persist1_size,
+ };
+ 
+-static struct dec_bufsize_ops dec_vp9_ops = {
++static const struct dec_bufsize_ops dec_vp9_ops = {
+ 	.scratch = vpxd_scratch_size,
+ 	.scratch1 = vp9d_scratch1_size,
+ 	.persist1 = vp9d_persist1_size,
+ };
+ 
+-static struct dec_bufsize_ops dec_mpeg2_ops = {
++static const struct dec_bufsize_ops dec_mpeg2_ops = {
+ 	.scratch = mpeg2d_scratch_size,
+ 	.scratch1 = mpeg2d_scratch1_size,
+ 	.persist1 = mpeg2d_persist1_size,
+ };
+ 
+-static struct enc_bufsize_ops enc_h264_ops = {
++static const struct enc_bufsize_ops enc_h264_ops = {
+ 	.scratch = h264e_scratch_size,
+ 	.scratch1 = h264e_scratch1_size,
+ 	.scratch2 = enc_scratch2_size,
+ 	.persist = enc_persist_size,
+ };
+ 
+-static struct enc_bufsize_ops enc_h265_ops = {
++static const struct enc_bufsize_ops enc_h265_ops = {
+ 	.scratch = h265e_scratch_size,
+ 	.scratch1 = h265e_scratch1_size,
+ 	.scratch2 = enc_scratch2_size,
+ 	.persist = enc_persist_size,
+ };
+ 
+-static struct enc_bufsize_ops enc_vp8_ops = {
++static const struct enc_bufsize_ops enc_vp8_ops = {
+ 	.scratch = vp8e_scratch_size,
+ 	.scratch1 = vp8e_scratch1_size,
+ 	.scratch2 = enc_scratch2_size,
+@@ -1186,7 +1186,7 @@ static int bufreq_dec(struct hfi_plat_buffers_params *params, u32 buftype,
+ 	u32 codec = params->codec;
+ 	u32 width = params->width, height = params->height, out_min_count;
+ 	u32 out_width = params->out_width, out_height = params->out_height;
+-	struct dec_bufsize_ops *dec_ops;
++	const struct dec_bufsize_ops *dec_ops;
+ 	bool is_secondary_output = params->dec.is_secondary_output;
+ 	bool is_interlaced = params->dec.is_interlaced;
+ 	u32 max_mbs_per_frame = params->dec.max_mbs_per_frame;
+@@ -1260,7 +1260,7 @@ static int bufreq_enc(struct hfi_plat_buffers_params *params, u32 buftype,
+ 		      struct hfi_buffer_requirements *bufreq)
+ {
+ 	enum hfi_version version = params->version;
+-	struct enc_bufsize_ops *enc_ops;
++	const struct enc_bufsize_ops *enc_ops;
+ 	u32 width = params->width;
+ 	u32 height = params->height;
+ 	bool is_tenbit = params->enc.is_tenbit;
+-- 
+2.45.1
 
