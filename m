@@ -1,109 +1,126 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F69A3207;
-	Sun,  2 Jun 2024 22:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29005364A0;
+	Sun,  2 Jun 2024 22:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717367842; cv=none; b=i7YsiPBzbmuskpni+s0UtENGC1XL4jVkC/m4+DjrrcShtezg5vE+BORg0LKMCH4fEb2AYGAvIj5w7XDeftnW82/9+ZlMNZ5cADPNENEFiHQQx0+nAJ8kkhOGOgqK9q/tffHvjboA9pRmBuxN8PHILeNgk5YeIL7WbUklnJTafhI=
+	t=1717369182; cv=none; b=uMlj60pGs3vHEOtccBClahwSUzsu6qpgiLLKIVvrhKftKQy/IWCE7i44pqLpEeVmgk20JVk+pAFEQnQXHUs403L7cFNlxH3NEPjeR54TkNwUMqDiMy4SPoe6mB3audwTWEqg9YBZfE0TXAuhDaKquogkLr0945GnYqkVY/5W8GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717367842; c=relaxed/simple;
-	bh=G3+pi39DXsLu5GOB3nNvWBkhX6gdL40MBr+mzLc1pEE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=e8nQUYh4jYQE+jO7IpaLTgXjyAkJO0Ds2ywCXWJgIVDePuOyJLDqfCUQoMc0JfOixcdbQVtyvUn47nANx0a6FdT30Dn10mKlb+qKQo6/1A2uyRBGa+/jtaw57jAmXnihX3afcIZ72K1F5pil7X2+DJEfHK9u79EssQecANwUUm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VSvO28yI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1717369182; c=relaxed/simple;
+	bh=yZcI6Fr8DY8YGyk+xlFWtHSX7RVfsv9IYwtg1aNm3Dk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RES2nGOW5ZRGBMfrxmThWVhD9YD98GmveiRoroPSSW6kHyiwK+o6dYLhRYPNBETff4NfU8NjFD1nUyrtKDj+WNfHFmqkeWdyEFhsHBpJZj1MWSCpiP9g00LXwhjwH//Y6Nm6LWdo1hQxETiayaQly8saacAzZnEWiW6HkkBR7mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Xt5lKAa2; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VSvO28yI"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 452MbBIb011223;
-	Sun, 2 Jun 2024 22:37:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=MmX33+HbK0PEuGl6iJkxQw
-	3i/jTUFnwPy5XrXhmZi5Y=; b=VSvO28yImd+ddpkrvUb4Kqq7GR24bkT0taVCLg
-	GC6ZVVv5Zt1HG6dh3vAc599LVBZxbWqJ69Kq5fDC3edWOWx1jdzwD/mnAtrYm1h9
-	TFKgG2Ur/9zjML9O9tZkxjZROhF/rWmLZrts2F9/UGLhJ1f+/xhpdk0y0YUwzXJt
-	XJpCsztUmgbu5g/pneNCfiDskoLk/3D/6hxFZaXk3C/Fu7SGfVOCX5LPryj3+E0o
-	ORNo/Z9+YL2fZFqAVqGffRQ/k8/cLhcWL3v6IgZCd68zmwIbCk5E5DwcsK2wXVz2
-	un15l95+e5PYpZLJHIzCKuM4zWdrfTeByvV6UpOpUWRfxnvA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw6v2md6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 02 Jun 2024 22:37:11 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 452MbAVh023345
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 2 Jun 2024 22:37:10 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Jun 2024
- 15:37:09 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 2 Jun 2024 15:33:39 -0700
-Subject: [PATCH] crypto: atmel-sha204a - add missing MODULE_DESCRIPTION()
- macro
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Xt5lKAa2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717369179;
+	bh=yZcI6Fr8DY8YGyk+xlFWtHSX7RVfsv9IYwtg1aNm3Dk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xt5lKAa2N3tMMEZAl/UW+f8Y9W7VPr9vSsAoFdDCvYdq7/7ONk+5XwqPQQZPY0ot6
+	 5JRK43JEAp+dK+V8rndrKJk+I+TZp51YC4b0XStY+NlFZNQSMHsilaapsMrc3HTn4N
+	 kJoiaCyqWwwkqVeR8koopAbzsC+KCq8pSecRJpdMRezPtF6j6pPiLEsMK9pkV04rMY
+	 TSw0Sv82U+xAPsfe64NT84roQmjr8zEloSbBU92/+ciGrQLEmCQFst39g1blURMM/S
+	 uC250+2l0nJg0QgYl9UgqsR9pnXHVWBlRhuoqJ1TN798kf2Nbi2t2NfWSth3ST03tY
+	 akWNdkKgI/NuA==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 517FE3781116;
+	Sun,  2 Jun 2024 22:59:39 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id BA19B10611D2; Mon, 03 Jun 2024 00:59:38 +0200 (CEST)
+Date: Mon, 3 Jun 2024 00:59:38 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH 2/2] power: supply: samsung-sdi-battery: Constify struct
+ power_supply_maintenance_charge_table
+Message-ID: <dgkqcnvnrw3sxzojjsteqpudf4sfjhsd6ifvwzn7murxeajs4w@2qededvny4vy>
+References: <cover.1717253900.git.christophe.jaillet@wanadoo.fr>
+ <02c6ad69a3ace192c9d609b7336a681a8fc7ba94.1717253900.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240602-md-atmel-sha204a-v1-1-ab02640a0cf2@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAELzXGYC/x3MwQrCMAyA4VcZORuosfTgq4iHbM1sYK2STBmMv
- bvV43f4/x1cTMXhOuxg8lHXZ+s4nwaYCreHoOZuoEAxpEBYM/JaZUEvTCEyZqb5wokoJoGevUx
- m3f7L2717ZBccjdtUfqNF23vDyr6KwXF8AZBNHa6BAAAA
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>
-CC: <linux-crypto@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: QT5x1BqUQwaW_cE8jeMcjplxIs-Qu_z6
-X-Proofpoint-ORIG-GUID: QT5x1BqUQwaW_cE8jeMcjplxIs-Qu_z6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-02_15,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
- impostorscore=0 mlxscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
- clxscore=1011 spamscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406020198
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3s5fgqs6cwwgl5ak"
+Content-Disposition: inline
+In-Reply-To: <02c6ad69a3ace192c9d609b7336a681a8fc7ba94.1717253900.git.christophe.jaillet@wanadoo.fr>
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/crypto/atmel-sha204a.o
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+--3s5fgqs6cwwgl5ak
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/crypto/atmel-sha204a.c | 1 +
- 1 file changed, 1 insertion(+)
+Hello,
 
-diff --git a/drivers/crypto/atmel-sha204a.c b/drivers/crypto/atmel-sha204a.c
-index 24ffdf505023..1fd836eb2d89 100644
---- a/drivers/crypto/atmel-sha204a.c
-+++ b/drivers/crypto/atmel-sha204a.c
-@@ -232,4 +232,5 @@ module_init(atmel_sha204a_init);
- module_exit(atmel_sha204a_exit);
- 
- MODULE_AUTHOR("Ard Biesheuvel <ard.biesheuvel@linaro.org>");
-+MODULE_DESCRIPTION("Microchip / Atmel SHA204A (I2C) driver");
- MODULE_LICENSE("GPL v2");
+On Sat, Jun 01, 2024 at 05:00:29PM +0200, Christophe JAILLET wrote:
+> 'struct power_supply_maintenance_charge_table' is not modified in this
+> driver.
+>=20
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+>=20
+> In order to do it, some code also needs to be adjusted to this new const
+> qualifier.
+>=20
+> On a x86_64, with allmodconfig:
+> Before:
+> =3D=3D=3D=3D=3D=3D
+> $ size drivers/power/supply/samsung-sdi-battery.o
+>    text	   data	    bss	    dec	    hex	filename
+>    4055	   4584	      0	   8639	   21bf	drivers/power/supply/samsung-sdi-=
+battery.o
+>=20
+> After:
+> =3D=3D=3D=3D=3D
+> $ size drivers/power/supply/samsung-sdi-battery.o
+>    text	   data	    bss	    dec	    hex	filename
+>    4087	   4552	      0	   8639	   21bf	drivers/power/supply/samsung-sdi-=
+battery.o
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested-only
+> ---
 
----
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240602-md-atmel-sha204a-da2f3a62246e
+Looks like that compile testing did not include ab8500_chargalg :)
+Fixing the error reported by the Intel bot should be trivial (i.e.
+add another const). When you send a new version, please also Cc
+Linus Walleij <linus.walleij@linaro.org>.
 
+Thanks for your patches and greetings,
+
+-- Sebastian
+
+--3s5fgqs6cwwgl5ak
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZc+VMACgkQ2O7X88g7
++pqjYhAAhWSnuCwUT8O+ov/tnAB82dz8t+GhKdxleL0ha+zqLdnA5j21cbUVOULS
+TRbokpnIOF5CHcoOYxsWCrKwM3vZvQ9ptLNCtCxe4+c7S13gfahv5UDYNzCyL2dF
+Z+9Ta5Lf2okzv/qsw+FO4uAcVhrUz2PpZ72BDsWBYWqWlHjd/vCGrTZ5kjwknHIz
+tbC2ql/YVQPcPau9ZAM5aOjeiDQqc+QL8e9D8aGAGokoWwx1LqW1AO7H+xUEb8XX
+NM7v+pOercZXQdC4hoMHwFdkyotJYRAZQ4TdRtfMC9Itt83dPzERoMKirQWtDsIG
+FuXfuQN4fAQH6S2vix1gkoaQjL3pHiVmay/ujUcLYA/iYVvC2u3nCwqcig/KDHFT
+3zaLdrs7L3WVeLlMVVYxuJ9JPzR2HEk+cBQrkn3ijf82VI+JzpdnABpAN2eydEuH
+uzOTZZXHDRoRL6rqLHEa+rFWY8Do3PiaHGWZSiWyCt1BahgDGd0jT3ElJ2IAJr8T
+7YXNxqGB6UujJGiO6CEiY96u0cQMeAuDx4mtxSgihIiAOyiHD3nwk3jDCeXIqfsT
+bHKdnCJg0IjgQE8l3F7ew69iZPT7vHp9vxeED4boWcCeqkCD4ARZF1jiNsLT7p8Q
+KNhOHFVm93cOmENyRPKoRDFwThz+ZA5G9v4EECP9Bo0ayvcyPvA=
+=z3Sd
+-----END PGP SIGNATURE-----
+
+--3s5fgqs6cwwgl5ak--
