@@ -1,150 +1,98 @@
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8120DDC4
-	for <kernel-janitors@vger.kernel.org>; Mon,  3 Jun 2024 03:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E325917C7C
+	for <kernel-janitors@vger.kernel.org>; Mon,  3 Jun 2024 04:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717385166; cv=none; b=OAQxAD6UBdJj0I8zt1vco1p9XUwECCFSFF7EYJgq+YarvrW6k3mjRxrz89Ff296MQMspGKnKVwWY8MYaVBqGZf/Y4SlzdaRyOi2zGRcpEHkYC2ZPiQcYLWSueZqZ1uDlGTNrORxMJx9+Wg7zbXAuHZyqfRvsawU8hXsOGk75IAw=
+	t=1717389802; cv=none; b=lsOPYumLfbM0Rx4MBtJBVC/yBnFgF9DlLwHnQ8O4BCuqq2l3Lra9rgqj22Zsa33H2JVjbdvStaX8X39zKfbr6IycJuxGLKBR/P7zNDeGKFOcaa0xyrPrMrQCHg1r4mFF99lHXdwVhGDHwLsg7r46i0VALFRf8Rbmeo7eLyzEBR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717385166; c=relaxed/simple;
-	bh=yvv+ByU0rbcx7vOWOy8x/ELh363v8vdXoWdPA0FsBRY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U7Fab+rOrdJ2NitDyKJ98oKwoYJlZ6B041pLzd42eum1pU+nyl4vgiKiQGZeNda7AGxH6+DpJhfsB19roWH1/rXNErBt03dbp8PiNCmo4d1gwvfcdeDRaQqap/bThvfjgH2lqvxQQFgHgUsH3KoHtQE2WavWt0FdXR0Trgr749I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=QkHpPYmX; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+	s=arc-20240116; t=1717389802; c=relaxed/simple;
+	bh=HzZDgjQYuvmDJq3i4NfWqunXjEzQo7xEJGoCmHbV/5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gMC/q7PDeoAWgH09sYM9fT2ca2xKoOXWz+BJz4mz+bQxaHIQLbnapSsHlc7RUTRUmzglj6Z+o9gx2QoLcOKAQ5eXZQwR2WR2OzFTspVQZROKjZLs/hw7GbhjeWbb4qrhDihKsf1qBEXvcJfFMjRFPvyiSvA4Q9V563e5DAWRN6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RyXFbgHV; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="QkHpPYmX"
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-6c821775f82so1012190a12.0
-        for <kernel-janitors@vger.kernel.org>; Sun, 02 Jun 2024 20:26:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RyXFbgHV"
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2c2283707b3so496485a91.0
+        for <kernel-janitors@vger.kernel.org>; Sun, 02 Jun 2024 21:43:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1717385164; x=1717989964; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=LwQ1ur+Zw6epC8fpHSOEy3Qv64zBOx9AxtVqgOruovc=;
-        b=QkHpPYmXrasO/8RyRcjZhPSGgPB6j0ZoliQg9ulUvQB6wetMcTmz3wSGkFoxqeXlvc
-         hh7EHYVv6s8DkiwDuG7mpNV8OkJ9+gspYhB/O4jYlJx5jTBhemf4C272sx/8b4K4LvlO
-         O1RUPrJmSlA0lwGyQSJUK46dWLXrZn6B5VYKmT/gGePJo87cS2oeoy7D0Y4MLNYwVFX7
-         Y2Y3DQPVEs3Y7vWak1RTMq7avUVv43bdx1Fu7QoIKszybrTFVTejBPPRk88v8PDIkjv3
-         shwMvQNzxQxrOdij6H4Zoun7wFm44GLhVHbq28mBXaeMfrFLfaTAzKnzJZ5l/ibhLOPi
-         Zkiw==
+        d=linaro.org; s=google; t=1717389799; x=1717994599; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PYCOigvbPRn1QXs7z+gV/0ewTOfNCducvc/Nnzd9dqg=;
+        b=RyXFbgHVwxJ7iHwNfYHy4EomjZhBymGGFNR70KPmuZb42DcwzybOa+um7fHAJ4d3CA
+         E62P3RmxxJuI1a/hLUDodfg4Wzwj6AblMC+D41ea9NxUHB59h9QXAVC64VCofEyr05RG
+         hgopo4pUGvQDeSQQYZmCWZ4Yb9iRSgQN9aH/cx2ZSyYM3SFpdLmc2A+X1Vnsi4abCXkJ
+         gzgfu4Yreer5FWrBnk+JErr9iK7rDpzNewJ6vDHY5Tm00ZLDBBJ75YDfaa1XKt3YuW4M
+         kQByNuEQBXIfQJLYSUc06KZeooyNJddJqtJFmRLIKdB2EOtkxIVR0fD8dqDiX8GklgoD
+         4hAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717385164; x=1717989964;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1717389799; x=1717994599;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LwQ1ur+Zw6epC8fpHSOEy3Qv64zBOx9AxtVqgOruovc=;
-        b=oSq18Gf3gGDDt4XfcbgwAMkBtLwaUJn0VmKzOTxnDEkuleHCYGIUvntka0MmcFv+FE
-         68QerfiBgEchDXkIcqF8eYVNhXy4YpwJuxujKguU6rSNwiqkxFjuOYfzvfi+5CHrWCAw
-         F3FkvMZjMa7hroZ4blLhG3Lch3gaTiFKcbkc0wbKiY6+VnT67DjBCmjeHZnSrXiEMpWc
-         jekmbbS3UGLTiDo9SBtI8E89XGXSKUp8kKibaMtnQ3uUzNxuVDfH8nfycoiTHQfCnOZP
-         0sC8jLbMavW8G830fRTWLZeb9Jkpv1bbrEm/MbBySiIEkeO/ElB1Dnlq/8TFJe8CiTQi
-         /+Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMR99Be4VydLNw8+/GXejQ2m+1jkd5lleWQCmEwGwQ40BwfqMKbcI2ZXsK4RHqMfSGI+td+jliJ6LpHH+xaZPLk9HY3ygPg28OmgvFS2iN
-X-Gm-Message-State: AOJu0YxV4TwxZE4jqrrkUbL6ZQqgOduCi2YDIZO9g7Y676vrEWO53uFF
-	5YQGQxStbmqHCTHn2tpxz9/VK11JHuUiPKqoTZbFzIa6hRTNxRmIjuT1MhU1armKOUIuY9SJ+0k
-	waINi/w==
-X-Google-Smtp-Source: AGHT+IH2Tv4cKiRNQVhD1wf6Teq/PgQ5BlkpaRe+RFniaQBz77llJw3MbV2CLQoabS7NExxdNZni6g==
-X-Received: by 2002:a17:903:2448:b0:1f6:74e6:1ec1 with SMTP id d9443c01a7336-1f674e62022mr24566395ad.68.1717385164007;
-        Sun, 02 Jun 2024 20:26:04 -0700 (PDT)
-Received: from [192.168.6.6] ([61.213.176.58])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f683d1a770sm1403735ad.13.2024.06.02.20.26.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Jun 2024 20:26:03 -0700 (PDT)
-Message-ID: <7ba64e00-373b-4c13-a30a-113646dad588@bytedance.com>
-Date: Mon, 3 Jun 2024 11:25:59 +0800
+        bh=PYCOigvbPRn1QXs7z+gV/0ewTOfNCducvc/Nnzd9dqg=;
+        b=tVdNaGWbtniTDc0ahd58DGDSDlemxmSQN1OCh0CYDsZdxey4aA0y7gryVSSarF5dWt
+         P4m9ypDtOZpN5Co47+SirYWu1utjev0xv1r9n8KZv33bxKYIAfDk5hN2CdGIHLs4UQWB
+         mZIHBxXHNM0uRgr2DWGzNVWG95sVjc0/mBZGBmT2nmIjcQ3g6/RdiWmH0LlY8RryayWy
+         pE7QQg4spjxLW6X9L569g87ahT9Lys2tj6beHUNQXN5TduF4Hvlx8lNQLqttoEky1N2v
+         4ktdNdOoX6rvMtsWE7xMmnUN9eP/y/w2kjZIshdqd3SDnlAulI6vVGrQDp68n1XDY9GM
+         WZfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXycwfbhs/y7VhAkjroCec1yrMyhSBpSAo7FqMZY0HwN/ToLfigIJmwRqpU8JI8hQENVL3caG58588JoKYWZI6wUtyPnh8kTU580TpyjDVF
+X-Gm-Message-State: AOJu0YxPa7mq4OaGqcRRL45IQTHVk2HQBo251ALXb/3vZniAfzAYmBzr
+	dl4OCrkXfNAFHYuojZ+PR9gGyurInmpI17HPujIfF8HLEu8TWCr1ICDxsV6G+K8=
+X-Google-Smtp-Source: AGHT+IGICJDgYZTyQLtQrb19UNS8GlFzTTuoxROSl97QOLqPlxpWyNoDe4s7cwH3PGktOiIdZ3+6hQ==
+X-Received: by 2002:a17:90b:50c6:b0:2b1:e314:a5e6 with SMTP id 98e67ed59e1d1-2c1dc56c32amr7244785a91.7.1717389799209;
+        Sun, 02 Jun 2024 21:43:19 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1ac1f9208sm7241985a91.41.2024.06.02.21.43.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Jun 2024 21:43:18 -0700 (PDT)
+Date: Mon, 3 Jun 2024 10:13:16 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: dt-platdev: add missing MODULE_DESCRIPTION()
+ macro
+Message-ID: <20240603044316.7psjarzpopab3pmq@vireshk-i7>
+References: <20240602-md-cpufreq-dt-platdev-v1-1-63c7d91c00ba@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lib: test_objpool: add missing MODULE_DESCRIPTION() macro
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-References: <20240531-md-lib-test_objpool-v1-1-516efee92a05@quicinc.com>
-Content-Language: en-US
-From: "wuqiang.matt" <wuqiang.matt@bytedance.com>
-Autocrypt: addr=wuqiang.matt@bytedance.com; keydata=
- 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
- 4mCJUdEkdwCS
-In-Reply-To: <20240531-md-lib-test_objpool-v1-1-516efee92a05@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240602-md-cpufreq-dt-platdev-v1-1-63c7d91c00ba@quicinc.com>
 
-On 2024/6/1 08:31, Jeff Johnson wrote:
+On 02-06-24, 15:14, Jeff Johnson wrote:
 > make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_objpool.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/cpufreq-dt-platdev.o
 > 
 > Add the missing invocation of the MODULE_DESCRIPTION() macro.
 > 
 > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
->   lib/test_objpool.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/lib/test_objpool.c b/lib/test_objpool.c
-> index bfdb81599832..5a3f6961a70f 100644
-> --- a/lib/test_objpool.c
-> +++ b/lib/test_objpool.c
-> @@ -687,4 +687,5 @@ static void __exit ot_mod_exit(void)
->   module_init(ot_mod_init);
->   module_exit(ot_mod_exit);
->   
-> -MODULE_LICENSE("GPL");
-> \ No newline at end of file
-> +MODULE_DESCRIPTION("Test module for lockless object pool");
-> +MODULE_LICENSE("GPL");
-> 
-> ---
-> base-commit: b050496579632f86ee1ef7e7501906db579f3457
-> change-id: 20240531-md-lib-test_objpool-338d937f8666
-> 
+> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+> index c74dd1e01e0d..cac379ba006d 100644
+> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> @@ -233,4 +233,5 @@ static int __init cpufreq_dt_platdev_init(void)
+>  			       sizeof(struct cpufreq_dt_platform_data)));
+>  }
+>  core_initcall(cpufreq_dt_platdev_init);
+> +MODULE_DESCRIPTION("Generic DT based cpufreq platdev driver");
+>  MODULE_LICENSE("GPL");
 
-Looks good to me. Thanks for the update.
+Applied. Thanks.
 
-I added Masami Hiramatsu and linux-trace in the loop.
-
-Reviewed-by: Matt Wu <wuqiang.matt@bytedance.com>
-
-Regards,
-Matt Wu
-
+-- 
+viresh
