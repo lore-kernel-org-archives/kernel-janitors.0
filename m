@@ -1,47 +1,54 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FFA12C81D;
-	Mon,  3 Jun 2024 14:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C1412F5A5;
+	Mon,  3 Jun 2024 14:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717424947; cv=none; b=F5w9vLPoPIaDPKKS/2kFxsxAu/Ly7HvDWmL4Qe8pUQ0Qr2HMT8Ir4t51PkhJjwvpDNsXyBhc8zR3FqU6k6dRFBLmYOD2BdorPrS3ucyI571CiQu3545PgGHOysYrmjAtS7gRvrqS/uNVZCtxkSSKtr6BC/TgzIGubuB5+g3rrJg=
+	t=1717425508; cv=none; b=M6E3AsZfVy5mqIry3iYB5BPjZdVhZIf+5VMpRBHTEhP9BhH8CpmqDzxTBMpaiZc7tWEAJE6Eat96dfZUtgVIkTmqEIYk2fps9czFqLkfxDftCuseNpudO5z/VTa+Esr9bvh9gEe5L+ILTkqPvvsl8OeCj1LNDFPYM8pu5SuAw2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717424947; c=relaxed/simple;
-	bh=kGkn/VyFT7RT5SaJPj4Gnp36roPKLueE55uWRqmXPJQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=FlZb5yIJmRivwqkIpXLE0V6KYIbjWyN4wA5Z6XReiSwT4aX+LUkpzIVKpqk4JVa6naOG0noaTU/miDctsRD4iZxjHw10Ja408qPnYfu9eMpf0b4H3n+fPu5QEDI/fEZ/mZXNzSR/tHtApsypiK8wO/ri1e7fUYv4qZultAumA7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RGhhYIUV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1717425508; c=relaxed/simple;
+	bh=TGazb/1IgD0MdnXe7ByDsV4IRWQpAhJrG6j9NfEKmk4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pFni7d/FfuDMPydbyHlp8qBgrfLXqwYt2w7KYY3+m6mj5FUSiT7rwsqzvSX/IaLiA4jZP5n2Q8t2tkacyWv4C8IeIZagz4vkoxV0B6fsKvSWD5YXlTfHDtcp7EB0p9Rw4OLpko1yfsVgmZDWDep47XzQZFbt8bI8Dhnfqfcz6uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNXHinoR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RGhhYIUV"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453AFoQL020531;
-	Mon, 3 Jun 2024 14:29:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=a8+iJWMkZBS4Gqc3lI03RH
-	0aIEuaBm+EuMCpnqHFpkU=; b=RGhhYIUVn+9Z+ZK08GGcLMxszyei/rmGjzmWlc
-	byowdPQDaG7mbzyQCHw7oyyhBBEKLCljoGLDRuK+9uXylBQBoZlBFwGramKpyGiK
-	YY4YgnU4dkR+2xXU9YkcckmhzNiQ1D6MV1XKUcuYq+LUdE5L7ocEvdGrvXXN4Mdj
-	6LP530wdpf2RAV+pSWmWm/YpO2bFEfWv3IlxP3ED16Qk9DfLqHvymSOexKPg5Aqx
-	b+EIM/pfrATl7QeKBehTU+6GLR7TRlV8dTmMmhOr+KQkosGV3Wr4dL7dTsezfWcM
-	RzyK4qcdh+DVwCvu3YMUrG6Hzp/NCv1fpmknas7Mp03s3+Bw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw6qm59m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 14:29:03 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453ET2KL027199
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Jun 2024 14:29:02 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
- 07:29:02 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 3 Jun 2024 07:29:02 -0700
-Subject: [PATCH] ACPI: add missing MODULE_DESCRIPTION() macros
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNXHinoR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C42FC2BD10;
+	Mon,  3 Jun 2024 14:38:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717425508;
+	bh=TGazb/1IgD0MdnXe7ByDsV4IRWQpAhJrG6j9NfEKmk4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tNXHinoRxsjkITrYNtgdrAsTg77wsJAaz3CfDxQh8cWKzuyzPp6l8y781StK45wpc
+	 ieTxqzS8bjDKYGUXo5c/hDxUdxrTx4jQrRo/NdAIssmuZKB4ulJ8o+IiPrjXcp9ynP
+	 ZSISa8SiVXEdr/0c1knBni5JTLqq4Pr1VWYvxOwM9gdMPtinWohYCPWZ+H4b14co4M
+	 29dbYWgujuySX1HUMrBJaAPujKWnfQ68tkgiSzcxotVWmU6uV33ktMZxiTPPnb6fnI
+	 nCuQCz+qHxjY0aZ33cx2mqhHtnWa4OOSJESMpUJV6q+aDvmkMmy++Z1DRNZg8zq7Uu
+	 buicurlfoLpSQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Seth Forshee <sforshee@kernel.org>
+Subject: Re: [PATCH] fs: nls: add missing MODULE_DESCRIPTION() macros
+Date: Mon,  3 Jun 2024 16:38:07 +0200
+Message-ID: <20240603-redefreiheit-seeblick-67c06fb0ee5a@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240516-md-fs-nls-v1-1-ed540d8239bf@quicinc.com>
+References: <20240516-md-fs-nls-v1-1-ed540d8239bf@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -49,67 +56,82 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240603-md-drivers-acpi-misc-v1-1-fd7f7de1ce19@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAC3TXWYC/x3MwQqDMAyA4VeRnBeonSuyVxk7xDbOwNpJsokgv
- vuqx+/w/xsYq7DBvdlAeRGTT6loLw3EicqLUVI1eOc7F9wVc8KksrAaUpwFs1jEPvrgwi313dh
- CTWflUdZz+3hWD2SMg1KJ0zF7S/mtmMm+rLDvf61YnqWFAAAA
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
-CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: oYU_7dzEqJu0rz6lv1-nKUAhHf7V139u
-X-Proofpoint-ORIG-GUID: oYU_7dzEqJu0rz6lv1-nKUAhHf7V139u
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_11,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 mlxlogscore=999 clxscore=1015 impostorscore=0 malwarescore=0
- mlxscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406030120
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4750; i=brauner@kernel.org; h=from:subject:message-id; bh=TGazb/1IgD0MdnXe7ByDsV4IRWQpAhJrG6j9NfEKmk4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTFXo25+f3iGiaTiPT6S9WrLBX2Lhc8c7+Ms/fp0c/Jp d1TfOvlO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYiGsbI8H+qGpNcQE7uLisP 9pSHm6y7Pf4FNLVa5p9espy1vaopgOGfmsgFG/kXO9h2pqxZ+Z/DM7x78/6ea0Xv226ZLt4p3ja dHwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/acpi/acpi_tad.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/acpi/platform_profile.o
+On Thu, 16 May 2024 09:50:55 -0700, Jeff Johnson wrote:
+> Fix the following allmodconfig "make W=1" issues:
+> 
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-celtic.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-centeuro.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-croatian.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-cyrillic.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-gaelic.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-greek.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-iceland.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-inuit.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-romanian.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-roman.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-turkish.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_ascii.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp1250.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp1251.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp1255.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp437.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp737.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp775.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp850.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp852.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp855.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp857.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp860.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp861.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp862.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp863.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp864.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp865.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp866.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp869.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp874.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp932.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp936.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp949.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp950.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_euc-jp.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-13.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-14.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-15.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-1.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-2.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-3.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-4.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-5.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-6.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-7.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-9.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_koi8-r.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_koi8-ru.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_koi8-u.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_ucs2_utils.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_utf8.o
+> 
+> [...]
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+Applied to the vfs.module.description branch of the vfs/vfs.git tree.
+Patches in the vfs.module.description branch should appear in linux-next soon.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/acpi/acpi_tad.c         | 1 +
- drivers/acpi/platform_profile.c | 1 +
- 2 files changed, 2 insertions(+)
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-diff --git a/drivers/acpi/acpi_tad.c b/drivers/acpi/acpi_tad.c
-index 1d670dbe4d1d..b831cb8e53dc 100644
---- a/drivers/acpi/acpi_tad.c
-+++ b/drivers/acpi/acpi_tad.c
-@@ -27,6 +27,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/suspend.h>
- 
-+MODULE_DESCRIPTION("ACPI Time and Alarm (TAD) Device Driver");
- MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("Rafael J. Wysocki");
- 
-diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
-index 4a9704730224..d2f7fd7743a1 100644
---- a/drivers/acpi/platform_profile.c
-+++ b/drivers/acpi/platform_profile.c
-@@ -217,4 +217,5 @@ int platform_profile_remove(void)
- EXPORT_SYMBOL_GPL(platform_profile_remove);
- 
- MODULE_AUTHOR("Mark Pearson <markpearson@lenovo.com>");
-+MODULE_DESCRIPTION("ACPI platform profile sysfs interface");
- MODULE_LICENSE("GPL");
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
----
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240603-md-drivers-acpi-misc-8c26065d84f1
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.module.description
+
+[1/1] fs: nls: add missing MODULE_DESCRIPTION() macros
+      https://git.kernel.org/vfs/vfs/c/d694e46afb4b
