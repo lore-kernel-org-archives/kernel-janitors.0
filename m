@@ -1,114 +1,79 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8805982D8E;
-	Mon,  3 Jun 2024 14:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E2212FF73;
+	Mon,  3 Jun 2024 15:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717426553; cv=none; b=VGl9nzUkjVagvvcySNkg0EdP6HapMhD1LcKjiLOJ5kwVuly6BTuk690pM8/GDvXamekVHt/lEKBNCq46HH6wqOi/ATORdQv3HcaBPP7LILZQnbXQRwtpKZfiuANuDyq0odRV+vCKwRp6YIBRLPo02G1HllaQzv3qwD5ClzSe6Gw=
+	t=1717427429; cv=none; b=f+4A7kLKiEAx8fKDVLK527fHobiDq/0Vkr/QB95/XA/Ctq+s3jwcwC/5982pS5T4JU6MwLKF2jT2UuPEqTxdiuLucLbn3j3ZAl81QWCRJ4HxLUgNW4E9A642+23QwAW9+7NA0md0g8fSiYAsDyMDpi8QbjFv92hM5Q7ADjlAoOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717426553; c=relaxed/simple;
-	bh=rRYL5O5uFxrfPXRTXGs3PdFwo4eiDRSxI+b2OAvAt4o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=eXdzT0kN5FUFjeueRI/6qGqJg54bW8IMc/X9JI6B8Au7tBovYSSc+Gs3uQCFWTs13XSXzIXneWyb1+ACGQycd6SSB4vUleFC1WbYSJT/piAAt3W133qRNF4MemMid9S+MUjgApuzXl7JhY8xneQJ75al4HeIi/H6xdT/nxhHyAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ljM1N9SP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1717427429; c=relaxed/simple;
+	bh=rNBDGAVUSqxZbk8Bj4sgiaMLerDh+0JJ9wWeRX3afuU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=gWNa9zZcNaP8vXpu9/ja9N9eb20B7geMjNNvRmzP18vsNnxA5ywnSl6cJyyEA5s4DwHO2ecpTUXwQTSfTUMg7k/4oc+5wgsgWG4U6Oxd5/5fg2XdXpqdCiLLG/E4K+PlsgRILS9SGth1FjDbKtyh5yKmECCFs+QSkcp2H01q3Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EACXZVwm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ljM1N9SP"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453BpubJ029103;
-	Mon, 3 Jun 2024 14:55:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=DcwwxU9+7NAcu8GIP/a4Nl
-	2gakVndejm2PrNifddhM8=; b=ljM1N9SPH5qGBOS2927rCIeAV4wORbWOaYEnuV
-	k4ah+KJrM617ieyHw3AtkPRzYTinPazXLWrW9MeZDQTAnHxLtCx/Cn5QDKjs2094
-	AvpFZe1tx0wwczHmM4Xipu/HMx2MzoeIJi5Zp0IdC9/Ag/R+FDL9tQ7JKtU6nw9r
-	cqsB98E9smxR/Vhw83hHvakqNCY8P4mZsgmDCq275d5hgG/N5QAwhyB4Itf/BNtm
-	WJi4Mgp29uVizSSMDJZ/myOoYnSeJHCvafdtDBV8MGS9h51NAlGQeEReQVqs3o7B
-	QCEq4VtbY1Fbp75lh7wIdHO16eqWk2bLAhf9tmvlYNYT3i8A==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw4bc7gb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 14:55:42 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453Etf9E029276
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Jun 2024 14:55:41 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
- 07:55:41 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 3 Jun 2024 07:55:39 -0700
-Subject: [PATCH] hwrng: omap - add missing MODULE_DESCRIPTION() macro
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EACXZVwm"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EB2A2C4AF12;
+	Mon,  3 Jun 2024 15:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717427429;
+	bh=rNBDGAVUSqxZbk8Bj4sgiaMLerDh+0JJ9wWeRX3afuU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=EACXZVwmhKooPq6AETvauDSxLa2IxFk2MFzuSMjLsANHLJJceMfW0ogqWmfgJk/nu
+	 LoVS/5NSKLpXyVSkMklriWC58FEwDN64sKxAGN5XlCY81SescN7nDqLULs/ONfQumc
+	 9taULNjKdb5MuNXFY/dynuyL0MgfCoFvdvdftNT9FOq2VWjrIaRrUmr/LC4rWxrWwW
+	 2Ag5cppUalG2omP6wmu5loh19FQU/09xDzWYmwvVUc1oG80b0Tgj8O1ej0PkkVoWnP
+	 baLKAP7psEbwV4HYdACakR9ybdxyaSkowciUIYt/zgkNqeYA7Gxbnw8Bb18yMRNKwy
+	 GNyy0Vv4SDQDA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E0671C32766;
+	Mon,  3 Jun 2024 15:10:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-ID: <20240603-md-hw_random-omap-v1-1-89400f524bbe@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAGrZXWYC/x3MQQrCMBBA0auUWTsQa4jgVURkkkzNgEnKpGqh9
- O5Gl2/x/waNVbjBZdhA+S1Nauk4HgYIicqDUWI3jGa0xpkT5ojpc1cqsWasmWa0MRg3+bOLwUL
- vZuVJ1v/zeuv21Bh9L0L6nZ5SXitmagsr7PsXpuTPiYIAAAA=
-To: Deepak Saxena <dsaxena@plexity.net>, Olivia Mackall <olivia@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: YgRAG3nxFmXTHBxUvwThQVvpDaDH842y
-X-Proofpoint-GUID: YgRAG3nxFmXTHBxUvwThQVvpDaDH842y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_11,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
- phishscore=0 malwarescore=0 priorityscore=1501 mlxscore=0 impostorscore=0
- bulkscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=962 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406030123
+Subject: Re: [PATCH] test_bpf: add missing MODULE_DESCRIPTION()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171742742891.507.1892910666937536494.git-patchwork-notify@kernel.org>
+Date: Mon, 03 Jun 2024 15:10:28 +0000
+References: <20240531-md-lib-test_bpf-v1-1-868e4bd2f9ed@quicinc.com>
+In-Reply-To: <20240531-md-lib-test_bpf-v1-1-868e4bd2f9ed@quicinc.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@google.com, haoluo@google.com, jolsa@kernel.org,
+ akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/omap-rng.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/omap3-rom-rng.o
+Hello:
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+This patch was applied to bpf/bpf-next.git (master)
+by Daniel Borkmann <daniel@iogearbox.net>:
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/char/hw_random/omap-rng.c      | 1 +
- drivers/char/hw_random/omap3-rom-rng.c | 1 +
- 2 files changed, 2 insertions(+)
+On Fri, 31 May 2024 09:28:43 -0700 you wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bpf.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> 
+> [...]
 
-diff --git a/drivers/char/hw_random/omap-rng.c b/drivers/char/hw_random/omap-rng.c
-index d4c02e900466..4914a8720e58 100644
---- a/drivers/char/hw_random/omap-rng.c
-+++ b/drivers/char/hw_random/omap-rng.c
-@@ -564,4 +564,5 @@ static struct platform_driver omap_rng_driver = {
- module_platform_driver(omap_rng_driver);
- MODULE_ALIAS("platform:omap_rng");
- MODULE_AUTHOR("Deepak Saxena (and others)");
-+MODULE_DESCRIPTION("RNG driver for TI OMAP CPU family");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/char/hw_random/omap3-rom-rng.c b/drivers/char/hw_random/omap3-rom-rng.c
-index 18dc46b1b58e..8064c792caf0 100644
---- a/drivers/char/hw_random/omap3-rom-rng.c
-+++ b/drivers/char/hw_random/omap3-rom-rng.c
-@@ -178,4 +178,5 @@ module_platform_driver(omap3_rom_rng_driver);
- MODULE_ALIAS("platform:omap3-rom-rng");
- MODULE_AUTHOR("Juha Yrjola");
- MODULE_AUTHOR("Pali Rohár <pali@kernel.org>");
-+MODULE_DESCRIPTION("RNG driver for TI OMAP3 CPU family");
- MODULE_LICENSE("GPL");
+Here is the summary with links:
+  - test_bpf: add missing MODULE_DESCRIPTION()
+    https://git.kernel.org/bpf/bpf-next/c/ec1249d32781
 
----
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240603-md-hw_random-omap-4dc06fb76dc4
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
