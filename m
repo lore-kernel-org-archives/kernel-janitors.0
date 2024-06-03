@@ -1,198 +1,105 @@
-Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CC55028C
-	for <kernel-janitors@vger.kernel.org>; Mon,  3 Jun 2024 23:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DE11E49B;
+	Mon,  3 Jun 2024 23:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717455734; cv=none; b=YRPNrNP+9akUswTH88peEvFk+9UdPxLY9GtQuavVKN2rfJ4wuqLNy7uGzwc75yEyT45al2EphffGx0ZJC6a2nf8WojXVwCSFoXOZGAifz5Xk9h/Wm6l7v4QkeGOkVQvy1Dz070sr3hY5SxQJpB8knGVUggHywjTm9K+I0o+WAYQ=
+	t=1717456967; cv=none; b=hijEV2aiM+msmadS8BngXFRDYDfCnAKa7KQ3QTVGiZBpmBYaOKy2WGtnwcP9uYxlIKrtjh7+w0ILeo01mj8IciUD2KhUCT7PG7TcHJgu704FiQyelGlr7jdHDQyRGZfPha5MOLNaJGhre2ftAQS8eQGrmko3KRukn/epuAGrGWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717455734; c=relaxed/simple;
-	bh=0jZi6KDIf1K2W/UDkvFfqguppsND1IA8K+Mx7olaYcw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l/5ZYaye3GlTsSpL/ZMkEckzUtzhhlrYdz1I52Izz9LwPkTgJy4LIwnnIO7QS5d/hHP8UiJ6RUPYGP1RWXtUDkIP3IHUFKlbz3A1UH31Cr6jGe1CybDG7VSSjWQaopEjaZ9fwNBk8SePq1EildeRX9GibDQcuQyYn9koUo0jMcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UbXLYWI2; arc=none smtp.client-ip=209.85.128.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1717456967; c=relaxed/simple;
+	bh=4nnPRcl+QHvF8cHD3oo3FD0nWhbmVspa5R3NuXCR+sg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=QQhMCgNIcxSoHZlQVd2fe3HA2qGjMpRiYzN8TAvol+nqT7VnStAmhs5T7QMJp6z7jlYaE9xf9sSdQxIDKoUPZK1xZjNb8XK+nhf7aDRFFKU9GsecxzLYL5hhcuY5gAIe3LBxG5Q+XdN4TfiJ+N2KRRbwJsk99BXYyBS/OvoIB7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U5EGqjGd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UbXLYWI2"
-Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-42137366995so28363075e9.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 03 Jun 2024 16:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717455730; x=1718060530; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kSyt1luXPfolxaJFzIiXo2v2aq7LyOeBXFD6yzHDT/c=;
-        b=UbXLYWI2bSmCik3AfdH4ORblsXmoxXBJdygmzYrHyxZzDRHcXc3ND10OD1CydyK0Em
-         avASTW01PwupE6iA+h7KDWWbg9/hcIgjIF0VpZvaa6LvBEJsL186abIhVfKJzC4ITsoK
-         vazI+DeU9oi2DnnkkGrlOLOsvNjeex4ac8Lqj5bTOiHvYTnJdYC8VQiVfDFwPsgLJw/L
-         4MAPey1diXt1vn0wVlI8P/B+i8LNdZwY8htjcwIU1QHDSReoxz+ZlBQDlcTbyuDq+u5h
-         pIIwdmQsCIPs4nt1iRNUcxb9Qoe1wjcOaYVIpjFULQXa46SvqL37XsO4rhjKG7wfcurz
-         zIkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717455730; x=1718060530;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kSyt1luXPfolxaJFzIiXo2v2aq7LyOeBXFD6yzHDT/c=;
-        b=i/7Jv6PoqWQWPk3qjD1tXk5uNxKZ5A1enxDWcu6nPc174sEYrpI6geDqESt6YwZqV3
-         Rkkl4O2qKuyhZ6wOUpuywXfTimRf6FML7WewFaMqMVfNlSojfbidARguBgzV6Yh6edFI
-         Iie65DM+Bib/bF8JVYnIjDkooahmEF0ZKCdJ9VkS3bf1hr2K6+1I+j409DSZoxDR3pRk
-         565dM8T3cvX4JK7cjM7uErDtIO9RmyBl8Ig3F96b5HgOqK4S3+/TytY9wtTofqGs55ZT
-         hcEjgPcq3qyhrxizfrG6p/LyzBCAVG59Wt64Qvit116HN9I+mwOwBZ/4iZaJKVnLMDi4
-         R5gw==
-X-Forwarded-Encrypted: i=1; AJvYcCVvKjy+WvlqjO6Dqt+nMdXtulisuy+CpuZn6YpZsxzTnvXXpWDWKblgy1aHzF4jPZTDq/6g5bH2+Dm+tZAvNvImtnub9gDJUwgEn129O5DI
-X-Gm-Message-State: AOJu0Yy5BhZTnt0XNRjJ2fzOszHsshOOnMYB0Hp4HdHIgHWvZcauZmIK
-	LwdNRNYKB/RhyYJNUGpQ7eMb15dDd/reSq7Isi0BHuPcsRoheePAFa2yk9c2y6o=
-X-Google-Smtp-Source: AGHT+IFH1dqVFdu0WORd1M0vWphzQ+CUSs7JJzkjEEqfH4oyoXjfHod5f+1x+jjn72SC3LPFAx44cg==
-X-Received: by 2002:a05:600c:4f0f:b0:41b:f116:8868 with SMTP id 5b1f17b1804b1-4212e0502e7mr105289885e9.12.1717455729708;
-        Mon, 03 Jun 2024 16:02:09 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4214ecbb563sm82895e9.21.2024.06.03.16.02.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 16:02:09 -0700 (PDT)
-Message-ID: <0d254b5e-0dcf-41c2-949e-2edd880b2de6@linaro.org>
-Date: Tue, 4 Jun 2024 00:02:08 +0100
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U5EGqjGd"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453D260p031534;
+	Mon, 3 Jun 2024 23:22:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=dIZDgI+MnBLX7qt0dELaC9
+	bnjOBSE4WoivnWsEYn/TU=; b=U5EGqjGdXpvWXYh5w4ngpfwUxi3XToAOiToGBB
+	+KZp/NDESN8erLF4z1E+r/aGpPAVIs9R7bsJwHBZ+Iwrp4zwlPOrUXFPMqucz7Tn
+	WkigJa6PwlmMY4BAv1HpVoDCkhSL6WQGu4i/96KxFcaoV5EPSvsCJPcjdJedjh5t
+	psBDNSAYn93vvTkBKIuRRhNsWvLsgiH9N5IbMadHTN32YBaKk2ZCONOYvyaTts7h
+	8Jdk3ClJu81Z+m4VoKhNVfWLpY0JxV1xoVLNb9BgHVYuHZW/afPQBqwC7FMWbz1r
+	jiLYU9BWBB3eY5JeMMGaIJgYfbblbPgkVtvmDE2wO+H3xRtQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw4bd7nh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Jun 2024 23:22:39 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453NMc9B003052
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Jun 2024 23:22:38 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
+ 16:22:38 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Mon, 3 Jun 2024 16:22:37 -0700
+Subject: [PATCH] hte: tegra-194: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: venus: Constify struct dec_bufsize_ops and
- enc_bufsize_ops
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <9bc4b24a55c42fa49125cae0304c8b0f208550b1.1717313173.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <9bc4b24a55c42fa49125cae0304c8b0f208550b1.1717313173.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240603-md-hte-tegra194-test-v1-1-83c959a0afdd@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIADxQXmYC/x3MQQrCMBCF4auUWTuQxBCqVxEXaTNtBmyUmVQKp
+ Xc3dve+xft3UBImhXu3g9CXld+lwV46GHMsMyGnZnDGeRPMFZeEuRJWmiXam29DK4bQO+uS9c5
+ M0K4foYm3M/t4Ng9RCQeJZcz/2IvLuuEStZLAcfwAram1RIUAAAA=
+To: Dipen Patel <dipenp@nvidia.com>,
+        Thierry Reding
+	<thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+CC: <timestamp@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: qJyYLZ-5Fy71dLIl0vHWTZrpxD47GSS5
+X-Proofpoint-GUID: qJyYLZ-5Fy71dLIl0vHWTZrpxD47GSS5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-03_17,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ phishscore=0 malwarescore=0 priorityscore=1501 mlxscore=0 impostorscore=0
+ bulkscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406030189
 
-On 02/06/2024 15:27, Christophe JAILLET wrote:
-> "struct dec_bufsize_ops and "struct enc_bufsize_ops" are not modified in
-> this driver.
-> 
-> Constifying these structures moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
->     text	   data	    bss	    dec	    hex	filename
->    12494	    822	      0	  13316	   3404	drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.o
-> 
-> After:
->     text	   data	    bss	    dec	    hex	filename
->    12766	    566	      0	  13332	   3414	drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Changes in v2:
->     - Add missing prefix in the subject
-> 
-> v1: https://lore.kernel.org/all/9bc4b28a55c42fa4a125c3e03d4c8b0f208550b4.1717313173.git.christophe.jaillet@wanadoo.fr/
-> 
-> While looking at lore to find the reference above, I found that this
-> patch had already been sent by Rikard Falkeborn <rikard.falkeborn@gmail.com>
-> See: https://lore.kernel.org/all/20211212123534.4473-1-rikard.falkeborn@gmail.com/
-> 
-> So, if applied, credits should be for him.
-> So feel free to add a Co-Developed-by:, Reported-by:, Suggested-by: or
-> whatever makes sense, including removing my Signed-off-by: to put his if
-> it sounds better to do it this way.
-> 
->   .../platform/qcom/venus/hfi_plat_bufs_v6.c    | 20 +++++++++----------
->   1 file changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c b/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c
-> index f5a655973c08..6289166786ec 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c
-> +++ b/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c
-> @@ -1063,51 +1063,51 @@ struct enc_bufsize_ops {
->   	u32 (*persist)(void);
->   };
->   
-> -static struct dec_bufsize_ops dec_h264_ops = {
-> +static const struct dec_bufsize_ops dec_h264_ops = {
->   	.scratch = h264d_scratch_size,
->   	.scratch1 = h264d_scratch1_size,
->   	.persist1 = h264d_persist1_size,
->   };
->   
-> -static struct dec_bufsize_ops dec_h265_ops = {
-> +static const struct dec_bufsize_ops dec_h265_ops = {
->   	.scratch = h265d_scratch_size,
->   	.scratch1 = h265d_scratch1_size,
->   	.persist1 = h265d_persist1_size,
->   };
->   
-> -static struct dec_bufsize_ops dec_vp8_ops = {
-> +static const struct dec_bufsize_ops dec_vp8_ops = {
->   	.scratch = vpxd_scratch_size,
->   	.scratch1 = vp8d_scratch1_size,
->   	.persist1 = vp8d_persist1_size,
->   };
->   
-> -static struct dec_bufsize_ops dec_vp9_ops = {
-> +static const struct dec_bufsize_ops dec_vp9_ops = {
->   	.scratch = vpxd_scratch_size,
->   	.scratch1 = vp9d_scratch1_size,
->   	.persist1 = vp9d_persist1_size,
->   };
->   
-> -static struct dec_bufsize_ops dec_mpeg2_ops = {
-> +static const struct dec_bufsize_ops dec_mpeg2_ops = {
->   	.scratch = mpeg2d_scratch_size,
->   	.scratch1 = mpeg2d_scratch1_size,
->   	.persist1 = mpeg2d_persist1_size,
->   };
->   
-> -static struct enc_bufsize_ops enc_h264_ops = {
-> +static const struct enc_bufsize_ops enc_h264_ops = {
->   	.scratch = h264e_scratch_size,
->   	.scratch1 = h264e_scratch1_size,
->   	.scratch2 = enc_scratch2_size,
->   	.persist = enc_persist_size,
->   };
->   
-> -static struct enc_bufsize_ops enc_h265_ops = {
-> +static const struct enc_bufsize_ops enc_h265_ops = {
->   	.scratch = h265e_scratch_size,
->   	.scratch1 = h265e_scratch1_size,
->   	.scratch2 = enc_scratch2_size,
->   	.persist = enc_persist_size,
->   };
->   
-> -static struct enc_bufsize_ops enc_vp8_ops = {
-> +static const struct enc_bufsize_ops enc_vp8_ops = {
->   	.scratch = vp8e_scratch_size,
->   	.scratch1 = vp8e_scratch1_size,
->   	.scratch2 = enc_scratch2_size,
-> @@ -1186,7 +1186,7 @@ static int bufreq_dec(struct hfi_plat_buffers_params *params, u32 buftype,
->   	u32 codec = params->codec;
->   	u32 width = params->width, height = params->height, out_min_count;
->   	u32 out_width = params->out_width, out_height = params->out_height;
-> -	struct dec_bufsize_ops *dec_ops;
-> +	const struct dec_bufsize_ops *dec_ops;
->   	bool is_secondary_output = params->dec.is_secondary_output;
->   	bool is_interlaced = params->dec.is_interlaced;
->   	u32 max_mbs_per_frame = params->dec.max_mbs_per_frame;
-> @@ -1260,7 +1260,7 @@ static int bufreq_enc(struct hfi_plat_buffers_params *params, u32 buftype,
->   		      struct hfi_buffer_requirements *bufreq)
->   {
->   	enum hfi_version version = params->version;
-> -	struct enc_bufsize_ops *enc_ops;
-> +	const struct enc_bufsize_ops *enc_ops;
->   	u32 width = params->width;
->   	u32 height = params->height;
->   	bool is_tenbit = params->enc.is_tenbit;
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hte/hte-tegra194-test.o
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
+
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/hte/hte-tegra194-test.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/hte/hte-tegra194-test.c b/drivers/hte/hte-tegra194-test.c
+index 8ee038ccf601..df631b5100d2 100644
+--- a/drivers/hte/hte-tegra194-test.c
++++ b/drivers/hte/hte-tegra194-test.c
+@@ -235,4 +235,5 @@ static struct platform_driver tegra_hte_test_driver = {
+ module_platform_driver(tegra_hte_test_driver);
+ 
+ MODULE_AUTHOR("Dipen Patel <dipenp@nvidia.com>");
++MODULE_DESCRIPTION("NVIDIA Tegra HTE (Hardware Timestamping Engine) test driver");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+change-id: 20240603-md-hte-tegra194-test-668212d1420f
+
