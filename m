@@ -1,106 +1,171 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99E1BE4A;
-	Tue,  4 Jun 2024 15:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE201474BE;
+	Tue,  4 Jun 2024 16:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717515259; cv=none; b=I3WeciKRnFTHm38vAJpWXkaKSEc0Z1I46QuOef05jPBMxSI7ssPL5l/EpxxXl+O9LpVQvnc+njzimmF1KcvrSoeTcXQfu6k4y1R102uytns/jm6ZrxHHKUSqsIIuFEvR7z5oFoQQAzhlr7PHfwlGKPGbjT3AMqjOw8IVTJrQpNk=
+	t=1717517092; cv=none; b=pwrwXC1GN2SV+PT+aTTYzMVIDlK6nx+u23blofwvDOku8GYkCbmJUcdJRJzgapTIOZaIwPJrNpFvwTpBJ1bFn/qIdDV2oj1akmNWRM3HDBGaR9uF7JPX7CyCWNT2H3bnmTgbxMdMRVNKAio4PARChPDuBUEx9neiMTIxr7lMS7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717515259; c=relaxed/simple;
-	bh=+V2Pn7pZqMh8/15HP9GBw/WSyruGjuKvEPeJTGM1Qrk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=BhgvGk8VJfjDF9ydbUjdiujZ1Pt+HKbItq2ugst1Nd69q6M9sb7VBgVA6gzkuLOO0j895VHDxgx+cpmBdUcCtU5vZLSW2uTSM4JDRHDNnl7q9Ya4KqlQ0ZvvuLZ+j49YetoArK/XtpYBo4BwFXzVrEQWEcVtIMcEMob8i+cGPUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=h8X6ElKR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="h8X6ElKR"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 454Bn9IS028037;
-	Tue, 4 Jun 2024 15:34:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Effa3JSW/rkRtXNKhXRn8A
-	jiK3ARC0OBNKnBpuVerlU=; b=h8X6ElKRZzkNSYszdtSSn8TPvTMgPt0WyUSF5r
-	7mywUMAcbMxoLhUaOkYTZkcbwo/N3NRMlokOi7v9DD69VfmGFZh0ouIyN9Uwibuq
-	HtQXj/+E7TT3S+GAlaD+fjkdefB+DDziGqSHNReOfVDzJGodM92yOKv5yzagLNca
-	rmAl0vxkPna7NU2lglWXnmzZBjtqemzQHfkyMPAMg/guW2MJXsYzy2GQ+usuda4K
-	c0czTdWz5p690uXsEeHDDfe5Gw0dJyZn7i3LudPhlaEvsNdRRRmP+qjfHTlt4Tfj
-	GWh2l8H5OyXMb8TsJdH7yB5gEFEqk1sJSS6OXLwT3s3qn+wQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw3r7frf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 15:34:07 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 454FY3FD029015
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Jun 2024 15:34:03 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
- 08:34:03 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 4 Jun 2024 08:34:01 -0700
-Subject: [PATCH] HID: logitech-dj: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1717517092; c=relaxed/simple;
+	bh=uSwYhDRrOAl/s39iwUUiNHqv2jXHckCtaGmDOi8+Ec4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j88pajpYOe/3KMo4aBjSAtpbYBg1hNHF/DJO+9h5waG4jMqQbtfjpTdTO2TRemqER9Kn+oUP9eKNzYGAzTgExb0hw23l0/fSSnxDLA6QPZtB1dFpLShjjD5QyBErUgY8hKFRS/LlW9WR39dj3ISEV+iQdaBYEiE+0ixLO05HVSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VtwKS6f85z6K6Q9;
+	Wed,  5 Jun 2024 00:00:12 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 39A801400D9;
+	Wed,  5 Jun 2024 00:04:46 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 4 Jun
+ 2024 17:04:45 +0100
+Date: Tue, 4 Jun 2024 17:04:45 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+CC: Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] cxl: add missing MODULE_DESCRIPTION() macros
+Message-ID: <20240604170445.00005c67@Huawei.com>
+In-Reply-To: <20240603-md-drivers-cxl-v1-1-f2940f5c0836@quicinc.com>
+References: <20240603-md-drivers-cxl-v1-1-f2940f5c0836@quicinc.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240604-md-hid-logitech-dj-v1-1-560f6b3cb54b@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAOgzX2YC/x3MwQqDMAyA4VeRnBfoSnWwVxk7xDTaDK0jdUMQ3
- 91ux+/w/zsUMZUC92YHk68WXXLF9dIAJ8qjoMZq8M4H17mAc8SkEadl1FU4YXyhbx0F7miQG0M
- N3yaDbv/p41ndUxHsjTKn32rS/NlwprKKwXGcs+Su2oMAAAA=
-To: =?utf-8?q?Filipe_La=C3=ADns?= <lains@riseup.net>,
-        Jiri Kosina
-	<jikos@kernel.org>,
-        Benjamin Tissoires <bentiss@kernel.org>
-CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: vDOhkPgPTno2Pu_HqXlacfNSpbtmvmXX
-X-Proofpoint-GUID: vDOhkPgPTno2Pu_HqXlacfNSpbtmvmXX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_09,2024-06-04_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- lowpriorityscore=0 suspectscore=0 adultscore=0 spamscore=0 mlxscore=0
- clxscore=1015 priorityscore=1501 malwarescore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406040124
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-logitech-dj.o
+On Mon, 3 Jun 2024 21:48:53 -0700
+Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/core/cxl_core.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pci.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_mem.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_acpi.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pmem.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_port.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/hid/hid-logitech-dj.c | 1 +
- 1 file changed, 1 insertion(+)
+This has been irritating me as well.  Need to do
+drivers/perf/cxl_pmu.c at somepoint as well but given that goes through
+a different maintainer makes sense to do separately.
 
-diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
-index 3c3c497b6b91..dfa4e3d1a3b3 100644
---- a/drivers/hid/hid-logitech-dj.c
-+++ b/drivers/hid/hid-logitech-dj.c
-@@ -2045,6 +2045,7 @@ static struct hid_driver logi_djreceiver_driver = {
- 
- module_hid_driver(logi_djreceiver_driver);
- 
-+MODULE_DESCRIPTION("HID driver for Logitech receivers");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Logitech");
- MODULE_AUTHOR("Nestor Lopez Casado");
+Only comment I have is that we should probably strive for more consistency
+than you currently have.  Always expand CXL or never do, use
+colons consistently, use Support everywhere or nowhere.
 
----
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240604-md-hid-logitech-dj-250a4c6afe7c
+
+
+> ---
+>  drivers/cxl/acpi.c      | 1 +
+>  drivers/cxl/core/port.c | 1 +
+>  drivers/cxl/mem.c       | 1 +
+>  drivers/cxl/pci.c       | 1 +
+>  drivers/cxl/pmem.c      | 1 +
+>  drivers/cxl/port.c      | 1 +
+>  6 files changed, 6 insertions(+)
+> 
+> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> index 571069863c62..e51315ea4a6a 100644
+> --- a/drivers/cxl/acpi.c
+> +++ b/drivers/cxl/acpi.c
+> @@ -921,6 +921,7 @@ static void __exit cxl_acpi_exit(void)
+>  /* load before dax_hmem sees 'Soft Reserved' CXL ranges */
+>  subsys_initcall(cxl_acpi_init);
+>  module_exit(cxl_acpi_exit);
+> +MODULE_DESCRIPTION("CXL ACPI: Platform Support");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_IMPORT_NS(CXL);
+>  MODULE_IMPORT_NS(ACPI);
+> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> index 887ed6e358fb..ccaa00cd0321 100644
+> --- a/drivers/cxl/core/port.c
+> +++ b/drivers/cxl/core/port.c
+> @@ -2356,5 +2356,6 @@ static void cxl_core_exit(void)
+>  
+>  subsys_initcall(cxl_core_init);
+>  module_exit(cxl_core_exit);
+> +MODULE_DESCRIPTION("CXL (Compute Express Link) Devices Support");
+
+Why the expanded version for this one?
+
+I'm not sure Devices really makes sense here, particularly as it
+likely a range of other driver will make some use of this core
+functionality over time.  Maybe "CXL core" is sufficient?
+
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_IMPORT_NS(CXL);
+> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
+> index 0c79d9ce877c..1afb0e78082b 100644
+> --- a/drivers/cxl/mem.c
+> +++ b/drivers/cxl/mem.c
+> @@ -252,6 +252,7 @@ static struct cxl_driver cxl_mem_driver = {
+>  
+>  module_cxl_driver(cxl_mem_driver);
+>  
+> +MODULE_DESCRIPTION("CXL: Memory Expansion");
+
+Why does this one get a colon? Also no Support at the end?
+
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_IMPORT_NS(CXL);
+>  MODULE_ALIAS_CXL(CXL_DEVICE_MEMORY_EXPANDER);
+> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
+> index e53646e9f2fb..2c17fcb1b4ee 100644
+> --- a/drivers/cxl/pci.c
+> +++ b/drivers/cxl/pci.c
+> @@ -1066,5 +1066,6 @@ static void __exit cxl_pci_driver_exit(void)
+>  
+>  module_init(cxl_pci_driver_init);
+>  module_exit(cxl_pci_driver_exit);
+> +MODULE_DESCRIPTION("CXL PCI manageability");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_IMPORT_NS(CXL);
+> diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
+> index 2ecdaee63021..4ef93da22335 100644
+> --- a/drivers/cxl/pmem.c
+> +++ b/drivers/cxl/pmem.c
+> @@ -453,6 +453,7 @@ static __exit void cxl_pmem_exit(void)
+>  	cxl_driver_unregister(&cxl_nvdimm_bridge_driver);
+>  }
+>  
+> +MODULE_DESCRIPTION("CXL PMEM: Persistent Memory Support");
+>  MODULE_LICENSE("GPL v2");
+>  module_init(cxl_pmem_init);
+>  module_exit(cxl_pmem_exit);
+> diff --git a/drivers/cxl/port.c b/drivers/cxl/port.c
+> index 97c21566677a..5ceff1df60db 100644
+> --- a/drivers/cxl/port.c
+> +++ b/drivers/cxl/port.c
+> @@ -209,6 +209,7 @@ static struct cxl_driver cxl_port_driver = {
+>  };
+>  
+>  module_cxl_driver(cxl_port_driver);
+> +MODULE_DESCRIPTION("CXL Port Support");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_IMPORT_NS(CXL);
+>  MODULE_ALIAS_CXL(CXL_DEVICE_PORT);
+> 
+> ---
+> base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+> change-id: 20240603-md-drivers-cxl-85ac807b9618
+> 
 
