@@ -1,93 +1,90 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8587A1EEE0;
-	Tue,  4 Jun 2024 16:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C431487EA;
+	Tue,  4 Jun 2024 16:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717518818; cv=none; b=ffUn4mbT2uo+oO2ogz4PoBYqZpGY0WGg8fkb4Qc7Mbdc7fe0DBY6UY12uyj8pDTCQW975dHIXOkNGTWjs913XeHNM2lvoqL24wZ6foDo6uWsoUeEFN5TD4xMn82DJ/hDEhVjqCCWJ6bZhKxBO8EdAlYb71Udyf3vIXgrq8L7ID8=
+	t=1717519389; cv=none; b=RqYJcNe194xZOhN21ChSBdA+dekGbENWGHYH9DvTV0RM5aAwPLt3tk2a4FzVweIwoXUwRvmKQHqJmS3lx+d96qCkSbem6QnAdcuHIk2lb8GgJ6s/tk9hVLuWukHPaDmCOXOrTHIoqg3hMy2H0tQkafDl/NT8g6RK+2KsIAwYMa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717518818; c=relaxed/simple;
-	bh=kAzhAjn6QK5JsICYxRyX4n5pzxt+vb1SJWA2/ETD7r0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pAwRGZMgxKBL2lKJ5+J4Wx74uKz5ZezyGws0dzUwsiYowwOHSxnmYfDkW4RY+2D+2nrLkZVaJj2s5MEkAO8doUJ/t8ledfS2khbCbz+sMpP3+090VV6X7je+A9H6WcOvM2qu7WeYiCzctn7LHYhsD087lw1pBKTKFOiPbezkXgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: i3mNSQoqSiurHRMFTgXRJA==
-X-CSE-MsgGUID: F0MNUQgER1qPJFef7s43AQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="13887589"
-X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
-   d="scan'208";a="13887589"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 09:33:37 -0700
-X-CSE-ConnectionGUID: qvogQ/vhSEq74oPdDOHlFA==
-X-CSE-MsgGUID: eAvhOdHAQ+W9V6JKKT7IeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
-   d="scan'208";a="37876183"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 09:33:35 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andy@kernel.org>)
-	id 1sEX6K-0000000DbcS-0kEx;
-	Tue, 04 Jun 2024 19:33:32 +0300
-Date: Tue, 4 Jun 2024 19:33:31 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Robin van der Gracht <robin@protonic.nl>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] auxdisplay: ht16k33: Drop device node reference after
- registration failure in ht16k33_led_probe()
-Message-ID: <Zl9B2zqbJqVAf83d@smile.fi.intel.com>
-References: <0fc79fe9-da49-4cbe-a7ff-6443ad93f120@web.de>
+	s=arc-20240116; t=1717519389; c=relaxed/simple;
+	bh=1p99fCGxODxrIiIt9XeDCfRuJ+kqg3lvOH++vIvpUAA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=Dv8zeINuPD/Jwg1TtPuj6gM8BQ6Ax8keJJqlAXnmyb3tLsGSBTMRaqOTC2FsjJXaUel87LcVkFQS8DL9ZaEsrfZ8BXUha04vEGUCTQTiTffL5XDl6LiyRgtME2T5GAx8Wg8SMj4WcS4NCaYCh1mbCOzIQ+hp6htOIjVhrHlD+0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ta4+C5HW; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ta4+C5HW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2AC6C2BBFC;
+	Tue,  4 Jun 2024 16:43:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717519389;
+	bh=1p99fCGxODxrIiIt9XeDCfRuJ+kqg3lvOH++vIvpUAA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ta4+C5HWSlUb+AKDacytBH7eL9iXvO7U7HHIWIxf9ZCDJanoA1+wK78DEcNXhM2or
+	 OYwVopQxjtOuuyrflAqE+Y2VhwqoTlNA0/kU3NvEaVAmrFJQykkeliBXj1QU5YxuzG
+	 5G3sG8DyV2iWlmsMC1Un2WqLmt9jfGq/yAL87Oiexmto+J9mlJTTZw+qHtGvtEaI76
+	 oimZpNV9FQrKwkGh0oRsvJfz8CkapqDxjfIcI95jPsGIAXQ6gUNcLB/NKs3EEk7VGg
+	 5ZlRYtwAZim/glGC5L6QnVAWTMm5BjpXhNGuIqQrtV2zY2Oz11DQwO2mPEsCuF3rXD
+	 4+gqXgF7z8qMA==
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0fc79fe9-da49-4cbe-a7ff-6443ad93f120@web.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 04 Jun 2024 19:43:05 +0300
+Message-Id: <D1RDT52OY7S6.J625EB7S0KVR@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jeff Johnson" <quic_jjohnson@quicinc.com>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>
+Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] KEYS: trusted: add missing MODULE_DESCRIPTION()
+X-Mailer: aerc 0.17.0
+References: <20240530-md-trusted-v2-1-151f0c7be272@quicinc.com>
+In-Reply-To: <20240530-md-trusted-v2-1-151f0c7be272@quicinc.com>
 
-On Tue, Jun 04, 2024 at 05:15:37PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 4 Jun 2024 17:02:15 +0200
-> 
-> A failed call of the function “devm_led_classdev_register_ext”
-> can be reported.
-> Add a call of the function “fwnode_handle_put” for this error case.
+On Thu May 30, 2024 at 5:43 PM EEST, Jeff Johnson wrote:
+> kbuild reports:
+>
+> WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/trusted-k=
+eys/trusted.o
+>
+> Add the missing MODULE_DESCRIPTION() macro invocation.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> Changes in v2:
+> - reword commit text per Jarkko's guidance
+> - Link to v1: https://lore.kernel.org/r/20240529-md-trusted-v1-1-56c9a0ae=
+8e28@quicinc.com
+> ---
+>  security/keys/trusted-keys/trusted_core.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/tr=
+usted-keys/trusted_core.c
+> index 5113aeae5628..f4ab16d59663 100644
+> --- a/security/keys/trusted-keys/trusted_core.c
+> +++ b/security/keys/trusted-keys/trusted_core.c
+> @@ -395,4 +395,5 @@ static void __exit cleanup_trusted(void)
+>  late_initcall(init_trusted);
+>  module_exit(cleanup_trusted);
+> =20
+> +MODULE_DESCRIPTION("Trusted Key support");
 
-Replace double quotes by parentheses, so the reference to the functions
-will look like func().
+First this should be just "Trusted key type".
 
-...
+Second: neither encrypted keys has the description.
 
->  	err = devm_led_classdev_register_ext(dev, led, &init_data);
-> -	if (err)
-> +	if (err) {
->  		dev_err(dev, "Failed to register LED\n");
-> +		fwnode_handle_put(init_data.fwnode);
-> +	}
+So I'd consider also "Encrypted key type" for that one.
 
-There are two issues with this approach:
-1) there is the same issue in ->remove(), isn't it?
-2) it potentially might mess up the ordering if any other devm call happens
-   in beetween.
+So this really needs two patches to be done properly.
 
-But, by design we don't use reference counting after we registered LED, hence
-both error and successful paths need to have this, so add another
-fwnode_handle_put() after this branch.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+BR, Jarkko
