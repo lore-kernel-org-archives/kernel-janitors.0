@@ -1,87 +1,89 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9E918635;
-	Tue,  4 Jun 2024 17:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B347B12E1CE;
+	Tue,  4 Jun 2024 18:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717523356; cv=none; b=LAljxBjW3fJ7TrPJs2F0vMSjCh+OW2wPVpKWPYwkPODqro6ztrQTdIOQTNECAc3pSW0wGqbKBVtDFp0Ucx41V+SwULmL9mC1jeJdyZF13oNM8041R+ip4NBaVNYS8AGPZoVaSqBmOonLwtjzbcXjtWiD4/IIyx1a5OHMLj+mvss=
+	t=1717524960; cv=none; b=dVypF/pOtDApyIdzQsfLyVnKMjf8asUb8wPRji3dIpLiH3+JCuAmXs5NxTOGBhrE2jG1gtS+aNA1EoSGZcE3ahufhjcpstmZdUZ84PZ0B5zFK4YSTKdZMkaAruPv6DcoYgIwgRvchLs+dk8rQBqvn8T19Iw9s4xd8rxSskrSWfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717523356; c=relaxed/simple;
-	bh=WEorQPzJSO/W3CDeE5v1HE6L5st6qd+aFene4UCkc0A=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ltQirTH9GX8NTnbeW4YIHnDjhB7ikOM3jVqJIxFJiWPGuL2jVFPmB3Oy7zaVjpg7YeqWgk4Iu9OWsAJOAVUDfLkn0OLf2mCbtOHggbzV4ktvo5DnW+oSsS8ZNJaxfxbDE9wWkAI6fJJS+hoZoumDeuFVgabRlp1ZzjVN8Hmox/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VinTsvil; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717524960; c=relaxed/simple;
+	bh=jYuZKxsQpb581PjD3Ptk8cZiajoRtaV88fAecHnSwLE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uaGhDEsuRJpNg8MpvyGTptWgD/IkE0hkm9x4tZdiRU2bhcIb5u4n56weP6z3MYHBdZ/PzhcW4xUTCmWVnzr0kSFn25Y/4o1b98LqZ0rYn73KjyKw2q7iW+qY1VDV/jOOxUYv95erdHkG0VBxKhtRnwaUCrgYIBTqRd94ZQgrSSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BiyVo111; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VinTsvil"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E02C2BBFC;
-	Tue,  4 Jun 2024 17:49:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717523356;
-	bh=WEorQPzJSO/W3CDeE5v1HE6L5st6qd+aFene4UCkc0A=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=VinTsvilqOOaUw3n5W+cvLlAcg3zcRKqcpx54sIzp74UrOV6ybQTa+HHF3DGHjE5l
-	 mHpTAMLL07g9d2BlmFvkRxa3m9GLvurb4bGIRfomCA1zhq+os0He3bwMZyfYRklFM1
-	 iJJiH25c0p8DwkoeEezd55tgYwdN+uhG+mhDNMR6fWBRIDDBzvfAy/TpxqiPv864fp
-	 xAYEPzIReTBSPRCAcMxfzMYvs1wMbgIMWNw2tEWseDKGx8+vR8J4qAwke1rN4fqVT5
-	 0u3fJhd9s0I5Tuu3rEbtEWsoF2tRjHQ8a93LLgyQP3wR2gLTxsi8dUYthgVYjQ7rxX
-	 mmngXpjLj32YQ==
-From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- kernel@quicinc.com
-In-Reply-To: <20240603-md-snd-soc-qcom-sdw-v1-1-101ea8bcdd38@quicinc.com>
-References: <20240603-md-snd-soc-qcom-sdw-v1-1-101ea8bcdd38@quicinc.com>
-Subject: Re: [PATCH] ASoC: qcom: add missing MODULE_DESCRIPTION() macro
-Message-Id: <171752335390.124688.10071366948406345970.b4-ty@kernel.org>
-Date: Tue, 04 Jun 2024 18:49:13 +0100
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BiyVo111"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1717524936; x=1718129736; i=markus.elfring@web.de;
+	bh=jYuZKxsQpb581PjD3Ptk8cZiajoRtaV88fAecHnSwLE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=BiyVo111CIpj8ApM5wiOiAPoZ4/m/cUGc86Zs38f9vL8iLn0do3Qr5afW/8LgZlL
+	 R40oPsHdZwMtyRHi6l6lsGgUJv7n/M5W177LSS6BBXhJ0c6n9X56lwvYgzAz7A2LW
+	 CPCPfBj9rjJsPzuatnMOBQ8XxvpNq0GfR2ntYeeCHAhrwpwFSN7Y+ycIIq5bSo1Rr
+	 PG+HbEu5Bw/0vLrj8oIjsr5p3wB828EnaSOmEzQx9P4TUywiMUKpX4IIzFWlbEbwr
+	 k/PAyDokRbJiR3aa/GygzhQJGxvAWhODZ9gWQk5j/fCLt2lu+zgkGd3UFmqYqdUln
+	 FQo+hNup5VxgAbDI+Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MY5fb-1rxjAz25lN-00KCAR; Tue, 04
+ Jun 2024 20:15:36 +0200
+Message-ID: <503de0cb-09d2-4716-99cb-de257a33bad8@web.de>
+Date: Tue, 4 Jun 2024 20:15:35 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: auxdisplay: ht16k33: Drop device node reference after
+ registration failure in ht16k33_led_probe()
+To: Andy Shevchenko <andy@kernel.org>, kernel-janitors@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, =?UTF-8?Q?Marek_Beh=C3=BAn?=
+ <kabel@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Robin van der Gracht <robin@protonic.nl>, LKML <linux-kernel@vger.kernel.org>
+References: <0fc79fe9-da49-4cbe-a7ff-6443ad93f120@web.de>
+ <Zl9B2zqbJqVAf83d@smile.fi.intel.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <Zl9B2zqbJqVAf83d@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+X-Provags-ID: V03:K1:XzxZXsyOQkXt5iZ3/RqJDZ9HblXj1cvp//kPU5U2jLBOKZaW0ER
+ i4flt4ib8b6jV5OXeJKRiiACOP8+ZEFaJzA73beglMckX/gVX6njC/vjN0nmCfAgxqFNFN2
+ BKpY5fg2I9OXrsyr62NcaU2+AQIjVMDClale8XkFWuxDLUvboMXPJ5mt498zHo4IAEew7Ad
+ VG9MVJnVIN3mqpIcXjJMQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:yXK4yK1g3E0=;kHGTcX+lLGuZzwdyL0aIM2O30LR
+ eJL0nD1F2XoRBm2ahhVzqlrLS5WPEvWOdJ/a7m8rQaHJaWOHDy8mlKSqatdIeppIRPAdtGKUL
+ bdydgPYivVR325ZCfC0Vx+EQafjzzVWl2dkEixb7E6yxJiQYuygz/VMhNUCTEte9NMK+O5Hbk
+ TsNHbHf0XXk0y/D/td6LgYcWqA2rHsA7GhS+w7Tj05d9SCM3nPgC+jCDmB2HZlALsEixOia0e
+ dp3sU7sWKxV2exxbgzGwmrhMGgxRSCM/jCdonP7OKDdo0TFAb8HaYGfsZmCe/n5S3Zo8BzmhB
+ +0A2n5KfDT5B0seVW27QMkv+PDEN0e4tYZOu14SH5N48dXvV+tGCoafgQKZCbCpo6o4iRxxCc
+ icH4uq92Q6MhT3qv/RsCDwFCBmxS5hin99RUOnuBW2aB6x+uI09T+BbidX8lPUhtan4cUh437
+ cZ2xuZbU6W38J+XtdbtKgX9OruzV2zcR8wyPIArZUHVfSyPnDLm+5ASgZeNf9tF5TiIl/FEMc
+ LdCK+3qp8h5iLFugmjcXKrINl95W1GW9U1FtuCr42lrh/06oeiw8GxWXmXgSAMORwczhf7FvA
+ QXJjclrWzjB5VUNIBR1demH43ZBlfxfFGeDNw1N++FGVFLsybEMPeg2O2+y4j4t7KicKxZTSK
+ d7b32t0TzmYZvF1O3/5Wb7lnGFLs3kln1hLsPRDfleULFVeYzkxy15gPNWjYuH4lSLEW8i7Ec
+ XkeE1x2G/OEwGQRclwi4BL8nqg9pNywqmsu6eFAzZCuB45gkp/eX/NyuaEq/W8CoIJdTc9Qm9
+ 8Xea7JfNvqarvNo0Vvxzhpb7xctcqPcT+Xopy6UxDCo0U=
 
-On Mon, 03 Jun 2024 17:16:07 -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/qcom/snd-soc-qcom-sdw.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> 
+> But, by design we don't use reference counting after we registered LED,
+> hence both error and successful paths need to have this,
 
-Applied to
+Do you indicate really special data processing constraints here?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Thanks!
+> so add another fwnode_handle_put() after this branch.
 
-[1/1] ASoC: qcom: add missing MODULE_DESCRIPTION() macro
-      commit: 65909a7e7aa8b25c9cc5f04c1fd5d6f0f1d76fcd
+Will this suggestion trigger any further clarifications for the affected software?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Regards,
+Markus
