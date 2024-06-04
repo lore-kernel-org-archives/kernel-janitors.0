@@ -1,82 +1,89 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26622144D21;
-	Tue,  4 Jun 2024 11:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id D492D145A1D;
+	Tue,  4 Jun 2024 12:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717502175; cv=none; b=Td3XzVFn3N67lE1MgVYc3U9nYLke+2kX6xrkBKLjm/+BoLFxaWLjlbzwmGjWmnwZxgAW+GfCPEVNpGhv9/p8wkdjPpIVpweDtF7OJhNds181JmjBvDVSH8U0itt4n4R/Q4jYCJkX9naHwFATJx0XkVR7yFW69AGJK/HQzEdXQw8=
+	t=1717503182; cv=none; b=VjxglFNHhdR+Q5pgMRjeQe+f9EvDRbUMn4BhtzKl3ZIShjhVhIbWhOuVPR+qSzDiKB16IS56swXjG1U6rTl2aWnl9usec3ourV6PJbTmwDJi88Df+oLShW3WktlzkdoijZOwe8eJIqG4A0a3RYjWW8XueZxaGUW2aI9URb0IFZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717502175; c=relaxed/simple;
-	bh=tXhLaowrcYMXzmicpuj4T6jEZTq866kBwfpJR7KjHYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HtPHhJ+QqZ0YYlnG9Ib6spp1ECVW0w9D+cOvCGvKF7cm2morDcmHuzyqlR8iLl282pgxOA0kwXouZWXdaylJlSYA4OTO+2LoSZVNZekrD3ZjMtY3RhAwfM8RtXHEzp39151Nrsm9iHZGHF55pDSGftcaEbtTm7XfCH5j4xDZL8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dgYh7/YR; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dgYh7/YR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E591C4AF08;
-	Tue,  4 Jun 2024 11:56:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717502174;
-	bh=tXhLaowrcYMXzmicpuj4T6jEZTq866kBwfpJR7KjHYw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dgYh7/YRAhKIjwsFQx2Yz+cbECMwgft3/F98XxETZRu4tkigfPDgdpb1Zqzo5wWfO
-	 91p0Qofhs1+TJT3TaZ7vnos/RbQEgcOAv3xdN0ZcGQkANtWaYR5bVJPwlB1EMlWA3G
-	 xjzZ/pl+BYxugx6nwsQKw7hT6789Mfa2DG+oQeSlErvJfCyt1chADHod/anBD/W/cH
-	 u4BUqhHUMeO5xdDxpkD6Vg+ptIeJ6pKeZTXeFiujIBFN8LmR2UtJ+49F8iALj4IzCE
-	 N0T5PLrZaHmdy9IxX3axhsfuxENX0Qp1U/fg62ScSWH+m1lj+bzrWss6DIRi41W5Cf
-	 k2ZoKfOCDSreg==
-Date: Tue, 4 Jun 2024 12:56:09 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Banajit Goswami <bgoswami@quicinc.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	kernel@quicinc.com
-Subject: Re: [PATCH] ASoC: qcom: add missing MODULE_DESCRIPTION() macro
-Message-ID: <0bd0a518-4d85-4251-9bf9-d056dc3d7b08@sirena.org.uk>
-References: <20240603-md-snd-soc-qcom-sdw-v1-1-101ea8bcdd38@quicinc.com>
+	s=arc-20240116; t=1717503182; c=relaxed/simple;
+	bh=es9LQ1eTsN135StDyRCpFPHsqX6uG/7ZNvhFSZOePNM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ixk6axXgjayKOflIFVh7R9XSm5qOu4oybWDpZ+QPVEB5Kr3cPQTbF3QwaFYZGo034NYHl2EFRXBT653/xOzncLBsEntEF1TPBHl/Sj8D3xnm0V1kwI+JP2nhHetJox8sq6r6UFd+3javS7khMHopw5ndMBhgf63RseEOL7DIxUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 93B93606EDF49;
+	Tue,  4 Jun 2024 20:12:53 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: axboe@kernel.dk,
+	asml.silence@gmail.com,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: Su Hui <suhui@nfschina.com>,
+	haoxu@linux.alibaba.com,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] io_uring/io-wq: avoid garbge value of 'match' in io_wq_enqueue()
+Date: Tue,  4 Jun 2024 20:12:43 +0800
+Message-Id: <20240604121242.2661244-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SHcC+f3LwF29Fsqc"
-Content-Disposition: inline
-In-Reply-To: <20240603-md-snd-soc-qcom-sdw-v1-1-101ea8bcdd38@quicinc.com>
-X-Cookie: Is it clean in other dimensions?
+Content-Transfer-Encoding: 8bit
 
+Clang static checker (scan-build) warning:
+o_uring/io-wq.c:line 1051, column 3
+The expression is an uninitialized value. The computed value will
+also be garbage.
 
---SHcC+f3LwF29Fsqc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+'match.nr_pending' is used in io_acct_cancel_pending_work(), but it is
+not initialized. Change the order of assignment for 'match' to fix
+this problem.
 
-On Mon, Jun 03, 2024 at 05:16:07PM -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/qcom/snd-soc-qcom-sdw.o
+Fixes: 42abc95f05bf ("io-wq: decouple work_list protection from the big wqe->lock")
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ io_uring/io-wq.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Is anyone getting any value from these MODULE_DESCRIPTION()s?  This all
-just seems like a huge amount of noise and I'm having trouble thinking
-of a use case.
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index d1c47a9d9215..7d3316fe9bfc 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -927,7 +927,11 @@ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
+ {
+ 	struct io_wq_acct *acct = io_work_get_acct(wq, work);
+ 	unsigned long work_flags = work->flags;
+-	struct io_cb_cancel_data match;
++	struct io_cb_cancel_data match = {
++		.fn		= io_wq_work_match_item,
++		.data		= work,
++		.cancel_all	= false,
++	};
+ 	bool do_create;
+ 
+ 	/*
+@@ -965,10 +969,6 @@ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
+ 		raw_spin_unlock(&wq->lock);
+ 
+ 		/* fatal condition, failed to create the first worker */
+-		match.fn		= io_wq_work_match_item,
+-		match.data		= work,
+-		match.cancel_all	= false,
+-
+ 		io_acct_cancel_pending_work(wq, acct, &match);
+ 	}
+ }
+-- 
+2.30.2
 
---SHcC+f3LwF29Fsqc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZfANgACgkQJNaLcl1U
-h9DD7Qf/Wbjd2t6/LWhnHPaYr8UDzVQzgJXS+fzgQ9Lou2WkHI9D2KV19uaMUqmV
-ACLaw7+m3lBGyG+FkxREZCucSN1wLhS7mPM2+41IaRAQ6/bj1LLQovR1vrwOyUcu
-bWJ+VFJLo2Yl+NIje4Z16Mg+f9QT7/VvR0Spz2LZXLwmTjis/GVwSY9I/v4ZiaTt
-dHeWr3dhPWNRnBx4PggQs0OyO3Ky4gxPVN1qfp7eiSLe9rOC3qcYsi5hdx50kVdy
-ViqX56cl1qJ2HfUZmbCVc43IViRnhVfgtrkKLTdtsM/acBnMl5oFDUkmL8+lOOFe
-V1/zKaMwRJMzabvh16khcsrHchaMSw==
-=Mgl8
------END PGP SIGNATURE-----
-
---SHcC+f3LwF29Fsqc--
