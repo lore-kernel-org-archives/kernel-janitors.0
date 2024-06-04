@@ -1,90 +1,87 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C431487EA;
-	Tue,  4 Jun 2024 16:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9E918635;
+	Tue,  4 Jun 2024 17:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717519389; cv=none; b=RqYJcNe194xZOhN21ChSBdA+dekGbENWGHYH9DvTV0RM5aAwPLt3tk2a4FzVweIwoXUwRvmKQHqJmS3lx+d96qCkSbem6QnAdcuHIk2lb8GgJ6s/tk9hVLuWukHPaDmCOXOrTHIoqg3hMy2H0tQkafDl/NT8g6RK+2KsIAwYMa8=
+	t=1717523356; cv=none; b=LAljxBjW3fJ7TrPJs2F0vMSjCh+OW2wPVpKWPYwkPODqro6ztrQTdIOQTNECAc3pSW0wGqbKBVtDFp0Ucx41V+SwULmL9mC1jeJdyZF13oNM8041R+ip4NBaVNYS8AGPZoVaSqBmOonLwtjzbcXjtWiD4/IIyx1a5OHMLj+mvss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717519389; c=relaxed/simple;
-	bh=1p99fCGxODxrIiIt9XeDCfRuJ+kqg3lvOH++vIvpUAA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=Dv8zeINuPD/Jwg1TtPuj6gM8BQ6Ax8keJJqlAXnmyb3tLsGSBTMRaqOTC2FsjJXaUel87LcVkFQS8DL9ZaEsrfZ8BXUha04vEGUCTQTiTffL5XDl6LiyRgtME2T5GAx8Wg8SMj4WcS4NCaYCh1mbCOzIQ+hp6htOIjVhrHlD+0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ta4+C5HW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717523356; c=relaxed/simple;
+	bh=WEorQPzJSO/W3CDeE5v1HE6L5st6qd+aFene4UCkc0A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ltQirTH9GX8NTnbeW4YIHnDjhB7ikOM3jVqJIxFJiWPGuL2jVFPmB3Oy7zaVjpg7YeqWgk4Iu9OWsAJOAVUDfLkn0OLf2mCbtOHggbzV4ktvo5DnW+oSsS8ZNJaxfxbDE9wWkAI6fJJS+hoZoumDeuFVgabRlp1ZzjVN8Hmox/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VinTsvil; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ta4+C5HW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2AC6C2BBFC;
-	Tue,  4 Jun 2024 16:43:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VinTsvil"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E02C2BBFC;
+	Tue,  4 Jun 2024 17:49:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717519389;
-	bh=1p99fCGxODxrIiIt9XeDCfRuJ+kqg3lvOH++vIvpUAA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ta4+C5HWSlUb+AKDacytBH7eL9iXvO7U7HHIWIxf9ZCDJanoA1+wK78DEcNXhM2or
-	 OYwVopQxjtOuuyrflAqE+Y2VhwqoTlNA0/kU3NvEaVAmrFJQykkeliBXj1QU5YxuzG
-	 5G3sG8DyV2iWlmsMC1Un2WqLmt9jfGq/yAL87Oiexmto+J9mlJTTZw+qHtGvtEaI76
-	 oimZpNV9FQrKwkGh0oRsvJfz8CkapqDxjfIcI95jPsGIAXQ6gUNcLB/NKs3EEk7VGg
-	 5ZlRYtwAZim/glGC5L6QnVAWTMm5BjpXhNGuIqQrtV2zY2Oz11DQwO2mPEsCuF3rXD
-	 4+gqXgF7z8qMA==
+	s=k20201202; t=1717523356;
+	bh=WEorQPzJSO/W3CDeE5v1HE6L5st6qd+aFene4UCkc0A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=VinTsvilqOOaUw3n5W+cvLlAcg3zcRKqcpx54sIzp74UrOV6ybQTa+HHF3DGHjE5l
+	 mHpTAMLL07g9d2BlmFvkRxa3m9GLvurb4bGIRfomCA1zhq+os0He3bwMZyfYRklFM1
+	 iJJiH25c0p8DwkoeEezd55tgYwdN+uhG+mhDNMR6fWBRIDDBzvfAy/TpxqiPv864fp
+	 xAYEPzIReTBSPRCAcMxfzMYvs1wMbgIMWNw2tEWseDKGx8+vR8J4qAwke1rN4fqVT5
+	 0u3fJhd9s0I5Tuu3rEbtEWsoF2tRjHQ8a93LLgyQP3wR2gLTxsi8dUYthgVYjQ7rxX
+	 mmngXpjLj32YQ==
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ kernel@quicinc.com
+In-Reply-To: <20240603-md-snd-soc-qcom-sdw-v1-1-101ea8bcdd38@quicinc.com>
+References: <20240603-md-snd-soc-qcom-sdw-v1-1-101ea8bcdd38@quicinc.com>
+Subject: Re: [PATCH] ASoC: qcom: add missing MODULE_DESCRIPTION() macro
+Message-Id: <171752335390.124688.10071366948406345970.b4-ty@kernel.org>
+Date: Tue, 04 Jun 2024 18:49:13 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 04 Jun 2024 19:43:05 +0300
-Message-Id: <D1RDT52OY7S6.J625EB7S0KVR@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jeff Johnson" <quic_jjohnson@quicinc.com>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>
-Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH v2] KEYS: trusted: add missing MODULE_DESCRIPTION()
-X-Mailer: aerc 0.17.0
-References: <20240530-md-trusted-v2-1-151f0c7be272@quicinc.com>
-In-Reply-To: <20240530-md-trusted-v2-1-151f0c7be272@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-On Thu May 30, 2024 at 5:43 PM EEST, Jeff Johnson wrote:
-> kbuild reports:
->
-> WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/trusted-k=
-eys/trusted.o
->
-> Add the missing MODULE_DESCRIPTION() macro invocation.
->
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> Changes in v2:
-> - reword commit text per Jarkko's guidance
-> - Link to v1: https://lore.kernel.org/r/20240529-md-trusted-v1-1-56c9a0ae=
-8e28@quicinc.com
-> ---
->  security/keys/trusted-keys/trusted_core.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/tr=
-usted-keys/trusted_core.c
-> index 5113aeae5628..f4ab16d59663 100644
-> --- a/security/keys/trusted-keys/trusted_core.c
-> +++ b/security/keys/trusted-keys/trusted_core.c
-> @@ -395,4 +395,5 @@ static void __exit cleanup_trusted(void)
->  late_initcall(init_trusted);
->  module_exit(cleanup_trusted);
-> =20
-> +MODULE_DESCRIPTION("Trusted Key support");
+On Mon, 03 Jun 2024 17:16:07 -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/qcom/snd-soc-qcom-sdw.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
+> 
 
-First this should be just "Trusted key type".
+Applied to
 
-Second: neither encrypted keys has the description.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-So I'd consider also "Encrypted key type" for that one.
+Thanks!
 
-So this really needs two patches to be done properly.
+[1/1] ASoC: qcom: add missing MODULE_DESCRIPTION() macro
+      commit: 65909a7e7aa8b25c9cc5f04c1fd5d6f0f1d76fcd
 
-BR, Jarkko
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
