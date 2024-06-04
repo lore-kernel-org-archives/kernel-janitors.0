@@ -1,152 +1,90 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA98B13D2B7
-	for <kernel-janitors@vger.kernel.org>; Tue,  4 Jun 2024 06:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C001411CA
+	for <kernel-janitors@vger.kernel.org>; Tue,  4 Jun 2024 07:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717481290; cv=none; b=aZcVJubHd6xKMb+1qP4hIrs6FVF8+KNP5Q+SLgs94RetieeY1TjyQvFschQb6WArTywkcyUWiLepGsQ6RekEOXK8dk76bkDIeJGuUSDsHRmFh/buE/dLSbv1aF/nb2f4DCVOFISJVs4K1hNI8o00ERdHjUaLUFCEezY9JY56y68=
+	t=1717487093; cv=none; b=MCMV43a0nynEc7onbJVPK7aXULey7WDL06cCiw88iTLk07FOX2I6uQTlt8ns/DrrQ779kdFj63SL6cKNSz3aFwu3PnEysXD3PGY1PnqVM4B/oSN8HrMN4Sus6FxFld+IE4+XZVlp5diO9TdptAh/bMY9VUE3Lb3RkgflUQkIG8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717481290; c=relaxed/simple;
-	bh=uBSMT/rJCeQH+/WQQglX9BDaLJwuZrWJKb3tRGMkiPg=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=cz2TbOlCS5Vj8b3IF/7IKS3aTQMPk3GbwMlVMsWjURNxjvFjbteLMqUNqyDPnaGvIOmxP4cTDISayVchpWHoeIBDiaSrfeENc5QDsx5Xdz2lbqMVqWpJEpglcpf5Byutchc+35eCZ1z8F35RyqCa/DIDGSvzl/B/OtaG19AV8i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FOQCvNDj; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1717487093; c=relaxed/simple;
+	bh=K3JztJJNDmxWgE8NZyb5e/BN4rv4y/pr6l7o7i2SxDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WqK5LNoRampZVOLRoXJo9N8h73jnTeTNndxgVrQH/RGq1D3kX863My/LQNSBOvCSk9CAstjJfaGfQKqFPHJF882YFfTEZ9PtK3Q+ZIJjNmbeI9FpTb6UPwn8F29dP5puxcjtiNOQADrMEUtoh8hNelXFDixPEjuCNM2S4JxcVWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q/AQN3J0; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FOQCvNDj"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240604060807euoutp018fc2777348802a4bd3a861265ac870b6~VuCGLg9Wn2783027830euoutp01i
-	for <kernel-janitors@vger.kernel.org>; Tue,  4 Jun 2024 06:08:07 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240604060807euoutp018fc2777348802a4bd3a861265ac870b6~VuCGLg9Wn2783027830euoutp01i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717481287;
-	bh=fXwWGleR7MHxbZ9YCCDvKWivlC67g5iAbwjZphmcEeo=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=FOQCvNDjITCsVlOK5DnP7AKdUUhnBoTxmx++M1JNSbYwNy17ppTni8OiPszB1Fi3i
-	 UBEmU0yZv+O/n60AxEBLD9MvFY2gztGx3P8MK83pmTO34sBzguMV5ifT2vNxP1AKXP
-	 DDpiowbDAe9oc06geVgINEEbaADEW4BnJVVez44M=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240604060806eucas1p2b5d355cdd13db417969c9a1b4a4f89ad~VuCF4AeEm1450314503eucas1p2L;
-	Tue,  4 Jun 2024 06:08:06 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id F6.49.09620.64FAE566; Tue,  4
-	Jun 2024 07:08:06 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240604060806eucas1p22862dbc5e160cc485614c823ba1f77a3~VuCFhbCqT1406314063eucas1p2q;
-	Tue,  4 Jun 2024 06:08:06 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240604060806eusmtrp162ffe2f0926e959a7292f45cf7162b99~VuCFg4hoQ2337423374eusmtrp1J;
-	Tue,  4 Jun 2024 06:08:06 +0000 (GMT)
-X-AuditID: cbfec7f5-d1bff70000002594-78-665eaf460f05
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 31.A0.09010.64FAE566; Tue,  4
-	Jun 2024 07:08:06 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240604060806eusmtip13627c1055fc783b6978f153609ec32c3~VuCFTUs_T2258622586eusmtip10;
-	Tue,  4 Jun 2024 06:08:06 +0000 (GMT)
-Received: from localhost (106.210.248.71) by CAMSVWEXC01.scsc.local
-	(2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Tue, 4 Jun 2024 07:08:05 +0100
-Date: Mon, 3 Jun 2024 15:23:05 +0200
-From: Joel Granados <j.granados@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q/AQN3J0"
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eaa80cb550so10217381fa.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 04 Jun 2024 00:44:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717487090; x=1718091890; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UcYWYntWAO2W3LAxMAaPVJr5Ylhpz9Mj9naAFGZsCvE=;
+        b=q/AQN3J0lmuofO9t1KTBuJoY1vEKpZE7l6GNwd723NtJYXiYKedPfNx4wmd7W22vfl
+         ++2GCQviMLJeO/o73zfTQkvhZsZYDUFuhDCxbmzVaCIfFg5LJJxLvQzwvKl3sQqYvB9m
+         nD0m9IsQkxkY5s2Xlg/YDt4m2g5FgRh+BS9gjVl3jyDu1Ubxv/ADnJ7TC3YJxRiTCVvQ
+         OZ4XMrDYVZL320PQJrZ2N59PRFbxQcvEi2qFH2dJb3dvcim5+oi5vTLUS5Qp/FztIhbV
+         CYqHRBB88MZ+tuXCh9/LyoRiaY5EXvVkd5nA3y/ugrvwtt2y1R0MVutC4pQtbtI+jHG+
+         Ug/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717487090; x=1718091890;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UcYWYntWAO2W3LAxMAaPVJr5Ylhpz9Mj9naAFGZsCvE=;
+        b=OxBno+1k3t+Ambt7Xb+7iyrvq8pfxJSD6fugu8yAAHZVAEu4/vNMb8nsI49GdaoUX9
+         QvPXc0aVi/sSRTm3kL81vCw76UvUARKxy+F19A1s8+DjKheV7PlWVcyq4k8jscqmx/x8
+         EGwsI85A/Rb+9dwVokIPRSfNbcVEBWXmqhvChXuydm7rvykWpXGTMyK9JMc6/tZprHTe
+         rj70aDrNXgia4GaTnjy7l68VJNvSs0wYKN6tpylH7+sQYJ8S+H5+BvEzze/rwyU1a+SF
+         0ssUso9blFQBfEmwO/chuVt2sHiqQuxjG4hfazg9YvhmGxzw27LdR+DSEqKJxpDWUsjZ
+         FPvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPmiWuEOP1D6rJNb+9gT1Q4TLipygWdUpJjzqGCjuONCHayerIWvuXq8iWnGwa5LBVvmOOMFoTZcaYiziH/G9Atvb0sm029ZRHiKCnY+7w
+X-Gm-Message-State: AOJu0YzvnossESeSMcFN+DJAoLNZcD6tzopvYThswUhzKCc3ELHe4kBt
+	YxyHfVX/KUyTbs6Rw5fT1QUvzNMFiB3GgMAfcgIEQqQwfzUuaWrECANEYaiJjHo=
+X-Google-Smtp-Source: AGHT+IHqZb9LYTpAH7wKglm6YhvwHz6YjOAKROkXHiyd6z8lsMM1DOFC6a++Wkm2gmrWAq+7DRwBww==
+X-Received: by 2002:a2e:9d12:0:b0:2ea:7cca:31aa with SMTP id 38308e7fff4ca-2ea950e64ebmr74116151fa.16.1717487089638;
+        Tue, 04 Jun 2024 00:44:49 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91b9d5f0sm14300931fa.21.2024.06.04.00.44.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 00:44:49 -0700 (PDT)
+Date: Tue, 4 Jun 2024 10:44:47 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Jeff Johnson <quic_jjohnson@quicinc.com>
-CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] kernel/sysctl-test: add MODULE_DESCRIPTION()
-Message-ID: <20240603132305.ji6mpwao6q4hnsfl@joelS2.panther.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, kernel@quicinc.com
+Subject: Re: [PATCH] soc: qcom: spm: add missing MODULE_DESCRIPTION()
+Message-ID: <wuozxhrtce5udbn5aqxb65e5ox6hqs7tncb6biutqoetlhtouj@rew5b25dc2tg>
+References: <20240603-md-soc-qcom-spm-v1-1-617730f08d22@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240529-md-kernel-sysctl-test-v1-1-32597f712634@quicinc.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnleLIzCtJLcpLzFFi42LZduznOV239XFpBrO2aFuc6c612HpL2mLP
-	3pMsFpd3zWGzuDHhKaNF45a7rA5sHrMbLrJ4bFrVyeYxcU+dx+dNcgEsUVw2Kak5mWWpRfp2
-	CVwZ267OZS64xlFx5fYZlgbGXvYuRk4OCQETiSvvVjF2MXJxCAmsYJTY1baeHcL5wijRtOsc
-	VOYzo8Tsp2uZYVqmf/rCBJFYzijx7+9vhKobjxdCOZsZJSa+WAXWwiKgInF2UgMbiM0moCNx
-	/s0dsLgIkN36dAsbSAMzSMO5H/vAioQFHCXu7J4HVsQr4CDRdmMTC4QtKHFy5hMwmxmoecHu
-	T0D1HEC2tMTyfxwgYU4Bb4mZH/czQpyqJHHw4nsWCLtWYu2xM2DPSQic4ZA4d/whVMJFYvmX
-	XjYIW1ji1fEt0KCRkTg9uYcFomEyo8T+fx+gulczSixr/MoEUWUt0XLlCTvIFRJAV+8/bA1h
-	8knceCsIcSefxKRt05khwrwSHW1CEI1qEqvvvWGZwKg8C8lns5B8NgvhswWMzKsYxVNLi3PT
-	U4uN81LL9YoTc4tL89L1kvNzNzEC08rpf8e/7mBc8eqj3iFGJg7GQ4wSHMxKIrx9ddFpQrwp
-	iZVVqUX58UWlOanFhxilOViUxHlVU+RThQTSE0tSs1NTC1KLYLJMHJxSDUyTVnqeKV7q1vDu
-	/1r+bU8eHQptvrOh/dTcqa+D455oh706mPjTeNn5bX/45Iw13/578k3wlg2f+pr8g0t+8V5c
-	uybMb/7E5yc+y+YtT71mPJdh2/4Ze20fCIou40i4paWl9fD6u2MFm6q7/U7dvRZ9IOHnscbt
-	X08/nDFV9ofuP49jXpI9BfMFVh8PWb+2+x1fL1sBW2D/+wurhNjcJUz5Nh0P3LeY5cVdpayw
-	iQfKt08tPXcgxOGz9JFn81oXPDt6e3HkToPfO544vbnT1SndahoiG9e1//wJf6+MAJ5Nvjd7
-	v/1+698YxL5+rv6JB1Wbi6V+NZZmyJp8n1M5/6P83gSuF+oTRNTFfjHfKNiePFOJpTgj0VCL
-	uag4EQDm2WNKmgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCIsWRmVeSWpSXmKPExsVy+t/xu7pu6+PSDD7eEbQ4051rsfWWtMWe
-	vSdZLC7vmsNmcWPCU0aLxi13WR3YPGY3XGTx2LSqk81j4p46j8+b5AJYovRsivJLS1IVMvKL
-	S2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQytl2dy1xwjaPiyu0zLA2M
-	vexdjJwcEgImEtM/fWHqYuTiEBJYyijx8tw1JoiEjMTGL1dZIWxhiT/Xutggij4ySpy8eA/K
-	2cwosePzVmaQKhYBFYmzkxrYQGw2AR2J82/ugMVFgOzWp1vAGphBGs792AdWJCzgKHFn9zyw
-	Il4BB4m2G5tYIKbOY5T4PmkRG0RCUOLkzCcsIDYz0KQFuz8BxTmAbGmJ5f84QMKcAt4SMz/u
-	Z4Q4VUni4MX3LBB2rcSr+7sZJzAKz0IyaRaSSbMQJi1gZF7FKJJaWpybnltspFecmFtcmpeu
-	l5yfu4kRGF3bjv3csoNx5auPeocYmTgYDzFKcDArifD21UWnCfGmJFZWpRblxxeV5qQWH2I0
-	BYbFRGYp0eR8YHznlcQbmhmYGpqYWRqYWpoZK4nzehZ0JAoJpCeWpGanphakFsH0MXFwSjUw
-	LVCdF7MwIsLxY1Yo45HFWVtSmpeed+t/zHNrQ94h6YpDB+y6D/29duLvi2PmjJ2ynZVPyueJ
-	m10JYmvyfPae+6XrLs12VS+pp7v/3mOo3HrXPGDbhkYLpQaxDyZ7mS9caFQ5776oxeEy2+28
-	X/w84RnvzzOfmnNPrirTRfz85MunTVt/yShl/NbdnP7Wr66jWCNR6V16uO7Eww+EpcMe/16o
-	fdCLw/hwWHNPaxDDwReq71dsVZPeP+vezXSnKwIzHx53TNKzvrFCd18Z35IdcpaF4VPk2ETk
-	7Ivddh5SbfIPSrsl7M08Xbi5TsBcLrirSO3CeSGVrgzn6TIvVQ2XJd7yOmSaoT5/5yru+weU
-	WIozEg21mIuKEwHXFM0GNwMAAA==
-X-CMS-MailID: 20240604060806eucas1p22862dbc5e160cc485614c823ba1f77a3
-X-Msg-Generator: CA
-X-RootMTR: 20240529212552eucas1p1810ee5a1c17fb966eada0b0562338c23
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240529212552eucas1p1810ee5a1c17fb966eada0b0562338c23
-References: <CGME20240529212552eucas1p1810ee5a1c17fb966eada0b0562338c23@eucas1p1.samsung.com>
-	<20240529-md-kernel-sysctl-test-v1-1-32597f712634@quicinc.com>
+In-Reply-To: <20240603-md-soc-qcom-spm-v1-1-617730f08d22@quicinc.com>
 
-On Wed, May 29, 2024 at 02:25:41PM -0700, Jeff Johnson wrote:
-> Fix the 'make W=1' warning:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/sysctl-test.o
-
-I changed the message to this
-"""
-sysctl: Add module description to sysctl-testing
-
-    Added a module description to sysctl Kunit self test module to fix the
-    'make W=1' warning (" WARNING: modpost: missing MODULE_DESCRIPTION() in
-    kernel/sysctl-test.o")
-"""
-
+On Mon, Jun 03, 2024 at 05:09:34PM -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 warns:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/qcom/spm.o
+> 
+> Add the missing MODULE_DESCRIPTION(), using the same description as
+> the underlying QCOM_SPM Kconfig item.
 > 
 > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
->  kernel/sysctl-test.c | 1 +
+>  drivers/soc/qcom/spm.c | 1 +
 >  1 file changed, 1 insertion(+)
 > 
-> diff --git a/kernel/sysctl-test.c b/kernel/sysctl-test.c
-> index 6ef887c19c48..92f94ea28957 100644
-> --- a/kernel/sysctl-test.c
-> +++ b/kernel/sysctl-test.c
-> @@ -388,4 +388,5 @@ static struct kunit_suite sysctl_test_suite = {
->  
->  kunit_test_suites(&sysctl_test_suite);
->  
-> +MODULE_DESCRIPTION("KUnit test of proc sysctl");
->  MODULE_LICENSE("GPL v2");
-> 
-> ---
-> base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-> change-id: 20240529-md-kernel-sysctl-test-2bbad793ac62
-> 
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
-
-Joel Granados
+With best wishes
+Dmitry
