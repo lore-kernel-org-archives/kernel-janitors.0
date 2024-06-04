@@ -1,89 +1,70 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B347B12E1CE;
-	Tue,  4 Jun 2024 18:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E66A801;
+	Tue,  4 Jun 2024 19:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717524960; cv=none; b=dVypF/pOtDApyIdzQsfLyVnKMjf8asUb8wPRji3dIpLiH3+JCuAmXs5NxTOGBhrE2jG1gtS+aNA1EoSGZcE3ahufhjcpstmZdUZ84PZ0B5zFK4YSTKdZMkaAruPv6DcoYgIwgRvchLs+dk8rQBqvn8T19Iw9s4xd8rxSskrSWfk=
+	t=1717528854; cv=none; b=aszBDxTXjL3qqfrvT7LI3IKXRyQWeX63pcbmZWFcC1P6yXbCYNo75UgP9LrEIPpQ1WqBfihmH7CFj8gkhPEmuLw/U4/eSIOQ5DKLHuwCK9jz1dxtw8oWuAfuuYr3u2V/nkaj6mtjZQ98Yx3p78TQWQjvj0pI0hBgjKAPCkex4Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717524960; c=relaxed/simple;
-	bh=jYuZKxsQpb581PjD3Ptk8cZiajoRtaV88fAecHnSwLE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uaGhDEsuRJpNg8MpvyGTptWgD/IkE0hkm9x4tZdiRU2bhcIb5u4n56weP6z3MYHBdZ/PzhcW4xUTCmWVnzr0kSFn25Y/4o1b98LqZ0rYn73KjyKw2q7iW+qY1VDV/jOOxUYv95erdHkG0VBxKhtRnwaUCrgYIBTqRd94ZQgrSSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BiyVo111; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1717528854; c=relaxed/simple;
+	bh=iEIJ1ODrXLu8gKKalSPXoQUGalwH+oelgUDRq8s7R8A=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=o3+3p95wia/C7gfBDwGIu6MODH1i/y1/DsasUqdCUukU/TBvUweUD7/4+D2/GfrRBeqmVnE0jIPvoODE+TWAka1JzUcZZyIVST9HGdcNjisR43MT/ci+qset4/qM3nfRo3xEZCFXhjslJMAwJNqktl9ro+InDx0StudNTsWu7fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Ba5ZIYTy; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BiyVo111"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1717524936; x=1718129736; i=markus.elfring@web.de;
-	bh=jYuZKxsQpb581PjD3Ptk8cZiajoRtaV88fAecHnSwLE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=BiyVo111CIpj8ApM5wiOiAPoZ4/m/cUGc86Zs38f9vL8iLn0do3Qr5afW/8LgZlL
-	 R40oPsHdZwMtyRHi6l6lsGgUJv7n/M5W177LSS6BBXhJ0c6n9X56lwvYgzAz7A2LW
-	 CPCPfBj9rjJsPzuatnMOBQ8XxvpNq0GfR2ntYeeCHAhrwpwFSN7Y+ycIIq5bSo1Rr
-	 PG+HbEu5Bw/0vLrj8oIjsr5p3wB828EnaSOmEzQx9P4TUywiMUKpX4IIzFWlbEbwr
-	 k/PAyDokRbJiR3aa/GygzhQJGxvAWhODZ9gWQk5j/fCLt2lu+zgkGd3UFmqYqdUln
-	 FQo+hNup5VxgAbDI+Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MY5fb-1rxjAz25lN-00KCAR; Tue, 04
- Jun 2024 20:15:36 +0200
-Message-ID: <503de0cb-09d2-4716-99cb-de257a33bad8@web.de>
-Date: Tue, 4 Jun 2024 20:15:35 +0200
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Ba5ZIYTy"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: auxdisplay: ht16k33: Drop device node reference after
- registration failure in ht16k33_led_probe()
-To: Andy Shevchenko <andy@kernel.org>, kernel-janitors@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, =?UTF-8?Q?Marek_Beh=C3=BAn?=
- <kabel@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Robin van der Gracht <robin@protonic.nl>, LKML <linux-kernel@vger.kernel.org>
-References: <0fc79fe9-da49-4cbe-a7ff-6443ad93f120@web.de>
- <Zl9B2zqbJqVAf83d@smile.fi.intel.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <Zl9B2zqbJqVAf83d@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1717528850;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=db/Sl9j482azBoAdhWtuIMKD0VB/oszgMwHPRWC6tXQ=;
+	b=Ba5ZIYTySI0OuLOX2S8DKaSXYQyd9j7j3JkCIjtrrWomudObV6fdgaMIVW/Ns9dK+vDT7b
+	IKCV09hJ1biUgpqpNTVRzilYMdTv5exJkRMPy3EC2SfxsQRFPSZgPhyLeYJ9psFPkg8eh8
+	46FtGa+a4vrRYq8AFVi1Q2um/uVQGKkSy9kLziYw+RMOD8zVJb85fZM1sb5KJThJoTmkV4
+	uPv5okFYbxu7f+Tozmna+NzaOZwz5xpmKzQCAXIJihfPNZrt1hyKIs6zVAFEoOFgnzV9el
+	e17uEA/bczRWhCZifAiIlo671TRGXWpJJdHLebQsxct8qrb3wBDzlQxB2p4yiA==
+Date: Tue, 04 Jun 2024 21:20:49 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, Srinivas Kandagatla
+ <srinivas.kandagatla@linaro.org>, Banajit Goswami <bgoswami@quicinc.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, kernel@quicinc.com
+Subject: Re: [PATCH] ASoC: qcom: add missing MODULE_DESCRIPTION() macro
+In-Reply-To: <0bd0a518-4d85-4251-9bf9-d056dc3d7b08@sirena.org.uk>
+References: <20240603-md-snd-soc-qcom-sdw-v1-1-101ea8bcdd38@quicinc.com>
+ <0bd0a518-4d85-4251-9bf9-d056dc3d7b08@sirena.org.uk>
+Message-ID: <04bfcdd0088f521e4418a77e528652e3@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:XzxZXsyOQkXt5iZ3/RqJDZ9HblXj1cvp//kPU5U2jLBOKZaW0ER
- i4flt4ib8b6jV5OXeJKRiiACOP8+ZEFaJzA73beglMckX/gVX6njC/vjN0nmCfAgxqFNFN2
- BKpY5fg2I9OXrsyr62NcaU2+AQIjVMDClale8XkFWuxDLUvboMXPJ5mt498zHo4IAEew7Ad
- VG9MVJnVIN3mqpIcXjJMQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:yXK4yK1g3E0=;kHGTcX+lLGuZzwdyL0aIM2O30LR
- eJL0nD1F2XoRBm2ahhVzqlrLS5WPEvWOdJ/a7m8rQaHJaWOHDy8mlKSqatdIeppIRPAdtGKUL
- bdydgPYivVR325ZCfC0Vx+EQafjzzVWl2dkEixb7E6yxJiQYuygz/VMhNUCTEte9NMK+O5Hbk
- TsNHbHf0XXk0y/D/td6LgYcWqA2rHsA7GhS+w7Tj05d9SCM3nPgC+jCDmB2HZlALsEixOia0e
- dp3sU7sWKxV2exxbgzGwmrhMGgxRSCM/jCdonP7OKDdo0TFAb8HaYGfsZmCe/n5S3Zo8BzmhB
- +0A2n5KfDT5B0seVW27QMkv+PDEN0e4tYZOu14SH5N48dXvV+tGCoafgQKZCbCpo6o4iRxxCc
- icH4uq92Q6MhT3qv/RsCDwFCBmxS5hin99RUOnuBW2aB6x+uI09T+BbidX8lPUhtan4cUh437
- cZ2xuZbU6W38J+XtdbtKgX9OruzV2zcR8wyPIArZUHVfSyPnDLm+5ASgZeNf9tF5TiIl/FEMc
- LdCK+3qp8h5iLFugmjcXKrINl95W1GW9U1FtuCr42lrh/06oeiw8GxWXmXgSAMORwczhf7FvA
- QXJjclrWzjB5VUNIBR1demH43ZBlfxfFGeDNw1N++FGVFLsybEMPeg2O2+y4j4t7KicKxZTSK
- d7b32t0TzmYZvF1O3/5Wb7lnGFLs3kln1hLsPRDfleULFVeYzkxy15gPNWjYuH4lSLEW8i7Ec
- XkeE1x2G/OEwGQRclwi4BL8nqg9pNywqmsu6eFAzZCuB45gkp/eX/NyuaEq/W8CoIJdTc9Qm9
- 8Xea7JfNvqarvNo0Vvxzhpb7xctcqPcT+Xopy6UxDCo0U=
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-> But, by design we don't use reference counting after we registered LED,
-> hence both error and successful paths need to have this,
+On 2024-06-04 13:56, Mark Brown wrote:
+> On Mon, Jun 03, 2024 at 05:16:07PM -0700, Jeff Johnson wrote:
+>> make allmodconfig && make W=1 C=1 reports:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in 
+>> sound/soc/qcom/snd-soc-qcom-sdw.o
+> 
+> Is anyone getting any value from these MODULE_DESCRIPTION()s?  This all
+> just seems like a huge amount of noise and I'm having trouble thinking
+> of a use case.
 
-Do you indicate really special data processing constraints here?
-
-
-> so add another fwnode_handle_put() after this branch.
-
-Will this suggestion trigger any further clarifications for the affected software?
-
-Regards,
-Markus
+FWIW, I find module descriptions useful.  Of course, there are
+some of them that don't provide much value, but the well-written
+ones are good.
