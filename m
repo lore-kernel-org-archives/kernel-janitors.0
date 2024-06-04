@@ -1,70 +1,84 @@
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E66A801;
-	Tue,  4 Jun 2024 19:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7772E64C;
+	Tue,  4 Jun 2024 19:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717528854; cv=none; b=aszBDxTXjL3qqfrvT7LI3IKXRyQWeX63pcbmZWFcC1P6yXbCYNo75UgP9LrEIPpQ1WqBfihmH7CFj8gkhPEmuLw/U4/eSIOQ5DKLHuwCK9jz1dxtw8oWuAfuuYr3u2V/nkaj6mtjZQ98Yx3p78TQWQjvj0pI0hBgjKAPCkex4Fw=
+	t=1717529414; cv=none; b=gBbMPUtHSjhTeBIdyP/QNdxSsxjdyi7/DCEWzdxsqzFIYh1iSNJuit4oH5esoZ8ehr5g6NWYAbWKHhB0vhxadsxzrYr/IWvhWV9AiDiP5KfGecnLDfutDd5w7ZsNXyNF5ejwlhqgweM10GLM2F5SHrEB8yqFpPQucEOQwWBqlpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717528854; c=relaxed/simple;
-	bh=iEIJ1ODrXLu8gKKalSPXoQUGalwH+oelgUDRq8s7R8A=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=o3+3p95wia/C7gfBDwGIu6MODH1i/y1/DsasUqdCUukU/TBvUweUD7/4+D2/GfrRBeqmVnE0jIPvoODE+TWAka1JzUcZZyIVST9HGdcNjisR43MT/ci+qset4/qM3nfRo3xEZCFXhjslJMAwJNqktl9ro+InDx0StudNTsWu7fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Ba5ZIYTy; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Ba5ZIYTy"
+	s=arc-20240116; t=1717529414; c=relaxed/simple;
+	bh=oULadjP6P41q089ExSQ5/oAxT/vKrEmTUYcwve21ydY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tf6cD7vuLQ7jjBsYIJpqSKbRjPNxHNZHJYsB3DuvJlV4IQ30IJ4zUfVsYiQ6KnidZa+4rO32MLyr9Zpke0dClliljsKMSXNM3lTF2jDyKsukLqkbWM91wAVIel4RQp9mP769zqkeZQPJqmKS9MVa/xl6YDGgpnUbBZcfsA+Z8gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: 1Cvi0cF8TK+EeU5TvQsCOA==
+X-CSE-MsgGUID: c9JEqBabSyKe2dY58hwyWA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="14257589"
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="14257589"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 12:30:12 -0700
+X-CSE-ConnectionGUID: lYBHTnAjSPer6lvyayjErg==
+X-CSE-MsgGUID: D8aIAmoOQISCjC8b7LQjgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="68488808"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 12:30:10 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andy@kernel.org>)
+	id 1sEZrD-0000000Ddrd-3tyz;
+	Tue, 04 Jun 2024 22:30:07 +0300
+Date: Tue, 4 Jun 2024 22:30:07 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel-janitors@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Robin van der Gracht <robin@protonic.nl>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: auxdisplay: ht16k33: Drop device node reference after
+ registration failure in ht16k33_led_probe()
+Message-ID: <Zl9rPy3hD-Hk-gxm@smile.fi.intel.com>
+References: <0fc79fe9-da49-4cbe-a7ff-6443ad93f120@web.de>
+ <Zl9B2zqbJqVAf83d@smile.fi.intel.com>
+ <503de0cb-09d2-4716-99cb-de257a33bad8@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1717528850;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=db/Sl9j482azBoAdhWtuIMKD0VB/oszgMwHPRWC6tXQ=;
-	b=Ba5ZIYTySI0OuLOX2S8DKaSXYQyd9j7j3JkCIjtrrWomudObV6fdgaMIVW/Ns9dK+vDT7b
-	IKCV09hJ1biUgpqpNTVRzilYMdTv5exJkRMPy3EC2SfxsQRFPSZgPhyLeYJ9psFPkg8eh8
-	46FtGa+a4vrRYq8AFVi1Q2um/uVQGKkSy9kLziYw+RMOD8zVJb85fZM1sb5KJThJoTmkV4
-	uPv5okFYbxu7f+Tozmna+NzaOZwz5xpmKzQCAXIJihfPNZrt1hyKIs6zVAFEoOFgnzV9el
-	e17uEA/bczRWhCZifAiIlo671TRGXWpJJdHLebQsxct8qrb3wBDzlQxB2p4yiA==
-Date: Tue, 04 Jun 2024 21:20:49 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, Srinivas Kandagatla
- <srinivas.kandagatla@linaro.org>, Banajit Goswami <bgoswami@quicinc.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, kernel@quicinc.com
-Subject: Re: [PATCH] ASoC: qcom: add missing MODULE_DESCRIPTION() macro
-In-Reply-To: <0bd0a518-4d85-4251-9bf9-d056dc3d7b08@sirena.org.uk>
-References: <20240603-md-snd-soc-qcom-sdw-v1-1-101ea8bcdd38@quicinc.com>
- <0bd0a518-4d85-4251-9bf9-d056dc3d7b08@sirena.org.uk>
-Message-ID: <04bfcdd0088f521e4418a77e528652e3@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <503de0cb-09d2-4716-99cb-de257a33bad8@web.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 2024-06-04 13:56, Mark Brown wrote:
-> On Mon, Jun 03, 2024 at 05:16:07PM -0700, Jeff Johnson wrote:
->> make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in 
->> sound/soc/qcom/snd-soc-qcom-sdw.o
+On Tue, Jun 04, 2024 at 08:15:35PM +0200, Markus Elfring wrote:
+> > But, by design we don't use reference counting after we registered LED,
+> > hence both error and successful paths need to have this,
 > 
-> Is anyone getting any value from these MODULE_DESCRIPTION()s?  This all
-> just seems like a huge amount of noise and I'm having trouble thinking
-> of a use case.
+> Do you indicate really special data processing constraints here?
 
-FWIW, I find module descriptions useful.  Of course, there are
-some of them that don't provide much value, but the well-written
-ones are good.
+Nothing special, either we hold reference for the entire life time of the
+device or not. For LEDS the convention is not to hold.
+
+
+> > so add another fwnode_handle_put() after this branch.
+> 
+> Will this suggestion trigger any further clarifications for the affected software?
+
+You need to put an fwnode handle in both paths: inside the if branch as you
+have done (error path) and missing one is after that needs to be added.
+
+Just address my comments and I believe everyone will be happy about it.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
