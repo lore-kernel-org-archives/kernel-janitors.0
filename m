@@ -1,240 +1,98 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85A583CD6;
-	Tue,  4 Jun 2024 20:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCC7140375;
+	Tue,  4 Jun 2024 21:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717532528; cv=none; b=mDEALPP8mtZQkXBu/Q1xO42idklr6bjsTfG5kmARimhI8c7Dh02giQwftdtb5IqhLrog11nI+p48afj/OPYm8uuOlvdC4smVZwn3Ksm7Eo7XaVOuzGQGjvqftqTWhvUg1WxunRa8mnOsFHtH/mml8QlXT1s+ioGdmLeYVb9w9kA=
+	t=1717535501; cv=none; b=Y6S1rTzmyzui4aG2YLrR6PiyIVnjghaku1Eiaq7w9r76lUmVjNnPCah6QfmwmVDfQK9r6HkZIbts77622RKwBgZ3AcTkspc0vwCN6v99wZo13SSZVTqvOCvQHSea1kxCMStR8Z5MadtA8eV2cp7UkoeOV9H9RpKH1/ZRUqvnp5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717532528; c=relaxed/simple;
-	bh=rj8tuvfVT3pQXy2JtATqZMda5lX7uPjdNHpX+MjWHuI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=syhLbrSiAA6tLa7tOrut+CkCIZkmSSEJNr56F+GPELs1ych2+J8eRyx0IDnE37nPE7tmy4BCxVJS50uxSyR8N4djs7x0h0j4T//Ws86bzieSoWTH+0HI3DRJYoP4StMYnEALOi4NPxVYkR7YjQ8hWdpLoQ4xRrwghQNH7v94ZzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ApGpR4iA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1717535501; c=relaxed/simple;
+	bh=EepEPX28KW8cIvWzQ83MU1wIxpKq/a8X93eGHjSQGBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U5nGHz0k8jRiZxFXBW22PifRMMyUqJlvbNEYpKCzC3IXUtGuqL2nmhc+nCP89Sr6z7lrGTNtEEkUFWqM/B+5i37/8E4cqcJnxuyzfzUyOLlyudcNtvqQgjzOgejfB6mEELiuyfGr7ae5LVl9Tc+Ig2fno1XkXyb6iP55eJaLn04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O9Nl5ed7; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ApGpR4iA"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 454HIXuM005515;
-	Tue, 4 Jun 2024 20:21:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	14uxE1rIsU28J32tiKle2lkHmGkT0MrPRwVsVv/GKAc=; b=ApGpR4iA0V5c7T58
-	ivv/FVMC+4vAsgyUNmIa/DOCRnsouAKkx+Tp8xm5OaEXyZk1ctU0jcHOLpET7UPo
-	C6NU9a7i8uk0lrjsg+g2Ze/Z6eYcQtmRkxiFHxDITkLlNGRyYUdJXBqA/xG+5W3N
-	UwIaB45IetpFqN/nN1tABl5o08LiAVZSyJVQoLXbo89+qALmrZ4CT/gqpdWRj9fV
-	0ernVGT0kbTFtj9wN5R5irjcwNnQGdcefSREgsIgULRFYbLAmCAJq0o/cKTpisNa
-	8YYy1L1wRCBlDBJOdKGa8sxLcDxzpAgNV5yFW5/x4+/adtWcN+MP0VCig+tj/lgv
-	ZWo2NQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yj76wgcgj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 20:21:54 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 454KLsaF013298
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Jun 2024 20:21:54 GMT
-Received: from [10.48.241.109] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
- 13:21:53 -0700
-Message-ID: <362fccea-707f-4430-8da3-8acc6ac5fbe9@quicinc.com>
-Date: Tue, 4 Jun 2024 13:21:52 -0700
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O9Nl5ed7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717535500; x=1749071500;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=EepEPX28KW8cIvWzQ83MU1wIxpKq/a8X93eGHjSQGBw=;
+  b=O9Nl5ed7FkGhsZU/nst992GgsQuuK0SW9KF88ySOtoL3B2Exsf99tQ4h
+   0gukoZmp5DG4EjgUZyxEPJ4prl/XOnu7SygEELf7jXZOBzXCoo5v44LD2
+   CyMVYbnbNz1+YC9GEZZX/2y4Z63UnuCv8cgxn9cEt+FyICPd2lF7QIpWt
+   mNS9mWJYX0ikhnxwEtNd91jnHWQc5DL/pvFm+Gtmo/4gGUuKPRmWj9gBd
+   8HMkM6RUDX8TqGCvmRWlQIbjup9RhYUO3z165CSmS2f4/7opek6v6SplR
+   56T+uNX3DDAo2EIAJJqcSKGs2inWF5kgPrIoKNEWZjWtDPfieRCIM2r9K
+   Q==;
+X-CSE-ConnectionGUID: AgyWAgr/QQ+VRT47IIg8zw==
+X-CSE-MsgGUID: xURqZQ33RmSWxoe7XJcu4g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="13955526"
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="13955526"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 14:11:39 -0700
+X-CSE-ConnectionGUID: HgdQjrOIRQm89ArG8EhTAw==
+X-CSE-MsgGUID: EfiKCilPSCK1vmPzNFiB3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="68508830"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 14:11:37 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sEbRO-0000000DfIN-2tX1;
+	Wed, 05 Jun 2024 00:11:34 +0300
+Date: Wed, 5 Jun 2024 00:11:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel-janitors@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Stanley Chang <stanley_chang@realtek.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] extcon: realtek: Use scope-based resource management in
+ extcon_rtk_type_c_init()
+Message-ID: <Zl-DBkt8sNb9xypq@smile.fi.intel.com>
+References: <532aa50e-b8e5-4e8e-a2bd-a05fd81274dc@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cxl: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-CC: Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Vishal Verma
-	<vishal.l.verma@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Dan Williams
-	<dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240603-md-drivers-cxl-v1-1-f2940f5c0836@quicinc.com>
- <20240604170445.00005c67@Huawei.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240604170445.00005c67@Huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: yfAKyCKxeS-gM4in7p3Eabdjkfl6f08i
-X-Proofpoint-ORIG-GUID: yfAKyCKxeS-gM4in7p3Eabdjkfl6f08i
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_11,2024-06-04_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015
- adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- phishscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406040164
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <532aa50e-b8e5-4e8e-a2bd-a05fd81274dc@web.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 6/4/2024 9:04 AM, Jonathan Cameron wrote:
-> On Mon, 3 Jun 2024 21:48:53 -0700
-> Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+On Tue, Jun 04, 2024 at 10:06:14PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 4 Jun 2024 21:55:08 +0200
 > 
->> make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/core/cxl_core.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pci.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_mem.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_acpi.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pmem.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_port.o
->>
->> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> Scope-based resource management became supported also for another
+> programming interface by contributions of Jonathan Cameron on 2024-02-17.
+> See also the commit 59ed5e2d505bf5f9b4af64d0021cd0c96aec1f7c ("device
+> property: Add cleanup.h based fwnode_handle_put() scope based cleanup.").
 > 
-> This has been irritating me as well.  Need to do
-> drivers/perf/cxl_pmu.c at somepoint as well but given that goes through
-> a different maintainer makes sense to do separately.
+> * Thus use the attribute “__free(fwnode_handle)”.
 > 
-> Only comment I have is that we should probably strive for more consistency
-> than you currently have.  Always expand CXL or never do, use
-> colons consistently, use Support everywhere or nowhere.
+> * Reduce the scope for the local variable “fwnode”.
 
-I'm going through a bunch of these tree-wide, and usually just copy/paste
-either from existing comments in the .c file or the description of any
-associated Kconfig item.
+> Fixes: 8a590d7371f0 ("extcon: add Realtek DHC RTD SoC Type-C driver")
 
->> ---
->>  drivers/cxl/acpi.c      | 1 +
->>  drivers/cxl/core/port.c | 1 +
->>  drivers/cxl/mem.c       | 1 +
->>  drivers/cxl/pci.c       | 1 +
->>  drivers/cxl/pmem.c      | 1 +
->>  drivers/cxl/port.c      | 1 +
->>  6 files changed, 6 insertions(+)
->>
->> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
->> index 571069863c62..e51315ea4a6a 100644
->> --- a/drivers/cxl/acpi.c
->> +++ b/drivers/cxl/acpi.c
->> @@ -921,6 +921,7 @@ static void __exit cxl_acpi_exit(void)
->>  /* load before dax_hmem sees 'Soft Reserved' CXL ranges */
->>  subsys_initcall(cxl_acpi_init);
->>  module_exit(cxl_acpi_exit);
->> +MODULE_DESCRIPTION("CXL ACPI: Platform Support");
+The problem here is that the above mentioned API only recently appeared in the
+kernel. It will be impossible to backport without backporting a new API, which
+is usually contradicts the idea of stable kernels. That's why it's better to
+really fix without using a new APIs and then convert to a new one. Hence needs
+two patches.
 
-From Kconfig:
-config CXL_ACPI
-        tristate "CXL ACPI: Platform Support"
+-- 
+With Best Regards,
+Andy Shevchenko
 
->>  MODULE_LICENSE("GPL v2");
->>  MODULE_IMPORT_NS(CXL);
->>  MODULE_IMPORT_NS(ACPI);
->> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
->> index 887ed6e358fb..ccaa00cd0321 100644
->> --- a/drivers/cxl/core/port.c
->> +++ b/drivers/cxl/core/port.c
->> @@ -2356,5 +2356,6 @@ static void cxl_core_exit(void)
->>  
->>  subsys_initcall(cxl_core_init);
->>  module_exit(cxl_core_exit);
->> +MODULE_DESCRIPTION("CXL (Compute Express Link) Devices Support");
-> 
-> Why the expanded version for this one?
-> 
-> I'm not sure Devices really makes sense here, particularly as it
-> likely a range of other driver will make some use of this core
-> functionality over time.  Maybe "CXL core" is sufficient?
-> 
-
-From Kconfig:
-menuconfig CXL_BUS
-        tristate "CXL (Compute Express Link) Devices Support"
-
->>  MODULE_LICENSE("GPL v2");
->>  MODULE_IMPORT_NS(CXL);
->> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
->> index 0c79d9ce877c..1afb0e78082b 100644
->> --- a/drivers/cxl/mem.c
->> +++ b/drivers/cxl/mem.c
->> @@ -252,6 +252,7 @@ static struct cxl_driver cxl_mem_driver = {
->>  
->>  module_cxl_driver(cxl_mem_driver);
->>  
->> +MODULE_DESCRIPTION("CXL: Memory Expansion");
-> 
-> Why does this one get a colon? Also no Support at the end?
-
-From Kconfig:
-config CXL_MEM
-        tristate "CXL: Memory Expansion"
-
-> 
->>  MODULE_LICENSE("GPL v2");
->>  MODULE_IMPORT_NS(CXL);
->>  MODULE_ALIAS_CXL(CXL_DEVICE_MEMORY_EXPANDER);
->> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
->> index e53646e9f2fb..2c17fcb1b4ee 100644
->> --- a/drivers/cxl/pci.c
->> +++ b/drivers/cxl/pci.c
->> @@ -1066,5 +1066,6 @@ static void __exit cxl_pci_driver_exit(void)
->>  
->>  module_init(cxl_pci_driver_init);
->>  module_exit(cxl_pci_driver_exit);
->> +MODULE_DESCRIPTION("CXL PCI manageability");
-
-Kconfig just has:
-config CXL_PCI
-        tristate "PCI manageability"
-
-I added CXL
-
->>  MODULE_LICENSE("GPL v2");
->>  MODULE_IMPORT_NS(CXL);
->> diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
->> index 2ecdaee63021..4ef93da22335 100644
->> --- a/drivers/cxl/pmem.c
->> +++ b/drivers/cxl/pmem.c
->> @@ -453,6 +453,7 @@ static __exit void cxl_pmem_exit(void)
->>  	cxl_driver_unregister(&cxl_nvdimm_bridge_driver);
->>  }
->>  
->> +MODULE_DESCRIPTION("CXL PMEM: Persistent Memory Support");
-
-From Kconfig:
-config CXL_PMEM
-        tristate "CXL PMEM: Persistent Memory Support"
-
->>  MODULE_LICENSE("GPL v2");
->>  module_init(cxl_pmem_init);
->>  module_exit(cxl_pmem_exit);
->> diff --git a/drivers/cxl/port.c b/drivers/cxl/port.c
->> index 97c21566677a..5ceff1df60db 100644
->> --- a/drivers/cxl/port.c
->> +++ b/drivers/cxl/port.c
->> @@ -209,6 +209,7 @@ static struct cxl_driver cxl_port_driver = {
->>  };
->>  
->>  module_cxl_driver(cxl_port_driver);
->> +MODULE_DESCRIPTION("CXL Port Support");
-
-This I just made up from the others since config CXL_PORT doesn't have a menu
-description or help text and the .c file begins with:
- * DOC: cxl port
-
-
->>  MODULE_LICENSE("GPL v2");
->>  MODULE_IMPORT_NS(CXL);
->>  MODULE_ALIAS_CXL(CXL_DEVICE_PORT);
-
-If you have specific edits you'd like me to make, I'm happy to make them.
-I have no opinion on the content -- I just want to get rid of the warnings :)
-
-/jeff
 
