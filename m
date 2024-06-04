@@ -1,84 +1,127 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7772E64C;
-	Tue,  4 Jun 2024 19:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD3B1350FD;
+	Tue,  4 Jun 2024 20:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717529414; cv=none; b=gBbMPUtHSjhTeBIdyP/QNdxSsxjdyi7/DCEWzdxsqzFIYh1iSNJuit4oH5esoZ8ehr5g6NWYAbWKHhB0vhxadsxzrYr/IWvhWV9AiDiP5KfGecnLDfutDd5w7ZsNXyNF5ejwlhqgweM10GLM2F5SHrEB8yqFpPQucEOQwWBqlpc=
+	t=1717531601; cv=none; b=Mxk2v4biQfCHKujK7FI1zj5qfxtkexUfy8K+d81ovlArP1iAqk73l8paGZkHrxQX6Vr+ub1riMtLghXCba/paSp4wqvayTe1J13+/4bYFBmtJcQi597xNB3ixobGx+Mxk8/KdrGwG/9IgqTzTB/8td5uN1EmPU09nYI/Q56E6O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717529414; c=relaxed/simple;
-	bh=oULadjP6P41q089ExSQ5/oAxT/vKrEmTUYcwve21ydY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tf6cD7vuLQ7jjBsYIJpqSKbRjPNxHNZHJYsB3DuvJlV4IQ30IJ4zUfVsYiQ6KnidZa+4rO32MLyr9Zpke0dClliljsKMSXNM3lTF2jDyKsukLqkbWM91wAVIel4RQp9mP769zqkeZQPJqmKS9MVa/xl6YDGgpnUbBZcfsA+Z8gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: 1Cvi0cF8TK+EeU5TvQsCOA==
-X-CSE-MsgGUID: c9JEqBabSyKe2dY58hwyWA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="14257589"
-X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
-   d="scan'208";a="14257589"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 12:30:12 -0700
-X-CSE-ConnectionGUID: lYBHTnAjSPer6lvyayjErg==
-X-CSE-MsgGUID: D8aIAmoOQISCjC8b7LQjgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
-   d="scan'208";a="68488808"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 12:30:10 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andy@kernel.org>)
-	id 1sEZrD-0000000Ddrd-3tyz;
-	Tue, 04 Jun 2024 22:30:07 +0300
-Date: Tue, 4 Jun 2024 22:30:07 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Robin van der Gracht <robin@protonic.nl>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: auxdisplay: ht16k33: Drop device node reference after
- registration failure in ht16k33_led_probe()
-Message-ID: <Zl9rPy3hD-Hk-gxm@smile.fi.intel.com>
-References: <0fc79fe9-da49-4cbe-a7ff-6443ad93f120@web.de>
- <Zl9B2zqbJqVAf83d@smile.fi.intel.com>
- <503de0cb-09d2-4716-99cb-de257a33bad8@web.de>
+	s=arc-20240116; t=1717531601; c=relaxed/simple;
+	bh=UyYvcyDzvOULQA5s2EXEzktbfL5xmUY+eN5IYMYeDPE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=EbKgkb7EUpxQele3blrndPnf2wLV2wFcADtDu/FTXRjf1CMAugF69fqM3mUAYUKbMqlRE1Ljj6c/RJEbDpZrVtBo7XeYwvI5Pli7oAhaxmA4PTaN92KGGyE8Dfzud+OJ9C667C6/OqHGJp237y9E/ZY2kQPLkiBtF0uCuu37nSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rYzgXPGN; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rYzgXPGN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1717531581; x=1718136381; i=markus.elfring@web.de;
+	bh=uhHW9GGQMJyeKuzBVKGCIeAGb0QutdaJfivNQuDOQqg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=rYzgXPGNju40m3dtl+VNlpzgxfCNptFUl4EL+/gtnyN5uUp28+yWnmOlPyGEFmgO
+	 kNlK8f6hqLSfIE+M1WVlUHPpktTDywxRrpbxHHxfN1nci0xBvgRijfzN6KiMdYFt9
+	 mmNcCwoYuteM61RJ3ao9PBmdH4PbpRMKPJsaZbJE+l4KOzTZupzd4Tt0mHp+Nj0Lc
+	 pYI+mSGvvHLkrLcNiqIehL7Co/DFoBF+RU8R8yEIlgLlQ9AHB30Jvc88rrFLSSF6r
+	 Ea/uwy/6uvOOSW9gwfUN2+ZYSX1LbNVeqa0Ej99m8X/BAqUXWzgXPaEOPZ53zgjuH
+	 j21sBwlox4ZXBJfQPA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MsaRt-1sTEak1TQJ-00u3fa; Tue, 04
+ Jun 2024 22:06:21 +0200
+Message-ID: <532aa50e-b8e5-4e8e-a2bd-a05fd81274dc@web.de>
+Date: Tue, 4 Jun 2024 22:06:14 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <503de0cb-09d2-4716-99cb-de257a33bad8@web.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+To: kernel-janitors@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Stanley Chang <stanley_chang@realtek.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] extcon: realtek: Use scope-based resource management in
+ extcon_rtk_type_c_init()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:0bU/ob+7kOatF+Jz8t5uLaM4o08nrxHMvPvk17RGGz5HLVViqNf
+ qfYph/J4pM7wUvoDWFDckjjDi7jyfZQGyF6wPNDWq/tpstxR6SPkGdaQyw4euoWWTily9pW
+ G+kDuJVD5kxkQjvr61PUe1fH/0qiSPhp3pk8dhhKfruf4zlZtMsNRPUaRreugj7ZzxGzasH
+ bBFVGpJN2omsakJnVmBGw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:G+pSpadvric=;2EdbEimaqR1zhnAl1Odt2yDHrIZ
+ j2XPfbzrkmiVTG1OeuCx1a58gDVUOCVQDgt4HrCeckwzyUJItFRZr5RLKcgILgsXljwUNISWs
+ G+HdNEoh1BSOq7MXaELkRfimlCsdGh3ijPMTYz+g/apY2j5xoJTwaztHvWET7w5pbmTdZvd6E
+ SWfMIjf2LL3TuDb9SKBHKJe5XcvGNxZ9awzL/c+TAxP4xhNL2ubBa9R6/wlp3n6HDFvBfq/CX
+ 0pInHr5v5AdBe2GTVgrlaOKZK0uQYGsLGtlTklHq0CUB/HVa9g2oRGy39UXWBkDitznLbsrSZ
+ AUKMCN/OKHirU61Tj+l7z4WhmM6vbnCXcOQQqUHoN9SGePYyftjx4NDger5+vsGaifqDrKsKO
+ jEu79XqxIOWlvZ7KGJYjT6MOnoXNU/737tBd/j5hPtEqsk5GbeOTIb89XhPEbsgsmZH9PZzOg
+ 4KOQ3QtwP5OfEBSbNYSQnFezCYGg0wUNFz4Fm2Zk0vBfkyTptelpRoUxn9wdQEaZmLb/Vw4pe
+ 6J+aVk/0x9fenrmtBWnxxbhDly4h9ZwtnDkVfOdGqBRnqcZl3HcBHRcl2AtDa9BQ5+uSWfKu6
+ I77mQAddGs9BXVoXNJMOAmy4QZao0Lt6Rj3EKhzfpMnAgYyOxlxZO1+lEtjKqW84mCsL6vxtJ
+ Xo89EdpnbF4SnwM/ev7PMeIJzg7Or9PCRusN/VRtQ3Atai16K+dnNo4Coyb1cucXQIAhPJZmb
+ YvNDZak7utenWSF+ifoDY7KAHw/UNvdVCcsOFwRYh9Pd0V7PN6HImgizXTcVO2C8Se86M0mtd
+ GyqZf7GOqtoyOyznNWtN3K41G2vWCcNzFs72Eob1tFF0s=
 
-On Tue, Jun 04, 2024 at 08:15:35PM +0200, Markus Elfring wrote:
-> > But, by design we don't use reference counting after we registered LED,
-> > hence both error and successful paths need to have this,
-> 
-> Do you indicate really special data processing constraints here?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 4 Jun 2024 21:55:08 +0200
 
-Nothing special, either we hold reference for the entire life time of the
-device or not. For LEDS the convention is not to hold.
+Scope-based resource management became supported also for another
+programming interface by contributions of Jonathan Cameron on 2024-02-17.
+See also the commit 59ed5e2d505bf5f9b4af64d0021cd0c96aec1f7c ("device
+property: Add cleanup.h based fwnode_handle_put() scope based cleanup.").
 
+* Thus use the attribute =E2=80=9C__free(fwnode_handle)=E2=80=9D.
 
-> > so add another fwnode_handle_put() after this branch.
-> 
-> Will this suggestion trigger any further clarifications for the affected software?
+* Reduce the scope for the local variable =E2=80=9Cfwnode=E2=80=9D.
 
-You need to put an fwnode handle in both paths: inside the if branch as you
-have done (error path) and missing one is after that needs to be added.
+Fixes: 8a590d7371f0 ("extcon: add Realtek DHC RTD SoC Type-C driver")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/extcon/extcon-rtk-type-c.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Just address my comments and I believe everyone will be happy about it.
+diff --git a/drivers/extcon/extcon-rtk-type-c.c b/drivers/extcon/extcon-rt=
+k-type-c.c
+index 19a01e663733..8a4b074fd745 100644
+=2D-- a/drivers/extcon/extcon-rtk-type-c.c
++++ b/drivers/extcon/extcon-rtk-type-c.c
+@@ -18,6 +18,7 @@
+ #include <linux/syscalls.h>
+ #include <linux/suspend.h>
+ #include <linux/debugfs.h>
++#include <linux/property.h>
+ #include <linux/extcon.h>
+ #include <linux/extcon-provider.h>
+ #include <linux/sys_soc.h>
+@@ -1237,7 +1238,6 @@ static int extcon_rtk_type_c_init(struct type_c_data=
+ *type_c)
 
--- 
-With Best Regards,
-Andy Shevchenko
+ 	if (!type_c->port) {
+ 		struct typec_capability typec_cap =3D { };
+-		struct fwnode_handle *fwnode;
+ 		const char *buf;
+ 		int ret;
 
+@@ -1246,7 +1246,8 @@ static int extcon_rtk_type_c_init(struct type_c_data=
+ *type_c)
+ 		typec_cap.driver_data =3D type_c;
+ 		typec_cap.ops =3D &type_c_port_ops;
+
+-		fwnode =3D device_get_named_child_node(dev, "connector");
++		struct fwnode_handle *fwnode __free(fwnode_handle)
++					     =3D device_get_named_child_node(dev, "connector");
+ 		if (!fwnode)
+ 			return -EINVAL;
+
+=2D-
+2.45.1
 
