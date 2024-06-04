@@ -1,71 +1,89 @@
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 3D88C145350;
-	Tue,  4 Jun 2024 11:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0211B145B17;
+	Tue,  4 Jun 2024 11:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717501570; cv=none; b=V+EZGDqDmr6yNtJsBUkSe9RwMdlZUcKRVHzFzEi8iET2bpqe4C1cz1n+75XUsVT6+qNRmk08AY43x/m4vh0GqzX84OTDO/rHrNaT7DmWBhjaQjNg72nRj0F/qzwOSYtijxYj8O3+ezh/gD9ZRItYKYLIIKPKLfWahiJQqQkoOYY=
+	t=1717502065; cv=none; b=JBC7ypbi3IPdUkbSwD47jjRO3dUGwGvNpRd7dyed56DOsIDVjgmE33PsYn7MBCEpREJg8L0N1qpeDoPcoUhh4OfPpKltcItb8NjWdzf1gU6Blvizkht68meuQ0DkAkP5QEN91LnZ12JNo+dd4Tcef2H5fufhSyy91iCeyqxQOdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717501570; c=relaxed/simple;
-	bh=p6de8ISvGtQYeLkdgHcT+UhUuBgzjaRIyC6F/0qCGvI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LYZ5C8UTpTSUYd6pUiewcSEjfK9Ud3RkcQKWDX4+73P9G47RxuW2qSye1cjZHz9Q3x7+xa2YKI0MdYe7vYDBmLoA1cUeRyiZl+kTAolJuDSMlHtNn+JU76KIhCJ6ySNIh1YhCHK3+dlrf6QDZ6ayHJssW2vntIAewakKfU2FpF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id A0ABB606E3AC4;
-	Tue,  4 Jun 2024 19:45:54 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: joro@8bytes.org,
-	suravee.suthikulpanit@amd.com,
-	will@kernel.org,
-	robin.murphy@arm.com
-Cc: Su Hui <suhui@nfschina.com>,
-	tglx@linutronix.de,
-	jiang.liu@linux.intel.com,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] iommu/amd: avoid possible wrong value of 'hwirq' in irq_remapping_alloc()
-Date: Tue,  4 Jun 2024 19:45:23 +0800
-Message-Id: <20240604114522.2630682-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1717502065; c=relaxed/simple;
+	bh=Xju8c8pxMFE3CRgZaF9WGkuzO4+OVpEAP7AjG92ajNQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=g99b9TeO/UvJ5id07A8d22gVmAsY1vAsj1zboqaw/t32lv2aGUBB62Tr34R8RI+HlnDNlxbnai5ovDFXFn/eUZ7Ex8woaIo7tnYT48+Ef4NIgbKjMSQ/g5CwXFOtbWUgKkS1//I3jTPIkrvoHFp5CZq0SCLIBmPd5lddBx1eV3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K3gG9apA; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K3gG9apA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBCACC2BBFC;
+	Tue,  4 Jun 2024 11:54:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717502064;
+	bh=Xju8c8pxMFE3CRgZaF9WGkuzO4+OVpEAP7AjG92ajNQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=K3gG9apAYeYplTHEHOAYIbTTT4A4V9N3k2PEkLkLeudSHpsSRzt62OjWVW9xFoSHb
+	 KUavRmmcbUon/ceYmb5UDEcvxVNc6Rl3DTem+I/RflxiuIUu8jHKMCeE/9UnUVZHQx
+	 JcSicsSB6gjOuAJEuSgHGcJzSQkop4Q9z7oinjgRvTN5qM6w2gOX7Pm3WpaKc2FCMs
+	 gk077UNUroHXR9+NdXfah2UHoKfVxpe9vcV7F2mA0/N0JQf/owSRgf9xo/FWBRlSig
+	 zgLzq69oHjGbD2fLzYM7dxKVecqgWvNNSSXph7YTleGPkL92h5X41WvZPtp7aeeaLU
+	 SQF+iIql14XAw==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: linux-sound@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <20240602-md-snd-soc-mxs-pcm-v1-1-1e663d11328d@quicinc.com>
+References: <20240602-md-snd-soc-mxs-pcm-v1-1-1e663d11328d@quicinc.com>
+Subject: Re: [PATCH] ASoC: mxs: add missing MODULE_DESCRIPTION() macro
+Message-Id: <171750206150.24919.3462400658045799986.b4-ty@kernel.org>
+Date: Tue, 04 Jun 2024 12:54:21 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-'devid' is type of int, but 'irq_data->hwirq' is unsigned long.
-When 'devid' >= 0xf000, hwirq will have a error value in 64 bit machine.
-For example:
-(unsigned long)((int)0xf000 << 16) = 0xfffffffff0000000
-(unsigned long)((unsigned int)0xf000 << 16) = 0xf0000000
+On Sun, 02 Jun 2024 09:30:13 -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/mxs/snd-soc-mxs-pcm.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
+> 
 
-Add a cast to fix this problem.
+Applied to
 
-Fixes: 7c71d306c97b ("irq_remapping/amd: Enhance AMD IR driver to support hierarchical irqdomains")
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- drivers/iommu/amd/iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index 52d83730a22a..934738dfc8ea 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -3506,7 +3506,7 @@ static int irq_remapping_alloc(struct irq_domain *domain, unsigned int virq,
- 		}
- 
- 		data->iommu = iommu;
--		irq_data->hwirq = (devid << 16) + i;
-+		irq_data->hwirq = ((irq_hw_number_t)devid << 16) + i;
- 		irq_data->chip_data = data;
- 		irq_data->chip = &amd_ir_chip;
- 		irq_remapping_prepare_irte(data, cfg, info, devid, index, i);
--- 
-2.30.2
+Thanks!
+
+[1/1] ASoC: mxs: add missing MODULE_DESCRIPTION() macro
+      commit: a73a83021ae136ab6b0d08eb196d84b1d02814e9
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
