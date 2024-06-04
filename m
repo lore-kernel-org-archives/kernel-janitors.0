@@ -1,44 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FF12A1C5;
-	Tue,  4 Jun 2024 08:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D4D1422D8;
+	Tue,  4 Jun 2024 08:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717489285; cv=none; b=NP0SjPJ+P1ZNNVt8ck3YloweX/2rOMx7Hb6EcfMOhZAJXj3LvihGB2qczWAwqGai25/+2eVFG4MEirHnZryQQxMzfTjOxSyDn6bCH3hyJt3FIEIsHK0o0j4sCYUHqVX4rlYZINunl/rc2WPXVvRfBI8D6ljRp5wpSWbvDxd/lRU=
+	t=1717490458; cv=none; b=RBPT9rtfKj6hBg+OihhiibDqbySiJjphIxx2wR0v2TH5AZN/v3O8t7dc+Lwl3aiPF1tJGH8SW6yWt99tvUWBjfmsbA+81QzeehcuhO5wvz5FiTOMRtrN7ImzhyMBzAiKMWFLLrbfMYZMRtDiIGI4GljLaWeJCSgmjytUO08k3xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717489285; c=relaxed/simple;
-	bh=tlI25W4DE2nYLkasA4v4U+4M++rc/Sj3aTcfd0rVEH8=;
+	s=arc-20240116; t=1717490458; c=relaxed/simple;
+	bh=QGgZbW90IOBxyw0tPgck/VovxBWLuXnIo7I9R9vrkWM=;
 	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=iRfGKrs26R+pBgI8V2dNvVWuX/6kWWEW4Iafi1kMquBdHLvjd7jJ4Dj93YWNplmSuUR2/QN3IKwWxPtGPJS25ZRP/5H5Ye7tY1tt+3fgZAbraONg3bA0GXh/d/sK/BmZ9kAnPSY4uSr1ugC/ooP/G+P5HoaNbwqr0hnYWwjtVpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rmgUPz2V; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=lJzj58QeWI+uXFRVHZ/0eF77JTG2h0t4jjRw7RVnG6StfMZXzS22NEZNqrwSztotmFpzGoHFosb8JIQjBPnIqiP1bN7ii7YFH2Q8pYQz+jLYXLOR94ftfey8c7mUHDeoobkMRXfiOtQb0p3PsUgtgYHlE4w/FIZst5vTrrhj4Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mL1kwb7Y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmgUPz2V"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19521C2BBFC;
-	Tue,  4 Jun 2024 08:21:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mL1kwb7Y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1D9CC2BBFC;
+	Tue,  4 Jun 2024 08:40:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717489284;
-	bh=tlI25W4DE2nYLkasA4v4U+4M++rc/Sj3aTcfd0rVEH8=;
+	s=k20201202; t=1717490458;
+	bh=QGgZbW90IOBxyw0tPgck/VovxBWLuXnIo7I9R9vrkWM=;
 	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=rmgUPz2VwGZs0qyQMr4wz+DAAMYU7BMBomeNMHxcZU3oLpQljmjL8Um06K5iXeDOX
-	 q3fTwdJTfc5ou/98WRGcHTkHjTZZYfEGc4Il1dXiC0mlEr327E/wNQc5FAGuMcKWJx
-	 BQxslO64zAAmdKKmd0Y+FvRSJ6QynXSyT2c3DGq5ptmCFBlG9gcHwPrq+iAP8kuR92
-	 YKlpuaml0OWpCOKM8uA7R+7UUkiWM8iOqgw6wGQwjN+JsagWFVW3NioaAfU9lc0y7K
-	 STFW8pILMWwfHyLYRtI3vLM5Z3yROe3YDpReE9vPckwa4spJljSD8U8DGSK0+ixjvk
-	 lk+dXsWQP76gQ==
-Date: Tue, 4 Jun 2024 10:21:21 +0200 (CEST)
+	b=mL1kwb7YL3z9nRa8E2dhMl5HxHLW6zK6to0FNXh/py4c8mARAgIie9EVwnLbczAtp
+	 fAtW6BnCHjREZK00l1LUWB2IxeYjz7OVK5dCsT1AR6atr6415nhnU8EbPlcBHlzzLs
+	 HNJ8J4sD727+Eb92g2P5Rx6pNmoRutzbnBkFInLTKYjnrCVOHedUZ90qZ/BBugMm/U
+	 mx9PRGsEPKdQwX670Ys3R62n3w6FnNOrlMCFkkavdqihKGVjXvAaogoNX7bvzL2IVO
+	 kbJhR+RWH+qgcmZRWZwL4/NynPtkNlHoX3YKPwL0Hz0IXvmuQ4kFV8M5LsyMNi4z6m
+	 9/FsCoE+23xYA==
+Date: Tue, 4 Jun 2024 10:40:54 +0200 (CEST)
 From: Jiri Kosina <jikos@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-cc: "Daniel J. Ogorchock" <djogorchock@gmail.com>, 
-    Benjamin Tissoires <bentiss@kernel.org>, 
-    Martino Fontana <tinozzo123@gmail.com>, 
-    Ryan McClelland <rymcclel@gmail.com>, linux-kernel@vger.kernel.org, 
-    kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH] HID: nintendo: Fix an error handling path in
- nintendo_hid_probe()
-In-Reply-To: <9e599978852f9a2f30f9523edfd220dd1e25aa63.1716735907.git.christophe.jaillet@wanadoo.fr>
-Message-ID: <nycvar.YFH.7.76.2406041021130.16865@cbobk.fhfr.pm>
-References: <9e599978852f9a2f30f9523edfd220dd1e25aa63.1716735907.git.christophe.jaillet@wanadoo.fr>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+cc: =?ISO-8859-15?Q?Filipe_La=EDns?= <lains@riseup.net>, 
+    Bastien Nocera <hadess@hadess.net>, 
+    Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] HID: logitech-hidpp: add missing MODULE_DESCRIPTION()
+ macro
+In-Reply-To: <20240603-md-hid-logitech-hidpp-v1-1-060f06e4529f@quicinc.com>
+Message-ID: <nycvar.YFH.7.76.2406041040470.24940@cbobk.fhfr.pm>
+References: <20240603-md-hid-logitech-hidpp-v1-1-060f06e4529f@quicinc.com>
 User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -48,21 +47,14 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 
-On Sun, 26 May 2024, Christophe JAILLET wrote:
+On Mon, 3 Jun 2024, Jeff Johnson wrote:
 
-> joycon_leds_create() has a ida_alloc() call. So if an error occurs after
-> it, a corresponding ida_free() call is needed, as already done in the
-> .remove function.
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-logitech-hidpp.o
 > 
-> This is not 100% perfect, because if ida_alloc() fails, then
-> 'ctlr->player_id' will forced to be U32_MAX, and an error will be logged
-> when ida_free() is called.
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
 > 
-> Considering that this can't happen in real life, no special handling is
-> done to handle it.
-> 
-> Fixes: 5307de63d71d ("HID: nintendo: use ida for LED player id")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
 Applied, thanks.
 
