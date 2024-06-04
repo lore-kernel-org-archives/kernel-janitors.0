@@ -1,95 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8547E39851;
-	Tue,  4 Jun 2024 14:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67B754903;
+	Tue,  4 Jun 2024 14:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717510454; cv=none; b=sU4HG7oNtotpqNFXoCEPfC05jzXYAwKrUsRESuwX6XBSG6NsDrK7gRdZd7cQ4osEeWqBctuFFSPDTJGNAFJZAzgSF8Nd0ak0QaE/55OXZ5jcxVQkFCaGPaKyswF2Bod4QSSAIJBXPMue7Z5KmxHV/GxTZ16jdY2EwIzVWH0vHx0=
+	t=1717510856; cv=none; b=s0lAVfUDI5JGeE5TNQNRziHWw3L+WDl6HueJYYYLYFDgT8yyDvtEjHBAwLVRTf/y3ExoiGz6/4HS7na4sCUzcZUR23BqLJjv/R9IbqbewNOOywerxlUQMbVqU0ZYeoB4XbX5fBrx7jE5rg9tbzizqIdtmpgH6O7Ps4qsUaxUuoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717510454; c=relaxed/simple;
-	bh=iVOugYKn7JrUfO3QEOy+kzL6OYvpAfOwiffJa4uP3LU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZarZgbDbFYfne/03z/uNVO10IaO5o7HwIBJLJTf1yTcSNYouyrbmZW6MfUuARfZ7uhHvO8jZmiIKs/F9EVUUJpu3/Y7MPVaOm+ugat4tl6J3OWXtZz4xMZpuGb0Kt2AOI+jJOFfKIqiyrZgzh31pWOv9/4sqqZgwrKvmqZQRC40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LVvN9rbf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717510856; c=relaxed/simple;
+	bh=bIOHR/btpct5Q2UC4EFEu5+yUn5Es6SR84QLRAuu0nc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=jjtxjtJjnQBHpO7zB75IRCXzCjiVKF73LbudnIthIfdND1Tps0evrYKyHlZm+TZHwI2WM59ULmaZkGqMpxWsX1TkpmvJ65Id4onFbcksfYv0aj0oVZDSTmiJXWsQuhAoSePi7E1dR4vInPiCISSAtW+xyctjuQdm6JTdAhUf6p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pHlLmqBa; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LVvN9rbf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAF87C2BBFC;
-	Tue,  4 Jun 2024 14:14:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717510454;
-	bh=iVOugYKn7JrUfO3QEOy+kzL6OYvpAfOwiffJa4uP3LU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LVvN9rbfPBO/0wuL1Gxzvlr218zVOgeXZIwwXFH5yarRgJhJ0wiV3JZ9MRDJua+30
-	 w5Zb0f+obcHyjt48riQOs59snxIDB7f6zRo4F0UXyVAXZlcrhp//BW/TiwU1DvN7pY
-	 4dvTioW0KgviHa0GFQxUdaUNMwGYH9lEsqFYrkR2kH5NJnfh+TzRVCKRWngmYZrw3y
-	 +oWWyBVhL2x4dICw4p+L5gBevRXC/ghdaRAIs2gFD3LoYL0tfjnVQj2x6DhyTEbqdH
-	 ZTxgtzdYofQP2n2snyobO0SklJdqEc0sszRPeuOrPsa+dMNaSCt9BE7uh+vUHmnM8V
-	 1p7oBqC5YJGvA==
-Date: Tue, 4 Jun 2024 15:14:09 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Banajit Goswami <bgoswami@quicinc.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	kernel@quicinc.com
-Subject: Re: [PATCH] ASoC: qcom: add missing MODULE_DESCRIPTION() macro
-Message-ID: <1acb74e5-e768-40f0-9eff-06b37c0d79ee@sirena.org.uk>
-References: <20240603-md-snd-soc-qcom-sdw-v1-1-101ea8bcdd38@quicinc.com>
- <0bd0a518-4d85-4251-9bf9-d056dc3d7b08@sirena.org.uk>
- <be0ee1bc-336f-4960-a54c-8bb71449fd1c@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pHlLmqBa"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 454D90Lo031534;
+	Tue, 4 Jun 2024 14:20:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=vrAfWtgxQuLdUkSCcMaxbA
+	DDZKLTIx/U9+nlzEtGl1s=; b=pHlLmqBae1Vp/nQNV+RjCBi2CzXQr3PSphvQnj
+	XqIur6rS2Skp3UN/i/H4+c6P3Pqq5+YeC7kQLeWHyKHLz6od5SgRuWzUxLqqrqnT
+	AbDwwuLSG/dEc/B4Ybb5Q79OamuwXKCswFuZXZAWxDWHGgcgbb8EsUFdyCJ20L/P
+	WQtjnd67ewi8vWCfwDNhgTVKdcfE02Gr1asRvEq/tiX4y9H+oPhrSVlN/+XfoZLa
+	mLV+MrPHnfr5S1R6B54tOCxehRGnDSd0Lf/6MT/Rt1wE8gblcl9LushtrTg1/kp5
+	f+sdvONonuHfl+oDGiAbAPwKCNye+rvmA9NkJd9ZeEFUQhYQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw4beykj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 14:20:50 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 454EKnRN032104
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 4 Jun 2024 14:20:49 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
+ 07:20:48 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 4 Jun 2024 07:20:47 -0700
+Subject: [PATCH] HID: letsketch: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="E1LT8wVf0uletdZD"
-Content-Disposition: inline
-In-Reply-To: <be0ee1bc-336f-4960-a54c-8bb71449fd1c@quicinc.com>
-X-Cookie: Is it clean in other dimensions?
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240604-md-hid-letsketch-v1-1-ff38ae7b4cb0@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAL4iX2YC/x3MwQ6CMAyA4VchPdtkTsToqxgPZSuuEaZppyEhv
+ DvD43f4/wWMVdjg1iyg/BOTd644HhoIifKTUWI1eOdb17kWp4hJIo5c7MUlJDyfvOvIDUSXK9T
+ sozzI/F/eH9U9GWOvlEPaR6Pk74wTWWGFdd0A0lmm8oEAAAA=
+To: Hans de Goede <hdegoede@redhat.com>, Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <bentiss@kernel.org>
+CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: lhu3zGEf2zxiu32zFXEf1vwXzScnxSYl
+X-Proofpoint-GUID: lhu3zGEf2zxiu32zFXEf1vwXzScnxSYl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-04_05,2024-06-04_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ phishscore=0 malwarescore=0 priorityscore=1501 mlxscore=0 impostorscore=0
+ bulkscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406040114
 
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-letsketch.o
 
---E1LT8wVf0uletdZD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-On Tue, Jun 04, 2024 at 06:59:31AM -0700, Jeff Johnson wrote:
-> On 6/4/2024 4:56 AM, Mark Brown wrote:
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/hid/hid-letsketch.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> > Is anyone getting any value from these MODULE_DESCRIPTION()s?  This all
-> > just seems like a huge amount of noise and I'm having trouble thinking
-> > of a use case.
+diff --git a/drivers/hid/hid-letsketch.c b/drivers/hid/hid-letsketch.c
+index 97f047f18136..229820fda960 100644
+--- a/drivers/hid/hid-letsketch.c
++++ b/drivers/hid/hid-letsketch.c
+@@ -319,4 +319,5 @@ static struct hid_driver letsketch_driver = {
+ module_hid_driver(letsketch_driver);
+ 
+ MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
++MODULE_DESCRIPTION("Driver for the LetSketch / VSON WP9620N drawing tablet");
+ MODULE_LICENSE("GPL");
 
-> https://bugzilla.kernel.org/show_bug.cgi?id=10770
+---
+base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+change-id: 20240604-md-hid-letsketch-53206a0faa79
 
-Please include human readable descriptions of things like commits and
-issues being discussed in e-mail in your mails, this makes them much
-easier for humans to read especially when they have no internet access.
-I do frequently catch up on my mail on flights or while otherwise
-travelling so this is even more pressing for me than just being about
-making things a bit easier to read.
-
-and I'm not seeing anything in the above link that articulates an actual
-use case.
-
---E1LT8wVf0uletdZD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZfITAACgkQJNaLcl1U
-h9BjoAf+Pt5R2AGb3L49fmvqs4QBC7DTDl0IfBvfjbP60Ie+ncNVy1kZeGH4J61H
-UnjJKq+c4rqo5OJ6/KXpHBACnpIb/Vbh4KrHPny3//T/mFaSmkAIYWLu1jH/p16V
-n+LcWdJDLOGUZKptOyNVilyFnrQdrhIa1lDnlHRTK6HSMTHggcqzILghk8hHV9sC
-ttLpxQ2yENnuXiyRe/UXq74Sl24O9J3pxWuFzZ5gV65Cjdr56kPTvtrWOj4pybi6
-px66fMIjkGxun3KVxeimDxFY1aNRoJ1VEmz2oZMVtXfBkUndEewCNAcTQVWCFmNd
-b8dWF7/eccrOklt47h6sXrkCFiV/CQ==
-=XAOE
------END PGP SIGNATURE-----
-
---E1LT8wVf0uletdZD--
