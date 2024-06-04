@@ -1,121 +1,95 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570E514A606
-	for <kernel-janitors@vger.kernel.org>; Tue,  4 Jun 2024 14:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FBE61459F6
+	for <kernel-janitors@vger.kernel.org>; Tue,  4 Jun 2024 14:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717512141; cv=none; b=Ywb7WY+MwcpYqOWzo+vmeQQcXJygx1Q1mS5ZlEZGj37hBnFyGGrO/E06hVTM7S7ZnXk0dyabjk+OJFynZkl53u8lxA5rom0JbKwvSJ554TXcTjLSqAiiBGHZslyGxAlEklBFHFHdnTcETgCutwqYkeLT3w7xFJafPtgoW4rSIIc=
+	t=1717512382; cv=none; b=QDl4FcnDF6d0MqHtgdWq0SJpEPaL0+KN2n6CpMC56hwi5ptnv/1+ch7SOjrjF00+M76fRefqn4hdvcF0qeJqn4VZIS2dEme9OXZpjg16pLK5S/nYrQZ7G+SyFuqvj5T+pzw3IgqIUGzuyGxLY2ntyQb5psmd/h864KqQLoYTM+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717512141; c=relaxed/simple;
-	bh=Ghqj7sm86kY0ZfjVRuy7AMU0AJWf5Kbzzfiaeeu4Smc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nDPh+g+W0pf4dwSIov2H8Pg0CO5Z9maUVcEcWIT+GtezKyQ2E/RoYOfJSAbNWZ7oEPOvMztn2JOGuLQh6Rg0z2dHiQKP4yzTBWw0I1aNy1lCrLcYPtMwN4vdaQXdI3afQ4Ky2atoqrBeZSXiOLBbR/pnYeCI+zRzhQIi2319wcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GCr3CgbG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1717512382; c=relaxed/simple;
+	bh=6p0sp9pgFRo1PqbzlDQMsuyY3COLLatNjO1bz6AsYto=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ccsnZFVrnjpoZvZZjAUs/43IVB+mORxzHNvOjjshcTmxi0V1zl1j0yp+KPRXfbaiHIHgOnZ9IvrhyGDaQ20ZtWwwHHA7OubrbqZDf8m0aqThQBMEgoWoWlrEnRZKV/BChnRx+6OuO4q2+6zlq/TVMgKBWtkkbwbgNgZI38EYSiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OnFEoM76; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GCr3CgbG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717512138;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6GSKZn5YJoJ3kMztNbh4Ff0sh8p7A+Y7W7uSyuwooK8=;
-	b=GCr3CgbGFtppbFBknp5GHAFYpN3skru48lJfzrg7+r9ZcCjhPDtx79mUh0VY238EMQd+jD
-	PPK4FjKBAWuCBtjfXqJDUJevEGy4PDuS+UjiGsVZN5UYOfNL7s5EXkKQLpGHHqwe8nBzU8
-	LkTjgKDx2ETeYGFQer2pBfwJETkGxNM=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-655-0wSr0suXODiKTtEzM1ld2Q-1; Tue, 04 Jun 2024 10:42:16 -0400
-X-MC-Unique: 0wSr0suXODiKTtEzM1ld2Q-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a68f2d64342so37515266b.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 04 Jun 2024 07:42:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OnFEoM76"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ea9386cde0so57016031fa.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 04 Jun 2024 07:46:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717512379; x=1718117179; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3fWM9RazXmkrrcf7cVm+FJhwHBnlPawdSsHuisHuA/0=;
+        b=OnFEoM76/ZmXM8SuDUkkn8piPsXCy6og/EPQ+XgUV/6rDrspml4LShHfeNgjpv3hZC
+         eBihZQ2fF8SMMtn+pbUgIEEol9MjCcXgjH8t7PBMfbULNxpStHDFGTk3f3BQ3odF69Pj
+         ICMlhrGHOXlgTz1Zq+Wa3QJkOnIUDWOZ0VSxmeR3gA5sDnYamnupNTXnZYZ0p8xB2W6L
+         H+mS1xaoLfm5SySt4ieCresd14e0k/CeA8WCCs/wj8qGw8+Ld14HjEx0z53Ajy+07ANd
+         /YWJkepUN0jQnNgof/YyxMtiHJ2X8tFL24bZnhUVRhZP3vCVMT+slqdAKAHUhhpJY1by
+         zyRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717512135; x=1718116935;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6GSKZn5YJoJ3kMztNbh4Ff0sh8p7A+Y7W7uSyuwooK8=;
-        b=tcLGh6Q0mr8ra4h/mN3a7ZdiiahDiFpPMOW0XLnPYIwCVdLlSPlW1E+ieXDhd62oI4
-         lBUdO1/RZOr2mM6wb9taxZ7vQsJRU64G2SgfCEriAv/EHW6rngbTdSiOa90KKpJ6h24M
-         gFX31KeJZERFx0UcAH5JAbKKIS9g2cStKAOumbA+2YL75+WEWWxlxnLyMTWZCmNrP9ov
-         guZt3b6vLpoQyw6nixLbGt1Vwe9Nki11PC8gnaRQB9jZFtEsrJnz1V+4u9mDjQCMJTkb
-         XyMgKC1HH4ZTbVkk7jc3EkIqa5uMMjxui0Ozj7VWr9//Pr6FXMqy/2ZNh5ZuL6WU8Jw5
-         EcHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYPtHpf8Otp6ae8DcMWUYOgY8RFvxgeT65Q7odFLJ2sZ/TdH8532ssHF7u6lei0jL3e5SJlFtYifAjML7Xzb8xwxmqLXWBfOVU6SpTHL/2
-X-Gm-Message-State: AOJu0YzJZwDgYX4/mVPsY7KmQWnbfLwLfYKKLGMiO8k1oBjvHOEi2TDY
-	/3r/M+BXdl6nBVIZP3DEqwr3lnlc4rvSzFe1eRtbz+rDinpMLzgu5eNPlLfMADyPRnzWixMb9C/
-	wzWfamaH4DzBpRawAWHq1NYRut+9zYX5i3wsd4ENvBFI7OZS+J+d2keoeKpwBP+aq6A==
-X-Received: by 2002:a17:906:a946:b0:a65:d7f7:f3f2 with SMTP id a640c23a62f3a-a6820be934fmr797485766b.36.1717512135499;
-        Tue, 04 Jun 2024 07:42:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGdDULiev1oH5nT3hJB3si4jO9YRCWfF0/Nqzsz2PAZuFe5bOc8WIqL7WohgMsV7xNUgCC15g==
-X-Received: by 2002:a17:906:a946:b0:a65:d7f7:f3f2 with SMTP id a640c23a62f3a-a6820be934fmr797484566b.36.1717512135073;
-        Tue, 04 Jun 2024 07:42:15 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:2a07:3a01:e7a9:b143:57e6:261b? (2001-1c00-2a07-3a01-e7a9-b143-57e6-261b.cable.dynamic.v6.ziggo.nl. [2001:1c00:2a07:3a01:e7a9:b143:57e6:261b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68e940ed6asm411617666b.22.2024.06.04.07.42.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 07:42:14 -0700 (PDT)
-Message-ID: <ad6c1af5-b0bb-430a-9d6f-0cdb1d2d8904@redhat.com>
-Date: Tue, 4 Jun 2024 16:42:13 +0200
+        d=1e100.net; s=20230601; t=1717512379; x=1718117179;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3fWM9RazXmkrrcf7cVm+FJhwHBnlPawdSsHuisHuA/0=;
+        b=ahxq/EpZbN0IibqxAB+hsqqTLamh0NZVH3n5ARIfI8NBiGgCWrSkt0uk5WeJHv2mhs
+         KauWoMVl6u8o6gJQAAT3SgpywZT3ELIrFr9NNRbv3IAahTQD2Q5JjmdfrwyoGaJM0Umo
+         eOFhLNkcq8qj9m68dha7DcxRzjQiHMM2SFeWknAS+ZWAYsXJWuYxdEkgleafuPhwGv7z
+         Jcdua1g8/o2GBl+R3Rj195rkFd/OSKogJ+tJIzfBD2+uhXMDxLULxA/5YXKSYNlP1FZc
+         lBSdlcJn5CogLFSle+emOb8aZyg3nkkzGPs62oLEsQFdSsGhUtiKcSu+A4IyUgQGLXT2
+         SKMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX373TuaPY1XgVIFQXx5HcmciiSLuxhmUIJ9EkHoOj4ji8eD/zAPQWC6iPtHxKSxvBRHoecezMsKHUe6M3i52iOlJrxwv/Ef23pjmcVzOKb
+X-Gm-Message-State: AOJu0Yz7fBbnn6nWvrkTbFfEzS5baF9Cn42lO8I0Dr63O0BM/tHIHO30
+	xZHkKdhl4HLu7Q9mm4EAW0vJNbvJMHoY8jzaXa2BlLLCnSrPCSns7CYzkenAXKFlOqi35Hcbxe6
+	J
+X-Google-Smtp-Source: AGHT+IERd+pOKeaU4WAUxdb915FWhHyou0aFSqNLEgCX/8v3BAB2Hl1Vqes5cCRKx30uO5efQiei6w==
+X-Received: by 2002:a2e:6804:0:b0:2e9:81f2:ce03 with SMTP id 38308e7fff4ca-2ea950f70c0mr70279431fa.20.1717512379323;
+        Tue, 04 Jun 2024 07:46:19 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31be4df2sm7465219a12.47.2024.06.04.07.46.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 07:46:18 -0700 (PDT)
+Date: Tue, 4 Jun 2024 17:46:14 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	kernel@quicinc.com
+Subject: Re: [PATCH] ASoC: qcom: add missing MODULE_DESCRIPTION() macro
+Message-ID: <7a0cde5c-db6f-4de1-9dc2-aa2c21fd0210@moroto.mountain>
+References: <20240603-md-snd-soc-qcom-sdw-v1-1-101ea8bcdd38@quicinc.com>
+ <0bd0a518-4d85-4251-9bf9-d056dc3d7b08@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] HID: lg-g15: add missing MODULE_DESCRIPTION() macro
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <20240604-md-hid-lg-g15-v1-1-265b094db089@quicinc.com>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240604-md-hid-lg-g15-v1-1-265b094db089@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0bd0a518-4d85-4251-9bf9-d056dc3d7b08@sirena.org.uk>
 
-Hi,
-
-On 6/4/24 4:33 PM, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-lg-g15.o
+On Tue, Jun 04, 2024 at 12:56:09PM +0100, Mark Brown wrote:
+> On Mon, Jun 03, 2024 at 05:16:07PM -0700, Jeff Johnson wrote:
+> > make allmodconfig && make W=1 C=1 reports:
+> > WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/qcom/snd-soc-qcom-sdw.o
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> Is anyone getting any value from these MODULE_DESCRIPTION()s?  This all
+> just seems like a huge amount of noise and I'm having trouble thinking
+> of a use case.
 
-Thanks, patch looks good to me:
+The missing MODULE_DESCRIPTION() warnings are very annoying.  We
+recently missed a link error issue because the warning was drowned out
+in MODULE_DESCRIPTION() warnings.
+https://lore.kernel.org/all/202405182038.ncf1mL7Z-lkp@intel.com/
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
-
-> ---
->  drivers/hid/hid-lg-g15.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/hid/hid-lg-g15.c b/drivers/hid/hid-lg-g15.c
-> index acbec1dcf196..53e7b90f9cc3 100644
-> --- a/drivers/hid/hid-lg-g15.c
-> +++ b/drivers/hid/hid-lg-g15.c
-> @@ -954,4 +954,5 @@ static struct hid_driver lg_g15_driver = {
->  module_hid_driver(lg_g15_driver);
->  
->  MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
-> +MODULE_DESCRIPTION("HID driver for gaming keys on Logitech gaming keyboards");
->  MODULE_LICENSE("GPL");
-> 
-> ---
-> base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-> change-id: 20240604-md-hid-lg-g15-e4a106ba126b
-> 
-
+regards,
+dan carpenter
