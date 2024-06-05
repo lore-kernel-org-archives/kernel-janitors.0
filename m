@@ -1,107 +1,109 @@
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2FA1946A2;
-	Wed,  5 Jun 2024 09:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F98B1755A;
+	Wed,  5 Jun 2024 14:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717580470; cv=none; b=NMGjPYH5sVFkpFEDjKOKTOkksszS+RigmeJxfK5tPM3SkwkRaPnk7WIjp6kHr/JD80oPuSju6km4EDMmKpvUP+1Dti7ypbQcGHbERASfLJ9enfPu0/VIog4H6tMoLmUOnBIv99z39THuVPuLIGpsdM+seP3he4L4UXIRQB7dN0Q=
+	t=1717596640; cv=none; b=QC0gzkSzvT3jdJVwcjSs3tqU6TijRPTtw2EL01qme1L5ahJE3y2rfjQ8gqti4JatLd1Oqwj81CLDioe2eVGbifFm8unOjSb2KrfbnKgIz8z1nSJtDWzmIeibEyYZiUMRidXzsPsz9eBF+FxMCqTth91UXnQkHUXp+/0pp8vnWTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717580470; c=relaxed/simple;
-	bh=3pFN4DdyhUddI2WsBSs6ZHdT32cRg56t+mxrmyj9eMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HYONezAPMoStjjRlaDFqHt8J6apYkUNsaHQzSv/NoawETktEAZR7Xf+4W41bhJ2g9zKO6786ps5ko9P3egXZMvKA2kWuoUPYS4vVosHor6BYlgxFJyiV9JphnAs2uO3ScspnxdShpsARiI9revNpvEFmVwJ9L6xhQu3fHI1FoGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Q0X4M8qE; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+	s=arc-20240116; t=1717596640; c=relaxed/simple;
+	bh=DNMwsQB8F98x6tqx/Sd3jfGF8X/pT+TnKEfF4Ph/3Go=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hc6s+R6fstAmCLEdcK7wLdm0vSTEihkXp4zYxCHWXk6Rz99NXVJQvOvYsUAvKg5lzFcTXmnRTi4fATgYwEjObFfaT0MEoMEiLihbA6Bus4X2ID4761Lcz0H/A4G5auESsbgqvt5aWR7A6S55xYnJ02h0d/6ji3XQ/mnQAb+qo4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IpCHjkdt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Q0X4M8qE"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A714D40E0176;
-	Wed,  5 Jun 2024 09:41:06 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id foKaUzSCcBWp; Wed,  5 Jun 2024 09:41:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717580458; bh=cM/V5hgwuNE0tUg8bDOJAW/Hl7YJwCejQy9zIz/wTmo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q0X4M8qEQHd7QpxGSWH8nb/7KxuA7OusxSHmVkXe6Bge3+qNXTM5bBpdAnnpPWG/1
-	 BXmiFJPvSPJ5E93OyyLPiY1O3UlMEcvPhYdQgTHIZ2RIVIssbiJXP/sosXDxSVCfgm
-	 6cqI+n1Xcx6AasNpBXgqirg+vFm/HazTlG3sD+wNCeWEhra5nP73/F4IXKTEqgPbgD
-	 qKmTg3zWWXYwr4/lPaMqySyhIznxUDXiSaTbsYs5aZdbq6hYwIrUokZJFz9Jyxqc8i
-	 pIDiA8/1UGCy8cYwLHaCwrqmNHOHjLImdo2sKOxzGvGq1j/KkKeOwMP02uewx5scsU
-	 Bmr0asMWXtXIi37EX0NdCczxqkINR5UYrOUiwqoCFuLRSHORKielzFj9UNIeSkKVZi
-	 KM5p0uu4WW7NTnsOewG0p8lyJ1zbm71auQOynTMeEWbbMHlbjIOa5FeDNCduu1dIwd
-	 HSKcKjgGB5tSsiRJDzgYTu5h7Dso1kYba5Xor+zowZpRcgPbjZ5lDTj0nUXzbSml7z
-	 EYcxQxo1xNvvT0CnA8MP5s35Pt/qx02Sic7DXnqDd9jQQ4B0YKCkg4U7htOTj2ruJO
-	 Kq1f+teJ0O/3xX9JUrm2dJS3BnIlRDXlWZRLH+lFJV7zykf1gyFZZL4I4dmtSNWzYv
-	 vp6rTFhBWIHa+whkNMjETiWE=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C6C8540E0184;
-	Wed,  5 Jun 2024 09:40:52 +0000 (UTC)
-Date: Wed, 5 Jun 2024 11:40:51 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>, Tony Luck <tony.luck@intel.com>,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] RAS/AMD/ATL: add missing MODULE_DESCRIPTION() macro
-Message-ID: <20240605094051.GDZmAyo1-j_uBri_YO@fat_crate.local>
-References: <20240604-md-ras-amd-atl-v1-1-d4eb3cf3abe4@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IpCHjkdt"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 455B1Mpf010904;
+	Wed, 5 Jun 2024 14:10:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nIVqUesmc+zClgQPv4Z85quMTqlyKMrwi1D+BMYd2k0=; b=IpCHjkdtGZzK7XRe
+	X44QOQr7tlRnKw0YvvMvAhO+IdB9zg9paiKj4TzMi5GMcVlZnR4XtbYJp01/fLws
+	QdZ1PiJsBYPVjhoCY4QFg/KChW3ZZDn7l0iMmSJHghtL4gNCL3rJ9E1i/jb57dZi
+	iheedfBXOzdupvcK1wCBAAECwG1vi97BQI4A6mSgUcFgXlqTMxpJQ24CZYX74ytt
+	ZOgY9l4Zkx1f31OasVDE2XARa2LnREEEX+w9WsCKBzdECNJOXVxnpU1IS9bpVy9U
+	sPfuQrwH6mcuIT10WPgBu2kjpPbBPEExrT7CfKaINU4Yn0mmDnzeyXpkcEuCJs5h
+	JgjO1Q==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjhw0s71h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Jun 2024 14:10:17 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 455EAGrV015085
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Jun 2024 14:10:16 GMT
+Received: from [10.48.241.109] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Jun 2024
+ 07:10:15 -0700
+Message-ID: <1d9e1530-be63-4374-b952-e12b15cee9d3@quicinc.com>
+Date: Wed, 5 Jun 2024 07:10:14 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240604-md-ras-amd-atl-v1-1-d4eb3cf3abe4@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] RAS/AMD/ATL: add missing MODULE_DESCRIPTION() macro
+Content-Language: en-US
+To: Borislav Petkov <bp@alien8.de>
+CC: Yazen Ghannam <Yazen.Ghannam@amd.com>, Tony Luck <tony.luck@intel.com>,
+        <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240604-md-ras-amd-atl-v1-1-d4eb3cf3abe4@quicinc.com>
+ <20240605094051.GDZmAyo1-j_uBri_YO@fat_crate.local>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240605094051.GDZmAyo1-j_uBri_YO@fat_crate.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: X5EwgURkzbmpuGtjXlEQ4Plh2BvvSXO3
+X-Proofpoint-GUID: X5EwgURkzbmpuGtjXlEQ4Plh2BvvSXO3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ phishscore=0 impostorscore=0 priorityscore=1501 mlxscore=0 mlxlogscore=999
+ lowpriorityscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406050107
 
-On Tue, Jun 04, 2024 at 07:21:59PM -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/ras/amd/atl/amd_atl.o
+On 6/5/2024 2:40 AM, Borislav Petkov wrote:
+> Btw, I'd suggest instead of sending those piecemeal-wise, one per
+> driver, just group them all by subsystem and whatnot so that each
+> maintainer can pick it up and this new thing modpost decided to complain
+> about, can be taken care of without noodling through each driver
+> one-by-one.
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/ras/amd/atl/core.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/ras/amd/atl/core.c b/drivers/ras/amd/atl/core.c
-> index 6dc4e06305f7..7be4982fdf19 100644
-> --- a/drivers/ras/amd/atl/core.c
-> +++ b/drivers/ras/amd/atl/core.c
-> @@ -222,4 +222,5 @@ static void __exit amd_atl_exit(void)
->  module_init(amd_atl_init);
->  module_exit(amd_atl_exit);
->  
-> +MODULE_DESCRIPTION("AMD Address Translation Library");
->  MODULE_LICENSE("GPL");
-> 
-> ---
+> Better yet: do a coccinelle patch and convert the whole tree.
 
-Applied, thanks.
+I actually did use a simple script to do a conversion locally, but the hard
+part is determining what text to use for the description. So my local
+conversion just added:
+MODULE_DESCRIPTION("TBD");
 
-Btw, I'd suggest instead of sending those piecemeal-wise, one per
-driver, just group them all by subsystem and whatnot so that each
-maintainer can pick it up and this new thing modpost decided to complain
-about, can be taken care of without noodling through each driver
-one-by-one.
+Then, on a per-directory basis, I look at documentation in the .c files and
+the Kconfig to replace the TBD with an appropriate description. And I then
+create patches for that directory based upon MAINTAINERS entries.
 
-Better yet: do a coccinelle patch and convert the whole tree.
+This was the only file in drivers/ras that had an issue.
 
-Thx.
+In drivers/hid there were a large number of issues.
+Some of the files had specific MAINTAINERS entries so I sent them separately:
+https://lore.kernel.org/all/20240604-md-hid-letsketch-v1-1-ff38ae7b4cb0@quicinc.com/
+https://lore.kernel.org/all/20240604-md-hid-lg-g15-v1-1-265b094db089@quicinc.com/
+https://lore.kernel.org/all/20240604-md-hid-logitech-dj-v1-1-560f6b3cb54b@quicinc.com/
+https://lore.kernel.org/all/20240603-md-hid-logitech-hidpp-v1-1-060f06e4529f@quicinc.com/
 
--- 
-Regards/Gruss,
-    Boris.
+I then sent a large patch for all of the remaining drivers/hid patches:
+https://lore.kernel.org/all/20240604-md-hid-misc-v1-1-4f9560796f3c@quicinc.com/
 
-https://people.kernel.org/tglx/notes-about-netiquette
