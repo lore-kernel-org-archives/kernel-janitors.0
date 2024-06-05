@@ -1,88 +1,113 @@
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07BB1411F3
-	for <kernel-janitors@vger.kernel.org>; Tue,  4 Jun 2024 23:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433411C27;
+	Wed,  5 Jun 2024 00:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717543785; cv=none; b=eGu0s8DQAp9YX4cxlTmsm9LDKYDxUz0SGmXzT/EpqbMEQxIFZ9YN/QqhhmB1iI2cJKRjvO2e42C6Wj49iADZBEwARiYFLfgxrZe0bAiOiv+mllGEFg+lr1+Z7ADdDx7bGE2H24+b/Ak5dpl5Ff4T2xVT79dGGgXInJOuYLrkqKk=
+	t=1717545748; cv=none; b=kmVbl+mCptA0WaKi1sRU1nLfZl4IkDoj/HsW+43Ov6SQBO0A6rI5uqnvz9zZ9ZmzFDPBDcGfyS5A2BHkEMVOcOisasWp4WxMIqQdH5wqPqhkTirRq6vcH0t3jshfV8H68iMp8haiN4EnmD/Oq23yNqCUlJ0VzsAgA9QRy2sRdE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717543785; c=relaxed/simple;
-	bh=NTOSuMKNlZjh5qgetQbTZmcQQXwN7LKuEZ9U+ZAncjc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=M3zabt0Kh4awONyb/DHB+N11w1jiSQo0r+RTjX5elwPmtqmgHVElXE7BoHNDc5Sr8mLuj1A2yHbLJw3iR4YNbxa/sbjZDkWqodrVDVywt43uc+N8y21i25EBvsEYTf5uut/GWmgZzptY8G0i1vrAqM7MIdhhYCmS+TEW/8FIbvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FAHOwFPB; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+	s=arc-20240116; t=1717545748; c=relaxed/simple;
+	bh=zbchVJpN8CtKnOtJCSxgSZT+M5QQnqyJvmlSKZIv2Xc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=o6nVUTUn4fsem3i9UHVkxA1H5k8h8b3Kb7wHmPwadCU3TCRgxQUA202zQYLh5DozdyKZYXEkeCPMcL20ArGtWGgsKbH1Ujv+FVxMaFD5rEmTndxGS3M8Zac7J+ENw3DrJSk1W13jPGIuIgRSxriFnAXGvoxISqKJcr78wB0J2N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BNH7oVyn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FAHOwFPB"
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2c1e797cafcso309312a91.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 04 Jun 2024 16:29:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717543783; x=1718148583; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+x51aoZ4NK0amIZazvXbm1aes7UfC8U/R8eR/ud4gNI=;
-        b=FAHOwFPBpFt4TnuPBq4x4DChftVHBms+jadKmPC/+JjLOBKc+YJ/WDB9renFGVBPtP
-         HlOvJ3AQJ6OSLe0PsyPbBkzSeM6YC6QRD6QJ8pVRhw3/bTYgPFoSZPw+VDBGExIWSbk7
-         dmpjYgD7aJ560Em5MhmYcnuEcbGMBGEXmGYF3oYsLi8szgSgyJ2eiVIHk4f1SL0d9eIs
-         bB3Hy9gr/PII+4W6a2sW/6IV2N4SNkTOdI+9j+Ao4kev7d5t+B1dgROw97CjEik69iRd
-         BjrpRUcQlBv1mG4k5FutNbJcEIfI24IrOLCXYYtyC0bbgvw5ZLEk/IjG7v32xY/UF19o
-         vCGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717543783; x=1718148583;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+x51aoZ4NK0amIZazvXbm1aes7UfC8U/R8eR/ud4gNI=;
-        b=eP+1Ml4FqmQHElHE2FEUn1kpO94QTNwsGwvFyNu3csP8yGNcyAF63ApmM6TFDx2/d0
-         5ENimxxvWRRRqq/mmsGE7Of4fm9Y6m22EG0K+QWtQi3gdWgIv4JptW1D1AoQ6/eO30+B
-         NwqoEP8lgvtjdxSDi/Ia9a7zPGQmFEB4dDcvhGZFpTvyemvcDKsd0D7q4X11tredPStz
-         0UiHdBVoikzkjUxHwryGjNeLURMyFu7i45Z8zUMf1wkEuZLyMBKp+RRiDrWzI75HyP30
-         50YU8KjpnRTV+kdBW4XdRiTXeSmiQ1sR1luA59KVCy8tLOflP670XOm1SrbisNgGETXA
-         Vn0w==
-X-Gm-Message-State: AOJu0YyEdUSWsSAjMW562Coo/kTYJiHBVoRgBaGSO4T2r8+6FT6/4bFx
-	EVpI0+iQ5YeehuBO0jDlMQmj4zxiq4he8vFm4AqCz6i+zfiRthKLAmxHX49VUvFWbal3FLlPutF
-	WnA==
-X-Google-Smtp-Source: AGHT+IExrVGyDj4SjTJZG5rOMmcDDREj9vNkffe0To8EYFE5NS2MHwZ2u6aszqpJQHooWRE6WzCHGDpCCg0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90b:2309:b0:2b4:32df:9b7b with SMTP id
- 98e67ed59e1d1-2c25300652fmr48774a91.1.1717543782991; Tue, 04 Jun 2024
- 16:29:42 -0700 (PDT)
-Date: Tue,  4 Jun 2024 16:29:17 -0700
-In-Reply-To: <20240523154102.2236133-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BNH7oVyn"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 454IIEe0006678;
+	Wed, 5 Jun 2024 00:02:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2cTX+tDsHPj5h2dpCR1ziwRegx7pqfUXJVgw+e3/P7s=; b=BNH7oVynwYZLaB1R
+	cMhSF8boJHJ+Kl+2TZcsIYc99w/69wVDu+dOkBu6QmkkE3PpJYSPKf7G/oJe6ik3
+	N0dn1COsTrMiZ9w4+3IuCcma4J2u1z7axiJLyaRxPCW7VF/bZbq2kJTH/8NtBmvX
+	hgHO2F2/d6RHbb84h8FPRmGz+mskDFphY8JHsqsgtN/ikZfgch+C2sHOmhjwhVlt
+	wVx+w8AL+/5byQd3v78a4pO8538DngPn4cD+XdMknlHyjT7L4RoHw7SPj+OoPNPW
+	Nti3ms6kZ/dqOhCsoRkO6dykTYwlmNQhHJ9fG+noML85NxxEMT6zE15jkpaTgpyN
+	9GAcvA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yj8300kra-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Jun 2024 00:02:12 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 45502BCb012993
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Jun 2024 00:02:11 GMT
+Received: from [10.48.241.109] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
+ 17:02:07 -0700
+Message-ID: <6f9d7066-9592-4a14-a811-c2451cbc33fa@quicinc.com>
+Date: Tue, 4 Jun 2024 17:02:06 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240523154102.2236133-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <171754270332.2777568.8736329166014206290.b4-ty@google.com>
-Subject: Re: [PATCH][next][V2] selftests: kvm: fix shift of 32 bit unsigned
- int more than 32 bits
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: qcom: add missing MODULE_DESCRIPTION() macro
+Content-Language: en-US
+To: Mark Brown <broonie@kernel.org>
+CC: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Banajit Goswami
+	<bgoswami@quicinc.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela
+	<perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
+        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, <kernel@quicinc.com>
+References: <20240603-md-snd-soc-qcom-sdw-v1-1-101ea8bcdd38@quicinc.com>
+ <0bd0a518-4d85-4251-9bf9-d056dc3d7b08@sirena.org.uk>
+ <be0ee1bc-336f-4960-a54c-8bb71449fd1c@quicinc.com>
+ <1acb74e5-e768-40f0-9eff-06b37c0d79ee@sirena.org.uk>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <1acb74e5-e768-40f0-9eff-06b37c0d79ee@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: EDj6ebt_bWiWvtkF7p8yfoReQrMkAZBA
+X-Proofpoint-ORIG-GUID: EDj6ebt_bWiWvtkF7p8yfoReQrMkAZBA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-04_11,2024-06-04_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0
+ impostorscore=0 adultscore=0 mlxlogscore=999 mlxscore=0 spamscore=0
+ malwarescore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406040194
 
-On Thu, 23 May 2024 16:41:02 +0100, Colin Ian King wrote:
-> Currrentl a 32 bit 1u value is being shifted more than 32 bits causing
-> overflow and incorrect checking of bits 32-63. Fix this by using the
-> BIT_ULL macro for shifting bits.
+On 6/4/2024 7:14 AM, Mark Brown wrote:
+> On Tue, Jun 04, 2024 at 06:59:31AM -0700, Jeff Johnson wrote:
+>> On 6/4/2024 4:56 AM, Mark Brown wrote:
 > 
-> Detected by cppcheck:
-> sev_init2_tests.c:108:34: error: Shifting 32-bit value by 63 bits is
-> undefined behaviour [shiftTooManyBits]
+>>> Is anyone getting any value from these MODULE_DESCRIPTION()s?  This all
+>>> just seems like a huge amount of noise and I'm having trouble thinking
+>>> of a use case.
 > 
-> [...]
+>> https://bugzilla.kernel.org/show_bug.cgi?id=10770
+> 
+> Please include human readable descriptions of things like commits and
+> issues being discussed in e-mail in your mails, this makes them much
+> easier for humans to read especially when they have no internet access.
+> I do frequently catch up on my mail on flights or while otherwise
+> travelling so this is even more pressing for me than just being about
+> making things a bit easier to read.
+> 
+> and I'm not seeing anything in the above link that articulates an actual
+> use case.
 
-Applied to kvm-x86 fixes, thanks!
+Sorry for the terse response. I agree with others that it was premature to
+enable the warnings before all the instances were cleaned. But since things
+are as they are, and since I saw others had 100% cleaned drivers/net, I took
+it upon myself to clean up some other top-level directories without worrying
+about if it made sense or not.
 
-[1/1] selftests: kvm: fix shift of 32 bit unsigned int more than 32 bits
-      https://github.com/kvm-x86/linux/commit/9a68cefe9f05
-
---
-https://github.com/kvm-x86/linux/tree/next
+/jeff
