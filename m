@@ -1,153 +1,244 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9CF196C91;
-	Thu,  6 Jun 2024 14:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BCA1AD9CD;
+	Thu,  6 Jun 2024 14:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717682729; cv=none; b=Y3nae9kMMljtHaDL8mDsVoWp18cX1gvBtkKvXboFSXDtlAlCmk8sf1nYJLvncCozKPBRiR3p6RLbW+uKpAEKBlez9pEPvjRNoGJeg1mWwpevoigGLf5evHVAjaIZuLCCzck7hYCZ1guJkf7RGMmV4COF8bxjfsLMK6/ippvUyRs=
+	t=1717683338; cv=none; b=XEo82gBpmcHgExr2CQT8gJhVs/3XjPQDQqbfekoP/K1uyyswtZftN/L28qCahPLMnPE7lrblH2lqzkKN2CKeDzdEZWmIScXg2KS+AYyyfMo7SY6Qh9Bo2X9R6nI3XcXyyKIke+KaRF6Vxiou+cL0rueiuFEsuxFRdr4L3nOdvx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717682729; c=relaxed/simple;
-	bh=i45Gu0FMOskw0DjvYyiQtFVhpvpJPcYFFKf1FYSoNCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uiNJsSYyG9uNn6zPjp9PJ2rEo5SSgDLw1NoZYrNZOr8cvlbpkYl0Hw05N0krhwWoY52fx6ZEH37DgKlF5ygtXGt9vpx+nxBdSobbpcDZTnXozSW4byZgNmHAeafso68zTDCBwyuyo8iaLk2OQy7voKz45LyhDbVccwSMNgaqyWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HGqJByk7; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HGqJByk7"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f44b45d6abso9746595ad.0;
-        Thu, 06 Jun 2024 07:05:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717682726; x=1718287526; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=hkvtxfRBP8HwEJyE98iao7aEsT4W32s7jFfmrt+wfA0=;
-        b=HGqJByk7JbgtCNgLSqPFCWv5BXNsgjE+qssJT1/VQN0riMbhPkjgewVeUbBMIv6pZZ
-         9xjFd/T6jdEy4kGjIwl16eJ0prmUuVrQyos5e56JUipJxczLMlaAHGfc2/4R1cV2kC2V
-         CO7vxxh0jXUdgAEXO2J/hlyKQPA5G/mkQ0Xclym+mQVEYm4ZsljwnNRWGRn0iivQ7Pwu
-         OkQAALkP07iycdJb9zYKChumaSdkNDTUcwpsIlK3lfS+ybjJRlfDwL2nQv6QDq68HxLc
-         Pi+loL2Y7C9MEk72/53qowLqJR6yIwKExp7TWxcTvL7s8mqNwyM4RT2Q54MwRdjG4s9x
-         9PTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717682726; x=1718287526;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hkvtxfRBP8HwEJyE98iao7aEsT4W32s7jFfmrt+wfA0=;
-        b=Eq0EGtwqtA8PL2mXansZsIVKOW19VukCygvDMbg6wU1G1pOQ66LALU+mgICev/Hvg8
-         fcIsu9xPYdnJcygHbDiQVV5hXOsxKbZQwdHsgmve2so0EKemf9nK5RoMb8Pe0rW6+qSN
-         0gNNWIhIq6oSQSFLJ1HAvGTRTBaS2sIFiw0UkLFCqDOl8HhOc4rhXIr10Be0TNunNjVA
-         H2lXaSoXc8RBzymttmyVCPcoHZ0dcORU0RIQ5pX05TornPQ8YB3D+wplmFHAlh1n/IGR
-         zUlmnE8JFny2DF9+FGlSeQuOZuSH3HcE7I779NHA2p4YCWfgWT+iZXqYU4lhER1oS38y
-         TFrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaeNxSCIC7kTmMW6TUZ4gUkyOF4UTq9qniSBArj0nivNlJpqkHCOgNBQGzsWzIV2vi4DW6akUknXukzyKLuRj4iobfFz1J/OLs9m2RBr5pgIKB8HU8U2gXqY7+EGlN7URy3eRGgR6mqoUj7HaOjtezIfAzXkB9azD/K9cH/MkmfQoBS6Z5Q2439w8=
-X-Gm-Message-State: AOJu0YxG1oeFutDVKT0+/a8ZOszvUlrj6p0oNrPrddqMMVXo5TZ3nLn2
-	tRBgPBIchbvEfBwtGwJ2sqwcyhMRocGxBiV1nEoblmX0UAGi4bhx
-X-Google-Smtp-Source: AGHT+IFEAiWIPngu5fU5+VKXgB5gVnT2E50j/2D/yKpChFDLWSGB6HMf20Lx2V4tl6ZUCjDwcRzLRg==
-X-Received: by 2002:a17:902:e851:b0:1f6:7cc9:fb2c with SMTP id d9443c01a7336-1f6a5a6aec3mr63688685ad.49.1717682725317;
-        Thu, 06 Jun 2024 07:05:25 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd76ab8fsm15288175ad.73.2024.06.06.07.05.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 07:05:24 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <01c955d3-cec6-43bc-be7c-b6c1bde441d1@roeck-us.net>
-Date: Thu, 6 Jun 2024 07:05:22 -0700
+	s=arc-20240116; t=1717683338; c=relaxed/simple;
+	bh=BrBTZ77UoeB+OHe4E6Sd25A/0q2z7NYbR6O/Hqx1lPs=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Vp0KCjxAap5md8NKoZjxYOXOtj1TCyOkKYhOE4R9StJbpA8X1MZiZltitJq6wMH8fFTmcaSY8ut+JQcEEbK7lAwkcCjkFIWCXOKdbxXwcpjz8t9QzGzwqonRVxe55N/DJTzrt8ZfDd2CLPcwrXgWrALIvT3jWsd7BvGl8R6lvxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Vw5pP4gqMz6K6TJ;
+	Thu,  6 Jun 2024 22:10:53 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6B434140DB0;
+	Thu,  6 Jun 2024 22:15:33 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 6 Jun
+ 2024 15:15:22 +0100
+Date: Thu, 6 Jun 2024 15:15:21 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+CC: Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] cxl: add missing MODULE_DESCRIPTION() macros
+Message-ID: <20240606151521.000018fd@Huawei.com>
+In-Reply-To: <362fccea-707f-4430-8da3-8acc6ac5fbe9@quicinc.com>
+References: <20240603-md-drivers-cxl-v1-1-f2940f5c0836@quicinc.com>
+	<20240604170445.00005c67@Huawei.com>
+	<362fccea-707f-4430-8da3-8acc6ac5fbe9@quicinc.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hwmon: (cros_ec) Prevent read overflow in probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>,
- Jean Delvare <jdelvare@suse.com>, Benson Leung <bleung@chromium.org>,
- Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <42331b70-bd3c-496c-8c79-3ec4faad40b8@moroto.mountain>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <42331b70-bd3c-496c-8c79-3ec4faad40b8@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On 6/6/24 06:12, Dan Carpenter wrote:
-> The "resp.sensor_name" comes from cros_ec_cmd() and it hasn't necessarily
-> been NUL terminated.  We had not intended to read past "sensor_name_size"
-> bytes, however, there is a width vs precision bug in the format string.
-> The format needs to be precision '%.*s' instead of width '%*s'.
-> Precision prevents an out of bounds read, but width is a no-op.
+On Tue, 4 Jun 2024 13:21:52 -0700
+Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+
+> On 6/4/2024 9:04 AM, Jonathan Cameron wrote:
+> > On Mon, 3 Jun 2024 21:48:53 -0700
+> > Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+> >   
+> >> make allmodconfig && make W=1 C=1 reports:
+> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/core/cxl_core.o
+> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pci.o
+> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_mem.o
+> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_acpi.o
+> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pmem.o
+> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_port.o
+> >>
+> >> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> >>
+> >> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>  
+> > 
+> > This has been irritating me as well.  Need to do
+> > drivers/perf/cxl_pmu.c at somepoint as well but given that goes through
+> > a different maintainer makes sense to do separately.
+> > 
+> > Only comment I have is that we should probably strive for more consistency
+> > than you currently have.  Always expand CXL or never do, use
+> > colons consistently, use Support everywhere or nowhere.  
 > 
-> Fixes: bc3e45258096 ("hwmon: add ChromeOS EC driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
-> ---
->   drivers/hwmon/cros_ec_hwmon.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> I'm going through a bunch of these tree-wide, and usually just copy/paste
+> either from existing comments in the .c file or the description of any
+> associated Kconfig item.
 > 
-> diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
-> index 41f268fa8260..b3ba7247e06b 100644
-> --- a/drivers/hwmon/cros_ec_hwmon.c
-> +++ b/drivers/hwmon/cros_ec_hwmon.c
-> @@ -212,7 +212,7 @@ static void cros_ec_hwmon_probe_temp_sensors(struct device *dev, struct cros_ec_
->   			continue;
->   
->   		sensor_name_size = strnlen(resp.sensor_name, sizeof(resp.sensor_name));
-> -		priv->temp_sensor_names[i] = devm_kasprintf(dev, GFP_KERNEL, "%*s",
-> +		priv->temp_sensor_names[i] = devm_kasprintf(dev, GFP_KERNEL, "%.*s",
->   							    (int)sensor_name_size,
->   							    resp.sensor_name);
->   	}
+> >> ---
+> >>  drivers/cxl/acpi.c      | 1 +
+> >>  drivers/cxl/core/port.c | 1 +
+> >>  drivers/cxl/mem.c       | 1 +
+> >>  drivers/cxl/pci.c       | 1 +
+> >>  drivers/cxl/pmem.c      | 1 +
+> >>  drivers/cxl/port.c      | 1 +
+> >>  6 files changed, 6 insertions(+)
+> >>
+> >> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> >> index 571069863c62..e51315ea4a6a 100644
+> >> --- a/drivers/cxl/acpi.c
+> >> +++ b/drivers/cxl/acpi.c
+> >> @@ -921,6 +921,7 @@ static void __exit cxl_acpi_exit(void)
+> >>  /* load before dax_hmem sees 'Soft Reserved' CXL ranges */
+> >>  subsys_initcall(cxl_acpi_init);
+> >>  module_exit(cxl_acpi_exit);
+> >> +MODULE_DESCRIPTION("CXL ACPI: Platform Support");  
+> 
+> From Kconfig:
+> config CXL_ACPI
+>         tristate "CXL ACPI: Platform Support"
+OK
+> 
+> >>  MODULE_LICENSE("GPL v2");
+> >>  MODULE_IMPORT_NS(CXL);
+> >>  MODULE_IMPORT_NS(ACPI);
+> >> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> >> index 887ed6e358fb..ccaa00cd0321 100644
+> >> --- a/drivers/cxl/core/port.c
+> >> +++ b/drivers/cxl/core/port.c
+> >> @@ -2356,5 +2356,6 @@ static void cxl_core_exit(void)
+> >>  
+> >>  subsys_initcall(cxl_core_init);
+> >>  module_exit(cxl_core_exit);
+> >> +MODULE_DESCRIPTION("CXL (Compute Express Link) Devices Support");  
+> > 
+> > Why the expanded version for this one?
+> > 
+> > I'm not sure Devices really makes sense here, particularly as it
+> > likely a range of other driver will make some use of this core
+> > functionality over time.  Maybe "CXL core" is sufficient?
+> >   
+> 
+> From Kconfig:
+> menuconfig CXL_BUS
+>         tristate "CXL (Compute Express Link) Devices Support"
+
+Understood, but that is expanded because it's the first use of
+CXL in the make file. Here we have no ordering as across many
+files and resulting modules.
+
+"CXL: Core Compute Express Link support"
+
+Would work I think.
+
+> 
+> >>  MODULE_LICENSE("GPL v2");
+> >>  MODULE_IMPORT_NS(CXL);
+> >> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
+> >> index 0c79d9ce877c..1afb0e78082b 100644
+> >> --- a/drivers/cxl/mem.c
+> >> +++ b/drivers/cxl/mem.c
+> >> @@ -252,6 +252,7 @@ static struct cxl_driver cxl_mem_driver = {
+> >>  
+> >>  module_cxl_driver(cxl_mem_driver);
+> >>  
+> >> +MODULE_DESCRIPTION("CXL: Memory Expansion");  
+> > 
+> > Why does this one get a colon? Also no Support at the end?  
+> 
+> From Kconfig:
+> config CXL_MEM
+>         tristate "CXL: Memory Expansion"
+
+OK.  Could add Support but then all code is supporting something,
+so fine to leave it without.
+
+
+> 
+> >   
+> >>  MODULE_LICENSE("GPL v2");
+> >>  MODULE_IMPORT_NS(CXL);
+> >>  MODULE_ALIAS_CXL(CXL_DEVICE_MEMORY_EXPANDER);
+> >> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
+> >> index e53646e9f2fb..2c17fcb1b4ee 100644
+> >> --- a/drivers/cxl/pci.c
+> >> +++ b/drivers/cxl/pci.c
+> >> @@ -1066,5 +1066,6 @@ static void __exit cxl_pci_driver_exit(void)
+> >>  
+> >>  module_init(cxl_pci_driver_init);
+> >>  module_exit(cxl_pci_driver_exit);
+> >> +MODULE_DESCRIPTION("CXL PCI manageability");  
+> 
+> Kconfig just has:
+> config CXL_PCI
+>         tristate "PCI manageability"
+> 
+> I added CXL
+
+CXL: PCI manageability
+
+
+> 
+> >>  MODULE_LICENSE("GPL v2");
+> >>  MODULE_IMPORT_NS(CXL);
+> >> diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
+> >> index 2ecdaee63021..4ef93da22335 100644
+> >> --- a/drivers/cxl/pmem.c
+> >> +++ b/drivers/cxl/pmem.c
+> >> @@ -453,6 +453,7 @@ static __exit void cxl_pmem_exit(void)
+> >>  	cxl_driver_unregister(&cxl_nvdimm_bridge_driver);
+> >>  }
+> >>  
+> >> +MODULE_DESCRIPTION("CXL PMEM: Persistent Memory Support");  
+> 
+> From Kconfig:
+> config CXL_PMEM
+>         tristate "CXL PMEM: Persistent Memory Support"
+OK
+> 
+> >>  MODULE_LICENSE("GPL v2");
+> >>  module_init(cxl_pmem_init);
+> >>  module_exit(cxl_pmem_exit);
+> >> diff --git a/drivers/cxl/port.c b/drivers/cxl/port.c
+> >> index 97c21566677a..5ceff1df60db 100644
+> >> --- a/drivers/cxl/port.c
+> >> +++ b/drivers/cxl/port.c
+> >> @@ -209,6 +209,7 @@ static struct cxl_driver cxl_port_driver = {
+> >>  };
+> >>  
+> >>  module_cxl_driver(cxl_port_driver);
+> >> +MODULE_DESCRIPTION("CXL Port Support");  
+> 
+> This I just made up from the others since config CXL_PORT doesn't have a menu
+> description or help text and the .c file begins with:
+>  * DOC: cxl port
+
+"CXL: Port Support"
+
+Not that informative, but I can't immediately think of better text.
+
+>
+> 
+> >>  MODULE_LICENSE("GPL v2");
+> >>  MODULE_IMPORT_NS(CXL);
+> >>  MODULE_ALIAS_CXL(CXL_DEVICE_PORT);  
+> 
+> If you have specific edits you'd like me to make, I'm happy to make them.
+> I have no opinion on the content -- I just want to get rid of the warnings :)
+
+With the suggestions above it would look more consistent I think.
+
+Jonathan
+
+
+> 
+> /jeff
+> 
 
