@@ -1,81 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5782313D2A2;
-	Thu,  6 Jun 2024 11:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE25195B3F
+	for <kernel-janitors@vger.kernel.org>; Thu,  6 Jun 2024 13:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717674031; cv=none; b=Ss71LC+MS7VkftXUpUaGxHdlqeXcLRvQMRyFcq8ixq0mFuOX2VhzXrjbukrL6qW+az3e8LhA2ZU3jmNrBObc6MkzPaiaGASM4xZFdm4IqDO/9yXawlxnIH0QGQI2S+Ocs7XZ+XxgMipe0BrEC1chFV3IkGbDzptj9Vtwz2Re+6w=
+	t=1717679431; cv=none; b=lPCtBFxR1NbYhSnChaJ+Gdr3ODLzRS1N57tZGvfec/5p4LcBwo9j2C6sH1qinJlQASk/31m4aLX0OP1cG3Djfx6Y62vblvJFZKj4Fw83XEIlqaGNNGPskmr3ShNx3jlnsJpNnYb0WEI8k7rg9t+6Z/SRg3cAJcpcENMkFGIByEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717674031; c=relaxed/simple;
-	bh=aGnlINQZ7i3g921rtkuSNbz/2AJPPOBSiliF5MFlN1c=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=af2zcBxmijNWRL1QnS+pwFcyqk1qkP/bBjlImWVIDiAkjVSU3AP/Ptv0XuMQ9hDSpNAQvBd52SZZIpCBJmmY7+wyzdwPRlls/LEZBkQvG/UgZyz/gaHViX4e9I1qXY/XWjZjktjraClYg0qGsdqac4Q4nWK/nfcleb5KQ55ZpfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mxAPjwCd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717679431; c=relaxed/simple;
+	bh=zT88eZfNNd+RiyI4o59iAJCPJIAf8oivhPTjWxX35MQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jOs3U3gPItnU0CMfoK8gAtAOw9F3pTxeCuFw4yRGDmAtL+QqOmhX/jVK8ckkZ6Ok5c01ULabvrwFAuUDSEl41IofCg5prZiSwARA88FnUPAh6OPgffINWLGoL5FhoWejda2G3YGT4OXAzfm08Fu2PfSWIrpv//LYNgXizbhv4hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fDx1Lh6r; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mxAPjwCd"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D5C5FC4AF08;
-	Thu,  6 Jun 2024 11:40:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717674030;
-	bh=aGnlINQZ7i3g921rtkuSNbz/2AJPPOBSiliF5MFlN1c=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=mxAPjwCdXGHOa6qAR1ARgkitGjl2+LiVNYRw169W9erePhsPdm55nvzpcuqfeRIRX
-	 /dsMFFtBHezRgVUWxCo062Gywikc25yjPHBfkIo3hYS4bIITu3UziguRYMYlZiW/jC
-	 bBuUGAaV9K7mobpXikOT3cqPbzPFLfBzBWN2dnf+wqk3Wh6obvH2+iM0Y4Hy/rSEag
-	 aci+f3hB8D5CxBZbHPdn4b7IkMcf/QrDzHW6HenVymdmDeHcfnNJUsrxAljVqbbqO2
-	 Ine2NkEi+OgCmlQ9GY9vFpFVSK7guoM9zu03Tbu+mQMrAF328Z1cxo/QPY88fNTIx4
-	 kUKCXVa+dlJGg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C3892D2039E;
-	Thu,  6 Jun 2024 11:40:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fDx1Lh6r"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a68ca4d6545so173154566b.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 06 Jun 2024 06:10:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717679428; x=1718284228; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LLTo6IN//CUfT633Q+EgtwxBk4Zhgr8yvAaTHaRrJKc=;
+        b=fDx1Lh6rX1LDP8w/JsHdvLHz6V6cyvu0Vc8B/sXq4YtcwW1DmqkH+afCojavFduOcZ
+         W/iz5jps5OsEzdRzyqWum3X1ZH2mcBRUS8rhCi2WXEb3qhKOvY2hcu3JIXz0pEEJ8Wpa
+         IFT3ASthAA3NgddTEw5N+hLmRycL/jwcPCoKTzD2JjR9HdXMEmBywKEV2WC2kNrMeMUJ
+         kqCUS3sxhg0mG+dkjghTfr51mJdZuN8a5YmSxnqkyZnTSYfIy7Ybs6XQWmSmTQ3be1Dl
+         Iz/l2+dm/W2xjGTI/gWFY9djaSSlciEJ2JGHp0rCK5mDJfJwAeqSoOPGOPePQKsx7330
+         yAKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717679428; x=1718284228;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LLTo6IN//CUfT633Q+EgtwxBk4Zhgr8yvAaTHaRrJKc=;
+        b=tgKlrIdefT5hyDEX+2IAWJAAA/c3D6qs14j7YDsHXvIkROQK7Rm3DVtU6Rjl8Ray9l
+         eIMjmmUXJMKaPHUNrtA2zqz/2y8i29F/Fpd9FUBgqfN8r5W1EfxkOY+fjnsQG+copUet
+         piD78s7oVw7b7eRfZyBZq6HtU0750Cs9tyKaMD/xAREpKvXm47ee5gAMUN2iMVdNyimC
+         QJjapTGXmKqmtbdDcuFG8NOp9KTyoHq9ITEtfizZtDQ/DtpiYsPqdARBd31akvHroZFJ
+         nhpJ7IU0PkYUHchUbro5GD5sSiKEyyvVaHDDR1V7UjgpKkxy6KsRiBR3Kk1yPyCi0UWW
+         p1IA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0e7BymGYFyluzz01JPM7SZKU7MhDNJ4b8H4RWn9uN5PYrihDCNbsMUvmtVFDuQyygnjGe1sxutzJNUmNGL8biNhSyGXPXL39fSEVIZkkS
+X-Gm-Message-State: AOJu0YyUMhohWXuj7yRoYkbDfwyk4URWv2FFeNYSMlzpeziflGpR8kZE
+	EjrwHkaQjVsdbeN4POtOEs6cg5TRgEgg9oB6Wf7mo9xFJZqD/H+hmcoHf/DYGII=
+X-Google-Smtp-Source: AGHT+IE/O3Z7xTXrhanwtiiAy00RvXG9RUOoWD1wIob6c3DU4S0+HjI1sOf6DL7JHERx+RQuhoT5dg==
+X-Received: by 2002:a17:906:e218:b0:a68:a476:6957 with SMTP id a640c23a62f3a-a6c7650a2ffmr216652566b.24.1717679428406;
+        Thu, 06 Jun 2024 06:10:28 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c8070e82esm94963466b.161.2024.06.06.06.10.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jun 2024 06:10:27 -0700 (PDT)
+Date: Thu, 6 Jun 2024 16:10:23 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Patrick Gansterer <paroga@paroga.com>
+Cc: Lee Jones <lee@kernel.org>,
+	Daniel Thompson <daniel.thompson@linaro.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] backlight: lm3509_bl: Fix NULL vs IS_ERR() check in
+ register() function
+Message-ID: <187b5bc5-a010-46c2-8ead-980df9efae79@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: ethtool: fix the error condition in
- ethtool_get_phy_stats_ethtool()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171767403079.12695.6034347075508573945.git-patchwork-notify@kernel.org>
-Date: Thu, 06 Jun 2024 11:40:30 +0000
-References: <20240605034742.921751-1-suhui@nfschina.com>
-In-Reply-To: <20240605034742.921751-1-suhui@nfschina.com>
-To: Su Hui <suhui@nfschina.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, nathan@kernel.org, ndesaulniers@google.com,
- morbo@google.com, justinstitt@google.com, andrew@lunn.ch,
- ahmed.zaki@intel.com, hkallweit1@gmail.com, justin.chen@broadcom.com,
- jdamato@fastly.com, gerhard@engleder-embedded.com, d-tatianin@yandex-team.ru,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
- kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Hello:
+The devm_backlight_device_register() doesn't return NULL, it returns
+error pointers.  Update the error checking to match.
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Fixes: b72755f5b577 ("backlight: Add new lm3509 backlight driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/video/backlight/lm3509_bl.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-On Wed,  5 Jun 2024 11:47:43 +0800 you wrote:
-> Clang static checker (scan-build) warning:
-> net/ethtool/ioctl.c:line 2233, column 2
-> Called function pointer is null (null dereference).
-> 
-> Return '-EOPNOTSUPP' when 'ops->get_ethtool_phy_stats' is NULL to fix
-> this typo error.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net] net: ethtool: fix the error condition in ethtool_get_phy_stats_ethtool()
-    https://git.kernel.org/netdev/net/c/0dcc53abf58d
-
-You are awesome, thank you!
+diff --git a/drivers/video/backlight/lm3509_bl.c b/drivers/video/backlight/lm3509_bl.c
+index ab57f79ffe23..c93cdedff5ad 100644
+--- a/drivers/video/backlight/lm3509_bl.c
++++ b/drivers/video/backlight/lm3509_bl.c
+@@ -114,9 +114,10 @@ lm3509_backlight_register(struct device *dev, const char *name_suffix,
+ 	}
+ 
+ 	bd = devm_backlight_device_register(dev, label, dev, data, ops, &props);
+-	if (bd)
+-		backlight_update_status(bd);
++	if (IS_ERR(bd))
++		return bd;
+ 
++	backlight_update_status(bd);
+ 	return bd;
+ }
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.43.0
 
