@@ -1,154 +1,88 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A50519D8B5;
-	Thu,  6 Jun 2024 09:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A14D3D56D;
+	Thu,  6 Jun 2024 11:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717665485; cv=none; b=V7zBnq+Cb86QUgtxQwKgId85eI1XhGJpo0v4pXXl9O2TA2+raLCuwyKDFQwPEYS9fJxBH0S1D1II9PJWLBPnEsg39cGlCYnohtF0oINOcMVITFFibjPWzQjwaXmmCt5WL8b4frfodLW37QefzP2uudklfY3SqCrYX8lg3wXUEnk=
+	t=1717671722; cv=none; b=HSkEkAHtFTjRgi9kL8R4byiDqFXxCwkFiPoQ2vRZqpwR9ir4/ZnJSGBaeOzGjLRmzcno09TYlDSrnXxg82Gt5zeNqPtoozhnZakaFXDJfrZ9MxVtCJI23eKvIzOCGHsCa/GPjdJ+HRF4nOibCho4OS9v28Z4nrlrnH9uGa+jvSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717665485; c=relaxed/simple;
-	bh=YJdbOuaHsaurGjX4eUFukDBYK8rr97L6xCHKtPDmWFg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hCvjJpUpyZJ4oAUHl1mF1tlAvZo5oqOgAs84o3LKeL0qWrsv3JE2tju4J2Ez0AmThULKCEOsDoOoig72QPQpNnYPROWVHg/K0EI4V5fKaOqW4CDNQUYfLDcUuw3e2qZXbo63pqYkPPfL491dK3vvsdLKFkMWN/emKLygUMCJZbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VvzC40f30z6K6f5;
-	Thu,  6 Jun 2024 17:13:20 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id D1A511400E7;
-	Thu,  6 Jun 2024 17:17:58 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 6 Jun
- 2024 10:17:58 +0100
-Date: Thu, 6 Jun 2024 10:17:57 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-CC: <linux-usb@vger.kernel.org>, <kernel-janitors@vger.kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, Heikki Krogerus
-	<heikki.krogerus@linux.intel.com>, Xin Ji <xji@analogixsemi.com>, LKML
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: typec: anx7411: Use scope-based resource
- management in anx7411_typec_port_probe()
-Message-ID: <20240606101757.0000331f@Huawei.com>
-In-Reply-To: <889729ac-3fc5-4666-b9f5-ce6e588a341a@web.de>
-References: <889729ac-3fc5-4666-b9f5-ce6e588a341a@web.de>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1717671722; c=relaxed/simple;
+	bh=62CrMwnBsDesJfBbj4JdA6nLwnTrPFPozSa6mWTBTjg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IFVeP9PmmO+grqbAkxkfyo+vP/QOU8EyYjwG1ThPD/A8SGAaywV9MzuY+VsJpSjrbY2fxcbjnLxjQaM/OXqBMzv0uy1do1RNm78QjKb29kAVqv6j4GZ0qM1ZeFL6rq+bE+4gQYaot4pQgy85Fzjf1/wWjNWuOCUkPuOaP51pTfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LYtv5Z21; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LYtv5Z21"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1717671696; x=1718276496; i=markus.elfring@web.de;
+	bh=fbrojDn0VDdn0L3EW1XYF97yJqxtpi3UOK2VLs7ulp0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=LYtv5Z21OpbjF02YgCTqGl/K15aq6Hez0UbRlIO5aaBciJaoAGZ1m8Iht+qhSYEV
+	 tagLKVk6my66ej5CfUCVJDAddet96+95Ln6IU1CHLAro/V2sPVD0c9V+ZL5Olr8fM
+	 WWLNG4qfVMJj5Sjy9CTTTiPJr1Pganv6r5ElLrHsxVErLpNpc+9zsgcaOIjLYgVNj
+	 04t5XAwi+37ORrya8E/lfiWTgtnlqSFMrg8zYpkgG0Vna2mujmahCagNQ4kZ/uUln
+	 l5Qoggeyb4wtd7DNedzDZ9aqSPW/HdBUUfIoA3Muy+eSqeOVy37auEFvVboTaKQDI
+	 3aWB0nihTdszQmwyhg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N14ta-1sQhFd3w0Q-00rGUS; Thu, 06
+ Jun 2024 13:01:35 +0200
+Message-ID: <204dc14f-1f58-4425-b613-85538eb4d947@web.de>
+Date: Thu, 6 Jun 2024 13:01:34 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+User-Agent: Mozilla Thunderbird
+Subject: Re: usb: typec: anx7411: Use scope-based resource management in
+ anx7411_typec_port_probe()
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+ linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Xin Ji <xji@analogixsemi.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <889729ac-3fc5-4666-b9f5-ce6e588a341a@web.de>
+ <20240606101757.0000331f@Huawei.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240606101757.0000331f@Huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:+TjG99r+XNmlKF6SwclUrVxDdMTNQkCcRDjGzvh01/WEkKXLCTs
+ 8SyL/Aay6KAsy3sM1C+dyMCaVelTWmyZFONT1jOsovzYxEh5i9M2KYJ1uVTqqbnaZwfvOen
+ W3Bn7BjhhjqRhGrF9jxxl05jobJ3HFe7jAnotPL3tKKe76hFpb+9bf3epKG2wMVRcZyD3IB
+ +xQf59yiUk7/vijNhlZUQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:h0TlJMfNPT8=;buw75irrEL0dwYIUtjk0vsyLbxT
+ A4i5U6FotW7xRr3WUT/bv7tNybBAp0Y5N9UJEmIyPSrE59jK8eTpBQhZ9+GD6n9nd8SlxyP0X
+ ioS+hdwR3MRP8l/LUvxWlnBDAMj6Nld1Mwm7apyVo/ootiSXSM0IYWA2UpkP/BQaeSmxb/+OU
+ vDFOhom4mWhGpoFnRouiJxIBk4bKmYwst/Qof9TBgrDiaZnh2nx6tpeh57sASUHtucPDZxn8Q
+ DrfmMiUHa+kSppYnRueQ+4UPtNKaaYHLP04EdSo7wdXUiOXs2bHiICpF1V4fRTEw+2ezEfo25
+ OV1taok/oNcJCeictql5z/DHrlXMIsfF2NP6fR+3u5/g96S/VijY4/0wt3dlS+wj418jSN05b
+ x90G/7AH2KSQmbeqiwgxrkdFXyzddI5/sh6dUj65znRoR0Qns9jYJdJYnPKyOpJd8XytUrGIG
+ 0qHVMlO+WPKa0ppXmaQW8gQ2sdHvK9cfvEjii1zZYGO3eizaO8sFVdPPvXtiPCNEEoymccG+K
+ LLehTl0Zc2IxbdyKkWeRPN1HrMdNY2ifvGegyLKK6mY5cV9V1WvrDd1K8pFY+Y1knNf9xx+8n
+ 0WWo/NdtGG/NXDKLn5Gd6t9/Y6OwZM88izNtPchF7dhJg3qOXkWBRXijoIVp4yn78gYsivOeo
+ p8+LAZRpNfiOvEQ4w2XmhJVOdWORZo0e360um7F5VvHFbsiIksRXw66dYUCghf7BG595KZCSP
+ v3wTdrMuKP7eiOuCorDmcY+xOKZGEqD3hYIUcfI+El2E/I3nT6EM//mML/PKEDqHF3KShUinF
+ u9VEkXEPqFocJRzwD5vV1KsFWTJNMeIZRWdvVVQjWnePo=
 
-On Wed, 5 Jun 2024 19:11:04 +0200
-Markus Elfring <Markus.Elfring@web.de> wrote:
+> That makes it tricky to use no_free_ptr() so I wonder if this is
+> a case where the old fashioned fix of adding all the relevant
+> fwnode_handle_put() calls is the better option.  The __free()
+> approach doesn't always fit.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 5 Jun 2024 18:56:19 +0200
->=20
-> Scope-based resource management became supported also for another
-> programming interface by contributions of Jonathan Cameron on 2024-02-17.
-> See also the commit 59ed5e2d505bf5f9b4af64d0021cd0c96aec1f7c ("device
-> property: Add cleanup.h based fwnode_handle_put() scope based cleanup.").
->=20
-> * Thus use the attribute =E2=80=9C__free(fwnode_handle)=E2=80=9D.
->=20
-> * Reduce the scope for the local variable =E2=80=9Cfwnode=E2=80=9D.
->=20
-> Fixes: fe6d8a9c8e64 ("usb: typec: anx7411: Add Analogix PD ANX7411 suppor=
-t")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Can involved development concerns be clarified better anyhow?
 
-Hi Markus,
-
-Good catch. However in this case I think this is insufficient.
-Also your patch description should more clearly state the bug rather
-and impacts (a potential resource leak).
-
-I'm not 100% sure how this should work though.
-
-If the expectation is that a reference to the fwnode is held when we
-enter typec_register_port(), then if that errors out then we
-need fwnode_handle_put().
-
-If expectation is that the reference is not held, then we should
-always call fwnode_handle_put() before that is called.
-Internally it just uses this to fill in port->dev.fwnode.
-
-Given typec_get_fw_cap() is called from there and doesn't get a reference
-I think expectation is that the fwnode is held by the driver calling
-typec_register_port() until that is unregistered.
-
-Hence should be put in the error path of that call in the calling driver.
-
-	ctx->typec.port =3D typec_register_port(dev, cap);
-	if (IS_ERR(ctx->typec.port)) {
-		// fwnode_handle_put() in here.
- 		ret =3D PTR_ERR(ctx->typec.port);
-		ctx->typec.port =3D NULL;
-		dev_err(dev, "Failed to register type c port %d\n", ret);
-		return ret;
-	}
-
-That makes it tricky to use no_free_ptr() so I wonder if this is
-a case where the old fashioned fix of adding all the relevant
-fwnode_handle_put() calls is the better option.  The __free()
-approach doesn't always fit.
-
-Jonathan
-
-=20
-> ---
->  drivers/usb/typec/anx7411.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/usb/typec/anx7411.c b/drivers/usb/typec/anx7411.c
-> index b12a07edc71b..9fb52f233a30 100644
-> --- a/drivers/usb/typec/anx7411.c
-> +++ b/drivers/usb/typec/anx7411.c
-> @@ -16,6 +16,7 @@
->  #include <linux/of_graph.h>
->  #include <linux/of_platform.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/property.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
->  #include <linux/types.h>
-> @@ -1142,11 +1143,11 @@ static int anx7411_typec_port_probe(struct anx741=
-1_data *ctx,
->  {
->  	struct typec_capability *cap =3D &ctx->typec.caps;
->  	struct typec_params *typecp =3D &ctx->typec;
-> -	struct fwnode_handle *fwnode;
->  	const char *buf;
->  	int ret, i;
->=20
-> -	fwnode =3D device_get_named_child_node(dev, "connector");
-> +	struct fwnode_handle *fwnode __free(fwnode_handle)
-> +				     =3D device_get_named_child_node(dev, "connector");
->  	if (!fwnode)
->  		return -EINVAL;
->=20
-> @@ -1237,7 +1238,7 @@ static int anx7411_typec_port_probe(struct anx7411_=
-data *ctx,
->  		typecp->caps_flags |=3D HAS_SINK_WATT;
->  	}
->=20
-> -	cap->fwnode =3D fwnode;
-> +	cap->fwnode =3D no_free_ptr(fwnode);
->=20
->  	ctx->typec.role_sw =3D usb_role_switch_get(dev);
->  	if (IS_ERR(ctx->typec.role_sw)) {
-> --
-> 2.45.1
->=20
-
+Regards,
+Markus
