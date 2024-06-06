@@ -1,127 +1,154 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017BE1553B0;
-	Thu,  6 Jun 2024 08:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A50519D8B5;
+	Thu,  6 Jun 2024 09:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717664107; cv=none; b=GNWTR30CjXEQObDn1XGNHAEmUoHrKloMaPcakuHhWReuOd6hWCrF/X98gi7bnCe9eypRPZrH23QnA5EL3Ihub4d0FaeALLQaP1qnIYKtglst1hUje0XocyalzFp3Ib+LaMKho3U6F0p7JjAJtGTUmORZIJo2Bqn3O3uNOVyLcnA=
+	t=1717665485; cv=none; b=V7zBnq+Cb86QUgtxQwKgId85eI1XhGJpo0v4pXXl9O2TA2+raLCuwyKDFQwPEYS9fJxBH0S1D1II9PJWLBPnEsg39cGlCYnohtF0oINOcMVITFFibjPWzQjwaXmmCt5WL8b4frfodLW37QefzP2uudklfY3SqCrYX8lg3wXUEnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717664107; c=relaxed/simple;
-	bh=flaEAuZ9nHRH4sGgsWaxOEBEE7aoCbt3vVi5NHd6VSI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=m0iUWCuCGUHn05cz4v/d9s7bDSqTd2D/63HsZH46lqtuKqXdPpS34WCT1/7qxpzb3HPHtQnMQB8rrNccM6G8AeCAETVR+4+2zI1xmJA/wlgR/1nk746rncrSfizloT1bi8DCrEkYVmauVgtMmVERii1iO9trGlzg0acrg5rzsnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OHk/h4bt; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OHk/h4bt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8434BC4AF19;
-	Thu,  6 Jun 2024 08:55:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717664106;
-	bh=flaEAuZ9nHRH4sGgsWaxOEBEE7aoCbt3vVi5NHd6VSI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=OHk/h4btc3AyFQjefSgrwCziLFaFsmsmFsnALA+Ey9GEA4q0xvKp3UuT3JdyIpnQJ
-	 Cbl20AHZ9EFG5yYlgy4kfg77yeqrQbjzrdCjZFkxGmpDVNSaqztEGja6IBXPzrdOW4
-	 m25SlDA6n8gECEZQYvYK1lmZmbGUpc4hJh5H96DYgcfoxpJik8v7c2KvWVbfv09eVF
-	 FzUV7jBIYMBSSWHNo3XdVPfnGTOiA964MSvzxCcGaWUxY+3jBfcMF6Jq7cTFJonEtp
-	 5PXkzG3fR/CkcuQjF1c6vJlpSozEqpZmSwNyuRKoyZ1JoExA/BSnrpTeCQMAInMc7Q
-	 dRe+ZwU0xcKgA==
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, 
- Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <20240604-md-hid-misc-v1-1-4f9560796f3c@quicinc.com>
-References: <20240604-md-hid-misc-v1-1-4f9560796f3c@quicinc.com>
-Subject: Re: [PATCH] HID: add missing MODULE_DESCRIPTION() macros
-Message-Id: <171766410527.2923458.12157886272125960133.b4-ty@kernel.org>
-Date: Thu, 06 Jun 2024 10:55:05 +0200
+	s=arc-20240116; t=1717665485; c=relaxed/simple;
+	bh=YJdbOuaHsaurGjX4eUFukDBYK8rr97L6xCHKtPDmWFg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hCvjJpUpyZJ4oAUHl1mF1tlAvZo5oqOgAs84o3LKeL0qWrsv3JE2tju4J2Ez0AmThULKCEOsDoOoig72QPQpNnYPROWVHg/K0EI4V5fKaOqW4CDNQUYfLDcUuw3e2qZXbo63pqYkPPfL491dK3vvsdLKFkMWN/emKLygUMCJZbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VvzC40f30z6K6f5;
+	Thu,  6 Jun 2024 17:13:20 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id D1A511400E7;
+	Thu,  6 Jun 2024 17:17:58 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 6 Jun
+ 2024 10:17:58 +0100
+Date: Thu, 6 Jun 2024 10:17:57 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+CC: <linux-usb@vger.kernel.org>, <kernel-janitors@vger.kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, Heikki Krogerus
+	<heikki.krogerus@linux.intel.com>, Xin Ji <xji@analogixsemi.com>, LKML
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] usb: typec: anx7411: Use scope-based resource
+ management in anx7411_typec_port_probe()
+Message-ID: <20240606101757.0000331f@Huawei.com>
+In-Reply-To: <889729ac-3fc5-4666-b9f5-ce6e588a341a@web.de>
+References: <889729ac-3fc5-4666-b9f5-ce6e588a341a@web.de>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.4
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Tue, 04 Jun 2024 15:10:23 -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-a4tech.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-apple.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-aureal.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-belkin.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-betopff.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-bigbenff.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-cherry.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-chicony.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-cypress.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-dr.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-emsff.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-elecom.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-elo.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-evision.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ezkey.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-vivaldi-common.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-google-hammer.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-google-stadiaff.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-gyration.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-holtek-kbd.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-holtek-mouse.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ite.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kensington.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-keytouch.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kye.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-lcpower.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-lenovo.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-logitech.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-magicmouse.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-maltron.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-mf.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-megaworld.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-microsoft.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-monterey.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ntrig.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ortek.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-prodikeys.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-pl.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-petalynx.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-primax.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-razer.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-redragon.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-retrode.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-saitek.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-samsung.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-semitek.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-sjoy.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-sony.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-speedlink.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-steam.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-steelseries.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-sunplus.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-gaff.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-tmff.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-tivo.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-topseed.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-twinhan.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-uclogic.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-xinmo.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-zpff.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-zydacron.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-viewsonic.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-waltop.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-winwing.o
-> 
-> [...]
+On Wed, 5 Jun 2024 19:11:04 +0200
+Markus Elfring <Markus.Elfring@web.de> wrote:
 
-Applied to hid/hid.git (for-6.11/module-description), thanks!
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 5 Jun 2024 18:56:19 +0200
+>=20
+> Scope-based resource management became supported also for another
+> programming interface by contributions of Jonathan Cameron on 2024-02-17.
+> See also the commit 59ed5e2d505bf5f9b4af64d0021cd0c96aec1f7c ("device
+> property: Add cleanup.h based fwnode_handle_put() scope based cleanup.").
+>=20
+> * Thus use the attribute =E2=80=9C__free(fwnode_handle)=E2=80=9D.
+>=20
+> * Reduce the scope for the local variable =E2=80=9Cfwnode=E2=80=9D.
+>=20
+> Fixes: fe6d8a9c8e64 ("usb: typec: anx7411: Add Analogix PD ANX7411 suppor=
+t")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-[1/1] HID: add missing MODULE_DESCRIPTION() macros
-      https://git.kernel.org/hid/hid/c/9d262f35b115
+Hi Markus,
 
-Cheers,
--- 
-Benjamin Tissoires <bentiss@kernel.org>
+Good catch. However in this case I think this is insufficient.
+Also your patch description should more clearly state the bug rather
+and impacts (a potential resource leak).
+
+I'm not 100% sure how this should work though.
+
+If the expectation is that a reference to the fwnode is held when we
+enter typec_register_port(), then if that errors out then we
+need fwnode_handle_put().
+
+If expectation is that the reference is not held, then we should
+always call fwnode_handle_put() before that is called.
+Internally it just uses this to fill in port->dev.fwnode.
+
+Given typec_get_fw_cap() is called from there and doesn't get a reference
+I think expectation is that the fwnode is held by the driver calling
+typec_register_port() until that is unregistered.
+
+Hence should be put in the error path of that call in the calling driver.
+
+	ctx->typec.port =3D typec_register_port(dev, cap);
+	if (IS_ERR(ctx->typec.port)) {
+		// fwnode_handle_put() in here.
+ 		ret =3D PTR_ERR(ctx->typec.port);
+		ctx->typec.port =3D NULL;
+		dev_err(dev, "Failed to register type c port %d\n", ret);
+		return ret;
+	}
+
+That makes it tricky to use no_free_ptr() so I wonder if this is
+a case where the old fashioned fix of adding all the relevant
+fwnode_handle_put() calls is the better option.  The __free()
+approach doesn't always fit.
+
+Jonathan
+
+=20
+> ---
+>  drivers/usb/typec/anx7411.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/usb/typec/anx7411.c b/drivers/usb/typec/anx7411.c
+> index b12a07edc71b..9fb52f233a30 100644
+> --- a/drivers/usb/typec/anx7411.c
+> +++ b/drivers/usb/typec/anx7411.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/of_graph.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/pm_runtime.h>
+> +#include <linux/property.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+> @@ -1142,11 +1143,11 @@ static int anx7411_typec_port_probe(struct anx741=
+1_data *ctx,
+>  {
+>  	struct typec_capability *cap =3D &ctx->typec.caps;
+>  	struct typec_params *typecp =3D &ctx->typec;
+> -	struct fwnode_handle *fwnode;
+>  	const char *buf;
+>  	int ret, i;
+>=20
+> -	fwnode =3D device_get_named_child_node(dev, "connector");
+> +	struct fwnode_handle *fwnode __free(fwnode_handle)
+> +				     =3D device_get_named_child_node(dev, "connector");
+>  	if (!fwnode)
+>  		return -EINVAL;
+>=20
+> @@ -1237,7 +1238,7 @@ static int anx7411_typec_port_probe(struct anx7411_=
+data *ctx,
+>  		typecp->caps_flags |=3D HAS_SINK_WATT;
+>  	}
+>=20
+> -	cap->fwnode =3D fwnode;
+> +	cap->fwnode =3D no_free_ptr(fwnode);
+>=20
+>  	ctx->typec.role_sw =3D usb_role_switch_get(dev);
+>  	if (IS_ERR(ctx->typec.role_sw)) {
+> --
+> 2.45.1
+>=20
 
