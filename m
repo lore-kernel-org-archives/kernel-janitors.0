@@ -1,112 +1,214 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04145199E89
-	for <kernel-janitors@vger.kernel.org>; Fri,  7 Jun 2024 14:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E80D2EE;
+	Fri,  7 Jun 2024 16:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717771843; cv=none; b=IH9f+dZYbjNne6TPwN5A8mH4iyFLHnTovyjze2neSaaVmfZvIH4MQfU9X/HQKsnDm0Lb0AQ14THbCWwjSYZEGEHURZ+0TXfTlRCdTQwXJypvlP2TTOrLYzV4KWo4zlTxpsUpcOK2EBuZEbku/aU9QiTKviGcJbg6qJY42R0b3FE=
+	t=1717776181; cv=none; b=uu4+zUn52RHgfMAeJEMt95BU30v/ZHXTZUa5SEq11I8VFwRgeEoEoEOKud55qNwJa12kMWuNSux/80iZjVE0F+8Pc9WnCLvd5SwOzY/NO3SRqa4NLY06DjGdMRHPfBcxCWcSiHB4YdJhbxFry/zVOvHmAbbd4GUVxpDJnxSsFzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717771843; c=relaxed/simple;
-	bh=bw48hkCXuzijbQuhV2rjxZ95PXUwMCrQtNy5mmsSCDQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=SjoSGVp+24SZmmg2M+0t8E7m9bqFOixsc5u63bifHvGVsqtui3yiH9a7QjKNJrE47FsYoR550I2ZOLDbVgxssSh9dLwy2upgPr9JyVwEjWucO89hZcQpk7hs1RykPbPxchHy7OC6t9siZFev/weDfTmoukMCP61hj5RyMVrz9X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YhAnR+87; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1717776181; c=relaxed/simple;
+	bh=8xGPJ18+HBP/2spAh6ITaeEbKwVFwjcYNTVE6lfhics=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Pm8fenflAjxLXqfHU+Ikrn/0zeN+RAhwEUFQ3acQVDh0PrGSuL5nG3KgPkHZnL5JCc/5XfA3QjN+Y+AcSwTigXN5NC/Yp3Nzqtn06dOV1cuKMUYyu1d+UJgwa7sU3YkRZfotN2ZZKzNaVTexQXpwK8rZlJ4+y+zGrndH6Etby/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bIhnUW/i; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YhAnR+87"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1717771831; x=1718376631; i=markus.elfring@web.de;
-	bh=V7r6gaZSRszhdI50Z8LDoyoHE+dr+ClzBMFz+UKK0iQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=YhAnR+87KAuiGMGm620ZkZ45GiTsRd3I8m8jndPKwZWSCyYGDNw6C3zJmn5BAUyW
-	 QgzeRI4YnRa6zX5oWU5nVuZ2WhEOLR4XWN9uccQZdjGlgzQnsf8MVpbezaUs5sPZ2
-	 XYt7uTk+TkKwUweZTNX0HHevYU1axBe2zcSm/qHfBZsKWx0eHBMdTsxahDtyimOsn
-	 GD/9zBMLFuUazhUG7h2r39LjxhYTBY0cNbg/edMvMS5IWVK3DtRH6f/i/FHupj9IQ
-	 7SDKqaEpYnIAeKTS+0FnjCxXNPHqWByIn2C5m7nuU6O30fqn3LbABok87/A5Ddlah
-	 JIODMtnlb0OrNvlfEA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MWzD3-1rvbDi0hz7-00MbP6; Fri, 07
- Jun 2024 16:50:31 +0200
-Message-ID: <426a5742-6180-4dea-8aca-58794dc299f5@web.de>
-Date: Fri, 7 Jun 2024 16:50:18 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bIhnUW/i"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457EmnwF010653;
+	Fri, 7 Jun 2024 16:02:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=4zyNQTIq2I6bGzfO6ANQkw
+	yFQAtcRA8n30vnfURCfX4=; b=bIhnUW/isCLT0Z+5Jmiezpp0Nt5GmOlKO1TVxU
+	WF01DyMVFNxDR9ldgg8FKy1QZNfSaLzHanEboC7I+0EPJMhRhZB9plP7lwvuGnU8
+	wR/y7j3cfI/n7Lz4Qrq2KPL2v5pihyNfhJqYh+a+zHU5kb/E+47X1CWzUOZjpcDP
+	FcAcwMg/a/ThvIlFw41v6F+Cugu847Uar6PBil5z9t9yOulp3wms1YrtKAzTiQgd
+	YB1SL9839Ls/MyBvkEjT2TC2WkBnQyGjC5oQTkH7U9yQERWaX0dqzczBS191Bc5E
+	MikG9fAVNoT8PTYsAAsw8hEwM96mk95p2YPaBLlcSgqL24Nw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ym49w066w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 16:02:36 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 457G2YII024794
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 7 Jun 2024 16:02:34 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 7 Jun 2024
+ 09:02:34 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 7 Jun 2024 09:02:33 -0700
+Subject: [PATCH] pwm: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cocci] Increasing usage of spinlock guards (with SmPL)?
-To: Julia Lawall <julia.lawall@inria.fr>, cocci@inria.fr,
- kernel-janitors@vger.kernel.org
-References: <7eb9626c-da7b-414d-bf50-da1eed27be31@web.de>
- <alpine.DEB.2.22.394.2405261847380.16852@hadrien>
- <9d79a2de-10fa-479c-b720-1c4a2f51782d@web.de>
- <4bad748-afee-713a-a2d7-30b6e5c1cb28@inria.fr>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <4bad748-afee-713a-a2d7-30b6e5c1cb28@inria.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:OkCI0vGgf/1Arh8QyYpVw/3XmTEpoL8TxKU8aV81XNQJorxymFS
- 11Dugi7mL3zOX8b14jxAQmgqCjOkCKUrfyByxsM8NJCvImyB5kX+sykH372RaRsxIMPlnu/
- ZuqrPEEhdZ20oZ9frU7eWMz+qmkosO+MqqEiSGB+hpc7ewEqLLkkg94GYvA6aeMjz9l4Atl
- sW/4v3RZGEBPMp++zKkDw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Y6SQlXsOfsM=;zJdsZx/xyEDrtXjs7ATmCkJFTe9
- Fibe+MxjHQ1Ak19HgsTThpT2qeEa7zGQfaKg/to11uQfluv71CWVPg6jyyZurSZSMCpIGABFr
- gHB7g6XWRM/80IFIBTtaUQHCHwlvOPKxAVvQzkLMkpCCqmJEnjSQghtg2i457j1/1O4lCT8lF
- 1QqKg0T2DznxQybGuHTXiBda6uFEq4R7CPvpATJi99AVDb3UQfv6EWvYZASFtvY7Irv3212wc
- k+BVS4W8zqEWNa6lRSKrrKv+Jc5naVxSzCGyzvKs1oxTCpGg8d0vNFs2CW7cD5w6kls1eZ8zC
- R2d5x5AjtEqmsERL4mR3wPebz77Nza8MUjhuuiTSrG6tAKImCw+vu9OFQbWhzs5yiBscFU3j6
- iRh3s8swDlUugkoCty5BkWmRAQMP8zgifEqNE0aT84VD1OBgxVAOxnNNTfXhfVVsV33yorOnl
- U1X3gOwW10FPUZrHfsb6damsgt1JwxojhDqj4VctyJqEFMoaGeo1AJa17HdvpgBvF9wxuwaYP
- FVR+JlbBeaW0VgEe/1LC4K8GqIJI1bWF/XiKjQ9elihpcCtyQlvIS8AFZwjzFZu/4EDlQdTW5
- iW/Q358JWtTOvmYMY4Fp0gYDe3vJbSdC9zQFSv9xy2JQXP70nJMBg3Dvqm6gCjVp9aSjUA1YW
- Wbrik+hcQnCp7gq55EerlQrVdLdRKtAl5/TBsZFT2t6FY3V8oX5D2z1+r2iuRyOFzEjlfVHjU
- UZWwKFW1e7JTpZmmIHRUlv/SSAMGSJMSGgGsrlZB5m8KqBejS9lPMd62UWunpzb5SRhWrXDz6
- L2vRIW1uH2oQ9fXtUGw7OwZxDcUQLiLlYZeMbsrh1nIhg=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIABgvY2YC/x3MQQrCQAxG4auUrA2MpejgVcTFtPlrA85YEq2F0
+ rs7uvwW723kMIXTpdnIsKjrs1QcDw0NUyp3sEo1taHtwimcOQuL6QJznj+Z49hJFEGMEqhGs2H
+ U9T+83qr75ODeUhmm3+ah5b1yTv6C0b5/AdiyANt/AAAA
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+        Shawn Guo
+	<shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Matthias Brugger
+	<matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <linux-pwm@vger.kernel.org>, <imx@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Xsaju1_HnI3ToMw3WAE6tj1QihTgS0au
+X-Proofpoint-GUID: Xsaju1_HnI3ToMw3WAE6tj1QihTgS0au
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-07_09,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ bulkscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
+ mlxlogscore=999 clxscore=1011 malwarescore=0 priorityscore=1501 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406070119
 
->> @replacement@
->> expression e;
->> @@
->> -raw_spin_lock
->> +guard(raw_spinlock_irq)
->>               (&e);
->>  ... when !=3D e
->>      when any
->> -raw_spin_unlock(&e);
->
-> What exactly is the problem?
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx1.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx27.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-intel-lgm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-mediatek.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-pxa.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-samsung.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-spear.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-visconti.o
 
-There are several development challenges remaining to make the application=
- of similar
-SmPL script variants really safe.
-https://elixir.bootlin.com/linux/v6.10-rc2/source/include/linux/spinlock.h=
-#L537
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-The discussed guards combine two actions.
-The shown transformation pattern depends on the deletion of the first acti=
-on identifier.
-This identifier should also be usable to determine a corresponding guard p=
-arameter
-and the companion action.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+This addresses all of the issues in driver/pwm
 
-Action pairs can eventually be stored in special data structures
-so that a mapping can be automatically performed (on demand).
+Let me know if you want any of the individual module changes
+segregated into separate patches.
+---
+ drivers/pwm/pwm-imx1.c      | 1 +
+ drivers/pwm/pwm-imx27.c     | 1 +
+ drivers/pwm/pwm-intel-lgm.c | 1 +
+ drivers/pwm/pwm-mediatek.c  | 1 +
+ drivers/pwm/pwm-pxa.c       | 1 +
+ drivers/pwm/pwm-samsung.c   | 1 +
+ drivers/pwm/pwm-spear.c     | 1 +
+ drivers/pwm/pwm-visconti.c  | 1 +
+ 8 files changed, 8 insertions(+)
 
-See also:
-Working with variables for case match identification by SmPL disjunctions
-2019-02-19
-https://github.com/coccinelle/coccinelle/issues/159
+diff --git a/drivers/pwm/pwm-imx1.c b/drivers/pwm/pwm-imx1.c
+index 1d2aae2d278f..d5535d208005 100644
+--- a/drivers/pwm/pwm-imx1.c
++++ b/drivers/pwm/pwm-imx1.c
+@@ -194,5 +194,6 @@ static struct platform_driver pwm_imx1_driver = {
+ };
+ module_platform_driver(pwm_imx1_driver);
+ 
++MODULE_DESCRIPTION("i.MX1 and i.MX21 Pulse Width Modulator driver");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Sascha Hauer <s.hauer@pengutronix.de>");
+diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
+index e1412116ef65..9e2bbf5b4a8c 100644
+--- a/drivers/pwm/pwm-imx27.c
++++ b/drivers/pwm/pwm-imx27.c
+@@ -352,5 +352,6 @@ static struct platform_driver imx_pwm_driver = {
+ };
+ module_platform_driver(imx_pwm_driver);
+ 
++MODULE_DESCRIPTION("i.MX27 and later i.MX SoCs Pulse Width Modulator driver");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Sascha Hauer <s.hauer@pengutronix.de>");
+diff --git a/drivers/pwm/pwm-intel-lgm.c b/drivers/pwm/pwm-intel-lgm.c
+index f9cc7c17c8f0..084c71a0a11b 100644
+--- a/drivers/pwm/pwm-intel-lgm.c
++++ b/drivers/pwm/pwm-intel-lgm.c
+@@ -230,4 +230,5 @@ static struct platform_driver lgm_pwm_driver = {
+ };
+ module_platform_driver(lgm_pwm_driver);
+ 
++MODULE_DESCRIPTION("Intel LGM Pulse Width Modulator driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
+index 19a87873ad60..0b5d68a90e83 100644
+--- a/drivers/pwm/pwm-mediatek.c
++++ b/drivers/pwm/pwm-mediatek.c
+@@ -395,4 +395,5 @@ static struct platform_driver pwm_mediatek_driver = {
+ module_platform_driver(pwm_mediatek_driver);
+ 
+ MODULE_AUTHOR("John Crispin <blogic@openwrt.org>");
++MODULE_DESCRIPTION("MediaTek Pulse Width Modulator driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/pwm/pwm-pxa.c b/drivers/pwm/pwm-pxa.c
+index bb7bb48b2e6d..430bd6a709e9 100644
+--- a/drivers/pwm/pwm-pxa.c
++++ b/drivers/pwm/pwm-pxa.c
+@@ -208,4 +208,5 @@ static struct platform_driver pwm_driver = {
+ 
+ module_platform_driver(pwm_driver);
+ 
++MODULE_DESCRIPTION("PXA Pulse Width Modulator driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index efb60c9f0cb3..7adf4f2b1049 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -644,6 +644,7 @@ static struct platform_driver pwm_samsung_driver = {
+ };
+ module_platform_driver(pwm_samsung_driver);
+ 
++MODULE_DESCRIPTION("Samsung Pulse Width Modulator driver");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Tomasz Figa <tomasz.figa@gmail.com>");
+ MODULE_ALIAS("platform:samsung-pwm");
+diff --git a/drivers/pwm/pwm-spear.c b/drivers/pwm/pwm-spear.c
+index 6c6f3b38c835..4f372279f313 100644
+--- a/drivers/pwm/pwm-spear.c
++++ b/drivers/pwm/pwm-spear.c
+@@ -255,6 +255,7 @@ static struct platform_driver spear_pwm_driver = {
+ 
+ module_platform_driver(spear_pwm_driver);
+ 
++MODULE_DESCRIPTION("ST Microelectronics SPEAr Pulse Width Modulator driver");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Shiraz Hashim <shiraz.linux.kernel@gmail.com>");
+ MODULE_AUTHOR("Viresh Kumar <viresh.kumar@linaro.com>");
+diff --git a/drivers/pwm/pwm-visconti.c b/drivers/pwm/pwm-visconti.c
+index 9e55380957be..28fae4979e3f 100644
+--- a/drivers/pwm/pwm-visconti.c
++++ b/drivers/pwm/pwm-visconti.c
+@@ -170,6 +170,7 @@ static struct platform_driver visconti_pwm_driver = {
+ };
+ module_platform_driver(visconti_pwm_driver);
+ 
++MODULE_DESCRIPTION("Toshiba Visconti Pulse Width Modulator driver");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>");
+ MODULE_ALIAS("platform:pwm-visconti");
 
+---
+base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+change-id: 20240607-md-drivers-pwm-8f4d8dde88d0
 
-Regards,
-Markus
