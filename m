@@ -1,36 +1,35 @@
 Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449E51847;
-	Fri,  7 Jun 2024 11:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654D4D53C;
+	Fri,  7 Jun 2024 12:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717761435; cv=none; b=nVs7mD964CvqCfRNDmEGCOFuKzu5lxODDF5tgW0/A991GdxRmgjSKC3qDfn4gOnI3MJSUl4TJr3KmEHaZqkUM3/ny/l8EDjC+4vA4Aw7VpHBNYyBWkjGqxoxZs+usyrggp5Hi5CI6NZQNhlnI1GFE0OmbWRPGL3pMAyFGV3j/3k=
+	t=1717761669; cv=none; b=rYMlMuMmnXTGLeDrYX0gaahETQqNHkqsyg/nu7vd/2na3ux5jN/UxrvBPm9uf/1Xn0hylH19CfFUve5QZODxsqqj6lPikie7ho6xmeG87x5d2zBRJeG/GJfqx54o4Hu25utQ65bfejHVWjKtxECrujH52BWHYSy16lz1D8Gy4Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717761435; c=relaxed/simple;
-	bh=adjTYryesZPpS5hAWfrCjwqqYGcWxRjoYGnUfbQ27wI=;
+	s=arc-20240116; t=1717761669; c=relaxed/simple;
+	bh=8bM4TXmZF6Q3bEWKpxwk+dcuEiChrvC6AykME8hxFxU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wk2prfNv9pBhtlXl5uHsCpMrvd4umE/o9SQOWjP3RSnXPYYTbqiLJ7ICL8Z4pJyZyR32ztiu6/3V1HMIu4Tr5sTZybGo+E2gpFmk7MWdmY9iS84p+0ZPPgUBncx64qnD0IGaN0LPNQgw5mnC5BweudJcnCvQwY9GfXx1iGpbcGA=
+	 Content-Type:Content-Disposition:In-Reply-To; b=IzNFsbDdTWooe8d0oUsmZmtITttOKp7XJM26f7gFyXoMfcaKxmsL8DzI3ehaEUGA/5pGfQVyJqQmbSLpvZQwZHYOTsDUZEQSihY8Uv1151XqvI9Zvf5dNzKoeS0/UQ4Jq3Rct/eXdkLkGVc8TWBp+YthKyHtoyicAyVUoBxrbTE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
 	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sFYCw-006pHZ-21;
-	Fri, 07 Jun 2024 19:56:35 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 07 Jun 2024 19:56:37 +0800
-Date: Fri, 7 Jun 2024 19:56:37 +0800
+	id 1sFYHA-006pMU-3C;
+	Fri, 07 Jun 2024 20:00:58 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 07 Jun 2024 20:00:59 +0800
+Date: Fri, 7 Jun 2024 20:00:59 +0800
 From: Herbert Xu <herbert@gondor.apana.org.au>
 To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] crypto: x86 - add missing MODULE_DESCRIPTION() macros
-Message-ID: <ZmL1deAM0RrEDHJ4@gondor.apana.org.au>
-References: <20240530-md-x86-crypto-v1-1-b480cbcc6bdf@quicinc.com>
+Cc: Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
+	Declan Murphy <declan.murphy@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] crypto: keembay - add missing MODULE_DESCRIPTION() macro
+Message-ID: <ZmL2e00gtB9K88iv@gondor.apana.org.au>
+References: <20240602-md-keembay-ocs-hcu-v1-1-22741e1c3d13@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -39,21 +38,18 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240530-md-x86-crypto-v1-1-b480cbcc6bdf@quicinc.com>
+In-Reply-To: <20240602-md-keembay-ocs-hcu-v1-1-22741e1c3d13@quicinc.com>
 
-On Thu, May 30, 2024 at 05:53:17PM -0700, Jeff Johnson wrote:
-> On x86, make allmodconfig && make W=1 C=1 warns:
+On Sun, Jun 02, 2024 at 04:03:54PM -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/crypto/intel/keembay/keembay-ocs-hcu.o
 > 
-> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/crypto/crc32-pclmul.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/crypto/curve25519-x86_64.o
-> 
-> Add the missing MODULE_DESCRIPTION() macro invocations.
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
 > 
 > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
->  arch/x86/crypto/crc32-pclmul_glue.c | 1 +
->  arch/x86/crypto/curve25519-x86_64.c | 1 +
->  2 files changed, 2 insertions(+)
+>  drivers/crypto/intel/keembay/ocs-hcu.c | 1 +
+>  1 file changed, 1 insertion(+)
 
 Patch applied.  Thanks.
 -- 
