@@ -1,133 +1,102 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71CE19B3F6
-	for <kernel-janitors@vger.kernel.org>; Fri,  7 Jun 2024 16:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0450214EC7B;
+	Fri,  7 Jun 2024 17:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717778101; cv=none; b=W1OcHYNNiyn6D+ZQ/dtMD2kLE04GyK5eJlW8VA76RKv4VPHVoMKgnvOPIn6YBBfX4bgYyFXHK6n1gH4GZJeAk3kyVksHCRmL7W4iBzeW2KhoPMYBEjgzVnZ29lb6SVFf1li4rF03EfuVU8DTh8jCPhCAVQ9glx0HN09LRmc6fqo=
+	t=1717780538; cv=none; b=iohWZp3GQTV9VBuae2I7cE7ZOcanzIghr1eXnhnaz4OiACCI3fdx1Mepl3ul6n1NArU8yWhUyA8dHlZSm8ZuqiASZwT1WS7iCk9t5txKfDb/uqbRUdCo7cJ8Uw+0wYqXpYo2Yj6s5nTahXyU2PnPdE7Cpx08KnJom/KRbanhXgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717778101; c=relaxed/simple;
-	bh=JSjugDn364e1bR2NBfOIb6HAziv7A8jZrYbuA88Eh+4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cGihrV4uuT9+Ng8bhhSi9ud6VIlsvp4NiJbBABxSl/s90i8GqFYchsvS6lANSeGYnCeYSdq7Lhps9iB3xfBrlS62sOzFkRm09jtnzK8JqYPeZKR9Aftkb+LrAmEG58jUGNLB1rO0wybUzOmW2FFStWHmD0nQf6mdObYnE7lCzVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Vz1LTUe9; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1717780538; c=relaxed/simple;
+	bh=Za2v3qaXxkuxnIYIIPWWduuavRVmLda6ovLO9m6cpo8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=aBF6fWm2aqgWeIlMwJjfF863Svdta1U2JTPs1HjllvqrXoUyyVviQoGu2CQgmxRvIRZRD9tXDgJqZ1XqNS+avlDiL2afh81UlvDlWDmmc4QoeUgTBmm/qY/AI4UQOPW3bJYmq60MSygKkF8xsokwxIwmOYIlSP1koUaRSpaRers=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OaGqpKPH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Vz1LTUe9"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42178999284so2703705e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 07 Jun 2024 09:34:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717778096; x=1718382896; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JSjugDn364e1bR2NBfOIb6HAziv7A8jZrYbuA88Eh+4=;
-        b=Vz1LTUe9I471TI69Ynuiuhq9MswC4g5uooJcYJjaMDtAqCc6UddtnVD25Egc9n9Idq
-         7nufaQ/AnSE1/FanmqWl4vpHz3M9+8rQtAGTIkfehR+dthNkMG59dMXz/lRgwTcrgwhV
-         BZ1mlpPYYYAu8Gqx666X+SwcpOJkC+DMYY9nQPIwylAgzj//b1bTGho5pHWXBrXcn72t
-         SSKHCnqYgEmsnvxZaca733bYXntpu0UFRn4XIx8wmU5qkvyXMuOBzVBtRROo669ovwYC
-         5zq1uGrBmSi5NtQv0M9dsY9IlskcwlPpFpT5VXxd+zQE0zBtpX07S9HzKBYbHyFQm2Ju
-         bNqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717778096; x=1718382896;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JSjugDn364e1bR2NBfOIb6HAziv7A8jZrYbuA88Eh+4=;
-        b=h+7ghbYwN/kaaIiN2KifR+DdCG6ajxe16qe43f9RJRhY/9Ow/SifS1M3Bh4zLB8jh6
-         vTBul6CDSvDOhd9paE8rfjF0YXPtbVOsP40/APWztjTcGbYEJHw4cW3IDJ6nk+Fel2jN
-         EOuAy8Q8STu/3zuakbn92Jj9kkWC8GvSrp6pt+kAXeEYZCfW3dmCGpfmGUQbyi1+UhTE
-         zgDdNwaL3y7hk7T9l5bzqo5QUiJDjwYznivvO4us0err4ydxHNvHEqko7Etp1uK/Pw+5
-         4ghJ1W3uV2LFFCRODOZmUhTAefmyJQ0W97ZrsusfLOgezwv2JUvl7Hv9ozkvZ53w7PD1
-         cTzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpEK1J9ov85h7Ey6/E7oNdGMSDCF0TLJapuXIPY0MpsdKHp/BWsa9GDzjKI2CGLup2ipu5SfphPlxdDZAhEAZ43EJAJpUmjXQT+kj79xs7
-X-Gm-Message-State: AOJu0YxxPnv+Jeyjz4X/K8wAK6m6z2M9teiZ6hD0b8JNhsej8yUaPhnQ
-	IZxjRC6KnRX19eOdcR1lNhUOWUNNCHKxSwX62oDvhevA6iPCvU75/Q3vUmpZGvg=
-X-Google-Smtp-Source: AGHT+IGpGEuV4DVZ1kdf6ue+dBm6Ke4RvEdYp3g9xEjXsaFgOxYEd6wAXfkcbKsCsHOsq8Dy8bGbhw==
-X-Received: by 2002:a05:600c:3c83:b0:41c:13f6:206d with SMTP id 5b1f17b1804b1-42164a2e9d4mr30060715e9.25.1717778096151;
-        Fri, 07 Jun 2024 09:34:56 -0700 (PDT)
-Received: from localhost (p200300f65f283b0017c92b05fa289d44.dip0.t-ipconnect.de. [2003:f6:5f28:3b00:17c9:2b05:fa28:9d44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c19e719sm58262335e9.3.2024.06.07.09.34.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 09:34:55 -0700 (PDT)
-From: "Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=" <ukleinek@baylibre.com>
-X-Google-Original-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Date: Fri, 7 Jun 2024 18:34:54 +0200
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-pwm@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] pwm: add missing MODULE_DESCRIPTION() macros
-Message-ID: <vunkvcpe7omv5tbsyw237hhauzyrhf6nujwvyv6vq5zd33udee@5b36qxbz5mjx>
-References: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OaGqpKPH"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457ErQTV022867;
+	Fri, 7 Jun 2024 17:15:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=IyRM4BkjktzL1b48KHFjkx
+	6g+n1E5mh1upwggLSVvq8=; b=OaGqpKPHm7u4Dfry/x5v5uJmvNq2EgLlzWoC72
+	evuvL3vwvWvaxHqm6IaRnlw7PH7s/qEmgdBFE1GZR6sYpe3f4F02on4lG/Zr8f4A
+	3f4WMpZYf+bo+kxpy8INkauVkxQzyOAtxu/6yXPtz1weyAHKpq90Ap7fyDdArdbI
+	Zwu1B4SHb3t4eaf2YTp6ywupZFsGlH22XOKPIspfyqYG0MvOxo/9MKE1E2GVe9AX
+	/AeOuFj4UGNcH8pV4wgEY924JDBHxy0lA03///qfrrDY5D3UWE1ryYT8fRNSIttk
+	zstq5GXLS9eWvGwVVBHvoVmYh2NxjWAP4ecGjuCE6O/I64zA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ykttx1wuu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Jun 2024 17:15:32 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 457HFTB0007719
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 7 Jun 2024 17:15:29 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 7 Jun 2024
+ 10:15:28 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 7 Jun 2024 10:15:27 -0700
+Subject: [PATCH] reset: hisilicon: hi6220: add missing MODULE_DESCRIPTION()
+ macro
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uegcep6av77uozx5"
-Content-Disposition: inline
-In-Reply-To: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240607-md-drivers-reset-v1-1-5d317ff8e3bd@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAC5AY2YC/x3MQQ6CQAxG4auQrm0yThCMVzEuCvMjTWQ0LRISw
+ t0dWX6L9zZymMLpVm1kWNT1nQvOp4r6UfITrKmYYoh1aELLU+JkusCcDY6ZEa8NJLQSLzWV7GM
+ YdD2W90dxJw7uTHI//kcvzd+VJ/EZRvv+Aw5klhiBAAAA
+To: Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: oAnYxsLEdQSA3XwIzJNEDNhT3V1zC5lo
+X-Proofpoint-ORIG-GUID: oAnYxsLEdQSA3XwIzJNEDNhT3V1zC5lo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-07_10,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 bulkscore=0 clxscore=1011 adultscore=0 phishscore=0
+ mlxlogscore=999 priorityscore=1501 mlxscore=0 spamscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406070128
 
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/reset/hisilicon/hi6220_reset.o
 
---uegcep6av77uozx5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Hello,
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/reset/hisilicon/hi6220_reset.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Fri, Jun 07, 2024 at 09:02:33AM -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx1.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx27.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-intel-l=
-gm.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-mediate=
-k.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-pxa.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-samsung=
-=2Eo
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-spear.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-viscont=
-i.o
->=20
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->=20
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> This addresses all of the issues in driver/pwm
->=20
-> Let me know if you want any of the individual module changes
-> segregated into separate patches.
+diff --git a/drivers/reset/hisilicon/hi6220_reset.c b/drivers/reset/hisilicon/hi6220_reset.c
+index 5c3267acd2b1..65aa5ff5ed82 100644
+--- a/drivers/reset/hisilicon/hi6220_reset.c
++++ b/drivers/reset/hisilicon/hi6220_reset.c
+@@ -219,4 +219,5 @@ static int __init hi6220_reset_init(void)
+ 
+ postcore_initcall(hi6220_reset_init);
+ 
++MODULE_DESCRIPTION("Hisilicon Hi6220 reset controller driver");
+ MODULE_LICENSE("GPL v2");
 
-Looks good to me, I applied it to
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
-next
+---
+base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+change-id: 20240607-md-drivers-reset-e286ea07a254
 
-Thanks
-Uwe
-
---uegcep6av77uozx5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZjNqkACgkQj4D7WH0S
-/k4LyAf+MocX0RpPC44cCBO/dFFZlEnU4+NMAXx+vRXpg0ASWbWuBgbMvXujfpeo
-YRQZYgDgLp/7/FndOQIPT59C9fFbWz0UdLPSiT/MkN+cbRAoiaMXD5JqiTrORPFq
-RFbNwOtXzQoRAEceczkKFb65oV7rwmyNyIBN9Vv3Ce/o+avvmlqdAziFU/smNwKz
-en3MhIonz85eSOessjikio9bmBGGFzT8US8WiD8Ya8zcQUZ/i9aXH/verkoyfsb/
-9hIlW/QY+mBn61RQeVHuF6O5W5Trnq4/sPf2TtnicRafEYBtwNFJRZmDviEqVp3g
-UVN+CF/yOMS6eo/89WixvZXyYMNuEQ==
-=bpJ1
------END PGP SIGNATURE-----
-
---uegcep6av77uozx5--
