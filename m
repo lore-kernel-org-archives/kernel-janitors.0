@@ -1,82 +1,79 @@
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0A8132139
-	for <kernel-janitors@vger.kernel.org>; Fri,  7 Jun 2024 09:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFDF15B0E7;
+	Fri,  7 Jun 2024 10:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717752670; cv=none; b=TqNvrrZtFoXbTEmO3zmwy/X2yhyc/XY72FSXxK5lveA8I3hMHPqLxdpKZP8ijz5BqS0Q12y+UT+R6f7H0owxwzhxctABVHcSxZYTtAoyuIj9U2GkkWOHXQJqD4sXiXry3woA/lq0bCj82ded+8QIZ6IuFuAlx/OZ8CWmb5FjCvU=
+	t=1717755029; cv=none; b=sQVtcleG1xJkF+SWuUs29yOtndtED1bCf7xNUJ8ztG+XF9vbAhOZ2m8RJ3dKJDsL40FVzOzZsKczvZ9NCYcO5ulUJBLGEAZ5oMZOOjjcmRF/alX1mog8NK4Izp9FAGUM5gPdg8uSChPQ/tC+1yXgxlprhVJglurFe2Y9jJa4lP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717752670; c=relaxed/simple;
-	bh=rh6d3hIT/gGHuZqXKZa2cH2yqFBKt04gITtRxetenJ8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=hMRzqvq/8v5GRwBa7SW0n9AEaThkrfojloEfvaqtoSB2a8U6M6A7NBcGQYBc5ejgA/7Ep/T7G7N0bKs2IShuV1fnW+S57TjDyCImhnlxglsmj/FEAsnhufCv4qUtcPj67dJjpuDmpevwjAXJb6BCgxoGxiheq1i64yDNz6wKpcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=E2RyW84n; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1717755029; c=relaxed/simple;
+	bh=fJJpTcmE67gybMtkto49XtqnJGcpAyK+OZybc/rYHxk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Q+GQ+XlrnmnW7Reobju1atBIczmP8OrrBZGQb9/pc67/GayJKdZkPsjBKY8MWg+J1QcsEsoCuilxHbT2+Rk/3vjODHtbmoSLbvxqwDrxvcj98vr+PyXsFTxj4bwDTI06QUCmkDjELyG89DAwv7tpsHbVx3IDhl9PhWgfmJ3q55g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kP4ynT23; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="E2RyW84n"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=1XtAVpu9xsa7LVD+ZsUycFjXRJCZQ525/U/2NN6TixM=;
-  b=E2RyW84ntlgvB2ZuzUy1zcpnDBuJOv5JpuWdT0JQdFDko4FKjUOLvSIe
-   emqz4rCz8VIWinRUd9WVhwIjgTIKJZJSVJRWmiCBYNHkWBjp8eCH2BLnb
-   g5vBzssUZPK6Yz946Dw4MoYpYvejVZtJ8gT4l9ycj05CMd73bX96BSnGT
-   c=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.08,220,1712613600"; 
-   d="scan'208";a="89091338"
-Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2024 11:31:00 +0200
-Date: Fri, 7 Jun 2024 11:30:58 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Markus Elfring <Markus.Elfring@web.de>
-cc: cocci@inria.fr, kernel-janitors@vger.kernel.org
-Subject: Re: [cocci] Increasing usage of spinlock guards (with SmPL)?
-In-Reply-To: <9d79a2de-10fa-479c-b720-1c4a2f51782d@web.de>
-Message-ID: <4bad748-afee-713a-a2d7-30b6e5c1cb28@inria.fr>
-References: <7eb9626c-da7b-414d-bf50-da1eed27be31@web.de> <alpine.DEB.2.22.394.2405261847380.16852@hadrien> <9d79a2de-10fa-479c-b720-1c4a2f51782d@web.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kP4ynT23"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 614EAC4AF07;
+	Fri,  7 Jun 2024 10:10:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717755029;
+	bh=fJJpTcmE67gybMtkto49XtqnJGcpAyK+OZybc/rYHxk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=kP4ynT23Jn0AUXgJxbNNHno1mo6JyEaJhVEwa1jluovymJqBoF4QBL2fOg8Cn81Mq
+	 W6dh3U2xgtcR694oBeoss6800HbUiIo1VaZUY+Q53uIFAaET+ru8gradUQNKhTpxht
+	 qUNVu/9stxLf05Q26YV3IOLhKYHYULS5Xh9pnQ4KzS9+hL3QzZvoBXw8zs4cyIVaSN
+	 TfdsWhjVB7lt74h2CdRx5qJYhetWKDz4wYfgqL32WdNysv3C1Q9NbzpLCnv1XAWclL
+	 sNRbPpZbO39xdPWf4Wm24exslLbniddJkz79AFcRBZHqurD5zd7wXJZ1hOuO4C6WHO
+	 GFpuFTsIHtY7g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 55A25CF3BA3;
+	Fri,  7 Jun 2024 10:10:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1745173528-1717752659=:3380"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] hwmon: (cros_ec) Prevent read overflow in probe()
+From: patchwork-bot+chrome-platform@kernel.org
+Message-Id: 
+ <171775502934.9691.12638692648620767166.git-patchwork-notify@kernel.org>
+Date: Fri, 07 Jun 2024 10:10:29 +0000
+References: <42331b70-bd3c-496c-8c79-3ec4faad40b8@moroto.mountain>
+In-Reply-To: <42331b70-bd3c-496c-8c79-3ec4faad40b8@moroto.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux@weissschuh.net, thomas@weissschuh.net, jdelvare@suse.com,
+ linux@roeck-us.net, bleung@chromium.org, tzungbi@kernel.org,
+ chrome-platform@lists.linux.dev, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hello:
 
---8323329-1745173528-1717752659=:3380
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+This patch was applied to chrome-platform/linux.git (for-kernelci)
+by Tzung-Bi Shih <tzungbi@kernel.org>:
+
+On Thu, 6 Jun 2024 16:12:11 +0300 you wrote:
+> The "resp.sensor_name" comes from cros_ec_cmd() and it hasn't necessarily
+> been NUL terminated.  We had not intended to read past "sensor_name_size"
+> bytes, however, there is a width vs precision bug in the format string.
+> The format needs to be precision '%.*s' instead of width '%*s'.
+> Precision prevents an out of bounds read, but width is a no-op.
+> 
+> Fixes: bc3e45258096 ("hwmon: add ChromeOS EC driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> [...]
+
+Here is the summary with links:
+  - hwmon: (cros_ec) Prevent read overflow in probe()
+    https://git.kernel.org/chrome-platform/c/1f72dd046270
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-
-On Fri, 7 Jun 2024, Markus Elfring wrote:
-
-> > I'm not the one to decide whether we should use cleanup for mutex locks.
->
-> Would you become interested to support the conversion of another tiny script
-> (like the following) for the semantic patch language into a corresponding
-> SmPL script variant which can be used together with the tool “coccicheck”
-> any more?
->
-> @replacement@
-> expression e;
-> @@
-> -raw_spin_lock
-> +guard(raw_spinlock_irq)
->               (&e);
->  ... when != e
->      when any
-> -raw_spin_unlock(&e);
-
-What exactly is the problem?  I tried this rule and it worked fine.  There
-were a few issues of inconsistent control-flow paths, but it made 325
-changes.
-
-julia
---8323329-1745173528-1717752659=:3380--
