@@ -1,79 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E271D15B0FB;
-	Fri,  7 Jun 2024 10:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AB915CD5C
+	for <kernel-janitors@vger.kernel.org>; Fri,  7 Jun 2024 10:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717755030; cv=none; b=gjEdtqgUBY4G1Y6LRABSAfbQnL7MKkb2FLF/hrtM0qKG9dEwPRvwuWjqlKZjGI1EcxKesx7wyxQUBZFcS4XmUolWm53BibxrdHnhi+9pwOih5OkjjRhqnOEDuRp4LGwdkCYRzLmEqY/r6jBKmFYRCaU46uG5PfYRFUsIkWtZ+a0=
+	t=1717755145; cv=none; b=mPgA4ItaRPR40gK0rHn5NDzhG8x52n7YuBLpY5jMlArKWuyqzVL/Ammm3CpAvGxFD+BuEafHDpzJJH47013IQs6GKRPvapJzVdzQDzSg+0hQspaHveTE00dAaoTojPQCNYojoqdG1BKkOb3384cdLEJtdLcUW4Xtwp/kOnkKh+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717755030; c=relaxed/simple;
-	bh=3q+16WX6b8x4qD8IG0VF1CV7m3QLtG8soxVfGdyTrsw=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=mO1FvWYCh3KBzp+U1xap2jSNjjEbQToMFfU3D6lLUQ6Zc10KukIfps8WfXmSUq830OyGBI2VZSarP2TPv6+lw8mbcd1Q/QnMnG2nd+8T08cwlMDY7/MfTjZRnmLJMsqfDR3J0SxMVSLYRzWA5PPn8E82wTAZS8Qnd0pbYWuIr9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KFGFUZI7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717755145; c=relaxed/simple;
+	bh=0ywILY/BBkcIiyvfCqrHA81jtvWblraMFlD9Ievvm3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=tAodGQk4gAApZQn21/pIwPq8BfbwlGnY37pjhSx5Z2RnvQsPE6HbYmMc7wMgegkbmImD/anL2aQRN81i9JlUtajlPgTGtJ/9cIG66+TH9bJsn/w3Q+SAPBAZfQ/hU895Ro98moUdrzwoXyegDemVQIY44iFUGEe0RW66yCGcj/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=L/68/PiP; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KFGFUZI7"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C2472C2BBFC;
-	Fri,  7 Jun 2024 10:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717755029;
-	bh=3q+16WX6b8x4qD8IG0VF1CV7m3QLtG8soxVfGdyTrsw=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=KFGFUZI7zlKn8NPLtzDlgL+0PX8p2y976S9t6o8wXqN898f9E7J4xMSTsSohZQ79C
-	 Z8s/1aqbIiWKWiQw6gYeyIm/fq7bqJcJwpWxtBbNy3HaawmPONk9uDy8l9bEr0/nW3
-	 Zc1FYCSqYzjFjFRddYQVFlWbJLACVWVYFGYQVAlRL0EqfT2V+G2LJrFnVRDib8w7z6
-	 CY/zWXs7e7y77YqIBbHaAegzIDo1JV1Rn/JL/xRtofIuAG4fE1NCSuXfUnlBEjTyu7
-	 c0WpgBGaAYhgqVhrctacD0FsFKUR4kOgoeAXsTQXqE89EXCuzOfRtDrE0Wf48uO4of
-	 y3TXW1trcLNAw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B70B5CF3BA6;
-	Fri,  7 Jun 2024 10:10:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="L/68/PiP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1717755140; x=1718359940; i=markus.elfring@web.de;
+	bh=ruOidOrwZOaAxxId9EG9bGAERRkK5J083Bdh6wCcIZE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=L/68/PiPtOrSmuT0r1u1mWV12xQZAnt3STxZZXvfZOu5n5uOYgCinIy3S6gYaTyC
+	 EmFaGIKk178buBcwAANPVRRo7lMynhFvBCvRTrt+ii8NLVg/HMRSSLzNrX/Rzn9Gs
+	 Pl0gwcJH4tJZET0JVhX71KRQk67ghf7iBiAS08cfEr6MCzqlBA/sePxD1WtC6AmUz
+	 czAYbxWWwTbzpQ0+LpI1O3GkV6ze+uhyDvJGF8ArducwcqKqSf8zwFfK3CJ00e8Ad
+	 tDQQaqEVxv6xr+yft259MVEwHAzh81EU/n7dU/U9djiUeN0iRRKzvjNA96Il7b7Nl
+	 g+QrkvpHydcEtBF0oQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N79NA-1sVp3g1SdY-00xJNz; Fri, 07
+ Jun 2024 12:12:20 +0200
+Message-ID: <cccf7214-3a98-4c4c-89ad-bfaef1776261@web.de>
+Date: Fri, 7 Jun 2024 12:12:19 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] hwmon: (cros_ec) Prevent read overflow in probe()
-From: patchwork-bot+chrome-platform@kernel.org
-Message-Id: 
- <171775502974.9691.860373891404266889.git-patchwork-notify@kernel.org>
-Date: Fri, 07 Jun 2024 10:10:29 +0000
-References: <42331b70-bd3c-496c-8c79-3ec4faad40b8@moroto.mountain>
-In-Reply-To: <42331b70-bd3c-496c-8c79-3ec4faad40b8@moroto.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux@weissschuh.net, thomas@weissschuh.net, jdelvare@suse.com,
- linux@roeck-us.net, bleung@chromium.org, tzungbi@kernel.org,
- chrome-platform@lists.linux.dev, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cocci] Increasing usage of spinlock guards (with SmPL)?
+To: Julia Lawall <julia.lawall@inria.fr>, cocci@inria.fr,
+ kernel-janitors@vger.kernel.org
+References: <7eb9626c-da7b-414d-bf50-da1eed27be31@web.de>
+ <alpine.DEB.2.22.394.2405261847380.16852@hadrien>
+ <9d79a2de-10fa-479c-b720-1c4a2f51782d@web.de>
+ <4bad748-afee-713a-a2d7-30b6e5c1cb28@inria.fr>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <4bad748-afee-713a-a2d7-30b6e5c1cb28@inria.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:bfb/J339Xa287nZwYLQi/yoI8Toq/qUJdi7sxahdJtul9dYZrhE
+ 34dfn0sqJwkECFcJaZTr17NineLPcJJKezymM5W1BGxZR6AsRcMrvT+A2XaYJ6C8IPdtSlh
+ LFI/YI7G7HPiBkTBWqkLMyKNIRskolAtulGUcEzWHFw0zh0lr7L204M0TDDd4L1wKB0ZcZI
+ AmLeBMixVLbsxCy08zoZw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ep/9XwZt/yQ=;1Ict5Q3FnzFA0FxlurPvJFLsb3W
+ tyVnSCzVdtqSaCa+MqybCgY9qvb6UrDigbKH59iCWPfa5LY2fzcAKA4qA4DfcaTdJ/Sw+IjiA
+ NxxE7e+UepxMbacCbpZGja6EtPGMm9E9DWpPVJ9HcR4kGfIjLMVAsMabL8zO4bhfZ3IsK0lXo
+ fYIy3n4ltjwH2yQ7z3xUaYAHDr8e1lc3AVMHlSrvhF5epM3MXlRf1stklHP2vwsnfEpEtEKJz
+ +UcdATn6CsvXxXxZxkUmLrZvXTw2ls9IroMnRIcUr9sUMVQZlIh7Kwaagmf7BUB8szQncnH7z
+ Y5AsKVw8pCA7Hw92KFnoi1q2bMXsPVOgbBVQTxX1owGiB+N843UAiE9xRJ9s+L/kXo4JoNLfh
+ YRuk5pAjijoVqmRE2OCnas+6QBaA4rG5ZVzCFS3td6p+Wxu4VWO1r7xVqrjlrBar73vfnoVQN
+ lyFpMitheNAp7/jZuckd+cdFI7IQOlgTmLpEysZwblfZgqyYR319PpZRVWTFFpPIncNI5rmJ4
+ pvDSxxM6X4ruM75BLE2MtpH3sjEhpiYgnQzNDyXxODEhLOukklLBTAOww/a0qFz0uIA2+JmK1
+ 1EbHvmEMKej0evdoc1CpdeCo2+7RKpqmoU5/IfYc5A2RWpWWDuaT7Y5bmEE4m73Hg4kGlMsRu
+ SDGsKv5NZd/F9aU9u5Ubvg+U5hDTBhLYxgyFcG7hIDh9kYTggDoU2czGG8gJmtIirsjPLiem1
+ G3uLcnLnPNSjx4wYogAan/xge7EstyXSvUDAiikNmuAdem47AtiL/H23KEWLYirpb/gBz5qmj
+ 9jkuodFQRG4eLQk/dz0SoeQZNMglYY6cOnpLTJy2LkxRE=
 
-Hello:
+>> Would you become interested to support the conversion of another tiny s=
+cript
+>> (like the following) for the semantic patch language into a correspondi=
+ng
+>> SmPL script variant which can be used together with the tool =E2=80=9Cc=
+occicheck=E2=80=9D
+>> any more?
+>>
+>> @replacement@
+>> expression e;
+>> @@
+>> -raw_spin_lock
+>> +guard(raw_spinlock_irq)
+>>               (&e);
+>>  ... when !=3D e
+>>      when any
+>> -raw_spin_unlock(&e);
+>
+> What exactly is the problem?  I tried this rule and it worked fine.
 
-This patch was applied to chrome-platform/linux.git (for-next)
-by Tzung-Bi Shih <tzungbi@kernel.org>:
+* Such a simple SmPL script is working to some degree under the constraint=
+s
+  of some known software limitations.
+  Thus there are challenges to consider for the rating of the correspondin=
+g
+  application confidence.
 
-On Thu, 6 Jun 2024 16:12:11 +0300 you wrote:
-> The "resp.sensor_name" comes from cros_ec_cmd() and it hasn't necessarily
-> been NUL terminated.  We had not intended to read past "sensor_name_size"
-> bytes, however, there is a width vs precision bug in the format string.
-> The format needs to be precision '%.*s' instead of width '%*s'.
-> Precision prevents an out of bounds read, but width is a no-op.
-> 
-> Fixes: bc3e45258096 ("hwmon: add ChromeOS EC driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> [...]
-
-Here is the summary with links:
-  - hwmon: (cros_ec) Prevent read overflow in probe()
-    https://git.kernel.org/chrome-platform/c/1f72dd046270
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+* I would also appreciate further positive indications for the integration
+  of coccicheck SmPL script variants.
 
 
+Regards,
+Markus
