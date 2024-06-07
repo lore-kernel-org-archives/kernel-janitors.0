@@ -1,47 +1,47 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39AA1552F9;
-	Fri,  7 Jun 2024 21:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1CF14D45B;
+	Fri,  7 Jun 2024 22:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717796578; cv=none; b=VgQ7OK3vQGXb9IZRmNeBpEhMnkc3ZM3Pb4YIEA9GahVfvDh/xfMJZZNYy/+c6fLj9PK82yEe5kpltdfPdIEDstjubBOhwanPi7mDKRQW9paYNksDLMpe4CYee3b4QML720AkN8a+zubIL77JlDcGHMsACCYvsERbWV4sXDp7D1M=
+	t=1717797788; cv=none; b=sj8AZGkdfL1vVnNqc24aOu/nYXignf3haQQ490/qDJT33NVCiJzPlmVCHgHfVYUikH7hI2PQSeYKsFDjWabIj3Kgntq1tw1A7AgyNjFb63fAPcg9nEDz49FrdHkXB2i3xqdwn1GDODE5mREMq9ZjMDTgQNPZOXSdPKtb+4Rw2HA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717796578; c=relaxed/simple;
-	bh=RB8GBLa09FNKHnCn8Vj4cDIs5G+EZwnXVBse7JCWfCw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=q/o5hhu2Ia0bSyrOtV2m/EvUjoCSPswD3LojrbhhH1z2kxfjpPe0yOjcOJJAvC7GjrV9vKHHhYyQ1rEKM2nthQ1rWD3yBWT/8PRfUm87543B7/j+/8U47N2Ce/DmGjPyRuw7qEiFAok2I7XlJR8Hgcc7BtExfkBYISnEzQ2Vxns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mn2G88TS; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1717797788; c=relaxed/simple;
+	bh=1jRqw3b5jNId4CuyD1hxo3XagfFdcuxOWHFpWmsLHGk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=KH3kNrjoSAMXFdSirKtMdD07WfQQ6ATYGpbgU9SujvIEeb5WUXLE3x1n2OZn08f52XjfaGqdyVp2OHt/AUEQKemn7GmAAIugNu2h9FMjgbmOFFI0CPVry8MalHeNIwhQlNSVY6sPnYrhducDObg2PtG4W+uKXW3g2z7UINPcaRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nxFyrJAH; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mn2G88TS"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457HZsgJ021561;
-	Fri, 7 Jun 2024 21:42:46 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nxFyrJAH"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457HaBTk008010;
+	Fri, 7 Jun 2024 22:03:01 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=+8GU/M5AD7kWb/svYR2W8/
-	PjPrUCESnALS1ZvO/wzbI=; b=mn2G88TSh5q8Q7g8blnGN6yjbeJMeWbH1dXjRk
-	7XQOcwVYsNOwjuRzMnr7k+NctMxBLYds0I7+wSq2iIzFA67dp/Z2OGBsvmYCiiDk
-	VKTD9YZDXVg3KYd13Ya4JQfd2ZTyk2iPsAFrP4AkjnqkMggMvH41xYZoBgAT00++
-	bbnYs9rG7VCrqQNXUuPia+XqIz+pcWjXoblcIWMpCgKK2d0hUgT3uLFwRxhMvBnv
-	oDdQExfd7CX9hlISfbO4WzV8FqkA7/9uF1DeqGFe50B7wcFKoY1lJ4LFc2J3uqap
-	sdUxFvtViDyNbd4KD6TeoWUi6/qYMWaMzY1TOY1qqUC1wTYA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ym0sf1mte-1
+	:mime-version:subject:to; s=qcppdkim1; bh=6peD2aU4S77arzo5+5tyXF
+	H/8AWJP9hftjSkGRSgoMI=; b=nxFyrJAHwRLBbximvfL9Ab8hqrsGKqz32HRHpq
+	hgko3P6V7RzniCwWkHxrcakrQnwWSCc8C+RwWOF6eCzC37ZfzntZmIYJsSI00ZSj
+	pOuQJpknvoofnI1G0Gu/dPMvKvJTUnpODoBkgJqjiLC3XMYJOUhSc1F7G3fVlK3f
+	qynAXth/AFnfPdL/r/acN9hozfTzTVpL1TvTGwEbMJx9H9Feo4kRkiFqBp4XcEts
+	taUFkpMHXSvWFCQO+C2JpGLd9nV7yivQO07TIE+xLWUmG6vzVfkQaaBNQyPeLyGk
+	s43MnPYQM3NDvvlpQQueN+AJg1j7TeVHOSr70spB57PzaJ0Q==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yj87rrwf1-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 21:42:46 +0000 (GMT)
+	Fri, 07 Jun 2024 22:03:00 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 457LgjVs020625
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 457M2xXo007027
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 7 Jun 2024 21:42:45 GMT
+	Fri, 7 Jun 2024 22:02:59 GMT
 Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 7 Jun 2024
- 14:42:43 -0700
+ 15:02:59 -0700
 From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Fri, 7 Jun 2024 14:42:43 -0700
-Subject: [PATCH] modpost: bypass module description test on vmlinux.o
+Date: Fri, 7 Jun 2024 15:02:58 -0700
+Subject: [PATCH] pcmcia: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,69 +50,118 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240607-md-scripts-mod-v1-1-d3cd5a024f05@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIANJ+Y2YC/x3MTQrCQAxA4auUrA2kgzjoVcTF/GRswJmWpEqh9
- O6OLr/FezsYq7DBbdhB+SMmc+sYTwOkKbQno+RucOTOdCGPNaMllWU1rHNGX3wpdB2ZXIQeLcp
- Ftv/w/uiOwRijhpam3+Yl7b1hDbaywnF8Ab5BLJB/AAAA
-To: Masahiro Yamada <masahiroy@kernel.org>,
-        Nathan Chancellor
-	<nathan@kernel.org>,
-        Nicolas Schier <nicolas@fjasle.eu>,
-        Vincenzo Palazzo
-	<vincenzopalazzodev@gmail.com>
-CC: <linux-kbuild@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
+Message-ID: <20240607-md-drivers-pcmcia-v1-1-6014889a1324@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAJGDY2YC/x3MwQ6CMAyA4VchPdtkTNDoqxgP3VakiZukVUJCe
+ HeGx+/w/ysYq7DBvVlBeRaTT6loTw3EkcqLUVI1eOc7d3FXzAmTysxqOMUchbDv3DmEtmc/3KB
+ 2k/Igy//5eFYHMsagVOJ4nN5Sfgtmsi8rbNsO26ae+oIAAAA=
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
 X-Mailer: b4 0.13.0
 X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -5g0ean99e-hNJo417IMauExIjobsCPQ
-X-Proofpoint-ORIG-GUID: -5g0ean99e-hNJo417IMauExIjobsCPQ
+X-Proofpoint-GUID: MYX96FXRT1MWsCULhV545rRjIhQ6pvA0
+X-Proofpoint-ORIG-GUID: MYX96FXRT1MWsCULhV545rRjIhQ6pvA0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-07_13,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 impostorscore=0 adultscore=0 suspectscore=0 mlxscore=0
- mlxlogscore=816 clxscore=1011 bulkscore=0 phishscore=0 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406070159
+ definitions=2024-06-07_14,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 phishscore=0 impostorscore=0 malwarescore=0 bulkscore=0
+ clxscore=1011 spamscore=0 mlxlogscore=999 adultscore=0 lowpriorityscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406070163
 
-When building modules with W=1, modpost will warn if a module is
-missing a MODULE_DESCRIPTION. Unfortunately, it also performs this
-test on vmlinux.o:
+On x86, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/pcmcia_rsrc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/yenta_socket.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/i82092.o
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
+Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+files which have a MODULE_LICENSE(). This includes files which did not
+produce a warning with the x86 allmodconfig since they may cause this
+warning with other configurations.
 
-Relocate the logic so that the test is not performed on vmlinux.o.
-
-Fixes: 1fffe7a34c89 ("script: modpost: emit a warning when the description is missing")
 Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
- scripts/mod/modpost.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/pcmcia/i82092.c         | 1 +
+ drivers/pcmcia/i82365.c         | 1 +
+ drivers/pcmcia/max1600.c        | 1 +
+ drivers/pcmcia/rsrc_mgr.c       | 1 +
+ drivers/pcmcia/rsrc_nonstatic.c | 1 +
+ drivers/pcmcia/yenta_socket.c   | 1 +
+ 6 files changed, 6 insertions(+)
 
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 937294ff164f..f48d72d22dc2 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -1647,10 +1647,11 @@ static void read_symbols(const char *modname)
- 			namespace = get_next_modinfo(&info, "import_ns",
- 						     namespace);
- 		}
-+
-+		if (extra_warn && !get_modinfo(&info, "description"))
-+			warn("missing MODULE_DESCRIPTION() in %s\n", modname);
- 	}
+diff --git a/drivers/pcmcia/i82092.c b/drivers/pcmcia/i82092.c
+index a335748bdef5..a947ffb2df55 100644
+--- a/drivers/pcmcia/i82092.c
++++ b/drivers/pcmcia/i82092.c
+@@ -23,6 +23,7 @@
+ #include "i82092aa.h"
+ #include "i82365.h"
  
--	if (extra_warn && !get_modinfo(&info, "description"))
--		warn("missing MODULE_DESCRIPTION() in %s\n", modname);
- 	for (sym = info.symtab_start; sym < info.symtab_stop; sym++) {
- 		symname = remove_dot(info.strtab + sym->st_name);
++MODULE_DESCRIPTION("Driver for Intel I82092AA PCI-PCMCIA bridge");
+ MODULE_LICENSE("GPL");
  
+ /* PCI core routines */
+diff --git a/drivers/pcmcia/i82365.c b/drivers/pcmcia/i82365.c
+index 891ccea2cccb..86a357837a7b 100644
+--- a/drivers/pcmcia/i82365.c
++++ b/drivers/pcmcia/i82365.c
+@@ -1342,5 +1342,6 @@ static void __exit exit_i82365(void)
+ 
+ module_init(init_i82365);
+ module_exit(exit_i82365);
++MODULE_DESCRIPTION("Driver for Intel 82365 and compatible PC Card controllers");
+ MODULE_LICENSE("Dual MPL/GPL");
+ /*====================================================================*/
+diff --git a/drivers/pcmcia/max1600.c b/drivers/pcmcia/max1600.c
+index 379875a5e7cd..7be9068f6191 100644
+--- a/drivers/pcmcia/max1600.c
++++ b/drivers/pcmcia/max1600.c
+@@ -119,4 +119,5 @@ int max1600_configure(struct max1600 *m, unsigned int vcc, unsigned int vpp)
+ }
+ EXPORT_SYMBOL_GPL(max1600_configure);
+ 
++MODULE_DESCRIPTION("MAX1600 PCMCIA power switch library");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/pcmcia/rsrc_mgr.c b/drivers/pcmcia/rsrc_mgr.c
+index 252893216e50..3168d2a98103 100644
+--- a/drivers/pcmcia/rsrc_mgr.c
++++ b/drivers/pcmcia/rsrc_mgr.c
+@@ -66,5 +66,6 @@ EXPORT_SYMBOL(pccard_static_ops);
+ 
+ 
+ MODULE_AUTHOR("David A. Hinds, Dominik Brodowski");
++MODULE_DESCRIPTION("Resource management routines");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("rsrc_nonstatic");
+diff --git a/drivers/pcmcia/rsrc_nonstatic.c b/drivers/pcmcia/rsrc_nonstatic.c
+index bf9d070a4496..84af1a9f3f5d 100644
+--- a/drivers/pcmcia/rsrc_nonstatic.c
++++ b/drivers/pcmcia/rsrc_nonstatic.c
+@@ -31,6 +31,7 @@
+ 
+ /* moved to rsrc_mgr.c
+ MODULE_AUTHOR("David A. Hinds, Dominik Brodowski");
++MODULE_DESCRIPTION("Resource management routines for !SS_CAP_STATIC_MAP sockets");
+ MODULE_LICENSE("GPL");
+ */
+ 
+diff --git a/drivers/pcmcia/yenta_socket.c b/drivers/pcmcia/yenta_socket.c
+index 1365eaa20ff4..f40f3daafd8e 100644
+--- a/drivers/pcmcia/yenta_socket.c
++++ b/drivers/pcmcia/yenta_socket.c
+@@ -1452,4 +1452,5 @@ static struct pci_driver yenta_cardbus_driver = {
+ 
+ module_pci_driver(yenta_cardbus_driver);
+ 
++MODULE_DESCRIPTION("Regular cardbus driver (yenta_socket)");
+ MODULE_LICENSE("GPL");
 
 ---
 base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
-change-id: 20240607-md-scripts-mod-7f7ff091e02b
+change-id: 20240607-md-drivers-pcmcia-5403bb15e2f9
 
