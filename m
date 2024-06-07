@@ -1,94 +1,94 @@
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16ECF154422
-	for <kernel-janitors@vger.kernel.org>; Fri,  7 Jun 2024 07:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94924154439
+	for <kernel-janitors@vger.kernel.org>; Fri,  7 Jun 2024 07:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717743898; cv=none; b=J4R8kGEOJF6IAwf+pTwrMV7wVkOdWc19zVz8g9/8jx/ft/KFdUNMk6tZ747BsIn5eKA/nqt34hAGcPuvT/htxdMG5+YuOFPT8hxBmjs5Z/1Om2ePftRjXE518plhRAa2lKg/AlZnvAxBWV4AZ3ZZDIrOiT4R/5WPmv9CwMe+UBE=
+	t=1717743924; cv=none; b=t8dX2hRPNDxOYZ3qaHUoU1y5qc/XSB8thCtR2ucmpHLsOpZnLmpmrREBcf/lp/YtjttIaSZx11iQJ4wUbDkh+6q32ALu4qalzduP0O07wJyAAUceXy1mbAQukPNuFwWuT8CEekHFnyfw2YC7iRW51LRiTPsCK0qPWEUnyK7fCxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717743898; c=relaxed/simple;
-	bh=Hr5OtnzzYXS09owrs1mK86KwgVgNDC0JhwPghh0+iyU=;
+	s=arc-20240116; t=1717743924; c=relaxed/simple;
+	bh=nCKjOvPtkI6Jxu47OESopixHSlbmRxzoAX44ldJx3fM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PsOqTrHKwZr3ysgAbp+s4ZQFi9PYwKNxLKi6PnRUQlj8scNBdcb7Ct1VqamlvgqyOH+D9lLkmXal6e50HBBG9mmlZygrErcs6rQreH9C98CfnVmiyHoS1/kycTUp81Vu0vwzo5VYTA6Oe5Z0YRS54MTun8zor6aJnvlt2MIWnCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=368Qa0Yq; arc=none smtp.client-ip=209.85.160.181
+	 To:Cc:Content-Type; b=RabsYzA6c4OgsSPmmz/xAcIj7A+/cbS3F7mSYzrw4oAUdqQuUidCPQ0HJzgnsjTdmP3zElvHyQvLkdZB8Ybavp6bDBHzFvU+SC1qwO78o21bfT63+1qeLHNzV6niZ4Gm+eXo+MeN6g7v8bY5hXn+OfMUcdhF6LoI8h/9eEfMJeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p4mWD1B+; arc=none smtp.client-ip=209.85.160.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="368Qa0Yq"
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-44024f5271dso165711cf.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 07 Jun 2024 00:04:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p4mWD1B+"
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4400cc0dad1so241311cf.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 07 Jun 2024 00:05:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717743896; x=1718348696; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1717743921; x=1718348721; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hr5OtnzzYXS09owrs1mK86KwgVgNDC0JhwPghh0+iyU=;
-        b=368Qa0YqUDLYhcJy3dKyYknI2DX9NwreWbtbnPFeHgDjG2wPnABf06laNs+xnrP/Hp
-         yqqHth7Fo+Mrqh+9Kiz7/b57+HsDDIBZrMpdycblqzP2elr+RPRkehiXMym+sSC3+Js6
-         7pS1/gL6Mzrs48fWxKfx4F5NBvjWDzmb9u1UPvo4w3xo5tp/K5F6XdXVxv1LaE+MG9/k
-         +n7cgl0+Sf+ccZu9QKBwEHCU49F5z0xYGvrI5YK4lTnbVFuONLOZRyolPNsXLLyr9dvx
-         DPW5SWPVtlPubSeL42+2/ojU1Bg9LdYZommhC03FWPgX68HzYn6CQ73Rzf00AmBMOOp8
-         d8Dg==
+        bh=nCKjOvPtkI6Jxu47OESopixHSlbmRxzoAX44ldJx3fM=;
+        b=p4mWD1B+h4U6PTAGthYJhMAfkuvngUzT41trsUcwdH3NOTn3KvDgYqNG9TQ+n4gqvE
+         8Arne2Mp9BlULiDc+rKn82ve2eQ4cCAKoA5VH/5Ce1QXn/K1WBpYeTM9X40fdGbgi3C3
+         pWP/MafcrwforICJSP4MnAdsgDdUBhLiqu0uv/brUXVDgEBQN/O5rLjrpYbf1vr4luAn
+         Z0gUvzA8Qqsa9sgZ40Ocmdkn6V8RBr/zC3cSTuPX4y0UuAKbj+ZRQOs7ogGpGyAdLqIM
+         H7X4OzP+25f5Rfev5ssNu8NLXNbkuv0W2dMPJW38s1PKTiGjpmIicOsEHHz1yCnEDqaZ
+         c33Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717743896; x=1718348696;
+        d=1e100.net; s=20230601; t=1717743921; x=1718348721;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Hr5OtnzzYXS09owrs1mK86KwgVgNDC0JhwPghh0+iyU=;
-        b=WZRc45QSOJPQM6mrp9U7Q51FQJoGAapbbSD7Kn+5GLbID7OT3XBQTTSMnDOvWugj11
-         mrtOxGVrZILZE9wDUSOKvpVk2UQHC0lIxXn/lwr03O+P56X9ZBHJQR4C/B9cvU0/EcYw
-         Dn4nrFOop+gf6ZNpu5rdyt9vD8QylvUBJkXbHk8yIu+MHxo+FGWG9qw96sdHA7uisc3d
-         z8zA9eDL60kVSFBKpn78wczKGyRl35oGNV6fqWUq0fQSwscXiK99d8WD3zB9f2gjD7Fk
-         iotYuwcjIhAHE/EtLMDh5cMzLFRlrE/ZmC9m9BEcAoQ5mYKma2WVKRz7H6LMkKgrbP7/
-         O59A==
-X-Forwarded-Encrypted: i=1; AJvYcCXOfrvfvImH65tTIIISF8QPJhOGqIP4r5LDTEbNAgMDZc508D/oa+3dEr52B094CQ2r9hu21l75rdbDN90cuDu3ok9XECldIsjcUVYVtTqX
-X-Gm-Message-State: AOJu0YxWekRZ1RkFQldn7nabumJqwmgDwx+6qdXSen0PJAzac6gsItSQ
-	y+dsIqZ9nopLpY2jAh7R9hBvBdb6xxiJshjMy2r2KMQBYid8Zzvzvyqq28h+bq2lzFGT9boE24h
-	WBFkrCZHNY9Ti+emDd/OVdVQMH3hIF3k05VrW+F7wb9UNvhf5zerg
-X-Google-Smtp-Source: AGHT+IGCIv8syTd9VWeWKZZ0SMIVQ9R/9GT+/Yk4N0uDWNCXVAzQSVpHPHb/ETP8A3dM4Ws7jhcojZPDgom9nhb5cjI=
-X-Received: by 2002:a05:622a:4ac6:b0:440:4abf:3e10 with SMTP id
- d75a77b69052e-4404abf3f7dmr502971cf.5.1717743895860; Fri, 07 Jun 2024
- 00:04:55 -0700 (PDT)
+        bh=nCKjOvPtkI6Jxu47OESopixHSlbmRxzoAX44ldJx3fM=;
+        b=vso60hPUWybwS/qeyUa2zQ9jRzNBLZczAdWxvBWY0G9UtoMARxNMjiPM05bE1ihIuW
+         GfA9qtuZQQQH4/20DUZxshZJ8WPonayC5NITQm4ggKS/IDoPWu7UOggdJ/uXzWL+ZJnF
+         8zDp2jY1Zkuo4JTEuf6IDWZ1MTmfc6Xh1r54dMN+JoPH4D/WpvM59uQqdVSDsySgqBGv
+         BcI+BD8G4yDCfm+vw+ITYnBzYNXgSdvfcpvLT9I5pGNczrTh7akZUcx0HE+yagRxSWAe
+         xf2EplSl3Q1vGB+HtTtjKTawxDhxbj13XfxDM33LDaeZJ/lcDdHLYXFaa9DVhQMM+LpW
+         aWJg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/zLPOSvFBILe+Pm9gvWaBMSKRd3q8UPOiqItXCwCbA+wJx7LFU6bZ5U9VHCN7bZ1gV8faF5bLNri0YxVPzgNlS3W3wJvyHJ1RkJVVT98I
+X-Gm-Message-State: AOJu0YwlUYrj+Efratr5SQ9qBRLVy0KDakuUws5L1cj8M7J2A/QsK+q9
+	x7JPyoeGZ7KLMt7Ru/RdYHii+Fon9OWpODy9jB9ubMhPjHNsmhAgMMtrkw/PCtjUf5Kj+rS9Dm+
+	cwz+yGLPiXibQCGVt67mAW3507Dk8kSyy+QIZ
+X-Google-Smtp-Source: AGHT+IH/R+cvtIHI1kAkTmVSndk1xsEvhq1ET9so2r01OzVDjHUY5mMlZ+sqfn6VluAvEL8ZVwjIKDx2tres9GCPCUQ=
+X-Received: by 2002:ac8:700e:0:b0:440:44e9:27b7 with SMTP id
+ d75a77b69052e-44044e92aafmr921121cf.4.1717743921394; Fri, 07 Jun 2024
+ 00:05:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531-md-lib-list-test-v1-1-50b79241cbb0@quicinc.com>
-In-Reply-To: <20240531-md-lib-list-test-v1-1-50b79241cbb0@quicinc.com>
+References: <20240601-md-lib-kunit-framework-v1-1-f406bb629bde@quicinc.com>
+In-Reply-To: <20240601-md-lib-kunit-framework-v1-1-f406bb629bde@quicinc.com>
 From: David Gow <davidgow@google.com>
-Date: Fri, 7 Jun 2024 15:04:41 +0800
-Message-ID: <CABVgOSnBT=z0gxZ-5Y5eobCvveY-xN_e-pKHTWR=y16MO7wgnQ@mail.gmail.com>
-Subject: Re: [PATCH] list: test: add the missing MODULE_DESCRIPTION() macro
+Date: Fri, 7 Jun 2024 15:05:10 +0800
+Message-ID: <CABVgOS=bpff0aejxAWr=y=k-gOkq4QYw614svbaVkXs8Md+dQQ@mail.gmail.com>
+Subject: Re: [PATCH] kunit: add missing MODULE_DESCRIPTION() macros to core modules
 To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
 	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	kernel-janitors@vger.kernel.org
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000c1c3be061a476a88"
+	boundary="0000000000004691e8061a476c5d"
 
---000000000000c1c3be061a476a88
+--0000000000004691e8061a476c5d
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 1 Jun 2024 at 07:58, Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+On Sun, 2 Jun 2024 at 01:19, Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
 >
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/list-test.o
+> make allmodconfig && make W=1 C=1 reports in lib/kunit:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-test.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-example-test.o
 >
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
 >
 > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
-
-Nice catch, thanks.
 
 Reviewed-by: David Gow <davidgow@google.com>
 
 Cheers,
 -- David
 
---000000000000c1c3be061a476a88
+--0000000000004691e8061a476c5d
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -156,13 +156,13 @@ GQs0EfiilyTgsH8iMOPqUJ1h4oX9z1FpaiJzfxcvcGG46SCieSFP0USs9aMl7GeERue37kBf14Pd
 kOYIfx09Pcv/N6lHV6kXlzG0xeUuV3RxtLtszQgxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
 MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
 IFNNSU1FIENBIDIwMjACEAFsPHWl8lqMEwx3lAnpufYwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
-hvcNAQkEMSIEIB2A0vNHg5kwRlSo2WZhBGsRl8iGDByZtgpXYMV7BPNWMBgGCSqGSIb3DQEJAzEL
-BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDYwNzA3MDQ1NlowaQYJKoZIhvcNAQkPMVww
+hvcNAQkEMSIEIGmKy0FaBQCTp2tGEOrAT4IlaVtXvDGdxJVVGtHUxviIMBgGCSqGSIb3DQEJAzEL
+BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDYwNzA3MDUyMVowaQYJKoZIhvcNAQkPMVww
 WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
-hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBimhZ/
-T69aZlr570UOE7Hj/231guo0Zv8K0/kDc0idFaVxTIRUlyTQUMixL+dYn3/ZRFKqp10N1mcon7GQ
-UQYxjk/LV+dNQQjr8P0EKU0vSwQTdQyNBEmLpY6W1bNJd5xmw7cok0ZalkXNjC4BfGLLwmdCn2Tr
-OWDMoKGYzuFFUWKQjfoPSj5VHlej94h9igHvApoTcBIA/+yhZ6gVLqUxNVeMQtUkcILrLpDzcjPN
-xac1obcWGSFJeMZypBaX+ZR+QOqosmXwC7VBO3ljH62eREYCrAkYwXOE48Mncw2uskGQPmRQc7gV
-TQb53GHBE++6PFPPOZRCZORzFXS8yAt7
---000000000000c1c3be061a476a88--
+hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBXLmx8
+lspNlDzkG3oPI6IOhun0mKkfImYY5mknRH0TgWF1jtQHyCOFiw+OkhpnamzbxTQPlT+aRKL33jWK
++eRs1tXwgqyxpJn4bWoK7or/zWPxB8U2YuOx+jv4cTB/vDRWIJ1AJKlmfvOjsYKxiLvTYCxcwnZ5
+yuOXwJqwWIBGnkimA5nUyOmLJur5l7xUNcA6LOD06HNiVzJtbUIHYnzJeYRxo3QBtnb9b94GaRMD
+uawWDuprn8F8YWiqtNWTM4ACWYfXKfMJlgWzu3W8pVxVUSQ/BNqjdMvBAOnTaJsSU78SMToobIba
+uU8OVDq15e2ur8uz/Tmv8hShnl7J9ni4
+--0000000000004691e8061a476c5d--
