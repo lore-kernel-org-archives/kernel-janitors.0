@@ -1,98 +1,176 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from msa.smtpout.orange.fr (smtp-70.smtpout.orange.fr [80.12.242.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B572179967
-	for <kernel-janitors@vger.kernel.org>; Sat,  8 Jun 2024 14:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C67149DED;
+	Sat,  8 Jun 2024 14:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717856678; cv=none; b=SYWtomO3E9zWVkBDxDqlNDaP3/KYSZp3765mFXv8s+pm9Xjs8A7SdEz4BjsiHpLrEn9G+yv0g4xRaqj1Z97Fwk83gYoJ6X0D/Av4hYTgDZCR2Kl52iI7NkaWV2hXR9cTUBvhUTyPE9BueoaOuT4I5hxJZZiRL9nYldktP3IbWwQ=
+	t=1717857305; cv=none; b=ZWZZBBDMYELYT1AKTCCwEirIz6bg8qTWxEqGuCX5vP1c+rXExc1Z9vt1n9VJkl3iN0WYIiQciqo/91YO11xCSduoLFT8bGUxRFvQrOU0xrGb8oyi9kXC4xbmQjDQhpjh4vq91+u6WH8AJiM6l4sLystY9cNbzeHLoASh2KP/tcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717856678; c=relaxed/simple;
-	bh=lUHuy8Zfz9urTlm/jQeycQ6F7jtrAN9u++rvVMTwTgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tDb+ovymTV1ft7crj+VmPiOnaf1CMKgrKo6FGIw2/2zz67X6aYiqnTrz+VJM0gi3e9oqbeqvn7M/H4kxNeYkuHq+kdaKb58/aj8mLbAc/3TnSJlic7zBadPmymHGCoLKIzeFBVCxTQRx3U9vIcCIm4MklvUytx7J+4AlQ9mI8MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MkM/7s3B; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1717857305; c=relaxed/simple;
+	bh=Avzt8iuW+icupfQzd34mdUP1exisuMqsbmUkbTgWcBk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=E3vK9IB1F6SoCECVWOhI/b43ZpfmVfB7Wiuv59qOECtcjrvC2iXuy4322cdUorN1bl5PxbF99Xi07T4V/AtFG0YyHlRWM34ZSj+1+EsYjDXlDabLroYRkSstobh2aQf9aOtpOMdGdEczsPg1fWDRIJ/EjhQJlqiF4W/pBZk6TVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=H/3bKZTJ; arc=none smtp.client-ip=80.12.242.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MkM/7s3B"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-421757d217aso11604105e9.3
-        for <kernel-janitors@vger.kernel.org>; Sat, 08 Jun 2024 07:24:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717856675; x=1718461475; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y3xUXLeXJa7g57nR3Rih0dUWygv43+3NziJlOMTLS4c=;
-        b=MkM/7s3BdonbSLtkq+3dkQOqDYsf2ynPHvl4H/pU6e2hfJv/VmwW8+FK6V3loW7pwS
-         grguLgrudIcJ1ptPAq+XV6/JiYi47CPdYk96gcd6LiPGi+NJ8JHMep/GjrkNWsSPoIu8
-         sYPKYg6oSGDQD8gKLbQluMZoYjXraG6Oza+l9p7q8XrCD+DzcUo/jEY/chsE0+YfVjIu
-         VN1l1Jv3nec2flg09SmILpdIy2Dn5PrkaupHLzjGoRVrwGfGLx8S3Z3b+TDfT7FRsduV
-         7wZ6fNKL7JDfwUC0d6E30mtdMdj9rhPdyyTFvprvz1MWDLq4EHEiIe+CMlMvl0oDRHhC
-         yVWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717856675; x=1718461475;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y3xUXLeXJa7g57nR3Rih0dUWygv43+3NziJlOMTLS4c=;
-        b=oXPgIaVp6YyzsPHPgHMw1lWOIE+wROXCrbUO4BCUyesPxf5gyQ0864vSaYL2hQdVS4
-         Ehbyj5Y4SQgiYH16AA7Sbkh0bJ5+NCGwp6CQkLSL+1iPLuuWEZJ82m+Q6vWtp6C/agFz
-         evxNhriK+Mzm9dHBOWCwBfmDoNKgOsOF2IPAXuaq2GgJsyL3r2xAl0SSM/pwLjte798q
-         LPsdFE3Vqzw77ha6jcvM0SspI//zb3jeDVZe20DF/drgfsYY6EOMigukyIjl5xM/QGf6
-         w8EAVXeQM0OAxqiAlKN2e5KqIhao/GgaACGLdrMUmLE8ELhCnj4jqFiAHC4wmBMEwg8G
-         RLlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOh0vUaEEl4PqLHHnyfTHEUjsth2LUb8MaSEoDlI8QBibsWW+2v2CQXtTL11SuBNNa3t79sLDM6UzZxWOvwFWFuxQNJfPRh2lePrfWfEqM
-X-Gm-Message-State: AOJu0YwvicHxD7eHPLAYfRD4eKzZln6POYp7ktMlrcsdiVu1Mww69vxZ
-	DTarhoYCTDpXwAI1iXyCaxGDQpzQUPSj5z4yL9YQi8QA+EFzJMz8eAcJi4yrqXTYekACYYXQhR4
-	p
-X-Google-Smtp-Source: AGHT+IFmaCUQ01iQpATq/GX8GTofXo5bwpAglPLwHfhcOwikEZDRyVKEQD6qy8rV6aM+BrXdDmp4sw==
-X-Received: by 2002:a05:600c:34d5:b0:420:fed7:2903 with SMTP id 5b1f17b1804b1-421649fbfa9mr53053035e9.15.1717856675259;
-        Sat, 08 Jun 2024 07:24:35 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2c738bsm86538485e9.32.2024.06.08.07.24.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Jun 2024 07:24:34 -0700 (PDT)
-Date: Sat, 8 Jun 2024 17:24:31 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Artur Weber <aweber.kernel@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] ASoC: samsung: midas_wm1811: Fix error code in probe()
-Message-ID: <01590109-cf27-404b-88ff-b42bb73ca1c6@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="H/3bKZTJ"
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id Fx9Rs04TztVxQFx9gsAXpq; Sat, 08 Jun 2024 16:34:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1717857293;
+	bh=5Rt9DtR3wFrK6NMeCAc9r8PlkozK/OUjFMR/opTt2bA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=H/3bKZTJzfjZgxWQ8Rs0pWnmgAXTGeglbXFR4n4P469sILXGIkny3rjPA3/Bu8+Vv
+	 sGSH8L+E+1yaCyhC8y9hV76w0dguIvAtpgioV7E2/RfdU2ssj6/v63KNKTFpwBjoo8
+	 YJ5dbTWax5EV0LrH3UVGHaJhxcdYF8CAxS+wV0+e/yZPIzlQBXz+CWVexB/3q0xkZL
+	 Ic/cn4zhFBj8t6e/tFR9NdMDKD7enSUxCPAiUp/cyIJom+iUJ1RyqPqB9bab2RvcNB
+	 0Z9raMR654UkVwRhj+rrAEbIRsIwiiDCwy4sC47c6KP5z0ayRfyB9p0KjGjnjW7eOX
+	 jXQfBpKEtiMvA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 08 Jun 2024 16:34:53 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: jk@ozlabs.org,
+	joel@jms.id.au,
+	alistair@popple.id.au,
+	eajames@linux.ibm.com,
+	parthiban.veerasooran@microchip.com,
+	christian.gromm@microchip.com,
+	willy@infradead.org,
+	akpm@linux-foundation.org
+Cc: linux-fsi@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH RESEND 2/3] most: Remove usage of the deprecated ida_simple_xx() API
+Date: Sat,  8 Jun 2024 16:34:19 +0200
+Message-ID: <ddbb2e3f249ba90417dc7ab01713faa1091fb44c.1717855701.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <cover.1717855701.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1717855701.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
 
-This accidentally returns success instead of -EINVAL.
+ida_alloc() and ida_free() should be preferred to the deprecated
+ida_simple_get() and ida_simple_remove().
 
-Fixes: c91d0c2e198d ("ASoC: samsung: midas_wm1811: Add GPIO-based headset jack detection")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+This is less verbose.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
 ---
- sound/soc/samsung/midas_wm1811.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch has been sent about 6 months ago [1].
+A gentle reminder has been sent 2 months later and an A-by has been given
+[2].
 
-diff --git a/sound/soc/samsung/midas_wm1811.c b/sound/soc/samsung/midas_wm1811.c
-index 3a269c7de169..bbfe5fef59af 100644
---- a/sound/soc/samsung/midas_wm1811.c
-+++ b/sound/soc/samsung/midas_wm1811.c
-@@ -623,7 +623,7 @@ static int midas_probe(struct platform_device *pdev)
+Another gentle reminder has been sent another 2 months later [3].
+
+However, it has still not reached -next since then in the last 2 months.
+
+So, I've added the A-b tag and I'm adding Andrew Morton in To:, in order to
+help in the merge process.
+
+Thanks
+CJ
+
+[1]: https://lore.kernel.org/all/988c218ef3d91bffaf4c3db9b6fba0d369cbb2b2.1702326601.git.christophe.jaillet@wanadoo.fr/
+[2]: https://lore.kernel.org/all/cd56d073-04ad-40ad-968b-7e137d10f456@microchip.com/
+[3]: https://lore.kernel.org/all/c5e519ea-2602-417c-84e9-199b610d427e@wanadoo.fr/
+---
+ drivers/most/core.c      | 10 +++++-----
+ drivers/most/most_cdev.c |  6 +++---
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/most/core.c b/drivers/most/core.c
+index f13d0e14a48b..10342e8801bf 100644
+--- a/drivers/most/core.c
++++ b/drivers/most/core.c
+@@ -1286,7 +1286,7 @@ int most_register_interface(struct most_interface *iface)
+ 	    !iface->poison_channel || (iface->num_channels > MAX_CHANNELS))
+ 		return -EINVAL;
  
- 		if (channel_type != IIO_VOLTAGE) {
- 			dev_err(dev, "ADC channel is not voltage\n");
--			return ret;
-+			return -EINVAL;
- 		}
+-	id = ida_simple_get(&mdev_id, 0, 0, GFP_KERNEL);
++	id = ida_alloc(&mdev_id, GFP_KERNEL);
+ 	if (id < 0) {
+ 		dev_err(iface->dev, "Failed to allocate device ID\n");
+ 		return id;
+@@ -1294,7 +1294,7 @@ int most_register_interface(struct most_interface *iface)
  
- 		priv->gpio_headset_key = devm_gpiod_get(dev, "headset-key",
+ 	iface->p = kzalloc(sizeof(*iface->p), GFP_KERNEL);
+ 	if (!iface->p) {
+-		ida_simple_remove(&mdev_id, id);
++		ida_free(&mdev_id, id);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -1308,7 +1308,7 @@ int most_register_interface(struct most_interface *iface)
+ 		dev_err(iface->dev, "Failed to register interface device\n");
+ 		kfree(iface->p);
+ 		put_device(iface->dev);
+-		ida_simple_remove(&mdev_id, id);
++		ida_free(&mdev_id, id);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -1366,7 +1366,7 @@ int most_register_interface(struct most_interface *iface)
+ 	}
+ 	kfree(iface->p);
+ 	device_unregister(iface->dev);
+-	ida_simple_remove(&mdev_id, id);
++	ida_free(&mdev_id, id);
+ 	return -ENOMEM;
+ }
+ EXPORT_SYMBOL_GPL(most_register_interface);
+@@ -1397,7 +1397,7 @@ void most_deregister_interface(struct most_interface *iface)
+ 		device_unregister(&c->dev);
+ 	}
+ 
+-	ida_simple_remove(&mdev_id, iface->p->dev_id);
++	ida_free(&mdev_id, iface->p->dev_id);
+ 	kfree(iface->p);
+ 	device_unregister(iface->dev);
+ }
+diff --git a/drivers/most/most_cdev.c b/drivers/most/most_cdev.c
+index 3ed8f461e01e..b9423f82373d 100644
+--- a/drivers/most/most_cdev.c
++++ b/drivers/most/most_cdev.c
+@@ -100,7 +100,7 @@ static void destroy_cdev(struct comp_channel *c)
+ 
+ static void destroy_channel(struct comp_channel *c)
+ {
+-	ida_simple_remove(&comp.minor_id, MINOR(c->devno));
++	ida_free(&comp.minor_id, MINOR(c->devno));
+ 	kfifo_free(&c->fifo);
+ 	kfree(c);
+ }
+@@ -425,7 +425,7 @@ static int comp_probe(struct most_interface *iface, int channel_id,
+ 	if (c)
+ 		return -EEXIST;
+ 
+-	current_minor = ida_simple_get(&comp.minor_id, 0, 0, GFP_KERNEL);
++	current_minor = ida_alloc(&comp.minor_id, GFP_KERNEL);
+ 	if (current_minor < 0)
+ 		return current_minor;
+ 
+@@ -472,7 +472,7 @@ static int comp_probe(struct most_interface *iface, int channel_id,
+ err_free_c:
+ 	kfree(c);
+ err_remove_ida:
+-	ida_simple_remove(&comp.minor_id, current_minor);
++	ida_free(&comp.minor_id, current_minor);
+ 	return retval;
+ }
+ 
 -- 
-2.43.0
+2.45.2
 
