@@ -1,37 +1,36 @@
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E85D1C6A3;
-	Sat,  8 Jun 2024 14:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E088015699D;
+	Sat,  8 Jun 2024 15:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717857849; cv=none; b=tBi++uDH9bOw3PlSzTU3pHIJPZMCclzcsPXiRx4dsX+YyFzA3TN05/seXNOpZFGVNc9ISAo1UX3I9KuN4iulEgJVXzQWI7HwiOiBClSNEb4h6nMiwE19l73lA/XfhQGIpHduK2aUGcdIrg5Fb8tpnHuzmQXc5F7jqUh1QqRbV2U=
+	t=1717859337; cv=none; b=ftyZUCCTiu7uvd/56gEXmDNBrPk1U3QeANtumF2n6QexvI71Hvj1/c6ZzGQ6pFZE8Q9Jil4BHO3AaXPWc4r1d19c1gzODTIBUK3XOIR/0agakhS1e1ToIqGRq0U/6he8rBr99vtvDbqa+erkrQW8r4inbDBKnS0z9OJfN66ahT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717857849; c=relaxed/simple;
-	bh=lWUI/lLw4K/aku+gQBv6f012sqNodVM7vtKVJcOLBr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=duPo3BsLCM2MdNb9NHfL1fJCq6EA9YgC4c++rnUNWoNqWIH5G9OyRSbgN20KHAOSC9/bxBhpS7cungm1fZ/wZtNu3RcOIuOURgn2a9l9LSQ1I9xQeQ2nPc+EmkNzFTKEXq4RA3obMORv82LZk2JBocZDBm2UrG5H/vH3HTWMmmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=jWztZ6EV; arc=none smtp.client-ip=80.12.242.17
+	s=arc-20240116; t=1717859337; c=relaxed/simple;
+	bh=/8Eaz0dOzW2Y/Aqj56RjuuuZa7c4BBPmMKiet5G1VG8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=myOjKu0KnGEoJptDoOE2RqXtTgQw4BRQ4zuc5XINRbE1w6f4SyoU3ZiCkZltWM5faOtFizgKDYPxk6qHoLvzBEfiBzeDWxaxxWVZ1EhbLcGNYy6aqeBKd9KzISOGmHZqaaGQtRYQuWlYtl4OuQj+VDlHCTBDblHDM9avZUPICd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=avRfbVYm; arc=none smtp.client-ip=80.12.242.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="jWztZ6EV"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="avRfbVYm"
 Received: from fedora.home ([86.243.222.230])
 	by smtp.orange.fr with ESMTPA
-	id Fx9Rs04TztVxQFx9hsAXq3; Sat, 08 Jun 2024 16:34:54 +0200
+	id Fx9Rs04TztVxQFx9RsAXo1; Sat, 08 Jun 2024 16:34:43 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1717857294;
-	bh=MxuPvXcFH8FAbiPwG6OxtP6h9EO2lNhJCavfueUtjog=;
+	s=t20230301; t=1717857283;
+	bh=wdE+q4tYw0Mtn7ZcN10lEjC0L3+XOPxEbNZhXe9vMQQ=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=jWztZ6EVoUlEaMITLyVQXV8Wl8O4L5I8bCtc2ArUUjoekzpq2A2X3UkWKnT/jDAwS
-	 XuzKKA3KABulEqqMzUvGPCvbgzdzEGF8BbzWm771khCIGhaHuwmWTQj1fUg/aS8qLq
-	 +E51xjytZlntwD6T7ZvfEHocZ/I40zrT+EYKJAd1/cDAoZ2+Ky8gNppX9nQQ/To6k2
-	 Ff0Mung6kPU0j8yDTU3xIXRkZ78hdvmoZtGEBkzzOjuwVcpt8j0ZPwIdKlTvSmYYQ6
-	 75vhfG/svmw0NBCish3QjmHVTxyIMCum/6bEHOcaKPGwT+dshVyWRW6E2FlhTni9YT
-	 GYF8R5lAKr/UQ==
+	b=avRfbVYm3oI+Q1ijAAVS0vX3w7ecGwso5Kk+KnoGVjGFiOgMHOmeMl+H45CKj5MJA
+	 wPwRR3hnQuYrKqj0XLnQ126JXk4THpYfhecCwfl8JoACIbS8CSob86RnSb10mha9LL
+	 uw7b8Fy+G4mdAkVlwtgBVD/RmDClZhQFcUuS4UtDGcQcutA0WdY49E04fGO49UJaWE
+	 UzhYWymT1ajfeTKTYlO7LLDuKUUKRfSRrWU77MJMCHwiQisRUblrjUADHGmES8dZHQ
+	 wk8pP7xVeXJr0B2FVyafuyidHZEQdZuB4UV1T9xhVETDzvSk+AWX0r+4zt5hpUrbFH
+	 H4K0D2jll+SlQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 08 Jun 2024 16:34:54 +0200
+X-ME-Date: Sat, 08 Jun 2024 16:34:43 +0200
 X-ME-IP: 86.243.222.230
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: jk@ozlabs.org,
@@ -47,12 +46,10 @@ Cc: linux-fsi@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH RESEND 3/3] proc: Remove usage of the deprecated ida_simple_xx() API
-Date: Sat,  8 Jun 2024 16:34:20 +0200
-Message-ID: <ae10003feb87d240163d0854de95f09e1f00be7d.1717855701.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH RESEND 0/3] Remove usage of the deprecated ida_simple_xx() API
+Date: Sat,  8 Jun 2024 16:34:17 +0200
+Message-ID: <cover.1717855701.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1717855701.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1717855701.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -61,58 +58,46 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-ida_alloc() and ida_free() should be preferred to the deprecated
-ida_simple_get() and ida_simple_remove().
+The small serie removes the *last* usages of the deprecated
+ida_simple_xx() API.
 
-Note that the upper limit of ida_simple_get() is exclusive, but the one of
-ida_alloc_max() is inclusive. So a -1 has been added when needed.
+The 3 patches have received either a R-b or A-b tag but never reached
+-next in the last 2 months.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
-This patch has been sent about 5 months ago [1] and has been A-by just a
-few minutes after.
+So, I've added the tags and I'm now adding Andrew Morton in To:, in
+order to help in the merge process.
 
-A gentle reminder has been sent 3 months later [2].
 
-However, it has still not reached -next since then in the last 2 months.
+2 other patches related to this API are still pending somewhere and are
+not reposted here.
 
-So, I've added the R-b tag and I'm adding Andrew Morton in To:, in order to
-help in the merge process.
+[1] is related to tools/testing/ and will be re-sent as part of the
+final removal, as suggested by Matthew.
+It is A-b, but the name of the function used in the test should be
+updated as well (s/ida_simple_get_remove_test/ida_alloc_remove_test)
 
-Thanks
+[2] is a tiny clean-up of a comment. I'll resend it to the corresponding
+maintainer (Srinivas Kandagatla) later, but won't fight for it.
+
+
+Obviously, you can also pick up one or both of these patches as well :)
+
 CJ
 
-[1]: https://lore.kernel.org/all/f235bd25763bd530ff5508084989f63e020c3606.1705341186.git.christophe.jaillet@wanadoo.fr/
-[2]: https://lore.kernel.org/all/24c05525-05f7-48bb-bf74-945cf55d3477@wanadoo.fr/
----
- fs/proc/generic.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+[1]: https://lore.kernel.org/all/81f44a41b7ccceb26a802af473f931799445821a.1705683269.git.christophe.jaillet@wanadoo.fr/
+[2]: https://lore.kernel.org/all/032b8035bd1f2dcc13ffc781c8348d9fbdf9e3b2.1713606957.git.christophe.jaillet@wanadoo.fr/
 
-diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-index 775ce0bcf08c..c02f1e63f82d 100644
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -202,8 +202,8 @@ int proc_alloc_inum(unsigned int *inum)
- {
- 	int i;
- 
--	i = ida_simple_get(&proc_inum_ida, 0, UINT_MAX - PROC_DYNAMIC_FIRST + 1,
--			   GFP_KERNEL);
-+	i = ida_alloc_max(&proc_inum_ida, UINT_MAX - PROC_DYNAMIC_FIRST,
-+			  GFP_KERNEL);
- 	if (i < 0)
- 		return i;
- 
-@@ -213,7 +213,7 @@ int proc_alloc_inum(unsigned int *inum)
- 
- void proc_free_inum(unsigned int inum)
- {
--	ida_simple_remove(&proc_inum_ida, inum - PROC_DYNAMIC_FIRST);
-+	ida_free(&proc_inum_ida, inum - PROC_DYNAMIC_FIRST);
- }
- 
- static int proc_misc_d_revalidate(struct dentry *dentry, unsigned int flags)
+Christophe JAILLET (3):
+  fsi: occ: Remove usage of the deprecated ida_simple_xx() API
+  most: Remove usage of the deprecated ida_simple_xx() API
+  proc: Remove usage of the deprecated ida_simple_xx() API
+
+ drivers/fsi/fsi-occ.c    | 17 ++++++++---------
+ drivers/most/core.c      | 10 +++++-----
+ drivers/most/most_cdev.c |  6 +++---
+ fs/proc/generic.c        |  6 +++---
+ 4 files changed, 19 insertions(+), 20 deletions(-)
+
 -- 
 2.45.2
 
