@@ -1,115 +1,114 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AE017BAF
-	for <kernel-janitors@vger.kernel.org>; Sat,  8 Jun 2024 06:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3113F17BAF;
+	Sat,  8 Jun 2024 08:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717829587; cv=none; b=MTLfF5pIOC6L5I6oKEwz3kWDlouyNxxdFiFZvhT9ovI/ttgfw/E4z5osYh2gCrgUc5RHOPP7G/CczufrFIG8EYszaycX34fViSKWuBwcEdUtngiPt3YWwBT2YRaSvYDKCPcKOaW+FizuwXg63/DFfeMwCyZ0C+c5GkWoGwqQ05U=
+	t=1717835119; cv=none; b=MqaEBef7Nqoss1lVwtM2wA036uPpPrsFc9UKJD5fkpCJ10Rb2slvF8X4NKmaNM2zaGvGyVgTKF6t1w8R78V0LNx0SMUXVo9x94rDmAXQ3S3RyRjH45nCbEP9fUZac+1gPa7Tb7RbdJEBZc1UJjHihmeMzm4TDPTSlSUxwlA1qxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717829587; c=relaxed/simple;
-	bh=oQIHcN3t0mGos6nkIkeUNHAGyPzrGqA67aW9fAkcaHo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TmbfaOCh4Gm0dHYYJLowS6SOfzr+UFd2JcT4oPNnngOfceQ/O7ENPIJ87mlktWsVg+ht7umP+ft1jMvcnuxXHAARWUWLrO3eaJ1g+gM1aE6JxB2EVcLEHGzjcw0fDumS1H0JDL0i1GfjXrnCoycNUVJev2h7VbD9fwn825Ki8Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VaeowVvQ; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1717835119; c=relaxed/simple;
+	bh=NHcCBCkVIG4S20BV+hk5Vde+bCt+RveWygaQATTN7vY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X7H8rgXj9ZFuK9F5WsnhmP85kCkcEizvvBAOjT9CxbYU4UkNLyoqdhcj+N1MezUm/HZEnvb9bDHMbi0hQG5gI0EvBguWhhSfCM2fWUsTOfES6GlbrJQdXZm30+R4QALZyCofqy+tPUtqo1S+ngpKZH6YG4d8B9DzGSsrHJhmiQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=OYYyuIoT; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VaeowVvQ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1717829576; x=1718434376; i=markus.elfring@web.de;
-	bh=oQIHcN3t0mGos6nkIkeUNHAGyPzrGqA67aW9fAkcaHo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=VaeowVvQ4DeKPp2b2Ghs1Aqt80Cxcfxat3mgzFQcSeg74a7N9/aDJmG7jbAB2bEa
-	 SsAV4TbQbUx3i4t7ZmgHf50D5hp2ayoW52QNueuEtKsrp7TsJDUAwIRERyI/m16bk
-	 Abv/YaGXVbnYUBsNlPmZyqxfXDviYzroj7YmA8aZyRbL9CQB3MPhyQ38S3p8kwhhI
-	 HhHIEzRxn6jOyjK1gH9Zo0+WcZyfb7flopJQtOLBvAHwY0PoKtW8jqAIAVVkiAO1v
-	 QGS/PtkCPVWdE70yA8hazEKg2V6I08pDGVOjqFME4tb1Dxqq5yixd+YoGAwkp5iFG
-	 WNmOqDQp6iDnX0YMyg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N6sBp-1sVEiF20nn-00ww3z; Sat, 08
- Jun 2024 08:52:56 +0200
-Message-ID: <63657b4b-b516-4993-8836-0b757f968401@web.de>
-Date: Sat, 8 Jun 2024 08:52:44 +0200
+	dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="OYYyuIoT"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=yTLtEsPk7oLK1m4GqjGTNlGn4NBucRzN+JPW/nQ4vXA=; b=OYYyuIoTYtrYySaGH65PZyH8ot
+	+gRjVqDpVMYiU0noV5X2mj2YvtIelGPFNYD160mnHDsAdRtHgSrMylySoJur+XlgmGljlERG2Dv54
+	OECu9VbAQKr0xQsYnRAp57AfVqpJ0PdMnrBFy4lNJ7IQEs8HMSalXuI1m5PzpGEBhKTinS6iB+jdO
+	sG237T574IpSZCVrVZa294fa8lagaXahxJXe2vOfXzoAQ8O5jhcjSnmlMTdzuKqyPfhC1XvfNBpe+
+	qEVlm06PcSvZQVe9C2z5BeZDEyMH4H0yqMRBZtIHhgN8pln0gu2rZbWCRnNtxGFXrzQggPkpyHrPJ
+	z599KfOw==;
+Received: from [2001:9e8:9f5:cb01:3235:adff:fed0:37e6] (port=35328 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1sFrNp-00CUUa-GL;
+	Sat, 08 Jun 2024 10:25:05 +0200
+Date: Sat, 8 Jun 2024 10:25:02 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Vincenzo Palazzo <vincenzopalazzodev@gmail.com>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] modpost: bypass module description test on vmlinux.o
+Message-ID: <20240608-certain-potoo-of-agility-cc231c@lindesnes>
+References: <20240607-md-scripts-mod-v1-1-d3cd5a024f05@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cocci] Determination of lock guard data (with SmPL)?
-To: Julia Lawall <julia.lawall@inria.fr>, cocci@inria.fr
-Cc: kernel-janitors@vger.kernel.org
-References: <7eb9626c-da7b-414d-bf50-da1eed27be31@web.de>
- <alpine.DEB.2.22.394.2405261847380.16852@hadrien>
- <9d79a2de-10fa-479c-b720-1c4a2f51782d@web.de>
- <4bad748-afee-713a-a2d7-30b6e5c1cb28@inria.fr>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <4bad748-afee-713a-a2d7-30b6e5c1cb28@inria.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ciHrHpRuRZdVO+RhDqKLoRKld7/wpDTU2cSQ2v2zr2FYd0MSYPO
- X3Hq8ja7VA/vEasW/3nevigCA11gPnhBGZZdT2bCCmgVthXXZe9bQZysQ8udXT0fb+tFx/u
- FeMynjG8sYKHj3nAHzmDZgD1mVq80cDBJOF12WhbBRN2vFoVm4iTRCRKNE6xQTgfGbaCQma
- 7Zbzs7eWZ+2MOOdIGC5fA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:3vd+JJxa6t4=;UbMDIer3No2WVxeavpHF4mQbNrv
- 8hV/K65L39f9JoM/4f2NaPCEnV+TZtVk/ArKmFQNBctxhtqHKgA5/NepbmeR+L8w9+++5Hzk8
- cT7jDb16GwaZhFhig3J6u0TH9T8n8vifQA49mHQkgIcaSvBVKogPt+9q/4EfUXbluqr99FEt6
- uwNHiGqZTQ6aEXDUEOJlRNrI+bQ3MNGY8mBgRByrLZPVqfFU78XN2uVeNep4f/pcho0HarHnl
- R7lhQa8sdjUULd3T0dYUwQMpPfKsFtjc4gm0sc6hckNGvwpcW9dW1z9myAjqmr+fp1Ii0sewj
- Uxi4SPVYtOsEBdoJ7ah4bJcg0A79o971mnvq8cZrMtAvGMPJRUc9Q8Pjwil9siR/4EDk0pZEn
- /EgQt+bvlAqnebCx+5iSNTTf9pLMq0W+EBmgnIzxx9A+lVdu3+NliHsnFj0W2gvO3UkjgICXN
- iPVPUOShhbzwaCRe+r2ZyQ9SzzeWRs0kLEneDBsgtcSrf4L/IgcoBM+yIsLlGMKAH1ampzlRY
- 2Mk4Bw/VWxGn4oLcwbuzzZQRgOJUMKL3K9dVUJRGPFBQrHVpgVu1FiTKzMeCPLBdJDjajkkw7
- UmQ6z6OGG2/zYhG7nQ7L1RJdr8JzXBK/I1DF+pKrTG6+MEolfUDApzmscz54apgMj9wrundJI
- SOqSU058CLly+CfkJQRgxjfEJr/TeJhyhBe+xw+vmliDsW47OlLPs/8EiBCk4qTfGrl0PMTto
- Mxu+Syu81vUhQISBsFtaqEryOFSscaezzoJC6W90iDqCR++4BTwZ+Ph2yqWiwNP5V6Yz7xL1+
- dXtwVt3yTNyOVDx2ELtUu2OACsgbWyJ4wg/TxT6oDQU1Q=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240607-md-scripts-mod-v1-1-d3cd5a024f05@quicinc.com>
 
-> What exactly is the problem?
+On Fri, Jun 07, 2024 at 02:42:43PM -0700, Jeff Johnson wrote:
+> When building modules with W=1, modpost will warn if a module is
+> missing a MODULE_DESCRIPTION. Unfortunately, it also performs this
+> test on vmlinux.o:
+> 
+> WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
+> 
+> Relocate the logic so that the test is not performed on vmlinux.o.
+> 
+> Fixes: 1fffe7a34c89 ("script: modpost: emit a warning when the description is missing")
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
 
-Another development concern (for example):
-I would like to benefit a bit more from information which is provided as p=
-arameters
-for macro calls.
-https://elixir.bootlin.com/linux/v6.10-rc2/source/include/linux/cleanup.h#=
-L179
+Hi Jeff,
 
-Thus I hope that something can be achieved by =E2=80=9Cadvanced=E2=80=9D s=
-ource code analyses
-also with help of the semantic patch language.
-May I expect that some data should be presented according to the following
-tiny SmPL script?
+you're a few hours too late:
+https://lore.kernel.org/linux-kbuild/20240606183921.1128911-1-masahiroy@kernel.org/
 
-@display@
-@@
-*DEFINE_LOCK_GUARD_1(...)
+Kind regards,
+Nicolas
 
 
-Test result:
-Markus_Elfring@Sonne:=E2=80=A6/Projekte/Linux/next-analyses/include/linux>=
- spatch --include-headers =E2=80=A6/Projekte/Coccinelle/janitor/show_lock_=
-guard_definitions.cocci spinlock.h
-=E2=80=A6
 
-No data are displayed by the software combination =E2=80=9CCoccinelle 1.2-=
-00008-g75525032=E2=80=9D
-(because of the specified SmPL asterisk) according to the selected macro c=
-all.
+>  scripts/mod/modpost.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index 937294ff164f..f48d72d22dc2 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -1647,10 +1647,11 @@ static void read_symbols(const char *modname)
+>  			namespace = get_next_modinfo(&info, "import_ns",
+>  						     namespace);
+>  		}
+> +
+> +		if (extra_warn && !get_modinfo(&info, "description"))
+> +			warn("missing MODULE_DESCRIPTION() in %s\n", modname);
+>  	}
+>  
+> -	if (extra_warn && !get_modinfo(&info, "description"))
+> -		warn("missing MODULE_DESCRIPTION() in %s\n", modname);
+>  	for (sym = info.symtab_start; sym < info.symtab_stop; sym++) {
+>  		symname = remove_dot(info.strtab + sym->st_name);
+>  
+> 
+> ---
+> base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+> change-id: 20240607-md-scripts-mod-7f7ff091e02b
+> 
+> 
 
-See also another known information source for further development consider=
-ations:
-https://elixir.bootlin.com/linux/v6.10-rc2/source/include/linux/spinlock.h=
-#L537
-
-
-Regards,
-Markus
+-- 
+epost|xmpp: nicolas@fjasle.eu          irc://oftc.net/nsc
+↳ gpg: 18ed 52db e34f 860e e9fb  c82b 7d97 0932 55a0 ce7f
+     -- frykten for herren er opphav til kunnskap --
