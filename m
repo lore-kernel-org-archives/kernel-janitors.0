@@ -1,74 +1,67 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A83B27457
-	for <kernel-janitors@vger.kernel.org>; Sat,  8 Jun 2024 14:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B572179967
+	for <kernel-janitors@vger.kernel.org>; Sat,  8 Jun 2024 14:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717856477; cv=none; b=OsT/d4Ff8y85DzjjsFMdpX894IHMmVPgCEnRPqQysgZrfw6OjVYO5IHDugOBXj0KwiT2TrG0NdwGgA9ta+efGIFVKi4kohtJ1jqOGkbi63N1O0aCVfGvURbblbSE9Z0DmFxo3Cn1CZ4EAGTU7TvuJ/Nmw6bySElJ2C0JUInF22M=
+	t=1717856678; cv=none; b=SYWtomO3E9zWVkBDxDqlNDaP3/KYSZp3765mFXv8s+pm9Xjs8A7SdEz4BjsiHpLrEn9G+yv0g4xRaqj1Z97Fwk83gYoJ6X0D/Av4hYTgDZCR2Kl52iI7NkaWV2hXR9cTUBvhUTyPE9BueoaOuT4I5hxJZZiRL9nYldktP3IbWwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717856477; c=relaxed/simple;
-	bh=xLFhrGBiH0pcuHVcunVgk1rk5xm4/9iOzHVu/jiIkck=;
+	s=arc-20240116; t=1717856678; c=relaxed/simple;
+	bh=lUHuy8Zfz9urTlm/jQeycQ6F7jtrAN9u++rvVMTwTgM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Kk4mmP3GSThj/ZABP56k8G094Ip6HZIl3f7fJvpkVevKjY3akLdw015kbXv0WppQiMOWPjuZpCPW2TNbpWbVDCuvXmGvCS5XAwjEfDAWHCwxIieM7f+WZbpDv7v+Sn8GJQJaAl9DBnwVRHXTWorYPzowXaTJ2ERL6j5cY9wA2t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q0P8Lecy; arc=none smtp.client-ip=209.85.128.48
+	 Content-Disposition; b=tDb+ovymTV1ft7crj+VmPiOnaf1CMKgrKo6FGIw2/2zz67X6aYiqnTrz+VJM0gi3e9oqbeqvn7M/H4kxNeYkuHq+kdaKb58/aj8mLbAc/3TnSJlic7zBadPmymHGCoLKIzeFBVCxTQRx3U9vIcCIm4MklvUytx7J+4AlQ9mI8MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MkM/7s3B; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q0P8Lecy"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4217136a74dso11376745e9.2
-        for <kernel-janitors@vger.kernel.org>; Sat, 08 Jun 2024 07:21:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MkM/7s3B"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-421757d217aso11604105e9.3
+        for <kernel-janitors@vger.kernel.org>; Sat, 08 Jun 2024 07:24:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717856473; x=1718461273; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717856675; x=1718461475; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FjYuT33PAKShV15vOZT2MY4Py8HrSQc+sDa6zAJXDS0=;
-        b=q0P8LecyZkzYuWNg2fMGyBAo+DYQI8t5wBKq4Ac8r1yXQKpEjvZnorCOHlWlm32qZ3
-         Rj26hZ6EX8PyipdzUH0DXOzg3MGMNLl8/MZTCCaVLg1a9Dy0UC2eOkGqcffjJoBe1M2k
-         s32jF4QWS0Pchx01AV3AwSC+qcNI/ytLakzZr5CVYXTAACT0KBFY10TRK6f1uKgCakBL
-         JiP8ZPxteSjXAajTLBTdhDYRg9RBeJVRqvDBC8JCUOsCbLyzKEKdNmmrH0C5NtKu8rcC
-         arYJqoNKGu5WKeiGhKzGRoV/4sDZ1Ug9XVbMDcRgW+cMs3ZApDizQ2x92fY3Qo3EYvEs
-         5Myg==
+        bh=Y3xUXLeXJa7g57nR3Rih0dUWygv43+3NziJlOMTLS4c=;
+        b=MkM/7s3BdonbSLtkq+3dkQOqDYsf2ynPHvl4H/pU6e2hfJv/VmwW8+FK6V3loW7pwS
+         grguLgrudIcJ1ptPAq+XV6/JiYi47CPdYk96gcd6LiPGi+NJ8JHMep/GjrkNWsSPoIu8
+         sYPKYg6oSGDQD8gKLbQluMZoYjXraG6Oza+l9p7q8XrCD+DzcUo/jEY/chsE0+YfVjIu
+         VN1l1Jv3nec2flg09SmILpdIy2Dn5PrkaupHLzjGoRVrwGfGLx8S3Z3b+TDfT7FRsduV
+         7wZ6fNKL7JDfwUC0d6E30mtdMdj9rhPdyyTFvprvz1MWDLq4EHEiIe+CMlMvl0oDRHhC
+         yVWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717856473; x=1718461273;
+        d=1e100.net; s=20230601; t=1717856675; x=1718461475;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FjYuT33PAKShV15vOZT2MY4Py8HrSQc+sDa6zAJXDS0=;
-        b=Ba3V9ZbIgc2r6ehfSTgMhAeZoep2V5YsvLI1R/OkdxjCZUDo+8wdWOp3zFXIWoGqd0
-         ZJWc9QAL7Mm2PXRneT2Xo/DTfH1eVJc3GgF1ZrXriW6WHqpcUL1UOEmkL4cUJhE8vxWS
-         AlPnhZ0ZoXq2yr6qKwL5yAYMTFbR5LEfmW8wGPo6O915wgs1enSYfX+eEmGIClrKz+al
-         zhHhcYmyBgEgc2nMMwxdc5cJAq6KHucEsb4MCkNvp77rGrsCyYhYVsM2hnhnSJHX5ede
-         5IXXhozFuDX1zFUxa+VNF7oEVyQIuayY/jSJcUVkZqqtWnZr8/CYrVaBv10UM0Xzvyo3
-         RjqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXuLwB+MlAHELMBJGCpnnpymC4LlEQNW50/1PxffW0VKa0Ud9chKt98h3x3/4hL6WA3iXmWeYbrCh1iSJTDKmMtaOFZBj/muEaQaeHaY0cb
-X-Gm-Message-State: AOJu0YxC7PTU2dLYXULQ18wqqsnEMb9PaRWDb+H8i6NG5UvoEK/4AhiO
-	OMHmuafGDfPjngBqk9S2Zfx7VsUyhS2hObCCbLqD5AI/ZCSiJxLrPoXcc6UOiok=
-X-Google-Smtp-Source: AGHT+IHMSDClGwHp6ZpeLqtN0xANquwVMTE0SCEKdNN8oNRycIpwR41xcOpeGGQ6Ptb5UJz1fLwcoA==
-X-Received: by 2002:a05:600c:1552:b0:421:6a73:5fd7 with SMTP id 5b1f17b1804b1-4216a736254mr33767185e9.15.1717856472749;
-        Sat, 08 Jun 2024 07:21:12 -0700 (PDT)
+        bh=Y3xUXLeXJa7g57nR3Rih0dUWygv43+3NziJlOMTLS4c=;
+        b=oXPgIaVp6YyzsPHPgHMw1lWOIE+wROXCrbUO4BCUyesPxf5gyQ0864vSaYL2hQdVS4
+         Ehbyj5Y4SQgiYH16AA7Sbkh0bJ5+NCGwp6CQkLSL+1iPLuuWEZJ82m+Q6vWtp6C/agFz
+         evxNhriK+Mzm9dHBOWCwBfmDoNKgOsOF2IPAXuaq2GgJsyL3r2xAl0SSM/pwLjte798q
+         LPsdFE3Vqzw77ha6jcvM0SspI//zb3jeDVZe20DF/drgfsYY6EOMigukyIjl5xM/QGf6
+         w8EAVXeQM0OAxqiAlKN2e5KqIhao/GgaACGLdrMUmLE8ELhCnj4jqFiAHC4wmBMEwg8G
+         RLlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOh0vUaEEl4PqLHHnyfTHEUjsth2LUb8MaSEoDlI8QBibsWW+2v2CQXtTL11SuBNNa3t79sLDM6UzZxWOvwFWFuxQNJfPRh2lePrfWfEqM
+X-Gm-Message-State: AOJu0YwvicHxD7eHPLAYfRD4eKzZln6POYp7ktMlrcsdiVu1Mww69vxZ
+	DTarhoYCTDpXwAI1iXyCaxGDQpzQUPSj5z4yL9YQi8QA+EFzJMz8eAcJi4yrqXTYekACYYXQhR4
+	p
+X-Google-Smtp-Source: AGHT+IFmaCUQ01iQpATq/GX8GTofXo5bwpAglPLwHfhcOwikEZDRyVKEQD6qy8rV6aM+BrXdDmp4sw==
+X-Received: by 2002:a05:600c:34d5:b0:420:fed7:2903 with SMTP id 5b1f17b1804b1-421649fbfa9mr53053035e9.15.1717856675259;
+        Sat, 08 Jun 2024 07:24:35 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2c690dsm87193245e9.34.2024.06.08.07.21.11
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2c738bsm86538485e9.32.2024.06.08.07.24.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Jun 2024 07:21:12 -0700 (PDT)
-Date: Sat, 8 Jun 2024 17:21:08 +0300
+        Sat, 08 Jun 2024 07:24:34 -0700 (PDT)
+Date: Sat, 8 Jun 2024 17:24:31 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Allen Chen <allen.chen@ite.com.tw>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Hermes Wu <hermes.wu@ite.com.tw>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/bridge: it6505: Fix potential NULL dereference
-Message-ID: <5e6e8882-478a-46c0-9119-b643d524cc0c@moroto.mountain>
+Subject: [PATCH] ASoC: samsung: midas_wm1811: Fix error code in probe()
+Message-ID: <01590109-cf27-404b-88ff-b42bb73ca1c6@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -79,34 +72,27 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Smatch complains correctly that the NULL checking isn't consistent:
+This accidentally returns success instead of -EINVAL.
 
-    drivers/gpu/drm/bridge/ite-it6505.c:2583 it6505_poweron()
-    error: we previously assumed 'pdata->pwr18' could be null
-    (see line 2569)
-
-Add a NULL check to prevent a NULL dereference on the error path.
-
-Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
+Fixes: c91d0c2e198d ("ASoC: samsung: midas_wm1811: Add GPIO-based headset jack detection")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/bridge/ite-it6505.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/samsung/midas_wm1811.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-index 3f68c82888c2..4f01fadaec0f 100644
---- a/drivers/gpu/drm/bridge/ite-it6505.c
-+++ b/drivers/gpu/drm/bridge/ite-it6505.c
-@@ -2580,7 +2580,8 @@ static int it6505_poweron(struct it6505 *it6505)
- 		usleep_range(1000, 2000);
- 		err = regulator_enable(pdata->ovdd);
- 		if (err) {
--			regulator_disable(pdata->pwr18);
-+			if (pdata->pwr18)
-+				regulator_disable(pdata->pwr18);
- 			return err;
+diff --git a/sound/soc/samsung/midas_wm1811.c b/sound/soc/samsung/midas_wm1811.c
+index 3a269c7de169..bbfe5fef59af 100644
+--- a/sound/soc/samsung/midas_wm1811.c
++++ b/sound/soc/samsung/midas_wm1811.c
+@@ -623,7 +623,7 @@ static int midas_probe(struct platform_device *pdev)
+ 
+ 		if (channel_type != IIO_VOLTAGE) {
+ 			dev_err(dev, "ADC channel is not voltage\n");
+-			return ret;
++			return -EINVAL;
  		}
- 	}
+ 
+ 		priv->gpio_headset_key = devm_gpiod_get(dev, "headset-key",
 -- 
 2.43.0
 
