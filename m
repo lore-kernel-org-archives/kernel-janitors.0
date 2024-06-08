@@ -1,281 +1,173 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D218D1C6A1;
-	Fri,  7 Jun 2024 23:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B9B33C5;
+	Sat,  8 Jun 2024 00:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717801842; cv=none; b=PH66id+JxdFzZRKOrbzBFkAgtr7bvsaWJyJgOSq4iD4gy2k3bYbIRPd3p06Et/p25wTCN/yJznlwkmKYTJnfm0rj7aAal087ZlU0FvXBxpcsI2czkxpqSBEZKsh2lug7EPgaqiTD2RxY9tI3z1ot6imUQvpPqyQdYvaSLSWfz0k=
+	t=1717807959; cv=none; b=cntnIigWMiI5awWt3XjnTYG3Bg9YbhJoybRqzXoHAIhZtXxIaIMnxyiY67zMhHRj6+o9916k4lXiyii9Z9TwlecKXJCbg6tVtqPnwjmYVS+dxtUjmuon6Is3mzntK/q+UT6JAKWspZ/8w0qFigQVAgwBONPf10UPjt4LKYnL/OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717801842; c=relaxed/simple;
-	bh=KcRUThBuR5QNs+vXJjr2HlSRy23gPY2N/ly3/vJIUAI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=YcnLqdj+IWwrrO88/R2g/jZy30QGPCyHv/h6TpGgwa/x82DZ1sddTMl1iwEZDcsYwCBwXkMd8azSxr24L1T8Zadcs5jtpSr+qxE76vdDcSqFmon9O2uM+Mgws2ZWn2wAXsOiR6rTh8KVdIwyfcQpIJxc3tuSgEnTCmiVCgFKQzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GV5rTm4W; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1717807959; c=relaxed/simple;
+	bh=eyfpPJgtOIuG1vIFDolKXcOYY3XJke1VYW8FXO8L9lw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=MhSQ7qNgjbI5CHrN6Uf3HK+TCJu41IftwanSCY0/Hf2p/mfpL8DYjlgiccrkqKMGaSgD+jOyUvNk49XyuMPRfA4E7ENWo8ueOZU0Ua3WCiN2e0pjZSTIWEW3Y3DGTVxvmG0Ln9Kg6zHNfSMIpoT8kuvJwbLvaUUftDiKInaoEVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=idl3dvWV; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GV5rTm4W"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 457HZpg4010206;
-	Fri, 7 Jun 2024 23:10:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=1BOu5b63kmJJ0cXnevJLGT
-	smnqAF6DrUJxjUPNnnbA0=; b=GV5rTm4WsLqEYPDfgNbkFII8woOcRMHKbI4FeO
-	fw5K6zq6IUMhspTg5XBa4Dcu3XbqEhYkXcNebBvhSp8YYWMyICD0cXxQ9wQomEKF
-	aVyMPtADjKAQoK6o9lvdDUqIPTVYXDUBaEEIQdNOZU6bKAcKaTYbe7FxMy4ggRse
-	lrDuRqYTK+NZScF5j0T+uW00cSGMTHha3uW+ndZOVqnOoUm0sscd1sTjjPsSpL1z
-	MAs4NMF9BR6EMFgCQYtXyPssLI8zS1EylLu1nUqKRyrDM9xClxBymY0g13ApF1ze
-	fo1+Z34GqIYzkClrhVhKyBwcSo4N1/soCkEqGK70F2aumeLw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjk89fvea-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Jun 2024 23:10:24 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 457NANVU011407
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 7 Jun 2024 23:10:23 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 7 Jun 2024
- 16:10:22 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Fri, 7 Jun 2024 16:10:20 -0700
-Subject: [PATCH] tty: add missing MODULE_DESCRIPTION() macros
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="idl3dvWV"
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id BC0DD1140198;
+	Fri,  7 Jun 2024 20:52:35 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Fri, 07 Jun 2024 20:52:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1717807955; x=1717894355; bh=/REvkr6D1X9D70grvQc7R30pDYdS
+	TCpuO5alixbgfuw=; b=idl3dvWVn5I9w3VyjDNA4Ubxji9+IShx8UWBbSp3dhEM
+	uOD2N1vgHND86LvmJBRihlxMeCYK1WzJepAkcxLiWtgXhrTmHwRw34Ih/TCWzS6u
+	9ZhLaCYXQbIAWK7Dp5mfFprAllPPt5749QeMLDyWfwASAtlS3hP0kzUzy/Xry6+H
+	eYsIHDHvKkgvwQ/LV543zkojg0qhviuwHwF9nSdfdmKB3ZNatIFeeQoSvkw9pbLE
+	iUnZyp2h3P0xOOFnW6FF+vIvIPJEmJwicXpI2rEQE6/RRVvg7J6sCnu5BcSIRo4G
+	dKoy/nekllowiW68sOkbYj0gQWs5Zwf75fNfFVI1wQ==
+X-ME-Sender: <xms:UqtjZgh_5tCr0UUD52YExB7Dmu-rk0SCxgVLAhlI7RAFbmeHBFVQfQ>
+    <xme:UqtjZpBim1sa_N1BqSVyXFyan7JSjuo9EEvYDCFIFS3m-G1JkuwkMyH8YwQJc-RMx
+    vhP2I717tLzsedCLxw>
+X-ME-Received: <xmr:UqtjZoGv1k___eQlePsqXz2yJvGJapPTvsPH5oqtpWf0pJCxiryuwNbthkUGo8E-2O68N1Pmt7C7az7SZsA0Qjd4J_K-6bJmOU0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedtvddgfeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcu
+    vfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrg
+    htthgvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeu
+    heeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hfthhhrghinheslhhinhhugidqmheikehkrdhorhhg
+X-ME-Proxy: <xmx:UqtjZhQM5s0kCbeiPk5CsPlJmN7ITTMh8xeiBFxk_JDU9M_OysraDg>
+    <xmx:UqtjZtzggBDkc0AysPkaRowYF_gJ4hojVed-FOenIUh21MTTpdEuqQ>
+    <xmx:UqtjZv4BnGTTGHp89OAwlx_FBQfsUXkUSpfkcBTIlT8P87DQ0eFzVQ>
+    <xmx:UqtjZqye_IxQsC1wIyykMDZd-kOg45Cf_9LW7faBPJH6WOpSiM41Hw>
+    <xmx:U6tjZiK-f8KeBmUYH9rnubMuOprY4Mp9NaUXO_JR1a4AWObb5NqDScKX>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 7 Jun 2024 20:52:32 -0400 (EDT)
+Date: Sat, 8 Jun 2024 10:52:45 +1000 (AEST)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+cc: Khalid Aziz <khalid@gonehiking.org>, 
+    "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+    "Martin K. Petersen" <martin.petersen@oracle.com>, 
+    Matthew Wilcox <willy@infradead.org>, Hannes Reinecke <hare@suse.com>, 
+    Michael Schmitz <schmitzmic@gmail.com>, 
+    James Smart <james.smart@broadcom.com>, 
+    Ram Vegesna <ram.vegesna@broadcom.com>, 
+    Artur Paszkiewicz <artur.paszkiewicz@intel.com>, 
+    "Juergen E. Fischer" <fischer@norbit.de>, linux-scsi@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, target-devel@vger.kernel.org, 
+    kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] scsi: add missing MODULE_DESCRIPTION() macros
+In-Reply-To: <20240607-md-drivers-scsi-v1-1-17ae31cc4fe5@quicinc.com>
+Message-ID: <82cdd602-8faf-5cc0-c0b4-87ff1d820474@linux-m68k.org>
+References: <20240607-md-drivers-scsi-v1-1-17ae31cc4fe5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240607-md-drivers-tty-v1-1-50a7efb8bed8@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAFuTY2YC/x3MTQ6CQAxA4auQrm1SRvyJVzEsClOkiYymHQmEc
- HdHl9/ivQ1cTMXhVm1gMqvrKxXUhwr6kdNDUGMxBAoNnemCU8RoOos55ryi1Ec+XUMciAKU6G0
- y6PIf3tvijl2wM079+Ns8NX0WnNizGOz7F5qLGoZ/AAAA
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby
-	<jirislaby@kernel.org>,
-        "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-parisc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-actions@lists.infradead.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: fU1wOBfN5rbKVGkvaH0Z_XRRxLPs3Qme
-X-Proofpoint-ORIG-GUID: fU1wOBfN5rbKVGkvaH0Z_XRRxLPs3Qme
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-07_15,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 impostorscore=0 phishscore=0 mlxscore=0 bulkscore=0
- adultscore=0 malwarescore=0 priorityscore=1501 clxscore=1011
- suspectscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405170001 definitions=main-2406070171
+Content-Type: text/plain; charset=US-ASCII
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/8250/8250_base.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/8250/8250_pxa.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/8250/serial_cs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/esp32_uart.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/esp32_acm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/owl-uart.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/n_hdlc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/n_gsm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/ttynull.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/goldfish.o
 
-Add all missing invocations of the MODULE_DESCRIPTION() macro.
+On Fri, 7 Jun 2024, Jeff Johnson wrote:
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/tty/amiserial.c                | 1 +
- drivers/tty/goldfish.c                 | 1 +
- drivers/tty/n_gsm.c                    | 1 +
- drivers/tty/n_hdlc.c                   | 1 +
- drivers/tty/serial/8250/8250_parisc.c  | 1 +
- drivers/tty/serial/8250/8250_pcilib.c  | 1 +
- drivers/tty/serial/8250/8250_port.c    | 1 +
- drivers/tty/serial/8250/8250_pxa.c     | 1 +
- drivers/tty/serial/8250/serial_cs.c    | 1 +
- drivers/tty/serial/esp32_acm.c         | 1 +
- drivers/tty/serial/esp32_uart.c        | 1 +
- drivers/tty/serial/owl-uart.c          | 1 +
- drivers/tty/serial/serial_mctrl_gpio.c | 1 +
- drivers/tty/synclink_gt.c              | 1 +
- drivers/tty/ttynull.c                  | 1 +
- 15 files changed, 15 insertions(+)
+> diff --git a/drivers/scsi/atari_scsi.c b/drivers/scsi/atari_scsi.c
+> index 742625ac7d99..4eb5770aeef5 100644
+> --- a/drivers/scsi/atari_scsi.c
+> +++ b/drivers/scsi/atari_scsi.c
+> @@ -894,4 +894,5 @@ static struct platform_driver atari_scsi_driver __refdata = {
+>  module_platform_driver_probe(atari_scsi_driver, atari_scsi_probe);
+>  
+>  MODULE_ALIAS("platform:" DRV_MODULE_NAME);
+> +MODULE_DESCRIPTION("Atari generic SCSI port driver");
+>  MODULE_LICENSE("GPL");
 
-diff --git a/drivers/tty/amiserial.c b/drivers/tty/amiserial.c
-index 8c964da75f2d..37164289277b 100644
---- a/drivers/tty/amiserial.c
-+++ b/drivers/tty/amiserial.c
-@@ -1660,5 +1660,6 @@ console_initcall(amiserial_console_init);
- 
- #endif /* CONFIG_SERIAL_CONSOLE && !MODULE */
- 
-+MODULE_DESCRIPTION("Serial driver for the amiga builtin port");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:amiga-serial");
-diff --git a/drivers/tty/goldfish.c b/drivers/tty/goldfish.c
-index 34421ec06a69..c60745f8e621 100644
---- a/drivers/tty/goldfish.c
-+++ b/drivers/tty/goldfish.c
-@@ -470,4 +470,5 @@ static struct platform_driver goldfish_tty_platform_driver = {
- 
- module_platform_driver(goldfish_tty_platform_driver);
- 
-+MODULE_DESCRIPTION("Goldfish TTY Driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
-index be35f7334ecd..5d37a0984916 100644
---- a/drivers/tty/n_gsm.c
-+++ b/drivers/tty/n_gsm.c
-@@ -4634,5 +4634,6 @@ module_init(gsm_init);
- module_exit(gsm_exit);
- 
- 
-+MODULE_DESCRIPTION("GSM 0710 tty multiplexor");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS_LDISC(N_GSM0710);
-diff --git a/drivers/tty/n_hdlc.c b/drivers/tty/n_hdlc.c
-index 1615f074ab86..4a4dc58b866a 100644
---- a/drivers/tty/n_hdlc.c
-+++ b/drivers/tty/n_hdlc.c
-@@ -822,6 +822,7 @@ static void __exit n_hdlc_exit(void)
- module_init(n_hdlc_init);
- module_exit(n_hdlc_exit);
- 
-+MODULE_DESCRIPTION("HDLC line discipline support");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Paul Fulghum paulkf@microgate.com");
- module_param(maxframe, int, 0);
-diff --git a/drivers/tty/serial/8250/8250_parisc.c b/drivers/tty/serial/8250/8250_parisc.c
-index 948d0a1c6ae8..4ba05a98791c 100644
---- a/drivers/tty/serial/8250/8250_parisc.c
-+++ b/drivers/tty/serial/8250/8250_parisc.c
-@@ -127,4 +127,5 @@ static int __init probe_serial_gsc(void)
- 
- module_init(probe_serial_gsc);
- 
-+MODULE_DESCRIPTION("Serial Device Initialisation for Lasi/Asp/Wax/Dino");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/serial/8250/8250_pcilib.c b/drivers/tty/serial/8250/8250_pcilib.c
-index d234e9194feb..ea906d721b2c 100644
---- a/drivers/tty/serial/8250/8250_pcilib.c
-+++ b/drivers/tty/serial/8250/8250_pcilib.c
-@@ -37,4 +37,5 @@ int serial8250_pci_setup_port(struct pci_dev *dev, struct uart_8250_port *port,
- 	return 0;
- }
- EXPORT_SYMBOL_NS_GPL(serial8250_pci_setup_port, SERIAL_8250_PCI);
-+MODULE_DESCRIPTION("8250 PCI library");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index 893bc493f662..2786918aea98 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -3473,4 +3473,5 @@ int serial8250_console_exit(struct uart_port *port)
- 
- #endif /* CONFIG_SERIAL_8250_CONSOLE */
- 
-+MODULE_DESCRIPTION("Base port operations for 8250/16550-type serial ports");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/serial/8250/8250_pxa.c b/drivers/tty/serial/8250/8250_pxa.c
-index f1a51b00b1b9..dc3870026bc6 100644
---- a/drivers/tty/serial/8250/8250_pxa.c
-+++ b/drivers/tty/serial/8250/8250_pxa.c
-@@ -181,5 +181,6 @@ OF_EARLYCON_DECLARE(mmp, "mrvl,mmp-uart", early_serial_pxa_setup);
- #endif
- 
- MODULE_AUTHOR("Sergei Ianovich");
-+MODULE_DESCRIPTION("driver for PXA on-board UARTS");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:pxa2xx-uart");
-diff --git a/drivers/tty/serial/8250/serial_cs.c b/drivers/tty/serial/8250/serial_cs.c
-index 2056aed46688..58e279ea7ee0 100644
---- a/drivers/tty/serial/8250/serial_cs.c
-+++ b/drivers/tty/serial/8250/serial_cs.c
-@@ -864,4 +864,5 @@ static struct pcmcia_driver serial_cs_driver = {
- };
- module_pcmcia_driver(serial_cs_driver);
- 
-+MODULE_DESCRIPTION("driver for PCMCIA serial devices");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/serial/esp32_acm.c b/drivers/tty/serial/esp32_acm.c
-index d4e8bdb1cdef..85eb0392e379 100644
---- a/drivers/tty/serial/esp32_acm.c
-+++ b/drivers/tty/serial/esp32_acm.c
-@@ -455,4 +455,5 @@ module_init(esp32s3_acm_init);
- module_exit(esp32s3_acm_exit);
- 
- MODULE_AUTHOR("Max Filippov <jcmvbkbc@gmail.com>");
-+MODULE_DESCRIPTION("Espressif ESP32 USB ACM gadget support");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/serial/esp32_uart.c b/drivers/tty/serial/esp32_uart.c
-index 6fc61f323355..8c86cf9cb763 100644
---- a/drivers/tty/serial/esp32_uart.c
-+++ b/drivers/tty/serial/esp32_uart.c
-@@ -775,4 +775,5 @@ module_init(esp32_uart_init);
- module_exit(esp32_uart_exit);
- 
- MODULE_AUTHOR("Max Filippov <jcmvbkbc@gmail.com>");
-+MODULE_DESCRIPTION("Espressif ESP32 UART support");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/serial/owl-uart.c b/drivers/tty/serial/owl-uart.c
-index 8b60ac0ad7cd..ecec483d4d59 100644
---- a/drivers/tty/serial/owl-uart.c
-+++ b/drivers/tty/serial/owl-uart.c
-@@ -761,4 +761,5 @@ static void __exit owl_uart_exit(void)
- module_init(owl_uart_init);
- module_exit(owl_uart_exit);
- 
-+MODULE_DESCRIPTION("Actions Semi Owl family serial console");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/serial/serial_mctrl_gpio.c b/drivers/tty/serial/serial_mctrl_gpio.c
-index e51ca593ab86..8855688a5b6c 100644
---- a/drivers/tty/serial/serial_mctrl_gpio.c
-+++ b/drivers/tty/serial/serial_mctrl_gpio.c
-@@ -385,4 +385,5 @@ void mctrl_gpio_disable_irq_wake(struct mctrl_gpios *gpios)
- }
- EXPORT_SYMBOL_GPL(mctrl_gpio_disable_irq_wake);
- 
-+MODULE_DESCRIPTION("Helpers for controlling modem lines via GPIO");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/tty/synclink_gt.c b/drivers/tty/synclink_gt.c
-index 8112d9d5a0d8..bd8d92ee7c53 100644
---- a/drivers/tty/synclink_gt.c
-+++ b/drivers/tty/synclink_gt.c
-@@ -89,6 +89,7 @@
-  */
- static const char driver_name[] = "SyncLink GT";
- static const char tty_dev_prefix[] = "ttySLG";
-+MODULE_DESCRIPTION("Device driver for Microgate SyncLink GT serial adapters");
- MODULE_LICENSE("GPL");
- #define MAX_DEVICES 32
- 
-diff --git a/drivers/tty/ttynull.c b/drivers/tty/ttynull.c
-index e4c4273993bc..6b2f7208b564 100644
---- a/drivers/tty/ttynull.c
-+++ b/drivers/tty/ttynull.c
-@@ -106,4 +106,5 @@ static void __exit ttynull_exit(void)
- module_init(ttynull_init);
- module_exit(ttynull_exit);
- 
-+MODULE_DESCRIPTION("NULL TTY driver");
- MODULE_LICENSE("GPL v2");
+"Atari NCR5380 SCSI driver", please. I don't think the word "generic" 
+applies here. It was a reference to the "generic NCR5380 driver by Drew 
+Eckhardt" from which specialized drivers like this one were derived.
 
----
-base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
-change-id: 20240607-md-drivers-tty-e13a582df002
+> diff --git a/drivers/scsi/g_NCR5380.c b/drivers/scsi/g_NCR5380.c
+> index f6305e3e60f4..1bef131664e0 100644
+> --- a/drivers/scsi/g_NCR5380.c
+> +++ b/drivers/scsi/g_NCR5380.c
+> @@ -110,6 +110,7 @@ module_param_array(card, int, NULL, 0);
+>  MODULE_PARM_DESC(card, "card type (0=NCR5380, 1=NCR53C400, 2=NCR53C400A, 3=DTC3181E, 4=HP C2502)");
+>  
+>  MODULE_ALIAS("g_NCR5380_mmio");
+> +MODULE_DESCRIPTION("Generic NCR5380 driver");
+>  MODULE_LICENSE("GPL");
+>  
+>  static void g_NCR5380_trigger_irq(struct Scsi_Host *instance)
 
+"Generic NCR5380/NCR53C400 SCSI driver" please.
+
+This driver actually describes itself as "generic generic NCR5380 driver" 
+which appears to be a joke. The term "generic" was used to mean universal 
+i.e. intended to cover every ISA card implementation.
+
+> diff --git a/drivers/scsi/initio.c b/drivers/scsi/initio.c
+> index 625fd547ee60..82d8b8f8293f 100644
+> --- a/drivers/scsi/initio.c
+> +++ b/drivers/scsi/initio.c
+> @@ -2939,6 +2939,7 @@ static void initio_remove_one(struct pci_dev *pdev)
+>  	pci_disable_device(pdev);
+>  }
+>  
+> +MODULE_DESCRIPTION("Initio 9100U(W) driver");
+>  MODULE_LICENSE("GPL");
+>  
+>  static struct pci_device_id initio_pci_tbl[] = {
+> @@ -2961,4 +2962,5 @@ module_pci_driver(initio_pci_driver);
+>  
+>  MODULE_DESCRIPTION("Initio INI-9X00U/UW SCSI device driver");
+>  MODULE_AUTHOR("Initio Corporation");
+> +MODULE_DESCRIPTION("TBD");
+>  MODULE_LICENSE("GPL");
+
+There are now three MODULE_DESCRIPTION macros here.
+
+> diff --git a/drivers/scsi/mac_scsi.c b/drivers/scsi/mac_scsi.c
+> index a402c4dc4645..f74231ca29e5 100644
+> --- a/drivers/scsi/mac_scsi.c
+> +++ b/drivers/scsi/mac_scsi.c
+> @@ -550,4 +550,5 @@ static struct platform_driver mac_scsi_driver __refdata = {
+>  module_platform_driver_probe(mac_scsi_driver, mac_scsi_probe);
+>  
+>  MODULE_ALIAS("platform:" DRV_MODULE_NAME);
+> +MODULE_DESCRIPTION("Generic Macintosh NCR5380 driver");
+>  MODULE_LICENSE("GPL");
+
+
+"Macintosh NCR5380 SCSI driver", please.
+
+> diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
+> index 7ab000942b97..c4a88f673183 100644
+> --- a/drivers/scsi/sr.c
+> +++ b/drivers/scsi/sr.c
+> @@ -68,6 +68,7 @@
+>  
+>  
+>  MODULE_DESCRIPTION("SCSI cdrom (sr) driver");
+> +MODULE_DESCRIPTION("TBD");
+>  MODULE_LICENSE("GPL");
+>  MODULE_ALIAS_BLOCKDEV_MAJOR(SCSI_CDROM_MAJOR);
+>  MODULE_ALIAS_SCSI_DEVICE(TYPE_ROM);
+> @@ -1007,4 +1008,5 @@ static void __exit exit_sr(void)
+>  
+>  module_init(init_sr);
+>  module_exit(exit_sr);
+> +MODULE_DESCRIPTION("SCSI CDROM driver");
+>  MODULE_LICENSE("GPL");
+
+Three macros here also.
