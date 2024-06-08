@@ -1,106 +1,115 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374DF1E888;
-	Sat,  8 Jun 2024 16:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E885158A1F;
+	Sat,  8 Jun 2024 16:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717864309; cv=none; b=C8Q5U/te3fD77pq+UtVuoYJpEoOnp7wQBM8ApJRJmRQMTmqV3/fHg5zNJ95fZ6YZ/MwV79W72b0hUtJxRXxYHbzsH4EkRi4acFLUPgQss+fqQRDz/f/6wa0oPqCBNo0viy7c18cqpqbQKBnOLYaE+iEuvDX75VT/qRoqLlE/o4Q=
+	t=1717864740; cv=none; b=gP/7EV8VWNVthHiyqursfN9w7UxVaZT71A0cIp/5hIgwvq4RhPYahDybLrhqMGgCEVRt2UnHg4vHrNkz7ozMSCerYgymEP8LISfYYRGt/gLIim2phFpNxg23K7LGGrYOwyWyRx3iD7fkjVAMEsC3DFebgpHEIYHSL5ouA05NDVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717864309; c=relaxed/simple;
-	bh=dzIhkuinC2M3kjTBzjU1/eeINliwXE3DjZLHluC8O58=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=RMSNRpBazs77QngiybsFNpHD5iYW8GNku1jN09jGczmOjXJJLjU1blGI8hapnaTuBGiFI8sV66+0AHdrqIgvhgJ5P62kTDxKUukpRg3XuCHUW440naWqaov6/vp/6Z1YZmTDB4wV34A3LOmBcdMzvarH+bKh6PZDZ6DP8d4jKz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HNaoG582; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1717864740; c=relaxed/simple;
+	bh=NRDypsUCwfI33OUpmlEU3120t7rA9JE3Pg3U+I93Uhs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gM2LRBkrW0SoMXaNUje9+hHXAOprpzihg0VnMNguF0r/I2ny2qlUipPX+QPZKo7x/7UNoAs/pkIivQNC5aFvlXTWndt8pnCcB7Gl7zpLbP+dX9wEXhHYz4LxWG3tntLGuG3UcIN7fyroI1l/wXdI02aZdMvqPfXQ6pRHKxUl+vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B69bAYcK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HNaoG582"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 458FkEHQ020933;
-	Sat, 8 Jun 2024 16:31:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=536ZuBV5Xko30Q9QMlfsPn
-	5bbVS/iTQ4a8HbJhBdSFI=; b=HNaoG582wKFtHPPjR/c2amJbmbFW02g5F18ybt
-	4JZKO4mSYkPEXG0zX5U5NyCJF27w7dGkpZj5lcOqvXg6Ja+QRu3ZAen/+lkryHuZ
-	0t+2NURJx7LVWDwLJIy01mj1Lds+AzzJfjfvFlbNS3l6JYJ67DW9biFCeX1EeKZc
-	k4W+F+pw33pTfuOxuwyxg3R/aLNkjDUNkhGsJUQThxBO3JzJZVqMH9ctC8soMOP6
-	SdQ0g5oKO+okI/zT0RoxsCMtwbGloDBECxsIhu1OG2e2CNmd4mh9IU0wWPfeTzVA
-	hzxHBbPqg9FfOScyrbwCJc9jlOjU1FNqJKIY8yi05b/e23RA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymgk8rn07-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 08 Jun 2024 16:31:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 458GVeI8018130
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 8 Jun 2024 16:31:40 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 8 Jun 2024
- 09:31:40 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sat, 8 Jun 2024 09:31:35 -0700
-Subject: [PATCH] mailbox: mtk-cmdq: add missing MODULE_DESCRIPTION() macro
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B69bAYcK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84998C2BD11;
+	Sat,  8 Jun 2024 16:38:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717864739;
+	bh=NRDypsUCwfI33OUpmlEU3120t7rA9JE3Pg3U+I93Uhs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=B69bAYcKw8dym5L3MbgCzJ28mi3wHTzqDDw7asjfy/vMjDRiorhwuZqZlsdlWTuy9
+	 tf+lzNAo6o7EzNfvW1mg0qkOGQi3A2W36dEdYitQ3Kn8r+JIZwPTrr1e2phcxFQG19
+	 T0qlQe/Yky9RQJDHXWnb0w+5EOTr0z/k4olt3nIF4ihk4jjjPvoEsIM5lZdhvoorJA
+	 HZ8pF+0E+o8FOSoEs4olfu/I+n0VMWGuI+pEzM3btJA2zPptIcoUAGoTzlERzDjWnF
+	 LX8UwHfgTuydrB4E1PwDL8hCw8APreKBxHSJcFm+9NMJecwf1LlW7hkoTnVzOGVWv6
+	 RHovd7RxIL57w==
+Date: Sat, 8 Jun 2024 17:38:51 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Paul Cercueil <paul@crapouillou.net>, Lars-Peter Clausen
+ <lars@metafoo.de>, Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
+ Michal Simek <michal.simek@amd.com>, <linux-mips@vger.kernel.org>,
+ <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] iio: add missing MODULE_DESCRIPTION() macros
+Message-ID: <20240608173851.7c575f1f@jic23-huawei>
+In-Reply-To: <20240607-md-drivers-iic-v1-1-9f9db6246083@quicinc.com>
+References: <20240607-md-drivers-iic-v1-1-9f9db6246083@quicinc.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240608-md-drivers-mailbox-v1-1-6ce5d6f924ad@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAGaHZGYC/x3MTQqDMBBA4avIrDsQf5DSq5QuksykDmgsM60Ex
- Ls3uvwW7+1grMIGj2YH5U1M1lzR3hqIk89vRqFq6Fw3uNHdcSEklY3VcPEyh7VgH6lvE6U4hBF
- q+FFOUq7p81UdvDEG9TlO52qW/Cs1ti8rHMcffDtjaYMAAAA=
-To: Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger
-	<matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>,
-        "Jeff Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: sgnuojmQtyHcFGj8RcGnPU-sjzXGdcTN
-X-Proofpoint-ORIG-GUID: sgnuojmQtyHcFGj8RcGnPU-sjzXGdcTN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-08_10,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 malwarescore=0
- priorityscore=1501 suspectscore=0 spamscore=0 bulkscore=0 clxscore=1011
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406080125
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mailbox/mtk-cmdq-mailbox.o
+On Fri, 7 Jun 2024 09:17:52 -0700
+Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/adc/ingenic-adc.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/adc/xilinx-ams.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/buffer/kfifo_buf.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Hi Jeff,
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/mailbox/mtk-cmdq-mailbox.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for tidying these up.
 
-diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-index 4aa394e91109..8247584bcbeb 100644
---- a/drivers/mailbox/mtk-cmdq-mailbox.c
-+++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-@@ -790,4 +790,5 @@ static void __exit cmdq_drv_exit(void)
- subsys_initcall(cmdq_drv_init);
- module_exit(cmdq_drv_exit);
- 
-+MODULE_DESCRIPTION("Mediatek Command Queue(CMDQ) driver");
- MODULE_LICENSE("GPL v2");
+Applied to the togreg branch of iio.git and pushed out as testing
+because there is other stuff I need 0-day to take a look at.
 
----
-base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
-change-id: 20240608-md-drivers-mailbox-3cd31fdfc4b6
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/adc/ingenic-adc.c  | 1 +
+>  drivers/iio/adc/xilinx-ams.c   | 1 +
+>  drivers/iio/buffer/kfifo_buf.c | 1 +
+>  3 files changed, 3 insertions(+)
+> 
+> diff --git a/drivers/iio/adc/ingenic-adc.c b/drivers/iio/adc/ingenic-adc.c
+> index a7325dbbb99a..af70ca760797 100644
+> --- a/drivers/iio/adc/ingenic-adc.c
+> +++ b/drivers/iio/adc/ingenic-adc.c
+> @@ -920,4 +920,5 @@ static struct platform_driver ingenic_adc_driver = {
+>  	.probe = ingenic_adc_probe,
+>  };
+>  module_platform_driver(ingenic_adc_driver);
+> +MODULE_DESCRIPTION("ADC driver for the Ingenic JZ47xx SoCs");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/iio/adc/xilinx-ams.c b/drivers/iio/adc/xilinx-ams.c
+> index f0b71a1220e0..ee45475c495b 100644
+> --- a/drivers/iio/adc/xilinx-ams.c
+> +++ b/drivers/iio/adc/xilinx-ams.c
+> @@ -1430,5 +1430,6 @@ static struct platform_driver ams_driver = {
+>  };
+>  module_platform_driver(ams_driver);
+>  
+> +MODULE_DESCRIPTION("Xilinx AMS driver");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_AUTHOR("Xilinx, Inc.");
+> diff --git a/drivers/iio/buffer/kfifo_buf.c b/drivers/iio/buffer/kfifo_buf.c
+> index 05b285f0eb22..38034c8bcc04 100644
+> --- a/drivers/iio/buffer/kfifo_buf.c
+> +++ b/drivers/iio/buffer/kfifo_buf.c
+> @@ -287,4 +287,5 @@ int devm_iio_kfifo_buffer_setup_ext(struct device *dev,
+>  }
+>  EXPORT_SYMBOL_GPL(devm_iio_kfifo_buffer_setup_ext);
+>  
+> +MODULE_DESCRIPTION("Industrial I/O buffering based on kfifo");
+>  MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+> change-id: 20240607-md-drivers-iic-cab420a99216
+> 
 
