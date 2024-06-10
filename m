@@ -1,197 +1,166 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8C623B0;
-	Mon, 10 Jun 2024 14:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E171A824BC;
+	Mon, 10 Jun 2024 14:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718029047; cv=none; b=UlwfqoOq5sVkOI92BOFakDcAbVuTmjTu4dHH0usySN2bg90xSOn8wwXT5V4/cRpsaGmaZtQDtN0cUDoFVypsTy6Ab7mfeTwlf2SkmJsp0p6WB5l5cgTZGMrCaq5bMEzipU3KA6zO4GxhpGoqN5+zgihDbwMmMnqB/GFQnr53iqU=
+	t=1718029388; cv=none; b=o86G9k92tRiXQynaG6Riz/Mom4SpMG+paoL3t5UBCN6xVO1xFmq/z25Ypqv2wp2Kz9CGMsEf+JLbA3VMpnr9qRRBGJVcXCFJlRgWFfjBCpRwC5iALZjWNxQGfnK/fTYzxqVFoamAHGjmzKhThvdhjKvMAIVkJgEWn5dVqd2uCrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718029047; c=relaxed/simple;
-	bh=0kBAWHKUioxPwsP0cOKMBLFQ/TodyuS7Yhv671eJmbo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=udzW5EM3sRf1PzkQDIa0jebFk/77E4YRU8nCg3HS45G/wWBt5Mk6hWANI812KRlz3CtBVgxfgPX1qzZCY48ZvAx9EKpg1YU5X+R+DMviUm28zN6AhZSGtsYY2FLbGj8tMixKMgXxklDRi+M3LKux/PV3NxyePNr1Yj+9JQXunSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mVZRM2uD; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1718029388; c=relaxed/simple;
+	bh=H+f7kBwQGLRlS9stWvV1R4/huvpLOvxicj9vrY72Mwc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ja+wldOxHuwy5m5EJdHx0Rlbooomm9/9KsgNZL+y20pislUPuMFqzzbHqygkgGid7gpMQ2nrCoR5RzLKdnazmcc1PyxSB2LtWkinrfkT8O9WkU9VgMNqLEB2EHx34Jnj3dPNMv8ebdR5DnPil3E9cHrczwWwrEIDq3hkhtDXtyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UaqHKqtP; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mVZRM2uD"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45A007YT005752;
-	Mon, 10 Jun 2024 14:17:20 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UaqHKqtP"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AEDo6D023208;
+	Mon, 10 Jun 2024 14:22:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=ZvmT6xcxZ7fKHo6lcksZ8X
-	lbUVuNwFgyUKsTa7jHC/U=; b=mVZRM2uDSD8lSk5zX1WldBu5dGoGRY21IPVKnl
-	pOX1jLSdS8QwHWohu+K6x+D7AIZmE/iS56YAZqfLMQgRPLzW+1Gyqc5Hd6YSLp12
-	tbrn62f1RVgnQGMpLeT+QDlE5sbehF6zudk6d3soypWzpbDBEhmovbMwRUjvSphC
-	9sQu92NMyuDKvH8xVO3uvt7WQ0eZ7pFjwpFBjUKfG+cmBsXawlCOxjrmH4FOIUYi
-	T4TztynDh+HimJcETz9bBUQFHYJS6QBTI4LJNybQI+lqP7EovX8Ag471a2SiIoA0
-	7LsMJMNgCYOGPv/e1FLFOz7ltVkmDLCRuVK8EqLj24HV4vcw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymd0ec9ks-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IT8sPCRCYHphIwu7Jr5FVfrM/uRqAW7zaQPKoTJM2lQ=; b=UaqHKqtPW3jvY39j
+	JndvfGxIJZFmxlLTgjwDalrrLR0gOfjYvfQIabjSSB1QGXfEMWZ+Eon4O0IogWJi
+	Aq+E4Ilg4bOjmZbRC7mWdR353ZFPHrCgPuz2t5fTbQRTM2Na0M4eQxHWp1Ncn+9c
+	KtYE8ek7nNA76ql43QaSlZAijvQkLPYG8PIky1/I59xCDmZ27s+22I7Wvt3JCKPv
+	OtfQXxL1KBbUI9X1JKCcQQuc9Zo4JyU/M9AFDgMvRKXnWPvFrw7acg4lTWVfnG+B
+	tSIMXbWx6KWOEJ0tktImemzq+8W3zjRd6UV0ZaNafco8FVt30iUneyUssk6HipGD
+	f/pH7A==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymfcv3tbk-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 14:17:20 +0000 (GMT)
+	Mon, 10 Jun 2024 14:22:53 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AEHJOU002770
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AEMqvx032184
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 14:17:19 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+	Mon, 10 Jun 2024 14:22:52 GMT
+Received: from [10.48.242.196] (10.49.16.6) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
- 2024 07:17:18 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 10 Jun 2024 07:17:18 -0700
-Subject: [PATCH] mmc: add missing MODULE_DESCRIPTION() macros
+ 2024 07:22:51 -0700
+Message-ID: <fdf878a7-a2c9-431e-a5c2-c7ba328c1fb3@quicinc.com>
+Date: Mon, 10 Jun 2024 07:22:50 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] regulator: add missing MODULE_DESCRIPTION() macro
+Content-Language: en-US
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Matthias Brugger
+	<matthias.bgg@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240608-md-drivers-regulator-v1-1-da338665db7a@quicinc.com>
+ <29cb4283-34ef-4c90-ad53-ea572576d3fa@collabora.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <29cb4283-34ef-4c90-ad53-ea572576d3fa@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240610-md-drivers-mmc-v1-1-c2a2593e4121@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAO0KZ2YC/x3MwQrCMAyA4VcZORvoWqfgq4iHps1cwFZJdAzG3
- t1ux+/w/ysYq7DBrVtBeRaTd23oTx2kKdYno+Rm8M6f3aV3WDJmlZnVsJSEiYbRXwMNFAK06KM
- 8ynIM749misZIGmua9s1L6m/BEu3LCtv2B9XfSLB/AAAA
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang
-	<wsa+renesas@sang-engineering.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: sOEy7AWb7EoyhgcQfM4iRDmWO2-dc6nA
-X-Proofpoint-ORIG-GUID: sOEy7AWb7EoyhgcQfM4iRDmWO2-dc6nA
+X-Proofpoint-ORIG-GUID: su16xLbBd-LTiqBIk09QJuuGuA-ichmC
+X-Proofpoint-GUID: su16xLbBd-LTiqBIk09QJuuGuA-ichmC
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
- adultscore=0 spamscore=0 mlxscore=0 clxscore=1011 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406100108
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ mlxlogscore=999 phishscore=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406100109
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/of_mmc_spi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/tmio_mmc_core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/renesas_sdhi_core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/mmc_core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq_simple.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq_sd8787.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq_emmc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/sdio_uart.o
+On 6/10/2024 1:43 AM, AngeloGioacchino Del Regno wrote:
+> Il 09/06/24 06:53, Jeff Johnson ha scritto:
+>> On x86, make allmodconfig && make W=1 C=1 reports:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/da9121-regulator.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/max20411-regulator.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/rt4831-regulator.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/tps6286x-regulator.o
+>>
+>> Add the missing invocation of the MODULE_DESCRIPTION() macro to all files
+>> which have a MODULE_LICENSE(). This includes mtk-dvfsrc-regulator.c, which
+>> did not produce a warning with the x86 allmodconfig, since it may cause
+>> this warning with other configurations.
+>>
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>> ---
+>>   drivers/regulator/da9121-regulator.c     | 1 +
+>>   drivers/regulator/max20411-regulator.c   | 1 +
+>>   drivers/regulator/mtk-dvfsrc-regulator.c | 1 +
+>>   drivers/regulator/rt4831-regulator.c     | 1 +
+>>   drivers/regulator/tps6286x-regulator.c   | 1 +
+>>   5 files changed, 5 insertions(+)
+>>
+>> diff --git a/drivers/regulator/da9121-regulator.c b/drivers/regulator/da9121-regulator.c
+>> index 96257551bb12..3571b6242e3a 100644
+>> --- a/drivers/regulator/da9121-regulator.c
+>> +++ b/drivers/regulator/da9121-regulator.c
+>> @@ -1192,4 +1192,5 @@ static struct i2c_driver da9121_regulator_driver = {
+>>   
+>>   module_i2c_driver(da9121_regulator_driver);
+>>   
+>> +MODULE_DESCRIPTION("Dialog Semiconductor DA9121/DA9122/DA9220/DA9217/DA9130/DA9131/DA9132 regulator driver");
+>>   MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/regulator/max20411-regulator.c b/drivers/regulator/max20411-regulator.c
+>> index 8c09dc71b16d..6614e767072f 100644
+>> --- a/drivers/regulator/max20411-regulator.c
+>> +++ b/drivers/regulator/max20411-regulator.c
+>> @@ -161,4 +161,5 @@ static struct i2c_driver max20411_i2c_driver = {
+>>   };
+>>   module_i2c_driver(max20411_i2c_driver);
+>>   
+>> +MODULE_DESCRIPTION("Maxim MAX20411 High-Efficiency Single Step-Down Converter driver");
+>>   MODULE_LICENSE("GPL");
+>> diff --git a/drivers/regulator/mtk-dvfsrc-regulator.c b/drivers/regulator/mtk-dvfsrc-regulator.c
+>> index f1280d45265d..1941aad5e247 100644
+>> --- a/drivers/regulator/mtk-dvfsrc-regulator.c
+>> +++ b/drivers/regulator/mtk-dvfsrc-regulator.c
+>> @@ -211,4 +211,5 @@ static void __exit mtk_dvfsrc_regulator_exit(void)
+>>   module_exit(mtk_dvfsrc_regulator_exit);
+>>   
+>>   MODULE_AUTHOR("Arvin wang <arvin.wang@mediatek.com>");
+>> +MODULE_DESCRIPTION("MediaTek DVFSRC regulator driver");
+> 
+> Can you please drop this one?
+> I have a series floating that is removing this driver entirely and replacing it
+> with a refactored one. Though, it has the same issue, so I'll have to send a v6.
+> 
+> Anyway, v5 is there:
+> 
+> https://lore.kernel.org/r/20240424095416.1105639-1-angelogioacchino.delregno@collabora.com
+> 
+> 
+>>   MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/regulator/rt4831-regulator.c b/drivers/regulator/rt4831-regulator.c
+>> index 97e6f7e2a0ba..7d1ba0c82271 100644
+>> --- a/drivers/regulator/rt4831-regulator.c
+>> +++ b/drivers/regulator/rt4831-regulator.c
+>> @@ -202,4 +202,5 @@ static struct platform_driver rt4831_regulator_driver = {
+>>   module_platform_driver(rt4831_regulator_driver);
+>>   
+>>   MODULE_AUTHOR("ChiYuan Huang <cy_huang@richtek.com>");
+>> +MODULE_DESCRIPTION("Richtek RT4831 DSV RegulatorsRichtek RT4831 DSV Regulators driver");
+> 
+> Also, there's a typo here :-)
+> 
+> After dropping mtk-dvfsrc-regulator changes and after fixing the typo:
+> 
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+Thanks, will address these in v2
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-Corrections to these descriptions are welcomed. I'm not an expert in
-this code so in most cases I've taken these descriptions directly from
-code comments, Kconfig descriptions, or git logs.  History has shown
-that in some cases these are originally wrong due to cut-n-paste
-errors, and in other cases the drivers have evolved such that the
-original information is no longer accurate.
----
- drivers/mmc/core/core.c              | 1 +
- drivers/mmc/core/pwrseq_emmc.c       | 1 +
- drivers/mmc/core/pwrseq_sd8787.c     | 1 +
- drivers/mmc/core/pwrseq_simple.c     | 1 +
- drivers/mmc/core/sdio_uart.c         | 1 +
- drivers/mmc/host/of_mmc_spi.c        | 1 +
- drivers/mmc/host/renesas_sdhi_core.c | 1 +
- drivers/mmc/host/tmio_mmc_core.c     | 1 +
- 8 files changed, 8 insertions(+)
-
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index a8c17b4cd737..d6c819dd68ed 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -2362,4 +2362,5 @@ static void __exit mmc_exit(void)
- subsys_initcall(mmc_init);
- module_exit(mmc_exit);
- 
-+MODULE_DESCRIPTION("MMC core driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/mmc/core/pwrseq_emmc.c b/drivers/mmc/core/pwrseq_emmc.c
-index 3b6d69cefb4e..fff30330574f 100644
---- a/drivers/mmc/core/pwrseq_emmc.c
-+++ b/drivers/mmc/core/pwrseq_emmc.c
-@@ -115,4 +115,5 @@ static struct platform_driver mmc_pwrseq_emmc_driver = {
- };
- 
- module_platform_driver(mmc_pwrseq_emmc_driver);
-+MODULE_DESCRIPTION("HW reset support for eMMC");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/mmc/core/pwrseq_sd8787.c b/drivers/mmc/core/pwrseq_sd8787.c
-index 0c5808fc3206..f24bbd68e251 100644
---- a/drivers/mmc/core/pwrseq_sd8787.c
-+++ b/drivers/mmc/core/pwrseq_sd8787.c
-@@ -130,4 +130,5 @@ static struct platform_driver mmc_pwrseq_sd8787_driver = {
- };
- 
- module_platform_driver(mmc_pwrseq_sd8787_driver);
-+MODULE_DESCRIPTION("Power sequence support for Marvell SD8787 BT + Wifi chip");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
-index df9588503ad0..97f6d69d9c80 100644
---- a/drivers/mmc/core/pwrseq_simple.c
-+++ b/drivers/mmc/core/pwrseq_simple.c
-@@ -159,4 +159,5 @@ static struct platform_driver mmc_pwrseq_simple_driver = {
- };
- 
- module_platform_driver(mmc_pwrseq_simple_driver);
-+MODULE_DESCRIPTION("Simple HW reset support for MMC");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/mmc/core/sdio_uart.c b/drivers/mmc/core/sdio_uart.c
-index 575ebbce378e..6b7471dba3bf 100644
---- a/drivers/mmc/core/sdio_uart.c
-+++ b/drivers/mmc/core/sdio_uart.c
-@@ -1162,4 +1162,5 @@ module_init(sdio_uart_init);
- module_exit(sdio_uart_exit);
- 
- MODULE_AUTHOR("Nicolas Pitre");
-+MODULE_DESCRIPTION("SDIO UART/GPS driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/mmc/host/of_mmc_spi.c b/drivers/mmc/host/of_mmc_spi.c
-index bf54776fb26c..05939f30a5ae 100644
---- a/drivers/mmc/host/of_mmc_spi.c
-+++ b/drivers/mmc/host/of_mmc_spi.c
-@@ -19,6 +19,7 @@
- #include <linux/mmc/core.h>
- #include <linux/mmc/host.h>
- 
-+MODULE_DESCRIPTION("OpenFirmware bindings for the MMC-over-SPI driver");
- MODULE_LICENSE("GPL");
- 
- struct of_mmc_spi {
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 12f4faaaf4ee..d62a4ed86775 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -1162,4 +1162,5 @@ void renesas_sdhi_remove(struct platform_device *pdev)
- }
- EXPORT_SYMBOL_GPL(renesas_sdhi_remove);
- 
-+MODULE_DESCRIPTION("Renesas SDHI driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 93e912afd3ae..c1a4ade5f949 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1319,4 +1319,5 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
- EXPORT_SYMBOL_GPL(tmio_mmc_host_runtime_resume);
- #endif
- 
-+MODULE_DESCRIPTION("TMIO MMC core driver");
- MODULE_LICENSE("GPL v2");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240610-md-drivers-mmc-cb5f273b5b33
+/jeff
 
