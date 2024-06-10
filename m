@@ -1,141 +1,97 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3323173514
-	for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 09:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AFACA62
+	for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 09:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718010341; cv=none; b=lVkzbStoPIS3jIUOgQ00FPhpwY8JR0XNp+cbDcyrNom/1lGTvurRdTRArsfdsB6eJi5ZiQy5QGi7rbRVXCu1/2Px5RfPJGuU8hNvJGd9lvD+9XyGf9pXW/G50PUinkzxJD/bg5NByAqYHulIjJqlkOkvwQiRmvzAIKPzqdDZ1PI=
+	t=1718011091; cv=none; b=qjyQNCrV9lhLc5KsqZAlO0LlpEkY5em1xNXidbisPpM+Rt11702070V7F742u6j0in53/pCpAEqXKsogf4aoTVzvb/VQX7nXTiKACcAeai0j1aWqXFn4Zht87BBSnru7OQRZ4vsl3wBfJTzQQgdoaDFjdHyOcikx4kkeTN/66o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718010341; c=relaxed/simple;
-	bh=HEg0zyvw/V+cMw418J+Nfsgp8PdHvRrJzynNEBulD/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g6jUdf1AKtb32Dk4f10S619OWhLuvcVQMF1Jyz5vKEUvKh1yDQR8/iUCflz97dwPRiBKgfwrp8ZI30PvqnBahgFjLMK6wurSIPzHtkiBW0zPLNnaEFPH+6/f2OCJ020BqqL+3ThrIChYG0TvaZyueFNwyl/SlxRn6TPl0E/2rKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=b3d3lJke; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1718011091; c=relaxed/simple;
+	bh=gtteO0LSPQdQ3RdVgHLeMls4+WyFe2f9ktPoUGUolqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DNCocnXOtgnLOMOVlOAEOqHniMz+R4HATngN49ibuoc8/sneCJ+CfXjy2BK0rKDaDTwEcNXY4fe4VKfdXzdiZI37ggbVD1RXO5liwkSYeTQV7jLTLfGSiI36XN6kqBGF30PJ4OzTQmeD3F9UW7d4NX+O2hjYQjgmoXRsGNJ0rY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PbaNp1j0; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="b3d3lJke"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57c6d3e6606so2401554a12.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 02:05:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PbaNp1j0"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-35f223e7691so548194f8f.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 02:18:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718010337; x=1718615137; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z97Srw814CSk6XdmVlMPcCGnmoMkpcpqJTTh4MZ38CU=;
-        b=b3d3lJkeKrEbLtTZr4R1OZWdGIQZFPncD6Y+TvfAnvUbPpF9t0V3hjGT5H2ChguXzG
-         OPkANN6libICRfhi4s6n5KQxo0JKx6D+95sEUe2YTBQb5PE9I4/bGEadbvYpqY8/37+t
-         Xt1Zis8yBgA2s+f9g+3fkag3JIv8YJH//6I+mkGuyhFEfPbUHrVQLZakXRwe/WI7+k3f
-         VttLkn59hLbD2Mcet0Xj7MxGIfquvklMqZgl9JzzRGogBRH3yQ4gLiwRRgD7tzBXVUcA
-         OFoVqOdfUm0fItxIK+/z2Sz8blTcrkNaUGrlTqzioFmuQQQa8/CnLHc0Jn0W6AB9J0Cu
-         gymw==
+        d=linaro.org; s=google; t=1718011087; x=1718615887; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6YXzyCsoRRHEYsnsz7snbNd/OFh2QNBazYlwAYKoZCA=;
+        b=PbaNp1j07oK26owcoytYGJnocpgNpuJkt2VhB6NAdRYXh50rSJhlWCmRYcInF/cMfg
+         3vr0blbkjx7yQRt914mZrcB48X9dFwUdssOS5Ir0uXXZokeOViCLh8UeYq2aKoKY9hQU
+         iwDBxRyqnPIGvi6peqXp8peHHhH36DY4RYZBx/FXz/zQAyeNk3ZsI5iLUIqyi1Talu1i
+         Rydeld2aeZ/DYS3p5bOyfdGwJi86lhY1bUoUVt9uyLdS3QS+uVxG0qjQW85KzYa2TOvx
+         Raa0c5JKDMpwhavNIsy2k0tPSnaV3W3Bkwss1PfiPU/MyOMA8xGA1/EZM5VZ2OD45s8H
+         blWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718010337; x=1718615137;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z97Srw814CSk6XdmVlMPcCGnmoMkpcpqJTTh4MZ38CU=;
-        b=t+vmVIg8BWeB5qyjfapW8ywaOuhVWdrMnYEv98a4JtPvx300sBdEQdHi/ZUKowewdH
-         PpdKAqGJzYtfQehRdoyGIi+FqHEEnOfEI3p6G8Y6TUQcW10J2/Ilb7eex8BW0X+qLnHr
-         f7+oIZFa6EPd1kd9kDgm1OG/aWiIED8RU0WzU/6VvU2zZOdKZ7InBO3n6qthSPSEi5+e
-         d5A06iecJ5VKduCL0CfppAAHKOUFmyscIgjCf3+oUbP50UduEzesLXW/baQ9eUjjcEsb
-         UzucLCgVDlN7oGTpTogO4pK+/2bV7+Ewlo1EjppvV21Qm1QrhPvV7/xG5ZFxJflZsdpt
-         zM+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVksesWNs8CPqQuym5580K3GImO3ALRczSs5rogIQgpw62vtXe7qiq2ixjXzCou2O5dekOfeMPXEBBwsJUJLyLxDgdpHehDXOcqlQcQ4KJ2
-X-Gm-Message-State: AOJu0YxGpV3MF1b3IPkG9Kzc0y2b8ejZIHtvb0ac7wUc/1hr1OTs3O9b
-	WFghSklfc4bds+13r6CQSp/OMAQvvDST2l24HPyZjidwJjqEHeBebBt5Cbbh1/s=
-X-Google-Smtp-Source: AGHT+IFkyhcT1eyJNZMa+v9iD180qe0aqLoDogvtNodRry9SmYe35KOJ15PGipaMtMR7zBJCwHj8dA==
-X-Received: by 2002:a17:906:840b:b0:a6f:dec:5a66 with SMTP id a640c23a62f3a-a6f0dec6614mr276844566b.5.1718010337430;
-        Mon, 10 Jun 2024 02:05:37 -0700 (PDT)
-Received: from localhost (p509153eb.dip0.t-ipconnect.de. [80.145.83.235])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6ef5285748sm412819866b.146.2024.06.10.02.05.36
+        d=1e100.net; s=20230601; t=1718011087; x=1718615887;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6YXzyCsoRRHEYsnsz7snbNd/OFh2QNBazYlwAYKoZCA=;
+        b=kq4nk0//gaYJpylRYvCTHObDN8ZHkPgxpEszeQmecak/tbu8WqnBb+o1/f3eUESG2M
+         Xv7Wrjbrd2hXAYUoGRQgiWRPhHXyzXSTIFtNUIjHqpUHc4IuHt4ZxRp92ufHZZCb7JQG
+         22yqTRlrUUKEQN6by3iL7ivXJ8mpgu846iXmRhyfazk6sZA+G3oDPaVtCeNNqKkI/R1c
+         W4DvF1I4pQ8Y4WJjudwxF9R08+0/FqNOAR+Vv2yJzap+CSoeBY1cMqoJmMsu9SsIdLfz
+         5M7wwRYmyZTXnmNyVTnMuaAiV643W6WPmeORrcM+LfqgR8LABJiaANpc3/dDSFzh4DGM
+         vAEg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1DWXXuZeJm1OAGF5iRMi6ID2BkcDAATtQWkUSuRsuoSewRhIBYTYSj3lqrATufPBzF98YKKBcyb7mHn8RAUlHpIihBSGfIiWkZU9UeyOh
+X-Gm-Message-State: AOJu0Yx2aYoulMjq1VX2gCiwxpjnS6Vzta/U4AuVZ8/TkmJ7NKN4TXRe
+	beRKZzlJbM8BBoF3ghxCG2TwupifQu4aSX8z/3QsDno1+uzoaAsDu7Tzz0yPpT4=
+X-Google-Smtp-Source: AGHT+IHMDyQqSuX8HIbrPi/FKnWIfUPZcRutT/SG9+8F+eYMPM18qeInUwLJ6ML/sEIBjJRLwQ2/SQ==
+X-Received: by 2002:a5d:458c:0:b0:35f:ddb:70e2 with SMTP id ffacd0b85a97d-35f0ddb72f9mr6126276f8f.1.1718011087265;
+        Mon, 10 Jun 2024 02:18:07 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f048dddddsm7859065f8f.111.2024.06.10.02.18.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 02:05:36 -0700 (PDT)
-Date: Mon, 10 Jun 2024 11:05:36 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	linux-pwm@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] pwm: add missing MODULE_DESCRIPTION() macros
-Message-ID: <g5u7xk2l625vu6dxleonlmshnwqoge5fiaigbqlcedayu2rate@o4vgz7g27vlv>
-References: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
- <ca6b4ce2-4ebf-409d-b87d-2024445b9392@collabora.com>
+        Mon, 10 Jun 2024 02:18:06 -0700 (PDT)
+Date: Mon, 10 Jun 2024 12:18:03 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] bitops: Add a comment explaining the double underscore macros
+Message-ID: <0ffbc9c3-7a7c-4cbe-bdb7-1041df44ce53@kili.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="q35kt4hkwtu27u62"
-Content-Disposition: inline
-In-Reply-To: <ca6b4ce2-4ebf-409d-b87d-2024445b9392@collabora.com>
-
-
---q35kt4hkwtu27u62
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: git-send-email haha only kidding
 
-Hello,
+Linus Walleij pointed out that a new comer might be confused about the
+difference between set_bit() and __set_bit().  Add a comment explaining
+the difference.
 
-On Mon, Jun 10, 2024 at 10:06:49AM +0200, AngeloGioacchino Del Regno wrote:
-> Il 07/06/24 18:02, Jeff Johnson ha scritto:
-> > [...]
-> > diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
-> > index 19a87873ad60..0b5d68a90e83 100644
-> > --- a/drivers/pwm/pwm-mediatek.c
-> > +++ b/drivers/pwm/pwm-mediatek.c
-> > @@ -395,4 +395,5 @@ static struct platform_driver pwm_mediatek_driver =
-=3D {
-> >   module_platform_driver(pwm_mediatek_driver);
-> >   MODULE_AUTHOR("John Crispin <blogic@openwrt.org>");
-> > +MODULE_DESCRIPTION("MediaTek Pulse Width Modulator driver");
->=20
-> MediaTek SoCs have got two different PWM IPs, one of which is used exclus=
-ively
-> for the Display PWM, and it is located in the DDP block.
->=20
-> So, there are two PWM IPs in one SoC:
->  - A general purpose PWM IP
->  - A DDP PWM IP
->=20
-> This driver is for the general purpose PWM IP.. so, please, can we change=
- this
-> to "MediaTek general purpose Pulse Width Modulator driver"?
->=20
-> After which,
->=20
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
+Link: https://lore.kernel.org/all/CACRpkdZFPG_YLici-BmYfk9HZ36f4WavCN3JNotkk8cPgCODCg@mail.gmail.com/
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ include/linux/bitops.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Looks like a reasonable request.
+diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+index 46d4bdc634c0..b35a5c3783f6 100644
+--- a/include/linux/bitops.h
++++ b/include/linux/bitops.h
+@@ -29,6 +29,9 @@ extern unsigned long __sw_hweight64(__u64 w);
+ #include <asm-generic/bitops/generic-non-atomic.h>
+ 
+ /*
++ * These double underscore __set_bit(), __clear_bit() macros are non-atomic
++ * versions of set_bit(), clear_bit() and so on.
++ *
+  * Many architecture-specific non-atomic bitops contain inline asm code and due
+  * to that the compiler can't optimize them to compile-time expressions or
+  * constants. In contrary, generic_*() helpers are defined in pure C and
+-- 
+2.39.2
 
-@Jeff: Can you please resend with the suggested change, I dropped the
-patch from for-next now.
-
-Best regards
-Uwe
-
---q35kt4hkwtu27u62
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZmwdsACgkQj4D7WH0S
-/k55zQf8CfuApQ1ZBtYAqa1Nbq+ZlBw/O21Uu1RabLwL/pyilctw+8HyD94rpw4l
-fa2pQmjJNIpbxVLwqbSz/liyD5+xs3qysDJdfTjG2sc3iWXXtfEo2PSOgxGByXfx
-53HHtTMGgwf4SGBDghqpOgBrfuPhjDbUC2xvVIYMwPFPliUjZhdQvNEUqZZiZxo1
-Ueou9i3+1M0/jEBd4adgtcR1QlNVQO/4QJ3RJMAFe1tQDVdYrLG3xb0+4uxskJ5b
-uuEuYScgNnItS4OISYQoo3R+M9RjhqBhiz+geuCDuHQOTK3GsLd6uJdvojmm1B1n
-PTlKBhDnoqJUPIoyjB6XfukvubKsiA==
-=P61q
------END PGP SIGNATURE-----
-
---q35kt4hkwtu27u62--
