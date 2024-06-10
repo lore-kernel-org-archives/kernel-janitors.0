@@ -1,57 +1,57 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0839474BE4
-	for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 09:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B78770F6
+	for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 09:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718012026; cv=none; b=XWnw3s3Ll3s2BGzjUE6PtajNEa/WORLmEg+4m09/50p1M4VqIsz0xT+Q8Q7GONr22rfGxbP9cF4xw63VP3007EGwV0z3uzwyvF3qZgcoaN/1bY/ctwrvO85EsrtLmbmMXDe5TiKWYQj6H6/BkuPa+7OYWSS8Q7kIy5BkdD5gHfo=
+	t=1718012037; cv=none; b=QDvhVHQ+k/uh14jSuXVx2WL9i0qtEJca7H05t6igb4uvHvEB1E2Do0uJg5ACujaXbo6bp96xrHD0CRx+DEsRbgLpPJRKgoR9eFyr9PTKqvdZVG8HlicAgsMpuU9pZQAqK1WrwFfx3Hex5CwyXSbQx6FrvGpWfcxhTel6T2fTZ78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718012026; c=relaxed/simple;
-	bh=tLOcVSiD6Eqw6Yy+f53eqMdy4+lsxuB3aeWvrhbUWPM=;
+	s=arc-20240116; t=1718012037; c=relaxed/simple;
+	bh=Y4u8UCZ3N7F3nxprunHyg90+5gvVlDurQflxxTdao7w=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=SoyDd4nl46uX5BggpwdmL7IOR7jJNpnYLjtCOXGxVr+tipTiKslZsxcdJ6Fu9bEx/Jr9xQkfGi03BiTXNzLzN/by6laG8OdSAD3xVIKFOEdQvRk6Avn8KUFijBN5VP3qZQJm0ySICrPNlBgnIu1baaW5pX67UXMDJHvfSJL0KR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DxD5TyLn; arc=none smtp.client-ip=209.85.167.49
+	 Content-Disposition:In-Reply-To; b=RV0rfDFFqXRwF0pgRrSy4dzp7MBO41Q8BDcgCasTD5jotSKT/yDrXsw1/Q4/5W3RyO40KyrFQAvtVQAnXm3Z2E/9QNW235pgFn4xhROSm9Hj5YEXY83Tplxhsvy21OtPfJG8++0FxcB8oWAv9to9fxL23qEHchPcP68w4Zc4ka4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ax/Mf6sL; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DxD5TyLn"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5295eb47b48so4857120e87.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 02:33:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ax/Mf6sL"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4217f2e3450so12821835e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 02:33:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718012023; x=1718616823; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718012034; x=1718616834; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
          :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pzVEamgsK8pIhsebOuX84FJsT0b+I1ivveKg0N5OLWc=;
-        b=DxD5TyLnUt2vJ5eV6h8gmlNIM5sfKsNMxoZxcrFkXMM+IfaORIQCFuAgNCq9/XIsIX
-         /lUn2W+QfQddSG7CeKqJiKdp0uKZm7Hs/Ym7AyuKC6glA4riQ86KUA3AKP35NGCrRWW9
-         y+Oi1CbUGU+J/iHI7iVQ3PnwvRRjFVbKPWaER32KwxfApqigTaFEOIXWim1/URWk/SJR
-         thiE6UObycwYrvGtt5gYlOUgVDlnP89S7+88D81FJ1Q/ty+dpfXui8OPK1IkBJpJwMn/
-         8hb6ap0Nq8wFKgEGZwC3BZbwPKvinfDSyCpWFw0e6Qj9+xWJk5DnAA1tc9FnzhCsyGL6
-         3yLA==
+        bh=JfyZWlscKr9Yqn9KGPRWZidB/h/j24q5WeuU1z+bRpQ=;
+        b=Ax/Mf6sLHu5jOpJbfna2GjAKKyTeZlVxGKt9vqDmcPFxgHzmMdUGuRTeOn83du+Jrn
+         NAwsgmrhIjc70Fj1RoJuX9gvm2E3bGDsniWdFEa5ysGYETq7gvLwQ65pT2A+3BOyol3z
+         dB4G+R8TSoBEFeO7AQvoOtGRWHryUBFEKOhDXwy82D/Jo/PyQb34soDNfEe5enHOki3A
+         v0rnokt/IqPZEbaASx9rShbaLZZkLXew5yi12On6MZ9+kocUk2Z4pa9ew48212Ikkl7c
+         EsB8CKDT8aUwcAcevdMJmnu0ed9rlj/idmM3vRse096a538WU4bmfXL0+w1BSWFnG6UQ
+         RFrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718012023; x=1718616823;
+        d=1e100.net; s=20230601; t=1718012034; x=1718616834;
         h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
          :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=pzVEamgsK8pIhsebOuX84FJsT0b+I1ivveKg0N5OLWc=;
-        b=drH/rVkFRGstLRNXdHCAqIOiWRZ/4K2tF1d6eiGh6FIza/k1QoZXoKiO3ZW5Hu09h+
-         qbGlIeeeC3qGFBhgeRQKOT+DuQaO+mD2xOiW793e6IwD0olkj96J12UZt3D6Q//I8yIw
-         eFE7eX7FAuHTDvwT4szr5gIbBjxUV33/Nd/S5+juQavVoSy+5thtTyZ3zEdPgI0ZPSp7
-         6JzSo+TTWQ+Rwd9dRE6NqC0DZNBiBgBzcLLns0dOz7feqpCbD46v3ae4/w5e0jIcOfR5
-         tOzRbEqWuaeSY24U4hgzs6kA/5OXTh1ACFm5gGjaHwbCaAIhFbv1r+tjLI2EfkiaNjrR
-         tWOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVb96H4Wch3WlLZKAyBGjDy3j3OpfMU6i7CyOcFwFy7DqJ5Ly5s1DJWdylwk/5xo7SEmahZHfsf8x/J/T/62plSPzRjCQ4wBRIxzvjELCOd
-X-Gm-Message-State: AOJu0YwD+uIGNH2crhbegmyv3G3s3EzhuUP7Gmev021XHPeeigGpSCR+
-	dCYjsFTRujRbz3s5+WhPw4tfNJt2VG4r/BnT8hnbBAOGPDd3lKK6L7tK0FTIfd0=
-X-Google-Smtp-Source: AGHT+IEjZLgV6Wy1oAxIIdW1ddfOocWe7sK0ReqlNbZA+bPWxFoLzpJukeMXV37eZ5OiEJagfcMF0A==
-X-Received: by 2002:a05:6512:61b:b0:52c:7fc3:601 with SMTP id 2adb3069b0e04-52c7fc306f4mr2851793e87.61.1718012023012;
-        Mon, 10 Jun 2024 02:33:43 -0700 (PDT)
+        bh=JfyZWlscKr9Yqn9KGPRWZidB/h/j24q5WeuU1z+bRpQ=;
+        b=G5D1lrS0HV34WsN/b2471cxJzsH2HuWsGds4pEodAGHmrsSxrpLuu7yy5WhNJGm+Tx
+         rB4LcvyQc932X/OsSc247yWgO/NnHWOIqzQSqVzvqwJXvgUf5twk3/SfudhJ7PcJ+4jz
+         4eMLu3lVHMFivVUImjIZQzj3pNn8nrsXLCZClJ2laGjMNct6oVAwOx6O9NF1zaJyXvao
+         L9iZi0d0ZpCeMXB9+Ae3gxHO24K9+fqXxhsOKZO2N3qilIcx9pZZoeuf9QI4/v13XkUx
+         eYhk8YFlj7tMUcu6EhHreLh9W1H3whGpFaARSkZBGrOlOewFF+FQoyVhLCrVtn9JdemZ
+         hApA==
+X-Forwarded-Encrypted: i=1; AJvYcCXd14j6lCUMJwg65YPYvPZTVcbZxFxUcxEGQ2pKM/NfyKWDobs89YJ62ts7bXo8q6jfl3Gzu2JUd9obmuX97oNaxtKzia7M621hl6l7TeUx
+X-Gm-Message-State: AOJu0Yx/Om3QsD/vQrvgZJtBGlQp6rWF5AouUVeuNFjWv+clOn2hHGTK
+	kzmHIPJAc3+PcIhmsYCs9gyvDsuh6di/oVZ3bAsnHEWfzjgfEbqvRilQBNkJYMg=
+X-Google-Smtp-Source: AGHT+IHV0SNoUbda6LDPv2KbyHC0xdaTqp83BCe78LwJZFcnLMqusq8VSWFXidvAy3Xd8mcDYj3/2w==
+X-Received: by 2002:a05:600c:4748:b0:421:edf4:1e89 with SMTP id 5b1f17b1804b1-421edf42181mr16200015e9.4.1718012033827;
+        Mon, 10 Jun 2024 02:33:53 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f0d512556sm7087985f8f.29.2024.06.10.02.33.42
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c2c7e8fsm136565045e9.38.2024.06.10.02.33.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 02:33:42 -0700 (PDT)
-Date: Mon, 10 Jun 2024 12:33:39 +0300
+        Mon, 10 Jun 2024 02:33:53 -0700 (PDT)
+Date: Mon, 10 Jun 2024 12:33:49 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Frank Li <Frank.Li@nxp.com>
 Cc: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
@@ -62,8 +62,8 @@ Cc: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
 	Bjorn Helgaas <bhelgaas@google.com>, ntb@lists.linux.dev,
 	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH 1/2] PCI: endpoint: Clean up error handling in vpci_scan_bus()
-Message-ID: <68e0f6a4-fd57-45d0-945b-0876f2c8cb86@moroto.mountain>
+Subject: [PATCH 2/2] PCI: endpoint: Fix epf_ntb_epc_cleanup() a bit
+Message-ID: <aaffbe8d-7094-4083-8146-185f4a84e8a1@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -75,51 +75,50 @@ Content-Disposition: inline
 In-Reply-To: <6eacdf8e-bb07-4e01-8726-c53a9a508945@moroto.mountain>
 X-Mailer: git-send-email haha only kidding
 
-Smatch complains about inconsistent NULL checking in vpci_scan_bus():
+There are two issues related to epf_ntb_epc_cleanup().
+1) It should call epf_ntb_config_sspad_bar_clear().
+2) The epf_ntb_bind() function should call epf_ntb_epc_cleanup()
+   to cleanup.
 
-    drivers/pci/endpoint/functions/pci-epf-vntb.c:1024 vpci_scan_bus()
-    error: we previously assumed 'vpci_bus' could be null (see line 1021)
-
-Instead of printing an error message and then crashing we should return
-an error code and clean up.  Also the NULL check is reversed so it
-prints an error for success instead of failure.
+I also changed the ordering a bit.  Unwinding should be done in the
+mirror order from how they are allocated.
 
 Fixes: e35f56bb0330 ("PCI: endpoint: Support NTB transfer between RC and EP")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/pci/endpoint/functions/pci-epf-vntb.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/pci/endpoint/functions/pci-epf-vntb.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-index 8e779eecd62d..7f05a44e9a9f 100644
+index 7f05a44e9a9f..874cb097b093 100644
 --- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
 +++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-@@ -1018,8 +1018,10 @@ static int vpci_scan_bus(void *sysdata)
- 	struct epf_ntb *ndev = sysdata;
+@@ -799,8 +799,9 @@ static int epf_ntb_epc_init(struct epf_ntb *ntb)
+  */
+ static void epf_ntb_epc_cleanup(struct epf_ntb *ntb)
+ {
+-	epf_ntb_db_bar_clear(ntb);
+ 	epf_ntb_mw_bar_clear(ntb, ntb->num_mws);
++	epf_ntb_db_bar_clear(ntb);
++	epf_ntb_config_sspad_bar_clear(ntb);
+ }
  
- 	vpci_bus = pci_scan_bus(ndev->vbus_number, &vpci_ops, sysdata);
--	if (vpci_bus)
--		pr_err("create pci bus\n");
-+	if (!vpci_bus) {
-+		pr_err("create pci bus failed\n");
-+		return -EINVAL;
-+	}
- 
- 	pci_bus_add_devices(vpci_bus);
- 
-@@ -1338,10 +1340,14 @@ static int epf_ntb_bind(struct pci_epf *epf)
- 		goto err_bar_alloc;
+ #define EPF_NTB_R(_name)						\
+@@ -1337,7 +1338,7 @@ static int epf_ntb_bind(struct pci_epf *epf)
+ 	ret = pci_register_driver(&vntb_pci_driver);
+ 	if (ret) {
+ 		dev_err(dev, "failure register vntb pci driver\n");
+-		goto err_bar_alloc;
++		goto err_epc_cleanup;
  	}
  
--	vpci_scan_bus(ntb);
-+	ret = vpci_scan_bus(ntb);
-+	if (ret)
-+		goto err_unregister;
+ 	ret = vpci_scan_bus(ntb);
+@@ -1348,6 +1349,8 @@ static int epf_ntb_bind(struct pci_epf *epf)
  
- 	return 0;
- 
-+err_unregister:
-+	pci_unregister_driver(&vntb_pci_driver);
+ err_unregister:
+ 	pci_unregister_driver(&vntb_pci_driver);
++err_epc_cleanup:
++	epf_ntb_epc_cleanup(ntb);
  err_bar_alloc:
  	epf_ntb_config_spad_bar_free(ntb);
  
