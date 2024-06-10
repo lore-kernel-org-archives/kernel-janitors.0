@@ -1,48 +1,37 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C152613213A;
-	Mon, 10 Jun 2024 14:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A796F86126;
+	Mon, 10 Jun 2024 14:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718031463; cv=none; b=AWPInjehhbOw4HbXEvqnxRw0zPZunMeZ1X514aJi3rOT/T5dS/8a/9tclRU965YA5l6UONOgKdSlgwhlE9xOiEnMbOJ1uHePhK6ee/PumTuaExbXIAy/U/IX51mnnYmvoCfHwSIizVnpv0Eso5h1MmrJieatoLnzwxfjLS1DQ5c=
+	t=1718031580; cv=none; b=FNTOEVW7bSNgN4QgrLTFr6OMbgirOaEBWiwvR3xh4pJbm56PA1fQKYtBYl8u6zh9RL7xuBo3Ssj+Lj5T0rU2+q3KV3jcaI6WMgtXkYgL/MEXQ0lfMhsPXnyhliXSnTHspI6P/ewb0NPv8p4fYjF7Vj1rXd79bgcNdNlC2xQQ5s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718031463; c=relaxed/simple;
-	bh=2rXaxkSAIZotar+nnN9S9D60wlWokv37PQWPyIcOILk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Oym5x8PHouvYM4H/tZKs/HCsttuioWbrp+hqcaUkIzv2ow7AGvjqS4FVldb48gjl+A+o7BsoKbVzMXU0sGrhJnCRKLLGRoxEYkDBpO6IIH4k4P4QPKIoDc0F18T2JuCLDQLXWH2MMnay0Ld35SMuUcdA6RAiYNIawO77H5H3NBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fQKXY5Uf; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718031580; c=relaxed/simple;
+	bh=P1CAVjktf7Ln2QB4ZgwW3nDizRL3v9KPQA8epNmv2uQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KMSljhXPTvNgdqgfEZ+TXUebNMUmvw+7k8Z+uGSVeEPce92ynwKEGlcyhEKQEyZ8hh1f88gRQ2aqt/XjcAFrQwWqGpjMk6zOBX1DzXBRWwosQVdbLkXHYb58cFZI7SEleoXW/CZ7WkpgM704aPrvQTu4oFWYiOloffmBZE6IgrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dfP6Nvd9; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fQKXY5Uf"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AEEjPT011686;
-	Mon, 10 Jun 2024 14:57:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	A4LnwTREdQzipPnKr1IjzxpDtyZ+lNAXOoAtXrqzceY=; b=fQKXY5Uf9KHvhFHu
-	4wup75oeDHsrQqOE6uYnnZ34qPIEZdxWousE+F4Uz3p6hvM/2Y2r0TvQz7dUp+s7
-	d/GcyTRV7DHbxPdyDkjmNk/+V3D3786O+gOuNC9carLLiLrf2Q7mwAwelEAqltn2
-	xc8kW2W9GDfF/kIri+1umYTwYB8YfuMbRm4K5n7jX2zl2LmAn3GP/OW7WIhzYNxC
-	TjRO+A2jVj659MkfFeWAiXZjb8IWvK9N2jLyrli90o2rRPbtDr24zpgWpenKA0SY
-	t4Se+bsR6yvfLoB1i0DZHlJSbEPJSINKERcksATcmqtmq9KivycFhNhgKKv5HcZe
-	uN03dw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymcnmuvw8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 14:57:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AEvMcm029467
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 14:57:22 GMT
-Received: from [10.48.242.196] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
- 2024 07:57:21 -0700
-Message-ID: <1988d782-e9a1-4099-9ca4-4a4d7c560554@quicinc.com>
-Date: Mon, 10 Jun 2024 07:57:20 -0700
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dfP6Nvd9"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=B0xfg+IE2l0Yoxu1WJC1kw9bFphbvDVSpsHf/NczCbI=; b=dfP6Nvd9RF1vC/RxxzXonfjumq
+	EfsGlCu2A2oTr8AqYfBYw8ew4AxuiagkLEo/QygWcH1/MfoPeDFjj7CRNwJdGWDokGe8LCoBsve1X
+	ECkbXasedJ/4uGO6yGFljjvjq2o7oFlpzyN+42W/r2HxPiQSld2Ra3X6aL6Rm/YIXPjpJuL7dd5UN
+	Pli1q+tc5303/hhkoed9FIbO6RhdM+jjpWa6IXAnzB0aylElxISP2785iUcILejCfWaiGo04pqVyc
+	XOecPzSwdRop+H6b/m4qxHu6QH7AQrIjvIgYpb74PZmphCIubqGgzJumpXUkxuBLIXxkgTAFGq9Y2
+	CL7nH1jA==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sGgUk-00000005XMC-0pb9;
+	Mon, 10 Jun 2024 14:59:38 +0000
+Message-ID: <ce08766e-8449-4fbc-9551-850852e53067@infradead.org>
+Date: Mon, 10 Jun 2024 07:59:36 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,72 +39,48 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] scsi: add missing MODULE_DESCRIPTION() macros
+Subject: Re: [PATCH][next] scripts/spelling.txt: add more spellings to
+ spelling.txt
+To: Colin Ian King <colin.i.king@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240610110419.1060732-1-colin.i.king@gmail.com>
 Content-Language: en-US
-To: Hannes Reinecke <hare@suse.com>, Khalid Aziz <khalid@gonehiking.org>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        "Martin K.
- Petersen" <martin.petersen@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Finn Thain <fthain@linux-m68k.org>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        James Smart <james.smart@broadcom.com>,
-        Ram Vegesna
-	<ram.vegesna@broadcom.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
-        "Juergen E. Fischer" <fischer@norbit.de>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <target-devel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240608-md-drivers-scsi-v2-1-d00d652e5d34@quicinc.com>
- <58217b4a-d731-4bc2-b625-9a5f0b9b17c0@suse.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <58217b4a-d731-4bc2-b625-9a5f0b9b17c0@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240610110419.1060732-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: h_25syYpGui5lXjXdsdojonkffjkwlcJ
-X-Proofpoint-ORIG-GUID: h_25syYpGui5lXjXdsdojonkffjkwlcJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 clxscore=1015 adultscore=0 phishscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406100114
 
-On 6/9/2024 11:10 PM, Hannes Reinecke wrote:
-> On 6/8/24 17:33, Jeff Johnson wrote:
-[...]
->> diff --git a/drivers/scsi/aha1542.c b/drivers/scsi/aha1542.c
->> index 9503996c6325..add10098a569 100644
->> --- a/drivers/scsi/aha1542.c
->> +++ b/drivers/scsi/aha1542.c
->> @@ -1009,6 +1009,7 @@ static int aha1542_biosparam(struct scsi_device *sdev,
->>   
->>   	return 0;
->>   }
->> +MODULE_DESCRIPTION("Adaptec AHA-1542 SCSI host adapter driver");
->>   MODULE_LICENSE("GPL");
-> 
-> Please add a newline before the MODULE_DESCRIPTION line.
-> 
->>   
->>   static int aha1542_init_cmd_priv(struct Scsi_Host *shost, struct scsi_cmnd *cmd)
-[...]
->> --- a/drivers/scsi/atp870u.c
->> +++ b/drivers/scsi/atp870u.c
->> @@ -1724,6 +1724,7 @@ static void atp870u_remove (struct pci_dev *pdev)
->>   	atp870u_free_tables(pshost);
->>   	scsi_host_put(pshost);
->>   }
->> +MODULE_DESCRIPTION("ACARD SCSI host adapter driver");
->>   MODULE_LICENSE("GPL");
-> 
-> Again, missing newline.
 
-I'll update these in v2
 
+On 6/10/24 4:04 AM, Colin Ian King wrote:
+> Some of the more common spelling mistakes and typos that I've found while
+> fixing up spelling mistakes in the kernel since December 2023.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  scripts/spelling.txt | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/scripts/spelling.txt b/scripts/spelling.txt
+> index edec60d39bbf..702a50ae1ad1 100644
+> --- a/scripts/spelling.txt
+> +++ b/scripts/spelling.txt
+> @@ -261,6 +261,7 @@ broadcase||broadcast
+
+> @@ -838,6 +853,7 @@ initalise||initialize
+>  initalize||initialize
+>  initation||initiation
+>  initators||initiators
+> +initialiased||initialized
+
+We normally accept British spellings...
+
+All of the others look good to me.
+Thanks.
+
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+-- 
+~Randy
