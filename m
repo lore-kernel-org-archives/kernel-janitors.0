@@ -1,99 +1,75 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18B97FBBA;
-	Mon, 10 Jun 2024 11:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD1654650;
+	Mon, 10 Jun 2024 12:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718020487; cv=none; b=RESOmOlaj04Y6fQADaaKFtHWDjQQLJOUY37yPKFUpDmi/1y16XzoTSdSgIoSnHeG1BlTG3sbNVXF6bBRr3SEgDQT3OGGuBDk5kwEtzClga8yoD6Khe0gMqPY1txBT32FLbJKJs2CTf95cqOWE2ftlYfeLid3sgx8OOjsBg+Qw5g=
+	t=1718021549; cv=none; b=IzqRfq9ZIrxKe2GWdvK6PHtX9QoOQsov5X5aYhwooAOQTg0e/+sz/oeNCJqAO7WfFbwUuIfK3sqBYq3lMrjdCf+GzxiezxwxeSgK0pntB40I4LPl4r+s1RK3ZV3vCcJsSvjR0qI5lrSnMOuqtv7GMLp0ymL50LA1MZFoM2yFDH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718020487; c=relaxed/simple;
-	bh=tFsn0x0/FBObqd/qWDmm4Ac4v94Ee73lutcAqjDJ56c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UtXAJ8pvr6qqe240RP/f3SlaieQJo11zDaw90wri4u/yrZXA1aebcVq4wirzGvd/Svjzp2fsYtT8sW1S2Vzlf0qPgXmZK1Yowf4URYg6d5vfT32Sq6j+ZyxB77YXpjVP5mcmh8J5RB5Db7s1xcbBVEv8sITe1iKaeZgO+3uRR58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G/VUPn2X; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1718021549; c=relaxed/simple;
+	bh=CoWMTLN3xVMCKujiQ62WewBUqmIwUhZeSl46qqqThsw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jskYjNP5QuCHPSCmrWM+VycrpBsAu+WFuICtPKjlpk7hqEeVrLV0MkhKEp5fIfktbix9M++Tw6jkjIysOQnWAlq9kcxjmFlnmQDVHwQWmZkZViPDc4JjEmM8LGGEVZ8wTl4JlYyZOcKlmpd+IL2WvnO/8lPrHa70kPcp3cmFE5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=YHTFNpZ6; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/VUPn2X"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a626919d19dso951781666b.0;
-        Mon, 10 Jun 2024 04:54:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718020484; x=1718625284; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tFsn0x0/FBObqd/qWDmm4Ac4v94Ee73lutcAqjDJ56c=;
-        b=G/VUPn2XG2q/33H5H8X95CvxqKDw50XgJ/QxCnRRiqMXpCXc4Or+gwknBvpBW2Ptiz
-         E0Gs4/NpGHxAneQAlYYcY9XrPv2rNTsuVa8FGXV4cMgQgOJSJi+U60G/T9tAEwxZPTuF
-         VchwBiSG4mVT2atbpNnSV1pRjuGUuQRVBGMbnNMU86Ijb2V7hwjCbTN5p5Zyls/pRc86
-         t6d2YzHNRKg7C7baZ5au+J5fKTVGIN+VFfUG9nvpfveQPerUFZfla0J4ddl+U/silfC9
-         7tvgWXKqCEYq36bCRvL5/1YOtGJnwHda+ZmZ9Ek0GIWW88vA/cuWBxxNNXo2piwIYgfo
-         XOAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718020484; x=1718625284;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tFsn0x0/FBObqd/qWDmm4Ac4v94Ee73lutcAqjDJ56c=;
-        b=acuU2x9gNya+l5hZ/8fpk0e1ne7NNivp/cxTby728Kpm5ddwZ3TikYurl394dsmtCE
-         EmOqb4QDyyDMz2K31F1SJhAST3S2N6zGXf9fyVhSuKgETxOr8ZaOtH41Qs0XLYo3sMuS
-         JHsfWMdUUukyUNvfqBw2nSbcEWG6Hhqy2BDynvjG/XYvHGXTTOP5zDD2f7BXlfCZbFEh
-         bbPQFmsXpKuFDBo/CauamIQj6O70047HdVZyhH1WGsIGR55HdJoKKn2V9zLZMFWlNOEj
-         wn7wkdneYHb+3H1B3K+il2KqFNE4gLKBkln624Lb08Tew0zIPrZiF1doNKEuu9EMnJ4p
-         6AHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEvnIcakfxr9lDwEL6qoVqXyWhkIPXqoba2S/P5LAGVBg/fpd8yc2vrJ8hRaeGrLXL6Z9WWJESwv5rLBP1EPikFiHJAR4Sm5d63QVhRrDp3WFoJtoJF1GG159ASVH01niIjlrG57zal68e6M9bvzOD5cJ0fRYuHEsOXUlBVe0Qancm34aYiJ45NTmJ/g==
-X-Gm-Message-State: AOJu0Yw51ExoT2iT9FPqsFMJVDdX2cy1r79wduaubl1bS3sMuKUyHJ0A
-	/iqoi/wIK2ag4gqxHivQoroge9BzZnIBYiL5usBD632ON+jtlpJTlxWkMgrIK72NpI8g+8xyKil
-	FU1SPMqh5HAItuITpqSOIsrsl390=
-X-Google-Smtp-Source: AGHT+IE2khVru4e8G4r78+VGQCZHUL1FvNUobqQ6rFka8hb4rGTSgOypy2uF7tpyhfYFbf2i7vAxHLN2y4c3YWAEFkA=
-X-Received: by 2002:a17:906:f1ca:b0:a6e:7720:7e39 with SMTP id
- a640c23a62f3a-a6e772086a4mr597115166b.8.1718020483971; Mon, 10 Jun 2024
- 04:54:43 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="YHTFNpZ6"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=X7eB5tOr4Wtz0yyAy8Xe6lpdiamgY9NpFstiAYK532I=; b=YHTFNpZ6MEWDOBw6od4XW+32LY
+	/g5YT6FOwEEanmRB1F8hkWFhzc7UxoWAaWNUjN22xwQCaA7WeDM6BY9MrT77az3W6eRR0DmyNNX5v
+	wMvuOHuKyQFDMV4SlH2iHySeYPtyedn7HRUD8Z+PSsQfiVzq4QAJC2hKd3H/ncFauJ84=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sGdsd-00HII0-5t; Mon, 10 Jun 2024 14:12:07 +0200
+Date: Mon, 10 Jun 2024 14:12:07 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] irqchip: add missing MODULE_DESCRIPTION() macros
+Message-ID: <91eae7c8-ecb5-4076-9d74-e0f073218875@lunn.ch>
+References: <20240608-md-drivers-irqchip-v1-1-dd02c3229277@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240609-md-drivers-mfd-v1-1-47cdd0b394e9@quicinc.com>
-In-Reply-To: <20240609-md-drivers-mfd-v1-1-47cdd0b394e9@quicinc.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 10 Jun 2024 14:54:07 +0300
-Message-ID: <CAHp75Vc1Ld6NFwFnjFDFbYScsQExg13MoXXwCCXoU_2Rw6ChfQ@mail.gmail.com>
-Subject: Re: [PATCH] mfd: add missing MODULE_DESCRIPTION() macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Lee Jones <lee@kernel.org>, Andy Shevchenko <andy@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	patches@opensource.cirrus.com, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240608-md-drivers-irqchip-v1-1-dd02c3229277@quicinc.com>
 
-On Mon, Jun 10, 2024 at 5:21=E2=80=AFAM Jeff Johnson <quic_jjohnson@quicinc=
-.com> wrote:
->
-> On x86, make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/arizona.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/pcf50633-gp=
-io.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/timberdale.=
-o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/ssbi.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/rt4831.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/intel_soc_p=
-mic_bxtwc.o
->
+On Sat, Jun 08, 2024 at 09:14:37AM -0700, Jeff Johnson wrote:
+> On x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/irqchip/irq-ts4800.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/irqchip/irq-meson-gpio.o
+> 
 > Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
->
-> This includes mfd-core.c and vexpress-sysreg.c which, although they
-> did not produce a warning with the x86 allmodconfig configuration, may
-> cause this warning with other configurations.
+> files which have a MODULE_LICENSE().  This includes a 3rd file,
+> irq-mvebu-pic.c, which did not produce a warning with the x86
+> allmodconfig, but which may cause this warning with other kernel
+> configurations.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/irqchip/irq-meson-gpio.c | 1 +
+>  drivers/irqchip/irq-mvebu-pic.c  | 1 +
 
-Acked-by: Andy Shevchenko <andy@kernel.org> # for Intel Broxton PMIC
+For the Marvell change, but the rest looks sensible as well:
 
---=20
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
