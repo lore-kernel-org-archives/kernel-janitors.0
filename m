@@ -1,314 +1,130 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675771DFF7;
-	Mon, 10 Jun 2024 16:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D9D14B978
+	for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 16:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718036201; cv=none; b=TzrS/ycQmxnv60HHbFXvtABu5gItsZjJXlZMu3cqOzWPfPhySoRpFL9LeGEFUk240cU66rmt4DU27exOIMncyGqaFs6W3LcSX9SZeGWHYxY7eoG69/yg3gR/LtoXCvEDPJw9CCVVGkLxQ1Ojn8aM0jrG9USXwYN4Zar++Da+zrI=
+	t=1718038403; cv=none; b=gpx695jYkBmGNi/nSpYXyueCT3RYUkSwL7EHjZE+ds4M/WZ1fOtptUdR0Ib3LENwMzpWRJ9eRCDyu3o/N8lD4n2un1w2466XNI/uqdwL2M8WP1ESITPfmjZg9ZsQBqQkLs7EbzrXEzZT0NuNaH+dsDpiU4nlVcsLl/QCl5ve9TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718036201; c=relaxed/simple;
-	bh=lJJVRDaDKBtRiy5dp2Z/Xvx+mfKgJ+g7wu4EAoB+3Rc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=V2jBM/IijqQ4yDVAgoiZdf6e+lISLam2elPGISgY69GEzGwl5bXJQlthXmVPDPwpFwKEBsYyPPq3Z8QDoImGxZPj123H9VZhqTR7ARrre4fq3kbipNt+aJBY4Rk4bGBdQLw7tWWdgyzoZKaXNIlL6GSplwR77UfR0H5+9RSL0ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nD/9LrSs; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718038403; c=relaxed/simple;
+	bh=BES8ee5sXlc5zmrxJY2BlnRPRIoI2IPGXq+EX3VR1No=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WR0f1g4bPgnRolVH3+Dv+W9lJfIhq7p22j6QynLNMlmFH9S+DY0f7FGlQTk7K4AK71P9QO/QzM3nk7cfwyPZR+Zx8zljpu9YK/s9M/Pdx9K2dN0eRnetGQFelZOqLKF7KZE1lWYzmW8ZVf0NwFSvPwS/k86fG9QiBa5fjnOJEwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LmDXmJ3Y; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nD/9LrSs"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45AFDMep024236;
-	Mon, 10 Jun 2024 16:16:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=+2SgnZTd/Jy9fjHWzehQ8D
-	XP+8WphTGJbo3+JOtqyt8=; b=nD/9LrSsGd7nRhPDJZqdmqu/ZJJtBZ7kGrqskt
-	kkd4SyZ/Fl0Lg952upa0J1bA0vdmYXvFTiwLfxcz8b3atGtYAEQwxkYnNlQnBqOn
-	WNUgx/73QcsaYbH+jVM4Z848HaRky1pcHglUjKFwzQzEBl0OugwILgLVMtRQPwSu
-	8w12J8Nzje0X307rECrb6UgjZMuqGbEkfblJtshef9W05DXmPkHUzDZjBD2KaoxU
-	j4Lpf64ScThhBC/MMKG3aVR+O94dme0qOfKGBm8IssBrGRLIMojhhAVQaIdOTV3f
-	KRD4IKd3AiCkW0k4/kb0NpyYJXijVzR0H5qDaZ7p+msZPqEA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yme8rvg92-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 16:16:20 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AGGGqp011292
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 16:16:16 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
- 2024 09:16:16 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 10 Jun 2024 09:16:15 -0700
-Subject: [PATCH v3] scsi: add missing MODULE_DESCRIPTION() macros
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LmDXmJ3Y"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6ef64b092cso301429966b.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 09:53:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718038399; x=1718643199; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BES8ee5sXlc5zmrxJY2BlnRPRIoI2IPGXq+EX3VR1No=;
+        b=LmDXmJ3Yzniv81WTRdsZrtyZG1y6KoqY2FzHq6MQ5drqhYzqqrl4x6g+Pq1dUZk11L
+         N5m1aeKPAKW9+sdMceZiP9qUStPbxCZNKAsJOPl4bpq7ecpL7xUSi8empeWWkadyfDGE
+         Lcow7q+hnKY8QXz1ifZnNRqqYBe206OMLOFWnjDDfbM6z+I8U1wQrr7au6g1ASJJl2up
+         dM60+egFWlFm8MCe4C3VRaEfTtxs1CSENpAa2KTR5Rfi5EsbinMdIuWhy7orHbmiYUxA
+         QZkJdzEnW6yBW1PKOnnVYmcjThZa0xIypG5MNpMJ//UsGGY7DJlC10ORrtS/Sppn3qYz
+         eAkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718038399; x=1718643199;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BES8ee5sXlc5zmrxJY2BlnRPRIoI2IPGXq+EX3VR1No=;
+        b=R5ptjKOdcTcPV/GI5Zdv53NrU2Oxmr0L/oe9HC1At37yfYaR2m5+xlp/61rFWjzP/t
+         8rinqDKusEowNSbNzvtJmPrMjkGbArFLLKqpLn2ENKhm34d9RaenJwzfQGVi9I6usIAr
+         NhM0RPTpsmXPMrjaOYC+SBLC3vBm9DqUTgUmK/lRy5L7athm1bRtXshOH4uK/wgYw1Ym
+         B6LKT0yzgDkmJffPrKfnKsz6Df1gkSV2nJyJo2KJOY6afW6GKWLaiOQdBDSgTmsNKleO
+         Lc1IjRE2+0InzzHKNahit4Wp3Mrb/Bqgk9SWsLxX+P3Lp8OViEzZSVfBunJQSkjssNXW
+         RHiA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3nCIEX61L+EkGU23QEip/K5lRPvPvQpSXkH9cJRMCytdXCldlMgmGWx5nmMvn4sDz9ga58ZCArFnemVAsleG6DCnsuWNiHvsgQ5DrTB1j
+X-Gm-Message-State: AOJu0YwvwVE1RYHb6Sc8jcoJJzK+L9tVzLMtPtRyHbg+xNh1Dp8ZhRmF
+	tGrHR1Y/TJgOT8XavGBmagGDhsqkDN83aUrZFOu0wiTFWNaenloQrfVBqR2eHj4=
+X-Google-Smtp-Source: AGHT+IFEYSFuraPOa+WYVzdaL+ESVBNKCRmo08LglRUMqvJEaK4g/mE7UxIj5Y6FmBNmUXmvs8sJdQ==
+X-Received: by 2002:a17:906:e20c:b0:a6f:26a5:9f5f with SMTP id a640c23a62f3a-a6f26a5a0a5mr142869266b.42.1718038398698;
+        Mon, 10 Jun 2024 09:53:18 -0700 (PDT)
+Received: from localhost (p200300f65f283b00ca876ee5dd3d1e3b.dip0.t-ipconnect.de. [2003:f6:5f28:3b00:ca87:6ee5:dd3d:1e3b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f20563a26sm133567866b.129.2024.06.10.09.53.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 09:53:18 -0700 (PDT)
+Date: Mon, 10 Jun 2024 18:53:16 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-pwm@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] pwm: add missing MODULE_DESCRIPTION() macros
+Message-ID: <t4xkx7mmokgj3lqmcl222s223obdahpqp6sqxgwaohisbqlbib@vitt25ggsezf>
+References: <20240610-md-drivers-pwm-v2-1-b337cfaa70ea@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240610-md-drivers-scsi-v3-1-055da78d66b2@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAM4mZ2YC/3WNQQ6CMBBFr0K6tqa0BcSV9zAuSjvKJFK0Aw2Gc
- HcLK40xs3rJ/PdmRhAQiB2zmQWISNj7BGqXMdsafwOOLjGTQmpRiop3jruAEQJxsoQclCq1qBT
- UTc3S6hHgitNmPF8SN4aAN8F4266eO/px4p2hAcL63iINfXht/Zivo/+pmPN0lQGVW6uvUJyeI
- 1r0dm/7jq2xKD8Nh1+DTAYnhCsLCYVT+tuwLMsbI9ZJIhEBAAA=
-To: Khalid Aziz <khalid@gonehiking.org>,
-        "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen"
-	<martin.petersen@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Hannes
- Reinecke" <hare@suse.com>, Finn Thain <fthain@linux-m68k.org>,
-        Michael
- Schmitz <schmitzmic@gmail.com>,
-        James Smart <james.smart@broadcom.com>,
-        Ram
- Vegesna <ram.vegesna@broadcom.com>,
-        Artur Paszkiewicz
-	<artur.paszkiewicz@intel.com>,
-        "Juergen E. Fischer" <fischer@norbit.de>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <target-devel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 5qpEp2i0nmmmlVnMTFqH9pz83Sqt6mda
-X-Proofpoint-GUID: 5qpEp2i0nmmmlVnMTFqH9pz83Sqt6mda
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_03,2024-06-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- suspectscore=0 bulkscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
- priorityscore=1501 mlxlogscore=999 impostorscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406100122
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lp35xxqvbjr4igp3"
+Content-Disposition: inline
+In-Reply-To: <20240610-md-drivers-pwm-v2-1-b337cfaa70ea@quicinc.com>
 
-On x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/scsi_common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/advansys.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/BusLogic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/aha1740.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/isci/isci.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/elx/efct.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/atp870u.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/ppa.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/imm.o
 
-Add all missing invocations of the MODULE_DESCRIPTION() macro.
+--lp35xxqvbjr4igp3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This updates all files which have a MODULE_LICENSE() but which do not
-have a MODULE_DESCRIPTION(), even ones which did not produce the x86
-allmodconfig warnings.
+Hello Jeff,
 
-Acked-by: Finn Thain <fthain@linux-m68k.org>
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-Changes in v3:
-- Added missing newlines in aha1542.c and atp870u.c
-- Link to v2: https://lore.kernel.org/r/20240608-md-drivers-scsi-v2-1-d00d652e5d34@quicinc.com
+On Mon, Jun 10, 2024 at 07:51:15AM -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx1.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx27.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-intel-l=
+gm.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-mediate=
+k.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-pxa.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-samsung=
+=2Eo
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-spear.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-viscont=
+i.o
+>=20
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>=20
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-Changes in v2:
-- Updated descriptions of atari_scsi.c, g_NCR5380.c, mac_scsi.c per Finn Thain
-  & Michael Schmitz
-- Removed unnecessary modifications to initio.c and sr.c
-- Link to v1: https://lore.kernel.org/r/20240607-md-drivers-scsi-v1-1-17ae31cc4fe5@quicinc.com
----
- drivers/scsi/BusLogic.c             | 1 +
- drivers/scsi/advansys.c             | 1 +
- drivers/scsi/aha1542.c              | 2 ++
- drivers/scsi/aha1740.c              | 1 +
- drivers/scsi/atari_scsi.c           | 1 +
- drivers/scsi/atp870u.c              | 2 ++
- drivers/scsi/elx/efct/efct_driver.c | 1 +
- drivers/scsi/g_NCR5380.c            | 1 +
- drivers/scsi/imm.c                  | 1 +
- drivers/scsi/isci/init.c            | 1 +
- drivers/scsi/mac_scsi.c             | 1 +
- drivers/scsi/pcmcia/aha152x_stub.c  | 1 +
- drivers/scsi/ppa.c                  | 1 +
- drivers/scsi/scsi_common.c          | 1 +
- drivers/scsi/sun3_scsi.c            | 1 +
- 15 files changed, 17 insertions(+)
+Thanks for the respin. Applied for next to
 
-diff --git a/drivers/scsi/BusLogic.c b/drivers/scsi/BusLogic.c
-index 72ceaf650b0d..2135a2b3e2d0 100644
---- a/drivers/scsi/BusLogic.c
-+++ b/drivers/scsi/BusLogic.c
-@@ -78,6 +78,7 @@ static struct blogic_drvr_options blogic_drvr_options[BLOGIC_MAX_ADAPTERS];
-   BusLogic can be assigned a string by insmod.
- */
- 
-+MODULE_DESCRIPTION("BusLogic MultiMaster and FlashPoint SCSI Host Adapter driver");
- MODULE_LICENSE("GPL");
- #ifdef MODULE
- static char *BusLogic;
-diff --git a/drivers/scsi/advansys.c b/drivers/scsi/advansys.c
-index ab066bb27a57..fd4fcb37863d 100644
---- a/drivers/scsi/advansys.c
-+++ b/drivers/scsi/advansys.c
-@@ -11545,6 +11545,7 @@ static void __exit advansys_exit(void)
- module_init(advansys_init);
- module_exit(advansys_exit);
- 
-+MODULE_DESCRIPTION("AdvanSys SCSI Adapter driver");
- MODULE_LICENSE("GPL");
- MODULE_FIRMWARE("advansys/mcode.bin");
- MODULE_FIRMWARE("advansys/3550.bin");
-diff --git a/drivers/scsi/aha1542.c b/drivers/scsi/aha1542.c
-index 9503996c6325..389499d3e00a 100644
---- a/drivers/scsi/aha1542.c
-+++ b/drivers/scsi/aha1542.c
-@@ -1009,6 +1009,8 @@ static int aha1542_biosparam(struct scsi_device *sdev,
- 
- 	return 0;
- }
-+
-+MODULE_DESCRIPTION("Adaptec AHA-1542 SCSI host adapter driver");
- MODULE_LICENSE("GPL");
- 
- static int aha1542_init_cmd_priv(struct Scsi_Host *shost, struct scsi_cmnd *cmd)
-diff --git a/drivers/scsi/aha1740.c b/drivers/scsi/aha1740.c
-index 3d18945abaf7..be7ebbbb9ba8 100644
---- a/drivers/scsi/aha1740.c
-+++ b/drivers/scsi/aha1740.c
-@@ -681,4 +681,5 @@ static __exit void aha1740_exit (void)
- module_init (aha1740_init);
- module_exit (aha1740_exit);
- 
-+MODULE_DESCRIPTION("Adaptec AHA1740 SCSI host adapter driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/scsi/atari_scsi.c b/drivers/scsi/atari_scsi.c
-index 742625ac7d99..98a1b966a0b0 100644
---- a/drivers/scsi/atari_scsi.c
-+++ b/drivers/scsi/atari_scsi.c
-@@ -894,4 +894,5 @@ static struct platform_driver atari_scsi_driver __refdata = {
- module_platform_driver_probe(atari_scsi_driver, atari_scsi_probe);
- 
- MODULE_ALIAS("platform:" DRV_MODULE_NAME);
-+MODULE_DESCRIPTION("Atari TT/Falcon NCR5380 SCSI driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/scsi/atp870u.c b/drivers/scsi/atp870u.c
-index 2a748af269c2..928151ec927a 100644
---- a/drivers/scsi/atp870u.c
-+++ b/drivers/scsi/atp870u.c
-@@ -1724,6 +1724,8 @@ static void atp870u_remove (struct pci_dev *pdev)
- 	atp870u_free_tables(pshost);
- 	scsi_host_put(pshost);
- }
-+
-+MODULE_DESCRIPTION("ACARD SCSI host adapter driver");
- MODULE_LICENSE("GPL");
- 
- static const struct scsi_host_template atp870u_template = {
-diff --git a/drivers/scsi/elx/efct/efct_driver.c b/drivers/scsi/elx/efct/efct_driver.c
-index 49fd2cfed70c..55d2301bfd7d 100644
---- a/drivers/scsi/elx/efct/efct_driver.c
-+++ b/drivers/scsi/elx/efct/efct_driver.c
-@@ -778,5 +778,6 @@ static void __exit efct_exit(void)
- module_init(efct_init);
- module_exit(efct_exit);
- MODULE_VERSION(EFCT_DRIVER_VERSION);
-+MODULE_DESCRIPTION("Emulex Fibre Channel Target driver");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Broadcom");
-diff --git a/drivers/scsi/g_NCR5380.c b/drivers/scsi/g_NCR5380.c
-index f6305e3e60f4..270eae7ac427 100644
---- a/drivers/scsi/g_NCR5380.c
-+++ b/drivers/scsi/g_NCR5380.c
-@@ -110,6 +110,7 @@ module_param_array(card, int, NULL, 0);
- MODULE_PARM_DESC(card, "card type (0=NCR5380, 1=NCR53C400, 2=NCR53C400A, 3=DTC3181E, 4=HP C2502)");
- 
- MODULE_ALIAS("g_NCR5380_mmio");
-+MODULE_DESCRIPTION("Generic NCR5380/NCR53C400 SCSI driver");
- MODULE_LICENSE("GPL");
- 
- static void g_NCR5380_trigger_irq(struct Scsi_Host *instance)
-diff --git a/drivers/scsi/imm.c b/drivers/scsi/imm.c
-index 21339da505f1..6e779bb14d98 100644
---- a/drivers/scsi/imm.c
-+++ b/drivers/scsi/imm.c
-@@ -1279,4 +1279,5 @@ static struct parport_driver imm_driver = {
- };
- module_parport_driver(imm_driver);
- 
-+MODULE_DESCRIPTION("IOMEGA MatchMaker parallel port SCSI host adapter driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/scsi/isci/init.c b/drivers/scsi/isci/init.c
-index de2aefcf2089..d31884f82f2a 100644
---- a/drivers/scsi/isci/init.c
-+++ b/drivers/scsi/isci/init.c
-@@ -758,6 +758,7 @@ static __exit void isci_exit(void)
- 	sas_release_transport(isci_transport_template);
- }
- 
-+MODULE_DESCRIPTION("Intel(R) C600 Series Chipset SAS Controller driver");
- MODULE_LICENSE("Dual BSD/GPL");
- MODULE_FIRMWARE(ISCI_FW_NAME);
- module_init(isci_init);
-diff --git a/drivers/scsi/mac_scsi.c b/drivers/scsi/mac_scsi.c
-index a402c4dc4645..53ee8f84d094 100644
---- a/drivers/scsi/mac_scsi.c
-+++ b/drivers/scsi/mac_scsi.c
-@@ -550,4 +550,5 @@ static struct platform_driver mac_scsi_driver __refdata = {
- module_platform_driver_probe(mac_scsi_driver, mac_scsi_probe);
- 
- MODULE_ALIAS("platform:" DRV_MODULE_NAME);
-+MODULE_DESCRIPTION("Macintosh NCR5380 SCSI driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/scsi/pcmcia/aha152x_stub.c b/drivers/scsi/pcmcia/aha152x_stub.c
-index 6a6621728c69..1b54ba51a485 100644
---- a/drivers/scsi/pcmcia/aha152x_stub.c
-+++ b/drivers/scsi/pcmcia/aha152x_stub.c
-@@ -75,6 +75,7 @@ module_param(synchronous, int, 0);
- module_param(reset_delay, int, 0);
- module_param(ext_trans, int, 0);
- 
-+MODULE_DESCRIPTION("Adaptec AHA152X-compatible PCMCIA SCSI card driver");
- MODULE_LICENSE("Dual MPL/GPL");
- 
- /*====================================================================*/
-diff --git a/drivers/scsi/ppa.c b/drivers/scsi/ppa.c
-index 8300f0bdddb3..2d9fcc45ad85 100644
---- a/drivers/scsi/ppa.c
-+++ b/drivers/scsi/ppa.c
-@@ -1155,4 +1155,5 @@ static struct parport_driver ppa_driver = {
- };
- module_parport_driver(ppa_driver);
- 
-+MODULE_DESCRIPTION("IOMEGA PPA3 parallel port SCSI host adapter driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/scsi/scsi_common.c b/drivers/scsi/scsi_common.c
-index 9c14fdf61037..04749fde1636 100644
---- a/drivers/scsi/scsi_common.c
-+++ b/drivers/scsi/scsi_common.c
-@@ -12,6 +12,7 @@
- #include <asm/unaligned.h>
- #include <scsi/scsi_common.h>
- 
-+MODULE_DESCRIPTION("SCSI functions used by both the initiator and the target code");
- MODULE_LICENSE("GPL v2");
- 
- /* Command group 3 is reserved and should never be used.  */
-diff --git a/drivers/scsi/sun3_scsi.c b/drivers/scsi/sun3_scsi.c
-index 4a8cc2e8238e..f51702893306 100644
---- a/drivers/scsi/sun3_scsi.c
-+++ b/drivers/scsi/sun3_scsi.c
-@@ -666,4 +666,5 @@ static struct platform_driver sun3_scsi_driver = {
- module_platform_driver_probe(sun3_scsi_driver, sun3_scsi_probe);
- 
- MODULE_ALIAS("platform:" DRV_MODULE_NAME);
-+MODULE_DESCRIPTION("Sun3 NCR5380 SCSI controller driver");
- MODULE_LICENSE("GPL");
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
+next
 
----
-base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
-change-id: 20240607-md-drivers-scsi-e3364073e9b9
+Thanks
+Uwe
 
+--lp35xxqvbjr4igp3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZnL3kACgkQj4D7WH0S
+/k7Y/gf+Oi0+dsAnW1E2XuJ43To/HG6xmMhALT1XJIHtAS1SRiuCRQ/KVw0Y07Ik
+Nr5ZJapzijm9o/YiKy3vJyMVEjozrO7E3AummZ24ZMBL7Ggz3EroPRAj8+l2v60k
+oz7i+Vs34vCraZGsPucTn52EuCnRMBh53fhz6bsKVKtOzNUD33k6c4V/BN9bIHfd
+MJpqwTO3ejnSMAUdC6ZPJc7ZTeddyiPi6u/I1UIm43Gud/1XGcnVXx7PL34kwB2R
+ng5cjCPGoiBYXfftDskl72+f2upFM5eJfueti5qqlGaT/C+wUxXQG3w5TGadSPmM
+00uycs1SX65h65o8xSssTRGIFQtOuQ==
+=OGvB
+-----END PGP SIGNATURE-----
+
+--lp35xxqvbjr4igp3--
