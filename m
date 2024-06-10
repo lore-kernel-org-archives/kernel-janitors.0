@@ -1,74 +1,178 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3664F2594;
-	Mon, 10 Jun 2024 11:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1FB7E107
+	for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 11:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718019453; cv=none; b=RKuZ/8use610S4Amfu92a2yS7LfIsmwEZCQmwisQVuztgXdZJORCX56iVPGgJNtB6VpP7D2pD/+lESxa6Foh9dqLuq0sDtQJgLkTqRn2I2cgdAhCTGdUAYu9XOYKDJbTDvlhrBUKE9LVQwAaTd+Mv1yoHTFKeJC5JvVxye1OJI4=
+	t=1718019675; cv=none; b=keoyxerH0PiKxrewpXhMDMip1apKishoOzRpjEAvUSQXbYNadYNk5VTuDxtEYM1d4YBbZYzXKQ45gjorCYV5qiQI9l1Y+99YtrVufhZ2lweQ1s/BxxzxuIPdRYf1xsDciI4dQyGidwo78Qs6/Kh0AMNGU6b5KaqXAgXVjXZonqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718019453; c=relaxed/simple;
-	bh=W5QzFncy0sUTy2B+uXEQTMtsMrR22hJS0osVxJ7jZF8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GMsNmxpON5dyGJU8nhR8HEBiXVlD9RCJ4YDwfmxu7A5RaQPwMir4GG9uoHy8qoOFG1X1xbHdVwsezwYErqxeGJxaEPbFSP2kZedkNEMyh8rD1oSy745vqKLy+u8CwAH4WRqfwhG8QJ/XIhlKA19WmYhNc4YEOFezOsBwCa9zIiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAihqqsn; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAihqqsn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DA96C4AF1C;
-	Mon, 10 Jun 2024 11:37:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718019452;
-	bh=W5QzFncy0sUTy2B+uXEQTMtsMrR22hJS0osVxJ7jZF8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=UAihqqsn0XnGRCucJWFCNxmRvk8TZlo++RhoqeW6SiLXJW3f/EIFyyKSJUNWNC9ak
-	 /Iq6ALFJZhvYeOIa9kh24gOnK3/HCqMMyFldZQSrSjjhYpYCB7XOYzr/wUC8PuQ/8w
-	 c99nxitWMQCtKSJj2K/FXdI+hbKiNYCWIs76EfqAzhFX/DA+mFBzbF687jJARrHRD5
-	 +fsOLl43LeJCWZPGEy95l7d5s6xLw0/ibmN2a2lOEiMRD36izWJo1qx7ic5KQg6dMz
-	 EbCW8a0Wmke49XVE3Iots7qdCl71BlQ+QPqg+pC5YD8Ary1mROmWlBgjHJhvU2k0FK
-	 MyGxsWuojx2wg==
-From: Robert Foss <rfoss@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- David Airlie <airlied@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
- linux-kernel@vger.kernel.org, Jernej Skrabec <jernej.skrabec@gmail.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, kernel-janitors@vger.kernel.org
-In-Reply-To: <6c8c6746-34e2-4a97-9dff-622ed29071e9@kili.mountain>
-References: <6c8c6746-34e2-4a97-9dff-622ed29071e9@kili.mountain>
-Subject: Re: [PATCH v2] drm/bridge: it6505: remove unnecessary NULL checks
-Message-Id: <171801944880.382402.4293639602145071155.b4-ty@kernel.org>
-Date: Mon, 10 Jun 2024 13:37:28 +0200
+	s=arc-20240116; t=1718019675; c=relaxed/simple;
+	bh=nyqfG2kuYiSkZ7XrIH7o5AupFxSBg0C40ywehmENuIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BTw4uQFrZHBb9YxPX91TjUyJYniSWLEykUnZsfHUogIyb5ZkIii+gsU4m1jdS6NKyYVSn6bti9OLyx7/ZidsYB/b1P6ppCkQrSeOmzWm8xmxSH65OMPZHRbWLdP+oF0eT02rWUpkW8f8tJlq9NK+MlywtuEJsY+wfJjjImn/IN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D3731688
+	for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 04:41:38 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 56D273F73B
+	for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 04:41:13 -0700 (PDT)
+Date: Mon, 10 Jun 2024 12:41:00 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Lee Jones <lee@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	patches@opensource.cirrus.com, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mfd: add missing MODULE_DESCRIPTION() macros
+Message-ID: <ZmbmTEt2cP4tS2Nn@e110455-lin.cambridge.arm.com>
+References: <20240609-md-drivers-mfd-v1-1-47cdd0b394e9@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.10.1
+In-Reply-To: <20240609-md-drivers-mfd-v1-1-47cdd0b394e9@quicinc.com>
 
-On Mon, 10 Jun 2024 13:50:26 +0300, Dan Carpenter wrote:
-> Smatch complains correctly that the NULL checking isn't consistent:
+On Sun, Jun 09, 2024 at 07:21:28PM -0700, Jeff Johnson wrote:
+> On x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/arizona.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/pcf50633-gpio.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/timberdale.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/ssbi.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/rt4831.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/intel_soc_pmic_bxtwc.o
 > 
->     drivers/gpu/drm/bridge/ite-it6505.c:2583 it6505_poweron()
->     error: we previously assumed 'pdata->pwr18' could be null
->     (see line 2569)
+> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+> files which have a MODULE_LICENSE().
 > 
-> These the ->pwr18 pointer is allocated during probe using the
-> devm_regulator_get() function.  If CONFIG_REGULATOR is disabled then,
-> yes, it can return NULL but in that case regulator_enable() and
-> disable() functions are no-ops so passing a NULL pointer is okay.
+> This includes mfd-core.c and vexpress-sysreg.c which, although they
+> did not produce a warning with the x86 allmodconfig configuration, may
+> cause this warning with other configurations.
 > 
-> [...]
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/mfd/arizona-core.c         | 1 +
+>  drivers/mfd/intel_soc_pmic_bxtwc.c | 1 +
+>  drivers/mfd/mfd-core.c             | 1 +
+>  drivers/mfd/pcf50633-gpio.c        | 1 +
+>  drivers/mfd/rt4831.c               | 1 +
+>  drivers/mfd/ssbi.c                 | 1 +
+>  drivers/mfd/timberdale.c           | 1 +
+>  drivers/mfd/vexpress-sysreg.c      | 1 +
+>  8 files changed, 8 insertions(+)
+> 
+> diff --git a/drivers/mfd/arizona-core.c b/drivers/mfd/arizona-core.c
+> index 19a0adf8ce3d..85ff8717d850 100644
+> --- a/drivers/mfd/arizona-core.c
+> +++ b/drivers/mfd/arizona-core.c
+> @@ -1429,4 +1429,5 @@ int arizona_dev_exit(struct arizona *arizona)
+>  }
+>  EXPORT_SYMBOL_GPL(arizona_dev_exit);
+>  
+> +MODULE_DESCRIPTION("Wolfson Arizona core driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/mfd/intel_soc_pmic_bxtwc.c b/drivers/mfd/intel_soc_pmic_bxtwc.c
+> index 8dac0d41f64f..ba32cacfc499 100644
+> --- a/drivers/mfd/intel_soc_pmic_bxtwc.c
+> +++ b/drivers/mfd/intel_soc_pmic_bxtwc.c
+> @@ -581,5 +581,6 @@ static struct platform_driver bxtwc_driver = {
+>  
+>  module_platform_driver(bxtwc_driver);
+>  
+> +MODULE_DESCRIPTION("Intel Broxton Whiskey Cove PMIC MFD core driver");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_AUTHOR("Qipeng Zha <qipeng.zha@intel.com>");
+> diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
+> index 6ad5c93027af..b2742b1dce0c 100644
+> --- a/drivers/mfd/mfd-core.c
+> +++ b/drivers/mfd/mfd-core.c
+> @@ -437,5 +437,6 @@ int devm_mfd_add_devices(struct device *dev, int id,
+>  }
+>  EXPORT_SYMBOL(devm_mfd_add_devices);
+>  
+> +MODULE_DESCRIPTION("Core MFD support");
+>  MODULE_LICENSE("GPL");
+>  MODULE_AUTHOR("Ian Molton, Dmitry Baryshkov");
+> diff --git a/drivers/mfd/pcf50633-gpio.c b/drivers/mfd/pcf50633-gpio.c
+> index 4d2b53b12eeb..3e368219479a 100644
+> --- a/drivers/mfd/pcf50633-gpio.c
+> +++ b/drivers/mfd/pcf50633-gpio.c
+> @@ -88,4 +88,5 @@ int pcf50633_gpio_power_supply_set(struct pcf50633 *pcf,
+>  }
+>  EXPORT_SYMBOL_GPL(pcf50633_gpio_power_supply_set);
+>  
+> +MODULE_DESCRIPTION("NXP PCF50633 GPIO Driver");
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/mfd/rt4831.c b/drivers/mfd/rt4831.c
+> index f8d6dc55b558..1ab8870e4ebf 100644
+> --- a/drivers/mfd/rt4831.c
+> +++ b/drivers/mfd/rt4831.c
+> @@ -115,4 +115,5 @@ static struct i2c_driver rt4831_driver = {
+>  module_i2c_driver(rt4831_driver);
+>  
+>  MODULE_AUTHOR("ChiYuan Huang <cy_huang@richtek.com>");
+> +MODULE_DESCRIPTION("Richtek RT4831 core driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/mfd/ssbi.c b/drivers/mfd/ssbi.c
+> index f849f2d34ec7..6e7aff6e2746 100644
+> --- a/drivers/mfd/ssbi.c
+> +++ b/drivers/mfd/ssbi.c
+> @@ -319,6 +319,7 @@ static struct platform_driver ssbi_driver = {
+>  };
+>  module_platform_driver(ssbi_driver);
+>  
+> +MODULE_DESCRIPTION("Qualcomm Single-wire Serial Bus Interface (SSBI) driver");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_VERSION("1.0");
+>  MODULE_ALIAS("platform:ssbi");
+> diff --git a/drivers/mfd/timberdale.c b/drivers/mfd/timberdale.c
+> index a41e9a3e2064..333d5b874de3 100644
+> --- a/drivers/mfd/timberdale.c
+> +++ b/drivers/mfd/timberdale.c
+> @@ -853,4 +853,5 @@ module_pci_driver(timberdale_pci_driver);
+>  
+>  MODULE_AUTHOR("Mocean Laboratories <info@mocean-labs.com>");
+>  MODULE_VERSION(DRV_VERSION);
+> +MODULE_DESCRIPTION("Timberdale FPGA MFD driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/mfd/vexpress-sysreg.c b/drivers/mfd/vexpress-sysreg.c
+> index eab82619ec31..d34d58ce46db 100644
+> --- a/drivers/mfd/vexpress-sysreg.c
+> +++ b/drivers/mfd/vexpress-sysreg.c
+> @@ -132,4 +132,5 @@ static struct platform_driver vexpress_sysreg_driver = {
+>  };
+>  
+>  module_platform_driver(vexpress_sysreg_driver);
+> +MODULE_DESCRIPTION("Versatile Express system registers driver");
+>  MODULE_LICENSE("GPL v2");
 
-Applied, thanks!
+For the vexpress-sysreg.c:
 
-[1/1] drm/bridge: it6505: remove unnecessary NULL checks
-      (no commit info)
+Acked-by: Liviu Dudau <liviu.dudau@arm.com>
 
+Best regards,
+Liviu
 
+> 
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240609-md-drivers-mfd-ef0e92e2f8da
+> 
 
-Rob
-
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
