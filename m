@@ -1,130 +1,104 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D9D14B978
-	for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 16:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4181474A9
+	for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 17:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718038403; cv=none; b=gpx695jYkBmGNi/nSpYXyueCT3RYUkSwL7EHjZE+ds4M/WZ1fOtptUdR0Ib3LENwMzpWRJ9eRCDyu3o/N8lD4n2un1w2466XNI/uqdwL2M8WP1ESITPfmjZg9ZsQBqQkLs7EbzrXEzZT0NuNaH+dsDpiU4nlVcsLl/QCl5ve9TU=
+	t=1718040358; cv=none; b=Sa77JCkb/Omu6b2hfpwdNMcmVALaTsTacPW4y4snFhsUUCZaNUN6Aod1AQI6bmo7vGL+H7P1wxzKMp9F8W/Kn+GzBd6TgPps2rU+cX4dj0GIDIy/hrqr40jWYgdO5LWLvrgY5GsoAJvmTcrRZPbAlazjMyaehCOpnozSy2ET/Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718038403; c=relaxed/simple;
-	bh=BES8ee5sXlc5zmrxJY2BlnRPRIoI2IPGXq+EX3VR1No=;
+	s=arc-20240116; t=1718040358; c=relaxed/simple;
+	bh=3m4/S4G2Yh24KJS9ZtKS2EJOg00cUqAvaAz79rtTSWw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WR0f1g4bPgnRolVH3+Dv+W9lJfIhq7p22j6QynLNMlmFH9S+DY0f7FGlQTk7K4AK71P9QO/QzM3nk7cfwyPZR+Zx8zljpu9YK/s9M/Pdx9K2dN0eRnetGQFelZOqLKF7KZE1lWYzmW8ZVf0NwFSvPwS/k86fG9QiBa5fjnOJEwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LmDXmJ3Y; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=TiD6wcA0+cnz0x3mngTDKZUilq20lIKqG1APFY6CEK+SVcB+rIJ9nyTyo0r7seIvpRpyYbuycPrUmCMYq+GDkSAMfi4PzGgoGykl+0hi514bKpxVOEVcOb4FC1EmjCAwDLL0QdOZm68kFqMUsy+28T8HA2ocpqjf9ky1sW2+Nxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t1YrASoQ; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LmDXmJ3Y"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6ef64b092cso301429966b.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 09:53:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t1YrASoQ"
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-6c702226b0aso4207291a12.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jun 2024 10:25:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718038399; x=1718643199; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718040356; x=1718645156; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BES8ee5sXlc5zmrxJY2BlnRPRIoI2IPGXq+EX3VR1No=;
-        b=LmDXmJ3Yzniv81WTRdsZrtyZG1y6KoqY2FzHq6MQ5drqhYzqqrl4x6g+Pq1dUZk11L
-         N5m1aeKPAKW9+sdMceZiP9qUStPbxCZNKAsJOPl4bpq7ecpL7xUSi8empeWWkadyfDGE
-         Lcow7q+hnKY8QXz1ifZnNRqqYBe206OMLOFWnjDDfbM6z+I8U1wQrr7au6g1ASJJl2up
-         dM60+egFWlFm8MCe4C3VRaEfTtxs1CSENpAa2KTR5Rfi5EsbinMdIuWhy7orHbmiYUxA
-         QZkJdzEnW6yBW1PKOnnVYmcjThZa0xIypG5MNpMJ//UsGGY7DJlC10ORrtS/Sppn3qYz
-         eAkg==
+        bh=abr2ue7yuPh0+wQBY3PyFrKJ/pZr3cN2Ly9RsxIqGXM=;
+        b=t1YrASoQzEV04/Jsy5xWnQ7Wp3OKDgt851PCeUvNzJYb3eh2LbF4zuxDcvrVXngB8C
+         S4FtvwsjrDo+qKMfYOnlTjT0S/cDVV1cRuIkHgNwlSe9W6n5kZDqTbUhOB2sppZOGium
+         9Z9lL8gqF6Zqo/emMWuG8pAwEBOfH4oQc5TP1HjycaIROg4GuzrWVuLK4yND57QAsjCq
+         J1cIGoKc8F8ha5rk13SutILtSVR2MY/2nOloAyZWZnXmANeyGBODlM2JHwZ4H6m55XwA
+         1ZYvH47utQfZiJ4imZH91xuEYU3C6rK4VdcQvbt8/J/FW5vCvmrK2bwJ7AhzLjE/D5hx
+         MGUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718038399; x=1718643199;
+        d=1e100.net; s=20230601; t=1718040356; x=1718645156;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BES8ee5sXlc5zmrxJY2BlnRPRIoI2IPGXq+EX3VR1No=;
-        b=R5ptjKOdcTcPV/GI5Zdv53NrU2Oxmr0L/oe9HC1At37yfYaR2m5+xlp/61rFWjzP/t
-         8rinqDKusEowNSbNzvtJmPrMjkGbArFLLKqpLn2ENKhm34d9RaenJwzfQGVi9I6usIAr
-         NhM0RPTpsmXPMrjaOYC+SBLC3vBm9DqUTgUmK/lRy5L7athm1bRtXshOH4uK/wgYw1Ym
-         B6LKT0yzgDkmJffPrKfnKsz6Df1gkSV2nJyJo2KJOY6afW6GKWLaiOQdBDSgTmsNKleO
-         Lc1IjRE2+0InzzHKNahit4Wp3Mrb/Bqgk9SWsLxX+P3Lp8OViEzZSVfBunJQSkjssNXW
-         RHiA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3nCIEX61L+EkGU23QEip/K5lRPvPvQpSXkH9cJRMCytdXCldlMgmGWx5nmMvn4sDz9ga58ZCArFnemVAsleG6DCnsuWNiHvsgQ5DrTB1j
-X-Gm-Message-State: AOJu0YwvwVE1RYHb6Sc8jcoJJzK+L9tVzLMtPtRyHbg+xNh1Dp8ZhRmF
-	tGrHR1Y/TJgOT8XavGBmagGDhsqkDN83aUrZFOu0wiTFWNaenloQrfVBqR2eHj4=
-X-Google-Smtp-Source: AGHT+IFEYSFuraPOa+WYVzdaL+ESVBNKCRmo08LglRUMqvJEaK4g/mE7UxIj5Y6FmBNmUXmvs8sJdQ==
-X-Received: by 2002:a17:906:e20c:b0:a6f:26a5:9f5f with SMTP id a640c23a62f3a-a6f26a5a0a5mr142869266b.42.1718038398698;
-        Mon, 10 Jun 2024 09:53:18 -0700 (PDT)
-Received: from localhost (p200300f65f283b00ca876ee5dd3d1e3b.dip0.t-ipconnect.de. [2003:f6:5f28:3b00:ca87:6ee5:dd3d:1e3b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f20563a26sm133567866b.129.2024.06.10.09.53.17
+        bh=abr2ue7yuPh0+wQBY3PyFrKJ/pZr3cN2Ly9RsxIqGXM=;
+        b=H8Vi9h8/i0kNW+xJiR9xo8jnTJ6Vkc+XPNYFJm2XNdHVR4eh2RL9LU0hRJemjTEUva
+         fT+y2ebyjW49tKMl/huynRoVkP7wVFPx9CckClB6KToZJiPdYRKsRpuVTeHTj7I7JycZ
+         M2kO2DqylnA5oo7jTxd74l9Yee5oMkoW5vWWLjjUYJzUA60ZzXI5Sy47OVAwbpUELVC6
+         NrvPH1L82tOzdXTDMBH5f7UDgw3tQv61rlpx1pJ5qKfYOiFMrDZQ4U1qv2PPPsvmfshA
+         EeuHMOImeykaQgkWLj3nu81YMjU8SS/uFQ0UDTzNmq4mNlpSsAlMsZbkgcpahkMyYVCo
+         yzXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxcR3q2iMEjo+eO23PY07pQ+XF9QE/pFmCEGAIG5+P0zbZhyZY2ObFiD2wZOYf8yDhjZY4msDMqixIETpa/ttA0/lXwoKYYVnEerzY7c/G
+X-Gm-Message-State: AOJu0YzWRFOlfZhG/DVNfTCpQ7cmp+b0u/rSQYNBJcpQhShVdcXbAwYn
+	TUA3Pfi6OVlzwgRNfTSroZ9CNpDDB9NgrbsMNrKihHPZrQnsgICtlHvfldlZ1Tw=
+X-Google-Smtp-Source: AGHT+IGG9+tJMQkgqsvCDc/nEkepy3d2r8n5n6dXzQzqVihO3brF8FWb4ywE8Wcq3W8Wme+D5vSwgg==
+X-Received: by 2002:a17:903:230e:b0:1f7:9a7:cd33 with SMTP id d9443c01a7336-1f728792081mr3720315ad.3.1718040355962;
+        Mon, 10 Jun 2024 10:25:55 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:9b34:fecc:a6c:e2bc])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7f7ea0sm86056265ad.270.2024.06.10.10.25.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 09:53:18 -0700 (PDT)
-Date: Mon, 10 Jun 2024 18:53:16 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+        Mon, 10 Jun 2024 10:25:54 -0700 (PDT)
+Date: Mon, 10 Jun 2024 11:25:51 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
 To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-pwm@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] pwm: add missing MODULE_DESCRIPTION() macros
-Message-ID: <t4xkx7mmokgj3lqmcl222s223obdahpqp6sqxgwaohisbqlbib@vitt25ggsezf>
-References: <20240610-md-drivers-pwm-v2-1-b337cfaa70ea@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] rpmsg: char: add missing MODULE_DESCRIPTION() macro
+Message-ID: <Zmc3H6PN8WPpgXNN@p14s>
+References: <20240604-md-drivers-rpmsg_char-v1-1-675453267fc6@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lp35xxqvbjr4igp3"
-Content-Disposition: inline
-In-Reply-To: <20240610-md-drivers-pwm-v2-1-b337cfaa70ea@quicinc.com>
-
-
---lp35xxqvbjr4igp3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240604-md-drivers-rpmsg_char-v1-1-675453267fc6@quicinc.com>
 
-Hello Jeff,
-
-On Mon, Jun 10, 2024 at 07:51:15AM -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx1.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx27.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-intel-l=
-gm.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-mediate=
-k.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-pxa.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-samsung=
-=2Eo
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-spear.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-viscont=
-i.o
->=20
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->=20
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
+On Tue, Jun 04, 2024 at 06:53:44PM -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rpmsg/rpmsg_char.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
 > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index d7a342510902..73b9fa113b34 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -566,4 +566,5 @@ static void rpmsg_chrdev_exit(void)
+>  module_exit(rpmsg_chrdev_exit);
+>  
+>  MODULE_ALIAS("rpmsg:rpmsg_chrdev");
+> +MODULE_DESCRIPTION("RPMSG device interface");
+>  MODULE_LICENSE("GPL v2");
+>
 
-Thanks for the respin. Applied for next to
+Applied
 
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
-next
+Thanks,
+Mathieu
 
-Thanks
-Uwe
-
---lp35xxqvbjr4igp3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZnL3kACgkQj4D7WH0S
-/k7Y/gf+Oi0+dsAnW1E2XuJ43To/HG6xmMhALT1XJIHtAS1SRiuCRQ/KVw0Y07Ik
-Nr5ZJapzijm9o/YiKy3vJyMVEjozrO7E3AummZ24ZMBL7Ggz3EroPRAj8+l2v60k
-oz7i+Vs34vCraZGsPucTn52EuCnRMBh53fhz6bsKVKtOzNUD33k6c4V/BN9bIHfd
-MJpqwTO3ejnSMAUdC6ZPJc7ZTeddyiPi6u/I1UIm43Gud/1XGcnVXx7PL34kwB2R
-ng5cjCPGoiBYXfftDskl72+f2upFM5eJfueti5qqlGaT/C+wUxXQG3w5TGadSPmM
-00uycs1SX65h65o8xSssTRGIFQtOuQ==
-=OGvB
------END PGP SIGNATURE-----
-
---lp35xxqvbjr4igp3--
+> ---
+> base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+> change-id: 20240604-md-drivers-rpmsg_char-02914d244ec9
+> 
