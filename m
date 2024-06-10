@@ -1,44 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D517441F;
-	Mon, 10 Jun 2024 21:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BE01514C9;
+	Mon, 10 Jun 2024 21:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718055887; cv=none; b=DVWdNVC7qDgexJJ3HwsxdLxsRBu9iP0/S+5xPzup6M9AzhbWKSBM8jvjENFGpp/5fo/0zUNQdhSppgWfaIsrP1vospJaTHwmcFvOxvnnNya4SE3VWejzV4tTcxYnbBgedG+hCB6DKpqffHtuVIhQ1Ij4si96pMTi83Vo2T+V4lU=
+	t=1718055902; cv=none; b=jYHDsIZ1UDY5TQhkHCpQEvsNlUPNaDtJzTjuC+ivDuHucox5QIcBXcqC21gKWpxoEtIqp6auMyWl5incRgV+SWMrf5DRGlUijs3T+ko9vm4DZS+JzR9Wdhm/JgfvS6gNppGKcXi7+JpxUYAyPEGYFgAsYFyCGXSeRyK5u+V5UbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718055887; c=relaxed/simple;
-	bh=Yq1fJAM7TJWvAOIEFxNG4hN4+EqR+5pk4rau/PBxoRs=;
+	s=arc-20240116; t=1718055902; c=relaxed/simple;
+	bh=CIrpJsQHJ1oAoHohV5FV+ZOP5zr4LCUK8FCMtTs1PcQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=etZhnTytJIkJnTAOgcsfm3atqhY/ShL/Z4P0xdtaF9LuSxTNYfQPlOivf2GKlnStTGSrhog360ajH6WZQnkPR/GUCUw1fEyt5zP8V+abz0A9bTgfA/k73C8hK0g6HQbHiTghWAOwIqSHGZydr3czmGxcx5vlOV0mFYVwJ+TFTOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a1iXrHE/; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=bUy++klgs60Sv7c5LfotH41M+hylpssd0Pxx3oxWwKDSlqrCjrZWhN5ugNp8AJaSKp5BX/nTgzkOBBJkzw0T3EKJH8yhSumOBgU8xLgcpz1hAJnMM6xApMutbbx85bcHah0LdvUu6xefd1gGmB6qHQ2sgMyIieeGZF5Dl3qHeVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECzMlU8k; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1iXrHE/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78913C2BBFC;
-	Mon, 10 Jun 2024 21:44:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECzMlU8k"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6F36C4AF1C;
+	Mon, 10 Jun 2024 21:44:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718055887;
-	bh=Yq1fJAM7TJWvAOIEFxNG4hN4+EqR+5pk4rau/PBxoRs=;
+	s=k20201202; t=1718055902;
+	bh=CIrpJsQHJ1oAoHohV5FV+ZOP5zr4LCUK8FCMtTs1PcQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=a1iXrHE/BKuNDrm+Sp1K/Ct8YZb/la8YIZTOAQUJPhe2XXDboTko82d37wJx5vge0
-	 YcTeEz+hGWjzREYDX9/rlL1vtP1jiR/wAw/pBQCWP3hwRgtWepRp4/ACFF5dBOEcZj
-	 QcIjCj1SapkMPKL28OZMu286SnHADhTd3LV3PNhnfy/lUzFMQF22+MTbhy0n6EeC/M
-	 w4+cYa55P0SqKoHxdIdOX7RJpUmCmUQ27ueXM3Shx0XimxWhnvSrqmL4JmZhHSMrCR
-	 2U/CKBn0CJ0OW8foY+F/e7RVFNuCzi6N05OdQnKEcpDR8RW5fjKTZSDEVp1TIcljy6
-	 /B/JUS1XAZsXQ==
+	b=ECzMlU8k7E3mQjMXJpraXWefsrEn04R4fio9Pt23U/XU+WMiWONv59lQftCD23Cr6
+	 ZizCb8WI9vF0kPh3MdjPdbCEyZlf9OYJEjeP9W8BVdKnspHeb5S9bSvV3lYZ4kUj12
+	 gANkYLgu87wZJrYkHBxTlGjgkaZGEjDb8pVhraNprMkB+0CaQPbv6jOyFhinnxFIhi
+	 wkUPP9W1LmJlo3LVWstFLwBDH4F2ovfUjkTA2CaObBE5xF+Es0yXm2WFvqIydtu69j
+	 6vM9J//vghujQWUERek2mzzSDYBoTR6PG6vmi0CX1Nm55air+TBIzNjy9IJ8niHC0U
+	 IWn2M4fLpnVaA==
 From: Mark Brown <broonie@kernel.org>
-To: Support Opensource <support.opensource@diasemi.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <20240610-md-drivers-regulator-v2-1-cf39106d7e54@quicinc.com>
-References: <20240610-md-drivers-regulator-v2-1-cf39106d7e54@quicinc.com>
-Subject: Re: [PATCH v2] regulator: add missing MODULE_DESCRIPTION() macro
-Message-Id: <171805587951.166318.13582723419199956307.b4-ty@kernel.org>
-Date: Mon, 10 Jun 2024 22:44:39 +0100
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <20240609-md-drivers-spi-v1-1-1c7444f53cde@quicinc.com>
+References: <20240609-md-drivers-spi-v1-1-1c7444f53cde@quicinc.com>
+Subject: Re: [PATCH] spi: add missing MODULE_DESCRIPTION() macros
+Message-Id: <171805589958.166358.8036553201290116562.b4-ty@kernel.org>
+Date: Mon, 10 Jun 2024 22:44:59 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -49,12 +45,12 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-4c370
 
-On Mon, 10 Jun 2024 07:30:51 -0700, Jeff Johnson wrote:
-> On x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/da9121-regulator.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/max20411-regulator.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/rt4831-regulator.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/tps6286x-regulator.o
+On Sun, 09 Jun 2024 15:18:58 -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-altera-core.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-fsl-lib.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-omap2-mcspi.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-qup.o
 > 
 > Add the missing invocations of the MODULE_DESCRIPTION() macro.
 > 
@@ -62,12 +58,12 @@ On Mon, 10 Jun 2024 07:30:51 -0700, Jeff Johnson wrote:
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/1] regulator: add missing MODULE_DESCRIPTION() macro
-      commit: 8a2744f2955a584188a82d631937aa365d4ea966
+[1/1] spi: add missing MODULE_DESCRIPTION() macros
+      commit: 8a71710bb4797174733a16df2bcb8683fbe7caea
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
