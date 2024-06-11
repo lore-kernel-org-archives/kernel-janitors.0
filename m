@@ -1,40 +1,61 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5AD42ABA;
-	Tue, 11 Jun 2024 07:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E3717333C
+	for <kernel-janitors@vger.kernel.org>; Tue, 11 Jun 2024 07:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718091612; cv=none; b=DTITMEZL2kBUGY+A7MAu+r74oH0F6aUTVSeBmI7+k8NX9ia9o1bOPZmTi0VtwpSrW2S/zkqAgai3Zc1A697KbFqBQmQAMA0hnS/FWiQWPUhs9XXnkqWtgsaUHhSwyXzmpmmHbsv/cHqkldWfQlMatIqrQ+Ve4DWVBcLpdAqAWWE=
+	t=1718091827; cv=none; b=j5xivEclvYGK3t67BM/RGKG/7ElsOwXGg3wYf6jnMr6rmXi69MhnUgwC4WRTIlcRnScVqnqYLTxSAhuO7/va4dwA1gL20ajVrv8yZx++0EKwcibCnXUMi4yFtaQQSm7vIBYR+wRbXGSGsz8IG4xYPuKs441mn2XqtkISyVU00vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718091612; c=relaxed/simple;
-	bh=0swJ7oefZ0XYQf1W0sRTgx9AL9YWktm9DAr1gHajTPM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=tMyHXixAogIHRKINCgd9/wLv8oQOUMrhFanimaRz+Dy2ulpTwzq7ARchjBrNetl+6+JahDfHJ7M3W4KZwWRsD6F6Uooa4u8te7e9gf8OgrvszF0bSMuqTG6YVmcx/KOMyxoA8tQ2FuVzf131dhxtpTiONSVhwTtG6evF2F49WGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=UjndKFr7; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1718091827; c=relaxed/simple;
+	bh=1hbRhtaD+Nk7+eePQv366/9QRI7tL/YdAz5mWXFDwtc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gDGY3rHtUTZmOsqgaCBZQDw+QAA2sNTQ2Kob2stvCF5dHYPof8mYd69OOQjVH4ftMO/lwumM5BEVHiNJDb4MC/Qusv5wRy+H1PR/IcRDxND7LBfpiy5OvhrxfQEKbVTkAeINw4QuV5Qg8J6igmje87DEMVnMFYI7CNB4WCqLAmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HjwQwfZF; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="UjndKFr7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718091589; x=1718696389; i=markus.elfring@web.de;
-	bh=IYe0QuucfsKEN4V8P0EKM9YqkQpxlrZscd9hQ6V7hDA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=UjndKFr7MtX2Tk4ugkcY4fHSiqYCp1aPy+pVQXDT0PhuCdNVqONEzMGqZB2oFedM
-	 7h3GVsuOmnW/aYLfDB6XMRv3T1qnlO3dMuIPqdDhs2nrmMJMO6e85lJG5QisVfUxM
-	 3935rklHO19sf3H6KWgWo78cXLI6xz6ctHulhrIq/Fw4KVWTc/iVuotO+GRuoG2my
-	 lOyXv1ENMbSUw5pnYLFqV0IiHbgx192oWBNc5fPUU1ZSR4rAoGzl8L+EFsZgpoz2e
-	 Bk/1o2BvNCBVcJtAYKBkkLQEGSmFA3ukYQw08Q5cXpg6Nd8ZtEEPNeRQOvu41fXBV
-	 YZu0YbRA5GY3RkL1rQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M2xw0-1sI1VJ0rPg-00AojT; Tue, 11
- Jun 2024 09:39:49 +0200
-Message-ID: <2ed41eff-284c-4c44-8090-d2c1765ab6b5@web.de>
-Date: Tue, 11 Jun 2024 09:39:24 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HjwQwfZF"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-421d32fda86so17817525e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jun 2024 00:43:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718091822; x=1718696622; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AaYHDTrL+lhdgiiWUWfPAobBHMAP2JH61ZX0cvqY+lM=;
+        b=HjwQwfZFsBODBhvfJ66rR74HXI+5wUSbgrmDSu9fjll8vlMuHRk/rnDddZrFlN1sOK
+         7S48+k8lcMi5zaDcCnp4pqYtNaJkUDoIozAcqJvFNvqKOD0NjcWHJJPTGu8TiIGP9tLx
+         YLE3NR4HPHRjmQNV2ZKpGaUXcrTwaWpq5TRj0X4PFvjh0yidTpNxoFOh82+23a3t4ZwR
+         i906P6aTZa4BE0+IMlC3+zlNvCahzzA72kxUN2QO3KmYAAxGgUhPFCgF5Ob2isWZ5H2j
+         v1lp1FwwnQ77oS+ELR1mD1+z7vjc+YlwnzZCtygyponihcCL+rgy6MNfx10Ox0zAC6Jd
+         fDxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718091822; x=1718696622;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=AaYHDTrL+lhdgiiWUWfPAobBHMAP2JH61ZX0cvqY+lM=;
+        b=UPka6DyIRn60jGoCYXaErhclX38iSQmjxvnbPaVPRk4s8KVkkkYnCgy4bsuct2Dwnr
+         F6Imf4GIg8cIyN5OT5Npu8+gPtLWkiTFktTfIHwXI9rIry9d/b/HplozVEnpNgOWUEfx
+         GuyK/d7NNhHZzpOKJN5B/4AE24unVRSohFJLCwqPimjddxaaJCLXaX5vqVvEDTMClK4L
+         boU3AAPlWTOrAv5XeXXKyZwZtZuRdzLPr+7wodcWWZ6i/nf7ptOmO1enXqbAxG+JT1zd
+         IrYJWuL9a2Mvaq39ZtjekYFGOuR9NRtI29MtgMdnhojfrCuitDLjmMhLfQ+pBvay48/V
+         P8Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUHbWzVdKg4MbGrjngKNnEdwGDv6E8QiTWbSeyGGrig14LJELAu0jJT2wzrO/4J4lvBUWOFN/W7NjkEUTYT9YsvecXPj7j/ZJdHVh8BII0U
+X-Gm-Message-State: AOJu0YydqE7e8bEh1umT1eJY7CQQA4O02ids/tSOpiJ4yCyShQRuD7Bs
+	EpaCZzKqq37d1FGew99a3zAcVMhFW+3TF8OWttdGBmfORrbjYW7Y+qFqOYTZNgI=
+X-Google-Smtp-Source: AGHT+IH4x5wACQat0OoKqIIRdpUr63Bf30Idh3s3QU7PBT65WI6cUEOYaAjORG1pUa2nasKiNItojA==
+X-Received: by 2002:a05:600c:45c4:b0:421:29cd:5c95 with SMTP id 5b1f17b1804b1-421649fba60mr129136245e9.10.1718091822434;
+        Tue, 11 Jun 2024 00:43:42 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:5a4:3b2:c750:ef5c? ([2a01:e0a:982:cbb0:5a4:3b2:c750:ef5c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f0f996ee3sm8916690f8f.71.2024.06.11.00.43.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 00:43:42 -0700 (PDT)
+Message-ID: <6c9bb16f-a1c1-474c-a753-9905d88c9022@linaro.org>
+Date: Tue, 11 Jun 2024 09:43:41 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,63 +63,240 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Gui-Dong Han <hanguidong02@outlook.com>,
- linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Chas Williams <3chas3@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jia-Ju Bai <baijiaju1990@gmail.com>
-References: <ME3P282MB3617E02526BEE4B295478B1AC0C72@ME3P282MB3617.AUSP282.PROD.OUTLOOK.COM>
-Subject: Re: [PATCH] atm/fore200e: Consolidate available cell rate update to
- prevent race condition
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ME3P282MB3617E02526BEE4B295478B1AC0C72@ME3P282MB3617.AUSP282.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:PqiipKOL74c+X+TwSvXlaX8DmpLwvd+tBTxwPu/+b42CG5TF1pO
- 1w+vyWhpMZ2jnlmvVSu4ZjeRAcBg7iZkBDyjr/shzRlev4H+hhso+VhjRW3tvKhyqIoX3OA
- E1TGt4AN6Pp13xtO6lfXBgK/EtzQMqj0Asf7Xmcjw2uWtUb2WTnwnSSdLr5rIqMkzUfvlam
- 2hnsoaOn+2gGyWQY+ukfQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:KKCreMyY098=;JxyQK6L5bAZizRDrwVNSFFjK2Du
- KYJ9acYM7pZh8kgSwJHGjwNTdQ2RsiF1WQoaXn7d9kpW4vVKGemjIrsgXtg6jVzmADW2j0BNw
- XRiijZFS/KoiIR+f5Dq9xjOeyX0vlcPx/lTXilme0xNy4nqLeFTYEPoSPLLzFcyX+1MAnRm05
- moZLU4FFkOPK7gIGDky9mKHD66ejlin0FQ8FJethiYuKQ1ehKYbawBTQP7zrGiVvmMqtSmia0
- LinDFoCGuZrhw4hxJY32nIkU6vjBh5rBVdFkV1ZVhkdi/IYhWhgfO1U9RqnTqolBUe/f5aMx1
- 3otFxXdo/4AXokK0TLdsCkhBTe4XYwwq0672TKiIrpn6jyzpj27p7K/Pu6adjXFlfYWP6jXZL
- Uu/c6RmDyYkQOB3W393qnebNJEs6WTzQib7vF/hS2a5m9KYb66XlL405XfNOdXRmbNkqFpmUO
- Bm5bqFmzh8TqprQWOK90MbFjI6pkWNI5npOFMAIimA0ktS8m4Wc6ERi1zN4m3J9+TN6FDy1dR
- N8ViB2GdzlsJUGlC78CchVP8mVwyYI16o4JqAUIeuBUzSiexHMFrNdDmz/n9mu9AWu8qJ+5KO
- isXAkdcrhVk+vVXneRyttwuxNT+i/9yKAv+s+Pv2j8v7zTAx/P/+pGFchQ3YR1rkWkVhxiofK
- SO4X8WEG67EmJmHkztdh+gWxh446E5VbhePe7e70y/cK1l1mltl/ngBi281BX47HFWZ8JT5kx
- koqUbxOoXwhLjbliAzsHWTO1rxJ1gfrLb1X/rb0AF/v8yTdSwF///TpgFFSq2M9q1bNG1WBjR
- wJ/uMKAo3/W6mfQ4yUbCg2PqdewKqSVoxtq/IOsMRPdoA=
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] pinctrl: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <rafal@milecki.pl>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman
+ <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ kernel-janitors@vger.kernel.org
+References: <20240610-md-drivers-pinctrl-v1-1-68462e3d960c@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240610-md-drivers-pinctrl-v1-1-68462e3d960c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> In fore200e_change_qos, there is a race condition due to two consecutive
-> updates to the 'available_cell_rate' variable. If a read operation
-> occurs between these updates, an intermediate value might be read,
-> leading to potential bugs.
+On 11/06/2024 06:21, Jeff Johnson wrote:
+> When ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/bcm/pinctrl-bcm4908.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_i2c.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_spi.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/meson/pinctrl-meson.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+> files which have a MODULE_LICENSE().
+> 
+> This includes many meson drivers which, although they did not produce
+> a warning with the x86 allmodconfig configuration, may cause this
+> warning with ARM or ARM64 configurations.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> Corrections to these descriptions are welcomed. I'm not an expert in
+> this code so in most cases I've taken these descriptions directly from
+> code comments, Kconfig descriptions, or git logs.  History has shown
+> that in some cases these are originally wrong due to cut-n-paste
+> errors, and in other cases the drivers have evolved such that the
+> original information is no longer accurate.
+> 
+> Also let me know if any changes need to be split into a separate patch
+> to go through a separate maintainer tree.
+> ---
+>   drivers/pinctrl/bcm/pinctrl-bcm4908.c         | 1 +
+>   drivers/pinctrl/meson/pinctrl-meson-a1.c      | 1 +
+>   drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c | 1 +
+>   drivers/pinctrl/meson/pinctrl-meson-axg.c     | 1 +
+>   drivers/pinctrl/meson/pinctrl-meson-g12a.c    | 1 +
+>   drivers/pinctrl/meson/pinctrl-meson-gxbb.c    | 1 +
+>   drivers/pinctrl/meson/pinctrl-meson-gxl.c     | 1 +
+>   drivers/pinctrl/meson/pinctrl-meson-s4.c      | 1 +
+>   drivers/pinctrl/meson/pinctrl-meson.c         | 1 +
+>   drivers/pinctrl/meson/pinctrl-meson8-pmx.c    | 1 +
 
-* Would you like to explain a bit more why you find the applied mutex
-  insufficient for data synchronisation aspects?
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org> # for Amlogic Pinctrl drivers
 
-* Is any special analysis tool (like =E2=80=9CBassCheck=E2=80=9D) involved=
- in such a contribution?
+>   drivers/pinctrl/pinctrl-mcp23s08.c            | 1 +
+>   drivers/pinctrl/pinctrl-mcp23s08_i2c.c        | 1 +
+>   drivers/pinctrl/pinctrl-mcp23s08_spi.c        | 1 +
+>   drivers/pinctrl/pinctrl-tb10x.c               | 1 +
+>   14 files changed, 14 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm4908.c b/drivers/pinctrl/bcm/pinctrl-bcm4908.c
+> index cdfa165fc033..f190e0997f1f 100644
+> --- a/drivers/pinctrl/bcm/pinctrl-bcm4908.c
+> +++ b/drivers/pinctrl/bcm/pinctrl-bcm4908.c
+> @@ -559,5 +559,6 @@ static struct platform_driver bcm4908_pinctrl_driver = {
+>   module_platform_driver(bcm4908_pinctrl_driver);
+>   
+>   MODULE_AUTHOR("Rafał Miłecki");
+> +MODULE_DESCRIPTION("Broadcom BCM4908 pinmux driver");
+>   MODULE_LICENSE("GPL v2");
+>   MODULE_DEVICE_TABLE(of, bcm4908_pinctrl_of_match_table);
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson-a1.c b/drivers/pinctrl/meson/pinctrl-meson-a1.c
+> index 50a87d9618a8..d2ac9ca72a3e 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson-a1.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson-a1.c
+> @@ -936,4 +936,5 @@ static struct platform_driver meson_a1_pinctrl_driver = {
+>   };
+>   
+>   module_platform_driver(meson_a1_pinctrl_driver);
+> +MODULE_DESCRIPTION("Amlogic Meson A1 SoC pinctrl driver");
+>   MODULE_LICENSE("Dual BSD/GPL");
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c b/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c
+> index ae3f8d0da05f..cad411d90727 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c
+> @@ -117,4 +117,5 @@ const struct pinmux_ops meson_axg_pmx_ops = {
+>   };
+>   EXPORT_SYMBOL_GPL(meson_axg_pmx_ops);
+>   
+> +MODULE_DESCRIPTION("Amlogic Meson AXG second generation pinmux driver");
+>   MODULE_LICENSE("Dual BSD/GPL");
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
+> index 6667c9d0238f..8f4e7154b73f 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
+> @@ -1091,4 +1091,5 @@ static struct platform_driver meson_axg_pinctrl_driver = {
+>   };
+>   
+>   module_platform_driver(meson_axg_pinctrl_driver);
+> +MODULE_DESCRIPTION("Amlogic Meson AXG pinctrl driver");
+>   MODULE_LICENSE("Dual BSD/GPL");
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson-g12a.c b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
+> index 2c17891ba6a9..32830269a5b4 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson-g12a.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
+> @@ -1426,4 +1426,5 @@ static struct platform_driver meson_g12a_pinctrl_driver = {
+>   };
+>   
+>   module_platform_driver(meson_g12a_pinctrl_driver);
+> +MODULE_DESCRIPTION("Amlogic Meson G12A SoC pinctrl driver");
+>   MODULE_LICENSE("Dual BSD/GPL");
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+> index f51fc3939252..2867f397fec6 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+> @@ -910,4 +910,5 @@ static struct platform_driver meson_gxbb_pinctrl_driver = {
+>   	},
+>   };
+>   module_platform_driver(meson_gxbb_pinctrl_driver);
+> +MODULE_DESCRIPTION("Amlogic Meson GXBB pinctrl driver");
+>   MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+> index 51408996255b..a2f25fa02852 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+> @@ -871,4 +871,5 @@ static struct platform_driver meson_gxl_pinctrl_driver = {
+>   	},
+>   };
+>   module_platform_driver(meson_gxl_pinctrl_driver);
+> +MODULE_DESCRIPTION("Amlogic Meson GXL pinctrl driver");
+>   MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson-s4.c b/drivers/pinctrl/meson/pinctrl-meson-s4.c
+> index cea77864b880..60c7d5003e8a 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson-s4.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson-s4.c
+> @@ -1230,4 +1230,5 @@ static struct platform_driver meson_s4_pinctrl_driver = {
+>   };
+>   module_platform_driver(meson_s4_pinctrl_driver);
+>   
+> +MODULE_DESCRIPTION("Amlogic Meson S4 SoC pinctrl driver");
+>   MODULE_LICENSE("Dual BSD/GPL");
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+> index 524424ee6c4e..ef002b9dd464 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
+> @@ -767,4 +767,5 @@ int meson_pinctrl_probe(struct platform_device *pdev)
+>   }
+>   EXPORT_SYMBOL_GPL(meson_pinctrl_probe);
+>   
+> +MODULE_DESCRIPTION("Amlogic Meson SoCs core pinctrl driver");
+>   MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson8-pmx.c b/drivers/pinctrl/meson/pinctrl-meson8-pmx.c
+> index f767b6923f9f..7f22aa0f8e36 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson8-pmx.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson8-pmx.c
+> @@ -101,4 +101,5 @@ const struct pinmux_ops meson8_pmx_ops = {
+>   	.gpio_request_enable = meson8_pmx_request_gpio,
+>   };
+>   EXPORT_SYMBOL_GPL(meson8_pmx_ops);
+> +MODULE_DESCRIPTION("Amlogic Meson SoCs first generation pinmux driver");
+>   MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+> index 38c3a14c8b58..737d0ae3d0b6 100644
+> --- a/drivers/pinctrl/pinctrl-mcp23s08.c
+> +++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+> @@ -696,4 +696,5 @@ int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
+>   }
+>   EXPORT_SYMBOL_GPL(mcp23s08_probe_one);
+>   
+> +MODULE_DESCRIPTION("MCP23S08 SPI/I2C GPIO driver");
+>   MODULE_LICENSE("GPL");
+> diff --git a/drivers/pinctrl/pinctrl-mcp23s08_i2c.c b/drivers/pinctrl/pinctrl-mcp23s08_i2c.c
+> index 04e8e7d079f0..94e1add6ddd7 100644
+> --- a/drivers/pinctrl/pinctrl-mcp23s08_i2c.c
+> +++ b/drivers/pinctrl/pinctrl-mcp23s08_i2c.c
+> @@ -111,4 +111,5 @@ static void mcp23s08_i2c_exit(void)
+>   }
+>   module_exit(mcp23s08_i2c_exit);
+>   
+> +MODULE_DESCRIPTION("MCP23S08 I2C GPIO driver");
+>   MODULE_LICENSE("GPL");
+> diff --git a/drivers/pinctrl/pinctrl-mcp23s08_spi.c b/drivers/pinctrl/pinctrl-mcp23s08_spi.c
+> index 4a872fff5fe8..54f61c8cb1c0 100644
+> --- a/drivers/pinctrl/pinctrl-mcp23s08_spi.c
+> +++ b/drivers/pinctrl/pinctrl-mcp23s08_spi.c
+> @@ -263,4 +263,5 @@ static void mcp23s08_spi_exit(void)
+>   }
+>   module_exit(mcp23s08_spi_exit);
+>   
+> +MODULE_DESCRIPTION("MCP23S08 SPI GPIO driver");
+>   MODULE_LICENSE("GPL");
+> diff --git a/drivers/pinctrl/pinctrl-tb10x.c b/drivers/pinctrl/pinctrl-tb10x.c
+> index c3b76e6511ac..4f98f72565f4 100644
+> --- a/drivers/pinctrl/pinctrl-tb10x.c
+> +++ b/drivers/pinctrl/pinctrl-tb10x.c
+> @@ -830,4 +830,5 @@ static struct platform_driver tb10x_pinctrl_pdrv = {
+>   module_platform_driver(tb10x_pinctrl_pdrv);
+>   
+>   MODULE_AUTHOR("Christian Ruppert <christian.ruppert@abilis.com>");
+> +MODULE_DESCRIPTION("Abilis Systems TB10x pinctrl driver");
+>   MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240610-md-drivers-pinctrl-7c07354ac076
+> 
 
-
-> To fix this issue, 'available_cell_rate' should be adjusted in a single
-> operation, ensuring consistency and preventing any intermediate states
-> from being read.
-
-* Please improve the change description with an imperative wording.
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.10-rc2#n94
-
-* How do you think about to specify the name of the affected function
-  in the summary phrase?
-
-* I would like to point out that similar source code adjustments can be ac=
-hieved
-  also by the means of the semantic patch language (Coccinelle software).
-
-Regards,
-Markus
