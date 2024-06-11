@@ -1,239 +1,91 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5431D52C;
-	Tue, 11 Jun 2024 14:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77D617D372;
+	Tue, 11 Jun 2024 14:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718114502; cv=none; b=eQBRPtBwyzkGtaerpippdZ51EeL3mmr1glJgvuuS7ghZ2r4aeoK2noIp+eeiTcSiYl4esLDDWmhGiy0AxyiOHX8VnnNP//QZWv1t+vu8ETmytKblAWEl8t6Mp57PiBVW5J6mpFe0Z0JqQYCNhaDkOjguPrs6XsYGhf8OlAbMBPs=
+	t=1718115144; cv=none; b=Mf8eI2aXGRBJSG22oUym2j2p+0laRBWKwds4p3XRLN5P9WxA6X6I65jc/5/I1vt0BBn6U0uu7iQea303zM0wMownMDRfhJFS2rbWcrJbQbqgSdp2Gzo2oO5Ws1n4Ybcyjs01vGjRWwVvfdhg8iuMHPPwYraNe6HH1DW2aCU/9R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718114502; c=relaxed/simple;
-	bh=ZfXqe5DRStLJbbL+hA9tbL6IekOLbb51eB0k+L/00qA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lXlnNo36hTmDQBowoTJFrgzb+KBL8a640HtDROjfAQdtyqngKK0bMdvAoE8krrzsCRSLk5oVs2ugF4CDPdzDPhIzo1KlPdJOmsmhTtbSrln/Da7T8lyZ7q1FHdWFaHVAAzj4uucBPHqEDtdXRWHSS3vAB02QIwEDUQFbp+I14o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e86UUdKn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e86UUdKn"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B5B6Ki017540;
-	Tue, 11 Jun 2024 14:01:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UI4ZVeDijMil2oU15QweqG+lgenlo/lXYwe5MUgORM0=; b=e86UUdKnR4WPbUoi
-	n4hd07s5rfYxLjZxPXtVfxNRzvH8z8yfzoACLZChSK7HxKQAMgGw0wN51yPftVhK
-	u1IETzTCY0P4quuc0gIroZxVaio69TGa02B0wzykkbWMmArfrFuIzAnEaMcQt6PM
-	i2Dyn4tqb9WIXIGGrMqq8DQv94VC8knVeBmw/F7vGeNNmLx3N9CwYZyaSotXTB0X
-	qV3Udz30drnhIOeXph0Dbe+eYvF3+MBn3p9eRfcwZpCHMY8+TxKSYJijokLYuaxp
-	mjlJNRyS/GuVlVglm9en+qtUgpXmXiglB8e0wPMzewQ7QqjAwo3HaxC+6K9RL0n9
-	mw2Skw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymg2epk82-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 14:01:26 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BE1OYr000587
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 14:01:24 GMT
-Received: from [10.48.243.20] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
- 2024 07:01:24 -0700
-Message-ID: <abef8935-3da2-4736-9ebc-1b5ad1c7e2a2@quicinc.com>
-Date: Tue, 11 Jun 2024 07:01:23 -0700
+	s=arc-20240116; t=1718115144; c=relaxed/simple;
+	bh=YY724BGhiyIEaylXd+UnLjm1nNWqWKv7YVra5OWy9Oo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rXUkUe9FaZwQCHt0/WU0G6Ee6I80yuh9KRzcefGv9lu8Bh4GhDpY2s7tc3qIAZPo29lm8fmFO2Vtmf0MXW/CedsuBE1tEfj2p/WGB0o2CQQ/pGY+PEf88pAPvcXY6RF0Ab5oe/QddvuolH3tDiyJVSbrBnyuQqRqEMgnWndVUiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 305C9C2BD10;
+	Tue, 11 Jun 2024 14:12:23 +0000 (UTC)
+Date: Tue, 11 Jun 2024 10:12:38 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+ kernel-janitors@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ "workflows@vger.kernel.org" <workflows@vger.kernel.org>, Thorsten Leemhuis
+ <linux@leemhuis.info>
+Subject: Re: [PATCH 05/14] tracefs: replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <20240611101238.6db5e4a7@gandalf.local.home>
+In-Reply-To: <2024061143-transfer-jalapeno-afa0@gregkh>
+References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
+	<20240609082726.32742-6-Julia.Lawall@inria.fr>
+	<20240610112223.151faf65@rorschach.local.home>
+	<b647eacd-f6f3-4960-acfd-36c30f376995@paulmck-laptop>
+	<20240610163606.069d552a@gandalf.local.home>
+	<70c093a5-df9c-4665-b9c9-90345c7f2139@suse.cz>
+	<2024061143-transfer-jalapeno-afa0@gregkh>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Dragan Simic <dsimic@manjaro.org>
-CC: Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang
-	<wsa+renesas@sang-engineering.com>,
-        <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240610-md-drivers-mmc-v1-1-c2a2593e4121@quicinc.com>
- <8f2e755bd711b566274119762b19505d@manjaro.org>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <8f2e755bd711b566274119762b19505d@manjaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 34JGQQK3mHppKrcAt8ATbXVOj5XiFZAm
-X-Proofpoint-GUID: 34JGQQK3mHppKrcAt8ATbXVOj5XiFZAm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- phishscore=0 bulkscore=0 spamscore=0 malwarescore=0 priorityscore=1501
- clxscore=1011 adultscore=0 lowpriorityscore=0 impostorscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406110101
 
-On 6/11/2024 12:29 AM, Dragan Simic wrote:
-> Hello Jeff,
-> 
-> Thanks for the patch.  Please see a few comments below.
-> 
-> On 2024-06-10 16:17, Jeff Johnson wrote:
->> make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in 
->> drivers/mmc/host/of_mmc_spi.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in
->> drivers/mmc/host/tmio_mmc_core.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in
->> drivers/mmc/host/renesas_sdhi_core.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in 
->> drivers/mmc/core/mmc_core.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in
->> drivers/mmc/core/pwrseq_simple.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in
->> drivers/mmc/core/pwrseq_sd8787.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in 
->> drivers/mmc/core/pwrseq_emmc.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in 
->> drivers/mmc/core/sdio_uart.o
->>
->> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->> Corrections to these descriptions are welcomed. I'm not an expert in
->> this code so in most cases I've taken these descriptions directly from
->> code comments, Kconfig descriptions, or git logs.  History has shown
->> that in some cases these are originally wrong due to cut-n-paste
->> errors, and in other cases the drivers have evolved such that the
->> original information is no longer accurate.
->> ---
->>  drivers/mmc/core/core.c              | 1 +
->>  drivers/mmc/core/pwrseq_emmc.c       | 1 +
->>  drivers/mmc/core/pwrseq_sd8787.c     | 1 +
->>  drivers/mmc/core/pwrseq_simple.c     | 1 +
->>  drivers/mmc/core/sdio_uart.c         | 1 +
->>  drivers/mmc/host/of_mmc_spi.c        | 1 +
->>  drivers/mmc/host/renesas_sdhi_core.c | 1 +
->>  drivers/mmc/host/tmio_mmc_core.c     | 1 +
->>  8 files changed, 8 insertions(+)
->>
->> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
->> index a8c17b4cd737..d6c819dd68ed 100644
->> --- a/drivers/mmc/core/core.c
->> +++ b/drivers/mmc/core/core.c
->> @@ -2362,4 +2362,5 @@ static void __exit mmc_exit(void)
->>  subsys_initcall(mmc_init);
->>  module_exit(mmc_exit);
->>
->> +MODULE_DESCRIPTION("MMC core driver");
->>  MODULE_LICENSE("GPL");
->> diff --git a/drivers/mmc/core/pwrseq_emmc.c 
->> b/drivers/mmc/core/pwrseq_emmc.c
->> index 3b6d69cefb4e..fff30330574f 100644
->> --- a/drivers/mmc/core/pwrseq_emmc.c
->> +++ b/drivers/mmc/core/pwrseq_emmc.c
->> @@ -115,4 +115,5 @@ static struct platform_driver 
->> mmc_pwrseq_emmc_driver = {
->>  };
->>
->>  module_platform_driver(mmc_pwrseq_emmc_driver);
->> +MODULE_DESCRIPTION("HW reset support for eMMC");
-> 
-> "Hardware reset support for eMMC" would read a bit better.
-> 
->>  MODULE_LICENSE("GPL v2");
->> diff --git a/drivers/mmc/core/pwrseq_sd8787.c 
->> b/drivers/mmc/core/pwrseq_sd8787.c
->> index 0c5808fc3206..f24bbd68e251 100644
->> --- a/drivers/mmc/core/pwrseq_sd8787.c
->> +++ b/drivers/mmc/core/pwrseq_sd8787.c
->> @@ -130,4 +130,5 @@ static struct platform_driver 
->> mmc_pwrseq_sd8787_driver = {
->>  };
->>
->>  module_platform_driver(mmc_pwrseq_sd8787_driver);
->> +MODULE_DESCRIPTION("Power sequence support for Marvell SD8787 BT + 
->> Wifi chip");
->>  MODULE_LICENSE("GPL v2");
->> diff --git a/drivers/mmc/core/pwrseq_simple.c 
->> b/drivers/mmc/core/pwrseq_simple.c
->> index df9588503ad0..97f6d69d9c80 100644
->> --- a/drivers/mmc/core/pwrseq_simple.c
->> +++ b/drivers/mmc/core/pwrseq_simple.c
->> @@ -159,4 +159,5 @@ static struct platform_driver 
->> mmc_pwrseq_simple_driver = {
->>  };
->>
->>  module_platform_driver(mmc_pwrseq_simple_driver);
->> +MODULE_DESCRIPTION("Simple HW reset support for MMC");
-> 
-> "Simple power sequence management for MMC" would be more accurate.
-> 
->>  MODULE_LICENSE("GPL v2");
->> diff --git a/drivers/mmc/core/sdio_uart.c 
->> b/drivers/mmc/core/sdio_uart.c
->> index 575ebbce378e..6b7471dba3bf 100644
->> --- a/drivers/mmc/core/sdio_uart.c
->> +++ b/drivers/mmc/core/sdio_uart.c
->> @@ -1162,4 +1162,5 @@ module_init(sdio_uart_init);
->>  module_exit(sdio_uart_exit);
->>
->>  MODULE_AUTHOR("Nicolas Pitre");
->> +MODULE_DESCRIPTION("SDIO UART/GPS driver");
->>  MODULE_LICENSE("GPL");
->> diff --git a/drivers/mmc/host/of_mmc_spi.c 
->> b/drivers/mmc/host/of_mmc_spi.c
->> index bf54776fb26c..05939f30a5ae 100644
->> --- a/drivers/mmc/host/of_mmc_spi.c
->> +++ b/drivers/mmc/host/of_mmc_spi.c
->> @@ -19,6 +19,7 @@
->>  #include <linux/mmc/core.h>
->>  #include <linux/mmc/host.h>
->>
->> +MODULE_DESCRIPTION("OpenFirmware bindings for the MMC-over-SPI 
->> driver");
->>  MODULE_LICENSE("GPL");
->>
->>  struct of_mmc_spi {
->> diff --git a/drivers/mmc/host/renesas_sdhi_core.c
->> b/drivers/mmc/host/renesas_sdhi_core.c
->> index 12f4faaaf4ee..d62a4ed86775 100644
->> --- a/drivers/mmc/host/renesas_sdhi_core.c
->> +++ b/drivers/mmc/host/renesas_sdhi_core.c
->> @@ -1162,4 +1162,5 @@ void renesas_sdhi_remove(struct platform_device 
->> *pdev)
->>  }
->>  EXPORT_SYMBOL_GPL(renesas_sdhi_remove);
->>
->> +MODULE_DESCRIPTION("Renesas SDHI driver");
-> 
-> "Renesas SDHI core driver" would be a bit more accurate.
-> 
->>  MODULE_LICENSE("GPL v2");
->> diff --git a/drivers/mmc/host/tmio_mmc_core.c 
->> b/drivers/mmc/host/tmio_mmc_core.c
->> index 93e912afd3ae..c1a4ade5f949 100644
->> --- a/drivers/mmc/host/tmio_mmc_core.c
->> +++ b/drivers/mmc/host/tmio_mmc_core.c
->> @@ -1319,4 +1319,5 @@ int tmio_mmc_host_runtime_resume(struct device 
->> *dev)
->>  EXPORT_SYMBOL_GPL(tmio_mmc_host_runtime_resume);
->>  #endif
->>
->> +MODULE_DESCRIPTION("TMIO MMC core driver");
->>  MODULE_LICENSE("GPL v2");
->>
->> ---
->> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
->> change-id: 20240610-md-drivers-mmc-cb5f273b5b33
+On Tue, 11 Jun 2024 08:23:11 +0200
+Greg KH <gregkh@linuxfoundation.org> wrote:
 
-Thank you for your clarifications. I'll incorporate them in the next version.
+> > Depends-on: c9929f0e344a ("mm/slob: remove CONFIG_SLOB")  
+> 
+> Ick, no, use the documented way of handling this as described in the
+> stable kernel rules file.
 
-/jeff
+You mentioned this before, I guess you mean this:
+
+> To send additional instructions to the stable team, use a shell-style inline
+> comment to pass arbitrary or predefined notes:
+> 
+> * Specify any additional patch prerequisites for cherry picking::
+> 
+>     Cc: <stable@vger.kernel.org> # 3.3.x: a1f84a3: sched: Check for idle
+>     Cc: <stable@vger.kernel.org> # 3.3.x: 1b9508f: sched: Rate-limit newidle
+>     Cc: <stable@vger.kernel.org> # 3.3.x: fd21073: sched: Fix affinity logic
+>     Cc: <stable@vger.kernel.org> # 3.3.x
+>     Signed-off-by: Ingo Molnar <mingo@elte.hu>
+> 
+>   The tag sequence has the meaning of::
+> 
+>     git cherry-pick a1f84a3
+>     git cherry-pick 1b9508f
+>     git cherry-pick fd21073
+>     git cherry-pick <this commit>
+> 
+>   Note that for a patch series, you do not have to list as prerequisites the
+>   patches present in the series itself. For example, if you have the following
+>   patch series::
+> 
+>     patch1
+>     patch2
+> 
+>   where patch2 depends on patch1, you do not have to list patch1 as
+>   prerequisite of patch2 if you have already marked patch1 for stable
+>   inclusion.
+
+What's with the "3.3.x"? Isn't that obsolete? And honestly, I find the
+above much more "ick" than "Depends-on:". That's because I like to read
+human readable tags and not machine processing tags. I'm a human, not a machine.
+
+-- Steve
