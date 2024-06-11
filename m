@@ -1,109 +1,86 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956894CDE0
-	for <kernel-janitors@vger.kernel.org>; Tue, 11 Jun 2024 12:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8A11E86F;
+	Tue, 11 Jun 2024 12:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718109500; cv=none; b=fJMdCAr7/RTy6ztGF8Ghfh53JduFT/gxFyN+NsNaUxT3E2PPTqadSuME4w+Ry/UnFvu+USA5reoWQfCI2uadWVL7Ok9Sdtjy/3FJsyibCF0/A83XouI+IvyEWs49ZammTZ+tMwhrd7gNC+zbmT3k6ncwBJpIzdjsp5XcVo8o1ME=
+	t=1718110106; cv=none; b=Rxq3iZ6RvlFTWSoKypntHycuo/Ximk1nM0piP/FUPjXtIh54OZ5v3PpA0En/rad056H9jtjjay0h7k/k1HHDrZUKrMN582uEeGvDZPXDIAHYsER3tNeqda+t5nezI4aGi4M5BkiLMUgWvZ/SaqGxoTxHJ+rY55Ra2tRb/Olgssc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718109500; c=relaxed/simple;
-	bh=XN52i8CqC7+2+wbJGjsKJnNbV1EtOmX3DDcwmxkn62s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cOcKXQ7iaRz7ktfs9C/cY7NXUm2lLhZ8jbXYzjBGkc4rQN+iBqNsAsk6ameHjgukfUSM5LWa/JA6WmN8zNDnzj6MV58nQAdSHAGy5b8evy2DE7L8MvifO8yfXBCKecD5LeKZSyPsWaVZZKDbl3ZYCZ8VAm1R8LiDXN+uVt2djPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tWyBT9AY; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718110106; c=relaxed/simple;
+	bh=B+F4jYtueaaFeYozuVyzY6N2Tp2CTNJFcO1Ip0Jlv6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cnhpypMpBSK+f/a6IVs90Vaq0HgJTQBbeCGc4ispTpHY6iZQ489WmmHUArddaQHh1fom2+S09RsTeEGaDRlWC4xmrdNEuB1HPbxXBD9N+6kjwi69b2EEAI6NBV0c6JJl85UkbFuGxfkkGTwNUZVfP9+GiGhZ1eNhlIS/21/cwwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eYwP88UM; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tWyBT9AY"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-35f1c490c13so3055146f8f.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jun 2024 05:38:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eYwP88UM"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57c83100c5fso1238765a12.3;
+        Tue, 11 Jun 2024 05:48:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718109497; x=1718714297; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=gmail.com; s=20230601; t=1718110103; x=1718714903; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=vaW169oqeSKLpqcvU28Mohgp1aN0lils3oMJkBYfdCU=;
-        b=tWyBT9AYdfW6tOo9Pjn7mnySMQyBd3BmnmPxQ4old4OX/LEi/4JGf0viwywT3iLVH9
-         QariCGAl6hcACWtqPRHeiNZR2g9Qk/L/Ybj+mSXPwbTKoyR91sv1AtRu51zmFz9BpWfh
-         9O1KozyZz+Xlb3tjgj47W4mesiLSVH0KiRZNDcaeYCRYjxoY8O1JSyetAEEMrOUcAyhZ
-         WnYkDdeSlsk8NmcaSz4voIQOIZEcZNeSjb42TPVU8viK7Mlu7v0H3ChQw94mVwQZE9WM
-         5XRlLhWTFukYLXCtZqrhnTb0F4gZi2AkO1t2SVVy+RKJdOGXllLk51I/p4kbD3/k9n2q
-         G4Kw==
+        bh=a/Oo7XjX+5E7PNpg5M8THdexoQgRehQoIPwH+7NOY6E=;
+        b=eYwP88UM7W2dmme+g95CUTfjKMTaMaAIYMaj/3JvoF2zDydjCXFxxhp4X1mXgSsrQH
+         rjW9+Gz+LbFGpJgJOeNbtKmOdsLldx5azUgNIzm2tVNPNzBkF150nbzekjdPma13vq/m
+         cca9p2XacKRngWaG2QXiKSZD9KCgriN23NU60vUQyAyv1L7l6QVtQYsV0U6pg4cVEPIE
+         YsTtcUVy5v3JFCA4i2zT6w2Fm/bh/ofRgnl55TLMy2ZCd5D8gap51ttpN7f3uyB5gDoO
+         NcXjwFOsjU7phxPnYDQxx4EsEKO69mchzTwlJu+GwvsmrXzz5YADkBpEedZby4nqYxTA
+         HcmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718109497; x=1718714297;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1718110103; x=1718714903;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vaW169oqeSKLpqcvU28Mohgp1aN0lils3oMJkBYfdCU=;
-        b=Pld5B9aB/4CaH8SbRtS034XNiOobe6soZAk4ecxnksm1M+Ir1BLCTyp1fi/6naMgAf
-         u00jol4xtmleB6+ARHK9Rul3K9JVtpUuMHmebLGyeB8K1qbGg9IQHCdoj8AY71kbsy8V
-         xM5AorZtGAYMTapwH+FGbssuuAxZQW+FaaKzEBQ2v+iARDV85mOT3wDXLy490hdnNuW7
-         pgOJ82J2gjvWAavl+AJmU+sXq8Q3+d7aMAdMWM2mvj7SkS4+tIAMYJGDjxtX5ohkrzeW
-         CQcfuVraF84mzV8nzCc715UUuEA/rt8X21rA67t9qTKVm7z85oByKe96yVwD+qPDM3Fx
-         Cplw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjuoy85l/JuLRGKektjgFZM8n74MPMaZdKAcL2cSur80oMlDrwl8osSTOtI/VRtkDrA4ek9yZ/ECcM29gg0QjXytyrKAYVQd9z2Q6+4Rr+
-X-Gm-Message-State: AOJu0YyaPMHK123OvwK5e1pWrQMmBnE8YY4pPulP89s+8CnVjEpWzOYp
-	ZsfSSdaB46vdDMzu9ivHicviyA8xVaQkLg7VzIOkeBwWBeJB3EuE/WSKVFxSSss=
-X-Google-Smtp-Source: AGHT+IHg02WcIth64AxHydDfrCzP3dJZs3yHUm+FSxLXj+eO5NSt07iZMz7QK5MsVXvzym9ZqDqH+w==
-X-Received: by 2002:a05:6000:144b:b0:35f:1846:72cc with SMTP id ffacd0b85a97d-35f1846737cmr7795462f8f.7.1718109496798;
-        Tue, 11 Jun 2024 05:38:16 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f1d3d7b11sm7512775f8f.28.2024.06.11.05.38.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 05:38:16 -0700 (PDT)
-Date: Tue, 11 Jun 2024 15:38:12 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] bitops: Add a comment explaining the double underscore macros
-Message-ID: <5a970f32-25c0-4955-b480-a4738bf86153@kili.mountain>
+        bh=a/Oo7XjX+5E7PNpg5M8THdexoQgRehQoIPwH+7NOY6E=;
+        b=iWZB7KcPgccV86QKJUYHGBE+fB/0XZ97lJP6Z+ppwpNgStD/W9DdhiU24qEDoSnS7G
+         N+QYz/kxSw/2Bduq7VdLb1aLlLKydAQGdcnBUbs4N5NOrMwse+3b5xxjUxorKOcE3Y83
+         Mov2aSSij7Xf2deO6PNG6gTOjrS2X9io6QM6cKllKmM9sJYHEV+3p/FiKXMj7gPLFQfa
+         +0Mhsd9UJbRickMHz/hzOcWLNioQlqbn3g7iDlkhoHECxH6H3ZxoCSa/z/khuztGgqmk
+         lO02gpTFvB62qPLYD4Ml/zVd6f/SCeFSTlB4UDF+BGSkfnojdPFML1dPHL1bgEIymmIw
+         G+cA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOqYvOEigr7opsn3UTICAsdv7mj/tbJ3zgsA3rJXDDMzWoN5yHrP7I+t9qG3qv8jt0AtNqzo2HNke3LIxnkCpnVXU79ce4ItJAm9Mv6DWD0vurLlQzMSlux5nQEcSE0LMe1x72FJ7yHH9V7yN8Vz5ydgqogCZan6wL9q5//W46ZayvI8icGd9dqls=
+X-Gm-Message-State: AOJu0YyfkAVw/w0WwinpN8y45qMfju747fEsgNo1ZZYiTqW+MMpWKZxJ
+	QtUuHGRQ4tMEYaD+o0toK3ispf1iz+mgFBlbmGsTGeznbAtex01SwrauwEZF
+X-Google-Smtp-Source: AGHT+IFp/1CR06HJRye+2fqk8C5zPASOQlbfXCIrIAIwmwTUWtI0C1ufR5WmUqLrkAfxRNHE9HGb6Q==
+X-Received: by 2002:a50:9509:0:b0:57a:339f:1b2d with SMTP id 4fb4d7f45d1cf-57c5086e237mr8319342a12.5.1718110102611;
+        Tue, 11 Jun 2024 05:48:22 -0700 (PDT)
+Received: from [192.168.61.55] ([37.30.4.115])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c71b6dcaesm5635493a12.78.2024.06.11.05.48.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jun 2024 05:48:22 -0700 (PDT)
+Message-ID: <771bf8d4-5423-4972-ba27-615148a54c77@gmail.com>
+Date: Tue, 11 Jun 2024 14:48:19 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: samsung: midas_wm1811: Fix error code in probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <01590109-cf27-404b-88ff-b42bb73ca1c6@moroto.mountain>
+Content-Language: en-US
+From: Artur Weber <aweber.kernel@gmail.com>
+In-Reply-To: <01590109-cf27-404b-88ff-b42bb73ca1c6@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Linus Walleij pointed out that a new comer might be confused about the
-difference between set_bit() and __set_bit().  Add a comment explaining
-the difference.
+On 8.06.2024 16:24, Dan Carpenter wrote:
+> This accidentally returns success instead of -EINVAL.
+> 
+> Fixes: c91d0c2e198d ("ASoC: samsung: midas_wm1811: Add GPIO-based headset jack detection")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Link: https://lore.kernel.org/all/CACRpkdZFPG_YLici-BmYfk9HZ36f4WavCN3JNotkk8cPgCODCg@mail.gmail.com/
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: re-word the comment, put it right next to the macros and add a blank
-    line in front of the test_bit() macros so it's not mixed in with the
-    non-atomic macros
+Good catch, thanks!
 
- include/linux/bitops.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/include/linux/bitops.h b/include/linux/bitops.h
-index 46d4bdc634c0..ba35bbf07798 100644
---- a/include/linux/bitops.h
-+++ b/include/linux/bitops.h
-@@ -47,12 +47,17 @@ extern unsigned long __sw_hweight64(__u64 w);
- 	  __builtin_constant_p(*(const unsigned long *)(addr))) ?	\
- 	 const##op(nr, addr) : op(nr, addr))
- 
-+/*
-+ * The following macros are non-atomic versions of their non-underscored
-+ * counterparts.
-+ */
- #define __set_bit(nr, addr)		bitop(___set_bit, nr, addr)
- #define __clear_bit(nr, addr)		bitop(___clear_bit, nr, addr)
- #define __change_bit(nr, addr)		bitop(___change_bit, nr, addr)
- #define __test_and_set_bit(nr, addr)	bitop(___test_and_set_bit, nr, addr)
- #define __test_and_clear_bit(nr, addr)	bitop(___test_and_clear_bit, nr, addr)
- #define __test_and_change_bit(nr, addr)	bitop(___test_and_change_bit, nr, addr)
-+
- #define test_bit(nr, addr)		bitop(_test_bit, nr, addr)
- #define test_bit_acquire(nr, addr)	bitop(_test_bit_acquire, nr, addr)
- 
--- 
-2.39.2
-
+Acked-by: Artur Weber <aweber.kernel@gmail.com>
