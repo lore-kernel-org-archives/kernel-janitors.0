@@ -1,90 +1,210 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B181317BB24
-	for <kernel-janitors@vger.kernel.org>; Tue, 11 Jun 2024 13:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239BB17BB35
+	for <kernel-janitors@vger.kernel.org>; Tue, 11 Jun 2024 13:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718111311; cv=none; b=bzA/FQWJ0V2UK/a7fGQm4UFMJfECTTuLDKlB4raW/V+GL0wMs0XNkATYyqCf2fCIefJHPL+IXcDDuUJdtBNTwXsbJBV0RxbChxpGQVnFGwMf+MAFJ2B7K1Wu3k/H4A3ZNLTcilaHHV9SwWbnD1QeBQX2NEJteDNgypu+iIEjJT8=
+	t=1718113419; cv=none; b=MOYufM6sJOhmktlujfrB9Wu8PeKA5Nh/QcDJWkuQCmcrw3YXwjTEhT1u8MC2RyUjiKCHMM5hBKVPXRX1Dz+7BdzJ1xa0NdT4AokCjZYTlvEPFTK03Htm3n1ZK+pAKn8GQfqTJslpX/PErKCDWLHalY8pWkVhi/+7S0dj8b1mWUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718111311; c=relaxed/simple;
-	bh=qLXHl7HneB0ZAz2f7/+nFTx5F6LdpJLFJfWWnfw3aco=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NOBKSQu6zVmfWUjM19L3B8EWSUm4CySDM+SfBTton+3GKAOBbNxHCkvMhR35bxQsQVyal77ccaQQuk4yXDFuNqW4piAO1c1LWCxwio62XWXNekgvEC1FP5kRkOpWwTamKmAMPpzMp+kd0HxVm08DzmmltDsnO/uVRbxxprwdahM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jufcDoo6; arc=none smtp.client-ip=209.85.167.54
+	s=arc-20240116; t=1718113419; c=relaxed/simple;
+	bh=G81nV/OBlKorj/bQSO/0m/YS18F0sOKnJ5vEEXLKL28=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fylog9pipu33qjAdZJrJmctLNo4Kfdug7yVtdrLUo+NUgZvLBCXfhqsWEVTNcYfgouNDsjpnLzJeDjx037NhU39D1TEOAOZgsJ87CEDezd4ZY/mYfxJH4KUcshdGA7ylG8EQfaVOD2fwpiAlTRVouuhTlfowrJeykovdMObzCIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hCb3wBhc; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jufcDoo6"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52bc0a9cea4so3514367e87.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jun 2024 06:08:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hCb3wBhc"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-35f223e7691so1540813f8f.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jun 2024 06:43:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718111308; x=1718716108; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pf6/gT+Ewdw8uG06lDxtm/kv6Pnh+Q7yaLg/g7n32Y8=;
-        b=jufcDoo6WoFT2VX5NFQliniXHwypKEiuXTIsnRVicbCNqKCVTCoSMy6TEyqfDisRof
-         Ch4FviWx7WPSB94YSRLTsFJa/yoGvXWMZ4mJasdeXBtARmXQl4nwgHTUNUUIp926fP9l
-         byWmqqzJHSwrAxmhteLsviGXRONCNt5KhcOOJ6+ygsdZpRpOmyKH9l8RKFNVHHgXHmWx
-         9uOkRj+3uB9VUj/EkXO6UObtmrstbyQNRcbYZGQmew4r0XsYSgZBDo8Xy7f1y4u1BNMi
-         i8ENgl+N9E6S6DRSVVFdjI1MGLgxhabxSP7r1fcBpwFmuyMq0r+agQMH2ajHdBae9vi7
-         3oOA==
+        d=linaro.org; s=google; t=1718113414; x=1718718214; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WQ7yuVnrb4EU6Lvo4BrfJFZP/ygleXZBaqxVgqydxfE=;
+        b=hCb3wBhc9BrRjGKRkaXMiKH5ypW1jFoYA22tESQuIbmisQc+PS44TJUPX9KIekvOMb
+         JMCsP+rCTQrTwZXZusnRkQFZYsFrDYvM3ZLT/m6vjrop0MJMaAmNxtLTR73VhhP4KBo9
+         1hC5F8F8MEQTEK9/QA5316xswh2CImzDwybwy6Lwc3bvTrzA/vMPu9o51GdSEGW3nvx/
+         qmWYBBhq6kXw7a6cmPeRgGb4KMy1Z9ZzaU17bu8OQeEFyrtaVhed/2opQriMuTtqdvPv
+         wSV9qj39VdJ07VF2LrwJpModBBVHDgI6JvZmPXqz0uEnsOUzPSAsL94PIEB96Yr77bcO
+         dJow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718111308; x=1718716108;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pf6/gT+Ewdw8uG06lDxtm/kv6Pnh+Q7yaLg/g7n32Y8=;
-        b=Jx6l4M/WwXhGXXOyzsw5A9oJ8/YI29KxV8XCfYgxtfiSJXD46A7vRidcuF2xENzVsl
-         5ztdylZbB4htGsYrJf3bc/rOkDqptK53BhntPsdXVwI2hjIV6bh8BOHw/msKLgwW0Wbg
-         izIoH+AmU3mPNnc65zqyL/mp0bZph2G1CMBfxX3Dpzo7S3ZSs98JGw4EEokHfLQwcAbW
-         l7y9nkc6uBPRpbaT+fycsdd+SP9Qfhz0N4mbB+4k/FudJT2PoJJL8RYosrbizJsz3d3o
-         Dg9dNvuwcUJ1Z1kYdRwSTURZYCDkM3f7855NuLlL/R63i5PmOTvaWhPocTc195PgjX6z
-         VaIw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsFF07N1gL4jqMVcOmEPfv3m3KH+N6sg1IaeZr03NX216GfKCet4Ih7WEZ8Sz/xqWiFHtAq7/LblBkgjPduA1AMIXXX4zFe6vabU7oztMe
-X-Gm-Message-State: AOJu0Ywln2qh3OxVbND6Fxu8AOOXJOy94ULR6IGubb7MYQkHJKYzW06O
-	Yd49HTVhZWupD3V7tM4n6Dw5Qb0TIelQ28PFv2P+GCnlNn9Hbxr/+SAle9zfIphTGhWk0v0TTuT
-	cp6HKFkCjZQOVQhh5jh6lvCrQ7kgoxzRCUhHIfA==
-X-Google-Smtp-Source: AGHT+IHOqXye9KCZZG448CXko9HSkqfPVrmO82845VTO+F6jU8L2MsQWSJpeN3/1oP3ZGjeUR2ViNiHEQQoCCvJpXrY=
-X-Received: by 2002:ac2:5041:0:b0:52c:94ad:9b26 with SMTP id
- 2adb3069b0e04-52c94ad9cd1mr564889e87.30.1718111307827; Tue, 11 Jun 2024
- 06:08:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718113414; x=1718718214;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WQ7yuVnrb4EU6Lvo4BrfJFZP/ygleXZBaqxVgqydxfE=;
+        b=C+U/plg2SxqjyTurt4zTIolseKukMcR4mUuRKOyvT76zMKcPIYO/2waFXQB/LXdm5C
+         LKTeXpZTHxwQwmt67ZcIUxMwW1L0zVW7dtZjtaCM2YY+fvnsTmunOHAmeYetp0FMbB9d
+         cKKM1xBJ7stM/vsG963XoZ5tu978dYWAxOYhKpQGqZV5DQMyEAqSslTqi4o9KyrY9l5s
+         gy8mzPFAr5nJXwbcNhjeAAuAR5t0Ye2LBvomAmDijAtWugwI59ectUi0AzLUAmhAnbCB
+         DpYJRlTdIz4OSDqErts+7nIkk5+7gS6XPCkE8RNRAfiVONwpLu7h4OeYV/AU/ohcvluv
+         9EGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjCgVqNmf9tdRHgjNRopLM1SRbxVQPTnVOGXNUriBW/gJ6iyer94gKdk8kak+Qrw6cEi2oopDmkFzLV3oDFCbw1DhPjjE6MlXjTJlGHsvX
+X-Gm-Message-State: AOJu0Yy6Fr8N4TJcSPu6F/ftFILTTVNChOIs3G9rQPHDFpfCoZGP5bmN
+	zImWVNyXOKURLvgQPfUBM3bwoFx2t+xjAXWX6jbXkvBeEIdOGD2/C30gfaXkJm8=
+X-Google-Smtp-Source: AGHT+IG7eYrNSeCHZqPcrPgnGK3VTAV/7wmKdDROJn5gJB5qTGNwoOifQ9hHpzWobxzk5D8LUqFv/g==
+X-Received: by 2002:a5d:6a4e:0:b0:35f:24d9:e7dc with SMTP id ffacd0b85a97d-35f2b28c102mr2348777f8f.19.1718113414183;
+        Tue, 11 Jun 2024 06:43:34 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f23c67e70sm5704051f8f.33.2024.06.11.06.43.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 06:43:33 -0700 (PDT)
+Date: Tue, 11 Jun 2024 16:43:29 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Thorsten Leemhuis <linux@leemhuis.info>,
+	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
+	Sasha Levin <sashal@kernel.org>, Tom Gall <tom.gall@linaro.org>,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v5] checkpatch: check for missing Fixes tags
+Message-ID: <ZmhUgZBKeF_8ixA6@moroto>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5a970f32-25c0-4955-b480-a4738bf86153@kili.mountain>
-In-Reply-To: <5a970f32-25c0-4955-b480-a4738bf86153@kili.mountain>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 11 Jun 2024 15:08:15 +0200
-Message-ID: <CACRpkdbSiSpRXGa=eHRgt-8sCgk9ByostgynRYoC1tZY9fUh8A@mail.gmail.com>
-Subject: Re: [PATCH] bitops: Add a comment explaining the double underscore macros
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, Jun 11, 2024 at 2:38=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
+This check looks for common words that probably indicate a patch
+is a fix.  For now the regex is:
 
-> Linus Walleij pointed out that a new comer might be confused about the
-> difference between set_bit() and __set_bit().  Add a comment explaining
-> the difference.
->
-> Link: https://lore.kernel.org/all/CACRpkdZFPG_YLici-BmYfk9HZ36f4WavCN3JNo=
-tkk8cPgCODCg@mail.gmail.com/
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> v2: re-word the comment, put it right next to the macros and add a blank
->     line in front of the test_bit() macros so it's not mixed in with the
->     non-atomic macros
+	(?:(?:BUG: K.|UB)SAN: |Call Trace:|stable\@|syzkaller)/)
 
-Thanks Dan! This makes the kernel a better place.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Why are stable patches encouraged to have a fixes tag?  Some people mark
+their stable patches as "# 5.10" etc.  This is useful but a Fixes tag is
+still a good idea.  For example, the Fixes tag helps in review.  It
+helps people to not cherry-pick buggy patches without also
+cherry-picking the fix.
 
-Yours,
-Linus Walleij
+Also if a bug affects the 5.7 kernel some people will round it up to
+5.10+ because 5.7 is not supported on kernel.org.  It's possible the Bad
+Binder bug was caused by this sort of gap where companies outside of
+kernel.org are supporting different kernels from kernel.org.
+
+Should it be counted as a Fix when a patch just silences harmless
+WARN_ON() stack trace.  Yes.  Definitely.
+
+Is silencing compiler warnings a fix?  It seems unfair to the original
+authors, but we use -Werror now, and warnings break the build so let's
+just add Fixes tags.  I tell people that silencing static checker
+warnings is not a fix but the rules on this vary by subsystem.
+
+Is fixing a minor LTP issue (Linux Test Project) a fix?  Probably?  It's
+hard to know what to do if the LTP test has technically always been
+broken.
+
+One clear false positive from this check is when someone updated their
+debug output and included before and after Call Traces.  Or when crashes
+are introduced deliberately for testing.  In those cases, you should
+just ignore checkpatch.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+---
+v5: Change the output:
+OLD: This looks like a fix but there is no Fixes: tag
+NEW: The commit message has 'stable@', perhaps it also needs a 'Fixes:' tag?
+NEW: The commit message has 'syzkaller', perhaps it also needs a 'Fixes:' tag?
+
+v4: Fix another formatting issue.
+v3: Add UBSAN to the regex as Kees suggested.
+v2: I fixed the formatting issues Joe pointed out.  I also silenced the
+    warning if the commit was a Revert because revert patches already
+    include the hash.
+
+ scripts/checkpatch.pl | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 2b812210b412..df99f48d824f 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -28,6 +28,7 @@ my %verbose_messages = ();
+ my %verbose_emitted = ();
+ my $tree = 1;
+ my $chk_signoff = 1;
++my $chk_fixes_tag = 1;
+ my $chk_patch = 1;
+ my $tst_only;
+ my $emacs = 0;
+@@ -88,6 +89,7 @@ Options:
+   -v, --verbose              verbose mode
+   --no-tree                  run without a kernel tree
+   --no-signoff               do not check for 'Signed-off-by' line
++  --no-fixes-tag             do not check for 'Fixes:' tag
+   --patch                    treat FILE as patchfile (default)
+   --emacs                    emacs compile window format
+   --terse                    one line per report
+@@ -295,6 +297,7 @@ GetOptions(
+ 	'v|verbose!'	=> \$verbose,
+ 	'tree!'		=> \$tree,
+ 	'signoff!'	=> \$chk_signoff,
++	'fixes-tag!'	=> \$chk_fixes_tag,
+ 	'patch!'	=> \$chk_patch,
+ 	'emacs!'	=> \$emacs,
+ 	'terse!'	=> \$terse,
+@@ -1257,6 +1260,7 @@ sub git_commit_info {
+ }
+ 
+ $chk_signoff = 0 if ($file);
++$chk_fixes_tag = 0 if ($file);
+ 
+ my @rawlines = ();
+ my @lines = ();
+@@ -2636,6 +2640,9 @@ sub process {
+ 
+ 	our $clean = 1;
+ 	my $signoff = 0;
++	my $fixes_tag = 0;
++	my $is_revert = 0;
++	my $needs_fixes_tag = "";
+ 	my $author = '';
+ 	my $authorsignoff = 0;
+ 	my $author_sob = '';
+@@ -3189,6 +3196,16 @@ sub process {
+ 			}
+ 		}
+ 
++# These indicate a bug fix
++		if (!$in_header_lines && !$is_patch &&
++			$line =~ /^This reverts commit/) {
++			$is_revert = 1;
++		}
++
++		if (!$in_header_lines && !$is_patch &&
++		    $line =~ /((?:(?:BUG: K.|UB)SAN: |Call Trace:|stable\@|syzkaller))/) {
++			$needs_fixes_tag = $1;
++		}
+ 
+ # Check Fixes: styles is correct
+ 		if (!$in_header_lines &&
+@@ -3201,6 +3218,7 @@ sub process {
+ 			my $id_length = 1;
+ 			my $id_case = 1;
+ 			my $title_has_quotes = 0;
++			$fixes_tag = 1;
+ 
+ 			if ($line =~ /(\s*fixes:?)\s+([0-9a-f]{5,})\s+($balanced_parens)/i) {
+ 				my $tag = $1;
+@@ -7697,6 +7715,12 @@ sub process {
+ 		ERROR("NOT_UNIFIED_DIFF",
+ 		      "Does not appear to be a unified-diff format patch\n");
+ 	}
++	if ($is_patch && $has_commit_log && $chk_fixes_tag) {
++		if ($needs_fixes_tag ne "" && !$is_revert && !$fixes_tag) {
++			WARN("MISSING_FIXES_TAG",
++				 "The commit message has '$needs_fixes_tag', perhaps it also needs a 'Fixes:' tag?\n");
++		}
++	}
+ 	if ($is_patch && $has_commit_log && $chk_signoff) {
+ 		if ($signoff == 0) {
+ 			ERROR("MISSING_SIGN_OFF",
