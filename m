@@ -1,207 +1,73 @@
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D650172773;
-	Tue, 11 Jun 2024 07:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 20A401E52F;
+	Tue, 11 Jun 2024 07:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718091009; cv=none; b=Ws6VtvibiL0xGt2bxMHuVjXOi/SkRq0hMQv3wpYiFwlbI2wB6a2dTOn23Zuvzb/5El0KkTswwv8Koks1+jmPHKdlQC3lpMXqEeVUy5uHSr5Hg2MCX/V6sAxsshcPpQ93OXD8yjlCkt4bzj2J8Li9zyd52etcD0hrM8YNqu/jY2M=
+	t=1718091484; cv=none; b=XeSrzlstpx/h4PrUd6NC7o5ClPNlSG8n6x/njjHgdb+qymh+/VDw09vnWhqnsDbD9C3YLjw0pzU4ynk16rzwapNDIrib2wvgw/DGqPGW/v4QRxleHxU3VkDDZkg7PAxmyajjFNAIDHFWIlU8638dp6/TC0q++Kbt3C3Z9veoXkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718091009; c=relaxed/simple;
-	bh=uf0SF1oNbuDXzEY9wmV/rDi/IXN4m+CWwdsB3yedEhM=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=JTVDJiavN2gA6gpkdeIc82GC7VljPOOGho7TNqWzUd/vUDvK+tmobVfStRP/wjOq5VBa79olH6SuVHDw1u6GBtrjGJpMyCSxN4YxPrxkFsQvsewQxHn5QkSieQEWddB7EYIfpQqFMeOen6UpodKaoK6uIzfFdjuFP0ip4STcNoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=wPU4n/Gw; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="wPU4n/Gw"
+	s=arc-20240116; t=1718091484; c=relaxed/simple;
+	bh=72lUgCjhFS9CofYliVXKecRiALBrHqQMHHGrzotam3c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=E+6y+rJwW1O1Reay45jEkx3EkDljJ/bE0yBbtHmRTwL4oH3a7BDocTArjiQP86u5ftSTIg0/f7wPwRN8KnsMWyJy1PXmkUh5/4daz+OsI1cn8zDpivf/4LCcIfYgnTLiwzD80ad4b7fPPQAbx3yg3WhDdo0RWRsCrEIlnlpYziQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 3201060198657;
+	Tue, 11 Jun 2024 15:37:20 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: jonathan.derrick@linux.dev,
+	axboe@kernel.dk,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: Su Hui <suhui@nfschina.com>,
+	jarkko@kernel.org,
+	gjoyce@linux.vnet.ibm.com,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] block: sed-opal: avoid possible wrong address reference in read_sed_opal_key()
+Date: Tue, 11 Jun 2024 15:37:00 +0800
+Message-Id: <20240611073659.429582-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1718091002;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vdaMoEnTDtvgD8I+Uno75VA5I/ban+WgDT8n3yc4lCA=;
-	b=wPU4n/Gw+9Saq9zhwbu7iND2gCs2KaWziMCtXASBaApTumAjl52W2/m181X+WtIL0C1tve
-	79mSNgKHdXGi4S+Mos7Zwgg1YDHEFWxkohdcFzEv2ETWWNmmRa2IF00d2AahEQN1Zq05TY
-	LJBVZM9YWqyzc0bdWEl8K2gX1/nHlI92ks8dxsv1RfY4IFlaTbReO8smj0qXFdzu06YbXR
-	0QsAhmD+7X1nCElNS/Thx2h59V0cJL1iSUyKT80SpnPZMWTNwkPcoZ4W008NWhWTC5G07b
-	QZ2vqrLrgiIj7HwrHy9/h9jZpaPWYRIZa8lfocGhj3NeYG00E/yhe1/17hpMOw==
-Date: Tue, 11 Jun 2024 09:29:59 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mmc: add missing MODULE_DESCRIPTION() macros
-In-Reply-To: <20240610-md-drivers-mmc-v1-1-c2a2593e4121@quicinc.com>
-References: <20240610-md-drivers-mmc-v1-1-c2a2593e4121@quicinc.com>
-Message-ID: <8f2e755bd711b566274119762b19505d@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Transfer-Encoding: 8bit
 
-Hello Jeff,
+Clang static checker (scan-build) warning:
+block/sed-opal.c:line 317, column 3
+Value stored to 'ret' is never read.
 
-Thanks for the patch.  Please see a few comments below.
+Fix this problem by returning the error code when keyring_search() failed.
+Otherwise, 'key' will have a wrong value when 'kerf' stores the error code.
 
-On 2024-06-10 16:17, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in 
-> drivers/mmc/host/of_mmc_spi.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in
-> drivers/mmc/host/tmio_mmc_core.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in
-> drivers/mmc/host/renesas_sdhi_core.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in 
-> drivers/mmc/core/mmc_core.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in
-> drivers/mmc/core/pwrseq_simple.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in
-> drivers/mmc/core/pwrseq_sd8787.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in 
-> drivers/mmc/core/pwrseq_emmc.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in 
-> drivers/mmc/core/sdio_uart.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> Corrections to these descriptions are welcomed. I'm not an expert in
-> this code so in most cases I've taken these descriptions directly from
-> code comments, Kconfig descriptions, or git logs.  History has shown
-> that in some cases these are originally wrong due to cut-n-paste
-> errors, and in other cases the drivers have evolved such that the
-> original information is no longer accurate.
-> ---
->  drivers/mmc/core/core.c              | 1 +
->  drivers/mmc/core/pwrseq_emmc.c       | 1 +
->  drivers/mmc/core/pwrseq_sd8787.c     | 1 +
->  drivers/mmc/core/pwrseq_simple.c     | 1 +
->  drivers/mmc/core/sdio_uart.c         | 1 +
->  drivers/mmc/host/of_mmc_spi.c        | 1 +
->  drivers/mmc/host/renesas_sdhi_core.c | 1 +
->  drivers/mmc/host/tmio_mmc_core.c     | 1 +
->  8 files changed, 8 insertions(+)
-> 
-> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-> index a8c17b4cd737..d6c819dd68ed 100644
-> --- a/drivers/mmc/core/core.c
-> +++ b/drivers/mmc/core/core.c
-> @@ -2362,4 +2362,5 @@ static void __exit mmc_exit(void)
->  subsys_initcall(mmc_init);
->  module_exit(mmc_exit);
-> 
-> +MODULE_DESCRIPTION("MMC core driver");
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/mmc/core/pwrseq_emmc.c 
-> b/drivers/mmc/core/pwrseq_emmc.c
-> index 3b6d69cefb4e..fff30330574f 100644
-> --- a/drivers/mmc/core/pwrseq_emmc.c
-> +++ b/drivers/mmc/core/pwrseq_emmc.c
-> @@ -115,4 +115,5 @@ static struct platform_driver 
-> mmc_pwrseq_emmc_driver = {
->  };
-> 
->  module_platform_driver(mmc_pwrseq_emmc_driver);
-> +MODULE_DESCRIPTION("HW reset support for eMMC");
+Fixes: 3bfeb6125664 ("block: sed-opal: keyring support for SED keys")
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ block/sed-opal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-"Hardware reset support for eMMC" would read a bit better.
+diff --git a/block/sed-opal.c b/block/sed-opal.c
+index 14fe0fef811c..598fd3e7fcc8 100644
+--- a/block/sed-opal.c
++++ b/block/sed-opal.c
+@@ -314,7 +314,7 @@ static int read_sed_opal_key(const char *key_name, u_char *buffer, int buflen)
+ 			      &key_type_user, key_name, true);
+ 
+ 	if (IS_ERR(kref))
+-		ret = PTR_ERR(kref);
++		return PTR_ERR(kref);
+ 
+ 	key = key_ref_to_ptr(kref);
+ 	down_read(&key->sem);
+-- 
+2.30.2
 
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/mmc/core/pwrseq_sd8787.c 
-> b/drivers/mmc/core/pwrseq_sd8787.c
-> index 0c5808fc3206..f24bbd68e251 100644
-> --- a/drivers/mmc/core/pwrseq_sd8787.c
-> +++ b/drivers/mmc/core/pwrseq_sd8787.c
-> @@ -130,4 +130,5 @@ static struct platform_driver 
-> mmc_pwrseq_sd8787_driver = {
->  };
-> 
->  module_platform_driver(mmc_pwrseq_sd8787_driver);
-> +MODULE_DESCRIPTION("Power sequence support for Marvell SD8787 BT + 
-> Wifi chip");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/mmc/core/pwrseq_simple.c 
-> b/drivers/mmc/core/pwrseq_simple.c
-> index df9588503ad0..97f6d69d9c80 100644
-> --- a/drivers/mmc/core/pwrseq_simple.c
-> +++ b/drivers/mmc/core/pwrseq_simple.c
-> @@ -159,4 +159,5 @@ static struct platform_driver 
-> mmc_pwrseq_simple_driver = {
->  };
-> 
->  module_platform_driver(mmc_pwrseq_simple_driver);
-> +MODULE_DESCRIPTION("Simple HW reset support for MMC");
-
-"Simple power sequence management for MMC" would be more accurate.
-
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/mmc/core/sdio_uart.c 
-> b/drivers/mmc/core/sdio_uart.c
-> index 575ebbce378e..6b7471dba3bf 100644
-> --- a/drivers/mmc/core/sdio_uart.c
-> +++ b/drivers/mmc/core/sdio_uart.c
-> @@ -1162,4 +1162,5 @@ module_init(sdio_uart_init);
->  module_exit(sdio_uart_exit);
-> 
->  MODULE_AUTHOR("Nicolas Pitre");
-> +MODULE_DESCRIPTION("SDIO UART/GPS driver");
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/mmc/host/of_mmc_spi.c 
-> b/drivers/mmc/host/of_mmc_spi.c
-> index bf54776fb26c..05939f30a5ae 100644
-> --- a/drivers/mmc/host/of_mmc_spi.c
-> +++ b/drivers/mmc/host/of_mmc_spi.c
-> @@ -19,6 +19,7 @@
->  #include <linux/mmc/core.h>
->  #include <linux/mmc/host.h>
-> 
-> +MODULE_DESCRIPTION("OpenFirmware bindings for the MMC-over-SPI 
-> driver");
->  MODULE_LICENSE("GPL");
-> 
->  struct of_mmc_spi {
-> diff --git a/drivers/mmc/host/renesas_sdhi_core.c
-> b/drivers/mmc/host/renesas_sdhi_core.c
-> index 12f4faaaf4ee..d62a4ed86775 100644
-> --- a/drivers/mmc/host/renesas_sdhi_core.c
-> +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> @@ -1162,4 +1162,5 @@ void renesas_sdhi_remove(struct platform_device 
-> *pdev)
->  }
->  EXPORT_SYMBOL_GPL(renesas_sdhi_remove);
-> 
-> +MODULE_DESCRIPTION("Renesas SDHI driver");
-
-"Renesas SDHI core driver" would be a bit more accurate.
-
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/mmc/host/tmio_mmc_core.c 
-> b/drivers/mmc/host/tmio_mmc_core.c
-> index 93e912afd3ae..c1a4ade5f949 100644
-> --- a/drivers/mmc/host/tmio_mmc_core.c
-> +++ b/drivers/mmc/host/tmio_mmc_core.c
-> @@ -1319,4 +1319,5 @@ int tmio_mmc_host_runtime_resume(struct device 
-> *dev)
->  EXPORT_SYMBOL_GPL(tmio_mmc_host_runtime_resume);
->  #endif
-> 
-> +MODULE_DESCRIPTION("TMIO MMC core driver");
->  MODULE_LICENSE("GPL v2");
-> 
-> ---
-> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> change-id: 20240610-md-drivers-mmc-cb5f273b5b33
