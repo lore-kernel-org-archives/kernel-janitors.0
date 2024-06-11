@@ -1,61 +1,80 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738B4172BD0
-	for <kernel-janitors@vger.kernel.org>; Tue, 11 Jun 2024 07:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF97176247;
+	Tue, 11 Jun 2024 08:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718091842; cv=none; b=ayehzJvTY337blIJDRY4hrDUftnTXkKvelqgH0KAJpA6d+DgvIE3JjgXBLKPVSN1zj6lNb2CfT4DgzKnJkxy6TsoFtno/3ABkAadxSOnpN2meFsGXuHzOqFryw7XKqAlwYVf9XeGS49H8GadPrnZG02DttSCJihYCu6yFGNaWXQ=
+	t=1718095352; cv=none; b=hSw9pl28n7BRxZsGu2J29JvBXu8CfapKoWLB5HgqoeMwY1rn1LrVZe4/70R5diazyG6RI/q0agDVjebdI5SxxCjt3B4+VQLTcc55ARQ9hLwGyBmJMtDQ9v1GySG6OKHzM4rYDx8vaQUpKjZ6E9/ERMa90EWRxKlid82vDACWIJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718091842; c=relaxed/simple;
-	bh=8m6jYm+p0unixwgfRSSCm6/2jtFbUYbvXevNZxEqCDQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=T1vJfUqYEcDVCqfjKiGlnly/2aekJjM3+Dt/9aGsDz6u1MLPW6lFouLVYce6yKHG7bTsEplJr6KlAsF+U/TMi8q9V+aCK9IOiVGscTUf081xiOoZRclH8SdT39Z4ppQ4L/Z8w0MB+ghKAxhvx0WiqBxSV2rvIY+ikSD4hvzMRpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jMz3hmWE; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718095352; c=relaxed/simple;
+	bh=PDPvVmNLI2KmML3eBZlAx0kSooka/PciHqCPlWK1J/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ATR3KaYcuWyPeZm2EAT2vLmKnLiC2LeXaV6tC4Deoq6Uq1ymWTuBrZVAWgicj1c4Q8XSXNzNxfRjxmLSw/csdNEHRS+VqXAePr+QLh6VxOo5X2yXzuexJZTaBRhX1+gtf5ZNS21ZnKIfICZLLPv7Z93zoh/JLNvCCCYFrgYvh8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tmbMfhHK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ylbu+lJk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C8YowmwT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NEeEbIWg; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jMz3hmWE"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-35f23f3da44so1799448f8f.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jun 2024 00:44:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718091839; x=1718696639; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WsHiHDrwj7KWTlL47RJPPmsPBBAjKyL5RmZO1AaRVKI=;
-        b=jMz3hmWEkEpJS/ULIW0Bl6uyy5IRk7IA2NwyW+aZ6yIKxrYHwrzDHbuLQhxbzIL7lq
-         YDO0Z2YY6z6tt2MqfaX0mZgAXaWz2Hq9imTGtVdiV36lTCveeFk0jrZbQHm+YypR+cxy
-         wO8bEvehOXuZkP1gPuq8X0zoMTfP6N7Vsn4rV8gscIlllhhgFtKnNL1M94WktsZ/0rn5
-         7iTF/ji/Oe2Jk/1MbXhyF+fV6SiJj2Xv8ZVHGXNYMyKS+mcDLcEJOleOgoGda36CLWqg
-         wfgqVwzaSKSYCbSP9zKaM285udWX6/ZKLRBdZnP9ibikuhBwRtKWRY0J52fXLgIDR0S4
-         UH2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718091839; x=1718696639;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WsHiHDrwj7KWTlL47RJPPmsPBBAjKyL5RmZO1AaRVKI=;
-        b=E5bTagJ12JZOgH7Q9rqPRo7Z3E+0U4O4fxvkUWS6K/Vu6bZE3LqMacnJ4+Lt4J/aUl
-         mPK7lsg/ng/+707ZKZHOgIyzKR9+aw7ZNC6NIwGWFdnHn5PeOIMK+WeT8bAtvd2FBwzg
-         EbET0T3N1Oq6nIXtWaab6qUKTzWeCr44dY5PuQ23GwVxUscdbMtmjA1LAcFwZn8rW+pn
-         q7bFZSB1Ga8FNMexOrQ3wj1ELfWTHpkduo+fqzTHUmKNcrxK6Ev2t3tWUcWPBIIFi+BL
-         bnrWkoqWC+tP5VC5KkddnPEEtFhMoXQpjR3IIfV+1zVtSkTyYr2l+eRNhxnxdIVIH7VC
-         16Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCVL1+RZ+V/b+QCnI7WFvFW22RZ/wMQwviDHoDrqBRHNRuSRXxQBx59M9KSor0p37osWXaGAQBJLOlX0dAdwEkxjCN/KPPIewdpNm0RWEXO/
-X-Gm-Message-State: AOJu0YzGQPjPVDTNwbW/sXMCC/KPACbBwlcPoubmR6dQ4GZgn0iSNvaZ
-	9FQRqPVplFIYkFj1aJQ9FqAlkVFpr16h1WfTlYe2xf2X8sELuqK4eyIdlpbEo3c=
-X-Google-Smtp-Source: AGHT+IHVUWQPU0XLKI8clLjC5hscIpVdt5ZDQarh9E7gq2k1Q6gIf/HvwxVroSXFwFVrLN4v0Tr2cg==
-X-Received: by 2002:a05:6000:1291:b0:35f:22d5:da72 with SMTP id ffacd0b85a97d-35f22d5dbbamr3080168f8f.50.1718091838847;
-        Tue, 11 Jun 2024 00:43:58 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:5a4:3b2:c750:ef5c? ([2a01:e0a:982:cbb0:5a4:3b2:c750:ef5c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f25dc3f07sm4013408f8f.79.2024.06.11.00.43.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 00:43:58 -0700 (PDT)
-Message-ID: <c0013295-c7de-4118-99dc-12074002c5fd@linaro.org>
-Date: Tue, 11 Jun 2024 09:43:57 +0200
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tmbMfhHK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ylbu+lJk";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C8YowmwT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NEeEbIWg"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D976722D5F;
+	Tue, 11 Jun 2024 08:42:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718095349; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1YGaZy/KyNbtepXJK1X5b4jkkJKA9PLqUc+mM7CUU7Q=;
+	b=tmbMfhHKvX65T9osYn6tm/1asE9MSw/E6T2dzo2ZJFZs/X1OqiQdQhyCB3BUuf0PcQo/xQ
+	KTHjhMHEh1T2ctJdhhMxVksP/vb3RugmbpeAYuMJj4000EqmcDPn6AF2RKepvdLFSPVkni
+	1UfIOHM9swCCaTio668vrNKRZ4Z0DIc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718095349;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1YGaZy/KyNbtepXJK1X5b4jkkJKA9PLqUc+mM7CUU7Q=;
+	b=Ylbu+lJky7kk6dVAxh3fYDuOKygl5EgKcOdtmpWOu4Er8KWEslAg/VI+hddP49xk1nG88m
+	wzNp2K/33Vq9SfDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718095348; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1YGaZy/KyNbtepXJK1X5b4jkkJKA9PLqUc+mM7CUU7Q=;
+	b=C8YowmwTGHbdtL8+g1YWpIvb3V36YWuwrzbx2oDpZ6pMtIYaQ2WpIx+OCeTx1nJzkTPwja
+	CbFArJqiJ5i79a5Xo0jlw2adVKTdW7xdpqlj7yPgQCIqMM3GF+jXBRp0+bozJWavlmpP/x
+	3Vi+5yRSv/ygd0p/hhR7NWpGaiQ7kKo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718095348;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1YGaZy/KyNbtepXJK1X5b4jkkJKA9PLqUc+mM7CUU7Q=;
+	b=NEeEbIWgZ4mJJjCO+5cRTx4FZkKiJ9dMR8zcjdSvYBPwvKAwj3eEyQKTH9NglmjHLxvOMT
+	21+ax51WvMO+bnAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BFF05137DF;
+	Tue, 11 Jun 2024 08:42:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 14aLLvQNaGa9YwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 11 Jun 2024 08:42:28 +0000
+Message-ID: <05ec743a-c4e9-4c66-b2cd-4e89c858d7d4@suse.cz>
+Date: Tue, 11 Jun 2024 10:42:28 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -63,104 +82,153 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] pmdomain: amlogic: add missing MODULE_DESCRIPTION()
- macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <20240610-md-drivers-pmdomain-amlogic-v1-1-b49ddb1a8bdf@quicinc.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240610-md-drivers-pmdomain-amlogic-v1-1-b49ddb1a8bdf@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 05/14] tracefs: replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Julia Lawall
+ <Julia.Lawall@inria.fr>, kernel-janitors@vger.kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ "workflows@vger.kernel.org" <workflows@vger.kernel.org>,
+ Thorsten Leemhuis <linux@leemhuis.info>
+References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
+ <20240609082726.32742-6-Julia.Lawall@inria.fr>
+ <20240610112223.151faf65@rorschach.local.home>
+ <b647eacd-f6f3-4960-acfd-36c30f376995@paulmck-laptop>
+ <20240610163606.069d552a@gandalf.local.home>
+ <70c093a5-df9c-4665-b9c9-90345c7f2139@suse.cz>
+ <2024061143-transfer-jalapeno-afa0@gregkh>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <2024061143-transfer-jalapeno-afa0@gregkh>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spam-Flag: NO
+X-Spam-Score: -4.29
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
 
-On 11/06/2024 01:13, Jeff Johnson wrote:
-> On x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pmdomain/amlogic/meson-ee-pwrc.o
+On 6/11/24 8:23 AM, Greg KH wrote:
+> On Mon, Jun 10, 2024 at 11:40:54PM +0200, Vlastimil Babka wrote:
+>> On 6/10/24 10:36 PM, Steven Rostedt wrote:
+>> > On Mon, 10 Jun 2024 08:46:42 -0700
+>> > "Paul E. McKenney" <paulmck@kernel.org> wrote:
+>> > 
+>> >> > > index 7c29f4afc23d..338c52168e61 100644
+>> >> > > --- a/fs/tracefs/inode.c
+>> >> > > +++ b/fs/tracefs/inode.c
+>> >> > > @@ -53,14 +53,6 @@ static struct inode *tracefs_alloc_inode(struct super_block *sb)
+>> >> > >  	return &ti->vfs_inode;
+>> >> > >  }
+>> >> > >  
+>> >> > > -static void tracefs_free_inode_rcu(struct rcu_head *rcu)
+>> >> > > -{
+>> >> > > -	struct tracefs_inode *ti;
+>> >> > > -
+>> >> > > -	ti = container_of(rcu, struct tracefs_inode, rcu);
+>> >> > > -	kmem_cache_free(tracefs_inode_cachep, ti);  
+>> >> > 
+>> >> > Does this work?
+>> >> > 
+>> >> > tracefs needs to be freed via the tracefs_inode_cachep. Does
+>> >> > kfree_rcu() handle specific frees for objects that were not allocated
+>> >> > via kmalloc()?  
+>> >> 
+>> >> A recent change to kfree() allows it to correctly handle memory allocated
+>> >> via kmem_cache_alloc().  News to me as of a few weeks ago.  ;-)
+>> > 
+>> > If that's the case then:
+>> > 
+>> > Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+>> > 
+>> > Do we have a way to add a "Depends-on" tag so that anyone backporting this
+>> > will know that it requires the change to whatever allowed that to happen?
+>> 
+>> Looks like people use that tag, although no grep hits in Documentation, so
+>> Cc'ing workflows@ and Thorsten.
+>> 
+>> In this case it would be
+>> 
+>> Depends-on: c9929f0e344a ("mm/slob: remove CONFIG_SLOB")
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
-> 
-> This includes meson-secure-pwrc.c which, although it did not produce a
-> warning with the x86 allmodconfig configuration, may cause this
-> warning with other configurations where CONFIG_MESON_SM is enabled.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->   drivers/pmdomain/amlogic/meson-ee-pwrc.c     | 1 +
->   drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c | 1 +
->   drivers/pmdomain/amlogic/meson-secure-pwrc.c | 1 +
->   3 files changed, 3 insertions(+)
-> 
-> diff --git a/drivers/pmdomain/amlogic/meson-ee-pwrc.c b/drivers/pmdomain/amlogic/meson-ee-pwrc.c
-> index fcec6eb610e4..fbb2b4103930 100644
-> --- a/drivers/pmdomain/amlogic/meson-ee-pwrc.c
-> +++ b/drivers/pmdomain/amlogic/meson-ee-pwrc.c
-> @@ -648,4 +648,5 @@ static struct platform_driver meson_ee_pwrc_driver = {
->   	},
->   };
->   module_platform_driver(meson_ee_pwrc_driver);
-> +MODULE_DESCRIPTION("Amlogic Meson Everything-Else Power Domains driver");
->   MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c b/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
-> index 33df520eab95..6028e91664a4 100644
-> --- a/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
-> +++ b/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
-> @@ -376,4 +376,5 @@ static struct platform_driver meson_gx_pwrc_vpu_driver = {
->   	},
->   };
->   module_platform_driver(meson_gx_pwrc_vpu_driver);
-> +MODULE_DESCRIPTION("Amlogic Meson GX Power Domains driver");
->   MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/pmdomain/amlogic/meson-secure-pwrc.c b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> index 4d5bda0d60fc..b50e5678abe3 100644
-> --- a/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> +++ b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> @@ -355,4 +355,5 @@ static struct platform_driver meson_secure_pwrc_driver = {
->   	},
->   };
->   module_platform_driver(meson_secure_pwrc_driver);
-> +MODULE_DESCRIPTION("Amlogic Meson Secure Power Domains driver");
->   MODULE_LICENSE("Dual MIT/GPL");
-> 
-> ---
-> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> change-id: 20240610-md-drivers-pmdomain-amlogic-f117930600ea
-> 
+> Ick, no, use the documented way of handling this as described in the
+> stable kernel rules file.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+AFAICS that documented way is for a different situation? I assume you mean
+this part:
 
-Thanks,
-Neil
+* Specify any additional patch prerequisites for cherry picking::
+
+    Cc: <stable@vger.kernel.org> # 3.3.x: a1f84a3: sched: Check for idle
+
+But that would assume we actively want to backport this cleanup patch in the
+first place. But as I understand Steven's intention, we want just to make
+sure that if in the future this patch is backported (i.e. as a dependency of
+something else) it won't be forgotten to also backport c9929f0e344a
+("mm/slob: remove CONFIG_SLOB"). How to express that without actively
+marking this patch for backport at the same time?
+
+> thanks,
+> 
+> greg k-h
+
