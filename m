@@ -1,34 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1C28488;
-	Tue, 11 Jun 2024 01:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AEBA2A;
+	Tue, 11 Jun 2024 02:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718070039; cv=none; b=qr9fRdzdxeowrg+vcw5QNqiI6O+1cQGjffb5dB/szhAs8ppfjeg2uwCfrANaQ9Qz3aCUBYocgHLyPRSppmiXY5Aiul25i+svQjcGVR0CVd7EjkX98/y4aMzw+gwFMg+7X4lTzG0kI6b6RFQ0xQvSLbVdlTAcZlnpeh87wxMsRaQ=
+	t=1718074357; cv=none; b=evy8FXjqZd7EQTQ7QIKe/ZZFBCH1tuxvCa2L/VHOV+hXgBGAfvtBFUOb9Co4Lr0jQLY5hI70GeNrcJhifCHxEPwwCBqDZxJwG/nHy5JW1zdUgWUzkRH8Bzvyz0ibad7/8Vx3TFhMh+y+GbhnglZrc5j6ebYIWD2TjhT46/vJ7Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718070039; c=relaxed/simple;
-	bh=j7HCWuWgHbxnyKpBoHz9jiNnduHdqNBguHdWyEaUkeY=;
+	s=arc-20240116; t=1718074357; c=relaxed/simple;
+	bh=Lw6UaTIaPX0ZJ+bHeOIKAfy56qXGaJ9yxxI09PHjR+E=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=E+/76Com0gcCJ+EyH2XQPusijYqFGosLoZKAFPfXHTHutw1Li79my463i78lz0naTm2d1Qop7FuvDoCco+I1YWkCeUSxG7QwCcjj/hYKtsU+wfYM6ziDQ+dr4RCShiNC3mKu7iHXUWeaDdKvrAktsn8PV39f38hcb8iDx5xOUlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gszLsRIN; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=HxkOAfSLlNRNwG1+l3p+cMBLA0mFM1UoUxsHslsGhPF4l7tooxMbbn52D26/t54M5Qq0ZqZvlZMMYNfnycniSqfDK6MU3eLxI3jXAHjJtzX5EcocCTnHWjV068BNKpeiFa6cpk+sLLXoti7qIAKw+Ls73Qc5xDEQhOtm4FHWKLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLoSsgdU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gszLsRIN"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AF96BC4AF49;
-	Tue, 11 Jun 2024 01:40:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLoSsgdU"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 69F54C4AF1A;
+	Tue, 11 Jun 2024 02:52:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718070038;
-	bh=j7HCWuWgHbxnyKpBoHz9jiNnduHdqNBguHdWyEaUkeY=;
+	s=k20201202; t=1718074356;
+	bh=Lw6UaTIaPX0ZJ+bHeOIKAfy56qXGaJ9yxxI09PHjR+E=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=gszLsRIN2CpfC5SXqU7SF8D7iD4hAZ/ntx8Yatxf+blU0aITsUww+695zk1JZnewo
-	 gtfDw9rmWZuHiHY32zuu97h4zs0eLZ8q/cEfooHUns47w53Cmx67jIUJ/1vdNLkDWv
-	 KDrxQOIb0scj/+IIS1e06BZWhqA2QxAiQAdlLatSI35GC71eXuNaXsp84M7Oa9dfkA
-	 uXU+0Y+1XP1Iq9BLhUn8hFNZMsXANyP0WKQ7MSeE1WjK7usZEwekWxb80SWRnUCjGq
-	 h7mvs30kqSnQDO5KJtOK18VoP2im3gC3kqWCInhXP7kkDB5kEVgXgHw1GFbKMeuf6u
-	 GLMyUO9f75a5g==
+	b=fLoSsgdUq6pLJERsof8jOvbi7VMKSR/nbQpXHd+299yWPwqi9Ie7CyuWmFJHtRWKS
+	 2t0vpOSihwi1TKsaTHzg2PL+C2X8iAjfWHjitIMrOoqkhN0wyuyQKGX7/QR6X/WrzE
+	 79DJTZlRdEaUX03qNTAfWvZVJYVZR1nrrP/Na/bsYCrK6tWP4n3RzZIqbZJzX3twLX
+	 zqgVaHtyQQ0NQcunezYY+mxXFPwucv3nt3HVVzm1rWm4xELi3GUmZbjSaHRE/pmb9a
+	 Fzx0e2UFQjbQ8q5A/NcXaj4v+OInfBSJqueTl7b+hl/7VqoCVQQD5TVGgPX5zOugZj
+	 yr7/mVyfLi9kw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9C39AC54BB3;
-	Tue, 11 Jun 2024 01:40:38 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 55002E7C76F;
+	Tue, 11 Jun 2024 02:52:36 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -37,43 +37,37 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] isdn: add missing MODULE_DESCRIPTION() macros
-From: patchwork-bot+netdevbpf@kernel.org
+Subject: Re: [PATCH] platform/chrome: cros_ec_proto: add missing
+ MODULE_DESCRIPTION() macro
+From: patchwork-bot+chrome-platform@kernel.org
 Message-Id: 
- <171807003863.13638.7461391442889099274.git-patchwork-notify@kernel.org>
-Date: Tue, 11 Jun 2024 01:40:38 +0000
-References: <20240607-md-drivers-isdn-v1-1-81fb7001bc3a@quicinc.com>
-In-Reply-To: <20240607-md-drivers-isdn-v1-1-81fb7001bc3a@quicinc.com>
+ <171807435634.18125.2033985053874197153.git-patchwork-notify@kernel.org>
+Date: Tue, 11 Jun 2024 02:52:36 +0000
+References: <20240610-md-drivers-platform-chrome-v1-1-f9c75adcc1ca@quicinc.com>
+In-Reply-To: <20240610-md-drivers-platform-chrome-v1-1-f9c75adcc1ca@quicinc.com>
 To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc: bleung@chromium.org, tzungbi@kernel.org, groeck@chromium.org,
+ chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
  kernel-janitors@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+This patch was applied to chrome-platform/linux.git (for-kernelci)
+by Tzung-Bi Shih <tzungbi@kernel.org>:
 
-On Fri, 7 Jun 2024 11:56:56 -0700 you wrote:
+On Mon, 10 Jun 2024 14:50:37 -0700 you wrote:
 > make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/hfcpci.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/hfcmulti.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/hfcsusb.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/avmfritz.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/speedfax.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/mISDNinfineon.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/w6692.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/netjet.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/mISDNipac.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/mISDNisar.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/mISDN/mISDN_core.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/mISDN/mISDN_dsp.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/mISDN/l1oip.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/chrome/cros_kunit_proto_test.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - isdn: add missing MODULE_DESCRIPTION() macros
-    https://git.kernel.org/netdev/net-next/c/2ebb87f45b3c
+  - platform/chrome: cros_ec_proto: add missing MODULE_DESCRIPTION() macro
+    https://git.kernel.org/chrome-platform/c/d11c00292a31
 
 You are awesome, thank you!
 -- 
