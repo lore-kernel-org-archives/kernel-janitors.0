@@ -1,120 +1,120 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD3B57CAE;
-	Tue, 11 Jun 2024 19:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD74152189;
+	Tue, 11 Jun 2024 20:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718133745; cv=none; b=LxKFsZ6XAklVqzVwuMgR9NbudHvDJEA7PrRu1hRLcHDivIi2t5a5FJVKzOCe/9skknuGKKw2QKxPqCh7LawzJCjuYMkZhs8I5qyh/FV7q4RXqpfObG4CmiMs36KrOXnwgBvImQdc9NMcLtWOHjzs5sMT/fYEH1cmE92ExPaLTqI=
+	t=1718138534; cv=none; b=E8liHkgZbZsZEEzAWhjOrmjnxERbV9nFENO10M8oGfH3taJE2pFGjafR0TLTeJMNdXYLpVA5uj0GpgTmySZutGal+7EEWZPJ6jF/ZJnfq34fEs/eRHLEmfKQKxiHJaaz9VIH0hEnw6B3++2a00OJW/uRCQEqz2bZE5F2mU8CsUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718133745; c=relaxed/simple;
-	bh=NWxk0xi3uhd7xmYlGU0qY3zYYQRAlKdsh+Rl6kYqk8I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=H2rO5sk+hEnmFMRZd6bcYgn297BIyRwz49Zlil++4FNEPQypo2rs/QSrKe3Qfo0TKNTH5bBIuc47xxtzzJX2Uwa/aw3P4he96CvQEMmunl65HvbQwVhZuwRPYJIFa0b1yyZTlz8RQwguNmNvnrbmPOUFOIVcUiTQhLGh8Tk2VEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SUebXWIB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718138534; c=relaxed/simple;
+	bh=LCCVZTF4VC4CuaRx97FoQAd69nXUhy8dxTqPn8RrFPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EvQRGNgidVbfqDt6ugSX7xYC/PzFOMcA1kFGVfHpjwsmPCYb0RD4w5om+JgK9VUTnk0CvZasucd7X//z1C6tQhRxsmwyKy2Pv9qd+3h88kfR3QtUFjMhGSDVQx5t2mZ19f+dgOYpkiUMmJhdZOEydFBXnd9xIJo/lhJsKCCa7LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CYcbithW; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SUebXWIB"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BFeXSx003049;
-	Tue, 11 Jun 2024 19:22:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=KQnVwxYMD9p1crv4V8a2Rw
-	oCsLwuUTHMozrqoix0LBg=; b=SUebXWIB+SKcgR5moR0gTpCDE4HTUFREL+caI9
-	QKk2/sSZBOS8yLwAINCZeBHL7Nnj1Rnp6J6HkAMh5cDVWDiVktoujLtvzeWOjejB
-	Tr4NgltZPTiB8uCKgGVKmjRjOydINYIoktujyrMfN6SDLD/lQi98uAq9Fb5iNlQ0
-	pl7irD4lUhTpRtPiBPsFqD7lXfEs2wFpDJjBwGUDzfsw5dC/aZKdzTnklt30xaJF
-	pFrefgrMbvla23kZcZXqDtwr7nBsic39Xv2/N552qeCm7q9ymcuSAR8cbDjXtWgL
-	lULG59Ka1TGfFKBmzBHzkwxOOzDtAWPTwwTWAK/i47AYoi7Q==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yphsasvkq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 19:22:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BJM9Fg007488
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Jun 2024 19:22:09 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
- 2024 12:22:08 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 11 Jun 2024 12:22:08 -0700
-Subject: [PATCH] vDPA: add missing MODULE_DESCRIPTION() macros
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CYcbithW"
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-6c702226b0aso168205a12.1;
+        Tue, 11 Jun 2024 13:42:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718138533; x=1718743333; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XkvFZ46cvbbRHaDGLxMnYMySUoXXzqZFujDfaujbw+I=;
+        b=CYcbithWa5I545w1ezdv1bLB1WV15NZGGkFJXZJtdO9lMvJ6wCjgZPRS/GUnpWUNjK
+         MCv3/S+bODAHN5EFG8RiB/FJKtm+1LAyYr5yF6L+A6Ss/gZNKqvFI4z1vD0OABRjJp+o
+         56CC2L/gHlyGz/ZsnJfceUnHJsnpFbuxfMkBtICmf1z9yVd+lWaEqhtYEy6P5DU1on84
+         x/Nltd4p+vbPwHFGctLe/K3M7V5OnKUIUzn6JpuuBB0IKknFhYHfdzqMfQVxoMLBNse7
+         X8jvRuy+JNNNdBG6O6HfhB3BwO9w+o7p4v42lFHCuEGEFzPTSdpkU0P7zaNld3o8B8Fu
+         Zobw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718138533; x=1718743333;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XkvFZ46cvbbRHaDGLxMnYMySUoXXzqZFujDfaujbw+I=;
+        b=w8+usMwZtS3p/1knGjiqNNCi8RN2f2Jo5a1+bAMilDt6oNxjzNq6E+G/JaLaPEe3/b
+         gl/0ZxbmBgOmM1nfoXmgTIXCRMHaZX+W4sojcSIhM/eNVg6POkhNp0YEs+cvmrdPjr4J
+         SqYbBfH74d7aA/y4bsOC8xQpIUFJHAfM78VRji6B0gH5GbZfJwTepfr710UuTEBcYcQT
+         jWeYpVMVU5SHtlbfzVZnNcjeNaJDGDiqhzvGYvC19SNlf+tFXMvdgWxCyzxVquSHGbZU
+         jhI+WgJsHQwizYRrXWJ8M7Y5aM75R2j+dI13UuZc2U4QsirnfpAHoBjrr2KHTbmk2AE6
+         LbFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXi6dIMGAOCn4qZpAawk4Egjtfhl4CKw0EShifeQNZo7+AUCc1/NfI4DAH3mngTCRyLiZncHGddMzMmdNrRfQf0DE753gCQd71ujmoKDb5GlD70DwW/CDVHi8kWGj+IcFQICJ7Z7o69CoQ0cT22
+X-Gm-Message-State: AOJu0YxSbx4YVYqX1dButlzIFnBxBaLiltT5TnYnLLPRcPLgoX0aMpi+
+	2ang5U2r0CSp3mqXx5NNvZUYNCuk5dkMm0e6+acODseLD2ot7O8R
+X-Google-Smtp-Source: AGHT+IF3TmoYIpSB6sGQyGS7GhdVbPilupJFPymlbUC4zyoHtECg83TvXZhj9FHm1TQd6wd0F15VUg==
+X-Received: by 2002:a17:902:bb8a:b0:1f2:fcc0:66f with SMTP id d9443c01a7336-1f83b1b3195mr658475ad.31.1718138532493;
+        Tue, 11 Jun 2024 13:42:12 -0700 (PDT)
+Received: from localhost ([216.228.127.130])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f7029b7d02sm55008415ad.197.2024.06.11.13.42.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 13:42:11 -0700 (PDT)
+Date: Tue, 11 Jun 2024 13:42:09 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] bitops: Add a comment explaining the double underscore
+ macros
+Message-ID: <Zmi2oUOjh5elr57T@yury-ThinkPad>
+References: <5a970f32-25c0-4955-b480-a4738bf86153@kili.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240611-md-drivers-vdpa-v1-1-efaf2de15152@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAN+jaGYC/x3MwQrCMAyA4VcZORtoOpnoq4iHroku4OpItAzG3
- t3q8Tv8/wYupuJw6TYwqer6Kg106CBPqTwElZshhngMAxHOjGxaxRwrLwn7M8UwMJ0k99CqxeS
- u6/94vTWPyQVHSyVPv89Ty2fFOflbDPb9C3XVsziAAAAA
-To: Zhu Lingshan <lingshan.zhu@intel.com>,
-        "Michael S. Tsirkin"
-	<mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo
-	<xuanzhuo@linux.alibaba.com>,
-        =?utf-8?q?Eugenio_P=C3=A9rez?=
-	<eperezma@redhat.com>
-CC: <virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: NWbbXaZ8dISxb5ZHSiDuu5olsfwcR9dl
-X-Proofpoint-GUID: NWbbXaZ8dISxb5ZHSiDuu5olsfwcR9dl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_09,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- adultscore=0 spamscore=0 mlxlogscore=999 impostorscore=0
- lowpriorityscore=0 clxscore=1011 phishscore=0 mlxscore=0
- priorityscore=1501 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405170001 definitions=main-2406110133
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5a970f32-25c0-4955-b480-a4738bf86153@kili.mountain>
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vdpa/vdpa.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vdpa/ifcvf/ifcvf.o
+On Tue, Jun 11, 2024 at 03:38:12PM +0300, Dan Carpenter wrote:
+> Linus Walleij pointed out that a new comer might be confused about the
+> difference between set_bit() and __set_bit().  Add a comment explaining
+> the difference.
+> 
+> Link: https://lore.kernel.org/all/CACRpkdZFPG_YLici-BmYfk9HZ36f4WavCN3JNotkk8cPgCODCg@mail.gmail.com/
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> v2: re-word the comment, put it right next to the macros and add a blank
+>     line in front of the test_bit() macros so it's not mixed in with the
+>     non-atomic macros
+> 
+>  include/linux/bitops.h | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+> index 46d4bdc634c0..ba35bbf07798 100644
+> --- a/include/linux/bitops.h
+> +++ b/include/linux/bitops.h
+> @@ -47,12 +47,17 @@ extern unsigned long __sw_hweight64(__u64 w);
+>  	  __builtin_constant_p(*(const unsigned long *)(addr))) ?	\
+>  	 const##op(nr, addr) : op(nr, addr))
+>  
+> +/*
+> + * The following macros are non-atomic versions of their non-underscored
+> + * counterparts.
+> + */
+>  #define __set_bit(nr, addr)		bitop(___set_bit, nr, addr)
+>  #define __clear_bit(nr, addr)		bitop(___clear_bit, nr, addr)
+>  #define __change_bit(nr, addr)		bitop(___change_bit, nr, addr)
+>  #define __test_and_set_bit(nr, addr)	bitop(___test_and_set_bit, nr, addr)
+>  #define __test_and_clear_bit(nr, addr)	bitop(___test_and_clear_bit, nr, addr)
+>  #define __test_and_change_bit(nr, addr)	bitop(___test_and_change_bit, nr, addr)
+> +
+>  #define test_bit(nr, addr)		bitop(_test_bit, nr, addr)
+>  #define test_bit_acquire(nr, addr)	bitop(_test_bit_acquire, nr, addr)
+>  
+> -- 
+> 2.39.2
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+Applied in bitmap-for-next. For the next time please make the subject
+prefix [PATCH v2], then [PATCH v3], and so on. The motivation is to
+avoid sending emails with identical subjects as some (not mine) email
+clients consider one as a reply to another.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/vdpa/ifcvf/ifcvf_main.c | 1 +
- drivers/vdpa/vdpa.c             | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/drivers/vdpa/ifcvf/ifcvf_main.c b/drivers/vdpa/ifcvf/ifcvf_main.c
-index 80d0a0460885..ccf64d7bbfaa 100644
---- a/drivers/vdpa/ifcvf/ifcvf_main.c
-+++ b/drivers/vdpa/ifcvf/ifcvf_main.c
-@@ -894,4 +894,5 @@ static struct pci_driver ifcvf_driver = {
- 
- module_pci_driver(ifcvf_driver);
- 
-+MODULE_DESCRIPTION("Intel IFC VF NIC driver for virtio dataplane offloading");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
-index 8d391947eb8d..1ca445e31acb 100644
---- a/drivers/vdpa/vdpa.c
-+++ b/drivers/vdpa/vdpa.c
-@@ -1538,4 +1538,5 @@ core_initcall(vdpa_init);
- module_exit(vdpa_exit);
- 
- MODULE_AUTHOR("Jason Wang <jasowang@redhat.com>");
-+MODULE_DESCRIPTION("vDPA bus");
- MODULE_LICENSE("GPL v2");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240611-md-drivers-vdpa-391206d17ec3
-
+Thanks,
+Yury
