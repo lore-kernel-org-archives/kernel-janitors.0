@@ -1,105 +1,101 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393AB12BF3E
-	for <kernel-janitors@vger.kernel.org>; Wed, 12 Jun 2024 22:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1763028385;
+	Wed, 12 Jun 2024 22:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718232783; cv=none; b=hVrtdwEWJzej36k9gIyHAzhznWV+gtoee6bA+nOF4ziEeDE8VFAO53y0cqKaZGbYhWyHdoIsbk946wcY10/aKu7rUn+MN6UXF2N9r2udryNgJzizG1PNVnzSNLAObCBUarGuzJ/aJJ7TpgxttGxxZ88Wsm/6hm7mS9XitTvstlY=
+	t=1718233114; cv=none; b=QHziIrvuIHTJOaDZkBqLBCPDugMttCsZXHrKLBx442R7cdZPL+WJfQK5lVmj4nsCNvPRv0WQoYYyRG9u6nmoUh+BKUGJYGaeJBIjTiCuuiCACcS7OV9E0Sj42WGS1SWSvllkiI4z2jUem7n9kc5iTCCxxV2IvYbFfuwVwAY+pvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718232783; c=relaxed/simple;
-	bh=L3qaXQNUUVxh4Q0Q3RMUhGqp7sJ7EFx4+fzYvA3H52A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HnhABadrxbBGOFToVx7B8LkVH78mkG5MUei6ePJj+BDmVyp1ds4KlQFsDj0AsFMdegpc5X3YPQqpAzTqNI+n+SH0fYpM70/Ams3QApC73bQSnz5L56hJGGE8S8AslywrOSorzShcwC+QZBimQin3/5dSclXZpi85WJ8laDbi9+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jK/qHLGv; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+	s=arc-20240116; t=1718233114; c=relaxed/simple;
+	bh=kBo3PrZiEdUdqC/4BbLA7KGTFYsksjNhvJlPCWpd8U0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=X5YQ5/zW7WdJnekWX1+LegSv1EzHgCS9mCkMNOgEJfRZ+9aP+sSVRBMXR9VlY9cST1w26+8otBnhnFLM5ePEtXRtd96HS8KyAQ6sDuxqSKd/G6y1RRDlWYueitui+F7KyYbv7iEVTvtkwIiAiA64BKjqI/XKwHeqplL6sDPJcNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YW3Y7PjC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jK/qHLGv"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f6f23e9377so441815ad.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jun 2024 15:53:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718232780; x=1718837580; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HCKGfocKzBU0+xeBiPtl1Ex5TwQcMh3k2EBSdA3xSn0=;
-        b=jK/qHLGvI0kV5kxk0TrIxYpm7MMWZSt3v741kn091VcRmXCARzl9rtz9vI0V4zfu7H
-         GR7OsA8rw93QhkXvQIEMPEP+ta1DBYG5sB4JUmu07Tv/2GANeCt1pLwqhfXTP0ahkAD5
-         ZTQg4WCW4uehb5S/Ej6DidDnexG6/OhTOov6AbzeQ+7JnKgZpxmW153617GINF5uGI3M
-         bvEbqQdnnimNSgV49Rv813WRNApxGQj6/2ZP1jfsA74AzF066dcloIIa4indI8oXIvGP
-         goAx3kwz5WfjuKZAE4S35MwK1J/RTxvBGAzcxGcOoDyJZ9mlG1dAmdToy+7D2b5ryiAm
-         rhEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718232780; x=1718837580;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HCKGfocKzBU0+xeBiPtl1Ex5TwQcMh3k2EBSdA3xSn0=;
-        b=Ax0Rll5ouXL5JtWtVMnn3LCEJx3Y/U1MpwGT4Uz8BlAEJIEmhTQ1rmO9F6iSqZp89M
-         xjWE//wiNaRe4+WvPJSM12ZrQ5SLM1KhG/wwyuH2EFiTBdtgKQdPcZ7G0N8lB9qoBZc8
-         aMoy511GZ2yyVP8zpFOAd8z8AhwNkeRO4wg0ECr7ZQLxck5k0bMbo8kJwyoUYcC+0pxG
-         aWexcl9MYl6FrHDeGFuDuzHN9BFqFuzA0BW7Gb4/FFG/9xLtlcmXIfW+mMkizj+hrQLt
-         sdwwA9Bh+jMM7evtySCXX94pjBEs344kxaeuckhwpJUo/ay7JUl7AkcsIV3OQLHPZrre
-         KUWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVI757uWPIA0E6R2RacG74KIuburlUFE624mfV/CB0jAwyD2+PmOqwFSol6LErXWe8XiQfbj8sWMQDjQWQAUH0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJZI0DbiSRWysO2rmBJzxylZTNkEE2H4pwRheYrF1y7Y0gLyQ2
-	T8FgEGi6U6QVWYCE+aVKSGt9SKXUIfe24qNprBCrJdUaHVdIouL9ntfZa3d+V44=
-X-Google-Smtp-Source: AGHT+IH5UZSMoyLCwmMYbQsnXovMsmtOxcZgzfit4qNG1yAnUakar4EveGlx5xiJfFg6llU0rCt4rg==
-X-Received: by 2002:a05:6a20:5647:b0:1af:acda:979d with SMTP id adf61e73a8af0-1b8a9b4e85fmr2859600637.1.1718232780575;
-        Wed, 12 Jun 2024 15:53:00 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb3d2c5sm73821b3a.105.2024.06.12.15.52.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 15:53:00 -0700 (PDT)
-Message-ID: <7e58e73d-4173-49fe-8f05-38a3699bc2c1@kernel.dk>
-Date: Wed, 12 Jun 2024 16:52:57 -0600
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YW3Y7PjC"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CKnNOC022525;
+	Wed, 12 Jun 2024 22:58:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=KVruShR2VdwkCpzyg19f+X
+	RXwOT8ljeHnXvU1gTxSnw=; b=YW3Y7PjCFNWgGtpVXutUr9enKD6MYiUSW031XH
+	wius+sEmZ0byo4wS4py7gx12lEG4dsE5De2VD4q8ip3I+zFZsuur5AlaxfJADB/f
+	xFN4F35FScJLmm/PQisgEEdnPAu6TVB1UUxqY1GVn1I9v41S+xQXabQvQZqor+4/
+	TEpljxYmTbTzJ4PYo11hwTb+oePylvN2EqRbr18gnWACYxLnAz6ods4ybm19a6K9
+	fX1NvW8CcBOrw8QY8om1wvnqcICqPorAkfayxk9n4uMw0lhQ9ykEY/HooE54G3ze
+	A6Wkp/CimF04e46ePmYfNyZSp43LlFOzgX64XpVdAeGB3YHg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yq4s8jqh1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 22:58:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CMwRnD028747
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 22:58:27 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
+ 2024 15:58:26 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Wed, 12 Jun 2024 15:58:25 -0700
+Subject: [PATCH] media: rc: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-To: paulmck@kernel.org, Jakub Kicinski <kuba@kernel.org>
-Cc: Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
- kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
- linux-trace-kernel@vger.kernel.org,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, kvm@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
- wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
- ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
- Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
- linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- Vlastimil Babka <vbabka@suse.cz>
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240612143305.451abf58@kernel.org>
- <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240612-md-drivers-media-rc-v1-1-3c3458bb73e8@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIABAoamYC/x3M0QrCMAyF4VcZuTawVinoq4gXWZu5gK2S6BiMv
+ fsyLz8O51/BWIUNbt0KyrOYvJsjnDrIE7UnoxQ3xD5e+hQi1oJFZWY1rFyEUDOGq09jSvmcEvj
+ zozzK8q/eH+6BjHFQank6Wi9pvwUr2ZcVtm0HzskoFoQAAAA=
+To: Sean Young <sean@mess.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QQIRi8NXxO5Y2mMnDx-rjRb8chdcF3R5
+X-Proofpoint-ORIG-GUID: QQIRi8NXxO5Y2mMnDx-rjRb8chdcF3R5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_10,2024-06-12_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ spamscore=0 mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1011 mlxlogscore=941 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406120164
 
-On 6/12/24 4:37 PM, Paul E. McKenney wrote:
-> [PATCH 09/14] block: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-> 	I don't see a kmem_cache_destroy(), but then again, I also don't
-> 	see the kmem_cache_create().  Unless someone can see what I am
-> 	not seeing, let's wait.
+With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/rc/rc-core.o
 
-It's in that same file:
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-blk_ioc_init()
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/media/rc/rc-main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-the cache itself never goes away, as the ioc code is not unloadable. So
-I think the change there should be fine.
+diff --git a/drivers/media/rc/rc-main.c b/drivers/media/rc/rc-main.c
+index 6bdad6341844..a4c539b17cf3 100644
+--- a/drivers/media/rc/rc-main.c
++++ b/drivers/media/rc/rc-main.c
+@@ -2092,4 +2092,5 @@ subsys_initcall(rc_core_init);
+ module_exit(rc_core_exit);
+ 
+ MODULE_AUTHOR("Mauro Carvalho Chehab");
++MODULE_DESCRIPTION("Remote Controller core module");
+ MODULE_LICENSE("GPL v2");
 
--- 
-Jens Axboe
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240612-md-drivers-media-rc-19061f66c366
 
