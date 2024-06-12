@@ -1,112 +1,133 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1440B17F36D;
-	Wed, 12 Jun 2024 14:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F5017F517
+	for <kernel-janitors@vger.kernel.org>; Wed, 12 Jun 2024 15:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718203600; cv=none; b=kzoJolJhMzTmU17CRn2nte1O2+PFI5/Kt2Ft0NBwX9Z9GhWC9b3RBuZshUnddlCTrGaAIDYzBEAd9Bv3bPO2sxKzPgeoMxgvd4x25EjSlyQB3/mDYKWh5xpD4x3Sga/T2Nww9GLystmDlHNNcZhTANueq4OiVwpaRrSk+uOoLfo=
+	t=1718205158; cv=none; b=V1zo8ok0SbUqEUK5urSoExXFn8R/FDr0MXA/BKrF91HvffwdVoQXsIU2Go4IbYvEEaHsF0nDVyM4pNFsWvkCulV95pN/hSdU/S7HGx5cgfzgW0CYw+E/GCfn6KYPpAUzGtQcDhL3LEVdFTG448pir/YwLikcqaG5LBgezFayq1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718203600; c=relaxed/simple;
-	bh=a4USTPMVf9sHbKEMgkVx+fvDI3fnm6l5LxNGdngwNto=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=PpfSs+YVgp3yImvBpsddLqMm8aaRe7YELCO2KCrssspY9Lt8U+ZwUxUtS2oZAayAgaSz1RkuQEf3OQY+Ag2peRdZ76cB7ujWCTMzJcqCGE0luoL//c7UM9Fh5F6bNxiyJuNZBRL4cBk/qIyuqvnHnAh8FKHCBDc7aBlXymxSAsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lOO4c99V; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718205158; c=relaxed/simple;
+	bh=UfKYU+FaEaDhlgVIlRO+d4NHVy0mPvtEYjAmluIP2c0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BBdQ553vNRmC+JcgtDQwrPuSk9IQIUwboEMvlOTmircq9IReFWhvS/Kr1ai62fxuEaAnvYlqly4lZxmhTxfjDMplnTIcrE4NYHxy3N1zKcVJp9Ex8mOzrbSvowvUlxNGIo5MK7yE+LcYVR6XoCeqFg/Ek+8QIx5O7sk9ac92sZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AZAEus65; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lOO4c99V"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CA1X6I032442;
-	Wed, 12 Jun 2024 14:46:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=ekX2Gw2ZRDFR6Doc/SoVvy
-	y4GVmslzkIqvdh+4BwNx4=; b=lOO4c99V3dks+xgWRSEKUtK6N6sHAX5XiEhuJW
-	oFOazlg3tIwsz8M/qE4xNV2UpwWzy1A/f3RSKDzBdd5HRMZAPC5LYuvecfzCHPj/
-	40gB7urpPR2A6541pxOGnAHvzEId5AcD0jqDy44/QL0mRaYwXzh0VZRFVAif37zl
-	LKzfGXb4EnnVlC6hloeuZD/sxSuuxM1UpIZ86CyO2LpCTJIJSjJ7MWYrFCOrw71d
-	Q5hJAezm0Xj/SPfabZkcoN520BaNfWeJW1RsyG05Wo6u+j5scXgg34fwhwjs/MS1
-	dfXZkq3OCtx9+IS8Ty8bgZOIzwkh+JEOs+iv4ueVQxLyfx5g==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypp87uk2f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 14:46:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CEkVOD001578
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 14:46:31 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 07:46:30 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 12 Jun 2024 07:46:28 -0700
-Subject: [PATCH] media: videobuf2: add missing MODULE_DESCRIPTION() macro
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AZAEus65"
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dfa4876a5bbso6635669276.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jun 2024 08:12:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718205156; x=1718809956; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ui0asLPnRQrSAoLGngUgtvhcpdpuHV+OvoZ2KNM3Fig=;
+        b=AZAEus65lFwXLSuDD7pvNBIR6lQmCU0QWOCq5Mb3lBOqD6hWB8qUxOKsp0Plc6YleJ
+         O1iA38wyo2Qit0rf/jPen7iLSbeMQnMbwEMYP6g/M16fRCqegSun+WBX4IeucxzUfYWk
+         CZ5qSfbLIKrLWSzVn9n6xf/NwGWELQJrWMQ5dG0E3DisOX0YkdXSPP0Pdzsc9hT5oREe
+         +72RdbxtYILqDqV0NLWuZi2yaqA4cJIulb43SP8nadcmtACHGQbnSkx3FsCzBzj7sPKX
+         PQt/VE3CXQpACCxgrfynk4GTzrY8NcfgufMPKvisClqJwmGPFBkM4fqXSMAjywazb0cN
+         pt7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718205156; x=1718809956;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ui0asLPnRQrSAoLGngUgtvhcpdpuHV+OvoZ2KNM3Fig=;
+        b=rlVhxmEH2afGfa78QB1A1BrxayFxyy1V+5LV03zuZEHyl4AoEKWHPWpaj7IipWGNAq
+         SOqQ8ftpgihMCmsOR4QODZRz8GhND+zv9+wwNjc2KglIUJalDAcb3SJ+6ljQlWqPrpKP
+         Dk89kZ6c2r3lgbvFILXAVJ5lHKn37DRtEEFD0LroBLodHgTrm547oduYygqmKjTP0B3i
+         5ZoAMVfwjvTSjW3Wl6dDe78gnPIT3lRpGvTStd9LwTDOuxZg3GBM+mpa/ObJXaN+kUDZ
+         xqdcNQxlVL1AFL91wEr9uSeRylllh9CpDTkNzh50z3D3tpCuM/+WMfAazQpADL0f2UtY
+         y5/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWXGIIbM1U/a4jNgLat8lPw4OH4ppeUiBEeZ3x+lr0l1+YbiBL7sUb0URy4vzC/fVwB+Ib3MQKzmQXWoGYidOYjQhkIdK8BeAh2pPzdwo+8
+X-Gm-Message-State: AOJu0YwawK3uhazfkxQCTdrwFYkByd7Xy3kIwMFAFSmYbYf9LUY1ozQm
+	C6mVzySB8atIFeTFAEq29DQq4++ulR370uvAueJI8AXAuY/6DGaJJtK+PJ3Kvsl/VpTvnsi6zRi
+	FXEsRKzwQct2AyhSozpDzM07iDnywHw1rnaNy2w==
+X-Google-Smtp-Source: AGHT+IFWoi12CdmKen6XCavHsYiaGeZ6uNOT7Y113dWDJBAN7YMJe+nUPHOOTDfX1o7vHsPrrRKwh1FWKxulzT69BGo=
+X-Received: by 2002:a25:6a45:0:b0:dfb:538:df1d with SMTP id
+ 3f1490d57ef6-dfe6852d794mr1893187276.43.1718205155725; Wed, 12 Jun 2024
+ 08:12:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240612-md-drivers-media-common-videobuf2-v1-1-4625ab172fd9@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAMO0aWYC/x3NywrCMBBA0V8ps3YgjRofv1Jc5DGxAyaRiQ2F0
- n83ujybezeoJEwV7sMGQo0rl9wxHgbws81PQg7doJU+KTNqTAGDcCOpmCiwRV9SKhkbBypuiRr
- pGN35ai5G3TT0zlso8vp/TI9uZyuhE5v9/Cu/OC8rJls/JLDvX7W1JtOSAAAA
-To: Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski
-	<m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: T34xx6uQmWIb7MZAW7isFKEiNQ3FsyvW
-X-Proofpoint-ORIG-GUID: T34xx6uQmWIb7MZAW7isFKEiNQ3FsyvW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_08,2024-06-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
- spamscore=0 suspectscore=0 mlxlogscore=855 priorityscore=1501 adultscore=0
- bulkscore=0 mlxscore=0 clxscore=1011 impostorscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406120105
+References: <20240610-md-drivers-pmdomain-amlogic-v1-1-b49ddb1a8bdf@quicinc.com>
+In-Reply-To: <20240610-md-drivers-pmdomain-amlogic-v1-1-b49ddb1a8bdf@quicinc.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 12 Jun 2024 17:11:59 +0200
+Message-ID: <CAPDyKFpJdOGq7VneJfaodo2Jc1jc8pfnoNxCdRW5+T0ofdabtg@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: amlogic: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-pm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/common/videobuf2/videobuf2-dvb.o
+On Tue, 11 Jun 2024 at 01:13, Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+>
+> On x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pmdomain/amlogic/meson-ee-pwrc.o
+>
+> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+> files which have a MODULE_LICENSE().
+>
+> This includes meson-secure-pwrc.c which, although it did not produce a
+> warning with the x86 allmodconfig configuration, may cause this
+> warning with other configurations where CONFIG_MESON_SM is enabled.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Applied for next, thanks!
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-While doing these cleanups, in most cases I've taken the descriptions
-directly from code comments, Kconfig descriptions, or git logs, but in
-this case I didn't see a nice concise description so I invented this
-one. Please suggest a replacement if this isn't an appropriate
-description.
----
- drivers/media/common/videobuf2/videobuf2-dvb.c | 1 +
- 1 file changed, 1 insertion(+)
+Kind regards
+Uffe
 
-diff --git a/drivers/media/common/videobuf2/videobuf2-dvb.c b/drivers/media/common/videobuf2/videobuf2-dvb.c
-index 8c15bcd07eef..6f6650183184 100644
---- a/drivers/media/common/videobuf2/videobuf2-dvb.c
-+++ b/drivers/media/common/videobuf2/videobuf2-dvb.c
-@@ -19,6 +19,7 @@
- /* ------------------------------------------------------------------ */
- 
- MODULE_AUTHOR("Gerd Knorr <kraxel@bytesex.org> [SuSE Labs]");
-+MODULE_DESCRIPTION("Simple DVB helper framework for videobuf2");
- MODULE_LICENSE("GPL");
- 
- /* ------------------------------------------------------------------ */
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240612-md-drivers-media-common-videobuf2-e3fb58676092
-
+> ---
+>  drivers/pmdomain/amlogic/meson-ee-pwrc.c     | 1 +
+>  drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c | 1 +
+>  drivers/pmdomain/amlogic/meson-secure-pwrc.c | 1 +
+>  3 files changed, 3 insertions(+)
+>
+> diff --git a/drivers/pmdomain/amlogic/meson-ee-pwrc.c b/drivers/pmdomain/amlogic/meson-ee-pwrc.c
+> index fcec6eb610e4..fbb2b4103930 100644
+> --- a/drivers/pmdomain/amlogic/meson-ee-pwrc.c
+> +++ b/drivers/pmdomain/amlogic/meson-ee-pwrc.c
+> @@ -648,4 +648,5 @@ static struct platform_driver meson_ee_pwrc_driver = {
+>         },
+>  };
+>  module_platform_driver(meson_ee_pwrc_driver);
+> +MODULE_DESCRIPTION("Amlogic Meson Everything-Else Power Domains driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c b/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
+> index 33df520eab95..6028e91664a4 100644
+> --- a/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
+> +++ b/drivers/pmdomain/amlogic/meson-gx-pwrc-vpu.c
+> @@ -376,4 +376,5 @@ static struct platform_driver meson_gx_pwrc_vpu_driver = {
+>         },
+>  };
+>  module_platform_driver(meson_gx_pwrc_vpu_driver);
+> +MODULE_DESCRIPTION("Amlogic Meson GX Power Domains driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/pmdomain/amlogic/meson-secure-pwrc.c b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> index 4d5bda0d60fc..b50e5678abe3 100644
+> --- a/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> +++ b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> @@ -355,4 +355,5 @@ static struct platform_driver meson_secure_pwrc_driver = {
+>         },
+>  };
+>  module_platform_driver(meson_secure_pwrc_driver);
+> +MODULE_DESCRIPTION("Amlogic Meson Secure Power Domains driver");
+>  MODULE_LICENSE("Dual MIT/GPL");
+>
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240610-md-drivers-pmdomain-amlogic-f117930600ea
+>
