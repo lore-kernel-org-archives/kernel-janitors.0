@@ -1,126 +1,112 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99E417F506;
-	Wed, 12 Jun 2024 13:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC185336D;
+	Wed, 12 Jun 2024 14:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718200601; cv=none; b=GBJXq8dqsHje8/H1amjcJRjehs1UJwfwolSqWgxaVNOAYteHlx+778kM/X6BIQr2FoYCzYozh5BXVyphiITHMImiC9UoKwGkYrUct2FB9XjP4GrzUS8oGltfeagWaXJJ3zBOygtB38SI0hnAVb5n4n5pGsYShUyuD5VQ3pmwoH8=
+	t=1718201388; cv=none; b=a9JVnSdzZQhIZt+Ef6+0jy1gVu6BIL+aznoIyFzfB7foJ11SoJ5MtFcHhzYsRJjxffdMyR/7StCWkHM5qaaym42GezPybZ7A0TKMPfi1kcgTJHvm6rad7xS4HkL5qEpbPQXkMSBX54YRRZeDR1LmolagZ7AIlP2AgvTzFwiHSPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718200601; c=relaxed/simple;
-	bh=wVj/TKmMd1rQ3SzX4DrV7AwKUyU2gwhaXGdlsq4rQaM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AJraC9hgaDyt9MH4+tqRMcgSgMMuogzyGU76jGhCdA51P3UJ0mC4pINKqbSE/S5zdhaoP/WZBaaZNOehNKw+a/Z8badA6q/CLEQ6gr9GcSSOkYOq0tg+paZaFFvIaAhlwLtRhb7/VF9XibfL+af9ML4AY9shGmJWTlgzLUO5XLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jhUWgUj/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718201388; c=relaxed/simple;
+	bh=II/NbhnYcdYmV79okBAT6ronkbwY9LssX0rkK2/jFYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wxu0jU5kyth4VxQavCyO4FoQkUQrsH2NW70feMII77aQ15StLhsmHGPD2SVNNDFiAIEtGh92e7WNd/xXxBGsoi6OwOCdV7kQBNxfgZJtngBUqtf6R2vwIqeEmT3qnSHYPZctytnBB+w1ZTIzN1RPWgg5BBuISkE2fAu/+YVhSYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=VFuu2Wwj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jhUWgUj/"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CCD4U1017787;
-	Wed, 12 Jun 2024 13:56:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	n560daCLgpz3ZdOfX2LEmXn4QpxtVUnQWqyqxxLmb8M=; b=jhUWgUj/nwoABnkO
-	ioLPdiZ6IND3JQMUZOn56ktSDoc0nOSyHjZ2Vr2pi5xpPqbE5H+OKIZV4ICeiwH/
-	NEJwMvsGLjV/vAmFeOCZ0sk7gYd6wQRj7+hcMRtnn7ZNMrW623sJsVwSBB3R1q8Y
-	KPbbR4Yp1NT6ubFPe8fPfbjXhIJw2PIcDnGTZJnY42UVZ1pjn6lSsn0T2ajdgDUO
-	eqCkcPyTO76A5m0uuXwrLTmLViyzY9n3Bt32pXdSAy9XMrpf/BHaN9ya1+nsz6Hh
-	tL5fTgh2QGoKAUk2p8vamEV5rTy2Q9EtOLo8v1EPihVneLQy91inpsVWcHq8jhjL
-	e8MXaw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yqbfq87h5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 13:56:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CDuEs5001427
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 13:56:14 GMT
-Received: from [10.48.243.20] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 06:56:13 -0700
-Message-ID: <0a67ada3-a030-466d-8110-c665940a5785@quicinc.com>
-Date: Wed, 12 Jun 2024 06:56:12 -0700
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="VFuu2Wwj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA7D4C116B1;
+	Wed, 12 Jun 2024 14:09:46 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="VFuu2Wwj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1718201384;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sp4kuln6csh80is8raFd9JuQeBE6LYfogahL+0jpLZs=;
+	b=VFuu2WwjHV79Ftcbh7MPyFzpURb23M2Q8GuLu1yfrurEKnnPfVq67aRQjUcnc6pG7iF9Fz
+	uVoB+nZR2nX6+c0ItUORM/GdfNQtMLltNs5JmOX74vBFe+zjQadH2pnpdOkcFnkBTZXF9s
+	v/CYDvOwV2LPGahQixqcoChvchvtCxo=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 50eb8ae5 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Wed, 12 Jun 2024 14:09:43 +0000 (UTC)
+Date: Wed, 12 Jun 2024 16:09:40 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Greg KH <gregkh@linuxfoundation.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	kernel-janitors@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	"workflows@vger.kernel.org" <workflows@vger.kernel.org>,
+	Thorsten Leemhuis <linux@leemhuis.info>
+Subject: Re: [PATCH 05/14] tracefs: replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <ZmmsJFDmnbjngRNV@zx2c4.com>
+References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
+ <20240609082726.32742-6-Julia.Lawall@inria.fr>
+ <20240610112223.151faf65@rorschach.local.home>
+ <b647eacd-f6f3-4960-acfd-36c30f376995@paulmck-laptop>
+ <20240610163606.069d552a@gandalf.local.home>
+ <70c093a5-df9c-4665-b9c9-90345c7f2139@suse.cz>
+ <2024061143-transfer-jalapeno-afa0@gregkh>
+ <05ec743a-c4e9-4c66-b2cd-4e89c858d7d4@suse.cz>
+ <20240611101458.7fa78da8@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Arnd Bergmann <arnd@arndb.de>,
-        AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome
- Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha
- Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team
-	<kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>, Linus Walleij
-	<linusw@kernel.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Matthias Brugger
-	<matthias.bgg@gmail.com>
-CC: <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <imx@lists.linux.dev>, <linux-mediatek@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240611-md-drivers-soc-v1-1-8f0fc9fff234@quicinc.com>
- <a314c676-3dbd-46f8-826a-2e59367d30ce@linaro.org>
- <ea604d75-e571-4d63-a7e2-aa1393588c75@collabora.com>
- <cfad60ae-3dee-4c03-84c0-734f1fa59ff2@app.fastmail.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <cfad60ae-3dee-4c03-84c0-734f1fa59ff2@app.fastmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Ftek-8sc2XhAb2_WElZ_ZTVzalQijyoT
-X-Proofpoint-ORIG-GUID: Ftek-8sc2XhAb2_WElZ_ZTVzalQijyoT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_07,2024-06-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
- spamscore=0 phishscore=0 suspectscore=0 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 bulkscore=0 adultscore=0 mlxlogscore=936 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406120097
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240611101458.7fa78da8@gandalf.local.home>
 
-On 6/12/2024 1:18 AM, Arnd Bergmann wrote:
-> On Wed, Jun 12, 2024, at 10:12, AngeloGioacchino Del Regno wrote:
+On Tue, Jun 11, 2024 at 10:14:58AM -0400, Steven Rostedt wrote:
+> On Tue, 11 Jun 2024 10:42:28 +0200
+> Vlastimil Babka <vbabka@suse.cz> wrote:
 > 
->> MediaTek:
->> Reviewed-by: AngeloGioacchino Del Regno 
->> <angelogioacchino.delregno@collabora.com>
->>
->> ...but I'm not sure how we should apply this? :-)
->>
->> Either Arnd takes it directly, or you split it per-soc... and I don't have any
->> preference anyway.
->>
->> (P.S.: Added Arnd to the loop)
+> > AFAICS that documented way is for a different situation? I assume you mean
+> > this part:
+> > 
+> > * Specify any additional patch prerequisites for cherry picking::
+> > 
+> >     Cc: <stable@vger.kernel.org> # 3.3.x: a1f84a3: sched: Check for idle
+> > 
+> > But that would assume we actively want to backport this cleanup patch in the
+> > first place. But as I understand Steven's intention, we want just to make
+> > sure that if in the future this patch is backported (i.e. as a dependency of
+> > something else) it won't be forgotten to also backport c9929f0e344a
+> > ("mm/slob: remove CONFIG_SLOB"). How to express that without actively
+> > marking this patch for backport at the same time?
 > 
-> I think in this case it makes sense to keep it as a single
-> patch, no need to clutter up the git log with identical
-> one-line changes.
+> Exactly! This isn't to be tagged as stable. It's just a way to say "if you
+> need this patch for any reason, you also need patch X".
 > 
-> Jeff, can you send this to soc@kernel.org (cc:lakml)
-> once you feel you have enough Acks? That will put it
-> into my patchwork queue.
-> 
->       Arnd
-Will do, thanks Arnd
+> I think "Depends-on" is the way to go, as it is *not* a stable thing, and
+> what is in stable rules is only about stable patches.
 
+How does "Depends-on" not spiral out of control? There's a *lot* of
+"Depends-on" relations one could express in commit series and such. Of
+course a lot of git itself is designed to show some subset of these
+relationships.
+
+It seems like in most cases, the "Cc: stable@v.g.o # x.y.z+" notation
+expresses the backporting safety correctly. What is the purpose of
+saying, "if you need this patch for any reason, you also need patch X"?
+Who is the intended audience, and are you sure they need this?
+
+I ask these questions because I wind up doing a lot of work backporting
+patches to stable and marking things properly for that or submitting
+manually backported stable patches and so forth, and in general, patch
+applicability for stable things is something I wind up devoting a lot of
+time to. If I have to *additionally* start caring about the theoretical
+possibility that somebody in the future, outside of the stable flow,
+might not understand the context of a given patch and blindly apply it
+to some random tree here or there, that sounds like a lot of extra brain
+cycles to consider.
+
+So, is this actually necessary, and how does it not spiral out of
+control?
