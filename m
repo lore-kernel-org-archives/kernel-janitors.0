@@ -1,173 +1,134 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745A61EB45;
-	Wed, 12 Jun 2024 05:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE70F25622;
+	Wed, 12 Jun 2024 06:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718171489; cv=none; b=bfgWNp6fsmUk2sEWSzG9m2Ubq09+zt0Vz0ZcYPxqZcXs4CoMHT0BHHom4hWudTnV24y2NGhUf86T2V00TABkdRoH4qO/LMnYVtCoCpeMUt0tcQ8But41ADbNUjRKPdfWuFUAAYSh6QokoSfUptZrfpKXEp3G7E3hjHKXbKGmBrU=
+	t=1718174790; cv=none; b=AbwGQxo9dTw5nKjIsd0fNEXuvQ5TGSFdkcAV1jL/4m/FKbLys4dGUV+njdGjoxuRbl6/a+mB6KFSBB2Xm1lHi9L6hT49ke4OtWGKwQ0xQ0eO6nJk9AoIzWgVoCel1n8cB1dF5ufXUBqk04EA07WcI6x3HpQgfAxL4JqUHfo7fF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718171489; c=relaxed/simple;
-	bh=eSZ4Sy3Bd+LgKQ/b98+H+wFttIGEU7uB3E1BIMCvP/o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=T5HIwcvhhiVvOKjNgWY/7Q3XwoFRO4NuhlnHAaYXojHP+V+pdcWOD81+hOJnJT3nwI2BJtHVRHzuNu9WZ1b6iEBd9rsScOfKZBSZAGuk+CXGItMvmU7xBbS9FxvUH5SvfLF3yRwbD5tLhzi4+zqt5+lR4vIL2m/5czwtL0aapc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gwnI6Xkm; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718174790; c=relaxed/simple;
+	bh=AP4H2PJybdyXI48p76JqtAskkZZNNPRy/HmyCOgf1gM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tiLdLL9I+vaxK1pG+JRsnCQ9uki0uESOJaNNciMoofT+3uUsIzFkIhBvQJTSsWfGaSpvaBQ3sh8M4/Btk2l16ziZfHc3WWracsTf4M58MtP3oel1O5vYhvbcnrJfOMtbu8vYceatYvzLHHEsVain1S1LanpMzwYuSkswcihvUKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=R462js79; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gwnI6Xkm"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45BL0gJK013157;
-	Wed, 12 Jun 2024 05:51:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Asvj8P9d0rg7S+Y9Suvlcx
-	FTOWajvcFsS63XkgAaQcs=; b=gwnI6Xkm+yhcXJUattorbWIJEMMBxOKi+CSvuO
-	x9IxN8RMGhMVMoTy+pdArLvx09skrEfPLaV/khLAcA0zxRGmYMXnzhlkFzbbbTSD
-	zF53fxHQxYsiHstm7nN0M0lwb1gzxBaea5+dhs8zRaFaQNVkXXlbRq/LMG5ObX0F
-	VgGuvXMaSdHCGphTP8KhLnr287iS9cNOKmrdybzG2ycFeAY+U1l/XvBTRDkMCAMB
-	j24h8jdKbBouPDJ164OTN6f1Tz5QuHR8sE6ND5LvY2g1OvGdh7IlkE4LVzgHfp9b
-	bjgtoMQMrBydNNsTSf7ZXFjWGPMxYY0NARloKz0dV7NQrbDA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypm45aj40-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 05:51:02 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45C5p1uH001793
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 05:51:01 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Jun
- 2024 22:51:00 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 11 Jun 2024 22:50:58 -0700
-Subject: [PATCH] soc: add missing MODULE_DESCRIPTION() macros
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="R462js79"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=pvLnwTafypJgBacbbF6XVnH7hSs8WZbnLIkz2LjARgk=; t=1718174788;
+	x=1718606788; b=R462js79Jn7g3mPIUvD10Lv+Y7f8TZoKvCWFCKqgWgONHRtFFengDVJJWShat
+	S1egMhzbWbIlirPmyq84ZEtbsbhZSfqb7KhoqiaoJVIDR2osdq/6/dxxAZv3+rMARdb38zN9h6lYI
+	qJpNcGCVJ762TeuO44cOsNgKc74jwipuIrj1GWh60VXr/CfP5Jlp2R6HKCWue3urJTYzPl7ayhqbY
+	7VsS9xnO30W2IU9V1dv/ETaedBATyU+Tx40kO/XuUYcNa5vxvwoRcJK6YKccxV+bcDyunm+4fOLAk
+	APpOcqihG1P3Pgx6q8KQ1/uMnuTULvdxo/bEKIxP0vrniK3m8w==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sHHkX-000557-GK; Wed, 12 Jun 2024 08:46:25 +0200
+Message-ID: <b3baa059-b433-42da-96c0-588312b5a4ac@leemhuis.info>
+Date: Wed, 12 Jun 2024 08:46:24 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] checkpatch: check for missing Fixes tags
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+ Dwaipayan Ray <dwaipayanray1@gmail.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-kernel@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
+ Sasha Levin <sashal@kernel.org>, Tom Gall <tom.gall@linaro.org>,
+ kernel-janitors@vger.kernel.org
+References: <ZmhUgZBKeF_8ixA6@moroto>
+ <20240611113855.b63a6015b26a0dad49d9f2a7@linux-foundation.org>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: en-US, de-DE
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <20240611113855.b63a6015b26a0dad49d9f2a7@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240611-md-drivers-soc-v1-1-8f0fc9fff234@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAEE3aWYC/x3MTQ6CQAxA4auQrm0yHQmIVzEu5qdKExlMq4SEc
- HdGl9/ivQ2MVdjg2mygvIjJXCro1EAaQ3kySq4G73zrOiKcMmaVhdXQ5oTUX1yk4Tx0vocavZU
- fsv6Ht3t1DMYYNZQ0/jYvKd8Vp2AfVtj3A080wx5/AAAA
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman
-	<khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        "Martin
- Blumenstingl" <martin.blumenstingl@googlemail.com>,
-        Shawn Guo
-	<shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "Pengutronix
- Kernel Team" <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>, Linus Walleij <linusw@kernel.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        "Matthias
- Brugger" <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <imx@lists.linux.dev>, <linux-mediatek@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: hemcyYV9GAtAfb0bwsG1uX_Te_dWyefs
-X-Proofpoint-ORIG-GUID: hemcyYV9GAtAfb0bwsG1uX_Te_dWyefs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_02,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 mlxlogscore=999 phishscore=0 malwarescore=0 suspectscore=0
- bulkscore=0 spamscore=0 clxscore=1011 priorityscore=1501 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406120040
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1718174788;97890b0f;
+X-HE-SMSGID: 1sHHkX-000557-GK
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/imx/soc-imx8m.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/ixp4xx/ixp4xx-qmgr.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/ixp4xx/ixp4xx-npe.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/mediatek/mtk-cmdq-helper.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/amlogic/meson-clk-measure.o
+On 11.06.24 20:38, Andrew Morton wrote:
+> On Tue, 11 Jun 2024 16:43:29 +0300 Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> 
+>> This check looks for common words that probably indicate a patch
+>> is a fix.  For now the regex is:
+>>
+>> 	(?:(?:BUG: K.|UB)SAN: |Call Trace:|stable\@|syzkaller)/)
+>>
+>> Why are stable patches encouraged to have a fixes tag?  Some people mark
+>> their stable patches as "# 5.10" etc.  This is useful but a Fixes tag is
+>> still a good idea.
+> 
+> I'd say that "# 5.10" is lame
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+Documentation/process/stable-kernel-rules.rst documents this use to
+"Point out kernel version prerequisites".
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-This is the last of the issues that I see in the soc directory
----
- drivers/soc/amlogic/meson-clk-measure.c | 1 +
- drivers/soc/imx/soc-imx8m.c             | 1 +
- drivers/soc/ixp4xx/ixp4xx-npe.c         | 1 +
- drivers/soc/ixp4xx/ixp4xx-qmgr.c        | 1 +
- drivers/soc/mediatek/mtk-cmdq-helper.c  | 1 +
- 5 files changed, 5 insertions(+)
+> and it would be good if checkpatch could
+> detect this and warn "hey, use a proper Fixes:".  Because
+> 
+>> It  helps people to not cherry-pick buggy patches without also
+>> cherry-picking the fix.
+> 
+> seems pretty important.
 
-diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
-index 3f3039600357..a6453ffeb753 100644
---- a/drivers/soc/amlogic/meson-clk-measure.c
-+++ b/drivers/soc/amlogic/meson-clk-measure.c
-@@ -688,4 +688,5 @@ static struct platform_driver meson_msr_driver = {
- 	},
- };
- module_platform_driver(meson_msr_driver);
-+MODULE_DESCRIPTION("Amlogic Meson SoC Clock Measure driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/soc/imx/soc-imx8m.c b/drivers/soc/imx/soc-imx8m.c
-index ec87d9d878f3..fe111bae38c8 100644
---- a/drivers/soc/imx/soc-imx8m.c
-+++ b/drivers/soc/imx/soc-imx8m.c
-@@ -252,4 +252,5 @@ static int __init imx8_soc_init(void)
- 	return ret;
- }
- device_initcall(imx8_soc_init);
-+MODULE_DESCRIPTION("NXP i.MX8M SoC driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/soc/ixp4xx/ixp4xx-npe.c b/drivers/soc/ixp4xx/ixp4xx-npe.c
-index 35825ee95dff..34a6f187c220 100644
---- a/drivers/soc/ixp4xx/ixp4xx-npe.c
-+++ b/drivers/soc/ixp4xx/ixp4xx-npe.c
-@@ -764,6 +764,7 @@ static struct platform_driver ixp4xx_npe_driver = {
- module_platform_driver(ixp4xx_npe_driver);
- 
- MODULE_AUTHOR("Krzysztof Halasa");
-+MODULE_DESCRIPTION("Intel IXP4xx Network Processor Engine driver");
- MODULE_LICENSE("GPL v2");
- MODULE_FIRMWARE(NPE_A_FIRMWARE);
- MODULE_FIRMWARE(NPE_B_FIRMWARE);
-diff --git a/drivers/soc/ixp4xx/ixp4xx-qmgr.c b/drivers/soc/ixp4xx/ixp4xx-qmgr.c
-index 244ad8d7e80b..cb112f3643e9 100644
---- a/drivers/soc/ixp4xx/ixp4xx-qmgr.c
-+++ b/drivers/soc/ixp4xx/ixp4xx-qmgr.c
-@@ -465,6 +465,7 @@ static struct platform_driver ixp4xx_qmgr_driver = {
- };
- module_platform_driver(ixp4xx_qmgr_driver);
- 
-+MODULE_DESCRIPTION("Intel IXP4xx Queue Manager driver");
- MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("Krzysztof Halasa");
- 
-diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
-index 046522664dc1..dd70d4d2bed7 100644
---- a/drivers/soc/mediatek/mtk-cmdq-helper.c
-+++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
-@@ -526,4 +526,5 @@ int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
- }
- EXPORT_SYMBOL(cmdq_pkt_finalize);
- 
-+MODULE_DESCRIPTION("MediaTek Command Queue (CMDQ) driver");
- MODULE_LICENSE("GPL v2");
+Hmmm. That would lead to false positive when it comes to changes that
+for example just add a device ID (and thus do not "Fix" anything) while
+having prerequisites that are only available in a specific version.
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240611-md-drivers-soc-1780b1939627
-
+Ciao, Thorsten
