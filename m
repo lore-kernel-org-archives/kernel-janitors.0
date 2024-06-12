@@ -1,107 +1,96 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B804C1802AA;
-	Wed, 12 Jun 2024 15:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AD617FAA4;
+	Wed, 12 Jun 2024 16:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718207461; cv=none; b=V0mUwXtzF9ufx1x9iJtLHLa0cTBM/M7O7jKTcaybeBIhA7L3WtIWLRLx40zbOxDOw7juTsTAqdgnDw8BENL6sFrh/rnfkkUn8sdorijPLid0jpmdRBG+50JNVyZkjqS5GiWLFxWUzHmJx9kmzewNV2xm3VNI/s22oe1g75cPcnI=
+	t=1718208301; cv=none; b=uQJFnR6iK67YS/kSHW0kEXXxc5JAd3DAtSL+CznFRlW64oUZtfqdTWF4BTrvTXRHYJmMapa44ZLr8h+Dh6I2tKzg6lvcNTcpeJO0WAm3pGfypumouxxS611uLNWdWm2tmrs7Xy5jHqJRA04ifWXj4/PEALwd1dMlch3mlx77TBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718207461; c=relaxed/simple;
-	bh=klVtsJuKXbwtzbDnxkwIMDy1AWW0ZYbn+0pkQtKH7hE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=KxkSNs7cyZ6gsgmYDYHJNAuiX7hbvFxtGVEA1fWV6xnFFVRjSeKTlCpKj0/NdNhV92qpZSH2LA/UU9vZp9dDJ/CkBfYqFhaQOKjg+7KpVGu57NfBFQ/woEHmsuAmOj5RW45wS50TXi1af1z0FDcFtG9QXz61H0do7nf0fBW753o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kMzwwb79; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kMzwwb79"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CAbPGg002327;
-	Wed, 12 Jun 2024 15:50:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=qfTgjrU+c9t402lfc6kXmQ
-	ihmKH9vn1aemt575x7eyM=; b=kMzwwb79xvjTbt5rROi+QsOVKszqW8CiNPVotT
-	an6WOXjjhmbazPTgeDIceny2KDKakbt+s29E+of2VB0kuM5mUUk2ehX8HLWdV7xG
-	B6+QRITkQgVjky3yF8mx6qgVGTxZT/kBISCzY5ymct/LNPgFaOg+vVfY/ev2pIwr
-	JmVov8lQ8+tkTIGumGh5d8N2f4d3s9lK/k5xXC7qckemgRyMOn76GMh8bUtXzpTw
-	qnnUdCyMC0WqgJYHVo76iZVsvpCl1bi6sGQbtb2nkI+ePec1mCIJxogdJW9iteYj
-	Kk5cveK5DSnsV7yL5lkqSwiwCaC79Q6EFHUhq8PKqZjxUlug==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yq4s8htvv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 15:50:55 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CFosb7021482
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 15:50:54 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 08:50:54 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 12 Jun 2024 08:50:53 -0700
-Subject: [PATCH] fbdev: viafb: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1718208301; c=relaxed/simple;
+	bh=RWJAxgMTq0703GeW99QCv1Ot2/tX/YqzAh2KeOG06tI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C847Tz/x1t737Rb81A/ZdS60SLpZA6XrwIv1SkdRwv0qB1A+geym9m9BsOYwh6nAbFTiB+qJQVdnfJF/AjFa/GUBuTCF4jGFRf/PSqiFir0SeeTTrjXFdkZzgdEMGeXXLM0jp1IzATH+T0O+PGCbjFE3DN0Nn6/IFrHcLiAg8Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E39BC32786;
+	Wed, 12 Jun 2024 16:04:59 +0000 (UTC)
+Date: Wed, 12 Jun 2024 12:04:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Greg KH <gregkh@linuxfoundation.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Julia Lawall
+ <Julia.Lawall@inria.fr>, kernel-janitors@vger.kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ "workflows@vger.kernel.org" <workflows@vger.kernel.org>, Thorsten Leemhuis
+ <linux@leemhuis.info>
+Subject: Re: [PATCH 05/14] tracefs: replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <20240612120457.5329934c@rorschach.local.home>
+In-Reply-To: <ZmmsJFDmnbjngRNV@zx2c4.com>
+References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
+	<20240609082726.32742-6-Julia.Lawall@inria.fr>
+	<20240610112223.151faf65@rorschach.local.home>
+	<b647eacd-f6f3-4960-acfd-36c30f376995@paulmck-laptop>
+	<20240610163606.069d552a@gandalf.local.home>
+	<70c093a5-df9c-4665-b9c9-90345c7f2139@suse.cz>
+	<2024061143-transfer-jalapeno-afa0@gregkh>
+	<05ec743a-c4e9-4c66-b2cd-4e89c858d7d4@suse.cz>
+	<20240611101458.7fa78da8@gandalf.local.home>
+	<ZmmsJFDmnbjngRNV@zx2c4.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240612-md-drivers-video-fbdev-via-v1-1-651f7cd699c4@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAN3DaWYC/x3MQQ6CMBBG4auQWTsJBZXEqxgXLfNXJpFiptiQE
- O5udfe+zdspwxSZbs1OhqJZl1ThTg2Nk09PsEo1dW13bq+u41lYTAssc1HBwjEISm3PvQwSe3c
- BMFAdvA1Rt//8/qgOPoOD+TROv+VL02fj2ecVRsfxBckNVLyLAAAA
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>,
-        Helge Deller
-	<deller@gmx.de>
-CC: <linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Kfn7gG-BakFs6dOAKfuK3YBjxTsIjesn
-X-Proofpoint-ORIG-GUID: Kfn7gG-BakFs6dOAKfuK3YBjxTsIjesn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_08,2024-06-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- spamscore=0 mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0
- priorityscore=1501 clxscore=1011 mlxlogscore=931 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406120114
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/via/viafb.o
+On Wed, 12 Jun 2024 16:09:40 +0200
+"Jason A. Donenfeld" <Jason@zx2c4.com> wrote:
+> > 
+> > I think "Depends-on" is the way to go, as it is *not* a stable thing, and
+> > what is in stable rules is only about stable patches.  
+> 
+> How does "Depends-on" not spiral out of control? There's a *lot* of
+> "Depends-on" relations one could express in commit series and such. Of
+> course a lot of git itself is designed to show some subset of these
+> relationships.
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+If a change occurs because a recent change happened that allows the
+current change to work, then I think a Depends-on is appropriate.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-Description derived from the Kconfig entry
----
- drivers/video/fbdev/via/viafbdev.c | 1 +
- 1 file changed, 1 insertion(+)
+Like in this example. I thought this change was broken, and it would
+have been except for a recent change. Having the dependency listed is
+useful, especially if the dependency is subtle (doesn't break the build
+and may not show the bug immediately).
 
-diff --git a/drivers/video/fbdev/via/viafbdev.c b/drivers/video/fbdev/via/viafbdev.c
-index a52b1ba43a48..6da5ae7d229a 100644
---- a/drivers/video/fbdev/via/viafbdev.c
-+++ b/drivers/video/fbdev/via/viafbdev.c
-@@ -2144,5 +2144,6 @@ MODULE_PARM_DESC(viafb_lcd_port, "Specify LCD output port.");
- module_param(viafb_dvi_port, charp, S_IRUSR);
- MODULE_PARM_DESC(viafb_dvi_port, "Specify DVI output port.");
- 
-+MODULE_DESCRIPTION("VIA UniChrome (Pro) and Chrome9 display driver");
- MODULE_LICENSE("GPL");
- #endif
+> 
+> It seems like in most cases, the "Cc: stable@v.g.o # x.y.z+" notation
+> expresses the backporting safety correctly. What is the purpose of
+> saying, "if you need this patch for any reason, you also need patch X"?
+> Who is the intended audience, and are you sure they need this?
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240612-md-drivers-video-fbdev-via-3d7df315eee7
+The intended audience is someone backporting features and not fixes.
 
+> 
+> I ask these questions because I wind up doing a lot of work backporting
+> patches to stable and marking things properly for that or submitting
+> manually backported stable patches and so forth, and in general, patch
+> applicability for stable things is something I wind up devoting a lot of
+> time to. If I have to *additionally* start caring about the theoretical
+> possibility that somebody in the future, outside of the stable flow,
+> might not understand the context of a given patch and blindly apply it
+> to some random tree here or there, that sounds like a lot of extra brain
+> cycles to consider.
+> 
+> So, is this actually necessary, and how does it not spiral out of
+> control?
+
+How would you see it going out of control? And "Depends-on" would only
+be used for non stable relationships. If stable backports, we can keep
+with the current method.
+
+-- Steve
