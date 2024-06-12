@@ -1,68 +1,77 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647BC1836D5;
-	Wed, 12 Jun 2024 17:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 65ABAEED0
+	for <kernel-janitors@vger.kernel.org>; Wed, 12 Jun 2024 18:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718214722; cv=none; b=cptH8Uu1jfcAHvr1iclij6pjDhO00wyopWE5RVEDwY4aJPivfHQ4fYZ2yTjebW/psDp7Oi4+rI31y03ytPkm5AsIy3jvh4eKUaWMIz0lDBFSpvPCwNdM2IQDfaWzZVePr66Kqax3cOKMKQoFLluYltBmi3awPJlyil+ab2E2y1U=
+	t=1718216179; cv=none; b=lxNCZH46bLS93uTh1AIoSmw/Tquac5kQwo3nQWO8GqQt6PErLqDjTubHAPIFziKChGoRCF/77S3uR0icm9GGIWnERxbcEfT2L5UXy/D3Uj03Q2jBEoHjLO6TegNgZuJkpS9esQgNPgcexHwYnHCI0951JNHQH1FvPGoHHEx8pCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718214722; c=relaxed/simple;
-	bh=GUySe7kOQ5O+5zPTwFjXrrUGkZhsuW1RT5+UVSqvC9w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NqQdwxIH7Aq9aTh6MHKZ93N4UgxhBN3OzwV/+2EqBcs9uFDsysS0irYff9FHRgFxMT9t370ZCVdPKUQb1GsK4b2mM0n+x0TuY4xvsVQq3jVOiiYwFtdz6aCNSePuhIDNizGIVVi8HUnAuIP64/D3SjQrOqRzFyipIVL8VDf1rFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ALPCfw1m; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ALPCfw1m"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6152DC4AF1A;
-	Wed, 12 Jun 2024 17:52:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718214722;
-	bh=GUySe7kOQ5O+5zPTwFjXrrUGkZhsuW1RT5+UVSqvC9w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ALPCfw1mB4ZBxJsLgtqUW/NXWmqkaYgUHyTkHOIIBsxP3Q7vpqiKg2T8BNMyaAAGu
-	 nC/NOiOXZUi2N1eV6vxbdK1FDlsqg6sA1c7sr0mNNr8cSFQn+FqSTTNgfPfN6RPwyn
-	 NArM2caQla0pXUjX+j51//1c4obyhbVyYxnDFLlfO92kadKHYOibWsOkfS8rOSMli9
-	 2bUOSuP853RysyoSU1YSfxBGxA/8JLaWFenhQxxJlRgbh/ugp77sZngxBXW71TIhyA
-	 QJ8sTYRooleTdgEAjSJ3MXiD+f8xLxXs5sXSj0E9thdRYWSL0jiN7Dcl6YR8k3qWgR
-	 ZqAuhstBcXDMQ==
-From: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <20240608-md-drivers-phy-broadcom-v1-1-f070f84cc3f0@quicinc.com>
-References: <20240608-md-drivers-phy-broadcom-v1-1-f070f84cc3f0@quicinc.com>
-Subject: Re: [PATCH] phy: broadcom: add missing MODULE_DESCRIPTION() macros
-Message-Id: <171821471999.586907.11914023851963096437.b4-ty@kernel.org>
-Date: Wed, 12 Jun 2024 23:21:59 +0530
+	s=arc-20240116; t=1718216179; c=relaxed/simple;
+	bh=Fegv2307vxylDdMBcSU8WOxyIWy1vn+xS4tfkkD5nVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VrGCCotbcBbqv/lBihnd/eBxTiUTBwylPchg2eq/UAI2MrHpsZjJP8GFJeT9CDKicEs+cS1zWqBry6HjBW4jPf57ai/fskhgNTA3RWcHWeVxb411IOi39xGLvpjIMD2X1sDyO4M8CMJ5hel3bRwsvN2ZF9bSLEzqtE+37Y4DkAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 232816 invoked by uid 1000); 12 Jun 2024 14:16:15 -0400
+Date: Wed, 12 Jun 2024 14:16:15 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Peter Chen <peter.chen@kernel.org>,
+  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+  Oliver Neukum <oneukum@suse.com>, linux-usb@vger.kernel.org,
+  linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+  usb-storage@lists.one-eyed-alien.net, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] usb: add missing MODULE_DESCRIPTION() macros
+Message-ID: <183a4d6a-30ad-4dce-b54d-3624aba36ac9@rowland.harvard.edu>
+References: <20240611-md-drivers-usb-v1-1-8b8d669e8e73@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611-md-drivers-usb-v1-1-8b8d669e8e73@quicinc.com>
 
-
-On Sat, 08 Jun 2024 23:17:05 -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/phy/broadcom/phy-bcm-ns-usb2.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/phy/broadcom/phy-bcm-ns-usb3.o
+On Tue, Jun 11, 2024 at 07:37:20PM -0700, Jeff Johnson wrote:
+> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/core/usbcore.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/mon/usbmon.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/class/usbtmc.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/storage/uas.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/chipidea/ci_hdrc_msm.o
 > 
 > Add the missing invocations of the MODULE_DESCRIPTION() macro.
 > 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> This is the remaining one-off fixes in usb.
 > 
-> [...]
+> Corrections to these descriptions are welcomed. I'm not an expert in
+> this code so in most cases I've taken these descriptions directly from
+> code comments, Kconfig descriptions, or git logs.  History has shown
+> that in some cases these are originally wrong due to cut-n-paste
+> errors, and in other cases the drivers have evolved such that the
+> original information is no longer accurate.
+> 
+> Let me know if any of these changes need to be segregated into
+> separate patches to go through different maintainer trees.
 
-Applied, thanks!
+> diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
+> index a0c432b14b20..65f9940bc7e8 100644
+> --- a/drivers/usb/core/usb.c
+> +++ b/drivers/usb/core/usb.c
+> @@ -1150,4 +1150,5 @@ static void __exit usb_exit(void)
+>  
+>  subsys_initcall(usb_init);
+>  module_exit(usb_exit);
+> +MODULE_DESCRIPTION("USB support library");
+>  MODULE_LICENSE("GPL");
 
-[1/1] phy: broadcom: add missing MODULE_DESCRIPTION() macros
-      commit: ea09ba7653bb53252ed96ec524991c55a38bcd0f
+I would change this to "USB core host-side support", or something more 
+along those lines.  It's not just a library because it does include 
+several drivers (such as the USB hub driver).  And it's host-side rather 
+than device-side -- that's a separate module.
 
-Best regards,
--- 
-Vinod Koul <vkoul@kernel.org>
-
+Alan Stern
