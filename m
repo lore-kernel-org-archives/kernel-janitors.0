@@ -1,124 +1,118 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022E345948;
-	Wed, 12 Jun 2024 08:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8049516C852;
+	Wed, 12 Jun 2024 08:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718179952; cv=none; b=B/lwLnw+SLU3iDvuaAL5KYgmi4kL2UQqYv7S46r5KBfArvqbj8hcoLK8pyktn6fA831hLqVx1pq0P1YcEQFylRXuLeT/Igdvq9Isqi7l4SQnk6xjBGDBjjGH/fQEr5uGpBrtDpG3vC3ploWBSCaY4w0J9/96bTFWJNE3AYoFiRo=
+	t=1718180358; cv=none; b=pE8dQzKKWOS3iwhfat7BCAAnHxBoprNFi31trvwXC6XkXcJBRoM+lDUSOS++wTo3YwQR/MYD1fvs/l6mhyE7Ea/fnBGr7EeXx3kMTP59TYHilKk9s9wG3AXZURmRGK1mrBQ9q2DoZrDFiF7tS9UTAjAOksJTX7Vi9udmVnErmyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718179952; c=relaxed/simple;
-	bh=rLJunDbeQeAUOd1JejIPRVqX35zvCbzWB9CqhTOod/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vDECe7T+TdOtYL0WcoQthltxcFNkt6TfV+SeSsX65z9t/ELftMk9+3td6bZU/mFyf5uVAKLPNE4M1KB7X+gOsXoSZBXOsrhHewOEfEs6YQRgX8zmlCH3qAiZ2EBJsugfcwlVHKLoplJ9BTLlEvAp5x0PbqwLH3hTrHCOM5VNJNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=q0RWbMR9; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1718180358; c=relaxed/simple;
+	bh=y//vbwfgBmVOrV/PuTjRTGtOTJ16+anauhBJjxDnZS0=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=k9veehGSD4nLbnhZNvvSGkthC24uf+bHc9x8fOaLhs04YWSmoftP+05hFYrcF2Ss5qs+95mhN7lp0hyR4ngcjBZRx41g5cYQCH3qDCNFq0ozgrLw2D+ldDS9VYRolcWgITpsROPQcvdcIvCWRdlH75CqLF2XgYbz3WfOJ8Xce3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=cLtineVW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ep5NWYR1; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="q0RWbMR9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718179949;
-	bh=rLJunDbeQeAUOd1JejIPRVqX35zvCbzWB9CqhTOod/w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=q0RWbMR9uA0R0gEmNo/Y42AKdEY0c8S2LtxkiNObYUUoOkwdu26EjDos8f9ExotJ1
-	 pv7VbPZZDqiBgjCuO3kHA3+PdUXqj1G1N0dIGS2D5UyRZgvm0AyOsUIwLLbX6s7xjx
-	 7vusY0GZrdJdkzFMks1JOJ83fMKjFYUwCiZ4VWPOiWs1r2S3tu/gyN6itwc7U9ksDK
-	 Pm+02wXMtSckWKMOUuD/K1ZquWNrilL7dr7UzW2Nbl3ldSAshzuzyJknCp4TiNfZVW
-	 clvAMte8TGX23djR8BpQ9hpyiAALcGMkdHtywsbf6SpRT4To25jen3L0Gvepm5aKXo
-	 8zRzswiHzBYgQ==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id EC54D37820A9;
-	Wed, 12 Jun 2024 08:12:27 +0000 (UTC)
-Message-ID: <ea604d75-e571-4d63-a7e2-aa1393588c75@collabora.com>
-Date: Wed, 12 Jun 2024 10:12:27 +0200
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="cLtineVW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ep5NWYR1"
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 8EFBB1380193;
+	Wed, 12 Jun 2024 04:19:14 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Wed, 12 Jun 2024 04:19:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1718180354; x=1718266754; bh=d8ymq7h+Su
+	pUPB1TveszzEzISILgzgA3jwE5Eb5tOo8=; b=cLtineVW9mr/pV8qARMG2jgqOS
+	+5XYZXEOoVSCYDVQdas5V5ZBdf2YV8Ae2k+/bfx5LJBmWNSlh+OD/PB6uaXZqZ1s
+	HqM7g8ErabNRspnQ5XaLsJJIMTk4qDzcn1fxXZc1rLMmGOzrBwv9sERSPA9oZVJd
+	dJYIq+G18nb+nZ6cb0+gVXzUAYWyTaM9q7r+mi093YKkcCSHyARHElKBGoAh6oG1
+	ARAWdmKtLhgi2qPFun7jQJSKdRWfISSeSFnk/dMQ5hBxkvnglD7Wk7lHbkllfccz
+	jm1CId6N41DKpfjjNLvyf64Bfh5zByI+lyffSQYm+vUAx3+SKp3MKRedsIdw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1718180354; x=1718266754; bh=d8ymq7h+SupUPB1TveszzEzISILg
+	zgA3jwE5Eb5tOo8=; b=Ep5NWYR1umrudPmeDMu5zJ40VHbQhuNrWLLvsC+AvDGa
+	Ck9he2H8ZwTc6/uvUGegKIv2tFoXhYR9e+TnP1ke5YFTfMJroMsqXBBpzqRlrBia
+	iFM/8hmBILSkGNuM1NI1x0TWb0MeZnagFm0w9+XzKck4c+V+Bik0oCNkDsiMQG2Z
+	N0h5j+Bqy0j1p2EC0pT5OP2MRr7dOh84/TvhpDyaM6zrote36lO4UFZIAbJiJa8M
+	1zPvdIf5yCKhMiuobjI/RW4mb45QndV2UKaFmeYbKcIR/c7O2dA1eyvdY3QCxbMo
+	cRGITwOdyhbL6XgPr77iZ6MU9r9zzezjADrlvQ4oTg==
+X-ME-Sender: <xms:AlppZgyhzFuOFYwRPkvpuRiZVMiS-XWloRkTwKptMs84lMwYsWPx2w>
+    <xme:AlppZkR21xV8qOeULUtzpTHFseQBiudMO_FFYipXMIq_UButUWe2g6weD_C0MR7d4
+    PCrFDq_UpeaehILs9s>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedugedgtddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:AlppZiXLDtfOBZktVAvgWTF0ksGBBajqeywK6hU7pK4KVR_NpZtQzw>
+    <xmx:AlppZugoz3yNYqwEzCEGHKewNaDkoVoQ5PDYt7-4D4MYXPI3Mi2pEA>
+    <xmx:AlppZiCfGGV2Q67Gjfk5v1vObUSV_TRM2ODFvniUt5bHjHGuoH3_mQ>
+    <xmx:AlppZvIc2Rx6ZYp0hZvwZI9EhosZMfB1rLtQ6dyuTqbMl2X4fCH39w>
+    <xmx:AlppZq6qYlLxPN7FqNnVAsjF9zzvF184QZ0j8p5vaNoOR26uVR5RX2Xe>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 00598B6008D; Wed, 12 Jun 2024 04:19:13 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-515-g87b2bad5a-fm-20240604.001-g87b2bad5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: add missing MODULE_DESCRIPTION() macros
-To: neil.armstrong@linaro.org, Jeff Johnson <quic_jjohnson@quicinc.com>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Linus Walleij <linusw@kernel.org>,
- Imre Kaloz <kaloz@openwrt.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Arnd Bergmann <arnd@arndb.de>
+Message-Id: <cfad60ae-3dee-4c03-84c0-734f1fa59ff2@app.fastmail.com>
+In-Reply-To: <ea604d75-e571-4d63-a7e2-aa1393588c75@collabora.com>
+References: <20240611-md-drivers-soc-v1-1-8f0fc9fff234@quicinc.com>
+ <a314c676-3dbd-46f8-826a-2e59367d30ce@linaro.org>
+ <ea604d75-e571-4d63-a7e2-aa1393588c75@collabora.com>
+Date: Wed, 12 Jun 2024 10:18:53 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Jeff Johnson" <quic_jjohnson@quicinc.com>,
+ "Kevin Hilman" <khilman@baylibre.com>,
+ "Jerome Brunet" <jbrunet@baylibre.com>,
+ "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
+ "Shawn Guo" <shawnguo@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+ "Fabio Estevam" <festevam@gmail.com>, "Linus Walleij" <linusw@kernel.org>,
+ "Imre Kaloz" <kaloz@openwrt.org>, "Matthias Brugger" <matthias.bgg@gmail.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
  linux-kernel@vger.kernel.org, imx@lists.linux.dev,
  linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-References: <20240611-md-drivers-soc-v1-1-8f0fc9fff234@quicinc.com>
- <a314c676-3dbd-46f8-826a-2e59367d30ce@linaro.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <a314c676-3dbd-46f8-826a-2e59367d30ce@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] soc: add missing MODULE_DESCRIPTION() macros
+Content-Type: text/plain
 
-Il 12/06/24 09:58, Neil Armstrong ha scritto:
-> On 12/06/2024 07:50, Jeff Johnson wrote:
->> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/imx/soc-imx8m.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/ixp4xx/ixp4xx-qmgr.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/ixp4xx/ixp4xx-npe.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in 
->> drivers/soc/mediatek/mtk-cmdq-helper.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in 
->> drivers/soc/amlogic/meson-clk-measure.o
->>
->> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->> This is the last of the issues that I see in the soc directory
->> ---
->>   drivers/soc/amlogic/meson-clk-measure.c | 1 +
-> 
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org> # for 
-> amlogic/meson-clk-measure.c
-> 
->>   drivers/soc/imx/soc-imx8m.c             | 1 +
->>   drivers/soc/ixp4xx/ixp4xx-npe.c         | 1 +
->>   drivers/soc/ixp4xx/ixp4xx-qmgr.c        | 1 +
->>   drivers/soc/mediatek/mtk-cmdq-helper.c  | 1 +
->>   5 files changed, 5 insertions(+)
->>
+On Wed, Jun 12, 2024, at 10:12, AngeloGioacchino Del Regno wrote:
 
-MediaTek:
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> MediaTek:
+> Reviewed-by: AngeloGioacchino Del Regno 
+> <angelogioacchino.delregno@collabora.com>
+>
+> ...but I'm not sure how we should apply this? :-)
+>
+> Either Arnd takes it directly, or you split it per-soc... and I don't have any
+> preference anyway.
+>
+> (P.S.: Added Arnd to the loop)
 
-...but I'm not sure how we should apply this? :-)
+I think in this case it makes sense to keep it as a single
+patch, no need to clutter up the git log with identical
+one-line changes.
 
-Either Arnd takes it directly, or you split it per-soc... and I don't have any
-preference anyway.
+Jeff, can you send this to soc@kernel.org (cc:lakml)
+once you feel you have enough Acks? That will put it
+into my patchwork queue.
 
-(P.S.: Added Arnd to the loop)
-
-Cheers,
-Angelo
-
->> diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c 
->> b/drivers/soc/mediatek/mtk-cmdq-helper.c
->> index 046522664dc1..dd70d4d2bed7 100644
->> --- a/drivers/soc/mediatek/mtk-cmdq-helper.c
->> +++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
->> @@ -526,4 +526,5 @@ int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
->>   }
->>   EXPORT_SYMBOL(cmdq_pkt_finalize);
->> +MODULE_DESCRIPTION("MediaTek Command Queue (CMDQ) driver");
->>   MODULE_LICENSE("GPL v2");
->>
->> ---
->> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
->> change-id: 20240611-md-drivers-soc-1780b1939627
->>
-> 
-
-
+      Arnd
