@@ -1,112 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC185336D;
-	Wed, 12 Jun 2024 14:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53D217D8BE;
+	Wed, 12 Jun 2024 14:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718201388; cv=none; b=a9JVnSdzZQhIZt+Ef6+0jy1gVu6BIL+aznoIyFzfB7foJ11SoJ5MtFcHhzYsRJjxffdMyR/7StCWkHM5qaaym42GezPybZ7A0TKMPfi1kcgTJHvm6rad7xS4HkL5qEpbPQXkMSBX54YRRZeDR1LmolagZ7AIlP2AgvTzFwiHSPo=
+	t=1718201564; cv=none; b=aRNXR+eGydbJNSgxWApRPZbZPqn6Xn0dHTDtwFBDnXMgJaGIqFL9uiHExmKIDF73pJ44h6IvEVmX8WvZ9OoswTTsqzpn7Jw7ML5/KqwJ3yIupEjmFZpCMPAP5iTSuIuJvy0puTNvTwA9+GZC+wkKqoKGuM1Cu3jdapGqZYisKyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718201388; c=relaxed/simple;
-	bh=II/NbhnYcdYmV79okBAT6ronkbwY9LssX0rkK2/jFYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wxu0jU5kyth4VxQavCyO4FoQkUQrsH2NW70feMII77aQ15StLhsmHGPD2SVNNDFiAIEtGh92e7WNd/xXxBGsoi6OwOCdV7kQBNxfgZJtngBUqtf6R2vwIqeEmT3qnSHYPZctytnBB+w1ZTIzN1RPWgg5BBuISkE2fAu/+YVhSYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=VFuu2Wwj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718201564; c=relaxed/simple;
+	bh=1h7oyWZtOlDIZIvEwGXdpgoBFJZDitp/SnMaJKTy7Fw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=GbRtsTmwDB5ULnCxeLNt5I7Ugf7vVTAyUQLkAg6FTe+JcQ9FDmLsKUd83IQKwkXYkl9/zxJ/xv/i+JEASK35MGbbs4lZeI7Pih+kT9Of5MyeTJL8DD30eBiSTmL39UhQnooe25UHm3ba0X6AHOhfjX0aFxB3J/KXwGpY8Bub/Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RVlPVu6G; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="VFuu2Wwj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA7D4C116B1;
-	Wed, 12 Jun 2024 14:09:46 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="VFuu2Wwj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1718201384;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sp4kuln6csh80is8raFd9JuQeBE6LYfogahL+0jpLZs=;
-	b=VFuu2WwjHV79Ftcbh7MPyFzpURb23M2Q8GuLu1yfrurEKnnPfVq67aRQjUcnc6pG7iF9Fz
-	uVoB+nZR2nX6+c0ItUORM/GdfNQtMLltNs5JmOX74vBFe+zjQadH2pnpdOkcFnkBTZXF9s
-	v/CYDvOwV2LPGahQixqcoChvchvtCxo=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 50eb8ae5 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Wed, 12 Jun 2024 14:09:43 +0000 (UTC)
-Date: Wed, 12 Jun 2024 16:09:40 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Greg KH <gregkh@linuxfoundation.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	kernel-janitors@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	"workflows@vger.kernel.org" <workflows@vger.kernel.org>,
-	Thorsten Leemhuis <linux@leemhuis.info>
-Subject: Re: [PATCH 05/14] tracefs: replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <ZmmsJFDmnbjngRNV@zx2c4.com>
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240609082726.32742-6-Julia.Lawall@inria.fr>
- <20240610112223.151faf65@rorschach.local.home>
- <b647eacd-f6f3-4960-acfd-36c30f376995@paulmck-laptop>
- <20240610163606.069d552a@gandalf.local.home>
- <70c093a5-df9c-4665-b9c9-90345c7f2139@suse.cz>
- <2024061143-transfer-jalapeno-afa0@gregkh>
- <05ec743a-c4e9-4c66-b2cd-4e89c858d7d4@suse.cz>
- <20240611101458.7fa78da8@gandalf.local.home>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RVlPVu6G"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CDfxPV018718;
+	Wed, 12 Jun 2024 14:12:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=m0FmGfkNeKrMXUaZQgUR4Q
+	N1A0zpT0OMtSwEyewWMhk=; b=RVlPVu6Gsy2fxTsmN7yw78lgLm6F89iuHYHj58
+	9EPQDHabSythCMXwrn6S5VqQKCyOFpenkhrtXprNHS030yezFqTz8xRUlnAH2TMG
+	I7yTO9QbPZojjhcITpw81ziMUnRxTvUkHXwIvCXfZ7VRc8vBYNIEM0vEr18Qm/Uh
+	BcdvLKb5Oaw9Tq6E2lBqznBQlgfIay7lnKWMB4HVXRlk39soNTsGbhF44lIiL3s9
+	yzBKu3el/hyG7fnlO02DMgOcndlIGJxQG0lJ4DAJm2CV4B791A5cNQ2D2ytZDY+4
+	3JBmPp9+lthlS+Xq83w+nQh3YQa8yrtvsGiK9c0W5TUMz/5w==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yq4s8hbk9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 14:12:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CECWGq010422
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 14:12:32 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
+ 2024 07:12:32 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Wed, 12 Jun 2024 07:12:31 -0700
+Subject: [PATCH] backlight: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240611101458.7fa78da8@gandalf.local.home>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240612-md-drivers-video-backlight-v1-1-f4ca1beb36cc@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAM6saWYC/x3MSwrCMBAA0KuUWTuQxqDiVcRFPmMz2KYy04ZC6
+ d2NLt/m7aAkTAr3bgehyspzaehPHcTsy0DIqRmssc5ceotTwiRcSRQrJ5ox+PgeecgLWucsXa0
+ /m3SDFnyEXrz988ezOXglDOJLzL9y5LJuOHldSOA4vuR+X2aLAAAA
+To: Lee Jones <lee@kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>
+CC: <dri-devel@lists.freedesktop.org>, <linux-fbdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 2Srocz6UknqIcfJfrgXnSAhLzLIvGKlF
+X-Proofpoint-ORIG-GUID: 2Srocz6UknqIcfJfrgXnSAhLzLIvGKlF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_08,2024-06-12_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ spamscore=0 mlxscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1011 mlxlogscore=952 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406120101
 
-On Tue, Jun 11, 2024 at 10:14:58AM -0400, Steven Rostedt wrote:
-> On Tue, 11 Jun 2024 10:42:28 +0200
-> Vlastimil Babka <vbabka@suse.cz> wrote:
-> 
-> > AFAICS that documented way is for a different situation? I assume you mean
-> > this part:
-> > 
-> > * Specify any additional patch prerequisites for cherry picking::
-> > 
-> >     Cc: <stable@vger.kernel.org> # 3.3.x: a1f84a3: sched: Check for idle
-> > 
-> > But that would assume we actively want to backport this cleanup patch in the
-> > first place. But as I understand Steven's intention, we want just to make
-> > sure that if in the future this patch is backported (i.e. as a dependency of
-> > something else) it won't be forgotten to also backport c9929f0e344a
-> > ("mm/slob: remove CONFIG_SLOB"). How to express that without actively
-> > marking this patch for backport at the same time?
-> 
-> Exactly! This isn't to be tagged as stable. It's just a way to say "if you
-> need this patch for any reason, you also need patch X".
-> 
-> I think "Depends-on" is the way to go, as it is *not* a stable thing, and
-> what is in stable rules is only about stable patches.
+With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/platform_lcd.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/rt4831-backlight.o
 
-How does "Depends-on" not spiral out of control? There's a *lot* of
-"Depends-on" relations one could express in commit series and such. Of
-course a lot of git itself is designed to show some subset of these
-relationships.
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-It seems like in most cases, the "Cc: stable@v.g.o # x.y.z+" notation
-expresses the backporting safety correctly. What is the purpose of
-saying, "if you need this patch for any reason, you also need patch X"?
-Who is the intended audience, and are you sure they need this?
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/video/backlight/platform_lcd.c     | 1 +
+ drivers/video/backlight/rt4831-backlight.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-I ask these questions because I wind up doing a lot of work backporting
-patches to stable and marking things properly for that or submitting
-manually backported stable patches and so forth, and in general, patch
-applicability for stable things is something I wind up devoting a lot of
-time to. If I have to *additionally* start caring about the theoretical
-possibility that somebody in the future, outside of the stable flow,
-might not understand the context of a given patch and blindly apply it
-to some random tree here or there, that sounds like a lot of extra brain
-cycles to consider.
+diff --git a/drivers/video/backlight/platform_lcd.c b/drivers/video/backlight/platform_lcd.c
+index 76872f5c34c5..b0af612834a7 100644
+--- a/drivers/video/backlight/platform_lcd.c
++++ b/drivers/video/backlight/platform_lcd.c
+@@ -143,5 +143,6 @@ static struct platform_driver platform_lcd_driver = {
+ module_platform_driver(platform_lcd_driver);
+ 
+ MODULE_AUTHOR("Ben Dooks <ben-linux@fluff.org>");
++MODULE_DESCRIPTION("Generic platform-device LCD power control interface");
+ MODULE_LICENSE("GPL v2");
+ MODULE_ALIAS("platform:platform-lcd");
+diff --git a/drivers/video/backlight/rt4831-backlight.c b/drivers/video/backlight/rt4831-backlight.c
+index 7d1af4c2ca67..c2f6fb29e1d0 100644
+--- a/drivers/video/backlight/rt4831-backlight.c
++++ b/drivers/video/backlight/rt4831-backlight.c
+@@ -229,4 +229,5 @@ static struct platform_driver rt4831_bl_driver = {
+ module_platform_driver(rt4831_bl_driver);
+ 
+ MODULE_AUTHOR("ChiYuan Huang <cy_huang@richtek.com>");
++MODULE_DESCRIPTION("Richtek RT4831 Backlight Driver");
+ MODULE_LICENSE("GPL v2");
 
-So, is this actually necessary, and how does it not spiral out of
-control?
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240612-md-drivers-video-backlight-2442e72a30d8
+
