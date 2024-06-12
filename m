@@ -1,150 +1,100 @@
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27E922F03;
-	Wed, 12 Jun 2024 09:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6E016E881
+	for <kernel-janitors@vger.kernel.org>; Wed, 12 Jun 2024 10:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718183757; cv=none; b=UF1kL3vYs9YPFSvX4VALgKmM0rOcHjf0QfsdLCpKc96eUjkQn6JYgboIQVlGvzNfT0E79bD3lbP4qaFrp6fn5z98bkW9wkT5jXe/VVXYlC6ymw493TjtsjVYoUK+t1o52zvs9tVZxyVROLO8CKselhzuNnFCGm8+4rHmbDZxh2g=
+	t=1718189022; cv=none; b=fdDyFPraPr9vkVcp1wk+z8bGq3V9yla3K4vhgzl56Ir/Srq6ZR9ekdtw4NbJfItsACWumDLgDulb7BoidPyPQzi+Jq0ytZxRnvKwdjnqM/Y6oqULzc9ZFngbPfNSooavMyUK5cXYLT4orTynxRDn8IosVkD4UdFO7I2mY7skR/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718183757; c=relaxed/simple;
-	bh=GWE5vzhby5amhtINrAuKD6JzalyCfL/7n0EHOqXonuE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U7T0yFmH+mwLRNuD1jgJO0IJN27g05yIhdzcHbyiIp9ZMZ/W/NOwstTzZrLCnh3dbn2dmAmmShkxxHfRQOVjcv1RGph/7HNvoFpPJ9rYzzfiqb3aPQhKHvQkmMHtT4GmG9tYnOrzqWBU+4LRdd+PwYqNjc0NKyOGewnLdxldsL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=3S+1CtwM; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+	s=arc-20240116; t=1718189022; c=relaxed/simple;
+	bh=REYZcvusm3pkwQ7HGYtJFqKnsOvXK1eSq4fjluTiMa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lbSC5+q2W6bqf0xT3qUozwN+S5QyDFV0Cy716ZjaIhAy4LG8AoN4TRxyZ0oFP7C1IFrCRKa46NNxAAhr0iSLrJmMggUVwblD4GYnVK/lecEpS4AE0jClwmTpeUXUP+lzyQFPX0FjYe2vagBg6gYj3HeOMQDtXr7OAtza37C/Ncc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nz5ecIO0; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="3S+1CtwM"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=JRvA94wC/Ln8bnzFmy6UZICx3X6OwE+oVvnKJStYJSQ=; t=1718183754;
-	x=1718615754; b=3S+1CtwMp3D8CowBNXQl6dzkZCC9J/ubK6D5vnu5sUx69+INM3+W//Hj4bNEg
-	Ut2I0jjI182rYXCwVsooZmWpTTXk1p8KaCz5URc4d/wjo8dxpFMdWSjSdjQuupT5OgQ8Q8j8B/l+7
-	V6wZDnIpZA3mJxjr6UsoKk7VmSCiNmxkM65z7zWv+569i1l5Vv2xzfsiBYY7doh1UZiWFfZtTymQ0
-	e+2wFBdsYgPtUpoIPkkTbiDugmeuLBIMBHfivcC3i2u2qn+jh2sRQI4DRLosJsIZVegGqcB+kw4Th
-	31EEWWN5jejqmhXhpnPl7kKAcmJWU1Z4Y6CwDqusOFX5qjHjlw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sHK53-00089h-Pj; Wed, 12 Jun 2024 11:15:45 +0200
-Message-ID: <390652ca-a383-4953-aa39-8c4ac92f2e3d@leemhuis.info>
-Date: Wed, 12 Jun 2024 11:15:45 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nz5ecIO0"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ebe40673e8so36246571fa.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jun 2024 03:43:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718189017; x=1718793817; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=en5v3zZb3SYUynuEEvB5KY7fvjCtjNs2C99/5XHt5sQ=;
+        b=nz5ecIO0pAY/S7aL5GGowJEQAAJHigWeTCvTLfrU434O6+lYLQ4pMiQpdHx44i7S07
+         uLavFrc8a/A6vwKIlUUgnhSDKbvYSfhFody4I34hFYeyod+YcOFazPwgHQZ3Q7hJzuB3
+         QzQMdFpLD/m2bOpX1vzEAbETmqydRUHx3BYtGH+WdG+FPFnvgF4F9zQcwsAaYOq1jipp
+         xr1jdppunOWlitTbbZhalwQFI206a3PefqXcvmIJezYqHeXs/INrjzfFJlIHx5ZFP87+
+         IovLV4n3tI4ikkID7le/Ag8TLRG4iDNkJAlIsO4PHpBCFMLH+VfeTMLE/NSe7hitSNIq
+         iGOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718189017; x=1718793817;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=en5v3zZb3SYUynuEEvB5KY7fvjCtjNs2C99/5XHt5sQ=;
+        b=XlUhk0Ehkhysn+Wh+vxoZU7mqQTO0b+Ho5y/HotWrG57mnfU7ujL+nVzpnoUqEJqpC
+         EZO5r6T02AuuyCO/K6xixg7k4qFHujGx+mWc8zL1fVbH2fWj5yAkb9FkmdubJl3jRwFa
+         MzTpd0crZaxAeXOoNFA3KDd1srqo8clcajYyoGRwiOWjQulKO0ieoQZHZPTEB0z1Paoj
+         dqtUD4GC27GTp4QQb5JTT2HuaW3gsTAMXy4DvDCXjuObLOzdkiqUrHfSGlJz8fkYHQLe
+         37q4aeknYCVM6mEstKxyf2t2ghpNxZfxlPS7Y6jOZiVUFZHfhgP/TYk2V47Leghr7KTe
+         4QCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrypf0EVRMLSQ18najmDXXqbmRRzFIsqdEv25qdHt32hZRA+O+kfjbGXLcn5pN8rN0pA/W4yqY/kYoj2zPB4cOmKKRJAdYcwZlhJYkhQeZ
+X-Gm-Message-State: AOJu0YzrpOniRYdNF0VN0Wa3F0CDuXPnIfphLQFUG2DyGTkwt+6ZQ2iO
+	vvXIQ8sFuAa2v+zzZWx/0OWWinC+mLX3Fsb7h5J98dw2VGZt0pzTyVAf6aXcTSKeiRvlP/9BO+0
+	Z
+X-Google-Smtp-Source: AGHT+IGAjGH7WuBg4zqQ4D62wvnr79c+GSlh8tV4aOGiyUMLTUamEwviTONC6JOitXK9+WCXuDW5Ng==
+X-Received: by 2002:a2e:a796:0:b0:2eb:fda7:e35f with SMTP id 38308e7fff4ca-2ebfda7e40bmr8240381fa.5.1718189017181;
+        Wed, 12 Jun 2024 03:43:37 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de62fsm21843715e9.38.2024.06.12.03.43.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 03:43:36 -0700 (PDT)
+Date: Wed, 12 Jun 2024 13:43:33 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jacky Huang <ychuang3@nuvoton.com>
+Cc: Shan-Chun Hung <schung@nuvoton.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] pinctrl: nuvoton: ma35d1: Fix an IS_ERR() vs NULL check
+Message-ID: <840152f9-d3bb-410e-8164-4c5043e1983e@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] checkpatch: check for missing Fixes tags
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
- Dwaipayan Ray <dwaipayanray1@gmail.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-kernel@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
- Sasha Levin <sashal@kernel.org>, Tom Gall <tom.gall@linaro.org>,
- kernel-janitors@vger.kernel.org
-References: <ZmhUgZBKeF_8ixA6@moroto>
- <20240611113855.b63a6015b26a0dad49d9f2a7@linux-foundation.org>
- <b3baa059-b433-42da-96c0-588312b5a4ac@leemhuis.info>
- <6825db9f-be27-4096-9723-6ad65342a59e@moroto.mountain>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: en-US, de-DE
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-In-Reply-To: <6825db9f-be27-4096-9723-6ad65342a59e@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1718183754;a4595a40;
-X-HE-SMSGID: 1sHK53-00089h-Pj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On 12.06.24 10:49, Dan Carpenter wrote:
-> On Wed, Jun 12, 2024 at 08:46:24AM +0200, Thorsten Leemhuis wrote:
->> On 11.06.24 20:38, Andrew Morton wrote:
->>> On Tue, 11 Jun 2024 16:43:29 +0300 Dan Carpenter <dan.carpenter@linaro.org> wrote:
->>>
->>>> This check looks for common words that probably indicate a patch
->>>> is a fix.  For now the regex is:
->>>>
->>>> 	(?:(?:BUG: K.|UB)SAN: |Call Trace:|stable\@|syzkaller)/)
->>>>
->>>> Why are stable patches encouraged to have a fixes tag?  Some people mark
->>>> their stable patches as "# 5.10" etc.  This is useful but a Fixes tag is
->>>> still a good idea.
->>>
->>> I'd say that "# 5.10" is lame
->>
->> Documentation/process/stable-kernel-rules.rst documents this use to
->> "Point out kernel version prerequisites".
-> 
-> No, the 5.10 means that the fix is required for everything after 5.10.
-> Here is how you reference pre-requisites.
-> 
->     Cc: <stable@vger.kernel.org> # 3.3.x: a1f84a3: sched: Check for idle
->     Cc: <stable@vger.kernel.org> # 3.3.x: 1b9508f: sched: Rate-limit newidle
->     Cc: <stable@vger.kernel.org> # 3.3.x: fd21073: sched: Fix affinity logic
+The fwnode_iomap() function doesn't return error pointers, it returns
+NULL.  It's the same as of_iomap() in that way.  Update the check
+accordingly.
 
-That format according to the docs is to "Specify any additional patch
-prerequisites for cherry picking", but cherry picking might not be what
-the maintainer wants.
+Fixes: ecc5bf868673 ("pinctrl: nuvoton: Add ma35d1 pinctrl and GPIO driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/pinctrl/nuvoton/pinctrl-ma35.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Anyway, I won't commit on this further and from here will leave this to
-Greg, that's best at this point, it's his domain.
+diff --git a/drivers/pinctrl/nuvoton/pinctrl-ma35.c b/drivers/pinctrl/nuvoton/pinctrl-ma35.c
+index fb933cddde91..1fa00a23534a 100644
+--- a/drivers/pinctrl/nuvoton/pinctrl-ma35.c
++++ b/drivers/pinctrl/nuvoton/pinctrl-ma35.c
+@@ -571,8 +571,8 @@ static int ma35_gpiolib_register(struct platform_device *pdev, struct ma35_pinct
+ static int ma35_get_bank_data(struct ma35_pin_bank *bank)
+ {
+ 	bank->reg_base = fwnode_iomap(bank->fwnode, 0);
+-	if (IS_ERR(bank->reg_base))
+-		return PTR_ERR(bank->reg_base);
++	if (!bank->reg_base)
++		return -ENOMEM;
+ 
+ 	bank->irq = fwnode_irq_get(bank->fwnode, 0);
+ 
+-- 
+2.43.0
 
-> But as a distro maintainer it's much nicer to have a Fixes:
-> 123412341234 ("Add new wifi driver").
-
-I see your point and agree that it would be nice to have. At the same
-time I've seen people on the lists that don't like to use the Fixes: tag
-when nothing is "fixed". And it would be an additional burden for
-developers to look the commit-id up. So it could contribute to the
-"checkpatch is asking too much here and not worth the trouble" stance
-I've seen a few times (to which I contributed myself... :-/ ).
-
-Ciao, Thorsten
