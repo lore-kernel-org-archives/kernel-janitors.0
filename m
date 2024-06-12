@@ -1,37 +1,61 @@
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE70F25622;
-	Wed, 12 Jun 2024 06:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46BB16B75C
+	for <kernel-janitors@vger.kernel.org>; Wed, 12 Jun 2024 07:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718174790; cv=none; b=AbwGQxo9dTw5nKjIsd0fNEXuvQ5TGSFdkcAV1jL/4m/FKbLys4dGUV+njdGjoxuRbl6/a+mB6KFSBB2Xm1lHi9L6hT49ke4OtWGKwQ0xQ0eO6nJk9AoIzWgVoCel1n8cB1dF5ufXUBqk04EA07WcI6x3HpQgfAxL4JqUHfo7fF4=
+	t=1718179093; cv=none; b=Lwaoa7v+vRszBTdI/dtTnFQHErwW7Zo6AUitwdNDHl+Y7ZDqlsAYuult3QZLvlajgjSfDzDOaIbS4xD16f1wbm//wgiykl2hcmeTM6hSmZRbx10n0weIIowCRE55PzYGO4glZRulfGInQV2ZMCthFr6VErBr/VcWMSQf+phH3Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718174790; c=relaxed/simple;
-	bh=AP4H2PJybdyXI48p76JqtAskkZZNNPRy/HmyCOgf1gM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tiLdLL9I+vaxK1pG+JRsnCQ9uki0uESOJaNNciMoofT+3uUsIzFkIhBvQJTSsWfGaSpvaBQ3sh8M4/Btk2l16ziZfHc3WWracsTf4M58MtP3oel1O5vYhvbcnrJfOMtbu8vYceatYvzLHHEsVain1S1LanpMzwYuSkswcihvUKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=R462js79; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+	s=arc-20240116; t=1718179093; c=relaxed/simple;
+	bh=f9kCf84eyzlwQr0DOO2ZoS6yL8QyN/5Y2BWId6yPcqw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=bIln6IY3XUPAOuwwe9vJ+oj5FRyFv45jwPKWk9c/utFVIrjsQU/jquk8LWompQwBPw5FvDaKEcAr/JkifwDHLHQ3hfmPbx0xk9Xrys1u3VTJDP9uGibCm5lJan1qqqywB2tTHEMR+yduuW5wqQFU03fB67Kk9OiddgmSX1Sy8bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UxX2Gx2v; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="R462js79"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=pvLnwTafypJgBacbbF6XVnH7hSs8WZbnLIkz2LjARgk=; t=1718174788;
-	x=1718606788; b=R462js79Jn7g3mPIUvD10Lv+Y7f8TZoKvCWFCKqgWgONHRtFFengDVJJWShat
-	S1egMhzbWbIlirPmyq84ZEtbsbhZSfqb7KhoqiaoJVIDR2osdq/6/dxxAZv3+rMARdb38zN9h6lYI
-	qJpNcGCVJ762TeuO44cOsNgKc74jwipuIrj1GWh60VXr/CfP5Jlp2R6HKCWue3urJTYzPl7ayhqbY
-	7VsS9xnO30W2IU9V1dv/ETaedBATyU+Tx40kO/XuUYcNa5vxvwoRcJK6YKccxV+bcDyunm+4fOLAk
-	APpOcqihG1P3Pgx6q8KQ1/uMnuTULvdxo/bEKIxP0vrniK3m8w==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sHHkX-000557-GK; Wed, 12 Jun 2024 08:46:25 +0200
-Message-ID: <b3baa059-b433-42da-96c0-588312b5a4ac@leemhuis.info>
-Date: Wed, 12 Jun 2024 08:46:24 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UxX2Gx2v"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4217f2e3450so36120885e9.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jun 2024 00:58:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718179089; x=1718783889; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bcLdFTHsKhxsWZKbXum3q12jRap59Wq5H+bR99icFo4=;
+        b=UxX2Gx2vTci5ZUMwkKEPUtRHnDjVZaIzpBtPV1bmdnOh5JjzU68jHI9CdYx+cXfNpZ
+         0m7eAU2G0fIr5mprcL8TURPtx0uJHxl0RTHBOMKhiO/1IaKzOmLxUdKjrdBy0fjcog8g
+         +mKa8TQzfSD/PouZupssU3/oDPVgnIGqBGbTnVbcMCJ9nNaAD9aQTRxHLqMzcarbT9L3
+         rjJ/ddbyeiOlXQc4wLyumTyrwX2Td6lCKwGVYX5zQSHJEoIELsi3Jzw9c6F5oqyXvXb7
+         ltLT8QzJd9F/523YIoLoRDueT3ce1NQdHqfD/ek7QE8J5u8g9NsxuOSBM65MROdBlIxp
+         v5mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718179089; x=1718783889;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bcLdFTHsKhxsWZKbXum3q12jRap59Wq5H+bR99icFo4=;
+        b=lG03SGykSXzO6ofWpUKniSFcaou7jTVgp2TXyP1j3TVUj4OphkaQdLckW7E2R4f83y
+         0Xm0OpXEVxUjTiAeNnlwWXBm3O0VnMNRALKqEj4WWulz/Hml9Ty61+rQCa3QHYlYciGY
+         YKRN3C5rodcH/vaLelB01izGDXmkoZVP4fHOGS4H3XtBl9h8TN5c8dPuyU8t1eXCq5tQ
+         5e10XtMVZhK2ejY19kH4jhn1VjJ+txIOC3mf5XDlJz8RT4Yta2crqmwolYIqfIn4+p3+
+         SZQVX606S1HLQsAvlw5C7LenMMmIrH9NHlqb8dJfu+KxtFl012OcPFrvf0S0Nl4F5qVc
+         cRRA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6/WbCU9ZzdtnbPGP/IUcqY+kNr7DngITnzB/rdiCfgZAYQ4RBFi8I+P/WyB+QvZq+mwj8Uef5LMLeelH1nRidz5eHrxR9AiAOCQqHQNso
+X-Gm-Message-State: AOJu0Yy9IXClQ3uRzT/ZJS8Bqrlullb303bU56AT2zzuYuzSIN9BMZYZ
+	Q/QZ9zR1UB66G0qvMWEytmQL+DInsIfkycaewdXVIKuX8S3m9eYU9aaMfkHHRGw=
+X-Google-Smtp-Source: AGHT+IEJGltYyHPm5azIaXZsfp0ocu+v/Cqr2tZqTEenkv7mLVqkDy/oZNxcfiL3PNM4Ugjo8ukmUw==
+X-Received: by 2002:a05:600c:4f0e:b0:422:97d:4403 with SMTP id 5b1f17b1804b1-422866c2684mr12207455e9.31.1718179088584;
+        Wed, 12 Jun 2024 00:58:08 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:30bd:bf21:eed1:8aeb? ([2a01:e0a:982:cbb0:30bd:bf21:eed1:8aeb])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35f26857582sm6538100f8f.77.2024.06.12.00.58.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 00:58:08 -0700 (PDT)
+Message-ID: <a314c676-3dbd-46f8-826a-2e59367d30ce@linaro.org>
+Date: Wed, 12 Jun 2024 09:58:05 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -39,96 +63,132 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] checkpatch: check for missing Fixes tags
-To: Andrew Morton <akpm@linux-foundation.org>,
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
- Dwaipayan Ray <dwaipayanray1@gmail.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-kernel@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
- Sasha Levin <sashal@kernel.org>, Tom Gall <tom.gall@linaro.org>,
- kernel-janitors@vger.kernel.org
-References: <ZmhUgZBKeF_8ixA6@moroto>
- <20240611113855.b63a6015b26a0dad49d9f2a7@linux-foundation.org>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: en-US, de-DE
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-In-Reply-To: <20240611113855.b63a6015b26a0dad49d9f2a7@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] soc: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Linus Walleij <linusw@kernel.org>,
+ Imre Kaloz <kaloz@openwrt.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+References: <20240611-md-drivers-soc-v1-1-8f0fc9fff234@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240611-md-drivers-soc-v1-1-8f0fc9fff234@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1718174788;97890b0f;
-X-HE-SMSGID: 1sHHkX-000557-GK
 
-On 11.06.24 20:38, Andrew Morton wrote:
-> On Tue, 11 Jun 2024 16:43:29 +0300 Dan Carpenter <dan.carpenter@linaro.org> wrote:
+On 12/06/2024 07:50, Jeff Johnson wrote:
+> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/imx/soc-imx8m.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/ixp4xx/ixp4xx-qmgr.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/ixp4xx/ixp4xx-npe.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/mediatek/mtk-cmdq-helper.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/amlogic/meson-clk-measure.o
 > 
->> This check looks for common words that probably indicate a patch
->> is a fix.  For now the regex is:
->>
->> 	(?:(?:BUG: K.|UB)SAN: |Call Trace:|stable\@|syzkaller)/)
->>
->> Why are stable patches encouraged to have a fixes tag?  Some people mark
->> their stable patches as "# 5.10" etc.  This is useful but a Fixes tag is
->> still a good idea.
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
 > 
-> I'd say that "# 5.10" is lame
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> This is the last of the issues that I see in the soc directory
+> ---
+>   drivers/soc/amlogic/meson-clk-measure.c | 1 +
 
-Documentation/process/stable-kernel-rules.rst documents this use to
-"Point out kernel version prerequisites".
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org> # for amlogic/meson-clk-measure.c
 
-> and it would be good if checkpatch could
-> detect this and warn "hey, use a proper Fixes:".  Because
+>   drivers/soc/imx/soc-imx8m.c             | 1 +
+>   drivers/soc/ixp4xx/ixp4xx-npe.c         | 1 +
+>   drivers/soc/ixp4xx/ixp4xx-qmgr.c        | 1 +
+>   drivers/soc/mediatek/mtk-cmdq-helper.c  | 1 +
+>   5 files changed, 5 insertions(+)
 > 
->> It  helps people to not cherry-pick buggy patches without also
->> cherry-picking the fix.
+> diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
+> index 3f3039600357..a6453ffeb753 100644
+> --- a/drivers/soc/amlogic/meson-clk-measure.c
+> +++ b/drivers/soc/amlogic/meson-clk-measure.c
+> @@ -688,4 +688,5 @@ static struct platform_driver meson_msr_driver = {
+>   	},
+>   };
+>   module_platform_driver(meson_msr_driver);
+> +MODULE_DESCRIPTION("Amlogic Meson SoC Clock Measure driver");
+>   MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/soc/imx/soc-imx8m.c b/drivers/soc/imx/soc-imx8m.c
+> index ec87d9d878f3..fe111bae38c8 100644
+> --- a/drivers/soc/imx/soc-imx8m.c
+> +++ b/drivers/soc/imx/soc-imx8m.c
+> @@ -252,4 +252,5 @@ static int __init imx8_soc_init(void)
+>   	return ret;
+>   }
+>   device_initcall(imx8_soc_init);
+> +MODULE_DESCRIPTION("NXP i.MX8M SoC driver");
+>   MODULE_LICENSE("GPL");
+> diff --git a/drivers/soc/ixp4xx/ixp4xx-npe.c b/drivers/soc/ixp4xx/ixp4xx-npe.c
+> index 35825ee95dff..34a6f187c220 100644
+> --- a/drivers/soc/ixp4xx/ixp4xx-npe.c
+> +++ b/drivers/soc/ixp4xx/ixp4xx-npe.c
+> @@ -764,6 +764,7 @@ static struct platform_driver ixp4xx_npe_driver = {
+>   module_platform_driver(ixp4xx_npe_driver);
+>   
+>   MODULE_AUTHOR("Krzysztof Halasa");
+> +MODULE_DESCRIPTION("Intel IXP4xx Network Processor Engine driver");
+>   MODULE_LICENSE("GPL v2");
+>   MODULE_FIRMWARE(NPE_A_FIRMWARE);
+>   MODULE_FIRMWARE(NPE_B_FIRMWARE);
+> diff --git a/drivers/soc/ixp4xx/ixp4xx-qmgr.c b/drivers/soc/ixp4xx/ixp4xx-qmgr.c
+> index 244ad8d7e80b..cb112f3643e9 100644
+> --- a/drivers/soc/ixp4xx/ixp4xx-qmgr.c
+> +++ b/drivers/soc/ixp4xx/ixp4xx-qmgr.c
+> @@ -465,6 +465,7 @@ static struct platform_driver ixp4xx_qmgr_driver = {
+>   };
+>   module_platform_driver(ixp4xx_qmgr_driver);
+>   
+> +MODULE_DESCRIPTION("Intel IXP4xx Queue Manager driver");
+>   MODULE_LICENSE("GPL v2");
+>   MODULE_AUTHOR("Krzysztof Halasa");
+>   
+> diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
+> index 046522664dc1..dd70d4d2bed7 100644
+> --- a/drivers/soc/mediatek/mtk-cmdq-helper.c
+> +++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
+> @@ -526,4 +526,5 @@ int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
+>   }
+>   EXPORT_SYMBOL(cmdq_pkt_finalize);
+>   
+> +MODULE_DESCRIPTION("MediaTek Command Queue (CMDQ) driver");
+>   MODULE_LICENSE("GPL v2");
 > 
-> seems pretty important.
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240611-md-drivers-soc-1780b1939627
+> 
 
-Hmmm. That would lead to false positive when it comes to changes that
-for example just add a device ID (and thus do not "Fix" anything) while
-having prerequisites that are only available in a specific version.
-
-Ciao, Thorsten
