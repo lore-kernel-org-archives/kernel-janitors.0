@@ -1,102 +1,147 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4C21DFF0;
-	Wed, 12 Jun 2024 22:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B433C28385;
+	Wed, 12 Jun 2024 22:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718230978; cv=none; b=ijARZmNx3VaHuFSayaHZhofVwQOzDXX0XsJpeWYJcdEqFAccVqEtYSvfRNQ7B10ahxMrL9RRa/pLTBebPHA50moN2xkyT17XSnFY/pAJSdd8I3mWHxFKwXCauM1/IWut6QatlogeKZc6OvANEsAl4PcZ5Du2pBeVlSTydwLo//c=
+	t=1718231876; cv=none; b=tLCf+n2Rg62o9iaq+cKVkksQlZgQionrgULmfVF+NYoiRx7rRK9yDBhSkmYPj9acnre97xZ3AsdqXF/CYJp+iJdoOWBa6V9hDUgcGQgcEKmGOP3P+vfGPiTfYHgDt3iGh5ETHrswC9nVTdwttuggy4UNWx6mVyev1w1rl9KzNQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718230978; c=relaxed/simple;
-	bh=kjGjPKRkxzNWFzgE6y4cA/bYXf9LyB4+K5/alp3/Ne8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Zj84ONjvxPqDVVMLWjDaIr9QZNqkq5PF5LbNkckxa8S9xr5xPx6fAH9KREV2K1DRWX0TaMezs7n283MBInzP8tfBEeYV9+ZIgH1SbzqSIvARJuyDeJYcGMHtJbCMcUmDborW3LBWNSZnt+qsyjr180nRUvuYG5hhHTGqFj6RF1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z1ApWSwz; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718231876; c=relaxed/simple;
+	bh=oIsohZ+9uDXt1/szfbZNu9uZ6WH4ExPZbv0MeSABAuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VP11zNL1BHneE8u7HEMfsUdH+TTt58BXmUt97y5tCQSOCfZ+c7VbB8FRiO14JUZEt4dtU1L31WsStNJEZK8JyiIlGBhxjNfO/k28/iXk3q17jZ/hThZ4W31jnG/kIeDhC0V7w9PaloX3DW5SH85++t8gAu7XIcQivgAjyLov8LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gP+b8oI2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z1ApWSwz"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CKnJKr024376;
-	Wed, 12 Jun 2024 22:22:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=i6UukDRRZJzedinienBhid
-	zn17tHAMUbF3e55BtT55Q=; b=Z1ApWSwzuXF/KQc/9Dv2RhCvimvC6xs57zRfld
-	mLNRiETzBed6Pk+oMkksYKEtL1DtbMpSU7fuUVGfXy1Rp82rAF6v9I+FCADQINLl
-	FJuc0Ll0bYRIZLat9ESinxZjMjYQtHdfEVY29dmCvEPZtL0UNWVTPsOpND1YEbaT
-	rEtnFUgERWVXZiO2HpsrdG3z7xP3tQRggEptH9cZd1yqBIHiRpuuzoSibSOUMTJH
-	hxOJBwsVh7hU6odeet6tnVbYe8moYcHDmuXi2PW+BgpTPKXYx/hbCJ06Q/6PRFMt
-	Fg2+pufbKY3PbMgzX9fkR/JiMjQLRBWzsaZvSEX8rlAmlx0A==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yqcxthb6j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 22:22:53 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CMMqLM028847
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Jun 2024 22:22:52 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 15:22:51 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 12 Jun 2024 15:01:11 -0700
-Subject: [PATCH] fbdev: goldfishfb: add missing MODULE_DESCRIPTION() macro
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gP+b8oI2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29078C116B1;
+	Wed, 12 Jun 2024 22:37:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718231876;
+	bh=oIsohZ+9uDXt1/szfbZNu9uZ6WH4ExPZbv0MeSABAuw=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=gP+b8oI23RaN2auavn9kdJs6IaFxGfpTRers71TYsRO81EBkAJS1TEEGF9PeM+7wx
+	 JfjAorGHi0StC2tbEFL0bYR8ahwDNRtKXd/jEciawD5flFj7OxObqgTN+5TakbhJo9
+	 MYUohzqZDX+JJBX7UwG3NUQCOUrxFlzf999/p9+XDhMFm6el3kPv2V63iZvZ5wUcv5
+	 lQ5MrBltINH+5KZS/28WiZf4A+9rRX+iNrE09oOnoadekn/S8rZO8cAVOXqThDgSq8
+	 GX1/wlDqJccdnaongSnTXVexdmEnFHpo7BzVqTOxZtg9rbL/bdSMDg4px5jWTRJf+V
+	 LGtEBztw5cOtQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id BC95ACE0DEA; Wed, 12 Jun 2024 15:37:55 -0700 (PDT)
+Date: Wed, 12 Jun 2024 15:37:55 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
+	linux-trace-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
+	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
+	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
+ <20240612143305.451abf58@kernel.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240612-md-drivers-video-fbdev-v1-1-68b1f7316835@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAKYaamYC/x3MwQqDMAyA4VeRnBfQ0gndq4wd2ibOwKwjmUUQ3
- 33djt/h/w8wVmGDW3eAchWTtTQMlw7yHMuTUagZXO98Pw4OF0JSqayGVYhXnBJxxZwC5dGHHPw
- VWvxWnmT/j++P5hSNMWksef7tXlK2HZdoH1Y4zy/JL2l4hwAAAA==
-To: Helge Deller <deller@gmx.de>
-CC: <linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: _lw1Ga2g9ZjHDXoZvWK77lt8G-CYap4y
-X-Proofpoint-GUID: _lw1Ga2g9ZjHDXoZvWK77lt8G-CYap4y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_10,2024-06-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=999 spamscore=0 mlxscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406120159
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612143305.451abf58@kernel.org>
 
-With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/goldfishfb.o
+On Wed, Jun 12, 2024 at 02:33:05PM -0700, Jakub Kicinski wrote:
+> On Sun,  9 Jun 2024 10:27:12 +0200 Julia Lawall wrote:
+> > Since SLOB was removed, it is not necessary to use call_rcu
+> > when the callback only performs kmem_cache_free. Use
+> > kfree_rcu() directly.
+> > 
+> > The changes were done using the following Coccinelle semantic patch.
+> > This semantic patch is designed to ignore cases where the callback
+> > function is used in another way.
+> 
+> How does the discussion on:
+>   [PATCH] Revert "batman-adv: prefer kfree_rcu() over call_rcu() with free-only callbacks"
+>   https://lore.kernel.org/all/20240612133357.2596-1-linus.luessing@c0d3.blue/
+> reflect on this series? IIUC we should hold off..
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+We do need to hold off for the ones in kernel modules (such as 07/14)
+where the kmem_cache is destroyed during module unload.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/video/fbdev/goldfishfb.c | 1 +
- 1 file changed, 1 insertion(+)
+OK, I might as well go through them...
 
-diff --git a/drivers/video/fbdev/goldfishfb.c b/drivers/video/fbdev/goldfishfb.c
-index ca9e8255947c..5f8de1ec23c3 100644
---- a/drivers/video/fbdev/goldfishfb.c
-+++ b/drivers/video/fbdev/goldfishfb.c
-@@ -321,4 +321,5 @@ static struct platform_driver goldfish_fb_driver = {
- 
- module_platform_driver(goldfish_fb_driver);
- 
-+MODULE_DESCRIPTION("Goldfish Virtual Platform Framebuffer driver");
- MODULE_LICENSE("GPL v2");
+[PATCH 01/14] wireguard: allowedips: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+	Needs to wait, see wg_allowedips_slab_uninit().
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240612-md-drivers-video-fbdev-cb9dc649c945
+[PATCH 02/14] net: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+	I don't immediately see the rcu_barrier(), but if there isn't
+	one in there somewhere there probably should be.  Caution
+	suggests a need to wait.
 
+[PATCH 03/14] KVM: PPC: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+	I don't immediately see the rcu_barrier(), but if there isn't
+	one in there somewhere there probably should be.  Caution
+	suggests a need to wait.
+
+[PATCH 04/14] xfrm6_tunnel: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+	Needs to wait, see xfrm6_tunnel_fini().
+
+[PATCH 05/14] tracefs: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+	This one is fine because the tracefs_inode_cachep kmem_cache
+	is created at boot and never destroyed.
+
+[PATCH 06/14] eCryptfs: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+	I don't see a kmem_cache_destroy(), but then again, I also don't
+	see the kmem_cache_create().  Unless someone can see what I am
+	not seeing, let's wait.
+
+[PATCH 07/14] net: bridge: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+	Needs to wait, see br_fdb_fini() and br_deinit().
+
+[PATCH 08/14] nfsd: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+	I don't immediately see the rcu_barrier(), but if there isn't
+	one in there somewhere there probably should be.  Caution
+	suggests a need to wait.
+
+[PATCH 09/14] block: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+	I don't see a kmem_cache_destroy(), but then again, I also don't
+	see the kmem_cache_create().  Unless someone can see what I am
+	not seeing, let's wait.
+
+[PATCH 10/14] can: gw: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+	Needs to wait, see cgw_module_exit().
+
+[PATCH 11/14] posix-timers: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+	This one is fine because the posix_timers_cache kmem_cache is
+	created at boot and never destroyed.
+
+[PATCH 12/14] workqueue: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+	This one is fine because the pwq_cache kmem_cache is created at
+	boot and never destroyed.
+
+[PATCH 13/14] kcm: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+	I don't immediately see the rcu_barrier(), but if there isn't
+	one in there somewhere there probably should be.  Caution
+	suggests a need to wait.
+
+[PATCH 14/14] netfilter: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+	Needs to wait, see hashlimit_mt_exit().
+
+So 05/14, 11/14 and 12/14 are OK and can go ahead.  The rest need some
+help.
+
+Apologies for my having gotten overly enthusiastic about this change!
+
+							Thanx, Paul
