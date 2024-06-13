@@ -1,86 +1,65 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BC613D524;
-	Thu, 13 Jun 2024 13:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F2C13D607
+	for <kernel-janitors@vger.kernel.org>; Thu, 13 Jun 2024 13:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718284023; cv=none; b=Bl7QObNjP8niiKvmzHmdJBehCOVq0AOydaZ4zVgL4TClo3wtv7irghSlhya2ptebmR+J0LuJPmRYrh0t0tRGU+yvG2T938FW2IT74pMJPYhvBSQT65iuC6lxBI2tpTtvrhbyWTVSBvYZgp197niPngLBc0y6u1uoPmrVgPaA3JY=
+	t=1718286921; cv=none; b=V94RWfNecQwyTw48cRbnRKwsSXjZoId3SI0mxLtdfnfFjp/aMB01oaBNPiEYC5UcLb+ctqOeZ0op9w26UaMb4Lvr1Ri20PbnSWMp/Y1iSmL6L970TPgd5WfrFmTCatQANYejrQR+reSmWU2KuRIBmlNDadEvGkc9nHdKZ/59hMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718284023; c=relaxed/simple;
-	bh=xu1792XvTnU3jDP3FYbYyhez1VlS5TvvwKQ4Hm46MoY=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OMl6W2nbddR8smhTMtvq+NX2WBQ6+9UlYFkbq0cjlqi4H0E1TDiEb29Z9kMH5ySAW6siXGdzD1Rc7gynLibbVYQNLIo/8Lqf54J+tQwR8gGClC7LOpOyFbVosThruIh9DYPFByW0m8nE/B4UTPudc9w7egnYPldBNTvkH1K86+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lHpKLv4x; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1718286921; c=relaxed/simple;
+	bh=vVwvkMaZAYjZyqicTOx1nxvLkCMqD5e221Va8hSK8uU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=JxPznDdtHxTcZr5KjbC91iVmPFJjdBQRwav7tmaePWZ3tvEAOZ3DeCOeV8xjcLJaiYPC+uQe8MA2EdusfobCP+LUdOnG/u4+4d9KaLHcXgaHK1QLH3Ff50AQbSepAnpkRgiuw4s0oIcnfHAG4RMpsBh56ZIV8icl3jmlTB3LzOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qT0p5zPW; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lHpKLv4x"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebd95f136bso10801621fa.0;
-        Thu, 13 Jun 2024 06:07:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qT0p5zPW"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-35f2c9e23d3so1459164f8f.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 13 Jun 2024 06:55:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718284018; x=1718888818; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=H4qMOlVAmB1+8562nApjJnNhlZQHZLqU1OXBwVXRF78=;
-        b=lHpKLv4xuroqczJt/Ywx8NPgMxPogcx8+78+YIa89Ws8ZSLTpvqmGLUKFxVOQlfbZ2
-         p3z4te5c2HO9g8+O3suERoCg3RYPQchSX4iaJKU9fTNvKa/phzJDhr/z+7O4He/OFnYe
-         z+vy7B7UjBYhkRKHHAgrEPhH4074IEBeknApcjudzORfl08aww/jACSaVNTHc49iqOiP
-         drFuPeWeAkgd4GIMCvMuXfuaJaLYPxgxDLEfl+zbBD5dr6xQh9GDMZGsOOW0TDX7hqdq
-         Wmyds3YQtfZYaUZYYr9qcQMkWfHkD3bTytLzUklplf9Y3kOro87R3TAWy2r1NWhBbd5E
-         2oNA==
+        d=linaro.org; s=google; t=1718286918; x=1718891718; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tFttpI6mxFfYOQDKQEDFzq5Zkmvl1Km0kHopsmHSaog=;
+        b=qT0p5zPWDtKGsdaCoo476S6sv2vV/B8udGV6WKk8x0iZhvfE41y8mzu+tqLtIG1sCF
+         YpbksmzcPpDrLJJg551lMYRJ1+N0telVYmcaX+rC50uDSezNMFeB3X1T6/71a0pPICTz
+         0OigWGBqqWmyJ5a4XGUBcr+bmg5mnYK7ifb1ctMCmoDib/yq+xTvGYoJ2T9CXcx18cJv
+         4C8XSECqx/UgZLQ2xHv6TADKGTA1W+kg3EJcxwKyQ1RfgbpP6LkPOoHlFUv6clR7RLF4
+         hbubJkEn93iPbSvvsDx1ov7KskcFQ439hE2Jj+jgb0zQ56hfWTSZq/70LXQ7vjpyZDNP
+         b6LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718284018; x=1718888818;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H4qMOlVAmB1+8562nApjJnNhlZQHZLqU1OXBwVXRF78=;
-        b=GSH+vuq+atblt2ONCh+TkgHMtZj6fOeBynKrQoCsTlIJASZ6Wj8CgpRYRpv9wPBe3y
-         Rc00TTMV9AlDxmeiSr8HjG2BQTE2dw8zqVNaIgjCmLP5u0teTCPGsGClfXOjWWOF6RM+
-         +/Q4HBoS6kytkJWCK+z3vxAp0OJWKQ5O/qp46b9takYihnLKO6HficNw0CJaABaf7bQl
-         Pdw0940qcxRcHwCXr7KlVjmi6anSBwnoh8dwEYl0Ggi+3mMaShds13A4iEzt+AGbBT+P
-         E9qtJLwB3XcJKJCNjWEoLFmXhebCh4tNbeqkO83AJ9VD3kd86x9w5Ei4KKasIHEUKt8b
-         FklA==
-X-Forwarded-Encrypted: i=1; AJvYcCXP46oBl9LWEeWZOi/nFO9LpfvD0XoXbjOze/y6JDCJBg8tWdMdYajFUlftwyFss9puNTTuHwlKWEIIvIB2jFDl6S48mcaLkYGvh3GMmxC3Nt7i+fd7S0YTjq14gSIWCGOIz0tm6QmrFpxoSLz8uRKbO8OTaPBJykm7iugHg1JzlEzIfwKDGF/EhovOdHI061peiiqbOINYoAEeU8K1Oe31BYZvY0y1xg+p1lCaTCormFL9CGyW9JeCT1+otoXW5Kd6RyhZTAoY612Xsx5F/mExtE0TYRhCV+ArQ8PWpgtBVcGCf0U6qpHyLh1EPdyPWuDnOHi1kTMjytStGOpgxFoZwZnvmOqDI51dN1oLq7M9bcwwBLl1hzW9WwMflZBwbFPR+WwOkcenlUHpYB+la126LQmDHWl6VPD6WGL7woF4mnRQphN7tnjdYSRfwg==
-X-Gm-Message-State: AOJu0YweF5XV8H+UF6myYCXms8mjJEFBK244riqhJzn46zyVY064vIwI
-	b8ZopXLnuMlBjdjlq08IeFphupqb91cIJ/K5Rd/IpLx94tfX950p
-X-Google-Smtp-Source: AGHT+IFNjIqLDbiiJvyVQ+CTYUUPuuKLx47d3/3uk6kw1RXtVGPymnVcCEA7pTqKhgYonTHLU10trQ==
-X-Received: by 2002:a2e:878f:0:b0:2eb:ecba:444a with SMTP id 38308e7fff4ca-2ebfc9fac80mr27236611fa.23.1718284018170;
-        Thu, 13 Jun 2024 06:06:58 -0700 (PDT)
-Received: from pc636 (host-90-233-218-141.mobileonline.telia.com. [90.233.218.141])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c05f56sm2099851fa.42.2024.06.13.06.06.56
+        d=1e100.net; s=20230601; t=1718286918; x=1718891718;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tFttpI6mxFfYOQDKQEDFzq5Zkmvl1Km0kHopsmHSaog=;
+        b=s4bjrKZ1dAWCcj/LV7JyOLO7nc/4vmDvKin94x82lU29zqdN0r8/iJZPN5f47WHidy
+         XX+ZabMPgCTFq4LdAzQn+hSolGvi2wIEIlD2FtMFEXfjafDwgpQ9kGYoDDJcbrV/MqVu
+         vkprb1hXZT9q6SCkiUOPH5neVcC7glGt6Db75DXGDxcm2yMIov1PGmgn0NfgmK+1l9in
+         5cb5GmJ+ORN70xbaiH9bYws+5wwR3tZOFzpD5tDgH83eXQZsqM9qLV/EZw9wChdW/YiF
+         rhUuUqcA4s7qTt7Xddc4xfbe8G2sZvGPmvpW5WoSoiAplhD7rfErGokKYH95T921UUGC
+         /b7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVzR1Ox8lWKzWMVGefsRiOSOzneqpHNEjri5rubQzf3UrzHmcnnWPp7F7RpEd5XA5gbQRJDjprvcygkyuI8PmW93cpZWBwWbhMzVKegQ7+j
+X-Gm-Message-State: AOJu0Yx5POU9l8ltLPN08qUHVo6RdE0LH2kz9PaUbnGyKw+1ERnHiVmi
+	PlRsGs/Ds6OOi/HLs7orTdlD6MJvmbIVrAcbFaFW9R2WIU9/nOzZxWRjhIRgPcI=
+X-Google-Smtp-Source: AGHT+IHrkX+CcccVhTGNwfhUGtMYn8rDSIQG438y+DU+7wum/b95cyXAUO7wmOgn1iLVTP1LFzTVsQ==
+X-Received: by 2002:adf:e646:0:b0:35f:e890:fbe1 with SMTP id ffacd0b85a97d-360718df02amr2564058f8f.19.1718286917900;
+        Thu, 13 Jun 2024 06:55:17 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3607510315csm1778848f8f.90.2024.06.13.06.55.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 06:06:57 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Thu, 13 Jun 2024 15:06:54 +0200
-To: "Paul E. McKenney" <paulmck@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
-	linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <Zmru7hhz8kPDPsyz@pc636>
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240612143305.451abf58@kernel.org>
- <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
- <ZmrfA1p2zSVIaYam@zx2c4.com>
- <80e03b02-7e24-4342-af0b-ba5117b19828@paulmck-laptop>
+        Thu, 13 Jun 2024 06:55:17 -0700 (PDT)
+Date: Thu, 13 Jun 2024 16:55:14 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ben Walsh <ben@jubnut.com>
+Cc: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in
+ cros_ec_lpc_mec_read_bytes()
+Message-ID: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -89,90 +68,45 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <80e03b02-7e24-4342-af0b-ba5117b19828@paulmck-laptop>
+X-Mailer: git-send-email haha only kidding
 
-On Thu, Jun 13, 2024 at 05:47:08AM -0700, Paul E. McKenney wrote:
-> On Thu, Jun 13, 2024 at 01:58:59PM +0200, Jason A. Donenfeld wrote:
-> > On Wed, Jun 12, 2024 at 03:37:55PM -0700, Paul E. McKenney wrote:
-> > > On Wed, Jun 12, 2024 at 02:33:05PM -0700, Jakub Kicinski wrote:
-> > > > On Sun,  9 Jun 2024 10:27:12 +0200 Julia Lawall wrote:
-> > > > > Since SLOB was removed, it is not necessary to use call_rcu
-> > > > > when the callback only performs kmem_cache_free. Use
-> > > > > kfree_rcu() directly.
-> > > > > 
-> > > > > The changes were done using the following Coccinelle semantic patch.
-> > > > > This semantic patch is designed to ignore cases where the callback
-> > > > > function is used in another way.
-> > > > 
-> > > > How does the discussion on:
-> > > >   [PATCH] Revert "batman-adv: prefer kfree_rcu() over call_rcu() with free-only callbacks"
-> > > >   https://lore.kernel.org/all/20240612133357.2596-1-linus.luessing@c0d3.blue/
-> > > > reflect on this series? IIUC we should hold off..
-> > > 
-> > > We do need to hold off for the ones in kernel modules (such as 07/14)
-> > > where the kmem_cache is destroyed during module unload.
-> > > 
-> > > OK, I might as well go through them...
-> > > 
-> > > [PATCH 01/14] wireguard: allowedips: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-> > > 	Needs to wait, see wg_allowedips_slab_uninit().
-> > 
-> > Also, notably, this patch needs additionally:
-> > 
-> > diff --git a/drivers/net/wireguard/allowedips.c b/drivers/net/wireguard/allowedips.c
-> > index e4e1638fce1b..c95f6937c3f1 100644
-> > --- a/drivers/net/wireguard/allowedips.c
-> > +++ b/drivers/net/wireguard/allowedips.c
-> > @@ -377,7 +377,6 @@ int __init wg_allowedips_slab_init(void)
-> > 
-> >  void wg_allowedips_slab_uninit(void)
-> >  {
-> > -	rcu_barrier();
-> >  	kmem_cache_destroy(node_cache);
-> >  }
-> > 
-> > Once kmem_cache_destroy has been fixed to be deferrable.
-> > 
-> > I assume the other patches are similar -- an rcu_barrier() can be
-> > removed. So some manual meddling of these might be in order.
-> 
-> Assuming that the deferrable kmem_cache_destroy() is the option chosen,
-> agreed.
->
-<snip>
-void kmem_cache_destroy(struct kmem_cache *s)
-{
-	int err = -EBUSY;
-	bool rcu_set;
+We changed these functions to returning negative error codes, but this
+first error path was accidentally overlooked.  It leads to a Smatch
+warning:
 
-	if (unlikely(!s) || !kasan_check_byte(s))
-		return;
+    drivers/platform/chrome/cros_ec_lpc.c:181 ec_response_timed_out()
+    error: uninitialized symbol 'data'.
 
-	cpus_read_lock();
-	mutex_lock(&slab_mutex);
+Fix this by returning the error code instead of success.
 
-	rcu_set = s->flags & SLAB_TYPESAFE_BY_RCU;
+Fixes: 68dbac0a58ef ("platform/chrome: cros_ec_lpc: MEC access can return error code")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/platform/chrome/cros_ec_lpc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-	s->refcount--;
-	if (s->refcount)
-		goto out_unlock;
+diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+index ebe9fb143840..f0470248b109 100644
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -139,7 +139,7 @@ static int cros_ec_lpc_mec_read_bytes(unsigned int offset, unsigned int length,
+ 	int in_range = cros_ec_lpc_mec_in_range(offset, length);
+ 
+ 	if (in_range < 0)
+-		return 0;
++		return in_range;
+ 
+ 	return in_range ?
+ 		cros_ec_lpc_io_bytes_mec(MEC_IO_READ,
+@@ -158,7 +158,7 @@ static int cros_ec_lpc_mec_write_bytes(unsigned int offset, unsigned int length,
+ 	int in_range = cros_ec_lpc_mec_in_range(offset, length);
+ 
+ 	if (in_range < 0)
+-		return 0;
++		return in_range;
+ 
+ 	return in_range ?
+ 		cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE,
+-- 
+2.43.0
 
-	err = shutdown_cache(s);
-	WARN(err, "%s %s: Slab cache still has objects when called from %pS",
-	     __func__, s->name, (void *)_RET_IP_);
-...
-	cpus_read_unlock();
-	if (!err && !rcu_set)
-		kmem_cache_release(s);
-}
-<snip>
-
-so we have SLAB_TYPESAFE_BY_RCU flag that defers freeing slab-pages
-and a cache by a grace period. Similar flag can be added, like
-SLAB_DESTROY_ONCE_FULLY_FREED, in this case a worker rearm itself
-if there are still objects which should be freed.
-
-Any thoughts here?
-
---
-Uladzislau Rezki
