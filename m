@@ -1,103 +1,76 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BFB13B580;
-	Thu, 13 Jun 2024 22:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A391311B6;
+	Thu, 13 Jun 2024 22:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718316346; cv=none; b=RvEvNXVFYqPrJ9icU6Yu2qNJTd0E3PQXuHbD4MwPcxrbo7LduBOOOpRC/143Bt0d38GPsbuVyU8DSWMntbNj4r88A+sDdK0enLNWGkPfF9pqfNss+z7pdv1PL1+uAQoNucsSDDkLZFNoMebAVTfaEhLSZHMd3z/oE8YGSFuHYjE=
+	t=1718316485; cv=none; b=OEyxsZ3bjUC2TZipEk1aIA0n4n+UbEiRpjVXckKdfjaszt4DTYKV7oTPoYik1GbaOp3odgafgbWI0WdQvU9Zd7W2nAVQjBEI15y3QEN/Kw9Drry34EL6+qqNNg5s6/LPfdtRRSb1SiwV1TYFXscrCFYXyZRbI7UcI6/BbGXJj/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718316346; c=relaxed/simple;
-	bh=WuU0Otsxtb3nAM3EXl2IyA1s7y0nsvgxdh2n60UdKBA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=qJtFIa8spllgY4mY7zVLFFYrTngqTvcX3Zk5AyxFg2Czz6cLYU/t04c+U4MZoWdVT4h/tPEzWjjkLhWU0odvzJmv5172aLXVA+4DHZyyfixlar73aDE+1jp+hGqocDSAHLNKiJ3WRUb3qDfjigz2bGHkujaZ0+zVvtbvYJOcq3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JUc888+3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718316485; c=relaxed/simple;
+	bh=fJMp4yW8tX/ZxoW/dcrwwsdkXCXb1Y/2P8xMjIFvow8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LUtJ9uGWPf4vGjkhy70iQKe2pL2gBDZs/1LHjeSZWTQLWySzR6B0gI3lqxoaz1KJvdN3d5ZdyLDLakytJaaeIHIKthmH08iKGFUlF9hHNaGh1HtdBunTdUfiDaGtvHfR2LZGMwEHlhlEzp0X7cDEXMwDLeqFBWYYyZ1ycta1Q2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwvp66QT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JUc888+3"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DJGNWr024639;
-	Thu, 13 Jun 2024 22:05:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=DfHGecqntcfd2j0ieWJNv1
-	YMjUiBfoV83KSHmttNx48=; b=JUc888+3xCIl/Y8axV5N4n/Id39LVtNCJqpzX8
-	u2JSQTgW8L3qHLb1oj8X1rXQVnt0sWxbXJ5xzROoR9MSWRh+pgqQ/8nhjoiuLJx5
-	ZaEkS6HZH4azpIPWLXVkWwscZ85illKmorolB3PDDSebY14eNm7QoVpuDmUocRke
-	rrc0MDq7qnDTPnrBobBzG1NXBxt5ANApRpcMpYE5uj/sunEa/iFz+ka4OmyVJozM
-	374CKAHgJBOxCHQLJ9DERrAuFc6h3zBTH0JM20/zw88EmHubM9FPV/Y07VwI1PoP
-	82q1xRXUYL9ZBM0HoK0Kosnp1p9i0YMP/ARQGnvky0wKCO9g==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yr6q4rd0n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 22:05:37 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45DM5aMo011063
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 22:05:36 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
- 2024 15:05:35 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 13 Jun 2024 15:05:33 -0700
-Subject: [PATCH] bus: vexpress-config: add missing MODULE_DESCRIPTION()
- macro
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwvp66QT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F4B6C2BBFC;
+	Thu, 13 Jun 2024 22:08:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718316484;
+	bh=fJMp4yW8tX/ZxoW/dcrwwsdkXCXb1Y/2P8xMjIFvow8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=gwvp66QTryv5yvPIyg64tGt1tkwzSYJB0aJ34O/EuJV4iqyfRtrikU7C0TRsVc/Lp
+	 mLO8DPgZvzMVFjWyblS7ZkvEUGNuGVBvdITyrzxFuNu9HLZoW0q1ujYSzVVtbis05Y
+	 ubNOtAhU3z2puVDdXAmHOD1LA26A/L/RI3vS4DOyxYZzzam93w0oIT8H2GRyqGjNXy
+	 3EsdIFLUIYiYRIHxZY+40zwWICZJY2uvMFtjE0nfTpQCxmGlGKBKBHggB3CiBL3Drt
+	 bHd5f2KAFvWHZsdek+Yz94E+BBguOb4TOXMEhWys2rUiauteT88a+d1dfmpMkkEXW4
+	 LVVTWebY0DwYw==
+Date: Thu, 13 Jun 2024 17:08:02 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] PCI: hotplug: add missing MODULE_DESCRIPTION() macro
+Message-ID: <20240613220802.GA1086403@bhelgaas>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240613-md-arm64-drivers-bus-v1-1-e8162434e0ca@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIACxta2YC/x3MwQqDMAyA4VeRnBeo1nWwVxk7pDbTgO1GoiKI7
- 75ux+/w/wcYq7DBvTlAeROTd6loLw0ME5WRUVI1dK7rXWg95oSkOfSYVDZWw7gauuBdijfyzFe
- o6Uf5Jft/+3hWRzLGqFSG6Tebpaw7ZrKFFc7zCzJfbemFAAAA
-To: Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: DnxrYvnKzcXaH35lUmEqjj1wltVmnSz7
-X-Proofpoint-GUID: DnxrYvnKzcXaH35lUmEqjj1wltVmnSz7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_13,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- impostorscore=0 adultscore=0 malwarescore=0 priorityscore=1501
- mlxlogscore=999 lowpriorityscore=0 phishscore=0 spamscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130159
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612-md-drivers-pci-hotplug-v1-1-2b30d14d783d@quicinc.com>
 
-With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/bus/vexpress-config.o
+On Wed, Jun 12, 2024 at 10:45:23PM -0700, Jeff Johnson wrote:
+> With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/hotplug/acpiphp_ampere_altra.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Applied to pci/hotplug for v6.11, thanks!
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/bus/vexpress-config.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/bus/vexpress-config.c b/drivers/bus/vexpress-config.c
-index d2c7ada90186..64ee920721ee 100644
---- a/drivers/bus/vexpress-config.c
-+++ b/drivers/bus/vexpress-config.c
-@@ -414,4 +414,5 @@ static struct platform_driver vexpress_syscfg_driver = {
- 	.probe = vexpress_syscfg_probe,
- };
- module_platform_driver(vexpress_syscfg_driver);
-+MODULE_DESCRIPTION("Versatile Express configuration bus");
- MODULE_LICENSE("GPL v2");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240613-md-arm64-drivers-bus-0630db7a3ee5
-
+> ---
+>  drivers/pci/hotplug/acpiphp_ampere_altra.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pci/hotplug/acpiphp_ampere_altra.c b/drivers/pci/hotplug/acpiphp_ampere_altra.c
+> index 3fddd04851b6..f5c9e741c1d4 100644
+> --- a/drivers/pci/hotplug/acpiphp_ampere_altra.c
+> +++ b/drivers/pci/hotplug/acpiphp_ampere_altra.c
+> @@ -124,4 +124,5 @@ static struct platform_driver altra_led_driver = {
+>  module_platform_driver(altra_led_driver);
+>  
+>  MODULE_AUTHOR("D Scott Phillips <scott@os.amperecomputing.com>");
+> +MODULE_DESCRIPTION("ACPI PCI Hot Plug Extension for Ampere Altra");
+>  MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240612-md-drivers-pci-hotplug-62a6e918e180
+> 
