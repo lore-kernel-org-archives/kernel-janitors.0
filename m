@@ -1,102 +1,100 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7BD84A48;
-	Thu, 13 Jun 2024 18:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71B9F9F8;
+	Thu, 13 Jun 2024 19:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718305042; cv=none; b=caHUItubC/ogHtFhSZN+JiNllO5icJKDZweX8HMhXnO7remb6T1F1VJB3LzYely9LMQPjgmhuSe/Y8X/7M8ZtDhvjUTCb4FuSc97HtMTASUcrp0mkUJBOt9qDrgfFAG0D6CjoKPsRN6E3gJFsJ0Vz4VsHF/4UHUKWpZ4AZB5Zpc=
+	t=1718305665; cv=none; b=fY8tPkxC0Jdw0hFLmygmHpYB3cONjXX42cuJPI57IX9y2YJPgkCGrHDLe1qdNKkDwB60GcYNT1Cc8ENi6fL/7XeWtPNfPs0aJYp3ujsxFJXeXDJVxo0AzAC0DmcwMZUtU6XIX80WQVkvPTVy85z8xaiyBF2fea52vQGBHyIB9HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718305042; c=relaxed/simple;
-	bh=P+m1t5xHvMIr3fsmh88GE/n8OkuO/B9/k7oOyAh8rho=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=epZP867SUKcn0RGYpsjyt5P8G3UjzxUi/jlHB+zFWJ7oiDrtF+3Xq/Qj3uWOj6oNjaoFV8Z0s2gDaOShcwY/pdLCZxK0QxINVCNOVyFnHO22Yw9pHE8wts0h1AxPLwLd+STGHjeY4sy9eO0vwuWG0bZS9xkeQYyi5Bkaa0dMVlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TWTylQ82; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718305665; c=relaxed/simple;
+	bh=rBIdEYd5jFu0+smwdlfbR/AfIbyZXKk7Vhu6cLGSxZk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h/J8PYNZnwQ9BaGSkCpgQQRBlvgmhov8KMiHMe1N6M3fj7Ue5bFy9xhN9F/lJDtOE157neWp+k0O4y4S/HfhTQ8kul2GGhqg/KHgf77IUvAmeOexrtOy0++i7F4MefHnKuuEYwopIxAPD5GfclUmuI4AE+22CpWpzmJz+GktEjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cP2izgT3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TWTylQ82"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DItMOb025340;
-	Thu, 13 Jun 2024 18:57:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=viNaj7mF1w8XPWkPxnYdqR
-	wOXEPjbFp19wKj6++NNc8=; b=TWTylQ8287387TU2hcOnqKISKdlZi2ggrPjvEF
-	ZajMPQZVBGxWHzi8Jy+xtjAA13wfWTnUTfv3S6Oh6fwWImBTWDRZgyz0swJNq6rq
-	bGQd/SKBdLSEVrVENtsxJqLAHOgpyuu/Zzt8ZlHqC8YmyArGdLseEUMZuPYvc+er
-	pTsDizxYjHz1Ao+pMS1TkIXBE+KK5mlT9+bIu7NH2rbYsu2LlL95k1Utck6UmXgI
-	rKyj7k/B8InHv2C1v6SPebr0BcHzo3vAHaxajh5ZqgTy4BT4btm80S+ti0jtyf1s
-	kYRaz/+dDUYfDiHmSRBjI0jijmMgix9qUwixvt4rJYEoUfqA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yr6fc007w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 18:57:17 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45DIvGll001891
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 18:57:16 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
- 2024 11:57:16 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 13 Jun 2024 11:57:14 -0700
-Subject: [PATCH] dmaengine: fsl-dpaa2-qdma: add missing
- MODULE_DESCRIPTION() macro
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cP2izgT3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B1BAC32786;
+	Thu, 13 Jun 2024 19:07:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718305665;
+	bh=rBIdEYd5jFu0+smwdlfbR/AfIbyZXKk7Vhu6cLGSxZk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cP2izgT35cGD+7lFMocFlkB/VSyZC8KX3kPDZLWLH3aWldwNIfgPDoMmYvdP1pmrH
+	 PcHFQEUbPAKyC0V2PYUyUEOcPTsOKFYGDyeD8yLBgezUeKThmmJSubnzw7BW7PMMDU
+	 Yestw4SGflGTMTixqwLiqXQo6EPSUIDo2kehVkazTKQDYjBcYfP1d0sbIYairUEBeh
+	 IfNZQOMXjrtCpk1PVtC8Kg9NofkAb7PgjKUeyCScn6kdkGFwWe77UsOtmUhJv0qr76
+	 7ytSVQqQWQfE22Yyj+8C5lZxCTfLeQUWdPBvcFLqMRt64pV9xMSevNEXbMfrDHX6Wr
+	 LPzcw0tWGhCtA==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5bb10cfe7daso93935eaf.2;
+        Thu, 13 Jun 2024 12:07:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW53A8YknTAwDjRoR19kmFJTF6vEGut+ovX2AKaSrHhfU9nRjY8WlBcvAegr5OMILgOsLK2k6vFwF65R782@vger.kernel.org, AJvYcCXe5fz7eVDEClN5J0T7kcMpAg657k1A8BapJWgVNkuKXbBojothjMx78sk1Qe/k6oaHHQlZ1PDn7RZf6Q==@vger.kernel.org, AJvYcCXwBK2L08NttabDf3PdHF29qaw98Wf9OARnh2iwYkIcrrOEXz/gy2Qjm1q9tC4yubXy88iCyzwdLV5IpdY7R78=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu1KjWDdnGsz/znwdy6FBineXqJakSFj+1Len3TxJdEEyx/nzs
+	4+1lQvU/frTyHKe+T9I0MhXhzxWdNxpYoZxE50T/ZKOIUrEFlokB3SvTunE4PEcPpBbmsd8c3j2
+	0VIDwKrUSGf9WK/kXa6wkAsL77ww=
+X-Google-Smtp-Source: AGHT+IGL1poXQ3NOZsQ6DH+8PEMCE1TZqGMdLOTA1ZPa7viW8qftegdQDE3IjM3d4DlSW0uwE7fIglsLzbnco2ThpJs=
+X-Received: by 2002:a4a:de45:0:b0:5ba:ca86:a025 with SMTP id
+ 006d021491bc7-5bdad9f3f2dmr636316eaf.0.1718305664456; Thu, 13 Jun 2024
+ 12:07:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240613-md-arm64-drivers-dma-fsl-dpaa2-qdma-v1-1-815d148740e6@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAApBa2YC/x3NTQ6CQAxA4auQrm0y/GSiXsW4KExHmjAjtkhIC
- Hd3cPlt3tvBWIUN7tUOyquYvHNBfalgGCm/GCUUQ+Oazvm6xRSQNPkOg8rKahgSYbQJw0zU4Oc
- kX2NovWtvniOU0qwcZftfHs/inoyxV8rDeLYnyd8NE9nCCsfxA2JndWuUAAAA
-To: Vinod Koul <vkoul@kernel.org>
-CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: aqG4T4zqVCsGGekInVM5wzIzHXv-g2UY
-X-Proofpoint-GUID: aqG4T4zqVCsGGekInVM5wzIzHXv-g2UY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_11,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- bulkscore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=866
- priorityscore=1501 mlxscore=0 spamscore=0 impostorscore=0 malwarescore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130135
+References: <20240603-md-drivers-acpi-misc-v1-1-fd7f7de1ce19@quicinc.com>
+In-Reply-To: <20240603-md-drivers-acpi-misc-v1-1-fd7f7de1ce19@quicinc.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 13 Jun 2024 21:07:33 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jCtky__pmmZoxpa6WCGVDLukmmDR01nUsSHaT6z3d4vw@mail.gmail.com>
+Message-ID: <CAJZ5v0jCtky__pmmZoxpa6WCGVDLukmmDR01nUsSHaT6z3d4vw@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/fsl-dpaa2-qdma/dpdmai.o
+On Mon, Jun 3, 2024 at 4:29=E2=80=AFPM Jeff Johnson <quic_jjohnson@quicinc.=
+com> wrote:
+>
+> make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/acpi/acpi_tad.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/acpi/platform_p=
+rofile.o
+>
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/acpi/acpi_tad.c         | 1 +
+>  drivers/acpi/platform_profile.c | 1 +
+>  2 files changed, 2 insertions(+)
+>
+> diff --git a/drivers/acpi/acpi_tad.c b/drivers/acpi/acpi_tad.c
+> index 1d670dbe4d1d..b831cb8e53dc 100644
+> --- a/drivers/acpi/acpi_tad.c
+> +++ b/drivers/acpi/acpi_tad.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/suspend.h>
+>
+> +MODULE_DESCRIPTION("ACPI Time and Alarm (TAD) Device Driver");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_AUTHOR("Rafael J. Wysocki");
+>
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_prof=
+ile.c
+> index 4a9704730224..d2f7fd7743a1 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -217,4 +217,5 @@ int platform_profile_remove(void)
+>  EXPORT_SYMBOL_GPL(platform_profile_remove);
+>
+>  MODULE_AUTHOR("Mark Pearson <markpearson@lenovo.com>");
+> +MODULE_DESCRIPTION("ACPI platform profile sysfs interface");
+>  MODULE_LICENSE("GPL");
+>
+> ---
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
-
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/dma/fsl-dpaa2-qdma/dpdmai.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/dma/fsl-dpaa2-qdma/dpdmai.c b/drivers/dma/fsl-dpaa2-qdma/dpdmai.c
-index 36897b41ee7e..b4323d243d6d 100644
---- a/drivers/dma/fsl-dpaa2-qdma/dpdmai.c
-+++ b/drivers/dma/fsl-dpaa2-qdma/dpdmai.c
-@@ -367,4 +367,5 @@ int dpdmai_get_tx_queue(struct fsl_mc_io *mc_io, u32 cmd_flags,
- }
- EXPORT_SYMBOL_GPL(dpdmai_get_tx_queue);
- 
-+MODULE_DESCRIPTION("NXP DPAA2 QDMA driver");
- MODULE_LICENSE("GPL v2");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240613-md-arm64-drivers-dma-fsl-dpaa2-qdma-e8fd360396ef
-
+Applied as 6.11 material, thanks!
