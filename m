@@ -1,133 +1,77 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA15C652;
-	Thu, 13 Jun 2024 00:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C67A8BEC;
+	Thu, 13 Jun 2024 01:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718238723; cv=none; b=kz9IZJ9RGCIZLnXXGS6F/hkIPFo0YG7XXGqdkRhoh61r72EGJLJozUcb4hR1sRD47Uq0BQeFESSWH45fbtz465gmzMWcnSItmUK84AI4gn0ghPzgcu5J/Vc2MnA8FGHDvYMNONreYzWtk9uSWZPzNBdquN1fC6Glp7CVYF4ah80=
+	t=1718240645; cv=none; b=Y13sNSYhde5gyOMgKV8d30p+nbw3K5a2j8H+Dpd+siXPPkRYibq4j0cu3ADnVhMWSprTcJfB1zhbF/sjzYZNJe87eHZCjPt5yYKg5Kdf3qARzoU1KIrpPk8l8H2JgLT5QnK/ueQaLqxLlef5fczmAXjm08bE8mhjAUJIzI65VZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718238723; c=relaxed/simple;
-	bh=+UbqprezWqxEbhKmSRaDsTwuur4mIfjSb1NUN/fCVbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K4dh9MDL+JHFhrN4K326PI0WduhfcrP0KhZ1vsSROdINZ2B3ogPVKOXnB1Uo+H6O0BytOPqf++V2LhEY9pWfWM0ZnHgVJz2s55AWHMeKQlVmJQpe5brMpR3xllEF7YQuuU8s60sUHVwGOlPGsfkvyKPqZdAOSthwo7h2J7Y9lRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=eF1VsvRJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718240645; c=relaxed/simple;
+	bh=eI6fr6y6BDbBbC7J2/cwrajhoyoAgMBifMm8zEHNPTY=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=kE9Y2jkgDXpx3JJoimkwsI7hUqH8lFsg+JL+Sli65EwlmxgUJluq+TzpspRxYdFdp4982hiQJwA7K6qEhCJBz8Qi2lnl5uBB5OE+ab74Ec8Xw4SINqJXSqNP0mabgLbma4phpo88BHJi69CmocJlbDQU2Veel290mEgr3atNJmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Sezacqbl; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eF1VsvRJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45E47C116B1;
-	Thu, 13 Jun 2024 00:32:00 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eF1VsvRJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1718238717;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GLUb85oLbjyoG+FcfWhggv8KT8bN6SBWkCY+yvZAHV8=;
-	b=eF1VsvRJdSDlt+jjhJiKZ5eDDi+CCrqpbP2qILiWHB7HfEnI5D10gtd4TmY1udoArULYFC
-	3p47U2iNEXteOz8cl56PqFBBedrFExfiroU7FcnCZmp/raJumk5hGsmXBZe7KI+jDx3FRz
-	mt6afVKn9JVqLJRPjTB0wjVVNYzZzWI=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 0c052d48 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Thu, 13 Jun 2024 00:31:57 +0000 (UTC)
-Date: Thu, 13 Jun 2024 02:31:53 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
-	linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	bridge@lists.linux.dev, linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <Zmo9-YGraiCj5-MI@zx2c4.com>
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240612143305.451abf58@kernel.org>
- <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
- <Zmov7ZaL-54T9GiM@zx2c4.com>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Sezacqbl"
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2EDAE4D0;
+	Thu, 13 Jun 2024 03:03:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718240629;
+	bh=eI6fr6y6BDbBbC7J2/cwrajhoyoAgMBifMm8zEHNPTY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=SezacqblUV0M+VvWatCgzsFjZb251HxTCOoD/48aQu+qMllu8XtUlJUqK8cFbeM9L
+	 RWEFSLHzVInRCdjcwYaCMKDXfkljSg+9Njn6UU6DRdHv2zVqTjkRwmz7u2ilO7rgPP
+	 4K9DhjFaQxGup9aQiNwG07pJ/77NW9IupBnYjJs0=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zmov7ZaL-54T9GiM@zx2c4.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240612-md-drivers-media-common-v1-1-b5603c85f629@quicinc.com>
+References: <20240612-md-drivers-media-common-v1-1-b5603c85f629@quicinc.com>
+Subject: Re: [PATCH] usb: uvc: add missing MODULE_DESCRIPTION() macro
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jeff Johnson <quic_jjohnson@quicinc.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Date: Thu, 13 Jun 2024 02:04:00 +0100
+Message-ID: <171824064052.2248009.2434759914694160537@ping.linuxembedded.co.uk>
+User-Agent: alot/0.10
 
-On Thu, Jun 13, 2024 at 01:31:57AM +0200, Jason A. Donenfeld wrote:
-> On Wed, Jun 12, 2024 at 03:37:55PM -0700, Paul E. McKenney wrote:
-> > On Wed, Jun 12, 2024 at 02:33:05PM -0700, Jakub Kicinski wrote:
-> > > On Sun,  9 Jun 2024 10:27:12 +0200 Julia Lawall wrote:
-> > > > Since SLOB was removed, it is not necessary to use call_rcu
-> > > > when the callback only performs kmem_cache_free. Use
-> > > > kfree_rcu() directly.
-> > > > 
-> > > > The changes were done using the following Coccinelle semantic patch.
-> > > > This semantic patch is designed to ignore cases where the callback
-> > > > function is used in another way.
-> > > 
-> > > How does the discussion on:
-> > >   [PATCH] Revert "batman-adv: prefer kfree_rcu() over call_rcu() with free-only callbacks"
-> > >   https://lore.kernel.org/all/20240612133357.2596-1-linus.luessing@c0d3.blue/
-> > > reflect on this series? IIUC we should hold off..
-> > 
-> > We do need to hold off for the ones in kernel modules (such as 07/14)
-> > where the kmem_cache is destroyed during module unload.
-> > 
-> > OK, I might as well go through them...
-> > 
-> > [PATCH 01/14] wireguard: allowedips: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-> > 	Needs to wait, see wg_allowedips_slab_uninit().
-> 
-> Right, this has exactly the same pattern as the batman-adv issue:
-> 
->     void wg_allowedips_slab_uninit(void)
->     {
->             rcu_barrier();
->             kmem_cache_destroy(node_cache);
->     }
-> 
-> I'll hold off on sending that up until this matter is resolved.
+Quoting Jeff Johnson (2024-06-13 00:58:59)
+> With ARCH=3Darm64, make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/common/uv=
+c.o
+>=20
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>=20
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-BTW, I think this whole thing might be caused by:
+Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-    a35d16905efc ("rcu: Add basic support for kfree_rcu() batching")
-
-The commit message there mentions:
-
-    There is an implication with rcu_barrier() with this patch. Since the
-    kfree_rcu() calls can be batched, and may not be handed yet to the RCU
-    machinery in fact, the monitor may not have even run yet to do the
-    queue_rcu_work(), there seems no easy way of implementing rcu_barrier()
-    to wait for those kfree_rcu()s that are already made. So this means a
-    kfree_rcu() followed by an rcu_barrier() does not imply that memory will
-    be freed once rcu_barrier() returns.
-
-Before that, a kfree_rcu() used to just add a normal call_rcu() into the
-list, but with the function offset < 4096 as a special marker. So the
-kfree_rcu() calls would be treated alongside the other call_rcu() ones
-and thus affected by rcu_barrier(). Looks like that behavior is no more
-since this commit.
-
-Rather than getting rid of the batching, which seems good for
-efficiency, I wonder if the right fix to this would be adding a
-`should_destroy` boolean to kmem_cache, which kmem_cache_destroy() sets
-to true. And then right after it checks `if (number_of_allocations == 0)
-actually_destroy()`, and likewise on each kmem_cache_free(), it could
-check `if (should_destroy && number_of_allocations == 0)
-actually_destroy()`. This way, the work is delayed until it's safe to do
-so. This might also mitigate other lurking bugs of bad code that calls
-kmem_cache_destroy() before kmem_cache_free().
-
-Jason
+> ---
+>  drivers/media/common/uvc.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/media/common/uvc.c b/drivers/media/common/uvc.c
+> index 9c0ba7a6c185..c54c2268fee6 100644
+> --- a/drivers/media/common/uvc.c
+> +++ b/drivers/media/common/uvc.c
+> @@ -180,4 +180,5 @@ const struct uvc_format_desc *uvc_format_by_guid(cons=
+t u8 guid[16])
+>  }
+>  EXPORT_SYMBOL_GPL(uvc_format_by_guid);
+> =20
+> +MODULE_DESCRIPTION("USB Video Class common code");
+>  MODULE_LICENSE("GPL");
+>=20
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240612-md-drivers-media-common-01f67d64768a
+>
