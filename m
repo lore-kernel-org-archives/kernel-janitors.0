@@ -1,68 +1,152 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2570713541B;
-	Thu, 13 Jun 2024 20:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CEF1877;
+	Thu, 13 Jun 2024 21:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718311840; cv=none; b=SHAoRUiXYCw9UBvLV48PFtOuDWgoM6+y6xOa0asKRCjvg2OKX1q30mZJWRQLqAPDa196Cq5RSFNK55N+1y3TiZS/xpNA0E4DLw/ctNiSqdO99DGxr/++8OQyZDltjjWq8oImo6hP5NqfdGVsekKuPA09osLs6q5/o0XJuDXCQ0A=
+	t=1718313174; cv=none; b=a1KOR1ICI95ziX/nSk4QKVVmTsmTVqNAQaWqiJD49/yrBf/LCB41ps62IWTAC/Vpi9AzzndrBbVSR8b1PVTmOH06pQJM9fU9yFLxFI3uv79GND1IWhwnHwgMkWkEYnkVoTPMS1zeqYsM7dk76SpZ8V+FqZjwJMtkuXqy+4gEbbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718311840; c=relaxed/simple;
-	bh=/iiG4vFIZ38MXvOcAlrpemCi3LyL4Xdk/H4OkWaE6LY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YuhQbKhfd0EZxVnkUw69BmOI/WoJMXACorrKGPyiisQHumkhDVhC8LH+qT7AQHTdaI6+NRvjQtR1ZjuGgPhuy+2U3Kwx6M83YEuCHAPVU/YmSANBTNqHXifcR+4NAfO2kadgHwreOekiT/WxZEBTMqIp0v8QaEirbXTExN9Er7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com; spf=pass smtp.mailfrom=jubnut.com; dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b=opGQI9ec; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jubnut.com
+	s=arc-20240116; t=1718313174; c=relaxed/simple;
+	bh=9tQSYSgyBhMSDag4XhwdfDSaNudYfQHJ7twOkn5RodU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gmT+crXiV3z2IZ4FRUp0JscQChr2V2X7FAAC01jmT7ekevq2G0x3HlTKP4dxhLfPg2qpcJefc9UA6uuo6JEQl3zlTqpmBSuqhX75t3lH/g0iaksUzTbdGGo6zAAJnRqVTFljxJ9X0Qr00qR9CjlvQ2zyi/1UsJLifzZXc8J5cbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=OzNTpt+G; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b="opGQI9ec"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4W0ZL76zJfz9sq4;
-	Thu, 13 Jun 2024 22:50:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jubnut.com; s=MBO0001;
-	t=1718311824;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/iiG4vFIZ38MXvOcAlrpemCi3LyL4Xdk/H4OkWaE6LY=;
-	b=opGQI9ecLlIFg++mCvNjcXejr7aZJSrHM2hnUkXN39qe5uP5zFjPMtLeCgaKBXlIAyCMB7
-	h3uy1y0nHpcSlbjx33jLIn78epOgHPoza7g8zd6X5eLR2djixq73b+VXPFyuLaDzdKSUK5
-	z7QMBKyxScwTExX3FcTGK7ecXMq/RQlUsUheFTbdUbmZhI7B0FkkApk3ExGzZGexComo5h
-	XFa7bnnpXytw8wI9FNKw4BPrbAicmjyTZD3zbQAQkW4uN+qVH2k61I+/pjwB1YNDpH2wTZ
-	R3fTf5xEmyOkKV/6ayqCtp/Fss152Kj0+hLkbquBK4+voDmCMQkNk4TsY8a+0g==
-From: Ben Walsh <ben@jubnut.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
- Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in
- cros_ec_lpc_mec_read_bytes()
-In-Reply-To: <68f1d8df-69d2-4246-8c64-4c7cc975feb1@moroto.mountain>
-References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
- <87sexgrdk4.fsf@jubnut.com>
- <3226cba0-82c5-47a3-89da-01ffa935a9dc@moroto.mountain>
- <87sexgaemn.fsf@jubnut.com>
- <68f1d8df-69d2-4246-8c64-4c7cc975feb1@moroto.mountain>
-Date: Thu, 13 Jun 2024 21:50:21 +0100
-Message-ID: <87h6dwa7oy.fsf@jubnut.com>
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="OzNTpt+G"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1718313163; x=1718917963; i=deller@gmx.de;
+	bh=CTyDv+PUvlT1RKfroSpzt4fEEz6wcmrhbKFLHShyk/s=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=OzNTpt+GNyXg5g/VPjh7EQ+GTHBLNXRBNuaRDtLYeENJ8FL+VrIHI5eSTqYp5uMO
+	 gYn9YPJr2WswRq8l0bbE9JTBnXf4syy3KgVq9MwZ/upXUCwNijoBAwwWWGWspAAJR
+	 jrI3w407I0XIyr0plyOHTq8i6FOE83GdoAL0ukdDze6XK42gSwaK9Z1bFZqArQLP/
+	 4ilzqpy4e3xvdgL2K8n0A4RSKrOn6S5peTnmGfGjN8Ubxq5RBYk73QE+9LroaJUk6
+	 0nrpHzL273qiEsnGTEbYslFV9Vlq32+oYu+Wztij4L6iB0ErPMC3U30KD+qWhVf39
+	 5p4VyXxezCpBmh9YfA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([83.135.217.92]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mj8mb-1swRpe1tqf-00l3MM; Thu, 13
+ Jun 2024 23:12:43 +0200
+Message-ID: <3adfc015-b54e-4ff6-831c-60d55118079b@gmx.de>
+Date: Thu, 13 Jun 2024 23:12:42 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: 4W0ZL76zJfz9sq4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: vfb: add missing MODULE_DESCRIPTION() macro
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20240612-md-drivers-video-fbdev-vfb-v1-1-9bcbc286aac4@quicinc.com>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <20240612-md-drivers-video-fbdev-vfb-v1-1-9bcbc286aac4@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:jIUSLwIzNEpQok55aYoZICYDlbc7/7+gm3YIqdUOA2gwA8qy3nv
+ 7FpWYj/aUzZTdd6gCOH7VSplne1xQBuirUbuafoa2ysu1mBvWe59NYfWxlmTX3ATHoVR/Yr
+ OpjHj8IkEfQW2a++VB370xWF0n8o6IwDOHz1/lNhH+UvSkW7mZVjXgYqrKHXyDJV1Qv/yDP
+ mvZl0dHnMG+fBlPN32k9A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:FvdmspNuxYE=;1hmwyW7XroWlZjZTcT7rWWJOlux
+ JtMiLQJWmbPnsICiW+BGaYnLZK3MicdcmcQbXgs4YFF3yUq6+UUTmynC5qQfgLj2P2coug0/1
+ NQ11mdHxSxgxJ/7zer0Nqp2Ic7z7bJuirZf6MyobIdZvw1gHIu0ZdHSj9gFsntu+m5C8AswIn
+ A05LbbWZgBwyTOeX2/GphJwRFNZqu0IB6xYbztur8DUoL63V17H2UQss+Kow67Jvs6DF/WngU
+ HMHzD1hJcoWLWjCwN8Dydv66JDQdIcLPzYB7VNYyyqrieDYwt6b6rfuaVY00quorqnTbHqA7j
+ YKNUkmC4P5ZFj/v1GHc4kuNquunTPEM9xW1PJxVznDe6MjKD6fzMiRPvbkxacedOTtLPS0kfP
+ fEvaKWE45tI/ovcXMfcubjlK+8d9TCBj/1fgzdweCG/raJ49XkkYTrNjCyEiaFLxH+K4cIV66
+ Khp5xsARKuNcymotKTZVRiJzs/4aGgvEu4djKso71eYqwePUnwmqT0EzVofBuDVSW2KPwioz3
+ QWG8x/dEZycnPO0e03xMGpTXhYkw05fVaIwQ5ZbPVX+I9dyXSANFDifw3ziTyi2RTY5voXfCJ
+ glCOFd7xdCeYjlWEW5xgzyFwWdemDCRMhQlEZTX6u391dpKT+HT82GwdE/R3PdZqVclwBoAQF
+ 6ynuPN6ymqCWwtjCcPjqmukksd3oMxrliiRI29q6xzgkx84WQ9vyHc0P8Odh7u/a2hyuvirUv
+ fLpuAmDpZQ4L9uqBAxmKlgYFstvVWAcdbVm3kwXdz4l25NUXQHCA+coFRASLHokymeY+x9YqD
+ TogiN6PCf2uXica4v9EVrUZVuFmEYGrEQfvOqkAhEEKY8=
 
-Dan Carpenter <dan.carpenter@linaro.org> writes:
-
-> Perhaps the cleanest thing is to delete the length == 0 check in
-> cros_ec_lpc_mec_in_range() and add one to the start of
-> cros_ec_lpc_io_bytes_mec().
+On 6/13/24 04:44, Jeff Johnson wrote:
+> With ARCH=3Dx86, make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/vf=
+b.o
 >
-> I think that's a good solution.
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-I think it's a good solution too. I'll send a patch. Thanks!
+All 6 fbdev driver patches applied to fbdev git tree.
+Thank you Jeff!
+
+Helge
+
+> ---
+>   drivers/video/fbdev/vfb.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/video/fbdev/vfb.c b/drivers/video/fbdev/vfb.c
+> index f86149ba3835..158e48385c24 100644
+> --- a/drivers/video/fbdev/vfb.c
+> +++ b/drivers/video/fbdev/vfb.c
+> @@ -546,5 +546,6 @@ static void __exit vfb_exit(void)
+>
+>   module_exit(vfb_exit);
+>
+> +MODULE_DESCRIPTION("Virtual Frame Buffer driver");
+>   MODULE_LICENSE("GPL");
+>   #endif				/* MODULE */
+>
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240612-md-drivers-video-fbdev-vfb-a4ed3808e861
+>
+
