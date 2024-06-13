@@ -1,47 +1,67 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A09A18622;
-	Thu, 13 Jun 2024 05:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A495B13C660;
+	Thu, 13 Jun 2024 07:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718257534; cv=none; b=bNkcrAue5AuAEwg2N4lXEq6ikaRzq8NqMXcUKdyZ5pS13ZJsgrXGDreu3lg+fznPNXbitSK7FxWpV3vNJYkCSyYv7hEx691uhFzh56tE5Qp3dTMkX/GJtjOSA52OUuTpLpFq50vizRsOAbHB3KEDkKYhTCEA8bLuUlAvyBLbZ+w=
+	t=1718264074; cv=none; b=pkEWiDIsI3Ud0/2YwFcQitl/EgNoTf0HWGKa4c8YPkGPQFE/9ZqA+1iGmaDvrbu7yPnXFU4ZSY/nEG0Ftr0UEKOHXGvyLyjkluXeXWnmU8FA7hbOTGRwxt02oRanAo5IMThjaiVDyTHIq7GxiysnMp+PsCszBKCQnOd3PW3PwcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718257534; c=relaxed/simple;
-	bh=KsBXxwYITcXSdlkMS6rL3MY1wyPo+d0h2FTlBf/5jvk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=rjeVqLLNiyvC11E9IjfRyZzHfqI9ZgfhHwHgY1xBdWzK0yge4Dtk6Jax8tKAgaIBTLcNGN3E/Bz020z++auYZSOt7GqaIMlQEKafCq38L87K8iVS7Q1tVpE6/8Gkl4Tt65JdWhju9UQs7YNtqnNrCOX4gitdaEqNfn9DAmaCjm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jnt91ElF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718264074; c=relaxed/simple;
+	bh=BgGPUA4CJHBAi6sstPxqPZGkojFNDXKzqwrZiGnPZHQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Ao2Du3jDFCmeUd6tx0QMLcAjZezzimeCa+GX7MxVeT5ockW0Ad2Df8aPeYzUybeLDLkLnn/YA2vhW2MEfgPlfrIfBtrch/kQzxtLrOz1knFmGRvlmJdl1U53P8k3aHX1chQ9DmqFskvYHGf3uP26vw6bMQTzPoalbd3Ut8rpDUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z4cBLzcg; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jnt91ElF"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CKn6oZ018799;
-	Thu, 13 Jun 2024 05:45:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=PUfH8gcBQoVjuIp6zSr1uO
-	GHiSZo5qY1U/hx6A6Gfhg=; b=jnt91ElFiT7JCIYLK6tGLz/P9VXnz4Kb1q6h/J
-	HYq5jJ33OfeDQ5NQCJcCR0C7cTeEEgk1P4VNjc8px803cvadjfW0Qb44mQwHa1sq
-	KTXXhf5sUAVXmm67GbpU8KfqO3Ht1RrlqcXYLZwYhBNe7729oGK9LIXQbtsUZtJ9
-	mUWGjZr3+ilFQ5LRDEiKlJVGFMBLmiAux/Y9oQAPcI8RCUYernpiav2QUdK2Yt4f
-	gh7tRRtLpf4u1W6xeQm3DAbdPdl/O9mHUMuHyogYal+VrbJnhVRCCffj14hss9Ee
-	RyHwUhkK9yGVm6uZ2PsUiE49fdgIQhahDH5MHliFKFyGsMgQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yqbfq9pfy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 05:45:27 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45D5jQAw001163
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 05:45:26 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 22:45:26 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 12 Jun 2024 22:45:23 -0700
-Subject: [PATCH] PCI: hotplug: add missing MODULE_DESCRIPTION() macro
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4cBLzcg"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42189d3c7efso8516715e9.2;
+        Thu, 13 Jun 2024 00:34:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718264071; x=1718868871; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MSHRYQpgTDWbDhn+hhtstnXRqbhO24DfQNz+E/HyPBU=;
+        b=Z4cBLzcgRHjbW21WaW2xRi64ZiXmV/Gwhzs/xo/g1Q8frvnEcfQ6+kh6Um0Qh0YJ24
+         p8e6whW27/S7k2zKjHI8hJtMQSI/BQkRSKpB1XRIpc78BpSc/EdtHT8onVk3QlpZPphV
+         /panKcM6Lg1xkm2gyADwa/wCMakSdK7ANOoMsUrzguTwcuZLm4gFfDUGdy6QAoDLVOL5
+         SIbGvWLs4j1M7THeP30HBcrAR1rfWKLbdQkZEdeQyGV3a40RmULs/Hzt4HgYGTKM4tVh
+         RJ/ez12Am7sUeZgqGAg66SOgMi64E7Ikd+niF9RlYpHHA+ExqWalDnjJMCynzzO0KNNR
+         kPKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718264071; x=1718868871;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MSHRYQpgTDWbDhn+hhtstnXRqbhO24DfQNz+E/HyPBU=;
+        b=RmewW2eMOG9wBzY/FC4f1RnMGfaJ4nlJCw5MIEkx21rkp76zmrSDcGv6OJ/O7ncxas
+         zaj08UED+T/eA/IJFax9ZkeH/sLWWljivsOceqacraepP3PQlHa95DnEDLmM2soVEA2Q
+         n7zWPW9qCAZUPW1M1l3/N/1RRP4LDMbh0KFWZOQTXtniwsJtkD1SUL8rLpRKgkVRjcv+
+         o3qDlohXzcpl2OQ4/OlnBCtq54aHHyI7DETXeRTiq+TsvP42PRRQByE+c1bVmbCtTcvp
+         xuOV7shHfp0vaNv0SFlO1yqRSMzhDLT6oK+ogSpeRLnLCMgwoUSnwfGzAISFfW+X317O
+         12yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUteEbYt+n0Zgmb6EZ0gC9VoJr+yFQIR2kRv/I8GWQL+LImhAdGPxk4GvPUzEkDAxYQcfxlMaLcnn7+S8pFRCaDF8xdKxtVjHfSdkIWy6LNXC0DDZUlUj8c3LRStZLjnu0/IsUHUzAT663DD8PU
+X-Gm-Message-State: AOJu0YxlWkXxVcqdfV3XajNLdvkxgymXuBIHXFGw7ZRs3T/rRKCRE7BW
+	Y8EI5WX/Z2Ckj/f5tga0YmhI2OzDfe6/6LUjz6KHaBWvgyZFpxA0ywmUDg==
+X-Google-Smtp-Source: AGHT+IE5HZjrLoCnNxLVajnotnkeImtDf2cI0u88h47cCjcg16Llc86SnlptsYF62rR065Ce2k3SMw==
+X-Received: by 2002:a05:600c:314d:b0:421:7c1e:5d5d with SMTP id 5b1f17b1804b1-422867bf846mr47056455e9.35.1718264070779;
+        Thu, 13 Jun 2024 00:34:30 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286eef70csm51236815e9.3.2024.06.13.00.34.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 00:34:30 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] kselftest/arm64: Fix a couple of spelling mistakes
+Date: Thu, 13 Jun 2024 08:34:29 +0100
+Message-Id: <20240613073429.1797451-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -49,55 +69,37 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240612-md-drivers-pci-hotplug-v1-1-2b30d14d783d@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAHOHamYC/x3MQQqDMBBA0avIrDuQhBJsr1K6iMnUDGgMMyqCe
- PemXb7F/ycoCZPCsztBaGflpTTYWwcxhzIScmoGZ9zdeOtwTpiEdxLFGhnzstZpG9G74Olhe7K
- 9gRZXoQ8f//Hr3TwEJRwklJh/u4nLduAcdCWB6/oCiawra4cAAAA=
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>
-CC: <linux-acpi@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: nXFxAKxtMNZO2108Dfncd7t5Tyu9lZ13
-X-Proofpoint-ORIG-GUID: nXFxAKxtMNZO2108Dfncd7t5Tyu9lZ13
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_12,2024-06-13_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
- spamscore=0 phishscore=0 suspectscore=0 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 bulkscore=0 adultscore=0 mlxlogscore=999 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406130038
+Content-Transfer-Encoding: 8bit
 
-With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/hotplug/acpiphp_ampere_altra.o
+There are two spelling mistakes in some error messages. Fix them.
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
-
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/pci/hotplug/acpiphp_ampere_altra.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/testing/selftests/arm64/fp/kernel-test.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/hotplug/acpiphp_ampere_altra.c b/drivers/pci/hotplug/acpiphp_ampere_altra.c
-index 3fddd04851b6..f5c9e741c1d4 100644
---- a/drivers/pci/hotplug/acpiphp_ampere_altra.c
-+++ b/drivers/pci/hotplug/acpiphp_ampere_altra.c
-@@ -124,4 +124,5 @@ static struct platform_driver altra_led_driver = {
- module_platform_driver(altra_led_driver);
+diff --git a/tools/testing/selftests/arm64/fp/kernel-test.c b/tools/testing/selftests/arm64/fp/kernel-test.c
+index 50db26a3ed79..e8da3b4cbd23 100644
+--- a/tools/testing/selftests/arm64/fp/kernel-test.c
++++ b/tools/testing/selftests/arm64/fp/kernel-test.c
+@@ -233,7 +233,7 @@ static bool compute_digest(void *buf)
+ reread:
+ 	ret = recv(sock, buf, digest_len, 0);
+ 	if (ret == 0) {
+-		printf("No disgest returned\n");
++		printf("No digest returned\n");
+ 		return false;
+ 	}
+ 	if (ret != digest_len) {
+@@ -308,7 +308,7 @@ int main(void)
  
- MODULE_AUTHOR("D Scott Phillips <scott@os.amperecomputing.com>");
-+MODULE_DESCRIPTION("ACPI PCI Hot Plug Extension for Ampere Altra");
- MODULE_LICENSE("GPL");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240612-md-drivers-pci-hotplug-62a6e918e180
+ 	while (true) {
+ 		if (!compute_digest(digest)) {
+-			printf("Failed to coempute digest, iter=%d\n", iter);
++			printf("Failed to compute digest, iter=%d\n", iter);
+ 			return EXIT_FAILURE;
+ 		}
+ 
+-- 
+2.39.2
 
