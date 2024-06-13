@@ -1,136 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE2317C72;
-	Thu, 13 Jun 2024 15:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3C0143759;
+	Thu, 13 Jun 2024 15:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718291526; cv=none; b=ZYBtLcMnkkUpgH9gWaYdSP1E3WsXAbtcV1Ou0r35pzXvwUdT23rcln3irB4mBzZsAj9rfeFVSv5BnqT/UaA7xG0od50wy4R4WCd34CjJdplH/sKH8uHmiV6CwabuVZCRkN/mj4p1QH3tbtClVkg0rf3o4Gb7uBsRi5Zbfca6RYA=
+	t=1718292030; cv=none; b=SG82+jTuFZ1jTSwTE89GfHdcp3O2xoAqwg3D2+lUlejrmu9KvHBCfQds9VNXn1LwkVVHdXxEJJKo1amGFTU1O4TMqaVY4cC2h7p9w2e1JdLh8KovskwJqlRcOaB1KRpt4My8BYybe4MdV0e6VoWbLG1sQa5+XmUMn3nuLrasSho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718291526; c=relaxed/simple;
-	bh=Js8RVIcQWrK8SBzBs0EgFN3NPMVLrfZVEqHlgM+8ujY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fb9Rrr7NXtNhvCWyjuERHOori/5Sw77A71qaSzaLu6IA9TpS7vs1lrZ9ml88P3mFeRMSmPrrcokKwWsq9r0kblGU4p8XPFXJKA5fRer9rQqURUZwf4KE5k3m+IIJQzG8UjPeOXhfBb/A+UFch+7mZlDH2XWNqLY6Sw6E45hQHLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLFhTImn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718292030; c=relaxed/simple;
+	bh=Gh4uOL7q5FWJwHSZwLXH0gmGi2mBbI+MxDTZqV4SHus=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=bZICnqI2yDViA4kJFoDRVq9PbtFPqk+G3SxSTtcL5oqvTSfsudjWmgaG5wYCjdF2sFv/nV7EUXNkmV1W3T/OygnIr4swa0TfRcSXADqlhmAh7ZBkQs4GlxLt3i7WNatNkWcO43FefBX3mcruNtQTz+hYJHBF1qgMONMMWqu5s/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dgFyyKCP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLFhTImn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B4A1C2BBFC;
-	Thu, 13 Jun 2024 15:12:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dgFyyKCP"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9BD45C4AF1D;
+	Thu, 13 Jun 2024 15:20:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718291526;
-	bh=Js8RVIcQWrK8SBzBs0EgFN3NPMVLrfZVEqHlgM+8ujY=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=PLFhTImnGBfruVfem7uoDdRQY9dt85NU9uz9NI1nWR1Tl8ZwZA2Rn8Oo+pStfyXsV
-	 EcyX+RV9PlAq8NGbBuCq1xDrwXHGIZbMJoy9lp/uxPIyy3x1VXFO0lRdU9guvTXWpK
-	 fWfovpAiSyeT2cI38X08BEvOMCHEP5MPP0MmNOwv9CguIjdgxn95t02Yg8rhsTjHrv
-	 JMsJdorpaWlfhjWGwd4su7F+sxA8gjgfARcKbZKcoULYJLtjoN0Cnd2hb1zWGCyIw6
-	 EdYmQujOfzjZ7hZCGpSCTtFxQu7IFk8SsutSm4TeEzC3kDQYyJTjRTvS5rNl7PGpcJ
-	 CzwVznRaVDJlg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A66DDCE09E0; Thu, 13 Jun 2024 08:12:05 -0700 (PDT)
-Date: Thu, 13 Jun 2024 08:12:05 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
-	linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	bridge@lists.linux.dev, linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <6595ff2a-690e-4d6c-9be5-eb83f2df23fa@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240612143305.451abf58@kernel.org>
- <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
- <Zmov7ZaL-54T9GiM@zx2c4.com>
- <Zmo9-YGraiCj5-MI@zx2c4.com>
- <08ee7eb2-8d08-4f1f-9c46-495a544b8c0e@paulmck-laptop>
- <Zmrkkel0Fo4_g75a@zx2c4.com>
- <e06440e2-9121-4c92-8bf2-945977987052@paulmck-laptop>
- <Zmr-KPG9F6w-uzys@zx2c4.com>
+	s=k20201202; t=1718292029;
+	bh=Gh4uOL7q5FWJwHSZwLXH0gmGi2mBbI+MxDTZqV4SHus=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=dgFyyKCPkQ2AWAucyYxvXgGGEdjAmEahdwAzJL0hmiGVf/xOBsRTpUnuLnKerkT5K
+	 /z71z8nGBj9bc3d3yjm2p+BeM4V5FArE/p8ASSKwaq1uKKuh2cVrlqRqZlCFayKPu0
+	 HB5cGAm3W9OAXnEZAiAJVf8x3cAecwxSPU87SD8yHfvC5qRV3r2xTQswANMpFUlPf/
+	 s2T1CVFeHwgun1q09AAbkLNVppvwueqNGY0qzLO0qmUnnCJZK3buIcOTG8sGskUztV
+	 TKcCxtZoRmrKWv84iJta1HO4OntuTXWr3Z2PzFfuOOw71LEadSICaU9PNkzfY/Zyzp
+	 mfeZ1dKAEHUpA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8F9C0C43612;
+	Thu, 13 Jun 2024 15:20:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zmr-KPG9F6w-uzys@zx2c4.com>
+Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in
+ cros_ec_lpc_mec_read_bytes()
+From: patchwork-bot+chrome-platform@kernel.org
+Message-Id: 
+ <171829202958.32437.16739284609802669464.git-patchwork-notify@kernel.org>
+Date: Thu, 13 Jun 2024 15:20:29 +0000
+References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
+In-Reply-To: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: ben@jubnut.com, bleung@chromium.org, tzungbi@kernel.org,
+ groeck@chromium.org, chrome-platform@lists.linux.dev,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jun 13, 2024 at 04:11:52PM +0200, Jason A. Donenfeld wrote:
-> On Thu, Jun 13, 2024 at 05:46:11AM -0700, Paul E. McKenney wrote:
-> > How about a kmem_cache_destroy_rcu() that marks that specified cache
-> > for destruction, and then a kmem_cache_destroy_barrier() that waits?
-> > 
-> > I took the liberty of adding your name to the Google document [1] and
-> > adding this section:
+Hello:
+
+This patch was applied to chrome-platform/linux.git (for-next)
+by Tzung-Bi Shih <tzungbi@kernel.org>:
+
+On Thu, 13 Jun 2024 16:55:14 +0300 you wrote:
+> We changed these functions to returning negative error codes, but this
+> first error path was accidentally overlooked.  It leads to a Smatch
+> warning:
 > 
-> Cool, though no need to make me yellow!
-
-No worries, Jakub is also colored yellow.  People added tomorrow
-will be cyan if I follow my usual change-color ordering.  ;-)
-
-> > > But then, if that mechanism generally works, we don't really need a new
-> > > function and we can just go with the first option of making
-> > > kmem_cache_destroy() asynchronously wait. It'll wait, as you described,
-> > > but then we adjust the tail of every kfree_rcu batch freeing cycle to
-> > > check if there are _still_ any old outstanding kmem_cache_destroy()
-> > > requests. If so, then we can splat and keep the old debugging info we
-> > > currently have for finding memleaks.
-> > 
-> > The mechanism can always be sabotaged by memory-leak bugs on the part
-> > of the user of the kmem_cache structure in play, right?
-> > 
-> > OK, but I see your point.  I added this to the existing
-> > "kmem_cache_destroy() Lingers for kfree_rcu()" section:
-> > 
-> > 	One way of preserving this debugging information is to splat if
-> > 	all of the slab’s memory has not been freed within a reasonable
-> > 	timeframe, perhaps the same 21 seconds that causes an RCU CPU
-> > 	stall warning.
-> > 
-> > Does that capture it?
+>     drivers/platform/chrome/cros_ec_lpc.c:181 ec_response_timed_out()
+>     error: uninitialized symbol 'data'.
 > 
-> Not quite what I was thinking. Your 21 seconds as a time-based thing I
-> guess could be fine. But I was mostly thinking:
-> 
-> 1) kmem_cache_destroy() is called, but there are outstanding objects, so
->    it defers.
-> 
-> 2) Sometime later, a kfree_rcu_work batch freeing operation runs.
+> [...]
 
-Or not, if there has been a leak and there happens to be no outstanding
-kfree_rcu() memory.
+Here is the summary with links:
+  - platform/chrome: cros_ec_lpc: Fix error code in cros_ec_lpc_mec_read_bytes()
+    https://git.kernel.org/chrome-platform/c/77a714325d09
 
-> 3) At the end of this batch freeing, the kernel notices that the
->    kmem_cache whose destruction was previously deferred still has
->    outstanding objects and has not been destroyed. It can conclude that
->    there's thus been a memory leak.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-And the batch freeing can be replicated across CPUs, so it would be
-necessary to determine which was last to do this effective.  Don't get
-me wrong, this can be done, but the performance/latency tradeoffs can
-be interesting.
 
-> In other words, instead of having to do this based on timers, you can
-> just have the batch freeing code ask, "did those pending kmem_cache
-> destructions get completed as a result of this last operation?"
-
-I agree that kfree_rcu_work-batch time is a good time to evaluate slab
-(and I have added this to the document), but I do not believe that it
-can completely replace timeouts.
-
-							Thanx, Paul
