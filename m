@@ -1,99 +1,159 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23EF811FE;
-	Thu, 13 Jun 2024 23:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48BE14D71E
+	for <kernel-janitors@vger.kernel.org>; Thu, 13 Jun 2024 23:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718320715; cv=none; b=BKHcmtqgUVhkV3rVoLxBC0trmRrGFdcPvooUG1nrCPQDiE8FVrWlO+hql0q+cwsG7cejKH2HqOklHZnBZs3AdiReLF/dQ63c1K0NvThsR6ajQdYxdkaSXUQqU1s1tauTddYuGfINsLNdg3ORdjNe/gSqkHUG5Y7B1woKsxhE6rg=
+	t=1718322653; cv=none; b=dnZNop8Aofq/RiOaFjvb+PPKv0NiZTiTqo3eA5wI7l6MY128uiSKzgHI2+N+5X2Pz5stmUxytuMeK9I9R91HVL8WgZXUcm3v8QhIm2eJx0YhTOejwvUI2SMhFi9g0rhipw/Xym/yw0G+DrXHzaGxb+bWxgqR6sXSWis0rHhrOfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718320715; c=relaxed/simple;
-	bh=0GmEVnbOy5Dqw6LO3CACFa9e3uDVnQKfVGU+o9gv16I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Y1fW55rGqaHmcks3YZABtWxHr8hOqP9SGbsz0ZMZA4zxmjkx2PCf4QyJWTJDe0beiYhNUqCeN76Q+I+NIsyWAcKDRu0b6efoDBGiVJeccrTnROk/uPYm9LoOpn5shdJeZgJLBhWsqdtgPKwvSCZuG2uXIjUhQSh1NHfSVidf0Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kuxk/GM+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718322653; c=relaxed/simple;
+	bh=ahRoGy5moLopddVlGfclLvv26he0ry7BCYTrh8QCNpc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=AZIVGwQBVUFm0OihY48Ez19fOmaYXYcy66zF9cZ1rcd7kVkajbBY9z19z+WCwXezrOw1vVxV/ajCeOzdLoSazcEc7K5jTOHELerB8RQK/Q/+bDZjPWgwCatanLL1+BlKF6O/B9rJuCPCMnZYEThkgBar4bzfHlaJj4YJDjwIHXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TUtAKIc6; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kuxk/GM+"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DJH4FI000770;
-	Thu, 13 Jun 2024 23:18:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	EaVJbksqBdaeWCbd2M/+/BZR1EwNQVHurs2U3sClB2s=; b=Kuxk/GM+w/VSdFVr
-	zqtlwTB1yWaDNN3j0lqX/VM9YR8HQfoJDyQJ+P6l4jKSAy0qJYlrOhswaHTZu9ba
-	n7mfDUrSxDl+QZ8Mx0bLeG+gIQzFr/dFD7/Wy4VDpQZp2PqOGeIbT/X3RgXlGjZu
-	lMM+rubSHayGz7Qoq22dz8ec8pWUoy7OlbOxVLblllM+Fdl3Updfrgv/PZBipZaR
-	nt7r/qwvIAvKxf95NNPAC/6EuCTtUJeTYEXgQirvbcY7xcPDPvVvg9HKwdYBG4EC
-	u0j++nw78jvWzz4s3S4rU9yeCRry9kBAssSTB3uGkjo+ePl5pZo/d0cFXpyGuR7B
-	kAAQ7A==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yr6q38h0t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 23:18:28 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45DNIQj1000452
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 23:18:26 GMT
-Received: from [10.48.243.167] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
- 2024 16:18:26 -0700
-Message-ID: <f26d6000-0431-42ef-9e1c-bbf4e5010feb@quicinc.com>
-Date: Thu, 13 Jun 2024 16:18:25 -0700
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TUtAKIc6"
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dfdfe3d9fc8so2926865276.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 13 Jun 2024 16:50:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718322650; x=1718927450; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q/2GD2P1P7CEf4LO1djLMe1zjWvI2Hkpb11N2GxkTnU=;
+        b=TUtAKIc6Q/bwQn/MFPoxJzZfU0sMRrTfbZBgwm1+0ctTj7WUUus7DO9LlNjo8jScjQ
+         fQ2SAwV0XEc4UeY5tsE0NTVJYB7OFEIgKwsYNAPuVbw+kZwczIrqy8sEXJa/DVZeHblc
+         pFbfbmpuh+UlkcFikqnTrrpmHVZCU1u8k5JGR1Ua4F9Thl+1UyzeGSLaZiwe6DUeXAXn
+         T3xCiO5kwqdzuVuTIZIipyEGvKfmvn0P4DPNtP9rSQ6vRXmKkRwvKG4FWD0KmUFxL4lO
+         OZVqbngfJMLqv7gNEYRxciCmiVcLm4W5QCRFKwNEm/5oZEnJH/ri8xlgSIOPBrpgXPRJ
+         8YBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718322650; x=1718927450;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q/2GD2P1P7CEf4LO1djLMe1zjWvI2Hkpb11N2GxkTnU=;
+        b=egd4glKBR1a9SmugMTW6lBJeFlIHTq5vwXyejMwZzVu1UUHuL1D80CWVN0khDKEDIZ
+         R4BqhTJoPKgYIFM6kdSTvUqLdp5BtssBSZ6aNZ09bAEiGzXnGX/o3W9IFccO2r795bnp
+         3LjAzh4AdfDBo7A4PyFoP/KMPGIEaHXokiGRAMNNgGwAiRkhIYy6nrTIrKR+3YaWG4NC
+         5cqetVE7DIQMcA1dGzkn2koUCf8R37ZIG4ULbyN3oNkILRL1tNbcKjDdRKkEXyY0ok11
+         sE8WWQHjTHRfgcWVW3EMk17p3uyC7YbOoGzXvqDRav4pSpmqXkhMf/mfexH7q8oigQNO
+         y6oA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/FW355zw/LXcV5zsE8dAXIdbLmWX3r65+xjdPORQQLhimwKpYbXxJBlnNePCHxUym/eNTSbY23vox8DqacYMnj8aWisYZbV88mZKOhXSh
+X-Gm-Message-State: AOJu0YwitBdBJlauWaJax1p0hEOz0cbVRmy61w/xOJJGAT9nUKk5wrCx
+	4FPCb4B7SHS1q8EXVFL6enE8IqvIgGnOzdDwQEufKrhngW3kIQWnWGecXU88xG1jJ6bmMPFcTTY
+	vbA==
+X-Google-Smtp-Source: AGHT+IGdwT4otzma8gQNBf9ykyP8JCZXHjwasEwBqEvekHLX0RYn2KS31UOPwPFM3LcoNrjyVrWpomgD6Og=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:2e13:b0:dfb:bf0:59cd with SMTP id
+ 3f1490d57ef6-dff153b2e10mr184365276.7.1718322649837; Thu, 13 Jun 2024
+ 16:50:49 -0700 (PDT)
+Date: Thu, 13 Jun 2024 16:50:48 -0700
+In-Reply-To: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: qcom: add missing MODULE_DESCRIPTION() macro
-Content-Language: en-US
-To: Bart Van Assche <bvanassche@acm.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen"
-	<martin.petersen@oracle.com>,
-        Can Guo <quic_cang@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240612-md-drivers-ufs-host-v1-1-df35924685b8@quicinc.com>
- <132dedc1-ee11-44d8-b684-0ffbf994d164@acm.org>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <132dedc1-ee11-44d8-b684-0ffbf994d164@acm.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: FTzuXVI8-5TGMW7C4_8y2A93QqnTW4iU
-X-Proofpoint-GUID: FTzuXVI8-5TGMW7C4_8y2A93QqnTW4iU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_13,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 spamscore=0 mlxlogscore=999 malwarescore=0 phishscore=0
- adultscore=0 lowpriorityscore=0 mlxscore=0 impostorscore=0 clxscore=1011
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130166
+Mime-Version: 1.0
+References: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
+Message-ID: <ZmuF2PsVot33fS1x@google.com>
+Subject: Re: [PATCH] KVM: fix an error code in kvm_create_vm()
+From: Sean Christopherson <seanjc@google.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Yi Wang <foxywang@tencent.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 6/13/2024 9:19 AM, Bart Van Assche wrote:
-> On 6/12/24 9:46 PM, Jeff Johnson wrote:
->> +MODULE_DESCRIPTION("QCOM specific hooks to UFS controller platform driver");
->>   MODULE_LICENSE("GPL v2");
+On Thu, Jun 13, 2024, Dan Carpenter wrote:
+> This error path used to return -ENOMEM from the where r is initialized
+> at the top of the function.  But a new "r = kvm_init_irq_routing(kvm);"
+> was introduced in the middle of the function so now the error code is
+> not set and it eventually leads to a NULL dereference.  Set the error
+> code back to -ENOMEM.
 > 
-> That sounds weird to me. I think we are better of with no module
-> description than with the above description.
+> Fixes: fbe4a7e881d4 ("KVM: Setup empty IRQ routing when creating a VM")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  virt/kvm/kvm_main.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> How about the following description?
-> 
-> "Qualcomm UFS host controller driver".
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 07ec9b67a202..ea7e32d722c9 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -1212,8 +1212,10 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+>  	for (i = 0; i < KVM_NR_BUSES; i++) {
+>  		rcu_assign_pointer(kvm->buses[i],
+>  			kzalloc(sizeof(struct kvm_io_bus), GFP_KERNEL_ACCOUNT));
+> -		if (!kvm->buses[i])
+> +		if (!kvm->buses[i]) {
+> +			r = -ENOMEM;
+>  			goto out_err_no_arch_destroy_vm;
+> +		}
+>  	}
 
-Sounds good to me. Will spin a v2.
+Drat.  Any objection to tweaking this slightly to guard against similar bugs in
+the future?  If not, I'll apply+push the below.
 
+Thanks!
+
+--
+From: Dan Carpenter <dan.carpenter@linaro.org>
+Date: Thu, 13 Jun 2024 17:33:16 +0300
+Subject: [PATCH] KVM: fix an error code in kvm_create_vm()
+
+This error path used to return -ENOMEM from the where r is initialized
+at the top of the function.  But a new "r = kvm_init_irq_routing(kvm);"
+was introduced in the middle of the function so now the error code is
+not set and it eventually leads to a NULL dereference.  Set the error
+code back to -ENOMEM.
+
+Opportunistically tweak the logic to pre-set "r = -ENOMEM" immediately
+before the flows that can fail due to memory allocation failure to make
+it less likely that the bug recurs in the future.
+
+Fixes: fbe4a7e881d4 ("KVM: Setup empty IRQ routing when creating a VM")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Link: https://lore.kernel.org/r/02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain
+[sean: tweak all of the "r = -ENOMEM" sites]
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ virt/kvm/kvm_main.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index b60186b9c1d3..436ca41f61e5 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1143,8 +1143,7 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+ {
+ 	struct kvm *kvm = kvm_arch_alloc_vm();
+ 	struct kvm_memslots *slots;
+-	int r = -ENOMEM;
+-	int i, j;
++	int r, i, j;
+ 
+ 	if (!kvm)
+ 		return ERR_PTR(-ENOMEM);
+@@ -1181,6 +1180,7 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+ 	snprintf(kvm->stats_id, sizeof(kvm->stats_id), "kvm-%d",
+ 		 task_pid_nr(current));
+ 
++	r = -ENOMEM;
+ 	if (init_srcu_struct(&kvm->srcu))
+ 		goto out_err_no_srcu;
+ 	if (init_srcu_struct(&kvm->irq_srcu))
+@@ -1209,6 +1209,7 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+ 		rcu_assign_pointer(kvm->memslots[i], &kvm->__memslots[i][0]);
+ 	}
+ 
++	r = -ENOMEM;
+ 	for (i = 0; i < KVM_NR_BUSES; i++) {
+ 		rcu_assign_pointer(kvm->buses[i],
+ 			kzalloc(sizeof(struct kvm_io_bus), GFP_KERNEL_ACCOUNT));
+
+base-commit: 3dee3b187499b317a6587e2b8e9bf3d5050e5288
+-- 
