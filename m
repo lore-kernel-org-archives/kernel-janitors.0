@@ -1,129 +1,102 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40A71581F3
-	for <kernel-janitors@vger.kernel.org>; Thu, 13 Jun 2024 18:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7BD84A48;
+	Thu, 13 Jun 2024 18:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718303696; cv=none; b=SAisbXcj3RsDjb/RmISS+zZeUomvQHa42uJ/ClLFJyZ8wVPzrc//x2ek2bMJtj3BkeZZAYRjhXvHawO6DIz3tlzyekbNAa5sU/Ccsuk/QOHhUmzuV3+Q0XK6nmhsAl5ZAnhRZpuGEgKviWNVv+mBls3Kr9ExiupfZZOWuXpr1tI=
+	t=1718305042; cv=none; b=caHUItubC/ogHtFhSZN+JiNllO5icJKDZweX8HMhXnO7remb6T1F1VJB3LzYely9LMQPjgmhuSe/Y8X/7M8ZtDhvjUTCb4FuSc97HtMTASUcrp0mkUJBOt9qDrgfFAG0D6CjoKPsRN6E3gJFsJ0Vz4VsHF/4UHUKWpZ4AZB5Zpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718303696; c=relaxed/simple;
-	bh=HzYejYuOAn5iwkrueS+PiiRJuMEgvDnHU5MUoSEiTXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gVQbCCDJyHUIroAF2UT7AaA7ZETDFGZjB8PyzyyEweHQCChM4zVzrbSWwj5ZFqbBvTxN/3VbCZEX7K21YRevUzJ3Kgh2d+YfFnNVmhdjN5Rvcua/GBIECiDo+C34NzR3W4EBmGMt0y68Ng7JMIZbFhNTlUABEiWUWcu4ZG58oDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nueE7lgG; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718305042; c=relaxed/simple;
+	bh=P+m1t5xHvMIr3fsmh88GE/n8OkuO/B9/k7oOyAh8rho=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=epZP867SUKcn0RGYpsjyt5P8G3UjzxUi/jlHB+zFWJ7oiDrtF+3Xq/Qj3uWOj6oNjaoFV8Z0s2gDaOShcwY/pdLCZxK0QxINVCNOVyFnHO22Yw9pHE8wts0h1AxPLwLd+STGHjeY4sy9eO0vwuWG0bZS9xkeQYyi5Bkaa0dMVlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TWTylQ82; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nueE7lgG"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-421f4d1c057so11804045e9.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 13 Jun 2024 11:34:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718303689; x=1718908489; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+98BqI659caT5fQyMNy5nW5CXfFil4jPP9JHzeqpioA=;
-        b=nueE7lgG/naHoaPFwMMQmTbMK+2/EAH6ktB36ICcvkmhc2yVGAyH3y5E53CJgTwyF6
-         dn+lrqcmtsufzy16Ul/EwLmaqTxX+YzxHyvixZKk+6lgapD+eQvNFHe01rNlivdLf/sj
-         cLDPP7G51iuCnM0XpakbceOu8xN9cVJ5WsuEtC4qXMbYqPoTlYieZMHzREpEUBN952pA
-         nOFdKlU0CGmofu2PHDd5cWmv9WplcAdVkyk5tOjH8cZuKXXwG0fiKDhmi+XPhhLBkCGh
-         6Tx8M0dRq7rIzDrUkn3m+s6+1EPR+A4n0UqVjkPioFqnHJQ0Hc7ZDN5G7mq/y0IQAd+h
-         +Tmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718303689; x=1718908489;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+98BqI659caT5fQyMNy5nW5CXfFil4jPP9JHzeqpioA=;
-        b=dh4ee/DWEYvx+S4qviep63AAR/+r4a1WrVhlHy3QV+WoQBkuHiLhQn4+G2GexiDa9E
-         Dv92jvR/5XclbKCv78USvXQb45ix7NU+14fCRXVOdLI/y5QBk00zeTPZEQ3oU1Mcthmt
-         /4YCvCVRWb0u1B/LNKDeHStlBMFcqE0dsYQ/OA/0Mjr9U6YE8AtHiIm6p5XoSvUQeujD
-         ebmRFSrsYTqLyG9hjnjKMd5HTsYMpjXdImvZUw9k6KyC5Le07m+5Kn2jRR/ajuXEFd33
-         CKMwExjrQ+SJQYDDaC3oiJYHT3Dt1vs+Lo7f84nPigIeC88cKQSSY6i1DwwZPT9JZS+q
-         ck8A==
-X-Forwarded-Encrypted: i=1; AJvYcCWQxkGFnVCJLv0oHZxlP/Da4RUllpuJxNZYyvswzZ17Tvc79KYen8YBR1swBVi2Due07sqxvManBrsMaQRzVesBRTuorhc9v3WP6YnhREjK
-X-Gm-Message-State: AOJu0YyKuxQiIEzQ+bYckgI4sQWwiVYS2pXJKhUs/gim3MhzVFaqNZi9
-	8atDR4/B4eoDICkcPvum0nmg7TZdkzQJiN+SL39WCDjUj6WBj+sB9lWRSxg+2ME=
-X-Google-Smtp-Source: AGHT+IH+s7hcDwfwjXdg6cobQ343oD9A/3tP8Z+Ip47trN4be35NWLP4NUKC3Qmn1FTyx++7yP9BQg==
-X-Received: by 2002:a05:600c:4c9a:b0:421:7ac9:460c with SMTP id 5b1f17b1804b1-4230484cfc5mr4462905e9.39.1718303688813;
-        Thu, 13 Jun 2024 11:34:48 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6320b11sm33706145e9.29.2024.06.13.11.34.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 11:34:48 -0700 (PDT)
-Date: Thu, 13 Jun 2024 21:34:44 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ben Walsh <ben@jubnut.com>
-Cc: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in
- cros_ec_lpc_mec_read_bytes()
-Message-ID: <68f1d8df-69d2-4246-8c64-4c7cc975feb1@moroto.mountain>
-References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
- <87sexgrdk4.fsf@jubnut.com>
- <3226cba0-82c5-47a3-89da-01ffa935a9dc@moroto.mountain>
- <87sexgaemn.fsf@jubnut.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TWTylQ82"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DItMOb025340;
+	Thu, 13 Jun 2024 18:57:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=viNaj7mF1w8XPWkPxnYdqR
+	wOXEPjbFp19wKj6++NNc8=; b=TWTylQ8287387TU2hcOnqKISKdlZi2ggrPjvEF
+	ZajMPQZVBGxWHzi8Jy+xtjAA13wfWTnUTfv3S6Oh6fwWImBTWDRZgyz0swJNq6rq
+	bGQd/SKBdLSEVrVENtsxJqLAHOgpyuu/Zzt8ZlHqC8YmyArGdLseEUMZuPYvc+er
+	pTsDizxYjHz1Ao+pMS1TkIXBE+KK5mlT9+bIu7NH2rbYsu2LlL95k1Utck6UmXgI
+	rKyj7k/B8InHv2C1v6SPebr0BcHzo3vAHaxajh5ZqgTy4BT4btm80S+ti0jtyf1s
+	kYRaz/+dDUYfDiHmSRBjI0jijmMgix9qUwixvt4rJYEoUfqA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yr6fc007w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 18:57:17 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45DIvGll001891
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 18:57:16 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
+ 2024 11:57:16 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 13 Jun 2024 11:57:14 -0700
+Subject: [PATCH] dmaengine: fsl-dpaa2-qdma: add missing
+ MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87sexgaemn.fsf@jubnut.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240613-md-arm64-drivers-dma-fsl-dpaa2-qdma-v1-1-815d148740e6@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAApBa2YC/x3NTQ6CQAxA4auQrm0y/GSiXsW4KExHmjAjtkhIC
+ Hd3cPlt3tvBWIUN7tUOyquYvHNBfalgGCm/GCUUQ+Oazvm6xRSQNPkOg8rKahgSYbQJw0zU4Oc
+ kX2NovWtvniOU0qwcZftfHs/inoyxV8rDeLYnyd8NE9nCCsfxA2JndWuUAAAA
+To: Vinod Koul <vkoul@kernel.org>
+CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: aqG4T4zqVCsGGekInVM5wzIzHXv-g2UY
+X-Proofpoint-GUID: aqG4T4zqVCsGGekInVM5wzIzHXv-g2UY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-13_11,2024-06-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ bulkscore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=866
+ priorityscore=1501 mlxscore=0 spamscore=0 impostorscore=0 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406130135
 
-On Thu, Jun 13, 2024 at 07:20:32PM +0100, Ben Walsh wrote:
-> 
-> Dan Carpenter <dan.carpenter@linaro.org> writes:
-> 
-> > On Thu, Jun 13, 2024 at 05:51:39PM +0100, Ben Walsh wrote:
-> >> 
-> >> Thanks for fixing this! Unfortunately `in_range` returns -EINVAL if
-> >> length == 0 (see the definition of `fwk_ec_lpc_mec_in_range`). I'm sure
-> >> this broke something in my testing, but I can't find what it was now.
-> >
-> > I don't think fwk_ec_lpc_mec_in_range() is upstream.  This email is the
-> > only reference I can find to it on the internet.
-> 
-> Sorry, I mean cros_ec_lpc_mec_in_range().
-> 
-> >  int cros_ec_lpc_mec_in_range(unsigned int offset, unsigned int length)
-> >  {
-> >  	if (length == 0)
-> > -		return -EINVAL;
-> > +		return 0;
-> >  
-> >  	if (WARN_ON(mec_emi_base == 0 || mec_emi_end == 0))
-> >  		return -EINVAL;
-> >
-> > But I don't like how subtle that is.  Probably adding a check for
-> > for if (length == 0) to the  to cros_ec_lpc_mec_read_bytes() seems
-> > like the best option.  I guess option 2 is the best option.
-> 
-> Thanks. I'll check out Tzung-Bi's suggestions as well before we decide.
+With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/fsl-dpaa2-qdma/dpdmai.o
 
-Writing length 0 bytes to cros_ec_lpc_io_bytes_mec() changes the
-function to basically this:
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-	cros_ec_lpc_mec_lock();
-	/* Initialize I/O at desired address */
-	cros_ec_lpc_mec_emi_write_address(offset, access);
-	cros_ec_lpc_mec_unlock();
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/dma/fsl-dpaa2-qdma/dpdmai.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-	return 0;
+diff --git a/drivers/dma/fsl-dpaa2-qdma/dpdmai.c b/drivers/dma/fsl-dpaa2-qdma/dpdmai.c
+index 36897b41ee7e..b4323d243d6d 100644
+--- a/drivers/dma/fsl-dpaa2-qdma/dpdmai.c
++++ b/drivers/dma/fsl-dpaa2-qdma/dpdmai.c
+@@ -367,4 +367,5 @@ int dpdmai_get_tx_queue(struct fsl_mc_io *mc_io, u32 cmd_flags,
+ }
+ EXPORT_SYMBOL_GPL(dpdmai_get_tx_queue);
+ 
++MODULE_DESCRIPTION("NXP DPAA2 QDMA driver");
+ MODULE_LICENSE("GPL v2");
 
-I was a little concerned about the cros_ec_lpc_mec_emi_write_address()
-But I don't know this subsystem at all so it might be fine.
-
-Perhaps the cleanest thing is to delete the length == 0 check in
-cros_ec_lpc_mec_in_range() and add one to the start of
-cros_ec_lpc_io_bytes_mec().
-
-I think that's a good solution.
-
-regards,
-dan carpenter
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240613-md-arm64-drivers-dma-fsl-dpaa2-qdma-e8fd360396ef
 
