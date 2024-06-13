@@ -1,44 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A741146A7B;
-	Thu, 13 Jun 2024 16:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FA714A4D2;
+	Thu, 13 Jun 2024 17:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718297774; cv=none; b=ZDim49y+LmokfGY9fu8zY5YHPEakfuEoo1vqGd6XMv5sVx/D+TnEJLK9jdHNe7pXuD+PVXYZVgPMjw2W+enyLIit5hb9FxuibxfMX0wNm1BoIA8kdltXFpWj5GNRk2lY64fDL9QRaeTd3wGx3h797GP1SylTGl1qfVpZPQyXEB8=
+	t=1718299213; cv=none; b=gxmUJFIinl5Iq9J2HDhdmpmKvTufg9IGeelcGsYe5Y7jiZmlJbnw8rJeyO04Lm3vPkEsx/hi7aHEWvc2QQS50tzRZoFtKMgDxi02jjjENUXSUhinjzsOIoDnIJjcoXO4tpxImJ5PvImSnSgoPUDRzZTHY7JWMQvgctiRBoUxaMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718297774; c=relaxed/simple;
-	bh=AFsjejU6WOUxpZm3KWb1MCdL1at46hZYCD2xgeBCuII=;
+	s=arc-20240116; t=1718299213; c=relaxed/simple;
+	bh=Apy/YJfzCXG5qBffjVb5Em/7Y/ajo8ZRh+LCsukDKns=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TnoSVfHfJH9TGvUlJoG92m/z797z9yJLVdJsNtbWWHZT2R9LxdI4bOG46fjc360M6IqZ87IloUxM4NFWPEtTQEBWvh5sT9MWr7tin5zuTL/H9uzuE9sIWciK92Cj+kaI9QobCU90h4297F4JogwGMAnXXzfs05McMjbqwb7yfFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NhIGzCPJ; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=ifx9IjiCMm46I1p1wTvzGACANJBojIW3v8ckfBxhZvcRFSKHthJp9Co45mAuit4PeIM4jbW5/2+iQf1Sm85XkmRtjno3btbPmP4e23PD8xDFvmJGICWusS6pXPeB1ADvzlZQvpcDZSNANHNWwXBIZqst5a6k+PJdXFF6lFdMn6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kXFfAgqG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NhIGzCPJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 269C1C32786;
-	Thu, 13 Jun 2024 16:56:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kXFfAgqG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66789C2BBFC;
+	Thu, 13 Jun 2024 17:20:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718297774;
-	bh=AFsjejU6WOUxpZm3KWb1MCdL1at46hZYCD2xgeBCuII=;
+	s=k20201202; t=1718299212;
+	bh=Apy/YJfzCXG5qBffjVb5Em/7Y/ajo8ZRh+LCsukDKns=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=NhIGzCPJrsdHU5NRJPqliKJGNxWHDBZFky42hoImrCL3ysQrgM0XboZ7+9jfsUkPD
-	 CZYVOk2/77hkOSdD2opFzY9m/I+Eo0jXl9rcQJLZyRHVCrw9SvAZxCiX73S+Cg4w7D
-	 qQwtCIT7n26dt/9C/jK6LrDFMZ8lL5GxNcZVGO5ZOc+c5rhn2Wrpi6rww3hdEQPZw6
-	 01h2op1LtrRFXzrlw0AuzQFNsCefHpl3F0DP3r8Biht1B7upxyE6ZkwcMXj5tzTEWW
-	 yRAFD/zaHaeS1Gmn5c9GmyvaufF5e51c6Xip0LCOG4zhjuMXDiw6p8UddTV7y3PPUl
-	 phX0DMLCr84HQ==
+	b=kXFfAgqGGfRDajw1ZdSl8ujZ8VNXRrUmaB5qtDjpeh2Z+N7taNOmSuloB3JcuLlxY
+	 cQn7auRp4fQYw9q4qszuzglsJCU4SucZjkUAaahDbFKjsIUGkRvXpP28EcpM0Agd9K
+	 n8d6bfEiH0f0BmM9k7yQCnIqphMMFwSJc9DQSOvYG5VyhINGHmMerx0TozM2JWMXJX
+	 jp0xnrq5xZme5OE7Lfk6dn0LQxUWD094vSQxaCEtvXPP0ZS3q3C5r0ygn1by4LYoFv
+	 98QoRL7uyWnk0lrdx5nK4cw8ssU22dTHjOyn6y7qQGitRvmteIrGdvFrr/zCW+s5Bf
+	 yMtoAR8UHUmOQ==
 From: Lee Jones <lee@kernel.org>
-To: Andy Shevchenko <andy@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
- Sudeep Holla <sudeep.holla@arm.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+To: Daniel Thompson <daniel.thompson@linaro.org>, 
+ Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, 
  Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: patches@opensource.cirrus.com, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <20240609-md-drivers-mfd-v1-1-47cdd0b394e9@quicinc.com>
-References: <20240609-md-drivers-mfd-v1-1-47cdd0b394e9@quicinc.com>
-Subject: Re: (subset) [PATCH] mfd: add missing MODULE_DESCRIPTION() macros
-Message-Id: <171829777189.2716745.4962313737090017638.b4-ty@kernel.org>
-Date: Thu, 13 Jun 2024 17:56:11 +0100
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <20240612-md-drivers-video-backlight-v1-1-f4ca1beb36cc@quicinc.com>
+References: <20240612-md-drivers-video-backlight-v1-1-f4ca1beb36cc@quicinc.com>
+Subject: Re: (subset) [PATCH] backlight: add missing MODULE_DESCRIPTION()
+ macros
+Message-Id: <171829921116.2731555.2620177411029795057.b4-ty@kernel.org>
+Date: Thu, 13 Jun 2024 18:20:11 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -49,21 +48,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.13.0
 
-On Sun, 09 Jun 2024 19:21:28 -0700, Jeff Johnson wrote:
-> On x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/arizona.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/pcf50633-gpio.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/timberdale.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/ssbi.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/rt4831.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/intel_soc_pmic_bxtwc.o
+On Wed, 12 Jun 2024 07:12:31 -0700, Jeff Johnson wrote:
+> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/platform_lcd.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/rt4831-backlight.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] mfd: add missing MODULE_DESCRIPTION() macros
-      commit: b3e691c26f55731fd937c4b7ccbc150e10aa30a3
+[1/1] backlight: add missing MODULE_DESCRIPTION() macros
+      commit: 7857f5c38d04a38e7a20060a6d370caf0424aa4e
 
 --
 Lee Jones [李琼斯]
