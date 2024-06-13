@@ -1,63 +1,70 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3652C135A69
-	for <kernel-janitors@vger.kernel.org>; Thu, 13 Jun 2024 18:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40A71581F3
+	for <kernel-janitors@vger.kernel.org>; Thu, 13 Jun 2024 18:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718302910; cv=none; b=PcMgOGc6TbHccJg69Iclii0XVW688lygJQxBrwks1FpbZYRqVmY+zhc14p6LGJ5dOPVOJ9KARQMlPLYYrk9Vz3WZmc5malSppWw40a2rkrPaQiQYvbJXMI6aCGGYWkKAVKiyDsIm0PEZz8+O1XEsh6g9o6oHAs1jIE/9w7XSSMk=
+	t=1718303696; cv=none; b=SAisbXcj3RsDjb/RmISS+zZeUomvQHa42uJ/ClLFJyZ8wVPzrc//x2ek2bMJtj3BkeZZAYRjhXvHawO6DIz3tlzyekbNAa5sU/Ccsuk/QOHhUmzuV3+Q0XK6nmhsAl5ZAnhRZpuGEgKviWNVv+mBls3Kr9ExiupfZZOWuXpr1tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718302910; c=relaxed/simple;
-	bh=Eg3PsnHVSYuLn+uKCQz7YExSHrr2gIhjUaFUT+0OM7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LmBuqBsFRZsuJupvStI1W/I7XEcE9MrRL5ebjq3KGmzqlOjiDhtCrBr+HNQM7aEyKjbGY5qHst7XWSV6R6Kv4+OU8JtJ6lTdBS/30MLfvhmdLQ0wuupv/2qr0NiZPFqskcGU2DLZhvZ1PG194gu9C4YdcGCQC8yhQlBPc+hereo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lUK9ZmP+; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1718303696; c=relaxed/simple;
+	bh=HzYejYuOAn5iwkrueS+PiiRJuMEgvDnHU5MUoSEiTXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gVQbCCDJyHUIroAF2UT7AaA7ZETDFGZjB8PyzyyEweHQCChM4zVzrbSWwj5ZFqbBvTxN/3VbCZEX7K21YRevUzJ3Kgh2d+YfFnNVmhdjN5Rvcua/GBIECiDo+C34NzR3W4EBmGMt0y68Ng7JMIZbFhNTlUABEiWUWcu4ZG58oDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nueE7lgG; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lUK9ZmP+"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42179dafd6bso15761905e9.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 13 Jun 2024 11:21:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nueE7lgG"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-421f4d1c057so11804045e9.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 13 Jun 2024 11:34:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718302907; x=1718907707; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QUxyMjU71ZE+fUPetZ6OJeVBxDmLzc8mtYCL3gsGt3s=;
-        b=lUK9ZmP+mAfBhy+5w0FZ/fWbkMITJqtWW0NAaRfyZPeTfXL5jMAr7mYStE/wl5KrVU
-         hy0a6wTwzMN+vD1BTuIx8U7aejrTiiqIFNDNkIEIugTpPXNmolkslgBoicXnEOtmI110
-         uN0iBiNNX1tHzgPjJREin7VYCd2i0iEfM2BoPZKeoQb4RrtP1FW0vS88pKKzIrufyO46
-         Coi6hOXVptR4SYI0eEDQ0AEJckgs57x7cYEDWe5YpQ+HpEnIOkgGzvv83XMHkh9iJvB5
-         XU4AbAwdPBXHRFa526OTRiRga5uafHCkgJX4gsS90DWKDvA0Vrk01n1bUjEahNtDfVwv
-         1YpQ==
+        d=linaro.org; s=google; t=1718303689; x=1718908489; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+98BqI659caT5fQyMNy5nW5CXfFil4jPP9JHzeqpioA=;
+        b=nueE7lgG/naHoaPFwMMQmTbMK+2/EAH6ktB36ICcvkmhc2yVGAyH3y5E53CJgTwyF6
+         dn+lrqcmtsufzy16Ul/EwLmaqTxX+YzxHyvixZKk+6lgapD+eQvNFHe01rNlivdLf/sj
+         cLDPP7G51iuCnM0XpakbceOu8xN9cVJ5WsuEtC4qXMbYqPoTlYieZMHzREpEUBN952pA
+         nOFdKlU0CGmofu2PHDd5cWmv9WplcAdVkyk5tOjH8cZuKXXwG0fiKDhmi+XPhhLBkCGh
+         6Tx8M0dRq7rIzDrUkn3m+s6+1EPR+A4n0UqVjkPioFqnHJQ0Hc7ZDN5G7mq/y0IQAd+h
+         +Tmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718302907; x=1718907707;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QUxyMjU71ZE+fUPetZ6OJeVBxDmLzc8mtYCL3gsGt3s=;
-        b=rXW+iXP7xDrtCk4rZePb2OUlGD3ebQWERQmJ7pKt+CX6VWmZ6sFic5uSVMfyFlBojC
-         mJmftpjK0boFp3g2az2HZNHepA95IK7HpJKPjSN/Sp/3VpH2kTSJ6lkTjIodg1QBh+wg
-         Rfr0o70JU6/a3wvqK7UG/9ndCs6sMu7ufgilYfbPipigY6dZzHtoH6qkVi9Tx9k16VUw
-         IsrBJ1aM1IqqzthkDaY5Kz07DiOdo4EkQwU0UGTnQq57cL9WXhP5DJpaeAfbHS0NanpJ
-         XKO1vyYdDuA0d7mjZ1XlmGWy2peEOFNEtMY200oILv4bC6kj+eHb+j6m/4hZiFPJJt9a
-         IV+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXm/55N9gB8grPA5tDC36SieixU/hSA0uCqw6DihtSF0xXop/oONWN3gPNyJs7+nMdWgTsNPOLN52tQjR7T0ike2mgU1r9ZcewfNW+vCnC5
-X-Gm-Message-State: AOJu0YwBp5qYD0q/SBi4wvSaj+Txkv0vLWSJvgxUtSncn/UOdBvzKaVm
-	E3aZqL0Fkpu8PmPRZ+0/i915+gygNy+5zTQ61vLOjmZwldbRbUsp+rd0a/jXyio=
-X-Google-Smtp-Source: AGHT+IHE8xPRTkTbm1KPshLdZzNhvmcmIrYIfPgMiJtdCnz+qehS2fJwkgES/YPzH7zgsVHVrvOTGQ==
-X-Received: by 2002:a05:600c:4506:b0:421:392b:7e13 with SMTP id 5b1f17b1804b1-422b6dc80c2mr39801835e9.4.1718302907122;
-        Thu, 13 Jun 2024 11:21:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718303689; x=1718908489;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+98BqI659caT5fQyMNy5nW5CXfFil4jPP9JHzeqpioA=;
+        b=dh4ee/DWEYvx+S4qviep63AAR/+r4a1WrVhlHy3QV+WoQBkuHiLhQn4+G2GexiDa9E
+         Dv92jvR/5XclbKCv78USvXQb45ix7NU+14fCRXVOdLI/y5QBk00zeTPZEQ3oU1Mcthmt
+         /4YCvCVRWb0u1B/LNKDeHStlBMFcqE0dsYQ/OA/0Mjr9U6YE8AtHiIm6p5XoSvUQeujD
+         ebmRFSrsYTqLyG9hjnjKMd5HTsYMpjXdImvZUw9k6KyC5Le07m+5Kn2jRR/ajuXEFd33
+         CKMwExjrQ+SJQYDDaC3oiJYHT3Dt1vs+Lo7f84nPigIeC88cKQSSY6i1DwwZPT9JZS+q
+         ck8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWQxkGFnVCJLv0oHZxlP/Da4RUllpuJxNZYyvswzZ17Tvc79KYen8YBR1swBVi2Due07sqxvManBrsMaQRzVesBRTuorhc9v3WP6YnhREjK
+X-Gm-Message-State: AOJu0YyKuxQiIEzQ+bYckgI4sQWwiVYS2pXJKhUs/gim3MhzVFaqNZi9
+	8atDR4/B4eoDICkcPvum0nmg7TZdkzQJiN+SL39WCDjUj6WBj+sB9lWRSxg+2ME=
+X-Google-Smtp-Source: AGHT+IH+s7hcDwfwjXdg6cobQ343oD9A/3tP8Z+Ip47trN4be35NWLP4NUKC3Qmn1FTyx++7yP9BQg==
+X-Received: by 2002:a05:600c:4c9a:b0:421:7ac9:460c with SMTP id 5b1f17b1804b1-4230484cfc5mr4462905e9.39.1718303688813;
+        Thu, 13 Jun 2024 11:34:48 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f641a5b4sm33163135e9.41.2024.06.13.11.21.46
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6320b11sm33706145e9.29.2024.06.13.11.34.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 11:21:46 -0700 (PDT)
-Date: Thu, 13 Jun 2024 21:21:42 +0300
+        Thu, 13 Jun 2024 11:34:48 -0700 (PDT)
+Date: Thu, 13 Jun 2024 21:34:44 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Hyunwoo Kim <v4bel@theori.io>,
-	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] atm: clean up a put_user() calls
-Message-ID: <04a018e8-7433-4f67-8ddd-9357a0114f87@moroto.mountain>
+To: Ben Walsh <ben@jubnut.com>
+Cc: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in
+ cros_ec_lpc_mec_read_bytes()
+Message-ID: <68f1d8df-69d2-4246-8c64-4c7cc975feb1@moroto.mountain>
+References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
+ <87sexgrdk4.fsf@jubnut.com>
+ <3226cba0-82c5-47a3-89da-01ffa935a9dc@moroto.mountain>
+ <87sexgaemn.fsf@jubnut.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -66,38 +73,57 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <87sexgaemn.fsf@jubnut.com>
 
-Unlike copy_from_user(), put_user() and get_user() return -EFAULT on
-error.  Use the error code directly instead of setting it.
+On Thu, Jun 13, 2024 at 07:20:32PM +0100, Ben Walsh wrote:
+> 
+> Dan Carpenter <dan.carpenter@linaro.org> writes:
+> 
+> > On Thu, Jun 13, 2024 at 05:51:39PM +0100, Ben Walsh wrote:
+> >> 
+> >> Thanks for fixing this! Unfortunately `in_range` returns -EINVAL if
+> >> length == 0 (see the definition of `fwk_ec_lpc_mec_in_range`). I'm sure
+> >> this broke something in my testing, but I can't find what it was now.
+> >
+> > I don't think fwk_ec_lpc_mec_in_range() is upstream.  This email is the
+> > only reference I can find to it on the internet.
+> 
+> Sorry, I mean cros_ec_lpc_mec_in_range().
+> 
+> >  int cros_ec_lpc_mec_in_range(unsigned int offset, unsigned int length)
+> >  {
+> >  	if (length == 0)
+> > -		return -EINVAL;
+> > +		return 0;
+> >  
+> >  	if (WARN_ON(mec_emi_base == 0 || mec_emi_end == 0))
+> >  		return -EINVAL;
+> >
+> > But I don't like how subtle that is.  Probably adding a check for
+> > for if (length == 0) to the  to cros_ec_lpc_mec_read_bytes() seems
+> > like the best option.  I guess option 2 is the best option.
+> 
+> Thanks. I'll check out Tzung-Bi's suggestions as well before we decide.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- net/atm/ioctl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Writing length 0 bytes to cros_ec_lpc_io_bytes_mec() changes the
+function to basically this:
 
-diff --git a/net/atm/ioctl.c b/net/atm/ioctl.c
-index f81f8d56f5c0..0f7a39aeccc8 100644
---- a/net/atm/ioctl.c
-+++ b/net/atm/ioctl.c
-@@ -68,7 +68,7 @@ static int do_vcc_ioctl(struct socket *sock, unsigned int cmd,
- 			goto done;
- 		}
- 		error = put_user(sk->sk_sndbuf - sk_wmem_alloc_get(sk),
--				 (int __user *)argp) ? -EFAULT : 0;
-+				 (int __user *)argp);
- 		goto done;
- 	case SIOCINQ:
- 	{
-@@ -83,7 +83,7 @@ static int do_vcc_ioctl(struct socket *sock, unsigned int cmd,
- 		skb = skb_peek(&sk->sk_receive_queue);
- 		amount = skb ? skb->len : 0;
- 		spin_unlock_irq(&sk->sk_receive_queue.lock);
--		error = put_user(amount, (int __user *)argp) ? -EFAULT : 0;
-+		error = put_user(amount, (int __user *)argp);
- 		goto done;
- 	}
- 	case ATM_SETSC:
--- 
-2.43.0
+	cros_ec_lpc_mec_lock();
+	/* Initialize I/O at desired address */
+	cros_ec_lpc_mec_emi_write_address(offset, access);
+	cros_ec_lpc_mec_unlock();
+
+	return 0;
+
+I was a little concerned about the cros_ec_lpc_mec_emi_write_address()
+But I don't know this subsystem at all so it might be fine.
+
+Perhaps the cleanest thing is to delete the length == 0 check in
+cros_ec_lpc_mec_in_range() and add one to the start of
+cros_ec_lpc_io_bytes_mec().
+
+I think that's a good solution.
+
+regards,
+dan carpenter
 
