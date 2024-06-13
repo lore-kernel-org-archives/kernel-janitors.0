@@ -1,38 +1,38 @@
 Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DF1149E1A;
-	Thu, 13 Jun 2024 19:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B3214D29B;
+	Thu, 13 Jun 2024 19:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718306069; cv=none; b=GqCZgXHjcNehXRKLyL90cfpFY2dXui0pe9woeLOa7cGasi6cvb8rANnXB1X5PYZe0TKqOB9pEigySmOvnJutUKEMdC66iLPwQOvU05D+wt5zs1h/vPAF1nupaP7XV0thd1E8robgjdIjmbLudguJYfvDRnn605DogAZJjlZgRGQ=
+	t=1718306406; cv=none; b=AP+yaDqglvHmI2Q7ogYZUyxDC6fBALi81PfsS7HRmRoWBj0v+rVntTUjWM5GfRdcMEjDPUhcPnyLGMNuGI0QBWFXpjyTO8MeSwbcPJPRegBwLui0sN1t5yJceNdxjwFBnuRCYYXbKddUrFFMu2AqU5AObLk1ExrUyQJE+E/UEeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718306069; c=relaxed/simple;
-	bh=SInef4o5M1AK1ysJCyquEWbuWWbqBrt9x4MkjqwsuwI=;
+	s=arc-20240116; t=1718306406; c=relaxed/simple;
+	bh=EyQ3hgLz0Dnk7ppR5oBQHpeY1aBrderyGlDfH/wRJIs=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AXGEc5a5QEqpYGcAZ1DtXDW2jsqWamHiZzZUyHNykw+mycbFEmSz8ASBq/mXaw3rkJoKeTTPqZqOe/Z3RmVl95lqL2azrkKqaSrwWv5b07szaiPZaxgpzMn+ws4qqCWqqJgSAO9t6YJJz2z6DUW2xniZe0VaXWQspPEpFdTPe6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com; spf=pass smtp.mailfrom=jubnut.com; dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b=L4RxlyWP; arc=none smtp.client-ip=80.241.56.161
+	 MIME-Version:Content-Type; b=qJp+Ykx5lQcqJv+j9Ip5d8P8UYEoyTPFolfmN1sZAEuCKsL9CV6rW037ebKxElmvC/P70oqoPNuwNWYHUzrpBoNjZU46Z4n1AnQ/hEiChOz2YKd4Z6NTfJuq0jZo4hEe80ugXa2jEU4lIgkjRXsXfWz22eAYQb3P0N7FIxZofro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com; spf=pass smtp.mailfrom=jubnut.com; dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b=VQKmOphU; arc=none smtp.client-ip=80.241.56.161
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jubnut.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b="L4RxlyWP"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b="VQKmOphU"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4W0XCF1gwBz9sxf;
-	Thu, 13 Jun 2024 21:14:17 +0200 (CEST)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4W0XKs1C50z9sRg;
+	Thu, 13 Jun 2024 21:20:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jubnut.com; s=MBO0001;
-	t=1718306057;
+	t=1718306401;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1Y2fqfo34jYOSwwgMfXN35xvUGJse2iPb8SuE0d9SRI=;
-	b=L4RxlyWPdRZoDVbvUgoWt2/kWCnKJ7oAPnbO+v1RwHWV3LF2hCxNYY9N8vjMGTXuouXGBK
-	iphm4wecR/ExSX/HS+R1hFOudMbV8ifHxVucEX5U5phwek+q6L4NNKO0Cjk2P6dY54Mv0S
-	8exe4k+Waxw2CB0qK5agl+NEZG/pxZJSGRDjpw5lhIZSFSvRthHjbKnDhqjN8kJML2r9jT
-	ws2jnB4NgmRYtSCK1gONy5RMpoIEHKYvQU4j60oGZa9wXaUZ9hkdJAzJiwOd5c9ekE64Gr
-	ayP9w+14JxfuicqdivAQiuPAAHOrxbULdqg4p/bM9mSMlv+jYNe75tnrx/SQzw==
+	bh=SzxVulY0TZcuW2PwYcIj3BXHYxEJ9lYYWUWQX+mmOOk=;
+	b=VQKmOphU5q/qHxoGuXx5eJ+VkLPGjLUcXaWxSrzkfwQfkRgSdU2LoE7zC5eiQX0uA6XO0Q
+	UOVBq3O8vvCEKVPFcbI6MyEtVlaDaQ9opyLHEPOS7FZFkG2N8Y50AIE1sMpkwxi02tD4CF
+	IEXpb/ihxt2B0vRrDrPic0GPb4M1Vdfe39AzmPJ3LE/hWpq2xxRn97AH0vEFPmXM53e7Sc
+	Lxj2omMcIE/zxGVnw/n2bZxn3b3YujgUSVfsZKw3wn5kOEReHcFN0+dX4ePNiebvOjVdkc
+	ICKKr9oOj3uB+dJKu8kMkdCguKh9J0OcQqxWxCZlkpCfoKqGUrm+93qx5zuerA==
 From: Ben Walsh <ben@jubnut.com>
 To: Tzung-Bi Shih <tzungbi@kernel.org>
 Cc: Dan Carpenter <dan.carpenter@linaro.org>, Benson Leung
@@ -44,8 +44,8 @@ Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in
 In-Reply-To: <ZmsvHBrYSpwYLyxx@google.com>
 References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
  <87sexgrdk4.fsf@jubnut.com> <ZmsvHBrYSpwYLyxx@google.com>
-Date: Thu, 13 Jun 2024 20:14:14 +0100
-Message-ID: <87o784ac55.fsf@jubnut.com>
+Date: Thu, 13 Jun 2024 20:19:58 +0100
+Message-ID: <87jzisabvl.fsf@jubnut.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -53,46 +53,23 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Rspamd-Queue-Id: 4W0XCF1gwBz9sxf
+
 
 Tzung-Bi Shih <tzungbi@kernel.org> writes:
 
-> On Thu, Jun 13, 2024 at 05:51:39PM +0100, Ben Walsh wrote:
->> 
->> Thanks for fixing this! Unfortunately `in_range` returns -EINVAL if
->> length == 0 (see the definition of `fwk_ec_lpc_mec_in_range`). I'm sure
->> this broke something in my testing, but I can't find what it was now.
->
 > Somewhere like [1] could accidentally get the -EINVAL.
 >
 > [1]: https://elixir.bootlin.com/linux/v6.9/source/drivers/platform/chrome/cros_ec_lpc.c#L232
 
-Yes. It turns out I'm getting it in:
+Sorry, it happens at:
 
 cros_ec_query_all -> cros_ec_proto_info -> ... -> cros_ec_pkt_xfer_lpc
 
-          /* Read response and update checksum */
-          ret = cros_ec_lpc_ops.read(EC_LPC_ADDR_HOST_PARAM, args.data_size,
-                                                             ^^^^^^^^^^^^^^^
-                                     msg->data);
-
-(as Dan suggested in his email).
-
->>   or 2. Put in a check for length == 0.
->> 
->>   or 3. Change the logic in `fwk_ec_lpc_mec_in_range`. Although I'm not
->>   sure what the correct answer is to "zero length is in range?"
->> 
->> I prefer option 2. What do you think?
->
-> How about drop the length check at [2]?
->
-> [2]: https://elixir.bootlin.com/linux/v6.9/source/drivers/platform/chrome/cros_ec_lpc_mec.c#L44
->
-
-This works, but we still end up calling cros_ec_lpc_io_bytes_mec() with
-zero length. Although this seems to work fine, we could put a length
-check at the top of cros_ec_lpc_read_bytes() to avoid it.
+        /* Read response and process checksum */
+        ret = fwk_ec_lpc_ops.read(EC_LPC_ADDR_HOST_PACKET +
+                                   sizeof(response), response.data_len,
+                                                     ^^^^^^^^^^^^^^^^^
+                                   msg->data);
 
 >>
 >> Dan Carpenter <dan.carpenter@linaro.org> writes:
