@@ -1,102 +1,130 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3396B182D2;
-	Thu, 13 Jun 2024 02:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBDE6A342
+	for <kernel-janitors@vger.kernel.org>; Thu, 13 Jun 2024 02:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718244005; cv=none; b=OIinsPfoX41pYY/7rrKewvTEqOFoi1DTjx6hVjH9e2H0LVobGVM6FrWLqDPmtOFgl6zldGsZh+6qI2I2MgV6P2U0AYIB6m9QSvyIKHbpofMt7HtTR+fLZjbB5x4G94a54Il6fepTDi0MN23yn9GGtbFEJluovNDqm1DJEd0ggw8=
+	t=1718245687; cv=none; b=o6d9zC11jy98UA9UxLb3oaHEPp5zr7qLvYddbqhP9dzn7DuareuZXQhsqFGbAMRhIpxIQZ/ACnmjcrdnhIfgrEdrAuTpHHjSxImF7TsQygC5IQ6eH6eAV1DCAkhdeGkPGh+FuDnkyWdb6kJiZ3/7NhoiUCs1mwTI12MfO7sXQn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718244005; c=relaxed/simple;
-	bh=yPI4anQmIzp5Hqu3yjzsH0vAKTfQCcNRUR8rQj1j10U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Gi/tHKDr9WhTS2tKI912DZLfdwx+nySaTRf40s4BO0axPl7PQ7vuJQECII6y/RVhYJwaiqtNqEf1BwjbuV1CCIlJ5lzyCoPyUf4Sn3XJ2svWvWfkMln98+dQfLtWCRuHxiWvdiOsiVG2ezAdhD9FioFxjD3BIXHYVZyYOc3Vj/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Njn2okIA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718245687; c=relaxed/simple;
+	bh=wQjkzUNkQvO1QQTmzJdFmOhe3eLsPajk6NuewFDYhho=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=me1TYDwfsBByGN8KYr3HLNV77qINsrmYuuBMl5NAON7r7l/wJco1A+KoxJxe7UNsiGlj3P+kqABIsC+Q+KR/J4QvVH+R7FUITBV3EEQPMkfQfMehEqZUIsINKlvPRkWcVjDqOObm/h3IG7XjsMS7VcEtF0/st9apdMgcJzXZWo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=f37yKs3d; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Njn2okIA"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CKo5ci025773;
-	Thu, 13 Jun 2024 01:59:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=nKH5Tok5u20aWE4SpbitkC
-	QG6pnQwp2V3arDCsYmjKI=; b=Njn2okIAMGm207QoFYL9fSrv0kGe1pPgYiue4E
-	B40HEqBu7JcFNhGxWZrZshkVztFb4R0jhqPz9dRCtMup7d1qmH99HtmoKk2tD6sx
-	90ZVPApZN2Ut4ua7TVEk91HRtzzoAqZNRxDyD1XzH9w1alubHrlonN8TfKDSoQxL
-	t1xo7TIZDeDI67+af67oMooXOWcciKbXEzZmnRxYstvCyMC1pPmltW4NnQjei8AR
-	1KECcL0NDjFkNHeENoaZ3SrevO4xNMpzm5fmwNXWr7OetHTZ3zcEZldZmEgSIFkZ
-	gyfTDXsjzy+l0U1cbZrhRiJo13eooiAx3+ZsvzngP9ntwlGA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yqcxthmr6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 01:59:58 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45D1xvu9015939
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 01:59:57 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 18:59:56 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 12 Jun 2024 18:59:53 -0700
-Subject: [PATCH] video: macmodes: add missing MODULE_DESCRIPTION() macro
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="f37yKs3d"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52bd48cf36bso720713e87.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jun 2024 19:28:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718245682; x=1718850482; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NqJHo/nm4dwxUT1vSJWjZGt/TMqLX57toHgV/NshWrQ=;
+        b=f37yKs3dt4fnBxljKLCDr4a0BTa5Ia63EuIZlmUwoxsvUYhjYICzT11NIXBEBigtJY
+         8h5m5vcYBnpIq4pk9rSB296kWwOpcjwLhIPViqZV+o1oy39dJKeDF48vH9Hwnm41yXZj
+         xlhoNxqMToaQHYi9Tf8vvRby/xhWKbGQ6L6BQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718245682; x=1718850482;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NqJHo/nm4dwxUT1vSJWjZGt/TMqLX57toHgV/NshWrQ=;
+        b=wyb+LQ5N/fe19SBi9walhnOESU6XBhf7buL9UOFP9VS4tXKC6pPjJ65xzwYwyi1mXN
+         d89uS4np8l/SBJHvHpfE1ppU6OgzMox8/EKcKbzglfjAcjoUZpvKpnBX5H8GrCM2jF7a
+         XtqF8w+HfFmdDA4c3ghmyA/xL5k1BWfJnQAueTU/5i6Nj4vlJZp0nj2kPM/QI75gVlCl
+         t7tIW5JQMYnmbVrAotlyjXYEL9QCl8EzrOH/vQG0Uyd6+JaU0HIfR876un9+n5jvJtCD
+         OtuU9MMFG9EB96cx9IB8E/DF6voJxJ4F/L98trc760Ojgj819bAkXNVJVUbkUBsHWsqP
+         RdHA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnafG1mz2hx3ku58HQsLxj6+xVqH878O4dIvpYC6l6mYm0Q661cDPVa0bhrWFuGtxTwUzUq6OJmP5I/1HrA+hjCvk3AXSC7d6amle3t8kr
+X-Gm-Message-State: AOJu0Yz5Q1Rm3WbSGbDUmz+Zr4u4HxjBzjbfWn16AkeL9OhTQcGuuKFF
+	KmLLodsdSbWeq5JeMOO+vC9fRv9J9U/Y7CtLbeGPivM53cjQzfa3XqKqkpaUxMAqj44ktTxcZ0D
+	Mag==
+X-Google-Smtp-Source: AGHT+IEDDPg2ALWf1lidEkeAmk93+mU74FvTGMErMmvesZZ+1ljDxxxStDLc7mrF3buB3vg5IB2W+Q==
+X-Received: by 2002:a05:6512:108e:b0:52c:7f12:61d1 with SMTP id 2adb3069b0e04-52c9a3b972dmr2871069e87.1.1718245682536;
+        Wed, 12 Jun 2024 19:28:02 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2888c2esm50903e87.300.2024.06.12.19.28.01
+        for <kernel-janitors@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Jun 2024 19:28:02 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52962423ed8so658158e87.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jun 2024 19:28:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWaF6IpicfXjoyO2kU7cce0DebWY2dvF+0jyglSIwULrcRjqic+u8kzAkWvogFgghqAPBLbmDMbwQVhF55vYde4s1CChwF3U6jz6uaf+yyi
+X-Received: by 2002:ac2:418a:0:b0:52b:c147:ea38 with SMTP id
+ 2adb3069b0e04-52c9a405960mr1780155e87.68.1718245681292; Wed, 12 Jun 2024
+ 19:28:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240612-md-drivers-video-fbdev-macmodes-v1-1-17514b2a6e71@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAJhSamYC/x3NywoCMQyF4VcZsjbQBi/gq4iLXjJOwLaSaBkY5
- t2tLr/F+c8GxipscJ02UO5i0uqAP0yQllAfjJKHgRwd3dkTloxZpbMadsnccI6ZO5aQSstseAn
- +FCmSi55gVF7Ks6z/h9t9OAZjjBpqWn7dp9TPOtb2ZoV9/wJd/bnfkAAAAA==
-To: Helge Deller <deller@gmx.de>
-CC: <linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: rOO_uOcTAaSg6ChrQB6M6W-nlW7y-5RD
-X-Proofpoint-GUID: rOO_uOcTAaSg6ChrQB6M6W-nlW7y-5RD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_12,2024-06-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=987 spamscore=0 mlxscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130011
+References: <20240612-md-drivers-media-common-videobuf2-v1-1-4625ab172fd9@quicinc.com>
+In-Reply-To: <20240612-md-drivers-media-common-videobuf2-v1-1-4625ab172fd9@quicinc.com>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Thu, 13 Jun 2024 11:27:22 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5Bdh6Lsje-71_HDK9T141jMNeNh1v400ukUVn1L5WO-kA@mail.gmail.com>
+Message-ID: <CAAFQd5Bdh6Lsje-71_HDK9T141jMNeNh1v400ukUVn1L5WO-kA@mail.gmail.com>
+Subject: Re: [PATCH] media: videobuf2: add missing MODULE_DESCRIPTION() macro
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/macmodes.o
+Hi Jeff,
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+On Wed, Jun 12, 2024 at 11:46=E2=80=AFPM Jeff Johnson <quic_jjohnson@quicin=
+c.com> wrote:
+>
+> With ARCH=3Dx86, make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/common/vi=
+deobuf2/videobuf2-dvb.o
+>
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> While doing these cleanups, in most cases I've taken the descriptions
+> directly from code comments, Kconfig descriptions, or git logs, but in
+> this case I didn't see a nice concise description so I invented this
+> one. Please suggest a replacement if this isn't an appropriate
+> description.
+> ---
+>  drivers/media/common/videobuf2/videobuf2-dvb.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/media/common/videobuf2/videobuf2-dvb.c b/drivers/med=
+ia/common/videobuf2/videobuf2-dvb.c
+> index 8c15bcd07eef..6f6650183184 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-dvb.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-dvb.c
+> @@ -19,6 +19,7 @@
+>  /* ------------------------------------------------------------------ */
+>
+>  MODULE_AUTHOR("Gerd Knorr <kraxel@bytesex.org> [SuSE Labs]");
+> +MODULE_DESCRIPTION("Simple DVB helper framework for videobuf2");
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/video/fbdev/macmodes.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for the patch!
 
-diff --git a/drivers/video/fbdev/macmodes.c b/drivers/video/fbdev/macmodes.c
-index af86c081d2be..d6be3c67d3df 100644
---- a/drivers/video/fbdev/macmodes.c
-+++ b/drivers/video/fbdev/macmodes.c
-@@ -411,4 +411,5 @@ int mac_find_mode(struct fb_var_screeninfo *var, struct fb_info *info,
- }
- EXPORT_SYMBOL(mac_find_mode);
- 
-+MODULE_DESCRIPTION("MacOS video mode library");
- MODULE_LICENSE("GPL");
+Looking at the header at the top of the file:
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240612-md-drivers-video-fbdev-macmodes-7a15b2b20b12
+ * some helper function for simple DVB cards which simply DMA the
+ * complete transport stream and let the computer sort everything else
+ * (i.e. we are using the software demux, ...).  Also uses vb2
+ * to manage DMA buffers.
 
+I think I'd call it "Videobuf2 helpers library for simple DVB cards".
+But maybe we could have some DVB expert comment on this. :)
+
+Regardless of whether the description stays or changes, feel free to add
+
+Acked-by: Tomasz Figa <tfiga@chromium.org>
+
+Best regards,
+Tomasz
