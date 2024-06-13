@@ -1,65 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6706317FD;
-	Thu, 13 Jun 2024 16:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E52F146583;
+	Thu, 13 Jun 2024 16:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718297285; cv=none; b=LCqjRdkU2uhFmnzsLmbTHLJpCt6DGHyTPQmwVO+S9oGuaS7FFBdyPKTQGgQO5unPZLHbKY4/FghL6qkStCaVEAahS4fUlNGsOav8JQ2Bot4Je6EEIElkjktWQJngj4fWxMOAc65B/UbsAuy0fXCo9kAFaICROaDRlRaHOy2aRYc=
+	t=1718297514; cv=none; b=ZVf0pFN3nVr4wco7D9Q6oNaWquMtcBt+C81SH3iBqijxgnkrPozTs5xX27XCQOy41jF9XQNej+3dgKNmXFV6/uLDD4IrB/dq8qE1cW6kkNqEvrIaNOghTNSQZhGPpHUg+EvhDh0Ylo39DxzaAw+5EAZ16JiLx4EnGydEWr7sZik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718297285; c=relaxed/simple;
-	bh=AJl67d8slnynIjtfzAGyDRCCHUC9dNMUzxCpIOQc+nk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=a1krORvCl8R6S5SRWxECjs/ytk8bQuN4/LxqJdE9lcdMKGlsQT6batiQ4DDyny/8vgfKy5v5HCPmoypgVRu+IDktzMY5LmEG0dHzi/Wet5kt9fcbaZViIbQy8IGBgJ1iDCKm1HQfA9nEfSg2cMRnWZMzv4w/PWSefDdjX8VRvIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jFIsMXMs; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718297514; c=relaxed/simple;
+	bh=VNcJSnvqR6/3seiRGBE6M9MZOINb+wobmGnn1qcsztk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=u+wNqWeRsUzi8erb7HR6ynpLN0NOvpcc8dUoDUi8yzXutucwOHc3a5LMYywNsD1+cDnLPlYAMYdzWM6uKNZktjHwCl9jegZ3+PDfUT70JEXM4A9l8hB5ipNwG316jv4KqPLLZr0HKk9GXBRauKq6Uo4b7R9W1ltU9HkzYQmk6Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com; spf=pass smtp.mailfrom=jubnut.com; dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b=RD/4abPT; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jubnut.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFIsMXMs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33A62C2BBFC;
-	Thu, 13 Jun 2024 16:48:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718297285;
-	bh=AJl67d8slnynIjtfzAGyDRCCHUC9dNMUzxCpIOQc+nk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=jFIsMXMsqyze/Z8v8/dCBH6z8+PH7v0VhR21enZw/mKLXpd2yA5UKmd9ZI+HmmHOr
-	 SlS/6ZqRAW4O9bgxtS7vHQGsxDBZ4oyWpjTK9LGu7MrDOYhmLl6hR9DsJjPxcWbt17
-	 jm7fV9vzwQ/Ht77V8LZikuWrBANBwzKZHiXgA1QnUwafXf9+gZGg2dGIZvdGh572nI
-	 8u3i5uFK3JkwYfaOsmzE8HeUgpZrNXk84jgmjHfzD9cV8Z5vGeDsxWdLkKURfMp3B9
-	 BJaqQV6OtfVwLFHf22SBJKPlh/3Si7zG2rqhnV4WsU8f+zm9AykHp+hDypM+FqhBSC
-	 xzI6Zn5PMI42A==
-From: Lee Jones <lee@kernel.org>
-To: Patrick Gansterer <paroga@paroga.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>, 
- Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, 
- dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, 
+	dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b="RD/4abPT"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4W0T2k24TMz9stL;
+	Thu, 13 Jun 2024 18:51:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jubnut.com; s=MBO0001;
+	t=1718297502;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CHPeQUmbiayIxQb12SxfsIIYWQF+CskyfBhwRKbz8mY=;
+	b=RD/4abPTD9XsAvWgGQ1kW6r1+dvysVjmcjkwd00uhLfpT+nYTKZ6Po+oEBcGqYIR8gS9EX
+	WzapVDFCCBl94Tc+fLzZ6uHZStfzcAMAX4zdUjwqiuCrZFYn7NkZjde/NteZQjRUyNgcRE
+	ejPQlsxVHvAtBaXBa05+G6xTfix56WzW3R8ZMwsZYanTt7phip6WGPDpgkHAeQn5U5NOSh
+	FooSWp7SHybL6b40IIi1kj6nk1B3U0dVt4xBA13PtjQnJhD/I+jfXp7RLeZhGS6uNu9chS
+	t4T9EQ2dtHVUCY+ED4LWrWFLjICYz4Rq1WV0L3njOxLyY3HXjQCW/xKN5yIIhg==
+From: Ben Walsh <ben@jubnut.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
+ Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev,
  linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <187b5bc5-a010-46c2-8ead-980df9efae79@moroto.mountain>
-References: <187b5bc5-a010-46c2-8ead-980df9efae79@moroto.mountain>
-Subject: Re: (subset) [PATCH] backlight: lm3509_bl: Fix NULL vs IS_ERR()
- check in register() function
-Message-Id: <171829728292.2711571.6119910061158578189.b4-ty@kernel.org>
-Date: Thu, 13 Jun 2024 17:48:02 +0100
+Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in
+ cros_ec_lpc_mec_read_bytes()
+In-Reply-To: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
+References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
+Date: Thu, 13 Jun 2024 17:51:39 +0100
+Message-ID: <87sexgrdk4.fsf@jubnut.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain
+X-Rspamd-Queue-Id: 4W0T2k24TMz9stL
 
-On Thu, 06 Jun 2024 16:10:23 +0300, Dan Carpenter wrote:
-> The devm_backlight_device_register() doesn't return NULL, it returns
-> error pointers.  Update the error checking to match.
-> 
-> 
 
-Applied, thanks!
+Thanks for fixing this! Unfortunately `in_range` returns -EINVAL if
+length == 0 (see the definition of `fwk_ec_lpc_mec_in_range`). I'm sure
+this broke something in my testing, but I can't find what it was now.
 
-[1/1] backlight: lm3509_bl: Fix NULL vs IS_ERR() check in register() function
-      commit: 90b7f2ead953aab5677ae8235d78841cee8fd13e
+My original suggestion was to add a test for "length == 0" before the
+"in_range" test, then do the test as you have done. But we decided to
+defer this to a later, separate patch.
 
---
-Lee Jones [李琼斯]
+There's also a similar "in_range" test in `fwk_ec_lpc_mec_write_bytes`.
 
+We could:
+
+  1. Revert this and change the `data & EC_LPC_STATUS_BUSY_MASK` to
+  `res & EC_LPC_STATUS_BUSY_MASK`. This is the same logic as before the
+  negative error code change.
+
+  or 2. Put in a check for length == 0.
+
+  or 3. Change the logic in `fwk_ec_lpc_mec_in_range`. Although I'm not
+  sure what the correct answer is to "zero length is in range?"
+
+I prefer option 2. What do you think?
+
+Dan Carpenter <dan.carpenter@linaro.org> writes:
+
+> We changed these functions to returning negative error codes, but this
+> first error path was accidentally overlooked.  It leads to a Smatch
+> warning:
+>
+>     drivers/platform/chrome/cros_ec_lpc.c:181 ec_response_timed_out()
+>     error: uninitialized symbol 'data'.
+>
+> Fix this by returning the error code instead of success.
+>
+> Fixes: 68dbac0a58ef ("platform/chrome: cros_ec_lpc: MEC access can return error code")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/platform/chrome/cros_ec_lpc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+> index ebe9fb143840..f0470248b109 100644
+> --- a/drivers/platform/chrome/cros_ec_lpc.c
+> +++ b/drivers/platform/chrome/cros_ec_lpc.c
+> @@ -139,7 +139,7 @@ static int cros_ec_lpc_mec_read_bytes(unsigned int offset, unsigned int length,
+>  	int in_range = cros_ec_lpc_mec_in_range(offset, length);
+>  
+>  	if (in_range < 0)
+> -		return 0;
+> +		return in_range;
+>  
+>  	return in_range ?
+>  		cros_ec_lpc_io_bytes_mec(MEC_IO_READ,
+> @@ -158,7 +158,7 @@ static int cros_ec_lpc_mec_write_bytes(unsigned int offset, unsigned int length,
+>  	int in_range = cros_ec_lpc_mec_in_range(offset, length);
+>  
+>  	if (in_range < 0)
+> -		return 0;
+> +		return in_range;
+>  
+>  	return in_range ?
+>  		cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE,
+> -- 
+> 2.43.0
