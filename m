@@ -1,188 +1,197 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF63748E;
-	Thu, 13 Jun 2024 03:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC998130A40;
+	Thu, 13 Jun 2024 03:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718249212; cv=none; b=jVjX04mipgnyUw3Yg2MbBt1TdXpbTuqKPgzNmMqhNHv3n2uEzmED1ILsqR5VKncvVJf+6xdcc9Vuh+J9Dz4VUpdrs8GJ6zo4vUOcEikUjdtDvPIpYnH7eU3VvWYSpnyzqOksLNKjU0Yb2D3dvHk6fwhO1LvLE5Juo5Cia7J8ifQ=
+	t=1718249883; cv=none; b=KRGkE0ok+wbYnTorTmGyFNa6iDPjgFcO66NRaihIrWax6yjmlEGXI2R5MVdljD/82LPZuQtW2zs1x+PC8eePOvIvdLva8h+ANWh/PIWqJIMhNMw4gw8SNj+BCEj1ol7nefqZorcEGx5MmFr8nRCbaAjx1P4bYUGlcfQlB7xvfHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718249212; c=relaxed/simple;
-	bh=Ci/6KzgUEyT4IcUqdvbSzPDG4P3cJd9nDSTz7u6vAGE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=PupFgIUND4qBO6vUbTtCgFrPA1irue5maS2xVwQ6bNH+INONdULNDkwYcPIQIWi6bji5G0FzeXNWi2kxru141d9N2g+GsM83848o9/rKA7NEuKd06F9FzUuGTta6S8Upk2vh5czLffcoC1yK59hQGbC89k1eaZI/eB3hpe4rJvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Lkq7CXMW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718249883; c=relaxed/simple;
+	bh=MUF6QJIs92YjVFx9pLVup9B1X4v/FOHgXQ+Q1ulGSY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HW+9VwlcPz5RihUx6mpz0y4hErm5jUTcRWbLAo1ssOQ/imt9cTFXtfOJ1e5as9RT3dXmiFL2HJtY7/oK5vOzmWFwYLdpr6xv4EknNAtSIR5eGbKqatsI54Onvvh7v4SuOb12Kew5sogp2Zxa28SlOHeNVEcxCQJMk3+AS1g6uKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/Q38vJo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Lkq7CXMW"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45D22sCA004228;
-	Thu, 13 Jun 2024 03:26:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=yc5eWxdqnW699o6z6p1XlX
-	XM745raYjvb+nBTtzQq0o=; b=Lkq7CXMWltg0UF1UrfbUH4GooD3eEsJOuQoMov
-	z3CfGyrrFecsJ++ymIg5odPn5VimB9gYW/yGq5VjYNUadJG3IEV/tS77cOehBJRe
-	brqF1QJ5c+nFM/d5BOWHPsaL/vSGcHRabI2bv5VfbvSg/UbZjJ/aBZcFVEESY9xf
-	Brer1DjD4la05yylGSu67ssafeh1B2dQX2SvP1yFLlJNLZVMV8xNc7Q3yFjmbiP0
-	J3F2rckDzeR4VZf5PW3E3VfSnQjCPYpHCj6ZKyTsz6NPUTtcvci4eekTpv2yr1Wz
-	yybJz643lCZxtyp9HKU4h0e1qim59Ykp3DLjWMo480QG7IJA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yqqn304bh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 03:26:29 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45D3QSFF019533
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 03:26:28 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 20:26:27 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 12 Jun 2024 20:26:26 -0700
-Subject: [PATCH] ASoC: amd: add missing MODULE_DESCRIPTION() macros
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/Q38vJo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7817BC2BBFC;
+	Thu, 13 Jun 2024 03:38:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718249882;
+	bh=MUF6QJIs92YjVFx9pLVup9B1X4v/FOHgXQ+Q1ulGSY8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=D/Q38vJoRXlXt5XW/4wGVxDR3Ve5LY0YeIOEeyXy3NbqhqX2dZ1j6M305bUwT45/t
+	 UDuYraBOn5RJGcB5wbPp0mVvgGhhjTHGq9Z0Flg5xyFBTSbQm63u8OHLMVmMqygIG8
+	 n9Bktxt8XPwCkrGEjHdwaonD6xgWh8Godtd+lRtFFTJN7g05LyY6qtQ9CoXmzs1IMm
+	 s3wJnTMklP71T4XudKIUo3akJ/RvcV6b0A4eh6dGBbeQLpeU8YyAJJTIYJ6rHLoz8s
+	 fp4CPkLTgzE6dVIPWUBEYXDVCE07lQXMRXq4lTfYFbtT2/hHBATfDcVAbYnccY1Jab
+	 dAuGuN0IsVTKA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 1975FCE0DEA; Wed, 12 Jun 2024 20:38:02 -0700 (PDT)
+Date: Wed, 12 Jun 2024 20:38:02 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+	linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	bridge@lists.linux.dev, linux-trace-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
+	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
+	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <08ee7eb2-8d08-4f1f-9c46-495a544b8c0e@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
+ <20240612143305.451abf58@kernel.org>
+ <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
+ <Zmov7ZaL-54T9GiM@zx2c4.com>
+ <Zmo9-YGraiCj5-MI@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240612-md-sound-soc-amd-v1-1-ad1de0409c11@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAOJmamYC/x3MQQqDQAyF4atI1g3MTEWhVyldjDNpDdRYkloE8
- e7Gbh58i/dvYKRMBrdmA6UfG8/iiJcGypjlRcjVDSmkNnQx4VTR5kXOLZhdte9i7AMFukbw20f
- pyes/eX+4h2yEg2Yp4xl6sywrTtm+pLDvB8p14q2BAAAA
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jUJ8Od1hB6UnDkUhtqAF6F901r_euKbk
-X-Proofpoint-ORIG-GUID: jUJ8Od1hB6UnDkUhtqAF6F901r_euKbk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_12,2024-06-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- mlxlogscore=999 impostorscore=0 bulkscore=0 adultscore=0 phishscore=0
- priorityscore=1501 clxscore=1015 spamscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130021
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zmo9-YGraiCj5-MI@zx2c4.com>
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/renoir/snd-acp3x-rn.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/yc/snd-soc-acp6x-mach.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/acp/snd-acp-i2s.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/acp/snd-acp-pdm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/acp/snd-acp-legacy-common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/acp/snd-acp-pci.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/ps/snd-soc-ps-mach.o
+On Thu, Jun 13, 2024 at 02:31:53AM +0200, Jason A. Donenfeld wrote:
+> On Thu, Jun 13, 2024 at 01:31:57AM +0200, Jason A. Donenfeld wrote:
+> > On Wed, Jun 12, 2024 at 03:37:55PM -0700, Paul E. McKenney wrote:
+> > > On Wed, Jun 12, 2024 at 02:33:05PM -0700, Jakub Kicinski wrote:
+> > > > On Sun,  9 Jun 2024 10:27:12 +0200 Julia Lawall wrote:
+> > > > > Since SLOB was removed, it is not necessary to use call_rcu
+> > > > > when the callback only performs kmem_cache_free. Use
+> > > > > kfree_rcu() directly.
+> > > > > 
+> > > > > The changes were done using the following Coccinelle semantic patch.
+> > > > > This semantic patch is designed to ignore cases where the callback
+> > > > > function is used in another way.
+> > > > 
+> > > > How does the discussion on:
+> > > >   [PATCH] Revert "batman-adv: prefer kfree_rcu() over call_rcu() with free-only callbacks"
+> > > >   https://lore.kernel.org/all/20240612133357.2596-1-linus.luessing@c0d3.blue/
+> > > > reflect on this series? IIUC we should hold off..
+> > > 
+> > > We do need to hold off for the ones in kernel modules (such as 07/14)
+> > > where the kmem_cache is destroyed during module unload.
+> > > 
+> > > OK, I might as well go through them...
+> > > 
+> > > [PATCH 01/14] wireguard: allowedips: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+> > > 	Needs to wait, see wg_allowedips_slab_uninit().
+> > 
+> > Right, this has exactly the same pattern as the batman-adv issue:
+> > 
+> >     void wg_allowedips_slab_uninit(void)
+> >     {
+> >             rcu_barrier();
+> >             kmem_cache_destroy(node_cache);
+> >     }
+> > 
+> > I'll hold off on sending that up until this matter is resolved.
+> 
+> BTW, I think this whole thing might be caused by:
+> 
+>     a35d16905efc ("rcu: Add basic support for kfree_rcu() batching")
+> 
+> The commit message there mentions:
+> 
+>     There is an implication with rcu_barrier() with this patch. Since the
+>     kfree_rcu() calls can be batched, and may not be handed yet to the RCU
+>     machinery in fact, the monitor may not have even run yet to do the
+>     queue_rcu_work(), there seems no easy way of implementing rcu_barrier()
+>     to wait for those kfree_rcu()s that are already made. So this means a
+>     kfree_rcu() followed by an rcu_barrier() does not imply that memory will
+>     be freed once rcu_barrier() returns.
+> 
+> Before that, a kfree_rcu() used to just add a normal call_rcu() into the
+> list, but with the function offset < 4096 as a special marker. So the
+> kfree_rcu() calls would be treated alongside the other call_rcu() ones
+> and thus affected by rcu_barrier(). Looks like that behavior is no more
+> since this commit.
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+You might well be right, and thank you for digging into this!
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-Corrections to these descriptions are welcomed. I'm not an expert in
-this code so in most cases I've taken these descriptions directly from
-code comments, Kconfig descriptions, or git logs.  History has shown
-that in some cases these are originally wrong due to cut-n-paste
-errors, and in other cases the drivers have evolved such that the
-original information is no longer accurate.
----
- sound/soc/amd/acp/acp-i2s.c           | 1 +
- sound/soc/amd/acp/acp-legacy-common.c | 1 +
- sound/soc/amd/acp/acp-pci.c           | 1 +
- sound/soc/amd/acp/acp-pdm.c           | 1 +
- sound/soc/amd/ps/ps-mach.c            | 1 +
- sound/soc/amd/renoir/acp3x-rn.c       | 1 +
- sound/soc/amd/yc/acp6x-mach.c         | 1 +
- 7 files changed, 7 insertions(+)
+> Rather than getting rid of the batching, which seems good for
+> efficiency, I wonder if the right fix to this would be adding a
+> `should_destroy` boolean to kmem_cache, which kmem_cache_destroy() sets
+> to true. And then right after it checks `if (number_of_allocations == 0)
+> actually_destroy()`, and likewise on each kmem_cache_free(), it could
+> check `if (should_destroy && number_of_allocations == 0)
+> actually_destroy()`. This way, the work is delayed until it's safe to do
+> so. This might also mitigate other lurking bugs of bad code that calls
+> kmem_cache_destroy() before kmem_cache_free().
 
-diff --git a/sound/soc/amd/acp/acp-i2s.c b/sound/soc/amd/acp/acp-i2s.c
-index 60cbc881be6e..0bc8617e922a 100644
---- a/sound/soc/amd/acp/acp-i2s.c
-+++ b/sound/soc/amd/acp/acp-i2s.c
-@@ -616,5 +616,6 @@ const struct snd_soc_dai_ops asoc_acp_cpu_dai_ops = {
- };
- EXPORT_SYMBOL_NS_GPL(asoc_acp_cpu_dai_ops, SND_SOC_ACP_COMMON);
- 
-+MODULE_DESCRIPTION("AMD ACP Audio I2S controller");
- MODULE_LICENSE("Dual BSD/GPL");
- MODULE_ALIAS(DRV_NAME);
-diff --git a/sound/soc/amd/acp/acp-legacy-common.c b/sound/soc/amd/acp/acp-legacy-common.c
-index 3be7c6d55a6f..4422cec81e3c 100644
---- a/sound/soc/amd/acp/acp-legacy-common.c
-+++ b/sound/soc/amd/acp/acp-legacy-common.c
-@@ -475,4 +475,5 @@ void check_acp_config(struct pci_dev *pci, struct acp_chip_info *chip)
- }
- EXPORT_SYMBOL_NS_GPL(check_acp_config, SND_SOC_ACP_COMMON);
- 
-+MODULE_DESCRIPTION("AMD ACP legacy common features");
- MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/sound/soc/amd/acp/acp-pci.c b/sound/soc/amd/acp/acp-pci.c
-index ad320b29e87d..565623afd42e 100644
---- a/sound/soc/amd/acp/acp-pci.c
-+++ b/sound/soc/amd/acp/acp-pci.c
-@@ -247,6 +247,7 @@ static struct pci_driver snd_amd_acp_pci_driver = {
- };
- module_pci_driver(snd_amd_acp_pci_driver);
- 
-+MODULE_DESCRIPTION("AMD ACP common PCI support");
- MODULE_LICENSE("Dual BSD/GPL");
- MODULE_IMPORT_NS(SND_SOC_ACP_COMMON);
- MODULE_ALIAS(DRV_NAME);
-diff --git a/sound/soc/amd/acp/acp-pdm.c b/sound/soc/amd/acp/acp-pdm.c
-index f754bf79b5e3..bb79269c2fc1 100644
---- a/sound/soc/amd/acp/acp-pdm.c
-+++ b/sound/soc/amd/acp/acp-pdm.c
-@@ -178,5 +178,6 @@ const struct snd_soc_dai_ops acp_dmic_dai_ops = {
- };
- EXPORT_SYMBOL_NS_GPL(acp_dmic_dai_ops, SND_SOC_ACP_COMMON);
- 
-+MODULE_DESCRIPTION("AMD ACP Audio PDM controller");
- MODULE_LICENSE("Dual BSD/GPL");
- MODULE_ALIAS(DRV_NAME);
-diff --git a/sound/soc/amd/ps/ps-mach.c b/sound/soc/amd/ps/ps-mach.c
-index e675b8f569eb..ff8ad036b077 100644
---- a/sound/soc/amd/ps/ps-mach.c
-+++ b/sound/soc/amd/ps/ps-mach.c
-@@ -75,5 +75,6 @@ static struct platform_driver acp63_mach_driver = {
- module_platform_driver(acp63_mach_driver);
- 
- MODULE_AUTHOR("Syed.SabaKareem@amd.com");
-+MODULE_DESCRIPTION("AMD Pink Sardine support for DMIC");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:" DRV_NAME);
-diff --git a/sound/soc/amd/renoir/acp3x-rn.c b/sound/soc/amd/renoir/acp3x-rn.c
-index 5d979a7b77fb..3249f74a0197 100644
---- a/sound/soc/amd/renoir/acp3x-rn.c
-+++ b/sound/soc/amd/renoir/acp3x-rn.c
-@@ -72,5 +72,6 @@ static struct platform_driver acp_mach_driver = {
- module_platform_driver(acp_mach_driver);
- 
- MODULE_AUTHOR("Vijendar.Mukunda@amd.com");
-+MODULE_DESCRIPTION("AMD Renoir support for DMIC");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:" DRV_NAME);
-diff --git a/sound/soc/amd/yc/acp6x-mach.c b/sound/soc/amd/yc/acp6x-mach.c
-index 1760b5d42460..4b32517c1b7c 100644
---- a/sound/soc/amd/yc/acp6x-mach.c
-+++ b/sound/soc/amd/yc/acp6x-mach.c
-@@ -504,5 +504,6 @@ static struct platform_driver acp6x_mach_driver = {
- module_platform_driver(acp6x_mach_driver);
- 
- MODULE_AUTHOR("Vijendar.Mukunda@amd.com");
-+MODULE_DESCRIPTION("AMD Yellow Carp support for DMIC");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:" DRV_NAME);
+Here are the current options being considered, including those that
+are completely brain-dead:
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240612-md-sound-soc-amd-d761170e0e31
+o	Document current state.  (Must use call_rcu() if module
+	destroys slab of RCU-protected objects.)
 
+	Need to review Julia's and Uladzislau's series of patches
+	that change call_rcu() of slab objects to kfree_rcu().
+
+o	Make rcu_barrier() wait for kfree_rcu() objects.  (This is
+	surprisingly complex and will wait unnecessarily in some cases.
+	However, it does preserve current code.)
+
+o	Make a kfree_rcu_barrier() that waits for kfree_rcu() objects.
+	(This avoids the unnecessary waits, but adds complexity to
+	kfree_rcu().  This is harder than it looks, but could be done,
+	for example by maintaining pairs of per-CPU counters and handling
+	them in an SRCU-like fashion.  Need some way of communicating the
+	index, though.)
+
+	(There might be use cases where both rcu_barrier() and
+	kfree_rcu_barrier() would need to be invoked.)
+
+	A simpler way to implement this is to scan all of the in-flight
+	objects, and queue each (either separately or in bulk) using
+	call_rcu().  This still has problems with kfree_rcu_mightsleep()
+	under low-memory conditions, in which case there are a bunch
+	of synchronize_rcu() instances waiting.  These instances could
+	use SRCU-like per-CPU arrays of counters.  Or just protect the
+	calls to synchronize_rcu() and the later frees with an SRCU
+	reader, then have the other end call synchronize_srcu().
+
+o	Make the current kmem_cache_destroy() asynchronously wait for
+	all memory to be returned, then complete the destruction.
+	(This gets rid of a valuable debugging technique because
+	in normal use, it is a bug to attempt to destroy a kmem_cache
+	that has objects still allocated.)
+
+o	Make a kmem_cache_destroy_rcu() that asynchronously waits for
+	all memory to be returned, then completes the destruction.
+	(This raises the question of what to is it takes a "long time"
+	for the objects to be freed.)
+
+o	Make a kmem_cache_free_barrier() that blocks until all
+	objects in the specified kmem_cache have been freed.
+
+o	Make a kmem_cache_destroy_wait() that waits for all memory to
+	be returned, then does the destruction.  This is equivalent to:
+
+		kmem_cache_free_barrier(&mycache);
+		kmem_cache_destroy(&mycache);
+
+Uladzislau has started discussions on the last few of these:
+https://lore.kernel.org/all/ZmnL4jkhJLIW924W@pc636/
+
+I have also added this information to a Google Document for
+easier tracking:
+https://docs.google.com/document/d/1v0rcZLvvjVGejT3523W0rDy_sLFu2LWc_NR3fQItZaA/edit?usp=sharing
+
+Other thoughts?
+
+							Thanx, Paul
