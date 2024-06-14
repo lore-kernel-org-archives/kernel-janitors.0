@@ -1,64 +1,68 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE28F19B3D2
-	for <kernel-janitors@vger.kernel.org>; Fri, 14 Jun 2024 17:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7324E1A2547
+	for <kernel-janitors@vger.kernel.org>; Fri, 14 Jun 2024 18:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718386347; cv=none; b=CfOLSVkKjQqzWVM3/sOAc5Z45nRpFiIc7nmH5QQdx0XhXqLCl+ACn7fhjTSSF7YjA2081HoYsbwMH2Wi6JsvP/3Y3gCzQSUHgzPkPcLzTQLtqVNSuZCLKIiO0uV9KO0uIuDM+eNnkgavLEwvH4n/jxHECB0y8Q1kqQ17Pufzaso=
+	t=1718391131; cv=none; b=NqgnnasluxVmgrUnt8VeE/Pg5Ts9q+fsDg6/GxxstN3UH6BbdjuhLR+F7JGmdjR1TYcl3TYqlLgAZULytuitO5DyhkbIKLVKMgULRrDog+1+WX8BkHtszVNn5Stl7euukB87OEB8XWm0QYlBP3CdILzqQPV7iwGeGXOuaMt8LCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718386347; c=relaxed/simple;
-	bh=BTDfLj4AnRVLzvSB2sl6u/qP7TFE0iMJBw7H91ZibCA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=T/hU/GmUQCYZT8UqWcqdjJSuTPTW+LWfzqRqtX0z7JjiRWhNTjWGQnDE4ooxnA5pA3pdRizh1TXHJD7DH9hyXhPxB6a+mxo3XjsuANbLk9wdUN2dhCbsZngn2PSStU5wXGSid06hW69pXkX9iLPqrNynJs8otJp7moNDvjz0E6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g/ng1T67; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718391131; c=relaxed/simple;
+	bh=Wnop8Qq538e7eVgLq4rlSTIJC3zohtdzZO1W1QS3zjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SfhN4m9TDB+X3tnNC93zWQKuOke3SG7yrFO9ZuDzZIa6DjiJZuDjqpJh+0Bj2Xl7jJDBI3qxkhAFP3IQdC4faFT+QRTChot+PWIoCeuwtZofbGYME0VUvt+f5OavSwIYZFFdDepidWb7l+v6aserAB286v36ssWGDos8NP8gV4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=f4+ZqOpx; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g/ng1T67"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-35fdf7aa8a1so1719227f8f.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 14 Jun 2024 10:32:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="f4+ZqOpx"
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3d2255f84e9so1581066b6e.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 14 Jun 2024 11:52:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718386344; x=1718991144; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hHcGiX8UBCwxh//a18tmbSzvIIZ91QoZrb+Pr6rgKAk=;
-        b=g/ng1T67W+kDlprcUiw4C9+Y39g//0l3cpj/cSFFq29jpPtW6mGSYCMwvn60vBFZ25
-         o43MOKo6N7MOZT4Ehc+vMhpm2IyH/ttDd9D4F3SYEjw9R9oRXx2rdJSil9FB5XUVPcvz
-         6va+q3CMF4gvUzXAHWPUbZ/YPrUAIhf7dunxs9SSk5Pu5cd15KkXNjvXeQiOIMigGXzl
-         Xbz3Y4WXHmkK22gayNEbIX5Ml3/MuXXp0YraotsjYKwArZ5aeAEYGxjC+ubJnRIxhDEZ
-         Mf3nOgguXsmIOpDckPgJsOp8zpyvK7WSB4ruYyoZfUEjV/T57YzDJmaQTlrpvJWhxcmz
-         RrZw==
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1718391127; x=1718995927; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LVDBvdP08HJe2LLNeEFHiRk2XhY0KePdWqVaxMDbvKE=;
+        b=f4+ZqOpxDlaOGx/uXxzo+JBV3c2J+GdTOHq0+3o/5hHOeiEIA3IMlgKm9Hvu7Y+4Pn
+         HKoQYCiCJj7/mPtUf5e1lapZ3Stw453sOUQmF43/uKKN/vqrX+TshpH6rxDd1KQ7zN2x
+         EOGzifnTP+0JdNPUnf5sv5ffBAXf+KbzaJ50jCN1lv55KQLh1VB3OSuyCN2R/iUEZ93O
+         kN87c9B6b1nv3WH2i50U1tVXOQocVi+ftsmta9MD6vSkoz9WLR2+IMxCgtyhL0oFYjuH
+         4IXpXhNh5eLnMGKUUHtWmSji8+VhyIHzRXeUaHP7L6izMP2mjkzQB0iZCBBCyH6gicic
+         y6mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718386344; x=1718991144;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hHcGiX8UBCwxh//a18tmbSzvIIZ91QoZrb+Pr6rgKAk=;
-        b=drZcmdNT05QqFFFcoIWJjww8vLWteOKtgduiqeudkiNud3EUtG1YW327LvbkjIBLct
-         k6dtKOsMdVZM3Io8u8AAAR3t8Xpz60mvhIfJHTnISk9+ljyrlLrdq0BsNSBG0oquPBWD
-         YwZ8n9Jrb4/pA8c2A7OSUgkxOZoiLqBr9TVVV+f1+17o7jZh6LbWOn+tCb1ebZKlYfA0
-         N6scx3fPkzdX0B/ZeVrfI0XCeQ06PPfaPOSO88y82qoZje8v3xr5NG2oPdrygEi3ayke
-         5MyzNB/cFLqknsdAjbGSn7avB5Mzb99gHZScL4NkP6JRVM0j91Kc5/kU+Q8VH9KYN2mQ
-         rENw==
-X-Forwarded-Encrypted: i=1; AJvYcCXuqNTT2Xaz93+vibg9Q4h+S9PsPklUNpJ/C8Xudg9NUC2ufM7HKsY23PpVbDMF+SrlAsq6koUlJA8srVUaBPqvRImj4KbHaPOhpgKZ5616
-X-Gm-Message-State: AOJu0YxIk6fgeyxk8ubOsf9vvlShs3yTPgmNn+20XD0Fkdur7FZXrLx2
-	IRpLZZAqFF9XprzdGWry+HRmJLaKEDGGw7eKZ3oX/F3a636S9Vah9NDspM7gvE9X7OR8R+wPvMn
-	r
-X-Google-Smtp-Source: AGHT+IHsxqX+vfK6OLdZouSmAaBnwPbFYWG7SuDtV+LLd1ZQ2QpbCa6D9qdoNvt9IQdsKez/NQ86Ww==
-X-Received: by 2002:a5d:6da6:0:b0:360:83cd:ea2d with SMTP id ffacd0b85a97d-36083cded29mr2374785f8f.24.1718386344226;
-        Fri, 14 Jun 2024 10:32:24 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360751152d9sm5045341f8f.116.2024.06.14.10.32.23
+        d=1e100.net; s=20230601; t=1718391127; x=1718995927;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LVDBvdP08HJe2LLNeEFHiRk2XhY0KePdWqVaxMDbvKE=;
+        b=aLFCbnnruhFB+TfnZGeMM3nsfbu0aqz6GltH/pR3TExoO/MPgECr/HhqFCthhGC5Ml
+         ea7fbMxX4MOj4BTxH50qG/ixtLrjHpPPzpByECQjNuFW4x49wFq3o8MqFXtAXaNunbsm
+         NVFiqBlnvdee8nJeVAtT456auXN3kTC2xVeyrU2GHn4abQThoZ+5B/NHUUVKJoeHo0+O
+         WGyC2ajKv1dsa0iFRGds5UR2MlQLwSXUhLnc4cgbS0uW0p5EYmm1AvxgY/TRwyRi0ii0
+         tU6Zn0mEHguWCfQcQE99qF5n6+/tOhtwOO03cck1GUzRM456rNMgf7HAtbVYdTnnccmV
+         g/Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCUn4faiLD7OlCx+yf67uFQAWDmY7uPjJOp3I9I19Bol+ox77+9WkQIpfCkHCgawq+Km4PvyKhs6YwepfqMruYGrHJrp8CaX305HK9sUTtxt
+X-Gm-Message-State: AOJu0Yyu1X/1GKK0nzypoNiA/JPf0VVI+yczzVbpMuFXNEN3tNX530wE
+	6jHMTF/r5iC2WvuZj940HjbYoFCYrNl3jm4gQGsjmo2feXxVecf3CwEFJRbgBrc=
+X-Google-Smtp-Source: AGHT+IH5wsewHDu4BXzms8+/hfuFuKIa/9eeUhy5xDV/FWcrmW7WzNgNCo/H/BIyrLMqqglhgTp+DQ==
+X-Received: by 2002:a05:6808:11d0:b0:3d1:d36b:379e with SMTP id 5614622812f47-3d244f362e9mr3226002b6e.26.1718391127297;
+        Fri, 14 Jun 2024 11:52:07 -0700 (PDT)
+Received: from mail.minyard.net ([2001:470:b8f6:1b:c3a8:c961:e73:5e22])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d2476bb36fsm618151b6e.40.2024.06.14.11.52.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 10:32:23 -0700 (PDT)
-Date: Fri, 14 Jun 2024 20:32:20 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Pradeep Kumar Chitrapu <quic_pradeepc@quicinc.com>
-Cc: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-	linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        Fri, 14 Jun 2024 11:52:06 -0700 (PDT)
+Date: Fri, 14 Jun 2024 13:52:05 -0500
+From: Corey Minyard <corey@minyard.net>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Quan Nguyen <quan@os.amperecomputing.com>,
+	Corey Minyard <minyard@acm.org>,
+	openipmi-developer@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] wifi: ath12k: fix potential NULL dereference
-Message-ID: <4428a7ab-eb67-4f0e-992f-35577ea2b564@moroto.mountain>
+Subject: Re: [PATCH] ipmi: ssif_bmc: prevent integer overflow on 32bit systems
+Message-ID: <ZmyRVQzcIbDwgnP9@mail.minyard.net>
+Reply-To: corey@minyard.net
+References: <1431ca2e-4e9c-4520-bfc0-6879313c30e9@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -67,37 +71,55 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <1431ca2e-4e9c-4520-bfc0-6879313c30e9@moroto.mountain>
 
-In this condition if "sband" is NULL then it leads to a NULL dereference
-on the next line when it does "idx -= sband->n_channels;".
+On Fri, Jun 14, 2024 at 08:30:44PM +0300, Dan Carpenter wrote:
+> There are actually two bugs here.  First, we need to ensure that count
+> is at least sizeof(u32) or msg.len will be uninitialized data.
+> 
+> The "msg.len" variable is a u32 that comes from the user.  On 32bit
+> systems the "sizeof_field(struct ipmi_ssif_msg, len) + msg.len"
+> addition can overflow if "msg.len" is greater than U32_MAX - 4.
+> 
+> Valid lengths for "msg.len" are 1-254.  Add a check for that to
+> prevent the integer overflow.
 
-The condition can just be deleted, because if "sband" is NULL or the
-"idx" is out of bounds, then the correct thing is to at this point is to
-return -ENOENT.  There are no additional sbands available to try.
+Thanks, this is in my tree.
 
-Fixes: 70e3be54bbdd ("wifi: ath12k: fix survey dump collection in 6 GHz")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/net/wireless/ath/ath12k/mac.c | 5 -----
- 1 file changed, 5 deletions(-)
+-corey
 
-diff --git a/drivers/net/wireless/ath/ath12k/mac.c b/drivers/net/wireless/ath/ath12k/mac.c
-index 509c02bffdae..e5456383dabd 100644
---- a/drivers/net/wireless/ath/ath12k/mac.c
-+++ b/drivers/net/wireless/ath/ath12k/mac.c
-@@ -8314,11 +8314,6 @@ static int ath12k_mac_op_get_survey(struct ieee80211_hw *hw, int idx,
- 
- 	if (!sband)
- 		sband = hw->wiphy->bands[NL80211_BAND_6GHZ];
--	if (!sband || idx >= sband->n_channels) {
--		idx -= sband->n_channels;
--		sband = NULL;
--	}
--
- 	if (!sband || idx >= sband->n_channels)
- 		return -ENOENT;
- 
--- 
-2.43.0
-
+> 
+> Fixes: dd2bc5cc9e25 ("ipmi: ssif_bmc: Add SSIF BMC driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/char/ipmi/ssif_bmc.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> ---
+>  drivers/char/ipmi/ssif_bmc.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/char/ipmi/ssif_bmc.c b/drivers/char/ipmi/ssif_bmc.c
+> index 56346fb32872..ab4e87a99f08 100644
+> --- a/drivers/char/ipmi/ssif_bmc.c
+> +++ b/drivers/char/ipmi/ssif_bmc.c
+> @@ -177,13 +177,15 @@ static ssize_t ssif_bmc_write(struct file *file, const char __user *buf, size_t
+>  	unsigned long flags;
+>  	ssize_t ret;
+>  
+> -	if (count > sizeof(struct ipmi_ssif_msg))
+> +	if (count < sizeof(msg.len) ||
+> +	    count > sizeof(struct ipmi_ssif_msg))
+>  		return -EINVAL;
+>  
+>  	if (copy_from_user(&msg, buf, count))
+>  		return -EFAULT;
+>  
+> -	if (!msg.len || count < sizeof_field(struct ipmi_ssif_msg, len) + msg.len)
+> +	if (!msg.len || msg.len > IPMI_SSIF_PAYLOAD_MAX ||
+> +	    count < sizeof_field(struct ipmi_ssif_msg, len) + msg.len)
+>  		return -EINVAL;
+>  
+>  	spin_lock_irqsave(&ssif_bmc->lock, flags);
+> -- 
+> 2.43.0
+> 
