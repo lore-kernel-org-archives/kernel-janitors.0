@@ -1,59 +1,69 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6421D13A863;
-	Fri, 14 Jun 2024 08:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224EC195F03;
+	Fri, 14 Jun 2024 12:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718354754; cv=none; b=WJ9OiAnYKJ4KIvtkn+6dSHqHEW2ExQ+IIex6dj6fvEXtHyJ46q5QU1bZFDn7QM4E2HgSrWEQuDgOL8ywxlSGo5U7h2aoH7TaW38uIJYQX0GktM8QDZvAZXch10gPgo/+mGTe/0T4uGoaDSoI35UT+a9dnIo/lmWEtlzdmYyb7U8=
+	t=1718367643; cv=none; b=mfQgkeIi+JLzznoGjW8dnaKIt+BktUufIhRvDmp0vBgdFRhuLYoEYCtLQvU1Mbn9wNJyu0IrVzXa85GpaMjhgcBn3qKyVH6dFDHhWhL/QmiMzJiQ7G/lP64zLtjdAIUCkeNl7gG9eS208opMWKkwNBYtMd9stuts5sidv0DgKE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718354754; c=relaxed/simple;
-	bh=807YOq4tajP/QaejQUpVZv6My8i6kNbj4EYdDJ6ROlg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RxE+9fY1lONyhgZO2FgDVEsGVwS3NTyKgX6UY2xwgmZF8q0fFx6B70lXULArWkBq4sh/VUMlTUuwpJUUKpkiRDmXBSLy61FyceufXEtueLz77yO3J3qgWT3OAi2ZKU3mQ9ZtzX+Y7zbXFwuZou65H751u9EmQkzKjeVmeYjbYkE=
+	s=arc-20240116; t=1718367643; c=relaxed/simple;
+	bh=AQjmUgnkIYBObU9R4yF5y+8pGugJxUIcztwj75zUnTI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fp8DOsRPzG9AChtm86ae5iiGV1r9MzzrcQW1FDvGLvbhLJO5tC0pTw8z0bvra+Or1fhEE7XokgfgOT1vlhhJ8hg6XY1oxu89Du1Tsmj6iIDwfoWb9gU/l0Np69dajtrUMYbM0z7iF1pmPHp56indN1lXAba25KRrZA/XCvToeYI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19DCBFEC;
-	Fri, 14 Jun 2024 01:46:16 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 231D03F64C;
-	Fri, 14 Jun 2024 01:45:50 -0700 (PDT)
-Date: Fri, 14 Jun 2024 09:45:47 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] clk: vexpress-osc: add missing MODULE_DESCRIPTION() macro
-Message-ID: <ZmwDO_tf5rS4xzJs@bogus>
-References: <20240613-md-arm64-drivers-clk-versatile-v1-1-6b8a5e5e00ef@quicinc.com>
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 176E7FEC;
+	Fri, 14 Jun 2024 05:21:06 -0700 (PDT)
+Received: from [10.57.71.136] (unknown [10.57.71.136])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 572BD3F64C;
+	Fri, 14 Jun 2024 05:20:40 -0700 (PDT)
+Message-ID: <f22db70d-01da-4b49-a13c-6c4639215468@arm.com>
+Date: Fri, 14 Jun 2024 13:20:39 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613-md-arm64-drivers-clk-versatile-v1-1-6b8a5e5e00ef@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommu/iova: add missing MODULE_DESCRIPTION() macro
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20240613-md-arm-drivers-iommu-v1-1-1fe0bd953119@quicinc.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240613-md-arm-drivers-iommu-v1-1-1fe0bd953119@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 13, 2024 at 02:55:17PM -0700, Jeff Johnson wrote:
-> With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/versatile/clk-vexpress-osc.o
+On 2024-06-14 2:14 am, Jeff Johnson wrote:
+> With ARCH=arm, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iommu/iova.o
 > 
 > Add the missing invocation of the MODULE_DESCRIPTION() macro.
->
 
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Acked-by: Robin Murphy <robin.murphy@arm.com>
 
-Stephen,
-
-I assume you will pick this up.
-
--- 
-Regards,
-Sudeep
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>   drivers/iommu/iova.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+> index d59d0ea2fd21..16c6adff3eb7 100644
+> --- a/drivers/iommu/iova.c
+> +++ b/drivers/iommu/iova.c
+> @@ -1000,4 +1000,5 @@ void iova_cache_put(void)
+>   EXPORT_SYMBOL_GPL(iova_cache_put);
+>   
+>   MODULE_AUTHOR("Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>");
+> +MODULE_DESCRIPTION("IOMMU I/O Virtual Address management");
+>   MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240613-md-arm-drivers-iommu-f637be6ec5c8
+> 
