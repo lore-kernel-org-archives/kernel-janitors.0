@@ -1,63 +1,64 @@
 Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C46119E7EC
-	for <kernel-janitors@vger.kernel.org>; Fri, 14 Jun 2024 17:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE28F19B3D2
+	for <kernel-janitors@vger.kernel.org>; Fri, 14 Jun 2024 17:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718386306; cv=none; b=Yz8GBNyrZI8XJLgMGLReUcuMC5NJ3/EfFQXJig/hUhHd08pEA8VOyShv2hTmvV59yCtSmY91YdQq9JuwkK7FtompEzzL4rgYtgJrovcDNw2WpjtowK+vTt3vE74nXHc6rj2HfEaa9DiF4CPhXLaCvWCGDjJcQUDCgkJLG/rFws4=
+	t=1718386347; cv=none; b=CfOLSVkKjQqzWVM3/sOAc5Z45nRpFiIc7nmH5QQdx0XhXqLCl+ACn7fhjTSSF7YjA2081HoYsbwMH2Wi6JsvP/3Y3gCzQSUHgzPkPcLzTQLtqVNSuZCLKIiO0uV9KO0uIuDM+eNnkgavLEwvH4n/jxHECB0y8Q1kqQ17Pufzaso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718386306; c=relaxed/simple;
-	bh=BSipHlIgDvAU9jtI+0UzoGnMftxvZb9NU2THa75rZr8=;
+	s=arc-20240116; t=1718386347; c=relaxed/simple;
+	bh=BTDfLj4AnRVLzvSB2sl6u/qP7TFE0iMJBw7H91ZibCA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KBXAfUv0KELhcAGMbEFOkLsbq8UzZNkjyC43rx31L6kSrm59vs8nu/yx97JSUdKJ3Hxd2wTw2byqJF06FZRtFLRDD1f4FHKOO2pAZYwYsf5Z/oEc0Z1iNKW4Cf8C8s4gWmoNxZYPAcDVRnOo5szGNttX0j5SO1PWHbL1sFLxAG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JMtBnXml; arc=none smtp.client-ip=209.85.221.44
+	 Content-Disposition; b=T/hU/GmUQCYZT8UqWcqdjJSuTPTW+LWfzqRqtX0z7JjiRWhNTjWGQnDE4ooxnA5pA3pdRizh1TXHJD7DH9hyXhPxB6a+mxo3XjsuANbLk9wdUN2dhCbsZngn2PSStU5wXGSid06hW69pXkX9iLPqrNynJs8otJp7moNDvjz0E6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g/ng1T67; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JMtBnXml"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3608545debbso527669f8f.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 14 Jun 2024 10:31:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g/ng1T67"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-35fdf7aa8a1so1719227f8f.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 14 Jun 2024 10:32:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718386303; x=1718991103; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718386344; x=1718991144; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9aAn+dyPFDj13W9kA9p8UoX5UEoPcAwL160WAxAoG68=;
-        b=JMtBnXmlPkwAZGeP120iN5JmDE7dBxPvv/O/r4PZ2EtSpsOvoafQjb4HqXugYmIohg
-         7+oTb+Ca7kqtML11aUm0WEpcHAaLSjAOMqb4prFAJIkZhACXOM+53Ddd3Ts4TyaXaTkC
-         J6482p/iPzmWQNq2Kg92AT7omsUN7jj9CMnZ/Fw5XTOk6lNh9cfXhmBgg1VmFRgv6a/I
-         pldcPbi/usSIM5+5oWduSQ4SvKD3kS1/MVzno12JCJs/jYFedMRZPoigT8V9cIRA9OVv
-         lZpezaREi8rlC4/sSo4dox5JVNE0/9KIz1YXUSoR3uVTeK5Di8xLHbFXUSPtcrzIAc/P
-         x4dQ==
+        bh=hHcGiX8UBCwxh//a18tmbSzvIIZ91QoZrb+Pr6rgKAk=;
+        b=g/ng1T67W+kDlprcUiw4C9+Y39g//0l3cpj/cSFFq29jpPtW6mGSYCMwvn60vBFZ25
+         o43MOKo6N7MOZT4Ehc+vMhpm2IyH/ttDd9D4F3SYEjw9R9oRXx2rdJSil9FB5XUVPcvz
+         6va+q3CMF4gvUzXAHWPUbZ/YPrUAIhf7dunxs9SSk5Pu5cd15KkXNjvXeQiOIMigGXzl
+         Xbz3Y4WXHmkK22gayNEbIX5Ml3/MuXXp0YraotsjYKwArZ5aeAEYGxjC+ubJnRIxhDEZ
+         Mf3nOgguXsmIOpDckPgJsOp8zpyvK7WSB4ruYyoZfUEjV/T57YzDJmaQTlrpvJWhxcmz
+         RrZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718386303; x=1718991103;
+        d=1e100.net; s=20230601; t=1718386344; x=1718991144;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9aAn+dyPFDj13W9kA9p8UoX5UEoPcAwL160WAxAoG68=;
-        b=kfMPVs4pKEYBwH0g0dT1unOJFwRrmg5iqte5KV0vL9qVElp5hcXkEGgTOcyT+aJ1Ek
-         EjksU6tt9VwILh6ZY68dIwLORc6O3xADpsrg4P0HHaXnuuYZO99Xx0Nr2yEAUGxTkcgp
-         908/RiqV4DD8LM7DtCvPwU/EFtBbZZN2hAcFgNmhkrUSUtGUckJytL8ab9FF8zIdmoeQ
-         nLDikG4tdb56DZQC54n1n48uc2ygs3eM6yuJI/HoXWrHERwpkd+MrTpXCmJ2DK9+bPNK
-         vZiK1wOREQxxl26JlcFvxohOYfQCKnANGC/ceAwmts9IN8Y3RddaLSdfr6hfeBmx1khg
-         hmiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzc+SgnyziYvQR70RfapcpBUUrxrRwTvhy/SXx2j30Yfg8wWIsYSZY5X1eXKKGu9Enl7NwNu1/1dD22/CJAfAOphiNaX6HCtro7A+6wP4w
-X-Gm-Message-State: AOJu0YyfoYhXXMdnJl9d3SqAvP8qbvEz9UI7RamG977NZ8IwxWnsGoOY
-	LMrlYZuMeslbq93m1NatV+FlIe+vXmdoDm0AydKfrvb4tc0U8xdu+qvbLpJbMQI=
-X-Google-Smtp-Source: AGHT+IHG7stbgSaExY65n+9KApXBI+yAhKzMZixuvshFIifsWmYEYNx+9bdoDb5iW6MQiJc8Gmrfkg==
-X-Received: by 2002:a05:6000:4014:b0:360:7558:49dd with SMTP id ffacd0b85a97d-3607a75c379mr3218191f8f.36.1718386302611;
-        Fri, 14 Jun 2024 10:31:42 -0700 (PDT)
+        bh=hHcGiX8UBCwxh//a18tmbSzvIIZ91QoZrb+Pr6rgKAk=;
+        b=drZcmdNT05QqFFFcoIWJjww8vLWteOKtgduiqeudkiNud3EUtG1YW327LvbkjIBLct
+         k6dtKOsMdVZM3Io8u8AAAR3t8Xpz60mvhIfJHTnISk9+ljyrlLrdq0BsNSBG0oquPBWD
+         YwZ8n9Jrb4/pA8c2A7OSUgkxOZoiLqBr9TVVV+f1+17o7jZh6LbWOn+tCb1ebZKlYfA0
+         N6scx3fPkzdX0B/ZeVrfI0XCeQ06PPfaPOSO88y82qoZje8v3xr5NG2oPdrygEi3ayke
+         5MyzNB/cFLqknsdAjbGSn7avB5Mzb99gHZScL4NkP6JRVM0j91Kc5/kU+Q8VH9KYN2mQ
+         rENw==
+X-Forwarded-Encrypted: i=1; AJvYcCXuqNTT2Xaz93+vibg9Q4h+S9PsPklUNpJ/C8Xudg9NUC2ufM7HKsY23PpVbDMF+SrlAsq6koUlJA8srVUaBPqvRImj4KbHaPOhpgKZ5616
+X-Gm-Message-State: AOJu0YxIk6fgeyxk8ubOsf9vvlShs3yTPgmNn+20XD0Fkdur7FZXrLx2
+	IRpLZZAqFF9XprzdGWry+HRmJLaKEDGGw7eKZ3oX/F3a636S9Vah9NDspM7gvE9X7OR8R+wPvMn
+	r
+X-Google-Smtp-Source: AGHT+IHsxqX+vfK6OLdZouSmAaBnwPbFYWG7SuDtV+LLd1ZQ2QpbCa6D9qdoNvt9IQdsKez/NQ86Ww==
+X-Received: by 2002:a5d:6da6:0:b0:360:83cd:ea2d with SMTP id ffacd0b85a97d-36083cded29mr2374785f8f.24.1718386344226;
+        Fri, 14 Jun 2024 10:32:24 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750ad082sm4909069f8f.59.2024.06.14.10.31.41
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360751152d9sm5045341f8f.116.2024.06.14.10.32.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 10:31:42 -0700 (PDT)
-Date: Fri, 14 Jun 2024 20:31:38 +0300
+        Fri, 14 Jun 2024 10:32:23 -0700 (PDT)
+Date: Fri, 14 Jun 2024 20:32:20 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Yangbo Lu <yangbo.lu@nxp.com>
-Cc: Richard Cochran <richardcochran@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+To: Pradeep Kumar Chitrapu <quic_pradeepc@quicinc.com>
+Cc: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+	linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net] ptp: fix integer overflow in max_vclocks_store
-Message-ID: <d094ecbe-8b14-45cc-8cd8-f70fdeca55d8@moroto.mountain>
+Subject: [PATCH] wifi: ath12k: fix potential NULL dereference
+Message-ID: <4428a7ab-eb67-4f0e-992f-35577ea2b564@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -68,28 +69,35 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-On 32bit systems, the "4 * max" multiply can overflow.  Use size_mul()
-to fix this.
+In this condition if "sband" is NULL then it leads to a NULL dereference
+on the next line when it does "idx -= sband->n_channels;".
 
-Fixes: 44c494c8e30e ("ptp: track available ptp vclocks information")
+The condition can just be deleted, because if "sband" is NULL or the
+"idx" is out of bounds, then the correct thing is to at this point is to
+return -ENOENT.  There are no additional sbands available to try.
+
+Fixes: 70e3be54bbdd ("wifi: ath12k: fix survey dump collection in 6 GHz")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/ptp/ptp_sysfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath12k/mac.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/ptp/ptp_sysfs.c b/drivers/ptp/ptp_sysfs.c
-index a15460aaa03b..bc1562fcd6c9 100644
---- a/drivers/ptp/ptp_sysfs.c
-+++ b/drivers/ptp/ptp_sysfs.c
-@@ -296,7 +296,7 @@ static ssize_t max_vclocks_store(struct device *dev,
- 	if (max < ptp->n_vclocks)
- 		goto out;
+diff --git a/drivers/net/wireless/ath/ath12k/mac.c b/drivers/net/wireless/ath/ath12k/mac.c
+index 509c02bffdae..e5456383dabd 100644
+--- a/drivers/net/wireless/ath/ath12k/mac.c
++++ b/drivers/net/wireless/ath/ath12k/mac.c
+@@ -8314,11 +8314,6 @@ static int ath12k_mac_op_get_survey(struct ieee80211_hw *hw, int idx,
  
--	size = sizeof(int) * max;
-+	size = size_mul(sizeof(int), max);
- 	vclock_index = kzalloc(size, GFP_KERNEL);
- 	if (!vclock_index) {
- 		err = -ENOMEM;
+ 	if (!sband)
+ 		sband = hw->wiphy->bands[NL80211_BAND_6GHZ];
+-	if (!sband || idx >= sband->n_channels) {
+-		idx -= sband->n_channels;
+-		sband = NULL;
+-	}
+-
+ 	if (!sband || idx >= sband->n_channels)
+ 		return -ENOENT;
+ 
 -- 
 2.43.0
 
