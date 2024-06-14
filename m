@@ -1,40 +1,61 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372D913664A;
-	Fri, 14 Jun 2024 06:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189CD146D55
+	for <kernel-janitors@vger.kernel.org>; Fri, 14 Jun 2024 07:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718347571; cv=none; b=OyM/r0yQTN7GqSOemiVhoqt2SOACxbtG2C9ksCtyog3LlExHJ8a+OJa93GA1yFOEvIqocFVumel4B31vewlQIR9EgzHekSPc3vAhIu8B2rtfKNVCPK/TZtKOj2UJM9iCjs4LuG7e42cAv4hJPFFWTCCVdf42voepuTP0veRmC2Q=
+	t=1718348639; cv=none; b=F65SOm1SuSUq0BhkoI2wBO37ES2jF2FXQzkm0NGUaDxxceJw8AcTepODBMqWfko8eCF1riTlcIf2d3NDFKwkg3eBvFjSyu9TRbVvSETJ46361WH8MIOybIqZGNfGQ/OBtxUDAxV9zJcCM4NRSMG/TT830U77Pj3CjwZjpYYKOmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718347571; c=relaxed/simple;
-	bh=YH7LKrwSFCa+CoKU0LWv/vYqquj8BHHJLekmHbOSkzk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ha8cBCAdEURAldWdOksNcLUpN/QhEzaz0wkvJGVs4g9yXNJdi4ZeCPxwLuGkMOn6MclYes/F7UD4u7IJu2fIRDufqBfZj0kWLcIeXg4PL8njLyJVHK/lXP40R9BXYvsEnG17zTuR2Rh6gFmC3eg7dgGJealCMRMiALTMvhslRZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=CsA+U6BJ; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1718348639; c=relaxed/simple;
+	bh=MNbfEaigD6aPLWW54LgFWKSKSsvzTT7J6aOZ31OO87c=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=s+W/0XH2xnzrNUl9LTn13PZLzYWvGUJ+VNkbhV7Gf+2M9pJqcOJLPnD45LOgZyWPI5+GD6Krwtn4hPownRDDNVNMmpnRBhCdtGZZVMBDDy6+TFG/iJqgPjF08TfM3HEVbq80lZIge607WtrYsxZX0jbiJaCLN9lDWo/IfMzzpSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fH/MV2++; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="CsA+U6BJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718347552; x=1718952352; i=markus.elfring@web.de;
-	bh=5zlFpg3ORlkfLRd5irYj/EAogjoqsKYjaMjqGShyL7Y=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=CsA+U6BJOimHdtLSvECgevR/IcYLGzd3Ds5NdwM1xn0odtTgkhkTNq4IANoztDLd
-	 mEvBaz2AZgbS7yFh+e8+q2pCs0yC2jLEh7n2u8A5gBcDZHF2Ow5hp8YGWb1+rtui8
-	 4PlZSyavq2cjEI5UflWckVrQcX7U/GesNM6xdy8q88fYacB8ZhklC0KnvOaSoSu7O
-	 Ls3x8ZEWhuZ96B81LNGOnla7QPoqn1gv69ISQDJBdYYD8zgpEzrsySe6tmB/1Ha4H
-	 IM5jfLfT2JVt3AR011C/2VzSFmqxOdLd7pj19H3ecHvlEEAJFJw/XUHMksz+N97Jv
-	 WwSDJfTcUbYR34kmsg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M1JAm-1sFGbi1CvK-00Du3P; Fri, 14
- Jun 2024 08:45:52 +0200
-Message-ID: <93ec485a-8620-4f24-80b2-0e08107c6287@web.de>
-Date: Fri, 14 Jun 2024 08:45:26 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fH/MV2++"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-421d32fda86so20984115e9.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 14 Jun 2024 00:03:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718348635; x=1718953435; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p4TNjSLKkh/gyKR6pHDFcT9hwwp7eBZGwBalltj+b7Q=;
+        b=fH/MV2++fbvhpL2hDr7kUBcXdWAuDhM2zqCa4cDui7BX6PmzRhiXuarPAmQQZnKCfL
+         mkSWPTLd+3SrlFihmp3bTuvsYRYArvHvrHx8bCza2CqdBzbBFQV04J9v0S6J+N8fZgui
+         XwWEP3+nmiI8EmRBrECKadO/Pfm3QKeM5HUTtD09aiSSGxEqe0y5mlAM6+PBTajJ1TZe
+         uC3jyBqWmFrM1ccN79YC31Xk+G7ZhmGkgLWCdcoza2DaYRa7wLZD9Yw0jIc6/Pxsri3S
+         OsEx4TTqfOw6n4/yjj9r7SlUG/PyqXW7Eu37VB3RSgrOYCnmu/bY7rBDfU4MTMFYs/3o
+         e2ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718348635; x=1718953435;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=p4TNjSLKkh/gyKR6pHDFcT9hwwp7eBZGwBalltj+b7Q=;
+        b=vmwjzI2sAvkURMLW5V/LX+KhkFPdgTxyKiwIRVBRFPmPVf435tu3Z0mf61SCum3ynG
+         n9AaHeaBJYXp1bEOMZJIW9rudjSlpxsqW31NMEF6Zvor20ZViiJEKtiK1ktY12QepMiq
+         swNPXMpL/jhJhTLcXSvmtRCkLM+eIGs8uqwPtD2x9DAcciASTV5XVKneMhPCJv7h4vNJ
+         9sA+xUhQ6YEuTonQz17uys/5T+RoV0bleDk/Jq1dGgau/CFJx9MB2zfUG7pJ611wl9VO
+         jaDBElhviRqOgL39HGsbvdj2j7mSDjeponaywQo09CViULTxgHHBlugnNJ83mDSdrAgm
+         q4tA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKy4mzllOF0UrxEqi5EducI3kA9wADKy//nqAQ7bpNqE5tJ8OxdIhC08l7hXS5eJAk+1vGKOAYLEtFgo+r6Q3I27Iv0lfu83jJEtKMX3c1
+X-Gm-Message-State: AOJu0Yx4rRFA4xrisLX4Kb9SzreRxzmZmTdBy409GYEjD+hs4/uPa5Fk
+	mSN5k2etn2Qu4rTnYX1UPQPj40wvX7jPqm9y42DSrahOtNqrJnS7yvnWsMGMRsY=
+X-Google-Smtp-Source: AGHT+IHAglRk9laq/PIfLee3Z5IGuhgrv0laafxD6GLaZVL31iAoc0E90SWCdrFlPsghFo7Ds38cTA==
+X-Received: by 2002:a05:600c:3c9a:b0:41c:2313:da8d with SMTP id 5b1f17b1804b1-4230483252bmr21763455e9.0.1718348635126;
+        Fri, 14 Jun 2024 00:03:55 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:261a:269e:a3a8:a2cc? ([2a01:e0a:982:cbb0:261a:269e:a3a8:a2cc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de623sm87193705e9.31.2024.06.14.00.03.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 00:03:54 -0700 (PDT)
+Message-ID: <ef7015e9-53b8-414c-802c-a56b98506755@linaro.org>
+Date: Fri, 14 Jun 2024 09:03:53 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,41 +63,71 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Dan Carpenter <dan.carpenter@linaro.org>, kvm@vger.kernel.org,
- Yi Wang <foxywang@tencent.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- =?UTF-8?Q?Christian_Borntr=C3=A4ger?= <borntraeger@linux.ibm.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
-References: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
-Subject: Re: [PATCH] KVM: fix an error code in kvm_create_vm()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kse9iwq86q4OapouTZFjQRTEBswgWxJ0dRt+ZHSdFA2UOHOq3Ew
- OwT1xgCN0hZnc3qUpN3/1Q1UixgusEBeeTOjXt/Jb9guplTH65wgSCPSrxxU+2/LrZi1QZ2
- wA5DOJXH6360dLOVNmJB/CPMbQEjs19xApq2zy10lFWXLixfwGEIteY/12Vzc25fZhkyGyx
- 4APKh+JKW3jcpjQ3d/5Ag==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:UAoW34K0xjM=;2HaTklojmuEO1RhTtNKZoOu7tjY
- h68lhrk/rGShI+dRDf0yHUwheQ6BTOIH6enIara9fNKlgPo6bM6wwPSCPSneZIrRb+i8xVdKF
- 62vr+fYt/ftcv78pI2bxXXM4Jp1e/kqeBYWO63Aju7W5wz/RRvXyzc30rA21ck788IRSzLvvV
- p/DDbM09MBYVhLGeutpqL38IYf8e+hg+cJd2XaB+cXFKBmzNCiKSJSqTXi2RTg4FfqUxLXELW
- 4n4jbjwkV+Kmg6jBHjh8CLfOPPKRIqs85fkliSpAkni+VS3iOJcSiTazVqJMvqBHZ0D2QpgWM
- J3NPLHqlpqmBO3us68/bvDKbLpDTpvpK9sJWB0Ix26fh0fTt0IgX0yDi4CSfwF2otoeOqX2/A
- NDVAkOO7h9H1t1tYoV6Q9TwVwjjQ7NERtlghVyRC7H3jRpREES0/U3gxBE/iYOXzaHGiIW772
- M839wQqx2bgupubVcXhoD4v2kN1Tn7/pHgmq+3JlXbbnis0zNqxn7oHBg/Demeh7KBwLf3rqe
- dL0Kf53NHBWYYziMpvgXThWJzQxAWtLMVD7zcImI4ALNYqp6jvaz8EdnJDDHEWjv7GO3vcu04
- InTJUctO91cnc99Zkfk7t/QarRPB4aKKTh5s+RwPScc81P1I5o1FxCX+XjhYQ908mgaJD3i0g
- ABYdxAgVmZH/fFcSRcI4YwRr2xpnXjwiVN/Vr6T6p9mS0y009wNTyqzs4lSPBEk7nHCrs/fKZ
- aCSPk+MNFsHudL4BgphN6QQpEAuUlgoNDWb8pWN4hjiAPV7qIidi4TGhUw+dUt/djOvRxJ31x
- OHMOpqpJJ72qquMo9eiHKOOiAeE0UBJD5sSNcy7gpdcVs=
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] firmware: meson_sm: add missing MODULE_DESCRIPTION()
+ macro
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20240613-md-arm64-drivers-firmware-meson-v1-1-28e4138a8597@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240613-md-arm64-drivers-firmware-meson-v1-1-28e4138a8597@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> This error path used to return -ENOMEM from the where r is initialized
-=E2=80=A6
-                                                  place where the local va=
-riable =E2=80=9Cr=E2=80=9D =E2=80=A6?
+On 13/06/2024 23:18, Jeff Johnson wrote:
+> With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/meson/meson_sm.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>   drivers/firmware/meson/meson_sm.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/firmware/meson/meson_sm.c b/drivers/firmware/meson/meson_sm.c
+> index 5d7f62fe1d5f..f25a9746249b 100644
+> --- a/drivers/firmware/meson/meson_sm.c
+> +++ b/drivers/firmware/meson/meson_sm.c
+> @@ -340,4 +340,5 @@ static struct platform_driver meson_sm_driver = {
+>   	},
+>   };
+>   module_platform_driver_probe(meson_sm_driver, meson_sm_probe);
+> +MODULE_DESCRIPTION("Amlogic Secure Monitor driver");
+>   MODULE_LICENSE("GPL v2");
+> 
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240613-md-arm64-drivers-firmware-meson-2ce24a9a9de9
+> 
 
-Regards,
-Markus
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
