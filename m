@@ -1,95 +1,82 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D432F43
-	for <kernel-janitors@vger.kernel.org>; Fri, 14 Jun 2024 05:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372D913664A;
+	Fri, 14 Jun 2024 06:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718341507; cv=none; b=Uy9euJO6OHqNwmxK0EYGGAqlrz21o9M2gyuBy4otXbljFyPs5vrS/sOHK6waexJhzwrLRarl56IzZsRkVx6sST1f/L2PsY5Q0P6BVKq3lVOWMqweG2rRKeWPmkKJXZcM82z1N9oWshn2FBCUJvLz4yU6fuBHRWbccklSvCbdGD4=
+	t=1718347571; cv=none; b=OyM/r0yQTN7GqSOemiVhoqt2SOACxbtG2C9ksCtyog3LlExHJ8a+OJa93GA1yFOEvIqocFVumel4B31vewlQIR9EgzHekSPc3vAhIu8B2rtfKNVCPK/TZtKOj2UJM9iCjs4LuG7e42cAv4hJPFFWTCCVdf42voepuTP0veRmC2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718341507; c=relaxed/simple;
-	bh=IukhxcX3qDkzoO5Zy8Nrlq5s8wAmwy+/c7BkQCbdyC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n4et2EM2DsElqwfHQ4Afi5F8d6H8xvFY+LabR7jyEln9wJ6sjW+wG6RiavDGk6pCiXjGvww4wK6t18sbMaHJsYFflq1k3Rz9pKxubSwDsnU1grsww2RrUaT2LA1rPQri5TiS2T6eHmDMcTHH89FCxMHL+/jyEFijpBB/86YpQaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=frsyOYeN; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718347571; c=relaxed/simple;
+	bh=YH7LKrwSFCa+CoKU0LWv/vYqquj8BHHJLekmHbOSkzk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ha8cBCAdEURAldWdOksNcLUpN/QhEzaz0wkvJGVs4g9yXNJdi4ZeCPxwLuGkMOn6MclYes/F7UD4u7IJu2fIRDufqBfZj0kWLcIeXg4PL8njLyJVHK/lXP40R9BXYvsEnG17zTuR2Rh6gFmC3eg7dgGJealCMRMiALTMvhslRZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=CsA+U6BJ; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="frsyOYeN"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42278f3aea4so17619375e9.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 13 Jun 2024 22:05:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718341504; x=1718946304; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EWNNIgMpJqUN8OKFztHzayuDCT95LOD3ZJqMZeNQQ+c=;
-        b=frsyOYeNNhtC5G+KKj+t9vsEKuI8OGC4BgQ2i8q/RDNlss/jTB0geMP/Ys5pIqNQ9n
-         UzInjbAFKZvUv34qm9GzzhtP8Hz1+gvQ0BuvcIIbdllC61rXfPC7ll9f8W0YdliJGNgn
-         8LhdKVuWOxLPBmtHt+sMD/3QodxEm+uGZwytO+L6iXrG9Bl9995dz5w3bljh0qdAA7Ly
-         0fS0SY/h+mBWIOYzWA8aj4J0vn38BExFPn2lFmganm80tYH/1U/c5hTKOWAVXG0yUThM
-         6kAtYcdyKrlfHRpWLf0fOs4jkLpteubLMfBTntLE+3W+dAHGcIPYsDoQ5IBxoCVi1Cuu
-         RDqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718341504; x=1718946304;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EWNNIgMpJqUN8OKFztHzayuDCT95LOD3ZJqMZeNQQ+c=;
-        b=wzHba/jU/FcNar0tdjwU0BtbuiNUkylKxvN7Bbgoud3hbeJITggwCIapwToQqFCf+8
-         dPmAz8EAGnutzlDMZ09fsyhU0fWNM1BgAsvx6L1MjeykarQacVJY1RdGlgITxoIxrOxh
-         aIepM6BQUAG9WxM/rEvid3gpD0odbtLX/3QWdEa52Dl1M+vszcM0kbk3dtWsywiTi3jL
-         5bQU2U6SBt8raMMt/1vQyXFkguCmKF9goTOlMLlaPe9Jrq0G7hzEtSBhVWEj3Pi2HdUh
-         Qh1nv05AEAR8BPrt6Dln16OIA32bIs5k5ZtkUjDCsjFgfEQ6kzvxQYT4u1VAG2iSdAsn
-         UgdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVibQGQ7O84dopip0MXTbFbnwpJf/rw7EnXmg0qAe39ErD3NofRUvDmk/PzYEchPu+P8KMb0LVBZbQcK/dMcm+v2Vcf8HVkYrGAbiVDlOg/
-X-Gm-Message-State: AOJu0YwcYFrqrY5YPFdPgMOR81Zy4WaRDK04o9CpmRkhuhHkAqTxbgLi
-	XB4/eNwnUS7jCIN9SC4npsrdKxWPbdRWirTp5CD8FlLnyG8furJUb7lLzUtlr3WZQh1b7vHncKy
-	2
-X-Google-Smtp-Source: AGHT+IHAc0Yh7ji0lwnDCu2Lv4w/FZ4Yx74voqdotxBtp/d5ml1qvOCQlfNZBB82HLxJCmKCwVO2Zg==
-X-Received: by 2002:a05:600c:4ca9:b0:422:52c3:7fe0 with SMTP id 5b1f17b1804b1-4230482c1e9mr16109225e9.22.1718341504275;
-        Thu, 13 Jun 2024 22:05:04 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de5d5sm83206355e9.33.2024.06.13.22.05.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 22:05:03 -0700 (PDT)
-Date: Fri, 14 Jun 2024 08:05:00 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ben Walsh <ben@jubnut.com>
-Cc: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Handle zero length
- read/write
-Message-ID: <590a7d8c-6bfb-45f1-bc26-d99837cff2a2@moroto.mountain>
-References: <20240613212542.403-1-ben@jubnut.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="CsA+U6BJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718347552; x=1718952352; i=markus.elfring@web.de;
+	bh=5zlFpg3ORlkfLRd5irYj/EAogjoqsKYjaMjqGShyL7Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=CsA+U6BJOimHdtLSvECgevR/IcYLGzd3Ds5NdwM1xn0odtTgkhkTNq4IANoztDLd
+	 mEvBaz2AZgbS7yFh+e8+q2pCs0yC2jLEh7n2u8A5gBcDZHF2Ow5hp8YGWb1+rtui8
+	 4PlZSyavq2cjEI5UflWckVrQcX7U/GesNM6xdy8q88fYacB8ZhklC0KnvOaSoSu7O
+	 Ls3x8ZEWhuZ96B81LNGOnla7QPoqn1gv69ISQDJBdYYD8zgpEzrsySe6tmB/1Ha4H
+	 IM5jfLfT2JVt3AR011C/2VzSFmqxOdLd7pj19H3ecHvlEEAJFJw/XUHMksz+N97Jv
+	 WwSDJfTcUbYR34kmsg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M1JAm-1sFGbi1CvK-00Du3P; Fri, 14
+ Jun 2024 08:45:52 +0200
+Message-ID: <93ec485a-8620-4f24-80b2-0e08107c6287@web.de>
+Date: Fri, 14 Jun 2024 08:45:26 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613212542.403-1-ben@jubnut.com>
+User-Agent: Mozilla Thunderbird
+To: Dan Carpenter <dan.carpenter@linaro.org>, kvm@vger.kernel.org,
+ Yi Wang <foxywang@tencent.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ =?UTF-8?Q?Christian_Borntr=C3=A4ger?= <borntraeger@linux.ibm.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
+References: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
+Subject: Re: [PATCH] KVM: fix an error code in kvm_create_vm()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:kse9iwq86q4OapouTZFjQRTEBswgWxJ0dRt+ZHSdFA2UOHOq3Ew
+ OwT1xgCN0hZnc3qUpN3/1Q1UixgusEBeeTOjXt/Jb9guplTH65wgSCPSrxxU+2/LrZi1QZ2
+ wA5DOJXH6360dLOVNmJB/CPMbQEjs19xApq2zy10lFWXLixfwGEIteY/12Vzc25fZhkyGyx
+ 4APKh+JKW3jcpjQ3d/5Ag==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UAoW34K0xjM=;2HaTklojmuEO1RhTtNKZoOu7tjY
+ h68lhrk/rGShI+dRDf0yHUwheQ6BTOIH6enIara9fNKlgPo6bM6wwPSCPSneZIrRb+i8xVdKF
+ 62vr+fYt/ftcv78pI2bxXXM4Jp1e/kqeBYWO63Aju7W5wz/RRvXyzc30rA21ck788IRSzLvvV
+ p/DDbM09MBYVhLGeutpqL38IYf8e+hg+cJd2XaB+cXFKBmzNCiKSJSqTXi2RTg4FfqUxLXELW
+ 4n4jbjwkV+Kmg6jBHjh8CLfOPPKRIqs85fkliSpAkni+VS3iOJcSiTazVqJMvqBHZ0D2QpgWM
+ J3NPLHqlpqmBO3us68/bvDKbLpDTpvpK9sJWB0Ix26fh0fTt0IgX0yDi4CSfwF2otoeOqX2/A
+ NDVAkOO7h9H1t1tYoV6Q9TwVwjjQ7NERtlghVyRC7H3jRpREES0/U3gxBE/iYOXzaHGiIW772
+ M839wQqx2bgupubVcXhoD4v2kN1Tn7/pHgmq+3JlXbbnis0zNqxn7oHBg/Demeh7KBwLf3rqe
+ dL0Kf53NHBWYYziMpvgXThWJzQxAWtLMVD7zcImI4ALNYqp6jvaz8EdnJDDHEWjv7GO3vcu04
+ InTJUctO91cnc99Zkfk7t/QarRPB4aKKTh5s+RwPScc81P1I5o1FxCX+XjhYQ908mgaJD3i0g
+ ABYdxAgVmZH/fFcSRcI4YwRr2xpnXjwiVN/Vr6T6p9mS0y009wNTyqzs4lSPBEk7nHCrs/fKZ
+ aCSPk+MNFsHudL4BgphN6QQpEAuUlgoNDWb8pWN4hjiAPV7qIidi4TGhUw+dUt/djOvRxJ31x
+ OHMOpqpJJ72qquMo9eiHKOOiAeE0UBJD5sSNcy7gpdcVs=
 
-On Thu, Jun 13, 2024 at 10:25:42PM +0100, Ben Walsh wrote:
-> cros_ec_lpc_mec_read_bytes and cros_ec_lpc_mec_write_bytes call
-> cros_ec_lpc_mec_in_range, which checks if addresses are in the MEC
-> address range, and returns -EINVAL if the range given is not sensible.
-> 
-> However cros_ec_lpc_mec_in_range was also returning -EINVAL for a zero
-> length range.
-> 
-> A zero length range should not be an error condition.
-> cros_ec_lpc_mec_in_range now returns 1 in this case.
-> cros_ec_lpc_io_bytes_mec checks for zero length, and returns
-> immediately without beginning a transfer.
-> 
-> Signed-off-by: Ben Walsh <ben@jubnut.com>
+> This error path used to return -ENOMEM from the where r is initialized
+=E2=80=A6
+                                                  place where the local va=
+riable =E2=80=9Cr=E2=80=9D =E2=80=A6?
 
-Ideally this would have a Fixes tag that points to my commit.
-
-regards,
-dan carpenter
-
+Regards,
+Markus
