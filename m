@@ -1,95 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC8D26AD7;
-	Fri, 14 Jun 2024 19:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B478817C72;
+	Fri, 14 Jun 2024 21:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718393638; cv=none; b=dl+pCGeNQ2hQSLtgfDQar0YVr9tBn9Xoz2YTqbNxPUcjA5EyTrRwu28myy0oAxeTQPeEPS22PYLNrJfmvyLvdkP9gO7iYohkokIA9Pc4bp+o5prIwXozRfeY3lEfzN2eIHPNb4JzWvQH3afgsMAzTOG61BJ7TsQuZkdpAhpevJM=
+	t=1718399215; cv=none; b=HA4JHa39MHJxxYMz1dqhBxij+vSj/pvq//QTyEambWGqG5GFB/qXQv4kAtYY6M5NNJxNQmDDD6dnccVXURmFV2Hlte4V7GZj02HTlQqjYw0f1eLWCfX0IMgsGBnscm4B7gqZkg/WU/Q3YIl3fpP0ydR2AJeLP9P39f0zeE5TKsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718393638; c=relaxed/simple;
-	bh=un2DKs68DVerlXBeKlpV6w20TzStZ/MgihGnCdsi2EU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A5O4zg/6E5qHVKs3c8INeozn/yCj0lrM3OGaEMV7P0Y+0O6D3bR5gNgd0fArTmglhgLXkhnUt9aaXO5/h15zYzD7wXiR0UN589jbazD6q4dym9gA+Vto8AlS7sSREOCzwnnHCyWpZbIV1PVG7l0ghBlmbsBxDjKYnTtbJPzKCQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Piy7/8cY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718399215; c=relaxed/simple;
+	bh=KMO7Zfugy9M15xMn9DWM7ExCCPIjAnsh8V/2u166Wjk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I9xWoC9sRYCSRNQg8CTzF4VlQmOBkCb6HSjWx4WP1KYm7rPic+82J6LHgrBi66obxR7DpFaTP3YVBaBW7Ce9CgK6k6qfB0735qOv3mpMazosXwU6rAXC5FF4Orx0wjxhOdS7jyqljo8nqrca2+pcuiTaUS4mzTGLgLO6c6ftIDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=c7RwiNFj; arc=none smtp.client-ip=80.12.242.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Piy7/8cY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF8CBC2BD10;
-	Fri, 14 Jun 2024 19:33:55 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Piy7/8cY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1718393634;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DXA9wvv5IhNhdgqqoog09hrS0W28PIbc3nCXFgq2mxA=;
-	b=Piy7/8cYE5kX8QxCb1ovvf7Oew+mzdXJL4F6If9Frkz4X0RUzqFF12WjwrhUhRlUy+iIKO
-	DoV+j//Avs/4vzAsOjkSD1yxY/bbFo9eXQkn/oEw9txGMiy9XDfptZ5hiqtMHXpzOrUrXv
-	cPfOpW6hB2UusbVHO75CZUsDVUtb8kw=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 6d22401f (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 14 Jun 2024 19:33:52 +0000 (UTC)
-Date: Fri, 14 Jun 2024 21:33:45 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Jakub Kicinski <kuba@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
-	linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <ZmybGZDbXkw7JTjc@zx2c4.com>
-References: <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
- <ZmrfA1p2zSVIaYam@zx2c4.com>
- <80e03b02-7e24-4342-af0b-ba5117b19828@paulmck-laptop>
- <Zmru7hhz8kPDPsyz@pc636>
- <7efde25f-6af5-4a67-abea-b26732a8aca1@paulmck-laptop>
- <Zmsuswo8OPIhY5KJ@pc636>
- <cb51bc57-47b8-456a-9ac0-f8aa0931b144@paulmck-laptop>
- <ZmszOd5idhf2Cb-v@pc636>
- <b03b007f-3afa-4ad4-b76b-dea7b3aa2bc3@paulmck-laptop>
- <Zmw5FTX752g0vtlD@pc638.lan>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="c7RwiNFj"
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id IDz0sVzold4AbIDz0shQqo; Fri, 14 Jun 2024 22:57:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1718398641;
+	bh=0gqOmh8tdr4J+MkHrhErZNEY+dxRqhfQP+7M6D3WdV0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=c7RwiNFjjLHdqSblMkJBWPJfoTE6MCtHwN7i+OaI4OZa6UlluTrA+5uRTcpd34uS3
+	 U4mdmvU/04dh4Sn6aHNgHbaQn0B28XF/pi9hZIl3S8DVwxQmyDL9Sp+0s6wMtk6aVU
+	 xubrZyUSzfvHM4O1wZH6PVY6wVR3b0oF4JzdRyzqTDuKM0abKgxuWvOdv+sXg7nGr9
+	 Xvp5WeG5DoI6b+iONI4HyFCrOOF990Af8cednrtrIuAGXDa4La5mO0h5nEqlkd/VIb
+	 iI0wTGpOszyubW8KXjjCC7YdpZelgqMIttaAnsJnQUuG2+1KZT1SkdK/v4anT5Kwiz
+	 mb3ZTiGR/9xhg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 14 Jun 2024 22:57:21 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Mark Fasheh <mark@fasheh.com>,
+	Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	ocfs2-devel@lists.linux.dev
+Subject: [PATCH] ocfs2: Constify struct ocfs2_stack_operations
+Date: Fri, 14 Jun 2024 22:57:09 +0200
+Message-ID: <f52dab89ee0049ec6271de29183a781efbb275ab.1718398605.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zmw5FTX752g0vtlD@pc638.lan>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 14, 2024 at 02:35:33PM +0200, Uladzislau Rezki wrote:
-> +	/* Should a destroy process be deferred? */
-> +	if (s->flags & SLAB_DEFER_DESTROY) {
-> +		list_move_tail(&s->list, &slab_caches_defer_destroy);
-> +		schedule_delayed_work(&slab_caches_defer_destroy_work, HZ);
-> +		goto out_unlock;
-> +	}
+"struct ocfs2_stack_operations" are not modified in this driver.
 
-Wouldn't it be smoother to have the actual kmem_cache_free() function
-check to see if it's been marked for destruction and the refcount is
-zero, rather than polling every one second? I mentioned this approach
-in: https://lore.kernel.org/all/Zmo9-YGraiCj5-MI@zx2c4.com/ -
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-    I wonder if the right fix to this would be adding a `should_destroy`
-    boolean to kmem_cache, which kmem_cache_destroy() sets to true. And
-    then right after it checks `if (number_of_allocations == 0)
-    actually_destroy()`, and likewise on each kmem_cache_free(), it
-    could check `if (should_destroy && number_of_allocations == 0)
-    actually_destroy()`. 
+In order to do it, "struct ocfs2_stack_plugin" also needs to be adjusted to
+this new const qualifier.
 
-Jason
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   6241	    644	      0	   6885	   1ae5	fs/ocfs2/stack_o2cb.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   6337	    548	      0	   6885	   1ae5	fs/ocfs2/stack_o2cb.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ fs/ocfs2/stack_o2cb.c | 2 +-
+ fs/ocfs2/stack_user.c | 2 +-
+ fs/ocfs2/stackglue.h  | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/ocfs2/stack_o2cb.c b/fs/ocfs2/stack_o2cb.c
+index c973c03f6fd8..10157d9d7a9c 100644
+--- a/fs/ocfs2/stack_o2cb.c
++++ b/fs/ocfs2/stack_o2cb.c
+@@ -404,7 +404,7 @@ static int o2cb_cluster_this_node(struct ocfs2_cluster_connection *conn,
+ 	return 0;
+ }
+ 
+-static struct ocfs2_stack_operations o2cb_stack_ops = {
++static const struct ocfs2_stack_operations o2cb_stack_ops = {
+ 	.connect	= o2cb_cluster_connect,
+ 	.disconnect	= o2cb_cluster_disconnect,
+ 	.this_node	= o2cb_cluster_this_node,
+diff --git a/fs/ocfs2/stack_user.c b/fs/ocfs2/stack_user.c
+index c11406cd87a8..77edcd70f72c 100644
+--- a/fs/ocfs2/stack_user.c
++++ b/fs/ocfs2/stack_user.c
+@@ -1065,7 +1065,7 @@ static int user_cluster_this_node(struct ocfs2_cluster_connection *conn,
+ 	return 0;
+ }
+ 
+-static struct ocfs2_stack_operations ocfs2_user_plugin_ops = {
++static const struct ocfs2_stack_operations ocfs2_user_plugin_ops = {
+ 	.connect	= user_cluster_connect,
+ 	.disconnect	= user_cluster_disconnect,
+ 	.this_node	= user_cluster_this_node,
+diff --git a/fs/ocfs2/stackglue.h b/fs/ocfs2/stackglue.h
+index 3636847fae19..02ab072c528a 100644
+--- a/fs/ocfs2/stackglue.h
++++ b/fs/ocfs2/stackglue.h
+@@ -223,7 +223,7 @@ struct ocfs2_stack_operations {
+  */
+ struct ocfs2_stack_plugin {
+ 	char *sp_name;
+-	struct ocfs2_stack_operations *sp_ops;
++	const struct ocfs2_stack_operations *sp_ops;
+ 	struct module *sp_owner;
+ 
+ 	/* These are managed by the stackglue code. */
+-- 
+2.45.2
+
