@@ -1,73 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803862AE75;
-	Fri, 14 Jun 2024 02:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833A514532B;
+	Fri, 14 Jun 2024 02:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718331677; cv=none; b=tqaCShxScfrXK5WgsVSoRycrmd/g4gD6oSZh/pyOfiQu4l0KXSjC8zoUzw5UiDIvOTJ5i2xbyP4NDy1xtXdN117kLima9p5IKq4fbtG10Z2k+CS+ReOpOnNTQ60Cu5ciBGg5MOdqtUeY98Yqy5P0gn9j4wuCkXWZKY52ikBCgS0=
+	t=1718331895; cv=none; b=kxFDdsMAoD0ZuOETKkGm3lMTgX3w8ObOk8KBOIQ4w+yaxwi2wizS/Nmu36Zifz1Gk+xXjzr1Vxfl7DAxHX0673AkaTZfHEkN23+H9pDaXv2mU0PKkdBlV7MeCAb8fFAGgzOw6KjiVPDs/7c70U5EwcQ9pU59G2r3wUBrw6t5MB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718331677; c=relaxed/simple;
-	bh=BNG0nAvaHGm3HWERpezfVrO8KZGZ2JvMeFwF0CQszUQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WWEiODehZ0lhMid4U5xPJzljCjE79wAv6c70wXABLbkHma7tGVgQS9St2CmjeUfNrosazo4fIRZAk0Cu4NNFZ7aNpW5gCkq7/LZi/WTCavadPhuWr7S3cu8H6oZjWnCwHyP+YHZUBFReRpOUEIR7ALw7K9/BQVIpzNvZwr8uYrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oYwz+2Ok; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718331895; c=relaxed/simple;
+	bh=ytMZoWlY3T6/1y4PZKJPCyJB9wfqD73M1b9fAST+Qj8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SGox4qx55usvFDu5eALkAWG/q12pvLZISaUMpcM3q92qZRgDUNi0/DxLROLjli92JJqb/fJOzWUYKktdCO8aKG9xNd+HfQOt3Nud+yjqEvCO3cb6mvX8hEVWtLVGUwhWDt7RLLVGliQOSyUiaqLgyphhmBQC/y36XHtbWx/1ikk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=T+K02XZr; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oYwz+2Ok"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA239C2BBFC;
-	Fri, 14 Jun 2024 02:21:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718331677;
-	bh=BNG0nAvaHGm3HWERpezfVrO8KZGZ2JvMeFwF0CQszUQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oYwz+2Okf9is4/9hlucE2Oyd1SvFV2qx7OeIcUKUFzx99mRCN/CDhihLCXgHdI2L/
-	 ekPPpDh1B/153moJ9XJGFgV8BUAQGrMGq/dxjYsESYJqkskzrv4tspk6LeXPS89AKv
-	 SccrLYtjI74cHL+yNk3k+/WYzvgNt38uGAG9eO8LX5Yv+cvygDSYWLsAWNLx9bRYvV
-	 6wggHmIeMsYSmOEXj0LD0kUmqcJAGR2tZsjDzTrK0A0a55aCkv0c6qJt1gdF5CAsB2
-	 vYUdp+wyQeH61im70SKWz7zIQB3KUEq7dJQlcjVZPTrqn8Em5NvaVytAF2F13vamkC
-	 6THrVKVaA1oug==
-Date: Fri, 14 Jun 2024 02:21:13 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Ben Walsh <ben@jubnut.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in
- cros_ec_lpc_mec_read_bytes()
-Message-ID: <ZmupGcjkuU0bNtdl@google.com>
-References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
- <87sexgrdk4.fsf@jubnut.com>
- <ZmsvHBrYSpwYLyxx@google.com>
- <87o784ac55.fsf@jubnut.com>
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="T+K02XZr"
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45E1fTHS022852;
+	Fri, 14 Jun 2024 02:24:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-type:content-transfer-encoding; s=
+	corp-2023-11-20; bh=XrfRu0md5jJhhvMuPZJR9e3AV5ULPx1ilpLbNcmqO3Y=; b=
+	T+K02XZrtCGpUc1KGgq1YxzQiqb35Uip9zG6ujKMV+sd2fPo3XWA5/kensfV1xuX
+	+YIjItNgQTStyBPIs30tbzPAryHnHWa+5JW78wYcF3Q96F1yIf6RmaIGpfc/gFvn
+	R+pddzjcICOslcbW/5nyjxxyfeo8Yzay45xttuLIw/hlp3voUyk5Vz8jCsxcyaAL
+	kdMweBEEV6Zpqro4U2k4wfjCm+lL6MZoa7NWwtHuzbwKtVMJ+caUtzVDP0d9ZBxJ
+	5mXMVMUzY9nFUVPIiiubJst83gDrmwNssy+li4f5dhgM85NggjU/F+5dNCkqo/en
+	F2tWhMrAp3vqqrRfJEXXHQ==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ymh7dttbq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Jun 2024 02:24:35 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45E2IZuB012523;
+	Fri, 14 Jun 2024 02:24:35 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ynca1vs2h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Jun 2024 02:24:35 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 45E2OY1g011090;
+	Fri, 14 Jun 2024 02:24:34 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3ynca1vs1v-1;
+	Fri, 14 Jun 2024 02:24:34 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Khalid Aziz <khalid@gonehiking.org>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Matthew Wilcox <willy@infradead.org>, Hannes Reinecke <hare@suse.com>,
+        Finn Thain <fthain@linux-m68k.org>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        James Smart <james.smart@broadcom.com>,
+        Ram Vegesna <ram.vegesna@broadcom.com>,
+        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
+        "Juergen E. Fischer" <fischer@norbit.de>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v3] scsi: add missing MODULE_DESCRIPTION() macros
+Date: Thu, 13 Jun 2024 22:23:58 -0400
+Message-ID: <171833163028.268988.11962134341142261590.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240610-md-drivers-scsi-v3-1-055da78d66b2@quicinc.com>
+References: <20240610-md-drivers-scsi-v3-1-055da78d66b2@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o784ac55.fsf@jubnut.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-13_15,2024-06-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ phishscore=0 suspectscore=0 malwarescore=0 mlxscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2406140014
+X-Proofpoint-GUID: weQJtNGLWCFQrvm7HXFkpHw9QzmCh-v5
+X-Proofpoint-ORIG-GUID: weQJtNGLWCFQrvm7HXFkpHw9QzmCh-v5
 
-On Thu, Jun 13, 2024 at 08:14:14PM +0100, Ben Walsh wrote:
-> Tzung-Bi Shih <tzungbi@kernel.org> writes:
-> > On Thu, Jun 13, 2024 at 05:51:39PM +0100, Ben Walsh wrote:
-> >>   or 2. Put in a check for length == 0.
-> >> 
-> >>   or 3. Change the logic in `fwk_ec_lpc_mec_in_range`. Although I'm not
-> >>   sure what the correct answer is to "zero length is in range?"
-> >> 
-> >> I prefer option 2. What do you think?
-> >
-> > How about drop the length check at [2]?
-> >
-> > [2]: https://elixir.bootlin.com/linux/v6.9/source/drivers/platform/chrome/cros_ec_lpc_mec.c#L44
-> >
+On Mon, 10 Jun 2024 09:16:15 -0700, Jeff Johnson wrote:
+
+> On x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/scsi_common.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/advansys.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/BusLogic.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/aha1740.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/isci/isci.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/elx/efct.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/atp870u.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/ppa.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/imm.o
 > 
-> This works, but we still end up calling cros_ec_lpc_io_bytes_mec() with
-> zero length. Although this seems to work fine, we could put a length
-> check at the top of cros_ec_lpc_read_bytes() to avoid it.
+> [...]
 
-I guess you mean: cros_ec_lpc_io_bytes_mec().  Ack.
+Applied to 6.11/scsi-queue, thanks!
+
+[1/1] scsi: add missing MODULE_DESCRIPTION() macros
+      https://git.kernel.org/mkp/scsi/c/95f8bf932b46
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
