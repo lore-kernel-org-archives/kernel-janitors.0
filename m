@@ -1,122 +1,88 @@
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B478817C72;
-	Fri, 14 Jun 2024 21:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231CC623
+	for <kernel-janitors@vger.kernel.org>; Sat, 15 Jun 2024 00:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718399215; cv=none; b=HA4JHa39MHJxxYMz1dqhBxij+vSj/pvq//QTyEambWGqG5GFB/qXQv4kAtYY6M5NNJxNQmDDD6dnccVXURmFV2Hlte4V7GZj02HTlQqjYw0f1eLWCfX0IMgsGBnscm4B7gqZkg/WU/Q3YIl3fpP0ydR2AJeLP9P39f0zeE5TKsk=
+	t=1718409786; cv=none; b=DnoMq0oN5+kzeEXdwBK/YE2cPqM1kX92CDf3S1SSHBklceL9voD6OZ4/a00n9FVu4PFZbdN33GZWJo5RkVDcoaSybE8oA2tm2TAp3sYFFlWEhcSFHKiCs2wmdKjagAIpuDWqXuZmWkDMwtcxlMyNRvJB5KPuD1QYNonW87gBCAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718399215; c=relaxed/simple;
-	bh=KMO7Zfugy9M15xMn9DWM7ExCCPIjAnsh8V/2u166Wjk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I9xWoC9sRYCSRNQg8CTzF4VlQmOBkCb6HSjWx4WP1KYm7rPic+82J6LHgrBi66obxR7DpFaTP3YVBaBW7Ce9CgK6k6qfB0735qOv3mpMazosXwU6rAXC5FF4Orx0wjxhOdS7jyqljo8nqrca2+pcuiTaUS4mzTGLgLO6c6ftIDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=c7RwiNFj; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1718409786; c=relaxed/simple;
+	bh=ckSubXPnhKnNiVj/54x8Q0EJzPrAh+WV8AbmQVVrhOo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Whozz9I3UAxNvjrJ5VWq0xssxQgbS7cCOEmLxEvSGC3XGLwBTx5FTWs83R6wEUz7dqE+q0nTvfgDYWPKcttuPMHatOjbUIZvR2X2CnIPfS1b8PeN+SfVf6ai1+CZs36rD8ACZbuAgFTNRdhH+IGY7LMIiXK27r5KxDCLYVl62+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XnwD1lOS; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="c7RwiNFj"
-Received: from fedora.home ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id IDz0sVzold4AbIDz0shQqo; Fri, 14 Jun 2024 22:57:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1718398641;
-	bh=0gqOmh8tdr4J+MkHrhErZNEY+dxRqhfQP+7M6D3WdV0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=c7RwiNFjjLHdqSblMkJBWPJfoTE6MCtHwN7i+OaI4OZa6UlluTrA+5uRTcpd34uS3
-	 U4mdmvU/04dh4Sn6aHNgHbaQn0B28XF/pi9hZIl3S8DVwxQmyDL9Sp+0s6wMtk6aVU
-	 xubrZyUSzfvHM4O1wZH6PVY6wVR3b0oF4JzdRyzqTDuKM0abKgxuWvOdv+sXg7nGr9
-	 Xvp5WeG5DoI6b+iONI4HyFCrOOF990Af8cednrtrIuAGXDa4La5mO0h5nEqlkd/VIb
-	 iI0wTGpOszyubW8KXjjCC7YdpZelgqMIttaAnsJnQUuG2+1KZT1SkdK/v4anT5Kwiz
-	 mb3ZTiGR/9xhg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 14 Jun 2024 22:57:21 +0200
-X-ME-IP: 86.243.222.230
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	ocfs2-devel@lists.linux.dev
-Subject: [PATCH] ocfs2: Constify struct ocfs2_stack_operations
-Date: Fri, 14 Jun 2024 22:57:09 +0200
-Message-ID: <f52dab89ee0049ec6271de29183a781efbb275ab.1718398605.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XnwD1lOS"
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-705c5d99980so2270021b3a.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 14 Jun 2024 17:03:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718409784; x=1719014584; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mdWG57If2wiUtVgSeqsrLCBP+D2JtONZMYQed/ktHFU=;
+        b=XnwD1lOS4ERdaU/0/CvTLwl/KfQyW5a7FhTR8SJIO9RIvIWxTiWykcHZpZtfnDzjb2
+         PdYB4ndPfWMoA/ixUsOIFL9zXp5vf4bTwvKz1VEiIp+XrazcDZD0Fk2We2Vv3DkhLpi4
+         CYNRKiVexBT7x9zC7oi1XjDa5pYhKAX8OXUG+xWe8GRqFFw4kYjILXVE4pobC9HINdy3
+         Rf45szj5r4c4xzcXHLLBIam7DsSWIfqhqd36gieINxaRivzuGJZRQjDT1sO88n7d5n7I
+         9QnT3917wKwrWi26I//Pf3/6Yqhn5Xavz83kUPM4q/iEDn64yMrxKS+do71i9BgXwx3F
+         135Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718409784; x=1719014584;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mdWG57If2wiUtVgSeqsrLCBP+D2JtONZMYQed/ktHFU=;
+        b=uPOCX7gwzDaMAA5MuESN2eeljNItBWytfdqOoy2GBnUzqB5N2U0weTt4a/miYGBPHs
+         C3FjRW4gg/cvN0vU+QIhSeJalqY6BX0D1XVbX5BpUfoMJcQ2TSPYGKKdyX01WK3SVoL5
+         /kabwg7H922Ay0jJhHmxWkUsvEo9POSu5Rgxc36v+Uvh9uwmAgF58ObVNojfGbQUrTpx
+         tOxWZ4u6PPc7AjxHIba2axzI9kmSAl3+tl6ZmqGzUb8KUasfA/EO5wu5XNP1TxfGUt8i
+         JNXHWAnCfWxiPkn7qbAIgBaMIqpkV6IHwlvG5YHH85qiDqWbdv7nOjY1TBQSOCge/Hy8
+         CFig==
+X-Forwarded-Encrypted: i=1; AJvYcCUMEotbcReZ47xzkX8VxUa5RYnsNAz5a6yS3+FBFHW2Zbf2oxRl1l8vfPybEF0nTnZ09+Rfit1uPYW72xkJUn3qvFWbia+NRsgvA6LKp1AD
+X-Gm-Message-State: AOJu0YwSojZgfePMglCKZCVqbJHSTuxnNMUlfQ4/vL5WtPK4laeF8Cew
+	OmvTHtzKgndFRKa5mxGAfJ2kPGQaO+pTCAGo+UKQf9hm99mYrsaNyyqzy5ojCyGRuVwion6rxdV
+	vWA==
+X-Google-Smtp-Source: AGHT+IE75Eg8FJSE4bq9aZ/BYnEr+ouKJwiOKS/K41JZNvFHP5zQ4Tli5g5aeYCspFPmah9r+g6Cdwx3w0Q=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:300b:b0:704:3ab0:86bb with SMTP id
+ d2e1a72fcca58-705d71fa325mr40352b3a.4.1718409784313; Fri, 14 Jun 2024
+ 17:03:04 -0700 (PDT)
+Date: Fri, 14 Jun 2024 17:02:51 -0700
+In-Reply-To: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
+X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
+Message-ID: <171840971654.1410787.550758149243431657.b4-ty@google.com>
+Subject: Re: [PATCH] KVM: fix an error code in kvm_create_vm()
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Yi Wang <foxywang@tencent.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-"struct ocfs2_stack_operations" are not modified in this driver.
+On Thu, 13 Jun 2024 17:33:16 +0300, Dan Carpenter wrote:
+> This error path used to return -ENOMEM from the where r is initialized
+> at the top of the function.  But a new "r = kvm_init_irq_routing(kvm);"
+> was introduced in the middle of the function so now the error code is
+> not set and it eventually leads to a NULL dereference.  Set the error
+> code back to -ENOMEM.
+> 
+> 
+> [...]
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+Applied to kvm-x86 generic, with the fixup I suggested and a massaged changelog
+to address Markus' feedback.  Thanks again!
 
-In order to do it, "struct ocfs2_stack_plugin" also needs to be adjusted to
-this new const qualifier.
+[1/1] KVM: fix an error code in kvm_create_vm()
+      https://github.com/kvm-x86/linux/commit/5c1f50ab7fcb
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   6241	    644	      0	   6885	   1ae5	fs/ocfs2/stack_o2cb.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   6337	    548	      0	   6885	   1ae5	fs/ocfs2/stack_o2cb.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- fs/ocfs2/stack_o2cb.c | 2 +-
- fs/ocfs2/stack_user.c | 2 +-
- fs/ocfs2/stackglue.h  | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/ocfs2/stack_o2cb.c b/fs/ocfs2/stack_o2cb.c
-index c973c03f6fd8..10157d9d7a9c 100644
---- a/fs/ocfs2/stack_o2cb.c
-+++ b/fs/ocfs2/stack_o2cb.c
-@@ -404,7 +404,7 @@ static int o2cb_cluster_this_node(struct ocfs2_cluster_connection *conn,
- 	return 0;
- }
- 
--static struct ocfs2_stack_operations o2cb_stack_ops = {
-+static const struct ocfs2_stack_operations o2cb_stack_ops = {
- 	.connect	= o2cb_cluster_connect,
- 	.disconnect	= o2cb_cluster_disconnect,
- 	.this_node	= o2cb_cluster_this_node,
-diff --git a/fs/ocfs2/stack_user.c b/fs/ocfs2/stack_user.c
-index c11406cd87a8..77edcd70f72c 100644
---- a/fs/ocfs2/stack_user.c
-+++ b/fs/ocfs2/stack_user.c
-@@ -1065,7 +1065,7 @@ static int user_cluster_this_node(struct ocfs2_cluster_connection *conn,
- 	return 0;
- }
- 
--static struct ocfs2_stack_operations ocfs2_user_plugin_ops = {
-+static const struct ocfs2_stack_operations ocfs2_user_plugin_ops = {
- 	.connect	= user_cluster_connect,
- 	.disconnect	= user_cluster_disconnect,
- 	.this_node	= user_cluster_this_node,
-diff --git a/fs/ocfs2/stackglue.h b/fs/ocfs2/stackglue.h
-index 3636847fae19..02ab072c528a 100644
---- a/fs/ocfs2/stackglue.h
-+++ b/fs/ocfs2/stackglue.h
-@@ -223,7 +223,7 @@ struct ocfs2_stack_operations {
-  */
- struct ocfs2_stack_plugin {
- 	char *sp_name;
--	struct ocfs2_stack_operations *sp_ops;
-+	const struct ocfs2_stack_operations *sp_ops;
- 	struct module *sp_owner;
- 
- 	/* These are managed by the stackglue code. */
--- 
-2.45.2
-
+--
+https://github.com/kvm-x86/linux/tree/next
