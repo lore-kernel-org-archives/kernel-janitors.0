@@ -1,88 +1,75 @@
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231CC623
-	for <kernel-janitors@vger.kernel.org>; Sat, 15 Jun 2024 00:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE95F173;
+	Sat, 15 Jun 2024 02:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718409786; cv=none; b=DnoMq0oN5+kzeEXdwBK/YE2cPqM1kX92CDf3S1SSHBklceL9voD6OZ4/a00n9FVu4PFZbdN33GZWJo5RkVDcoaSybE8oA2tm2TAp3sYFFlWEhcSFHKiCs2wmdKjagAIpuDWqXuZmWkDMwtcxlMyNRvJB5KPuD1QYNonW87gBCAw=
+	t=1718417435; cv=none; b=qKNPgdDHFXLa9wQT4PuIpRS3bPz0zSIepISAEyaYOznVJ19O/B7YbxuMd9a1/7BAGfPke0BDhofB/28S+1ZO69ME4u7ZLdc36T5y7PwASzIkYjvZySAov/bYdIzM2peOZsP6nziTEhZC58HLEiUkC7W5LADegnClUwPx+iZ2Qow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718409786; c=relaxed/simple;
-	bh=ckSubXPnhKnNiVj/54x8Q0EJzPrAh+WV8AbmQVVrhOo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Whozz9I3UAxNvjrJ5VWq0xssxQgbS7cCOEmLxEvSGC3XGLwBTx5FTWs83R6wEUz7dqE+q0nTvfgDYWPKcttuPMHatOjbUIZvR2X2CnIPfS1b8PeN+SfVf6ai1+CZs36rD8ACZbuAgFTNRdhH+IGY7LMIiXK27r5KxDCLYVl62+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XnwD1lOS; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+	s=arc-20240116; t=1718417435; c=relaxed/simple;
+	bh=GCWmK2mdjXrPgBNPEyFvcbzSuRZtsonLQhm18KyHfGo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=j4RjFpVVf7x9hBeo+kpp8BnOpCNljOR4BpF4qABuPQmEJPdTNw4E8t/YSUGo4wkgSNVtmFysU2Nw02+581vJQAjX3R/xxhHx/2kfQlRXkcVCBjfv6SpciQL7unjhLKa9a0k/B4SetVJ6vqHnYmCkBe2qpGUCL4Wma+7GnOv+YSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jQdXYsOz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XnwD1lOS"
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-705c5d99980so2270021b3a.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 14 Jun 2024 17:03:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718409784; x=1719014584; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mdWG57If2wiUtVgSeqsrLCBP+D2JtONZMYQed/ktHFU=;
-        b=XnwD1lOS4ERdaU/0/CvTLwl/KfQyW5a7FhTR8SJIO9RIvIWxTiWykcHZpZtfnDzjb2
-         PdYB4ndPfWMoA/ixUsOIFL9zXp5vf4bTwvKz1VEiIp+XrazcDZD0Fk2We2Vv3DkhLpi4
-         CYNRKiVexBT7x9zC7oi1XjDa5pYhKAX8OXUG+xWe8GRqFFw4kYjILXVE4pobC9HINdy3
-         Rf45szj5r4c4xzcXHLLBIam7DsSWIfqhqd36gieINxaRivzuGJZRQjDT1sO88n7d5n7I
-         9QnT3917wKwrWi26I//Pf3/6Yqhn5Xavz83kUPM4q/iEDn64yMrxKS+do71i9BgXwx3F
-         135Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718409784; x=1719014584;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mdWG57If2wiUtVgSeqsrLCBP+D2JtONZMYQed/ktHFU=;
-        b=uPOCX7gwzDaMAA5MuESN2eeljNItBWytfdqOoy2GBnUzqB5N2U0weTt4a/miYGBPHs
-         C3FjRW4gg/cvN0vU+QIhSeJalqY6BX0D1XVbX5BpUfoMJcQ2TSPYGKKdyX01WK3SVoL5
-         /kabwg7H922Ay0jJhHmxWkUsvEo9POSu5Rgxc36v+Uvh9uwmAgF58ObVNojfGbQUrTpx
-         tOxWZ4u6PPc7AjxHIba2axzI9kmSAl3+tl6ZmqGzUb8KUasfA/EO5wu5XNP1TxfGUt8i
-         JNXHWAnCfWxiPkn7qbAIgBaMIqpkV6IHwlvG5YHH85qiDqWbdv7nOjY1TBQSOCge/Hy8
-         CFig==
-X-Forwarded-Encrypted: i=1; AJvYcCUMEotbcReZ47xzkX8VxUa5RYnsNAz5a6yS3+FBFHW2Zbf2oxRl1l8vfPybEF0nTnZ09+Rfit1uPYW72xkJUn3qvFWbia+NRsgvA6LKp1AD
-X-Gm-Message-State: AOJu0YwSojZgfePMglCKZCVqbJHSTuxnNMUlfQ4/vL5WtPK4laeF8Cew
-	OmvTHtzKgndFRKa5mxGAfJ2kPGQaO+pTCAGo+UKQf9hm99mYrsaNyyqzy5ojCyGRuVwion6rxdV
-	vWA==
-X-Google-Smtp-Source: AGHT+IE75Eg8FJSE4bq9aZ/BYnEr+ouKJwiOKS/K41JZNvFHP5zQ4Tli5g5aeYCspFPmah9r+g6Cdwx3w0Q=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:300b:b0:704:3ab0:86bb with SMTP id
- d2e1a72fcca58-705d71fa325mr40352b3a.4.1718409784313; Fri, 14 Jun 2024
- 17:03:04 -0700 (PDT)
-Date: Fri, 14 Jun 2024 17:02:51 -0700
-In-Reply-To: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQdXYsOz"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 900BCC4AF48;
+	Sat, 15 Jun 2024 02:10:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718417434;
+	bh=GCWmK2mdjXrPgBNPEyFvcbzSuRZtsonLQhm18KyHfGo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=jQdXYsOzn1dl6F9031mpQy4zKonqcp0dKV9Go9XNgiDq0V9DMoxNBmZ9XTD7V9GoP
+	 P468TSd1eamaXg6xMx3G+NnGVNl333hgu+VxOeYQk67bE+N7VjkUntuHYXDMO7Xg3l
+	 QC3BZKAdnfx6P8UNs8driUksLmM+BVNIrxPpU+o+t9padi9gbsXMfgyZTo7trGzaOq
+	 QBFvHnyUUMm8oVYv52Ga6rvg3gX43dC+AZ/WZvSbcjWuqHXmlnQUm51O6kxNmL8EtS
+	 ZdJUzwbMW8HmNAuDc+U7LVzuUm7KckRWHwhcBRfPFyQRnfkNCwbDY6WCfWE9Cwhi+u
+	 6qfcCJpnLNXoA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 71966C43616;
+	Sat, 15 Jun 2024 02:10:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
-X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
-Message-ID: <171840971654.1410787.550758149243431657.b4-ty@google.com>
-Subject: Re: [PATCH] KVM: fix an error code in kvm_create_vm()
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Yi Wang <foxywang@tencent.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] atm: clean up a put_user() calls
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171841743446.11975.10416200680014723985.git-patchwork-notify@kernel.org>
+Date: Sat, 15 Jun 2024 02:10:34 +0000
+References: <04a018e8-7433-4f67-8ddd-9357a0114f87@moroto.mountain>
+In-Reply-To: <04a018e8-7433-4f67-8ddd-9357a0114f87@moroto.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, v4bel@theori.io, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 
-On Thu, 13 Jun 2024 17:33:16 +0300, Dan Carpenter wrote:
-> This error path used to return -ENOMEM from the where r is initialized
-> at the top of the function.  But a new "r = kvm_init_irq_routing(kvm);"
-> was introduced in the middle of the function so now the error code is
-> not set and it eventually leads to a NULL dereference.  Set the error
-> code back to -ENOMEM.
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Thu, 13 Jun 2024 21:21:42 +0300 you wrote:
+> Unlike copy_from_user(), put_user() and get_user() return -EFAULT on
+> error.  Use the error code directly instead of setting it.
 > 
-> 
-> [...]
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  net/atm/ioctl.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied to kvm-x86 generic, with the fixup I suggested and a massaged changelog
-to address Markus' feedback.  Thanks again!
+Here is the summary with links:
+  - [net-next] atm: clean up a put_user() calls
+    https://git.kernel.org/netdev/net-next/c/afc5625e2097
 
-[1/1] KVM: fix an error code in kvm_create_vm()
-      https://github.com/kvm-x86/linux/commit/5c1f50ab7fcb
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
---
-https://github.com/kvm-x86/linux/tree/next
+
