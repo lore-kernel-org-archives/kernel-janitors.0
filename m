@@ -1,41 +1,47 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3DA45030;
-	Sat, 15 Jun 2024 14:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F744383B1;
+	Sat, 15 Jun 2024 15:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718461723; cv=none; b=M+QEfnhNSbsa37TVS6KPd1RzmFY6bYnpcObBQjUMQL0GZvw3nmxog1RfsgLUZGspBNHznY1dmFbdPxAqftzc8AhEB7AS7RS4fbcvcR2xQAIT42X/JU5xYQkv/R1vRGJu97buCY+KkkM1RA6fe7j/V5kmC+kGfXcvLURseYDGU44=
+	t=1718464799; cv=none; b=K/+9N37pSr3n0hM696iFs95J6LTaDusVGKvnb0Jy3WFQ3Ij3DNCK8/1kiYGBQn3+5kqowkhyfsnI/tP82Y6xYGRbxQ+IuVBXZNWcMhSiMqnMD4ZJriMFYkiNt6+WPjjUItBXNPkA95XMQrL/euo0Qm3AfwModlqhvVIhP6BD3BY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718461723; c=relaxed/simple;
-	bh=ImhCtEWLBwtWTSaKi+IX+aQ1Arndqt0zvB4GTE47T4E=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=efXfwWLlKG0bE6vvVZVpGdtggEIXfFiK/BzkCsH9NZGbtVrg1CMiyDnuWfllofhjBhmkjzbq+AKRBdUg1v1E9Podggdphe73h+wIAHFfsLfGBp444HVI78U1gBXd26B+mPcDVddq0FYQixLlB5neyugSJaHKYJ0lbqShWjU9l8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzV+klCJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718464799; c=relaxed/simple;
+	bh=jshkWIHPo3YzeCmina0UJk9xyEG39QgO5mRkhbtsSK8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ZdYpa1McsmPiKiQBg+JiR9VAAjmCb3XEqMFdi8TYibE49gjSK60v9cXCMts9t31NCiJpl7tX/33vGCGP6H66E0Vo4J2wLOqDj5LHywuznG6NbxencwFltze4HTADD8P8HZNLD/xtB7YLwL8nPC7f2jUFvo1il9t9P1a0a//1kHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jgvuDx3j; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzV+klCJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3A0AC116B1;
-	Sat, 15 Jun 2024 14:28:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718461723;
-	bh=ImhCtEWLBwtWTSaKi+IX+aQ1Arndqt0zvB4GTE47T4E=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=UzV+klCJR4jqHdsWf1Igp/S3xaOHkRTpev1IuRZboj6CtZEKf8CUbnm0mEfIttwCt
-	 zkTUoTAiwUawvq+5s7Pw0e3e7+F3o55B7B5+s8YALQl0tf626n7tUyvXa73y3/rEGd
-	 TT+b/oat6RgGnpkvLqL7Jyr5lXlRpUCjXKsXDBLaMI7Si4i+WmG3kZhr1ElMZGEqx3
-	 XWLkhCMC/VISRAjjhGSl5G/3aN4HZdIm5dYjoPiFwVaCg8+R+AJEsm/ac4o9R4eF7/
-	 UJ/lDeBz7XZtAW99xdS8H5P4Cm8cKPZe36Ep4gu/KnFv/YoQypY0TP/LAsXZ1Lsb1U
-	 5VU00+0QfuWgg==
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <20240613-md-arm64-drivers-base-regmap-v1-1-222be554d520@quicinc.com>
-References: <20240613-md-arm64-drivers-base-regmap-v1-1-222be554d520@quicinc.com>
-Subject: Re: [PATCH] regmap-i2c: add missing MODULE_DESCRIPTION() macro
-Message-Id: <171846172275.314843.10603557257116385150.b4-ty@kernel.org>
-Date: Sat, 15 Jun 2024 15:28:42 +0100
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jgvuDx3j"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45FEhgkD024563;
+	Sat, 15 Jun 2024 15:19:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+Q0rGL8N8LaCSBSgdAqB6/
+	nnToMU3UOTJeUQub067eE=; b=jgvuDx3jzAv5sm8K7CuY1RWbRnuFuWVv2uYSDA
+	+Q4whNArFf6KmKkJNjZwXLmtTrmzJpeQEt+HFcTJ7+8/NQL+05TwEJlSOz2ZBU2M
+	xeKQepW24FzcKR75mUBMuB8prlXLOBgC6GI3YdegoliKdtj1meW8UhAoiSvjb8Xu
+	WLiSw9u4gvsBnFo/BFRiTct64DeZFnsvz6k4NC2Yz1I6QguB7rKoYzTKQGLL2KeQ
+	Ugyg+gqRq5+KUka2QCG6CJCTYMBr5fJCWLieNlngnQKVDaiwuqvTlNMgigTRAv+B
+	5t8Tr+4ZELXQxeWzS1iexyF5X0R1T7KItq5M0zNODYdnPZFg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys3b70q1j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Jun 2024 15:19:13 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45FFJBiV017204
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Jun 2024 15:19:11 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Jun
+ 2024 08:19:04 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sat, 15 Jun 2024 08:18:59 -0700
+Subject: [PATCH] KVM: PPC: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -44,41 +50,86 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-0bd45
+Message-ID: <20240615-md-powerpc-arch-powerpc-kvm-v1-1-7478648b3100@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAOKwbWYC/z3MwQ6CMAwA0F8hPdtkLIrorxgP3Siu0Y2lUyQh/
+ LvTg8d3eSsUVuEC52YF5VmKTKmi3TXgA6UbowzVYI3dm649YBwwT2/W7JHUhz/uc8ST7Y6j752
+ h3kEdsvIoy2+/XKsdFUanlHz4ng9JrwUjlScrbNsH0A6iY4wAAAA=
+To: Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin
+	<npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "Naveen
+ N. Rao" <naveen.n.rao@linux.ibm.com>
+CC: <linuxppc-dev@lists.ozlabs.org>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: c65O775oj7ut3YNE45UZp56zioJYRR9i
+X-Proofpoint-ORIG-GUID: c65O775oj7ut3YNE45UZp56zioJYRR9i
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-15_11,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
+ bulkscore=0 spamscore=0 mlxscore=0 priorityscore=1501 clxscore=1015
+ mlxlogscore=999 adultscore=0 lowpriorityscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406150117
 
-On Thu, 13 Jun 2024 12:59:59 -0700, Jeff Johnson wrote:
-> With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-i2c.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> 
+With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/kvm/test-guest-state-buffer.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/kvm/kvm-pr.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/kvm/kvm-hv.o
 
-Applied to
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ arch/powerpc/kvm/book3s_hv.c               | 1 +
+ arch/powerpc/kvm/book3s_pr.c               | 1 +
+ arch/powerpc/kvm/test-guest-state-buffer.c | 1 +
+ 3 files changed, 3 insertions(+)
 
-Thanks!
+diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+index daaf7faf21a5..e16c096a2422 100644
+--- a/arch/powerpc/kvm/book3s_hv.c
++++ b/arch/powerpc/kvm/book3s_hv.c
+@@ -6519,6 +6519,7 @@ static void kvmppc_book3s_exit_hv(void)
+ 
+ module_init(kvmppc_book3s_init_hv);
+ module_exit(kvmppc_book3s_exit_hv);
++MODULE_DESCRIPTION("KVM on Book 3S (POWER7 and later) in hypervisor mode");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS_MISCDEV(KVM_MINOR);
+ MODULE_ALIAS("devname:kvm");
+diff --git a/arch/powerpc/kvm/book3s_pr.c b/arch/powerpc/kvm/book3s_pr.c
+index a7d7137ea0c8..7c19744c43cb 100644
+--- a/arch/powerpc/kvm/book3s_pr.c
++++ b/arch/powerpc/kvm/book3s_pr.c
+@@ -2111,6 +2111,7 @@ void kvmppc_book3s_exit_pr(void)
+ module_init(kvmppc_book3s_init_pr);
+ module_exit(kvmppc_book3s_exit_pr);
+ 
++MODULE_DESCRIPTION("KVM on Book 3S without using hypervisor mode");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS_MISCDEV(KVM_MINOR);
+ MODULE_ALIAS("devname:kvm");
+diff --git a/arch/powerpc/kvm/test-guest-state-buffer.c b/arch/powerpc/kvm/test-guest-state-buffer.c
+index 4720b8dc8837..10238556c113 100644
+--- a/arch/powerpc/kvm/test-guest-state-buffer.c
++++ b/arch/powerpc/kvm/test-guest-state-buffer.c
+@@ -325,4 +325,5 @@ static struct kunit_suite guest_state_buffer_test_suite = {
+ 
+ kunit_test_suites(&guest_state_buffer_test_suite);
+ 
++MODULE_DESCRIPTION("KUnit tests for Guest State Buffer APIs");
+ MODULE_LICENSE("GPL");
 
-[1/1] regmap-i2c: add missing MODULE_DESCRIPTION() macro
-      commit: 48c1a30bf160117080b48589641f91eae9492207
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240615-md-powerpc-arch-powerpc-kvm-9267fc8b0a8b
 
