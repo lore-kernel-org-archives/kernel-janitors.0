@@ -1,98 +1,160 @@
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+Received: from msa.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCD03D6B;
-	Sun, 16 Jun 2024 07:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B3661FF1;
+	Sun, 16 Jun 2024 07:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718522598; cv=none; b=Z3zxnei4xZyoOgVSFBuCIVEy3mqrhldSAEeORJbwnUq3mptMU7o2YGv+/6q6EVw69pEfzK7iPB31zRysUpqAUsHs+xwiyUIfGbDLP8D6k1/+NZcZbFp1ozYzEk4bqz8z3PPzDBCdm3UG2aSBfsCsT2atmtlum/R7FOtpU+VGx9Q=
+	t=1718524699; cv=none; b=iQlOzp3BCfGMlAs9pLXC138xBXO53UzwgFvXU4q3NWxddCm5j3b4TqQeIZe3jKPl9tXAL064G6p78m5WgD5GJ/itJ3coMx6geXTC5PW59Nw9qtW4QfPC+Wn9DsN/Hfa3eu/tVjRKLIy1HFl/WERsUFAYVuCAjoRiSXzjrV0yw/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718522598; c=relaxed/simple;
-	bh=+OZys9MJKjQjiTKcvx4NEmnpvqcjrD585Do8GvjtISA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G1Vj2PaxaI+aEfKw0fTaa3+CRSPrB7nvYr50eGvFcQQkJ8HTbcduHD07q7oYmuQ37gLbZuHGVlvdLW8OVFpXNpE0hs3spkwWRK6ROD2baGiS6qxgBc2xDvZ18svfNpK9z5frBNDOdrd+C7KPa1IPqv9BXSxgmp8DyebevQI87dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RZExeNms; arc=none smtp.client-ip=80.12.242.30
+	s=arc-20240116; t=1718524699; c=relaxed/simple;
+	bh=WRZv3PDO/c6mtg4LaKOXC6PUftDrcCyhmpjzZeaRBdw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eyj1A7VZVALMVvellVHZFv7S2EzrrxMf4U8inGILdacj6AyQIIdskoil2OeVqDovsUqe9gYoUy7k/aGgBuCHWv0MWy4alwlXr06MMxiRt2Fp6iH30xWlfnRRJpxfsubKXmK3JrE5XsuPd/5CqqlgRv33N0mmegZQremS/i5qAnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Q/A1m8nE; arc=none smtp.client-ip=80.12.242.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RZExeNms"
-Received: from [192.168.1.37] ([86.243.222.230])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Q/A1m8nE"
+Received: from fedora.home ([86.243.222.230])
 	by smtp.orange.fr with ESMTPA
-	id Ik5as8CMcevLqIk5bsMq50; Sun, 16 Jun 2024 09:14:20 +0200
+	id Ikm4sPtRXuRA3Ikm4selgw; Sun, 16 Jun 2024 09:58:09 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1718522060;
-	bh=YP7PkSksy9wMazSXjGajDue5tMT2K7r8fSa1XkSOCMw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=RZExeNmsKlRnZQBILU4YjwXErTuEql+SaccL2uFBjA6xwDM4IK1gZWon0XfW41Rqm
-	 u5MS1+gNoKQaor66VozQF1NM+QzzgBYrfVf64wPAlE46LIdXavKTwO2yd6BRghSbMV
-	 eOa/MT3OuABzxJ4Sv0OxMrda82F8Sl2RQFQMe0HO8TtZMCo0azizFdYtlYG0Au1tc6
-	 2hIpD3IL6C3lhz5ZqV9hPwUHK8B0tIk470L/qO6oLW703+W09Zwce5vl5sALEf76uE
-	 2qKjo4YMTV1HmnLgyTc8EylS+rQG2AEtQrfQeaT1JZvs9QQ+dMjV2ZzFqqEXuC8+S/
-	 0O4zOexyhTUqA==
-X-ME-Helo: [192.168.1.37]
+	s=t20230301; t=1718524689;
+	bh=9PkIY/+JvPRQH3lG8FJNGa1VEAbWJvoCrfAn8QG8UOQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Q/A1m8nE15VUD/F2KcFqQih3WKQqzCifDKGM/2EAxMQuLgsA1LyLfRtrEmPYV+Vqd
+	 STY3RwYuI1z7WiPj9tuxMFpl1eBPybkYBaaz8Zu01+YPVXzoGpB9izrLaVD5wplg2i
+	 t8WoLktVjxlysIhGPNCEga6dOPNTE8k87gzCBdYwa/WCLrLca25kv8Gu5lggYiUf1O
+	 /3zzT/U2k55aKMYfPki78VajtGkxfrH2HqfYG+T65uxF1naq/n6Kt+LgZTfc1UQmkG
+	 egZmBWxCTSR193wV1xn33tEcGTLRucGFwUXesx9ySaEK9jR1sAYo487TUP4FusDu8V
+	 pnurseGbfG92w==
+X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 16 Jun 2024 09:14:20 +0200
+X-ME-Date: Sun, 16 Jun 2024 09:58:09 +0200
 X-ME-IP: 86.243.222.230
-Message-ID: <de75c710-044a-45ff-9477-cf4d57f55ab1@wanadoo.fr>
-Date: Sun, 16 Jun 2024 09:14:10 +0200
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Lars Povlsen <lars.povlsen@microchip.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH net-next] net: microchip: Constify struct vcap_operations
+Date: Sun, 16 Jun 2024 09:57:56 +0200
+Message-ID: <d8e76094d2e98ebb5bfc8205799b3a9db0b46220.1718524644.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: fsl: imx-pcm-fiq: add missing MODULE_DESCRIPTION()
- macro
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
- Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
- Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
- linux-sound@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <20240615-md-arm-sound-soc-fsl-v1-1-8ed731c2f073@quicinc.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240615-md-arm-sound-soc-fsl-v1-1-8ed731c2f073@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 16/06/2024 à 08:42, Jeff Johnson a écrit :
-> With ARCH=arm, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/fsl/imx-pcm-fiq.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->   sound/soc/fsl/imx-pcm-fiq.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/sound/soc/fsl/imx-pcm-fiq.c b/sound/soc/fsl/imx-pcm-fiq.c
-> index 0d124002678e..5ea6dd4c89a1 100644
-> --- a/sound/soc/fsl/imx-pcm-fiq.c
-> +++ b/sound/soc/fsl/imx-pcm-fiq.c
-> @@ -319,4 +319,5 @@ void imx_pcm_fiq_exit(struct platform_device *pdev)
->   }
->   EXPORT_SYMBOL_GPL(imx_pcm_fiq_exit);
->   
-> +MODULE_DESCRIPTION("Freescle i.MX PCM FIQ handler");
+"struct vcap_operations" are not modified in these drivers.
 
-Freescale? (missing 'a')
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-CJ
+In order to do it, "struct vcap_control" also needs to be adjusted to this
+new const qualifier.
 
->   MODULE_LICENSE("GPL");
-> 
-> ---
-> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> change-id: 20240615-md-arm-sound-soc-fsl-c598fb353e69
-> 
-> 
-> 
+As an example, on a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  15176	   1094	     16	  16286	   3f9e	drivers/net/ethernet/microchip/lan966x/lan966x_vcap_impl.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  15268	    998	     16	  16282	   3f9a	drivers/net/ethernet/microchip/lan966x/lan966x_vcap_impl.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I hope this can be applied as a single patch.
+I think it can be split between lan966x, sparx5 and vcap if really needed.
+---
+ drivers/net/ethernet/microchip/lan966x/lan966x_vcap_impl.c   | 2 +-
+ drivers/net/ethernet/microchip/sparx5/sparx5_vcap_impl.c     | 2 +-
+ drivers/net/ethernet/microchip/vcap/vcap_api.h               | 2 +-
+ drivers/net/ethernet/microchip/vcap/vcap_api_debugfs_kunit.c | 2 +-
+ drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c         | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_vcap_impl.c b/drivers/net/ethernet/microchip/lan966x/lan966x_vcap_impl.c
+index a4414f63c9b1..a1471e38d118 100644
+--- a/drivers/net/ethernet/microchip/lan966x/lan966x_vcap_impl.c
++++ b/drivers/net/ethernet/microchip/lan966x/lan966x_vcap_impl.c
+@@ -581,7 +581,7 @@ static void lan966x_vcap_move(struct net_device *dev,
+ 	lan966x_vcap_wait_update(lan966x, admin->tgt_inst);
+ }
+ 
+-static struct vcap_operations lan966x_vcap_ops = {
++static const struct vcap_operations lan966x_vcap_ops = {
+ 	.validate_keyset = lan966x_vcap_validate_keyset,
+ 	.add_default_fields = lan966x_vcap_add_default_fields,
+ 	.cache_erase = lan966x_vcap_cache_erase,
+diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_vcap_impl.c b/drivers/net/ethernet/microchip/sparx5/sparx5_vcap_impl.c
+index 187efa1fc904..967c8621c250 100644
+--- a/drivers/net/ethernet/microchip/sparx5/sparx5_vcap_impl.c
++++ b/drivers/net/ethernet/microchip/sparx5/sparx5_vcap_impl.c
+@@ -1507,7 +1507,7 @@ static void sparx5_vcap_move(struct net_device *ndev, struct vcap_admin *admin,
+ 	}
+ }
+ 
+-static struct vcap_operations sparx5_vcap_ops = {
++static const struct vcap_operations sparx5_vcap_ops = {
+ 	.validate_keyset = sparx5_vcap_validate_keyset,
+ 	.add_default_fields = sparx5_vcap_add_default_fields,
+ 	.cache_erase = sparx5_vcap_cache_erase,
+diff --git a/drivers/net/ethernet/microchip/vcap/vcap_api.h b/drivers/net/ethernet/microchip/vcap/vcap_api.h
+index 9eccfa633c1a..6069ad95c27e 100644
+--- a/drivers/net/ethernet/microchip/vcap/vcap_api.h
++++ b/drivers/net/ethernet/microchip/vcap/vcap_api.h
+@@ -271,7 +271,7 @@ struct vcap_operations {
+ 
+ /* VCAP API Client control interface */
+ struct vcap_control {
+-	struct vcap_operations *ops;  /* client supplied operations */
++	const struct vcap_operations *ops;  /* client supplied operations */
+ 	const struct vcap_info *vcaps; /* client supplied vcap models */
+ 	const struct vcap_statistics *stats; /* client supplied vcap stats */
+ 	struct list_head list; /* list of vcap instances */
+diff --git a/drivers/net/ethernet/microchip/vcap/vcap_api_debugfs_kunit.c b/drivers/net/ethernet/microchip/vcap/vcap_api_debugfs_kunit.c
+index b23c11b0647c..9c9d38042125 100644
+--- a/drivers/net/ethernet/microchip/vcap/vcap_api_debugfs_kunit.c
++++ b/drivers/net/ethernet/microchip/vcap/vcap_api_debugfs_kunit.c
+@@ -221,7 +221,7 @@ static int vcap_test_port_info(struct net_device *ndev,
+ 	return 0;
+ }
+ 
+-static struct vcap_operations test_callbacks = {
++static const struct vcap_operations test_callbacks = {
+ 	.validate_keyset = test_val_keyset,
+ 	.add_default_fields = test_add_def_fields,
+ 	.cache_erase = test_cache_erase,
+diff --git a/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c b/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c
+index fe4e166de8a0..51d9423b08a6 100644
+--- a/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c
++++ b/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c
+@@ -211,7 +211,7 @@ static int vcap_test_port_info(struct net_device *ndev,
+ 	return 0;
+ }
+ 
+-static struct vcap_operations test_callbacks = {
++static const struct vcap_operations test_callbacks = {
+ 	.validate_keyset = test_val_keyset,
+ 	.add_default_fields = test_add_def_fields,
+ 	.cache_erase = test_cache_erase,
+-- 
+2.45.2
 
