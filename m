@@ -1,103 +1,86 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB7118F2CE
-	for <kernel-janitors@vger.kernel.org>; Mon, 17 Jun 2024 09:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9190D18F2C2
+	for <kernel-janitors@vger.kernel.org>; Mon, 17 Jun 2024 09:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718614813; cv=none; b=hNRWK7BO6FSLPs8ZMdBqltIKzosLleCdjRybJeY7dh+AtIqJGOKz5Fx8Fx75sYyD+MDLTx5L8Q/rtmgwA1zxoJmqUk2pdxKVn6ZeqU9WQfdp/WPPgXUK3inif5Lf2cUYT3HlLkoWbY6Bx2O0i4Tk7evmVGmK5azcyi7hPIr8qMA=
+	t=1718614949; cv=none; b=Zx0yl+Qu82P7jIaSjjodBXMAIkx0FN6YSe0af22fLlmNr5i8XorAkJ07QDwoVjuN3Pfj2hawb9+ECUaOGv631SFw393/4CtpONzs3Eq1gbu9wV/O/RTvpH8Wb5FZ12QMaEdo7jTRCoausEYCPjnb5GTqayOr+ZNyzK5wOD3kLPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718614813; c=relaxed/simple;
-	bh=V1FSShmentoBvRry0j/39LUajSeLEBqH5nME2N3UuAk=;
+	s=arc-20240116; t=1718614949; c=relaxed/simple;
+	bh=1qnOahOGBH471qmFiN5a9Hm4ejehkHAVCb/42SLIrHw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h9zOlFaIp/1t0R8pyceupk6/BInAHl+vCCXjEozoTWz1GWbdDCkm0mNWjYvyhUUPSMIdt6v7lvHztSfSpNy55ZO9d4ss7sNsfKwxHrVT5rHtZRy8SMhGnmwDIp7sv5u3jSYckeW4CxkasJP0V1w8Jxm0UJNoH0adW0Qmw8nbqgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M3sM4XLl; arc=none smtp.client-ip=209.85.167.50
+	 To:Cc:Content-Type; b=oeWC3iZIz6rPEaeMA8on5Iyl9iny/Pd1+Ey/GsT/VWcBr7ylom9bcGPrzEC9JiHpybaDF7k9xXl7ud+qHdJ2wC1bLYPLqHf6P6gAlLs2bZdQg6eFUnWKtIkTiUobsnfxhrKZwgxD+9hG4FWRnLoE4qi37En/5wvFfHUDN3LLiTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cfiY+/ix; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M3sM4XLl"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cc10b5978so158651e87.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jun 2024 02:00:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cfiY+/ix"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52c85a7f834so5342231e87.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jun 2024 02:02:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718614809; x=1719219609; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718614946; x=1719219746; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V1FSShmentoBvRry0j/39LUajSeLEBqH5nME2N3UuAk=;
-        b=M3sM4XLl/5Q0V3CRwkqgQAurW4yprqo50nshziVg/WYZi9JFR+GmPVDaXS1OxKO/Et
-         b1u5qLcDIYPKS34p6cYhDZm3QatFJq4yydOmrydLzwuTgTb93oGc8NYZdnxPCxLpaGDp
-         2kPDQ+EcFk2WQRLAa6GoBFKCKdTWTAsVPemqaxUvCginqfwHRj2AC5eHJZpST3ppZ3br
-         J6HKyAr5ByeqqD4dlnVrGDwHusROlBfL2H23vb2GL11uHVHoUpQ+hVzaVCVogsnXzHEF
-         h5naa9zSVWs8YlxT6YC9X2+hvFKXa97wcSUnlDNr34EDOFI0toWZxfblkLRxWWZCU9KR
-         8gWg==
+        bh=+ZKVXz9zFkYiCdmxjX5crpO8a9wB/5gYIUl8nRld108=;
+        b=cfiY+/ixGJ+iQAdvoVwfqYlZJQlI5kQoCced6EYqKJ5ASiVL60wsk4NsuDg0mAF4pn
+         OINwZ+nqcpjbl/UMpEOareooi9AwSvXDSCO4dUVYXU5KlTieod7LuSXtUbXdFWgDftjx
+         46G1WFCD0g3PgMc2tCCPNlsLJNOqqwnOuiwb1DHX0D2ITV9dTl0onnwe/G8M/QezAHYo
+         Kr4EIgDK5BRadyChTYGSk/snTgEm/SwH/6cRtU4WmjAgNbMdxDz6jAKWprXMvzss7cSo
+         5sHvdczUdDPyuRHqsnyl8JqGM3Uxmr7NKJSfaFJ9mxWD5xt5Vmj8ueUYwlngtXd/7ZZ7
+         JLQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718614809; x=1719219609;
+        d=1e100.net; s=20230601; t=1718614946; x=1719219746;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=V1FSShmentoBvRry0j/39LUajSeLEBqH5nME2N3UuAk=;
-        b=uzNNvqxRQGEkJBCyUmCAbNOQ0vKLz/wIK5z/IDJXPqvVSBEb1N4tc2J7RDDkO9pzaU
-         qblSR6K7fp/7gT5sGXaQzZgQHjp09lHY6xx8mLaC1Twl4WnNZkijkxGTSdeNKG8jQQcT
-         Qd8DT/t6RdD5JWEEuP1KPZqkyLGLBehbkp3/CVFs0RHvDMwpE1Fa0rqhruB28j2dAccv
-         74c094AER6ceXoyjFxg6efjNkiezAjyxh46VzNMGGytJdmABaM8gmXI4ZfFYskDcFBx+
-         6s4rVKMI9xYyMeTGYowJfPLoebggHqk7gN+cx3s9whiSfKgT4YTEtZbSSd9jllojdtwX
-         8UdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPAbKBYShM2u1kqKbw7g9mT4hRPGgyRKkRE7TYFvx9G7RvLYwcEOAlo1ZAxegrujraQjALggtGC19W0TAMnIOhGriYkJ0V6WRu1rLrD/t2
-X-Gm-Message-State: AOJu0Yx6GIrsb2g/8nZsq0Euc6qgZAdjm8UHLunh0hKyxuCehqAd93a3
-	uufySiIXaGFGs3Dv0jPbwjZQMquRbY13psngDLKSukmleW9T2ICuZWqmE1+IFbTNh97fCu1g5+A
-	fbwNKrM27bX3k6MHBSCP6YQFgkvhQaSPOemeD3A==
-X-Google-Smtp-Source: AGHT+IG9zighTs6xvh63BukgGULZA+rm8EHxMlcrHikHKdNririru1xtsssJ0ZWvnvp2q2oJd7kXO4xZ0dX+3hN0oTY=
-X-Received: by 2002:ac2:5a4b:0:b0:52c:884f:5a31 with SMTP id
- 2adb3069b0e04-52ca6e6dc0fmr6141428e87.30.1718614809351; Mon, 17 Jun 2024
- 02:00:09 -0700 (PDT)
+        bh=+ZKVXz9zFkYiCdmxjX5crpO8a9wB/5gYIUl8nRld108=;
+        b=Xza3xozbIyFFY8kU8dEC9wnEo7eAvETb7nHbeckpTozB8kUxejFPuJ5kuQ0w3xlAkg
+         OVeDm7TrGnpYXVyhafA4pE5CKlansObceMvn3aVP3W0fVkbSIMRpZMDYpzampKytGTUA
+         Mh7qJJ8Vp2NNYPGv6EDpXbyoZphczsTE/UuLoEAsbzrenuBdlNBMcwl4WpKy+Cb8tETo
+         niziy2zSUTqt2FL9c5AP4tXKPhBGn66QJEvRuryPNVYteweZNHtKhiPPi30ALBdMGCyO
+         w2rDwNZkS6i0c3w5sAO0mfzt4rExR6uP+IVAZUJdd3oUNt0hXF46UlC3m1FsiPQ68mSJ
+         UozA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCRFZGBiP3AkNpMXZzDdAh6djvgNipUS2NpHYzRMcFqnk5XlbjnmYT0DnfGhFbLrnEZ5Shf5LuOnPkpCP+XkZ4YQYaIiHDhPjBEDV4pVOV
+X-Gm-Message-State: AOJu0YwCbV9aCmg59sKV48zmmvF/pMzk663ormvr03VcJk+S2seNJHEs
+	Zmwr3SLQx46MAnjFp9x43d0HKZ1JmdvYYaMcZVi+qlfNS+cOPTsAOeGZ2o7L+ltsNj2iCWGYQqN
+	vlBxclCTs3GkTVFbq6Alv2jOFVNnbNInrkYVFEg==
+X-Google-Smtp-Source: AGHT+IEDbmeeJPP/Lzk+VO4Yf74aqIdgheOGoGFca2Xhj3pvQTusqNkXyG4ZYxSQcu+BAqajvjPvlTSvRaLNcm3T7P0=
+X-Received: by 2002:a05:6512:4015:b0:52c:b11a:bfb3 with SMTP id
+ 2adb3069b0e04-52cb11ac093mr4656348e87.57.1718614945752; Mon, 17 Jun 2024
+ 02:02:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610-md-drivers-pinctrl-v1-1-68462e3d960c@quicinc.com>
-In-Reply-To: <20240610-md-drivers-pinctrl-v1-1-68462e3d960c@quicinc.com>
+References: <840152f9-d3bb-410e-8164-4c5043e1983e@moroto.mountain>
+In-Reply-To: <840152f9-d3bb-410e-8164-4c5043e1983e@moroto.mountain>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 17 Jun 2024 10:59:58 +0200
-Message-ID: <CACRpkdY9aRr+OisO3Bs5-p7gtF_PbGh9MbWnyuURXSuMBW34Nw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: add missing MODULE_DESCRIPTION() macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, kernel-janitors@vger.kernel.org
+Date: Mon, 17 Jun 2024 11:02:14 +0200
+Message-ID: <CACRpkdakxbw=A+ri56t=-AF1mr6Y711ouFRfPgPj=qrSfRtZ8w@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: nuvoton: ma35d1: Fix an IS_ERR() vs NULL check
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 6:21=E2=80=AFAM Jeff Johnson <quic_jjohnson@quicinc=
-.com> wrote:
+On Wed, Jun 12, 2024 at 12:43=E2=80=AFPM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
 
-> When ARCH=3Dx86, make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/bcm/pin=
-ctrl-bcm4908.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl=
--mcp23s08_i2c.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl=
--mcp23s08_spi.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl=
--mcp23s08.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/meson/p=
-inctrl-meson.o
+> The fwnode_iomap() function doesn't return error pointers, it returns
+> NULL.  It's the same as of_iomap() in that way.  Update the check
+> accordingly.
 >
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
->
-> This includes many meson drivers which, although they did not produce
-> a warning with the x86 allmodconfig configuration, may cause this
-> warning with ARM or ARM64 configurations.
->
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> Fixes: ecc5bf868673 ("pinctrl: nuvoton: Add ma35d1 pinctrl and GPIO drive=
+r")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Patch applied.
+Patch applied, thanks Dan!
 
 Yours,
 Linus Walleij
