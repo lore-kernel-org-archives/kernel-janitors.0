@@ -1,313 +1,113 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CE918FC90;
-	Mon, 17 Jun 2024 21:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C21288BD;
+	Mon, 17 Jun 2024 23:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718659984; cv=none; b=Q0QqvDuxx1MEpmjQAZA5DzQhJoE6zSlcv+GnTPFp4v3ygcNKfhwRo/1XyB1CsbBkYAEDxzkcgXlX9v3D9Waig4342GPr5+LETC5x8Xyscm7FjUToKaRSHEsvMVZH/XQKmtTD6zpqJ9snALwnaVjR3ZXGTJB9SSeuNIjVxQvZtp8=
+	t=1718668033; cv=none; b=XeAXxEslkoV2d/MW1mvtzC9g/mYP8onB4bepJ1OznJHuNm2diEKIxdbD+1HjYsiobsoOX3uKB+JkEpThT2KgE1x9iQP4a81iQXoOHSrzviYivNIGdXSumLbsA9FO07YqLwwPr+GkUCy5iJm1DLLGg1wO0HmbZxsnqs26m7eI0BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718659984; c=relaxed/simple;
-	bh=sdaDMvLQCreBwTA57eVWyzB2b5NZ72cf2xJlc9gYc0s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UxHr5ag2ZScUqieFQHFR5dP+3q0acjzk/Y4SB1YA8CCqUFC1HwciNt2VlitbdZB2TO6I07xQ6+qYvBeBmG8DtlK8luQmccYSkFLQx8Es6MEQ4c8wfq0T4Fw+BcS9JMvFGuQELM4/9AYKNTQPXeftUi+/pj7jvqeU61qFVnDBgws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jXLkls7G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=awc7LiFL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jXLkls7G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=awc7LiFL; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1718668033; c=relaxed/simple;
+	bh=X69PeuIEgpqfq/kpUARttKZjeOQ4rtH1JUKDF4eHXO0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=A3BsHPoDkhj6n3sva7JjCwxajRVe3s/EYGHsp1vZO4zrRGXRj7SnpTuayGlnGpFVaPxhFX7SnqN9kQNzFGSo+OoV99spuWyS81kTnjiViWbDIPsRRD8l4BgbU3RRgNwyNpcbdJ/kUn6cSMlk8/uqRkqif3PX/ZeDG2Oh0/1fcnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IFHzQUEx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jXLkls7G";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="awc7LiFL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jXLkls7G";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="awc7LiFL"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8F3A11F747;
-	Mon, 17 Jun 2024 21:33:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718659980; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6ZIkcM2Jg5cQeoR/5GuAI6KY2sxiEb8XUmVreSeq1Lk=;
-	b=jXLkls7Gg36TdnuZn/Uovq+cvGYbKqMGUCVYKgxcsEUB9Jsne9spvnQSAHPGhwEwynFk9M
-	4LAEhLZj3/x60Gc7Vitf/UJp70UcNNd/hv6x9nXYiFm7a3P9oxE2PkrEmTGEydnUnddJQ2
-	x1NhhexsmnRLDq2lGyPP7ZxiWDUOhRA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718659980;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6ZIkcM2Jg5cQeoR/5GuAI6KY2sxiEb8XUmVreSeq1Lk=;
-	b=awc7LiFLCbsytHw/yfYy1gWG7NzLvYeAvlEiGnXo//N6X5M7i0AWfkI3UmGQETKUOZc6Ch
-	f434vBWqXK7zccDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=jXLkls7G;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=awc7LiFL
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718659980; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6ZIkcM2Jg5cQeoR/5GuAI6KY2sxiEb8XUmVreSeq1Lk=;
-	b=jXLkls7Gg36TdnuZn/Uovq+cvGYbKqMGUCVYKgxcsEUB9Jsne9spvnQSAHPGhwEwynFk9M
-	4LAEhLZj3/x60Gc7Vitf/UJp70UcNNd/hv6x9nXYiFm7a3P9oxE2PkrEmTGEydnUnddJQ2
-	x1NhhexsmnRLDq2lGyPP7ZxiWDUOhRA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718659980;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6ZIkcM2Jg5cQeoR/5GuAI6KY2sxiEb8XUmVreSeq1Lk=;
-	b=awc7LiFLCbsytHw/yfYy1gWG7NzLvYeAvlEiGnXo//N6X5M7i0AWfkI3UmGQETKUOZc6Ch
-	f434vBWqXK7zccDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 428F813AAA;
-	Mon, 17 Jun 2024 21:33:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BpV7D4yrcGbuUQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 17 Jun 2024 21:33:00 +0000
-Message-ID: <e7cbca4d-9b34-46f8-961a-9f8ddc92be21@suse.cz>
-Date: Mon, 17 Jun 2024 23:34:04 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IFHzQUEx"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HL5da1016008;
+	Mon, 17 Jun 2024 23:47:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=jDG0K+WOKw6f8MLeBYAaLB
+	FQGctuL8ElU0BjDTIFv0s=; b=IFHzQUExqzXDe3HQIGnjVEgy58W3IOmr/YhIb8
+	gc7T/BgXunVxv5pXSpGNgNKHxiN49GwPQhQ3mD6XhTPyWs/KQT4e/5S9s8zy8tdd
+	n7dkUjZlaLAjDifVo/tPUK6wyg92oFTpEpCs+gdhJa6w9wOvTleknVsf47LMgSWR
+	2fDxaiCEi41WU0ZMifX3aNrm2Lmqzot3hLabyy4enaCcG54fcHO2exEHTOQSTtRU
+	cj4dk/KZzPDU//Pn5Y8PZZUdfy7UCjRFi6DL7ihI342N1hD3mCBLFkCo57YOzWCk
+	V9CYyBmVaMdiTEghDXxEpePU/XiqiL9D0Tq1TBlHHCjvkz0Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys1wr50hr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 23:47:07 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45HNl7Up014299
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 23:47:07 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Jun
+ 2024 16:47:06 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Mon, 17 Jun 2024 16:47:04 -0700
+Subject: [PATCH] m68k: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-To: paulmck@kernel.org
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
- "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
- Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
- linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
- bridge@lists.linux.dev, linux-trace-kernel@vger.kernel.org,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, kvm@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
- wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
- ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
- Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
- linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- kasan-dev <kasan-dev@googlegroups.com>
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240612143305.451abf58@kernel.org>
- <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
- <Zmov7ZaL-54T9GiM@zx2c4.com> <Zmo9-YGraiCj5-MI@zx2c4.com>
- <08ee7eb2-8d08-4f1f-9c46-495a544b8c0e@paulmck-laptop>
- <Zmrkkel0Fo4_g75a@zx2c4.com> <e926e3c6-05ce-4ba6-9e2e-e5f3b37bcc23@suse.cz>
- <3b6fe525-626c-41fb-8625-3925ca820d8e@paulmck-laptop>
- <6711935d-20b5-41c1-8864-db3fc7d7823d@suse.cz>
- <1755282b-e3f5-4d18-9eab-fc6a29ca5886@paulmck-laptop>
-From: Vlastimil Babka <vbabka@suse.cz>
-Content-Language: en-US
-In-Reply-To: <1755282b-e3f5-4d18-9eab-fc6a29ca5886@paulmck-laptop>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[29];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[zx2c4.com,gmail.com,kernel.org,inria.fr,vger.kernel.org,lists.linux.dev,efficios.com,lists.ozlabs.org,linux.ibm.com,csgroup.eu,lists.zx2c4.com,suse.de,netapp.com,oracle.com,talpey.com,netfilter.org,googlegroups.com];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 8F3A11F747
-X-Spam-Flag: NO
-X-Spam-Score: -4.50
-X-Spam-Level: 
+Message-ID: <20240617-md-m68k-arch-m68k-v1-1-57d38beaeb13@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAPfKcGYC/yXMQQrCMBCF4auUWTuQxlLFq4iLyWRqBk2UiUqh9
+ O6Nunvf4v0LVDGVCqduAZOPVn2Uhn7XAScqV0GNzeCdH9zYHzBHzOPxhmSc/stPnmnPPrgYoP2
+ eJpPOv+b50hyoCgajwulbumt5z5ipvsRgXTd/Cl3ZggAAAA==
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: <linux-m68k@lists.linux-m68k.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: K5e7IH_XCHppF4pzVv_S_5yyT5izCJ6q
+X-Proofpoint-ORIG-GUID: K5e7IH_XCHppF4pzVv_S_5yyT5izCJ6q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ lowpriorityscore=0 mlxlogscore=926 adultscore=0 spamscore=0 suspectscore=0
+ priorityscore=1501 malwarescore=0 mlxscore=0 phishscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406170183
 
-On 6/17/24 8:54 PM, Paul E. McKenney wrote:
-> On Mon, Jun 17, 2024 at 07:23:36PM +0200, Vlastimil Babka wrote:
->> On 6/17/24 6:12 PM, Paul E. McKenney wrote:
->>> On Mon, Jun 17, 2024 at 05:10:50PM +0200, Vlastimil Babka wrote:
->>>> On 6/13/24 2:22 PM, Jason A. Donenfeld wrote:
->>>>> On Wed, Jun 12, 2024 at 08:38:02PM -0700, Paul E. McKenney wrote:
->>>>>> o	Make the current kmem_cache_destroy() asynchronously wait for
->>>>>> 	all memory to be returned, then complete the destruction.
->>>>>> 	(This gets rid of a valuable debugging technique because
->>>>>> 	in normal use, it is a bug to attempt to destroy a kmem_cache
->>>>>> 	that has objects still allocated.)
->>>>
->>>> This seems like the best option to me. As Jason already said, the debugging
->>>> technique is not affected significantly, if the warning just occurs
->>>> asynchronously later. The module can be already unloaded at that point, as
->>>> the leak is never checked programatically anyway to control further
->>>> execution, it's just a splat in dmesg.
->>>
->>> Works for me!
->>
->> Great. So this is how a prototype could look like, hopefully? The kunit test
->> does generate the splat for me, which should be because the rcu_barrier() in
->> the implementation (marked to be replaced with the real thing) is really
->> insufficient. Note the test itself passes as this kind of error isn't wired
->> up properly.
-> 
-> ;-) ;-) ;-)
+With ARCH=m68k, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/m68k/emu/nfblock.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/m68k/emu/nfcon.o
 
-Yeah yeah, I just used the kunit module as a convenient way add the code
-that should see if there's the splat :)
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-> Some might want confirmation that their cleanup efforts succeeded,
-> but if so, I will let them make that known.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ arch/m68k/emu/nfblock.c | 1 +
+ arch/m68k/emu/nfcon.c   | 1 +
+ 2 files changed, 2 insertions(+)
 
-It could be just the kunit test that could want that, but I don't see
-how it could wrap and inspect the result of the async handling and
-suppress the splats for intentionally triggered errors as many of the
-other tests do.
+diff --git a/arch/m68k/emu/nfblock.c b/arch/m68k/emu/nfblock.c
+index 642fb80c5c4e..b35ac17e7ea9 100644
+--- a/arch/m68k/emu/nfblock.c
++++ b/arch/m68k/emu/nfblock.c
+@@ -193,4 +193,5 @@ static void __exit nfhd_exit(void)
+ module_init(nfhd_init);
+ module_exit(nfhd_exit);
+ 
++MODULE_DESCRIPTION("ARAnyM block device driver");
+ MODULE_LICENSE("GPL");
+diff --git a/arch/m68k/emu/nfcon.c b/arch/m68k/emu/nfcon.c
+index 17b2987c2bf5..0ab2e4d08871 100644
+--- a/arch/m68k/emu/nfcon.c
++++ b/arch/m68k/emu/nfcon.c
+@@ -173,4 +173,5 @@ static void __exit nfcon_exit(void)
+ module_init(nfcon_init);
+ module_exit(nfcon_exit);
+ 
++MODULE_DESCRIPTION("ARAnyM console driver");
+ MODULE_LICENSE("GPL");
 
->> Another thing to resolve is the marked comment about kasan_shutdown() with
->> potential kfree_rcu()'s in flight.
-> 
-> Could that simply move to the worker function?  (Hey, had to ask!)
+---
+base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
+change-id: 20240617-md-m68k-arch-m68k-2f2ca3c2b0db
 
-I think I had a reason why not, but I guess it could move. It would just
-mean that if any objects are quarantined, we'll go for the async freeing
-even though those could be flushed immediately. Guess that's not too bad.
-
->> Also you need CONFIG_SLUB_DEBUG enabled otherwise node_nr_slabs() is a no-op
->> and it might fail to notice the pending slabs. This will need to change.
-> 
-> Agreed.
-> 
-> Looks generally good.  A few questions below, to be taken with a
-> grain of salt.
-
-Thanks!
-
->> +static void kmem_cache_kfree_rcu_destroy_workfn(struct work_struct *work)
->> +{
->> +	struct kmem_cache *s;
->> +	int err = -EBUSY;
->> +	bool rcu_set;
->> +
->> +	s = container_of(work, struct kmem_cache, async_destroy_work);
->> +
->> +	// XXX use the real kmem_cache_free_barrier() or similar thing here
->> +	rcu_barrier();
-
-Note here's the barrier.
-
->> +	cpus_read_lock();
->> +	mutex_lock(&slab_mutex);
->> +
->> +	rcu_set = s->flags & SLAB_TYPESAFE_BY_RCU;
->> +
->> +	err = shutdown_cache(s, true);
-> 
-> This is currently the only call to shutdown_cache()?  So there is to be
-> a way for the caller to have some influence over the value of that bool?
-
-Not the only caller, there's still the initial attempt in
-kmem_cache_destroy() itself below.
-
-> 
->> +	WARN(err, "kmem_cache_destroy %s: Slab cache still has objects",
->> +	     s->name);
-> 
-> Don't we want to have some sort of delay here?  Or is this the
-> 21-second delay and/or kfree_rcu_barrier() mentioned before?
-
-Yes this is after the barrier. The first immediate attempt to shutdown
-doesn't warn.
-
->> +	mutex_unlock(&slab_mutex);
->> +	cpus_read_unlock();
->> +	if (!err && !rcu_set)
->> +		kmem_cache_release(s);
->> +}
->> +
->>  void kmem_cache_destroy(struct kmem_cache *s)
->>  {
->>  	int err = -EBUSY;
->> @@ -494,9 +527,9 @@ void kmem_cache_destroy(struct kmem_cache *s)
->>  	if (s->refcount)
->>  		goto out_unlock;
->>  
->> -	err = shutdown_cache(s);
->> -	WARN(err, "%s %s: Slab cache still has objects when called from %pS",
->> -	     __func__, s->name, (void *)_RET_IP_);
->> +	err = shutdown_cache(s, false);
->> +	if (err)
->> +		schedule_work(&s->async_destroy_work);
-
-And here's the initial attempt that used to warn but now doesn't and
-instead schedules the async one.
-
->>  out_unlock:
->>  	mutex_unlock(&slab_mutex);
->>  	cpus_read_unlock();
->> diff --git a/mm/slub.c b/mm/slub.c
->> index 1617d8014ecd..4d435b3d2b5f 100644
->> --- a/mm/slub.c
->> +++ b/mm/slub.c
->> @@ -5342,7 +5342,8 @@ static void list_slab_objects(struct kmem_cache *s, struct slab *slab,
->>   * This is called from __kmem_cache_shutdown(). We must take list_lock
->>   * because sysfs file might still access partial list after the shutdowning.
->>   */
->> -static void free_partial(struct kmem_cache *s, struct kmem_cache_node *n)
->> +static void free_partial(struct kmem_cache *s, struct kmem_cache_node *n,
->> +			 bool warn_inuse)
->>  {
->>  	LIST_HEAD(discard);
->>  	struct slab *slab, *h;
->> @@ -5353,7 +5354,7 @@ static void free_partial(struct kmem_cache *s, struct kmem_cache_node *n)
->>  		if (!slab->inuse) {
->>  			remove_partial(n, slab);
->>  			list_add(&slab->slab_list, &discard);
->> -		} else {
->> +		} else if (warn_inuse) {
->>  			list_slab_objects(s, slab,
->>  			  "Objects remaining in %s on __kmem_cache_shutdown()");
->>  		}
->> @@ -5378,7 +5379,7 @@ bool __kmem_cache_empty(struct kmem_cache *s)
->>  /*
->>   * Release all resources used by a slab cache.
->>   */
->> -int __kmem_cache_shutdown(struct kmem_cache *s)
->> +int __kmem_cache_shutdown(struct kmem_cache *s, bool warn_inuse)
->>  {
->>  	int node;
->>  	struct kmem_cache_node *n;
->> @@ -5386,7 +5387,7 @@ int __kmem_cache_shutdown(struct kmem_cache *s)
->>  	flush_all_cpus_locked(s);
->>  	/* Attempt to free all objects */
->>  	for_each_kmem_cache_node(s, node, n) {
->> -		free_partial(s, n);
->> +		free_partial(s, n, warn_inuse);
->>  		if (n->nr_partial || node_nr_slabs(n))
->>  			return 1;
->>  	}
->>
