@@ -1,80 +1,66 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9486153593;
-	Mon, 17 Jun 2024 15:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E448DDDA
+	for <kernel-janitors@vger.kernel.org>; Mon, 17 Jun 2024 15:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718637054; cv=none; b=e8lQ0G7mD/p5f794nbWbWPq1V4JYzQvxXUm7YZYZaGHuHsfLcDARXpVzyQUwY3otbJac5Q3fGs+3fMphka53JhZMyguavM21Klz4ju3IrFoUm9ZmkPXH3Aj2zGX9EXAQxlM2eJCo7grzb3THO3vPJKf6y3VQeVgjZmZBkaS/t+Y=
+	t=1718638046; cv=none; b=XK5nzSkCwfoDkTm5O5fOelTrHgNW36iYMbIXdcXSV545KxWZEh308tcyzdZ3UgiHepLZ62XmEaV+/PaqWjm9QfudVx6Ylkl6kzY7WtgOJJLWel6X6BO8qqZBTP3wjNzw5bqsAYAb0vJ2AplyqFmNfF+MoQzZpfNPtAk4vibvlJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718637054; c=relaxed/simple;
-	bh=/1X7hIfTcTiRc+Fad6/3Qv6AEZTTH5fvcoPL6yNc8lY=;
+	s=arc-20240116; t=1718638046; c=relaxed/simple;
+	bh=dFfnPY2LQuHSLUvCh4VkFkCM0jwP4XrN51PLoGp0vlc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cloc1yxbQq0B9fBXx1BUItO3yuisagytYnsb7Pnvh7m8n3wtgMAJ6ZNKUsYkIm4fGbQzbFx1TYGq6DKyIDvQAZeM35efmIVQsda2uYYlaOt6kwso9fSXSCdHZq2/Xkg0IZ6FV7YzV7SXgkACBsrmCXlbsiiqbofipPV749JrcEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cgO7Ec0c; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=d2KMdJCB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pF233v1e; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1HIVKVPL; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	 In-Reply-To:Content-Type; b=GTaCBScz8yWOyz5tQjHlVP5eBeGHxRek2wNH+1t4BzaV5TlNY0YYC+Owyujmwj6TvdCH5X4yyZtlu3nvKjUv99zKypkDLOKwl8bTs5aZr5PaRlrFVzfcaRj1eqWS7MLUxPWtyRQRR+8YLV05KwE/A6fReAL5dSgxVauIkMJh96A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D8DPm6jd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cgO7Ec0c";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="d2KMdJCB";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pF233v1e";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1HIVKVPL"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E94D73836C;
-	Mon, 17 Jun 2024 15:10:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718637051; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D8DPm6jd"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718638043;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JpCjailk6uzSHmhsPx9E6A+Robg4DOaNP8kYpasrOKc=;
-	b=cgO7Ec0c/8vyt88tmxWawFJwL3HXdWVtygAkZIVAPTJQWmftWk1sjhK6borqKMhPa+QcOk
-	rxq515tyJSaHLP/RFjBRZvxIQR2tThKorJUHJcKQJurlRpZVgYhpmmLal6zpuB3PVD+sYx
-	3SF4JcQI3kBAql7lk4mLxUPlQUtsyP4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718637051;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JpCjailk6uzSHmhsPx9E6A+Robg4DOaNP8kYpasrOKc=;
-	b=d2KMdJCBaWnFFedrUzNwUM4WeZ4gpuw40Dt/P+4AYcrqhMx4keN8/2xqBcoRnaIXGkgeDZ
-	AogZ7q3LsrYp8KCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718637050; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JpCjailk6uzSHmhsPx9E6A+Robg4DOaNP8kYpasrOKc=;
-	b=pF233v1e162BLRBguSnBhti1yjCt1VJ2SVPyKRquFev8zbPvWOCxHCJ4fN4AdId7KTn/8o
-	54l3Oft6gVkGQW4xjhWHQJoihEkGIjhQqoHRea7QZESGnelxJ9TBB/L+aMB/5ImeSB9on2
-	1d2ctYoP/n7hzz/ObcH/86kY8VqZQJ8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718637050;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JpCjailk6uzSHmhsPx9E6A+Robg4DOaNP8kYpasrOKc=;
-	b=1HIVKVPLG/W+0AjeFWOE6nJ+MdMznkv0hiO81SV6BPDStOUNpQ/aVetNB7JTGGE7n3SuC8
-	oHOrrsxvWhAssoAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A5EAA13AAA;
-	Mon, 17 Jun 2024 15:10:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LdOJJ/pRcGaIZgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 17 Jun 2024 15:10:50 +0000
-Message-ID: <e926e3c6-05ce-4ba6-9e2e-e5f3b37bcc23@suse.cz>
-Date: Mon, 17 Jun 2024 17:10:50 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=l3yNOohsWGaypNKhl1iDB1/cvtnFfZJdux3KpEMAOgs=;
+	b=D8DPm6jdpzE+gL5PfX+vhX5hU4BOun+pV7ELoNVa7UV31uoJ8doOPj+tLRYH9k23630iYb
+	YGHWi+V5rB3AGVK48DScFnw7LdB5J5GNsOkD41pJkaKgMuUocC6XXk/eDrQmpM8+dwbPkg
+	bG1720A6/PdaIbLNXqj2dIYT49+KrrM=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-682-Pm1BLq4TPfOQ8gnCIY64Kw-1; Mon, 17 Jun 2024 11:27:21 -0400
+X-MC-Unique: Pm1BLq4TPfOQ8gnCIY64Kw-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3608fb58acaso1228326f8f.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jun 2024 08:27:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718638040; x=1719242840;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l3yNOohsWGaypNKhl1iDB1/cvtnFfZJdux3KpEMAOgs=;
+        b=ZM2GjO8VrMrJJigSSA5C/pi5FOLsVGWptpfc7gHtGx1YsINN9SN2QIEiCtBjw+10v8
+         TQNlf0Z0QfWcmdcZnirwsTkSZO3S/ZsGiU9RTXzk+oNtn/MfOyNmmCqcAb3U0Q9g/mMb
+         dt0ryiZu8IEUyw+iQNXpv8XoAnrJd12sR+mZSVp3oyWslZRGCHbLAoE3Gg+gGIIi+dRX
+         CGXS1HhA4WTsrecMrSuCxdTkeopO9LSKbvq2T7Fa9LDUj9CpFUxwy4nJ3FxePk/YVWAg
+         m7QXYCrvVoMQURzmXp92XX7hbWXhKAJxcVNQeB9qRmsx8hU/lxgOtrurWOdJHNM+Akbr
+         odMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXuwPb5c5GV7zcEBGshfLfCrqFMe89LZFWA6SfRMR28xZRf1BsDNESzh2eSNhlxyObPqvqzP8ztXhxb9WX6A8hfKjg8TaSWpMs++kBqAfe0
+X-Gm-Message-State: AOJu0YxDwWh+g6blePk+vEe05Wyp8Abi3GQYqCSvsHVg4hQPxbwsUDaD
+	Ff12ojHHGGq34MSdFfVzx9LsZZoeCSPtG9HfYFIumXhgJg2Ir3UFG4VsBSUNfMLElhRiJ+9TK/s
+	DE8DDylx8OX5qBlb7DKjTn6QznnHc24F+ztRZXZO3e35s3ccJiG17192gcvvRQ7M5mg==
+X-Received: by 2002:a05:6000:82:b0:35f:e4d:f3dc with SMTP id ffacd0b85a97d-3607a741964mr9404279f8f.9.1718638040652;
+        Mon, 17 Jun 2024 08:27:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFRjNmUohArz1oiIJJtmkoA2K/cMFwDCp/vUBbIHNHAgBY0QFm8dKaVEvyDta7bhr4F1pF9tg==
+X-Received: by 2002:a05:6000:82:b0:35f:e4d:f3dc with SMTP id ffacd0b85a97d-3607a741964mr9404262f8f.9.1718638040302;
+        Mon, 17 Jun 2024 08:27:20 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:4b3f:ee94:abf:b8ff:feee:998b? ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075104954sm12066178f8f.99.2024.06.17.08.27.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 08:27:19 -0700 (PDT)
+Message-ID: <cd389206-88a6-4e6f-9fca-491fb186ed5e@redhat.com>
+Date: Mon, 17 Jun 2024 17:27:18 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -82,147 +68,96 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
+Subject: Re: [PATCH] drm/nouveau: Constify struct nouveau_job_ops
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+References: <860e9753d7867aa46b003bb3d0497f1b04065b24.1718381285.git.christophe.jaillet@wanadoo.fr>
 Content-Language: en-US
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
- linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
- bridge@lists.linux.dev, linux-trace-kernel@vger.kernel.org,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, kvm@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
- wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
- ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
- Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
- linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240612143305.451abf58@kernel.org>
- <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
- <Zmov7ZaL-54T9GiM@zx2c4.com> <Zmo9-YGraiCj5-MI@zx2c4.com>
- <08ee7eb2-8d08-4f1f-9c46-495a544b8c0e@paulmck-laptop>
- <Zmrkkel0Fo4_g75a@zx2c4.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <Zmrkkel0Fo4_g75a@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8
+From: Danilo Krummrich <dakr@redhat.com>
+Organization: RedHat
+In-Reply-To: <860e9753d7867aa46b003bb3d0497f1b04065b24.1718381285.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.29
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.996];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[zx2c4.com,kernel.org,gmail.com];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[28];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,inria.fr,vger.kernel.org,lists.linux.dev,efficios.com,lists.ozlabs.org,linux.ibm.com,csgroup.eu,gmail.com,lists.zx2c4.com,suse.de,netapp.com,oracle.com,talpey.com,netfilter.org];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLr583pch5u74edj9dsne3chzi)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 
-On 6/13/24 2:22 PM, Jason A. Donenfeld wrote:
-> On Wed, Jun 12, 2024 at 08:38:02PM -0700, Paul E. McKenney wrote:
->> o	Make the current kmem_cache_destroy() asynchronously wait for
->> 	all memory to be returned, then complete the destruction.
->> 	(This gets rid of a valuable debugging technique because
->> 	in normal use, it is a bug to attempt to destroy a kmem_cache
->> 	that has objects still allocated.)
+On 6/14/24 18:08, Christophe JAILLET wrote:
+> "struct nouveau_job_ops" is not modified in these drivers.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+> 
+> In order to do it, "struct nouveau_job" and "struct nouveau_job_args" also
+> need to be adjusted to this new const qualifier.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>     text	   data	    bss	    dec	    hex	filename
+>     5570	    152	      0	   5722	   165a	drivers/gpu/drm/nouveau/nouveau_exec.o
+> 
+> After:
+> =====
+>     text	   data	    bss	    dec	    hex	filename
+>     5630	    112	      0	   5742	   166e	drivers/gpu/drm/nouveau/nouveau_exec.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-This seems like the best option to me. As Jason already said, the debugging
-technique is not affected significantly, if the warning just occurs
-asynchronously later. The module can be already unloaded at that point, as
-the leak is never checked programatically anyway to control further
-execution, it's just a splat in dmesg.
+Applied to drm-misc-next, thanks!
 
-> Specifically what I mean is that we can still claim a memory leak has
-> occurred if one batched kfree_rcu freeing grace period has elapsed since
-> the last call to kmem_cache_destroy_rcu_wait/barrier() or
-> kmem_cache_destroy_rcu(). In that case, you quit blocking, or you quit
-> asynchronously waiting, and then you splat about a memleak like we have
-> now.
-
-Yes so we'd need the kmem_cache_free_barrier() for a slab kunit test (or the
-pessimistic variant waiting for the 21 seconds), and a polling variant of
-the same thing for the asynchronous destruction. Or we don't need a polling
-variant if it's ok to invoke such a barrier in a schedule_work() workfn.
-
-We should not need any new kmem_cache flag nor kmem_cache_destroy() flag to
-burden the users of kfree_rcu() with. We have __kmem_cache_shutdown() that
-will try to flush everything immediately and if it doesn't succeed, we can
-assume kfree_rcu() might be in flight and try to wait for it asynchronously,
-without any flags.
-
-SLAB_TYPESAFE_BY_RCU is still handled specially because it has special
-semantics as well.
-
-As for users of call_rcu() with arbitrary callbacks that might be functions
-from the module that is about to unload, these should not return from
-kmem_cache_destroy() with objects in flight. But those should be using
-rcu_barrier() before calling kmem_cache_destroy() already, and probably we
-should not try to handle this automagically? Maybe one potential change with
-the described approach is that today they would get the "cache not empty"
-warning immediately. But that wouldn't stop the module unload so later the
-callbacks would try to execute unmapped code anyway. With the new approach
-the asynchronous handling might delay the "cache not empty" warnings (or
-not, if kmem_cache_free_barrier() would finish before a rcu_barrier() would)
-so the unmapped code execution would come first. I don't think that would be
-a regression.
+> ---
+>   drivers/gpu/drm/nouveau/nouveau_exec.c  | 2 +-
+>   drivers/gpu/drm/nouveau/nouveau_sched.h | 4 ++--
+>   drivers/gpu/drm/nouveau/nouveau_uvmm.c  | 2 +-
+>   3 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_exec.c b/drivers/gpu/drm/nouveau/nouveau_exec.c
+> index e65c0ef23bc7..a0b5f1b16e8b 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_exec.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_exec.c
+> @@ -188,7 +188,7 @@ nouveau_exec_job_timeout(struct nouveau_job *job)
+>   	return DRM_GPU_SCHED_STAT_NOMINAL;
+>   }
+>   
+> -static struct nouveau_job_ops nouveau_exec_job_ops = {
+> +static const struct nouveau_job_ops nouveau_exec_job_ops = {
+>   	.submit = nouveau_exec_job_submit,
+>   	.armed_submit = nouveau_exec_job_armed_submit,
+>   	.run = nouveau_exec_job_run,
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.h b/drivers/gpu/drm/nouveau/nouveau_sched.h
+> index e1f01a23e6f6..20cd1da8db73 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_sched.h
+> +++ b/drivers/gpu/drm/nouveau/nouveau_sched.h
+> @@ -42,7 +42,7 @@ struct nouveau_job_args {
+>   		u32 count;
+>   	} out_sync;
+>   
+> -	struct nouveau_job_ops *ops;
+> +	const struct nouveau_job_ops *ops;
+>   };
+>   
+>   struct nouveau_job {
+> @@ -73,7 +73,7 @@ struct nouveau_job {
+>   		u32 count;
+>   	} out_sync;
+>   
+> -	struct nouveau_job_ops {
+> +	const struct nouveau_job_ops {
+>   		/* If .submit() returns without any error, it is guaranteed that
+>   		 * armed_submit() is called.
+>   		 */
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+> index ee02cd833c5e..9402fa320a7e 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+> @@ -1534,7 +1534,7 @@ nouveau_uvmm_bind_job_cleanup(struct nouveau_job *job)
+>   	nouveau_uvmm_bind_job_put(bind_job);
+>   }
+>   
+> -static struct nouveau_job_ops nouveau_bind_job_ops = {
+> +static const struct nouveau_job_ops nouveau_bind_job_ops = {
+>   	.submit = nouveau_uvmm_bind_job_submit,
+>   	.armed_submit = nouveau_uvmm_bind_job_armed_submit,
+>   	.run = nouveau_uvmm_bind_job_run,
 
