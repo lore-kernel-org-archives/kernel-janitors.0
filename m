@@ -1,133 +1,145 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88295187323;
-	Mon, 17 Jun 2024 07:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5ADB18FDD9;
+	Mon, 17 Jun 2024 07:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718608354; cv=none; b=K/cQaX1UCR1+mCxqhXKBo/hsSjX1ciq2XlQIgc9MonRTo0fDcuFCosEhmEwSv98k/OOGZYY5jW4gE9aBAT7c/ewX8GpKrJMADUqQBZTjHmAnofluNsF6AbdCYb3I1b9hIp93j9zj1xQZx6e3takZHaM5zNj7ZojOp2iEUU9mxhU=
+	t=1718610233; cv=none; b=E7hDxiILFbDa/JfRMpA2/5rHG7uWKuwrz+6wDiD+ebBnP8VgaAmStlURZyanXlwLFBvvYi4WpuSju6q8uy3TkZsAvMf2yKJvdexuoKubhD5AVKxxW6ESy12Ay+vK6oKjdaLSOYXLd4JCwja7i4++wn0ltD56zU+9BWKXOsMbDbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718608354; c=relaxed/simple;
-	bh=1Pdnnsv+4H1+xRQ2MXTH98SvbrTizrijzJdjQnW5Ky0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=N81fB3onPMNaXcBuHadph7haYUHNxd6PKxNF1xPLTo41v2hapknrhnuCNVcTNl8TlS8qFsC0a2lpO5Yaw/xBHA56rUJ6LEZkJUezSu7KT0TTwvBYZJlGaoM/WHtEEJwoAz6wM+q7mQgP4w55IBtwJghMT5jUggVzZfMZxno4kD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Nn8GgdUg; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1718610233; c=relaxed/simple;
+	bh=ARDINmLxBaG0p/LEOE00F9rVi6V0jZ7bV46cMz2B2rw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l8ludk1bKODy7JzY01Et12kuYBlT6PK/NUAmjGmbKmPWENYQEzQzWIR8RIyH8VHhGq+cxfwx1OOQS4t+SN5JBnS6LpHvmCQF4kPYvf0ckDJCneYKIgMXPcbpyIqVTmYTPKcec4cdeM4hI91tCIwfxssKKyl1NAN2y6+vNOxQBdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=D5ENlHcB; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Nn8GgdUg"
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45H4tQ2l007779;
-	Mon, 17 Jun 2024 07:12:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	UCRJ3eftxXrLEbwyiW6PUEFcv4Vib2NF/RTrMnRowWY=; b=Nn8GgdUgOPVmYJ7v
-	l2GAKMWjc3E0MmZ2Q3GchDxxuEmW8v0PZ3wf1O9g/aZY5zNy0JPi7lKcEVRwjqQX
-	C/H+J6MPpE2T7VMRE5Hz3D0QPah8v3gcbW/aG/zT7944b45qMagzOgs8XYlQsaoZ
-	3QlIzy8mRtwuYlG8Ratlgp8BkTlzITZ/h5D2EpubLKXVW9ZXrsluIDVIiptLjq/h
-	+wtKpHSftQBIupdU7Djz3OXCQWtBock4tpM2bXG8046URepJRIhzPb3gHc9nuOBv
-	X7k1sdK8zztNdzYhnsmwJ5ZZciPRa0Y1mgUjcQG0RdtbW/Vyzo4R9iPct5q8iNH+
-	/41mhg==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ytcu6rdur-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 07:12:28 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45H6o8Hx006227;
-	Mon, 17 Jun 2024 07:12:27 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ysn9u821c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 07:12:27 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45H7CM4Y42533318
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Jun 2024 07:12:24 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 23D3720043;
-	Mon, 17 Jun 2024 07:12:22 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A97C52004B;
-	Mon, 17 Jun 2024 07:12:21 +0000 (GMT)
-Received: from [9.171.86.232] (unknown [9.171.86.232])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 17 Jun 2024 07:12:21 +0000 (GMT)
-Message-ID: <8357ad99-4627-4084-a000-9208f7c6c18a@linux.ibm.com>
-Date: Mon, 17 Jun 2024 09:12:21 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] s390/lcs: add missing MODULE_DESCRIPTION() macro
-Content-Language: en-US
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
-        Thorsten Winkler <twinkler@linux.ibm.com>,
-        Heiko Carstens
- <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20240615-md-s390-drivers-s390-net-v1-1-968cb735f70d@quicinc.com>
-From: Alexandra Winter <wintera@linux.ibm.com>
-In-Reply-To: <20240615-md-s390-drivers-s390-net-v1-1-968cb735f70d@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ylpOOhBGHplOXCPclnYNNJcvPyT5juaV
-X-Proofpoint-GUID: ylpOOhBGHplOXCPclnYNNJcvPyT5juaV
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="D5ENlHcB"
+Received: from [192.168.88.20] (91-158-144-210.elisa-laajakaista.fi [91.158.144.210])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1870539F;
+	Mon, 17 Jun 2024 09:43:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718610211;
+	bh=ARDINmLxBaG0p/LEOE00F9rVi6V0jZ7bV46cMz2B2rw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=D5ENlHcBAMzQA7nZKn8f2+or1VsQ85Su/fmEk7/Qjhdm9qOP5rHtppeajLmsqeSTp
+	 +sPViwtol4HzttGkc3VwfXoZu/NWxP0dxKbMg4jVfJo5HIJqTg9sbyNyfWFCcCjRvA
+	 g0QhnbUjQWl0Iei14CrAqVu11cxCPo5ifJLQxmSA=
+Message-ID: <88cbb88a-34de-4f97-9035-b3ef630580ed@ideasonboard.com>
+Date: Mon, 17 Jun 2024 10:43:44 +0300
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_06,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- clxscore=1011 suspectscore=0 adultscore=0 impostorscore=0 mlxscore=0
- bulkscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406170051
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm: zynqmp_dpsub: Fix an error handling path in
+ zynqmp_dpsub_probe()
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Sean Anderson <sean.anderson@linux.dev>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org
+References: <974d1b062d7c61ee6db00d16fa7c69aa1218ee02.1716198025.git.christophe.jaillet@wanadoo.fr>
+ <5288867f-ee45-4930-bde0-14b24b878181@linux.dev>
+ <120ffe3c-0240-4f93-a220-e0df565bcdbf@linux.dev>
+ <20240616184326.GC7378@pendragon.ideasonboard.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20240616184326.GC7378@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi,
 
-
-On 16.06.24 06:23, Jeff Johnson wrote:
-> With ARCH=s390, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/net/lcs.o
+On 16/06/2024 21:43, Laurent Pinchart wrote:
+> On Thu, Jun 13, 2024 at 11:05:01AM -0400, Sean Anderson wrote:
+>> On 5/20/24 11:05, Sean Anderson wrote:
+>>> On 5/20/24 05:40, Christophe JAILLET wrote:
+>>>> If zynqmp_dpsub_drm_init() fails, we must undo the previous
+>>>> drm_bridge_add() call.
+>>>>
+>>>> Fixes: be3f3042391d ("drm: zynqmp_dpsub: Always register bridge")
+>>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>>>> ---
+>>>> Compile tested only
+>>>> ---
+>>>>   drivers/gpu/drm/xlnx/zynqmp_dpsub.c | 1 +
+>>>>   1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+>>>> index face8d6b2a6f..f5781939de9c 100644
+>>>> --- a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+>>>> +++ b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+>>>> @@ -269,6 +269,7 @@ static int zynqmp_dpsub_probe(struct platform_device *pdev)
+>>>>   	return 0;
+>>>>   
+>>>>   err_disp:
+>>>> +	drm_bridge_remove(dpsub->bridge);
+>>>>   	zynqmp_disp_remove(dpsub);
+>>>>   err_dp:
+>>>>   	zynqmp_dp_remove(dpsub);
+>>>
+>>> Reviewed-by: Sean Anderson <sean.anderso@linux.dev>
+>>
+>> Will this be applied soon? The patch it fixes has made its way into
+>> the stable tree already.
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/s390/net/lcs.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/s390/net/lcs.c b/drivers/s390/net/lcs.c
-> index 25d4e6376591..83807ce823e9 100644
-> --- a/drivers/s390/net/lcs.c
-> +++ b/drivers/s390/net/lcs.c
-> @@ -2380,5 +2380,6 @@ module_init(lcs_init_module);
->  module_exit(lcs_cleanup_module);
->  
->  MODULE_AUTHOR("Frank Pavlic <fpavlic@de.ibm.com>");
-> +MODULE_DESCRIPTION("S/390 Lan Channel Station Network Driver");
->  MODULE_LICENSE("GPL");
->  
-> 
-> ---
-> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> change-id: 20240615-md-s390-drivers-s390-net-78a9068f1004
-> 
+> If someone can merge it in drm-misc that would be the fastest way.
+> Otherwise I'll send a pull request at some point, but I'm overworked at
+> the moment.
 > 
 
+Thanks, I have pushed this to drm-misc-next.
 
-Thank you very much Jeff for noticing this and sending a patch.
+  Tomi
 
-I propose to describe the module as
-"LAN channel station device driver"
-as this is the term and spelling used in the documentation, e.g. here:
-https://www.ibm.com/docs/en/linux-on-systems?topic=n-lcs-device-driver-4
-
-Please send a v2
