@@ -1,149 +1,92 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9777819BC6;
-	Mon, 17 Jun 2024 01:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CADF161320
+	for <kernel-janitors@vger.kernel.org>; Mon, 17 Jun 2024 01:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718588657; cv=none; b=NAOx366KWGtCt93XPfiffrjVnTuEuRXYuhNvC1zOrtFQAml3T+vV5um0IrHtwXsB0ULdfK78zyDqTeNCN9XwjJbfsPADiY9jxrHBXLCtFi/GJdcGj71BrbR2oLAGo5ftgj1Mh0AI32xQiW6Y9iJ9CA1NQ9iAe1zeI+EfTVsW35A=
+	t=1718589169; cv=none; b=MzYhEOODJcAk8CSzXbHGWf1ZJdUWcprk2AxsXYohm2e8Sa7YHYF+3YtHYYgZXCCeT1uf1zw+Q9wui0W46b150drtUjele2/7CCPrbZOlSsuTHFYK6QMK9+naC5HuABZDCJ7OLG4m6R+OQR7B4QE1dd68qtwvJ6I+B9R2gpwlMsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718588657; c=relaxed/simple;
-	bh=Ue0EB9ia/yrAN0YyauzTV7SY5oDbw16XaSNxoKWFz4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jobh89szzT06qRh7uvVVP32XnN3xxb4L6C/WUc5gXGu8liV7hoqMMSsuN91+lnC5BCtJsgS5alD368EIE5M9py/eaZGhtGnrOVikoAGuQW32YNPdCUJDzmqxPbYcyD5UCcfnCcIe3XpzfmLu8kcmy8S60bIlDf8qfiCOV5oS+QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gqLtV3Dx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718589169; c=relaxed/simple;
+	bh=sTJ/iuTrsEdSBS5qgmnl6h5mYl1g8hs6XygUrJRR7A0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NHrFx/jjQc0SXCXG/Kgl9FG9WULEwIhI5RuX63WHweukVVJKtyE1IDGNxxe0CYTjws3zGqdJFAZfoLBSiHnqtUlLuYuIVAuVxIlFjaAZkxj85SZuY8D/BxVHsa635wDkukpFIUYC1+QEe5akRuFeb1vYGv0VYkE7OHYeBPqVExo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JJFTFOc6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gqLtV3Dx"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45GNsSEs027697;
-	Mon, 17 Jun 2024 01:44:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/Njs1C3lkrQ5RjLAZ0/KROR0CPFhdqk2ns0RTeOfPXE=; b=gqLtV3Dx9ytiNAaD
-	n5oelLmpSLrwPwDtbD9pieR9n2Fj8ifDqHnfVHxLEdFuVNPJqJvQZ0abBSJxMW5W
-	WHd6aqOQkPmQ0LFmXz8tTpHny4CWZQ4zh/SQQtpPyeYIAVA03fRupj6vmE8gCBbt
-	O2jnU/k+GhmCONsFFP9FbLf5n3A9VFfAj8+96dy6eqtgN78DgI33dQO9N508G1wh
-	0Q+yhqUpBkYsu7GFMq8aOkxYZUKwSsSfYPvt7bR9cQVuE5+2qDzwYS4RCnICI6pq
-	tdGOmB5W+DsaeLUzGHwLsZTyPYuFUfDnxOTZY7QfmUULFe0EPLJG8TeUs/OxNLNP
-	lnUclg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ysv5xgwkx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 01:44:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45H1i0a0015536
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 01:44:00 GMT
-Received: from [10.48.243.231] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 16 Jun
- 2024 18:43:59 -0700
-Message-ID: <28c653ab-af12-4857-8a32-9ea73740959a@quicinc.com>
-Date: Sun, 16 Jun 2024 18:43:58 -0700
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JJFTFOc6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718589167;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sTJ/iuTrsEdSBS5qgmnl6h5mYl1g8hs6XygUrJRR7A0=;
+	b=JJFTFOc6HlOD1n+sow2Jigc73ftOD9Wm1kZhYkGimBR5VgqAOHUvUawgYlbqkMaDRKEGji
+	4UUNXRCXPDHQosqj5YEHIsSG/ZBrGJKBZVnfILftTqc/cNhfwhAGwnRaRT/7se6h+04VHw
+	HR3Urt0PVs+pqSpncWAGtS2svklkOls=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-227-0zsqBT4YOb6wR5JWgx98Og-1; Sun, 16 Jun 2024 21:52:44 -0400
+X-MC-Unique: 0zsqBT4YOb6wR5JWgx98Og-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2c2dd66e05dso4266479a91.0
+        for <kernel-janitors@vger.kernel.org>; Sun, 16 Jun 2024 18:52:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718589163; x=1719193963;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sTJ/iuTrsEdSBS5qgmnl6h5mYl1g8hs6XygUrJRR7A0=;
+        b=QOBW1GSIL1uExqGRJK3dghj8ISAF0wWvj8mqgqRcYPfLRUeyHYu02UeCsXsho5rXTV
+         3WdPUydfo2AJdIUYq5sULcfRH5pn3zBgUpMIu535yGoiyAbj/OZu4RtIZ3K2NOv9JgHt
+         rMlOyu5BmdTjrL1EdnR6wVz0wnAZuJeaS8xMGY3IFYdrMADaSZQZDYsW0VBaPTmPb3AO
+         ze7vsSdASuO79/at8iQrAj0j+1c1T/Tya/t9CBdAcMnUjJ/R9R9lfj9BHFxUrz9yc/G7
+         sP59y4VaaT59oQ2YPCMQ8rcwL3308AySg7IJHcQ3z31aK157e1dUXIXLlFeQdCD9QaT2
+         a8DA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIvULfnuUYbqZ4LtA98nHDDw4tgFzgAbbH0WGatsiJhh/5zLRLy5m1oduTaJc8dyXkwcHXOtxICB8TdKi/7IOJY57dvMcSL0eGbEVogRMG
+X-Gm-Message-State: AOJu0Yz7hTAjZnHJzUrbU9Py+g2KrnZi8s+CeF6uAQan3yDv+AG8vE7A
+	XxIopGFhlnseWrwQHsJkq8GYneLG3aYp5Le0yutSmWagm0OHpbbckD/6CG6oQANxmLvSxq7cgX+
+	vtAQH4SR2U4jqrRjaB4Mho08/dytCwYizDpH/avCB04r2ecO0knG+gqiyY3Llb09ifrnMjbOXlO
+	Fa7t8BHZ0IO29ottxHbagVeGRL1UP83hgvBX7tOUoO
+X-Received: by 2002:a17:90b:1213:b0:2c4:a974:bc79 with SMTP id 98e67ed59e1d1-2c4dba4cf41mr9455806a91.36.1718589163038;
+        Sun, 16 Jun 2024 18:52:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG+QQNT5453eJc8Q6wrY2MwQONVCUdTNKrjoTG9l0wExtAxoW4PcawA6CbvZ6/VnsBDwc00gN9K/+tJsC+cH0k=
+X-Received: by 2002:a17:90b:1213:b0:2c4:a974:bc79 with SMTP id
+ 98e67ed59e1d1-2c4dba4cf41mr9455799a91.36.1718589162769; Sun, 16 Jun 2024
+ 18:52:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] EDAC: layerscape: add missing MODULE_DESCRIPTION() macro
-Content-Language: en-US
-To: Borislav Petkov <bp@alien8.de>
-CC: Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-        Mauro
- Carvalho Chehab <mchehab@kernel.org>,
-        Robert Richter <rric@kernel.org>, <linux-edac@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240613-md-arm64-drivers-edac-v1-1-149a4f0f61bb@quicinc.com>
- <20240616154347.GCZm8IMxshO8YYTTjB@fat_crate.local>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240616154347.GCZm8IMxshO8YYTTjB@fat_crate.local>
+References: <20240516-md-vringh-v1-1-31bf37779a5a@quicinc.com>
+In-Reply-To: <20240516-md-vringh-v1-1-31bf37779a5a@quicinc.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 17 Jun 2024 09:52:31 +0800
+Message-ID: <CACGkMEvdL4ieDDbpwy+MGBbHjia5UbbJQfUidh2btG9vPcvWpg@mail.gmail.com>
+Subject: Re: [PATCH] vringh: add MODULE_DESCRIPTION()
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, kvm@vger.kernel.org, virtualization@lists.linux.dev, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DInqufhmA_jVtANYx6VKQbmISrhM5LUE
-X-Proofpoint-ORIG-GUID: DInqufhmA_jVtANYx6VKQbmISrhM5LUE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_01,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- bulkscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
- suspectscore=0 adultscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405170001 definitions=main-2406170012
+Content-Transfer-Encoding: quoted-printable
 
-On 6/16/2024 8:43 AM, Borislav Petkov wrote:
-> On Thu, Jun 13, 2024 at 02:36:21PM -0700, Jeff Johnson wrote:
->> With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/edac/layerscape_edac_mod.o
->>
->> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->>  drivers/edac/layerscape_edac.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/edac/layerscape_edac.c b/drivers/edac/layerscape_edac.c
->> index d2f895033280..b70d5d258fcb 100644
->> --- a/drivers/edac/layerscape_edac.c
->> +++ b/drivers/edac/layerscape_edac.c
->> @@ -69,6 +69,7 @@ static void __exit fsl_ddr_mc_exit(void)
->>  
->>  module_exit(fsl_ddr_mc_exit);
->>  
->> +MODULE_DESCRIPTION("Freescale Layerscape EDAC module");
->>  MODULE_LICENSE("GPL");
->>  MODULE_AUTHOR("NXP Semiconductor");
->>  module_param(edac_op_state, int, 0444);
->>
->> ---
-> 
-> $ git grep -E "MODULE_(DESCRIPTION|LICENSE)" drivers/edac/
-> 
-> I'd expect to see regular pairs like this:
-> 
-> drivers/edac/al_mc_edac.c:348:MODULE_LICENSE("GPL v2");
-> drivers/edac/al_mc_edac.c:350:MODULE_DESCRIPTION("Amazon's Annapurna Lab's Memory Controller EDAC Driver");
-> 
-> drivers/edac/altera_edac.c:2216:MODULE_DESCRIPTION("EDAC Driver for Altera Memories");
-> 
-> drivers/edac/amd64_edac.c:4238:MODULE_LICENSE("GPL");
-> drivers/edac/amd64_edac.c:4240:MODULE_DESCRIPTION("MC support for AMD64 memory controllers");
-> ...
-> 
-> but there are cases which need fixing.
-> 
-> How about you do them all with one patch?
+On Fri, May 17, 2024 at 9:57=E2=80=AFAM Jeff Johnson <quic_jjohnson@quicinc=
+.com> wrote:
+>
+> Fix the allmodconfig 'make w=3D1' issue:
+>
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vhost/vringh.o
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-My process has been, for the most part, to first fix the ones where I actually
-observe the warning, unless there is just one or two others. For drivers/edac
-there are more than a couple more that have a LICENSE but not a DESCRIPTION:
-drivers/edac/mpc85xx_edac.c
-drivers/edac/octeon_edac-l2c.c
-drivers/edac/octeon_edac-lmc.c
-drivers/edac/octeon_edac-pc.c
-drivers/edac/octeon_edac-pci.c
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-So my preference is to first fix the one where I actually observed the
-warning, and then later fix the ones which currently don't seem to produce a
-warning. But a can make an exception and fix all of them in drivers/edac.
+Thanks
 
-Also note I haven't even considered doing anything for the ones that have a
-DESCRIPTION but not a LICENSE such as drivers/edac/altera_edac.c. Note that a
-missing LICENSE would result in a build failure, not just a warning, so the
-appropriate thing to do in that case is probably to remove the DESCRIPTION. It
-has been enough of a job to fix the missing DESCRIPTIONs that actually
-generate warnings (I've been making changes tree-wide for over a month,
-touching almost 800 files). So I prefer to let others worry about removing
-DESCRIPTION/LICENSE found in files that cannot be built as modules.
-
-/jeff
+>
 
