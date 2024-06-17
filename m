@@ -1,63 +1,65 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4638F192B94
-	for <kernel-janitors@vger.kernel.org>; Mon, 17 Jun 2024 09:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36864161320
+	for <kernel-janitors@vger.kernel.org>; Mon, 17 Jun 2024 09:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718616698; cv=none; b=Zfda0zccuzMMjBV/tAJgQfx3xcqzfVkVLhW2Ot5Rdbjg3XX+HTco+4zKXJxdKrjAWfjjWS5m3GrfssnZiESUNltjG9+BuB5r566T3yMS0yHbnKi8U/PtKqA0f41jgadKfho2nl78Vv+UcuexXZevbGGa6/9/AEQ2KJGfF2Jsb4g=
+	t=1718616795; cv=none; b=ddU7v1TLC1sQEcTebSUb42RPYo6Js0lJpT0SReVFbXVmdgRn6hD+niYzC0n3U+xP86LL6tArM0SYbvUDfTZ94CdhnFmES7HF53wmNtNyiwJ5kAduWgoIcu+FZtgFi++X+O7aVxNXsAHzdue2yNQarkutI86qF5UcSoYdhMIYbdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718616698; c=relaxed/simple;
-	bh=fRmLFWtad0MeVfCzJRA49BbTleCC61mmZxAFsL6FegQ=;
+	s=arc-20240116; t=1718616795; c=relaxed/simple;
+	bh=cuDoyOzQS8+YGUYNphhgplN7srLAz/Uq/xuPLYwdlvw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BJQUr+GFkCxxdhvXJCwDdpkwx1i9BmPMenX0MIHQQBBiYFmCn1f/dxjuU1KRTzbSsSbZxyUKNm/j6HBicAlF2klr2VRqgJzTKjHUmD0zxmquvDVd6ZjuWT+UdGMNnI0cYnsJsvpfomIhl000rQNoXdQSGNNupwHDj7KLCzwgUmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x0OO7ZoJ; arc=none smtp.client-ip=209.85.208.179
+	 Content-Disposition; b=NcdspfHnpE4pLHuCFjm/j18C8KbJIZDSxUtZXKHJ2OSlfdF2Jj41X65upOMrqchp/jO1jas/cN2jOXFK9wwXTn18u+z4+NGOsbx5N9QclvRJYDjEkbDvmz0svuzfnMmuBFQPv9cZks3v8VgtpPNyYWSpROCdlyiAFfKXCGDRNcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XoFRL6TP; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x0OO7ZoJ"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e95a75a90eso44978381fa.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jun 2024 02:31:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XoFRL6TP"
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e95a75a90eso44995351fa.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jun 2024 02:33:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718616694; x=1719221494; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718616792; x=1719221592; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=dIKWXjEnV/JvaI/YdcZiIYzxlyFqw0Iq/qRXLaIf03Q=;
-        b=x0OO7ZoJl49oJhq0ieXzpJJr+3gLU1YvJuDb3UA61aLIlPef09wrEnFtAcAEVEhssv
-         T5aAin03VqfyFkWmBAvbnMTp28Ea8DwukfEuMKhtID/45UdJrZTITMYVD3n+RALPUTpn
-         Uhqziz6kB4AlR9gMYjItAuohJK4+6vj/nROl1we/5iMIPmTlDsFVGjfDMvZa+sh1flPY
-         PVY4cE5dJ4sF3oMKTzwhPK55TEiSxHmiRi1glIxpI+sUoX8YJatxZxp6GsPAik0Kb9sw
-         /1ukV49jpq7HOzzFNhsXjAlhFJaSYChu7GY6UxUtB7NW2Hc4EfNk0J5NBTI8gb7YD0eP
-         bo7A==
+        bh=XR5GYB9eKu58vQFoGUBee/KjF/Xw+p5AvKjlrAjbe4E=;
+        b=XoFRL6TPRXrl/gtBWDcnwd0t7ToJfi3G5PU0wekKq/sWwT4/dOsIFuiV0M4mM12koY
+         hbI8u1e2NlwHSMNiwRiQoYBSufnUXN74HdAZVFzPxuQyylAhCUQgeXV6tvzY10y5hwcd
+         iZ/VEdnIr3X35cc3kF6toriBEcZ94EiIAfIqQ+6HP/9WU3eqggOJuGsb1NEUR/OO5fnT
+         Ls7LtFGP6rvNT7ERd5wyiZT5Wa1kVBwtCFTD3DRRyMZ1cM+Ap96YWCS6vm067kmq4F9N
+         NjjJpHi0rRIriVPUixcEZj51HaFjCV/0KgeXyFQigDw9CxD9c2EJ0pI13fawwVMc7mtI
+         aXwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718616694; x=1719221494;
+        d=1e100.net; s=20230601; t=1718616792; x=1719221592;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dIKWXjEnV/JvaI/YdcZiIYzxlyFqw0Iq/qRXLaIf03Q=;
-        b=DFNoqv2hC2JARKBXR0G7T0sfb5GidAW2hwy3lv/yPEQTpOjOaUo3wX5mM2rmzov5Br
-         lMujcXZ2J5ggyQnb1wJ7B5z+Jw08X2/vSfKsU5PFMkycGtGk/nd7OxHSSX2frUsltttW
-         DDWSMD1UJLsLSXwqGi+Bnku/+gnpbY63jU4A63gWcoCe7r5Av1jWLpcanykN7x2NkbIm
-         Vi4nF0J8+1OJIUqfGXkepfDF5dqTSLwKDP1Qz7cKVWAQhBVv85VcfR7MsZCR6tE3NIH9
-         jEje8SeJ6eA6gPOtFFsB0K1TRv59suRekx13kBfsnjbVwukv2s3wtdzqM1cpOCLSY/Wn
-         NYIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwxdOBup+HNoLxqGowpeBbNbYcWv8dnHZjYg+tY92pGMaPMH1uXSLPvdOyWDzWgevmWHT7v67WgBmHiX6xL0HBtW1YpC4zMBcDvCA+zFHy
-X-Gm-Message-State: AOJu0YxzTC/Ffi43iCTYWIQhrLhQ0wrQXHEZomckA5cDnaDQN5bXU5KU
-	ZVoaXDEH8gbp/JU6VNd8K7LN2ueFRPIKUgUCKvuV+9cx0EYcf79yyz52k+jJ/3c=
-X-Google-Smtp-Source: AGHT+IEODBDEsxxAci2aBLEEjswUYh1kr6DsZMBMYgj0029fdsBS+kjBKhpqZUVlxzZYUPOZnGGZNw==
-X-Received: by 2002:a2e:9217:0:b0:2ec:2617:ad4 with SMTP id 38308e7fff4ca-2ec26170c7bmr29025681fa.43.1718616694419;
-        Mon, 17 Jun 2024 02:31:34 -0700 (PDT)
+        bh=XR5GYB9eKu58vQFoGUBee/KjF/Xw+p5AvKjlrAjbe4E=;
+        b=DlJPBIzXCOoLD3fNrc5gXGjwclpD15zCRToc8O4FZ9Bov8L7BKeYfbr6E0CpLOdBu3
+         FCuRtygEmSIkKagaAZ7/+LMBs5Qlqmp0fIYvMR9wRca4clSP7BnsXUJ1gLTcM8tqKI5O
+         b/Vm6ftMtoadoHuEcgdrMBKIRofIut5yHzZH740YXiD5uWfKLFWcq66RYGILQvdpPrh+
+         kPfx+xUYqkUjqh6YqPj+QLGwrPXWWlyPGRC8TJcxlmhhQjj8oZJszB3eC7V4JpNCZbB/
+         sSwA+1wh5U5gBUF74aWja+TS//vb1E42h7WYvcaTEATlTEK57OCJ00RUJJVcyoHFQAE0
+         f1TA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYIc4h09kmlc8yuy8S5irxZ28L10Wxml85EnGNituPl7XaMcskCUwgOJk9vpcqNcZ5S53N74u3oZtNZs9NTQJcugsCzPHd8XTRIJdDiMP0
+X-Gm-Message-State: AOJu0YzuZgs2aR0DALFba7AK40QOnJQM8UTFaSx9JCRz+kA1lOie2xiL
+	X2A9Qqx6Wm3WJ2J+GgKLzu6PmZ/cw/hbCfGeAjF4pjiMk4h1QMsUg3gH4jK0Bil7m47fpXRJE0U
+	N
+X-Google-Smtp-Source: AGHT+IEa3K7XWz/lzC+j+im6KTvLDjDG7zCAkU3RZRrqaUfwf+xaegKVQs8z15qdzYiqFHNsN+qEbw==
+X-Received: by 2002:a2e:9f44:0:b0:2ea:e98e:4399 with SMTP id 38308e7fff4ca-2ec0e5ffc00mr63770771fa.36.1718616792269;
+        Mon, 17 Jun 2024 02:33:12 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4229447eaa5sm186875575e9.48.2024.06.17.02.31.33
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6320bfdsm153872995e9.37.2024.06.17.02.33.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 02:31:34 -0700 (PDT)
-Date: Mon, 17 Jun 2024 12:31:30 +0300
+        Mon, 17 Jun 2024 02:33:11 -0700 (PDT)
+Date: Mon, 17 Jun 2024 12:33:08 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Alexandre Bailon <abailon@baylibre.com>
-Cc: Bin Liu <b-liu@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] usb: musb: da8xx: fix a resource leak in probe()
-Message-ID: <69af1b1d-d3f4-492b-bcea-359ca5949f30@moroto.mountain>
+To: Karol Herbst <kherbst@redhat.com>
+Cc: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@redhat.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/nouveau: Use kmemdup_array() instead of kmemdup()
+Message-ID: <a3e8cecc-77dd-4a4a-bb12-c1d6759d3efb@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -68,42 +70,57 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Call usb_phy_generic_unregister() if of_platform_populate() fails.
+Use kmemdup_array() because we're allocating an array.
 
-Fixes: d6299b6efbf6 ("usb: musb: Add support of CPPI 4.1 DMA controller to DA8xx")
+The main difference between kmemdup() and kmemdup_array() is that the
+kmemdup_array() function has integer overflow checking built it.  The
+"args->in_sync.count" variable is a u32 so integer overflows would only
+be a concern on 32bit systems.  Fortunately, however, the u_memcpya()
+function has integer overflow checking which means that it is not an
+issue.
+
+Still using kmemdup_array() is more appropriate and makes auditing the
+code easier.
+
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/usb/musb/da8xx.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/nouveau/nouveau_sched.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/usb/musb/da8xx.c b/drivers/usb/musb/da8xx.c
-index fcf06dcf2d61..953094c1930c 100644
---- a/drivers/usb/musb/da8xx.c
-+++ b/drivers/usb/musb/da8xx.c
-@@ -560,7 +560,7 @@ static int da8xx_probe(struct platform_device *pdev)
- 	ret = of_platform_populate(pdev->dev.of_node, NULL,
- 				   da8xx_auxdata_lookup, &pdev->dev);
- 	if (ret)
--		return ret;
-+		goto err_unregister_phy;
+diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/nouveau/nouveau_sched.c
+index 32fa2e273965..53d8b0584a56 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_sched.c
++++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
+@@ -45,10 +45,10 @@ nouveau_job_init(struct nouveau_job *job,
+ 		if (job->sync)
+ 			return -EINVAL;
  
- 	pinfo = da8xx_dev_info;
- 	pinfo.parent = &pdev->dev;
-@@ -575,9 +575,13 @@ static int da8xx_probe(struct platform_device *pdev)
- 	ret = PTR_ERR_OR_ZERO(glue->musb);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to register musb device: %d\n", ret);
--		usb_phy_generic_unregister(glue->usb_phy);
-+		goto err_unregister_phy;
+-		job->in_sync.data = kmemdup(args->in_sync.s,
+-					 sizeof(*args->in_sync.s) *
+-					 args->in_sync.count,
+-					 GFP_KERNEL);
++		job->in_sync.data = kmemdup_array(args->in_sync.s,
++					args->in_sync.count,
++					sizeof(*args->in_sync.s),
++					GFP_KERNEL);
+ 		if (!job->in_sync.data)
+ 			return -ENOMEM;
  	}
+@@ -60,10 +60,10 @@ nouveau_job_init(struct nouveau_job *job,
+ 			goto err_free_in_sync;
+ 		}
  
-+	return 0;
-+
-+err_unregister_phy:
-+	usb_phy_generic_unregister(glue->usb_phy);
- 	return ret;
- }
- 
+-		job->out_sync.data = kmemdup(args->out_sync.s,
+-					  sizeof(*args->out_sync.s) *
+-					  args->out_sync.count,
+-					  GFP_KERNEL);
++		job->out_sync.data = kmemdup_array(args->out_sync.s,
++					args->out_sync.count,
++					sizeof(*args->out_sync.s),
++					GFP_KERNEL);
+ 		if (!job->out_sync.data) {
+ 			ret = -ENOMEM;
+ 			goto err_free_in_sync;
 -- 
 2.43.0
 
