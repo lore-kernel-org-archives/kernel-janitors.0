@@ -1,152 +1,143 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F62610958
-	for <kernel-janitors@vger.kernel.org>; Mon, 17 Jun 2024 15:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17C514AAD;
+	Mon, 17 Jun 2024 16:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718639741; cv=none; b=ByTTBYC41kHGvcJvyiB1ZFpX/1g8tWmfftbUPVattDU9JxLNHcAyLL2/mSUKgN/Iu80kjYAPYx3O2cQA1Mr45CDi9h9DFMK6aEJIfBBm+gzOrvPuk1MBDQWL7F0DmJWHLvFoUSIU10ff5KxVrEqzar/qr4YtJouqSGQMMhASjBA=
+	t=1718640750; cv=none; b=p2O8ZIn2XWHOgro7v7mTcv/QRte6RWyKnvtOm8UVXKYQbhwotFN0FSm696tR+X7Z3+DFS2uXaNbIHdzPml1+qeU0hAMtcIlC9MJltBhNE/GHXIlQIXwgK7u14+BiIUMHBX6RIHVsbRS3ArUb6czl1u0g3XbTnDpzt/xyaAYdngo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718639741; c=relaxed/simple;
-	bh=JANif8e1KKUW7ry1WN7ofm9l+tvrWerY2twJ/3A32Ug=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F4+K4OIkKm/6Sal1ukxG5MOigtzdMpAnSK2C6NFpyZZxkHfPaSjJvUQtM96y+FcFJGs/AFYy5OnCe/5yTqE9Ro1SatsP3DUxnLXZ/j4lCgWAFO8TA5pTpaauKfQZN2mKtiynGWjuYuUVpGfncZiqZ/jFv1HvzdmNad6wMDhoh2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sl1Sb+GA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1718640750; c=relaxed/simple;
+	bh=+gtWCVLAIwVN9QYLGAITeupOhR87qFGefwq+Ci8vsv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lfnytt5vgpt/qTYkazNmCj5dc9kqUO22kjx11ElBlvjb7D/Bi/9Yid22KdLowk5y6/TuJyA0svj4P+aUy0x5+9ju2xuTmft0IhNKryGrZJweZzv9s4O+243AVw9B5jr72lOGffK966IFgK95AcmUbu+bEOzx8ooSMACSPLetZ4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGMxqYUW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sl1Sb+GA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718639738;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Qmb8gUny6Zpgr7K8KEYWVXXhXU3OWlH3oKm/5lLTDS8=;
-	b=Sl1Sb+GAj34IwWArz/vhWg+mMfngLdgoVK+rZyI5opZsZz4yPdadFHFpZYECD5TG3iaACN
-	6sd04nd1WiNlZFhybC35ikr487rHXMVr5AX3jhU/ZXdRIdhHkGM+QV6jhdA8G1Tdp1f8ZR
-	cX/m0w7h8elqwxtLB5ho3YjlQwViaqA=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-445-e-w7FvrnNvCuIx5qBztuDw-1; Mon, 17 Jun 2024 11:55:37 -0400
-X-MC-Unique: e-w7FvrnNvCuIx5qBztuDw-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42196394b72so28823145e9.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Jun 2024 08:55:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718639736; x=1719244536;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qmb8gUny6Zpgr7K8KEYWVXXhXU3OWlH3oKm/5lLTDS8=;
-        b=QlwNDleH952fLNBnqCmdO3CuB5fmI9v63YDNpmWNjvT8al4RNAElo+mbjwPBfUzA9m
-         2KWJYabw5jLzqzikzlPTu17Gg+D61phyWsmx9BxiekSwGSvFye2jlCytIluNOWXubrNi
-         OYDNb8sMWmhUPdV0w34VGhsWdAReV2cjJcVPGLKNmebrw4yUlpZ/doexea0coWNqa7hh
-         ITY0s0jhbpKHm+qKVsgttbzsmgG+/wz5+SxT01F5DN3hbAU1R/BonJnI8LXooAGRoqB5
-         DZAsbOad0ApV8hLGyfJWk1buNojtzckwD5c4XI9dD63aTdNObk+DzisK8F3vvhbqAvRs
-         XFOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAQAeEHfzsA01qr8AxWjJImOl5PPz6aiq6u46b0ZcqUrTVthYyMboH8dipNbrwnzHh91F4i6K0M2tMMUsJwXkf/Oso2+VjQo3ZvGeb7UAp
-X-Gm-Message-State: AOJu0YzdgtfkxCjhh4/h+9lIZ9ZAK0i+yRYD2X1f8kfGYUZWYPnDXYIE
-	fH3OIJK/GxMSIDlfTD3w0FJJeLSVlqh6AvRg5bgDwFS0qZjhDloqDVUFs5yfs3cj6Onr4KB8kNv
-	K/M9vrJlsaGKPZ5vEQy+SydsRD97Yl263+SRe2P1HoGSBiAqsYhuWDxh9WDP4gqZf+g==
-X-Received: by 2002:a05:600c:4ed2:b0:421:7983:f1c4 with SMTP id 5b1f17b1804b1-42304822952mr78837515e9.6.1718639735982;
-        Mon, 17 Jun 2024 08:55:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGG2HBjQR/zaDHDGvKUJDd9tDwyIlWmvB+O3V20u9Yfc0HFIdhjMf6sutXTwVwI4ehzNmpWbg==
-X-Received: by 2002:a05:600c:4ed2:b0:421:7983:f1c4 with SMTP id 5b1f17b1804b1-42304822952mr78837335e9.6.1718639735666;
-        Mon, 17 Jun 2024 08:55:35 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:4b3f:ee94:abf:b8ff:feee:998b? ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f5f33bdasm164871085e9.8.2024.06.17.08.55.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 08:55:35 -0700 (PDT)
-Message-ID: <a61d9781-7c6e-46b8-ab1b-cf4fc1c76ba3@redhat.com>
-Date: Mon, 17 Jun 2024 17:55:33 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGMxqYUW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45957C3277B;
+	Mon, 17 Jun 2024 16:12:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718640749;
+	bh=+gtWCVLAIwVN9QYLGAITeupOhR87qFGefwq+Ci8vsv0=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=tGMxqYUWUZidJOkTYRC4FVvYBSBOWSgclx4qkkf2YhB76G0qNpmpl3h3ZG/PV3BOy
+	 xlZXdbbOvZ6jW6KZZoE8jW1tSsMXb9BTJYiUY+4BFP1x4DLKJ88c59xgouIGwbGnfH
+	 pzOLAUlBJvqVtt/nGes5ftIvMNsA0KW74j39YxI7CsKwDMIstY8QCTis+Vm1d09ssf
+	 Brg/opMBq5bCqKivChkp0axZbqIBv6L47ipGD98z9wwNolXOn9myeZNXKM1TRS3DUb
+	 bJJ9eMBF03SfToJMq6gfQl4IveoZO6GqEFk38XBSPXCG+yBO8oun6MjojXjI6saj96
+	 ETfYabYghHfAQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C3424CE09F5; Mon, 17 Jun 2024 09:12:28 -0700 (PDT)
+Date: Mon, 17 Jun 2024 09:12:28 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+	"Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
+	linux-trace-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
+	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
+	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <3b6fe525-626c-41fb-8625-3925ca820d8e@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
+ <20240612143305.451abf58@kernel.org>
+ <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
+ <Zmov7ZaL-54T9GiM@zx2c4.com>
+ <Zmo9-YGraiCj5-MI@zx2c4.com>
+ <08ee7eb2-8d08-4f1f-9c46-495a544b8c0e@paulmck-laptop>
+ <Zmrkkel0Fo4_g75a@zx2c4.com>
+ <e926e3c6-05ce-4ba6-9e2e-e5f3b37bcc23@suse.cz>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/nouveau: Use kmemdup_array() instead of kmemdup()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Lyude Paul <lyude@redhat.com>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Karol Herbst <kherbst@redhat.com>
-References: <a3e8cecc-77dd-4a4a-bb12-c1d6759d3efb@moroto.mountain>
-Content-Language: en-US
-From: Danilo Krummrich <dakr@redhat.com>
-Organization: RedHat
-In-Reply-To: <a3e8cecc-77dd-4a4a-bb12-c1d6759d3efb@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e926e3c6-05ce-4ba6-9e2e-e5f3b37bcc23@suse.cz>
 
-On 6/17/24 11:33, Dan Carpenter wrote:
-> Use kmemdup_array() because we're allocating an array.
+On Mon, Jun 17, 2024 at 05:10:50PM +0200, Vlastimil Babka wrote:
+> On 6/13/24 2:22 PM, Jason A. Donenfeld wrote:
+> > On Wed, Jun 12, 2024 at 08:38:02PM -0700, Paul E. McKenney wrote:
+> >> o	Make the current kmem_cache_destroy() asynchronously wait for
+> >> 	all memory to be returned, then complete the destruction.
+> >> 	(This gets rid of a valuable debugging technique because
+> >> 	in normal use, it is a bug to attempt to destroy a kmem_cache
+> >> 	that has objects still allocated.)
 > 
-> The main difference between kmemdup() and kmemdup_array() is that the
-> kmemdup_array() function has integer overflow checking built it.  The
-> "args->in_sync.count" variable is a u32 so integer overflows would only
-> be a concern on 32bit systems.  Fortunately, however, the u_memcpya()
-> function has integer overflow checking which means that it is not an
-> issue.
+> This seems like the best option to me. As Jason already said, the debugging
+> technique is not affected significantly, if the warning just occurs
+> asynchronously later. The module can be already unloaded at that point, as
+> the leak is never checked programatically anyway to control further
+> execution, it's just a splat in dmesg.
+
+Works for me!
+
+> > Specifically what I mean is that we can still claim a memory leak has
+> > occurred if one batched kfree_rcu freeing grace period has elapsed since
+> > the last call to kmem_cache_destroy_rcu_wait/barrier() or
+> > kmem_cache_destroy_rcu(). In that case, you quit blocking, or you quit
+> > asynchronously waiting, and then you splat about a memleak like we have
+> > now.
 > 
-> Still using kmemdup_array() is more appropriate and makes auditing the
-> code easier.
-
-Indeed, we shouldn't rely on the previous check here, good catch.
-
+> Yes so we'd need the kmem_cache_free_barrier() for a slab kunit test (or the
+> pessimistic variant waiting for the 21 seconds), and a polling variant of
+> the same thing for the asynchronous destruction. Or we don't need a polling
+> variant if it's ok to invoke such a barrier in a schedule_work() workfn.
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/gpu/drm/nouveau/nouveau_sched.c | 16 ++++++++--------
->   1 file changed, 8 insertions(+), 8 deletions(-)
+> We should not need any new kmem_cache flag nor kmem_cache_destroy() flag to
+> burden the users of kfree_rcu() with. We have __kmem_cache_shutdown() that
+> will try to flush everything immediately and if it doesn't succeed, we can
+> assume kfree_rcu() might be in flight and try to wait for it asynchronously,
+> without any flags.
+
+That does sound like a very attractive approach.
+
+> SLAB_TYPESAFE_BY_RCU is still handled specially because it has special
+> semantics as well.
 > 
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/nouveau/nouveau_sched.c
-> index 32fa2e273965..53d8b0584a56 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_sched.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
-> @@ -45,10 +45,10 @@ nouveau_job_init(struct nouveau_job *job,
->   		if (job->sync)
->   			return -EINVAL;
->   
-> -		job->in_sync.data = kmemdup(args->in_sync.s,
-> -					 sizeof(*args->in_sync.s) *
-> -					 args->in_sync.count,
-> -					 GFP_KERNEL);
-> +		job->in_sync.data = kmemdup_array(args->in_sync.s,
-> +					args->in_sync.count,
-> +					sizeof(*args->in_sync.s),
-> +					GFP_KERNEL);
->   		if (!job->in_sync.data)
->   			return -ENOMEM;
+> As for users of call_rcu() with arbitrary callbacks that might be functions
+> from the module that is about to unload, these should not return from
+> kmem_cache_destroy() with objects in flight. But those should be using
+> rcu_barrier() before calling kmem_cache_destroy() already, and probably we
+> should not try to handle this automagically? Maybe one potential change with
+> the described approach is that today they would get the "cache not empty"
+> warning immediately. But that wouldn't stop the module unload so later the
+> callbacks would try to execute unmapped code anyway. With the new approach
+> the asynchronous handling might delay the "cache not empty" warnings (or
+> not, if kmem_cache_free_barrier() would finish before a rcu_barrier() would)
+> so the unmapped code execution would come first. I don't think that would be
+> a regression.
 
-Not sure if this is what we want for kmemdup_array(). It just saturates the
-size. This doesn't prevent accessing the array out of bounds later on. I mean,
-it's rather unlikely to get such a huge amount of physically contiguous memory
-anyways, but wouldn't it be cleaner to let kmemdup_array() return
-ERR_PTR(-EOVERFLOW) on overflow, just like memdup_array_user()[1]?
+Agreed.
 
-AFAICS, there's just two users of kmemdup_array(), hence it should be an easy
-change. :-)
+There are some use cases where a call_rcu() from a module without an
+rcu_barrier() would be OK, for example, if the callback function was
+defined in the core kernel and either: (1) The memory was from kmalloc()
+or (2) The memory was from kmem_cache_alloc() and your suggested
+changes above have been applied.  My current belief is that these are
+too special of cases to be worth optimizing for, so that the rule should
+remain "If you use call_rcu() in a module, you must call rcu_barrier()
+within the module-unload code."
 
-[1] https://elixir.bootlin.com/linux/latest/source/include/linux/string.h#L30
+There have been discussions of having module-unload automatically invoke
+rcu_barrier() if needed, but thus far we have not come up with a good
+way to do this.  Challenges include things like static inline functions
+from the core kernel invoking call_rcu(), in which case how to figure
+out that the rcu_barrier() is not needed?
 
->   	}
-> @@ -60,10 +60,10 @@ nouveau_job_init(struct nouveau_job *job,
->   			goto err_free_in_sync;
->   		}
->   
-> -		job->out_sync.data = kmemdup(args->out_sync.s,
-> -					  sizeof(*args->out_sync.s) *
-> -					  args->out_sync.count,
-> -					  GFP_KERNEL);
-> +		job->out_sync.data = kmemdup_array(args->out_sync.s,
-> +					args->out_sync.count,
-> +					sizeof(*args->out_sync.s),
-> +					GFP_KERNEL);
->   		if (!job->out_sync.data) {
->   			ret = -ENOMEM;
->   			goto err_free_in_sync;
-
+							Thanx, Paul
