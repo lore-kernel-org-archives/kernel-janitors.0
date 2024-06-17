@@ -1,92 +1,86 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CADF161320
-	for <kernel-janitors@vger.kernel.org>; Mon, 17 Jun 2024 01:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+Received: from mail-177131.yeah.net (mail-177131.yeah.net [123.58.177.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD1B23A9;
+	Mon, 17 Jun 2024 02:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=123.58.177.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718589169; cv=none; b=MzYhEOODJcAk8CSzXbHGWf1ZJdUWcprk2AxsXYohm2e8Sa7YHYF+3YtHYYgZXCCeT1uf1zw+Q9wui0W46b150drtUjele2/7CCPrbZOlSsuTHFYK6QMK9+naC5HuABZDCJ7OLG4m6R+OQR7B4QE1dd68qtwvJ6I+B9R2gpwlMsY=
+	t=1718591209; cv=none; b=FNp+YIEO44svK6VrugW13zpj+9asAKoi4spiNjKk3VN3x6BuwoFCAR3+xo4hfL/XafXQA99F/I/K8DxXfQPfzFUfr6tS1LDj7i7u5y7/nKvr7+/F1PYgsZU6H7CJOzqy6QDPZXyftvAVQJ/0FrHPlxiALRBvVAokHvuZSx3EY0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718589169; c=relaxed/simple;
-	bh=sTJ/iuTrsEdSBS5qgmnl6h5mYl1g8hs6XygUrJRR7A0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NHrFx/jjQc0SXCXG/Kgl9FG9WULEwIhI5RuX63WHweukVVJKtyE1IDGNxxe0CYTjws3zGqdJFAZfoLBSiHnqtUlLuYuIVAuVxIlFjaAZkxj85SZuY8D/BxVHsa635wDkukpFIUYC1+QEe5akRuFeb1vYGv0VYkE7OHYeBPqVExo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JJFTFOc6; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1718591209; c=relaxed/simple;
+	bh=44Ip4MpDpvbbELazKfCtpt8hUnGs0ULGPPnP59pS5AY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cqUEWs0PUvxiR6yrn4KFNmkH+N1ihZfUOe/02RqCdcS915CfvSUC+uPOn1PXeDDiTs+qcE4XYQq6PzoJF67364Q1rsbfXZiWjnlG2QHDrX4D2ehmwC309+8deZqDNx32tEOHdWaUN3ZM27CC/dxBvqJHsiYoF8nX9vAYYf9OHU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=YedPxTmO; arc=none smtp.client-ip=123.58.177.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JJFTFOc6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718589167;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sTJ/iuTrsEdSBS5qgmnl6h5mYl1g8hs6XygUrJRR7A0=;
-	b=JJFTFOc6HlOD1n+sow2Jigc73ftOD9Wm1kZhYkGimBR5VgqAOHUvUawgYlbqkMaDRKEGji
-	4UUNXRCXPDHQosqj5YEHIsSG/ZBrGJKBZVnfILftTqc/cNhfwhAGwnRaRT/7se6h+04VHw
-	HR3Urt0PVs+pqSpncWAGtS2svklkOls=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-227-0zsqBT4YOb6wR5JWgx98Og-1; Sun, 16 Jun 2024 21:52:44 -0400
-X-MC-Unique: 0zsqBT4YOb6wR5JWgx98Og-1
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2c2dd66e05dso4266479a91.0
-        for <kernel-janitors@vger.kernel.org>; Sun, 16 Jun 2024 18:52:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718589163; x=1719193963;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sTJ/iuTrsEdSBS5qgmnl6h5mYl1g8hs6XygUrJRR7A0=;
-        b=QOBW1GSIL1uExqGRJK3dghj8ISAF0wWvj8mqgqRcYPfLRUeyHYu02UeCsXsho5rXTV
-         3WdPUydfo2AJdIUYq5sULcfRH5pn3zBgUpMIu535yGoiyAbj/OZu4RtIZ3K2NOv9JgHt
-         rMlOyu5BmdTjrL1EdnR6wVz0wnAZuJeaS8xMGY3IFYdrMADaSZQZDYsW0VBaPTmPb3AO
-         ze7vsSdASuO79/at8iQrAj0j+1c1T/Tya/t9CBdAcMnUjJ/R9R9lfj9BHFxUrz9yc/G7
-         sP59y4VaaT59oQ2YPCMQ8rcwL3308AySg7IJHcQ3z31aK157e1dUXIXLlFeQdCD9QaT2
-         a8DA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIvULfnuUYbqZ4LtA98nHDDw4tgFzgAbbH0WGatsiJhh/5zLRLy5m1oduTaJc8dyXkwcHXOtxICB8TdKi/7IOJY57dvMcSL0eGbEVogRMG
-X-Gm-Message-State: AOJu0Yz7hTAjZnHJzUrbU9Py+g2KrnZi8s+CeF6uAQan3yDv+AG8vE7A
-	XxIopGFhlnseWrwQHsJkq8GYneLG3aYp5Le0yutSmWagm0OHpbbckD/6CG6oQANxmLvSxq7cgX+
-	vtAQH4SR2U4jqrRjaB4Mho08/dytCwYizDpH/avCB04r2ecO0knG+gqiyY3Llb09ifrnMjbOXlO
-	Fa7t8BHZ0IO29ottxHbagVeGRL1UP83hgvBX7tOUoO
-X-Received: by 2002:a17:90b:1213:b0:2c4:a974:bc79 with SMTP id 98e67ed59e1d1-2c4dba4cf41mr9455806a91.36.1718589163038;
-        Sun, 16 Jun 2024 18:52:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG+QQNT5453eJc8Q6wrY2MwQONVCUdTNKrjoTG9l0wExtAxoW4PcawA6CbvZ6/VnsBDwc00gN9K/+tJsC+cH0k=
-X-Received: by 2002:a17:90b:1213:b0:2c4:a974:bc79 with SMTP id
- 98e67ed59e1d1-2c4dba4cf41mr9455799a91.36.1718589162769; Sun, 16 Jun 2024
- 18:52:42 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="YedPxTmO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=UzRS40U5/LPPmxXbUV5UdyzySjYYlr6Ws3i6/OCKy5w=;
+	b=YedPxTmONWBUG3jg8Fa85RpOdjBRHELvJNkIcKO6HV7zFcyPodFd9iTXzRBdZr
+	q3yjw7r0GSNceXWKNvlqTW3J/y0BfpkZshwn0qpCfdifBXyiCFjuP4Sd+u9KBWzc
+	ajJhXuE1iuF6yT/T6TZX2REjFPbIcIczTdNw6mjy+eBLQ=
+Received: from dragon (unknown [114.216.76.201])
+	by smtp1 (Coremail) with SMTP id ClUQrADnr0G9nm9mU0AMCA--.39214S3;
+	Mon, 17 Jun 2024 10:26:06 +0800 (CST)
+Date: Mon, 17 Jun 2024 10:26:05 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Linus Walleij <linusw@kernel.org>, Imre Kaloz <kaloz@openwrt.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-mediatek@lists.infradead.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] soc: add missing MODULE_DESCRIPTION() macros
+Message-ID: <Zm+evaRZ6/6BOvAw@dragon>
+References: <20240611-md-drivers-soc-v1-1-8f0fc9fff234@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516-md-vringh-v1-1-31bf37779a5a@quicinc.com>
-In-Reply-To: <20240516-md-vringh-v1-1-31bf37779a5a@quicinc.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 17 Jun 2024 09:52:31 +0800
-Message-ID: <CACGkMEvdL4ieDDbpwy+MGBbHjia5UbbJQfUidh2btG9vPcvWpg@mail.gmail.com>
-Subject: Re: [PATCH] vringh: add MODULE_DESCRIPTION()
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, kvm@vger.kernel.org, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611-md-drivers-soc-v1-1-8f0fc9fff234@quicinc.com>
+X-CM-TRANSID:ClUQrADnr0G9nm9mU0AMCA--.39214S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZFWkur13tw1UJFyrtryxKrg_yoWkXrcEkr
+	Wkt3yxuw17Jry8Cay5CF1kZF9F9Fn7X3ySqw1jgryrXrW7Zw1UJF4kur43Ga4UZw4xAF1D
+	Ars7Xr1rJFWUZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8E1v3UUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiDx4BZVnxc0yUrgAAsY
 
-On Fri, May 17, 2024 at 9:57=E2=80=AFAM Jeff Johnson <quic_jjohnson@quicinc=
-.com> wrote:
->
-> Fix the allmodconfig 'make w=3D1' issue:
->
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vhost/vringh.o
->
+On Tue, Jun 11, 2024 at 10:50:58PM -0700, Jeff Johnson wrote:
+> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/imx/soc-imx8m.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/ixp4xx/ixp4xx-qmgr.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/ixp4xx/ixp4xx-npe.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/mediatek/mtk-cmdq-helper.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/amlogic/meson-clk-measure.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
 > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> This is the last of the issues that I see in the soc directory
+> ---
+>  drivers/soc/amlogic/meson-clk-measure.c | 1 +
+>  drivers/soc/imx/soc-imx8m.c             | 1 +
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Shawn Guo <shawnguo@kernel.org>
 
-Thanks
-
->
+>  drivers/soc/ixp4xx/ixp4xx-npe.c         | 1 +
+>  drivers/soc/ixp4xx/ixp4xx-qmgr.c        | 1 +
+>  drivers/soc/mediatek/mtk-cmdq-helper.c  | 1 +
+>  5 files changed, 5 insertions(+)
 
