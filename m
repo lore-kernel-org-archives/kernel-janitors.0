@@ -1,101 +1,118 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D2413D8A0
-	for <kernel-janitors@vger.kernel.org>; Tue, 18 Jun 2024 10:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004FB13DDDA;
+	Tue, 18 Jun 2024 11:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718706372; cv=none; b=BgnULPXzZFqlINYQlA8OFp7FG0yhTjhN+erPP3R3Vtj16xQdNj1bZDd3C+OqSVhd1vSaQ8IO9CJXhzeeoqSIVTfBv5/K4ciqRC/H9DeIqnQ/YqaEq3sfbA2xMT55Bvrt37L22SxMacQl8n6+xH8pLgcOk8iLVo/cL4LJbfgNfQc=
+	t=1718710244; cv=none; b=EOFixWEwVJqTCOJYedql4QlJG8yfyGRyLeOKqyER6q1aVOij44iiZOHfxlXdLcM410WgkIh2Kl6coSva5BuDvslcp0yyX5r2pk3wEekSne0/+gv7EyiA6My9eqEGzJYXp/AqQlq/64davwaA8ZyEIWhqc0Vpua5G3sAZEvQASOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718706372; c=relaxed/simple;
-	bh=klk6lMXdngCdVEKP7J2KBH6LljlLq0Hco77UGKsQj4g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hs1nR7d81FiguPoykeblEQ1ijWRpJMS/io66s28WEgQtjih5SrzlGgB69pqmYmCIEiGaECOStif5q3+u2CoVmzYKAOo6ot9xNbVVlej1a9XONzcF3SaAcTu31p/NJi+d/o6LToii3dYiAyUrjoQlOK8RHnnjVpTD1ExfCFVtxCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rNWbZ04Q; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718710244; c=relaxed/simple;
+	bh=Fvq1y+koqj8fOQevp53Pmnpz9AgYuJGBtdWNg1G1Scw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pbV6kdR2nCnjJb1ik6ZQwdoD/oqI+VLZDJPoK11FzQx72uHMVQBmo4VwwoKCnufq4DBHX2B+lRmRIhR3/9sgwnUmA4OeYkHK1+k4fmmlAw6eNvvhFSaC7YqageN7PPcVN00VNziXq79HPmSI33dTgotwcEqULFssuybzkcF2ebg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=m31V2R7s; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rNWbZ04Q"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ebeefb9a6eso56316621fa.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jun 2024 03:26:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718706369; x=1719311169; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=klk6lMXdngCdVEKP7J2KBH6LljlLq0Hco77UGKsQj4g=;
-        b=rNWbZ04QzIw/BPmf5uhqo7VVRgW18RFuLxGJrgOO1VqWug30VlkJBlh9aD8PJokYQJ
-         6ivZt7V27/N+3zko7Wd9jNUiN+5tn+oQQum3Izt3KLTh9uAFjzQHhHDqCiHVssTUIb4e
-         y1YF5UvysUt/MZxrfDcYlz/X91mFSsin26WupPpYvjUoLx/FedpiERlOy8ERToaYesBa
-         HW9Z3xOYIWA8X4wFLNmcrNCAKi/z1G9NqajCN72exvOh/79zQ1VKPbHMddvEG/YrWHot
-         ZvdN+mA92onP6HvBa/Ba327QLjfdJoCaZ2hauLRBa964Xzd37rydeeZLpAf3Q0HWZgC+
-         qGcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718706369; x=1719311169;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=klk6lMXdngCdVEKP7J2KBH6LljlLq0Hco77UGKsQj4g=;
-        b=XHtVrmlAzF6MZDAzW280GQlVIDEqvffbB/nvX4i7L1U8zEOo6It4ekGlWaI3VhYK7+
-         nOVK2xfvPEMYUFNErPa1anUzVhSfxMi8CxNdUnr5Hj70VkiPGOtOG51Z8VKCRxw4umoI
-         pMhQtOtC9ytnx5VsXBRkTVtm8G5hJKjELOiDg3azJVGO8mmqk7aJ21iZBpfpF0XAllII
-         cbZ+JCcrnnGOGqAvkjnUckW8E+MCpkthKxYXb8hc3g4wl9xea8AO2hqz1VgrPyFbMSOp
-         IqxGsjPNkLnTlrSmkUbGFNNSscOBiXjDiXCz7EN38d2NOBse+aGGrS1tT6BkTdzAl1G3
-         BiBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWeG9xirBwotp1pdUzD+MVtp+BR8vQwLrBE5u4bi9vPlYXE7Z0DPfjYqE+Ncg4/l6M2M24iivJZMJzNYJXv9ji2i2fWlLzR192L8AJ/loan
-X-Gm-Message-State: AOJu0YzsCc45515pvEpnA2/ZQjgwcT29QrMv5mLpcx+SGhtrZ4hgAu1L
-	I0KLCptWCaci7Ba6DDYfvaFBzN+D1zXfDyFZOVscRR11zR42TYBYPRwuKa/4AafdftGJ+bdr3Vt
-	T1B9Oynozj3+yyex2A73Bw6bYWJrMUHZ85tiFhA==
-X-Google-Smtp-Source: AGHT+IFVnhzqBoiu9GboooE5iY1zi/XLlllZteuuassl+ZmbxgbyJsQPD3pk6oFTjF6bKUOXQjAi+8CRlASoDk+Kx6o=
-X-Received: by 2002:a19:6912:0:b0:52c:99c9:bef6 with SMTP id
- 2adb3069b0e04-52ca6e5639fmr6700866e87.7.1718706369027; Tue, 18 Jun 2024
- 03:26:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="m31V2R7s"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718710214; x=1719315014; i=markus.elfring@web.de;
+	bh=Fvq1y+koqj8fOQevp53Pmnpz9AgYuJGBtdWNg1G1Scw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=m31V2R7soGq6GQZ+fiv99i2+9GduwzVKaySyLRE/OTx1VFLkL2D3oEUsyeOWFbQD
+	 tkaJXVq7ZHnChpeezbdBgd48xvelMK+rWNCwrunUznKHfUz0lN/KBGZo0YT5xJxBm
+	 pfTDyQ1V/84BV2dvfF1hyI8L2j8JDh9oa5PVt5M1g64Qg1M/xFhfF56SD10XRNtYq
+	 68gpJRZo+HvL7jdraLFfrq9j/8TOE+jzXLmaeFBTZLWVXhGus4XIDaxXpwhOIZpY/
+	 TtKda8mnJ1UDCE+yTsQm5NFYLY11ncgmMny+xuioApBQTSZ3eOusTDzNoDpGjgSZb
+	 TgzrKRlRThNPR9ZwyQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N6Jxd-1sPtj23usT-00vvRF; Tue, 18
+ Jun 2024 13:30:14 +0200
+Message-ID: <3f3f57dc-88c1-44ab-a69a-457633360fbd@web.de>
+Date: Tue, 18 Jun 2024 13:30:09 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611-md-drivers-soc-v1-1-8f0fc9fff234@quicinc.com>
-In-Reply-To: <20240611-md-drivers-soc-v1-1-8f0fc9fff234@quicinc.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 18 Jun 2024 12:25:57 +0200
-Message-ID: <CACRpkdZdjL7Z7qY5MTtZZRKQBLWHPKoHKKyoy56mKzZfu=WfPA@mail.gmail.com>
-Subject: Re: [PATCH] soc: add missing MODULE_DESCRIPTION() macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Linus Walleij <linusw@kernel.org>, Imre Kaloz <kaloz@openwrt.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v20 02/13] rtase: Implement the .ndo_open function
+To: Justin Lai <justinlai0215@realtek.com>, Simon Horman <horms@kernel.org>,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, Hariprasad Kelam <hkelam@marvell.com>,
+ Jiri Pirko <jiri@resnulli.us>, Larry Chiu <larry.chiu@realtek.com>,
+ Ping-Ke Shih <pkshih@realtek.com>, Ratheesh Kannoth <rkannoth@marvell.com>
+References: <20240607084321.7254-3-justinlai0215@realtek.com>
+ <1d01ece4-bf4e-4266-942c-289c032bf44d@web.de>
+ <ef7c83dea1d849ad94acef81819f9430@realtek.com>
+ <6b284a02-15e2-4eba-9d5f-870a8baa08e8@web.de>
+ <0c57021d0bfc444ebe640aa4c5845496@realtek.com>
+ <20240617185956.GY8447@kernel.org>
+ <202406181007.45IA7eWxA3305754@rtits1.realtek.com.tw>
+ <d8ca31ba65364e60af91bca644a96db5@realtek.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <d8ca31ba65364e60af91bca644a96db5@realtek.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:HQWoZ1zR902uFm4bsPscR4h5SeyaamFsUAkVv9Cl8KQq08NyzhW
+ 9Dbnm7muODpM/JkLKyK3pdzHHDN9crnYVmb8mMhakJFQ1QWaC0de7E4966E1FIZ0tIjG3Ey
+ fKf5/uCGrjq5JvOYkyXr/cfgLDD/bpciBObRaE+s3la4IvStEm3oQb3s9FjxNCDoaujRYAp
+ 6oUQ6gj+5eKEZV97/y/0g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:YmUCZHo1Yd0=;hAaTHTQxgNJCPZcDGMgj94JTeMO
+ 7yjAb+NNCP/Zud39D1AhLOVlwTCWpPWICtKjPB2/VXixeItg099hoahf4dCBS8r2MWHymV+7L
+ i7npaGN9jDMR4YNqhyG5MW82gOKzYyY9cF128JjBlYSMopnrWDbo5d4lPugoO/CukW/eWV6NL
+ qu3879fhlRqxjzCy4zXicCV+qQoEno1UxEjTUIw3xfvN6hT/aUN0u+on5SWx32E2dWdFpYq3M
+ f7f1qdgiHhoeqgSh/pvTrw9fCgrl3T9BhV8J4CCu4LfbaQjoUNHrdztPx90I0ORCFau0h6TTq
+ mQEIOM9vQHNYSD/7hq3iautK9jGE3pjYrh/DgMDisGGM2uVvPAmk4pj6JtrSif2F2qD8QhBjJ
+ HJ4vaLn3P/FzPIevoxuxAVy5+m8r42y8UC93KdS9Qo4QY1E1+CzAD46Su9CnxqdlgcSZkNJ+I
+ OijVN6/dlvDsZIXZ2F4+uwLJxx7sZ7YbUEGmw8iUA+UDrU+QVAj85aYweDl9SQuIJTa6ITeOc
+ DCZqsEEVfxX0FgtrL44vMvPvS9svVxnT6hqbE0LB83GtCTpTbvm+Go0Qi6+E+KQINxsp7Bj/1
+ EmbruTVBySheUs5sZLddcVE7/L77MzmDnYwIyOvBl8gSaVhbXoT61E242UGZqW/7EIZQrFQB+
+ FT00mp9CZk5uHhN6OARaTNG7rJ4RQtwV5Uwuv+/ktsF7q9TgQtv/K93hMziyyICy7ukr0RC0d
+ 0pZjN/C6pioIc9USTfzevWvIzN2F8ppmi/Nmh7nntogc0D6dv3K3kSors4nnWrtIiG3jVJMfH
+ z+wneR+JaWarQx+FDYE+EP/6aSDzpJNq4rWU4Ov1K1fzU=
 
-On Wed, Jun 12, 2024 at 7:51=E2=80=AFAM Jeff Johnson <quic_jjohnson@quicinc=
-.com> wrote:
+>> I dare to propose further collateral evolution according to available
+>> programming interfaces.
+=E2=80=A6
+> Thank you for your suggestion,
 
-> With ARCH=3Dx86, make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/imx/soc-imx=
-8m.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/ixp4xx/ixp4=
-xx-qmgr.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/ixp4xx/ixp4=
-xx-npe.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/mediatek/mt=
-k-cmdq-helper.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/amlogic/mes=
-on-clk-measure.o
->
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+I became curious how the clarification will evolve further for adjusting
+API usage in some ways.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Yours,
-Linus Walleij
+> but since we still need to survey the new method,
+
+Would you like to take another look at any intermediate application statis=
+tics?
+
+Example:
+Looking at guard usage (with SmPL)
+https://lore.kernel.org/cocci/2dc6a1c7-79bf-42e3-95cc-599a1e154f57@web.de/
+https://sympa.inria.fr/sympa/arc/cocci/2024-05/msg00090.html
+
+
+> we want to use the goto method for this current version of the patch
+
+Goto chains can still be applied for another while.
+
+
+> and make modifications based on Simon's suggestions.
+The change acceptance is evolving also according to known software transfo=
+rmations,
+isn't it?
+
+Regards,
+Markus
