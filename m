@@ -1,41 +1,41 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004FB13DDDA;
-	Tue, 18 Jun 2024 11:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3C61419B3;
+	Tue, 18 Jun 2024 12:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718710244; cv=none; b=EOFixWEwVJqTCOJYedql4QlJG8yfyGRyLeOKqyER6q1aVOij44iiZOHfxlXdLcM410WgkIh2Kl6coSva5BuDvslcp0yyX5r2pk3wEekSne0/+gv7EyiA6My9eqEGzJYXp/AqQlq/64davwaA8ZyEIWhqc0Vpua5G3sAZEvQASOA=
+	t=1718712157; cv=none; b=sOTj1eZNI3Pp3i+eHrTj7HaDlMyryEUn2DyHcNpJ5dqVffTPAbsVN1aYJTys/3/hpZszNBkgb5A0jrlodzDCOSxRrAhMoYEdQW641B86Hw242aiAyoskZpQ8UcLVYqgflMTmcrp6FmYxC0lakQNaB7tDULmFqnwfHGEBRMV1x3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718710244; c=relaxed/simple;
-	bh=Fvq1y+koqj8fOQevp53Pmnpz9AgYuJGBtdWNg1G1Scw=;
+	s=arc-20240116; t=1718712157; c=relaxed/simple;
+	bh=/PDz/xpL0YIwagnMrBVoYHnF3YhYaTqwbvNs6CfbhnA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pbV6kdR2nCnjJb1ik6ZQwdoD/oqI+VLZDJPoK11FzQx72uHMVQBmo4VwwoKCnufq4DBHX2B+lRmRIhR3/9sgwnUmA4OeYkHK1+k4fmmlAw6eNvvhFSaC7YqageN7PPcVN00VNziXq79HPmSI33dTgotwcEqULFssuybzkcF2ebg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=m31V2R7s; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	 In-Reply-To:Content-Type; b=NmUJGC+NvZqzcMzlvjcyBKfxtfq77485Jvr2M3IRWdMER8+WT/z9fJr5CrsgKGeI2svE5BN7tvyeM9qyvp9IDJ3kkyQxIr/sjS03ZlQI+K4ohsP+saiOPE9h6isBIdzowrpg/sBpMWYS9IgJ0rUNUuv926NrH6vSN508FJoNYsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=J59HipBt; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="m31V2R7s"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718710214; x=1719315014; i=markus.elfring@web.de;
-	bh=Fvq1y+koqj8fOQevp53Pmnpz9AgYuJGBtdWNg1G1Scw=;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="J59HipBt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1718712147; x=1719316947; i=deller@gmx.de;
+	bh=KazL8lPyZjhl9SQQly3zXXFrIFGEDfdAjzeR5tlpaJk=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=m31V2R7soGq6GQZ+fiv99i2+9GduwzVKaySyLRE/OTx1VFLkL2D3oEUsyeOWFbQD
-	 tkaJXVq7ZHnChpeezbdBgd48xvelMK+rWNCwrunUznKHfUz0lN/KBGZo0YT5xJxBm
-	 pfTDyQ1V/84BV2dvfF1hyI8L2j8JDh9oa5PVt5M1g64Qg1M/xFhfF56SD10XRNtYq
-	 68gpJRZo+HvL7jdraLFfrq9j/8TOE+jzXLmaeFBTZLWVXhGus4XIDaxXpwhOIZpY/
-	 TtKda8mnJ1UDCE+yTsQm5NFYLY11ncgmMny+xuioApBQTSZ3eOusTDzNoDpGjgSZb
-	 TgzrKRlRThNPR9ZwyQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N6Jxd-1sPtj23usT-00vvRF; Tue, 18
- Jun 2024 13:30:14 +0200
-Message-ID: <3f3f57dc-88c1-44ab-a69a-457633360fbd@web.de>
-Date: Tue, 18 Jun 2024 13:30:09 +0200
+	b=J59HipBtRPfyC8yFgvqH0LDo3UjFbdqWnvh77mR3Y8QNMTyyCgZWbB68WeLqllAH
+	 oMHKaljZb9Cp73CKBPKswaPVcQbc3+CvSAGShjumoqoj/0+Ix5Rc22Jc23hDwnyxL
+	 n0s80aGJSjdDQam8yYIrg4Tj0HXOx6c5In72n3fSdopi57djVYi3uo3GfH73LHXup
+	 iZzNRpitCpDBQKuiBTdGCjG1aiMbLvOoYtch5udkF7xOpL5nEEuWVbdZ5GlO7AiaA
+	 fhEcoqzVFm5jHc+8qRjQ8J2K5oWOeQV0r3OG+C8GGQj5zFXgGRsU18CflOpZ9lNNT
+	 j/JfWRxBsSBwAKigig==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [10.8.0.6] ([78.94.87.245]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mn2W5-1slPS008AR-00hJdM; Tue, 18
+ Jun 2024 14:02:27 +0200
+Message-ID: <edf45156-4ce4-4ab1-a3b8-32d1628feb66@gmx.de>
+Date: Tue, 18 Jun 2024 14:02:25 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,76 +43,111 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [v20 02/13] rtase: Implement the .ndo_open function
-To: Justin Lai <justinlai0215@realtek.com>, Simon Horman <horms@kernel.org>,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
- Andrew Lunn <andrew@lunn.ch>, Hariprasad Kelam <hkelam@marvell.com>,
- Jiri Pirko <jiri@resnulli.us>, Larry Chiu <larry.chiu@realtek.com>,
- Ping-Ke Shih <pkshih@realtek.com>, Ratheesh Kannoth <rkannoth@marvell.com>
-References: <20240607084321.7254-3-justinlai0215@realtek.com>
- <1d01ece4-bf4e-4266-942c-289c032bf44d@web.de>
- <ef7c83dea1d849ad94acef81819f9430@realtek.com>
- <6b284a02-15e2-4eba-9d5f-870a8baa08e8@web.de>
- <0c57021d0bfc444ebe640aa4c5845496@realtek.com>
- <20240617185956.GY8447@kernel.org>
- <202406181007.45IA7eWxA3305754@rtits1.realtek.com.tw>
- <d8ca31ba65364e60af91bca644a96db5@realtek.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <d8ca31ba65364e60af91bca644a96db5@realtek.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] fbdev: amifb: add missing MODULE_DESCRIPTION() macro
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20240617-md-m68k-drivers-video-fbdev-amifb-v1-1-85f74746ecd4@quicinc.com>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <20240617-md-m68k-drivers-video-fbdev-amifb-v1-1-85f74746ecd4@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:HQWoZ1zR902uFm4bsPscR4h5SeyaamFsUAkVv9Cl8KQq08NyzhW
- 9Dbnm7muODpM/JkLKyK3pdzHHDN9crnYVmb8mMhakJFQ1QWaC0de7E4966E1FIZ0tIjG3Ey
- fKf5/uCGrjq5JvOYkyXr/cfgLDD/bpciBObRaE+s3la4IvStEm3oQb3s9FjxNCDoaujRYAp
- 6oUQ6gj+5eKEZV97/y/0g==
+X-Provags-ID: V03:K1:nzU49krb0P0srJ9sw/bU4rEepCemcESpPIGap0VolZSYs0A5kns
+ ITa1oudBheWDHYSOTYWouEQ76Pr0A7Ql24A5LY2lo/QSLhb2lmqjmFVBB9/g2D+yyJD2x2Q
+ K+oocN03dL3OqfAoX6baAMKe+glAgES6csWq9NWiwWX/nozz4j2Jc6+J1muBRd2/x6MM5hQ
+ r7LFf8WTUd8EhtjI30IBw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YmUCZHo1Yd0=;hAaTHTQxgNJCPZcDGMgj94JTeMO
- 7yjAb+NNCP/Zud39D1AhLOVlwTCWpPWICtKjPB2/VXixeItg099hoahf4dCBS8r2MWHymV+7L
- i7npaGN9jDMR4YNqhyG5MW82gOKzYyY9cF128JjBlYSMopnrWDbo5d4lPugoO/CukW/eWV6NL
- qu3879fhlRqxjzCy4zXicCV+qQoEno1UxEjTUIw3xfvN6hT/aUN0u+on5SWx32E2dWdFpYq3M
- f7f1qdgiHhoeqgSh/pvTrw9fCgrl3T9BhV8J4CCu4LfbaQjoUNHrdztPx90I0ORCFau0h6TTq
- mQEIOM9vQHNYSD/7hq3iautK9jGE3pjYrh/DgMDisGGM2uVvPAmk4pj6JtrSif2F2qD8QhBjJ
- HJ4vaLn3P/FzPIevoxuxAVy5+m8r42y8UC93KdS9Qo4QY1E1+CzAD46Su9CnxqdlgcSZkNJ+I
- OijVN6/dlvDsZIXZ2F4+uwLJxx7sZ7YbUEGmw8iUA+UDrU+QVAj85aYweDl9SQuIJTa6ITeOc
- DCZqsEEVfxX0FgtrL44vMvPvS9svVxnT6hqbE0LB83GtCTpTbvm+Go0Qi6+E+KQINxsp7Bj/1
- EmbruTVBySheUs5sZLddcVE7/L77MzmDnYwIyOvBl8gSaVhbXoT61E242UGZqW/7EIZQrFQB+
- FT00mp9CZk5uHhN6OARaTNG7rJ4RQtwV5Uwuv+/ktsF7q9TgQtv/K93hMziyyICy7ukr0RC0d
- 0pZjN/C6pioIc9USTfzevWvIzN2F8ppmi/Nmh7nntogc0D6dv3K3kSors4nnWrtIiG3jVJMfH
- z+wneR+JaWarQx+FDYE+EP/6aSDzpJNq4rWU4Ov1K1fzU=
+UI-OutboundReport: notjunk:1;M01:P0:9mnA1uuzbmQ=;iLHqUU7bXPbWF/ysGPJ9+ymH6SA
+ akJxYli97gjGeOv3eR4lsKTHjRwwRvdjrzEiAlWvVQJZ/2xRn2xylmOe7jERUT7T0UZ1nDs8v
+ gjXwQ+KbrNu+n80/I71Tv8AV1p0kezK0mlPw7Iz84n2nEbm0s1FUOP3JROqNyCz/aU693Szng
+ frSm1eae6nN7bJyo4XM/LnR5/MQ7mCT8iI30KuYBtfe4q08HST1eMJJTLoUcdhZ38sJFO5C8O
+ rTZkmhaILJbNcZncan7uhksv7KkzJ+gXeO9l1QGKkUjpxeJ+Cpe+VvdB8jPy7pyPYVdMoRNKg
+ 41p7VLAH3Bx4Dz4gWmxWLS1Od3OZ2WvUvHDF8lVi3rVifOz7YvsTULevVrvjq4AV4yt3V94+c
+ nuVfbtqfGzxx0L+tvtR/4qMQqS7kv1LjfMfXVxHnTxVyw6BR6fvttldO0QKfatbp8Bywg7FB0
+ Xboez7nUvbKStCF5YwROqrlJbjBylZh6brMM0rQeL3sBdymvdJip1b91o8HSDyTBYv7jCgJrE
+ 74mz76DMngivFotLyicuXespSmc7/kIj3gF8Z2WIN7yYuGbJe2DZ12hfrLgjLvf4UiX0vBrYH
+ /QoYwKRK8AYzCXLd4sehl3Zd12dmzXqiARzJq48lZNjt6/VqcHd/erUgms5odIXDzkRau0oGC
+ yPR5IaHeeE0EKZkx1Iqcq8qaEVPJen39V40kXzZo2WWPforM59B6ImZJk6XCfk05mxeoigrll
+ y5+jE2/DchfC4hvpvZw07HuRYQLar9c5J9M8269Lq2nVdftfSd8Ryi/64/J8enfsmwqbbV9tT
+ rUrEYSEKGUBrH2/FKggR2CCYfQ8iAmN/BSvaxHzM3fd/I=
 
->> I dare to propose further collateral evolution according to available
->> programming interfaces.
-=E2=80=A6
-> Thank you for your suggestion,
+On 6/18/24 05:14, Jeff Johnson wrote:
+> With ARCH=3Dm68k, make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/am=
+ifb.o
+>
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-I became curious how the clarification will evolve further for adjusting
-API usage in some ways.
+both patches applied.
 
+Thanks!
+Helge
 
-> but since we still need to survey the new method,
+> ---
+>   drivers/video/fbdev/amifb.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/video/fbdev/amifb.c b/drivers/video/fbdev/amifb.c
+> index 305f396c764c..132638240521 100644
+> --- a/drivers/video/fbdev/amifb.c
+> +++ b/drivers/video/fbdev/amifb.c
+> @@ -3782,5 +3782,6 @@ static struct platform_driver amifb_driver __refda=
+ta =3D {
+>
+>   module_platform_driver_probe(amifb_driver, amifb_probe);
+>
+> +MODULE_DESCRIPTION("Amiga builtin chipset frame buffer driver");
+>   MODULE_LICENSE("GPL");
+>   MODULE_ALIAS("platform:amiga-video");
+>
+> ---
+> base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
+> change-id: 20240617-md-m68k-drivers-video-fbdev-amifb-3f65d4a6ed79
+>
 
-Would you like to take another look at any intermediate application statis=
-tics?
-
-Example:
-Looking at guard usage (with SmPL)
-https://lore.kernel.org/cocci/2dc6a1c7-79bf-42e3-95cc-599a1e154f57@web.de/
-https://sympa.inria.fr/sympa/arc/cocci/2024-05/msg00090.html
-
-
-> we want to use the goto method for this current version of the patch
-
-Goto chains can still be applied for another while.
-
-
-> and make modifications based on Simon's suggestions.
-The change acceptance is evolving also according to known software transfo=
-rmations,
-isn't it?
-
-Regards,
-Markus
