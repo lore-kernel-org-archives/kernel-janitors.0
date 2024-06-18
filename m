@@ -1,108 +1,95 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41F841C89;
-	Tue, 18 Jun 2024 17:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EACC15E5CF
+	for <kernel-janitors@vger.kernel.org>; Tue, 18 Jun 2024 18:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718733400; cv=none; b=L0qhCWVclvhDqkPme3839q22S6o5kir18933JSCEHR4Snoz7vGzx9LN9LCz4NXUuF65r/OdfKgdhR/TAL6eJKntMDqH5KVKmQWPuGZFvptOadYqVVfQ/nkgaRMVQz457aWD9dnBnI/7QeaDwCFIGpWg2BPrZuvvEq0xkLghwWS4=
+	t=1718736265; cv=none; b=Fq923Q88j+v0ae+wqB7fR1Coeeu/sqfrGKrwkAe8rhtSKecXx3gBf2By3T1fLBbn/L7yJ7eDSfGHLRNBdCP2KIvG/+4W/jRt9CxbWMMiB7cs4aynyPBfwOgm6miO+F18aW+vasWpIsLddhF75iMeVba6NATfEE/ECmMPqXiiVWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718733400; c=relaxed/simple;
-	bh=Km919CFyw8OSShS6B8IYDf17coDJFN1nYTJygYZHhfM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=SonG1x63K0pe49OQPWlt5YebLngny+gF5mE20v8Wa5ru3yvtOBu8ypgawM6DBbrE48saf1MBtWC5N/KgGP8Dns3639EMbD9YavPALcuNSCcdIwcR/e89TQllTDy+xY7lrZScYV8SGZPow0vnqvraCITskx7wh/h0Kn75ijIroPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XE5RgZ3L; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718736265; c=relaxed/simple;
+	bh=8EAlZ728fwAoajTGax/Ncng82hLDLRjznjKwi43NYEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fKrEhoHFku9ZYKGtuU7JrI/WZ1SStk5+7j3/3CvOziKdBn/KjMNyxdJc0o9MGCqM8JhVMAdemumh+fNZiAtX9lPTUskOKzHzgLLuDMWSMgCv2IAisNny3N/zujfbWJH/b8/YVcpgRPpunMCVutQHPsfptGTSLJAPA8hdDQ/rCSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TdBE1V48; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XE5RgZ3L"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ICTBwE011398;
-	Tue, 18 Jun 2024 17:56:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=GtT8QPt+w7lXq+BEYNDUO/
-	UJ1vTg+doTOXgVkhie5Yo=; b=XE5RgZ3LNY+lkt8iNx2zx1CG879ILnW+bGV+KZ
-	QbSJqct+5XXYVqUbe8SxDsH+Mc0v5hcrpqwSUqRqAidmGdbTmqHPbCnQc1jPA0XJ
-	k0g5wLlabAzvwTOWlEygmHw1wKK5ula5Q3+pQky9+DcesWYyxLsADbIdeJZqN/MX
-	z9gBHJu3MqXyI7lhDA5QGK5cfE+ek++4S5DaNfyfs/Mfo/xho1Sszz4ddVK86yr9
-	TH+lA1bD3W5So72+lZIM4wxUeBS1pBAae/sIS2UHBhm7+263GOD24LNODYPxopXE
-	1lrPTOZjkLmt67xLsnoscjOF6oMBFBSS2ipvCGhNKtLxUphQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yu24n22vb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 17:56:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45IHuTbm026216
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 17:56:29 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
- 2024 10:56:29 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 18 Jun 2024 10:56:28 -0700
-Subject: [PATCH net-next] net: smc9194: add missing MODULE_DESCRIPTION()
- macro
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TdBE1V48"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4218008c613so43994345e9.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jun 2024 11:44:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718736262; x=1719341062; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8YmtIThoWHDNf2Fuz82v5hAeQY8x9PJlXOA1daw3WoE=;
+        b=TdBE1V48xu80DA4mvrlW+yXbeiCrJmu+GaVZkxzKLObeeYFFAse4BrEJXumDqQ+YFM
+         bjVIJJWdpYDu0eEwYsnd6oYGMMJTh29Zr8g5wLw+nipw5BQYLwy16AWWZnm6bMV987u2
+         +Ji0Idnuwl0GG1MXkExqczw72/iNMBzXk+kev1c+gMSWzhlV4ext/Xnm2WNrlbUUSSfT
+         gUX5qDrTGFSzGjkjv1WLSeNDwQSbtMpT50bzp8kFj1K/VF1VIHXwdN2aS2zav3Ybqqdj
+         sS9e6xnMO3xqjUcQz0RuVD6UxMzV8YtK7QlBAyz9T9Ai27fKy+mTMz3M/6Bx2Z7rhK3y
+         /qcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718736262; x=1719341062;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8YmtIThoWHDNf2Fuz82v5hAeQY8x9PJlXOA1daw3WoE=;
+        b=EtR/Ur5o0tgoTjfGav4t7BgDaLaYYpPzKGr9EbJYmSpSczSsSGCWNnYfUXoWHnP5AM
+         pbLqLQyL7FpxaJKsfn5hi5hMYiBANQazJZ7lWqHKx6l8XF0tfmb1mpmeaxZIaP3o+Z38
+         m2zl1fV/+ecMfmQ9y/uIANqG78KU54uz0jhRCokMDl2q/m8XaTIw8m5ZiptWLRpS+gEz
+         CAeZcZVEQQ2nXEMrvtrDPnEcjCsxqvwh48baQz2AaVbSrt6tBjuiIJl326f++p1CjN3p
+         gXpXsN5SEuNhCkdD4maKuquMCNhSFbMXCx3MW5iAD8jO/AIksoB9LyGRMGw3PSi2eN5a
+         9HmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwvaMHMEgEfWK2t3MYt4Y5LC8NB/H9oltrgOGKl1uNJv/S09A+1+Biouss7KOUyvziSezeACdDRYHuRWMEAE7jVPRqLvqtTn6WBClXFDzo
+X-Gm-Message-State: AOJu0YyTXfsEKxXmN8ewDafP+nwK6aOZVC4ajbaJ6wiN3Jzbjir/2i/Y
+	63dfjKnhZ7Fw3mRb5uyQLgaTzQQs4davSkibDEv+b5YucFXQ32Iznfbrf+RB2fj5HxHgFjF3ZcT
+	D
+X-Google-Smtp-Source: AGHT+IFOPmmL9xR+r57H15PcFrByC+dDDkTEnkkD9qQAMSmDls4Jrd8tVkl363ch/XvrYNrZXNiQ4g==
+X-Received: by 2002:a05:600c:acc:b0:421:eed3:5991 with SMTP id 5b1f17b1804b1-42475297adbmr2774925e9.32.1718736261769;
+        Tue, 18 Jun 2024 11:44:21 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f61277fesm198937395e9.21.2024.06.18.11.44.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 11:44:21 -0700 (PDT)
+Date: Tue, 18 Jun 2024 21:44:17 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Andrey Krechetov <apkrechetov@miem.hse.ru>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	apkrecheto <apkrecheto@mts.ru>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fix typo in pid.c
+Message-ID: <78f86a5a-3889-4f6c-a2bd-49dc2d3b4998@moroto.mountain>
+References: <20240617220206.2788261-1-apkrechetov@miem.hse.ru>
+ <20240618140421.GB13758@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240618-md-m68k-drivers-net-ethernet-smsc-v1-1-ad3d7200421e@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAEvKcWYC/x2NwQqDMBBEf0X23AUVEemvlB5iMtalTVp2UwmI/
- 97Y2zxmmLeTQQVG12YnxSYm71ShuzTkV5ceYAmVqW/7oR27iWPgOE5PDiob1DghM/IKPYNF8ww
- /uH7p2nEJoPrzUSxS/o4bnauEkulem9kZeFaX/Ho6XpK+haOzDKXj+AECI2x7nAAAAA==
-To: "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: eZWjci9KWdPMBfjRpA_0c2gx2HSfFRaL
-X-Proofpoint-ORIG-GUID: eZWjci9KWdPMBfjRpA_0c2gx2HSfFRaL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- lowpriorityscore=0 mlxscore=0 mlxlogscore=999 impostorscore=0
- priorityscore=1501 malwarescore=0 spamscore=0 clxscore=1015 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406180133
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618140421.GB13758@redhat.com>
 
-With ARCH=m68k, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/ethernet/smsc/smc9194.o
+On Tue, Jun 18, 2024 at 04:04:21PM +0200, Oleg Nesterov wrote:
+> Hi Andrey,
+> 
+> thanks, but I guess this should be routed via kernel-janitors?
+> CC'ed, and add Alexey.
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+There used to be a trivial tree for typos but it died.  It has to go
+through the regular ./scripts/get_maintainer.pl people.  It's Christian
+Brauner's tree but CC everyone from get_maintainer.pl.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/net/ethernet/smsc/smc9194.c | 1 +
- 1 file changed, 1 insertion(+)
+But there are a number of issues with the patch.
 
-diff --git a/drivers/net/ethernet/smsc/smc9194.c b/drivers/net/ethernet/smsc/smc9194.c
-index af661c65ffe2..e2e7b1c68563 100644
---- a/drivers/net/ethernet/smsc/smc9194.c
-+++ b/drivers/net/ethernet/smsc/smc9194.c
-@@ -1501,6 +1501,7 @@ static void smc_set_multicast_list(struct net_device *dev)
- #ifdef MODULE
- 
- static struct net_device *devSMC9194;
-+MODULE_DESCRIPTION("SMC 9194 Ethernet driver");
- MODULE_LICENSE("GPL");
- 
- module_param_hw(io, int, ioport, 0);
+1) The subject is wrong (no patch prefix)
+2) The From address should have the full name
+3) The Signed off should have the same name as well
+4) The commit message is missing.  It could just say something simple
+   like "Add the missing 'd' to 'already'."
 
----
-base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
-change-id: 20240618-md-m68k-drivers-net-ethernet-smsc-ec4a2f106fde
+regards,
+dan carpenter
 
