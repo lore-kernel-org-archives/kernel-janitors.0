@@ -1,108 +1,153 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E951941C89;
-	Tue, 18 Jun 2024 17:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB551CAB3;
+	Tue, 18 Jun 2024 17:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718732525; cv=none; b=Ch3leIoDoJom8Sy8HVeygin3OAEASeRYc2ustm4PIogtr5QJiwJ6FTw5yuqbH1eSQxnsatGsNRZYciVc9BvSk1IXSWI0GactSoJERY1MH0adv/v++avHjlMRF3mbSG89oXw1H8Bf/CncrBH628Y6g4Yqb44vpXxTlAp6UHh9EL4=
+	t=1718733192; cv=none; b=kSnnQIlXIyDZyMZIYrelGg5GpzzE6UVIcyin8UH+Cn7AikQJZPF1edfIg/CtsI+3QhrLSzWz/BdGb4Lhqgcik4J3r6Bbu1xp4dfhvaAk5tE3UbgB3lG0SGUE+s+KKQ2jmG0EiCcr8SJfHHDDLh31KRjqUovHz7Jsg2z5iI6Hb6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718732525; c=relaxed/simple;
-	bh=XJL+Fhe5nKB+1xkBdbIdnAo2+nyfuaGX+VNEVe3DdqY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=sbkEeiw9g/JxUv3ES9a22K0NGE6WnZ84b29Mnuu+ffg8L1Izpnr2d3juNX5Z2aO1isKTc0IgkJh0Zk0+08/EypHIQiiT2JlmI8sVd108s6q4H00i6j8zmqzFBnTxVR9DThfEruQ34TlX9LQtxI0BA+2l3+hZDcI3xudX4NLPB+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RnqZX+FH; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718733192; c=relaxed/simple;
+	bh=1oG2z1L2HMCk/Y21GlrePdx7AXyrdRLAZGfQqNCTU9I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hU2aa3P504iXMC1l6vLhXLIbQNepjd4AH8WLt94DPsNA7mEIN/5HYCHTkxQ6HT3Gci4rhNr5y0GLapeSQoG4woMhDbp8Lt9x2xb2Jgw5EUmVHAe2ppeVYx99Ci+xFayR5+C3nShY+YC/V11QrtUop5/rAzv6agxBm4meoPyyaMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QkOp7f3+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RnqZX+FH"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IGM3Ck021307;
-	Tue, 18 Jun 2024 17:41:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=62THTjkwAl0xCY97eg1FIS
-	xzP7RhV6/9iENORIzA4mE=; b=RnqZX+FHdKZIajauwAEAi1HbmIApAllxkyxnaK
-	3HBSdbjebU3GaDzWST7Gk//heDYXiS4zNGuL/Xb117uLc69v84ZymbcOKSGBhpSM
-	CqnCfxfAajX7zY1jTZ7LKABC52flepEOMP2CGnjC/kK3vvpic59/8eXc1UVTFvlL
-	TsW6gGoDFJYmqqdPZfQJHN7ftXyyuoAMJzDtFF53TalKY2to0Z5b0kOQ9eNll2Im
-	tfFBqJGDSGe9sKSyN0NIcMPp6XhH5umfR6XVsuQIh8neJtJQa9ntnc3LoPykfs2K
-	Ml4ASLvkPmrHiG2BXjR0aT0X9zQcHyE/MBKuZdkRfMdsjHWg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ytx3wtf6n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 17:41:56 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45IHfttP014258
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 17:41:55 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
- 2024 10:41:55 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 18 Jun 2024 10:41:54 -0700
-Subject: [PATCH net-next] net: ethernet: mac89x0: add missing
- MODULE_DESCRIPTION() macro
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QkOp7f3+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 078A0C3277B;
+	Tue, 18 Jun 2024 17:53:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718733192;
+	bh=1oG2z1L2HMCk/Y21GlrePdx7AXyrdRLAZGfQqNCTU9I=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=QkOp7f3+vMry8cAs4SIc1hm/gEn1nrjiwL7M2c0KKPR9yiamR54iaHuuCRGK7piGG
+	 +n42AXTyIq0ngAFYyq7228+ThonPylf7E7oMdT2aYR9Pj835uWmAGVPiU6S9gfNyhB
+	 yfkIq9lqKnRI9OARD5J0WUk6ozDPQ5dA8rkdgqCxf/WalWf2keAEK6iXZgRM6fR4Ch
+	 vHY9axBAPsFEWk9+VWTA6AYH4XWKV//PM6aKm/qaUrDDo0afnO6WO7QxPGZLE4pl9Y
+	 oz/l1kLMvMAbKJ2LAF3HRzkHJxiudjKsFXTmeXVFEuWrvtx/MztlGXtyweNvs6fNs6
+	 OSLwxNqjqPupw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id A0B31CE05B6; Tue, 18 Jun 2024 10:53:11 -0700 (PDT)
+Date: Tue, 18 Jun 2024 10:53:11 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Uladzislau Rezki <urezki@gmail.com>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
+	linux-trace-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
+	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
+	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	kasan-dev <kasan-dev@googlegroups.com>
+Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <6dad6e9f-e0ca-4446-be9c-1be25b2536dd@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <08ee7eb2-8d08-4f1f-9c46-495a544b8c0e@paulmck-laptop>
+ <Zmrkkel0Fo4_g75a@zx2c4.com>
+ <e926e3c6-05ce-4ba6-9e2e-e5f3b37bcc23@suse.cz>
+ <3b6fe525-626c-41fb-8625-3925ca820d8e@paulmck-laptop>
+ <6711935d-20b5-41c1-8864-db3fc7d7823d@suse.cz>
+ <ZnCDgdg1EH6V7w5d@pc636>
+ <36c60acd-543e-48c5-8bd2-6ed509972d28@suse.cz>
+ <ZnFT1Czb8oRb0SE7@pc636>
+ <5c8b2883-962f-431f-b2d3-3632755de3b0@paulmck-laptop>
+ <9967fdfa-e649-456d-a0cb-b4c4bf7f9d68@suse.cz>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240618-md-m68k-drivers-net-ethernet-cirrus-v1-1-07f5bd0b64cb@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAOHGcWYC/x2NSwrDMAxErxK0riA2IQ29SunCH6URrd0iOSEQc
- vfa3c1jhnkHKAmTwq07QGhj5U+uYC4dhMXlJyHHymB7O/SjmTBFTOP0wii8kShmKkhlIWkhsMi
- q6IK1vTFXb+YI9ekrNPP+t9yh7TLtBR618U4JvbgclmZ5c153TE4LCZznD8cv+r+eAAAA
-To: "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: xZxw18AlH8Y1bSt6zfE-eOYm30qntAWL
-X-Proofpoint-ORIG-GUID: xZxw18AlH8Y1bSt6zfE-eOYm30qntAWL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 clxscore=1015 mlxlogscore=986 suspectscore=0 mlxscore=0
- spamscore=0 bulkscore=0 priorityscore=1501 phishscore=0 malwarescore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406180131
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9967fdfa-e649-456d-a0cb-b4c4bf7f9d68@suse.cz>
 
-With ARCH=m68k, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/ethernet/cirrus/mac89x0.o
+On Tue, Jun 18, 2024 at 07:21:42PM +0200, Vlastimil Babka wrote:
+> On 6/18/24 6:48 PM, Paul E. McKenney wrote:
+> > On Tue, Jun 18, 2024 at 11:31:00AM +0200, Uladzislau Rezki wrote:
+> >> > On 6/17/24 8:42 PM, Uladzislau Rezki wrote:
+> >> > >> +
+> >> > >> +	s = container_of(work, struct kmem_cache, async_destroy_work);
+> >> > >> +
+> >> > >> +	// XXX use the real kmem_cache_free_barrier() or similar thing here
+> >> > > It implies that we need to introduce kfree_rcu_barrier(), a new API, which i
+> >> > > wanted to avoid initially.
+> >> > 
+> >> > I wanted to avoid new API or flags for kfree_rcu() users and this would
+> >> > be achieved. The barrier is used internally so I don't consider that an
+> >> > API to avoid. How difficult is the implementation is another question,
+> >> > depending on how the current batching works. Once (if) we have sheaves
+> >> > proven to work and move kfree_rcu() fully into SLUB, the barrier might
+> >> > also look different and hopefully easier. So maybe it's not worth to
+> >> > invest too much into that barrier and just go for the potentially
+> >> > longer, but easier to implement?
+> >> > 
+> >> Right. I agree here. If the cache is not empty, OK, we just defer the
+> >> work, even we can use a big 21 seconds delay, after that we just "warn"
+> >> if it is still not empty and leave it as it is, i.e. emit a warning and
+> >> we are done.
+> >> 
+> >> Destroying the cache is not something that must happen right away. 
+> > 
+> > OK, I have to ask...
+> > 
+> > Suppose that the cache is created and destroyed by a module and
+> > init/cleanup time, respectively.  Suppose that this module is rmmod'ed
+> > then very quickly insmod'ed.
+> > 
+> > Do we need to fail the insmod if the kmem_cache has not yet been fully
+> > cleaned up?
+> 
+> We don't have any such link between kmem_cache and module to detect that, so
+> we would have to start tracking that. Probably not worth the trouble.
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Fair enough!
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/net/ethernet/cirrus/mac89x0.c | 1 +
- 1 file changed, 1 insertion(+)
+> >  If not, do we have two versions of the same kmem_cache in
+> > /proc during the overlap time?
+> 
+> Hm could happen in /proc/slabinfo but without being harmful other than
+> perhaps confusing someone. We could filter out the caches being destroyed
+> trivially.
 
-diff --git a/drivers/net/ethernet/cirrus/mac89x0.c b/drivers/net/ethernet/cirrus/mac89x0.c
-index 887876f35f10..84b300fee2bb 100644
---- a/drivers/net/ethernet/cirrus/mac89x0.c
-+++ b/drivers/net/ethernet/cirrus/mac89x0.c
-@@ -554,6 +554,7 @@ static int set_mac_address(struct net_device *dev, void *addr)
- 	return 0;
- }
- 
-+MODULE_DESCRIPTION("Macintosh CS89x0-based Ethernet driver");
- MODULE_LICENSE("GPL");
- 
- static void mac89x0_device_remove(struct platform_device *pdev)
+Or mark them in /proc/slabinfo?  Yet another column, yay!!!  Or script
+breakage from flagging the name somehow, for example, trailing "/"
+character.
 
----
-base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
-change-id: 20240618-md-m68k-drivers-net-ethernet-cirrus-ac220117b1fd
+> Sysfs and debugfs might be more problematic as I suppose directory names
+> would clash. I'll have to check... might be even happening now when we do
+> detect leaked objects and just leave the cache around... thanks for the
+> question.
 
+"It is a service that I provide."  ;-)
+
+But yes, we might be living with it already and there might already
+be ways people deal with it.
+
+							Thanx, Paul
+
+> >> > > Since you do it asynchronous can we just repeat
+> >> > > and wait until it a cache is furry freed?
+> >> > 
+> >> > The problem is we want to detect the cases when it's not fully freed
+> >> > because there was an actual read. So at some point we'd need to stop the
+> >> > repeats because we know there can no longer be any kfree_rcu()'s in
+> >> > flight since the kmem_cache_destroy() was called.
+> >> > 
+> >> Agree. As noted above, we can go with 21 seconds(as an example) interval
+> >> and just perform destroy(without repeating).
+> >> 
+> >> --
+> >> Uladzislau Rezki
+> 
