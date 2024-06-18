@@ -1,59 +1,78 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9116917F3;
-	Tue, 18 Jun 2024 00:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995561CD29;
+	Tue, 18 Jun 2024 01:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718669672; cv=none; b=r6U1xq05EmwOS/U9y4OSKJKdHtWf+B2NsAc0yPsyui2vnwm8UD2ZGP7X5Df+CAdAYlR5m1ZTaOjvR5/Hj+18cbspZ/NJc99tUAOlJZhGDCREY9DeIUkzfZiQJZG2zPBYbcFV2aVnIixLy80CVBuTGboYO7eu89p9XTJ3ngBo/9A=
+	t=1718673031; cv=none; b=jhpXKnmqsRsPwG16ncxFIdhBIQkx5iXpYee21WhgpLktdItvZS/wHfNhU+RCww9mZ/lzpuwayIfgICCEuQLXJFUuPtOSRv3j28+8DFT2mv6TFcfJ9zGgEI2jSQ20id7TItL81Zzim/YCJTg+vu6dnudUMwTJfQyUIaayQjEe4fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718669672; c=relaxed/simple;
-	bh=AqCOcEd4ls31i1LUK6L8hUCY0cozFi8uvOkLyRI3fsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EcvtZC3AGatWLbACBWjYUpq2UAKTpCa8sKQGYMY/1BzZ/u2vqvzSGBt0pfyDq+fQ8RqJk/iQnw6u+/QeCZ53dyYAoLZAo1XyXRoORWmppoQ2p41j/PWJvs1K28RPq/yg5HMjcUjI/YO4ooC9r87JGnQus5sghAzACXHfJYbAYfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqZCyrVZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718673031; c=relaxed/simple;
+	bh=xHsznYbqkDWmLLh0WPB8c2toLHwqTrLGNRNxcwScrdE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=RoSb5uIB4+ivX3sy2I3h3nK/tvuCrKiqUt1LtR07cgfohzsmL6tEO8YAJR+tf7ePGI8Azenkz2f9n2mnVAsNj6fotyIk9ohEtEzNfwXhaDqqwtKqr00O9wpLOdkOwOIII8iQvlfXtJl9yVYBFoPdDhOKofejW9N1HYFqlFw8nWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WKNqV2ig; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqZCyrVZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAD73C4AF48;
-	Tue, 18 Jun 2024 00:14:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WKNqV2ig"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EA32CC4DDEC;
+	Tue, 18 Jun 2024 01:10:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718669672;
-	bh=AqCOcEd4ls31i1LUK6L8hUCY0cozFi8uvOkLyRI3fsI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EqZCyrVZgYgqsUMwSSwtx7EqDU5vMEaRhInCp1Q0EFOD8csIBHGM9Zr8QvVL4YXWU
-	 7LICNb9CLVcQrH3Gly2FM45p6R9OErQZZRqklvA0/iEa81kgyG5AIbMg1FdumPsalj
-	 NyHVeKMw7xqIaTjnZM9EySLHGN1MczKhrzXUCoxxQHGEtt+lflkcgA7D0/c53KHrPn
-	 hCfI8Wz5fKgQC33/5Oy+6DD7KrG873bJwoytwSX20cdWj1sOdnHD8VjvKccZbVst65
-	 nN/ims8YxA/+5LWQNK/sViGuuUZ4j9YxFq1x5O+LII5qr+DIlPFdkwVvEhrvC1x1Oo
-	 Bp7SRacjfw4iw==
-Date: Mon, 17 Jun 2024 17:14:30 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jiri Pirko <jiri@resnulli.us>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, Jose Abreu
- <Jose.Abreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] net: dwc-xlgmac: fix missing MODULE_DESCRIPTION()
- warning
-Message-ID: <20240617171430.5db6dcd0@kernel.org>
-In-Reply-To: <ZnAYVU5AKG_tHjip@nanopsycho.orion>
-References: <20240616-md-hexagon-drivers-net-ethernet-synopsys-v1-1-55852b60aef8@quicinc.com>
-	<ZnAYVU5AKG_tHjip@nanopsycho.orion>
+	s=k20201202; t=1718673030;
+	bh=xHsznYbqkDWmLLh0WPB8c2toLHwqTrLGNRNxcwScrdE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=WKNqV2iga9Rk+7Xye0GW/G5/Plexs5kpkpO5Ia0CJfSq5Z12964flAuq9ESC2K5zm
+	 xGWOeSTXdD0yQLu/QEZNIggINZDEnAxYYAmPzZjErY2UDN/U5TGyU+PjO3Hy3r6qC/
+	 2stf6zvIpXtyYa7OMc7d2vR9bBrfa416uN+JuIIvSP+d6dCkhxn8pbrxwOh32rFqFx
+	 WttpwwgPg3vVbmAoPVqou6XtcyWMHp8am1UVZ18oFzQ18EMAtr7GDrIYJ/l6hqQeSu
+	 I1YqUd5QHXgHgNqraXiKa+7zohFR0/4r/8h0emEGOwpfGygo91GYrqXkyAuRtoBvkh
+	 EPdebcz5ZFrrA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E01A4C4166F;
+	Tue, 18 Jun 2024 01:10:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: dwc-xlgmac: fix missing MODULE_DESCRIPTION() warning
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171867302991.10892.6137229238136764379.git-patchwork-notify@kernel.org>
+Date: Tue, 18 Jun 2024 01:10:29 +0000
+References: <20240616-md-hexagon-drivers-net-ethernet-synopsys-v1-1-55852b60aef8@quicinc.com>
+In-Reply-To: <20240616-md-hexagon-drivers-net-ethernet-synopsys-v1-1-55852b60aef8@quicinc.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Jose.Abreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 17 Jun 2024 13:04:53 +0200 Jiri Pirko wrote:
-> Looks okay. Missing "Fixes" tag though. Please add it and send v2.
-> Also, please make obvious what tree you target using "[PATCH net]"
-> prefix.
+Hello:
 
-I've been applying these to net-next lately, TBH.
-Judging by the number of these warnings still left in the tree we are
-the only ones who care.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Sun, 16 Jun 2024 13:01:48 -0700 you wrote:
+> With ARCH=hexagon, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/ethernet/synopsys/dwc-xlgmac.o
+> 
+> With most other ARCH settings the MODULE_DESCRIPTION() is provided by
+> the macro invocation in dwc-xlgmac-pci.c. However, for hexagon, the
+> PCI bus is not enabled, and hence CONFIG_DWC_XLGMAC_PCI is not set.
+> As a result, dwc-xlgmac-pci.c is not compiled, and hence is not linked
+> into dwc-xlgmac.o.
+> 
+> [...]
+
+Here is the summary with links:
+  - net: dwc-xlgmac: fix missing MODULE_DESCRIPTION() warning
+    https://git.kernel.org/netdev/net-next/c/0d9bb144276e
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
