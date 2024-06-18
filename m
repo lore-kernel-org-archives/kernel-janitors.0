@@ -1,134 +1,91 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F6613E40D
-	for <kernel-janitors@vger.kernel.org>; Tue, 18 Jun 2024 07:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E273C78685;
+	Tue, 18 Jun 2024 07:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718694061; cv=none; b=ZNhOaHBS8OV63rQpSfU0dfj3w6IY0EDalymrSrrjLnruIHkT/Q+tnGptUxiIc2qPUNxOhGCaIG1HeBtAnORTRZdcGSvVZgO/kXnrrswwAkVeBJlNaMUvZb/SitEV58SvRa5cccrMxjW33TJpfn2ENjXtHJ1Z4hiyiT34yJGRObM=
+	t=1718694892; cv=none; b=d5GSkQiKYWZEssYUXhYnpYdMxOtp+uKwA37EKetzDpVi5FOzI2QYvFuoF02PONOM0ecQl6Dkiwffgb8WPmGMxp0BShhDYUnhRfrA0VgVd1Liut6whwBSKJhJ8a0KzrsZBCfP9lskL4D6VMGEN20qSm0tjBqk1rgRFKG0Uq8qupA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718694061; c=relaxed/simple;
-	bh=bygB13U/fPkTwSJhv17fEws+pWQHglyY/Xsdrm7v/+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jYBIwSXBfzkfpc5NOwzCfJ8O2XsV3SuDlbsvlJyziWCILEWI0c7bujCYroeFINCGz7DOdiz9PA4xtvrPUtJ/9M/7BqUdu+mfQyt7nGzf1ZM60Xxy3/7y1JwpTZ6N3dwyX3EV25+4kGLNeI+7jc6ZDZe9xPGJxGCVFJNStRg2yno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J1Q0JQoS; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J1Q0JQoS"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3609565a1bdso1526960f8f.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Jun 2024 00:00:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718694058; x=1719298858; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v0a5p1bD0AyssKGKB5WnIImRaJI9ITejqF9cQEG0YuY=;
-        b=J1Q0JQoS4iJ1v/ozqpomg5/bsAU1zXtxV0sRI8h/AN7TmLBUNL0CDiL9iAQpOB2woJ
-         b48GHcEvQ4zz0ZldQ/d5PHw09OOJuluH/qS7k8yYyMk0PwZOaCZyxaQOADpFG57Gc64w
-         2aofrOki5kzfoyN822AGWWaTySQpP+12uB+MaGOKR8125OHtLT7jbDIbxLH9T+MzfArZ
-         JUSdmeWWzM5MIROmEVMt8WffWW6GzMsQ1q1qdYwpRms7Oy++72s+L8+amXLwsq8Ao3eY
-         G9HuGN2/HihoBL8wtN60dZnf6YEbOxxd/LtXzEC2f3KMVPCPKSE/7Xb8vbgSP/hsVdij
-         0zvA==
+	s=arc-20240116; t=1718694892; c=relaxed/simple;
+	bh=MZfw96ZY4lyuDL1eut5U5Wp4+N8ISP/QZHIF+wEzR9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gJrEmFGLZF3NAgPgH9SDYlEH2LvRXRpyXprbEqzPjQpw4hTRIPWDJy8So71X8WoZOXkKRRBTtzeG5GcKBHI+7sXb8B565I2LItcgDo0Z3AunFhHSg2kKNYAf2gas+09P8cJJHDY/Q86Zxh/9/eAuf8pgxG5etDidbz/SrWphsCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-63186c222eeso46963107b3.2;
+        Tue, 18 Jun 2024 00:14:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718694058; x=1719298858;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v0a5p1bD0AyssKGKB5WnIImRaJI9ITejqF9cQEG0YuY=;
-        b=D4+Yoz4qf9z1cxb8rj6UfTWzEQQT+HG6KUXf6atRStbNDAksfAxCJHHXA4JrQ2Apjr
-         8gAhhYM7AsNfoc4dOjW1ngOQfLeWh0lyt+3b6ZFs4Sutover2SfWlgfN5wEnpZnJorI4
-         HsCbstqtI6H78bujRID4IyeB4Ju9rZEXBoWVij69iNvCVrOQjeV6UOECxcM1ngFKVn8R
-         n/4h6ZMjqzSmDxMV4hlVly81H6UHXkRbXwm8hfTjy8hwR0mSlgtIWqMCZd8rWRAum3Cn
-         f0vCH84CFfhCB7/9xx7N51jIvHw9e+uvTxwiU1vMU6FX3Na/skHNkJBN3Z9YhB4fDQNt
-         GisA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbdasLasnGHSsUNkyEMtQWjLAdoDIJoECgmEvneGrdAtZ42th2VFggQIwRjsnSe4NelBRR5NjTlB3xyig8sEAX8OxPULBtio7pHZEsz6Sw
-X-Gm-Message-State: AOJu0YwcZUquh25UWlCKhknOfaD7xmh79ohnVk0efzvcXwpFbC0OKKe/
-	FPEqT7+tQF96CNVsPn/QyV4/waUZfA1m7ElLbe/BdU5RHVMBugvV7lPTDLpT7xo=
-X-Google-Smtp-Source: AGHT+IENTRuaf3ngXVONzPwSYh1oRVgwzc4UC8HbyWW/rviR2sWOLdMBJeB9XSWba9XZVCRXPH2cZQ==
-X-Received: by 2002:a05:6000:87:b0:361:bd3f:f89b with SMTP id ffacd0b85a97d-361bd3ff946mr527425f8f.50.1718694028568;
-        Tue, 18 Jun 2024 00:00:28 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36077536f78sm13307498f8f.7.2024.06.18.00.00.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 00:00:27 -0700 (PDT)
-Date: Tue, 18 Jun 2024 10:00:23 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: Lyude Paul <lyude@redhat.com>, David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, Karol Herbst <kherbst@redhat.com>
-Subject: Re: [PATCH] drm/nouveau: Use kmemdup_array() instead of kmemdup()
-Message-ID: <ba70e0f2-c957-4235-aa51-b1a8c86034b6@moroto.mountain>
-References: <a3e8cecc-77dd-4a4a-bb12-c1d6759d3efb@moroto.mountain>
- <a61d9781-7c6e-46b8-ab1b-cf4fc1c76ba3@redhat.com>
+        d=1e100.net; s=20230601; t=1718694888; x=1719299688;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rz6LJGzD4G8AYqhBAzwk0Rq4f7QZMRwIAsp6KRs4lxo=;
+        b=cZsjxAk/MCmoD59QVH1CM1NhKfZFnRDRjeUcbX79rpRM1BKr9+G1T6y2VcTShHTyY1
+         0hmHnHfcumI3m+PbIBDMYJVOO1ArdLsfI3v9OL68U4Tnerbo5asLRUdNrniWf2xRkUiH
+         LG1yHtiyobUdsnHPhxUCSuYMQHPnne9UmPMejZ+i/fB3hDRokGu0OEbxLKaWWQaWOTC5
+         lYgkfpW9KB5j9Dr+/N7vpEumv/ps+T73+kGESq1U5w83YA4Ynk4r9zFRq2kszke6IQL4
+         /TPeRfMRfmXlr78jD88jAghWuh8i9HUSQOVg/R0uyOX679IeX5jSYIZG68e9djAW29dC
+         qoVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFLzotiqM9WtJJMcu+xRlWcKlm9BQL1N5j7VhngBTx7oPusuRR1FOXgIkn8gD7LvQ8d50/vwBhl2q6etHRX1wxCYODqmvAn0HW5vYUt3hPcrP80pCvGbmei5iPXsBF3iMTxAd2RJdY+qkGYBC4yeC0AMWOwZrNp9O2PynBsHHstefEHiQtCSvgclo=
+X-Gm-Message-State: AOJu0Yy4jnU7P13bhTFOWfjXA6cQluSCC6UuqvEjJz6YBh2aeLNZ1+YX
+	UoAMJPl1J/fWSka4gatfsQI32DBC0/mgzMibixUVud21N1WU43gqjGKQFWDb
+X-Google-Smtp-Source: AGHT+IH42Z5KMOvIe6Jop5M3yX/Iy3Ae4qU5+meOcku5VisPGlWheHapZoxGfs7P0pX5m9Goy3Mz5g==
+X-Received: by 2002:a05:690c:84d:b0:627:7ff0:fb4e with SMTP id 00721157ae682-632231463bdmr114553337b3.26.1718694888579;
+        Tue, 18 Jun 2024 00:14:48 -0700 (PDT)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-631183d80b8sm17191777b3.7.2024.06.18.00.14.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 00:14:48 -0700 (PDT)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-63186c222eeso46962937b3.2;
+        Tue, 18 Jun 2024 00:14:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW6g994ArvguYO67ypLL5ClyB02l/Uco6EF27bINH95jFerPnDbzz2VfqM+tRlN4o91NnTRl0EnZ8/WFT8bNRot6g2UkK91JGYij7IS5ZCuBlTHzYT4U+tOG+EJih5H79inGHeGeY02V3ZTnU3aSU4beaLzxmr3udvVXc0IecvYHNWZk+oWRmXI56U=
+X-Received: by 2002:a05:690c:24d:b0:62c:efa2:a091 with SMTP id
+ 00721157ae682-63222a58bc1mr110730687b3.14.1718694888087; Tue, 18 Jun 2024
+ 00:14:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a61d9781-7c6e-46b8-ab1b-cf4fc1c76ba3@redhat.com>
+References: <20240617-md-m68k-drivers-video-fbdev-amifb-v1-1-85f74746ecd4@quicinc.com>
+In-Reply-To: <20240617-md-m68k-drivers-video-fbdev-amifb-v1-1-85f74746ecd4@quicinc.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Jun 2024 09:14:34 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX6G6sXpJmtHXCZobuOstvn4Kw-90mpky-ZXPcoe_ezUQ@mail.gmail.com>
+Message-ID: <CAMuHMdX6G6sXpJmtHXCZobuOstvn4Kw-90mpky-ZXPcoe_ezUQ@mail.gmail.com>
+Subject: Re: [PATCH] fbdev: amifb: add missing MODULE_DESCRIPTION() macro
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Helge Deller <deller@gmx.de>, linux-fbdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024 at 05:55:33PM +0200, Danilo Krummrich wrote:
-> On 6/17/24 11:33, Dan Carpenter wrote:
-> > Use kmemdup_array() because we're allocating an array.
-> > 
-> > The main difference between kmemdup() and kmemdup_array() is that the
-> > kmemdup_array() function has integer overflow checking built it.  The
-> > "args->in_sync.count" variable is a u32 so integer overflows would only
-> > be a concern on 32bit systems.  Fortunately, however, the u_memcpya()
-> > function has integer overflow checking which means that it is not an
-> > issue.
-> > 
-> > Still using kmemdup_array() is more appropriate and makes auditing the
-> > code easier.
-> 
-> Indeed, we shouldn't rely on the previous check here, good catch.
-> 
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >   drivers/gpu/drm/nouveau/nouveau_sched.c | 16 ++++++++--------
-> >   1 file changed, 8 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/nouveau/nouveau_sched.c
-> > index 32fa2e273965..53d8b0584a56 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_sched.c
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
-> > @@ -45,10 +45,10 @@ nouveau_job_init(struct nouveau_job *job,
-> >   		if (job->sync)
-> >   			return -EINVAL;
-> > -		job->in_sync.data = kmemdup(args->in_sync.s,
-> > -					 sizeof(*args->in_sync.s) *
-> > -					 args->in_sync.count,
-> > -					 GFP_KERNEL);
-> > +		job->in_sync.data = kmemdup_array(args->in_sync.s,
-> > +					args->in_sync.count,
-> > +					sizeof(*args->in_sync.s),
-> > +					GFP_KERNEL);
-> >   		if (!job->in_sync.data)
-> >   			return -ENOMEM;
-> 
-> Not sure if this is what we want for kmemdup_array(). It just saturates the
-> size. This doesn't prevent accessing the array out of bounds later on. I mean,
-> it's rather unlikely to get such a huge amount of physically contiguous memory
-> anyways, but wouldn't it be cleaner to let kmemdup_array() return
-> ERR_PTR(-EOVERFLOW) on overflow, just like memdup_array_user()[1]?
-> 
-> AFAICS, there's just two users of kmemdup_array(), hence it should be an easy
-> change. :-)
-> 
-> [1] https://elixir.bootlin.com/linux/latest/source/include/linux/string.h#L30
-> 
+On Tue, Jun 18, 2024 at 5:14=E2=80=AFAM Jeff Johnson <quic_jjohnson@quicinc=
+.com> wrote:
+> With ARCH=3Dm68k, make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/ami=
+fb.o
+>
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-We can't change the return values.
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-kmemdup_array() has to match kmemdup().  <-- returns NULL
-memdup_array_user() has to match memdup_user().  <-- returns error pointer
+Gr{oetje,eeting}s,
 
-regards,
-dan carpenter
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
