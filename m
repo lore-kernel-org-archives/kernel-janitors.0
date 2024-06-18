@@ -1,201 +1,125 @@
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9458E139CFC;
-	Tue, 18 Jun 2024 14:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D06A2139AC;
+	Tue, 18 Jun 2024 14:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718721190; cv=none; b=VRpi2edt+58oKeAdwe9E67GbsgrzcuTQ3JNToq8IjTA6X7YQvjzp3d/iZBpy7fbZ+30ua3FJO+yoE0bALWOHqecdGb6m6R0UU9HQt0c/XtgnCCVgJhXw4pmPqF26S0D6BHHmXFKSvEkQ2lOcvZHoth131GwhZFTZ7WRB6pRjB0c=
+	t=1718721987; cv=none; b=EUf3CpHb+em4MlhyKnQjTbuIhd0RXjaIkHKRHSxRUWEePSCn036TAhR7b18NC5uvsR351osayk9gEmSBfps7IiUXFoMNhRbquQWZfGT5Nqg6Tbc3OqmqAL2zwl01Gz833bhqQtbDhUArohN1f+oqT0c3wE4w3oo4qUJjfmWQj4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718721190; c=relaxed/simple;
-	bh=ZyOZ9J3QRzEiSMg23ILmpfCKotN1iY9F6+Jc3rY7gLg=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=gDBc2z/oe2FKu1P85VAHIf6mbvvMpYdaBGoAkerYAJX2Sr6BXdTx05KbPywz28DINUpTRdV4QQ+N2nRJoQ+Tmi+gAij0253bY9x9iZpH1GTJDWVIurRHGUIoeK+b9y3YP4lv1H9jWQy2jOW5WPGMAXFHZja3jOsT3Vhkep9tdSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4W3Tdb28C2z1SCYt;
-	Tue, 18 Jun 2024 22:28:51 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 12C98140258;
-	Tue, 18 Jun 2024 22:33:05 +0800 (CST)
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 18 Jun 2024 22:33:04 +0800
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <imx@lists.linux.dev>,
-	<kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] perf: add missing MODULE_DESCRIPTION() macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron
-	<jonathan.cameron@huawei.com>, Frank Li <Frank.li@nxp.com>, Shawn Guo
-	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	Yicong Yang <yangyicong@hisilicon.com>
-References: <20240611-md-drivers-perf-v1-1-c001bae6da5c@quicinc.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <bd65ab86-902d-abd1-1b8b-d473c8f6016d@huawei.com>
-Date: Tue, 18 Jun 2024 22:33:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	s=arc-20240116; t=1718721987; c=relaxed/simple;
+	bh=fukWbmx4Pn2pTyJOFRUZc4NXCWcgWo+BcbbO5PdfbSw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jZI3BX5Zxf+0RYnxC8Ix2blGPh4DYb9MPBsZUkOwQX4btIhw91GJrLOzRVCiv9ES4J7Wng2D4VhyZxhI6zsRrutpmZMDI6nY+mf2vmMpnTH9zFdgiZBymbRguDxhXgsbHpBkBVwiLxp571xvzVriNG45HvbqAZ+iTs39fs4ZihU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FaHz0LTb; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FaHz0LTb"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45IAplKd001257;
+	Tue, 18 Jun 2024 14:46:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WO8KYgNz3uTg6+MlBwKDt9QO1R1LkJOmDUu0c9k4BIs=; b=FaHz0LTbmBTzVfAB
+	AVC4L8mOZDdprjHOnw9diOWFTxpnty7rPE9bKK1PgzxzJXL37N/CbsvSA14xlN2j
+	FYOr/ePQE0/9MSqFo+n72R5dp93IXgz+MnC8qXW+AL+NwekvhqaMUJQwrtYanqUN
+	ko0Vep7cDA37drQKowh/LStbKFuQ5gRlCKvJgGkpTBJX2+K5cJnp1KSUEbTuGqkD
+	Y98DyMqee/vHlhGhI65z+Atm9LGHBPMq+kplARSsAztXy1+bYJF5eQuPg+sKk1gi
+	wmKKuiRG8Y0EUF35MdKLzPbKXuhS2a6GrPDhg8LelhowpcR2Fp76l1Kq8Mg1QS7s
+	0uIp2w==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yu1b0spmm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 14:46:20 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45IEkJvw003275
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 14:46:19 GMT
+Received: from [10.48.243.231] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
+ 2024 07:46:18 -0700
+Message-ID: <a9a90666-5b3f-478d-8c88-002e23aee48b@quicinc.com>
+Date: Tue, 18 Jun 2024 07:46:12 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240611-md-drivers-perf-v1-1-c001bae6da5c@quicinc.com>
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] m68k: add missing MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: <linux-m68k@lists.linux-m68k.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240617-md-m68k-arch-m68k-v1-1-57d38beaeb13@quicinc.com>
+ <CAMuHMdWD0Je3HZ+RJyfdxKxKcBp7nt6ooP_YUpiju77Zf1QzVw@mail.gmail.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <CAMuHMdWD0Je3HZ+RJyfdxKxKcBp7nt6ooP_YUpiju77Zf1QzVw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nX1uQMjgfFnUf-9jM2l6DKaD-bLmW3LZ
+X-Proofpoint-ORIG-GUID: nX1uQMjgfFnUf-9jM2l6DKaD-bLmW3LZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ suspectscore=0 bulkscore=0 spamscore=0 mlxlogscore=999 impostorscore=0
+ adultscore=0 mlxscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406180110
 
-Hi Jeff,
-
-On 2024/6/12 2:31, Jeff Johnson wrote:
-> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm-ccn.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/fsl_imx8_ddr_perf.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/marvell_cn10k_ddr_pmu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/arm_cspmu_module.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/nvidia_cspmu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/ampere_cspmu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/cxl_pmu.o
+On 6/18/2024 12:36 AM, Geert Uytterhoeven wrote:
+> Hi Jeff,
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
+> On Tue, Jun 18, 2024 at 1:47 AM Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+>> With ARCH=m68k, make allmodconfig && make W=1 C=1 reports:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/m68k/emu/nfblock.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/m68k/emu/nfcon.o
+>>
+>> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>>
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > 
-> This includes drivers/perf/hisilicon/hisi_uncore_pmu.c which, although
-> it did not produce a warning with the x86 allmodconfig configuration,
-> may cause this warning with arm64 configurations.
+> Thanks for your patch!
 > 
-
-Thanks for catching this. I can reproduce this by my config:
-
-➜  hisilicon git:(master) make -C ../../../ M=$(pwd) W=1
-make: Entering directory '/home/yangyicong/mainline_linux/linux'
-  CC [M]  /home/yangyicong/mainline_linux/linux/drivers/perf/hisilicon/hisi_uncore_pmu.o
-  CC [M]  /home/yangyicong/mainline_linux/linux/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.o
-  CC [M]  /home/yangyicong/mainline_linux/linux/drivers/perf/hisilicon/hisi_uncore_hha_pmu.o
-  CC [M]  /home/yangyicong/mainline_linux/linux/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.o
-  CC [M]  /home/yangyicong/mainline_linux/linux/drivers/perf/hisilicon/hisi_uncore_sllc_pmu.o
-  CC [M]  /home/yangyicong/mainline_linux/linux/drivers/perf/hisilicon/hisi_uncore_pa_pmu.o
-  CC [M]  /home/yangyicong/mainline_linux/linux/drivers/perf/hisilicon/hisi_uncore_cpa_pmu.o
-  CC [M]  /home/yangyicong/mainline_linux/linux/drivers/perf/hisilicon/hisi_uncore_uc_pmu.o
-  CC [M]  /home/yangyicong/mainline_linux/linux/drivers/perf/hisilicon/hisi_pcie_pmu.o
-  CC [M]  /home/yangyicong/mainline_linux/linux/drivers/perf/hisilicon/hns3_pmu.o
-  MODPOST /home/yangyicong/mainline_linux/linux/drivers/perf/hisilicon/Module.symvers
-WARNING: modpost: missing MODULE_DESCRIPTION() in /home/yangyicong/mainline_linux/linux/drivers/perf/hisilicon/hisi_uncore_pmu.o
-
-This warning is introduced by 1fffe7a34c89 ("script: modpost: emit a warning when the description is missing")
-from v6.5 so we didn't catch this. Once comment below.
-
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/perf/arm-ccn.c                   | 1 +
->  drivers/perf/arm_cspmu/ampere_cspmu.c    | 1 +
->  drivers/perf/arm_cspmu/arm_cspmu.c       | 1 +
->  drivers/perf/arm_cspmu/nvidia_cspmu.c    | 1 +
->  drivers/perf/cxl_pmu.c                   | 1 +
->  drivers/perf/fsl_imx8_ddr_perf.c         | 1 +
->  drivers/perf/hisilicon/hisi_uncore_pmu.c | 1 +
->  drivers/perf/marvell_cn10k_ddr_pmu.c     | 1 +
->  8 files changed, 8 insertions(+)
+>> --- a/arch/m68k/emu/nfblock.c
+>> +++ b/arch/m68k/emu/nfblock.c
+>> @@ -193,4 +193,5 @@ static void __exit nfhd_exit(void)
+>>  module_init(nfhd_init);
+>>  module_exit(nfhd_exit);
+>>
+>> +MODULE_DESCRIPTION("ARAnyM block device driver");
 > 
-> diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
-> index 86ef31ac7503..65f4882531db 100644
-> --- a/drivers/perf/arm-ccn.c
-> +++ b/drivers/perf/arm-ccn.c
-> @@ -1561,4 +1561,5 @@ module_init(arm_ccn_init);
->  module_exit(arm_ccn_exit);
->  
->  MODULE_AUTHOR("Pawel Moll <pawel.moll@arm.com>");
-> +MODULE_DESCRIPTION("ARM CCN (Cache Coherent Network) driver support");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/perf/arm_cspmu/ampere_cspmu.c b/drivers/perf/arm_cspmu/ampere_cspmu.c
-> index f146a455e838..426b3cfcb52e 100644
-> --- a/drivers/perf/arm_cspmu/ampere_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/ampere_cspmu.c
-> @@ -269,4 +269,5 @@ static void __exit ampere_cspmu_exit(void)
->  module_init(ampere_cspmu_init);
->  module_exit(ampere_cspmu_exit);
->  
-> +MODULE_DESCRIPTION("Ampere SoC PMU (Performance Monitor Unit) driver");
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
-> index c318dc909767..c21c564840d6 100644
-> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
-> @@ -1427,4 +1427,5 @@ EXPORT_SYMBOL_GPL(arm_cspmu_impl_unregister);
->  module_init(arm_cspmu_init);
->  module_exit(arm_cspmu_exit);
->  
-> +MODULE_DESCRIPTION("ARM CoreSight Architecture PMU driver");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> index 5b84b701ad62..0dea47e48ac5 100644
-> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> @@ -417,4 +417,5 @@ static void __exit nvidia_cspmu_exit(void)
->  module_init(nvidia_cspmu_init);
->  module_exit(nvidia_cspmu_exit);
->  
-> +MODULE_DESCRIPTION("NVIDIA Coresight Architecture PMU driver");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/perf/cxl_pmu.c b/drivers/perf/cxl_pmu.c
-> index 1f93a66eff5b..8b6ce9ea5a55 100644
-> --- a/drivers/perf/cxl_pmu.c
-> +++ b/drivers/perf/cxl_pmu.c
-> @@ -972,6 +972,7 @@ static __exit void cxl_pmu_exit(void)
->  	cpuhp_remove_multi_state(cxl_pmu_cpuhp_state_num);
->  }
->  
-> +MODULE_DESCRIPTION("CXL Performance Monitoring Unit driver");
->  MODULE_LICENSE("GPL");
->  MODULE_IMPORT_NS(CXL);
->  module_init(cxl_pmu_init);
-> diff --git a/drivers/perf/fsl_imx8_ddr_perf.c b/drivers/perf/fsl_imx8_ddr_perf.c
-> index 1bbdb29743c4..a6683b38315c 100644
-> --- a/drivers/perf/fsl_imx8_ddr_perf.c
-> +++ b/drivers/perf/fsl_imx8_ddr_perf.c
-> @@ -850,4 +850,5 @@ static struct platform_driver imx_ddr_pmu_driver = {
->  };
->  
->  module_platform_driver(imx_ddr_pmu_driver);
-> +MODULE_DESCRIPTION("Freescale i.MX8 DDR PMU driver");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.c b/drivers/perf/hisilicon/hisi_uncore_pmu.c
-> index 6392cbedcd06..e1df9db498e9 100644
-> --- a/drivers/perf/hisilicon/hisi_uncore_pmu.c
-> +++ b/drivers/perf/hisilicon/hisi_uncore_pmu.c
-> @@ -537,4 +537,5 @@ void hisi_pmu_init(struct hisi_pmu *hisi_pmu, struct module *module)
->  }
->  EXPORT_SYMBOL_GPL(hisi_pmu_init);
->  
-> +MODULE_DESCRIPTION("HiSilicon SoC PMU driver");
-
-This module's not a driver but provides the framework for other HiSilicon uncore PMUs. Should be
-more proper to make this "HiSilicon SoC uncore PMU driver framework".
-
-Thanks.
-
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/perf/marvell_cn10k_ddr_pmu.c b/drivers/perf/marvell_cn10k_ddr_pmu.c
-> index e2abca188dbe..94f1ebcd2a27 100644
-> --- a/drivers/perf/marvell_cn10k_ddr_pmu.c
-> +++ b/drivers/perf/marvell_cn10k_ddr_pmu.c
-> @@ -763,4 +763,5 @@ module_init(cn10k_ddr_pmu_init);
->  module_exit(cn10k_ddr_pmu_exit);
->  
->  MODULE_AUTHOR("Bharat Bhushan <bbhushan2@marvell.com>");
-> +MODULE_DESCRIPTION("Marvell CN10K DRAM Subsystem (DSS) Performance Monitor Driver");
->  MODULE_LICENSE("GPL v2");
+> I think that should be s/ARAnyM/Atari NatFeat/, as I believe NatFeat
+> is also available on other Atari emulators. See also nfeth.c
 > 
-> ---
-> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> change-id: 20240611-md-drivers-perf-5d834208964d
+>>  MODULE_LICENSE("GPL");
+>> diff --git a/arch/m68k/emu/nfcon.c b/arch/m68k/emu/nfcon.c
+>> index 17b2987c2bf5..0ab2e4d08871 100644
+>> --- a/arch/m68k/emu/nfcon.c
+>> +++ b/arch/m68k/emu/nfcon.c
+>> @@ -173,4 +173,5 @@ static void __exit nfcon_exit(void)
+>>  module_init(nfcon_init);
+>>  module_exit(nfcon_exit);
+>>
+>> +MODULE_DESCRIPTION("ARAnyM console driver");
 > 
-> .
+> Likewise.
 > 
+>>  MODULE_LICENSE("GPL");
+> 
+> If you agree, I can make these changes while queuing in the m68k tree
+> for v6.11.
+
+You are the domain expert here. I'd be very happy for you to make the changes :)
+
+/jeff
+
