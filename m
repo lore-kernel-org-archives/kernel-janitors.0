@@ -1,102 +1,144 @@
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FFB13DDAF
-	for <kernel-janitors@vger.kernel.org>; Wed, 19 Jun 2024 13:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B34D26A;
+	Wed, 19 Jun 2024 14:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718805261; cv=none; b=e7wZYrRV4meMswjKvUMSXs8tlwEN/16J+8qGlqY3VbY4LXMQTXbziRrrNarA0UI/jfI0QiHK74kqn2m04MqMGIKxEZe14kh4ncHoglRtMPXN0UOpkp9FzHfOudkP9NCkd5yveOYj1Udsg3dwZgtebtkwRZY+NGsr4BXK5FJtcSw=
+	t=1718805629; cv=none; b=LT0BP/3giZNOwWvlxHmM1Dlti6eG4qomDkBT4+0znLOuuOHac51Z7F7mXiHN9HY4xEB1Tmy41RSOBkEY+ltVtR1KuPtc54OT9y4uyphuZtK7safOvcJxtSblrx96neWMvWTtJ7ejEIPyJlVFeFa2HWK12yMpPVs1wo+aSFc0UW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718805261; c=relaxed/simple;
-	bh=xpkqazG6++afbEk83vkpLmSWnTiOgnZWcv/jTUALrv4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=S5+36f4K6kml7ln9G2M8WC1N95bio8JTg3cvlBJ2yCXSAsUcjYu89xpI5d6PAas4mzh2ygzA9sOomCVQkpMKOg/Useq3ZIGUHfZ7GYFUGFqBUI3fDqprcSKkfZK8VMcakci8xxr8fxKl2op0FmgTnVesypc5cBacqrJIdMUIbsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MaRiY4d1; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+	s=arc-20240116; t=1718805629; c=relaxed/simple;
+	bh=k3gSboAJc+MvETXcfhdx81BB8B2hrN6M6hXGZXPOdq0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EsIuSD4OEoPC8FiRo+11o2Sx2fZwKAB5iyQseSakbCIAk+s+j00tSfFP92vCQ8UUaoEqFOH8LBLRutD6TU19syKAcIruQAMT7gEuSNcuhfiQOE+OPxB3T4dObK2OuxK+0U5HYI0MzNby3MbQn1TNnThMG3NkkJfUiZ3CpnYClIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=S9Nd1see; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MaRiY4d1"
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-6fed6e899cfso75166a12.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 19 Jun 2024 06:54:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718805260; x=1719410060; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WkDHd790kWmtvQ6UF8dcb7gjO3oHpCPMgBhaS8+VJfk=;
-        b=MaRiY4d1qds/DjlSUOL5kNPU06HRjIVvMI2X3c0KSILjOdFvT1tgkbo9kqnO66OMtE
-         yULRsb5fu8+FCt3qk5SLifHsNRkSAB9wRXhzd3JPr6lXAJ5s21REzaw244JLdgcHPREF
-         oXKs0LuggaEzWFkIjKtEfXSxGpFI44z/5fzbvITZpTdP+h+7OXKbWIsspd35nYywlPb7
-         HHwrtjyiJfT6AAZlRbOptU0djRGrL3ewLfyW38z6IDmCwYGfIVke8yj9Wv9NluUApu7D
-         VtGNFHhVxvM5EKMApXwTmdVugBQZ6C4+iqUTAxiiztkoKSn3gqoYpk5A/nLVhG+HMa3y
-         tmaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718805260; x=1719410060;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WkDHd790kWmtvQ6UF8dcb7gjO3oHpCPMgBhaS8+VJfk=;
-        b=sX4cQ39hGLKJ3NT2lTiTbBAN+G3J37FyJ5Gm80nUP4lQfM0pGr0DBHc9e0FAfepXWw
-         Pdh5Ey6+evuciNYJtGivJ+9hD/9lGQ0zFS3fAzKOCEbbeDJe8geKGhOUKWk2fNZEUT0A
-         eH/Qp/Jr2vL2qkdEQiwscdBBUmzPo72HHF2xKIOpTI8F0yye2gL40sUbmrucnBxXztuv
-         AzoTOC9qiymj98BpJZDzIeW8heGsjziTFFcfqgf8TH75RkVRQuR3qyLCkSB2DHK4B77b
-         1XmF5ewoqjW11AwIUAwXQ0GsYkfmJ4MwcKn1EEfaQ+q6PyZhedjuF44d5agjNjGNYDUf
-         xp3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXubS1SEH+3ER1IBLSkkaa1m/luuyO968VkQAOEECa4KF8bqlgGLcNwY0Fv0T2/PbzXQ11/3IOSVfIXSHSHbwVELU8U2oerN4MeiPqLMOhq
-X-Gm-Message-State: AOJu0Yxs7W5vfK+RcC9qfnbU4yErEwmd6UT0L3huH5retfGotw0cyuym
-	eamf73i12L1R+avbHmBv8ki0o7EkWz99VTV/gFZHdIozpFLEOIyQaXD/A05un0k=
-X-Google-Smtp-Source: AGHT+IHa5lmBL3cTRn8I7U6f9EAY1cpzPJyppZPZB1ibCn7ith2thKtjx5wQNTrWrGQBB2QxHoKaeg==
-X-Received: by 2002:a05:6a21:99a0:b0:1b6:d2e7:160 with SMTP id adf61e73a8af0-1bcbb151a6cmr2662623637.0.1718805259647;
-        Wed, 19 Jun 2024 06:54:19 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e56183sm116843765ad.28.2024.06.19.06.54.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 06:54:19 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <20240617-md-m68k-drivers-block-v1-0-b200599a315e@quicinc.com>
-References: <20240617-md-m68k-drivers-block-v1-0-b200599a315e@quicinc.com>
-Subject: Re: [PATCH 0/3] block: m68k: add missing MODULE_DESCRIPTION()
- macros
-Message-Id: <171880525880.107379.10461906104688825511.b4-ty@kernel.dk>
-Date: Wed, 19 Jun 2024 07:54:18 -0600
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="S9Nd1see"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JDR102003196;
+	Wed, 19 Jun 2024 14:00:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	k3gSboAJc+MvETXcfhdx81BB8B2hrN6M6hXGZXPOdq0=; b=S9Nd1seeM2taZwhn
+	3Go0MPxv9KF29c3xx+SsDcbtZlLa8/ddvAX1ckUKXEnp7prf8VbtZK3wmMOWAEuK
+	XE4TRDXdtNu/f2aebtfk8NcL1hUsc5wEfrM9KKDk2yoHC0aJdubXBjU4sDZP0sF9
+	zCeHWOwwwzdpQ8VgmdoXmp9JRCS0HvjD6TT94VB1Kclw2Subfjw2MghuuWCxysvr
+	T207gexiGQNz1aoV1iAaOs6EFqNR3OOlLsdtz1wYhfU0VjmZ6pXrUi/YCFgT/W20
+	J/HUD3yWjhw7Nz7C8WY3q6We7IScQAsw+ozQtmDoA0JWozJanbfSQymMB3udcqe0
+	KM0KWg==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yux3fgfma-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 14:00:24 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45JCAgh6023990;
+	Wed, 19 Jun 2024 14:00:22 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ysp9qd1w7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 14:00:22 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45JE0IlJ11666108
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Jun 2024 14:00:20 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 53B0058069;
+	Wed, 19 Jun 2024 14:00:16 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 569F95808E;
+	Wed, 19 Jun 2024 14:00:15 +0000 (GMT)
+Received: from li-479af74c-31f9-11b2-a85c-e4ddee11713b.ibm.com (unknown [9.61.159.49])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 19 Jun 2024 14:00:15 +0000 (GMT)
+Message-ID: <8ae9b1bef0e8ef4689873911c8ae5c9a921401a9.camel@linux.ibm.com>
+Subject: Re: [PATCH] s390/cio: add missing MODULE_DESCRIPTION() macros
+From: Eric Farman <farman@linux.ibm.com>
+To: Halil Pasic <pasic@linux.ibm.com>
+Cc: Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Jeff Johnson
+ <quic_jjohnson@quicinc.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger
+ <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Matthew
+ Rosato <mjrosato@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Date: Wed, 19 Jun 2024 10:00:14 -0400
+In-Reply-To: <20240619123255.4b1a6c6d.pasic@linux.ibm.com>
+References: 
+	<20240615-md-s390-drivers-s390-cio-v1-1-8fc9584e8595@quicinc.com>
+	 <064eb313-2f38-479d-80bd-14777f7d3d62@linux.ibm.com>
+	 <afdde0842680698276df0856dd8b896dac692b56.camel@linux.ibm.com>
+	 <20240619123255.4b1a6c6d.pasic@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 3U6wkBpOZZvOXgSq-0KAzS0OtU9mEOAY
+X-Proofpoint-GUID: 3U6wkBpOZZvOXgSq-0KAzS0OtU9mEOAY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 clxscore=1015 phishscore=0 mlxlogscore=943 spamscore=0
+ mlxscore=0 malwarescore=0 suspectscore=0 adultscore=0 impostorscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406190104
 
+On Wed, 2024-06-19 at 12:32 +0200, Halil Pasic wrote:
+> On Tue, 18 Jun 2024 16:11:33 -0400
+> Eric Farman <farman@linux.ibm.com> wrote:
+>=20
+> > > > +MODULE_DESCRIPTION("VFIO based Physical Subchannel device
+> > > > driver");=C2=A0=20
+> > >=20
+> > > Halil/Mathew/Eric,
+> > > Could you please comment on this ?=C2=A0=20
+> >=20
+> > That's what is in the prologue, and is fine.
+>=20
+> Eric can you explain it to me why is the attribute "physical"
+> appropriate
+> here? I did a quick grep for "Physical Subchannel" only turned up
+> hits
+> in vfio-ccw.
 
-On Mon, 17 Jun 2024 18:13:31 -0700, Jeff Johnson wrote:
-> With ARCH=m68k, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/amiflop.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/ataflop.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/z2ram.o
-> 
-> Since these have traditionally had different commit prefixes, I
-> submitted individual patches. Let me know if you want me to squash
-> them.
-> 
-> [...]
+One hit, in the prologue comment of this module. "Physical device" adds
+three to the tally, but only one of those is in vfio-ccw so we should
+expand your query regarding "physical" vs "emulated" vs "virtual" in
+the context of, say, tape devices.
 
-Applied, thanks!
+>=20
+> My best guess is that "physical" was somehow intended to mean the
+> opposite of "virtual". But actually it does not matter if our
+> underlying
+> subchannel is emulated or not, at least AFAIU.
 
-[1/3] amiflop: add missing MODULE_DESCRIPTION() macro
-      commit: 28d8c13830cc530996157e22ecf22def90cb7f35
-[2/3] ataflop: add missing MODULE_DESCRIPTION() macro
-      commit: ba8df22e25e7e906254f4f490d7bcfbe637152aa
-[3/3] z2ram: add missing MODULE_DESCRIPTION() macro
-      commit: 465478bb00168a7620788990b1679c5067d421f2
+I also believe this was intended to mean "not virtual," regardless of
+whether there's emulation taking place underneath. That point is moot
+since I don't see that information being surfaced, such that the driver
+can only work with "physical" subchannels.
 
-Best regards,
--- 
-Jens Axboe
+I'm fine with removing it if it bothers you, but I don't see it as an
+issue.
 
+Thanks,
+Eric
 
+>=20
+> Regards,
+> Halil
 
