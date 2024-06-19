@@ -1,171 +1,102 @@
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6B9135A6D;
-	Wed, 19 Jun 2024 11:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FFB13DDAF
+	for <kernel-janitors@vger.kernel.org>; Wed, 19 Jun 2024 13:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718796140; cv=none; b=AVD1eRwH6w9/Mftajmm2bWZnRBskPsBT/kVX73naDP6k1+C+F7JILlXg7qa0abPH6suGIwZuBEoIcoinkbs2D7kSzAyLSyiMO0x66UmzwQVHKW8rQJKWrwSnGfLGay8qdCNz120UgoprXpBJ87064LpaAufav5APVqA61fY8rMU=
+	t=1718805261; cv=none; b=e7wZYrRV4meMswjKvUMSXs8tlwEN/16J+8qGlqY3VbY4LXMQTXbziRrrNarA0UI/jfI0QiHK74kqn2m04MqMGIKxEZe14kh4ncHoglRtMPXN0UOpkp9FzHfOudkP9NCkd5yveOYj1Udsg3dwZgtebtkwRZY+NGsr4BXK5FJtcSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718796140; c=relaxed/simple;
-	bh=75uxE1jIS7U/gZgImO3O5k1fhrGtDx8xK2bnlmud6ek=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e9hG8Mu+hUCukq50a22nZ4clt1cYa/BHXO9I51GTvI3Ga5K1cl/1dV22XOcIueUPCenTro/qOFo5Rmm4+9kYiVjPUZ/Y1K4BmP0o1ZpOE6bl1Ue6jFqF5kUdGGwM2DniBsGuIZ0DsQtOj2GkG58YiAbaKIMspM47IJ1zedLY7vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OE0RMUMW; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1718805261; c=relaxed/simple;
+	bh=xpkqazG6++afbEk83vkpLmSWnTiOgnZWcv/jTUALrv4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=S5+36f4K6kml7ln9G2M8WC1N95bio8JTg3cvlBJ2yCXSAsUcjYu89xpI5d6PAas4mzh2ygzA9sOomCVQkpMKOg/Useq3ZIGUHfZ7GYFUGFqBUI3fDqprcSKkfZK8VMcakci8xxr8fxKl2op0FmgTnVesypc5cBacqrJIdMUIbsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MaRiY4d1; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OE0RMUMW"
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ebdfe26217so60994721fa.2;
-        Wed, 19 Jun 2024 04:22:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MaRiY4d1"
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-6fed6e899cfso75166a12.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 19 Jun 2024 06:54:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718796136; x=1719400936; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1We8+J1M8/iGwbEuKq9QLdgleuBIYYNVC3Jie6+7WKQ=;
-        b=OE0RMUMWjmwTtHxwSC4/QTw7VP4UWIGmzyY3G60c8oHmQcSXvGGu4pU0Tj+aAk3yPj
-         /TTAdEwqMfUAFnC8a+YXBOoaNNU2iL3V+G05cF1LQiduL9icX43CyQlHITKJb2cABUJm
-         XArxR7y3DBv2aGz96LS77mX3BV3kyUvH3ykaQ5DsFurdylle+q3Mf4Q7Y9jXRnEfp0H5
-         oUoK5sxPkUDQashXt1x3+NJavosmhcA4V0IqUiYX2g4+lqFUhQqFC1o6uf6rvYyQRA5u
-         Y5X291yrUXOlSP2aish46TVfkHTTWuJsxujUSDNJ2fmAV+2Tqh1wFJDhltWJ3FxDWNU1
-         OScA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718796136; x=1719400936;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718805260; x=1719410060; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1We8+J1M8/iGwbEuKq9QLdgleuBIYYNVC3Jie6+7WKQ=;
-        b=iT+cNrdnGcRfgzPtRn2eV6CNRohnYCP/dS28lW59LfiyTS6oEZ8nj74ajSp+0fN7Pw
-         EMLF7KcVmwDcpEMbWKeFWBOQAglIlDnAI7cW8XkEziOi5bF9yePwk2h5UaRcjsRJVup1
-         nH6HUSnbJ0+HWBzDA6dbKdFCmxiYab4ufS6welvZmEKPtiG96JA7y4SnXGSUTfdmwm2m
-         OcC5V3TMoXdhd9i8F/T8AM58whzxWEpvt41+KzPuCqRuN6H2c4aQUVWE4Cuu/JONj3gb
-         KhYE/B/5HCMUzbaj3UJ+Tq4ZwMGNAbdKmrD3/8g1uRn6vFrKjtq3bOOmOxeY9eYXJlG4
-         gvCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYzhSmLisSheX6vi4V6i7ZLOIh3wGQK+SM3YPSf4aA/fTa/6daYzDhhCc+TiesUBeLqcnymwAeDhKm6GmkA6yfU0whN3kjzDPhKmxCXwz9BzTSJgDVQU1H6QN4CXFVV5uxFkiE9Uip+LEkACdj9G3iBYs8K7IF0OLaezYgP6DRvyM3UdFP2s+LdhK9KawS0R/TAQV9de0uWp7uvPn+fsAxzuCJsGdMjadhm6UBOMJUPAxWWFOkoQibEhnCi6lnLouAg4m2cpZTSU4TILCsctSYqjYh68PK7PsyYepU+HoxiB7DDhYKPmIz2voRyAdbTkktwAYzfITCz5GLiANk+dksq9MmTN9imEIzQ8aoVn7zv3nZkTGvgiYSxeEzswzUY9SyMSfVCRsXPJc4XAt9zMV72HZW7cVa1FPToxn3RPlCqXEVrSqwzVCtlgKwjg==
-X-Gm-Message-State: AOJu0YxeHZ0KQJp3btvZ3dg98HpiQKlSe6dway4K/BCxRoQELEkVl9gy
-	x2QLEgvuw4dEAIX3Z2csXlkXaxYOHSckCCb6kYTP+DWyqnPcPc50
-X-Google-Smtp-Source: AGHT+IHY6I+1wjnfCL5bVO3aTBj0asX2DB6+TLCQy1IxnGK2EyJpAdTHcDYhDhl1lF4pI5isZiqATw==
-X-Received: by 2002:a2e:7818:0:b0:2ec:3bc4:3e36 with SMTP id 38308e7fff4ca-2ec3ceb6a56mr15076241fa.14.1718796136224;
-        Wed, 19 Jun 2024 04:22:16 -0700 (PDT)
-Received: from pc636 (host-90-233-216-238.mobileonline.telia.com. [90.233.216.238])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c78126sm19577951fa.81.2024.06.19.04.22.14
+        bh=WkDHd790kWmtvQ6UF8dcb7gjO3oHpCPMgBhaS8+VJfk=;
+        b=MaRiY4d1qds/DjlSUOL5kNPU06HRjIVvMI2X3c0KSILjOdFvT1tgkbo9kqnO66OMtE
+         yULRsb5fu8+FCt3qk5SLifHsNRkSAB9wRXhzd3JPr6lXAJ5s21REzaw244JLdgcHPREF
+         oXKs0LuggaEzWFkIjKtEfXSxGpFI44z/5fzbvITZpTdP+h+7OXKbWIsspd35nYywlPb7
+         HHwrtjyiJfT6AAZlRbOptU0djRGrL3ewLfyW38z6IDmCwYGfIVke8yj9Wv9NluUApu7D
+         VtGNFHhVxvM5EKMApXwTmdVugBQZ6C4+iqUTAxiiztkoKSn3gqoYpk5A/nLVhG+HMa3y
+         tmaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718805260; x=1719410060;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WkDHd790kWmtvQ6UF8dcb7gjO3oHpCPMgBhaS8+VJfk=;
+        b=sX4cQ39hGLKJ3NT2lTiTbBAN+G3J37FyJ5Gm80nUP4lQfM0pGr0DBHc9e0FAfepXWw
+         Pdh5Ey6+evuciNYJtGivJ+9hD/9lGQ0zFS3fAzKOCEbbeDJe8geKGhOUKWk2fNZEUT0A
+         eH/Qp/Jr2vL2qkdEQiwscdBBUmzPo72HHF2xKIOpTI8F0yye2gL40sUbmrucnBxXztuv
+         AzoTOC9qiymj98BpJZDzIeW8heGsjziTFFcfqgf8TH75RkVRQuR3qyLCkSB2DHK4B77b
+         1XmF5ewoqjW11AwIUAwXQ0GsYkfmJ4MwcKn1EEfaQ+q6PyZhedjuF44d5agjNjGNYDUf
+         xp3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXubS1SEH+3ER1IBLSkkaa1m/luuyO968VkQAOEECa4KF8bqlgGLcNwY0Fv0T2/PbzXQ11/3IOSVfIXSHSHbwVELU8U2oerN4MeiPqLMOhq
+X-Gm-Message-State: AOJu0Yxs7W5vfK+RcC9qfnbU4yErEwmd6UT0L3huH5retfGotw0cyuym
+	eamf73i12L1R+avbHmBv8ki0o7EkWz99VTV/gFZHdIozpFLEOIyQaXD/A05un0k=
+X-Google-Smtp-Source: AGHT+IHa5lmBL3cTRn8I7U6f9EAY1cpzPJyppZPZB1ibCn7ith2thKtjx5wQNTrWrGQBB2QxHoKaeg==
+X-Received: by 2002:a05:6a21:99a0:b0:1b6:d2e7:160 with SMTP id adf61e73a8af0-1bcbb151a6cmr2662623637.0.1718805259647;
+        Wed, 19 Jun 2024 06:54:19 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e56183sm116843765ad.28.2024.06.19.06.54.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 04:22:15 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 19 Jun 2024 13:22:12 +0200
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Uladzislau Rezki <urezki@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
-	linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	kasan-dev <kasan-dev@googlegroups.com>
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <ZnK_ZLlFM6MrdEah@pc636>
-References: <Zmrkkel0Fo4_g75a@zx2c4.com>
- <e926e3c6-05ce-4ba6-9e2e-e5f3b37bcc23@suse.cz>
- <3b6fe525-626c-41fb-8625-3925ca820d8e@paulmck-laptop>
- <6711935d-20b5-41c1-8864-db3fc7d7823d@suse.cz>
- <ZnCDgdg1EH6V7w5d@pc636>
- <36c60acd-543e-48c5-8bd2-6ed509972d28@suse.cz>
- <ZnFT1Czb8oRb0SE7@pc636>
- <5c8b2883-962f-431f-b2d3-3632755de3b0@paulmck-laptop>
- <ZnKqPqlPD3Rl04DZ@pc636>
- <c208e95d-9aa9-476f-9dee-0242a2d6a24f@suse.cz>
+        Wed, 19 Jun 2024 06:54:19 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <20240617-md-m68k-drivers-block-v1-0-b200599a315e@quicinc.com>
+References: <20240617-md-m68k-drivers-block-v1-0-b200599a315e@quicinc.com>
+Subject: Re: [PATCH 0/3] block: m68k: add missing MODULE_DESCRIPTION()
+ macros
+Message-Id: <171880525880.107379.10461906104688825511.b4-ty@kernel.dk>
+Date: Wed, 19 Jun 2024 07:54:18 -0600
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c208e95d-9aa9-476f-9dee-0242a2d6a24f@suse.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
 
-On Wed, Jun 19, 2024 at 11:56:44AM +0200, Vlastimil Babka wrote:
-> On 6/19/24 11:51 AM, Uladzislau Rezki wrote:
-> > On Tue, Jun 18, 2024 at 09:48:49AM -0700, Paul E. McKenney wrote:
-> >> On Tue, Jun 18, 2024 at 11:31:00AM +0200, Uladzislau Rezki wrote:
-> >> > > On 6/17/24 8:42 PM, Uladzislau Rezki wrote:
-> >> > > >> +
-> >> > > >> +	s = container_of(work, struct kmem_cache, async_destroy_work);
-> >> > > >> +
-> >> > > >> +	// XXX use the real kmem_cache_free_barrier() or similar thing here
-> >> > > > It implies that we need to introduce kfree_rcu_barrier(), a new API, which i
-> >> > > > wanted to avoid initially.
-> >> > > 
-> >> > > I wanted to avoid new API or flags for kfree_rcu() users and this would
-> >> > > be achieved. The barrier is used internally so I don't consider that an
-> >> > > API to avoid. How difficult is the implementation is another question,
-> >> > > depending on how the current batching works. Once (if) we have sheaves
-> >> > > proven to work and move kfree_rcu() fully into SLUB, the barrier might
-> >> > > also look different and hopefully easier. So maybe it's not worth to
-> >> > > invest too much into that barrier and just go for the potentially
-> >> > > longer, but easier to implement?
-> >> > > 
-> >> > Right. I agree here. If the cache is not empty, OK, we just defer the
-> >> > work, even we can use a big 21 seconds delay, after that we just "warn"
-> >> > if it is still not empty and leave it as it is, i.e. emit a warning and
-> >> > we are done.
-> >> > 
-> >> > Destroying the cache is not something that must happen right away. 
-> >> 
-> >> OK, I have to ask...
-> >> 
-> >> Suppose that the cache is created and destroyed by a module and
-> >> init/cleanup time, respectively.  Suppose that this module is rmmod'ed
-> >> then very quickly insmod'ed.
-> >> 
-> >> Do we need to fail the insmod if the kmem_cache has not yet been fully
-> >> cleaned up?  If not, do we have two versions of the same kmem_cache in
-> >> /proc during the overlap time?
-> >> 
-> > No fail :) If same cache is created several times, its s->refcount gets
-> > increased, so, it does not create two entries in the "slabinfo". But i
-> > agree that your point is good! We need to be carefully with removing and
-> > simultaneous creating.
-> 
-> Note that this merging may be disabled or not happen due to various flags on
-> the cache being incompatible with it. And I want to actually make sure it
-> never happens for caches being already destroyed as that would lead to
-> use-after-free (the workfn doesn't recheck the refcount in case a merge
-> would happen during the grace period)
-> 
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -150,9 +150,10 @@ int slab_unmergeable(struct kmem_cache *s)
->  #endif
-> 
->         /*
-> -        * We may have set a slab to be unmergeable during bootstrap.
-> +        * We may have set a cache to be unmergeable during bootstrap.
-> +        * 0 is for cache being destroyed asynchronously
->          */
-> -       if (s->refcount < 0)
-> +       if (s->refcount <= 0)
->                 return 1;
-> 
->         return 0;
-> 
-OK, i see such flags, SLAB_NO_MERGE. Then i was wrong, it can create two
-different slabs.
 
-Thanks!
+On Mon, 17 Jun 2024 18:13:31 -0700, Jeff Johnson wrote:
+> With ARCH=m68k, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/amiflop.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/ataflop.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/z2ram.o
+> 
+> Since these have traditionally had different commit prefixes, I
+> submitted individual patches. Let me know if you want me to squash
+> them.
+> 
+> [...]
 
---
-Uladzislau Rezki
+Applied, thanks!
+
+[1/3] amiflop: add missing MODULE_DESCRIPTION() macro
+      commit: 28d8c13830cc530996157e22ecf22def90cb7f35
+[2/3] ataflop: add missing MODULE_DESCRIPTION() macro
+      commit: ba8df22e25e7e906254f4f490d7bcfbe637152aa
+[3/3] z2ram: add missing MODULE_DESCRIPTION() macro
+      commit: 465478bb00168a7620788990b1679c5067d421f2
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
