@@ -1,84 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5A0803;
-	Thu, 20 Jun 2024 00:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BB91C06;
+	Thu, 20 Jun 2024 00:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718842777; cv=none; b=OcMp5rQ+iySU1pJmIkQwyC6SB9ahrzGPMm/m+nt0d6I8+U/fvkeP6OV8PuHVUc28Zxx0dl6u6O70fRrn7rS5xQncyXdTOKCY4y+cDvoNtDJvo2jj/qIy/NxJZCmSmD/4qPkBnQC9uNm9qIfyvJN8cXzNcsHWe1eQssXP5joo0dY=
+	t=1718843428; cv=none; b=sbFm4ZFgWQihrq12eFE+EsmaGj/EBHx4Z2Rp5QFfNXu/09WWdRrrFQZwcAb5xooXFTlmeLVzY3VQweXyYJNn1tHq9kJYrZmtXrW/qmdIdtxVfCZ00x/mwDp5T7Zmbewc3O6ElO7S0pT8FaJyWoIfeJIEKLXi9eTJYxqH8KQZwWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718842777; c=relaxed/simple;
-	bh=aAxvRmyU6eGzufg6jqOySxqXJ+23+A+mbhwHxG6OZWY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=GAfXDc3+KctCHfaudp4FA1CC1pXfDMkI3QPZ+cePUDrS9Y/OvmHkC0IsZYht7+rKM3T43wfMjlJ4uDoEpFcYy4mbKnv6/h2CbEyxpdFycXdA4T4dUHN/4VP4rK++R6dxILbo5YV+Em4kv9vsUUQX8aaJz4YY/p6oQ/BSmoiS0NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6JPtoD9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718843428; c=relaxed/simple;
+	bh=5tbk9+Fr16/riDnMOtgnfheqzFQwhcOjQtRbMoh4Fgc=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=k4fMpHJK1dOQgS2eGxklf9O9GraEvMB5VHcMygkL0A8Qtjt7HQcuCUOpF55fB+EsjH+6Y/tj5tU5h7E6AvWbAVCtaS63pBEARi8XUmFYdnOft2k2rU+g8c/xXYczoNuPUuHVTyMO0/3lFEtXB1tW608ljL/+gGrYDxYXDRSoTKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jaEWEVIF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6JPtoD9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06195C2BBFC;
-	Thu, 20 Jun 2024 00:19:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jaEWEVIF"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0579CC4AF0B;
+	Thu, 20 Jun 2024 00:30:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718842777;
-	bh=aAxvRmyU6eGzufg6jqOySxqXJ+23+A+mbhwHxG6OZWY=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=b6JPtoD9839CTXgCWKTMiqQ4aFO6kRGKNrv+ALiiuMeJIVS/Sgyasm8ce1kfBRxfT
-	 7eY8tyRcZHSHB51o3cRdNaX3GznSOzPdZ/NLz4IYqc8xPw8gcXZhv/8+wrAIL+tov5
-	 QELTZkYnCQafGGS1j2dMdaZV+HxdzPsspEhFSjn0XAdzXv/QeamCCAhMx331pHgpIl
-	 D9FMt7pXOB/ZFZPkA9BqOwvr5SoIkHdNo2L/A4u7/I6xOaLh5eVjJhDH3FqKZiQhUu
-	 SeeY5FOA6RtZCkl0Ho9PlhKX5kObiX4KCHTzmL9fnUlEAmqc0ALWE19tzPnpsN/zJu
-	 Gb3XGDJYhQ/lg==
+	s=k20201202; t=1718843428;
+	bh=5tbk9+Fr16/riDnMOtgnfheqzFQwhcOjQtRbMoh4Fgc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=jaEWEVIFwMtn4wdcGZOcRJK1fX5AQ+Wlh9iiv26PBUVr0MjPcVOuJm+WY9YCoFgAO
+	 QSOCgPDs3o9zJuz4/qPru0UYWcqoytoD5GZQMM6VFtw2K93XzV53tI5aBL2VXgqRN6
+	 2xBnQErshPnDqCCcaPBQjfQLS6YW/tCm4oZcbp4+0KR6sZezXlqTS+TrLp9TG3mKGu
+	 fRh1YA1IktrzT+oEJUeI1LqwAcM4Tf3bBSAKvn38YOIZy6nuMAqa5qzA2IN55OacRu
+	 d9Oq7XSVJPkUS+9jZBGCpggHfc5eZUBfkqY0mlxrtGGNjEXBjZpK8y2s6XUl4qs/2I
+	 3IV/EMh7uCLQQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id F1D4AE7C4C5;
+	Thu, 20 Jun 2024 00:30:27 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 20 Jun 2024 03:19:33 +0300
-Message-Id: <D24EWT5ESVET.2K1K93ONMJ1R5@kernel.org>
-Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] KEYS: encrypted: add missing
- MODULE_DESCRIPTION()
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jeff Johnson" <quic_jjohnson@quicinc.com>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>
-X-Mailer: aerc 0.17.0
-References: <20240606-md-trusted-v3-0-42716f15e66e@quicinc.com>
- <20240606-md-trusted-v3-2-42716f15e66e@quicinc.com>
-In-Reply-To: <20240606-md-trusted-v3-2-42716f15e66e@quicinc.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: smc9194: add missing MODULE_DESCRIPTION()
+ macro
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171884342798.23279.345235713034514694.git-patchwork-notify@kernel.org>
+Date: Thu, 20 Jun 2024 00:30:27 +0000
+References: <20240618-md-m68k-drivers-net-ethernet-smsc-v1-1-ad3d7200421e@quicinc.com>
+In-Reply-To: <20240618-md-m68k-drivers-net-ethernet-smsc-v1-1-ad3d7200421e@quicinc.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 
-On Fri Jun 7, 2024 at 4:47 AM EEST, Jeff Johnson wrote:
-> During kbuild, with W=3D1, modpost will warn when a module doesn't have
-> a MODULE_DESCRIPTION(). The encrypted-keys module does not have a
-> MODULE_DESCRIPTION().  But currently, even with an allmodconfig
-> configuration, this module is built-in, and as a result, kbuild does
-> not currently warn about the missing MODULE_DESCRIPTION().
->
-> However, just in case it is built as a module in the future, add the
-> missing MODULE_DESCRIPTION() macro invocation.
->
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 18 Jun 2024 10:56:28 -0700 you wrote:
+> With ARCH=m68k, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/ethernet/smsc/smc9194.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
 > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  security/keys/encrypted-keys/encrypted.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/enc=
-rypted-keys/encrypted.c
-> index 8af2136069d2..831cb84fd75a 100644
-> --- a/security/keys/encrypted-keys/encrypted.c
-> +++ b/security/keys/encrypted-keys/encrypted.c
-> @@ -1040,4 +1040,5 @@ static void __exit cleanup_encrypted(void)
->  late_initcall(init_encrypted);
->  module_exit(cleanup_encrypted);
-> =20
-> +MODULE_DESCRIPTION("Encrypted key type");
->  MODULE_LICENSE("GPL");
+> 
+> [...]
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Here is the summary with links:
+  - [net-next] net: smc9194: add missing MODULE_DESCRIPTION() macro
+    https://git.kernel.org/netdev/net-next/c/2b0cd6b7270e
 
-BR, Jarkko
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
