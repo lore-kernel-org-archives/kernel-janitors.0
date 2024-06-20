@@ -1,81 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F951803A;
-	Thu, 20 Jun 2024 07:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33252582
+	for <kernel-janitors@vger.kernel.org>; Thu, 20 Jun 2024 08:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718869596; cv=none; b=p56w9jp1paPGmoWCgBmS3dvSPXzhr+AWXgAdqatUEaYi1Hy/dGWyX6isyj79oQExI3QCoMns7Ekb99uUefVryrDkCtrFXrBKyO00P2F5ZNSjrTRisWNLFpaaoxKGWjVPs0Se2eXiXZO0rXBStlAi0gC1ab/65pnkfzRR+ZXyavI=
+	t=1718873378; cv=none; b=UIxKGpGBfcO9BvtgXnwTgIX5Cm4du1GW66+mZmgC+TNxwxjsqABZSbbBRadBO6d3NhaatuuxjIdgkl/ap9NyZCWl/7FPDiMtzDo8bF53ug0omQ4F28wTQj035C6u+Dn1jCfTid/N6Ho9QmSD2L8XxXEdS0sox7s5qMpCk81GlW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718869596; c=relaxed/simple;
-	bh=v2gXpKgBK7Qhc0Qigkxufj6SFVYQaHNJh7yaTp7lIjE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DHjjP9bCpw72Krxg1JqPlV97FN55aWJPs3B3g+z/BmcaUOfEBPJv5M837gwUfCPoR++o4bfT4c8+gWTO6PADLGwXP8sWJqS8pkQZQpB44/zvwElHO8RRt0sU+cbzsfAnOHOck0/0pcjZL4CquzY59gd2g9lHskHvqKeKqpF6wlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWHbd+m3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718873378; c=relaxed/simple;
+	bh=KosNXeh15nXHkmwNcQhO6+BAaPr7YVQjhfKuYz8HdH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=irABuvIC2beWLfZc+3VlVWq7bBMtgaJylMEoeRtkbxV+soX3a7uJG1we+6UbygUrENCFx2TAqRLGoZjRd9wN/SLdT152g1zdVlRWSeRD7eujazGpg2MO74wygxoCRqZgRObrJZugngrd8JBCpJztAx2Qka18V8n9GBvnuglejvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ce4Gp5nN; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWHbd+m3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87BDCC2BD10;
-	Thu, 20 Jun 2024 07:46:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718869596;
-	bh=v2gXpKgBK7Qhc0Qigkxufj6SFVYQaHNJh7yaTp7lIjE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CWHbd+m3Lyicvoc6NVwiI70irdmZ7m2/V/fn0f9jRrL7MJDvsvFwIhQOQ5FIRKEqo
-	 L1dDSsfk3Acw8QmOesIOQiBSiaAZQVbN4lRWpbEEoHRrNYx0EPYGIZugA2lQr4mlm3
-	 kY/au8NDHWjUSAlTz3aj5y2MzyBArPIwtsc3o9svgMAFC0nivk0o3j4wo4Dw87RwNx
-	 HK/5TPn9YRKsjTKGz3r+ms6+a+3ZD8fVKDWNUawBWbHbw2oxs4GY5Ky/qPzbJyjxMw
-	 DseKV3Yc920blW/EigtLemKgxlLFQQnXHHZ+h3rtoIV386fvwhBcYgjASkmDfCmHe9
-	 MDTcrTEik+WpA==
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	sparclinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] openpromfs: add missing MODULE_DESCRIPTION() macro
-Date: Thu, 20 Jun 2024 09:46:19 +0200
-Message-ID: <20240620-periodisch-begleichen-68d1d06b70c6@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240619-md-sparc-fs-openpromfs-v1-1-51c85ce90fa3@quicinc.com>
-References: <20240619-md-sparc-fs-openpromfs-v1-1-51c85ce90fa3@quicinc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ce4Gp5nN"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a6f8ebbd268so288311566b.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 20 Jun 2024 01:49:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718873375; x=1719478175; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vplqWI8cKIJ52zF1aYYCsDVAV72MV1EuoajGM0seqQU=;
+        b=ce4Gp5nNou42DDHE4vJgK9vsAaUWsKEamhNtSHFfmSkQxHmDXXM2fuIS0KrW04jMZJ
+         2kFT0rS7Eh4H8DlttqHSIG+p3GzrN/t1AiBq0zCSC73ew6n8lJ9mmSSQflkqFIOXjbGw
+         Mqw5mmFK82NydxnrzqvwoBpQadbHF9UNO0XvJvmbluVvkTcuFeGLsQnr+9I+/9xHT8OY
+         ZaXBO+D6iDt8isUZCQHi3P7vY8t8fHemNIq8UC1H5Sr0s2usorrjC0IjK8p82W7Ai8Fd
+         SHYz5kbhQsITYpwJkxQoBCGitUi2gMJQh7saZ+bybq5Gf8D2NbMM643/vTGoRFLUGevw
+         rPUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718873375; x=1719478175;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vplqWI8cKIJ52zF1aYYCsDVAV72MV1EuoajGM0seqQU=;
+        b=llkcJ5v+LIgBQ69wjcVelQkngYnQ9W8Iy2qrs7GQpsVzWnRJ2BZKpKNvmMnE27nOfh
+         pLJF2bDMMtFVL2GGEl7ur/6wZyBve31iQnV/IgXPjYxKFEvAKih1u7mHG2lZtLuNXo8P
+         HHyK+K06YOPWyV3Ezz6w1jm395+8fcRoSnLOc65VIs9aCQMvYRpA04IeqV+vo/bhSK5F
+         2HBbOYhBP0n2Tu+lXRDPJkgcB+Tpsaxdq4vl6PZJjyfPym9O3R1zVgaWWzmKnwHwbo2i
+         SdRSxcB8T290x/u43493LYYmwGD1P/uTr16irjDUY7ov9gBYYflYo46z9PjuJaTON6ZT
+         l4GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVaZlbhmGDlkgQpU79CrQYCwnLCUp+aFFmhdoAsqLxw0XQPxa7EPqV3gzzzvaTz5+Dqzb/xCy2aXlvF8o7nP2vwFDa5kqMfgeXmiqrva6Nk
+X-Gm-Message-State: AOJu0Yz3Ljb6EVVMI/5hFlwBpdaJ6JI6/9gsyxyoHUCqJ84e/zUiwJDy
+	ystgOKoiQEA7Twx818kNj3Pl7Ku72MqkI5tgFnR6El9d7pSRYKwvd/rPFhMiT34=
+X-Google-Smtp-Source: AGHT+IF0HJWu5+9qrzpdj+2IohqmI65R3iM9YQiZqQ/II9cNRx507OWzSUKesTfdkh9pqQPDzJtJrg==
+X-Received: by 2002:a17:906:3643:b0:a6f:6bad:b5a9 with SMTP id a640c23a62f3a-a6f94c047c4mr519564166b.7.1718873374898;
+        Thu, 20 Jun 2024 01:49:34 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ed0ea4sm741387066b.116.2024.06.20.01.49.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 01:49:34 -0700 (PDT)
+Date: Thu, 20 Jun 2024 11:49:30 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Yunxiang Li <Yunxiang.Li@amd.com>
+Cc: Felix Kuehling <Felix.Kuehling@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/amdgpu/kfd: Add unlock() on error path to add_queue_mes()
+Message-ID: <10510733-a59a-4419-afb5-e75fdd802794@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1081; i=brauner@kernel.org; h=from:subject:message-id; bh=v2gXpKgBK7Qhc0Qigkxufj6SFVYQaHNJh7yaTp7lIjE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQV3wuZq3Geze38Mpvzt7oUXB7qXrLfo7Eg//8SmYa/M +9bRW5S7yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIAS1GhuvrM4/PWxr+5Opr ju2aX85+7ub48FnvZqrK560Wi5rn+KgyMszZO2fNO/X7U+tC5bQu3PbW9grP4Ny4+oDuk6CmFbs P6nEBAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Wed, 19 Jun 2024 07:38:14 -0700, Jeff Johnson wrote:
-> With ARCH=sparc, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/openpromfs/openpromfs.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> 
+We recently added locking to add_queue_mes() but this error path was
+overlooked.  Add an unlock to the error path.
 
-Applied to the vfs.module.description branch of the vfs/vfs.git tree.
-Patches in the vfs.module.description branch should appear in linux-next soon.
+Fixes: 1802b042a343 ("drm/amdgpu/kfd: remove is_hws_hang and is_resetting")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+index d2fceb6f9802..4f48507418d2 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+@@ -230,6 +230,7 @@ static int add_queue_mes(struct device_queue_manager *dqm, struct queue *q,
+ 	if (queue_type < 0) {
+ 		dev_err(adev->dev, "Queue type not supported with MES, queue:%d\n",
+ 			q->properties.type);
++		up_read(&adev->reset_domain->sem);
+ 		return -EINVAL;
+ 	}
+ 	queue_input.queue_type = (uint32_t)queue_type;
+-- 
+2.43.0
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.module.description
-
-[1/1] openpromfs: add missing MODULE_DESCRIPTION() macro
-      https://git.kernel.org/vfs/vfs/c/807221c54db6
