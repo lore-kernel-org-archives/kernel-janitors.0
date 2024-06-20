@@ -1,71 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6C71B3F0E;
-	Thu, 20 Jun 2024 18:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147A41BA078
+	for <kernel-janitors@vger.kernel.org>; Thu, 20 Jun 2024 20:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718909847; cv=none; b=boqsXnQ06qNopBdm9r+MATDyMZVwMfX14T2CN4mqqYB5XBlvrWvTclxjHqZlp4t5r+xe8WGHGu2rr1w+hn+6Wj/6pv+r6xf75hAbIiryDoM41uCiXXjOrx6A+PDod9AMdnNUkUrkAF880vNM/752MLAVUiPnFwSIfn95oW2hjGw=
+	t=1718914486; cv=none; b=QiNpz31uIzQ383j7NaZMH2/6u9E8dFV04ftXf7FSFEPh+Jk4QPXcO3ZZT5NkenKD+kDQ7YC3c5jYvzwKxu9s7FYy+mbLHysc6kp9B89h+fpp/tTmhURsyiexlZ0nq6QGpIPaTMZMiXfUFFllKlhawOVHi+tY1Gwfn3r1IER7pb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718909847; c=relaxed/simple;
-	bh=WcQ0rNzXvrRap0rnggKdcZJESM4eSuhs5dvUMzvkZJE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZZg8xd5aApcbM3Yaw9b91qhbYamBZFp4oqGvlito7XIoTN9flq2+lF7AV9o0E2arhJSZo7pdktxoX+jQ3Y7fv8CClElnNizwCagB/OTSWV/NJ8c5kZKBbv8d9N9DuOZM9kRQW0CS4yxSIcgazY+kG7PP5wFsEdlkG0Hgs9sRt/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OwTlXzTN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718914486; c=relaxed/simple;
+	bh=2j3mQFB7iTl1buIKWTw++t/Z3MBaEzKNVz4k5V+ti+o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hx1r9xHrC7yQr5FD191fRTH6D3/094hhsPH+NFzXxaGvgqa0HoWiG5kXQWemmU0VxABGIXgwDS7nSbhT9ZLmD9gw6NkgWMoZJSn6Ou0z5ooHoHbLgmI1Hbe/1frxHyOhnUFi8V2bukK06WZ1VpRd5yx7nAoj/z3xAjaU3HyjhKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z9gayOoH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OwTlXzTN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CDFFC2BD10;
-	Thu, 20 Jun 2024 18:57:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718909845;
-	bh=WcQ0rNzXvrRap0rnggKdcZJESM4eSuhs5dvUMzvkZJE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OwTlXzTNIrY6+kekkvNjonuR8Av4hf/Pv30X9vw8IfzumOExUjKKrv0g3L0MKYxba
-	 qo8lpuRmZUMCVyzmeEZabmsxNMDI6cjtsAWo4fi+aqMVeO0zQ5i21HGTx8G2aVo5vt
-	 Xk+IRWgCfOnSdcV/TIOeDyNAczOD3mMOz4zjpRebmPoxUByMabm0zS6Ut+2T4HxApw
-	 gLEFDcYHXMIu3s2RCZ6j+DCwaPL6ewbAhahVNUzU1gzRmcz+O96THF+0jvAlaNdFkE
-	 919IizPo4w0Tg01dCsOdu0SKbXA5e1YCrrImikmnmTGQ+72WhdaaAUW3VP2YR58Scr
-	 fTfaQJruiFOxA==
-From: Kees Cook <kees@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-hardening@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z9gayOoH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718914484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=stWFvKfQWMunoN+aSizxyUNPbtT8PDu9EoTxxN5jaME=;
+	b=Z9gayOoHCm1Srud0PTV27PzzICUcc+1MsX+DrlCgZnB0QAYqeOPsJUu6dS7vP/h2itS3h4
+	H1XSu8hRyIB7LKbmdeH+oXYp1lHcBFfeEXDmxSmiywYeMj1H++szdki+u9hv87f5I8z7Zi
+	nCxvMXSjd5Eq6BFYuJldFPth0kuv0dk=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-593-ApywM-z6OryagqZjG4v3gQ-1; Thu, 20 Jun 2024 16:14:42 -0400
+X-MC-Unique: ApywM-z6OryagqZjG4v3gQ-1
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-57cbaa7be59so676497a12.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 20 Jun 2024 13:14:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718914481; x=1719519281;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=stWFvKfQWMunoN+aSizxyUNPbtT8PDu9EoTxxN5jaME=;
+        b=xB1CpzdkNpcSy5/G9q3x0iQN4ItmNyd+vz2Uol+mJCyjMHBhb7++Byw4EbJAAmzW+E
+         bCxTRHUcAH6y4hxsIZKSU/UgaNzy/l4zuYfhTf62RVjXdVTvlmS7IQbtRVZMKUS0uOEJ
+         Bhf5c2PdowyPksYagfaMRVKv77f/qk3DLB46Qf5vg4j3qHrqKBxwzgXs9oZ0okX9BkRe
+         CoATOkDfcRPya3Bm5kAYmJ0V/7t960o9Ro7PgufJuMIdNDUau97arQaH4zroBSCeILCS
+         pHVIwCnrnOwjx2HkK+k6qbWCx7s+MkPJXYDieMieVrO5XlfCKWs7jxQCWHjoxFUtynOj
+         FYIg==
+X-Gm-Message-State: AOJu0Yz+dnRWpPyYJez9DBGaxgxb318XIVpX2DupPgYEUQf3iwJl2hZu
+	OdBM5IyRnQgLXza7z2HF73g+pzpfn4Q+cZvrxdr8g6LLWxxvX4cVxHEgfzWrSdNLCoZ1JgYako+
+	TdyQ23iOCkN1xDITwvz1094SQe5cKlNP0mfJ0W5dtO7QxccxEMWI4uoYrTXsafReNGw==
+X-Received: by 2002:a50:9b1c:0:b0:57c:a701:2311 with SMTP id 4fb4d7f45d1cf-57d07eb266emr3541323a12.26.1718914481514;
+        Thu, 20 Jun 2024 13:14:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHwT2V8ppfUQALHQ2Gx2dIUCQcXKuvxeXgHo5UbL20yvWmBKnofAzONZopukB2iwYsqsq/PEg==
+X-Received: by 2002:a50:9b1c:0:b0:57c:a701:2311 with SMTP id 4fb4d7f45d1cf-57d07eb266emr3541312a12.26.1718914481052;
+        Thu, 20 Jun 2024 13:14:41 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb743b032sm10020898a12.92.2024.06.20.13.14.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 13:14:40 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] string: kunit: add missing MODULE_DESCRIPTION() macros
-Date: Thu, 20 Jun 2024 11:57:23 -0700
-Message-Id: <171890984014.2516838.7096538088084150732.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240531-md-lib-string-v1-1-2738cf057d94@quicinc.com>
-References: <20240531-md-lib-string-v1-1-2738cf057d94@quicinc.com>
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] clk: qcom: select right config in CLK_QCM2290_GPUCC definition
+Date: Thu, 20 Jun 2024 22:14:31 +0200
+Message-ID: <20240620201431.93254-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Fri, 31 May 2024 16:07:26 -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/string_kunit.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/string_helpers_kunit.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> 
-> [...]
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Applied to for-next/hardening, thanks!
+Commit 8cab033628b1 ("clk: qcom: Add QCM2290 GPU clock controller driver")
+adds the config CLK_QCM2290_GPUCC, which intends to select the support for
+the QCM2290 Global Clock Controller. It however selects the non-existing
+config CLK_QCM2290_GCC, whereas the config for the QCM2290 Global Clock
+Controller is named QCM_GCC_2290.
 
-[1/1] string: kunit: add missing MODULE_DESCRIPTION() macros
-      https://git.kernel.org/kees/c/e3890eadadad
+Adjust the config to the intended one.
 
-Take care,
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ drivers/clk/qcom/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index f72838aa573b..ef3c2852f531 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -68,7 +68,7 @@ config CLK_X1E80100_TCSRCC
+ config CLK_QCM2290_GPUCC
+ 	tristate "QCM2290 Graphics Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
+-	select CLK_QCM2290_GCC
++	select QCM_GCC_2290
+ 	help
+ 	  Support for the graphics clock controller on QCM2290 devices.
+ 	  Say Y if you want to support graphics controller devices and
 -- 
-Kees Cook
+2.45.2
 
