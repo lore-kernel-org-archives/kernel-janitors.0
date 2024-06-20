@@ -1,110 +1,98 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147A41BA078
-	for <kernel-janitors@vger.kernel.org>; Thu, 20 Jun 2024 20:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75D02E859
+	for <kernel-janitors@vger.kernel.org>; Thu, 20 Jun 2024 20:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718914486; cv=none; b=QiNpz31uIzQ383j7NaZMH2/6u9E8dFV04ftXf7FSFEPh+Jk4QPXcO3ZZT5NkenKD+kDQ7YC3c5jYvzwKxu9s7FYy+mbLHysc6kp9B89h+fpp/tTmhURsyiexlZ0nq6QGpIPaTMZMiXfUFFllKlhawOVHi+tY1Gwfn3r1IER7pb0=
+	t=1718915056; cv=none; b=QTXK5jiNdrgc5q6FRunRUjwJnMXA3ROf5wA+Jf6+6R3YtiVSIku/1Pbi+LAKP0Vvk8UauvgBu8afl6wqFZXMMqXn8gaVo+Cd/iOtDW2iBOSTELWDwPsfqejWPAfmGKtWFBVX9DkNikw22QxGkRX7/aXmTwsiQatLjIli1h4+bnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718914486; c=relaxed/simple;
-	bh=2j3mQFB7iTl1buIKWTw++t/Z3MBaEzKNVz4k5V+ti+o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hx1r9xHrC7yQr5FD191fRTH6D3/094hhsPH+NFzXxaGvgqa0HoWiG5kXQWemmU0VxABGIXgwDS7nSbhT9ZLmD9gw6NkgWMoZJSn6Ou0z5ooHoHbLgmI1Hbe/1frxHyOhnUFi8V2bukK06WZ1VpRd5yx7nAoj/z3xAjaU3HyjhKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z9gayOoH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1718915056; c=relaxed/simple;
+	bh=DXU+kaQ13mDGzc/ERef772ITWHwfMHgJ1whdUUQWN5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fSY3wII9fsL0HnWUhKlIEp0MEMvo/NRVK18QRcPh3m9JySHDRVz1Go9npeDg5CMzIvAVQ4kcjPCLsFvZCPJV9QL9ExzL8Thsgu1//gXbLtbiV71Sd0dGPBZqDheYOObuZIyFG6TM99Cda7EwPwEmVB6B1oK+eMXdonLjPRqVgg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qE4YyeQ1; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z9gayOoH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718914484;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=stWFvKfQWMunoN+aSizxyUNPbtT8PDu9EoTxxN5jaME=;
-	b=Z9gayOoHCm1Srud0PTV27PzzICUcc+1MsX+DrlCgZnB0QAYqeOPsJUu6dS7vP/h2itS3h4
-	H1XSu8hRyIB7LKbmdeH+oXYp1lHcBFfeEXDmxSmiywYeMj1H++szdki+u9hv87f5I8z7Zi
-	nCxvMXSjd5Eq6BFYuJldFPth0kuv0dk=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-593-ApywM-z6OryagqZjG4v3gQ-1; Thu, 20 Jun 2024 16:14:42 -0400
-X-MC-Unique: ApywM-z6OryagqZjG4v3gQ-1
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-57cbaa7be59so676497a12.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 20 Jun 2024 13:14:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qE4YyeQ1"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52bc121fb1eso1516670e87.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 20 Jun 2024 13:24:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718915053; x=1719519853; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bjwgpUTvj0kF3WJiIA1rR+AvckGLAoKpZg/E+Ljg++0=;
+        b=qE4YyeQ1jlqKNCbJwysMQtB2F/3JuJboDCc51OUgaRRNdeR8yzQy17/WTz3seimzB1
+         IDECObgnpRBftgq7JvM8jtr7BPWcleXZqx2yKY0+NxwCVfm2tWzbsTAIsIiLJH8ibQjb
+         Y7qGyvf6OvVX6fgB0DYISjxN4DbV55/fzTDixBK5MyBVYS9JniNV0T4wEvlfVvLcBnwM
+         63RiqE49rBH3d6RqNStPqZSOG8GN3AkYbROaeSLYZEQNpzrd+U3CxEc5ThRg4dBIaRyy
+         iSMgL4M6F0GNg1xschNsCjxRSvyTSY+biDtDllWo7s/ASaQjeUxAfylgvcswhWTCtkrz
+         iKCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718914481; x=1719519281;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=stWFvKfQWMunoN+aSizxyUNPbtT8PDu9EoTxxN5jaME=;
-        b=xB1CpzdkNpcSy5/G9q3x0iQN4ItmNyd+vz2Uol+mJCyjMHBhb7++Byw4EbJAAmzW+E
-         bCxTRHUcAH6y4hxsIZKSU/UgaNzy/l4zuYfhTf62RVjXdVTvlmS7IQbtRVZMKUS0uOEJ
-         Bhf5c2PdowyPksYagfaMRVKv77f/qk3DLB46Qf5vg4j3qHrqKBxwzgXs9oZ0okX9BkRe
-         CoATOkDfcRPya3Bm5kAYmJ0V/7t960o9Ro7PgufJuMIdNDUau97arQaH4zroBSCeILCS
-         pHVIwCnrnOwjx2HkK+k6qbWCx7s+MkPJXYDieMieVrO5XlfCKWs7jxQCWHjoxFUtynOj
-         FYIg==
-X-Gm-Message-State: AOJu0Yz+dnRWpPyYJez9DBGaxgxb318XIVpX2DupPgYEUQf3iwJl2hZu
-	OdBM5IyRnQgLXza7z2HF73g+pzpfn4Q+cZvrxdr8g6LLWxxvX4cVxHEgfzWrSdNLCoZ1JgYako+
-	TdyQ23iOCkN1xDITwvz1094SQe5cKlNP0mfJ0W5dtO7QxccxEMWI4uoYrTXsafReNGw==
-X-Received: by 2002:a50:9b1c:0:b0:57c:a701:2311 with SMTP id 4fb4d7f45d1cf-57d07eb266emr3541323a12.26.1718914481514;
-        Thu, 20 Jun 2024 13:14:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHwT2V8ppfUQALHQ2Gx2dIUCQcXKuvxeXgHo5UbL20yvWmBKnofAzONZopukB2iwYsqsq/PEg==
-X-Received: by 2002:a50:9b1c:0:b0:57c:a701:2311 with SMTP id 4fb4d7f45d1cf-57d07eb266emr3541312a12.26.1718914481052;
-        Thu, 20 Jun 2024 13:14:41 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb743b032sm10020898a12.92.2024.06.20.13.14.40
+        d=1e100.net; s=20230601; t=1718915053; x=1719519853;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bjwgpUTvj0kF3WJiIA1rR+AvckGLAoKpZg/E+Ljg++0=;
+        b=mRfbHz5+yLMgH9BoBAPblnGQLF/3S7+qoF7IVEFUvZuJRYgh3MN8CG4ZUbvYH1NDUi
+         ck6cDbm0SA5O3z4gqxBDhKTvUhh1/JqlhS2zqxvQSN5h+35qimTAZVtBMdH9sfBHOV8W
+         sUdkoGPF4af87A9sFO081w/TzIT+bOhdFMjilaKURHCtFTWT3KFRxdtbp9BXZpUGSTZW
+         jmW6l6d+C3vlQ2gheTAq11XPRcn1gVfYk5tOyFQSyn52HuFW1F4b9YIIUpu5+484ZLED
+         vpEdSFJXn76WPnXK0NvTa/iAVH5USeSrre1grvjpqY7pGPqcgG5k2gJ6EZEh/OMxF/OO
+         pzqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeYq7Po1MqULM8K6zwSoq+HjhVQ5E1ljmCqMujZYc7x0QyFll6k53MmQc4AnoQWFvb0ApHAWefZaAXVSG14p5lNIXCwemXw8mZuSDFp+A+
+X-Gm-Message-State: AOJu0YzRbo/ygInUApkmsaujtEjkkmXpvV6CTMp4LZyr7b6h/2NBTMn6
+	oCuknRgmWNabFQicvZDbt+SiexWMUI7Hb8jzeq6KnuR5lDbkURj6zpLAxyYs6F8=
+X-Google-Smtp-Source: AGHT+IH9EWkurMSwiLpS9SksacWAo23NNuhZoV9rS+DFQjCv4svEZZXVS1qoWFAt8tLMdslowIQ2nQ==
+X-Received: by 2002:ac2:4e06:0:b0:52c:80fa:2967 with SMTP id 2adb3069b0e04-52ccaa2d61amr4627356e87.12.1718915053081;
+        Thu, 20 Jun 2024 13:24:13 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282ed95sm2154233e87.75.2024.06.20.13.24.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 13:14:40 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+        Thu, 20 Jun 2024 13:24:12 -0700 (PDT)
+Date: Thu, 20 Jun 2024 23:24:11 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] clk: qcom: select right config in CLK_QCM2290_GPUCC definition
-Date: Thu, 20 Jun 2024 22:14:31 +0200
-Message-ID: <20240620201431.93254-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.45.2
+Subject: Re: [PATCH] clk: qcom: select right config in CLK_QCM2290_GPUCC
+ definition
+Message-ID: <lrvvogzmhtxsjyebebjngnhu2s7rwwrxl6urvl35kte6n4panl@hvejq4mbwvb3>
+References: <20240620201431.93254-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620201431.93254-1-lukas.bulwahn@redhat.com>
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Thu, Jun 20, 2024 at 10:14:31PM GMT, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit 8cab033628b1 ("clk: qcom: Add QCM2290 GPU clock controller driver")
+> adds the config CLK_QCM2290_GPUCC, which intends to select the support for
+> the QCM2290 Global Clock Controller. It however selects the non-existing
+> config CLK_QCM2290_GCC, whereas the config for the QCM2290 Global Clock
+> Controller is named QCM_GCC_2290.
+> 
+> Adjust the config to the intended one.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>  drivers/clk/qcom/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Commit 8cab033628b1 ("clk: qcom: Add QCM2290 GPU clock controller driver")
-adds the config CLK_QCM2290_GPUCC, which intends to select the support for
-the QCM2290 Global Clock Controller. It however selects the non-existing
-config CLK_QCM2290_GCC, whereas the config for the QCM2290 Global Clock
-Controller is named QCM_GCC_2290.
+Fixes: 8cab033628b1 ("clk: qcom: Add QCM2290 GPU clock controller driver")
 
-Adjust the config to the intended one.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- drivers/clk/qcom/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index f72838aa573b..ef3c2852f531 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -68,7 +68,7 @@ config CLK_X1E80100_TCSRCC
- config CLK_QCM2290_GPUCC
- 	tristate "QCM2290 Graphics Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
--	select CLK_QCM2290_GCC
-+	select QCM_GCC_2290
- 	help
- 	  Support for the graphics clock controller on QCM2290 devices.
- 	  Say Y if you want to support graphics controller devices and
 -- 
-2.45.2
-
+With best wishes
+Dmitry
