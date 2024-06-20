@@ -1,77 +1,73 @@
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28AFA1AF6B7;
-	Thu, 20 Jun 2024 15:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F871B0104;
+	Thu, 20 Jun 2024 15:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718897840; cv=none; b=jpdAxXRu6q11hHxDnkKCyXcb8NYLQcblTtXVzM57y8XMEglCpPROoU8gLaAQJezDOSdb9vkdba12z4SKp/shMOVZesAr3pzOpJ4/BQqdF2CvSVUXK2uLDpo0pMAFINI5BaJCxUY0Ud2m2LPob3qEpNVskR8cgUhi9cM/vgfm0X4=
+	t=1718898184; cv=none; b=ZmKOH/ZL8Vr4wGj3MtkrP+dfPALuLmO1EuzSfbG0BD9P7/T1BqHVtNNhfo6WQKP+iGwXc8La+FTJXRGPaxtEzHCzy5VPVBHEhnWm+h16K0pJF5mHSGfgPFdhAkbg/d800fd1pBZGVjyRHZH0jMwHny2Wg2+pQshK2OkqCmLyCn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718897840; c=relaxed/simple;
-	bh=8wpoUZH3SR3wSuMlTkrUQr+OoR64UaEjTJ4j4qsZPAk=;
+	s=arc-20240116; t=1718898184; c=relaxed/simple;
+	bh=cR6djxH09Ea4TNlofQrMPziUOAf3QcLsBQENcOtnsSc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ug9/N1sWWEHgFWlBEh2hrdYktUgSrqq8c0s88ORpDMvs1C9LbkiwAsprIN2dwOjSLACh6LCXwyXU8KhY5vr1rNyXI+RbCmKs9u3RTSkKzA9QpfAd75ascaqCdcQdue1QOjhcPQvWFy6I36NNMeJQqGBY70W/wVBazJxQqE/uneY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W/XyTFaS; arc=none smtp.client-ip=209.85.215.181
+	 To:Cc:Content-Type; b=ObRFSdObHSSksoyw3sYZIIYK96x9L2poYY+jFQ9Gdx+Ck50WogkAqpXhr/QvchO73WaIhhDz69Fk8FO621hMBcvPu48FPP13NZ3us/Cfk4du3SbND7LDt9eq3z7KA9Q3k3Aow1zuAaMIbE80B97bvDs4VPPtqgxMp2RW1+fyQyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iybkP5VE; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W/XyTFaS"
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-713fa1ae9a7so669050a12.2;
-        Thu, 20 Jun 2024 08:37:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iybkP5VE"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f480624d10so8645465ad.1;
+        Thu, 20 Jun 2024 08:43:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718897838; x=1719502638; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718898183; x=1719502983; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7uAJa9cd+U3ByOgDIj6AuFYi+T/LG4WllhhWOF2SAZo=;
-        b=W/XyTFaS1i07Tx+siKrpkV4SVB19G+fQTsfxz89XskK2RZry9Whq1NdkctAgvWRnfR
-         cDQ02rO4twdsMHG/UPzJ0ww63NengFHcPHM3azUv8V0mKYbHXdFooJ26d+mmOr+KUxiG
-         u3Lehthy+yAhNV3Ot+wcfQ2Q5swCtUXQ+rZhkpSaPGjgORz+PMpjCD7vnqyyAzjNr5J4
-         29ifqDz9WdaQIkvCuwmVIlJiQDghNf9hO7wcQGVsLApKQOpELNJNG7nnkuRN2/wNNsG1
-         WyslKaWlZnC8Ka/haL2NBonJNxIbSLUR3+PeZk/M8SjaJt8AbFRS5fzUyQCGIwGGn54e
-         effQ==
+        bh=k6+cRiKVZO9FUYX5aSKkhl/XU8fhmFH+Uqj0NqNLjzY=;
+        b=iybkP5VErJDvp8YUEywM0iMyyYzbrMq7J1A+zldcYVkEFB8QuQNK0wWkOnZ8vrdhwx
+         mcWsMMqhY1CQuZlaEnEq1q0czgh2tjJNSaLZjXvWZeVMYbQs/KILA4ruuv7cmHuTCOi6
+         u/L91FtxbydoyDXxWyEeXhYsIWMM4X8N6ZHeCEG9tBLXgSuWb6/6lk27wBTP691HGU+f
+         r5iDKJwonLF/wEIcu4oyliQrPkx+3+rgTMAYS0O9h50ytn3tfSTABtLTrc09CZESapHl
+         M8pBiJEqSmh0cPvcFR7mde0gjv+yZayhog5mlHfgPb0fSXj/32PeZB3s68NWAgfZ84S5
+         vfmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718897838; x=1719502638;
+        d=1e100.net; s=20230601; t=1718898183; x=1719502983;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7uAJa9cd+U3ByOgDIj6AuFYi+T/LG4WllhhWOF2SAZo=;
-        b=K44OtjOHinPJtJ/COw8dXgieq3IwLnwK6Hmp41D4N8VsFWDinQN4a/NoAq8J7vlTBg
-         W/y1pIYGPynMv92biTT8zxP5xfRCXe6CQYqdMTJdaxROYUo0F8e1vt2HHkWE3LbTGg5u
-         q/K9xk5bXGEgYIZLHMWf+NQ/1WYB5IjlgAg1egGpYMfhMDTyPs8GNMWsRTly2CYdpQ9L
-         BU7jLpWnUv4dCNq4Doe/QWuD+uKpukMjbKonLt4LPNryYJlnP7cFE3eXuO70eZ56lZhE
-         I1nlCpKF5h/sJoB6IbpVQcqGU50qc4NpzThKA4xcF7TsZqILRb6F6R09YzP0Ga+Z4uQ+
-         WrCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOgIpcnGBt84O7A7ChVImVh8KgeeOID6BIlJfcWphUyW7uPJXQ/YcftUoW9iEIeG0BBYn1iEqKbx1NsEhZViZBIwLbRYgXm81274IyrIN6QEB5g6t2YoTvS572ly6kf2bCQo06NIA9sD3o1JXu
-X-Gm-Message-State: AOJu0YzeUUM2bbFpwfyWQNCglv8sG8sFi+tRiZ3xqY03yrXYNffw8DHc
-	er6Hj/D8JXqF/U2avo5d4ovbGzYe9MVC6SDEJA8IWdpiX4sxDOM6R15p2l5+bHe6/3eb84IrpYi
-	mb3HUAdBOhVgrgmg8tMx7F98AlG0=
-X-Google-Smtp-Source: AGHT+IHSa5FQ71JMRXYJyNnf8Gm4yVBhH8IUXZ/P53BWbl/sQt3VuXb0a7WwZrfoKndyPecNdx8rJ7qCoEk/iEFq384=
-X-Received: by 2002:a17:90a:2f45:b0:2c7:aafb:8e3c with SMTP id
- 98e67ed59e1d1-2c7b5afc252mr6219918a91.18.1718897838148; Thu, 20 Jun 2024
- 08:37:18 -0700 (PDT)
+        bh=k6+cRiKVZO9FUYX5aSKkhl/XU8fhmFH+Uqj0NqNLjzY=;
+        b=gDFjLlEMhgHdCtpvetyC0afNurs4gvLeY9aW1rlNRX1lhzS4t62PxfJEpu2KbV5Fm5
+         qydFRSjeTOjMjK0ydZry4ynbhow7SZwQT5D4KNGQ9P/h00FzcWCBoq0krC8gJKTBZlXz
+         EyAdchPFwvvnRiHo0YeRguqxNrHJBFQCtPVzEHh2L36anLJ/DNdPwDipFCg7BINotFLU
+         9HC32t3NTtPSBOYI1UaOrfL11e4MXWbHSW4IxvcOnnc2KSDoNKJfYyz99d4nEO1pbmlJ
+         gdj0mohMNHAe2/bQlapH05D4ly39CkwgzRGehQVluVci+o2L/AwM+mUTBVB/lbVRFXla
+         HGYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVljZRRaFzUjd2FvoBbL2DPMHS0YW6EwQjGvdBI+XBs66A6+lSddKqpPWXyPTvYfnWlwEsUEhVfFLSOrT+IOPzwoLA2UNjG+cNPsJXUaJ3y5/3ZV8PnE0lFSAjvVqsWOP3VfKB6OXn4ulgFLkx9
+X-Gm-Message-State: AOJu0Yz/6iHvR+1+WJ8jb/S19Yqmrfhw9ZgF5WMtz30s/nhojuEsT8kI
+	eSrRmFLOn3sKbsUtJHI+r9g7OU8KQij7plTk20t0PfUk9U67s9HbrlP5EX8d3ayLEQc6NqqPezP
+	jMXJ/EwpaJjbhhlmS/9OU67SJkMJNjQ==
+X-Google-Smtp-Source: AGHT+IH/qGtmd25WWTOZkSnnwAfm5sy2oxl3ao2SCrYKmj2x13c+PTut6ES6liqOyIzzDab8A2DfeKmumSKaGaV3ZlQ=
+X-Received: by 2002:a17:903:1cf:b0:1f9:8cd9:96c9 with SMTP id
+ d9443c01a7336-1f9aa45a571mr60134705ad.46.1718898182576; Thu, 20 Jun 2024
+ 08:43:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a57a9d8f-40bb-4cfa-9dad-4f93a1f33303@moroto.mountain>
-In-Reply-To: <a57a9d8f-40bb-4cfa-9dad-4f93a1f33303@moroto.mountain>
+References: <10510733-a59a-4419-afb5-e75fdd802794@moroto.mountain>
+In-Reply-To: <10510733-a59a-4419-afb5-e75fdd802794@moroto.mountain>
 From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 20 Jun 2024 11:37:06 -0400
-Message-ID: <CADnq5_OeVWwL2UfR0a5eE5TYaQo4QySvTennYJdGQ9r-ajDwWw@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: Clean up indenting in dm_dp_mst_is_port_support_mode()
+Date: Thu, 20 Jun 2024 11:42:51 -0400
+Message-ID: <CADnq5_PsUNMG6FmH40fb_AetaGjhBf6S0Yd41ewAaai=eec_nQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu/kfd: Add unlock() on error path to add_queue_mes()
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+Cc: Yunxiang Li <Yunxiang.Li@amd.com>, Felix Kuehling <Felix.Kuehling@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
 	"Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Alex Hung <alex.hung@amd.com>, Wayne Lin <wayne.lin@amd.com>, Fangzhi Zuo <jerry.zuo@amd.com>, 
-	Agustin Gutierrez <agustin.gutierrez@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
-	Hersen Wu <hersenxs.wu@amd.com>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -79,44 +75,34 @@ Applied.  Thanks!
 
 Alex
 
-On Thu, Jun 20, 2024 at 4:49=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+On Thu, Jun 20, 2024 at 5:07=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
 .org> wrote:
 >
-> This code works, but it's not aligned correctly.  Add a couple missing
-> tabs.
+> We recently added locking to add_queue_mes() but this error path was
+> overlooked.  Add an unlock to the error path.
 >
+> Fixes: 1802b042a343 ("drm/amdgpu/kfd: remove is_hws_hang and is_resetting=
+")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c =
-b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> index 48118447c8d9..5d4f831b1e55 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> @@ -1691,7 +1691,7 @@ enum dc_status dm_dp_mst_is_port_support_mode(
->                 if (aconnector->mst_output_port->passthrough_aux) {
->                         if (bw_range.min_kbps > end_to_end_bw_in_kbps) {
->                                 DRM_DEBUG_DRIVER("DSC passthrough. Max ds=
-c compression can't fit into end-to-end bw\n");
-> -                       return DC_FAIL_BANDWIDTH_VALIDATE;
-> +                               return DC_FAIL_BANDWIDTH_VALIDATE;
->                         }
->                 } else {
->                         /*dsc bitstream decoded at the dp last link*/
-> @@ -1756,7 +1756,7 @@ enum dc_status dm_dp_mst_is_port_support_mode(
->                 if (branch_max_throughput_mps !=3D 0 &&
->                         ((stream->timing.pix_clk_100hz / 10) >  branch_ma=
-x_throughput_mps * 1000)) {
->                         DRM_DEBUG_DRIVER("DSC is required but max through=
-put mps fails");
-> -               return DC_FAIL_BANDWIDTH_VALIDATE;
-> +                       return DC_FAIL_BANDWIDTH_VALIDATE;
->                 }
->         } else {
->                 DRM_DEBUG_DRIVER("DSC is required but can't find common d=
-sc config.");
+> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c b/driv=
+ers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+> index d2fceb6f9802..4f48507418d2 100644
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+> @@ -230,6 +230,7 @@ static int add_queue_mes(struct device_queue_manager =
+*dqm, struct queue *q,
+>         if (queue_type < 0) {
+>                 dev_err(adev->dev, "Queue type not supported with MES, qu=
+eue:%d\n",
+>                         q->properties.type);
+> +               up_read(&adev->reset_domain->sem);
+>                 return -EINVAL;
+>         }
+>         queue_input.queue_type =3D (uint32_t)queue_type;
 > --
 > 2.43.0
 >
