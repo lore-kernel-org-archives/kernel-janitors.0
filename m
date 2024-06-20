@@ -1,77 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD28C6FCC;
-	Thu, 20 Jun 2024 00:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF8F1CFA9;
+	Thu, 20 Jun 2024 06:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718843428; cv=none; b=dWHDekRYiqbPffeRSxMgLuQEc50cbi9MtvshyyixknrMrOxXSJKfN6j1Y0qxDP5r8h1yt7CyED63TQXYWYKwaIjeObyQLsbMH3+Ka8jEnS48kqasvE5JUqTfr8Z6obVVKv49kpkk4B/HB1E1AHwLGHT7gnk81yZFLcRmhmexpJQ=
+	t=1718864960; cv=none; b=rD3H1tuUSTVB2ct/IVHYVx1Oj6huU/cyvOAL/K5/m/q/oKrsw+gTnBqGWreHi5OldxDtOSCIqVbd8/TB7MhTqyUx80os+UknaYwbvfmIamnfzC26N1+V3DSXrGi0/EJ0c629ZrViUIvRC1HVxs59MSYV4cvfjLVob8RmBLbG6y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718843428; c=relaxed/simple;
-	bh=iJI2/XoTwnwLfJH7NVEwHYz1dtuhiHTokmR/vQuK2gI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=nSzDzCF17krJIGl6MnZemowA7xOhhepnApPYsnz6HQOMEO2SH1SPsaNAh+fSZ78G2DE8bbbfi+SQ+xs6baHO0j1/gufNaGIgC8aHWQj6ZPVaewTwaYlYYyam7O5o/VsghDKdO1u6C0hhnfrKbdEGngyEiz18uqwA1FCewYaabdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hl1q3dtS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718864960; c=relaxed/simple;
+	bh=AJU+IcQK9TNFEQT1vsa902xQ13yY9qya1GOcSpNF5Ec=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=cb0rdK/WoNYkhzjQGQdgezkLfNd7Ty+wSWzXxnkvrY354Oh4mXXATPLNCq+U4TMhqcOYszrVwuXxiUq3JENZMTDEYYWWVQJx4EsadbzuQxX/8Ys888Pgq6rwHLW1GQ8dBTL5WxiMkqZlxkSKgk9H7/hCwyMQYIbqZsmz+PXVBw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W+wzj8Qw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hl1q3dtS"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2F9F6C4AF15;
-	Thu, 20 Jun 2024 00:30:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718843428;
-	bh=iJI2/XoTwnwLfJH7NVEwHYz1dtuhiHTokmR/vQuK2gI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Hl1q3dtSDaiyTs5dabxzUTb98pv21ymE+H7zEBEWiIDJ2Rt6/nKgZxbGd3CSayItQ
-	 our7PGxgcRz7GqKXLig6RPqeaV653AICOyUdonte+kEF8fbS+jaoK/y8xlk0QE0zG4
-	 J08QifHxuekerhLxJo1GlObRvvLcGyMaE6Yk+ev6mQnwRJhsSTygIKY3X5qwcZobnn
-	 ONnw09jCFrFEjSg0cnmm6MSn400wh/q/lpifsjT+mrQjJNP5TmS6SHpzUSKN//XtFi
-	 s+f2NhJUh5oqJ8x17BfYOHBmMmicDbGW2ZhWrcUNK6ny/sV30zH2tC9WYfVwnXxRVZ
-	 0n8pqsWAgXu0w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 21BC8E7C4C6;
-	Thu, 20 Jun 2024 00:30:28 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W+wzj8Qw"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45K1NcKF024459;
+	Thu, 20 Jun 2024 06:29:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+iJ+ZcNNMMRRyKHxGbCQrp
+	ouL0wP99StKm757wGOd9o=; b=W+wzj8QwzY3J/GDwd0vsGFgW4scH805NqRnJSB
+	MsmUkG83WXzVzdP7nbtRtp5Lg+et3hgdYiUZuOsC2XkVfs7QO/snt5BaC1X00Thd
+	5uGjI7HAnqNotM1GDqoCs62YLqexpOF1YmOZu03qdec+LwU1IkYNTphl7YblNV+k
+	JQhG/GA8WZ8IIwNmrpf34rSOZ9r2L5pdaeUEEW56IjW+7heuFwmbgUAIWV1RGN/g
+	Fvp3uzpFrW8JlvdnakDzrc/fDwTUSfJqkswl3dkcxi5POihq/xLwHClA3EibSjAD
+	nurLevnkk0AKDhwKkNYikEHPlrhhYNPbilpQu1BGpE1Pq9Hg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvaqbrhee-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 06:29:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45K6T4Um007576
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 06:29:04 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
+ 2024 23:29:03 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Wed, 19 Jun 2024 23:29:02 -0700
+Subject: [PATCH] drm/tests: add drm_hdmi_state_helper_test
+ MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: arcnet: com20020-isa: add missing
- MODULE_DESCRIPTION() macro
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171884342813.23279.2393622021304357673.git-patchwork-notify@kernel.org>
-Date: Thu, 20 Jun 2024 00:30:28 +0000
-References: <20240618-md-m68k-drivers-net-arcnet-v1-1-90e42bc58102@quicinc.com>
-In-Reply-To: <20240618-md-m68k-drivers-net-arcnet-v1-1-90e42bc58102@quicinc.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: m.grzeschik@pengutronix.de, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240619-md-drm-tests-drm_hdmi_state_helper_test-v1-1-41c5fe2fdb4a@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAC3Mc2YC/x2NUQrDIBAFrxL2uwvRlqT2KqWIiWsVGhN2pQRC7
+ l7t3xsezBwgxIkEHt0BTN8kac0V1KWDObr8Jky+Muhe3/pBGVw8el6wkBRpy0a/JCvFFbKRPhu
+ xbR+OehxIm3C/KgPVtjGFtP9Lz1flyQnhxC7PsfmbM6yMmfYC5/kDtF1hyZgAAAA=
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Dave Stevenson
+	<dave.stevenson@raspberrypi.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gx46bUwopQ1zNNN4zwehclrcZ-GSZXR_
+X-Proofpoint-ORIG-GUID: gx46bUwopQ1zNNN4zwehclrcZ-GSZXR_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_04,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 bulkscore=0 phishscore=0 mlxlogscore=999
+ priorityscore=1501 malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406200045
 
-Hello:
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_hdmi_state_helper_test.o
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-On Tue, 18 Jun 2024 09:53:44 -0700 you wrote:
-> With ARCH=m68k, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/arcnet/com20020-isa.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> 
-> [...]
+Fixes: eb66d34d793e ("drm/tests: Add output bpc tests")
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Here is the summary with links:
-  - [net-next] net: arcnet: com20020-isa: add missing MODULE_DESCRIPTION() macro
-    https://git.kernel.org/netdev/net-next/c/e6fed01554fa
+diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+index 2d3abc71dc16..34ee95d41f29 100644
+--- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
++++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+@@ -1740,4 +1740,5 @@ kunit_test_suites(
+ );
+ 
+ MODULE_AUTHOR("Maxime Ripard <mripard@kernel.org>");
++MODULE_DESCRIPTION("Kunit test for drm_hdmi_state_helper functions");
+ MODULE_LICENSE("GPL");
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+---
+base-commit: b9578c49456340ca4d3c7ddbaca054ffc2b51bc1
+change-id: 20240619-md-drm-tests-drm_hdmi_state_helper_test-7276e29f8319
 
