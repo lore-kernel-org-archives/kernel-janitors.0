@@ -1,48 +1,48 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812001B14E6;
-	Thu, 20 Jun 2024 16:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58381CD3D;
+	Thu, 20 Jun 2024 16:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900288; cv=none; b=AUXn1Am+oT1w4eAFV4OtkjuMhW5TGGz+XExoPvzkUHjXqVydBW4Gg1FrNdAesxGNvDzuNxjIPHBcshdcMuhL/ga9Uuz+V6bvplP3uRCq9Yp5zCbyurvClKm83rNldBo0Ccb2TVs6dRl5ffNNmegXnNu4RjStwFQIUbqR4gmsI9o=
+	t=1718900536; cv=none; b=SSYoHxH+S4wLaC4W1oZbHBm+lWo+IHbaz9D8WK7kjeOuGm/3M2UOCi7hqgecobEC7Xyp7UTJ9Mtgml1nLujacPcB3f+BJk5FdihztplvXypJjpepzrbOD+siCVIWHUU4RBxihNO77F6SyltbrcdBL0ge7FGa7KBOdDuTU0lGhe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900288; c=relaxed/simple;
-	bh=1dFUQMCGHMZ3LH1izFqUEiTLo9GXkX0FPQTOZy4JQLM=;
+	s=arc-20240116; t=1718900536; c=relaxed/simple;
+	bh=ssJliKc5kNtUyUtknPdOclEvUOLH+104ZebK/uc38CI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=X4JwbZHuR3an8YRIiBleNbKkhiXvJCnaHEEaSuwOlO/Cequ7n17NxW303wXl/TvXj3fnLqdS8SlOf2K/YoRPOzU4FUw1faQHSmRzM51UIFyrGuJ+nxhIe6lIfRkgzizEppZWTZpHJePntgHFJb2Am2/Tiq54gO7b7w+na58cAHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jMOUnED4; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=F7ORG2kyXxrEGOGi0ttBjkaw8J0c0ViWFsqX4USSdKmBJE4Uh3+43RGFSTqjXw87ZLvN2WEDZzKeKDlTSXY+9p2lPH/wsxOrrwqIbgNdOTPK7cTzTWrmw24AAfhyZnDxc9X6YFfwc9x9NKX2d4dfGNJvSY3Zr9j8Rq7+w9DmejA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jOx7eYfG; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jMOUnED4"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KDmDh7024158;
-	Thu, 20 Jun 2024 16:17:53 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jOx7eYfG"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45K9vXRa003612;
+	Thu, 20 Jun 2024 16:22:02 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	av3bSper8XkT24kJs48B9E2HUSJzvcJCEJjAApE39x4=; b=jMOUnED4vp+wo05D
-	4McItidBwVJpHr/Cbn4xX/L+A3ufy+62FguwPoTjFDs7KIjJzyvYSiE77Y150yGB
-	1R8mYt2nkNovr+XXA54CtWXpDl6RBTaumvCAcCX1tu6qXM0Bw0OGcJ6pABTuNPyi
-	4KKO/I/UzA0d0Gbh++qhxtDL9plcW51JNeKSBHbx9gw5b9NV0u2LQhkm93KTY/j2
-	2XiWazIR5a/l8Nd3QfEr5rYAwcsGg6RYV/MlbInhvRuAv7CpLz055sesC6SzlcdX
-	ialkYun0VYHmj1iRMNfn9tYrSRJlfLvsnnINctS49JAN4ZOz5EDkTxEJYIhhtSyT
-	kdinXA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvnmh8d7r-1
+	hhGpsxMxzPNoapl7cqpvoCRjNe/ydCSjVn5o6h1MEu0=; b=jOx7eYfGaCbY5pPh
+	PU+XzdAGyBjuNJh9BhWB6mHmDbc8ETjF3tIBCJI+nJwNgWu8LV1cvgxI1z6jHMLr
+	GkpETrTgkA7Dw/XMf3WueG88YxPtraRbz1NlUmoRtGYSamfdEfmXV1OWyT42O0C3
+	V+bRn0ChDOkdPRA4kaB0tgE4l/sxVgn8TqneiplzztakibGkDALk8es/KgU6YTBK
+	i0qg4G1deu6wbcTzaoJRQ35BUkU5JJhyvDLRV1gjEh2eIpmHW64qL5VljiF5yGc7
+	fav6XDU2IMgtWcgwzAW6Xll1fZvSZyQpjhf/bd8t1MDYQo1Vz0yNwn5pmuKmSLl8
+	EuaDmg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvaqbswx4-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 16:17:53 +0000 (GMT)
+	Thu, 20 Jun 2024 16:22:01 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KGHq1n019100
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KGM0XL001765
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 16:17:52 GMT
-Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
+	Thu, 20 Jun 2024 16:22:00 GMT
+Received: from [10.48.244.93] (10.49.16.6) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
- 2024 09:17:51 -0700
-Message-ID: <0284e6be-a176-48a6-a99b-82ed4ad1a910@quicinc.com>
-Date: Thu, 20 Jun 2024 09:17:50 -0700
+ 2024 09:21:59 -0700
+Message-ID: <66425403-66fc-4250-9642-5b29dc821b39@quicinc.com>
+Date: Thu, 20 Jun 2024 09:21:59 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,139 +50,58 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: nfs: add missing MODULE_DESCRIPTION() macros
-To: Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker
-	<anna@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton
-	<jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-        Olga Kornievskaia
-	<kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-        Tom Talpey
-	<tom@talpey.com>, Christian Brauner <brauner@kernel.org>,
-        "Alexander Viro,"
-	<viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240527-md-fs-nfs-v1-1-64a15e9b53a6@quicinc.com>
+Subject: Re: [PATCH] apparmor: test: add MODULE_DESCRIPTION()
 Content-Language: en-US
+To: John Johansen <john.johansen@canonical.com>,
+        Paul Moore
+	<paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"
+	<serge@hallyn.com>
+CC: <apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20240529-md-apparmor_policy_unpack_test-v1-1-9efc582078c4@quicinc.com>
 From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240527-md-fs-nfs-v1-1-64a15e9b53a6@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+In-Reply-To: <20240529-md-apparmor_policy_unpack_test-v1-1-9efc582078c4@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: p8-5mBJJaexEwGfLCKtSoV561Moqotdh
-X-Proofpoint-GUID: p8-5mBJJaexEwGfLCKtSoV561Moqotdh
+X-Proofpoint-GUID: 9ntzmUJzd46cMdm1GDexHpmHrfFSoAvk
+X-Proofpoint-ORIG-GUID: 9ntzmUJzd46cMdm1GDexHpmHrfFSoAvk
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-20_07,2024-06-20_04,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- adultscore=0 lowpriorityscore=0 spamscore=0 clxscore=1011 mlxlogscore=999
- suspectscore=0 impostorscore=0 priorityscore=1501 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406200117
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 bulkscore=0 phishscore=0 mlxlogscore=999
+ priorityscore=1501 malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406200118
 
-On 5/27/24 10:58, Jeff Johnson wrote:
-> Fix the 'make W=1' warnings:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs_common/nfs_acl.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs_common/grace.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfs.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv2.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv3.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv4.o
+On 5/29/2024 6:21 PM, Jeff Johnson wrote:
+> Fix the 'make W=1' warning:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in security/apparmor/apparmor_policy_unpack_test.o
 > 
 > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
->   fs/nfs/inode.c         | 1 +
->   fs/nfs/nfs2super.c     | 1 +
->   fs/nfs/nfs3super.c     | 1 +
->   fs/nfs/nfs4super.c     | 1 +
->   fs/nfs_common/grace.c  | 1 +
->   fs/nfs_common/nfsacl.c | 1 +
->   6 files changed, 6 insertions(+)
+>  security/apparmor/policy_unpack_test.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-> index acef52ecb1bb..57c473e9d00f 100644
-> --- a/fs/nfs/inode.c
-> +++ b/fs/nfs/inode.c
-> @@ -2538,6 +2538,7 @@ static void __exit exit_nfs_fs(void)
->   
->   /* Not quite true; I just maintain it */
->   MODULE_AUTHOR("Olaf Kirch <okir@monad.swb.de>");
-> +MODULE_DESCRIPTION("NFS client support");
->   MODULE_LICENSE("GPL");
->   module_param(enable_ino64, bool, 0644);
->   
-> diff --git a/fs/nfs/nfs2super.c b/fs/nfs/nfs2super.c
-> index 467f21ee6a35..b1badc70bd71 100644
-> --- a/fs/nfs/nfs2super.c
-> +++ b/fs/nfs/nfs2super.c
-> @@ -26,6 +26,7 @@ static void __exit exit_nfs_v2(void)
->   	unregister_nfs_version(&nfs_v2);
->   }
->   
-> +MODULE_DESCRIPTION("NFSv2 client support");
->   MODULE_LICENSE("GPL");
->   
->   module_init(init_nfs_v2);
-> diff --git a/fs/nfs/nfs3super.c b/fs/nfs/nfs3super.c
-> index 8a9be9e47f76..20a80478449e 100644
-> --- a/fs/nfs/nfs3super.c
-> +++ b/fs/nfs/nfs3super.c
-> @@ -27,6 +27,7 @@ static void __exit exit_nfs_v3(void)
->   	unregister_nfs_version(&nfs_v3);
->   }
->   
-> +MODULE_DESCRIPTION("NFSv3 client support");
->   MODULE_LICENSE("GPL");
->   
->   module_init(init_nfs_v3);
-> diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
-> index 8da5a9c000f4..b29a26923ce0 100644
-> --- a/fs/nfs/nfs4super.c
-> +++ b/fs/nfs/nfs4super.c
-> @@ -332,6 +332,7 @@ static void __exit exit_nfs_v4(void)
->   	nfs_dns_resolver_destroy();
->   }
->   
-> +MODULE_DESCRIPTION("NFSv4 client support");
->   MODULE_LICENSE("GPL");
->   
->   module_init(init_nfs_v4);
-> diff --git a/fs/nfs_common/grace.c b/fs/nfs_common/grace.c
-> index 1479583fbb62..8f034aa8c88b 100644
-> --- a/fs/nfs_common/grace.c
-> +++ b/fs/nfs_common/grace.c
-> @@ -139,6 +139,7 @@ exit_grace(void)
->   }
->   
->   MODULE_AUTHOR("Jeff Layton <jlayton@primarydata.com>");
-> +MODULE_DESCRIPTION("lockd and nfsv4 grace period control");
->   MODULE_LICENSE("GPL");
->   module_init(init_grace)
->   module_exit(exit_grace)
-> diff --git a/fs/nfs_common/nfsacl.c b/fs/nfs_common/nfsacl.c
-> index 5a5bd85d08f8..ea382b75b26c 100644
-> --- a/fs/nfs_common/nfsacl.c
-> +++ b/fs/nfs_common/nfsacl.c
-> @@ -29,6 +29,7 @@
->   #include <linux/nfs3.h>
->   #include <linux/sort.h>
->   
-> +MODULE_DESCRIPTION("NFS ACL support");
->   MODULE_LICENSE("GPL");
->   
->   struct nfsacl_encode_desc {
+> diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+> index 5c9bde25e56d..874fcf97794e 100644
+> --- a/security/apparmor/policy_unpack_test.c
+> +++ b/security/apparmor/policy_unpack_test.c
+> @@ -604,4 +604,5 @@ static struct kunit_suite apparmor_policy_unpack_test_module = {
+>  
+>  kunit_test_suite(apparmor_policy_unpack_test_module);
+>  
+> +MODULE_DESCRIPTION("KUnit tests for AppArmor's policy unpack");
+>  MODULE_LICENSE("GPL");
 > 
 > ---
-> base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
-> change-id: 20240527-md-fs-nfs-42f19eb60b50
+> base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
+> change-id: 20240529-md-apparmor_policy_unpack_test-7657c4f11591
 > 
 
-Adding core fs maintainers.
 Following up to see if anything else is needed to get this merged.
-
