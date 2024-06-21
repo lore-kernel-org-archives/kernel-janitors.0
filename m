@@ -1,35 +1,34 @@
 Received: from norbury.hmeau.com (helcar.hmeau.com [216.24.177.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47EFC1527BB;
-	Fri, 21 Jun 2024 12:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4431552ED;
+	Fri, 21 Jun 2024 12:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.24.177.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718973275; cv=none; b=PwPglADWF8KH4mnWJZgAxL9Oz9RPvXeayJFl/9An0LwjEX2AGEEzWQ5wvNVxtuDG8mgNlzUGEKauaM3GBjP8u1OUy2D/knegZjMnGsxM0XyLFqg6nK9wBlAsVTdj1/fJ5z9Nd1Z3OnRxjb1sqkRfvSBsOnbcnroZril6Y3HCdKg=
+	t=1718973321; cv=none; b=aVZWVxetIsC46jou09/XapHF0f98luvQdMj7SjK26kJNLjb8D15FwJrt6d9q4YNgyffWQtRGellNOQ1ik8rLxqY2aq7IZ/31myAaiuZcjjWxNiD9jHYI50htfL3R6Q5HhQOIgnCIoddhTQTvFmzZ+m/5EPjtnavnaqwXde+U0lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718973275; c=relaxed/simple;
-	bh=vUVvNctaPVLLYkhaC2RkdX9sgZkPkbhRqFGtCGGVTL4=;
+	s=arc-20240116; t=1718973321; c=relaxed/simple;
+	bh=jYTDt0Blf0IGRCLiR9Gi7to30UUBqgffpSUNmha3AOw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pbrKaCWEV+PD0nzU/VrYNlKjJgDeEv6+7IJRCFeQlU2a6W5gyhtzdz1LUazRBxx0c1ke1ogmyaBLeNolr5hwOIGsVR0bPLTCTX2ZlpQ1FrEVHsJio02O4iAydtaWn4IxwA+HYvb4wjuFPM9CiTkzwp34mfuecYRd5ZHtiiQHZ2o=
+	 Content-Type:Content-Disposition:In-Reply-To; b=D7CfszFJROF1zyuLGujfPmUpWS9TM+dDWKo/5KTWHXx5qg5QDCOh6AzRUC2Bv6CElzS1Zi6An6Epec1T5riuKPX5iePBJLsdcYPzhVWrDBacVN8XFuE9V2JFqjoPLuu10v9F/WW723ROQHj20hZ+cENMaU9GNdUkFh6l7qvRxro=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=216.24.177.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
 	by norbury.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sKdSu-002enm-2W;
-	Fri, 21 Jun 2024 22:34:05 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 21 Jun 2024 22:34:05 +1000
-Date: Fri, 21 Jun 2024 22:34:05 +1000
+	id 1sKdTj-002epi-1v;
+	Fri, 21 Jun 2024 22:34:56 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 21 Jun 2024 22:34:56 +1000
+Date: Fri, 21 Jun 2024 22:34:56 +1000
 From: Herbert Xu <herbert@gondor.apana.org.au>
 To: Jeff Johnson <quic_jjohnson@quicinc.com>
 Cc: "David S. Miller" <davem@davemloft.net>,
 	Russell King <linux@armlinux.org.uk>, linux-crypto@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] crypto: arm/poly1305 - add missing MODULE_DESCRIPTION()
- macro
-Message-ID: <ZnVzPV295Zcs0Npk@gondor.apana.org.au>
-References: <20240613-md-arm-arch-arm-crypto-v1-1-0ff745c4220a@quicinc.com>
+Subject: Re: [PATCH] crypto: arm: add missing MODULE_DESCRIPTION() macros
+Message-ID: <ZnVzcCMSCI+ERiOB@gondor.apana.org.au>
+References: <20240615-md-arm-arch-arm-crypto-cont-v1-1-f15541b5db02@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -38,18 +37,27 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240613-md-arm-arch-arm-crypto-v1-1-0ff745c4220a@quicinc.com>
+In-Reply-To: <20240615-md-arm-arch-arm-crypto-cont-v1-1-f15541b5db02@quicinc.com>
 
-On Thu, Jun 13, 2024 at 05:57:05PM -0700, Jeff Johnson wrote:
+On Sat, Jun 15, 2024 at 10:32:37PM -0700, Jeff Johnson wrote:
 > With ARCH=arm, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/crypto/poly1305-arm.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/crypto/aes-arm-bs.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/crypto/crc32-arm-ce.o
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+> files which have a MODULE_LICENSE().
+> 
+> This includes crct10dif-ce-glue.c and curve25519-glue.c which,
+> although they did not produce a warning with the arm allmodconfig
+> configuration, may cause this warning with other configurations.
 > 
 > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
->  arch/arm/crypto/poly1305-glue.c | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm/crypto/aes-neonbs-glue.c   | 1 +
+>  arch/arm/crypto/crc32-ce-glue.c     | 1 +
+>  arch/arm/crypto/crct10dif-ce-glue.c | 1 +
+>  arch/arm/crypto/curve25519-glue.c   | 1 +
+>  4 files changed, 4 insertions(+)
 
 Patch applied.  Thanks.
 -- 
