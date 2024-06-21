@@ -1,144 +1,89 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B1617107C;
-	Fri, 21 Jun 2024 11:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0CB172BC7
+	for <kernel-janitors@vger.kernel.org>; Fri, 21 Jun 2024 11:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718968394; cv=none; b=YAHJPcyts04yO8tAeFyUfHrYS/5M1hxTL+zaQ3k1GFx32GmQZGqfdHQPPAM4wxswzxl2yaqBy1wAs9vI483U4VnFkoBV9Mk/dlsMzZGhPJYEi8Mby4MhsFUMu6Dh4f6PLBsnPABDNV6lZWgp3Kl1brn5Dg6sDVKLRsKaYx60u+s=
+	t=1718970099; cv=none; b=NkXmdSkUKNVqwyTPI6MXWgGf2tztF70Ytcepi4LW5SZAXkP4/7zzSxRUrvGkQTrBIoDYAz0Tn3ILKDV3yJzTkDUyZM3TiR7Px2X1pOBN0/SAWR829olEoK4U45mTfHO6myqpsNOfmA68Gpbyikpp8H5abkgblOLsEK6MJGJZYow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718968394; c=relaxed/simple;
-	bh=pyE6rpI0+UknO/WUfC/fDntx9R2sRzT4vDGkJMqYsNk=;
+	s=arc-20240116; t=1718970099; c=relaxed/simple;
+	bh=/dIk4GsbsvwJE2GyMw1zPwJuQiOj+ZNFGivrp+bs3yM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XEN5qkUxPSzKIuDFX0l8HfD8B0tN6EJOiWZi5za1tllDsQ6YKVYWj27K/kdVlzGrMQhAEf40HIce40qf0jcqip9AjeWkeJkWrC/ycRf/eu/rFJ2Cdi45ZaXDJpwbu3SZS8vwi9b1A40/nf69K754jqZjjqJ04PPSHJjB7u1pt1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hR6ZCGHG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VcpkxfG9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hR6ZCGHG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VcpkxfG9; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	 Content-Type:Content-Disposition:In-Reply-To; b=gsI1lAqag+cNfAUKLRUbAhY9ayb2KzqXrXR4Kvzly5vAAmNChJjdr8+6X8+tRQtD4UotgeVUDxw0KnoTRrWYQY+gZ0Xs5SJnQozU04cNjAEB4Yu+ht5LYL+/anN3M8gnBmgJbmpBPD5x0XawtEC+rxUHqTX2s0ObG4fNtIYsWB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=GEYTYKuk; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hR6ZCGHG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VcpkxfG9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hR6ZCGHG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VcpkxfG9"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 521DB1FB6C;
-	Fri, 21 Jun 2024 11:13:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718968390; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dZc/C+EFdu9Q33AJSPSavgIomLUKLutbToyiR7oDqwo=;
-	b=hR6ZCGHGbDBJ6+dzVp+qCwSBdCG3Ou9WIrNxirxxIU3EJUzX5qE1uDeixrRkXlccRBNz7s
-	pJ5rAtIfC3eLZ7lRCkd8NeTO9TqkEWEoJshuF57f9EoQunQu0GW2nSu/fzLMVwryTf0H4t
-	VJf8FrM4zjNFmzdUua+6PQUbYGjZajo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718968390;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dZc/C+EFdu9Q33AJSPSavgIomLUKLutbToyiR7oDqwo=;
-	b=VcpkxfG92MFA/VQOE6mEueNESkeXndNka2csU/ZgHffruro5LI06X9Tt2wtKogl0X+KsKl
-	Gd7+fGXZbNevmVAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hR6ZCGHG;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=VcpkxfG9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718968390; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dZc/C+EFdu9Q33AJSPSavgIomLUKLutbToyiR7oDqwo=;
-	b=hR6ZCGHGbDBJ6+dzVp+qCwSBdCG3Ou9WIrNxirxxIU3EJUzX5qE1uDeixrRkXlccRBNz7s
-	pJ5rAtIfC3eLZ7lRCkd8NeTO9TqkEWEoJshuF57f9EoQunQu0GW2nSu/fzLMVwryTf0H4t
-	VJf8FrM4zjNFmzdUua+6PQUbYGjZajo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718968390;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dZc/C+EFdu9Q33AJSPSavgIomLUKLutbToyiR7oDqwo=;
-	b=VcpkxfG92MFA/VQOE6mEueNESkeXndNka2csU/ZgHffruro5LI06X9Tt2wtKogl0X+KsKl
-	Gd7+fGXZbNevmVAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3B6A813AAA;
-	Fri, 21 Jun 2024 11:13:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xU6uDkZgdWZqYwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 21 Jun 2024 11:13:10 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B8ED2A087E; Fri, 21 Jun 2024 13:13:09 +0200 (CEST)
-Date: Fri, 21 Jun 2024 13:13:09 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="GEYTYKuk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=/dIk
+	4GsbsvwJE2GyMw1zPwJuQiOj+ZNFGivrp+bs3yM=; b=GEYTYKukOYTDN+iSFAAS
+	/dnLXdYhG54JI5LtzBJWXJBOEAOLU5OB5BSWLWY8qyoSGTCA/Y5Jq+eIeXcO/QvH
+	TgvaqE9Gald3feQRwLq36avP2HXB+F8T05ZyHJGNhI4+5yh8v3/nPEFUGn7USvWZ
+	OlDTAZC1DSkjLLueAHOvbmc275oUPEjp4D/IjZ0mxKD4cBh7741b75XTqISb+FZq
+	/ZcL3kw0ZPPwNNRyBd84QMy9j6eVSA8GR40JKcv/9kqyCoHDRe+f/KUm8popmvoO
+	1IJaEM7DxIW0H6mM23B7pRu3QnPaHxmu03ccP7lTc6Omv6Fm6SkZ6WAe0LCd3xYP
+	uw==
+Received: (qmail 1357810 invoked from network); 21 Jun 2024 13:41:34 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jun 2024 13:41:34 +0200
+X-UD-Smtp-Session: l3s3148p1@jo/Y6WQb2oAgAwDPXzjQABqqX1QYyOSW
+Date: Fri, 21 Jun 2024 13:41:34 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Jean Delvare <jdelvare@suse.com>, Rudolf Marek <r.marek@assembler.cz>, 
+	Jeff Johnson <quic_jjohnson@quicinc.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] i2c: add missing MODULE_DESCRIPTION() macros
+Message-ID: <4ifsa2bb7edxoxbajejkjc5lps3o2puvzmqpcky5f7ociopj5r@lqez5qd5j5za>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Andi Shyti <andi.shyti@kernel.org>, Jean Delvare <jdelvare@suse.com>, 
+	Rudolf Marek <r.marek@assembler.cz>, Jeff Johnson <quic_jjohnson@quicinc.com>, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs: ext4: add missing MODULE_DESCRIPTION()
-Message-ID: <20240621111309.l4f7mxu6zqjwx7ws@quack3>
-References: <20240527-md-fs-ext4-v1-1-07aad5936bb1@quicinc.com>
- <bbff5b14-75ae-4dc3-9aac-17afd4e92693@quicinc.com>
+References: <20240607-md-drivers-i2c-busses-v1-1-0340f4590199@quicinc.com>
+ <171823283902.404205.70695545508575687.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fik6xs7tmxtqyryo"
+Content-Disposition: inline
+In-Reply-To: <171823283902.404205.70695545508575687.b4-ty@kernel.org>
+
+
+--fik6xs7tmxtqyryo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bbff5b14-75ae-4dc3-9aac-17afd4e92693@quicinc.com>
-X-Rspamd-Queue-Id: 521DB1FB6C
-X-Spam-Score: -4.01
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-On Thu 20-06-24 09:06:42, Jeff Johnson wrote:
-> On 5/27/24 11:02, Jeff Johnson wrote:
-> > Fix the 'make W=1' warning:
-> > WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ext4/ext4-inode-test.o
-> > 
-> > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-Ted was on a long vacation recently but I expect him to pick up this patch
-for the next merge window. Anyway feel free to add:
+> git://git.kernel.org/pub/scm/linux/kernel/git/local tree
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+That link looks suspicious...
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+--fik6xs7tmxtqyryo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ1Zu0ACgkQFA3kzBSg
+KbZBVg/+LUcLvpmuMVH5Bd9PpNiQDF8FIqEfaTJJ3co/3XcYU7tjCpvd9iFaBVX7
+7pZQOYDli345sB4GZ5nlgdphfsNVZghZW3SOJnMt7y/xctGepjMQ3rBkpAQlzIs0
+vvJOygTNzXz9WsIb1GI4j9MXH2STi2bLJ4aZFKjf6ud3Cz9KBuVjv6saqKiiFphJ
+863ogVDF72yIkKrlgNU5UG0l29H2MsWSYMM3bLfDiIcOxYm2uoCPQQ0UQqpdchuC
+3IojANLp+4TYoL2/PKjA2luf5mrEYg8u+YjkpygMDk6KWLdpS/0aJEa3t5l7yiAD
+q5BZkD8XFwf83lEuNMN0tmNgi34g5J+K4xbU8yIk3+qoykPE746dUFopt2tHxh9h
+jXJ//9AqHAJV53+Fvf1Sk15eDBwRHRWDDzNtVf67kgXQ+mNOApElVHy59AQdpJFI
+QwLB6O6q1dyHhuhu9SS61HJ585sMkc8UgXzQfkjFJ4EcTjyZn7LcYkQnliN4m/bn
+dblCT7yIc/nDUpGKS62OspxUQhM70fuGhHFF/kiN8f8WHJgn1uOkhAbHFn5YeI16
+g+xcV4KeYzyzoG8LATSdb3nYCqqXsviU/TR/Vh4cYxXnY1CBvikU5IO5N4EzWz9+
+wExLe9XAzNL9GsWoGQE7rwE0ZDBB69YYkp8IXuVxQuU4Dnk8/ps=
+=TPpP
+-----END PGP SIGNATURE-----
+
+--fik6xs7tmxtqyryo--
