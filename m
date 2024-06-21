@@ -1,89 +1,62 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from norbury.hmeau.com (helcar.hmeau.com [216.24.177.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0CB172BC7
-	for <kernel-janitors@vger.kernel.org>; Fri, 21 Jun 2024 11:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4D1152161;
+	Fri, 21 Jun 2024 12:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.24.177.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718970099; cv=none; b=NkXmdSkUKNVqwyTPI6MXWgGf2tztF70Ytcepi4LW5SZAXkP4/7zzSxRUrvGkQTrBIoDYAz0Tn3ILKDV3yJzTkDUyZM3TiR7Px2X1pOBN0/SAWR829olEoK4U45mTfHO6myqpsNOfmA68Gpbyikpp8H5abkgblOLsEK6MJGJZYow=
+	t=1718973239; cv=none; b=MiIow7g0ydvHPzE5nGW74+QStsOa72nUtEPN3hykjO4bSt21R9kJemC1jR+tGOHsP/YX2Xzl8nUQmGgq9vWMPIQKRCAmUXCqEmQ3Lc/yEQW9lmeYKkbyKzsR4uoSzisAcD3Kkn0GgqEvhlojIZAykNZTVIbZvjoY4srWIcvzl+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718970099; c=relaxed/simple;
-	bh=/dIk4GsbsvwJE2GyMw1zPwJuQiOj+ZNFGivrp+bs3yM=;
+	s=arc-20240116; t=1718973239; c=relaxed/simple;
+	bh=3BJYGNkY5ljEsopichr1iPVm2bH5/omcygOmiN77/oY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gsI1lAqag+cNfAUKLRUbAhY9ayb2KzqXrXR4Kvzly5vAAmNChJjdr8+6X8+tRQtD4UotgeVUDxw0KnoTRrWYQY+gZ0Xs5SJnQozU04cNjAEB4Yu+ht5LYL+/anN3M8gnBmgJbmpBPD5x0XawtEC+rxUHqTX2s0ObG4fNtIYsWB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=GEYTYKuk; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="GEYTYKuk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=/dIk
-	4GsbsvwJE2GyMw1zPwJuQiOj+ZNFGivrp+bs3yM=; b=GEYTYKukOYTDN+iSFAAS
-	/dnLXdYhG54JI5LtzBJWXJBOEAOLU5OB5BSWLWY8qyoSGTCA/Y5Jq+eIeXcO/QvH
-	TgvaqE9Gald3feQRwLq36avP2HXB+F8T05ZyHJGNhI4+5yh8v3/nPEFUGn7USvWZ
-	OlDTAZC1DSkjLLueAHOvbmc275oUPEjp4D/IjZ0mxKD4cBh7741b75XTqISb+FZq
-	/ZcL3kw0ZPPwNNRyBd84QMy9j6eVSA8GR40JKcv/9kqyCoHDRe+f/KUm8popmvoO
-	1IJaEM7DxIW0H6mM23B7pRu3QnPaHxmu03ccP7lTc6Omv6Fm6SkZ6WAe0LCd3xYP
-	uw==
-Received: (qmail 1357810 invoked from network); 21 Jun 2024 13:41:34 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jun 2024 13:41:34 +0200
-X-UD-Smtp-Session: l3s3148p1@jo/Y6WQb2oAgAwDPXzjQABqqX1QYyOSW
-Date: Fri, 21 Jun 2024 13:41:34 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Jean Delvare <jdelvare@suse.com>, Rudolf Marek <r.marek@assembler.cz>, 
-	Jeff Johnson <quic_jjohnson@quicinc.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] i2c: add missing MODULE_DESCRIPTION() macros
-Message-ID: <4ifsa2bb7edxoxbajejkjc5lps3o2puvzmqpcky5f7ociopj5r@lqez5qd5j5za>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, Jean Delvare <jdelvare@suse.com>, 
-	Rudolf Marek <r.marek@assembler.cz>, Jeff Johnson <quic_jjohnson@quicinc.com>, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=YpX/3eSrGH1NwyZXtiYoJs28XTfFgVbYkITs71StB9yMo66vt/Oxa+xauqyf+i7P5LhX5I0k/D4mhbcHuvTRsm6f8xQiTpuGh8/aGrjkh1/FOynRsdfEJ1PLI9x3bcW05ME6vZn21PLWesZj2TUfUbvJBWK67IXyqEwEyk7E9z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=216.24.177.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
+	by norbury.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sKdSD-002enT-36;
+	Fri, 21 Jun 2024 22:33:23 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 21 Jun 2024 22:33:22 +1000
+Date: Fri, 21 Jun 2024 22:33:22 +1000
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-crypto@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-References: <20240607-md-drivers-i2c-busses-v1-1-0340f4590199@quicinc.com>
- <171823283902.404205.70695545508575687.b4-ty@kernel.org>
+Subject: Re: [PATCH] crypto: arm64 - add missing MODULE_DESCRIPTION() macros
+Message-ID: <ZnVzEjYSfv4jZj/8@gondor.apana.org.au>
+References: <20240612-md-arch-arm64-crypto-v1-1-7a0e83d83cda@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fik6xs7tmxtqyryo"
-Content-Disposition: inline
-In-Reply-To: <171823283902.404205.70695545508575687.b4-ty@kernel.org>
-
-
---fik6xs7tmxtqyryo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240612-md-arch-arm64-crypto-v1-1-7a0e83d83cda@quicinc.com>
 
+On Wed, Jun 12, 2024 at 01:11:57PM -0700, Jeff Johnson wrote:
+> With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm64/crypto/crct10dif-ce.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm64/crypto/poly1305-neon.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm64/crypto/aes-neon-bs.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  arch/arm64/crypto/aes-neonbs-glue.c   | 1 +
+>  arch/arm64/crypto/crct10dif-ce-glue.c | 1 +
+>  arch/arm64/crypto/poly1305-glue.c     | 1 +
+>  3 files changed, 3 insertions(+)
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/local tree
-
-That link looks suspicious...
-
-
---fik6xs7tmxtqyryo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ1Zu0ACgkQFA3kzBSg
-KbZBVg/+LUcLvpmuMVH5Bd9PpNiQDF8FIqEfaTJJ3co/3XcYU7tjCpvd9iFaBVX7
-7pZQOYDli345sB4GZ5nlgdphfsNVZghZW3SOJnMt7y/xctGepjMQ3rBkpAQlzIs0
-vvJOygTNzXz9WsIb1GI4j9MXH2STi2bLJ4aZFKjf6ud3Cz9KBuVjv6saqKiiFphJ
-863ogVDF72yIkKrlgNU5UG0l29H2MsWSYMM3bLfDiIcOxYm2uoCPQQ0UQqpdchuC
-3IojANLp+4TYoL2/PKjA2luf5mrEYg8u+YjkpygMDk6KWLdpS/0aJEa3t5l7yiAD
-q5BZkD8XFwf83lEuNMN0tmNgi34g5J+K4xbU8yIk3+qoykPE746dUFopt2tHxh9h
-jXJ//9AqHAJV53+Fvf1Sk15eDBwRHRWDDzNtVf67kgXQ+mNOApElVHy59AQdpJFI
-QwLB6O6q1dyHhuhu9SS61HJ585sMkc8UgXzQfkjFJ4EcTjyZn7LcYkQnliN4m/bn
-dblCT7yIc/nDUpGKS62OspxUQhM70fuGhHFF/kiN8f8WHJgn1uOkhAbHFn5YeI16
-g+xcV4KeYzyzoG8LATSdb3nYCqqXsviU/TR/Vh4cYxXnY1CBvikU5IO5N4EzWz9+
-wExLe9XAzNL9GsWoGQE7rwE0ZDBB69YYkp8IXuVxQuU4Dnk8/ps=
-=TPpP
------END PGP SIGNATURE-----
-
---fik6xs7tmxtqyryo--
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
