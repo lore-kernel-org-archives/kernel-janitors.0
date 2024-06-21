@@ -1,32 +1,44 @@
-Received: from norbury.hmeau.com (helcar.hmeau.com [216.24.177.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE07155741;
-	Fri, 21 Jun 2024 12:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.24.177.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1380B5BAF0;
+	Fri, 21 Jun 2024 18:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718973325; cv=none; b=cDOvKEGZu7qY0uNLmG8eNtK0KjCknNVSygiJMtCVHuFY0lKRyeo3GvtW6bl88HmGHJ+WmtYbUJiD56Nh13LZkmCZ9J7nkZBrqvFasxgkjhATJWCrPhQPPgDKXo2eHODBf6anOxGKWKT5hL5v3tg/BbhnbZZ9JDXslU1AFIZS88E=
+	t=1718995593; cv=none; b=rTNcYmtUCJg6YLe/EufT2uxq6DobICd4MD3UxMZCJqYYUAzipRUlbpkV4zebM5Ie4vlXdFSFMmwC+8kObtQYQLsGgGuGZnp3vfsz0HFCpC1+ntodECgWM9UmXtuAP05m0F2hqnt+lNLJuhgyUVvFswnok5F0+5uon0FR2kfVMLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718973325; c=relaxed/simple;
-	bh=DAbfkbzQszqjx9XcJQhPa3kDd4qDzqPlO1ZHE4zgObM=;
+	s=arc-20240116; t=1718995593; c=relaxed/simple;
+	bh=hGWFaeKo6xY0d8c6EUHTKFxGmvR2STDskrDV3QJjCJ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tv/vPp8YgL7NEvW6Vv/dOaMwLxMOWnv77it5rclxwzxVULmp8Ki20XQ5M6KZwFv7KcL/P88mD7FGNUt5J1S8I6/tXlTI3JV1HvFpwqlVSEn4VBAmzMkDUPXpu/2U7N1l4IAs72zmLdTRe1qtEMnWxz3qGDYG6EP4AOeXOzpHMcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=216.24.177.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
-	by norbury.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sKdTs-002eps-2d;
-	Fri, 21 Jun 2024 22:35:05 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 21 Jun 2024 22:35:05 +1000
-Date: Fri, 21 Jun 2024 22:35:05 +1000
-From: Herbert Xu <herbert@gondor.apana.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GwhH22s/SFfVxNtwyxueOt5h7rD9MB6d0521rC3YNjAOqV1GDmmGx3OOXa29/1mve8iN1MbwrLnqzhWqcZu3QQu0RemwHJFBJHAtLULyp/Kbnok0c0AUh+7pVdNbqwMGEfAgiIXQSV131CH9wqrap5+EufAYkQ43PldT66aOiSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RyDOWkzQ; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RyDOWkzQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE150C2BBFC;
+	Fri, 21 Jun 2024 18:46:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718995592;
+	bh=hGWFaeKo6xY0d8c6EUHTKFxGmvR2STDskrDV3QJjCJ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RyDOWkzQNhc4cnXSG2+ek5wjUB23AHoh1Ua8eWl/X4+KBDAwZniV3sgHnVFk3ra/h
+	 3D+40sNMNRBX7a1L5S+ybM8/mqf+EQl0FhDyXIj9SNtt5Bwv9VRoudFOQyH2DFyanv
+	 vRMtNF6QO3NZXIQwx930cKGMkM9hi/zk4l747fxdgIOSBx04HBxK/B8Y68yasRvQ/t
+	 hDNPUVKVMpRDXB03G6mo03W6Dc/yBydkk40hHLp9FmEeM2dFzloahpIXpv99c4/OnR
+	 UzvxKIl0Mrk+Ma1OV9ahWztP04cuOphcoNqbwDlhMZljBE62Qo+/kpka3ubzqMGZOz
+	 YfUxWJlVcC15g==
+Date: Fri, 21 Jun 2024 12:46:29 -0600
+From: Keith Busch <kbusch@kernel.org>
 To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] crypto: lib - add missing MODULE_DESCRIPTION() macros
-Message-ID: <ZnVzeapei4WxSUbQ@gondor.apana.org.au>
-References: <20240615-md-arm-lib-crypto-v1-1-27b67bf8573c@quicinc.com>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, Eric Curtin <ecurtin@redhat.com>
+Subject: Re: [PATCH v2] nvme-apple: add missing MODULE_DESCRIPTION()
+Message-ID: <ZnXKhUMDenD4tnrn@kbusch-mbp>
+References: <20240620-md-nvme-apple-v2-1-72e9d7151a1f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -35,28 +47,12 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240615-md-arm-lib-crypto-v1-1-27b67bf8573c@quicinc.com>
+In-Reply-To: <20240620-md-nvme-apple-v2-1-72e9d7151a1f@quicinc.com>
 
-On Sat, Jun 15, 2024 at 11:14:57PM -0700, Jeff Johnson wrote:
-> With ARCH=arm, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libsha256.o
+On Thu, Jun 20, 2024 at 09:42:18AM -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvme/host/nvme-apple.o
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
-> 
-> This includes sha1.c and utils.c which, although they did not produce
-> a warning with the arm allmodconfig configuration, may cause this
-> warning with other configurations.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  lib/crypto/sha1.c   | 1 +
->  lib/crypto/sha256.c | 1 +
->  lib/crypto/utils.c  | 1 +
->  3 files changed, 3 insertions(+)
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Applied to nvme-6.10.
