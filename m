@@ -1,168 +1,134 @@
-Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CDE17C7C;
-	Sun, 23 Jun 2024 08:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F9515E83;
+	Sun, 23 Jun 2024 08:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719129902; cv=none; b=GulOU+tva4SLnBVPsbDAE29lPvjzvorQah3x0Ts1vKvcFnEs1P2vZtzNR4juxt1keZ8Pn74q6ff/TQjpvJp28SOpqLo4SIduA4QZmulcPhW4i2WXwzTorPglqvEz61aleTUyGnxlt8yZYYTPACf6fdc/Ip3OTYt3fYMs92ry/JQ=
+	t=1719131004; cv=none; b=MqHLrOpOaweDA3YWzEtScH44X1tiBWjMbqXcCiuPFYYXBGwZbD0oWorofbY84TQpyf1a0so9uo19SqxzEnzmORNuuWlyNSKDfHEyy1IYk1vX+HxKpCv2rix2SSyBUj2grtWUJdPQTWiZYVaMabrOdEJujkQsOAh1BbyvHt1FDF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719129902; c=relaxed/simple;
-	bh=L+fBNEeK6lDWZjdsWdDStuilRXSXt+4gjCSKof+Ck14=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kRxtel2WHYnIhlDi9jdZjrKC29Jy72pduADLwYufj6ynynjnXUbYPMhhsFDz1dqpK3/yHFpjytHXyzgjzOglrEHdKGQPkyD8WW1zeStSL56VwcaoNOblgGNW4uRYqFHokHFpiWTnbDMZmKw6L3uFQ1I8v00eaoRAXNqiwlcXfas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Orp1t91x; arc=none smtp.client-ip=193.252.23.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1719131004; c=relaxed/simple;
+	bh=x4e8XcpJNZymn97A0V+osWFBR8uTIfDjYcM2vgAnIeo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ACucUB34BifkxlCoBo2rTbQp1Z+73LUhFXXNt2jcQyf13AHiwPSyf2xl2pilwBH9YUh3RYoInvdFT7Hn71NujcZ87fv0B1IgsKLku49dbeOzcyIudbvtpuuu0cBrZhVqvi837uhPfAR8eNUH0eM1BoME4enfckqBLEzHGxNBmec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=NdiA2RVv; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Orp1t91x"
-Received: from fedora.home ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id LIDRshykYqHypLIDRsPqzn; Sun, 23 Jun 2024 10:04:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1719129890;
-	bh=iSV7OMQHyo5A+TPl27ELYTFtKHhEE1HTiDYIXwhqgZY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Orp1t91xeBDFmihYa8h5KObI0070Jlfu2IeYnVhCvZ+XoumsjKWG3Sou9P3enz2jH
-	 xL973V89/xBGmUwbMAeVm8DgZFq23vhXDoZ1dEV/rbsC+eX0C6kvejB3GxhiS47ZX5
-	 yko6epdo40nV+/wwXmQhPtuftRiFyT+yY0CisZEhfamXTAll26gV64OLAWcStmXEdR
-	 UajfaSzkoB8oDIRWjSaW7d9GzzB/5tQ8Hrs7w+nnCCBQjaB7Z5fH04Clzg64zduT1E
-	 CYRt3zeNZtxZTqkG53Pk8X+k10P/rGENhDkjcrwv9xiCr/q55Tel3m/JbonmWxx5wq
-	 FBNcSa5aciv0g==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 23 Jun 2024 10:04:50 +0200
-X-ME-IP: 86.243.222.230
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: linus.walleij@linaro.org,
-	Sebastian Reichel <sre@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pm@vger.kernel.org
-Subject: [PATCH v2 2/2] power: supply: samsung-sdi-battery: Constify struct power_supply_maintenance_charge_table
-Date: Sun, 23 Jun 2024 10:04:45 +0200
-Message-ID: <6caafd0ac2556a40405273b1a4badc508ea8e9b0.1719125040.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <d01818abd880bf435d1106a9a6cc11a7a8a3e661.1719125040.git.christophe.jaillet@wanadoo.fr>
-References: <d01818abd880bf435d1106a9a6cc11a7a8a3e661.1719125040.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="NdiA2RVv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719130963; x=1719735763; i=markus.elfring@web.de;
+	bh=3B2iF2h3ohW2JdPS8V2ghJL3k8HTmL/3Td3HOCrMzss=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=NdiA2RVvQGEA4DentX5eZomaqbxNfyu3SCPJV+JnEt6X0V5NNBN1Qk5EXVYhyDVs
+	 aiy26951PT2/GNhiFyC58q1L+eBcwrrMGi9cl3op1vwtmaptaGTuMpe4ZvqaYn4qd
+	 V7yQIt24ascbaOV45UfvLLlwm0tNLm72tKDjp8/iknnFw7GRgPikB4p/BjwnxovjR
+	 N66JjVFSPVXLBKq5lmoPSGNdnTQjH6h2nKZhZF2Ja1UbR8j03noyBKrkugrKM3Msx
+	 Egrec6ZdS1N/Cdn0dVR1rDmNvc0M6TXeBr0nFvTn8AaV9Gjo/g1XFmZm9mKp2kbMF
+	 oyU4Kvq0RdLj6bOe5A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MdfCN-1su59G2BYf-00otqA; Sun, 23
+ Jun 2024 10:22:43 +0200
+Message-ID: <b0f546d2-bb6a-4761-bbc0-69d785df5eef@web.de>
+Date: Sun, 23 Jun 2024 10:22:38 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Wei Fang <wei.fang@nxp.com>, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, imx@lists.linux.dev,
+ Andrew Lunn <andrew@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Clark Wang <xiaoning.wang@nxp.com>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Julia Lawall <julia.lawall@inria.fr>,
+ Paolo Abeni <pabeni@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Shenwei Wang <shenwei.wang@nxp.com>, Waiman Long <longman@redhat.com>
+References: <AM0PR0402MB38910DB23A6DABF1C074EF1D88E52@AM0PR0402MB3891.eurprd04.prod.outlook.com>
+Subject: RE: [PATCH net-next] net: fec: Convert fec driver to use lock guards
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <AM0PR0402MB38910DB23A6DABF1C074EF1D88E52@AM0PR0402MB3891.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:RhNAOB7zwVYK3MyZH/sACZ3FmkNf75gEXEW2BT7QSpSBf0753Rp
+ qxqGiNuMFwtHShwF3HQF6FJuw2OOXNo9PcDQlx6D5bwxSaGScX8q/YohwGjYOVmXT3CT+Nk
+ zudjRI8k1dTix64dpcyf4lml8eExuE1yKO2PvxawoYK4gp2JFwTT1r5AASxFBetnZoCi9P0
+ aw2MkJbScBbF0GoCgHtsg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:jhXu7Ls7F4g=;6Ol0DqOJu0Cat9xBMdFBH/JNn7F
+ 7uNpSp0hXWxU7rgj96/rMmcOM3lDx/DzvfFL0KOQHK2qnAmaPvIt2bzYcdYJDl64v58GZSRWz
+ eBdf3AfspiAzL147WIde3OHc0IvRnPaNYPTAE1Tqe0pdChr0HeYEMUg7CUVxyoSFB2ZjUIHmu
+ kyffBJ+YVO0rX/F8q02746kUyyrquueB+X+sDnNIT4sRm9efYOKNTQKhGak7IdUVBdaQ9l52F
+ SH9qa1kQGiazmMamsGjVlD9yF9m6qzDerHJ9oB3C9a6ebzTkcCffquqeXVshRrt92iEZZjnFp
+ TY1jdiwZ6/z87RrIeks5DHOM//G0d6WeEvmhmj2U1/H9ZxF2yVajcGLKod5mBCDWl4ijNFUqd
+ M6PXREASPi1XnsjK7HQD+/edWkqNs07P+ncMAOirxzX7DFuOL3yzKb2DH6sjp1+23yFg687WF
+ D/MpvIVjgOAUeUhnT40b7W0si00/8t2cIsRSJUZszbb4NUaElNsViGjFk+WSO9VR8uj0XbWQ0
+ O83XbGlBgpv1qn2mJYjV5YmHSaPa/22c4WJISlpa69POdUZaRcCSxelkzo2Nmc+mMtFUp0rb3
+ kmz3pnPgHM+HbDfdtXsdRsfzRDntin7jbh9zWo5Kr46+TuJpyCr3Bh4yRGI4bCfKGAFLP2JPc
+ FG/uzSq0WYdNe0YJ8mrTXjQGC5PaPpbgQVDMfmwaJBZ4yQQJjeJDE1yQ19+pn7K3kOwS8V7l+
+ 6j1n++fGvKdt2dFOYMZSX6z7T4mJrCEtZzmniQjtljsLRC3PhWD9JWppDh3bw7Z7f9eUE9Cl9
+ QBZ94z4RHzqhenRQz+bpF79hPbK06jWI115QI9rozXjLU=
 
-'struct power_supply_maintenance_charge_table' is not modified in this
-driver.
+=E2=80=A6
+> > > +++ b/drivers/net/ethernet/freescale/fec_ptp.c
+> > > @@ -99,18 +99,17 @@
+> > >   */
+> > >  static int fec_ptp_enable_pps(struct fec_enet_private *fep, uint en=
+able)
+> > >  {
+> > > -	unsigned long flags;
+> > >  	u32 val, tempval;
+> > >  	struct timespec64 ts;
+> > >  	u64 ns;
+> > >
+> > > -	if (fep->pps_enable =3D=3D enable)
+> > > -		return 0;
+> > > -
+> > >  	fep->pps_channel =3D DEFAULT_PPS_CHANNEL;
+> > >  	fep->reload_period =3D PPS_OUPUT_RELOAD_PERIOD;
+> > >
+> > > -	spin_lock_irqsave(&fep->tmreg_lock, flags);
+> > > +	guard(spinlock_irqsave)(&fep->tmreg_lock);
+> > > +
+> > > +	if (fep->pps_enable =3D=3D enable)
+> > > +		return 0;
+> >
+> > This is not obviously correct. Why has this condition moved?
+> >
+> As you see, the assignment of ' pps_enable ' is protected by the 'tmreg_=
+lock',
+> But the read operation of 'pps_enable' was not protected by the lock, so=
+ the
+> Coverity tool will complain a LOCK EVASION warning which may cause data
+> race to occur when running in a multithreaded environment.
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+Should such information trigger the addition of any corresponding tags
+(like =E2=80=9CFixes=E2=80=9D and =E2=80=9CCc=E2=80=9D)?
 
-In order to do it, some code also needs to be adjusted to this new const
-qualifier.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-$ size drivers/power/supply/samsung-sdi-battery.o
-   text	   data	    bss	    dec	    hex	filename
-   4055	   4584	      0	   8639	   21bf	drivers/power/supply/samsung-sdi-battery.o
+>                                                            Of course, th=
+is
+> data race issue is almost impossible, so I modified it by the way. Becau=
+se I don't
+> really want to fix it through another patch, unless you insist on doing =
+so.
 
-After:
-=====
-$ size drivers/power/supply/samsung-sdi-battery.o
-   text	   data	    bss	    dec	    hex	filename
-   4087	   4552	      0	   8639	   21bf	drivers/power/supply/samsung-sdi-battery.o
+Would you like to take the known advice =E2=80=9CSolve only one problem pe=
+r patch=E2=80=9D
+better into account?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc4#n81
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only
+Please take another look at further approaches for the presentation of
+similar =E2=80=9Cchange combinations=E2=80=9D.
 
-Changes in v2
-  - Add Linus Walleij <linus.walleij@linaro.org> in Cc  [Sebastian Reichel]
-  - Also update ab8500_chargalg.c  [Sebastian Reichel, kernel test robot]
-
-v1: https://lore.kernel.org/all/02c6ad69a3ace192c9d609b7336a681a8fc7ba94.1717253900.git.christophe.jaillet@wanadoo.fr/
----
- drivers/power/supply/ab8500_chargalg.c     | 2 +-
- drivers/power/supply/power_supply_core.c   | 2 +-
- drivers/power/supply/samsung-sdi-battery.c | 2 +-
- include/linux/power_supply.h               | 6 +++---
- 4 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/power/supply/ab8500_chargalg.c b/drivers/power/supply/ab8500_chargalg.c
-index 55ab7a28056e..854491ad3ecd 100644
---- a/drivers/power/supply/ab8500_chargalg.c
-+++ b/drivers/power/supply/ab8500_chargalg.c
-@@ -1225,8 +1225,8 @@ static bool ab8500_chargalg_time_to_restart(struct ab8500_chargalg *di)
-  */
- static void ab8500_chargalg_algorithm(struct ab8500_chargalg *di)
- {
-+	const struct power_supply_maintenance_charge_table *mt;
- 	struct power_supply_battery_info *bi = di->bm->bi;
--	struct power_supply_maintenance_charge_table *mt;
- 	int charger_status;
- 	int ret;
- 
-diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
-index 022d0e4bf621..8f6025acd10a 100644
---- a/drivers/power/supply/power_supply_core.c
-+++ b/drivers/power/supply/power_supply_core.c
-@@ -1072,7 +1072,7 @@ int power_supply_vbat2ri(struct power_supply_battery_info *info,
- }
- EXPORT_SYMBOL_GPL(power_supply_vbat2ri);
- 
--struct power_supply_maintenance_charge_table *
-+const struct power_supply_maintenance_charge_table *
- power_supply_get_maintenance_charging_setting(struct power_supply_battery_info *info,
- 					      int index)
- {
-diff --git a/drivers/power/supply/samsung-sdi-battery.c b/drivers/power/supply/samsung-sdi-battery.c
-index 725fbe09379e..b63fd2758c2f 100644
---- a/drivers/power/supply/samsung-sdi-battery.c
-+++ b/drivers/power/supply/samsung-sdi-battery.c
-@@ -613,7 +613,7 @@ static struct power_supply_battery_ocv_table samsung_ocv_cap_eb585157lu[] = {
- 	{ .ocv = 3300000, .capacity = 0},
- };
- 
--static struct power_supply_maintenance_charge_table samsung_maint_charge_table[] = {
-+static const struct power_supply_maintenance_charge_table samsung_maint_charge_table[] = {
- 	{
- 		/* Maintenance charging phase A, 60 hours */
- 		.charge_current_max_ua = 600000,
-diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-index 5061eeecf62e..72dc7e45c90c 100644
---- a/include/linux/power_supply.h
-+++ b/include/linux/power_supply.h
-@@ -736,7 +736,7 @@ struct power_supply_battery_info {
- 	int overvoltage_limit_uv;
- 	int constant_charge_current_max_ua;
- 	int constant_charge_voltage_max_uv;
--	struct power_supply_maintenance_charge_table *maintenance_charge;
-+	const struct power_supply_maintenance_charge_table *maintenance_charge;
- 	int maintenance_charge_size;
- 	int alert_low_temp_charge_current_ua;
- 	int alert_low_temp_charge_voltage_uv;
-@@ -810,7 +810,7 @@ power_supply_temp2resist_simple(struct power_supply_resistance_temp_table *table
- 				int table_len, int temp);
- extern int power_supply_vbat2ri(struct power_supply_battery_info *info,
- 				int vbat_uv, bool charging);
--extern struct power_supply_maintenance_charge_table *
-+extern const struct power_supply_maintenance_charge_table *
- power_supply_get_maintenance_charging_setting(struct power_supply_battery_info *info, int index);
- extern bool power_supply_battery_bti_in_range(struct power_supply_battery_info *info,
- 					      int resistance);
-@@ -824,7 +824,7 @@ extern int power_supply_set_battery_charged(struct power_supply *psy);
- static inline bool
- power_supply_supports_maintenance_charging(struct power_supply_battery_info *info)
- {
--	struct power_supply_maintenance_charge_table *mt;
-+	const struct power_supply_maintenance_charge_table *mt;
- 
- 	mt = power_supply_get_maintenance_charging_setting(info, 0);
- 
--- 
-2.45.2
-
+Regards,
+Markus
