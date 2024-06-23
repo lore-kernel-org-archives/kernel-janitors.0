@@ -1,51 +1,47 @@
-Received: from msa.smtpout.orange.fr (msa-209.smtpout.orange.fr [193.252.23.209])
+Received: from msa.smtpout.orange.fr (smtp-72.smtpout.orange.fr [80.12.242.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D587FD;
-	Sun, 23 Jun 2024 05:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DBC175AD;
+	Sun, 23 Jun 2024 06:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719121918; cv=none; b=WWnHywJKBLEc23HKA1r4JR8JOWZzP6wffkoynEecNdTrOznbBrHny6vzM/taXwK6wTGj0J+iUfCiNhcOjd9g9MBee7I1fFA4BqcwhSfE4gnk2/55YIx1CBGfv1v45dn4FeJYDKUUis5WLrdAImSF+HcpTGjAlBFVr/QYgJRNwKk=
+	t=1719125219; cv=none; b=SiJSAgPPJf59aEqUrxmnhimZvEt5DQGU+x6QsVVM5hQlUvcnnhR5ZCSf5ttY6ZdFQjvHMTWmRd1khLSymak2ohJu/9eMxEGwPqWj3koputlOXwi+U1s7yExkuH1N1ZBS8I9g6KR+QnBRGbQqRUG0FQYuZcZFsrMJ/HETKO8jp0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719121918; c=relaxed/simple;
-	bh=Cd2SyuRK9YrNE+mv9R88nDo2JxhCzCsvUFL6HwzkUHg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YMPl9mkoCjUYMogS7g+ISA4vrZZu1kxNb5i3IsfqK2yyx9ofFbaZz1oxokaKBb7GKBMDWj+GkVFIStN63H8fmuBVDtc92BR3n9alTs/+FMVN6XZpmLou1esnGuFB6IrZYJkWHiQoI/5ZIXqt90cIBp1SZ4WpyoLP59PD4NDue1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=avMDEYy+; arc=none smtp.client-ip=193.252.23.209
+	s=arc-20240116; t=1719125219; c=relaxed/simple;
+	bh=dfq06tE3YCP5kQWMyxxEvvFd4AYUTchihWxC68Enxik=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FwnxDgcn7CRWTM2irVzH/mm6vm9BlmW1zje3LHCa2SKGN9iJwRop6BP9wswZRCcglfCs9oP7b5HfJoYDdQIhBFqoamoYlPQ2Zzt7y6+3WiuPZCm1ndYZCE4WWbNxVU+g0rKTGr+RuvN798A9SNoB04V0DMYi5ZSCUKnav8ow3fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Elv+6aT9; arc=none smtp.client-ip=80.12.242.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="avMDEYy+"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Elv+6aT9"
 Received: from fedora.home ([86.243.222.230])
 	by smtp.orange.fr with ESMTPA
-	id LG7csGen4jiKDLG7csmuih; Sun, 23 Jun 2024 07:50:45 +0200
+	id LGyusGzbVjiKDLGyusn1NL; Sun, 23 Jun 2024 08:45:44 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1719121845;
-	bh=1RAR2hjJePdFBRujGabmMIXRMO+LOncR48fid7AVn+0=;
+	s=t20230301; t=1719125144;
+	bh=mvaiCxkajJYPoYk09ilckf4bnV5wjXJDRtKrJ6xsPmY=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=avMDEYy+qFQyLB9kez5bH7ffN4XGNH4YwZMHZN8n4EB91X7D+73x+uP7OCYXReKJC
-	 SaX5l4MiVpdvvVROtWr+eksb9P/xAAWvQeVR4QZKsP6p3uYxlphbUkkNEpCXknI9r0
-	 YCw8V/Do1I/viuP3G4oDNO2tUD6ZZ0CQvs69n25ZTDyb36+oHL4kKmyuavWgYwOdDx
-	 9p+C0X+/A9IOeCQ3pBl+CHL5HQwfxnw4hIXdFwCApH9Zw1h0nJxcyu6HAMJEEGdzRU
-	 NYax7iLhzqYkxtpUhqwtop0p1Og45wDjMVqRGVxEM9EzQjtLL5YPUmowps8Wj4oOWd
-	 SZV0WVORC5InQ==
+	b=Elv+6aT9owWWgrVNEXrnNg3gMaBiiS/bbuR7YJpWiEUZL6+UuTgwLq2qebsNRBGZf
+	 pOKXm/714ZdUwou+L5kDeI3Gr8z/tsx1kHov1pyTkzTUJY9RIZlaVXgKx2LHoo1c6T
+	 DBU38JLfgnN2rksB6WrVt7EAv1mrp7HTW/5ifgnROrER2Hla/BGXy6Zxaz6XhpjbYb
+	 /RqWqfvQvLwvLIsURE1sYDH7gRBvRAitLNcoI9yGLuJoYKSKHAsI4ZiPBzMN9o1DOD
+	 L6zoD5IZTkW+tbFM/HdT05gRBmQbwOEO9dO9z0B5IvEK34g+HiegnWf+g+GJYBKZHX
+	 vlS3+07uyCS6w==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 23 Jun 2024 07:50:45 +0200
+X-ME-Date: Sun, 23 Jun 2024 08:45:44 +0200
 X-ME-IP: 86.243.222.230
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Paul Cercueil <paul@crapouillou.net>,
-	Sebastian Reichel <sre@kernel.org>,
-	Artur Rojek <contact@artur-rojek.eu>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: linus.walleij@linaro.org,
+	Sebastian Reichel <sre@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	linux-mips@vger.kernel.org,
 	linux-pm@vger.kernel.org
-Subject: [PATCH] power: supply: ingenic: Fix some error handling paths in ingenic_battery_get_property()
-Date: Sun, 23 Jun 2024 07:50:32 +0200
-Message-ID: <51e49c18574003db1e20c9299061a5ecd1661a3c.1719121781.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 1/2] power: supply: samsung-sdi-battery: Constify struct power_supply_vbat_ri_table
+Date: Sun, 23 Jun 2024 08:45:33 +0200
+Message-ID: <d01818abd880bf435d1106a9a6cc11a7a8a3e661.1719125040.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -55,53 +51,182 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If iio_read_channel_processed() fails, 'val->intval' is not updated, but it
-is still *1000 just after. So, in case of error, the *1000 accumulate and
-'val->intval' becomes erroneous.
+'struct power_supply_vbat_ri_table' are not modified in this driver.
 
-So instead of rescaling the value after the fact, use the dedicated scaling
-API. This way the result is updated only when needed. In case of error, the
-previous value is kept, unmodified.
+Constifying these structures moves some data to a read-only section, so
+increase overall security.
 
-This should also reduce any inaccuracies resulting from the scaling.
+In order to do it, some code also needs to be adjusted to this new const
+qualifier.
 
-Finally, this is also slightly more efficient as it saves a function call
-and a multiplication.
+On a x86_64, with allmodconfig:
+Before:
+======
+$ size drivers/power/supply/samsung-sdi-battery.o
+   text	   data	    bss	    dec	    hex	filename
+    955	   7664	      0	   8619	   21ab	drivers/power/supply/samsung-sdi-battery.o
 
-Fixes: fb24ccfbe1e0 ("power: supply: add Ingenic JZ47xx battery driver.")
+After:
+=====
+$ size drivers/power/supply/samsung-sdi-battery.o
+   text	   data	    bss	    dec	    hex	filename
+   4055	   4584	      0	   8639	   21bf	drivers/power/supply/samsung-sdi-battery.o
+
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/power/supply/ingenic-battery.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Compile tested-only
 
-diff --git a/drivers/power/supply/ingenic-battery.c b/drivers/power/supply/ingenic-battery.c
-index 2e7fdfde47ec..0a40f425c277 100644
---- a/drivers/power/supply/ingenic-battery.c
-+++ b/drivers/power/supply/ingenic-battery.c
-@@ -31,8 +31,9 @@ static int ingenic_battery_get_property(struct power_supply *psy,
+Changes in v2
+  - Add Linus Walleij <linus.walleij@linaro.org> in Cc  [Sebastian Reichel]
+
+v1: https://lore.kernel.org/all/bab3f44b62275c91d039b82dac1c32167c0c3bad.1717253900.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/power/supply/power_supply_core.c   |  2 +-
+ drivers/power/supply/samsung-sdi-battery.c | 24 +++++++++++-----------
+ include/linux/power_supply.h               |  4 ++--
+ 3 files changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
+index fefe938c9342..022d0e4bf621 100644
+--- a/drivers/power/supply/power_supply_core.c
++++ b/drivers/power/supply/power_supply_core.c
+@@ -1024,7 +1024,7 @@ EXPORT_SYMBOL_GPL(power_supply_temp2resist_simple);
+ int power_supply_vbat2ri(struct power_supply_battery_info *info,
+ 			 int vbat_uv, bool charging)
+ {
+-	struct power_supply_vbat_ri_table *vbat2ri;
++	const struct power_supply_vbat_ri_table *vbat2ri;
+ 	int table_len;
+ 	int i, high, low;
  
- 	switch (psp) {
- 	case POWER_SUPPLY_PROP_HEALTH:
--		ret = iio_read_channel_processed(bat->channel, &val->intval);
--		val->intval *= 1000;
-+		ret = iio_read_channel_processed_scale(bat->channel,
-+						       &val->intval,
-+						       1000);
- 		if (val->intval < info->voltage_min_design_uv)
- 			val->intval = POWER_SUPPLY_HEALTH_DEAD;
- 		else if (val->intval > info->voltage_max_design_uv)
-@@ -41,8 +42,9 @@ static int ingenic_battery_get_property(struct power_supply *psy,
- 			val->intval = POWER_SUPPLY_HEALTH_GOOD;
- 		return ret;
- 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
--		ret = iio_read_channel_processed(bat->channel, &val->intval);
--		val->intval *= 1000;
-+		ret = iio_read_channel_processed_scale(bat->channel,
-+						       &val->intval,
-+						       1000);
- 		return ret;
- 	case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
- 		val->intval = info->voltage_min_design_uv;
+diff --git a/drivers/power/supply/samsung-sdi-battery.c b/drivers/power/supply/samsung-sdi-battery.c
+index b33daab798b9..725fbe09379e 100644
+--- a/drivers/power/supply/samsung-sdi-battery.c
++++ b/drivers/power/supply/samsung-sdi-battery.c
+@@ -25,7 +25,7 @@ struct samsung_sdi_battery {
+  * tables apply depending on whether we are charging or not.
+  */
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb_l1m7flu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb_l1m7flu[] = {
+ 	{ .vbat_uv = 4240000, .ri_uohm = 160000 },
+ 	{ .vbat_uv = 4210000, .ri_uohm = 179000 },
+ 	{ .vbat_uv = 4180000, .ri_uohm = 183000 },
+@@ -53,7 +53,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb_l1m7flu
+ 	{ .vbat_uv = 3300000, .ri_uohm = 339000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb_l1m7flu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb_l1m7flu[] = {
+ 	{ .vbat_uv = 4302000, .ri_uohm = 230000 },
+ 	{ .vbat_uv = 4276000, .ri_uohm = 345000 },
+ 	{ .vbat_uv = 4227000, .ri_uohm = 345000 },
+@@ -73,7 +73,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb_l1m7flu[]
+ 	{ .vbat_uv = 3590000, .ri_uohm = 164000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb425161la[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb425161la[] = {
+ 	{ .vbat_uv = 4240000, .ri_uohm = 160000 },
+ 	{ .vbat_uv = 4210000, .ri_uohm = 179000 },
+ 	{ .vbat_uv = 4180000, .ri_uohm = 183000 },
+@@ -105,7 +105,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb425161la
+ 	{ .vbat_uv = 3300000, .ri_uohm = 339000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb425161la[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb425161la[] = {
+ 	{ .vbat_uv = 4345000, .ri_uohm = 230000 },
+ 	{ .vbat_uv = 4329000, .ri_uohm = 238000 },
+ 	{ .vbat_uv = 4314000, .ri_uohm = 225000 },
+@@ -182,7 +182,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb425161la[]
+ 	{ .vbat_uv = 3590000, .ri_uohm = 164000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb425161lu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb425161lu[] = {
+ 	{ .vbat_uv = 4240000, .ri_uohm = 160000 },
+ 	{ .vbat_uv = 4210000, .ri_uohm = 179000 },
+ 	{ .vbat_uv = 4180000, .ri_uohm = 183000 },
+@@ -214,7 +214,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb425161lu
+ 	{ .vbat_uv = 3300000, .ri_uohm = 339000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb425161lu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb425161lu[] = {
+ 	{ .vbat_uv = 4346000, .ri_uohm = 293000 },
+ 	{ .vbat_uv = 4336000, .ri_uohm = 290000 },
+ 	{ .vbat_uv = 4315000, .ri_uohm = 274000 },
+@@ -244,7 +244,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb425161lu[]
+ 	{ .vbat_uv = 3590000, .ri_uohm = 164000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb485159lu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb485159lu[] = {
+ 	{ .vbat_uv = 4240000, .ri_uohm = 160000 },
+ 	{ .vbat_uv = 4210000, .ri_uohm = 179000 },
+ 	{ .vbat_uv = 4180000, .ri_uohm = 183000 },
+@@ -271,7 +271,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb485159lu
+ 	{ .vbat_uv = 3300000, .ri_uohm = 339000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb485159lu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb485159lu[] = {
+ 	{ .vbat_uv = 4302000, .ri_uohm = 200000 },
+ 	{ .vbat_uv = 4258000, .ri_uohm = 206000 },
+ 	{ .vbat_uv = 4200000, .ri_uohm = 231000 },
+@@ -291,7 +291,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb485159lu[]
+ 	{ .vbat_uv = 3590000, .ri_uohm = 164000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb535151vu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb535151vu[] = {
+ 	{ .vbat_uv = 4071000, .ri_uohm = 158000 },
+ 	{ .vbat_uv = 4019000, .ri_uohm = 187000 },
+ 	{ .vbat_uv = 3951000, .ri_uohm = 191000 },
+@@ -311,7 +311,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb535151vu
+ 	{ .vbat_uv = 3280000, .ri_uohm = 250000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb535151vu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb535151vu[] = {
+ 	{ .vbat_uv = 4190000, .ri_uohm = 214000 },
+ 	{ .vbat_uv = 4159000, .ri_uohm = 252000 },
+ 	{ .vbat_uv = 4121000, .ri_uohm = 245000 },
+@@ -331,7 +331,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb535151vu[]
+ 	{ .vbat_uv = 3510000, .ri_uohm = 228000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb585157lu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb585157lu[] = {
+ 	{ .vbat_uv = 4194000, .ri_uohm = 121000 },
+ 	{ .vbat_uv = 4169000, .ri_uohm = 188000 },
+ 	{ .vbat_uv = 4136000, .ri_uohm = 173000 },
+@@ -401,7 +401,7 @@ static struct power_supply_vbat_ri_table samsung_vbat2res_discharging_eb585157lu
+ 	{ .vbat_uv = 3161000, .ri_uohm = 452000 },
+ };
+ 
+-static struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb585157lu[] = {
++static const struct power_supply_vbat_ri_table samsung_vbat2res_charging_eb585157lu[] = {
+ 	{ .vbat_uv = 4360000, .ri_uohm = 128000 },
+ 	{ .vbat_uv = 4325000, .ri_uohm = 130000 },
+ 	{ .vbat_uv = 4316000, .ri_uohm = 148000 },
+diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+index 65082ef75692..5061eeecf62e 100644
+--- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -755,9 +755,9 @@ struct power_supply_battery_info {
+ 	int ocv_table_size[POWER_SUPPLY_OCV_TEMP_MAX];
+ 	struct power_supply_resistance_temp_table *resist_table;
+ 	int resist_table_size;
+-	struct power_supply_vbat_ri_table *vbat2ri_discharging;
++	const struct power_supply_vbat_ri_table *vbat2ri_discharging;
+ 	int vbat2ri_discharging_size;
+-	struct power_supply_vbat_ri_table *vbat2ri_charging;
++	const struct power_supply_vbat_ri_table *vbat2ri_charging;
+ 	int vbat2ri_charging_size;
+ 	int bti_resistance_ohm;
+ 	int bti_resistance_tolerance;
 -- 
 2.45.2
 
