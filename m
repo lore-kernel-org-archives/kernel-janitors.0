@@ -1,103 +1,107 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from msa.smtpout.orange.fr (msa-209.smtpout.orange.fr [193.252.23.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7857C38B;
-	Sun, 23 Jun 2024 04:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D587FD;
+	Sun, 23 Jun 2024 05:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719117307; cv=none; b=ek5Tn5GD3PZuTcsVdZ1rvbBi11aprZ8kwTWVQzbQCnu/zVPaeEKOEQnUuo/GZ5/lE1IW6QR9oOH7FoCo1Wm1Q8YV2VIdWcnXTRbPN0deJQFJJ4XWsImEnDZQyrZZzslEmkje89lL3YQu9/o9F7+6PihKd62RFrIbEuWfUWYOT7Y=
+	t=1719121918; cv=none; b=WWnHywJKBLEc23HKA1r4JR8JOWZzP6wffkoynEecNdTrOznbBrHny6vzM/taXwK6wTGj0J+iUfCiNhcOjd9g9MBee7I1fFA4BqcwhSfE4gnk2/55YIx1CBGfv1v45dn4FeJYDKUUis5WLrdAImSF+HcpTGjAlBFVr/QYgJRNwKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719117307; c=relaxed/simple;
-	bh=x2/i2mDMDWuFx0aYELfA/M4ZaXwnc6/oI0MDKQHto3A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=PtbS7ArHyTzIYUMbVhpAKwhc0bLdHG45r9aNKYpTLMgCWLZi5ktu7+ukELIinup0LMQG0bagtfVAXWji2Ec1Innsg68ytrs0RP1HjpJSCobnayWNbVvKJmUIn0aIcQjdHiEmY1aS+CnEel04EyBZHL6bT/1UZg9gnKlA4wJMqJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dQOnNuir; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1719121918; c=relaxed/simple;
+	bh=Cd2SyuRK9YrNE+mv9R88nDo2JxhCzCsvUFL6HwzkUHg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YMPl9mkoCjUYMogS7g+ISA4vrZZu1kxNb5i3IsfqK2yyx9ofFbaZz1oxokaKBb7GKBMDWj+GkVFIStN63H8fmuBVDtc92BR3n9alTs/+FMVN6XZpmLou1esnGuFB6IrZYJkWHiQoI/5ZIXqt90cIBp1SZ4WpyoLP59PD4NDue1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=avMDEYy+; arc=none smtp.client-ip=193.252.23.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dQOnNuir"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45N2Ue3P013657;
-	Sun, 23 Jun 2024 04:34:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=64E+NkOOnR1B+78MYqKrSn
-	noPyxZl9GmnOyi76daGq4=; b=dQOnNuirD71iD7baiOJ7THsd9k1dtBQl+YO85d
-	ViOJ7J4gZwGjaFNlGKBKI4xASvUmNAPg7QOTXRiQDJ3pzm+2fWzWfnNs+VeNogke
-	dN6RrgPzueN8Xeufm7FQkcQX7inWh9geVlKhtji92D1xkQI97gQcMmpl9SlASiGT
-	xJbDBdsfgN1wv3cqZNsZHEyuE4wNgvinI0F/RPefTQhLnq9MZYXVzYiipF5wEGUs
-	KzfYeq+uongSspeGktQiRxk4oHbBWyQcdxQvV9nurJTs4wqKNBhDJ+6JEvifolGW
-	8xI2g1cqXVaeBnT33eOo7DmJNp0wl3JripJ+hkr2lDtBdPwQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywq0719pa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 04:34:52 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45N4Ypdd030837
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 04:34:51 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 22 Jun
- 2024 21:34:50 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sat, 22 Jun 2024 21:34:48 -0700
-Subject: [PATCH] arm: kprobes: add missing MODULE_DESCRIPTION() macro
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="avMDEYy+"
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id LG7csGen4jiKDLG7csmuih; Sun, 23 Jun 2024 07:50:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1719121845;
+	bh=1RAR2hjJePdFBRujGabmMIXRMO+LOncR48fid7AVn+0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=avMDEYy+qFQyLB9kez5bH7ffN4XGNH4YwZMHZN8n4EB91X7D+73x+uP7OCYXReKJC
+	 SaX5l4MiVpdvvVROtWr+eksb9P/xAAWvQeVR4QZKsP6p3uYxlphbUkkNEpCXknI9r0
+	 YCw8V/Do1I/viuP3G4oDNO2tUD6ZZ0CQvs69n25ZTDyb36+oHL4kKmyuavWgYwOdDx
+	 9p+C0X+/A9IOeCQ3pBl+CHL5HQwfxnw4hIXdFwCApH9Zw1h0nJxcyu6HAMJEEGdzRU
+	 NYax7iLhzqYkxtpUhqwtop0p1Og45wDjMVqRGVxEM9EzQjtLL5YPUmowps8Wj4oOWd
+	 SZV0WVORC5InQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 23 Jun 2024 07:50:45 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Paul Cercueil <paul@crapouillou.net>,
+	Sebastian Reichel <sre@kernel.org>,
+	Artur Rojek <contact@artur-rojek.eu>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	linux-mips@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH] power: supply: ingenic: Fix some error handling paths in ingenic_battery_get_property()
+Date: Sun, 23 Jun 2024 07:50:32 +0200
+Message-ID: <51e49c18574003db1e20c9299061a5ecd1661a3c.1719121781.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240622-md-arm-arch-arm-probes-kprobes-v1-1-0832bd6e45db@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAOeld2YC/y2NSw7CMAxEr1J5jaWQVPyugrpwUkMsaFrZgCpVv
- TuhYjGaeZs3CxirsMGlWUD5IyZjqbDfNZAylTuj9JXBO9+6g/c49Eg61KS8jUnHyIaPf4fWhaM
- 7n8inAFUyKd9k3g6uXeVIxhiVSso/7VPKe8aB7MUK6/oFhcbTjo8AAAA=
-To: Russell King <linux@armlinux.org.uk>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Oc94u13o8bpKUFBewIOZl0vcx75mtEkv
-X-Proofpoint-GUID: Oc94u13o8bpKUFBewIOZl0vcx75mtEkv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-22_19,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 phishscore=0
- mlxscore=0 spamscore=0 mlxlogscore=964 adultscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406230034
+Content-Transfer-Encoding: 8bit
 
-With ARCH=arm, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/probes/kprobes/test-kprobes.o
+If iio_read_channel_processed() fails, 'val->intval' is not updated, but it
+is still *1000 just after. So, in case of error, the *1000 accumulate and
+'val->intval' becomes erroneous.
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+So instead of rescaling the value after the fact, use the dedicated scaling
+API. This way the result is updated only when needed. In case of error, the
+previous value is kept, unmodified.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+This should also reduce any inaccuracies resulting from the scaling.
+
+Finally, this is also slightly more efficient as it saves a function call
+and a multiplication.
+
+Fixes: fb24ccfbe1e0 ("power: supply: add Ingenic JZ47xx battery driver.")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/arm/probes/kprobes/test-core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/power/supply/ingenic-battery.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/probes/kprobes/test-core.c b/arch/arm/probes/kprobes/test-core.c
-index 171c7076b89f..6e9041a76b8b 100644
---- a/arch/arm/probes/kprobes/test-core.c
-+++ b/arch/arm/probes/kprobes/test-core.c
-@@ -1664,6 +1664,7 @@ static void __exit kprobe_test_exit(void)
+diff --git a/drivers/power/supply/ingenic-battery.c b/drivers/power/supply/ingenic-battery.c
+index 2e7fdfde47ec..0a40f425c277 100644
+--- a/drivers/power/supply/ingenic-battery.c
++++ b/drivers/power/supply/ingenic-battery.c
+@@ -31,8 +31,9 @@ static int ingenic_battery_get_property(struct power_supply *psy,
  
- module_init(run_all_tests)
- module_exit(kprobe_test_exit)
-+MODULE_DESCRIPTION("ARM kprobes test module");
- MODULE_LICENSE("GPL");
- 
- #else /* !MODULE */
-
----
-base-commit: 563a50672d8a86ec4b114a4a2f44d6e7ff855f5b
-change-id: 20240622-md-arm-arch-arm-probes-kprobes-34037098a2c3
+ 	switch (psp) {
+ 	case POWER_SUPPLY_PROP_HEALTH:
+-		ret = iio_read_channel_processed(bat->channel, &val->intval);
+-		val->intval *= 1000;
++		ret = iio_read_channel_processed_scale(bat->channel,
++						       &val->intval,
++						       1000);
+ 		if (val->intval < info->voltage_min_design_uv)
+ 			val->intval = POWER_SUPPLY_HEALTH_DEAD;
+ 		else if (val->intval > info->voltage_max_design_uv)
+@@ -41,8 +42,9 @@ static int ingenic_battery_get_property(struct power_supply *psy,
+ 			val->intval = POWER_SUPPLY_HEALTH_GOOD;
+ 		return ret;
+ 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+-		ret = iio_read_channel_processed(bat->channel, &val->intval);
+-		val->intval *= 1000;
++		ret = iio_read_channel_processed_scale(bat->channel,
++						       &val->intval,
++						       1000);
+ 		return ret;
+ 	case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
+ 		val->intval = info->voltage_min_design_uv;
+-- 
+2.45.2
 
