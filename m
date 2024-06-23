@@ -1,136 +1,109 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36472F25;
-	Sun, 23 Jun 2024 11:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75141369B4;
+	Sun, 23 Jun 2024 11:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719140514; cv=none; b=rZe151K7hWlYCtdznrsWORW22pfqi2NICqZy1lL55Jn9vMh4G0ru84lEx1I3hQLzN6iF+1+kQa8oxddh5R0ws4HDos95bK8zLkKhvr7zrEzOsyX62KITQxD13s5kUDrR8Nx8sE5AVu2g93nwk4aFCNaXT/CZT96jAPhZ7vbubLo=
+	t=1719142009; cv=none; b=jKCh7CxRJ1wiZG6XFzZNY3HBLgV+3dDxk9WpS4aWpvemamq/B+VHXperaTHkZJ54rT4nNW5SdxQ1mv57GE6hJIymRtQP2gaenfDl6XcwX46FDw8srHG2IkJRT8vVOtXrgUfsJv+eEi1Ged76qK/MGpRfM2ac8H46BQJUeiAUZow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719140514; c=relaxed/simple;
-	bh=jA2qe5AZogCjbl9IbAFVpirimD78ae76THm9qAsC7Vc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Qv9LZg4xlWaHx5pxL6kZnOogLEV+g4DJC1z4X9EWCvasaLv9QTJaWthBp7CIHf6cPkJcBD0vwgVmZuE0a+jta8krDtoETbUHUJFeadaVC87ml7AM74zzkzgFgn1Zi+IdRuxjKax9Rox6WEN5XrkjCC2eaFxrSc9ibeyU15WPQi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=UnrEALRC; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="UnrEALRC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719140471; x=1719745271; i=markus.elfring@web.de;
-	bh=csftI6NjKYpBjRUO4MzTMZDIUeKT+0DyU6evFuhDjn0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=UnrEALRCv5EFq4W16tdamLLRhWIa5I+tBdPWylMHS68OWKqJ3wcs6I/MUUOndZiz
-	 jHDxPJzk8OlmVK12LHPoEuvvUlutuHaVwYB8VgtyPv2mWU3w7aAikN5a9Cfb9o4/y
-	 JTS7SoacxJbrHKn9dLEaVCUjpIgfGT3jEHs2qyta7/2CqVJxtOIrcupKNNasgovLv
-	 ToX2XeiX4FQ2RwuBWpnMqEG/bL40qqG809KKox4KqlOpghH+I2RMLkUUPTc0DMcFA
-	 k4v/Ia7yVrCZhh2l63G28IJtMjuaJ/+yyS/jKVjoCJ9QX6X4PgeWJ/gbdiXITSgrP
-	 FHvQJj1P9O5nqb7ZZA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1McIkg-1staOI43yO-00jPYW; Sun, 23
- Jun 2024 13:01:11 +0200
-Message-ID: <657b4098-60b8-4522-8ea0-f10aa338e1b6@web.de>
-Date: Sun, 23 Jun 2024 13:01:08 +0200
+	s=arc-20240116; t=1719142009; c=relaxed/simple;
+	bh=Dd6YcmLb8o+G6RWqBuwSGvOw3f/TCS3z7u0PqBD9BPg=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=qHvxh4d9Q/XUmydvjiG+irW0eYuI/+OnFO20I5kZnkrT+6sWxD3AGlgEjyNR4Zu8LcS0CmDxe1mtD4LMiiLHdNgJ9RkNreaiuRl+1MmG712rRhp9VZknlLuEo5r5UqGYPrwsvhzXFbnqdmhBdnN2Wwbpn5Bc4qDdETG/fa2xDik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=artur-rojek.eu; spf=pass smtp.mailfrom=artur-rojek.eu; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=artur-rojek.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=artur-rojek.eu
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3C80BC0005;
+	Sun, 23 Jun 2024 11:26:38 +0000 (UTC)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Wei Fang <wei.fang@nxp.com>, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, imx@lists.linux.dev,
- Andrew Lunn <andrew@lunn.ch>, Clark Wang <xiaoning.wang@nxp.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Richard Cochran <richardcochran@gmail.com>,
- Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Julia Lawall <julia.lawall@inria.fr>,
- Peter Zijlstra <peterz@infradead.org>, Simon Horman <horms@kernel.org>,
- Waiman Long <longman@redhat.com>
-References: <20240511030229.628287-1-wei.fang@nxp.com>
-Subject: Re: [PATCH v2 net-next] net: fec: Convert fec driver to use lock
- guards
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240511030229.628287-1-wei.fang@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:nceYxAwQIJBGBZ7hqj2vF269GF4C5ScdiWl63QyR/roUC5hgzKG
- 63sgpGqrhO9kIRDieTZQz4aWrI+PaDHtKvkf5ki/Cfrs8DI3VxeVdtSbMMdDOJd+QPRR3OD
- FoOFC7iBrvf+aXPnNQzmAOx5LgvBKuInLcdYi0wszjxbwBZpg7tOLQ9Yo74vnn9n1ciEhUC
- Wq502cQ0CA+wpklIKJhNg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:WftciS5HYck=;cQ1cS/xibwGzoKW1JT9qH66yusp
- SYZ/Vo7ToQuOsc5l/FEpzvoUOO3TKii6L/7+QVk/ZRUGzgq4Ago1OsU/TWx8MBoTtHx9Mq9VW
- C6aPplKM9Np2Q2WMwl+BSXIheBTDWBQUDGwm+nkAw4aTqTTPXM8H1Q/IQGOZpjcf2LeMOwfpH
- IP01Q2hzJlwac06rxQRLEzerr+5nBSMgWP3lgt4qAduMSx45UR6LQ2lU4VgE3UJ93TXKrfY7e
- iVYJsRDQ/N62pZGywdg4GWs4z2BqZyl9sPEX++0FZOga5+89husEjCjJ5E8xCW68dw0nPkVOk
- h3krm1T9NFQ2+HS5nRIqFH7eF3j+oG1oa6YWxFjHBRNgyOI5KcR7ZLvYqodA7dI2XIvLlrJdK
- /kRaR4c070hGvcAxsWLKPPG4LY98MrnHpngggllConiD8/3QbT8xHa6L2o2VFdoXYJLAoG3lq
- IJ3YhUbuF2ijloGuqUrs2KnQw0zI8LBC7Y+PaSp1aXTlQIQRX/HUZ/QVwGPlLpyPwP/xsFoaR
- GvpTIDowQEN2tEmK86cs6iPjd1S+NbEsZ5+IDq9IAAS1hBg8CCY4GOQiQxlZ5VC9knQ4P3wBY
- CvV0dcO7WFhPksmCjCgMLiGQPwg0xCcFT80FrpPD02dAL0iqYQZc5xgRZhLAYujtf7K4Glc4P
- QsUa+AefY1wFa8dghxk/8yvvwgtadElF7pHDuq6AZdawVNsrnAi/B6yOZs1dvkN9V0/w+4aSC
- f0E7sY1XDfBL0ggQkQM1dtlF/b1f2oOVJaadqt+jlhwS6g+7h3MstFV27+QZafxY8rS9pK9SX
- 6t61DqQZbxrM2ueoTpJ7+u3lXDoXuezIWu3Mv+EpoJrwA=
+Date: Sun, 23 Jun 2024 13:26:38 +0200
+From: Artur Rojek <contact@artur-rojek.eu>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Paul Cercueil <paul@crapouillou.net>, Sebastian Reichel
+ <sre@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Sebastian
+ Reichel <sebastian.reichel@collabora.com>, linux-mips@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Subject: Re: [PATCH] power: supply: ingenic: Fix some error handling paths in
+ ingenic_battery_get_property()
+In-Reply-To: <51e49c18574003db1e20c9299061a5ecd1661a3c.1719121781.git.christophe.jaillet@wanadoo.fr>
+References: <51e49c18574003db1e20c9299061a5ecd1661a3c.1719121781.git.christophe.jaillet@wanadoo.fr>
+Message-ID: <f3b7a454fbd761450303ea8128c888fa@artur-rojek.eu>
+X-Sender: contact@artur-rojek.eu
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: contact@artur-rojek.eu
 
-> The Scope-based resource management mechanism has been introduced into
-=E2=80=A6
-      scope?                                    was?
+Hi Christophe,
 
+thanks for the patch, looking good.
 
-=E2=80=A6
-> +++ b/drivers/net/ethernet/freescale/fec_ptp.c
-> @@ -99,18 +99,17 @@
->   */
->  static int fec_ptp_enable_pps(struct fec_enet_private *fep, uint enable=
-)
->  {
-> -	unsigned long flags;
->  	u32 val, tempval;
->  	struct timespec64 ts;
->  	u64 ns;
->
-> -	if (fep->pps_enable =3D=3D enable)
-> -		return 0;
-> -
->  	fep->pps_channel =3D DEFAULT_PPS_CHANNEL;
->  	fep->reload_period =3D PPS_OUPUT_RELOAD_PERIOD;
->
-> -	spin_lock_irqsave(&fep->tmreg_lock, flags);
-> +	guard(spinlock_irqsave)(&fep->tmreg_lock);
-> +
-> +	if (fep->pps_enable =3D=3D enable)
-> +		return 0;
->
->  	if (enable) {
->  		/* clear capture or output compare interrupt status if have.
-=E2=80=A6
+Acked-by: Artur Rojek <contact@artur-rojek.eu>
 
-Was this source code adjustment influenced also by a hint about =E2=80=9CL=
-OCK EVASION=E2=80=9D
-from the analysis tool =E2=80=9CCoverity=E2=80=9D?
-https://lore.kernel.org/linux-kernel/AM0PR0402MB38910DB23A6DABF1C074EF1D88=
-E52@AM0PR0402MB3891.eurprd04.prod.outlook.com/
-https://lkml.org/lkml/2024/5/8/77
+Cheers,
+Artur
 
-Will any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=9CCc=E2=80=9D) beco=
-me relevant here?
-
-How do you think about to take the known advice =E2=80=9CSolve only one pr=
-oblem per patch=E2=80=9D
-better into account?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc4#n81
-
-Under which circumstances will development interests grow for further appr=
-oaches
-according to the presentation of similar change combinations?
-
-Regards,
-Markus
+On 2024-06-23 07:50, Christophe JAILLET wrote:
+> If iio_read_channel_processed() fails, 'val->intval' is not updated, 
+> but it
+> is still *1000 just after. So, in case of error, the *1000 accumulate 
+> and
+> 'val->intval' becomes erroneous.
+> 
+> So instead of rescaling the value after the fact, use the dedicated 
+> scaling
+> API. This way the result is updated only when needed. In case of error, 
+> the
+> previous value is kept, unmodified.
+> 
+> This should also reduce any inaccuracies resulting from the scaling.
+> 
+> Finally, this is also slightly more efficient as it saves a function 
+> call
+> and a multiplication.
+> 
+> Fixes: fb24ccfbe1e0 ("power: supply: add Ingenic JZ47xx battery 
+> driver.")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/power/supply/ingenic-battery.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/power/supply/ingenic-battery.c 
+> b/drivers/power/supply/ingenic-battery.c
+> index 2e7fdfde47ec..0a40f425c277 100644
+> --- a/drivers/power/supply/ingenic-battery.c
+> +++ b/drivers/power/supply/ingenic-battery.c
+> @@ -31,8 +31,9 @@ static int ingenic_battery_get_property(struct 
+> power_supply *psy,
+> 
+>  	switch (psp) {
+>  	case POWER_SUPPLY_PROP_HEALTH:
+> -		ret = iio_read_channel_processed(bat->channel, &val->intval);
+> -		val->intval *= 1000;
+> +		ret = iio_read_channel_processed_scale(bat->channel,
+> +						       &val->intval,
+> +						       1000);
+>  		if (val->intval < info->voltage_min_design_uv)
+>  			val->intval = POWER_SUPPLY_HEALTH_DEAD;
+>  		else if (val->intval > info->voltage_max_design_uv)
+> @@ -41,8 +42,9 @@ static int ingenic_battery_get_property(struct 
+> power_supply *psy,
+>  			val->intval = POWER_SUPPLY_HEALTH_GOOD;
+>  		return ret;
+>  	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+> -		ret = iio_read_channel_processed(bat->channel, &val->intval);
+> -		val->intval *= 1000;
+> +		ret = iio_read_channel_processed_scale(bat->channel,
+> +						       &val->intval,
+> +						       1000);
+>  		return ret;
+>  	case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
+>  		val->intval = info->voltage_min_design_uv;
