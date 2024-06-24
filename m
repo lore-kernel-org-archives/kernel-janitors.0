@@ -1,47 +1,48 @@
-Received: from msa.smtpout.orange.fr (smtp-83.smtpout.orange.fr [80.12.242.83])
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FEDF22313;
-	Mon, 24 Jun 2024 19:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A4BFBEF;
+	Mon, 24 Jun 2024 20:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719259191; cv=none; b=uiWo68J3BtipzZDE19PHSoTt0aSz9eT03Dmfa711E8qSH89yABVZmxrsE8ys9BwGpAsJVYDsOa+q5dOIM2voq4qrSSeVQqDw4/qKrGeoYHl8DhxQUxUXHO5xi+LOhhQnLrAUbbw+g8UO8g+iZjKUQJX6b3IYrXHWBxodxfWNd7s=
+	t=1719260091; cv=none; b=VT6+4HfLIPz7gncVRsSl+t2jOLN9jLk5GiKwiVY8M7TXXRN5rdv/9WhxJpskne077xbosCdEJLm6FHlW6H2ju1b2ju2/ajWj2+xkK2IB7L9TiajDWbdSIBzZ6AuVDabUMeTBC19ZRbIo/Xi17B5baq+xzbOwIulPn0z8kSZYBEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719259191; c=relaxed/simple;
-	bh=vCqRmHL7cYxTlVI258Ronb2EAVfusmQTE3q/msKfOU0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mjwl3YKS/Yw3NTNTW/GYKwCR+FL0RNLqsupMtWbiW/uxTS5/d7cJ9d745rgKkw+DQhizPAheNEdSbwnD91rc7q4Fa/As9m6QhtQ/IhnVLGSZ/ORyBzPVG2EIBRkqrOGrJfPZ3c9DfZhGWo4uhu7hrBcHCB8Xpcd8nEQuw62rdb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=aqhg+JBN; arc=none smtp.client-ip=80.12.242.83
+	s=arc-20240116; t=1719260091; c=relaxed/simple;
+	bh=fDp0bfLOTgweVFtXCjjNaHA/d2bWypmpiTDG5XkIAt4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MVfzaQD+iU7Tx6pCMaSxBH/diINiRppBWsJByz9wYxn3WlYwm8hhmiTbyL7MdzJbrJnLYrjv3jNUOKEchMU03BZPUp87WitQo9wcMnKr8MAnAxeKB27Bpiln2nJayNbDmyIrOeRzS1a75yaR1Xh+Bn5mOqEO0DAMV3+JRcPWg2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FZfqrxAa; arc=none smtp.client-ip=80.12.242.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="aqhg+JBN"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FZfqrxAa"
 Received: from fedora.home ([86.243.222.230])
 	by smtp.orange.fr with ESMTPA
-	id Lpqrsf3K7qnVgLpqrsXGhT; Mon, 24 Jun 2024 21:59:46 +0200
+	id Lq4CsKPgR6xnbLq4CsCLm9; Mon, 24 Jun 2024 22:13:35 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1719259186;
-	bh=PKvXmWL5ia+tMLrsPCdtaw8yQlKmPVzcIZ50EnxNumY=;
+	s=t20230301; t=1719260015;
+	bh=Elslo1pemTLslrrEitU31K06X28LN8QnqrN10QUJgz8=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=aqhg+JBNDULyFJdYyzAawWk2UelUDJ7vZGWcpuDed6f1j963n0r7rQGpxDOc0LNuJ
-	 x0kQoBY+wTeKvUkka2MrNEKIX4sRKiMdhnLL+4YhyQMgduhDZgD7+5Xjrie5kO0TuX
-	 zHn41oG70Ybt0Aev6DzSLEsisnJ1KTkuyb32VplrZkyZvKHdFK1OeaqOvjrLsB+B6K
-	 0LgOjHSyE45ZLum68oKQtxu+5QN7jb2NLlH00Gml6LW3MqcMUbetckwGd6HJy0afQa
-	 yRHkQyunEGbdyuGXr4WzyxKmp3xsixlNpr+TyKxs5LxpHS6CTWZKKaL8mevX/vDqAS
-	 g+3HZ35IODryA==
+	b=FZfqrxAakQ6ncfePlzV7aPvu5uhH2TwEk70ZO7AglRqZkBeUP7AK5KXz1g1dyWNx/
+	 8v3NFKjMD+EzRejV3k1cCd30g4fFdf8NE9t8LKgiJAcGI2WVwfyzKvQK4WhZWDowu8
+	 3GsP1oe8/gEAT/T8hSEbyFLSjmBNd4paeDTn6fdYI6OB6jS1W9Ilrih3HUXTOjbbP/
+	 4csVnHtFUcYUL+YiB4H+Nk8NToQ6/QiG5ZTPd2ahNryAaNfGarlqFk/zmAj+p3gwqN
+	 7raITcddSY8tKh++LsEtFc7Pk1lW/hfxe03OMQkdYhB/+C0+2pmL7qbFtB4v5+FHMP
+	 RPFmJYCeocaKg==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 24 Jun 2024 21:59:46 +0200
+X-ME-Date: Mon, 24 Jun 2024 22:13:35 +0200
 X-ME-IP: 86.243.222.230
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Helge Deller <deller@gmx.de>
+To: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH] fbdev: mmp: Constify struct mmp_overlay_ops
-Date: Mon, 24 Jun 2024 21:59:42 +0200
-Message-ID: <c5c1a26fdbf0895d1b17010f1c2da44b18b4ae55.1719259171.git.christophe.jaillet@wanadoo.fr>
+	linux-rdma@vger.kernel.org
+Subject: [PATCH] RDMA/hfi1: Constify struct mmu_rb_ops
+Date: Mon, 24 Jun 2024 22:13:27 +0200
+Message-ID: <b826dd05eefa5f4d6a7a1b4d191eaf37c714ed04.1719259997.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -51,7 +52,7 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'struct mmp_overlay_ops' is not modified in this driver.
+'struct mmu_rb_ops' is not modified in this driver.
 
 Constifying this structure moves some data to a read-only section, so
 increase overall security.
@@ -60,56 +61,70 @@ On a x86_64, with allmodconfig, as an example:
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-  11798	    555	     16	  12369	   3051	drivers/video/fbdev/mmp/hw/mmp_ctrl.o
+  10879	    164	      0	  11043	   2b23	drivers/infiniband/hw/hfi1/pin_system.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-  11834	    507	     16	  12357	   3045	drivers/video/fbdev/mmp/hw/mmp_ctrl.o
+  10907	    140	      0	  11047	   2b27	drivers/infiniband/hw/hfi1/pin_system.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested-only
 ---
- drivers/video/fbdev/mmp/hw/mmp_ctrl.c | 2 +-
- include/video/mmp_disp.h              | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/hfi1/mmu_rb.c     | 2 +-
+ drivers/infiniband/hw/hfi1/mmu_rb.h     | 4 ++--
+ drivers/infiniband/hw/hfi1/pin_system.c | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/video/fbdev/mmp/hw/mmp_ctrl.c b/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
-index 76b50b6c98ad..a20a2c408127 100644
---- a/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
-+++ b/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
-@@ -313,7 +313,7 @@ static void path_set_mode(struct mmp_path *path, struct mmp_mode *mode)
- 	mutex_unlock(&path->access_ok);
+diff --git a/drivers/infiniband/hw/hfi1/mmu_rb.c b/drivers/infiniband/hw/hfi1/mmu_rb.c
+index d4a6acad0e65..67a5c410fb5e 100644
+--- a/drivers/infiniband/hw/hfi1/mmu_rb.c
++++ b/drivers/infiniband/hw/hfi1/mmu_rb.c
+@@ -40,7 +40,7 @@ static unsigned long mmu_node_last(struct mmu_rb_node *node)
  }
  
--static struct mmp_overlay_ops mmphw_overlay_ops = {
-+static const struct mmp_overlay_ops mmphw_overlay_ops = {
- 	.set_fetch = overlay_set_fetch,
- 	.set_onoff = overlay_set_onoff,
- 	.set_win = overlay_set_win,
-diff --git a/include/video/mmp_disp.h b/include/video/mmp_disp.h
-index a722dcbf5073..41354bd49895 100644
---- a/include/video/mmp_disp.h
-+++ b/include/video/mmp_disp.h
-@@ -156,7 +156,7 @@ struct mmp_overlay {
- 	int status;
- 	struct mutex access_ok;
- 
--	struct mmp_overlay_ops *ops;
-+	const struct mmp_overlay_ops *ops;
+ int hfi1_mmu_rb_register(void *ops_arg,
+-			 struct mmu_rb_ops *ops,
++			 const struct mmu_rb_ops *ops,
+ 			 struct workqueue_struct *wq,
+ 			 struct mmu_rb_handler **handler)
+ {
+diff --git a/drivers/infiniband/hw/hfi1/mmu_rb.h b/drivers/infiniband/hw/hfi1/mmu_rb.h
+index 8e5d05454d70..3fa50dd64db6 100644
+--- a/drivers/infiniband/hw/hfi1/mmu_rb.h
++++ b/drivers/infiniband/hw/hfi1/mmu_rb.h
+@@ -42,7 +42,7 @@ struct mmu_rb_handler {
+ 	/* Begin on a new cachline boundary here */
+ 	struct rb_root_cached root ____cacheline_aligned_in_smp;
+ 	void *ops_arg;
+-	struct mmu_rb_ops *ops;
++	const struct mmu_rb_ops *ops;
+ 	struct list_head lru_list;
+ 	struct work_struct del_work;
+ 	struct list_head del_list;
+@@ -51,7 +51,7 @@ struct mmu_rb_handler {
  };
  
- /* panel type */
-@@ -299,7 +299,7 @@ struct mmp_path_info {
- 	int overlay_num;
- 	void (*set_mode)(struct mmp_path *path, struct mmp_mode *mode);
- 	void (*set_onoff)(struct mmp_path *path, int status);
--	struct mmp_overlay_ops *overlay_ops;
-+	const struct mmp_overlay_ops *overlay_ops;
- 	void *plat_data;
- };
+ int hfi1_mmu_rb_register(void *ops_arg,
+-			 struct mmu_rb_ops *ops,
++			 const struct mmu_rb_ops *ops,
+ 			 struct workqueue_struct *wq,
+ 			 struct mmu_rb_handler **handler);
+ void hfi1_mmu_rb_unregister(struct mmu_rb_handler *handler);
+diff --git a/drivers/infiniband/hw/hfi1/pin_system.c b/drivers/infiniband/hw/hfi1/pin_system.c
+index 384f722093e0..cce56134519b 100644
+--- a/drivers/infiniband/hw/hfi1/pin_system.c
++++ b/drivers/infiniband/hw/hfi1/pin_system.c
+@@ -26,7 +26,7 @@ static int sdma_rb_evict(void *arg, struct mmu_rb_node *mnode, void *arg2,
+ 			 bool *stop);
+ static void sdma_rb_remove(void *arg, struct mmu_rb_node *mnode);
  
+-static struct mmu_rb_ops sdma_rb_ops = {
++static const struct mmu_rb_ops sdma_rb_ops = {
+ 	.filter = sdma_rb_filter,
+ 	.evict = sdma_rb_evict,
+ 	.remove = sdma_rb_remove,
 -- 
 2.45.2
 
