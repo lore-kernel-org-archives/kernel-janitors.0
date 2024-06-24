@@ -1,93 +1,112 @@
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9A019AD67
-	for <kernel-janitors@vger.kernel.org>; Mon, 24 Jun 2024 14:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D642E14264C;
+	Mon, 24 Jun 2024 16:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719240019; cv=none; b=Zgb9Q6x0jtbgMhDTMF0aRRi786/r3KbfwDoACuNGdckuK72sYOy0t+lLyJ7r8d2Pan5RcjAUo/G+3+YYWRlG2pVqnuqnaNS86ktaONkGXc7LeZcbF8aAR8vIE3xQNwQUYpGpGypVl9KkRxQFP4rHCYf536veDgJkVJXCN8O6mUc=
+	t=1719245389; cv=none; b=J2r2GtPb+vVx4erZCzhPGNzjxiNuGY6UAcIViRa6KLH5VgHW+xXLcZALtgK+X+IU3AjDYcGC+L2xpkqDR+aDGLi2olxFA9jkQCqjCRpcB7zy/SIOyvWr1YxADzRufmbud1XLDjNDO3x7hFJJWSyD2ct4zMa97lJ0fhN9gX1YLKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719240019; c=relaxed/simple;
-	bh=3+VEMirkt2JimbX+cgEpMZSYxqIZTmLUAGJ3tL7aqRc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GJ9DCmJyY7OROwryuWGWbeLAxSbtR1RlVg6vf0LFktsSCRn/yq4oB3U8qhyv7ZEsRsInAne4OW9lOWs/+61skbZZaH2n0bP5Or3WxnixrBE2rUswbqlwvlaSnaPDwMfUElWheJ1wenq5KmiAMdKfFePG9tCgjxCPHzLFzBnd288=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=cBLkRpjB; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+	s=arc-20240116; t=1719245389; c=relaxed/simple;
+	bh=crGQnyvQ3WV2pooiE0nYH0RPMIhwc0fCco/rfImN3Fg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=vEw99XVleBAqeGW7Ac68MsVp1w+xlhmaAqDg4vv3ZTr3PjcCwJ7VqNjzxsTZqOpbBOCw9vPevXE60tcjU7rrz/U6CoriapuXqVATV17fkvlLHlNiLF4wUkosez5Qud+w91s0gZ+r0BsRej2MUlB/Mb8z7+lO4qhlg5tiRJde38A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bWPasvFq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="cBLkRpjB"
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7065f3de571so100776b3a.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Jun 2024 07:40:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1719240016; x=1719844816; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TKy5X78Xc68Jjp/ITVwHyZUvV7q/2v9iXB0/cpHUtsM=;
-        b=cBLkRpjBjzJL9pK8ybzUiu8pJDFuaFThvl+/HmObM3WA8AqDx6c9zUpwL4gZGDTROL
-         N0oOpm8ufogeMajklFccJ20omMBY7flpr5mCufMo2hqRg2gtAt0+80Pe582S9Rv1liHv
-         gYCNBLDjBfPtBPbkxQ89UdEAK2mTmxm/OBQXxRAHCLZp75RLKxJX/XvvXTA5LBpKMVJv
-         MtNPvh+9N70oC+sPH57KEjCtzEyx1nKgwqaBcL6O0pJjhFdFCX2LTkNC6jUYiGYlnM7k
-         +Z4TF7/6W+G12SW6jn1fAgBTxFBv/z2k4S/E5uSKIcjsRJdUjUlKIUo9Ho4a/XEIn/P8
-         esug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719240016; x=1719844816;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TKy5X78Xc68Jjp/ITVwHyZUvV7q/2v9iXB0/cpHUtsM=;
-        b=th14pTx3xp6MRzKSpGhy4Vu5uOaU4SCHiUZYKzR1KbkEPv1KQb20Z1zuvC8lKMdGAd
-         NGfbFZ3XShXkr5hcuN0tV2madW0ZNiXj7s3EqYT8hCDJA1g1l3VS5CDMNJRH+TenVGOu
-         +Ot2DIAGujLMysXlKmDhlGvZZeHR/eezmlTJ1EXMMlI9ZTCGLQTqa/lrDMAzChLlfE01
-         jHenj59FnRt+pf0LJuBlP2uGfeYdgzxuy0kxCynuW/NLb1HMX+n4eRq8i807aMM8Gyad
-         7pR5wMiueu6gAf21M97HSZtuuNXL0o8A5CSaz9e3OUb7DMMnAqe+Zortr+RHzsV4l+Bl
-         LnYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWc21XukLr0jWrIjF20UqsYDkBzKWsgzVvi51f7ch83+NG3Z1xFmXvN+Ry52M5piJjyoUYF/UPZU5NLr4LrOtugVt2D+8IxG2mcOMnubOy
-X-Gm-Message-State: AOJu0Ywj2PHHCCrSgz+V68+jKrg2c4nQ2RgejNddeZn8xZscFWmAOzMa
-	D21Q0h31Go1gfsURai0RDTLDJwNNVza4BAyypmRUYssWUwAsx3sdXSS3ZBwKRCY=
-X-Google-Smtp-Source: AGHT+IFMSPpdcpFf9R0ildYRClJVAwkyi4bsJ5OHhkX5J/qqK8Lr9fu97jELdRw9rLlQ6iA/jVH4rw==
-X-Received: by 2002:a05:6a00:48:b0:705:d50c:2564 with SMTP id d2e1a72fcca58-70667e6fcd6mr6262026b3a.3.1719240015146;
-        Mon, 24 Jun 2024 07:40:15 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706512fed18sm6278729b3a.181.2024.06.24.07.40.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 07:40:14 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <20240602-md-block-brd-v1-1-e71338e131b6@quicinc.com>
-References: <20240602-md-block-brd-v1-1-e71338e131b6@quicinc.com>
-Subject: Re: [PATCH] brd: add missing MODULE_DESCRIPTION() macro
-Message-Id: <171924001423.306345.14142856232917408187.b4-ty@kernel.dk>
-Date: Mon, 24 Jun 2024 08:40:14 -0600
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bWPasvFq"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O8YkWt007960;
+	Mon, 24 Jun 2024 16:09:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5XGm1PQQvfx1GHXN3o4N9cO5QcBAnrPqv25v9cbmeBg=; b=bWPasvFqW7UZ36Br
+	oVN4v3D94qOvVU7TMXKw6PDwUaFVm4cd/eaQObPytgai0lEldY2zP8DIckIN2EHr
+	FUvaCGqKm+uCwuRnNiA++hQPKcK056eWcJvrfK1sTG3M9E6l75gELO2NJT43z8jp
+	AStHRYHv68hl6u5DuK+KxXLTvXHsn2FoXaiIf+E+6gMy86WHG2S1dYaUgbcmRKvh
+	M3UR4qkLd0nl50BCOHjiYplAhszPntEYc5GpP4ARAlpjJ1UDy3IHa0/xYQT6warT
+	7AHiJlje0zDW+PvFIfK0oOBIgtXgWgMGAXl5T5a7S/kdqOd6SJ8fMwP54vlmy/1K
+	aKH6PA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnjrv8gu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 16:09:40 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45OG9dZ7000695
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 16:09:39 GMT
+Received: from [10.48.244.142] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
+ 2024 09:09:39 -0700
+Message-ID: <df490024-440c-45aa-a420-312ad24a26e0@quicinc.com>
+Date: Mon, 24 Jun 2024 09:09:37 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mailbox: mtk-cmdq: add missing MODULE_DESCRIPTION() macro
+Content-Language: en-US
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger
+	<matthias.bgg@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240608-md-drivers-mailbox-v1-1-6ce5d6f924ad@quicinc.com>
+ <05841850-aeb6-47b6-916b-f4889d971d5c@collabora.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <05841850-aeb6-47b6-916b-f4889d971d5c@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: cYCySJiXn-1OvVH0nsbecfNuw1Y8RnXJ
+X-Proofpoint-ORIG-GUID: cYCySJiXn-1OvVH0nsbecfNuw1Y8RnXJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_13,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1015 mlxscore=0 suspectscore=0 adultscore=0 mlxlogscore=999
+ impostorscore=0 bulkscore=0 malwarescore=0 spamscore=0 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406240129
 
-
-On Sun, 02 Jun 2024 16:46:25 -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> modpost: missing MODULE_DESCRIPTION() in drivers/block/brd.o
+On 6/24/2024 4:34 AM, AngeloGioacchino Del Regno wrote:
+> Il 08/06/24 18:31, Jeff Johnson ha scritto:
+>> make allmodconfig && make W=1 C=1 reports:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mailbox/mtk-cmdq-mailbox.o
+>>
+>> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>>
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>> ---
+>>   drivers/mailbox/mtk-cmdq-mailbox.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+>> index 4aa394e91109..8247584bcbeb 100644
+>> --- a/drivers/mailbox/mtk-cmdq-mailbox.c
+>> +++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+>> @@ -790,4 +790,5 @@ static void __exit cmdq_drv_exit(void)
+>>   subsys_initcall(cmdq_drv_init);
+>>   module_exit(cmdq_drv_exit);
+>>   
+>> +MODULE_DESCRIPTION("Mediatek Command Queue(CMDQ) driver");
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> MODULE_DESCRIPTION("MediaTek Command Queue (CMDQ) Mailbox driver");
 > 
+> After which,
 > 
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Applied, thanks!
-
-[1/1] brd: add missing MODULE_DESCRIPTION() macro
-      commit: 876835b128976e2e9a7d18daab58b4cba7742787
-
-Best regards,
--- 
-Jens Axboe
-
-
+ack, v2 coming
 
