@@ -1,41 +1,60 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A263A1DA;
-	Mon, 24 Jun 2024 06:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D38A3D96A;
+	Mon, 24 Jun 2024 06:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719210874; cv=none; b=XvzBUFE/npMGjj38FaXW0us5rD/iYLIQIvK+ABl4qTZzlDnubwgxNzmLSyrC7jETrI9PpSmIMc8MPBzfdVJ0hhxxvchAGTLHZsm4xwyDu39kXtT3J+AaCHRqY8ODdoW2LtDBNT4RF7UThIS47EU/A+3Tr200vp9AvoqqquOd9Sg=
+	t=1719210892; cv=none; b=pPeOReXPHfv5d/8lgURLAo+Cv+87is02ktgXdNswgFO4EBSrJoCeH7ntuSTFg68EjHqN/iyHaS+eU3+cuYINLfKNgWsG/gQW2N97HMOS1TiQmrEU14ULU1F7YiuRTRpuw7lad3Z+bXH9yFp2dIA1pz+tdc7336ZW3ns4izyPLiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719210874; c=relaxed/simple;
-	bh=1DMakykCIfUAlpVADCUSyn5T4zIsvaNezaKnvW8q8W0=;
+	s=arc-20240116; t=1719210892; c=relaxed/simple;
+	bh=5wWeGBPlm4+UHCYoNYSsMzwnp/gskQPkm5NlvO8iPyU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AdMbZx2f+Zro9hDpaly+TJVVBTY6DrsDgyBpj1HLpC+GsLVHluViEybXb9htNJv4eEOdkmHv/Nb7XGslfs5OCdjq3rRTWr0/4inKNUWx1xaEMUiGR2j8yCnUEE5ZzfCW62ViZgZXmxcmPjL/KANxMSVRs89gHpLBbxB13hW0H6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Dpf9f78k; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	 In-Reply-To:Content-Type; b=m9MIWIYKhSf3EDpCDVhaERrDHPF/L9XTXKLNSCMMZlY785Oj+D2EkqzJtW2cISsLJOI8ITT88qDqqdHezIB0u+NNITzh6bXq+hj6jCjbQJaKMjmPEVDXDnhaYFgw4oAEnrfoyb3i6tfpKEhGss5udtPXtzA1EUHWqNKaYh+vBBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ezu47ZH2; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ezu47ZH2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Dpf9f78k"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719210830; x=1719815630; i=markus.elfring@web.de;
-	bh=1DMakykCIfUAlpVADCUSyn5T4zIsvaNezaKnvW8q8W0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Dpf9f78kjCnyvPbDW90cWnTiE1Eql/65se/QMCiPrClB4aeB6jLUQCg50zSES4uT
-	 PZVMnaX3GhcTi9pLzjjxWHXmAepMOv9KVqxYFSGr5V3/pyMCoLbdH9cpUrqkK+kFu
-	 owYBD9zPtCFjRG4luAX1yst1A71YZWTlV/cxNRlI7ziP3mn/Cdg1NNJcjBFNdlReT
-	 fUIEc3FTnn4+WXoISG5uZSj2nCKiv+YBi+qR60kyFhpdS9h85IU/+o6tSJzAreduL
-	 J218W9g5S/9/t1BDyrNmUT8FLBd01zoRg6Bkb5k4onruarW19IBqlId7O7RZKX4s7
-	 22aJvNWkTplcYhbORw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MkVwo-1slfEG3F2E-00aped; Mon, 24
- Jun 2024 08:33:50 +0200
-Message-ID: <94b76f8d-5886-4a1e-8469-712be369ee9e@web.de>
-Date: Mon, 24 Jun 2024 08:33:24 +0200
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ezu47ZH2";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ezu47ZH2"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2F825219DA;
+	Mon, 24 Jun 2024 06:34:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1719210889; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z3WhiZXNQHgFwvVrbBEz4za7o2pwZgL3jItNx6ibiys=;
+	b=ezu47ZH2GWQetljxo8W9EMriwjsho4BU3PlWB+8aiEKMaWvQymGY7PDS3xFAtCHsDSbpt9
+	/jXBzP0ap3MzYlxK12qCi5OC0LxQGKTXa8AG91Y54l2XqwOBZAxFQM3ar3pQgUtSe1buEH
+	3hcjzbmA91gHsacEtnDOCUiwnl/zWfs=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=ezu47ZH2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1719210889; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z3WhiZXNQHgFwvVrbBEz4za7o2pwZgL3jItNx6ibiys=;
+	b=ezu47ZH2GWQetljxo8W9EMriwjsho4BU3PlWB+8aiEKMaWvQymGY7PDS3xFAtCHsDSbpt9
+	/jXBzP0ap3MzYlxK12qCi5OC0LxQGKTXa8AG91Y54l2XqwOBZAxFQM3ar3pQgUtSe1buEH
+	3hcjzbmA91gHsacEtnDOCUiwnl/zWfs=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EC1DD13AA4;
+	Mon, 24 Jun 2024 06:34:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dGmJN4gTeWZnaQAAD6G6ig
+	(envelope-from <jgross@suse.com>); Mon, 24 Jun 2024 06:34:48 +0000
+Message-ID: <988f62b6-642d-404e-ae1e-1c9a428c1eb9@suse.com>
+Date: Mon, 24 Jun 2024 08:34:48 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,64 +62,76 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [v2] net: fec: Convert fec driver to use lock guards
-To: Wei Fang <wei.fang@nxp.com>, Julia Lawall <julia.lawall@inria.fr>,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, imx@lists.linux.dev
-Cc: Peter Zijlstra <peterz@infradead.org>, Simon Horman <horms@kernel.org>,
- Waiman Long <longman@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
- Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>,
- Shenwei Wang <shenwei.wang@nxp.com>
-References: <20240511030229.628287-1-wei.fang@nxp.com>
- <657b4098-60b8-4522-8ea0-f10aa338e1b6@web.de>
- <PAXPR04MB85106653965E0694C2C84E4C88D42@PAXPR04MB8510.eurprd04.prod.outlook.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <PAXPR04MB85106653965E0694C2C84E4C88D42@PAXPR04MB8510.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] xen/manage: Constify struct shutdown_handler
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ xen-devel@lists.xenproject.org
+References: <ca1e75f66aed43191cf608de6593c7d6db9148f1.1719134768.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+In-Reply-To: <ca1e75f66aed43191cf608de6593c7d6db9148f1.1719134768.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:zYDgtPUyGbVR494S2aaAhBezw2rAjlld6p7OKoMYRntp28QZx/e
- CE4/G6HTWYHbUNijX/hEDkeAY4myZih3TWhk+FqR4Fe9hC7XyeVKX+bxl36mGrP1iA+B0Ad
- 6hgucoBUn43z9X/uFhcCxC2dkcKXyDF+JZ+39hOmsTymyW5Iw1GdaEhNcGmPfrA0LaFf3xC
- IRo/XaGOn+X/K79Jn2i6g==
+X-Rspamd-Queue-Id: 2F825219DA
+X-Spam-Score: -3.45
+X-Spam-Level: 
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Wq5Ia2J9EVg=;FGkgTGR3qAAXJ/99JgodSWi8s+M
- cnUK2GRemrHPTe2GKsB9KEmM4cOhm9RAcZxXtfCzRHMqYEBR8kXh0LfwDRla4/m3vba+LKmal
- pr580LPxSRi+cU/ZfQPtYsknXz07n6oqea45rOyAdcvXb20mEPBZbXZajfB92LDxglLTljme6
- /ozqj9GX8YgUNRDFB+jk/AQDyXJoZei3L1RGxbFfoJsvxiAk28QSnV87zFFmnf2rLIMYk+Yvb
- VdHqYrLKci3e8eia8zaSt3rlO1rK4ilS5HcFNCpYq+BTl6KynXV7lAFWHGnmaRJYbnK3xnHjA
- 3PO/GSAtFPEdQTNLDAgxeQvuGAHpGyoFou8qLkzg9PrY9gUO9WRN2NqnlHqk5ITKc6NlzHDVN
- U2DZOW0GelBqesJloWrbN9n3bdm42XSI4djR5uir+AzoGkw/F3QhMP+k5NwtkDpruBEK1pPtc
- MiSsvgVTxQwIBfOEsMVwqPRF7+QuhC0/0lQ648VqZcMHabTpflRlT3ovpUUZ4CvudLOwSLjPg
- x9OWYOiN7Gsu+dNqsVgwJjzsEg8QUI1Lsk1ITxDXzkjcm0Qglyv4LM7K+l59/88UlH2j6F/5d
- t0zGLUWVRlSHq1e3ZJ3a4t5065FAEyCYW1z/QWl4Qc7p8FV4vOBGD48DgEGDmc8ggW9/FbE1X
- 02TwRPMRPDb0fedQM7ECtaoZpOaoniXdpsXzmicUqwyc6XaR/LPn0ADB70FpKXvDipwICP2fO
- Qpd3GEBVjdHtFpV5c9eijXwUtlUj+P8d/Nlp3UR3L+9CiWtL1F8DC9RBK0DCjwGFNniqZoGjK
- ifwfmlKYYFBgC2B+Lp3U7JpUluxsKwfz0Wh6pLUIpmIjI=
+X-Spamd-Result: default: False [-3.45 / 50.00];
+	BAYES_HAM(-2.95)[99.80%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MIXED_CHARSET(1.00)[subject];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[wanadoo.fr,kernel.org,epam.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.com:dkim];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.com:dkim]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-> This patch has been rejected because netdev people don't want these sort of
-> conversions at present which will make backporting more difficult.
+On 23.06.24 11:26, Christophe JAILLET wrote:
+> 'struct shutdown_handler' is not modified in this driver.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>     text	   data	    bss	    dec	    hex	filename
+>     7043	    788	      8	   7839	   1e9f	drivers/xen/manage.o
+> 
+> After:
+> =====
+>     text	   data	    bss	    dec	    hex	filename
+>     7164	    676	      8	   7848	   1ea8	drivers/xen/manage.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Advanced development tools can help to adjust involved concerns another bit.
-Some contributors got used to capabilities of the semantic patch language
-(Coccinelle software) for example.
-Will any clarifications become more helpful here?
-
-Would you get useful insights from special information sources?
-
-Looking at guard usage (with SmPL)
-https://lore.kernel.org/cocci/2dc6a1c7-79bf-42e3-95cc-599a1e154f57@web.de/
-https://sympa.inria.fr/sympa/arc/cocci/2024-05/msg00090.html
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
 
-> The LOCK EVASION issue has been fixed by another patch.
+Juergen
 
-https://lore.kernel.org/r/20240521023800.17102-1-wei.fang@nxp.com
-
-Further software evolution might become more interesting also around
-the commit 3b1c92f8e5371700fada307cc8fd2c51fa7bc8c1 ("net: fec:
-avoid lock evasion when reading pps_enable").
-
-Regards,
-Markus
