@@ -1,76 +1,106 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3518B219E2;
-	Mon, 24 Jun 2024 06:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A263A1DA;
+	Mon, 24 Jun 2024 06:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719210127; cv=none; b=bbeUkpntB3Oz4As51UKjTszxolRh1CF4gO99ZiNBYyMIDBDLuWUMpKKfaZ64RZnWTXcLsFktP2ewdAJF9OoCezIOAEoICHri3wm4/eGXvoc+h2coGCW07uGGFMKjJZ4PfmTsncTCVJp4p0+sCzFztYsJ2C/ZLWNSYZNl5rU9ELk=
+	t=1719210874; cv=none; b=XvzBUFE/npMGjj38FaXW0us5rD/iYLIQIvK+ABl4qTZzlDnubwgxNzmLSyrC7jETrI9PpSmIMc8MPBzfdVJ0hhxxvchAGTLHZsm4xwyDu39kXtT3J+AaCHRqY8ODdoW2LtDBNT4RF7UThIS47EU/A+3Tr200vp9AvoqqquOd9Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719210127; c=relaxed/simple;
-	bh=izV8xtFw87LJRHc0H3NGdhgh/pXNsAOWlHQntv9q9Z4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VpDRGY7QSa2YOArwQUVoxxL8Zs1yNfyr71ydUN5kQ/OcnFkPNos+Ib9pNKd0XP4AgW/TmaxTVu++Pvhi5mvCcbnr8+04ovGFMFbf6M/UH5m3zzIBbW8AusjjLPNcMFpFIxCVVOMJd0DzyZPGELMe4+t7kzFYM43Sra6np1QOP7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JqwaS42x; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1719210874; c=relaxed/simple;
+	bh=1DMakykCIfUAlpVADCUSyn5T4zIsvaNezaKnvW8q8W0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AdMbZx2f+Zro9hDpaly+TJVVBTY6DrsDgyBpj1HLpC+GsLVHluViEybXb9htNJv4eEOdkmHv/Nb7XGslfs5OCdjq3rRTWr0/4inKNUWx1xaEMUiGR2j8yCnUEE5ZzfCW62ViZgZXmxcmPjL/KANxMSVRs89gHpLBbxB13hW0H6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Dpf9f78k; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JqwaS42x"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7252bfe773so59306166b.1;
-        Sun, 23 Jun 2024 23:22:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719210124; x=1719814924; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=izV8xtFw87LJRHc0H3NGdhgh/pXNsAOWlHQntv9q9Z4=;
-        b=JqwaS42xSuYoGivGftta04s4VFAatPrxAo5jiYpsSi7FHnOZXUmbTXH1jSQvqFFzv7
-         Qef+USwCHAWdNm1mt7GMUqKCJGL/x7beQ7cQyn9e1yMX1GWrw+J5OeF+O8LBvlAXq6df
-         fPEgrmYLFTbaaFMFracqzy8JJaygOXkIE0X2koYFZufmfJ5staZlh+zLc+Qu7dnJU8uO
-         ufP2+Ogn82ztrosvFBT07mBFQ3DEwnXJmb8Av3GKbbpv3agkVe0nfNfiuTYTsmIHSBog
-         H3L6KQGCKmdullrjU7alw/FRV+/2TF78jfAvLp2u2Z48Ah/Y0Dgbgg+W0TAiLbucBU4h
-         LbZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719210124; x=1719814924;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=izV8xtFw87LJRHc0H3NGdhgh/pXNsAOWlHQntv9q9Z4=;
-        b=Tij9ddPUJX4bFzHqP3wB+47EWijJ4O8ekgypUaLpGSJue0wgGFa2ry7oN3T6GeN/tH
-         PgKToO77pvpXWVvTR7Bo7XZdArqjF108soI+lZ6Nb6bhliiLwaru56hHb3nihmS6eDCu
-         qri+B7e8BGsdOn2Mb8cNxicbkI0VvcWDDgvlAArMsAKO/avKA1fOr3NV+CWsROX/skzM
-         ZTAfKbzNUPTktU3C/I5ivh6WBaOTadkIO8xxSuclbKPi5nKkqI8Lb6P0k9DN0yvZSC2c
-         xTivstHZTtQx1YGWoXs2hn+Vh2KaW21kHWMwEa7HsG7JGayCIbWrWuTtqLVaAExPOuG3
-         Qt3g==
-X-Forwarded-Encrypted: i=1; AJvYcCV92U0pmxXXrIwpij6doHpF6xRUevqAfhqO2alY53xkfa/3FE3QbqQ4cAIZRKZOX0IZ2FFnUG77y2H8Ll703PwtPTDhba2TsGQsm+Em/YYzUsjKw8c4V1avIJbdliMZjl4jbuyFoDKOmzs2gvhR
-X-Gm-Message-State: AOJu0YwkInhSbhisJIWbSvABNdRC9IIhIx7j4QUiBIVlGACY8fuZP6ux
-	slwI8KsP5mVXhRdNMOGsFVFtmWSxPbWSVjV992fG4SpdNDQb+ac52g8EOsQg6DuN+SY8HIuyjsC
-	UNjhglgerQyD//+Gq7Dnbc+zsVI0=
-X-Google-Smtp-Source: AGHT+IF4p3kQuq5bMoS6IT8dI6Brsx4Molp0hz/DWisb09x1f9QYxKJIHq/2rFVb9+bLYmidFi0EDdziT1pi0FXCcqc=
-X-Received: by 2002:a17:906:f851:b0:a6f:5091:467b with SMTP id
- a640c23a62f3a-a7245cf27e8mr209723366b.39.1719210124278; Sun, 23 Jun 2024
- 23:22:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Dpf9f78k"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719210830; x=1719815630; i=markus.elfring@web.de;
+	bh=1DMakykCIfUAlpVADCUSyn5T4zIsvaNezaKnvW8q8W0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Dpf9f78kjCnyvPbDW90cWnTiE1Eql/65se/QMCiPrClB4aeB6jLUQCg50zSES4uT
+	 PZVMnaX3GhcTi9pLzjjxWHXmAepMOv9KVqxYFSGr5V3/pyMCoLbdH9cpUrqkK+kFu
+	 owYBD9zPtCFjRG4luAX1yst1A71YZWTlV/cxNRlI7ziP3mn/Cdg1NNJcjBFNdlReT
+	 fUIEc3FTnn4+WXoISG5uZSj2nCKiv+YBi+qR60kyFhpdS9h85IU/+o6tSJzAreduL
+	 J218W9g5S/9/t1BDyrNmUT8FLBd01zoRg6Bkb5k4onruarW19IBqlId7O7RZKX4s7
+	 22aJvNWkTplcYhbORw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MkVwo-1slfEG3F2E-00aped; Mon, 24
+ Jun 2024 08:33:50 +0200
+Message-ID: <94b76f8d-5886-4a1e-8469-712be369ee9e@web.de>
+Date: Mon, 24 Jun 2024 08:33:24 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240603-md-agp-v1-1-9a1582114ced@quicinc.com> <650386f8-16c4-4988-b05c-1e4fc1c9167a@quicinc.com>
-In-Reply-To: <650386f8-16c4-4988-b05c-1e4fc1c9167a@quicinc.com>
-From: Dave Airlie <airlied@gmail.com>
-Date: Mon, 24 Jun 2024 16:21:52 +1000
-Message-ID: <CAPM=9tyKZKPo-bkhGFvwNTOaojV033j0S-5ex5FPmY766x4ocA@mail.gmail.com>
-Subject: Re: [PATCH] agp: add missing MODULE_DESCRIPTION() macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: David Airlie <airlied@redhat.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2] net: fec: Convert fec driver to use lock guards
+To: Wei Fang <wei.fang@nxp.com>, Julia Lawall <julia.lawall@inria.fr>,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, imx@lists.linux.dev
+Cc: Peter Zijlstra <peterz@infradead.org>, Simon Horman <horms@kernel.org>,
+ Waiman Long <longman@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+ Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>,
+ Shenwei Wang <shenwei.wang@nxp.com>
+References: <20240511030229.628287-1-wei.fang@nxp.com>
+ <657b4098-60b8-4522-8ea0-f10aa338e1b6@web.de>
+ <PAXPR04MB85106653965E0694C2C84E4C88D42@PAXPR04MB8510.eurprd04.prod.outlook.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <PAXPR04MB85106653965E0694C2C84E4C88D42@PAXPR04MB8510.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:zYDgtPUyGbVR494S2aaAhBezw2rAjlld6p7OKoMYRntp28QZx/e
+ CE4/G6HTWYHbUNijX/hEDkeAY4myZih3TWhk+FqR4Fe9hC7XyeVKX+bxl36mGrP1iA+B0Ad
+ 6hgucoBUn43z9X/uFhcCxC2dkcKXyDF+JZ+39hOmsTymyW5Iw1GdaEhNcGmPfrA0LaFf3xC
+ IRo/XaGOn+X/K79Jn2i6g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Wq5Ia2J9EVg=;FGkgTGR3qAAXJ/99JgodSWi8s+M
+ cnUK2GRemrHPTe2GKsB9KEmM4cOhm9RAcZxXtfCzRHMqYEBR8kXh0LfwDRla4/m3vba+LKmal
+ pr580LPxSRi+cU/ZfQPtYsknXz07n6oqea45rOyAdcvXb20mEPBZbXZajfB92LDxglLTljme6
+ /ozqj9GX8YgUNRDFB+jk/AQDyXJoZei3L1RGxbFfoJsvxiAk28QSnV87zFFmnf2rLIMYk+Yvb
+ VdHqYrLKci3e8eia8zaSt3rlO1rK4ilS5HcFNCpYq+BTl6KynXV7lAFWHGnmaRJYbnK3xnHjA
+ 3PO/GSAtFPEdQTNLDAgxeQvuGAHpGyoFou8qLkzg9PrY9gUO9WRN2NqnlHqk5ITKc6NlzHDVN
+ U2DZOW0GelBqesJloWrbN9n3bdm42XSI4djR5uir+AzoGkw/F3QhMP+k5NwtkDpruBEK1pPtc
+ MiSsvgVTxQwIBfOEsMVwqPRF7+QuhC0/0lQ648VqZcMHabTpflRlT3ovpUUZ4CvudLOwSLjPg
+ x9OWYOiN7Gsu+dNqsVgwJjzsEg8QUI1Lsk1ITxDXzkjcm0Qglyv4LM7K+l59/88UlH2j6F/5d
+ t0zGLUWVRlSHq1e3ZJ3a4t5065FAEyCYW1z/QWl4Qc7p8FV4vOBGD48DgEGDmc8ggW9/FbE1X
+ 02TwRPMRPDb0fedQM7ECtaoZpOaoniXdpsXzmicUqwyc6XaR/LPn0ADB70FpKXvDipwICP2fO
+ Qpd3GEBVjdHtFpV5c9eijXwUtlUj+P8d/Nlp3UR3L+9CiWtL1F8DC9RBK0DCjwGFNniqZoGjK
+ ifwfmlKYYFBgC2B+Lp3U7JpUluxsKwfz0Wh6pLUIpmIjI=
 
->
-> Following up to see if anything else is needed from me.
-> Hoping to see this in linux-next :)
+> This patch has been rejected because netdev people don't want these sort of
+> conversions at present which will make backporting more difficult.
 
-I just pushed this into drm-next.
+Advanced development tools can help to adjust involved concerns another bit.
+Some contributors got used to capabilities of the semantic patch language
+(Coccinelle software) for example.
+Will any clarifications become more helpful here?
 
-Thanks,
-Dave.
+Would you get useful insights from special information sources?
+
+Looking at guard usage (with SmPL)
+https://lore.kernel.org/cocci/2dc6a1c7-79bf-42e3-95cc-599a1e154f57@web.de/
+https://sympa.inria.fr/sympa/arc/cocci/2024-05/msg00090.html
+
+
+> The LOCK EVASION issue has been fixed by another patch.
+
+https://lore.kernel.org/r/20240521023800.17102-1-wei.fang@nxp.com
+
+Further software evolution might become more interesting also around
+the commit 3b1c92f8e5371700fada307cc8fd2c51fa7bc8c1 ("net: fec:
+avoid lock evasion when reading pps_enable").
+
+Regards,
+Markus
