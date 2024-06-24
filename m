@@ -1,116 +1,120 @@
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC9F12EBD7
-	for <kernel-janitors@vger.kernel.org>; Mon, 24 Jun 2024 08:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F74745E2
+	for <kernel-janitors@vger.kernel.org>; Mon, 24 Jun 2024 09:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719217293; cv=none; b=IiIuFsuPpOv5mBTmZo7VlxvUFCZHflhzbFr/CbywzDmPKcAC33NeQDIedKz2w2BGgkSHDmtCSetRzc3TWZdRDBczsSFAylMZklzl59thFDAUcoOVkS0dp5YHfJaoEHgs77/dQ22EfS/2cw/IkIDbt3AZJRu/A8msnPvElYzbwIo=
+	t=1719219916; cv=none; b=pIILsBMFd7efSJoo9YjplIxzXHpkiEbqpqMv783s8sAW0Z9Mbl544CBC2Vliv4Jm+d8dtvpZo6CMo/zXpewhmbpjm3kwWX8ZKSco51icnCmpQTZ7pFQJgVFNAu/NrkabopA9scC95rf6VY9lq284Mx+6A3gu3TVOLhmnEZ0v4I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719217293; c=relaxed/simple;
-	bh=d/7onzK25APsdWR1y2MGqqkPA2ZJXUYc1Kpw8PGQE+I=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=D2mTMWRM4wlReD+NkKSJG+ZST0mIiFxBPoVJB2ekZVdt4vC1FcgPb1iXZMBt7lhdthiAWHg1h184Z6NHjyZiEoEJGMQfCb7+KldYpdSHpRZCnLaekS0ER+3t68dXCX7LzCEsGfHi6In3hRb03zstfvct61yhDluyb4y74dYn0rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xFbG7hMz; arc=none smtp.client-ip=209.85.208.169
+	s=arc-20240116; t=1719219916; c=relaxed/simple;
+	bh=hG12t8OX9r2zsfi6mBRztzi3GNBLfq5sysaB6M3sQR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VYI3b4tsvcq+V2kj1Km7Y5lTqzxHoT3pKAwhZHgClrFS2s/s9dHjBDJaw5M1LIk36m52E6DNpDaCZdkL6pRikfosG5btJGPBHObCTYmEejgP8/aLzHcAG4HyZkxLHKN8lxKQKt3xw/AXC7F3kAlTVZc0edY/cW0aKeUyFhRhHjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jlvB3nO2; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xFbG7hMz"
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ebe40673d8so45805081fa.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Jun 2024 01:21:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jlvB3nO2"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-421b9068274so35848465e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 24 Jun 2024 02:05:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719217289; x=1719822089; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I7NcOeCTe6QbjgqW/a6BuGeeL6JmiMXVqSTnEvXy5Q0=;
-        b=xFbG7hMzFvklonsMJLpHVl8PL/XcAez/tPNl9J5u590KkmL/gldm+tcunPPe0S6qIM
-         7vjEGxQstJmRKKuRBQQoXHvFo8eslZOvRTYB7TRY0T+krq4SwUE+GPZA1ZEOXzVNAwaY
-         JfQc/7ui3bEZMfCrGDgN8ADjWeFuIk0BezkINKojlEyi9Ic64DRi6/tuN0eJZpe2tSPC
-         7bLkw2Vrl/EhcOU3EoR00ntQpOKlcP6IcLcE1GXkuqV2gmPGRZX0HOknlQIKznR5SofH
-         1CR925gJORakaUhjLr1+0sAubpeq9rKmYHVT7vNmVv9UYfqFPDlambPFKta1+d/xhEnn
-         Ze1Q==
+        d=linaro.org; s=google; t=1719219913; x=1719824713; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=di0dNpRixSPGeZUOijvt7RrcSBHiIOF2BknJfQ4DEvM=;
+        b=jlvB3nO2j0E/Cw1TQ0Ocs127h5xTK+VcBauO2us23PJQkB6a1Nc5CAeKRyZeJOjyXL
+         GC1sa8RHOOdZXC/tmHGXWbAwRWrz9TRLgWujWITNxXLlOzLIhJ6VyBNB2GufbtgdVMSS
+         6mTV16HTCacoymb4bc34XS8Fm2XXv+ZUON4XntKZbdq02fyCFoLuHgAm6Ug8GGS3vfoX
+         jEtrcGrvBkS1YeF+snK3dj7oasUHFTWy5uUWG1nha+ASWnDynwQkbyaWfUbUjGpCW9hk
+         2X4CcySLEh3iRqgZyX0WZ+8NoakHNw0qx55YOYnJhWvtc5i39DmMnFRxWL7SeSTrLsf3
+         4uKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719217289; x=1719822089;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I7NcOeCTe6QbjgqW/a6BuGeeL6JmiMXVqSTnEvXy5Q0=;
-        b=hOYDoZ1T09Vir3w7vtHPpJq1302OEY53omS0QYn/uKeVj/ysHlIurnL4YB+sA3pC8e
-         oejBMgKBGnfgez97OLgUdMkgLXF2uZjSL4ynbtVno8UBzdShWdMNtTGu5NQPzPSKf4H0
-         YsyL2xbtEHcY0WvWlAbPDZqeRGmxGrf+wsqWZMCkncMaogw7OvHzLwjPdLNUcyNkY7Lw
-         DpC689jwbH1wxkIFndJBb0+/s+tvFlbB376n27tN3MnJFqJ0RSc5uGLV+b9/H2CcOf7m
-         GpUYWUDascm2yXUVNfIAXht9VC7g1hBqVbmX5Jn/lypN1DvWjHNxeUTSYnuIvPiiLYZO
-         cHdw==
-X-Forwarded-Encrypted: i=1; AJvYcCX4/Ty4dhcNSAV9wMcEFYkTe1xKWb5yCbASaHJrzbgb1aZUdsdfN/martMQnq2AP66n2Y1N0tHgrpwZZOd3aGazVBdLLHq9jQL0zX3d7Bd8
-X-Gm-Message-State: AOJu0Yz7aHpra5oKlA2p9ypn689urrOAkYq8KgH9hGN07JsthimLydpE
-	IoID1LOm7Mx/f4dC5LDzes6c3nYciqceTXKiArgMxdaju31xDluZ9ucTFaW0zhk=
-X-Google-Smtp-Source: AGHT+IGNlOezhcfigWHR887LWxcT/h/hglmHb1ED9g6uw0MBIQ2/Hju9mHH0wEbb+SX8JpBxqzajXg==
-X-Received: by 2002:ac2:4838:0:b0:52b:79d6:5c28 with SMTP id 2adb3069b0e04-52ce185f6f8mr1966516e87.52.1719217288265;
-        Mon, 24 Jun 2024 01:21:28 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42481910fd4sm124758095e9.30.2024.06.24.01.21.27
+        d=1e100.net; s=20230601; t=1719219913; x=1719824713;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=di0dNpRixSPGeZUOijvt7RrcSBHiIOF2BknJfQ4DEvM=;
+        b=J1RJd70zRnvelNWi9z9aTan8DKpdKlCd0DsO75ol4XkyIlfk+rxsUNYkKCK9+1pocL
+         ryWoIfl4IOox2O49Lq706+WfjbVOT/s7xn99FgnbLYTSaICRwHlw6EY2Wjq3HTAdVyiV
+         tVkyrYufusnRxusDLKY56j8Q5ys7M8C3gJkOlAGpcffqu6TWsG2NelhRngwsBpxSX44m
+         RQTM6Bpr+T7A39Gd7iqgCERo1lciVSmAyYyemo/D8sajNTchX9fW2LsnGCVE0hZiC2jO
+         FHsUqyUEcJwJh1cRCb4IyIpIsAUZchXMRMznXPyUJ/egRVh/LxRfm0diteAy0WM1SPXA
+         EJuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgL04Yy0nxKylXy3K8A15awp9PpD2niHoirog5dTm4omJuFhYj6PkeLHIAOT7R2VMwaCOF6r6mpvVKIv8W/Sgi7uQaDEpwRBE4s3Hgg+wP
+X-Gm-Message-State: AOJu0Yx4DUSNv6himbkh8l+D9saqwNZHO3bmxOLG3kAhLD3KjkIMXEkj
+	IwXTHkPFCB/H76GyzGSEm2OnEPjZW2zdtOkqX3Ptzf7Wr/hGnvxW4o8OgMvqc8U=
+X-Google-Smtp-Source: AGHT+IFkSDPiD+yWXQfNgR70eBw92raGLyWVYw9jofSEZ+B5IYJBbmKB8z16gdgkMotEoz1Cs0mBxg==
+X-Received: by 2002:a05:6000:2c5:b0:366:e89c:342b with SMTP id ffacd0b85a97d-366e89c34bcmr3948138f8f.52.1719219913015;
+        Mon, 24 Jun 2024 02:05:13 -0700 (PDT)
+Received: from linaro.org ([82.79.124.209])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a2f8268sm9404031f8f.79.2024.06.24.02.05.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 01:21:27 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Kevin Hilman <khilman@baylibre.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <20240613-md-arm64-drivers-firmware-meson-v1-1-28e4138a8597@quicinc.com>
-References: <20240613-md-arm64-drivers-firmware-meson-v1-1-28e4138a8597@quicinc.com>
-Subject: Re: [PATCH] firmware: meson_sm: add missing MODULE_DESCRIPTION()
- macro
-Message-Id: <171921728754.3499470.13684580570905229720.b4-ty@linaro.org>
-Date: Mon, 24 Jun 2024 10:21:27 +0200
+        Mon, 24 Jun 2024 02:05:12 -0700 (PDT)
+Date: Mon, 24 Jun 2024 12:05:11 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] clk: imx: add missing MODULE_DESCRIPTION() macros
+Message-ID: <Znk2x1ON5orqjziA@linaro.org>
+References: <20240602-md-clk-imx-v1-1-5c6d240f6fab@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240602-md-clk-imx-v1-1-5c6d240f6fab@quicinc.com>
 
-Hi,
-
-On Thu, 13 Jun 2024 14:18:48 -0700, Jeff Johnson wrote:
-> With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/meson/meson_sm.o
+On 24-06-02 08:59:17, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/imx/mxc-clk.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/imx/clk-imxrt1050.o
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
 > 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+
+> ---
+>  drivers/clk/imx/clk-imxrt1050.c | 1 +
+>  drivers/clk/imx/clk.c           | 1 +
+>  2 files changed, 2 insertions(+)
 > 
-
-Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.11/drivers)
-
-[1/1] firmware: meson_sm: add missing MODULE_DESCRIPTION() macro
-      https://git.kernel.org/amlogic/c/5375986e16207e573c0493009d25b0c01f44e01d
-
-These changes has been applied on the intermediate git tree [1].
-
-The v6.11/drivers branch will then be sent via a formal Pull Request to the Linux SoC maintainers
-for inclusion in their intermediate git branches in order to be sent to Linus during
-the next merge window, or sooner if it's a set of fixes.
-
-In the cases of fixes, those will be merged in the current release candidate
-kernel and as soon they appear on the Linux master branch they will be
-backported to the previous Stable and Long-Stable kernels [2].
-
-The intermediate git branches are merged daily in the linux-next tree [3],
-people are encouraged testing these pre-release kernels and report issues on the
-relevant mailing-lists.
-
-If problems are discovered on those changes, please submit a signed-off-by revert
-patch followed by a corrective changeset.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-
--- 
-Neil
-
+> diff --git a/drivers/clk/imx/clk-imxrt1050.c b/drivers/clk/imx/clk-imxrt1050.c
+> index 08d155feb035..efd1ac9d8eeb 100644
+> --- a/drivers/clk/imx/clk-imxrt1050.c
+> +++ b/drivers/clk/imx/clk-imxrt1050.c
+> @@ -176,6 +176,7 @@ static struct platform_driver imxrt1050_clk_driver = {
+>  };
+>  module_platform_driver(imxrt1050_clk_driver);
+>  
+> +MODULE_DESCRIPTION("NXP i.MX RT1050 clock driver");
+>  MODULE_LICENSE("Dual BSD/GPL");
+>  MODULE_AUTHOR("Jesse Taube <Mr.Bossman075@gmail.com>");
+>  MODULE_AUTHOR("Giulio Benetti <giulio.benetti@benettiengineering.com>");
+> diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+> index e35496af5ceb..df83bd939492 100644
+> --- a/drivers/clk/imx/clk.c
+> +++ b/drivers/clk/imx/clk.c
+> @@ -226,4 +226,5 @@ static int __init imx_clk_disable_uart(void)
+>  late_initcall_sync(imx_clk_disable_uart);
+>  #endif
+>  
+> +MODULE_DESCRIPTION("Common clock support for NXP i.MX SoC family");
+>  MODULE_LICENSE("GPL v2");
+> 
+> ---
+> base-commit: 83814698cf48ce3aadc5d88a3f577f04482ff92a
+> change-id: 20240602-md-clk-imx-370fc1d85ab5
+> 
