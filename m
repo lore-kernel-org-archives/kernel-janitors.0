@@ -1,119 +1,75 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E1F4AECE;
-	Mon, 24 Jun 2024 23:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF2A1FA4;
+	Tue, 25 Jun 2024 01:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719270057; cv=none; b=UuYH9n4Q5NQvWngH35HXZVDFTYVjacvaDkF0ojEocil3v4aVDqWzgBWBIMCB3N8NrviuF+WbNGNAV+iRs4Q+x5x4qsXOdNNEbKi11mDXS4fWh9Wl8a7WxMIA3mp8TFlH4li330PnQOaFa+u4dDtX/ipnNhRaHE0p/PszeWHveZ0=
+	t=1719277674; cv=none; b=uLg3+ZMUtKObcEmuKwG39HEmFJ3F4P0PuZQtcWoXmb0LyRkl6qqMxam+D4MTCUUEoAqvUNYw3T8peNF5iltkoQvbCxyFIO0ILhCb0o1vYAtIxj9UxH8FPCV0PnhfTAvKz+Is6Yzxo77gliajrICmjXg2PXdCC7zqVLHLx3wx3gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719270057; c=relaxed/simple;
-	bh=Ec35imzGEuBbXxvRYJAo/TZyYqIrFfQ1Ebjn3oL/DFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=q9wLXVslS3FczjsZ2aIbM96uclQ8VtmkzC6YNe/wUXBflRHhenlVgYHXgDB6QgJxmfwPvjRIFEpbeoHWvtEutmqQh7kDqxKnElEvjmWfJyMHl1hlIQgybxWjlNrLFmOipPWhTDjSibYVq12KJkTueHYMRpR/2DwHRJglCxSpRbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WTyukIwy; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WTyukIwy"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OJ1Hmj031385;
-	Mon, 24 Jun 2024 23:00:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/hQLfmAiXIb2anfT/qj3Vwa6Wgr+wflqbuNpn7rd4dM=; b=WTyukIwyVNr3VUQ5
-	8CTXPAo7quPHE52d8umIC8/n7gi7Ozqu98AkVoI1QdP+j+tbM1guToqxD5nBcQW6
-	bBQKTcnJsomxTv6Asum5J+0rkbrizZq9ebR/QTKBtl/512ne/PgaqV1JIPU0m+oy
-	zb9p49+24XmUdfjKS9r8t8O6iuTjSSC2KljINciVS6awIffMD7dc4h/8fPUdoij6
-	lzNApvEpO0nCa+eH7slwULbUu0/plA8wat3dKGpQnvwWH+Y4r2ROII1+Xm7ieyN1
-	zuWmG0YDt2YiMgsj3yVIJaPucyhYQLMJopSH4+bQrwD0oCg590LI8fiBFwnKKHRn
-	VPmTgg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywppv4tjk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 23:00:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45ON0i87001796
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 23:00:44 GMT
-Received: from [10.48.244.142] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
- 2024 16:00:43 -0700
-Message-ID: <aae7de31-b027-4427-83e7-0943257ef229@quicinc.com>
-Date: Mon, 24 Jun 2024 16:00:42 -0700
+	s=arc-20240116; t=1719277674; c=relaxed/simple;
+	bh=bvR7Gop4UhIMst1t0cOAIG9iXUKelRNiGsfVDj73ESM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t9C94j11lxlxVV6sa8h0HSD9gs5jw+Whrzt0J6CZCEkJ/D9gdlLW/hTyzGZ8rcuqjglmHzj2yXhMPA4g4t/KUjjFyoqqm3XKG2F5boiLUfECwq1RA6sCguAXGZHdreLnPnQCmXczrFS2RkiaVxl2jtTSs9wvq2H7kfECMK0FM2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-656d8b346d2so3458069a12.2;
+        Mon, 24 Jun 2024 18:07:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719277672; x=1719882472;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OZ2l4rvhLdb5zNKxoHNK6je0C77nF/TIfXLS8kYBYT8=;
+        b=qrwi88MeqTsTVZQeTBPxMF1mTtaTy7eKhd3+dJuhWopTTIY2j6BhtQ/ZcpierHQnQw
+         Vez/Og2EMGDkSrtpEl8eFWRZRhmyL3refkHnNp8dzm4Z2qmuETUV5TJTnO8CgzvpBptw
+         8riW9lOL+ZGJQbPwoxdIlm/tuZ96sKW3aGcmPtLebF59WZETusCKixdxgcvSffxgQacQ
+         7ky9NCq2Yz318Pu3H97iHlW7L5Fwdxq+edXh4ZTVvMgSoLC9+th/11+fxvk6TWUFp7su
+         n+RQKw7wQPynLqkhEWJJtT38bYjUCnCPp2ZfwYpPa9bZ/1zGDzS1QHV5GuHC7gyInhYA
+         Z7pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHUZpBf9NH99dkSTFbxNE0pBq27t7fFpZyTPdBrkWgEjiOXzNHfSeLlLCCMrCvyaRdcpgViIxtpPBOrSa+NwjIcEvnZ3dpyGoWiNG4Tclp9nefiKuQCi6IPyPJ94YbjT+u2lmGPyt7+1qQHgcyfYQlXce+41xenyesxlPWAqlv23NtuF90Av0a
+X-Gm-Message-State: AOJu0YxGxf6pLhVAj33WejaexDvIJX6TCb/Kiz5VOl7XJFkUKUkeMIIL
+	ZvMXERzthfkOjRvt/mzO7/A/7pW/A/oRZIHSMHq2pq6VhRMSu1egiMb3AXHklSA=
+X-Google-Smtp-Source: AGHT+IF/uXFrtb1A0Glhz/BEFQiR25mYJoiI5Hw7sgeRptJRnKb6S6bz/2Rqegm/kJ55jsZi0yWAMw==
+X-Received: by 2002:a05:6a20:2d8a:b0:1b8:9b05:e7a5 with SMTP id adf61e73a8af0-1bcf800034fmr4834215637.61.1719277672522;
+        Mon, 24 Jun 2024 18:07:52 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7066c2ebd85sm4823974b3a.93.2024.06.24.18.07.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 18:07:51 -0700 (PDT)
+Date: Tue, 25 Jun 2024 10:07:50 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] PCI: ls-gen4: Constify struct mobiveil_rp_ops
+Message-ID: <20240625010750.GA430517@rocinante>
+References: <189fd881cc8fd80220e74e91820e12cf3a5be114.1719260294.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/ttm/tests: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui
-	<ray.huang@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240609-md-drivers-gpu-drm-ttm-tests-v1-1-d94123d95b4c@quicinc.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240609-md-drivers-gpu-drm-ttm-tests-v1-1-d94123d95b4c@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rbILnTa6iw5-rIVTROzockP09gxP5XVO
-X-Proofpoint-ORIG-GUID: rbILnTa6iw5-rIVTROzockP09gxP5XVO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_20,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=999 mlxscore=0 adultscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406240184
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <189fd881cc8fd80220e74e91820e12cf3a5be114.1719260294.git.christophe.jaillet@wanadoo.fr>
 
-On 6/9/2024 9:34 AM, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_device_test.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_pool_test.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_resource_test.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_tt_test.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_bo_test.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/gpu/drm/ttm/tests/ttm_bo_test.c       | 1 +
->  drivers/gpu/drm/ttm/tests/ttm_device_test.c   | 1 +
->  drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c | 1 +
->  drivers/gpu/drm/ttm/tests/ttm_pool_test.c     | 1 +
->  drivers/gpu/drm/ttm/tests/ttm_resource_test.c | 1 +
->  drivers/gpu/drm/ttm/tests/ttm_tt_test.c       | 1 +
->  6 files changed, 6 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/ttm/tests/ttm_bo_test.c b/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
-> index 1f8a4f8adc92..c18547c65985 100644
-> --- a/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
-> +++ b/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
-> @@ -619,4 +619,5 @@ static struct kunit_suite ttm_bo_test_suite = {
->  
->  kunit_test_suites(&ttm_bo_test_suite);
->  
-> +MODULE_DESCRIPTION("KUnit tests for ttm_bo APIs");
->  MODULE_LICENSE("GPL");
+Hello,
 
-FYI I'll be posting a v2 to resolve conflicts with recent MODULE_LICENSE()
-changes and to handle the addition of new test modules.
+> 'struct mobiveil_rp_ops' is not modified in this driver.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
 
-/jeff
+Applied to controller/layerscape, thank you!
+
+[1/1] PCI: ls-gen4: Make struct mobiveil_rp_ops constant
+      https://git.kernel.org/pci/pci/c/cd09a6ac85b9
+
+	Krzysztof
