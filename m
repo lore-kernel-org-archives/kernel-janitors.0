@@ -1,40 +1,41 @@
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41511148312;
-	Tue, 25 Jun 2024 08:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E80B14B965;
+	Tue, 25 Jun 2024 12:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719304002; cv=none; b=XPzM6fuKCf8wLP9jiyFBJfQmbwe4naIxRqWDxxXwVQUk7/f5+jdsfW3BSpVaeNvYoNIVbq7nhC0P08EJsV+HU+gtpCIzlSKfZaUCJLOJRmCo54XnKPZGm3dvX8L270Q5Ho70tju/uiahPRbqrWAsnaqUMfWVs9fG6+u3qE+rbXw=
+	t=1719319261; cv=none; b=VPxOF+P8erVKjr3TfuBmmJJ1XSVNqTKivmJ5SGwHn2U+01MwmTVZwQqHSd60tOtJ5caFBjgiSgSnRDdfWxIrih2+houdYx3p2NzNwQ1OroncoWoFGJcdKpHs0pCVQS3fIcr1vz2XD0C/6pj3SkWSi+kvrajJwxmxOHB4Dm280OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719304002; c=relaxed/simple;
-	bh=BQ9kNbrPpzeImFo00g4KBYC1c+0nqfw8+UuDMbnQzNk=;
+	s=arc-20240116; t=1719319261; c=relaxed/simple;
+	bh=Azz83iCxMey+RHYQMQuTn8+hKRjE9l9Ng9p796lbhdc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KnCGu5/zNwVBqJLPmpLVGCBakmJ8//LA8xz6StEQtpxIo/h+FmHCmzqD03IdOXiRsl+HJNSc2DSp781zjDJXbqJFVgpyVvAWu9WsP6x6kTKBFG2BI4Yvv+QyMdzknasW17FAoSxAxeYit/iBD4Hic/0WFPvANVDmw+FNrOMzArI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=TuS6PQe0; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	 In-Reply-To:Content-Type; b=DmdCgqXuQZOlZ9szNFvo6LTPUU3Tg9caZfefIPt3hre1R/u7p+UYkR/9h2SH/Xq6KWIbR4vvIvx7LF5sR27FKWnyq9bjmHVi4IgGytAT/WZhapy9DH3IKr0NUyLfc9j3BosfDJpHlvDu0gT98iqMiPYAmCrLDkxidCyShdvEU6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=fZOJ29Bo; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="TuS6PQe0"
-Received: from [10.0.0.100] (pool-99-255-30-7.cpe.net.cable.rogers.com [99.255.30.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 36B4640FAD;
-	Tue, 25 Jun 2024 08:26:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1719303997;
-	bh=wTzLXfd9yMtwyHiYV3uWIdxvkfzRaQy0R5/+H6GPJP8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=TuS6PQe0qCUba1eR9ABvOCchB2FAAhHX3KYPi+v/87L4Ujgmgz+JC97g0k1a0oawC
-	 r1j7eMZmxNuOoesqEY00PA/BvUtwYe5G1C45m6nscLwQCvp/cuDsGQehSIw003MB1N
-	 C0AbpY9elHVrSfLgA+VKxkIEbGy2ixK61wcV2BZGlUX35QsMxYscM9TIbzUPLnExgP
-	 un3RQm6lKcfjleFpjUHpstqisn+TSOfXxlrUwuQfYcknQM3k7tSqg/MzPgIE4LHLgs
-	 PbjY+5OlgSGz+C41n42UrCBsop5vVMhgN76m4rvRjDk6Tx1kSoMI0vaogaKgI+v7dJ
-	 JgpXzWYu6Lmlg==
-Message-ID: <640381ed-4db2-43e1-b742-2e7d2c7c1adf@canonical.com>
-Date: Tue, 25 Jun 2024 01:26:34 -0700
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="fZOJ29Bo"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1719319254; x=1719924054; i=deller@gmx.de;
+	bh=6DnJSkhTF263LRHIDsc/RuBomqMyNgJmJNDVqGHIMdk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=fZOJ29BoHEsjBpIH5Ds3yOzi87xnfkKUXyENmtXzIJVkJotPtyb/mWKbCtBEuUeD
+	 jGU+EoKHaUWRjlhh4RzM5MT/NKlyg5NzCFzZPaxG69f9m1gHu8ApmZSeqZXASsH+x
+	 Ao4QfyvFL8NyEMaBiYWoqiXvduXJKAxszXYOCqUN8ZcXnw33e+p01g3AMDLun3t/0
+	 EQ/0qqjM5PmaHPC1DtkLPqzDZ0mgwzZmzeEFee1lXsJe0O61eEJ0RRgXGoLTP5046
+	 9vHaAorG5Bd2WqyuO3hEGokicOBsejOLbtEuH1B5iJQAI1vLbPlcMgS+UFlltAni4
+	 g0TOmXzfig5KpB8Wzg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [10.8.0.6] ([78.94.87.245]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MgeoI-1spcrq13q0-00gQI4; Tue, 25
+ Jun 2024 14:40:54 +0200
+Message-ID: <7a209bc9-82bc-4c3b-a9ad-6ee17280b0dc@gmx.de>
+Date: Tue, 25 Jun 2024 14:40:53 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,90 +43,106 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: test: add MODULE_DESCRIPTION()
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>
-Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20240529-md-apparmor_policy_unpack_test-v1-1-9efc582078c4@quicinc.com>
- <66425403-66fc-4250-9642-5b29dc821b39@quicinc.com>
+Subject: Re: [PATCH] fbdev: mmp: Constify struct mmp_overlay_ops
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <c5c1a26fdbf0895d1b17010f1c2da44b18b4ae55.1719259171.git.christophe.jaillet@wanadoo.fr>
 Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <66425403-66fc-4250-9642-5b29dc821b39@quicinc.com>
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <c5c1a26fdbf0895d1b17010f1c2da44b18b4ae55.1719259171.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:2mUriBY5Bh6IvsmIPOOVoKxrCpFOTtSxaZOZ8vNrpHn3Nd16/xY
+ MHdfg8HK6bJLGKpALBi0EJbR4FmmgrnRQ9TCdHmRu9jOhfkOShSCtIP+xT9/yzYNB1fi15s
+ Q4Um2Mf4EvK6YQ03aE/qbmxwqfSoeEQjg15VL9oSthWX4UBSaJGHzZScScpHC2iJMrmuTVI
+ qUEDG9T+vxZBSORg/kwQw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:V5JHoB5155M=;tEDyanyxld9/6d4nMIFBNKfOm/8
+ 8I/Dmwa9w+nzNuWeWjBivsoamI/qk3g2hunQRj6mTJByGjZLE6Mu+DwHpo9lhzC7oqoIycsF4
+ emfkqmF34iS2rLYmCSmRiROxHqC3tO1qINkWeKcLrD/b/RStdkiLw1rgmrn4CFnlbeu8pgfmP
+ 1qj8rbmooLxile84FK+LcWEqvWBVjfHUkq0bv1eTSoPETHhWZPFFpxmd85PXsDzYRsgTHUiqX
+ MEDrZ1czKWvf9vlyewyIEawfeg09nzvvQVZAhfxrbCynwXWh6ndLzxCvEJju+lXSMz+DUw0M7
+ Ko/SvRjKXVBSdU0k1ZM+Y6DoXsvbF/jWEE2SqGKXa3DZTBkH9xOX/ZOd5Cbs1ZHyQZKqkoSFz
+ devtSYUYdJkVGA/5FlM4AQx9R+0NraflKCiMvJDtdYk3uw5vzv0/mEGnnHVfdqnLO5DFRFS//
+ ppXi/39j0LU3h/L8vTGaNFWIDYS/PybFv+7K+OOKdBtPBOHj7cpgniSonwuJ7m+Xn8rv8pyCQ
+ OqnOcISgzopz2MKSImJdgfO+kpkBxOWwL6f1UgXG2qOv8MfMNoOIUDsrNejIReLVp7ehpm/FW
+ IZbnEaJMoNtxZiQOUcNGM6UzC7bkEMrfjHKe5+Iw1mpwHRDlLHSxTW7Qj55V3v90UxwoY14fr
+ RrX/9AXrfDgwO3euEIMdDxKiD3DPJOD1ekAbtJTtcJmUpNmmag7oI8pgGo8VRsBnzm9tssgMP
+ /Chy15SzI8VxHadpfZLDZvvFFTEZXOQJ+jEWaFW6ByYPcNV51qMpEuRnwSLRDxg7IwTX73Fn3
+ merqNnvdD0FF989PBKvCxgJ9ZFEBanCpWG3wwXaAUZIqs=
 
-On 6/20/24 09:21, Jeff Johnson wrote:
-> On 5/29/2024 6:21 PM, Jeff Johnson wrote:
->> Fix the 'make W=1' warning:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in security/apparmor/apparmor_policy_unpack_test.o
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->>   security/apparmor/policy_unpack_test.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
->> index 5c9bde25e56d..874fcf97794e 100644
->> --- a/security/apparmor/policy_unpack_test.c
->> +++ b/security/apparmor/policy_unpack_test.c
->> @@ -604,4 +604,5 @@ static struct kunit_suite apparmor_policy_unpack_test_module = {
->>   
->>   kunit_test_suite(apparmor_policy_unpack_test_module);
->>   
->> +MODULE_DESCRIPTION("KUnit tests for AppArmor's policy unpack");
->>   MODULE_LICENSE("GPL");
->>
->> ---
->> base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
->> change-id: 20240529-md-apparmor_policy_unpack_test-7657c4f11591
->>
-> 
-> Following up to see if anything else is needed to get this merged.
+On 6/24/24 21:59, Christophe JAILLET wrote:
+> 'struct mmp_overlay_ops' is not modified in this driver.
+>
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+>
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> =3D=3D=3D=3D=3D=3D
+>     text	   data	    bss	    dec	    hex	filename
+>    11798	    555	     16	  12369	   3051	drivers/video/fbdev/mmp/hw/mmp_=
+ctrl.o
+>
+> After:
+> =3D=3D=3D=3D=3D
+>     text	   data	    bss	    dec	    hex	filename
+>    11834	    507	     16	  12357	   3045	drivers/video/fbdev/mmp/hw/mmp_=
+ctrl.o
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested-only
+> ---
+>   drivers/video/fbdev/mmp/hw/mmp_ctrl.c | 2 +-
+>   include/video/mmp_disp.h              | 4 ++--
+>   2 files changed, 3 insertions(+), 3 deletions(-)
 
-sorry, just me catching up on my backlog
+applied.
+Thanks!
+Helge
 
