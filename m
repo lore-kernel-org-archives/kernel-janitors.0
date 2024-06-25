@@ -1,158 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F565174EC6;
-	Tue, 25 Jun 2024 16:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922B416C696;
+	Tue, 25 Jun 2024 16:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719333870; cv=none; b=rPINKiI4sE9Jbkp8sGedtwp50WyxHdkW83tunaygq4jkppzCDfdJRtX6JeFEnJeNYu9Mr1lusXKbvB380+0Odw/hYQG93IBuXusEQgK5O+JveWfH6FE4NxCTiz0TKPdt2fEWPIZMSh5QPl92TeLs20uhLJyO4axOOVruqY6pVzo=
+	t=1719334437; cv=none; b=M0FgmcvDDdb3D5WH+esgaDg/4qu0B0EI9+C+JQdIh3a1XaGbsdEWPntbwvNcNbtV3F4kJs1qy2Ms9HZ4gPVRyFEQdnoyT4U2nWJejU3h1qF4wKS/rmilOeZ4TyMmcBCE/faXu+1C56RPzjzW37eIMJCMkpar/xXWOfhqXk6VQYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719333870; c=relaxed/simple;
-	bh=T3EQ9ejCbWFfXVJQ4DjTr0lEc1PmW02Q64V8AJQ+Vqo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tCy0CYsDWZZP2iCZVp2B8eb08KDxuWvVNOLtzpUS7B2MsDgoesDyLMItB5+uZcVtvsppXQ0ATLZhwo8ZkxDCVwcdn+olflGEUxXw1aOTggFPlhHMlq8vo8vEVHL2KoeI8dLwukNjU93ZIEIOfAjjs4emMwLfY1t4si6I3+90Kqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVx0S+Ig; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1719334437; c=relaxed/simple;
+	bh=DwpWLBHt1XJLYjaG/1fFg0b5XgL2jy/41pZOj0cmR+Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=UrDCaeANMryMRFzShGjHGtgwUc18RZtPz+b6ux8UKHI+hQootNoG8kUYv7KNTO4K8blfeQAJBg8A/5SJyI+D4FSwDMdAgBHIjPk1ZWvkR2RMvVS2rnuP+bzPq42U5Dksb1g+jTQyP1j6O+uRMGDxmDMAAj4IHN0RWxlxVNcL++I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kq8sKJQ0; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVx0S+Ig"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59DF5C32781;
-	Tue, 25 Jun 2024 16:44:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719333869;
-	bh=T3EQ9ejCbWFfXVJQ4DjTr0lEc1PmW02Q64V8AJQ+Vqo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=iVx0S+Iglbvi1wB3nVFFpB/ufAptdVzPYfLpg4E5jI8AtK/FnOG0jJZpTtzmaFcCs
-	 fZTY8DSNn9TDujFUOduzl7Gmx8xBmoze8ezz8OYgpmBSL+wCRnLAYEq6bRB/Yysz/7
-	 uwMswzOSpvrueY6TgB5M3GJKi8F7YwmpZ6xDxf+KmStHvACgYwZNEiBjeI6oq24oK/
-	 R/fX0UMxPDQELhI+tF4XPimm1cOidOC7sQZoMGP4qg2oqLgfXq2corhD4Qla/7x3EY
-	 77DCZq6sVDC8CvOwqhIOv55gbGeUPcG9DayPeE6D2fIACo4jecvgQ1Zb3+w3z9qYeB
-	 LrWLi7YrReDYA==
-Message-ID: <abe2e12fcd6a64b603179f234ca684a182657d6a.camel@kernel.org>
-Subject: Re: [PATCH v2] fs: nfs: add missing MODULE_DESCRIPTION() macros
-From: Jeff Layton <jlayton@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Trond Myklebust
- <trond.myklebust@hammerspace.com>, Anna Schumaker <anna@kernel.org>, Chuck
- Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, Olga
- Kornievskaia <kolga@netapp.com>,  Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey
- <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Date: Tue, 25 Jun 2024 12:44:26 -0400
-In-Reply-To: <20240625-md-fs-nfs-v2-1-2316b64ffaa5@quicinc.com>
-References: <20240625-md-fs-nfs-v2-1-2316b64ffaa5@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kq8sKJQ0"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45P8P6jg008959;
+	Tue, 25 Jun 2024 16:53:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=++wbgQplAJePZM1ke3wMP8
+	45KHLDRhZef8Xj8nHEiTg=; b=Kq8sKJQ0D/dNYtnnpmCm+NZNk5BzzxYqysqpRS
+	jCy1kKV128PNSXoZsRFxCsKBSEPNFdovwnqpnisdyz99fRxaXUw3Xp0YqDPeQgdO
+	bNgDvZAeZXESWt2kVAjeBwwAyTuNejKctw/FPKvEyIX0uMhmdPRUlxjU9jsmTOKm
+	5ZRjTCeeVxuYK5t1AAZGZeks2dp39EDUf6t5ACd4C4amtsM5DkpEqb7qmDArxOp6
+	5N6gowT2LdkZf5hL0BjZj4D9m9h+TmZGdoNQe+viT45W0Z1ATw0kQt/yg3i+OiFG
+	NDr15zFAmem9su14jTfQDVVyu0vHpJcZbgmkZLDxiHoY7AXw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqcef8fd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 16:53:48 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45PGrkLT007460
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 16:53:46 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Jun
+ 2024 09:53:45 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 25 Jun 2024 09:53:45 -0700
+Subject: [PATCH v2] scsi: ufs: qcom: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240625-md-drivers-ufs-host-v2-1-59a56974b05a@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIABj2emYC/32OSw6CMBRFt0I69plSPgFH7sMwKP3Yl0irfdBgC
+ Hu3sACHJ7n33LsxMhENsVuxsWgSEgafQVwKppz0TwOoMzPBRc3bUsCkQUdMJhIslsAFmkF2kku
+ pm6q3nOXmOxqL62l9DJlHSQbGKL1yh+uFfllhkjSbeMQd0hzi9/yQyqP0fy6VUIK2VdOLuu2as
+ bt/FlTo1VWFiQ37vv8AurvH4tcAAAA=
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "James E.J.
+ Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Martin K. Petersen"
+	<martin.petersen@oracle.com>,
+        Bart Van Assche <bvanassche@acm.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: --qJxBrSpJ1iy7VdyhUHWRYogLSiiCFb
+X-Proofpoint-ORIG-GUID: --qJxBrSpJ1iy7VdyhUHWRYogLSiiCFb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_12,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ mlxscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 spamscore=0
+ suspectscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=962
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406250124
 
-On Tue, 2024-06-25 at 09:42 -0700, Jeff Johnson wrote:
-> Fix the 'make W=3D1' warnings:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in
-> fs/nfs_common/nfs_acl.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in
-> fs/nfs_common/grace.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfs.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv2.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv3.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv4.o
->=20
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> Changes in v2:
-> - Updated the description in grace.c per Jeff Layton
-> - Link to v1:
-> https://lore.kernel.org/r/20240527-md-fs-nfs-v1-1-64a15e9b53a6@quicinc.co=
-m
-> ---
-> =C2=A0fs/nfs/inode.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1 =
-+
-> =C2=A0fs/nfs/nfs2super.c=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
-> =C2=A0fs/nfs/nfs3super.c=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
-> =C2=A0fs/nfs/nfs4super.c=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
-> =C2=A0fs/nfs_common/grace.c=C2=A0 | 1 +
-> =C2=A0fs/nfs_common/nfsacl.c | 1 +
-> =C2=A06 files changed, 6 insertions(+)
->=20
-> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-> index acef52ecb1bb..57c473e9d00f 100644
-> --- a/fs/nfs/inode.c
-> +++ b/fs/nfs/inode.c
-> @@ -2538,6 +2538,7 @@ static void __exit exit_nfs_fs(void)
-> =C2=A0
-> =C2=A0/* Not quite true; I just maintain it */
-> =C2=A0MODULE_AUTHOR("Olaf Kirch <okir@monad.swb.de>");
-> +MODULE_DESCRIPTION("NFS client support");
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0module_param(enable_ino64, bool, 0644);
-> =C2=A0
-> diff --git a/fs/nfs/nfs2super.c b/fs/nfs/nfs2super.c
-> index 467f21ee6a35..b1badc70bd71 100644
-> --- a/fs/nfs/nfs2super.c
-> +++ b/fs/nfs/nfs2super.c
-> @@ -26,6 +26,7 @@ static void __exit exit_nfs_v2(void)
-> =C2=A0	unregister_nfs_version(&nfs_v2);
-> =C2=A0}
-> =C2=A0
-> +MODULE_DESCRIPTION("NFSv2 client support");
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0
-> =C2=A0module_init(init_nfs_v2);
-> diff --git a/fs/nfs/nfs3super.c b/fs/nfs/nfs3super.c
-> index 8a9be9e47f76..20a80478449e 100644
-> --- a/fs/nfs/nfs3super.c
-> +++ b/fs/nfs/nfs3super.c
-> @@ -27,6 +27,7 @@ static void __exit exit_nfs_v3(void)
-> =C2=A0	unregister_nfs_version(&nfs_v3);
-> =C2=A0}
-> =C2=A0
-> +MODULE_DESCRIPTION("NFSv3 client support");
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0
-> =C2=A0module_init(init_nfs_v3);
-> diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
-> index 8da5a9c000f4..b29a26923ce0 100644
-> --- a/fs/nfs/nfs4super.c
-> +++ b/fs/nfs/nfs4super.c
-> @@ -332,6 +332,7 @@ static void __exit exit_nfs_v4(void)
-> =C2=A0	nfs_dns_resolver_destroy();
-> =C2=A0}
-> =C2=A0
-> +MODULE_DESCRIPTION("NFSv4 client support");
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0
-> =C2=A0module_init(init_nfs_v4);
-> diff --git a/fs/nfs_common/grace.c b/fs/nfs_common/grace.c
-> index 1479583fbb62..27cd0d13143b 100644
-> --- a/fs/nfs_common/grace.c
-> +++ b/fs/nfs_common/grace.c
-> @@ -139,6 +139,7 @@ exit_grace(void)
-> =C2=A0}
-> =C2=A0
-> =C2=A0MODULE_AUTHOR("Jeff Layton <jlayton@primarydata.com>");
-> +MODULE_DESCRIPTION("NFS client and server infrastructure");
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0module_init(init_grace)
-> =C2=A0module_exit(exit_grace)
-> diff --git a/fs/nfs_common/nfsacl.c b/fs/nfs_common/nfsacl.c
-> index 5a5bd85d08f8..ea382b75b26c 100644
-> --- a/fs/nfs_common/nfsacl.c
-> +++ b/fs/nfs_common/nfsacl.c
-> @@ -29,6 +29,7 @@
-> =C2=A0#include <linux/nfs3.h>
-> =C2=A0#include <linux/sort.h>
-> =C2=A0
-> +MODULE_DESCRIPTION("NFS ACL support");
-> =C2=A0MODULE_LICENSE("GPL");
-> =C2=A0
-> =C2=A0struct nfsacl_encode_desc {
->=20
-> ---
-> base-commit: 50736169ecc8387247fe6a00932852ce7b057083
-> change-id: 20240527-md-fs-nfs-42f19eb60b50
->=20
+With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/ufs/host/ufs-qcom.o
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
+
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+Changes in v2:
+- Updated the description per Bart Van Assche
+- Link to v1: https://lore.kernel.org/r/20240612-md-drivers-ufs-host-v1-1-df35924685b8@quicinc.com
+---
+ drivers/ufs/host/ufs-qcom.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+index cca190d1c577..c12004030b50 100644
+--- a/drivers/ufs/host/ufs-qcom.c
++++ b/drivers/ufs/host/ufs-qcom.c
+@@ -1883,4 +1883,5 @@ static struct platform_driver ufs_qcom_pltform = {
+ };
+ module_platform_driver(ufs_qcom_pltform);
+ 
++MODULE_DESCRIPTION("Qualcomm UFS host controller driver");
+ MODULE_LICENSE("GPL v2");
+
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240612-md-drivers-ufs-host-a8a0aad539f0
+
