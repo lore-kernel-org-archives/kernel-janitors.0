@@ -1,116 +1,185 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDDA14A627;
-	Tue, 25 Jun 2024 16:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D9E174EC6;
+	Tue, 25 Jun 2024 16:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719331972; cv=none; b=e45nTrrOEk4LxQJ1cvhcB0/1nMGxtv5DGI5wSKbhgGhzrZTyz5avdvJ8HtQVl6De9unN4PmXqh0mMmJMnhdPjSvPvjD3dhdAt9Cwb21IGX5B3c5Z7iYxcq23a2MMst26sfjHopAdpS6mWVa3Yde6Gk+6dpYrk+e5pQyCwCIWEFA=
+	t=1719333801; cv=none; b=uglADRwp5UUfjuhPXl35SAKAc9EZ3aVQI4O/8QbNhtTApzBbLNEy1mHKqAeBPGh5lfStYJpwAmLJyi6v0cymi2MiPi+rfEIhFSwJ8UeFRdMdfB+YLLeD8HLAVe+zh4UfGNXK4rowxzRqUKUZQUpfPO/glm4Tven2HJfXJ+m6x5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719331972; c=relaxed/simple;
-	bh=M4zqVrfxiNAFsT6ctqK1XKNWsBCMjv6lM8g4olf2aak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tcMDll5A8frRRKoRwU7wQL7yJl+V8zWhFDc5uWUd4KcaIs2OEd7v/ML/NoMAiWc+KFiQ3chJx2qwQMKMd1Eu3dRvwIOzhtOAeMpTsDCB8CpJbP7AxZfBkYK2IBgTFMu2ix0Wlm3zh38FauuJcmKPGzZCplygg3NcPJwRXA6Fuq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FwfKPqOs; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1719333801; c=relaxed/simple;
+	bh=2L/weZesvpaS33GujX2m1IrTRFya4TVbCAXm5cfqiXM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ILmRZI7sZrg8yDImhpDVdBzDUoFNIHkdQ8aVXu8FHCsDVrH6RKVQ4rC5CLiQ1t1E924yku/KMYyRrldBqSxxu1SoylvhF+PcRJ70vKCmocUcJGA1+WlYDrnZ3sjD1MGoEKRZ0mPOp2Jv5J2Ou59gaU6AN6DnWj0WCW0seO70xcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=R8hRoBoj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FwfKPqOs"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719331942; x=1719936742; i=markus.elfring@web.de;
-	bh=a6i52JC6Jz9SMj7x18Xrbev5HZKfpMpu1ptSSS7AvsE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=FwfKPqOskwVJaj6zll4hhIt4YIMMutlU1MUPKdiNNiljKFefTx7HPc4XuI/CRpKi
-	 rg+Eq07A2W3x4VfgdXmMah0p/AerzLhJFWfXKkaASmmtyUf2chAcLnOX8G/ycKv/+
-	 uTaXyGALct2IiAKqyyWrrsq6wPySIS4dFaQt/gdrnXfmaQavUuQ+kEfNEWNVpksC1
-	 +smyND++jtPrNrR7MH3oy/SHRLxAIWU7x4BmmNjN4gs7Mff9wefIxkGdSHyxf6SVs
-	 AxviH8GiXOmwLINk1s8btfhrek9zyJfgs6hqIsZUARzsD2Su2F6Tmnn1cKYtjxoit
-	 LBxnVALaM1BBn7WknQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MRk0W-1rssmK3NH8-00Mo7u; Tue, 25
- Jun 2024 18:12:22 +0200
-Message-ID: <fcb2c59a-b0e2-4a07-853d-8dda94db628e@web.de>
-Date: Tue, 25 Jun 2024 18:12:18 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="R8hRoBoj"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45P8ZnhS017339;
+	Tue, 25 Jun 2024 16:42:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=fnTd3X2IcxnuPJrt8M3MaL
+	pgA/56i9asApZb/lKpIcg=; b=R8hRoBojD9z7h+MWYh4dC5FkLEI07p7yiwnPT9
+	lF1JM2NjlkDFxgBxgzKh64teLkCA9gmH24gKt5TwcbFYhaOnwlWUuW8f1jYpY+X7
+	O7ZGGvgzzFT35jBQy3KXnBX0jppG3xEAw4fVs6fzvugIO5NIYK/G+VVif5jiB6Q8
+	7Qok55XhHGOrxDr7AEYYbotyYNfxKVcg1LkMEstzNV8950YU+CzK8I7/fjISehex
+	ALRhaIzw3MAOoTRL75IXuq+6Fhy65UmTDowKi2EWcUDilY1fDDVjnWzJRZjOwMv5
+	lRQRSs8MzRkvQxW9qVc+PLtCUPhRzTxTMBm3f+kix6tO4emg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqw9eue7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 16:42:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45PGgolS009442
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 16:42:50 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Jun
+ 2024 09:42:50 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 25 Jun 2024 09:42:49 -0700
+Subject: [PATCH v2] fs: nfs: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v4] usb: gadget: aspeed_udc: validate endpoint index for ast udc
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-aspeed@lists.ozlabs.org, linux-usb@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Ma Ke <make24@iscas.ac.cn>, Andrew Jeffery <andrew@codeconstruct.com.au>,
- Joel Stanley <joel@jms.id.au>, Julia Lawall <julia.lawall@inria.fr>,
- Neal Liu <neal_liu@aspeedtech.com>, LKML <linux-kernel@vger.kernel.org>
-References: <20240625022306.2568122-1-make24@iscas.ac.cn>
- <edeaa699-7cfe-44ed-abde-7cf3d3efe3bf@web.de>
- <2024062556-ladder-canister-1ab1@gregkh>
- <ff2aaf0d-5456-43d1-af52-78986b3401f9@web.de>
- <2024062532-strep-president-44d7@gregkh>
- <5fa430f5-3e18-4c20-93d4-6733afd6bdcf@web.de>
- <2024062553-koala-granddad-50f1@gregkh>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <2024062553-koala-granddad-50f1@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:67NMm2dfE8kCd5D9WldFr8mlygFuTOO43QrxnGpmnD+xIJUF6H3
- D4ScmAVARb/Inj6uEZFHub9SHzZbRIxBi7PX1Cpqr+Lz1umOzzPY5AhlyhzbQsEpprvY1Iw
- WmkgQPp0okATcu1/GtKcBehtJXaBF4G0c3T/Po8cfPQgOf69Hnds5YEezTVMnW00ooPRxfG
- iP8/D8RbmGEOfD1Nnnzlw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:aFOZ6XKuxOA=;TuMWGKgmPIC6zCZ7YGB3r/khXrd
- LqhyjFJ01jYlt6SFluDqvDwA6R6yfGaku98gjKZ1HhxcS8ZpKYCBWUBL4qfIJh8KEe3v6GlgD
- fcpK0W4rx7rLF7lQZ6EpgEZOsP50baKpAHx0geyH4C+bVzfH4H722BVSEv7pMmTmwB4U0qEq2
- nJ9dxanHYSG6TCNW69PDgm2yKSupRI2C4JMlmgbK9nd/3Oett9/4dXRkeNfe5vLg1AHur9kiq
- CoIoGBQbHog/FqjdSjk80GroADrYcrZTQsRa1LiPPZV1OflwhBq3YmcJpVU1pnErKsJIVphVB
- UxEV0AURoYssYb8rP2t9iEyg3vZ8FYNL8nuTHfSyC/7R3TVsxqt9WA5hxs/M0zT9YgT7e5Tl/
- DVJSg+oL/HsbTOYuGhnvcLbatHREMkiqNHJiZLUWll2laDHlnL8kc7EbxbV73SgN6jeY02DEX
- hpBhfIF0knKL7U3bVBP589PdiUsf6b+mU6cPII6/8FV4oNbqphlg58IMTyjwfWtEm7/URh4Qh
- YSslPUAoyViwKGdpZibfuSMXuc0vBRFf4PTmTa/GsmSKfM/VLBSjv+r2tmd0ls1pOEpfvNQme
- ha5jJ0vaZB6vHpRiLSr1YS4qkHvSvFnerGW2erfveaiFFVncqiSS32uRWyr9qGZopCGiMJHR5
- CmJta59i4maay9WtcofxR9LC8MGXaVyTjKBgoWP/kPyldCS24lkqn1QLceojmBWEQEPa3QnRY
- uNPHMdlTwpe55O/ngotKA3xSrXGaZFjVLBkO96HOjhKipadjO7BWSh2NkIpfz451Eb51/n4TF
- arTjQnrCXyMUw3+L6B/C6PjnVUdYwLKNR/ZM+s73qJzL0=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240625-md-fs-nfs-v2-1-2316b64ffaa5@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAInzemYC/22NwQ6CMBBEf4X07Jq2Ugye/A/DoS2LbCJFu0Awp
+ P9u4exhDi+ZmbcJxkjI4lZsIuJCTGPIoE+F8L0NTwRqMwstdSmNvsLQQscQckrdqRpdJZ2RIvf
+ fETtaj69Hk9lZRnDRBt/vDy8K8wqD5QnjXu+JpzF+D/Oi9tE/yaJAQVVaZbB25mKr+2cmT8Gf/
+ TiIJqX0A4T9RzPDAAAA
+To: Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker
+	<anna@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton
+	<jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+        Olga Kornievskaia
+	<kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+        Tom Talpey
+	<tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>
+CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 3ufymTWmd9CZcxEu6-Paw8LvycJvOxtq
+X-Proofpoint-GUID: 3ufymTWmd9CZcxEu6-Paw8LvycJvOxtq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_11,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 clxscore=1011 impostorscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 mlxlogscore=999 phishscore=0 bulkscore=0
+ adultscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406250122
 
->> You indicated concerns according to patch review processes,
->> didn't you?
->>
->> See also:
->> * Patch submission notes
->>   https://elixir.bootlin.com/linux/v6.10-rc5/source/Documentation/proce=
-ss/maintainer-tip.rst#L100
->
-> This is not the tip tree.
+Fix the 'make W=1' warnings:
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs_common/nfs_acl.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs_common/grace.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv2.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv3.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv4.o
 
-I know.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+Changes in v2:
+- Updated the description in grace.c per Jeff Layton
+- Link to v1: https://lore.kernel.org/r/20240527-md-fs-nfs-v1-1-64a15e9b53a6@quicinc.com
+---
+ fs/nfs/inode.c         | 1 +
+ fs/nfs/nfs2super.c     | 1 +
+ fs/nfs/nfs3super.c     | 1 +
+ fs/nfs/nfs4super.c     | 1 +
+ fs/nfs_common/grace.c  | 1 +
+ fs/nfs_common/nfsacl.c | 1 +
+ 6 files changed, 6 insertions(+)
 
-But I got the impression that some information sources
-(also from the Linux development reference documentation)
-can provide advices and further guidance for recurring patch review concer=
-ns.
+diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+index acef52ecb1bb..57c473e9d00f 100644
+--- a/fs/nfs/inode.c
++++ b/fs/nfs/inode.c
+@@ -2538,6 +2538,7 @@ static void __exit exit_nfs_fs(void)
+ 
+ /* Not quite true; I just maintain it */
+ MODULE_AUTHOR("Olaf Kirch <okir@monad.swb.de>");
++MODULE_DESCRIPTION("NFS client support");
+ MODULE_LICENSE("GPL");
+ module_param(enable_ino64, bool, 0644);
+ 
+diff --git a/fs/nfs/nfs2super.c b/fs/nfs/nfs2super.c
+index 467f21ee6a35..b1badc70bd71 100644
+--- a/fs/nfs/nfs2super.c
++++ b/fs/nfs/nfs2super.c
+@@ -26,6 +26,7 @@ static void __exit exit_nfs_v2(void)
+ 	unregister_nfs_version(&nfs_v2);
+ }
+ 
++MODULE_DESCRIPTION("NFSv2 client support");
+ MODULE_LICENSE("GPL");
+ 
+ module_init(init_nfs_v2);
+diff --git a/fs/nfs/nfs3super.c b/fs/nfs/nfs3super.c
+index 8a9be9e47f76..20a80478449e 100644
+--- a/fs/nfs/nfs3super.c
++++ b/fs/nfs/nfs3super.c
+@@ -27,6 +27,7 @@ static void __exit exit_nfs_v3(void)
+ 	unregister_nfs_version(&nfs_v3);
+ }
+ 
++MODULE_DESCRIPTION("NFSv3 client support");
+ MODULE_LICENSE("GPL");
+ 
+ module_init(init_nfs_v3);
+diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
+index 8da5a9c000f4..b29a26923ce0 100644
+--- a/fs/nfs/nfs4super.c
++++ b/fs/nfs/nfs4super.c
+@@ -332,6 +332,7 @@ static void __exit exit_nfs_v4(void)
+ 	nfs_dns_resolver_destroy();
+ }
+ 
++MODULE_DESCRIPTION("NFSv4 client support");
+ MODULE_LICENSE("GPL");
+ 
+ module_init(init_nfs_v4);
+diff --git a/fs/nfs_common/grace.c b/fs/nfs_common/grace.c
+index 1479583fbb62..27cd0d13143b 100644
+--- a/fs/nfs_common/grace.c
++++ b/fs/nfs_common/grace.c
+@@ -139,6 +139,7 @@ exit_grace(void)
+ }
+ 
+ MODULE_AUTHOR("Jeff Layton <jlayton@primarydata.com>");
++MODULE_DESCRIPTION("NFS client and server infrastructure");
+ MODULE_LICENSE("GPL");
+ module_init(init_grace)
+ module_exit(exit_grace)
+diff --git a/fs/nfs_common/nfsacl.c b/fs/nfs_common/nfsacl.c
+index 5a5bd85d08f8..ea382b75b26c 100644
+--- a/fs/nfs_common/nfsacl.c
++++ b/fs/nfs_common/nfsacl.c
+@@ -29,6 +29,7 @@
+ #include <linux/nfs3.h>
+ #include <linux/sort.h>
+ 
++MODULE_DESCRIPTION("NFS ACL support");
+ MODULE_LICENSE("GPL");
+ 
+ struct nfsacl_encode_desc {
 
+---
+base-commit: 50736169ecc8387247fe6a00932852ce7b057083
+change-id: 20240527-md-fs-nfs-42f19eb60b50
 
->> I might be going to influence evolution of this software area in other =
-ways
->> under other circumstances.
->
-> Please take some time and find other projects to help out.
-
-I found several opportunities already to improve something through the yea=
-rs.
-
-Concrete example for a selected data representation:
-https://patchwork.kernel.org/project/linux-usb/list/?submitter=3D170303&ar=
-chive=3Dboth
-
-Regards,
-Markus
