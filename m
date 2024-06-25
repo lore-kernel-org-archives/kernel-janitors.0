@@ -1,106 +1,72 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2573C178CC8;
-	Tue, 25 Jun 2024 14:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A90172BB5;
+	Tue, 25 Jun 2024 14:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719325583; cv=none; b=OIU9+Iw042WXy8Ig9i7gRO6gQFyvakeaAw1TWhM4BSycgWtflQVrdks51rY3xdqkmcN0YklTpzlcdu7e5cJEGCMFkyLjVoumIXIzBsRLEVGRvxVxijnIh5PResmVsKadQO/jcA+tqKxwJUPYYMpaYSxlsoego2aVFya3PkE0fTY=
+	t=1719325827; cv=none; b=sIpSF1aEICaGnIfOPc7lhufb1JqeJqgd2rae6UreIBhc95UxKFCuxx0g+AXeMlIcd2qBGXPzD8qDtyZAkxkvUlXkI55sm6D4QktHrn67/icJIxlxs89VHaCTnwKyNkWXtVxtk194alDRi3+mD3AisG9SOjgyd/RB/7svbeKCe5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719325583; c=relaxed/simple;
-	bh=1UiCDGgHQ5ObpSvrlGcUdzZAlv2fF8O0u+CoSyWokOg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gaYqtASBDGKqaaw5+zbASt7DPzBSpvSPAXJHWZI9Km5eu0zHsI/orYEMWz42z/HXvrxhRqRJM7bhXndpmlAI5oK3tRSprmFCzhgyX6RRCrxtweac6xkr78n13zBb7GrbnSYSExmU8RS2KhC0RDCVc0OoGL0NsSUHYlgXTui1g1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lACvOxu+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1719325827; c=relaxed/simple;
+	bh=9tO7IZgG2Eakun8AumgjuwsmLm6VCVkaQQyUnGM/LJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sNYkJn3GspAd8KhUm4HVHpfVbs/IR/OJf1hfhKOiixMdcKzF7IAPv4rzTsuIpuj/rsMwsFgh5ri2lpKKp2ANA3N97jH7GdAOpg4/+TZCrzQqK6T0kBU3mR8/QyLVyzuZyH0krGzQiGSmQ8IxYoGTkHLMfPKK7PygM4kLPXYrrBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RvDVfhnW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lACvOxu+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 609D3C4AF18;
-	Tue, 25 Jun 2024 14:26:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719325582;
-	bh=1UiCDGgHQ5ObpSvrlGcUdzZAlv2fF8O0u+CoSyWokOg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lACvOxu+Ix+ixThSVmq6TSefFSYMz6Kt/oC9BnAl4CpmKUw/Rt2a72TyOU8fR2XnO
-	 f0OmgQxnSO0suAMc52SEEf8ieXux9bR8LYjaf8XQL8i6qP1RutXtA1DxHOcSjSGBzF
-	 uAEA98Ci/Um2y6XyCbOZBr2fhNW/MHfaR2VXfkuhIuZlIdvVISUAllh3oevbyqsk66
-	 qg8REQtnkCqEY5nI4IPIGqJKYqr/Vpjfs7SwAhjFweiSr5lpjCXsbu3Df0NYi2/aE2
-	 Ru37Ehkpue8HFC6+1qsflglDWtNPdUxaBO6GzNYN/4xHFrHzwULYGEfLujYRFtICUH
-	 rJySljONHG0UQ==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ec6635aa43so17204711fa.1;
-        Tue, 25 Jun 2024 07:26:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWB4quNA7aNlOYjD5BJVKUDGIwNpp+iuAgsHDeMZyExMngdosQSxHq4B6RFkXeydMA6buopW30m8hn5R4rFP7Rn6hz108CHG3txwvAuAE5pwfjzpqmwrexnbC6tyZKpf9mRqstXn+VgGyqqcTa4
-X-Gm-Message-State: AOJu0YzqAe+1/xEkgtweqB88ExgjCrmBK4rLXj5pVJ2qpUZ8zXhHUBl3
-	Fqa4wbQOXKc4GOtqcyyvVym9HznzNgRByV42oEPgXz4FtquDtHy8rZXNOSOwjciLzwh7PF2zymJ
-	euQVGwzDVZUYvB+Rr/VfNHrvIZiI=
-X-Google-Smtp-Source: AGHT+IHY6mqrg5q2k7Ksffy5lOKv3VtwyAeYeBWBMKfB1TdfPAKVU073l+OGh7egFuNslbR/DdOAGGYr0MKYiAiVHcw=
-X-Received: by 2002:a2e:3218:0:b0:2ec:5685:f06b with SMTP id
- 38308e7fff4ca-2ec579837bamr52831631fa.27.1719325580775; Tue, 25 Jun 2024
- 07:26:20 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RvDVfhnW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4841CC32781;
+	Tue, 25 Jun 2024 14:30:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1719325826;
+	bh=9tO7IZgG2Eakun8AumgjuwsmLm6VCVkaQQyUnGM/LJA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RvDVfhnWZ4+6R35mtCpawhGntF5GxG/7AHndEhYp8YGC6IT/2L2zZBo2SIJ03GO06
+	 HviWdrFveIUNGho+BX6Qi57vp1d//KzwQmS6K8aR1LSGeQ+Dba08EUI78j0nOnqraa
+	 5lIf0l518d+SPZaBXGMlOtANAebIjjezbFyr+Xl0=
+Date: Tue, 25 Jun 2024 16:30:24 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-aspeed@lists.ozlabs.org, linux-usb@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Ma Ke <make24@iscas.ac.cn>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Joel Stanley <joel@jms.id.au>, Lee Jones <lee@kernel.org>,
+	Julia Lawall <julia.lawall@inria.fr>,
+	Neal Liu <neal_liu@aspeedtech.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] usb: gadget: aspeed_udc: validate endpoint index for
+ ast udc
+Message-ID: <2024062532-strep-president-44d7@gregkh>
+References: <20240625022306.2568122-1-make24@iscas.ac.cn>
+ <edeaa699-7cfe-44ed-abde-7cf3d3efe3bf@web.de>
+ <2024062556-ladder-canister-1ab1@gregkh>
+ <ff2aaf0d-5456-43d1-af52-78986b3401f9@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240622-md-i386-lib-test_fpu_glue-v1-1-a4e40b7b1264@quicinc.com>
-In-Reply-To: <20240622-md-i386-lib-test_fpu_glue-v1-1-a4e40b7b1264@quicinc.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 25 Jun 2024 23:25:44 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATDbq=ai0EX0BeKQg8r_mtSJ_68fL1R_ORpynX+BLh_Rw@mail.gmail.com>
-Message-ID: <CAK7LNATDbq=ai0EX0BeKQg8r_mtSJ_68fL1R_ORpynX+BLh_Rw@mail.gmail.com>
-Subject: Re: [PATCH] selftests/fpu: add missing MODULE_DESCRIPTION() macro
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Samuel Holland <samuel.holland@sifive.com>, 
-	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Palmer Dabbelt <palmer@rivosinc.com>, Russell King <linux@armlinux.org.uk>, 
-	Thomas Gleixner <tglx@linutronix.de>, WANG Xuerui <git@xen0n.name>, Will Deacon <will@kernel.org>, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ff2aaf0d-5456-43d1-af52-78986b3401f9@web.de>
 
-On Sat, Jun 22, 2024 at 11:55=E2=80=AFPM Jeff Johnson <quic_jjohnson@quicin=
-c.com> wrote:
->
-> make allmodconfig && make W=3D1 C=3D1 now reports:
+On Tue, Jun 25, 2024 at 02:50:25PM +0200, Markus Elfring wrote:
+> >>> We should verify the bound of the array to assure that host
+> >>> may not manipulate the index to point past endpoint array.
+> >>
+> >> Why did you not choose an imperative wording for your change description?
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc5#n94
+> >
+> > Markus, please stop reviewing USB patches.  This is not helpful at all,
+> > and causes new developers extra work for no reason at all.
+> 
+> How does this feedback fit to the linked information source?
 
+That is not what I wrote.
 
-This is a boilerplate, but C=3D1 is unrelated.
+I wrote, "Please stop reviewing USB patches."
 
+Please stop now.
 
-W=3D1 actually prints this warning.
-
-
-
-> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_fpu.o
->
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->
-> Fixes: 9613736d852d ("selftests/fpu: move FP code to a separate translati=
-on unit")
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  lib/test_fpu_glue.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/lib/test_fpu_glue.c b/lib/test_fpu_glue.c
-> index eef282a2715f..074f30301f29 100644
-> --- a/lib/test_fpu_glue.c
-> +++ b/lib/test_fpu_glue.c
-> @@ -59,4 +59,5 @@ static void __exit test_fpu_exit(void)
->  module_init(test_fpu_init);
->  module_exit(test_fpu_exit);
->
-> +MODULE_DESCRIPTION("Test cases for floating point operations");
->  MODULE_LICENSE("GPL");
->
-> ---
-> base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
-> change-id: 20240622-md-i386-lib-test_fpu_glue-437927d4afe3
->
-
-
---=20
-Best Regards
-Masahiro Yamada
+greg k-h
