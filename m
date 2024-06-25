@@ -1,42 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E89C4437A;
-	Tue, 25 Jun 2024 17:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3AD1448D9;
+	Tue, 25 Jun 2024 18:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719337522; cv=none; b=jKjth+5hbAek2t32jZV6kARf97jNVJHckXZPGxbl1y4VFGNpf02NmEyQF/kz6YjuqONfPmfFvFjlWrcXJfA3cWqnl4tHZh2C7anZfik+qN7nf3qydCuA0yJSeQqo8Na0UGcQcIopoeuPiFixWRprSG2vKTGTUPKUi4HzZKSwXOQ=
+	t=1719339142; cv=none; b=Dtk+0c0nlB7QDTsYO56MrxowYpLxW/iiva8DNlqU0gRJLJGnLQOsu7b6Qhv1Tk9z+/51r4TMz/tBSTspQS5DdPoNJf6I4NWnFX9peAaj+hHp/bR7dZ/LpVqFHCR4n1FME6/c8z2EibXSqTR6qiqY3zKn1CLO7SIEcbeAMg7ijvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719337522; c=relaxed/simple;
-	bh=3juEGBiQ0BSrKT3CulYrFtDalEOYotCXZj3U2euRQMA=;
+	s=arc-20240116; t=1719339142; c=relaxed/simple;
+	bh=xyvICa2oeI1Am2uQgSUf7rCUh93mw89ll8DkY9ZU0hg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=bHTvnazQAb4E63pnApnhN49MTRaxF0hXkw0IMkwasWz+lnyh8na+6v1RPCOEPh6+48xHbjEgQu+bW82GGjA0setLCRUa/JB7jotTifkFjJQyS8KaMNUlCTzS7EDb/cM8Skqqpvdpm7EyKW0Nv7kL6HMNpx6RoNJ/sGb1uARq98k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9EpkWp6; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=HhpIH/mAzUGz25okE3B3mAwtYcd47AjmHgbNmVh/foxG8cXfRanTXxjWDXjQpclbudx2YS9VaXwQQY6lxnbY8X4KfsxxLZJmaIFbFLVSPB8oBvpVRiHDP9SIIe8GRFUBuu0VuQfRwyoEwDut7CCntn/8HXFD93uXvXnN1lPnTbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEgZFudx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9EpkWp6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71874C32781;
-	Tue, 25 Jun 2024 17:45:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEgZFudx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34CD2C32782;
+	Tue, 25 Jun 2024 18:12:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719337522;
-	bh=3juEGBiQ0BSrKT3CulYrFtDalEOYotCXZj3U2euRQMA=;
+	s=k20201202; t=1719339141;
+	bh=xyvICa2oeI1Am2uQgSUf7rCUh93mw89ll8DkY9ZU0hg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=n9EpkWp67ouvx+rGC2qwzAr0gQpCTZGKe9NRP+i0p33idMEjaZ0GZ+trKm62pc+Xd
-	 e39vFQHH07/YbC8LuahI623ocrlMjua4LZ0R0VtgStyXhz+OFrquuLhm+oyQKPP/Qy
-	 EtYBryaTAVzroSM4pGAjFzTByYM98YjESVwy1zeaKbg1Ngh7VUUuX3Il3CPzOQjTCv
-	 u7B9LLPrfFfJN2DBQMlEZb4gkkOxJRXGibgPJV4hp/fYsiMW8UOBARqXdpwy8yDIxk
-	 gfyvvo5T2qRc+bgBwmthy0fFe7gh3aFabV8ncUT3sv1GV+Jdn2TaFHKIBijAPfUrG8
-	 Q1lpDbsepvl/w==
-From: Leon Romanovsky <leon@kernel.org>
-To: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>, 
- Jason Gunthorpe <jgg@ziepe.ca>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-rdma@vger.kernel.org
-In-Reply-To: <b826dd05eefa5f4d6a7a1b4d191eaf37c714ed04.1719259997.git.christophe.jaillet@wanadoo.fr>
-References: <b826dd05eefa5f4d6a7a1b4d191eaf37c714ed04.1719259997.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] RDMA/hfi1: Constify struct mmu_rb_ops
-Message-Id: <171933751680.963586.6452376643796322440.b4-ty@kernel.org>
-Date: Tue, 25 Jun 2024 20:45:16 +0300
+	b=OEgZFudx5UJb/BTxHgKcJIWVpsitDDFGH+XeD7njhUXjqbCX0AWZFrG3d8yre+BNR
+	 rn2N4gSpGpMITjMQRUrLfsddiwGTqaksc1fgBsy0eraHQxKhBER6xV7WpKxz4OmlFC
+	 gtgQkwyxNQdsewjQU82orhmuqxLxCbT1qlNZNp98ChWTccWXHdf7gSe4ePRWwX/1c0
+	 Dawgo1fJCZatDfqJLwkdmSyc9NbuQBaW4HqVAj7T0kvlW6RTMggUd47BAwwIA6lvtk
+	 WErmfYmuDJBuZODBojpGTTbHoeorkK2DSGc5VbQMPvRYsGlQ3cE2P9dQGhhPhOhX6G
+	 L19cnY6MsTmXA==
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+ Daniel Baluta <daniel.baluta@nxp.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, linux-sound@vger.kernel.org, 
+ Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+In-Reply-To: <20240625033419.149775-1-lukas.bulwahn@redhat.com>
+References: <20240625033419.149775-1-lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entries after adding vendor
+ prefix in sound dtbs
+Message-Id: <171933913995.1078071.14226785405365723718.b4-ty@kernel.org>
+Date: Tue, 25 Jun 2024 19:12:19 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -45,29 +48,44 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-13183
+X-Mailer: b4 0.14-dev-d4707
 
-
-On Mon, 24 Jun 2024 22:13:27 +0200, Christophe JAILLET wrote:
-> 'struct mmu_rb_ops' is not modified in this driver.
+On Tue, 25 Jun 2024 05:34:19 +0200, Lukas Bulwahn wrote:
+> Commit ae8fc2948b48 ("ASoC: dt-bindings: add missing vender prefix on
+> filename") renames a few files in Documentation/devicetree/bindings/sound/,
+> but misses to adjust the file entries pointing to those files in
+> MAINTAINERS.
 > 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->   10879	    164	      0	  11043	   2b23	drivers/infiniband/hw/hfi1/pin_system.o
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
+> broken references.
 > 
 > [...]
 
-Applied, thanks!
+Applied to
 
-[1/1] RDMA/hfi1: Constify struct mmu_rb_ops
-      https://git.kernel.org/rdma/rdma/c/ccf238c8da1511
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Best regards,
--- 
-Leon Romanovsky <leon@kernel.org>
+Thanks!
+
+[1/1] MAINTAINERS: adjust file entries after adding vendor prefix in sound dtbs
+      commit: 15c99e7fa9e2bb536e813478250d2a609863dcfb
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
