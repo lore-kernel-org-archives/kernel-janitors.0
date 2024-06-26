@@ -1,48 +1,50 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE6A18FC6C;
-	Wed, 26 Jun 2024 16:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A031B18E75D;
+	Wed, 26 Jun 2024 16:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719419958; cv=none; b=LPZH/bDgphMrFRdsvk4FiUIgR3Z9xA2tLjwfVnVKWU3pPW2p3iGtJQSTk27GDeMiW5uOH2vUZrA9Lpwkl4jgowkIvbS+3ScelAnE2nAik2oah4jCIuHSfh2VyVEtg7bhk28oKwPCelElmsd2ZBnve/z1O1HbnA5+eesGOIimXnY=
+	t=1719420091; cv=none; b=Q6kiacOQmis36Su6A8NJfCx6ogogG+cO8hyGe5tKU5qBXU2sEZ9LBRR6DgvXOtccrYEvVBYQfAcIHd2BBAl9QkUVyDYJTP7loZtkTBq1tA+rrtFhXA+N2DzuYFirqH/jkqUqX2o4yG/kuOZqJVlwzP6GhXueZNvmOlJN+UvGJVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719419958; c=relaxed/simple;
-	bh=yOlDxBZu3pWz8NnSvstlkkupmt0K7U89lTu4e4ns5ds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=utRrDBaIHLtaU1SAvo10cwdgVImexjVLxwqzSC/GBlKvMOi2UWnF/YzOg7xVYY3qucS1VOnVm0JeCZypkr4zH2eB20PMsbA8i678tU5JCxWskLisMCmRmZUOjjZexLIQMdAVuD1xv/PlZGoC0EF7P82SpL+MKF9Ckc+m0ZaoU1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a4Z5JZV/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1719420091; c=relaxed/simple;
+	bh=Ng3JmspzaUJJb1ZBh8cyB3xxKd0+Oed2sYqKaTzLd6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DoanOuG4r78XRxJc1X98nyXJpYjvx/JnHi9081pWzJ+lDsz2d2d9Q5WDMlDToa7XUVmgbrc5bP1/Yf3BF2wsxqVA9h/hLZEnQENdL6610bdJ29qf8jw3yT73THoTjKLaL/ehfcsz3Ld43sAzyJzujJJXW3g5hmhta/2d6Z4FrLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n+4M+nxl; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a4Z5JZV/"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfUG2023737;
-	Wed, 26 Jun 2024 16:39:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	53BRxXB+20bEEGJgP9JLStrQZG51nI9iZGonm6T2Zms=; b=a4Z5JZV/gJIVCwSc
-	K2n4yo2Hmhr7BLu5/lwp7q0x53s+YUBPgOkFaDVSdvvMCRdcNRcMhaiITsfsSYgU
-	DodA1mEZ56eNw8VDaMURRRQo1dmWUMzy6vksIuRzPhhj/L8JsvZnLNdPQZtdhH/A
-	et1+YmvWOFau4vGeJ15hXhXySaySaktC/yz1I7AuP4Ph4yzl3yQ3+rPGMuNCrM1n
-	xcZg2SrSmkCGDIBjGqzGtkvxqp8z0tWAWtWocj/PICe5KmaQMfYogQuhBOo1IMhn
-	YVCcapwO9V3M6pNNJpDYGk6voE+rbWGO+QMOPODQrE2dEBQ6VIg2e4TjcAaM2X7u
-	LKKxUA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywp6yt4tg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 16:39:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QGdCOS024087
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 16:39:12 GMT
-Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
- 2024 09:39:11 -0700
-Message-ID: <8bd4fa77-a7f7-41eb-bf2f-7f21dc15856c@quicinc.com>
-Date: Wed, 26 Jun 2024 09:39:11 -0700
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n+4M+nxl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719420090; x=1750956090;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Ng3JmspzaUJJb1ZBh8cyB3xxKd0+Oed2sYqKaTzLd6I=;
+  b=n+4M+nxlQgRYe7sTLxe97O4JXyfHOq99aZ86Zkn1F2f2UOo0oBcktU9+
+   i/CNP6c5UTGYDMEdD7/wsrxHluw+BQbQNPEkTsNFdWU+SsFDIezulpVr6
+   tFmvYeZbzZdbqETkHIIGEW58U8gtSUoJ20JAcLJLWKsuZW27HWtigHraH
+   bIyUXUFzJMxNjzS76GMDjKLwpLZl6NwaIgau/saCWGA+Cn9FbpDOp1oiC
+   V2l0d/FOyOAzOEXvC+F3eTvyFgHATQaLB+fdWuVTEtyIGxcH0NVbnwTIT
+   Ss99koTvnVP4pOE7k8rQ1jQNBkZpKSOEnm9cNV18iMo4Qbl9eNqLVwUDj
+   g==;
+X-CSE-ConnectionGUID: a7MljIhzTLqy5jIYpQd2Rg==
+X-CSE-MsgGUID: ZjTbdLvfQ0GyMi2RVINbCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16731591"
+X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
+   d="scan'208";a="16731591"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 09:41:29 -0700
+X-CSE-ConnectionGUID: /6wgtqOCTNipk71msqBlDQ==
+X-CSE-MsgGUID: iTCNQAUSR0KEjIrE/eG4Ig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
+   d="scan'208";a="44778573"
+Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.125.109.183]) ([10.125.109.183])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 09:41:28 -0700
+Message-ID: <73d13869-cb80-4226-b8fe-3e45fb7d2518@intel.com>
+Date: Wed, 26 Jun 2024 09:41:27 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,74 +52,49 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: dvb-frontends: add missing MODULE_DESCRIPTION()
- macros
+Subject: Re: [PATCH v2] cxl: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20240607-md-drivers-cxl-v2-1-0c61d95ee7a7@quicinc.com>
+ <20240607151046.00002ae2@Huawei.com>
+ <aef7c12f-cefa-4823-b3a2-920c12990afa@quicinc.com>
 Content-Language: en-US
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240611-md-drivers-media-dvb-frontends-v1-1-a378ed102f69@quicinc.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240611-md-drivers-media-dvb-frontends-v1-1-a378ed102f69@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <aef7c12f-cefa-4823-b3a2-920c12990afa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: LpzqAaSJMV-S1T0EuJB2RFLCOU2jeWI3
-X-Proofpoint-ORIG-GUID: LpzqAaSJMV-S1T0EuJB2RFLCOU2jeWI3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_07,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- phishscore=0 adultscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 lowpriorityscore=0 spamscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406260122
 
-On 6/11/2024 8:21 PM, Jeff Johnson wrote:
-> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/dvb-frontends/au8522_decoder.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/dvb-frontends/mb86a16.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/media/dvb-frontends/au8522_decoder.c | 1 +
->  drivers/media/dvb-frontends/mb86a16.c        | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/drivers/media/dvb-frontends/au8522_decoder.c b/drivers/media/dvb-frontends/au8522_decoder.c
-> index acc27376c246..d02a92a81c60 100644
-> --- a/drivers/media/dvb-frontends/au8522_decoder.c
-> +++ b/drivers/media/dvb-frontends/au8522_decoder.c
-> @@ -25,6 +25,7 @@
->  #include "au8522_priv.h"
->  
->  MODULE_AUTHOR("Devin Heitmueller");
-> +MODULE_DESCRIPTION("Auvitek AU8522 QAM/8VSB demodulator driver and video decoder");
->  MODULE_LICENSE("GPL");
->  
->  static int au8522_analog_debug;
-> diff --git a/drivers/media/dvb-frontends/mb86a16.c b/drivers/media/dvb-frontends/mb86a16.c
-> index 0fc45896e7b8..9033e39d75f4 100644
-> --- a/drivers/media/dvb-frontends/mb86a16.c
-> +++ b/drivers/media/dvb-frontends/mb86a16.c
-> @@ -1854,5 +1854,6 @@ struct dvb_frontend *mb86a16_attach(const struct mb86a16_config *config,
->  	return NULL;
->  }
->  EXPORT_SYMBOL_GPL(mb86a16_attach);
-> +MODULE_DESCRIPTION("Fujitsu MB86A16 DVB-S/DSS DC Receiver driver");
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Manu Abraham");
-> 
-> ---
-> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> change-id: 20240611-md-drivers-media-dvb-frontends-ed357c23fc53
-> 
-Following up to see if anything else is needed from me. Hoping to see this in
-linux-next so I can remove it from my tracking spreadsheet :)
 
-/jeff
+
+On 6/26/24 9:02 AM, Jeff Johnson wrote:
+> On 6/7/2024 7:10 AM, Jonathan Cameron wrote:
+>> On Fri, 7 Jun 2024 06:57:15 -0700
+>> Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+>>
+>>> make allmodconfig && make W=1 C=1 reports:
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/core/cxl_core.o
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pci.o
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_mem.o
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_acpi.o
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pmem.o
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_port.o
+>>>
+>>> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>>>
+>>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>>
+>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>>
+>> Thanks,
+> 
+> Following up to see if anything else is needed from me. Hoping to see this in
+> linux-next so I can remove it from my tracking spreadsheet :)
+
+I have it locally queued, but will probably push to linux-next after rc6 drops. 
+> 
+> /jeff
