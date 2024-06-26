@@ -1,111 +1,62 @@
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3C525761
-	for <kernel-janitors@vger.kernel.org>; Wed, 26 Jun 2024 13:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4529518AF4;
+	Wed, 26 Jun 2024 13:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719408153; cv=none; b=WKiIrYBEOt9nSVZEplgmjQDE1FzU4p97plDpvihOnakm/zHYtGtY70ykKK6PZJoo5wykoL6xJ9YNi4aWFGow7SxU4XXlwHWWn/qYTwaeeNqPxHwT0myBL2AGhhF1EyoMa/elfwaul3Ijy/cqLQEsZn9NO+1dgz04nMd2sGmcPUs=
+	t=1719410097; cv=none; b=CR+98o4PzJqp4oYnI04IRQCGeNFanGxXWVpqof6GFSqCGt5ANt0CAkk10lQufGkUTNvHpmV4SqX4qYvll7W+Hr3ZqVpNdgzToVWM0sFR8y9R0L21xp7xYa0KHRD4wdOvZI2+OtybUqHeGkFlYYo2+qWKIsK+V2AvVr95bQX3MkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719408153; c=relaxed/simple;
-	bh=XxBobdsohKtbbp+VDP9sBXJLs9uMbEUbONhmhgK7pq4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P5LPy7Dj8Wkrgdp/pjD69JOWBKd0xeXMjlpVBcBCzXVm69XH93DbSRr1bWfv99Lkc698M59qLZw+g4jMGgg9M8BsbwAXuDXqB2Mv2crj0BB7+AoyygIqOstft9dgJb7U96IwYM/dDzZO32YAN1g4cG7Pb8QgHyeordyxOT/297M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=MkABVdL6; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="MkABVdL6"
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-700a6853664so2638879a34.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 26 Jun 2024 06:22:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1719408151; x=1720012951; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=I5xewZHY2oJYxuRQNOBT5mZfboUik/lCsriRBhVol24=;
-        b=MkABVdL6PzsU5MPCrZFzZFCczVjW1kUU2yObpmVSqXL8Xz0lfIhZvyXnvgWZHSlfDq
-         Bd7cnz0GMGG2yRO05qkcnnGOLa67jjxn8WntvfOKOE1QnS02ClVmjobWGt3sDpLhWqhb
-         ZOB2W0E7tGQjrr7XnVlbWkNJvRaNPD9QuqvdHkgeYAM2efmsk92ZvP2exj/XmhHzp2h4
-         eDOYuLlQOvO5KDoQgPVR2eCfcksG5B+LUZAPm+UDCJqQFnSATipors1djcA0e8M0qa6Q
-         mB2w5nVmQKCoz3EraLt3k0wP2NfIuSFwduNUWlKm/mjIgszBjrPaQ2QKPm+p1bCT/7T/
-         BzFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719408151; x=1720012951;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I5xewZHY2oJYxuRQNOBT5mZfboUik/lCsriRBhVol24=;
-        b=Dk0A1I1qpH3hv67MeXAqM//iBZF6fVjvrPjteGUmuw70uXTO6qwtGJhaM3X0NKDqrL
-         dGjMGnVruD9JH/tWtvm4QBC1JID6AqPyl9Kkf98ytvZ+ORo9Iu4r53pNDq7+HxQNVV5U
-         HQhBMA1LGLoueCnBBcQkIF2wZNJDHgPuzo+NwfN4a+8sNynf1nL7PImn6oPP5AAQJolE
-         o/oHNJTbHmrU71lmYgXDTcGCvEJnSpfZZWOmFVKCihiReaptzaEEMAXYhUJH3VW9NSWk
-         o5KbcFlGm4emHmH7vZpuY2CuO1VL2XEcHxpNKhx49sMg8rqZKxZw1oljudIGBQjODcYi
-         E7LA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4caCNUVvEerUnVI7Shxrw48Xl72iojY3AFolS18b5HATudABO8j2rDO71HrIDGEQREgJVEH4U8TKtwyiCt4x2MzXzB0gytZgtEWStvLDC
-X-Gm-Message-State: AOJu0YwWwAE/6jog+Hc1qFM1r6bezYO+xXq6gUS8JmhrwKi4K7KAX12H
-	aco5alBJRyOUUnWRahvg/22CuCjPhpNnxCsIZYBMcAAJHvE5xNOjJm6OSH/rPew=
-X-Google-Smtp-Source: AGHT+IFQ7TQc949+gnCiGt+D4TzmOQ0Ckn0QWBw98q32b0sD5xDjYU5NsCtAsd0KDekGkzXy4fWwFw==
-X-Received: by 2002:a05:6830:1d46:b0:700:ab11:86c8 with SMTP id 46e09a7af769-700af98902emr11454041a34.22.1719408150773;
-        Wed, 26 Jun 2024 06:22:30 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-700d369f8adsm118762a34.48.2024.06.26.06.22.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 06:22:30 -0700 (PDT)
-Message-ID: <6f5c1de2-42da-46be-9af1-9b293e4ac3e5@sifive.com>
-Date: Wed, 26 Jun 2024 08:22:28 -0500
+	s=arc-20240116; t=1719410097; c=relaxed/simple;
+	bh=FxtDe9nSy9I9WH66jJV3VBzgSphNCZ9umbNyeu3Umc4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=CW6nFnvqgi1y/zcsc8EpRAfLIO48iH4H2OHh5aqdAfoUP0UUtrb3N5g5lur2EHdtVwWbwT5JAoHrUOaRhqUMUUKlnw1WSD/W7Jsx1fJX8EPefLtWdkM8ozcbwCtB+WG+aMFL2pwRW6LxtcHEF0ENXqVUkz8TVxSDvtxaGkIQtVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5432C116B1;
+	Wed, 26 Jun 2024 13:54:56 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id A97F2106093D; Wed, 26 Jun 2024 15:54:54 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Paul Cercueil <paul@crapouillou.net>, 
+ Sebastian Reichel <sre@kernel.org>, Artur Rojek <contact@artur-rojek.eu>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ linux-mips@vger.kernel.org, linux-pm@vger.kernel.org
+In-Reply-To: <51e49c18574003db1e20c9299061a5ecd1661a3c.1719121781.git.christophe.jaillet@wanadoo.fr>
+References: <51e49c18574003db1e20c9299061a5ecd1661a3c.1719121781.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] power: supply: ingenic: Fix some error handling paths
+ in ingenic_battery_get_property()
+Message-Id: <171941009467.143534.7882184622422258601.b4-ty@collabora.com>
+Date: Wed, 26 Jun 2024 15:54:54 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/fpu: add missing MODULE_DESCRIPTION() macro
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Jonathan Corbet <corbet@lwn.net>, Masahiro Yamada <masahiroy@kernel.org>,
- Michael Ellerman <mpe@ellerman.id.au>, Nathan Chancellor
- <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
- Palmer Dabbelt <palmer@rivosinc.com>, Russell King <linux@armlinux.org.uk>,
- Thomas Gleixner <tglx@linutronix.de>, WANG Xuerui <git@xen0n.name>,
- Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <20240622-md-i386-lib-test_fpu_glue-v1-1-a4e40b7b1264@quicinc.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-Content-Language: en-US
-In-Reply-To: <20240622-md-i386-lib-test_fpu_glue-v1-1-a4e40b7b1264@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On 2024-06-22 9:55 AM, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 now reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_fpu.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> Fixes: 9613736d852d ("selftests/fpu: move FP code to a separate translation unit")
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  lib/test_fpu_glue.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/lib/test_fpu_glue.c b/lib/test_fpu_glue.c
-> index eef282a2715f..074f30301f29 100644
-> --- a/lib/test_fpu_glue.c
-> +++ b/lib/test_fpu_glue.c
-> @@ -59,4 +59,5 @@ static void __exit test_fpu_exit(void)
->  module_init(test_fpu_init);
->  module_exit(test_fpu_exit);
->  
-> +MODULE_DESCRIPTION("Test cases for floating point operations");
->  MODULE_LICENSE("GPL");
-> 
-> ---
-> base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
-> change-id: 20240622-md-i386-lib-test_fpu_glue-437927d4afe3
-> 
 
-Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+On Sun, 23 Jun 2024 07:50:32 +0200, Christophe JAILLET wrote:
+> If iio_read_channel_processed() fails, 'val->intval' is not updated, but it
+> is still *1000 just after. So, in case of error, the *1000 accumulate and
+> 'val->intval' becomes erroneous.
+> 
+> So instead of rescaling the value after the fact, use the dedicated scaling
+> API. This way the result is updated only when needed. In case of error, the
+> previous value is kept, unmodified.
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] power: supply: ingenic: Fix some error handling paths in ingenic_battery_get_property()
+      commit: f8b6c1eb76f73ed721facd58d0cfb08513aad34c
+
+Best regards,
+-- 
+Sebastian Reichel <sebastian.reichel@collabora.com>
 
