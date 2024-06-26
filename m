@@ -1,119 +1,120 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0945E16F0DC;
-	Wed, 26 Jun 2024 17:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4638F47
+	for <kernel-janitors@vger.kernel.org>; Wed, 26 Jun 2024 20:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719422154; cv=none; b=WvM/0RTZeIS97PFCukqOjT6OLQeKqnNX5cRVOcElD6zxBTZ3MYrhUuujHr0lTsocgrJeVMgywnJa3f6zMB++UV7s/G0BsXcLhvQnyhyH8i9+dFzNNBXjiOonRAoi+eKMrY8lCZD3dGB0Uv4dDSCEar9TIkS0DApJ2ffQrNpnBHs=
+	t=1719433107; cv=none; b=bcie1fDTaQ3GCGv6e5LEsuixPc7VE1Vnwcv0BD1we5SkBf3w3gCU/9eH/KTEYhSo5FrmutJj4RWZ75JwwEtxqt+txgtxh4iKQiJdigBMiiV7ApvtC3/GTNNHew+pW2xt1ZK9D702xPljzMOP9kXpIo6+jIuBXwdARWWGK+ID5R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719422154; c=relaxed/simple;
-	bh=KFeMYf0yXCblwTWoR2tyu0Q3uNiNDyWPSL3bCRQW11c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=mHp6/W5vonrnUJiCtvrJ9sVC7fADqdJcsx/O4rLye+irGDzGBBWToF/mXfNpgN5RIiX539ihlLc1J1iFrSreuCdz9P/U5lnxXU1RlXKo19ZVdQDqhIc6SpVCPr/QktN+Kn0OkxFfI2TEklqu2S1k2K8PmpvMrZYFHWJSA2tKTKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UoYJ4F5v; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1719433107; c=relaxed/simple;
+	bh=Ftq67nm0JfYOkpiAIY6KRhsDW2bsJuzJxWDFtGcclIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XOEat/1QeuAxOKMvoNEftz81cIJYHy6STfdQKFDd3KUIqpMVZz5ZwHgMeypg4Q6e5Yx4iLaI0Uc2NMQZuY2hq5b+dx9AhXldbKhXPOaA6kABG/U1C3QDWIl0sTTlJ0/zdJN11yBko5HN4SSjJVFmpxTBr+WLwZ/ebvYIOXtxOkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=YDC0U6vN; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UoYJ4F5v"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAg4LC025153;
-	Wed, 26 Jun 2024 17:15:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=fzDlqpudN0m8ccLoLjmKvZ
-	jR/yGpFYqoSRyzyV4xtvM=; b=UoYJ4F5vN0yd4wqXHBOFqZfX+1Rhj84Yhjs8rU
-	M5yhD2Du176QZyMMHbB4IiNfJZReGnSZqji48gu4JFtf9VEjaujpwvMnx2pjmKQv
-	evs1WvlmUy/f7WG837Fk0Z+iUYXqriqjQaQ47PTTk+sC72kUdvGRXZgnI5zUgfJY
-	xhMhSQX/V/nnkWV0gVa/QHZ1pc6dUf40QcTDG7YfwdvtaBSmorH8Mujlo/1KSoPa
-	bvDbk3degHnR7gAPU++uM5YDMcuj30CkoC+4kCPFFbtWVQn/mKEWg9xaCLjIJR/C
-	uarFHUX39GevrTZSUFIeLTsMZIaAYfBnTa4w+VDGbJb5vzug==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywp6yt7b6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 17:15:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QHFiWl009815
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 17:15:44 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
- 2024 10:15:44 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 26 Jun 2024 10:15:43 -0700
-Subject: [PATCH v2] media: videobuf2: add missing MODULE_DESCRIPTION()
- macro
+	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="YDC0U6vN"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57d07f07a27so922699a12.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 26 Jun 2024 13:18:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ieee.org; s=google; t=1719433104; x=1720037904; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VwK1TIVcZa2quDepKblugLh91hcpk5uPsbaDfQj8P3Y=;
+        b=YDC0U6vNHOEV0QUJ7OfHKQMNWEEFUDhnF8sctvxsERXvt52YoTf+RjvlCYPfcDj0qH
+         FFwneNW6ESqv1c5MPlEeKasEokVEb2oFKsizyqPjnD2zaRit/0YN9KSUEAOXeN1aMQwv
+         f2NUIJgJlb+IURByE/k6c8XsvqsOCs0UwTQGg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719433104; x=1720037904;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VwK1TIVcZa2quDepKblugLh91hcpk5uPsbaDfQj8P3Y=;
+        b=LDW3lyvTTyiO2eFoIJUisUhRvHPGQuKX3wuE3OYNHhfb1uZR8y1riX0z44aJGH1U2i
+         xC3No5QbvN6rCH9RyYV7zjvuVlL4YJf8YLdje6hCi0InZ+GOPwtWHcvXNTd/ZfDtM83u
+         e657KOYcwOvpfgKm+mG1NuIOIZHB1gLLzG5ua6KesIrzvb2R2AKyLwMxaPm/f18bqpSS
+         JDjC6dsy+uMnnURq2SNUzUBr/tZtLf/2wuLpO+lCazY4SYuk90w4fdJezO7BO5Zr1FfX
+         ktBj2LbpJP32Ny5NEAjNu0m92RdFqg3UsW7dWiDyiwpu4Mbddx5nRdLWHMmfU3MjyHWr
+         Hr4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUkcWXT+wGy9L5/Um85nYXcr1NOg7LLaAsM4QxvZTKyRtfkDDA6NNVrgTEOCCZeYfAm8Vh7BkeQb9rgRCIshkwXL+Mcon1Y08JAoHOVy0n7
+X-Gm-Message-State: AOJu0YwNWHpZkA47A07RRDyiwHy+gk8v4wcy9y5V09Ob4DEQMnEHyygE
+	jKojhJJ3hs/iaB8JNbjlWquUbByWcAjmUIczqHEsqvBDmvA0RcXh3cZ1QIbfzQ==
+X-Google-Smtp-Source: AGHT+IFkPZrAZf2Dv1I/tcG9HNqylGU3EOg+zPZYcuRIs218Pi3Cs/RkddJTLupYtqHQps+mECBsfQ==
+X-Received: by 2002:a50:8d4f:0:b0:57d:10bb:b42b with SMTP id 4fb4d7f45d1cf-57d4bdcba20mr7272393a12.26.1719433103808;
+        Wed, 26 Jun 2024 13:18:23 -0700 (PDT)
+Received: from [10.211.55.3] (p5093ccb1.dip0.t-ipconnect.de. [80.147.204.177])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-57d30534b25sm7513702a12.68.2024.06.26.13.18.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 13:18:23 -0700 (PDT)
+Message-ID: <a132dc0b-2b2c-41db-9d09-4676a3f88535@ieee.org>
+Date: Wed, 26 Jun 2024 15:18:22 -0500
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] greybus: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, Johan Hovold
+ <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: greybus-dev@lists.linaro.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20240607-md-drivers-greybus-v1-1-31faa0b21105@quicinc.com>
+Content-Language: en-US
+From: Alex Elder <elder@ieee.org>
+In-Reply-To: <20240607-md-drivers-greybus-v1-1-31faa0b21105@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240626-md-drivers-media-common-videobuf2-v2-1-6b2ea3d07353@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAL5MfGYC/5WOSw6CMBRFt0I69hla+Ygj92EY9POQl9hWW2gwh
- L1b2IHDk9x77l1ZxEAY2a1YWcBEkbzLIE4F06N0TwQymZkoRVU2XIA1YAIlDBEsGpKgvbXeQSK
- DXs2DALwMqr42bVN2gmXPO+BAy7Hx6DMrGRFUkE6Pu/lFbl7Ayjhh2OMjxcmH7/Eo8b30z3jiw
- KFqRC0Vb8VguvtnJk1On3OU9du2/QDlppqp8wAAAA==
-To: Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski
-	<m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: zCwOKPLLEKjmBbMlzoY8rEj7KcKrM8JI
-X-Proofpoint-ORIG-GUID: zCwOKPLLEKjmBbMlzoY8rEj7KcKrM8JI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_08,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- phishscore=0 adultscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 lowpriorityscore=0 spamscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406260127
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/common/videobuf2/videobuf2-dvb.o
+On 6/7/24 3:56 PM, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/greybus.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/gb-es2.o
+> 
+> Add all missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+I would drop the single quotes, but I don't feel very strongly about it.
+Greg can offer a second opinion (taking the patch or not).
 
-Acked-by: Tomasz Figa <tfiga@chromium.org>
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-While doing these cleanups, in most cases I've taken the descriptions
-directly from code comments, Kconfig descriptions, or git logs, but in
-this case I didn't see a nice concise description so I invented this
-one. Please suggest a replacement if this isn't an appropriate
-description.
----
-Changes in v2:
-- Updated description per Tomasz and added the Acked-by tag
-- Link to v1: https://lore.kernel.org/r/20240612-md-drivers-media-common-videobuf2-v1-1-4625ab172fd9@quicinc.com
----
- drivers/media/common/videobuf2/videobuf2-dvb.c | 1 +
- 1 file changed, 1 insertion(+)
+Acked-by: Alex Elder <elder@kernel.org>
 
-diff --git a/drivers/media/common/videobuf2/videobuf2-dvb.c b/drivers/media/common/videobuf2/videobuf2-dvb.c
-index 8c15bcd07eef..a5d69bc75769 100644
---- a/drivers/media/common/videobuf2/videobuf2-dvb.c
-+++ b/drivers/media/common/videobuf2/videobuf2-dvb.c
-@@ -19,6 +19,7 @@
- /* ------------------------------------------------------------------ */
- 
- MODULE_AUTHOR("Gerd Knorr <kraxel@bytesex.org> [SuSE Labs]");
-+MODULE_DESCRIPTION("Videobuf2 helpers library for simple DVB cards");
- MODULE_LICENSE("GPL");
- 
- /* ------------------------------------------------------------------ */
-
----
-base-commit: 55027e689933ba2e64f3d245fb1ff185b3e7fc81
-change-id: 20240612-md-drivers-media-common-videobuf2-e3fb58676092
+> ---
+>   drivers/greybus/core.c | 1 +
+>   drivers/greybus/es2.c  | 1 +
+>   2 files changed, 2 insertions(+)
+> 
+> diff --git a/drivers/greybus/core.c b/drivers/greybus/core.c
+> index 95c09d4f3a86..c28bb973f67c 100644
+> --- a/drivers/greybus/core.c
+> +++ b/drivers/greybus/core.c
+> @@ -375,5 +375,6 @@ static void __exit gb_exit(void)
+>   	tracepoint_synchronize_unregister();
+>   }
+>   module_exit(gb_exit);
+> +MODULE_DESCRIPTION("Greybus 'core' driver");
+>   MODULE_LICENSE("GPL v2");
+>   MODULE_AUTHOR("Greg Kroah-Hartman <gregkh@linuxfoundation.org>");
+> diff --git a/drivers/greybus/es2.c b/drivers/greybus/es2.c
+> index 1ee78d0d90b4..db4d033925e6 100644
+> --- a/drivers/greybus/es2.c
+> +++ b/drivers/greybus/es2.c
+> @@ -1456,5 +1456,6 @@ static struct usb_driver es2_ap_driver = {
+>   
+>   module_usb_driver(es2_ap_driver);
+>   
+> +MODULE_DESCRIPTION("Greybus 'AP' USB driver for 'ES2' controller chips");
+>   MODULE_LICENSE("GPL v2");
+>   MODULE_AUTHOR("Greg Kroah-Hartman <gregkh@linuxfoundation.org>");
+> 
+> ---
+> base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+> change-id: 20240607-md-drivers-greybus-a13b64e41256
+> 
 
