@@ -1,100 +1,104 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B398160796;
-	Wed, 26 Jun 2024 08:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740FD16EB7B
+	for <kernel-janitors@vger.kernel.org>; Wed, 26 Jun 2024 10:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719392210; cv=none; b=b1AIGXK7WeAd/jpFGnIi3sB3ImMNQFkt6AIxn91nMPw02plotc2emDTILNZxH5KDB8Jv5cgzEVx0t10EdDjXZIQy0iJww0rli4/jGguiFOO3ywdKRFTc7ZB6dMrKEzsX78CToO1184cixYt08ViR6Wb8g77RMm09Crrf3AspkMI=
+	t=1719398289; cv=none; b=nrtcKevzTmYeVGTr4HC2HRCzgGTqULVov4pCu3E6L+78kVLOy+0lvMnFoDSrC07JXCRRthlPfh8YHM3dOJU0beAzNBb1rfaTYTALR577zmsj5DdfEouXBhEItSuRBaOMY+0fqwhVzrcV3axORytHb2FJnIBhSBYHGtgnmH7/P/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719392210; c=relaxed/simple;
-	bh=dqN7RMr1ENoXwQSJOuRDf7RcOZcpC3x1Eq9p6j1DL3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rb5VKWigkWhSBdt58GPrmxWFLtfAeju+1l+qXCXDOa2Ru8w0dzkry8FQzdbEL3BJGVsJC+W8cE0K2rgGBXLbtLoMo7jVQk/gkZ1YCZnH3LszOGSOdmH4tZa+rx65v80yew0W38WntruM7XtwzRdJyYElyhMvHCGhfulI/N0wzO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=UtBMb89y; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1719398289; c=relaxed/simple;
+	bh=VYUz5N4gtv8iv/6U7Fma+w++MYKM4dTro8aD5iMAqJc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qwgi09MAOkS/Hr+0Y8fTVrQdnVLvs1YUYfNxkl+p8hcnVwm56FgFA8ss2srNilT4clA3vLOGbtqopBV7OvkGYlEMVPQIq9QzCyuWmJc1YElP+azIhnIXD4Ib+NIuKrRZwODms5X6lM3su67Ugyhr7BoFBmaJK/UwS8/r+QFC9BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gCVi/Odj; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="UtBMb89y"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719392168; x=1719996968; i=markus.elfring@web.de;
-	bh=uHpBbe5Y1ciXIOpkMuiiWV5X9R8Qj10UQWwEFWd/0kc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=UtBMb89yxkN/4fE8WTQmaHr1dsRFCz7YlpxKHXzi2hhw87EZD0QXvHczGoC8zK4C
-	 bxs46Sx5ME/30TY1yXnx+GcDfBczARqfuq9n0tEbyeP9bjUuzSyhlkqA+zgxyNmKV
-	 hfINLFpKAcaA9arKRjXzuoHhFVd/JQQSjDbjFcy+QPxTNAGV6Tr+jSWK+01Vl8q5y
-	 aBGGij92NgG7FWoSlpwutJHawlqIr5hv621j6s5SmNC3b2Y0UzRWajL3kB50o2/W9
-	 j8bvh+dtxuN9TdbbNO6WhvKysawYc2TMuBeMnhba9RKQg99wja4JwPGFwQxAg9XCk
-	 2A2DwGsVEei87pFdYQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MODiN-1rxqFd2O8P-00V3Tx; Wed, 26
- Jun 2024 10:56:08 +0200
-Message-ID: <95612a56-63ee-4ba8-beaa-4b773ccca5e8@web.de>
-Date: Wed, 26 Jun 2024 10:55:38 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gCVi/Odj"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cdcd26d61so4706500e87.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 26 Jun 2024 03:38:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719398285; x=1720003085; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KAP7Avo0NqErHhw/LgeqaI6OS2BfZZmGrKu2N8kUgqY=;
+        b=gCVi/OdjXk1Y+PwpYIimpHcOd6rlm3EMdwPd+qg7wNDxO30YSdDKf+Wy1sJGxbJ/uo
+         1m7IWGK1Q6YNDxOOexYKXdCB51zrmPR4r/wYD0/kNtIdvw1Z8O2i1d9igV/bOwf8PPih
+         pZtEX55l1npz7Tm25GTml+EascAMpqfmopNa9l+ALEFPoBy/YVRJqerPoRSZaoS6ODS2
+         uYIlDuIki+ZaWyfnfeOMNHWZV1sDzcbN4zxAaYTDEIqvcall1MIVi4ytLDITCOdWixG/
+         dWSTeD/RM+3XzC+qJnhuh6HzsQaWw7uqDIFAcIWFaT0P58/Qtkp7mA3xT9RkK/mqcne1
+         b7mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719398285; x=1720003085;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KAP7Avo0NqErHhw/LgeqaI6OS2BfZZmGrKu2N8kUgqY=;
+        b=qYnuRZHYheuvzhsA/ZfALvxpPldAXNNe36t510pxo7q0gmqoTqrB/fhSvTIkPeiBzJ
+         gCLR1x+UX5CaPMW9GP5Km+0/lavYjsA7LjmUHeDNAEwIiseox6SJIoYof7DF5MXSiKBK
+         Ve4cvH6zK0seUrLmWykNiEruQGFTrzTeUOvk32PSjD59wb0vIlbKC0/L3rM5C9wbB1o3
+         PJ+jhbWOPiJgV3DMgNB9yPUuciOMUe5VEgYvbcaZNtD2y1a4J/hZbzLdATOiqu9acvSw
+         edhhhfsRDxjyC7P78jA649dFO0Jqkh+kAuhCSEP3155/TCSc8NJSxEzo9feL5WfcDatq
+         ZJUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUeBoeFt79rZ02Ti0PtZt5sgyI5GQXEp8jL7zMGCcFUGll2g2wugmaXg0Ubk7ULHgmbZ8mhFkgqZODwdECls7/UX4C2QOk9CCd2pyrBuYtX
+X-Gm-Message-State: AOJu0YypVy8zI9HWyoDTZPWMbaKSgC3YrqxCl5hP4np05eb6JMec2WDm
+	kPuN0q670+YXxnHj8TovNzhWl8oZ/1t+Av+7u05PXh4MVX2xkF1s5DPpDlYfMeassEdpNOp667l
+	aUSayXkZgV9avthehhDQSXKXpEJ3MfQorN6T4bg==
+X-Google-Smtp-Source: AGHT+IGzCEHmUW20SzJfj/AOkF92f/FKlba7gvSlxZWz6Yna1JEIXVmc39gid0pFCtGiZI+oDk6MEqv5XprFAgIE2Tg=
+X-Received: by 2002:a05:6512:3091:b0:52c:e54e:f84b with SMTP id
+ 2adb3069b0e04-52ce54ef9fdmr6615691e87.14.1719398285525; Wed, 26 Jun 2024
+ 03:38:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] usb: Patch review processes?
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-doc@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-aspeed@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, Ma Ke <make24@iscas.ac.cn>,
- Andrew Jeffery <andrew@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>,
- Julia Lawall <julia.lawall@inria.fr>, Neal Liu <neal_liu@aspeedtech.com>
-References: <20240625022306.2568122-1-make24@iscas.ac.cn>
- <edeaa699-7cfe-44ed-abde-7cf3d3efe3bf@web.de>
- <2024062556-ladder-canister-1ab1@gregkh>
- <ff2aaf0d-5456-43d1-af52-78986b3401f9@web.de>
- <2024062532-strep-president-44d7@gregkh>
- <5fa430f5-3e18-4c20-93d4-6733afd6bdcf@web.de>
- <2024062553-koala-granddad-50f1@gregkh>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <2024062553-koala-granddad-50f1@gregkh>
-Content-Type: text/plain; charset=UTF-8
+References: <d01818abd880bf435d1106a9a6cc11a7a8a3e661.1719125040.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <d01818abd880bf435d1106a9a6cc11a7a8a3e661.1719125040.git.christophe.jaillet@wanadoo.fr>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 26 Jun 2024 12:37:53 +0200
+Message-ID: <CACRpkdZ-DOLV1ZHALCDKaUjj4HjwX_qLJ9GttKMvrRJ867q64Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] power: supply: samsung-sdi-battery: Constify
+ struct power_supply_vbat_ri_table
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Sebastian Reichel <sre@kernel.org>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:01Zgw4SpZxal5aX+cdD8nOTCspwL5KOnoabCgPJR2tnzNKav2ey
- kY81u5ra8MXgMOxtiZZXjPFI8MKtKPtnTNvanxr3aMrubDK53O5Q6lSYjFBWX1oD6o/QsQ/
- ftgq9FJV0X2wtZ5m2KTV2zcl4yJrdgwpm4E1Enl7Cdz0yfBdQO2N2lhvZFHzDtIdhINqskr
- POn2J1dxCNUh+sBbgoPPg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:gfrLLhDtPD0=;UlbLOaeVxgTqqoy5hNUBJ8gBGCp
- vnSvPRqj7AtVm2SCQt8tVy4oNIw3HPJfJdNp6DTZsXaQCyDzJHJtJkHrl4lNR2YrTg2gHLJaj
- VBjz2dCD8QXbthggUT1rffygNJm8L6SsgL7eBQkJ1OXI2IJfJ9vP39oJHNQZB+B7yO+KzSPuD
- 70Jd4fp/wP+9Sw5zHI3Eb2ZNo28MXO+BTRQVXz2qoUCEsmBVXq75RSCMCHCNgRGQtpOqA+cb3
- XaMn69X30IdlbPA3JaCUb/2Wa4XVNFKaAi6yJytX6XjRH4gZlZVMTmw1QQnx5D2v8vbBl0RLb
- +IAiqXDSTXHNoOPDS/kjEfHvziRfKdJETXzkfla/K43mRNADraVPhMoU7EFql/KJ4ceuB7W0K
- Wob7idlraKRvfThiNUA6s0vfh8kttP3KcfuGWDpcgUbtds1RY+8L8VXYKuNd0DXG6ycHBv6CM
- yWag7wrDclPLugGnlfkAcpm4LhvkyyEHqtEFpEkrwf0Dpg3OFX1SBuiomX2Ig3HdMjlgKzGlm
- dLWTn7jO1BQMq34P8fqTfKxXKkpbELQxqZcgSGCVq5c11n6jW1JKYeapPN14783isi4ldaW89
- xJ616XTleXAi0PBWoJVEvJYWmLtan7rz9MVNSSEuZpukcjjrsC09riSDH/W8L6dz9h9OFR8rz
- CuqVYp8bnvdrqSMvL3mNI+4DHfZgqsRc6KtYKm8YVhsbZOXztXzgk7cFl7apeGr0EjfN7t/NH
- sVZ0X49TPfZuHqnxoasaTFvlXG5QHrV/X4YIDTpNG4oWME+B1a1WQ/m42mp9okc4jdDXK+Zxw
- CTCNxvLaXxOY5R335wGi0XnPLfkCLULuEZW7YkSp8IqV0=
 
->> You indicated concerns according to patch review processes,
->> didn't you?
->>
->> See also:
->> * Patch submission notes
->>   https://elixir.bootlin.com/linux/v6.10-rc5/source/Documentation/proce=
-ss/maintainer-tip.rst#L100
+On Sun, Jun 23, 2024 at 8:45=E2=80=AFAM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+
+> 'struct power_supply_vbat_ri_table' are not modified in this driver.
 >
-> This is not the tip tree.
+> Constifying these structures moves some data to a read-only section, so
+> increase overall security.
+>
+> In order to do it, some code also needs to be adjusted to this new const
+> qualifier.
+>
+> On a x86_64, with allmodconfig:
+> Before:
+> =3D=3D=3D=3D=3D=3D
+> $ size drivers/power/supply/samsung-sdi-battery.o
+>    text    data     bss     dec     hex filename
+>     955    7664       0    8619    21ab drivers/power/supply/samsung-sdi-=
+battery.o
+>
+> After:
+> =3D=3D=3D=3D=3D
+> $ size drivers/power/supply/samsung-sdi-battery.o
+>    text    data     bss     dec     hex filename
+>    4055    4584       0    8639    21bf drivers/power/supply/samsung-sdi-=
+battery.o
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Would you eventually like to support the creation and maintenance of a doc=
-ument
-like =E2=80=9CDocumentation/process/maintainer-usb.rst=E2=80=9D?
+Really neat!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Regards,
-Markus
+Yours,
+Linus Walleij
