@@ -1,103 +1,88 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740FD16EB7B
-	for <kernel-janitors@vger.kernel.org>; Wed, 26 Jun 2024 10:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161BF1662F2
+	for <kernel-janitors@vger.kernel.org>; Wed, 26 Jun 2024 10:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719398289; cv=none; b=nrtcKevzTmYeVGTr4HC2HRCzgGTqULVov4pCu3E6L+78kVLOy+0lvMnFoDSrC07JXCRRthlPfh8YHM3dOJU0beAzNBb1rfaTYTALR577zmsj5DdfEouXBhEItSuRBaOMY+0fqwhVzrcV3axORytHb2FJnIBhSBYHGtgnmH7/P/I=
+	t=1719398326; cv=none; b=ua96rtJ4i2V/husdZgOtmpTMyQeDvXy4+tE1pvK/Df//g9q1FVqV6cZaa8RLm1nelLLLoMJ2KrY4Tu1vAI0fFm2MVikLrIPI4SUI4XDLM5ny58aoxQCJlX71+taNb8raxrjCr1JUtVnLL+OQ7Gb0loSjhRqX/DC2Mv8ZoCaPC80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719398289; c=relaxed/simple;
-	bh=VYUz5N4gtv8iv/6U7Fma+w++MYKM4dTro8aD5iMAqJc=;
+	s=arc-20240116; t=1719398326; c=relaxed/simple;
+	bh=G9Hu0rSz9odo+/555uwylOWDqs0wLoPhDnYobZDypvk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qwgi09MAOkS/Hr+0Y8fTVrQdnVLvs1YUYfNxkl+p8hcnVwm56FgFA8ss2srNilT4clA3vLOGbtqopBV7OvkGYlEMVPQIq9QzCyuWmJc1YElP+azIhnIXD4Ib+NIuKrRZwODms5X6lM3su67Ugyhr7BoFBmaJK/UwS8/r+QFC9BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gCVi/Odj; arc=none smtp.client-ip=209.85.167.50
+	 To:Cc:Content-Type; b=rT6jsXUwreWWWFHy5Aaa4os0L33JiVdlZfCgx6kXjBW4qmjhloFlBXmD1RdyMT19D2HWG0WwP8YGMn/1sce4cUsihiufCCkDWs9Q7dY19LznCFWDXrB2fsk8PreU9KJYnHO9jWF9Zc13EaQX2LTzpXndrIxWo1VGdyR766/ROXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jOnGt8gE; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gCVi/Odj"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cdcd26d61so4706500e87.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 26 Jun 2024 03:38:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jOnGt8gE"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ec52fbb50cso43019991fa.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 26 Jun 2024 03:38:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719398285; x=1720003085; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719398323; x=1720003123; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KAP7Avo0NqErHhw/LgeqaI6OS2BfZZmGrKu2N8kUgqY=;
-        b=gCVi/OdjXk1Y+PwpYIimpHcOd6rlm3EMdwPd+qg7wNDxO30YSdDKf+Wy1sJGxbJ/uo
-         1m7IWGK1Q6YNDxOOexYKXdCB51zrmPR4r/wYD0/kNtIdvw1Z8O2i1d9igV/bOwf8PPih
-         pZtEX55l1npz7Tm25GTml+EascAMpqfmopNa9l+ALEFPoBy/YVRJqerPoRSZaoS6ODS2
-         uYIlDuIki+ZaWyfnfeOMNHWZV1sDzcbN4zxAaYTDEIqvcall1MIVi4ytLDITCOdWixG/
-         dWSTeD/RM+3XzC+qJnhuh6HzsQaWw7uqDIFAcIWFaT0P58/Qtkp7mA3xT9RkK/mqcne1
-         b7mA==
+        bh=G9Hu0rSz9odo+/555uwylOWDqs0wLoPhDnYobZDypvk=;
+        b=jOnGt8gEsAWGLWSbCcrShDOTKT4LSg6fKcM5R1Hr8fUnN5IJHwb03CHsaw3W5ZPWcN
+         JJgCVemxzht3383bTfpWXMMXDgb3yp4YCtd37AYEOljGqPkHaH9djdPxq20laYy75plg
+         hGmdKKyPwy2ekvIzIMZwWlKmFWxuXChbYuYqqhwYIdx23wSmMWfj1fdTopPmdYe5DzUr
+         RV6qumEFyRT8gZBUwMgWTbcIXkPQlUbWXFQZVyTgFRlaR9kiVXCpLsa9x/pB9CD385SE
+         b8een99aJ3j0MM78pQwMds35DKvcVwpmXOVQcq2CSZR2igUrMY+M1TfurFBaS8xaPuAN
+         MdRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719398285; x=1720003085;
+        d=1e100.net; s=20230601; t=1719398323; x=1720003123;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KAP7Avo0NqErHhw/LgeqaI6OS2BfZZmGrKu2N8kUgqY=;
-        b=qYnuRZHYheuvzhsA/ZfALvxpPldAXNNe36t510pxo7q0gmqoTqrB/fhSvTIkPeiBzJ
-         gCLR1x+UX5CaPMW9GP5Km+0/lavYjsA7LjmUHeDNAEwIiseox6SJIoYof7DF5MXSiKBK
-         Ve4cvH6zK0seUrLmWykNiEruQGFTrzTeUOvk32PSjD59wb0vIlbKC0/L3rM5C9wbB1o3
-         PJ+jhbWOPiJgV3DMgNB9yPUuciOMUe5VEgYvbcaZNtD2y1a4J/hZbzLdATOiqu9acvSw
-         edhhhfsRDxjyC7P78jA649dFO0Jqkh+kAuhCSEP3155/TCSc8NJSxEzo9feL5WfcDatq
-         ZJUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUeBoeFt79rZ02Ti0PtZt5sgyI5GQXEp8jL7zMGCcFUGll2g2wugmaXg0Ubk7ULHgmbZ8mhFkgqZODwdECls7/UX4C2QOk9CCd2pyrBuYtX
-X-Gm-Message-State: AOJu0YypVy8zI9HWyoDTZPWMbaKSgC3YrqxCl5hP4np05eb6JMec2WDm
-	kPuN0q670+YXxnHj8TovNzhWl8oZ/1t+Av+7u05PXh4MVX2xkF1s5DPpDlYfMeassEdpNOp667l
-	aUSayXkZgV9avthehhDQSXKXpEJ3MfQorN6T4bg==
-X-Google-Smtp-Source: AGHT+IGzCEHmUW20SzJfj/AOkF92f/FKlba7gvSlxZWz6Yna1JEIXVmc39gid0pFCtGiZI+oDk6MEqv5XprFAgIE2Tg=
-X-Received: by 2002:a05:6512:3091:b0:52c:e54e:f84b with SMTP id
- 2adb3069b0e04-52ce54ef9fdmr6615691e87.14.1719398285525; Wed, 26 Jun 2024
- 03:38:05 -0700 (PDT)
+        bh=G9Hu0rSz9odo+/555uwylOWDqs0wLoPhDnYobZDypvk=;
+        b=SnI4uP3R0uvwC4HX0YBDn+i6TOWWKUnZK6NnmW/Wtehu+kLOqFbnlHosfekCvmHWwa
+         xyt6mQZO0C9Aj45IguO7uZNYukcn5VkBXkVt4VBo29RKURqtO8vFqQfbFrTqkWScLg9Y
+         ZCVbiUI7/fgSp+3zsBv076Iui6NCPDy2KpyKkKg/yzZSVHZtXjv4eFskTrEGgf6ny/07
+         FiwhPne4i1rgjaCG+XKPXk7J0UmGiNETueJ8OlNel+26U3OeQTJ4HYiVGR4BlqzdvRFe
+         0VLSPqKMb+MGYobZuWylvzwqreKcerIWiva+PDVqNwdzxKDFYaINFlkEpmA+dKpvA/yH
+         gO1A==
+X-Forwarded-Encrypted: i=1; AJvYcCXf/lYtuRpHN5m5kGRS0owFmXDCezo8JRr7RewsC3Fmf1LaSpf/I7vYl0CXzEr4oxHWogg/BP6YTtwlJcs9BPj7q5bpMb5fRHrfhnz27GdW
+X-Gm-Message-State: AOJu0YyvX2bP9CnkCM5BtdHLIAkFxx4v0WhZM0P+KWdkEu6jOoE3u6M1
+	BkO1NZsK0nUp+umkcpdNzDa5/pu9Wr9KC3fhOdj8d/FImOmMabVc8plC+3Mv1L9o0hlH2LwlrRX
+	+3MIH6XcMDkDHA4tKN/FdZVLa3qY5IY5fYliH5Z65W+TDeBUxTsg=
+X-Google-Smtp-Source: AGHT+IGeb9kRMk63OmPcq4hGusevLEvgTC/3rjFDSFhwI2qkWS4cL5PyLdwWxtexrTyhWm4WxjddDCl/NOIRPCwB5GU=
+X-Received: by 2002:ac2:5f09:0:b0:52c:8fe4:b153 with SMTP id
+ 2adb3069b0e04-52ce1839751mr5615327e87.32.1719398323287; Wed, 26 Jun 2024
+ 03:38:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d01818abd880bf435d1106a9a6cc11a7a8a3e661.1719125040.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <d01818abd880bf435d1106a9a6cc11a7a8a3e661.1719125040.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1719037737.git.christophe.jaillet@wanadoo.fr> <f9f65642331c9e40aaebb888589db043db80b7eb.1719037737.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <f9f65642331c9e40aaebb888589db043db80b7eb.1719037737.git.christophe.jaillet@wanadoo.fr>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 26 Jun 2024 12:37:53 +0200
-Message-ID: <CACRpkdZ-DOLV1ZHALCDKaUjj4HjwX_qLJ9GttKMvrRJ867q64Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] power: supply: samsung-sdi-battery: Constify
- struct power_supply_vbat_ri_table
+Date: Wed, 26 Jun 2024 12:38:32 +0200
+Message-ID: <CACRpkdbWMO__y+_xYkt0-h5gGTE67LVygwr8m0_Tt20HnD1+Bg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] power: supply: ab8500: Fix error handling when
+ calling iio_read_channel_processed()
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Sebastian Reichel <sre@kernel.org>, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: sre@kernel.org, jic23@kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 23, 2024 at 8:45=E2=80=AFAM Christophe JAILLET
+On Sat, Jun 22, 2024 at 9:05=E2=80=AFAM Christophe JAILLET
 <christophe.jaillet@wanadoo.fr> wrote:
 
-> 'struct power_supply_vbat_ri_table' are not modified in this driver.
+> The ab8500_charger_get_[ac|vbus]_[current|voltage]() functions should
+> return an error code on error.
 >
-> Constifying these structures moves some data to a read-only section, so
-> increase overall security.
+> Up to now, an un-initialized value is returned.
+> This makes the error handling of the callers un-reliable.
 >
-> In order to do it, some code also needs to be adjusted to this new const
-> qualifier.
+> Return the error code instead, to fix the issue.
 >
-> On a x86_64, with allmodconfig:
-> Before:
-> =3D=3D=3D=3D=3D=3D
-> $ size drivers/power/supply/samsung-sdi-battery.o
->    text    data     bss     dec     hex filename
->     955    7664       0    8619    21ab drivers/power/supply/samsung-sdi-=
-battery.o
->
-> After:
-> =3D=3D=3D=3D=3D
-> $ size drivers/power/supply/samsung-sdi-battery.o
->    text    data     bss     dec     hex filename
->    4055    4584       0    8639    21bf drivers/power/supply/samsung-sdi-=
-battery.o
->
+> Fixes: 97ab78bac5d0 ("power: supply: ab8500_charger: Convert to IIO ADC")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Really neat!
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
