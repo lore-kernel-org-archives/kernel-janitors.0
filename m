@@ -1,48 +1,48 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBACB28E8;
-	Wed, 26 Jun 2024 04:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F9422089;
+	Wed, 26 Jun 2024 05:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719375694; cv=none; b=VEXeXHab6z/V/NonHkb4JruTFMIN2mNANdQyAhVLE1t0cDkXIT8B5PxL8ACvDxZF0nU03UvbLTDePNx4jFcVOR+XoygjLhdNJNsBCLKBQYu4RmXH+C5TJTN8YkSHWU8oiXFpWCpoGLqBJXBPV6CwrSHOrRhuWKsjoYAEgMAMjQI=
+	t=1719378964; cv=none; b=rj/uHApq2mYe8/7OXpi9N/320uz6g344dCxT4GjwpIvKk7cPQ2pu4a/MgA/RVNHxs771L9x8TcBBanARqCrkLdftz2RYqbCyzmiCtQejkPw6hyiu9Oc6x5MSh+J+voLQi+N1v0kMPt7fwMdbySdr/IV7nPcAllXIG5jEa/oZuWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719375694; c=relaxed/simple;
-	bh=QrGzaWGF/Pxgx7QLBK4bQHhV3RoAHEsagB6y31SWHXw=;
+	s=arc-20240116; t=1719378964; c=relaxed/simple;
+	bh=4AsFFJaLigvJRLisQB4Y8xT/h2Zm9d01tBPjfPxCX2o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qvYQ87ND7Yomx9968T6uRWuGYOT9ik+Ej2NNsb68oRztNPweR6xMoou7UCaIuBYr7yzrG+25ZdyViAQPZy8Uo0Aon3Gfzp4f4lwkA0Xv0ppvNWp4Ud3UeFkmcZ8279TAJd5SU2o9QYSbzJF6n962jHQBLY/T1y5scXn4DKuecMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XkHXDxvj; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:Content-Type; b=bAKPexsg81SnwvLhnUrYao0QD83THwWuN0BAjhse7NKqVMFMBNiqIBR/sqaR5lG5UmPENDAYlxBxU14xBNC9xhphnVYoQiq5V5yonXBObkhHwNyPZArZDgiKdwtK9sNgqD6Q7s1qIlvp76MpPmfurGJNu7Q5gWxsiu4wI6E4TAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QpVxPWum; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XkHXDxvj"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PIQCXv018135;
-	Wed, 26 Jun 2024 04:21:28 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QpVxPWum"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PHiafG009016;
+	Wed, 26 Jun 2024 05:15:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	aPevAHX0eiKoSN3NfsCn/+HoljXZKFpW+pVLwVO2LGU=; b=XkHXDxvjELRpohOy
-	vZHb8k9a481yfsmC0o+faWMBSS8x9ZGl6/j9z4UzAMAIyGo4z3PG+dy+A1GyPcEG
-	I4r6mqMrdqO14Wea/lwhQ00FJshuwsJVfOgbcu+f/cji7vlA1zZul1MW3NdjtAhC
-	XVxngHavFeobOHkzfliNU22GOgwdlmkd3xPoGot2KT052ktqQEri5b+Jj6oxBhQY
-	PHFPMq+24S5910fKZA+ZQcpdZBnBQ7AC0FmXzw4AQgkgGlICf6tFUblrwJ8t6KOG
-	uOXZTDCjFs1NA+jIRdXOVUsrVB1UdtclDOGQP12DCIbC30CGEibcavmUb6vjbGO4
-	+CqYiA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnm6r5hw-1
+	NwTtCl3iJT3YitwFW8p6dlka2tHgHpGQkCLhbInxWTk=; b=QpVxPWumFllrEba5
+	J63sQKI0Ckj8s1X8i5XaPhdYpOTUaN5qE14LOu3v6MNhPSwBZ0njKirkwEd9tib5
+	M3kyfkbC1/ZDxvCIG+kaxrGjWDFabLeMJoE1dNEn3EtSpxi8M3Hv/yml0580TELM
+	rsH2m7RVEb17ACqKPYtueOK+bkNnXyveuei9KWXYV1bp+M5RkLBM8jmIPXG9a4oF
+	t+r/OECUQiGka0AR+dTct6+/4s97mWIYtu0TC9woqvKfLQMsAeMw0t2J5euEvkMG
+	oFt4fAtiW/5QrqOcVhc5tErygYUz81WBugVJ8L+nwXrkhwTwRIRj2odaIe0BTVN8
+	l5r0lA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqcegjk6-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 04:21:28 +0000 (GMT)
+	Wed, 26 Jun 2024 05:15:32 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45Q4LRqJ030757
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45Q5FN3J014103
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 04:21:27 GMT
+	Wed, 26 Jun 2024 05:15:23 GMT
 Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Jun
- 2024 21:21:26 -0700
-Message-ID: <f09b56c7-ad2f-472a-896e-466261b39ce7@quicinc.com>
-Date: Tue, 25 Jun 2024 21:21:25 -0700
+ 2024 22:15:22 -0700
+Message-ID: <4d1276a3-ef4a-4c84-8d09-d1613f311a28@quicinc.com>
+Date: Tue, 25 Jun 2024 22:15:21 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,98 +50,135 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PM/devfreq: governor: add missing MODULE_DESCRIPTION()
- macros
+Subject: Re: [PATCH] fsi: add missing MODULE_DESCRIPTION() macros
 Content-Language: en-US
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park
-	<kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240605-md-drivers-devfreq-v1-1-d01ae91b907e@quicinc.com>
+To: Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>,
+        Alistar Popple
+	<alistair@popple.id.au>,
+        Eddie James <eajames@linux.ibm.com>,
+        Andrew Jeffery
+	<andrew@codeconstruct.com.au>
+CC: <linux-fsi@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-aspeed@lists.ozlabs.org>, <kernel-janitors@vger.kernel.org>
+References: <20240605-md-drivers-fsi-v1-1-fefc82d81b12@quicinc.com>
 From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240605-md-drivers-devfreq-v1-1-d01ae91b907e@quicinc.com>
+In-Reply-To: <20240605-md-drivers-fsi-v1-1-fefc82d81b12@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SDdyq6rabC7vapdYTZ0wJnK04xcfAQiO
-X-Proofpoint-ORIG-GUID: SDdyq6rabC7vapdYTZ0wJnK04xcfAQiO
+X-Proofpoint-GUID: 5tURQ12dorLWZ9yS2q27DoMKcY5u3HyZ
+X-Proofpoint-ORIG-GUID: 5tURQ12dorLWZ9yS2q27DoMKcY5u3HyZ
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_02,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
- mlxscore=0 malwarescore=0 mlxlogscore=999 lowpriorityscore=0
- impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406260032
+ definitions=2024-06-26_03,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1011
+ mlxscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 spamscore=0
+ suspectscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406260039
 
-On 6/5/2024 11:18 AM, Jeff Johnson wrote:
+On 6/5/2024 3:39 PM, Jeff Johnson wrote:
 > make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_simpleondemand.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_performance.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_powersave.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-core.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-hub.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-aspeed.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-gpio.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-ast-cf.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-scom.o
 > 
-> Add all missing invocations of the MODULE_DESCRIPTION() macro.
+> Add the missing invocations of the MODULE_DESCRIPTION() macro, and fix the
+> copy/paste of the module description comment in fsi-master-ast-cf.c.
 > 
 > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
->  drivers/devfreq/governor_performance.c    | 1 +
->  drivers/devfreq/governor_powersave.c      | 1 +
->  drivers/devfreq/governor_simpleondemand.c | 1 +
->  drivers/devfreq/governor_userspace.c      | 1 +
->  4 files changed, 4 insertions(+)
+>  drivers/fsi/fsi-core.c          | 1 +
+>  drivers/fsi/fsi-master-aspeed.c | 1 +
+>  drivers/fsi/fsi-master-ast-cf.c | 3 ++-
+>  drivers/fsi/fsi-master-gpio.c   | 1 +
+>  drivers/fsi/fsi-master-hub.c    | 1 +
+>  drivers/fsi/fsi-scom.c          | 1 +
+>  6 files changed, 7 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/devfreq/governor_performance.c b/drivers/devfreq/governor_performance.c
-> index 5dbc1e56ec08..2e4e981446fa 100644
-> --- a/drivers/devfreq/governor_performance.c
-> +++ b/drivers/devfreq/governor_performance.c
-> @@ -58,4 +58,5 @@ static void __exit devfreq_performance_exit(void)
->  	return;
+> diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
+> index 097d5a780264..716a924269ee 100644
+> --- a/drivers/fsi/fsi-core.c
+> +++ b/drivers/fsi/fsi-core.c
+> @@ -1444,5 +1444,6 @@ static void fsi_exit(void)
 >  }
->  module_exit(devfreq_performance_exit);
-> +MODULE_DESCRIPTION("DEVFREQ Performance governor");
+>  module_exit(fsi_exit);
+>  module_param(discard_errors, int, 0664);
+> +MODULE_DESCRIPTION("FSI core driver");
 >  MODULE_LICENSE("GPL");
-> diff --git a/drivers/devfreq/governor_powersave.c b/drivers/devfreq/governor_powersave.c
-> index 4746af2435b0..f059e8814804 100644
-> --- a/drivers/devfreq/governor_powersave.c
-> +++ b/drivers/devfreq/governor_powersave.c
-> @@ -58,4 +58,5 @@ static void __exit devfreq_powersave_exit(void)
->  	return;
->  }
->  module_exit(devfreq_powersave_exit);
-> +MODULE_DESCRIPTION("DEVFREQ Powersave governor");
+>  MODULE_PARM_DESC(discard_errors, "Don't invoke error handling on bus accesses");
+> diff --git a/drivers/fsi/fsi-master-aspeed.c b/drivers/fsi/fsi-master-aspeed.c
+> index f0a19cd451a0..b454587790a2 100644
+> --- a/drivers/fsi/fsi-master-aspeed.c
+> +++ b/drivers/fsi/fsi-master-aspeed.c
+> @@ -672,4 +672,5 @@ static struct platform_driver fsi_master_aspeed_driver = {
+>  };
+>  
+>  module_platform_driver(fsi_master_aspeed_driver);
+> +MODULE_DESCRIPTION("FSI master driver for AST2600");
 >  MODULE_LICENSE("GPL");
-> diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
-> index d57b82a2b570..c23435736367 100644
-> --- a/drivers/devfreq/governor_simpleondemand.c
-> +++ b/drivers/devfreq/governor_simpleondemand.c
-> @@ -140,4 +140,5 @@ static void __exit devfreq_simple_ondemand_exit(void)
->  	return;
->  }
->  module_exit(devfreq_simple_ondemand_exit);
-> +MODULE_DESCRIPTION("DEVFREQ Simple On-demand governor");
+> diff --git a/drivers/fsi/fsi-master-ast-cf.c b/drivers/fsi/fsi-master-ast-cf.c
+> index 812dfa9a9140..85096559dda3 100644
+> --- a/drivers/fsi/fsi-master-ast-cf.c
+> +++ b/drivers/fsi/fsi-master-ast-cf.c
+> @@ -1,7 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0+
+>  // Copyright 2018 IBM Corp
+>  /*
+> - * A FSI master controller, using a simple GPIO bit-banging interface
+> + * A FSI master based on Aspeed ColdFire coprocessor
+>   */
+>  
+>  #include <linux/crc4.h>
+> @@ -1440,5 +1440,6 @@ static struct platform_driver fsi_master_acf = {
+>  };
+>  
+>  module_platform_driver(fsi_master_acf);
+> +MODULE_DESCRIPTION("A FSI master based on Aspeed ColdFire coprocessor");
 >  MODULE_LICENSE("GPL");
-> diff --git a/drivers/devfreq/governor_userspace.c b/drivers/devfreq/governor_userspace.c
-> index d69672ccacc4..d1aa6806b683 100644
-> --- a/drivers/devfreq/governor_userspace.c
-> +++ b/drivers/devfreq/governor_userspace.c
-> @@ -153,4 +153,5 @@ static void __exit devfreq_userspace_exit(void)
->  	return;
->  }
->  module_exit(devfreq_userspace_exit);
-> +MODULE_DESCRIPTION("DEVFREQ Userspace governor");
+>  MODULE_FIRMWARE(FW_FILE_NAME);
+> diff --git a/drivers/fsi/fsi-master-gpio.c b/drivers/fsi/fsi-master-gpio.c
+> index ed03da4f2447..d32dcc98e85b 100644
+> --- a/drivers/fsi/fsi-master-gpio.c
+> +++ b/drivers/fsi/fsi-master-gpio.c
+> @@ -894,4 +894,5 @@ static struct platform_driver fsi_master_gpio_driver = {
+>  };
+>  
+>  module_platform_driver(fsi_master_gpio_driver);
+> +MODULE_DESCRIPTION("A FSI master controller, using a simple GPIO bit-banging interface");
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/fsi/fsi-master-hub.c b/drivers/fsi/fsi-master-hub.c
+> index 6d8b6e8854e5..6568fed7db3c 100644
+> --- a/drivers/fsi/fsi-master-hub.c
+> +++ b/drivers/fsi/fsi-master-hub.c
+> @@ -295,4 +295,5 @@ static struct fsi_driver hub_master_driver = {
+>  };
+>  
+>  module_fsi_driver(hub_master_driver);
+> +MODULE_DESCRIPTION("FSI hub master driver");
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/fsi/fsi-scom.c b/drivers/fsi/fsi-scom.c
+> index 61dbda9dbe2b..411ddc018cd8 100644
+> --- a/drivers/fsi/fsi-scom.c
+> +++ b/drivers/fsi/fsi-scom.c
+> @@ -625,4 +625,5 @@ static void scom_exit(void)
+>  
+>  module_init(scom_init);
+>  module_exit(scom_exit);
+> +MODULE_DESCRIPTION("SCOM FSI Client device driver");
 >  MODULE_LICENSE("GPL");
 > 
 > ---
-> base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-> change-id: 20240605-md-drivers-devfreq-42b19b2594a1
+> base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+> change-id: 20240605-md-drivers-fsi-0a34d82a85da
 > 
-
 Following up to see if anything else is needed from me.
 Hoping to see this in linux-next :)
 
