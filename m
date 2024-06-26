@@ -1,211 +1,100 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EFE15ECC0
-	for <kernel-janitors@vger.kernel.org>; Wed, 26 Jun 2024 07:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B398160796;
+	Wed, 26 Jun 2024 08:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719388157; cv=none; b=SwOEu3ZuDrS1HVJX6TQBLLNiH+W94Fu+zJkTcldDbCwkIloZnQzukp9X+PxSN2zu9hKkezStREiA8HJuHVDMZUSnoCjnxh6yDxAFJmh3y6swNBK2uEsvQImkq6mdbD7ZbE/pkJZwbmmnyXT6ykXzrS/hak3yGIxDL3GaRqYrICY=
+	t=1719392210; cv=none; b=b1AIGXK7WeAd/jpFGnIi3sB3ImMNQFkt6AIxn91nMPw02plotc2emDTILNZxH5KDB8Jv5cgzEVx0t10EdDjXZIQy0iJww0rli4/jGguiFOO3ywdKRFTc7ZB6dMrKEzsX78CToO1184cixYt08ViR6Wb8g77RMm09Crrf3AspkMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719388157; c=relaxed/simple;
-	bh=9ApuSxps7IxuDfoDtOKVKXsCtIlHbfe/9watfwFZ+LI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=G65wqcYbRVsYflcVsV9sfgPzxLXZYWM0VLW3IFKT4/KcfGusMHDN2YSWUY+IaSrWjtKPWQeHv8oHBaGZnN8CSMRGxjiwbeI9YQvs5yem3/ARCvukpkidn6sHf+QMVL8zXQDJpMW2n/w+zrRa9dwjcb+VeWTBr4kzBEsRw1b4goU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sm2RBKYg; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1719392210; c=relaxed/simple;
+	bh=dqN7RMr1ENoXwQSJOuRDf7RcOZcpC3x1Eq9p6j1DL3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rb5VKWigkWhSBdt58GPrmxWFLtfAeju+1l+qXCXDOa2Ru8w0dzkry8FQzdbEL3BJGVsJC+W8cE0K2rgGBXLbtLoMo7jVQk/gkZ1YCZnH3LszOGSOdmH4tZa+rx65v80yew0W38WntruM7XtwzRdJyYElyhMvHCGhfulI/N0wzO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=UtBMb89y; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sm2RBKYg"
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240626074911epoutp01a58d580b1ebc69ce6297c4d2ed094ee6~cfmn40_LS3071230712epoutp01Y
-	for <kernel-janitors@vger.kernel.org>; Wed, 26 Jun 2024 07:49:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240626074911epoutp01a58d580b1ebc69ce6297c4d2ed094ee6~cfmn40_LS3071230712epoutp01Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1719388151;
-	bh=3yWXZ7SGSEfCN6yXGdQIRnQOcuLZUOlDTlk00sawPhY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=sm2RBKYgsizf0S8sjDJFRWyuSgadqiKi3aWa44mJYkS3JCJT4gmYcn3SeQl0+pE7p
-	 8mUzZI4EhELEYbasuf2xwL2NKsaXp4kfpEt6jE0TdQLpZNT0PH0UHG+kab3/LQl3wy
-	 RR7i79L/v+HBNNL7m/ifG0bnuQIJ2SG0A32+sEMo=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20240626074910epcas1p3820e8d82021bd2c5fb2494724ef51a83~cfmnMUEBK0213302133epcas1p3F;
-	Wed, 26 Jun 2024 07:49:10 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.36.145]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4W8DNj4WLSz4x9QD; Wed, 26 Jun
-	2024 07:49:09 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-	epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D1.BE.34823.5F7CB766; Wed, 26 Jun 2024 16:49:09 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240626074909epcas1p4dddc9ee5b42c3df1fa5bec0ea3a9a4a7~cfml7FZ2f0214302143epcas1p4C;
-	Wed, 26 Jun 2024 07:49:09 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240626074909epsmtrp2f12783d30139157c57ee56e7be988d56~cfml6U5es2588525885epsmtrp2z;
-	Wed, 26 Jun 2024 07:49:09 +0000 (GMT)
-X-AuditID: b6c32a35-e8dff70000018807-88-667bc7f5e7ab
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	53.8A.19057.5F7CB766; Wed, 26 Jun 2024 16:49:09 +0900 (KST)
-Received: from cw00choi03 (unknown [10.113.111.106]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240626074908epsmtip16071f43ee4c5ad95d55be7adaf8f574a~cfmlqI4fI1279612796epsmtip1G;
-	Wed, 26 Jun 2024 07:49:08 +0000 (GMT)
-From: "Chanwoo Choi" <cw00.choi@samsung.com>
-To: "'Jeff Johnson'" <quic_jjohnson@quicinc.com>, "'MyungJoo Ham'"
-	<myungjoo.ham@samsung.com>, "'Kyungmin Park'" <kyungmin.park@samsung.com>
-Cc: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<kernel-janitors@vger.kernel.org>
-In-Reply-To: <f09b56c7-ad2f-472a-896e-466261b39ce7@quicinc.com>
-Subject: RE: [PATCH] PM/devfreq: governor: add missing MODULE_DESCRIPTION()
- macros
-Date: Wed, 26 Jun 2024 16:49:08 +0900
-Message-ID: <001501dac79d$53cdf390$fb69dab0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="UtBMb89y"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719392168; x=1719996968; i=markus.elfring@web.de;
+	bh=uHpBbe5Y1ciXIOpkMuiiWV5X9R8Qj10UQWwEFWd/0kc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=UtBMb89yxkN/4fE8WTQmaHr1dsRFCz7YlpxKHXzi2hhw87EZD0QXvHczGoC8zK4C
+	 bxs46Sx5ME/30TY1yXnx+GcDfBczARqfuq9n0tEbyeP9bjUuzSyhlkqA+zgxyNmKV
+	 hfINLFpKAcaA9arKRjXzuoHhFVd/JQQSjDbjFcy+QPxTNAGV6Tr+jSWK+01Vl8q5y
+	 aBGGij92NgG7FWoSlpwutJHawlqIr5hv621j6s5SmNC3b2Y0UzRWajL3kB50o2/W9
+	 j8bvh+dtxuN9TdbbNO6WhvKysawYc2TMuBeMnhba9RKQg99wja4JwPGFwQxAg9XCk
+	 2A2DwGsVEei87pFdYQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MODiN-1rxqFd2O8P-00V3Tx; Wed, 26
+ Jun 2024 10:56:08 +0200
+Message-ID: <95612a56-63ee-4ba8-beaa-4b773ccca5e8@web.de>
+Date: Wed, 26 Jun 2024 10:55:38 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: ko
-Thread-Index: AQJ1vcgjbNwdtN0YPI7qXTPUbW8f+AH8kPSiAnbMmY+wgCOJMA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgk+LIzCtJLcpLzFFi42LZdljTQPfr8eo0g32PlSy23pK2ONv0ht3i
-	8q45bBafe48wWtxuXMFm0bjlLqsDm8fEPXUefVtWMXp83iQXwByVbZORmpiSWqSQmpecn5KZ
-	l26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDtFVJoSwxpxQoFJBYXKykb2dTlF9a
-	kqqQkV9cYquUWpCSU2BaoFecmFtcmpeul5daYmVoYGBkClSYkJ0xd7FXwT3pih2PZ7I1MJ4R
-	72Lk5JAQMJG48fw8YxcjF4eQwA5Gif9PN0I5nxglPv+fxQThfGOUmN81mQmmZdavjewQib2M
-	Eqtmr4Cqesko8azzGVCGg4NNQEdiwY9QkLiIQB+jxNtJZ1hBupkFkiU+txwEm8QpYC8x7dAV
-	FhBbWCBE4tbZp4wgNouAqsSFg/vB6nkFLCW2tH1nhLAFJU7OfMICMUdeYvvbOcwQFylI/Hy6
-	DGq+iMTszjawuIiAk8TECxeYQY6QEPjLLvF2zSZ2iAYXiYnLNrFC2MISr45vgYpLSXx+t5cN
-	omEyo8TF16+hutczSmxc2QK1zlhi/1JQYHAArdOUWL9LH2Izn8S7rz2sIGEJAV6JjjYhiGpl
-	icsP7kKDTlJicXsnG4TtIXFm8UrmCYyKs5D8NgvJb7OQ/DMLYdkCRpZVjGKpBcW56anFhgWG
-	8OhOzs/dxAhOklqmOxgnvv2gd4iRiYPxEKMEB7OSCG9oSVWaEG9KYmVValF+fFFpTmrxIUZT
-	YGhPZJYSTc4Hpum8knhDE0sDEzMjYxMLQzNDJXHeM1fKUoUE0hNLUrNTUwtSi2D6mDg4pRqY
-	0goXiSre9DhWnn16hlJnHtPxHYJbFkZwXq0IWbkl31OQudpmz1Lhuf9z3zxLdch60mYaq2C3
-	6epkaXXG1y8UQrk2rP3jLuPIFNi4Zt1VjteZ/zskJWeH1+5YVciaEiGbXLgyM5B5i6i0HtPH
-	i6GCLqI39PfPjTpvUJ4oeZPzqmzU+9aLDYHxT7aGXSw8f2/5d8ms6Gs7DRrnnfXut55/JNxh
-	c4gQ66kVHc8Mpnla1l478/j2o3LblQLC8fz5ttalH75tfvi3d/6qu0+KrKb3vGl6Xduc6z45
-	KuvcSrlL7sfXK73+aqbhlp245nuAzGvzGV8mhEy/UFM498We9tgHiXYbbzRUO7Z63K+av2+R
-	EktxRqKhFnNRcSIARRpnDBsEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPLMWRmVeSWpSXmKPExsWy7bCSnO7X49VpBq++slpsvSVtcbbpDbvF
-	5V1z2Cw+9x5htLjduILNonHLXVYHNo+Je+o8+rasYvT4vEkugDmKyyYlNSezLLVI3y6BK2Pu
-	Yq+Ce9IVOx7PZGtgPCPexcjJISFgIjHr10b2LkYuDiGB3YwSH6+dZIZISEpMu3gUyOYAsoUl
-	Dh8uhqh5ziixd8cdNpA4m4COxIIfoSDlIgITGCVOH4gFsZkFUiWute9nhqg/wyhxfd9LVpAE
-	p4C9xLRDV1hAeoUFgiRmnTUHCbMIqEpcOLgfrIRXwFJiS9t3RghbUOLkzCcsEDO1JXoftjJC
-	2PIS29/OgTpTQeLn02WsEHERidmdbcwQ9zhJTLxwgXkCo/AsJKNmIRk1C8moWUjaFzCyrGKU
-	TC0ozk3PLTYsMMpLLdcrTswtLs1L10vOz93ECI4TLa0djHtWfdA7xMjEwXiIUYKDWUmEN7Sk
-	Kk2INyWxsiq1KD++qDQntfgQozQHi5I477fXvSlCAumJJanZqakFqUUwWSYOTqkGphlnerOy
-	chv6dFWvGZasMg1brZL2pt3M9fEjhbKIJX/4Aq9y+smkmIQunvxx5SFGN3V9gzMxCucdeFfM
-	N1vfd8v9wruUE4zLjWcz7bv7LEev8ssEw4tiO6r2iB584XN7SxLv84Xx3modwvaWne/2NcbP
-	YmFku/Y7xM1+7o7Dl+YXXv3t01Zt+fae0123lbsSzudN9OzQdtVMylhdMafv1l+J7lyJs6ya
-	6tuXKx9zfeA/Ufr/qVceyc0fr0/hWnX+wqqT1RN2cz/0XexjELn8X4TlEsdZWx22X5il8unV
-	uQ7F1uzoPPPndvyvintL7671efzkwEfeV2d/HZ8SWHC86JRQ+5ecDf9Pcnjqft8U9U+JpTgj
-	0VCLuag4EQDYeyqvAgMAAA==
-X-CMS-MailID: 20240626074909epcas1p4dddc9ee5b42c3df1fa5bec0ea3a9a4a7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240626042133epcas1p3f68b406443e993411c4e01072ed63d5f
-References: <20240605-md-drivers-devfreq-v1-1-d01ae91b907e@quicinc.com>
-	<CGME20240626042133epcas1p3f68b406443e993411c4e01072ed63d5f@epcas1p3.samsung.com>
-	<f09b56c7-ad2f-472a-896e-466261b39ce7@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] usb: Patch review processes?
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-aspeed@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org, Ma Ke <make24@iscas.ac.cn>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>,
+ Julia Lawall <julia.lawall@inria.fr>, Neal Liu <neal_liu@aspeedtech.com>
+References: <20240625022306.2568122-1-make24@iscas.ac.cn>
+ <edeaa699-7cfe-44ed-abde-7cf3d3efe3bf@web.de>
+ <2024062556-ladder-canister-1ab1@gregkh>
+ <ff2aaf0d-5456-43d1-af52-78986b3401f9@web.de>
+ <2024062532-strep-president-44d7@gregkh>
+ <5fa430f5-3e18-4c20-93d4-6733afd6bdcf@web.de>
+ <2024062553-koala-granddad-50f1@gregkh>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <2024062553-koala-granddad-50f1@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:01Zgw4SpZxal5aX+cdD8nOTCspwL5KOnoabCgPJR2tnzNKav2ey
+ kY81u5ra8MXgMOxtiZZXjPFI8MKtKPtnTNvanxr3aMrubDK53O5Q6lSYjFBWX1oD6o/QsQ/
+ ftgq9FJV0X2wtZ5m2KTV2zcl4yJrdgwpm4E1Enl7Cdz0yfBdQO2N2lhvZFHzDtIdhINqskr
+ POn2J1dxCNUh+sBbgoPPg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:gfrLLhDtPD0=;UlbLOaeVxgTqqoy5hNUBJ8gBGCp
+ vnSvPRqj7AtVm2SCQt8tVy4oNIw3HPJfJdNp6DTZsXaQCyDzJHJtJkHrl4lNR2YrTg2gHLJaj
+ VBjz2dCD8QXbthggUT1rffygNJm8L6SsgL7eBQkJ1OXI2IJfJ9vP39oJHNQZB+B7yO+KzSPuD
+ 70Jd4fp/wP+9Sw5zHI3Eb2ZNo28MXO+BTRQVXz2qoUCEsmBVXq75RSCMCHCNgRGQtpOqA+cb3
+ XaMn69X30IdlbPA3JaCUb/2Wa4XVNFKaAi6yJytX6XjRH4gZlZVMTmw1QQnx5D2v8vbBl0RLb
+ +IAiqXDSTXHNoOPDS/kjEfHvziRfKdJETXzkfla/K43mRNADraVPhMoU7EFql/KJ4ceuB7W0K
+ Wob7idlraKRvfThiNUA6s0vfh8kttP3KcfuGWDpcgUbtds1RY+8L8VXYKuNd0DXG6ycHBv6CM
+ yWag7wrDclPLugGnlfkAcpm4LhvkyyEHqtEFpEkrwf0Dpg3OFX1SBuiomX2Ig3HdMjlgKzGlm
+ dLWTn7jO1BQMq34P8fqTfKxXKkpbELQxqZcgSGCVq5c11n6jW1JKYeapPN14783isi4ldaW89
+ xJ616XTleXAi0PBWoJVEvJYWmLtan7rz9MVNSSEuZpukcjjrsC09riSDH/W8L6dz9h9OFR8rz
+ CuqVYp8bnvdrqSMvL3mNI+4DHfZgqsRc6KtYKm8YVhsbZOXztXzgk7cFl7apeGr0EjfN7t/NH
+ sVZ0X49TPfZuHqnxoasaTFvlXG5QHrV/X4YIDTpNG4oWME+B1a1WQ/m42mp9okc4jdDXK+Zxw
+ CTCNxvLaXxOY5R335wGi0XnPLfkCLULuEZW7YkSp8IqV0=
 
+>> You indicated concerns according to patch review processes,
+>> didn't you?
+>>
+>> See also:
+>> * Patch submission notes
+>>   https://elixir.bootlin.com/linux/v6.10-rc5/source/Documentation/proce=
+ss/maintainer-tip.rst#L100
+>
+> This is not the tip tree.
 
+Would you eventually like to support the creation and maintenance of a doc=
+ument
+like =E2=80=9CDocumentation/process/maintainer-usb.rst=E2=80=9D?
 
-> -----Original Message-----
-> From: Jeff Johnson <quic_jjohnson@quicinc.com>
-> Sent: Wednesday, June 26, 2024 1:21 PM
-> To: MyungJoo Ham <myungjoo.ham@samsung.com>; Kyungmin Park
-> <kyungmin.park@samsung.com>; Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: linux-pm@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-
-> janitors@vger.kernel.org
-> Subject: Re: [PATCH] PM/devfreq: governor: add missing MODULE_DESCRIPTION()
-> macros
-> 
-> On 6/5/2024 11:18 AM, Jeff Johnson wrote:
-> > make allmodconfig && make W=1 C=1 reports:
-> > WARNING: modpost: missing MODULE_DESCRIPTION() in
-> drivers/devfreq/governor_simpleondemand.o
-> > WARNING: modpost: missing MODULE_DESCRIPTION() in
-> drivers/devfreq/governor_performance.o
-> > WARNING: modpost: missing MODULE_DESCRIPTION() in
-> drivers/devfreq/governor_powersave.o
-> > WARNING: modpost: missing MODULE_DESCRIPTION() in
-> drivers/devfreq/governor_userspace.o
-> >
-> > Add all missing invocations of the MODULE_DESCRIPTION() macro.
-> >
-> > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> > ---
-> >  drivers/devfreq/governor_performance.c    | 1 +
-> >  drivers/devfreq/governor_powersave.c      | 1 +
-> >  drivers/devfreq/governor_simpleondemand.c | 1 +
-> >  drivers/devfreq/governor_userspace.c      | 1 +
-> >  4 files changed, 4 insertions(+)
-> >
-> > diff --git a/drivers/devfreq/governor_performance.c
-> b/drivers/devfreq/governor_performance.c
-> > index 5dbc1e56ec08..2e4e981446fa 100644
-> > --- a/drivers/devfreq/governor_performance.c
-> > +++ b/drivers/devfreq/governor_performance.c
-> > @@ -58,4 +58,5 @@ static void __exit devfreq_performance_exit(void)
-> >  	return;
-> >  }
-> >  module_exit(devfreq_performance_exit);
-> > +MODULE_DESCRIPTION("DEVFREQ Performance governor");
-> >  MODULE_LICENSE("GPL");
-> > diff --git a/drivers/devfreq/governor_powersave.c
-> b/drivers/devfreq/governor_powersave.c
-> > index 4746af2435b0..f059e8814804 100644
-> > --- a/drivers/devfreq/governor_powersave.c
-> > +++ b/drivers/devfreq/governor_powersave.c
-> > @@ -58,4 +58,5 @@ static void __exit devfreq_powersave_exit(void)
-> >  	return;
-> >  }
-> >  module_exit(devfreq_powersave_exit);
-> > +MODULE_DESCRIPTION("DEVFREQ Powersave governor");
-> >  MODULE_LICENSE("GPL");
-> > diff --git a/drivers/devfreq/governor_simpleondemand.c
-> b/drivers/devfreq/governor_simpleondemand.c
-> > index d57b82a2b570..c23435736367 100644
-> > --- a/drivers/devfreq/governor_simpleondemand.c
-> > +++ b/drivers/devfreq/governor_simpleondemand.c
-> > @@ -140,4 +140,5 @@ static void __exit devfreq_simple_ondemand_exit(void)
-> >  	return;
-> >  }
-> >  module_exit(devfreq_simple_ondemand_exit);
-> > +MODULE_DESCRIPTION("DEVFREQ Simple On-demand governor");
-> >  MODULE_LICENSE("GPL");
-> > diff --git a/drivers/devfreq/governor_userspace.c
-> b/drivers/devfreq/governor_userspace.c
-> > index d69672ccacc4..d1aa6806b683 100644
-> > --- a/drivers/devfreq/governor_userspace.c
-> > +++ b/drivers/devfreq/governor_userspace.c
-> > @@ -153,4 +153,5 @@ static void __exit devfreq_userspace_exit(void)
-> >  	return;
-> >  }
-> >  module_exit(devfreq_userspace_exit);
-> > +MODULE_DESCRIPTION("DEVFREQ Userspace governor");
-> >  MODULE_LICENSE("GPL");
-> >
-> > ---
-> > base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-> > change-id: 20240605-md-drivers-devfreq-42b19b2594a1
-> >
-> 
-> Following up to see if anything else is needed from me.
-> Hoping to see this in linux-next :)
-> 
-> /jeff
-
-I'm sorry for late reply. I applied it.
-
-Thanks,
-Chanwoo Choi
-
+Regards,
+Markus
