@@ -1,185 +1,211 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F9422089;
-	Wed, 26 Jun 2024 05:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EFE15ECC0
+	for <kernel-janitors@vger.kernel.org>; Wed, 26 Jun 2024 07:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719378964; cv=none; b=rj/uHApq2mYe8/7OXpi9N/320uz6g344dCxT4GjwpIvKk7cPQ2pu4a/MgA/RVNHxs771L9x8TcBBanARqCrkLdftz2RYqbCyzmiCtQejkPw6hyiu9Oc6x5MSh+J+voLQi+N1v0kMPt7fwMdbySdr/IV7nPcAllXIG5jEa/oZuWs=
+	t=1719388157; cv=none; b=SwOEu3ZuDrS1HVJX6TQBLLNiH+W94Fu+zJkTcldDbCwkIloZnQzukp9X+PxSN2zu9hKkezStREiA8HJuHVDMZUSnoCjnxh6yDxAFJmh3y6swNBK2uEsvQImkq6mdbD7ZbE/pkJZwbmmnyXT6ykXzrS/hak3yGIxDL3GaRqYrICY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719378964; c=relaxed/simple;
-	bh=4AsFFJaLigvJRLisQB4Y8xT/h2Zm9d01tBPjfPxCX2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bAKPexsg81SnwvLhnUrYao0QD83THwWuN0BAjhse7NKqVMFMBNiqIBR/sqaR5lG5UmPENDAYlxBxU14xBNC9xhphnVYoQiq5V5yonXBObkhHwNyPZArZDgiKdwtK9sNgqD6Q7s1qIlvp76MpPmfurGJNu7Q5gWxsiu4wI6E4TAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QpVxPWum; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1719388157; c=relaxed/simple;
+	bh=9ApuSxps7IxuDfoDtOKVKXsCtIlHbfe/9watfwFZ+LI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=G65wqcYbRVsYflcVsV9sfgPzxLXZYWM0VLW3IFKT4/KcfGusMHDN2YSWUY+IaSrWjtKPWQeHv8oHBaGZnN8CSMRGxjiwbeI9YQvs5yem3/ARCvukpkidn6sHf+QMVL8zXQDJpMW2n/w+zrRa9dwjcb+VeWTBr4kzBEsRw1b4goU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sm2RBKYg; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QpVxPWum"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PHiafG009016;
-	Wed, 26 Jun 2024 05:15:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NwTtCl3iJT3YitwFW8p6dlka2tHgHpGQkCLhbInxWTk=; b=QpVxPWumFllrEba5
-	J63sQKI0Ckj8s1X8i5XaPhdYpOTUaN5qE14LOu3v6MNhPSwBZ0njKirkwEd9tib5
-	M3kyfkbC1/ZDxvCIG+kaxrGjWDFabLeMJoE1dNEn3EtSpxi8M3Hv/yml0580TELM
-	rsH2m7RVEb17ACqKPYtueOK+bkNnXyveuei9KWXYV1bp+M5RkLBM8jmIPXG9a4oF
-	t+r/OECUQiGka0AR+dTct6+/4s97mWIYtu0TC9woqvKfLQMsAeMw0t2J5euEvkMG
-	oFt4fAtiW/5QrqOcVhc5tErygYUz81WBugVJ8L+nwXrkhwTwRIRj2odaIe0BTVN8
-	l5r0lA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqcegjk6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 05:15:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45Q5FN3J014103
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 05:15:23 GMT
-Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Jun
- 2024 22:15:22 -0700
-Message-ID: <4d1276a3-ef4a-4c84-8d09-d1613f311a28@quicinc.com>
-Date: Tue, 25 Jun 2024 22:15:21 -0700
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sm2RBKYg"
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240626074911epoutp01a58d580b1ebc69ce6297c4d2ed094ee6~cfmn40_LS3071230712epoutp01Y
+	for <kernel-janitors@vger.kernel.org>; Wed, 26 Jun 2024 07:49:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240626074911epoutp01a58d580b1ebc69ce6297c4d2ed094ee6~cfmn40_LS3071230712epoutp01Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1719388151;
+	bh=3yWXZ7SGSEfCN6yXGdQIRnQOcuLZUOlDTlk00sawPhY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=sm2RBKYgsizf0S8sjDJFRWyuSgadqiKi3aWa44mJYkS3JCJT4gmYcn3SeQl0+pE7p
+	 8mUzZI4EhELEYbasuf2xwL2NKsaXp4kfpEt6jE0TdQLpZNT0PH0UHG+kab3/LQl3wy
+	 RR7i79L/v+HBNNL7m/ifG0bnuQIJ2SG0A32+sEMo=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+	20240626074910epcas1p3820e8d82021bd2c5fb2494724ef51a83~cfmnMUEBK0213302133epcas1p3F;
+	Wed, 26 Jun 2024 07:49:10 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.36.145]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4W8DNj4WLSz4x9QD; Wed, 26 Jun
+	2024 07:49:09 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+	epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	D1.BE.34823.5F7CB766; Wed, 26 Jun 2024 16:49:09 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240626074909epcas1p4dddc9ee5b42c3df1fa5bec0ea3a9a4a7~cfml7FZ2f0214302143epcas1p4C;
+	Wed, 26 Jun 2024 07:49:09 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240626074909epsmtrp2f12783d30139157c57ee56e7be988d56~cfml6U5es2588525885epsmtrp2z;
+	Wed, 26 Jun 2024 07:49:09 +0000 (GMT)
+X-AuditID: b6c32a35-e8dff70000018807-88-667bc7f5e7ab
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	53.8A.19057.5F7CB766; Wed, 26 Jun 2024 16:49:09 +0900 (KST)
+Received: from cw00choi03 (unknown [10.113.111.106]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240626074908epsmtip16071f43ee4c5ad95d55be7adaf8f574a~cfmlqI4fI1279612796epsmtip1G;
+	Wed, 26 Jun 2024 07:49:08 +0000 (GMT)
+From: "Chanwoo Choi" <cw00.choi@samsung.com>
+To: "'Jeff Johnson'" <quic_jjohnson@quicinc.com>, "'MyungJoo Ham'"
+	<myungjoo.ham@samsung.com>, "'Kyungmin Park'" <kyungmin.park@samsung.com>
+Cc: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<kernel-janitors@vger.kernel.org>
+In-Reply-To: <f09b56c7-ad2f-472a-896e-466261b39ce7@quicinc.com>
+Subject: RE: [PATCH] PM/devfreq: governor: add missing MODULE_DESCRIPTION()
+ macros
+Date: Wed, 26 Jun 2024 16:49:08 +0900
+Message-ID: <001501dac79d$53cdf390$fb69dab0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fsi: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>,
-        Alistar Popple
-	<alistair@popple.id.au>,
-        Eddie James <eajames@linux.ibm.com>,
-        Andrew Jeffery
-	<andrew@codeconstruct.com.au>
-CC: <linux-fsi@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <kernel-janitors@vger.kernel.org>
-References: <20240605-md-drivers-fsi-v1-1-fefc82d81b12@quicinc.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240605-md-drivers-fsi-v1-1-fefc82d81b12@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5tURQ12dorLWZ9yS2q27DoMKcY5u3HyZ
-X-Proofpoint-ORIG-GUID: 5tURQ12dorLWZ9yS2q27DoMKcY5u3HyZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_03,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1011
- mlxscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 spamscore=0
- suspectscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406260039
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: ko
+Thread-Index: AQJ1vcgjbNwdtN0YPI7qXTPUbW8f+AH8kPSiAnbMmY+wgCOJMA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgk+LIzCtJLcpLzFFi42LZdljTQPfr8eo0g32PlSy23pK2ONv0ht3i
+	8q45bBafe48wWtxuXMFm0bjlLqsDm8fEPXUefVtWMXp83iQXwByVbZORmpiSWqSQmpecn5KZ
+	l26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDtFVJoSwxpxQoFJBYXKykb2dTlF9a
+	kqqQkV9cYquUWpCSU2BaoFecmFtcmpeul5daYmVoYGBkClSYkJ0xd7FXwT3pih2PZ7I1MJ4R
+	72Lk5JAQMJG48fw8YxcjF4eQwA5Gif9PN0I5nxglPv+fxQThfGOUmN81mQmmZdavjewQib2M
+	Eqtmr4Cqesko8azzGVCGg4NNQEdiwY9QkLiIQB+jxNtJZ1hBupkFkiU+txwEm8QpYC8x7dAV
+	FhBbWCBE4tbZp4wgNouAqsSFg/vB6nkFLCW2tH1nhLAFJU7OfMICMUdeYvvbOcwQFylI/Hy6
+	DGq+iMTszjawuIiAk8TECxeYQY6QEPjLLvF2zSZ2iAYXiYnLNrFC2MISr45vgYpLSXx+t5cN
+	omEyo8TF16+hutczSmxc2QK1zlhi/1JQYHAArdOUWL9LH2Izn8S7rz2sIGEJAV6JjjYhiGpl
+	icsP7kKDTlJicXsnG4TtIXFm8UrmCYyKs5D8NgvJb7OQ/DMLYdkCRpZVjGKpBcW56anFhgWG
+	8OhOzs/dxAhOklqmOxgnvv2gd4iRiYPxEKMEB7OSCG9oSVWaEG9KYmVValF+fFFpTmrxIUZT
+	YGhPZJYSTc4Hpum8knhDE0sDEzMjYxMLQzNDJXHeM1fKUoUE0hNLUrNTUwtSi2D6mDg4pRqY
+	0goXiSre9DhWnn16hlJnHtPxHYJbFkZwXq0IWbkl31OQudpmz1Lhuf9z3zxLdch60mYaq2C3
+	6epkaXXG1y8UQrk2rP3jLuPIFNi4Zt1VjteZ/zskJWeH1+5YVciaEiGbXLgyM5B5i6i0HtPH
+	i6GCLqI39PfPjTpvUJ4oeZPzqmzU+9aLDYHxT7aGXSw8f2/5d8ms6Gs7DRrnnfXut55/JNxh
+	c4gQ66kVHc8Mpnla1l478/j2o3LblQLC8fz5ttalH75tfvi3d/6qu0+KrKb3vGl6Xduc6z45
+	KuvcSrlL7sfXK73+aqbhlp245nuAzGvzGV8mhEy/UFM498We9tgHiXYbbzRUO7Z63K+av2+R
+	EktxRqKhFnNRcSIARRpnDBsEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPLMWRmVeSWpSXmKPExsWy7bCSnO7X49VpBq++slpsvSVtcbbpDbvF
+	5V1z2Cw+9x5htLjduILNonHLXVYHNo+Je+o8+rasYvT4vEkugDmKyyYlNSezLLVI3y6BK2Pu
+	Yq+Ce9IVOx7PZGtgPCPexcjJISFgIjHr10b2LkYuDiGB3YwSH6+dZIZISEpMu3gUyOYAsoUl
+	Dh8uhqh5ziixd8cdNpA4m4COxIIfoSDlIgITGCVOH4gFsZkFUiWute9nhqg/wyhxfd9LVpAE
+	p4C9xLRDV1hAeoUFgiRmnTUHCbMIqEpcOLgfrIRXwFJiS9t3RghbUOLkzCcsEDO1JXoftjJC
+	2PIS29/OgTpTQeLn02WsEHERidmdbcwQ9zhJTLxwgXkCo/AsJKNmIRk1C8moWUjaFzCyrGKU
+	TC0ozk3PLTYsMMpLLdcrTswtLs1L10vOz93ECI4TLa0djHtWfdA7xMjEwXiIUYKDWUmEN7Sk
+	Kk2INyWxsiq1KD++qDQntfgQozQHi5I477fXvSlCAumJJanZqakFqUUwWSYOTqkGphlnerOy
+	chv6dFWvGZasMg1brZL2pt3M9fEjhbKIJX/4Aq9y+smkmIQunvxx5SFGN3V9gzMxCucdeFfM
+	N1vfd8v9wruUE4zLjWcz7bv7LEev8ssEw4tiO6r2iB584XN7SxLv84Xx3modwvaWne/2NcbP
+	YmFku/Y7xM1+7o7Dl+YXXv3t01Zt+fae0123lbsSzudN9OzQdtVMylhdMafv1l+J7lyJs6ya
+	6tuXKx9zfeA/Ufr/qVceyc0fr0/hWnX+wqqT1RN2cz/0XexjELn8X4TlEsdZWx22X5il8unV
+	uQ7F1uzoPPPndvyvintL7671efzkwEfeV2d/HZ8SWHC86JRQ+5ecDf9Pcnjqft8U9U+JpTgj
+	0VCLuag4EQDYeyqvAgMAAA==
+X-CMS-MailID: 20240626074909epcas1p4dddc9ee5b42c3df1fa5bec0ea3a9a4a7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240626042133epcas1p3f68b406443e993411c4e01072ed63d5f
+References: <20240605-md-drivers-devfreq-v1-1-d01ae91b907e@quicinc.com>
+	<CGME20240626042133epcas1p3f68b406443e993411c4e01072ed63d5f@epcas1p3.samsung.com>
+	<f09b56c7-ad2f-472a-896e-466261b39ce7@quicinc.com>
 
-On 6/5/2024 3:39 PM, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-core.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-hub.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-aspeed.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-gpio.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-ast-cf.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-scom.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro, and fix the
-> copy/paste of the module description comment in fsi-master-ast-cf.c.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/fsi/fsi-core.c          | 1 +
->  drivers/fsi/fsi-master-aspeed.c | 1 +
->  drivers/fsi/fsi-master-ast-cf.c | 3 ++-
->  drivers/fsi/fsi-master-gpio.c   | 1 +
->  drivers/fsi/fsi-master-hub.c    | 1 +
->  drivers/fsi/fsi-scom.c          | 1 +
->  6 files changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
-> index 097d5a780264..716a924269ee 100644
-> --- a/drivers/fsi/fsi-core.c
-> +++ b/drivers/fsi/fsi-core.c
-> @@ -1444,5 +1444,6 @@ static void fsi_exit(void)
->  }
->  module_exit(fsi_exit);
->  module_param(discard_errors, int, 0664);
-> +MODULE_DESCRIPTION("FSI core driver");
->  MODULE_LICENSE("GPL");
->  MODULE_PARM_DESC(discard_errors, "Don't invoke error handling on bus accesses");
-> diff --git a/drivers/fsi/fsi-master-aspeed.c b/drivers/fsi/fsi-master-aspeed.c
-> index f0a19cd451a0..b454587790a2 100644
-> --- a/drivers/fsi/fsi-master-aspeed.c
-> +++ b/drivers/fsi/fsi-master-aspeed.c
-> @@ -672,4 +672,5 @@ static struct platform_driver fsi_master_aspeed_driver = {
->  };
->  
->  module_platform_driver(fsi_master_aspeed_driver);
-> +MODULE_DESCRIPTION("FSI master driver for AST2600");
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/fsi/fsi-master-ast-cf.c b/drivers/fsi/fsi-master-ast-cf.c
-> index 812dfa9a9140..85096559dda3 100644
-> --- a/drivers/fsi/fsi-master-ast-cf.c
-> +++ b/drivers/fsi/fsi-master-ast-cf.c
-> @@ -1,7 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0+
->  // Copyright 2018 IBM Corp
->  /*
-> - * A FSI master controller, using a simple GPIO bit-banging interface
-> + * A FSI master based on Aspeed ColdFire coprocessor
->   */
->  
->  #include <linux/crc4.h>
-> @@ -1440,5 +1440,6 @@ static struct platform_driver fsi_master_acf = {
->  };
->  
->  module_platform_driver(fsi_master_acf);
-> +MODULE_DESCRIPTION("A FSI master based on Aspeed ColdFire coprocessor");
->  MODULE_LICENSE("GPL");
->  MODULE_FIRMWARE(FW_FILE_NAME);
-> diff --git a/drivers/fsi/fsi-master-gpio.c b/drivers/fsi/fsi-master-gpio.c
-> index ed03da4f2447..d32dcc98e85b 100644
-> --- a/drivers/fsi/fsi-master-gpio.c
-> +++ b/drivers/fsi/fsi-master-gpio.c
-> @@ -894,4 +894,5 @@ static struct platform_driver fsi_master_gpio_driver = {
->  };
->  
->  module_platform_driver(fsi_master_gpio_driver);
-> +MODULE_DESCRIPTION("A FSI master controller, using a simple GPIO bit-banging interface");
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/fsi/fsi-master-hub.c b/drivers/fsi/fsi-master-hub.c
-> index 6d8b6e8854e5..6568fed7db3c 100644
-> --- a/drivers/fsi/fsi-master-hub.c
-> +++ b/drivers/fsi/fsi-master-hub.c
-> @@ -295,4 +295,5 @@ static struct fsi_driver hub_master_driver = {
->  };
->  
->  module_fsi_driver(hub_master_driver);
-> +MODULE_DESCRIPTION("FSI hub master driver");
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/fsi/fsi-scom.c b/drivers/fsi/fsi-scom.c
-> index 61dbda9dbe2b..411ddc018cd8 100644
-> --- a/drivers/fsi/fsi-scom.c
-> +++ b/drivers/fsi/fsi-scom.c
-> @@ -625,4 +625,5 @@ static void scom_exit(void)
->  
->  module_init(scom_init);
->  module_exit(scom_exit);
-> +MODULE_DESCRIPTION("SCOM FSI Client device driver");
->  MODULE_LICENSE("GPL");
-> 
-> ---
-> base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
-> change-id: 20240605-md-drivers-fsi-0a34d82a85da
-> 
-Following up to see if anything else is needed from me.
-Hoping to see this in linux-next :)
 
-/jeff
+
+> -----Original Message-----
+> From: Jeff Johnson <quic_jjohnson@quicinc.com>
+> Sent: Wednesday, June 26, 2024 1:21 PM
+> To: MyungJoo Ham <myungjoo.ham@samsung.com>; Kyungmin Park
+> <kyungmin.park@samsung.com>; Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: linux-pm@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-
+> janitors@vger.kernel.org
+> Subject: Re: [PATCH] PM/devfreq: governor: add missing MODULE_DESCRIPTION()
+> macros
+> 
+> On 6/5/2024 11:18 AM, Jeff Johnson wrote:
+> > make allmodconfig && make W=1 C=1 reports:
+> > WARNING: modpost: missing MODULE_DESCRIPTION() in
+> drivers/devfreq/governor_simpleondemand.o
+> > WARNING: modpost: missing MODULE_DESCRIPTION() in
+> drivers/devfreq/governor_performance.o
+> > WARNING: modpost: missing MODULE_DESCRIPTION() in
+> drivers/devfreq/governor_powersave.o
+> > WARNING: modpost: missing MODULE_DESCRIPTION() in
+> drivers/devfreq/governor_userspace.o
+> >
+> > Add all missing invocations of the MODULE_DESCRIPTION() macro.
+> >
+> > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> > ---
+> >  drivers/devfreq/governor_performance.c    | 1 +
+> >  drivers/devfreq/governor_powersave.c      | 1 +
+> >  drivers/devfreq/governor_simpleondemand.c | 1 +
+> >  drivers/devfreq/governor_userspace.c      | 1 +
+> >  4 files changed, 4 insertions(+)
+> >
+> > diff --git a/drivers/devfreq/governor_performance.c
+> b/drivers/devfreq/governor_performance.c
+> > index 5dbc1e56ec08..2e4e981446fa 100644
+> > --- a/drivers/devfreq/governor_performance.c
+> > +++ b/drivers/devfreq/governor_performance.c
+> > @@ -58,4 +58,5 @@ static void __exit devfreq_performance_exit(void)
+> >  	return;
+> >  }
+> >  module_exit(devfreq_performance_exit);
+> > +MODULE_DESCRIPTION("DEVFREQ Performance governor");
+> >  MODULE_LICENSE("GPL");
+> > diff --git a/drivers/devfreq/governor_powersave.c
+> b/drivers/devfreq/governor_powersave.c
+> > index 4746af2435b0..f059e8814804 100644
+> > --- a/drivers/devfreq/governor_powersave.c
+> > +++ b/drivers/devfreq/governor_powersave.c
+> > @@ -58,4 +58,5 @@ static void __exit devfreq_powersave_exit(void)
+> >  	return;
+> >  }
+> >  module_exit(devfreq_powersave_exit);
+> > +MODULE_DESCRIPTION("DEVFREQ Powersave governor");
+> >  MODULE_LICENSE("GPL");
+> > diff --git a/drivers/devfreq/governor_simpleondemand.c
+> b/drivers/devfreq/governor_simpleondemand.c
+> > index d57b82a2b570..c23435736367 100644
+> > --- a/drivers/devfreq/governor_simpleondemand.c
+> > +++ b/drivers/devfreq/governor_simpleondemand.c
+> > @@ -140,4 +140,5 @@ static void __exit devfreq_simple_ondemand_exit(void)
+> >  	return;
+> >  }
+> >  module_exit(devfreq_simple_ondemand_exit);
+> > +MODULE_DESCRIPTION("DEVFREQ Simple On-demand governor");
+> >  MODULE_LICENSE("GPL");
+> > diff --git a/drivers/devfreq/governor_userspace.c
+> b/drivers/devfreq/governor_userspace.c
+> > index d69672ccacc4..d1aa6806b683 100644
+> > --- a/drivers/devfreq/governor_userspace.c
+> > +++ b/drivers/devfreq/governor_userspace.c
+> > @@ -153,4 +153,5 @@ static void __exit devfreq_userspace_exit(void)
+> >  	return;
+> >  }
+> >  module_exit(devfreq_userspace_exit);
+> > +MODULE_DESCRIPTION("DEVFREQ Userspace governor");
+> >  MODULE_LICENSE("GPL");
+> >
+> > ---
+> > base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+> > change-id: 20240605-md-drivers-devfreq-42b19b2594a1
+> >
+> 
+> Following up to see if anything else is needed from me.
+> Hoping to see this in linux-next :)
+> 
+> /jeff
+
+I'm sorry for late reply. I applied it.
+
+Thanks,
+Chanwoo Choi
+
