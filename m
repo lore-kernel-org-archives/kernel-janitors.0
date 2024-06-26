@@ -1,111 +1,64 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8410D1802A3;
-	Wed, 26 Jun 2024 11:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADD818A959;
+	Wed, 26 Jun 2024 13:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719402636; cv=none; b=er736UZQroemEv9xsFzFonInbX5OWzZSgnNl0n6QmAFRya95EjHQVye/RHcE/S/jUB5pomSU4BhMDs+sjuohX3xGngZKenkv10tfM7fkD2GHFD1/HiXahyhLnlfoxN3c0I7/OLwenVtc/2A2NIZu2qgjs9YXBJKBvaVOFFaeuHc=
+	t=1719407172; cv=none; b=A1f7luv7vXboXTGrbwyw8dFzAIpnPYm61AeR90h2yU+xQ1hvEBD3pJbPNo1b7FFpYD+k595yItvoe/iPSlyQ3/n2Fr61XL+tqinBNMbd8ndFOFkva9iz1Ko4lXPrGeTgAkCw8UOS/l6OkyYg284ObvJw52RRsrr4Mrhom50Nr/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719402636; c=relaxed/simple;
-	bh=ofPusKWLOwmUb2AYKGiawB8MhlRCDoTLrGx6m1Ye3H4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=haZTgdNjSrGUe2zwsaO6y/jbpe/0KLkmKKob9WqjJB9YgT5TzjgtyXPm0EZYN9ei4qf12ykRZxTJ3ERBkAsu+hVZrjjUxNqXsblzFR2lpkZE3+l+9YaVcj1DcwaContL546XoOAS51b73CgqsBtlaD/hoRxoC/lotSnTU2YoleM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qxGdT6hO; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qxGdT6hO"
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QBRG1f022697;
-	Wed, 26 Jun 2024 11:50:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	FuYGLcPJmc5EbSHey+hHc0f8H78DH+GPjDEIrdfzUOY=; b=qxGdT6hO51ZS7w22
-	g7C9swHVwvULxwGTcj0JLifrzVXt7OzMTJ5EaL5Re5ZAA0wjoKnovU1dNBEn3X25
-	rKK30DH16z7fTFXQAUBiMV2/KxaNZ20EBOSeoNvMNqWfQsR52uwndOPaQA3fEMu7
-	HXWAW6CSlp95CDQ9xgxoNPg664ynUTMhXS8wOhuc85w23/PKGSHZFd/oRdaAET/3
-	WD0iMjlOeF3u55J2CYVIH08KhS0DDBysEuIfygFs2q6zWQ2WCcPjkIenVHwLTs+Y
-	kWgiuq8x8cnEyNRwEU2jsxSAcvRk3DFSblY2LczPhKWd6Td7CzUFMHGXYI6U+fZh
-	GCpcCQ==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 400hq803cm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 11:50:29 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45QBm5xa019533;
-	Wed, 26 Jun 2024 11:50:29 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yx9xq47tn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 11:50:28 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45QBoNdb42336688
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Jun 2024 11:50:25 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B856C2005A;
-	Wed, 26 Jun 2024 11:50:21 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8E5D42004B;
-	Wed, 26 Jun 2024 11:50:21 +0000 (GMT)
-Received: from [9.152.224.141] (unknown [9.152.224.141])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 26 Jun 2024 11:50:21 +0000 (GMT)
-Message-ID: <cd626321-51e1-4e69-b043-a838d1351de7@linux.ibm.com>
-Date: Wed, 26 Jun 2024 13:50:21 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] s390/lcs: add missing MODULE_DESCRIPTION() macro
-Content-Language: en-US
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
-        Thorsten Winkler <twinkler@linux.ibm.com>,
-        Heiko Carstens
- <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20240625-md-s390-drivers-s390-net-v2-1-5a8a2b2f2ae3@quicinc.com>
-From: Alexandra Winter <wintera@linux.ibm.com>
-In-Reply-To: <20240625-md-s390-drivers-s390-net-v2-1-5a8a2b2f2ae3@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 3QEDTMdxbxghYG-mFRAI7qroOFu9LTMv
-X-Proofpoint-GUID: 3QEDTMdxbxghYG-mFRAI7qroOFu9LTMv
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1719407172; c=relaxed/simple;
+	bh=GOp37wPmnAvgXsqMReUrdRIqdeUb22PiUxfzKAposJQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=uofA4P43qJEWq37VAKGkGYhTVAKRAOZzJ73cyRNZr6zdvJKUVaPGAYvM3JwDRzMJY5HTshZG9p02nN9EFhVpedc0EW/BLfGSeeu+jTNen5xyqmaUE68Y9I73nGkZi+l1X5e+64TL7iW1Y6FlhR+DBeaTSvmSC+zekH6QlJYer1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21902C32789;
+	Wed, 26 Jun 2024 13:06:12 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id A4A1E106093D; Wed, 26 Jun 2024 15:06:09 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: linus.walleij@linaro.org, sre@kernel.org, jic23@kernel.org, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <cover.1719037737.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1719037737.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH 0/3] power: supply: ab8500: Improve code related to
+ iio_read_channel_processed() and fix a bug
+Message-Id: <171940716965.127964.17060971210782573496.b4-ty@collabora.com>
+Date: Wed, 26 Jun 2024 15:06:09 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_05,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- phishscore=0 lowpriorityscore=0 adultscore=0 spamscore=0 suspectscore=0
- mlxlogscore=909 impostorscore=0 mlxscore=0 priorityscore=1501
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406260086
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
 
-
-On 25.06.24 18:35, Jeff Johnson wrote:
-> With ARCH=s390, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/net/lcs.o
+On Sat, 22 Jun 2024 09:04:23 +0200, Christophe JAILLET wrote:
+> This series is inspired by a patch submitted at [1].
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> While looking if the same pattern was relevant elsewhere, I ended in
+> ab8500_charger.c.
 > 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> Changes in v2:
-> - Modified the description (both in the patch and in the file prolog) per
->   feedback from Alexandra
-> - Link to v1: https://lore.kernel.org/r/20240615-md-s390-drivers-s390-net-v1-1-968cb735f70d@quicinc.com
-> ---
+> Patch 1 fixes what looks to me as a regression introduced by
+> 97ab78bac5d0.
+> 
+> [...]
 
+Applied, thanks!
 
-Acked-by: Alexandra Winter <wintera@linux.ibm.com>
+[1/3] power: supply: ab8500: Fix error handling when calling iio_read_channel_processed()
+      commit: 3288757087cbb93b91019ba6b7de53a1908c9d48
+[2/3] power: supply: ab8500: Use iio_read_channel_processed_scale()
+      commit: dc6ce568afd3452ac682261ea0db570d28f7d82d
+[3/3] power: supply: ab8500: Clean some error messages
+      commit: f62b267adcac33c64a26ec55973dad92bc8a8358
+
+Best regards,
+-- 
+Sebastian Reichel <sebastian.reichel@collabora.com>
+
