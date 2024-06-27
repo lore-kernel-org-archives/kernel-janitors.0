@@ -1,66 +1,66 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2434B433B3;
-	Thu, 27 Jun 2024 17:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A6219A288;
+	Thu, 27 Jun 2024 17:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719508132; cv=none; b=NV/VN7sHFlGPGsmKTGOme2owEoEMt8NNplM9xnYEA3gUIfcst2L7D3aJBEYmYEI0PwjkRFDysZnLXnKqX6thBx4ym73ni3ZwXjrBA/KRjRHJmHx/o1xHE190TIO9NSKRAWaa0TzEhjTvoNumiyLLCg47Ww811EiEYThEP7W3sbM=
+	t=1719508297; cv=none; b=baZi6hmNXRVhDKAgtzFr9GOoCUU/oBttU8v3pKBQqdr7Yd0Se1cLZOEjlryqR+CV7BmbIu5TnDSeGDgM3bhRnZM2WSkjCKiXCA1kLJY/jgUwDDkBZ0fvRMkCHzS7AGbsotDmfqVM4drlCSqtloJN9CShWdJsDQ0D06g0iVfFHxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719508132; c=relaxed/simple;
-	bh=6a+QzgfITt8frxG2BinwNLUcugEG8Lp4mDKzxGhzYm4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=d6Oot6BmsHFOSI8YADIhJRo+oZnkgwTTi/kjGp7QRUhC5IUAA1zBIrpAmY8WrYoJMFV7bLpVJWC+uCKUbGyuz1AK6oN3zUkKdZbqHxVFdY9QytRSDB9qNxVD1tV6joIzlRE2IBguJo+jYzEBKwWrIk1hdCvIOQoKrze5Ed4aEcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l+kNx+ND; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1719508297; c=relaxed/simple;
+	bh=QxkEVdlf8zyk1RIA+/TdGzvbc2WpIDBuALqYaPUC+r8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=TqDVpAKeQ0K29XpDnlHmMS+HtaBdMCya4QJRNsiNEyOXUw8sreGhkb7JKrWzzFRa8B039Ss2++YEG6+4Bny9UQWHY8JkXd4I/NzNBZOr6TaX7lnhzu7aFCL8KRktT8o4pkPoI+rdfUcb0sfVe2a1AQlExWhb1c0ilSP4tS/JmhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GIEA9/f3; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l+kNx+ND"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42561c16ffeso13857075e9.3;
-        Thu, 27 Jun 2024 10:08:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GIEA9/f3"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-424ad991c1cso25352545e9.1;
+        Thu, 27 Jun 2024 10:11:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719508129; x=1720112929; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719508294; x=1720113094; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cd52TDCo23vBUICUzAHPR5YFmSE3EhQH6c918u4ugTM=;
-        b=l+kNx+NDwiJN6QHmYwbT4SGurL9WxLn07hFdAH4sd/lEfWKy6Noq7f+ijhr67RwKZB
-         onULGKKtnqUOdckxbqL+OIFdpUyeaJN6TmKBuzAMu4N9CD3Q03myC8KJxToUx8zHH+4u
-         UX9TkxglsiIwhnV00lj3kCjDB6rHgsWWNRLIUtNf1j1zl56ciR5b7wA6rxdLRbwep6Gu
-         uopXkX66+IaBD6+ROZDX+eBfqqkPnqs6pbT9YBu9H2/qWHL8eQcSWI2cdKvdgjb9pLk4
-         gBEQXq8vrIpXXD1VaYZGB8sSbSlunmaW6bS7Eb/jsXlO21s4c+unLCQl8ZTgxf+GcLJ0
-         Blmg==
+        bh=cqg+cB0tsKwYbj2AdR+1t235Rjir/+bGbK9C4esMo/Y=;
+        b=GIEA9/f3CNGaZ+M5VqS7A0ET6NxJYXaZiQX82tceAnj9bJ51kH8gfzxmwhNylM77uT
+         nO40Y9MP4rB9EyqsfqZbkDdz7xv+4cjF3Jq5MNbToa6DSR7vt4R7vsrSeHIWgJWlGBmG
+         5cv4HFjNa5DHUQVq3B+1mUTy57zkv3gk0KeVyjab28MD8cWYnjKzaC5Xl+gK8WVRg5ZL
+         h6+hezqPW8FxKAjjDNxxFpN3QAIEKbVLOuqSGM8Zmd1yrMGX3NbyfFSO+XoDbyrLTIkI
+         DNCpvpFDBIvDD4z9JxkpYXxA46Nxml2QvZpMwF0tJla9IxclGfe4vgoHepLYhgHrXjAm
+         US2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719508129; x=1720112929;
+        d=1e100.net; s=20230601; t=1719508294; x=1720113094;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cd52TDCo23vBUICUzAHPR5YFmSE3EhQH6c918u4ugTM=;
-        b=T6XD5c50Og8elC3ksQM7arGF0ZpN4yP5HXAm7uNtCPafy6AZ10pnrfzS5MQZaycWza
-         vMpe9my3x+IID4+N/mT1wl4ogLe3dQmMz7WIUXRf78Xt9TLfAO1Snpcbq3puLQmt68Ly
-         MX/Ko6IysghGsZBO3pZJ15fePizmZUh4SDFIfUm0fUatSMFMAEq4/cs0MfU7H3W3nOw5
-         YVN63MPHEoc3tT9gTTcqSnmbtguUV2k/VD7Hc2p4gQl1kEe23FAe9V1M7RsaAoiXxEMn
-         2X3euc/7flJRPOn+iOo9uFgAkoR7Q3IVi/KiKRRsVwanIR49at46kYTe6psmb3HBEuza
-         S3uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtY1I/ugo29QsI4upeDo+IKg4jYn/YpB9vq0cNoixyxaypcsTq+a5Zm9XYpNyycfrfnQRk+d016NrZPrL4WhjCgmLTN/ZneoSnUazGXPm/WK5bsk36c9yMenuMdZuoCbcR/8gA9W/UQrrPGQcNf6T+
-X-Gm-Message-State: AOJu0YyS5jnyy6diMrYxY/zrBg/PzwM6ihUMJSL3zIpMfaeG2/ZfoqDE
-	7PEmO7/DHJd9MeciZto0NQwX7VgcD7hUk7EtwFSOvdm0NaTmtfJ4NHUAwA==
-X-Google-Smtp-Source: AGHT+IE5bMkYh7fWJfWBM1m0gURnI3pYwYNUdfjazbH575zk32WvUb2At7eMuejqYxfL6YI71DOP4Q==
-X-Received: by 2002:a05:6000:1010:b0:367:f2b:aeff with SMTP id ffacd0b85a97d-3670f2bb07emr4426806f8f.0.1719508129193;
-        Thu, 27 Jun 2024 10:08:49 -0700 (PDT)
+        bh=cqg+cB0tsKwYbj2AdR+1t235Rjir/+bGbK9C4esMo/Y=;
+        b=sPxfQruRAhzx+EzEv9x68bZ1iKfRCWuzi4xfx701iSN+XRIBpD4BkMqqDg/MRvczm+
+         jrBxYlJxvCMJW1rEaoTbXyDfXjbfyzay2aW8aJqUD2dA8WKtxLi/mDjBR1t6S/V0Yz/J
+         PnwGFaqcRNATipkwzrgAuXgynH1apgunkhweYIETFQhmNiwxR3GMMyU6BAUdGS9QeisZ
+         QAauPdUtmNGqsw9T7riYoYOKxP0fU1jYpWG7M0kP0/TlLV4UlMryYUAb2/aAUMSRVYqh
+         5p9U/g5sDGSUNMGHvX3k1l/7dSd4DbnFVDyNpG7jrRJOxbxxuErOJzd8In+t/e1z4Yah
+         dOmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWqgDAZAEeJAK5c1s3mduw1P8+/r+46Oi8BfCviWoXkbxdEKH3OnpxE4094Y1nIOkM0mVMM7+wS2BbgRfybzyTvCyTgk0re9spSpYer
+X-Gm-Message-State: AOJu0YzmwNTfZkemqX8PpdqVIjdQhxrO/I9ynXqIL4GEwmj3BsSjuh0w
+	rDH9eqS6QoTHwoDvQfucsUZ7+bDLlYeQG/w+SMStmlrQzEeN7xCB97bJig==
+X-Google-Smtp-Source: AGHT+IEQyc28xXl89nzT+yHLn1As7BSXret+foZ1FqJN1HcCzTFQPzttZkYpnClu1IgjIjaR2UqD2g==
+X-Received: by 2002:a05:6000:1844:b0:366:eb4b:4e74 with SMTP id ffacd0b85a97d-366eb4b4f40mr14405736f8f.1.1719508293966;
+        Thu, 27 Jun 2024 10:11:33 -0700 (PDT)
 Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3674357c12esm2493077f8f.15.2024.06.27.10.08.48
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36743585528sm2499212f8f.65.2024.06.27.10.11.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 10:08:48 -0700 (PDT)
+        Thu, 27 Jun 2024 10:11:33 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	linux-kernel@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Josh Don <joshdon@google.com>,
+	Barret Rhoden <brho@google.com>,
+	Hao Luo <haoluo@google.com>
 Cc: kernel-janitors@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH][next] firewire: core: Fix spelling mistakes in tracepoint messages
-Date: Thu, 27 Jun 2024 18:08:47 +0100
-Message-Id: <20240627170847.125531-1-colin.i.king@gmail.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] sched_ext: Fix spelling mistake: "intead" -> "instead"
+Date: Thu, 27 Jun 2024 18:11:32 +0100
+Message-Id: <20240627171132.127421-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -71,35 +71,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There are two spelling mistakes in the tracepoint message text. Fix them.
+There is a spelling mistake in the help text. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- include/trace/events/firewire.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/sched_ext/scx_qmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/trace/events/firewire.h b/include/trace/events/firewire.h
-index d9158a134beb..86330ba58336 100644
---- a/include/trace/events/firewire.h
-+++ b/include/trace/events/firewire.h
-@@ -853,7 +853,7 @@ DECLARE_EVENT_CLASS(isoc_single_completions_template,
- 		memcpy(__get_dynamic_array(header), header, __get_dynamic_array_len(header));
- 	),
- 	TP_printk(
--		"context=0x%llx card_index=%u timestap=0x%04x cause=%s header=%s",
-+		"context=0x%llx card_index=%u timestamp=0x%04x cause=%s header=%s",
- 		__entry->context,
- 		__entry->card_index,
- 		__entry->timestamp,
-@@ -891,7 +891,7 @@ TRACE_EVENT(isoc_inbound_multiple_completions,
- 		__entry->cause = cause;
- 	),
- 	TP_printk(
--		"context=0x%llx card_index=%u comleted=%u cause=%s",
-+		"context=0x%llx card_index=%u completed=%u cause=%s",
- 		__entry->context,
- 		__entry->card_index,
- 		__entry->completed,
+diff --git a/tools/sched_ext/scx_qmap.c b/tools/sched_ext/scx_qmap.c
+index 4d41c0cb1dab..e4e3ecffc4cf 100644
+--- a/tools/sched_ext/scx_qmap.c
++++ b/tools/sched_ext/scx_qmap.c
+@@ -31,7 +31,7 @@ const char help_fmt[] =
+ "  -d PID        Disallow a process from switching into SCHED_EXT (-1 for self)\n"
+ "  -D LEN        Set scx_exit_info.dump buffer length\n"
+ "  -S            Suppress qmap-specific debug dump\n"
+-"  -p            Switch only tasks on SCHED_EXT policy intead of all\n"
++"  -p            Switch only tasks on SCHED_EXT policy instead of all\n"
+ "  -v            Print libbpf debug messages\n"
+ "  -h            Display this help and exit\n";
+ 
 -- 
 2.39.2
 
