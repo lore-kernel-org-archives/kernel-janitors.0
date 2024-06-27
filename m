@@ -1,77 +1,73 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8360D13B780;
-	Thu, 27 Jun 2024 21:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C239C1A255F;
+	Thu, 27 Jun 2024 22:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719525031; cv=none; b=eTlKHauUBOIJSlLAKkcO7JMcx1PnZBBzCsrvkSiWGn0GOHzSNvZufbIp7sXPv8rM3oFPjM1YixYv32vfs64avYTle3JmanlA47GYdWYRl8PT689PHxVwGkcc7Ka8JKsWXKNf1jBXYP9HDNU4rBrWobZr4Jq9Khk+kmchhjgsmxQ=
+	t=1719527720; cv=none; b=TtNAEwDbyBgJYsPJ4Hv8L399cnsR0kfRrSoL3QSYv/nWoR6DDO4DYDyGN25QEeXVQ8S+CM2M6jXoX1z7AkrBFc7AZFhSN+bP9W/Z+i6dgz12raT5yihYjaC9NBXajAjLEzeis3tfSdAzqHRuwE5kwje8y+xoutuRi+7QhbM764k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719525031; c=relaxed/simple;
-	bh=XkPxgHmsESYmdBThT7SlxwvBjshLf4TR6DxdLnVeaqY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=KcuSZwWfD7gFiKYf5UbYxa16SLo5ve8WspLXJLsTQleHBI7cnB0KvCRCamA+1CL9QwWpE7kWb2+CiVg/vzzRQBmpDricjY1vboprt4dDsYvM/HY/RPWtAteqvQV5DSJCT9uGu5hlj1tdcVRrmsFoW1CtDVGmLDs0qyL5WTIIEDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ep5iHiTO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1719527720; c=relaxed/simple;
+	bh=yPwMKQNj4dAoFLYak969z04Q6O+CMMLIJwetuTJgLKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nq5i7SBDRGLFNbX4C1a/wW7Yy1jjRRJd6bTqEUi75qju3oeIGcPIBkEgx6MoWAf+imcA236jhroJfGa8RqSmeJ5K4jhQ0vWJKRAzLvmMXF08Cbq2lVHRHAqHP+op3ImucFZ5i90Q/IVOUY1LOLbf4Y7rD8u++xbmyA9m1eyzwJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=G1pd9ZOQ; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ep5iHiTO"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 82819C2BD10;
-	Thu, 27 Jun 2024 21:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719525030;
-	bh=XkPxgHmsESYmdBThT7SlxwvBjshLf4TR6DxdLnVeaqY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ep5iHiTOGKrkMqiSLTjssZ0rFdfgc3EcKRpgyTOf9FHXXQGhfeqZr68iand1wAj+G
-	 u3DxEDtsBnbzrjWldo9zGHgBeKRHAVFn1phsS737iZRCW2q4r7qbd/phdocUufa+nc
-	 mkeIH6leppTeZdpaP8GZ2UUYjKrnV+wzvhZMN5seI+NEd8lZuDJmOIwJFv3ILJSw8y
-	 LPec3b/0UsPmPqkrGNViUoBkoPxtmuUp9BosSPIgjfATUSk+E0N1TjBLzJJSyOxiFC
-	 +JTizqeIY6oLITfGmUWhJubcrU2r6B7FiMdn/xa/RpZpI3akhknsAx/EpOuZXWV2dn
-	 OhKm1RpZl0ioA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6A450C43336;
-	Thu, 27 Jun 2024 21:50:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="G1pd9ZOQ"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 180FB60003;
+	Thu, 27 Jun 2024 22:35:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719527716;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IeT/dL1HxME6TiyoCjNQwli1fo+sUhVo7A3qxwHUl1w=;
+	b=G1pd9ZOQcOBEmfFyiboBhqVgCtRSGUVKiKUGQHiVZMQqvGhUMZFsho3JvSPKvg8VcCi+FL
+	gvlOcwZyl9mDZ4udngZCBxDcQ3ljrEVLGVSKTEgFXMn1BRBC+cx7otytfgWQKpjOPZH/OE
+	OYOazr0KYWI1xmeE5aPHAxjx97XdMiMCE1WSgdv5dlvyBDbX/cuGBybJ5APMX4p7HOGNU/
+	i9HeqZfxVAC0vDsZm/ocf5gQdBxL2Z6+eI5QDnYHnV5/5lx1RBcSwFSaNNHLkI5grGGODm
+	PoO5l78j3cFRw5i2xc9DZB4l0WnQ9/wDfAo7sDGocAUXHB/s5Ox0lstXfgGbSA==
+Date: Fri, 28 Jun 2024 00:35:15 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] rtc: add missing MODULE_DESCRIPTION() macro
+Message-ID: <171952768197.522224.11784543057394259843.b4-ty@bootlin.com>
+References: <20240608-md-drivers-rtc-v1-1-5f44222adfae@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] s390/lcs: add missing MODULE_DESCRIPTION() macro
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171952503042.25992.13672375382878224314.git-patchwork-notify@kernel.org>
-Date: Thu, 27 Jun 2024 21:50:30 +0000
-References: <20240625-md-s390-drivers-s390-net-v2-1-5a8a2b2f2ae3@quicinc.com>
-In-Reply-To: <20240625-md-s390-drivers-s390-net-v2-1-5a8a2b2f2ae3@quicinc.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: wintera@linux.ibm.com, twinkler@linux.ibm.com, hca@linux.ibm.com,
- gor@linux.ibm.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
- svens@linux.ibm.com, linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240608-md-drivers-rtc-v1-1-5f44222adfae@quicinc.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 25 Jun 2024 09:35:41 -0700 you wrote:
-> With ARCH=s390, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/net/lcs.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+On Sat, 08 Jun 2024 22:52:03 -0700, Jeff Johnson wrote:
+> On x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rtc/lib_test.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rtc/rtc-goldfish.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rtc/rtc-omap.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rtc/rtc-rc5t583.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rtc/rtc-tps65910.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rtc/rtc-twl.o
 > 
 > [...]
 
-Here is the summary with links:
-  - [v2] s390/lcs: add missing MODULE_DESCRIPTION() macro
-    https://git.kernel.org/netdev/net-next/c/346a03e5fbdb
+Applied, thanks!
 
-You are awesome, thank you!
+[1/1] rtc: add missing MODULE_DESCRIPTION() macro
+      https://git.kernel.org/abelloni/c/86e9b5085d75
+
+Best regards,
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
