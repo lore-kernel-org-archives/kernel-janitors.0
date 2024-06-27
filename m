@@ -1,96 +1,86 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A6219A288;
-	Thu, 27 Jun 2024 17:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDFD13A276;
+	Thu, 27 Jun 2024 18:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719508297; cv=none; b=baZi6hmNXRVhDKAgtzFr9GOoCUU/oBttU8v3pKBQqdr7Yd0Se1cLZOEjlryqR+CV7BmbIu5TnDSeGDgM3bhRnZM2WSkjCKiXCA1kLJY/jgUwDDkBZ0fvRMkCHzS7AGbsotDmfqVM4drlCSqtloJN9CShWdJsDQ0D06g0iVfFHxs=
+	t=1719512389; cv=none; b=eyyUvUqoTb0msOwiS+URHO6G2o2l/zNonpmd2/CV4sD71rRNnjs9A8MDcWKpJBFBJC5hU4NzfM9+VxyrAzwpQM21ZoaeWer6RZzOINx+3HBun/TM2Gyc1X+Gys9+Dtz10mis9DMN1baJWhMuDPRttNQMeuN22EJ+ApTqD5YlQ44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719508297; c=relaxed/simple;
-	bh=QxkEVdlf8zyk1RIA+/TdGzvbc2WpIDBuALqYaPUC+r8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=TqDVpAKeQ0K29XpDnlHmMS+HtaBdMCya4QJRNsiNEyOXUw8sreGhkb7JKrWzzFRa8B039Ss2++YEG6+4Bny9UQWHY8JkXd4I/NzNBZOr6TaX7lnhzu7aFCL8KRktT8o4pkPoI+rdfUcb0sfVe2a1AQlExWhb1c0ilSP4tS/JmhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GIEA9/f3; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1719512389; c=relaxed/simple;
+	bh=S4yZTjNdAasOLmi/6sNO0zqGI1eHp+DjtJ00j4c1U8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hpbXOWNUEavLC9kIqesosdpl+SLj/GgLmzHQ7U6RAzPg16Z1eFDAVy+09equ61LIFdKYnodPjxUUl5JaMQRenGlxAf8B3GH7LBY5uaeb+f5G4NEyi301Pc/g4ysfmWdx9TUUbNr8wL8TyBMam/AUEWRhhRuSQhC4Np9blStIVxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HfDjUMmT; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GIEA9/f3"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-424ad991c1cso25352545e9.1;
-        Thu, 27 Jun 2024 10:11:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HfDjUMmT"
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7024d571d8eso6392996b3a.0;
+        Thu, 27 Jun 2024 11:19:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719508294; x=1720113094; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cqg+cB0tsKwYbj2AdR+1t235Rjir/+bGbK9C4esMo/Y=;
-        b=GIEA9/f3CNGaZ+M5VqS7A0ET6NxJYXaZiQX82tceAnj9bJ51kH8gfzxmwhNylM77uT
-         nO40Y9MP4rB9EyqsfqZbkDdz7xv+4cjF3Jq5MNbToa6DSR7vt4R7vsrSeHIWgJWlGBmG
-         5cv4HFjNa5DHUQVq3B+1mUTy57zkv3gk0KeVyjab28MD8cWYnjKzaC5Xl+gK8WVRg5ZL
-         h6+hezqPW8FxKAjjDNxxFpN3QAIEKbVLOuqSGM8Zmd1yrMGX3NbyfFSO+XoDbyrLTIkI
-         DNCpvpFDBIvDD4z9JxkpYXxA46Nxml2QvZpMwF0tJla9IxclGfe4vgoHepLYhgHrXjAm
-         US2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719508294; x=1720113094;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1719512388; x=1720117188; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cqg+cB0tsKwYbj2AdR+1t235Rjir/+bGbK9C4esMo/Y=;
-        b=sPxfQruRAhzx+EzEv9x68bZ1iKfRCWuzi4xfx701iSN+XRIBpD4BkMqqDg/MRvczm+
-         jrBxYlJxvCMJW1rEaoTbXyDfXjbfyzay2aW8aJqUD2dA8WKtxLi/mDjBR1t6S/V0Yz/J
-         PnwGFaqcRNATipkwzrgAuXgynH1apgunkhweYIETFQhmNiwxR3GMMyU6BAUdGS9QeisZ
-         QAauPdUtmNGqsw9T7riYoYOKxP0fU1jYpWG7M0kP0/TlLV4UlMryYUAb2/aAUMSRVYqh
-         5p9U/g5sDGSUNMGHvX3k1l/7dSd4DbnFVDyNpG7jrRJOxbxxuErOJzd8In+t/e1z4Yah
-         dOmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqgDAZAEeJAK5c1s3mduw1P8+/r+46Oi8BfCviWoXkbxdEKH3OnpxE4094Y1nIOkM0mVMM7+wS2BbgRfybzyTvCyTgk0re9spSpYer
-X-Gm-Message-State: AOJu0YzmwNTfZkemqX8PpdqVIjdQhxrO/I9ynXqIL4GEwmj3BsSjuh0w
-	rDH9eqS6QoTHwoDvQfucsUZ7+bDLlYeQG/w+SMStmlrQzEeN7xCB97bJig==
-X-Google-Smtp-Source: AGHT+IEQyc28xXl89nzT+yHLn1As7BSXret+foZ1FqJN1HcCzTFQPzttZkYpnClu1IgjIjaR2UqD2g==
-X-Received: by 2002:a05:6000:1844:b0:366:eb4b:4e74 with SMTP id ffacd0b85a97d-366eb4b4f40mr14405736f8f.1.1719508293966;
-        Thu, 27 Jun 2024 10:11:33 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36743585528sm2499212f8f.65.2024.06.27.10.11.33
+        bh=62JiO+TkNEq74EVObdgZGlo5gS5AEmMQRPiPucmgw2E=;
+        b=HfDjUMmT05LgrNU2EMCtvTuaZ0wEN/4BPWuOYyK66YVMfyQBYeyVqnVV7VrGmB6r+S
+         SWt/WxxpRy20OyjRzqBzerxaR9UIQwoOa41DLv9mt0PByMhofMjmQNmwu3EjA77jM09a
+         MZk2jad92Z3fI4GP9kVOCuQRBI/dbC4mq2r8DvaPfg3tB/RKiilJW7ZXzQqeCSLVOhch
+         xjPl/bd1sqF0wxgPTd6QwbvcwSNqGzh2clsmhMDh24w5X7gPY94IcFF7pADJc1ct4rKI
+         uoVqLr8EDdUQyb3H7PECPUBn0eeoqfvVff3lkn93Dmd7ihDI64z5Fkgglg5osoogZnzV
+         vQJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719512388; x=1720117188;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=62JiO+TkNEq74EVObdgZGlo5gS5AEmMQRPiPucmgw2E=;
+        b=mlajJfc00MshD7A6xDRbGyO5u4UaKE5q4oW3CI+DTyCoWg06L3qBAB+9/vfZ9NTcmi
+         hbzXV+o68LYibf/fQO0B7Z/sZjeJoOmXEZU3c9EZWYz64kttgfN3RTntIozokdNcgm+x
+         TdaZ/QG/B6hjbZrOxerNI39jcFX06D9XrPTU25tlRR5cwOISKnmUGP9DcXJpblFafg7H
+         EBsq2W9yESkokSme/Xc7T2iANeIYjmd3xgCWG6zI4XeL9oVWJBGfQFhU4velnpBu4pMu
+         aSUHAUE54xoW/45RCTnoDH8uK/z/SegX0aeJH7YshULg/0kYXBZ9EWO+yYxJqgoluvae
+         pRrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmomBQDyPfNn+54Fm5cuavrQp56WZlN+EhzsJ4qN+imHAjj14Z5GY/NmB1zm2uHCJwDlEDgiarR3HtWAENyopvrRQ2+gB76meGafKHUNDfAy7bSs8jzdpiScLjV96h2VXVIJ7Lobf8OXUBgOWw
+X-Gm-Message-State: AOJu0YwZKOsQxA4pmST2tzlOax95/TrB5vTlKaoRbqGNUpo6Pub/Hi/V
+	euDslhgZxoHE3iIQYEStUILEkBTFRyru9x/dlMQ8Kdzk+m6M+L9sPF+1KQ==
+X-Google-Smtp-Source: AGHT+IEl8sgpfds4KPZSn+LUFHWqwLNrS0W6hvVZB9wSF0P+9VAusVh9Nk7XVIJ/ZGuXsmK2xAJHtQ==
+X-Received: by 2002:a05:6a21:6d98:b0:1be:d299:d818 with SMTP id adf61e73a8af0-1bed299da48mr3100401637.14.1719512387749;
+        Thu, 27 Jun 2024 11:19:47 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac15691ebsm541075ad.213.2024.06.27.11.19.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 10:11:33 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Josh Don <joshdon@google.com>,
-	Barret Rhoden <brho@google.com>,
-	Hao Luo <haoluo@google.com>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] sched_ext: Fix spelling mistake: "intead" -> "instead"
-Date: Thu, 27 Jun 2024 18:11:32 +0100
-Message-Id: <20240627171132.127421-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Thu, 27 Jun 2024 11:19:47 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Thu, 27 Jun 2024 08:19:46 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: David Vernet <void@manifault.com>, Josh Don <joshdon@google.com>,
+	Barret Rhoden <brho@google.com>, Hao Luo <haoluo@google.com>,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] sched_ext: Fix spelling mistake: "intead" ->
+ "instead"
+Message-ID: <Zn2tQpNQVAHtGo7h@slm.duckdns.org>
+References: <20240627171132.127421-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240627171132.127421-1-colin.i.king@gmail.com>
 
-There is a spelling mistake in the help text. Fix it.
+On Thu, Jun 27, 2024 at 06:11:32PM +0100, Colin Ian King wrote:
+> There is a spelling mistake in the help text. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/sched_ext/scx_qmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to sched_ext/for-6.11.
 
-diff --git a/tools/sched_ext/scx_qmap.c b/tools/sched_ext/scx_qmap.c
-index 4d41c0cb1dab..e4e3ecffc4cf 100644
---- a/tools/sched_ext/scx_qmap.c
-+++ b/tools/sched_ext/scx_qmap.c
-@@ -31,7 +31,7 @@ const char help_fmt[] =
- "  -d PID        Disallow a process from switching into SCHED_EXT (-1 for self)\n"
- "  -D LEN        Set scx_exit_info.dump buffer length\n"
- "  -S            Suppress qmap-specific debug dump\n"
--"  -p            Switch only tasks on SCHED_EXT policy intead of all\n"
-+"  -p            Switch only tasks on SCHED_EXT policy instead of all\n"
- "  -v            Print libbpf debug messages\n"
- "  -h            Display this help and exit\n";
- 
+Thanks.
+
 -- 
-2.39.2
-
+tejun
