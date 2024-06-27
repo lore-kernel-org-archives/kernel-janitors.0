@@ -1,148 +1,105 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891F61BF3A;
-	Thu, 27 Jun 2024 09:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2434B433B3;
+	Thu, 27 Jun 2024 17:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719480302; cv=none; b=A5DZfM9+3C+ZZTPQU9t/W2dWk289MLBwP9mLSW2vWtxiHKIV0MPwvCiD73dGlVJlDTxcvKt3tMMygW53ADQF0TNUcAagBGuI2IfNAbLOiMlueiuO0QgQQdTs6AjeG6r1Ua61nXOFU5LXe4tma3tCrddC0yJN+xtqlo63mPqpTN8=
+	t=1719508132; cv=none; b=NV/VN7sHFlGPGsmKTGOme2owEoEMt8NNplM9xnYEA3gUIfcst2L7D3aJBEYmYEI0PwjkRFDysZnLXnKqX6thBx4ym73ni3ZwXjrBA/KRjRHJmHx/o1xHE190TIO9NSKRAWaa0TzEhjTvoNumiyLLCg47Ww811EiEYThEP7W3sbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719480302; c=relaxed/simple;
-	bh=euJbICgu11eNuvfWUsmW/5bzsZBqGYzIAnb0k++tV64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LtzpGc1hwAhKLk+CmJQFCW9Z+PyNDYRWar1nSpNsAv9ksQgSUgL2SW5lofKpKwiGWXthfmSjx7xaAOiS76nTMxR3xRXk1ETQO6HFZ8jHOs62fqppS846ZJHqx8/R9SjgmrIDVezHwz8eXGnzcZuNCjGFdfHfueb96w/QG6I0X+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=odhFXgoN; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1719508132; c=relaxed/simple;
+	bh=6a+QzgfITt8frxG2BinwNLUcugEG8Lp4mDKzxGhzYm4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=d6Oot6BmsHFOSI8YADIhJRo+oZnkgwTTi/kjGp7QRUhC5IUAA1zBIrpAmY8WrYoJMFV7bLpVJWC+uCKUbGyuz1AK6oN3zUkKdZbqHxVFdY9QytRSDB9qNxVD1tV6joIzlRE2IBguJo+jYzEBKwWrIk1hdCvIOQoKrze5Ed4aEcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l+kNx+ND; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="odhFXgoN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719480289; x=1720085089; i=markus.elfring@web.de;
-	bh=48+3xLseeIyaNSOUgoXl0FU+m8DL9pwzc8+ON0U1XKw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=odhFXgoNGXIK4yQXmm7by59dy8OQefkD0O5ZOlHzilBSw/+adKHSEmvP+028wNM6
-	 zgLMur5IxzLabOoup2Z28+/XXSud67bxHCdKMu1Ra/DOnVLYflCRxlPHZ2uTlzmac
-	 4RFLkON1vpaytbI9wwkhcfAzOaxBI9L2Y+cQtcnHqY4Lu0pA3B0aO3E1VJfEZjDpZ
-	 SYkPbfoKTY460xu+wpcYqqed7bXLFJwjHHiAkLI/pM4kCzvUAnNLgWB19DxDPus/K
-	 Jw9YVwnZlm7QNcEvqwAQxi+VKuYSHOkhxNAln6V34y04pnRt7ETS88yuzfD5+Ux9g
-	 nxGi2MFIsmAuieR+7Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MElZB-1s7bsg1yHr-00103h; Thu, 27
- Jun 2024 11:24:49 +0200
-Message-ID: <2a1cffd6-8ca2-4dd7-94ee-2debadcb1521@web.de>
-Date: Thu, 27 Jun 2024 11:24:48 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l+kNx+ND"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42561c16ffeso13857075e9.3;
+        Thu, 27 Jun 2024 10:08:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719508129; x=1720112929; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cd52TDCo23vBUICUzAHPR5YFmSE3EhQH6c918u4ugTM=;
+        b=l+kNx+NDwiJN6QHmYwbT4SGurL9WxLn07hFdAH4sd/lEfWKy6Noq7f+ijhr67RwKZB
+         onULGKKtnqUOdckxbqL+OIFdpUyeaJN6TmKBuzAMu4N9CD3Q03myC8KJxToUx8zHH+4u
+         UX9TkxglsiIwhnV00lj3kCjDB6rHgsWWNRLIUtNf1j1zl56ciR5b7wA6rxdLRbwep6Gu
+         uopXkX66+IaBD6+ROZDX+eBfqqkPnqs6pbT9YBu9H2/qWHL8eQcSWI2cdKvdgjb9pLk4
+         gBEQXq8vrIpXXD1VaYZGB8sSbSlunmaW6bS7Eb/jsXlO21s4c+unLCQl8ZTgxf+GcLJ0
+         Blmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719508129; x=1720112929;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cd52TDCo23vBUICUzAHPR5YFmSE3EhQH6c918u4ugTM=;
+        b=T6XD5c50Og8elC3ksQM7arGF0ZpN4yP5HXAm7uNtCPafy6AZ10pnrfzS5MQZaycWza
+         vMpe9my3x+IID4+N/mT1wl4ogLe3dQmMz7WIUXRf78Xt9TLfAO1Snpcbq3puLQmt68Ly
+         MX/Ko6IysghGsZBO3pZJ15fePizmZUh4SDFIfUm0fUatSMFMAEq4/cs0MfU7H3W3nOw5
+         YVN63MPHEoc3tT9gTTcqSnmbtguUV2k/VD7Hc2p4gQl1kEe23FAe9V1M7RsaAoiXxEMn
+         2X3euc/7flJRPOn+iOo9uFgAkoR7Q3IVi/KiKRRsVwanIR49at46kYTe6psmb3HBEuza
+         S3uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtY1I/ugo29QsI4upeDo+IKg4jYn/YpB9vq0cNoixyxaypcsTq+a5Zm9XYpNyycfrfnQRk+d016NrZPrL4WhjCgmLTN/ZneoSnUazGXPm/WK5bsk36c9yMenuMdZuoCbcR/8gA9W/UQrrPGQcNf6T+
+X-Gm-Message-State: AOJu0YyS5jnyy6diMrYxY/zrBg/PzwM6ihUMJSL3zIpMfaeG2/ZfoqDE
+	7PEmO7/DHJd9MeciZto0NQwX7VgcD7hUk7EtwFSOvdm0NaTmtfJ4NHUAwA==
+X-Google-Smtp-Source: AGHT+IE5bMkYh7fWJfWBM1m0gURnI3pYwYNUdfjazbH575zk32WvUb2At7eMuejqYxfL6YI71DOP4Q==
+X-Received: by 2002:a05:6000:1010:b0:367:f2b:aeff with SMTP id ffacd0b85a97d-3670f2bb07emr4426806f8f.0.1719508129193;
+        Thu, 27 Jun 2024 10:08:49 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3674357c12esm2493077f8f.15.2024.06.27.10.08.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 10:08:48 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH][next] firewire: core: Fix spelling mistakes in tracepoint messages
+Date: Thu, 27 Jun 2024 18:08:47 +0100
+Message-Id: <20240627170847.125531-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [3/3] leds: leds-lp55xx: Convert mutex lock/unlock to guard API
-To: Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Christian Marangi <ansuelsmth@gmail.com>,
- Julia Lawall <julia.lawall@inria.fr>, Pavel Machek <pavel@ucw.cz>
-References: <20240626221520.2846-1-ansuelsmth@gmail.com>
- <20240626221520.2846-3-ansuelsmth@gmail.com>
- <fa53fa80-4c0e-44d1-a62d-da219831526c@web.de>
- <20240627070909.GD2532839@google.com>
- <873c2900-859d-40eb-97df-f45f714ed295@web.de>
- <20240627082232.GG2532839@google.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240627082232.GG2532839@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:2PtDIVjRAoYhsDV9zI8Q3b9UPpZNOvQJZsrnA1WvWNCFuQUbLhv
- YGqXgw2cb6FjqIFCXNGGZPD0Yr2EbL2FJE/q2w1DquMlOdNVyCPm7U+v5t3MbNlVcQRNfUo
- Ve46dxtK4/AK6/oApjQydOM6jcaIQzj3xa9KuPT4R80M5j4NEOvp5UVhXUImlM8gw2SVuSc
- SILtIRVhqJAzWaRTcmyVg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:z1XJOnyBE+o=;rfBk1RqlOxYlwrOtzVjRgdSmPGQ
- Y4tfUu7MQ3SRwJ3Zw9oLB5CbErr2TxGwNVr6F0XqCmXRBOH2esB6FhzHNij2R57RcNAjD8WOq
- B/V5FMSbRK77OXRgIMBdR1WtIesMJJe/8zbGHSVtfDA5ALBCCf7k9G0qIW9jknMVZSOfVwx+X
- uJG8h2S8RQIDWD5p+78EujkdZpDZbDwzRgpv+QygaUxA7xx1aMD+Xi11EI+XpXSt/gfkYjBCo
- +AR8EK55shiMzhsDMs084s7reWtrNg4zK4xRrSrFz98Z8RjbHZRAGb8HinHVlHT+Rz+ngdjrv
- rmXo3hOhmn/TitFoGtjq0bsf4KJ0oz12bt5KKcaGm5TPaujDv4PE7t7GADLyVr1TFSVyddwyQ
- vaPGTFumXVCCljMwCNBagh1KiGdjUihpP2hJoe68Y1dw1f1qVjw6gz3/Jjmold6s3lKtMqMt2
- ylZectMHq/UdIWn0cRdWwwDBVpkWKk97z2Rn8W9BSwwSsjlt8cNhulIGp2KRqVKIweD6dULDb
- LKzAEeE1zKcGSRk226I3+Z+DOI45lHXnoq7weV6SMCUrUwYX509q5sGGiQSz6Y8n3RxGJPBe+
- PG010U/71afaQ44BGXYKthn+N5LoExv6HwPrOyrSDQi5HHBkn87MCmF382taxDDGocYiKo6C5
- evqc/ShHQ4/+oLU3Wudlty2mGlM1+OBXnadO0O9RFUY8/pneuLHfIoKyGDR1rVbKaQcJBNWIF
- Ag+SdZXbXvEWmDr+A4Omq5uIFxa5pulenZH2PGYjd3jxMwg93W5f40QX7YaTOPjJsglSvql9q
- TWZCQvaGSuNK/uT2xEDxmvWAWvvMesH6aIWeCAu4EdEK4=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
->>>>> Convert any entry of mutex lock/unlock to guard API and simplify cod=
-e.
->>>>
->>>> Thanks that you would like to support another bit of collateral evolu=
-tion.
->>>>
->>>> * Would you get into the mood to benefit any more from applications
->>>>   of scope-based resource management?
->>>
->>> Why don't you submit them yourself instead of asking others to do work=
-?
->>
->> 1. The change resistance (or acceptance) is varying for possible softwa=
-re transformations
->>    in wide ranges, isn't it?
->
-> How would that be any different for anyone else?
+There are two spelling mistakes in the tracepoint message text. Fix them.
 
-Maybe not.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ include/trace/events/firewire.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/include/trace/events/firewire.h b/include/trace/events/firewire.h
+index d9158a134beb..86330ba58336 100644
+--- a/include/trace/events/firewire.h
++++ b/include/trace/events/firewire.h
+@@ -853,7 +853,7 @@ DECLARE_EVENT_CLASS(isoc_single_completions_template,
+ 		memcpy(__get_dynamic_array(header), header, __get_dynamic_array_len(header));
+ 	),
+ 	TP_printk(
+-		"context=0x%llx card_index=%u timestap=0x%04x cause=%s header=%s",
++		"context=0x%llx card_index=%u timestamp=0x%04x cause=%s header=%s",
+ 		__entry->context,
+ 		__entry->card_index,
+ 		__entry->timestamp,
+@@ -891,7 +891,7 @@ TRACE_EVENT(isoc_inbound_multiple_completions,
+ 		__entry->cause = cause;
+ 	),
+ 	TP_printk(
+-		"context=0x%llx card_index=%u comleted=%u cause=%s",
++		"context=0x%llx card_index=%u completed=%u cause=%s",
+ 		__entry->context,
+ 		__entry->card_index,
+ 		__entry->completed,
+-- 
+2.39.2
 
-> Resistance/acceptance should be based on patch quality alone.
-
-There are further factors involved also according to usual communication c=
-hallenges.
-
-
->> 2. I would appreciate better support and collaboration with additional =
-development resources.
->
-> In what regard?
-
-I got the impression that progress would be hindered (or even blocked?) fo=
-r a while
-in selected subsystem areas.
-
-
-> What additional resources could you possibly need?
-
-Possibly known examples:
-
-* More powerful computation equipment?
-
-* Software improvements?
-
-* Financial incentives?
-
-
->> 3. I hope that further improvements can be achieved also by the means o=
-f
->>    the semantic patch language (Coccinelle software) in safer and more =
-convenient ways.
->>    Are you looking for any extensions according to the coccicheck tool?
->
-> Sounds good.
-
-Thanks for such positive feedback.
-
-
-> Submit a patch.
-
-How long will the integration take (if you would like to take another look=
- at
-growing product backlogs)?
-
-Regards,
-Markus
