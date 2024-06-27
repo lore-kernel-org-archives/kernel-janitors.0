@@ -1,99 +1,106 @@
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D31747A74;
-	Thu, 27 Jun 2024 07:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3919623BE;
+	Thu, 27 Jun 2024 08:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719472379; cv=none; b=oP1mDOpoRAAWnCfGfXUYMQcCzGAMXN/Fjenxd0QwJ/E0qGOLGPrnhQPqx5nqZzVElZ8o0dFmhuqIDOfRhoKmhkhAFMzuIakhDyzT7lyiA26Aeu0Ot+6yefRHLwrCUFtwTkfS9OLP3zJUAnVPp7W3CqBQ442W8rVPHYpaPyKAO84=
+	t=1719475955; cv=none; b=QWr0Bg1y6+q1d17zl+PweN4qCQLmOxAE/gdxLFgDHqJnz0e0XvtR6E3Zf8gwJ/Bl4BhkcLY31BXVoa/NK7QMXwNa4pgTr5AsnpnaUrpA5g2yiKboAysbwCxtxVqaCpLb0ruaJaABsyMkFpLTk+l1rugr83A3AFlhIG6WrIOMxNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719472379; c=relaxed/simple;
-	bh=HZ1ieO5mdOeI/L53TPPVa0yOUEeO3yiTK54ycoeCtrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fFrf5p+5/aPLSjDcoOQ7n/YrpdpSnv0QTzRjw7kTTTQH9H9T1kEpssJQHnLyuJdXtcmQIjhZ5ZgfycURacb0Yya3JTxF5OgD35qlD2Nrd2aPnSROs8uvS5sz2KNnRhEjS5gqX2DFtkDDxNt0kSorxgITQ0iyWQI8Ndnvina0Wbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WvCmvmg/; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1719475955; c=relaxed/simple;
+	bh=fiWrayC4CoOBwPtIsiSX/GiXceLl+OaC2dxB0IutO90=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rx+ip1ClN/Qnybt/Dk/c1qQrfuv88g4AGteKbSaPViBGpv8EjjjsQORO+I6PKT4vZ+6mq4sPe6qRnxzQ30h1yv8GTAoUS3oLE0GIiOJTgzRBa87TD+I68pm4qAnxXgGIC3TZyyKKpXM6jElGes4sTLzOdlJWcDZcGAw7Nu7QnE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qJEiRhyd; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WvCmvmg/"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45R7CUcg066000;
-	Thu, 27 Jun 2024 02:12:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719472350;
-	bh=9/nt+OwWswhCPKKWAujQ3ZdvXlga4u8MUGMl58MIwQ8=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=WvCmvmg/Xagn/PUZZhekH2f6Qzd96bL+1Igzvf8dDSbTpcefJ+K98NnFljwGdVVWU
-	 SULh0L+t8KXzhjlCdgju+Hkxm4Wftw11vkn+CDD9L4VFVwSk2xf9zh35laRS6r6r7I
-	 JTzGpCr3DniOJ1sJ5AvNyqzr/UchFd+irGZBdzIs=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45R7CUgr027376
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 27 Jun 2024 02:12:30 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
- Jun 2024 02:12:29 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 27 Jun 2024 02:12:30 -0500
-Received: from [172.24.23.9] (lt5cg1457vgj.dhcp.ti.com [172.24.23.9])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45R7CRwH130459;
-	Thu, 27 Jun 2024 02:12:28 -0500
-Message-ID: <4b867d2e-fdb0-4d5a-a9a9-e00758f2cd05@ti.com>
-Date: Thu, 27 Jun 2024 12:42:26 +0530
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qJEiRhyd"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719475931; x=1720080731; i=markus.elfring@web.de;
+	bh=mhQVKH8+Px7f5Ojk/E2nBPFB2qgO/2wkwUsc6zhbtbI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=qJEiRhydvspISLCC70vtzLqcsU8FELDUUbYITGxm1V+F6sFgE4w3e7iovaQx3iFy
+	 T8vugz9+wzb+YcPbBZNDr1FW7XE8Py8Bv0aI0y96JxlBm5qCBI0JLdSkiO1A/h1kr
+	 3tcoXw48d+/0AYwfIusuFun0rpu47bHe3DnmyCbrTjBrVeS4cKAd4xZ63fRJT1Q6X
+	 7PZrSotrVzCrgPSqj/nKFkNJsK8HI7+VFVHabhmg+UtlnpnIBM5ptVCKaK8vttTGk
+	 J7rjK1TAzfktyk0ZxCPpLT7OUFZ7KscWG471tqm2WPpdrhWwK3Z9DI6MnwQedqUgu
+	 GdA4UCFfJAMU2aextQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MZSFY-1rrTZt0Sne-00QMKG; Thu, 27
+ Jun 2024 10:12:11 +0200
+Message-ID: <873c2900-859d-40eb-97df-f45f714ed295@web.de>
+Date: Thu, 27 Jun 2024 10:12:10 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH] mtd: add missing MODULE_DESCRIPTION() macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
-        Miquel Raynal
-	<miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>
-CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240610-md-drivers-mtd-v1-1-0f59183e4005@quicinc.com>
-From: "Raghavendra, Vignesh" <vigneshr@ti.com>
-Content-Language: en-US
-In-Reply-To: <20240610-md-drivers-mtd-v1-1-0f59183e4005@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [3/3] leds: leds-lp55xx: Convert mutex lock/unlock to guard API
+To: Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Christian Marangi <ansuelsmth@gmail.com>,
+ Julia Lawall <julia.lawall@inria.fr>, Pavel Machek <pavel@ucw.cz>
+References: <20240626221520.2846-1-ansuelsmth@gmail.com>
+ <20240626221520.2846-3-ansuelsmth@gmail.com>
+ <fa53fa80-4c0e-44d1-a62d-da219831526c@web.de>
+ <20240627070909.GD2532839@google.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240627070909.GD2532839@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:sfP02OlOEek9hLSqJ6tuRgykIOaf//tZu58IwVFIWt2LpAO5ncp
+ 37rN0Fka8KsjMZe+RW7gndekYZzWjntiACX06qUKyoSsaj0AOWbv2clzcT8NcXxaO3oHiVP
+ 3xLob7OyBV2CItJNtSytAys9u4iMUY2c/bomaVWBsu3ePWULT+YPO6dnOmmFcMV/XpFopgC
+ B8MDlm+U2ravKQiPzDmgA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:vY4+w2lbiss=;8dCvRqr/bDnowWIHTdRnxTJNXGj
+ IrFxtZlxC4C3H28Db53PjrcBI+23H6MC919MshCPNLYugTEgC36FQJLD1rhoMrzV+bVVfUis1
+ db95qXS4rsxJFwsRC4VTjTOC8lFfv9dv1xPbMARbaQL6XXOee0OI1u4T3F7xARGsKnHQbGaAF
+ xmx3Yual9aXLUsA4Y82RJlNSBT0S6xzVIbkz3veEPclBqDx9g+7Hcm59zOgKeu9uOBJvQAf/O
+ OWbI3/u6OB2ojqrAGvyaFDdRBkfo3NpRdqrdLMrf0mwHZj0bkhVeIMmVXvULHNYcrKWBDI4fB
+ BhDY7xV4rwldgLEWtU0wP29ZftWmYdqtz53e1dn9KRzZ/dZ8VoUCAdnrEHmTUNAh7nNSN06j/
+ 0t6kAmAC8FoPNerFyZDVExFhKRx+ndpc17GpkQebI/sL0xpRBfVmpXHesQYBh2b9yguZ0gqsV
+ BGBEDq3yOLk8LR7wn2N5OYRk8WinLkHiNfhr/O78U6UhrQrLEnLI1ICHXAuYvXicwCxgq/rn5
+ di2UPMqSeddrW/8hFrQOFvPFG4Tcb2cMYmEirt22uMhCPgOe7032QOO0CfNATNeW6qu+23VZ8
+ lznBTJY5aora8epYDJx/SjcYGU7g6yFwdgyYchrZC/WEJ0oF0vdq/1b+TzqxcSntgLq3BbYhJ
+ fTVbAVginTMO8b3alA8vYkBmp8z6lSXg+WbChPTogJncSv3AnJ+AiCgymmqdFlsJLBt0dyelc
+ 3X9+PfVq+mOfCeQ89jKe8Du77JC2IcOTIAqOaFaMP/fBRXAaCmPtXUu+n/wSSVyCx+BtYcaqN
+ g5V244yPBOUl0w6wms7Xp7VVF9DoJVfDqhAR7FSqsKOQY=
+
+>>> Convert any entry of mutex lock/unlock to guard API and simplify code.
+>>
+>> Thanks that you would like to support another bit of collateral evoluti=
+on.
+>>
+>> * Would you get into the mood to benefit any more from applications
+>>   of scope-based resource management?
+>
+> Why don't you submit them yourself instead of asking others to do work?
+
+1. The change resistance (or acceptance) is varying for possible software =
+transformations
+   in wide ranges, isn't it?
 
 
-
-On 6/11/2024 10:37 AM, Jeff Johnson wrote:
-> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/parsers/brcm_u-boot.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/parsers/tplink_safeloader.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/chips/cfi_util.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/chips/cfi_cmdset_0020.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/maps/map_funcs.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> Corrections to these descriptions are welcomed. I'm not an expert in
-> this code so in most cases I've taken these descriptions directly from
-> code comments, Kconfig descriptions, or git logs.  History has shown
-> that in some cases these are originally wrong due to cut-n-paste
-> errors, and in other cases the drivers have evolved such that the
-> original information is no longer accurate.
-> ---
+2. I would appreciate better support and collaboration with additional dev=
+elopment resources.
 
 
->  drivers/mtd/chips/cfi_cmdset_0020.c     | 1 +
->  drivers/mtd/chips/cfi_util.c            | 1 +
-
-For the CFI bits
-
-Acked-by: Vignesh Raghavendra <vigneshr@ti.com>
+3. I hope that further improvements can be achieved also by the means of
+   the semantic patch language (Coccinelle software) in safer and more con=
+venient ways.
+   Are you looking for any extensions according to the coccicheck tool?
 
 
-[...]
+Regards,
+Markus
