@@ -1,111 +1,176 @@
-Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA33F12B72;
-	Fri, 28 Jun 2024 01:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757B013E3FD;
+	Fri, 28 Jun 2024 07:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719536805; cv=none; b=kKfBSxH2bXiQUF+uJ16yCLqwYB5vMr7W+ZwQysW/dHB1B/UMVvq0pyL0Gsx/sE7+L3S8ij33ZvmlEZxhTxo1cf/0YQULtLHcNUc52LAF1Zici2w/PxevDmdgInJCUJZe797HPOSk0ViUznpJ6MNqYkqdpBOwn51ZywUM8ag0XpA=
+	t=1719559647; cv=none; b=I2FSN1F51a31kfb5JN+mxIjBEKN1+tS1ye7c5BOUgKtE0r8YdZSw6l/QeUNEd6U+HxwQAHqNTmKz1KitEmKgWR4OtSem3s+pthA0Lp7ZdttWQai5MlA+QvdPVZnsnX9kvUQ2U6soQUh9ud7+tH0bjbfolwDcxy9DLddQaPy5+us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719536805; c=relaxed/simple;
-	bh=yefVHsO4JUxqb/nsWn/gvTjbRftGeWGVUg0tvn1oRxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a1fSI6ktExuGm8brapFZYwmJwcuIjExlhy9skplZNqTklvXgSQTxm/Yhe4UM/f7OWgKCdtyPaRosxXg8RQHVbTtbv7Fr5kUGXUapvtIaX6PwiWoLBqR3eqbM2s+i/hjI5aKyRd6LjLP0oJX5WyZ5xdU74vhSwYSRzzoleTpvRzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=esuA+8gU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ObXzR877; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+	s=arc-20240116; t=1719559647; c=relaxed/simple;
+	bh=GzFaYYQU3q+oka/5f4J6D9YJgYGUys2RDo5EPNs7WLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KtdDJhh25y7wWa5HjBwAJT3zjpu94msSwyWw0gvUFG4ZMR01lNjxG9t4IOeexW8L4yrVz0kAbuOk1uNUbdEpsylv2XsXWmpRb6L2awbGobJ7RinAWKluKDnCRCpl0J4KinubKZlhb6vUyyZiO10LZEcKm7WK+6+NSGaiaVSTRsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GvNIrfqu; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="esuA+8gU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ObXzR877"
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id C5B961140211;
-	Thu, 27 Jun 2024 21:06:40 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Thu, 27 Jun 2024 21:06:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1719536800; x=
-	1719623200; bh=yI8GYT0tC7+Zux+1Ug0067pja9GoxuFh1z+fEwMhgEc=; b=e
-	suA+8gUrtmAQDn6IbWY8U9edenoYbcGM2aS9w9obOtMXg9mUwNmKj+lh/f7lpgjo
-	dY2B4FuUz4J5FiXx9rZjc4NyRl4/W5aAD1cSJDAQoAnxms9KtFR0v15bLbYGajSv
-	7g/GtqYJce/JlbqHmV8635BgVbx3fAlNn5/iEe+rMA8uQyc94eqm43mgNOc/Kls6
-	C2LzONO6Jp7kN0zkkWovF+Fc7bQKd/g6ygqt7ebUMvy4GPyXL4xGNqzP17f66gEN
-	c35hVB/LnPBuJGWSX2Dbv49KqqrrcjxFcTh2+8FJOQ0vhlogtji+w/AlA7VhNiHF
-	g+BUG9H7S0nNifhmnaW/g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1719536800; x=1719623200; bh=yI8GYT0tC7+Zux+1Ug0067pja9Go
-	xuFh1z+fEwMhgEc=; b=ObXzR877lhFsQ7HaW7o0H/rrLmUNlgdckXnOZ2wogGRj
-	uK3iKs19OOhVLaAikisMQ+6qABqildl7F7E8xPPCG5uN2jGWNMNJqfm5orFRCBqz
-	kCUZIK+jdNvyVWq/HTG0IInMf10ZUQEMCtrr/XmWe9dj4gAW2y6dBzqG8H2gC2Ss
-	/9TdK1ArE63SWL69EhTo2RjF4Hq61yWXIAWcW2behrxjmiBvEVM4kptRnpz/4zoI
-	vshHtVfz3ACISeVNZD/whfDPadt1EnUsXh8EH7VsZRXYuaQz6DIorcOhJRCnPl+U
-	skA0z6GIQFWlDk5A8s3dnVsR0GcGgu77TqfTrQpEQQ==
-X-ME-Sender: <xms:oAx-ZgFq8jI5nO1NIy76el02fqScLWM4SCJ-H3sLpaGM9D-ZNHavmg>
-    <xme:oAx-ZpUkVlu3C5SLJ1VSiOJ6nsxiqWEEdUtUaXYTlatw1BDwPUPSlrVOwrCUFSMwD
-    r44HchR5doKgv6bxvI>
-X-ME-Received: <xmr:oAx-ZqLJRy9GWTWg89LgnvLC1BH7COp8HVgi_9y0-cj7GJZMTQ7VJLs6TZxGrsoU_SezpjkgKw_3B1wjQxVh7tHo__59m5ZK0S0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrtdehgdeggecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvrghkrghs
-    hhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjh
-    hpqeenucggtffrrghtthgvrhhnpeehhffhteetgfekvdeiueffveevueeftdelhfejieei
-    tedvleeftdfgfeeuudekueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhp
-X-ME-Proxy: <xmx:oAx-ZiHS80IbLPHSfGChMHfy0jaPxaYblv4qbcFvLTGQJ9Ae7U5hiA>
-    <xmx:oAx-ZmXiSSGeaG2urRqFJz4UYdBJAi0dFsgnfu4SdR6y8WuZpzPm8A>
-    <xmx:oAx-ZlO_3lm9GjhZwOjrLYPVLnxykzF408QAmGwW1WWpvSPBjp9GOg>
-    <xmx:oAx-Zt2Z3TAgfMh-MIHDth8PowV0QVjJrWOiQ23sniEoBROeKQLrIw>
-    <xmx:oAx-ZhH-FUPUj75UTKQIPARRPc0nlw4LtRJ0alNT_Erl-VKirGeiWLHq>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 27 Jun 2024 21:06:38 -0400 (EDT)
-Date: Fri, 28 Jun 2024 10:06:37 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] firewire: core: Fix spelling mistakes in
- tracepoint messages
-Message-ID: <20240628010637.GA978284@workstation.local>
-Mail-Followup-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-References: <20240627170847.125531-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GvNIrfqu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719559620; x=1720164420; i=markus.elfring@web.de;
+	bh=nl0CL9GDIaeTPnglvyjXELGMdmLp+0wQCRgVbrDa0Xc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=GvNIrfquwx4IxnfzelRFzL06vT+ZrXCBp8ECAZhYWDDJke7/sN2mpOOyAAEQZy9f
+	 G6ZgRL0v+nV7ll3aneE+TBVb0dwvJRptMY+Rnutx9kZXdPE0xDiKX+3wVsoiWmPhQ
+	 pFRHgunBu6n35lX24q/5rZn3WphUz2ataWOd2Mrzs18t0AUns7w/OPGoNFH8Smify
+	 om5wq6ZiEW2GK+h3ViMpwjy5cH0k6gtUMMbywXNbpGd19jBNkNGbftnRFwrsBIe9v
+	 z2AMvGJrj3gq2fuSAL9tNhlKDhyD2X4JUhfDaMw+v9QiSOE1JUxPOwwfJDa5Dh3Mb
+	 cU1vgnWKsiGKWGGzdw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M5j1c-1sFyTW3WiA-009URR; Fri, 28
+ Jun 2024 09:27:00 +0200
+Message-ID: <0d2704d9-202c-457b-a83d-75a427966564@web.de>
+Date: Fri, 28 Jun 2024 09:26:47 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627170847.125531-1-colin.i.king@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH 2] usb: typec: anx7411: Use scope-based resource management in
+ anx7411_typec_port_probe()
+To: linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@Huawei.com>, Xin Ji <xji@analogixsemi.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@inria.fr>
+References: <889729ac-3fc5-4666-b9f5-ce6e588a341a@web.de>
+ <20240606101757.0000331f@Huawei.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240606101757.0000331f@Huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:iGRJMg3HVVWt+ehkSA2MzkeVAPv/Hn5WVwelrW7NtILx9T7WsC2
+ zI86UvidMu9tiMK2rVoK6Ia0f7fDMn77Yw31x7afp97lDWE87HPembl1DydWP4PeiJ3UtdL
+ z8bVAL8GaUICf7cfoCzglJ/ucWJv4WmSQcEcAga6yaw/TXCHPJ46UAWTIeeUvIGOvcs43Zk
+ rctE3izcHnYeEMYymzniA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:WMNp1tp+eX0=;7SG/gANxHI2ek2gitqo80qqvDDd
+ GTmzPe8GerRu2Au6/GL13hP605zrf0Kyi8Qq2dyFs9QT+55WH8FJQiLvmSsbxyh/OaCLS3BOc
+ 3+QfP0YHl6o5iK3u4Zr6yxRMxA93aak6ALYs+HDd7iHoojzJAiWlnMoQ1AeREwgZkCVG8L6E6
+ yH0sNpnFs3vseBKEbedZjt0/ut10xcfkpeL2rP68OvL15ujQtaik+a4ePACZ9aBzwhwMUF2jZ
+ 4ANraoppJG9YJsh4CP58S7R3pmcdfJ1W+wYqTeGYgPyt7oobGtXhAQpbiKDuBFP5p9PlbhJyh
+ amIqGuEjoPDSYlNgm8hKWS2Iq+G+KEaAyMqzMRw4H0lhEHZxviGoxX1hE0LnEgvte/hI0L/hJ
+ ktmE2PPtIvIrbBvwlKwQSur2TTgK9VNptS3xeB4Uc00vNrk5CqRnu+Gi9WLLDvfFfxpM5fHjE
+ e1Jvi0LG9bISmh85oqs8h0MDyCxH0yQcIY13EL1xnpANLvAbCfqabQC8Ew/tHHvS4Fms5HPAL
+ ZFLtP8ws/Kua3DCksaRLLjP9rvkBWugFyDAuN91/DfTdifUWoXQ5NPZHSnSMzaw5l/u5CNDTW
+ QaneYLeceuxLYdGMTmr2rT7ylEJHZywlQ8KiMXuJc89NqY16800d0RAgMQqDv+ohBhR6fg8DR
+ r+DMxFJGxjGjjK1VOxjEcDqK6EqMZshWsD5uXOFH/7GmG8M1qi4xrY4G995HVqLZYyhVB6bnc
+ gHKO/iQxi/iJ26D7Le9Mzkkp6b9FUHbEHSS6xEZk97yu1d+DQfqhtBPFFZNgUbDV1aiQwpQtO
+ LeM2aeDJLllpOxeTi79Ca8HT+7dqGGS2amrhtSLbyHDYI=
 
-On Thu, Jun 27, 2024 at 06:08:47PM +0100, Colin Ian King wrote:
-> There are two spelling mistakes in the tracepoint message text. Fix them.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  include/trace/events/firewire.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 28 Jun 2024 08:25:34 +0200
 
-Applied to for-next branch. I'll use spellcheck program when posting this
-kind of changes.
+The API documentation for the function =E2=80=9Cdevice_get_named_child_nod=
+e=E2=80=9D
+contains the following information:
+=E2=80=9C=E2=80=A6
+The caller is responsible for calling fwnode_handle_put()
+on the returned fwnode pointer.
+=E2=80=A6=E2=80=9D
+
+The mentioned requirement was not fulfilled so that a resource leak
+will occur in some error cases after a device_get_named_child_node() call
+succeeded in this function implementation.
+
+Thus apply scope-based resource management which became supported also
+for this programming interface by contributions of Jonathan Cameron
+on 2024-02-17.
+See also the commit 59ed5e2d505bf5f9b4af64d0021cd0c96aec1f7c ("device
+property: Add cleanup.h based fwnode_handle_put() scope based cleanup.").
+
+* Use the attribute =E2=80=9C__free(fwnode_handle)=E2=80=9D accordingly.
+
+* Reduce the scope for the local variable =E2=80=9Cfwnode=E2=80=9D.
+
+Cc: stable@vger.kernel.org
+Fixes: fe6d8a9c8e64 ("usb: typec: anx7411: Add Analogix PD ANX7411 support=
+")
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+
+V2:
+* The change description was extended as requested by patch reviewers.
+
+* The tag =E2=80=9CReviewed-by=E2=80=9D was added according to feedback by=
+ Heikki Krogerus.
+
+* A =E2=80=9Cstable tag=E2=80=9D was added.
 
 
-Thanks
+V1:
+Initial patch review
+https://lore.kernel.org/r/889729ac-3fc5-4666-b9f5-ce6e588a341a@web.de/
+https://lkml.org/lkml/2024/6/5/1276
 
-Takashi Sakamoto
+
+
+I guess that clarifications can become interesting also for backporting co=
+ncerns
+because of the proposed software transformation.
+
+
+
+ drivers/usb/typec/anx7411.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/typec/anx7411.c b/drivers/usb/typec/anx7411.c
+index b12a07edc71b..9fb52f233a30 100644
+=2D-- a/drivers/usb/typec/anx7411.c
++++ b/drivers/usb/typec/anx7411.c
+@@ -16,6 +16,7 @@
+ #include <linux/of_graph.h>
+ #include <linux/of_platform.h>
+ #include <linux/pm_runtime.h>
++#include <linux/property.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/types.h>
+@@ -1142,11 +1143,11 @@ static int anx7411_typec_port_probe(struct anx7411=
+_data *ctx,
+ {
+ 	struct typec_capability *cap =3D &ctx->typec.caps;
+ 	struct typec_params *typecp =3D &ctx->typec;
+-	struct fwnode_handle *fwnode;
+ 	const char *buf;
+ 	int ret, i;
+
+-	fwnode =3D device_get_named_child_node(dev, "connector");
++	struct fwnode_handle *fwnode __free(fwnode_handle)
++				     =3D device_get_named_child_node(dev, "connector");
+ 	if (!fwnode)
+ 		return -EINVAL;
+
+@@ -1237,7 +1238,7 @@ static int anx7411_typec_port_probe(struct anx7411_d=
+ata *ctx,
+ 		typecp->caps_flags |=3D HAS_SINK_WATT;
+ 	}
+
+-	cap->fwnode =3D fwnode;
++	cap->fwnode =3D no_free_ptr(fwnode);
+
+ 	ctx->typec.role_sw =3D usb_role_switch_get(dev);
+ 	if (IS_ERR(ctx->typec.role_sw)) {
+=2D-
+2.45.2
+
+
