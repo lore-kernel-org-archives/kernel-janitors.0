@@ -1,112 +1,111 @@
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D0913B58F;
-	Thu, 27 Jun 2024 23:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA33F12B72;
+	Fri, 28 Jun 2024 01:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719531108; cv=none; b=NMzwBvbkJSAT/tyIxU48jx4NDI18D/3saUdHanAcNu6kbLJPbFVq3cWYtQRQ3lwwQ5H8h1YFVIRMW8BIpAcr/uePnOipiJayAd7cEaLj++SSxq+WGEd4EvE3/hQS+TdWhoss4IDnuUQjIwViTMzg2010YyGupk/qRPKH98HGE5Y=
+	t=1719536805; cv=none; b=kKfBSxH2bXiQUF+uJ16yCLqwYB5vMr7W+ZwQysW/dHB1B/UMVvq0pyL0Gsx/sE7+L3S8ij33ZvmlEZxhTxo1cf/0YQULtLHcNUc52LAF1Zici2w/PxevDmdgInJCUJZe797HPOSk0ViUznpJ6MNqYkqdpBOwn51ZywUM8ag0XpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719531108; c=relaxed/simple;
-	bh=Y2C58iMS1rC7jBjERQJ70o8iJaPYnqApBKqtWa1Ubl4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ETCIBuhZBJuDmY33gYUC4dWayclGqxJtc5Z2XmoNYkLQU49bTbCYlg8GIzKOWIm/2znQ5Bmh56mcxSrBglbgy8e9DlBsc/07EQlGxBoPeYCtt8EhB0drwWBkwGvCDLMBshpos87pcFyGZCwgd05yOOltuXQmdDE1a6ZUj8GuPIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BWT1nzSk; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1719536805; c=relaxed/simple;
+	bh=yefVHsO4JUxqb/nsWn/gvTjbRftGeWGVUg0tvn1oRxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a1fSI6ktExuGm8brapFZYwmJwcuIjExlhy9skplZNqTklvXgSQTxm/Yhe4UM/f7OWgKCdtyPaRosxXg8RQHVbTtbv7Fr5kUGXUapvtIaX6PwiWoLBqR3eqbM2s+i/hjI5aKyRd6LjLP0oJX5WyZ5xdU74vhSwYSRzzoleTpvRzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=esuA+8gU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ObXzR877; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BWT1nzSk"
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45RNVfeh064861;
-	Thu, 27 Jun 2024 18:31:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719531101;
-	bh=viBH8xEHWs7bGKbHzAD1OeDH+PahwuZmOpzT/pNStZA=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=BWT1nzSk+QG7aXWdGOhMOHsDYtksU3qxbpkNv06fe3U7ewV/bbkRP9z52kZDp3R9b
-	 oMIwK1TVQaWlqOTP0NYMQVsO4Xu90pbNHMAiSsG/zKliwkZKrG08nxgV9siWxCw49e
-	 bfRWS3iUKuX2PNyhLdZ9Q2ZFlYDZ76S6fO17WODA=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45RNVfAh006999
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 27 Jun 2024 18:31:41 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
- Jun 2024 18:31:41 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 27 Jun 2024 18:31:41 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45RNVfCH094607;
-	Thu, 27 Jun 2024 18:31:41 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Santosh Shilimkar <ssantosh@kernel.org>,
-        Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>
-CC: Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] soc: ti: knav_qmss: Constify struct knav_range_ops
-Date: Thu, 27 Jun 2024 18:31:36 -0500
-Message-ID: <171953106048.1077699.4550001367312717108.b4-ty@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <a8b4b428f97fc584f38bf45100aa9da241aeb935.1719159074.git.christophe.jaillet@wanadoo.fr>
-References: <a8b4b428f97fc584f38bf45100aa9da241aeb935.1719159074.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="esuA+8gU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ObXzR877"
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id C5B961140211;
+	Thu, 27 Jun 2024 21:06:40 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute7.internal (MEProxy); Thu, 27 Jun 2024 21:06:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1719536800; x=
+	1719623200; bh=yI8GYT0tC7+Zux+1Ug0067pja9GoxuFh1z+fEwMhgEc=; b=e
+	suA+8gUrtmAQDn6IbWY8U9edenoYbcGM2aS9w9obOtMXg9mUwNmKj+lh/f7lpgjo
+	dY2B4FuUz4J5FiXx9rZjc4NyRl4/W5aAD1cSJDAQoAnxms9KtFR0v15bLbYGajSv
+	7g/GtqYJce/JlbqHmV8635BgVbx3fAlNn5/iEe+rMA8uQyc94eqm43mgNOc/Kls6
+	C2LzONO6Jp7kN0zkkWovF+Fc7bQKd/g6ygqt7ebUMvy4GPyXL4xGNqzP17f66gEN
+	c35hVB/LnPBuJGWSX2Dbv49KqqrrcjxFcTh2+8FJOQ0vhlogtji+w/AlA7VhNiHF
+	g+BUG9H7S0nNifhmnaW/g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1719536800; x=1719623200; bh=yI8GYT0tC7+Zux+1Ug0067pja9Go
+	xuFh1z+fEwMhgEc=; b=ObXzR877lhFsQ7HaW7o0H/rrLmUNlgdckXnOZ2wogGRj
+	uK3iKs19OOhVLaAikisMQ+6qABqildl7F7E8xPPCG5uN2jGWNMNJqfm5orFRCBqz
+	kCUZIK+jdNvyVWq/HTG0IInMf10ZUQEMCtrr/XmWe9dj4gAW2y6dBzqG8H2gC2Ss
+	/9TdK1ArE63SWL69EhTo2RjF4Hq61yWXIAWcW2behrxjmiBvEVM4kptRnpz/4zoI
+	vshHtVfz3ACISeVNZD/whfDPadt1EnUsXh8EH7VsZRXYuaQz6DIorcOhJRCnPl+U
+	skA0z6GIQFWlDk5A8s3dnVsR0GcGgu77TqfTrQpEQQ==
+X-ME-Sender: <xms:oAx-ZgFq8jI5nO1NIy76el02fqScLWM4SCJ-H3sLpaGM9D-ZNHavmg>
+    <xme:oAx-ZpUkVlu3C5SLJ1VSiOJ6nsxiqWEEdUtUaXYTlatw1BDwPUPSlrVOwrCUFSMwD
+    r44HchR5doKgv6bxvI>
+X-ME-Received: <xmr:oAx-ZqLJRy9GWTWg89LgnvLC1BH7COp8HVgi_9y0-cj7GJZMTQ7VJLs6TZxGrsoU_SezpjkgKw_3B1wjQxVh7tHo__59m5ZK0S0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrtdehgdeggecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvrghkrghs
+    hhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjh
+    hpqeenucggtffrrghtthgvrhhnpeehhffhteetgfekvdeiueffveevueeftdelhfejieei
+    tedvleeftdfgfeeuudekueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhp
+X-ME-Proxy: <xmx:oAx-ZiHS80IbLPHSfGChMHfy0jaPxaYblv4qbcFvLTGQJ9Ae7U5hiA>
+    <xmx:oAx-ZmXiSSGeaG2urRqFJz4UYdBJAi0dFsgnfu4SdR6y8WuZpzPm8A>
+    <xmx:oAx-ZlO_3lm9GjhZwOjrLYPVLnxykzF408QAmGwW1WWpvSPBjp9GOg>
+    <xmx:oAx-Zt2Z3TAgfMh-MIHDth8PowV0QVjJrWOiQ23sniEoBROeKQLrIw>
+    <xmx:oAx-ZhH-FUPUj75UTKQIPARRPc0nlw4LtRJ0alNT_Erl-VKirGeiWLHq>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 27 Jun 2024 21:06:38 -0400 (EDT)
+Date: Fri, 28 Jun 2024 10:06:37 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] firewire: core: Fix spelling mistakes in
+ tracepoint messages
+Message-ID: <20240628010637.GA978284@workstation.local>
+Mail-Followup-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+References: <20240627170847.125531-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240627170847.125531-1-colin.i.king@gmail.com>
 
-Hi Christophe JAILLET,
-
-On Sun, 23 Jun 2024 18:11:31 +0200, Christophe JAILLET wrote:
-> 'struct knav_range_ops' is not modified in these drivers.
+On Thu, Jun 27, 2024 at 06:08:47PM +0100, Colin Ian King wrote:
+> There are two spelling mistakes in the tracepoint message text. Fix them.
 > 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->    7498	   1193	      0	   8691	   21f3	drivers/soc/ti/knav_qmss_acc.o
-> 
-> [...]
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  include/trace/events/firewire.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-I have applied the following to branch ti-drivers-soc-next on [1].
-Thank you!
+Applied to for-next branch. I'll use spellcheck program when posting this
+kind of changes.
 
-[1/1] soc: ti: knav_qmss: Constify struct knav_range_ops
-      commit: ca16cb2b9073e2f2a968a04c794275aa21ee1aa3
 
-Seems to work fine in the limited testing I did.
+Thanks
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-
+Takashi Sakamoto
