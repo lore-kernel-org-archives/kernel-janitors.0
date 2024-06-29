@@ -1,37 +1,37 @@
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+Received: from msa.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BF03B290
-	for <kernel-janitors@vger.kernel.org>; Sat, 29 Jun 2024 09:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FB33BB25
+	for <kernel-janitors@vger.kernel.org>; Sat, 29 Jun 2024 09:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719652794; cv=none; b=RaCxF8Y5dJwHeGGsexkLqRr4lUNkGdECuVsAlcn0QqTKfpry/Jf2WD+e+NNf1wqU3ae/Fs1q8i4OPK7ElO7xndO+LX1nLsI3XWMXTqjBDFqCTM/Foj3hEjbeCb4NNtPuz+i6n/i+4ZKncfSmUmWN/+N2xazrpZZse/GLsqbYfFc=
+	t=1719652795; cv=none; b=rWPJ+62FkIk7Tam1cb8/5RkbmDzH0Fd2imXHdJKw7aTDWD9VEDoqnvBDA/iYo5ZQDFLZlfpH2lgzqP4bJlRHhkdF2Q0pOzf3YSoDMdHcPdvovdOzI8DN+kI2PPLGlW38yOoGo2Yl5S9nNnZw+SdA91xsYpVlls6uZ0Cg+JlXxfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719652794; c=relaxed/simple;
-	bh=AR/cuiqPTJDQLi2Gey2ZejTL45Qo897DCKmhdoxbNhE=;
+	s=arc-20240116; t=1719652795; c=relaxed/simple;
+	bh=JEqQTXN7i/UpjDTg0v2GMhy06AEN/B1xTgSE3FEecGA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PA1YmOnBYi+yUB9KdEsR3ysbM7yxzoC19IDTOahJQovgBnv/R4RDpyvPmkhI+dr/PGcT52zIbmuA1RKaKpjYTO6+lzbxvZEVXo/LiVj8FoQsbe0k/MzY2eK4u0tL1hdcP+Wud8YrVIqsxY2q4Y6ae8uun3UHPb28OLTLUwD4g1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=O4zLoHSX; arc=none smtp.client-ip=80.12.242.13
+	 MIME-Version; b=JYfj2i0wJUye/UNQUnNFIhMsWUYKFLgjBWGRWI7NCmsHBx7GgX34Yofem+7kOJPM19GJSI2s1/wkieZI+iYeMiQHzL4joBaHV5sF5vbbZ+zr+l2am8XU695jd8z6BXnFvPW7Q1Qe8VV3Qqp4qAu7WYn9gQ8UXVe1gssApNroWeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=GLm2aW9j; arc=none smtp.client-ip=80.12.242.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="O4zLoHSX"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="GLm2aW9j"
 Received: from fedora.home ([86.243.222.230])
 	by smtp.orange.fr with ESMTPA
-	id NUF6sgiHDa7etNUFDs5cq9; Sat, 29 Jun 2024 11:19:43 +0200
+	id NUF6sgiHDa7etNUFFs5cqZ; Sat, 29 Jun 2024 11:19:45 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1719652783;
-	bh=BV1I0wL1udnb3DdFseFHu4DwTEbjoNWY9BRWJUO9U+4=;
+	s=t20230301; t=1719652785;
+	bh=SbC8eskPoxKJ+eN2Qq7W2GaCgbxx29oD7K2szf1j0QE=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=O4zLoHSXsi5p0+T5JwMoe1v7kS+ChfSJrgmjcpEcg4JYndJOWiHxGOoi5PjHULZpq
-	 OtMpuJr/VfTutjWv4vsVjY+1bil5EvJTFnAaKwWJ4FFvpU+WrD+25gGb2TG6cgkdnd
-	 9SekrXH6RbwdJ/gDzgU0k6zy11HO+XwCzKPhYBulcNAuewKUL78gwQwGIcB5LamHh/
-	 9cBFgwN2a6sqFTIulKCgPdGjXXN21pr76ACNnTeycagATvpeKw6KEnaxo05P0kE4Z3
-	 FPO3Qumr+NYmV0iwGZVGG5Ye5mgjnIo+yQi8rCiABbCw2bzotsByrMK2Shw6buzUxT
-	 HD6UsXdhCjirg==
+	b=GLm2aW9jAdL1vITOmoKJ22fGy+4A6bXXIupEbaVhXFBjWbK4tAcN7p6wrh9akuhCi
+	 9DIgF6Sgqyauc36H8w9LgJ3GDogS4OEERhmEcl6Bj9ASurrX+/k0Y+ZKl8xWSmXVB4
+	 dMI678AoM5hbZYzDdRewj11b8KefFRB5pCdE0cI8KUmt++9xIN1XHYdpPdoY6uTVJH
+	 tCGxCg6XRMKq6KoO1Wtw+H2uuPax70nAM/klCzp2ru/6xNMiIStjHNvJlbaURU7gd2
+	 oE9Kt1a+VQlPW/1VBalZD1kANRAfeafe7iFBxr9hR3hEFQuO73Zx2A2C0XiJGBiRYH
+	 Nk80KScPP8b9A==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 29 Jun 2024 11:19:43 +0200
+X-ME-Date: Sat, 29 Jun 2024 11:19:45 +0200
 X-ME-IP: 86.243.222.230
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: matthias.bgg@gmail.com,
@@ -44,9 +44,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 3/4] soc: mediatek: pwrap: Use devm_clk_get_[optional_]enabled()
-Date: Sat, 29 Jun 2024 11:19:32 +0200
-Message-ID: <07b3745819c8ba818d4508ed12e93f14f29b80a2.1719652155.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 4/4] soc: mediatek: pwrap: Simplify some error messages
+Date: Sat, 29 Jun 2024 11:19:33 +0200
+Message-ID: <7e6f7dcded577091061e2bc3f86d6ec5f6c4be7d.1719652155.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <cover.1719652155.git.christophe.jaillet@wanadoo.fr>
 References: <cover.1719652155.git.christophe.jaillet@wanadoo.fr>
@@ -58,177 +58,45 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use devm_clk_get_enabled() and devm_clk_get_optional_enabled() to simplify
-the code and to make sure that clk_disable_unprepare() is called if the
-driver is unloaded.
+dev_err_probe() already display the error code in a human readable form,
+there is no need to add it explicitly to the message.
 
-Fixes: 55924157da8c ("soc: mediatek: pwrap: add support for sys & tmr clocks")
-Fixes: 1f022d84bd19 ("soc: mediatek: Add PMIC wrapper for MT8135 and MT8173 SoCs")
+While at it, remove some useless {}.
+
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested-only
 ---
- drivers/soc/mediatek/mtk-pmic-wrap.c | 85 ++++++++--------------------
- 1 file changed, 25 insertions(+), 60 deletions(-)
+ drivers/soc/mediatek/mtk-pmic-wrap.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
-index d57553486383..6981d6a1ab93 100644
+index 6981d6a1ab93..c55f4061b8ef 100644
 --- a/drivers/soc/mediatek/mtk-pmic-wrap.c
 +++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
-@@ -1366,10 +1366,6 @@ struct pmic_wrapper {
- 	struct regmap *regmap;
- 	const struct pmic_wrapper_type *master;
- 	const struct pwrap_slv_type *slave;
--	struct clk *clk_spi;
--	struct clk *clk_wrap;
--	struct clk *clk_sys;
--	struct clk *clk_tmr;
- 	struct reset_control *rstc;
- 
- 	struct reset_control *rstc_bridge;
-@@ -2471,6 +2467,7 @@ static int pwrap_probe(struct platform_device *pdev)
- {
- 	int ret, irq;
- 	u32 mask_done;
-+	struct clk *clk;
- 	struct pmic_wrapper *wrp;
- 	struct device_node *np = pdev->dev.of_node;
- 	const struct of_device_id *of_slave_id = NULL;
-@@ -2521,50 +2518,34 @@ static int pwrap_probe(struct platform_device *pdev)
- 		}
+@@ -2533,18 +2533,14 @@ static int pwrap_probe(struct platform_device *pdev)
  	}
  
--	wrp->clk_spi = devm_clk_get(wrp->dev, "spi");
--	if (IS_ERR(wrp->clk_spi)) {
-+	clk = devm_clk_get_enabled(wrp->dev, "spi");
-+	if (IS_ERR(clk)) {
- 		dev_dbg(wrp->dev, "failed to get clock: %ld\n",
--			PTR_ERR(wrp->clk_spi));
--		return PTR_ERR(wrp->clk_spi);
-+			PTR_ERR(clk));
-+		return PTR_ERR(clk);
- 	}
+ 	clk = devm_clk_get_optional_enabled(wrp->dev, "sys");
+-	if (IS_ERR(clk)) {
++	if (IS_ERR(clk))
+ 		return dev_err_probe(wrp->dev, PTR_ERR(clk),
+-				     "failed to get clock: %pe\n",
+-				     clk);
+-	}
++				     "failed to get sys clock\n");
  
--	wrp->clk_wrap = devm_clk_get(wrp->dev, "wrap");
--	if (IS_ERR(wrp->clk_wrap)) {
-+	clk = devm_clk_get_enabled(wrp->dev, "wrap");
-+	if (IS_ERR(clk)) {
- 		dev_dbg(wrp->dev, "failed to get clock: %ld\n",
--			PTR_ERR(wrp->clk_wrap));
--		return PTR_ERR(wrp->clk_wrap);
-+			PTR_ERR(clk));
-+		return PTR_ERR(clk);
- 	}
+ 	clk = devm_clk_get_optional_enabled(wrp->dev, "tmr");
+-	if (IS_ERR(clk)) {
++	if (IS_ERR(clk))
+ 		return dev_err_probe(wrp->dev, PTR_ERR(clk),
+-				     "failed to get clock: %pe\n",
+-				     clk);
+-	}
++				     "failed to get tmr clock\n");
  
--	wrp->clk_sys = devm_clk_get_optional(wrp->dev, "sys");
--	if (IS_ERR(wrp->clk_sys)) {
--		return dev_err_probe(wrp->dev, PTR_ERR(wrp->clk_sys),
-+	clk = devm_clk_get_optional_enabled(wrp->dev, "sys");
-+	if (IS_ERR(clk)) {
-+		return dev_err_probe(wrp->dev, PTR_ERR(clk),
- 				     "failed to get clock: %pe\n",
--				     wrp->clk_sys);
-+				     clk);
- 	}
- 
--	wrp->clk_tmr = devm_clk_get_optional(wrp->dev, "tmr");
--	if (IS_ERR(wrp->clk_tmr)) {
--		return dev_err_probe(wrp->dev, PTR_ERR(wrp->clk_tmr),
-+	clk = devm_clk_get_optional_enabled(wrp->dev, "tmr");
-+	if (IS_ERR(clk)) {
-+		return dev_err_probe(wrp->dev, PTR_ERR(clk),
- 				     "failed to get clock: %pe\n",
--				     wrp->clk_tmr);
-+				     clk);
- 	}
- 
--	ret = clk_prepare_enable(wrp->clk_spi);
--	if (ret)
--		return ret;
--
--	ret = clk_prepare_enable(wrp->clk_wrap);
--	if (ret)
--		goto err_out1;
--
--	ret = clk_prepare_enable(wrp->clk_sys);
--	if (ret)
--		goto err_out2;
--
--	ret = clk_prepare_enable(wrp->clk_tmr);
--	if (ret)
--		goto err_out3;
--
  	/* Enable internal dynamic clock */
  	if (HAS_CAP(wrp->master->caps, PWRAP_CAP_DCM)) {
- 		pwrap_writel(wrp, 1, PWRAP_DCM_EN);
-@@ -2579,7 +2560,7 @@ static int pwrap_probe(struct platform_device *pdev)
- 		ret = pwrap_init(wrp);
- 		if (ret) {
- 			dev_dbg(wrp->dev, "init failed with %d\n", ret);
--			goto err_out4;
-+			return ret;
- 		}
- 	}
- 
-@@ -2592,8 +2573,7 @@ static int pwrap_probe(struct platform_device *pdev)
- 
- 	if (!(pwrap_readl(wrp, PWRAP_WACS2_RDATA) & mask_done)) {
- 		dev_dbg(wrp->dev, "initialization isn't finished\n");
--		ret = -ENODEV;
--		goto err_out4;
-+		return -ENODEV;
- 	}
- 
- 	/* Initialize watchdog, may not be done by the bootloader */
-@@ -2622,42 +2602,27 @@ static int pwrap_probe(struct platform_device *pdev)
- 		pwrap_writel(wrp, wrp->master->int1_en_all, PWRAP_INT1_EN);
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		ret = irq;
--		goto err_out2;
--	}
-+	if (irq < 0)
-+		return irq;
- 
- 	ret = devm_request_irq(wrp->dev, irq, pwrap_interrupt,
- 			       IRQF_TRIGGER_HIGH,
- 			       "mt-pmic-pwrap", wrp);
- 	if (ret)
--		goto err_out4;
-+		return ret;
- 
- 	wrp->regmap = devm_regmap_init(wrp->dev, NULL, wrp, wrp->slave->regops->regmap);
--	if (IS_ERR(wrp->regmap)) {
--		ret = PTR_ERR(wrp->regmap);
--		goto err_out2;
--	}
-+	if (IS_ERR(wrp->regmap))
-+		return PTR_ERR(wrp->regmap);
- 
- 	ret = of_platform_populate(np, NULL, NULL, wrp->dev);
- 	if (ret) {
- 		dev_dbg(wrp->dev, "failed to create child devices at %pOF\n",
- 				np);
--		goto err_out4;
-+		return ret;
- 	}
- 
- 	return 0;
--
--err_out4:
--	clk_disable_unprepare(wrp->clk_tmr);
--err_out3:
--	clk_disable_unprepare(wrp->clk_sys);
--err_out2:
--	clk_disable_unprepare(wrp->clk_wrap);
--err_out1:
--	clk_disable_unprepare(wrp->clk_spi);
--
--	return ret;
- }
- 
- static struct platform_driver pwrap_drv = {
 -- 
 2.45.2
 
