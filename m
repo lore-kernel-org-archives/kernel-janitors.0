@@ -1,225 +1,161 @@
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29B24084C
-	for <kernel-janitors@vger.kernel.org>; Sat, 29 Jun 2024 09:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E2DB645;
+	Sat, 29 Jun 2024 09:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719652853; cv=none; b=fB3FkU6ZGK1F2RZLukkwle+CIETc0xtsYT/jz241Cy3kEI46zVpgVynPBOK71BR92ARIQFi3UonSsnjnIIfdCIZjrbPasyqPW1QAm3VAFlX56dVlD0oiYRMSDxzTtwEaUw2zaAT3cmfps3iTXNdlnFLQQBDMz/9FIpJ3/yF+quE=
+	t=1719654336; cv=none; b=QpXFdPpgJIflU+w1elQF0EdCnaQRY6tZm+VDsPHSINQ+83WAZCAxqLACmU5fyG4AVa/P5mMHcSJ0T2ZnaBUaljQPhIjjc6LqCd0OD1TmxgW8+caPnv0WRZhEJI7DIvhsAcx8WBl63LVKEsfymheg6GAK5E4OiHPDT0vLge5lWis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719652853; c=relaxed/simple;
-	bh=tIqb8K/9bSd8h5tSTEKj6fyRr0/9UPR6MjzTmhpbye4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y7O6XcqcyvNoX+EbMSzCTdYhSYRHiI/PbvXeUws1sR6EBBqOYMeam+Ma2pNYZ2cz+6ER2r7+3r6CpbzVZxwsOEUJMtg1ZkvMjPXEPkFr+gUkwA1FqBjXWALUpTp7yed896dtg54r1Pn3aNkgOOmW2XnOY19oyxAmBnXkSeZY5uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=N18GjfXy; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1719654336; c=relaxed/simple;
+	bh=8TQFG/i8JN4oqJJhe689hGGOUqLPoIbGuHdOuNO60Zw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Z3msJbCnuCJ49mTSmkfyrxYwd4m9JJh4wEs3Jy/669o6k7sRBmfO8W7EvMAmU20BRq7irL3i/WSzgWaQcOhKW2scw4+BouM8ZzzZxEgwgJoZr7PLHgalBS9FTY1Xw+WuhSOH7O52/Q5fjbl803WChiilhEj4pSpjIVmQgKTrAi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GJjFmMsL; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="N18GjfXy"
-Received: from fedora.home ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id NUF6sgiHDa7etNUFCs5cnD; Sat, 29 Jun 2024 11:19:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1719652782;
-	bh=wyjA2BhEiXaiYu36IgBQtDPeZotGjNfhM/eFXVY5sOg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=N18GjfXyCMCL0Bfw0rX/L1yZjQLg+P+cbpJLsU0XO16j1gxXLhpcjJNjlggMXf4l3
-	 Li/cp9PZBJgcuBcMsQrkdQ/hD8O3Lu1CAsj+Kgca5LOppYwNLBCZOuB0S3fhslsGmk
-	 uIoiLCOl4UyP9mZEdED4duW5Ysc2JxaeD/lozPQQeNtP+QDxMewVpqaUUOXIC+Jt6p
-	 t1xhs1NQ9hbf1YCx+28EbMroVUzK3UbiKywKVaAyGfWW1XNQyRQ1CR8FNj8KBh72CE
-	 kE9NuwuDBMqbtARqPPRuoXFAaa89vYhN2DWPtlgTNgUFK4JYjDSfYPwrQAzZRkJ35m
-	 18xZYF9C0NHFg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 29 Jun 2024 11:19:42 +0200
-X-ME-IP: 86.243.222.230
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	fparent@baylibre.com,
-	fchiby@baylibre.com,
-	s.hauer@pengutronix.de
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/4] soc: mediatek: pwrap: Constify some struct int[]
-Date: Sat, 29 Jun 2024 11:19:31 +0200
-Message-ID: <626783bb264a8b3b0c8cd7e1d9f9b241f0a494b6.1719652155.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1719652155.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1719652155.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GJjFmMsL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719654297; x=1720259097; i=markus.elfring@web.de;
+	bh=Dcrq5SwkkM/A/2nHVlTypW1FQ4OCJ0W5eKy45LQ0Q6k=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=GJjFmMsL6P1As2sUHx/gO+AWWmlXPwHhb2v9ijMRLTYG9X+J431roeW74aIfwKAQ
+	 eYW2qbZU0X665+YV8qqzuswGt4cIwU7JEU6FWJv/DIc1XfYR0n0b4NI4D+93NRQWu
+	 NFaItTPF939iYpNNqx6IaoaL/eZ8LTxRhXHIhlIWgXBdUh4BnLYBkok5EnqY1Kygp
+	 Rar8l/4vtMSEXKB1/7KIuhDtZdnWNgA5utYAyvfcqXTNO84Uv9krsjURMy0m7ZfVX
+	 pQVHQrYeX9NwNfCqoxo+bwih4eGKy3Jf4zfUbLBJa6VefuZAy8Wn1HKEss8LqZ6cW
+	 U2RrJd0Vbt9ZMpUyEg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MN6FV-1s4Rga311R-00UGLK; Sat, 29
+ Jun 2024 11:44:57 +0200
+Message-ID: <a2f9f5bc-5e22-4b03-9cd7-5dad16743ca3@web.de>
+Date: Sat, 29 Jun 2024 11:44:43 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2] extcon: realtek: Prevent resource leak in
+ extcon_rtk_type_c_init()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: kernel-janitors@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Stanley Chang <stanley_chang@realtek.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+ Julia Lawall <julia.lawall@inria.fr>
+References: <532aa50e-b8e5-4e8e-a2bd-a05fd81274dc@web.de>
+Content-Language: en-GB
+In-Reply-To: <532aa50e-b8e5-4e8e-a2bd-a05fd81274dc@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:org6bioxA9jVxtD2+WvGOl2jIhT0ddpsalXACyJ2hx/bAKH8t/O
+ fg1IKpgF4AoMOSd9JoCx3EOL6ALDBighyebwHl93LzQndXkgJLnVzJbP3j65zRXwUPI2QWb
+ Re3dIDprJC3/ITaYPqPjGkbmYX11lHKHz+gVz9G7aRl10exgPAxDFogyV4yoGB/jLwLC017
+ i2Cj0mr23bI/mmzfYx/Zg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:4c7VnyfKfm0=;qmmaANJf7GO67mwScG1Uw7DhMPY
+ ysMcYCsKENbqoTMz9ytimyvwwhB1J7ERShXWu6redMj6d8lWxUYSq7asQ+AJQKCda6FdxAhE3
+ ia9Y7QOzw4Qj+T7vt5E18mVkfIyUuADNagRiYZepPRhvpyzeZ14YEJmDt8vgOdmGZZ93gewEg
+ 38ug9hjegFMW00z+TmscSfp8uA1RwncjGU9OBoayfaM410jtm7cC1Qinjr2cBp523d4fHpXoo
+ +v9MKqu7Ar7HaYZqPNJPBMENK2X33+c0WdFqIxG2gT2hvHYcArMzwNFUz2UoHg1/j9ZK5TLAq
+ LaxGIyJ8XClvT1Y3s+wTQ1ExEG8PjgqrocWa48Fh/iyPaHCefUfjFtGEXqY6sVfCIBb0E+2wT
+ JwIPwcaRVotz2F+8Zv009DuhzsiGmd6JY1HZb8EpK21dJJk+ZXNy0V9SfG7wEse2cdWowb6dm
+ YZnRwE8UBV/GDJq5jXo2VF8GzuXG40yio5HVZyGlSih9u+1Py8059fwI77vGDH3qMfAHN2vHl
+ soIA/1y2i3+jcJUShyUoX5UFfCHuPRzwz1wZf/d6+2GUj4px2tgRrmdbCoQa7zmW+5mBQqflq
+ EOZRNL1g+QUq7p14f4WDZHrz2Q0VxJz6iqEf6rQoewSBnDlq7o5UBiGvJkkddJHUF2zt3/Abn
+ oxVEixxbQ74Qv2c6PfyKFSSxzjlMmPF0sVR2nGiKRPuaWK01FB4r38dAttmpV6IfLpn0J3t7Z
+ obugHux++TLmCFn/9IIXEF4/vOJAvx1JzGRGr/hfuTVeFZsh15VemyZTdmeQCs8gthFaOM/V/
+ 5mCVuNquR3SWcV02s9x5D+2zEYMsmwNU+pgdkb8nCcHOU=
 
-These arrays are not modified in this driver.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 29 Jun 2024 11:30:06 +0200
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+The API documentation for the function =E2=80=9Cdevice_get_named_child_nod=
+e=E2=80=9D
+contains the following information:
+=E2=80=9C=E2=80=A6
+The caller is responsible for calling fwnode_handle_put()
+on the returned fwnode pointer.
+=E2=80=A6=E2=80=9D
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  45528	   8532	     16	  54076	   d33c	drivers/soc/mediatek/mtk-pmic-wrap.o
+The mentioned requirement was not fulfilled so that a resource leak
+will occur in error cases after a device_get_named_child_node() call
+succeeded in this function implementation.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  52664	   1384	     16	  54064	   d330	drivers/soc/mediatek/mtk-pmic-wrap.o
+Thus apply scope-based resource management which became supported also
+for this programming interface by contributions of Jonathan Cameron
+on 2024-02-17.
+See also the commit 59ed5e2d505bf5f9b4af64d0021cd0c96aec1f7c ("device
+property: Add cleanup.h based fwnode_handle_put() scope based cleanup.").
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only
----
- drivers/soc/mediatek/mtk-pmic-wrap.c | 30 ++++++++++++++--------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+* Use the attribute =E2=80=9C__free(fwnode_handle)=E2=80=9D accordingly.
 
-diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
-index 0da0cdec5050..d57553486383 100644
---- a/drivers/soc/mediatek/mtk-pmic-wrap.c
-+++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
-@@ -483,7 +483,7 @@ enum pwrap_regs {
- 	PWRAP_MSB_FIRST,
- };
- 
--static int mt2701_regs[] = {
-+static const int mt2701_regs[] = {
- 	[PWRAP_MUX_SEL] =		0x0,
- 	[PWRAP_WRAP_EN] =		0x4,
- 	[PWRAP_DIO_EN] =		0x8,
-@@ -569,7 +569,7 @@ static int mt2701_regs[] = {
- 	[PWRAP_ADC_RDATA_ADDR2] =	0x154,
- };
- 
--static int mt6765_regs[] = {
-+static const int mt6765_regs[] = {
- 	[PWRAP_MUX_SEL] =		0x0,
- 	[PWRAP_WRAP_EN] =		0x4,
- 	[PWRAP_DIO_EN] =		0x8,
-@@ -601,7 +601,7 @@ static int mt6765_regs[] = {
- 	[PWRAP_DCM_DBC_PRD] =		0x1E0,
- };
- 
--static int mt6779_regs[] = {
-+static const int mt6779_regs[] = {
- 	[PWRAP_MUX_SEL] =		0x0,
- 	[PWRAP_WRAP_EN] =		0x4,
- 	[PWRAP_DIO_EN] =		0x8,
-@@ -640,7 +640,7 @@ static int mt6779_regs[] = {
- 	[PWRAP_WACS2_VLDCLR] =		0xC28,
- };
- 
--static int mt6795_regs[] = {
-+static const int mt6795_regs[] = {
- 	[PWRAP_MUX_SEL] =		0x0,
- 	[PWRAP_WRAP_EN] =		0x4,
- 	[PWRAP_DIO_EN] =		0x8,
-@@ -725,7 +725,7 @@ static int mt6795_regs[] = {
- 	[PWRAP_EXT_CK] =		0x14c,
- };
- 
--static int mt6797_regs[] = {
-+static const int mt6797_regs[] = {
- 	[PWRAP_MUX_SEL] =		0x0,
- 	[PWRAP_WRAP_EN] =		0x4,
- 	[PWRAP_DIO_EN] =		0x8,
-@@ -758,7 +758,7 @@ static int mt6797_regs[] = {
- 	[PWRAP_DCM_DBC_PRD] =		0x1D4,
- };
- 
--static int mt6873_regs[] = {
-+static const int mt6873_regs[] = {
- 	[PWRAP_INIT_DONE2] =		0x0,
- 	[PWRAP_TIMER_EN] =		0x3E0,
- 	[PWRAP_INT_EN] =		0x448,
-@@ -769,7 +769,7 @@ static int mt6873_regs[] = {
- 	[PWRAP_WACS2_RDATA] =		0xCA8,
- };
- 
--static int mt7622_regs[] = {
-+static const int mt7622_regs[] = {
- 	[PWRAP_MUX_SEL] =		0x0,
- 	[PWRAP_WRAP_EN] =		0x4,
- 	[PWRAP_DIO_EN] =		0x8,
-@@ -881,7 +881,7 @@ static int mt7622_regs[] = {
- 	[PWRAP_SPI2_CTRL] =		0x244,
- };
- 
--static int mt8135_regs[] = {
-+static const int mt8135_regs[] = {
- 	[PWRAP_MUX_SEL] =		0x0,
- 	[PWRAP_WRAP_EN] =		0x4,
- 	[PWRAP_DIO_EN] =		0x8,
-@@ -954,7 +954,7 @@ static int mt8135_regs[] = {
- 	[PWRAP_DCM_DBC_PRD] =		0x160,
- };
- 
--static int mt8173_regs[] = {
-+static const int mt8173_regs[] = {
- 	[PWRAP_MUX_SEL] =		0x0,
- 	[PWRAP_WRAP_EN] =		0x4,
- 	[PWRAP_DIO_EN] =		0x8,
-@@ -1036,7 +1036,7 @@ static int mt8173_regs[] = {
- 	[PWRAP_DCM_DBC_PRD] =		0x148,
- };
- 
--static int mt8183_regs[] = {
-+static const int mt8183_regs[] = {
- 	[PWRAP_MUX_SEL] =			0x0,
- 	[PWRAP_WRAP_EN] =			0x4,
- 	[PWRAP_DIO_EN] =			0x8,
-@@ -1087,7 +1087,7 @@ static int mt8183_regs[] = {
- 	[PWRAP_WACS2_VLDCLR] =			0xC28,
- };
- 
--static int mt8195_regs[] = {
-+static const int mt8195_regs[] = {
- 	[PWRAP_INIT_DONE2] =		0x0,
- 	[PWRAP_STAUPD_CTRL] =		0x4C,
- 	[PWRAP_TIMER_EN] =		0x3E4,
-@@ -1104,7 +1104,7 @@ static int mt8195_regs[] = {
- 	[PWRAP_WACS2_RDATA] =		0x8A8,
- };
- 
--static int mt8365_regs[] = {
-+static const int mt8365_regs[] = {
- 	[PWRAP_MUX_SEL] =		0x0,
- 	[PWRAP_WRAP_EN] =		0x4,
- 	[PWRAP_DIO_EN] =		0x8,
-@@ -1166,7 +1166,7 @@ static int mt8365_regs[] = {
- 	[PWRAP_WDT_SRC_EN_1] =		0xf8,
- };
- 
--static int mt8516_regs[] = {
-+static const int mt8516_regs[] = {
- 	[PWRAP_MUX_SEL] =		0x0,
- 	[PWRAP_WRAP_EN] =		0x4,
- 	[PWRAP_DIO_EN] =		0x8,
-@@ -1251,7 +1251,7 @@ static int mt8516_regs[] = {
- 	[PWRAP_MSB_FIRST] =		0x170,
- };
- 
--static int mt8186_regs[] = {
-+static const int mt8186_regs[] = {
- 	[PWRAP_MUX_SEL] =		0x0,
- 	[PWRAP_WRAP_EN] =		0x4,
- 	[PWRAP_DIO_EN] =		0x8,
-@@ -1377,7 +1377,7 @@ struct pmic_wrapper {
- };
- 
- struct pmic_wrapper_type {
--	int *regs;
-+	const int *regs;
- 	enum pwrap_type type;
- 	u32 arb_en_all;
- 	u32 int_en_all;
--- 
+* Reduce the scope for the local variable =E2=80=9Cfwnode=E2=80=9D.
+
+Cc: stable@vger.kernel.org
+Fixes: 8a590d7371f0 ("extcon: add Realtek DHC RTD SoC Type-C driver")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+
+V2:
+* The change description was extended.
+
+* The summary phrase was adjusted.
+
+* A =E2=80=9Cstable tag=E2=80=9D was added.
+
+
+I guess that clarifications can become interesting also for backporting co=
+ncerns
+because of the proposed software transformation.
+
+
+
+ drivers/extcon/extcon-rtk-type-c.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/extcon/extcon-rtk-type-c.c b/drivers/extcon/extcon-rt=
+k-type-c.c
+index 19a01e663733..8a4b074fd745 100644
+=2D-- a/drivers/extcon/extcon-rtk-type-c.c
++++ b/drivers/extcon/extcon-rtk-type-c.c
+@@ -18,6 +18,7 @@
+ #include <linux/syscalls.h>
+ #include <linux/suspend.h>
+ #include <linux/debugfs.h>
++#include <linux/property.h>
+ #include <linux/extcon.h>
+ #include <linux/extcon-provider.h>
+ #include <linux/sys_soc.h>
+@@ -1237,7 +1238,6 @@ static int extcon_rtk_type_c_init(struct type_c_data=
+ *type_c)
+
+ 	if (!type_c->port) {
+ 		struct typec_capability typec_cap =3D { };
+-		struct fwnode_handle *fwnode;
+ 		const char *buf;
+ 		int ret;
+
+@@ -1246,7 +1246,8 @@ static int extcon_rtk_type_c_init(struct type_c_data=
+ *type_c)
+ 		typec_cap.driver_data =3D type_c;
+ 		typec_cap.ops =3D &type_c_port_ops;
+
+-		fwnode =3D device_get_named_child_node(dev, "connector");
++		struct fwnode_handle *fwnode __free(fwnode_handle)
++					     =3D device_get_named_child_node(dev, "connector");
+ 		if (!fwnode)
+ 			return -EINVAL;
+
+=2D-
 2.45.2
 
