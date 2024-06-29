@@ -1,155 +1,119 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6221158DDC;
-	Fri, 28 Jun 2024 16:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D7118C36;
+	Sat, 29 Jun 2024 02:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719591266; cv=none; b=Jxi8h0spMi5wBw6bcgH6IEVH6cxRNeI5T2aer4Wfp6bRGkCfmk/w0/S2+lzDV2/Q3+oX3IbeICp0Ywe90lpvyFDQuOYKldKBXxOQ2y1OR5k7oAwXC8fC4AQNNjgkJctQ3AnOXAxu0yQoVERqUyHWKA3n0jJu2fZgdvfeUwT2pT4=
+	t=1719629083; cv=none; b=hlfxda76uBn6Kp8lSVQT81YTc07Uo76ds///oprhIrw9oRX53VoSz3jHFEuqcV4kxCFCu/mAmTBoHJNfExQllFMsb570MV4gCOKwUun1/eLDvq41XE2dqtOjpSywCJJs3qh+tRhZsFuo+VLO4jAPwtp+1xB6Hws+RUW6H4xxx2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719591266; c=relaxed/simple;
-	bh=feF1lOyhnHeQGXNKtOQi+xZFfMBlR7bnlTEk0I8pZ7E=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=fEkSHhR6pg7iJewd/RSRFFhJ4dkW6Vgutcbcm2fFftCImSAHKbihpG+7VkY4ckMkkUSyHnh9/DokfWEOUbSBb7gaeRYQDrcrJod0Y7CJCcLpsUubSiJ/CkPD5wjsLO0mGLVITSPnEjYJrF5ZxoB0TdAVYYxqLQdBlkGd4+YpThY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KcmU2isO; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1719629083; c=relaxed/simple;
+	bh=p8iIXpwYR9Biygc/M5mSdAtHO7W8ZU5of6LQ+JgyoNo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=PvP9epxI7Tj11SQhgqHi5DXf17tQMgx6Zc3AwzqrQlQg0182stTliCOVMdaN+EeBRhtT6TGJhbv+RrUkQLhq7GOpbWt6d2+XqRoxQMW/23IB1LCDTZ9p0PXBQYR27LU/lDRtX3CRgyfbmd/qlcE4eYfhtmo2oZYV50aEqIKF/DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YAUI2Q0s; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KcmU2isO"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719590913; x=1720195713; i=markus.elfring@web.de;
-	bh=jMjENFh+f5y9wyjB5cxn4bcX9t6DsGiG5xIjoFHNnL4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:From:Subject:
-	 Cc:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=KcmU2isOzbZdqyyKmg87LJN7CYNLrBhng4oN6+Uq9FP6ivUE17oN7cD3XpH952my
-	 12kn7y9w7KVj1dttLKnnhYUgSXTz5DBFnCRYqwSsDRkrSrBQrloK8AGQ9q+w6g4+R
-	 /Zwx/tC6VtR09zxc3Z7M5iTUHkZJiNFiq0XqLbHDIJBbnhf2eZsFguDp6mj9KARsl
-	 RufkUP7Qt8R+06043CHda2KdIbVGS6iPUSmQZXsYLlDNSEpcfpHc8nLCVZYg7yQo5
-	 FniDToohr+aR5fBquVEiAQpHvhwDG6/0Q7sPg/e60VQntiujkRWVG50B+VNkA9FXG
-	 RxaMjSh7z66T8NXiXg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MQxsD-1rzoHe1nVP-00Uk7W; Fri, 28
- Jun 2024 18:08:33 +0200
-Message-ID: <c05e397c-5ed1-49d9-92a0-826f21fe2469@web.de>
-Date: Fri, 28 Jun 2024 18:08:27 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YAUI2Q0s"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45T1OaZe010461;
+	Sat, 29 Jun 2024 02:44:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=5s2Gl/oj6oJvHPbGpv/AYi
+	PtZVdErC+YN9KDK/tR+OU=; b=YAUI2Q0sZDomPb+zSupKcEmFQx9iHw3riLe0x/
+	RSjRNwkBPvVu2DLZ0hW/G+QbZjEIgG8g+iEEzETU1c8XSQHDaWWASGvd5C4pe4+P
+	7K4po2CJeGSWvRYjkdVqYh+HtezgATwLuxmJp3Bx+kG2a3hyC71oGFUAeOeiUnt7
+	bmvc+nUR81rBKjdEz05PunG8sv8BFxjUXIX8Dvf8jT1VU8OUA3Gi1SVPjfb3a662
+	SqMP8JukKaRJNxcR4IN39kp84j1poPSfSiJXb6q+pygn8Opun1RS6POY08INVQyE
+	rLhbXgACLay8k68gfAHeS1P+o61nVRvkFpSDBNV/cVk5yFHw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4027mng5vy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 29 Jun 2024 02:44:31 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45T2iTYx013630
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 29 Jun 2024 02:44:30 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
+ 2024 19:44:29 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 28 Jun 2024 19:44:18 -0700
+Subject: [PATCH v2] clk: vexpress-osc: add missing MODULE_DESCRIPTION()
+ macro
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Andy Shevchenko <andy.shevchenko@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>,
- Hans de Goede <hdegoede@redhat.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Prashant Malani <pmalani@chromium.org>, Wen Yang <wenyang@linux.alibaba.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] usb: typec: Prevent memory leak in typec_register_port()
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
- Julia Lawall <julia.lawall@inria.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Op0AhE/oYVUbpffMnqL1KB0klyIoNEWbyvj7Rl1SdHSSCKNv+eQ
- MFfe5GqAwDNji7jlyykH+eisfGcwrLVPEoaUGUsBinSgRrt+ehKY6D4lUQDOTvAYLoLIHCP
- GYGSenPeQFJVAAcpFkUw+59iK7YCNqpst77f+KcoE7VYg01gO+WZlqLnxAmoxxDkQpkjdeC
- bgw6iB5M75uZ6OXPva5Ug==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:JrQC0Yt1hKA=;mPfok86m0LGA7E1Y/8tQE24en8v
- dXNDcbAtVLN/ETAB0d/cR1otpdFGqO+YRr4Pb98IRi0uPQ09CIlrFPhV9BVv6+u2moArd48/A
- 7kblJFV/HtzxrfUc6bepLCoDQfeNFnBVon/iul1wJ+iWrndX2LFqwwXbroDPPOyS0Cbrx/2kL
- pa4PN9TsOCZAykjgBJdFpg8PCTfULDm35FFjAe8QwQyyKX428aUV0RB23mMNoBvmreLX6Ym8y
- oMOhGnDxX0zJnWjAoPdNDyVBIcMZl3NG4GVH/DjizGo8dLPmTzIJSzV3p1Tn2eXA59t7KRTer
- 6NMH7VVca6/OdC+ZDlVtuAqc4IGJjAtm7VZQACOOfuMzAnKvrXydTZKd0JyzGiG2E1OkRdMMl
- iKjdEY5+84fZIwAwcSJOXgEUYbU/tC+mMJmT6iSkgJSTyfzEn0WB+KuKSAw2m4iHc/LciHUKY
- IIlntfBXBej3onWxp5O5evsj8dOgiosgK9TVclfHJGGp/yNyzKTRLspjAxyg90AExwvaRnz9R
- FGBumynauwl+zYDO6wSSIGvxtUdEZhtlVE8veMB8YdrU21+KoiEukt9bP6jscENzfnSI7+1TO
- RYmH/lqJUHQvNQ6TZA7biysx/rua+Fm+LrI9VO+gMn++vAAIX729x1LTC+s8Ty1y3+c7yS40A
- YAnUGOy7yyw1DfJq0piMC+qFvAXXtM8bfFCaS2ukdhtxkBG9wvrcbk7BU+jl3BY2FS1xVB9w8
- QAjN9WIvqVvkCdVs1gvBj8wXKRBtE7THCY1KlAW3D1DvhNiyWa12J1DzrCv7KGdZZrJ/1aO/O
- iua+Ry4DzFGfWAe2qy9LQfWcL6T3WZNO6qjThfpF2ioo0=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240628-md-arm64-drivers-clk-versatile-v2-1-cd8ec6cad92e@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAAF1f2YC/42OSw6CMBCGr2K6dkx5Slx5D8NiWgaZCEWnQDCEu
+ 9tyAnf/l/yvTXkSJq9up00JLex5dAHS80nZDt2TgJvAKtVprsskg6EBlKHMoRFeSDzY/gVR4MQ
+ 9AWpTYpal1zavVCh5C7W8HgOPOrBBT2AEne1ibc9uXmFAP5FEe8d+GuV73FmSGPp7eUkggdJUW
+ FBBWlN7/8xs2dmLHQdV7/v+A3rIbV/tAAAA
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Liviu Dudau
+	<liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: DKptU_KILgEA0e1h_LBYxT7jtugEyutG
+X-Proofpoint-GUID: DKptU_KILgEA0e1h_LBYxT7jtugEyutG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-28_18,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 phishscore=0 mlxscore=0 suspectscore=0 clxscore=1011
+ mlxlogscore=931 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406290019
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 28 Jun 2024 17:46:19 +0200
+With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/versatile/clk-vexpress-osc.o
 
-Memory is allocated for the data structure =E2=80=9Ctypec_port=E2=80=9D at=
- the beginning
-of this function implementation.
-Unfortunately, it was not released in all subsequent error cases.
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Thus apply scope-based resource management which became supported
-for this programming interface by contributions of Peter Zijlstra
-on 2023-05-26.
-See also the commit 54da6a0924311c7cf5015533991e44fb8eb12773 ("locking:
-Introduce __cleanup() based infrastructure").
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+Changes in v2:
+- no changes to the actual patch, just collected review tags and rebased
+  to current linus/master. Hoping to get this into linux-next and out
+  of my tracking spreadsheet :)
+- Link to v1: https://lore.kernel.org/r/20240613-md-arm64-drivers-clk-versatile-v1-1-6b8a5e5e00ef@quicinc.com
+---
+ drivers/clk/versatile/clk-vexpress-osc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-* Use the attribute =E2=80=9C__free(kfree)=E2=80=9D accordingly.
+diff --git a/drivers/clk/versatile/clk-vexpress-osc.c b/drivers/clk/versatile/clk-vexpress-osc.c
+index b2b32fa2d7c3..c385ca2f4a74 100644
+--- a/drivers/clk/versatile/clk-vexpress-osc.c
++++ b/drivers/clk/versatile/clk-vexpress-osc.c
+@@ -119,4 +119,5 @@ static struct platform_driver vexpress_osc_driver = {
+ 	.probe = vexpress_osc_probe,
+ };
+ module_platform_driver(vexpress_osc_driver);
++MODULE_DESCRIPTION("Clock driver for Versatile Express OSC clock generators");
+ MODULE_LICENSE("GPL v2");
 
-* Reduce the scope for the local variable =E2=80=9Cport=E2=80=9D.
-
-Cc: stable@vger.kernel.org
-Fixes: f31a8702cd36 ("usb: typec: Add retimer handle to port")
-Fixes: a7cff92f0635 ("usb: typec: USB Power Delivery helpers for ports and=
- partners")
-Fixes: 5c388abefda0 ("usb: typec: fix use after free in typec_register_por=
-t()")
-Fixes: ad772c39b2fb ("usb: typec: Copy everything from struct typec_capabi=
-lity during registration")
-Fixes: cf6e06cddf29 ("usb: typec: Start using ERR_PTR")
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
-
-I guess that clarifications can become interesting also for backporting co=
-ncerns
-because of the proposed software transformation.
-
-
-drivers/usb/typec/class.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-index 9262fcd4144f..97c0afd41e35 100644
-=2D-- a/drivers/usb/typec/class.c
-+++ b/drivers/usb/typec/class.c
-@@ -2372,19 +2372,16 @@ EXPORT_SYMBOL_GPL(typec_port_register_cable_ops);
- struct typec_port *typec_register_port(struct device *parent,
- 				       const struct typec_capability *cap)
- {
--	struct typec_port *port;
- 	int ret;
- 	int id;
-
--	port =3D kzalloc(sizeof(*port), GFP_KERNEL);
-+	struct typec_port *port __free(kfree) =3D kzalloc(sizeof(*port), GFP_KER=
-NEL);
- 	if (!port)
- 		return ERR_PTR(-ENOMEM);
-
- 	id =3D ida_alloc(&typec_index_ida, GFP_KERNEL);
--	if (id < 0) {
--		kfree(port);
-+	if (id < 0)
- 		return ERR_PTR(id);
--	}
-
- 	switch (cap->type) {
- 	case TYPEC_PORT_SRC:
-@@ -2483,7 +2480,7 @@ struct typec_port *typec_register_port(struct device=
- *parent,
- 	if (ret)
- 		dev_warn(&port->dev, "failed to create symlinks (%d)\n", ret);
-
--	return port;
-+	return_ptr(port);
- }
- EXPORT_SYMBOL_GPL(typec_register_port);
-
-=2D-
-2.45.2
+---
+base-commit: de0a9f4486337d0eabacc23bd67ff73146eacdc0
+change-id: 20240613-md-arm64-drivers-clk-versatile-a0b6a3327f48
 
