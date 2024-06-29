@@ -1,50 +1,51 @@
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+Received: from msa.smtpout.orange.fr (msa-209.smtpout.orange.fr [193.252.23.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282E01CF9B;
-	Sat, 29 Jun 2024 06:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FFB40848
+	for <kernel-janitors@vger.kernel.org>; Sat, 29 Jun 2024 09:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719644347; cv=none; b=mbSb+Fvp8wRd8rAfCe2HbEys4sG/fF5XF1fIF8H/+KdnJKnccErAc8wjZjzHrsNRNxnWMINJGY5VjJjc8Yi7m62eHbibyvh4RY9ts65bVCEuCoHNmFzQ9ezQq4uBgBSELrmbeRLo1E8gQ1bkpjC4NMUh3Jd4jLG6d3XjMyUcwoY=
+	t=1719652790; cv=none; b=IlG5UbIepKSKReiscRKoUHantZdWtGNKabN8w3NIi5/WS7kLpDVXekd/PFkY7v7yXBcWsWf7DRST9Sqg1oL2kuOAF3OTK/jWOXe2hyxpkBHoeJZ9ampEQs0D14k71RkeYhDnhRuhZT4DFFjt/dB80fxzGaKur0mlIrzH+x4yYTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719644347; c=relaxed/simple;
-	bh=6KyjtX5hOxB5LlFjn7fgJk+/s9NXrVzZ9ltFbNSFa2U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c2rOU53onIwN8wRks1YDYeRXIbfsEoKNTkneepKAONJS6u8aUPAIk8AHyXDlMJpgJZkuCC/VEPs0bJofbsq3F4WUBPI7nhSsar1BAWtUvqZs7Ih/s4sxGNWdJGUjNWnK8k1ERcDJQFc5XS5gUlC0uIH7Xxplm4mLP/jWRRJ9rew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RFdThJhf; arc=none smtp.client-ip=80.12.242.15
+	s=arc-20240116; t=1719652790; c=relaxed/simple;
+	bh=pC6V2+u2WQ4S8FkLlPfozSbePEASsC7GRAOeIw4oKM8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QwhKlXztCQBFRXP6qwW7gyyjTPQzo+BYIpPHyyiua/C9gNppeNicXcoz9ete0l0lLBqdZKnfsPenoEBJKED72Frz/orXUN7Dgww/wHa+40YRxHe/H96Ud6AUxyA3HxaxdL1J/rmApCgKTbbxjZniqidEeKiT5nE1AZnPRoQtf10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JsLkESlh; arc=none smtp.client-ip=193.252.23.209
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RFdThJhf"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JsLkESlh"
 Received: from fedora.home ([86.243.222.230])
 	by smtp.orange.fr with ESMTPA
-	id NS2ussK9tE745NS2vs6O5R; Sat, 29 Jun 2024 08:58:56 +0200
+	id NUF6sgiHDa7etNUF6s5cmT; Sat, 29 Jun 2024 11:19:38 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1719644336;
-	bh=7ZffAGKYDmgIjO3VVxySPyiErhAqXhow8CsGzx+lLxE=;
+	s=t20230301; t=1719652778;
+	bh=JpucOAbumbHAvBNa/G5y6qwvaXXu9oGDOGj7Rt8h4IU=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=RFdThJhfv4vP0hsVXmPTV5moPfCdjkgSOtnIqkWMriydYqth15YzuIU7lvY7cYBYD
-	 SxTULNmD8MBCbXjHJUwQy0f3hk1hMCh6uWVJykx9fay1rYE8U52k0tRgmWUNx9okxd
-	 YfebuiBFrfp+8CjStf3Y9/L6y6x6olhY2w7w9HYLqq1lKvOETEIg8iW+8K1altibgl
-	 6+/JosxD5GUz4zE9v23oRPFn13dL3ZE/LIlxRWXzpowNqG4NC+zyPnIH4rBMitnHVQ
-	 4JK8CLFEeZ5kuvWKjI+RchpY5MS84JOMNC117wT5DfMXRFnQ8IgOacLOiGjQ/LI/bL
-	 usaVooEKFjHIA==
+	b=JsLkESlhxnCH4AOpFKKtHgC4mDBa19akQInXPCbNnj95NJ8Wci32l/R3/SEs0/nlI
+	 OiLuG0aA+55ZKQODcJZw4mqFJ9UnFpn4FvUpHyvFup7F9nWnju5/znFUMaIJzTS7w6
+	 s28pwX0JmYGUtr+W+tKGS0QRMKKKqDTyexKkAMd6i1In1HWPt+/cbwZMX4ESMeWeq+
+	 hPDwdNa37H4UxaefqvbA1rNT29/LrJOwdvj0YVlTq6KzGTny2nszRyAsH5ZnI8rS8B
+	 3xzgGHvDpWMFyDWtafT+lKtwLka6Lw3t6q52x64dw/CgArFoc35nz5pA5My2fjiQgM
+	 pULIr6daqPvnw==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 29 Jun 2024 08:58:56 +0200
+X-ME-Date: Sat, 29 Jun 2024 11:19:38 +0200
 X-ME-IP: 86.243.222.230
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
+To: matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	fparent@baylibre.com,
+	fchiby@baylibre.com,
+	s.hauer@pengutronix.de
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-acpi@vger.kernel.org
-Subject: [PATCH] ACPI: PMIC: Constify struct pmic_table
-Date: Sat, 29 Jun 2024 08:58:42 +0200
-Message-ID: <a6c9b1bcdf259adabbcaf91183d3f5ab87a98600.1719644292.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/4] soc: mediatek: pwrap: Constify some data and other improvements
+Date: Sat, 29 Jun 2024 11:19:29 +0200
+Message-ID: <cover.1719652155.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -54,163 +55,29 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'struct pmic_table' is not modified in these drivers.
+This series is motivated by patch 1. The 3 other patches are some
+additionnal goodies spotted while looking at the code.
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+Patch 1 constifies struct pmic_wrapper_type to move some data to a
+read-only section, in order to increase safety.
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   3811	    786	      0	   4597	   11f5	drivers/acpi/pmic/intel_pmic_xpower.o
+Patch 2 does the same for some int arrays. This helps move about 7 ko of
+data to a read-only section. Not that bad!
 
-   text	   data	    bss	    dec	    hex	filename
-   4147	    450	      0	   4597	   11f5	drivers/acpi/pmic/intel_pmic_xpower.o
+Patch 3 simplifies code related to clk management. It also fixes an
+issue if the driver is unloaded.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only
----
- drivers/acpi/pmic/intel_pmic.c          | 2 +-
- drivers/acpi/pmic/intel_pmic.h          | 4 ++--
- drivers/acpi/pmic/intel_pmic_bxtwc.c    | 4 ++--
- drivers/acpi/pmic/intel_pmic_bytcrc.c   | 4 ++--
- drivers/acpi/pmic/intel_pmic_chtdc_ti.c | 4 ++--
- drivers/acpi/pmic/intel_pmic_chtwc.c    | 2 +-
- drivers/acpi/pmic/intel_pmic_xpower.c   | 4 ++--
- 7 files changed, 12 insertions(+), 12 deletions(-)
+Patch 4 is just a clean-up of some messages.
 
-diff --git a/drivers/acpi/pmic/intel_pmic.c b/drivers/acpi/pmic/intel_pmic.c
-index f20dbda1a831..134e9ca8eaa2 100644
---- a/drivers/acpi/pmic/intel_pmic.c
-+++ b/drivers/acpi/pmic/intel_pmic.c
-@@ -31,7 +31,7 @@ struct intel_pmic_opregion {
- 
- static struct intel_pmic_opregion *intel_pmic_opregion;
- 
--static int pmic_get_reg_bit(int address, struct pmic_table *table,
-+static int pmic_get_reg_bit(int address, const struct pmic_table *table,
- 			    int count, int *reg, int *bit)
- {
- 	int i;
-diff --git a/drivers/acpi/pmic/intel_pmic.h b/drivers/acpi/pmic/intel_pmic.h
-index d956b03a6ca0..006f0780ffab 100644
---- a/drivers/acpi/pmic/intel_pmic.h
-+++ b/drivers/acpi/pmic/intel_pmic.h
-@@ -21,9 +21,9 @@ struct intel_pmic_opregion_data {
- 					  u32 reg_address, u32 value, u32 mask);
- 	int (*lpat_raw_to_temp)(struct acpi_lpat_conversion_table *lpat_table,
- 				int raw);
--	struct pmic_table *power_table;
-+	const struct pmic_table *power_table;
- 	int power_table_count;
--	struct pmic_table *thermal_table;
-+	const struct pmic_table *thermal_table;
- 	int thermal_table_count;
- 	/* For generic exec_mipi_pmic_seq_element handling */
- 	int pmic_i2c_address;
-diff --git a/drivers/acpi/pmic/intel_pmic_bxtwc.c b/drivers/acpi/pmic/intel_pmic_bxtwc.c
-index e247615189fa..c332afbf82bd 100644
---- a/drivers/acpi/pmic/intel_pmic_bxtwc.c
-+++ b/drivers/acpi/pmic/intel_pmic_bxtwc.c
-@@ -24,7 +24,7 @@
- #define VSWITCH1_OUTPUT         BIT(4)
- #define VUSBPHY_CHARGE          BIT(1)
- 
--static struct pmic_table power_table[] = {
-+static const struct pmic_table power_table[] = {
- 	{
- 		.address = 0x0,
- 		.reg = 0x63,
-@@ -177,7 +177,7 @@ static struct pmic_table power_table[] = {
- 	} /* MOFF -> MODEMCTRL Bit 0 */
- };
- 
--static struct pmic_table thermal_table[] = {
-+static const struct pmic_table thermal_table[] = {
- 	{
- 		.address = 0x00,
- 		.reg = 0x4F39
-diff --git a/drivers/acpi/pmic/intel_pmic_bytcrc.c b/drivers/acpi/pmic/intel_pmic_bytcrc.c
-index 2b09f8da5400..b4c21a75294a 100644
---- a/drivers/acpi/pmic/intel_pmic_bytcrc.c
-+++ b/drivers/acpi/pmic/intel_pmic_bytcrc.c
-@@ -16,7 +16,7 @@
- 
- #define PMIC_A0LOCK_REG		0xc5
- 
--static struct pmic_table power_table[] = {
-+static const struct pmic_table power_table[] = {
- /*	{
- 		.address = 0x00,
- 		.reg = ??,
-@@ -134,7 +134,7 @@ static struct pmic_table power_table[] = {
- 	}, /* V105 -> V1P05S, L2 SRAM */
- };
- 
--static struct pmic_table thermal_table[] = {
-+static const struct pmic_table thermal_table[] = {
- 	{
- 		.address = 0x00,
- 		.reg = 0x75
-diff --git a/drivers/acpi/pmic/intel_pmic_chtdc_ti.c b/drivers/acpi/pmic/intel_pmic_chtdc_ti.c
-index 79f9df552524..ecb36fbc1e7f 100644
---- a/drivers/acpi/pmic/intel_pmic_chtdc_ti.c
-+++ b/drivers/acpi/pmic/intel_pmic_chtdc_ti.c
-@@ -23,7 +23,7 @@
- #define CHTDC_TI_BPTHERM	0x58
- #define CHTDC_TI_GPADC		0x5a
- 
--static struct pmic_table chtdc_ti_power_table[] = {
-+static const struct pmic_table chtdc_ti_power_table[] = {
- 	{ .address = 0x00, .reg = 0x41 }, /* LDO1 */
- 	{ .address = 0x04, .reg = 0x42 }, /* LDO2 */
- 	{ .address = 0x08, .reg = 0x43 }, /* LDO3 */
-@@ -39,7 +39,7 @@ static struct pmic_table chtdc_ti_power_table[] = {
- 	{ .address = 0x30, .reg = 0x4e }, /* LD14 */
- };
- 
--static struct pmic_table chtdc_ti_thermal_table[] = {
-+static const struct pmic_table chtdc_ti_thermal_table[] = {
- 	{
- 		.address = 0x00,
- 		.reg = CHTDC_TI_GPADC
-diff --git a/drivers/acpi/pmic/intel_pmic_chtwc.c b/drivers/acpi/pmic/intel_pmic_chtwc.c
-index 25aa3e33b09a..81caede51ca2 100644
---- a/drivers/acpi/pmic/intel_pmic_chtwc.c
-+++ b/drivers/acpi/pmic/intel_pmic_chtwc.c
-@@ -70,7 +70,7 @@
-  * "regulator: whiskey_cove: implements Whiskey Cove pmic VRF support"
-  * https://github.com/intel-aero/meta-intel-aero/blob/master/recipes-kernel/linux/linux-yocto/0019-regulator-whiskey_cove-implements-WhiskeyCove-pmic-V.patch
-  */
--static struct pmic_table power_table[] = {
-+static const struct pmic_table power_table[] = {
- 	{
- 		.address = 0x0,
- 		.reg = CHT_WC_V1P8A_CTRL,
-diff --git a/drivers/acpi/pmic/intel_pmic_xpower.c b/drivers/acpi/pmic/intel_pmic_xpower.c
-index 43c5850b4bf3..49bda5e0c8aa 100644
---- a/drivers/acpi/pmic/intel_pmic_xpower.c
-+++ b/drivers/acpi/pmic/intel_pmic_xpower.c
-@@ -26,7 +26,7 @@
- #define AXP288_ADC_TS_CURRENT_ON_ONDEMAND		(2 << 0)
- #define AXP288_ADC_TS_CURRENT_ON			(3 << 0)
- 
--static struct pmic_table power_table[] = {
-+static const struct pmic_table power_table[] = {
- 	{
- 		.address = 0x00,
- 		.reg = 0x13,
-@@ -129,7 +129,7 @@ static struct pmic_table power_table[] = {
- };
- 
- /* TMP0 - TMP5 are the same, all from GPADC */
--static struct pmic_table thermal_table[] = {
-+static const struct pmic_table thermal_table[] = {
- 	{
- 		.address = 0x00,
- 		.reg = XPOWER_GPADC_LOW
+Christophe JAILLET (4):
+  soc: mediatek: pwrap: Constify struct pmic_wrapper_type
+  soc: mediatek: pwrap: Constify some struct int[]
+  soc: mediatek: pwrap: Use devm_clk_get_[optional_]enabled()
+  soc: mediatek: pwrap: Simplify some error messages
+
+ drivers/soc/mediatek/mtk-pmic-wrap.c | 125 +++++++++------------------
+ 1 file changed, 43 insertions(+), 82 deletions(-)
+
 -- 
 2.45.2
 
