@@ -1,152 +1,216 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52D53C00;
-	Sat, 29 Jun 2024 03:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282E01CF9B;
+	Sat, 29 Jun 2024 06:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719631463; cv=none; b=kMVHn/Iwuu3+4IkAbhAsApDEtZGbV0O0AxszJh+TEpAdNfUnrB3Ca0WlT9Fu2OEYX3iAT/2lEHq1zWHUrnNtI2pX919sdFESoDoIy8veI65dgmKb9K5Dsxwn2qYcJEsUtDZa/dH3sYADhHEwXR9i4htziDxcUSEBsTsFYII+kR8=
+	t=1719644347; cv=none; b=mbSb+Fvp8wRd8rAfCe2HbEys4sG/fF5XF1fIF8H/+KdnJKnccErAc8wjZjzHrsNRNxnWMINJGY5VjJjc8Yi7m62eHbibyvh4RY9ts65bVCEuCoHNmFzQ9ezQq4uBgBSELrmbeRLo1E8gQ1bkpjC4NMUh3Jd4jLG6d3XjMyUcwoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719631463; c=relaxed/simple;
-	bh=zzFzV9Hf3y2xU4IErrtSymGVyrv9lLHfRvbFW6GO8Qs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eh0EgwEdfQEUfb2qMtm86mexSdVVK+92z4gG2AelgjJA0ZM+1E3ij+SI941tX+wFfm8tbKfZAPafyMBQsa0dLx1X/NjJHZnnz2IWgN8XnpSxEizsWD9UgL6WbmL0l+q7Glj5Z1zQPY775I6ahuRkJVFKEpQ649a1FvqJIPp48sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UmJ4qD4t; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1719644347; c=relaxed/simple;
+	bh=6KyjtX5hOxB5LlFjn7fgJk+/s9NXrVzZ9ltFbNSFa2U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c2rOU53onIwN8wRks1YDYeRXIbfsEoKNTkneepKAONJS6u8aUPAIk8AHyXDlMJpgJZkuCC/VEPs0bJofbsq3F4WUBPI7nhSsar1BAWtUvqZs7Ih/s4sxGNWdJGUjNWnK8k1ERcDJQFc5XS5gUlC0uIH7Xxplm4mLP/jWRRJ9rew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RFdThJhf; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UmJ4qD4t"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45T2smtT027565;
-	Sat, 29 Jun 2024 03:24:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SVVShuazCaLUDPTDIegp+IOHraDAN3vXNEH1dB82+0k=; b=UmJ4qD4tfmNmqDOX
-	ewt+spLRRN3ja2tfpOOiJMZWEe2rtvJ4rBqOR2/xE9rmPsnPV6e8r3hsOEIGf8hQ
-	/lw3v0xRBw4B5Yon0O71rmD9aru7oB+Got7syoj9Wcc6WVrgnRHUS969QP85ouPA
-	6KU214FdtKBXiTyEJhnAT7w6b0/J6iw881RkZ0bTPQDWn6eaDuh7qE8r1eddB5HT
-	SHaOW+c1/B61wWaCUBr7SJJzCPShCr6fnE8sGmH2ftwcj3/lMAoJLwxHJzpevBpY
-	HsEXZlJ0ImLkJwGBjP7HymHb0TAfhxOmMqVqwVYpYy4MiAOY4ORjjfcsleaVfUGO
-	EYBPYw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40297rg34k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 29 Jun 2024 03:24:20 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45T3OJtb011895
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 29 Jun 2024 03:24:19 GMT
-Received: from [10.48.245.152] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
- 2024 20:24:18 -0700
-Message-ID: <0c52c041-6091-4fe2-a519-b8d26e5fc3e8@quicinc.com>
-Date: Fri, 28 Jun 2024 20:24:18 -0700
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RFdThJhf"
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id NS2ussK9tE745NS2vs6O5R; Sat, 29 Jun 2024 08:58:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1719644336;
+	bh=7ZffAGKYDmgIjO3VVxySPyiErhAqXhow8CsGzx+lLxE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=RFdThJhfv4vP0hsVXmPTV5moPfCdjkgSOtnIqkWMriydYqth15YzuIU7lvY7cYBYD
+	 SxTULNmD8MBCbXjHJUwQy0f3hk1hMCh6uWVJykx9fay1rYE8U52k0tRgmWUNx9okxd
+	 YfebuiBFrfp+8CjStf3Y9/L6y6x6olhY2w7w9HYLqq1lKvOETEIg8iW+8K1altibgl
+	 6+/JosxD5GUz4zE9v23oRPFn13dL3ZE/LIlxRWXzpowNqG4NC+zyPnIH4rBMitnHVQ
+	 4JK8CLFEeZ5kuvWKjI+RchpY5MS84JOMNC117wT5DfMXRFnQ8IgOacLOiGjQ/LI/bL
+	 usaVooEKFjHIA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 29 Jun 2024 08:58:56 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-acpi@vger.kernel.org
+Subject: [PATCH] ACPI: PMIC: Constify struct pmic_table
+Date: Sat, 29 Jun 2024 08:58:42 +0200
+Message-ID: <a6c9b1bcdf259adabbcaf91183d3f5ab87a98600.1719644292.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] s390/dasd: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner
-	<hoeppner@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
-	<gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian
- Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>
-CC: <linux-s390@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240615-md-s390-drivers-s390-block-dasd-v1-1-36b200f14344@quicinc.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240615-md-s390-drivers-s390-block-dasd-v1-1-36b200f14344@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Yf5mmrD-0RqAvYnEepWgdMKZGdKY3cK6
-X-Proofpoint-GUID: Yf5mmrD-0RqAvYnEepWgdMKZGdKY3cK6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-28_18,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- lowpriorityscore=0 clxscore=1011 mlxscore=0 suspectscore=0 spamscore=0
- adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406290023
+Content-Transfer-Encoding: 8bit
 
-On 6/15/2024 7:19 PM, Jeff Johnson wrote:
-> With ARCH=s390, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/block/dasd_diag_mod.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/block/dasd_eckd_mod.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/block/dasd_fba_mod.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> Corrections to these descriptions are welcomed. I'm not an expert in
-> this code so in most cases I've taken these descriptions directly from
-> code comments, Kconfig descriptions, or git logs.  History has shown
-> that in some cases these are originally wrong due to cut-n-paste
-> errors, and in other cases the drivers have evolved such that the
-> original information is no longer accurate.
-> ---
->  drivers/s390/block/dasd_diag.c | 1 +
->  drivers/s390/block/dasd_eckd.c | 1 +
->  drivers/s390/block/dasd_fba.c  | 1 +
->  3 files changed, 3 insertions(+)
-> 
-> diff --git a/drivers/s390/block/dasd_diag.c b/drivers/s390/block/dasd_diag.c
-> index ea4b1d01bb76..8245b742e4a2 100644
-> --- a/drivers/s390/block/dasd_diag.c
-> +++ b/drivers/s390/block/dasd_diag.c
-> @@ -29,6 +29,7 @@
->  #include "dasd_int.h"
->  #include "dasd_diag.h"
->  
-> +MODULE_DESCRIPTION("S/390 Support for DIAG access to DASD Disks");
->  MODULE_LICENSE("GPL");
->  
->  /* The maximum number of blocks per request (max_blocks) is dependent on the
-> diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
-> index 2f16f543079b..f8113974cfba 100644
-> --- a/drivers/s390/block/dasd_eckd.c
-> +++ b/drivers/s390/block/dasd_eckd.c
-> @@ -44,6 +44,7 @@
->  /* 64k are 128 x 512 byte sectors  */
->  #define DASD_RAW_SECTORS_PER_TRACK 128
->  
-> +MODULE_DESCRIPTION("S/390 DASD ECKD Disks device driver");
->  MODULE_LICENSE("GPL");
->  
->  static struct dasd_discipline dasd_eckd_discipline;
-> diff --git a/drivers/s390/block/dasd_fba.c b/drivers/s390/block/dasd_fba.c
-> index 361e9bd75257..9ef7b168aba8 100644
-> --- a/drivers/s390/block/dasd_fba.c
-> +++ b/drivers/s390/block/dasd_fba.c
-> @@ -32,6 +32,7 @@
->  #define DASD_FBA_CCW_LOCATE 0x43
->  #define DASD_FBA_CCW_DEFINE_EXTENT 0x63
->  
-> +MODULE_DESCRIPTION("S/390 DASD FBA Disks device driver");
->  MODULE_LICENSE("GPL");
->  
->  static struct dasd_discipline dasd_fba_discipline;
-> 
-> ---
-> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> change-id: 20240615-md-s390-drivers-s390-block-dasd-9a143c6ca093
+'struct pmic_table' is not modified in these drivers.
 
-Following up to see if anything else is needed from me. Hoping to see this in
-linux-next so I can remove it from my tracking spreadsheet :)
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-/jeff
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   3811	    786	      0	   4597	   11f5	drivers/acpi/pmic/intel_pmic_xpower.o
+
+   text	   data	    bss	    dec	    hex	filename
+   4147	    450	      0	   4597	   11f5	drivers/acpi/pmic/intel_pmic_xpower.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only
+---
+ drivers/acpi/pmic/intel_pmic.c          | 2 +-
+ drivers/acpi/pmic/intel_pmic.h          | 4 ++--
+ drivers/acpi/pmic/intel_pmic_bxtwc.c    | 4 ++--
+ drivers/acpi/pmic/intel_pmic_bytcrc.c   | 4 ++--
+ drivers/acpi/pmic/intel_pmic_chtdc_ti.c | 4 ++--
+ drivers/acpi/pmic/intel_pmic_chtwc.c    | 2 +-
+ drivers/acpi/pmic/intel_pmic_xpower.c   | 4 ++--
+ 7 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/acpi/pmic/intel_pmic.c b/drivers/acpi/pmic/intel_pmic.c
+index f20dbda1a831..134e9ca8eaa2 100644
+--- a/drivers/acpi/pmic/intel_pmic.c
++++ b/drivers/acpi/pmic/intel_pmic.c
+@@ -31,7 +31,7 @@ struct intel_pmic_opregion {
+ 
+ static struct intel_pmic_opregion *intel_pmic_opregion;
+ 
+-static int pmic_get_reg_bit(int address, struct pmic_table *table,
++static int pmic_get_reg_bit(int address, const struct pmic_table *table,
+ 			    int count, int *reg, int *bit)
+ {
+ 	int i;
+diff --git a/drivers/acpi/pmic/intel_pmic.h b/drivers/acpi/pmic/intel_pmic.h
+index d956b03a6ca0..006f0780ffab 100644
+--- a/drivers/acpi/pmic/intel_pmic.h
++++ b/drivers/acpi/pmic/intel_pmic.h
+@@ -21,9 +21,9 @@ struct intel_pmic_opregion_data {
+ 					  u32 reg_address, u32 value, u32 mask);
+ 	int (*lpat_raw_to_temp)(struct acpi_lpat_conversion_table *lpat_table,
+ 				int raw);
+-	struct pmic_table *power_table;
++	const struct pmic_table *power_table;
+ 	int power_table_count;
+-	struct pmic_table *thermal_table;
++	const struct pmic_table *thermal_table;
+ 	int thermal_table_count;
+ 	/* For generic exec_mipi_pmic_seq_element handling */
+ 	int pmic_i2c_address;
+diff --git a/drivers/acpi/pmic/intel_pmic_bxtwc.c b/drivers/acpi/pmic/intel_pmic_bxtwc.c
+index e247615189fa..c332afbf82bd 100644
+--- a/drivers/acpi/pmic/intel_pmic_bxtwc.c
++++ b/drivers/acpi/pmic/intel_pmic_bxtwc.c
+@@ -24,7 +24,7 @@
+ #define VSWITCH1_OUTPUT         BIT(4)
+ #define VUSBPHY_CHARGE          BIT(1)
+ 
+-static struct pmic_table power_table[] = {
++static const struct pmic_table power_table[] = {
+ 	{
+ 		.address = 0x0,
+ 		.reg = 0x63,
+@@ -177,7 +177,7 @@ static struct pmic_table power_table[] = {
+ 	} /* MOFF -> MODEMCTRL Bit 0 */
+ };
+ 
+-static struct pmic_table thermal_table[] = {
++static const struct pmic_table thermal_table[] = {
+ 	{
+ 		.address = 0x00,
+ 		.reg = 0x4F39
+diff --git a/drivers/acpi/pmic/intel_pmic_bytcrc.c b/drivers/acpi/pmic/intel_pmic_bytcrc.c
+index 2b09f8da5400..b4c21a75294a 100644
+--- a/drivers/acpi/pmic/intel_pmic_bytcrc.c
++++ b/drivers/acpi/pmic/intel_pmic_bytcrc.c
+@@ -16,7 +16,7 @@
+ 
+ #define PMIC_A0LOCK_REG		0xc5
+ 
+-static struct pmic_table power_table[] = {
++static const struct pmic_table power_table[] = {
+ /*	{
+ 		.address = 0x00,
+ 		.reg = ??,
+@@ -134,7 +134,7 @@ static struct pmic_table power_table[] = {
+ 	}, /* V105 -> V1P05S, L2 SRAM */
+ };
+ 
+-static struct pmic_table thermal_table[] = {
++static const struct pmic_table thermal_table[] = {
+ 	{
+ 		.address = 0x00,
+ 		.reg = 0x75
+diff --git a/drivers/acpi/pmic/intel_pmic_chtdc_ti.c b/drivers/acpi/pmic/intel_pmic_chtdc_ti.c
+index 79f9df552524..ecb36fbc1e7f 100644
+--- a/drivers/acpi/pmic/intel_pmic_chtdc_ti.c
++++ b/drivers/acpi/pmic/intel_pmic_chtdc_ti.c
+@@ -23,7 +23,7 @@
+ #define CHTDC_TI_BPTHERM	0x58
+ #define CHTDC_TI_GPADC		0x5a
+ 
+-static struct pmic_table chtdc_ti_power_table[] = {
++static const struct pmic_table chtdc_ti_power_table[] = {
+ 	{ .address = 0x00, .reg = 0x41 }, /* LDO1 */
+ 	{ .address = 0x04, .reg = 0x42 }, /* LDO2 */
+ 	{ .address = 0x08, .reg = 0x43 }, /* LDO3 */
+@@ -39,7 +39,7 @@ static struct pmic_table chtdc_ti_power_table[] = {
+ 	{ .address = 0x30, .reg = 0x4e }, /* LD14 */
+ };
+ 
+-static struct pmic_table chtdc_ti_thermal_table[] = {
++static const struct pmic_table chtdc_ti_thermal_table[] = {
+ 	{
+ 		.address = 0x00,
+ 		.reg = CHTDC_TI_GPADC
+diff --git a/drivers/acpi/pmic/intel_pmic_chtwc.c b/drivers/acpi/pmic/intel_pmic_chtwc.c
+index 25aa3e33b09a..81caede51ca2 100644
+--- a/drivers/acpi/pmic/intel_pmic_chtwc.c
++++ b/drivers/acpi/pmic/intel_pmic_chtwc.c
+@@ -70,7 +70,7 @@
+  * "regulator: whiskey_cove: implements Whiskey Cove pmic VRF support"
+  * https://github.com/intel-aero/meta-intel-aero/blob/master/recipes-kernel/linux/linux-yocto/0019-regulator-whiskey_cove-implements-WhiskeyCove-pmic-V.patch
+  */
+-static struct pmic_table power_table[] = {
++static const struct pmic_table power_table[] = {
+ 	{
+ 		.address = 0x0,
+ 		.reg = CHT_WC_V1P8A_CTRL,
+diff --git a/drivers/acpi/pmic/intel_pmic_xpower.c b/drivers/acpi/pmic/intel_pmic_xpower.c
+index 43c5850b4bf3..49bda5e0c8aa 100644
+--- a/drivers/acpi/pmic/intel_pmic_xpower.c
++++ b/drivers/acpi/pmic/intel_pmic_xpower.c
+@@ -26,7 +26,7 @@
+ #define AXP288_ADC_TS_CURRENT_ON_ONDEMAND		(2 << 0)
+ #define AXP288_ADC_TS_CURRENT_ON			(3 << 0)
+ 
+-static struct pmic_table power_table[] = {
++static const struct pmic_table power_table[] = {
+ 	{
+ 		.address = 0x00,
+ 		.reg = 0x13,
+@@ -129,7 +129,7 @@ static struct pmic_table power_table[] = {
+ };
+ 
+ /* TMP0 - TMP5 are the same, all from GPADC */
+-static struct pmic_table thermal_table[] = {
++static const struct pmic_table thermal_table[] = {
+ 	{
+ 		.address = 0x00,
+ 		.reg = XPOWER_GPADC_LOW
+-- 
+2.45.2
+
