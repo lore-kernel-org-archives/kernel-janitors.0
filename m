@@ -1,48 +1,48 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800001EB31;
-	Sat, 29 Jun 2024 03:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D87522086;
+	Sat, 29 Jun 2024 03:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719630528; cv=none; b=EgZobXCNTCZG57NyHguMA99F5qe6m5cHyQXAw1ZpME47O0I/1UDJymFPsXwr27xYmgTindgFLExkMII5vhHmjzxDONkEboFZvtOiT21fCPMfDYDUNPnLqSHsYLtK4uk8rvHYX8mzpRnW+YDuMjLB5SYlNC+vpdRnwfQpp0+ElyA=
+	t=1719630624; cv=none; b=TOcgRktdaGtDrsMcXO7dHrWxi1AotZZy3hq9g0wH6w229JSDIdqM+i2mzCFd7uuz2flrP/a0u1wPxnsyKT12UqJ4fabViqbRrOnEUFtb7OPM65t0xO4CpvYAB/Usx4kEVJTSr/sYg1K8IaTeOk9kf7UWXBKHcQnM/jdHaEPPPTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719630528; c=relaxed/simple;
-	bh=VLey5HTG1ce3qfqn5FGTexMgy6lpFW/kPfkmJKKgxeU=;
+	s=arc-20240116; t=1719630624; c=relaxed/simple;
+	bh=ecaQLAgzhBzzmTT5df0SGRynpgMqFN50zOvlg6650X8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ARzzqrtuCnmzgMW8IDT/dvJNj9riTjiWG4mAnQ98Bfvjzee8ixx+ny0jVgJqAMUpF5eXoJJpiZU4Qp29yUgson5ftNU5SciI3tXrPODnMvlSyZw5lM12nO3Szga3Rn55K+H8rJkMpssvycDeP1UFV/lgUB2bNfH4sTMJgpxtQeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MeYDPcHc; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=Ihc/NKuh0lnxZm8eJelcjZQYjqvw460RqV3oeRgG0d4mgMNkEIv5jb57AQv/6vkwB/61lSKdq6XkJ+cB19DwGt++mkZ69xjA9lJUqMIj4KUBK/LZihAEBhadw7DH0b1vvUeHtnGH1dwfOEeh7KACWXeVwtdofAlGw823RXoUtBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JR3LT8Jl; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MeYDPcHc"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45SFvjGX015158;
-	Sat, 29 Jun 2024 03:08:42 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JR3LT8Jl"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45SG2YDn015339;
+	Sat, 29 Jun 2024 03:10:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HGxVsfN3za+mToVpqfn892s4MHmmP3ddMR1WlCtHhY8=; b=MeYDPcHcGIIjTBgr
-	ToUYYCCYs5dwIyqNlxP3yJ2YOmePsgL5uPEYhBfXUyqdELhIOKc8IJnO072KuyhX
-	8KIuw7Vt0Ccl5WcbkX823YTlpynlRolkWMVib/u6g/EtgBti2KkaiM6h8WvGQpL2
-	Y3fVAHMAyXG8Ew4ePeTLZLwilb3BN0+ON5luRtDD3S08YtXJHi7dx5sx64h+q9aC
-	Y01I2LwcNsupwFVe/F5NwQ4Lhl71seX7oVpBgstCigs9/Lv8hN+NgaAnBYOkRWRW
-	3sCgiU2PUk5kBQIpcm1WNmrJrqOcfK40cQc6/R+vM1o6OpH6+qn9DL5AYa6BLj1K
-	Xiw5xQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqsj1vsk-1
+	1uNs3pB+IC28ZfqQi+oFquJimoPG805ibakF1kqPOyw=; b=JR3LT8JlQWNPPoxU
+	Gfmq7yU6X6Lbi7qLLPZppwky/kY9EeEy1iYkMEE3P5l7/sRHjBGmInos29ao6gmv
+	9CB/KqU+Fkko3YQ69vjZ5a2RIaX4aq3pHPklUiDJFoh226qWAznfpMXAdbxxtsdD
+	ZPoiIiJH6YE28UBe+crs3x9V374SrXEKu5Hx9ygUxd1oO1AQZfqU4sTuMZXmkXMr
+	JUsp1EVbehpiw67TjO4CaiJjZMCMOigEqQ2Bx+3SYvPd3dGRP4YtFNIqF/Exm/Jy
+	bFSEdrTMVUXtozEylp6z55P05hz7KY+RZkCyjr0rRFVZblO824d5s4SlvB+NqHCL
+	cVTIfQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400gcmgru9-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 29 Jun 2024 03:08:42 +0000 (GMT)
+	Sat, 29 Jun 2024 03:10:19 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45T38fDL024972
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45T3AIZ0011474
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 29 Jun 2024 03:08:41 GMT
+	Sat, 29 Jun 2024 03:10:18 GMT
 Received: from [10.48.245.152] (10.49.16.6) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
- 2024 20:08:41 -0700
-Message-ID: <94597a22-7de6-4422-8af2-f243156daca9@quicinc.com>
-Date: Fri, 28 Jun 2024 20:08:40 -0700
+ 2024 20:10:18 -0700
+Message-ID: <3f8bb9ef-059e-4ef1-9e03-f90ddc8e612f@quicinc.com>
+Date: Fri, 28 Jun 2024 20:10:18 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,58 +50,65 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: ufs: add MODULE_DESCRIPTION()
+Subject: Re: [PATCH v2] platform/goldfish: goldfish_pipe: add missing
+ MODULE_DESCRIPTION() macro
 Content-Language: en-US
-To: Evgeniy Dushistov <dushistov@mail.ru>,
-        Andrew Morton
-	<akpm@linux-foundation.org>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240510-ufs-md-v1-1-85eaff8c6beb@quicinc.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>
+CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240615-goldfish_pipe-md-v2-1-b4323a969594@quicinc.com>
 From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240510-ufs-md-v1-1-85eaff8c6beb@quicinc.com>
+In-Reply-To: <20240615-goldfish_pipe-md-v2-1-b4323a969594@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: SmiD1pkA_clIF74u9KUIbGPHD12l5QmI
-X-Proofpoint-GUID: SmiD1pkA_clIF74u9KUIbGPHD12l5QmI
+X-Proofpoint-GUID: BjjZf5qqqRVpiT9HbV2mGXDwOJHuL_dP
+X-Proofpoint-ORIG-GUID: BjjZf5qqqRVpiT9HbV2mGXDwOJHuL_dP
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-28_18,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
- bulkscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
- mlxscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406290022
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ mlxlogscore=999 clxscore=1015 mlxscore=0 phishscore=0 impostorscore=0
+ adultscore=0 malwarescore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406290023
 
-On 5/10/2024 12:02 PM, Jeff Johnson wrote:
-> Fix make W=1 warning:
+On 6/15/2024 2:34 PM, Jeff Johnson wrote:
+> With arch=x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/goldfish/goldfish_pipe.o
 > 
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ufs/ufs.o
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
 > 
 > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
->  fs/ufs/super.c | 1 +
+> Changes in v2:
+> - Rebased to v6.10-rc3
+> - Updated commit text to use a more recent boilerplate
+> - Since there are no matching entries in MAINTAINERS, added Andrew & Greg
+>   to see if this can go through one of their misc trees
+> - Link to v1: https://lore.kernel.org/r/20240509-goldfish_pipe-md-v1-1-acb513276263@quicinc.com
+> ---
+>  drivers/platform/goldfish/goldfish_pipe.c | 1 +
 >  1 file changed, 1 insertion(+)
 > 
-> diff --git a/fs/ufs/super.c b/fs/ufs/super.c
-> index 44666afc6209..bc625788589c 100644
-> --- a/fs/ufs/super.c
-> +++ b/fs/ufs/super.c
-> @@ -1540,4 +1540,5 @@ static void __exit exit_ufs_fs(void)
+> diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
+> index 061aa9647c19..c2aab0cfab33 100644
+> --- a/drivers/platform/goldfish/goldfish_pipe.c
+> +++ b/drivers/platform/goldfish/goldfish_pipe.c
+> @@ -946,4 +946,5 @@ static struct platform_driver goldfish_pipe_driver = {
 >  
->  module_init(init_ufs_fs)
->  module_exit(exit_ufs_fs)
-> +MODULE_DESCRIPTION("UFS Filesystem");
->  MODULE_LICENSE("GPL");
+>  module_platform_driver(goldfish_pipe_driver);
+>  MODULE_AUTHOR("David Turner <digit@google.com>");
+> +MODULE_DESCRIPTION("Goldfish virtual device for QEMU pipes");
+>  MODULE_LICENSE("GPL v2");
 > 
 > ---
-> base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
-> change-id: 20240510-ufs-md-7a78d87a7ff4
-
-+Andrew since he's signed off on this file in the past.
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240509-goldfish_pipe-md-1dec20bd3a90
 
 Following up to see if anything else is needed from me. Hoping to see this in
 linux-next so I can remove it from my tracking spreadsheet :)
