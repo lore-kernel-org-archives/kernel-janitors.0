@@ -1,83 +1,58 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from isilmar-4.linta.de (isilmar-4.linta.de [136.243.71.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536393A268;
-	Sun, 30 Jun 2024 08:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0162E12CDBE;
+	Sun, 30 Jun 2024 14:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.243.71.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719734876; cv=none; b=bIBvTXGI+Jsh10GwPpY/FUa0uCVwu67XLnkvE3kPWIiD2SU6TDGwB9LBW8nPyas94fuNqhCLmakOTsfrYa66NQvDaCwyxCcJl4CPFASwrsFOUHCwKSSj+xPw0Ye/du2kDpIKfzpQXeouNjCl7695k12ma4iSikeXLNlmaV0RoZQ=
+	t=1719759549; cv=none; b=Yhm7JYNA2gwgLek+i56XgF/hqn0NAKk9vbefqIhs6iGNo2yMQq9auXf+nZ27tvaLUtwJE7LdnH4dHGxVuIqLgFhkUN84f5j1IacvfeAYVOIsvXFuUKnd8pmTeGLCWRMAQt/vnZMW3AVvuThAKsDRfvDHqsNoPW6VNIqopeMCH1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719734876; c=relaxed/simple;
-	bh=lNuSaJ11QtPi4mbe4FqYY/z0bjszGfu+9HvYgYhmTKA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=htHxDoZuls77Fyz8ej6TCz6dZ9uKGnNYmhkqTlqjJbA8GNE6oJDnv4IIaS3y5DdF2wDg7nadKA660HYbrTM1vGRl77uj6Q2OHTMnBQVh1ngkngliIwUOGdBr/6XUMERYSC/OgXe9JhZHKDBpIsOEkpsKEe5xwU36ngvXHZg5V/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=l/i2vC5J; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="l/i2vC5J"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719734857; x=1720339657; i=markus.elfring@web.de;
-	bh=lN5WQT/P42Agtm6YWk9SosCJtGnpAgOUpbIGynjUq88=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=l/i2vC5JDLAolxVTBtLSrqQPvGLYRc9QVqTBWYel4k8jFSR+cN2MFmoFjZn2xZEA
-	 VmGw9mo3WExpwoYSeNfgRgOv7ja3e+CVuk4QCI07EVDrP1T7lxyo9nS8+Jc4fGH75
-	 RfI6lf8KLCACvobaqiS9+5GVtJ0iRnXxxcezMVKd1g7jfTFo/p8UNY6We1xi0MM4y
-	 /7NiMLV4sgUDxFXBqJq1psYVL5IcMeBK5WEdD073yZiGBVUHdrh2JXqV1BXwVhZtL
-	 0Tg+l2sB8co6oPoS799zQs3DdnTgnVAAEvvbvGHFHpEDzw/L6oGz6bk71HaFfCCKF
-	 mLDXTzlaqwKYMDyQpQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MuF8z-1s9Tfg1e0r-011PFz; Sun, 30
- Jun 2024 10:07:37 +0200
-Message-ID: <005f0c44-25bf-4e50-a660-9a298a164129@web.de>
-Date: Sun, 30 Jun 2024 10:07:35 +0200
+	s=arc-20240116; t=1719759549; c=relaxed/simple;
+	bh=fRMjtpuXIYvbpTQDAQK4oU2XSt0OZh0MHx2Yg1WVqXc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uFxbxpPmw3q/wC6QOpFTINreBxxoiivtEd21UpG9gK3izfQJyCA/pNmtmT90xVyHEb1qPb1WwR0q26XOcxaguufmG0hT/vQ4chsZ3mCnsx+HJbi0jNo4UC4C3py82pH7+1uboVAJPTIDwGjzkl2YJy297uFU7yDELiBY6ua6WIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dominikbrodowski.net; spf=pass smtp.mailfrom=dominikbrodowski.net; arc=none smtp.client-ip=136.243.71.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dominikbrodowski.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dominikbrodowski.net
+Received: from shine.dominikbrodowski.net (shine.brodo.linta [10.2.0.112])
+	by isilmar-4.linta.de (Postfix) with ESMTPSA id 2DE5320027C;
+	Sun, 30 Jun 2024 14:52:15 +0000 (UTC)
+Received: by shine.dominikbrodowski.net (Postfix, from userid 1000)
+	id E16EFA008A; Sun, 30 Jun 2024 15:52:42 +0200 (CEST)
+Date: Sun, 30 Jun 2024 15:52:42 +0200
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] pcmcia: add missing MODULE_DESCRIPTION() macros
+Message-ID: <ZoFjKv-xrW-XIqqI@shine.dominikbrodowski.net>
+References: <20240607-md-drivers-pcmcia-v1-1-6014889a1324@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Keith Busch <kbusch@kernel.org>, kernel-janitors@vger.kernel.org,
- Bjorn Helgaas <bhelgaas@google.com>, Dan Williams <dan.j.williams@intel.com>
-Cc: Keith Busch <kbusch@meta.com>, LKML <linux-kernel@vger.kernel.org>
-References: <20240628193514.1680137-1-kbusch@meta.com>
-Subject: Re: [PATCH] PCI: fix recusive device locking
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240628193514.1680137-1-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:z7GOR5Oam3BF13l4JmM7FgI8WpNGmFdJPfOk/1a2ZRVEsPeyxzG
- it6SNDjrL6bIn4PlogTF8z3CrM8+N6gaMBrhC2MUm7a7Bv4GJ3jLoqrOlq9YiP9ao9fGNU1
- AK6RcSvXlUv8aLE/cNlL2gQj9Ly97yOMNAYKEfy38GJ2I7Lt7UJu3q71DhIdeRA/dwSGVNP
- KZu9BY7PeliRTBQWq/qag==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:aoaQQgYZuWo=;wHqimmBKHoMU8h9+2o8BaCzkeag
- gTZsPwIQyygCJ747gHiq7sEN6+FNMnQj50ZkLt4odnw29qvuIlIb/eN3WjNgjrXUkZF7MX5gc
- zxjjr20+HG1YiA3YuJyhVpk1g18UsefKEInfhtY7CvsYQHqwIa98wugt6KZXvnf5QL8mU2XIs
- zht0Cx1zcNZo/fH/4Yf4WZ9IHuXbe/ErjUfJeLD39fkgksqKBjsS9ZNTpx+7lrWz9D+3bCU1R
- VTHB/gnGTdssCFlUeSPMxjxTvQLg/T9VeVMnnTYr14yXibHdzmrH3Xhb1hxOZiNlkIrqu/vY9
- +jBvc5RYSlCVDk6JRclwdDnUippTHD5gzVvl6aLdkbf50ejrYjKjyfybGP4cF4N7LAOdrKB1U
- 0PVZBOemxDHp1byDsTPFQB1CW2GuU174W4EJrgNTCLXSCNx+VpKMtkg8xnZUqxTMoShrDpbtp
- xGlDoSmgqsd9tpA2H+au1kbbqLuqv8fBo0stQ/Sd7ZW94KmJczJX3o1UkeCCrOlB6zFMWBRG3
- 7r6DC7/uRssEQwKXeyjI+Q+sUokqBJtJyFnP84fjSQxDUS4C/lcgqGMGkcOT8lXO9iK+T2s15
- n0jNjsPXSm2odfngrhXmzlXv/35OTu11DEbGsFi+1lMsOl8FSCDYFhl0k8p7okmm9rNopTF3v
- 9yPTvtC1IP8JyAUQPWplwetIOyG1swj/4y/dFSLhSd0ncQRCoCT4Pb+dLjBUrapMGTFAlJzuZ
- j4BJVaWEvAwFXaTlJZSszRTr7VVTuCfiN5+JofzC250RwhS3NftbI5V5ZPyZbCAuGY/i1cHWQ
- WiYp5XgOjNcI7Op3OzDAEtYA5AbtBIHlkcxxufCreUhbA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607-md-drivers-pcmcia-v1-1-6014889a1324@quicinc.com>
 
-> If one of the bus' devices has subordinates, the recursive call locks
-> itself, so no need to lock the device before the recusion or it will
-=E2=80=A6
 
-                                                   recursion?
+Am Fri, Jun 07, 2024 at 03:02:58PM -0700 schrieb Jeff Johnson:
+> On x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/pcmcia_rsrc.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/yenta_socket.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/i82092.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+> files which have a MODULE_LICENSE(). This includes files which did not
+> produce a warning with the x86 allmodconfig since they may cause this
+> warning with other configurations.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-Would you like to avoid another typo also in the summary phrase?
+Thanks, applied to pcmcia-next (although without the change to rsrc_mgr.c,
+as that was commented out anyway, and with a few modifications to the
+descriptions.
 
-Regards,
-Markus
+Best,
+	Dominik
