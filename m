@@ -1,58 +1,96 @@
-Received: from isilmar-4.linta.de (isilmar-4.linta.de [136.243.71.142])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0162E12CDBE;
-	Sun, 30 Jun 2024 14:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.243.71.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39052433D2;
+	Mon,  1 Jul 2024 05:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719759549; cv=none; b=Yhm7JYNA2gwgLek+i56XgF/hqn0NAKk9vbefqIhs6iGNo2yMQq9auXf+nZ27tvaLUtwJE7LdnH4dHGxVuIqLgFhkUN84f5j1IacvfeAYVOIsvXFuUKnd8pmTeGLCWRMAQt/vnZMW3AVvuThAKsDRfvDHqsNoPW6VNIqopeMCH1g=
+	t=1719811330; cv=none; b=DLIXegA/9Xbtm2BIyelhGigZx1+rsBO868vHtKTmXFvmsOiPNjzNT7RzdiGURBTnqpOgoOLBH9MLqJlXsP1NHqtm233qN5VC78fw2ugRj2ozNbFE5tI00sK0ucUIfBo4HQODa3AM16eF/fzbXRzY3PhpzTAKsy6CCEL5cfWgFfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719759549; c=relaxed/simple;
-	bh=fRMjtpuXIYvbpTQDAQK4oU2XSt0OZh0MHx2Yg1WVqXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uFxbxpPmw3q/wC6QOpFTINreBxxoiivtEd21UpG9gK3izfQJyCA/pNmtmT90xVyHEb1qPb1WwR0q26XOcxaguufmG0hT/vQ4chsZ3mCnsx+HJbi0jNo4UC4C3py82pH7+1uboVAJPTIDwGjzkl2YJy297uFU7yDELiBY6ua6WIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dominikbrodowski.net; spf=pass smtp.mailfrom=dominikbrodowski.net; arc=none smtp.client-ip=136.243.71.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dominikbrodowski.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dominikbrodowski.net
-Received: from shine.dominikbrodowski.net (shine.brodo.linta [10.2.0.112])
-	by isilmar-4.linta.de (Postfix) with ESMTPSA id 2DE5320027C;
-	Sun, 30 Jun 2024 14:52:15 +0000 (UTC)
-Received: by shine.dominikbrodowski.net (Postfix, from userid 1000)
-	id E16EFA008A; Sun, 30 Jun 2024 15:52:42 +0200 (CEST)
-Date: Sun, 30 Jun 2024 15:52:42 +0200
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] pcmcia: add missing MODULE_DESCRIPTION() macros
-Message-ID: <ZoFjKv-xrW-XIqqI@shine.dominikbrodowski.net>
-References: <20240607-md-drivers-pcmcia-v1-1-6014889a1324@quicinc.com>
+	s=arc-20240116; t=1719811330; c=relaxed/simple;
+	bh=IMGIXZ6HdrFRPSbcEmA5t2KXTtvIr3dl+wW5RM+jytI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hSDzYhY6WRwgtdQULIQegW2MkmrR1fROJicBO8H4kqM1if2qcTKB+AdV3EzURITv52pA0WxlEyXkt+SXPYo+oa2XmlZr9E3gbJCUhDWH8U3or1KZnq/ZSbwBLUsfOvQncwwoufMhMiClbJOxtnyRUj3uK5+mOZWnx93JKYc2eHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HYeQbzVa; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HYeQbzVa"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719811295; x=1720416095; i=markus.elfring@web.de;
+	bh=IMGIXZ6HdrFRPSbcEmA5t2KXTtvIr3dl+wW5RM+jytI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=HYeQbzVacYIAEj2A0UPV/THk+x4OLgwhDHkd7U3gRfli1Ib3wX0oAhIyUFL26az0
+	 ZS0fiPQTUCFgYYs4lSHKtjNWXQrRN2Y4zcFZyT9UrtCy+z//xD1NT7he62dkvEh9a
+	 psRHen+/FG/qBeRJ17fsOmXWsdnxBDGSWzLUrNm5gTntVquGuKP84xRbi7jjQMIgy
+	 gCHUGTxyL5vcjHMTaDleOrxeswCiM5sVRVS9E93Y+odF+GXuw0jqg26faJN4UYcZM
+	 7V9JTRGvpxSM2GXGtksGtb4H+0y7Q0kEc43jHgtDCmij37hf9BwaxRktrDYXDNBoM
+	 cuOpWcr9cFcDV9C9GA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MdwJO-1rpdfs3oec-00ln7o; Mon, 01
+ Jul 2024 07:21:34 +0200
+Message-ID: <8ced519f-47f2-4a74-be6d-4be5958009ba@web.de>
+Date: Mon, 1 Jul 2024 07:21:18 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240607-md-drivers-pcmcia-v1-1-6014889a1324@quicinc.com>
+User-Agent: Mozilla Thunderbird
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: Re: [v2 2/5] rosebush: Add new data structure
+To: Matthew Wilcox <willy@infradead.org>, kernel-janitors@vger.kernel.org,
+ Boqun Feng <boqun.feng@gmail.com>, Johannes Berg <johannes.berg@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Uladzislau Rezki <urezki@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+ maple-tree@lists.infradead.org
+References: <20240625211803.2750563-3-willy@infradead.org>
+ <52d370b2-d82a-4629-918a-128fc7bf7ff8@web.de>
+ <ZoIHLiTvNm0IE0CD@casper.infradead.org>
+Content-Language: en-GB
+In-Reply-To: <ZoIHLiTvNm0IE0CD@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:UX+yfozCovUOm1nP0B4sPqw6v0GncWxcDhx/WTSrO86UU6cPV96
+ wkrtHU+lntN1gR1IY6k2WV9FajaXj/y36jiqB7AxzUBvVlyO7FLxsIXSV85SBvEZOLWRt5b
+ TbUM7ivrT/tiyhmLwKdR3IZBRxeYDBZbBCzf4Uh8Si93d8JyZty4eyWDaUmOjXD6T2HgzOJ
+ sTiU0NvL2ntkXCAunRyoQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:rTh91dUTLFs=;RJyIXwVaTwSFBMHklihzmdWsonH
+ L6vlbDQDW2aPB+JXmXF20qa2FpvnEqnxSRbngoZqT/w+V6bEhSzLAq7tjoukGJpDzsWGlaNgZ
+ xAIXE3vWJyikUBB7niMyEzU2vLxpczFfA9RQTOmZZJHZiP9Wfsqm+QSnv5EttT3WUQhs/nL6P
+ H5AicN/YjQokwYT0ThjYI+Gp+G/H8Os66lxZTuYCjHTAlArAks9NEkmbCkZhjREI/Qjc2TQsC
+ YcyBW2iTStwMEdaBfUkZ1DEme2BEMhoZhMR4Z+kes25TipOiBdUq9laPFmimLowdUxoS9xoZV
+ iTesXWViE/HrOUyYVn5gyAx3Xcd9k20i2/KBotYlROt6sjtJbEzwmL3qtie128Xd9DWrb9npy
+ 1I+iQg0oza0z3YFaPWcVF55AIT0RGrnbfbH9PFxc1C0OH4o4WGs3I33UY3p0kJuh1D86bGBQB
+ klRBn1asu9p3hiqZrXcaci72V5zznSBnoTU+vdvaB7E5sDQIPfr3DxZyltTB/EVmqQEiSgRH3
+ zJr1GF2VAKyz8b3pdedbYjRp1X5Cp95sAwzgV2XC25R5Xx5nomOPfY1q+zY5rHeZTGIA8tmG+
+ e/crKXfxY8u1s1hI/fqq45FzpaJOMiICEZ8ZAaRLo00Gv9sydsNMSB4LNZ0pAJZfl4mkvWbG8
+ bc5SEG6IRBSP/OLHgMBnO6rY2Pf0F/+herdmrYmcLJdj9xsXCFt+ypNXY8E191V7Ajd/eKOfO
+ e8OxI0/iJko6EKN0S/wh4IhGbmqG++WXX79zob6wW8WTnaQwKi4UHITcs5LhF3TvdajkcSHOA
+ +ZjJEBCMAHvpBBtX20Hrxy3pjQ7jB6h6uSciJmtVSeHSQ=
 
+>> Under which circumstances would you become interested to apply a statem=
+ent
+>> like =E2=80=9Cguard(rcu)();=E2=80=9D?
+>
+> Under no circumstances.
 
-Am Fri, Jun 07, 2024 at 03:02:58PM -0700 schrieb Jeff Johnson:
-> On x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/pcmcia_rsrc.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/yenta_socket.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/i82092.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE(). This includes files which did not
-> produce a warning with the x86 allmodconfig since they may cause this
-> warning with other configurations.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+I imagine that further contributors would like to discuss collateral evolu=
+tion
+also according to the support for applications of scope-based resource man=
+agement.
+https://elixir.bootlin.com/linux/v6.10-rc6/source/include/linux/rcupdate.h=
+#L1093
 
-Thanks, applied to pcmcia-next (although without the change to rsrc_mgr.c,
-as that was commented out anyway, and with a few modifications to the
-descriptions.
+See also the commit 80cd613a9ae091dbf52e27a409d58da988ffc8f3 ("rcu:
+Mollify sparse with RCU guard") from 2024-04-15.
 
-Best,
-	Dominik
+Regards,
+Markus
