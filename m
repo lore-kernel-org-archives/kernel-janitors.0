@@ -1,135 +1,95 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF251EB39;
-	Mon,  1 Jul 2024 08:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09F02C6BB
+	for <kernel-janitors@vger.kernel.org>; Mon,  1 Jul 2024 08:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719820915; cv=none; b=OK6kWvZvgUKadd7F5PmxleY5NgJYRh5nzYk9liprDaCov70LPU9RDlHrxpXElgxzIJZi3oaHMAtaTMrgqH2KDdBCg25+IgSqIJesqfzGCOzIlOv7OC7h5zFy0wXSFNXlEYwAkRwfts4dhRsQIm09R65w18HV5qwVQ40Nr4MGhNY=
+	t=1719822807; cv=none; b=sZ9aLaK09DAaqETjVWeFsyn+BgVDEZiyYCQG7wS58PVPgTtM6G5VDWf/W73asH3UYBJVIfJJ4/TFH1ceQ0OyaaDjtQXF/CiE4c4Nhmob1JZ+YR1Lw52C+haQNJbCHSRhvEqdc21MPlMdjGQUA1GmmGmGpjfNLOqCooFztNBg2OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719820915; c=relaxed/simple;
-	bh=vHZsiYbVuLK8PNijbZkO2ITL1Z6pcGf5q74vYq9jzEg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=hCLiEDj95tJZKQnGRa63VbtuGzSVmcYoDMqIrXmQMlE7xmSiFiPzq0lJbPV6c7WtU7E7kVZmLI+OiSXFkP8IVvsvEgDdVqlVLcBggiRa8iksnaMddyJ9Bx/opR0KnKKXTrP2H1LIVTD8r7CmiCNBOP+o6GYmKt1VE3z/4W146fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=NPa412Fr; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1719822807; c=relaxed/simple;
+	bh=hQ3wIo8jfp+1QpIFa1TH6fMJr5lMyi6hFqlV4E+krQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VvyH1DjS6uVjGZ0tbiFd1zrVI4SqvLXU8m8REVRt08oOtlXczUw2Y2P1uSA8fwmQQES7P/yPd4ROqSg81aGkvCkmlMuwEX/3p5Db4bU6eNthd3GDsJF2h4zT0ePV0VCMRdZRhog2+YDU77M+Bb1rFwswmVXbPegW1gd0pL+bhFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J5QgfmyB; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="NPa412Fr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719820885; x=1720425685; i=markus.elfring@web.de;
-	bh=XMjo85fqdujP80T25ZWnN55NRa54zLobA87TTomVDrA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=NPa412FrmCBZuIGal3jrn9O06XHbIqxQWQevki1VbsLVJ5rDdS6/Q0xok3Bjorzf
-	 DIsJJC8QA2gO6r4GDPoa2GVAvuDmcyTdjIsSAAfwUG8Mmpmzlk7UPQolAwfWsuBZ4
-	 aomV3oiNogFm6VXjc3jQG2QoSVUkA4RR+HuvGvm8LkMHnP16cjeRX7Nc8achUdpiG
-	 HqFENMiIq8zB8IvaCRzYuam/VUOMzgmcw8b5zb4BgJbK76kPGfqfpqWOrwfOMP/yP
-	 2IIwfhbmiMn9BXmjt8QaMrxfCx4rU/31Zwol+5wXTeALBCnwHWAU3isDvuzDLfZen
-	 KO9MHMcAu21h7WpPjg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MsaS7-1s8aw22d59-00zkZa; Mon, 01
- Jul 2024 10:01:25 +0200
-Message-ID: <a194b5d3-d3f8-48a4-a010-d98381107b80@web.de>
-Date: Mon, 1 Jul 2024 10:01:13 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J5QgfmyB"
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3d5611cdc52so1364091b6e.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 01 Jul 2024 01:33:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719822805; x=1720427605; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=plmjyndby8wCrQ0dzhsOGEIbNYKVIMLD81+XwlR3F9w=;
+        b=J5QgfmyBoeorJkdPqoFp/l1yjZR+g9jGrNHMV60lcxA7aP4+p+/wSXJPZJnIjmjgrR
+         feW1hPvaTGbIbuOzyDJO9G1VYh1dfdkqponINWu4NfKvkf3NRjZH3hCuZStGx7UOBQz/
+         oVtcBEHpsYO2zWTIlp7qXKsomqbl/M/ZwnqF6ntFBmqy5uvqKJmX29IDFbqt60ckBJUn
+         OFTBKlUsT079gl7t8AM/EeeXQ7BFrOcJ48JY3CdNB+Q0CcP9yUtZe4UyrSkPJB3Dkq/Z
+         cf4faQNQMPn+RZz3Um9kbHS8aoP8QExhIB4ubNCfnmshpN4s6x4Ylwlw/lAW4/GjUQOh
+         tJaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719822805; x=1720427605;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=plmjyndby8wCrQ0dzhsOGEIbNYKVIMLD81+XwlR3F9w=;
+        b=LfqRIkHfW1QOD1iZP8UdtM7hi/xgB9fjaETyEjhbyyPfMtUGzl71/nFXUy0BKUfEoN
+         /+qDztEgT/V4a1mNhsZtoYAsK7TZ+TIJHPhCNOb+GxDs+uxuOaa1dNqe7qBJWr8Hmqt9
+         U7uiEI0DtIgPiUFeEL/zqH7gqrA1zVCex0eNHfeguJA8fX1HyMtcGV0mXH8tY7fzr7+D
+         DexLcjeHwXpmJFN5vsrM1yjpGmSmnYhE/m+NdabJDPO0aBb6bYME8TAJd3Xu/YNkoRFA
+         IcwOpBX1zRGKZ/2OQskXgy53wWfzhcr3zzGB2bLMopjFjA3pmI6jteZ8FFxdtrd7W/l/
+         V5TA==
+X-Forwarded-Encrypted: i=1; AJvYcCVG3FRXwmK/s5Aak95idsfE5/+Bt2rh9iYPXDKOu/aWPFh2HWGZY7Qos0lItPiHBEtvJ6EsdZ9UC1MUCGO8h13FkvMtJAcjDAznbocTgY8e
+X-Gm-Message-State: AOJu0YyygZuNIHJZxECkhz08Gr0l7Sm2Y593iw1q5vJhbi9dQma4CMG3
+	FpGJ5EBu0/E6am3sC0VWnlh6yGvnJldh2lekkhr160je+tya58O2iaknyBZnd/o=
+X-Google-Smtp-Source: AGHT+IE1oWZE1bOQ7gPCQ6D2Kkco7qOvhQLh2xnubHsY9YThCuK7aoKubwEBd7IojI4Hbf8ohqHZIQ==
+X-Received: by 2002:a05:6808:14ca:b0:3d6:31eb:69b1 with SMTP id 5614622812f47-3d6b54975afmr7594905b6e.58.1719822803407;
+        Mon, 01 Jul 2024 01:33:23 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70803ecf63esm5885051b3a.123.2024.07.01.01.33.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 01:33:22 -0700 (PDT)
+Date: Mon, 1 Jul 2024 14:03:20 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: powerpc: add missing MODULE_DESCRIPTION() macros
+Message-ID: <20240701083320.c3r4aussa4qojewq@vireshk-i7>
+References: <20240614-md-powerpc-drivers-cpufreq-v1-1-de4034d87fd2@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Ma Ke <make24@iscas.ac.cn>, linux-kselftest@vger.kernel.org,
- Amer Al Shanawany <amer.shanawany@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski
- <luto@kernel.org>, Kees Cook <kees@kernel.org>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Shuah Khan <shuah@kernel.org>,
- Swarup Laxman Kotiaklapudi <swarupkotikalapudi@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Julia Lawall <julia.lawall@inria.fr>
-References: <20240630130038.3671507-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v3] selftests/capabilities: Fix possible file leak in
- copy_fromat_to
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240630130038.3671507-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ITtbtaJRixQcC4ydQvWAh70vkNkfeTcFFOSJ+GWUnF3ZF7ZPydo
- iv9KGBeu0yaw+ZcByKAnvwFn1SaSqT3D+ij7Wdqfz5ToAAYq4q2lBfPHH1OW4wjEBPuFoqb
- Zjl96yT1l3VpqNWijbS5KiGTMPWlDnbniWZkJsiJ5+S4imLHpSiU0SzzIpTgq7wNBmdaj0F
- LI4AEC1n+35wXxG9SIHQQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:y2osiQM7q8c=;1aLLusO+miy302MIfA0gbIrnF0A
- BRAcS6kQibZuLPI9SQ0XEz/rYmslI66qtnLOpXUsiAy7IbSMEFdYV9HXNcxCp7JA9FEldlm1M
- 0WsRd1pCBE7x9vhZ8iNqqbatNkGl7Tv0oxaV82ERi8WALuJq3xwBvHFyTEI0Iz8kHsu5g6LCC
- FiMQfO6YPgsnNgH1t7fvYTvOVDvetlxQX7ep7U4lIjvTopnZN11u3fnskr8i5ci/JnTDG/bVw
- a67A2Zhk68LHUmq4qqSbf4gYM03eKhjpKxQLyMHFRzA3av6ZvX1vGlwX5G4nHuAoxULXmBi2g
- trlpVc6L5i1qn5vNpIgHgfxIEGDTpf2yyJAhSIHGLYD6NlmSf6CuzwGIwH7Tl91cxrpYKe5Md
- yCOIt+G7zSL/w/l3cU17iBSzBxLVIqClb332iWI/K3nJRl5kX/ervhyzOpIH7xWVJlpMQh0oX
- ClLYQmjboR9CXPMaN6jvGUnwrGlBeQbSLu0onZYWxm77JSUHTl1RcFRixBU4mdYihFFK0V0XR
- E8ux8/AO8yhjNLVKvJmXZP924bnxTJAP8rpU/oLMnIYQhf6APShgNcia7UT61/61nNKhcTG0e
- C6XRYeT7g245SMYwmK18EmMsLOmqiXorWhZ9/ZAAxeaTnnQiHYSGoo9C+rE4PGBtyh1n8MZsv
- bAhr/cB/Q/LV3sKgWgaca0KsqGyfjo/yOx9rc1ZeT99fAwQzlmISheez54jY3hWfTi7yL3Bv9
- cDzzTxK8dGTFxrE7K+/tY6XborgX6KN2CDEt4cRuvIgKli+ww3DD417AmzNzoODKt3nCe5kY6
- CJ5zeKTCTrRHKbP9ZFASljiv1+fJzQ5XXgzzkzDfcHdQ8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240614-md-powerpc-drivers-cpufreq-v1-1-de4034d87fd2@quicinc.com>
 
->                                        =E2=80=A6 openat() and open() ini=
-tialize
-> 'from' and 'to', and only 'from' validated with 'if' statement.
+On 14-06-24, 23:08, Jeff Johnson wrote:
+> With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/ppc-cbe-cpufreq.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/powernv-cpufreq.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+> files which have a MODULE_LICENSE().
+> 
+> This includes three additional files which, although they did not
+> produce a warning with the powerpc allmodconfig configuration, may
+> cause this warning with specific options enabled in the kernel
+> configuration.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-Why do you find such information helpful?
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-
->                                                                 If the
-> initialization of variable 'to' fails,
-
-The variable assignment will usually succeed.
-A stored return value would eventually indicate a failed function call.
-
-
->                                        we should better check the value
-> of 'to' and close 'from' to avoid possible file leak. Improve the checki=
-ng
-> of 'from' additionally.
-
-Please split desired changes into separate update steps.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n168
-
-
-How do you think about to use a summary phrase like =E2=80=9CComplete erro=
-r handling
-in copy_fromat_to()=E2=80=9D?
-
-
-Under which circumstances would you become interested to take remaining
-patch review concerns better into account?
-
-
-=E2=80=A6
-> ---
-> Changes in v3:
-> - Thank you for your interest in our vulnerability detection method. We
-> extract vulnerability characteristics from a known vulnerability and mat=
-ch
-> the same characteristics in the project code. As our work is still in
-> progress, we are not able to disclose it at this time. =E2=80=A6
-
-* In which time range do you plan to publish an official announcement?
-
-* Will similar software research approaches be discussed further?
-
-
-> - found by customized static analysis tool.
-> ---
-
-Would you like to replace a duplicate marker line by a blank line?
-
-
-Regards,
-Markus
+-- 
+viresh
