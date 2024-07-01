@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE8022066;
-	Mon,  1 Jul 2024 12:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F7215EFB8;
+	Mon,  1 Jul 2024 13:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719835977; cv=none; b=QZOtk1Ks0u9irXa8GhpIvs++7Zng7fHL4LHm0gjq3LKW4L5yFZUUe7CAN/OGRje1oVSiXoLkT5Z/AF2WSf/i0U1f9J49jTiD7Rxqj6JKA115P87RWjefi+oghxIODLTn3rv5mvNoGiP8vP5Fl9jHEu8wjVr9TdEjrtR4wHV3a6Y=
+	t=1719838900; cv=none; b=oyk6/KUaIfpV7tl/NIISZjjIF7u5HqPJlJIEk5Kd/Zj+5sHMiEuazLmrAfPxaLAd6AOYTIsszJXR8QhkVuIE81MtirLbeQ/pwqadv5h3mF5J136LAphMo90KyTsfyciK60S8dx7nepO6YXCV/Op8RgMaanHNWcytHpdqHXff1O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719835977; c=relaxed/simple;
-	bh=8pqS8Ajx7jf3KVnlDFP3xFvmDy2FXwv4PylF1RVd6NE=;
+	s=arc-20240116; t=1719838900; c=relaxed/simple;
+	bh=I5l4BmXzzjYrEFqjls37V5m4ptisjD/c/HozJlF8dEU=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Vfd7M+FUYuTxVUeeFtAdqCo5bEQvOFoONOY6ttWs/wS3ElOR/UufJ7AfTQSDxaHGpK3+fy5ZrGC/HTjrAMhdDS5eiELaqQEdvY0jyhEdXgWThLMsZKIHaG6sjYhcEUKoIfQbgFCwQXjSkvfnJrkt67lTBAnZDriyQ/2kljYSM+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XRx7kIbL; arc=none smtp.client-ip=212.227.15.4
+	 In-Reply-To:Content-Type; b=XZ7T48aTV9y6X+Z81mOOnB/BjZ/ymtxZ++GiNTVbRhitzG/ms/SWfMOHK/EVdbHFey5RFt0SfnO6u8AW4verTm1oBc+Ioq3soM1BdB8Zzr19Hr+5y0at2GRiFdYNs6LKlU640DwCyUHeA9Bxow70tqdJKf/jyhHbIRRqGoU1grk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=e7DPe1iS; arc=none smtp.client-ip=212.227.15.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XRx7kIbL"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="e7DPe1iS"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719835958; x=1720440758; i=markus.elfring@web.de;
-	bh=XDSReHTPBLyXmOEtu/8phohbfWHRG0oRy8C/Bacjz68=;
+	s=s29768273; t=1719838880; x=1720443680; i=markus.elfring@web.de;
+	bh=RheuWezdV3dKfPfPXlPzuZw1wJlMe7l1v3xBfQujEMU=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=XRx7kIbLjp4eiM498TMXYizXVzt5i8kPuWyyqjYVx1jSzmdnXaWjvRj7G4x6lu2U
-	 a0oIfBdwblYVjgXVxNPmGY8VPMJg+uSfZFH0Phd24KTRHsC0yhTTRzf7KJC+RY829
-	 cHaLeh/riOVfGrRCiec8427W9zZMjVGf+6IJBDXl8tccqJL/iqSjdeJMK8xsB//4V
-	 cvkC1Do6TE+94MR0PZTrHC5fSsAYX/+3rBO9tGx0gUQRwIuVTdtlkBHolR2J4Rys8
-	 kbpsDTVxdCzaJwsrZ5GO5w3wC09uTvZ3Ijoq3gRQ/I+bmSwuMTW2jhlb4Icz9i5oI
-	 ZdGv297qe0zGkoaf7g==
+	b=e7DPe1iSWlAR3vgcYGuyIxX8+4Oj1iGauSSTWqmeCInM+JIoldR/JT0WYLQWM/vA
+	 IwdOoULXtOEi+zd5QnzFuqkPcDGjczE23hH7u6r1waODPFoB0quO7wf8+KOJoEn1O
+	 vjQXcuEEVIm5rsjUixPTYnHYvtT2afrhJ8IuZdthwzBe+gnKBBvW7VNOXfnGuZCkR
+	 xFZ6refvHVzdFk/PzCkOCIlFcennevibKRQiGa/b1+b7msX6ZQRgNgSpdf5e4Pzw+
+	 UByOvECBuOz1UlLkpBCO5CpKAKCLWa8/joPUJuLK9VVgLY+04rfwpSJ3lVaHehFeh
+	 /2ub96fwZV5p/JS98w==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mho04-1rtIrG2F5k-00pdm5; Mon, 01
- Jul 2024 14:12:38 +0200
-Message-ID: <e751f992-0510-478e-a714-6299e8650333@web.de>
-Date: Mon, 1 Jul 2024 14:12:33 +0200
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MwjK2-1sCezq2isc-014Pjz; Mon, 01
+ Jul 2024 15:01:20 +0200
+Message-ID: <5fecc08a-c3b7-4745-abc9-0f5b4de03c22@web.de>
+Date: Mon, 1 Jul 2024 15:01:15 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,79 +42,75 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Haoxiang Li <make24@iscas.ac.cn>, megaraidlinux.pdl@broadcom.com,
- linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Chandrakanth patil <chandrakanth.patil@broadcom.com>,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- Kashyap Desai <kashyap.desai@broadcom.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Shivasharan Srikanteshwara <shivasharan.srikanteshwara@broadcom.com>,
- Sumit Saxena <sumit.saxena@broadcom.com>, Suraj Upadhyay <usuraj35@gmail.com>
+To: Haoxiang Li <make24@iscas.ac.cn>, samba-technical@lists.samba.org,
+ linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.com>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
+ Tom Talpey <tom@talpey.com>
 Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240701034102.84207-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] drivers: scsi: megaraid: Add missing check for
- dma_set_mask
+References: <20240701064847.84726-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] fs: smb: client: Add missing check for kstrdup()
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240701034102.84207-1-make24@iscas.ac.cn>
+In-Reply-To: <20240701064847.84726-1-make24@iscas.ac.cn>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:nqlPM28yXVNsz2mN0+RXvs0BOcKP4jxoTiJxM3Q01MTetMb/Xy3
- 9W4NHHocBl5b3PtGtgYtjCAaDVrDrwv1lJOgr1R0fSKFrKcOhkgp239EdGn5NG12U7taEGS
- bSmQZHlrUChc5MRcdRwmKwbt64hK+aih3Ty9w+FH8OzlTqwmrnWKeqZUeJ1MOPb+uf4Ue7I
- Ne9B3zXUN8JsPO65qYtZg==
+X-Provags-ID: V03:K1:WGM+jFjvbr01rKJUJEZYPEiqQkoIMOHon5Q3YwwJMi5/5cPJkXb
+ hWPKRkzf1iYYz3Zl3XNNJvJ6mUz2Y/Q1HjCp8NnX8jVgV0FLyaK+RjuMNieZDeMYsE3WPVm
+ XEB797PD/jaIx0OSp6csgjzik08v9HIfoCL6cT5K8ANNGomp8ska6HAbTE/2JBMhH41BvRA
+ F+wc6w0VU2O4veIVJFDrg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:hQ0MFYfpSRY=;t1qNq503LNmnGomSGZAJriFOe/9
- v7osqV01ZPMeZVp5Asc0uLWDxoELqqTgvIbRmrFZvARv7jsKYAKq64b7E/SyDQJrLWmkQmZPe
- fpiExYCMRVF2z6AMCSuCigQuEJTXrqlYluhtAMw5w9F4bPeR+fV9ujscNxfrwsae8eVCNjpB1
- uZ/wseZM54n5Jk8EDWuxVCTJjWT4Twke3ZAYu4ChbGJTYPw8zQviPNbDiVKcNjhURcrxhxWgE
- ehIhh96ppeHRknvC8VAlm8ccd4UIzkQDe0NvfOP9lys1fL0CXJjXYM6s4rtDgMVukKup+2V7x
- LhJD5xxAsS2ADhhyssi8hroD4Ug3XuxGFwTMjvd8QIbCPJWYT4p0N1ydfDtFSJjKd7yIQ4m+j
- AJ8xlBNQclctvrsXb5hwhb5+/EcR3QrITaHGKshgPhNaojggYyA2jnanJqeUolXvItMTG/DtN
- Rz+SnnCjbXG5faTiRg+DXYMcvmK/Q8JoFaNpV4A2DfQMiE0WetIgAT8gNtRZzwa394IYOOJ0g
- tRkMP16vNfOS5tQuApdebE7iFaVKkEjyAuKMF2ejDYCoLUSCEqGBNzZEUrZQSgC+kcZ9J3aDy
- /D+h000U94dm4ySMaVewLB3/Ci1mohXkXNqnfXoRCKzrNHJ5Qq138LAJjVtPXWDHFkW9FItkq
- gxOJuJs8YqGBwhRbdQFT5rv3Xp5VPz1Fta2W/ZT7PDEMntplGFXxHQvDQmI5INfFSz9SQOhsa
- pVDtin4Trieyb9tOlPhT0SxeAdd9/S+pIDZrFLCxpu59mYb4i28sj9N6hnz3qZFDEMThh1rWX
- hzGkp/v3qgOVAME9lrssoPv648HTiuiVA9bBNSbhxGbvU=
+UI-OutboundReport: notjunk:1;M01:P0:n/hCUtUIstI=;SUHx5PArkiOBs4twGmmXl0aGEFv
+ 5g5IXJUuAVq/FhX+EfKgzJ52yGtoWn6fP4ZZp9m0TAkLfQS3LCwvWXpYvF0MD2D68znERpik8
+ 2wqSP6FJPuJEC8HNrGT7VOOTbGCB45jl2k0TSfx3De8ZtVq/lunJWx6M0uk2NdnfAOfGlb3OD
+ /3GGNxctlAa2C02fNKFN/ojohyayJohKzXOPWoABfISpFbKFZYgHJZbf0xpREMGyTMXThL6sA
+ fXTQHxT1jgfQcFmtl+rPEhTzlWzDYvrwMQzdrk1qUy7KliD4hNl5P10/Ghbi6Kl2f3lUeA4UR
+ maVho+4C4tqZW1MIBcIurKBHv+RjwlrQ6khiU6GFwrUupBYOhSS07NIz+ikqiswVHQA6AlesV
+ FL6JOv0ceG3j+CfY+z43QgFCplTHogtQ6mQFfTuOHcbPL+XQmHozKaABcclim8SHjqhscsfZh
+ iUxBdK0AZ/ZPHiefjicqjovD5dvJYQDr3UZpfnMEon7C0QWuj9LSs0QTcPWQBM7CH6GQKaQYL
+ OOQs8rrtWCHftQ8O0rWX4xsf/ESI+PkzOPRt7RfdzyTRpdFhwuEs3PoDJ1JLztdL7su/Ns5f+
+ Qkzwg5i9gCh7fb9VhkitLeZIIlNiJtcjGfnyT1aXa4nc/3Mgwwt4zGgfB79Vt3F0U0V40pSCd
+ YLBE2vsiysvvN33YYFQGwW3nSgp4TjmIzy0lM0TLZq1gwV1PqbEGde+/uwBtpalaajaTRa+fH
+ b9jL6HlkU31g3me8D1NyZ5gBDojDEs1y4nv8gbKYzxtPyYD/l3QrovSx7aImJC9tIifrZZKxV
+ gfzJTvWKo2stICzv8cCacu1EEQAF+2rmdxGNs9xLGl+64=
 
-> pdev->dev cannot perform DMA properly if dma_set_mask() returns non-zero=
-.
+> Add check for kstrdup() in smb3_reconfigure in order to guarantee
 
-Can a wording approach (like the following) become a part of a better chan=
-ge description?
-
-  Direct memory access can not be properly performed any more
-  after a dma_set_mask() call failed.
+      checks?             calls?             ()
 
 
-> Add check for dma_set_mask()
+> the success of allocation.
 
-How do you think about to avoid a repeated reference to a function name?
-
-
->                                  return the error if it fails.
-
-How can this happen after you did not store the return value (in the local=
- variable =E2=80=9Cerror=E2=80=9D)
-for further usage (according to your proposed source code adjustment)?
+I suggest to take further patch/code review concerns better into account.
 
 
 =E2=80=A6
 > Signed-off-by: Haoxiang Li <make24@iscas.ac.cn>
 
-I find it interesting that another personal name is presented here.
-I noticed that some patches were published with the name =E2=80=9CMa Ke=E2=
-=80=9D previously.
-How will requirements be resolved for the Developer's Certificate of Origi=
-n?
+Will requirements be reconsidered once more for the Developer's Certificat=
+e of Origin?
 https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
 cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n398
 
 
 How do you think about to use a summary phrase like =E2=80=9CComplete erro=
 r handling
-in megaraid_probe_one()=E2=80=9D?
+in smb3_reconfigure()=E2=80=9D?
+
+
+=E2=80=A6
+> +++ b/fs/smb/client/fs_context.c
+> @@ -920,6 +920,8 @@ static int smb3_reconfigure(struct fs_context *fc)
+>  		ses->password =3D kstrdup(ctx->password, GFP_KERNEL);
+>  		kfree_sensitive(ses->password2);
+>  		ses->password2 =3D kstrdup(ctx->password2, GFP_KERNEL);
+> +		if (!ses->password || !ses->password2)
+> +			return ERR_PTR(rc);
+>  	}
+=E2=80=A6
+
+How do you think about to avoid also a memory leak here?
 
 Regards,
 Markus
