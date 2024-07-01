@@ -1,149 +1,79 @@
-Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D4185934;
-	Mon,  1 Jul 2024 20:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E2816DEAD;
+	Mon,  1 Jul 2024 20:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719864136; cv=none; b=AzspceaoIHzY2YsPqrM1k5Mjf85N4nn9Fwf5Aq6KKcEBKWG+LLOyd8KrNhxAm+fphwxQVgExIRamb3eSkTdBNhkZM6XY8uMioVveOCjX1vX5f2iNTbjM3rKVTpedh4SYDDbhh9gSAmLYcDpIA1hCwOqzm4azA29mmFkMLahm2uM=
+	t=1719866072; cv=none; b=pQYj3Nc58ssQlXSWBCM/xIcMod+ZpyxSEiPneTvF9oe8rA5/Rueyf9qoX2blmYrxA8p2Macoe/cRgdMt7HCg0jnkJ2mFvhy0oU44U+qEe6GBGwXrCZAi2IYDex1doo0LyEtvHYjLVCo80QqjDt89+3LjEreng5avHHk1wMCcbNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719864136; c=relaxed/simple;
-	bh=jQdOwtAk9sV1JIpaAlSIWJ8MY68481iecsUhvG2Hxgk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gHBTLQgflNVACQ43BNSEqjsm+QjvDXgwUXt3z2wfCLDWmhH6yliuZ6eH/1ZcUJKYN1H3yVHsnfpBKVB9St8zQKfK56quwPEE0OkhDlM0VSGwpMBsIemLUGT5Y6c2JitODrLGCyu6f4tvyLbeeVhKk7TZhvawriPHSRQzGWLz2tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=NXYBi3ru; arc=none smtp.client-ip=193.252.23.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="NXYBi3ru"
-Received: from fedora.. ([77.131.3.81])
-	by smtp.orange.fr with ESMTPA
-	id ON5TsnKqM3PPAON5UsfK1q; Mon, 01 Jul 2024 21:53:22 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1719863602;
-	bh=vMCou+9uf+uUUkz293F72Wo3DfglK/VKpyr7CR/9w3U=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=NXYBi3ruSXep/nOHyr+39Y8bVRoQF5zRRgVKeRE8wLAKdSURmXLuOLqLtoeEsboPF
-	 N6AsQOovL4wUDg0jNvKE9klGF1eYYaBC2KRGO/smC/Hb6FvGLz5EK5yHT/bSb+yTls
-	 nbKfFEjqfavg8m0Q41i7KL/YmYOBR2ImU/8Kjf2xBFvmkSa76Acd78iwQAdknj5DGE
-	 cadz5geCbOHj4IvlYkiib9bSlNicnSZfNZdKjFgROt3FJCOc4waI9wKcetGq4sP+d5
-	 GKh/MQ7jM1gU1YkbNk8k6s4xFG5gbus7a+L/JktoNlPL+x7WF0J0dENDlY1td0OtV5
-	 ixu41dYZWgGPA==
-X-ME-Helo: fedora..
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 01 Jul 2024 21:53:22 +0200
-X-ME-IP: 77.131.3.81
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH] pmdomain: amlogic: Constify struct meson_secure_pwrc_domain_desc
-Date: Mon,  1 Jul 2024 21:53:16 +0200
-Message-ID: <871d6b708de8bb42e1fabd8a601dc9a9a217cf00.1719863475.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719866072; c=relaxed/simple;
+	bh=Wo6jYVKWt1XsfvW2kocRWwhdmJB1ArOA1W+ONgrcPUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jeeTpVpQJILQUzP8XTq2bj4s3TzkB1JvVEK2tV5f5TRQfKECpXl0W35j7W6V+nx6Ao86LmhMck87rKc7Gcjqk+2HqUGMh5AOohZVbEfJR5ycEK6n5YtHcAUGs5gZEnDFfMmevC4roNwNlYV+cCsxeYqXiQxN6DK3qJQuc2JMEsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2c70c08d98fso2550204a91.0;
+        Mon, 01 Jul 2024 13:34:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719866070; x=1720470870;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gt/VCLG0XE9tYQ4KowekIVt6Vm28X9Pkg8zs7uMqPhA=;
+        b=soUasothld5V2uHGgPoIj2iqlw0/Q+DCUqFzx5jEVmpe63GPOMThtkKEOwu9bDv7lY
+         RirFesaJtGIgKQH92sc+xO17XsauDA2u2l4J4D5VR51abyfM05E+9hCPkLxJv1ZbTGcW
+         milM76ROyabOEwPuo0g3lxqE4FjjdLt9+JOOnLLhX9qL4Gqk12IrwAEAu6xE1t+lskX/
+         3BTLDTnBbkXNdwrjuxkbnLy8gvMM3BJcmAUfBw6+KzON6x7NDUqynpfVf3Aa1fTYMdUf
+         /JhF3vxOqj+y+9YymRLY2SJpUS+3sO3wcxCYX4hsMldwaiuwahyGezfkwle9YCFBjkIu
+         N61g==
+X-Forwarded-Encrypted: i=1; AJvYcCWwMbzTSPzfxlKzZU4OBMNcdbA1E4PMtB9vig428cxx5vVxTmGub+cugLXcVbd4f91sB91rX8mnZO7OLDHeJU/BCwINaxvO69NqwhnpPWgGebvI0gn11KQZgU2h4aP5u0V6qeTWw6+tsNuwYbhwZH3CMENddM3JH4KVDjG6BblLbWAOky0RH6H0
+X-Gm-Message-State: AOJu0YyHAQQtLp4z+HKVws6AherE0Hu4mwqopaNF5kAgf47SOkMCGexz
+	xkQZFyqclxCsC+huz/Rer1sPjGNutBHY6GENW84zjxmxQONOD0Z5
+X-Google-Smtp-Source: AGHT+IH37dM54+qflq0oEXeW4Muag9hwYXpu9YtpKLmCGG+T0D5FT3KmTqCArx3LOlD6TcYfx9xJMw==
+X-Received: by 2002:a17:90a:d70b:b0:2c2:d8d7:bf65 with SMTP id 98e67ed59e1d1-2c93d6d72famr5079101a91.7.1719866070429;
+        Mon, 01 Jul 2024 13:34:30 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce425bdsm7306981a91.14.2024.07.01.13.34.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 13:34:30 -0700 (PDT)
+Date: Tue, 2 Jul 2024 05:34:28 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Frank Li <Frank.Li@nxp.com>, Jon Mason <jdmason@kudzu.us>,
+	Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, ntb@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 0/2] PCI: endpoint: fix a couple error handling bugs
+Message-ID: <20240701203428.GA412915@rocinante>
+References: <6eacdf8e-bb07-4e01-8726-c53a9a508945@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6eacdf8e-bb07-4e01-8726-c53a9a508945@moroto.mountain>
 
-'struct meson_secure_pwrc_domain_desc' is not modified in this driver.
+Hello,
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+> Two small error error handling and cleanup patches.  The first one fixes
+> an incorrect error message printed on success.  The other one fixes some
+> cleanup.  Which is probably not required because PCI code is generally
+> required for a functioning system...
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   4909	   4072	      0	   8981	   2315	drivers/pmdomain/amlogic/meson-secure-pwrc.o
+Applied to endpoint, thank you!
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   8605	    392	      0	   8997	   2325	drivers/pmdomain/amlogic/meson-secure-pwrc.o
+[01/02] PCI: endpoint: Clean up error handling in vpci_scan_bus()
+        https://git.kernel.org/pci/pci/c/72705e5b5957
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
+[02/02] PCI: endpoint: Fix error handling in epf_ntb_epc_cleanup()
+        https://git.kernel.org/pci/pci/c/05214340e133
 
-The .is_off() function is *always* set as pwrc_secure_is_off(), so it could
-make sense to remove this function pointer and call pwrc_secure_is_off()
-directly when needed.
-This would save some memory and useless indirection.
-
-I leave it as-is because it is maybe here for future use.
----
- drivers/pmdomain/amlogic/meson-secure-pwrc.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pmdomain/amlogic/meson-secure-pwrc.c b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-index df5567418226..62857482f874 100644
---- a/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-+++ b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-@@ -46,7 +46,7 @@ struct meson_secure_pwrc_domain_desc {
- 
- struct meson_secure_pwrc_domain_data {
- 	unsigned int count;
--	struct meson_secure_pwrc_domain_desc *domains;
-+	const struct meson_secure_pwrc_domain_desc *domains;
- };
- 
- static bool pwrc_secure_is_off(struct meson_secure_pwrc_domain *pwrc_domain)
-@@ -110,7 +110,7 @@ static int meson_secure_pwrc_on(struct generic_pm_domain *domain)
- 	.parent = __parent,			\
- }
- 
--static struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
-+static const struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
- 	SEC_PD(DSPA,	0),
- 	SEC_PD(DSPB,	0),
- 	/* UART should keep working in ATF after suspend and before resume */
-@@ -137,7 +137,7 @@ static struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
- 	SEC_PD(RSA,	0),
- };
- 
--static struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
-+static const struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
- 	SEC_PD(A4_AUDIO,	0),
- 	SEC_PD(A4_SDIOA,	0),
- 	SEC_PD(A4_EMMC,	0),
-@@ -155,7 +155,7 @@ static struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
- 	SEC_PD(A4_AO_IR,	GENPD_FLAG_ALWAYS_ON),
- };
- 
--static struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
-+static const struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
- 	SEC_PD(C3_NNA,		0),
- 	SEC_PD(C3_AUDIO,	0),
- 	SEC_PD(C3_SDIOA,	0),
-@@ -172,7 +172,7 @@ static struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
- 	SEC_PD(C3_VCODEC,	0),
- };
- 
--static struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
-+static const struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
- 	SEC_PD(S4_DOS_HEVC,	0),
- 	SEC_PD(S4_DOS_VDEC,	0),
- 	SEC_PD(S4_VPU_HDMI,	0),
-@@ -184,7 +184,7 @@ static struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
- 	SEC_PD(S4_AUDIO,	0),
- };
- 
--static struct meson_secure_pwrc_domain_desc t7_pwrc_domains[] = {
-+static const struct meson_secure_pwrc_domain_desc t7_pwrc_domains[] = {
- 	SEC_PD(T7_DSPA,		0),
- 	SEC_PD(T7_DSPB,		0),
- 	TOP_PD(T7_DOS_HCODEC,	0, PWRC_T7_NIC3_ID),
--- 
-2.45.2
-
+	Krzysztof
