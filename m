@@ -1,95 +1,115 @@
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09F02C6BB
-	for <kernel-janitors@vger.kernel.org>; Mon,  1 Jul 2024 08:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5842C859;
+	Mon,  1 Jul 2024 09:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719822807; cv=none; b=sZ9aLaK09DAaqETjVWeFsyn+BgVDEZiyYCQG7wS58PVPgTtM6G5VDWf/W73asH3UYBJVIfJJ4/TFH1ceQ0OyaaDjtQXF/CiE4c4Nhmob1JZ+YR1Lw52C+haQNJbCHSRhvEqdc21MPlMdjGQUA1GmmGmGpjfNLOqCooFztNBg2OM=
+	t=1719826272; cv=none; b=lNqqlkjD5ME3IIloUL1b0yVqhjmhlSJ5vvXWnv4XeaZHQIDtgIW/gxVfxSE6Wf10iatJUT/lLOIeU6pUu6N34O8BSMRheSeXR+jslUHCjht3zhvp2wMclQHfm3gdANIUnwIwG0q5ARU+PMINz5m6ZJHXjvsbxVqMtFrF6vaM6+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719822807; c=relaxed/simple;
-	bh=hQ3wIo8jfp+1QpIFa1TH6fMJr5lMyi6hFqlV4E+krQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VvyH1DjS6uVjGZ0tbiFd1zrVI4SqvLXU8m8REVRt08oOtlXczUw2Y2P1uSA8fwmQQES7P/yPd4ROqSg81aGkvCkmlMuwEX/3p5Db4bU6eNthd3GDsJF2h4zT0ePV0VCMRdZRhog2+YDU77M+Bb1rFwswmVXbPegW1gd0pL+bhFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J5QgfmyB; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1719826272; c=relaxed/simple;
+	bh=U9zvGVR6EM9VmPPgkNfEiRVaS2I3tAhr6eAPgnKQLfY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ZSLtGfxyNSgSKfqCErz3g5wAU+Z9wMonWxpX3KZItzS3hJEwqJBySXxi2LILAQMle2ldm2GcetjMZ2oBCFnYk5p5c8iLoSGlXCpFeuI7Z/pCeoPbphMYgNpk2TTBqjozXd5BzIkcoR7da/FRtnfjKnS8XCPRPWRup4nIuT/fZIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=H/D+Q2VC; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J5QgfmyB"
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3d5611cdc52so1364091b6e.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 01 Jul 2024 01:33:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719822805; x=1720427605; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=plmjyndby8wCrQ0dzhsOGEIbNYKVIMLD81+XwlR3F9w=;
-        b=J5QgfmyBoeorJkdPqoFp/l1yjZR+g9jGrNHMV60lcxA7aP4+p+/wSXJPZJnIjmjgrR
-         feW1hPvaTGbIbuOzyDJO9G1VYh1dfdkqponINWu4NfKvkf3NRjZH3hCuZStGx7UOBQz/
-         oVtcBEHpsYO2zWTIlp7qXKsomqbl/M/ZwnqF6ntFBmqy5uvqKJmX29IDFbqt60ckBJUn
-         OFTBKlUsT079gl7t8AM/EeeXQ7BFrOcJ48JY3CdNB+Q0CcP9yUtZe4UyrSkPJB3Dkq/Z
-         cf4faQNQMPn+RZz3Um9kbHS8aoP8QExhIB4ubNCfnmshpN4s6x4Ylwlw/lAW4/GjUQOh
-         tJaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719822805; x=1720427605;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=plmjyndby8wCrQ0dzhsOGEIbNYKVIMLD81+XwlR3F9w=;
-        b=LfqRIkHfW1QOD1iZP8UdtM7hi/xgB9fjaETyEjhbyyPfMtUGzl71/nFXUy0BKUfEoN
-         /+qDztEgT/V4a1mNhsZtoYAsK7TZ+TIJHPhCNOb+GxDs+uxuOaa1dNqe7qBJWr8Hmqt9
-         U7uiEI0DtIgPiUFeEL/zqH7gqrA1zVCex0eNHfeguJA8fX1HyMtcGV0mXH8tY7fzr7+D
-         DexLcjeHwXpmJFN5vsrM1yjpGmSmnYhE/m+NdabJDPO0aBb6bYME8TAJd3Xu/YNkoRFA
-         IcwOpBX1zRGKZ/2OQskXgy53wWfzhcr3zzGB2bLMopjFjA3pmI6jteZ8FFxdtrd7W/l/
-         V5TA==
-X-Forwarded-Encrypted: i=1; AJvYcCVG3FRXwmK/s5Aak95idsfE5/+Bt2rh9iYPXDKOu/aWPFh2HWGZY7Qos0lItPiHBEtvJ6EsdZ9UC1MUCGO8h13FkvMtJAcjDAznbocTgY8e
-X-Gm-Message-State: AOJu0YyygZuNIHJZxECkhz08Gr0l7Sm2Y593iw1q5vJhbi9dQma4CMG3
-	FpGJ5EBu0/E6am3sC0VWnlh6yGvnJldh2lekkhr160je+tya58O2iaknyBZnd/o=
-X-Google-Smtp-Source: AGHT+IE1oWZE1bOQ7gPCQ6D2Kkco7qOvhQLh2xnubHsY9YThCuK7aoKubwEBd7IojI4Hbf8ohqHZIQ==
-X-Received: by 2002:a05:6808:14ca:b0:3d6:31eb:69b1 with SMTP id 5614622812f47-3d6b54975afmr7594905b6e.58.1719822803407;
-        Mon, 01 Jul 2024 01:33:23 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70803ecf63esm5885051b3a.123.2024.07.01.01.33.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 01:33:22 -0700 (PDT)
-Date: Mon, 1 Jul 2024 14:03:20 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: powerpc: add missing MODULE_DESCRIPTION() macros
-Message-ID: <20240701083320.c3r4aussa4qojewq@vireshk-i7>
-References: <20240614-md-powerpc-drivers-cpufreq-v1-1-de4034d87fd2@quicinc.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="H/D+Q2VC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719826236; x=1720431036; i=markus.elfring@web.de;
+	bh=0n79Gfup/hAkeMvlN7WvUCrlNjugDCmGLSow+BGQudY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=H/D+Q2VCEGNpgZjCQoz5qfWGbAGoxvEpb3BnHr6WhxJa238nWq3xEx3tNKKhrcsX
+	 +vqj7W5CY2Rq3U/4a7WqR3ZMyIF1AG9hlc9OpUvQ+gnb2GaHRCKw5EhsE/1c3JAH/
+	 uuisi/h97NoYLKf/IvE34dwAJ28Af+bZdBJfa5n+3RtqKb+MCTYg0ODQNsKhiyPN8
+	 C1Q7Uj2iTFcUNxar2lfbCpCnQuI/dYvpfTz+lrJNDtU0i5BN+HM45K2XzbWE+szjZ
+	 kDXtkQIf0RHI2HywE3mEDtqW6LNxjE94eQkrJQ2HkN7RR7QPhMcxEdiMazPZ8cAyM
+	 el8AMWLxoNGPgZaaWw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N0Zns-1sCABs1tOm-018I67; Mon, 01
+ Jul 2024 11:30:36 +0200
+Message-ID: <6e5dffe8-69fa-4d91-8cf1-136265bb5500@web.de>
+Date: Mon, 1 Jul 2024 11:30:32 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614-md-powerpc-drivers-cpufreq-v1-1-de4034d87fd2@quicinc.com>
+User-Agent: Mozilla Thunderbird
+To: Haoxiang Li <make24@iscas.ac.cn>, linux-hyperv@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Andrea Parri <parri.andrea@gmail.com>,
+ Dexuan Cui <decui@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Michael Kelley <mikelley@microsoft.com>, Wei Liu <wei.liu@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240701023059.83616-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] Drivers: hv: vmbus: Add missing check for dma_set_mask in
+ vmbus_device_register()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240701023059.83616-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:oj/fHA+sMZUu4U5nVZUuyMGcCxNNLJ8V8FmFWYOwlpnsBvPbOmw
+ VsYOXmr6EXKAUde4IUSN+xXPQALYyhWCkF0W683c21KV5aqbdt0EBckVJlJgq8o9e/PCZDG
+ 0b1a23dmIcN417xhKaQDL5VJjuPqc8rr0mnPYxDkJ95lvnpAfK1nzEU58aJiWW9kJBFw8D4
+ bBJxD4aZjN9Ytf3WPvylQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:nqZCyd0z8HM=;0q72lLX8mmvOxhJ5Agdviowh1UU
+ TkZ+qORi6u9sNW+4yjdp8/Qc/VkOHdQREMhCtOSzkkwUR0Za11AoxuIgLcPrAWnNuOGrxj+m3
+ HDJqzCBm2VF18Xh7yQxzL/MWk3bHFptjN2dyJc1qwMkRV3mJPiu8e/+9MNpCLq0cIK28Ciob6
+ iUro3RzxdrUf5eJmENHJsJRY7xfxvyzMXy0X9UhYprRTzNuPbq4irRQIucQIXXlvK2YhsH44B
+ a/e7PYhATvE2AjCQwRDctxldwgSiYlNzmbO9+QRn/IMXpwcLMysORi2t01JXVz8Ege0fjaEVk
+ Bo8vb61rlzu3LWVdpaq/hrb1zFPGaoZzcOKrKRs3ke0mOnUhpYMu78LL4wELLxQXANx2uuIi5
+ wgsXhnw4W9i1bIM1z/s1VHqlhPfuAF2qYGJqxsomihXlNGJ5HsCJbNOnEvgkrJv3vIf0liRkP
+ kFbec3C/kdMDPsEhUl1Au5TurYB3crGwDo9q/noyYKUnBLyASdyi/ueormOitoDno4MRLgl89
+ UeAGZDcBxQVIdn8pW3E7BP7ChwolkTyB3076Jwp8Pvz8TD/M3cnjt01KAsFnVZst4uaZwQSRu
+ ff8VLNpwAB7quC53cDfEWFw06vPbozchbvhZZYbH0qnXOfp4fMRbEi4sQb9dFk9//aoLaRzTO
+ ZK/nhPEujrgiMHPQej/Fhkes1P8DkPBIm9nRlyrjJcjGNJ9nFupamutkf07eWk0EJnAMZsHKD
+ Ip1XfG+JDzgZTF+72VMX6kVSApklwi7TOF0KjXZdac+eVfrXYCMlWi/Y8IcCWXZp3nand/kRF
+ BXgAmp2bB1YulO80ylQZL7XznVi0cAmSLzmTMEsYknD3U=
 
-On 14-06-24, 23:08, Jeff Johnson wrote:
-> With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/ppc-cbe-cpufreq.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/powernv-cpufreq.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
-> 
-> This includes three additional files which, although they did not
-> produce a warning with the powerpc allmodconfig configuration, may
-> cause this warning with specific options enabled in the kernel
-> configuration.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> child_device_obj->device cannot perform DMA properly if dma_set_mask()
+> returns non-zero. =E2=80=A6
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Another wording suggestion:
+  Direct memory access can not be properly performed any more
+  after a dma_set_mask() call failed.
 
--- 
-viresh
+
+See also:
+https://elixir.bootlin.com/linux/v6.10-rc6/source/kernel/dma/mapping.c#L80=
+4
+
+
+>      =E2=80=A6 child_device_obj->device is not initialized here, so use =
+kfree() to
+> free child_device_obj->device.
+
+How did you come to the conclusion that meaningful data processing
+would still be possible according to such information?
+
+
+=E2=80=A6
+> Signed-off-by: Haoxiang Li <make24@iscas.ac.cn>
+
+I find it interesting that another personal name is presented here.
+I noticed that some patches were published with the name =E2=80=9CMa Ke=E2=
+=80=9D previously.
+How will requirements be resolved for the Developer's Certificate of Origi=
+n?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n398
+
+
+Would you like to append parentheses to another function name in the summa=
+ry phrase?
+
+Regards,
+Markus
