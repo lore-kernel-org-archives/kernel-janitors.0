@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39052433D2;
-	Mon,  1 Jul 2024 05:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF251EB39;
+	Mon,  1 Jul 2024 08:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719811330; cv=none; b=DLIXegA/9Xbtm2BIyelhGigZx1+rsBO868vHtKTmXFvmsOiPNjzNT7RzdiGURBTnqpOgoOLBH9MLqJlXsP1NHqtm233qN5VC78fw2ugRj2ozNbFE5tI00sK0ucUIfBo4HQODa3AM16eF/fzbXRzY3PhpzTAKsy6CCEL5cfWgFfw=
+	t=1719820915; cv=none; b=OK6kWvZvgUKadd7F5PmxleY5NgJYRh5nzYk9liprDaCov70LPU9RDlHrxpXElgxzIJZi3oaHMAtaTMrgqH2KDdBCg25+IgSqIJesqfzGCOzIlOv7OC7h5zFy0wXSFNXlEYwAkRwfts4dhRsQIm09R65w18HV5qwVQ40Nr4MGhNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719811330; c=relaxed/simple;
-	bh=IMGIXZ6HdrFRPSbcEmA5t2KXTtvIr3dl+wW5RM+jytI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hSDzYhY6WRwgtdQULIQegW2MkmrR1fROJicBO8H4kqM1if2qcTKB+AdV3EzURITv52pA0WxlEyXkt+SXPYo+oa2XmlZr9E3gbJCUhDWH8U3or1KZnq/ZSbwBLUsfOvQncwwoufMhMiClbJOxtnyRUj3uK5+mOZWnx93JKYc2eHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HYeQbzVa; arc=none smtp.client-ip=212.227.15.14
+	s=arc-20240116; t=1719820915; c=relaxed/simple;
+	bh=vHZsiYbVuLK8PNijbZkO2ITL1Z6pcGf5q74vYq9jzEg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=hCLiEDj95tJZKQnGRa63VbtuGzSVmcYoDMqIrXmQMlE7xmSiFiPzq0lJbPV6c7WtU7E7kVZmLI+OiSXFkP8IVvsvEgDdVqlVLcBggiRa8iksnaMddyJ9Bx/opR0KnKKXTrP2H1LIVTD8r7CmiCNBOP+o6GYmKt1VE3z/4W146fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=NPa412Fr; arc=none smtp.client-ip=212.227.15.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HYeQbzVa"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="NPa412Fr"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719811295; x=1720416095; i=markus.elfring@web.de;
-	bh=IMGIXZ6HdrFRPSbcEmA5t2KXTtvIr3dl+wW5RM+jytI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	s=s29768273; t=1719820885; x=1720425685; i=markus.elfring@web.de;
+	bh=XMjo85fqdujP80T25ZWnN55NRa54zLobA87TTomVDrA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=HYeQbzVacYIAEj2A0UPV/THk+x4OLgwhDHkd7U3gRfli1Ib3wX0oAhIyUFL26az0
-	 ZS0fiPQTUCFgYYs4lSHKtjNWXQrRN2Y4zcFZyT9UrtCy+z//xD1NT7he62dkvEh9a
-	 psRHen+/FG/qBeRJ17fsOmXWsdnxBDGSWzLUrNm5gTntVquGuKP84xRbi7jjQMIgy
-	 gCHUGTxyL5vcjHMTaDleOrxeswCiM5sVRVS9E93Y+odF+GXuw0jqg26faJN4UYcZM
-	 7V9JTRGvpxSM2GXGtksGtb4H+0y7Q0kEc43jHgtDCmij37hf9BwaxRktrDYXDNBoM
-	 cuOpWcr9cFcDV9C9GA==
+	b=NPa412FrmCBZuIGal3jrn9O06XHbIqxQWQevki1VbsLVJ5rDdS6/Q0xok3Bjorzf
+	 DIsJJC8QA2gO6r4GDPoa2GVAvuDmcyTdjIsSAAfwUG8Mmpmzlk7UPQolAwfWsuBZ4
+	 aomV3oiNogFm6VXjc3jQG2QoSVUkA4RR+HuvGvm8LkMHnP16cjeRX7Nc8achUdpiG
+	 HqFENMiIq8zB8IvaCRzYuam/VUOMzgmcw8b5zb4BgJbK76kPGfqfpqWOrwfOMP/yP
+	 2IIwfhbmiMn9BXmjt8QaMrxfCx4rU/31Zwol+5wXTeALBCnwHWAU3isDvuzDLfZen
+	 KO9MHMcAu21h7WpPjg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MdwJO-1rpdfs3oec-00ln7o; Mon, 01
- Jul 2024 07:21:34 +0200
-Message-ID: <8ced519f-47f2-4a74-be6d-4be5958009ba@web.de>
-Date: Mon, 1 Jul 2024 07:21:18 +0200
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MsaS7-1s8aw22d59-00zkZa; Mon, 01
+ Jul 2024 10:01:25 +0200
+Message-ID: <a194b5d3-d3f8-48a4-a010-d98381107b80@web.de>
+Date: Mon, 1 Jul 2024 10:01:13 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,55 +42,94 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [v2 2/5] rosebush: Add new data structure
-To: Matthew Wilcox <willy@infradead.org>, kernel-janitors@vger.kernel.org,
- Boqun Feng <boqun.feng@gmail.com>, Johannes Berg <johannes.berg@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
- <paulmck@kernel.org>, Uladzislau Rezki <urezki@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
- maple-tree@lists.infradead.org
-References: <20240625211803.2750563-3-willy@infradead.org>
- <52d370b2-d82a-4629-918a-128fc7bf7ff8@web.de>
- <ZoIHLiTvNm0IE0CD@casper.infradead.org>
+To: Ma Ke <make24@iscas.ac.cn>, linux-kselftest@vger.kernel.org,
+ Amer Al Shanawany <amer.shanawany@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski
+ <luto@kernel.org>, Kees Cook <kees@kernel.org>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Shuah Khan <shuah@kernel.org>,
+ Swarup Laxman Kotiaklapudi <swarupkotikalapudi@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Julia Lawall <julia.lawall@inria.fr>
+References: <20240630130038.3671507-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH v3] selftests/capabilities: Fix possible file leak in
+ copy_fromat_to
 Content-Language: en-GB
-In-Reply-To: <ZoIHLiTvNm0IE0CD@casper.infradead.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240630130038.3671507-1-make24@iscas.ac.cn>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UX+yfozCovUOm1nP0B4sPqw6v0GncWxcDhx/WTSrO86UU6cPV96
- wkrtHU+lntN1gR1IY6k2WV9FajaXj/y36jiqB7AxzUBvVlyO7FLxsIXSV85SBvEZOLWRt5b
- TbUM7ivrT/tiyhmLwKdR3IZBRxeYDBZbBCzf4Uh8Si93d8JyZty4eyWDaUmOjXD6T2HgzOJ
- sTiU0NvL2ntkXCAunRyoQ==
+X-Provags-ID: V03:K1:ITtbtaJRixQcC4ydQvWAh70vkNkfeTcFFOSJ+GWUnF3ZF7ZPydo
+ iv9KGBeu0yaw+ZcByKAnvwFn1SaSqT3D+ij7Wdqfz5ToAAYq4q2lBfPHH1OW4wjEBPuFoqb
+ Zjl96yT1l3VpqNWijbS5KiGTMPWlDnbniWZkJsiJ5+S4imLHpSiU0SzzIpTgq7wNBmdaj0F
+ LI4AEC1n+35wXxG9SIHQQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:rTh91dUTLFs=;RJyIXwVaTwSFBMHklihzmdWsonH
- L6vlbDQDW2aPB+JXmXF20qa2FpvnEqnxSRbngoZqT/w+V6bEhSzLAq7tjoukGJpDzsWGlaNgZ
- xAIXE3vWJyikUBB7niMyEzU2vLxpczFfA9RQTOmZZJHZiP9Wfsqm+QSnv5EttT3WUQhs/nL6P
- H5AicN/YjQokwYT0ThjYI+Gp+G/H8Os66lxZTuYCjHTAlArAks9NEkmbCkZhjREI/Qjc2TQsC
- YcyBW2iTStwMEdaBfUkZ1DEme2BEMhoZhMR4Z+kes25TipOiBdUq9laPFmimLowdUxoS9xoZV
- iTesXWViE/HrOUyYVn5gyAx3Xcd9k20i2/KBotYlROt6sjtJbEzwmL3qtie128Xd9DWrb9npy
- 1I+iQg0oza0z3YFaPWcVF55AIT0RGrnbfbH9PFxc1C0OH4o4WGs3I33UY3p0kJuh1D86bGBQB
- klRBn1asu9p3hiqZrXcaci72V5zznSBnoTU+vdvaB7E5sDQIPfr3DxZyltTB/EVmqQEiSgRH3
- zJr1GF2VAKyz8b3pdedbYjRp1X5Cp95sAwzgV2XC25R5Xx5nomOPfY1q+zY5rHeZTGIA8tmG+
- e/crKXfxY8u1s1hI/fqq45FzpaJOMiICEZ8ZAaRLo00Gv9sydsNMSB4LNZ0pAJZfl4mkvWbG8
- bc5SEG6IRBSP/OLHgMBnO6rY2Pf0F/+herdmrYmcLJdj9xsXCFt+ypNXY8E191V7Ajd/eKOfO
- e8OxI0/iJko6EKN0S/wh4IhGbmqG++WXX79zob6wW8WTnaQwKi4UHITcs5LhF3TvdajkcSHOA
- +ZjJEBCMAHvpBBtX20Hrxy3pjQ7jB6h6uSciJmtVSeHSQ=
+UI-OutboundReport: notjunk:1;M01:P0:y2osiQM7q8c=;1aLLusO+miy302MIfA0gbIrnF0A
+ BRAcS6kQibZuLPI9SQ0XEz/rYmslI66qtnLOpXUsiAy7IbSMEFdYV9HXNcxCp7JA9FEldlm1M
+ 0WsRd1pCBE7x9vhZ8iNqqbatNkGl7Tv0oxaV82ERi8WALuJq3xwBvHFyTEI0Iz8kHsu5g6LCC
+ FiMQfO6YPgsnNgH1t7fvYTvOVDvetlxQX7ep7U4lIjvTopnZN11u3fnskr8i5ci/JnTDG/bVw
+ a67A2Zhk68LHUmq4qqSbf4gYM03eKhjpKxQLyMHFRzA3av6ZvX1vGlwX5G4nHuAoxULXmBi2g
+ trlpVc6L5i1qn5vNpIgHgfxIEGDTpf2yyJAhSIHGLYD6NlmSf6CuzwGIwH7Tl91cxrpYKe5Md
+ yCOIt+G7zSL/w/l3cU17iBSzBxLVIqClb332iWI/K3nJRl5kX/ervhyzOpIH7xWVJlpMQh0oX
+ ClLYQmjboR9CXPMaN6jvGUnwrGlBeQbSLu0onZYWxm77JSUHTl1RcFRixBU4mdYihFFK0V0XR
+ E8ux8/AO8yhjNLVKvJmXZP924bnxTJAP8rpU/oLMnIYQhf6APShgNcia7UT61/61nNKhcTG0e
+ C6XRYeT7g245SMYwmK18EmMsLOmqiXorWhZ9/ZAAxeaTnnQiHYSGoo9C+rE4PGBtyh1n8MZsv
+ bAhr/cB/Q/LV3sKgWgaca0KsqGyfjo/yOx9rc1ZeT99fAwQzlmISheez54jY3hWfTi7yL3Bv9
+ cDzzTxK8dGTFxrE7K+/tY6XborgX6KN2CDEt4cRuvIgKli+ww3DD417AmzNzoODKt3nCe5kY6
+ CJ5zeKTCTrRHKbP9ZFASljiv1+fJzQ5XXgzzkzDfcHdQ8=
 
->> Under which circumstances would you become interested to apply a statem=
-ent
->> like =E2=80=9Cguard(rcu)();=E2=80=9D?
->
-> Under no circumstances.
+>                                        =E2=80=A6 openat() and open() ini=
+tialize
+> 'from' and 'to', and only 'from' validated with 'if' statement.
 
-I imagine that further contributors would like to discuss collateral evolu=
-tion
-also according to the support for applications of scope-based resource man=
-agement.
-https://elixir.bootlin.com/linux/v6.10-rc6/source/include/linux/rcupdate.h=
-#L1093
+Why do you find such information helpful?
 
-See also the commit 80cd613a9ae091dbf52e27a409d58da988ffc8f3 ("rcu:
-Mollify sparse with RCU guard") from 2024-04-15.
+
+>                                                                 If the
+> initialization of variable 'to' fails,
+
+The variable assignment will usually succeed.
+A stored return value would eventually indicate a failed function call.
+
+
+>                                        we should better check the value
+> of 'to' and close 'from' to avoid possible file leak. Improve the checki=
+ng
+> of 'from' additionally.
+
+Please split desired changes into separate update steps.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n168
+
+
+How do you think about to use a summary phrase like =E2=80=9CComplete erro=
+r handling
+in copy_fromat_to()=E2=80=9D?
+
+
+Under which circumstances would you become interested to take remaining
+patch review concerns better into account?
+
+
+=E2=80=A6
+> ---
+> Changes in v3:
+> - Thank you for your interest in our vulnerability detection method. We
+> extract vulnerability characteristics from a known vulnerability and mat=
+ch
+> the same characteristics in the project code. As our work is still in
+> progress, we are not able to disclose it at this time. =E2=80=A6
+
+* In which time range do you plan to publish an official announcement?
+
+* Will similar software research approaches be discussed further?
+
+
+> - found by customized static analysis tool.
+> ---
+
+Would you like to replace a duplicate marker line by a blank line?
+
 
 Regards,
 Markus
