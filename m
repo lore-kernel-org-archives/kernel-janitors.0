@@ -1,146 +1,78 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C8915FA84;
-	Mon,  1 Jul 2024 14:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769DE16191A;
+	Mon,  1 Jul 2024 14:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719842727; cv=none; b=Rae/gYzg2RYN4qNyi/YrdYwW5cjmZDhuW1O7nl5kw4z/m7aPEQt9if+Gn/tIH4AdMBslBLT9pHbmul7fQUSuM/yD9t6YuoN9qajDvnpnh+mLYMfwsE5nzIqvgGJzI3LJy10nOCKK70J7i3R9HrMz35kW1+J1/uAqyDoTWxT7FZw=
+	t=1719843484; cv=none; b=Hk24Alm8aA/vD6mGfUa4Zv6VjWNd9EWNk3YClr2VNRkW1OL5MhBrZwrOlTJ8v6N7nSCHpaMu44p2DkfPKRJT7jr/M/0MjPQmS5qkJCd65/RI0W9/lXcQlcLMAOuuhYz/XPlGc+Hd+tF7GzVU6h+8er1njgauNP8MtzlG9K/7aoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719842727; c=relaxed/simple;
-	bh=3z7Nyih4klomXUbQ7PdjR2cY+MU5YAkFW2gKQkAGdis=;
+	s=arc-20240116; t=1719843484; c=relaxed/simple;
+	bh=KNdmg62H0LvKkwIT08kVZT9u8KwP64SOz7rDR0b4SFE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QxGh9kWHPkGLr94QLnAOm0TGDC7P/dGz0J6qXMCUjREr6w+2oalSgK7i4gJT9580oxYKMR/M5IfSoIvb1DfsKhNQahSA+ug2JpMz+1xbfBw0Xk0hgAJrzOSwAb3ErelgoP0QPagMT7XLt4G15g7f4mc1E2jmhH0xiI+RPOTwAXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IelUclHL; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=EjxMYc7B+OykxRJLlnhBT++GVZXdPGe3g/shBf22imCp2/p/UJwADzgxzceU1V7nYLfkaDx+upxg4Auwg8V4x/ZAZ9zH3S47O50qOF+8OpfGI2Owjh7gdAqeoSlw0oOH2yaxO25Nc2x4NXjcNltUmcycS/gSB04FHGpG9W9YSvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C6DydJbO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IelUclHL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6613BC116B1;
-	Mon,  1 Jul 2024 14:05:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C6DydJbO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1D8FC116B1;
+	Mon,  1 Jul 2024 14:18:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719842726;
-	bh=3z7Nyih4klomXUbQ7PdjR2cY+MU5YAkFW2gKQkAGdis=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IelUclHLBKmH/CQ1eHdRciWb6yKC9Ex/W+yqaBRUGCDDPmIVbju1SQgHfL+JRC38g
-	 1MkB/gtU8Ml9QsNa2gkU9T2l+kaz5vvwT9VBybApM0NYkcCLnRpK2jPu6U+E0TD/fy
-	 Z9gMLVGMNITnWZM2G7os5H/nMwDigx+OZ+hpvQP46SLCzNAFsuTFM8g675o0eIJECw
-	 hThpLWmk3m5OwJpiwTyEqDqhocPwHRPRucGYu4VdbqvL03whaiAM28TrxJ3Zd2M+4g
-	 VCEA9lq/r3uyTm5yE1SyfIDDlJhSaKrYV55DU0h+p/sGm//ELBZn1GttvlBs/jSTCl
-	 9V0Ff+2WSjPEg==
-Date: Mon, 1 Jul 2024 15:05:21 +0100
-From: Will Deacon <will@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Frank Li <Frank.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org, imx@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] perf: add missing MODULE_DESCRIPTION() macros
-Message-ID: <20240701140521.GF2250@willie-the-truck>
-References: <20240620-md-drivers-perf-v2-1-1f88f8a08e48@quicinc.com>
+	s=k20201202; t=1719843484;
+	bh=KNdmg62H0LvKkwIT08kVZT9u8KwP64SOz7rDR0b4SFE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=C6DydJbOJaYlZYklePBF3Mo12au5Yjdt2qvyRaArGosBk6V1aQWD1+mPpmyoTD7aa
+	 H142OWpuDA0wW/Dq8pJx0lIsbaY5LJPRC2KMfrASntlF0W5Ey5houV2xjJu0dhsrvW
+	 +sXSmJvCd3IHLyFJj4Nnlw391xuhO1uL0MIi/9tGYGtTxaBbkywvXcIDF/AHnQecgz
+	 1A0BCNmhWgAA0p33tZC3bVduW66GyodzrYTgl+hk2HMiDkNf40k/Mo1bBHdfEpXa06
+	 Z++U+RlDRgkcd7AFt4mL4ZcuHCV++rBaKxb6SQK7f+vXdTzzO6KCQF+ilHSTFxeHLp
+	 s/o2L9gRqQkSQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 94168CE0AD3; Mon,  1 Jul 2024 07:18:03 -0700 (PDT)
+Date: Mon, 1 Jul 2024 07:18:03 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Matthew Wilcox <willy@infradead.org>, kernel-janitors@vger.kernel.org,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+	maple-tree@lists.infradead.org
+Subject: Re: [v2 2/5] rosebush: Add new data structure
+Message-ID: <c550c690-7555-4ccd-bf8a-8c54657aea3c@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240625211803.2750563-3-willy@infradead.org>
+ <52d370b2-d82a-4629-918a-128fc7bf7ff8@web.de>
+ <ZoIHLiTvNm0IE0CD@casper.infradead.org>
+ <8ced519f-47f2-4a74-be6d-4be5958009ba@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240620-md-drivers-perf-v2-1-1f88f8a08e48@quicinc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8ced519f-47f2-4a74-be6d-4be5958009ba@web.de>
 
-On Thu, Jun 20, 2024 at 06:46:09PM -0700, Jeff Johnson wrote:
-> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm-ccn.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/fsl_imx8_ddr_perf.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/marvell_cn10k_ddr_pmu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/arm_cspmu_module.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/nvidia_cspmu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/ampere_cspmu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/cxl_pmu.o
+On Mon, Jul 01, 2024 at 07:21:18AM +0200, Markus Elfring wrote:
+> >> Under which circumstances would you become interested to apply a statement
+> >> like “guard(rcu)();”?
+> >
+> > Under no circumstances.
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
+> I imagine that further contributors would like to discuss collateral evolution
+> also according to the support for applications of scope-based resource management.
+> https://elixir.bootlin.com/linux/v6.10-rc6/source/include/linux/rcupdate.h#L1093
 > 
-> This includes drivers/perf/hisilicon/hisi_uncore_pmu.c which, although
-> it did not produce a warning with the x86 allmodconfig configuration,
-> may cause this warning with arm64 configurations.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> Changes in v2:
-> - Updated hisi_uncore_pmu.c description per Yicong Yang
-> - Link to v1: https://lore.kernel.org/r/20240611-md-drivers-perf-v1-1-c001bae6da5c@quicinc.com
-> ---
->  drivers/perf/arm-ccn.c                   | 1 +
->  drivers/perf/arm_cspmu/ampere_cspmu.c    | 1 +
->  drivers/perf/arm_cspmu/arm_cspmu.c       | 1 +
->  drivers/perf/arm_cspmu/nvidia_cspmu.c    | 1 +
->  drivers/perf/cxl_pmu.c                   | 1 +
->  drivers/perf/fsl_imx8_ddr_perf.c         | 1 +
->  drivers/perf/hisilicon/hisi_uncore_pmu.c | 1 +
->  drivers/perf/marvell_cn10k_ddr_pmu.c     | 1 +
->  8 files changed, 8 insertions(+)
-> 
-> diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
-> index 86ef31ac7503..65f4882531db 100644
-> --- a/drivers/perf/arm-ccn.c
-> +++ b/drivers/perf/arm-ccn.c
-> @@ -1561,4 +1561,5 @@ module_init(arm_ccn_init);
->  module_exit(arm_ccn_exit);
->  
->  MODULE_AUTHOR("Pawel Moll <pawel.moll@arm.com>");
-> +MODULE_DESCRIPTION("ARM CCN (Cache Coherent Network) driver support");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/perf/arm_cspmu/ampere_cspmu.c b/drivers/perf/arm_cspmu/ampere_cspmu.c
-> index f146a455e838..426b3cfcb52e 100644
-> --- a/drivers/perf/arm_cspmu/ampere_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/ampere_cspmu.c
-> @@ -269,4 +269,5 @@ static void __exit ampere_cspmu_exit(void)
->  module_init(ampere_cspmu_init);
->  module_exit(ampere_cspmu_exit);
->  
-> +MODULE_DESCRIPTION("Ampere SoC PMU (Performance Monitor Unit) driver");
+> See also the commit 80cd613a9ae091dbf52e27a409d58da988ffc8f3 ("rcu:
+> Mollify sparse with RCU guard") from 2024-04-15.
 
-Curious: why do you expand the PMU acronym here, but not for any of the
-other drivers? If we're going to add these strings to all the drivers in
-one go, then it would good to be consistent.
+Although the guard(rcu)() statement is very helpful in some circumstances
+and is seeing increasing use, it is not free of downsides in a number
+of situations.  For but one example, Matthew might expect that partially
+overlapping critical sections will be needed, which would rule out use of
+guards on one or the other of those two critical sections.
 
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
-> index c318dc909767..c21c564840d6 100644
-> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
-> @@ -1427,4 +1427,5 @@ EXPORT_SYMBOL_GPL(arm_cspmu_impl_unregister);
->  module_init(arm_cspmu_init);
->  module_exit(arm_cspmu_exit);
->  
-> +MODULE_DESCRIPTION("ARM CoreSight Architecture PMU driver");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> index 5b84b701ad62..0dea47e48ac5 100644
-> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> @@ -417,4 +417,5 @@ static void __exit nvidia_cspmu_exit(void)
->  module_init(nvidia_cspmu_init);
->  module_exit(nvidia_cspmu_exit);
->  
-> +MODULE_DESCRIPTION("NVIDIA Coresight Architecture PMU driver");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/perf/cxl_pmu.c b/drivers/perf/cxl_pmu.c
-> index 1f93a66eff5b..8b6ce9ea5a55 100644
-> --- a/drivers/perf/cxl_pmu.c
-> +++ b/drivers/perf/cxl_pmu.c
-> @@ -972,6 +972,7 @@ static __exit void cxl_pmu_exit(void)
->  	cpuhp_remove_multi_state(cxl_pmu_cpuhp_state_num);
->  }
->  
-> +MODULE_DESCRIPTION("CXL Performance Monitoring Unit driver");
-
-Similarly here, we now have a conflicting expansion of the acronym.
-
-Will
+							Thanx, Paul
