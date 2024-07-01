@@ -1,40 +1,60 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5842C859;
-	Mon,  1 Jul 2024 09:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D24C139CFE;
+	Mon,  1 Jul 2024 10:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719826272; cv=none; b=lNqqlkjD5ME3IIloUL1b0yVqhjmhlSJ5vvXWnv4XeaZHQIDtgIW/gxVfxSE6Wf10iatJUT/lLOIeU6pUu6N34O8BSMRheSeXR+jslUHCjht3zhvp2wMclQHfm3gdANIUnwIwG0q5ARU+PMINz5m6ZJHXjvsbxVqMtFrF6vaM6+s=
+	t=1719831441; cv=none; b=eD9+gmbQdZvSwCUOPYknRThf7oY9zZw4CFVXX7cKYLI1H8l/M31302vJARMP4holFLRe2KFIIQL+WtGnXpIHR7loSu8Hx1tOiSTshQ2qnnVHWsq8i42Iz4SNpmomEj28WGqHoutmscbSPamAWEoIM0SAi3MFC+o1FYuGumeXDv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719826272; c=relaxed/simple;
-	bh=U9zvGVR6EM9VmPPgkNfEiRVaS2I3tAhr6eAPgnKQLfY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ZSLtGfxyNSgSKfqCErz3g5wAU+Z9wMonWxpX3KZItzS3hJEwqJBySXxi2LILAQMle2ldm2GcetjMZ2oBCFnYk5p5c8iLoSGlXCpFeuI7Z/pCeoPbphMYgNpk2TTBqjozXd5BzIkcoR7da/FRtnfjKnS8XCPRPWRup4nIuT/fZIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=H/D+Q2VC; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1719831441; c=relaxed/simple;
+	bh=JiofziG/xZtlyqRXDAzYHGYGfhs54iVEkwzYJYFNDjc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FsPMWQLqTc47Tfsu1QNgYBa3m+F0I9QeFafDD+byyg1RmHJBUeri+nwlaBk9cRR9ZEeh9Vz3aMAgrxHxu3mE8RUiKwgt9SUFHscNKUPzPTadmVeL9iJLCZNae2UW2XtMj7xgLPGNJtrW1YBIddw8c3qXaIvyGl45rPsUqiTNH6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eeNxvYmV; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="H/D+Q2VC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719826236; x=1720431036; i=markus.elfring@web.de;
-	bh=0n79Gfup/hAkeMvlN7WvUCrlNjugDCmGLSow+BGQudY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=H/D+Q2VCEGNpgZjCQoz5qfWGbAGoxvEpb3BnHr6WhxJa238nWq3xEx3tNKKhrcsX
-	 +vqj7W5CY2Rq3U/4a7WqR3ZMyIF1AG9hlc9OpUvQ+gnb2GaHRCKw5EhsE/1c3JAH/
-	 uuisi/h97NoYLKf/IvE34dwAJ28Af+bZdBJfa5n+3RtqKb+MCTYg0ODQNsKhiyPN8
-	 C1Q7Uj2iTFcUNxar2lfbCpCnQuI/dYvpfTz+lrJNDtU0i5BN+HM45K2XzbWE+szjZ
-	 kDXtkQIf0RHI2HywE3mEDtqW6LNxjE94eQkrJQ2HkN7RR7QPhMcxEdiMazPZ8cAyM
-	 el8AMWLxoNGPgZaaWw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N0Zns-1sCABs1tOm-018I67; Mon, 01
- Jul 2024 11:30:36 +0200
-Message-ID: <6e5dffe8-69fa-4d91-8cf1-136265bb5500@web.de>
-Date: Mon, 1 Jul 2024 11:30:32 +0200
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eeNxvYmV"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 461AurGk031543;
+	Mon, 1 Jul 2024 10:57:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=J
+	iofziG/xZtlyqRXDAzYHGYGfhs54iVEkwzYJYFNDjc=; b=eeNxvYmVyDSH150XC
+	f/O+mGpnMsGveiSOxRyoT8SIAtODQYWqaS5FoBg9TEncUR0BTxsdOtZFpss8/WW4
+	DSj52UCHu+xpnZE5TKZt2HW/LjRmJ6kHIVZ1Q+e4T9biM1+0Ac4qt5aUXlN8+fAW
+	Oro+Ts/RWnsQ/9oWg7k6TfrJwrp31gnFY2gkWjlTJggc8tSTJard4E+TrZusHIFI
+	2QwgKiwmnZ7gYpPANR+2B/6THuKmsKpPA4gcZI3TuJtr3yj1WHajhANW7WEYKav8
+	LaezD0B3Rd05FToiciRy9VpTqQfm+8zfIzCeAdmR9BMw1tpWSwNCmWYbO6Y7fvbQ
+	tQ7IA==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 403tqv81r1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 10:57:17 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4619USAE024091;
+	Mon, 1 Jul 2024 10:57:16 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 402ya36dv6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 10:57:16 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 461AvCZD26739442
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 1 Jul 2024 10:57:14 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AF8695804B;
+	Mon,  1 Jul 2024 10:57:12 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 57F575805B;
+	Mon,  1 Jul 2024 10:57:10 +0000 (GMT)
+Received: from [9.171.47.124] (unknown [9.171.47.124])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  1 Jul 2024 10:57:10 +0000 (GMT)
+Message-ID: <2c2655ad-2a2a-4180-8a31-828a7531af1b@linux.ibm.com>
+Date: Mon, 1 Jul 2024 12:57:09 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,74 +62,44 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Haoxiang Li <make24@iscas.ac.cn>, linux-hyperv@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Andrea Parri <parri.andrea@gmail.com>,
- Dexuan Cui <decui@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- Michael Kelley <mikelley@microsoft.com>, Wei Liu <wei.liu@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240701023059.83616-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] Drivers: hv: vmbus: Add missing check for dma_set_mask in
- vmbus_device_register()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240701023059.83616-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:oj/fHA+sMZUu4U5nVZUuyMGcCxNNLJ8V8FmFWYOwlpnsBvPbOmw
- VsYOXmr6EXKAUde4IUSN+xXPQALYyhWCkF0W683c21KV5aqbdt0EBckVJlJgq8o9e/PCZDG
- 0b1a23dmIcN417xhKaQDL5VJjuPqc8rr0mnPYxDkJ95lvnpAfK1nzEU58aJiWW9kJBFw8D4
- bBJxD4aZjN9Ytf3WPvylQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:nqZCyd0z8HM=;0q72lLX8mmvOxhJ5Agdviowh1UU
- TkZ+qORi6u9sNW+4yjdp8/Qc/VkOHdQREMhCtOSzkkwUR0Za11AoxuIgLcPrAWnNuOGrxj+m3
- HDJqzCBm2VF18Xh7yQxzL/MWk3bHFptjN2dyJc1qwMkRV3mJPiu8e/+9MNpCLq0cIK28Ciob6
- iUro3RzxdrUf5eJmENHJsJRY7xfxvyzMXy0X9UhYprRTzNuPbq4irRQIucQIXXlvK2YhsH44B
- a/e7PYhATvE2AjCQwRDctxldwgSiYlNzmbO9+QRn/IMXpwcLMysORi2t01JXVz8Ege0fjaEVk
- Bo8vb61rlzu3LWVdpaq/hrb1zFPGaoZzcOKrKRs3ke0mOnUhpYMu78LL4wELLxQXANx2uuIi5
- wgsXhnw4W9i1bIM1z/s1VHqlhPfuAF2qYGJqxsomihXlNGJ5HsCJbNOnEvgkrJv3vIf0liRkP
- kFbec3C/kdMDPsEhUl1Au5TurYB3crGwDo9q/noyYKUnBLyASdyi/ueormOitoDno4MRLgl89
- UeAGZDcBxQVIdn8pW3E7BP7ChwolkTyB3076Jwp8Pvz8TD/M3cnjt01KAsFnVZst4uaZwQSRu
- ff8VLNpwAB7quC53cDfEWFw06vPbozchbvhZZYbH0qnXOfp4fMRbEi4sQb9dFk9//aoLaRzTO
- ZK/nhPEujrgiMHPQej/Fhkes1P8DkPBIm9nRlyrjJcjGNJ9nFupamutkf07eWk0EJnAMZsHKD
- Ip1XfG+JDzgZTF+72VMX6kVSApklwi7TOF0KjXZdac+eVfrXYCMlWi/Y8IcCWXZp3nand/kRF
- BXgAmp2bB1YulO80ylQZL7XznVi0cAmSLzmTMEsYknD3U=
+Subject: Re: [PATCH] s390/dasd: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20240615-md-s390-drivers-s390-block-dasd-v1-1-36b200f14344@quicinc.com>
+Content-Language: en-US
+From: Stefan Haberland <sth@linux.ibm.com>
+In-Reply-To: <20240615-md-s390-drivers-s390-block-dasd-v1-1-36b200f14344@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: D1xLR7T2PHM2C2vUe5sHmreK7F05PUyp
+X-Proofpoint-ORIG-GUID: D1xLR7T2PHM2C2vUe5sHmreK7F05PUyp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-01_09,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 spamscore=0 clxscore=1011
+ phishscore=0 adultscore=0 impostorscore=0 suspectscore=0 bulkscore=0
+ mlxlogscore=829 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407010084
 
-> child_device_obj->device cannot perform DMA properly if dma_set_mask()
-> returns non-zero. =E2=80=A6
+Am 16.06.24 um 04:19 schrieb Jeff Johnson:
+> With ARCH=s390, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/block/dasd_diag_mod.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/block/dasd_eckd_mod.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/block/dasd_fba_mod.o
+>
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
 
-Another wording suggestion:
-  Direct memory access can not be properly performed any more
-  after a dma_set_mask() call failed.
+Applied, thanks.
 
-
-See also:
-https://elixir.bootlin.com/linux/v6.10-rc6/source/kernel/dma/mapping.c#L80=
-4
-
-
->      =E2=80=A6 child_device_obj->device is not initialized here, so use =
-kfree() to
-> free child_device_obj->device.
-
-How did you come to the conclusion that meaningful data processing
-would still be possible according to such information?
-
-
-=E2=80=A6
-> Signed-off-by: Haoxiang Li <make24@iscas.ac.cn>
-
-I find it interesting that another personal name is presented here.
-I noticed that some patches were published with the name =E2=80=9CMa Ke=E2=
-=80=9D previously.
-How will requirements be resolved for the Developer's Certificate of Origi=
-n?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n398
-
-
-Would you like to append parentheses to another function name in the summa=
-ry phrase?
-
-Regards,
-Markus
