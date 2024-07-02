@@ -1,194 +1,128 @@
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C3B1BD038
-	for <kernel-janitors@vger.kernel.org>; Tue,  2 Jul 2024 16:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD521BD4F7
+	for <kernel-janitors@vger.kernel.org>; Tue,  2 Jul 2024 16:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719937619; cv=none; b=smDmj68Uj+fnASOJS8br3fNUqR4W+9Mz/9HGFLp6tOa32mE2hngBVh3yJdN7sG1k4LHk/e2q8ctHRjLKuO68b8DHUclWY28kjLPvMq/ru4SVUaRtule2c3IZQmDttxByxyIU7neKOEJy2SRhOJPMwT2QgG4IXRoisgpHxIc/T/g=
+	t=1719938282; cv=none; b=gj3s+QzgKfIYvJSCGdNdL7+rsqMYqCCEgs9kKzeb3oeN7RZtmylqMJ+sSTaP5n/FxCE0aNiYht0KvKLxODkaDDY7WeNWUy/9Sa5Vkbl1ydArHegtkOzeVQJOwOnDXCvz77lWOmzoil13Og4nAbT1lKLf/xWtVB5wY45KGz5sDfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719937619; c=relaxed/simple;
-	bh=M46ztOj2KLnslDUgt/8O59fxEY0PwKiMFJXTjb5MHRA=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=mJbO53KPTI7CRO4qMbjUqVXMm9ERwJGiwNoxhpFQYiuT5nc8PqnizMOJDnsRBVuIVljKSg4OOhcrLuFbAXJua0uo+OC5Gs6wRHAomdVfVh3OiE7eOvG9yurlAoXi8tLzwEmuz2WlEXVp8jR8pRmkxGRKNNvVhThf1rBmBa6tsiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=cxJQH97f; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1719938282; c=relaxed/simple;
+	bh=Td/mymmjXx2bhoBfX42+S3grkOQA58fYkvzmlYiSbRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VEE4VoaPOKrwAJ98tOoJAynrJZ89oBTf9RR1RXiN1OOPrQNKEjs/7L9PgkRGbey0WvQx/QrAqpqWjz8S/9z5suEZ5xuGg8MP+WJdGc9bHU2cRLj/SHTv/nDirQXlTb8nwxP6dZY5OHu8/E+BXkxc2n1n8C5cvZ05QnRrPzfr7yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ngj9Vrie; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cxJQH97f"
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c825f0b381so2601475a91.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 02 Jul 2024 09:26:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ngj9Vrie"
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-70226277bc0so114721a34.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 02 Jul 2024 09:38:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1719937618; x=1720542418; darn=vger.kernel.org;
-        h=mime-version:subject:user-agent:references:in-reply-to:message-id
-         :date:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Weu5fmzm2wPBLVFgwAp/kzeiV/Hf3udRmfGQuDZw8b8=;
-        b=cxJQH97fLuhnEdO2FO/9TA/s7b7cOOZGphk8bgO+kzVV4+lNS1WmsIQJc1wt6O8wCx
-         qHpE8QajnRVlVWB+1zsFmT/1FMUMdC7Pt9EMH5V2LBDDx6+cNKlB91+3E5oBbPTiBBUv
-         i8nBNSFOv+QAKKmfFZowcEK3rQtbM5pKpTRfw=
+        d=linaro.org; s=google; t=1719938280; x=1720543080; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fCJPO8HJZKPLtkJRQZbJmZwwdF765WINU9lgdrr+c8s=;
+        b=ngj9VriefIIZnaiRKRUI6yetRGDTgYowup8IIcIVxYc3872q1XUVuM659wk6wIAa2L
+         rIb95dfn3v+0B7jkPxBRAXzOIOehrP2N7FpfHCzPUd1rN+m9xI9fD5P0i6zD+0ES8ogp
+         A843ts2ZabmdnrgiJTszeTqtMPDeWXLlWjSu0cIkcgLiHhMqr2tslWTsayOO6k7Q2TEP
+         J3dKJVxhBVSfy/6x5FoSxu+Zk8F4vYSJnkGxpYsf20WzBFb+aRqOnBeu2uLApVmCWBfO
+         48oovOC2RzHUazreSstN2tdU+9aInp0kOLbFTboA0+MKXaY71qab5kjo/1fOHcMwVt30
+         /VHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719937618; x=1720542418;
-        h=mime-version:subject:user-agent:references:in-reply-to:message-id
-         :date:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1719938280; x=1720543080;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Weu5fmzm2wPBLVFgwAp/kzeiV/Hf3udRmfGQuDZw8b8=;
-        b=sVEfZAZy8/jEVraQm/Ss9Xs+X15nxlph16QCujGymuZjoFtOmP4n/Ag2NfuofusJgg
-         rrLpWPxTxduZxpO/Ohvgqn6eo1W0YV7Kduy9PU2TrGy4MUFqvy5JuTPOVV7MnlWUx9dx
-         Xdzn5nL4QuX7+mThE0Rifc1nQKasw/EtK9u4OhRqjxFnNhkJZqh5zGp55giCu3Ij7JrY
-         7DOYW51T7aUy9nnhblLwYBoBU6UVsrZdlhvN8JBMN1XNxOxVnThB34yE+i3FU350d49i
-         u7loDJ8Z07KyVCvjvtSVHkR7nEcD+l1hM6xV7zsYEc1RotX3An3OvYTLhxODvs6KBIIH
-         WXBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQJHKkeGf+HV0VV/OC6NoCXYEmkShiIfJtclO9IkHIjg3oEfVkxfIesazEQtmpWpgj0GXwg4n0cGWHgLyLn6QsHxfBhSJUCFGsdHcD7Ove
-X-Gm-Message-State: AOJu0Yx4QrA+J/0oNtBQ2B8SSQmUy6vG5SrTh7VlyMpoi+RCfB6giE1F
-	CXTrZd9Ol6RgtYFkKUlA1KQRN6mwl+BPB+NVpLAO5y3lkxFl89xjJUqbXLSEmw==
-X-Google-Smtp-Source: AGHT+IHaKEzsVjhtAgyonPaS4x7MGwSeBIOGNBpe/ox6nPbhDA4jnqihFInNrZdsokg0QOjhvTL1mQ==
-X-Received: by 2002:a17:90a:9ee:b0:2c9:63a4:a138 with SMTP id 98e67ed59e1d1-2c963a4a232mr1209263a91.11.1719937617616;
-        Tue, 02 Jul 2024 09:26:57 -0700 (PDT)
-Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3be561sm9035933a91.43.2024.07.02.09.26.51
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jul 2024 09:26:57 -0700 (PDT)
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Kalle Valo <kvalo@kernel.org>
-CC: Su Hui <suhui@nfschina.com>, <johannes.berg@intel.com>, <kees@kernel.org>, <a@bayrepo.ru>, <marcan@marcan.st>, <quic_alokad@quicinc.com>, <zyytlz.wz@163.com>, <petr.tesarik.ext@huawei.com>, <duoming@zju.edu.cn>, <colin.i.king@gmail.com>, <frankyl@broadcom.com>, <meuleman@broadcom.com>, <phaber@broadcom.com>, <linville@tuxdriver.com>, <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Date: Tue, 02 Jul 2024 18:26:49 +0200
-Message-ID: <19074452940.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-In-Reply-To: <3071fd19-5cc7-440a-8184-3aeeb81c96e0@suswa.mountain>
+        bh=fCJPO8HJZKPLtkJRQZbJmZwwdF765WINU9lgdrr+c8s=;
+        b=KI9GM5MTQ5gBc5HVIoQAOvk/EMGlK5Nk9AJ4s1hccc0iDyNnTAdFIVCs3TJmO7XLZ3
+         5++X2N0FvJ4wlGN7JohCQHRAHUgUTLo4f5x8UkhDQ9JeHhCCaKknTtlS8kb0u+LiB3u5
+         wlUhdRWewhM46u7B4Q0R0cgtnMpIvsNa5aRcGCeRHfOIyhX51vKLbjnEDhTYpnazbYqX
+         OnnGeFD05shxGHpeQ/nycjueOIv7JxcPbP8Gkrip6ZafYwsE6RpMkrkgmt47kMv0FvyT
+         vJ2gm+/Lg+wYEhy/6GPGs+QOr1RoA0Vw4/ZVJNy1F2zWjh2cghLjvhnNGXg59XYEloS9
+         /fFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXrw8wUDxAscZpq69aH5M8hOCW8L1mSlA6qOjmTTpAyXD/3juFEdmtUvkQ/OzlS2nts1dQ5hRdZXzoRjI7jtXWNa0lrGIzLvqo3K/S89upB
+X-Gm-Message-State: AOJu0YxQmn7Dy+Hsjl43TbtpsxGPd/KL5BQQTUNvRPH5CnjokXFV2YR1
+	dMgo06nSmzgeDZUxuPp8SBantU4Kwtrseeb9DqEEEDGTZYQ6GN+oIBx7yx4zwag=
+X-Google-Smtp-Source: AGHT+IEGT5Dx+bmDID+3tLY4yH/uWp/+sLbhF7QkmdiL3UCJgcDeNDsdEM0dT4hvHy6ajkiiNDK8eA==
+X-Received: by 2002:a05:6830:148a:b0:702:1dd5:da47 with SMTP id 46e09a7af769-7021dd5de6dmr4587972a34.0.1719938279693;
+        Tue, 02 Jul 2024 09:37:59 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:a6f1:b7be:4c8c:bf62])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-701f7b3679asm1666064a34.67.2024.07.02.09.37.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 09:37:59 -0700 (PDT)
+Date: Tue, 2 Jul 2024 18:37:57 +0200
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Cc: Kalle Valo <kvalo@kernel.org>, Su Hui <suhui@nfschina.com>,
+	johannes.berg@intel.com, kees@kernel.org, a@bayrepo.ru,
+	marcan@marcan.st, quic_alokad@quicinc.com, zyytlz.wz@163.com,
+	petr.tesarik.ext@huawei.com, duoming@zju.edu.cn,
+	colin.i.king@gmail.com, frankyl@broadcom.com, meuleman@broadcom.com,
+	phaber@broadcom.com, linville@tuxdriver.com,
+	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH wireless 1/9]  wifi: cfg80211: avoid garbage value of
+ 'io_type' in  brcmf_cfg80211_attach()
+Message-ID: <b74d94f1-ea0e-4a1e-bc4a-7180dd25ee85@suswa.mountain>
 References: <20240702122450.2213833-1-suhui@nfschina.com>
  <20240702122450.2213833-2-suhui@nfschina.com>
  <ba67020a-04bb-46b8-bc05-751684f71e8a@suswa.mountain>
  <19073fcc9e8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
  <878qyjg6cv.fsf@kernel.org>
  <3071fd19-5cc7-440a-8184-3aeeb81c96e0@suswa.mountain>
-User-Agent: AquaMail/1.51.5 (build: 105105504)
-Subject: Re: [PATCH wireless 1/9]  wifi: cfg80211: avoid garbage value of 'io_type' in  brcmf_cfg80211_attach()
+ <19074452940.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000c2f753061c462ebd"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19074452940.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
 
---000000000000c2f753061c462ebd
-Content-Type: text/plain; format=flowed; charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+On Tue, Jul 02, 2024 at 06:26:49PM +0200, Arend Van Spriel wrote:
+> On July 2, 2024 5:37:10 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> 
+> > On Tue, Jul 02, 2024 at 06:29:20PM +0300, Kalle Valo wrote:
+> > > Arend Van Spriel <arend.vanspriel@broadcom.com> writes:
+> > > 
+> > > > On July 2, 2024 3:57:27 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > > > 
+> > > > > On Tue, Jul 02, 2024 at 08:24:44PM +0800, Su Hui wrote:
+> > > > > > brcmf_fil_cmd_int_get() reads the value of 'io_type' and passes it to
+> > > > > > brcmf_fil_cmd_data_get(). Initialize 'io_type' to avoid garbage value.
+> > > > > 
+> > > > > Since you're going to be resending anyway, please delete the space char
+> > > > > from the start of the line.
+> > > > > 
+> > > > > It's weird that brcmf_fil_cmd_data_get() uses the uninitialized data.
+> > > > > It looks like it just goes to great lengths to preserve the original
+> > > > > data in io_type...  So it likely is harmless enough but still a strange
+> > > > > and complicated way write a no-op.
+> > > > 
+> > > > Not sure if it helps, but I tried to explain the reason in response to
+> > > > patch 0 (cover letter).
+> > > 
+> > > Would it make more sense to have just one patch? It's the same issue
+> > > anyway.
+> > 
+> > The Fixes tags are different though.  I'd probably leave them as
+> > separate patches just because of that.
+> 
+> Depending how you look at the problem those tags are wrong.
 
-On July 2, 2024 5:37:10 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+Tags are often unfair in that way where you could blame different
+commits and you have to pick one.  We end up picking the practical
+commit instead of the most guilty commit.
 
-> On Tue, Jul 02, 2024 at 06:29:20PM +0300, Kalle Valo wrote:
->> Arend Van Spriel <arend.vanspriel@broadcom.com> writes:
->>
->>> On July 2, 2024 3:57:27 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
->>>
->>>> On Tue, Jul 02, 2024 at 08:24:44PM +0800, Su Hui wrote:
->>>>> brcmf_fil_cmd_int_get() reads the value of 'io_type' and passes it to
->>>>> brcmf_fil_cmd_data_get(). Initialize 'io_type' to avoid garbage value.
->>>>
->>>> Since you're going to be resending anyway, please delete the space char
->>>> from the start of the line.
->>>>
->>>> It's weird that brcmf_fil_cmd_data_get() uses the uninitialized data.
->>>> It looks like it just goes to great lengths to preserve the original
->>>> data in io_type...  So it likely is harmless enough but still a strange
->>>> and complicated way write a no-op.
->>>
->>> Not sure if it helps, but I tried to explain the reason in response to
->>> patch 0 (cover letter).
->>
->> Would it make more sense to have just one patch? It's the same issue
->> anyway.
->
-> The Fixes tags are different though.  I'd probably leave them as
-> separate patches just because of that.
+Like if you do a partial or incorrect fix normally you'll be blamed
+instead of the original patch which has no fix at all.  It works because
+if the backporter hasn't tried to backport the partial fix, they don't
+care about the complete fix either.
 
-Depending how you look at the problem those tags are wrong.
+regards,
+dan carpenter
 
-Regards,
-Arend
-
-
-
---000000000000c2f753061c462ebd
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-2Gzj3QNJRLsZu1TLyOyBBIr/BE7UiY3RabgRzknBGAPmzhS+fmyM8OtM5BYBsFBrSUFtZZO2p/tf
-Nbc24J2zf2peoZ8MK+7WQqummYlOnz+FyDkA9EybeNMcS5C+xi/PAgMBAAGjggHdMIIB2TAOBgNV
-HQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRwOi8vc2VjdXJl
-Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcnQwQQYI
-KwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24y
-Y2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3
-dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRCMEAwPqA8oDqG
-OGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3Js
-MCcGA1UdEQQgMB6BHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYB
-BQUHAwQwHwYDVR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFIikAXd8CEtv
-ZbDflDRnf3tuStPuMA0GCSqGSIb3DQEBCwUAA4IBAQCdS5XCYx6k2GGZui9DlFsFm75khkqAU7rT
-zBX04sJU1+B1wtgmWTVIzW7ugdtDZ4gzaV0S9xRhpDErjJaltxPbCylb1DEsLj+AIvBR34caW6ZG
-sQk444t0HPb29HnWYj+OllIGMbdJWr0/P95ZrKk2bP24ub3ZP/8SyzrohfIba9WZKMq6g2nTLZE3
-BtkeSGJx/8dy0h8YmRn+adOrxKXHxhSL8BNn8wsmIZyYWe6fRcBtO3Ks2DOLyHCdkoFlN8x9VUQF
-N2ulEgqCbRKkx+qNirW86eF138lr1gRxzclu/38ko//MmkAYR/+hP3WnBll7zbpIt0jc9wyFkSqH
-p8a1MYICbTCCAmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1z
-YTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMTv1t
-bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCANkW8i6xNH461hlU4N
-tir5y4Q+4435V9AqoArP0RVMlTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
-BTEPFw0yNDA3MDIxNjI2NThaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
-AwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzAL
-BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAUhwgqzRKh4tj3CM5qfY7ImL+adYce23127oE
-EV1xi42PY8yJUyFQ9BhzWLNbUFCznXK2Bjc0lbIQz6CuVGdpSDRifrWdp10nZeHFofva6973ABBO
-3KiVAGUSjsNy0rgDhhQabqTc8FXqDsMmN+570X9LHh9S33fku7IfnvwOrt4cSH0s9D2PEPEUNTB4
-S+s9JlTMocH9BAr9jS8hheOnRaxIGyMcadGt1bOXLw5KXPcvRcgiyZWLFo24zDvOd/dl9VzKpDpD
-AocArzaWW/SzjygUUSxiP6rHwHVa38zwIxAaD2dEh6+bk1ps3qOcXVYj5A2+APGDdalCIR4C5zb3
-gA==
---000000000000c2f753061c462ebd--
