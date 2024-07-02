@@ -1,45 +1,73 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FED19DF60;
-	Tue,  2 Jul 2024 13:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F281B4C51
+	for <kernel-janitors@vger.kernel.org>; Tue,  2 Jul 2024 13:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719925942; cv=none; b=JxmTJ6nTMg3hAzOHyU/xuWR7YvWk65b4CUqsfkFFf/9E+cV4/55z2jIFDfDDfEIxEHQ/DF8lIlDyQaGEd2ImUmvt8hpTybD8H8FpeiVui9lZ7w4q6A2biW560qJNEoztU3azlpPTfdPd3DAtu5oN4H9NljIzxRcXWMcWoR3n8i0=
+	t=1719928649; cv=none; b=rqEaXal/eLtJa174otii5Rg4BU9SDKIZjXdw1OR0hahg3RFpKsRGyyj/b0osr5VRF+rFVejD0DgMjohG50dJ+DtVrSYg109EUu0SIdJnhAswcZAvwndqE0oErDbzv7fhoUj0M/ygeYkyDq32gVciT9RatamHjtDaxCHxt0xy7ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719925942; c=relaxed/simple;
-	bh=p+lBJAEBNcH6mzYX4tBdWs7yrDOUKpDqlewKL2RMD8U=;
+	s=arc-20240116; t=1719928649; c=relaxed/simple;
+	bh=qt01brAtBuYeYDb5XU6vCoxDmnQV+1+Sre8GzSkYpTs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WX9krxPfC4ly+xKkDD0yUJK6zgycdytFepSeyJPu3rjguD41+ydvZbM5ri2S7JBbsyan8jKtJt71I3NdG9GbfGEx4En7vG6r8ubvINTgTXmiSzv0dc+BkkQYnzGf1It7z4zYBEqdAFboNSY68uExYBDIc0Zqv8NQv06ZdAjV2UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFYJZJYO; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/rjK8j3CXG0jgQpKrS/99G9hjeBDM7o+en/+5PQQBO1VBqNiD9nQUKZ5Pn7M3tkFLPndGWn32UwdniFRq+rJ2aFOcr5R3d3rH1GQuyWSBYNZWOJUOL1YppcR4I7kOn0a5T0dJXbAjvG/jiSGUWKImgyBECHIaHzJKK3aEJdhck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SD/4Xdcy; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFYJZJYO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 578E7C116B1;
-	Tue,  2 Jul 2024 13:12:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719925942;
-	bh=p+lBJAEBNcH6mzYX4tBdWs7yrDOUKpDqlewKL2RMD8U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WFYJZJYO3UR/3JWTw+bvTFiEj+fr6L7XT7a4jC19rbfuBFMi4S0T8fGsD+eSBjewI
-	 K9a3ZEcwOQVT5Nsh+a0KgW+CY8TfpnUoiGva+XKt1StQdIDJTDzycabrADOekJil3E
-	 8s5NbGjb6wVA/0pqtQtgT5dMzjiqaSqNDtzZFB1tdXm3mABF1tvoAMLVmyKIDVXHJv
-	 hKmuH4M52gqxev+CuvLb5yARGsQDUp+sNun3kWzjd6f8LDobhUbClixczDpp/4J4yr
-	 fz98pu/Jf5Icaaql8W7xvXXHYRoVyonMczAS4BAr92Hhjdm5vE/ckI9RMEdwhtzsdp
-	 F6Zt8yZQ8Cwtg==
-Date: Tue, 2 Jul 2024 18:42:17 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Ma Ke <make24@iscas.ac.cn>, linux-phy@lists.infradead.org,
-	kernel-janitors@vger.kernel.org,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>, Roger Quadros <rogerq@kernel.org>,
-	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-	Swapnil Jakhade <sjakhade@cadence.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] phy: cadence-torrent: Check return value on register read
-Message-ID: <ZoP8seqQxMFb-kS2@matsya>
-References: <20240702032042.3993031-1-make24@iscas.ac.cn>
- <def496b0-ea98-467c-be47-77d965bb3a88@web.de>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SD/4Xdcy"
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-6f8d0a00a35so3977060a34.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 02 Jul 2024 06:57:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719928647; x=1720533447; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ePmiEYi/a4AH0wn7ckFFYm2PTW/+uVYsAN+yRliA3Bs=;
+        b=SD/4Xdcy4fe3ZVO3oqqPa9q++Hszs4ulZr+39UOdXOyvkdKhvwxmZKrmgdd8yCaT44
+         hdfCXKvZYcDiQ3oUXQd/guxEeUHK4MZo+A/3YKrwPtSp0ZTcnPTsqWXmMiNY5mvRbNYL
+         7ew+UjSEDqgPZqHhuchJkmRn0iHR2vzuDgvYouou/tFzOESIL5bAPGwn+631ctrH2xqI
+         X0kdOTs4OyB0RI9VrakfixnBTs09+l5czZ7QAGxKniScmlgTDw/6rjmiqIzh24vGuuMO
+         A0RGrmTmMiw6ig5S0YU4n0qwPMhZQPWQm0wiwN9pGD6uXJLcOIaXQ4ZoTyOLQACl5CZJ
+         lutw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719928647; x=1720533447;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ePmiEYi/a4AH0wn7ckFFYm2PTW/+uVYsAN+yRliA3Bs=;
+        b=Aq3fQrECVVTeT2umIUOnU7z8QrQjx+/BYnjjTMJ7OrK3GrZUCB2D4f+G0Z+qPzi2Hi
+         HYNqlMT0TUg5lKCyRo3n9gmTBrk1QbyXRy7aoA2nQPFRKMebYIlbHeFKJE6tFiPAZlP+
+         2ndnYDNlKcitjNWBjNkWmtbYrs96MEyMuktpdiOxlglpELcft+Ht7PxURpu7EnMOLoCi
+         DXj4SlbGvY+9r9TX/wodc9eO3tUOZ9zNzmtVYYD6r3i4v5gwctwnQr/fRc0Zz3CCXKuQ
+         FaBtwppolePKuTPGEo/C6mwFRH7cRQPYRrcJLZ4kRqVVcxWK4hXgz1SFmrXVINYiQCnI
+         Ft5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW1PmcZFFK1fPlnXHs/pNj+/hmlAyLBQvrvXna7aDxo87gW6twdIgkGY2J8KZaZnb0G9tqtID0ViB9jGVknBuPzDtHhUQ8FP3+vgld+Glh1
+X-Gm-Message-State: AOJu0YwsAthPFyYOheN6MeCrLLni6rgYHH2NUUdMPMuyPCOWW1/IcJ7g
+	8hwt8k2VpYFDw+ukHgODu78+ScCs9cDd7JpUrs/xAHgsnunQKiw6bHWsKBAoY5w=
+X-Google-Smtp-Source: AGHT+IH5Vk/edmC8lLAXOlWnBYfSKbo/eOsXpv1FuEvdKG37AODsGoiz394zQKMr5V6bCT7B+XImXQ==
+X-Received: by 2002:a9d:7c84:0:b0:700:cf6e:e261 with SMTP id 46e09a7af769-70207708212mr10589665a34.31.1719928647061;
+        Tue, 02 Jul 2024 06:57:27 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:a6f1:b7be:4c8c:bf62])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-701f7ab6931sm1688615a34.31.2024.07.02.06.57.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 06:57:26 -0700 (PDT)
+Date: Tue, 2 Jul 2024 15:57:23 +0200
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: arend.vanspriel@broadcom.com, kvalo@kernel.org, johannes.berg@intel.com,
+	kees@kernel.org, a@bayrepo.ru, marcan@marcan.st,
+	quic_alokad@quicinc.com, zyytlz.wz@163.com,
+	petr.tesarik.ext@huawei.com, duoming@zju.edu.cn,
+	colin.i.king@gmail.com, frankyl@broadcom.com, meuleman@broadcom.com,
+	phaber@broadcom.com, linville@tuxdriver.com,
+	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH wireless 1/9]  wifi: cfg80211: avoid garbage value of
+ 'io_type' in  brcmf_cfg80211_attach()
+Message-ID: <ba67020a-04bb-46b8-bc05-751684f71e8a@suswa.mountain>
+References: <20240702122450.2213833-1-suhui@nfschina.com>
+ <20240702122450.2213833-2-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -48,32 +76,20 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <def496b0-ea98-467c-be47-77d965bb3a88@web.de>
+In-Reply-To: <20240702122450.2213833-2-suhui@nfschina.com>
 
-On 02-07-24, 09:43, Markus Elfring wrote:
-> > cdns_torrent_dp_set_power_state() does not consider that ret might be
-> > overwritten. Add return value check of regmap_read_poll_timeout() after
-> > register read in cdns_torrent_dp_set_power_state().
-> 
-> I suggest to improve such a change description another bit.
-> 
-> 1. A return value is stored in the mentioned local variable.
-> 
-> 2. Unfortunately, it was not immediately checked.
-> 
->    * https://cwe.mitre.org/data/definitions/252.html
-> 
->    * https://wiki.sei.cmu.edu/confluence/display/c/EXP12-C.+Do+not+ignore+values+returned+by+functions
-> 
-> 3. How do you think about to avoid a repeated reference to a function name?
+On Tue, Jul 02, 2024 at 08:24:44PM +0800, Su Hui wrote:
+>  brcmf_fil_cmd_int_get() reads the value of 'io_type' and passes it to
+>  brcmf_fil_cmd_data_get(). Initialize 'io_type' to avoid garbage value.
 
+Since you're going to be resending anyway, please delete the space char
+from the start of the line.
 
-<form letter>
-Feel free to ignore all comments from Markus, regardless whether the
-suggestion is reasonable or not. This person is banned from LKML and
-several maintainers ignore Markus' feedback, because it is just a waste
-of time.
-</form letter>
+It's weird that brcmf_fil_cmd_data_get() uses the uninitialized data.
+It looks like it just goes to great lengths to preserve the original
+data in io_type...  So it likely is harmless enough but still a strange
+and complicated way write a no-op.
 
--- 
-~Vinod
+regards,
+dan carpenter
+
