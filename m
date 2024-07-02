@@ -1,63 +1,64 @@
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8901BB6B7
-	for <kernel-janitors@vger.kernel.org>; Tue,  2 Jul 2024 15:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4811BB685
+	for <kernel-janitors@vger.kernel.org>; Tue,  2 Jul 2024 15:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719932483; cv=none; b=lYmPn7C4Jx46voUm1yPZmBmpKpW7LcAMUlvuX+4+N7Av99zRIyCs3O27TdVWzIVVkPj+RwBHr5zbB9yN+tBe48JWLxEOZ7J+ndo2FwyyKfLVVLxs3kabZkQNsH7mSoyL8l7EKpWTQv1b3eLOyKgCLFGhMnN4nMDLD1HTDPVHEB0=
+	t=1719932876; cv=none; b=Q/IaD7CHIM6HRVA1RDFzxGQ0bpYVgrO8Obc2W+cripRkk63e+/NUij9Y/QegKfAC9O+thhDXnr59CbIgpJlx7EvpdCiKVgNsfnlWc2JdgnUCfgKWJtXa6jiwhsDRIZRidSKl8lV28JeBcmnkVGLx0KJRyq73dp1YQC/uPaR1O+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719932483; c=relaxed/simple;
-	bh=50bsl9IFJSIXbFepQy0mLoLxioZTN4ZUMufXK5ax2R4=;
+	s=arc-20240116; t=1719932876; c=relaxed/simple;
+	bh=+rgJjE/gcCj2AwXUpNLFZUCHEeXPa6T80RCYXtQd6ts=;
 	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=eJdqETXmtqgLqQtHdk1CTYpexbSs0uL9nj5F21pQTJny+BoAx2OhfY7uIS/1nLGzSZOgeMM2O0PnFlsYXIPbcmVf2NLkjQyfbI45ocRhXbDTSYg+L+rdzfofwZ7DCQ91G7EbfEnKnwF2B+sSI7b1nRfWT+pmok2bv4ThrmSDPU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=LPueMaaE; arc=none smtp.client-ip=209.85.222.172
+	 MIME-Version:Content-Type; b=VtILA7TrriVV/nNtuD0VTAfUzUkqCUcoCb1leYFnA9VTrXu0ZvlL6PwnAfVqn4SnKRC6+MMjh9+06eAXmSNUYT/KvOoRrgrftQXz5hLw/iAbbpAYbBJDQNA1TjJNRWk9lTXKtCy1LTsOTZJrnt6bLPoxPoc5e9pxWq2gQgJIG0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Lu8QS0Nu; arc=none smtp.client-ip=209.85.222.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LPueMaaE"
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-79c076c0d83so257146885a.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 02 Jul 2024 08:01:21 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Lu8QS0Nu"
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-79c0bc8092dso363750585a.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 02 Jul 2024 08:07:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1719932481; x=1720537281; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1719932874; x=1720537674; darn=vger.kernel.org;
         h=mime-version:subject:user-agent:references:in-reply-to:message-id
          :date:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZdwQPB8/WgmyTCTJOTOxS5iplAACsbozoBQv06W1zr0=;
-        b=LPueMaaEFYbBSI9aI7wB08Xk6HqD71LclbEBomDStvIatuWaqN6rrz7npfSNhnvq7y
-         DQzIVjPw62dw0dO4WJ0C2c50lgPbVcwYfKl+9iRYLR/OtwL35TBlbaRPJHm/MrZ1F9ep
-         LWWIIhqfohEADdE8NhNNa6OaqBGTSJ90JIs9M=
+        bh=7J87ikGy3aX6bi8jyKAGOugx0SUe4xtvWFBfd9CNYac=;
+        b=Lu8QS0Nucz+ouxdgs3n/2ukm1WMhFSAf+kaQZmsl5nuiJwOOKEJFWRvh+mnLceu6um
+         2TYKW96bQGSpQwxopAMmz4LZp0HVr5aUbw9izwtyPGjddfdKrCp9wkRcP3vNrWBvfNjU
+         WqbWOFbHKslWj9e4teB087I13npuXwrM97Ip8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719932481; x=1720537281;
+        d=1e100.net; s=20230601; t=1719932874; x=1720537674;
         h=mime-version:subject:user-agent:references:in-reply-to:message-id
          :date:cc:to:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZdwQPB8/WgmyTCTJOTOxS5iplAACsbozoBQv06W1zr0=;
-        b=PtQh+VKgfbZWrESCeTH23zMJXh7TzefvdFXRDI9B2WbWF5+0exbt3UdOviYvzTCtuR
-         o1DrbsjR/g7gqofJeJ2vrrC2+RdIBKL1YBCxot7ytUT75OFZOQznICC9Z4zHYz3YItUZ
-         rDYGQTNVpeAcy0MVFlT0tWIYw2dmHqEfrxWg9fj+mLBf/KCJNo+LdzZgSHKhB8iVN0Dv
-         mEkDxlUi4XTMQlIYpscKvwIRGibAT/ZAqSlXvmVyyqGWIMdID1VMLP2eA9qSqTWoOVJ1
-         stkGxSz2cciS/klGL/ItYqB+b/h76D4cU5tCYRO988b+zYNqZEzsLNUAZlkYyio8QG/O
-         EVFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUakw+dPaDadXJJgjXv6x0XyrUeUCIbqeF32kTzNef4ET4qUoGwLyqIn3DTdZLg6oJJPo0DJpEQRdoNmzsl6HZwNAW2M1l/gDAu/6kd+SwC
-X-Gm-Message-State: AOJu0YzzlN6ojxHrsvO10JJbEmK/MtVZZDAXIsrVJJcFZb0IIbAF/hxB
-	AOFo/EYp3m0Vg1VGY3kVeaX3r2YlL+bfsMhdxYX0dY8h4ehRXKE4XVhCbpIO5g==
-X-Google-Smtp-Source: AGHT+IFFStNTYgGdj+GqsrGQpXiBJjbRncg8J9s6u9qrFknNapaz8Uy/bKd9ajTPLOK8cIfpA6gqbg==
-X-Received: by 2002:a05:6214:300b:b0:6b5:44c:24ea with SMTP id 6a1803df08f44-6b5b709501emr102967926d6.16.1719932480617;
-        Tue, 02 Jul 2024 08:01:20 -0700 (PDT)
+        bh=7J87ikGy3aX6bi8jyKAGOugx0SUe4xtvWFBfd9CNYac=;
+        b=H5tw1R7YEJRKsu2MGgX1usXUFJX8BFNQmOQZjw5VHCA/rBU4XoTXtuPMdextS3q5OT
+         kp87vk67FOon3sH9ju7AOb8gtFqL2WCPMIyZ+ib6Y5hUvIBdZ3dtw5VbbzTnIS7+gSew
+         RBOhJ8TrteA0RhoDM7Hmt6KM2HQBKgLJt5wxUnU8oFIBpOz9scgl2HiiZXsDaAY1sUVA
+         vL/YdHh24VpGph6c5ydOQgL+rNiH9OU4XDKlT3CMFjnFMg9VumFsil2XHNwTx+GXm1Mk
+         jEGWLNIls9TZEgZ0mhnHmUzKYQ2z7SloBA5akZw/jYhpwWj7LxVoExnA3H9HY8dR5ZAR
+         dMgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXklbsmHw+C3/D2bPwlxXtlh3CM5Gs1VBVH4xXQFDHk8LjLvJ4ZT15DENfuGcxWOOeE3sYnZM3DKlXYeFljGqx8oq6OtCvc8Ci3d+p7p+oW
+X-Gm-Message-State: AOJu0YxWccTL7ppK09BM7KZ7RTYzQATVJei/RbL07Cjl8ah/CEDnAAP/
+	zkx0/9GthH10013WAy8ktcVD/yYc964G/LsBdzjJRD7jPb7PwEFB0TGaPErdIQ==
+X-Google-Smtp-Source: AGHT+IFT3KFWENwxvfDbJfuBesJru9QLfzhJS9tFply8t5qiy5/EzmRdd8/ZBMl+PnEJ5FqNrZilHA==
+X-Received: by 2002:a05:620a:2a06:b0:797:d55a:5166 with SMTP id af79cd13be357-79d7ba89787mr1033682685a.58.1719932874359;
+        Tue, 02 Jul 2024 08:07:54 -0700 (PDT)
 Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b5bcf1acc0sm27300076d6.44.2024.07.02.08.01.13
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d692945b4sm461249085a.57.2024.07.02.08.07.49
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jul 2024 08:01:20 -0700 (PDT)
+        Tue, 02 Jul 2024 08:07:54 -0700 (PDT)
 From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-To: Jonas Gorski <jonas.gorski@gmail.com>, Su Hui <suhui@nfschina.com>
-CC: <kvalo@kernel.org>, <johannes.berg@intel.com>, <kees@kernel.org>, <a@bayrepo.ru>, <quic_alokad@quicinc.com>, <zyytlz.wz@163.com>, <marcan@marcan.st>, <petr.tesarik.ext@huawei.com>, <duoming@zju.edu.cn>, <colin.i.king@gmail.com>, <u.kleine-koenig@pengutronix.de>, <quic_jjohnson@quicinc.com>, <linville@tuxdriver.com>, <pieterpg@broadcom.com>, <meuleman@broadcom.com>, <frankyl@broadcom.com>, <stanley.hsu@cypress.com>, <wright.feng@cypress.com>, <ian.lin@infineon.com>, <chi-hsien.lin@cypress.com>, <zajec5@gmail.com>, <antonio@open-mesh.com>, <franky.lin@broadcom.com>, <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Date: Tue, 02 Jul 2024 17:01:09 +0200
-Message-ID: <19073f6bf08.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-In-Reply-To: <CAOiHx=n5rfCBkO8wfqpa=UgL==Ty9=s1f=roVHiaFy2acQOHtw@mail.gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>, Su Hui <suhui@nfschina.com>
+CC: <kvalo@kernel.org>, <johannes.berg@intel.com>, <kees@kernel.org>, <a@bayrepo.ru>, <marcan@marcan.st>, <quic_alokad@quicinc.com>, <zyytlz.wz@163.com>, <petr.tesarik.ext@huawei.com>, <duoming@zju.edu.cn>, <colin.i.king@gmail.com>, <frankyl@broadcom.com>, <meuleman@broadcom.com>, <phaber@broadcom.com>, <linville@tuxdriver.com>, <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Date: Tue, 02 Jul 2024 17:07:45 +0200
+Message-ID: <19073fcc9e8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <ba67020a-04bb-46b8-bc05-751684f71e8a@suswa.mountain>
 References: <20240702122450.2213833-1-suhui@nfschina.com>
- <CAOiHx=n5rfCBkO8wfqpa=UgL==Ty9=s1f=roVHiaFy2acQOHtw@mail.gmail.com>
+ <20240702122450.2213833-2-suhui@nfschina.com>
+ <ba67020a-04bb-46b8-bc05-751684f71e8a@suswa.mountain>
 User-Agent: AquaMail/1.51.5 (build: 105105504)
-Subject: Re: [PATCH wireless 0/9] wifi: cfg80211: avoid some garbage values
+Subject: Re: [PATCH wireless 1/9]  wifi: cfg80211: avoid garbage value of 'io_type' in  brcmf_cfg80211_attach()
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -65,53 +66,28 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000009400c2061c44fc14"
+	boundary="00000000000007e6a4061c4514d7"
 
---0000000000009400c2061c44fc14
+--00000000000007e6a4061c4514d7
 Content-Type: text/plain; format=flowed; charset="us-ascii"
 Content-Transfer-Encoding: 8bit
 
-On July 2, 2024 4:02:39 PM Jonas Gorski <jonas.gorski@gmail.com> wrote:
+On July 2, 2024 3:57:27 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-> Hi,
+> On Tue, Jul 02, 2024 at 08:24:44PM +0800, Su Hui wrote:
+>> brcmf_fil_cmd_int_get() reads the value of 'io_type' and passes it to
+>> brcmf_fil_cmd_data_get(). Initialize 'io_type' to avoid garbage value.
 >
-> On Tue, 2 Jul 2024 at 14:50, Su Hui <suhui@nfschina.com> wrote:
->>
->> Clang static checker (scan-build) has some warnings as follows.
->>
->> included from drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c:16
->> drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.h:123:2:
->> warning:Assigned value is garbage or undefined [core.uninitialized.Assign]
->> 123 |         __le32 data_le = cpu_to_le32(*data);
->> |         ^~~~~~~~~~~~~~   ~~~~~~~~~~~~~~~~~~
->> drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c:138:3:warning
->> Value stored to 'err' is never read [deadcode.DeadStores]
->>
->> There are some functions like brcmf_fil_{cmd,iovar,basscfg}_int_get()
->> which read the value of its parameter, but some callers have not
->> initialized these parameters which will be read. And this patchset fixes
->> these problems.
+> Since you're going to be resending anyway, please delete the space char
+> from the start of the line.
 >
-> The core issue here seems to be that
-> brcmf_fil_{cmd,iovar,basscfg}_int_get() function (needlessly?) read
-> from *data.
->
-> So instead of forcing all callers of
-> brcmf_fil_{cmd,iovar,basscfg}_int_get() to initialize *data first, I
-> suggest changing brcmf_fil_{cmd,iovar,basscfg}_int_get() to just not
-> read from it.
->
-> I see no reason why they should care about what the previous value
-> was, since they are supposed to overwrite it anyway.
+> It's weird that brcmf_fil_cmd_data_get() uses the uninitialized data.
+> It looks like it just goes to great lengths to preserve the original
+> data in io_type...  So it likely is harmless enough but still a strange
+> and complicated way write a no-op.
 
-The issue here is that these are generic functions and there is a reason. 
-Some firmware API primitives allow/require the caller to pass selection 
-parameters in *data. We wanted to keep the functions generic and leave out 
-that knowledge. I suppose we could introduce a separate set of api 
-functions for that purpose, but it seems like significant overhead to 
-silence compiler warnings. Guess I underestimate the potential risk of 
-leaking few bytes of stack data.
-
+Not sure if it helps, but I tried to explain the reason in response to 
+patch 0 (cover letter).
 
 Regards,
 Arend
@@ -119,8 +95,7 @@ Arend
 
 
 
-
---0000000000009400c2061c44fc14
+--00000000000007e6a4061c4514d7
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -191,14 +166,14 @@ BtkeSGJx/8dy0h8YmRn+adOrxKXHxhSL8BNn8wsmIZyYWe6fRcBtO3Ks2DOLyHCdkoFlN8x9VUQF
 N2ulEgqCbRKkx+qNirW86eF138lr1gRxzclu/38ko//MmkAYR/+hP3WnBll7zbpIt0jc9wyFkSqH
 p8a1MYICbTCCAmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1z
 YTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMTv1t
-bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCHEpuiGSTh+tj9jQ0c
-lbBFEX6PxCSaLD+AwUpZnKrMCzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
-BTEPFw0yNDA3MDIxNTAxMjFaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
+bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCB6VCGmFck08Oe87eDj
+IG86W39dDecyS213otDN4jZ4xzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
+BTEPFw0yNDA3MDIxNTA3NTRaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
 AwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzAL
-BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAWsdgkI0g3cy0UBzh0fqNfA43NBnWcTktPJ1l
-CzRZrCVNpnsqJPjqGn3O8PadMicICDHa+TocZAkamrdxSHTXGXvSU3egSUxyrew75+O39wGkWpdS
-hrObifdYKHK7dc6man0lMrIDBHPTeT5MhYuo+ytobtQHLCpeIzuhFkjZP1Cf5ufi6IpXFd54/js/
-UHzlVc6Izo/PT/8C11/Lywq99tNM/P44Hfmg7TGpVHLGSzhCtqA2nJ7p8YKtmdAwae8IV6E1AiCO
-VBfV/bL1m0tC8LMtLZHcJ2z9o0RsDMWijMz4CBAQOUXdrMFPiPKu64NMkLIWFfbe79pmqFb+HZ//
-lQ==
---0000000000009400c2061c44fc14--
+BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAhV6/6PHa/hfQ08MhxvUTUwH3CV17jxOk1sxX
+yPZ+qqhMuvMpWpQA8PUxlNfDmPhIb0sLzrwI4oEdRzKleqo7Nql6WehmNpPmKPs8GNuMbyEI78fI
+lO9bwK1cHXSQbG3smc5GsOzNmZb5Bm9b86TwefIr4cJMgYqRZl8UNaqOwJ81KMwG9Pibb0sMT26O
+NOHt9JYCH3r84aTNE1e1BStooH/R55ydKtWgHczF5lrSunKm9zNhJXx2T5l8TRUE4ilMcOu3AtYk
+2NR5lxcZI3hVPsoNgbVWQvKOjfIUz8y1/gvF3mcLcw5lsba4309oQNM64aHs0JBqI2566vGNPx/K
+1w==
+--00000000000007e6a4061c4514d7--
