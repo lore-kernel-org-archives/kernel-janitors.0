@@ -1,112 +1,109 @@
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84861DFD1;
-	Wed,  3 Jul 2024 15:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CFB181CE2;
+	Wed,  3 Jul 2024 16:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720019783; cv=none; b=QCrQnAtL7taaLT51SuIEakJLz3dgBg/p6XSk9YwdOIirtG2FlL4Lz8jc4hQj/t/YQAt1zNnsys5K0zIuunA6qGH4W5GwFGTozeufwRDTKD9Jn3SU/05i9AtkvhfFbkPF0E89C2E5T/BUYCgJGMrmGpDaQBj/DrgPBplI/+xTppw=
+	t=1720022922; cv=none; b=cBAtLIz+OL1ki+Kl58dEOc34qX6YiLGxYEfyieLECbhFSPZV6sgcL4xgXTSskd+nQFuKG8Ho49JpZx/HfcCAo4wt3kgnumRC1q8j+XIRK07b/6L2V5e7W8iEkpqFlVGJFG3sq9ansg5kPLzLS1stTWEj1lvJZUri8b+KHUq9d74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720019783; c=relaxed/simple;
-	bh=7FMn/uRg0zYfw3DQH1Sz/pojM+8pV3loh/mbtGw+Fm4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QVqWVMyoiDEcA9dukxUg9euNOnbedMXdXIyUxt50r/VAuGQM8Un6UiFSDWGNNQnTXLlcxSlJnlLwh8CfEJYwrooY6rHZU7LueR7Gsol1479wxL/YUVlq28d1FFVaKLx750QsMearbtFPEF/yDL/LnOc416J7j6TewIr9xmtU4vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=F/TChOj+; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+	s=arc-20240116; t=1720022922; c=relaxed/simple;
+	bh=07orgEznonTXaOIHNFt/N1sf+pDGLONgsVdR7FpN9vU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=uKhXC8FfukMWuW8b7dxSmcxFAf4MA5loltOBGBdjcbl+0XTtM8chgs9AMTC7Fbhm6DIrRndOm4vP04CxigB/2CxDeWOpS6uYFVNQ9dy7knZZNqx/F7p91WN16qkyaRBKtNQPOufXDXKGPtYkw1mS2io/fci9M8EbbF+7fGNOq9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=oZkpvrM8; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="F/TChOj+"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=6Pvtr4CL3nBCwnXoyeyqTuDH9oRlsRjo2dtNGYFj5Ks=; t=1720019779; x=1720624579; 
-	b=F/TChOj+kldVL4qjJxBxCohEnwgii6ad0clG+V8T0KJKorBpRTV5RRik+zLk/d4F9/r06SwwejT
-	xUdBzw57lCxjrIGtqTor+cXOzVgKMxKPeP5QNqeqxZH9Lhccit9gGlPEB8HW/KZdp5y8zlhfBKrh7
-	XAceUqDm9rvmSXmIaj7d0cOFAfuJeu6y7D3g3aVkHxAJo5iFs+j4J42N1JF3bgzEfw/stgyEki6l8
-	DphxZNmBP6Ws4Dmv0kJ/UejncXX8nk42U1kfIxi2atuCUtXPiFb2JG5rIBMtCKQsq62PoyhM+JWWx
-	noXj8xwkCXpLb4HuJsrfS8T3WPQ8Ic7ytXMg==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.97)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1sP1eU-00000002G2P-0ZsP; Wed, 03 Jul 2024 17:12:10 +0200
-Received: from tmo-084-6.customers.d1-online.com ([80.187.84.6] helo=[172.20.10.3])
-          by inpost2.zedat.fu-berlin.de (Exim 4.97)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1sP1eT-00000003lh1-3VTh; Wed, 03 Jul 2024 17:12:10 +0200
-Message-ID: <5473f57a21639724e6277c3e271fc46ea5f62ed3.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH] sh: push-switch: add missing MODULE_DESCRIPTION() macro
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Yoshinori Sato
-	 <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>
-Cc: linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Date: Wed, 03 Jul 2024 17:12:07 +0200
-In-Reply-To: <20240702-md-sh-arch-sh-drivers-v1-1-2c5d439a5479@quicinc.com>
-References: <20240702-md-sh-arch-sh-drivers-v1-1-2c5d439a5479@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="oZkpvrM8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720022896; x=1720627696; i=markus.elfring@web.de;
+	bh=07orgEznonTXaOIHNFt/N1sf+pDGLONgsVdR7FpN9vU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=oZkpvrM8xwVQ7XI5woMiqdzY/u2dKaIegJszLY91DeWPg66nsqdG/FtgjPyR9odg
+	 reD1lLMgQ331UVEr6+NREDbVnvWHpMWBjstONtypiCrGbXPAB90QcO6jpXRHSl1Gn
+	 kUG5shMRwd5QcK+t7J6mDZex62t+VV1oKdqrhERhu3Z9VeKLqyGJQ6fttVsM/nxCB
+	 caoxJhveaVOKu+PLSpI99yyQVXL9GrTDryBi14nf90O844EMV/FFyFVDYmw2AoHKm
+	 5NabEYQ8lhDskGZkVTc02qmRptzL4ibT21nMIlp8hrC98jBA8M35Ix0kqn0IW/k8U
+	 1i98Q6N63rvvyXUFnw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MLAVc-1sh7LO2ee2-00TfqF; Wed, 03
+ Jul 2024 18:08:16 +0200
+Message-ID: <170879dc-88de-4c08-93d7-57756daca4c6@web.de>
+Date: Wed, 3 Jul 2024 18:08:12 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+User-Agent: Mozilla Thunderbird
+To: Junlin Li <make24@iscas.ac.cn>, linux-media@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Peter Rosin <peda@axentia.se>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240702132413.4318-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] drivers: media: dvb-frontends/rtl2832: fix an
+ out-of-bounds write error
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240702132413.4318-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:VhPOAXdGj5dgCOol1vZtrpOQqZEObNHjQFtD5lJZmM8jnW4FXzA
+ enGASuwiIRqSoGaG9yCDX8XozDPVzVZCMpMaLzn9kuRbnuyjeEqPnOYmH5RVuQr/Y7XEbru
+ z2WzAEwrC/pLIA+oivPIQyKHKHsayImzFsvwHuIOirQyX7pnmL5oOnJFg/5o31AWkCyI1A+
+ YBh5hb4ga8GZoPX9QjM/Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:DBJ8xYYnUw8=;PJRQ3jGGArGOK9kR+6p9MKH3hcB
+ MEYm3WMIve8yDCOsueqwU3FelYdtBYf3vZ/DUNmMuLbk8Ba5Hgtn01TAEIoeYxs6lnoTgKJrQ
+ taUFYdlD22dYWuj6zw2rhGPWYWisIx5bS2jR5UQBvF7EhNlaANVtNlmkeqb2pJqWYPnV6R+I3
+ vN3TM45Z+NSSuqDZ+9AxFocH5yN8lwVh3T6D6IRMNBwcuDuURd+6NDKOchJguD7FOMN72QeSC
+ gdv+wFRcVK5NO0eDpu9Eiq35thwTsiwuojWfBoSFVlbHO+NtlaSODLwxCST9B8dFdkGC2I8Vk
+ lxEQUoLtX+mQiZygzaQ0gBixLB24jC2MX2uEDwWG0Y9tQ0Fq1n+wJxVzIUVU6UFKVCo+icLaI
+ FWYQ2TSOWuWP3eoJ+t5OMMbSQ3kZ88TYitK1yuYT8wnYCONf5c5q2kKM/yR+nIYNfO9Rbv9WQ
+ nFYWI+K23BG+c+Pca7TcuXBY7HIM7+Tkpt7bknCivd8NKzyZS4tKAYT5Q4Bso5X2dC5nUDq6D
+ CSHndcKpyi1agchmx053CtE1V+hAFgoMXApJdr1iqWEsqzrqWWIT7CAEct3RvZNLcvWobHKfi
+ HpCwGtjK+j9KwFhdSvnuZH5BLFkPG3DyDQ+FoaavMJFDQSwkwY+rSZmAd5AlYOQPvKll1umPR
+ p8UoTxAfb1cVNbq2nCF6spyMXFLUtRaDXDrN74vT2+WNk56JYCn4a5GMrCFVXsIU1AzNQcZSe
+ E2lDPy9SGp6uGEhoZ98/GsOrwCC1F66jmNYe6tbhnaj/Y00/pOwQV+PESPGlZhGNgrgXuIPUf
+ 1LOX3X6pCwDbHVfJT1Bu7GBbAQ/Y5GeJ8Wi0lrpWxTnqQ=
 
-Hi Jeff,
+> Ensure index in rtl2830_pid_filter
 
-On Tue, 2024-07-02 at 12:29 -0700, Jeff Johnson wrote:
-> With ARCH=3Dsh, make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/sh/drivers/push-sw=
-itch.o
->=20
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->=20
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> MODULE_DESCRIPTION copied from file prologue:
-> /*
->  * Generic push-switch framework
->  *
->  * Copyright (C) 2006  Paul Mundt
->  */
-> ---
->  arch/sh/drivers/push-switch.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/arch/sh/drivers/push-switch.c b/arch/sh/drivers/push-switch.=
-c
-> index 362e4860bf52..1dea43381b5a 100644
-> --- a/arch/sh/drivers/push-switch.c
-> +++ b/arch/sh/drivers/push-switch.c
-> @@ -131,4 +131,5 @@ module_exit(switch_exit);
-> =20
->  MODULE_VERSION(DRV_VERSION);
->  MODULE_AUTHOR("Paul Mundt");
-> +MODULE_DESCRIPTION("Generic push-switch framework");
->  MODULE_LICENSE("GPL v2");
->=20
-> ---
-> base-commit: 1dfe225e9af5bd3399a1dbc6a4df6a6041ff9c23
-> change-id: 20240702-md-sh-arch-sh-drivers-40af731eb66c
+Please correct such information according to the shown function name =E2=
+=80=9Crtl2832_pid_filter=E2=80=9D
+in the proposed diff fragment.
 
-Reviewed-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 
-Thanks for fixing this. Will pick this up later this week.
+> does not exceed 31 to prevent out-of-bounds access.
+=E2=80=A6
 
-Adrian
+Please adjust the word wrapping.
+You may occasionally put more than 51 characters into text lines
+of such a change description.
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+
+=E2=80=A6
+> Signed-off-by: Junlin Li <make24@iscas.ac.cn>
+
+Under which circumstances will applications of the Developer's Certificate=
+ of Origin
+be reconsidered any more (after three different names were presented so fa=
+r)?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n398
+
+
+Would you like to omit the text =E2=80=9Cdrivers: =E2=80=9D from the subsy=
+stem specification?
+
+Regards,
+Markus
