@@ -1,127 +1,108 @@
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A601B13A25B
-	for <kernel-janitors@vger.kernel.org>; Wed,  3 Jul 2024 13:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B8017965E;
+	Wed,  3 Jul 2024 14:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720012999; cv=none; b=ZV5Mf7r0VQx4SqKV5Qd3N9zv9zajFYyhowFiFdJerseZUycgvIFeUf1a5uJJE6qSY/eyw8DJTIEedWbgSxgx1IP29EgxzVqMIqfW29GY5UcAqQFfnHTrp4xJ82Nf87qJ6mNQGanm6RSDTJO/D9JjSXcCfJDfn9u8gjwsyflDEmQ=
+	t=1720016569; cv=none; b=Cb9RliE8vro+kD170LSsHg7UHfixaI8rTTSiNGwdmvmUD/KryzS8XldF2nSazun77hN/8ajFKsTF9D87xG3XpJzgmzjx+zEa5DVLenlN+zIA1KdGis0Rg18m65N3dwHJqQn3G/F8KyZKjAF+spf+fge+mi8HZycZQfKiRHZGtXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720012999; c=relaxed/simple;
-	bh=XkZ36YVkSCYdsa2PZ9dd8KTKzlgKsyNmSOvBW6fXlRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FGvI4yRSyzhDi3Jfi8lE3rWjNlGcgxzmDCgPlBCW5XJ/aTKiFSBUBtF84ZyJ+F4OKJyqc/vxRod3opfvM6CRoXP+NLtzjq1cvupGD8dIHQ6La0b3GdnVib23FODuBWyRhx0Q2rRiH3QQ+e5k3Hi1deOnKd+JXa/WXeYiVtiFyVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jyvWpIyC; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1720016569; c=relaxed/simple;
+	bh=T4yKvc+lELzYxYMsH81tgHi+E5UPTZWagiGiUK6QmX8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=k5tL2YAAEytcqR16jBAMkDeh6cULN28lLmgiDWNnsxuZr+yQd7JD6QFtVs7Qfuzp/uqpCFBiukD729oWzxndXDCjhAT8zDWy4twsgKgWZyAyIsIuk3ZpK1l9DHQRJEQ7mUsybOgi9GwlHmfHP6uGrMclDCMDiER0MVRyJxlfjRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=gS9lErmN; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jyvWpIyC"
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5c47cc12ddfso89915eaf.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 03 Jul 2024 06:23:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720012997; x=1720617797; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u5g2d7cGxt5LUhs3Ln8D9odUoDF0lLXQxROOlmlLiFA=;
-        b=jyvWpIyCy7LZmxcm0VigiCYObo4vP6KKgFIJP14jAx1STjvEpVVu4EFbjizRTrZhiq
-         36s9BNUCMBkaJYKiUDa/hh7nTOxl5ncSqMctElJBGjoCf78Gii6n2utEBESmrAy9uyYa
-         uWHVDJ/XlpZImKDq6cn1lJeEooCvpC4pQcj8K6YbwK72/vAdeHaJWd5LGYaSXavaeipd
-         hroDJvYzU15B+K84zHRMvzQ0iVUJb7PohuX/q66qI1gJ6O0aAbdnAcKQDeoH50mC7Cce
-         NGdgXeEvKsPgDQwLeHUIXOY3zpNhKeR1k4/BGbkwYJYOKHMlE6DNILdRJVNUXXxz7nh+
-         P8Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720012997; x=1720617797;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u5g2d7cGxt5LUhs3Ln8D9odUoDF0lLXQxROOlmlLiFA=;
-        b=eSKW8kAqU5Fa2KvbisQpLfqKzqYPqVxtqL0K0uPF/HCoizRcIubW4gdx8QV7MFsBNu
-         VIBpU/muLtoJv3M9GNBNBHRYRTpm/jlLSHHUepLxnISH9B+Hg11u/hXo9U71eBPr1aTw
-         gWIjl9OCH73zUSyE9XRCWimicTNsnOuDqbBWZ+0Db7KYATbQ8/xxGavYkGkl6cwK/m59
-         iCoDwSYzB1JVCYjVp8weHqkApDPMsbzdrkuTGPzy0dcV/I1xfsgKtYyimPTdZRYSe+rb
-         qtETM9qgFBS+jNWz37L1hdUvcNsu/qh+j+w3Z7ZNs5M++MwA2ytaVVAvpxjeXPJaBDds
-         x7Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCXsWWW5Grw5NjKt6lnWZtOH3KutR3Gc13U2/mvVRjIZDFdTVXhMNDaCRJt9kzioHpAni8RW/YHb0FYuSmhqjk3k20ZrilqOQiP2+wBS8sXI
-X-Gm-Message-State: AOJu0Yz8W6v7uX6DwN9LhUhBRanh14ShG4D7YCed++wM6lTnDmT48dnJ
-	KGwHTjFOW4H4H7UdjV1dtKGJhjOGgn3KARd2TFxW44g0jF6JnE1N1o5Vh8s4GqU=
-X-Google-Smtp-Source: AGHT+IGplWSy9vOCLJA/qnz+gTqhZnkdj7xlESE8azCcFRv+VtomZcElQ/dKFnO84Qfq84NOw3z4Hw==
-X-Received: by 2002:a4a:4884:0:b0:5c4:fc6:c7f5 with SMTP id 006d021491bc7-5c4390512d7mr11084414eaf.5.1720012996656;
-        Wed, 03 Jul 2024 06:23:16 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:a6f1:b7be:4c8c:bf62])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c46ae49decsm327881eaf.24.2024.07.03.06.23.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 06:23:16 -0700 (PDT)
-Date: Wed, 3 Jul 2024 15:23:14 +0200
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Cc: Su Hui <suhui@nfschina.com>, Kalle Valo <kvalo@kernel.org>,
-	johannes.berg@intel.com, kees@kernel.org, a@bayrepo.ru,
-	marcan@marcan.st, quic_alokad@quicinc.com, zyytlz.wz@163.com,
-	petr.tesarik.ext@huawei.com, duoming@zju.edu.cn,
-	colin.i.king@gmail.com, frankyl@broadcom.com, meuleman@broadcom.com,
-	phaber@broadcom.com, linville@tuxdriver.com,
-	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH wireless 1/9] wifi: cfg80211: avoid garbage value of
- 'io_type' in brcmf_cfg80211_attach()
-Message-ID: <3f7bcda7-092f-4d94-80c7-2015e860fbe2@suswa.mountain>
-References: <36cef2a8-10a3-928a-d962-3599333d9ac8@nfschina.com>
- <19076e6bec0.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="gS9lErmN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720016532; x=1720621332; i=markus.elfring@web.de;
+	bh=c5lTrDrm1hXARYh2GRtk5/VrYRUhLUaho/B5U9nuKNA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=gS9lErmNl5vam2RQWajiqIHwn5LvqfFI56M/NAfvGJbbpQU1GOZ5fs9FBYHJ3lyR
+	 EVZrtz1DIrHVM3nU4YO6RE2Y7x2e755Yy4PKtEobECQbILq90ImSNbuZCk3zqpfyu
+	 RUv/mu18/giUs0ZfHUIa6cc2LY7Y2XM1ecowvs/b6dxYRxWAyNKYXU0TF+IXdLFXN
+	 t6dbMLfm1JxqD0ItcaFVqDjNqIYFrNGnU8PteBo9NWpEaSE7y150aDut5lUDky9UO
+	 ZsaYrg0NvorFAuSk4spEfoPp6ZuTNJmWhK4+FE8WEUEjiyNLQNmSIWbyGqh98P7KU
+	 H3HsIn54KwrYhtUU7w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MdfCN-1rpg7Z1p7B-00otu0; Wed, 03
+ Jul 2024 16:22:12 +0200
+Message-ID: <20e989df-0a63-4a07-b164-f213405d62b3@web.de>
+Date: Wed, 3 Jul 2024 16:21:57 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <19076e6bec0.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+User-Agent: Mozilla Thunderbird
+To: Junlin Li <make24@iscas.ac.cn>, linux-media@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Antti Palosaari <crope@iki.fi>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240702175023.3921-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] drivers: media: dvb-frontends/rtl2830: fix an
+ out-of-bounds write error
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240702175023.3921-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:EoluFemJE7z7gOT0PW5yGSaUvKc7zIT6Nwvg7Mzwt2EVM+EpL44
+ QXmEbT/ymdcqnp4zolFzN1/ugkzO4CPc9ZnKga7zp4c4D0OvtjJMMd1q9exeKCJvQWKjtnt
+ WljoNs0e52U+VlBrG/u5WtHZi936iMWhpU6pDqfP/B45pp0top74x2h5Po1wjF9NY0+beaV
+ fjKBhIn/dLqYZB48g0fzg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:OuVp94A9e5Q=;ZLsMdpoS4/jKg+kBdB3ynJpdNhq
+ q8mwd6McDAAOLmo1yoI1HRYOMPCeLOhvaFBXqtOUzv75yFFaHBPUz9Awj4lGZLlGOC2Q89K1x
+ PODOlRFumlqQIUF+AC5AqJoDz3ca5azTf7ZIQTCz63kVivQIUcsizbbxENmh+f7PqDaE3aPXO
+ WKf6fi/kjT4psu+esjwYMI6yNyKrcjJiShAsrAPxWGzMdWmVdxOH04rEp+zCbidyrLO2GDYMP
+ wgGXVafHecnFOQMlnk4+IpuI9ILFlXrFR61UiUHODDVSwe/z487fHlwr8HbMex1Udw0mlfbER
+ JzINidaFwTB1UfqJFPyWpeTfhFYLEu5Wjj40GYNxdFIjT1TKnzti4JrMXG/ddiu8yEpPSucCC
+ JS2k2CRd4BoV0yGnDZOUdanKGF1yIPgvd0mh4ysJ8/9Lv/HqoayJL6o7acScb/l5I1/KW2iPt
+ L4lyOvn79kUZsJm2YlRvrcagCTNl/Ioa1AEyYUWrN9Lnb1mBtUWF8fVick3UZ5/26A8vIywR5
+ K+2vUq4vfGNgaCI0bDP+CO43Z+4c1LivjrEV1zweHqPriCfpmpAkMakav2kGeTQM7m5I57meE
+ ZI//98fblCbYAPrE68juynDd588hw3TLdj9E8jSd1tW5q7/9ZLWdqHOQpACp+FMCkjV2Sv2hm
+ scdUSfgXJLRhMNgW+VRzIAvSQ3lForVQKdXYINRdGEc79zNWabtZ6iidDB4rIyKn9ZDpEV/IG
+ PW8hHutX/YO10M7KM7tAit+t86Z+/8J9Y2j2miPd/842zuU5Gf+OPDkJHzaG2zD8S4DgyBL9E
+ jwCvUb2c6krlLknzdy4aMQSOW1U5+v8woDwHaEe0jucEM=
 
-On Wed, Jul 03, 2024 at 06:42:32AM +0200, Arend Van Spriel wrote:
-> On July 3, 2024 3:42:18 AM Su Hui <suhui@nfschina.com> wrote:
-> 
-> > On 2024/7/2 23:39, Arend Van Spriel wrote:
-> > > On July 2, 2024 5:29:27 PM Kalle Valo <kvalo@kernel.org> wrote:
-> > > 
-> > > > Arend Van Spriel <arend.vanspriel@broadcom.com> writes:
-> > > > 
-> > > > > On July 2, 2024 3:57:27 PM Dan Carpenter <dan.carpenter@linaro.org>
-> > > > > wrote:
-> > > > > 
-> > > > > > On Tue, Jul 02, 2024 at 08:24:44PM +0800, Su Hui wrote:
-> > > > > > > brcmf_fil_cmd_int_get() reads the value of 'io_type' and passes it to
-> > > > > > > brcmf_fil_cmd_data_get(). Initialize 'io_type' to avoid garbage
-> > > > > > > value.
-> > > > > > 
-> > > > > > Since you're going to be resending anyway, please delete the space
-> > > > > > char
-> > > > > > from the start of the line.
-> > > > > > 
-> > > > > > It's weird that brcmf_fil_cmd_data_get() uses the uninitialized data.
-> > > > > > It looks like it just goes to great lengths to preserve the original
-> > > > > > data in io_type...  So it likely is harmless enough but still a
-> > > > > > strange
-> > > > > > and complicated way write a no-op.
-> > > > > 
-> > > > > Not sure if it helps, but I tried to explain the reason in response to
-> > > > > patch 0 (cover letter).
-> > > > 
-> > > > Would it make more sense to have just one patch? It's the same issue
-> > > > anyway.
-> > > 
-> > > Yes, but I would solve it in brcmf_fil_* functions (fwil.[ch]).
-> > It seems you will send a new patch to solve this issue.
-> > And I guess there is no need for me to resend a v2 patchset or just one
-> > patch.
-> 
-> I am not entirely sure. If both gcc and clang would warn about using
-> uninitialized data I would be fine with these patches rolled into one.
+> Ensure index in rtl2830_pid_filter
+> does not exceed 31 to prevent out-of-bounds access.
+=E2=80=A6
 
-We should definitely fix this, it's just a matter of how.  UBSan will
-also detect these at run time.  And honestly, it's not clear to me where
-these eventually do get copied to?  Is it to the firmware?  In that case
-it might be that we'd treat these as a CVE.
+Please adjust the word wrapping.
+You may occasionally put more than 51 characters into text lines
+of such a change description.
 
-regards,
-dan carpenter
+
+=E2=80=A6
+> Signed-off-by: Junlin Li <make24@iscas.ac.cn>
+
+I find it interesting that another personal name is presented here.
+
+* How many contributors (besides the names =E2=80=9CHaoxiang Li=E2=80=9D a=
+nd =E2=80=9CMa Ke=E2=80=9D)
+  are connected with such an email address so far?
+
+* How will requirements be resolved better for the Developer's Certificate=
+ of Origin?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n398
+
+
+Would you like to omit the text =E2=80=9Cdrivers: =E2=80=9D from the subsy=
+stem specification?
+
+Regards,
+Markus
