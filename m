@@ -1,107 +1,112 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DE61DA319;
-	Wed,  3 Jul 2024 15:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84861DFD1;
+	Wed,  3 Jul 2024 15:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720019467; cv=none; b=Gh0Km+NDm3G6DG16BjoPfGj7NCIgXDq2D0JA+6UDvrONPhk4XHCm/sUm6LlDwtz8YZVy1BkFT/w9B/3UqF6lSLf5Hz1PaEICgBoPjZvLLFcrEiXipduQ26+t5AtdGD3ta88Y5cI4YgFTpHV1ziTJZbPqrBhau0uQ4mwHeu/0YG8=
+	t=1720019783; cv=none; b=QCrQnAtL7taaLT51SuIEakJLz3dgBg/p6XSk9YwdOIirtG2FlL4Lz8jc4hQj/t/YQAt1zNnsys5K0zIuunA6qGH4W5GwFGTozeufwRDTKD9Jn3SU/05i9AtkvhfFbkPF0E89C2E5T/BUYCgJGMrmGpDaQBj/DrgPBplI/+xTppw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720019467; c=relaxed/simple;
-	bh=3wjTP1DBKceOOiIIRZ+CtbjKJjvmYWz9hXD+GkONhlo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=G6G+R5c7NE25FndVIBgOc4IPngj3zYC1/N7yQ66Ok0Xu4hMvnLhF46g+w2n/dN9K3lpuhxo9HLB7USjZM8m+NBbUlc5oDHSFUuh5QmnsNA61hxC/TdcwRFp1peKFSyvhojOw2UvlHCj0lueJ5+jMuiDSEFocRVRxwzPAfoxPriM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QctYtcqB; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1720019783; c=relaxed/simple;
+	bh=7FMn/uRg0zYfw3DQH1Sz/pojM+8pV3loh/mbtGw+Fm4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QVqWVMyoiDEcA9dukxUg9euNOnbedMXdXIyUxt50r/VAuGQM8Un6UiFSDWGNNQnTXLlcxSlJnlLwh8CfEJYwrooY6rHZU7LueR7Gsol1479wxL/YUVlq28d1FFVaKLx750QsMearbtFPEF/yDL/LnOc416J7j6TewIr9xmtU4vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=F/TChOj+; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QctYtcqB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720019462; x=1720624262; i=markus.elfring@web.de;
-	bh=uzXyAXmbJBxGH6PQ3hVx3H9XYijhY9dW2zRghJjaRTI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=QctYtcqBAc9Z7SyNbdJh4kGMRJx+WhM3exw+AS54JsJAzzZq4gkRLIQRZBh/ZNdb
-	 uI6gZykd6BzQo4orusmIJM/tWoGmoNRyGzcDykFjb5lQkDAGkaqEFb+uHGM8dNrAn
-	 2BpIRCqL7Z3ZboCPKX+cMjk6Rrj/FmDtQFTZa38sM+nDycmzezFBDj3M4rzqdUoHG
-	 Nh4Aw7GxsMH7bQA4ZL3147x892CPOhKKfxjqf/XRsH4oy16Ht/dX7qjNmTsYqNy8/
-	 SORh5RcMOBzieCuU5x1d+X6LLZ+eEb02Pm6ZhTwTmDKZX0IygU7i8wz7JytqlfmHu
-	 gD1IPlNrNCu6L2bEIQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Ml46w-1rzp832BZM-00ekp4; Wed, 03
- Jul 2024 17:05:15 +0200
-Message-ID: <b0fe50c3-9279-4225-aad5-2869b335fe53@web.de>
-Date: Wed, 3 Jul 2024 17:05:14 +0200
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="F/TChOj+"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=6Pvtr4CL3nBCwnXoyeyqTuDH9oRlsRjo2dtNGYFj5Ks=; t=1720019779; x=1720624579; 
+	b=F/TChOj+kldVL4qjJxBxCohEnwgii6ad0clG+V8T0KJKorBpRTV5RRik+zLk/d4F9/r06SwwejT
+	xUdBzw57lCxjrIGtqTor+cXOzVgKMxKPeP5QNqeqxZH9Lhccit9gGlPEB8HW/KZdp5y8zlhfBKrh7
+	XAceUqDm9rvmSXmIaj7d0cOFAfuJeu6y7D3g3aVkHxAJo5iFs+j4J42N1JF3bgzEfw/stgyEki6l8
+	DphxZNmBP6Ws4Dmv0kJ/UejncXX8nk42U1kfIxi2atuCUtXPiFb2JG5rIBMtCKQsq62PoyhM+JWWx
+	noXj8xwkCXpLb4HuJsrfS8T3WPQ8Ic7ytXMg==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1sP1eU-00000002G2P-0ZsP; Wed, 03 Jul 2024 17:12:10 +0200
+Received: from tmo-084-6.customers.d1-online.com ([80.187.84.6] helo=[172.20.10.3])
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1sP1eT-00000003lh1-3VTh; Wed, 03 Jul 2024 17:12:10 +0200
+Message-ID: <5473f57a21639724e6277c3e271fc46ea5f62ed3.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH] sh: push-switch: add missing MODULE_DESCRIPTION() macro
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, Yoshinori Sato
+	 <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>
+Cc: linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Date: Wed, 03 Jul 2024 17:12:07 +0200
+In-Reply-To: <20240702-md-sh-arch-sh-drivers-v1-1-2c5d439a5479@quicinc.com>
+References: <20240702-md-sh-arch-sh-drivers-v1-1-2c5d439a5479@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Haoxiang Li <make24@iscas.ac.cn>, linux-hyperv@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Andrea Parri <parri.andrea@gmail.com>,
- Dexuan Cui <decui@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
- "K. Y. Srinivasan" <kys@microsoft.com>, Michael Kelley
- <mhklinux@outlook.com>, Wei Liu <wei.liu@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240703084221.12057-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v2] drivers: hv: vmbus: Add missing check for dma_set_mask
- in vmbus_device_register()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240703084221.12057-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:YV8ws4IVXhh8faxR3kOPPdm6RfB/oTFu1GWuLpn3YbmM6sIdPrS
- kdcANEgP8Z3mzIkApf8ZC6F+eE8H9zgChVOZllxO5YZyDBJz7IvNo2qG7WZgbV1FEo/YUZx
- En6C+uRQWZKf47+Fgyqh7vgGCu8V+2e07I/2hNOm/g7UJknTRyTAscOnJG+1QSKMHoQuMxQ
- DH1aX6qwRzRq7oCWtKbTQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:njd83SA+1ts=;J++nmAq9qfV+/27rRiJIp7+2skC
- ie7foP98eRndAw9gUKDk3/WRDjb7nlNxefeJLjVZakxQyUUScjeabFmhN8y4YEBlfvqIgbiEp
- KPWTpuOYnD1/EArT0dYcenbLcWv8sjapAypkUOzyrxC0QVk8ZbCdWezbK+K3EG8tr3FwuenQY
- 14CLBPN7IlmhOa041iu7KW047zdTuG7NZalH5csWhpX91GuZkFKQhoNPVoW9waBQjaTzb4nyu
- jq0XJWtMdN/q2F+1s9EEspSgpqSK4oZHxx/aPGq9M0W8698cglHJV/fDkbyOlM1z5p3iA1Onv
- EBXX9y1GZmE5yXOeKicPzEFGDr3eDiBdMHQ6rcMmHxB8xpxGHcNAXdWdFokSE++jZpiojWzxB
- GxJGttL9jCv4COvG0PK1y9hnTdUH+mi5gGnAAgVaNwoJJv1mvSNjegmgMWksRHTaTfgdroxs4
- 5b4rXt8zBwhOjCvuOHu6EM8wx+OrhviaufEY1AvOryfnqreFIGN8soeaGvfTBZJ49QILoD7/c
- T6L8/W3jHqlL5B5dmouUk+y2n23JwdfzzHX85AstyF7nmQu42rrPNpAhHhg0Tvd95MVk/Ahop
- 2lpP24KXemslIloJjLqPwNKLog79crjZKVDIzkv4XvJKTT+AugA6t8DHZ6umkOV1AxCPArWpD
- qTpuH5iw5d7GEm28JtTW92Nf45Uo9nQM7gUWvuLg0JWe9rRe1edMIih5ViQ1cn/ppS9kB1hXK
- m6M+gTkoCrKx4wGSHv1lMaGB0POF22yFUY3SV5G+tTigD7oq7InFz3Bfm5v54I6/9cDoeh5Y/
- tbSYpyOkwHymqUMLqwj/jpnEGADY4DBwejG2RmYLuqliQ=
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-> child_device_obj->device cannot perform DMA properly if dma_set_mask()
-> returns non-zero. =E2=80=A6
+Hi Jeff,
 
-Can the repetition of another wording suggestion influence the software ev=
-olution?
-  Direct memory access can not be properly performed any more
-  after a dma_set_mask() call failed.
+On Tue, 2024-07-02 at 12:29 -0700, Jeff Johnson wrote:
+> With ARCH=3Dsh, make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/sh/drivers/push-sw=
+itch.o
+>=20
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>=20
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> MODULE_DESCRIPTION copied from file prologue:
+> /*
+>  * Generic push-switch framework
+>  *
+>  * Copyright (C) 2006  Paul Mundt
+>  */
+> ---
+>  arch/sh/drivers/push-switch.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/sh/drivers/push-switch.c b/arch/sh/drivers/push-switch.=
+c
+> index 362e4860bf52..1dea43381b5a 100644
+> --- a/arch/sh/drivers/push-switch.c
+> +++ b/arch/sh/drivers/push-switch.c
+> @@ -131,4 +131,5 @@ module_exit(switch_exit);
+> =20
+>  MODULE_VERSION(DRV_VERSION);
+>  MODULE_AUTHOR("Paul Mundt");
+> +MODULE_DESCRIPTION("Generic push-switch framework");
+>  MODULE_LICENSE("GPL v2");
+>=20
+> ---
+> base-commit: 1dfe225e9af5bd3399a1dbc6a4df6a6041ff9c23
+> change-id: 20240702-md-sh-arch-sh-drivers-40af731eb66c
 
+Reviewed-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 
-See also:
-https://elixir.bootlin.com/linux/v6.10-rc6/source/kernel/dma/mapping.c#L80=
-4
+Thanks for fixing this. Will pick this up later this week.
 
+Adrian
 
-=E2=80=A6
-> Signed-off-by: Haoxiang Li <make24@iscas.ac.cn>
-
-Under which circumstances will applications of the Developer's Certificate=
- of Origin
-be reconsidered any more (after three different names were presented so fa=
-r)?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n398
-
-
-Would you like to append parentheses to another function name in the summa=
-ry phrase?
-
-Regards,
-Markus
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
