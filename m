@@ -1,111 +1,80 @@
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 011394DA14;
-	Wed,  3 Jul 2024 07:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159D7142649;
+	Wed,  3 Jul 2024 13:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719992297; cv=none; b=Pf5yMfyu+tduwYBze8rQsBkgW7SJoBYYN+VF1EXfIXyjmdOTfoghIPS+D9G3D4XazHlBIHrmZtQMgTco4czOcQ6cRCyPkAZczDX3q5ZeHmg3HHNw/Bzde+MBhvNusFzSDylzfw/QUHpBNO4GKMtZ/4DRd4n7kobVVm2RZrJT1GY=
+	t=1720011731; cv=none; b=ZnQOTX9aROTwSNVM36Mm0v77uICd4J0HpHMzQJHY0PBZFbo+tVAPgk0gTRmKW/izluEWQzo9XSC3ePg3DLbhWLjwafvtyvi+rUTMGpLs0DCk/gq3/V05CjZQ+5f0dvwnSyQObjqqUoa4Vqaf+cxVn9TAGpOtupX6o3lQpf8Y1EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719992297; c=relaxed/simple;
-	bh=5jagiKmtXakGpPGsAgYG6voU1kDL/YWcFy95b21TfZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type; b=bbC1h/M+vOGDJZiqtIUcJxo0Sadvxf9Ll+4fOwYxXbm6FryneVFXxUbsLcYfHkuTk/qd2MoVa1pHcV3yK8oy6fHxSkzs0kw2bx2UpFEje/QPu4hgEaWK6U/PFKI2AbgKxojAd8JneLSitmPkPOcEu3IFHcX+VHXkzORHmY4Fw10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from [172.30.20.101] (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 2F029604B3B70;
-	Wed,  3 Jul 2024 15:38:07 +0800 (CST)
-Message-ID: <114387f0-02c3-b4bb-7b79-6589e790add3@nfschina.com>
-Date: Wed, 3 Jul 2024 15:38:04 +0800
+	s=arc-20240116; t=1720011731; c=relaxed/simple;
+	bh=TOADNGjX56WX/yUPHZlqe4KeE8KUG2F1J81HJ0Nduqg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EAFP7JgJEZIH5HWtVAMyleKz+8rxOW4V4JAFpLjUtiNAu1m96v7xVQlPBNZdaRroU4bFS/FQUrUcFGZY5Jmas3WOwKIaEvqZLZLrm/SGe5sBD4SEsZynJ4MAINoTeT/FpGqE3MpI2qdbL2OZBJor1VomjKqmMEVUPvO0Av7vWVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=B3QwUuHM; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="B3QwUuHM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720011728;
+	bh=TOADNGjX56WX/yUPHZlqe4KeE8KUG2F1J81HJ0Nduqg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=B3QwUuHMiLSNKY8w9FvSDHWQGC8RtMk2lCdQq680c5dTUYDC/xAUAToJfsYk4gQqd
+	 Vka1X3ruIcwYyoVLk7s6JNyUtCMW0ib1JuQsk40T2B5QvFINWA3n0Augx1T7UNBjhc
+	 SLyJ9mqrkTvrCFepImK9vz23Ap1/wd3ktUlbZbeI6Dx9oXQ74s4knmj8TLq0C+9sG3
+	 aOBDnN1SONNb81JtpD6lX1CHNFL3s6uPPvRizudbF2VQ+boZioAzfZmSdKsfCoAkvJ
+	 1uDZiztl0i4Jsj/j1OoazfDi8AqdtGNJnQYAyUnoj4QNTQcPOxN60sZfVpCSaWy//R
+	 Tow4qrC+Y1+Lw==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id AACA43782194;
+	Wed,  3 Jul 2024 13:02:07 +0000 (UTC)
+Message-ID: <59b24780-3c17-4e1a-ae3c-14584f9f5101@collabora.com>
+Date: Wed, 3 Jul 2024 15:02:07 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Subject: Re: [PATCH wireless 1/9] wifi: cfg80211: avoid garbage value of
- 'io_type' in brcmf_cfg80211_attach()
-Content-Language: en-US
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>,
- Kalle Valo <kvalo@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, johannes.berg@intel.com,
- kees@kernel.org, a@bayrepo.ru, marcan@marcan.st, quic_alokad@quicinc.com,
- zyytlz.wz@163.com, petr.tesarik.ext@huawei.com, duoming@zju.edu.cn,
- colin.i.king@gmail.com, frankyl@broadcom.com, meuleman@broadcom.com,
- phaber@broadcom.com, linville@tuxdriver.com, linux-wireless@vger.kernel.org,
- brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] soc: mediatek: pwrap: Constify some struct int[]
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ matthias.bgg@gmail.com, fparent@baylibre.com, fchiby@baylibre.com,
+ s.hauer@pengutronix.de
+Cc: linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
  linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-In-Reply-To: <19076e6bec0.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+References: <cover.1719652155.git.christophe.jaillet@wanadoo.fr>
+ <626783bb264a8b3b0c8cd7e1d9f9b241f0a494b6.1719652155.git.christophe.jaillet@wanadoo.fr>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <626783bb264a8b3b0c8cd7e1d9f9b241f0a494b6.1719652155.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 2024/7/3 12:42, Arend Van Spriel wrote:
-> On July 3, 2024 3:42:18 AM Su Hui <suhui@nfschina.com> wrote:
->
->> On 2024/7/2 23:39, Arend Van Spriel wrote:
->>> On July 2, 2024 5:29:27 PM Kalle Valo <kvalo@kernel.org> wrote:
->>>
->>>> Arend Van Spriel <arend.vanspriel@broadcom.com> writes:
->>>>
->>>>> On July 2, 2024 3:57:27 PM Dan Carpenter <dan.carpenter@linaro.org>
->>>>> wrote:
->>>>>
->>>>>> On Tue, Jul 02, 2024 at 08:24:44PM +0800, Su Hui wrote:
->>>>>>> brcmf_fil_cmd_int_get() reads the value of 'io_type' and passes 
->>>>>>> it to
->>>>>>> brcmf_fil_cmd_data_get(). Initialize 'io_type' to avoid garbage
->>>>>>> value.
->>>>>>
->>>>>> Since you're going to be resending anyway, please delete the space
->>>>>> char
->>>>>> from the start of the line.
->>>>>>
->>>>>> It's weird that brcmf_fil_cmd_data_get() uses the uninitialized 
->>>>>> data.
->>>>>> It looks like it just goes to great lengths to preserve the original
->>>>>> data in io_type...  So it likely is harmless enough but still a
->>>>>> strange
->>>>>> and complicated way write a no-op.
->>>>>
->>>>> Not sure if it helps, but I tried to explain the reason in 
->>>>> response to
->>>>> patch 0 (cover letter).
->>>>
->>>> Would it make more sense to have just one patch? It's the same issue
->>>> anyway.
->>>
->>> Yes, but I would solve it in brcmf_fil_* functions (fwil.[ch]).
->> It seems you will send a new patch to solve this issue.
->> And I guess there is no need for me to resend a v2 patchset or just one
->> patch.
->
-> I am not entirely sure. If both gcc and clang would warn about using 
-> uninitialized data I would be fine with these patches rolled into one.
-It's sad that gcc wouldn't warn about this uninitialized data. And my 
-gcc version
-is  10.2.1 20210110 (Debian 10.2.1-6) .
-By the way, I found a funny thing about this uninitialized warning.
-Just with the patch as follows , gcc will give a uninitialized warning.
+Il 29/06/24 11:19, Christophe JAILLET ha scritto:
+> These arrays are not modified in this driver.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+> 
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> ======
+>     text	   data	    bss	    dec	    hex	filename
+>    45528	   8532	     16	  54076	   d33c	drivers/soc/mediatek/mtk-pmic-wrap.o
+> 
+> After:
+> =====
+>     text	   data	    bss	    dec	    hex	filename
+>    52664	   1384	     16	  54064	   d330	drivers/soc/mediatek/mtk-pmic-wrap.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
-@@ -130,6 +130,7 @@ static int brcmf_c_download_blob(struct brcmf_if *ifp,
-         u32 status;
-         s32 err;
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-+       err = brcmf_fil_iovar_int_get(ifp, statvar, &status);
-         brcmf_dbg(TRACE, "Enter\n");
-
-         chunk_buf = kzalloc(struct_size(chunk_buf, data, MAX_CHUNK_LEN),
-
-It seems that gcc only issue this uninitialized warning in some sitution.
-I think it's worth a patch to fix this uninitialized problem.  :)
-
-Regards,
-Su Hui
 
