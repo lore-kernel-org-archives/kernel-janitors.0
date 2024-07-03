@@ -1,57 +1,79 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656EF55C08;
-	Tue,  2 Jul 2024 22:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 58CA51FB4;
+	Wed,  3 Jul 2024 01:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719961024; cv=none; b=PzVPXiMhuQWozELIm8XnRS6VuMRqi5hjpQSOKoHpyeZqZMN/ZmucXqylkxyIhuON5GspIhMKAIIlEXgGcP5UaaB8tUtfXK91EiMuUeu3Q6vXNzQ4lFps44h42CZyPVGUowqF8amHQEoP0P4vlCuBbTXAXygD+5NQl8zXGbn/E4Q=
+	t=1719970926; cv=none; b=GfqIjeh0II1/TcimWm8KLHdAZ00WhmiKB1KYC2FmzY1aLxu9bZnJrCWe1KZXX7y0Lkcf5tcfYHY8borugcHKT5AymNKF9jWJZDFQq/gdwzFGssK55BYm59mxKG5UAluWWNCL4yD86Xnv4PKQtnaYQWW0z2xabfor10xecbI2Gpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719961024; c=relaxed/simple;
-	bh=9eLaRUJTytdJBsS6cjn1nKuveI+Cjm1ZYcQflF414qg=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=M5FjxPHQEiSeSqvp3spMqEa9A2fi+kRb+YqjszfEtmPu0w5v1JiygAhsdtRHGoSjqaTfYOQ3H+On8fvhQQNZbnTEty+mBMs86ej+wnVxitsROBoXriyC2gC7wqh/Ic4b/hXkkJly26A4FuDCGQgitWEKpIfTv4dXu7uaaNuTX7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/fY6sgV; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/fY6sgV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFC1EC116B1;
-	Tue,  2 Jul 2024 22:57:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719961023;
-	bh=9eLaRUJTytdJBsS6cjn1nKuveI+Cjm1ZYcQflF414qg=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=i/fY6sgVL/8B09EFtm9TkqipL9U/TBoR1cCJ+PZPJo9PYVHezr3i8IJA7RRHl783R
-	 FpmyzcMaYb3EX6+qpVYzFbuE3MBwmBTQw+FXAbwqw6pb1DXV8awv5TtHXm0hDn8xwd
-	 5AAqDJzSaxkvC3xhM8NbBeosxLF7s8Vt8IJl8VIdffbZqsM+wxIaSFY6BWk0QUbwHD
-	 w8Ik0mqYRK/IamDZZ4YedJEO8V+GZAkhEtV4x23abc599l9JDSJ3EZo5TCaJlxIV9z
-	 M1s+4zIj4Gp/9foU1jQmuna0fg5XhfM/Qy5hYypqYneVOWHESAL7sfXy2YMtqEfxdT
-	 knrSP/Z9qUeiA==
-Message-ID: <567ef66c0a508bedd98e65cbfbd2d76e.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1719970926; c=relaxed/simple;
+	bh=/0w+i+Lr65ap+CUE0bx3iXZmGu8G7R70ai0Z4Ilzjm0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=ZxLQj4DWGiSANux5JNSndL3KsL3Jp9TKBNyyl9Kwl8AUkv6ZDq5ETAn6lvJakXjnCdXOMGlqV2sU+nbVy37uEVeNnaBeU8Q1oHRgwxdthBtf4JNYdjWsMQMXqnu9aD+DaPBOc2FZkyzlv83L0aNs/o44VZnCGmkMkuvitJg45yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.101] (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 515B16047B688;
+	Wed,  3 Jul 2024 09:41:46 +0800 (CST)
+Message-ID: <36cef2a8-10a3-928a-d962-3599333d9ac8@nfschina.com>
+Date: Wed, 3 Jul 2024 09:41:45 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240613-md-arm64-drivers-clk-versatile-v1-1-6b8a5e5e00ef@quicinc.com>
-References: <20240613-md-arm64-drivers-clk-versatile-v1-1-6b8a5e5e00ef@quicinc.com>
-Subject: Re: [PATCH] clk: vexpress-osc: add missing MODULE_DESCRIPTION() macro
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jeff Johnson <quic_jjohnson@quicinc.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Linus Walleij <linus.walleij@linaro.org>, Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Sudeep Holla <sudeep.holla@arm.com>
-Date: Tue, 02 Jul 2024 15:57:01 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Subject: Re: [PATCH wireless 1/9] wifi: cfg80211: avoid garbage value of
+ 'io_type' in brcmf_cfg80211_attach()
+Content-Language: en-US
+To: Arend Van Spriel <arend.vanspriel@broadcom.com>,
+ Kalle Valo <kvalo@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, johannes.berg@intel.com,
+ kees@kernel.org, a@bayrepo.ru, marcan@marcan.st, quic_alokad@quicinc.com,
+ zyytlz.wz@163.com, petr.tesarik.ext@huawei.com, duoming@zju.edu.cn,
+ colin.i.king@gmail.com, frankyl@broadcom.com, meuleman@broadcom.com,
+ phaber@broadcom.com, linville@tuxdriver.com, linux-wireless@vger.kernel.org,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <1907419a888.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Quoting Jeff Johnson (2024-06-13 14:55:17)
-> With ARCH=3Darm64, make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/versatile/c=
-lk-vexpress-osc.o
->=20
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->=20
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-
-Applied to clk-next
+On 2024/7/2 23:39, Arend Van Spriel wrote:
+> On July 2, 2024 5:29:27 PM Kalle Valo <kvalo@kernel.org> wrote:
+>
+>> Arend Van Spriel <arend.vanspriel@broadcom.com> writes:
+>>
+>>> On July 2, 2024 3:57:27 PM Dan Carpenter <dan.carpenter@linaro.org> 
+>>> wrote:
+>>>
+>>>> On Tue, Jul 02, 2024 at 08:24:44PM +0800, Su Hui wrote:
+>>>>> brcmf_fil_cmd_int_get() reads the value of 'io_type' and passes it to
+>>>>> brcmf_fil_cmd_data_get(). Initialize 'io_type' to avoid garbage 
+>>>>> value.
+>>>>
+>>>> Since you're going to be resending anyway, please delete the space 
+>>>> char
+>>>> from the start of the line.
+>>>>
+>>>> It's weird that brcmf_fil_cmd_data_get() uses the uninitialized data.
+>>>> It looks like it just goes to great lengths to preserve the original
+>>>> data in io_type...  So it likely is harmless enough but still a 
+>>>> strange
+>>>> and complicated way write a no-op.
+>>>
+>>> Not sure if it helps, but I tried to explain the reason in response to
+>>> patch 0 (cover letter).
+>>
+>> Would it make more sense to have just one patch? It's the same issue
+>> anyway.
+>
+> Yes, but I would solve it in brcmf_fil_* functions (fwil.[ch]).
+It seems you will send a new patch to solve this issue.
+And I guess there is no need for me to resend a v2 patchset or just one 
+patch.
