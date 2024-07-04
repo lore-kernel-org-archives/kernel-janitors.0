@@ -1,81 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6E11A01B8;
-	Thu,  4 Jul 2024 07:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDB51AB8F8;
+	Thu,  4 Jul 2024 12:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720076884; cv=none; b=R+JlhXxU+xAlAlD3Q3gVw0710JB9UPTghL/JgkdjA3XOXUKQSnY6FoVChB5qazKVpZaHtY+cu5V1bFwIKfnZOfdqvmPVdvuCPDofX9fbqewEdGCi4/nKUX9tQcWmKmLnPHllkJx+NDRZr4hmkosUxmASFNX9wau5Cz5MIDVnN+A=
+	t=1720096352; cv=none; b=bocoPNqg3DpSNTdtVJr25FvbNJI9yvUJzOSBnP6jlQHW+dyBmQikYOx7Nsa+48LbcVJqEykX6/JIJwUiNUkBc3k84k8BeSwIKf+G9dmN+dZVpcMpB2aXlPI0H0FMV6QEFD8lyPUlISnavO5fc/uPQaqgg4nPJbnjDQ/UAQEtrEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720076884; c=relaxed/simple;
-	bh=beE8qyS6id19OTmayM3RapJclxp80MYplB370wW4Z2M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZxgL5HnN8piQTQvNgVr+ETm5kN5m5kzNVIS60xV++4DaQIjwjwXAjma8fTiMnB015bzr/h9L6UOSajPwpJqy313gp8HvkCqkoEsqbs4xYweZJTn50caS1C6rSXHEnXHFkmQTC6cbUJK5N1zpQSwu399y+Uz61qxbD2836TGZFUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FcvvSj8j; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720096352; c=relaxed/simple;
+	bh=IzeWJYYp6m5cyiUP0hsBAU7OPxm6xFSfbz0WFTaEY1k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kEPKgiPOgQZdackM9cJvyZr3pH28WB9epLJUht5g3iEiEu6skjGuN7XD0tEQfHLixrSmsvJgEgyQLkIqytgoDiQJyyJbneG2QLHsGspfp4piG8UATiF2Ff2Smnt93/cUMgb7etLE0dTGHQNK8tdk/IJYyIiNI0iigFLZzXbe2pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=eC9J/ndt; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FcvvSj8j"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90E6CC3277B;
-	Thu,  4 Jul 2024 07:08:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720076883;
-	bh=beE8qyS6id19OTmayM3RapJclxp80MYplB370wW4Z2M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FcvvSj8j/h5g8AZHZeMnJs89FLtc/qBGttkwFQVIMfGKpgNvI6zrj67QFpgZ5XJN6
-	 XElwNLBPznxK/EaPLMFhJOQSdjJr085xoT8xe7YZaZu0QUPR4AShFOA0/QjFxTG8bS
-	 ebri7yz7FZ7VsdpeNsGZ3cXQwCAQoOeKOXyflcQ6oakKYqIMg8nS/Ht3QJptvJzdaI
-	 Hgk7hcj4N/KCQk/nfWxkcdMNNcnjctofot79cZG6vuwv9/LpITxmv0xQGXG2wqA0/h
-	 f/yP6n2j/+/fL3d787wIun9SOBqizZDHBuGUKBGW9OGlv9tQXKmyjonrd5c0rYE3at
-	 1zlZcGDfRn0Zw==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ea1a69624so140975e87.1;
-        Thu, 04 Jul 2024 00:08:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWDG6ya3ogSSPlZIhf3wB/hT50Nm5u16yzdLs1irzkc7Dug9hAKbIxijp3pLfqwqCLy2oO0TnnDee4L8rGVhYD1gZ3Ie6ioi6RZeryT0eSsXQ5mAwBVvHlWPUVZef95RsiM1ixuixE9owQk2qz0hzKJDt6A7L35YCnX7me6H2nC7bnTQiTZFAla1Q==
-X-Gm-Message-State: AOJu0YzN+V4nvcFn+n+Ple2csh5F4w2FEwx1pea3pWNq6BUYifOIll0X
-	U+otI+c2MNA1ifOPBvtq+302RU1QG8pxQbujH1DOszBjcELa4WsrIlTNBAfkmXr3NFryOHtPmSQ
-	bDFkblugVjjk4ixPwfJqy0o5/Fxs=
-X-Google-Smtp-Source: AGHT+IGh6+P+1EiIoM58zfZVkEca2e7u3b68XGi1cyEf6GxHfJUbwvlYuhpttGC7c4v/TpT1nlDVYxqDa+2eLeP0N4M=
-X-Received: by 2002:a05:6512:3aa:b0:52c:8fd7:2252 with SMTP id
- 2adb3069b0e04-52ea061f61emr424036e87.11.1720076881971; Thu, 04 Jul 2024
- 00:08:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="eC9J/ndt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1720096348;
+	bh=Kg76KaOIbqnAt68SmtPouOnB34EHvYcOG9w3BrvhJDM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=eC9J/ndtD3JZYC5bXcIUuL9baGS+FEO9OPeVGtvMcAfVWSbN1jia1Em79xmhsbey1
+	 ix9jF1OFtfcOlZ/PsqE/Cvdjd8DLaWVIBdk7XuVWxnJoX2/CWaCi5AkFef0js7DppK
+	 OC3c5wY7L7QYjUDAEc6m9bBbylPc/VqSre7llqaC2XyjUOi+CBaaUqaUmWFNRlOpUz
+	 0ML8tWrrT5/3TQOqY0c4e9+cb8ag/vk/IqVx5siUeoR33KgCPUaRrvakLHSmPIRUQT
+	 phQdAm+PVhNIF9AIn6IEESqQLrzgtxLQyggahFovqM4i3jtiA8bOPJTHCJeF4HNGcm
+	 HfMLzR0cSNYhQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WFGHt5Rmjz4wbp;
+	Thu,  4 Jul 2024 22:32:26 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, Nicholas Piggin
+ <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Naveen
+ N. Rao" <naveen.n.rao@linux.ibm.com>, Scott Wood <oss@buserror.net>, Arnd
+ Bergmann <arnd@arndb.de>, Jeremy Kerr <jk@ozlabs.org>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] powerpc: add missing MODULE_DESCRIPTION() macros
+In-Reply-To: <2509b43d-630c-4295-8330-5976677bf8bc@quicinc.com>
+References: <20240615-md-powerpc-arch-powerpc-v1-1-ba4956bea47a@quicinc.com>
+ <2509b43d-630c-4295-8330-5976677bf8bc@quicinc.com>
+Date: Thu, 04 Jul 2024 22:32:26 +1000
+Message-ID: <87y16hibhh.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3727f3ce9693cae4e62ae6778ea13971df805479.1719173852.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <3727f3ce9693cae4e62ae6778ea13971df805479.1719173852.git.christophe.jaillet@wanadoo.fr>
-From: Song Liu <song@kernel.org>
-Date: Thu, 4 Jul 2024 15:07:49 +0800
-X-Gmail-Original-Message-ID: <CAPhsuW5=sZTm2Uwmz7dZ-4v2vqPbS=RygDeZ535ef7yk4NCjsg@mail.gmail.com>
-Message-ID: <CAPhsuW5=sZTm2Uwmz7dZ-4v2vqPbS=RygDeZ535ef7yk4NCjsg@mail.gmail.com>
-Subject: Re: [PATCH] md-cluster: Constify struct md_cluster_operations
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Yu Kuai <yukuai3@huawei.com>, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-raid@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Jun 24, 2024 at 4:18=E2=80=AFAM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+Jeff Johnson <quic_jjohnson@quicinc.com> writes:
+> On 6/15/2024 10:06 AM, Jeff Johnson wrote:
+>> With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/kernel/rtas_flash.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/sysdev/rtc_cmos_setup.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/platforms/pseries/papr_scm.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/platforms/cell/spufs/spufs.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/platforms/cell/cbe_thermal.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/platforms/cell/cpufreq_spudemand.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/platforms/cell/cbe_powerbutton.o
+>> 
+>> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+>> files which have a MODULE_LICENSE().
+>> 
+>> This includes 85xx/t1042rdb_diu.c and chrp/nvram.c which, although
+>> they did not produce a warning with the powerpc allmodconfig
+>> configuration, may cause this warning with other configurations.
+>> 
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>> ---
+>> Corrections to these descriptions are welcomed. I'm not an expert in
+>> this code so in most cases I've taken these descriptions directly from
+>> code comments, Kconfig descriptions, or git logs.  History has shown
+>> that in some cases these are originally wrong due to cut-n-paste
+>> errors, and in other cases the drivers have evolved such that the
+>> original information is no longer accurate.
+...
 >
-> 'struct md_cluster_operations' is not modified in this driver.
->
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
->
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> =3D=3D=3D=3D=3D=3D
->    text    data     bss     dec     hex filename
->   51941    1442      80   53463    d0d7 drivers/md/md-cluster.o
->
-> After:
-> =3D=3D=3D=3D=3D
->    text    data     bss     dec     hex filename
->   52133    1246      80   53459    d0d3 drivers/md/md-cluster.o
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Following up to see if anything else is needed from me. Hoping to see this in
+> linux-next so I can remove it from my tracking spreadsheet :)
 
-Applied to md-6.11. Thanks!
+I have this in my test branch, it will appear in linux-next next week.
 
-Song
+A spreadsheet seems like overkill ;)
+
+cheers
