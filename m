@@ -1,65 +1,68 @@
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41ED91AED21
-	for <kernel-janitors@vger.kernel.org>; Thu,  4 Jul 2024 15:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949E81AED55
+	for <kernel-janitors@vger.kernel.org>; Thu,  4 Jul 2024 15:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720106377; cv=none; b=XiQi/UtLorAtkbAAfjiLaagWq0HmKdQvPyLw3K/7vqtlc3rSrOfGSu68SCt6Fk/ucA1dqqGWxcroCW3ah7EpSuc3QENh4znHTFw2wETf3+TFIoM593CA/p1K+YM/EUzLzKrI7TAH1nIAk21vCG+kDD7x006MxVnTCV4PsgX4OEw=
+	t=1720106391; cv=none; b=s/qkEBHw+ViOzpC5i+G2t1USAzSbtKujZahgFrU/BxyZllci+vtbjQOkN0+LV+BKU+S6PwTP8BRDivtN7c1CsyMxx7NpBSqQb7vzATR1oFbod8TQJKJce89NlBYV/HHPkDSEu0dO6IViw9fR7ew9Hlho95lXUJH/krEFnFcsBhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720106377; c=relaxed/simple;
-	bh=NLb6Q+ANHQ06rpfkujhFNjqrqimEb0WH08jhVQZ/wu4=;
+	s=arc-20240116; t=1720106391; c=relaxed/simple;
+	bh=rTi+HSfP+CDmR9Y8iR5mkNNK7g6n1NJse0dPKt9usAk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IKONBU2rTUsyL4H7PVSLYCcbixWjV95XLMi+w0F+IAHIH7lLOKOHbpP40GegOl7gn5/aNOgVbIr0jOWO2A4dsbTYn8beh4ZbyKl2AYk6lNzfwFzZnSYs9PWHcds1r3goAPi6AtlSt04jG7RV/YxCQn94mGAr80o3nu+o+/34ARE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xQMDHXhm; arc=none smtp.client-ip=209.85.210.46
+	 Content-Disposition; b=QJczhAaXDgaCvbWfj3yHvEoDaeiZumEDW2xSa80xfakCSjKNzltCY8xya9g6wEufVz1U0Qziwz1owcoqza/QclxYlQa3DhVLgD5wjJ+BypUYSTKzp4GMJwN0YluMVQFNM9WbPCdeIc1G3X8CKpatxaix4RMDAcKQNNW/2kJzAwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UXzjIbhW; arc=none smtp.client-ip=209.85.167.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xQMDHXhm"
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-700cc388839so495665a34.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 04 Jul 2024 08:19:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UXzjIbhW"
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3d850109679so433781b6e.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 04 Jul 2024 08:19:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720106375; x=1720711175; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720106388; x=1720711188; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=SBnMvG37dKuOC06S9766u4IZ2Y8qnimBTz3yQ0fqYFs=;
-        b=xQMDHXhm0ZN/5JPM6OySB8Vz5K6qNztm+FpCV9WPEkfP5xlUqig4JNkIAuxFMMziIu
-         igdjOGhw297xPnix49EX00tgvf9rpZyNC8Ioap+9kAuemFA0HPYqZXaCfiM13MI2iaaz
-         uzUSIwsJltogYSPWxoa4z5VSgm2PyYFEmhZQE5yNNaZOT9dgZiGi20ow89dMl0YH8PLy
-         zSdwRPAW1ZRPjAbz9LI1/5AYO6/dhei0nBFT4Bmfd1N/ZwADncLlQdEbcADt9SVjUOvA
-         SmwOjjFCfQTgAlTLnkTMhwSOXLE6S/kJGiX7WVDVOzB72IHNs/g+30aG0j2NyYy5J3ik
-         /lnA==
+        bh=V+zXDUJM7lfgygxbXYWjttEkeiLpdqmsPDn2aj5otxo=;
+        b=UXzjIbhWdbJVnmk8NcCSyTsGxcyvFq8rI2NHjlztAfFJvEFpFRzOIQBo9zbc++1grb
+         +DMep5I7UP2shvYsgBq93mwvK8m41NT4PRKNMKTgUUSGV72r0fJrvQBDSOGxMsbHAyqM
+         LqsxqSi2LlYXNf7r9I9adPOcbmoiMACmUrKQ8sJJOJTNdGAU+XMsi/0pLqydeNoXYlh3
+         8FfTL8yr8Bt20+yggYZHdOTppE6hH/p2bulYSMFKOSqNYy2/a17ed1YvDDjF5tDaP26h
+         XhnzzoFx5Tpmawfqn8DHYGEqVxJMoHCNG6azd70OWOsB6XAyKSnYRLCM9SPLR6Gvg1rW
+         iCsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720106375; x=1720711175;
+        d=1e100.net; s=20230601; t=1720106388; x=1720711188;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SBnMvG37dKuOC06S9766u4IZ2Y8qnimBTz3yQ0fqYFs=;
-        b=vsjAhbJCjqBNPk7o3u+KlY/zsympesa3/4ljGZnbaeS8jpXj6l++MrJr9aq097CicK
-         hTUCjP7SC70TrULx2S3wp7S+HZxnJTIDon60sylOwlUnFvAyqChPnaMGoUwHGci/kutH
-         FprDf0m62nj6itCbeQiwohNgIifE706VSnGX9Jus2C96d8bUZ5wyNVkBP2ia0UHSOMj0
-         4paEhoOJVI5I/op4R/GzJUalDxkZOxhV1ZEfzllvKFP7+8yUEQqWKxYjc2JLvjihqBQS
-         NEAOWLLstUdjCLeRhkEy9KLhLuYXF79pCS58FQwU99AVVJXL/fLiOEtUo/MkgxrkxpJ4
-         /Rpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLQiJWsf34U7+MDIXoJeriKDLJW3atFYwiIcMRBh8DibJxU1Y2R5zIfXJZIsEc21LkCU7C8bUI8P4PgHdKoV7z0hR0SxETiwWa11z6Eg92
-X-Gm-Message-State: AOJu0Ywwe2p3Nfh9zFovkGXGaO5hBf2NU++fZzHTLriFzl7sS4MvLmsf
-	h/Jp+J/DyaUTC3yVoUBINj65VTSGqLuU6IsbcT5UUSApg2+3oFJfQGyCs+kXKW4=
-X-Google-Smtp-Source: AGHT+IGELc1XlTyU7hBE3KqfD3MGbDcxlgY/gdOmWK9vwGIPWbgvvPgc53z9nomGTso73+WzVnHE1Q==
-X-Received: by 2002:a9d:684b:0:b0:700:cf81:3d75 with SMTP id 46e09a7af769-7034a737ef9mr2275095a34.4.1720106375459;
-        Thu, 04 Jul 2024 08:19:35 -0700 (PDT)
+        bh=V+zXDUJM7lfgygxbXYWjttEkeiLpdqmsPDn2aj5otxo=;
+        b=YPXY0YJoQwSGd5EBAQp3f2kkNe5JBxEmFtXemvAgXb4xu7rgQwT2JCA8p/WAd3xhUQ
+         jRHbIlK1M9oHhYCreoUecqyLlEW6hzqLdsiS05ODii0WorjEMtKiX5YNduOG1xCJJkLJ
+         KGOUg0L4m+zeuRp2TShMQI+UQgCMqZf+Wxn9VZ/HFfv3CXosausrYltTUlxhwi7trCXT
+         DovSDMdOukqtNFVcsgrm0oBM1jQfKukog4+RfY0AQ6DpZhWYVf9L5EwzruEBTTgRzE6s
+         kngPhD3z9Xzr3MbYheTmIfjA6NhBqu26klA7LrrNPM42xz7bJeJHEWUw8l5+IMc80mG6
+         GFyA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3E2YTg5FwMrpzaqzvwbi/n5zruiqS0hn3ghMkchKvUCo1SlaFcZseE7DuMsJD/faRhXTKGCaVUwUf6Hgov2GPcgBKQrxRzDYd5l9IPlV4
+X-Gm-Message-State: AOJu0YxXvQ5+rAMBphyYgIP0ck7xS6VM69eWTS5FZwMyF8iZFUZrKS/d
+	4uZB6XlgYqHoIQ9Lag7y97HO+UjycXTKCehshC8OOKbaYNnMY/JF8KyzC+25TLpffAWVbP2wDvD
+	6
+X-Google-Smtp-Source: AGHT+IHAWyWPp3t/3hLm3p6DC0AvvzzmljGLCooD0y9pIZ4rkXDGF9k2VyEEwC6Rp+KB4ThglvcN9A==
+X-Received: by 2002:a05:6808:1b14:b0:3d5:1f50:1860 with SMTP id 5614622812f47-3d915d2d73amr612153b6e.27.1720106387688;
+        Thu, 04 Jul 2024 08:19:47 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:96a0:e6e9:112e:f4c])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-701f7ad93c4sm2426120a34.46.2024.07.04.08.19.34
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d62f9c7c51sm2442474b6e.18.2024.07.04.08.19.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 08:19:34 -0700 (PDT)
-Date: Thu, 4 Jul 2024 10:19:32 -0500
+        Thu, 04 Jul 2024 08:19:47 -0700 (PDT)
+Date: Thu, 4 Jul 2024 10:19:44 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Pavel Machek <pavel@ucw.cz>, Fenglin Wu <quic_fenglinw@quicinc.com>
-Cc: Lee Jones <lee@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] leds: flash: leds-qcom-flash: Test the correct variable in
- init
-Message-ID: <ZoWJS_epjIMCYITg@stanley.mountain>
+To: Justin Chen <justin.chen@broadcom.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net] net: bcmasp: Fix error code in probe()
+Message-ID: <ZoWKBkHH9D1fqV4r@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -70,44 +73,27 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This code was passing the incorrect pointer to PTR_ERR_OR_ZERO() so it
-always returned success.  It should have been checking the array element
-instead of the array itself.
+Return an error code if bcmasp_interface_create() fails.  Don't return
+success.
 
-Fixes: 96a2e242a5dc ("leds: flash: Add driver to support flash LED module in QCOM PMICs")
+Fixes: 490cb412007d ("net: bcmasp: Add support for ASP2.0 Ethernet controller")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/leds/flash/leds-qcom-flash.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/broadcom/asp2/bcmasp.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/leds/flash/leds-qcom-flash.c b/drivers/leds/flash/leds-qcom-flash.c
-index 7c99a3039171..bf70bf6fb0d5 100644
---- a/drivers/leds/flash/leds-qcom-flash.c
-+++ b/drivers/leds/flash/leds-qcom-flash.c
-@@ -505,6 +505,7 @@ qcom_flash_v4l2_init(struct device *dev, struct qcom_flash_led *led, struct fwno
- 	struct qcom_flash_data *flash_data = led->flash_data;
- 	struct v4l2_flash_config v4l2_cfg = { 0 };
- 	struct led_flash_setting *intensity = &v4l2_cfg.intensity;
-+	struct v4l2_flash *v4l2_flash;
- 
- 	if (!(led->flash.led_cdev.flags & LED_DEV_CAP_FLASH))
- 		return 0;
-@@ -523,9 +524,12 @@ qcom_flash_v4l2_init(struct device *dev, struct qcom_flash_led *led, struct fwno
- 				LED_FAULT_OVER_TEMPERATURE |
- 				LED_FAULT_TIMEOUT;
- 
--	flash_data->v4l2_flash[flash_data->leds_count] =
--		v4l2_flash_init(dev, fwnode, &led->flash, &qcom_v4l2_flash_ops, &v4l2_cfg);
--	return PTR_ERR_OR_ZERO(flash_data->v4l2_flash);
-+	v4l2_flash = v4l2_flash_init(dev, fwnode, &led->flash, &qcom_v4l2_flash_ops, &v4l2_cfg);
-+	if (IS_ERR(v4l2_flash))
-+		return PTR_ERR(v4l2_flash);
-+
-+	flash_data->v4l2_flash[flash_data->leds_count] = v4l2_flash;
-+	return 0;
- }
- # else
- static int
+diff --git a/drivers/net/ethernet/broadcom/asp2/bcmasp.c b/drivers/net/ethernet/broadcom/asp2/bcmasp.c
+index a806dadc4196..20c6529ec135 100644
+--- a/drivers/net/ethernet/broadcom/asp2/bcmasp.c
++++ b/drivers/net/ethernet/broadcom/asp2/bcmasp.c
+@@ -1380,6 +1380,7 @@ static int bcmasp_probe(struct platform_device *pdev)
+ 			dev_err(dev, "Cannot create eth interface %d\n", i);
+ 			bcmasp_remove_intfs(priv);
+ 			of_node_put(intf_node);
++			ret = -ENOMEM;
+ 			goto of_put_exit;
+ 		}
+ 		list_add_tail(&intf->list, &priv->intfs);
 -- 
 2.43.0
 
