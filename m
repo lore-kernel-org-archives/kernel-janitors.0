@@ -1,69 +1,65 @@
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282541AEFFF
-	for <kernel-janitors@vger.kernel.org>; Thu,  4 Jul 2024 15:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FD01EB36
+	for <kernel-janitors@vger.kernel.org>; Thu,  4 Jul 2024 15:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720106408; cv=none; b=alYBJ2FQc4OJ/MeQhAwTry4hG7Cx3qu5R7PoGtsJVnru+vc5soWyEfdQiX4XeozoD8f0ZdTMtQrhqT6zv+yx1OCA/og9aiKSYl18SCZpu2weaGWDpmRJljMd1Q0UyYNX3dV/KsZ4G/S84+xWMXnWnPD7hwpPI9VsBowflyfFVK8=
+	t=1720106710; cv=none; b=UFDveFeA1cSRBS0igat3VqblrVpI3VkAlq1ubwjiLCbcfC4t0jW39C6nmddVjYymT2eF83hRnHR/VK3RH1+g1lHk7HmEbWaR3y0uszQ3LZgyvCTSXusfvzyCCspN76hayafkZdkGFr8aXbfYxMeujSCOORfKyS/4o2uusAarixQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720106408; c=relaxed/simple;
-	bh=LRBnNjsH1CyBlK27vH4HjxzagefLojGK6jhHT2bCEms=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IceWCq/3gnhTYi4wIMcHoB1Q/kB2OkGps6SjuD7ZzomomhlKfC2KyBiL9ea5uU1R6ZA1be9a3E6SILea7ttlIoPdwzpsTd/q6CIgupuTeP6MyMKdeMABLMpgmn3cNuWfj1PzqBJg528W9X5zyKu/PwIvEUJK3JezwR03RgVqQ8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EBoYolrH; arc=none smtp.client-ip=209.85.167.173
+	s=arc-20240116; t=1720106710; c=relaxed/simple;
+	bh=L0fqthKwQoJ3/n3wTuxc8RAAQ0COsdCjZ1mWGK2Mepw=;
+	h=Message-ID:Date:From:To:Cc:Subject:MIME-Version:Content-Type:
+	 Content-Disposition; b=mAijtUp3v3VVJoDbVupbkJi53YurHShWi7HJu326BCPCQUqz6malqEt1rKlfAmBZvRwyKJWwo7vTP0b0+hq959refQ18nkul1giS4fNUZk95Myu3nlxQwpVuZZDxj9U/D/s0sOgCpWrVRy+QofUqCsBihLuJDP7m48XzqNcLfng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nQaXHkA8; arc=none smtp.client-ip=209.85.161.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EBoYolrH"
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3d850109679so433938b6e.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 04 Jul 2024 08:20:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nQaXHkA8"
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5c21f3fbdd3so373050eaf.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 04 Jul 2024 08:25:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720106406; x=1720711206; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=linaro.org; s=google; t=1720106708; x=1720711508; darn=vger.kernel.org;
+        h=content-disposition:mime-version:subject:cc:to:from:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=3dDOkW0PAFspV1Nsbjh2zbZUyCnV1dEkHmg1HqSY2cw=;
-        b=EBoYolrHK3eXkZb2Sao25jmck/Pl/7AVO4kE5vMnRJWfsRHW6YdVW/k07p2yCICN2i
-         vYiZjs1W9mL1xR9titcWzYBHRhioXIAP4qsEPe8Y4sAhTRTcgk97ENSwMZwuruRi7Dj5
-         lV3kXswDzJA9eZsEWHsZPfn8oA09zpuQjEGRwCcf67QVIxu3P+hbeJ6i/psQXBMHWsql
-         lFPnO2i4dJsNgT7pijHNXyqCCICJw3OhXFTpb5XZvHY5R9VWnXdvHy/SHyagVncHThXl
-         mRPnDJEK29sn6b4CXoze0hIiyyMYqG4jDb8Xvfg9Pc1MrsthYOhKosj3N12lGaQCXme9
-         DD5w==
+        bh=7sFNJOnSmqtqKvPXuuEH/9m0mTzrSrkSfu1bDrkU8IU=;
+        b=nQaXHkA8W9mW8J8bVh4lksG8sNjdzmiE0L2KEJo99bUiZZKzomIc/HX7qTbqhalHn7
+         pPZfstVNyW8ku2/qeOKT3QmrcHsN66waiAU0uLUFyx+518GLENllFuka0H/NfFhNmZEc
+         4JJQQfr5FowIEftD4L2O4QCImkjNR2bi6sir9jtUZ79Cr+wCpJQuLCP4pbCVMEmKFxkF
+         BmoO1gUDIrHJlcRbYsYShprA+OjuWmQnjGgJqVOpLGpgwo2IisSOvEFz0cY+UITsIFHH
+         jjzvo7ouyPBezol5S4XEVWKNh6jpFwlMxuordhp6ld+guvBIJJlQDbUgIoMkyN3Zd05S
+         0OPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720106406; x=1720711206;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1720106708; x=1720711508;
+        h=content-disposition:mime-version:subject:cc:to:from:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3dDOkW0PAFspV1Nsbjh2zbZUyCnV1dEkHmg1HqSY2cw=;
-        b=O91sjCO+aed2VuPeivh1Yj/mT5/zGB6XyrnW623JFNaO5ZCtt7WDKWFFjdp4ov0LRb
-         kBKarV5x46p3iCyE3nXwxmacU9OHlc/OiID48d5xIdLqzvMeq3m9a2fZttOEfdJnP7Kg
-         mow7YnLbHv4gR0Ik+49GoyyRwaCOETBUjJjcnltUoxmyKfxU5Q92nV1AHhMxRuTAkSZ9
-         uUU32g1Tuy8NgFLLWnK2WMGg3NZYFLFys2iNkka70ni1mleJlTuFjLs2D4xzFWLBu2SX
-         bPQKYCvGgGSk5kmKfmJ4n66B286dYf9sked9NTa/Vgk0CaM833p/oOX2HY4L6O3tb2YJ
-         tA6g==
-X-Forwarded-Encrypted: i=1; AJvYcCW9I8OKEQD96yynguCsjkrgqyOBeFxPvFROu6jLm4OmO4j/oDviZnvyHNvY3tGFAmqBNWadVcmaPigJx7UyKEujnj3xPyfMJWE7MfsNDEdk
-X-Gm-Message-State: AOJu0YxSSvsV22vIipB775CHmQMWfz2W1pbwLhDwXAh0biCJm8i+4JDM
-	t4DCaCyqBH8rEh9lpEY7scc34yWHbRnXZ/5f92kcNkkMETyvecBtap7kYkgtQAtfozs2jFwHgoZ
-	u
-X-Google-Smtp-Source: AGHT+IHHk3pE4TLFr7KRVvJS5XlXRIKfpvIedOe6u7433gzwuERp8u/tr3qO5KeYVUGyta7Gx3L7RQ==
-X-Received: by 2002:a05:6808:1404:b0:3d6:2bab:16ca with SMTP id 5614622812f47-3d915b0c6b5mr771492b6e.13.1720106406264;
-        Thu, 04 Jul 2024 08:20:06 -0700 (PDT)
+        bh=7sFNJOnSmqtqKvPXuuEH/9m0mTzrSrkSfu1bDrkU8IU=;
+        b=ghH458JPiONVo8pghktmSMlDh7OLuxjC3hzVF5PfL7USbdzZEFBhJblxl34ZfxwHL+
+         m+GgR+NdSssDG+NGrUu8jsAl08pEpLYFsJW7z/12jfkT1H7MVVzYw25A9SUmitZl0byz
+         8ofl6CgNXiXVfBwAuUSyDFswtgL/Lecg9M2X27D/ySV151+1WPf93+m69mjyvE3/dIZv
+         g/H0zRvpW2F9NKHwqmMxmiy/e/3aQ/Fes4Ka41GQFQ9vbA64ZsB2Emn7DEhf4p+3qXfR
+         OlvO1+jOKU0szRAoC4Ime+Y/cIuhtLueVsid8T1RWN3v9wT+tEof8iOp6IAC4CUYbCjw
+         9VUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGVlUplCkeVsHBp+MDN5nVhyfWpI9+MCIK86JRKBWPi5LPTtY7vUZ4TvuOQvE3OjAnRGGNR/BJBDpcrpGAQV4n+VxM1oqBqj53Q623I8cK
+X-Gm-Message-State: AOJu0YyH28iVwSjql5GeLcy8l+AUF3oOrM9Cjrqya7fOpNAtp0lJfZzi
+	G1U6x0XpSjS91XFku2wnrQflj5JNKZQuoe5+bISrPWPIKW4U3hnDspRRoump70A=
+X-Google-Smtp-Source: AGHT+IFsO54HvV2syeU4YZ26SXAOrzkSz/Z2cJBBPKHT1L0d/gQhuA22lcmvQepFViKBwkpZQsYdug==
+X-Received: by 2002:a4a:4b43:0:b0:5c2:1bdc:669c with SMTP id 006d021491bc7-5c646f7105dmr2315521eaf.6.1720106708143;
+        Thu, 04 Jul 2024 08:25:08 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:96a0:e6e9:112e:f4c])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d62fb41f77sm2484567b6e.51.2024.07.04.08.20.05
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c44bba4eddsm1148760eaf.32.2024.07.04.08.25.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 08:20:05 -0700 (PDT)
-Date: Thu, 4 Jul 2024 10:20:03 -0500
+        Thu, 04 Jul 2024 08:25:07 -0700 (PDT)
+Message-ID: <6686bed3.4a0a0220.6aa45.6c34@mx.google.com>
+X-Google-Original-Message-ID: <@stanley.mountain>
+Date: Thu, 4 Jul 2024 10:25:05 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@weissschuh.net>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] power: supply: cros_charge-control: Fix signedness bug in
- charge_behaviour_store()
-Message-ID: <ZoWKEs4mCqeLyTOB@stanley.mountain>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Mimi Zohar <zohar@linux.ibm.com>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] crypto: lib/mpi: delete unnecessary condition
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,39 +70,35 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The C standard is vague about the signedness of enums, but in this case
-here, they are treated as unsigned so the error handling does not work.
-Use an int type to fix this.
+We checked that "nlimbs" is non-zero in the outside if statement so delete
+the duplicate check here.
 
-Fixes: c6ed48ef5259 ("power: supply: add ChromeOS EC based charge control driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/power/supply/cros_charge-control.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ lib/crypto/mpi/mpi-bit.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/power/supply/cros_charge-control.c b/drivers/power/supply/cros_charge-control.c
-index 73d7f2dc0fa3..3183a13eefd0 100644
---- a/drivers/power/supply/cros_charge-control.c
-+++ b/drivers/power/supply/cros_charge-control.c
-@@ -204,14 +204,13 @@ static ssize_t charge_behaviour_store(struct device *dev, struct device_attribut
- {
- 	struct cros_chctl_priv *priv = cros_chctl_attr_to_priv(&attr->attr,
- 							       CROS_CHCTL_ATTR_CHARGE_BEHAVIOUR);
--	enum power_supply_charge_behaviour behaviour;
- 	int ret;
+diff --git a/lib/crypto/mpi/mpi-bit.c b/lib/crypto/mpi/mpi-bit.c
+index 070ba784c9f1..e08fc202ea5c 100644
+--- a/lib/crypto/mpi/mpi-bit.c
++++ b/lib/crypto/mpi/mpi-bit.c
+@@ -212,12 +212,10 @@ void mpi_rshift(MPI x, MPI a, unsigned int n)
+ 			return;
+ 		}
  
--	behaviour = power_supply_charge_behaviour_parse(EC_CHARGE_CONTROL_BEHAVIOURS, buf);
--	if (behaviour < 0)
--		return behaviour;
-+	ret = power_supply_charge_behaviour_parse(EC_CHARGE_CONTROL_BEHAVIOURS, buf);
-+	if (ret < 0)
-+		return ret;
+-		if (nlimbs) {
+-			for (i = 0; i < x->nlimbs - nlimbs; i++)
+-				x->d[i] = x->d[i+nlimbs];
+-			x->d[i] = 0;
+-			x->nlimbs -= nlimbs;
+-		}
++		for (i = 0; i < x->nlimbs - nlimbs; i++)
++			x->d[i] = x->d[i+nlimbs];
++		x->d[i] = 0;
++		x->nlimbs -= nlimbs;
  
--	priv->current_behaviour = behaviour;
-+	priv->current_behaviour = ret;
- 
- 	ret = cros_chctl_configure_ec(priv);
- 	if (ret < 0)
+ 		if (x->nlimbs && nbits)
+ 			mpihelp_rshift(x->d, x->d, x->nlimbs, nbits);
 -- 
 2.43.0
 
