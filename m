@@ -1,92 +1,99 @@
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDB51AB8F8;
-	Thu,  4 Jul 2024 12:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886261AEFFD
+	for <kernel-janitors@vger.kernel.org>; Thu,  4 Jul 2024 15:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720096352; cv=none; b=bocoPNqg3DpSNTdtVJr25FvbNJI9yvUJzOSBnP6jlQHW+dyBmQikYOx7Nsa+48LbcVJqEykX6/JIJwUiNUkBc3k84k8BeSwIKf+G9dmN+dZVpcMpB2aXlPI0H0FMV6QEFD8lyPUlISnavO5fc/uPQaqgg4nPJbnjDQ/UAQEtrEk=
+	t=1720106345; cv=none; b=HTvwqX1tLdcEIag4ncCDau1nt0HN49Y5ZPpjFlFf8xfEnLxff+MSlHMuM7bRKPi1fvI3KbajMzdVF4VXad7+9qIkHCrc/wy0EEdJY0Ob+8HIp901x/Ed3LBei4Fvx+JD4QvEOKnpB2rGVpHkIYrHCrBugPFBaBPWIMrJdYeo9vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720096352; c=relaxed/simple;
-	bh=IzeWJYYp6m5cyiUP0hsBAU7OPxm6xFSfbz0WFTaEY1k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kEPKgiPOgQZdackM9cJvyZr3pH28WB9epLJUht5g3iEiEu6skjGuN7XD0tEQfHLixrSmsvJgEgyQLkIqytgoDiQJyyJbneG2QLHsGspfp4piG8UATiF2Ff2Smnt93/cUMgb7etLE0dTGHQNK8tdk/IJYyIiNI0iigFLZzXbe2pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=eC9J/ndt; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+	s=arc-20240116; t=1720106345; c=relaxed/simple;
+	bh=buQkhNYWNZ4v2t3m4bQVQhaixs64N6pn2WVCfFRJwoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=i4ZNzb/MtulMBsFkx/rMKZDUTjh7ZxZYpvlDWBbivZpO/Z57dpSuoIO0PReE2o655eDaTppUY013OAQG7gsx2yNgxTN8PEaz8WuNCFTDuNhJKRCnT5sWHfu+Ezslk+Eww+RuuTmxzxncXmUVKs3A5+l5uL4FPw7IiV/FpGf24tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D3mSUVnc; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="eC9J/ndt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1720096348;
-	bh=Kg76KaOIbqnAt68SmtPouOnB34EHvYcOG9w3BrvhJDM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=eC9J/ndtD3JZYC5bXcIUuL9baGS+FEO9OPeVGtvMcAfVWSbN1jia1Em79xmhsbey1
-	 ix9jF1OFtfcOlZ/PsqE/Cvdjd8DLaWVIBdk7XuVWxnJoX2/CWaCi5AkFef0js7DppK
-	 OC3c5wY7L7QYjUDAEc6m9bBbylPc/VqSre7llqaC2XyjUOi+CBaaUqaUmWFNRlOpUz
-	 0ML8tWrrT5/3TQOqY0c4e9+cb8ag/vk/IqVx5siUeoR33KgCPUaRrvakLHSmPIRUQT
-	 phQdAm+PVhNIF9AIn6IEESqQLrzgtxLQyggahFovqM4i3jtiA8bOPJTHCJeF4HNGcm
-	 HfMLzR0cSNYhQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WFGHt5Rmjz4wbp;
-	Thu,  4 Jul 2024 22:32:26 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Nicholas Piggin
- <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- "Naveen
- N. Rao" <naveen.n.rao@linux.ibm.com>, Scott Wood <oss@buserror.net>, Arnd
- Bergmann <arnd@arndb.de>, Jeremy Kerr <jk@ozlabs.org>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] powerpc: add missing MODULE_DESCRIPTION() macros
-In-Reply-To: <2509b43d-630c-4295-8330-5976677bf8bc@quicinc.com>
-References: <20240615-md-powerpc-arch-powerpc-v1-1-ba4956bea47a@quicinc.com>
- <2509b43d-630c-4295-8330-5976677bf8bc@quicinc.com>
-Date: Thu, 04 Jul 2024 22:32:26 +1000
-Message-ID: <87y16hibhh.fsf@mail.lhotse>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D3mSUVnc"
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5c40f0aed5bso370817eaf.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 04 Jul 2024 08:19:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720106341; x=1720711141; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CMzeEDWFLbET7EVjJ5/MmFzOYk7qyHAIetPdQnDCD/U=;
+        b=D3mSUVncV52gPDWLF/L81hURvQXpLeNz3zXUtINMOlpgP6V2BKwgyOsi37CwVZ6XXp
+         qowvCeTrDcnTFizi1QPKsS7kv/dQh705n7h5zmftefs7NLbyKhgqCKvHYR7y9BSxOruo
+         DHfkaH2GWn5NMcC92G73pwM8f2swjwVnkD9P1o93XvWPuxhuNFe+ynNBODWMj5zGXvK8
+         6qbrXsHsBOGT5FF0tyZLp58orXBlQHstEg01lM0S0ldhJ09vdo+41ctG/j7rsyTOx8Fy
+         6iwFT1Bj3Bwbj8vj3+4ES+C0T0jvKq2bVyHRcXzefnSOtfYTROxQSsxzZYefnK8eq0tk
+         2IXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720106341; x=1720711141;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CMzeEDWFLbET7EVjJ5/MmFzOYk7qyHAIetPdQnDCD/U=;
+        b=GEC4NbEdjmLFr/EDOuFxq4BlqL2iUXgmXgsDRqK8450YHdH+xLl1L742qbhSpfVbk9
+         Bh1zXvaQeO1LxMYnZWcT5HzNH3HeGO3RQKgIExWykM2S8lPWm/CKEYGKVPbW0t2gSigb
+         lJ0ocdWN/ybwy8jvyLOkczLBcfuXt2UAq8i5iOdaaEJOYXcniY2g695zdY9ShTNEv4kB
+         HeBAGbirYmkXCFhfrBy3L/1ZOjXLQgUxh2bQ0u1j9soNnz/a1CWjcb9HMppvc5w+Wcdr
+         /P4k99Uu/2TT68Da62KOcKM6Sbk0QtyQ6DTFRef9uXp9axAvLqxV77jhlnvcOIXKYdLk
+         GvDg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0cNO8zUz5pqn6IoN72OUNrvrc/R+m0mp2cO8KBK7yi41nKtUdTZhYbBIRITk736XA3ehzN9NyGcWQoUPB4qEemynSMVigkDNRR2M1jJd+
+X-Gm-Message-State: AOJu0Yw93aEibvVKBJHjxlOz75SqkZmWPriP7umO8QGHxLZfoVDdR5Hg
+	AvKYbPrzptjDP0w0evJ9DUOY7YWo55tDNl3a4ixV7j9SxJFVn9xHaA6W511zyY4=
+X-Google-Smtp-Source: AGHT+IFa89RkSbBtDLAGPm/Oytl/zqf+l6nNhycW5ftQ0IzdwyLCbQi5qoc2uJ3JD73BLAFEC92q+Q==
+X-Received: by 2002:a05:6870:a11d:b0:25e:1cde:f5c6 with SMTP id 586e51a60fabf-25e2bf33b14mr1598496fac.53.1720106341662;
+        Thu, 04 Jul 2024 08:19:01 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:96a0:e6e9:112e:f4c])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25df20b0423sm1336873fac.14.2024.07.04.08.19.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 08:19:01 -0700 (PDT)
+Date: Thu, 4 Jul 2024 10:18:59 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] hwmon: (ltc2991) re-order conditions to fix off by one bug
+Message-ID: <Zoa9Y_UMY4_ROfhF@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Jeff Johnson <quic_jjohnson@quicinc.com> writes:
-> On 6/15/2024 10:06 AM, Jeff Johnson wrote:
->> With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/kernel/rtas_flash.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/sysdev/rtc_cmos_setup.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/platforms/pseries/papr_scm.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/platforms/cell/spufs/spufs.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/platforms/cell/cbe_thermal.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/platforms/cell/cpufreq_spudemand.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/platforms/cell/cbe_powerbutton.o
->> 
->> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
->> files which have a MODULE_LICENSE().
->> 
->> This includes 85xx/t1042rdb_diu.c and chrp/nvram.c which, although
->> they did not produce a warning with the powerpc allmodconfig
->> configuration, may cause this warning with other configurations.
->> 
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->> Corrections to these descriptions are welcomed. I'm not an expert in
->> this code so in most cases I've taken these descriptions directly from
->> code comments, Kconfig descriptions, or git logs.  History has shown
->> that in some cases these are originally wrong due to cut-n-paste
->> errors, and in other cases the drivers have evolved such that the
->> original information is no longer accurate.
-...
->
-> Following up to see if anything else is needed from me. Hoping to see this in
-> linux-next so I can remove it from my tracking spreadsheet :)
+LTC2991_T_INT_CH_NR is 4.  The st->temp_en[] array has LTC2991_MAX_CHANNEL
+(4) elements.  Thus if "channel" is equal to LTC2991_T_INT_CH_NR then we
+have read one element beyond the end of the array.  Flip the conditions
+around so that we check if "channel" is valid before using it as an array
+index.
 
-I have this in my test branch, it will appear in linux-next next week.
+Fixes: 2b9ea4262ae9 ("hwmon: Add driver for ltc2991")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/hwmon/ltc2991.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-A spreadsheet seems like overkill ;)
+diff --git a/drivers/hwmon/ltc2991.c b/drivers/hwmon/ltc2991.c
+index a01f887392f9..573cd8f5721b 100644
+--- a/drivers/hwmon/ltc2991.c
++++ b/drivers/hwmon/ltc2991.c
+@@ -225,8 +225,8 @@ static umode_t ltc2991_is_visible(const void *data,
+ 	case hwmon_temp:
+ 		switch (attr) {
+ 		case hwmon_temp_input:
+-			if (st->temp_en[channel] ||
+-			    channel == LTC2991_T_INT_CH_NR)
++			if (channel == LTC2991_T_INT_CH_NR ||
++			    st->temp_en[channel])
+ 				return 0444;
+ 			break;
+ 		}
+-- 
+2.43.0
 
-cheers
