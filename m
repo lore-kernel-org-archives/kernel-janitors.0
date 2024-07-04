@@ -1,109 +1,81 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CFB181CE2;
-	Wed,  3 Jul 2024 16:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6E11A01B8;
+	Thu,  4 Jul 2024 07:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720022922; cv=none; b=cBAtLIz+OL1ki+Kl58dEOc34qX6YiLGxYEfyieLECbhFSPZV6sgcL4xgXTSskd+nQFuKG8Ho49JpZx/HfcCAo4wt3kgnumRC1q8j+XIRK07b/6L2V5e7W8iEkpqFlVGJFG3sq9ansg5kPLzLS1stTWEj1lvJZUri8b+KHUq9d74=
+	t=1720076884; cv=none; b=R+JlhXxU+xAlAlD3Q3gVw0710JB9UPTghL/JgkdjA3XOXUKQSnY6FoVChB5qazKVpZaHtY+cu5V1bFwIKfnZOfdqvmPVdvuCPDofX9fbqewEdGCi4/nKUX9tQcWmKmLnPHllkJx+NDRZr4hmkosUxmASFNX9wau5Cz5MIDVnN+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720022922; c=relaxed/simple;
-	bh=07orgEznonTXaOIHNFt/N1sf+pDGLONgsVdR7FpN9vU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=uKhXC8FfukMWuW8b7dxSmcxFAf4MA5loltOBGBdjcbl+0XTtM8chgs9AMTC7Fbhm6DIrRndOm4vP04CxigB/2CxDeWOpS6uYFVNQ9dy7knZZNqx/F7p91WN16qkyaRBKtNQPOufXDXKGPtYkw1mS2io/fci9M8EbbF+7fGNOq9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=oZkpvrM8; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1720076884; c=relaxed/simple;
+	bh=beE8qyS6id19OTmayM3RapJclxp80MYplB370wW4Z2M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZxgL5HnN8piQTQvNgVr+ETm5kN5m5kzNVIS60xV++4DaQIjwjwXAjma8fTiMnB015bzr/h9L6UOSajPwpJqy313gp8HvkCqkoEsqbs4xYweZJTn50caS1C6rSXHEnXHFkmQTC6cbUJK5N1zpQSwu399y+Uz61qxbD2836TGZFUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FcvvSj8j; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="oZkpvrM8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720022896; x=1720627696; i=markus.elfring@web.de;
-	bh=07orgEznonTXaOIHNFt/N1sf+pDGLONgsVdR7FpN9vU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=oZkpvrM8xwVQ7XI5woMiqdzY/u2dKaIegJszLY91DeWPg66nsqdG/FtgjPyR9odg
-	 reD1lLMgQ331UVEr6+NREDbVnvWHpMWBjstONtypiCrGbXPAB90QcO6jpXRHSl1Gn
-	 kUG5shMRwd5QcK+t7J6mDZex62t+VV1oKdqrhERhu3Z9VeKLqyGJQ6fttVsM/nxCB
-	 caoxJhveaVOKu+PLSpI99yyQVXL9GrTDryBi14nf90O844EMV/FFyFVDYmw2AoHKm
-	 5NabEYQ8lhDskGZkVTc02qmRptzL4ibT21nMIlp8hrC98jBA8M35Ix0kqn0IW/k8U
-	 1i98Q6N63rvvyXUFnw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MLAVc-1sh7LO2ee2-00TfqF; Wed, 03
- Jul 2024 18:08:16 +0200
-Message-ID: <170879dc-88de-4c08-93d7-57756daca4c6@web.de>
-Date: Wed, 3 Jul 2024 18:08:12 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FcvvSj8j"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90E6CC3277B;
+	Thu,  4 Jul 2024 07:08:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720076883;
+	bh=beE8qyS6id19OTmayM3RapJclxp80MYplB370wW4Z2M=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FcvvSj8j/h5g8AZHZeMnJs89FLtc/qBGttkwFQVIMfGKpgNvI6zrj67QFpgZ5XJN6
+	 XElwNLBPznxK/EaPLMFhJOQSdjJr085xoT8xe7YZaZu0QUPR4AShFOA0/QjFxTG8bS
+	 ebri7yz7FZ7VsdpeNsGZ3cXQwCAQoOeKOXyflcQ6oakKYqIMg8nS/Ht3QJptvJzdaI
+	 Hgk7hcj4N/KCQk/nfWxkcdMNNcnjctofot79cZG6vuwv9/LpITxmv0xQGXG2wqA0/h
+	 f/yP6n2j/+/fL3d787wIun9SOBqizZDHBuGUKBGW9OGlv9tQXKmyjonrd5c0rYE3at
+	 1zlZcGDfRn0Zw==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ea1a69624so140975e87.1;
+        Thu, 04 Jul 2024 00:08:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWDG6ya3ogSSPlZIhf3wB/hT50Nm5u16yzdLs1irzkc7Dug9hAKbIxijp3pLfqwqCLy2oO0TnnDee4L8rGVhYD1gZ3Ie6ioi6RZeryT0eSsXQ5mAwBVvHlWPUVZef95RsiM1ixuixE9owQk2qz0hzKJDt6A7L35YCnX7me6H2nC7bnTQiTZFAla1Q==
+X-Gm-Message-State: AOJu0YzN+V4nvcFn+n+Ple2csh5F4w2FEwx1pea3pWNq6BUYifOIll0X
+	U+otI+c2MNA1ifOPBvtq+302RU1QG8pxQbujH1DOszBjcELa4WsrIlTNBAfkmXr3NFryOHtPmSQ
+	bDFkblugVjjk4ixPwfJqy0o5/Fxs=
+X-Google-Smtp-Source: AGHT+IGh6+P+1EiIoM58zfZVkEca2e7u3b68XGi1cyEf6GxHfJUbwvlYuhpttGC7c4v/TpT1nlDVYxqDa+2eLeP0N4M=
+X-Received: by 2002:a05:6512:3aa:b0:52c:8fd7:2252 with SMTP id
+ 2adb3069b0e04-52ea061f61emr424036e87.11.1720076881971; Thu, 04 Jul 2024
+ 00:08:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Junlin Li <make24@iscas.ac.cn>, linux-media@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Peter Rosin <peda@axentia.se>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240702132413.4318-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] drivers: media: dvb-frontends/rtl2832: fix an
- out-of-bounds write error
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240702132413.4318-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
+References: <3727f3ce9693cae4e62ae6778ea13971df805479.1719173852.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <3727f3ce9693cae4e62ae6778ea13971df805479.1719173852.git.christophe.jaillet@wanadoo.fr>
+From: Song Liu <song@kernel.org>
+Date: Thu, 4 Jul 2024 15:07:49 +0800
+X-Gmail-Original-Message-ID: <CAPhsuW5=sZTm2Uwmz7dZ-4v2vqPbS=RygDeZ535ef7yk4NCjsg@mail.gmail.com>
+Message-ID: <CAPhsuW5=sZTm2Uwmz7dZ-4v2vqPbS=RygDeZ535ef7yk4NCjsg@mail.gmail.com>
+Subject: Re: [PATCH] md-cluster: Constify struct md_cluster_operations
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Yu Kuai <yukuai3@huawei.com>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-raid@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:VhPOAXdGj5dgCOol1vZtrpOQqZEObNHjQFtD5lJZmM8jnW4FXzA
- enGASuwiIRqSoGaG9yCDX8XozDPVzVZCMpMaLzn9kuRbnuyjeEqPnOYmH5RVuQr/Y7XEbru
- z2WzAEwrC/pLIA+oivPIQyKHKHsayImzFsvwHuIOirQyX7pnmL5oOnJFg/5o31AWkCyI1A+
- YBh5hb4ga8GZoPX9QjM/Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:DBJ8xYYnUw8=;PJRQ3jGGArGOK9kR+6p9MKH3hcB
- MEYm3WMIve8yDCOsueqwU3FelYdtBYf3vZ/DUNmMuLbk8Ba5Hgtn01TAEIoeYxs6lnoTgKJrQ
- taUFYdlD22dYWuj6zw2rhGPWYWisIx5bS2jR5UQBvF7EhNlaANVtNlmkeqb2pJqWYPnV6R+I3
- vN3TM45Z+NSSuqDZ+9AxFocH5yN8lwVh3T6D6IRMNBwcuDuURd+6NDKOchJguD7FOMN72QeSC
- gdv+wFRcVK5NO0eDpu9Eiq35thwTsiwuojWfBoSFVlbHO+NtlaSODLwxCST9B8dFdkGC2I8Vk
- lxEQUoLtX+mQiZygzaQ0gBixLB24jC2MX2uEDwWG0Y9tQ0Fq1n+wJxVzIUVU6UFKVCo+icLaI
- FWYQ2TSOWuWP3eoJ+t5OMMbSQ3kZ88TYitK1yuYT8wnYCONf5c5q2kKM/yR+nIYNfO9Rbv9WQ
- nFYWI+K23BG+c+Pca7TcuXBY7HIM7+Tkpt7bknCivd8NKzyZS4tKAYT5Q4Bso5X2dC5nUDq6D
- CSHndcKpyi1agchmx053CtE1V+hAFgoMXApJdr1iqWEsqzrqWWIT7CAEct3RvZNLcvWobHKfi
- HpCwGtjK+j9KwFhdSvnuZH5BLFkPG3DyDQ+FoaavMJFDQSwkwY+rSZmAd5AlYOQPvKll1umPR
- p8UoTxAfb1cVNbq2nCF6spyMXFLUtRaDXDrN74vT2+WNk56JYCn4a5GMrCFVXsIU1AzNQcZSe
- E2lDPy9SGp6uGEhoZ98/GsOrwCC1F66jmNYe6tbhnaj/Y00/pOwQV+PESPGlZhGNgrgXuIPUf
- 1LOX3X6pCwDbHVfJT1Bu7GBbAQ/Y5GeJ8Wi0lrpWxTnqQ=
 
-> Ensure index in rtl2830_pid_filter
+On Mon, Jun 24, 2024 at 4:18=E2=80=AFAM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> 'struct md_cluster_operations' is not modified in this driver.
+>
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+>
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> =3D=3D=3D=3D=3D=3D
+>    text    data     bss     dec     hex filename
+>   51941    1442      80   53463    d0d7 drivers/md/md-cluster.o
+>
+> After:
+> =3D=3D=3D=3D=3D
+>    text    data     bss     dec     hex filename
+>   52133    1246      80   53459    d0d3 drivers/md/md-cluster.o
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Please correct such information according to the shown function name =E2=
-=80=9Crtl2832_pid_filter=E2=80=9D
-in the proposed diff fragment.
+Applied to md-6.11. Thanks!
 
-
-> does not exceed 31 to prevent out-of-bounds access.
-=E2=80=A6
-
-Please adjust the word wrapping.
-You may occasionally put more than 51 characters into text lines
-of such a change description.
-
-
-=E2=80=A6
-> Signed-off-by: Junlin Li <make24@iscas.ac.cn>
-
-Under which circumstances will applications of the Developer's Certificate=
- of Origin
-be reconsidered any more (after three different names were presented so fa=
-r)?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n398
-
-
-Would you like to omit the text =E2=80=9Cdrivers: =E2=80=9D from the subsy=
-stem specification?
-
-Regards,
-Markus
+Song
