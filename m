@@ -1,91 +1,129 @@
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4FE15491;
-	Thu,  4 Jul 2024 18:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12856A039;
+	Thu,  4 Jul 2024 21:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720116984; cv=none; b=UXl6s9WwgKOSQclRexMdw624vnpBOqvTVmIBWAFY8gAs/wXQ+4cq9NQxkfzDPZfgBHUvI6UWiCkFniJGxV+0flxC+DVTcvXbkXt9VR+xvB6YpMhDV1uLJjUmVWsFxSrPeaBVY1exqUKH6dG1Qv8T34Eoa6OMIksDIWpc4O2Ukuo=
+	t=1720130123; cv=none; b=MTwpv4aYh+bMl+N97QphmoAqMkNqhoML02uETd299tv8WwmYV3ic+9IdoIYg9O115hNtcYE9TovcrUKXq1ezhDiz8fUdA3VT4moJH8IXvtYXzRM0JZxejQm4/ppGHQQ2dpfW2TH7PXgWHcCTXOrAe3f/7JEl5cx85yhZ6TfEqu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720116984; c=relaxed/simple;
-	bh=5d/dB4AsLDLrUV0iB98Gfxiyh26yO3HZ8Hx1w+E/ZNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DgwcviE0svh9N8caMNlYxhIaB1oSLBt6x0BlAEhZRFBYa+X3jWdKvyE/V7mcyzJPhsi0OEzgXfUVbJvVjVpzE7xEe7S/l3pUHP9g5xzJ4uRQKLHlJHOvKe62iF/5W0T888p4Eme2qRiLHgi2ZhPWq5JEygyvxGXec0YWvU9acdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=dYnVuHGX; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+	s=arc-20240116; t=1720130123; c=relaxed/simple;
+	bh=UMtKACPAKb5kPODKBAoPlmRU2/hW+T7OmyYCvNE5WO4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p/RK7jktDcv4RaRYqvwGxMuifM3CyUNmXSEDR0nfX42bPx0TnDASCdx24Q36zDEjRnQkc3xFkgLGT76fbmo0ZCHXDuT+u+YA+y9v9dSkgl1y6M/al6jE6nykwAX2WZUiKvaVFEnMlb19e4N5JcpSgjdBQDXffxDIKmWTHU7ipmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QbGLiGjP; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="dYnVuHGX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1720116978;
-	bh=5d/dB4AsLDLrUV0iB98Gfxiyh26yO3HZ8Hx1w+E/ZNU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dYnVuHGX5hdWPRFDaQopLHp/LP69wqpUd+usfunfEK/X/17gWqtMzdoHKz//7Gr1C
-	 PFtoBAsH7OAy+0dwk3EYG82ysadfethxc45svz6nPUwD4EOqaGQlZWDNF/83ztVwaw
-	 Ru/oLroh7CexjOHBCljggFDw2V3QGmr0RM0MVPh8=
-Date: Thu, 4 Jul 2024 20:16:18 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QbGLiGjP"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52e99060b41so1029507e87.2;
+        Thu, 04 Jul 2024 14:55:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720130120; x=1720734920; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c0Mucu4azB4762rQz2sUA0weJJHmfoyRkDcYhqdYRss=;
+        b=QbGLiGjPS++mampRZyGkgRNGlMALaX+BIFZbWfNad/OjGku5C58I/8VFgcAfRycG1Y
+         Lqie6mtzmkT5vOmKzyD0gRG8EN4SUe/GC+H3GNpgxxhNYZONmrkjZI4Mw2nwPIFUb3Rf
+         Vc1R5T/D/w68jQNG2IH453fqSjU/ieund2eJW29eZ1tZr/z6DBZgim3LFs9kr2JwDwcc
+         pcc7NzAgbVcxqkXszUT6DL3aiuetFvn5dcp5PG+9bwWksowdt6LN2mmt+afKT8n0MI0K
+         o8y191xuLTiuoq/xTWL1Ihojknpi/qwnkEOsxlm23+bHu5p2dFzC3HNR2zy9ed8U7Dnw
+         WY+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720130120; x=1720734920;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c0Mucu4azB4762rQz2sUA0weJJHmfoyRkDcYhqdYRss=;
+        b=cc/C+RJEwgr7ACCKgpIlRlnOQKJC/55uM4LMmemVdmi/wpl7MIo4Rfe9ZxDVBxDAX5
+         /0VO93vhcAFL59EoLo1R5B7nJqYked8E2+WepPFZ8VjmEsDg9LapcEOxg/MiDwuu2XMO
+         M7eW3X5YhUKzLWQ3XoAK67hU1b1TCJYgOH8gM0joJqnZwF6X4XA3O51GxUtdZzHT7Q5I
+         ZOdbH4QSYeOLk5aohgXZB4USOAmPrOfTgd6qcAWSmsO3fFPSzq/Jvefqn7MVztdD/Kdy
+         mhBVIG3+ypnmJw/mA8lofJ48o22mfFZntx7XniQ8V2HkxZPwdmrtMISWsNMG22f1La3R
+         OePg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQcU8GGGCqnjkky3wjpIwguUEGMXNCqc31dfmZI29ixstXEpNU0/tqOH+XBp+PvMfrLGNdFSwZwRaSRaEjt5SGIr8Nn7LwlVPUI7uDDUIdxgIhGZ2dXgo3bcasONUAdSL6OzCdVIkuwjwEzdFfBm2C6f/bb0hhwWOYiYmT7g4XS5Rk
+X-Gm-Message-State: AOJu0Yz3aNnW4Cyr0PgBVsB3gIqOkSrg7DncxFzyzvGezPbdjGsfLe8k
+	DiM5MJHSqcg7wohfna6pybUuci1TXQwNllp0FifAye1dAht4Zj4y
+X-Google-Smtp-Source: AGHT+IF0OzApOl8VduWwGHxJNAkdy4vso6GRZTazOFmoHK9BpHFnD+7UypBCbNa1hxmdSIUi2UPTkA==
+X-Received: by 2002:a05:6512:3ec:b0:52e:9942:e8c7 with SMTP id 2adb3069b0e04-52ea0706ba3mr1493155e87.69.1720130119525;
+        Thu, 04 Jul 2024 14:55:19 -0700 (PDT)
+Received: from krava (net-93-147-243-58.cust.vodafonedsl.it. [93.147.243.58])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58e2f7c0e00sm1410611a12.6.2024.07.04.14.55.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jul 2024 14:55:19 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 4 Jul 2024 23:55:16 +0200
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, Sebastian Reichel <sre@kernel.org>, 
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev, linux-pm@vger.kernel.org, 
+Cc: Yonghong Song <yonghong.song@linux.dev>,
+	Christian Brauner <brauner@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] power: supply: cros_charge-control: Fix signedness bug
- in charge_behaviour_store()
-Message-ID: <48a348a0-0489-45bb-874b-246c7683a5a5@t-8ch.de>
-References: <ZoWKEs4mCqeLyTOB@stanley.mountain>
+Subject: Re: [PATCH bpf-next] bpf: remove unnecessary loop in
+ task_file_seq_get_next()
+Message-ID: <ZocaRENGH-HFLo4p@krava>
+References: <ZoWJF51D4zWb6f5t@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZoWKEs4mCqeLyTOB@stanley.mountain>
+In-Reply-To: <ZoWJF51D4zWb6f5t@stanley.mountain>
 
-Hi Dan,
-
-Thanks!
-
-On 2024-07-04 10:20:03+0000, Dan Carpenter wrote:
-> The C standard is vague about the signedness of enums, but in this case
-> here, they are treated as unsigned so the error handling does not work.
-> Use an int type to fix this.
+On Thu, Jul 04, 2024 at 10:19:19AM -0500, Dan Carpenter wrote:
+> After commit 0ede61d8589c ("file: convert to SLAB_TYPESAFE_BY_RCU") this
+> loop always iterates exactly one time.  Delete the for statement and pull
+> the code in a tab.
 > 
-> Fixes: c6ed48ef5259 ("power: supply: add ChromeOS EC based charge control driver")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Acked-by: Thomas Weißschuh <linux@weissschuh.net>
+lgtm
+
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+
+jirka
 
 > ---
->  drivers/power/supply/cros_charge-control.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
+>  kernel/bpf/task_iter.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/power/supply/cros_charge-control.c b/drivers/power/supply/cros_charge-control.c
-> index 73d7f2dc0fa3..3183a13eefd0 100644
-> --- a/drivers/power/supply/cros_charge-control.c
-> +++ b/drivers/power/supply/cros_charge-control.c
-> @@ -204,14 +204,13 @@ static ssize_t charge_behaviour_store(struct device *dev, struct device_attribut
->  {
->  	struct cros_chctl_priv *priv = cros_chctl_attr_to_priv(&attr->attr,
->  							       CROS_CHCTL_ATTR_CHARGE_BEHAVIOUR);
-> -	enum power_supply_charge_behaviour behaviour;
->  	int ret;
+> diff --git a/kernel/bpf/task_iter.c b/kernel/bpf/task_iter.c
+> index ec4e97c61eef..02aa9db8d796 100644
+> --- a/kernel/bpf/task_iter.c
+> +++ b/kernel/bpf/task_iter.c
+> @@ -261,6 +261,7 @@ task_file_seq_get_next(struct bpf_iter_seq_task_file_info *info)
+>  	u32 saved_tid = info->tid;
+>  	struct task_struct *curr_task;
+>  	unsigned int curr_fd = info->fd;
+> +	struct file *f;
 >  
-> -	behaviour = power_supply_charge_behaviour_parse(EC_CHARGE_CONTROL_BEHAVIOURS, buf);
-> -	if (behaviour < 0)
-> -		return behaviour;
-> +	ret = power_supply_charge_behaviour_parse(EC_CHARGE_CONTROL_BEHAVIOURS, buf);
-> +	if (ret < 0)
-> +		return ret;
+>  	/* If this function returns a non-NULL file object,
+>  	 * it held a reference to the task/file.
+> @@ -286,12 +287,8 @@ task_file_seq_get_next(struct bpf_iter_seq_task_file_info *info)
+>  	}
 >  
-> -	priv->current_behaviour = behaviour;
-> +	priv->current_behaviour = ret;
->  
->  	ret = cros_chctl_configure_ec(priv);
->  	if (ret < 0)
+>  	rcu_read_lock();
+> -	for (;; curr_fd++) {
+> -		struct file *f;
+> -		f = task_lookup_next_fdget_rcu(curr_task, &curr_fd);
+> -		if (!f)
+> -			break;
+> -
+> +	f = task_lookup_next_fdget_rcu(curr_task, &curr_fd);
+> +	if (f) {
+>  		/* set info->fd */
+>  		info->fd = curr_fd;
+>  		rcu_read_unlock();
 > -- 
 > 2.43.0
 > 
