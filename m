@@ -1,67 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5CE1848A;
-	Fri,  5 Jul 2024 01:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E825EE97;
+	Fri,  5 Jul 2024 03:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720144536; cv=none; b=rQR0qheVG9Zcalp4PQcOIvf/cy4G9NwFJLW+/GF2W5bPpVyW9QnXdrl07Z8yB8FiFpHKAOQVgBdb6/F7OiFE48sFWagRV01HF7tSUCDSydj8dVbZN0wKxyssyIAiGHR/StnCqmND1E3ZmWZZ7dxL5geT2AINYAlKaeZDNY4ak9c=
+	t=1720151656; cv=none; b=UnPQh3C1hxQUY7SAUO18Ebd18MLEPg1B1vL8C1ygYu55LN7H7jB/FbppfCx9NTYd6kuVtEDIe0necbZT8VAcMNuf/OmEvtdlAVa0hvdpDoc9QNYPNhGdeZaiHdyxgQGqmcmcdUyPhPz212/+C8XPzYkZpwnVqwqfPhfEZMBgVic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720144536; c=relaxed/simple;
-	bh=0D07LHAuhhUTF8PFmdgBLlE7Wo0dLVb51mBbu1HxwUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c39l1tqYm59K/1gGHmhRdU1zX81WhMy0aJk/cuPcaBwX5ZagMRyHAZf/i7Ck3PpDr/0/WgIfPmbQs+LMVEjGJgmH+JgU8Fwu+dx8B2hf9nlffumzmbODtKdD119eLQzP3mrtaiaFctm4goU5e0b3dKOVFculYb++zC3ZLuuUnio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jWZ3cyr9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720151656; c=relaxed/simple;
+	bh=BpuvriFk4tBTkcvIOJzPNcEZclOJezRXm2fUbGIypJk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uAuBPU05VKhGJEWr+N5vk9XIsJ5v0FrPGm4cHAKX3dbPKXcKjoyITCxvziUFQKLdwqj2tciJN458fF7J9d+JEs1dCwRM06iUuTGqwrXlm6ig6PFVs9ibknKf1hJKNTpNteqjN3DdkGTpP4eO/QGtJpYIP6IKJB39UU2PHZs5Khw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fAWnXc2J; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jWZ3cyr9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16279C3277B;
-	Fri,  5 Jul 2024 01:55:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720144536;
-	bh=0D07LHAuhhUTF8PFmdgBLlE7Wo0dLVb51mBbu1HxwUc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jWZ3cyr9YnRQMnZhzLP9jJLxSHLjRfogDBprSaFxMbke0qmX+aSZyZhZlYmljrGI6
-	 yV+pa+5jjjxKmPyzz5fKdqWdAgPJ56Kvd8CLWWl602mid+IdsoTmoy0Dsw8CyLMpao
-	 3sNC+iHe2icjtFQFXOFJ/Yac+Bt6290hN2mbCKIZeA09i5OI08y17285J5DtsCO1Jk
-	 thYvotCStwHBVioNRLL0qLC2J8aRWPB07gbEpdKGWUd2ePOnHRGoGt75ArI5p87c8P
-	 m4DO5PJI7G1lBT5w5ZdY/EdORiND0BFhEH/xNhmqFsnO/Z05tjue9vLcG//cpOHLQ0
-	 68bbZCmFZ1taw==
-Date: Fri, 5 Jul 2024 01:55:31 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@weissschuh.net>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Sebastian Reichel <sre@kernel.org>, chrome-platform@lists.linux.dev,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] power: supply: cros_charge-control: Fix signedness bug
- in charge_behaviour_store()
-Message-ID: <ZodSk4PRanMnT9-Z@google.com>
-References: <ZoWKEs4mCqeLyTOB@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fAWnXc2J"
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 464DKuRn031090;
+	Fri, 5 Jul 2024 03:54:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-type:content-transfer-encoding; s=
+	corp-2023-11-20; bh=4BZCwtyO9t1QDe//Pn1bJXsdrZWpTamr8lKZHANnZPY=; b=
+	fAWnXc2JjikunYCZ0PfMYExyvh9FQbm5l+WJjUWG1V+nmZ8uUqFf4a4eZPsUWwBT
+	1H6XcBf+JsqdcA5F6gAUzBbh4IWSE97RGjtaYAPSFLCMj2d9tL8Pg0Ojh3+gVMbS
+	khrI8r2SooDHuAsZHGN0b7eadCWuWcwrSpMtAZngDWY+hZKypadow0Eh+TI9D0ER
+	5lqN8kkvI+toRj0VWtiVIVP6E3TU98dBT0pPXM0DbWTI1DOorWgt9OUc2UjZmpAR
+	8Z4ZG1kyOM+/LvxTHPaHXRk1kBGcrsliXCKw6uwDyePmwAHLzUt0DBCENFktpdlo
+	Z9ZgG7AMeIR3UUTYs0cxWQ==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 402aack5nx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 05 Jul 2024 03:54:08 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 4653MCYE010234;
+	Fri, 5 Jul 2024 03:54:07 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4028qh9y03-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 05 Jul 2024 03:54:07 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4653s6dM010018;
+	Fri, 5 Jul 2024 03:54:07 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4028qh9xyf-3;
+	Fri, 05 Jul 2024 03:54:07 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] scsi: ufs: qcom: add missing MODULE_DESCRIPTION() macro
+Date: Thu,  4 Jul 2024 23:53:29 -0400
+Message-ID: <172014707936.1511036.14365910924505005781.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240625-md-drivers-ufs-host-v2-1-59a56974b05a@quicinc.com>
+References: <20240625-md-drivers-ufs-host-v2-1-59a56974b05a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZoWKEs4mCqeLyTOB@stanley.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-04_21,2024-07-03_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ adultscore=0 bulkscore=0 mlxlogscore=820 phishscore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2406180000 definitions=main-2407050027
+X-Proofpoint-GUID: CPO5hG50sh1jpqK62DIDCoAReyE_ur3T
+X-Proofpoint-ORIG-GUID: CPO5hG50sh1jpqK62DIDCoAReyE_ur3T
 
-On Thu, Jul 04, 2024 at 10:20:03AM -0500, Dan Carpenter wrote:
-> The C standard is vague about the signedness of enums, but in this case
-> here, they are treated as unsigned so the error handling does not work.
-> Use an int type to fix this.
+On Tue, 25 Jun 2024 09:53:45 -0700, Jeff Johnson wrote:
+
+> With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/ufs/host/ufs-qcom.o
 > 
-> [...]
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
+> 
 
-Applied to
+Applied to 6.11/scsi-queue, thanks!
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
+[1/1] scsi: ufs: qcom: add missing MODULE_DESCRIPTION() macro
+      https://git.kernel.org/mkp/scsi/c/4d66ecc6e5a5
 
-Thanks!
-
-[1/1] power: supply: cros_charge-control: Fix signedness bug in charge_behaviour_store()
-      commit: 4baf1cc54433ff7c6e5178517bc8768001416681
+-- 
+Martin K. Petersen	Oracle Linux Engineering
