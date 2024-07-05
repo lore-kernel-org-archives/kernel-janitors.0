@@ -1,92 +1,74 @@
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F6C143890;
-	Fri,  5 Jul 2024 06:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7AA1482F3;
+	Fri,  5 Jul 2024 11:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720161799; cv=none; b=P26a/cQQ7eVU3DliglXqoTIfc4BYmcVk4ogfdbWGuBucIJDZW2k0VZeB8QqZvoIIscEMRNqOMBg2c4snd5TOQ0/Vss4X1j7IMta8lGiqU0xRBAEMWguNSQJbwUfif5LS5+bBSh/mZJmYzMEuHHfha2mY2x6Wp5LH3nuexw9XHzk=
+	t=1720179339; cv=none; b=ZQYrHnV5TELPlTZSAohOj4eTLr+6fXyZdyZSkIqUyDiQse4iwAIauOnEWoAEyGVTBUl8et4bHfKRj24kuWfRjhv6kUIrFVb2rd4e90whzxKqINs1S2H0nwGk/frSE2ErEpCPJnJ/8Eo//QTqWzJpg2JK60BM48qi4EPEL04Gpj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720161799; c=relaxed/simple;
-	bh=8qoHFSRKhHhJ8qBwr1oPNZA0QMdxUS4HBp4ofdLFHaM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=azK0Z8pXfexeepJzaoLYcxwPsDirdpoqWSjyLwsY3onYM3mCYKn/ar6SLO4GRiUuXTaF9SvpmKgSuvzGCFuiAsiwtgRjS4NTN/SKaya2Yy1XmWJ7KhH9Ly/X82UDYB9Dcfl8n2kmCPtvBauUI7fjkHIiBucv7AkvhAZaGPK9XEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=b8QcIczu; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+	s=arc-20240116; t=1720179339; c=relaxed/simple;
+	bh=l7eHKj+T+etssusst1Hidt5TggjZOVOBAqE3clxrtlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dlBXKeJ9S067UZS0dCmi5KXwzKCyIl6DWCwdhcJQMz2172jVsz38PfeDnHZrBSVYT4aQTUUi3j5/nNEV7t2loE2Nx049A+0gTFwVKZnwsjscS8Mr4/ytaHwLIqEfzVg1/ILQkMaWokZ/BUQUUuEWqLX0wjFbAf9GCMH3w3XBo7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TgoYJv1K; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="b8QcIczu"
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720161793; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=2LPcby+iS6BBEYNZnz/2U/NNFAHgLJPj1zgzlJlT1Js=;
-	b=b8QcIczuEMZaUyOfj06MNPb/b0nU/xVUx/Zc/dSB17ShJMB5GrWLANXE65FmQE08Y5fHGRlwkgMkG/3KkiW2Xl/YTF4/auXRsEl7by12J/+Lgy253CSlnG2t3fvn/yR6AEJDFZNLos0Q3MvXe3ODi7w98aLE+OSYgXagE6imCEs=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R571e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W9txrXV_1720161791;
-Received: from 30.246.181.6(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0W9txrXV_1720161791)
-          by smtp.aliyun-inc.com;
-          Fri, 05 Jul 2024 14:43:12 +0800
-Message-ID: <e5e4db6f-079c-45e7-b079-ef2a6851dd29@linux.alibaba.com>
-Date: Fri, 5 Jul 2024 14:43:11 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TgoYJv1K"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC713C116B1;
+	Fri,  5 Jul 2024 11:35:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720179338;
+	bh=l7eHKj+T+etssusst1Hidt5TggjZOVOBAqE3clxrtlg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TgoYJv1KgMimYmEfZFP8nqE/ns2FPio4FoGL05l01NhsvDL8rpjPp949MpO6NvtXh
+	 bIxTPnZut1fWvZUfT9/HAoH6WRYc3ZXFyGsCQxko+Qg9bDeFi3vLNNIYtnAGOb0d3V
+	 MhshiK8VG+zVJaI+fm9oPf2+Gq5KNZzbswFlTw2gk1XNH0HIUOaRBJVgpL2wTgwDAA
+	 zG+DrpM9ivdBlOp5MMUkjBb7rsXEEmKrtOnQUQkbq1ghydtXlcXq9wNO3XQVM0AJYX
+	 fm99+SznguE1y8LNIT9CqJY9OmDSGs/Nyj2GQoLLyLQT6G8/OCkmkUE7cFzQT/skME
+	 E0XAHh51wRNKQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sPhE5-000000000en-1tZC;
+	Fri, 05 Jul 2024 13:35:41 +0200
+Date: Fri, 5 Jul 2024 13:35:41 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: add missing MODULE_DESCRIPTION() macros
+Message-ID: <ZofajSjhaaZsFRro@hovoldconsulting.com>
+References: <20240611-md-drivers-usb-serial-v1-1-c6ada535890a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crypto: lib/mpi: delete unnecessary condition
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>, Mimi Zohar
- <zohar@linux.ibm.com>, linux-crypto@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <6686bed3.4a0a0220.6aa45.6c34@mx.google.com>
-Content-Language: en-US
-From: "tianjia.zhang" <tianjia.zhang@linux.alibaba.com>
-In-Reply-To: <6686bed3.4a0a0220.6aa45.6c34@mx.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611-md-drivers-usb-serial-v1-1-c6ada535890a@quicinc.com>
 
-Hi,
+On Tue, Jun 11, 2024 at 10:52:54AM -0700, Jeff Johnson wrote:
+> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/ch341.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb_debug.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/mxuport.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/navman.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/qcaux.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb-serial-simple.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/symbolserial.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-On 2024/7/4 23:25, Dan Carpenter wrote:
-> We checked that "nlimbs" is non-zero in the outside if statement so delete
-> the duplicate check here.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
+I amended the commit message with the (recent) commit that added this
+W=1 warning (and dropped C=1). I also tweaked three descriptions
+slightly. End result is here:
 
+	https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git/commit/?h=usb-next&id=9f4dc05107a6db3743e6b9ea4014cbdc3795682d
 
-Reviewed-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Thanks.
 
-
->   lib/crypto/mpi/mpi-bit.c | 10 ++++------
->   1 file changed, 4 insertions(+), 6 deletions(-)
->
-> diff --git a/lib/crypto/mpi/mpi-bit.c b/lib/crypto/mpi/mpi-bit.c
-> index 070ba784c9f1..e08fc202ea5c 100644
-> --- a/lib/crypto/mpi/mpi-bit.c
-> +++ b/lib/crypto/mpi/mpi-bit.c
-> @@ -212,12 +212,10 @@ void mpi_rshift(MPI x, MPI a, unsigned int n)
->   			return;
->   		}
->   
-> -		if (nlimbs) {
-> -			for (i = 0; i < x->nlimbs - nlimbs; i++)
-> -				x->d[i] = x->d[i+nlimbs];
-> -			x->d[i] = 0;
-> -			x->nlimbs -= nlimbs;
-> -		}
-> +		for (i = 0; i < x->nlimbs - nlimbs; i++)
-> +			x->d[i] = x->d[i+nlimbs];
-> +		x->d[i] = 0;
-> +		x->nlimbs -= nlimbs;
->   
->   		if (x->nlimbs && nbits)
->   			mpihelp_rshift(x->d, x->d, x->nlimbs, nbits);
-
-
-Cheers,
-
-Tianjia
-
+Johan
