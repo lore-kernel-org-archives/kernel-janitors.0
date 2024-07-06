@@ -1,95 +1,83 @@
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF7EE552;
-	Sat,  6 Jul 2024 03:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48FA10A1A;
+	Sat,  6 Jul 2024 07:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720238059; cv=none; b=FMiJunnt+TMxXYOr3DTCC2u4MzcsboQwypponkQqwsMuneqalF3Zg+nyw5q+3pVZNbETZ0dKnseIEXIhby+DEMiHzNyq96mTkr/XpzRN5d6iwVKO7rwzyo+i0d3O68/Y9J/tv772iBmfqyQhmF9y0IcV1Hg5dIPPeIh0oSchbpU=
+	t=1720249757; cv=none; b=Hrx+r98q9Br1FWLArXOwcgyJdfusVVEzqZtD6H97lf9xBJaFiN7hUZCdGXo52QqB2xao2o5uOS4hZkME2YIYrGSaRGPs7SQNtA9czxVfWaw3QxsY27bhtzc2j0Ifcjw9/VZCJZ3G/hwsEMolr23Ak0KNHA+R3rkWp4n/w6BYxLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720238059; c=relaxed/simple;
-	bh=ITg6qRMPQUBa0g5V9kbsJV7gEtIiSexsTKQ1w1qpxm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UtYyOBgtMzjC6jhueQsv8ONJpvlwyXlQIw9DxkMQL4Ey+0u58IthqE2KsJvIYl2WZ8GGb9AoMrP6LlrfUz/9BiDRpU1H2eNhAQL6Wh6SwkCpSrndXcGCsaeLR1/4YZk8ZikgXiR0qA4FKrl/ypT55DEOtmol7wGjHZFO9BQ7x2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-380deeb250eso8115835ab.1;
-        Fri, 05 Jul 2024 20:54:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720238057; x=1720842857;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5D4tI0AD6TKB5f8V0gI1Ny//6YFM3x96o/cMbfklP+8=;
-        b=oW7a11WXUyNhgXoH/hyrXGd7nRvanv9WMt2xnOFNfjYgLEdBwwX44bkxmW+6GOnl0O
-         PpnXlq7EmYuwYbM8CgT3PkHi2IPcJa0g2kRv8Vzo2X+BIYLChqFEdW3xfDsM9gky0eZ1
-         +8B8LHoIMzPh5fUJ6i/I21BcEZqk2NS/J5yUfWoY+LPVEbgx+fJ0DFUp8+S5pUjDdi3t
-         RdaTEC8U0WjrlRKHYQcCgUluvpwXYVHggEZuB/dNyNz3ZxK/PBunKZOSURN52TgA/dEp
-         SmcbsmT4532uIhye24lrsdwG1jCRyWuYN2AyVJbvZqlsMn4J8Tt5UeF+JG1LfVBtzXHS
-         3MmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfTzEk3MW9kOC5J4gicLvjTtReehrHM93r4ox0dcyMQz9N6GH4mw/2q3VRtIrs/lnqB+kGDd5QCnDgOjjSTHz1JpQm9r+zqohHB0jiY9A1lr6JQz+CHzsm5y9lFOd+5aYRtZD3dl7G0jrDxcKW7MpY3k3VZIfAGoMbKZpmTLo9QidimyYGcNRLUD1CGp8pgHKxE40Ke/pcfll9M606FVc0LMi27068MDNL33s=
-X-Gm-Message-State: AOJu0YwgeBpUm+qfsl6OxmKg8WGT7GNIG7QuQT2zueNwaUUMIk7CfflT
-	b27Da65LdKNCX+Y1VQqTFs/3xR1zZb6mch4LKiuBRg9989veq/eQyrqHQ4N9sPE=
-X-Google-Smtp-Source: AGHT+IFkmr6rOVVQ6tzIaz/yVRjICqptKhGOdC6MQB/5XVn5kCPoeWBDP61rz3vPYC4BMP0jc8MmoA==
-X-Received: by 2002:a05:6e02:1ca5:b0:381:40be:4ce6 with SMTP id e9e14a558f8ab-38398a01bcbmr78518675ab.11.1720238057336;
-        Fri, 05 Jul 2024 20:54:17 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b12e6712esm1565477b3a.25.2024.07.05.20.54.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 20:54:16 -0700 (PDT)
-Date: Sat, 6 Jul 2024 12:54:15 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Will Deacon <will@kernel.org>, Joyce Ooi <joyce.ooi@intel.com>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Marc Zyngier <maz@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>,
-	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: controller: add missing MODULE_DESCRIPTION()
- macros
-Message-ID: <20240706035415.GJ1195499@rocinante>
-References: <20240626-md-drivers-pci-controller-v2-1-94c811db7a51@quicinc.com>
+	s=arc-20240116; t=1720249757; c=relaxed/simple;
+	bh=xIxRSsrufjq3R79gidF3atyyjKG9FDVof0Vmer13Pdo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=hDHORuHDwIIL3dhEqOKVRNk8oi4fG5IvGtPW4V3IMMTSleM7f1zcNHzaL5ctzRMlODpmiYD1keykIZ5+hvp9SWrT4NzDDsESHsxS4ssMh3ezaqLyrALYJvkwT6bOnTtyE/HnJNeyaJvydFKIY4sZyt027njBQbZB5GnNZvFfda0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QS5kx7C2; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QS5kx7C2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720249747; x=1720854547; i=markus.elfring@web.de;
+	bh=xIxRSsrufjq3R79gidF3atyyjKG9FDVof0Vmer13Pdo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=QS5kx7C2UCygpssHvyKXp3i1/C1o978MlFMs5Y4AMzeD48yEnzFfCkJNvvqt6Owd
+	 FQXr0CcrLHDkWk6HqRStD12cyuvN4kISz9fv8/VDX0DrUYSff5upnT2jb3nGDDHPc
+	 K4dSDGOUjHSYzZv9+hgEJyh6Fopq7bfme64d5vFKnsA7gUz6jZvf8CETvPlRxGKtz
+	 i/IhGO0uBNtYd/6iN5v1Jrf+HaD9hrQ3vC4EigX5TFv/GJ3PcPuAhWYgxEkLIrTlU
+	 4HpZ2c7PqBzeJWElJzyZXERPqbquD4k26BddhXtvPehL6jm8MnLOztThLCsr5jI8d
+	 QdIZ1i7+jzffdpkz9A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M5j5y-1sSkc80e66-00DYBr; Sat, 06
+ Jul 2024 09:03:42 +0200
+Message-ID: <202d6997-2176-47a4-a46d-40ed63609cfd@web.de>
+Date: Sat, 6 Jul 2024 09:03:07 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626-md-drivers-pci-controller-v2-1-94c811db7a51@quicinc.com>
+User-Agent: Mozilla Thunderbird
+To: Sergey Senozhatsky <senozhatsky@chromium.org>,
+ kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Minchan Kim <minchan@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240706045641.631961-1-senozhatsky@chromium.org>
+Subject: Re: [PATCHv5 00/23] zram: compression algorithms tunables
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240706045641.631961-1-senozhatsky@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:4LFjH1W84JqCy9Ae1H6HnQZN5tCxlB1f0fFU384ODFv2yffuPi6
+ OQn6JJGWm8CSNCi+VX/+QB+GIZIvXcHYbB5wDXtmk7srxqQc/E71ijJJkU68p50jF7sYlTU
+ kSOZCunjo9q5TwdzaCcw8y07OfWdO/B5oyb9VeUXC73WoZI5En2nr2ds554e2TKZMftpHkj
+ /b7Y46lByhk6c21goApDw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Jy42c8A3ToA=;Cz+rqlZiKqtQMC05URfedoc+qpk
+ I93MXANggbEWgQQ1nDqd5PRXi+JxrtlF8kPbLPl9sQv7oSHflraYR2VHRGEDmyQ2V6TdZUaDj
+ x8jNgxqoaHQLEJgY2QLMnD0lfsOy8pIyKFLvdLlDXueV3i1ymhQSaxzWsRBdFrvcQ11fmhbSU
+ w1pgZXtNAY1AiIZxRLO0VeCZ6KnqvKif6x0sY2Z7C+tXpkf9xWGe4OM1WFe3oWUXJRN8vnGzO
+ P1IA/KNMmitho6XC1zxMsZ9nSTTwgGt+ExYYL01i99xK8cKVfle1bdN365WinRnUw59thTDn2
+ lZo9rI9te1kUB2rH4VT+1Wj1o9gtOISEpWmQbXEyqWqURsqNRjh88grX60J/YYa/YomtS4dO/
+ L5We48zWnN6SAbE8H/EVkPXBOiG71OkehDxbRnYgLZ2X+PnsxP66xj5vYWzQuBlr0aqLd6bkV
+ wxzgf/JRM+BQ4y5p9mmoELDjSq83hbkGGR5MSUHRQsjoCjuD8kqNYACXf01U60Wm/pjWO7pLM
+ EhQwpSYQxsaEWf2kSYeW/iwBWi1KF9bv6w9Zw42qyMq4MIqOogJP2ZimVj4E45KCaPfRYHqf7
+ jb19UPMKtCJXnRufN/YHtk1icy+0WUF4cmjjE3zN3CDOrnMXNcOYhVCLsw6dPqOvQYEGsvVlr
+ qwhN445NKMafLD5VXbPOH2BAny4fqOHSjTyXuHiycIxEuztxXNk/+U3gTlfcmZKxqINcltXbS
+ nn7Uy5lE4KXMoV8YBu+3IOGGmvQJwvlehLNZhpMgtZ2Os+OtGXLBzmRZV59bwvitV7zT0xdY2
+ BgAYPdYPgPMkJeacFkRl+nIXfdW5GA6pwT2siLIgsFfWk=
 
-Hello,
+> This series introduces support for run-time compression algorithms
+=E2=80=A6
 
-> When ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/dwc/pci-exynos.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pci-host-generic.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-altera.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-altera-msi.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mediatek.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mediatek-gen3.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/vmd.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-apple.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mt7621.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+I find it helpful to separate the version identifier from the previous key=
+ word
+in message subjects.
 
-Applied to misc, thank you!
-
-[1/1] PCI: controller: Add missing MODULE_DESCRIPTION() macros
-      https://git.kernel.org/pci/pci/c/df472e9b08e2
-
-	Krzysztof
+Regards,
+Markus
