@@ -1,78 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96762629;
-	Sat,  6 Jul 2024 00:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF7EE552;
+	Sat,  6 Jul 2024 03:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720225232; cv=none; b=bFtP6n7Enm6UQ0H9sexPGuE6CSkfjNgw+WhgwykTAfND4MiUroUrRh/BMcjpL20Paq4H2QQDAsiDQSeH2Ls4bXyXTeEU96E4zTBvqrs3jA53ytEJs3T5eaVxqvEIcuwpKYOAW5w3QDUbngIeqWn7ZHZ5gw3SCng4FAwHKXk7lgc=
+	t=1720238059; cv=none; b=FMiJunnt+TMxXYOr3DTCC2u4MzcsboQwypponkQqwsMuneqalF3Zg+nyw5q+3pVZNbETZ0dKnseIEXIhby+DEMiHzNyq96mTkr/XpzRN5d6iwVKO7rwzyo+i0d3O68/Y9J/tv772iBmfqyQhmF9y0IcV1Hg5dIPPeIh0oSchbpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720225232; c=relaxed/simple;
-	bh=mTFJwvimHXfAAulibMAiNcci7VWAw1aUgc5lWwsGlzg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Dbm6rEkMa/XwSIGMt8eJpoc1wJNLRYAJrJsl+E9DXkdAYv/N0pPIIOdNNl09M0RChoNOC9en3NV1hW/nOFAgyo6pz6y5zvNAW9brnqOOH4x+MqwRc2RztNHSaip+n2qKClAf6JzFYnO4Yk3wANNzX2uNn3zOuQNsJp6tGEnndbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hqKaYNWQ; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hqKaYNWQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1E7BCC4AF0A;
-	Sat,  6 Jul 2024 00:20:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720225231;
-	bh=mTFJwvimHXfAAulibMAiNcci7VWAw1aUgc5lWwsGlzg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=hqKaYNWQHVzxtLXwo8RWSYlirR2212yBeF5EACILm6jM7uwkl1Mbqzxkny6Yudi0P
-	 HZOC68T4P1kCUzR6tlkia4jqctQS7GHsgDt4tSpyQ21t8DmuvbQv6MVgcrFtVq4FZ8
-	 ZcWxRQKIGZwepY3euo2QfAJIMd4q3nCjcdlCH+2hOT/rwyqhMhhGZpvSC67EHxXleg
-	 rdUpitmHnKPG6DWEXrQTFArhXRK9DSDR8Ut0buq4pr6mHf3ZmdtZPK0snhlqth1hIG
-	 oVmgkIiNazL/tGvEUhjctZzaagbbaxmm6so4f3EcBr68lGP2I7a6EGy4p/BkqPp6RL
-	 IgD3efAfD30FQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0BF31C43332;
-	Sat,  6 Jul 2024 00:20:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720238059; c=relaxed/simple;
+	bh=ITg6qRMPQUBa0g5V9kbsJV7gEtIiSexsTKQ1w1qpxm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UtYyOBgtMzjC6jhueQsv8ONJpvlwyXlQIw9DxkMQL4Ey+0u58IthqE2KsJvIYl2WZ8GGb9AoMrP6LlrfUz/9BiDRpU1H2eNhAQL6Wh6SwkCpSrndXcGCsaeLR1/4YZk8ZikgXiR0qA4FKrl/ypT55DEOtmol7wGjHZFO9BQ7x2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-380deeb250eso8115835ab.1;
+        Fri, 05 Jul 2024 20:54:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720238057; x=1720842857;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5D4tI0AD6TKB5f8V0gI1Ny//6YFM3x96o/cMbfklP+8=;
+        b=oW7a11WXUyNhgXoH/hyrXGd7nRvanv9WMt2xnOFNfjYgLEdBwwX44bkxmW+6GOnl0O
+         PpnXlq7EmYuwYbM8CgT3PkHi2IPcJa0g2kRv8Vzo2X+BIYLChqFEdW3xfDsM9gky0eZ1
+         +8B8LHoIMzPh5fUJ6i/I21BcEZqk2NS/J5yUfWoY+LPVEbgx+fJ0DFUp8+S5pUjDdi3t
+         RdaTEC8U0WjrlRKHYQcCgUluvpwXYVHggEZuB/dNyNz3ZxK/PBunKZOSURN52TgA/dEp
+         SmcbsmT4532uIhye24lrsdwG1jCRyWuYN2AyVJbvZqlsMn4J8Tt5UeF+JG1LfVBtzXHS
+         3MmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfTzEk3MW9kOC5J4gicLvjTtReehrHM93r4ox0dcyMQz9N6GH4mw/2q3VRtIrs/lnqB+kGDd5QCnDgOjjSTHz1JpQm9r+zqohHB0jiY9A1lr6JQz+CHzsm5y9lFOd+5aYRtZD3dl7G0jrDxcKW7MpY3k3VZIfAGoMbKZpmTLo9QidimyYGcNRLUD1CGp8pgHKxE40Ke/pcfll9M606FVc0LMi27068MDNL33s=
+X-Gm-Message-State: AOJu0YwgeBpUm+qfsl6OxmKg8WGT7GNIG7QuQT2zueNwaUUMIk7CfflT
+	b27Da65LdKNCX+Y1VQqTFs/3xR1zZb6mch4LKiuBRg9989veq/eQyrqHQ4N9sPE=
+X-Google-Smtp-Source: AGHT+IFkmr6rOVVQ6tzIaz/yVRjICqptKhGOdC6MQB/5XVn5kCPoeWBDP61rz3vPYC4BMP0jc8MmoA==
+X-Received: by 2002:a05:6e02:1ca5:b0:381:40be:4ce6 with SMTP id e9e14a558f8ab-38398a01bcbmr78518675ab.11.1720238057336;
+        Fri, 05 Jul 2024 20:54:17 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b12e6712esm1565477b3a.25.2024.07.05.20.54.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 20:54:16 -0700 (PDT)
+Date: Sat, 6 Jul 2024 12:54:15 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Will Deacon <will@kernel.org>, Joyce Ooi <joyce.ooi@intel.com>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Marc Zyngier <maz@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: controller: add missing MODULE_DESCRIPTION()
+ macros
+Message-ID: <20240706035415.GJ1195499@rocinante>
+References: <20240626-md-drivers-pci-controller-v2-1-94c811db7a51@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: bcmasp: Fix error code in probe()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172022523104.18034.11968225683723635232.git-patchwork-notify@kernel.org>
-Date: Sat, 06 Jul 2024 00:20:31 +0000
-References: <ZoWKBkHH9D1fqV4r@stanley.mountain>
-In-Reply-To: <ZoWKBkHH9D1fqV4r@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: justin.chen@broadcom.com, florian.fainelli@broadcom.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, bcm-kernel-feedback-list@broadcom.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626-md-drivers-pci-controller-v2-1-94c811db7a51@quicinc.com>
 
-Hello:
+Hello,
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 4 Jul 2024 10:19:44 -0500 you wrote:
-> Return an error code if bcmasp_interface_create() fails.  Don't return
-> success.
+> When ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/dwc/pci-exynos.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pci-host-generic.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-altera.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-altera-msi.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mediatek.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mediatek-gen3.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/vmd.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-apple.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mt7621.o
 > 
-> Fixes: 490cb412007d ("net: bcmasp: Add support for ASP2.0 Ethernet controller")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/net/ethernet/broadcom/asp2/bcmasp.c | 1 +
->  1 file changed, 1 insertion(+)
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-Here is the summary with links:
-  - [net] net: bcmasp: Fix error code in probe()
-    https://git.kernel.org/netdev/net/c/0c754d9d86ff
+Applied to misc, thank you!
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+[1/1] PCI: controller: Add missing MODULE_DESCRIPTION() macros
+      https://git.kernel.org/pci/pci/c/df472e9b08e2
 
-
+	Krzysztof
