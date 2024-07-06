@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48FA10A1A;
-	Sat,  6 Jul 2024 07:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD631A29A;
+	Sat,  6 Jul 2024 07:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720249757; cv=none; b=Hrx+r98q9Br1FWLArXOwcgyJdfusVVEzqZtD6H97lf9xBJaFiN7hUZCdGXo52QqB2xao2o5uOS4hZkME2YIYrGSaRGPs7SQNtA9czxVfWaw3QxsY27bhtzc2j0Ifcjw9/VZCJZ3G/hwsEMolr23Ak0KNHA+R3rkWp4n/w6BYxLE=
+	t=1720250748; cv=none; b=a6RqSv3dVnwdixrmkAckA4MIL1CUxpcel8P9Tv1vYoBVV3+oe1IAzl7atoYpMxBgYdj3Pj7x36ghHgGc11l7dEDHw8zaZhY5LcVx3YmtDDyMR1bfHU3bbVppJgzRbSFry3/kuMDYbKFPy9K2i3fAMTewC4PODi1jBIxZVKgGzMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720249757; c=relaxed/simple;
-	bh=xIxRSsrufjq3R79gidF3atyyjKG9FDVof0Vmer13Pdo=;
+	s=arc-20240116; t=1720250748; c=relaxed/simple;
+	bh=enV4Pmz9JYqoPxrbZ7WoUiNHOT9xZDkPD53ffPmZ6ec=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=hDHORuHDwIIL3dhEqOKVRNk8oi4fG5IvGtPW4V3IMMTSleM7f1zcNHzaL5ctzRMlODpmiYD1keykIZ5+hvp9SWrT4NzDDsESHsxS4ssMh3ezaqLyrALYJvkwT6bOnTtyE/HnJNeyaJvydFKIY4sZyt027njBQbZB5GnNZvFfda0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QS5kx7C2; arc=none smtp.client-ip=212.227.15.3
+	 In-Reply-To:Content-Type; b=DcjEAkuCSeoCzvl2coSDw5Pa9jxF7xotvnBUZQ8HJtEh+yQlyhlgO2yNZr0tzfHJL3DNBuxeYngVeKLw2mzRfPR9zEOUQon1/b780yYlhMJIJG/QbMb6sHcQCTaFXXuKH5eZyw9YScZny5hkqt1aIK7833bepxBWdCSygstGGm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=NBzdTE48; arc=none smtp.client-ip=212.227.15.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QS5kx7C2"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="NBzdTE48"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720249747; x=1720854547; i=markus.elfring@web.de;
-	bh=xIxRSsrufjq3R79gidF3atyyjKG9FDVof0Vmer13Pdo=;
+	s=s29768273; t=1720250738; x=1720855538; i=markus.elfring@web.de;
+	bh=IZviilEXqtAESXHA45V3MqR+qjy8V7xE6K2KvJiIJuU=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=QS5kx7C2UCygpssHvyKXp3i1/C1o978MlFMs5Y4AMzeD48yEnzFfCkJNvvqt6Owd
-	 FQXr0CcrLHDkWk6HqRStD12cyuvN4kISz9fv8/VDX0DrUYSff5upnT2jb3nGDDHPc
-	 K4dSDGOUjHSYzZv9+hgEJyh6Fopq7bfme64d5vFKnsA7gUz6jZvf8CETvPlRxGKtz
-	 i/IhGO0uBNtYd/6iN5v1Jrf+HaD9hrQ3vC4EigX5TFv/GJ3PcPuAhWYgxEkLIrTlU
-	 4HpZ2c7PqBzeJWElJzyZXERPqbquD4k26BddhXtvPehL6jm8MnLOztThLCsr5jI8d
-	 QdIZ1i7+jzffdpkz9A==
+	b=NBzdTE48zB75GH1cIbjj8DhKztJazc02uYPVYk0aZnvCwXP3esDYJdtjl9d1vUJo
+	 ht0QnqJ9lkMjiWUla+zQzpewKTo+CF0mTz54mjLSKLqZ6Ag7Jg385aD566MkpEkBe
+	 2mGf6LrxBScpnukxZ6a7NwbSjC/8VpvGCeSIuLFKIChAqzjH4VeW9GfpMKMu5CnYE
+	 JJc79/xIuov/UgYBAxEk2IS59XcbOcYU1w8UvsDO7D6SYQU0RSfzYhCexmqoe4l8c
+	 JKd30OfoBiM99gfZgbj5ruh29PiiS+IHp6fEz+Y5PeTmOFvFdWSpNxu+xWmYpFmLi
+	 ejSbYzMnrZ6zDLI1eg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M5j5y-1sSkc80e66-00DYBr; Sat, 06
- Jul 2024 09:03:42 +0200
-Message-ID: <202d6997-2176-47a4-a46d-40ed63609cfd@web.de>
-Date: Sat, 6 Jul 2024 09:03:07 +0200
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mx0N5-1sBD3f2JyN-0149MY; Sat, 06
+ Jul 2024 09:20:04 +0200
+Message-ID: <90779f58-9fe3-4d64-a449-f08f5eef7369@web.de>
+Date: Sat, 6 Jul 2024 09:20:03 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -45,39 +45,47 @@ User-Agent: Mozilla Thunderbird
 To: Sergey Senozhatsky <senozhatsky@chromium.org>,
  kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
  Minchan Kim <minchan@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240706045641.631961-1-senozhatsky@chromium.org>
-Subject: Re: [PATCHv5 00/23] zram: compression algorithms tunables
+Cc: LKML <linux-kernel@vger.kernel.org>, Nick Terrell <terrelln@fb.com>
+References: <20240706045641.631961-4-senozhatsky@chromium.org>
+Subject: Re: [PATCH v5 03/23] lib: zstd: fix null-deref in
+ ZSTD_createCDict_advanced2()
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240706045641.631961-1-senozhatsky@chromium.org>
+In-Reply-To: <20240706045641.631961-4-senozhatsky@chromium.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4LFjH1W84JqCy9Ae1H6HnQZN5tCxlB1f0fFU384ODFv2yffuPi6
- OQn6JJGWm8CSNCi+VX/+QB+GIZIvXcHYbB5wDXtmk7srxqQc/E71ijJJkU68p50jF7sYlTU
- kSOZCunjo9q5TwdzaCcw8y07OfWdO/B5oyb9VeUXC73WoZI5En2nr2ds554e2TKZMftpHkj
- /b7Y46lByhk6c21goApDw==
+X-Provags-ID: V03:K1:Km/vDPiXp2BPvMcRE46bACQq+CFLlZKgrDCpRquZORNjwnw3hZM
+ grTaNSXbwKURJzJL14MKYZWLRUKVaPLNV86E8bNMJ77ObiQpDuT8jUoJDdAFRLmgbQLIJVH
+ bZ0ToYgXzBHPZW657yxkYj5B4TVlCdLf77EMg5/j3R85tpZaVgyP/n1wAjanBPapGIfNvDT
+ 7by/OuVlqbeEG+Z6Xk/fA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Jy42c8A3ToA=;Cz+rqlZiKqtQMC05URfedoc+qpk
- I93MXANggbEWgQQ1nDqd5PRXi+JxrtlF8kPbLPl9sQv7oSHflraYR2VHRGEDmyQ2V6TdZUaDj
- x8jNgxqoaHQLEJgY2QLMnD0lfsOy8pIyKFLvdLlDXueV3i1ymhQSaxzWsRBdFrvcQ11fmhbSU
- w1pgZXtNAY1AiIZxRLO0VeCZ6KnqvKif6x0sY2Z7C+tXpkf9xWGe4OM1WFe3oWUXJRN8vnGzO
- P1IA/KNMmitho6XC1zxMsZ9nSTTwgGt+ExYYL01i99xK8cKVfle1bdN365WinRnUw59thTDn2
- lZo9rI9te1kUB2rH4VT+1Wj1o9gtOISEpWmQbXEyqWqURsqNRjh88grX60J/YYa/YomtS4dO/
- L5We48zWnN6SAbE8H/EVkPXBOiG71OkehDxbRnYgLZ2X+PnsxP66xj5vYWzQuBlr0aqLd6bkV
- wxzgf/JRM+BQ4y5p9mmoELDjSq83hbkGGR5MSUHRQsjoCjuD8kqNYACXf01U60Wm/pjWO7pLM
- EhQwpSYQxsaEWf2kSYeW/iwBWi1KF9bv6w9Zw42qyMq4MIqOogJP2ZimVj4E45KCaPfRYHqf7
- jb19UPMKtCJXnRufN/YHtk1icy+0WUF4cmjjE3zN3CDOrnMXNcOYhVCLsw6dPqOvQYEGsvVlr
- qwhN445NKMafLD5VXbPOH2BAny4fqOHSjTyXuHiycIxEuztxXNk/+U3gTlfcmZKxqINcltXbS
- nn7Uy5lE4KXMoV8YBu+3IOGGmvQJwvlehLNZhpMgtZ2Os+OtGXLBzmRZV59bwvitV7zT0xdY2
- BgAYPdYPgPMkJeacFkRl+nIXfdW5GA6pwT2siLIgsFfWk=
+UI-OutboundReport: notjunk:1;M01:P0:UXwnxxGvBaA=;P1NogJ1YKVOgnzjl88/twQDNnL/
+ +KxAV2UIWohZ9dWi2J2+peWpES4w+FatxhLgrtnB9vSbvjnj2UdAvY5oyEThbIut6AdirhP48
+ 3QEvtISsaCLloAm/m6Tk8KfLgUikuvIk3RofeC1gg5KSnZUfftJEL3eQ4outl8mxcdjdHKZ5L
+ 7IUsQYnVzMozvd8rswgWT0R12Pe0VVL1Wb+LWnom4Lmm+2NUN3hnCviYv0Q/hrp5LCgAHDOOE
+ d4rjeoSNmGqCjUMx3Naq7dabdPg2Cog5f30ctfoVBFV4WqURVBEqMmZVR0ATygqjieM0CbcYD
+ 31kc/xriKTZ/ppfgcqECZfodkVxGmao3ZG6qh23CLtIDVEEBACcc3YSTQRA8jyjI37SCzuylp
+ 5io0fhZQoRarTW1byeeAp92Hmm4Uu751ffi5JxwN2A0R+QuYBkA+Kr+AD7U0PIsn5+HC/bBm4
+ o1HAF5PKzaUTgUJrv9rDSxwonIfkYXqbaFHpnzTCB4VYM2zVJCLqQl1zmvvmj2z2pVsfDiATJ
+ UQGNruVMjBBE+TbeYRQx5I3+Iv1NnBqi1J6BJzDDdIHqgmG7ltKxoJe0/7sTwhtUNgKzSTYm7
+ yATlpuMvYujW0xBBjLzNrmlOkV0MSnb/zzsdXUDjMju6hTPCiZquESiX5g7mc8iIkyJCGlDKG
+ eZYeqTriMSwJ2a2uqGn/h3XEHspqLFAVSevm0oiGEA3Y/GYz/JQJsGYOqMtPxwllWBxI5xNUl
+ wtGEylw/rFAf4RGFnIXvot+FQz19y3SVas8S3LOINv44+e+du0criJCoupgm7mLUmnijHBz9P
+ 4scvCF4ikuks4g3ZP1b9QFLD4aflD+yxsXa2OKToQYfuM=
 
-> This series introduces support for run-time compression algorithms
-=E2=80=A6
+> ZSTD_createCDict_advanced2() must ensure that
+> ZSTD_createCDict_advanced_internal() has successfully
+> allocated cdict.  customMalloc() may be called under
+> low memory condition and may be unable to allocate
+> workspace for cdict.
 
-I find it helpful to separate the version identifier from the previous key=
- word
-in message subjects.
+* Please improve such a change description with imperative wordings.
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n94
+
+* Would you like to use the term =E2=80=9Cnull pointer dereference=E2=80=
+=9D (in the summary phrase)?
+
 
 Regards,
 Markus
