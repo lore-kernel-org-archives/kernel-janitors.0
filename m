@@ -1,61 +1,85 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD4F5695;
-	Sat,  6 Jul 2024 09:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0121060275
+	for <kernel-janitors@vger.kernel.org>; Sat,  6 Jul 2024 15:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720256578; cv=none; b=aNKnQrxn6UjA5WHryllyzkYNTz4CE4PkBjDjgJd7sCXxBkNZ9lRd1upbcNaDhR/rBt8KVJg0M8IkRIIF9JbO5x9Py8FRD6gnfJ1U9Q3ZmEAq2kyNh2lUCsKlLZz3VaAF4Ez1pE2q8NzugyguU+LdrrAZSuU2F+E53oVF2CHX1Qw=
+	t=1720280472; cv=none; b=QNk79AYUzalFvtBsVVpAY0v3MI7qiPsHZrsp8f6YcyOfWijh7MbuBQ0w8g/nMI6JWqpRYQLELTPdyj4K/LHE56jLsJk9mMSgr966AXSpcvdifu+J9l0djHKbxE4o7F9Bq8gxM2RnB7WooY47+Lgz58tRrtzgdthA4uqbsFfYY9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720256578; c=relaxed/simple;
-	bh=X4mPycFhWcc4FxPxIbLHKRt3pmtyzYPRqFdUa43qLlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pFebdlVgUueI2oAxJgAPKwrDBNzeIt+AO+N9BzMKwspHLB3YtgL/AOHzhVWrryUuwCw0BFlTM+zySF0pMABKU3SpWb3cfBmGKtaFqrP8W+eHFTL7gaxGkHjeI7+qvTndFl6pUFCLtJJ2hOAsrCsg1YFe1yhRfS/jmvgmxc4H1vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TSS6ywWG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720280472; c=relaxed/simple;
+	bh=M9jRDBpbXwZ4EmwaQHnuGlnqvEpiyG3lM49RlqDVwbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PhOJwsvcE4Od2DGNWkd6XcSZoBvdGMWsJ6QSqmUxzceiqQ4EeAdAVo7uKjkCnWY4hAdXdN8I2iol3qJ0Pb/ans55UkXKwKoEUUye1+xu8/MMDxcei56jvpQvRy5zbZ12bfG0enfdGIiADar9Zkm9mz0SWDB0enNQsiHmZzyjscU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BJ8pW5Cg; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TSS6ywWG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECD49C32786;
-	Sat,  6 Jul 2024 09:02:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720256578;
-	bh=X4mPycFhWcc4FxPxIbLHKRt3pmtyzYPRqFdUa43qLlo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TSS6ywWGgb0Ea+R4G2yaTTOHSoXjhmTJCA3KIaX3HyEC9pyKLFFp/dvoSySovZWvB
-	 lekwROFvwbwim4BgJq3P14ztxo8WyqtNrQvHVzb1z5QAYpM40rZ7y+6h+o8pTP5sLY
-	 VmhFOykpB5XCpoHV5qwSZyhX2KBI9Lj/NhsyvlhMEDyAAMT63NBGv61g+ucb+qZW7U
-	 2ypC/M2sVT8rYxozuVSgo6LKVn5YnSO3EGMfIDAlstXWZiIfIL4SdtvbJ966+1QH2y
-	 FOYy1zEDV/bKZwZDegW7ny9jqBmNALTRV68yWpUS7p76y8/WkPu3ELN5FwAB4xzY3J
-	 6jsZjjvCPgbLA==
-Date: Sat, 6 Jul 2024 11:02:35 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Yonghong Song <yonghong.song@linux.dev>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH bpf-next] bpf: remove unnecessary loop in
- task_file_seq_get_next()
-Message-ID: <20240706-mitnichten-wolfsrudel-53235d096460@brauner>
-References: <ZoWJF51D4zWb6f5t@stanley.mountain>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BJ8pW5Cg"
+X-Envelope-To: dan.carpenter@linaro.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1720280466;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VHyX+ItlOF80ZtMIh6eOxVSUOn43OMD99j3+D49eFXM=;
+	b=BJ8pW5CgQiMSF9nGLg3xKq2Nn38oV8dpQ+4hEKBu8lC+ozyGcn7toD/hvL5perN/YhKSbi
+	i0koOgsQf6LzOsG+xd0U6r/OKJYYatMPoFak7BHcVKr/FZvGu44FBscUah4Sk+89qr5rzP
+	iMqBP8zvY4LLUCbgFtjJrZtx6hvZBs4=
+X-Envelope-To: brauner@kernel.org
+X-Envelope-To: ast@kernel.org
+X-Envelope-To: daniel@iogearbox.net
+X-Envelope-To: andrii@kernel.org
+X-Envelope-To: martin.lau@linux.dev
+X-Envelope-To: eddyz87@gmail.com
+X-Envelope-To: song@kernel.org
+X-Envelope-To: john.fastabend@gmail.com
+X-Envelope-To: kpsingh@kernel.org
+X-Envelope-To: sdf@fomichev.me
+X-Envelope-To: haoluo@google.com
+X-Envelope-To: jolsa@kernel.org
+X-Envelope-To: bpf@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: kernel-janitors@vger.kernel.org
+Message-ID: <40958285-12dc-4beb-8085-53f0bb35a989@linux.dev>
+Date: Sat, 6 Jul 2024 08:40:55 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Subject: Re: [PATCH bpf-next] bpf: remove unnecessary loop in
+ task_file_seq_get_next()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <ZoWJF51D4zWb6f5t@stanley.mountain>
+Content-Language: en-GB
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
 In-Reply-To: <ZoWJF51D4zWb6f5t@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Jul 04, 2024 at 10:19:19AM GMT, Dan Carpenter wrote:
+
+On 7/4/24 8:19 AM, Dan Carpenter wrote:
 > After commit 0ede61d8589c ("file: convert to SLAB_TYPESAFE_BY_RCU") this
 > loop always iterates exactly one time.  Delete the for statement and pull
 > the code in a tab.
-> 
+>
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+LGTM. Thanks for the cleanup.
+
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
+
