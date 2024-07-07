@@ -1,133 +1,123 @@
-Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122793C0B;
-	Sun,  7 Jul 2024 05:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE0C4405
+	for <kernel-janitors@vger.kernel.org>; Sun,  7 Jul 2024 05:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720330202; cv=none; b=lZqjrmd3y8jtuu/tPe7ahdqu5WmBKsGYKY3KclqKm4cHLVknAanbOO/eL7ASWi6qtJ8mstz6mJSRd9t+YbFV1ebuT6ySZYmksdT0nfBcv7geY+ZeYMHTAqK+XM/y8HxJyGbPVlWo0DsWmx8SHndb0nyJGk1zXYa1U95ZUeJB4Xw=
+	t=1720331336; cv=none; b=TQKK+8KGMl+1jmBlq8s1X38Xi/xK3VHXPSfe4fz5c8fyiSAfstv0MWsEcYKmPHPmtUddxMP3auqNJ+TQQrzl0lz++cyHcWMTjWxC7BfstvWGhRQKQIIAHSlQYkwr20hihpva2MturZBryVEKqjKfO177udP8w8dliDt9bzkq8QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720330202; c=relaxed/simple;
-	bh=RrJZGTxd7xygHhaOVoishTvrFUj3gGMe/6VLlgISMgw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Sgkmi7/GSfRoAI3JyKG3FHdRaxTj22cDC/2G+MhI7ygz/BOIdxtfjVIbznWo3YFofFXTyiXuoyBQGABQIiPosAfyefdU/qJGeVmLHbtxWHaXrjgq7p0TKi2vY1iIewUs531BCJ6qN3HsrlYXPrW2YXb47BwfQ8vaeWqUKsVj2rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=q1R3tD2R; arc=none smtp.client-ip=193.252.23.217
+	s=arc-20240116; t=1720331336; c=relaxed/simple;
+	bh=Kr8q7jgtvxXVl4D8u942YnL8udJewM780MCOxyFlPCI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fnLDndq+q8mKW14VLNL///HqWLFyc0VmbCk06PsofY2Rm7x8SPZlIY+ow67K9VK3Ze6u7t13h13poE72TBqEOOOgl/ykamjtuv2WryuuWbVe8P9ixIqMWk7ysmgfakYXKtvyGd5rfgBlelDIVUgvo45z1n8uY8/ZQROxx29xUM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UG1BaYS5; arc=none smtp.client-ip=80.12.242.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="q1R3tD2R"
-Received: from [192.168.1.37] ([86.243.222.230])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UG1BaYS5"
+Received: from fedora.home ([86.243.222.230])
 	by smtp.orange.fr with ESMTPA
-	id QKT8ssABbbqgGQKT8soUOV; Sun, 07 Jul 2024 07:29:51 +0200
+	id QKkEsyOxChEtDQKkWs8JLE; Sun, 07 Jul 2024 07:47:49 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1720330191;
-	bh=zC54ys3M8a39QLCtSzCZVowyG7EsoN9tlLmkgNqnfvk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=q1R3tD2RXdeLFyBEQTmY0fXh19otMgvcnaVayp8aA524Au5Og59rc7IdyRPmdZauT
-	 +JM3S5N5bt5lbojBzDK991fq+LRxD3RckSk5ZggPl2RaefwxZl4P9UTijWJBZseetv
-	 ImAORn69hTuHhzoVO4DMb/wdmEnXGF2xS96UxgSfTp1oCQFq7i/NknY8pmihF6OqV8
-	 54lSTnrL0SnbsyaS202XTF5u3M9fFM8KgcS8BirE3GeiznpeDg3g+T/HaHdtCfUwBg
-	 Km25DkU07YuNSG1aW87wwxnCPrLN0JD/ifJJNB9VbnX7Tqr3ozt7hTZ9Dk6L0LGTSF
-	 Dqswi9a5z0kGg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 07 Jul 2024 07:29:51 +0200
+	s=t20230301; t=1720331269;
+	bh=Ghi6/9KK5dnA4d7xrwkCyOhDZvJBSxCQgYi3tZ7zCuA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=UG1BaYS5p50YBPSwi/Swqw/Ei+LajcK5WrI3tsOSriwLjEBS4TtTB64qkeuRQBvZq
+	 pqg4k0guhhYIzkmJIY7VzCHzOIEePsz5qPbDzkI0b16m97fmLj1bl7aJNlAXQGmvil
+	 BMwQ63yIMqJ9ogHWOuan2tiWMhtDNBLu/hycRjVlz7vrhDsF3cYA34ROnc4ycw6YcK
+	 TfgO3c9uVxNoXtvCOZnv8DuTsTjbdTivBTLQMNItDjjeBNB5Csa4IIMt2CclcgX6nt
+	 aIgrdKvDO690XhgaYAN0pZgFZzVcaR+8kYKzyHVHuVfVZGEN/UF/muwhDHkh+tyzK2
+	 IERxLON+14o9A==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 07 Jul 2024 07:47:49 +0200
 X-ME-IP: 86.243.222.230
-Message-ID: <7635709f-9974-4c60-9cb0-78ae7f007cc2@wanadoo.fr>
-Date: Sun, 7 Jul 2024 07:29:49 +0200
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	fchiby@baylibre.com,
+	fparent@baylibre.com,
+	s.hauer@pengutronix.de
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 1/3] soc: mediatek: pwrap: Constify struct pmic_wrapper_type
+Date: Sun,  7 Jul 2024 07:47:20 +0200
+Message-ID: <5b4b60c5dfd6d8fe893b05cfc96c0e2d67705463.1720331018.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <cover.1720331018.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1720331018.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] Removed extra asterisks from comment beginnings, and
- removed unnecessary comment end
-To: Gold Side <goldside000@outlook.com>, "krzk@kernel.org" <krzk@kernel.org>,
- "perex@perex.cz" <perex@perex.cz>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
- "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>
-References: <DM4P223MB0541357D7B105C83EF9FCFD5F7D92@DM4P223MB0541.NAMP223.PROD.OUTLOOK.COM>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <DM4P223MB0541357D7B105C83EF9FCFD5F7D92@DM4P223MB0541.NAMP223.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 07/07/2024 à 06:14, Gold Side a écrit :
->  From 3574f0514207f9610a69d82d3dd0d018d6dce5dd Mon Sep 17 00:00:00 2001
-> From: Steven Davis <goldside000@outlook.com>
-> Date: Tue, 2 Jul 2024 22:57:24 -0400
-> Subject: [PATCH 1/3] Removed extra asterisk from comment beginning
-> 
-> It saves a byte. I'd imagine bytes are valuable in a project like this.
-> PS: Please forgive my previous patch email, I didn't know the guidelines well.
+'struct pmic_wrapper_type' is not modified in this driver.
 
-Hi,
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-no-problem, newcomers are always welcomed and they have to learn. So, 
-IMHO, making small mistakes is part of the learning curve.
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  45336	   8724	     16	  54076	   d33c	drivers/soc/mediatek/mtk-pmic-wrap.o
 
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  45528	   8532	     16	  54076	   d33c	drivers/soc/mediatek/mtk-pmic-wrap.o
 
-People/mailing-list should be defined according to the MAINTAINERS file. 
-A script helps you for that: ./scripts/get_maintainer.pl
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+Compile tested-only
 
-It can be run either on a patch or on a file/directory.
+Changes in v2:
+   - Add R-b
 
-Here:
-	./scripts/get_maintainer.pl -f kernel/module/main.c
-or
-	./scripts/get_maintainer.pl your_patch.patch
-give:
-	Luis Chamberlain <mcgrof@kernel.org> (maintainer:MODULE SUPPORT)
-	linux-modules@vger.kernel.org (open list:MODULE SUPPORT)
-	linux-kernel@vger.kernel.org (open list:MODULE SUPPORT)
+v1: https://lore.kernel.org/all/ee3160978ac6564663d044815f24cf79e2e0744e.1719652155.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/soc/mediatek/mtk-pmic-wrap.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-It is perfectly fine to add other people/mailing list that are relevant, 
-as kernel-janitor.
-
-If you are using git mail, it is possible to automate the creation of 
-the To: and cc: fields. (see 
-https://www.marcusfolkesson.se/blog/get_maintainers-and-git-send-email/). 
-If using this --identify, you still can add some other --to, --cc., 
-which is really convenient.
-
-
-
-On your commit log, here are a few comments:
-   - there should be a new-line before the Signed-off-by: line
-   - you can add whatever you want after the --- ending the commit 
-description. These extra comments are informational only, and won't be 
-part of the git history. Here, your PS should have been here.
-    - imperative wording is preferred when writing commit logs
-
-You can also give a look at 
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html, 
-if not already done.
-
-
-Welcome and happy patching :)
-
-CJ
-
-> Signed-off-by: Steven Davis <goldside000@outlook.com
-> ---
->   kernel/module/main.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index d18a94b973e102..25e456f4381c71 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -450,7 +450,7 @@ bool __is_module_percpu_address(unsigned long addr, unsigned long *can_addr)
->        return false;
->   }
->   
-> -/**
-> +/*
->    * is_module_percpu_address() - test whether address is from module static percpu
->    * @addr: address to test
->    *
+diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
+index efd9cae212dc..0da0cdec5050 100644
+--- a/drivers/soc/mediatek/mtk-pmic-wrap.c
++++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
+@@ -2397,7 +2397,7 @@ static const struct pmic_wrapper_type pwrap_mt8183 = {
+ 	.init_soc_specific = pwrap_mt8183_init_soc_specific,
+ };
+ 
+-static struct pmic_wrapper_type pwrap_mt8195 = {
++static const struct pmic_wrapper_type pwrap_mt8195 = {
+ 	.regs = mt8195_regs,
+ 	.type = PWRAP_MT8195,
+ 	.arb_en_all = 0x777f, /* NEED CONFIRM */
+@@ -2423,7 +2423,7 @@ static const struct pmic_wrapper_type pwrap_mt8365 = {
+ 	.init_soc_specific = NULL,
+ };
+ 
+-static struct pmic_wrapper_type pwrap_mt8516 = {
++static const struct pmic_wrapper_type pwrap_mt8516 = {
+ 	.regs = mt8516_regs,
+ 	.type = PWRAP_MT8516,
+ 	.arb_en_all = 0xff,
+@@ -2435,7 +2435,7 @@ static struct pmic_wrapper_type pwrap_mt8516 = {
+ 	.init_soc_specific = NULL,
+ };
+ 
+-static struct pmic_wrapper_type pwrap_mt8186 = {
++static const struct pmic_wrapper_type pwrap_mt8186 = {
+ 	.regs = mt8186_regs,
+ 	.type = PWRAP_MT8186,
+ 	.arb_en_all = 0xfb27f,
+-- 
+2.45.2
 
