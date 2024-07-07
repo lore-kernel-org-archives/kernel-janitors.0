@@ -1,119 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from out.smtpout.orange.fr (out-15.smtpout.orange.fr [193.252.22.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65536FBE;
-	Sun,  7 Jul 2024 11:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33722BCF5;
+	Sun,  7 Jul 2024 14:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720351300; cv=none; b=g4nSZNxPeVLyIEcTOBqrAykmSEPlDEcVdXFqjyRXNEv5M4zPLdmBCaKHPb3N0h5rY81A5bxqDJ8NPQtDR92n6ZgX75khUxkhin+49ViNBc/+6NJX7HIww0SxpjAgKCP5VpZadkWDe3DKG6jmidHSvgG0k4eWD+u37MO0yqaSanc=
+	t=1720360968; cv=none; b=RACJrP1a9oGYVTvjemDytwfmXwn4Hxg7RAxCa/L2YGn88/4RvO8Ep9OQw0yabvpqwZR1J3V7X7vaBK6rpKqcxTmrgxsuIan6yNHKnTq/rY8nzbmakSUuWc2AWkx7VfPjDiJJ5h8HJyOugj6ohdO1KsXDs/R9xZ/X4biOdi1/J5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720351300; c=relaxed/simple;
-	bh=RuY0M+PTCkxY/xq17rYpCK199mEZaqpmtfHMMGxCftE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UxEelUYczJZcPfRAR45hRYDNlY7YNOR9fEGx7DWtpFWanXfm948gJIU19+0py66edQ7PqRr4bnOL6p+CM/CfeDVNvZfw73wNg4vaHqY9aNGnsdksVU3sTRYP89Nb0Woupo46kqDkLWyubW3MuPAalEilQHcSYGPFQMWPqtJe3I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwqCyB8i; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720360968; c=relaxed/simple;
+	bh=cNY4FBrDVyFvxJ1FcOjdbsesqA7en96tMYxacO6mzj0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ozgg+YpUJFinvsS2riuwPyXP4iMmXMcqsgm/pJH7ZWDscoYP59d3CdjwgDWPzwIprqHBM0fs8UELiBaeAucNQuizQyUSylmSFS3aLbjkEVi2eCgvJVgPUznB6SGH+zvD9qJK0bEt8c5wrpd4jkp31WE0OzxnljGbee47t7nngqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=cKyOn3j7; arc=none smtp.client-ip=193.252.22.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwqCyB8i"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A789C3277B;
-	Sun,  7 Jul 2024 11:21:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720351299;
-	bh=RuY0M+PTCkxY/xq17rYpCK199mEZaqpmtfHMMGxCftE=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=hwqCyB8i+bVFuMMUf0NbIAMukTWz2xnrM35Iydj7smVJG3ROoaxkmkpsqL18ghvT4
-	 p8+J8MHHm2yPSrbva0OnpFU3RL8HBCSxbwWiPJAOnlYvhT7ld6N0xmnyMfXqvT2kef
-	 f8RxAYEqlRec7D5gpCA6ocPnoQAp9T5FJFt1s+MutjzdbzZs2j0Jgc4OEZDP61t9OC
-	 6qBf/jDFvsBQPVwd5+yFInFmxkr+meRUkr/Q/nKTGaM/5Em4C/z0/LJil3QrgCazrW
-	 w8qyb+y64R3LbSX8tml7Ns5MTBdJklIhSIqmjsMa8WMl0HUSK19Cgr+lOHLBS2s+Ar
-	 IrtUHM1EIdG5w==
-Message-ID: <4e0e5dea-09a7-479d-9a1d-7c95132949c1@kernel.org>
-Date: Sun, 7 Jul 2024 13:21:34 +0200
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="cKyOn3j7"
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id QSSCsitZDDoZEQSSCsv4du; Sun, 07 Jul 2024 16:01:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720360884;
+	bh=yVl9ZDegeHLmo3z4LwytZC3MJwUOtHfsHQOYoM/Kvbo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=cKyOn3j7qIWtromjRHSwjED+tRnvDYNG4upPcM0jfIDp/1W4WJK7nr5ihTPth/p+p
+	 4R2dvhee0xboI2GQoIeSNQeflpvos/n641SsqFNZctFORTZ5n3dPw1ql2YUtDYjfWR
+	 sTbwLRd7Em1bre+8+9iwZ0fQy2QdgZwgowsuwME7hYE9QcJMJS8KKKnDLJFazH5cdt
+	 QSjc8X2T1ErJOSKIii3BYSiLie2rUwmy7EeDpSpfoawkH3G+ejB5z0u5gBG/jE4jbi
+	 Q/3c+Ief03aHXz9Qu9+ZLhaa8OvgMjcDs44riOgYwXoKN0uHE1fzaCj0KbQKaQGwAv
+	 8QIN2uN9aszwQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 07 Jul 2024 16:01:24 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-nilfs@vger.kernel.org
+Subject: [PATCH] nilfs2: Constify struct kobj_type
+Date: Sun,  7 Jul 2024 16:01:14 +0200
+Message-ID: <7da501fae4f96e3d2c740fe5638cad813d33fcbf.1720360830.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] Removed extra asterisks from comment beginnings, and
- removed unnecessary comment end
-To: Gold Side <goldside000@outlook.com>, "perex@perex.cz" <perex@perex.cz>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
- "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>
-References: <DM4P223MB054139F737887D40A2CA396FF7D92@DM4P223MB0541.NAMP223.PROD.OUTLOOK.COM>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <DM4P223MB054139F737887D40A2CA396FF7D92@DM4P223MB0541.NAMP223.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 07/07/2024 06:14, Gold Side wrote:
-> From 33dc0aa3973913f310840cc8f7d5d599d573c297 Mon Sep 17 00:00:00 2001
-> From: Steven Davis <goldside000@outlook.com>
-> Date: Tue, 2 Jul 2024 23:43:15 -0400
-> Subject: [PATCH 2/3] Removed unnecessary comment end
-> 
-> It still works the same without that comment end, so why is it in there?
+'struct kobj_type' is not modified in this driver. It is only used with
+kobject_init_and_add() which takes a "const struct kobj_type *" parameter.
 
-Because license-rules asks for it. Why do you change only one file? Look
-how this is done in other files. This should make you ask questions why
-doing things differently.
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-> Signed-off-by: Steven Davis <goldside000@outlook.com>
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  22403	   4184	     24	  26611	   67f3	fs/nilfs2/sysfs.o
 
-Please use git to create commits, not hand-craft them. Missing blank
-line before tag.
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  22723	   3928	     24	  26675	   6833	fs/nilfs2/sysfs.o
 
-Entire patch does not look like proper patch, but some weirdly generated
-mbox file. :/ Use git format-patch or b4.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only
+---
+ fs/nilfs2/sysfs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> ---
->  include/memory/renesas-rpc-if.h | 2 +-
-
-Best regards,
-Krzysztof
+diff --git a/fs/nilfs2/sysfs.c b/fs/nilfs2/sysfs.c
+index 379d22e28ed6..a5569b7f47a3 100644
+--- a/fs/nilfs2/sysfs.c
++++ b/fs/nilfs2/sysfs.c
+@@ -56,7 +56,7 @@ static void nilfs_##name##_attr_release(struct kobject *kobj) \
+ 						sg_##name##_kobj); \
+ 	complete(&subgroups->sg_##name##_kobj_unregister); \
+ } \
+-static struct kobj_type nilfs_##name##_ktype = { \
++static const struct kobj_type nilfs_##name##_ktype = { \
+ 	.default_groups	= nilfs_##name##_groups, \
+ 	.sysfs_ops	= &nilfs_##name##_attr_ops, \
+ 	.release	= nilfs_##name##_attr_release, \
+@@ -166,7 +166,7 @@ static const struct sysfs_ops nilfs_snapshot_attr_ops = {
+ 	.store	= nilfs_snapshot_attr_store,
+ };
+ 
+-static struct kobj_type nilfs_snapshot_ktype = {
++static const struct kobj_type nilfs_snapshot_ktype = {
+ 	.default_groups	= nilfs_snapshot_groups,
+ 	.sysfs_ops	= &nilfs_snapshot_attr_ops,
+ 	.release	= nilfs_snapshot_attr_release,
+@@ -967,7 +967,7 @@ static const struct sysfs_ops nilfs_dev_attr_ops = {
+ 	.store	= nilfs_dev_attr_store,
+ };
+ 
+-static struct kobj_type nilfs_dev_ktype = {
++static const struct kobj_type nilfs_dev_ktype = {
+ 	.default_groups	= nilfs_dev_groups,
+ 	.sysfs_ops	= &nilfs_dev_attr_ops,
+ 	.release	= nilfs_dev_attr_release,
+-- 
+2.45.2
 
