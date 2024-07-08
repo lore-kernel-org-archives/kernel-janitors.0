@@ -1,114 +1,116 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70F537160
-	for <kernel-janitors@vger.kernel.org>; Mon,  8 Jul 2024 07:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8022361FCF;
+	Mon,  8 Jul 2024 09:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720425093; cv=none; b=BvEknlgAPM0ogEH42IUrb6OPmJVWzBb09iBLkTAIa1YlXPZ4dSyOnxLbiN8uQkh/jxZg84bUAuCUTMDtn98WXPGozG9nOzJew7evDD2GeWWu2+u7KF/e6xWcr+yfvsa5hUqFYOZJBbzx2HiH0NmTLi0THyhHoVtCNQ0UIlvA3Kg=
+	t=1720429510; cv=none; b=qMeGL2g/GncwYqIOCRFLT8l9jbzkdJSEHRD59/WbXpa/OueJI8k0VGmsP8ZNobA+BvUXdoZ/6U50JdXeVrL3IqEZQVjZFqvV+mw/UEoYTNP/Ywh5GpJMKSppbJPlOITf87PjdStznurw9G/CNlnNWNM9l5tdDkbTx5OSo5KnPGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720425093; c=relaxed/simple;
-	bh=sMCuHNPwMzVOTIECsai/oVdKXcj1XiUQZZ+KQ8wvdlg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aeUZzmp/PVJFS1FBv7JU0lUkIWYanVIOXJUcMYTxRYcInzQM1qGskUQ2DcwzXc7hRiiyz3KP/UjdUXJSU6N0zqEwu53m3q1UdsnDmov4tQ9zeJv5GHxDq0ACK+FWaBDeLzpn9Y1uoL9GigMYJIDWoCtG4NyuPre9afI7vKNCG+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CHlfDzBF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1720429510; c=relaxed/simple;
+	bh=NnQqjUbKvjNZY7J0GvOZUH87Q46eIm6qNoQROrVlD08=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XTF9fpp1/bdGgYSgmSfqpH+CgOdE6lMA8BXH9Qwbc+ju5NrZLGoomvh8m54JvueqfvDn4+QOwRyCWSfokXRBZMKcJ9d+KzP7WWUxDuKER+fo2jvaIfed7IdJToo/WLoz4TjrfBVI2GbOAaRGmlcdsftArrUP5SsL2adVsqs/zBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USoGd6ui; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CHlfDzBF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720425090;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=mbt2usRMEhPQM41Uc5WG7giJsy4J3tFaRLey9pcvtWo=;
-	b=CHlfDzBFRoQYTepBz/g+Dr+p67wdQ6uf2yLq0AqXlfAXyXrvkwqtI6qbYEayaYOngal5bp
-	mzLbHQh7jAiOuVkm5ZwhbLhGaYSigz8FTuB4iQ5T4jfqWeJ3tLXfGN0WNPwFKf4oF3LX2Z
-	ypIoQsp2zBv12iliocaw5HCAaJpB+Mc=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-118-ApdVoCz0PW-xi5nqP1s85Q-1; Mon, 08 Jul 2024 03:51:29 -0400
-X-MC-Unique: ApdVoCz0PW-xi5nqP1s85Q-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-426679bc120so6247155e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 08 Jul 2024 00:51:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720425088; x=1721029888;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mbt2usRMEhPQM41Uc5WG7giJsy4J3tFaRLey9pcvtWo=;
-        b=R3NakMgz512AVT5HWlqY6qmKoNtDHfSj2RuBf3rrxZdLtS7Yqa8Q/GdyZCtO6alzrJ
-         wnO8QFrJRnm/KTnT+WimT6rzY1Yez4krRBLdEv/kHl4zN60egd+N6oc9z++0illnNMuL
-         dGVCoy0dgBZJD1Nj69hnND+kH04ZpWCqehIFNNQBv0FixyDNigt3BWHkgZF/wm5i4xW6
-         n7tZmI3srulsZUi8PRR9/kxDZ1r7KmmDm+npn6v8UU9n6VtR3czAjFbSJmLJK3Dwf+oa
-         EBxjHfPCGQVNujHJMF3YgcThSVPvh5R14bMv+fdlcSU5jNRDMl7uMYgsaD4qw5kAcpd8
-         WQOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXZrpAkL68yi7Od2lynfaqeDqNwoIVD06iFKJtvG73/W0gelj13xwnDQV6cK/MKtLANhX1+BZnjy6vPJPmo2d6a14OFBL5UbSNA8PiFXbe
-X-Gm-Message-State: AOJu0YxGv14pQYdAIczoe1uXTeIQN7Cs6wreJzqnUq/W6pne5LLJi9O+
-	CQ0e+Xdtc7LVg+zaQBmIi7KuDX4D5doNDWBvTL+IN6SYpEaaWI6RqiBdCU6dSLD5HzS/zxvBZ44
-	vlUAHbvUUsHuyUmFQh5UASoTAY/YfwWpiUZlnW1xBVETL4Qs+ryraogM0XB3DBPBqpQ==
-X-Received: by 2002:a05:600c:2e49:b0:426:5471:156a with SMTP id 5b1f17b1804b1-426547117a5mr52986525e9.13.1720425087994;
-        Mon, 08 Jul 2024 00:51:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFgOpusd4NR4jXY1q924v3zDOMC+LgMqX0gtVRoZWih+SE99nRuVfWcAwG/NI2cxpeKYpWMxw==
-X-Received: by 2002:a05:600c:2e49:b0:426:5471:156a with SMTP id 5b1f17b1804b1-426547117a5mr52986345e9.13.1720425087614;
-        Mon, 08 Jul 2024 00:51:27 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2ca4b7sm153482915e9.37.2024.07.08.00.51.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 00:51:27 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Frank Li <Frank.Li@nxp.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org
-Cc: Stuart Yoder <stuyoder@gmail.com>,
-	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in QORIQ DPAA2 FSL-MC BUS DRIVER
-Date: Mon,  8 Jul 2024 09:51:24 +0200
-Message-ID: <20240708075124.73522-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USoGd6ui"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4389C116B1;
+	Mon,  8 Jul 2024 09:05:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720429510;
+	bh=NnQqjUbKvjNZY7J0GvOZUH87Q46eIm6qNoQROrVlD08=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=USoGd6uiu9WBBz3dnB5q8pTS3aRRunNU0rDk0lXLDo8e4xzFSgXBynZK0BLZIapG7
+	 0Y9nmCmqKqR6aF3/ZqbphXbEvR+YiYCq3NdhnRiB627erT2J5ysCcvxvhD8A07iBFu
+	 XCsfPjvSTsF2G33Gcn9TiKlJE9PWP72H6QSkfayQqoZ/lAPziUvCpkA/2ToZq3KJEl
+	 63GhtgZhTOxiuGDOEDDRH/5kDz5KHat++8Vge7diE5JNA7d6FXBMEgu4UVToiycHzK
+	 4f1fAf0f80DI0rUCPrZ/+Q3mph4fbJXRTEwJkx00JXorkZQdCzc2zwzwy3SJ/nx69b
+	 KYKNkZ0QDTWEg==
+Message-ID: <67d29f3c-35c0-4c55-a274-432df5dc9393@kernel.org>
+Date: Mon, 8 Jul 2024 11:05:02 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in QORIQ DPAA2 FSL-MC BUS
+ DRIVER
+To: Lukas Bulwahn <lbulwahn@redhat.com>, Frank Li <Frank.Li@nxp.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
+Cc: Stuart Yoder <stuyoder@gmail.com>,
+ Laurentiu Tudor <laurentiu.tudor@nxp.com>, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
+References: <20240708075124.73522-1-lukas.bulwahn@redhat.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240708075124.73522-1-lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On 08/07/2024 09:51, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit 78fa0d19a50a ("dt-bindings: misc: fsl,qoriq-mc: convert to yaml
+> format") converts fsl,qoriq-mc.txt to yaml format, but misses to adjust the
+> file entry in QORIQ DPAA2 FSL-MC BUS DRIVER.
+> 
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
+> 
+> Adjust the file entry in QORIQ DPAA2 FSL-MC BUS DRIVER.
+> 
 
-Commit 78fa0d19a50a ("dt-bindings: misc: fsl,qoriq-mc: convert to yaml
-format") converts fsl,qoriq-mc.txt to yaml format, but misses to adjust the
-file entry in QORIQ DPAA2 FSL-MC BUS DRIVER.
+Frank Li,
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
+Please start checking all the paths when you rename files. That's the
+second issue reported recently.
 
-Adjust the file entry in QORIQ DPAA2 FSL-MC BUS DRIVER.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4cb9f0819d8e..13332cfc15f6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18588,7 +18588,7 @@ M:	Laurentiu Tudor <laurentiu.tudor@nxp.com>
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
- F:	Documentation/ABI/stable/sysfs-bus-fsl-mc
--F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
-+F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.yaml
- F:	Documentation/networking/device_drivers/ethernet/freescale/dpaa2/overview.rst
- F:	drivers/bus/fsl-mc/
- F:	include/uapi/linux/fsl_mc.h
--- 
-2.45.2
+Best regards,
+Krzysztof
 
