@@ -1,87 +1,87 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CB51D6AA
-	for <kernel-janitors@vger.kernel.org>; Mon,  8 Jul 2024 17:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C454879FD;
+	Mon,  8 Jul 2024 18:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720460014; cv=none; b=SQ8wOQfouZHh9PlxCL2e3tuAF0WTRSBhsfXVx3OJyhsQijUTM6jv33h55yifZu06/iUydS2GuKCfjazwvQuMVj5J9kdvMS5kmtu24FsYsgI2M1nvce7FdTsl4Fb3bpEV7hbiDdxl0thGjNoSG3vYReSlJiQZn5EKVDc1AgAe3Vk=
+	t=1720463255; cv=none; b=gBkHT72ryvF7CjlCzLVKOTnTcnPq4hin99xWpxZYdhfdZI1wcPSyb6mGv44eQXbdoY9f7xkCiSe8A0ljzJhc2qRbipYCrt+g4rHHrXnJ2ZSwxW/vEUm6vy1PjkuM6KpgfQIRfMQ/gPq8bHYxbOkKRgMmSalV4eIu8Dwc18RXx34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720460014; c=relaxed/simple;
-	bh=xMgVMxuVJ+4mDxDIZpv60LWECy5vBRGinidcROVywxQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Wbpb5IEq9C2MMnSk1OZgtx4z3URO57C6LJ3HZZs9rt8w9SVwE+4y70ct6fkNz/Oeg1WCqzoxFBRwysmNrHElmsZzBxmO4mQLFIzoLTO67+/4AWX3ELIDtTlkx9G46wg3mQ2xjeyVdjSeEXsni9WTQpwDyGI0ZM9OvJ2PtoxBNfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y50tGogI; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1720463255; c=relaxed/simple;
+	bh=nlMaB/JpuH88DM3GoVX7G0Uuyms0smFzf26TAoL12eY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=FFRb2KmIobdBwftU8G7zoygme34lwJsbpCtePlFdHv0WRqPbDb+iiLNEcqUzA8vjHdhqEpjn0I29gV6x5HgmHyOnyyXZ6qQEXLbtStTo5B7mGv4KpEqeNOYDpgKxqSjYotJas7bf7sXTiF2SkHU1PdvnO30pybpsoLcUXn9XLAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=U42852Dn; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y50tGogI"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eeb2d60efbso3270611fa.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 08 Jul 2024 10:33:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720460010; x=1721064810; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xMgVMxuVJ+4mDxDIZpv60LWECy5vBRGinidcROVywxQ=;
-        b=Y50tGogIngiclh4Gts5xkP4pOWNro5ruF/OZolpDwLqRsNTA+OxfK0DtSOyKzzALe8
-         OVKL3i4CpYcP4Nw6lYb0nfdhnKnrGCIR7T8t70gVVsI44HIpmtlofEaQJ7VZiPolsOn+
-         f8oKytFIs7qqBmvnvOz/7XiPTT0kCMfvXKSK4hHsihxFH1QroOx7ByPSJhBvRrlN2OBQ
-         HHCbi6iN1EA4jTBdC2owSX7quGRalPXVfsO/p2EtzGdUQI7zpwJqeoZ5B/RBk+ZejVeu
-         Dxa9zCLntjXk/8y5NQCFO0oA/zKUgHm7SWYSeGGBjF7oYWtrqhG+0eFfPVs6+QoyFjqd
-         Q5gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720460010; x=1721064810;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xMgVMxuVJ+4mDxDIZpv60LWECy5vBRGinidcROVywxQ=;
-        b=OLY6oKHljoK9C8ezZas5czbB4LPjJyiWdGcst8h/ykPJIwEEotNyJMC2q3xH8iNXmV
-         axRu/6FKIeMXly9GcjYnMRzVs4PBj1OOLF2gvHXuGpHEMcQE6qNtCN18ztESRX19Bc4u
-         BiucCPFoGAdkECXSkFaWJpgm8wjdH6+t/ySUX1at+xujSPqzKMyEgk4ory84/HfO5Qkr
-         +MZe51MXn6yEzmDJ9m0PqgAJgm1xo40XokEcxIRDYZowz4Xmw+x1xPdGIdtf7JtFf7NM
-         tcASYhzGuo/KhdUOiIt75AMpFjw1STmW7QrGQqxSMqScSK9FmHIKz4dlRQGdejqnkEgS
-         5YNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaMwHMhNdEjnMcFV4k/aYovV8OY7XGjD/ydZUk4NA9w9BbT59vnnjJjDqdc/Mt8cUG3zPEisaSaqtg2KcAjTydCm+40EsPZXVngz38Tme4
-X-Gm-Message-State: AOJu0Yx1JPO1brDT3pp9TsH8Xb3jrIDv18IOtW+sfSqGJ391v2Z+rNma
-	Zs0n3nSCh2c+apdOISNS2CiR39WR01E8EfXovxiVxjH8H9+iCjVNHcu363o92B8=
-X-Google-Smtp-Source: AGHT+IHqm74O9XrXu8Sp/c9nwIkpH2JvcIAs+C9RT3fJBrhdSnfh3Hhhnky9bRB/8pAITn8lkJu/iQ==
-X-Received: by 2002:a2e:9a92:0:b0:2ed:136b:755b with SMTP id 38308e7fff4ca-2eeb318b5e9mr2863341fa.53.1720460010540;
-        Mon, 08 Jul 2024 10:33:30 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f741553sm5885805e9.40.2024.07.08.10.33.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 10:33:30 -0700 (PDT)
-Message-ID: <77711848a7e7242a7445a4bccf5c93675239b838.camel@linaro.org>
-Subject: Re: [PATCH] phy: exynos5-usbdrd: fix error code in probe()
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>,  Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, Sam
- Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>,
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-Date: Mon, 08 Jul 2024 18:33:29 +0100
-In-Reply-To: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
-References: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3-1 
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="U42852Dn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720463221; x=1721068021; i=markus.elfring@web.de;
+	bh=nlMaB/JpuH88DM3GoVX7G0Uuyms0smFzf26TAoL12eY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=U42852DnVa/l/aji1gejCv+ivNU+NkM4U5x6NGXf5TvqMP9Xk2pH/t4Jhzq7X3XP
+	 EbD4aiGoae03rLAynmSTj7EcqkN6Jwr1fCcLTNkoFZQsJtpT8hJFyZIqDGsNFpdd4
+	 8bIOvTlKrNCaZ3EpRcXQChvanqNrz+C6yAB44ejdhm9s98rz7IBnk/ZJJ4LriY+Kp
+	 bH998OUSPjblxjKtXkmw08Myiw9N0yqq7hPxVgkW3TwpNtb67yStLOK4r4qOvxWU4
+	 JUroRYfaehz5sQUiK1JL1ikR5EJhq0+vdqCFLF1s3P/aUQIcyyKTwqFhJLl4m0WiE
+	 M3TBaNM7ILgLHTVvpg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MYu16-1svjin0mFE-00P4Ko; Mon, 08
+ Jul 2024 20:27:01 +0200
+Message-ID: <25435c69-d33b-49fe-be7f-c0d93af639fc@web.de>
+Date: Mon, 8 Jul 2024 20:26:46 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Dan Carpenter <dan.carpenter@linaro.org>, linux-phy@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+ Sam Protsenko <semen.protsenko@linaro.org>, Vinod Koul <vkoul@kernel.org>
+References: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
+Subject: Re: [PATCH] phy: exynos5-usbdrd: fix error code in probe()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:L1Gdda1KHAXM3MhKUbikQbsc/6T6hLXGu6hHFu4HvtGFPADfB02
+ WlMPZMzYETWo0QrMiYcSyNHt23xaeUr92HSMZuqJX1AfiMd5bAuPiNA8FV764pis/yZNtQZ
+ osO7PAeDwjfRYpDrD/leT18EEtrcjetiUalGglPNEOYDSSF/qelGMjCQSV4PEKzS5cnX/sZ
+ i6VHdDyQUGfeY9oufJM8A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2ZYuXBedkdA=;jzqSJq1FcYwTlwfIq9xFK4UBb9t
+ p922l9+XcoZ53L1uXsFwWz+btk37W13Xlxmrjm0SIXsCUgrESut+KhOZYXXq7w0p8ZlfQfSJ/
+ Jly2DeIhvYmlMB0I1v3D5gFM1zeyBn4j9MRGfibesQnM6oZc33Dj270/8DqhcXZTKOdpfHxCa
+ Hx0QKn0qg+cutDaq1IwA6odNYKeU6MjdkGJtzEY7HuDEsBx+AW/Zu/kvkD4uxsMXaTQbJhOYO
+ Ol1OXXagRkA3cQpUKRkmgPd20+YgCM3k5fc78/b4efLwi5HeKmeiE3Srin/gqrtSAc1ZPVWNr
+ feNTxf3FG5zDHQIajNczj7ByM3OL7Rooohtqgo4tb7gvHGi5LAV52cMxYw4J6AQt1OTfVtUyo
+ QubjONSTcweqXpH8EXexcoW5QCTOfqsOhKakO/RS2kW/N0gBtlp4bd+5y2EqnKb1pX1np5JMF
+ 0gzqWSpidzLsxMcdNhyHQS0kcbX2sS10uEq4wfXkvsDIIfqGFo/h/8npMlG8rOpNC2mDv5j6J
+ r7hIVjin5InYgLP6o0/S8UaZhJaOPZkj4jJCS8i1GRQaK6FbJGWkNGfm1Dl9PJHgqn/zoRakP
+ xBK7zMRdhcZXrcf73k6EU9KVawX5Hc7lGR3aodOs/esEouNJHvpaMEhPXur3QacaXrXELc/9x
+ w5X18yJddD2ZacBidkJEYAVDedkB98dsYeFxFtjGUgGxz1rbG/GWSv4Dl01SVumDR42soFoD7
+ SVAK3wyn1DKh+e5jyNvDLTMfQKh8n+vlhWeZyeB3ZAFG30P7z+2LCbqm7VsCBeZq+2ELNgv4e
+ RSu8ygyWqtmYw9Kx/3Kvy2+r8/WlsB+r2WaPTiCbSdH8g=
 
-On Mon, 2024-07-08 at 12:04 -0500, Dan Carpenter wrote:
 > Return negative -ENOMEM instead of positive ENOMEM.
->=20
-> Fixes: 497ddafe915e ("phy: exynos5-usbdrd: convert Vbus supplies to regul=
-ator_bulk")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+Would you like to refer to the function name =E2=80=9Cexynos5_usbdrd_phy_p=
+robe=E2=80=9D
+in the summary phrase?
 
+Regards,
+Markus
