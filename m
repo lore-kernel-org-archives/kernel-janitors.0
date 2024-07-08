@@ -1,87 +1,117 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from out.smtpout.orange.fr (out-14.smtpout.orange.fr [193.252.22.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C454879FD;
-	Mon,  8 Jul 2024 18:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD3617C9E;
+	Mon,  8 Jul 2024 18:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720463255; cv=none; b=gBkHT72ryvF7CjlCzLVKOTnTcnPq4hin99xWpxZYdhfdZI1wcPSyb6mGv44eQXbdoY9f7xkCiSe8A0ljzJhc2qRbipYCrt+g4rHHrXnJ2ZSwxW/vEUm6vy1PjkuM6KpgfQIRfMQ/gPq8bHYxbOkKRgMmSalV4eIu8Dwc18RXx34=
+	t=1720464387; cv=none; b=EmXMiazvq6oc4GvWxVeD/26XnPn8F+hOf7786DPe3kf4tQN8FPexHtrE/VevUZ0US3oHsFwWMTmBzktHBWN8aLm0wURyNjbGMtnAzh6lvrjEwwWH8Lb1doJ5AbKOg5tpadhoCo6Gpxwm3INVCZtZKzKziy8k+J5aP3V9IsXsPd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720463255; c=relaxed/simple;
-	bh=nlMaB/JpuH88DM3GoVX7G0Uuyms0smFzf26TAoL12eY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=FFRb2KmIobdBwftU8G7zoygme34lwJsbpCtePlFdHv0WRqPbDb+iiLNEcqUzA8vjHdhqEpjn0I29gV6x5HgmHyOnyyXZ6qQEXLbtStTo5B7mGv4KpEqeNOYDpgKxqSjYotJas7bf7sXTiF2SkHU1PdvnO30pybpsoLcUXn9XLAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=U42852Dn; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1720464387; c=relaxed/simple;
+	bh=qhKBayIAPavSMW75aEM3zJFBTq4j3VWijVeLsHFc6bE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mF5exyT8mYmQbb0TdjpYY/jf24gwpWdJvmyS5bqC4KvY+JZW+hh19xat7C0lurpmohjA0xZpUCJIA3atDcugCmRofY3p8hpnx3eC3FlLynHIEK7Fddi9buEbTp9xnxFh0g7OVoznFFdYTew3xV37Vo+V81h+h/F2QivG3YqASu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=myuGue4s; arc=none smtp.client-ip=193.252.22.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="U42852Dn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720463221; x=1721068021; i=markus.elfring@web.de;
-	bh=nlMaB/JpuH88DM3GoVX7G0Uuyms0smFzf26TAoL12eY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=U42852DnVa/l/aji1gejCv+ivNU+NkM4U5x6NGXf5TvqMP9Xk2pH/t4Jhzq7X3XP
-	 EbD4aiGoae03rLAynmSTj7EcqkN6Jwr1fCcLTNkoFZQsJtpT8hJFyZIqDGsNFpdd4
-	 8bIOvTlKrNCaZ3EpRcXQChvanqNrz+C6yAB44ejdhm9s98rz7IBnk/ZJJ4LriY+Kp
-	 bH998OUSPjblxjKtXkmw08Myiw9N0yqq7hPxVgkW3TwpNtb67yStLOK4r4qOvxWU4
-	 JUroRYfaehz5sQUiK1JL1ikR5EJhq0+vdqCFLF1s3P/aUQIcyyKTwqFhJLl4m0WiE
-	 M3TBaNM7ILgLHTVvpg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MYu16-1svjin0mFE-00P4Ko; Mon, 08
- Jul 2024 20:27:01 +0200
-Message-ID: <25435c69-d33b-49fe-be7f-c0d93af639fc@web.de>
-Date: Mon, 8 Jul 2024 20:26:46 +0200
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="myuGue4s"
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id QsprsV0CzZLaOQspssvWtF; Mon, 08 Jul 2024 20:11:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720462296;
+	bh=krSibVlXs2Xtz/4LEWDf2JDpcRVHt1a2jYVqAJYebcs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=myuGue4s1pukqR07LJDpCxc11AGXJ4/MLDGGJ/h9rppxkYq/auADyRTiP42xlwiVo
+	 NjvawSS23pOqRM4r0jwEn71PnICPoL9r1H3MYNm5DgtLJO/QZ1cUSepN0wb85FYafp
+	 0ACf17Rtk15N4iWRE3w+x6uvcWPkfy7urwBe/JEIq0dkBh3fiuy2IDgFWT8i3KDrt7
+	 yUjxGM0taYXeZLyX8cyecR9CEiISmAf8CveSqqwBLkrDn/p+M/fi9Lc9wfFLi5F627
+	 MYkNPFG6gQZjSKmqhjPNa/TBnHJ9Sq76K1NNLuacKQfwnQXwapHSi8G2DFY+Afb+NW
+	 dDrAYKK1AUecQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 08 Jul 2024 20:11:36 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+	Jack Wang <jinpu.wang@ionos.com>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-block@vger.kernel.org
+Subject: [PATCH] block/rnbd: Constify struct kobj_type
+Date: Mon,  8 Jul 2024 20:11:30 +0200
+Message-ID: <e3d454173ffad30726c9351810d3aa7b75122711.1720462252.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Dan Carpenter <dan.carpenter@linaro.org>, linux-phy@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
- Sam Protsenko <semen.protsenko@linaro.org>, Vinod Koul <vkoul@kernel.org>
-References: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
-Subject: Re: [PATCH] phy: exynos5-usbdrd: fix error code in probe()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:L1Gdda1KHAXM3MhKUbikQbsc/6T6hLXGu6hHFu4HvtGFPADfB02
- WlMPZMzYETWo0QrMiYcSyNHt23xaeUr92HSMZuqJX1AfiMd5bAuPiNA8FV764pis/yZNtQZ
- osO7PAeDwjfRYpDrD/leT18EEtrcjetiUalGglPNEOYDSSF/qelGMjCQSV4PEKzS5cnX/sZ
- i6VHdDyQUGfeY9oufJM8A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2ZYuXBedkdA=;jzqSJq1FcYwTlwfIq9xFK4UBb9t
- p922l9+XcoZ53L1uXsFwWz+btk37W13Xlxmrjm0SIXsCUgrESut+KhOZYXXq7w0p8ZlfQfSJ/
- Jly2DeIhvYmlMB0I1v3D5gFM1zeyBn4j9MRGfibesQnM6oZc33Dj270/8DqhcXZTKOdpfHxCa
- Hx0QKn0qg+cutDaq1IwA6odNYKeU6MjdkGJtzEY7HuDEsBx+AW/Zu/kvkD4uxsMXaTQbJhOYO
- Ol1OXXagRkA3cQpUKRkmgPd20+YgCM3k5fc78/b4efLwi5HeKmeiE3Srin/gqrtSAc1ZPVWNr
- feNTxf3FG5zDHQIajNczj7ByM3OL7Rooohtqgo4tb7gvHGi5LAV52cMxYw4J6AQt1OTfVtUyo
- QubjONSTcweqXpH8EXexcoW5QCTOfqsOhKakO/RS2kW/N0gBtlp4bd+5y2EqnKb1pX1np5JMF
- 0gzqWSpidzLsxMcdNhyHQS0kcbX2sS10uEq4wfXkvsDIIfqGFo/h/8npMlG8rOpNC2mDv5j6J
- r7hIVjin5InYgLP6o0/S8UaZhJaOPZkj4jJCS8i1GRQaK6FbJGWkNGfm1Dl9PJHgqn/zoRakP
- xBK7zMRdhcZXrcf73k6EU9KVawX5Hc7lGR3aodOs/esEouNJHvpaMEhPXur3QacaXrXELc/9x
- w5X18yJddD2ZacBidkJEYAVDedkB98dsYeFxFtjGUgGxz1rbG/GWSv4Dl01SVumDR42soFoD7
- SVAK3wyn1DKh+e5jyNvDLTMfQKh8n+vlhWeZyeB3ZAFG30P7z+2LCbqm7VsCBeZq+2ELNgv4e
- RSu8ygyWqtmYw9Kx/3Kvy2+r8/WlsB+r2WaPTiCbSdH8g=
+Content-Transfer-Encoding: 8bit
 
-> Return negative -ENOMEM instead of positive ENOMEM.
+'struct kobj_type' is not modified in this driver. It is only used with
+kobject_init_and_add() which takes a "const struct kobj_type *" parameter.
 
-Would you like to refer to the function name =E2=80=9Cexynos5_usbdrd_phy_p=
-robe=E2=80=9D
-in the summary phrase?
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-Regards,
-Markus
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   4082	    792	      8	   4882	   1312	drivers/block/rnbd/rnbd-srv-sysfs.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   4210	    672	      8	   4890	   131a	drivers/block/rnbd/rnbd-srv-sysfs.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only
+---
+ drivers/block/rnbd/rnbd-clt-sysfs.c | 2 +-
+ drivers/block/rnbd/rnbd-srv-sysfs.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/block/rnbd/rnbd-clt-sysfs.c b/drivers/block/rnbd/rnbd-clt-sysfs.c
+index 39887556cf95..6ea7c12e3a87 100644
+--- a/drivers/block/rnbd/rnbd-clt-sysfs.c
++++ b/drivers/block/rnbd/rnbd-clt-sysfs.c
+@@ -475,7 +475,7 @@ void rnbd_clt_remove_dev_symlink(struct rnbd_clt_dev *dev)
+ 	}
+ }
+ 
+-static struct kobj_type rnbd_dev_ktype = {
++static const struct kobj_type rnbd_dev_ktype = {
+ 	.sysfs_ops      = &kobj_sysfs_ops,
+ 	.default_groups = rnbd_dev_groups,
+ };
+diff --git a/drivers/block/rnbd/rnbd-srv-sysfs.c b/drivers/block/rnbd/rnbd-srv-sysfs.c
+index cba6ba43c2c2..64780094442c 100644
+--- a/drivers/block/rnbd/rnbd-srv-sysfs.c
++++ b/drivers/block/rnbd/rnbd-srv-sysfs.c
+@@ -33,7 +33,7 @@ static void rnbd_srv_dev_release(struct kobject *kobj)
+ 	kfree(dev);
+ }
+ 
+-static struct kobj_type dev_ktype = {
++static const struct kobj_type dev_ktype = {
+ 	.sysfs_ops = &kobj_sysfs_ops,
+ 	.release = rnbd_srv_dev_release
+ };
+@@ -184,7 +184,7 @@ static void rnbd_srv_sess_dev_release(struct kobject *kobj)
+ 	rnbd_destroy_sess_dev(sess_dev, sess_dev->keep_id);
+ }
+ 
+-static struct kobj_type rnbd_srv_sess_dev_ktype = {
++static const struct kobj_type rnbd_srv_sess_dev_ktype = {
+ 	.sysfs_ops	= &kobj_sysfs_ops,
+ 	.release	= rnbd_srv_sess_dev_release,
+ };
+-- 
+2.45.2
+
