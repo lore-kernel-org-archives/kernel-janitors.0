@@ -1,175 +1,197 @@
-Received: from msa.smtpout.orange.fr (out-66.smtpout.orange.fr [193.252.22.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AC717B05E
-	for <kernel-janitors@vger.kernel.org>; Tue,  9 Jul 2024 20:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F0A1B86DD;
+	Tue,  9 Jul 2024 20:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720557550; cv=none; b=lILyS2EdAl16JlO4i4Fm5/v9wN6RCiaqqGzu5S+UAyBeI8OiF3wf/x4xcCtYx/+lU56GWBLLuLd+X48CkfAEz+HA8yT5mJaEzZktkaP7cw3ufrroUey6JeE6v0Mcpy81+sLQeYU/WbTN8x+9IOrJME/FUxYLDjeYS9T5TdsKvto=
+	t=1720558084; cv=none; b=QSEcL5t4XH/w0Ly8PewCzI5abw5cOfF5o1iunFW+X3nVx1tQHW3kdHnn8cew+KGaQuOOMYTYwD7SYt2UvFuVAWTg4DIW58rfyKECJig+JYF+8gGjHGLjHYH0qlb+8toJRFxyjDQtYt/XlKhO0vVY/6eQfe8CHcYfmjGvkKscwbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720557550; c=relaxed/simple;
-	bh=i1N+Z/2ISYoU2xkqMv8KVqdJajIRRXpo+2JbHMcYGJA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KZ5hAOYpWucYLJ6sfT+rnOnfB1HoHjJjN6+ihk8dA7pW+np0J64JQWBBy+JJVrUgIevxMYZEAaJkc+sBmxla491px+hT0+zQFkit5gcsqsZiYV2AZPSkLLKWm1neLyYO+Qb19aWaABzysM2PhzNU3bm2vGvxNGfy8FPPy4ucBUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=rOiW0UEG; arc=none smtp.client-ip=193.252.22.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1720558084; c=relaxed/simple;
+	bh=0IDf6TB+FYUHkNkAUQiGcWACaOXwFtv93FPLqJAuQF4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qKABrg6mUGXBopM0v+zJ9xIWPcFj/XCzW2Dy6FyAKY5SyNV0Q0Sj4TiQeqBf6dvuVdmcOj69v+u9MH/jA6gj9Cpsj/iXtO77a6FXGhz5Tv7AVHiGF6TVs8lKVEEjbTzXVNFj4M8GasBsc7CeDE4EL8BNQUbVcLcvdN2oybCbLLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ob3XUogJ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="rOiW0UEG"
-Received: from fedora.. ([77.130.249.53])
-	by smtp.orange.fr with ESMTPA
-	id RHavsh9C6phyvRHaysZbWF; Tue, 09 Jul 2024 22:37:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1720557472;
-	bh=dMg7mTXfpctFZkkNyoWDAtldXD4ACEocdjQPCli4wGs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=rOiW0UEGBfbia/zNC+vi7VqxdJ0RlXu5LhpKjSDa2lYBWLrqlvYasIQeieiUlw5EE
-	 vAEB/swjiNqLWgppLzT6a861T5FfbgeX7Jb/ho/sqk2o5Z+NIQ5Z3p9zgBfvdIuuta
-	 oKDaKHN10p1eVHboI8+Q4fUGwAj+DSoFS3u+WOi3f+XJF3aHH8+9U8Wz6pO67lHz1H
-	 4MDRkBmZh3pDSeLF0AA+PAEN7ZUIlGbArEOU7tffqcCjVI1c7TgkRBCaSd+Qe6ac99
-	 wqiTShfm8wjxqoyzs7nvH2UoEw6EvDpsG6mrGsGbrx7roJ4cOPifntRsSfd7gI8toA
-	 m0ej8Y30Ojv5g==
-X-ME-Helo: fedora..
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 09 Jul 2024 22:37:52 +0200
-X-ME-IP: 77.130.249.53
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: linus.walleij@linaro.org,
-	lokeshvutla@ti.com,
-	nm@ti.com,
-	robh@kernel.org,
-	tony@atomide.com
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 1/3] pinctrl: ti: ti-iodelay: Fix some error handling paths
-Date: Tue,  9 Jul 2024 22:37:43 +0200
-Message-ID: <0220fa5b925bd08e361be8206a5438f6229deaac.1720556038.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1720556038.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1720556038.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ob3XUogJ"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469C1YTq003817;
+	Tue, 9 Jul 2024 20:47:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gjNkgghvbaiGaVfC9986p0MdHkU4HA49qHYTTJZJj+w=; b=ob3XUogJJYo0F6Iw
+	dAlAUZfolnpZiFGj7Z365Xx6MLB76up8l3/wgNhUhN0z+mxVCJ/1VpE+7g7WQJzg
+	7AS4iqTP/8tmDYYKZFJAQvxbybfrPW6aC/QOZwvv12q49C6Szjlh42cNg7/P1miF
+	xJfebFzaQrjodTJPY5mxUBBRcK0WTjdVSB93hK4WXMb8oo+flHlj5N7A14LHuno1
+	K2CrwhsxcM9oJHIn2syZaUhgZYg4h+zg2Me1DNrK27EcBa6YjVHl422ZNcJZFGzu
+	8ZD4aQZQRM2fD1MXQFecjvHDH1A5gp/a4ZCm0UapkibYgLAvR3JBeZdsiw25mRqd
+	mQ+3sg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 408w0rae1k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 20:47:49 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469Klmvt014652
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 20:47:48 GMT
+Received: from [10.48.245.228] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
+ 13:47:47 -0700
+Message-ID: <e0a9f5ab-92d4-4a41-8693-358e861f2ef6@quicinc.com>
+Date: Tue, 9 Jul 2024 13:47:41 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fs: nfs: add missing MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust
+	<trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Chuck
+ Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>,
+        Olga Kornievskaia
+	<kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+        Tom Talpey
+	<tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>
+CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240625-md-fs-nfs-v2-1-2316b64ffaa5@quicinc.com>
+ <abe2e12fcd6a64b603179f234ca684a182657d6a.camel@kernel.org>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <abe2e12fcd6a64b603179f234ca684a182657d6a.camel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: bDOqncjgmTe-V7cPJHhh8rGPj9jFqcW8
+X-Proofpoint-GUID: bDOqncjgmTe-V7cPJHhh8rGPj9jFqcW8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_09,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ impostorscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
+ phishscore=0 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090141
 
-In the probe, if an error occurs after the ti_iodelay_pinconf_init_dev()
-call, it is likely that ti_iodelay_pinconf_deinit_dev() should be called,
-as already done in the remove function.
+On 6/25/2024 9:44 AM, Jeff Layton wrote:
+> On Tue, 2024-06-25 at 09:42 -0700, Jeff Johnson wrote:
+>> Fix the 'make W=1' warnings:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in
+>> fs/nfs_common/nfs_acl.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in
+>> fs/nfs_common/grace.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfs.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv2.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv3.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv4.o
+>>
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>> ---
+>> Changes in v2:
+>> - Updated the description in grace.c per Jeff Layton
+>> - Link to v1:
+>> https://lore.kernel.org/r/20240527-md-fs-nfs-v1-1-64a15e9b53a6@quicinc.com
+>> ---
+>>  fs/nfs/inode.c         | 1 +
+>>  fs/nfs/nfs2super.c     | 1 +
+>>  fs/nfs/nfs3super.c     | 1 +
+>>  fs/nfs/nfs4super.c     | 1 +
+>>  fs/nfs_common/grace.c  | 1 +
+>>  fs/nfs_common/nfsacl.c | 1 +
+>>  6 files changed, 6 insertions(+)
+>>
+>> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+>> index acef52ecb1bb..57c473e9d00f 100644
+>> --- a/fs/nfs/inode.c
+>> +++ b/fs/nfs/inode.c
+>> @@ -2538,6 +2538,7 @@ static void __exit exit_nfs_fs(void)
+>>  
+>>  /* Not quite true; I just maintain it */
+>>  MODULE_AUTHOR("Olaf Kirch <okir@monad.swb.de>");
+>> +MODULE_DESCRIPTION("NFS client support");
+>>  MODULE_LICENSE("GPL");
+>>  module_param(enable_ino64, bool, 0644);
+>>  
+>> diff --git a/fs/nfs/nfs2super.c b/fs/nfs/nfs2super.c
+>> index 467f21ee6a35..b1badc70bd71 100644
+>> --- a/fs/nfs/nfs2super.c
+>> +++ b/fs/nfs/nfs2super.c
+>> @@ -26,6 +26,7 @@ static void __exit exit_nfs_v2(void)
+>>  	unregister_nfs_version(&nfs_v2);
+>>  }
+>>  
+>> +MODULE_DESCRIPTION("NFSv2 client support");
+>>  MODULE_LICENSE("GPL");
+>>  
+>>  module_init(init_nfs_v2);
+>> diff --git a/fs/nfs/nfs3super.c b/fs/nfs/nfs3super.c
+>> index 8a9be9e47f76..20a80478449e 100644
+>> --- a/fs/nfs/nfs3super.c
+>> +++ b/fs/nfs/nfs3super.c
+>> @@ -27,6 +27,7 @@ static void __exit exit_nfs_v3(void)
+>>  	unregister_nfs_version(&nfs_v3);
+>>  }
+>>  
+>> +MODULE_DESCRIPTION("NFSv3 client support");
+>>  MODULE_LICENSE("GPL");
+>>  
+>>  module_init(init_nfs_v3);
+>> diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
+>> index 8da5a9c000f4..b29a26923ce0 100644
+>> --- a/fs/nfs/nfs4super.c
+>> +++ b/fs/nfs/nfs4super.c
+>> @@ -332,6 +332,7 @@ static void __exit exit_nfs_v4(void)
+>>  	nfs_dns_resolver_destroy();
+>>  }
+>>  
+>> +MODULE_DESCRIPTION("NFSv4 client support");
+>>  MODULE_LICENSE("GPL");
+>>  
+>>  module_init(init_nfs_v4);
+>> diff --git a/fs/nfs_common/grace.c b/fs/nfs_common/grace.c
+>> index 1479583fbb62..27cd0d13143b 100644
+>> --- a/fs/nfs_common/grace.c
+>> +++ b/fs/nfs_common/grace.c
+>> @@ -139,6 +139,7 @@ exit_grace(void)
+>>  }
+>>  
+>>  MODULE_AUTHOR("Jeff Layton <jlayton@primarydata.com>");
+>> +MODULE_DESCRIPTION("NFS client and server infrastructure");
+>>  MODULE_LICENSE("GPL");
+>>  module_init(init_grace)
+>>  module_exit(exit_grace)
+>> diff --git a/fs/nfs_common/nfsacl.c b/fs/nfs_common/nfsacl.c
+>> index 5a5bd85d08f8..ea382b75b26c 100644
+>> --- a/fs/nfs_common/nfsacl.c
+>> +++ b/fs/nfs_common/nfsacl.c
+>> @@ -29,6 +29,7 @@
+>>  #include <linux/nfs3.h>
+>>  #include <linux/sort.h>
+>>  
+>> +MODULE_DESCRIPTION("NFS ACL support");
+>>  MODULE_LICENSE("GPL");
+>>  
+>>  struct nfsacl_encode_desc {
+>>
+>> ---
+>> base-commit: 50736169ecc8387247fe6a00932852ce7b057083
+>> change-id: 20240527-md-fs-nfs-42f19eb60b50
+>>
+> 
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
-Also in ti_iodelay_pinconf_init_dev(), if an error occurs after the first
-regmap_update_bits() call, it is also likely that the deinit() function
-should be called.
-
-The easier way to fix it is to add a devm_add_action_or_reset() at the
-rigtht place to have ti_iodelay_pinconf_deinit_dev() called when needed.
-
-Doing so, the .remove() function can be removed, and the associated
-platform_set_drvdata() call in the probe as well.
-
-Fixes: 003910ebc83b ("pinctrl: Introduce TI IOdelay configuration driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
-
-This patch is speculative, review with care!
----
- drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 52 ++++++++++---------------
- 1 file changed, 21 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-index f5e5a23d2226..451801acdc40 100644
---- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-+++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-@@ -273,6 +273,22 @@ static int ti_iodelay_pinconf_set(struct ti_iodelay_device *iod,
- 	return r;
- }
- 
-+/**
-+ * ti_iodelay_pinconf_deinit_dev() - deinit the iodelay device
-+ * @data:	IODelay device
-+ *
-+ * Deinitialize the IODelay device (basically just lock the region back up.
-+ */
-+static void ti_iodelay_pinconf_deinit_dev(void *data)
-+{
-+	struct ti_iodelay_device *iod = data;
-+	const struct ti_iodelay_reg_data *reg = iod->reg_data;
-+
-+	/* lock the iodelay region back again */
-+	regmap_update_bits(iod->regmap, reg->reg_global_lock_offset,
-+			   reg->global_lock_mask, reg->global_lock_val);
-+}
-+
- /**
-  * ti_iodelay_pinconf_init_dev() - Initialize IODelay device
-  * @iod: iodelay device
-@@ -295,6 +311,11 @@ static int ti_iodelay_pinconf_init_dev(struct ti_iodelay_device *iod)
- 	if (r)
- 		return r;
- 
-+	r = devm_add_action_or_reset(iod->dev, ti_iodelay_pinconf_deinit_dev,
-+				     iod);
-+	if (r)
-+		return r;
-+
- 	/* Read up Recalibration sequence done by bootloader */
- 	r = regmap_read(iod->regmap, reg->reg_refclk_offset, &val);
- 	if (r)
-@@ -353,21 +374,6 @@ static int ti_iodelay_pinconf_init_dev(struct ti_iodelay_device *iod)
- 	return 0;
- }
- 
--/**
-- * ti_iodelay_pinconf_deinit_dev() - deinit the iodelay device
-- * @iod:	IODelay device
-- *
-- * Deinitialize the IODelay device (basically just lock the region back up.
-- */
--static void ti_iodelay_pinconf_deinit_dev(struct ti_iodelay_device *iod)
--{
--	const struct ti_iodelay_reg_data *reg = iod->reg_data;
--
--	/* lock the iodelay region back again */
--	regmap_update_bits(iod->regmap, reg->reg_global_lock_offset,
--			   reg->global_lock_mask, reg->global_lock_val);
--}
--
- /**
-  * ti_iodelay_get_pingroup() - Find the group mapped by a group selector
-  * @iod: iodelay device
-@@ -877,27 +883,11 @@ static int ti_iodelay_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	platform_set_drvdata(pdev, iod);
--
- 	return pinctrl_enable(iod->pctl);
- }
- 
--/**
-- * ti_iodelay_remove() - standard remove
-- * @pdev: platform device
-- */
--static void ti_iodelay_remove(struct platform_device *pdev)
--{
--	struct ti_iodelay_device *iod = platform_get_drvdata(pdev);
--
--	ti_iodelay_pinconf_deinit_dev(iod);
--
--	/* Expect other allocations to be freed by devm */
--}
--
- static struct platform_driver ti_iodelay_driver = {
- 	.probe = ti_iodelay_probe,
--	.remove_new = ti_iodelay_remove,
- 	.driver = {
- 		   .name = DRIVER_NAME,
- 		   .of_match_table = ti_iodelay_of_match,
--- 
-2.45.2
+I don't see this in linux-next yet so following up to see if anything else is
+needed to get this merged.
 
