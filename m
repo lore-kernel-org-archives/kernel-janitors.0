@@ -1,197 +1,210 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F0A1B86DD;
-	Tue,  9 Jul 2024 20:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4DF1B86D6;
+	Tue,  9 Jul 2024 22:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720558084; cv=none; b=QSEcL5t4XH/w0Ly8PewCzI5abw5cOfF5o1iunFW+X3nVx1tQHW3kdHnn8cew+KGaQuOOMYTYwD7SYt2UvFuVAWTg4DIW58rfyKECJig+JYF+8gGjHGLjHYH0qlb+8toJRFxyjDQtYt/XlKhO0vVY/6eQfe8CHcYfmjGvkKscwbk=
+	t=1720562910; cv=none; b=H/4EoiQey3OIM8QuSwCcUt7QqHT/J0kI8LuYFCN8Rua6YBJXufFTayVR+TIsDvLSnnFbvDPghW31p6XRonxTGKIcUyQFK+KNK86CnwjR4ngZRYAFEa6B7F3W9thhrIqgvhTZoUG/OvmYV5GFPofKvcxb5xHM0WGKX2pYcY9NeSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720558084; c=relaxed/simple;
-	bh=0IDf6TB+FYUHkNkAUQiGcWACaOXwFtv93FPLqJAuQF4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qKABrg6mUGXBopM0v+zJ9xIWPcFj/XCzW2Dy6FyAKY5SyNV0Q0Sj4TiQeqBf6dvuVdmcOj69v+u9MH/jA6gj9Cpsj/iXtO77a6FXGhz5Tv7AVHiGF6TVs8lKVEEjbTzXVNFj4M8GasBsc7CeDE4EL8BNQUbVcLcvdN2oybCbLLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ob3XUogJ; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1720562910; c=relaxed/simple;
+	bh=lkzWomeVwq/YRJmwTAIEZ93bVceNo/kXZvVtzOy1Wd0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=jvTHv/zyEBeKZkAMR7vQ/UKn5sTtOOi7n7kJwYfbeInFfkFM05yhf6cwBZ5xqwAZ4fDT5Bz9LJELJ6AbsHrWRtaxgerpQEbnX6lAx96/jD5UabSl9B55SxEo5zHgLlUe2WmU/U1tjkfWS/x5/FQvnJFdWaGkq/ZLapVjFjigQqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YISv2mlK; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ob3XUogJ"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469C1YTq003817;
-	Tue, 9 Jul 2024 20:47:49 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YISv2mlK"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469J6FoH019368;
+	Tue, 9 Jul 2024 22:07:57 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gjNkgghvbaiGaVfC9986p0MdHkU4HA49qHYTTJZJj+w=; b=ob3XUogJJYo0F6Iw
-	dAlAUZfolnpZiFGj7Z365Xx6MLB76up8l3/wgNhUhN0z+mxVCJ/1VpE+7g7WQJzg
-	7AS4iqTP/8tmDYYKZFJAQvxbybfrPW6aC/QOZwvv12q49C6Szjlh42cNg7/P1miF
-	xJfebFzaQrjodTJPY5mxUBBRcK0WTjdVSB93hK4WXMb8oo+flHlj5N7A14LHuno1
-	K2CrwhsxcM9oJHIn2syZaUhgZYg4h+zg2Me1DNrK27EcBa6YjVHl422ZNcJZFGzu
-	8ZD4aQZQRM2fD1MXQFecjvHDH1A5gp/a4ZCm0UapkibYgLAvR3JBeZdsiw25mRqd
-	mQ+3sg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 408w0rae1k-1
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=qlBjtF6+Nl6p3pxoPrJXX6
+	P3qWoG4zdVGdJPJXfQSu0=; b=YISv2mlKxrtaQNwSg0QGrgLDzM5cpQUh0X8NHO
+	HeZkjGl8BN0285CD755VQZZVfhQ23yfLwGH9/4ZdLUG0M0sJePB0DBpY254B/pcn
+	5hkhLkW2Sm4IQO6ZnfHJf2X5d6XmEvia2sAUPK+h7FQnOrjBiRQYlHoeJ5y+QxG6
+	18EbhrWzNLoL6eHH9UkmUTW8v56nvPRL+jBBVdqrqWbOyZkIl43Li/gBi9pE9gr3
+	w/6/eFrQE693/oyb1D/6H97ExEhSO/A542D1vPyv0Oq0fhQJjchNanEDZegCatgs
+	1JeQsT04EreTjJcDoPM7YLX7UrExTQOpc/TraBIlsiagJjwA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wg3yvgd-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 20:47:49 +0000 (GMT)
+	Tue, 09 Jul 2024 22:07:57 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469Klmvt014652
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469M7uXu022335
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 20:47:48 GMT
-Received: from [10.48.245.228] (10.49.16.6) by nalasex01a.na.qualcomm.com
+	Tue, 9 Jul 2024 22:07:56 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
- 13:47:47 -0700
-Message-ID: <e0a9f5ab-92d4-4a41-8693-358e861f2ef6@quicinc.com>
-Date: Tue, 9 Jul 2024 13:47:41 -0700
+ 15:07:56 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 9 Jul 2024 15:07:55 -0700
+Subject: [PATCH v3] perf: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs: nfs: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust
-	<trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Chuck
- Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>,
-        Olga Kornievskaia
-	<kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-        Tom Talpey
-	<tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>
-CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240625-md-fs-nfs-v2-1-2316b64ffaa5@quicinc.com>
- <abe2e12fcd6a64b603179f234ca684a182657d6a.camel@kernel.org>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <abe2e12fcd6a64b603179f234ca684a182657d6a.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240709-md-drivers-perf-v3-1-513275b75ed0@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIALq0jWYC/3WNQQ6CMBBFr0K6dkxbgVRX3sO4KO0gk0jBKTQaw
+ 90trjTG5Uv+f+8pIjJhFIfiKRgTRRpCht2mEK6z4YJAPrPQUpeyVgp6D54pIUcYkVuovNmVWpp
+ 9XXqRXyNjS/e38XTO3NiI0LANrls9VwrzHXobJ+R13lGcBn68+0mtp/+ppECBk1I1FmtvK3e8z
+ eQouK0berHGkv4waPlr0NmgWmNaY6XB0nwblmV5Abxhll8RAQAA
+To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Frank Li <Frank.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam
+	<festevam@gmail.com>,
+        Yicong Yang <yangyicong@hisilicon.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-cxl@vger.kernel.org>, <imx@lists.linux.dev>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
 X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: bDOqncjgmTe-V7cPJHhh8rGPj9jFqcW8
-X-Proofpoint-GUID: bDOqncjgmTe-V7cPJHhh8rGPj9jFqcW8
+X-Proofpoint-ORIG-GUID: NIEQ1DEPAW5LxLD-pOtMBJdkRdU74cC0
+X-Proofpoint-GUID: NIEQ1DEPAW5LxLD-pOtMBJdkRdU74cC0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_09,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- impostorscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
- phishscore=0 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090141
+ definitions=2024-07-09_10,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 clxscore=1015 impostorscore=0 malwarescore=0 mlxscore=0
+ bulkscore=0 spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090151
 
-On 6/25/2024 9:44 AM, Jeff Layton wrote:
-> On Tue, 2024-06-25 at 09:42 -0700, Jeff Johnson wrote:
->> Fix the 'make W=1' warnings:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in
->> fs/nfs_common/nfs_acl.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in
->> fs/nfs_common/grace.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfs.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv2.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv3.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv4.o
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->> Changes in v2:
->> - Updated the description in grace.c per Jeff Layton
->> - Link to v1:
->> https://lore.kernel.org/r/20240527-md-fs-nfs-v1-1-64a15e9b53a6@quicinc.com
->> ---
->>  fs/nfs/inode.c         | 1 +
->>  fs/nfs/nfs2super.c     | 1 +
->>  fs/nfs/nfs3super.c     | 1 +
->>  fs/nfs/nfs4super.c     | 1 +
->>  fs/nfs_common/grace.c  | 1 +
->>  fs/nfs_common/nfsacl.c | 1 +
->>  6 files changed, 6 insertions(+)
->>
->> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
->> index acef52ecb1bb..57c473e9d00f 100644
->> --- a/fs/nfs/inode.c
->> +++ b/fs/nfs/inode.c
->> @@ -2538,6 +2538,7 @@ static void __exit exit_nfs_fs(void)
->>  
->>  /* Not quite true; I just maintain it */
->>  MODULE_AUTHOR("Olaf Kirch <okir@monad.swb.de>");
->> +MODULE_DESCRIPTION("NFS client support");
->>  MODULE_LICENSE("GPL");
->>  module_param(enable_ino64, bool, 0644);
->>  
->> diff --git a/fs/nfs/nfs2super.c b/fs/nfs/nfs2super.c
->> index 467f21ee6a35..b1badc70bd71 100644
->> --- a/fs/nfs/nfs2super.c
->> +++ b/fs/nfs/nfs2super.c
->> @@ -26,6 +26,7 @@ static void __exit exit_nfs_v2(void)
->>  	unregister_nfs_version(&nfs_v2);
->>  }
->>  
->> +MODULE_DESCRIPTION("NFSv2 client support");
->>  MODULE_LICENSE("GPL");
->>  
->>  module_init(init_nfs_v2);
->> diff --git a/fs/nfs/nfs3super.c b/fs/nfs/nfs3super.c
->> index 8a9be9e47f76..20a80478449e 100644
->> --- a/fs/nfs/nfs3super.c
->> +++ b/fs/nfs/nfs3super.c
->> @@ -27,6 +27,7 @@ static void __exit exit_nfs_v3(void)
->>  	unregister_nfs_version(&nfs_v3);
->>  }
->>  
->> +MODULE_DESCRIPTION("NFSv3 client support");
->>  MODULE_LICENSE("GPL");
->>  
->>  module_init(init_nfs_v3);
->> diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
->> index 8da5a9c000f4..b29a26923ce0 100644
->> --- a/fs/nfs/nfs4super.c
->> +++ b/fs/nfs/nfs4super.c
->> @@ -332,6 +332,7 @@ static void __exit exit_nfs_v4(void)
->>  	nfs_dns_resolver_destroy();
->>  }
->>  
->> +MODULE_DESCRIPTION("NFSv4 client support");
->>  MODULE_LICENSE("GPL");
->>  
->>  module_init(init_nfs_v4);
->> diff --git a/fs/nfs_common/grace.c b/fs/nfs_common/grace.c
->> index 1479583fbb62..27cd0d13143b 100644
->> --- a/fs/nfs_common/grace.c
->> +++ b/fs/nfs_common/grace.c
->> @@ -139,6 +139,7 @@ exit_grace(void)
->>  }
->>  
->>  MODULE_AUTHOR("Jeff Layton <jlayton@primarydata.com>");
->> +MODULE_DESCRIPTION("NFS client and server infrastructure");
->>  MODULE_LICENSE("GPL");
->>  module_init(init_grace)
->>  module_exit(exit_grace)
->> diff --git a/fs/nfs_common/nfsacl.c b/fs/nfs_common/nfsacl.c
->> index 5a5bd85d08f8..ea382b75b26c 100644
->> --- a/fs/nfs_common/nfsacl.c
->> +++ b/fs/nfs_common/nfsacl.c
->> @@ -29,6 +29,7 @@
->>  #include <linux/nfs3.h>
->>  #include <linux/sort.h>
->>  
->> +MODULE_DESCRIPTION("NFS ACL support");
->>  MODULE_LICENSE("GPL");
->>  
->>  struct nfsacl_encode_desc {
->>
->> ---
->> base-commit: 50736169ecc8387247fe6a00932852ce7b057083
->> change-id: 20240527-md-fs-nfs-42f19eb60b50
->>
-> 
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm-ccn.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/fsl_imx8_ddr_perf.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/marvell_cn10k_ddr_pmu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/arm_cspmu_module.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/nvidia_cspmu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/ampere_cspmu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/cxl_pmu.o
 
-I don't see this in linux-next yet so following up to see if anything else is
-needed to get this merged.
+Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+files which have a MODULE_LICENSE().
+
+This includes drivers/perf/hisilicon/hisi_uncore_pmu.c which, although
+it did not produce a warning with the x86 allmodconfig configuration,
+may cause this warning with arm64 configurations.
+
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+Changes in v3:
+- Consistently use "Performance Monitor" in the descriptions
+- Did not carry forward Yicong Yang's Reviewed-by since I tweaked the
+  description that was reviewed
+- Link to v2: https://lore.kernel.org/r/20240620-md-drivers-perf-v2-1-1f88f8a08e48@quicinc.com
+
+Changes in v2:
+- Updated hisi_uncore_pmu.c description per Yicong Yang
+- Link to v1: https://lore.kernel.org/r/20240611-md-drivers-perf-v1-1-c001bae6da5c@quicinc.com
+---
+ drivers/perf/arm-ccn.c                   | 1 +
+ drivers/perf/arm_cspmu/ampere_cspmu.c    | 1 +
+ drivers/perf/arm_cspmu/arm_cspmu.c       | 1 +
+ drivers/perf/arm_cspmu/nvidia_cspmu.c    | 1 +
+ drivers/perf/cxl_pmu.c                   | 1 +
+ drivers/perf/fsl_imx8_ddr_perf.c         | 1 +
+ drivers/perf/hisilicon/hisi_uncore_pmu.c | 1 +
+ drivers/perf/marvell_cn10k_ddr_pmu.c     | 1 +
+ 8 files changed, 8 insertions(+)
+
+diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
+index 86ef31ac7503..5c66b9278862 100644
+--- a/drivers/perf/arm-ccn.c
++++ b/drivers/perf/arm-ccn.c
+@@ -1561,4 +1561,5 @@ module_init(arm_ccn_init);
+ module_exit(arm_ccn_exit);
+ 
+ MODULE_AUTHOR("Pawel Moll <pawel.moll@arm.com>");
++MODULE_DESCRIPTION("ARM CCN (Cache Coherent Network) Performance Monitor Driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/perf/arm_cspmu/ampere_cspmu.c b/drivers/perf/arm_cspmu/ampere_cspmu.c
+index f146a455e838..f72f5689923c 100644
+--- a/drivers/perf/arm_cspmu/ampere_cspmu.c
++++ b/drivers/perf/arm_cspmu/ampere_cspmu.c
+@@ -269,4 +269,5 @@ static void __exit ampere_cspmu_exit(void)
+ module_init(ampere_cspmu_init);
+ module_exit(ampere_cspmu_exit);
+ 
++MODULE_DESCRIPTION("Ampere SoC Performance Monitor Driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
+index c318dc909767..2158a5975c90 100644
+--- a/drivers/perf/arm_cspmu/arm_cspmu.c
++++ b/drivers/perf/arm_cspmu/arm_cspmu.c
+@@ -1427,4 +1427,5 @@ EXPORT_SYMBOL_GPL(arm_cspmu_impl_unregister);
+ module_init(arm_cspmu_init);
+ module_exit(arm_cspmu_exit);
+ 
++MODULE_DESCRIPTION("ARM CoreSight Architecture Performance Monitor Driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
+index 5b84b701ad62..d0ef611240aa 100644
+--- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
++++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
+@@ -417,4 +417,5 @@ static void __exit nvidia_cspmu_exit(void)
+ module_init(nvidia_cspmu_init);
+ module_exit(nvidia_cspmu_exit);
+ 
++MODULE_DESCRIPTION("NVIDIA Coresight Architecture Performance Monitor Driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/perf/cxl_pmu.c b/drivers/perf/cxl_pmu.c
+index 1f93a66eff5b..43d68b69e630 100644
+--- a/drivers/perf/cxl_pmu.c
++++ b/drivers/perf/cxl_pmu.c
+@@ -972,6 +972,7 @@ static __exit void cxl_pmu_exit(void)
+ 	cpuhp_remove_multi_state(cxl_pmu_cpuhp_state_num);
+ }
+ 
++MODULE_DESCRIPTION("CXL Performance Monitor Driver");
+ MODULE_LICENSE("GPL");
+ MODULE_IMPORT_NS(CXL);
+ module_init(cxl_pmu_init);
+diff --git a/drivers/perf/fsl_imx8_ddr_perf.c b/drivers/perf/fsl_imx8_ddr_perf.c
+index 1bbdb29743c4..746b92330ca7 100644
+--- a/drivers/perf/fsl_imx8_ddr_perf.c
++++ b/drivers/perf/fsl_imx8_ddr_perf.c
+@@ -850,4 +850,5 @@ static struct platform_driver imx_ddr_pmu_driver = {
+ };
+ 
+ module_platform_driver(imx_ddr_pmu_driver);
++MODULE_DESCRIPTION("Freescale i.MX8 DDR Performance Monitor Driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.c b/drivers/perf/hisilicon/hisi_uncore_pmu.c
+index 6392cbedcd06..918cdc31de57 100644
+--- a/drivers/perf/hisilicon/hisi_uncore_pmu.c
++++ b/drivers/perf/hisilicon/hisi_uncore_pmu.c
+@@ -537,4 +537,5 @@ void hisi_pmu_init(struct hisi_pmu *hisi_pmu, struct module *module)
+ }
+ EXPORT_SYMBOL_GPL(hisi_pmu_init);
+ 
++MODULE_DESCRIPTION("HiSilicon SoC uncore Performance Monitor driver framework");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/perf/marvell_cn10k_ddr_pmu.c b/drivers/perf/marvell_cn10k_ddr_pmu.c
+index e2abca188dbe..94f1ebcd2a27 100644
+--- a/drivers/perf/marvell_cn10k_ddr_pmu.c
++++ b/drivers/perf/marvell_cn10k_ddr_pmu.c
+@@ -763,4 +763,5 @@ module_init(cn10k_ddr_pmu_init);
+ module_exit(cn10k_ddr_pmu_exit);
+ 
+ MODULE_AUTHOR("Bharat Bhushan <bbhushan2@marvell.com>");
++MODULE_DESCRIPTION("Marvell CN10K DRAM Subsystem (DSS) Performance Monitor Driver");
+ MODULE_LICENSE("GPL v2");
+
+---
+base-commit: 34afb82a3c67f869267a26f593b6f8fc6bf35905
+change-id: 20240611-md-drivers-perf-5d834208964d
 
