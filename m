@@ -1,50 +1,61 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D240412D75A;
-	Tue,  9 Jul 2024 08:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BAB1527AF
+	for <kernel-janitors@vger.kernel.org>; Tue,  9 Jul 2024 09:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720513851; cv=none; b=cSz8qfo7rUiF3IijXgJZ4H6f7VW/3eNSVZa9JtQan+TVpsbDBB7dfGaKGZKjXuk/jNLxWYusQ0XjuH7RMgjOroPKVHE4MRUI2eaPeBpXqerTAwRXS1A3q3qTfTFelHlszNnpbaxqVBYURcTCKdBgIKBimL3/XGftMFLVtJv/p9E=
+	t=1720516131; cv=none; b=cYcpSA/21X15u88gxbL7aNBJza5AA2M25A9tmopydL2mL0dlSWVaUQuAvx7I8r4MUsOw+DGi9TCqpozFGtJ8Tn4m7pD3cplgf85Qf6Fba4Jkkb1m4agV0rx/8lbXENE9HQj0kkBrDsrj5xMm0aGAr4cvHUvfYrfTARey+JWEYhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720513851; c=relaxed/simple;
-	bh=4ddWApf5yRC6Suz8B9WVJ/vHSrjM8rDrQEFG9pPzp1s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=la8AYASPKPpwbZN8e7fuyB+i/bHASmmgYF++qWKFevzsWL0AddLdsuaKujV9rz0RT7jxnafvfFrVBkzYKPKpoi8bIrjQCp0yYxwi/bBRYYeKcOpP1cf6GxxgE3et11YCFO+nDYx5/PVX8aF8uQ/nJblN52WdKv4cTkeVKUvWqV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wsEFis3C; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1720516131; c=relaxed/simple;
+	bh=Z0xPFpGMNM1DRzaaF5OZtuXrdJ6qOuf1nCpsWBwhJ0k=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=KKJz8ndD/M25yUa7bnjcWtQk3koTiL2hwqtcyZ8KzKT8chZXMPj9gAMQ9dd7Gcaqi3/YmIvm+trt3jdgvk1clf82Q4CvGHFKp+8yjM2InbGJTmVwrOskAqQxXJXfwVABB00Ou6xytuaeB8UlDQEulYvBCoutbxeaDKP8FGjYjOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bR6e3GoC; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wsEFis3C"
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46970J4r031206;
-	Tue, 9 Jul 2024 10:30:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	4ddWApf5yRC6Suz8B9WVJ/vHSrjM8rDrQEFG9pPzp1s=; b=wsEFis3CIz+Vjztg
-	XX4X+LydYiLGCdtCM6SabJwpr3ie+6IWfe5khJcstAyiK9MvQwDF62bwvkt+yG5m
-	WDGDPT+PiVLG5MPbHD2Q2e2FY6eIYnYZhCjGYuOyEeo3T5qWd42xn8v+kCq8Kvgy
-	e589FH4mwHKGI+kOz6DHR0tWMTBeTwQY1auHQeTPmnp1B1rdgdQDAXzgKskL8EMU
-	+wQu9wpBqV2WDdxYpOfPfrGHSfmb2vWyXqx4lO6L9/KD1Nw+OacTQ0gnZd4aBXYe
-	V4SCC36O5e0JsvY66L55pTxUy6+WgmoQZ6i8euGr9g02YRXW+Jlej17VdIaj7tHA
-	N6dp+Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 406whft9m4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 10:30:14 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id ADADB40044;
-	Tue,  9 Jul 2024 10:29:52 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 09C5F216821;
-	Tue,  9 Jul 2024 10:28:55 +0200 (CEST)
-Received: from [10.129.178.17] (10.129.178.17) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 9 Jul
- 2024 10:28:53 +0200
-Message-ID: <f8295b75-1c98-44d3-9da3-92cc192297e2@foss.st.com>
-Date: Tue, 9 Jul 2024 10:28:53 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bR6e3GoC"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4257a390a4eso35477895e9.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 09 Jul 2024 02:08:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720516128; x=1721120928; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5ANmKzDOIKVmKZHKX18dtZ0Xwvo3oCJHasWzFPD4tQ0=;
+        b=bR6e3GoCkpNowZ88fec/nhAWdy7s974miRfJqwTkqq4F8SllCYmMuqDy/mNIogwcgN
+         v4Ho56sMRJX7RwglB9yU503gA7hjoVhngvhuqJ6vzJ5B31vbI5DgZEs8V1B4ASghDwjW
+         B0sgAIMMLGAYA9OLQ522X3rsscTVNVPeZW8lxg4XJBFYm1QF8e3TsGwAX/kalk++QXtF
+         dmCWlGpPVFHelox/sTvDjDzVZXcPd3+a2Zqx+80p5oiWRHOUlOg32G+oc2+qATwVEos5
+         AQPbyFkJVtb2ULPBK9iOrN9PsL1n1KhKOR8/xvFx/GEpBVTbkqkzlgGgdyd2vtzMUuXs
+         rMcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720516128; x=1721120928;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5ANmKzDOIKVmKZHKX18dtZ0Xwvo3oCJHasWzFPD4tQ0=;
+        b=r1q+G6fXuayXmrx88va6PLsjfscaEap/LAd3EMK1h8OzzlvhQcU1FD3oy6ChdOv30i
+         kMaSG9q8QJ95Uxmv1iiXOCQ3PG4aiOVOiEspJkzSELX07MHSCIwllyqTrG9VcAO9JNWF
+         5uT2SwmvGB/nE4tQ7zIv/ugq8ii3pvmo/V6v34kib46S4asHCqBsAb5jGRlTPZN8hy+X
+         mVyaQpnJiP50RFb4RrYlA761ePqV6QN/L03N14C/VvXV4zgYidJ8qrUB6De+DNy+3mhq
+         Bld43Hiru+vyhqRD1tUXG/3xda8vSy98TVjnIW6hPzfDsM/7kINvWoY+BvyJTMlegThv
+         7cEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPkJd8O4RluFs8qd39T+6yPiN5pdAWda1CWCWPmJ/iD95QGhbXL8XLCBJh7nW4kQFZO1bXdI5hn1LrUVwupIlH3ieDxunrLrYDqa4qV9bb
+X-Gm-Message-State: AOJu0YwUNQSSnZjTlPgjEGMF1RpYfDxtuU4bInAsg7C6jaM+fdeYf4lU
+	rRYPEnsuLDATDHYditGnPHvmCiKwk5Hmkt0cdV4qZp/JN4QzVYWnIixiec8FVj8=
+X-Google-Smtp-Source: AGHT+IE8dGfgukDFvsdorYHZw//51MvpbEXXLFPm2ybjz9IBphbGLeUpfAWThkn7OBaAt18C73eG9A==
+X-Received: by 2002:a7b:c446:0:b0:426:5ddf:fd22 with SMTP id 5b1f17b1804b1-426705ce962mr12407445e9.6.1720516128261;
+        Tue, 09 Jul 2024 02:08:48 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:cad:2140:b12a:8461:5e2a:dfe? ([2a01:e0a:cad:2140:b12a:8461:5e2a:dfe])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42663f049e5sm98687965e9.35.2024.07.09.02.08.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 02:08:47 -0700 (PDT)
+Message-ID: <3ad982d1-6626-4618-b815-cbee1f4f4901@linaro.org>
+Date: Tue, 9 Jul 2024 11:08:45 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -52,53 +63,136 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/stm: Fix an error handling path in
- stm_drm_platform_probe()
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] pmdomain: amlogic: Constify struct
+ meson_secure_pwrc_domain_desc
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Yannick Fertre
-	<yannick.fertre@foss.st.com>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Eric Anholt <eric@anholt.net>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Yannick Fertre" <yannick.fertre@st.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20fff7f853f20a48a96db8ff186124470ec4d976.1704560028.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-In-Reply-To: <20fff7f853f20a48a96db8ff186124470ec4d976.1704560028.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-08_15,2024-07-08_01,2024-05-17_01
+ Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org
+References: <871d6b708de8bb42e1fabd8a601dc9a9a217cf00.1719863475.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <871d6b708de8bb42e1fabd8a601dc9a9a217cf00.1719863475.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On 1/6/24 17:54, Christophe JAILLET wrote:
-> If drm_dev_register() fails, a call to drv_load() must be undone, as
-> already done in the remove function.
->
-> Fixes: b759012c5fa7 ("drm/stm: Add STM32 LTDC driver")
+On 01/07/2024 21:53, Christophe JAILLET wrote:
+> 'struct meson_secure_pwrc_domain_desc' is not modified in this driver.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+> 
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> ======
+>     text	   data	    bss	    dec	    hex	filename
+>     4909	   4072	      0	   8981	   2315	drivers/pmdomain/amlogic/meson-secure-pwrc.o
+> 
+> After:
+> =====
+>     text	   data	    bss	    dec	    hex	filename
+>     8605	    392	      0	   8997	   2325	drivers/pmdomain/amlogic/meson-secure-pwrc.o
+> 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested-only.
+> 
+> The .is_off() function is *always* set as pwrc_secure_is_off(), so it could
+> make sense to remove this function pointer and call pwrc_secure_is_off()
+> directly when needed.
+> This would save some memory and useless indirection.
+> 
+> I leave it as-is because it is maybe here for future use.
+> ---
+>   drivers/pmdomain/amlogic/meson-secure-pwrc.c | 12 ++++++------
+>   1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pmdomain/amlogic/meson-secure-pwrc.c b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> index df5567418226..62857482f874 100644
+> --- a/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> +++ b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> @@ -46,7 +46,7 @@ struct meson_secure_pwrc_domain_desc {
+>   
+>   struct meson_secure_pwrc_domain_data {
+>   	unsigned int count;
+> -	struct meson_secure_pwrc_domain_desc *domains;
+> +	const struct meson_secure_pwrc_domain_desc *domains;
+>   };
+>   
+>   static bool pwrc_secure_is_off(struct meson_secure_pwrc_domain *pwrc_domain)
+> @@ -110,7 +110,7 @@ static int meson_secure_pwrc_on(struct generic_pm_domain *domain)
+>   	.parent = __parent,			\
+>   }
+>   
+> -static struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
+> +static const struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
+>   	SEC_PD(DSPA,	0),
+>   	SEC_PD(DSPB,	0),
+>   	/* UART should keep working in ATF after suspend and before resume */
+> @@ -137,7 +137,7 @@ static struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
+>   	SEC_PD(RSA,	0),
+>   };
+>   
+> -static struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
+> +static const struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
+>   	SEC_PD(A4_AUDIO,	0),
+>   	SEC_PD(A4_SDIOA,	0),
+>   	SEC_PD(A4_EMMC,	0),
+> @@ -155,7 +155,7 @@ static struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
+>   	SEC_PD(A4_AO_IR,	GENPD_FLAG_ALWAYS_ON),
+>   };
+>   
+> -static struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
+> +static const struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
+>   	SEC_PD(C3_NNA,		0),
+>   	SEC_PD(C3_AUDIO,	0),
+>   	SEC_PD(C3_SDIOA,	0),
+> @@ -172,7 +172,7 @@ static struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
+>   	SEC_PD(C3_VCODEC,	0),
+>   };
+>   
+> -static struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
+> +static const struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
+>   	SEC_PD(S4_DOS_HEVC,	0),
+>   	SEC_PD(S4_DOS_VDEC,	0),
+>   	SEC_PD(S4_VPU_HDMI,	0),
+> @@ -184,7 +184,7 @@ static struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
+>   	SEC_PD(S4_AUDIO,	0),
+>   };
+>   
+> -static struct meson_secure_pwrc_domain_desc t7_pwrc_domains[] = {
+> +static const struct meson_secure_pwrc_domain_desc t7_pwrc_domains[] = {
+>   	SEC_PD(T7_DSPA,		0),
+>   	SEC_PD(T7_DSPB,		0),
+>   	TOP_PD(T7_DOS_HCODEC,	0, PWRC_T7_NIC3_ID),
 
-
-Hi Christophe,
-
-After some delay: applied on drm-misc-next.
-
-Thanks,
-Raphaël
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
