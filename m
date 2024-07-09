@@ -1,92 +1,96 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82154156875;
-	Tue,  9 Jul 2024 09:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93665154C0D;
+	Tue,  9 Jul 2024 10:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720517113; cv=none; b=XD9AP4x9herI8n6EShXMYWn7GjhqFAcHXn9MNyx8lHPhlavLf7Pxcsua4Xbniv+WiTG/PYUxXlwYUv3AgSbM9WZ3Iq4CQCn97ndKrHiE7nW3AIOsLSDy1PiMofesStxV30/JY6woJxZVUhsfoa9hWVx37oUWEyXiNdGchdLBVRU=
+	t=1720522093; cv=none; b=QxUXsgI5O7fYrHoD5hnmsEYW4712lRvYkHaqxUSlobf6a/XKZLZi0wQwPcfyR4OdCQ1q9HdwVb+wSgUI8cvUGwZAfgnEdTqQsxASF8sxcuwdv5PhH/PWdwsGK0XB2+YFMPD7LE3SYWLn/ocEvOvL5pGjbp/H2Ii2PNSoVC7I4B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720517113; c=relaxed/simple;
-	bh=J+1hPuhHeGaLG8RaIcdJzDWKam0wGYfdcX5++xetsIw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=phbIH04BDx4btOPZmmHpelQ0l3w+iSdrTu+XYliiqt525dq1iqbv1Ejj6nVSQjxjJl391TX9ReIG9rBQddeh+U430aQLppPFbMUFvfUqbsC59+7/NQJJLZSw+XZVW80TP1FZySX8Djp8e6b2z+fTqDQHFmrJAfxz9vh0g9rzntc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=m9aKwtBV; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1720522093; c=relaxed/simple;
+	bh=0xkU7IgIYUv4NKxJJEVpD6QkCpmpQXa8gGCjanhQcg0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=C/akBFa6MyzdqdYS0AhTP+8rp2VgEeY/hHMA+Nx8mJTfbMdwoGdPS9lFKIUqVC7rxGMvGVgAZ2UFN+W/Ann8jfLVP/fpGOiBPjVXLV8OAeIO9g8uu9qJ5QLwBSq/DH/6ATEuMUznlzubvRtheNf0/r/ZzKObyx1fDP6FW45N+oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Asfd1295; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="m9aKwtBV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720517076; x=1721121876; i=markus.elfring@web.de;
-	bh=J+1hPuhHeGaLG8RaIcdJzDWKam0wGYfdcX5++xetsIw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=m9aKwtBV7fvwLToEAu7ZcEZ3OmazsV/Cg68MjuCA5alZ2CwHKKTpBlBbCEoyFL/q
-	 P3XhGTddnzFeRmGuWS14kmNgJ2Ot/VlKzmTB0CBEWfX958hHQM1g2P8z3mcsq6tLt
-	 6r6ilFb4L2tBdSweeoawb003zq6aw41idfMAKNX3ARvu6HTuYPoQLJUspYzJFjxOU
-	 XCkMVznAzZe6Cze7dHt8V7UnZlPtWdnC8oPfGDmkhqqSEX40Cr+mftrwsyRuq/8I8
-	 R4uNGy4MQvyyiJoaG99MtuW2F6Ev7g2XidjkHXN9TCj9lNy9u9Pbd/NRdKXrbqBni
-	 CA8z0PY6XPLx9AE5dQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M5j5y-1sTtJ02ilO-00DY7f; Tue, 09
- Jul 2024 11:24:36 +0200
-Message-ID: <43d7a27e-5b45-4d45-8ff7-8c10e128db88@web.de>
-Date: Tue, 9 Jul 2024 11:24:33 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Asfd1295"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-367b0cc6c65so2315216f8f.3;
+        Tue, 09 Jul 2024 03:48:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720522090; x=1721126890; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F6j93NAgaEbkg9TwwMnNk+h0n998d/UHM8aDpgO3P40=;
+        b=Asfd1295GLD7bUozXnSsiUuINcj/j5vKIAd1jdlYAUql/s2Pnvrx1IEckqvqQ8ujaA
+         T2qCy6ODdrSqVLjqk3R8apYQvZRuCc4IHyaNIKmRko+T9lWGsROYbCHWsaWMtprxdUD5
+         OtC/BPO6A1NHKE4IJC02modseQpkgU+KcC1k3261TODPvmYa5iMyjiZrTzWMrk02q5BK
+         r7kg5N4e4QBjqxhrKsXXL3SpwwZ15b9K/MRiDBP+oUjHn/JZezjRGwRlQRg29fohn28y
+         jo2lfKrztH3dwE6CEu0n97LbC5WcD8NsCcRRkCOvtEfOPvTnaUyZgH5YlXgdnO4Ox9ZM
+         UR8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720522090; x=1721126890;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F6j93NAgaEbkg9TwwMnNk+h0n998d/UHM8aDpgO3P40=;
+        b=YqVDNaR5DIhxGHuFnbrV0wSrLPPe43rA1dXJlEDtFthWH5j593vcyjiQA7zNFeL8iW
+         rfHwhLFcD2hybCTEdfAnjJPx8BMaBq5Jws3/jz0f40HLFCRJwPBkvALtmUrvFDFybmX0
+         o6EtgBEYDlV4dMNbiB2/EbmAtMea+skFyxdslvmEZVBAjpR1WxnRzRlnFIygCheV+BYN
+         DzOrJ9FizOrmG0vaDFNWpejyPx3hAvxa/yPygrVSstM04JyzIEvQ1nO7OyeWE5Kow8LF
+         ZPctGO5uv2i2PXMxWg/Y3xnovXs1mc2E5XgkDo3gKsHED8+DPBmP8Gu1UYmRyRWXaU7f
+         Hscg==
+X-Forwarded-Encrypted: i=1; AJvYcCVL5y0CuDoV/qsczEtrqUj/Y1vIDupKaoQnLgA300LOTBL9DVQGMRq+niBO7HO4pP0vjusbbTonV4FjBUAs/iyc5cJ5Oei2F6SB05kBAxAEa+b8D7tOM9xf//2YM2nmHwrbB9gVxXQB8EQ=
+X-Gm-Message-State: AOJu0YzoaE6wT508xD2oyZLTM16fxLi0uYEzam/UrAH0VQmNHt+bN9vK
+	K9oU1eEPuLjrhk5395i9PmxFateLcXQsuOLzK0mHDbOVLYtcRCp4
+X-Google-Smtp-Source: AGHT+IF2vPtRPRrXhmooa5/sHFCSJ7g/iHCxCxNwXFB0+bGtFhLdonWOHqLcr98ixTtVqydWUbG5sQ==
+X-Received: by 2002:adf:f84e:0:b0:367:8459:a56c with SMTP id ffacd0b85a97d-367cea73576mr1392955f8f.15.1720522088390;
+        Tue, 09 Jul 2024 03:48:08 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde7e023sm2187690f8f.13.2024.07.09.03.48.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 03:48:07 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Zhi Mao <zhi.mao@mediatek.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] media: i2c: GC05A2: Fix spelling mistake "Horizental" -> "Horizontal"
+Date: Tue,  9 Jul 2024 11:48:07 +0100
+Message-Id: <20240709104807.167992-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: make24@iscas.ac.cn, dri-devel@lists.freedesktop.org,
- kernel-janitors@vger.kernel.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>,
- David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
- Thomas Zimmermann <tzimmermann@suse.de>
-References: <20240709085916.3002467-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v3] drm/gma500: fix null pointer dereference in
- cdv_intel_lvds_get_modes
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240709085916.3002467-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:RSrk3mncGUb8pKlEo1cdNPJk9W1ixGdfqI+k3kTLx2Jl/K9fR1y
- +P29RjkHCoyhpjabNt3iYTlwcqzKg95aJweUtEhupC2WZv0m9rEP/rxHPq4mhEraRxMUGBK
- P3gT++6GYtR3Rt/8+a3gXPDikk9lNQ3WKuQuA2PdclIx2vntMZNE+OE9Tu/bjl+Mos0md/9
- nI63PGF2oB4x2ze8LCJPg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:7+yOAalgqd0=;CmFfosr4UNWvErVMkE0pCcB8JBa
- PFAjH7CW2L6+HTBs3Uxjgq5X4diF2BTMaQwOxWEhxU0HpdCUHL3UpaZ8cOvlEf+U7AklOWCRe
- foCvYzh7OfA5XuVmL6qkLUHQVS1aNYwit6r76e8RdvvZWhOr9DIxI1qckEUtWIQtGkd7b693W
- YO1DgLpbSroDo9+axdyDspX4nEv4BgidHRnZNERcs737lTf7fhrBDCMsei7jEZnAq77gKsDmj
- sfee0g1DxU/KfFvxRlblXleJFCQ8cy2F4Eq6Zhr1JUCwh9fWtV8Ik9jvqtVkjoKuErpTRDGoV
- 1VXxUqM46OysUcV87DC8OQPHWhm0ekRd0zYFSmyXWg6QRdgQIeePzg005DnMD7n/zE9mF6sD/
- wehbzQCPUaOF7yiGHx2TL19GEo8Qa2Wg7pU4xU9XZtnkONxpxitiqsopqKhj8IDFEYkanpaCh
- SpOzITw7zzghHw8iHMeyaMaQ88Y2nDZTbh0UVVFEfAHdsN0+pPxbjjIL7t0KSJQRX132myfCw
- dSE/mO7Iq2/ojw89Vf1Hrv9rOO11fv38xvIha+yzqZdVTckkbqXvB9GsJXQdYC/f53F4heMJe
- /Y/5nP8ztidnt5YEpsS4G75q4t3hU9YDVGxZgzMxaJ0Yy7bYTu6uNIXqe6nJnr2HPux7kXh76
- bj+9PZiNf4ruGZ99XzJQR1mKoUblPLwDMlfU7AlU89c3uRCI9h5qDLZgbafyFaP5CbgVziDZE
- XlQYGPJNt3cIvamcRU8begghx9N6Po9hKrpIkfGp/kTW6uTojvXTXu2mCUftXB1AM8kVHYhOD
- Lei5YkwRnjIUEEYT20c3GX6Qf7gqC5TqmSieZBzGaIJJw=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+There is a spelling mistake in a string in the gc05a2_test_pattern_menu
+array. Fix it.
 
-Are you going to adjust this information anyhow?
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/media/i2c/gc05a2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The usage of mailing list addresses is probably undesirable for
-the Developer's Certificate of Origin, isn't it?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc7#n398
+diff --git a/drivers/media/i2c/gc05a2.c b/drivers/media/i2c/gc05a2.c
+index dcba29ee725c..0413c557e594 100644
+--- a/drivers/media/i2c/gc05a2.c
++++ b/drivers/media/i2c/gc05a2.c
+@@ -65,7 +65,7 @@
+ 
+ static const char *const gc05a2_test_pattern_menu[] = {
+ 	"No Pattern",  "Fade_to_gray_Color Bar", "Color Bar",
+-	"PN9",	       "Horizental_gradient",    "Checkboard Pattern",
++	"PN9",	       "Horizontal_gradient",    "Checkboard Pattern",
+ 	"Slant",       "Resolution",	         "Solid Black",
+ 	"Solid White",
+ };
+-- 
+2.39.2
 
-Regards,
-Markus
