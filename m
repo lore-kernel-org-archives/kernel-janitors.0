@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5033218E76F;
-	Tue,  9 Jul 2024 13:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6D619CCE1;
+	Tue,  9 Jul 2024 14:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720532977; cv=none; b=Tt04o8b7UWF0G3AXlU0AW2PJZZyR0S4itcOKgPzuN154iOvdI/ad5oGB5N7U7dHUVn7ERQswRqvkVVV9CJAa+teZWOE4lvhx4g3fcHwDGnclt+Dx4CpVetmov9z5gZuzkD2tG1XpduqA9eWc6GgbpaH4gVXcjJ7Sm93GAWG6Pus=
+	t=1720535096; cv=none; b=FXS6oMdD/soAizBH+0TWZgOoZHVX61NHHiyEbbWVIm8GDg5RrKuHPkYKhA0T7Yi21+YGqUqfpPvUvTQjuOnQ+W3yniHpMvASpzxrCriYdwRu+Dn5cy/Io+DXArgyjnOZ7r7ScRyDQf+F16x/erfEjZ52rRU9EiDFp22u1OMjeMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720532977; c=relaxed/simple;
-	bh=a015ZC5r03ehNw73sIJe/WiI2A13WN9tv5vZoYkZ0RU=;
+	s=arc-20240116; t=1720535096; c=relaxed/simple;
+	bh=MTZEk95cVNmOlHjGboGqC2IjvsBNeV/FYtOh6Kkyrx4=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=rT+GtkKarEdc07u6yIeahtKKiIr1ktAhnAMoLqDRaMRKrfKVG9m3C/gjy+0ww/SaI39aTMUxb81eLXgNOPgJFfkl+iUCLkL758ZTddtMfZsp4G6wsG7QRVcei72o999FTqOPIegYypteT4478q9PfI8THu6UoWvd8TPKFJULki0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WkltUh1i; arc=none smtp.client-ip=212.227.17.11
+	 In-Reply-To:Content-Type; b=WOGT21xxPTJ2cNVn88DtZbeQlYZG/VLsXYOjUadhi5RId7xbT+uTdwReqB/KCx8LATgzmENXu0s0SHAXnLkrZx01jWbOf7uEwEG02OdjszEaV2CWGxQkAhSIsZdvqUMcwGF1PUrNIaafzn8NR5UGai2qjDx3MkfqGV9usnJ7lTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=cEaa5wx3; arc=none smtp.client-ip=212.227.17.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WkltUh1i"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="cEaa5wx3"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720532947; x=1721137747; i=markus.elfring@web.de;
-	bh=a015ZC5r03ehNw73sIJe/WiI2A13WN9tv5vZoYkZ0RU=;
+	s=s29768273; t=1720535051; x=1721139851; i=markus.elfring@web.de;
+	bh=MTZEk95cVNmOlHjGboGqC2IjvsBNeV/FYtOh6Kkyrx4=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=WkltUh1iEhfoZNCT8KIZzUNg0zksVJFjJ//b7xvaMKPZYWZzqaql+V44Zp7pOk5I
-	 2QZqvsbiNHMN9zmFympsFgqukqxmprSUZk2LSLxIJNzsZU9jWLefhYUyn9ppEUNTM
-	 nvJmckHQmcuwW13RKU7MUWzx7rdnzu7pdcjOGKxFXtCkHC3Zl8geeA9jqnQjawtpZ
-	 i4iCh67n2gH7f8kPpMXd3vbELVHT5EHgYgmqSXdullP+YqkB2uopSLdPi7Ekkqa03
-	 cux55NxZK0qaSInTsYavVTpxt57EAFMFB9cVdI8l+DZ2sNmPLKtZhOlyAgvavZj4R
-	 ykjxJpkJIoVN0ZwzLQ==
+	b=cEaa5wx3voy8AQeo/RMUCaM0+M7rr44DeplLoH1LoL7zdkVRHn/MPpRnZEsT5M0e
+	 NifKpB+EimH08fovMMrkbFy8JiZY/ANi2DOTfW0OgRKddWiIyET63L7n25uillPvw
+	 2RiOQEMbe/QcARZxLV7qiEFJ1yPkHufrKUx3K/rKA2irvqh8X4xtNmC9J8ry/Hxx3
+	 qB3j46b+Gr8okC4cErk0bQc7FcRTV87CkkVTIEZwQz6JSAEAOqWpUBexfJe0zipSP
+	 zJf9NflpLF8U/DCaijwdW0SNpOnXsfS2cOZ5qMIVG3Gn3sC21MVRhr7paP04CFOzp
+	 wxGzGs20bb4wIN5n0Q==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MOm0r-1skBlk0bNv-00Lgme; Tue, 09
- Jul 2024 15:49:07 +0200
-Message-ID: <a10b0d71-2e1c-47d6-9c7a-4086035fc6ec@web.de>
-Date: Tue, 9 Jul 2024 15:48:57 +0200
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1McZnj-1roYDu32yL-00gymh; Tue, 09
+ Jul 2024 16:24:11 +0200
+Message-ID: <91a7a967-9aba-4e24-8e67-1b6d95f62d61@web.de>
+Date: Tue, 9 Jul 2024 16:24:07 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,51 +42,47 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: make24@iscas.ac.cn, linuxppc-dev@lists.ozlabs.org,
+To: make24@iscas.ac.cn, linux-edac@vger.kernel.org,
  kernel-janitors@vger.kernel.org
 Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
- Christophe Lombard <clombard@linux.vnet.ibm.com>,
- Frederic Barrat <fbarrat@linux.ibm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Ian Munsie <imunsie@au1.ibm.com>, "Manoj N. Kumar" <manoj@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Wei Liu <wei.liu@kernel.org>
-References: <20240709131754.855144-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] cxl: Fix possible null pointer dereference in
- read_handle()
+ Borislav Petkov <bp@alien8.de>, Dinh Nguyen <dinguyen@kernel.org>,
+ James Morse <james.morse@arm.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Niravkumar L Rabara <niravkumar.l.rabara@intel.com>,
+ Robert Richter <rric@kernel.org>, Tony Luck <tony.luck@intel.com>,
+ Wei Liu <wei.liu@kernel.org>
+References: <20240709133759.1012350-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] EDAC/altera: Fix possible null pointer dereference
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240709131754.855144-1-make24@iscas.ac.cn>
+In-Reply-To: <20240709133759.1012350-1-make24@iscas.ac.cn>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:wD8tpFNoCW581VFsOPGKJF66fFjx15l+bwepghLJM6uHTOaEEIV
- S+CYjNw6rH2wZ4TwvNgnSQP8vBlD/7iuiRLjicS9hxBOLD8V1kU2vdnDrofiv4uP6k9Fh63
- tqjoNqMkBduPCI8cZMTSYsHsjI2ttQfQTSuaquQ1HtekCs1jJFF+FNrDUy0EF/ZT3bBSY5l
- XIyBXWpEoWS9T6Vfr42qw==
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:bRLtD/pS+yG61EgWsjRd99XE9ffwfsmXNL2IOhIGJOG7z8bScNJ
+ JWtlU5evQSUiUZIYQhjrNm7kQ2j4W673J0oMWeGFt1EDAYI5ea+wZKfqykFAx/1OJkkXji4
+ 0IBJMRBP+2Yd/rayqT3VFjfiUrx/DYY6nyuBSQIdeoRZpxXn1S4vFEiRhzLA+0En71cmPYR
+ i0C4Rd6j04i5yvfIGGEfw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:MqjwUJAwWmA=;d33iWjaAIjULA24pEscPLGP8YoJ
- nnxs35QjcOFAwZUZOS/fchXGW2rVCJTqaBwzJC3otBl2Nku7qfiw0wV6Xvlf8W+rr2JpjG7oW
- Ax0SjwWa5i85kIiemtwn+/qUrpNio9Wltl1QXbrFRSLOgFmTW+6m3RT25od+kA4JTuGJJrhE1
- +V72jE+WfgmWe8buVOkeJQzlA6witivjXSsni+spk7rD9X2QkMB2uQe9oEyW4pT48zsAEkpLT
- l+n7kL9Ju8MPN/aPKOaeD2naiXWuTVVbdJomjnS45Eyu+dT1hi1zyLwBO0+FeiP/uwGOe/v3W
- WdnK72SAHW1OcK0pfs9EpWk/OBk6rUSXDzH9lG3ADFodCCmeRHNm6pxyAVdvtUz827ZOahdCd
- T47sLWT3wNR19SCzdd6PrLkFWJQpmfgmBRkj16Zam7hl1JacP2KwMmFZKgz0FFvEVauFWB524
- HMqyJobNi4lnigHkg7pJ+VZxtMpdAPI9i3gsivCR+VGYueYpbjQq2N1Gz3gWSkj6OUp+dkV9v
- KOL6OHmzv2b/ntdMOaxRMo7DyqK+rvZku2hJgxYXpNlqsb86S3qfaeTpms4gnW7NpfFoFvEoB
- pP1MAyVx1cegla6iWuJpFte1lg1SLidWLzXp8u7tfK1bpfk66Xohy9JZNjScdTsGERdqiG5KT
- cbBUs/wiXNzkl9AbNVsJxDBF2sGWkEqxlstxPnpdxGZFKrZRE11RZ73T5vYSbzDFffSLHq5kQ
- BZi2xY6kJksgnRBYPyzNtbDHWj6BdSWycz1xAFr6ShVATEdztfpHEhAkODEpsA+atYGhMG5Ol
- ux7Myq0mUUuINiM7gvwKns6m8TXTYbqM4bfj1DdUbAxWY=
+UI-OutboundReport: notjunk:1;M01:P0:OUOKpLgiNhA=;iUBh/Goe++xlI5fnKz0aT+IvwF2
+ dRzcAtz359CqFWr01azCrO4tHdx3x+7UbpNWJKrLjDDz07zUjDFURrHYDbd5D2DQn2fMV4XFJ
+ dOGbwb/5dCDex+tdmwbzkVvaaCt/k2wBtr7Vy3aIALkSvLYqdRepJvv5S20tcyo/K5Px8zYUj
+ ZHaUF1zI16PuU+7Ug25opRiOWZSkwtumaH2cZjmmKn0NpdfjwR3iP7yj4YUOU4sdzSVwMbvQY
+ mqJi9h9M0qAzxjxlPBEC2ie9XfMgFsoRcxmAK5YdC2fTqNpfDk0OHz+r/8+jCvZw1HUmm9gY+
+ tfB7R/FA8KmRmE9D6EA1+FJIdmafVTZgUP5E1bOjsDDxLcG3c2cEz4Yk5YInIOwfvtzxygrfv
+ vx+SYzxbQ+YTButulnmddoLqeFh0+1OiVWTLnxl28PRgZ8KGI1bh5MhpVFz5kDINfolJE50tj
+ QjmEgbUQCAzdrsaAXverXOFV7y5bPQ16eJRUQCApN+b/GPIsKZdMhyT5uYeRd2K8L2/llosVO
+ QuuHGWHSlLYw5KL67WzQfeU2kGXxjibb65GwtPsAjeDG4bRiZBPnK4rif/yOTRlN3IuRkCNWa
+ sRxeJmi5E9/IAZGhBVJ5tHzlOojk6u7TX98owU9nE1XwG2lOGeo3/TvvnuvavfUROnfiGw5eY
+ q6dbatvxQBjsRg0b8beKiVf8ArCs9ydKlxu8AzaMjSgovdPNw7yk9BtCtxEg/NT1AN66vLy3s
+ uEYC1GgwKUD/I+Itd3R6f3yx2owrt57L6e3Uq2YZ9T1/DmkMzM+ql5RZzRE4OH5mJBlwNJrcW
+ cK0goW4T/n/aQGUGPMckuRm9qVn2vhbIQHOwfFQP2vAaw=
 
-=E2=80=A6
 > Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 
 Under which circumstances will this information be corrected anyhow?
 
 The usage of mailing list addresses is probably undesirable for
 the Developer's Certificate of Origin, isn't it?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc7#n398
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc7#n398
 
 Regards,
 Markus
