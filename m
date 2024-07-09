@@ -1,98 +1,172 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABA4155329;
-	Tue,  9 Jul 2024 10:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0861591F0
+	for <kernel-janitors@vger.kernel.org>; Tue,  9 Jul 2024 11:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720522347; cv=none; b=CLeN6eI93M0OZLaUmEIhqBaHmWiKD3WXxJiO1NtMUxlu3pI0q0KitgTpS0bZu8A78wQ7CYVtYc0ynOKvy8tcZaFz+o7hE0e/dHZoXGr8Gd9kPIS55Wvgd+g92oZq67+zAbXoLa7JoQGykJnx4tlF4ITADF+LL/8b/9CLE7rddsY=
+	t=1720523723; cv=none; b=NWDAT204qW0hXZBlbl4oHW5qwN2riIEreZWiZi4bYoPtD0hONxGYLxf47lAdhOGVKiqJar32dgQRqGePnQHrJ6D3eT0cx0FDOfQPTa1GnC/sYyduV8ISq32VzEsKcL+JaNufomjmquphdFoC2ge2PXo17tQ7IkhKY0SSzhxlMGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720522347; c=relaxed/simple;
-	bh=vQYiMZyY4wCIinORfN1CaFqtYJUd5P93b1oJl47srJQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=pMfC/O6uR0VEfLMIDMeWc3yZToTd+jX0I7ehXAMZMFCQWKE1BhISpPBKGf6iKm33yez3Wx8vXnD050d+Ph29c6EthXw8J1OsnMKqTD2vQA8QtEGxmevt30P1g0b5c9cw2KQpvJWwkaf3i+LmCdNj/r/rEaQxIuwnSNKQYQk8BVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hEej11Kv; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1720523723; c=relaxed/simple;
+	bh=8o9HK/XW5AhtJvK6eFRArwMqdWRhZ5tZPR9MnQJ5oeM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ccNydSu3t/vu6M1lmjq/6yvksHFPwPuIisTl3Tc3sl7ALOP4OT493VbmbV9mtl87V9iy7h0yLgvbRJVaotq8+qSVf9ZVGFXdvqpu9jL90D0BqQsAQnnpetA+VXR+YzyB2rpBO8INWL0yNHtuEkNPojzxaDf0bWQ53SFAdKNGD6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X0V4d5b2; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hEej11Kv"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-367b8a60b60so1959392f8f.2;
-        Tue, 09 Jul 2024 03:52:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X0V4d5b2"
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-65465878c1fso39748957b3.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 09 Jul 2024 04:15:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720522344; x=1721127144; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7mRrmwMm1DmJw1xSNDgxQWCnqRc/CmvO9uv+arr7hQ0=;
-        b=hEej11KvDNh3gNeehY36vuFOchXMpovKQjVkXI277qnLfCVmqL4/0VmdElMRbRzrPD
-         JwwiU8HJOmpuihvE5DcczUItR/eoWzYt3uMAMFkCyMr/JK1fLE3WQAtp82iqCi8WyGEl
-         jUy4wV6As/e6lBn+GyquYl6XQkMXl0KJ4gf5RpGEPLBYp/P3b4MB8y5xmGLyFBr0Nolh
-         1Li12Q0GyaimMrx/W8JQBXx28wwMIdpevYXkDCV3fZhk+I6dFTCy8T1Zl+C4Bwx4cc3+
-         EPYmYXGD/FvREN5hC5jLZ4IdlOMxkrW7SST/82XeuQ2+U/sZaKRr7VNw2BZys9CzwOdb
-         Ucwg==
+        d=linaro.org; s=google; t=1720523720; x=1721128520; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=amibtjMeBpHYdoWGEAnGfjOuZ2WN6rEsWzK1yJggVqI=;
+        b=X0V4d5b2DHrmkHpMqUq9F2twFXuz8n8ts6uR4Dh+jUNW2oWTbAYztI1gbOD8g+BgfH
+         Spcal3qkQShKInEPIS3kfg3F7+0+fcjuw3DXKxTzmtJpATbaeOea8nGGwe5YLzKoqKRG
+         ns6Uxq3yRJ08F0r/BHPwTaUXUxqu8Zs+U52diS9v6itHkb08k0pNuxmg9eoxvNw5W4c8
+         nRhlhExa+1uSHymJi9mGc22Zm1UQDc0KuN7cd2lIjbDGAQCGJf7kfZwRjgKw+SPIJJbk
+         bvxWamXqKPKoDZKg12YUX1TP7q3Bs10UbL6JNueEoK7z8oqRUVcuEit4MjfRjV7rdHsu
+         QbQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720522344; x=1721127144;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1720523720; x=1721128520;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7mRrmwMm1DmJw1xSNDgxQWCnqRc/CmvO9uv+arr7hQ0=;
-        b=u0hKTyrulvM5e6HhvQFuqvroYp2itT9OaQUgRcyHxuQViunD8x91X4x5jbTHjEVCKm
-         KvppEIJUyVHUXgjAahxXcF3Vx5f1Dl4aFyWw1Ahg3VuT4pRFOMdjRFgNkjDxBHUyruVg
-         6LFs5Rt19wE/+veN0YeGbCZIGaE2tphpByZ8PlspceVH6jfHXA61pPXQd8CQaycMHXe3
-         XtKsC4KnkiEwY9TANY8XV7439CC6qbsrZNjN1mc9c1Iyg+lDEOmW7eGA/J9H8Uk9ujoz
-         5na8/P/yiSmCYqhoKd90oVaZ7wMnfkf32pB7B2IS5ADGgOAREHiGAmTYQfH/ee/rm2eW
-         h5+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVnbTNqUGP607mtGA7oY6D9jdF4WcfAnfWf0xF7LP4ymF5H76tnM+v7IrnMXVfnIFnRk+O8/imI8jiEPyPxhuxzlT9stUIWaj0Jl7nuKONNbAYzpDaJObpXb45Mh4H7ZbEGW5oT
-X-Gm-Message-State: AOJu0YzYNJbLdav/eEAtXAv2iTkFBlpd7uzTnHdUPX5XV3v+gA3UbY7W
-	iyhJGWewm4iOOuX7/JBCGHU4msjb4Iuj9Bqx+d9GeewZp91rqifu+/4WWg0K
-X-Google-Smtp-Source: AGHT+IGvTztA3LGIiuYsN8gV0etV5BgW0nqdXMyjLBSWtHQbBPY48hOhZy9U/wY6scIClzpl2Ij9Cg==
-X-Received: by 2002:a05:6000:e41:b0:367:992e:acc with SMTP id ffacd0b85a97d-367cea67df8mr1505425f8f.18.1720522343590;
-        Tue, 09 Jul 2024 03:52:23 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfab106sm2186078f8f.103.2024.07.09.03.52.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 03:52:23 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: pse-pd: pd692x0: Fix spelling mistake "availables" -> "available"
-Date: Tue,  9 Jul 2024 11:52:22 +0100
-Message-Id: <20240709105222.168306-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        bh=amibtjMeBpHYdoWGEAnGfjOuZ2WN6rEsWzK1yJggVqI=;
+        b=Y9atLrQw7ofc3jFU5h9tdlp3tVegWAJk6pTbVDFC7Ux4vKXj3/+76IS5m6pzXng+M6
+         Kj6yvyTExpNpzG8hWE5VYRKRtaXqS6SnDKDy+4zY9kOHuZqZ28tisbBgKM/UAS3WECzh
+         M6WW12aq4S1rJuTdsTzidl5TNDb8HLQ20C7SxNI9XhNd/b5uFzdivkTTU6LVvlO2BUSr
+         +xd0U6WCA0rQIYIzvOmohXbkYV949CB3rfwe8dj0zAu7kDABheqD+iYApCP/mtnYjeSC
+         Bt1+M3QQzp+1nLzrgGNoYoVRf3Z8YEca3kReHfChokzMoASN3CziGInvL+fqSMzMUbSH
+         +/Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCWGid+RRy7FWT6N6zdIjwPOP8BARiKHimV9wcty8S6Ze5KNGx5UT9iQnjA3zg2dex4gAQxu+to3sTLhDH2AMbX13PxHcg/POkSckKYH1lXP
+X-Gm-Message-State: AOJu0Yy4qwR/42DjIUGZrSidAEKqnTRalBsiMByzl7rfPlrZ2OPnrv9f
+	Cj52wojGN9Gdmgcw7Q/qceSXuYDA65VN0E+uhCRb4enH32m5EJHbB0BSKm6KiuahWp1EOtqINfW
+	Q9U/pleKFzwWdBBG00ZTVOrZmjsW4IRa2MFfsuA==
+X-Google-Smtp-Source: AGHT+IFZPKT3QneE1vinb0l0LrB8IBVWI9enPV/6FaauTcqtNWGCxq5Rdp14ew2EtEqk25i4Zh3v1NHOT10WrvY4W2M=
+X-Received: by 2002:a05:690c:7306:b0:64a:e7ec:f3d with SMTP id
+ 00721157ae682-658eed5eae3mr32126757b3.18.1720523719826; Tue, 09 Jul 2024
+ 04:15:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <871d6b708de8bb42e1fabd8a601dc9a9a217cf00.1719863475.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <871d6b708de8bb42e1fabd8a601dc9a9a217cf00.1719863475.git.christophe.jaillet@wanadoo.fr>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 9 Jul 2024 13:14:43 +0200
+Message-ID: <CAPDyKFprG1iwNDegi45d0KPWiZ7QNthGUWihY05UQ63MCvs=2A@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: amlogic: Constify struct meson_secure_pwrc_domain_desc
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-There is a spelling mistake in a dev_err message. Fix it.
+On Mon, 1 Jul 2024 at 21:53, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> 'struct meson_secure_pwrc_domain_desc' is not modified in this driver.
+>
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+>
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> ======
+>    text    data     bss     dec     hex filename
+>    4909    4072       0    8981    2315 drivers/pmdomain/amlogic/meson-secure-pwrc.o
+>
+> After:
+> =====
+>    text    data     bss     dec     hex filename
+>    8605     392       0    8997    2325 drivers/pmdomain/amlogic/meson-secure-pwrc.o
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/pse-pd/pd692x0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Re-based and applied for next, thanks!
 
-diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
-index 29cc76a66c13..0af7db80b2f8 100644
---- a/drivers/net/pse-pd/pd692x0.c
-+++ b/drivers/net/pse-pd/pd692x0.c
-@@ -589,7 +589,7 @@ static int pd692x0_pi_set_pw_from_table(struct device *dev,
- 
- 		if (pw < pw_table->class_pw) {
- 			dev_err(dev,
--				"Power limit %dmW not supported. Ranges availables: [%d-%d] or [%d-%d]\n",
-+				"Power limit %dmW not supported. Ranges available: [%d-%d] or [%d-%d]\n",
- 				pw,
- 				(pw_table - 1)->class_pw,
- 				(pw_table - 1)->class_pw + (pw_table - 1)->max_added_class_pw,
--- 
-2.39.2
+Kind regards
+Uffe
 
+
+> ---
+> Compile tested-only.
+>
+> The .is_off() function is *always* set as pwrc_secure_is_off(), so it could
+> make sense to remove this function pointer and call pwrc_secure_is_off()
+> directly when needed.
+> This would save some memory and useless indirection.
+>
+> I leave it as-is because it is maybe here for future use.
+> ---
+>  drivers/pmdomain/amlogic/meson-secure-pwrc.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/pmdomain/amlogic/meson-secure-pwrc.c b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> index df5567418226..62857482f874 100644
+> --- a/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> +++ b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> @@ -46,7 +46,7 @@ struct meson_secure_pwrc_domain_desc {
+>
+>  struct meson_secure_pwrc_domain_data {
+>         unsigned int count;
+> -       struct meson_secure_pwrc_domain_desc *domains;
+> +       const struct meson_secure_pwrc_domain_desc *domains;
+>  };
+>
+>  static bool pwrc_secure_is_off(struct meson_secure_pwrc_domain *pwrc_domain)
+> @@ -110,7 +110,7 @@ static int meson_secure_pwrc_on(struct generic_pm_domain *domain)
+>         .parent = __parent,                     \
+>  }
+>
+> -static struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
+> +static const struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
+>         SEC_PD(DSPA,    0),
+>         SEC_PD(DSPB,    0),
+>         /* UART should keep working in ATF after suspend and before resume */
+> @@ -137,7 +137,7 @@ static struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
+>         SEC_PD(RSA,     0),
+>  };
+>
+> -static struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
+> +static const struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
+>         SEC_PD(A4_AUDIO,        0),
+>         SEC_PD(A4_SDIOA,        0),
+>         SEC_PD(A4_EMMC, 0),
+> @@ -155,7 +155,7 @@ static struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
+>         SEC_PD(A4_AO_IR,        GENPD_FLAG_ALWAYS_ON),
+>  };
+>
+> -static struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
+> +static const struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
+>         SEC_PD(C3_NNA,          0),
+>         SEC_PD(C3_AUDIO,        0),
+>         SEC_PD(C3_SDIOA,        0),
+> @@ -172,7 +172,7 @@ static struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
+>         SEC_PD(C3_VCODEC,       0),
+>  };
+>
+> -static struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
+> +static const struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
+>         SEC_PD(S4_DOS_HEVC,     0),
+>         SEC_PD(S4_DOS_VDEC,     0),
+>         SEC_PD(S4_VPU_HDMI,     0),
+> @@ -184,7 +184,7 @@ static struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
+>         SEC_PD(S4_AUDIO,        0),
+>  };
+>
+> -static struct meson_secure_pwrc_domain_desc t7_pwrc_domains[] = {
+> +static const struct meson_secure_pwrc_domain_desc t7_pwrc_domains[] = {
+>         SEC_PD(T7_DSPA,         0),
+>         SEC_PD(T7_DSPB,         0),
+>         TOP_PD(T7_DOS_HCODEC,   0, PWRC_T7_NIC3_ID),
+> --
+> 2.45.2
+>
