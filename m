@@ -1,82 +1,98 @@
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB97F155A32
-	for <kernel-janitors@vger.kernel.org>; Tue,  9 Jul 2024 10:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABA4155329;
+	Tue,  9 Jul 2024 10:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720522289; cv=none; b=hWRJd27hXivIHj24njWYe9y1pS1LrCZ04oZz/1yzEpvOzao4ES00FBtrDeh199oogLLkqqap5rvguIURnwIH5p2gqUJ02w9Vs6mDVzhFvdwE4ygX5RYANXoREuYWp6CJl1I4mU4KJ0d+KmhPE8dH9A08vt3eYpdca06f33OEzhA=
+	t=1720522347; cv=none; b=CLeN6eI93M0OZLaUmEIhqBaHmWiKD3WXxJiO1NtMUxlu3pI0q0KitgTpS0bZu8A78wQ7CYVtYc0ynOKvy8tcZaFz+o7hE0e/dHZoXGr8Gd9kPIS55Wvgd+g92oZq67+zAbXoLa7JoQGykJnx4tlF4ITADF+LL/8b/9CLE7rddsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720522289; c=relaxed/simple;
-	bh=GuE84+tYe3IliZz36W/xwOvWAw5aen9f9pO/jTu9YLE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EzpYgqxXfAJI32ELiF8iY/bfgqTmmWYFsNFvs54qgLJVBoCX1SWoJPRgLlZioiUlut0IlaQnJtd03yvtRMqNmFzGH0gIoJ4slhOOSFtOBekbfy2OycOBEete5EnQ88Q0yDD1USEMgR32QVIx8kAM8qrbJsBJ9ntv3tFjjRI5Bis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KZid57NG; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1720522347; c=relaxed/simple;
+	bh=vQYiMZyY4wCIinORfN1CaFqtYJUd5P93b1oJl47srJQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=pMfC/O6uR0VEfLMIDMeWc3yZToTd+jX0I7ehXAMZMFCQWKE1BhISpPBKGf6iKm33yez3Wx8vXnD050d+Ph29c6EthXw8J1OsnMKqTD2vQA8QtEGxmevt30P1g0b5c9cw2KQpvJWwkaf3i+LmCdNj/r/rEaQxIuwnSNKQYQk8BVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hEej11Kv; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KZid57NG"
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7036ab4a2acso1411652a34.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 09 Jul 2024 03:51:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hEej11Kv"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-367b8a60b60so1959392f8f.2;
+        Tue, 09 Jul 2024 03:52:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720522286; x=1721127086; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ne6sGKGQF4GM9jaPTveT7Fc90CaEuMuRCImmXptQf6Y=;
-        b=KZid57NGukekwIq+9YW7ovSClgvK3OT5wht0YGeLtLx6issn2BPNVKA9xWfqya3Q4D
-         rgrpdVUYupPbXsRQKFg2NaXugCsUps1748fntbGScIdOfZ15uvJ5Euqd4UtPVQ7yAUUY
-         fjG95ovi6Q0xR5807E7E0kr3k48JR/wihioYOzF83ahwNXcc1OEwMjglQkvns7fNdSRp
-         JCDaSRSkXEo1i4ly9PEOaZf+BHZoDgqPtGmbwqpOQ8WHtygCA8Z1Op3KmvADVJyx2eDC
-         LSycppoCDueVOLW48W7qUbmnhLISHmwsqMKQ5G6aksqXlhaaTZbfkBpG8l941JaMmZsK
-         6fwg==
+        d=gmail.com; s=20230601; t=1720522344; x=1721127144; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7mRrmwMm1DmJw1xSNDgxQWCnqRc/CmvO9uv+arr7hQ0=;
+        b=hEej11KvDNh3gNeehY36vuFOchXMpovKQjVkXI277qnLfCVmqL4/0VmdElMRbRzrPD
+         JwwiU8HJOmpuihvE5DcczUItR/eoWzYt3uMAMFkCyMr/JK1fLE3WQAtp82iqCi8WyGEl
+         jUy4wV6As/e6lBn+GyquYl6XQkMXl0KJ4gf5RpGEPLBYp/P3b4MB8y5xmGLyFBr0Nolh
+         1Li12Q0GyaimMrx/W8JQBXx28wwMIdpevYXkDCV3fZhk+I6dFTCy8T1Zl+C4Bwx4cc3+
+         EPYmYXGD/FvREN5hC5jLZ4IdlOMxkrW7SST/82XeuQ2+U/sZaKRr7VNw2BZys9CzwOdb
+         Ucwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720522286; x=1721127086;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1720522344; x=1721127144;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Ne6sGKGQF4GM9jaPTveT7Fc90CaEuMuRCImmXptQf6Y=;
-        b=Yvb0E+CJBI1AYFZkFF3O5gQYojYgAYcG1YJVPEClO3zt5sOsNvDrDn/r+Qt7HwSeBT
-         0WZXt4KchC7KXER6oMKM43Vyu2FAEcds2Tg8oFDt45KwQH3jOpgiTzu8dY+h+FYhJwuL
-         rpr7qOSXxSOP4GRMx/CSrtcIpZQ4lMoSS7yLFZ+fk7GyaUiujTE53RNCz+CwWEg5Pt+n
-         lkKaPHMe9GqhCxX6mcc1PQjXsRAt1zFC2C8wmnWxFJEllFzpyiTNLMga4ZKpMzAHUAI/
-         Kj8RsAT5tsBSrSmGGi7qfqgdx+rZuMv28rVci0AmMMGjBx4pBp23dpNTBhn5WgFf8NMQ
-         x+fA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHzd0IWHP48qbg+7DFsvE9IJ/U1HRGY5/A1Ln1NDANC1TJ+rGyx3ifKAQm7OMuCxKliXbU+djvg2RYQ0WFbiGbO8IBdjQoqer0znh+oDKn
-X-Gm-Message-State: AOJu0Yz30bf48nbdgZMbPP0RVyXPArvDi8P3erqjaYdboVP5lM2Nunyj
-	ArDx4t8/BBztEIfqpWh7DshUcENjZlK/0DqGECib9boTsOVfCni7ZnspevFHNPp6rZeQ82xR+hA
-	nGewYQtUNCo2czRw3wqswSvrRCbHQ8qWDGVI3hg==
-X-Google-Smtp-Source: AGHT+IG+y2y1lYDjW0w074p6b32KN/SNBfuH66xZOYYfG/aQ33OHnDDWnfHU1jSQkLv7VHnBWB5U5y0xOdhTHcklAQw=
-X-Received: by 2002:a05:6870:ec87:b0:254:ccac:134d with SMTP id
- 586e51a60fabf-25eae7575dcmr1763592fac.2.1720522285808; Tue, 09 Jul 2024
- 03:51:25 -0700 (PDT)
+        bh=7mRrmwMm1DmJw1xSNDgxQWCnqRc/CmvO9uv+arr7hQ0=;
+        b=u0hKTyrulvM5e6HhvQFuqvroYp2itT9OaQUgRcyHxuQViunD8x91X4x5jbTHjEVCKm
+         KvppEIJUyVHUXgjAahxXcF3Vx5f1Dl4aFyWw1Ahg3VuT4pRFOMdjRFgNkjDxBHUyruVg
+         6LFs5Rt19wE/+veN0YeGbCZIGaE2tphpByZ8PlspceVH6jfHXA61pPXQd8CQaycMHXe3
+         XtKsC4KnkiEwY9TANY8XV7439CC6qbsrZNjN1mc9c1Iyg+lDEOmW7eGA/J9H8Uk9ujoz
+         5na8/P/yiSmCYqhoKd90oVaZ7wMnfkf32pB7B2IS5ADGgOAREHiGAmTYQfH/ee/rm2eW
+         h5+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVnbTNqUGP607mtGA7oY6D9jdF4WcfAnfWf0xF7LP4ymF5H76tnM+v7IrnMXVfnIFnRk+O8/imI8jiEPyPxhuxzlT9stUIWaj0Jl7nuKONNbAYzpDaJObpXb45Mh4H7ZbEGW5oT
+X-Gm-Message-State: AOJu0YzYNJbLdav/eEAtXAv2iTkFBlpd7uzTnHdUPX5XV3v+gA3UbY7W
+	iyhJGWewm4iOOuX7/JBCGHU4msjb4Iuj9Bqx+d9GeewZp91rqifu+/4WWg0K
+X-Google-Smtp-Source: AGHT+IGvTztA3LGIiuYsN8gV0etV5BgW0nqdXMyjLBSWtHQbBPY48hOhZy9U/wY6scIClzpl2Ij9Cg==
+X-Received: by 2002:a05:6000:e41:b0:367:992e:acc with SMTP id ffacd0b85a97d-367cea67df8mr1505425f8f.18.1720522343590;
+        Tue, 09 Jul 2024 03:52:23 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfab106sm2186078f8f.103.2024.07.09.03.52.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 03:52:23 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net: pse-pd: pd692x0: Fix spelling mistake "availables" -> "available"
+Date: Tue,  9 Jul 2024 11:52:22 +0100
+Message-Id: <20240709105222.168306-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
-In-Reply-To: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 9 Jul 2024 11:51:14 +0100
-Message-ID: <CADrjBPq13+k6LM=Xs3Eof9jXJwOHmcMoJUXAR18aHfp7fEeLcw@mail.gmail.com>
-Subject: Re: [PATCH] phy: exynos5-usbdrd: fix error code in probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Sam Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>, 
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 8 Jul 2024 at 18:04, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> Return negative -ENOMEM instead of positive ENOMEM.
->
-> Fixes: 497ddafe915e ("phy: exynos5-usbdrd: convert Vbus supplies to regulator_bulk")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
+There is a spelling mistake in a dev_err message. Fix it.
 
-Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/pse-pd/pd692x0.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
+index 29cc76a66c13..0af7db80b2f8 100644
+--- a/drivers/net/pse-pd/pd692x0.c
++++ b/drivers/net/pse-pd/pd692x0.c
+@@ -589,7 +589,7 @@ static int pd692x0_pi_set_pw_from_table(struct device *dev,
+ 
+ 		if (pw < pw_table->class_pw) {
+ 			dev_err(dev,
+-				"Power limit %dmW not supported. Ranges availables: [%d-%d] or [%d-%d]\n",
++				"Power limit %dmW not supported. Ranges available: [%d-%d] or [%d-%d]\n",
+ 				pw,
+ 				(pw_table - 1)->class_pw,
+ 				(pw_table - 1)->class_pw + (pw_table - 1)->max_added_class_pw,
+-- 
+2.39.2
+
