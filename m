@@ -1,88 +1,131 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from out.smtpout.orange.fr (out-15.smtpout.orange.fr [193.252.22.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6D619CCE1;
-	Tue,  9 Jul 2024 14:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25EB1B86F8;
+	Tue,  9 Jul 2024 17:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720535096; cv=none; b=FXS6oMdD/soAizBH+0TWZgOoZHVX61NHHiyEbbWVIm8GDg5RrKuHPkYKhA0T7Yi21+YGqUqfpPvUvTQjuOnQ+W3yniHpMvASpzxrCriYdwRu+Dn5cy/Io+DXArgyjnOZ7r7ScRyDQf+F16x/erfEjZ52rRU9EiDFp22u1OMjeMo=
+	t=1720546908; cv=none; b=AJipyfsKTDHhgtQQ8Qt+wcDIY9rMmgiTax9YJM4dBOvjNfCB2Z1T6CLg/VrrI7rcSg6y3xoVANsYxBg88XTjRBbwihm+coYsng/kPQHb+Ikb70LsrmOAC4AMuuSvm6myz6PUNUxDLoPnBuK99Oe+lc+Ghiv3rgTLbZBEaK8STVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720535096; c=relaxed/simple;
-	bh=MTZEk95cVNmOlHjGboGqC2IjvsBNeV/FYtOh6Kkyrx4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=WOGT21xxPTJ2cNVn88DtZbeQlYZG/VLsXYOjUadhi5RId7xbT+uTdwReqB/KCx8LATgzmENXu0s0SHAXnLkrZx01jWbOf7uEwEG02OdjszEaV2CWGxQkAhSIsZdvqUMcwGF1PUrNIaafzn8NR5UGai2qjDx3MkfqGV9usnJ7lTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=cEaa5wx3; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1720546908; c=relaxed/simple;
+	bh=c8cxlmF6gbJmKp0GvscVOmvNDUYjxKXUjTI5ERmG9Cg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l6LqfSnzegNoZdZyMBgbTDyW56KBZF6UfbEW27HT9E8GjgGhExMXo5Jngvl+yVodmFxgevBs1kn3eCx+7+ZQxr3aHpYuOvxL6XufM7sQtUGO+Cwhy6sQKeeDtdbW8ylTmfQPC6qM18DnoAOsSMKz+9AbWnOvsUKf4LIuYBnZPfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=pleTIFYo; arc=none smtp.client-ip=193.252.22.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="cEaa5wx3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720535051; x=1721139851; i=markus.elfring@web.de;
-	bh=MTZEk95cVNmOlHjGboGqC2IjvsBNeV/FYtOh6Kkyrx4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=cEaa5wx3voy8AQeo/RMUCaM0+M7rr44DeplLoH1LoL7zdkVRHn/MPpRnZEsT5M0e
-	 NifKpB+EimH08fovMMrkbFy8JiZY/ANi2DOTfW0OgRKddWiIyET63L7n25uillPvw
-	 2RiOQEMbe/QcARZxLV7qiEFJ1yPkHufrKUx3K/rKA2irvqh8X4xtNmC9J8ry/Hxx3
-	 qB3j46b+Gr8okC4cErk0bQc7FcRTV87CkkVTIEZwQz6JSAEAOqWpUBexfJe0zipSP
-	 zJf9NflpLF8U/DCaijwdW0SNpOnXsfS2cOZ5qMIVG3Gn3sC21MVRhr7paP04CFOzp
-	 wxGzGs20bb4wIN5n0Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1McZnj-1roYDu32yL-00gymh; Tue, 09
- Jul 2024 16:24:11 +0200
-Message-ID: <91a7a967-9aba-4e24-8e67-1b6d95f62d61@web.de>
-Date: Tue, 9 Jul 2024 16:24:07 +0200
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="pleTIFYo"
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id REqNsAwXTzs6PREqNsRYPw; Tue, 09 Jul 2024 19:41:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720546896;
+	bh=xCRQ9FdghEv29HWsRbQeBsLGTuUnfGCmDM9LR32omWo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=pleTIFYoaqWyd+Pr6fLoKQXMRzTsdVt+kaE8c1aUWdyMsUhn1wL+yKZXCxDsNUtMF
+	 dlSMDMV/4pwzNhoyIQ3ZRZPmN0DI9/Z1BJAJeDNmPJuCpXHqx9WZoWWyGj+KcPrlXj
+	 Wy/8ckrgeJN+rpy98huLj4LyLtQiF3Om6QXgi58riuoCFbaruRg25avoT4Ojy8dcBo
+	 PWCpOzQ/Epuzt3WW5++ENhGN2UnUu1VielyHxzg4QGXi3J6WnJs2HC4g4gAWez2Ktt
+	 uQQvoUelindGlgXj0uCNmL8uMgx6PVQw64hT4xxjrwgVTyVGMnfeoeXLOqYVlINR50
+	 5CYSseVscUEFA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 09 Jul 2024 19:41:36 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Nishanth Menon <nm@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] soc: ti: k3-ringacc: Constify struct k3_ring_ops
+Date: Tue,  9 Jul 2024 19:41:29 +0200
+Message-ID: <cb9dfc18cdf890afa2c53cd74b0b330d6f1c30ab.1720546863.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: make24@iscas.ac.cn, linux-edac@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Borislav Petkov <bp@alien8.de>, Dinh Nguyen <dinguyen@kernel.org>,
- James Morse <james.morse@arm.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Niravkumar L Rabara <niravkumar.l.rabara@intel.com>,
- Robert Richter <rric@kernel.org>, Tony Luck <tony.luck@intel.com>,
- Wei Liu <wei.liu@kernel.org>
-References: <20240709133759.1012350-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] EDAC/altera: Fix possible null pointer dereference
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240709133759.1012350-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:bRLtD/pS+yG61EgWsjRd99XE9ffwfsmXNL2IOhIGJOG7z8bScNJ
- JWtlU5evQSUiUZIYQhjrNm7kQ2j4W673J0oMWeGFt1EDAYI5ea+wZKfqykFAx/1OJkkXji4
- 0IBJMRBP+2Yd/rayqT3VFjfiUrx/DYY6nyuBSQIdeoRZpxXn1S4vFEiRhzLA+0En71cmPYR
- i0C4Rd6j04i5yvfIGGEfw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:OUOKpLgiNhA=;iUBh/Goe++xlI5fnKz0aT+IvwF2
- dRzcAtz359CqFWr01azCrO4tHdx3x+7UbpNWJKrLjDDz07zUjDFURrHYDbd5D2DQn2fMV4XFJ
- dOGbwb/5dCDex+tdmwbzkVvaaCt/k2wBtr7Vy3aIALkSvLYqdRepJvv5S20tcyo/K5Px8zYUj
- ZHaUF1zI16PuU+7Ug25opRiOWZSkwtumaH2cZjmmKn0NpdfjwR3iP7yj4YUOU4sdzSVwMbvQY
- mqJi9h9M0qAzxjxlPBEC2ie9XfMgFsoRcxmAK5YdC2fTqNpfDk0OHz+r/8+jCvZw1HUmm9gY+
- tfB7R/FA8KmRmE9D6EA1+FJIdmafVTZgUP5E1bOjsDDxLcG3c2cEz4Yk5YInIOwfvtzxygrfv
- vx+SYzxbQ+YTButulnmddoLqeFh0+1OiVWTLnxl28PRgZ8KGI1bh5MhpVFz5kDINfolJE50tj
- QjmEgbUQCAzdrsaAXverXOFV7y5bPQ16eJRUQCApN+b/GPIsKZdMhyT5uYeRd2K8L2/llosVO
- QuuHGWHSlLYw5KL67WzQfeU2kGXxjibb65GwtPsAjeDG4bRiZBPnK4rif/yOTRlN3IuRkCNWa
- sRxeJmi5E9/IAZGhBVJ5tHzlOojk6u7TX98owU9nE1XwG2lOGeo3/TvvnuvavfUROnfiGw5eY
- q6dbatvxQBjsRg0b8beKiVf8ArCs9ydKlxu8AzaMjSgovdPNw7yk9BtCtxEg/NT1AN66vLy3s
- uEYC1GgwKUD/I+Itd3R6f3yx2owrt57L6e3Uq2YZ9T1/DmkMzM+ql5RZzRE4OH5mJBlwNJrcW
- cK0goW4T/n/aQGUGPMckuRm9qVn2vhbIQHOwfFQP2vAaw=
+Content-Transfer-Encoding: 8bit
 
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+'struct k3_ring_ops' is not modified in this driver.
 
-Under which circumstances will this information be corrected anyhow?
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-The usage of mailing list addresses is probably undesirable for
-the Developer's Certificate of Origin, isn't it?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc7#n398
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  17090	   3304	     32	  20426	   4fca	drivers/soc/ti/k3-ringacc.o
 
-Regards,
-Markus
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  17266	   3144	     32	  20442	   4fda	drivers/soc/ti/k3-ringacc.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only
+---
+ drivers/soc/ti/k3-ringacc.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/soc/ti/k3-ringacc.c b/drivers/soc/ti/k3-ringacc.c
+index fd4251d75935..8c0102968351 100644
+--- a/drivers/soc/ti/k3-ringacc.c
++++ b/drivers/soc/ti/k3-ringacc.c
+@@ -161,7 +161,7 @@ struct k3_ring {
+ 	struct k3_ringacc_proxy_target_regs  __iomem *proxy;
+ 	dma_addr_t	ring_mem_dma;
+ 	void		*ring_mem_virt;
+-	struct k3_ring_ops *ops;
++	const struct k3_ring_ops *ops;
+ 	u32		size;
+ 	enum k3_ring_size elm_size;
+ 	enum k3_ring_mode mode;
+@@ -268,17 +268,17 @@ static int k3_ringacc_ring_pop_mem(struct k3_ring *ring, void *elem);
+ static int k3_dmaring_fwd_pop(struct k3_ring *ring, void *elem);
+ static int k3_dmaring_reverse_pop(struct k3_ring *ring, void *elem);
+ 
+-static struct k3_ring_ops k3_ring_mode_ring_ops = {
++static const struct k3_ring_ops k3_ring_mode_ring_ops = {
+ 		.push_tail = k3_ringacc_ring_push_mem,
+ 		.pop_head = k3_ringacc_ring_pop_mem,
+ };
+ 
+-static struct k3_ring_ops k3_dmaring_fwd_ops = {
++static const struct k3_ring_ops k3_dmaring_fwd_ops = {
+ 		.push_tail = k3_ringacc_ring_push_mem,
+ 		.pop_head = k3_dmaring_fwd_pop,
+ };
+ 
+-static struct k3_ring_ops k3_dmaring_reverse_ops = {
++static const struct k3_ring_ops k3_dmaring_reverse_ops = {
+ 		/* Reverse side of the DMA ring can only be popped by SW */
+ 		.pop_head = k3_dmaring_reverse_pop,
+ };
+@@ -288,7 +288,7 @@ static int k3_ringacc_ring_pop_io(struct k3_ring *ring, void *elem);
+ static int k3_ringacc_ring_push_head_io(struct k3_ring *ring, void *elem);
+ static int k3_ringacc_ring_pop_tail_io(struct k3_ring *ring, void *elem);
+ 
+-static struct k3_ring_ops k3_ring_mode_msg_ops = {
++static const struct k3_ring_ops k3_ring_mode_msg_ops = {
+ 		.push_tail = k3_ringacc_ring_push_io,
+ 		.push_head = k3_ringacc_ring_push_head_io,
+ 		.pop_tail = k3_ringacc_ring_pop_tail_io,
+@@ -300,7 +300,7 @@ static int k3_ringacc_ring_push_tail_proxy(struct k3_ring *ring, void *elem);
+ static int k3_ringacc_ring_pop_head_proxy(struct k3_ring *ring, void *elem);
+ static int k3_ringacc_ring_pop_tail_proxy(struct k3_ring *ring, void *elem);
+ 
+-static struct k3_ring_ops k3_ring_mode_proxy_ops = {
++static const struct k3_ring_ops k3_ring_mode_proxy_ops = {
+ 		.push_tail = k3_ringacc_ring_push_tail_proxy,
+ 		.push_head = k3_ringacc_ring_push_head_proxy,
+ 		.pop_tail = k3_ringacc_ring_pop_tail_proxy,
+-- 
+2.45.2
+
