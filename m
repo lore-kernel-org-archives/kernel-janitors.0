@@ -1,61 +1,40 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BAB1527AF
-	for <kernel-janitors@vger.kernel.org>; Tue,  9 Jul 2024 09:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82154156875;
+	Tue,  9 Jul 2024 09:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720516131; cv=none; b=cYcpSA/21X15u88gxbL7aNBJza5AA2M25A9tmopydL2mL0dlSWVaUQuAvx7I8r4MUsOw+DGi9TCqpozFGtJ8Tn4m7pD3cplgf85Qf6Fba4Jkkb1m4agV0rx/8lbXENE9HQj0kkBrDsrj5xMm0aGAr4cvHUvfYrfTARey+JWEYhY=
+	t=1720517113; cv=none; b=XD9AP4x9herI8n6EShXMYWn7GjhqFAcHXn9MNyx8lHPhlavLf7Pxcsua4Xbniv+WiTG/PYUxXlwYUv3AgSbM9WZ3Iq4CQCn97ndKrHiE7nW3AIOsLSDy1PiMofesStxV30/JY6woJxZVUhsfoa9hWVx37oUWEyXiNdGchdLBVRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720516131; c=relaxed/simple;
-	bh=Z0xPFpGMNM1DRzaaF5OZtuXrdJ6qOuf1nCpsWBwhJ0k=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KKJz8ndD/M25yUa7bnjcWtQk3koTiL2hwqtcyZ8KzKT8chZXMPj9gAMQ9dd7Gcaqi3/YmIvm+trt3jdgvk1clf82Q4CvGHFKp+8yjM2InbGJTmVwrOskAqQxXJXfwVABB00Ou6xytuaeB8UlDQEulYvBCoutbxeaDKP8FGjYjOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bR6e3GoC; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1720517113; c=relaxed/simple;
+	bh=J+1hPuhHeGaLG8RaIcdJzDWKam0wGYfdcX5++xetsIw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=phbIH04BDx4btOPZmmHpelQ0l3w+iSdrTu+XYliiqt525dq1iqbv1Ejj6nVSQjxjJl391TX9ReIG9rBQddeh+U430aQLppPFbMUFvfUqbsC59+7/NQJJLZSw+XZVW80TP1FZySX8Djp8e6b2z+fTqDQHFmrJAfxz9vh0g9rzntc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=m9aKwtBV; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bR6e3GoC"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4257a390a4eso35477895e9.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 09 Jul 2024 02:08:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720516128; x=1721120928; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5ANmKzDOIKVmKZHKX18dtZ0Xwvo3oCJHasWzFPD4tQ0=;
-        b=bR6e3GoCkpNowZ88fec/nhAWdy7s974miRfJqwTkqq4F8SllCYmMuqDy/mNIogwcgN
-         v4Ho56sMRJX7RwglB9yU503gA7hjoVhngvhuqJ6vzJ5B31vbI5DgZEs8V1B4ASghDwjW
-         B0sgAIMMLGAYA9OLQ522X3rsscTVNVPeZW8lxg4XJBFYm1QF8e3TsGwAX/kalk++QXtF
-         dmCWlGpPVFHelox/sTvDjDzVZXcPd3+a2Zqx+80p5oiWRHOUlOg32G+oc2+qATwVEos5
-         AQPbyFkJVtb2ULPBK9iOrN9PsL1n1KhKOR8/xvFx/GEpBVTbkqkzlgGgdyd2vtzMUuXs
-         rMcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720516128; x=1721120928;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5ANmKzDOIKVmKZHKX18dtZ0Xwvo3oCJHasWzFPD4tQ0=;
-        b=r1q+G6fXuayXmrx88va6PLsjfscaEap/LAd3EMK1h8OzzlvhQcU1FD3oy6ChdOv30i
-         kMaSG9q8QJ95Uxmv1iiXOCQ3PG4aiOVOiEspJkzSELX07MHSCIwllyqTrG9VcAO9JNWF
-         5uT2SwmvGB/nE4tQ7zIv/ugq8ii3pvmo/V6v34kib46S4asHCqBsAb5jGRlTPZN8hy+X
-         mVyaQpnJiP50RFb4RrYlA761ePqV6QN/L03N14C/VvXV4zgYidJ8qrUB6De+DNy+3mhq
-         Bld43Hiru+vyhqRD1tUXG/3xda8vSy98TVjnIW6hPzfDsM/7kINvWoY+BvyJTMlegThv
-         7cEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPkJd8O4RluFs8qd39T+6yPiN5pdAWda1CWCWPmJ/iD95QGhbXL8XLCBJh7nW4kQFZO1bXdI5hn1LrUVwupIlH3ieDxunrLrYDqa4qV9bb
-X-Gm-Message-State: AOJu0YwUNQSSnZjTlPgjEGMF1RpYfDxtuU4bInAsg7C6jaM+fdeYf4lU
-	rRYPEnsuLDATDHYditGnPHvmCiKwk5Hmkt0cdV4qZp/JN4QzVYWnIixiec8FVj8=
-X-Google-Smtp-Source: AGHT+IE8dGfgukDFvsdorYHZw//51MvpbEXXLFPm2ybjz9IBphbGLeUpfAWThkn7OBaAt18C73eG9A==
-X-Received: by 2002:a7b:c446:0:b0:426:5ddf:fd22 with SMTP id 5b1f17b1804b1-426705ce962mr12407445e9.6.1720516128261;
-        Tue, 09 Jul 2024 02:08:48 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:cad:2140:b12a:8461:5e2a:dfe? ([2a01:e0a:cad:2140:b12a:8461:5e2a:dfe])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42663f049e5sm98687965e9.35.2024.07.09.02.08.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 02:08:47 -0700 (PDT)
-Message-ID: <3ad982d1-6626-4618-b815-cbee1f4f4901@linaro.org>
-Date: Tue, 9 Jul 2024 11:08:45 +0200
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="m9aKwtBV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720517076; x=1721121876; i=markus.elfring@web.de;
+	bh=J+1hPuhHeGaLG8RaIcdJzDWKam0wGYfdcX5++xetsIw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=m9aKwtBV7fvwLToEAu7ZcEZ3OmazsV/Cg68MjuCA5alZ2CwHKKTpBlBbCEoyFL/q
+	 P3XhGTddnzFeRmGuWS14kmNgJ2Ot/VlKzmTB0CBEWfX958hHQM1g2P8z3mcsq6tLt
+	 6r6ilFb4L2tBdSweeoawb003zq6aw41idfMAKNX3ARvu6HTuYPoQLJUspYzJFjxOU
+	 XCkMVznAzZe6Cze7dHt8V7UnZlPtWdnC8oPfGDmkhqqSEX40Cr+mftrwsyRuq/8I8
+	 R4uNGy4MQvyyiJoaG99MtuW2F6Ev7g2XidjkHXN9TCj9lNy9u9Pbd/NRdKXrbqBni
+	 CA8z0PY6XPLx9AE5dQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M5j5y-1sTtJ02ilO-00DY7f; Tue, 09
+ Jul 2024 11:24:36 +0200
+Message-ID: <43d7a27e-5b45-4d45-8ff7-8c10e128db88@web.de>
+Date: Tue, 9 Jul 2024 11:24:33 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -63,136 +42,51 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] pmdomain: amlogic: Constify struct
- meson_secure_pwrc_domain_desc
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org
-References: <871d6b708de8bb42e1fabd8a601dc9a9a217cf00.1719863475.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <871d6b708de8bb42e1fabd8a601dc9a9a217cf00.1719863475.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: make24@iscas.ac.cn, dri-devel@lists.freedesktop.org,
+ kernel-janitors@vger.kernel.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>,
+ David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+References: <20240709085916.3002467-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH v3] drm/gma500: fix null pointer dereference in
+ cdv_intel_lvds_get_modes
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240709085916.3002467-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:RSrk3mncGUb8pKlEo1cdNPJk9W1ixGdfqI+k3kTLx2Jl/K9fR1y
+ +P29RjkHCoyhpjabNt3iYTlwcqzKg95aJweUtEhupC2WZv0m9rEP/rxHPq4mhEraRxMUGBK
+ P3gT++6GYtR3Rt/8+a3gXPDikk9lNQ3WKuQuA2PdclIx2vntMZNE+OE9Tu/bjl+Mos0md/9
+ nI63PGF2oB4x2ze8LCJPg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:7+yOAalgqd0=;CmFfosr4UNWvErVMkE0pCcB8JBa
+ PFAjH7CW2L6+HTBs3Uxjgq5X4diF2BTMaQwOxWEhxU0HpdCUHL3UpaZ8cOvlEf+U7AklOWCRe
+ foCvYzh7OfA5XuVmL6qkLUHQVS1aNYwit6r76e8RdvvZWhOr9DIxI1qckEUtWIQtGkd7b693W
+ YO1DgLpbSroDo9+axdyDspX4nEv4BgidHRnZNERcs737lTf7fhrBDCMsei7jEZnAq77gKsDmj
+ sfee0g1DxU/KfFvxRlblXleJFCQ8cy2F4Eq6Zhr1JUCwh9fWtV8Ik9jvqtVkjoKuErpTRDGoV
+ 1VXxUqM46OysUcV87DC8OQPHWhm0ekRd0zYFSmyXWg6QRdgQIeePzg005DnMD7n/zE9mF6sD/
+ wehbzQCPUaOF7yiGHx2TL19GEo8Qa2Wg7pU4xU9XZtnkONxpxitiqsopqKhj8IDFEYkanpaCh
+ SpOzITw7zzghHw8iHMeyaMaQ88Y2nDZTbh0UVVFEfAHdsN0+pPxbjjIL7t0KSJQRX132myfCw
+ dSE/mO7Iq2/ojw89Vf1Hrv9rOO11fv38xvIha+yzqZdVTckkbqXvB9GsJXQdYC/f53F4heMJe
+ /Y/5nP8ztidnt5YEpsS4G75q4t3hU9YDVGxZgzMxaJ0Yy7bYTu6uNIXqe6nJnr2HPux7kXh76
+ bj+9PZiNf4ruGZ99XzJQR1mKoUblPLwDMlfU7AlU89c3uRCI9h5qDLZgbafyFaP5CbgVziDZE
+ XlQYGPJNt3cIvamcRU8begghx9N6Po9hKrpIkfGp/kTW6uTojvXTXu2mCUftXB1AM8kVHYhOD
+ Lei5YkwRnjIUEEYT20c3GX6Qf7gqC5TqmSieZBzGaIJJw=
 
-On 01/07/2024 21:53, Christophe JAILLET wrote:
-> 'struct meson_secure_pwrc_domain_desc' is not modified in this driver.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->     text	   data	    bss	    dec	    hex	filename
->     4909	   4072	      0	   8981	   2315	drivers/pmdomain/amlogic/meson-secure-pwrc.o
-> 
-> After:
-> =====
->     text	   data	    bss	    dec	    hex	filename
->     8605	    392	      0	   8997	   2325	drivers/pmdomain/amlogic/meson-secure-pwrc.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only.
-> 
-> The .is_off() function is *always* set as pwrc_secure_is_off(), so it could
-> make sense to remove this function pointer and call pwrc_secure_is_off()
-> directly when needed.
-> This would save some memory and useless indirection.
-> 
-> I leave it as-is because it is maybe here for future use.
-> ---
->   drivers/pmdomain/amlogic/meson-secure-pwrc.c | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pmdomain/amlogic/meson-secure-pwrc.c b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> index df5567418226..62857482f874 100644
-> --- a/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> +++ b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> @@ -46,7 +46,7 @@ struct meson_secure_pwrc_domain_desc {
->   
->   struct meson_secure_pwrc_domain_data {
->   	unsigned int count;
-> -	struct meson_secure_pwrc_domain_desc *domains;
-> +	const struct meson_secure_pwrc_domain_desc *domains;
->   };
->   
->   static bool pwrc_secure_is_off(struct meson_secure_pwrc_domain *pwrc_domain)
-> @@ -110,7 +110,7 @@ static int meson_secure_pwrc_on(struct generic_pm_domain *domain)
->   	.parent = __parent,			\
->   }
->   
-> -static struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
-> +static const struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
->   	SEC_PD(DSPA,	0),
->   	SEC_PD(DSPB,	0),
->   	/* UART should keep working in ATF after suspend and before resume */
-> @@ -137,7 +137,7 @@ static struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
->   	SEC_PD(RSA,	0),
->   };
->   
-> -static struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
-> +static const struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
->   	SEC_PD(A4_AUDIO,	0),
->   	SEC_PD(A4_SDIOA,	0),
->   	SEC_PD(A4_EMMC,	0),
-> @@ -155,7 +155,7 @@ static struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
->   	SEC_PD(A4_AO_IR,	GENPD_FLAG_ALWAYS_ON),
->   };
->   
-> -static struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
-> +static const struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
->   	SEC_PD(C3_NNA,		0),
->   	SEC_PD(C3_AUDIO,	0),
->   	SEC_PD(C3_SDIOA,	0),
-> @@ -172,7 +172,7 @@ static struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
->   	SEC_PD(C3_VCODEC,	0),
->   };
->   
-> -static struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
-> +static const struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
->   	SEC_PD(S4_DOS_HEVC,	0),
->   	SEC_PD(S4_DOS_VDEC,	0),
->   	SEC_PD(S4_VPU_HDMI,	0),
-> @@ -184,7 +184,7 @@ static struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
->   	SEC_PD(S4_AUDIO,	0),
->   };
->   
-> -static struct meson_secure_pwrc_domain_desc t7_pwrc_domains[] = {
-> +static const struct meson_secure_pwrc_domain_desc t7_pwrc_domains[] = {
->   	SEC_PD(T7_DSPA,		0),
->   	SEC_PD(T7_DSPB,		0),
->   	TOP_PD(T7_DOS_HCODEC,	0, PWRC_T7_NIC3_ID),
+=E2=80=A6
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Are you going to adjust this information anyhow?
+
+The usage of mailing list addresses is probably undesirable for
+the Developer's Certificate of Origin, isn't it?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc7#n398
+
+Regards,
+Markus
