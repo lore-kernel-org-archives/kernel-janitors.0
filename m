@@ -1,95 +1,82 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647CA14290;
-	Tue,  9 Jul 2024 10:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB97F155A32
+	for <kernel-janitors@vger.kernel.org>; Tue,  9 Jul 2024 10:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720522207; cv=none; b=uYI6SD4VK3YVfSZQ7W4R1ImsqLPEOxrXe0zJMeB8yd/APq2S76HOuyN2PAA10VpKmBtlG3Mjha3bs6h6ueISDcfvnWVdOuvD/Bkvo/WlNtzzAJKH4IVMrZPWIKTnkehZgTc2Ag33a0jNgA0nLY0GNfwLZE2sWBtPltCS9OYmPkY=
+	t=1720522289; cv=none; b=hWRJd27hXivIHj24njWYe9y1pS1LrCZ04oZz/1yzEpvOzao4ES00FBtrDeh199oogLLkqqap5rvguIURnwIH5p2gqUJ02w9Vs6mDVzhFvdwE4ygX5RYANXoREuYWp6CJl1I4mU4KJ0d+KmhPE8dH9A08vt3eYpdca06f33OEzhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720522207; c=relaxed/simple;
-	bh=cfkQROxpQ3ODJ6mApydadNz5RDmrNUOliBwpjxyf0m4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=A+hyJXyBdNi4ySvtEWyQ2Ja4mIu2rF4Dx2v2f5Brltz6slX+5YUAPOoaOKEd0bekKcCqV5NGhEHGG2lavoZe4qZjdNvryOlLhNU7Qpsz0VJnaOha6tu3Vc+y1uFNFTgdDS/9kRaWj2uSFpaXomDDvR1U1/pDW6gB4fc50YDpm0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MSH2BskH; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1720522289; c=relaxed/simple;
+	bh=GuE84+tYe3IliZz36W/xwOvWAw5aen9f9pO/jTu9YLE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EzpYgqxXfAJI32ELiF8iY/bfgqTmmWYFsNFvs54qgLJVBoCX1SWoJPRgLlZioiUlut0IlaQnJtd03yvtRMqNmFzGH0gIoJ4slhOOSFtOBekbfy2OycOBEete5EnQ88Q0yDD1USEMgR32QVIx8kAM8qrbJsBJ9ntv3tFjjRI5Bis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KZid57NG; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSH2BskH"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42573d3f7e4so34001195e9.0;
-        Tue, 09 Jul 2024 03:50:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KZid57NG"
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7036ab4a2acso1411652a34.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 09 Jul 2024 03:51:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720522205; x=1721127005; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=o7NZxGqNGmbidCE7D7qtZyKAE80sPf8YO3V55ixCNY0=;
-        b=MSH2BskHsIE+fNx6/jRdE/LPiyhhU3eNh4f/7XLWGiHNTqbD2Md0s6TBZqkl6g3xF7
-         PnAGmlklu3oqRGZGMM35PN6Ddd3JDK2iBJki2Ic3Wxsu2wqnflQUnfq3P62rUllKpgNU
-         RYCxb/EaRBf1GjNeiSwulbMBtcs5Qjg5/xFMe5HW/1gNOb49kH7EkwCSvv9nYsvrRMmQ
-         xWO7brwHnWdNfROGdzX4NydECeo2GmG0Ss5Kpw9FL3r8XK8CpIusW0ZwwS/VjYRyEckU
-         b3Qf2zUzmMdLWVN1VMTnS0ildTAvsxBkGaKDBGW/fJnOrd2QTCgIdlAZ9HRXkb1ToqJ5
-         3HGQ==
+        d=linaro.org; s=google; t=1720522286; x=1721127086; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ne6sGKGQF4GM9jaPTveT7Fc90CaEuMuRCImmXptQf6Y=;
+        b=KZid57NGukekwIq+9YW7ovSClgvK3OT5wht0YGeLtLx6issn2BPNVKA9xWfqya3Q4D
+         rgrpdVUYupPbXsRQKFg2NaXugCsUps1748fntbGScIdOfZ15uvJ5Euqd4UtPVQ7yAUUY
+         fjG95ovi6Q0xR5807E7E0kr3k48JR/wihioYOzF83ahwNXcc1OEwMjglQkvns7fNdSRp
+         JCDaSRSkXEo1i4ly9PEOaZf+BHZoDgqPtGmbwqpOQ8WHtygCA8Z1Op3KmvADVJyx2eDC
+         LSycppoCDueVOLW48W7qUbmnhLISHmwsqMKQ5G6aksqXlhaaTZbfkBpG8l941JaMmZsK
+         6fwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720522205; x=1721127005;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1720522286; x=1721127086;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=o7NZxGqNGmbidCE7D7qtZyKAE80sPf8YO3V55ixCNY0=;
-        b=GGmzbZWkvFud6IieA5Zbx4yriaMG79A9m6tNafcghmo2L07R/wIFfm5vhNGr4UumlM
-         atCwWBFY27J95k3PsDiGtIN4Feyq5TSfXE8VI8byB25J8l8m0q3Snf5Edsg/jGODS0sI
-         j+s0vjuahG3ixakfhOG9X0MlQ4agf1kcutdjoqp1Zbets6zcI+EsLgips9e3sW0/w1bP
-         o1IJ1SVbBJHqoHPJeZmJ+b9hlQ0v0ak6djZRXRR55iv4tzvGITZ2M47iEB1/6QQOaIzX
-         aRTJQwg3AxSYUmqZknUgVoc7DdlUuqOsZZBtWmyXxl+WFY9jMqdmvKb3EIvddgJRjjci
-         ugfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNzgFiofhHWnZDRnPJGXPWFYuiKaO/iVmlHaOaZad8kfFBaOR3IAt5ReB3oaO8gXpssub6jSSJOdEFEkZ6JH+1yi7iPgzra0RnuJeyK5LGpk6OwKUUZ6p90tyijiwCtVN3+EMKggq1bz8=
-X-Gm-Message-State: AOJu0YwYAPqeDn85RY3YGIukX2MnIRS21iFuwP7sq87C7XEJLDkrEnid
-	RhAdqNb1kzcj6ux49TSBJRz2QaqlycH4xL7wGmsQxYtDqgdgmEVF45JYeA==
-X-Google-Smtp-Source: AGHT+IGW8y63IoUfQbNtYMROoq79X9Z5OSDL5E8FvO2qE/CK2lZ/epocGDaa+hTSOmot6x3ePsFB2g==
-X-Received: by 2002:adf:a78a:0:b0:364:3ba5:c5af with SMTP id ffacd0b85a97d-367ceadc875mr1715790f8f.61.1720522204250;
-        Tue, 09 Jul 2024 03:50:04 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfab6d3sm2157496f8f.112.2024.07.09.03.50.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 03:50:03 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Zhi Mao <zhi.mao@mediatek.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: i2c: GC08A3: Fix spelling mistake "STRAEMING_REG" -> "STREAMING_REG"
-Date: Tue,  9 Jul 2024 11:50:03 +0100
-Message-Id: <20240709105003.168142-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        bh=Ne6sGKGQF4GM9jaPTveT7Fc90CaEuMuRCImmXptQf6Y=;
+        b=Yvb0E+CJBI1AYFZkFF3O5gQYojYgAYcG1YJVPEClO3zt5sOsNvDrDn/r+Qt7HwSeBT
+         0WZXt4KchC7KXER6oMKM43Vyu2FAEcds2Tg8oFDt45KwQH3jOpgiTzu8dY+h+FYhJwuL
+         rpr7qOSXxSOP4GRMx/CSrtcIpZQ4lMoSS7yLFZ+fk7GyaUiujTE53RNCz+CwWEg5Pt+n
+         lkKaPHMe9GqhCxX6mcc1PQjXsRAt1zFC2C8wmnWxFJEllFzpyiTNLMga4ZKpMzAHUAI/
+         Kj8RsAT5tsBSrSmGGi7qfqgdx+rZuMv28rVci0AmMMGjBx4pBp23dpNTBhn5WgFf8NMQ
+         x+fA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHzd0IWHP48qbg+7DFsvE9IJ/U1HRGY5/A1Ln1NDANC1TJ+rGyx3ifKAQm7OMuCxKliXbU+djvg2RYQ0WFbiGbO8IBdjQoqer0znh+oDKn
+X-Gm-Message-State: AOJu0Yz30bf48nbdgZMbPP0RVyXPArvDi8P3erqjaYdboVP5lM2Nunyj
+	ArDx4t8/BBztEIfqpWh7DshUcENjZlK/0DqGECib9boTsOVfCni7ZnspevFHNPp6rZeQ82xR+hA
+	nGewYQtUNCo2czRw3wqswSvrRCbHQ8qWDGVI3hg==
+X-Google-Smtp-Source: AGHT+IG+y2y1lYDjW0w074p6b32KN/SNBfuH66xZOYYfG/aQ33OHnDDWnfHU1jSQkLv7VHnBWB5U5y0xOdhTHcklAQw=
+X-Received: by 2002:a05:6870:ec87:b0:254:ccac:134d with SMTP id
+ 586e51a60fabf-25eae7575dcmr1763592fac.2.1720522285808; Tue, 09 Jul 2024
+ 03:51:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
+In-Reply-To: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 9 Jul 2024 11:51:14 +0100
+Message-ID: <CADrjBPq13+k6LM=Xs3Eof9jXJwOHmcMoJUXAR18aHfp7fEeLcw@mail.gmail.com>
+Subject: Re: [PATCH] phy: exynos5-usbdrd: fix error code in probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Sam Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>, 
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-There is a spelling mistake in a dev_err message. Fix it.
+On Mon, 8 Jul 2024 at 18:04, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> Return negative -ENOMEM instead of positive ENOMEM.
+>
+> Fixes: 497ddafe915e ("phy: exynos5-usbdrd: convert Vbus supplies to regulator_bulk")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/media/i2c/gc08a3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/i2c/gc08a3.c b/drivers/media/i2c/gc08a3.c
-index 7680d807e7a5..84de5cff958d 100644
---- a/drivers/media/i2c/gc08a3.c
-+++ b/drivers/media/i2c/gc08a3.c
-@@ -948,7 +948,7 @@ static int gc08a3_start_streaming(struct gc08a3 *gc08a3)
- 
- 	ret = cci_write(gc08a3->regmap, GC08A3_STREAMING_REG, 1, NULL);
- 	if (ret < 0) {
--		dev_err(gc08a3->dev, "write STRAEMING_REG failed: %d\n", ret);
-+		dev_err(gc08a3->dev, "write STREAMING_REG failed: %d\n", ret);
- 		goto err_rpm_put;
- 	}
- 
--- 
-2.39.2
-
+Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
