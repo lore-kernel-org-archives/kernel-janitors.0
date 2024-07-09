@@ -1,131 +1,103 @@
-Received: from out.smtpout.orange.fr (out-15.smtpout.orange.fr [193.252.22.15])
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25EB1B86F8;
-	Tue,  9 Jul 2024 17:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F3F17B03F
+	for <kernel-janitors@vger.kernel.org>; Tue,  9 Jul 2024 17:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720546908; cv=none; b=AJipyfsKTDHhgtQQ8Qt+wcDIY9rMmgiTax9YJM4dBOvjNfCB2Z1T6CLg/VrrI7rcSg6y3xoVANsYxBg88XTjRBbwihm+coYsng/kPQHb+Ikb70LsrmOAC4AMuuSvm6myz6PUNUxDLoPnBuK99Oe+lc+Ghiv3rgTLbZBEaK8STVs=
+	t=1720547548; cv=none; b=uzkxonC4iDqU3B/+U9rjrnNc6+0Ii9vAAWSCrjlM88qUDPJ4RP3xeKpmu8NY2DvTCrUloxUqLdWY5fBDM9ng2W8ntVqGa4pqGRlmqaFz+2NlvJK3bWMywmbYiZ9B5Py1r1z0fYVz8t3ydFI1BvJVoAXEmlnBuaWUqQswiMK2dy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720546908; c=relaxed/simple;
-	bh=c8cxlmF6gbJmKp0GvscVOmvNDUYjxKXUjTI5ERmG9Cg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l6LqfSnzegNoZdZyMBgbTDyW56KBZF6UfbEW27HT9E8GjgGhExMXo5Jngvl+yVodmFxgevBs1kn3eCx+7+ZQxr3aHpYuOvxL6XufM7sQtUGO+Cwhy6sQKeeDtdbW8ylTmfQPC6qM18DnoAOsSMKz+9AbWnOvsUKf4LIuYBnZPfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=pleTIFYo; arc=none smtp.client-ip=193.252.22.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1720547548; c=relaxed/simple;
+	bh=B2ybeoGe/mdMT8ELtzXBtaeU6uv0Kbth2KRn9eiD6Ks=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ZXzP59hVSyTI8932M1457qOVYUhwURhgC5H9dA7N8haQ96kFF/hmvqV4lpgTyRw2eQp1EfejGXhXSYXuxvX4TJrESkNnlyLwm08E1UcUyYCTjxEXjWjG1DYQLUMONFGckmHmUONC49NIpq0aPfNNvMZiv0rMmARqEfX5yjBxkow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jtMkjYf7; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="pleTIFYo"
-Received: from fedora.home ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id REqNsAwXTzs6PREqNsRYPw; Tue, 09 Jul 2024 19:41:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1720546896;
-	bh=xCRQ9FdghEv29HWsRbQeBsLGTuUnfGCmDM9LR32omWo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=pleTIFYoaqWyd+Pr6fLoKQXMRzTsdVt+kaE8c1aUWdyMsUhn1wL+yKZXCxDsNUtMF
-	 dlSMDMV/4pwzNhoyIQ3ZRZPmN0DI9/Z1BJAJeDNmPJuCpXHqx9WZoWWyGj+KcPrlXj
-	 Wy/8ckrgeJN+rpy98huLj4LyLtQiF3Om6QXgi58riuoCFbaruRg25avoT4Ojy8dcBo
-	 PWCpOzQ/Epuzt3WW5++ENhGN2UnUu1VielyHxzg4QGXi3J6WnJs2HC4g4gAWez2Ktt
-	 uQQvoUelindGlgXj0uCNmL8uMgx6PVQw64hT4xxjrwgVTyVGMnfeoeXLOqYVlINR50
-	 5CYSseVscUEFA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 09 Jul 2024 19:41:36 +0200
-X-ME-IP: 86.243.222.230
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Nishanth Menon <nm@ti.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] soc: ti: k3-ringacc: Constify struct k3_ring_ops
-Date: Tue,  9 Jul 2024 19:41:29 +0200
-Message-ID: <cb9dfc18cdf890afa2c53cd74b0b330d6f1c30ab.1720546863.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jtMkjYf7"
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ee9174c5c0so6892321fa.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 09 Jul 2024 10:52:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1720547542; x=1721152342; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V4EOuy7NJXdErPjBoDexTRUjt+r44vQQLOT5S4Zc36k=;
+        b=jtMkjYf7eVPIyQnA6Jd5Znga0NN3xkFLiuFyKOdkP0Pja+gHNPCVPdshqT01cQjg1O
+         x+bv6Ojff/j6LE2Bt2GwISAN+PdfTs5D4O0sYRzm2wQsLsNxjGgNUs6EdtT1qr7O+cgr
+         I4NO0Jwom6ID4lC1ioOF+HGXz8x2vDgzBRPp6xbQ/2CbMzvl6i4R+v5KCQzU4Ua1QGKt
+         UT9YHZA3qyLqgdsUlaY92tbWEUqdTJGIE8Xy9MzOnXT/eolY9N98TRuKHvX9p5KBkHRx
+         MsNYucH4Mmlaej0cOm84a9VHT951cJStHuB/qEEiB6pYk+owiqhnxLKknC4NLxhP/1va
+         NUfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720547542; x=1721152342;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V4EOuy7NJXdErPjBoDexTRUjt+r44vQQLOT5S4Zc36k=;
+        b=q6U5Aq0ZEq6a46a9U3JTzu5ecB3JHJBcHcdv7Uwc26TQI27plWF9dIWNoc33GWZrqG
+         fArjBN4l29rGZl9V5fzWq2UCEB3J3BKKSXa0Za+jwcMlXn5VxGGHy0gS+toeXcJ3qxYm
+         vVOeOWaEFb8zrg4okaa2X20cl/aVGG/BSw8fkEVxCdXoj6p33KAHY3cNBMjynzNpPLt5
+         6HWsk9PWejCTG7tAs4mM5B1c4tEMtbCr28RREx+C+egsj62IhQ9D2QG9JhABRpGAMsIu
+         TRItRyLuI2RY5q6waogxjvl26QIV/bebaU7OfGhNd+2gFCp024goG4Gdm+niYNf+GbXR
+         msaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRTjmrmCMg+5dnpBaG6Wj9nc3H7KZCzYkYspSEkgNCfE7rZFNHRZFiJXJ4ldm89HD5O+uP+dZg2/BJ39A1Azz00RJhE/WreUO1rG4U94lY
+X-Gm-Message-State: AOJu0YxtSyWr3Py5Bn/6VaD4wIK1FWjfOiapLsAIelU1XvuyxRaoU1UE
+	cAdxPbABXBAYELCDDAJV5u4scS2VmAfaWbvSzPdQG4SXZ1/WsDaUPP7w+4pFUVal6HvATB4XfTq
+	t7tS+OA3E
+X-Google-Smtp-Source: AGHT+IHRjslBxiqyy0G3zZrlaEYF5Q+TIgFQwRt2w+/GueaRGC3kTXkbxEmvDPFr3e86fDi9Pu5PbQ==
+X-Received: by 2002:a05:651c:198b:b0:2ee:8ccc:f113 with SMTP id 38308e7fff4ca-2eeb30b86a9mr21999341fa.1.1720547542378;
+        Tue, 09 Jul 2024 10:52:22 -0700 (PDT)
+Received: from [127.0.0.1] (87-52-80-167-dynamic.dk.customer.tdc.net. [87.52.80.167])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2eeb33fd1casm2454311fa.26.2024.07.09.10.52.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 10:52:21 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: "Md. Haris Iqbal" <haris.iqbal@ionos.com>, 
+ Jack Wang <jinpu.wang@ionos.com>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ linux-block@vger.kernel.org
+In-Reply-To: <e3d454173ffad30726c9351810d3aa7b75122711.1720462252.git.christophe.jaillet@wanadoo.fr>
+References: <e3d454173ffad30726c9351810d3aa7b75122711.1720462252.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] block/rnbd: Constify struct kobj_type
+Message-Id: <172054754133.374919.11899102978335897724.b4-ty@kernel.dk>
+Date: Tue, 09 Jul 2024 11:52:21 -0600
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
 
-'struct k3_ring_ops' is not modified in this driver.
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+On Mon, 08 Jul 2024 20:11:30 +0200, Christophe JAILLET wrote:
+> 'struct kobj_type' is not modified in this driver. It is only used with
+> kobject_init_and_add() which takes a "const struct kobj_type *" parameter.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+> 
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>    4082	    792	      8	   4882	   1312	drivers/block/rnbd/rnbd-srv-sysfs.o
+> 
+> [...]
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  17090	   3304	     32	  20426	   4fca	drivers/soc/ti/k3-ringacc.o
+Applied, thanks!
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  17266	   3144	     32	  20442	   4fda	drivers/soc/ti/k3-ringacc.o
+[1/1] block/rnbd: Constify struct kobj_type
+      commit: e4eaca5e30c55c83c547974188afc2b2d02d4f0c
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only
----
- drivers/soc/ti/k3-ringacc.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/soc/ti/k3-ringacc.c b/drivers/soc/ti/k3-ringacc.c
-index fd4251d75935..8c0102968351 100644
---- a/drivers/soc/ti/k3-ringacc.c
-+++ b/drivers/soc/ti/k3-ringacc.c
-@@ -161,7 +161,7 @@ struct k3_ring {
- 	struct k3_ringacc_proxy_target_regs  __iomem *proxy;
- 	dma_addr_t	ring_mem_dma;
- 	void		*ring_mem_virt;
--	struct k3_ring_ops *ops;
-+	const struct k3_ring_ops *ops;
- 	u32		size;
- 	enum k3_ring_size elm_size;
- 	enum k3_ring_mode mode;
-@@ -268,17 +268,17 @@ static int k3_ringacc_ring_pop_mem(struct k3_ring *ring, void *elem);
- static int k3_dmaring_fwd_pop(struct k3_ring *ring, void *elem);
- static int k3_dmaring_reverse_pop(struct k3_ring *ring, void *elem);
- 
--static struct k3_ring_ops k3_ring_mode_ring_ops = {
-+static const struct k3_ring_ops k3_ring_mode_ring_ops = {
- 		.push_tail = k3_ringacc_ring_push_mem,
- 		.pop_head = k3_ringacc_ring_pop_mem,
- };
- 
--static struct k3_ring_ops k3_dmaring_fwd_ops = {
-+static const struct k3_ring_ops k3_dmaring_fwd_ops = {
- 		.push_tail = k3_ringacc_ring_push_mem,
- 		.pop_head = k3_dmaring_fwd_pop,
- };
- 
--static struct k3_ring_ops k3_dmaring_reverse_ops = {
-+static const struct k3_ring_ops k3_dmaring_reverse_ops = {
- 		/* Reverse side of the DMA ring can only be popped by SW */
- 		.pop_head = k3_dmaring_reverse_pop,
- };
-@@ -288,7 +288,7 @@ static int k3_ringacc_ring_pop_io(struct k3_ring *ring, void *elem);
- static int k3_ringacc_ring_push_head_io(struct k3_ring *ring, void *elem);
- static int k3_ringacc_ring_pop_tail_io(struct k3_ring *ring, void *elem);
- 
--static struct k3_ring_ops k3_ring_mode_msg_ops = {
-+static const struct k3_ring_ops k3_ring_mode_msg_ops = {
- 		.push_tail = k3_ringacc_ring_push_io,
- 		.push_head = k3_ringacc_ring_push_head_io,
- 		.pop_tail = k3_ringacc_ring_pop_tail_io,
-@@ -300,7 +300,7 @@ static int k3_ringacc_ring_push_tail_proxy(struct k3_ring *ring, void *elem);
- static int k3_ringacc_ring_pop_head_proxy(struct k3_ring *ring, void *elem);
- static int k3_ringacc_ring_pop_tail_proxy(struct k3_ring *ring, void *elem);
- 
--static struct k3_ring_ops k3_ring_mode_proxy_ops = {
-+static const struct k3_ring_ops k3_ring_mode_proxy_ops = {
- 		.push_tail = k3_ringacc_ring_push_tail_proxy,
- 		.push_head = k3_ringacc_ring_push_head_proxy,
- 		.pop_tail = k3_ringacc_ring_pop_tail_proxy,
+Best regards,
 -- 
-2.45.2
+Jens Axboe
+
+
 
