@@ -1,95 +1,92 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774AE84A31
-	for <kernel-janitors@vger.kernel.org>; Wed, 10 Jul 2024 06:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6369A83CBA;
+	Wed, 10 Jul 2024 08:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720592636; cv=none; b=Vnq5XkHnK/0iDGd75Gj0MVZNcW9LXERnCYJbUWGSwh09dpCSDfxI+eYZmxElGIsE12p7/Y2t4VUxspSip6QpDQ+X2harlcg+fT5rxb+A/ti/3YdSTnloJs/Vo3CHLDLtlp/ll3LlFz6TQ6ONSaHKwr0ggPVPsHAooilXsjEarKM=
+	t=1720600555; cv=none; b=tI7yIkCa4r01tktrJbrMmYqV/eIdfQFybPaLTnd2UvjxxTevFOZ1qeeEGBoSCvEPDkPlHTWta0sS5nqWy5kHnWZnBOpmgmlaUOFB8IDm15i9slYD2aRqhVxR8pjN+rCtov0fTEHCZBsCg6ulcBtrYzKdg4KWWBC2VwdC9EmP0x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720592636; c=relaxed/simple;
-	bh=6s7so5c7HOknihvumh3Haewm4qizE8uH5cVOjlcBNW4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=EA1vZwNZgjB0kixUYy3yTqxE30pCz4wC4K8pVEJF27q24ICg1JWNB4zH8GclzjOS5yGBpVyljPAwdfjl+t5M4650g+DomUCzdNfuKwIF+Tqy8npRAMLQj4VGAaYwTRX5LfoqbkotgyBIF/6G7Dtq9+0h+BLsG9Oi99txJIh31zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=cAoOEajs; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+	s=arc-20240116; t=1720600555; c=relaxed/simple;
+	bh=YLjYF/eFVWGg/xIW1xPAMIzk49GaK0gZOh85xXj6gpM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=YoAADHBvMkz+aaKUaZpDxVBYbGJgOOrTm1E6QJ2okr8wTIXs/mDsV+EK3UXMm2C8hEtc0D5L3whMJ2pFAu8R7sop8dMzV5+JUYTiIQ0sZ26B2GcyneO6X2mEX0zfns3ebQStsH4nHPIioUldfcjOxipJogPc3eY3s6F6mKBLbcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BX2XRfzT; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="cAoOEajs"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ee9d099009so3197591fa.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 09 Jul 2024 23:23:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1720592632; x=1721197432; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=assg/spa4cOMqEpYiqy3ecAcAwnhbvPRfb3jWzWA0iQ=;
-        b=cAoOEajsdhDU8va5s4PHGyPaNulXDepCAefXzmlZnAWnst8moQ5y7AQaqh1jXiBNp2
-         7FOQa29N26sqz2xs3H5NgHjg2EPhZQ5rCO/UDgkpEAoRG2+BH+9K3bMd+qwXNIWgENDq
-         9VLav8cwsJSYX/99U7eQ5qR7feS374tthDGjz2/mRzqy+mADE83nrHuBgDu+zurQH8SG
-         sopn9KeaOoqC7O1fxdYOJvnz/D/dakD+NPrUeDkxMvF36yLdSEKWZGBHbldggjgbEPWO
-         BCmofiytZC/E2Aqy7eoGb7rispIIIHC/XO/N+yi041IBqCLujFD3+1Llrn+ZI/mJ1A0R
-         nH3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720592632; x=1721197432;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=assg/spa4cOMqEpYiqy3ecAcAwnhbvPRfb3jWzWA0iQ=;
-        b=n36tsSq4ce7nreZSgi6x9JXH1VfGdS2GkHPEc5s5W3HsT1IYIt+CTgicQV++uImhjn
-         o6kyygWNOLT6o3IZzOWmiCetLBsV4ULBdukEJg3yip4zfVSxLsezxmHzz1+059o4wJWc
-         55i87rdc5QHmF1jcTEtpQ1RxLiO6BT2miZPMMqCWNYxm32DZzqonaHQNcZDgxepCp0rn
-         ttbQrSWBngjbePiA9JzIJRR5mVJWjUFVQZOQZU4Uy5LiCj+Td6wTMM4OMGv0SE+OMWkL
-         4Y8T2/JXFNy9VCWDMdH1hLBgYTqmN/zOLtWjApdjIKuodIInsUmNz3vgkT3rcVaAfY1I
-         3v0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWA4VfQyrwky3IlIHe4p37mwPcePdYncoy6Ar8nxGX/tFymf0PTpHU15BW+djVq+ESv6qkGX/4IfCH6Mvp0gKX58qXKnpYHtPTDU1G9BxeO
-X-Gm-Message-State: AOJu0Yx1VKMvX21Pzc1bU3OmDjjw0RZ9wWUZel0B+srr4gCAYHjCAOBC
-	xc9vwt+oocn2vXvzcFoiKQtr1xt2pHz0trxiVCMMBN2FOjrhzq3r80giqbFipikBDxNWTa6BHIW
-	9hA+ZlKmM
-X-Google-Smtp-Source: AGHT+IFrolNW5lOMuUJhl618lI6yjdNOR6K82mCSLOdcX6udq8FJVW5dASBzQo09mgslsZx9YSpn/g==
-X-Received: by 2002:a05:6512:31cc:b0:52c:dd58:1a97 with SMTP id 2adb3069b0e04-52eb9a0498bmr3119303e87.5.1720592632042;
-        Tue, 09 Jul 2024 23:23:52 -0700 (PDT)
-Received: from [127.0.0.1] (87-52-80-167-dynamic.dk.customer.tdc.net. [87.52.80.167])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52eb90670b6sm463892e87.197.2024.07.09.23.23.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 23:23:50 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Denis Efremov <efremov@linux.com>, 
- Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <20240602-md-block-floppy-v1-1-bc628ea5eb84@quicinc.com>
-References: <20240602-md-block-floppy-v1-1-bc628ea5eb84@quicinc.com>
-Subject: Re: [PATCH] floppy: add missing MODULE_DESCRIPTION() macro
-Message-Id: <172059263066.380385.1122582379768544116.b4-ty@kernel.dk>
-Date: Wed, 10 Jul 2024 00:23:50 -0600
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BX2XRfzT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720600511; x=1721205311; i=markus.elfring@web.de;
+	bh=YLjYF/eFVWGg/xIW1xPAMIzk49GaK0gZOh85xXj6gpM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=BX2XRfzT8priNv5di15/HMx5X9rHSfQ/Iw1YFnUWIsojTQLYhzeiHnnD4ijQSQIk
+	 P2gsH3xMRJ5DgqAIPcMv3fba2FQftOCoCZGX2EPhUdvLPxWBGzb8toK8pSBeefuBP
+	 WkCdtuKAKNtax3FYT8vq1iIk60HVQGaXRvfMPxHozukakoSD5qOZvSKkAvuDVo0CK
+	 naB+HARwqS8+4evcJJ6q9Cz81+XcBTm/VtbUmY1OxLYb/pPfUaQ/RQld2C/tnkmzf
+	 dwHCK1d5gpbEcAkgOq8M309TpQrArbeauwyfBwD+j/snHjtcbzVSPrhJ5T/52/2SA
+	 W3NCEWbZ/omseIiRoA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N3Xjb-1sIULU0c9T-00tC6R; Wed, 10
+ Jul 2024 10:35:11 +0200
+Message-ID: <7eabf6b3-e9fd-4c59-8c2d-8dfdf05ddb55@web.de>
+Date: Wed, 10 Jul 2024 10:34:57 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
+User-Agent: Mozilla Thunderbird
+To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, make24@iscas.ac.cn,
+ dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Wei Liu <wei.liu@kernel.org>
+References: <CAMeQTsZojC24Hs_zy0UX0Zjq42zLH21yn_hZhkcSKbL5X1jiSA@mail.gmail.com>
+Subject: Re: [v4] drm/gma500: fix null pointer dereference in
+ cdv_intel_lvds_get_modes
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CAMeQTsZojC24Hs_zy0UX0Zjq42zLH21yn_hZhkcSKbL5X1jiSA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ztBwSIUruFgutnrDH/yIK49xLeUe4QbnRCIEIQKFqESog/Ybbyt
+ iw7A5NjiZgHUCNbH0waliVLhepQbQ4dD900Mi/RFDDDxEaCww5oxcL1wJ9OwtVCkc+PaD7w
+ B5lphAlk1pv+FfY3Fuc/uSIyTLEuboJhpI+H985+C9i9YsqMT84lkGohqdf0Yt/KBbYcmOq
+ EvFcHOgFrkRHlJxw5c8Tw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:lEmTYdWidZc=;iMWpbu+WPrflaguxPa0NHvvIT2w
+ p0veKle+VCyYtnui1D8IV36ib/RDceUBy+wJbhJWLGi20/1SiQGwJvNpMV6NgwN484aelKpFT
+ V0fT/6hCpqBHSspX8C7IsvXn+OPWol367rK/Q9TmqHm5uF0er4+RrUJAKEmxc+l4nYfBN4rBp
+ nfikqoshmdJttbXIoi1yIUPwZnyrpZU+Rw5gOPuy1mmgAmjTfEooKC/9/wUou48p6v1DWzPTi
+ uaYfup75enS3jcRUm84EEv+ahJ4kQOLHZW2KgV1K6inEsiG0cLN0pWt+QAI7EiSkb1Kh9Vi+a
+ umyGRLjvTmJkr9cVruS8aKQlHFgV7cOlxICHTVmWfZ1v9PU5YICZ458O/p8JA0ssMyvVWWwP3
+ L2s5AT0bS93hNR/0vf6pe5E8ah2VybxmBR3SO12NtqF6EqdYxV/OYy/FZzYYOsav0XDXRBeAl
+ OwhO/tBxpK2pjnBCfUz1p+58hcMsb2apdNfOcJCfXhHeFQCNNNfgZ2RYoICo24dN9A0fGHgsi
+ 5I6a90C+1L90JcgfOYzVukMVnZnuf9JT9eSlVbYxZmazo/WIooOs/aT8fFL/K2a7UDPvf9pOF
+ OZakTDID+MMXX6QXr5Za4h0ugBM/ijoUpB6K7H2zJ7kAZ9ybK8WIVfXGBzGiOP6677ZqKUmC5
+ vxduJZtOWG5gVDFNBRuz6kGJEhLmp+Yk/bQ58PostAQOX347oRVISe8FBEmPBkIuVQdRCajHX
+ XgpH3SEIiuFjmzIk5/eXQV250ap5In9zGIUuMv/FqM4LwjQBkp/rRsuj/Rs0hQ/u4VtVnCEDt
+ ljxzWab3eu+sFBDzirapH0zTsMM01q4GUz6SG8vdzlB/0=
 
+=E2=80=A6
+> > Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+>
+> Thanks for the patch!
+> Pushed to drm-misc-fixes
 
-On Sun, 02 Jun 2024 17:05:31 -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/floppy.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> 
+Do you care for the applicability of the available information
+according to this tag?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc7#n398
 
-Applied, thanks!
-
-[1/1] floppy: add missing MODULE_DESCRIPTION() macro
-      commit: 3c1743a685b19bc17cf65af4a2eb149fd3b15c50
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+Regards,
+Markus
