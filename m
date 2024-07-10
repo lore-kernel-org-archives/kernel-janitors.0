@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6369A83CBA;
-	Wed, 10 Jul 2024 08:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48DC12C499;
+	Wed, 10 Jul 2024 09:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720600555; cv=none; b=tI7yIkCa4r01tktrJbrMmYqV/eIdfQFybPaLTnd2UvjxxTevFOZ1qeeEGBoSCvEPDkPlHTWta0sS5nqWy5kHnWZnBOpmgmlaUOFB8IDm15i9slYD2aRqhVxR8pjN+rCtov0fTEHCZBsCg6ulcBtrYzKdg4KWWBC2VwdC9EmP0x4=
+	t=1720603034; cv=none; b=luA4VuRum04C2N/xdU8QE2omMeMu6Hsn4Ct7/OzwTLvPVLKbXlFurJdy2k1sRaucbB4LQc4wUiE1AKA1nDzaFJ2l4opa54OSD+p8OWoY/BY/1pe9iFf3kwI3IqK9Pa2BEti+364WzHESUQZn0vDUdtJOMrjD0TCZAr2NjASz0Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720600555; c=relaxed/simple;
-	bh=YLjYF/eFVWGg/xIW1xPAMIzk49GaK0gZOh85xXj6gpM=;
+	s=arc-20240116; t=1720603034; c=relaxed/simple;
+	bh=1BIbj8gqWvAK9dy/9EE/67KCD5eryOi6uFcCDMa2RXQ=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=YoAADHBvMkz+aaKUaZpDxVBYbGJgOOrTm1E6QJ2okr8wTIXs/mDsV+EK3UXMm2C8hEtc0D5L3whMJ2pFAu8R7sop8dMzV5+JUYTiIQ0sZ26B2GcyneO6X2mEX0zfns3ebQStsH4nHPIioUldfcjOxipJogPc3eY3s6F6mKBLbcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BX2XRfzT; arc=none smtp.client-ip=212.227.15.4
+	 In-Reply-To:Content-Type; b=k9t1oeiLMiAK/DlAStRDQKuXfqhCX7bV8zV8anAwQpN+gMLP4NyGBpzRv7J7rM9hTYtEofgTlBx+4ZPqIHaXLh0P5hmFag94DFoEC7mzLFXdH0H5SvhJsGoNfc4befzBJokSRlrH3eaIr0IiE8mz/wyVBc7T7eZYwddjy0gmiyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=abljnqDk; arc=none smtp.client-ip=212.227.15.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BX2XRfzT"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="abljnqDk"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720600511; x=1721205311; i=markus.elfring@web.de;
-	bh=YLjYF/eFVWGg/xIW1xPAMIzk49GaK0gZOh85xXj6gpM=;
+	s=s29768273; t=1720602999; x=1721207799; i=markus.elfring@web.de;
+	bh=1BIbj8gqWvAK9dy/9EE/67KCD5eryOi6uFcCDMa2RXQ=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=BX2XRfzT8priNv5di15/HMx5X9rHSfQ/Iw1YFnUWIsojTQLYhzeiHnnD4ijQSQIk
-	 P2gsH3xMRJ5DgqAIPcMv3fba2FQftOCoCZGX2EPhUdvLPxWBGzb8toK8pSBeefuBP
-	 WkCdtuKAKNtax3FYT8vq1iIk60HVQGaXRvfMPxHozukakoSD5qOZvSKkAvuDVo0CK
-	 naB+HARwqS8+4evcJJ6q9Cz81+XcBTm/VtbUmY1OxLYb/pPfUaQ/RQld2C/tnkmzf
-	 dwHCK1d5gpbEcAkgOq8M309TpQrArbeauwyfBwD+j/snHjtcbzVSPrhJ5T/52/2SA
-	 W3NCEWbZ/omseIiRoA==
+	b=abljnqDka9y3oruhMVfd/xyLXfDi3A0jHi7CG0tqKrZTx5vNMeli3aqIAsWn4Doa
+	 fur/AJIbQHaFyFHRklhycOqNciAzisQMYT0DuicxZGhoq7pyqwMab40SOHHDJzNX6
+	 uyxffNj3t4niADC348s6SMAZP1f3sIjxeYi9VuSGm//loC0K0wz4hwE0ok/1LxISx
+	 P68n8rZ69wZKOsPnv1TJ5qtnhzWVIq2paHKHTBSVD5ONZf0dS2RejbMKhErmicXdS
+	 yVR2aO989PtP4e9JWE+dXqR3Qw5AOodhlaOB8Y/PcQ0nI7rhXuj8v6kjm5X9L50W1
+	 Os/kZBJt3MyyTF0pqA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N3Xjb-1sIULU0c9T-00tC6R; Wed, 10
- Jul 2024 10:35:11 +0200
-Message-ID: <7eabf6b3-e9fd-4c59-8c2d-8dfdf05ddb55@web.de>
-Date: Wed, 10 Jul 2024 10:34:57 +0200
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MTOlk-1soYBv3KTk-00Ja79; Wed, 10
+ Jul 2024 11:16:39 +0200
+Message-ID: <24d6ddab-c4aa-49d6-899a-1dd3a3e1bd20@web.de>
+Date: Wed, 10 Jul 2024 11:16:34 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,46 +42,43 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, make24@iscas.ac.cn,
- dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Wei Liu <wei.liu@kernel.org>
-References: <CAMeQTsZojC24Hs_zy0UX0Zjq42zLH21yn_hZhkcSKbL5X1jiSA@mail.gmail.com>
-Subject: Re: [v4] drm/gma500: fix null pointer dereference in
- cdv_intel_lvds_get_modes
+To: make24@iscas.ac.cn, linux-edac@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>,
+ James Morse <james.morse@arm.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Robert Richter <rric@kernel.org>,
+ Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>,
+ Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+ Tony Luck <tony.luck@intel.com>, Wei Liu <wei.liu@kernel.org>
+References: <20240710010746.1741228-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH v2] EDAC/versal: Fix possible null pointer dereference in
+ emif_get_id()
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CAMeQTsZojC24Hs_zy0UX0Zjq42zLH21yn_hZhkcSKbL5X1jiSA@mail.gmail.com>
+In-Reply-To: <20240710010746.1741228-1-make24@iscas.ac.cn>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ztBwSIUruFgutnrDH/yIK49xLeUe4QbnRCIEIQKFqESog/Ybbyt
- iw7A5NjiZgHUCNbH0waliVLhepQbQ4dD900Mi/RFDDDxEaCww5oxcL1wJ9OwtVCkc+PaD7w
- B5lphAlk1pv+FfY3Fuc/uSIyTLEuboJhpI+H985+C9i9YsqMT84lkGohqdf0Yt/KBbYcmOq
- EvFcHOgFrkRHlJxw5c8Tw==
+X-Provags-ID: V03:K1:XuZm9nktWDHsIpAvNrlbnIGr2boEbuB71vnR11x74ixZmXVcn14
+ ql0WtrRZ0qz4SUgKLyDSsbXltJ2b9NbsWlBdmpPz/3A8jncGVPaz1u8bjQCWonjx9bx57cG
+ +Er55b3x+4ZYrJIcKEQfiG4mG+K7BCV5Hi64WV6Bu0IIAyd2xKyx8tMODwOhyXD1GwZMNG8
+ OvjawnHFyiVuPw8/CqckA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:lEmTYdWidZc=;iMWpbu+WPrflaguxPa0NHvvIT2w
- p0veKle+VCyYtnui1D8IV36ib/RDceUBy+wJbhJWLGi20/1SiQGwJvNpMV6NgwN484aelKpFT
- V0fT/6hCpqBHSspX8C7IsvXn+OPWol367rK/Q9TmqHm5uF0er4+RrUJAKEmxc+l4nYfBN4rBp
- nfikqoshmdJttbXIoi1yIUPwZnyrpZU+Rw5gOPuy1mmgAmjTfEooKC/9/wUou48p6v1DWzPTi
- uaYfup75enS3jcRUm84EEv+ahJ4kQOLHZW2KgV1K6inEsiG0cLN0pWt+QAI7EiSkb1Kh9Vi+a
- umyGRLjvTmJkr9cVruS8aKQlHFgV7cOlxICHTVmWfZ1v9PU5YICZ458O/p8JA0ssMyvVWWwP3
- L2s5AT0bS93hNR/0vf6pe5E8ah2VybxmBR3SO12NtqF6EqdYxV/OYy/FZzYYOsav0XDXRBeAl
- OwhO/tBxpK2pjnBCfUz1p+58hcMsb2apdNfOcJCfXhHeFQCNNNfgZ2RYoICo24dN9A0fGHgsi
- 5I6a90C+1L90JcgfOYzVukMVnZnuf9JT9eSlVbYxZmazo/WIooOs/aT8fFL/K2a7UDPvf9pOF
- OZakTDID+MMXX6QXr5Za4h0ugBM/ijoUpB6K7H2zJ7kAZ9ybK8WIVfXGBzGiOP6677ZqKUmC5
- vxduJZtOWG5gVDFNBRuz6kGJEhLmp+Yk/bQ58PostAQOX347oRVISe8FBEmPBkIuVQdRCajHX
- XgpH3SEIiuFjmzIk5/eXQV250ap5In9zGIUuMv/FqM4LwjQBkp/rRsuj/Rs0hQ/u4VtVnCEDt
- ljxzWab3eu+sFBDzirapH0zTsMM01q4GUz6SG8vdzlB/0=
+UI-OutboundReport: notjunk:1;M01:P0:ZsQE4SVYc5Q=;AFGl7MSwGr4BvvX48U7lXdNaH/h
+ RcphXqgX1XXjKqw/4vwuz3AI4GyGjZyREPGN93EQR02A5nWWUyRmJL/IhkVBnKnC6z9Po+d6a
+ VOqv1AyozT8eIjX44HHoIKqzV1dhXB0AXVk2OoBqY7l5rzeXh9nXaQ98oh9tMgVj4703Z1JSF
+ Wunboj28Jnj3sKd7DLD0amqpktJptnkF8SOscxQq+9lBk41OtjWTiZplJVcwVewyKq/r1Ylz1
+ j9x7ybLDsDFZDKLwIEs7VYWdqDU0SYtdDolld++BTkmawKLLTj3LtH672qd6EqUr/GQTEc03z
+ udjm5dK3pDqV+0uQCCvuS6zJgrO4qbuf3ZuKXbTW2m3FmT+5WYwHBLLv+eP/htFNLGYgDupjb
+ Qr1b1Z6OgGlNJjE288IjLnAg48AqTldrXz/rJmVF/fzngXlgMkvItT0WxCaUnTh4GMIuGEBGQ
+ Jj3SdnC0216tWhmEdNTbt8pSujXbknqvWG6lvXk9T072+UVz42+5+JSb25op9uS5la8YgPtz7
+ DNxnNnrYOrKBy14tQLdoa9lqdvKzAEXexNS8FDgWTXcH7V83WzLl1mZToBxsfiEEbLBuln38k
+ SWSeafQRzb5J+WAxY1kQ4IN0sAWqgy1YTo9fpkF3oYfBQDcJgiy37AClMX2RhzAhGWJUu8HWh
+ b35MGHsx440fnwE8C1PVTWhUvvn+23X/Qcti2aBxzoqliUnmNSUjkQmGZdrYXbZnLgiBspTOL
+ GVIU76kUXCNcBzRN5Kh4ELl1q4BntIRr1608iRXgw6tQ+rKuPUueEZDqbq9BovNDiD7uoX7b6
+ /XffhxYSVr5uDA+kfcwHom/w==
 
 =E2=80=A6
-> > Signed-off-by: Ma Ke <make24@iscas.ac.cn>
->
-> Thanks for the patch!
-> Pushed to drm-misc-fixes
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 
 Do you care for the applicability of the available information
 according to this tag?
