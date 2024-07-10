@@ -1,85 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27B1191F90;
-	Wed, 10 Jul 2024 12:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5C983CD4;
+	Wed, 10 Jul 2024 13:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720616371; cv=none; b=X0buJIYQwk5sNquPFISpvT83mHwPT5r3Dja7253jhoBPI9oLp1lam0Uuwosqm+diCCt6lcyIrVWFzKZ9YG1ZftgBLqIdY1RLyZAWwOZ0p6HlgGwRa38eTupMp/TLMBbBUyLc7tuYaQ2G0vcIDhbTyZA4ruJy6cdd3oyvErslNkE=
+	t=1720616770; cv=none; b=FEe4nOa68E8erV738hNJLxxUfOnEyMJBI86LAJqeCA5Wo++wQopyO3Yu4CdsCKo5xAX2O57nWcaR7CvRTvIzvS58JY8lSV+7hUsjRaZXPJJrFhwKyFvcHH3TvghOe8VepKvssqZsY233wKg4xqRECcPpYOHPgVvARU54KRz7o64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720616371; c=relaxed/simple;
-	bh=VRHPKpwkycL0bwJgHfbOMhdmOr4tvIHjVAVo19p2i3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pofs71p/vDCH3gsiud4PFGzu2a8JuRobdLsK6lAbsR1mBQOkPCGqlL6A+i0KdL/YgY8QRgFVrYno+V/cV5iLHVL9cBaQBW6iVM7cQ8VRHzcXHZJ/Nt1sTvdYJslkCkBl4HzFonielU/0li/tDozqaBfFBwXYCQdEtHC/gUhuUjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BmPIou20; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720616770; c=relaxed/simple;
+	bh=mgA99OrDmthPsDPhXumxSed5OSOz0lcBLKjYOBeh/vM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=P9KM0hnaa4ztYJ49x2/hw+xJiEtKZr/xNbfe4t/jWHLgDdY1uhQAJwXUOEmCrOYf1Q8+j60/DEmjW2SwbVP2Dp/zg3d+7kWHUFiSZV7JR8Fku5tpp9ywNVvr7H52jshtxaSKt/lm84fIw2j9g85QiY5Gm8rrCmhq4nIzEnL++oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Wtv5WKeK; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BmPIou20"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10B50C32781;
-	Wed, 10 Jul 2024 12:59:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720616370;
-	bh=VRHPKpwkycL0bwJgHfbOMhdmOr4tvIHjVAVo19p2i3c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BmPIou20C0jJoRbT9eMu3nbx20vswKyyrH0V/6c6+ZrYTAe656BY3ZE66pn6XfxnQ
-	 Zz2855XjwXZ+E1Kd4AqpFYYsx9J2nGGZWdxXDjI682dhmIQZE71Wpjawawqzqe44wv
-	 TpjiV7EwGQYKEVmCUVGmXs1jtRjYjtBNJp4nAz6c=
-Date: Wed, 10 Jul 2024 14:59:27 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] samples: configfs: add missing MODULE_DESCRIPTION() macro
-Message-ID: <2024071021-dares-schedule-9377@gregkh>
-References: <20240601-md-samples-configfs-v1-1-83ef2d3c0088@quicinc.com>
- <1d5dc2bb-773c-4877-9660-fff5517c2df3@quicinc.com>
- <04bd39d0-9ed7-4c09-9e21-a0a61a0fc6ea@quicinc.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Wtv5WKeK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720616734; x=1721221534; i=markus.elfring@web.de;
+	bh=hL1FGV0d+/uNuT5MwoYkBSDKdQE8pznXZfxl1D6esK4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Wtv5WKeKXhTZ4xKMJdhVn4hR0512X93slSKmuJcIJq3zP4UTGggQGgS/rwS7KW7A
+	 fWmPHQFZnmGKE5po8BZuXyWUjGeWcH7uKkXCcKLV0WrEuucuyxISWs55EOkfvLQbF
+	 xpkJZwjHYvT0YsnNwh+yXvk3+Db8gY3XxyKLz6+IkV51bT2ygM1+FbHEkuutUY1zl
+	 O/+b9NQHt8VooN5QiRor4c2mH6MG3Sxv52ajrp9ghTg9KVMWJ3JhbaME2nNb3CSsd
+	 VtQXtqPNUZS20uh8njvx3uEcnZA03SjN4ANAPI2RlDGiBkxQqU3cWH1eDYiVy//rw
+	 t3WkhWLnopmmo7M6IA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MD5jp-1sadhP2Yi1-00DHGg; Wed, 10
+ Jul 2024 15:05:34 +0200
+Message-ID: <17c94d87-e260-4155-90c1-b7e5013ac69e@web.de>
+Date: Wed, 10 Jul 2024 15:05:31 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <04bd39d0-9ed7-4c09-9e21-a0a61a0fc6ea@quicinc.com>
+User-Agent: Mozilla Thunderbird
+To: make24@iscas.ac.cn, linuxppc-dev@lists.ozlabs.org,
+ kernel-janitors@vger.kernel.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Aleksandr Mishin <amishin@t-argos.ru>, Andrew Donnellan <ajd@linux.ibm.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Christophe Lombard <clombard@linux.vnet.ibm.com>,
+ Frederic Barrat <fbarrat@linux.ibm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Ian Munsie <imunsie@au1.ibm.com>, "Manoj N. Kumar" <manoj@linux.ibm.com>,
+ Maxime Ripard <mripard@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
+ Shuah Khan <shuah@kernel.org>, Wei Liu <wei.liu@kernel.org>
+References: <20240710103352.1890726-1-make24@iscas.ac.cn>
+Subject: Re: [v2] cxl: Fix possible null pointer dereference in read_handle()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240710103352.1890726-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ySccpis36z6zCEn3Lvza8Bcw69K9CLTO951Rfrr+vzx9/WjUznR
+ uBGLzfKx31PWoZiRB7dopUjsxoO0LOxfLLn4qYbLDy1tjwFRFR18KxbDMxFvi5MN48BHBPQ
+ miagwSx+EDmvQYcvoizxkyvQjC5+j5OC437GHMMocZo4AYMnYa8QXKcpxrrhdIXySYhjuF5
+ a0sHalsGI2NtM8CUfLAHA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:QlxgUnxO+Gg=;x1/tJ3UEsXUlj19rmtzQQ0Bu+/G
+ YIcvK+OTSSc01X209tkGyk5j8jwQlXZ32ANqTTIePu5iRihf4ut5PA3mR7P+FWxVwabR4HXzQ
+ 17Wscigeq99PSTCarfj4XqQ/Z8C4YRVLrBSDK5+9Fjd7HL8o9JSxFdluCYO0wT3lVPYH/BQca
+ uf0lZpBzQjqf5cybjn2CSqA8HZHEBxhOTAx+gNqI5PWoEjsrMdAp4voUezMcf23rHXn181CM3
+ Z1Emz5epnsZfAegPh3EQUeAS7Q0CkLrLfa2aADvyltNUTxIF4EArIC2ssrICGKEXBDCLBruPv
+ eQvNRztTrwHhiAmdJpA3fqnpshh2+yl9eqbM+UqUgy/vqKrGmI34iAhz7yTy0Mkew6JOqclvo
+ lMuHgPYa1nsnyuifDQr7bWVlAIHcWrgaaJzRdpfBpLmI/Nwqtoc68LHCAf75ozIpiIFauqz/6
+ VL2SewEm9CM7hgs0Hclh2ddtfgyBFbPRXf35itDLjcKS2qO90FuDCW6Oe3qm5T/fwd3Q6nUPd
+ n8smSTA6h59vpOccMJekDgxsO222HBG+DEF4h5m6d7RnpzqMUma5y+s7Vp5kQhqCN+lgjGjMg
+ vt4YTnfgcRcw1NgAp2t/1e6ydafGPLJFtOgBaGiL4ZsxT5uVLqZu6KiFdEqyGwPjYdtS+yHlF
+ uMmnbU+hIUH4YEpBswED5dCiHnRdhF4ojLT24KlMkbxnW4IhwneZ/FrRq4xN1sfeMJYhSraVe
+ 381f0ddaMdKzSNPHJuakGeAS+cKIOG4qq3W+LUulGRiCCfa8W+poZUgL3P/Cx+SXWb+ogIAa6
+ IPsjOQ09tJ/I3rEl8xtJsHkg==
 
-On Tue, Jul 09, 2024 at 03:20:56PM -0700, Jeff Johnson wrote:
-> On 6/20/2024 9:46 AM, Jeff Johnson wrote:
-> > On 6/1/2024 5:12 PM, Jeff Johnson wrote:
-> >> make allmodconfig && make W=1 C=1 reports:
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in samples/configfs/configfs_sample.o
-> >>
-> >> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> >>
-> >> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> >> ---
-> >>  samples/configfs/configfs_sample.c | 1 +
-> >>  1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/samples/configfs/configfs_sample.c b/samples/configfs/configfs_sample.c
-> >> index 37a657b25d58..fd5d163828c5 100644
-> >> --- a/samples/configfs/configfs_sample.c
-> >> +++ b/samples/configfs/configfs_sample.c
-> >> @@ -364,4 +364,5 @@ static void __exit configfs_example_exit(void)
-> >>  
-> >>  module_init(configfs_example_init);
-> >>  module_exit(configfs_example_exit);
-> >> +MODULE_DESCRIPTION("Sample configfs module");
-> >>  MODULE_LICENSE("GPL");
-> >>
-> >> ---
-> >> base-commit: b050496579632f86ee1ef7e7501906db579f3457
-> >> change-id: 20240601-md-samples-configfs-946b278a9d47
-> >>
-> > 
-> > I don't see this in linux-next yet so following up to see if anything else is
-> > needed to get this merged.
-> 
-> I still don't see this in linux-next so adding Andrew & Greg to see if this
-> should go through one of their misc trees. Hoping to have these cleaned up
-> tree-wide in 6.11.
+=E2=80=A6
+> - The potential vulnerability was discovered as follows: based on our
+> customized static analysis tool,
 
-I'll take it, thanks.
+I became curious in which time range further corresponding information wil=
+l be published.
 
-greg k-h
+
+>                                  extract vulnerability features[1],
+
+Various software corrections were published through the years.
+
+Several error (or weakness) categories are known already.
+https://cwe.mitre.org/
+https://wiki.sei.cmu.edu/confluence/display/c/
+
+
+> and then match similar vulnerability features in this function.
+> - Reference link:
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/com=
+mit/?id=3D2d9adecc88ab678785b581ab021f039372c324cb
+
+Another reference format can be helpful also for the commit c534b63bede6cb=
+987c2946ed4d0b0013a52c5ba7
+("drm: vc4: Fix possible null pointer dereference") from 2024-04-15.
+
+Regards,
+Markus
