@@ -1,89 +1,94 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48DC12C499;
-	Wed, 10 Jul 2024 09:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6C818C161;
+	Wed, 10 Jul 2024 11:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720603034; cv=none; b=luA4VuRum04C2N/xdU8QE2omMeMu6Hsn4Ct7/OzwTLvPVLKbXlFurJdy2k1sRaucbB4LQc4wUiE1AKA1nDzaFJ2l4opa54OSD+p8OWoY/BY/1pe9iFf3kwI3IqK9Pa2BEti+364WzHESUQZn0vDUdtJOMrjD0TCZAr2NjASz0Rs=
+	t=1720610578; cv=none; b=V9oHMlfFISSLO4m+hfKWZY29/F3O1CzY2Q2xgrEti9kVMWaj0ZRWTkXxpx1gpAWZgF8X9LZzNDiuP5TDm290TNjmLpBGaVqsNM9D6oli1GNYClE8zsOrczI2x1ZfALWRf9dkfoVqs1JrzDpJzDGCYjD1y6hl4xQG40sZ74zfiS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720603034; c=relaxed/simple;
-	bh=1BIbj8gqWvAK9dy/9EE/67KCD5eryOi6uFcCDMa2RXQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=k9t1oeiLMiAK/DlAStRDQKuXfqhCX7bV8zV8anAwQpN+gMLP4NyGBpzRv7J7rM9hTYtEofgTlBx+4ZPqIHaXLh0P5hmFag94DFoEC7mzLFXdH0H5SvhJsGoNfc4befzBJokSRlrH3eaIr0IiE8mz/wyVBc7T7eZYwddjy0gmiyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=abljnqDk; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1720610578; c=relaxed/simple;
+	bh=+2lG3eONR6clr5oIGVEwoEoU8KiT5nobeApkSFqKMb0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=F6BxUuI1p866kJGFMoyP+ox41CZR6Uo7TE1GYsvxzVroGtbFD0mZVEw64k0y4Sfl9NIjJAMjIBoGYl90++3wOh/RMpfSfpm6bBbx6TB4E3s2T4lrWuyyQ3O1QeKEarhYcH+8WNzvqTdnu/9YZSJO9MWQO+j2pveCLfyKjDqRZk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVdwHw+q; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="abljnqDk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720602999; x=1721207799; i=markus.elfring@web.de;
-	bh=1BIbj8gqWvAK9dy/9EE/67KCD5eryOi6uFcCDMa2RXQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=abljnqDka9y3oruhMVfd/xyLXfDi3A0jHi7CG0tqKrZTx5vNMeli3aqIAsWn4Doa
-	 fur/AJIbQHaFyFHRklhycOqNciAzisQMYT0DuicxZGhoq7pyqwMab40SOHHDJzNX6
-	 uyxffNj3t4niADC348s6SMAZP1f3sIjxeYi9VuSGm//loC0K0wz4hwE0ok/1LxISx
-	 P68n8rZ69wZKOsPnv1TJ5qtnhzWVIq2paHKHTBSVD5ONZf0dS2RejbMKhErmicXdS
-	 yVR2aO989PtP4e9JWE+dXqR3Qw5AOodhlaOB8Y/PcQ0nI7rhXuj8v6kjm5X9L50W1
-	 Os/kZBJt3MyyTF0pqA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MTOlk-1soYBv3KTk-00Ja79; Wed, 10
- Jul 2024 11:16:39 +0200
-Message-ID: <24d6ddab-c4aa-49d6-899a-1dd3a3e1bd20@web.de>
-Date: Wed, 10 Jul 2024 11:16:34 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVdwHw+q"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-367a9ab4d81so3103174f8f.1;
+        Wed, 10 Jul 2024 04:22:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720610575; x=1721215375; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+5pSWEv/oTNW6NcIbQDcaGxWdOTM6qk7A0MwW/PmYxc=;
+        b=VVdwHw+qpFWD/zDxNccyGPyU7Q6CHClU9oRreNYTG9kjlSFEv3EA7GIcQw50eBxHob
+         THhGzc4sl0MEw+GBhchGsNHg/rZDyuEussnMUTvd08yKxBqM2qbyWlzKALQiuqdHKdpL
+         cXeD83kxxsPUj0wNv9yAbc0J08I6GYE40XHIOhrVHpjr9I2aKyKEqnUrDjht7b47hcNz
+         IzC9k+w2zfrpQgI6W+XE6O1yrtALoiCXj8ldN32/+2SdEGwRaqNh3j7fdUW6PsCu396/
+         XIYTpY0HOclfDokj1wysBr00xk9miCHsvivOpQGfBGAexJRywViK8qk3Rimo2eY7vy8d
+         Kvig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720610575; x=1721215375;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+5pSWEv/oTNW6NcIbQDcaGxWdOTM6qk7A0MwW/PmYxc=;
+        b=jAyLVgCc+Yly3x63LK/xjkxFIA4Qo/HWqDwI2Jb5hASQOGW4P9UDxEQ+wSE2whIE/Q
+         76p5TxOTSIK6EOorPjEk2wQzyQsRtqG1nFAJbXFzbu7WhYzZsefiF8j7QXjljqmABhA/
+         yr2rEzXYlTpsmJzG5Sam8c4IG8HuOEGI1yI/ZEc3Sw/QuxFmWdZBk+3JbinImaOg5oFW
+         6OISkVSbTz4xCqd0sqTvUngKNVAKJRIiLihP8rEHtRgYRbFi7PfbjocYEzJZrRNm+vr6
+         mMpoZWcqT3Ns90mcfDUBBYs12ONgMxJo4lyN5/vndt7s5n34fABat0lajYMq8Hwd88PW
+         uF0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVr101atbLJsA0lj8bWkK+bkrdO+tP89QiOEPbTI1/NAPTzKWI7XorXCM1W2PDMIArBuhGrglHN31BBLwvq7kx8JSGmg/3FB7W9C+Ex4bRAv/7G8ThaPlq5ul+FEY99rfneATH0Gk49++gyISc=
+X-Gm-Message-State: AOJu0YzMycHDNIysh7l7AnXfp2CssD/+fMumagEvOp9tcVy2cBDZ7ibD
+	aP2Uc+lydHGLqYO3xQmykMplJt/R34CF4Oj9lzTco5k4cTV3LLWLItkINz4c
+X-Google-Smtp-Source: AGHT+IGxvkA0FD/5EZ/WLWTb5skCt68JxrBOSHiF5I5G4EGu4EkYmc0RJXX+XWkeKTdsYZUs8gIf3g==
+X-Received: by 2002:a5d:4fd1:0:b0:367:97b9:d5f3 with SMTP id ffacd0b85a97d-367cea4674emr3721820f8f.2.1720610575007;
+        Wed, 10 Jul 2024 04:22:55 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfab11csm5052022f8f.102.2024.07.10.04.22.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 04:22:54 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Ping-Ke Shih <pkshih@realtek.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] wifi: rtw89: 8852bt: rfk: Fix spelling mistake "KIP_RESOTRE" -> "KIP_RESTORE"
+Date: Wed, 10 Jul 2024 12:22:53 +0100
+Message-Id: <20240710112253.228171-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: make24@iscas.ac.cn, linux-edac@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>,
- James Morse <james.morse@arm.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Robert Richter <rric@kernel.org>,
- Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>,
- Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
- Tony Luck <tony.luck@intel.com>, Wei Liu <wei.liu@kernel.org>
-References: <20240710010746.1741228-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v2] EDAC/versal: Fix possible null pointer dereference in
- emif_get_id()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240710010746.1741228-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:XuZm9nktWDHsIpAvNrlbnIGr2boEbuB71vnR11x74ixZmXVcn14
- ql0WtrRZ0qz4SUgKLyDSsbXltJ2b9NbsWlBdmpPz/3A8jncGVPaz1u8bjQCWonjx9bx57cG
- +Er55b3x+4ZYrJIcKEQfiG4mG+K7BCV5Hi64WV6Bu0IIAyd2xKyx8tMODwOhyXD1GwZMNG8
- OvjawnHFyiVuPw8/CqckA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ZsQE4SVYc5Q=;AFGl7MSwGr4BvvX48U7lXdNaH/h
- RcphXqgX1XXjKqw/4vwuz3AI4GyGjZyREPGN93EQR02A5nWWUyRmJL/IhkVBnKnC6z9Po+d6a
- VOqv1AyozT8eIjX44HHoIKqzV1dhXB0AXVk2OoBqY7l5rzeXh9nXaQ98oh9tMgVj4703Z1JSF
- Wunboj28Jnj3sKd7DLD0amqpktJptnkF8SOscxQq+9lBk41OtjWTiZplJVcwVewyKq/r1Ylz1
- j9x7ybLDsDFZDKLwIEs7VYWdqDU0SYtdDolld++BTkmawKLLTj3LtH672qd6EqUr/GQTEc03z
- udjm5dK3pDqV+0uQCCvuS6zJgrO4qbuf3ZuKXbTW2m3FmT+5WYwHBLLv+eP/htFNLGYgDupjb
- Qr1b1Z6OgGlNJjE288IjLnAg48AqTldrXz/rJmVF/fzngXlgMkvItT0WxCaUnTh4GMIuGEBGQ
- Jj3SdnC0216tWhmEdNTbt8pSujXbknqvWG6lvXk9T072+UVz42+5+JSb25op9uS5la8YgPtz7
- DNxnNnrYOrKBy14tQLdoa9lqdvKzAEXexNS8FDgWTXcH7V83WzLl1mZToBxsfiEEbLBuln38k
- SWSeafQRzb5J+WAxY1kQ4IN0sAWqgy1YTo9fpkF3oYfBQDcJgiy37AClMX2RhzAhGWJUu8HWh
- b35MGHsx440fnwE8C1PVTWhUvvn+23X/Qcti2aBxzoqliUnmNSUjkQmGZdrYXbZnLgiBspTOL
- GVIU76kUXCNcBzRN5Kh4ELl1q4BntIRr1608iRXgw6tQ+rKuPUueEZDqbq9BovNDiD7uoX7b6
- /XffhxYSVr5uDA+kfcwHom/w==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+There is a spelling mistake in a literal string. Fix it.
 
-Do you care for the applicability of the available information
-according to this tag?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc7#n398
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c b/drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c
+index fa0e49d58112..5bdabb45e968 100644
+--- a/drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c
++++ b/drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c
+@@ -1863,7 +1863,7 @@ static void _dpk_one_shot(struct rtw89_dev *rtwdev, enum rtw89_phy_idx phy,
+ 		    id == 0x14 ? "PWR_CAL" :
+ 		    id == 0x15 ? "DPK_RXAGC" :
+ 		    id == 0x16 ? "KIP_PRESET" :
+-		    id == 0x17 ? "KIP_RESOTRE" :
++		    id == 0x17 ? "KIP_RESTORE" :
+ 		    "DPK_TXAGC", dpk_cmd);
+ }
+ 
+-- 
+2.39.2
+
