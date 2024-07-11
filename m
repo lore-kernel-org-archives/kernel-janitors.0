@@ -1,129 +1,127 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2FD1EA85
-	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jul 2024 19:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BBE5BACF;
+	Thu, 11 Jul 2024 19:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720725792; cv=none; b=YNbJSmA1AozrffCl6IUUnWLVMu+L/GJ+grgLWJt8ooJ/3yUkXAO9VK6gp0bG9pVCxL4yVXO26pGI2rYu44bNb7zC4RSzjpeJALPi3T02RyTv7Uti46dg9jWl3wvLb8zDFy/euiiOio81LBJO2hkpQH/f17D8kWlBLqahd9LqqB0=
+	t=1720726052; cv=none; b=HCTqnGwMjKVZ0drRSCRL5/Oot3yEeexgOm+RXdIcWHYz8rGpvQviKfZBpH0N+7N9/bg2h2QEprpQr+iatjmWV84U4Pgjn6c2C+TvZj7QpTszC6cnHhA2Q6JpQmITbY8KkC7IJQhqQazmnL3EDlbeuJTRqaqJrrUyIwWBjEF4IhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720725792; c=relaxed/simple;
-	bh=qd4JfM9C7XhNkDZ9MKhcRdWS74czpvCBniJo+nnNLbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rcLAVU6x/z5NcMyPnPL09qqNrGtz/9Z1JZIQT19fIHPWvk6FVjiAA8ieaxvjFJ9RaBmmuu4oXzRFQHRopZAnGWpGuglfbiZKRvsFhjCZ2G/vlfVQXXwYp0+oDnH7fGsroI3umklyrD0zUjhQO9yptHbLVPp0XOxocP8wBQUkCVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OxIT3Nic; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1720726052; c=relaxed/simple;
+	bh=WTO8nBFtNNsR8zMMo/kRRpHE+3MJgYaGztu5gFTI4PA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lmMC7XPpIGULJYiSax+KuoXEViL4nY7ZlJNV4ou9/acxGEERsIFiNVppt85hEzuIpH27v0Ody3H2JTx4l1vR384198e/Fkl1veQCGvuqjbglb9PVa8HUPf9dhqtr5LzuHcT0UX9GBtjS/Yf3YR5su/ohi2ka6N/kcmGU9krl5jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K3UvANMn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OxIT3Nic"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720725789;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qHMyJXBeRkRSNluth1L1mz9hL7fSL3Kwm56sBWnC+jg=;
-	b=OxIT3NicQ11pWpwjOECkC9H/zFtI8FFKbsySh2j5odh1H798IbPjpKKTpIrBuI7PxaGH2r
-	gUVAUCA/Vj2i99uX70oZTR8TDsvNy4955zU+HALgGQC7Nf/2LbuHAS2R7xlsgHgl0On3ZS
-	qBr2Bh79hwLYw1EGhEKVzzwOLhop3aw=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-626-E26O1PoWPR-CjNsUZ_0rPA-1; Thu, 11 Jul 2024 15:23:06 -0400
-X-MC-Unique: E26O1PoWPR-CjNsUZ_0rPA-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2ee9260658cso10897711fa.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 11 Jul 2024 12:23:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720725785; x=1721330585;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qHMyJXBeRkRSNluth1L1mz9hL7fSL3Kwm56sBWnC+jg=;
-        b=faRy5m8BiaLiNMFIWtdbzAecnZRWfkoL83vBjNOAIRnUJbRj2ie6lM0Mto1BSMbGb7
-         d2Xx1l/a1q1Fuetk65tLtH0L7il0HsDPvVCWWskJh11xnTXLLn+13lBPvpYsDK9DTEux
-         +xVDmi2UN1J22vhwoJ8ywm3AyVsgnJBg1SqYsV9FAnZuGs/7rWoxgN90vt2Lzc0z0mtU
-         NGH8xtS8dUrCz96GQGPT9MOS69jG/uN++unZ2qGARZV9Au5RRurzXVN0XIdqbDiLMFsq
-         hIx46FSIG6RkUusg7v+vE41Ct8HVzIzmomBd0VnZVL4lpqyIbim1TLhskKdDmuTwJ5/b
-         ZTXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWn9CEMszkyIyvYOtM7ThD/AXpA1LGsXJHzfskdN+K1glEqfX+c+yX37ylfketQ+tyjQVuHzn1P56xnm14g6C4ZC6g/boe4Ke08U3DFMvTH
-X-Gm-Message-State: AOJu0YxR2/bIkdSy+W4t4qTJUzFOYUuTy/WMfUvC0Qfllnclu30FY7xY
-	2VytQE4rnSrJaoy+VxVBkNuXl+n5alpZCbApetNdl3aZH83CxHz1iGCWlQbhrLS68i5011OnVZ6
-	euAhyN0Bt+TAYh4GJjr5KuEWtxIF/w4G6GLwB483LJxn+VL+woHsvDvG1LkHh5hb9RQ==
-X-Received: by 2002:a2e:8691:0:b0:2ee:6a72:f006 with SMTP id 38308e7fff4ca-2eeb30e3ademr61595791fa.21.1720725784995;
-        Thu, 11 Jul 2024 12:23:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFlcdhPzF+B/x+wWIA8iNp5tqQGZgR9yQ+XfTnwuaunKMFe59pESZv2NmWVtBCYCvMz/J6DmQ==
-X-Received: by 2002:a2e:8691:0:b0:2ee:6a72:f006 with SMTP id 38308e7fff4ca-2eeb30e3ademr61595591fa.21.1720725784330;
-        Thu, 11 Jul 2024 12:23:04 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:173:2166:83a4:d566:a055:a5a3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f7362d9sm125253225e9.30.2024.07.11.12.23.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 12:23:03 -0700 (PDT)
-Date: Thu, 11 Jul 2024 15:22:58 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] virtio: add missing MODULE_DESCRIPTION() macro
-Message-ID: <20240711152235-mutt-send-email-mst@kernel.org>
-References: <20240602-md-virtio_dma_buf-v1-1-ce602d47e257@quicinc.com>
- <ef8f00f2-210c-454e-a7f8-ab724a18bf96@quicinc.com>
- <b8b23dc1-7df6-489d-9638-db64a89c8a83@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K3UvANMn"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BDLirT007342;
+	Thu, 11 Jul 2024 19:27:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	01He2AukA3gNli5ye4GmZPgjjeR1c89/VmEYxkoI18U=; b=K3UvANMnRv7D4o2/
+	BMk7fqojcDm81lzaRtLOnH5BVCeeAq4XqM7neX5rnp8uJX+VNkaKzWu9gkMG7BIk
+	dL4brSvDYShCD4EnOapEtiE8IWK2gFNX+FlVpUOA/y/qzJvQN3folGTZdmixo+b8
+	bCdEHMJLwFznbKQigebJxyPxF9mYHZQSNCmI4gAPGemugdrrUo2F+rRs//3zDTlp
+	1eM5FqEwXxt8bHCZSdrjdVvb5gCnhg0uY8Ol1E2zUO5hM9ErmzMi3mZAi6IcwnXc
+	AR027uawPbZ/fkHiRc6kP1qQxZ3EFhb09XADtoFZPm6IifJUducWiD4cUaP3rfoD
+	T2kS4g==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wg45kq3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 19:27:26 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BJRPPN015571
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 19:27:25 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
+ 2024 12:27:24 -0700
+Message-ID: <ce7863a7-f84e-42f0-9aa5-54b43edcd260@quicinc.com>
+Date: Thu, 11 Jul 2024 13:27:23 -0600
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b8b23dc1-7df6-489d-9638-db64a89c8a83@quicinc.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH] agp: uninorth: add missing MODULE_DESCRIPTION() macro
+Content-Language: en-US
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+        David Airlie
+	<airlied@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240615-md-powerpc-drivers-char-agp-v1-1-b79bfd07da42@quicinc.com>
+ <99d6c483-9291-4bd0-8e62-76022abb762c@quicinc.com>
+ <7b7e2952-fb54-48b0-93bc-f96c04e5cdd3@quicinc.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <7b7e2952-fb54-48b0-93bc-f96c04e5cdd3@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ADn9gVcQwjMLZ4n9ELF6H4wQf-jPtw3V
+X-Proofpoint-GUID: ADn9gVcQwjMLZ4n9ELF6H4wQf-jPtw3V
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_14,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 clxscore=1011 impostorscore=0 malwarescore=0 mlxscore=0
+ bulkscore=0 spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407110134
 
-On Thu, Jul 11, 2024 at 11:43:18AM -0700, Jeff Johnson wrote:
-> On 6/23/24 10:36, Jeff Johnson wrote:
-> > On 6/2/2024 1:25 PM, Jeff Johnson wrote:
-> > > make allmodconfig && make W=1 C=1 reports:
-> > > WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio_dma_buf.o
-> > > 
-> > > Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> > > 
-> > > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> > > ---
-> > >   drivers/virtio/virtio_dma_buf.c | 1 +
-> > >   1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/drivers/virtio/virtio_dma_buf.c b/drivers/virtio/virtio_dma_buf.c
-> > > index 2521a75009c3..3034a2f605c8 100644
-> > > --- a/drivers/virtio/virtio_dma_buf.c
-> > > +++ b/drivers/virtio/virtio_dma_buf.c
-> > > @@ -85,5 +85,6 @@ int virtio_dma_buf_get_uuid(struct dma_buf *dma_buf,
-> > >   }
-> > >   EXPORT_SYMBOL(virtio_dma_buf_get_uuid);
-> > > +MODULE_DESCRIPTION("dma-bufs for virtio exported objects");
-> > >   MODULE_LICENSE("GPL");
-> > >   MODULE_IMPORT_NS(DMA_BUF);
-> > > 
-> > > ---
-> > > base-commit: 83814698cf48ce3aadc5d88a3f577f04482ff92a
-> > > change-id: 20240602-md-virtio_dma_buf-b3552ca6c5d5
-> > > 
-> > 
-> > Following up to see if anything else is needed from me.
-> > Hoping to see this in linux-next :)
+On 7/11/2024 12:19 PM, Jeff Johnson wrote:
+> On 6/28/24 20:14, Jeff Johnson wrote:
+>> On 6/15/2024 2:01 PM, Jeff Johnson wrote:
+>>> With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in 
+>>> drivers/char/agp/uninorth-agp.o
+>>>
+>>> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>>>
+>>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>>> ---
+>>>   drivers/char/agp/uninorth-agp.c | 1 +
+>>>   1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/drivers/char/agp/uninorth-agp.c 
+>>> b/drivers/char/agp/uninorth-agp.c
+>>> index 84411b13c49f..b8d7115b8c9e 100644
+>>> --- a/drivers/char/agp/uninorth-agp.c
+>>> +++ b/drivers/char/agp/uninorth-agp.c
+>>> @@ -726,4 +726,5 @@ MODULE_PARM_DESC(aperture,
+>>>            "\t\tDefault: " DEFAULT_APERTURE_STRING "M");
+>>>   MODULE_AUTHOR("Ben Herrenschmidt & Paul Mackerras");
+>>> +MODULE_DESCRIPTION("Apple UniNorth & U3 AGP support");
+>>>   MODULE_LICENSE("GPL");
+>>>
+>>> ---
+>>> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+>>> change-id: 20240615-md-powerpc-drivers-char-agp-db644db58c24
+>>
+>> Following up to see if anything else is needed from me. Hoping to see 
+>> this in
+>> linux-next so I can remove it from my tracking spreadsheet :)
 > 
-> I still don't see this in linux-next so following up to see if anything else
-> is needed to get this merged. Adding Greg KH since he's signed off on this
-> file before and he's taken quite a few of my cleanups through his trees.
-> 
-> I'm hoping to have all of these warnings fixed tree-wide in 6.11.
-> 
-> /jeff
+> I still don't see this in linux-next.
+> Adding Greg KH since he's picked up many of these fixes.
+> Hope to have all of these warnings fixed tree-wide in 6.11.
 
-not sure why I tag it and it gets cleared again.
-tagged again hope it holds now.
+Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
 
--- 
-MST
+Dave, this seems like a trivial fix that is stuck, but normally routed 
+through DRM.  I hope I'm not over stepping, but I think I'll drop this 
+in drm-misc-next on the 19th if there isn't any other activity.
 
+-Jeff
