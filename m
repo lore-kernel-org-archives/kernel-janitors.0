@@ -1,94 +1,80 @@
-Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B554315B;
-	Thu, 11 Jul 2024 08:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF7C15CD42;
+	Thu, 11 Jul 2024 12:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720687513; cv=none; b=F6kBioAA4u+r4fxHm8b+32KTrMTnrsx1EPNCm+nafTBLn7A+dnjyVJ+/8i0n4g0F+zms878HobRDy/sTHSCSNxbBAXXwgMzvv0hqh2G3vSMzWV6S7OcYTsFyzdH8En7ypz2Ey2pRjJMmOBmrWd/Lx4hoxz3wSz0SgQPlO31zRYo=
+	t=1720699861; cv=none; b=TaXh0I6x7/+pzlnFG0Qpbq/KCBD8yDbCowjKGcL/lpFbyzOv4a/B/Fy4amYD3vBniTXBq5qLr0aZ9Rkr6FAq6Y/hKRezQxK98w5B5/X+d3RJYR4dcbWAoX+m5UeE61BDhyjRRe2uI1IPoepSKZ4Lmu249Iu9FbhPD5LOKOwkkmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720687513; c=relaxed/simple;
-	bh=QRGxbfH+3SeKRG16yQOvBXWdakQh0M8wwO69vXLtBIc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:To:From:Cc:
-	 References:In-Reply-To; b=kNcyEVdKSpBG+9pqn8039PVyyZ/1VYpq6gRMjCnqAcskOTRdA7+B+sfWjoFtSubkNqZ3jPkkG0kyex8inwqRsGUUPDzmEp75hxsWNHvBv6wI2ae6lz7Chg3t56BD7SkLudwuOEoteakwaWr1XWaTe+VkcTDcGEo4U9fAO/Fxpf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=jQqR5yg6; arc=none smtp.client-ip=195.113.20.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
+	s=arc-20240116; t=1720699861; c=relaxed/simple;
+	bh=Z20/sCF5g3WtCr9/UKphITxI8tzAAYNyK+hrlF3OdIE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CBJZKD/gTcikO0iPAEkX0M536SuluquMdCso3dgV2S57NxZr6G72OjFeBeNY0TEcf685+mWT8Dv+F+4FH7bhh6aoNRpsd+eJ2FH2+VCSuTpcJCKS1IQ7EJIt2XcMnFpmtm2dyrqW7XNo+y1Px4kLsWLMi3wZGaiZrJJC+zuZlgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=Owb2RnTI; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="jQqR5yg6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
-	s=submission; t=1720685852; x=1721985852;
-	bh=Ls7RNbnmxHwm0IM0YhzLBLizkdiPlt+11EedtmZU+3k=; h=From;
-	b=jQqR5yg65sj8UpliFuByNMMGwzvR1CSXBc80hFLXtB02fQckgr/codwkbToD8dccv
-	 lMgXuGngFliqna6YO5PN1W6VQqxVVXFCh+uSKzQ7Wc5T+szbBqZUHiT8UvJPkj895y
-	 ylG05nbvZu4C45fY++oEI7b0NiRzOrar5QgSMXBjYqYWJZ37VBD/hF2eg1CFIArK64
-	 i5bRFwxYYQDWzNpe6+44UkL+X5Dc9p/Zk4k8nQhbGiunZB56Y+FYHPvsjgqypm3gkO
-	 5lH6oLZqJ4nJfaFjEYRtpJ8ymHZHlcgb/mImq8OfVBGExgimVeiLpxREyJmzWh4sF4
-	 QjkHQ4pq7NNIA==
-Received: from localhost (internet5.mraknet.com [185.200.108.250])
-	(authenticated)
-	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 46B8HVSV030720
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Thu, 11 Jul 2024 10:17:32 +0200 (CEST)
-	(envelope-from balejk@matfyz.cz)
+	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="Owb2RnTI"
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4WKYTg6vNSz1DPkZ;
+	Thu, 11 Jul 2024 14:10:47 +0200 (CEST)
+Received: from [192.168.0.25] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4WKYTg4L2Cz1DPkS;
+	Thu, 11 Jul 2024 14:10:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=unoeuro; t=1720699847;
+	bh=ZhVrQsILYydXW0I2ququWpuLnNjaS/9rHPIQZwxhGVg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=Owb2RnTI4WtlRVyr6Ifmq2UuJsDQ0Jy/+UHIK1DEPPc6T8Ur+snybV/lYlHfnj2+i
+	 5gLSAbx00ic+HOv9w8TcC5cyn7mTu/OixRbiLP1JZlg46Pw6Ypdry63CLW+CIlqc+h
+	 /E0N/7a6Z8OxZoQS/gdJEEcKhB9xw1W02wzS4NqA=
+Message-ID: <5aa81417-9fe3-41e5-ac75-8dac52d02c64@gaisler.com>
+Date: Thu, 11 Jul 2024 14:10:47 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sbus: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ "David S. Miller" <davem@davemloft.net>
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20240619-md-sparc-drivers-sbus-char-v1-1-85acadb8f789@quicinc.com>
+Content-Language: en-US
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <20240619-md-sparc-drivers-sbus-char-v1-1-85acadb8f789@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 11 Jul 2024 10:17:31 +0200
-Message-Id: <D2MK87FSAP8Y.N9JBG2R7IBQX@matfyz.cz>
-Subject: Re: [PATCH] MAINTAINERS: repair file entry in MARVELL 88PM886 PMIC
- DRIVER
-To: "Lukas Bulwahn" <lbulwahn@redhat.com>, "Lee Jones" <lee@kernel.org>
-From: "Karel Balej" <balejk@matfyz.cz>
-Cc: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Lukas Bulwahn" <lukas.bulwahn@redhat.com>
-References: <20240711065140.140703-1-lukas.bulwahn@redhat.com>
-In-Reply-To: <20240711065140.140703-1-lukas.bulwahn@redhat.com>
+Content-Transfer-Encoding: 7bit
 
-Lukas Bulwahn, 2024-07-11T08:51:40+02:00:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->
-> Commit f53d3efa366b ("MAINTAINERS: Add myself for Marvell 88PM886 PMIC")
-> adds a file entry referring to drivers/regulators/88pm886-regulator.c,
-> but the directory is actually called drivers/regulator. Note that there i=
-s
-> no 's' at the end.
->
-> Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about=
- a
-> broken reference.
->
-> Repair the file entry in the MARVELL 88PM886 PMIC DRIVER section.
->
-> Fixes: f53d3efa366b ("MAINTAINERS: Add myself for Marvell 88PM886 PMIC")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On 2024-06-19 16:07, Jeff Johnson wrote:
+> With ARCH=sparc, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/sbus/char/envctrl.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/sbus/char/flash.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/sbus/char/uctrl.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/sbus/char/bbc.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 3eab44bd1010..bb7b5ecbc0b9 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13495,7 +13495,7 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/mfd/marvell,88pm886-a1.yaml
->  F:	drivers/input/misc/88pm886-onkey.c
->  F:	drivers/mfd/88pm886.c
-> -F:	drivers/regulators/88pm886-regulator.c
-> +F:	drivers/regulator/88pm886-regulator.c
->  F:	include/linux/mfd/88pm886.h
-> =20
->  MARVELL ARMADA 3700 PHY DRIVERS
-> --=20
-> 2.45.2
+>  drivers/sbus/char/bbc_i2c.c | 1 +
+>  drivers/sbus/char/envctrl.c | 1 +
+>  drivers/sbus/char/flash.c   | 1 +
+>  drivers/sbus/char/uctrl.c   | 1 +
+>  4 files changed, 4 insertions(+)
 
-Thank you for the fix and sorry for the trouble.
 
-Reviewed-by: Karel Balej <balejk@matfyz.cz>
+Reviewed-by: Andreas Larsson <andreas@gaisler.com>
 
-K. B.
+Picking this up to my for-next.
+
+Thanks,
+Andreas
+
