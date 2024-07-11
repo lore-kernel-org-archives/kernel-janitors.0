@@ -1,111 +1,101 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70C612DD9B
-	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jul 2024 06:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A66684DFF;
+	Thu, 11 Jul 2024 08:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720680717; cv=none; b=ZppNApB4cp6EWG/aSILni3G+RcprbAq265HM9PsyON3heKl7Sby/OJJQYymU3YZA/U1QWAjnIbm0Sr42SRt581zbTiLeCmkzgtnT9kXuNN2eByjFE5RS6Aoxm8iQBrCQVsC4QxQpwIKDaMFTRcsh59sRmbDA3VdM8PEfoWFvrpg=
+	t=1720686918; cv=none; b=NHQf9ENUhREdGh6N+nmAznitYGgF4Aw3Wu1LE7bdso7S/uniw3laa1RuNaKQbWM/bFPDm6bWlrCF+Hw8NiNbIldGSZbGCWpMChMt+BkxoMamzgbO6Or9gwI+EDNjB/sBgkYeiPjkhj2rvaTRYckPGlQjrJCsVRQDKX0/Vxgh2UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720680717; c=relaxed/simple;
-	bh=LCK9icEae3jKYmdEHdfJqroHgzlTNAWTkaaa0AbjU4Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gw6Z7DlSrg+458wxk8SYxeAlrsrJATXZDFJHcf1Lg+gMxcvq/9nW/oXzTU1Hi3wI4AJ5a9/o34MhUTNUotWRysT0Nioq2nqUawpZc+307IQo9ThBpJoxARdw8EbQmAD5WElj7AqLiuhsQNSdGwqMbhJcMAcRLyMPPiaiqxmdCvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TuTv+yla; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1720686918; c=relaxed/simple;
+	bh=/sRKFgmsDsZIzpYRaVug4Mi4NZRhZ/7HAM2acJMAb6M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ezDwsQ6I338c3iCjnxli1UUqSeRC5efFh6ODg5iUCLFHwlaI7vYsXMFH3+UtdD1PNCaV7eHyMA3frSJUBRk0ibgJRqaAaqarhr5x27TWVRR1HPsiXC784RTs5IrS99rdnD+dJwG0xOlljEDxDeL53iz/NYafq1rTuBY2ko1/HJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qz/R//zg; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TuTv+yla"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720680713;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OGHWmQ5BDSpnthAm3GCMpgKvKr351yaxBIw3YmVdyjY=;
-	b=TuTv+ylaoxo43lGkikHQvrm/9w+QqGMiLTddjovqmyPC4TGn1eAKGtXSVQY+COiNWetxOa
-	Ta4rdDKS9NYstrROAcPNCSGa9/LYn8XM/4YpIjnfBcCTZL+eOCRZhgGD006nvNzRaQdPg3
-	yb7GS9/YphaFYaFlmhtfPxudkbBNqKE=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-564-QPiS3w5IPnSw5LG850EiQQ-1; Thu, 11 Jul 2024 02:51:52 -0400
-X-MC-Unique: QPiS3w5IPnSw5LG850EiQQ-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a77af33ce50so52330366b.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 10 Jul 2024 23:51:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qz/R//zg"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42660b8dd27so3814115e9.3;
+        Thu, 11 Jul 2024 01:35:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720686915; x=1721291715; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XRdelXRPrYArCb0SO4NlJ297ukxQ1Ul5Gq5hQ4uFaDA=;
+        b=Qz/R//zg7Ldz9gU4zUy1v0vqrRf8+B4G97zdoJc1/yN5ZqLTCTC2lACn7/Jw9ir5pV
+         9ntaSYGWoSJKam0hXLJ09UbfUe4gBkrZ30z7M2TbJu4T7uQcoGJAvvLOQF9jv54Rsq3L
+         YBYC4zOLPhAvnTH3WjIulkfsqdD6TB6RKcFqU5QdJk03IklUQgytM68A8CHN4YcNQmW9
+         cdL6gYuijD6sxn0Xe35DIFlAtNFgHp1i1tT5KhuqUZ4nCq6neM7kyas+YproAbTtHD8E
+         HzejYsYRpmOiHsYdS0B77abmpcYXQJPBIiKjSrjtUnALMYgu38y+khjr/FVc5lxC/Ngq
+         arNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720680711; x=1721285511;
+        d=1e100.net; s=20230601; t=1720686915; x=1721291715;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OGHWmQ5BDSpnthAm3GCMpgKvKr351yaxBIw3YmVdyjY=;
-        b=PGVTuaA/ScLrsURh09951oIjdo1jHBDUiwPpXgFXw8Ed8wFTJQ6X/2GzqdtoNBV2pB
-         Gc6/IpoYfB6qdM2TFctQaTu6lcWwm/mvyHjb8ovgRHO1j9kNvu1Y7BhcX+rI8rGNP8qK
-         UjSdKJF5BRrlASqixHEG4+23qvPDc7G0LUT3mi7XQw6R4GV4zsj+Y+IbSEE0GVlVxqL9
-         Q+P9V5T41DHPR+L2rM00kNs1O5HPsKIrCPGkmPnfKri7WUIWc/1J23BtoEJNO4HnoXLd
-         H0HzTcO9bol6YiAaW+remc0DAL8bEX/XgHBoaOHsMRmZFhOlzyZkwUNifNsqvCpE5f+A
-         VyXw==
-X-Gm-Message-State: AOJu0YyNe1zlBZDar9gyWW7Bc4HEAQ1nLt95hRmd+nVMgCZJwwBPutkK
-	HLzua8FN41R4tGUXJcJB5XyMuhr6tcSji7jydHzg812/yK2Yv/uOoMOOpGxg0VALphE5szAIeMT
-	0AoqgctrcrHdY89cmGdXn7N0h9wMCu7I38Q7T/ThOsqkrDcRRQWfDQ3ix0hS40V9QeghyQwcjfQ
-	==
-X-Received: by 2002:a17:907:7f0e:b0:a72:4444:79bb with SMTP id a640c23a62f3a-a780b881cc4mr674810366b.59.1720680710877;
-        Wed, 10 Jul 2024 23:51:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHNGa3iTLDkJs9r42QlkOKMbEzsJfArWsJUH4Y9CnC2eN/9R9XztdP8hv+banbSj19eiMhoRA==
-X-Received: by 2002:a17:907:7f0e:b0:a72:4444:79bb with SMTP id a640c23a62f3a-a780b881cc4mr674809466b.59.1720680710535;
-        Wed, 10 Jul 2024 23:51:50 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a86f620sm226365966b.209.2024.07.10.23.51.49
+        bh=XRdelXRPrYArCb0SO4NlJ297ukxQ1Ul5Gq5hQ4uFaDA=;
+        b=VFXKPOd/Z82lkUXx1BJFwlWDKghIBfkwuOANbjWNeMkGy2JoQKT0Ycir42YZ1n4Ml4
+         yjKfsjcukiB3nwlEC6OW1DizqfMW6KbmxZbu44VfP+TzvbSjzAqvQF0PPQ0f6g6kc9ai
+         DyFZ/dRxbpnnMRx47j5JJc2nC6NEi1V5Yj9PP3vYpZpndaHogFQq8/ixsW1LoJYnVQry
+         zwgsPngFH7+G12Unglo9SI97eLVmishe9R5zgtpdVBMtj9257hmLoZDsyYgf8h3Y5a7m
+         E26BJQyy4PRr+1BkFAJ54kFpnYc57eNj15Cqq8VcCVq1RORDDHPxwk9ogPYgHs49o7r7
+         DY8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUnSIqBOcTPoz30A8Q2a1X8xRE7zZ2wzf8BPP52Taw5/qfLxe0R9LkyiIxv2/jJzqk2DXb91sTfimZmuqy8IFx7Un7UuLNc4HD/LFmhSHq+4EtChXQ1oheB3z6OHCXZIpy/d0tDzh2jLxA=
+X-Gm-Message-State: AOJu0YytM7WAtWeUtEgJmAYzl9i1Qg5EBHaty0iwhB0/e9dteO+Mp6YD
+	huqwgqIfOLvui5dy9w1WffHAz+Oz7jElWgaUajWA/ukzq1+BtoB0tgZMHA==
+X-Google-Smtp-Source: AGHT+IHvedUvC6o9qAq1eGQZ5ALhsjKnN3PtlkJahY1fTvi8O/oyo+CmYeV6XOuyBnIJqCpZn8l7pQ==
+X-Received: by 2002:a05:600c:12d5:b0:426:629f:1550 with SMTP id 5b1f17b1804b1-426707d8a6dmr52591585e9.9.1720686914702;
+        Thu, 11 Jul 2024 01:35:14 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6e0b4bsm108667675e9.8.2024.07.11.01.35.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 23:51:50 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Lee Jones <lee@kernel.org>,
-	Karel Balej <balejk@matfyz.cz>
+        Thu, 11 Jul 2024 01:35:13 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: repair file entry in MARVELL 88PM886 PMIC DRIVER
-Date: Thu, 11 Jul 2024 08:51:40 +0200
-Message-ID: <20240711065140.140703-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.45.2
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] HID: Fix spelling mistakes "Kensigton" -> "Kensington"
+Date: Thu, 11 Jul 2024 09:35:13 +0100
+Message-Id: <20240711083513.282724-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+There are spelling mistakes in a comment and in the module description.
+Fix these.
 
-Commit f53d3efa366b ("MAINTAINERS: Add myself for Marvell 88PM886 PMIC")
-adds a file entry referring to drivers/regulators/88pm886-regulator.c,
-but the directory is actually called drivers/regulator. Note that there is
-no 's' at the end.
-
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
-
-Repair the file entry in the MARVELL 88PM886 PMIC DRIVER section.
-
-Fixes: f53d3efa366b ("MAINTAINERS: Add myself for Marvell 88PM886 PMIC")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/hid-kensington.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3eab44bd1010..bb7b5ecbc0b9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13495,7 +13495,7 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/mfd/marvell,88pm886-a1.yaml
- F:	drivers/input/misc/88pm886-onkey.c
- F:	drivers/mfd/88pm886.c
--F:	drivers/regulators/88pm886-regulator.c
-+F:	drivers/regulator/88pm886-regulator.c
- F:	include/linux/mfd/88pm886.h
+diff --git a/drivers/hid/hid-kensington.c b/drivers/hid/hid-kensington.c
+index 99e79b42047c..16839027981f 100644
+--- a/drivers/hid/hid-kensington.c
++++ b/drivers/hid/hid-kensington.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+- *  HID driver for Kensigton Slimblade Trackball
++ *  HID driver for Kensington Slimblade Trackball
+  *
+  *  Copyright (c) 2009 Jiri Kosina
+  */
+@@ -46,5 +46,5 @@ static struct hid_driver ks_driver = {
+ };
+ module_hid_driver(ks_driver);
  
- MARVELL ARMADA 3700 PHY DRIVERS
+-MODULE_DESCRIPTION("HID driver for Kensigton Slimblade Trackball");
++MODULE_DESCRIPTION("HID driver for Kensington Slimblade Trackball");
+ MODULE_LICENSE("GPL");
 -- 
-2.45.2
+2.39.2
 
