@@ -1,72 +1,70 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB89EDE;
-	Thu, 11 Jul 2024 01:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049BC14294
+	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jul 2024 02:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720660090; cv=none; b=RWbfm60nSqfriN1zBFQ9uL32mLXlEHRLAuetGyFTk8trENdq1SNXrqNnIZ8ksvHlZWvxy4VtfR5soFESKKTBqCNpGrzcU6BYqBSenKYA8+AvX2sVDmaLdiszskJxbE7tsIxV96CbTcvwrz9md/wK9WA7DticcIABIJosUqeYnI4=
+	t=1720665357; cv=none; b=TdLEgcirJ7LT1mFfqXTnHCkR1gAbn5NRUSRvS36MKqRbgBdx2XTJTp/EVEMl191HgU6nwT+X7TBQLPNAaJ5s5/Wg8mZ9L9FAAFQKvE7/IGCp7FigjhPj2SAZMeXdBMdjePM9A/vamEJanpYJAODf+Nww5dvL9syC5znf+kVjfP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720660090; c=relaxed/simple;
-	bh=GZ6TeTkURZEkICEupC4JglsSBRC3luXvLeZtmEQBQ+U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=bQakTV2sHnuxfxhbhPwWyvpQx2K0jTvuIHft3eEEsNt1wa80RafT9vMnuFamq2VcZaE36Hgl1A2itrFEFXcLs1Icjklux5ri0AFdfNHoLP9pTnnyuDdF/DtsHfDonW4r/36pU1l61eIhsv5o/xln1J/ecv1dQGkInrltxS+rOWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=AzOdFXgS; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1720665357; c=relaxed/simple;
+	bh=mVlNPKvgBDmHjNlih/T7Trzg9IL5n3ionbhTdiuuJfc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dXWjCbBVsiX4bLfoBHrTJLUFraFWvm8wAmxGPnomrOptaGHjqrqlObjuoTZ09Zi24UhLn2ugx/M0/+MP5qplbFRIhdY3OfhBN/8SEU1kZNHgOUrIi3ZHGt4b9BwKwiuGLeGb8+7TpdENVTqGv4NRIR8DguabHK5Gq48T/CMTStk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=F0zKcjiI; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="AzOdFXgS"
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46B1803102704447, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1720660080; bh=GZ6TeTkURZEkICEupC4JglsSBRC3luXvLeZtmEQBQ+U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=AzOdFXgSQ9JrT6dxZdsCSbYqNE7vTsm0VnpamxKUIg4LODV8Bm3fLSBDeTAAASK9h
-	 Lv5dh2JlFfjNVXD877pROXHJspR1MgnY0/3lc1jrhFBuYvQtXJRQAoX33Mqf652a9Z
-	 YaOe+HgmILHdJix860KfDs/fAVXirG12RGN0bv246C5ibj2Pu3/Q6QnZ1SKP4qc+g6
-	 MroKD0S87lzw1ydEWlfSJNc7uReyBmB+4VYmNvQIlFnLxAQZBv5WTpodP2I3ObUidh
-	 7bWivBJPTxYfug4L7wWBrI6FBIF1SNbbPLNpDi6TxyYEg4LDyCg4QfF4f+Sq0NiN5l
-	 oRofnagrjHUMw==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46B1803102704447
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Jul 2024 09:08:00 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 11 Jul 2024 09:08:01 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 11 Jul 2024 09:08:00 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
- RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
- 15.01.2507.035; Thu, 11 Jul 2024 09:08:00 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Colin Ian King <colin.i.king@gmail.com>, Kalle Valo <kvalo@kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-CC: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH][next] wifi: rtw89: 8852bt: rfk: Fix spelling mistake "KIP_RESOTRE" -> "KIP_RESTORE"
-Thread-Topic: [PATCH][next] wifi: rtw89: 8852bt: rfk: Fix spelling mistake
- "KIP_RESOTRE" -> "KIP_RESTORE"
-Thread-Index: AQHa0ruFWRpvCWi/UkaLsQbm6z/XUrHwt/sw
-Date: Thu, 11 Jul 2024 01:08:00 +0000
-Message-ID: <f188660d4333447381cc708008d3e9a9@realtek.com>
-References: <20240710112253.228171-1-colin.i.king@gmail.com>
-In-Reply-To: <20240710112253.228171-1-colin.i.king@gmail.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="F0zKcjiI"
+Received: from cwcc.thunk.org (pool-173-48-116-79.bstnma.fios.verizon.net [173.48.116.79])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 46B2Zhia025454
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 22:35:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1720665345; bh=KCKUSCnJZej2EOEp8Kf3hF/vp94UjZHAqgQFUyfnS0w=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=F0zKcjiIDwZzLl2WJbgXcHpQlgp1RRqAwVUwL+a0PzeoUR6AM6pmoCYF6Qnwm67kd
+	 C/JN7iciSBD9T6qbYLiK0vu5MfwEaj4HgmNHl+SYzHvgiZg2GKhEE3mI7XVw+ZEov6
+	 4gn3ROMxgCtBR80lY6l6ReMGhCtcUqL1j+5FiCOl0WT4B4KurBqeJM6NAUa5DR+9cQ
+	 aktl24Jp0pcv3IdF6+iXT2HZv14v1y+m4hZP5oI4H5g1Q7GxAKWvNfZw60UsFrpT0u
+	 h6nff4G994Lz/QxC3Zs1Qp2LdvXrCHC++LQiYkHeyM0Hn0sbUPVnnVSTIvJz4Dy3CB
+	 yjFlznZCrmd+w==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id D447415C18FD; Wed, 10 Jul 2024 22:35:41 -0400 (EDT)
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fs: ext4: add missing MODULE_DESCRIPTION()
+Date: Wed, 10 Jul 2024 22:35:34 -0400
+Message-ID: <172066485811.400039.15583789810159631305.b4-ty@mit.edu>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240527-md-fs-ext4-v1-1-07aad5936bb1@quicinc.com>
+References: <20240527-md-fs-ext4-v1-1-07aad5936bb1@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Q29saW4gSWFuIEtpbmcgPGNvbGluLmkua2luZ0BnbWFpbC5jb20+IHdyb3RlOg0KPiBUaGVyZSBp
-cyBhIHNwZWxsaW5nIG1pc3Rha2UgaW4gYSBsaXRlcmFsIHN0cmluZy4gRml4IGl0Lg0KPiANCj4g
-U2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmkua2luZ0BnbWFpbC5jb20+DQoN
-CkFja2VkLWJ5OiBQaW5nLUtlIFNoaWggPHBrc2hpaEByZWFsdGVrLmNvbT4NCg0KDQo=
+
+On Mon, 27 May 2024 11:02:29 -0700, Jeff Johnson wrote:
+> Fix the 'make W=1' warning:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ext4/ext4-inode-test.o
+> 
+> 
+
+Applied, thanks!
+
+[1/1] fs: ext4: add missing MODULE_DESCRIPTION()
+      commit: 7378e8991a459f3e5672e4b06bf346adce062fd8
+
+Best regards,
+-- 
+Theodore Ts'o <tytso@mit.edu>
