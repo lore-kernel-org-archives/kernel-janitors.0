@@ -1,35 +1,48 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2E316DEA4;
-	Thu, 11 Jul 2024 17:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB94747F7F
+	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jul 2024 17:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720717877; cv=none; b=iQLSXTWPpS297AjctSeOuAI5o8y80oiezd5mVVzw9NlLlAw8OhrY7t9DZDF/p8d/54yrTdFhjur1VhVebA1Xco9R/TduFe3haQUcdkTHLk8mTAjjvX9bcYYE+IJqzaSA1BQ8WPDmMGiox8laTNkd3zSiOYiK1qoIgYgrnR0srZw=
+	t=1720719084; cv=none; b=QNuYN/bq6hZNoWF3Fnpbt0rWuCJTBxrVcjNoAakjvbJ4Z6zLQUE3MsFFkLj94Tr0D9xmY2zBU3c5YCaseImTOtIQx8PKJQLFcSAoWG76n5ro3elRmwyFa/UkpVRG2OatygvZP7DFxXn7qbI6H2jHZxBghFy2qlA1Vfs32kDwiuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720717877; c=relaxed/simple;
-	bh=eAcO3eyyhWyjZax3zOfbzNEnJg7IUGfjgGt7eDDcIIk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=QR5ye9Jhr+KXXwKkGxy8/x/nejzpWDb3uZXuhu+EmyrhG+Q1BPNT60zGmKqmWa0SUmEQ0igQza8xOSeY671Z7X/+Zcd6mOwWEZVMjpIuenOjUPo44gtnOvVA5dRsNhQD3pNyApkl1tCvIaUmqHC2X2+VHGXofVKZPwaI8CBBr70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gSYuYYzq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720719084; c=relaxed/simple;
+	bh=i5M/KkEe+fepdyPiWkDJhqjuHP7yldYG6MEfdBmuf1U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oRh4a+R77J+5pzXSyCYyBW6T179HVoTekKUTUovvTrKu1TjH0adBMUk5ItTQ0TdS+AomCbJ/ueGtpC1DUJxvQgxoz+TS1t4mh1ks+TNLIa/9NBtlCaBhs5KIec4OlopT/CP5Kz4qQRxxrfPNKRO+CRLZtD0RdcSdKGjBAU4fv3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RKGfCXy+; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSYuYYzq"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4B207C116B1;
-	Thu, 11 Jul 2024 17:11:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720717877;
-	bh=eAcO3eyyhWyjZax3zOfbzNEnJg7IUGfjgGt7eDDcIIk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=gSYuYYzqdYZlo2iyfVbFW86Upg6xaE5dq83UgTNu29rmr/bzYylRvHGFJNZa1sAQl
-	 kRsyQ4SFsn4Bxm+5LdPfg8DPgln5avJYqHAYhHF5bQKmtiZDtOENDYhU7D3Kh0LMQX
-	 S4kYu/Js4ZhNsUrM3MPYKQddEj0+pxdd1Yl4wEHFsAnc6EZumnz0BCrsFxQXvNPYUi
-	 +LjJZCiXGGvYp7tT/nSVxcW5g2MVTLFgKSMtmcf0ar19N9TYZKsE6K/SpnxnvnSCA/
-	 OiAw0fx3W0n6e8s5rD5ga/tK8lWW8dEm0FmyqYpDgTmJ+Jq4RZtSmCkPe2L9SotEnx
-	 M2151CKYIk4ww==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3F623C433E9;
-	Thu, 11 Jul 2024 17:11:17 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RKGfCXy+"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id RxdPsAr1uHTrpRxdQsVLWC; Thu, 11 Jul 2024 19:31:13 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720719073;
+	bh=RRQXTK+lQmAsyj99iqPHXhZaL0F3tchaEGasoQcNsJg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=RKGfCXy+SgyVVuegeHXFR9X/K4vy2r5C/OqqhX1Jt7URhz/8Wl8GE4CJClVkmOfag
+	 JdcvlzDivjhY5PnmQ86winemWbm3hV7D09j+2d91kFXbtKtbfwUFdHpEDobvFNM3P4
+	 RzntG9QMIbD5vNpdHaU3ylw6ITkrkZ/a0lOcPlk5Aw5qTaArCkF4fF+dVpxzB5FII4
+	 AKGbV5hg1xJRgMrjeTg0R04QvxcjVHypXVxYs9AxjKAig3EqAXePBWgjUyx3OeOtCc
+	 QiDYwnivWHW8N/S5CkkmmWJgmMINyYAiu6GxR50Ar9+fF3AAZiy/QFdncjhSxCHL3K
+	 XcUVp9P5XV5Bg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 11 Jul 2024 19:31:13 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: vkoul@kernel.org,
+	kishon@kernel.org
+Cc: linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/4] phy: cadence-torrent: Constify struct cdns_reg_pairs
+Date: Thu, 11 Jul 2024 19:31:05 +0200
+Message-ID: <cover.1720718240.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -37,40 +50,32 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] net: pse-pd: pd692x0: Fix spelling mistake "availables"
- -> "available"
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172071787725.2867.7176768478740166491.git-patchwork-notify@kernel.org>
-Date: Thu, 11 Jul 2024 17:11:17 +0000
-References: <20240709105222.168306-1-colin.i.king@gmail.com>
-In-Reply-To: <20240709105222.168306-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: o.rempel@pengutronix.de, kory.maincent@bootlin.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
 
-Hello:
+This series is just abour constification of some structs.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+It turns about 15 ko of data in ro section:
 
-On Tue,  9 Jul 2024 11:52:22 +0100 you wrote:
-> There is a spelling mistake in a dev_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/pse-pd/pd692x0.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  78154	  20222	     16	  98392	  18058	drivers/phy/cadence/phy-cadence-torrent.o
 
-Here is the summary with links:
-  - [next] net: pse-pd: pd692x0: Fix spelling mistake "availables" -> "available"
-    https://git.kernel.org/netdev/net-next/c/a6a9fcb10836
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  93606	   4790	     16	  98412	  1806c	drivers/phy/cadence/phy-cadence-torrent.o
 
-You are awesome, thank you!
+All patches have been compile tested only.
+
+Christophe JAILLET (4):
+  phy: cadence-torrent: Constify struct cdns_reg_pairs
+  phy: cadence-torrent: Constify struct cdns_torrent_vals_entry
+  phy: cadence-torrent: Constify struct cdns_torrent_vals
+  phy: cadence-torrent: Constify a u32[]
+
+ drivers/phy/cadence/phy-cadence-torrent.c | 376 +++++++++++-----------
+ 1 file changed, 188 insertions(+), 188 deletions(-)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.45.2
 
