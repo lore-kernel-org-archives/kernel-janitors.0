@@ -1,127 +1,113 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BBE5BACF;
-	Thu, 11 Jul 2024 19:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDAC16E876
+	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jul 2024 19:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720726052; cv=none; b=HCTqnGwMjKVZ0drRSCRL5/Oot3yEeexgOm+RXdIcWHYz8rGpvQviKfZBpH0N+7N9/bg2h2QEprpQr+iatjmWV84U4Pgjn6c2C+TvZj7QpTszC6cnHhA2Q6JpQmITbY8KkC7IJQhqQazmnL3EDlbeuJTRqaqJrrUyIwWBjEF4IhY=
+	t=1720726504; cv=none; b=iwgwbDvAfJk5HcqYyYDQIvODOghVnvuQ2jYKccJaEt5l64IPYQoqh5MRTeEhQyP+ZoWi1G6bSu1jhtFnngGYh4FeQM5JpktP7ARPUq85BKJ+T+5BAI1OqSzrgGCmDnl5n8Xp6yHJSrfso3Vy3XyCu3O7Dz+F5b/a111hIoBUCG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720726052; c=relaxed/simple;
-	bh=WTO8nBFtNNsR8zMMo/kRRpHE+3MJgYaGztu5gFTI4PA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lmMC7XPpIGULJYiSax+KuoXEViL4nY7ZlJNV4ou9/acxGEERsIFiNVppt85hEzuIpH27v0Ody3H2JTx4l1vR384198e/Fkl1veQCGvuqjbglb9PVa8HUPf9dhqtr5LzuHcT0UX9GBtjS/Yf3YR5su/ohi2ka6N/kcmGU9krl5jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K3UvANMn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1720726504; c=relaxed/simple;
+	bh=fxqHbexqa/XBA+b4kSaSE8iCXVy+Xhb2hvj+JR297Bk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pKw3XiiiCU1//EIg00tKEMi/GRLDt/DZHdcP6eFsTq3X7ipaCwH+whbxD6bnm6Zg0P+T0wH8No8C155vrVHSphetrqHLL/lj3d1vOAhd5rTPY8DHzId1eW2xdsfJb7BnRrNBxcTmp0QJKHm5yQxx3chwwChJ5RUR5BImsYmiqm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=uKlfxmlZ; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K3UvANMn"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BDLirT007342;
-	Thu, 11 Jul 2024 19:27:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	01He2AukA3gNli5ye4GmZPgjjeR1c89/VmEYxkoI18U=; b=K3UvANMnRv7D4o2/
-	BMk7fqojcDm81lzaRtLOnH5BVCeeAq4XqM7neX5rnp8uJX+VNkaKzWu9gkMG7BIk
-	dL4brSvDYShCD4EnOapEtiE8IWK2gFNX+FlVpUOA/y/qzJvQN3folGTZdmixo+b8
-	bCdEHMJLwFznbKQigebJxyPxF9mYHZQSNCmI4gAPGemugdrrUo2F+rRs//3zDTlp
-	1eM5FqEwXxt8bHCZSdrjdVvb5gCnhg0uY8Ol1E2zUO5hM9ErmzMi3mZAi6IcwnXc
-	AR027uawPbZ/fkHiRc6kP1qQxZ3EFhb09XADtoFZPm6IifJUducWiD4cUaP3rfoD
-	T2kS4g==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wg45kq3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 19:27:26 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BJRPPN015571
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 19:27:25 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
- 2024 12:27:24 -0700
-Message-ID: <ce7863a7-f84e-42f0-9aa5-54b43edcd260@quicinc.com>
-Date: Thu, 11 Jul 2024 13:27:23 -0600
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="uKlfxmlZ"
+Received: from fedora.. ([77.131.3.214])
+	by smtp.orange.fr with ESMTPA
+	id RzZBsCMFrj4pfRzZEsIiRe; Thu, 11 Jul 2024 21:35:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720726501;
+	bh=MaLM7B8grFGEA8Qhxc325Ffgm/J2Yg0HpAuW5vXtFvE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=uKlfxmlZm+QDK9dDFuhV//L6spwodsLDPA9Fqhg/ncr3a1Z9vkzcdMNckcJEsP7Cy
+	 HHrKThLpkL6iNE/eHu3mDTKRFwbfrtvF3/VxzHRGzXyDptCEI+uX1bEd4BHazLP+nC
+	 eeFMytPSvArCHyalNCDhdiJgVewvlteO9DNw9p/a6cj193aaaETA4ClxIsU1Tl2QMu
+	 K4MKrlnKmSLdL/+8GRxsg6iTbNm9OF0tmxMBhp9S2RpOgXT62e9FSBfimxm1cgzrFH
+	 rxx0zb5ZjRpC5bNoXBSuzOiW787NX+GytCf2gheKLtWTQVOaCKndKY+89u5KB85tm9
+	 +lan4gygVrKsA==
+X-ME-Helo: fedora..
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 11 Jul 2024 21:35:01 +0200
+X-ME-IP: 77.131.3.214
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: vkoul@kernel.org,
+	kishon@kernel.org
+Cc: linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/3] phy: cadence: Sierra: Constify struct cdns_reg_pairs
+Date: Thu, 11 Jul 2024 21:34:52 +0200
+Message-ID: <c57ee8206ebba8c222d7d954335654384072b9ac.1720723132.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <cover.1720723132.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1720723132.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH] agp: uninorth: add missing MODULE_DESCRIPTION() macro
-Content-Language: en-US
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
-        David Airlie
-	<airlied@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240615-md-powerpc-drivers-char-agp-v1-1-b79bfd07da42@quicinc.com>
- <99d6c483-9291-4bd0-8e62-76022abb762c@quicinc.com>
- <7b7e2952-fb54-48b0-93bc-f96c04e5cdd3@quicinc.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <7b7e2952-fb54-48b0-93bc-f96c04e5cdd3@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ADn9gVcQwjMLZ4n9ELF6H4wQf-jPtw3V
-X-Proofpoint-GUID: ADn9gVcQwjMLZ4n9ELF6H4wQf-jPtw3V
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_14,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 clxscore=1011 impostorscore=0 malwarescore=0 mlxscore=0
- bulkscore=0 spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407110134
 
-On 7/11/2024 12:19 PM, Jeff Johnson wrote:
-> On 6/28/24 20:14, Jeff Johnson wrote:
->> On 6/15/2024 2:01 PM, Jeff Johnson wrote:
->>> With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
->>> WARNING: modpost: missing MODULE_DESCRIPTION() in 
->>> drivers/char/agp/uninorth-agp.o
->>>
->>> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->>>
->>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->>> ---
->>>   drivers/char/agp/uninorth-agp.c | 1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/char/agp/uninorth-agp.c 
->>> b/drivers/char/agp/uninorth-agp.c
->>> index 84411b13c49f..b8d7115b8c9e 100644
->>> --- a/drivers/char/agp/uninorth-agp.c
->>> +++ b/drivers/char/agp/uninorth-agp.c
->>> @@ -726,4 +726,5 @@ MODULE_PARM_DESC(aperture,
->>>            "\t\tDefault: " DEFAULT_APERTURE_STRING "M");
->>>   MODULE_AUTHOR("Ben Herrenschmidt & Paul Mackerras");
->>> +MODULE_DESCRIPTION("Apple UniNorth & U3 AGP support");
->>>   MODULE_LICENSE("GPL");
->>>
->>> ---
->>> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
->>> change-id: 20240615-md-powerpc-drivers-char-agp-db644db58c24
->>
->> Following up to see if anything else is needed from me. Hoping to see 
->> this in
->> linux-next so I can remove it from my tracking spreadsheet :)
-> 
-> I still don't see this in linux-next.
-> Adding Greg KH since he's picked up many of these fixes.
-> Hope to have all of these warnings fixed tree-wide in 6.11.
+'struct cdns_reg_pairs' is not modified in this driver.
 
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-Dave, this seems like a trivial fix that is stuck, but normally routed 
-through DRM.  I hope I'm not over stepping, but I think I'll drop this 
-in drm-misc-next on the 19th if there isn't any other activity.
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  60489	   4342	     16	  64847	   fd4f	drivers/phy/cadence/phy-cadence-sierra.o
 
--Jeff
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  60521	   4310	     16	  64847	   fd4f	drivers/phy/cadence/phy-cadence-sierra.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+---
+ drivers/phy/cadence/phy-cadence-sierra.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/phy/cadence/phy-cadence-sierra.c b/drivers/phy/cadence/phy-cadence-sierra.c
+index d4eb93ce8232..6bb0ca3443f1 100644
+--- a/drivers/phy/cadence/phy-cadence-sierra.c
++++ b/drivers/phy/cadence/phy-cadence-sierra.c
+@@ -1544,7 +1544,7 @@ static void cdns_sierra_phy_remove(struct platform_device *pdev)
+ }
+ 
+ /* SGMII PHY PMA lane configuration */
+-static struct cdns_reg_pairs sgmii_phy_pma_ln_regs[] = {
++static const struct cdns_reg_pairs sgmii_phy_pma_ln_regs[] = {
+ 	{0x9010, SIERRA_PHY_PMA_XCVR_CTRL}
+ };
+ 
+@@ -1609,7 +1609,7 @@ static struct cdns_sierra_vals sgmii_100_no_ssc_plllc1_opt3_ln_vals = {
+ };
+ 
+ /* QSGMII PHY PMA lane configuration */
+-static struct cdns_reg_pairs qsgmii_phy_pma_ln_regs[] = {
++static const struct cdns_reg_pairs qsgmii_phy_pma_ln_regs[] = {
+ 	{0x9010, SIERRA_PHY_PMA_XCVR_CTRL}
+ };
+ 
+@@ -1675,7 +1675,7 @@ static struct cdns_sierra_vals qsgmii_100_no_ssc_plllc1_ln_vals = {
+ };
+ 
+ /* PCIE PHY PCS common configuration */
+-static struct cdns_reg_pairs pcie_phy_pcs_cmn_regs[] = {
++static const struct cdns_reg_pairs pcie_phy_pcs_cmn_regs[] = {
+ 	{0x0430, SIERRA_PHY_PIPE_CMN_CTRL1}
+ };
+ 
+-- 
+2.45.2
+
