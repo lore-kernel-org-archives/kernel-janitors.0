@@ -1,95 +1,111 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79846374CB;
-	Thu, 11 Jul 2024 06:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70C612DD9B
+	for <kernel-janitors@vger.kernel.org>; Thu, 11 Jul 2024 06:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720680582; cv=none; b=YKhXaXjE945NSTrmeBjZLQ4FS6+liguM93PY9rZt82ykk/oDTFuJ5opkgC9ZUX3IuR8Zxp7P52UJYK3M6i3l9Ce53zrY/E3+JlJCKYOLGtqL6RwilZkpGBJyI2AXy/lTwgOeT81EJs2JCE3XsU5DT0GvQsionRQar6Jnerl4lVs=
+	t=1720680717; cv=none; b=ZppNApB4cp6EWG/aSILni3G+RcprbAq265HM9PsyON3heKl7Sby/OJJQYymU3YZA/U1QWAjnIbm0Sr42SRt581zbTiLeCmkzgtnT9kXuNN2eByjFE5RS6Aoxm8iQBrCQVsC4QxQpwIKDaMFTRcsh59sRmbDA3VdM8PEfoWFvrpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720680582; c=relaxed/simple;
-	bh=6qI8fLIJiGf17J5Ni96D/YTFzWMMohhjRTncnDj8gIg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=LT0IVSSrGMMQVFMlMNRd1T8LSOT/dx31v4iqhit20OEpVXRe5rk/aehRkrFtsnaJwzWnqvV3aswCEFNjv5wisTUlIoSkFtUywiTnpMQ3vrVHXKc2sfuAkTcCFQP0kXEbtkPSeHFRtGyHH8geZCVbqDSZE38Ooqj2rmdHAJIJ6G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Qf6UdGtV; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1720680717; c=relaxed/simple;
+	bh=LCK9icEae3jKYmdEHdfJqroHgzlTNAWTkaaa0AbjU4Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gw6Z7DlSrg+458wxk8SYxeAlrsrJATXZDFJHcf1Lg+gMxcvq/9nW/oXzTU1Hi3wI4AJ5a9/o34MhUTNUotWRysT0Nioq2nqUawpZc+307IQo9ThBpJoxARdw8EbQmAD5WElj7AqLiuhsQNSdGwqMbhJcMAcRLyMPPiaiqxmdCvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TuTv+yla; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Qf6UdGtV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720680523; x=1721285323; i=markus.elfring@web.de;
-	bh=6qI8fLIJiGf17J5Ni96D/YTFzWMMohhjRTncnDj8gIg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Qf6UdGtVg0C+3CVRbryVw/ff4dGeXSVSTquRkYNDn/jDjj1ReKAhus+X/6P80WH/
-	 msiR+5OjWeqY+rtZMqAFwoBgnKv+IGyOQTCx69kAV2gaqX2WJ/QRWFzBOMCw+TZlO
-	 iV8aOLR2YDWwYSrJ7SLsVwzCXGn8m7rzXrmBBn3sQeVj0K1MCrrj5LcOWKjokTKFQ
-	 rbr8a2bOCXA5XuhBalFPkH4hALZSZZqhqrStomMxG3cJ1wi6WCnSSXWn1EjC42HiU
-	 Mi8Qkj/ZGdxokChxM7/c1QB9zbwzrXxSHOMgVSOw2nHQ5AKES36vwG734WaKJ+S/6
-	 ujlWJ/d/+YuN6umoag==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MzCED-1sDj8T3pXX-00rMnK; Thu, 11
- Jul 2024 08:48:43 +0200
-Message-ID: <74b43faa-f212-4542-b7e2-68d5eb9ce474@web.de>
-Date: Thu, 11 Jul 2024 08:48:36 +0200
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TuTv+yla"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720680713;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=OGHWmQ5BDSpnthAm3GCMpgKvKr351yaxBIw3YmVdyjY=;
+	b=TuTv+ylaoxo43lGkikHQvrm/9w+QqGMiLTddjovqmyPC4TGn1eAKGtXSVQY+COiNWetxOa
+	Ta4rdDKS9NYstrROAcPNCSGa9/LYn8XM/4YpIjnfBcCTZL+eOCRZhgGD006nvNzRaQdPg3
+	yb7GS9/YphaFYaFlmhtfPxudkbBNqKE=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-564-QPiS3w5IPnSw5LG850EiQQ-1; Thu, 11 Jul 2024 02:51:52 -0400
+X-MC-Unique: QPiS3w5IPnSw5LG850EiQQ-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a77af33ce50so52330366b.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 10 Jul 2024 23:51:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720680711; x=1721285511;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OGHWmQ5BDSpnthAm3GCMpgKvKr351yaxBIw3YmVdyjY=;
+        b=PGVTuaA/ScLrsURh09951oIjdo1jHBDUiwPpXgFXw8Ed8wFTJQ6X/2GzqdtoNBV2pB
+         Gc6/IpoYfB6qdM2TFctQaTu6lcWwm/mvyHjb8ovgRHO1j9kNvu1Y7BhcX+rI8rGNP8qK
+         UjSdKJF5BRrlASqixHEG4+23qvPDc7G0LUT3mi7XQw6R4GV4zsj+Y+IbSEE0GVlVxqL9
+         Q+P9V5T41DHPR+L2rM00kNs1O5HPsKIrCPGkmPnfKri7WUIWc/1J23BtoEJNO4HnoXLd
+         H0HzTcO9bol6YiAaW+remc0DAL8bEX/XgHBoaOHsMRmZFhOlzyZkwUNifNsqvCpE5f+A
+         VyXw==
+X-Gm-Message-State: AOJu0YyNe1zlBZDar9gyWW7Bc4HEAQ1nLt95hRmd+nVMgCZJwwBPutkK
+	HLzua8FN41R4tGUXJcJB5XyMuhr6tcSji7jydHzg812/yK2Yv/uOoMOOpGxg0VALphE5szAIeMT
+	0AoqgctrcrHdY89cmGdXn7N0h9wMCu7I38Q7T/ThOsqkrDcRRQWfDQ3ix0hS40V9QeghyQwcjfQ
+	==
+X-Received: by 2002:a17:907:7f0e:b0:a72:4444:79bb with SMTP id a640c23a62f3a-a780b881cc4mr674810366b.59.1720680710877;
+        Wed, 10 Jul 2024 23:51:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHNGa3iTLDkJs9r42QlkOKMbEzsJfArWsJUH4Y9CnC2eN/9R9XztdP8hv+banbSj19eiMhoRA==
+X-Received: by 2002:a17:907:7f0e:b0:a72:4444:79bb with SMTP id a640c23a62f3a-a780b881cc4mr674809466b.59.1720680710535;
+        Wed, 10 Jul 2024 23:51:50 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a86f620sm226365966b.209.2024.07.10.23.51.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 23:51:50 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Lee Jones <lee@kernel.org>,
+	Karel Balej <balejk@matfyz.cz>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: repair file entry in MARVELL 88PM886 PMIC DRIVER
+Date: Thu, 11 Jul 2024 08:51:40 +0200
+Message-ID: <20240711065140.140703-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: make24@iscas.ac.cn, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Cc: tech-board@groups.linuxfoundation.org, LKML
- <linux-kernel@vger.kernel.org>, Alex Deucher <alexander.deucher@amd.com>,
- Chen Jiahao <chenjiahao16@huawei.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Guchun Chen <guchun.chen@amd.com>, Jammy Zhou <Jammy.Zhou@amd.com>,
- Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
- Shuah Khan <shuah@kernel.org>, Wei Liu <wei.liu@kernel.org>,
- Xinhui Pan <Xinhui.Pan@amd.com>
-References: <20240711024531.1604757-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v2] drm/amdgpu: fix a possible null pointer dereference
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240711024531.1604757-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:SQMLuje8Gr1yokQNLO4dDAgbd+AIGjrCDl1NTgAreYMe3ccfHrM
- qHW7nk1tIK3Qh3sJg0yZ1UBiSf+em5kL7oH1eIuO/bKFYNuOy9t2z/YIg6SA8ozi1gV/ibU
- elAPMwnfIeGc4ta0+RTeysexxtXFQtcrQL1v0aH43/mpFGVjgm3nALJUMURbreMljVqOF0Z
- +aOxRAbBw4/DqyjagFnow==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:F35aPUitlI8=;iUxxLvJdovw+7SO0os6kpsTQkXg
- AevsvLV/3wAetvXBvxMzDMLKJ81X4uKxpOXUBTzCXnbeKnqMmZ9V/Itdlj6DgpPiqZfLITzLI
- gE0IaYZzN13JFQIQBGFf1jBQgXPTkFLAAjl3woxxyrL8A9COvOJ8GooNsisumF9Fx9ygLQxPc
- 04lERQA2dXUCjmvWZ9+w+0lW3AbFEXjEsPQEEdCh1kjliIqTPue5RVzb6nP1uSsLNWPh5iMJv
- MlFPTRa/8ndIGpktU7pORraE1KHGNXLdxzvCYbBNKjllbE+/V6w0uHKShBb0JyyObQea8pNi+
- 9YNi/PbP92NRkhlBbpmTA3Xbiu40GmRVvggNkVKiSRK0Us1yE+s9A3kp89JtDMbCC0PkNvom5
- bEx2yHphgAnm2X2dw6QXw4zYVxaXCfjjyHUEfhYmgEl7jctnpDYFehDMSvts1zKtdwtc4hfbi
- n/hPVpbSsUVQHQhWAMh3tTjBAGZbHpcnHVQFijlQWZuWPM/xX1E2BjMKB45rqSH+vI/pR/9Wv
- Oak57OurljQbWCMFup4rKX0r7BD8yFf2ay+vNjRBsvz94tAETcWnh2xOCN1GZiEivzCKwKCvY
- aY1VFFS2U0aeycECtCAt/UHQZoRoC+aTaf036FTiRAULa+HYi4gLgnk6LIzRHPmLeQYSh6SAy
- fmitSZaft1XyvWgdGjGNbxFPlfRNZkHmQvtx6hiG2kpDhypZntw1ZKXMs9s7MuVmUL+jdE7ww
- zDkkKpPV3eOGONJD7zcpoxWb8nIASLEKFqLQgY83dZwboiPyccJMkQIYo61nY17QlkWZRFXIQ
- 1r+GNaPXAVQZ8DC9EGEmngpg==
+Content-Transfer-Encoding: 8bit
 
-> In amdgpu_connector_add_common_modes(), the return value of drm_cvt_mode=
-()
-> is assigned to mode, which will lead to a NULL pointer dereference on
-> failure of drm_cvt_mode(). Add a check to avoid npd.
->
-> Fixes: d38ceaf99ed0 ("drm/amdgpu: add core driver (v4)")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Are you going to adhere to known research and development processes?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/researcher-guidelines.rst?h=3Dv6.10-rc7#n5
+Commit f53d3efa366b ("MAINTAINERS: Add myself for Marvell 88PM886 PMIC")
+adds a file entry referring to drivers/regulators/88pm886-regulator.c,
+but the directory is actually called drivers/regulator. Note that there is
+no 's' at the end.
 
-Regards,
-Markus
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
+
+Repair the file entry in the MARVELL 88PM886 PMIC DRIVER section.
+
+Fixes: f53d3efa366b ("MAINTAINERS: Add myself for Marvell 88PM886 PMIC")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3eab44bd1010..bb7b5ecbc0b9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13495,7 +13495,7 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/mfd/marvell,88pm886-a1.yaml
+ F:	drivers/input/misc/88pm886-onkey.c
+ F:	drivers/mfd/88pm886.c
+-F:	drivers/regulators/88pm886-regulator.c
++F:	drivers/regulator/88pm886-regulator.c
+ F:	include/linux/mfd/88pm886.h
+ 
+ MARVELL ARMADA 3700 PHY DRIVERS
+-- 
+2.45.2
+
