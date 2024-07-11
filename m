@@ -1,48 +1,48 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077D415ECCA;
-	Thu, 11 Jul 2024 17:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164737F492;
+	Thu, 11 Jul 2024 17:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720719324; cv=none; b=XwVIBtYQvdQ4Ss76+WvZu1j0LS+UZrm56XxMUaBz9Hpx3b9lAdde9Bjfc+3o0t1cJvIXZKijUCHQpdWdSHBtEoHKXwpU57OZBnJ4uTS1Em2dZj08SowFLsbcaUoz4aF2rA7yEoWdqdR/j+8gvTb7CNugvaHSr6l80EdaN083Mbk=
+	t=1720719960; cv=none; b=cB1TvAfh53CobLDTfc130YO/fVfSG6nZVANo77/HPZR7QbY23mjUghyabI4cfzFu04oK/bya+E9Kc6ojHqiLTELRXvIEkjrxf5Y+j/BK91Xhl2Eph8zEUaOMOsn8RHZa7xexIgZxUH5oD4MLYawGxRXHrE02l7H8R3reTOdxKrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720719324; c=relaxed/simple;
-	bh=Yq5IPf1HRPSyNRcPOhcfpmbjqBQXjhii33FKiak2WP4=;
+	s=arc-20240116; t=1720719960; c=relaxed/simple;
+	bh=xclbpvZqBZFVNWlZTggHeSBR9i8w8gKEldzknM8mYRo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nsj1By/WVpNtXvRK7wxyf2NOsJNGkAe8j2Ngrj3Qtxo6N1fGs7/rnmlfUcsk6OfWX1wKIOhn+4vWdzxaIyKn8FS5e0EvLCr7AX44BKxfOLvLlfQFCPmVjmWteSDnaO6FyWpZ25GdlWqjgfLz1M+oqM+OHYFo8R2FH1hpnpY/X2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aIPJ9u0h; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=Jg3/7aWY1wJanP7OWTd1FBFV/PfEtZ4LubWI1q7cua79Ah1Ef1UxCtIn3BiMqn+LXe1B4FFGQvqNBKlXlslPRfpDC59BO5Y8eBzwQ6nilgNEwJMReynAPXSnew93zo0amcDrvBDgibe0Xhf9WLZlNx0aKk2q95yOy8sdEB/eCvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RYRoACGC; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aIPJ9u0h"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BD2LO7007421;
-	Thu, 11 Jul 2024 17:35:17 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RYRoACGC"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BCih1U014631;
+	Thu, 11 Jul 2024 17:45:45 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qNPf0d2xbAM8URqvKSWu8WshjIdAJFLq2jdFkPgYo2k=; b=aIPJ9u0hBoZUGZ+C
-	VjBCfdT242yhcU/dTCGwU7+4+BnGthPusUwd4F3vFc5uIx7iCl9jRy2LWoROt4hE
-	+Wc1xz4FfRurvOUa8D2mVAhz+koE+cY3BVP0twdzj9erzfokvRQhZY4BPb8f/oMT
-	yzIDrnkyoA213a+7LQDmL+/jVRQXv6zqfkal8vNyTwTvFcSvzCf84bzb7YgNXB3e
-	esz+2F1bsaUBE1YSh+rXZAZm2OrkDVcSCtDG84yHaQRJaITJzDhhnIgTGZJL42Dx
-	Jk25llWRhsO4WiH0M5Su2wnn345sC0uiyr9Lmct7x4pepz9ksQGSO8/rZYIWU2K2
-	BMQQoA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4091jdqcvp-1
+	GwBFYXMdD1X49TV4BVm7xe3SSQwTysSATv9976M8WMU=; b=RYRoACGCohysQ15e
+	w9EJPsz4WSd0Gv9fKb+JkNcG90wZwYeU167EnTZssM9cYWGDN7QiWaJxCivpTPzb
+	pB6Jff6E33wPiSIAahhD3GAUc6d/tCeXd6TrI8CLvVgqoog5kBATlgAQYTudsrt4
+	GcnKTANgFRIhXUuB23VGPCdIfUollPx2/A3XICefqeApcGRVOyQgeRFGZ6tydLGs
+	Np74UJwQpmRhbzj5i12XtHOifHBqGycxUTBW5ddLJ2L3Y/eRVEThrJS/iGXvPQok
+	bOSTyC1GhS82ZjLa3WY+G37Qz8hE/xD07tsE4typsistGGy/4N+eDcvP10+9M8l/
+	N6uUoQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 409kdtmxrf-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 17:35:17 +0000 (GMT)
+	Thu, 11 Jul 2024 17:45:45 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BHZGAt031757
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BHjiMD009338
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 17:35:16 GMT
+	Thu, 11 Jul 2024 17:45:44 GMT
 Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
- 2024 10:35:15 -0700
-Message-ID: <f623ca12-6911-48d0-8706-483f38a99b13@quicinc.com>
-Date: Thu, 11 Jul 2024 10:35:15 -0700
+ 2024 10:45:43 -0700
+Message-ID: <ea1b2ed4-704a-4676-8915-d3e566675070@quicinc.com>
+Date: Thu, 11 Jul 2024 10:45:43 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,53 +50,48 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/adfs: add MODULE_DESCRIPTION
-To: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Jan Kara <jack@suse.cz>
-References: <20240523-md-adfs-v1-1-364268e38370@quicinc.com>
- <20240524-zumal-butterbrot-015b2a21efd5@brauner>
- <20240527164022.GE2118490@ZenIV>
- <20240528-gehemmt-umziehen-510568bb05ac@brauner>
+Subject: Re: [PATCH] apparmor: test: add MODULE_DESCRIPTION()
+To: John Johansen <john.johansen@canonical.com>,
+        Paul Moore
+	<paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"
+	<serge@hallyn.com>
+CC: <apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20240529-md-apparmor_policy_unpack_test-v1-1-9efc582078c4@quicinc.com>
+ <17dad6b9-9dc3-4b0f-bd3d-34e9e22e7627@canonical.com>
 Content-Language: en-US
 From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240528-gehemmt-umziehen-510568bb05ac@brauner>
+In-Reply-To: <17dad6b9-9dc3-4b0f-bd3d-34e9e22e7627@canonical.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: B8dvNRnMd4KtbiTIJfnGVLX6N3pIlPeZ
-X-Proofpoint-ORIG-GUID: B8dvNRnMd4KtbiTIJfnGVLX6N3pIlPeZ
+X-Proofpoint-ORIG-GUID: k8Mhs3lXG4xo2MilVXA2DfNYVGINlqP_
+X-Proofpoint-GUID: k8Mhs3lXG4xo2MilVXA2DfNYVGINlqP_
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-11_12,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- lowpriorityscore=0 adultscore=0 spamscore=0 malwarescore=0 mlxlogscore=846
- mlxscore=0 priorityscore=1501 phishscore=0 clxscore=1011 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407110122
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ impostorscore=0 mlxlogscore=635 lowpriorityscore=0 malwarescore=0
+ adultscore=0 suspectscore=0 phishscore=0 bulkscore=0 priorityscore=1501
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407110123
 
-On 5/28/24 03:00, Christian Brauner wrote:
-> On Mon, May 27, 2024 at 05:40:22PM +0100, Al Viro wrote:
->> On Fri, May 24, 2024 at 03:13:04PM +0200, Christian Brauner wrote:
->>> On Thu, 23 May 2024 06:58:01 -0700, Jeff Johnson wrote:
->>>> Fix the 'make W=1' issue:
->>>> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/adfs/adfs.o
->>>>
->>>>
->>>
->>> Sure, why not.
+On 6/25/24 01:26, John Johansen wrote:
+> On 5/29/24 18:21, Jeff Johnson wrote:
+>> Fix the 'make W=1' warning:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in 
+>> security/apparmor/apparmor_policy_unpack_test.o
 >>
->> Might make sense to move those into a separate branch, IMO (and feel
->> free to slap ACKed-by: Al Viro <viro@zeniv.linux.org.uk> on those -
->> AFAICS all of them look reasonable).
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > 
-> Thanks! Added Acks to all of them and about to push it to
-> #vfs.module.description.
+> Acked-by: John Johansen <john.johansen@canonical.com>
+> 
+> I will pull this into my tree
 
-Following up since I don't see this in linux-next and hope to have all 
-of these warnings fixed tree-wide in 6.11.
+I still don't see this in linux-next.
+I'm hoping to have these warnings fixed tree-wide in 6.11.
 
-/jeff
