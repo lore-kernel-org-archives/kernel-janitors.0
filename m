@@ -1,116 +1,189 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992682941C;
-	Fri, 12 Jul 2024 19:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D133A1DA
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 22:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720812502; cv=none; b=P8y5Ilq1NMSSTyyEHfpeFZzm9u0evo1e5ljld4tkBfJD4M8WN2q39N4+KhnBt27pYG2FutR9eLOqxCwqNFTEENM8yDTd2dzMYpbwhgOKIjHBYugKnXUUZzCSg0x7zblzrewwcjSlIGr+l9VzaQcS5udPiSgJwcBGIn3C/V8tqWA=
+	t=1720823789; cv=none; b=kBdJyOzacmp33RrHEzNgOdGOUba72oJNKtm1PPPgX+mrYW28UeAJGXKcOZdyHVtNQ6MXnwuS/t06StEhTCn4rUXaNv2M/VIjId0NkZ1rA8RextcWOUeVxHlSXAmkfYONvU/tyCCFRgkhSUmG2AYIYKhRopbfpIZmtfI+BhER6nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720812502; c=relaxed/simple;
-	bh=W281CCmUUMiP3TQluVjVobFYoS5Y7Blsjj8LngTL8Hw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XVCar6ufZtPJ+j4jTTNcoqm0t9wV2bwmtUEabNZ/YSRjQyO7WoQtF/36iB8Ii8qGSERr3APitLB8e63fDjIY7rQW7abYi9Hw91T4JC1SHtYYTh7k5gvs3txZTdCJiD2xY79e4WhM1C4hrZMutZpRudQV9IjNWXz8TSZr2bFa6yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=f/GLhxog; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+	s=arc-20240116; t=1720823789; c=relaxed/simple;
+	bh=TNXcGKx0oO0INQoUwhNKp6sd7FDNWObHlJOZyFifFs8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TEdINUvreaWWP7qIgSa6lTOHbIMmzUMei1iyGqFuWqkQCLrHRewUaRgsj6R7E6rMlJ9T3R7FwmfjumiQCuZ0Pce4Y4vbkk8FQcfO880VelTRK79nw0aoX9YAzBYTYNCOJefFZO0K+yKvCCIOWs/1elyW9B64jHtJz6Uag21sGfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NFJ/GbFa; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="f/GLhxog"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1720812479; x=1721417279; i=w_armin@gmx.de;
-	bh=ICQlSYkMltWe/isrb0y1hYVhfN3pn7hHveOTMdIriHI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=f/GLhxogaZF24DWIqW8y28nl6M6WrDFlaozJMoyHPCd8InC6ngLmGyf8EIiaf4Y4
-	 DNyQ/IiURrMmLP1MzF81BXX/wel090Lb1dsuYq7t0+g8aO+orE4+bRvTyBBDO+V5r
-	 VTsMUhucwGrzcaB+2Gy9N9P3rn3zS4sZGRPhK40ed5Db0IX60+1tt7LEHHchkBIam
-	 4PWsG+ej+TBaMPoD+4eDx1I2miRUhoXa5rhyXU9MVLmB0IGelqNr9xATCIbYYWpIA
-	 /gKUf4f68CsWCmdjj9pEG8pZG6C0ggdEdOS/rUc9DyByqGW8Ki/w54RAj+WH+WCg0
-	 q2mfFOzgh/bBUpkJIw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MuUnK-1sBEUP2c0w-00zwY5; Fri, 12
- Jul 2024 21:27:59 +0200
-Message-ID: <34a94b40-9532-45b0-b745-ba0c2e9846c3@gmx.de>
-Date: Fri, 12 Jul 2024 21:27:58 +0200
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NFJ/GbFa"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720823786;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UD+jsIB9utwUuMD5D9RKKWQHJKFtMYpx4nMjcv9KoxQ=;
+	b=NFJ/GbFacmMjFCx2KCrY2h1GIzSPKDh051sxNVOB1yjwe8sWB5ub3PwenAXZxNREKge1lH
+	xaDqLxYAw7z+8+unq3xcRvXLZ1vYNK6a4dEei4k3+KsVRtB+mRT3CPEiPUbQkcJALEqnBn
+	4dzURTrAh8gFBLZfK7+dofKkAX8SPRQ=
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
+ [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-661-OcCFXNoZO86D1ajyqroMFQ-1; Fri, 12 Jul 2024 18:36:24 -0400
+X-MC-Unique: OcCFXNoZO86D1ajyqroMFQ-1
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-802d5953345so265688539f.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 15:36:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720823784; x=1721428584;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UD+jsIB9utwUuMD5D9RKKWQHJKFtMYpx4nMjcv9KoxQ=;
+        b=YLMnMv3g2CXVHH/vjMInsSuvbpCKGKw2enSOvw5xfxqQzkH9XoHnaKRyqiJLmOrePE
+         5PptH0YEoFcGXieXK1o+PiDMmyLlrvg7gQV+xWInX2+sYxkeKQEpnzC+Uz6gr9DIgtiB
+         L5ZXHTz1ZdVWzrGsvXL9ZddWa700+EhY8NOQcLi0cmpdZY11eiMgDm7Ue03upAvWthfj
+         lEG8xad558j/TkrWVFhD28ki8/HFFsY8YDSkGC4Ynwsm9s+18/efMNJpyxmxSxIaRqM2
+         RWM+I7FGJJh34NaJ960JJtUMPfX8Bhh59QpsTMIp+o9R72NYKFhTUalTDMh6q0SyqQQw
+         PVhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhKmEJm+Mcbk4m/vU/PLaYuwI97O8lk7AZoF5uo19cnbDGYXuRmQ1CeE3P8vNZTftTU4Icbl4CQM0zYjs4yFq6tWQm0VS5wYWtApgdFiwz
+X-Gm-Message-State: AOJu0Yx8VMpRJrArFaVhyZMKgBiRqAi4+zYbaMAq/JVXF74EARYhryZT
+	9nF9i7zWgZ/mFcKaEESjB10XzoXL73XbGTO6kBtv8oNT6VX9StvcgYvnOG4Fr2OtefIWeBrp47B
+	6FEkCtk7nXobMWoQa78g+MhMTJLkePaFhQPm0fqpWitG2uX0nrnW3iVR/Mp+bMxB8olFdZxMlgg
+	==
+X-Received: by 2002:a05:6602:1615:b0:7f6:f93d:e6a0 with SMTP id ca18e2360f4ac-800034fd528mr1822795239f.15.1720823783806;
+        Fri, 12 Jul 2024 15:36:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGSyar8qW8JkxVFrshE2XwMjaVLy7kugEr4dBZXEvrYReUj5BJaoGKYAE5t07ynIbmqrbCK4g==
+X-Received: by 2002:a05:6602:1615:b0:7f6:f93d:e6a0 with SMTP id ca18e2360f4ac-800034fd528mr1822794539f.15.1720823783398;
+        Fri, 12 Jul 2024 15:36:23 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c0b1af8108sm2710939173.14.2024.07.12.15.36.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 15:36:22 -0700 (PDT)
+Date: Fri, 12 Jul 2024 16:36:21 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Kirti Wankhede <kwankhede@nvidia.com>, Jeff Johnson
+ <quic_jjohnson@quicinc.com>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] vfio-mdev: add MODULE_DESCRIPTION() macros
+Message-ID: <20240712163621.6f34ae98.alex.williamson@redhat.com>
+In-Reply-To: <MN2PR12MB420688C51B3F2CC8BF8CA3A8DCA62@MN2PR12MB4206.namprd12.prod.outlook.com>
+References: <20240523-md-vfio-mdev-v1-1-4676cd532b10@quicinc.com>
+	<a94604eb-7ea6-4813-aa78-6c73f7d4253a@quicinc.com>
+	<MN2PR12MB420688C51B3F2CC8BF8CA3A8DCA62@MN2PR12MB4206.namprd12.prod.outlook.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] eeprom: ee1004: Unlock on error path in probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Heiner Kallweit <hkallweit1@gmail.com>, Guenter Roeck <linux@roeck-us.net>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <b5c51026-a2de-434b-8f45-44a641ab1c82@stanley.mountain>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <b5c51026-a2de-434b-8f45-44a641ab1c82@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:XoJj1mClfAdiUnVK05XDWWLKjk8HkFbwyIsp6Of+TkrgvIcWzwH
- ZlHrUZpj8k00+FyYnExlQuSjs/DSRPST4eoGLMuMmzufcZCLUTFdi+n6W+589xaa3QCt7pH
- usKWVjIFuaOOVzoNbvO4MORzVMHgKdF+Pg0P7fJOT91bPP0ycHdKpz7vpTCQFVrlvHxz1/X
- s7qSXnPSAF+DOniGRrgsg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:cPJ8eIH9NMA=;Q+VH2abwOn3iEuQ71eCpIecVJmX
- hkoWishAL701nCFegn3V7uuiB7uZSemJUHORcmBWu5Wvn3Xvj14J7aCv7vAY0kUoAg33QNvAu
- 642vW4i1rd1iEXm+XC+cVKi3ywHBEsT8IgXfDsMT6VGYnLQJp3OLpbAvlS7HnOQQX6KKdQaSB
- 4c0q+u1vJvFSspfHshdT6JGwW0pttvb/mmXQkAq2AASt0zPmx3eipGO65UBCKa3UuFD1v2lmZ
- /rHOHQFS3U19GGlK9qL66pYQX4JldBo4bhvg1KNr9tAqZbT46FMUBJZlZSwhFFxvzzeSkPs+T
- 9/J01PomRIw+nnQMvbx+lZvzUgp0PEhthDJKPe6d6u/DHLt4BJI5lBT3yv0CO3Zp+HhAzSdrz
- Z/WY79eb7L9M5HdHxRxURJc3U7vnyPzpui87NzC4Q+TT7Nrsll0528oThwstL5lCOsfm3BF9T
- bQpnayVbbIABYa2+tDlRsr4OM48f18i8/OFlpP67EqT0Zz4yuZMHSXqO5wUBJiDCqzo/ed5MS
- LFYvKCrjTUXFZNX19CeqLyIG1MaUM1/R1kyhzivhz7ytRAVBkzlcwoEi/k4PiSDoC7LsI+blB
- 75mPgRQJn9UTtu6yZgIDroFUmU2YwAL6M/MXK0ffastQU4oVtshOMpskQ2nazug+89Pu8sONy
- rCd6qO2WQ6q/hEnOvnmGDebdn7QMx+8wiLnlWfxXHjCGC1090K4vsGR9IERxcrvg1JvBpVz5u
- iycGC4bmnqMOffXfalv0IXa0G8s40NIaNunNEMDYXI/BeoB+Exp25a0mfnOoPBwHtI/3goffR
- xyPx43lsVtVE+4bElXPqx5Gg==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Am 12.07.24 um 16:04 schrieb Dan Carpenter:
+On Fri, 12 Jul 2024 07:27:33 +0000
+Kirti Wankhede <kwankhede@nvidia.com> wrote:
 
-> Call mutex_unlock() before returning an error in ee1004_probe()
+> + Alex.
+> 
+> Reviewed by : Kirti Wankhede <kwankhede@nvidia.com>
 
-Good catch, but it seems that i messed up the locking part event more, sor=
-ry.
-Because if devm_add_action_or_reset() does a reset operation, a deadlock
-will occur since ee1004_cleanup_bus_data() will try to lock the mutex agai=
-n.
+Mind the syntax, Reviewed-by:
 
-I can provide a cleanup patch to fix both problems.
+Also a comment below...
 
-Thanks,
-Armin Wolf
+> > -----Original Message-----
+> > From: Jeff Johnson <quic_jjohnson@quicinc.com>
+> > Sent: Friday, July 12, 2024 12:01 AM
+> > To: Kirti Wankhede <kwankhede@nvidia.com>
+> > Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-
+> > janitors@vger.kernel.org
+> > Subject: Re: [PATCH] vfio-mdev: add MODULE_DESCRIPTION() macros
+> > 
+> > On 5/23/24 17:12, Jeff Johnson wrote:  
+> > > Fix the 'make W=1' warnings:
+> > > WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-  
+> > mdev/mtty.o  
+> > > WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-  
+> > mdev/mdpy.o  
+> > > WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-  
+> > mdev/mdpy-fb.o  
+> > > WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-  
+> > mdev/mbochs.o  
+> > >
+> > > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> > > ---
+> > >   samples/vfio-mdev/mbochs.c  | 1 +
+> > >   samples/vfio-mdev/mdpy-fb.c | 1 +
+> > >   samples/vfio-mdev/mdpy.c    | 1 +
+> > >   samples/vfio-mdev/mtty.c    | 1 +
+> > >   4 files changed, 4 insertions(+)
+> > >
+> > > diff --git a/samples/vfio-mdev/mbochs.c b/samples/vfio-mdev/mbochs.c
+> > > index 9062598ea03d..836456837997 100644
+> > > --- a/samples/vfio-mdev/mbochs.c
+> > > +++ b/samples/vfio-mdev/mbochs.c
+> > > @@ -88,6 +88,7 @@
+> > >   #define STORE_LE32(addr, val)	(*(u32 *)addr = val)
+> > >
+> > >
+> > > +MODULE_DESCRIPTION("Mediated virtual PCI display host device driver");
+> > >   MODULE_LICENSE("GPL v2");
+> > >
+> > >   static int max_mbytes = 256;
+> > > diff --git a/samples/vfio-mdev/mdpy-fb.c b/samples/vfio-mdev/mdpy-fb.c
+> > > index 4598bc28acd9..149af7f598f8 100644
+> > > --- a/samples/vfio-mdev/mdpy-fb.c
+> > > +++ b/samples/vfio-mdev/mdpy-fb.c
+> > > @@ -229,4 +229,5 @@ static int __init mdpy_fb_init(void)
+> > >   module_init(mdpy_fb_init);
+> > >
+> > >   MODULE_DEVICE_TABLE(pci, mdpy_fb_pci_table);
+> > > +MODULE_DESCRIPTION("Framebuffer driver for mdpy (mediated virtual pci  
+> > display device)");  
+> > >   MODULE_LICENSE("GPL v2");
+> > > diff --git a/samples/vfio-mdev/mdpy.c b/samples/vfio-mdev/mdpy.c
+> > > index 27795501de6e..8104831ae125 100644
+> > > --- a/samples/vfio-mdev/mdpy.c
+> > > +++ b/samples/vfio-mdev/mdpy.c
+> > > @@ -40,6 +40,7 @@
+> > >   #define STORE_LE32(addr, val)	(*(u32 *)addr = val)
+> > >
+> > >
+> > > +MODULE_DESCRIPTION("Mediated virtual PCI display host device driver");
+> > >   MODULE_LICENSE("GPL v2");
+> > >
+> > >   #define MDPY_TYPE_1 "vga"
+> > > diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
+> > > index 2284b3751240..40e7d154455e 100644
+> > > --- a/samples/vfio-mdev/mtty.c
+> > > +++ b/samples/vfio-mdev/mtty.c
+> > > @@ -2059,5 +2059,6 @@ module_exit(mtty_dev_exit)
+> > >
+> > >   MODULE_LICENSE("GPL v2");
+> > >   MODULE_INFO(supported, "Test driver that simulate serial port over PCI");
+> > > +MODULE_DESCRIPTION("Test driver that simulate serial port over PCI");
 
->
-> Fixes: 55d57ef6fa97 ("eeprom: ee1004: Use devres for bus data cleanup")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/misc/eeprom/ee1004.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/misc/eeprom/ee1004.c b/drivers/misc/eeprom/ee1004.c
-> index d4aeeb2b2169..adba67cef1e7 100644
-> --- a/drivers/misc/eeprom/ee1004.c
-> +++ b/drivers/misc/eeprom/ee1004.c
-> @@ -272,8 +272,10 @@ static int ee1004_probe(struct i2c_client *client)
->   	}
->
->   	err =3D devm_add_action_or_reset(&client->dev, ee1004_cleanup_bus_dat=
-a, bd);
-> -	if (err < 0)
-> +	if (err < 0) {
-> +		mutex_unlock(&ee1004_bus_lock);
->   		return err;
-> +	}
->
->   	i2c_set_clientdata(client, bd);
->
+Seems the preceding MODULE_INFO needs to be removed here.  At best the
+added MODULE_DESCRIPTION is redundant, but "supported" is not a
+standard tag, so it's not clear what the purpose of that tag was meant
+to be anyway.  Thanks,
+
+Alex
+
+> > >   MODULE_VERSION(VERSION_STRING);
+> > >   MODULE_AUTHOR(DRIVER_AUTHOR);
+> > >
+> > > ---
+> > > base-commit: 5c4069234f68372e80e4edfcce260e81fd9da007
+> > > change-id: 20240523-md-vfio-mdev-381f74bf87f1
+> > >  
+> > 
+> > I don't see this in linux-next yet so following up to see if anything
+> > else is needed to get this merged.
+> > 
+> > I hope to have these warnings fixed tree-wide in 6.11.
+> > 
+> > /jeff  
+
