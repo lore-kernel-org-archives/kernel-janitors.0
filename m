@@ -1,78 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1048440C;
-	Fri, 12 Jul 2024 15:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F84B173320;
+	Fri, 12 Jul 2024 15:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720797529; cv=none; b=glsl/UDK5qhYGnuwyJ5pi379jupmfa+3tohgiJ6QPTFdVGvBDsAHJcA04u4lmvIXxAx7Z7u9u2MEF62D+7D933bKLEj1zRrBMXkg5GznwfhQOdA4W7pL4FQJQA5cg4gRDzvMl1At7dWMK42x1hblBmsSL9QA+YdRm3TUkVZfkTE=
+	t=1720798958; cv=none; b=o/QnycHz2xkpQDEJn5Bv0XGiajejTCK2UxVYPsMQJvWxmKxD2p45gPK3AqqC9WGkwDKjydVywc7rlcHiG+3tSzsw+PuNcPnU0VPdERVP7ZwCOlmvejY9SMrTLMRDckkvVxyZYQ484bCnM5khdCPw/7t8CKrP2hPfSeW1LVDUYVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720797529; c=relaxed/simple;
-	bh=M/p6+O1hBUvWmBfOokNka/pO7EbQq2s+zuwR9vSFEv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e/8rXiGtExp1VjTT1b+7LLWScmuNgQpCTrDRgJiKB1FIqHYkU/rVocgTH/8wmb/cJiKoquVHLGydvuurWWHkueKEOqSrXvc1NxGTOW6YR03iLNq4zObeVj2q/NMKZFSTrOkHLb7HyMqiYQbw/vO/eTjjGHeIrVNtdBACMQy0FzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ctgqHdtA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720798958; c=relaxed/simple;
+	bh=sCwtaGelw5QnbOoK2nqEirjtxWGCgtQcAhVSm5WLvkg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=FM/4p1JR5C3hMA01PQKM4XpYm7PSKeHPtqD+9nWiaseIfHxxpGvMK0a7LFPd6ZlGh+l8qxjMD6L6Z69tw1lv9btC7Xom7Yos9vHhlImpOCL75QUjm7NWfrionxEGCytTJRUy4O1bGL45zXRUJK3OGITmTYNlQfZ3RPAeXaTR/84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iAdKmpEc; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ctgqHdtA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60003C32782;
-	Fri, 12 Jul 2024 15:18:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720797529;
-	bh=M/p6+O1hBUvWmBfOokNka/pO7EbQq2s+zuwR9vSFEv0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ctgqHdtACHhfnQSeLWPfph3tHQNwG0p1SOYjCosiMn38IoB1ZxDFFaL/iBlU8k0ga
-	 aZeLshB03MKios0YWjg0AdphwLnzlDDiqux2+gx+EvaP7cKXQsCw7GPtOfwL96VQUy
-	 GcEZW/uPILOAp+DmOVGv07jNWjz7ckr1KKjmQwzoDFSZtx7xoFlbKh1clt1fMFzM+n
-	 ogbGDOa05svsEQl+T7f6TnczeITR2bfvZXVczlIvNUZifRMNTpwotkG4UweaSCF55S
-	 oE3DBboBU5VP8PRM9r2iFE7h0pREQAL9XNPL7/uis2SpPvq2mhierKP5embuLhsTyx
-	 nP7rm+8sFXLZA==
-Date: Fri, 12 Jul 2024 08:18:48 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Chandan Babu R <chandan.babu@oracle.com>, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xfs: remove unnecessary check
-Message-ID: <20240712151848.GS612460@frogsfrogsfrogs>
-References: <a6c945f8-b07c-4474-a603-ff360b8fb0f4@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iAdKmpEc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720798935; x=1721403735; i=markus.elfring@web.de;
+	bh=sCwtaGelw5QnbOoK2nqEirjtxWGCgtQcAhVSm5WLvkg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=iAdKmpEcsBzHHweil1K6FoKWsge0JHR5RIlsP6POhLuMUkozFWvVm99PiahtO4Bz
+	 1jCsj7GNYiG+wXaH+cqYQvdlMQ4cYYdIHKNiyUNvr4QTa4vLUrKllMfY4b1GVMfZf
+	 baok31vkd/rJXLQta0mGYudx08WSwBShE4s2a6aHF6oifa0HXpTWbj6KbAM10A2GB
+	 UQ5W8GyVWLdHhv9JtdC2AUKCSHpCx+MvXf69zaYUAesxUTqoMk5EnrGvKFmjXhBlE
+	 7l+kxiJxwsegFjddTonmgELItYjw4cLeTReSs5MdZPdVBNFgvHB4emjxWg6rK5uw4
+	 HkAx5i2vsynsBAxmlQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N4vNQ-1sKh7r0nwK-00zto7; Fri, 12
+ Jul 2024 17:42:15 +0200
+Message-ID: <19bb8ed0-e783-49aa-a4cd-6a0c3b89f0a8@web.de>
+Date: Fri, 12 Jul 2024 17:42:12 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a6c945f8-b07c-4474-a603-ff360b8fb0f4@stanley.mountain>
+User-Agent: Mozilla Thunderbird
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ kernel-janitors@vger.kernel.org, Armin Wolf <W_Armin@gmx.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+References: <b5c51026-a2de-434b-8f45-44a641ab1c82@stanley.mountain>
+Subject: Re: [PATCH] eeprom: ee1004: Unlock on error path in probe()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <b5c51026-a2de-434b-8f45-44a641ab1c82@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:cKQLHTMHFOnn2opdW3wDhxufV77k1h426VF/dXXnCRFYb/yBv4g
+ dA0FyUwvl7kahh1Rupwvd4iNpmV7N7MRboVDgx40Q2UwTbGk45gHHoIXzO+Tj12K2iFeyIP
+ UpD6jr4MuCtEUBOfHGQO8thWmzp9b/u9nDl38D6Yn5/R6oh5dE5fx3Tkxvc2UVw5bdhrOj7
+ BTyHBbZWk2zifxB6kc3wQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ChkuGOv3/mc=;55XdRv9PPjPcDrJvl9y6/jhvIh3
+ cI11oAJz9ohm796zutBTqif7XhksaPufk5njSo/V7A6UpcJFtOI9xqYMdzpnki/wGwW3erH7u
+ 6E7Xpd1Uk/nwa0Kip28HUo8QVlatYPphmukxk/u9YSiBdJ6CiD6QTn1eCpeHjZmAXEVB6Cxhw
+ zgvuCmMO4N/lJmshp41QjqdNjad3kGOo5kIT3yixKK2CFXwK3WK3Mpnpw2OCzUkEWYhAxP81/
+ dQ+8jAKej+LLj1NVPjs9l5Y50H4J18oFtqMbqOrTaki6r0YZW+yeYe92yYYkFWhOsg+nlS176
+ IumH3K0cUeyI8U3kCgcdV893hHgv46RL+E7HqGE14mB8HmATGzVOZ46CcEjw6YgNxjRb/PCUy
+ RJtI+lCgfIcT5AVABmhLvTTBxCUqfLiB7XR+JqvmHdToH3hWz30fBid4QobvXvCx4T8AgYKa+
+ rT8PjL4VB3eBTz6mWH5E5ukBEyNU4i5Y9sO/y2klBY4h56707QQju6q2d/oNHPxII5KRm3vZR
+ 2mU3jFuuqCV9jZE6sLMeUG6ZJi4MoOWesYO+sKxA2hXv5UzqbUADEvTjXomiA/Ru5PoqMSTNn
+ anFCft75N5iJ367hsh+LjI2McApSJiqcbPoz5xHWtUlK4zbiI+CglCvK82ZvsgchN/SREx4Tc
+ DRgNd26pZWHZfsvRnJ2EHWBFUbFoQA9L0lkyVDRjf6zutHUhftUSGhZqFsPBDF/Q278Y1oa0e
+ 4HuPz4T+I+1EckcpGe5nSV7rLSog2KhYXAv0BfXE9LiOayY7iJpCKQA6imfU4WVJRS8EACWDb
+ x1c/JKVjKDoWsF7xVcDixzSg==
 
-On Fri, Jul 12, 2024 at 09:07:36AM -0500, Dan Carpenter wrote:
-> We checked that "pip" is non-NULL at the start of the if else statement
-> so there is no need to check again here.  Delete the check.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Call mutex_unlock() before returning an error in ee1004_probe()
 
-Yep.
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Under which circumstances would you become interested to apply a statement
+like =E2=80=9Cguard(mutex)(&ee1004_bus_lock);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.10-rc7/source/include/linux/mutex.h#L1=
+96
 
---D
 
-> ---
->  fs/xfs/libxfs/xfs_inode_util.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_inode_util.c b/fs/xfs/libxfs/xfs_inode_util.c
-> index 032333289113..cc38e1c3c3e1 100644
-> --- a/fs/xfs/libxfs/xfs_inode_util.c
-> +++ b/fs/xfs/libxfs/xfs_inode_util.c
-> @@ -308,7 +308,7 @@ xfs_inode_init(
->  		    !vfsgid_in_group_p(i_gid_into_vfsgid(args->idmap, inode)))
->  			inode->i_mode &= ~S_ISGID;
->  
-> -		ip->i_projid = pip ? xfs_get_initial_prid(pip) : 0;
-> +		ip->i_projid = xfs_get_initial_prid(pip);
->  	}
->  
->  	ip->i_disk_size = 0;
-> -- 
-> 2.43.0
-> 
-> 
+Would you like to refer to the function name =E2=80=9Cee1004_probe=E2=80=
+=9D in the summary phrase?
+
+Regards,
+Markus
