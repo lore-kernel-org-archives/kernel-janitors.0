@@ -1,66 +1,68 @@
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681A617084C
-	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 14:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA141171081
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 14:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720793155; cv=none; b=N8HR61wgOi9KA0fwJPPm8GlrvCUtYjGpzRNB37NevQhjlyNpiIqsy+0JR+N5ZCZd7DVI7BXr2dNUdswMzIqJydbhQLqSwtdm9MjdeMJjL4Uf3O4QC22CX+nrNfvWTj2URgovueboCIgx2q5pz7DlQgnyV/IMquDFn8pzP8xlInE=
+	t=1720793177; cv=none; b=eA3QnKTh42eiGwpfy4N1YZMh1IE4OUazLOgJOXp+mr3n04FDvOkQQBIJfmWEhNK7+8FSuUpQ2F5HbLiGoziywATipVWh69QWo4vBC8oipiaSmHLAeCKUmbvxkwQEd7bcja+zxJw5e1xMTKngKLnm8Ngo2qPwuOJIs1W+m4oJIDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720793155; c=relaxed/simple;
-	bh=LngRdNiu2YEjbbuZsYN9VKeMbFVX5bvzSoOqXzErxvI=;
+	s=arc-20240116; t=1720793177; c=relaxed/simple;
+	bh=N06X/eoY1Uebyo+0qwaEwr0aawks/J5+fGM4g2wyaBE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=sFvzS5jbuQI+u6iClvybavkXcXx5ZEpNhoZpO5EEVVoBt81BvcrfUi/5JRbzzT+0ymHb6hq8htWUwfa5M3kdxa6ZQJJjrNVZIV+mLEzc+x8vq5tg7HEdYIOY5EdRl0ZjuqWVqksm3va161ygPpiRZSiEzhPU1/Knw4yKkbiXms4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nso1M+2Y; arc=none smtp.client-ip=209.85.210.53
+	 Content-Disposition; b=ZUDpBfarOUGKUh49Bmudp/yQzB2Io6255VbGb3eiJq+dytVL7gXowK7W/r2S04/4QJNaSbPoF2TcXZEZy/3J+MAH8hve7+zaiRRBVnszrIa0dN0w/NCo+B9r7g3k43/ITHMVnlbj1O3uRhK+zPmP2HsDVL5nPrw7IeReaOqid9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fX6gkVcy; arc=none smtp.client-ip=209.85.167.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nso1M+2Y"
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-70445bb3811so1079122a34.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 07:05:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fX6gkVcy"
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d932f991f6so1175418b6e.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 07:06:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720793153; x=1721397953; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720793175; x=1721397975; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=EOXtwv/Ldbm32946n4+7+2Znba7a0UrRT/2hMaZfivM=;
-        b=Nso1M+2Y/p9pxsEGT8QQ64hCisfAh8Qnbsuaoccqs2FCh7ONggvXe98SspRn7fUc9M
-         8iit3E8pp9R5wYscPwIMPdg6HCZby4GeWLtgO0fEr62kwK53RnjnEFS6xj8vuyE9pUw/
-         pJvyNRC+xrVBMX4Yc66SAd0RDKa3DIEj++1iC6ee39qdt6UtWm4s7lsb/Ek8oxkyE5iv
-         PBIeKOjbyGjOK6rGhvwKd2ACsJTpXYheytO5dGdnw0HB7oGLc1m+oqmn8481vHSe11g4
-         ZnB40Ujj2oG7DIRkzD0NFhL4GuA6fT2HL0KXyEMzZ8NdOWiertKr39ccU/DIbwI+6jQ8
-         uSeA==
+        bh=pvGeMLuAwhrzJn9gtgYIG8cYNqHlo6tU2+mQF6lF0yw=;
+        b=fX6gkVcy3weHYb/O12GBCdcCiTIK0PYJtIdJkZhBAYC/R++x0G60O7wOT+y2JuMLki
+         yallOF0lLvKmPVJqFKpwEUvj4JDtkJeDxY4JRtwRlzWYS5/rfhI8RBCgUTqFhpy3cDKS
+         jcRuxvHqqdJMATer/o4ddoar48dq8PFQNwfMI9i6+GRKT3tXBTCLb44o1JVGtAa8K3fg
+         gFnkwoyv93tiUzcFBwXGXMeamr1Gz6c16gVOXQIri/1Bhh2KMZUXPCLkPQDMP6FLpmpY
+         JC7qtFh1PJiwsfJPIP3qcVj//G7cwP8xPu/dtMXlQLnS1EPhxb4obxMFSA9WO25CioIS
+         RZYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720793153; x=1721397953;
+        d=1e100.net; s=20230601; t=1720793175; x=1721397975;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EOXtwv/Ldbm32946n4+7+2Znba7a0UrRT/2hMaZfivM=;
-        b=lb/sftCK9twICxLVWfYTaK8dJXMJQCn616zsy8JBAtQTCu+6yX0lgNFqEDJir3FgcK
-         ZesdyrgBaJVtKYWd2KHc2FQgbVfz1rKkPxRXOEGoagSD+nW3yRI+lRRCucPElynMrNar
-         tMUfm34NrQxNLUVeesNHuHJeBcFvv+ZlHJXNMOgvaihbpHYVAiiYrrt52P5mSfq4BShp
-         yhCdeKhEy11wb9uRuhMQ/2Dqa9t45mYJ3NtZV4e1rqgUGgARWLDntFJHATyMEIycTtbv
-         Hr6Fb5zTxapLV8Z9JReVAGZsucOJ50fKYPtcwKua75asoVysDZvSHq/Mae859rH5KYmu
-         U6sw==
-X-Forwarded-Encrypted: i=1; AJvYcCWn98HCQ6xxFkkvSS5Ib00tvgBPBDXERcFIKf5ZPDUZjXiJy96EgK0BQkAe00oksOxJIbiY4LLurK6w2GDwNQPyWGLQKo2641n+uI6pkEpf
-X-Gm-Message-State: AOJu0Yzg/jY0t4+Ef6e6UbtC210P2O4drmQ4IeIzZnjLrqo/SCBh38fZ
-	dv0+piF7NawESwgP4x/jGQIgsyjEMyeeUMEH5uTMA3LI8I0aAy7uU6AjrSq6PF8=
-X-Google-Smtp-Source: AGHT+IGb9Kef190iCPaOpWx5MShkZU/cz6tUILd4tavbxOpBAvfY5CSmNUca5k0xQNYE01N1vFJMog==
-X-Received: by 2002:a9d:7ad4:0:b0:704:480c:963f with SMTP id 46e09a7af769-704480c9a3cmr9573417a34.35.1720793153396;
-        Fri, 12 Jul 2024 07:05:53 -0700 (PDT)
+        bh=pvGeMLuAwhrzJn9gtgYIG8cYNqHlo6tU2+mQF6lF0yw=;
+        b=gcV+D2vOvPsEVQnRfx9w0JOnlH6gmiCFbSQhjY1w+yE/svfDXc2IzFK4u7AYB1dmea
+         HgfUTAfja1rWvq7Cq7dWJbbx4v4EFKjs7UCDHaLhT5p7xd1oCwd7ilGltRZgUCvtKZuR
+         is0FKgskwWs1FXWMot8LHE6sbAzqKr7tC0pJAmaGAnLs+pwkImCu82tS3hQDrS1iHts3
+         aqhb6+LwKkdjBqpIOPgIyCB/vibDipFguIUbWcj0SaBEm9C1urhyGhUCN1s51AYBUioA
+         W3z5QtYY0MF4D254gglYX+284hZBNAvJTDAPzl8DhG3u6nYXFwTDpnu6ZTuvcxgEHOXk
+         YPaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUE0pI87Sy9T3rlkXBcu1qNYNw7PHRxf6wx5d4gD3KW1uC3g0NQ1TQbxAbE+A1iM2TI2CR3LQyDVJrenh2CqueXpe6MKG+Nv2qPo7OCbyNR
+X-Gm-Message-State: AOJu0Yy27HfsBd+0YwKEs+/XsymX5cvQIw1RtnYJyxF6x8ROgLYSousP
+	axoXwrPkjUSBENmaVqRdtBhIhidm8NWg9t/8+XUrkFaCrkVrEQNF090qvfSE4OQ=
+X-Google-Smtp-Source: AGHT+IHtlDnTv4HuxsnriRgYqH4/N/EK8AvwLk/fKhC8ywuVcO8avOC/Y0CnrzNEReTN5UcGHI/41w==
+X-Received: by 2002:a05:6870:a353:b0:25e:2923:a373 with SMTP id 586e51a60fabf-25eae7a3377mr9210983fac.15.1720793174935;
+        Fri, 12 Jul 2024 07:06:14 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:d26:9826:56eb:a2e5])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c7b606db30sm715711eaf.8.2024.07.12.07.05.52
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25eaa5afa68sm2180190fac.28.2024.07.12.07.06.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 07:05:53 -0700 (PDT)
-Date: Fri, 12 Jul 2024 09:05:50 -0500
+        Fri, 12 Jul 2024 07:06:14 -0700 (PDT)
+Date: Fri, 12 Jul 2024 09:06:12 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	RD Babiera <rdbabiera@google.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] usb: typec: tcpci: Fix error code in
- tcpci_check_std_output_cap()
-Message-ID: <b0880888-6719-4614-91fc-8ee63b71d304@stanley.mountain>
+To: Srujana Challa <schalla@marvell.com>
+Cc: vattunuru@marvell.com, "Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Shijith Thotton <sthotton@marvell.com>,
+	Nithin Dabilpuram <ndabilpuram@marvell.com>,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] vdpa/octeon_ep: Fix error code in octep_process_mbox()
+Message-ID: <623e885b-1a05-479e-ab97-01bcf10bf5b8@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,29 +73,33 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The tcpci_check_std_output_cap() function is supposed to return negative
-error codes but it's declared as type bool so the error handling doesn't
-work.  Declare it as an int instead.
+Return -EINVAL for invalid signatures.  Don't return success.
 
-Fixes: 62ce9ef14797 ("usb: typec: tcpci: add support to set connector orientation")
+Fixes: 8b6c724cdab8 ("virtio: vdpa: vDPA driver for Marvell OCTEON DPU devices")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/usb/typec/tcpm/tcpci.c | 2 +-
+Nag mode: When we add a new driver, then could we use the patch prefix for the
+driver not for the subsystem only.
+
+ BAD: net: add driver for abc123
+GOOD: net/abc123: add driver for abc123
+
+ drivers/vdpa/octeon_ep/octep_vdpa_hw.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
-index 8a18d561b063..b5e49af48f43 100644
---- a/drivers/usb/typec/tcpm/tcpci.c
-+++ b/drivers/usb/typec/tcpm/tcpci.c
-@@ -67,7 +67,7 @@ static int tcpci_write16(struct tcpci *tcpci, unsigned int reg, u16 val)
- 	return regmap_raw_write(tcpci->regmap, reg, &val, sizeof(u16));
- }
+diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_hw.c b/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
+index 7fa0491bb201..11bd76ae18cf 100644
+--- a/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
++++ b/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
+@@ -140,7 +140,7 @@ static int octep_process_mbox(struct octep_hw *oct_hw, u16 id, u16 qid, void *bu
+ 	val = octep_read_sig(mbox);
+ 	if ((val & 0xFFFF) != MBOX_RSP_SIG) {
+ 		dev_warn(&pdev->dev, "Invalid Signature from mbox : %d response\n", id);
+-		return ret;
++		return -EINVAL;
+ 	}
  
--static bool tcpci_check_std_output_cap(struct regmap *regmap, u8 mask)
-+static int tcpci_check_std_output_cap(struct regmap *regmap, u8 mask)
- {
- 	unsigned int reg;
- 	int ret;
+ 	val = octep_read_sts(mbox);
 -- 
 2.43.0
 
