@@ -1,68 +1,62 @@
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA141171081
-	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 14:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E427C17164B
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 14:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720793177; cv=none; b=eA3QnKTh42eiGwpfy4N1YZMh1IE4OUazLOgJOXp+mr3n04FDvOkQQBIJfmWEhNK7+8FSuUpQ2F5HbLiGoziywATipVWh69QWo4vBC8oipiaSmHLAeCKUmbvxkwQEd7bcja+zxJw5e1xMTKngKLnm8Ngo2qPwuOJIs1W+m4oJIDU=
+	t=1720793262; cv=none; b=PT4nplZ85sRicneRk3bn4GCq2VKtFIPH8wMIzK+6m67I8cSst++P5u4fUtz9hNwKVy67Zhzo2ZOqrw9PboGhNln1aIq1m+xWezApr8mN+/ToSQFqWp4kzFv8ioFPs8ojvvPFTiDXUVtn25nx0qVa/ZaFV9o/Kw6VQ/4Y2cn0cNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720793177; c=relaxed/simple;
-	bh=N06X/eoY1Uebyo+0qwaEwr0aawks/J5+fGM4g2wyaBE=;
+	s=arc-20240116; t=1720793262; c=relaxed/simple;
+	bh=SfyLdJmWIl09BqrLT3s5UZpOh+WQ4L3Y+LeTeNjzYvc=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZUDpBfarOUGKUh49Bmudp/yQzB2Io6255VbGb3eiJq+dytVL7gXowK7W/r2S04/4QJNaSbPoF2TcXZEZy/3J+MAH8hve7+zaiRRBVnszrIa0dN0w/NCo+B9r7g3k43/ITHMVnlbj1O3uRhK+zPmP2HsDVL5nPrw7IeReaOqid9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fX6gkVcy; arc=none smtp.client-ip=209.85.167.175
+	 Content-Disposition; b=oj0bD3IS7GcUDnzzpMf63KdABVSWosTN/fhrh8SdcMCmqjvPow6S78FflhYJ/sbkPXIvcNuqxKFzpFukcK2So7myN7o2cC3hAhEJA7bbEUuVHJ3A11wrfWmHLcUxxQSB/1PzkSCm0FwzlonKE9+X/Sd06uj3w6GA17Zwx4QnFQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XCt1Cpaw; arc=none smtp.client-ip=209.85.160.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fX6gkVcy"
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d932f991f6so1175418b6e.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 07:06:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XCt1Cpaw"
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-25e171122fcso921962fac.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 07:07:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720793175; x=1721397975; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720793260; x=1721398060; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=pvGeMLuAwhrzJn9gtgYIG8cYNqHlo6tU2+mQF6lF0yw=;
-        b=fX6gkVcy3weHYb/O12GBCdcCiTIK0PYJtIdJkZhBAYC/R++x0G60O7wOT+y2JuMLki
-         yallOF0lLvKmPVJqFKpwEUvj4JDtkJeDxY4JRtwRlzWYS5/rfhI8RBCgUTqFhpy3cDKS
-         jcRuxvHqqdJMATer/o4ddoar48dq8PFQNwfMI9i6+GRKT3tXBTCLb44o1JVGtAa8K3fg
-         gFnkwoyv93tiUzcFBwXGXMeamr1Gz6c16gVOXQIri/1Bhh2KMZUXPCLkPQDMP6FLpmpY
-         JC7qtFh1PJiwsfJPIP3qcVj//G7cwP8xPu/dtMXlQLnS1EPhxb4obxMFSA9WO25CioIS
-         RZYQ==
+        bh=/kDrIianMg+3X2yJ60OXLpyMU7e0jBqRLYg/AtDIiSk=;
+        b=XCt1CpawhEs2zmeR7RI6jlzeBzM0wFj8MfIsgtasolujsMu37/pkZtssjkgqBvSbhd
+         atg9w7PgzfXgqtmwQt8lA+eYUYUtEFfGrF9MCkhqU4tYNnOrqRdiK77zKJlM+HJaqNWE
+         pkbKBfD7ttSLuyJsCiqxPZDz+hjV9lb68ZRuoFzDjg2Wr6FgV1bQknK6McqE/hIdZ6VW
+         ZiIRRz+coMUDboxPKQEgazHInB6WtjIgJW4P42swT8n8yKqYldSHV3ZFI8Em/vo6GORK
+         Rn7pfkldkdXlhroV5XIpv/26OG8fz/2rIf3ML9z8LBynXEseeOISHGESWGJs/0l9pq4j
+         JwcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720793175; x=1721397975;
+        d=1e100.net; s=20230601; t=1720793260; x=1721398060;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pvGeMLuAwhrzJn9gtgYIG8cYNqHlo6tU2+mQF6lF0yw=;
-        b=gcV+D2vOvPsEVQnRfx9w0JOnlH6gmiCFbSQhjY1w+yE/svfDXc2IzFK4u7AYB1dmea
-         HgfUTAfja1rWvq7Cq7dWJbbx4v4EFKjs7UCDHaLhT5p7xd1oCwd7ilGltRZgUCvtKZuR
-         is0FKgskwWs1FXWMot8LHE6sbAzqKr7tC0pJAmaGAnLs+pwkImCu82tS3hQDrS1iHts3
-         aqhb6+LwKkdjBqpIOPgIyCB/vibDipFguIUbWcj0SaBEm9C1urhyGhUCN1s51AYBUioA
-         W3z5QtYY0MF4D254gglYX+284hZBNAvJTDAPzl8DhG3u6nYXFwTDpnu6ZTuvcxgEHOXk
-         YPaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUE0pI87Sy9T3rlkXBcu1qNYNw7PHRxf6wx5d4gD3KW1uC3g0NQ1TQbxAbE+A1iM2TI2CR3LQyDVJrenh2CqueXpe6MKG+Nv2qPo7OCbyNR
-X-Gm-Message-State: AOJu0Yy27HfsBd+0YwKEs+/XsymX5cvQIw1RtnYJyxF6x8ROgLYSousP
-	axoXwrPkjUSBENmaVqRdtBhIhidm8NWg9t/8+XUrkFaCrkVrEQNF090qvfSE4OQ=
-X-Google-Smtp-Source: AGHT+IHtlDnTv4HuxsnriRgYqH4/N/EK8AvwLk/fKhC8ywuVcO8avOC/Y0CnrzNEReTN5UcGHI/41w==
-X-Received: by 2002:a05:6870:a353:b0:25e:2923:a373 with SMTP id 586e51a60fabf-25eae7a3377mr9210983fac.15.1720793174935;
-        Fri, 12 Jul 2024 07:06:14 -0700 (PDT)
+        bh=/kDrIianMg+3X2yJ60OXLpyMU7e0jBqRLYg/AtDIiSk=;
+        b=pj0jx+IJVltCwtdMQ0SF5r2inNT3eb8AJ6GS33/JWPRH4OfOvd/zVCy8mmC6qtLh/S
+         UcudgG6uLy4clP085v4xCPpZH6MOjfaz1xPuP1unmEzOGseyNAv52t+JrD8oILLH7FoR
+         h+SeMdvKYF6JHIebn1rr4oMX5g/1FABNxheVhwQaIQh7yQe8RgPieYxcuDwc61Ri7dMb
+         M6sLCxP5q3jCdmX37dG3ButxPtiotfnh8UasHslwhS2xYgsUWRZ8+usgJ6epyxTqjErw
+         svHW7JCaV84JFslNbO++f7HVRj4gThd4ggqKJZKtAuYoEAJeVaaDlGP5OaW2wHVh7XLf
+         Plzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDVb9xZIcHPsQqxf1rZ8sp7tkSmbj5mr7kI2lio999Z3aeVZDAFzEkzxi+fp4Ud/9/1o4YrCsmovM0oCyOeG+A4/6mqzmEIn0A4TxWMIje
+X-Gm-Message-State: AOJu0Yy8CZobRKkiUCQmJvTlLAzdXAOdBmAaw1XKW/bzoOdWF0lk98bg
+	nuL+4VIEh4re01npxmFOeXbWca5myv9HOeH3JffC0MVVfxKo46zH+MeTCSHuQBY=
+X-Google-Smtp-Source: AGHT+IH0XTKXSXVxdXKq83umC1HPIu3utFplrKBotLtfEPjZGT5ZNt/dC043fyKGyZP2rTqqiVF5+A==
+X-Received: by 2002:a05:6870:f10e:b0:260:246e:99aa with SMTP id 586e51a60fabf-26052cd32aamr1168947fac.11.1720793259963;
+        Fri, 12 Jul 2024 07:07:39 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:d26:9826:56eb:a2e5])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25eaa5afa68sm2180190fac.28.2024.07.12.07.06.14
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25eaa2a148esm2242391fac.54.2024.07.12.07.07.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 07:06:14 -0700 (PDT)
-Date: Fri, 12 Jul 2024 09:06:12 -0500
+        Fri, 12 Jul 2024 07:07:39 -0700 (PDT)
+Date: Fri, 12 Jul 2024 09:07:36 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Srujana Challa <schalla@marvell.com>
-Cc: vattunuru@marvell.com, "Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Shijith Thotton <sthotton@marvell.com>,
-	Nithin Dabilpuram <ndabilpuram@marvell.com>,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] vdpa/octeon_ep: Fix error code in octep_process_mbox()
-Message-ID: <623e885b-1a05-479e-ab97-01bcf10bf5b8@stanley.mountain>
+To: Chandan Babu R <chandan.babu@oracle.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] xfs: remove unnecessary check
+Message-ID: <a6c945f8-b07c-4474-a603-ff360b8fb0f4@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,33 +67,27 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Return -EINVAL for invalid signatures.  Don't return success.
+We checked that "pip" is non-NULL at the start of the if else statement
+so there is no need to check again here.  Delete the check.
 
-Fixes: 8b6c724cdab8 ("virtio: vdpa: vDPA driver for Marvell OCTEON DPU devices")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-Nag mode: When we add a new driver, then could we use the patch prefix for the
-driver not for the subsystem only.
-
- BAD: net: add driver for abc123
-GOOD: net/abc123: add driver for abc123
-
- drivers/vdpa/octeon_ep/octep_vdpa_hw.c | 2 +-
+ fs/xfs/libxfs/xfs_inode_util.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_hw.c b/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
-index 7fa0491bb201..11bd76ae18cf 100644
---- a/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
-+++ b/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
-@@ -140,7 +140,7 @@ static int octep_process_mbox(struct octep_hw *oct_hw, u16 id, u16 qid, void *bu
- 	val = octep_read_sig(mbox);
- 	if ((val & 0xFFFF) != MBOX_RSP_SIG) {
- 		dev_warn(&pdev->dev, "Invalid Signature from mbox : %d response\n", id);
--		return ret;
-+		return -EINVAL;
+diff --git a/fs/xfs/libxfs/xfs_inode_util.c b/fs/xfs/libxfs/xfs_inode_util.c
+index 032333289113..cc38e1c3c3e1 100644
+--- a/fs/xfs/libxfs/xfs_inode_util.c
++++ b/fs/xfs/libxfs/xfs_inode_util.c
+@@ -308,7 +308,7 @@ xfs_inode_init(
+ 		    !vfsgid_in_group_p(i_gid_into_vfsgid(args->idmap, inode)))
+ 			inode->i_mode &= ~S_ISGID;
+ 
+-		ip->i_projid = pip ? xfs_get_initial_prid(pip) : 0;
++		ip->i_projid = xfs_get_initial_prid(pip);
  	}
  
- 	val = octep_read_sts(mbox);
+ 	ip->i_disk_size = 0;
 -- 
 2.43.0
 
