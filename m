@@ -1,62 +1,66 @@
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD8316F85A
-	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 14:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681A617084C
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 14:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720793144; cv=none; b=nioBNOSUD9WEhF9V99XugOnlCMadtUaDP1sOdT2is0KCdhK1IVdlQkWBs6Pi6M5vq0BPMB2u4KF3BNA0BF/HL9UMeuotP2v8u3U/+Bn84z2kmx9gkfgyi4JJaeFSHh9loxW3c6UDVMvVyyPukkJgIUMdf2PxeIOFr5BYO3G63PQ=
+	t=1720793155; cv=none; b=N8HR61wgOi9KA0fwJPPm8GlrvCUtYjGpzRNB37NevQhjlyNpiIqsy+0JR+N5ZCZd7DVI7BXr2dNUdswMzIqJydbhQLqSwtdm9MjdeMJjL4Uf3O4QC22CX+nrNfvWTj2URgovueboCIgx2q5pz7DlQgnyV/IMquDFn8pzP8xlInE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720793144; c=relaxed/simple;
-	bh=s07sW+WzTiA93Z5y93aIN6vcb2Pd9mJhEo7g0I1uSsg=;
+	s=arc-20240116; t=1720793155; c=relaxed/simple;
+	bh=LngRdNiu2YEjbbuZsYN9VKeMbFVX5bvzSoOqXzErxvI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kdbLSjlUveG8e61Yv5a9zdgjMQEd1GRdTkdQj4UEDxbk0JULUCx8CUteysSRjD39ibejfo55SdismCgK0EWfq4LDbAwlr12WgfdpAFt1NWNDp2a4KXePNxylHuSz7mcdI0NIdVd0RYVHy5h0+kEP7sqLD3XMayT7Eaw1vCJ4Q70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZOW/a0rV; arc=none smtp.client-ip=209.85.167.177
+	 Content-Disposition; b=sFvzS5jbuQI+u6iClvybavkXcXx5ZEpNhoZpO5EEVVoBt81BvcrfUi/5JRbzzT+0ymHb6hq8htWUwfa5M3kdxa6ZQJJjrNVZIV+mLEzc+x8vq5tg7HEdYIOY5EdRl0ZjuqWVqksm3va161ygPpiRZSiEzhPU1/Knw4yKkbiXms4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nso1M+2Y; arc=none smtp.client-ip=209.85.210.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZOW/a0rV"
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3d9dd7e5f6eso1075482b6e.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 07:05:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nso1M+2Y"
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-70445bb3811so1079122a34.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 07:05:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720793142; x=1721397942; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720793153; x=1721397953; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=z6sW8CRsL35ZnaN7Vz3PXYaGIWLNI/xKoebh6l2Ns/Y=;
-        b=ZOW/a0rVDxIcxMPg8nZP/cOz3YpCp0dQ+YEpZdlLDHoN5Pss2fpqWCBexDyac1BoJT
-         OJe+0Pcc4g2Zw1j5grX35Jy0CTc3OMbfvQO2bWlqc9Ar3igl7eBDbHIGyJ2SsZTmP6+I
-         WScyMhjtvvYS1VOmcJkm4m3K2doG0bV41PDaodCaoW3booM8qnvoDlUzUyrJuXOsIX1B
-         pWzIrnx31045QLCZFSHtGuHMFDhALXUiLJ9eOiOfZId5xOw0p8yUXV4Odt1Z9SbW4d8F
-         Cdf6jrMd1t8tJktsIm+63aUTm1r/btsKjIoYO+wXw/iJ3HYmCrGXUaD9fdqCMbQyiMCv
-         uFCw==
+        bh=EOXtwv/Ldbm32946n4+7+2Znba7a0UrRT/2hMaZfivM=;
+        b=Nso1M+2Y/p9pxsEGT8QQ64hCisfAh8Qnbsuaoccqs2FCh7ONggvXe98SspRn7fUc9M
+         8iit3E8pp9R5wYscPwIMPdg6HCZby4GeWLtgO0fEr62kwK53RnjnEFS6xj8vuyE9pUw/
+         pJvyNRC+xrVBMX4Yc66SAd0RDKa3DIEj++1iC6ee39qdt6UtWm4s7lsb/Ek8oxkyE5iv
+         PBIeKOjbyGjOK6rGhvwKd2ACsJTpXYheytO5dGdnw0HB7oGLc1m+oqmn8481vHSe11g4
+         ZnB40Ujj2oG7DIRkzD0NFhL4GuA6fT2HL0KXyEMzZ8NdOWiertKr39ccU/DIbwI+6jQ8
+         uSeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720793142; x=1721397942;
+        d=1e100.net; s=20230601; t=1720793153; x=1721397953;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z6sW8CRsL35ZnaN7Vz3PXYaGIWLNI/xKoebh6l2Ns/Y=;
-        b=UubsvFSRHGmZmBQOnnBZ5tcM5nQ2ysxKnp5AXSD1BhmGwXU4enkSpUMYEDOz1/7khB
-         Yqb5qgTEMOPmLGEv/kVGzjBkn5GPAUqRssX3IGSw5KMY4Uh96nBBV4Mkxdt849F74QkX
-         NJSV2i5jbsmU2Xp574G/bYRmBbZYIlC5yJS8/tokYchZCf5eAERadUchIE+z9yR7OoNs
-         fM3lxA2MfqyECiMoTvTi/C1M//srCYl7HF5jVFbWNYy2R2IX2ygRPrJ+0nA1myjmL6y3
-         1A9CCQCTViLHBdRs+lS3F7PLNnou5wCrroQp3ORp6vbOdT8Grwq9UmAYMcZIWekdKTqh
-         5TVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXF8hC3fjHS3CZpVbdSd9FG/rvlH6pOgSeA9Gbj5zoHbTAyOR9MFRTDumEBdTuT0e+pVdpJt3XtmDZnjy3kFNH50jX88wv17QQHkVb7RU0j
-X-Gm-Message-State: AOJu0Yy0qpwn5iVE4I5P5bAlO7rnzYHzVBWmAksaNBj4DfDNOhkfp6s4
-	ZDc6vI2Xrbv4sr4EJGBL61G+Q1kv2aa8gjsFgrF08/JcGRyjDbR+0ET1Y3Y+XQ4=
-X-Google-Smtp-Source: AGHT+IEysI9SGkIePZZKaS96R96m8ogDps9CeyaZpTkA7h39rNGBYZkG5ZiHjmniJk+GgmCSrDzh3A==
-X-Received: by 2002:a05:6808:15a2:b0:3da:a793:f10e with SMTP id 5614622812f47-3daa793fe0amr4676841b6e.18.1720793142528;
-        Fri, 12 Jul 2024 07:05:42 -0700 (PDT)
+        bh=EOXtwv/Ldbm32946n4+7+2Znba7a0UrRT/2hMaZfivM=;
+        b=lb/sftCK9twICxLVWfYTaK8dJXMJQCn616zsy8JBAtQTCu+6yX0lgNFqEDJir3FgcK
+         ZesdyrgBaJVtKYWd2KHc2FQgbVfz1rKkPxRXOEGoagSD+nW3yRI+lRRCucPElynMrNar
+         tMUfm34NrQxNLUVeesNHuHJeBcFvv+ZlHJXNMOgvaihbpHYVAiiYrrt52P5mSfq4BShp
+         yhCdeKhEy11wb9uRuhMQ/2Dqa9t45mYJ3NtZV4e1rqgUGgARWLDntFJHATyMEIycTtbv
+         Hr6Fb5zTxapLV8Z9JReVAGZsucOJ50fKYPtcwKua75asoVysDZvSHq/Mae859rH5KYmu
+         U6sw==
+X-Forwarded-Encrypted: i=1; AJvYcCWn98HCQ6xxFkkvSS5Ib00tvgBPBDXERcFIKf5ZPDUZjXiJy96EgK0BQkAe00oksOxJIbiY4LLurK6w2GDwNQPyWGLQKo2641n+uI6pkEpf
+X-Gm-Message-State: AOJu0Yzg/jY0t4+Ef6e6UbtC210P2O4drmQ4IeIzZnjLrqo/SCBh38fZ
+	dv0+piF7NawESwgP4x/jGQIgsyjEMyeeUMEH5uTMA3LI8I0aAy7uU6AjrSq6PF8=
+X-Google-Smtp-Source: AGHT+IGb9Kef190iCPaOpWx5MShkZU/cz6tUILd4tavbxOpBAvfY5CSmNUca5k0xQNYE01N1vFJMog==
+X-Received: by 2002:a9d:7ad4:0:b0:704:480c:963f with SMTP id 46e09a7af769-704480c9a3cmr9573417a34.35.1720793153396;
+        Fri, 12 Jul 2024 07:05:53 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:d26:9826:56eb:a2e5])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d93acff82fsm1427548b6e.4.2024.07.12.07.05.41
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c7b606db30sm715711eaf.8.2024.07.12.07.05.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 07:05:42 -0700 (PDT)
-Date: Fri, 12 Jul 2024 09:05:39 -0500
+        Fri, 12 Jul 2024 07:05:53 -0700 (PDT)
+Date: Fri, 12 Jul 2024 09:05:50 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	RD Babiera <rdbabiera@google.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] regulator: bd96801: Delete unnecessary check in probe()
-Message-ID: <01cd578f-127b-4c8b-a8c6-5e11a0a2555c@stanley.mountain>
+Subject: [PATCH] usb: typec: tcpci: Fix error code in
+ tcpci_check_std_output_cap()
+Message-ID: <b0880888-6719-4614-91fc-8ee63b71d304@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -67,27 +71,29 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "idesc" pointer points to the middle of rdesc[] array so it can't be
-NULL.  Also rdesc isn't NULL.  Delete the check.
+The tcpci_check_std_output_cap() function is supposed to return negative
+error codes but it's declared as type bool so the error handling doesn't
+work.  Declare it as an int instead.
 
+Fixes: 62ce9ef14797 ("usb: typec: tcpci: add support to set connector orientation")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/regulator/bd96801-regulator.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/usb/typec/tcpm/tcpci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/bd96801-regulator.c b/drivers/regulator/bd96801-regulator.c
-index 46ca81f18703..ec5b1a6b19e8 100644
---- a/drivers/regulator/bd96801-regulator.c
-+++ b/drivers/regulator/bd96801-regulator.c
-@@ -853,8 +853,6 @@ static int bd96801_probe(struct platform_device *pdev)
- 			ldo_errs_arr[temp_notif_ldos] = rdesc[i].ldo_errs;
- 			temp_notif_ldos++;
- 		}
--		if (!idesc)
--			continue;
+diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
+index 8a18d561b063..b5e49af48f43 100644
+--- a/drivers/usb/typec/tcpm/tcpci.c
++++ b/drivers/usb/typec/tcpm/tcpci.c
+@@ -67,7 +67,7 @@ static int tcpci_write16(struct tcpci *tcpci, unsigned int reg, u16 val)
+ 	return regmap_raw_write(tcpci->regmap, reg, &val, sizeof(u16));
+ }
  
- 		/* Register INTB handlers for configured protections */
- 		for (j = 0; j < idesc->num_irqs; j++) {
+-static bool tcpci_check_std_output_cap(struct regmap *regmap, u8 mask)
++static int tcpci_check_std_output_cap(struct regmap *regmap, u8 mask)
+ {
+ 	unsigned int reg;
+ 	int ret;
 -- 
 2.43.0
 
