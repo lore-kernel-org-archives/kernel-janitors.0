@@ -1,80 +1,62 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75991DFE3;
-	Fri, 12 Jul 2024 16:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DDE173345;
+	Fri, 12 Jul 2024 16:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720800887; cv=none; b=LqGLEni3bIma2iAfVYaGi4RX3xoXnX3XmtQF4a0xuGLNsCLrdrdAzhp9bDJhIqEdXNacXETroxRH0ifsS3pP1ytkP7Lqt/goxxQ2CLnCCXw/yTCKwdrSmFV7sf7oHRziRmjOZb9tmh1xtOx9CIZQ2zb/FAETtrpZ+Xle2y3Dtxg=
+	t=1720801711; cv=none; b=lm53OvJ3n/iYvoXULFtoTzcaKx0hRuu9LNFMyWlQacfKE3nqu7lCurQTKtytm94dx/EbY5davjygyn9g1O3NS1wvo5QUohgvgzTG/r+6RA7ZIbRoCV/cry0djXDb4VkKfUHrhuRd1udYLxrjnriPu4XTS1FHZ/FxYwVpuPtC0rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720800887; c=relaxed/simple;
-	bh=1ul5U7u1q3HCojqZzhYYvG/+4UwWFpVkhRqU+q0icPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Evbl0GGCxE7uJOS7ZG/20knXfUPfBaqBlzfJ9AGJdcqkhJSFZQvwOz48z38hGjRFbylSaT/rwghr/svMxIIr1N/+BtJeMg+ANMZTC2kAB1faeuTFcCGDHy+1quY551em+JBJyrM/WM+HthqI1yfSZEiuILw0kARSYWkz/mLmAnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Rf+oiapu; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720801711; c=relaxed/simple;
+	bh=p/XRIOJDBo7gdVbB36+ebgQz202YenpMwkGhPPLgx7g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ayxxaXzY860BH0sKi7paAWuR5l75hnEA0d5POvk4qkKH04LYxYZuZeUsTP08WZKZs6c6K2fGPMyWjmb2T7qkqsko/t50UtKnQekF2w0AXhN5fi04anCKCvMCrmBVy0ngjLQiCfOSGUFzxqaIUMqFEQP9emd3NxUFzPagfxZ0K6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SUFX0D98; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Rf+oiapu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A85DC4AF0B;
-	Fri, 12 Jul 2024 16:14:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720800886;
-	bh=1ul5U7u1q3HCojqZzhYYvG/+4UwWFpVkhRqU+q0icPk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rf+oiapu7Hfpjm1e3uX7XbieRNjVyGgAsQ6cXKGXXKeCVONzKSGYkmdadIUEE89IY
-	 KX4q74v9vxy4VakX/FY108lWlKZ8ybjlV2kgva0pz7hlgbcj8K6eBqQ4DeHfqTq5r2
-	 ipgJ3kxRizJaXwaJFsVXDGhdwNmE+etSgZJMQRQQ=
-Date: Fri, 12 Jul 2024 18:14:43 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	kernel-janitors@vger.kernel.org, Armin Wolf <W_Armin@gmx.de>,
-	LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	=?iso-8859-1?Q?G=FCnter_R=F6ck?= <linux@roeck-us.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH] eeprom: ee1004: Unlock on error path in probe()
-Message-ID: <2024071235-exposure-overkill-356a@gregkh>
-References: <b5c51026-a2de-434b-8f45-44a641ab1c82@stanley.mountain>
- <19bb8ed0-e783-49aa-a4cd-6a0c3b89f0a8@web.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SUFX0D98"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0CDDC32782;
+	Fri, 12 Jul 2024 16:28:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720801710;
+	bh=p/XRIOJDBo7gdVbB36+ebgQz202YenpMwkGhPPLgx7g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=SUFX0D9832ulzQJ6/UIxd9oKqzfwUvJvxxmXTZ5vJLIH5A8cAvGTbLMj8tHb+xjPR
+	 w/ubVp1zPZanVOHzCsqQQ1gh//a6jwDTLU2HpFxJo7Y4rqyq9ExphA01QRGbi5V41N
+	 ubE8FDMaz88ea6DGGkcEjAzv3fSakLDxB9tOMWezf7yp/1CKXecenRmoP/h4OLEzhl
+	 omw2N+VYdwLT6PKGX4DIioK+8s/dBiEgiP//zuzTkXIBewQAhITcCZMAIJiaca1g6c
+	 6HOJSiRFO58owFrBhSOFPw7VaLxw9I3G7bAT9PgwPQgb2YbGzfVfRVfZlYSV8TD+1p
+	 sUpj3nb3SfEmg==
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org, 
+ Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240711083513.282724-1-colin.i.king@gmail.com>
+References: <20240711083513.282724-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] HID: Fix spelling mistakes "Kensigton" -> "Kensington"
+Message-Id: <172080170934.1413001.1147650564619529825.b4-ty@kernel.org>
+Date: Fri, 12 Jul 2024 18:28:29 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <19bb8ed0-e783-49aa-a4cd-6a0c3b89f0a8@web.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
 
-On Fri, Jul 12, 2024 at 05:42:12PM +0200, Markus Elfring wrote:
-> > Call mutex_unlock() before returning an error in ee1004_probe()
-> 
-> Under which circumstances would you become interested to apply a statement
-> like “guard(mutex)(&ee1004_bus_lock);”?
-> https://elixir.bootlin.com/linux/v6.10-rc7/source/include/linux/mutex.h#L196
+On Thu, 11 Jul 2024 09:35:13 +0100, Colin Ian King wrote:
+> There are spelling mistakes in a comment and in the module description.
+> Fix these.
 > 
 > 
-> Would you like to refer to the function name “ee1004_probe” in the summary phrase?
 
+Applied to hid/hid.git (for-6.11/module-description), thanks!
 
-Hi,
+[1/1] HID: Fix spelling mistakes "Kensigton" -> "Kensington"
+      https://git.kernel.org/hid/hid/c/523e6f4f50fc
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+Cheers,
+-- 
+Benjamin Tissoires <bentiss@kernel.org>
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
-
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
