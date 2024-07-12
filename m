@@ -1,134 +1,118 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86428F58;
-	Fri, 12 Jul 2024 14:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EDB171E66
+	for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 14:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720794128; cv=none; b=OOTPNg8RdwldvYu4xlhCuXxAXWLmoRJK5eoa+/zO+BBVbbknLE6QqyY8mlUgFVoTqaajYcd+kXYUJRmUXVs/xBoJmYXAbxq5id2Z2cd2+usJ9y1hISiJOn7UMMWbw2vcJFdPjVtzTcLNWy0zZY7vbctVbhwonuMXFmuTUjOQY8g=
+	t=1720794604; cv=none; b=HCumTbx55oZhNkpu78Fkx+lfz47sWPyA064KrKD2dLz6v++8Og/FOs3QGfNUTKsisX00uYXz2pT0froIOWyVfv2rBGjdgbPjMGQOtFVt4FJ3Xxs1ZOe1Y7iAuvb3iI7Flq6A2wT3Y/po7/DPT043SWyqhPKeGfh5gT19k0Q0JZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720794128; c=relaxed/simple;
-	bh=1X2h1pP3P9bEY0dhKtPEte/MDMdHXeYYEYq0BALA4wA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aGdNcuVzTopJ4nDuon9IqQO62H0OwXHg42UUNi9Pa1fYddgGy5AcpJkKkeqKILM50aSK1QmdzgeWNfVLSCx9p+K7iKA/RUNZJwPWAwbBHUbH6/vYFsJu/czXddLZxEsHzZvHJWS0D/GqxJZG6myuBHao+AyWaawm2aJRMDzm7pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DFHTzslK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1720794604; c=relaxed/simple;
+	bh=xNf1tJFXF2XZo5kA4RL74P4CbwPpLhsf5gbnmAkL9hI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nu3hFRbqX8hygH7cRRDsfk1yAkSl875L9/SuVflH+lYtrNxVqSllKY2MR6KnMoWYp+MNDFDQcL5UwpMH093ipMAGa0EFG4Obhb0pwQ6J1an2+mXneWgt2yHMn3R81Jcu3g7uqHK1tef6LhoYG5G/fHnRLiw9BDfDY0608/awxk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RrwJRrf6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DFHTzslK"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46C5eSW2017618;
-	Fri, 12 Jul 2024 14:22:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	q4dCjN7RFCWVafWDh+lIi4XYXTLCjqM699IDxs58Tmc=; b=DFHTzslKRy8niAYB
-	sfp1jlSj9rawPFAMdVTA1RuYiYjlMQwFpSwsrhVqopQt/r4GhqKFrLUobv7ecfBW
-	xs0u3bc6zSkMLZ1xjBnmeU6rtzN3VvU2sJDiEe7jVoyvgvwYMjjFROYiOb7hnRx/
-	8blL0hbLfkBYh8Bohaotm7VNFL5NMnQL1FAV9C9hJitU12ofiqmdJrUm6rahYeun
-	u21Jchrp0e6jgkU4rA2uGAXnojMbZfFPGRJ89Zqt3Zu+Z1D19Akn/RKKv8nEUK37
-	aCuKrKDdecIFCJ/7tpr04PzmM60s66zhth+ZMc7Ur5R+lskeYk86JqlBMhjBYFEi
-	uK+eVw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40a8uhv9dp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Jul 2024 14:22:02 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46CEM1vl002959
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Jul 2024 14:22:01 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 12 Jul
- 2024 07:22:00 -0700
-Message-ID: <7a01ee4b-73af-3818-ecd5-cce5e270eeb6@quicinc.com>
-Date: Fri, 12 Jul 2024 08:22:00 -0600
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RrwJRrf6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720794601;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Em+4lpr48F+sTPUkNgk9R0TQyrZ2qwV17RRP7sfDWpk=;
+	b=RrwJRrf6qQZFqsmqrQDIB5iOjrNtPDDyjBNr9QpCMapUI54rZCbCb8MJgbNC9372OChGMs
+	NQcm8RtYEg8ddcmTS1y9Z8TmGPIZ9fQ+m9Wn4QoMeSLozQTWLk5P3GsnDtMsZQ/PHa19OR
+	jeOXQtkG1bHMQTyyKlUt6G0WSFE4Sy4=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-441-LPiQKhbUN9SwTrPf08YYtA-1; Fri, 12 Jul 2024 10:30:00 -0400
+X-MC-Unique: LPiQKhbUN9SwTrPf08YYtA-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2c96cb48a8bso1843511a91.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 07:30:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720794599; x=1721399399;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Em+4lpr48F+sTPUkNgk9R0TQyrZ2qwV17RRP7sfDWpk=;
+        b=LsHJAWCW1yvaWM2Y2DT/xV61q06WFRayYdiqnoSfsrcKQlXxPP3iR3AjRMC882E46B
+         OliyUIcSoZ6+f58XlTa4JTd2uVidOFQzX1Xje4f8cbQu9bdMYEzQhtfyBq2/EewPjy8H
+         sNqTj5VSyPQ+uDg4KXDYc3bbRchwDmHJw8qLjz31tvi7IEjckAuoXaj6BXuQpSPBKVoZ
+         X1/ZAyVMQ+Lj+mhdpVEiquY7eQ1COwdlWpuy7SYFlnP+jDH4s/duRpi7NwafUDtnNJtz
+         Q9ZztJI3zXXByzNU65fBfBglGan5QHTTUQXeegbRZKodj1qjSyR5TKMvw98k+4NMl4ZK
+         4dCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsjm1XswR04ui0umEGovpqkhUua1FE1GF56HoCynaKNlwueYx3lZufCydR/mo6D1pRr9Iw4xUwlRKKYh1IItjwVWTQ1F4VA0PrRrTGk3hV
+X-Gm-Message-State: AOJu0YzmzRteUTrHKrdM1wE+WUpdtIL5qC6eMNDCgRjd0I3hOqenASyd
+	9rS05v9cVpWj2ewzDWIWWK6c4M1wv+v0D0O0yCD4HCfkEWuKNy8RVUilJfjfVd7C4+h7spwzjTD
+	8MUsdxFtK2Gf03/vQtdXSl11ePxp3wWkKyMBdoVqwnPm/so6R8xgfr4uK2vo797GrNX4ebG3meC
+	CG/Fj5htCmYmrZb54MKrelJXWN3jb7g8t6/4mHQbJf
+X-Received: by 2002:a17:90a:70c6:b0:2c8:87e:c2d9 with SMTP id 98e67ed59e1d1-2ca35d43887mr9092100a91.39.1720794599172;
+        Fri, 12 Jul 2024 07:29:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEyEXCNphbXM4G/rPhQQo3eVo3TcpH/vUgTlLXnK+HK0NsMDnIjoeWz76/qY2/k2Ca8KWUcmscnLjrUmqi++Q=
+X-Received: by 2002:a17:90a:70c6:b0:2c8:87e:c2d9 with SMTP id
+ 98e67ed59e1d1-2ca35d43887mr9092063a91.39.1720794598057; Fri, 12 Jul 2024
+ 07:29:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH] agp: uninorth: add missing MODULE_DESCRIPTION() macro
-Content-Language: en-US
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Jeff Johnson <quic_jjohnson@quicinc.com>,
-        David Airlie
-	<airlied@redhat.com>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240615-md-powerpc-drivers-char-agp-v1-1-b79bfd07da42@quicinc.com>
- <99d6c483-9291-4bd0-8e62-76022abb762c@quicinc.com>
- <7b7e2952-fb54-48b0-93bc-f96c04e5cdd3@quicinc.com>
- <ce7863a7-f84e-42f0-9aa5-54b43edcd260@quicinc.com>
- <2024071209-squatting-nacho-60b0@gregkh>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <2024071209-squatting-nacho-60b0@gregkh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: i4nPaeiFe4MMA_TcMwjt-3Hm4iydEraN
-X-Proofpoint-ORIG-GUID: i4nPaeiFe4MMA_TcMwjt-3Hm4iydEraN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-12_10,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 bulkscore=0 clxscore=1015 mlxscore=0 malwarescore=0
- mlxlogscore=999 lowpriorityscore=0 suspectscore=0 spamscore=0 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407120097
+References: <124bbda3-7ccf-4e6b-b30d-7115e1c2620f@stanley.mountain>
+In-Reply-To: <124bbda3-7ccf-4e6b-b30d-7115e1c2620f@stanley.mountain>
+From: Eric Curtin <ecurtin@redhat.com>
+Date: Fri, 12 Jul 2024 15:29:21 +0100
+Message-ID: <CAOgh=Fx6hcJdbQpna2JJhnzp=YG_nyg-gpd=ZH7CewudtgDhAA@mail.gmail.com>
+Subject: Re: [PATCH] nvme: apple: remove some dead code
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-nvme@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/12/2024 1:31 AM, Greg Kroah-Hartman wrote:
-> On Thu, Jul 11, 2024 at 01:27:23PM -0600, Jeffrey Hugo wrote:
->> On 7/11/2024 12:19 PM, Jeff Johnson wrote:
->>> On 6/28/24 20:14, Jeff Johnson wrote:
->>>> On 6/15/2024 2:01 PM, Jeff Johnson wrote:
->>>>> With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
->>>>> WARNING: modpost: missing MODULE_DESCRIPTION() in
->>>>> drivers/char/agp/uninorth-agp.o
->>>>>
->>>>> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->>>>>
->>>>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->>>>> ---
->>>>>    drivers/char/agp/uninorth-agp.c | 1 +
->>>>>    1 file changed, 1 insertion(+)
->>>>>
->>>>> diff --git a/drivers/char/agp/uninorth-agp.c
->>>>> b/drivers/char/agp/uninorth-agp.c
->>>>> index 84411b13c49f..b8d7115b8c9e 100644
->>>>> --- a/drivers/char/agp/uninorth-agp.c
->>>>> +++ b/drivers/char/agp/uninorth-agp.c
->>>>> @@ -726,4 +726,5 @@ MODULE_PARM_DESC(aperture,
->>>>>             "\t\tDefault: " DEFAULT_APERTURE_STRING "M");
->>>>>    MODULE_AUTHOR("Ben Herrenschmidt & Paul Mackerras");
->>>>> +MODULE_DESCRIPTION("Apple UniNorth & U3 AGP support");
->>>>>    MODULE_LICENSE("GPL");
->>>>>
->>>>> ---
->>>>> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
->>>>> change-id: 20240615-md-powerpc-drivers-char-agp-db644db58c24
->>>>
->>>> Following up to see if anything else is needed from me. Hoping to
->>>> see this in
->>>> linux-next so I can remove it from my tracking spreadsheet :)
->>>
->>> I still don't see this in linux-next.
->>> Adding Greg KH since he's picked up many of these fixes.
->>> Hope to have all of these warnings fixed tree-wide in 6.11.
->>
->> Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
->>
->> Dave, this seems like a trivial fix that is stuck, but normally routed
->> through DRM.  I hope I'm not over stepping, but I think I'll drop this in
->> drm-misc-next on the 19th if there isn't any other activity.
-> 
-> I can take it now, otherwise you will miss the 6.11-rc1 merge window.
+On Fri, 12 Jul 2024 at 15:13, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> platform_get_irq() never returns zero so we can remove his dead code.
+> Checking for zero is a historical artifact from over ten years ago.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Works for me.  Thanks Greg!
+There's quite a few return paths in platform_get_irq_optional, are we
+sure it can never be zero?
 
--Jeff
+Not calling out a specific case here, but it's not so clear to me how
+we can guarantee platform_get_irq() is never zero,
+
+Is mise le meas/Regards,
+
+Eric Curtin
+
+> ---
+>  drivers/nvme/host/apple.c | 4 ----
+>  1 file changed, 4 deletions(-)
+>
+> diff --git a/drivers/nvme/host/apple.c b/drivers/nvme/host/apple.c
+> index b1387dc459a3..f5a3a4e8b1e5 100644
+> --- a/drivers/nvme/host/apple.c
+> +++ b/drivers/nvme/host/apple.c
+> @@ -1417,10 +1417,6 @@ static struct apple_nvme *apple_nvme_alloc(struct platform_device *pdev)
+>                 ret = anv->irq;
+>                 goto put_dev;
+>         }
+> -       if (!anv->irq) {
+> -               ret = -ENXIO;
+> -               goto put_dev;
+> -       }
+>
+>         anv->mmio_coproc = devm_platform_ioremap_resource_byname(pdev, "ans");
+>         if (IS_ERR(anv->mmio_coproc)) {
+> --
+> 2.43.0
+>
+>
+
