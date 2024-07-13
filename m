@@ -1,97 +1,102 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CFB4C8E;
-	Sat, 13 Jul 2024 00:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05F14C7D
+	for <kernel-janitors@vger.kernel.org>; Sat, 13 Jul 2024 01:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720832349; cv=none; b=mZXZH+pZ+HzEsfoHtVwK75BkRGyFhLfa52JuVg9OdDJTC7Rs6itLwrHTT8AGsGrhXIDbaDCJu8jWAQrrW3YYt1F6B9cO7v/JOCDr4yMGTcbaSpgSAwU5BfhaLdIwp7GlpALiK7lfn37c/v1tRFMr3NYLJNxUaBKtzAVOQsLLPeo=
+	t=1720832592; cv=none; b=PyVbYXUW3ZwrJAA/XNXkXSCb/2jxAalWEo+uZc5h/n87Y2alpDuKpbOWRFijaWKDHzp1bSDTPZAhs7N9TmpTjPYFnhXz9OST9QznwdD72XTW1ZqKByCWbcJwoc4CzCIX4+FmgdZm71hZUjLuTZ6OhqxGXboW33x2A9wzjyXPF2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720832349; c=relaxed/simple;
-	bh=DtrdLYqQvUWp1rATRcfHif/KLyAI+NavdKK3cI0d2b0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j0d68sBwPaLOh0jtZ+BTpxSS8LZahoiGPDp69jEIT+Mniafa6qOY32Gq87wetXlenBLxDdvusp+52CvflEVgiZb7iMWw8RmlTCabaI+PqIUplLsQldd6nk5NRscAQ+Dj6QAyX+k2H0X3xrw+1IMYl8OuPs/zN2TPDe9eiV+CwrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fb70169c23so23734205ad.1;
-        Fri, 12 Jul 2024 17:59:07 -0700 (PDT)
+	s=arc-20240116; t=1720832592; c=relaxed/simple;
+	bh=UNBl82bWy6BK4QvIg/lANifWxpGzKBqS6jSOUjWhy2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kNJaL0Dlu1Bq9Zsxn5RkhlUpeKz84mGZuyCWyZy2G72JbXkoLmjwm22bJ1IbJsE3vlE7QhmO1C8u/zCP16Bob+RhKRQPGsscGz7qGXf4LdDCl6L7lG+W5miVouzsP4D6v3qwRKdy2HDnRT7/7uDAlforvDoRmJWPauGSwKSelLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZjotkBUe; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZjotkBUe"
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-25e400d78b0so1020988fac.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Jul 2024 18:03:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720832589; x=1721437389; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CXBzGKQHzwTCLNi/QbLQ9MxDBvRYj/mrMe6mJtSFLx4=;
+        b=ZjotkBUenoi/S9I65VkyteuUmkLaZ8Lm+s/Bzt9Lt52+i/vuz71szXzpEdsx+Ln9SX
+         9sInb/YjNLygYybZ7qzNeKLn7P3OmXwN/hAIDU3LRSNpggbzZ7BXzdmYqlGhj/A0sK6O
+         mWJ1RP/1turoZNxlQjmsC5mwWR7KicSnqtDM0wnmyEAf+IUrGRA3kH63QLuvzoL1Mdmc
+         BM65ZO3ujqCS5Ru/xdLRt2pzVeQ//Le5iIQgA+SFiAZfV7YzaJFlOKXButr8DvsotLWV
+         bZvkbB34nlIYLHXH5EBLtG+DdQV/giYwWBzSvMBGWrVbXKArAlr9Pq+byan2O/WlPmjX
+         bfHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720832346; x=1721437146;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fObagCVLV5QOrGNzDLRDEtxOlEZx/xK9uTPhQmSYFR4=;
-        b=QqIW7+1IRVmXr3x7vvGI0WfGusEeQuVPmJNuBDASTR3nA/rE71lJKZXX/TqG79lbJA
-         ZveFE9dqbhSfWBNsehrZz00N3oLVKWOrIsXr5DHWwpu2PALoRkva0D4fLyhHn7yToX77
-         n1hqqYhAbxx+EX6mLuRh8u9l/Pp75wv1INmz/ETkgxGQ02MmGd1jknO0dP3rT9DseOgW
-         0wxSE6qtsQ6AO0lz7JOByoJe31Gh8+jeDycV4VlC48IoeK+7EJIL6S7nrY+s5rvftRTV
-         TNwF3iipZojmOpfHzNqcOAr1WLDqtfF7AgNjrKCv+tSLYp9/QAmsuHM710wj/+Vl18Uf
-         TeMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHMcpHERhAJfaWGRPh4ijdu1ukSRgkbr8XdMYSCaeiqPh3Uvf13P8i8Hl+3RayTtgNatkQ+gvL6N+XRuhk2A5U+x/pzapQP7zRoxlu/cDUQWscnN3+uHQNTiVVsmullGFVLJGWFDYJAQoeIjUkn5ynNf8BxnXbvQ3Qy2tRWjHFFTpp+KgkBcx3oFgC4TTUa0xzVoob0u3UTrT/isrcugBKmXM0
-X-Gm-Message-State: AOJu0Ywmij0ppMrpxojtvR7j79GvGxo4ceLKGG2KjY0BWB/ANfmCERyr
-	x+LVvvAhhTTjI/rwgtCDfbQVOI/dJsbDsMzoklviNml2jTb8NoE=
-X-Google-Smtp-Source: AGHT+IHpMYHwlurRaTSXBZOLGL6393z+3iM2RhBoT8I/MqjietVUrz25qYNqvkz4lN15p4xWujmI4A==
-X-Received: by 2002:a17:902:e9cd:b0:1fb:9e80:b4fe with SMTP id d9443c01a7336-1fbb6d35ecfmr82888385ad.39.1720832346401;
-        Fri, 12 Jul 2024 17:59:06 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:73b6:7410:eb24:cba4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bb6ffc8sm522855ad.35.2024.07.12.17.59.05
+        d=1e100.net; s=20230601; t=1720832589; x=1721437389;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CXBzGKQHzwTCLNi/QbLQ9MxDBvRYj/mrMe6mJtSFLx4=;
+        b=SM50vVyCJYP5Ir3O1w5qMuxpepk0pJiv7uw4MWQgv264yOuBnp3Q5FIzoKfKFF/pj9
+         swoaI4mAEak0byjMePvG/sBQH56KSYccKjEJcxppL7EyY2V1f99xEw2HW4qvg+ScyBQt
+         mQU/LLzG045K/PmDuw+p6n6q1Mrwd4Z0Q1M8Mgh2UFGzHQOIRvafZfyc59+HNN2QuL0N
+         2seWbn16y1OTMjiik7Bj6gz0oUz2MRCISt9Ejn9l0mJ3oGQhaLFKScZ6F3meDgMZm/OU
+         KsgKcz9PMh5La62MUPUf5exq53sScVk7az0phdqT4AN2YUUlPsuymxtPJqJ9UpE9lhB1
+         S6jg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3Hrh/yEPvCQMFsqXfkpOv5iXxSXdL5nEppFzKqajv4LQiEn0SIHnKXw1RQk7QqRc5WPToYxCZc40B9E+MK2zRHMlTvQ3IjeOz/VI9kzlW
+X-Gm-Message-State: AOJu0YyROS0mc5BXnOK0bGn7mIkyCBricoZcKCJ4KM+hKslYP3HcjspL
+	9Ko4aounWPO4fsLSkEwl+Q76z0Ir5UDmjKJ+4RoahRt9B/scqVBLFY/TXFkKbCg=
+X-Google-Smtp-Source: AGHT+IHrcn916Hce1CRrEs0ecid1zN7rNG5C1ltGgNYwmbOmsJO2nacySkLmcuDxq0DTDMpveul2Gg==
+X-Received: by 2002:a05:6870:6587:b0:25e:1061:6541 with SMTP id 586e51a60fabf-25eae75e8f4mr11263510fac.7.1720832589608;
+        Fri, 12 Jul 2024 18:03:09 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700::1cb1])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2607530524asm57773fac.53.2024.07.12.18.03.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 17:59:05 -0700 (PDT)
-Date: Fri, 12 Jul 2024 17:59:05 -0700
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: make24@iscas.ac.cn, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	Song Liu <song@kernel.org>,
-	Sowmini Varadhan <sowmini.varadhan@oracle.com>,
-	Yonghong Song <yonghong.song@linux.dev>
-Subject: Re: [PATCH] selftests/bpf:fix a resource leak in main()
-Message-ID: <ZpHRWRWXGewydZfe@mini-arch>
-References: <20240711071018.2197252-1-make24@iscas.ac.cn>
- <c341e275-4fac-4aaa-8117-55b654c5c006@web.de>
+        Fri, 12 Jul 2024 18:03:09 -0700 (PDT)
+Date: Fri, 12 Jul 2024 20:03:06 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Tero Kristo <tero.kristo@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] platform/x86/intel/tpmi/plr: Uninitialized variable in
+ plr_print_bits()
+Message-ID: <8ccfab0c-3c11-4168-a383-19895ae60022@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c341e275-4fac-4aaa-8117-55b654c5c006@web.de>
+X-Mailer: git-send-email haha only kidding
 
-On 07/12, Markus Elfring wrote:
-> > The requested resources should be closed before return in main(), otherwise
-> > resource leak will occur. Add a check of cg_fd before close().
-> >
-> > Fixes: 435f90a338ae ("selftests/bpf: add a test case for sock_ops perf-event notification")
-> > Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> 
-> Please reconsider such information once more.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc7#n398
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/researcher-guidelines.rst?h=v6.10-rc7#n5
-> 
-> 
-> How many source code analysis tools should be able to point out that the return value
-> from the call of a function like pthread_create() should get more development attention
-> (also for discussed test functions)?
-> https://elixir.bootlin.com/linux/v6.10-rc7/source/tools/testing/selftests/bpf/test_tcpnotify_user.c#L122
-> 
-> See also:
-> * https://cwe.mitre.org/data/definitions/252.html
-> 
-> * https://wiki.sei.cmu.edu/confluence/display/c/POS54-C.+Detect+and+handle+POSIX+library+errors
+Initialize the "str" pointer to NULL.  There is a test later for if "str"
+is NULL but in the original code it was either valid or uninitialized.
 
-We are talking about testing binaries here. We don't have infinite
-amount of time to polish them. If you really want to help, look at
-the flakes on the bpf dashboard and help us weed them out.
+Fixes: 9e9397a41b7b ("platform/x86/intel/tpmi/plr: Add support for the plr mailbox")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+Almost everyone automatically initializes stack variables to zero these days so
+bugs like this don't show up in testing and we disabled GCC's uninitialized
+variable warning so it's easy to miss.
+
+ drivers/platform/x86/intel/intel_plr_tpmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/platform/x86/intel/intel_plr_tpmi.c b/drivers/platform/x86/intel/intel_plr_tpmi.c
+index c1aa52c23d25..2725a1ddba92 100644
+--- a/drivers/platform/x86/intel/intel_plr_tpmi.c
++++ b/drivers/platform/x86/intel/intel_plr_tpmi.c
+@@ -162,7 +162,7 @@ static int plr_clear_cpu_status(struct tpmi_plr_die *plr_die, int cpu)
+ static void plr_print_bits(struct seq_file *s, u64 val, int bits)
+ {
+ 	const unsigned long mask[] = { BITMAP_FROM_U64(val) };
+-	const char *str;
++	const char *str = NULL;
+ 	int bit, index;
+ 
+ 	for_each_set_bit(bit, mask, bits) {
+-- 
+2.43.0
+
