@@ -1,39 +1,39 @@
 Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511B71E86E;
-	Sat, 13 Jul 2024 13:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588DB130486;
+	Sat, 13 Jul 2024 14:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720878652; cv=none; b=BLUd2cWUByp++MlmRMR3DrkFp2YrXI/W0bj0Bk/us/yDa0igQmSv0WFOkTrRcU+3lzj1hkScZ0r8D9jZaQ532gNuIdSpBBl+BCUQLxweiEq6eR0ydmYVX/GgegcjkD+QBL8zzQq7TsliJ4rij842xjfxoOlgAYcZGL1Hx59abuY=
+	t=1720880135; cv=none; b=W8aT56wHHVonujWXQtED1iMQV4aAFbkkfw4a3f7llBlCJGiCyZGxaWBo+C5WWmkN+e62BUwios9RA7ppeUPzHV+/OTAvtrTtNbhbQpozmdOnZ04e/3xVXoA60qUcOSvsjhML4ZUv0VZ2YvTw7hEx8i7cN5b3i1pdUqvN9N9suSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720878652; c=relaxed/simple;
-	bh=glbXfZ57zeOAVeFcp148EjAAduVLDX1Nm1Qm/7z/xoA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=T21pnGqQ1LgwAXHa60C06jMSVzXyXIOUbXcmL5kgyUK8bqovNlDJUS/AoOk1AIFpTu28CplHpwXHzNkeSEtYPz6Qd0mBDXTkL7llZFQsqr3OIlthRCuAKdEtrVZCclT4hKEfZBYgRrY8qLDKfvsvv7v0AoCSrz62VGfkjY0ykZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=oVKD2X0m; arc=none smtp.client-ip=212.227.17.11
+	s=arc-20240116; t=1720880135; c=relaxed/simple;
+	bh=0sImha/N/FjIHW7HwE6mq+4I+YE1wV6jEPOuW++u+5c=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=t5t3Q+c7bed5yOtgG3rE9/rZRoqPuOof4Nwsby3PARCqStI0SuOBeclWKG6V+flyGU7wIOKJCwL3aMcNp3bKctNiCmk90gzBzsSsBqEpqaC/pbtN1JplobBM456UQ+RGs78esxsaGXeVL0ZvO/ODUE33KDFVyObyRws/kErh+wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qcI3imhd; arc=none smtp.client-ip=212.227.17.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="oVKD2X0m"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qcI3imhd"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720878625; x=1721483425; i=markus.elfring@web.de;
-	bh=2DkVKMeSZLdTkmkibS3yN5duPZ98hT8azZgpJe/6Ne4=;
+	s=s29768273; t=1720880129; x=1721484929; i=markus.elfring@web.de;
+	bh=i29h15iOs2DJLJvtpOSvAjE7y04Zre3BMYJI6oJamFY=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
 	 Subject:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=oVKD2X0mTNKOGyW+A2lRub+vSt8nRJ3u1RmIjcfHbrj80xzT/GIjmfEVRRePuCkW
-	 DcbyNcsFnipJ466fmsWjrJYn+LSRTIJcjjcQvF9a+pvEgaP/MXguHgOyCEsW/0MXA
-	 H7sxhs3PK/kDpBkLEdtYdvsXiEzk36OXOGfZsVMTT3UFjqTE4kXzi/wx78rpsG9v5
-	 yHg4PcEljd3xJxpSHUnHgDh7LPMJx9X19NTUlHK1kGgfiMl26+o3HbQgRRTKWSRII
-	 ojciR2Bwc2Z1GxHCuTDxGVZWTWi3DPeLs3JrMEcFaf5yShMlJM1lRvVPDj3KyArzM
-	 qjzmoXcleRC3xt+lZQ==
+	b=qcI3imhdJykTIHiWZu0ssEfdZ1/mw/PUoaBJ9elI6Be6kx0s8LCLQ5IAlGLvy7lX
+	 9QDJjBnziEVDo84m73oCNE0gXfiRUal/1M3fBBIZDrjwku5GAgDb/rKTMxfZtuqCh
+	 ANi75Pp9gsGXOby65rqzju9vSvaq9MGnOrWmINnu8BGRn72lITgNwDYAiKZweXb9L
+	 oddnoFzVjqas2DuOIEiY/r8etWyMMOfNmiBFKBX8atxC3pKiCj1hE4X2YT6BBKC/h
+	 4qxds/pBJFlfSPdHPISotjJoyAdeDSghhSV622WatWma3h/2zFBDOr6hzTmpMSGSB
+	 P6Hz02zo4kBEAwzwaw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MGgNU-1sWWt03lty-00GaSe; Sat, 13
- Jul 2024 15:50:24 +0200
-Message-ID: <45f97bd8-21eb-4ef6-bc7d-9201e7447c08@web.de>
-Date: Sat, 13 Jul 2024 15:50:24 +0200
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MtPrY-1sDi1934ik-00zRPT; Sat, 13
+ Jul 2024 16:15:29 +0200
+Message-ID: <3a52f0c5-85c5-4077-b6cd-504cc5383817@web.de>
+Date: Sat, 13 Jul 2024 16:15:28 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,65 +41,80 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-nvme@lists.infradead.org, kernel-janitors@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
- Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>
+To: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Linus Walleij <linus.walleij@linaro.org>
 Content-Language: en-GB
 Cc: LKML <linux-kernel@vger.kernel.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] nvme-fabrics: Use seq_putc() in __nvmf_concat_opt_tokens()
+Subject: [PATCH] pinctrl: core: Use seq_putc() in three functions
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:JdDdT3GUzpkpOCWjWe73M1t1rMwD8wjznYly5YMkYxte7etCvLg
- cet9s3eO2FDEIbS9AiOD0GrGdcPp13qepmsYUQtb4HxQYWE4F3JMBdNrw2sjPIQYMXO0NYy
- 1Z8NGLa6i+6afWzt+Bx5gkGFmx5xa+E0xr+AoLgacbxXiqjLWj/8lIIZIq0fjIhSvdh7xl7
- suiDGhITR/WGZphwVA5mg==
+X-Provags-ID: V03:K1:FHsifFfV8fdhGzisDa9WcUVEOifIRIqKuxaDTVIeakwyofgPKn5
+ weSW3384DZSLadx7B9H3CyTkodrPOW6s0T+/DF9PzZryG0kxw5Zyl+B3bYBuwDbcjxdib8+
+ 3JwLgL5SCowBv+q/boaj5o0FdG5rP78d4byfgzo2Rkx5hVo3yTn57v7tA2ulBoLpNhsyosk
+ EwUHi1mR/ZCEfJvJzUhpw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:uCU1KQ/BpF8=;ODwdkhcsbvCG4oe2kr5D2e7eFzg
- PMFYW+OgDj873lsKpNxLJwCw7Da8SXNXKwM3QSur9WkmwssCtEwRVrsWl0N+xSS9bi9yhEn10
- pw0RTuB8Bct1+XgieILC+yBjujpQkLzFoT5fz7AqnPF+bEpU2VbKyNJq+pkF0ZKjr8B+9Z6sb
- HoNDoC42ZUvYtLi2RuxvQg+3PfQxoCTfpygJZSCnrwFeqCKIjtJCLRJ2Fldx5cDIWl+rUN8AE
- TRadzXXm8+6y9sjJOhhbjoLpJQfpt5qDRVG7nBuBUTWM9jQ5zPR9UD8MCmhHRFsU83hY2I+6Q
- jx6ufLSV8n03wNfO/3iDuXg+h7Z6a36HkS1vLNhsIAIqLPXEjOOjOm8eSGo0owjxT4+pQT4vn
- cYYD8tG/ZPaEFhhKKqVYWz2093Wpe9DKyyu+r2Qolqlcko4NaZ/HoG2Qn09McwL0cis7bQSKi
- 1rsIUGZ0/+gara7YD8sLoBYLq8q+Y+J/fVV4arustcvVPSXrZSlYq4Il1+yYBLQVUFRG2CAUa
- Jvv4gT+09xzJeYzKHs6GC7RjUjQalKT8Ryc7aHo4aarf5KyyUHh1hjuT2/ElHfurORKGHP7Lh
- bI9CzcnWYrQ+R4xzPSlMAEHSBPZaAB1nyBYgzJu8LCxQzet+o3ExuN0tA7J3fzLS97WvWMfSi
- 5+8uktOBlN57/t8fCSzAiEXghc7PsEcSG1+z6KYr8DMChT9ZKzBuMe75vWR5uSBCFdppbXexQ
- RgjlQNuG4z4pnh6GGT6B0Gw4h2QP8XwRwGKDgQ1TTVdei8JuiWpMUG8LGYWOYahZ4cujYS5x6
- hb3oTzfgNxr2neW8JYmpNszQ==
+UI-OutboundReport: notjunk:1;M01:P0:mtI6PBGZhgY=;ZqXwS5/Omeym0uvpspkbO2My4rp
+ HPCwn4GBg95rleyvoxsRRDUU7jhs/+39Vp00AR1qUmbPUVkfi2yzEeNqshm2K6QeUJxwiL207
+ q3VdtNPvuvrmWv3WIz68WvPF8z5j1C8gxOeQn0p70xYNOzHyJyv/g5f+SjU71Uqglpy5OCDZ2
+ 739SRs3Ncg0SXTP9perMF86zwXHKvNdLPmhJIRG5lwZuex2k9zJumXdJaR3enuOMJ1MV1LFMF
+ PCSzize4EUYBpGXodoTsQvwSWWkJX6aNJTevDMgsOVK0e+fPLZ0DnC8B10VlsF/lqhHc8mPf+
+ ggeupk3x+ivRAy3xOtH66t6PYJzuz2HSO7VaW7DOPJSw09OhOq2AlpimG3pI4W8jR6FDTXJhZ
+ msu76hT/KDs2oNHPtmxu5PMeW9RvJuZSKuqdDayEheqINvbsa/VYjEcEH3jBq7VH5529JSU60
+ 6KcS40B3Yfd9+hT2qaJ3tifnSzW6bxAIFOu9rPUcRVmg60hg//WQdsFX5lkdyikVT9A4Kcx4o
+ PV78ZAVJeDWv21ioHrx39XvZle5Ypvtwe1K2g2OEI5PtmPjJ7V+Gdhb4vYbG5H4dC+utRBGwI
+ mAQ5uSU9oHvybizyI8E1tkBWyEae/oJN76irwP7wBUU41FYslx5lu1ErxeExnwqK05k/nJ3WP
+ ZpHIqvE1gE1yWjA+z1LeT4nlFH3ht6AIXyg25ER6agT7B7AUKq4SloeKkRmt+qhAhHjVIeS4Z
+ GSEkur24MD6vzG69A+GiOssh04DaOGjN+d9FK0NiPCN+N75nBYxb0YnPGzXfIPiDXSeEJxhhx
+ dB7kba3klrpmTl2joIuHKsqw==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jul 2024 15:43:17 +0200
+Date: Sat, 13 Jul 2024 16:10:31 +0200
 
-Single characters should be put into a sequence.
+Single characters (line breaks) should be put into a sequence.
 Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
 
 This issue was transformed by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/nvme/host/fabrics.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/nvme/host/fabrics.c b/drivers/nvme/host/fabrics.c
-index 44e342a46f39..f5f545fa0103 100644
-=2D-- a/drivers/nvme/host/fabrics.c
-+++ b/drivers/nvme/host/fabrics.c
-@@ -1403,10 +1403,10 @@ static void __nvmf_concat_opt_tokens(struct seq_fi=
-le *seq_file)
- 		tok =3D &opt_tokens[idx];
- 		if (tok->token =3D=3D NVMF_OPT_ERR)
- 			continue;
--		seq_puts(seq_file, ",");
-+		seq_putc(seq_file, ',');
- 		seq_puts(seq_file, tok->pattern);
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 314ab93d7691..6d61101f488a 100644
+=2D-- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -1707,7 +1707,7 @@ static int pinctrl_pins_show(struct seq_file *s, voi=
+d *what)
+ 		if (ops->pin_dbg_show)
+ 			ops->pin_dbg_show(pctldev, s, pin);
+
+-		seq_puts(s, "\n");
++		seq_putc(s, '\n');
  	}
--	seq_puts(seq_file, "\n");
-+	seq_putc(seq_file, '\n');
- }
 
- static int nvmf_dev_show(struct seq_file *seq_file, void *private)
+ 	mutex_unlock(&pctldev->mutex);
+@@ -1751,7 +1751,7 @@ static int pinctrl_groups_show(struct seq_file *s, v=
+oid *what)
+ 				}
+ 				seq_printf(s, "pin %d (%s)\n", pins[i], pname);
+ 			}
+-			seq_puts(s, "\n");
++			seq_putc(s, '\n');
+ 		}
+ 		selector++;
+ 	}
+@@ -1814,7 +1814,7 @@ static int pinctrl_devices_show(struct seq_file *s, =
+void *what)
+ 			seq_puts(s, "yes");
+ 		else
+ 			seq_puts(s, "no");
+-		seq_puts(s, "\n");
++		seq_putc(s, '\n');
+ 	}
+
+ 	mutex_unlock(&pinctrldev_list_mutex);
 =2D-
 2.45.2
 
