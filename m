@@ -1,39 +1,39 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F9913DDDD;
-	Sat, 13 Jul 2024 18:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F251BC37;
+	Sat, 13 Jul 2024 19:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720896305; cv=none; b=QG21428rmpj5aY5o+mgw2o7gICRHfZ3MWB1G6q7xsZfc4Tqp6BgMb6ohlfmWaUV6X4aO2CXwRTf+kMKJxuToArodobCge6dicVPFPgJjE/cmKMiBG9br/HVTG7SQeiI6CkUpFVAFMwHw4FY0EilPdSI1Whtajga0VqsttzdBfF0=
+	t=1720898221; cv=none; b=qKmOOs0uIc/1IKNio8bNFhhuJo3e1kLB6FqPxE82DYGvbGQgMKVCyfs4MldJK9208nZHDzw4C0KG4uHbL15aeXI6FPr2HgyzJ3zRyQu2sChAgPMTBsdKiXtnlwIoGCUUr13VkxXl3L4uRsisop5p56X2n2oeqthXsMEbIgxlNvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720896305; c=relaxed/simple;
-	bh=S4VHF1SncDJq0sGOKJ8UmXPy4Jk7J8435o2/pnX922k=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=IS7nP9VrJz+boHd6ubVW8d6PidPH+yWqvzqoy1Mlk/7YZcGXMsx6Zbu7u4OwyBDs8Od7vlfzTSdeUqqHzgEbdzQdnZ/ggrFZe0IftM01M0W3ubpF/OCTv0cIsSKO0mfIYTK0sbWFQ1bT0EV3Z4roYw9gruTOYNgm7QIyqjjddag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mVaYXeBU; arc=none smtp.client-ip=212.227.17.11
+	s=arc-20240116; t=1720898221; c=relaxed/simple;
+	bh=fIllpoDxxfPmzGlVdFqG2Dd8k9qDQSm8a4VANbMlw/8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=c42yW6EAM1sMwHEhKs1e8m9FtIKFqiZm8AArGRPZ/Oo2jM6F91ZRUIz/1+GBKjjPS3ZUAy7lM4qKdWgFJlgxRJAGKz8wRpXIgYGdQtNjMPRUprl+1oADsIYH7wMRUB1JuZ3uOiRpOR0BqwnEdFgd24cHn+xnXKztUkS7gCrKn1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lOAKR95T; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mVaYXeBU"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lOAKR95T"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720896295; x=1721501095; i=markus.elfring@web.de;
-	bh=Tl94jXHRVPHxXEsNK8QYCbwg6IcbsePXJwiPZ1IYb2s=;
+	s=s29768273; t=1720898176; x=1721502976; i=markus.elfring@web.de;
+	bh=58QnkHd6/w55w5TERgZr8FgykSb/+JmRwMIOmIkhJT0=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
 	 Subject:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=mVaYXeBUhKnDonClssgvcoZRLq7wEZ4av2RDahQVJ8y428r7TOc2I7GtiA/zhIu1
-	 Kjg5Pn8w3+M0LeFS3pEtBRm37Rg+98/hPJaoBG4eDu8FX099srvss2QyVDRAU+Mq3
-	 OV1CoYIpdrsgjU2IoLwN94U0fDUodrxexRjlGPw8TcRVibtnUP/bZOEUlwpMVvo0K
-	 pGYTysuvouY/TRs0YOZbY2QI13Xyxka0hJjxOxCakNY1Kr4uDET14c/I4zZOsYqmK
-	 /rX5ZfqBhJCKSH5R9FEayfjH7BnXYASlD9cas0l1upH9bLxOB3K/XAescIv4lb0LN
-	 pZS0FfEhxSF1Z5PRJw==
+	b=lOAKR95TuMkoPKhSE5sTdhKKXaSqfyy/diHSsgIriaTZT6+f1EMUgjXe0rNRCrOl
+	 PqN3RJh55W5lX+phsUjxM4qwSCBhkr1yxNHLP/vaDUIYj06FWYTxNAH9xDuiADwjB
+	 yIDG0ODLIZ/FSKGVSituzJ56HwBUgY8gQnV5lgtsw/3OO/K7x6X5TLkq56yNTxqEG
+	 Jt0iS8ojFxvgcjTFZZedsvUz9rv8LhHAO1V7EqSZnc3fSi8NJtanGzY5WSsh87Wn8
+	 G6PfLCOA9Zu2mQ7C30fAyI87Mgmr/afvOK5hGkk8G6ZxJJI1K9dQQ9e/3lFaM0mos
+	 jrFfjIlxO5BYDTUU5Q==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MbTGt-1rvppX3qO1-00bN57; Sat, 13
- Jul 2024 20:44:54 +0200
-Message-ID: <aace3b69-d26d-4f4f-a584-97f1bcb59f29@web.de>
-Date: Sat, 13 Jul 2024 20:44:54 +0200
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MXocY-1sryIV3qma-00VNUQ; Sat, 13
+ Jul 2024 21:16:15 +0200
+Message-ID: <ab25204c-5a53-42e1-ab3a-c4f704ebc929@web.de>
+Date: Sat, 13 Jul 2024 21:16:14 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,71 +41,67 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, David Howells <dhowells@redhat.com>,
- Jeff Layton <jlayton@kernel.org>
+To: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Chuck Lever <chuck.lever@oracle.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+ Olga Kornievskaia <kolga@netapp.com>, Tom Talpey <tom@talpey.com>
 Content-Language: en-GB
 Cc: LKML <linux-kernel@vger.kernel.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] netfs: Use seq_putc() in fscache_cookies_seq_show()
+Subject: [PATCH] nfsd: Use seq_putc() in seq_quote_mem()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:JmU/2zR/PKK4sSlgNuBI3f9yIhj/lxOWu4mkHIhjafPLe6M+1rt
- rl5qyE3nSYsi3evGHgxOrDpIeP6oEqGldhN8Ld4hS9+wBzEpU4Mqty6A5uhZGcYrq0Mot2b
- vRwe+d0Rgq374vNOCEkxuiTPPmyNXRYRIcRSHaHDCkrF5VbDThNWVLD8TXf1aN35d243Aj9
- tSbgi4jrNnLl9POykuEWw==
+X-Provags-ID: V03:K1:4U1i3VGg2hW2biQjqwkau4fUlaA5QrRWSFAddPSaI4TxmZ4QO76
+ coIgIqYor+kRQck6xu6QazchcZJ29e2lrXW9kjLsnIYqVmoCSMJkgAywYa4Bjf9uh8u07Up
+ U6/kWxYIgA/FBZ3mEVRPPZ/7mXfsd+CMyVxFivIsaTJqyM5Wwd0Q83FxCKjdT2dcfUFNu6i
+ WJifVuZhz0ky4EXPtMRcA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:jKBRqTA+rHg=;iYl9a6wc/pomO0tBXDvrmEI0a4f
- cs3p7lv6SpK3XOrTTfTvJ3rL04LziIMKMrTjyOL0sNXi1FlYt00MJ0phhsClms0El9BrjULG4
- a9KTA98J6a3pqiyZXuHxmVrssvC7hZ4/FrQvSYdpDxmfnM+Uee7KoRzwL2iLqRBQRTpRG4hHX
- LT5kiyDhNmPQ5u0GM5LokfAFDOfmoUykJ9gVkT9wK1nwSNeyl74p9IKYRie+FzvgQCqur+qq/
- 15NSnZ6vuzl7VlrSFbBZZwETDmh5NE5xk+vig6WB9qnHtecnn4bcs+zfUii/6XNwCwY3mAP/4
- mbIovkLekC5GOy5K+PbqELrxaoxAoVnv9jPnOx0oZu1psaiEoP4n+yV24FjuF4MKAKRbGcoQF
- 2U5Dm21qfIgZsGNTdnWznBC7QTAsh34AooVel5Jmvms1VD2gMWFmEA7GJIIZl5bOjcsF3kG/B
- spY1Hw0B7OBjKodpv0ZphBC1hp4jCooRW/obXFS8SuYRv2M3UzYHci8GqA+edoGG43qRtl9FC
- horcYQv//MDKWU2nCuc17f2X3yvlOfPqDF6jyWwMnz+lRg0WPKQXYpdZeQQAC6hYPAzc1dZnh
- df6H7rwgH1SAiWyvqEMAGCe8Z5skeTyhc9Rhy15lmQC7Ue5GCBTAOWzuQHMtXUh/rwgpDHGJA
- WMyQ/pR+XpKcOFBTJNLI5olz1kWbq1oaabP0Mi3YbY//q2rTuRN/UjKbR7YBhZJ88fTrH5AuA
- s/1SMCZ4T2E3MXw/KUYIMAnrKdGnlivqiJlfMaho38Qqmb/XI4lFptF/lr+KeD7sWOHpl8/i5
- g2FNondHa2GcxnJk0kVzC/eg==
+UI-OutboundReport: notjunk:1;M01:P0:S09+jYoUjpE=;61J+iwp2722nWrtNBlXdKcjngN5
+ mzrumDrpaVgh7cQCjVk2unTYR7BmNMNg6urfqDXdCWw4dpA8ryHryzfawZOuKDbmCN0Qvz1n5
+ Hvxmy+ags+EppEnlazERupHDvS9IH4rVxW6rZFqDCuDMYnccMNhPtp6AAV2TTGczH3OO58iaC
+ I3FnGOqfgVZgKqpP++t3WKCl2pi7106T0QXvVanXZLR+cU2Jd7Po+i9gvuTvqi3r7zqoUHOhy
+ 9LUQZmYolt0EOapVAusjIE5GX6vNRXRVTXmgkvEZq64SXQaV5+9Ja/vJsvXJeCaNCW+VmD1ej
+ NAeuJtNzLoMe2WLKnDg2tRKQVE1lFZhLnPqlrX59VdF/P8EfZJmNXTy22UJ8USUfMxmCVt/I0
+ V+licQVZbl2K5Y84VzkJqkVsa68sfX2BLV6zIAnYzJPSMV3pvr1KnMNI69/UjMvwULZudX2CW
+ m9JGO3kaTTJGCAUab2vBEdyVl141SmhE/jLvbwobMJJuJE5F8PH5ugHdIu8g2UG1fqF5+DnKv
+ dLHhcGmMa2SEOE8M+s+1wqTg6pLJBQtTNfpuMUgJwvdQJOZsgUtkjq2TFINA8BlFhJHY60GTA
+ AIFJS0/AEGq71YpZGkiTE5i0CoOVR6Yj3kzVYud1vWn31ZlyK3wwI+QrXm1Nak+lP1Ki4NyzS
+ XZ5M9VBmi99kAPHM/QJU8v1uDoHzveI6uA1tq5qIy6RxSUoskTiQmEUPnHqlncOHYY7tXNiEd
+ bJuFPhqHIzNbUgg0t7aHAap0uRTRoWjRD4jzmAFpnKGIjL+JMXOFeJuQkmFH25YPZGy9E2QW7
+ yrWa1DB/qsEr23uHrGu2o/ow==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jul 2024 20:35:35 +0200
+Date: Sat, 13 Jul 2024 21:07:09 +0200
 
-Single characters should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
+Double quotation characters should be put into a sequence
+around other data.
+Thus use the function =E2=80=9Cseq_putc=E2=80=9D accordingly.
 
 This issue was transformed by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- fs/netfs/fscache_cookie.c | 4 ++--
+ fs/nfsd/nfs4state.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/netfs/fscache_cookie.c b/fs/netfs/fscache_cookie.c
-index 4d1e8bf4c615..5e490336b90f 100644
-=2D-- a/fs/netfs/fscache_cookie.c
-+++ b/fs/netfs/fscache_cookie.c
-@@ -1134,7 +1134,7 @@ static int fscache_cookies_seq_show(struct seq_file =
-*m, void *v)
- 	auxlen =3D cookie->aux_len;
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index a20c2c9d7d45..1d15165a15cf 100644
+=2D-- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -2636,9 +2636,9 @@ static struct nfs4_client *get_nfsdfs_clp(struct ino=
+de *inode)
 
- 	if (keylen > 0 || auxlen > 0) {
--		seq_puts(m, " ");
-+		seq_putc(m, ' ');
- 		p =3D keylen <=3D sizeof(cookie->inline_key) ?
- 			cookie->inline_key : cookie->key;
- 		for (; keylen > 0; keylen--)
-@@ -1148,7 +1148,7 @@ static int fscache_cookies_seq_show(struct seq_file =
-*m, void *v)
- 		}
- 	}
-
--	seq_puts(m, "\n");
-+	seq_putc(m, '\n');
- 	return 0;
+ static void seq_quote_mem(struct seq_file *m, char *data, int len)
+ {
+-	seq_puts(m, "\"");
++	seq_putc(m, '"');
+ 	seq_escape_mem(m, data, len, ESCAPE_HEX | ESCAPE_NAP | ESCAPE_APPEND, "\=
+"\\");
+-	seq_puts(m, "\"");
++	seq_putc(m, '"');
  }
 
+ static const char *cb_state2str(int state)
 =2D-
 2.45.2
 
