@@ -1,96 +1,115 @@
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E4612E1D2
-	for <kernel-janitors@vger.kernel.org>; Sat, 13 Jul 2024 11:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4923D4CE0F;
+	Sat, 13 Jul 2024 11:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720868641; cv=none; b=l1fZnuS6NdxBR77NEr9SuyNTnfFyVk4gcez4bywRQVnQKY/lPNSJOLVfU1QT4FT/Ro+T72bWToin+tvkSTdljloR36Jp9iCuDdJnxVOGcICbeGI2tAJpm7yxSCwiUA11woJxb3ayYiJuSDC5q3sDMn2HIBkRsOzyhLdNQidFXT0=
+	t=1720870266; cv=none; b=sTSNluRbQ59tC2ckITiXUKEfBS07XlBa3NSEtvc/jxu97oEyVwKIBVLnMAjzHiep6lmdPvmuYzCtarnSrm+fgXfaWUEuSy0d+z7gCigmyJoupQduzAeF/ieDslqCh4P1kLVoHjyLRxBFhAYga8SCPzlZSSUDL0mvsEuBI3pPmsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720868641; c=relaxed/simple;
-	bh=uD7ddHPNCv9re7jh+GgSVnOkNYW3iWVk5/d0ybro+S0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PsahxNmMgtBCcjFzi9z4UE1bPl46iq8aWPvEtp3Ayshj6LqQGCMa0x8JAvx9zz43uVA2DdomWw2bzEFxDfbQJHSEOHUqT4LdVpHXL5t244Q1/Ywh8z1aG6xaGyQUJqCkJoWotMr3V2QBMYyNH08fp/e33SKaU+aD7Czu7aLe6/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MHxueTaC; arc=none smtp.client-ip=80.12.242.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1720870266; c=relaxed/simple;
+	bh=Sw+deMIe59WsQaxBu0LOVGuFA81rEJgfc6fNk8Rm0cU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=dxznK7kIjAmEv3caVIsMXgZPzUyJw/7fNaSEpHPSZ2eyQBTruysFX/3RNuDvcfvy1g4zH5wBZnOZCktmtGcxPTkkQyCQUiXfAg9ppOVwJqtcxyioEpnWmVv80g84U+Wg72AeqvmfuhZnVV89b3s+Snx0kD5pn15fgDOMt/JzxYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tGsSnTmv; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MHxueTaC"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id SaWWs33AVt4p9SaWXsZPUe; Sat, 13 Jul 2024 13:02:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1720868564;
-	bh=+95BoV2zMSWhEXD4+8PYZ6sPnem7u4o6Qt+9aNjgw34=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=MHxueTaCXcUv0jTgyKWZKCmJIlffD84NUjpqOZ8OqbEnwBJtH5V+rF7Punxk7IET6
-	 ZqMBhWXqQP7kq7CQGxPkxMxlDTdoMR0CBspSjjmGf/++DcXfsHNS2+HMbwXa0v2V59
-	 k3+Qhl31MEpm+YZB5BpEw6XqGoEAsOBETdt7v78+M7xGJnRqaWWRJlYNkrEFaY94OX
-	 08oZW/s3KQPBgz5/xdfz9H6tiH10TWu4gltfYNFEm7SBUunqBcmYGuWWAX+vpmISxc
-	 eQSszVUtEfW64RlVeY1eJ4UbqKI/vOM8JvR1mfrhF6dgVoFiNFlZI7NODVRLzeixJv
-	 Im1okBIi0e6eg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 13 Jul 2024 13:02:44 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] x86/resctrl: Slightly clean-up mbm_config_show()
-Date: Sat, 13 Jul 2024 13:02:32 +0200
-Message-ID: <b2ebc809c8b6c6440d17b12ccf7c2d29aaafd488.1720868538.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tGsSnTmv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720870238; x=1721475038; i=markus.elfring@web.de;
+	bh=yYStihca3IYwKi+Yeorx3KjJ/JDKDHTh2foEdguZtEk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=tGsSnTmvvE6xMIvyeYh6lFon8yhft9MxaZ4Dh/DECx8uK51/jNGmrwNc9P770PbL
+	 XyvWkCb4SxgKhmo9pIZDy5lBKkY7iTegBMrNwXFMCQ3okjolFlQ1kDdxEe2DidJkE
+	 euF5A4qUJ+pPkMw4Ak19OzC31HrzL8LqDLHGzNm52xqBbqK5RIjxpoDa8AtpBLQ5Z
+	 aDwfsVxnmsMj/AjRGKoofjBXwyokbs9G6HllABojLOGq91AYktnROE0Zx67xs1v32
+	 YqRWjzVUjNgz3WwqE4+Yq7D+n9M9Ti0qUgw7NaDX45uAri2zi+IVaDRs+MDifET/1
+	 LpjO/ZzUrpIdY1Hsew==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MBSB3-1seOGo3ucp-00HCct; Sat, 13
+ Jul 2024 13:30:38 +0200
+Message-ID: <6b952625-614f-414c-80aa-ea51027a044c@web.de>
+Date: Sat, 13 Jul 2024 13:30:34 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ Huang Rui <ray.huang@amd.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] drm/ttm: Use seq_putc() in two functions
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:MLl4JbXy3sVYHpWZibGJ8ChC0B03gzqpyVJQOmkXaRaeG7T0UOc
+ puCT7y1wYZU4A6tVM/+zrF+ZnkBvtVuQjXP/za18cKBgYWs9Ro00eYN7A3ZzOw6hMSHkKdS
+ OKsX//e2ZBaZBWtMMUd1IA9eG+CrjdACTL8WdzX42qfnSdKYISDe7WNn7XrM+P0anawiZb+
+ QAJoC1Y9HgVf5phyPTXDA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8tcJ/Qg6fbg=;t6IAKWkCVwd8JWouP1A1PGRjWBo
+ KNfA0R0CRgA9b/+x3BsZxI1VIg6NIttR10wlpwirCPFJXyEoOn7vRl/He096+MueyyHTHfsMV
+ 7rnJMsotlNXxNkG8HtUeUrle3m/IqqduWnOLn9yOOqyg5qlk1Q+L+8lyILcheZxLwuxGmvltF
+ HMNTFJwPctih3REl8GWAmYVBwX6CNsuPS1krNBZ3plkICYe315Y6jyjakcbgbjwNaitRzyRK2
+ U88lZN3j5+KnzBtViPKJHsbXDL3A9ve6ePZ55wN25XapcoVLhpkcrJYqduQZzP09Y/bzFIO7g
+ uizeFO7btUiSF416PlqR1nClUBwFvUNnHEHNYSq+ERL4vNDHfrVBVS2YWIVkt873FkCtnM7hw
+ ypAeIR9wrnMJ78/Nqjrz/PyXaioZ/9NvlnvO/MKtSz/MEnFUlEWmnyXSkINLIrUiqnxPfTOUJ
+ dVV0YcrAvvEQJ6MIHHl3csy7k8yspZhcf2N+vA0HoGh2LMwWdi5Y7iWLmwhGdhn/s5MU6dbAl
+ 7kZQzXtQ3WE4CgJcikzvfsN1c6pb3/RQ5FX50mpKEE1iml+4hE4SU7r/9d7TaZHy3z0KBueVd
+ qip5IjdQ3cYbezj8Pc4vPn/380HfU4xKcsLE8zKrN8xIfTzvZtIrOvbc+8hTQPoLDA5VK2664
+ Acs3AF/SkiiQR2ww5Lqq378GMhvUt3RrPHm1WH4N44S3kj4coKTmRwxgyyjSWETz1m/0nutV6
+ szXHSqIyg7AdNoSrBpuu4B3mM0y4TKu47spiOFqiZkDbXKtzOA4L8B8YPnKNIa1qCJivvEvt9
+ 7gj3uAQK2vj7S3wp8lQkh0uw==
 
-'mon_info' is already zeroed in the list_for_each_entry() loop below.
-There is no need to explicitly initialize it here. It just wastes some
-space and cycles.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 13 Jul 2024 13:23:06 +0200
 
-Remove this un-needed code.
+Single characters (line breaks) should be put into a sequence.
+Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  74967	   5103	   1880	  81950	  1401e	arch/x86/kernel/cpu/resctrl/rdtgroup.o
+This issue was transformed by using the Coccinelle software.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  74903	   5103	   1880	  81886	  13fde	arch/x86/kernel/cpu/resctrl/rdtgroup.o
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/gpu/drm/ttm/ttm_pool.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/drivers/gpu/drm/ttm/ttm_pool.c b/drivers/gpu/drm/ttm/ttm_pool=
+.c
+index 6e1fd6985ffc..451e6155432f 100644
+=2D-- a/drivers/gpu/drm/ttm/ttm_pool.c
++++ b/drivers/gpu/drm/ttm/ttm_pool.c
+@@ -676,7 +676,7 @@ static void ttm_pool_debugfs_header(struct seq_file *m=
+)
+ 	seq_puts(m, "\t ");
+ 	for (i =3D 0; i < NR_PAGE_ORDERS; ++i)
+ 		seq_printf(m, " ---%2u---", i);
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+ }
 
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index d7163b764c62..d906a1cd8491 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -1596,7 +1596,7 @@ static void mondata_config_read(struct rdt_mon_domain *d, struct mon_config_info
- 
- static int mbm_config_show(struct seq_file *s, struct rdt_resource *r, u32 evtid)
- {
--	struct mon_config_info mon_info = {0};
-+	struct mon_config_info mon_info;
- 	struct rdt_mon_domain *dom;
- 	bool sep = false;
- 
--- 
+ /* Dump information about the different pool types */
+@@ -687,7 +687,7 @@ static void ttm_pool_debugfs_orders(struct ttm_pool_ty=
+pe *pt,
+
+ 	for (i =3D 0; i < NR_PAGE_ORDERS; ++i)
+ 		seq_printf(m, " %8u", ttm_pool_type_count(&pt[i]));
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+ }
+
+ /* Dump the total amount of allocated pages */
+=2D-
 2.45.2
 
