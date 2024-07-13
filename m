@@ -1,55 +1,97 @@
-Received: from norbury.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B0738DD9;
-	Fri, 12 Jul 2024 23:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CFB4C8E;
+	Sat, 13 Jul 2024 00:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720828663; cv=none; b=XBurgl2DE8KUMGLucm0gtnIqlPZ3zs/R62HH0g/xYWGQbul4DgQj6Co29AGr6cdarCDFzOQvzbB/9eVE3K+k/dlKwCg3F4Us0JJ8vknlRZelBgIjVgX9y4Ono3gbxuHhX04OjProm3YfvDxosVUsnZ1rcDMzYkJb5WXuvsbilvQ=
+	t=1720832349; cv=none; b=mZXZH+pZ+HzEsfoHtVwK75BkRGyFhLfa52JuVg9OdDJTC7Rs6itLwrHTT8AGsGrhXIDbaDCJu8jWAQrrW3YYt1F6B9cO7v/JOCDr4yMGTcbaSpgSAwU5BfhaLdIwp7GlpALiK7lfn37c/v1tRFMr3NYLJNxUaBKtzAVOQsLLPeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720828663; c=relaxed/simple;
-	bh=TsY6JEfalLllqjYlHrbYXXydEB0C2MBCge+Kq6rlKf8=;
+	s=arc-20240116; t=1720832349; c=relaxed/simple;
+	bh=DtrdLYqQvUWp1rATRcfHif/KLyAI+NavdKK3cI0d2b0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t1A43KUYR4/cB7uUVFgPxzml7bo96UIyieuKJuJ8+uoN+sY4voGvmfq7RA4OXrzXn0Xn1sD+VJ0imxj/MiqsTqfFYG68fMTaHDZ9OHTYVb0PNRnU2G2unnrxEMUS2Oq1Ph1HjeIBftp4UyWODz8We1rdJnIXwUYwfu+Oo3KPCEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
-	by norbury.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sSQ8f-001q61-1p;
-	Sat, 13 Jul 2024 09:57:22 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Sat, 13 Jul 2024 11:57:21 +1200
-Date: Sat, 13 Jul 2024 11:57:21 +1200
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Mimi Zohar <zohar@linux.ibm.com>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] crypto: lib/mpi: delete unnecessary condition
-Message-ID: <ZpHC4VxlpycOGdOO@gondor.apana.org.au>
-References: <6686bed3.4a0a0220.6aa45.6c34@mx.google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=j0d68sBwPaLOh0jtZ+BTpxSS8LZahoiGPDp69jEIT+Mniafa6qOY32Gq87wetXlenBLxDdvusp+52CvflEVgiZb7iMWw8RmlTCabaI+PqIUplLsQldd6nk5NRscAQ+Dj6QAyX+k2H0X3xrw+1IMYl8OuPs/zN2TPDe9eiV+CwrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fb70169c23so23734205ad.1;
+        Fri, 12 Jul 2024 17:59:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720832346; x=1721437146;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fObagCVLV5QOrGNzDLRDEtxOlEZx/xK9uTPhQmSYFR4=;
+        b=QqIW7+1IRVmXr3x7vvGI0WfGusEeQuVPmJNuBDASTR3nA/rE71lJKZXX/TqG79lbJA
+         ZveFE9dqbhSfWBNsehrZz00N3oLVKWOrIsXr5DHWwpu2PALoRkva0D4fLyhHn7yToX77
+         n1hqqYhAbxx+EX6mLuRh8u9l/Pp75wv1INmz/ETkgxGQ02MmGd1jknO0dP3rT9DseOgW
+         0wxSE6qtsQ6AO0lz7JOByoJe31Gh8+jeDycV4VlC48IoeK+7EJIL6S7nrY+s5rvftRTV
+         TNwF3iipZojmOpfHzNqcOAr1WLDqtfF7AgNjrKCv+tSLYp9/QAmsuHM710wj/+Vl18Uf
+         TeMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHMcpHERhAJfaWGRPh4ijdu1ukSRgkbr8XdMYSCaeiqPh3Uvf13P8i8Hl+3RayTtgNatkQ+gvL6N+XRuhk2A5U+x/pzapQP7zRoxlu/cDUQWscnN3+uHQNTiVVsmullGFVLJGWFDYJAQoeIjUkn5ynNf8BxnXbvQ3Qy2tRWjHFFTpp+KgkBcx3oFgC4TTUa0xzVoob0u3UTrT/isrcugBKmXM0
+X-Gm-Message-State: AOJu0Ywmij0ppMrpxojtvR7j79GvGxo4ceLKGG2KjY0BWB/ANfmCERyr
+	x+LVvvAhhTTjI/rwgtCDfbQVOI/dJsbDsMzoklviNml2jTb8NoE=
+X-Google-Smtp-Source: AGHT+IHpMYHwlurRaTSXBZOLGL6393z+3iM2RhBoT8I/MqjietVUrz25qYNqvkz4lN15p4xWujmI4A==
+X-Received: by 2002:a17:902:e9cd:b0:1fb:9e80:b4fe with SMTP id d9443c01a7336-1fbb6d35ecfmr82888385ad.39.1720832346401;
+        Fri, 12 Jul 2024 17:59:06 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:73b6:7410:eb24:cba4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bb6ffc8sm522855ad.35.2024.07.12.17.59.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 17:59:05 -0700 (PDT)
+Date: Fri, 12 Jul 2024 17:59:05 -0700
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: make24@iscas.ac.cn, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+	Song Liu <song@kernel.org>,
+	Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+	Yonghong Song <yonghong.song@linux.dev>
+Subject: Re: [PATCH] selftests/bpf:fix a resource leak in main()
+Message-ID: <ZpHRWRWXGewydZfe@mini-arch>
+References: <20240711071018.2197252-1-make24@iscas.ac.cn>
+ <c341e275-4fac-4aaa-8117-55b654c5c006@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6686bed3.4a0a0220.6aa45.6c34@mx.google.com>
+In-Reply-To: <c341e275-4fac-4aaa-8117-55b654c5c006@web.de>
 
-On Thu, Jul 04, 2024 at 10:25:05AM -0500, Dan Carpenter wrote:
-> We checked that "nlimbs" is non-zero in the outside if statement so delete
-> the duplicate check here.
+On 07/12, Markus Elfring wrote:
+> > The requested resources should be closed before return in main(), otherwise
+> > resource leak will occur. Add a check of cg_fd before close().
+> >
+> > Fixes: 435f90a338ae ("selftests/bpf: add a test case for sock_ops perf-event notification")
+> > Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  lib/crypto/mpi/mpi-bit.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
+> Please reconsider such information once more.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc7#n398
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/researcher-guidelines.rst?h=v6.10-rc7#n5
+> 
+> 
+> How many source code analysis tools should be able to point out that the return value
+> from the call of a function like pthread_create() should get more development attention
+> (also for discussed test functions)?
+> https://elixir.bootlin.com/linux/v6.10-rc7/source/tools/testing/selftests/bpf/test_tcpnotify_user.c#L122
+> 
+> See also:
+> * https://cwe.mitre.org/data/definitions/252.html
+> 
+> * https://wiki.sei.cmu.edu/confluence/display/c/POS54-C.+Detect+and+handle+POSIX+library+errors
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+We are talking about testing binaries here. We don't have infinite
+amount of time to polish them. If you really want to help, look at
+the flakes on the bpf dashboard and help us weed them out.
