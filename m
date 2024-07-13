@@ -1,110 +1,96 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6E042049;
-	Sat, 13 Jul 2024 10:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E4612E1D2
+	for <kernel-janitors@vger.kernel.org>; Sat, 13 Jul 2024 11:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720868122; cv=none; b=I3SvIsI03/6nyYIjiJukFILLdaOzDRBHbTZcA3Tt/lByuCeHrcyKfod+exG2DvqjbocwfHi4j53gMe6fHZ+AL5eZar9rt2UjTz7dSwa1YLO82djP30yeHESCdWjoRMXRGWHypl/9FNsu30sMjODOCHhXUMDgvK0ny/ZtS3oQWzo=
+	t=1720868641; cv=none; b=l1fZnuS6NdxBR77NEr9SuyNTnfFyVk4gcez4bywRQVnQKY/lPNSJOLVfU1QT4FT/Ro+T72bWToin+tvkSTdljloR36Jp9iCuDdJnxVOGcICbeGI2tAJpm7yxSCwiUA11woJxb3ayYiJuSDC5q3sDMn2HIBkRsOzyhLdNQidFXT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720868122; c=relaxed/simple;
-	bh=Mdx3w8q7KQJYWfl/irAVZ9IeK4hNn9RgGyBFy7QYeBw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=owQ6BSu705s/5XVk93brnGTJ48YSYbAocv9HhAg8C7JIeD2vacL8CD2OZJiLJEr21QtZKoRDPyyM2TrOo969coNNKEU0B/TzPaihF0daXRCkgsCCkLVEzG3AEyGFKTDeGYQP8ru1HbFbnXYPnJ2I4N275//YlYLRqMNub28bPGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ZP3nL2AY; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1720868641; c=relaxed/simple;
+	bh=uD7ddHPNCv9re7jh+GgSVnOkNYW3iWVk5/d0ybro+S0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PsahxNmMgtBCcjFzi9z4UE1bPl46iq8aWPvEtp3Ayshj6LqQGCMa0x8JAvx9zz43uVA2DdomWw2bzEFxDfbQJHSEOHUqT4LdVpHXL5t244Q1/Ywh8z1aG6xaGyQUJqCkJoWotMr3V2QBMYyNH08fp/e33SKaU+aD7Czu7aLe6/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MHxueTaC; arc=none smtp.client-ip=80.12.242.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ZP3nL2AY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720868110; x=1721472910; i=markus.elfring@web.de;
-	bh=DhTEpLlivlrGpySqjjeN3M7w54ILJzJ9uQo+GK+NNOc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ZP3nL2AYNbd5aQpzH8CWfqsWkXs1NppBIXKq3o38WV1s4DrtFovJUy4N3+WeQTqf
-	 iA2QxhIGH9SOYNjotkXOHGH+Fbr8MUzHUOhH7jw6rBS0V7sZtkv3zDAsKRhVW9Hch
-	 vB9YE9ulbmOerKLZWXfMSmwWmcaS0H4eXADIYd5F0UB/163m1eKq4fQk/G26fCN+h
-	 Uxq1ARFy9uABb6yZp50rNIqtCMy3pqXBOiRn05iccTDhhb2fcHWnYVWN1YwjhQwje
-	 M6fsvZU1gUvMe80jl1I1SdG23MkTwbsnQoOEVuLW8Nu8Re8qfJC4R4e5U9lnWBmWw
-	 juW17I1net9lTQcZ1w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MTvw0-1ssP1z3dac-00TlLs; Sat, 13
- Jul 2024 12:55:09 +0200
-Message-ID: <2f694a65-218a-48cc-b0e6-fcca6aaf646f@web.de>
-Date: Sat, 13 Jul 2024 12:55:09 +0200
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MHxueTaC"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id SaWWs33AVt4p9SaWXsZPUe; Sat, 13 Jul 2024 13:02:44 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720868564;
+	bh=+95BoV2zMSWhEXD4+8PYZ6sPnem7u4o6Qt+9aNjgw34=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=MHxueTaCXcUv0jTgyKWZKCmJIlffD84NUjpqOZ8OqbEnwBJtH5V+rF7Punxk7IET6
+	 ZqMBhWXqQP7kq7CQGxPkxMxlDTdoMR0CBspSjjmGf/++DcXfsHNS2+HMbwXa0v2V59
+	 k3+Qhl31MEpm+YZB5BpEw6XqGoEAsOBETdt7v78+M7xGJnRqaWWRJlYNkrEFaY94OX
+	 08oZW/s3KQPBgz5/xdfz9H6tiH10TWu4gltfYNFEm7SBUunqBcmYGuWWAX+vpmISxc
+	 eQSszVUtEfW64RlVeY1eJ4UbqKI/vOM8JvR1mfrhF6dgVoFiNFlZI7NODVRLzeixJv
+	 Im1okBIi0e6eg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 13 Jul 2024 13:02:44 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] x86/resctrl: Slightly clean-up mbm_config_show()
+Date: Sat, 13 Jul 2024 13:02:32 +0200
+Message-ID: <b2ebc809c8b6c6440d17b12ccf7c2d29aaafd488.1720868538.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Vinod Koul <vkoul@kernel.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] dmaengine: Use seq_putc() in two functions
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:nWYO7sFfEEhfpedzY7Hgh1tN+t2UM9S+7icVE7Z25wrlc7ESInb
- LzUo48B+8mole+wVkYI0ACBVcCxhBfU/u2I2qVeCNXBe75jrwx+tkOvWEOSaQEQyG6lZtR6
- vXP51rV3nPOK542cxmy29oYtS2hNKY2x1MiaUNY+1N12ro7ZJl50q/90tNFj6zme2n4D7C+
- LdYL1xDNB4PpMJ1BQpW/w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:JovllL977LQ=;VfNe0dWfllFPTCFnmjmqvPsXhlt
- tLpHkmnr1SH3dkc69gJeadpIT2GmrolXGjGJIDBZG8dGuel8d2YR6umuCbKUgwPjBMwimzAZS
- cLoDhfCZNgBSltJi/ODFGiPPQq1Da9pEeTEljolR1r1Rr2my+23Bv/vKNlLjFtL6RVfLRTbs2
- HXpsPT43C7smrluMJ6SddneW2rX0p82fvNuE7eyuI/dBET5duHIxSCvAS8PyTdD3DtAUhd3L3
- xdhvQX04gfV0EocyuxX9bzLYZfEDfvyNHOXH/FOyEh1Ha5cYIF6Yzy4bxUF39O/C0GsgBW6Hf
- F3LLRKYus5mvxqgacESpw3OA92OuSASg5fdG2sGUropu8pZFgeHlCcIssxDUdf210Jh2I5d1f
- /diDkFHwLQyJw8Wrg+QCixSRVhWc8dsIqk3HGWn9XwbHN0dZxDfBadoKfYWIJZuux+v7lvw5N
- Ll/W9TQKAKk5OMljhPYttJ2I94tzbg4J/dslzNRg08kEqes8z9a1rCXtHKP13mAXiSGWTZ9my
- WiKYb6ptD+j/op5XIj1vQ39FkwXqUsHl2L594EOSbcYH6vMI1YSI2EWvylGuZ8YS6/W6aJ+ZI
- QJy9rplSz5dUgQRh5jPqtEilO6rRz2a+nmNeEi24YlRkfUVKlZc80QOyCehB/EUZBfqrLp1Vk
- 00eXEb1J2/5Bm2MRWnm34jCOABR3+kOqC7FQHOOGJEGKqwKv9SPXjaNAtpH0lO2rJWb2wXrKd
- bTE4wzIS3BvtYYS+Gxt9SBhVa1TtxkAGek8jaT5ozfOEk+o8VIPMBAecutvpBA9BIZKyNRvqt
- bDmz2HPApnZN3No40oRfvRsA==
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jul 2024 12:30:30 +0200
+'mon_info' is already zeroed in the list_for_each_entry() loop below.
+There is no need to explicitly initialize it here. It just wastes some
+space and cycles.
 
-Single characters (line breaks) should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
+Remove this un-needed code.
 
-This issue was transformed by using the Coccinelle software.
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  74967	   5103	   1880	  81950	  1401e	arch/x86/kernel/cpu/resctrl/rdtgroup.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/dma/dmaengine.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  74903	   5103	   1880	  81886	  13fde	arch/x86/kernel/cpu/resctrl/rdtgroup.o
 
-diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-index c380a4dda77a..d098de909b1e 100644
-=2D-- a/drivers/dma/dmaengine.c
-+++ b/drivers/dma/dmaengine.c
-@@ -94,7 +94,7 @@ static void dmaengine_dbg_summary_show(struct seq_file *=
-s,
- 				seq_printf(s, " (via router: %s)\n",
- 					dev_name(chan->router->dev));
- 			else
--				seq_puts(s, "\n");
-+				seq_putc(s, '\n');
- 		}
- 	}
- }
-@@ -115,7 +115,7 @@ static int dmaengine_summary_show(struct seq_file *s, =
-void *data)
- 			dmaengine_dbg_summary_show(s, dma_dev);
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- 		if (!list_is_last(&dma_dev->global_node, &dma_device_list))
--			seq_puts(s, "\n");
-+			seq_putc(s, '\n');
- 	}
- 	mutex_unlock(&dma_list_mutex);
-
-=2D-
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index d7163b764c62..d906a1cd8491 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -1596,7 +1596,7 @@ static void mondata_config_read(struct rdt_mon_domain *d, struct mon_config_info
+ 
+ static int mbm_config_show(struct seq_file *s, struct rdt_resource *r, u32 evtid)
+ {
+-	struct mon_config_info mon_info = {0};
++	struct mon_config_info mon_info;
+ 	struct rdt_mon_domain *dom;
+ 	bool sep = false;
+ 
+-- 
 2.45.2
 
