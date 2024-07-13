@@ -1,39 +1,39 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588DB130486;
-	Sat, 13 Jul 2024 14:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6CD13957E;
+	Sat, 13 Jul 2024 14:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720880135; cv=none; b=W8aT56wHHVonujWXQtED1iMQV4aAFbkkfw4a3f7llBlCJGiCyZGxaWBo+C5WWmkN+e62BUwios9RA7ppeUPzHV+/OTAvtrTtNbhbQpozmdOnZ04e/3xVXoA60qUcOSvsjhML4ZUv0VZ2YvTw7hEx8i7cN5b3i1pdUqvN9N9suSQ=
+	t=1720881808; cv=none; b=ZJHh/OXZaAXEy57CTxuUiZVvR5ZP/6y9dZWCnEWeB+G5+ycUAp3lJF63I5G4Fc3xrbvmJQW+PwA2ZaUACQ1gWnyzSIf5A6Jk0KHLVjE4x8IjlEVGod9rSasjrsFH8d+mdszccifYrNq4cQ8HuSw4hXP5tub6ut2DEmiUVqL5gEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720880135; c=relaxed/simple;
-	bh=0sImha/N/FjIHW7HwE6mq+4I+YE1wV6jEPOuW++u+5c=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=t5t3Q+c7bed5yOtgG3rE9/rZRoqPuOof4Nwsby3PARCqStI0SuOBeclWKG6V+flyGU7wIOKJCwL3aMcNp3bKctNiCmk90gzBzsSsBqEpqaC/pbtN1JplobBM456UQ+RGs78esxsaGXeVL0ZvO/ODUE33KDFVyObyRws/kErh+wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qcI3imhd; arc=none smtp.client-ip=212.227.17.11
+	s=arc-20240116; t=1720881808; c=relaxed/simple;
+	bh=0IUsix3yW+JZP3A6RF/R61sx0LwAcRmuY1vIpsGlq9Q=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=iZst76TlsD5+l7SC6k/FtMHqdNFu+AQra3HpOaPlwDfs+31ZmBCe0UJemekKTe7RT2xpnvWPFlrgntwaFG8Efmu4LyhlAopulus6ghWJQjztpJU+4XDrXzJ6Foh9hb4QFRDi3JBbHI1S0bLJa2WOUgO3W5zm94+1sbgfj6LvCsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vTOC5H6c; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qcI3imhd"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vTOC5H6c"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720880129; x=1721484929; i=markus.elfring@web.de;
-	bh=i29h15iOs2DJLJvtpOSvAjE7y04Zre3BMYJI6oJamFY=;
+	s=s29768273; t=1720881798; x=1721486598; i=markus.elfring@web.de;
+	bh=7fQ9elM2VGZvsrn+aU88EfXnuV3oDFRum+kdAh3DWyU=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
 	 Subject:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=qcI3imhdJykTIHiWZu0ssEfdZ1/mw/PUoaBJ9elI6Be6kx0s8LCLQ5IAlGLvy7lX
-	 9QDJjBnziEVDo84m73oCNE0gXfiRUal/1M3fBBIZDrjwku5GAgDb/rKTMxfZtuqCh
-	 ANi75Pp9gsGXOby65rqzju9vSvaq9MGnOrWmINnu8BGRn72lITgNwDYAiKZweXb9L
-	 oddnoFzVjqas2DuOIEiY/r8etWyMMOfNmiBFKBX8atxC3pKiCj1hE4X2YT6BBKC/h
-	 4qxds/pBJFlfSPdHPISotjJoyAdeDSghhSV622WatWma3h/2zFBDOr6hzTmpMSGSB
-	 P6Hz02zo4kBEAwzwaw==
+	b=vTOC5H6c3YIcp+kw+C80ctFZbIszyei6gG2OsPLmyO/2BA1/a6gXs7TBPOZvreeI
+	 pZ0JWCKbYEhy5ze/whGxRVs5oSFtuCautBveADC4vZfRmhXbK4d5MbeqCvH1wOhvj
+	 Gb0PUMMPXK+tD8ezPW/KsrFOaN+WjrHMNPNvCVMd/BIgSpxESaNK3MPx2zXeeVlaH
+	 j0/wWq5lOCn37ZNrzQXwPXSmM0QBrdzEcQvAzzOjT1ldlIdLcwmt92OnhAylfiFu3
+	 zcqDAbzBIGE2UqM5d6GZ16IIi8d9PYn9jowh3iIO419V9CqIXjl4mzSLaLHHSlvgm
+	 rmqjTGqSosXlxrwf4Q==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MtPrY-1sDi1934ik-00zRPT; Sat, 13
- Jul 2024 16:15:29 +0200
-Message-ID: <3a52f0c5-85c5-4077-b6cd-504cc5383817@web.de>
-Date: Sat, 13 Jul 2024 16:15:28 +0200
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M2PdU-1sVP7g01bK-008iUe; Sat, 13
+ Jul 2024 16:43:18 +0200
+Message-ID: <9142662e-e709-48fa-9ac2-a4fc16e6228c@web.de>
+Date: Sat, 13 Jul 2024 16:43:17 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,35 +41,36 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Linus Walleij <linus.walleij@linaro.org>
 Content-Language: en-GB
+To: kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] pinctrl: core: Use seq_putc() in three functions
+Subject: [PATCH] regulator: core: Use seq_putc() in
+ regulator_summary_show_subtree()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:FHsifFfV8fdhGzisDa9WcUVEOifIRIqKuxaDTVIeakwyofgPKn5
- weSW3384DZSLadx7B9H3CyTkodrPOW6s0T+/DF9PzZryG0kxw5Zyl+B3bYBuwDbcjxdib8+
- 3JwLgL5SCowBv+q/boaj5o0FdG5rP78d4byfgzo2Rkx5hVo3yTn57v7tA2ulBoLpNhsyosk
- EwUHi1mR/ZCEfJvJzUhpw==
+X-Provags-ID: V03:K1:zSnmLgqOq/vavYWScmBThEVNkt31I8NcwGe8bKeYdqulYqGUtiQ
+ NgBpMKaMfnlKkUm1EVIrRMzy0ulTzd6zMikubVrEk44FMTSs7FCb8UrTKqjUwqtnUH6Vcg3
+ a3owwCJdSJj3KybiPpYRafpBDID+sW7N/oLFTjGX+v+q6JWPfL0ivJTuow1P//bkOGkHKNp
+ LwO8t2nD/y87k56LsuFBQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:mtI6PBGZhgY=;ZqXwS5/Omeym0uvpspkbO2My4rp
- HPCwn4GBg95rleyvoxsRRDUU7jhs/+39Vp00AR1qUmbPUVkfi2yzEeNqshm2K6QeUJxwiL207
- q3VdtNPvuvrmWv3WIz68WvPF8z5j1C8gxOeQn0p70xYNOzHyJyv/g5f+SjU71Uqglpy5OCDZ2
- 739SRs3Ncg0SXTP9perMF86zwXHKvNdLPmhJIRG5lwZuex2k9zJumXdJaR3enuOMJ1MV1LFMF
- PCSzize4EUYBpGXodoTsQvwSWWkJX6aNJTevDMgsOVK0e+fPLZ0DnC8B10VlsF/lqhHc8mPf+
- ggeupk3x+ivRAy3xOtH66t6PYJzuz2HSO7VaW7DOPJSw09OhOq2AlpimG3pI4W8jR6FDTXJhZ
- msu76hT/KDs2oNHPtmxu5PMeW9RvJuZSKuqdDayEheqINvbsa/VYjEcEH3jBq7VH5529JSU60
- 6KcS40B3Yfd9+hT2qaJ3tifnSzW6bxAIFOu9rPUcRVmg60hg//WQdsFX5lkdyikVT9A4Kcx4o
- PV78ZAVJeDWv21ioHrx39XvZle5Ypvtwe1K2g2OEI5PtmPjJ7V+Gdhb4vYbG5H4dC+utRBGwI
- mAQ5uSU9oHvybizyI8E1tkBWyEae/oJN76irwP7wBUU41FYslx5lu1ErxeExnwqK05k/nJ3WP
- ZpHIqvE1gE1yWjA+z1LeT4nlFH3ht6AIXyg25ER6agT7B7AUKq4SloeKkRmt+qhAhHjVIeS4Z
- GSEkur24MD6vzG69A+GiOssh04DaOGjN+d9FK0NiPCN+N75nBYxb0YnPGzXfIPiDXSeEJxhhx
- dB7kba3klrpmTl2joIuHKsqw==
+UI-OutboundReport: notjunk:1;M01:P0:7U1ypnc8ehM=;8DGI+m4Z+kXS3EawXYwvsbLPare
+ NFK8rpsbFngwSULrTpYeW04AkgbviPV17JGi2pna8UVYSvH3UVii04Hf9XcIjGfBYJR0gCQz5
+ 6RpU3XlcXqGPhS8iJWxC3f/rI7h5Nr+GogEMLyTK0sMEAGhOPKT2B/X2kBYuea7JK+FcCkMQ6
+ qWZSavfPCmPxVIob9AzRrhWVprbWNe57MjbYtwYV3qjcOfIXbNjEcN3tV0wPGzGbKzmpQDcqz
+ 0BuOnhfCLpLmVx8fmL6mcgY4Ein9HrsQ2/YDGxBAMsOK9c0bQ3LS9X+AhL1LlEIgJ1I9x2cKe
+ nEmKFowGpQLjxhgvSrUu0QL4ed8pW+kw+KhYkcyTv6IL/NxMrs0gG/qD2TRTb6oO9dIJ80D29
+ 2RFOnc0jAtkiOHgphrQVrUic+FX5L2xBf9VEJI20ARjQfxecKfGG4RCGAeNbmz29PouPePlWW
+ DzxIet53U+nKtyAwyqF8at053K40qYD4gbPqrtYaS5HHQodlHZDxP/dm+KU89BIRznnPZtNMC
+ 5cv+YXiCUTzIgQQ8fr/bX7g61tXcYVCMKmMQqhoR4zWu/bYHRrFsZZaSnHF4LG7VU8T7IxD02
+ YrPxsNR/+VdKHnLf4JgKDiqW/CLju1WeXuSdAMg2cIrDhTp0j2iZ40Q2lp1Gaa86pHtbtJw3S
+ ge+jDpYtdBC7vsNpEC6HOVLNKQM6vrNs22trY50fJloZ8kfIOTvN+WaI+72jpOZ1aOa1uc6+6
+ Iaws8vr1TN4rjtPpsTDYolBGezJIyae1RvF4MJKpjZERovLL9dnNlPlaxOHkGmoPjc73rLWxx
+ 5V3WBIEcpwysVM93atK9EbTQ==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jul 2024 16:10:31 +0200
+Date: Sat, 13 Jul 2024 16:36:30 +0200
 
 Single characters (line breaks) should be put into a sequence.
 Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
@@ -78,43 +79,33 @@ This issue was transformed by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/pinctrl/core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/regulator/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 314ab93d7691..6d61101f488a 100644
-=2D-- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -1707,7 +1707,7 @@ static int pinctrl_pins_show(struct seq_file *s, voi=
-d *what)
- 		if (ops->pin_dbg_show)
- 			ops->pin_dbg_show(pctldev, s, pin);
-
--		seq_puts(s, "\n");
-+		seq_putc(s, '\n');
- 	}
-
- 	mutex_unlock(&pctldev->mutex);
-@@ -1751,7 +1751,7 @@ static int pinctrl_groups_show(struct seq_file *s, v=
-oid *what)
- 				}
- 				seq_printf(s, "pin %d (%s)\n", pins[i], pname);
- 			}
--			seq_puts(s, "\n");
-+			seq_putc(s, '\n');
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 7674b7f2df14..3200bf129fc6 100644
+=2D-- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -6099,7 +6099,7 @@ static void regulator_summary_show_subtree(struct se=
+q_file *s,
  		}
- 		selector++;
  	}
-@@ -1814,7 +1814,7 @@ static int pinctrl_devices_show(struct seq_file *s, =
-void *what)
- 			seq_puts(s, "yes");
- 		else
- 			seq_puts(s, "no");
+
+-	seq_puts(s, "\n");
++	seq_putc(s, '\n');
+
+ 	list_for_each_entry(consumer, &rdev->consumer_list, list) {
+ 		if (consumer->dev && consumer->dev->class =3D=3D &regulator_class)
+@@ -6125,7 +6125,7 @@ static void regulator_summary_show_subtree(struct se=
+q_file *s,
+ 			break;
+ 		}
+
 -		seq_puts(s, "\n");
 +		seq_putc(s, '\n');
  	}
 
- 	mutex_unlock(&pinctrldev_list_mutex);
+ 	summary_data.s =3D s;
 =2D-
 2.45.2
 
