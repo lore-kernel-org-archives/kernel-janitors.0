@@ -1,99 +1,114 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251641B7F7;
-	Sat, 13 Jul 2024 19:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E5743ADE;
+	Sat, 13 Jul 2024 20:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720899988; cv=none; b=f8Vy1unMN8mhypQpjP6ADtIDojAb7u264s0WhxDh47MoFkym0pQv2xLqbhhR7sSp2Cb/0BohlcdyIYmyUXpb6YHh6y7WKYsL2LSRQPXawtNKbi4MqZWv44FZj/P0BIla1wWoTppdIisa4CErezhfxcF1+7ucnrkiqoy3H8YUmB4=
+	t=1720904010; cv=none; b=GfQMK81z5AyIN5VtiIrmNlRpOM7EJa2CYvBp+2qSQ9LtRutag8avemW5xGhYkaqu9t6BHvaCYnktlz8SrixeTG+33VHzLaQyL6wfinFUKADDCmCuNw6W6kTuCQqTAjrg+TEcSs2CKAop5QSj8P1NsOQcEPfUlPXgUqejDiQo/YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720899988; c=relaxed/simple;
-	bh=BDr8r1aRINaMyd7uhCEuBNNCT90+wpbt7PExvizV4SI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=jS5zfYjrO6iY+Yqd6QJSThnA8oEZPAxAwPl9Cf+ly1J+yCEX0P4bAthVLkYQH9lnnUSY3INCNLKRsNvG7hpBaF4z73hlUwt7iiDHbcVaqqthmmozA1FZHbJkChpTAuvjd4rwureRWOuC6tEfDTon6L5RV4S7y4g0cDGD296Rvow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FRZEC/ag; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1720904010; c=relaxed/simple;
+	bh=YqVnxkNyfwSobbp8/+AVaXFAHvFW7N/bW9TOpjeQweI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ShfKa+/rlQYpYdFBsCeIHpIDg6puOdDAfoxrFHDcax7qpgL1TOKNyOnbWWUjEmZe2nO4YM+KKymi+HonpJfKdooYLG3HsT3XJBFZq5rh1DaTeY/mLV5vSToUM/NymA7yYST98zhquF4ZSNUiEDG/5ymF82VSBv36Ho6gv15ucCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=IyjD/S2o; arc=none smtp.client-ip=80.12.242.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FRZEC/ag"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720899966; x=1721504766; i=markus.elfring@web.de;
-	bh=3tBJhjM6eFblAsrUfksAZ4Js6i0KWeliNKRgPH6K5hE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=FRZEC/agZLua5gA3+r2SWAmJVrou3sNXbHoIVM7cNZig+UwxJm9JgylGZaqNOw2M
-	 8xcihUXVnnNCT9wcFrZ0kYdoC7I3dv8VS1MsZdCTMQyrEp8NvepPZBMZbogmOyJlO
-	 tJRW818NL64AEcZxfdN9XD+IF8YLE4UzBvb7jRZKAWJO8mIQH9698rwrhzH6I4SF+
-	 iM+MTsV/P99dbK3EPikYLNp0rnelJLnDfDRKiqm4A5gkNXttlkNkPI74sdUEkqC+w
-	 pbiKChtf1nJHhow7vXm9PVjxZmyzgZhRP4E1xi17utiKg86bz10cs28LVdG5VjFOT
-	 +LsrUKtM2bT1tCHCjA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MgANG-1rriRX3RcM-00daM5; Sat, 13
- Jul 2024 21:46:05 +0200
-Message-ID: <553b5dad-6b84-4415-86ab-a44a1182d3f9@web.de>
-Date: Sat, 13 Jul 2024 21:45:53 +0200
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="IyjD/S2o"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id Sjj0sHlkifWRDSjj0skR4R; Sat, 13 Jul 2024 22:52:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720903935;
+	bh=36Mcqh3lrdshkqWXw2v9j64RRGuxk5wAxlhTZZIAi7E=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=IyjD/S2oU8pPRrxH+yjP+hhUglsP21Gcv+wbpA++OzN7k/RsMVxtamHkyrwJ4JP5y
+	 KyvF8Kx0851tEa71BvgfSYCGrxjq2yOJ9lRGocURvqQdpr6LpI3ZWyZaEc3nm7c7WX
+	 7QvjgBbAnUhf4fVlGDXaNdPAHL4GQrz9Zd+XcifWQFnkBRtVPzOdXadI/XnfcitgZj
+	 M4JIytkd+NMG8LobPW2w++poSRHJB5nY4QC1mPuYR2zoRVX+EKQN01EFVnG+PXOzEn
+	 2eGd9qwtF3yQG0AzEpnP+rV/n5nbwK8jfGTyFHN43kxXOzrzYAa5+KXfRWyZ7DrvO5
+	 t6GJoTVJ/48gQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 13 Jul 2024 22:52:15 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Sandy Huang <hjc@rock-chips.com>,
+	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH] drm/rockchip: Constify struct drm_encoder_helper_funcs
+Date: Sat, 13 Jul 2024 22:52:05 +0200
+Message-ID: <128f9941aab3b1367eb7abca4ac26e2e5dd6ad21.1720903899.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] NFS: Use seq_putc() in nfs_show_path()
-To: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Anna Schumaker <anna@kernel.org>, Trond Myklebust <trondmy@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Content-Language: en-GB
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ibDaFNA5hp+rfw9RUb/9iufCsgWAqICVCpODfxJR0BtMRw8uTD+
- ikBY3nndU2mraFSldE9BlFvD9ZRx6tP/PJLu4nfGISmnpIX/QqcA1w/VEbEdPQBt9osF5CF
- VBq7q8gqBUm4rFMp4OGWAodv+9Bsq84DNlsxN8G4cawDj8rdxn/HE1prEhvqZPNl/fLdCCx
- QLd+uIoFUi/Iu1D0fTTYg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:TTC7OHr1d4Q=;RcXOwpd/G+61VKEDRclqDST/LJk
- pEeAitKXyTe/6CO6HpagPP9yyEsd3Mv7zazDggn4kfR9uHPX3AvSADtcml4ynk1Se+tzp59bk
- hJPtMsjd3TU19nxyjzfJloZsguq29O4bBfh0rey5AvyxmO28w3maPGIXBug3pXC4faHND5pGD
- PL9DOG9VW7RIB61khzPa4W5EnPD935IY/t5R9fTV5DnXAoQ42A85UsmB0tpGouTHMybNYgVnJ
- nxtf8IGYH/nSlNBIljJ8HoPWG90c25Gq6TOqqdaRrdWY+xUrrUqS2V0bKY3gwb7ilZ2uQ5ILJ
- LiWINr3z9lXyZ9NIf5PktkCd+8mmpTmPIV2GgXGtAk8+Y2d7uFW2wbMeBPegpWlW6dsUv7DvC
- 4IO2qMLxW3kv/ySNYC4ETeUzyk07TGicvSr05h0LfajgAOUb4u3aUR2YZsR3hUvgNW+SH1O7+
- A22jChkEfaNGaxVTPl/6OjTxck51UV5RZxUv0tE7ky2Q5g/BaxkAI85vxDmkIJwFLwUAahJMk
- wDCSOQOg5qV0Lpw6Vx0B3Xxehb7zDl55I5n1dxZvlqQS5ZDtggEEZPHbeeIS1X45y+61+5wfj
- Nz+MgT2Lf04OxzYPxjdECxvvhwzK+oS47oWRwgfn1LfmHsD+27c9jcYXGEzxZ9L854/i1B2j1
- l+0QV92WrzJVYF9WFahmBXFq7foI40B6MWmB40gfD6HSqizceBdcXHfY6DVdLncnwyB8Ot62e
- ZqBfQ1on5scaawr4y1XEzM7FH/9oT7uPo1/9eXEkukK92kpImv12+J0cXPtGKvj6KrTAAVKEb
- Hz+uz+ai8DkcbIkRj8R8GMgg==
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jul 2024 21:35:37 +0200
+'struct drm_encoder_helper_funcs' is not modified in these drivers.
 
-A single slash should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-This issue was transformed by using the Coccinelle software.
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   7458	    552	      0	   8010	   1f4a	drivers/gpu/drm/rockchip/analogix_dp-rockchip.o
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/nfs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   7578	    424	      0	   8002	   1f42	drivers/gpu/drm/rockchip/analogix_dp-rockchip.o
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index cbbd4866b0b7..b087720d7811 100644
-=2D-- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -648,7 +648,7 @@ EXPORT_SYMBOL_GPL(nfs_show_devname);
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+---
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 2 +-
+ drivers/gpu/drm/rockchip/inno_hdmi.c            | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
- int nfs_show_path(struct seq_file *m, struct dentry *dentry)
- {
--	seq_puts(m, "/");
-+	seq_putc(m, '/');
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index 362c7951ca4a..d3341edfe4f4 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -262,7 +262,7 @@ rockchip_dp_drm_encoder_atomic_check(struct drm_encoder *encoder,
  	return 0;
  }
- EXPORT_SYMBOL_GPL(nfs_show_path);
-=2D-
+ 
+-static struct drm_encoder_helper_funcs rockchip_dp_encoder_helper_funcs = {
++static const struct drm_encoder_helper_funcs rockchip_dp_encoder_helper_funcs = {
+ 	.mode_fixup = rockchip_dp_drm_encoder_mode_fixup,
+ 	.mode_set = rockchip_dp_drm_encoder_mode_set,
+ 	.atomic_enable = rockchip_dp_drm_encoder_enable,
+diff --git a/drivers/gpu/drm/rockchip/inno_hdmi.c b/drivers/gpu/drm/rockchip/inno_hdmi.c
+index 2241e53a2946..44ce0f581062 100644
+--- a/drivers/gpu/drm/rockchip/inno_hdmi.c
++++ b/drivers/gpu/drm/rockchip/inno_hdmi.c
+@@ -545,7 +545,7 @@ inno_hdmi_encoder_atomic_check(struct drm_encoder *encoder,
+ 	return 0;
+ }
+ 
+-static struct drm_encoder_helper_funcs inno_hdmi_encoder_helper_funcs = {
++static const struct drm_encoder_helper_funcs inno_hdmi_encoder_helper_funcs = {
+ 	.atomic_check	= inno_hdmi_encoder_atomic_check,
+ 	.atomic_enable	= inno_hdmi_encoder_enable,
+ 	.atomic_disable	= inno_hdmi_encoder_disable,
+-- 
 2.45.2
 
