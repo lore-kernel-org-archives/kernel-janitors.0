@@ -1,97 +1,530 @@
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+Received: from msa.smtpout.orange.fr (msa-209.smtpout.orange.fr [193.252.23.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0909D634
-	for <kernel-janitors@vger.kernel.org>; Sun, 14 Jul 2024 01:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A8F1C68D;
+	Sun, 14 Jul 2024 07:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720919935; cv=none; b=ep/rb5oXhtX4wmFCPiOFKEht5wg+keZdVUY2pSbuqSGx3Pyhfd/PHD6B2vET+EHcwOibbinjPADULNBmdzQMDLW5si4QcONnca4yTxhldAI1OGYT6GsOqzYIUbR+XWSa2YpmtUNn9cZlvzWkbSdC8pERQFwdgYaQkqAZX0WGyJc=
+	t=1720941262; cv=none; b=eeX4X3h+QoHZyi3ytiWL36wgbaqZv8cBdTbqkfmDvEMMZ/uidxHME6RxCqVvwZ1E4NzGzuaOXwRRaHFQz9L+VINzMWG85VS0XaTZ72HxRNqAa3G9L8qUFuR/U/cDoNXZTywA0cgNPoEgYnW7dRm00gamwNt63aEjRhj5SGIUQNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720919935; c=relaxed/simple;
-	bh=XNl4SIRsyUzlAgwEKX8UHtR391X6Ugl11Xr4ci7cOG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UGS94myCuV8xyVV4RYh7CZuZY7CVO0xkL9lwzN2p+Pf7435Md8InQu5Efzn0KT23EBzqf4BAjIIWDe2tCfp/nY/chXXC+nYfWv644h/cljmXipVzH7+SD6rm5mW/ppj88s2BVlC+X/rrgkApknQm7Cx1llBPHdk2I99VO4uuMdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U1SU4IkP; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1720941262; c=relaxed/simple;
+	bh=X9thnM5+8xDDweqmeDo4ppAH3Lq6Tx8w369a9Hxws4c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=owRN7R9Dx46y65BpWOoppX3DjDAzVE+a0bLG/jobrYMcrYRbg/sOs7pQDAdwZBQg8dISGb1Vtq+B0K9dy9URTkR74cP2B4BULek7kCEGnX80E9m8UGTiV8CijgV0lRrm45y5nDgRKZ/QMDShRYA5QCHlPqMLOrT4Eutc5a5ehhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Uqk5fpKG; arc=none smtp.client-ip=193.252.23.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U1SU4IkP"
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-25e00f348e6so1752990fac.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 13 Jul 2024 18:18:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720919933; x=1721524733; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IPJWV+XXbidTWRNRU70s/IEwIJH02vBiz+D5u5cJT6g=;
-        b=U1SU4IkPCMvIRa4/9uCq7U2I0yXzOAiv910FePbfR4hLAM+yy+7h86ZTBWJgp1bHiR
-         lITntbX2rM5UvXr5/FKdyNsTsPA0YseXk0HBAkV+/jGwNMlSjWqwoDGU6Q4S3VMjaSH/
-         u4kzo8u4qjJDK7PlNBYSDGJRQ9/PeG9mbe/91TPj9/p9WIPrlXh5N+rfO7hOqdAucAYv
-         6AMvVaJOb1uZIHXVxaK1dlqFms9d4ve9/VW31KBdudM+ax5fsc37sfBZ4aE0vO2TKE6W
-         RmhmBPelbN/jCXsCeUHEQI/Xd0J2wDrxfP2/rZdku/lpGJkdq6cwf5xJSx0MZdsUWDhM
-         d8Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720919933; x=1721524733;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IPJWV+XXbidTWRNRU70s/IEwIJH02vBiz+D5u5cJT6g=;
-        b=Nw1LQCSEiTyakR2t8G+cp21Fy0ITUEQyDXuPIuM62/7/uFcjZ4OGJrxs4Pu4wdydBx
-         jvNH5AXZWu3ij/QBQCVzeqrMnxrVWeUqvAQcpttgMjP7GBiIltR4zBxawI0cjvmnXX9N
-         Gka27qDLAgPHAx5D2H9F0niq3YTIyBB99yiZxGCcOJsAZAx3WfVssd9wT9iZ8UnrnfBa
-         lvNOpHy3pj9UTh1X4veVqOdFcELecAFRa/ioX3qB/7osxz4YZG/wuFhFE0oaTL8CN2vC
-         MUzv97aUMqUVpyM+VGVTSq5qgtEkMcAkJaBb9oCwSUjd4t8JPv+FgyauU4awNKx0t9tC
-         basA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9VXzP6qCHJRLqy64Eu7AVuVD8ELNeibsrKGjKqO1v9EcXW3KVnaD/9AxLwwL8QG/XLdZVRO+pD+kLMlNz4+YBJD3qi1C7ekJVPZr0baWI
-X-Gm-Message-State: AOJu0YxHg247VO0dSR154XmqTkFmSUDK423TnyLhaNYFGK8XCHPwCrvA
-	+dx0Adjjqpmx6iM01/sYTzddPkEt5x2T+uhHiE2SIy/n8eWY58K2DcMrB7W6MIU=
-X-Google-Smtp-Source: AGHT+IEhXK7JJdtVcSXS0unCz6UTyQGtaX/ZzHlDJNGAIFYSAg/Rj9679ty3v0d4eWraFv/K/1qqHQ==
-X-Received: by 2002:a05:6871:591:b0:254:d05e:4cd5 with SMTP id 586e51a60fabf-25eaec1f34emr11755860fac.38.1720919932883;
-        Sat, 13 Jul 2024 18:18:52 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700::17c0])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3dab3dbfb74sm362358b6e.12.2024.07.13.18.18.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jul 2024 18:18:52 -0700 (PDT)
-Date: Sat, 13 Jul 2024 20:18:50 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: arnd@arndb.de, gregkh@linuxfoundation.org, hkallweit1@gmail.com,
-	linux@roeck-us.net, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, ukleinek@kernel.org
-Subject: Re: [PATCH] eeprom: ee1004: Fix locking issues in ee1004_probe()
-Message-ID: <5eda1109-5656-4a0d-9444-6a18bb1b382c@suswa.mountain>
-References: <20240713234813.21746-1-W_Armin@gmx.de>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Uqk5fpKG"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id StQvsafiXxIArStQwsQE5w; Sun, 14 Jul 2024 09:14:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720941250;
+	bh=EV7rWySTzawDQT/aSvME45z4PjLFbc3Ge9KqxqTJ/Ho=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Uqk5fpKGs5BGjk9oGzRJbzBtwwaZhdTZc+Vq1WGxIs77WcpHsTGc/cixXLrk6nHQx
+	 XYC9sNwplapVNj2TSFKXwhFX8H6RdwlKj9DqK4hbIbYxiwYEzf2MwrrPgvgDOeflns
+	 e0pncTLcMPgOOT4lImcvSltfz1TKCrEiF/hVI/Lu4VmZ1X437mFD/fymSYI4VKg4QW
+	 xITDZb1BlSawO7nC72do3a5vI7i6zPPhgl+i5J5TjjD/INzPY3y9XZ668gi/yNV0Y8
+	 4xtG4sBP5C/AjG9W38i/S7PZ2Cazg60tdsIEKOg80m2vdSHZfx63iAm/9lYpG3AECa
+	 q6X1vtOun6lyQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 14 Jul 2024 09:14:10 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	dm-devel@lists.linux.dev
+Subject: [PATCH] dm: Constify struct dm_block_validator
+Date: Sun, 14 Jul 2024 09:13:56 +0200
+Message-ID: <ddffb49d3ba2d274319faa5c4fbeac48a9914524.1720940992.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240713234813.21746-1-W_Armin@gmx.de>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 14, 2024 at 01:48:13AM +0200, Armin Wolf wrote:
-> Currently, the devres-based management of ee1004_bus_data has
-> several issues when it comes to locking:
-> 
-> 1. It does not call mutex_unlock() before returning an error.
-> 
-> 2. When encountering an error, it deadlocks when trying to recursively
->    lock a mutex.
-> 
-> Fix this by moving the mutex-protected bus data initialization into
-> a separate function so that devm_add_action_or_reset() is called
-> without the mutex being held.
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Fixes: 55d57ef6fa97 ("eeprom: ee1004: Use devres for bus data cleanup")
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-> ---
+'struct dm_block_validator' are not modified in these drivers.
 
-Looks good.  :)
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  32047	    920	     16	  32983	   80d7	drivers/md/dm-cache-metadata.o
 
-regards,
-dan carpenter
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  32075	    896	     16	  32987	   80db	drivers/md/dm-cache-metadata.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+---
+ drivers/md/dm-cache-metadata.c                     |  6 +++---
+ drivers/md/dm-clone-metadata.c                     |  6 +++---
+ drivers/md/dm-era-target.c                         |  6 +++---
+ drivers/md/dm-thin-metadata.c                      |  6 +++---
+ drivers/md/persistent-data/dm-array.c              |  6 +++---
+ drivers/md/persistent-data/dm-block-manager.c      | 12 ++++++------
+ drivers/md/persistent-data/dm-block-manager.h      | 14 ++++++++------
+ drivers/md/persistent-data/dm-btree-internal.h     |  2 +-
+ drivers/md/persistent-data/dm-btree-spine.c        |  6 +++---
+ drivers/md/persistent-data/dm-space-map-common.c   | 12 ++++++------
+ .../md/persistent-data/dm-transaction-manager.c    |  8 ++++----
+ .../md/persistent-data/dm-transaction-manager.h    |  6 +++---
+ 12 files changed, 46 insertions(+), 44 deletions(-)
+
+diff --git a/drivers/md/dm-cache-metadata.c b/drivers/md/dm-cache-metadata.c
+index 0ad9dc1824fa..24cd87fddf75 100644
+--- a/drivers/md/dm-cache-metadata.c
++++ b/drivers/md/dm-cache-metadata.c
+@@ -170,7 +170,7 @@ struct dm_cache_metadata {
+  */
+ #define SUPERBLOCK_CSUM_XOR 9031977
+ 
+-static void sb_prepare_for_write(struct dm_block_validator *v,
++static void sb_prepare_for_write(const struct dm_block_validator *v,
+ 				 struct dm_block *b,
+ 				 size_t sb_block_size)
+ {
+@@ -195,7 +195,7 @@ static int check_metadata_version(struct cache_disk_superblock *disk_super)
+ 	return 0;
+ }
+ 
+-static int sb_check(struct dm_block_validator *v,
++static int sb_check(const struct dm_block_validator *v,
+ 		    struct dm_block *b,
+ 		    size_t sb_block_size)
+ {
+@@ -228,7 +228,7 @@ static int sb_check(struct dm_block_validator *v,
+ 	return check_metadata_version(disk_super);
+ }
+ 
+-static struct dm_block_validator sb_validator = {
++static const struct dm_block_validator sb_validator = {
+ 	.name = "superblock",
+ 	.prepare_for_write = sb_prepare_for_write,
+ 	.check = sb_check
+diff --git a/drivers/md/dm-clone-metadata.c b/drivers/md/dm-clone-metadata.c
+index 47c1fa7aad8b..2db84cd2202b 100644
+--- a/drivers/md/dm-clone-metadata.c
++++ b/drivers/md/dm-clone-metadata.c
+@@ -163,7 +163,7 @@ struct dm_clone_metadata {
+ /*
+  * Superblock validation.
+  */
+-static void sb_prepare_for_write(struct dm_block_validator *v,
++static void sb_prepare_for_write(const struct dm_block_validator *v,
+ 				 struct dm_block *b, size_t sb_block_size)
+ {
+ 	struct superblock_disk *sb;
+@@ -177,7 +177,7 @@ static void sb_prepare_for_write(struct dm_block_validator *v,
+ 	sb->csum = cpu_to_le32(csum);
+ }
+ 
+-static int sb_check(struct dm_block_validator *v, struct dm_block *b,
++static int sb_check(const struct dm_block_validator *v, struct dm_block *b,
+ 		    size_t sb_block_size)
+ {
+ 	struct superblock_disk *sb;
+@@ -220,7 +220,7 @@ static int sb_check(struct dm_block_validator *v, struct dm_block *b,
+ 	return 0;
+ }
+ 
+-static struct dm_block_validator sb_validator = {
++static const struct dm_block_validator sb_validator = {
+ 	.name = "superblock",
+ 	.prepare_for_write = sb_prepare_for_write,
+ 	.check = sb_check
+diff --git a/drivers/md/dm-era-target.c b/drivers/md/dm-era-target.c
+index e627781b1420..9c84e9d13eca 100644
+--- a/drivers/md/dm-era-target.c
++++ b/drivers/md/dm-era-target.c
+@@ -196,7 +196,7 @@ struct superblock_disk {
+  * Superblock validation
+  *--------------------------------------------------------------
+  */
+-static void sb_prepare_for_write(struct dm_block_validator *v,
++static void sb_prepare_for_write(const struct dm_block_validator *v,
+ 				 struct dm_block *b,
+ 				 size_t sb_block_size)
+ {
+@@ -221,7 +221,7 @@ static int check_metadata_version(struct superblock_disk *disk)
+ 	return 0;
+ }
+ 
+-static int sb_check(struct dm_block_validator *v,
++static int sb_check(const struct dm_block_validator *v,
+ 		    struct dm_block *b,
+ 		    size_t sb_block_size)
+ {
+@@ -254,7 +254,7 @@ static int sb_check(struct dm_block_validator *v,
+ 	return check_metadata_version(disk);
+ }
+ 
+-static struct dm_block_validator sb_validator = {
++static const struct dm_block_validator sb_validator = {
+ 	.name = "superblock",
+ 	.prepare_for_write = sb_prepare_for_write,
+ 	.check = sb_check
+diff --git a/drivers/md/dm-thin-metadata.c b/drivers/md/dm-thin-metadata.c
+index 6022189c1388..f90679cfec5b 100644
+--- a/drivers/md/dm-thin-metadata.c
++++ b/drivers/md/dm-thin-metadata.c
+@@ -249,7 +249,7 @@ struct dm_thin_device {
+  */
+ #define SUPERBLOCK_CSUM_XOR 160774
+ 
+-static void sb_prepare_for_write(struct dm_block_validator *v,
++static void sb_prepare_for_write(const struct dm_block_validator *v,
+ 				 struct dm_block *b,
+ 				 size_t block_size)
+ {
+@@ -261,7 +261,7 @@ static void sb_prepare_for_write(struct dm_block_validator *v,
+ 						      SUPERBLOCK_CSUM_XOR));
+ }
+ 
+-static int sb_check(struct dm_block_validator *v,
++static int sb_check(const struct dm_block_validator *v,
+ 		    struct dm_block *b,
+ 		    size_t block_size)
+ {
+@@ -294,7 +294,7 @@ static int sb_check(struct dm_block_validator *v,
+ 	return 0;
+ }
+ 
+-static struct dm_block_validator sb_validator = {
++static const struct dm_block_validator sb_validator = {
+ 	.name = "superblock",
+ 	.prepare_for_write = sb_prepare_for_write,
+ 	.check = sb_check
+diff --git a/drivers/md/persistent-data/dm-array.c b/drivers/md/persistent-data/dm-array.c
+index 798c9c53a343..157c9bd2fed7 100644
+--- a/drivers/md/persistent-data/dm-array.c
++++ b/drivers/md/persistent-data/dm-array.c
+@@ -38,7 +38,7 @@ struct array_block {
+  */
+ #define CSUM_XOR 595846735
+ 
+-static void array_block_prepare_for_write(struct dm_block_validator *v,
++static void array_block_prepare_for_write(const struct dm_block_validator *v,
+ 					  struct dm_block *b,
+ 					  size_t size_of_block)
+ {
+@@ -50,7 +50,7 @@ static void array_block_prepare_for_write(struct dm_block_validator *v,
+ 						 CSUM_XOR));
+ }
+ 
+-static int array_block_check(struct dm_block_validator *v,
++static int array_block_check(const struct dm_block_validator *v,
+ 			     struct dm_block *b,
+ 			     size_t size_of_block)
+ {
+@@ -77,7 +77,7 @@ static int array_block_check(struct dm_block_validator *v,
+ 	return 0;
+ }
+ 
+-static struct dm_block_validator array_validator = {
++static const struct dm_block_validator array_validator = {
+ 	.name = "array",
+ 	.prepare_for_write = array_block_prepare_for_write,
+ 	.check = array_block_check
+diff --git a/drivers/md/persistent-data/dm-block-manager.c b/drivers/md/persistent-data/dm-block-manager.c
+index b17b54df673b..1ef71e5fcde7 100644
+--- a/drivers/md/persistent-data/dm-block-manager.c
++++ b/drivers/md/persistent-data/dm-block-manager.c
+@@ -345,7 +345,7 @@ void *dm_block_data(struct dm_block *b)
+ EXPORT_SYMBOL_GPL(dm_block_data);
+ 
+ struct buffer_aux {
+-	struct dm_block_validator *validator;
++	const struct dm_block_validator *validator;
+ 	int write_locked;
+ 
+ #ifdef CONFIG_DM_DEBUG_BLOCK_MANAGER_LOCKING
+@@ -441,7 +441,7 @@ dm_block_t dm_bm_nr_blocks(struct dm_block_manager *bm)
+ static int dm_bm_validate_buffer(struct dm_block_manager *bm,
+ 				 struct dm_buffer *buf,
+ 				 struct buffer_aux *aux,
+-				 struct dm_block_validator *v)
++				 const struct dm_block_validator *v)
+ {
+ 	if (unlikely(!aux->validator)) {
+ 		int r;
+@@ -467,7 +467,7 @@ static int dm_bm_validate_buffer(struct dm_block_manager *bm,
+ 	return 0;
+ }
+ int dm_bm_read_lock(struct dm_block_manager *bm, dm_block_t b,
+-		    struct dm_block_validator *v,
++		    const struct dm_block_validator *v,
+ 		    struct dm_block **result)
+ {
+ 	struct buffer_aux *aux;
+@@ -500,7 +500,7 @@ int dm_bm_read_lock(struct dm_block_manager *bm, dm_block_t b,
+ EXPORT_SYMBOL_GPL(dm_bm_read_lock);
+ 
+ int dm_bm_write_lock(struct dm_block_manager *bm,
+-		     dm_block_t b, struct dm_block_validator *v,
++		     dm_block_t b, const struct dm_block_validator *v,
+ 		     struct dm_block **result)
+ {
+ 	struct buffer_aux *aux;
+@@ -536,7 +536,7 @@ int dm_bm_write_lock(struct dm_block_manager *bm,
+ EXPORT_SYMBOL_GPL(dm_bm_write_lock);
+ 
+ int dm_bm_read_try_lock(struct dm_block_manager *bm,
+-			dm_block_t b, struct dm_block_validator *v,
++			dm_block_t b, const struct dm_block_validator *v,
+ 			struct dm_block **result)
+ {
+ 	struct buffer_aux *aux;
+@@ -569,7 +569,7 @@ int dm_bm_read_try_lock(struct dm_block_manager *bm,
+ }
+ 
+ int dm_bm_write_lock_zero(struct dm_block_manager *bm,
+-			  dm_block_t b, struct dm_block_validator *v,
++			  dm_block_t b, const struct dm_block_validator *v,
+ 			  struct dm_block **result)
+ {
+ 	int r;
+diff --git a/drivers/md/persistent-data/dm-block-manager.h b/drivers/md/persistent-data/dm-block-manager.h
+index f706d3de8d5a..b1998968594c 100644
+--- a/drivers/md/persistent-data/dm-block-manager.h
++++ b/drivers/md/persistent-data/dm-block-manager.h
+@@ -51,12 +51,14 @@ dm_block_t dm_bm_nr_blocks(struct dm_block_manager *bm);
+  */
+ struct dm_block_validator {
+ 	const char *name;
+-	void (*prepare_for_write)(struct dm_block_validator *v, struct dm_block *b, size_t block_size);
++	void (*prepare_for_write)(const struct dm_block_validator *v,
++				  struct dm_block *b, size_t block_size);
+ 
+ 	/*
+ 	 * Return 0 if the checksum is valid or < 0 on error.
+ 	 */
+-	int (*check)(struct dm_block_validator *v, struct dm_block *b, size_t block_size);
++	int (*check)(const struct dm_block_validator *v,
++		     struct dm_block *b, size_t block_size);
+ };
+ 
+ /*----------------------------------------------------------------*/
+@@ -73,11 +75,11 @@ struct dm_block_validator {
+  * written back to the disk sometime after dm_bm_unlock is called.
+  */
+ int dm_bm_read_lock(struct dm_block_manager *bm, dm_block_t b,
+-		    struct dm_block_validator *v,
++		    const struct dm_block_validator *v,
+ 		    struct dm_block **result);
+ 
+ int dm_bm_write_lock(struct dm_block_manager *bm, dm_block_t b,
+-		     struct dm_block_validator *v,
++		     const struct dm_block_validator *v,
+ 		     struct dm_block **result);
+ 
+ /*
+@@ -85,7 +87,7 @@ int dm_bm_write_lock(struct dm_block_manager *bm, dm_block_t b,
+  * available immediately.
+  */
+ int dm_bm_read_try_lock(struct dm_block_manager *bm, dm_block_t b,
+-			struct dm_block_validator *v,
++			const struct dm_block_validator *v,
+ 			struct dm_block **result);
+ 
+ /*
+@@ -93,7 +95,7 @@ int dm_bm_read_try_lock(struct dm_block_manager *bm, dm_block_t b,
+  * overwrite the block completely.  It saves a disk read.
+  */
+ int dm_bm_write_lock_zero(struct dm_block_manager *bm, dm_block_t b,
+-			  struct dm_block_validator *v,
++			  const struct dm_block_validator *v,
+ 			  struct dm_block **result);
+ 
+ void dm_bm_unlock(struct dm_block *b);
+diff --git a/drivers/md/persistent-data/dm-btree-internal.h b/drivers/md/persistent-data/dm-btree-internal.h
+index 7ed2ce656fcc..acebd32858a7 100644
+--- a/drivers/md/persistent-data/dm-btree-internal.h
++++ b/drivers/md/persistent-data/dm-btree-internal.h
+@@ -138,7 +138,7 @@ static inline uint64_t value64(struct btree_node *n, uint32_t index)
+  */
+ int lower_bound(struct btree_node *n, uint64_t key);
+ 
+-extern struct dm_block_validator btree_node_validator;
++extern const struct dm_block_validator btree_node_validator;
+ 
+ /*
+  * Value type for upper levels of multi-level btrees.
+diff --git a/drivers/md/persistent-data/dm-btree-spine.c b/drivers/md/persistent-data/dm-btree-spine.c
+index 7540383b7cf3..c46fc50c274e 100644
+--- a/drivers/md/persistent-data/dm-btree-spine.c
++++ b/drivers/md/persistent-data/dm-btree-spine.c
+@@ -16,7 +16,7 @@
+ 
+ #define BTREE_CSUM_XOR 121107
+ 
+-static void node_prepare_for_write(struct dm_block_validator *v,
++static void node_prepare_for_write(const struct dm_block_validator *v,
+ 				   struct dm_block *b,
+ 				   size_t block_size)
+ {
+@@ -29,7 +29,7 @@ static void node_prepare_for_write(struct dm_block_validator *v,
+ 					     BTREE_CSUM_XOR));
+ }
+ 
+-static int node_check(struct dm_block_validator *v,
++static int node_check(const struct dm_block_validator *v,
+ 		      struct dm_block *b,
+ 		      size_t block_size)
+ {
+@@ -81,7 +81,7 @@ static int node_check(struct dm_block_validator *v,
+ 	return 0;
+ }
+ 
+-struct dm_block_validator btree_node_validator = {
++const struct dm_block_validator btree_node_validator = {
+ 	.name = "btree_node",
+ 	.prepare_for_write = node_prepare_for_write,
+ 	.check = node_check
+diff --git a/drivers/md/persistent-data/dm-space-map-common.c b/drivers/md/persistent-data/dm-space-map-common.c
+index 591d1a43d035..3a19124ee279 100644
+--- a/drivers/md/persistent-data/dm-space-map-common.c
++++ b/drivers/md/persistent-data/dm-space-map-common.c
+@@ -22,7 +22,7 @@
+  */
+ #define INDEX_CSUM_XOR 160478
+ 
+-static void index_prepare_for_write(struct dm_block_validator *v,
++static void index_prepare_for_write(const struct dm_block_validator *v,
+ 				    struct dm_block *b,
+ 				    size_t block_size)
+ {
+@@ -34,7 +34,7 @@ static void index_prepare_for_write(struct dm_block_validator *v,
+ 						 INDEX_CSUM_XOR));
+ }
+ 
+-static int index_check(struct dm_block_validator *v,
++static int index_check(const struct dm_block_validator *v,
+ 		       struct dm_block *b,
+ 		       size_t block_size)
+ {
+@@ -59,7 +59,7 @@ static int index_check(struct dm_block_validator *v,
+ 	return 0;
+ }
+ 
+-static struct dm_block_validator index_validator = {
++static const struct dm_block_validator index_validator = {
+ 	.name = "index",
+ 	.prepare_for_write = index_prepare_for_write,
+ 	.check = index_check
+@@ -72,7 +72,7 @@ static struct dm_block_validator index_validator = {
+  */
+ #define BITMAP_CSUM_XOR 240779
+ 
+-static void dm_bitmap_prepare_for_write(struct dm_block_validator *v,
++static void dm_bitmap_prepare_for_write(const struct dm_block_validator *v,
+ 					struct dm_block *b,
+ 					size_t block_size)
+ {
+@@ -84,7 +84,7 @@ static void dm_bitmap_prepare_for_write(struct dm_block_validator *v,
+ 						       BITMAP_CSUM_XOR));
+ }
+ 
+-static int dm_bitmap_check(struct dm_block_validator *v,
++static int dm_bitmap_check(const struct dm_block_validator *v,
+ 			   struct dm_block *b,
+ 			   size_t block_size)
+ {
+@@ -109,7 +109,7 @@ static int dm_bitmap_check(struct dm_block_validator *v,
+ 	return 0;
+ }
+ 
+-static struct dm_block_validator dm_sm_bitmap_validator = {
++static const struct dm_block_validator dm_sm_bitmap_validator = {
+ 	.name = "sm_bitmap",
+ 	.prepare_for_write = dm_bitmap_prepare_for_write,
+ 	.check = dm_bitmap_check,
+diff --git a/drivers/md/persistent-data/dm-transaction-manager.c b/drivers/md/persistent-data/dm-transaction-manager.c
+index c88fa6266203..c7ba4e6cbbc7 100644
+--- a/drivers/md/persistent-data/dm-transaction-manager.c
++++ b/drivers/md/persistent-data/dm-transaction-manager.c
+@@ -237,7 +237,7 @@ int dm_tm_commit(struct dm_transaction_manager *tm, struct dm_block *root)
+ EXPORT_SYMBOL_GPL(dm_tm_commit);
+ 
+ int dm_tm_new_block(struct dm_transaction_manager *tm,
+-		    struct dm_block_validator *v,
++		    const struct dm_block_validator *v,
+ 		    struct dm_block **result)
+ {
+ 	int r;
+@@ -266,7 +266,7 @@ int dm_tm_new_block(struct dm_transaction_manager *tm,
+ }
+ 
+ static int __shadow_block(struct dm_transaction_manager *tm, dm_block_t orig,
+-			  struct dm_block_validator *v,
++			  const struct dm_block_validator *v,
+ 			  struct dm_block **result)
+ {
+ 	int r;
+@@ -306,7 +306,7 @@ static int __shadow_block(struct dm_transaction_manager *tm, dm_block_t orig,
+ }
+ 
+ int dm_tm_shadow_block(struct dm_transaction_manager *tm, dm_block_t orig,
+-		       struct dm_block_validator *v, struct dm_block **result,
++		       const struct dm_block_validator *v, struct dm_block **result,
+ 		       int *inc_children)
+ {
+ 	int r;
+@@ -331,7 +331,7 @@ int dm_tm_shadow_block(struct dm_transaction_manager *tm, dm_block_t orig,
+ EXPORT_SYMBOL_GPL(dm_tm_shadow_block);
+ 
+ int dm_tm_read_lock(struct dm_transaction_manager *tm, dm_block_t b,
+-		    struct dm_block_validator *v,
++		    const struct dm_block_validator *v,
+ 		    struct dm_block **blk)
+ {
+ 	if (tm->is_clone) {
+diff --git a/drivers/md/persistent-data/dm-transaction-manager.h b/drivers/md/persistent-data/dm-transaction-manager.h
+index 01f7e650118d..61a8d10825ca 100644
+--- a/drivers/md/persistent-data/dm-transaction-manager.h
++++ b/drivers/md/persistent-data/dm-transaction-manager.h
+@@ -64,7 +64,7 @@ int dm_tm_commit(struct dm_transaction_manager *tm, struct dm_block *superblock)
+  * Zeroes the new block and returns with write lock held.
+  */
+ int dm_tm_new_block(struct dm_transaction_manager *tm,
+-		    struct dm_block_validator *v,
++		    const struct dm_block_validator *v,
+ 		    struct dm_block **result);
+ 
+ /*
+@@ -84,7 +84,7 @@ int dm_tm_new_block(struct dm_transaction_manager *tm,
+  * it locked when you call this.
+  */
+ int dm_tm_shadow_block(struct dm_transaction_manager *tm, dm_block_t orig,
+-		       struct dm_block_validator *v,
++		       const struct dm_block_validator *v,
+ 		       struct dm_block **result, int *inc_children);
+ 
+ /*
+@@ -92,7 +92,7 @@ int dm_tm_shadow_block(struct dm_transaction_manager *tm, dm_block_t orig,
+  * on it outstanding then it'll block.
+  */
+ int dm_tm_read_lock(struct dm_transaction_manager *tm, dm_block_t b,
+-		    struct dm_block_validator *v,
++		    const struct dm_block_validator *v,
+ 		    struct dm_block **result);
+ 
+ void dm_tm_unlock(struct dm_transaction_manager *tm, struct dm_block *b);
+-- 
+2.45.2
 
