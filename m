@@ -1,219 +1,159 @@
-Received: from msa.smtpout.orange.fr (msa-210.smtpout.orange.fr [193.252.23.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BB749647;
-	Sun, 14 Jul 2024 12:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14751FDD;
+	Sun, 14 Jul 2024 12:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720959347; cv=none; b=dgwABBO6RSB7Oybp50HxVBYslVAnq8ZDQPs5XmVXGav4+QkfmnM502vjXahW9banJnuH6np6JGyVpEYg+EMLfrf2ivsqhDmGpjNXsCsJVIPE8pBQiShsy+5OOu5w1o9NHN5bQvC878siFbN1BqgRGMd/S+3RKlR0WNQq+5OyMcU=
+	t=1720960614; cv=none; b=Ku/BwfQDmX9WdA5+U5dwq2LKrEY2jUV6bJ5xvx9T3oZQuhAapE6yHpXpblij1lvtOo7WmhO0/XqIzJe2hqpEEPFdodwHd8bbeaUOTuwDiry4y4QWgqgFQ04ljmobQ+sEr1aEojauKtt3jIc2gJm18r5hdQ3AhbE0jS+Ki4gbP88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720959347; c=relaxed/simple;
-	bh=wemadaPaF5tYj2gDESeIMIx0Xn4/NfVv5MLoAteFeac=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b7ScIerPyfGSE823O7fznl/gJUbCqUvXkJ4NFZ1l2tL57wdJWtmUxOSTEiu2NCRaIHHU2I0PTXetkVKp5BRzadk1gX+ajSIU48fS3U6t5oQbgbsBz8437JZ3G1bLxGdVZ11XdvX4QZ71BNenj12BGWuyGO4q6qNT8OkNJLGg0Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Utcrhdtl; arc=none smtp.client-ip=193.252.23.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1720960614; c=relaxed/simple;
+	bh=MWt6vUSJVirl5baT6jQhbOU2aaQeojysvNYPBOIOdXg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=GDoUT7E0Th6Tkq1yowA27MV6MuNJUCNYOUlGffBz50V8a768IKUwX6dZ4qISWJNXG+7NYGp5Cke4d7zoNTx5bUfWwxDPU5zyRaqTEwHY+tmkreCFTrQC9au0GQw1z3wlfLO/kzPJ3ZyAxE461jo8XS4sczVAjj6fRTLKRE9WdGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kJe2AGvZ; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Utcrhdtl"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id Sy8aseahrEfqMSy8asZxKO; Sun, 14 Jul 2024 14:15:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1720959336;
-	bh=Ib9jUMmVKMUmOCzzj+eKpdb7WVSo4L1l4Cu4ds83SNs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=UtcrhdtlKRnx7p4YDJGKQVifbW5vaTGFLxGBUU6tbNtnme/AAY5U35n1NiGGeMhTd
-	 AdouoG7UHfUpMrEK+e2fIt1N0BAvSF5XO7EkqoslfTHPdwd5gabMw9NGfDHHmXr+s7
-	 SMN3aqhY22JfwqSANXtdYMIOxR3FnE5jeFeBzSpM1wh+CUTH1ktDpcTKyJaWRVa1Vr
-	 VGHEtroAshKuK/G3tuJYBgxcDxPLbMQ59dBRHl3QzuO5wYHPTNeIQu2tWQO0EW7AyM
-	 QqRxgn4PXwAhMSxy0r3Lz8F6ui3dndE1yOgviUH8TCXGDZH9BAFttqpynWR78ZWpwZ
-	 7NDko9UJC7wYA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 14 Jul 2024 14:15:36 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-rdma@vger.kernel.org
-Subject: [PATCH] IB/hfi1: Constify struct flag_table
-Date: Sun, 14 Jul 2024 14:15:25 +0200
-Message-ID: <782b6a648bfbbf2bb83f81a73c0460b5bb7642a1.1720959310.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kJe2AGvZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720960574; x=1721565374; i=markus.elfring@web.de;
+	bh=g11cNSzqa/kFL592OZP6SLFSSzberrOpC0FsGs3iDiw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=kJe2AGvZNiLqBcS673cI0L6DmNN6enKM/0mpEDhW55yzo9aKwq+R6cMvbuo7SJCo
+	 QihBNJ1IVDHI71fznR8eYSY8HA1a3SQU8GfgQ5/EBrP9PrVRCOWBiqwBDHRYCyF11
+	 W+9enjnw+TCAOHeWRN/jhFJh94syg2/F5+n5qyYKwwn3hnijL07tGfTAHTmxdCmgs
+	 WRZgjXR3bFBBcTsElQ5yRyP70bJYbIlxU4i5pUbqV37yxkO+l+or6dKrEKaNkLzzG
+	 LAxDtL+oi2gfxQXZug4ZxdwyDygFL8yOYyrONNO/TLkHFu7f2qJppgVQbbxIMLkbc
+	 DYU9Xl9NX5tj96k75w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MrOdf-1ryMOH14dz-00jsv3; Sun, 14
+ Jul 2024 14:36:14 +0200
+Message-ID: <4b78f586-4c87-433e-a57f-0d8ca151b89c@web.de>
+Date: Sun, 14 Jul 2024 14:36:13 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB
+To: kernel-janitors@vger.kernel.org, Ben Segall <bsegall@google.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>,
+ Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Valentin Schneider <vschneid@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] sched: Use seq_putc() in four functions
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:gMNiszC8c3AKpW4omBxYkemCqriXY2qBw76sqmW3rj7MjlkTvWV
+ doJq59Z4rjCH6VV5XZmH/thT28Zh0q/vCElK/n4gG6VtVPVyBO79GCBwNesBNDIdUujPSuV
+ 9OhKyC1DY7IwjJhmfXfkYiJIbh8tOWZnQb7WMcgrY4e/aFWIAiSUe7aRnt78gmlpvlXyBp0
+ oUk8nPJMoiGnwlz6mMrMQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:oQQbhroLkC4=;E5ej6YQylfDYKLEikd2yAKCiQrA
+ n/FJRMwV4W4WRPryjDIQi8ED/3LjWoAVLK4i3LloZdFOpSfHewYGkXvHLivoBEUZ5GP13E0qa
+ Q3u7hsYGQGS8nCiZjAu/EhoIhvu19AO03dBcdO/sCEguLfHwiPZIUnGgF5A0MJtnVoFZn+zlp
+ 0vdLOsQJxwI1m0Eat9xbuN1hoa10MSC4UVAufkHN2aJH94ADzV0POurgO4Kvzp0ZjsNOMrDrf
+ OQltcpGhg891KcG38+UEB4t2D4YmZwFTZYAHXsO73x0NdanHAnI3rthCwtG+jA/nRkuseydwY
+ emNFjnOcaaAZQOes84vxB8UCjnaCWHm3xdRh7pyBY5s++i5FBI7GdE1PBjeTr+RInONGYeawC
+ 07tYWgzw61wUODpwfca9XgvbSexMBKhI+ICUEBGntQtknqggDfL6nN8PExp86nCYrysLpp63p
+ /S+bf+sRvPZLoqoufqktWToQfHYKDigwgeJ8lK0Gq8G8VITACmfb/QY8aAn3WFig3E3rRJa3S
+ Gd0MOuQb2cAg1GmsbKhEhGv3vKNVuCzJIxExnIXlOSZ2ntDPQfap2e3HCha8hjn7FEMMUw2N5
+ UEPAduiZ8wlpYmIZQQd9Erllr6xSjs66Li52WQsOZfjkp6O2+UL/DCyx8wuVxHQJ05imthGSE
+ 6cpTREXNdjmr6OO9kubZjX5PKp50p5GmiiPWooGAbtb84+JGFPWl+AqFT0cACpkcp86akvunF
+ 4D40bB1eY8Eoq/OwnOfdeO1pl3grO2LBUsFaTQQTU5tWyE8zGB+eDOLNr3+18q9tII/RRf5nL
+ Fb1vKZl/tAckX11hhJQyIRVQ==
 
-'struct flag_table' are not modified in this driver.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 14 Jul 2024 14:25:33 +0200
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+Single characters should be put into a sequence.
+Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
- 302932	  40271	    112	 343315	  53d13	drivers/infiniband/hw/hfi1/chip.o
+This issue was transformed by using the Coccinelle software.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
- 311636	  31567	    112	 343315	  53d13	drivers/infiniband/hw/hfi1/chip.o
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ kernel/sched/cpuacct.c |  4 ++--
+ kernel/sched/debug.c   | 14 +++++++-------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
----
- drivers/infiniband/hw/hfi1/chip.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+diff --git a/kernel/sched/cpuacct.c b/kernel/sched/cpuacct.c
+index 0de9dda09949..0c1ce2e1c89b 100644
+=2D-- a/kernel/sched/cpuacct.c
++++ b/kernel/sched/cpuacct.c
+@@ -245,14 +245,14 @@ static int cpuacct_all_seq_show(struct seq_file *m, =
+void *V)
+ 	seq_puts(m, "cpu");
+ 	for (index =3D 0; index < CPUACCT_STAT_NSTATS; index++)
+ 		seq_printf(m, " %s", cpuacct_stat_desc[index]);
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
 
-diff --git a/drivers/infiniband/hw/hfi1/chip.c b/drivers/infiniband/hw/hfi1/chip.c
-index 78f27f7b4203..c52e6b2c9914 100644
---- a/drivers/infiniband/hw/hfi1/chip.c
-+++ b/drivers/infiniband/hw/hfi1/chip.c
-@@ -251,7 +251,7 @@ struct flag_table {
- /*
-  * CCE Error flags.
-  */
--static struct flag_table cce_err_status_flags[] = {
-+static const struct flag_table cce_err_status_flags[] = {
- /* 0*/	FLAG_ENTRY0("CceCsrParityErr",
- 		CCE_ERR_STATUS_CCE_CSR_PARITY_ERR_SMASK),
- /* 1*/	FLAG_ENTRY0("CceCsrReadBadAddrErr",
-@@ -341,7 +341,7 @@ static struct flag_table cce_err_status_flags[] = {
-  * Misc Error flags
-  */
- #define MES(text) MISC_ERR_STATUS_MISC_##text##_ERR_SMASK
--static struct flag_table misc_err_status_flags[] = {
-+static const struct flag_table misc_err_status_flags[] = {
- /* 0*/	FLAG_ENTRY0("CSR_PARITY", MES(CSR_PARITY)),
- /* 1*/	FLAG_ENTRY0("CSR_READ_BAD_ADDR", MES(CSR_READ_BAD_ADDR)),
- /* 2*/	FLAG_ENTRY0("CSR_WRITE_BAD_ADDR", MES(CSR_WRITE_BAD_ADDR)),
-@@ -360,7 +360,7 @@ static struct flag_table misc_err_status_flags[] = {
- /*
-  * TXE PIO Error flags and consequences
-  */
--static struct flag_table pio_err_status_flags[] = {
-+static const struct flag_table pio_err_status_flags[] = {
- /* 0*/	FLAG_ENTRY("PioWriteBadCtxt",
- 	SEC_WRITE_DROPPED,
- 	SEND_PIO_ERR_STATUS_PIO_WRITE_BAD_CTXT_ERR_SMASK),
-@@ -502,7 +502,7 @@ static struct flag_table pio_err_status_flags[] = {
- /*
-  * TXE SDMA Error flags
-  */
--static struct flag_table sdma_err_status_flags[] = {
-+static const struct flag_table sdma_err_status_flags[] = {
- /* 0*/	FLAG_ENTRY0("SDmaRpyTagErr",
- 		SEND_DMA_ERR_STATUS_SDMA_RPY_TAG_ERR_SMASK),
- /* 1*/	FLAG_ENTRY0("SDmaCsrParityErr",
-@@ -530,7 +530,7 @@ static struct flag_table sdma_err_status_flags[] = {
-  * TXE Egress Error flags
-  */
- #define SEES(text) SEND_EGRESS_ERR_STATUS_##text##_ERR_SMASK
--static struct flag_table egress_err_status_flags[] = {
-+static const struct flag_table egress_err_status_flags[] = {
- /* 0*/	FLAG_ENTRY0("TxPktIntegrityMemCorErr", SEES(TX_PKT_INTEGRITY_MEM_COR)),
- /* 1*/	FLAG_ENTRY0("TxPktIntegrityMemUncErr", SEES(TX_PKT_INTEGRITY_MEM_UNC)),
- /* 2 reserved */
-@@ -631,7 +631,7 @@ static struct flag_table egress_err_status_flags[] = {
-  * TXE Egress Error Info flags
-  */
- #define SEEI(text) SEND_EGRESS_ERR_INFO_##text##_ERR_SMASK
--static struct flag_table egress_err_info_flags[] = {
-+static const struct flag_table egress_err_info_flags[] = {
- /* 0*/	FLAG_ENTRY0("Reserved", 0ull),
- /* 1*/	FLAG_ENTRY0("VLErr", SEEI(VL)),
- /* 2*/	FLAG_ENTRY0("JobKeyErr", SEEI(JOB_KEY)),
-@@ -680,7 +680,7 @@ static struct flag_table egress_err_info_flags[] = {
-  * TXE Send error flags
-  */
- #define SES(name) SEND_ERR_STATUS_SEND_##name##_ERR_SMASK
--static struct flag_table send_err_status_flags[] = {
-+static const struct flag_table send_err_status_flags[] = {
- /* 0*/	FLAG_ENTRY0("SendCsrParityErr", SES(CSR_PARITY)),
- /* 1*/	FLAG_ENTRY0("SendCsrReadBadAddrErr", SES(CSR_READ_BAD_ADDR)),
- /* 2*/	FLAG_ENTRY0("SendCsrWriteBadAddrErr", SES(CSR_WRITE_BAD_ADDR))
-@@ -689,7 +689,7 @@ static struct flag_table send_err_status_flags[] = {
- /*
-  * TXE Send Context Error flags and consequences
-  */
--static struct flag_table sc_err_status_flags[] = {
-+static const struct flag_table sc_err_status_flags[] = {
- /* 0*/	FLAG_ENTRY("InconsistentSop",
- 		SEC_PACKET_DROPPED | SEC_SC_HALTED,
- 		SEND_CTXT_ERR_STATUS_PIO_INCONSISTENT_SOP_ERR_SMASK),
-@@ -712,7 +712,7 @@ static struct flag_table sc_err_status_flags[] = {
-  * RXE Receive Error flags
-  */
- #define RXES(name) RCV_ERR_STATUS_RX_##name##_ERR_SMASK
--static struct flag_table rxe_err_status_flags[] = {
-+static const struct flag_table rxe_err_status_flags[] = {
- /* 0*/	FLAG_ENTRY0("RxDmaCsrCorErr", RXES(DMA_CSR_COR)),
- /* 1*/	FLAG_ENTRY0("RxDcIntfParityErr", RXES(DC_INTF_PARITY)),
- /* 2*/	FLAG_ENTRY0("RxRcvHdrUncErr", RXES(RCV_HDR_UNC)),
-@@ -847,7 +847,7 @@ static struct flag_table rxe_err_status_flags[] = {
-  * DCC Error Flags
-  */
- #define DCCE(name) DCC_ERR_FLG_##name##_SMASK
--static struct flag_table dcc_err_flags[] = {
-+static const struct flag_table dcc_err_flags[] = {
- 	FLAG_ENTRY0("bad_l2_err", DCCE(BAD_L2_ERR)),
- 	FLAG_ENTRY0("bad_sc_err", DCCE(BAD_SC_ERR)),
- 	FLAG_ENTRY0("bad_mid_tail_err", DCCE(BAD_MID_TAIL_ERR)),
-@@ -900,7 +900,7 @@ static struct flag_table dcc_err_flags[] = {
-  * LCB error flags
-  */
- #define LCBE(name) DC_LCB_ERR_FLG_##name##_SMASK
--static struct flag_table lcb_err_flags[] = {
-+static const struct flag_table lcb_err_flags[] = {
- /* 0*/	FLAG_ENTRY0("CSR_PARITY_ERR", LCBE(CSR_PARITY_ERR)),
- /* 1*/	FLAG_ENTRY0("INVALID_CSR_ADDR", LCBE(INVALID_CSR_ADDR)),
- /* 2*/	FLAG_ENTRY0("RST_FOR_FAILED_DESKEW", LCBE(RST_FOR_FAILED_DESKEW)),
-@@ -943,7 +943,7 @@ static struct flag_table lcb_err_flags[] = {
-  * DC8051 Error Flags
-  */
- #define D8E(name) DC_DC8051_ERR_FLG_##name##_SMASK
--static struct flag_table dc8051_err_flags[] = {
-+static const struct flag_table dc8051_err_flags[] = {
- 	FLAG_ENTRY0("SET_BY_8051", D8E(SET_BY_8051)),
- 	FLAG_ENTRY0("LOST_8051_HEART_BEAT", D8E(LOST_8051_HEART_BEAT)),
- 	FLAG_ENTRY0("CRAM_MBE", D8E(CRAM_MBE)),
-@@ -962,7 +962,7 @@ static struct flag_table dc8051_err_flags[] = {
-  *
-  * Flags in DC8051_DBG_ERR_INFO_SET_BY_8051.ERROR field.
-  */
--static struct flag_table dc8051_info_err_flags[] = {
-+static const struct flag_table dc8051_info_err_flags[] = {
- 	FLAG_ENTRY0("Spico ROM check failed",  SPICO_ROM_FAILED),
- 	FLAG_ENTRY0("Unknown frame received",  UNKNOWN_FRAME),
- 	FLAG_ENTRY0("Target BER not met",      TARGET_BER_NOT_MET),
-@@ -986,7 +986,7 @@ static struct flag_table dc8051_info_err_flags[] = {
-  *
-  * Flags in DC8051_DBG_ERR_INFO_SET_BY_8051.HOST_MSG field.
-  */
--static struct flag_table dc8051_info_host_msg_flags[] = {
-+static const struct flag_table dc8051_info_host_msg_flags[] = {
- 	FLAG_ENTRY0("Host request done", 0x0001),
- 	FLAG_ENTRY0("BC PWR_MGM message", 0x0002),
- 	FLAG_ENTRY0("BC SMA message", 0x0004),
-@@ -5275,7 +5275,7 @@ static int append_str(char *buf, char **curp, int *lenp, const char *s)
-  * the buffer.  End in '*' if the buffer is too short.
-  */
- static char *flag_string(char *buf, int buf_len, u64 flags,
--			 struct flag_table *table, int table_size)
-+			 const struct flag_table *table, int table_size)
- {
- 	char extra[32];
- 	char *p = buf;
--- 
+ 	for_each_possible_cpu(cpu) {
+ 		seq_printf(m, "%d", cpu);
+ 		for (index =3D 0; index < CPUACCT_STAT_NSTATS; index++)
+ 			seq_printf(m, " %llu",
+ 				   cpuacct_cpuusage_read(ca, cpu, index));
+-		seq_puts(m, "\n");
++		seq_putc(m, '\n');
+ 	}
+ 	return 0;
+ }
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index c057ef46c5f8..ac9d65c5d0b4 100644
+=2D-- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -62,7 +62,7 @@ static int sched_feat_show(struct seq_file *m, void *v)
+ 			seq_puts(m, "NO_");
+ 		seq_printf(m, "%s ", sched_feat_names[i]);
+ 	}
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+
+ 	return 0;
+ }
+@@ -251,15 +251,15 @@ static int sched_dynamic_show(struct seq_file *m, vo=
+id *v)
+
+ 	for (i =3D 0; i < ARRAY_SIZE(preempt_modes); i++) {
+ 		if (preempt_dynamic_mode =3D=3D i)
+-			seq_puts(m, "(");
++			seq_putc(m, '(');
+ 		seq_puts(m, preempt_modes[i]);
+ 		if (preempt_dynamic_mode =3D=3D i)
+-			seq_puts(m, ")");
++			seq_putc(m, ')');
+
+-		seq_puts(m, " ");
++		seq_putc(m, ' ');
+ 	}
+
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+ 	return 0;
+ }
+
+@@ -389,9 +389,9 @@ static int sd_flags_show(struct seq_file *m, void *v)
+
+ 	for_each_set_bit(idx, &flags, __SD_FLAG_CNT) {
+ 		seq_puts(m, sd_flag_debug[idx].name);
+-		seq_puts(m, " ");
++		seq_putc(m, ' ');
+ 	}
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+
+ 	return 0;
+ }
+=2D-
 2.45.2
 
