@@ -1,98 +1,143 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from msa.smtpout.orange.fr (out-68.smtpout.orange.fr [193.252.22.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D24BD53E;
-	Sun, 14 Jul 2024 10:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17B41643A;
+	Sun, 14 Jul 2024 10:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720951235; cv=none; b=l0Tt01IYlEzWA7cmySFxy/E1w07ahWU5aiCO1XLchTxrnXcTHyV29DM5y9mw0vmn1Eh4A0kHTEePSLdVe84/H+LWezXBTmi47If8dzQ8obrmT17V2iKPK8YtVkUPG26TIw3QHhG+Mj8rQMOv7yk1eFscFfAiXlGLK+Sv3szsQzs=
+	t=1720951911; cv=none; b=JLMd995fANDW+36M1phGDVqPsl19pXC1KjBfD7zG9yU9kRGMIWLbqg4eIywPz8EeKmwXR6dNk5YA8cdEbi4k3q15a11Ki6xHffTgSLYA7s5eLDT6LJXs4OjNYXhXUXA90UA159JI4A9e4f4bMdehCSI7b4D1rCY/3UTEjwDowJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720951235; c=relaxed/simple;
-	bh=70JMor/oZb4mHjzra3jt9sMl0xtaN4eX84HTPMEELtE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=idy/ChheqOqXZL6brlPM0UvROGs1Lq9khYy6Wlq+5bjsKYbLqNiSL2MBPrbrOOXsik3DCjZVUfSsbLvOpwQrfB6reNd6gTChikfWYOY9Vgy9DxFGS7UU+QrFp2uAyIPH+o4wG/XBV0m66EFbpsFpiietJSteU1vTUXT3N5m4pGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sVtQNKE9; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1720951911; c=relaxed/simple;
+	bh=kWCs+cEQtqbwjreHdj53o84/iX19kR9ct0q9z6sWyA8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k63QWBEFBeu6mvZ0sJZNwfMaB+B2H++E6NZNYOKhQUDL2+tfr8lxI7SzQ7O5arOMdskqzg9Hp7lTSt3DNkRtFUT+5Tg7CqATKlcIUXKxpK9VeqONT0OXIJ3TPII3EzOGx4Tjn82bVfMc4zS2sl9foj6zFgrDI6WoB+YKHemeAZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JGC3ZMva; arc=none smtp.client-ip=193.252.22.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sVtQNKE9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720951224; x=1721556024; i=markus.elfring@web.de;
-	bh=f/V8aOL09Ui/qzegtZpYK/nVfAQmMHIQe/+tR3O9ibc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=sVtQNKE9hx9xL23lnbGNeZJvt6D1tOsU/6FvSHFtImxixuJOTm2lvDRKo7uL2mTb
-	 N5dcuBpwXKQgzIOywJALCKktpTgH5rIfvSHLvJm99cIAkHyC3V/dGe6jY6bTiBVCE
-	 Zs7M6MhhF5g+BJrkfxWiqzUiltkX9NGpZD9qPeHLFkEOHFcy1okq6zlJ7wx9xKgo6
-	 +ABqstgXJwWHT0Xj/iuwk7RUhoSpHxHPFa1pT1jdVqDFK53PTgKKkYg6YQNJOptq8
-	 ZnrUthhCRoySYXxxu+j6mgzg2afQTrNHt3CbgxXU+OkVKB7NHh0G0vSaCLPcLXx2T
-	 m0nVtf7d1jraNwd5jA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MJnvp-1smXFB0sxd-00LnlJ; Sun, 14
- Jul 2024 12:00:24 +0200
-Message-ID: <19c77c4d-7f81-4980-a124-d6a8e14675d9@web.de>
-Date: Sun, 14 Jul 2024 12:00:23 +0200
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JGC3ZMva"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id SwBhsdxgbEfqMSwBhsYXFo; Sun, 14 Jul 2024 12:10:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720951838;
+	bh=bcgYQd7qyMKezXOwUHato7KOe58Ug0yR7MvnLf1WWps=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=JGC3ZMvaFCnKXsEO8GFmcJ9JjXIQt+LJOdnt3Tw5tUez4+8Hk0cpw3GN12XSxZPJp
+	 eFHjU/jZwJV9XqShDr5bt1mm8QtnH/gMN2ZWbPHTreHNjMiDtz7fK8HytXWSOKy3sc
+	 Hch5D5lg917TV9NTaEgs7/EpGwV9eQO4aEdt+p6MtllWI1q2ehmWldUMs0Jt0PU1fa
+	 LP8+1iNFFQ2g+oWwSOuAZmqmmNAu7R09LC1G2n4LUZBkl57zsXaalmQKOIYchjUcBA
+	 gtiqFBwxwTQ/akwG+27pOyle5nC37ixzWBb3XhypPbfJefKqW6YCqGp47sVKQiLcy/
+	 +hVh7PAJAcXrw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 14 Jul 2024 12:10:38 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+	Kalle Valo <kvalo@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com
+Subject: [PATCH] brcmfmac: fwsignal: Use struct_size() to simplify brcmf_fws_rxreorder()
+Date: Sun, 14 Jul 2024 12:10:33 +0200
+Message-ID: <bd3ad239c4d1c49b94c1ba93e48c09df98ef86cb.1720951805.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-To: kernel-janitors@vger.kernel.org, Joel Granados <j.granados@samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] latencytop: Use seq_putc() in lstats_show()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:TqZBUhXhqpHGxa1gc58W399KpIZNGZb2ii1m5+vpW0ibQqib+4F
- T5IcP5A4z6e7q837phyVqb5BJMW8GG3LZ2ls+qVU4zjQeml2kJQagcjHPhDNfwP+8hNd3Ab
- 4n1NMSTONgrnNKZg7TQtdkNr6/LDDll236r5ZvFD+7K2BveQ0rcycWMnVGZIhY+xhK+tLP7
- IZG4ffWYmVAQAwKa0lxnQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:v9Ct82VaZo4=;+I/evG/a54EpAnd5MSr5p9YQ/zI
- 5PQ2vikeXo2fL3UpHKmIIndsQFRivrLAkwDSvmKU7937p1vgmtevUe5BbllayRCz1t086fHeT
- W1xmRKys9J6KATljXUQXyefEuuDT7kGMPdA6kKuFaXyR4/kXdEEaPoc9wMrv1IU0X2jxTHJhc
- +3dVY7PctPIhWxPSJF3O7sRH4icw60bRPJw0gotIb4e6WgqDi297ma+sMpZKzsk/Kzd2ckpcw
- onFpCvJMhOoUrO8MxWsRuS1BUbl/tNEhqsxDsElVTRBOGqvtivCA+HGemfmITnn8ARTBCuMko
- OLmwtRZSRGcmbF+7AKCd7t4BIlqPAzFFX9EEJDX1UP6CtUeGpZj4zp1tMj/UAuPhTl6BCzUDm
- 0AAN/7ULILAXYSZ3gZGLfQhjlvnX5byRKqI5OjJLUf4CHmRkIoNQFx2Yo8fxVn5Z9XCeKVtEF
- DjLGgVSvHAEGz5xJiR4BJ5hFEvKXvHQCnYt0m0WbTh4y2uN4RcYTBkvepB8gGna5JYJJtWEOQ
- ia3UIHLo+ybvwcFmbLmk7s+8Jt+c6Vl6NcNeWV81TaJto96p6PgYDxAtl1Ac3rBozEp2mS8qC
- DgS9LR/MPUmE0FCUJ4A6mDWLJ876rJqO4u/E+mxd7hC9soj+24zaMi6VClnPT9px+x1S91XXz
- X21TPTeWmTqqzemnIEBYzsExfX2dPbHF64BszaPxeXo9xAohjbJEVwu4fheMzkSmjZx4Luv9q
- LvdhClCfEgGNIdsK00aFGZgwLgiz8YdtP73S+WZfnw4kdifZ+vtq7zqT85BdgDsYXIoEClghq
- 7B1Ev2mNZ0f8DdcymhK8oUeA==
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 14 Jul 2024 11:52:13 +0200
+In the "struct brcmf_ampdu_rx_reorder", change the 'pktslots' field into
+flexible array.
 
-A single line break should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
+It saves the size of a pointer when the memory is allocated and avoids
+an indirection when the array is used.
+It also removes the usage of a pointer arithmetic and saves a few lines of
+code.
 
-This issue was transformed by using the Coccinelle software.
+Finally, struct_size() can be used. It is not a must have here, because
+it is easy to see that buf_size can not overflow, but still, it is a good
+practice.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- kernel/latencytop.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h   | 4 ++--
+ .../net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c   | 8 ++------
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/latencytop.c b/kernel/latencytop.c
-index 84c53285f499..09e5231598ae 100644
-=2D-- a/kernel/latencytop.c
-+++ b/kernel/latencytop.c
-@@ -260,7 +260,7 @@ static int lstats_show(struct seq_file *m, void *v)
-
- 				seq_printf(m, " %ps", (void *)bt);
- 			}
--			seq_puts(m, "\n");
-+			seq_putc(m, '\n');
- 		}
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
+index ea76b8d33401..6ea2b677f047 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
+@@ -48,20 +48,20 @@
+ /**
+  * struct brcmf_ampdu_rx_reorder - AMPDU receive reorder info
+  *
+- * @pktslots: dynamic allocated array for ordering AMPDU packets.
+  * @flow_id: AMPDU flow identifier.
+  * @cur_idx: last AMPDU index from firmware.
+  * @exp_idx: expected next AMPDU index.
+  * @max_idx: maximum amount of packets per AMPDU.
+  * @pend_pkts: number of packets currently in @pktslots.
++ * @pktslots: dynamic allocated array for ordering AMPDU packets.
+  */
+ struct brcmf_ampdu_rx_reorder {
+-	struct sk_buff **pktslots;
+ 	u8 flow_id;
+ 	u8 cur_idx;
+ 	u8 exp_idx;
+ 	u8 max_idx;
+ 	u8 pend_pkts;
++	struct sk_buff *pktslots[];
+ };
+ 
+ /* Forward decls for struct brcmf_pub (see below) */
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
+index 36af81975855..0949e7975ff1 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
+@@ -1673,7 +1673,6 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
+ 	struct sk_buff_head reorder_list;
+ 	struct sk_buff *pnext;
+ 	u8 flags;
+-	u32 buf_size;
+ 
+ 	reorder_data = ((struct brcmf_skb_reorder_data *)pkt->cb)->reorder;
+ 	flow_id = reorder_data[BRCMF_RXREORDER_FLOWID_OFFSET];
+@@ -1708,15 +1707,13 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
  	}
- 	return 0;
-=2D-
+ 	/* from here on we need a flow reorder instance */
+ 	if (rfi == NULL) {
+-		buf_size = sizeof(*rfi);
+ 		max_idx = reorder_data[BRCMF_RXREORDER_MAXIDX_OFFSET];
+ 
+-		buf_size += (max_idx + 1) * sizeof(pkt);
+-
+ 		/* allocate space for flow reorder info */
+ 		brcmf_dbg(INFO, "flow-%d: start, maxidx %d\n",
+ 			  flow_id, max_idx);
+-		rfi = kzalloc(buf_size, GFP_ATOMIC);
++		rfi = kzalloc(struct_size(rfi, pktslots, max_idx + 1),
++			      GFP_ATOMIC);
+ 		if (rfi == NULL) {
+ 			bphy_err(drvr, "failed to alloc buffer\n");
+ 			brcmf_netif_rx(ifp, pkt);
+@@ -1724,7 +1721,6 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
+ 		}
+ 
+ 		ifp->drvr->reorder_flows[flow_id] = rfi;
+-		rfi->pktslots = (struct sk_buff **)(rfi + 1);
+ 		rfi->max_idx = max_idx;
+ 	}
+ 	if (flags & BRCMF_RXREORDER_NEW_HOLE)  {
+-- 
 2.45.2
 
