@@ -1,127 +1,118 @@
-Received: from msa.smtpout.orange.fr (msa-211.smtpout.orange.fr [193.252.23.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C351BDCD;
-	Sun, 14 Jul 2024 07:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B2328F3;
+	Sun, 14 Jul 2024 08:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720942664; cv=none; b=B8jn2Q3G4Kt1rL5N8qfK917HXJtSlyloK7bvaTovwQqti9bRm1cVhIbgeb3jMmCXK9zsiFzBYz9UfFo+VZOqS0fT//RxKq0X21+5Wzej78Iu1lLZ6Q4FyJDUHKQoHDDQZPy3iujbSwklyQuMaRg4RasywCpZ0mEf0jlGVh+fcyg=
+	t=1720946130; cv=none; b=V0K2ll4tgLyb0Hd3dMaqC23cnObG0fcjmd06OvCNhkXFr50oKoq2KFWVwcVyxHa4eih7HJpFR83v9HH/MUfTUCQy6AB3Px8zqDP51nyabHScBSsOhdXuvZB40/vOUpa2qIkoGzRoJ1ftIWv9NBoOQ00BMwgE5xUkxmqlSbipg10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720942664; c=relaxed/simple;
-	bh=nq37sIkuvaBRK/8tbljabKRjSSyojeugxyXMGAf/aa0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s39m3N7+QFizIiEnUDMc9GG32PKV0usfFGyIDbUj4ju12imO7aUK7xED0pR6dw2LlOWtGqRAoZC5iPQ8t3Gwj4isXgMZut0OHI8B1GfrS6cKowD2BOUvqyuMB57KQimPyuKvpOBvFThLJRLOk51NI3RUpE9NkJX4cGQLFijTIMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=AXRo7NO+; arc=none smtp.client-ip=193.252.23.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1720946130; c=relaxed/simple;
+	bh=X4BdYgFSH221jGfjwvw4T+PWkp2cDmma/5jFhvnZ/hs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=NE6RsSujcM6BQOHxng7pj2wRJIk6DdfpPeQ8e2d/fnU40eu4UmAodaxBmBSXcxCP/0Idq17V3hXVrM82NVRFiJmfE6DJL6R/+PppepMA6kCmSMwbEiIWlbwQbiO0GmqyL1A7ju187E7ps0J2kS99AilCPNJCWxd7anBVqiTIkzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ofF30iP7; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="AXRo7NO+"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id StnYsEflQwxoIStnYs4c19; Sun, 14 Jul 2024 09:37:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1720942654;
-	bh=JiF6rlqsmKD1wAOp9hDzYCiLWPlf9kUDYQw53qiLvCc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=AXRo7NO+P0TMlGtigGCaWrJERsqN5Bf7rwQAflRz7/nSk8X/PkTiZNjlYXZBh91Bv
-	 jpT1TyRE5U/s7tpIE5H62zQzEQhcdy3htE/keeZEQVgbceWylPmJwWho9DbuuniB3O
-	 MsaDSfc+d46qs+srFaJO8pLwxYJcgr0hZjjIh5pgfitK/xRIeW4Q0RhhNHf1sDe7vm
-	 ZlR50ahvaof+exNxkgGbcU0wTaV5HUfs9G94hkQ9gh0E11/c+LKeYvTnTGKgIDA2XP
-	 NZHp/IdqMDNWnU+XbBUMnX0qfpH3Vj89RzusRSQ7W/wNaLaiUzCSha56/UhkUNYXVs
-	 gwutLJ8PyeTSA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 14 Jul 2024 09:37:34 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH] drm/exynos: Constify struct exynos_drm_ipp_funcs
-Date: Sun, 14 Jul 2024 09:37:20 +0200
-Message-ID: <7c4a1ca4525a1d1429c9f16ccfc6d8bf80fc2b63.1720942618.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ofF30iP7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720946118; x=1721550918; i=markus.elfring@web.de;
+	bh=8sssd1CaXuoGXJxfU+Ilm+YolaxDXCqVXoLxKX/XL08=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ofF30iP738k2qmn4UvaX4oj29CJDuS3bb7j6pBQHjelixejAYM5lpfXvvKPSQhWv
+	 OO1LvnhUEjkRX0en4/MAmxaWRrjSSqlLdC/CLScCbkrsXjv6AnGD+GSCm1lMYsuNC
+	 BRApm95HYJzSwWsmpLb8Es0PFXgKKsP+1w/1tLz+nutq6LbYhke6hBsiP+THxb+J2
+	 plLJ+7nrV4wl5OHQ7mC9RwFqYoNrac0BSepnsCUQoGtowSVIsRwKy2iMXtg+k98mP
+	 Arp3v7SsHxXZ2h4UvCc5bTpnp+cPqPPJbh/ajPzE20R9xwer4mSFa1xXIo8gOSYue
+	 2CF4ZHz4yBLL/FnrQA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MG9DC-1saeTq1dVc-00Dr5h; Sun, 14
+ Jul 2024 10:35:18 +0200
+Message-ID: <18310e20-826f-45ab-b69e-dbfe47a1f83f@web.de>
+Date: Sun, 14 Jul 2024 10:35:00 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: samba-technical@lists.samba.org, linux-cifs@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Bharath SM <bharathsm@microsoft.com>,
+ Paulo Alcantara <pc@manguebit.com>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
+ Tom Talpey <tom@talpey.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] cifs: Use seq_putc() in two functions
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:wHQHsCa/IRF5oT7nVboVX4k43zcPoxY8kVyGiLEg6oH16W9H4qq
+ +KK4e3p6ik1SAJPUhS/K0p2EEsqApim/8AwVRFnEUV2ZPsRofbAEMvHX03V90DvpFFFFdV1
+ VdcMS3VfxdlgoAM8J21xg81Zvq6pwgKsxBeo1ppRw6TQxnNaUFi+Y2dYPddhwh0EuGm5CzM
+ pRT0vnCOhnfspW3inE2fg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Tn93NAUKJpA=;twoAGmU/W3belNO+hhOuK40o9QN
+ 5gM08NFoVJWTSVwDlias1LTCZxTycPi6ikmFIf29Q8jcic42zprMbHHLwFqPNi9Ly1oBlc4PG
+ 7D2rcsGgudBPm/d7lbI/jOW8WDnqr3CT1RB//1uevPP28cTDPMgHF3RRUk6Ea9U9yS6SNYFce
+ 0JMTQx7CVqUCyOBlv7ICyocnVOI+MdHxDRh5Zt/83uxVXT8M9uE0oB5qoEwCCmBTPh9GeOuse
+ 3MN/6bjBapRuXCRe5c75OHyabCAc2lW9Wongl4FjJfv+zEcLDaEoh/gqN26IHQ6H31N20Diov
+ Cp9tjjzvXDOIhgYsmF2HV+bFZIfctR1H9HwnvgOkO/XoAilAnhuvCFsjEWAoKhE/kGE7W+ORX
+ cIHzfZN3Ri6+UISrPMHVivbFOwF8Y1TL2rdy6iifLfDJXIdTCTkSGlAJoloZKZ4TAljYqVaJg
+ ZMw6Kmd+aw7auPm4Dd+Z3tABZiTPwMelUKuGY2OG4xtJzh+/PAk3Gn/WVXxN3fFJBicpJw0Vp
+ 0lGoY2/L9TJwTZEW6oZ1w3LBHID4IpMYYZbbjVHMnnGVlhcuHKH67K39EoDMJ9bNshfgve0r2
+ C2gVwKNTifa4oyWT2ooG08HE7JqgNgwCgZBkp22Urpph51+kplGHfKY/Hgyimaruf8ZNsSZrt
+ dwqmlh95j3+IdD2gfgsGFYUCh07OtcvmqGlF+k++285NhwTw3R8HksddccoHlsP2fXMMGT3Ha
+ czaSwQEuIkwv5AnsWdm6TOuZjvEu3+fSBynXaR/RoBWYkYweQv1QvGw6a2c8i9C3yT8zspIwI
+ G9LqJ29ifSiU2OWLxjF3adZA==
 
-'struct exynos_drm_ipp_funcs' are not modified in these drivers.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 14 Jul 2024 10:23:49 +0200
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+Single characters should be put into a sequence.
+Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  20446	   1746	     16	  22208	   56c0	drivers/gpu/drm/exynos/exynos_drm_fimc.o
+This issue was transformed by using the Coccinelle software.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  20446	   1714	     16	  22176	   56a0	drivers/gpu/drm/exynos/exynos_drm_fimc.o
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/smb/client/cifs_swn.c | 2 +-
+ fs/smb/client/cifsfs.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
----
- drivers/gpu/drm/exynos/exynos_drm_fimc.c   | 2 +-
- drivers/gpu/drm/exynos/exynos_drm_gsc.c    | 2 +-
- drivers/gpu/drm/exynos/exynos_drm_scaler.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-index 142184c8c3bc..4d7ea65b7dd8 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-@@ -1125,7 +1125,7 @@ static void fimc_abort(struct exynos_drm_ipp *ipp,
+diff --git a/fs/smb/client/cifs_swn.c b/fs/smb/client/cifs_swn.c
+index 7233c6a7e6d7..68998c6ba7a2 100644
+=2D-- a/fs/smb/client/cifs_swn.c
++++ b/fs/smb/client/cifs_swn.c
+@@ -655,7 +655,7 @@ void cifs_swn_dump(struct seq_file *m)
+ 		seq_printf(m, "%s", swnreg->ip_notify ? "(y)" : "(n)");
  	}
+ 	mutex_unlock(&cifs_swnreg_idr_mutex);
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
  }
- 
--static struct exynos_drm_ipp_funcs ipp_funcs = {
-+static const struct exynos_drm_ipp_funcs ipp_funcs = {
- 	.commit = fimc_commit,
- 	.abort = fimc_abort,
- };
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-index 1b111e2c3347..d80b0d1eb734 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-@@ -1162,7 +1162,7 @@ static void gsc_abort(struct exynos_drm_ipp *ipp,
+
+ void cifs_swn_check(void)
+diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+index 6397fdefd876..ce5cb72bb81f 100644
+=2D-- a/fs/smb/client/cifsfs.c
++++ b/fs/smb/client/cifsfs.c
+@@ -491,7 +491,7 @@ cifs_show_security(struct seq_file *s, struct cifs_ses=
+ *ses)
  	}
- }
- 
--static struct exynos_drm_ipp_funcs ipp_funcs = {
-+static const struct exynos_drm_ipp_funcs ipp_funcs = {
- 	.commit = gsc_commit,
- 	.abort = gsc_abort,
- };
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-index a9d469896824..2788105ac780 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-@@ -403,7 +403,7 @@ static int scaler_commit(struct exynos_drm_ipp *ipp,
- 	return 0;
- }
- 
--static struct exynos_drm_ipp_funcs ipp_funcs = {
-+static const struct exynos_drm_ipp_funcs ipp_funcs = {
- 	.commit = scaler_commit,
- };
- 
--- 
+
+ 	if (ses->sign)
+-		seq_puts(s, "i");
++		seq_putc(s, 'i');
+
+ 	if (ses->sectype =3D=3D Kerberos)
+ 		seq_printf(s, ",cruid=3D%u",
+=2D-
 2.45.2
 
