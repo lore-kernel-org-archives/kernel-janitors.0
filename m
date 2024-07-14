@@ -1,143 +1,181 @@
-Received: from msa.smtpout.orange.fr (out-68.smtpout.orange.fr [193.252.22.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17B41643A;
-	Sun, 14 Jul 2024 10:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893DF26AE6;
+	Sun, 14 Jul 2024 10:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720951911; cv=none; b=JLMd995fANDW+36M1phGDVqPsl19pXC1KjBfD7zG9yU9kRGMIWLbqg4eIywPz8EeKmwXR6dNk5YA8cdEbi4k3q15a11Ki6xHffTgSLYA7s5eLDT6LJXs4OjNYXhXUXA90UA159JI4A9e4f4bMdehCSI7b4D1rCY/3UTEjwDowJI=
+	t=1720952751; cv=none; b=oD+/cviACVFpHoIdtZNycYxTvUOEQeSmMmgqGSgx/A5nCDRKQhmkEejuRNRpsvxEVDaZuc6fuqxj+xF8Br+jt3CA/UB9v/sioRciRs9z9RRSEWMryHbNTSpdm+Y5egelKEvNzvNMkc4fY3cI1ycllZqOQmjfRJaZCSRWu/tCp3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720951911; c=relaxed/simple;
-	bh=kWCs+cEQtqbwjreHdj53o84/iX19kR9ct0q9z6sWyA8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k63QWBEFBeu6mvZ0sJZNwfMaB+B2H++E6NZNYOKhQUDL2+tfr8lxI7SzQ7O5arOMdskqzg9Hp7lTSt3DNkRtFUT+5Tg7CqATKlcIUXKxpK9VeqONT0OXIJ3TPII3EzOGx4Tjn82bVfMc4zS2sl9foj6zFgrDI6WoB+YKHemeAZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JGC3ZMva; arc=none smtp.client-ip=193.252.22.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1720952751; c=relaxed/simple;
+	bh=AfWnb9cfrD1x1VDWpWZbqdYgV13IMZnJ805PXrY/Vn4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=hrL71pz5hE6xkOQZCaIkwklGQXkL0Dn78TxRQusdUc+l01L/bYmk9NW+Bc6nq232JQ7AzPnlZapGpYN4vUk9hVDgE5Zh7nJm7I5CNhcGu5Rt+/b1Oo+eDk3+UyZ9G/mLRdxIQqbP1MM8Ud/qhDqLQfgIRXcH89OruIpKCuCW+TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ADrCIItH; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JGC3ZMva"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id SwBhsdxgbEfqMSwBhsYXFo; Sun, 14 Jul 2024 12:10:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1720951838;
-	bh=bcgYQd7qyMKezXOwUHato7KOe58Ug0yR7MvnLf1WWps=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=JGC3ZMvaFCnKXsEO8GFmcJ9JjXIQt+LJOdnt3Tw5tUez4+8Hk0cpw3GN12XSxZPJp
-	 eFHjU/jZwJV9XqShDr5bt1mm8QtnH/gMN2ZWbPHTreHNjMiDtz7fK8HytXWSOKy3sc
-	 Hch5D5lg917TV9NTaEgs7/EpGwV9eQO4aEdt+p6MtllWI1q2ehmWldUMs0Jt0PU1fa
-	 LP8+1iNFFQ2g+oWwSOuAZmqmmNAu7R09LC1G2n4LUZBkl57zsXaalmQKOIYchjUcBA
-	 gtiqFBwxwTQ/akwG+27pOyle5nC37ixzWBb3XhypPbfJefKqW6YCqGp47sVKQiLcy/
-	 +hVh7PAJAcXrw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 14 Jul 2024 12:10:38 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
-	Kalle Valo <kvalo@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com
-Subject: [PATCH] brcmfmac: fwsignal: Use struct_size() to simplify brcmf_fws_rxreorder()
-Date: Sun, 14 Jul 2024 12:10:33 +0200
-Message-ID: <bd3ad239c4d1c49b94c1ba93e48c09df98ef86cb.1720951805.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ADrCIItH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720952729; x=1721557529; i=markus.elfring@web.de;
+	bh=svmi7O2EV7BzborbEmqMMS6ECP2Aalnt/a8I7tOnb6g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ADrCIItHKk6eBjb6TlEf1VwnW6ecIkBPSpvhEX54/QCSnsIsgsO3syLFZ6LoVh49
+	 T7T+OCgbH2gxmZv1Jy+z3Q9SHj5w7CP1jkj9xTbWggWjkA2QDPBoidEeF1MAKZrrK
+	 AXn+X7Udlw8vglYnKvfyHtcUs6a2V5SV/KvMqa2kH4TBCEnZyCe3w5tOEUJAEDTXI
+	 Rf93hRdcqJJ5z1W38OGuSZ+bOdSGEvMsVV7QXCgz1PuIPlJ8ZmVLxpsZdB8K6mQtZ
+	 w/5IiU1LQJX2rd/csmxmbM/YUF6SRsVbN0C8Fp9fUvbySr78Iz/VkgipL0b9LRodq
+	 nWXocW2cioEgoes5ww==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MhWkh-1roOXC0mO3-00a17u; Sun, 14
+ Jul 2024 12:25:29 +0200
+Message-ID: <aa9e1986-8631-405e-96f5-86a0f5a1eab2@web.de>
+Date: Sun, 14 Jul 2024 12:25:28 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB
+To: kernel-janitors@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] locking/lockdep: Use seq_putc() in five functions
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:HG7/r8wz98ZCZb6+fZl/pSi6QZXKyJgXP9E7E/U5Tn8P2qfvXtr
+ g9T9TdcWIUJor+SUZWajwcjUKxaynbH6O3JukRIezAQYXYyeDcm3IS8IFUSr/WtAEROrN+A
+ M8MaNEGT3oI5CnQClLFYJvMclD1aLXlG8z5YCSMRaOKXZyqIrdoCXGTTw1kTyu4Rxgbi7Vc
+ QGAMPcd8zHzdfXltmwchA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:/1ij2NdqdbY=;jbakHNe1ogzGRBc2s39J6deAK97
+ 2K9SbGxBToSEbYxaI5MD7eDL77YnFcejl1m2Ay9TAwuqIvEcrR4Pf7tDCV1P32BK6P8pSJMzD
+ 1MqoH8s/4/72ljkNoi1C9p1F+5cbWD0qA4V1Gc3iKP2YX/AJohWjpE5BdJo6002wT6e1Vx26y
+ LWHmwAsAARyqbRAciAcXdDqEN1RL4cpz7WJRsdwmWiGfP9PPnz8qRqjJcDfPdP5Qdu6pN8k5V
+ m5gmoza1+SE9Qxqy51DERBs/8TvXEsGGD8RDnLvJ0oDf1sxTiC/uFXqGZ5T6EzTMrczQ4itgX
+ YTJJYh2diiiELdjGRsVDcCpOeqnWa8J/QN1BAKlY2JK8r1C2DzgA1Wn3DMf0ROZSg2zdP+MMc
+ QX7MFwi/aVVZk1xvDo8kQZfPczotXEfKOoKSovwd7dlwlhgM3KW69CGIqrhy7maLbJADgnsMh
+ cvZrkB7Pbn4IvRa2SyvqI0GzFIXFgFA0gAoQbEHlfrc/VbzGh15uAL9kYes90C2DHROl1gE9J
+ aRPzQnGTRDNwtpb7cx8wMCTW/b+DDZuzMo4h/RGaAOe2ec6WO29NWQUAU9mQ4vYm1xD/07QbA
+ +lp/JGpP7Z8iA8Ct7oCM+Oyt54PUCSUs+TlRP90yl/ryxN9zH6j4SY5izrRCpiGs93100KCYf
+ m/CbG9YCi6Mw8felWEAEXnJkKR7OQHF6O7ZIcXtTO1cbRQB162w5GSNdWd3Vvj9DwQYopvVlg
+ 2B9slOrzbb2pI5vgo9vm4OZWbV3r8zlcJaUfyaXH4nDEIWAs05zKseGmvW2/IfKi3eydHFLS5
+ 5AA0mdFg2+oe6xwqX7UMrn8g==
 
-In the "struct brcmf_ampdu_rx_reorder", change the 'pktslots' field into
-flexible array.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 14 Jul 2024 12:18:16 +0200
 
-It saves the size of a pointer when the memory is allocated and avoids
-an indirection when the array is used.
-It also removes the usage of a pointer arithmetic and saves a few lines of
-code.
+Single characters should be put into a sequence.
+Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
 
-Finally, struct_size() can be used. It is not a must have here, because
-it is easy to see that buf_size can not overflow, but still, it is a good
-practice.
+This issue was transformed by using the Coccinelle software.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h   | 4 ++--
- .../net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c   | 8 ++------
- 2 files changed, 4 insertions(+), 8 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ kernel/locking/lockdep_proc.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
-index ea76b8d33401..6ea2b677f047 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
-@@ -48,20 +48,20 @@
- /**
-  * struct brcmf_ampdu_rx_reorder - AMPDU receive reorder info
-  *
-- * @pktslots: dynamic allocated array for ordering AMPDU packets.
-  * @flow_id: AMPDU flow identifier.
-  * @cur_idx: last AMPDU index from firmware.
-  * @exp_idx: expected next AMPDU index.
-  * @max_idx: maximum amount of packets per AMPDU.
-  * @pend_pkts: number of packets currently in @pktslots.
-+ * @pktslots: dynamic allocated array for ordering AMPDU packets.
-  */
- struct brcmf_ampdu_rx_reorder {
--	struct sk_buff **pktslots;
- 	u8 flow_id;
- 	u8 cur_idx;
- 	u8 exp_idx;
- 	u8 max_idx;
- 	u8 pend_pkts;
-+	struct sk_buff *pktslots[];
- };
- 
- /* Forward decls for struct brcmf_pub (see below) */
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
-index 36af81975855..0949e7975ff1 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
-@@ -1673,7 +1673,6 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
- 	struct sk_buff_head reorder_list;
- 	struct sk_buff *pnext;
- 	u8 flags;
--	u32 buf_size;
- 
- 	reorder_data = ((struct brcmf_skb_reorder_data *)pkt->cb)->reorder;
- 	flow_id = reorder_data[BRCMF_RXREORDER_FLOWID_OFFSET];
-@@ -1708,15 +1707,13 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
- 	}
- 	/* from here on we need a flow reorder instance */
- 	if (rfi == NULL) {
--		buf_size = sizeof(*rfi);
- 		max_idx = reorder_data[BRCMF_RXREORDER_MAXIDX_OFFSET];
- 
--		buf_size += (max_idx + 1) * sizeof(pkt);
--
- 		/* allocate space for flow reorder info */
- 		brcmf_dbg(INFO, "flow-%d: start, maxidx %d\n",
- 			  flow_id, max_idx);
--		rfi = kzalloc(buf_size, GFP_ATOMIC);
-+		rfi = kzalloc(struct_size(rfi, pktslots, max_idx + 1),
-+			      GFP_ATOMIC);
- 		if (rfi == NULL) {
- 			bphy_err(drvr, "failed to alloc buffer\n");
- 			brcmf_netif_rx(ifp, pkt);
-@@ -1724,7 +1721,6 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
+diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
+index e2bfb1db589d..4612d1c4f45e 100644
+=2D-- a/kernel/locking/lockdep_proc.c
++++ b/kernel/locking/lockdep_proc.c
+@@ -101,17 +101,17 @@ static int l_show(struct seq_file *m, void *v)
+
+ 	seq_printf(m, ": ");
+ 	print_name(m, class);
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+
+ 	if (IS_ENABLED(CONFIG_PROVE_LOCKING)) {
+ 		list_for_each_entry(entry, &class->locks_after, entry) {
+ 			if (entry->distance =3D=3D 1) {
+ 				seq_printf(m, " -> [%p] ", entry->class->key);
+ 				print_name(m, entry->class);
+-				seq_puts(m, "\n");
++				seq_putc(m, '\n');
+ 			}
  		}
- 
- 		ifp->drvr->reorder_flows[flow_id] = rfi;
--		rfi->pktslots = (struct sk_buff **)(rfi + 1);
- 		rfi->max_idx = max_idx;
+-		seq_puts(m, "\n");
++		seq_putc(m, '\n');
  	}
- 	if (flags & BRCMF_RXREORDER_NEW_HOLE)  {
--- 
+
+ 	return 0;
+@@ -175,9 +175,9 @@ static int lc_show(struct seq_file *m, void *v)
+
+ 		seq_printf(m, "[%p] ", class->key);
+ 		print_name(m, class);
+-		seq_puts(m, "\n");
++		seq_putc(m, '\n');
+ 	}
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+
+ 	return 0;
+ }
+@@ -379,7 +379,7 @@ static int lockdep_stats_show(struct seq_file *m, void=
+ *v)
+ 	/*
+ 	 * Zapped classes and lockdep data buffers reuse statistics.
+ 	 */
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+ 	seq_printf(m, " zapped classes:                %11lu\n",
+ 			nr_zapped_classes);
+ #ifdef CONFIG_PROVE_LOCKING
+@@ -422,10 +422,10 @@ static void seq_line(struct seq_file *m, char c, int=
+ offset, int length)
+ 	int i;
+
+ 	for (i =3D 0; i < offset; i++)
+-		seq_puts(m, " ");
++		seq_putc(m, ' ');
+ 	for (i =3D 0; i < length; i++)
+ 		seq_printf(m, "%c", c);
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+ }
+
+ static void snprint_time(char *buf, size_t bufsiz, s64 nr)
+@@ -512,7 +512,7 @@ static void seq_stats(struct seq_file *m, struct lock_=
+stat_data *data)
+ 		seq_lock_time(m, &stats->write_waittime);
+ 		seq_printf(m, " %14lu ", stats->bounces[bounce_acquired_write]);
+ 		seq_lock_time(m, &stats->write_holdtime);
+-		seq_puts(m, "\n");
++		seq_putc(m, '\n');
+ 	}
+
+ 	if (stats->read_holdtime.nr) {
+@@ -521,7 +521,7 @@ static void seq_stats(struct seq_file *m, struct lock_=
+stat_data *data)
+ 		seq_lock_time(m, &stats->read_waittime);
+ 		seq_printf(m, " %14lu ", stats->bounces[bounce_acquired_read]);
+ 		seq_lock_time(m, &stats->read_holdtime);
+-		seq_puts(m, "\n");
++		seq_putc(m, '\n');
+ 	}
+
+ 	if (stats->read_waittime.nr + stats->write_waittime.nr =3D=3D 0)
+@@ -561,9 +561,9 @@ static void seq_stats(struct seq_file *m, struct lock_=
+stat_data *data)
+ 			   ip, (void *)class->contending_point[i]);
+ 	}
+ 	if (i) {
+-		seq_puts(m, "\n");
++		seq_putc(m, '\n');
+ 		seq_line(m, '.', 0, 40 + 1 + 12 * (14 + 1));
+-		seq_puts(m, "\n");
++		seq_putc(m, '\n');
+ 	}
+ }
+
+=2D-
 2.45.2
 
