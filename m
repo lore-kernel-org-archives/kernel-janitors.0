@@ -1,141 +1,118 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D6518E774;
-	Mon, 15 Jul 2024 14:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8547A18F2CA
+	for <kernel-janitors@vger.kernel.org>; Mon, 15 Jul 2024 15:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721053513; cv=none; b=nC8CD677CZejRany/HePkA7h0Q8A98q9hjGMElOZwu9i5l1DDdnfmw6dItSAb9MiZIR3DOD83aaO4dOXRtjlPSeDY4wmCzmRBS8XKwnRPBEzTEJXY+kpEjhsxC5+OaE4ryqfviBOYCmdUUr5cv6PtUA/tnOBVVFgs8pbYnc86aI=
+	t=1721058298; cv=none; b=k0IK7uT7MmPFA3pnBWOBFhbnW1MivMo1ShKXah4TSknZ+NEma6+Qzqo7nCOvqYtJg5u3IdWRJeT2Rl5pfYjrOi9wiIlHPYQUn1H+bPS+a9hEaAIG5Se55Bn8aXS1ziUbI0mmFdH8QMwiw9nQ5Du246+fpcy72u0rt6qRf/zRXBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721053513; c=relaxed/simple;
-	bh=R67XFnzLZ9QjB2uq+uY/ljL1d84gWX+aFz8a2q3uJG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=M/OAKNqqIfT0WDGEeUS/xuUvub+nBL2/FJN3C5hKagNDTCUm0dYYk7jBRJDZPJ+4VhUczt59uNBKvOAwDuojiQdToUjZRzlezZOtv8z1GfuU+9PP+glr+EzqDj6KU3JWh3nSk6ZIMMweNPCisESg2j/Iw0ks3ft1Aumh9NATDXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SCKVab60; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1721058298; c=relaxed/simple;
+	bh=V4i9Y72ygbi3jOnQ26pocIAnFEUoTLTrmCCoMTUYFoA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TmzrOByP5bIbyGQfIqwjB5r3DPCAlI2l8v0UMYCk7cW/vNqIUcccfLfntNpmpzoNgJ+NcALTrWo3bhOGhS6kHJxbrIruNFRNCXwpoVuDSRWaJfUEF/0iyiTrKZD9VY0ygUBO4v6zyi5a3mTvIytRNA7IHvl6YO0TmRQFp8ZBjFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dEI5idEK; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SCKVab60"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46FBQAk7012006;
-	Mon, 15 Jul 2024 14:25:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lj3QQfvcZuDIukTmBT+g9CVo+hAALIMQsiEa519RY48=; b=SCKVab60QFt1pdbj
-	nm3Gh6bzlnR1QrKymJDAeFUixK2tkyXBfPr+MW643H6SOf0eZi2CVETfnI4KMLdt
-	KiI+OjNbvAj2vzVvzwwpWV4sIbPItJyfQ29+jpo5zVRjCwKTkSXZRBypELhm4Foq
-	GZiAsf+a7Md/0yTqf1g9EeZnQG+A4YdFe3ODk6XjiP9bRPC6UeiUgqDp6pPsaJfr
-	O0fg/gqYmrRI8z4jiwinrgquf4uEAgIkchuqAO/pNPXqzd2UGVCQE5ro/CChGIto
-	ASGP70Q5wEs57sxJpmeGlEdf0FzlJDd20sfn+yRTPap4sJhVE3nYzw+RGrWyctuS
-	ogNMbg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bexncn0y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 14:25:03 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46FEP26r009233
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 14:25:02 GMT
-Received: from [10.48.246.224] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 15 Jul
- 2024 07:25:02 -0700
-Message-ID: <f60c8a62-86f3-4083-87a5-bf6343d58f46@quicinc.com>
-Date: Mon, 15 Jul 2024 07:25:00 -0700
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dEI5idEK"
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-703775e4d5dso2283126a34.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 Jul 2024 08:44:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721058295; x=1721663095; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pAuoAPVtDn5NEi6WB4DvRUg0IfWdqRt5barySy1Fzh0=;
+        b=dEI5idEKVQSrXxSqT3IIadVd4yeZKCjkmZ8ZvXI1ap+Hjs7dr9jRnKVxvkXJcV5G2m
+         duLplIlGGEqrRX2QrjRdfy++D+/0QIjE9+YCEOUukW3nan22VlFTxhEp5iJKXl0kWAXR
+         6U2wDzrHX4uY2/Ie4f7qvk1AXGN1y96SuofHSSkN4C1QcyCWCeFYK0PkhAKEHeSokKMd
+         aNaTMrfa2UJ7ulPqJS2cyXlyrj+5tXCFc92AtWEG7d5cgA6nhRwO7l1k5rBfaVFI3soj
+         Y/TVEdXVQ4QTbDJBNVSIquQNlJhIHVVe92inZ+yvZWOs3FIXxj2VaSs9nWRqrqIM0AFq
+         ac+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721058295; x=1721663095;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pAuoAPVtDn5NEi6WB4DvRUg0IfWdqRt5barySy1Fzh0=;
+        b=OxHWcPJ7rjSaOQt65sDXbllZyNqOKdLfrLGoTPxs83qMN/xGtdlDR/ywIgxad4Wt+N
+         ido9anyxyxrbodlabXkiEndF+NXlxIvxQQ15MB1Pxf5feCyabG5jRtMHQ/9my5x23cLQ
+         3fYYS0ogJvOEwBUJVTv40kpXEXSitoLpLkk+JXYPhSv91T9LlFy8JTKaTY5VISFQi3ZR
+         JlbhMaTSECTInfXeZGbqZqEKEgz59FfDcWvOzqu2E5+Hb5dkoMJfFF6LognMontjdmK5
+         vBkfBZ17rs2/8Ad9pTtkm+xr1gCdlPcF6TL98lLQy4wNn+vA/B1Rce4SPBqG+25c+5i3
+         5ONA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJzdn/qrLr/eMCkcFYXfJhUTPCKPNPFLbPyMKzUXawPFWpqbzjPwbdFHux/SOaSlnvEU/+iTHqVXBg2ofEvOTd32LHCXRU9tM2ZbsdVSdS
+X-Gm-Message-State: AOJu0YznbE9jaN6F8Jnlex0X7GYw+Ckbk9V4pKPLMLfckaRf3nS9uL39
+	zC1yovmeOvNosRyC+cmQ3WDp4Kn2dKcs0IeEE/lTdeJEJOUzWpKwai50wnT9afk=
+X-Google-Smtp-Source: AGHT+IHv5RoP8rbG/BgCJi5p+sb+fDQFciWX94XX4Trb6B1Dt48Wwt2QAbCP9vRkfv0v5DCxmtw61w==
+X-Received: by 2002:a05:6830:280c:b0:703:6076:a47 with SMTP id 46e09a7af769-708d83927e7mr27584a34.23.1721058293674;
+        Mon, 15 Jul 2024 08:44:53 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:358f:3413:c118:4021])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-708c0c53e58sm956120a34.16.2024.07.15.08.44.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 08:44:53 -0700 (PDT)
+Date: Mon, 15 Jul 2024 10:44:51 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Tero Kristo <tero.kristo@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/x86/intel/tpmi/plr: Uninitialized variable in
+ plr_print_bits()
+Message-ID: <428d4e27-6970-45d8-a7b9-7bf6af95c91a@suswa.mountain>
+References: <8ccfab0c-3c11-4168-a383-19895ae60022@stanley.mountain>
+ <1467f140-c035-cb2a-20d9-b5910971cb56@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lib: test_objpool: add missing MODULE_DESCRIPTION() macro
-Content-Language: en-US
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-CC: wuqiang.matt <wuqiang.matt@bytedance.com>,
-        Andrew Morton
-	<akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-trace-kernel@vger.kernel.org>
-References: <20240531-md-lib-test_objpool-v1-1-516efee92a05@quicinc.com>
- <7ba64e00-373b-4c13-a30a-113646dad588@bytedance.com>
- <20240603154549.4a338c065e42f07c8c3d1b82@kernel.org>
- <3edb1529-744c-4b7a-acc9-12e166ada738@quicinc.com>
- <20240715181206.f0b6c9e6bfc548c2b729b76b@kernel.org>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240715181206.f0b6c9e6bfc548c2b729b76b@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: eH4OmE_C52hyItjbv_-6-Fnt6sopEy0s
-X-Proofpoint-GUID: eH4OmE_C52hyItjbv_-6-Fnt6sopEy0s
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_09,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 adultscore=0 clxscore=1015 suspectscore=0 bulkscore=0
- spamscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407150113
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1467f140-c035-cb2a-20d9-b5910971cb56@linux.intel.com>
 
-On 7/15/2024 2:12 AM, Masami Hiramatsu (Google) wrote:
-> On Thu, 11 Jul 2024 11:14:20 -0700
-> Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+On Mon, Jul 15, 2024 at 12:25:21PM +0300, Ilpo Järvinen wrote:
+> On Fri, 12 Jul 2024, Dan Carpenter wrote:
 > 
->> On 6/2/24 23:45, Masami Hiramatsu (Google) wrote:
->>> On Mon, 3 Jun 2024 11:25:59 +0800
->>> "wuqiang.matt" <wuqiang.matt@bytedance.com> wrote:
->>>
->>>> On 2024/6/1 08:31, Jeff Johnson wrote:
->>>>> make allmodconfig && make W=1 C=1 reports:
->>>>> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_objpool.o
->>>>>
->>>>> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->>>>>
->>>>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->>>>> ---
->>>>>    lib/test_objpool.c | 3 ++-
->>>>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/lib/test_objpool.c b/lib/test_objpool.c
->>>>> index bfdb81599832..5a3f6961a70f 100644
->>>>> --- a/lib/test_objpool.c
->>>>> +++ b/lib/test_objpool.c
->>>>> @@ -687,4 +687,5 @@ static void __exit ot_mod_exit(void)
->>>>>    module_init(ot_mod_init);
->>>>>    module_exit(ot_mod_exit);
->>>>>    
->>>>> -MODULE_LICENSE("GPL");
->>>>> \ No newline at end of file
->>>>> +MODULE_DESCRIPTION("Test module for lockless object pool");
->>>>> +MODULE_LICENSE("GPL");
->>>>>
->>>>> ---
->>>>> base-commit: b050496579632f86ee1ef7e7501906db579f3457
->>>>> change-id: 20240531-md-lib-test_objpool-338d937f8666
->>>>>
->>>>
->>>> Looks good to me. Thanks for the update.
->>>>
->>>> I added Masami Hiramatsu and linux-trace in the loop.
->>>>
->>>> Reviewed-by: Matt Wu <wuqiang.matt@bytedance.com>
->>>
->>> Thanks, let me pick this to probes/for-next branch.
->> Following up since I don't see this in linux-next.
->> I'm hoping to have these warnings fixed tree-wide in 6.11.
->>
->> /jeff
->>
+> > Initialize the "str" pointer to NULL.  There is a test later for if "str"
+> > is NULL but in the original code it was either valid or uninitialized.
+> > 
+> > Fixes: 9e9397a41b7b ("platform/x86/intel/tpmi/plr: Add support for the plr mailbox")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > Almost everyone automatically initializes stack variables to zero these days so
+> > bugs like this don't show up in testing and we disabled GCC's uninitialized
+> > variable warning so it's easy to miss.
+> > 
+> >  drivers/platform/x86/intel/intel_plr_tpmi.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/platform/x86/intel/intel_plr_tpmi.c b/drivers/platform/x86/intel/intel_plr_tpmi.c
+> > index c1aa52c23d25..2725a1ddba92 100644
+> > --- a/drivers/platform/x86/intel/intel_plr_tpmi.c
+> > +++ b/drivers/platform/x86/intel/intel_plr_tpmi.c
+> > @@ -162,7 +162,7 @@ static int plr_clear_cpu_status(struct tpmi_plr_die *plr_die, int cpu)
+> >  static void plr_print_bits(struct seq_file *s, u64 val, int bits)
+> >  {
+> >  	const unsigned long mask[] = { BITMAP_FROM_U64(val) };
+> > -	const char *str;
+> > +	const char *str = NULL;
+> >  	int bit, index;
+> >  
+> >  	for_each_set_bit(bit, mask, bits) {
 > 
-> Can you resend it to me and linux-trace-kernel with Matt's
-> Reviewed-by? Also, can you add the warning message?
+> This fix looks slightly incorrect.
 
-v2 sent. note the warning message was already there.
+s/slightly/totally/.
 
-/jeff
+I'll resend.
+
+regards,
+dan carpenter
 
