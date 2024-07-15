@@ -1,65 +1,45 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855E73F8E4
-	for <kernel-janitors@vger.kernel.org>; Mon, 15 Jul 2024 06:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFF818309A
+	for <kernel-janitors@vger.kernel.org>; Mon, 15 Jul 2024 07:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721024483; cv=none; b=g573zBiTdcYxmj613zxOZRJUqzkOV2u2lWzgMlbNxXbRwm/0kW5UkzPbeddTw0zX7QnUBFEnfocLxE2PaLS45SalgUkXVbrS3gOmSOd0VI5puT1gLm0ErGXEIV8Or05aDPWUHrgyeyI7f4enHo0JounoRJN6h+Y9TWfIRDLS0pY=
+	t=1721027514; cv=none; b=jI25j/Ifoi2L9y2Xb8odwov+M6IebiibkFTU5+zzhsuMUjUkLVFupK1AFHP0S7M1Lf07mCihTt5FZh+zhwFuyK1Jp2HRaXRs+zwDJW/2ut1FopTKr1rbb63Z5A1gfNhmqD7SOvXd61b4oXovqqnr9IH/MgCuPEiRatn5vH4P7Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721024483; c=relaxed/simple;
-	bh=D6XqNP7Ocjw2YrA4F9ERC7JrymvGT0zCRzd7DfHQb5s=;
+	s=arc-20240116; t=1721027514; c=relaxed/simple;
+	bh=Jl9F54gKC2HZ6RkFE/JPLXbjvDwLcSrFahwOTKM89U8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WNtpdEF3J1FSjUaIUVZ0FGtrrgb695LoYp6DssVWA/09PDH7ODc59ge5AfojmbIqqlAA/bxuPsbmztv+yRYfVQM9XDBaB6h1dbHVgwDj8G89b2Z2jz9WR++wQCcw86srKt2hHeyi+c4kY1kwzXWLm/FsdSqhBh6Qhboj6njeOZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xk/Vnsko; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xk/Vnsko"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52ea2b6a9f5so4083142e87.0
-        for <kernel-janitors@vger.kernel.org>; Sun, 14 Jul 2024 23:21:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721024480; x=1721629280; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=10h7AorBoHJscK+IMdAvqhx2IYEBB33opsawba3ThY8=;
-        b=xk/VnskoLU+N7UdRakjSZHFNKtad10E5suLJPEKNs8prCCQoJYJ+W0MTa9eaUrO4aO
-         C8iBqAOD7QZVoO+Qg41FMkl3f0Oz2IxQBPqOQe+2wOzjV6h9vN0uZ0dAxiWs/yMdDcKH
-         jm7nZ+IkMFufAQguEgQzvqnHH0K3t8w5/xJj8q7H7bp9yfNZiLnnzG0JPRVKgyDLQWN8
-         abC1HXqBxHNbR88CyExHu/vYsmwGfc3goqNV1VYu+yUIMRQGAq5zR2Jo0MqkmZG0agcJ
-         E1p9hCgfgk4xIwaw6dwNpgY/50CB8z59YG2yaDzmfNR2n5DO17cpm+daBP64O5BFr3ct
-         HECQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721024480; x=1721629280;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=10h7AorBoHJscK+IMdAvqhx2IYEBB33opsawba3ThY8=;
-        b=H9/jlI1SJsggFWfUuy7NVIhmo8/++cgaYFRHaNZpEtrkX03pjTpq1I1EZFK6RSGWS+
-         h1rzRheZ3cs+CZ+5aYSnX8TXaHiKEmq+IwVUcvvQwi+CC8BG5c3FPVVni88EPBmzUxxy
-         Qnk2DVGsM1i05DnbhNyg/vCKKwNUO+MPCXUrRseK+HsSkZIvfgPYT0sxveyFSOm0Uxld
-         pJnqY7JLSFvPQy6IywAIsqemAuWs0JWuOOr1RLgf6g1MfIrCZo0Q/v+svuQseRNNgNqD
-         xebTueex56S4DBm7QzVIEqwv3m79vFolgzIlHAcPtf0oYlwxYLFxwYY7soctbSaFxwTx
-         GnQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ3+3yWqxjU2VltwDdLL7FD4akbh/OTXR++gonVxTj3GqeXEDzwy44n9fIyir+7o02b1KfHG1xw4RcjnSG9xpWWGehhTW7K7+2s4eJYvDN
-X-Gm-Message-State: AOJu0YwFNegf81qCO4jneOf1LNYrtIaknv17i1SLhJZqh3ttXXd5VbT9
-	kv8eqkVavdWacnPImJCphDv9OU0Z46LkABb+R3pigkLlMDSlmI5ChdQpvvr9ngY=
-X-Google-Smtp-Source: AGHT+IGIypb/Qu3E+HlICgtenyNPJ1eoKnIT5Y8g4jzQcW7TIRmsNUzmEcdGrxNLhSAXxoKHuhmA1A==
-X-Received: by 2002:a05:6512:3b82:b0:52c:e084:bb1e with SMTP id 2adb3069b0e04-52eb999126bmr12945618e87.13.1721024479558;
-        Sun, 14 Jul 2024 23:21:19 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed252d7b4sm739852e87.127.2024.07.14.23.21.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Jul 2024 23:21:19 -0700 (PDT)
-Date: Mon, 15 Jul 2024 09:21:17 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: Constify struct freq_tbl
-Message-ID: <ixuyjg5os4huflsjbizfvde5kytvg6ekccjq72mpkiiiunin6y@pqkhiu6xoznk>
-References: <e8aee66fa83a4e65f7e855eb8bdbc91275d6994b.1720962107.git.christophe.jaillet@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fu5dE4Q2cF22OlX4Kq3DN4rvDOVTi6kSziV4uWrZwcGkQrRiGd5oN9EwgiSW0eH8nOQ38cg1e7ZpFVynbnyFCAFi+UeiqgMarm8rMFueq5nxOCkhKCW8O2PZAsKojF0//cfoqouWszdSUHsr6WsShNZO+0hDYHFl2kf+D6JyEYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sTFrr-0000ot-Hi; Mon, 15 Jul 2024 09:11:27 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sTFrq-009e7s-32; Mon, 15 Jul 2024 09:11:26 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sTFrp-000JYF-3D;
+	Mon, 15 Jul 2024 09:11:26 +0200
+Date: Mon, 15 Jul 2024 09:11:25 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	RD Babiera <rdbabiera@google.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: tcpci: Fix error code in
+ tcpci_check_std_output_cap()
+Message-ID: <20240715071125.p5a7eidkvo2jqcvk@pengutronix.de>
+References: <b0880888-6719-4614-91fc-8ee63b71d304@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -68,53 +48,22 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e8aee66fa83a4e65f7e855eb8bdbc91275d6994b.1720962107.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <b0880888-6719-4614-91fc-8ee63b71d304@stanley.mountain>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 
-On Sun, Jul 14, 2024 at 03:01:58PM GMT, Christophe JAILLET wrote:
-> 'struct freq_tbl' are not modified in these drivers.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->    7595	  43696	      0	  51291	   c85b	drivers/clk/qcom/mmcc-apq8084.o
-> 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->    9867	  41424	      0	  51291	   c85b	drivers/clk/qcom/mmcc-apq8084.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only.
-> 
-> I hope that it can be applied with this single patch because all files are
-> in drivers/clk/qcom/.
-> ---
->  drivers/clk/qcom/gcc-ipq6018.c  |  2 +-
->  drivers/clk/qcom/gcc-ipq806x.c  |  4 +--
->  drivers/clk/qcom/gcc-ipq8074.c  |  4 +--
->  drivers/clk/qcom/gcc-mdm9615.c  |  4 +--
->  drivers/clk/qcom/gcc-msm8660.c  |  4 +--
->  drivers/clk/qcom/gcc-msm8960.c  |  6 ++--
->  drivers/clk/qcom/gcc-msm8994.c  | 54 ++++++++++++++++-----------------
->  drivers/clk/qcom/gcc-msm8996.c  |  2 +-
->  drivers/clk/qcom/gcc-msm8998.c  |  2 +-
->  drivers/clk/qcom/lcc-ipq806x.c  |  8 ++---
->  drivers/clk/qcom/lcc-msm8960.c  |  8 ++---
->  drivers/clk/qcom/mmcc-apq8084.c | 50 +++++++++++++++---------------
->  drivers/clk/qcom/mmcc-msm8960.c | 30 +++++++++---------
->  drivers/clk/qcom/mmcc-msm8974.c | 52 +++++++++++++++----------------
->  drivers/clk/qcom/mmcc-msm8994.c |  8 ++---
->  drivers/clk/qcom/mmcc-msm8996.c |  8 ++---
->  16 files changed, 123 insertions(+), 123 deletions(-)
-> 
+Hi,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On 24-07-12, Dan Carpenter wrote:
+> The tcpci_check_std_output_cap() function is supposed to return negative
+> error codes but it's declared as type bool so the error handling doesn't
+> work.  Declare it as an int instead.
 
--- 
-With best wishes
-Dmitry
+sorry I missed this :/ in the first place, thank you for the fix.
+
+> Fixes: 62ce9ef14797 ("usb: typec: tcpci: add support to set connector orientation")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
