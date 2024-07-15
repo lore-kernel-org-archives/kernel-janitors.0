@@ -1,110 +1,76 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310C5446DB;
-	Mon, 15 Jul 2024 11:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51936A039;
+	Mon, 15 Jul 2024 11:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721042810; cv=none; b=pAOmluiGovGjn8LkvhnidvhsZ9NEUOLjfs6kd2Gvo/RqxiDHArpgd0cjgAD0qYO//wLWpLiylGqNlc2KyWd5H5/Dj+dvxW29wUS96rgJfeB599eRaRbaCXG3yxNT2U0zFu1NhZxUR5vkObx0eBUDSlEoAFv9mikru/dMO5R+sPc=
+	t=1721044131; cv=none; b=phFCTSWXNOyqvw4PQNvZtU9ixKyFT8oT8o7fSBmRl3medACqcXw4kDHHREN7XyaIBZtQ8BBRIS8wgw+4Eihb/UgKckmRSjAhBtmb3w0A84o8fusPKPi2jsY3nF02w7wFewXz2u0d5pt5/ghleEUSG6aL+AoKRillbiE4BJxwz/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721042810; c=relaxed/simple;
-	bh=jw9YV4v7bz4V4h3+r7GDDiBx+ysh6QXUgxwbAWpbBqE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=SxzfcLL+nNYT4EW+GnzDjf88dOWeMDXJtHlE0z5m6JSJlqUTHLxSv7k9UOeOVPcIIrK7GUbProDWNkl+yIw3MPdfa/cZKoJixmO5+mTC8A96bqArYL6U4iIhoZydVQaw1EhiHmZOkvvsqmruEQ1pgoOGev7FVfU7gb9hdnsoUl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DMhp4Ldi; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1721044131; c=relaxed/simple;
+	bh=//gQFsYwBWW1kMaHQ6xpz0jh8fgWViTigdtlaSbhC2s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZCa7GPA9coVPnSp9BWBMTs8DVSoFFuJrA4fI9CalXIwA1sZox6BSHq2UKAujAwELE647hvEg9YDJAdixiuBrZa8QDph5i0FwMGyFCQaVR03pVscLlDLede+Tel2tQhGNhcH8RRo/V6JJDqXvIjv1e/oZhi9r22TBOwB14TKessA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kKOakvPS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DMhp4Ldi"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721042785; x=1721647585; i=markus.elfring@web.de;
-	bh=e6D3UXu8XYGKga578156aed+uo3RT052v5jgKYnVAaY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=DMhp4LdiR7EKVsuEDI1bcGpjuOCZezcTSyJ2BSLwYiqVchCZbGzCyJNLaWzVVHfp
-	 erFxT0TontOSgtLGChyW4pIp04uW8Vqhp10IizfFVjfvk6zDJd4PlyIY1KrJl5YWc
-	 7VvKj+S27jT9Rs/xcSZh7eWLrrdLjMYT1q0S5GfRgqC7q+47Pc/+QiwkYuxs7ry8d
-	 Vlq2L5ZFxwdwEh54S7WcJ8l+Qxn11WdBWqxxbtKq5/uF3FH3j51glKVydFOW6bVdu
-	 5ighsJLHIxKbU5WUJmohlVdWiWiUlo977Qq+JVo/NjYSXIoep997EBlEFIbqixZtQ
-	 cHVEvdEvLqAV23jOIw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mw9x2-1sAp3l38qa-00r8Mb; Mon, 15
- Jul 2024 13:26:25 +0200
-Message-ID: <af602b2e-4d92-4c54-9884-7db84700aa93@web.de>
-Date: Mon, 15 Jul 2024 13:26:20 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kKOakvPS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ECB8C32782;
+	Mon, 15 Jul 2024 11:48:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721044130;
+	bh=//gQFsYwBWW1kMaHQ6xpz0jh8fgWViTigdtlaSbhC2s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=kKOakvPSY34XGVJ3Gxu6ySBrFxWJJS9/VC+dOiWaxnEu+8O2VcNjR0Sx7evI6NbVH
+	 Ydvng06hCb/hm4PzLH+1CKBNZl4YgbDeSRdtpk3rkqKO+nrj4/DKqQQkaclwGIVKg0
+	 VzSYkx86OOHuYaC6v8yAv5qCilP2re2GvmZnyOA74nxv81+mUnZJMsWn6a9/9xb7an
+	 UMwg0tKl13YoIE6VZhxBhnXSc+wk4hhepUgnXWXPCHTohyUkiJCN0vT/QIHH0phUg1
+	 Hswxemijq+lGhBKgGLAB1pU5qAjxElKvVfB7U4hjDNf3EkGzCuF3B/PGSMPHLLYdvy
+	 ht/O89wU/N2lQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs/adfs: add MODULE_DESCRIPTION
+Date: Mon, 15 Jul 2024 13:48:35 +0200
+Message-ID: <20240715-anhaben-ausmachen-2abf2d78742a@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240523-md-adfs-v1-1-364268e38370@quicinc.com>
+References: <20240523-md-adfs-v1-1-364268e38370@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
- Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Imre Deak <imre.deak@intel.com>, Jani Nikula <jani.nikula@intel.com>,
- Lyude Paul <lyude@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
- Wayne Lin <Wayne.Lin@amd.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] drm/dp_mst: Simplify character output in
- drm_dp_mst_dump_topology()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:QO2YEPyAv86lnrZfJDpzoSDqKV4xAgrbv8IoSX86Vh+u43DTEm8
- nX2dbrpFUgBrAqQQOdG8C58BJx5wUeshf2x/tXjlwiQCB3jXN5P/W040U5TLeRhi0BFtyoq
- GrOFbR3NF80kea7cNRU0OPfJJFPos/W59xQNJi6+PiX6CXq7NrHTgLLCLxHKpSVH2h9dFaJ
- wFRdBCBIUK+Cnwuu6yNyw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:IrsSFhFRPpY=;kNdl2UoqtzFHi/6nBC+LGjxoqkD
- WyrAJmRRi6LX2fcoHCwyFkhBhfEsN78KzY/YNHSpaM7v1A/+VFvCUaLd81Dy1w8R/yT8vIJS8
- 9QdK2X+wk4qH3wet6QdumG4+RcSLxWE3ZsjO0ut5R2Flwoyp13bzu/GRBS96ehsT7bFst5cJz
- R2uGzHV5N3o+Jx2dfcWq1yDtUCD8S1baRIJ4cvBu+xARDEinteg2QJfzD7e+2BIClVADKKaDw
- fGLvgSnUWBovVb8LxDSYsfbVmcIJsb5oGBc+MqkgK1wqfaC9q4NOaY93n31zoqR6dxcCDwg03
- ulX7O4LvqoRfD3MmuMjt3NVM73rJHvSNTiVQxYDeRQByiQRQdWOAknrhPn4O5j9SuuyR8xcfn
- HoGrXmVJRxrYMrI3lsbmKMLXo8FTfRMy51pvmcIlaE6eSJ0kc4kNd4wlPl4h/o19/AcAsh1Gl
- zy6R+LZzUP+6nqrvVDIJQ3ytZz+0koxHR3qQjXjp1FUBLF6jkrYetjKMTtNQNl5Suk++E8Knh
- VvFsOm1FHyaKgBwjO7EpxAs6poPGzZsdgQonJn2C89N8Mp0v6N8d3f/YwmpVZcIb4r3Lniyoy
- c5gYaRR6Qqc3CAZCQ9DvmtCYubDU4MbnIBhNaa/nVByAN3wGGRHXyDl353n/AqEMO3qhse7pz
- VaxptlaPAdnpAFHXD0esZhx3uCJKsdc3to9TUBU74k+3wom5pNfOuRsvBqfcqT01UJtBZUQJy
- dXnIBNtQIPuqItTp3dhMScYGhs0Z43snLOZJtOHfbsRnWYKvQ1Gg67bA7M5Rt/jaCHNXgftKf
- gKSZU+PnKhnRQQVsXjbPdBQw==
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=908; i=brauner@kernel.org; h=from:subject:message-id; bh=//gQFsYwBWW1kMaHQ6xpz0jh8fgWViTigdtlaSbhC2s=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRN5Zl9y2d19qayHbs4qhi2/a8q6z5ZpDTVuC/qwenTh r5yD++7d5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExklicjw56Dwi4rll2pvclX 2Nugt+Z7XmOs35a1hp+OTmjsO9aR18/whzsuet80rzAVxR9zs4TMTU6v7I/R6fkyNb9bt+pz5lp HXgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 Jul 2024 13:12:10 +0200
+On Thu, 23 May 2024 06:58:01 -0700, Jeff Johnson wrote:
+> Fix the 'make W=1' issue:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/adfs/adfs.o
+> 
+> 
 
-Single characters should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D for one sel=
-ected call.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-This issue was transformed by using the Coccinelle software.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Suggested-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/gpu/drm/display/drm_dp_mst_topology.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-diff --git a/drivers/gpu/drm/display/drm_dp_mst_topology.c b/drivers/gpu/d=
-rm/display/drm_dp_mst_topology.c
-index fc2ceae61db2..65c1700f3e40 100644
-=2D-- a/drivers/gpu/drm/display/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/display/drm_dp_mst_topology.c
-@@ -4963,7 +4963,7 @@ void drm_dp_mst_dump_topology(struct seq_file *m,
- 		seq_printf(m, "branch oui: %*phN devid: ", 3, buf);
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
- 		for (i =3D 0x3; i < 0x8 && buf[i]; i++)
--			seq_printf(m, "%c", buf[i]);
-+			seq_putc(m, buf[i]);
- 		seq_printf(m, " revision: hw: %x.%x sw: %x.%x\n",
- 			   buf[0x9] >> 4, buf[0x9] & 0xf, buf[0xa], buf[0xb]);
- 		if (dump_dp_payload_table(mgr, buf))
-=2D-
-2.45.2
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
+[1/1] fs/adfs: add MODULE_DESCRIPTION
+      https://git.kernel.org/vfs/vfs/c/330367c0700d
