@@ -1,134 +1,110 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0966D13AD16
-	for <kernel-janitors@vger.kernel.org>; Mon, 15 Jul 2024 08:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAF81E890;
+	Mon, 15 Jul 2024 08:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721032492; cv=none; b=gRFH6irZqB+VyHnpHwik70FjwLc5iOvCDM4gUqx5SiTC3oqcwzM7jZcb9PG+Y+ktIpbNnpI4FWRACsNpJBBIgp/TzxX14jEXdiVxBjmASCed8fzD9L4Wknu+52260qD4KCbTzak4OO9+apRKZSCgj5UweOek5EPkeFGtTwBhUW4=
+	t=1721033534; cv=none; b=e42biGHdKxwWYyx0Tlvrb4WbpVkCMohUxPFa9SmZcbzRt4SkRApxZWa11cK+EOlSpfGYtG6yE6+Y+SwKzFmo3Wb4cT4PWE3WicFtmtXcZuD1SyIGLur7WEHG6nJpsa2soOIg7W1iZfp1m3m/UvqBYhSZtAVKnuFlq7vto2x5eW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721032492; c=relaxed/simple;
-	bh=12qK/peWcf3l+/VLCx5d119ICPpq7wBUmlboZtiGZqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dpnikp6I9l/DWcdXE9dMicJBrK0i5SRdTRmBZB5iQXQ4x6TaQ3z8rRFCZImuuAduyliR46Eh2Etv4llfy2eRyBk9YwM+yYvjsdbW8TqZwL/hTXMJJL2P9IkfLcp/eJzom1ZjsSYzXGbJ0dSrHpqRjzledARma9ckFlh5wytmrGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=dtYtR+Jo; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+	s=arc-20240116; t=1721033534; c=relaxed/simple;
+	bh=lPPSCe+ov7UF3C243GO/UqavibELTq39WhED1+GwWNA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=McNBUa9SQ0+SuC/ksiTXoCL7f2ZTRVvkkCMcWds7DJgrlG8anpeJRiNMO1sBkTIMRQmM14VWG6wWs0gP2OnMfIpY9JEUbz8qJvMcr9IPpI/3fpWl4pLdgt5Eck4ijKe5aqf6DNHwijl1CJCceMm/yHAQpasCSd1nzkA7k1ygAa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ropr15gH; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="dtYtR+Jo"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52e994be1abso316281e87.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 Jul 2024 01:34:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1721032488; x=1721637288; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iVCqckyW7c8V6lxlB2E2A8uvPDhEx4b9vry7kv1USrg=;
-        b=dtYtR+JoDNibGhtqliq2/eBW27cwSUduk9RPqFYYoGuZ3qrh8bIl7Kcz5EYU6B/X3E
-         cFuO/Sh7jAzmXr7YmqF9lDhSHnYllwqTqgpEGo6AfkaO4wJbcSbrKPVJmydXdCeJqcEf
-         dF9FPIUHePKrwUW8mgfvvmTSv33xzxmHpgkkc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721032488; x=1721637288;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iVCqckyW7c8V6lxlB2E2A8uvPDhEx4b9vry7kv1USrg=;
-        b=TijLqM5/Lzl2+GUCellCbI9UcYMHxrgi8jcHGbnlh47WRHnxO30Nrb3kc30KkudcxD
-         Rmo2z/tI/rtLyBRIy2HJYwLEyvlkWMeQHi9e5hzAl7VcWxyI3I5RkV7ByzH0Fi0GkMkU
-         Ips9O0qVu2A4gixA5eTEtg+eLLgmiLuUBW/fa+0ntMzQyPumA2JWWAShWhxJ5DigSQb/
-         xMnpuhlYy1czY/tKb7Dc7lhwTAhb0YLaMsnMDScV+urkVmT61VPskq8DO1mVETpBcw7p
-         tEtN2TMWJp8IszUExMhGXNOEc/n0mIMGl33oEQMCX0Tu3426dKodfX/IWtdGNCJ0yI1E
-         /Fvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRVFuiWTg5dHVG/3HpoaMlirU32WUhQDRbxz2Qn5nL4zO2ZjVJ9XjhLTzO7rV4x9pM3hsPkhrVBc0H0x/yxe8Q8xfnWuiKAOaRvOxhMTWJ
-X-Gm-Message-State: AOJu0YzPM0wTaQnBjkCG0DeL0cOulHdmbnmBnS5gU/5E/asQTQG32QlZ
-	QXHXu3C41ZI0lw4Y4a0/QkddssgYkXRqNZ5p/UB4gixybZP84XxAxTokHw2LKyI=
-X-Google-Smtp-Source: AGHT+IH5T9YdVXggIpdAzXkSXyX37SMpGlCbN9JJqMdkjy6jqBuP4OMd6gOAeWKCKT6bIEAml4lqfg==
-X-Received: by 2002:ac2:5f54:0:b0:52e:9b18:9a89 with SMTP id 2adb3069b0e04-52ec3e53a53mr4484289e87.1.1721032487982;
-        Mon, 15 Jul 2024 01:34:47 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-426725597bdsm138545655e9.0.2024.07.15.01.34.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 01:34:47 -0700 (PDT)
-Date: Mon, 15 Jul 2024 10:34:45 +0200
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: Jeffrey Hugo <quic_jhugo@quicinc.com>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
-	David Airlie <airlied@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] agp: uninorth: add missing MODULE_DESCRIPTION() macro
-Message-ID: <ZpTfJdscoWCjTaSd@phenom.ffwll.local>
-Mail-Followup-To: Jeffrey Hugo <quic_jhugo@quicinc.com>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	David Airlie <airlied@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-References: <20240615-md-powerpc-drivers-char-agp-v1-1-b79bfd07da42@quicinc.com>
- <99d6c483-9291-4bd0-8e62-76022abb762c@quicinc.com>
- <7b7e2952-fb54-48b0-93bc-f96c04e5cdd3@quicinc.com>
- <ce7863a7-f84e-42f0-9aa5-54b43edcd260@quicinc.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ropr15gH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721033505; x=1721638305; i=markus.elfring@web.de;
+	bh=A2wbh4kaLbKzhVBmO3dybv3YRMmrGDYw8khYFcvl2GU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Ropr15gHStMe+xMOdO6KXrdQglh4Z6C7wg0izTlVeN2C6hjFqOEudBkLxeQTiyUN
+	 vLFodoSwJIdKUwHMgAOzWbbmlia+vYSeaQmsutyUUx3LwXYpJr3opQKMQOnAuMGQT
+	 x5dHaIkrU84aRPKyYa3rQVUsWHromqU9COEoIVQNrQMpHGuzyzJfLjZWFIxKfr3OO
+	 m7Yuo+qYiA9RLHVQJKXBMFCe5/8swO4XwzouHxq8ZyWESlHvngJiMoJB8aRFhgUBd
+	 PYKvIT5qeyWs2QneetTedM/rviY1kNpZS4vKAMNzjrzF8ysh1ElgOC2mYIESKcdWY
+	 /oNLcKlK5XQXa6LNlA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N0qv3-1s6GuK2ShB-00vErd; Mon, 15
+ Jul 2024 10:51:45 +0200
+Message-ID: <e346d688-7b01-462f-867c-ba52b7790d19@web.de>
+Date: Mon, 15 Jul 2024 10:51:44 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ce7863a7-f84e-42f0-9aa5-54b43edcd260@quicinc.com>
-X-Operating-System: Linux phenom 6.9.7-amd64 
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH] locking/lockdep: Simplify character output in seq_line()
+To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+ kernel-janitors@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <aa9e1986-8631-405e-96f5-86a0f5a1eab2@web.de>
+ <975d2b0f-f84c-4c84-adf2-098fef59d90b@redhat.com>
+ <7560b341-27b4-45b9-8b73-202ec7f27200@wanadoo.fr>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <7560b341-27b4-45b9-8b73-202ec7f27200@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:/Mg74PvR7pnkoPncBRx+bICjO9uS+vtQ9nUJkqfaLTg3WCI0b5L
+ WXkFcUBppVWx1KqkBIazziPqLCdD+S6YHf8wO+ncPHhd24HruhXzvr5tdlaCKQv0LRb1xId
+ Jhw4/5SUNKx0VHY8f089LZONyCJFapw9wiHGz3eVZU24JDuaul7xMHdoNaHo7Xo/h3dSU1y
+ V1tsEX4GS4SnTn6+u+chw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:b3IYyir/BDs=;sfFrpKiVnLUrcW0KrKt+NKgLWHh
+ RqrTlGtXmH2pu5IQEEIDVz/eAkPZzC4r0r58mKSji8NhFEPmO/Q+krO6Q5A0Jd2ftN1MlD+2E
+ SNucwaOMWPID2JBU5QRp8OFO5bSDF8rR7/oyObDPQvmZ92bnrPNgfWCSYEA/CkUiosD3lPjNs
+ 8XFMXVIzt7QvMCmDSE63Dbb7u5tUmuYUNrdbJg95bLkTbwQsGgT8iutMgnG80MMh6r6ZYYJHB
+ 90rrykTn0JRVf0+yfz8e3YThflN7dmnMHFGF1yc6BxhGMEfNo5pIVF7VPm0TCiVaTHBIWOOyb
+ ggjQ3PR7M1mTTkrQJNWnuS4fFDyi3fS5ABgHQki2lsq4Xu3UYCs45fCLqUnRGMVkVuwKwdGEy
+ YpBK483D0dL2DsO0I++ZNNhhOixMTqV+QVZKADW860CJAZ12bvO2C/MAhQYjQ5ie9BK7mIHdP
+ SYb7brxZ75rTeFamVm6EZdZMH4tz/a3rH0VOmfSUSEQJT+ByvawfK1jzjXAvWtA+pMJzXVT1d
+ xX7S7Nj3JMCW7Tjgk96rNXkWkiGQDviT/RsL6mmNk1uvn1KdRKTvCWhu7qJeNRMUP+TIFWZYv
+ GDXaBDkfjl8nAUlm96z3pwllGe0MQUiwLTWV9QoQ05ed7kDwVS0L1Z/K/9wLqmtjXcI5p/JZi
+ iAmJGnmmmcpVCAYnMvH7QEPqMfuucWtNEAywSex27mHnngCeHxXMDgBX9nCVc/8ouZVwgL7AB
+ BCuq6znZFyxWmaPkDcD5g/kTegqatUOg/81afLMmNrX1Q80vozTh3xHRKs2ZD6oA+pm8BhybB
+ VPrh0Pq1cMUH7hd9RYm48qcw==
 
-On Thu, Jul 11, 2024 at 01:27:23PM -0600, Jeffrey Hugo wrote:
-> On 7/11/2024 12:19 PM, Jeff Johnson wrote:
-> > On 6/28/24 20:14, Jeff Johnson wrote:
-> > > On 6/15/2024 2:01 PM, Jeff Johnson wrote:
-> > > > With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
-> > > > WARNING: modpost: missing MODULE_DESCRIPTION() in
-> > > > drivers/char/agp/uninorth-agp.o
-> > > > 
-> > > > Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> > > > 
-> > > > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> > > > ---
-> > > >   drivers/char/agp/uninorth-agp.c | 1 +
-> > > >   1 file changed, 1 insertion(+)
-> > > > 
-> > > > diff --git a/drivers/char/agp/uninorth-agp.c
-> > > > b/drivers/char/agp/uninorth-agp.c
-> > > > index 84411b13c49f..b8d7115b8c9e 100644
-> > > > --- a/drivers/char/agp/uninorth-agp.c
-> > > > +++ b/drivers/char/agp/uninorth-agp.c
-> > > > @@ -726,4 +726,5 @@ MODULE_PARM_DESC(aperture,
-> > > >            "\t\tDefault: " DEFAULT_APERTURE_STRING "M");
-> > > >   MODULE_AUTHOR("Ben Herrenschmidt & Paul Mackerras");
-> > > > +MODULE_DESCRIPTION("Apple UniNorth & U3 AGP support");
-> > > >   MODULE_LICENSE("GPL");
-> > > > 
-> > > > ---
-> > > > base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> > > > change-id: 20240615-md-powerpc-drivers-char-agp-db644db58c24
-> > > 
-> > > Following up to see if anything else is needed from me. Hoping to
-> > > see this in
-> > > linux-next so I can remove it from my tracking spreadsheet :)
-> > 
-> > I still don't see this in linux-next.
-> > Adding Greg KH since he's picked up many of these fixes.
-> > Hope to have all of these warnings fixed tree-wide in 6.11.
-> 
-> Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
-> 
-> Dave, this seems like a trivial fix that is stuck, but normally routed
-> through DRM.  I hope I'm not over stepping, but I think I'll drop this in
-> drm-misc-next on the 19th if there isn't any other activity.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Jul 2024 10:42:17 +0200
 
-Committers applying patches is very much welcome and encouraged.
--Sima
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Single characters should be put into a sequence.
+Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D for one sel=
+ected call.
+
+This issue was transformed by using the Coccinelle software.
+
+Suggested-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ kernel/locking/lockdep_proc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
+index e2bfb1db589d..6db0f43fc4df 100644
+=2D-- a/kernel/locking/lockdep_proc.c
++++ b/kernel/locking/lockdep_proc.c
+@@ -424,7 +424,7 @@ static void seq_line(struct seq_file *m, char c, int o=
+ffset, int length)
+ 	for (i =3D 0; i < offset; i++)
+ 		seq_puts(m, " ");
+ 	for (i =3D 0; i < length; i++)
+-		seq_printf(m, "%c", c);
++		seq_putc(m, c);
+ 	seq_puts(m, "\n");
+ }
+
+=2D-
+2.45.2
+
