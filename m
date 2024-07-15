@@ -1,59 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE20134BD;
-	Mon, 15 Jul 2024 16:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4703617C67;
+	Mon, 15 Jul 2024 16:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721059304; cv=none; b=ukcfiJcewRx4pil96FyVqfAgXz3P8uOpB6maKHP8F3jofamjXG8QuCyoYcxhYc9KMGVc4+W5VofZYHR+KWfLLoFLgrGTUHZkqId9MViKVRBCWzgcFLsR9t+FAGdOlDauQPamo2a4QqaW79HQIkrh9xwXvKKptxsgr4dYXNYNh+A=
+	t=1721059830; cv=none; b=DEOFTqaL/rNV+rFuZq/aE7riQiGGAGiq47UK2GIF24rZ33bnbAqV2b/ClDsIL2wVweGuONuq+lwzUJUSL3jCeTOpE9TJ8hHv42hRdYmVRu8RSLlhvWF7E9VXROwMksWRyIx7lG/hXhM+tFnACumTvqFit8+ILYGEJCq3bhAC78s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721059304; c=relaxed/simple;
-	bh=hdZ1uWLfrmlCAu1exDSse0MJmB2RV4h4+omKn5OeTOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CyTcjC2P69zhoCq75EKQX3Q2kYvBEprtgz+dpCTgNF2NMn71JnzZ1CeZCxTDoWN1MA49m48fXaF1h2c+e7jrjnJI5SyrGDNN5b0lyQpQf4G+2ot73SHh/0NXrxDe1f1qNUXhqOMxR1ci7W/BLp2ZiKiNGWrSgXN4cC2tq+T7b9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uzO8HI/e; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721059830; c=relaxed/simple;
+	bh=MHKbDjhMNiFYxJ/gGPAZhxDmz/n0Au+38x900Q4HPeY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=eu6GKh8flqt4SkzmnpbLsFov3C1/xkPy8jcSlsqRO2+ROv2HhDA899hG3mj35SEJtj3R9Pl/6v93I/9/wqS8naKFVvWgFAHqoi9/PVmkVylyKc8e7Ij2Lj+SXOTunrFUsU6faMsCpDI7gq1g0cXLVhy7cO5tCfKrDj1WVfUPmvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AimO3ZGs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uzO8HI/e"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14049C32782;
-	Mon, 15 Jul 2024 16:01:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AimO3ZGs"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D6BF7C4AF0A;
+	Mon, 15 Jul 2024 16:10:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721059304;
-	bh=hdZ1uWLfrmlCAu1exDSse0MJmB2RV4h4+omKn5OeTOU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uzO8HI/eEzxNy8ddFoI3PcKHZwffFK8KyjFJ/yZOY4J6doEyHz3b7cuBtBS11XDoV
-	 oLVJQA5ZzbEj9J4L8vqCeutzPWGo0S+h0KuVuJP44H2MZFJF5u3fJo9UxjJt2qLXl+
-	 6u9UFCy+YunGBLHM4eKRuSipn/md0ZpJUiaR/U3xP8k3TPCLd5SILWWViWYd5QOqba
-	 u1sOtnhFtGqcKET9GYqjLG7F3Xuz27DxVK9BVQu2A5XhPBt41Y6eQciFqzg0bAFg/h
-	 d3rSq2d7QDciv/PwPwykU4j9OgrYwA7ieWfc2qyARTe70sdlVQiWJLEcnOFKkWHWrL
-	 F9vak1PoljrnA==
-Date: Mon, 15 Jul 2024 09:01:43 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: xen-devel@lists.xenproject.org, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Paul
- Durrant <paul@xen.org>, Wei Liu <wei.liu@kernel.org>, LKML
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] xen-netback: Use seq_putc() in xenvif_dump_hash_info()
-Message-ID: <20240715090143.6b6303a2@kernel.org>
-In-Reply-To: <add2bb00-4ac1-485d-839a-55670e2c7915@web.de>
-References: <add2bb00-4ac1-485d-839a-55670e2c7915@web.de>
+	s=k20201202; t=1721059829;
+	bh=MHKbDjhMNiFYxJ/gGPAZhxDmz/n0Au+38x900Q4HPeY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=AimO3ZGso4BUI9mPA9iZuwDnlQdrfpSnBrHC07OV0Dm+XoPSWRJ2LU4RlB6j9OdNQ
+	 snztMG3/jcQjK2blhkX+WWxpATJH7/XQ8uQAIcLDNt57ZHIynZ4v35tg7wsq7D3esd
+	 UJlwCo0XorL37GiLZtK475umlavmc7hPd+aOVGEvwh06iFJf6pC66RGQ3MV0SkKlI+
+	 9ZoMz26Uw29eO34e/8Fa++xBdQ6ud7Q0IJeKaIB3acSLGOwGf/n6kn3xixnGZfFmPY
+	 fy/bU+LxjOTUNv42osg0VSTeZijR5isgH7fHWftLRAvzFu5fgNM8FA6VVF0By0tWev
+	 XrEjf7dVCtgoQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B7EE5C4332C;
+	Mon, 15 Jul 2024 16:10:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] llc: Constify struct llc_conn_state_trans
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172105982974.6134.3480413843064784008.git-patchwork-notify@kernel.org>
+Date: Mon, 15 Jul 2024 16:10:29 +0000
+References: <87cda89e4c9414e71d1a54bb1eb491b0e7f70375.1720973029.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <87cda89e4c9414e71d1a54bb1eb491b0e7f70375.1720973029.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 
-On Sat, 13 Jul 2024 15:18:42 +0200 Markus Elfring wrote:
-> Single characters (line breaks) should be put into a sequence.
-> Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
->=20
-> This issue was transformed by using the Coccinelle software.
+Hello:
 
-I prefer to only merge trivial changes like this if maintainer
-indicates their support by acking them. Since the merge window
-has opened we can't wait and see so I'm marking this patch and
-your pktgen patch as deferred.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Sun, 14 Jul 2024 18:05:56 +0200 you wrote:
+> 'struct llc_conn_state_trans' are not modified in this driver.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+> 
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>   13923	  10896	     32	  24851	   6113	net/llc/llc_c_st.o
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] llc: Constify struct llc_conn_state_trans
+    https://git.kernel.org/netdev/net-next/c/70de41ef7857
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
