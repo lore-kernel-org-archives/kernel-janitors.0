@@ -1,74 +1,109 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4929A24B5B;
-	Mon, 15 Jul 2024 08:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2C713B5B2;
+	Mon, 15 Jul 2024 08:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721032165; cv=none; b=UGlPpZ1k8DIBcY5TpGlJR6rz67BCeBfAOMTM7Bo46SyNmOakTZuhgeOBdTLhZ8sSE2NfLBXi10r/mDOH5TQdc7YHwbGlHv/I1PwjrD+SY6mgbQs6R6HZhHjBkpikEQVt7aLUO4Xv2eCtw6WGdN5pD06FxLp9GDjnYFVRtay8bY8=
+	t=1721032225; cv=none; b=lL3GExVZTXHGT+Gm3AkVyUVQPsB30gsehMW4w80KQnf+KfF3YO+qjLEK+zunDw3E41uqgUEW7jVGPRhScmqz+U/bhoPYUXiLxG9dGGkcFTCnjELPA09mYjjnXZDjhBq9yrfs0kvg3+wWItGamt8axpykYsqGc6WgLuKDpmWs3V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721032165; c=relaxed/simple;
-	bh=cby1TPiBt8ufALYg+O0f93ZA73SqJpUmRjwv/o6jqyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OPYiW3wg8nS1Eql1IBnwYd1wKDgnbNkf1KfPhHO0TZIQCN1axKEgfRd6cGSPfP5nFgccR7+JfSTZO31QVswz7Xe8npZcTVePYcxNhGHT5hPnEtF02sCgVO6JUZKDPdwx8qQn0Y/Hdi8TD5KYfOd7bDZCugAj/xH/uquOl5yHKOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYK4H83V; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721032225; c=relaxed/simple;
+	bh=cnnjx6vN6SkcRwmo0gZuagUL8/r39lmyNh61FPnqguw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=LnCp+JlL8GwiwObguRG7xDRzBBUuDfZgqeiGQWU0pBxrIfX2P142nyXkKIOWDIB1hzzcKsoJq9odBHhoSMD9weh4WsJtd8gcNrxv5dn1LKbWPUi/EN6aGjXQ8dY2IK7o2Dqj4z5RBMNLqP/d3cu0piO1nTLC7jWnjhs9zXOJo9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJ+GBtbJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYK4H83V"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 065ACC32782;
-	Mon, 15 Jul 2024 08:29:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJ+GBtbJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C94FAC32782;
+	Mon, 15 Jul 2024 08:30:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721032164;
-	bh=cby1TPiBt8ufALYg+O0f93ZA73SqJpUmRjwv/o6jqyw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JYK4H83VCuYDSg0kNkH2rT5Ji2MiXnNMKOXvpub1fNnnw7Ox+hMm3vHAUxSj5Vjkm
-	 J4fiR0eoI8OIltz3rNmBiCE1Wq95RvLYJ1D+20kBj1SLsJClBKuTmfvdo7YvFqsqS9
-	 ThqL9u4yjJbpGdwYWeECbYM5RWjdaAaJFkC3LzxnNzCxQ5GgbtCKOSgkpKN0D//PDA
-	 ltt2C4Dm3NDrDc17SUhs/jf9Ib5gRI7PukP+LQApwDWADTo8eL7gdPVRTX+0nu3bKK
-	 4DCAlknw1yFVBgxSyimBUR1I+YN/a/jwSenb5CrG3Ji5AUNQBv/TSbRX2QRf2GugTR
-	 BuGeDOf2bclaw==
-Date: Mon, 15 Jul 2024 09:27:50 +0100
-From: Simon Horman <horms@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	netdev@vger.kernel.org, Kuniyuki Iwashima <kuniyu@amazon.com>
-Subject: Re: [PATCH] llc: Constify struct llc_sap_state_trans
-Message-ID: <20240715082750.GC8432@kernel.org>
-References: <9d17587639195ee94b74ff06a11ef97d1833ee52.1720973710.git.christophe.jaillet@wanadoo.fr>
+	s=k20201202; t=1721032223;
+	bh=cnnjx6vN6SkcRwmo0gZuagUL8/r39lmyNh61FPnqguw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FJ+GBtbJX952GMve1l54H8b42/5kTc+0uO7eCtQjBidtFsdTBsV0dgxCLPZJq82If
+	 uU46t+HAwaiEu04a443yVFwd3ojZP1MXsdHsJqmooYZMhP58TFYvrp7g02KYzNXH2S
+	 /XGWTbhXiIAZKJdeinQIIIPDCCKIY4OLYE3hlylEBXRLnc/bDN3GNQgI+wu8RBfrob
+	 yL/LahS7ggKYwZJyZpfdX18HBr67Wrke4ogfop62DVDgq3bB3GlfSFnKgoABvdmIFe
+	 6rvE0ngwH3+Xqdj4tTHQm9un9fYYcPCW4NVKkLYYxDSzVjEAyF20+ISw1DhMF6ZDvX
+	 d7h+Fx71UiwQg==
+Date: Mon, 15 Jul 2024 17:30:19 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: wuqiang.matt <wuqiang.matt@bytedance.com>, Andrew Morton
+ <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+ <kernel-janitors@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>
+Subject: Re: [PATCH] lib: test_objpool: add missing MODULE_DESCRIPTION()
+ macro
+Message-Id: <20240715173019.ebe734f2c8182ca0f13b7c7a@kernel.org>
+In-Reply-To: <3edb1529-744c-4b7a-acc9-12e166ada738@quicinc.com>
+References: <20240531-md-lib-test_objpool-v1-1-516efee92a05@quicinc.com>
+	<7ba64e00-373b-4c13-a30a-113646dad588@bytedance.com>
+	<20240603154549.4a338c065e42f07c8c3d1b82@kernel.org>
+	<3edb1529-744c-4b7a-acc9-12e166ada738@quicinc.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9d17587639195ee94b74ff06a11ef97d1833ee52.1720973710.git.christophe.jaillet@wanadoo.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-+ Iwashima-san
+On Thu, 11 Jul 2024 11:14:20 -0700
+Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
 
-On Sun, Jul 14, 2024 at 06:15:20PM +0200, Christophe JAILLET wrote:
-> 'struct llc_sap_state_trans' are not modified in this driver.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->     339	    456	     24	    819	    333	net/llc/llc_s_st.o
-> 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->     683	    144	      0	    827	    33b	net/llc/llc_s_st.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only.
+> On 6/2/24 23:45, Masami Hiramatsu (Google) wrote:
+> > On Mon, 3 Jun 2024 11:25:59 +0800
+> > "wuqiang.matt" <wuqiang.matt@bytedance.com> wrote:
+> > 
+> >> On 2024/6/1 08:31, Jeff Johnson wrote:
+> >>> make allmodconfig && make W=1 C=1 reports:
+> >>> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_objpool.o
+> >>>
+> >>> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> >>>
+> >>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> >>> ---
+> >>>    lib/test_objpool.c | 3 ++-
+> >>>    1 file changed, 2 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/lib/test_objpool.c b/lib/test_objpool.c
+> >>> index bfdb81599832..5a3f6961a70f 100644
+> >>> --- a/lib/test_objpool.c
+> >>> +++ b/lib/test_objpool.c
+> >>> @@ -687,4 +687,5 @@ static void __exit ot_mod_exit(void)
+> >>>    module_init(ot_mod_init);
+> >>>    module_exit(ot_mod_exit);
+> >>>    
+> >>> -MODULE_LICENSE("GPL");
+> >>> \ No newline at end of file
+> >>> +MODULE_DESCRIPTION("Test module for lockless object pool");
+> >>> +MODULE_LICENSE("GPL");
+> >>>
+> >>> ---
+> >>> base-commit: b050496579632f86ee1ef7e7501906db579f3457
+> >>> change-id: 20240531-md-lib-test_objpool-338d937f8666
+> >>>
+> >>
+> >> Looks good to me. Thanks for the update.
+> >>
+> >> I added Masami Hiramatsu and linux-trace in the loop.
+> >>
+> >> Reviewed-by: Matt Wu <wuqiang.matt@bytedance.com>
+> > 
+> > Thanks, let me pick this to probes/for-next branch.
+> Following up since I don't see this in linux-next.
+> I'm hoping to have these warnings fixed tree-wide in 6.11.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Oops, sorry, I missed this. Let me try.
 
+Thank you,
+
+> 
+> /jeff
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
