@@ -1,114 +1,166 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2072.outbound.protection.outlook.com [40.107.237.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80AA189F59;
-	Mon, 15 Jul 2024 13:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721049578; cv=none; b=iT6wSWQoLwMrZIXjiMhJMx7RW6gXXKGNSTanqjkW2oQoXwlVkYg/Gr65PBaPeVI1YQh17vpuQnq8jtWShZZeDa7BtcXaGaa44o+5ccHIxq9wI84/OrrNkNUghlive8Dq/FrJk1+j+N6Kogyf3dmyqxdSDeRu9YHYTsQCN2qqjWM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721049578; c=relaxed/simple;
-	bh=vPG94mdyUfScDU9XjxT9wJHj1nF1OhhTm8LfdKYGKyU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=dv5Y2bLFLkrvN0+hlv7DybIE8V/mS2qzl0l+unuujZsQM+ac7TPVvgaFMAj04PgFeK7hfGFmvYxXCN+mdvc/j/gJDvZuE480QUQSHuhx2qTEOleT4wVTPMHhTSjh153QSknvDyIv++5sFYRjXU2aJ0e12vIvVHuGcALst52I2/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qG+JJCdr; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4029B1850B4;
+	Mon, 15 Jul 2024 13:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721050197; cv=fail; b=NCRp9i0MaliLcRR9KZmGreQ+FtpGKFfkY/5ZpHjeRHlbL40hUU6g29Efavr4Y2YiyTMQdprs4iOMjfjvrDFzNlIfwnfZzgRM3DT/M2rTmFopZqkGsiMfFR+MTnGW9xTdsfPhZGEk4agsd1lRvHILiiwM4OCPWENnQV0a4ElV860=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721050197; c=relaxed/simple;
+	bh=66T4bALrDQQkvTch/NUs8M8aEKZIfeihjwt9L6JxHUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=B80Nd1iI/RtYY3iQEXdw0Vs+7fP71b3QLC4svF6tm194tSutyPvI65WsCmoW1vuh1t+ac1a4HB9Wi+hoSjGG9t3UiIMJKpu74UoTNsbFg5wCh8ER/w6Tz1QpKEXLOqVDDERlRSrklrsfusSEtqWNArxALQANvn5eQeXZFeBwN6s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TEU3o2dG; arc=fail smtp.client-ip=40.107.237.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qG+JJCdr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721049540; x=1721654340; i=markus.elfring@web.de;
-	bh=vPG94mdyUfScDU9XjxT9wJHj1nF1OhhTm8LfdKYGKyU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=qG+JJCdrVFKUMJy5ceJT8hntkrkhkXkHlZ6hlrGWBwS2fyMgXfdUJqnU33WrLFTB
-	 t50JYaF5OFIKjzhs14wJIHHw+IsL/DwBR9d0oCjuxzq/CTlPIE1uKdkpXdUzO6ZEK
-	 sOKT3hRskQNqSsxKmTroR1UNBdvgUnDTQ4AqSC1Wa/kg+CAEeGI/bpdn/fY4Ah9O5
-	 4AqO6kMoT2l2RHrdfLIiSw4OM2I6iw5BzoydhAqSkDJyrImZ79Jf7BYHMPZcHf0fm
-	 bQn8WnlYPtNrLMAOetuIP6iAj4jtGZ9j9YDGQIx0bIZyUfQxmOQyjg9W3zkpLkLoK
-	 z7l6LtplhOMGpbzbgA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0Icn-1s6kgV12v9-00xrqD; Mon, 15
- Jul 2024 15:19:00 +0200
-Message-ID: <6c50de6d-7f35-4427-bd11-5f02f5e90c08@web.de>
-Date: Mon, 15 Jul 2024 15:18:56 +0200
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TEU3o2dG"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Xxw0Yg1ruY6HNijG+6cS46PwyxKzd8ByGFNxQds5BfwNDdH0k5YWHEA5wYLZohg7UBpsYLVAyJ7eGg8pelc9BTMtY528JDG2WPMs2I0e0pRgFW2qg64dY6hMk6NRTPz7gtWoQugc1sormvWr92OVreliMh33nZ5oUHdz1b5kYoCtW2TF5IjyeJLaWmwgYzWsU4HJ7FE6dpd4c0B0TnGFbelTfmcmcEKuhNbtDnQkI/iLHycZ3KV3U3iALAbeIFYVVs0N05D7CThSSHMZznDrtgpb5WEWnEM2ZjXM7i+86EEGS08+89Lz0UW5W8jNzONC99/UJXNvTg2qerUrNg0N2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NjXDY5swLkh1WCOXnWzEt9/M50NiozFihmgpTMmr96g=;
+ b=HEp5AFUZJn8wBVAjg3r5KTwQUaV2CPS1iGD5m8TEMpKDvSySwdYV4fO8O1ggJ1l+NvSp4kSbt4pAZCW/HQBh7WhNQAaCSxYn/uNULcg9UF309WRF3agMIdxP95vToG8r6NdTjfyhVhGkSriIgQJ/7cCVBgfbJvFyRZIs2zrxx+VrcM/CuV2Lg8poFi9cgqMeUO4gan8L6HSpkBc/e0wHUUTNouUGBK3KY4GdrYUyR+gpGpvaFPZ89ol5+Fmg5Ah/MNCI9JIUnMwcuTaVdBIHJsU813+RMc+LQsrEjpEPHwPpXNC4YphvGbuiJyVr1GXw83ngG0RCVKAdCn48NPw8ug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NjXDY5swLkh1WCOXnWzEt9/M50NiozFihmgpTMmr96g=;
+ b=TEU3o2dG9SRdqjlU0kGHdwgWYd77eTXoWgRwKAZyHhIHONLgkKjoU1aAIcg+K3lIPeQVBnoVsrPonZME4vpa7Rq/BAmHJxptn7BA99Kc5CE0I53qeQ4vuJWI6EEvT2KPlKCdrrPypfw/srGJt2wsKCk1EI+PErUB9OThjuXxUnvUpKWRO1TNjqyY/A3RkSLXyiz7IVIC88u6YfB1xC3JqByy6QHd0bmP4878lpn86kPvqC9q/PbnIkJOcj0XbaqjCeVFiW+rF2nQF2Puh0+PKcy5igiq2x0/rb8gvIxPdo2MXLvvTRBmeUNlPuKohhoPRyE69AS20JBoXTXgO2LxQA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by LV3PR12MB9166.namprd12.prod.outlook.com (2603:10b6:408:19c::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Mon, 15 Jul
+ 2024 13:29:51 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7762.027; Mon, 15 Jul 2024
+ 13:29:51 +0000
+Date: Mon, 15 Jul 2024 10:29:50 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+	Leon Romanovsky <leon@kernel.org>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH] IB/hfi1: Constify struct flag_table
+Message-ID: <20240715132950.GA673219@nvidia.com>
+References: <782b6a648bfbbf2bb83f81a73c0460b5bb7642a1.1720959310.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <782b6a648bfbbf2bb83f81a73c0460b5bb7642a1.1720959310.git.christophe.jaillet@wanadoo.fr>
+X-ClientProxiedBy: BLAPR03CA0009.namprd03.prod.outlook.com
+ (2603:10b6:208:32b::14) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: make24@iscas.ac.cn, linuxppc-dev@lists.ozlabs.org,
- kernel-janitors@vger.kernel.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Aleksandr Mishin <amishin@t-argos.ru>, Andrew Donnellan <ajd@linux.ibm.com>,
- Arnd Bergmann <arnd@arndb.de>, Frederic Barrat <fbarrat@linux.ibm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Ian Munsie <imunsie@au1.ibm.com>, Maxime Ripard <mripard@kernel.org>,
- Michael Ellerman <mpe@ellerman.id.au>, Shuah Khan <shuah@kernel.org>,
- Wei Liu <wei.liu@kernel.org>
-References: <20240715025442.3229209-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v4] cxl: Fix possible null pointer dereference in
- read_handle()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240715025442.3229209-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:60AT5T8BRZHQ6Gfv9u427isOzaT1ol9JQSTUXVRY8R+RWiR+wlg
- uOOY0ka3OvtSIcX6lXp4OgDSPrJFLe03Ofze5Hs3wM9Z9IePcr3uBn+DZP1YpGcBh3A49id
- zatBnGaU1zQtqqXMksLXbjlMe4ZRKgt2qtbHowpg44jp0okSPQESB/hzUIbO43MhyUft7NK
- S3n1WF9VfhlErESXakadA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:viLqW/CObXo=;0l1lBepkdtz8vogJ+28NR/ACuF1
- orJWguKXGfvjM4ndYEQhEBoyIbZYVTbZH4X1Cqxb/x01Utdj3CvDfE5wT2jmbFKkCWdblPM8a
- cjAmiD+2zhYJvPABeiLM7gy/DtyL3PmpuOxIFV/zozqKwTpNwQx2pMRhGkllRwoM/Nps+La8W
- cjAjmITuRSge2ykwpRHJ+7+cPiIKkvKtUvuDp7GJYlL3jMwMMgpxLyTjgcUIDx3peD5lU463P
- JOdpKWLzZ+WuQKI2BYPFXPrxRO3quZqrrhx5EWXsmUQdVM0t8DsliOp4NnCQdMbUinmUi5QUN
- ZY9ZvajK6GAUozrTrAtQ5l0ULyYjHMCDqYrQ2vtFkL5T6hWhyuESPpg+tRSNnnfWWze1gQS6f
- mi5dLB+sZugZ6K1zTYXaq1me90EBn3G6KmNbw/IAr7XI0Vf0aqmGVDOQ0Rxr7X10ICsAuGTDo
- 4sUlUiiGNv43NEP25qFrZktinKTimy6tMFm/rlc0ki/nP5uvCQ8R0Pcuhs607n1fOunsrkzxh
- A3KkhwczFYgOqLoHJBMpw6l+5P5p3bcVIR0AgqqIdzt7m+TGZH8MJyc85CJRZMGXkwoS6o5mG
- BqS3stnqgZc5iX9g6xBU0n7NaF8qwr+NirvNsgimUQMesbMValrBB1HYRg7UsvNKKDkzpteAV
- WGUSDaLt72FP+m5Pdap3cf0cX+XpeVz7dSILoZRZ2NnUoIWiry9bED1b8qLQLsgRUKWYheKlH
- 2wMek/9d295pYAzNuUYG0oDUE/g9ThlXKOO2E/FzceIJxXZxk5Mc7o0UFt9KreO9u7XX3NVp/
- 0KkwSfS6nZJ0c3pc6uu8Ldig==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|LV3PR12MB9166:EE_
+X-MS-Office365-Filtering-Correlation-Id: e8d18ead-73ba-4864-a055-08dca4d234ab
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WOv45bGfK8yt1fUkzBxnYcJGvqYfsLI3h8URJs+LDlwphKDegL00c+rVivot?=
+ =?us-ascii?Q?H0i3ooRulijaIBHNt8JSrv8qVX8fIGkAMUlCb8h3x3kcEpnuvX4sd5hz/e6/?=
+ =?us-ascii?Q?C0K3bMe+2tTi5jilZ3+D+Q1MG1ICn0V/niJ/H0SJC9aAvNEZFyuGGOD5wTVS?=
+ =?us-ascii?Q?7fHkFP9XX3lz4yGQLjsp1OxdZvGVFtny1IuIvmUzhH5CggrnII+7C8QCOrA+?=
+ =?us-ascii?Q?pOpc52127YyJhiLYYvadXEH1JYorMBNz0NFMCNb2QfaNiVVysnrVMuGVwKvH?=
+ =?us-ascii?Q?mGN7SkOk7ktmCBYdccR0Yg3Yd6OO/dnX46atpr4AXNXLwNSxkPb0+Akxu5R8?=
+ =?us-ascii?Q?YJ/Pa93dL/v022xoobM2YBcUaObHmtG8LCG7cSOr1oLa/xZt67OW11mzh80y?=
+ =?us-ascii?Q?D5NBTDVSrTcgk50oiQXyCjm4eCTRERlxiT2x0L+ItGSbOQ32efyPB1k2eNDM?=
+ =?us-ascii?Q?QEz9GcoUNyCxAgUH9oK3ggNmT0KCJTm01n/UVxs3TxA4H9e9ENqAb7Pzo6vA?=
+ =?us-ascii?Q?Fa0FjUuEduJLRumDaCQ+X9n+UkCTv3tTISJ1XuNii031tapdG3Tfg52xqdKi?=
+ =?us-ascii?Q?oirDOmeV157f1spf0uC76z1GIBd0SVcPZ7efF9PNvPun3MyUETlYKVBff9UE?=
+ =?us-ascii?Q?7R9yMCtueu7hLh5CIySpYlwqB3HDnUVWoA8kpig+qkn2gigT4p56u1fMQ5u4?=
+ =?us-ascii?Q?oKMRAazMcbq+bkGTKwKjZXfh73dT3rcYEXAm2awObyrdDNY36hP04dxwJ8W5?=
+ =?us-ascii?Q?fJ4muzOVcCeJ1+zsAcuDQlI14hzaQS1szSsa4Uj0Eo+qgyX+KMyStHCgopfl?=
+ =?us-ascii?Q?dHlfknKhxuYT5sxQ1WDO7kc+DFPcPUP4M0hXpzPunOWUsNuIERxpalrfSabI?=
+ =?us-ascii?Q?Myn6pG127ppuhbqPhXeo0vYlgfNuQNpD5Vzp6/T8JKEjTp+Tb5X5on6qPYjI?=
+ =?us-ascii?Q?cA55v7IQwqsmOdo1Q+1RgEZRgzRBBxrxO+O4k5TvNXlGKZyRaNHA45eWtASR?=
+ =?us-ascii?Q?fONUgrzGVHcXFxcRT+oHX9a7if7+4fZhXMV8s04TarCrNE+8Cq/bgrLGHrPx?=
+ =?us-ascii?Q?qW3J7+OUs6SoQw/8xdFg+mB+1XFX7YvkR3GVJn3qBqgXsFRL1k8DJEFpLnEx?=
+ =?us-ascii?Q?kgKLHp5A1BhjqzS8gRKmxjaeBh5yzOYfLkun+VhdHbzrwngzWZRiarj4+zTq?=
+ =?us-ascii?Q?UvmRmsAGhix/9Z41hojNuW3fN1sRvnZNze3hMjMAq/qhhwKyYsld+NP4ac5V?=
+ =?us-ascii?Q?tNZxa1NKpPifQck4giDYQA4y9C4uBMRtrded5KuHK0vJqMCt61PxqGu3DhVH?=
+ =?us-ascii?Q?f0ZM8uPtNaLe3AwFH5RyI1bgkyYl5klHoXLZS7z9if5yCw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?AcUy5vLcLT2+mQ48kIVowl/iYaYusvz1wuTWNy9pqeHvGk/eHr0CQ37dsrVU?=
+ =?us-ascii?Q?naXeqhmzwTBb1gfFFXB8OphiziFU12npd7yOmxTbxKVHjgF+P1G4UdiiUwsj?=
+ =?us-ascii?Q?LzMeGBtpE3DefzXywICgK0BkCRYq27eIsjs/OTA9CO137pCsJC87NGuqYocW?=
+ =?us-ascii?Q?v66tSdh2NcbDvqkwr6Juf5HmSt6bf67bg87YYrj7QQTSLHd8x98ieKeHpjst?=
+ =?us-ascii?Q?Jcc+gcgJE/4u4cJKBb0W697OZKj63XSVbNP6W/eFt1LkjwJ7ZCCysDOkQBGl?=
+ =?us-ascii?Q?obsuPmwUoj3XyrFsah4nYcNoBrww933ujsMRokqtM+Jl45wjkDHuZLgdwLc/?=
+ =?us-ascii?Q?yjcoIKfJ7L8X6qAK9OcfwI/9DKuJxhC85XrUf5zMzwnb5eaNLD8ZZhSzyLpd?=
+ =?us-ascii?Q?LRXUo8CJo1lBSqlxqnf8pspIIv0fCDcdrvQHvvPlbIVmQVi0n2hKjufhUAiK?=
+ =?us-ascii?Q?+2ZgsKxHq0OBKxj5xjj5OMiE4wjecLSTQFNIIBTO2+EAnnRQ3BqI559aLlzb?=
+ =?us-ascii?Q?uWROAdb102nNvPg8Qs6hw9dtLm2SCAb5RZhLtUjGYjA800DPOc1zzqgQA1iN?=
+ =?us-ascii?Q?kgrNinDjbU0hkq5A4g+b1I67OfmT6HiIyMIU+bvTSH2THycXaxidlQVIJDhg?=
+ =?us-ascii?Q?LghEDx+/UT/fUTMe6rK9JC5WzChdkEOrMUAgIe6JUCzPZ/HYI2DPKu3i+aKJ?=
+ =?us-ascii?Q?JMu+U0F/X+j8FVFaqcDNTRASo4+GJutwFJpvpcnu1QNOdfg8VxBtu3446P72?=
+ =?us-ascii?Q?cXaNFN1RyYdxEtTwqH2d44i9jTkDH+rwn5klt9C9bEuAe5LHZy3uzK+zrLn8?=
+ =?us-ascii?Q?rtJWfWXn/YgUxwBGcfC67o3LRopu5iF5UP9ub7CdSRDzGs5TewCv5fHy3nmy?=
+ =?us-ascii?Q?MEDtHfecT7u88rFiNItSh1C0wrZeXf8FL5FDzRzF0kJlM4AkEw3cVoMDfIOI?=
+ =?us-ascii?Q?aiASXFDWdVQqUimg619Px2obbErX+D8rOC3bJIsnpcumMvc+ub4H+asf16QR?=
+ =?us-ascii?Q?wqLns2ElD62/sjnpg8Of1wKhprs2CI7xz1nqe5e70II4bfFCdbjjhYJaZx4w?=
+ =?us-ascii?Q?jH+uwaf3rm48EFFtF/nogkSSQUe6hKKQIFeVehTr0rGfHCvykcRin3B1XFwr?=
+ =?us-ascii?Q?3+i+FFLyvdWLAUm02Yfez3TEslfFuXaC0MHUNpbLy81j4N5Aeym4sxm8Z+BT?=
+ =?us-ascii?Q?4J6wh+87sCy385sin3xQXW2rVGftf0i1Yc5aa68tz1MkYoZeSNEajNY2NgwI?=
+ =?us-ascii?Q?MuYVCO+MKTJzMujQyEN9Eyx2Szq8PtQ4uqo0N7yFo+aogA4AWnQxycDkoT3F?=
+ =?us-ascii?Q?OACocjBGRt4oQuudUM+pz2LMFdaKOqrWMspPHRBaAfwI+amvxxunrPjfumH2?=
+ =?us-ascii?Q?vm3ANFYf8flvDF40HyoyBqJ0LoaPWteW8HsOkfdbiNUnLpO9M8pAcHrUOOhV?=
+ =?us-ascii?Q?6gyhunSPAlhO/6WSV+EBMBvLSKr+V0YLUx+WdF2SZdFmMj+IpvgC40Th5lAY?=
+ =?us-ascii?Q?Dv5X2mz2ycP4b3Vw204wWK+6qU6x9mN47e+AHCPn1PgA0ktzQvGFG3H9CTtI?=
+ =?us-ascii?Q?bE2eod3iMoUmhfEmOG9MdBFLMs6dK/TFt8VvWP6P?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8d18ead-73ba-4864-a055-08dca4d234ab
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2024 13:29:51.5897
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uc4bveEN6JcaIq5Ece+Rgps1RoGpFRAyW1e0j3WyWeN6rRVc619Paiz92zOMkpi4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9166
 
-> In read_handle(), of_get_address() may return NULL if getting address an=
-d
-> size of the node failed. When of_read_number() uses prop to handle
-> conversions between different byte orders, it could lead to a null point=
-er
-> dereference. Add NULL check to fix potential issue.
->
-> Found by static analysis.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 14baf4d9c739 ("cxl: Add guest-specific code")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-
-How will interests evolve for caring more according to known research
-and development processes?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10#n398
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/researcher-guidelines.rst?h=3Dv6.10#n5
-
-
+On Sun, Jul 14, 2024 at 02:15:25PM +0200, Christophe JAILLET wrote:
+> 'struct flag_table' are not modified in this driver.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>  302932	  40271	    112	 343315	  53d13	drivers/infiniband/hw/hfi1/chip.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>  311636	  31567	    112	 343315	  53d13	drivers/infiniband/hw/hfi1/chip.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> Changes in v4:
-> - modified vulnerability description according to suggestions, making th=
-e
-> process of static analysis of vulnerabilities clearer. No active researc=
-h
-> on developer behavior.
-=E2=80=A6
+> Compile tested-only.
+> ---
+>  drivers/infiniband/hw/hfi1/chip.c | 30 +++++++++++++++---------------
+>  1 file changed, 15 insertions(+), 15 deletions(-)
 
-Does such information indicate any communication difficulties?
+Applied to for-next
 
-Regards,
-Markus
+Thanks,
+Jason
