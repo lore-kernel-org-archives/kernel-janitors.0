@@ -1,110 +1,108 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAF81E890;
-	Mon, 15 Jul 2024 08:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FE9185E7E;
+	Mon, 15 Jul 2024 09:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721033534; cv=none; b=e42biGHdKxwWYyx0Tlvrb4WbpVkCMohUxPFa9SmZcbzRt4SkRApxZWa11cK+EOlSpfGYtG6yE6+Y+SwKzFmo3Wb4cT4PWE3WicFtmtXcZuD1SyIGLur7WEHG6nJpsa2soOIg7W1iZfp1m3m/UvqBYhSZtAVKnuFlq7vto2x5eW8=
+	t=1721034731; cv=none; b=SoXtFOL9/2mTcKo86hd8YSTFZq7aDq8TZP7rRjV0mmV23uTy8LuCd78NBAze4RpWbJ1y/KXqcSNaDTrkr2zpoN4+8bzXErnczMFgb7MP1EKISg0+nbvBcwNzm1WyMXsPs4l8E0CL7tzWhp0crTeS69p62L/+d3d1Aiepv3kKa14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721033534; c=relaxed/simple;
-	bh=lPPSCe+ov7UF3C243GO/UqavibELTq39WhED1+GwWNA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=McNBUa9SQ0+SuC/ksiTXoCL7f2ZTRVvkkCMcWds7DJgrlG8anpeJRiNMO1sBkTIMRQmM14VWG6wWs0gP2OnMfIpY9JEUbz8qJvMcr9IPpI/3fpWl4pLdgt5Eck4ijKe5aqf6DNHwijl1CJCceMm/yHAQpasCSd1nzkA7k1ygAa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ropr15gH; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1721034731; c=relaxed/simple;
+	bh=Mcchug6I+yL+6ME9FwAuRnZicvWblXCrtNJQblFaSv4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=enAsy3hmbUG2Q2l4iSEtUguyZ54bsc9EVezSomsm+9IPx7in6uXiGpfWRPtREZdd6vhYGS4MsvAohXjXM35zZEL6wyNygun/SNM0GSJ1E7j2qhfUddzSL1VX5kPxK6+tp49aprkJUggdZ1AMldpXVGLIla8bcmBmXj/Ye4+YIW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dRDo+dXb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ropr15gH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721033505; x=1721638305; i=markus.elfring@web.de;
-	bh=A2wbh4kaLbKzhVBmO3dybv3YRMmrGDYw8khYFcvl2GU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Ropr15gHStMe+xMOdO6KXrdQglh4Z6C7wg0izTlVeN2C6hjFqOEudBkLxeQTiyUN
-	 vLFodoSwJIdKUwHMgAOzWbbmlia+vYSeaQmsutyUUx3LwXYpJr3opQKMQOnAuMGQT
-	 x5dHaIkrU84aRPKyYa3rQVUsWHromqU9COEoIVQNrQMpHGuzyzJfLjZWFIxKfr3OO
-	 m7Yuo+qYiA9RLHVQJKXBMFCe5/8swO4XwzouHxq8ZyWESlHvngJiMoJB8aRFhgUBd
-	 PYKvIT5qeyWs2QneetTedM/rviY1kNpZS4vKAMNzjrzF8ysh1ElgOC2mYIESKcdWY
-	 /oNLcKlK5XQXa6LNlA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N0qv3-1s6GuK2ShB-00vErd; Mon, 15
- Jul 2024 10:51:45 +0200
-Message-ID: <e346d688-7b01-462f-867c-ba52b7790d19@web.de>
-Date: Mon, 15 Jul 2024 10:51:44 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dRDo+dXb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BE82C32782;
+	Mon, 15 Jul 2024 09:12:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721034730;
+	bh=Mcchug6I+yL+6ME9FwAuRnZicvWblXCrtNJQblFaSv4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dRDo+dXb5hyyUY8YblJaogFBV8Cn6xo9XrXLSpMS3IWcbozfA9E4G3tuwkWiMRHhM
+	 r7JCab1A9ycIhfPWCEs+uGO5yXfc/mmg4BCNwbLX3zJZNId1SvH9vo6gYhYBnnn7zf
+	 Cf3YUYoThW7frvJz3zdEWJjd4NkaW578kTXUIZl9ehVRdSFn8TvT2YAR8mNSZFv9tW
+	 1usQ26SHZjiTk/UUTw8u8RARbYGIb8Id799WwqwJxZIIv6mlTFPhX1Q4XwfePLPQXP
+	 K5ZA+LDcdSMdCbAxs0JQKtQJRtz+pPQBLfnUIcCZGE5cTVekdIzQkIVXJoY6K7p+zF
+	 c959ZJc4rrK7g==
+Date: Mon, 15 Jul 2024 18:12:06 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: wuqiang.matt <wuqiang.matt@bytedance.com>, Andrew Morton
+ <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+ <kernel-janitors@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>
+Subject: Re: [PATCH] lib: test_objpool: add missing MODULE_DESCRIPTION()
+ macro
+Message-Id: <20240715181206.f0b6c9e6bfc548c2b729b76b@kernel.org>
+In-Reply-To: <3edb1529-744c-4b7a-acc9-12e166ada738@quicinc.com>
+References: <20240531-md-lib-test_objpool-v1-1-516efee92a05@quicinc.com>
+	<7ba64e00-373b-4c13-a30a-113646dad588@bytedance.com>
+	<20240603154549.4a338c065e42f07c8c3d1b82@kernel.org>
+	<3edb1529-744c-4b7a-acc9-12e166ada738@quicinc.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH] locking/lockdep: Simplify character output in seq_line()
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
- kernel-janitors@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <aa9e1986-8631-405e-96f5-86a0f5a1eab2@web.de>
- <975d2b0f-f84c-4c84-adf2-098fef59d90b@redhat.com>
- <7560b341-27b4-45b9-8b73-202ec7f27200@wanadoo.fr>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <7560b341-27b4-45b9-8b73-202ec7f27200@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:/Mg74PvR7pnkoPncBRx+bICjO9uS+vtQ9nUJkqfaLTg3WCI0b5L
- WXkFcUBppVWx1KqkBIazziPqLCdD+S6YHf8wO+ncPHhd24HruhXzvr5tdlaCKQv0LRb1xId
- Jhw4/5SUNKx0VHY8f089LZONyCJFapw9wiHGz3eVZU24JDuaul7xMHdoNaHo7Xo/h3dSU1y
- V1tsEX4GS4SnTn6+u+chw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:b3IYyir/BDs=;sfFrpKiVnLUrcW0KrKt+NKgLWHh
- RqrTlGtXmH2pu5IQEEIDVz/eAkPZzC4r0r58mKSji8NhFEPmO/Q+krO6Q5A0Jd2ftN1MlD+2E
- SNucwaOMWPID2JBU5QRp8OFO5bSDF8rR7/oyObDPQvmZ92bnrPNgfWCSYEA/CkUiosD3lPjNs
- 8XFMXVIzt7QvMCmDSE63Dbb7u5tUmuYUNrdbJg95bLkTbwQsGgT8iutMgnG80MMh6r6ZYYJHB
- 90rrykTn0JRVf0+yfz8e3YThflN7dmnMHFGF1yc6BxhGMEfNo5pIVF7VPm0TCiVaTHBIWOOyb
- ggjQ3PR7M1mTTkrQJNWnuS4fFDyi3fS5ABgHQki2lsq4Xu3UYCs45fCLqUnRGMVkVuwKwdGEy
- YpBK483D0dL2DsO0I++ZNNhhOixMTqV+QVZKADW860CJAZ12bvO2C/MAhQYjQ5ie9BK7mIHdP
- SYb7brxZ75rTeFamVm6EZdZMH4tz/a3rH0VOmfSUSEQJT+ByvawfK1jzjXAvWtA+pMJzXVT1d
- xX7S7Nj3JMCW7Tjgk96rNXkWkiGQDviT/RsL6mmNk1uvn1KdRKTvCWhu7qJeNRMUP+TIFWZYv
- GDXaBDkfjl8nAUlm96z3pwllGe0MQUiwLTWV9QoQ05ed7kDwVS0L1Z/K/9wLqmtjXcI5p/JZi
- iAmJGnmmmcpVCAYnMvH7QEPqMfuucWtNEAywSex27mHnngCeHxXMDgBX9nCVc/8ouZVwgL7AB
- BCuq6znZFyxWmaPkDcD5g/kTegqatUOg/81afLMmNrX1Q80vozTh3xHRKs2ZD6oA+pm8BhybB
- VPrh0Pq1cMUH7hd9RYm48qcw==
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 Jul 2024 10:42:17 +0200
+On Thu, 11 Jul 2024 11:14:20 -0700
+Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
 
-Single characters should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D for one sel=
-ected call.
+> On 6/2/24 23:45, Masami Hiramatsu (Google) wrote:
+> > On Mon, 3 Jun 2024 11:25:59 +0800
+> > "wuqiang.matt" <wuqiang.matt@bytedance.com> wrote:
+> > 
+> >> On 2024/6/1 08:31, Jeff Johnson wrote:
+> >>> make allmodconfig && make W=1 C=1 reports:
+> >>> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_objpool.o
+> >>>
+> >>> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> >>>
+> >>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> >>> ---
+> >>>    lib/test_objpool.c | 3 ++-
+> >>>    1 file changed, 2 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/lib/test_objpool.c b/lib/test_objpool.c
+> >>> index bfdb81599832..5a3f6961a70f 100644
+> >>> --- a/lib/test_objpool.c
+> >>> +++ b/lib/test_objpool.c
+> >>> @@ -687,4 +687,5 @@ static void __exit ot_mod_exit(void)
+> >>>    module_init(ot_mod_init);
+> >>>    module_exit(ot_mod_exit);
+> >>>    
+> >>> -MODULE_LICENSE("GPL");
+> >>> \ No newline at end of file
+> >>> +MODULE_DESCRIPTION("Test module for lockless object pool");
+> >>> +MODULE_LICENSE("GPL");
+> >>>
+> >>> ---
+> >>> base-commit: b050496579632f86ee1ef7e7501906db579f3457
+> >>> change-id: 20240531-md-lib-test_objpool-338d937f8666
+> >>>
+> >>
+> >> Looks good to me. Thanks for the update.
+> >>
+> >> I added Masami Hiramatsu and linux-trace in the loop.
+> >>
+> >> Reviewed-by: Matt Wu <wuqiang.matt@bytedance.com>
+> > 
+> > Thanks, let me pick this to probes/for-next branch.
+> Following up since I don't see this in linux-next.
+> I'm hoping to have these warnings fixed tree-wide in 6.11.
+> 
+> /jeff
+> 
 
-This issue was transformed by using the Coccinelle software.
+Can you resend it to me and linux-trace-kernel with Matt's
+Reviewed-by? Also, can you add the warning message?
 
-Suggested-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- kernel/locking/lockdep_proc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you,
 
-diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
-index e2bfb1db589d..6db0f43fc4df 100644
-=2D-- a/kernel/locking/lockdep_proc.c
-+++ b/kernel/locking/lockdep_proc.c
-@@ -424,7 +424,7 @@ static void seq_line(struct seq_file *m, char c, int o=
-ffset, int length)
- 	for (i =3D 0; i < offset; i++)
- 		seq_puts(m, " ");
- 	for (i =3D 0; i < length; i++)
--		seq_printf(m, "%c", c);
-+		seq_putc(m, c);
- 	seq_puts(m, "\n");
- }
-
-=2D-
-2.45.2
-
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
