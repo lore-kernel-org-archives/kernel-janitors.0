@@ -1,66 +1,64 @@
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127746F099
-	for <kernel-janitors@vger.kernel.org>; Mon, 15 Jul 2024 20:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98191369B1
+	for <kernel-janitors@vger.kernel.org>; Mon, 15 Jul 2024 20:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721074982; cv=none; b=JfD21IbJoFBf8qM9hyBgHkmGx3rhD2OVhReE3oaVDuEQDFlacA4J6BYZcTtgIUy2/TN/nGVAkXTrMV8hqE0s1wFT3GC/43BETCyJhWiG+MKiiEuPXAxq0I2CmMUMRvNbwII9dqTBKm9AQLk1JrGHXxRoXVgHzsLm2qWRR4PqUPw=
+	t=1721074990; cv=none; b=o2rULuCjkE1GGVT0t3m9PSqQpesdEij6M6k0ztSIQpDTZb4oI2VeqAPvrH5QMbSBmhEXq2305B8Nc0oju3D5fFBeCOv5yZvVhlUMvGEVY7mgYqg/Hg2nkiarxxDsLf0DIL7wX8VmKmYOcfGonQJcKGWl0TAib+L0ZAUUf0Hv1H0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721074982; c=relaxed/simple;
-	bh=JOZ28iCKMuwJxA0hytXjgkoNBjAf0gBGWTDlMp9gjMg=;
+	s=arc-20240116; t=1721074990; c=relaxed/simple;
+	bh=wKcJC/TQQJ5hsiRXBQE5LgixCLhnnv8Q1ON9MKB1yLI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kdh5G9lbkqEouvChmqm5djp8PUwphjpVicr05yG/r8OO4nHSH6rKkLoJq1bFjPA55SCt4YwLDI8GzQEdmB2Pv+ISG1NDW9eGbtYcVPY1yXTiWAdFEmZALV9wEe6FdKSJDkFU5xdUK4bZXpQ226Dni4mSwmByStwE1Xd5UpSfGc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TJfiXsAZ; arc=none smtp.client-ip=209.85.161.50
+	 Content-Disposition; b=VqY+wenptSyl/FwEXOJSm8YiLphrOLC5aSFWDF/8L3pacvn/YXXFZVLfhdm9myM0cEuK21LoyOXYDxndH4Lycw9KLwyKuTW32AtJrGrQBLSMdk+ULi+JWZvaXgl92Zz0syMsHGdWydkj+iWuA8nC8800TxMfd8zMHqkxruHI+a0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H3RxzQnr; arc=none smtp.client-ip=209.85.161.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TJfiXsAZ"
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5c6924f2383so2318232eaf.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 Jul 2024 13:22:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H3RxzQnr"
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5c2011716a3so1792755eaf.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 Jul 2024 13:23:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721074979; x=1721679779; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721074988; x=1721679788; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=PxzT0SN3KlZDqe7HSlcdVmVH8IF9jSYcZYq5mPjp6ic=;
-        b=TJfiXsAZrhiV55+8XzjVwhHX8CNF6IMxjmK6crJPfuTTBubldi3tazREeJRrehGIdk
-         Q+eTxvWGJlghIRerz0uuw7Nf3xxVfxF8sgRmO8cecj/AeHfAsusCvRV+DkfYkJSV+NW5
-         bmzhTvrziPqcZwO+q/FVa3cmi4JfIFQj9robLD5MovCPOfvoDYQ7iWWrdU6JQMVNIR+R
-         PywZl+7R24SIQMJGvwQD6HGPuIUOFeqWl3hL2zYXUV4oD3sCDyFoWyd5iLZ8EQw99+qI
-         bnywq485Z4jgoQWgwnpA7wTYsJhnUegEn81E5eDdHsG47dQwAUttyEujA9LetraJrI19
-         0wmQ==
+        bh=/M/SQ3yhUFPnWUkqHtKb793cWpyAWaWiy63HuW6xq/w=;
+        b=H3RxzQnrOwf5/PALmVFjBaKVhkd7iasuaBjKhcfuz/hU6GDi3Ox4iJIeHntEZWj/bV
+         8LVd5skXdR8aPFAHuBkgYUqOua0dLjJOdGM5X+VRn3p6rpso6eiLYnsKbllwKhiUbJ22
+         KRlHBtG/ffCqMcr34ngt8RUFDRe1pSsyH/HiaVBFyXj8oert7dJPeOVCPrL5/8rKnIAV
+         qTPXcHPbSLGOsWJukUjZgG65YKd5uMIuh57BdfDeoxNsLZvEfJE9recFHgcVCfV2BT/r
+         GUyQCPV4dXKRLoQrv44s9kF8eATTNKlfjwigCz3DrMD+5NdgQwEaOsjgAildOl8mEzjt
+         9iYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721074979; x=1721679779;
+        d=1e100.net; s=20230601; t=1721074988; x=1721679788;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PxzT0SN3KlZDqe7HSlcdVmVH8IF9jSYcZYq5mPjp6ic=;
-        b=lZrAMgyVdD+4HiB17lcJcYXoyc5DXZX9BXcKF3HJutKzqchQmhlonEmU7A8OWCajCj
-         sRULl4SgJEkJu9YuhClBz4/62xO5nmHEeSDhhN56PnaiW/kWdpK+kg25HUfyckNhkqAV
-         EA/smecww3UitXr5WEwuc75Zp4G4j2EzAfqA7fvhhpFaNB7ZvvRMHpV1T+Fd9BdYY5G3
-         6/rECvNuQP2E1ZyfQ2UO4It2Tr4Qus6xGUncsPFX8MOOzvDTk6FZjTMTz25cuZBI/Rlx
-         WyOyhI9AkV82tezfBNJv5LlZbcjhfkezN26cy+WzZj+kAatu7+ZbmTncmOWeVvvqFUUW
-         W5Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCU72Yl2puBxFw4Ho6dMtaI3ha1MhJYq6s0CH2L4PuTVb8SNBnIoFGRhEAUYOOHde7Uuu0or8+hcLUW5s3u9JTtltGEcLwkdIibCgGdTVH7A
-X-Gm-Message-State: AOJu0Yx4Aw+HeBIe+Lv+pgDhmV++kiRUbCngLALvUa3Y/1FWWnD4PJZX
-	Rp7vdcpkot3yeIkaJ9qwsMpE68CSOcjHAtCzotYpAMFFZEtZrVK+TM56hvyjm5w=
-X-Google-Smtp-Source: AGHT+IE6iz+VJy5pl+98qTdQOY8G87Tq38PgtWVMsTaW/ZgCE0q6Hk/6a96OkviHPSMLGWHtiWkiPw==
-X-Received: by 2002:a05:6820:983:b0:5c4:10df:c479 with SMTP id 006d021491bc7-5d286d18e83mr217369eaf.2.1721074979149;
-        Mon, 15 Jul 2024 13:22:59 -0700 (PDT)
+        bh=/M/SQ3yhUFPnWUkqHtKb793cWpyAWaWiy63HuW6xq/w=;
+        b=fCoIj0Z6JbsLMEwR6x3no5fV2NDmVBUbOrnMdS/T3cJ8/zl0j0D9qicKU3qQYhBk9w
+         FcBD4Dm19xnh3Jz5GZnIIU18vM2YalWmvJ+IoIw4chyIbSmVzjM5WP3VaDr6qYpEZyi9
+         zlXWomvv3X47hRf00SvBfl4bqDYV8YEjvcSrROayzRtDHnOD9F6F/vKyDEpSJzyY7hg+
+         +BORK025V0ndJ3QDyTf6MfJG+4j6cNAnSyTwxEFYErNOb0AiDc3Fshu7Gd5Hy2hYtylS
+         zhKlWgEQyEjH5XhaQKH9w2SKEy37NcJgGy1OvEUdt/ttX/EAxuyN4skqpCKlWm/hAUPJ
+         nRiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZcamtbvUMdHC5ZbqNw/O7jadLiDtMxr8oqVT6Rbz4gtUOYuR7m0z5hM6yi6COiR6HWPNPyM2rRsJEZjSTJDD2l04uBAzzGT07gOmIPTlQ
+X-Gm-Message-State: AOJu0YxrJIERgLAaXzjH+MYNmHfFxYi+6SBN20uNYKSq1HP/qYMQoXFS
+	M+JRPo/Al6kMFZqGWtbawpBvrnVLI6ufYTjwMAuhrDSxWOuMfaNQtcFI3TPA668=
+X-Google-Smtp-Source: AGHT+IGPdWkVufwnmw9GbYLmNd5GtKQPpIudgOzgzgClCWdsuROkVbuwHwpLSNGGoexh8AYzwac75w==
+X-Received: by 2002:a05:6870:6587:b0:25e:1061:6541 with SMTP id 586e51a60fabf-25eae75e8f4mr15351092fac.7.1721074987780;
+        Mon, 15 Jul 2024 13:23:07 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:750c:19a4:cf5:50a9])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ce774dbde3sm898325eaf.43.2024.07.15.13.22.57
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-26075176228sm1068955fac.29.2024.07.15.13.23.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 13:22:58 -0700 (PDT)
-Date: Mon, 15 Jul 2024 15:22:55 -0500
+        Mon, 15 Jul 2024 13:23:07 -0700 (PDT)
+Date: Mon, 15 Jul 2024 15:23:05 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Tero Kristo <tero.kristo@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] platform/x86/intel/tpmi/plr: Fix output in
- plr_print_bits()
-Message-ID: <b0084e70-4144-445a-9b89-fb19f6b8336a@stanley.mountain>
+To: Chengming Zhou <chengming.zhou@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>
+Cc: Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] mm/zswap: fix a white space issue
+Message-ID: <c15066a0-f061-42c9-b0f5-d60281d3d5d8@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,47 +69,27 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Smatch complains that 'str' can be used without being initialized:
+We accidentally deleted a tab in commit f84152e9efc5 ("mm/zswap: use only
+one pool in zswap").  Add it back.
 
-    drivers/platform/x86/intel/intel_plr_tpmi.c:178 plr_print_bits()
-    error: uninitialized symbol 'str'.
-
-In this loop, we iterate over all the set bits and print the name of the
-bit.  The intention is that if there is a bit which is between 0-31 we
-look for the name in the first array plr_coarse_reasons[] which has 10
-elements.  If the bit is in the 32-63 range we look for it in the
-plr_fine_reasons[] array which has 30 elements.  If the bit is in the
-invalid ranges, 10-31 or 62-63, then we should print "UNKNOWN(%d)".
-
-The problem is that 'str' needs to be initialized at the start of each
-iteration, otherwise if we can't find the string then instead of printing
-"UNKNOWN(%d)", we will re-print whatever the previous bit was.
-
-Fixes: 9e9397a41b7b ("platform/x86/intel/tpmi/plr: Add support for the plr mailbox")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-v2: initialize str at the start of each iteration
+ mm/zswap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/platform/x86/intel/intel_plr_tpmi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/platform/x86/intel/intel_plr_tpmi.c b/drivers/platform/x86/intel/intel_plr_tpmi.c
-index c1aa52c23d25..69ace6a629bc 100644
---- a/drivers/platform/x86/intel/intel_plr_tpmi.c
-+++ b/drivers/platform/x86/intel/intel_plr_tpmi.c
-@@ -162,10 +162,11 @@ static int plr_clear_cpu_status(struct tpmi_plr_die *plr_die, int cpu)
- static void plr_print_bits(struct seq_file *s, u64 val, int bits)
- {
- 	const unsigned long mask[] = { BITMAP_FROM_U64(val) };
--	const char *str;
- 	int bit, index;
- 
- 	for_each_set_bit(bit, mask, bits) {
-+		const char *str = NULL;
-+
- 		if (bit < PLR_COARSE_REASON_BITS) {
- 			if (bit < ARRAY_SIZE(plr_coarse_reasons))
- 				str = plr_coarse_reasons[bit];
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 66decab33d14..adeaf9c97fde 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -803,7 +803,7 @@ static void zswap_entry_free(struct zswap_entry *entry)
+ 		atomic_dec(&zswap_same_filled_pages);
+ 	else {
+ 		zswap_lru_del(&zswap_list_lru, entry);
+-	zpool_free(entry->pool->zpool, entry->handle);
++		zpool_free(entry->pool->zpool, entry->handle);
+ 		zswap_pool_put(entry->pool);
+ 	}
+ 	if (entry->objcg) {
 -- 
 2.43.0
 
