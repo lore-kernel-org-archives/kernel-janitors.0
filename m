@@ -1,95 +1,82 @@
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98191369B1
-	for <kernel-janitors@vger.kernel.org>; Mon, 15 Jul 2024 20:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94236282FD;
+	Mon, 15 Jul 2024 20:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721074990; cv=none; b=o2rULuCjkE1GGVT0t3m9PSqQpesdEij6M6k0ztSIQpDTZb4oI2VeqAPvrH5QMbSBmhEXq2305B8Nc0oju3D5fFBeCOv5yZvVhlUMvGEVY7mgYqg/Hg2nkiarxxDsLf0DIL7wX8VmKmYOcfGonQJcKGWl0TAib+L0ZAUUf0Hv1H0=
+	t=1721075093; cv=none; b=TDZei5c7a4/GiCmMITsVgtRmm8HFQZjFEdxBH9ynt9wiRhA87YFGGEh2JfF08S32LZshGNv+fc35BwaL6orUJvw0CU9e2xw7N8hfsmI93IoagSvd4FXgD5RvqmNccv6IUOJK/1yKrhDu3Wk9cE+L1gh4XGj6HfxQT++BiQqu4Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721074990; c=relaxed/simple;
-	bh=wKcJC/TQQJ5hsiRXBQE5LgixCLhnnv8Q1ON9MKB1yLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VqY+wenptSyl/FwEXOJSm8YiLphrOLC5aSFWDF/8L3pacvn/YXXFZVLfhdm9myM0cEuK21LoyOXYDxndH4Lycw9KLwyKuTW32AtJrGrQBLSMdk+ULi+JWZvaXgl92Zz0syMsHGdWydkj+iWuA8nC8800TxMfd8zMHqkxruHI+a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H3RxzQnr; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1721075093; c=relaxed/simple;
+	bh=osTrVHiIObgI+vHOvHyIs7DuJMj3b0dBdNKtsFr9owU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VahCbY1KFf/uhEeCp8lh7x3VpUBlyvKk9Yw5pcD/QWIlHlX0r+1FglreDH6AZ0KfYpvSFgKluDXYLN+tJGeqIOZlJObFIspxfKiJGNtFQczdNqX2MkPoqZogte0yLLf+FJx+cgQpXIUVYcCETqPc+ql9BKj+SnyMrqxsF5NqHGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Uw2tFpXR; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H3RxzQnr"
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5c2011716a3so1792755eaf.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 Jul 2024 13:23:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721074988; x=1721679788; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/M/SQ3yhUFPnWUkqHtKb793cWpyAWaWiy63HuW6xq/w=;
-        b=H3RxzQnrOwf5/PALmVFjBaKVhkd7iasuaBjKhcfuz/hU6GDi3Ox4iJIeHntEZWj/bV
-         8LVd5skXdR8aPFAHuBkgYUqOua0dLjJOdGM5X+VRn3p6rpso6eiLYnsKbllwKhiUbJ22
-         KRlHBtG/ffCqMcr34ngt8RUFDRe1pSsyH/HiaVBFyXj8oert7dJPeOVCPrL5/8rKnIAV
-         qTPXcHPbSLGOsWJukUjZgG65YKd5uMIuh57BdfDeoxNsLZvEfJE9recFHgcVCfV2BT/r
-         GUyQCPV4dXKRLoQrv44s9kF8eATTNKlfjwigCz3DrMD+5NdgQwEaOsjgAildOl8mEzjt
-         9iYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721074988; x=1721679788;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/M/SQ3yhUFPnWUkqHtKb793cWpyAWaWiy63HuW6xq/w=;
-        b=fCoIj0Z6JbsLMEwR6x3no5fV2NDmVBUbOrnMdS/T3cJ8/zl0j0D9qicKU3qQYhBk9w
-         FcBD4Dm19xnh3Jz5GZnIIU18vM2YalWmvJ+IoIw4chyIbSmVzjM5WP3VaDr6qYpEZyi9
-         zlXWomvv3X47hRf00SvBfl4bqDYV8YEjvcSrROayzRtDHnOD9F6F/vKyDEpSJzyY7hg+
-         +BORK025V0ndJ3QDyTf6MfJG+4j6cNAnSyTwxEFYErNOb0AiDc3Fshu7Gd5Hy2hYtylS
-         zhKlWgEQyEjH5XhaQKH9w2SKEy37NcJgGy1OvEUdt/ttX/EAxuyN4skqpCKlWm/hAUPJ
-         nRiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZcamtbvUMdHC5ZbqNw/O7jadLiDtMxr8oqVT6Rbz4gtUOYuR7m0z5hM6yi6COiR6HWPNPyM2rRsJEZjSTJDD2l04uBAzzGT07gOmIPTlQ
-X-Gm-Message-State: AOJu0YxrJIERgLAaXzjH+MYNmHfFxYi+6SBN20uNYKSq1HP/qYMQoXFS
-	M+JRPo/Al6kMFZqGWtbawpBvrnVLI6ufYTjwMAuhrDSxWOuMfaNQtcFI3TPA668=
-X-Google-Smtp-Source: AGHT+IGPdWkVufwnmw9GbYLmNd5GtKQPpIudgOzgzgClCWdsuROkVbuwHwpLSNGGoexh8AYzwac75w==
-X-Received: by 2002:a05:6870:6587:b0:25e:1061:6541 with SMTP id 586e51a60fabf-25eae75e8f4mr15351092fac.7.1721074987780;
-        Mon, 15 Jul 2024 13:23:07 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:750c:19a4:cf5:50a9])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-26075176228sm1068955fac.29.2024.07.15.13.23.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jul 2024 13:23:07 -0700 (PDT)
-Date: Mon, 15 Jul 2024 15:23:05 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Chengming Zhou <chengming.zhou@linux.dev>,
-	Johannes Weiner <hannes@cmpxchg.org>
-Cc: Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] mm/zswap: fix a white space issue
-Message-ID: <c15066a0-f061-42c9-b0f5-d60281d3d5d8@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Uw2tFpXR"
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id TSFTskNDCj4pfTSFTsXq55; Mon, 15 Jul 2024 22:24:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1721075082;
+	bh=he6gmmUMbwqSQvrMV8Ht1aTxpX0j3zxi5MrnSEMUtK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Uw2tFpXR0tt0oeSW7GCyQ4KbPzTV1U03xlQVSUohBFjERXVY/VyzYpNkxkOflO47/
+	 S9OW4zOii+LNuEWk+KIFMOTK7oMVoRZQc/MIOQ36wNBLq8b/PpCi/d5zGHQONMpLhU
+	 DNHkW9VEU/k4yiF6CmGRfxDJmwtONicerc3g6o06U8EE4qBmnPBLN5uf8amKg4ejXi
+	 w1Z4reb1ppUjvcDdaLrHomrr/aCkBhevHMGpw2biRNQdUnclfa/yBbSz1KzlARjB8k
+	 w9IE7w+CKpcgx/sKHa3A5j4YORzeD9qUnqxSn2a5zOiW8pBgvG5mmb6loPtA22oKjG
+	 wJnekI47YlphA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 15 Jul 2024 22:24:42 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <b3fa592d-91d7-45f0-9ca2-824feb610df8@wanadoo.fr>
+Date: Mon, 15 Jul 2024 22:24:39 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] xen-netback: Use seq_putc() in xenvif_dump_hash_info()
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: xen-devel@lists.xenproject.org, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Paul Durrant <paul@xen.org>, Wei Liu <wei.liu@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, Markus Elfring <Markus.Elfring@web.de>
+References: <add2bb00-4ac1-485d-839a-55670e2c7915@web.de>
+ <20240715090143.6b6303a2@kernel.org>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240715090143.6b6303a2@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-We accidentally deleted a tab in commit f84152e9efc5 ("mm/zswap: use only
-one pool in zswap").  Add it back.
+Le 15/07/2024 à 18:01, Jakub Kicinski a écrit :
+> On Sat, 13 Jul 2024 15:18:42 +0200 Markus Elfring wrote:
+>> Single characters (line breaks) should be put into a sequence.
+>> Thus use the corresponding function “seq_putc”.
+>>
+>> This issue was transformed by using the Coccinelle software.
+> 
+> I prefer to only merge trivial changes like this if maintainer
+> indicates their support by acking them. Since the merge window
+> has opened we can't wait and see so I'm marking this patch and
+> your pktgen patch as deferred.
+> 
+> 
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- mm/zswap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Jakub,
 
-diff --git a/mm/zswap.c b/mm/zswap.c
-index 66decab33d14..adeaf9c97fde 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -803,7 +803,7 @@ static void zswap_entry_free(struct zswap_entry *entry)
- 		atomic_dec(&zswap_same_filled_pages);
- 	else {
- 		zswap_lru_del(&zswap_list_lru, entry);
--	zpool_free(entry->pool->zpool, entry->handle);
-+		zpool_free(entry->pool->zpool, entry->handle);
- 		zswap_pool_put(entry->pool);
- 	}
- 	if (entry->objcg) {
--- 
-2.43.0
+Most of the time, this kind of modification is useless because it is 
+already done by the compiler, see [1].
 
+CJ
+
+[1]: 
+https://elixir.bootlin.com/linux/v6.10-rc7/source/include/linux/seq_file.h#L123
