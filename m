@@ -1,100 +1,114 @@
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0B81850B4;
-	Mon, 15 Jul 2024 13:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80AA189F59;
+	Mon, 15 Jul 2024 13:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721049324; cv=none; b=LRWCJLJNtH1Yk2KZ4s/kC6TrVwjtG1CAFdUfzZA2Qc6g2+I32Rvp3X0Hxr5oycdZQ0jC6no8eGcj3XkUKB2RkWjyDSVV1Gk4sQeAV3O3Ub6+baPDfHvkmwHEcDfgXIVSFRaCL3cPQMk02lJCNeLtxrVPKzImM9XhaGGB2g3dwmE=
+	t=1721049578; cv=none; b=iT6wSWQoLwMrZIXjiMhJMx7RW6gXXKGNSTanqjkW2oQoXwlVkYg/Gr65PBaPeVI1YQh17vpuQnq8jtWShZZeDa7BtcXaGaa44o+5ccHIxq9wI84/OrrNkNUghlive8Dq/FrJk1+j+N6Kogyf3dmyqxdSDeRu9YHYTsQCN2qqjWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721049324; c=relaxed/simple;
-	bh=NDiGhLikZFXheoCYWgdbBv8oB2Fs1Q0tUVp2bO4OnJM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tNESuLMa7C0A0GtXB1IaCsViaCkLOlM8PSFSHZq1rX/In/I4JvErLgaFEOyw5l6L73TYW2DhmCINlcZ/vgwvwecGf9nT8gUayxUA4LXv0ZolexiBd+xnMW8lRMMBx/iMdHCxL2+VNkQ/G4fcqaftLm2x6ctQxA3DkXa337EDq3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=alum.mit.edu; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=alum.mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-70448cae1e0so2424641a34.3;
-        Mon, 15 Jul 2024 06:15:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721049322; x=1721654122;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tNR0w8f7DgNm43Yovgh09Jc86fgc4MgJXWKIFtreEko=;
-        b=T9J9ELjdDTPeuQ/BbqM6+N9M7+Fpvoo0BdzBjghN8WjNRG5Kdwn80ojG0zi5PWQOPU
-         u+qD6DodVvZcTO1BF/Kx5QZsheUa2uW1I0Pn7rIj0aCCyoiRDcLAzrogp8Y/CugeTfWF
-         G0R/m0XVV7lZ2eSpw1CKiWd/V111G9nvtjrrBYBGBtARuv7AvdanF53bw9elbJ7m+mwo
-         D9hOPvuZAqDXylcKlQm56awR6ObxT1KzBn7uyNIfaBgDYQ8olF29WyJ2rwpT4BDiha1f
-         K/f5+RwYYUTjF1Smi8j01kkrihtPaBZzeDVp3g9EB2LUj6oBhOwoZBUodVw/OlNk9Vf5
-         M6tA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHAtoGI/E1U5CcoN6NkveBimGSIOieq/sMZ1E0oZsB+qXtsJUJEzpINRoSkfYwl7VMwURaSnkYL52tHziZorol6uCb9MrR4+aAoLmAHyz/Q4tI/zN+9m1a7nSo64Z/9nsMxU7OxZYRSBI53OeF
-X-Gm-Message-State: AOJu0YynQqKCniBd7r1I3ItMPqJyzVDcR53BNlwVhEAhJtaoYeA+545o
-	TUsvnXR1lNl7WUAqqWrg45xtr1Mge5FzRVCWt59dOyE7bFShpq0FkyNV71WUUrFcJsWLq55JYvb
-	SfCc6SAZO6sZLZs7YU6hCHFVKyHI=
-X-Google-Smtp-Source: AGHT+IHaZDYvxo07Vr9ALMufUbtJ9JDhOtTtJyaDYEF5Vq40o/q+4REDZmuFRwQEdwuzWOGgEhtlipHg6B79axpNsBo=
-X-Received: by 2002:a05:6830:4117:b0:703:6e87:a7d4 with SMTP id
- 46e09a7af769-70375a1f418mr26514909a34.19.1721049321887; Mon, 15 Jul 2024
- 06:15:21 -0700 (PDT)
+	s=arc-20240116; t=1721049578; c=relaxed/simple;
+	bh=vPG94mdyUfScDU9XjxT9wJHj1nF1OhhTm8LfdKYGKyU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=dv5Y2bLFLkrvN0+hlv7DybIE8V/mS2qzl0l+unuujZsQM+ac7TPVvgaFMAj04PgFeK7hfGFmvYxXCN+mdvc/j/gJDvZuE480QUQSHuhx2qTEOleT4wVTPMHhTSjh153QSknvDyIv++5sFYRjXU2aJ0e12vIvVHuGcALst52I2/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qG+JJCdr; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qG+JJCdr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721049540; x=1721654340; i=markus.elfring@web.de;
+	bh=vPG94mdyUfScDU9XjxT9wJHj1nF1OhhTm8LfdKYGKyU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=qG+JJCdrVFKUMJy5ceJT8hntkrkhkXkHlZ6hlrGWBwS2fyMgXfdUJqnU33WrLFTB
+	 t50JYaF5OFIKjzhs14wJIHHw+IsL/DwBR9d0oCjuxzq/CTlPIE1uKdkpXdUzO6ZEK
+	 sOKT3hRskQNqSsxKmTroR1UNBdvgUnDTQ4AqSC1Wa/kg+CAEeGI/bpdn/fY4Ah9O5
+	 4AqO6kMoT2l2RHrdfLIiSw4OM2I6iw5BzoydhAqSkDJyrImZ79Jf7BYHMPZcHf0fm
+	 bQn8WnlYPtNrLMAOetuIP6iAj4jtGZ9j9YDGQIx0bIZyUfQxmOQyjg9W3zkpLkLoK
+	 z7l6LtplhOMGpbzbgA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0Icn-1s6kgV12v9-00xrqD; Mon, 15
+ Jul 2024 15:19:00 +0200
+Message-ID: <6c50de6d-7f35-4427-bd11-5f02f5e90c08@web.de>
+Date: Mon, 15 Jul 2024 15:18:56 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cb21950b-286b-4630-9052-cff9e7e56337@web.de>
-In-Reply-To: <cb21950b-286b-4630-9052-cff9e7e56337@web.de>
-From: Ilia Mirkin <imirkin@alum.mit.edu>
-Date: Mon, 15 Jul 2024 09:15:10 -0400
-Message-ID: <CAKb7Uvj513trzg9bVGrjcQ8CfO4anCq7e9mgbD0eZKh=zNLy=Q@mail.gmail.com>
-Subject: Re: [PATCH] drm/nouveau/debugfs: Simplify character output in nouveau_debugfs_vbios_image()
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	kernel-janitors@vger.kernel.org, 
-	Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Daniel Vetter <daniel@ffwll.ch>, 
-	Danilo Krummrich <dakr@redhat.com>, David Airlie <airlied@gmail.com>, Karol Herbst <kherbst@redhat.com>, 
-	Lyude Paul <lyude@redhat.com>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: make24@iscas.ac.cn, linuxppc-dev@lists.ozlabs.org,
+ kernel-janitors@vger.kernel.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Aleksandr Mishin <amishin@t-argos.ru>, Andrew Donnellan <ajd@linux.ibm.com>,
+ Arnd Bergmann <arnd@arndb.de>, Frederic Barrat <fbarrat@linux.ibm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Ian Munsie <imunsie@au1.ibm.com>, Maxime Ripard <mripard@kernel.org>,
+ Michael Ellerman <mpe@ellerman.id.au>, Shuah Khan <shuah@kernel.org>,
+ Wei Liu <wei.liu@kernel.org>
+References: <20240715025442.3229209-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH v4] cxl: Fix possible null pointer dereference in
+ read_handle()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240715025442.3229209-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:60AT5T8BRZHQ6Gfv9u427isOzaT1ol9JQSTUXVRY8R+RWiR+wlg
+ uOOY0ka3OvtSIcX6lXp4OgDSPrJFLe03Ofze5Hs3wM9Z9IePcr3uBn+DZP1YpGcBh3A49id
+ zatBnGaU1zQtqqXMksLXbjlMe4ZRKgt2qtbHowpg44jp0okSPQESB/hzUIbO43MhyUft7NK
+ S3n1WF9VfhlErESXakadA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:viLqW/CObXo=;0l1lBepkdtz8vogJ+28NR/ACuF1
+ orJWguKXGfvjM4ndYEQhEBoyIbZYVTbZH4X1Cqxb/x01Utdj3CvDfE5wT2jmbFKkCWdblPM8a
+ cjAmiD+2zhYJvPABeiLM7gy/DtyL3PmpuOxIFV/zozqKwTpNwQx2pMRhGkllRwoM/Nps+La8W
+ cjAjmITuRSge2ykwpRHJ+7+cPiIKkvKtUvuDp7GJYlL3jMwMMgpxLyTjgcUIDx3peD5lU463P
+ JOdpKWLzZ+WuQKI2BYPFXPrxRO3quZqrrhx5EWXsmUQdVM0t8DsliOp4NnCQdMbUinmUi5QUN
+ ZY9ZvajK6GAUozrTrAtQ5l0ULyYjHMCDqYrQ2vtFkL5T6hWhyuESPpg+tRSNnnfWWze1gQS6f
+ mi5dLB+sZugZ6K1zTYXaq1me90EBn3G6KmNbw/IAr7XI0Vf0aqmGVDOQ0Rxr7X10ICsAuGTDo
+ 4sUlUiiGNv43NEP25qFrZktinKTimy6tMFm/rlc0ki/nP5uvCQ8R0Pcuhs607n1fOunsrkzxh
+ A3KkhwczFYgOqLoHJBMpw6l+5P5p3bcVIR0AgqqIdzt7m+TGZH8MJyc85CJRZMGXkwoS6o5mG
+ BqS3stnqgZc5iX9g6xBU0n7NaF8qwr+NirvNsgimUQMesbMValrBB1HYRg7UsvNKKDkzpteAV
+ WGUSDaLt72FP+m5Pdap3cf0cX+XpeVz7dSILoZRZ2NnUoIWiry9bED1b8qLQLsgRUKWYheKlH
+ 2wMek/9d295pYAzNuUYG0oDUE/g9ThlXKOO2E/FzceIJxXZxk5Mc7o0UFt9KreO9u7XX3NVp/
+ 0KkwSfS6nZJ0c3pc6uu8Ldig==
 
-On Mon, Jul 15, 2024 at 7:49=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
+> In read_handle(), of_get_address() may return NULL if getting address an=
+d
+> size of the node failed. When of_read_number() uses prop to handle
+> conversions between different byte orders, it could lead to a null point=
+er
+> dereference. Add NULL check to fix potential issue.
 >
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 15 Jul 2024 13:36:54 +0200
+> Found by static analysis.
 >
-> Single characters should be put into a sequence.
-> Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D for one se=
-lected call.
->
-> This issue was transformed by using the Coccinelle software.
->
-> Suggested-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Cc: stable@vger.kernel.org
+> Fixes: 14baf4d9c739 ("cxl: Add guest-specific code")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+
+How will interests evolve for caring more according to known research
+and development processes?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10#n398
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/researcher-guidelines.rst?h=3Dv6.10#n5
+
+
 > ---
->  drivers/gpu/drm/nouveau/nouveau_debugfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_debugfs.c b/drivers/gpu/drm/=
-nouveau/nouveau_debugfs.c
-> index e83db051e851..931b62097366 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-> @@ -42,7 +42,7 @@ nouveau_debugfs_vbios_image(struct seq_file *m, void *d=
-ata)
->         int i;
->
->         for (i =3D 0; i < drm->vbios.length; i++)
-> -               seq_printf(m, "%c", drm->vbios.data[i]);
-> +               seq_putc(m, drm->vbios.data[i]);
+> Changes in v4:
+> - modified vulnerability description according to suggestions, making th=
+e
+> process of static analysis of vulnerabilities clearer. No active researc=
+h
+> on developer behavior.
+=E2=80=A6
 
-Is there some reason this whole thing isn't just
+Does such information indicate any communication difficulties?
 
-seq_write(m, drm->vbios.data, drm->vbios.length)
-
->         return 0;
->  }
->
-> --
-> 2.45.2
->
+Regards,
+Markus
