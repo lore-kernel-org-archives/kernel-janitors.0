@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCE213B294;
-	Mon, 15 Jul 2024 08:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4929A24B5B;
+	Mon, 15 Jul 2024 08:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721031654; cv=none; b=I+JINkNoSRG3DvloPRUf17ljH1fnAb07tDd/L8gvMBGh6MlhfAaUjkabs7uNMaE5q+gu93BbPJPmuR0lrYil8ozhKaCLkHgL0FNZN358J4HtD/854o/8oDDlISWRLp6lODNqwiMA6DmyuP4KTVRcprLKDQwTSxHWwmwnvIgNeus=
+	t=1721032165; cv=none; b=UGlPpZ1k8DIBcY5TpGlJR6rz67BCeBfAOMTM7Bo46SyNmOakTZuhgeOBdTLhZ8sSE2NfLBXi10r/mDOH5TQdc7YHwbGlHv/I1PwjrD+SY6mgbQs6R6HZhHjBkpikEQVt7aLUO4Xv2eCtw6WGdN5pD06FxLp9GDjnYFVRtay8bY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721031654; c=relaxed/simple;
-	bh=1atlJa6pg5MLixwt13GOXk12gmJnNDnLh6Y2IRgFabk=;
+	s=arc-20240116; t=1721032165; c=relaxed/simple;
+	bh=cby1TPiBt8ufALYg+O0f93ZA73SqJpUmRjwv/o6jqyw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T0qHA62iPGBKXfGLKtORjspvJ0e4XjOw9o+3DeZGpFk7GkS/99mKfn7QMP4tO+nbpwkkTAMXlA9Rr53/LtL9QAL8SVWNpZBab2KeWOO3FfCrhBBudXr2iWGkQPiZobdvBEoyUZIrH7gcL6HpegO4Wmqny3Z9Lk0TZ5NpaBjHQhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BUJ3ISum; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=OPYiW3wg8nS1Eql1IBnwYd1wKDgnbNkf1KfPhHO0TZIQCN1axKEgfRd6cGSPfP5nFgccR7+JfSTZO31QVswz7Xe8npZcTVePYcxNhGHT5hPnEtF02sCgVO6JUZKDPdwx8qQn0Y/Hdi8TD5KYfOd7bDZCugAj/xH/uquOl5yHKOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYK4H83V; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BUJ3ISum"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 791D0C4AF0B;
-	Mon, 15 Jul 2024 08:20:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYK4H83V"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 065ACC32782;
+	Mon, 15 Jul 2024 08:29:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721031654;
-	bh=1atlJa6pg5MLixwt13GOXk12gmJnNDnLh6Y2IRgFabk=;
+	s=k20201202; t=1721032164;
+	bh=cby1TPiBt8ufALYg+O0f93ZA73SqJpUmRjwv/o6jqyw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BUJ3ISumVYGL9TRsL2xf6Jx3DbqqfeCPuD79Mp8KZ+eHP+qMp14sDxeuIqprLWxiI
-	 +cl6qYJKOXWdNy/hT4FqLkUwKbDNEyREgwmzOOiBeG/cDxckxpsQD+WD7DxhRA7xVn
-	 VR5VLHqyHri/Ix3cO8T7Q18ldTJWXO32OP/v1bfvhfIO8HhgGKmAzZxfjJCYbzu7HH
-	 rCVHMgncLXuppXW4T9OsL7JtfqOfaPsuK8qHWF689yo4o70XobEdReVoi4xZhhPvgd
-	 tN34OvqJlSIM4PpjGFnPUHaHbaChT7Bx1M+e/ha0eBJomVLvRzSAWObNrl8r9k3r+8
-	 +2J80W8mYcTag==
-Date: Mon, 15 Jul 2024 09:19:19 +0100
+	b=JYK4H83VCuYDSg0kNkH2rT5Ji2MiXnNMKOXvpub1fNnnw7Ox+hMm3vHAUxSj5Vjkm
+	 J4fiR0eoI8OIltz3rNmBiCE1Wq95RvLYJ1D+20kBj1SLsJClBKuTmfvdo7YvFqsqS9
+	 ThqL9u4yjJbpGdwYWeECbYM5RWjdaAaJFkC3LzxnNzCxQ5GgbtCKOSgkpKN0D//PDA
+	 ltt2C4Dm3NDrDc17SUhs/jf9Ib5gRI7PukP+LQApwDWADTo8eL7gdPVRTX+0nu3bKK
+	 4DCAlknw1yFVBgxSyimBUR1I+YN/a/jwSenb5CrG3Ji5AUNQBv/TSbRX2QRf2GugTR
+	 BuGeDOf2bclaw==
+Date: Mon, 15 Jul 2024 09:27:50 +0100
 From: Simon Horman <horms@kernel.org>
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc: "David S. Miller" <davem@davemloft.net>,
@@ -34,9 +34,9 @@ Cc: "David S. Miller" <davem@davemloft.net>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
 	netdev@vger.kernel.org, Kuniyuki Iwashima <kuniyu@amazon.com>
-Subject: Re: [PATCH net-next] llc: Constify struct llc_conn_state_trans
-Message-ID: <20240715081919.GB8432@kernel.org>
-References: <87cda89e4c9414e71d1a54bb1eb491b0e7f70375.1720973029.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] llc: Constify struct llc_sap_state_trans
+Message-ID: <20240715082750.GC8432@kernel.org>
+References: <9d17587639195ee94b74ff06a11ef97d1833ee52.1720973710.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -45,12 +45,12 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87cda89e4c9414e71d1a54bb1eb491b0e7f70375.1720973029.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <9d17587639195ee94b74ff06a11ef97d1833ee52.1720973710.git.christophe.jaillet@wanadoo.fr>
 
 + Iwashima-san
 
-On Sun, Jul 14, 2024 at 06:05:56PM +0200, Christophe JAILLET wrote:
-> 'struct llc_conn_state_trans' are not modified in this driver.
+On Sun, Jul 14, 2024 at 06:15:20PM +0200, Christophe JAILLET wrote:
+> 'struct llc_sap_state_trans' are not modified in this driver.
 > 
 > Constifying this structure moves some data to a read-only section, so
 > increase overall security.
@@ -59,14 +59,16 @@ On Sun, Jul 14, 2024 at 06:05:56PM +0200, Christophe JAILLET wrote:
 > Before:
 > ======
 >    text	   data	    bss	    dec	    hex	filename
->   13923	  10896	     32	  24851	   6113	net/llc/llc_c_st.o
+>     339	    456	     24	    819	    333	net/llc/llc_s_st.o
 > 
 > After:
 > =====
 >    text	   data	    bss	    dec	    hex	filename
->   21859	   3328	      0	  25187	   6263	net/llc/llc_c_st.o
+>     683	    144	      0	    827	    33b	net/llc/llc_s_st.o
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested-only.
 
 Reviewed-by: Simon Horman <horms@kernel.org>
 
