@@ -1,102 +1,130 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE476AC0;
-	Mon, 15 Jul 2024 09:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE7418411C;
+	Mon, 15 Jul 2024 10:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721035531; cv=none; b=ugW+r8MZDhahCahPKz3bNYeVojgjZUcMqd77s4QYwJWIe80FN49VtqJscIzTK78rZyiSvQ0bwLgWV1qbmM6KP9rCHn7d58U8gOMe9AjcD4ie7U9rPpQpp/qkjG2IU7Ncp0ioDAhWahTy1N4oAjc3N6rCJf0njSRbkZAVv6IqJTc=
+	t=1721040735; cv=none; b=lVohwsu2Rr7Vg5vF/mVaXqt/UrhdXSjBvFQuxQYA8/1UHWHbx6T+J+tSJf2l2oiRrDQx1BcbqFv3ESihfkCTSxeqbX0BigLVaiLPlfEQqYjZLuHL9mr0I20GR9x065DRIPBtLDwrp1LEJKU8jBlWMATJArR+bFjqFR6oOD6o/NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721035531; c=relaxed/simple;
-	bh=8ladW+rqCwCi2KnMbdLEzh70YZ0rfIe4aeFAwhNRgEE=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=eKN7XGzknlAd5tKnvIGcljGXzkV/mpZ64EQ2tZyVPETRR/dEp/YCN5jEqribYjI2gCBm1NuI8h2kH9XXAgFhekYICMv0NZauUZmacUBhDT9aRA/QOOjWghXFa2l1wqO3Oca7QNwsZArTOYbPtzyVI9Vn5602ZrxpqMWlSjq0M/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RWhxIZLv; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1721040735; c=relaxed/simple;
+	bh=0ffIqFMhgd62MRjku7YOL5+9xOlnOuR2WZLZmX447b0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=ibtroRXX7lfSzTTAo+xPQtmVXbixoszwCSQT19gMb2e+l+TXQkq9FMu6xwThlUNdVTZiQ3qw4+BJwVHfTjVYQcin99jaLEbhwFiGFlnzZ5O4vbgi9DOzzKG6EcUI3Kmq53rmkTgygt/ewzyKvpMc8W5VXotFOu9yXvzluZx828I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sJ7Musss; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RWhxIZLv"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721035530; x=1752571530;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=8ladW+rqCwCi2KnMbdLEzh70YZ0rfIe4aeFAwhNRgEE=;
-  b=RWhxIZLvYaSrklPEHquhdNyvF6eQuuWolqJu8eryC8ecwvhOFv1gOvWT
-   pboZM5ntAUxNR3Ldm4dJthhGzCVzBTiEsBzL3ypidqT2GOtEZbOM3M8Ta
-   InGtKpeafJmcghKNsj/5BMlOgFey9EJKlinA3ditTPoyCDgkiTSWrZm3s
-   TuNhzZmQO3kuW3qmpNWhKGgSIekNK/eC3nRQcBrkTxsWZ0TQJUhsT9CMU
-   MvzTeXI4UIUtfaPDcC3cZQAaz64+RAiF1QsnBE9twmKHuWQCTK1M87H/g
-   eeVTZy0Kso4nju/zNIXzEH6kTZBMLASI8n/k68UBKY6lNhx8M7+2tfkjI
-   g==;
-X-CSE-ConnectionGUID: t6jxPYV0TpmURPOOR1oBVw==
-X-CSE-MsgGUID: AfSDEliuTmKemZ+riDtiWA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11133"; a="18116965"
-X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
-   d="scan'208";a="18116965"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 02:25:29 -0700
-X-CSE-ConnectionGUID: w4YbGjS4QT2Flzwk22vxNg==
-X-CSE-MsgGUID: c3bSWFr6SD+oPLkg4naVsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
-   d="scan'208";a="49444312"
-Received: from unknown (HELO localhost) ([10.245.247.131])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 02:25:26 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 15 Jul 2024 12:25:21 +0300 (EEST)
-To: Dan Carpenter <dan.carpenter@linaro.org>
-cc: Tero Kristo <tero.kristo@linux.intel.com>, 
-    Hans de Goede <hdegoede@redhat.com>, 
-    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] platform/x86/intel/tpmi/plr: Uninitialized variable in
- plr_print_bits()
-In-Reply-To: <8ccfab0c-3c11-4168-a383-19895ae60022@stanley.mountain>
-Message-ID: <1467f140-c035-cb2a-20d9-b5910971cb56@linux.intel.com>
-References: <8ccfab0c-3c11-4168-a383-19895ae60022@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sJ7Musss"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721040728; x=1721645528; i=markus.elfring@web.de;
+	bh=HE81+eZZ6QrvNNv/IW9iPA4uF80hwznlTx71KPwroGY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=sJ7Musssy8QG/WOwueBnBFptBlRexNoXi4l+JklyIlijLc+wzO7DiGqIlxLu2mmh
+	 zft9lEQ7/LeVSyMS8LVTe6ROXEPZdNP9hYilMSZmsix5eSluarHT+kQY6TsOWBTHD
+	 ylicIq55e6ieeR2GQDBRS3soYfp0pZ84TktTc1ObQvAz1Clhysd8iQHLqU0owd9aV
+	 b1DJaLj675IP0MhrpgJILPX5npzOqwMRIhR2cnrORH4XjE/vaY4J7zYrHy9GLUGVC
+	 6RaVfnnGVjZZrK7M4wbbhLEiaud0egr8b8RW0aRUMGIFMe51DN6ncMcbLUQjrWk0p
+	 TUfVWYwJcIrZS5hISg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N3Xnj-1sL5ng3hDf-011DNf; Mon, 15
+ Jul 2024 12:52:07 +0200
+Message-ID: <f69334a0-ccdb-4caf-b5b4-177cbf0ed1d7@web.de>
+Date: Mon, 15 Jul 2024 12:52:07 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+To: gfs2@lists.linux.dev, kernel-janitors@vger.kernel.org,
+ Alexander Aring <aahringo@redhat.com>,
+ Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+ David Teigland <teigland@redhat.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] dlm: Simplify character output in three functions
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:0Vridu5YqH381X6uz5LbU5TKudpxIA7pichPMTsY2HmUpGQH3pX
+ WCHy8n3D+LenESIj6JhctSYEKKRZpxrxoZImTMpczvpUzeR+1Ap8jzslD4wvMNo0AoKXHaG
+ 8hv/7Nq46U7PvnYgHOESj/ppRNqafD4pxhf0WYT7mtALzHJDy0l1uZgE/LNT5qq1SUkSFet
+ y/ol+fmXwQx5uwSVnY1Hg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:MVsrPNsOdCU=;uEGUbUv1yWP+h4W+v/FYIfFrOl6
+ 9M49U5qSBF9Lyq077ScapIhwvXiOw2+B4FlpyYYUPiVg17mLTjfoz3DrG6SiI44Le1Hfj5HZX
+ +vsK6E5/lB0JSHUv8H1ly+6y3TmvSSCtcPBtK1LAXfqnnj4onm6XJSvuGl5uyxggsnceD2rUU
+ Slpc7ay+tEtvh8CcF4qD6j40KoYX85rSUOZimJ71U01ALB7L7GMCrRglSDQn2o6C1ke9LVuBg
+ rmYIgSWJPZ9Wu8eAkyDZH3WzvpKEm0cj3zA5el9uHuWzTV2dnUBgp2YM2G3ueHI5BxnDle1+X
+ CyKXiHOazQaBVTZ0vTN7XfxTq6+MEK5749C2xG4XtV2Sm7pUDRR9WwwXM1qScCQNeTV3ykBwo
+ q9fR/MlduoaMAKyLVdUo1cDg6Zi3v3W4HpQHOjZ6MhbFblToL8tM+xzfuzYnUBh6E6f/hpgjS
+ cqifQmAytMbxqhTcxriSE0ndPQWGJ2cH4AmRR0uP8ZuZLv0uLwGgjTKiWbhtZHIhlBrktxsfx
+ A5b8S4knIm9jjSi11Gxk7U8Ucl0SNs9ESwhHtqUzHCEgHNT7gcZuKyZ41ZcFHM/y8uUle070g
+ fC+CgE8rr+Je/kEvp2BV+A70E3pVdFgNIB+Bc5nA/SPaP5DY5ff0Kv9ZHLBLcAw3f4R6+1Z3u
+ HZnR4XPeApD3ymBzvUpRsAVtE6A9d9vFQ3q5vXB+B1OmgsrNJqHXGvNzbxRV7xD50tdBRtlea
+ y6I4bDuEcGfYukX+lZ/we3l1G/OA+W/Qes6Y4HZfpka+0hPewE0bGnhYPzrOb04dFwo6faJfF
+ 0l4gLG2JMss4gtDDt14/lv5A==
 
-On Fri, 12 Jul 2024, Dan Carpenter wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 15 Jul 2024 12:36:44 +0200
 
-> Initialize the "str" pointer to NULL.  There is a test later for if "str"
-> is NULL but in the original code it was either valid or uninitialized.
-> 
-> Fixes: 9e9397a41b7b ("platform/x86/intel/tpmi/plr: Add support for the plr mailbox")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> Almost everyone automatically initializes stack variables to zero these days so
-> bugs like this don't show up in testing and we disabled GCC's uninitialized
-> variable warning so it's easy to miss.
-> 
->  drivers/platform/x86/intel/intel_plr_tpmi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/intel/intel_plr_tpmi.c b/drivers/platform/x86/intel/intel_plr_tpmi.c
-> index c1aa52c23d25..2725a1ddba92 100644
-> --- a/drivers/platform/x86/intel/intel_plr_tpmi.c
-> +++ b/drivers/platform/x86/intel/intel_plr_tpmi.c
-> @@ -162,7 +162,7 @@ static int plr_clear_cpu_status(struct tpmi_plr_die *plr_die, int cpu)
->  static void plr_print_bits(struct seq_file *s, u64 val, int bits)
->  {
->  	const unsigned long mask[] = { BITMAP_FROM_U64(val) };
-> -	const char *str;
-> +	const char *str = NULL;
->  	int bit, index;
->  
->  	for_each_set_bit(bit, mask, bits) {
+Single characters should be put into a sequence.
+Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D for three s=
+elected calls.
 
-This fix looks slightly incorrect. It silences warning but for logic 
-correctness, the NULL assignment seems to belong inside the for loop so 
-it's done for each bit.
+This issue was transformed by using the Coccinelle software.
 
--- 
- i.
+Suggested-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/dlm/debug_fs.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/fs/dlm/debug_fs.c b/fs/dlm/debug_fs.c
+index 7112958c2e5b..0d21007930ed 100644
+=2D-- a/fs/dlm/debug_fs.c
++++ b/fs/dlm/debug_fs.c
+@@ -81,12 +81,8 @@ static void print_format1(struct dlm_rsb *res, struct s=
+eq_file *s)
+
+ 	seq_printf(s, "\nResource %p Name (len=3D%d) \"", res, res->res_length);
+
+-	for (i =3D 0; i < res->res_length; i++) {
+-		if (isprint(res->res_name[i]))
+-			seq_printf(s, "%c", res->res_name[i]);
+-		else
+-			seq_printf(s, "%c", '.');
+-	}
++	for (i =3D 0; i < res->res_length; i++)
++		seq_putc(s, (isprint(res->res_name[i]) ? res->res_name[i] : '.'));
+
+ 	if (res->res_nodeid > 0)
+ 		seq_printf(s, "\"\nLocal Copy, Master is node %d\n",
+@@ -284,7 +280,7 @@ static void print_format3(struct dlm_rsb *r, struct se=
+q_file *s)
+
+ 	for (i =3D 0; i < r->res_length; i++) {
+ 		if (print_name)
+-			seq_printf(s, "%c", r->res_name[i]);
++			seq_putc(s, r->res_name[i]);
+ 		else
+ 			seq_printf(s, " %02x", (unsigned char)r->res_name[i]);
+ 	}
+@@ -358,7 +354,7 @@ static void print_format4(struct dlm_rsb *r, struct se=
+q_file *s)
+
+ 	for (i =3D 0; i < r->res_length; i++) {
+ 		if (print_name)
+-			seq_printf(s, "%c", r->res_name[i]);
++			seq_putc(s, r->res_name[i]);
+ 		else
+ 			seq_printf(s, " %02x", (unsigned char)r->res_name[i]);
+ 	}
+=2D-
+2.45.2
 
