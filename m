@@ -1,90 +1,85 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C371223A9;
-	Mon, 15 Jul 2024 05:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C13139CF7;
+	Mon, 15 Jul 2024 05:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721021720; cv=none; b=Pzuguob1zWYZDMu7xclr86EwQOcDq6L/9VLY1ko9w7bUwBSe39KJT67ODCf91Cbdj8eYu8wGIdwRln96U/Btqz2PVRldB4OZfPwT0TgZCf3hzTAXVdrYxdmWlSX+BFTugkmDfA5oRsCgED6HwHN59zsSN/xa0OR6eT/xAGgkhmU=
+	t=1721023061; cv=none; b=VGZQfdg8Bz6uqsbsU60lUhuUVWMTlWFcgXSPPS8Y9srpBMqzN8mxe/0hiFbghmphjLY77PjISO5dz+nn44C1k4H8RNKm3MhGMq7pED2dGuVm7XrRn05/Efw1ec5kbWsCobN6bb+L9MU94iMdksI66zKC+el7C6+DzA+8XlBf+WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721021720; c=relaxed/simple;
-	bh=23WVQytlsylhbvxlQYuds0lP2VtzWIhTTgtqfdPH29o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hDkUCRptJFTzFaQ+GA0ewbm7vzJJzMAb1s7Zi9CECpJpyPJiBHJy+xDxJH4XO+bZtb2gC7zd5JEyWPFXdIKOJiTNUTP06xu4rbZ4zF/7xzvIlHD8s+wBIs5NNUoDJtrWUq5kIoXP6XWfNGDvCa6X/Qn+mI3iTOofgMoiQbbNLPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iy2UdCZH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721023061; c=relaxed/simple;
+	bh=jejlM2MUECGwRFBDGbgLxK40TVh9teiMJBMELQIWGes=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hE7vfxajhGRhd9N69dcbYen4ihY97irpr9Yk4LEWg2zdp3nCLUZMhez53VpbFP6UZqqLNdo0IUlfeh9uzMuVLu40Gt5h+xk03xa43RH9/q3vyZl1J7k5pG6ZyYqtGseje0x4XHDosjVjY5Bc03Sg5s7AEapeW1YT+Rc147brQLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tcFF8O3C; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iy2UdCZH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5407FC4AF0C;
-	Mon, 15 Jul 2024 05:35:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721021720;
-	bh=23WVQytlsylhbvxlQYuds0lP2VtzWIhTTgtqfdPH29o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iy2UdCZHqRcCdoKcJTRLMDVSnkjG+Xex9X8HTKKJYHrjK8RHNBUnRu0DFbYVgx3Gc
-	 xERkEqqR+hutyEkvQkWM8YaBb/6823P8dEOQubX4aMDiHn97+/yjrKKqpqaVb/6zNa
-	 RDDOhpe9OZ2tJrpcFDRjjwynZ3jeQGCvKCz8pJuQ=
-Date: Mon, 15 Jul 2024 07:35:16 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, nouveau@lists.freedesktop.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Karol Herbst <karolherbst@gmail.com>,
-	Pekka Paalanen <ppaalanen@gmail.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Subject: Re: MODULE_DESCRIPTION() patches with no maintainer action
-Message-ID: <2024071518-ridden-election-8118@gregkh>
-References: <2d168cf9-e456-4262-b276-95e992b8eac7@quicinc.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tcFF8O3C"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721023044; x=1721627844; i=markus.elfring@web.de;
+	bh=jejlM2MUECGwRFBDGbgLxK40TVh9teiMJBMELQIWGes=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=tcFF8O3CV7FfYUIg5gFavv7e2yMp50zBXFQu6KiUVHM6AJAGuVsTRKrRVC4wUFGM
+	 f7t75t0Uf/bxYgXF0Vk4DjVVaDKUwhbC9lql7HZr0xbimfOiKpe7cEjIVRsUoSVQp
+	 Mt3fGGwaeZgGqFHyDXATQ8xZp7OB2t0PPNZUx13BnKcNXbtcNYuyLkDlFjyr+R+1N
+	 z9Mp0o6lJ5WiTVWiVuvSnzqNS8jbqpAQjYD5z1nqKkQtW+zOKlKGneMkSCi3XK3Z2
+	 SOBshkAqwvP70HVk8WZZMV91/eYiKVEwSrFwQO45HbFh3vq2QfY1CmGIm/6t3EE8V
+	 WuqlwhBBH8+PosKktA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MECCP-1sbBL70L7V-00ENlO; Mon, 15
+ Jul 2024 07:57:24 +0200
+Message-ID: <32c1c251-6ad2-4009-94f5-cc72f6f49e43@web.de>
+Date: Mon, 15 Jul 2024 07:57:08 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2d168cf9-e456-4262-b276-95e992b8eac7@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cifs: Use seq_putc() in two functions
+To: Steve French <smfrench@gmail.com>, samba-technical@lists.samba.org,
+ linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.com>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
+ Tom Talpey <tom@talpey.com>, LKML <linux-kernel@vger.kernel.org>
+References: <18310e20-826f-45ab-b69e-dbfe47a1f83f@web.de>
+ <CAH2r5mvbk6OrX59dybJvS=ANdzzidsj=rDzRUFrBrjff-upSkg@mail.gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CAH2r5mvbk6OrX59dybJvS=ANdzzidsj=rDzRUFrBrjff-upSkg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:j1h2pwY5bpDxwy4B49KhDZS3F8MNhzv0vLl2gk77oYeLt7FK41J
+ 3xpI01CNQmh6J2G0vyCOIkl+fwH5Ln4oDf/pD3vW2bxOctIKYDaqL9iTCo+gThdYBGuaLcG
+ g7GXzht86PV92LYAnHgGOOiAjsG9AVnq5Z9QuWR0/EtDDK0iC7FpEhuhtCfdcqLgwLiAg09
+ QmEL9aVRWtOh28cqPxN5w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZpdWg5RYreY=;AZnL/S1OjuXIE2O8XQk1tCoRh9y
+ CqjNaQGTOsJNmwMVS4tM2kHriyKimFJsK3r1BDkPfrVycwJMtbj1iEOrLPQl94fx7MaRdhEhV
+ tAreioPnwcgzUM/EiBSJ05J+ZyxhBsnwxBydPMy7LCn/len2OlaptGQFtKdU0ynXZRV/iW/zc
+ iiOyrRjb/lg7q3iWDG7dnLKsjCmmcponByFyqAkYel+03h+kQNbk0xntycQA3uTlEWkWZ2GZe
+ vMt8jabB3ag7W0QuJXxc9Tj4mqrSgudTTmLllfMVHCVlbYxUubtMn8575iOcQyrXlwm1rcNYw
+ i2JUkbxzEt08iJkjAAC227WfF2uNRXY+e20ZgJZDaUWs5OHyFqSXgjNW16fDdSt+GThlwZzrh
+ SvlyK+X8tI/uXupxUoNFm8xtL+HInRl3+aUZoe/J5JqTcu1e6QiR+1Oh2Se0GWpnZHmRcCnfq
+ oGVXvouEIM02+btLKXR9Abj6c6xhYNxHP2UvA7H6FFG97B/o2be9zYEgGVrd0ZNRdh1G6nWcF
+ yZ4/HIG71ImICf2W+OrOj9b91kza5WRqvtYQQ3KiqyCnA88yY1bknF+rqm1dyN7UgAOdljBEj
+ CnaS25wXVfFpKzAo85M42TTj7islx34UF5U2dh2CWhScXWTV4oPNoIjS4wWOkTpiWCoZehF1J
+ CvSbqFUrOIQYSKwTK9BedCzHvRjs7FZ/NrAtobGaw4gRUxgcK0YATToXXZbPxScUXf4g96s6A
+ HpIPe5ECkAoBmckFmLB1yktyQ6j7ulNzcsE6qOGKz/zmG+7SNMVInjFXdKKSVVeUJepjikk83
+ Xz3rwtXH7TDvR5gvKyqXDGwQ==
 
-On Sun, Jul 14, 2024 at 02:46:19PM -0700, Jeff Johnson wrote:
-> Andrew & Greg,
-> 
-> I hate to bother you with such mundane patches, but the following have been
-> posted for a while without any maintainer or reviewer comment or action, and
-> they have not yet landed in linux-next.
-> 
-> What is the path forward to have these MODULE_DESCRIPTION() warnings fixed?
-> 
-> arch/arm/probes/kprobes/
-> https://lore.kernel.org/all/20240622-md-arm-arch-arm-probes-kprobes-v1-1-0832bd6e45db@quicinc.com/
-> 
-> arch/x86/mm/
-> https://lore.kernel.org/all/20240515-testmmiotrace-md-v1-1-10919a8b2842@quicinc.com/
-> 
-> drivers/spmi/
-> https://lore.kernel.org/all/20240609-md-drivers-spmi-v1-1-f1d5b24e7a66@quicinc.com/
-> 
-> (note that beyond these 3 patches I still have an additional 13 patches which
-> need to land in order to fix these warnings tree-wide, but those 13 patches
-> have had recent maintainer or reviewer action so I'm not seeking your help at
-> this time).
+> are there other examples of modules where similar changes have been made?
 
-After -rc1 is out, resend them all as a series and cc: the right people
-and either me or Andrew can pick them up then and get them merged in
-before -final is released.
+Similar source code adjustment possibilities were presented for several software components.
+https://lore.kernel.org/all/?q=seq_puts
 
-thanks,
-
-greg k-h
+Regards,
+Markus
