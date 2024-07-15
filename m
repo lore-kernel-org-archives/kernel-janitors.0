@@ -1,113 +1,102 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AD5185E5B;
-	Mon, 15 Jul 2024 09:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE476AC0;
+	Mon, 15 Jul 2024 09:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721035252; cv=none; b=HqU6MUqntlajq1J8XjWWDbxEYymLqeSbuo64Rx1OlzctYXOt0z2NSrgscqCe6SuFbvPnuf2HPDbtZuzsmJNkC3Tm0+Yq7Mul/tRhOLirTQG70llC9N0IDVu+X42tkiq3GEqitivYFAyM9lw3i1s63JSzwRCnX0So+Ktu0ApkFqA=
+	t=1721035531; cv=none; b=ugW+r8MZDhahCahPKz3bNYeVojgjZUcMqd77s4QYwJWIe80FN49VtqJscIzTK78rZyiSvQ0bwLgWV1qbmM6KP9rCHn7d58U8gOMe9AjcD4ie7U9rPpQpp/qkjG2IU7Ncp0ioDAhWahTy1N4oAjc3N6rCJf0njSRbkZAVv6IqJTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721035252; c=relaxed/simple;
-	bh=eTRBEPkS2r87hNj5UkLCu1loixz5oChnDT5vx9ZswWw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=olLPKsGNQXr/meYGthLf/pT3nL9Iq4MqrLeu5XVbIzsNy4AEIHcq+0Pr0P5VkKX/ebi7NQj/OMwxqD7Xw6LOIU1kRUg5bKTlGlfP3ZdXXOd5Si0lodUFE9DiWiltet0BFAZzpxkjhwuYEm0lrswj/EiYI1Nq0qWS59clPv25hfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=skcF89Tc; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1721035531; c=relaxed/simple;
+	bh=8ladW+rqCwCi2KnMbdLEzh70YZ0rfIe4aeFAwhNRgEE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=eKN7XGzknlAd5tKnvIGcljGXzkV/mpZ64EQ2tZyVPETRR/dEp/YCN5jEqribYjI2gCBm1NuI8h2kH9XXAgFhekYICMv0NZauUZmacUBhDT9aRA/QOOjWghXFa2l1wqO3Oca7QNwsZArTOYbPtzyVI9Vn5602ZrxpqMWlSjq0M/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RWhxIZLv; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="skcF89Tc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721035229; x=1721640029; i=markus.elfring@web.de;
-	bh=h5J4xnTRRczNmA4SY9gfKeB3SBi2lBm0xtml3mDw2LU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=skcF89TcJn6FKgVZEzX+cCIs7of3bzdp4RQpo/UUt3+bEwFVx7x1o7G5ZbW/PCqp
-	 0ZbD7zPYCKvwZKj+7INxy86WumWnrvDIQUDrr77APVOxwV2CPfyfxsCu7CEoTGZmP
-	 Pg//dlCry5CWYCcwsbPCbgHJVt3G1qokcA83z5QeM5EwK7v4XV3keApPNOi79sYWu
-	 DKiO4149pDmyjphYEEVOoGkCQabA+anBd7VPKwZtPhIG2HEV3Z/+5WdZ653vGoH3r
-	 TcuSfR89XxASQrB0BDzuNDRskt3BxrX8p2ROtqSCcx1x5B1ng+h1+PLGZi/oIf68I
-	 SKc7UTpnnN/gXBA9hg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mfc4q-1rrlCO3Yk4-00hHPN; Mon, 15
- Jul 2024 11:20:28 +0200
-Message-ID: <abde0992-3d71-44d2-ab27-75b382933a22@web.de>
-Date: Mon, 15 Jul 2024 11:20:27 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RWhxIZLv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721035530; x=1752571530;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=8ladW+rqCwCi2KnMbdLEzh70YZ0rfIe4aeFAwhNRgEE=;
+  b=RWhxIZLvYaSrklPEHquhdNyvF6eQuuWolqJu8eryC8ecwvhOFv1gOvWT
+   pboZM5ntAUxNR3Ldm4dJthhGzCVzBTiEsBzL3ypidqT2GOtEZbOM3M8Ta
+   InGtKpeafJmcghKNsj/5BMlOgFey9EJKlinA3ditTPoyCDgkiTSWrZm3s
+   TuNhzZmQO3kuW3qmpNWhKGgSIekNK/eC3nRQcBrkTxsWZ0TQJUhsT9CMU
+   MvzTeXI4UIUtfaPDcC3cZQAaz64+RAiF1QsnBE9twmKHuWQCTK1M87H/g
+   eeVTZy0Kso4nju/zNIXzEH6kTZBMLASI8n/k68UBKY6lNhx8M7+2tfkjI
+   g==;
+X-CSE-ConnectionGUID: t6jxPYV0TpmURPOOR1oBVw==
+X-CSE-MsgGUID: AfSDEliuTmKemZ+riDtiWA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11133"; a="18116965"
+X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
+   d="scan'208";a="18116965"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 02:25:29 -0700
+X-CSE-ConnectionGUID: w4YbGjS4QT2Flzwk22vxNg==
+X-CSE-MsgGUID: c3bSWFr6SD+oPLkg4naVsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,210,1716274800"; 
+   d="scan'208";a="49444312"
+Received: from unknown (HELO localhost) ([10.245.247.131])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 02:25:26 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 15 Jul 2024 12:25:21 +0300 (EEST)
+To: Dan Carpenter <dan.carpenter@linaro.org>
+cc: Tero Kristo <tero.kristo@linux.intel.com>, 
+    Hans de Goede <hdegoede@redhat.com>, 
+    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/x86/intel/tpmi/plr: Uninitialized variable in
+ plr_print_bits()
+In-Reply-To: <8ccfab0c-3c11-4168-a383-19895ae60022@stanley.mountain>
+Message-ID: <1467f140-c035-cb2a-20d9-b5910971cb56@linux.intel.com>
+References: <8ccfab0c-3c11-4168-a383-19895ae60022@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-To: bpf@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
- Daniel Borkmann <daniel@iogearbox.net>, Eduard Zingerman
- <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Yonghong Song <yonghong.song@linux.dev>
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] bpf: Simplify character output in seq_print_delegate_opts()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:3cIevsQjGB9LkZ4UtKg/WHmhtrHXPpk3H78A16xjMuEDTnWYs1G
- oo+o1TLOx0EZ04WW/RxbiXTKvakzKH5I9TPu++LyibC380zAt84j6UeTwDz6uqQI2Aq5vV3
- Pit47qm8vn/RISSejp2KPWpLdAebLoF/LDFfGOl2n0hK9IlJcc7U1XSFewIzsAqJ/jkeAWx
- GCTEgjgG1CcJDKjS7LqEw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:41ZoitEmC68=;dx0jI6QkWrMTUcENTtTJbIVoQLP
- v9KSdawl8hNi9dUfWAkrQdy1Q14j+STscKcjvxstw4orPVMstRYPX/H5TGmwJrvmSkWiAFWES
- t/eifFVwvOMeR1BL9D30EcvlC1OGJ2GYFtTKSqFAAkz9q37K0PxiRtgPxs1etRVkD/BwRByPn
- Wwba5whkBsONZN7VXJNVZi5ImvSedLdsJO5qlsiCkR8JhpYgZb0LSgsCgfekOSnfDBAoC7elN
- s/pro39uLvY97MwW8AmR2IVoGaef4ypIHxDUU9gaCWWmalLZf0mjUOAHiYk5+m6ru6X7PCE33
- K8Fc4SZZiUitxeEFWQIkdcKvQ1KJaA2eDPrBM/IiKZrTK834wWzWsNXjOHN2X25NXSfVpWjhX
- 7BxIKqMBz6TJdlWKoV3L3uFybuhl7c6gPRnGVVxwKSXWcdX6c/sK8cZwSXJpgiE+8pMjkXMTx
- 0Zx0GzT9LA9cdbFDOfqEYTA2+Y75Upl5fORmkMtDr9CamlNencZJUXuuZFvDXttpZwiWIHiPg
- e4uie2ZxSfWCoCYa1wrEtjMDGKeBBndOiEKz3lYQTQ/TGMC/iOksG9PA92G+p/miRGkq8ey5d
- NsdVXm8vtboIuaf9cpMrFynclP/eESSKKQVMmLpZdNm4ZZ7LhhK/Fx9G/TQp9KZb1PyUURWBV
- xVn3u8Y6CowoVgcNUVX4H8WACiDhyg7Mx7slRwgK0xerEzBSrlcjiM3RCix7Kp0vHvDuzEs2t
- t6SBDeUDRJ/QcjmB8J/jxrTxLVJfwvzEeCujG02X3fW42a313Rzxe1+7OkpEkUxAEB9zlCzke
- VDSLQLbXzdxKHdOLy+A0CvgQ==
+Content-Type: text/plain; charset=US-ASCII
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 15 Jul 2024 11:12:30 +0200
+On Fri, 12 Jul 2024, Dan Carpenter wrote:
 
-Single characters should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D for two sel=
-ected calls.
+> Initialize the "str" pointer to NULL.  There is a test later for if "str"
+> is NULL but in the original code it was either valid or uninitialized.
+> 
+> Fixes: 9e9397a41b7b ("platform/x86/intel/tpmi/plr: Add support for the plr mailbox")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> Almost everyone automatically initializes stack variables to zero these days so
+> bugs like this don't show up in testing and we disabled GCC's uninitialized
+> variable warning so it's easy to miss.
+> 
+>  drivers/platform/x86/intel/intel_plr_tpmi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/x86/intel/intel_plr_tpmi.c b/drivers/platform/x86/intel/intel_plr_tpmi.c
+> index c1aa52c23d25..2725a1ddba92 100644
+> --- a/drivers/platform/x86/intel/intel_plr_tpmi.c
+> +++ b/drivers/platform/x86/intel/intel_plr_tpmi.c
+> @@ -162,7 +162,7 @@ static int plr_clear_cpu_status(struct tpmi_plr_die *plr_die, int cpu)
+>  static void plr_print_bits(struct seq_file *s, u64 val, int bits)
+>  {
+>  	const unsigned long mask[] = { BITMAP_FROM_U64(val) };
+> -	const char *str;
+> +	const char *str = NULL;
+>  	int bit, index;
+>  
+>  	for_each_set_bit(bit, mask, bits) {
 
-This issue was transformed by using the Coccinelle software.
+This fix looks slightly incorrect. It silences warning but for logic 
+correctness, the NULL assignment seems to belong inside the for loop so 
+it's done for each bit.
 
-Suggested-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- kernel/bpf/inode.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-index af5d2ffadd70..d8fc5eba529d 100644
-=2D-- a/kernel/bpf/inode.c
-+++ b/kernel/bpf/inode.c
-@@ -709,10 +709,10 @@ static void seq_print_delegate_opts(struct seq_file =
-*m,
- 			msk =3D 1ULL << e->val;
- 			if (delegate_msk & msk) {
- 				/* emit lower-case name without prefix */
--				seq_printf(m, "%c", first ? '=3D' : ':');
-+				seq_putc(m, first ? '=3D' : ':');
- 				name +=3D pfx_len;
- 				while (*name) {
--					seq_printf(m, "%c", tolower(*name));
-+					seq_putc(m, tolower(*name));
- 					name++;
- 				}
-
-=2D-
-2.45.2
+-- 
+ i.
 
