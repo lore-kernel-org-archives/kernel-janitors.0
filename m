@@ -1,110 +1,117 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202A415491;
-	Mon, 15 Jul 2024 19:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127746F099
+	for <kernel-janitors@vger.kernel.org>; Mon, 15 Jul 2024 20:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721072135; cv=none; b=rpppwk+tsumDYwTN05tITuPvOTIGZYzJbVVntHPA/d+ObIL1C6suBFKoLeLdJ1Bp3wTiXbNzvdabEDtKpeyvtNmD0i9FXEFVsr0mrU/cq70LLgJhU9WQL9/AvWXwwdnw/ent909bLC5lH2tNSa1Hl7LZ7CiLUs+voByAm21j2fc=
+	t=1721074982; cv=none; b=JfD21IbJoFBf8qM9hyBgHkmGx3rhD2OVhReE3oaVDuEQDFlacA4J6BYZcTtgIUy2/TN/nGVAkXTrMV8hqE0s1wFT3GC/43BETCyJhWiG+MKiiEuPXAxq0I2CmMUMRvNbwII9dqTBKm9AQLk1JrGHXxRoXVgHzsLm2qWRR4PqUPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721072135; c=relaxed/simple;
-	bh=FRn9L6xt/4pBPTKmgkgNlVfwV8prnDiH2WQXjDdDtOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=h5RB6wYZnr23Nn3cuAMOEGnGTulYo9adDBYKW68EYB5+aMDYmxj/F9EKt7E0RpMoh0vrSCpQd/878jMaOy/ZtsmOkjA9TJcSmoUCt/crtwcgztS6b6rhFH5eBHKVWr4TZvCpFUDjouMaBVLp59+Z/jzM7YpygePFY+2/IZ/8tug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U+c8yoRC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1721074982; c=relaxed/simple;
+	bh=JOZ28iCKMuwJxA0hytXjgkoNBjAf0gBGWTDlMp9gjMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kdh5G9lbkqEouvChmqm5djp8PUwphjpVicr05yG/r8OO4nHSH6rKkLoJq1bFjPA55SCt4YwLDI8GzQEdmB2Pv+ISG1NDW9eGbtYcVPY1yXTiWAdFEmZALV9wEe6FdKSJDkFU5xdUK4bZXpQ226Dni4mSwmByStwE1Xd5UpSfGc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TJfiXsAZ; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U+c8yoRC"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46FH8jKZ031938;
-	Mon, 15 Jul 2024 19:35:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KMUJ2TW4Kz92vZ1WNbj9fim2oaakNFSraWNVGeLCagg=; b=U+c8yoRCaunVsvgr
-	XG+15WKI+r84R5ti6CuwxYjgMxlP7Sm0SE1k2Tm1Mrg9d/O7GvrjlRw4kqEu9vhQ
-	6KixL6vuFBRM/EZ1+JHTU+yfNyaVwhEO6MKy+tju10wQdfVY0l32MCoQnlz/Z/KL
-	20ovJCG4Ugy7LJbNX0Ynt6qTatm/P7cKSCmk/sw8cl4Ycx7K/0s9drAYggl3UOpV
-	Ux3vpxaL2z34mt7SfO/h5g0P5CrXc5m0R1kutWp+xppsA5qpV6xxmFkP8prBHNQv
-	kNS61b1lkOMM9b5l5ByeKUmQdwrlnxZLqEts3vS0BxBsXowysOWdvltHBkUgEyYv
-	wTm9mw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bjbh50b2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 19:35:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46FJZC02001309
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 19:35:12 GMT
-Received: from [10.48.247.129] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 15 Jul
- 2024 12:35:11 -0700
-Message-ID: <6c324421-f35a-450a-9a39-05aab3136c8d@quicinc.com>
-Date: Mon, 15 Jul 2024 12:35:10 -0700
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TJfiXsAZ"
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5c6924f2383so2318232eaf.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 Jul 2024 13:22:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721074979; x=1721679779; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PxzT0SN3KlZDqe7HSlcdVmVH8IF9jSYcZYq5mPjp6ic=;
+        b=TJfiXsAZrhiV55+8XzjVwhHX8CNF6IMxjmK6crJPfuTTBubldi3tazREeJRrehGIdk
+         Q+eTxvWGJlghIRerz0uuw7Nf3xxVfxF8sgRmO8cecj/AeHfAsusCvRV+DkfYkJSV+NW5
+         bmzhTvrziPqcZwO+q/FVa3cmi4JfIFQj9robLD5MovCPOfvoDYQ7iWWrdU6JQMVNIR+R
+         PywZl+7R24SIQMJGvwQD6HGPuIUOFeqWl3hL2zYXUV4oD3sCDyFoWyd5iLZ8EQw99+qI
+         bnywq485Z4jgoQWgwnpA7wTYsJhnUegEn81E5eDdHsG47dQwAUttyEujA9LetraJrI19
+         0wmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721074979; x=1721679779;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PxzT0SN3KlZDqe7HSlcdVmVH8IF9jSYcZYq5mPjp6ic=;
+        b=lZrAMgyVdD+4HiB17lcJcYXoyc5DXZX9BXcKF3HJutKzqchQmhlonEmU7A8OWCajCj
+         sRULl4SgJEkJu9YuhClBz4/62xO5nmHEeSDhhN56PnaiW/kWdpK+kg25HUfyckNhkqAV
+         EA/smecww3UitXr5WEwuc75Zp4G4j2EzAfqA7fvhhpFaNB7ZvvRMHpV1T+Fd9BdYY5G3
+         6/rECvNuQP2E1ZyfQ2UO4It2Tr4Qus6xGUncsPFX8MOOzvDTk6FZjTMTz25cuZBI/Rlx
+         WyOyhI9AkV82tezfBNJv5LlZbcjhfkezN26cy+WzZj+kAatu7+ZbmTncmOWeVvvqFUUW
+         W5Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCU72Yl2puBxFw4Ho6dMtaI3ha1MhJYq6s0CH2L4PuTVb8SNBnIoFGRhEAUYOOHde7Uuu0or8+hcLUW5s3u9JTtltGEcLwkdIibCgGdTVH7A
+X-Gm-Message-State: AOJu0Yx4Aw+HeBIe+Lv+pgDhmV++kiRUbCngLALvUa3Y/1FWWnD4PJZX
+	Rp7vdcpkot3yeIkaJ9qwsMpE68CSOcjHAtCzotYpAMFFZEtZrVK+TM56hvyjm5w=
+X-Google-Smtp-Source: AGHT+IE6iz+VJy5pl+98qTdQOY8G87Tq38PgtWVMsTaW/ZgCE0q6Hk/6a96OkviHPSMLGWHtiWkiPw==
+X-Received: by 2002:a05:6820:983:b0:5c4:10df:c479 with SMTP id 006d021491bc7-5d286d18e83mr217369eaf.2.1721074979149;
+        Mon, 15 Jul 2024 13:22:59 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:750c:19a4:cf5:50a9])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ce774dbde3sm898325eaf.43.2024.07.15.13.22.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 13:22:58 -0700 (PDT)
+Date: Mon, 15 Jul 2024 15:22:55 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Tero Kristo <tero.kristo@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] platform/x86/intel/tpmi/plr: Fix output in
+ plr_print_bits()
+Message-ID: <b0084e70-4144-445a-9b89-fb19f6b8336a@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpufreq: powerpc: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Viresh Kumar <viresh.kumar@linaro.org>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Michael Ellerman
-	<mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy
-	<christophe.leroy@csgroup.eu>,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <kernel-janitors@vger.kernel.org>
-References: <20240614-md-powerpc-drivers-cpufreq-v1-1-de4034d87fd2@quicinc.com>
- <20240701083320.c3r4aussa4qojewq@vireshk-i7>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240701083320.c3r4aussa4qojewq@vireshk-i7>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ctGWlwWjxygEGzUEfixMirX5izh2d6XZ
-X-Proofpoint-GUID: ctGWlwWjxygEGzUEfixMirX5izh2d6XZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_13,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- lowpriorityscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- clxscore=1011 spamscore=0 mlxlogscore=999 mlxscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407150152
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On 7/1/2024 1:33 AM, Viresh Kumar wrote:
-> On 14-06-24, 23:08, Jeff Johnson wrote:
->> With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/ppc-cbe-cpufreq.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/powernv-cpufreq.o
->>
->> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
->> files which have a MODULE_LICENSE().
->>
->> This includes three additional files which, although they did not
->> produce a warning with the powerpc allmodconfig configuration, may
->> cause this warning with specific options enabled in the kernel
->> configuration.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
+Smatch complains that 'str' can be used without being initialized:
 
-I still don't see this in linux-next. Is anything else needed from me?
+    drivers/platform/x86/intel/intel_plr_tpmi.c:178 plr_print_bits()
+    error: uninitialized symbol 'str'.
 
-Of the almost 300 patches I've submitted to fix these issues tree-wide, this
-is one of the 13 remaining. Hopefully this can make it into the 6.11 merge
-window. If not, Greg KH has indicated he'll take this as an -rc instead of
-waiting for 6.12.
+In this loop, we iterate over all the set bits and print the name of the
+bit.  The intention is that if there is a bit which is between 0-31 we
+look for the name in the first array plr_coarse_reasons[] which has 10
+elements.  If the bit is in the 32-63 range we look for it in the
+plr_fine_reasons[] array which has 30 elements.  If the bit is in the
+invalid ranges, 10-31 or 62-63, then we should print "UNKNOWN(%d)".
+
+The problem is that 'str' needs to be initialized at the start of each
+iteration, otherwise if we can't find the string then instead of printing
+"UNKNOWN(%d)", we will re-print whatever the previous bit was.
+
+Fixes: 9e9397a41b7b ("platform/x86/intel/tpmi/plr: Add support for the plr mailbox")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: initialize str at the start of each iteration
+
+ drivers/platform/x86/intel/intel_plr_tpmi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/platform/x86/intel/intel_plr_tpmi.c b/drivers/platform/x86/intel/intel_plr_tpmi.c
+index c1aa52c23d25..69ace6a629bc 100644
+--- a/drivers/platform/x86/intel/intel_plr_tpmi.c
++++ b/drivers/platform/x86/intel/intel_plr_tpmi.c
+@@ -162,10 +162,11 @@ static int plr_clear_cpu_status(struct tpmi_plr_die *plr_die, int cpu)
+ static void plr_print_bits(struct seq_file *s, u64 val, int bits)
+ {
+ 	const unsigned long mask[] = { BITMAP_FROM_U64(val) };
+-	const char *str;
+ 	int bit, index;
+ 
+ 	for_each_set_bit(bit, mask, bits) {
++		const char *str = NULL;
++
+ 		if (bit < PLR_COARSE_REASON_BITS) {
+ 			if (bit < ARRAY_SIZE(plr_coarse_reasons))
+ 				str = plr_coarse_reasons[bit];
+-- 
+2.43.0
+
