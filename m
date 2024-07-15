@@ -1,56 +1,56 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B4F13D250;
-	Mon, 15 Jul 2024 20:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962AC13B5B6;
+	Mon, 15 Jul 2024 20:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721075988; cv=none; b=U+dQMubK3FjiRAyMtt07jc8KSTu7e1v3jDmsyQ96QZQ5o52R5QzBVn5nAAz/m/jrPa5HKlmyXoNjFWDaZGlvx4CsWjok11Hq6IzQChMk7LKROXUblz+GvU/z9TMzAzMzeal64nhj9QnBGEbJT65eRNygqygPrU9wdgG2bBpY4v0=
+	t=1721076650; cv=none; b=bqCxiJhBvGrWXr+8MA9Ks08BUITQBzvD06v3mCpuOUrwR0R8PYS5k98PIvDxVJUbhYYHAiwViePP5mwXrIjneLE4xGz6kSrcyOJo/av5qiVFS5m5BaTmKhJzaB+z8kiyxzLr+TQnrtRbBbM9cmFT71n5teBamfIVhMqeZRTcD/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721075988; c=relaxed/simple;
-	bh=kKaLSwVabRDdDlLt0slI1jlhl9ANHI8aEIY1Kw5DTBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WWFyJnLuaY4wZASivr6fK2O8hqeyAKFFBfCV4NtvM7L+DhouDF/o+8+JlOxyxNVgDJbOnuBs+V3NVnxYCDUSNywcI5YEhnSPuLKF1uV8tIOyfSG7g3cEsnjWU2mD39CqVf/S2vU89PhqIXIPHUGk6CzUZZoMUk+2042hbBdVc5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=byu1ma0q; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721076650; c=relaxed/simple;
+	bh=DsKv1AnbLIi/huCDomUZSsXmSWwVkesZakSY1Ot4E10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iDNfAjiHYvIUfU3p11UZi6wgtQ8VlKy7yXI5vnK7JP7dz7Ajs8iekwKW1ZXfVe5P+v0CnEK9iAYhQ41JaspChMYxOTmlpwOIfII6tCE7brMogbV7+er1LjmxMz+H0mM9KpKs5dJBIWU05naRhogyDJd7YTm/QYNdovPl7RRG/AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sBx1NCsk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="byu1ma0q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 984E2C4AF0E;
-	Mon, 15 Jul 2024 20:39:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sBx1NCsk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 469A4C32782;
+	Mon, 15 Jul 2024 20:50:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721075987;
-	bh=kKaLSwVabRDdDlLt0slI1jlhl9ANHI8aEIY1Kw5DTBg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=byu1ma0qe96Pr2RZ7ZtXjLtwI+Xj1+rDG5J96UErpKH0n3gzdE/CldPAzap4U27lT
-	 Oy70dkekPynFTqihT8JJfQ/FGg0+GQoeaCBjaV8qQ7BQLaPUnn+b3dKmX/UDzTJEDO
-	 sOXSh2TPe9BQovUKYf9nfBV40h7xXskDHH+ze2aoevaN59Nw3GZ2Pv2ViuqlHr0JfD
-	 AlV7g1MwK7Vu45UWMos+H6QwSBv57HCBbTYTqWWLFiPwbozzgYZkHxyQieLDO3BT32
-	 yQLx80rZTI+mSk0vy2ljLswCYr6vwnIZ7ghVuPI62i3nfchLUlNMOsNImXWkRJsPig
-	 uuQFetvjAa1og==
-Date: Mon, 15 Jul 2024 13:39:45 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: xen-devel@lists.xenproject.org, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Paul
- Durrant <paul@xen.org>, Wei Liu <wei.liu@kernel.org>, LKML
- <linux-kernel@vger.kernel.org>, Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [PATCH] xen-netback: Use seq_putc() in xenvif_dump_hash_info()
-Message-ID: <20240715133945.165d8098@kernel.org>
-In-Reply-To: <b3fa592d-91d7-45f0-9ca2-824feb610df8@wanadoo.fr>
-References: <add2bb00-4ac1-485d-839a-55670e2c7915@web.de>
-	<20240715090143.6b6303a2@kernel.org>
-	<b3fa592d-91d7-45f0-9ca2-824feb610df8@wanadoo.fr>
+	s=k20201202; t=1721076650;
+	bh=DsKv1AnbLIi/huCDomUZSsXmSWwVkesZakSY1Ot4E10=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sBx1NCskOtENzvyYcblevhJxDIA5+vo5nA5XHlD8Q4m6Fi5vfNySjP7GH624wmmTV
+	 qXItdniWSCy73pv/FC48KRnouYOfB/5IKs01Thc27AWdY74qj2B0v0bjSka3lQt30/
+	 i/+WZHX1L8eSayNofrevKjZofKLGlMQo2hJYc2qGjtnUpomxuunZqS07jrCcCvI9MX
+	 68isftP1phj+YU/vZHAvcL0QN/PDU0NPPSjPzgnk50RCgIIJa7q7RXmU+pqEVcYYDU
+	 oxg9MJ/hJD8DrEqLBQ3ybW+v4r+RaIH7zuGE8DiTYnR/Ca+9hZWFK7XdVu+GsEOJ+j
+	 m5POjaD+Rnf2Q==
+Date: Mon, 15 Jul 2024 14:50:47 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-nvme@lists.infradead.org, kernel-janitors@vger.kernel.org,
+	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] nvme-fabrics: Use seq_putc() in
+ __nvmf_concat_opt_tokens()
+Message-ID: <ZpWLpxwNTYlIbdAc@kbusch-mbp.dhcp.thefacebook.com>
+References: <45f97bd8-21eb-4ef6-bc7d-9201e7447c08@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <45f97bd8-21eb-4ef6-bc7d-9201e7447c08@web.de>
 
-On Mon, 15 Jul 2024 22:24:39 +0200 Christophe JAILLET wrote:
-> Most of the time, this kind of modification is useless because it is 
-> already done by the compiler, see [1].
+On Sat, Jul 13, 2024 at 03:50:24PM +0200, Markus Elfring wrote:
+> Single characters should be put into a sequence.
+> Thus use the corresponding function "seq_putc".
+> 
+> This issue was transformed by using the Coccinelle software.
 
-GTK, thanks!
+Thanks, applied to nvme-6.11.
