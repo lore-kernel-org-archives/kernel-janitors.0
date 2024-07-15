@@ -1,85 +1,120 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C13139CF7;
-	Mon, 15 Jul 2024 05:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855E73F8E4
+	for <kernel-janitors@vger.kernel.org>; Mon, 15 Jul 2024 06:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721023061; cv=none; b=VGZQfdg8Bz6uqsbsU60lUhuUVWMTlWFcgXSPPS8Y9srpBMqzN8mxe/0hiFbghmphjLY77PjISO5dz+nn44C1k4H8RNKm3MhGMq7pED2dGuVm7XrRn05/Efw1ec5kbWsCobN6bb+L9MU94iMdksI66zKC+el7C6+DzA+8XlBf+WQ=
+	t=1721024483; cv=none; b=g573zBiTdcYxmj613zxOZRJUqzkOV2u2lWzgMlbNxXbRwm/0kW5UkzPbeddTw0zX7QnUBFEnfocLxE2PaLS45SalgUkXVbrS3gOmSOd0VI5puT1gLm0ErGXEIV8Or05aDPWUHrgyeyI7f4enHo0JounoRJN6h+Y9TWfIRDLS0pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721023061; c=relaxed/simple;
-	bh=jejlM2MUECGwRFBDGbgLxK40TVh9teiMJBMELQIWGes=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hE7vfxajhGRhd9N69dcbYen4ihY97irpr9Yk4LEWg2zdp3nCLUZMhez53VpbFP6UZqqLNdo0IUlfeh9uzMuVLu40Gt5h+xk03xa43RH9/q3vyZl1J7k5pG6ZyYqtGseje0x4XHDosjVjY5Bc03Sg5s7AEapeW1YT+Rc147brQLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tcFF8O3C; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1721024483; c=relaxed/simple;
+	bh=D6XqNP7Ocjw2YrA4F9ERC7JrymvGT0zCRzd7DfHQb5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WNtpdEF3J1FSjUaIUVZ0FGtrrgb695LoYp6DssVWA/09PDH7ODc59ge5AfojmbIqqlAA/bxuPsbmztv+yRYfVQM9XDBaB6h1dbHVgwDj8G89b2Z2jz9WR++wQCcw86srKt2hHeyi+c4kY1kwzXWLm/FsdSqhBh6Qhboj6njeOZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xk/Vnsko; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tcFF8O3C"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721023044; x=1721627844; i=markus.elfring@web.de;
-	bh=jejlM2MUECGwRFBDGbgLxK40TVh9teiMJBMELQIWGes=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=tcFF8O3CV7FfYUIg5gFavv7e2yMp50zBXFQu6KiUVHM6AJAGuVsTRKrRVC4wUFGM
-	 f7t75t0Uf/bxYgXF0Vk4DjVVaDKUwhbC9lql7HZr0xbimfOiKpe7cEjIVRsUoSVQp
-	 Mt3fGGwaeZgGqFHyDXATQ8xZp7OB2t0PPNZUx13BnKcNXbtcNYuyLkDlFjyr+R+1N
-	 z9Mp0o6lJ5WiTVWiVuvSnzqNS8jbqpAQjYD5z1nqKkQtW+zOKlKGneMkSCi3XK3Z2
-	 SOBshkAqwvP70HVk8WZZMV91/eYiKVEwSrFwQO45HbFh3vq2QfY1CmGIm/6t3EE8V
-	 WuqlwhBBH8+PosKktA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MECCP-1sbBL70L7V-00ENlO; Mon, 15
- Jul 2024 07:57:24 +0200
-Message-ID: <32c1c251-6ad2-4009-94f5-cc72f6f49e43@web.de>
-Date: Mon, 15 Jul 2024 07:57:08 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xk/Vnsko"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52ea2b6a9f5so4083142e87.0
+        for <kernel-janitors@vger.kernel.org>; Sun, 14 Jul 2024 23:21:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721024480; x=1721629280; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=10h7AorBoHJscK+IMdAvqhx2IYEBB33opsawba3ThY8=;
+        b=xk/VnskoLU+N7UdRakjSZHFNKtad10E5suLJPEKNs8prCCQoJYJ+W0MTa9eaUrO4aO
+         C8iBqAOD7QZVoO+Qg41FMkl3f0Oz2IxQBPqOQe+2wOzjV6h9vN0uZ0dAxiWs/yMdDcKH
+         jm7nZ+IkMFufAQguEgQzvqnHH0K3t8w5/xJj8q7H7bp9yfNZiLnnzG0JPRVKgyDLQWN8
+         abC1HXqBxHNbR88CyExHu/vYsmwGfc3goqNV1VYu+yUIMRQGAq5zR2Jo0MqkmZG0agcJ
+         E1p9hCgfgk4xIwaw6dwNpgY/50CB8z59YG2yaDzmfNR2n5DO17cpm+daBP64O5BFr3ct
+         HECQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721024480; x=1721629280;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=10h7AorBoHJscK+IMdAvqhx2IYEBB33opsawba3ThY8=;
+        b=H9/jlI1SJsggFWfUuy7NVIhmo8/++cgaYFRHaNZpEtrkX03pjTpq1I1EZFK6RSGWS+
+         h1rzRheZ3cs+CZ+5aYSnX8TXaHiKEmq+IwVUcvvQwi+CC8BG5c3FPVVni88EPBmzUxxy
+         Qnk2DVGsM1i05DnbhNyg/vCKKwNUO+MPCXUrRseK+HsSkZIvfgPYT0sxveyFSOm0Uxld
+         pJnqY7JLSFvPQy6IywAIsqemAuWs0JWuOOr1RLgf6g1MfIrCZo0Q/v+svuQseRNNgNqD
+         xebTueex56S4DBm7QzVIEqwv3m79vFolgzIlHAcPtf0oYlwxYLFxwYY7soctbSaFxwTx
+         GnQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ3+3yWqxjU2VltwDdLL7FD4akbh/OTXR++gonVxTj3GqeXEDzwy44n9fIyir+7o02b1KfHG1xw4RcjnSG9xpWWGehhTW7K7+2s4eJYvDN
+X-Gm-Message-State: AOJu0YwFNegf81qCO4jneOf1LNYrtIaknv17i1SLhJZqh3ttXXd5VbT9
+	kv8eqkVavdWacnPImJCphDv9OU0Z46LkABb+R3pigkLlMDSlmI5ChdQpvvr9ngY=
+X-Google-Smtp-Source: AGHT+IGIypb/Qu3E+HlICgtenyNPJ1eoKnIT5Y8g4jzQcW7TIRmsNUzmEcdGrxNLhSAXxoKHuhmA1A==
+X-Received: by 2002:a05:6512:3b82:b0:52c:e084:bb1e with SMTP id 2adb3069b0e04-52eb999126bmr12945618e87.13.1721024479558;
+        Sun, 14 Jul 2024 23:21:19 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed252d7b4sm739852e87.127.2024.07.14.23.21.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Jul 2024 23:21:19 -0700 (PDT)
+Date: Mon, 15 Jul 2024 09:21:17 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: Constify struct freq_tbl
+Message-ID: <ixuyjg5os4huflsjbizfvde5kytvg6ekccjq72mpkiiiunin6y@pqkhiu6xoznk>
+References: <e8aee66fa83a4e65f7e855eb8bdbc91275d6994b.1720962107.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cifs: Use seq_putc() in two functions
-To: Steve French <smfrench@gmail.com>, samba-technical@lists.samba.org,
- linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.com>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
- Tom Talpey <tom@talpey.com>, LKML <linux-kernel@vger.kernel.org>
-References: <18310e20-826f-45ab-b69e-dbfe47a1f83f@web.de>
- <CAH2r5mvbk6OrX59dybJvS=ANdzzidsj=rDzRUFrBrjff-upSkg@mail.gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CAH2r5mvbk6OrX59dybJvS=ANdzzidsj=rDzRUFrBrjff-upSkg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:j1h2pwY5bpDxwy4B49KhDZS3F8MNhzv0vLl2gk77oYeLt7FK41J
- 3xpI01CNQmh6J2G0vyCOIkl+fwH5Ln4oDf/pD3vW2bxOctIKYDaqL9iTCo+gThdYBGuaLcG
- g7GXzht86PV92LYAnHgGOOiAjsG9AVnq5Z9QuWR0/EtDDK0iC7FpEhuhtCfdcqLgwLiAg09
- QmEL9aVRWtOh28cqPxN5w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ZpdWg5RYreY=;AZnL/S1OjuXIE2O8XQk1tCoRh9y
- CqjNaQGTOsJNmwMVS4tM2kHriyKimFJsK3r1BDkPfrVycwJMtbj1iEOrLPQl94fx7MaRdhEhV
- tAreioPnwcgzUM/EiBSJ05J+ZyxhBsnwxBydPMy7LCn/len2OlaptGQFtKdU0ynXZRV/iW/zc
- iiOyrRjb/lg7q3iWDG7dnLKsjCmmcponByFyqAkYel+03h+kQNbk0xntycQA3uTlEWkWZ2GZe
- vMt8jabB3ag7W0QuJXxc9Tj4mqrSgudTTmLllfMVHCVlbYxUubtMn8575iOcQyrXlwm1rcNYw
- i2JUkbxzEt08iJkjAAC227WfF2uNRXY+e20ZgJZDaUWs5OHyFqSXgjNW16fDdSt+GThlwZzrh
- SvlyK+X8tI/uXupxUoNFm8xtL+HInRl3+aUZoe/J5JqTcu1e6QiR+1Oh2Se0GWpnZHmRcCnfq
- oGVXvouEIM02+btLKXR9Abj6c6xhYNxHP2UvA7H6FFG97B/o2be9zYEgGVrd0ZNRdh1G6nWcF
- yZ4/HIG71ImICf2W+OrOj9b91kza5WRqvtYQQ3KiqyCnA88yY1bknF+rqm1dyN7UgAOdljBEj
- CnaS25wXVfFpKzAo85M42TTj7islx34UF5U2dh2CWhScXWTV4oPNoIjS4wWOkTpiWCoZehF1J
- CvSbqFUrOIQYSKwTK9BedCzHvRjs7FZ/NrAtobGaw4gRUxgcK0YATToXXZbPxScUXf4g96s6A
- HpIPe5ECkAoBmckFmLB1yktyQ6j7ulNzcsE6qOGKz/zmG+7SNMVInjFXdKKSVVeUJepjikk83
- Xz3rwtXH7TDvR5gvKyqXDGwQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e8aee66fa83a4e65f7e855eb8bdbc91275d6994b.1720962107.git.christophe.jaillet@wanadoo.fr>
 
-> are there other examples of modules where similar changes have been made?
+On Sun, Jul 14, 2024 at 03:01:58PM GMT, Christophe JAILLET wrote:
+> 'struct freq_tbl' are not modified in these drivers.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+> 
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>    7595	  43696	      0	  51291	   c85b	drivers/clk/qcom/mmcc-apq8084.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>    9867	  41424	      0	  51291	   c85b	drivers/clk/qcom/mmcc-apq8084.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested-only.
+> 
+> I hope that it can be applied with this single patch because all files are
+> in drivers/clk/qcom/.
+> ---
+>  drivers/clk/qcom/gcc-ipq6018.c  |  2 +-
+>  drivers/clk/qcom/gcc-ipq806x.c  |  4 +--
+>  drivers/clk/qcom/gcc-ipq8074.c  |  4 +--
+>  drivers/clk/qcom/gcc-mdm9615.c  |  4 +--
+>  drivers/clk/qcom/gcc-msm8660.c  |  4 +--
+>  drivers/clk/qcom/gcc-msm8960.c  |  6 ++--
+>  drivers/clk/qcom/gcc-msm8994.c  | 54 ++++++++++++++++-----------------
+>  drivers/clk/qcom/gcc-msm8996.c  |  2 +-
+>  drivers/clk/qcom/gcc-msm8998.c  |  2 +-
+>  drivers/clk/qcom/lcc-ipq806x.c  |  8 ++---
+>  drivers/clk/qcom/lcc-msm8960.c  |  8 ++---
+>  drivers/clk/qcom/mmcc-apq8084.c | 50 +++++++++++++++---------------
+>  drivers/clk/qcom/mmcc-msm8960.c | 30 +++++++++---------
+>  drivers/clk/qcom/mmcc-msm8974.c | 52 +++++++++++++++----------------
+>  drivers/clk/qcom/mmcc-msm8994.c |  8 ++---
+>  drivers/clk/qcom/mmcc-msm8996.c |  8 ++---
+>  16 files changed, 123 insertions(+), 123 deletions(-)
+> 
 
-Similar source code adjustment possibilities were presented for several software components.
-https://lore.kernel.org/all/?q=seq_puts
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Regards,
-Markus
+-- 
+With best wishes
+Dmitry
