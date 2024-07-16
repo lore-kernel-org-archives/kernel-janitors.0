@@ -1,123 +1,98 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D303224;
-	Tue, 16 Jul 2024 08:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A626FB8;
+	Tue, 16 Jul 2024 09:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721118034; cv=none; b=ptL+tX6KNZCBRwIzdVBSm6kFojntUFXQ9wuMchHQX+Mnz9QIJMyAKyz5N4HvOK6+CkbJ+KdXl30PG4gf08YtS3dY8BM/0wF0siBvvEhUT5qLwfk4XcB29PqRsq0HEMNzXHpxLo2MWFRDln6RFEpzbBy2+zKbmU8JbrfJ/hF6ZFU=
+	t=1721122736; cv=none; b=WvO9Nv/tSed0yCa5eZAFv5lJFIsQJmSioWqexqf7C4gMajyI5b43K9rm16aI2VuUFaoxnfXOUBUPShSE77ktSmPRj/DZwne75tagcod9zBg0eHlBxhiyTz5zNL5PEOY8LGcAFLcqKrHEau6Zttx9yi6TzG0IP0A7PTxahkvM4FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721118034; c=relaxed/simple;
-	bh=RGHFPf9WIT0FeAlOqROa14SHBOw/KaGBaGRH1b2nz/U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TMCGpmVe17ijTovoWnalu3wlH7hgBNesT8PPy0FZqr8GfyEqJwzECdLXRuHvyJsQ+Gw05xFI+iW8BC7t3kMOoe5QHJWxH3ZWYCcC4lH+Dh3YCNM6ScpuNXgoaKTICwiqhC7+0eFYfSXd1egd9kTr2CSM0OmlX3G6JvXhpLS7eKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WTbb/F4w; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1721122736; c=relaxed/simple;
+	bh=sZCgZ1mlf1W+93s1WpaccP/syCAclEKy79wKbpowxxU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Gu/2P0tFki9XCyKv3tWmhq+zD1BneJvjWM+37/tler3+xyZM8GvB5TyeGW0k1XbgP4SKxFjnpOXclKD7IKgQxE013KxsHhRTdCHuiKnBkqMj2CSzEfqGYXZLxxrCZmytX3IjMpxE5hN4diEWpC3mUX5ckyvuKyppK9MXc925s30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FtRAo/Ci; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WTbb/F4w"
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46G84MER001748;
-	Tue, 16 Jul 2024 08:20:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=a
-	Cr2OURIQq7Sr00CP5aHRAvmfuV4sRpVqwaUFLdGLl0=; b=WTbb/F4ww4ICgAp1S
-	qhiCXvE4aLQvarOxc5dj2VHotM34HFO9bOuLRH+wWs/i5nxPmhrADxBq3TKUu10p
-	gIvpAjbxDMP/4XYqJMQtaHy9qt53zo7Wu7d/ACfqNDg3IN8LTMaovt6IFutcrhnv
-	6Nb2KKQe730p6pWyrTyiY2pPj0zxOJ+D6hNQA39s4iUKXhlTRrOzyDhpUtaonH1m
-	Byfml6XS0YXhwC2ODKACkahicwDC2p9bqzAS7TLaLrOg8WIaDbKooN8Hqpj+A9tY
-	y+5mIIsduTX8uRDXyblzHDIh/IOsh4iknRbxT9R9rHIdWAXtp6Y3ZVVWnVTgjwmU
-	EPJnA==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40dk6agbcf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Jul 2024 08:20:27 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46G6KZr9023092;
-	Tue, 16 Jul 2024 08:20:26 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 40c64m2uhh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Jul 2024 08:20:26 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46G8KNX027263548
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 16 Jul 2024 08:20:25 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7F8DE58060;
-	Tue, 16 Jul 2024 08:20:23 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 27ED55805B;
-	Tue, 16 Jul 2024 08:20:21 +0000 (GMT)
-Received: from [9.171.67.160] (unknown [9.171.67.160])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 16 Jul 2024 08:20:20 +0000 (GMT)
-Message-ID: <c12b2289-aca5-4b2d-9599-e9ca8daa2003@linux.ibm.com>
-Date: Tue, 16 Jul 2024 10:20:20 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtRAo/Ci"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-426526d30aaso37107665e9.0;
+        Tue, 16 Jul 2024 02:38:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721122733; x=1721727533; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gO65E7lX5KVX6534BJkCtsb8cdN0RzRb3ZFTu0VXeK4=;
+        b=FtRAo/CiTrNcXlIJvft+5NkPabCYoVR72CQotMjl/c37NvGnOWg33kGkGh20TONumj
+         NaBQhEQkuqNGUjBIvY3ItRDQjOmm6i1mYUiT4jz43iwXIqONiDM9rL5MrFC2k6w1H6ID
+         sdLl0CqgtKGz2hhz4nYFWffxGXgN4WPCXvj96wBjCIWiGylU1Z/77WHzR6IV1GEAHNlL
+         lgc2nIfL2JNSa5DTZ2wMubXmlwjNAWwS7Oza4y7OB6v1nFN83Xyu4/MZwr7+UEjXqW0H
+         dB+P/TCLMwXav/WeKVuQ5Za1HYjsGvOZ1Lz+F0gYommI/vYw2O6qEWAHO5Na7KhasHCE
+         oobQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721122733; x=1721727533;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gO65E7lX5KVX6534BJkCtsb8cdN0RzRb3ZFTu0VXeK4=;
+        b=DQzCUME7yIdap88w6MaY0Y5VV23mNEPeCyWUyrXRFbVLOEGrpxRzmlV5NCa32JLdaw
+         YwSmF0JQkqG50GRSbq0vbNell/aYAnQQZwv0vAoOQ7/vRMRJQYWfUcetA1qfcSNaqdok
+         2+xAPuvU7iSk14yWb40scDIsq7ZmXZU5To8avlofLRjDzpugJity0hZ6C4u2q0qQlCJR
+         guObFqSoKV31yWO1VEJ8klg/D/igQ+LX+uw0opnP3jp2521znZUwrkNqi/BMRa/QXP++
+         yayT1+xJofB27QwfCgu199SwQ3exTZVO0R5XeF+HzgWMP8Ldz04qBcvDDhEyeyf6ejXJ
+         Ovbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGcDfZhNcIQGDSVzBru2oViYea9YVwhLXm6hQVXA5Nt+bKUF0+FXUqYDhrl/oyoJbjTjhPmQl8SkBPSphk1mdcbMRw8Fm8DNmN+W5MxPF+7ky1DtDBBP2zwTaWzxJieGP/Rcm6
+X-Gm-Message-State: AOJu0YzbUgcSePuAnDpDNtRWmulZ8gru4f8jP5UIB5cOEF+CAPH88B3c
+	JVRsOSX1yN2ChlICiINsZ7tXHfhKsCTQ1VfEHhsQ9jWw6WB1GILC
+X-Google-Smtp-Source: AGHT+IG0xGF3XqjukJKCYBK/iGBjGxYiTaFgDY3iB2v6fltmo5sNxhPWZZE/6hlUjouFOfVS9Wmm1w==
+X-Received: by 2002:a5d:6d08:0:b0:360:7971:7e2c with SMTP id ffacd0b85a97d-3682631443bmr1137987f8f.54.1721122732710;
+        Tue, 16 Jul 2024 02:38:52 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db04748sm8440028f8f.102.2024.07.16.02.38.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 02:38:52 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alexander Duyck <alexanderduyck@fb.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	kernel-team@meta.com,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] eth: fbnic: Fix spelling mistake "tiggerring" -> "triggering"
+Date: Tue, 16 Jul 2024 10:38:51 +0100
+Message-Id: <20240716093851.1003131-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] s390/dasd: add missing MODULE_DESCRIPTION() macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev
- <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20240615-md-s390-drivers-s390-block-dasd-v1-1-36b200f14344@quicinc.com>
- <2c2655ad-2a2a-4180-8a31-828a7531af1b@linux.ibm.com>
- <87bace58-eec4-4b05-981d-5c6f70b7a798@quicinc.com>
-Content-Language: en-US
-From: Stefan Haberland <sth@linux.ibm.com>
-In-Reply-To: <87bace58-eec4-4b05-981d-5c6f70b7a798@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: oG9LhWPnZ1C-FiCtr9vVL4YjzqBz2axC
-X-Proofpoint-GUID: oG9LhWPnZ1C-FiCtr9vVL4YjzqBz2axC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_19,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0
- priorityscore=1501 malwarescore=0 impostorscore=0 mlxlogscore=999
- spamscore=0 clxscore=1011 lowpriorityscore=0 suspectscore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407160058
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Am 14.07.24 um 18:58 schrieb Jeff Johnson:
-> On 7/1/24 03:57, Stefan Haberland wrote:
->> Am 16.06.24 um 04:19 schrieb Jeff Johnson:
->>> With ARCH=s390, make allmodconfig && make W=1 C=1 reports:
->>> WARNING: modpost: missing MODULE_DESCRIPTION() in 
->>> drivers/s390/block/dasd_diag_mod.o
->>> WARNING: modpost: missing MODULE_DESCRIPTION() in 
->>> drivers/s390/block/dasd_eckd_mod.o
->>> WARNING: modpost: missing MODULE_DESCRIPTION() in 
->>> drivers/s390/block/dasd_fba_mod.o
->>>
->>> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->>>
->>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->>> ---
->>
->> Applied, thanks.
->>
->
-> I still don't see this in linux-next. Does your tree feed into 
-> linux-next, or will it go into Linus' tree during the merge window?
->
-> Hoping to have these warnings fixed tree-wide in 6.11
+There is a spelling mistake in a netdev_warn message. Fix it.
 
-Sorry for the delay.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/meta/fbnic/fbnic_txrx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The DASD patches usually go upstream through the linux-block tree. I 
-have sent them yesterday and Jens already applied them.
+diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_txrx.c b/drivers/net/ethernet/meta/fbnic/fbnic_txrx.c
+index b1a471fac4fe..0ed4c9fff5d8 100644
+--- a/drivers/net/ethernet/meta/fbnic/fbnic_txrx.c
++++ b/drivers/net/ethernet/meta/fbnic/fbnic_txrx.c
+@@ -1499,7 +1499,7 @@ void fbnic_disable(struct fbnic_net *fbn)
+ 
+ static void fbnic_tx_flush(struct fbnic_dev *fbd)
+ {
+-	netdev_warn(fbd->netdev, "tiggerring Tx flush\n");
++	netdev_warn(fbd->netdev, "triggering Tx flush\n");
+ 
+ 	fbnic_rmw32(fbd, FBNIC_TMI_DROP_CTRL, FBNIC_TMI_DROP_CTRL_EN,
+ 		    FBNIC_TMI_DROP_CTRL_EN);
+-- 
+2.39.2
 
