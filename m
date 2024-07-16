@@ -1,56 +1,85 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962AC13B5B6;
-	Mon, 15 Jul 2024 20:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21136AB6
+	for <kernel-janitors@vger.kernel.org>; Tue, 16 Jul 2024 02:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721076650; cv=none; b=bqCxiJhBvGrWXr+8MA9Ks08BUITQBzvD06v3mCpuOUrwR0R8PYS5k98PIvDxVJUbhYYHAiwViePP5mwXrIjneLE4xGz6kSrcyOJo/av5qiVFS5m5BaTmKhJzaB+z8kiyxzLr+TQnrtRbBbM9cmFT71n5teBamfIVhMqeZRTcD/A=
+	t=1721095978; cv=none; b=qbQWOW/XpLE99ddgXvldhzccIrrcczd3V6lFEbKJLaZgUSmSUUnYjkeYa/msCBKcRm0H1RVDxwhrFZ4V9qu+J6HxdmQi8eb7B8bd993MIhiti52phM704Frl+Ddo/RVHK76tb0rrwNmljgcQIqOxNjCMxjeF5IY8uI1AaI2MsEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721076650; c=relaxed/simple;
-	bh=DsKv1AnbLIi/huCDomUZSsXmSWwVkesZakSY1Ot4E10=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iDNfAjiHYvIUfU3p11UZi6wgtQ8VlKy7yXI5vnK7JP7dz7Ajs8iekwKW1ZXfVe5P+v0CnEK9iAYhQ41JaspChMYxOTmlpwOIfII6tCE7brMogbV7+er1LjmxMz+H0mM9KpKs5dJBIWU05naRhogyDJd7YTm/QYNdovPl7RRG/AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sBx1NCsk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721095978; c=relaxed/simple;
+	bh=1/93/zNm6AeVY9EQeAYq84mgdF/NBgDByAl5Pf8K4no=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pLz7o3yfCyaVPHi/pQHooKtL3jsLtFBPj5c3BB2uyrbWJwndPJwjk1LJBQM0mYOGldh9Lnq/hbT1Ub5r36m2PAsRuhyBi2A3G4HP15ing0quOPmRkEY8kXdNL6N3gS7X+cuemks+na8RCaAUSHLe7NgWpN71UegSflkv6BgI93g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FMU5MRqV; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sBx1NCsk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 469A4C32782;
-	Mon, 15 Jul 2024 20:50:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721076650;
-	bh=DsKv1AnbLIi/huCDomUZSsXmSWwVkesZakSY1Ot4E10=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sBx1NCskOtENzvyYcblevhJxDIA5+vo5nA5XHlD8Q4m6Fi5vfNySjP7GH624wmmTV
-	 qXItdniWSCy73pv/FC48KRnouYOfB/5IKs01Thc27AWdY74qj2B0v0bjSka3lQt30/
-	 i/+WZHX1L8eSayNofrevKjZofKLGlMQo2hJYc2qGjtnUpomxuunZqS07jrCcCvI9MX
-	 68isftP1phj+YU/vZHAvcL0QN/PDU0NPPSjPzgnk50RCgIIJa7q7RXmU+pqEVcYYDU
-	 oxg9MJ/hJD8DrEqLBQ3ybW+v4r+RaIH7zuGE8DiTYnR/Ca+9hZWFK7XdVu+GsEOJ+j
-	 m5POjaD+Rnf2Q==
-Date: Mon, 15 Jul 2024 14:50:47 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-nvme@lists.infradead.org, kernel-janitors@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] nvme-fabrics: Use seq_putc() in
- __nvmf_concat_opt_tokens()
-Message-ID: <ZpWLpxwNTYlIbdAc@kbusch-mbp.dhcp.thefacebook.com>
-References: <45f97bd8-21eb-4ef6-bc7d-9201e7447c08@web.de>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FMU5MRqV"
+X-Envelope-To: dan.carpenter@linaro.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721095972;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jUwgP6b0XLZ9LYeyGLdT+XvxAMFGp+mm7CM4eFLG6qk=;
+	b=FMU5MRqV1j2i4xAzVGbOYSj1Q/4cZ74YnVVvz2mKeiQLY56+5UnIRtqY1cf5uug5+mJ4q4
+	SYqti4oNX0EoCbPautk+HePpD8uxP5qiSv2Ap7Nkzb4/fA4+2rYXVIIZLb9UkhwLR1OQwi
+	bDouv7XKGjhL/Uuf+cITME1LYaH1ukI=
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: yosryahmed@google.com
+X-Envelope-To: nphamcs@gmail.com
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: kernel-janitors@vger.kernel.org
+Message-ID: <cc1a6407-1af8-44ea-9f99-fbcd94e8188d@linux.dev>
+Date: Tue, 16 Jul 2024 10:12:42 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <45f97bd8-21eb-4ef6-bc7d-9201e7447c08@web.de>
+Subject: Re: [PATCH] mm/zswap: fix a white space issue
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Johannes Weiner <hannes@cmpxchg.org>
+Cc: Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <c15066a0-f061-42c9-b0f5-d60281d3d5d8@stanley.mountain>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <c15066a0-f061-42c9-b0f5-d60281d3d5d8@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Jul 13, 2024 at 03:50:24PM +0200, Markus Elfring wrote:
-> Single characters should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
+On 2024/7/16 04:23, Dan Carpenter wrote:
+> We accidentally deleted a tab in commit f84152e9efc5 ("mm/zswap: use only
+> one pool in zswap").  Add it back.
 > 
-> This issue was transformed by using the Coccinelle software.
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Thanks, applied to nvme-6.11.
+Thanks!
+
+Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+
+> ---
+>   mm/zswap.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index 66decab33d14..adeaf9c97fde 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -803,7 +803,7 @@ static void zswap_entry_free(struct zswap_entry *entry)
+>   		atomic_dec(&zswap_same_filled_pages);
+>   	else {
+>   		zswap_lru_del(&zswap_list_lru, entry);
+> -	zpool_free(entry->pool->zpool, entry->handle);
+> +		zpool_free(entry->pool->zpool, entry->handle);
+>   		zswap_pool_put(entry->pool);
+>   	}
+>   	if (entry->objcg) {
