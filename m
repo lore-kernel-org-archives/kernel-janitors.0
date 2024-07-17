@@ -1,125 +1,94 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA206168BD
-	for <kernel-janitors@vger.kernel.org>; Wed, 17 Jul 2024 07:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957E6180A71;
+	Wed, 17 Jul 2024 13:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721199619; cv=none; b=j/RTquILiUsqdqMv532S8JXyp8HE82/hoQUBeCIK2h2GKogFIeR3r4eZ3kTLC8A4zk3wSd9lsFFmO5GBQjpExN6FAR0l8hZm2C5VcMTLN99IkI1xnT6KzYjhK0T7siXNnmBWj9/TVNqiyowTA4Rqb2kDMKn7H7BRGiEAY8zuCKQ=
+	t=1721224595; cv=none; b=bvWP6U0pBOBbw5YST8dzZRI5yD8pntPj0lfKV7QRsk0x6HO1MCgEmLZFP4S4ECJSxAtKy7HlwcuJGgY58BIMf8nkq+jJAqiIDzA3pVJBo6qW/yAKs22yl6geH3L0nljmzsvZvya1F64tZSkdr+NzpC9jzXWn90Z1cV4Uu70oWP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721199619; c=relaxed/simple;
-	bh=EqwiWs+iOpk7g0tuP/hjx3eQs5pRF88hGkWdz2xsbZA=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=u0ybek1fuunGbqTWqaQxyjdG7IiO7O4z+BGl/lDTdl52cxQvVUW4KYZUPzXRee3abWz++epvSwZJx5WYvgGRYxyezPCUPdOBbIEqEamQBatrEtfANRizdB4IlGBV/9DPjKYL+eQnxJqR9iiiBcPtcQKbFptecOeheDKxWLgKHJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bzMbEJxh; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1721224595; c=relaxed/simple;
+	bh=ueo6YeuqYBrwR97RPNPcL3NG27I21SlFoh0T9ywCRcA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=G6tAl8bR+cpFlFpjzrDP0Cd3+tEtJs/DEqn/9YcfLB1/Y1EhR+JHBxJaPJAvv/27tFvKW8B4PA8kHjmtDBC4XuM9BfQz6KkoPAEBHAgq6VxO8yE6atNEQpzi1A8/T2ym1DvpeGLi/RjMwKRrbQYOS6WlxuQvp8KIPGLUJnoYP/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=j+6EoMgT; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bzMbEJxh"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240717070014euoutp016456283958c99621a63629d3b23ac9c5~i7e4r47vd1274512745euoutp01V
-	for <kernel-janitors@vger.kernel.org>; Wed, 17 Jul 2024 07:00:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240717070014euoutp016456283958c99621a63629d3b23ac9c5~i7e4r47vd1274512745euoutp01V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1721199614;
-	bh=BqQmvxngJh/jUxT0xcjtnge0rHXvJkSYChxldhCU0eE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=bzMbEJxhp/nKl9JiIt1VulHwaX0xk/a+NqGGLgkmlJArTfxQMXwQ+0QEyxxXDu6Zl
-	 KwL0YewYMXgKIElqESXKkRypynA04juO0lqYOoiU0ORbMAzTXpfipQuVp4OKzLPrTJ
-	 ziuZGp9j8T1/8coqRlH5obralGAiumC93PGRPa5o=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240717070014eucas1p25a69ebd8b04ffeac75fccbfe6ebde1db~i7e4dkgr91989919899eucas1p2h;
-	Wed, 17 Jul 2024 07:00:14 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 67.C0.09620.EFB67966; Wed, 17
-	Jul 2024 08:00:14 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240717070014eucas1p26bc42b2b532e6e40210ec5bc57c827ec~i7e4F6f9b2430324303eucas1p2D;
-	Wed, 17 Jul 2024 07:00:14 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240717070014eusmtrp2210e51f611f3db51d99c7c885c1d6852~i7e3914lb0570805708eusmtrp2k;
-	Wed, 17 Jul 2024 07:00:14 +0000 (GMT)
-X-AuditID: cbfec7f5-d1bff70000002594-26-66976bfe3f1a
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id D5.28.09010.DFB67966; Wed, 17
-	Jul 2024 08:00:13 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240717070013eusmtip270865bcd1140da1f214f4a2c2fca5523~i7e3u-c_71582415824eusmtip2D;
-	Wed, 17 Jul 2024 07:00:13 +0000 (GMT)
-Received: from localhost (106.210.248.174) by CAMSVWEXC01.scsc.local
-	(2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Wed, 17 Jul 2024 08:00:13 +0100
-Date: Wed, 17 Jul 2024 09:00:09 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-CC: <kernel-janitors@vger.kernel.org>, <cocci@inria.fr>, LKML
-	<linux-kernel@vger.kernel.org>, Arjan van de Ven <arjan@linux.intel.com>
-Subject: Re: latencytop: Use seq_putc() in lstats_show()
-Message-ID: <20240717070009.g33selzj27lqg44n@joelS2.panther.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="j+6EoMgT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721224553; x=1721829353; i=markus.elfring@web.de;
+	bh=ueo6YeuqYBrwR97RPNPcL3NG27I21SlFoh0T9ywCRcA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
+	 Cc:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=j+6EoMgT6uRZenobEAy1gGzxA4Ox1J2cZ7uZWZNHBka0BYCfQEff0bozJZlkiXNv
+	 gt7yWjn4/VTAvOt6x6TH0KUZej5OSlYo1oubEwtnhSUUJrjhTnyk20MdzOFinEzQG
+	 pLaa5swR06qcFecn0BWlxUZr92DAjWjMHYqYd1zq2+7ld+TvZetZgJG7RGL2WAvii
+	 ifNLZ2yoL3jlOfJQEu9XP4+z18gDiVKVAEgByoQobB/gDhabFfVPF1ozMV5AI2+QR
+	 Pj4CQmgxintEg56JGcD2LIsJG+Qkdv/ti/fhmXJJW94vr4hXH7uHaj2RNseqxpUIO
+	 N3e1ITwW1WUebD0zpw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MpCmT-1rzSfm21iZ-00muYw; Wed, 17
+ Jul 2024 15:55:53 +0200
+Message-ID: <6ede4925-8461-466e-ae09-7016ed92d314@web.de>
+Date: Wed, 17 Jul 2024 15:55:50 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a1b7f067-efa9-4550-8351-8923a71826fa@web.de>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42LZduzned1/2dPTDJ6/kLP4/mABu8XLS62s
-	FltvSVtc3jWHzeL/rOesDqwek14cYvGYdzLQ4/MmOY/bz7axBLBEcdmkpOZklqUW6dslcGW8
-	2XCRraCPqeLx7FVMDYw3GLsYOTkkBEwkLndfYO9i5OIQEljBKNGxfQUThPOFUeLc6y1QzmdG
-	iXm9W4BaOMBaHt5zhYgvZ5Q4PLGdHa7o/r+brBDOVkaJGc2X2EE6WARUJd58dQLZxyagI3H+
-	zR1mkLCIgJbE08cmIOXMAh2MEg1zH7CA1AgLWEhMvg9Sw8nBK+AgMW32ViYIW1Di5MwnLCC9
-	zAKaEut36UOY0hLL/3GAVDALyEs0b50N1skpYCVxZmU/K8SXyhLvH+xjgbBrJdYeOwN2soTA
-	HQ6JAxNWQYPCReLh/SaoImGJV8e3sEPYMhL/d85ngmiYzCix/98HqO7VjBLLGr8yQVRZS7Rc
-	ecIOCSFHibn7IiBMPokbbwUhjuOTmLRtOjNEmFeio01oAqPKLCSPzUJ4bBbCY7OQPLaAkWUV
-	o3hqaXFuemqxcV5quV5xYm5xaV66XnJ+7iZGYHI5/e/41x2MK1591DvEyMTBeIhRgoNZSYR3
-	AuO0NCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8qinyqUIC6YklqdmpqQWpRTBZJg5OqQYmcQbP
-	1De7p/NU/zvNuTzd65Ps1YWPWO133DDLu/kndAebykNHRo3fq45kpAau9Tr04raa19OF997/
-	FVkSzXJQfOoE8ZMnp0+bVKB69tdNth0TfJ/tee5gd7BFYe3DqXEVl1lX9RvzRczgFooP/von
-	uj371eMpMoyrDgrFeYm0rv89v2GTOM/Ela5bG5X/n/Df8e6a0BKR2Nmtk2QzrJ+yLZWdJDnt
-	VHBm6q8JEdLNGeUdr0//e2ux//VppyzntKk77ry8brz7U4rY3GjXMJG0iz5FyiHsbxk2LSqR
-	Y3m72kjHMkxr+2SPKd2r3rS8njHbm/OfpOVUvv/x94RPXI86f3CWrfeWNLsfxT0COVd99yqx
-	FGckGmoxFxUnAgCbnA9nnQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsVy+t/xe7p/s6enGfxqMrf4/mABu8XLS62s
-	FltvSVtc3jWHzeL/rOesDqwek14cYvGYdzLQ4/MmOY/bz7axBLBE6dkU5ZeWpCpk5BeX2CpF
-	G1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GW82XCRraCPqeLx7FVMDYw3GLsY
-	OTgkBEwkHt5z7WLk4hASWMoocXrJGvYuRk6guIzExi9XWSFsYYk/17rYIIo+MkrM2XSfCcLZ
-	yiixo/0QM8gkFgFViTdfnUAa2AR0JM6/uQMWFhHQknj62ASknFmgg1GiYe4DFpAaYQELicn3
-	QWo4OXgFHCSmzd4KNfMLo8TGPz1sEAlBiZMzn7CADGIW0JRYv0sfwpSWWP6PA6SCWUBeonnr
-	bLAxnAJWEmdW9kPdrCzx/sE+Fgi7VuLV/d2MExhFZiEZOgth6CyEobOQDF3AyLKKUSS1tDg3
-	PbfYSK84Mbe4NC9dLzk/dxMjMPa2Hfu5ZQfjylcf9Q4xMnEwHmKU4GBWEuGdwDgtTYg3JbGy
-	KrUoP76oNCe1+BCjKTB8JjJLiSbnA6M/ryTe0MzA1NDEzNLA1NLMWEmc17OgI1FIID2xJDU7
-	NbUgtQimj4mDU6qBad8ZVkPWRYEzl6p07V8kv3au22MDL5HglX/uL9F8xTbN8kWL/XNW3y39
-	xwVTLMrqpLWsY86ys3pt90ypvvkgzWWbz6ttF0JOS/M9tVzYeUHk81IrC65pG0+HFmmuW2Uf
-	een3acUI9tcq/Jcs4wqvzzf2FX456Y/ye6aHMl9z728QcahVPBO+cuZnww3F2zy7vvM+Ud/B
-	/Tno/f7QM2KGj2u/2DRtOn7bc69Q+sbOTcXGq01qXsifulB5K9buhV3eC88ZDRUqbsycNVo/
-	ZqdkmSeedJ2Uv3DrEzY29XeNEjN2qE/iTpKwlxI+8pRz889wE4sjeQsYjOyjHvvUKseUnf/A
-	6qPJIf6G/6uT/nFjJZbijERDLeai4kQArV/QQ0YDAAA=
-X-CMS-MailID: 20240717070014eucas1p26bc42b2b532e6e40210ec5bc57c827ec
-X-Msg-Generator: CA
-X-RootMTR: 20240714100031eucas1p16b701d3e5852ccb40305a73bdb2a2759
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240714100031eucas1p16b701d3e5852ccb40305a73bdb2a2759
-References: <CGME20240714100031eucas1p16b701d3e5852ccb40305a73bdb2a2759@eucas1p1.samsung.com>
-	<19c77c4d-7f81-4980-a124-d6a8e14675d9@web.de>
-	<20240716154520.vtlqv4jxlihy2h7r@joelS2.panther.com>
-	<a1b7f067-efa9-4550-8351-8923a71826fa@web.de>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [RFC] perf script: Completing error handling?
+To: linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+ Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>,
+ Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:fDXUSdWFcLIkBEJAhXka5DyKKV6W0WvCAVbX/pry/GZc3hUwHW9
+ 62sZLZSh2zMd1f7p26+iEhlXHFtJQXVHsoq/yEgNcUX6K1aDIDyPrHM+zWeNXYaRphc8HVM
+ ftr0/hlTAl3N5rf8x9gdqadjVojAQYH+t9NTDBzkBz2TuOPR7oujxM6vs33NxBwFFTqtunO
+ 8u88CzFwyueWij87mhiLg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:zRhuL6EUs7Q=;VrKJbBFUm5qLyKmfqjh4dEDm4WV
+ NJfk+sLn9QZMN+pYG50XYa77Lq3HGTM7j9I7aPTt76IrKs/qVVCfQSg0y6vJjsCYDn+a+jpXj
+ mhH22GynIahsqu2bdlNSA3k1R1QUoERB97nbRxlCHO7HbksNLI//TcI8GzFJlnfU6kBRnmVo4
+ DOU3wOt56Qn28PSdQuqAv9Zq/KSWDvkuK3HQyognT7eC8Gg4WYTijaizsYNnUxZSmazW+mrVT
+ QvTDYxKtWY29sAoIbfBmQVwj6/bIEpNC1unXWhsKpjKOACbuGpqgEtuJ5BWsJGTuj8xOgEDqD
+ oH0pRbpKaXgyct8ncdwFsH1jAy4tvav9+C7o5H5Z1MmhmgeMyvxrfDfvDq7iQBKg5Smxns7DF
+ nf/+gXasdg0J+w62vebSLtSso1JCKp7jnI3oSFWSllmA/CyKXJY40Iyxs5n4cLtoDR9HTA4Nl
+ 2ROgT0vrUVjbTAXXgAzwr85ScoTlMgn6WLxEQ5YUw3iYx2OSIRcfvMIqF8UbzWEDsj+gstwk6
+ 6AV3h9j8e27ZG2TYFV67QopQwxso7Vxlm7uDzNZT6xB5Xim5nFNlbcDNITzETs+qCwdWlphmh
+ Vu6xV6hXI1LHoL8cGLwuChXmhuReq2Ablnok5HOt5XjSCjALZ6NdY6riZXp6UyVHFRMwSbC0q
+ gDngxrbVyTeeY7SzKWBnOFLH23CKKUKqMHH16edKiwEHN2iJGqfdJgLMxmxR9pyKOLOpBsqfg
+ QlBShsGPkPhFVgyPsiNEBJCyOO1IATR0HyogdLiDGFUfOY3aeT0Hk2eW7La6QgBW2n8JMULq8
+ B1BTdhyNCNdPmnjWtLvowRkg==
 
-On Tue, Jul 16, 2024 at 07:06:06PM +0200, Markus Elfring wrote:
-> > Not sure why this got forwarded to me.
-> 
-> The script “get_maintainer.pl” pointed your recent contribution out.
-Makes sense. I'll still defer to arjan@linux.intel.com.
+Hello,
 
--- 
+I noticed that source code like =E2=80=9Cprinted +=3D fprintf(fp, =E2=80=
+=A6)=E2=80=9D is used
+in some function implementations.
+https://elixir.bootlin.com/linux/v6.10/source/tools/perf/builtin-script.c#=
+L697
 
-Joel Granados
+I find that return values should be checked somehow at 63 places.
+
+See also:
+* https://cwe.mitre.org/data/definitions/252.html
+
+* https://wiki.sei.cmu.edu/confluence/display/c/POS54-C.+Detect+and+handle=
++POSIX+library+errors
+
+
+Regards,
+Markus
