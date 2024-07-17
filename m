@@ -1,76 +1,93 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEB4101C8;
-	Wed, 17 Jul 2024 04:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F357125DE;
+	Wed, 17 Jul 2024 05:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721189960; cv=none; b=AAVMngLNozjQlO7ASNxUkTQbzgOAzsq8oYaShCIFdH9s3zfVcBWPbqldjH9X6WsNi2v52CT8HBdZMbSCIDbyXXVdjbuTGPn2ulDgJsz3eWtY94pu3kpa6mIpFaWe+Kv+83g1cb6i/UAyiXXCfAJW6mUG87YkUUgfUOt8HWzKUh8=
+	t=1721193135; cv=none; b=lmzB8W+G/ZKZ7J0ufiDQafZ2rzg/wSlpLR/IDiL7vpdZYfy7YCYcGDUkxoqNMm1pb6jejyp7+K9ZzBE4WrEpMmxq7IjJrbEUbf+pQNhJ0DKl0+WbR4FG+apnvyV3gkrolzQMws+/Ci54negqka1Uwlu46/OMrwIecCuDZZeGjdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721189960; c=relaxed/simple;
-	bh=WatAHJAk9HtvZah7qSYlsS5qs4Jv2ZV2mkLGQMYLoMM=;
-	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
-	 Content-Type:Message-ID:Date; b=Xc4S0r2GDBCbgOFM/Az0xeGhdK81b9XXfdmXb5W3+fJw3FtfAjNKFeeHYploHv2SQsYust9mEDxrTF/+lJ/0uh6le7OZvauXigxh/vXBl1sALIYMBS8HAM3Rvc6nx1myH0Qsr5ibdY9GO5GORWkEHxwfh9ZKFMQiHX7ifFocqyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=ANX3+NfV; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1721193135; c=relaxed/simple;
+	bh=H36BJoSSlRDF1Z+nVvb/Uc70itDMo3PGoNayxqtEKAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YMOJ/L0BQAqQOewkVTw3MoRvUzZdxyu5xHgTMb5AJN1Uij+uerI4+srZS2aPnYiv5HDeJ2rThuDmBoUoPhMW7olQRTGae8yE/QqZsBrlKDcItzlUAweKcFstiBbTahNmVLgCOyYKZRRGN0KhzNe8bXAmsly7odgtOgb3Jzag5PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=SYMEn0VT; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="ANX3+NfV"
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46H4J8cZ41705346, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1721189948; bh=WatAHJAk9HtvZah7qSYlsS5qs4Jv2ZV2mkLGQMYLoMM=;
-	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
-	 Content-Type:Message-ID:Date;
-	b=ANX3+NfVtFBT85ZE18g/m8A2hQCf+Ey364aLHSSzNBxk0BiKBgDeP8PRsa7wLwR4O
-	 u6p7K1FaRJ52f5Qp8rkDfFwizHVAHwdJY9n5zIDRFdjm0hRP9M51qZ1E0EDgikifG0
-	 kcJKjNtr79sSw7iz1Lv/l8yANORIFss9G3yIKD46I0v+zHJCaBQRcE1SCFcgQMGDfd
-	 yrmnKHZ1q0T4wEOZuEybtj5nqLuntUy4UBIkJ1nuvZ4hnJQg1QsKkjAmo+BAS4LB9W
-	 5xdwhr7HlV3s8ChNOtY8xl12IJX1EdUDjJim0V+9bPm0II/gEl2acuBkvmOA2KDqHZ
-	 Y7Z/g79SF91UQ==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46H4J8cZ41705346
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Jul 2024 12:19:08 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 17 Jul 2024 12:19:09 +0800
-Received: from [127.0.1.1] (172.21.69.94) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Wed, 17 Jul
- 2024 12:19:08 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Colin Ian King <colin.i.king@gmail.com>,
-        Ping-Ke Shih
-	<pkshih@realtek.com>, Kalle Valo <kvalo@kernel.org>,
-        <linux-wireless@vger.kernel.org>
-CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] wifi: rtw89: 8852bt: rfk: Fix spelling mistake "KIP_RESOTRE" -> "KIP_RESTORE"
-In-Reply-To: <20240710112253.228171-1-colin.i.king@gmail.com>
-References: <20240710112253.228171-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="SYMEn0VT"
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id TwxMsrsBhJ7CGTwxMsIU7w; Wed, 17 Jul 2024 07:12:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1721193124;
+	bh=sa2nadHmhXuLtY7ot8ndiHN0OIbRKX9pb16VLbEu1i4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=SYMEn0VTwbEU4NR9+q4PpIKnHPyG0VclAA9dE9BxrjCHFYm6vy7uxjGABb4UJKu+f
+	 2OMrEnBXZDF24dnBHwbgpZ/HtfmXxgFotjw5OocOtTNP51Dhp5C4R41D0/4tk2/KzJ
+	 iqXfwgeDOTC6rH1Htoh+nmhwqEyAaNwBS0SQPQXOk/44hefbEFimwWEOSt0KxWCPY9
+	 VR5oPQs0pXtQ5X0QZ33qWvAaKC4JulzZYIZ7IAfD0oDjbXNwUTfhnzY7RGCA4Cz0Kk
+	 2PI34OFBuYnMeXtvovf6dd00GGdmRckTtAPF7XjgRxvhItJRjm5kgMwmaGa/MnxweB
+	 8b2jX2AGrXamg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 17 Jul 2024 07:12:04 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <4197ad98-a7f7-487d-a303-d682677e0b80@wanadoo.fr>
+Date: Wed, 17 Jul 2024 07:12:00 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Message-ID: <544d6f83-1698-40f5-823b-d2a3aefe748c@RTEXMBS04.realtek.com.tw>
-Date: Wed, 17 Jul 2024 12:19:08 +0800
-X-ClientProxiedBy: RTEXMBS02.realtek.com.tw (172.21.6.95) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/resctrl: Use seq_putc() in two functions
+To: Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
+ kernel-janitors@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Fenghua Yu
+ <fenghua.yu@intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Markus Elfring <Markus.Elfring@web.de>
+References: <d4be0dc8-f6db-4bf1-bb6d-ccff161dfde9@web.de>
+ <cb908d7f-db6a-4b04-8867-bf36fb2dd45f@intel.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cb908d7f-db6a-4b04-8867-bf36fb2dd45f@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Colin Ian King <colin.i.king@gmail.com> wrote:
-
-> There is a spelling mistake in a literal string. Fix it.
+Le 16/07/2024 à 23:43, Reinette Chatre a écrit :
+> Hi Markus,
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+> On 7/13/24 2:00 AM, Markus Elfring wrote:
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Sat, 13 Jul 2024 10:43:14 +0200
+>>
+>> Single characters should be put into a sequence.
+>> Thus use the corresponding function “seq_putc”.
+>>
 
-1 patch(es) applied to rtw-next branch of rtw.git, thanks.
+...
 
-d64270128bf5 wifi: rtw89: 8852bt: rfk: Fix spelling mistake "KIP_RESOTRE" -> "KIP_RESTORE"
+> Could you please highlight the benefit of this change? Looking at 
+> seq_puts() implementation, thanks
+> to [1], it seems to me these seq_puts() calls will result in seq_putc() 
+> anyway?
 
----
-https://github.com/pkshih/rtw.git
+Hi,
+
+in this case, there is no benefit and the generated code should be 
+exactly the same.
+
+CJ
+
+> 
+> Reinette
+> 
+> [1] 
+> https://lore.kernel.org/all/a8589bffe4830dafcb9111e22acf06603fea7132.1713781332.git.christophe.jaillet@wanadoo.fr/
+> 
+> 
 
