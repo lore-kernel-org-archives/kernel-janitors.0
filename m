@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7021442E8;
-	Thu, 18 Jul 2024 20:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FDD12B94;
+	Thu, 18 Jul 2024 21:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721334802; cv=none; b=GADqzaCgE9HvWqbehThsXGjnTiqGp4btpvFtTME4Kh3gI2umhY9SJOvvM/qHzkFW6etuL6NGaPBdzsUZvxOEdrxhzQpNmU/36l8neb5Hp4oBl1ZYE78VFz+JfVDyUSSFt+zYa7bZtb0DP4HNjm4MO/dGGkp6PrN7+66OMEnxz2g=
+	t=1721336526; cv=none; b=JcSSmcKj+eY6sQsZC28meoKoHcrabhzPc3LETIHALf3P6Pkfr+FwGwIxX0qSkpcESPi1V13p2UYDOckxOJqEwlicSHCTXZ7AB5grajrKy3GTYFW/vQNLau2nIoNprNXqF2ysozIAVGL+0u76CTjXilDz2/3tMzYCg7YUXrlqOZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721334802; c=relaxed/simple;
-	bh=+2jZ1FJdayxI/jeTGQsq55tA4N3XqDyXQ5ATmDJfZ+k=;
+	s=arc-20240116; t=1721336526; c=relaxed/simple;
+	bh=2tmsuB8807vM7DRg1GCoBkXXL08qmyyj7gTlWqJGv3s=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=YQKlbU+BIcjwxpTtY+dVGmp9Yi+xv/Ee4Dulybb64J4kDXd8o9E2QxISgcgNr1nSUsTrxkXXYAAtQDzuXKueKYklp/8f/y9hO3mCs+VlRUExelrS4M8xLrfEwtMlKEe4bm04+WuArYl51BiZ+3eDzm7xcm5NiTlNmSDcCb5NYnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kVQ5dy3s; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=IEVjYB5xeHjnSc+IWbzIFXEOaE6YJyfTbPzeonJYAuZfdza7WN/75jEwWzBongWCXItdeTWiOEL0rIoYjX1JWyr+TjWTYnWuWy3BLxoICdiWOOKczJW7BKJWIlZ7bWy4YgX4prDSWUUQk5mr0aY9oGL/+NNqWN1QZ7OJpJXt+lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpHoiS6Y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kVQ5dy3s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF17C116B1;
-	Thu, 18 Jul 2024 20:33:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpHoiS6Y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9BC1C116B1;
+	Thu, 18 Jul 2024 21:02:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721334801;
-	bh=+2jZ1FJdayxI/jeTGQsq55tA4N3XqDyXQ5ATmDJfZ+k=;
+	s=k20201202; t=1721336525;
+	bh=2tmsuB8807vM7DRg1GCoBkXXL08qmyyj7gTlWqJGv3s=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=kVQ5dy3sUROdJgrzfzIKIyurjWhSjo+iSL7S3vTnCFYPDrzyDcZ6phNPnVUz5En2O
-	 cN/W5uQgpRavx1lCOD7BAavesj5ws1CUVlD49rOoox8qK0lIaBvafm8ekpq/Y2yhLT
-	 HllHKokSN+DleMU7GZNfX37ROZYoEALy1IgbGu0byti8ka9oPTKuXGqAcY99dFsCUs
-	 5Ktu0EMVIA6lwb3155yoMBAWKmdK7gKE7Ow8xM4oXscdykdOQE0JDsHgnC/d6en00Q
-	 qrI8+p/T+Ti3/q+g6XOGewxjD3c1BLEf0whilmeQGbvCNR0fmVN+//fSvRRD+sYWS4
-	 iOWZ3KtizWQBw==
-Message-ID: <7c554c6ec0d24bffdfc9ea55de5c8ff7.sboyd@kernel.org>
+	b=lpHoiS6YoG8nLkHzxSY+eDKZiD/xlfaTv18YroF3GssL6ivKB9rwSnjTRyRsYm0pQ
+	 Pp3+luEQVTZKQDANJtqiV1fZ4qTTYTXnLLy5mTz5M9K1AQCuYbJXS2PR4lutqleT8D
+	 Su43YtGfwiWt3XWpTdBKizNKwr4yTW8W7S1ZJMBc32ZLfgGdjc8hB5cfNOld6jm4ls
+	 NZBAY4IznidPV1b9rjVLlmUVEksPfnkUlNDrfykLPtiJHrrrvPS+HOCEmNjoiZV9ut
+	 qkDGbDh4tpsj7sUa1H6N8t5TtJnvkSnliouogiTq70kSGxcnyoBpCpGD1UBc/fzRQs
+	 0gmG22CYCSt9A==
+Message-ID: <a3da2ff289e89042956e43281d43283e.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -35,21 +35,25 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <baf0a490-d5ba-4528-90ba-80399684692d@stanley.mountain>
-References: <baf0a490-d5ba-4528-90ba-80399684692d@stanley.mountain>
-Subject: Re: [PATCH] clk: sophgo: clk-sg2042-pll: Fix uninitialized variable in debug output
+In-Reply-To: <20240609-md-drivers-spmi-v1-1-f1d5b24e7a66@quicinc.com>
+References: <20240609-md-drivers-spmi-v1-1-f1d5b24e7a66@quicinc.com>
+Subject: Re: [PATCH] spmi: add missing MODULE_DESCRIPTION() macros
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Inochi Amaoto <inochiama@outlook.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-To: Chen Wang <unicorn_wang@outlook.com>, Dan Carpenter <dan.carpenter@linaro.org>
-Date: Thu, 18 Jul 2024 13:33:19 -0700
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jeff Johnson <quic_jjohnson@quicinc.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Date: Thu, 18 Jul 2024 14:02:03 -0700
 User-Agent: alot/0.10
 
-Quoting Dan Carpenter (2024-07-17 19:25:53)
-> If sg2042_get_pll_ctl_setting() fails then "value" isn't initialized and
-> it is printed in the debug output.  Initialize it to zero.
+Quoting Jeff Johnson (2024-06-09 17:40:17)
+> make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/hisi-spmi-=
+controller.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/spmi-pmic-=
+arb.o
 >=20
-> Fixes: 48cf7e01386e ("clk: sophgo: Add SG2042 clock driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>=20
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
 
-Applied to clk-next
+Applied to spmi-next
