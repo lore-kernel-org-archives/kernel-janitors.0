@@ -1,118 +1,98 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675C1140395;
-	Thu, 18 Jul 2024 13:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B398D1B86FD
+	for <kernel-janitors@vger.kernel.org>; Thu, 18 Jul 2024 18:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721309091; cv=none; b=AkoPlSPiNC71XnMnyHlEmKbnwy5Zf31kAiWg4IMVz5bkEXwv5bsuqC8vgKVsNsqlXxgaAJRbk1T2rJ1od0xaIydYF7Wl0PX8xYUNtQVM1Wvfz7VauMFuddG3NLaxO5d9nsFcf5znqbIAcPNgFdGAtXVpPGBZNjBKOIeJrCufpuQ=
+	t=1721327429; cv=none; b=BcaM/+bxp0csxX7l2rnDjOyWDB2TxDA0MYU07bq7HkphU79dlDc5n943i4T1KDEzvZjZQqnRvBg5mp62h3BWDAXXq/Z0zTxu3xJlHg5hnmcLjg72iCpFFIpZINw2O6Ih207atPoBeCPdASzjkGJ+qOyw++AuNnY2S+G6LxuCnsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721309091; c=relaxed/simple;
-	bh=IbnjVcjD/gDsPIIINtuZ1kh6E9PTVuBcQTlfUzXrZ/I=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=LFPo/ZFYsC9+omn5Ds3mVEKlmIec9YK/zfcl8cs9WGg+VCnzH2YwMt3vArxADxkfFmP2rud0T3iloatKRutbjdc+T6B7Ieq/GJyQ3+2nbCC9r3JHTqyYFD3x0LLExsDA35J/Sw0WrZmvOsfD0051WV8mN/OWQpPzYf5w7razlQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=b5X3+tEh; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1721327429; c=relaxed/simple;
+	bh=TD1+61nPDe9jB/4IMkUiQtOBgJX2zOKDPnI9xvRyrmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KqsGjB2w2y6uG2lbCduhQPcUOPDgDj6VZQ3WWMbKSRhK+S6+waMzkioMyAkIIhIgIHg7YDpQJXt3+rM3AX7+QvDP9fszcDtZBX91inKJ3M9Mur26eNqgbcRffQJcV+CMiAgbFBdweNXcZERvD0XRrCv6dN2z9sI7Umx5QVg6qRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zpUxQU4T; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="b5X3+tEh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721309061; x=1721913861; i=markus.elfring@web.de;
-	bh=Oi3RQqwc8YwRoiG7mf8FQel+ZrdjpuN03Bnz/GOyui8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=b5X3+tEhaKDJguRnBm0XXs52WYvJ+ApI++d6yvAlmeq9q8lzMG3OUVTIQIQWru9y
-	 /sfLMtYaAKq40vfT4G4Qj/JiEFoBTMm/a+ZD00Ym+62C0Sa8oBtZmQsysigl0+HIs
-	 oDyCJOTYRNmbaPlUzcle5lMJyXT9ctpOqFJfS8JWskg/VL5+SVPJIAMH5QnSO9rnS
-	 HlSAuxSRtBrXpNDqN/O8SjqGV+xeUZKSK6Yt/VLY802l9PgBeyRyMbBMkYupUg2Zl
-	 LHlh9IDA0Ss1ZN0MeyOxxGhnZamyx79E26WVRdgvgJUJAFwBQWp7IMOUqaauOt9vV
-	 iWbOcHIdlcOk7MlgPg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjgSv-1s2I2w04VP-00jdKl; Thu, 18
- Jul 2024 15:24:21 +0200
-Message-ID: <c2fcf5b7-217b-4287-94ef-7429fbfe9b53@web.de>
-Date: Thu, 18 Jul 2024 15:24:18 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zpUxQU4T"
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5ce74defe42so668479eaf.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 18 Jul 2024 11:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721327426; x=1721932226; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bu3L66gXFcN3QKFM4M2IyGwT//LPj6mk9IKjJSFoji8=;
+        b=zpUxQU4TO26i8UraVGq12dc8lXpwW8VwUIi4sOTAqDqlwtCHCCPyP5k8Mzsc2tGMJF
+         tZV9N/b/sSC4e7Yq419EflIuF9L5UXaZsUKlHHYRI7KBN1BniT/jdliDTCgzGiRtxl1S
+         SxtH+22VzYboTs05bcyUqD+tE0DUm5uMDAbsnwX65JLaFGHjJU9BludFXmvpbsS9NmLY
+         IUcwW++7fHhbKLXBPE95lZzAk92NPmt6BZO9SM9B+Tm/MzIa2wlhkdL1BZUSfx6XkSil
+         4ciukqcl92liPcdipKH5oYnHhufyHUey2MnWfRjUPA0uxL/QsSLt2Sl7sFg0lA4ipAqq
+         W4pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721327426; x=1721932226;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bu3L66gXFcN3QKFM4M2IyGwT//LPj6mk9IKjJSFoji8=;
+        b=TfJzVFzTsQRcC3ZvENJxxuoK0BlmdI9MyC8dkLXVflv27Bu57ac5ERzuSfzufP1jgo
+         NVx9NQ3hQcyKh9IiH4ALdfc5dzuXesMJy5OH0/nIRNDr6SEd5l8CwUgNF0nyoKjw6c/u
+         RZrqPz8i9oJHFXPoPrg2/w/nG6cUzt0jd9MsF+pB2NeMNDdeY4t1Y4cOZyMtX0F/A555
+         /GQ2A/sqe5uB0+d6sjCw1R6rrCqRZtipkIEQxtSHUjmaJL8SWBM05v6FOjNdGSfqzYH9
+         LDKfjtIpL+1b4jybJYsqZFtT/BegLdlNAMWelFFB6ADMLMXfzBXsaVzy1yvgED9/XC+1
+         rBQA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8/yHQ5CNfdEBkKsck81wUp+Z/+Pjsb1vsEjeyMabvXUkNpNtrGKZXgtjP9EKwfI5mPx1ImVijzE9iyZL9xBFPuM6w25ysZ3t2qmTU7TJ2
+X-Gm-Message-State: AOJu0YzVrrlmo11aZ1HYJE53P0JS1y68d3sLhtQWvcjp2j4mctp05BFo
+	HMlN48GxTnt4NFeSGBlxg1HWOFJL/gGW+vVVPQbNqHBzjb+scCg+koCfl3ANaXg=
+X-Google-Smtp-Source: AGHT+IHfVnIuNs7e/rNBEuwsyQLUJ7M7eNZl5L5eDW+zD/V5s9h31Hxelwx+b54/gMeTAXhX7pudZQ==
+X-Received: by 2002:a05:6820:2788:b0:5c6:61b9:20ba with SMTP id 006d021491bc7-5d41a4c1e69mr6849785eaf.1.1721327425729;
+        Thu, 18 Jul 2024 11:30:25 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:8d5a:14eb:55d7:f0ba])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5d3ca788101sm641622eaf.16.2024.07.18.11.30.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 11:30:25 -0700 (PDT)
+Date: Thu, 18 Jul 2024 13:30:22 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Conor Culhane <conor.culhane@silvaco.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] i3c: master: svc: Fix error code in
+ svc_i3c_master_do_daa_locked()
+Message-ID: <e017edfc-da64-496b-8516-958bec27cd9a@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
- Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
- Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>,
- Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] perf trace: Simplify output of string literals in
- thread__dump_stats()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:AVxqHWFZGQuuHQv1K8Q+VDnuWLh48UxOVX8n/sFTmOvDwPKnVQM
- S1hDvwtXluPiejwHJSQnT4cxp7NWzE2N1GjlKSQbjgCNapmr0QYzug5h8+xkFG2HIqUQpAJ
- EE2jExdd0ALdl3b/N/kOC6S7P0T0Xv6q/T5a60WyExRVA/fAZtJIgFjVz25xcCr0xBkURq+
- Ya6HLSDtAkLMEBaf9axiw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2UuCpAt+y2k=;Al41A0mGylZRJBqN5wNlUvBQVX0
- Htw3LN+4u7j0gpxwiuw1uI4+DSU4RV0G15u1/5HQGu/8iGaZza56wmE1Mq7yWsBtP0OYsH4sZ
- prMaaHjhjKxI74X5qtOQp8Mtf9kGl/BEgLD5KVAcQpd/aI4XpfzJyMQmTVvcVnb8WXXv9dnjS
- 9vWQeDt3BcHP72S+U2l9TaEk6X73dOwKZtsKWJRxbG8HVBma3fDIj8GSllxFCQizgBm5F7boe
- 104wc7LT4c6dXdLuvrJmJAvRQgbuLKs9dB8fYZ5VDzp5OWqkS22wZ45LD6i/G/eyr15tLY+t7
- iINkwEZ6D8q0BL3qCuu1MbV4SvA5cF98Yzs7HAiUJlJChNy03pCWtAhk0iQ37PrM9+6eg3DRc
- 8jr/TT3pJxU1QiF6FKifNp7W5owWA1cSmpY3MYsmSFDLa268/s4WUOG6jRtmmUNVZ/J1dB4qb
- KOCQ8X0AJ/3K9mSnD6kQbftE1tZEZq8qNoHzQfTcNrREtWsJTyGiEhUjQcYdqVJ96vl/52Fhs
- hmG5WJzOTk6bcNFPfZgjdwLTfRdnCWSsiEp+ZM0vEe+dKfEzT/CahQjR4ncg1tjbDtyjnqdA+
- oezMZMK2L2rk5gB9pfz6lDFbusVctXfatsY49uUE58qlHbGjXosaLYrzDdGytAvFSk8OI3WkM
- OKrXmkRh0H/WSvrK4MbU0+2WkwDCDwaxXFbZ+qfpZon+waU4yKb7MBxbho0CDPCp8l+zk910R
- wHs0WbOpX+vw97+M9SExUJjwxdPElslLzIJ994oCCH4JVWZI6Yhn6VCeVbDyGSd6QiYXtg01s
- 1/+0j5R3qFI4+O4s8AJTKc6Q==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 18 Jul 2024 15:12:13 +0200
+This code has a typo so it returns positive EIO instead of negative -EIO.  Fix
+it!
 
-Combine four fprintf() calls so that the same text is printed
-by a single function call.
+Fixes: a7809cb368b9 ("i3c: master: svc: Improve DAA STOP handle code logic")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/i3c/master/svc-i3c-master.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- tools/perf/builtin-trace.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 8449f2beb54d..b96fc6c00e26 100644
-=2D-- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -4238,11 +4238,11 @@ static size_t thread__dump_stats(struct thread_tra=
-ce *ttrace,
- 	if (syscall_stats =3D=3D NULL)
- 		return 0;
-
--	printed +=3D fprintf(fp, "\n");
--
--	printed +=3D fprintf(fp, "   syscall            calls  errors  total    =
-   min       avg       max       stddev\n");
--	printed +=3D fprintf(fp, "                                     (msec)   =
- (msec)    (msec)    (msec)        (%%)\n");
--	printed +=3D fprintf(fp, "   --------------- --------  ------ -------- -=
--------- --------- ---------     ------\n");
-+	printed +=3D fprintf(fp,
-+			   "\n"
-+			   "   syscall            calls  errors  total       min       avg    =
-   max       stddev\n"
-+			   "                                     (msec)    (msec)    (msec)   =
- (msec)        (%%)\n"
-+			   "   --------------- --------  ------ -------- --------- --------- -=
---------     ------\n");
-
- 	resort_rb__for_each_entry(nd, syscall_stats) {
- 		struct syscall_stats *stats =3D syscall_stats_entry->stats;
-=2D-
-2.45.2
+diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
+index e80c002991f7..0a68fd1b81d4 100644
+--- a/drivers/i3c/master/svc-i3c-master.c
++++ b/drivers/i3c/master/svc-i3c-master.c
+@@ -874,7 +874,7 @@ static int svc_i3c_master_do_daa_locked(struct svc_i3c_master *master,
+ 				 * address this time.
+ 				 */
+ 				if (prov_id[dev_nb] == nacking_prov_id) {
+-					ret = EIO;
++					ret = -EIO;
+ 					break;
+ 				}
+ 
+-- 
+2.43.0
 
