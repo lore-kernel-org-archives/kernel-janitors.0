@@ -1,165 +1,175 @@
-Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9579F1E502;
-	Fri, 19 Jul 2024 11:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F2E13F458;
+	Fri, 19 Jul 2024 13:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721388548; cv=none; b=omDB9g2+6BCEJyoqQ9RDca9FKrl/DGjGJ5El9fPw06dYnw52NapDyvtEjMpAon/PTNGxHIbfF2YBWzjVlKCNeuV5uuW8niXfvFzbYBKvqta9dUIOdbkL7YtcJM2q0TX/5gxK+nYWPFDO4Pe2uod/e9fZ8fzcTh/ecDhFcyvTyec=
+	t=1721396331; cv=none; b=FAojtHEgMZvRBxVF1MT8zKU3c8fy9HPYXEwtjO33wi2jPgbLsRZWVL2tpiTqCv6fjsOA8m37PodpHdHLBD0qfSKPDu8aE6qnVTyvZ4iwv5kBnrFJTmlU3oMFwl/hebLTmFCOWKHwTfW1I8NWhiMrX2xzmPA8DUsFizLsX1R/a+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721388548; c=relaxed/simple;
-	bh=6e1McigiHvEvVwK5EbMhAGua/tT5rtZuppTZZmZ/LpY=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=Au6e9+7hh+gTn5SPFqX6x/nbmUuPZQv/WVKezTVhQZD/oec82pd/nNodITPTpfrZGA3vMwR3Baz0o8npUvc3UdHQc1bEpts9a4d9zJ8wygKlPYJKnsUupkgvNj3lzUbshhMV19oUBWmicONu/kohfoiwxbigdGf8ifH/3CImezE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=mQJI0s4D; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=twhcLmvx; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1721396331; c=relaxed/simple;
+	bh=hYm0+Gc/4820hUi3b/qjBW/E/nlsvhfdp460SR6KPfs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=mtFj9gUB94c2RM1crXVg0VSe83iXyV+YIOCLIYe82MrdIClyHJDYm3HELuHQ9A3r04Jr+s+6TlVRVdOD61WQDXsXAHMTRLvkXpoaO4BoUcdUH6aB9O4HK3e3e4SAnhiJd83LtftOVP3O4FrJ9Wg9P6kMP1+FX6br/tNEm1cUDzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iK1P8Lv0; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="mQJI0s4D";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="twhcLmvx"
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id B43EA11406A6;
-	Fri, 19 Jul 2024 07:29:05 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Fri, 19 Jul 2024 07:29:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1721388545; x=1721474945; bh=r/mNmunF4X
-	YM9lHwpvMhWNpNNiXBr+47HI8/H3udo78=; b=mQJI0s4DF6X7kQCMYF6YJh5swB
-	hVCn49Q2d1G0mKvHpSRSmbKe4wrMVixnooQqY8TF3WP0z0owTaitdmK5dAql08eu
-	0X3vtrZOD9wCDK4AXyKJlGVvD8U/SLMSXbjKKoYoA9NNB8E61mIFrd6297ssmpoQ
-	KuHjaDQig370CLzoXRP/eGT9TzvAxQkGnnUmUBc6+Y8FJTrf9RGnCs9D0C9dS3yS
-	C/wCpRQW7KhOa6ioyBFr+NpS4ZmULn8457pCSk1rRAuGMlfFOwXfiDxoCHHiBnZW
-	iPWecw1M4VYJUwRT7ke3p4ofvt+wYQDIvaw1f9krS2abS957LOYsLcEpKVtA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1721388545; x=1721474945; bh=r/mNmunF4XYM9lHwpvMhWNpNNiXB
-	r+47HI8/H3udo78=; b=twhcLmvxiHKHfwtb934chH1dIsNbM6vYklhw7jqkMRaE
-	BwX7uIDZjuCuRFCTCh82iCwJo4TunLcHP5NF0Ia8ynz+kWzLmaiQiEHZGCCQ2bF4
-	LAbiqGbIAhOwXnwIrtfrLO+l3XjKd+O7L2VNoXgnGZi9qc2PhRp65fibiK75CXTL
-	1MjcxJjTlZ959hcmsnCQAL1sf0RiMHYUQx+tDL6DXWODoiH8v2dsqKfnCc4LLeFV
-	wCq860a5cndjxBM//OY9/kgo+NN3zDIVDKSamQAyOZOreDH94BNSCKkO3YLpzqNe
-	bldCNOlSUY/y6xF/AIBC7pR5P7LKHVUaxa2ePBLBig==
-X-ME-Sender: <xms:AU6aZlW7OVI2E-tQJVVJAZI-8pvcMkyo7K6yO5c3XiuGc5aqbMQlyQ>
-    <xme:AU6aZlk9NZH4nWl5MCV9wNRKxWVzP3ykbIWFbuv4h57IOC3e-WvR23Isg5ErsKUnz
-    W6ZhJaGrFSqd8sFGSY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrhedugdegtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeelffehffevveekgefffeffvdeigfffgefhhfduveetveefgfetudejfeeugffg
-    jeenucffohhmrghinheplhhinhhugidrohhrghdruhhknecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:AU6aZhZtNVyb4bF4ywf82oUI7tencC7h--TxGXSSW1i28hwysgvfCQ>
-    <xmx:AU6aZoWi7CuRnLoP_DYq-Y29bdRKh0zziDuNrKsLJSpOCLVzGyuSug>
-    <xmx:AU6aZvl0pLIBXs36EwH3YGMh34LRx1DIzIZv4XGd-WvOAC_YU3aZew>
-    <xmx:AU6aZlcgkBXiY3tcNwHbmbbmnEFenU0wz4yDhB-aOTkIjQ-cUfECxw>
-    <xmx:AU6aZoAwrpOKHxWcu98sE8o1f3WxzA5TYsOBKooLYWRCtdDo31j76C6e>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 5F153B6008D; Fri, 19 Jul 2024 07:29:05 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iK1P8Lv0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721396297; x=1722001097; i=markus.elfring@web.de;
+	bh=Nvp33d300YqX0N1vR8LPcXTZPzXdHadX2ynJNuJ4AJM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=iK1P8Lv0vRGyQhWaZp4lqZN01zBuTF+XKFjc1dH1fufRyCfWCUE2hUXQng5poy8T
+	 fvQohhNtYL3ZxscNonGHDW67pIaydWuZ7EA0zuBr+Ejsur39c2BJ/ErdSd4+GWH0j
+	 mkWK9q6uUzgZMtKmWRiWOBlOtm0kRs2mPpkKesAGLM/5I8c5IjiJBB4GgnUgf9q5m
+	 BakvAxS3rOnCHVKRZUBnC+AyIy0morloPiyrCursnwMg8SQO8t/4cS67P9uF7pnJC
+	 rbUkt9GgTdGK6oORV0o/mpacHZ61wCwrdGt2w9h2383X9+aogR1C8AklPtqUa176p
+	 KUzZnj8JNfuG9aa6cA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N2BI2-1sKNRX21ra-00yI1m; Fri, 19
+ Jul 2024 15:38:17 +0200
+Message-ID: <fcc9ebe9-e4a0-4395-b3f0-8c6d5fba56f2@web.de>
+Date: Fri, 19 Jul 2024 15:38:14 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <05cacd03-686a-4ede-b485-7f4781f69b99@app.fastmail.com>
-In-Reply-To: <3808c973-1315-420c-900d-122a73a34f9e@quicinc.com>
-References: 
- <20240622-md-arm-arch-arm-probes-kprobes-v1-1-0832bd6e45db@quicinc.com>
- <3808c973-1315-420c-900d-122a73a34f9e@quicinc.com>
-Date: Fri, 19 Jul 2024 13:28:45 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jeff Johnson" <quic_jjohnson@quicinc.com>,
- "Russell King" <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] arm: kprobes: add missing MODULE_DESCRIPTION() macro
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+To: linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+ Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>,
+ Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@inria.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] perf: Optimise format string selections in three functions
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:JRd9oP5K2pJo4gOj2zTHo1CxRuaY9GB517rk431Il04gVRO6ctk
+ JFNLg7HSapN8h1kSqwqwzZWN1uV1yPL4e/KlJeSa90qQMSpj7Ft8lc/d2YUQsto0Uv98Oab
+ ikTINY1n/GvYhkO278y/478UrM6JiYkVQsvLURNKrEjtXrszNHEXdbggtoSEZ88W8c7aC5+
+ peZnt+x8D9vj0eVrvXosg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:0vVQUbzDQ0Q=;9EiJVL6xEZcbkBJj0Vg2qvbTk5v
+ qjqZ/aUD6OQl3W27o94QWV+wvnm9WrI1nANnUM+hZV+VNn83FVzDjCBYZLzZM0lQFTHjypiws
+ bco7BrhbNd7e11lT28A8hLyVWhenaCIv2SkC1cAovxxSHIDdeRZU92DjBzWnybbOeLMgexiIn
+ KXM+SIVEdJR/1Ln+A6//JLeaIEw4BQvsjQnGMgNZsgvXfb8SpAx7HTlA+eKlNEXPiRL6UJJmT
+ Y30vzcxpQKOblwLCVkIlm47OoJhvCR1kfu9Q3OaC/sco5ttkd2bDuLEA6b6/MLfo4zHJaTRoD
+ Aowi5nTfqw5KNVoefwmps2qpp+NGNR3kn/V94x5cSbtRn61odsgU9yr3v2KUa8aZDOF3O/awg
+ ejSmBvuLapHFaNFgsgVqEDhYrEVMNVJQfuwqwsNkt+ABT94xt8uFyAHb8WqbBdL4yL3EEBhkT
+ zYSLhVIPXSgqockYzbXf17hZafLTzTAHDE8VagOWQyx/U6F8nUumHgeGzhMGbKBDOeESCaWPD
+ NqZr0PpeSN/iys9TGAliQ0ySnF9g+kVUxBRtzPL8wsGPztcczvmprMX/8loUDaajkLpnebTRK
+ dphwANuoVMCtlX15uF8hYU+QG1dYoZhDuoojL3g+KxitU3xo8+hDpMg9JiCdGUU/bppLzlUDR
+ 51VOffalgEpsVHe7vnq3K0HaV9sjprvXXi/9/birzPzBG9j2BRA/cD3aHovXxyjdpAkzq24yk
+ sPi07WE+O/INs20GX/YrT9022XvgGgWFBgtpe7f4ubb1uX3EgTVzkElvRwOuX8tkXP2NoGM7p
+ mwj19Elh7rkcIa3arq+4+a5g==
 
-On Tue, Jul 9, 2024, at 21:53, Jeff Johnson wrote:
-> On 6/22/2024 9:34 PM, Jeff Johnson wrote:
->> With ARCH=arm, make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/probes/kprobes/test-kprobes.o
->> 
->> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->> 
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->>  arch/arm/probes/kprobes/test-core.c | 1 +
->>  1 file changed, 1 insertion(+)
->> 
->> diff --git a/arch/arm/probes/kprobes/test-core.c b/arch/arm/probes/kprobes/test-core.c
->> index 171c7076b89f..6e9041a76b8b 100644
->> --- a/arch/arm/probes/kprobes/test-core.c
->> +++ b/arch/arm/probes/kprobes/test-core.c
->> @@ -1664,6 +1664,7 @@ static void __exit kprobe_test_exit(void)
->>  
->>  module_init(run_all_tests)
->>  module_exit(kprobe_test_exit)
->> +MODULE_DESCRIPTION("ARM kprobes test module");
->>  MODULE_LICENSE("GPL");
->>  
->>  #else /* !MODULE */
->> 
->> ---
->> base-commit: 563a50672d8a86ec4b114a4a2f44d6e7ff855f5b
->> change-id: 20240622-md-arm-arch-arm-probes-kprobes-34037098a2c3
->
-> I don't see this in linux-next yet so following up to see if anything else is
-> needed to get this merged.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 19 Jul 2024 15:30:26 +0200
 
-Hi Jeff,
+Adjust source code in three function implementations so that duplicate cod=
+e
+can be avoided for a few format string selections.
 
-The arm tree uses a separate submission system for reviewed
-patches to get into the tree, see
+This issue was transformed by using the Coccinelle software.
 
-https://www.arm.linux.org.uk/developer/patches/info.php
-https://www.arm.linux.org.uk/developer/patches/section.php?section=0
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ tools/perf/builtin-script.c | 29 +++++++++++++----------------
+ tools/perf/ui/stdio/hist.c  | 11 +++--------
+ 2 files changed, 16 insertions(+), 24 deletions(-)
 
-I looked at this file as well during build testing
-and ended up combining the change with a cleanup,
-If you like, I can send my version instead, see below.
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index c16224b1fef3..ec6807f00c54 100644
+=2D-- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -796,16 +796,16 @@ static int perf_sample__fprintf_start(struct perf_sc=
+ript *script,
+ 	if (PRINT_FIELD(VCPU) && sample->machine_pid)
+ 		printed +=3D fprintf(fp, "VCPU:%03d ", sample->vcpu);
 
-      Arnd
-
-diff --git a/arch/arm/probes/kprobes/test-core.c b/arch/arm/probes/kprobes/test-core.c
-index 171c7076b89f..0c6639509eff 100644
---- a/arch/arm/probes/kprobes/test-core.c
-+++ b/arch/arm/probes/kprobes/test-core.c
-@@ -1650,24 +1650,16 @@ static int __init run_all_tests(void)
- 
- 	return ret;
- }
+-	if (PRINT_FIELD(COMM)) {
+-		const char *comm =3D thread ? thread__comm_str(thread) : ":-1";
 -
-+late_initcall(run_all_tests);
- 
- /*
-  * Module setup
-  */
- 
--#ifdef MODULE
--
- static void __exit kprobe_test_exit(void)
- {
- }
--
--module_init(run_all_tests)
- module_exit(kprobe_test_exit)
--MODULE_LICENSE("GPL");
- 
--#else /* !MODULE */
--
--late_initcall(run_all_tests);
--
--#endif
-+MODULE_DESCRIPTION("Test code for ARM kprobes");
-+MODULE_LICENSE("GPL");
+-		if (latency_format)
+-			printed +=3D fprintf(fp, "%8.8s ", comm);
+-		else if (PRINT_FIELD(IP) && evsel__has_callchain(evsel) && symbol_conf.=
+use_callchain)
+-			printed +=3D fprintf(fp, "%s ", comm);
+-		else
+-			printed +=3D fprintf(fp, "%16s ", comm);
+-	}
++	if (PRINT_FIELD(COMM))
++		printed +=3D fprintf(fp,
++				   (latency_format
++				   ? "%8.8s "
++				   : ((PRINT_FIELD(IP) &&
++				     evsel__has_callchain(evsel) &&
++				     symbol_conf.use_callchain)
++				     ? "%s "
++				     : "%16s ")),
++				   (thread ? thread__comm_str(thread) : ":-1"));
+
+ 	if (PRINT_FIELD(PID) && PRINT_FIELD(TID))
+ 		printed +=3D fprintf(fp, "%7d/%-7d ", sample->pid, sample->tid);
+@@ -814,12 +814,9 @@ static int perf_sample__fprintf_start(struct perf_scr=
+ipt *script,
+ 	else if (PRINT_FIELD(TID))
+ 		printed +=3D fprintf(fp, "%7d ", sample->tid);
+
+-	if (PRINT_FIELD(CPU)) {
+-		if (latency_format)
+-			printed +=3D fprintf(fp, "%3d ", sample->cpu);
+-		else
+-			printed +=3D fprintf(fp, "[%03d] ", sample->cpu);
+-	}
++	if (PRINT_FIELD(CPU))
++		printed +=3D fprintf(fp, (latency_format ? "%3d " : "[%03d] "),
++				   sample->cpu);
+
+ 	if (PRINT_FIELD(MISC)) {
+ 		int ret =3D 0;
+diff --git a/tools/perf/ui/stdio/hist.c b/tools/perf/ui/stdio/hist.c
+index 9372e8904d22..899019e8aab8 100644
+=2D-- a/tools/perf/ui/stdio/hist.c
++++ b/tools/perf/ui/stdio/hist.c
+@@ -37,10 +37,7 @@ static size_t ipchain__fprintf_graph_line(FILE *fp, int=
+ depth, int depth_mask,
+ 	size_t ret =3D callchain__fprintf_left_margin(fp, left_margin);
+
+ 	for (i =3D 0; i < depth; i++)
+-		if (depth_mask & (1 << i))
+-			ret +=3D fprintf(fp, "|          ");
+-		else
+-			ret +=3D fprintf(fp, "           ");
++		ret +=3D fprintf(fp, ((depth_mask & (1 << i)) ? "|          " : "      =
+     "));
+
+ 	ret +=3D fprintf(fp, "\n");
+
+@@ -60,10 +57,8 @@ static size_t ipchain__fprintf_graph(FILE *fp, struct c=
+allchain_node *node,
+
+ 	ret +=3D callchain__fprintf_left_margin(fp, left_margin);
+ 	for (i =3D 0; i < depth; i++) {
+-		if (depth_mask & (1 << i))
+-			ret +=3D fprintf(fp, "|");
+-		else
+-			ret +=3D fprintf(fp, " ");
++		ret +=3D fprintf(fp, ((depth_mask & (1 << i)) ? "|" : " "));
++
+ 		if (!period && i =3D=3D depth - 1) {
+ 			ret +=3D fprintf(fp, "--");
+ 			ret +=3D callchain_node__fprintf_value(node, fp, total_samples);
+=2D-
+2.45.2
+
