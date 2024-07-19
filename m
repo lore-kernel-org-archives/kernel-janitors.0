@@ -1,68 +1,68 @@
-Received: from flow4-smtp.messagingengine.com (flow4-smtp.messagingengine.com [103.168.172.139])
+Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F9777107;
-	Fri, 19 Jul 2024 10:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9579F1E502;
+	Fri, 19 Jul 2024 11:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721386308; cv=none; b=plbq9FJWxRnc/vjhWT46y+H0a/59iiiqCWd5TZKODIj1PV+x4rNkbLMeDmUa76z2HGMvsUK9NfIcMYT10/DGgLbD4BDlJRdv/QTW1/FlRDyz+QGRT7wtQflAX/Mw2vLtfuXAXWLSArDjqDLntj46A7IUoLPpxXQbYdsggTZ9u6k=
+	t=1721388548; cv=none; b=omDB9g2+6BCEJyoqQ9RDca9FKrl/DGjGJ5El9fPw06dYnw52NapDyvtEjMpAon/PTNGxHIbfF2YBWzjVlKCNeuV5uuW8niXfvFzbYBKvqta9dUIOdbkL7YtcJM2q0TX/5gxK+nYWPFDO4Pe2uod/e9fZ8fzcTh/ecDhFcyvTyec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721386308; c=relaxed/simple;
-	bh=UykTFXBXSeN2FHoxIZ5+bRknSsY4BwftZQIXhRBSmcs=;
+	s=arc-20240116; t=1721388548; c=relaxed/simple;
+	bh=6e1McigiHvEvVwK5EbMhAGua/tT5rtZuppTZZmZ/LpY=;
 	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=pHZZM/hMaJq3vJj1wKwyo18DHserTKHd5FYtwEQpt68nsAAgaY8g2d2owJW1qSXdXeS90kNbqcVmXxzJ1NUhNrshhI8pfPJ7MSS3oQEV2XtP2kzhWvFXVtjnthbitcE2UGNwpZLtxydHJlBYSVbqBSmbNiwkjY8Rladpqt8Pz44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Z3HBXcph; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iDmpZHFk; arc=none smtp.client-ip=103.168.172.139
+	 Subject:Content-Type; b=Au6e9+7hh+gTn5SPFqX6x/nbmUuPZQv/WVKezTVhQZD/oec82pd/nNodITPTpfrZGA3vMwR3Baz0o8npUvc3UdHQc1bEpts9a4d9zJ8wygKlPYJKnsUupkgvNj3lzUbshhMV19oUBWmicONu/kohfoiwxbigdGf8ifH/3CImezE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=mQJI0s4D; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=twhcLmvx; arc=none smtp.client-ip=103.168.172.159
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Z3HBXcph";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iDmpZHFk"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="mQJI0s4D";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="twhcLmvx"
 Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 742BC2000B7;
-	Fri, 19 Jul 2024 06:51:44 -0400 (EDT)
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id B43EA11406A6;
+	Fri, 19 Jul 2024 07:29:05 -0400 (EDT)
 Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Fri, 19 Jul 2024 06:51:44 -0400
+  by compute6.internal (MEProxy); Fri, 19 Jul 2024 07:29:05 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
 	:cc:content-type:content-type:date:date:from:from:in-reply-to
 	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1721386304; x=1721393504; bh=snau8pjlrT
-	IlBYFHhAeSm3IIl4Zf9EVnI+lPjH52Fu8=; b=Z3HBXcphBEQWb//NJQ9l+W9ZKW
-	OBbnK3/+rwK9uI9pZK2nNHelXW9Z/bP/2wc4cgqUZITmr3BEbz/AiTo1oel3VMYZ
-	EhRdEg0y0lFwUP3JsjGiFJE9n1FY+3JZjsnar4Gq2DASAxHTxH0wFcZKlBvAWQOi
-	6JGlpMBAlUwNOEv3LRbM0Thg49CI3/scGsj9NYb+RfAhR4tzGo4hTt8yiNV9pYqg
-	/gVPs4jaKoWaWeFyj19MPUde/6cSqmN8BGA+ZDn/x8jS6uEhRRVfOOBpfvblySTX
-	1GG3dxs8IrT3y4ExPdf9JbR9lLhO4bZEXY/He9NFRUJT8mTM/QW9jJdL1mwg==
+	:subject:to:to; s=fm2; t=1721388545; x=1721474945; bh=r/mNmunF4X
+	YM9lHwpvMhWNpNNiXBr+47HI8/H3udo78=; b=mQJI0s4DF6X7kQCMYF6YJh5swB
+	hVCn49Q2d1G0mKvHpSRSmbKe4wrMVixnooQqY8TF3WP0z0owTaitdmK5dAql08eu
+	0X3vtrZOD9wCDK4AXyKJlGVvD8U/SLMSXbjKKoYoA9NNB8E61mIFrd6297ssmpoQ
+	KuHjaDQig370CLzoXRP/eGT9TzvAxQkGnnUmUBc6+Y8FJTrf9RGnCs9D0C9dS3yS
+	C/wCpRQW7KhOa6ioyBFr+NpS4ZmULn8457pCSk1rRAuGMlfFOwXfiDxoCHHiBnZW
+	iPWecw1M4VYJUwRT7ke3p4ofvt+wYQDIvaw1f9krS2abS957LOYsLcEpKVtA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1721386304; x=1721393504; bh=snau8pjlrTIlBYFHhAeSm3IIl4Zf
-	9EVnI+lPjH52Fu8=; b=iDmpZHFky5pw44gpAg4Nr9919985laOcKHe8ogNwz0Fd
-	s0QxxQN8D4T7pggLmcsFvB/cDQHc+6pkCu5jCEuxyo/PwfbLPLo5ld3x4hNwpi9f
-	DJaVjItVrdrDQOECI7xiE4uRYd8wAuW9+YN1XdptlRDHtjbda1A6qbiIZ6/EhIHC
-	e5CZ/eWUGmOpRXWdDHxN0iq7mNx/dytP2QbAZaRAp9sRzYcrMasBOkPGEBt+9z1o
-	gfDA9+kEZ5Ws1+1G621TWWnk5/NXKFBR65HudNcUFH7bYO4ahCDbLJJeEYELHqUK
-	U+A4Q2kIHoCMeEmDxHVMxqPdHP/lcqxCIYOCIByKwg==
-X-ME-Sender: <xms:PkWaZkUfMylc-zbGdOQK5o5U9dbqz1uSPC1Kt9DaWahtWKT2YSrcbA>
-    <xme:PkWaZolqbmoxSS4rWWa08il_02Fr9pXYSFc9A37FWdNUQsG_sum3kqEuB1JqB9xFM
-    6-BnbVoikKioTBby4c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrhedugdeffecutefuodetggdotefrodftvf
+	fm3; t=1721388545; x=1721474945; bh=r/mNmunF4XYM9lHwpvMhWNpNNiXB
+	r+47HI8/H3udo78=; b=twhcLmvxiHKHfwtb934chH1dIsNbM6vYklhw7jqkMRaE
+	BwX7uIDZjuCuRFCTCh82iCwJo4TunLcHP5NF0Ia8ynz+kWzLmaiQiEHZGCCQ2bF4
+	LAbiqGbIAhOwXnwIrtfrLO+l3XjKd+O7L2VNoXgnGZi9qc2PhRp65fibiK75CXTL
+	1MjcxJjTlZ959hcmsnCQAL1sf0RiMHYUQx+tDL6DXWODoiH8v2dsqKfnCc4LLeFV
+	wCq860a5cndjxBM//OY9/kgo+NN3zDIVDKSamQAyOZOreDH94BNSCKkO3YLpzqNe
+	bldCNOlSUY/y6xF/AIBC7pR5P7LKHVUaxa2ePBLBig==
+X-ME-Sender: <xms:AU6aZlW7OVI2E-tQJVVJAZI-8pvcMkyo7K6yO5c3XiuGc5aqbMQlyQ>
+    <xme:AU6aZlk9NZH4nWl5MCV9wNRKxWVzP3ykbIWFbuv4h57IOC3e-WvR23Isg5ErsKUnz
+    W6ZhJaGrFSqd8sFGSY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrhedugdegtdcutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
     ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeufeeh
-    udenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:PkWaZobKZoAh34lEbgvtOaX5PBuGJaCUpADltnho3RXCI-M7t992Nw>
-    <xmx:PkWaZjULJDIp92lesbHoZeYSuI_5ii7kPw-pW_lZyrRKjssWI3Cl2A>
-    <xmx:PkWaZuknikK5YKCAOAmhIOFH4tkk3_YKlbZ5oSOzRHdlaABGT-h1jg>
-    <xmx:PkWaZofwYM6FaYpVY0p5h3VQ0qhBNYUJj-2qqkMVMolTlytnxvHKRg>
-    <xmx:QEWaZsuF_FJxQqbOfqieUqN9wrqpH8vTypvvs7J5CxPEbxs95fcjscV0>
+    gvrhhnpeelffehffevveekgefffeffvdeigfffgefhhfduveetveefgfetudejfeeugffg
+    jeenucffohhmrghinheplhhinhhugidrohhrghdruhhknecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:AU6aZhZtNVyb4bF4ywf82oUI7tencC7h--TxGXSSW1i28hwysgvfCQ>
+    <xmx:AU6aZoWi7CuRnLoP_DYq-Y29bdRKh0zziDuNrKsLJSpOCLVzGyuSug>
+    <xmx:AU6aZvl0pLIBXs36EwH3YGMh34LRx1DIzIZv4XGd-WvOAC_YU3aZew>
+    <xmx:AU6aZlcgkBXiY3tcNwHbmbbmnEFenU0wz4yDhB-aOTkIjQ-cUfECxw>
+    <xmx:AU6aZoAwrpOKHxWcu98sE8o1f3WxzA5TYsOBKooLYWRCtdDo31j76C6e>
 Feedback-ID: i56a14606:Fastmail
 Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 7A275B6008D; Fri, 19 Jul 2024 06:51:42 -0400 (EDT)
+	id 5F153B6008D; Fri, 19 Jul 2024 07:29:05 -0400 (EDT)
 X-Mailer: MessagingEngine.com Webmail Interface
 User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
@@ -71,387 +71,95 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <bdac7f10-4c65-4be2-952b-aed1af04e2c9@app.fastmail.com>
-In-Reply-To: <2d168cf9-e456-4262-b276-95e992b8eac7@quicinc.com>
-References: <2d168cf9-e456-4262-b276-95e992b8eac7@quicinc.com>
-Date: Fri, 19 Jul 2024 12:51:21 +0200
+Message-Id: <05cacd03-686a-4ede-b485-7f4781f69b99@app.fastmail.com>
+In-Reply-To: <3808c973-1315-420c-900d-122a73a34f9e@quicinc.com>
+References: 
+ <20240622-md-arm-arch-arm-probes-kprobes-v1-1-0832bd6e45db@quicinc.com>
+ <3808c973-1315-420c-900d-122a73a34f9e@quicinc.com>
+Date: Fri, 19 Jul 2024 13:28:45 +0200
 From: "Arnd Bergmann" <arnd@arndb.de>
 To: "Jeff Johnson" <quic_jjohnson@quicinc.com>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: "Russell King" <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org,
- "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
- linux-stm32@st-md-mailman.stormreply.com,
- "Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
- "Stephen Boyd" <sboyd@kernel.org>, "Steven Rostedt" <rostedt@goodmis.org>,
- "Masami Hiramatsu" <mhiramat@kernel.org>,
- "Karol Herbst" <karolherbst@gmail.com>,
- "Pekka Paalanen" <ppaalanen@gmail.com>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "Andy Lutomirski" <luto@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
- "Alexandre Torgue" <alexandre.torgue@foss.st.com>
-Subject: Re: MODULE_DESCRIPTION() patches with no maintainer action
+ "Russell King" <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] arm: kprobes: add missing MODULE_DESCRIPTION() macro
 Content-Type: text/plain
 
-On Sun, Jul 14, 2024, at 23:46, Jeff Johnson wrote:
-> Andrew & Greg,
+On Tue, Jul 9, 2024, at 21:53, Jeff Johnson wrote:
+> On 6/22/2024 9:34 PM, Jeff Johnson wrote:
+>> With ARCH=arm, make allmodconfig && make W=1 C=1 reports:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/probes/kprobes/test-kprobes.o
+>> 
+>> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>> 
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>> ---
+>>  arch/arm/probes/kprobes/test-core.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>> 
+>> diff --git a/arch/arm/probes/kprobes/test-core.c b/arch/arm/probes/kprobes/test-core.c
+>> index 171c7076b89f..6e9041a76b8b 100644
+>> --- a/arch/arm/probes/kprobes/test-core.c
+>> +++ b/arch/arm/probes/kprobes/test-core.c
+>> @@ -1664,6 +1664,7 @@ static void __exit kprobe_test_exit(void)
+>>  
+>>  module_init(run_all_tests)
+>>  module_exit(kprobe_test_exit)
+>> +MODULE_DESCRIPTION("ARM kprobes test module");
+>>  MODULE_LICENSE("GPL");
+>>  
+>>  #else /* !MODULE */
+>> 
+>> ---
+>> base-commit: 563a50672d8a86ec4b114a4a2f44d6e7ff855f5b
+>> change-id: 20240622-md-arm-arch-arm-probes-kprobes-34037098a2c3
 >
-> I hate to bother you with such mundane patches, but the following have been
-> posted for a while without any maintainer or reviewer comment or action, and
-> they have not yet landed in linux-next.
->
-> What is the path forward to have these MODULE_DESCRIPTION() warnings fixed?
->
-> arch/arm/probes/kprobes/
-> https://lore.kernel.org/all/20240622-md-arm-arch-arm-probes-kprobes-v1-1-0832bd6e45db@quicinc.com/
->
-> arch/x86/mm/
-> https://lore.kernel.org/all/20240515-testmmiotrace-md-v1-1-10919a8b2842@quicinc.com/
->
-> drivers/spmi/
-> https://lore.kernel.org/all/20240609-md-drivers-spmi-v1-1-f1d5b24e7a66@quicinc.com/
->
-> (note that beyond these 3 patches I still have an additional 13 patches which
-> need to land in order to fix these warnings tree-wide, but those 13 patches
-> have had recent maintainer or reviewer action so I'm not seeking your help at
-> this time).
+> I don't see this in linux-next yet so following up to see if anything else is
+> needed to get this merged.
 
 Hi Jeff,
 
-For completeness, this is a patch that I have in my local
-test tree now after I addressed the build issues for all
-randconfig builds on arm, arm64 and x86.
+The arm tree uses a separate submission system for reviewed
+patches to get into the tree, see
 
-I assume you already a version of most of these,
-but please have a look in case there are some still
-missing.
+https://www.arm.linux.org.uk/developer/patches/info.php
+https://www.arm.linux.org.uk/developer/patches/section.php?section=0
 
-   Arnd 
+I looked at this file as well during build testing
+and ended up combining the change with a cleanup,
+If you like, I can send my version instead, see below.
 
- arch/arm/lib/xor-neon.c                         | 1 +
- arch/x86/mm/testmmiotrace.c                     | 1 +
- drivers/fpga/tests/fpga-bridge-test.c           | 1 +
- drivers/fpga/tests/fpga-mgr-test.c              | 1 +
- drivers/fpga/tests/fpga-region-test.c           | 1 +
- drivers/fsi/fsi-core.c                          | 1 +
- drivers/fsi/fsi-master-aspeed.c                 | 2 ++
- drivers/fsi/fsi-master-ast-cf.c                 | 1 +
- drivers/fsi/fsi-master-gpio.c                   | 1 +
- drivers/fsi/fsi-master-hub.c                    | 1 +
- drivers/fsi/fsi-scom.c                          | 1 +
- drivers/xen/xenbus/xenbus_probe_frontend.c      | 1 +
- fs/adfs/super.c                                 | 2 ++
- fs/exportfs/expfs.c                             | 1 +
- kernel/locking/test-ww_mutex.c                  | 1 +
- lib/asn1_decoder.c                              | 1 +
- lib/slub_kunit.c                                | 1 +
- lib/ucs2_string.c                               | 1 +
- lib/zlib_inflate/inflate_syms.c                 | 1 +
- mm/kasan/kasan_test.c                           | 1 +
- mm/kasan/kasan_test_module.c                    | 1 +
- samples/livepatch/livepatch-callbacks-busymod.c | 1 +
- samples/livepatch/livepatch-callbacks-demo.c    | 1 +
- samples/livepatch/livepatch-callbacks-mod.c     | 1 +
- samples/livepatch/livepatch-sample.c            | 1 +
- samples/livepatch/livepatch-shadow-fix1.c       | 1 +
- samples/livepatch/livepatch-shadow-fix2.c       | 1 +
- security/apparmor/policy_unpack_test.c          | 1 +
- 28 files changed, 30 insertions(+)
+      Arnd
 
-diff --git a/arch/arm/lib/xor-neon.c b/arch/arm/lib/xor-neon.c
-index 522510baed49..fae19167ae0a 100644
---- a/arch/arm/lib/xor-neon.c
-+++ b/arch/arm/lib/xor-neon.c
-@@ -8,6 +8,7 @@
- #include <linux/raid/xor.h>
- #include <linux/module.h>
+diff --git a/arch/arm/probes/kprobes/test-core.c b/arch/arm/probes/kprobes/test-core.c
+index 171c7076b89f..0c6639509eff 100644
+--- a/arch/arm/probes/kprobes/test-core.c
++++ b/arch/arm/probes/kprobes/test-core.c
+@@ -1650,24 +1650,16 @@ static int __init run_all_tests(void)
  
-+MODULE_DESCRIPTION("NEON accelerated block XOR function");
- MODULE_LICENSE("GPL");
- 
- #ifndef __ARM_NEON__
-diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
-index bda73cb7a044..ccafab530b1e 100644
---- a/arch/x86/mm/testmmiotrace.c
-+++ b/arch/x86/mm/testmmiotrace.c
-@@ -143,4 +143,5 @@ static void __exit cleanup(void)
- 
- module_init(init);
- module_exit(cleanup);
-+MODULE_DESCRIPTION("Test module for memory mapped I/O tracing");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/fpga/tests/fpga-bridge-test.c b/drivers/fpga/tests/fpga-bridge-test.c
-index 2f7a24f23808..3a28f3cc7089 100644
---- a/drivers/fpga/tests/fpga-bridge-test.c
-+++ b/drivers/fpga/tests/fpga-bridge-test.c
-@@ -173,4 +173,5 @@ static struct kunit_suite fpga_bridge_suite = {
- 
- kunit_test_suite(fpga_bridge_suite);
- 
-+MODULE_DESCRIPTION("KUnit test for the FPGA Bridge");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/fpga/tests/fpga-mgr-test.c b/drivers/fpga/tests/fpga-mgr-test.c
-index 125b3a4d43c6..50419ba66667 100644
---- a/drivers/fpga/tests/fpga-mgr-test.c
-+++ b/drivers/fpga/tests/fpga-mgr-test.c
-@@ -324,4 +324,5 @@ static struct kunit_suite fpga_mgr_suite = {
- 
- kunit_test_suite(fpga_mgr_suite);
- 
-+MODULE_DESCRIPTION("KUnit test for the FPGA Manager");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/fpga/tests/fpga-region-test.c b/drivers/fpga/tests/fpga-region-test.c
-index bcf0651df261..b2ddd1f73d07 100644
---- a/drivers/fpga/tests/fpga-region-test.c
-+++ b/drivers/fpga/tests/fpga-region-test.c
-@@ -207,4 +207,5 @@ static struct kunit_suite fpga_region_suite = {
- 
- kunit_test_suite(fpga_region_suite);
- 
-+MODULE_DESCRIPTION("KUnit test for the FPGA Region");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
-index 46ac5a8beab7..e2e1e9df6115 100644
---- a/drivers/fsi/fsi-core.c
-+++ b/drivers/fsi/fsi-core.c
-@@ -1444,5 +1444,6 @@ static void fsi_exit(void)
+ 	return ret;
  }
- module_exit(fsi_exit);
- module_param(discard_errors, int, 0664);
-+MODULE_DESCRIPTION("FSI core driver");
- MODULE_LICENSE("GPL");
- MODULE_PARM_DESC(discard_errors, "Don't invoke error handling on bus accesses");
-diff --git a/drivers/fsi/fsi-master-aspeed.c b/drivers/fsi/fsi-master-aspeed.c
-index b0b624c3717b..a75cb8c8bace 100644
---- a/drivers/fsi/fsi-master-aspeed.c
-+++ b/drivers/fsi/fsi-master-aspeed.c
-@@ -670,4 +670,6 @@ static struct platform_driver fsi_master_aspeed_driver = {
- };
+-
++late_initcall(run_all_tests);
  
- module_platform_driver(fsi_master_aspeed_driver);
-+
-+MODULE_DESCRIPTION("FSI master driver for AST2600");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/fsi/fsi-master-ast-cf.c b/drivers/fsi/fsi-master-ast-cf.c
-index f8c776ce1b56..aecaafaae8de 100644
---- a/drivers/fsi/fsi-master-ast-cf.c
-+++ b/drivers/fsi/fsi-master-ast-cf.c
-@@ -1438,5 +1438,6 @@ static struct platform_driver fsi_master_acf = {
- };
+ /*
+  * Module setup
+  */
  
- module_platform_driver(fsi_master_acf);
-+MODULE_DESCRIPTION("FSI master controller, using ASpeed Corefire microcontroller");
- MODULE_LICENSE("GPL");
- MODULE_FIRMWARE(FW_FILE_NAME);
-diff --git a/drivers/fsi/fsi-master-gpio.c b/drivers/fsi/fsi-master-gpio.c
-index 10fc344b6b22..371810cdcd27 100644
---- a/drivers/fsi/fsi-master-gpio.c
-+++ b/drivers/fsi/fsi-master-gpio.c
-@@ -892,4 +892,5 @@ static struct platform_driver fsi_master_gpio_driver = {
- };
- 
- module_platform_driver(fsi_master_gpio_driver);
-+MODULE_DESCRIPTION("FSI master controller, using a simple GPIO bit-banging interface");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/fsi/fsi-master-hub.c b/drivers/fsi/fsi-master-hub.c
-index 6d8b6e8854e5..6568fed7db3c 100644
---- a/drivers/fsi/fsi-master-hub.c
-+++ b/drivers/fsi/fsi-master-hub.c
-@@ -295,4 +295,5 @@ static struct fsi_driver hub_master_driver = {
- };
- 
- module_fsi_driver(hub_master_driver);
-+MODULE_DESCRIPTION("FSI hub master driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/fsi/fsi-scom.c b/drivers/fsi/fsi-scom.c
-index 61dbda9dbe2b..411ddc018cd8 100644
---- a/drivers/fsi/fsi-scom.c
-+++ b/drivers/fsi/fsi-scom.c
-@@ -625,4 +625,5 @@ static void scom_exit(void)
- 
- module_init(scom_init);
- module_exit(scom_exit);
-+MODULE_DESCRIPTION("SCOM FSI Client device driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/xen/xenbus/xenbus_probe_frontend.c b/drivers/xen/xenbus/xenbus_probe_frontend.c
-index fcb335bb7b18..8b75f8234baf 100644
---- a/drivers/xen/xenbus/xenbus_probe_frontend.c
-+++ b/drivers/xen/xenbus/xenbus_probe_frontend.c
-@@ -513,4 +513,5 @@ static int __init boot_wait_for_devices(void)
- late_initcall(boot_wait_for_devices);
- #endif
- 
-+MODULE_DESCRIPTION("Frontend for Xen bus probe");
- MODULE_LICENSE("GPL");
-diff --git a/fs/adfs/super.c b/fs/adfs/super.c
-index 9354b14bbfe3..ea4488b1f234 100644
---- a/fs/adfs/super.c
-+++ b/fs/adfs/super.c
-@@ -491,4 +491,6 @@ static void __exit exit_adfs_fs(void)
- 
- module_init(init_adfs_fs)
- module_exit(exit_adfs_fs)
-+
-+MODULE_DESCRIPTION("Acorn Disc Filing System");
- MODULE_LICENSE("GPL");
-diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-index 4f2dd4ab4486..002599bfbe8d 100644
---- a/fs/exportfs/expfs.c
-+++ b/fs/exportfs/expfs.c
-@@ -597,4 +597,5 @@ struct dentry *exportfs_decode_fh(struct vfsmount *mnt, struct fid *fid,
+-#ifdef MODULE
+-
+ static void __exit kprobe_test_exit(void)
+ {
  }
- EXPORT_SYMBOL_GPL(exportfs_decode_fh);
+-
+-module_init(run_all_tests)
+ module_exit(kprobe_test_exit)
+-MODULE_LICENSE("GPL");
  
-+MODULE_DESCRIPTION("Code mapping from inodes to NFS file handles");
- MODULE_LICENSE("GPL");
-diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
-index 78719e1ef1b1..2de48f8aa58e 100644
---- a/kernel/locking/test-ww_mutex.c
-+++ b/kernel/locking/test-ww_mutex.c
-@@ -695,5 +695,6 @@ static void __exit test_ww_mutex_exit(void)
- module_init(test_ww_mutex_init);
- module_exit(test_ww_mutex_exit);
- 
-+MODULE_DESCRIPTION("Module-based API test facility for ww_mutexes");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Intel Corporation");
-diff --git a/lib/asn1_decoder.c b/lib/asn1_decoder.c
-index 13da529e2e72..5738ae286b41 100644
---- a/lib/asn1_decoder.c
-+++ b/lib/asn1_decoder.c
-@@ -518,4 +518,5 @@ int asn1_ber_decoder(const struct asn1_decoder *decoder,
- }
- EXPORT_SYMBOL_GPL(asn1_ber_decoder);
- 
-+MODULE_DESCRIPTION("Decoder for ASN.1 BER/DER/CER encoded bytestream");
- MODULE_LICENSE("GPL");
-diff --git a/lib/slub_kunit.c b/lib/slub_kunit.c
-index e6667a28c014..2404e37633ab 100644
---- a/lib/slub_kunit.c
-+++ b/lib/slub_kunit.c
-@@ -187,4 +187,5 @@ static struct kunit_suite test_suite = {
- };
- kunit_test_suite(test_suite);
- 
-+MODULE_DESCRIPTION("Kunit tests for slub allocator");
- MODULE_LICENSE("GPL");
-diff --git a/lib/ucs2_string.c b/lib/ucs2_string.c
-index 9308bcfb2ad5..dfb4f2358cab 100644
---- a/lib/ucs2_string.c
-+++ b/lib/ucs2_string.c
-@@ -165,4 +165,5 @@ ucs2_as_utf8(u8 *dest, const ucs2_char_t *src, unsigned long maxlength)
- }
- EXPORT_SYMBOL(ucs2_as_utf8);
- 
-+MODULE_DESCRIPTION("UCS2 string handling");
- MODULE_LICENSE("GPL v2");
-diff --git a/lib/zlib_inflate/inflate_syms.c b/lib/zlib_inflate/inflate_syms.c
-index 9720114c0672..b8996d90e8bc 100644
---- a/lib/zlib_inflate/inflate_syms.c
-+++ b/lib/zlib_inflate/inflate_syms.c
-@@ -18,4 +18,5 @@ EXPORT_SYMBOL(zlib_inflateEnd);
- EXPORT_SYMBOL(zlib_inflateReset);
- EXPORT_SYMBOL(zlib_inflateIncomp); 
- EXPORT_SYMBOL(zlib_inflate_blob);
-+MODULE_DESCRIPTION("Data decompression using the deflation algorithm");
- MODULE_LICENSE("GPL");
-diff --git a/mm/kasan/kasan_test.c b/mm/kasan/kasan_test.c
-index 7b32be2a3cf0..88b717ba34e8 100644
---- a/mm/kasan/kasan_test.c
-+++ b/mm/kasan/kasan_test.c
-@@ -1984,4 +1984,5 @@ static struct kunit_suite kasan_kunit_test_suite = {
- 
- kunit_test_suite(kasan_kunit_test_suite);
- 
-+MODULE_DESCRIPTION("kunit test case for kasan");
- MODULE_LICENSE("GPL");
-diff --git a/mm/kasan/kasan_test_module.c b/mm/kasan/kasan_test_module.c
-index 27ec22767e42..f3f62c90df3e 100644
---- a/mm/kasan/kasan_test_module.c
-+++ b/mm/kasan/kasan_test_module.c
-@@ -78,4 +78,5 @@ static int __init kasan_test_module_init(void)
- }
- 
- module_init(kasan_test_module_init);
-+MODULE_DESCRIPTION("test module for KASAN");
- MODULE_LICENSE("GPL");
-diff --git a/samples/livepatch/livepatch-callbacks-busymod.c b/samples/livepatch/livepatch-callbacks-busymod.c
-index 378e2d40271a..4f9cb3de59f0 100644
---- a/samples/livepatch/livepatch-callbacks-busymod.c
-+++ b/samples/livepatch/livepatch-callbacks-busymod.c
-@@ -57,4 +57,5 @@ static void livepatch_callbacks_mod_exit(void)
- 
- module_init(livepatch_callbacks_mod_init);
- module_exit(livepatch_callbacks_mod_exit);
-+MODULE_DESCRIPTION("Live patching demo for (un)patching callbacks");
- MODULE_LICENSE("GPL");
-diff --git a/samples/livepatch/livepatch-callbacks-demo.c b/samples/livepatch/livepatch-callbacks-demo.c
-index 11c3f4357812..9e69d9caed25 100644
---- a/samples/livepatch/livepatch-callbacks-demo.c
-+++ b/samples/livepatch/livepatch-callbacks-demo.c
-@@ -192,5 +192,6 @@ static void livepatch_callbacks_demo_exit(void)
- 
- module_init(livepatch_callbacks_demo_init);
- module_exit(livepatch_callbacks_demo_exit);
-+MODULE_DESCRIPTION("Live patching demo for (un)patching callbacks");
- MODULE_LICENSE("GPL");
- MODULE_INFO(livepatch, "Y");
-diff --git a/samples/livepatch/livepatch-callbacks-mod.c b/samples/livepatch/livepatch-callbacks-mod.c
-index 2a074f422a51..d1851b471ad9 100644
---- a/samples/livepatch/livepatch-callbacks-mod.c
-+++ b/samples/livepatch/livepatch-callbacks-mod.c
-@@ -38,4 +38,5 @@ static void livepatch_callbacks_mod_exit(void)
- 
- module_init(livepatch_callbacks_mod_init);
- module_exit(livepatch_callbacks_mod_exit);
-+MODULE_DESCRIPTION("Live patching demo for (un)patching callbacks, support module");
- MODULE_LICENSE("GPL");
-diff --git a/samples/livepatch/livepatch-sample.c b/samples/livepatch/livepatch-sample.c
-index cd76d7ebe598..5263a2f31c48 100644
---- a/samples/livepatch/livepatch-sample.c
-+++ b/samples/livepatch/livepatch-sample.c
-@@ -66,5 +66,6 @@ static void livepatch_exit(void)
- 
- module_init(livepatch_init);
- module_exit(livepatch_exit);
-+MODULE_DESCRIPTION("Kernel Live Patching Sample Module");
- MODULE_LICENSE("GPL");
- MODULE_INFO(livepatch, "Y");
-diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
-index 6701641bf12d..25a03cca79c0 100644
---- a/samples/livepatch/livepatch-shadow-fix1.c
-+++ b/samples/livepatch/livepatch-shadow-fix1.c
-@@ -169,5 +169,6 @@ static void livepatch_shadow_fix1_exit(void)
- 
- module_init(livepatch_shadow_fix1_init);
- module_exit(livepatch_shadow_fix1_exit);
-+MODULE_DESCRIPTION("Live patching demo for shadow variables");
- MODULE_LICENSE("GPL");
- MODULE_INFO(livepatch, "Y");
-diff --git a/samples/livepatch/livepatch-shadow-fix2.c b/samples/livepatch/livepatch-shadow-fix2.c
-index 361046a4f10c..b99122cb221f 100644
---- a/samples/livepatch/livepatch-shadow-fix2.c
-+++ b/samples/livepatch/livepatch-shadow-fix2.c
-@@ -128,5 +128,6 @@ static void livepatch_shadow_fix2_exit(void)
- 
- module_init(livepatch_shadow_fix2_init);
- module_exit(livepatch_shadow_fix2_exit);
-+MODULE_DESCRIPTION("Live patching demo for shadow variables");
- MODULE_LICENSE("GPL");
- MODULE_INFO(livepatch, "Y");
-diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
-index 5c9bde25e56d..874fcf97794e 100644
---- a/security/apparmor/policy_unpack_test.c
-+++ b/security/apparmor/policy_unpack_test.c
-@@ -604,4 +604,5 @@ static struct kunit_suite apparmor_policy_unpack_test_module = {
- 
- kunit_test_suite(apparmor_policy_unpack_test_module);
- 
-+MODULE_DESCRIPTION("KUnit tests for AppArmor's policy unpack");
- MODULE_LICENSE("GPL");
+-#else /* !MODULE */
+-
+-late_initcall(run_all_tests);
+-
+-#endif
++MODULE_DESCRIPTION("Test code for ARM kprobes");
++MODULE_LICENSE("GPL");
