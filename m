@@ -1,39 +1,48 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F2E13F458;
-	Fri, 19 Jul 2024 13:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240EB39FF3;
+	Fri, 19 Jul 2024 14:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721396331; cv=none; b=FAojtHEgMZvRBxVF1MT8zKU3c8fy9HPYXEwtjO33wi2jPgbLsRZWVL2tpiTqCv6fjsOA8m37PodpHdHLBD0qfSKPDu8aE6qnVTyvZ4iwv5kBnrFJTmlU3oMFwl/hebLTmFCOWKHwTfW1I8NWhiMrX2xzmPA8DUsFizLsX1R/a+o=
+	t=1721397702; cv=none; b=bxmYG7dihbuRJqrJ6TBwI87HCLzCFnb8syEN0nc7pH0WFPx4yR5k8OkWqopH94ctw9bi6mUvIDpODXpvwfzTQSOEmp09KBTTSljtvQ19sQEhhA08kEfsiwAGnA1cqxVDAufOzvNcYuIG62rAVN72sf0W2KVuUsU4gLWGndNVtTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721396331; c=relaxed/simple;
-	bh=hYm0+Gc/4820hUi3b/qjBW/E/nlsvhfdp460SR6KPfs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=mtFj9gUB94c2RM1crXVg0VSe83iXyV+YIOCLIYe82MrdIClyHJDYm3HELuHQ9A3r04Jr+s+6TlVRVdOD61WQDXsXAHMTRLvkXpoaO4BoUcdUH6aB9O4HK3e3e4SAnhiJd83LtftOVP3O4FrJ9Wg9P6kMP1+FX6br/tNEm1cUDzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iK1P8Lv0; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1721397702; c=relaxed/simple;
+	bh=HDQU3FDX+hBa1O/Oib/v0VdziCMVN2qK+SSJPiYu710=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EKon3hoqSCVGPWx3Oj4PxuOGoAuM0F37xEIJMCEt24tXjoz3Lm2+9FGU+ucl4diFbibEh0hUwVJPnL/BJg8EBV0h0Ws0aLKetjMVLfOw3VCSSde7le3JDnkedbSqHRFsv/QA94pmRgtKDRVeLkbazpUE40RKXyEVB896ZwZ/yvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LYyJO9nj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iK1P8Lv0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721396297; x=1722001097; i=markus.elfring@web.de;
-	bh=Nvp33d300YqX0N1vR8LPcXTZPzXdHadX2ynJNuJ4AJM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=iK1P8Lv0vRGyQhWaZp4lqZN01zBuTF+XKFjc1dH1fufRyCfWCUE2hUXQng5poy8T
-	 fvQohhNtYL3ZxscNonGHDW67pIaydWuZ7EA0zuBr+Ejsur39c2BJ/ErdSd4+GWH0j
-	 mkWK9q6uUzgZMtKmWRiWOBlOtm0kRs2mPpkKesAGLM/5I8c5IjiJBB4GgnUgf9q5m
-	 BakvAxS3rOnCHVKRZUBnC+AyIy0morloPiyrCursnwMg8SQO8t/4cS67P9uF7pnJC
-	 rbUkt9GgTdGK6oORV0o/mpacHZ61wCwrdGt2w9h2383X9+aogR1C8AklPtqUa176p
-	 KUzZnj8JNfuG9aa6cA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N2BI2-1sKNRX21ra-00yI1m; Fri, 19
- Jul 2024 15:38:17 +0200
-Message-ID: <fcc9ebe9-e4a0-4395-b3f0-8c6d5fba56f2@web.de>
-Date: Fri, 19 Jul 2024 15:38:14 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LYyJO9nj"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46JCVfr5002454;
+	Fri, 19 Jul 2024 14:00:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0iOXd/KnUcqhuwFmJpV0aD60W+/rKAO1g0GIgi7G9dU=; b=LYyJO9njjal2idWQ
+	pHOhc9v48Y3mFXXbo69osK52dhN/D2QEB1m6pC0VT4I8cWFE6izJVlgjMwNnXolR
+	ukdcCv907hcFc3z5BaSFy2wnlJpSuGYRw4Zt5qMUJhnOF3k0Ds/1r/rAEu3sMBaR
+	milE/AgVpodAQ976/mWxTO9CfzNtOrQiai5WaOGn08hjuBVDuDDa8bKhY6RgDjRz
+	p0UGJ/xbZv/pSTN8VVHBMVXj7UhG3xtqyRdt6RhNvIdiwv66z5tvUIMNbRA+R7RN
+	FdN5SwAgonLbrA6yAjkBbAsg38Q2rnC1O4iKS7dmylnlLecD8O8nA19F7zuFDW9u
+	j62hpw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40fe94sm9p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Jul 2024 14:00:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46JE0J7r027068
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Jul 2024 14:00:19 GMT
+Received: from [10.48.247.102] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 19 Jul
+ 2024 07:00:18 -0700
+Message-ID: <55341a0d-b07b-4f25-be45-dd0b352315aa@quicinc.com>
+Date: Fri, 19 Jul 2024 07:00:17 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,135 +50,149 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
- Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
- Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>,
- Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@inria.fr>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] perf: Optimise format string selections in three functions
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:JRd9oP5K2pJo4gOj2zTHo1CxRuaY9GB517rk431Il04gVRO6ctk
- JFNLg7HSapN8h1kSqwqwzZWN1uV1yPL4e/KlJeSa90qQMSpj7Ft8lc/d2YUQsto0Uv98Oab
- ikTINY1n/GvYhkO278y/478UrM6JiYkVQsvLURNKrEjtXrszNHEXdbggtoSEZ88W8c7aC5+
- peZnt+x8D9vj0eVrvXosg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:0vVQUbzDQ0Q=;9EiJVL6xEZcbkBJj0Vg2qvbTk5v
- qjqZ/aUD6OQl3W27o94QWV+wvnm9WrI1nANnUM+hZV+VNn83FVzDjCBYZLzZM0lQFTHjypiws
- bco7BrhbNd7e11lT28A8hLyVWhenaCIv2SkC1cAovxxSHIDdeRZU92DjBzWnybbOeLMgexiIn
- KXM+SIVEdJR/1Ln+A6//JLeaIEw4BQvsjQnGMgNZsgvXfb8SpAx7HTlA+eKlNEXPiRL6UJJmT
- Y30vzcxpQKOblwLCVkIlm47OoJhvCR1kfu9Q3OaC/sco5ttkd2bDuLEA6b6/MLfo4zHJaTRoD
- Aowi5nTfqw5KNVoefwmps2qpp+NGNR3kn/V94x5cSbtRn61odsgU9yr3v2KUa8aZDOF3O/awg
- ejSmBvuLapHFaNFgsgVqEDhYrEVMNVJQfuwqwsNkt+ABT94xt8uFyAHb8WqbBdL4yL3EEBhkT
- zYSLhVIPXSgqockYzbXf17hZafLTzTAHDE8VagOWQyx/U6F8nUumHgeGzhMGbKBDOeESCaWPD
- NqZr0PpeSN/iys9TGAliQ0ySnF9g+kVUxBRtzPL8wsGPztcczvmprMX/8loUDaajkLpnebTRK
- dphwANuoVMCtlX15uF8hYU+QG1dYoZhDuoojL3g+KxitU3xo8+hDpMg9JiCdGUU/bppLzlUDR
- 51VOffalgEpsVHe7vnq3K0HaV9sjprvXXi/9/birzPzBG9j2BRA/cD3aHovXxyjdpAkzq24yk
- sPi07WE+O/INs20GX/YrT9022XvgGgWFBgtpe7f4ubb1uX3EgTVzkElvRwOuX8tkXP2NoGM7p
- mwj19Elh7rkcIa3arq+4+a5g==
+Subject: Re: MODULE_DESCRIPTION() patches with no maintainer action
+Content-Language: en-US
+To: Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Russell King <linux@armlinux.org.uk>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        "nouveau@lists.freedesktop.org"
+	<nouveau@lists.freedesktop.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu
+	<mhiramat@kernel.org>,
+        Karol Herbst <karolherbst@gmail.com>,
+        Pekka Paalanen
+	<ppaalanen@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy
+ Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav
+ Petkov <bp@alien8.de>, <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>
+References: <2d168cf9-e456-4262-b276-95e992b8eac7@quicinc.com>
+ <bdac7f10-4c65-4be2-952b-aed1af04e2c9@app.fastmail.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <bdac7f10-4c65-4be2-952b-aed1af04e2c9@app.fastmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: sg1Ff6mAFYU0BUKqF12MoFAl9ng0bFVC
+X-Proofpoint-ORIG-GUID: sg1Ff6mAFYU0BUKqF12MoFAl9ng0bFVC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-19_06,2024-07-18_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 lowpriorityscore=0 bulkscore=0 spamscore=0 impostorscore=0
+ adultscore=0 malwarescore=0 clxscore=1011 phishscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407190107
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 19 Jul 2024 15:30:26 +0200
+On 7/19/2024 3:51 AM, Arnd Bergmann wrote:
+> On Sun, Jul 14, 2024, at 23:46, Jeff Johnson wrote:
+>> Andrew & Greg,
+>>
+>> I hate to bother you with such mundane patches, but the following have been
+>> posted for a while without any maintainer or reviewer comment or action, and
+>> they have not yet landed in linux-next.
+>>
+>> What is the path forward to have these MODULE_DESCRIPTION() warnings fixed?
+>>
+>> arch/arm/probes/kprobes/
+>> https://lore.kernel.org/all/20240622-md-arm-arch-arm-probes-kprobes-v1-1-0832bd6e45db@quicinc.com/
+>>
+>> arch/x86/mm/
+>> https://lore.kernel.org/all/20240515-testmmiotrace-md-v1-1-10919a8b2842@quicinc.com/
+>>
+>> drivers/spmi/
+>> https://lore.kernel.org/all/20240609-md-drivers-spmi-v1-1-f1d5b24e7a66@quicinc.com/
+>>
+>> (note that beyond these 3 patches I still have an additional 13 patches which
+>> need to land in order to fix these warnings tree-wide, but those 13 patches
+>> have had recent maintainer or reviewer action so I'm not seeking your help at
+>> this time).
+> 
+> Hi Jeff,
+> 
+> For completeness, this is a patch that I have in my local
+> test tree now after I addressed the build issues for all
+> randconfig builds on arm, arm64 and x86.
+> 
+> I assume you already a version of most of these,
+> but please have a look in case there are some still
+> missing.
 
-Adjust source code in three function implementations so that duplicate cod=
-e
-can be avoided for a few format string selections.
+You have found and fixed some that I didn't encounter with make allmodconfig
+builds. I do have a list of ones for further analysis that I created by
+looking for files with a MODULE_LICENSE but not a MODULE_DESCRIPTION, and the
+ones I haven't yet fixed are on that list, but I'm very happy for you to
+submit your fixes.
 
-This issue was transformed by using the Coccinelle software.
+Details follow:
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- tools/perf/builtin-script.c | 29 +++++++++++++----------------
- tools/perf/ui/stdio/hist.c  | 11 +++--------
- 2 files changed, 16 insertions(+), 24 deletions(-)
+>  arch/arm/lib/xor-neon.c                         | 1 +
+https://lore.kernel.org/all/20240711-md-arm-arch-arm-lib-v2-1-ab08653dc106@quicinc.com/
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index c16224b1fef3..ec6807f00c54 100644
-=2D-- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -796,16 +796,16 @@ static int perf_sample__fprintf_start(struct perf_sc=
-ript *script,
- 	if (PRINT_FIELD(VCPU) && sample->machine_pid)
- 		printed +=3D fprintf(fp, "VCPU:%03d ", sample->vcpu);
+>  arch/x86/mm/testmmiotrace.c                     | 1 +
+https://lore.kernel.org/all/20240515-testmmiotrace-md-v1-1-10919a8b2842@quicinc.com/
 
--	if (PRINT_FIELD(COMM)) {
--		const char *comm =3D thread ? thread__comm_str(thread) : ":-1";
--
--		if (latency_format)
--			printed +=3D fprintf(fp, "%8.8s ", comm);
--		else if (PRINT_FIELD(IP) && evsel__has_callchain(evsel) && symbol_conf.=
-use_callchain)
--			printed +=3D fprintf(fp, "%s ", comm);
--		else
--			printed +=3D fprintf(fp, "%16s ", comm);
--	}
-+	if (PRINT_FIELD(COMM))
-+		printed +=3D fprintf(fp,
-+				   (latency_format
-+				   ? "%8.8s "
-+				   : ((PRINT_FIELD(IP) &&
-+				     evsel__has_callchain(evsel) &&
-+				     symbol_conf.use_callchain)
-+				     ? "%s "
-+				     : "%16s ")),
-+				   (thread ? thread__comm_str(thread) : ":-1"));
+>  drivers/fpga/tests/fpga-bridge-test.c           | 1 +
+>  drivers/fpga/tests/fpga-mgr-test.c              | 1 +
+>  drivers/fpga/tests/fpga-region-test.c           | 1 +
+I do not have a patch for these three
 
- 	if (PRINT_FIELD(PID) && PRINT_FIELD(TID))
- 		printed +=3D fprintf(fp, "%7d/%-7d ", sample->pid, sample->tid);
-@@ -814,12 +814,9 @@ static int perf_sample__fprintf_start(struct perf_scr=
-ipt *script,
- 	else if (PRINT_FIELD(TID))
- 		printed +=3D fprintf(fp, "%7d ", sample->tid);
+>  drivers/fsi/fsi-core.c                          | 1 +
+>  drivers/fsi/fsi-master-aspeed.c                 | 2 ++
+>  drivers/fsi/fsi-master-ast-cf.c                 | 1 +
+>  drivers/fsi/fsi-master-gpio.c                   | 1 +
+>  drivers/fsi/fsi-master-hub.c                    | 1 +
+>  drivers/fsi/fsi-scom.c                          | 1 +
+https://lore.kernel.org/all/20240605-md-drivers-fsi-v1-1-fefc82d81b12@quicinc.com/
 
--	if (PRINT_FIELD(CPU)) {
--		if (latency_format)
--			printed +=3D fprintf(fp, "%3d ", sample->cpu);
--		else
--			printed +=3D fprintf(fp, "[%03d] ", sample->cpu);
--	}
-+	if (PRINT_FIELD(CPU))
-+		printed +=3D fprintf(fp, (latency_format ? "%3d " : "[%03d] "),
-+				   sample->cpu);
+>  drivers/xen/xenbus/xenbus_probe_frontend.c      | 1 +
+I do not have a patch for this one
 
- 	if (PRINT_FIELD(MISC)) {
- 		int ret =3D 0;
-diff --git a/tools/perf/ui/stdio/hist.c b/tools/perf/ui/stdio/hist.c
-index 9372e8904d22..899019e8aab8 100644
-=2D-- a/tools/perf/ui/stdio/hist.c
-+++ b/tools/perf/ui/stdio/hist.c
-@@ -37,10 +37,7 @@ static size_t ipchain__fprintf_graph_line(FILE *fp, int=
- depth, int depth_mask,
- 	size_t ret =3D callchain__fprintf_left_margin(fp, left_margin);
+>  fs/adfs/super.c                                 | 2 ++
+https://lore.kernel.org/all/20240523-md-adfs-v1-1-364268e38370@quicinc.com/
 
- 	for (i =3D 0; i < depth; i++)
--		if (depth_mask & (1 << i))
--			ret +=3D fprintf(fp, "|          ");
--		else
--			ret +=3D fprintf(fp, "           ");
-+		ret +=3D fprintf(fp, ((depth_mask & (1 << i)) ? "|          " : "      =
-     "));
+>  fs/exportfs/expfs.c                             | 1 +
+I do not have a patch for this one
 
- 	ret +=3D fprintf(fp, "\n");
+>  kernel/locking/test-ww_mutex.c                  | 1 +
+https://lore.kernel.org/all/20240528-md-test-ww_mutex-v2-1-a2a19e920b12@quicinc.com/
 
-@@ -60,10 +57,8 @@ static size_t ipchain__fprintf_graph(FILE *fp, struct c=
-allchain_node *node,
+>  lib/asn1_decoder.c                              | 1 +
+>  lib/slub_kunit.c                                | 1 +
+>  lib/ucs2_string.c                               | 1 +
+>  lib/zlib_inflate/inflate_syms.c                 | 1 +
+I do not have a patch for these four
 
- 	ret +=3D callchain__fprintf_left_margin(fp, left_margin);
- 	for (i =3D 0; i < depth; i++) {
--		if (depth_mask & (1 << i))
--			ret +=3D fprintf(fp, "|");
--		else
--			ret +=3D fprintf(fp, " ");
-+		ret +=3D fprintf(fp, ((depth_mask & (1 << i)) ? "|" : " "));
-+
- 		if (!period && i =3D=3D depth - 1) {
- 			ret +=3D fprintf(fp, "--");
- 			ret +=3D callchain_node__fprintf_value(node, fp, total_samples);
-=2D-
-2.45.2
+>  mm/kasan/kasan_test.c                           | 1 +
+>  mm/kasan/kasan_test_module.c                    | 1 +
+I do not have a patch for these two
+
+>  samples/livepatch/livepatch-callbacks-busymod.c | 1 +
+>  samples/livepatch/livepatch-callbacks-demo.c    | 1 +
+>  samples/livepatch/livepatch-callbacks-mod.c     | 1 +
+>  samples/livepatch/livepatch-sample.c            | 1 +
+>  samples/livepatch/livepatch-shadow-fix1.c       | 1 +
+>  samples/livepatch/livepatch-shadow-fix2.c       | 1 +
+I do not have a patch for these six
+
+>  security/apparmor/policy_unpack_test.c          | 1 +
+https://lore.kernel.org/all/20240529-md-apparmor_policy_unpack_test-v1-1-9efc582078c4@quicinc.com/
+
 
