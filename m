@@ -1,205 +1,457 @@
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2068.outbound.protection.outlook.com [40.107.243.68])
+Received: from flow4-smtp.messagingengine.com (flow4-smtp.messagingengine.com [103.168.172.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F958383A5;
-	Fri, 19 Jul 2024 06:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721371116; cv=fail; b=Np0B3KA35K9Q9N5jgKk+QrLmG8FvCTzVaSdDzaqE50DBNsB4DmTj83Qp+ZnMN7GX4GNeBDkFNFwqtJW4GHdvoivYHeNEPNsFzN0xuqW6CUzeQgRUYunDDkMikB+hB6Jw6gJuut00xCAU3mPVTrBK0GpALd6CDtUNPsf4qs7WY8w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721371116; c=relaxed/simple;
-	bh=+TyZcD8yLRJhUGPnuMVXCiombwUo6N9FIErpeUSmFZA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jfjtqRi/Qt0QAS0JFLMCeup8TkUy0uvY0e3YgqHcRVFrTztAX2nsUXFvFDYwGPs5j2Zr98Xx9PvYTRI94i/Bmp1a/5pPE86o60eQqjQW5Lq4nF7elT5t9W5T72aeil4q+mrwt75StIk987IuC3G5lDsLvvLpBxhl82/KUlCA0rc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=H5trdwzc; arc=fail smtp.client-ip=40.107.243.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F9777107;
+	Fri, 19 Jul 2024 10:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721386308; cv=none; b=plbq9FJWxRnc/vjhWT46y+H0a/59iiiqCWd5TZKODIj1PV+x4rNkbLMeDmUa76z2HGMvsUK9NfIcMYT10/DGgLbD4BDlJRdv/QTW1/FlRDyz+QGRT7wtQflAX/Mw2vLtfuXAXWLSArDjqDLntj46A7IUoLPpxXQbYdsggTZ9u6k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721386308; c=relaxed/simple;
+	bh=UykTFXBXSeN2FHoxIZ5+bRknSsY4BwftZQIXhRBSmcs=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=pHZZM/hMaJq3vJj1wKwyo18DHserTKHd5FYtwEQpt68nsAAgaY8g2d2owJW1qSXdXeS90kNbqcVmXxzJ1NUhNrshhI8pfPJ7MSS3oQEV2XtP2kzhWvFXVtjnthbitcE2UGNwpZLtxydHJlBYSVbqBSmbNiwkjY8Rladpqt8Pz44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Z3HBXcph; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iDmpZHFk; arc=none smtp.client-ip=103.168.172.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="H5trdwzc"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vdnKOthcTMKtRf7Z9+Niwio4HbBOITjJDhr6gKlZtg7AH0S6uZbyZuMQN6gSaFiRMntrYz00HGTZxoBUJ2u/XUaRtIUS2ULSlCDCgH9DfVK2Iu80qo/jMbNgvtDZAoQxjAtH8+aNOI49ShsvshFlOOVpSd+Fv8BtMzjrCxEoBd6TCy8L5NBXToJ9im6Gw/EGRA39yLCpt0MZkCeN8XqH67vFulAKyrKYQi0kpbOp9BMq5jCRpeiPr0TQbTErupFbc7RNecnTrMUDklqucAB77hRrB9cSRv9xTzGVZRmYJMTVWBThCuznrvmFMIdW6vOw7RVg+mFEcu3iwTjUqaBxSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0rT6Bkp5H4rxnMjW4pAFgkycP/m37dorYQEgaKfgIwU=;
- b=Dkhun0rvvOIwK/qKpbVPiJAKzH2uoc3o/WD79tIBWMtY4b68+D2Y8tQPgpZAFq+8ercJBEqaubAh8Xm52/q8T2Ytf4K1gd6YggvpMYpi14Tl+2XDzVgF+TKsHzqJApAt9A1V5ovjwDqCQX0j5dyOlHoMI/pj4gcGF4E0+vGS9i3UTLfY2R13T29MoL8QNlhIIOQ94NvJubjB3GOiw2PcufSPxOYZPnjVFfyij+iGs2F2Tby8PPcPEvWls0c6At2gOTBmdXXo4LQMcFEm6/OM+j1nfZHBy1/zNt32mvFNTzcq01EO6GNw5jbexsVUCbz6rjNO8NbfiEGCsHub6WV2bA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0rT6Bkp5H4rxnMjW4pAFgkycP/m37dorYQEgaKfgIwU=;
- b=H5trdwzcIOah3/zMvCaWSC6xb/8Wuvt4Zm7nhvrWRP3y/nPpjWlXiCChUP4ame0X173AsqvU323IrEQPMWumlXJXktOeOQaleBOG5DUoixCitCA6FtMcMcnUc8qSZnU8ZiFNHXP40ny34uQ5UB+M7bfA7xRS5C8F7j1veQ4Z8/I=
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com (2603:10b6:930:c4::19)
- by DS7PR12MB5743.namprd12.prod.outlook.com (2603:10b6:8:72::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Fri, 19 Jul
- 2024 06:38:30 +0000
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf]) by CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf%5]) with mapi id 15.20.7784.016; Fri, 19 Jul 2024
- 06:38:30 +0000
-From: "Yuan, Perry" <Perry.Yuan@amd.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: "Huang, Ray" <Ray.Huang@amd.com>, "Shenoy, Gautham Ranjal"
-	<gautham.shenoy@amd.com>, "Limonciello, Mario" <Mario.Limonciello@amd.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar
-	<viresh.kumar@linaro.org>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
-	<kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] cpufreq: amd-pstate: Fix uninitialized variable in
- amd_pstate_cpu_boost_update()
-Thread-Topic: [PATCH] cpufreq: amd-pstate: Fix uninitialized variable in
- amd_pstate_cpu_boost_update()
-Thread-Index: AQHa2U5KukeeSWwdckWWUCvkFE++B7H9mZUA
-Date: Fri, 19 Jul 2024 06:38:30 +0000
-Message-ID:
- <CYYPR12MB8655D6D2630692790CCDEBE99CAD2@CYYPR12MB8655.namprd12.prod.outlook.com>
-References: <7ff53543-6c04-48a0-8d99-7dc010b93b3a@stanley.mountain>
-In-Reply-To: <7ff53543-6c04-48a0-8d99-7dc010b93b3a@stanley.mountain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=f6e8f3d5-b6f8-4d4e-a27a-f4446e409ed0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-07-19T06:37:16Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CYYPR12MB8655:EE_|DS7PR12MB5743:EE_
-x-ms-office365-filtering-correlation-id: fe9e2006-d07a-40d6-62f6-08dca7bd6774
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?cWlmiC/229cP9x2P/MvDJUasY0K8quTfLVundGsm4cUge0cv4WmGpNayPwMa?=
- =?us-ascii?Q?jEn4TZ+XK1UXnBXb7ONI4n9wK9oZs2feYQabBejp8wvzD+ksnQpKWto+lPcP?=
- =?us-ascii?Q?tp7VQoGtIplFOJRMvXPKqBJ1sQtER5LrdN2Gkz3jcOLpylwiNiMWHUoPOJao?=
- =?us-ascii?Q?oiMaM+M0VYAG1BUG5zo0xqVBkKNe2TZyTU/T6To53rdNzvK/gf3Mz/aoM7py?=
- =?us-ascii?Q?29xNIdaQ6lMOMpub79RLsay9dey5A5hyxag+Sii+C6cSlZEbsMwuD7SpyMCk?=
- =?us-ascii?Q?KTsVqCi8Zqp1BefpSQ6IolwTyuFMpHrvbeNFJJ3iZheFCx8nB6m+jcVdn38J?=
- =?us-ascii?Q?ntwHvFprOU5daJytWzM8Pg/dEm2do45X2A8eCFzgPr04aHU+qgH9ImCnUvkc?=
- =?us-ascii?Q?H3iudFUz4A70SM5GdJha5GW9Fh2Y0YnKDSrdiI0kthqyhh/tPNFFkhfuE/2Q?=
- =?us-ascii?Q?iLE7LPvNwQ9dZD4a1hkzsvKHnphlVUN8ClT7S5JwPoNMXMOx2rcYWdI1aFhs?=
- =?us-ascii?Q?kyttucBh75q7pxWSF0NzE+VQFR940w0GLQ9BWSe1GIY/QkbVMFwHaFwAP7oJ?=
- =?us-ascii?Q?xlW6DtpIV32J+WBv3TD78fEHKo8DB221pDFL9bHdRwT3TE5HDrEPxOXFuzD0?=
- =?us-ascii?Q?XeqeMIy6IWjMxnyEMJIBXxxtis/HZZtxien+suGgdqQZj+YxZ74KAJ0JoZGY?=
- =?us-ascii?Q?pLoRiaJ+UPsC3bor56o6tbNQqhB+b8yhgXa3cQ67+6KWhh4g7UFn2TrgiJmc?=
- =?us-ascii?Q?99qiRJgioxqX6930p6LCi01otQpXHwFkCHkIayJdgy5pZ0Mac/JNpewLyLw0?=
- =?us-ascii?Q?tn497NgymNtLA23Gf1XB4/Ps68ouH3TkrFPZ6DHvHbO5W/jODYs3H9UWUbAx?=
- =?us-ascii?Q?NaHtVEtsGzjnzW3X64NECu47Qwro50pketnt9EH4YUzpinzB9bbk5hHJOpN+?=
- =?us-ascii?Q?G0Nw5y8p3T+xCxdHBIkRomidH7vYB/n9kmphVIws9wOemYbA92tSToJF6cjN?=
- =?us-ascii?Q?UaYINTBt3bqB4qTMVUcYEWZcmibGH0EZPfCTf4RmvuxUGEt3A5HKm1aEOO56?=
- =?us-ascii?Q?fY7u1+r0VcKYK8biLkbC980OVbMoXvn/RIeNcGSjkkrWRQVD/ATpa03fSRuY?=
- =?us-ascii?Q?F9UvnUZmjloiCgvWRbTObcjtGwtvsEHZf2bCRj+FqoNBBZHJMvwmGpYqV4k1?=
- =?us-ascii?Q?o876nUKvGBFYeHMxaaqQlT8LZFRk2fGxOr1ZYWc7SQGagyd6YRt/SzM06798?=
- =?us-ascii?Q?0VNtr/NhmQoFSJdmqXKcZZnhozgGU3/nz3MAes0F6TOdGpWZBerYikl+6hMw?=
- =?us-ascii?Q?ju9ZyNLp+jrUwSc08l3A15Zqe/Ji7I98NcH/mCKUT3/M0IprtPz7tK+sqc8l?=
- =?us-ascii?Q?iEvxGDBR/wxXNmTXHLEvYFQCKAzbg6p8b6erg5paPGE7TjtwXQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8655.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?si/nlGcgp40OiW9CEsK6voK7sAKezJoeKhVBqQ0R1QfpGsDNTldczlPX5Y6K?=
- =?us-ascii?Q?x1JnVNDgcQBWmK1ykvqj49MVc9OnUYbf9obCwqxeVVfH8o369/hECt/ZmYrg?=
- =?us-ascii?Q?9ZwEyroM65vUtbLvE6XPBSbboDYP3tdPkmtscbdJBfwq9gnrMA4wIwlBwxCF?=
- =?us-ascii?Q?M7NU5FkAyJrmKxS7XXnTSfd++bjEwRG5cE/uOJ+Kp3fseaNdusqivS54YNhw?=
- =?us-ascii?Q?0lBBGhdXsJ+ey1jGk6YtGK9hGWvH1Z3D1a9HPHUp/p6Adl+zVUcw8BmRd2x8?=
- =?us-ascii?Q?AnJZ5Nj1WoNw8Oj9HDiaElyS8Z1gHZGah2JDXzd/qXrWYF0e6GM3NnmGPcbJ?=
- =?us-ascii?Q?WhJtcyGlpuhv5aYryP1cTr5yTeYmk0E+jywDGemTTi7uSgLylVmbetVPf1TW?=
- =?us-ascii?Q?F1hoE5Xh1yVY5JX79uayoQH0M30FWdkt4iv68jAzugiQ5YA8IjQpsCAOSgAu?=
- =?us-ascii?Q?9os62+yBSW6FdmbPuu9HBgH3LgiTpshJleajK2+ezlMXpCPF20x/h+fslGYF?=
- =?us-ascii?Q?S4e5QMzy5Ljtd8rSJpW8OViA48HUA7wYE2vWSQL5JQhrqxpNU6OwbY0oe2D6?=
- =?us-ascii?Q?tNaY7QGQSBbiL3rL+BY6KLLaGG4wvvhpmI6JMmUyVdp+KhBKwzC9w9gPQ0BB?=
- =?us-ascii?Q?T1s6ffzI4pOn7fobS8WDp0V0ahuvxCsv8hFnTSoPlMEYAooeIwSNXg8pIJxM?=
- =?us-ascii?Q?gZJuQj5SfDFznYEJyT/rAR5zWtvIT3HGMmBLpJ6Tavh1//vIY3WxYfXOARmH?=
- =?us-ascii?Q?ey7zIZo8boSxtPKEWbsip+0xcfBx2xtXtO8mPb/UGPh71YF1LT1dUI2wgRPd?=
- =?us-ascii?Q?aojdGZCwWCYCwxOl3951yU7m1EezMOMMM149GZSeiFD7SNrG1tbROQQAkzFe?=
- =?us-ascii?Q?LhLstI+e66VLaIpUKh6BO5ZK8ru7fa189qd8ZZoAeD5R+iwPjEm+4TQWsn55?=
- =?us-ascii?Q?O2EsI3chKHuGr1IbwsyCUmDj51731XJkny2i1WDRItEbvrCPB+qKIPrGh0Pz?=
- =?us-ascii?Q?9GCcMFQviSCWjiyCOulkZ2zKYN1iCvvMsRtJaex+UcRGcErGqHQXar5h0ZTz?=
- =?us-ascii?Q?X8d7FHcQGn4udUoYS6W6QeMcGD0tSraBDaid+F6fT2Btjt942wILFCqzIaM1?=
- =?us-ascii?Q?/i1FUMkzuNcZInnjNfjSUH0i1TSkGgtCPBRb3kE3GqTsqnbSYmzHCETdmXKs?=
- =?us-ascii?Q?cCd5+OGLYCZG5bjvVzVUVhC5Ys0zf2kJGYOkA6YZwQJOsKGI5AKXcOyU53Ev?=
- =?us-ascii?Q?7KCLXSdJAdMltMh+M3ttt7a0f4r21he7B7x/1it57DHC3U/PFrOap7rSr4Mi?=
- =?us-ascii?Q?RtCPMWTtQSld5+2YLD0EJApEVHKG5hzjtlLBdWqGzQfLInz6QtI+2eTy5DDv?=
- =?us-ascii?Q?f7I8fzr5pGxsJFWaxyvDRitCHXjWLBvZqN5eTRaGD7F2uWrGgxN8N81OL7Qd?=
- =?us-ascii?Q?4Mxv9BIImHolA3Rl489ABKuBnD3mkHn2MgwSwgJ9TgrRPTzZVaRsWMWXdqs+?=
- =?us-ascii?Q?TiYAG82fHUt1r7bKrAvKCfvf49sldJQoGVMlvlgeXHNxWjgBsZA1CQUO5Ys6?=
- =?us-ascii?Q?dJxKCdes5Otp4phagXc=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Z3HBXcph";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iDmpZHFk"
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailflow.nyi.internal (Postfix) with ESMTP id 742BC2000B7;
+	Fri, 19 Jul 2024 06:51:44 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Fri, 19 Jul 2024 06:51:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1721386304; x=1721393504; bh=snau8pjlrT
+	IlBYFHhAeSm3IIl4Zf9EVnI+lPjH52Fu8=; b=Z3HBXcphBEQWb//NJQ9l+W9ZKW
+	OBbnK3/+rwK9uI9pZK2nNHelXW9Z/bP/2wc4cgqUZITmr3BEbz/AiTo1oel3VMYZ
+	EhRdEg0y0lFwUP3JsjGiFJE9n1FY+3JZjsnar4Gq2DASAxHTxH0wFcZKlBvAWQOi
+	6JGlpMBAlUwNOEv3LRbM0Thg49CI3/scGsj9NYb+RfAhR4tzGo4hTt8yiNV9pYqg
+	/gVPs4jaKoWaWeFyj19MPUde/6cSqmN8BGA+ZDn/x8jS6uEhRRVfOOBpfvblySTX
+	1GG3dxs8IrT3y4ExPdf9JbR9lLhO4bZEXY/He9NFRUJT8mTM/QW9jJdL1mwg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1721386304; x=1721393504; bh=snau8pjlrTIlBYFHhAeSm3IIl4Zf
+	9EVnI+lPjH52Fu8=; b=iDmpZHFky5pw44gpAg4Nr9919985laOcKHe8ogNwz0Fd
+	s0QxxQN8D4T7pggLmcsFvB/cDQHc+6pkCu5jCEuxyo/PwfbLPLo5ld3x4hNwpi9f
+	DJaVjItVrdrDQOECI7xiE4uRYd8wAuW9+YN1XdptlRDHtjbda1A6qbiIZ6/EhIHC
+	e5CZ/eWUGmOpRXWdDHxN0iq7mNx/dytP2QbAZaRAp9sRzYcrMasBOkPGEBt+9z1o
+	gfDA9+kEZ5Ws1+1G621TWWnk5/NXKFBR65HudNcUFH7bYO4ahCDbLJJeEYELHqUK
+	U+A4Q2kIHoCMeEmDxHVMxqPdHP/lcqxCIYOCIByKwg==
+X-ME-Sender: <xms:PkWaZkUfMylc-zbGdOQK5o5U9dbqz1uSPC1Kt9DaWahtWKT2YSrcbA>
+    <xme:PkWaZolqbmoxSS4rWWa08il_02Fr9pXYSFc9A37FWdNUQsG_sum3kqEuB1JqB9xFM
+    6-BnbVoikKioTBby4c>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrhedugdeffecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeufeeh
+    udenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:PkWaZobKZoAh34lEbgvtOaX5PBuGJaCUpADltnho3RXCI-M7t992Nw>
+    <xmx:PkWaZjULJDIp92lesbHoZeYSuI_5ii7kPw-pW_lZyrRKjssWI3Cl2A>
+    <xmx:PkWaZuknikK5YKCAOAmhIOFH4tkk3_YKlbZ5oSOzRHdlaABGT-h1jg>
+    <xmx:PkWaZofwYM6FaYpVY0p5h3VQ0qhBNYUJj-2qqkMVMolTlytnxvHKRg>
+    <xmx:QEWaZsuF_FJxQqbOfqieUqN9wrqpH8vTypvvs7J5CxPEbxs95fcjscV0>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 7A275B6008D; Fri, 19 Jul 2024 06:51:42 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8655.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe9e2006-d07a-40d6-62f6-08dca7bd6774
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2024 06:38:30.5505
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QH/5Ah1YfE2TsPxTjacda91pUwKgT7kDAq0WqL9CEXYem81gcS+jpcQXwj79S6TKEyTXvu3qb9jKsavt8m3Fvg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5743
+Message-Id: <bdac7f10-4c65-4be2-952b-aed1af04e2c9@app.fastmail.com>
+In-Reply-To: <2d168cf9-e456-4262-b276-95e992b8eac7@quicinc.com>
+References: <2d168cf9-e456-4262-b276-95e992b8eac7@quicinc.com>
+Date: Fri, 19 Jul 2024 12:51:21 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jeff Johnson" <quic_jjohnson@quicinc.com>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Cc: "Russell King" <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+ linux-stm32@st-md-mailman.stormreply.com,
+ "Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Steven Rostedt" <rostedt@goodmis.org>,
+ "Masami Hiramatsu" <mhiramat@kernel.org>,
+ "Karol Herbst" <karolherbst@gmail.com>,
+ "Pekka Paalanen" <ppaalanen@gmail.com>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "Andy Lutomirski" <luto@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
+ "Alexandre Torgue" <alexandre.torgue@foss.st.com>
+Subject: Re: MODULE_DESCRIPTION() patches with no maintainer action
+Content-Type: text/plain
 
-[AMD Official Use Only - AMD Internal Distribution Only]
+On Sun, Jul 14, 2024, at 23:46, Jeff Johnson wrote:
+> Andrew & Greg,
+>
+> I hate to bother you with such mundane patches, but the following have been
+> posted for a while without any maintainer or reviewer comment or action, and
+> they have not yet landed in linux-next.
+>
+> What is the path forward to have these MODULE_DESCRIPTION() warnings fixed?
+>
+> arch/arm/probes/kprobes/
+> https://lore.kernel.org/all/20240622-md-arm-arch-arm-probes-kprobes-v1-1-0832bd6e45db@quicinc.com/
+>
+> arch/x86/mm/
+> https://lore.kernel.org/all/20240515-testmmiotrace-md-v1-1-10919a8b2842@quicinc.com/
+>
+> drivers/spmi/
+> https://lore.kernel.org/all/20240609-md-drivers-spmi-v1-1-f1d5b24e7a66@quicinc.com/
+>
+> (note that beyond these 3 patches I still have an additional 13 patches which
+> need to land in order to fix these warnings tree-wide, but those 13 patches
+> have had recent maintainer or reviewer action so I'm not seeking your help at
+> this time).
 
-Hi Dan,
+Hi Jeff,
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@linaro.org>
-> Sent: Friday, July 19, 2024 4:09 AM
-> To: Yuan, Perry <Perry.Yuan@amd.com>
-> Cc: Huang, Ray <Ray.Huang@amd.com>; Shenoy, Gautham Ranjal
-> <gautham.shenoy@amd.com>; Limonciello, Mario
-> <Mario.Limonciello@amd.com>; Yuan, Perry <Perry.Yuan@amd.com>; Rafael
-> J. Wysocki <rafael@kernel.org>; Viresh Kumar <viresh.kumar@linaro.org>;
-> linux-pm@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-
-> janitors@vger.kernel.org
-> Subject: [PATCH] cpufreq: amd-pstate: Fix uninitialized variable in
-> amd_pstate_cpu_boost_update()
->
-> Smatch complains that "ret" could be uninitialized:
->
->   drivers/cpufreq/amd-pstate.c:734 amd_pstate_cpu_boost_update()
->   error: uninitialized symbol 'ret'.
->
-> This seems like it probably is a real issue.  Initialize "ret" to zero to=
- be safe.
->
-> Fixes: c8c68c38b56f ("cpufreq: amd-pstate: initialize core precision boos=
-t
-> state")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/cpufreq/amd-pstate.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index 68c616b572f2..358bd88cd0c5 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -692,7 +692,7 @@ static int amd_pstate_cpu_boost_update(struct
-> cpufreq_policy *policy, bool on)
->       struct amd_cpudata *cpudata =3D policy->driver_data;
->       struct cppc_perf_ctrls perf_ctrls;
->       u32 highest_perf, nominal_perf, nominal_freq, max_freq;
-> -     int ret;
-> +     int ret =3D 0;
->
->       highest_perf =3D READ_ONCE(cpudata->highest_perf);
->       nominal_perf =3D READ_ONCE(cpudata->nominal_perf);
-> --
-> 2.43.0
+For completeness, this is a patch that I have in my local
+test tree now after I addressed the build issues for all
+randconfig builds on arm, arm64 and x86.
 
-Thanks for the fix.
-LGTM
-Reviewed-by: Perry Yuan <perry.yuan@amd.com>
+I assume you already a version of most of these,
+but please have a look in case there are some still
+missing.
+
+   Arnd 
+
+ arch/arm/lib/xor-neon.c                         | 1 +
+ arch/x86/mm/testmmiotrace.c                     | 1 +
+ drivers/fpga/tests/fpga-bridge-test.c           | 1 +
+ drivers/fpga/tests/fpga-mgr-test.c              | 1 +
+ drivers/fpga/tests/fpga-region-test.c           | 1 +
+ drivers/fsi/fsi-core.c                          | 1 +
+ drivers/fsi/fsi-master-aspeed.c                 | 2 ++
+ drivers/fsi/fsi-master-ast-cf.c                 | 1 +
+ drivers/fsi/fsi-master-gpio.c                   | 1 +
+ drivers/fsi/fsi-master-hub.c                    | 1 +
+ drivers/fsi/fsi-scom.c                          | 1 +
+ drivers/xen/xenbus/xenbus_probe_frontend.c      | 1 +
+ fs/adfs/super.c                                 | 2 ++
+ fs/exportfs/expfs.c                             | 1 +
+ kernel/locking/test-ww_mutex.c                  | 1 +
+ lib/asn1_decoder.c                              | 1 +
+ lib/slub_kunit.c                                | 1 +
+ lib/ucs2_string.c                               | 1 +
+ lib/zlib_inflate/inflate_syms.c                 | 1 +
+ mm/kasan/kasan_test.c                           | 1 +
+ mm/kasan/kasan_test_module.c                    | 1 +
+ samples/livepatch/livepatch-callbacks-busymod.c | 1 +
+ samples/livepatch/livepatch-callbacks-demo.c    | 1 +
+ samples/livepatch/livepatch-callbacks-mod.c     | 1 +
+ samples/livepatch/livepatch-sample.c            | 1 +
+ samples/livepatch/livepatch-shadow-fix1.c       | 1 +
+ samples/livepatch/livepatch-shadow-fix2.c       | 1 +
+ security/apparmor/policy_unpack_test.c          | 1 +
+ 28 files changed, 30 insertions(+)
+
+diff --git a/arch/arm/lib/xor-neon.c b/arch/arm/lib/xor-neon.c
+index 522510baed49..fae19167ae0a 100644
+--- a/arch/arm/lib/xor-neon.c
++++ b/arch/arm/lib/xor-neon.c
+@@ -8,6 +8,7 @@
+ #include <linux/raid/xor.h>
+ #include <linux/module.h>
+ 
++MODULE_DESCRIPTION("NEON accelerated block XOR function");
+ MODULE_LICENSE("GPL");
+ 
+ #ifndef __ARM_NEON__
+diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
+index bda73cb7a044..ccafab530b1e 100644
+--- a/arch/x86/mm/testmmiotrace.c
++++ b/arch/x86/mm/testmmiotrace.c
+@@ -143,4 +143,5 @@ static void __exit cleanup(void)
+ 
+ module_init(init);
+ module_exit(cleanup);
++MODULE_DESCRIPTION("Test module for memory mapped I/O tracing");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fpga/tests/fpga-bridge-test.c b/drivers/fpga/tests/fpga-bridge-test.c
+index 2f7a24f23808..3a28f3cc7089 100644
+--- a/drivers/fpga/tests/fpga-bridge-test.c
++++ b/drivers/fpga/tests/fpga-bridge-test.c
+@@ -173,4 +173,5 @@ static struct kunit_suite fpga_bridge_suite = {
+ 
+ kunit_test_suite(fpga_bridge_suite);
+ 
++MODULE_DESCRIPTION("KUnit test for the FPGA Bridge");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fpga/tests/fpga-mgr-test.c b/drivers/fpga/tests/fpga-mgr-test.c
+index 125b3a4d43c6..50419ba66667 100644
+--- a/drivers/fpga/tests/fpga-mgr-test.c
++++ b/drivers/fpga/tests/fpga-mgr-test.c
+@@ -324,4 +324,5 @@ static struct kunit_suite fpga_mgr_suite = {
+ 
+ kunit_test_suite(fpga_mgr_suite);
+ 
++MODULE_DESCRIPTION("KUnit test for the FPGA Manager");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fpga/tests/fpga-region-test.c b/drivers/fpga/tests/fpga-region-test.c
+index bcf0651df261..b2ddd1f73d07 100644
+--- a/drivers/fpga/tests/fpga-region-test.c
++++ b/drivers/fpga/tests/fpga-region-test.c
+@@ -207,4 +207,5 @@ static struct kunit_suite fpga_region_suite = {
+ 
+ kunit_test_suite(fpga_region_suite);
+ 
++MODULE_DESCRIPTION("KUnit test for the FPGA Region");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
+index 46ac5a8beab7..e2e1e9df6115 100644
+--- a/drivers/fsi/fsi-core.c
++++ b/drivers/fsi/fsi-core.c
+@@ -1444,5 +1444,6 @@ static void fsi_exit(void)
+ }
+ module_exit(fsi_exit);
+ module_param(discard_errors, int, 0664);
++MODULE_DESCRIPTION("FSI core driver");
+ MODULE_LICENSE("GPL");
+ MODULE_PARM_DESC(discard_errors, "Don't invoke error handling on bus accesses");
+diff --git a/drivers/fsi/fsi-master-aspeed.c b/drivers/fsi/fsi-master-aspeed.c
+index b0b624c3717b..a75cb8c8bace 100644
+--- a/drivers/fsi/fsi-master-aspeed.c
++++ b/drivers/fsi/fsi-master-aspeed.c
+@@ -670,4 +670,6 @@ static struct platform_driver fsi_master_aspeed_driver = {
+ };
+ 
+ module_platform_driver(fsi_master_aspeed_driver);
++
++MODULE_DESCRIPTION("FSI master driver for AST2600");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fsi/fsi-master-ast-cf.c b/drivers/fsi/fsi-master-ast-cf.c
+index f8c776ce1b56..aecaafaae8de 100644
+--- a/drivers/fsi/fsi-master-ast-cf.c
++++ b/drivers/fsi/fsi-master-ast-cf.c
+@@ -1438,5 +1438,6 @@ static struct platform_driver fsi_master_acf = {
+ };
+ 
+ module_platform_driver(fsi_master_acf);
++MODULE_DESCRIPTION("FSI master controller, using ASpeed Corefire microcontroller");
+ MODULE_LICENSE("GPL");
+ MODULE_FIRMWARE(FW_FILE_NAME);
+diff --git a/drivers/fsi/fsi-master-gpio.c b/drivers/fsi/fsi-master-gpio.c
+index 10fc344b6b22..371810cdcd27 100644
+--- a/drivers/fsi/fsi-master-gpio.c
++++ b/drivers/fsi/fsi-master-gpio.c
+@@ -892,4 +892,5 @@ static struct platform_driver fsi_master_gpio_driver = {
+ };
+ 
+ module_platform_driver(fsi_master_gpio_driver);
++MODULE_DESCRIPTION("FSI master controller, using a simple GPIO bit-banging interface");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fsi/fsi-master-hub.c b/drivers/fsi/fsi-master-hub.c
+index 6d8b6e8854e5..6568fed7db3c 100644
+--- a/drivers/fsi/fsi-master-hub.c
++++ b/drivers/fsi/fsi-master-hub.c
+@@ -295,4 +295,5 @@ static struct fsi_driver hub_master_driver = {
+ };
+ 
+ module_fsi_driver(hub_master_driver);
++MODULE_DESCRIPTION("FSI hub master driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/fsi/fsi-scom.c b/drivers/fsi/fsi-scom.c
+index 61dbda9dbe2b..411ddc018cd8 100644
+--- a/drivers/fsi/fsi-scom.c
++++ b/drivers/fsi/fsi-scom.c
+@@ -625,4 +625,5 @@ static void scom_exit(void)
+ 
+ module_init(scom_init);
+ module_exit(scom_exit);
++MODULE_DESCRIPTION("SCOM FSI Client device driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/xen/xenbus/xenbus_probe_frontend.c b/drivers/xen/xenbus/xenbus_probe_frontend.c
+index fcb335bb7b18..8b75f8234baf 100644
+--- a/drivers/xen/xenbus/xenbus_probe_frontend.c
++++ b/drivers/xen/xenbus/xenbus_probe_frontend.c
+@@ -513,4 +513,5 @@ static int __init boot_wait_for_devices(void)
+ late_initcall(boot_wait_for_devices);
+ #endif
+ 
++MODULE_DESCRIPTION("Frontend for Xen bus probe");
+ MODULE_LICENSE("GPL");
+diff --git a/fs/adfs/super.c b/fs/adfs/super.c
+index 9354b14bbfe3..ea4488b1f234 100644
+--- a/fs/adfs/super.c
++++ b/fs/adfs/super.c
+@@ -491,4 +491,6 @@ static void __exit exit_adfs_fs(void)
+ 
+ module_init(init_adfs_fs)
+ module_exit(exit_adfs_fs)
++
++MODULE_DESCRIPTION("Acorn Disc Filing System");
+ MODULE_LICENSE("GPL");
+diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+index 4f2dd4ab4486..002599bfbe8d 100644
+--- a/fs/exportfs/expfs.c
++++ b/fs/exportfs/expfs.c
+@@ -597,4 +597,5 @@ struct dentry *exportfs_decode_fh(struct vfsmount *mnt, struct fid *fid,
+ }
+ EXPORT_SYMBOL_GPL(exportfs_decode_fh);
+ 
++MODULE_DESCRIPTION("Code mapping from inodes to NFS file handles");
+ MODULE_LICENSE("GPL");
+diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
+index 78719e1ef1b1..2de48f8aa58e 100644
+--- a/kernel/locking/test-ww_mutex.c
++++ b/kernel/locking/test-ww_mutex.c
+@@ -695,5 +695,6 @@ static void __exit test_ww_mutex_exit(void)
+ module_init(test_ww_mutex_init);
+ module_exit(test_ww_mutex_exit);
+ 
++MODULE_DESCRIPTION("Module-based API test facility for ww_mutexes");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Intel Corporation");
+diff --git a/lib/asn1_decoder.c b/lib/asn1_decoder.c
+index 13da529e2e72..5738ae286b41 100644
+--- a/lib/asn1_decoder.c
++++ b/lib/asn1_decoder.c
+@@ -518,4 +518,5 @@ int asn1_ber_decoder(const struct asn1_decoder *decoder,
+ }
+ EXPORT_SYMBOL_GPL(asn1_ber_decoder);
+ 
++MODULE_DESCRIPTION("Decoder for ASN.1 BER/DER/CER encoded bytestream");
+ MODULE_LICENSE("GPL");
+diff --git a/lib/slub_kunit.c b/lib/slub_kunit.c
+index e6667a28c014..2404e37633ab 100644
+--- a/lib/slub_kunit.c
++++ b/lib/slub_kunit.c
+@@ -187,4 +187,5 @@ static struct kunit_suite test_suite = {
+ };
+ kunit_test_suite(test_suite);
+ 
++MODULE_DESCRIPTION("Kunit tests for slub allocator");
+ MODULE_LICENSE("GPL");
+diff --git a/lib/ucs2_string.c b/lib/ucs2_string.c
+index 9308bcfb2ad5..dfb4f2358cab 100644
+--- a/lib/ucs2_string.c
++++ b/lib/ucs2_string.c
+@@ -165,4 +165,5 @@ ucs2_as_utf8(u8 *dest, const ucs2_char_t *src, unsigned long maxlength)
+ }
+ EXPORT_SYMBOL(ucs2_as_utf8);
+ 
++MODULE_DESCRIPTION("UCS2 string handling");
+ MODULE_LICENSE("GPL v2");
+diff --git a/lib/zlib_inflate/inflate_syms.c b/lib/zlib_inflate/inflate_syms.c
+index 9720114c0672..b8996d90e8bc 100644
+--- a/lib/zlib_inflate/inflate_syms.c
++++ b/lib/zlib_inflate/inflate_syms.c
+@@ -18,4 +18,5 @@ EXPORT_SYMBOL(zlib_inflateEnd);
+ EXPORT_SYMBOL(zlib_inflateReset);
+ EXPORT_SYMBOL(zlib_inflateIncomp); 
+ EXPORT_SYMBOL(zlib_inflate_blob);
++MODULE_DESCRIPTION("Data decompression using the deflation algorithm");
+ MODULE_LICENSE("GPL");
+diff --git a/mm/kasan/kasan_test.c b/mm/kasan/kasan_test.c
+index 7b32be2a3cf0..88b717ba34e8 100644
+--- a/mm/kasan/kasan_test.c
++++ b/mm/kasan/kasan_test.c
+@@ -1984,4 +1984,5 @@ static struct kunit_suite kasan_kunit_test_suite = {
+ 
+ kunit_test_suite(kasan_kunit_test_suite);
+ 
++MODULE_DESCRIPTION("kunit test case for kasan");
+ MODULE_LICENSE("GPL");
+diff --git a/mm/kasan/kasan_test_module.c b/mm/kasan/kasan_test_module.c
+index 27ec22767e42..f3f62c90df3e 100644
+--- a/mm/kasan/kasan_test_module.c
++++ b/mm/kasan/kasan_test_module.c
+@@ -78,4 +78,5 @@ static int __init kasan_test_module_init(void)
+ }
+ 
+ module_init(kasan_test_module_init);
++MODULE_DESCRIPTION("test module for KASAN");
+ MODULE_LICENSE("GPL");
+diff --git a/samples/livepatch/livepatch-callbacks-busymod.c b/samples/livepatch/livepatch-callbacks-busymod.c
+index 378e2d40271a..4f9cb3de59f0 100644
+--- a/samples/livepatch/livepatch-callbacks-busymod.c
++++ b/samples/livepatch/livepatch-callbacks-busymod.c
+@@ -57,4 +57,5 @@ static void livepatch_callbacks_mod_exit(void)
+ 
+ module_init(livepatch_callbacks_mod_init);
+ module_exit(livepatch_callbacks_mod_exit);
++MODULE_DESCRIPTION("Live patching demo for (un)patching callbacks");
+ MODULE_LICENSE("GPL");
+diff --git a/samples/livepatch/livepatch-callbacks-demo.c b/samples/livepatch/livepatch-callbacks-demo.c
+index 11c3f4357812..9e69d9caed25 100644
+--- a/samples/livepatch/livepatch-callbacks-demo.c
++++ b/samples/livepatch/livepatch-callbacks-demo.c
+@@ -192,5 +192,6 @@ static void livepatch_callbacks_demo_exit(void)
+ 
+ module_init(livepatch_callbacks_demo_init);
+ module_exit(livepatch_callbacks_demo_exit);
++MODULE_DESCRIPTION("Live patching demo for (un)patching callbacks");
+ MODULE_LICENSE("GPL");
+ MODULE_INFO(livepatch, "Y");
+diff --git a/samples/livepatch/livepatch-callbacks-mod.c b/samples/livepatch/livepatch-callbacks-mod.c
+index 2a074f422a51..d1851b471ad9 100644
+--- a/samples/livepatch/livepatch-callbacks-mod.c
++++ b/samples/livepatch/livepatch-callbacks-mod.c
+@@ -38,4 +38,5 @@ static void livepatch_callbacks_mod_exit(void)
+ 
+ module_init(livepatch_callbacks_mod_init);
+ module_exit(livepatch_callbacks_mod_exit);
++MODULE_DESCRIPTION("Live patching demo for (un)patching callbacks, support module");
+ MODULE_LICENSE("GPL");
+diff --git a/samples/livepatch/livepatch-sample.c b/samples/livepatch/livepatch-sample.c
+index cd76d7ebe598..5263a2f31c48 100644
+--- a/samples/livepatch/livepatch-sample.c
++++ b/samples/livepatch/livepatch-sample.c
+@@ -66,5 +66,6 @@ static void livepatch_exit(void)
+ 
+ module_init(livepatch_init);
+ module_exit(livepatch_exit);
++MODULE_DESCRIPTION("Kernel Live Patching Sample Module");
+ MODULE_LICENSE("GPL");
+ MODULE_INFO(livepatch, "Y");
+diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
+index 6701641bf12d..25a03cca79c0 100644
+--- a/samples/livepatch/livepatch-shadow-fix1.c
++++ b/samples/livepatch/livepatch-shadow-fix1.c
+@@ -169,5 +169,6 @@ static void livepatch_shadow_fix1_exit(void)
+ 
+ module_init(livepatch_shadow_fix1_init);
+ module_exit(livepatch_shadow_fix1_exit);
++MODULE_DESCRIPTION("Live patching demo for shadow variables");
+ MODULE_LICENSE("GPL");
+ MODULE_INFO(livepatch, "Y");
+diff --git a/samples/livepatch/livepatch-shadow-fix2.c b/samples/livepatch/livepatch-shadow-fix2.c
+index 361046a4f10c..b99122cb221f 100644
+--- a/samples/livepatch/livepatch-shadow-fix2.c
++++ b/samples/livepatch/livepatch-shadow-fix2.c
+@@ -128,5 +128,6 @@ static void livepatch_shadow_fix2_exit(void)
+ 
+ module_init(livepatch_shadow_fix2_init);
+ module_exit(livepatch_shadow_fix2_exit);
++MODULE_DESCRIPTION("Live patching demo for shadow variables");
+ MODULE_LICENSE("GPL");
+ MODULE_INFO(livepatch, "Y");
+diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+index 5c9bde25e56d..874fcf97794e 100644
+--- a/security/apparmor/policy_unpack_test.c
++++ b/security/apparmor/policy_unpack_test.c
+@@ -604,4 +604,5 @@ static struct kunit_suite apparmor_policy_unpack_test_module = {
+ 
+ kunit_test_suite(apparmor_policy_unpack_test_module);
+ 
++MODULE_DESCRIPTION("KUnit tests for AppArmor's policy unpack");
+ MODULE_LICENSE("GPL");
