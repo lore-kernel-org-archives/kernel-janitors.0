@@ -1,99 +1,94 @@
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC8210E6
-	for <kernel-janitors@vger.kernel.org>; Sat, 20 Jul 2024 03:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A10A2F5A;
+	Sat, 20 Jul 2024 06:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721446727; cv=none; b=iQIV8FTRHFuvPla8/BfhrNwDGbCAyYkFRmdkBfhlQr6zmNw4RKMoNbOVriDLtZDLnDRDbpDFAn4DeUOScmBVdu1bZIrsJwjjaV/AQDhR9TiAOWVDkQznZ7HHOgfs4X7Tmq+waWyEFARD+361ifZ1z83kVXFHA0CZEBIo76ihhGs=
+	t=1721455559; cv=none; b=M9Ezk/D+E+F4FWu69C+gTK6gVtbbvswDW0mvreYPgzFphjq9uv12RjombXlwNDYuQvrZSS3+P7+FtE0EfuIZPiaR9Ntn1rpvzc+eMBUPf3116UkVDqWq4T5LkHFs3XdXq09OvnQTyI9UB9w7JaTx21yuZf+jxKdUk14pvR8JFdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721446727; c=relaxed/simple;
-	bh=TLDylYPZsCMZtAc8wiveu/6zwfhNg8BI6WmgBJBWvV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P8bT63QzYlE2IM5IsT5slQy1USt8sFwdKVKhwRBoIWqO+RuFWga8MkqB/1l+nVwksjDZ9Ls6UTbeJMfmHI/a03aDZjHlShNWQKisieIMdxV4toY0vdEu+KqHETkoZh+jzqSTNb/TIQyUKNOnMrvh8nnPqIje17nmfa8ES9j9TXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=htF0JNO5; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1721455559; c=relaxed/simple;
+	bh=SAmjcwt+H0HCe9djoIu0iZu3AnsR25j1fRzonNRbU6g=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HndUAINjgu60tcp4ORx8KdnWNVdt0ID3UuA6JMVpPso4IPi6vMTnvjYjmsEQPYCRN5mzE4TzFWBjnjNgxELDykKrKMLFzAJDL1aDlqKmoxhZFtv+HZOa7MfQmkd2MrBO3E0Tbxz52zQ0HhWtG+hZA3SorFGVzIiWK+9quVmkmpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wYSGYUaU; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="htF0JNO5"
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3c9cc681ee7so1252835b6e.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 19 Jul 2024 20:38:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721446724; x=1722051524; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cClTBAbYXiLYPh2mydOYSPjwCmRcNI1cZVCCE11hSAE=;
-        b=htF0JNO5lAjCz2lv2y4hxKqtjREWGm866FNScu4fE0TsRQfGlHZ7kaRORcvmfYEiI7
-         Xw0uQ/pK9xfRgQAwzp7gxreo1vQ97uwPEMKXx71OMSbPs+uQk/NxBxciu/5lubDeCcBC
-         cAijkUe2UMgkNjXkBPd247BYKEmS6v8igoZm3sULxlUgEmGPSvtgWGZNDfHPoj9VY/k8
-         s8rFDUhC9N0ta9mfTiDVmR+Ah39XzqKGLQ0HVPoswXbKPdAelJNxrzXE3xQabFptU05X
-         eqYq65x0YnDscBBY4J5Ds4w+WtiXtQVoK8kDWyRO658xl0r4GeA0557X8woLIQBR0qPv
-         J4IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721446724; x=1722051524;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cClTBAbYXiLYPh2mydOYSPjwCmRcNI1cZVCCE11hSAE=;
-        b=v/wv5QG1twzgb+JbvtuDYyW7X0mhK/PyP5k1ZcDWu4QLQOmUwamUTJHEZMmtTn4dMv
-         o3Gqpoo1UEP9hWzYeMUdhSiWH9XEgPwjyoOEgIllNMItLcTHJcaDXRyd4GC4Mer4CGar
-         jPfcxLfSm6gImwQyvZy7+8CNMmUtRhjVg6wzx9LEyHCvJBVDRa1W2ciboPPvmvD0JGGy
-         ll2x8Xe0/UdKR0YhUK0+yeCPnhEAPG/xxYPOoFP57gY+sB5/itopXud+N2dUXMmTTUdf
-         DoYEkWA0hWPwCGpjh2ZCcg/Y+6/wJ+7X9bgfd7dKIR1c9i/fJi/NNzmNNgFapf+55835
-         LUlw==
-X-Gm-Message-State: AOJu0YwRPPqcWHSzd7geW2XqwLDq9LnTRv18NZXUbSvqih0Deg5s0nMF
-	NUAKp93G3Pc2P4Ba6gpOBSRumH8kX0nptBhFAU2ZvDpVs3ZIua2YGmVBNRHJreU=
-X-Google-Smtp-Source: AGHT+IE6FafAaV+XRc2gY9e0msZLx1CjRqvih3LOwBBb502JmarZN/NsbvgDMFwWW0B/06TShmxMDg==
-X-Received: by 2002:a05:6808:1b10:b0:3d9:ad9d:620e with SMTP id 5614622812f47-3dad732ebb9mr3814085b6e.0.1721446724498;
-        Fri, 19 Jul 2024 20:38:44 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:4528:a9e:1eaf:80c5])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2610ca4617csm611274fac.39.2024.07.19.20.38.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 20:38:44 -0700 (PDT)
-Date: Fri, 19 Jul 2024 22:38:42 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Pavan Chebbi <pavan.chebbi@broadcom.com>
-Cc: kernel-janitors@vger.kernel.org,
-	Michael Chan <michael.chan@broadcom.com>,
-	Andrew Gospodarek <andrew.gospodarek@broadcom.com>
-Subject: Re: [bug report] bnxt_en: Increase the max total outstanding PTP TX
- packets to 4
-Message-ID: <1b44dc03-0092-4904-89ad-4e7a78bc2aca@suswa.mountain>
-References: <cc01a509-ca3d-488c-b158-2ef16cbda5e2@stanley.mountain>
- <CALs4sv3RY6ANULQK7zX3Rpk7EQrq5Nm5q8PMBkLuFmYa2QW=zg@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wYSGYUaU"
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46K65XoF084039;
+	Sat, 20 Jul 2024 01:05:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1721455533;
+	bh=IUwJKoer6LWSfyx1dmKm3lX66EAqNMpwJb7CXtHw3CE=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=wYSGYUaUeU7AzQdBjxcNol0wq5wbpDZiTcJpcd2MaX9opnRNvkQnIbe8G4Jf/e4Ts
+	 YfvFs8RFlH7/E3kYq1/5EB3WtNSFxFTH6ed8DzWq5ai+XyMRd4L4pKQvIs7fdml+/1
+	 xErX13HL8q6wT3KHkyoIMLsZ9wZE8YHWRuwpf518=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46K65WWq071025
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 20 Jul 2024 01:05:32 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 20
+ Jul 2024 01:05:32 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 20 Jul 2024 01:05:32 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46K65VJD067154;
+	Sat, 20 Jul 2024 01:05:32 -0500
+Date: Sat, 20 Jul 2024 11:35:31 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Kishon Vijay Abraham I <kishon@kernel.org>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+	<kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas
+	<bhelgaas@google.com>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        Niklas Cassel <cassel@kernel.org>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@pengutronix.de>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Aleksandr Mishin
+	<amishin@t-argos.ru>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Jan Kiszka
+	<jan.kiszka@siemens.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] PCI: keystone: Fix && vs || typo
+Message-ID: <dfe47606-1146-4e1e-b349-23a3a60b7629@ti.com>
+References: <1b762a93-e1b2-4af3-8c04-c8843905c279@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CALs4sv3RY6ANULQK7zX3Rpk7EQrq5Nm5q8PMBkLuFmYa2QW=zg@mail.gmail.com>
+In-Reply-To: <1b762a93-e1b2-4af3-8c04-c8843905c279@stanley.mountain>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Sat, Jul 20, 2024 at 09:01:48AM +0530, Pavan Chebbi wrote:
-> >     759
-> >     760 tx_free:
-> >     761         dev_kfree_skb_any(skb);
-> >     762 tx_kick_pending:
-> >     763         if (BNXT_TX_PTP_IS_SET(lflags)) {
-> >     764                 txr->tx_buf_ring[txr->tx_prod].is_ts_pkt = 0;
-> >     765                 atomic64_inc(&bp->ptp_cfg->stats.ts_err);
-> >     766                 if (!(bp->fw_cap & BNXT_FW_CAP_TX_TS_CMP))
-> >     767                         /* set SKB to err so PTP worker will clean up */
-> > --> 768                         ptp->txts_req[txts_prod].tx_skb = ERR_PTR(-EIO);
-> >                                 ^^^^^^^^^^^^^
-> > The patch adds an unchecked dereference
+On Fri, Jul 19, 2024 at 06:53:26PM -0500, Dan Carpenter wrote:
+> This code accidentally uses && where || was intended.  It potentially
+> results in a NULL dereference.
 > 
-> If ptp is null at 513, we will never set the lflags with TX_BD_FLAGS_STAMP.
-> Hence I think this Smatch error be ignored because under no condition
-> we will reach here where we find BNXT_TX_PTP_IS_SET(lflags) = true and
-> we don't have a valid ptp (bp->ptp_cfg)
-> Thanks
-> 
+> Fixes: 86f271f22bbb ("PCI: keystone: Add workaround for Errata #i2037 (AM65x SR 1.0)")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Ah, yes.  Thanks for the review.
+Thank you for the fix.
 
-regards,
-dan carpenter
+Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 
+Regards,
+Siddharth.
