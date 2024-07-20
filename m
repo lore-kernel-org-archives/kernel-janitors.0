@@ -1,55 +1,48 @@
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+Received: from msa.smtpout.orange.fr (msa-212.smtpout.orange.fr [193.252.23.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718012913;
-	Sat, 20 Jul 2024 10:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38A583A19;
+	Sat, 20 Jul 2024 10:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721472139; cv=none; b=Ks3++8rOaKclsb9w6McJW8l1EqrGOyhbirwE6tZYRFnP7zI80sGFY2t3bBEnZxFcJ77rjYrlATBZ+EWvYThHx+HT4XF8vPsUo1lT/mBjidcl4ttsvurJDc1DTX73NAP9HBJy3QV7pUgVHPSdPWilnNQBJRio9k7I+GkeaGqF8mo=
+	t=1721473192; cv=none; b=WprnkzgVET4/cQRFY1Xd+TP1l94C5p2my3xcCbgqOwxQR63SvEpJiwyI4RxFmA9nLHeWwmiVcwc6BkPtN3il401NlKeqVzw+KkZM3Vhz+dSWlky31tyZgh4uwlhNe1q65yPhB0ASccV7hA0JMajLukZog9BXBFiny79w6ns8LiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721472139; c=relaxed/simple;
-	bh=/4f141tJHvAWF8tQzzk0NAIKIQKehhhpmiX34/KAy0M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YqxuvQFAGx2D967qpcC93FGI8X5Q1CvTCcOIQplJBT+2t/vTUFp/yZ1YgKJ6gVUcyzVKyfOJjT4U8tofGERRcLI3VOcE73D6D0qXH3SIIwD0Ti8dpJuFGX0ARmNMpDoZ0iLfGHAI3SbJsAFjNu+/s9w18YFbdm7RXBFRu07oWOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=eWna8qRI; arc=none smtp.client-ip=80.12.242.18
+	s=arc-20240116; t=1721473192; c=relaxed/simple;
+	bh=3eJP5D2gLY2qGLsJ+PSb5K2vvmVn2tcyQqDbjoG+glw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jj12rP/MEnegDMP97gSDFgnz/QCLZtid1pMOy+hR8Vbn4yDjT6WLPUtEwfgAsSfjkDfYzGQHfOhtOYXNeabo+VEth5rJU2eYlT+T5M+5uSMlSC6qIYsS3F5ig7aZFG2rdYwRsSZwVzXmAIOu0rRmToaAQCoterVKH8V7+CMnWTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lngDg7eb; arc=none smtp.client-ip=193.252.23.212
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="eWna8qRI"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lngDg7eb"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id V7XRsonOi95X4V7XRsgB3j; Sat, 20 Jul 2024 12:42:08 +0200
+	id V7oSskCfXOGeaV7oSswaIZ; Sat, 20 Jul 2024 12:59:42 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1721472128;
-	bh=PtZVKDIVPm219rX235hzdcjRMLlI/guwNur3d/5rJXg=;
+	s=t20230301; t=1721473182;
+	bh=/Oc6zHUJ3PsZDwx3kEOlE52feOVHzNSUSRVZP+ZoPqE=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=eWna8qRIGRu2hhZOvWtZqgZKzliKcEd6NTg797VGHgizLWszQVvPqrXND33R7H+Ai
-	 zKB9R4EkDjW/wkS7P2wbXqYT5TUsaf2miPcNyg3aVXfyklY1bLMgltK2MFIVpp8u20
-	 yQMK53YAIJab8b76AdpxqEdqYKzyg1Rs8KvWXEjEdZqagGIynvUPCGN5r0qlCrmH3z
-	 owb5RkbzxjaSwO7SDE+4d98lkIBqaN3TYVnw8uNn+qdipyfNvYFk9ZUTFyMKB5ik2m
-	 z+FCpadpTZfBLGG0hBVODGgI+7C20PfzWawAfxZ+kE7bnqbSvyGZBGORiVolHnQEv6
-	 nNqcGjGUl0LFw==
+	b=lngDg7ebFxzciPH9gWGq9jkDnDew+kqNbMu28oDWUv1HQe3IN0S9BsCR/+QTtMeY8
+	 EoKSnB367Ck8ERNoIVnSt1oBAJYVGpDGjEojaOYuspkdHrXTOwl7lAsehu/V07s/Yf
+	 X2/H5N1Mh2gWqdf2drbimqHXj1KKSAjUMfRPyMvF1eIuk1Y47ITg2tjJ44l5ghYcKL
+	 QJGxSn3RiBCvt+o4hEhx/dyn0Ta5EAW7GXBGhrPIyob/Bax9L0Qgg92+84lVOu7lNu
+	 FuksPrBHgG3C4Bv1IFGdfyN1PdEM702c3n5d5lO4vI7LelG9o9Ct/cvguEhYT5rlJz
+	 dTttig84WNQeA==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 20 Jul 2024 12:42:08 +0200
+X-ME-Date: Sat, 20 Jul 2024 12:59:42 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>
+To: Jon Mason <jdmason@kudzu.us>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Allen Hubbe <allenbh@gmail.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH] perf: Constify struct bus_type
-Date: Sat, 20 Jul 2024 12:42:02 +0200
-Message-ID: <1f6472a4e9f2ee9e74152c3a3491d015e44137ab.1721472093.git.christophe.jaillet@wanadoo.fr>
+	ntb@lists.linux.dev
+Subject: [PATCH] ntb: Constify struct bus_type
+Date: Sat, 20 Jul 2024 12:59:36 +0200
+Message-ID: <50a28f39b1f0d0201b2645d2a8239e1819dc924b.1721473166.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -69,33 +62,59 @@ On a x86_64, with allmodconfig:
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
- 273314	  16956	    716	 290986	  470aa	kernel/events/core.o
+  69682	   4593	    152	  74427	  122bb	drivers/ntb/ntb_transport.o
+   5847	    448	     32	   6327	   18b7	drivers/ntb/core.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
- 273474	  16764	    716	 290954	  4708a	kernel/events/core.o
+  69858	   4433	    152	  74443	  122cb	drivers/ntb/ntb_transport.o
+   6007	    288	     32	   6327	   18b7	drivers/ntb/core.o
+
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested-only.
 ---
- kernel/events/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ntb/core.c          | 4 ++--
+ drivers/ntb/ntb_transport.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index af2e3a06b239..ee011a967a33 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -11508,7 +11508,7 @@ static const struct attribute_group *pmu_dev_groups[] = {
- };
+diff --git a/drivers/ntb/core.c b/drivers/ntb/core.c
+index d702bee78082..ed6f4adc6130 100644
+--- a/drivers/ntb/core.c
++++ b/drivers/ntb/core.c
+@@ -72,7 +72,7 @@ MODULE_VERSION(DRIVER_VERSION);
+ MODULE_AUTHOR(DRIVER_AUTHOR);
+ MODULE_DESCRIPTION(DRIVER_DESCRIPTION);
  
- static int pmu_bus_running;
--static struct bus_type pmu_bus = {
-+static const struct bus_type pmu_bus = {
- 	.name		= "event_source",
- 	.dev_groups	= pmu_dev_groups,
- };
+-static struct bus_type ntb_bus;
++static const struct bus_type ntb_bus;
+ static void ntb_dev_release(struct device *dev);
+ 
+ int __ntb_register_client(struct ntb_client *client, struct module *mod,
+@@ -298,7 +298,7 @@ static void ntb_dev_release(struct device *dev)
+ 	complete(&ntb->released);
+ }
+ 
+-static struct bus_type ntb_bus = {
++static const struct bus_type ntb_bus = {
+ 	.name = "ntb",
+ 	.probe = ntb_probe,
+ 	.remove = ntb_remove,
+diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
+index 77e55debeed6..a79f68e18d3f 100644
+--- a/drivers/ntb/ntb_transport.c
++++ b/drivers/ntb/ntb_transport.c
+@@ -314,7 +314,7 @@ static void ntb_transport_bus_remove(struct device *dev)
+ 	put_device(dev);
+ }
+ 
+-static struct bus_type ntb_transport_bus = {
++static const struct bus_type ntb_transport_bus = {
+ 	.name = "ntb_transport",
+ 	.match = ntb_transport_bus_match,
+ 	.probe = ntb_transport_bus_probe,
 -- 
 2.45.2
 
