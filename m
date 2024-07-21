@@ -1,57 +1,49 @@
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+Received: from msa.smtpout.orange.fr (msa-213.smtpout.orange.fr [193.252.23.213])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87F81FBA;
-	Sun, 21 Jul 2024 07:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2715D33E1;
+	Sun, 21 Jul 2024 07:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721546778; cv=none; b=NDsgLiR13km7kmdz6UIWXTtvqUn0KfZDtGmsUnyzx4vnTAAe/YhhA2mFks752oui0eG2tS2dVyBzgToVxY+p36RIlJ0CAB2WsIaB4dAPTeEtv29/fgpl9PEKG2zxkYXGy5ni5eir85rnuCCvIPgSEdUQgKzSKObB/shi8qT4e1E=
+	t=1721547669; cv=none; b=A6sOkvdfQzk6TieYo9pBPX6wh8pOAU9iulomkrTY9SY+pT8iP1OcpiwRwuic8oapJVAtdeMTDSJ9x1gp1/dZaLBUo2VaeZNKq0SY8rpZOmM9k63NPaL2UPtSnId+YhmoM1XCKWgPZpg7l5VFybXJ5LQqf8Mm2M+av6uu+8hIl+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721546778; c=relaxed/simple;
-	bh=cJ3i0/obWWckr6AJB5BV1+8n6uCKwfupk+hR6GnOxU0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jHl4wpToGZY5eDZXiKzUQPQbepSMJUZvpzPHURp3KQD9YaxAKqQ1Ri6YvDxS13wvi+wWqqJdZFmQ2Or/LS1qGdRIPh/60pqkuWKcISTf9HppdIL9tEWcPWQRm4YykdeUs6t10m1RK/e1KHudtzovajO4XsEcZ089iCAltqGUAxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=LSgwRhhi; arc=none smtp.client-ip=80.12.242.24
+	s=arc-20240116; t=1721547669; c=relaxed/simple;
+	bh=myooTmdDYWi3w4/BwipOyDPWqNI6T+1/xT+G+yICZtA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=auJ+B1LOMKHcZztwivXT5F2AkT5+TrdfDUCksY7TNWPBvxuxucjz0l6x7CD6se6R8+nXP/iet+08KNQgnRJU/uhusObu+eMP3py9P6f+JgfsFoR8OcPNWrO/Vl96/c3zkh5mDeMiUYDVMvjOhqLPH/YBZnI5ShR+naA/zlMQpwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UEpSI4Sk; arc=none smtp.client-ip=193.252.23.213
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="LSgwRhhi"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UEpSI4Sk"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id VQw7sP3rKfVp1VQw7s8A2z; Sun, 21 Jul 2024 09:24:55 +0200
+	id VRBmsszGLnYGvVRBms5oUi; Sun, 21 Jul 2024 09:41:02 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1721546695;
-	bh=sup3EfDa3fgB07IHFJsI7aMCSMa4OWCW/+hc3teBTJc=;
+	s=t20230301; t=1721547662;
+	bh=0P+L+Gugv+wzdGvctc9kSUn+nQDPgO6wIWj+dXDwk3M=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=LSgwRhhiPHJxxeZu1l1IyJpSBWBEdNdRzZM+FI8NPptw2l0lul9hKTcgIwUqjWA3E
-	 xWVMqHUq63s4o5DlodvykLw+96Nl7UyOrEMie2KGKx8eR9l2/x5SCAuyFbsSt1dERx
-	 pcVCp/DOJ9V/xm696W7SiBlJEDDS39IVqnwj2TeWB5KUYNIktOGPNJADwwClLk43Sr
-	 MOo4RtBnctPN/+21i2bdQfbjtteeAgBavvuZU272p1GXql8gHfspIZvzYzOTesrZN4
-	 o3reGXlbWBLYUQgu73isdBES2aZiD31fhF8DGtk/FsUbxUvnTBSm+743QgntnVKWXC
-	 p7wPLeCoG5MBQ==
+	b=UEpSI4SkWxFHkRylyVr6QtXi3vte6IoJivFq98RMQvM8JZwomp6PtWnn/Bb2ad/Cb
+	 aU9RPvVRMpAN0yY91hhL3H+DmcHhw+pm/s0D7gEs9tKc5LCZ3sfvTe2PTfgNDe0SZ6
+	 RkymXfA3zeoqpbolNNxytKP9KaUZzRSr5+NME56azOgS2VOT92Hto8Hcta8TSQVZXj
+	 8nmIdcH+6/VBBLW8sHFkKjJYPo9KFaN53q8i/rC1OFSaSjzUaxPfI4cQAkMdxIRsas
+	 NHGCVnblCOiC+wbJhV/F92ywA/edxhfW+xSWPdvexiSPyXPHTJ/JB9QW+755GJt/FJ
+	 4hCfIC9prkVQQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 21 Jul 2024 09:24:55 +0200
+X-ME-Date: Sun, 21 Jul 2024 09:41:02 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Davidlohr Bueso <dave@stgolabs.net>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+	Kalle Valo <kvalo@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	rcu@vger.kernel.org
-Subject: [PATCH v2] refscale: Optimize process_durations()
-Date: Sun, 21 Jul 2024 09:23:46 +0200
-Message-ID: <77d6d8ee94d7149e6c33b10b78b43daf48ab8c70.1721546569.git.christophe.jaillet@wanadoo.fr>
+	linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com
+Subject: [PATCH v2] brcmfmac: fwsignal: Use struct_size() to simplify brcmf_fws_rxreorder()
+Date: Sun, 21 Jul 2024 09:40:19 +0200
+Message-ID: <f4ca6b887ca1290c71e76247218adea4d1c42442.1721547559.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -61,95 +53,98 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-process_durations() is not a hot path, but there is no good reason to
-iterate over and over the data already in 'buf'.
+In the "struct brcmf_ampdu_rx_reorder", change the 'pktslots' field into
+flexible array.
 
-Using a seq_buf saves some useless strcat() and the need of a temp buffer.
-Data is written directly at the correct place.
+It saves the size of a pointer when the memory is allocated and avoids
+an indirection when the array is used.
+It also removes the usage of a pointer arithmetic and saves a few lines of
+code.
+
+Finally, struct_size() can be used. It is not a must have here, because
+it is easy to see that buf_size can not overflow, but still, it is a good
+practice.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
 ---
-This patch is compile tested only.
-I introduced a bug in v1 (see 1st item in the changes below), so it should
-definitively be tested by someone!
-
-v1 was un-usable because seq_buf_putc() was not exported. It is now
-available since v6.7.
-
-Because of the changes, I don't know if the previous R-b should kept.
-In case, it was:
-	Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-	Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+Compile tested only
 
 Changes in v2:
-  - Use seq_buf_printf() alseo for the first string, otherwise it would
-    get lost
-  - Use seq_buf_str() instead of seq_buf_terminate() because the API has
-    changed
+  - fix description of the 'pktslots' field   [Arend van Spriel]
+  - add A-b tag
 
-v1: https://lore.kernel.org/all/bbbab32e3e104bdc2238724a6a4a85e539f49ddd.1698512661.git.christophe.jaillet@wanadoo.fr/
+v1: https://lore.kernel.org/all/bd3ad239c4d1c49b94c1ba93e48c09df98ef86cb.1720951805.git.christophe.jaillet@wanadoo.fr/
 ---
- kernel/rcu/refscale.c | 25 ++++++++++++++-----------
- 1 file changed, 14 insertions(+), 11 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h   | 4 ++--
+ .../net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c   | 8 ++------
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
-index f4ea5b1ec068..cfec0648e141 100644
---- a/kernel/rcu/refscale.c
-+++ b/kernel/rcu/refscale.c
-@@ -28,6 +28,7 @@
- #include <linux/rcupdate_trace.h>
- #include <linux/reboot.h>
- #include <linux/sched.h>
-+#include <linux/seq_buf.h>
- #include <linux/spinlock.h>
- #include <linux/smp.h>
- #include <linux/stat.h>
-@@ -891,32 +892,34 @@ static u64 process_durations(int n)
- {
- 	int i;
- 	struct reader_task *rt;
--	char buf1[64];
-+	struct seq_buf s;
- 	char *buf;
- 	u64 sum = 0;
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
+index ea76b8d33401..39226b9c0fa8 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
+@@ -48,20 +48,20 @@
+ /**
+  * struct brcmf_ampdu_rx_reorder - AMPDU receive reorder info
+  *
+- * @pktslots: dynamic allocated array for ordering AMPDU packets.
+  * @flow_id: AMPDU flow identifier.
+  * @cur_idx: last AMPDU index from firmware.
+  * @exp_idx: expected next AMPDU index.
+  * @max_idx: maximum amount of packets per AMPDU.
+  * @pend_pkts: number of packets currently in @pktslots.
++ * @pktslots: array for ordering AMPDU packets.
+  */
+ struct brcmf_ampdu_rx_reorder {
+-	struct sk_buff **pktslots;
+ 	u8 flow_id;
+ 	u8 cur_idx;
+ 	u8 exp_idx;
+ 	u8 max_idx;
+ 	u8 pend_pkts;
++	struct sk_buff *pktslots[];
+ };
  
- 	buf = kmalloc(800 + 64, GFP_KERNEL);
- 	if (!buf)
- 		return 0;
--	buf[0] = 0;
--	sprintf(buf, "Experiment #%d (Format: <THREAD-NUM>:<Total loop time in ns>)",
--		exp_idx);
-+	seq_buf_init(&s, buf, 800 + 64);
-+
-+	seq_buf_printf(&s, "Experiment #%d (Format: <THREAD-NUM>:<Total loop time in ns>)",
-+		       exp_idx);
+ /* Forward decls for struct brcmf_pub (see below) */
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
+index 36af81975855..0949e7975ff1 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
+@@ -1673,7 +1673,6 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
+ 	struct sk_buff_head reorder_list;
+ 	struct sk_buff *pnext;
+ 	u8 flags;
+-	u32 buf_size;
  
- 	for (i = 0; i < n && !torture_must_stop(); i++) {
- 		rt = &(reader_tasks[i]);
--		sprintf(buf1, "%d: %llu\t", i, rt->last_duration_ns);
- 
- 		if (i % 5 == 0)
--			strcat(buf, "\n");
--		if (strlen(buf) >= 800) {
--			pr_alert("%s", buf);
--			buf[0] = 0;
-+			seq_buf_putc(&s, '\n');
-+
-+		if (seq_buf_used(&s) >= 800) {
-+			pr_alert("%s", seq_buf_str(&s));
-+			seq_buf_clear(&s);
- 		}
--		strcat(buf, buf1);
-+
-+		seq_buf_printf(&s, "%d: %llu\t", i, rt->last_duration_ns);
- 
- 		sum += rt->last_duration_ns;
+ 	reorder_data = ((struct brcmf_skb_reorder_data *)pkt->cb)->reorder;
+ 	flow_id = reorder_data[BRCMF_RXREORDER_FLOWID_OFFSET];
+@@ -1708,15 +1707,13 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
  	}
--	pr_alert("%s\n", buf);
-+	pr_alert("%s\n", seq_buf_str(&s));
+ 	/* from here on we need a flow reorder instance */
+ 	if (rfi == NULL) {
+-		buf_size = sizeof(*rfi);
+ 		max_idx = reorder_data[BRCMF_RXREORDER_MAXIDX_OFFSET];
  
- 	kfree(buf);
- 	return sum;
+-		buf_size += (max_idx + 1) * sizeof(pkt);
+-
+ 		/* allocate space for flow reorder info */
+ 		brcmf_dbg(INFO, "flow-%d: start, maxidx %d\n",
+ 			  flow_id, max_idx);
+-		rfi = kzalloc(buf_size, GFP_ATOMIC);
++		rfi = kzalloc(struct_size(rfi, pktslots, max_idx + 1),
++			      GFP_ATOMIC);
+ 		if (rfi == NULL) {
+ 			bphy_err(drvr, "failed to alloc buffer\n");
+ 			brcmf_netif_rx(ifp, pkt);
+@@ -1724,7 +1721,6 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
+ 		}
+ 
+ 		ifp->drvr->reorder_flows[flow_id] = rfi;
+-		rfi->pktslots = (struct sk_buff **)(rfi + 1);
+ 		rfi->max_idx = max_idx;
+ 	}
+ 	if (flags & BRCMF_RXREORDER_NEW_HOLE)  {
 -- 
 2.45.2
 
