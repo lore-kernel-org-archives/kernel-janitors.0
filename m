@@ -1,150 +1,118 @@
-Received: from msa.smtpout.orange.fr (msa-213.smtpout.orange.fr [193.252.23.213])
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2715D33E1;
-	Sun, 21 Jul 2024 07:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C2E8F70
+	for <kernel-janitors@vger.kernel.org>; Sun, 21 Jul 2024 08:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721547669; cv=none; b=A6sOkvdfQzk6TieYo9pBPX6wh8pOAU9iulomkrTY9SY+pT8iP1OcpiwRwuic8oapJVAtdeMTDSJ9x1gp1/dZaLBUo2VaeZNKq0SY8rpZOmM9k63NPaL2UPtSnId+YhmoM1XCKWgPZpg7l5VFybXJ5LQqf8Mm2M+av6uu+8hIl+I=
+	t=1721550346; cv=none; b=Jvr5I+cIwQdGRZeKdBiyx8VFzNmMhYLicY0Z7xfWo1nX87GFdi1WOpKhIPBHahZLQudu9RaIgB5j7G4vOcTGc3EcFXpmIciO4jPx2MCICiRkcQ32ikGOo4m7Y6NWUeoQzHrF7/WjMNejVZIp7cPLeO2MKvWFD+XKg4Aw8Q/M4sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721547669; c=relaxed/simple;
-	bh=myooTmdDYWi3w4/BwipOyDPWqNI6T+1/xT+G+yICZtA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=auJ+B1LOMKHcZztwivXT5F2AkT5+TrdfDUCksY7TNWPBvxuxucjz0l6x7CD6se6R8+nXP/iet+08KNQgnRJU/uhusObu+eMP3py9P6f+JgfsFoR8OcPNWrO/Vl96/c3zkh5mDeMiUYDVMvjOhqLPH/YBZnI5ShR+naA/zlMQpwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UEpSI4Sk; arc=none smtp.client-ip=193.252.23.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1721550346; c=relaxed/simple;
+	bh=7mxFT5RPH8uPGTLPA8mWVIBU6Y10+Ss+XorW4DoWPXE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJ9/ZmynEUJHdVOrf4QMZF09MkAPu5XBsYpyoVWLd7gdSfHrEKcAH1A0qepZhcjlTmPYU0hYtRG2apkpGtHf3HlYHjVvQO/KRpvT2ToNCo206A8DR2xt8vOyv4uKmqM0EFclf0Kkk8PCRJBOvB1NM2r5vqjIIy+CTu39ZeTR26I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E7MSQaig; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UEpSI4Sk"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id VRBmsszGLnYGvVRBms5oUi; Sun, 21 Jul 2024 09:41:02 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1721547662;
-	bh=0P+L+Gugv+wzdGvctc9kSUn+nQDPgO6wIWj+dXDwk3M=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=UEpSI4SkWxFHkRylyVr6QtXi3vte6IoJivFq98RMQvM8JZwomp6PtWnn/Bb2ad/Cb
-	 aU9RPvVRMpAN0yY91hhL3H+DmcHhw+pm/s0D7gEs9tKc5LCZ3sfvTe2PTfgNDe0SZ6
-	 RkymXfA3zeoqpbolNNxytKP9KaUZzRSr5+NME56azOgS2VOT92Hto8Hcta8TSQVZXj
-	 8nmIdcH+6/VBBLW8sHFkKjJYPo9KFaN53q8i/rC1OFSaSjzUaxPfI4cQAkMdxIRsas
-	 NHGCVnblCOiC+wbJhV/F92ywA/edxhfW+xSWPdvexiSPyXPHTJ/JB9QW+755GJt/FJ
-	 4hCfIC9prkVQQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 21 Jul 2024 09:41:02 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
-	Kalle Valo <kvalo@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com
-Subject: [PATCH v2] brcmfmac: fwsignal: Use struct_size() to simplify brcmf_fws_rxreorder()
-Date: Sun, 21 Jul 2024 09:40:19 +0200
-Message-ID: <f4ca6b887ca1290c71e76247218adea4d1c42442.1721547559.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E7MSQaig"
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7fe8d029fbeso130577239f.3
+        for <kernel-janitors@vger.kernel.org>; Sun, 21 Jul 2024 01:25:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721550344; x=1722155144; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NRb+ts4NCAeHX8eVfGlmxAo56K5zTcMk9tYd2zxfBD4=;
+        b=E7MSQaigRkHuYFTzfZguchHmWDfl38MTAvzA1bBXWjboL9vM4geV0sBW/0wMDGsPAK
+         7gOu7XGjd+MMClbuRkv1a9BkLZn+E15gFpydxBG66WhpZ39ogUMKe7DjvwNlCCj8qsjE
+         7UX4/IFX4wiSFe/wm7+fJQKuTwFjz7o2zvHk1MJsznkjRkfGDkr8VLakVzDc6EuevZEn
+         3C+0axVDs0TMxJ1BLOhu8CUDlrBhfRTtHbSb3yrhYNzXfnhWqBrjlI5lHdVphAC5I6b4
+         czRjxY/KLPBb0hUMQjs6qLITWUpNuA8g1Ptmr0GctEjFvwtsb0GoHTchIdjXKk6UMYSP
+         NURg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721550344; x=1722155144;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NRb+ts4NCAeHX8eVfGlmxAo56K5zTcMk9tYd2zxfBD4=;
+        b=O/JiUQttKaIm9a06z1VL13HrUE2RDrQvm1JLEn41OwAzcWjyqokZ/5jM2vz7mNR2OC
+         wGCuzy0YQAOzTtS2nSeh1ZJrubMQZiAim2R+XKAf/Cn0Q9wvVbHX7TUuBnmiT6QHebZh
+         3AzhfxUvNQi/VF1BtM57Q9nz+HHBnOkbTiMXJ51GfGIAs72bqPrDYqYkVQCQwN4z+G1V
+         kqgr2tAKXs6Wo/uplAPFAiQ1YY06tNoknHUpzxxbW4Io2CMzG3gwkDTfwU84c7Q2Xia8
+         1ithCK6fsvhZetXC7fet+D29LxvMwqKr4iUr1lC4emgv0rmRN2Z6NVbYoQfMqwDDedFa
+         u1oA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAnmFMnWWMCzUlSJUFzZThAIgGU6qDtuIuJPKZnD67etSL6gP5QBu/LNJgchA4nXwXfUXXqREwASYsF/KJgAJ4vize8VGWMNzp3W84MWW7
+X-Gm-Message-State: AOJu0YzhEfKN60FMAYBU4GvdxsdJQQviBqDoAQvKDxhC+pCzyO5A+jjw
+	oj+ZnaS+FUzxBuB8/4p6CVA+C8+XjdBXOWkSZ7cCcS+ntA0wV0Y4i4dj7xNdwg==
+X-Google-Smtp-Source: AGHT+IElTOoJolfiF+bmMtTVVaiVVtUT1Qy014HteDsgb6L5kUnlFT0MfSAqpaqrfJx8vtSHjSru8g==
+X-Received: by 2002:a05:6602:601b:b0:805:e2bf:f303 with SMTP id ca18e2360f4ac-81aa9cc3f73mr572267839f.8.1721550344194;
+        Sun, 21 Jul 2024 01:25:44 -0700 (PDT)
+Received: from thinkpad ([120.56.206.118])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f319789sm32845225ad.137.2024.07.21.01.25.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Jul 2024 01:25:43 -0700 (PDT)
+Date: Sun, 21 Jul 2024 13:55:38 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Niklas Cassel <cassel@kernel.org>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Aleksandr Mishin <amishin@t-argos.ru>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] PCI: keystone: Fix && vs || typo
+Message-ID: <20240721082538.GH1908@thinkpad>
+References: <1b762a93-e1b2-4af3-8c04-c8843905c279@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1b762a93-e1b2-4af3-8c04-c8843905c279@stanley.mountain>
 
-In the "struct brcmf_ampdu_rx_reorder", change the 'pktslots' field into
-flexible array.
+On Fri, Jul 19, 2024 at 06:53:26PM -0500, Dan Carpenter wrote:
+> This code accidentally uses && where || was intended.  It potentially
+> results in a NULL dereference.
+> 
+> Fixes: 86f271f22bbb ("PCI: keystone: Add workaround for Errata #i2037 (AM65x SR 1.0)")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-It saves the size of a pointer when the memory is allocated and avoids
-an indirection when the array is used.
-It also removes the usage of a pointer arithmetic and saves a few lines of
-code.
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Finally, struct_size() can be used. It is not a must have here, because
-it is easy to see that buf_size can not overflow, but still, it is a good
-practice.
+- Mani
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
----
-Compile tested only
+> ---
+>  drivers/pci/controller/dwc/pci-keystone.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> index 52c6420ae200..95a471d6a586 100644
+> --- a/drivers/pci/controller/dwc/pci-keystone.c
+> +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> @@ -577,7 +577,7 @@ static void ks_pcie_quirk(struct pci_dev *dev)
+>  	 */
+>  	if (pci_match_id(am6_pci_devids, bridge)) {
+>  		bridge_dev = pci_get_host_bridge_device(dev);
+> -		if (!bridge_dev && !bridge_dev->parent)
+> +		if (!bridge_dev || !bridge_dev->parent)
+>  			return;
+>  
+>  		ks_pcie = dev_get_drvdata(bridge_dev->parent);
+> -- 
+> 2.43.0
+> 
 
-Changes in v2:
-  - fix description of the 'pktslots' field   [Arend van Spriel]
-  - add A-b tag
-
-v1: https://lore.kernel.org/all/bd3ad239c4d1c49b94c1ba93e48c09df98ef86cb.1720951805.git.christophe.jaillet@wanadoo.fr/
----
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h   | 4 ++--
- .../net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c   | 8 ++------
- 2 files changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
-index ea76b8d33401..39226b9c0fa8 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.h
-@@ -48,20 +48,20 @@
- /**
-  * struct brcmf_ampdu_rx_reorder - AMPDU receive reorder info
-  *
-- * @pktslots: dynamic allocated array for ordering AMPDU packets.
-  * @flow_id: AMPDU flow identifier.
-  * @cur_idx: last AMPDU index from firmware.
-  * @exp_idx: expected next AMPDU index.
-  * @max_idx: maximum amount of packets per AMPDU.
-  * @pend_pkts: number of packets currently in @pktslots.
-+ * @pktslots: array for ordering AMPDU packets.
-  */
- struct brcmf_ampdu_rx_reorder {
--	struct sk_buff **pktslots;
- 	u8 flow_id;
- 	u8 cur_idx;
- 	u8 exp_idx;
- 	u8 max_idx;
- 	u8 pend_pkts;
-+	struct sk_buff *pktslots[];
- };
- 
- /* Forward decls for struct brcmf_pub (see below) */
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
-index 36af81975855..0949e7975ff1 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
-@@ -1673,7 +1673,6 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
- 	struct sk_buff_head reorder_list;
- 	struct sk_buff *pnext;
- 	u8 flags;
--	u32 buf_size;
- 
- 	reorder_data = ((struct brcmf_skb_reorder_data *)pkt->cb)->reorder;
- 	flow_id = reorder_data[BRCMF_RXREORDER_FLOWID_OFFSET];
-@@ -1708,15 +1707,13 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
- 	}
- 	/* from here on we need a flow reorder instance */
- 	if (rfi == NULL) {
--		buf_size = sizeof(*rfi);
- 		max_idx = reorder_data[BRCMF_RXREORDER_MAXIDX_OFFSET];
- 
--		buf_size += (max_idx + 1) * sizeof(pkt);
--
- 		/* allocate space for flow reorder info */
- 		brcmf_dbg(INFO, "flow-%d: start, maxidx %d\n",
- 			  flow_id, max_idx);
--		rfi = kzalloc(buf_size, GFP_ATOMIC);
-+		rfi = kzalloc(struct_size(rfi, pktslots, max_idx + 1),
-+			      GFP_ATOMIC);
- 		if (rfi == NULL) {
- 			bphy_err(drvr, "failed to alloc buffer\n");
- 			brcmf_netif_rx(ifp, pkt);
-@@ -1724,7 +1721,6 @@ void brcmf_fws_rxreorder(struct brcmf_if *ifp, struct sk_buff *pkt)
- 		}
- 
- 		ifp->drvr->reorder_flows[flow_id] = rfi;
--		rfi->pktslots = (struct sk_buff **)(rfi + 1);
- 		rfi->max_idx = max_idx;
- 	}
- 	if (flags & BRCMF_RXREORDER_NEW_HOLE)  {
 -- 
-2.45.2
-
+மணிவண்ணன் சதாசிவம்
