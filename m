@@ -1,85 +1,87 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228BC16EBFE;
-	Mon, 22 Jul 2024 19:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED808DDDC;
+	Mon, 22 Jul 2024 20:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721675546; cv=none; b=Zhz2NnM1fJJiJv12UJuYySkQA0Y3WRt7hIxpMalWnZrhJC1YIlmnN+Q/Ot0r4laZAUx7vDM5kNA4SN6E1GaIyB3uhDbZ8/m2gbli2bNO9L1sOL5CcKtIR7L9j2XqZNNsJXqoWFcS+A4ZkBhgxNfqs6xmTdTd4cANONvav1MvqAs=
+	t=1721678478; cv=none; b=czsZQva9pmbLHVcrj3PNqpDjFt37OojUkyBltpsziX15TWb8xELvTckwkRz9copMNsMx/QSozM8HzOV2ujTM4Pk7tAzMG+vDzsNcEObPlalzknSx1ml4xczOcGlhXbMdLKQe4l2+FuOpzbJ6h7MnaQ/P14Mt/T17pWXHQAdFS/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721675546; c=relaxed/simple;
-	bh=08Ix2ICoI12/cLhY4GIhbhpOUaxPusqc257F2p4YRgo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=R7X6UoR2XSugwHe+uhVl5sT9Z1EY/Z8dd+l/boFjmjGesXKxfvYlELJfJK9La4rK55/SoiiGT6Mbdpnwyvz3t5tnsheCrOLk5HhyRE8T/EajGb4rGyLDayrV2f3tKT59NdRb69vlc0CWYA2/9sPvdoadmc94IY8L5DvARJ0jV3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZX7dIjw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721678478; c=relaxed/simple;
+	bh=cfx2IEBAJvr/Le7OR2NOFIbsx6vpBws+z8Tgwex+Ras=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=agF26Ej6qR+bYG6H6J0iYQ0upePm5nxoUWWGMVHZWstsmx0TzhKq5KOrGbunz6mUUqzAysJ9iz21wwnyf+nCf0CqjKPjiKqhLLwe8FPpSRu3SdkJFN2T3d79PTJ1MPgfLjquCRgmNUf1VuDenBA2tpHrW70TAH1+h2mXS1rarRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nGXi5th1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZX7dIjw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A204DC4AF0B;
-	Mon, 22 Jul 2024 19:12:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nGXi5th1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16C75C116B1;
+	Mon, 22 Jul 2024 20:01:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721675546;
-	bh=08Ix2ICoI12/cLhY4GIhbhpOUaxPusqc257F2p4YRgo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=IZX7dIjwMPLhTMKg000zPem6udIF24kPaDuiDggQk3CWEcji8KaVHC3rsAK+5x+aL
-	 12eckH04vW7DW02IiuZnuxQjCsAWS0EsuBOX3ExIA/+RDep67EIuAr0CTuAokRKxY4
-	 t8u7uYyrTzMdKMyzaXIQUJae1gw9K02phDM1i1pal3dRvdAoTo5GC1dYh/x6+cWrMR
-	 XrCi0EjU0zISuMaN5O5izRLhr6PccUY+SF4oTRrSKIDJBi98/Z/t9eE00FPNOnc4W0
-	 U3Y0afjAATl06kBHC3A/9yNVugX6TYYpqUvcexza1yz6kB5c+wmI9LmNJb5BGXtI0u
-	 TzhjArwt7inpg==
-From: Mark Brown <broonie@kernel.org>
-To: Shenghao Ding <shenghao-ding@ti.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <18a29b68-cc85-4139-b7c7-2514e8409a42@stanley.mountain>
-References: <18a29b68-cc85-4139-b7c7-2514e8409a42@stanley.mountain>
-Subject: Re: [PATCH] ASoc: TAS2781: Fix tasdev_load_calibrated_data()
-Message-Id: <172167554332.83479.1180608727450798301.b4-ty@kernel.org>
-Date: Mon, 22 Jul 2024 20:12:23 +0100
+	s=k20201202; t=1721678477;
+	bh=cfx2IEBAJvr/Le7OR2NOFIbsx6vpBws+z8Tgwex+Ras=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nGXi5th1VN70wpahO3OHaswmRmu1x+884UcatqPke1zNs90KRWYIMzbrPGBUgXZJG
+	 FW2p8BSUL3ZhVEy2zjajtCHoyz3sbaj6fkue3goniZ/TJghYcb+qyWEirKufCQ2+b0
+	 wjSWjFC361B8hCRKBfHuWY+xidKW17zNH5bg1o6HFu02vjg/4x9IvL1kgZDWjbZqOF
+	 ssWsC3PQ+r5WE1Nn2eYZnoL+8oe/emvfzeKt+conzZ1S0qWfpXWn9UEnKC5F6FsJu+
+	 tP/XMQGWqw/UT/8ImWdX/4aJoM0WdEaSy9xLKcCcelC2tTVdtNWePGzB4N8w5spoDF
+	 E7EKgWfcSrMyA==
+Date: Mon, 22 Jul 2024 21:01:11 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Vasileios Amoiridis
+ <vassilisamir@gmail.com>, linux-iio@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] iio: pressure: bmp280-core: Make read-only const
+ array conversion_time_max static
+Message-ID: <20240722210111.49e66c4e@jic23-huawei>
+In-Reply-To: <20240722151738.572913-1-colin.i.king@gmail.com>
+References: <20240722151738.572913-1-colin.i.king@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
 
-On Fri, 19 Jul 2024 18:53:48 -0500, Dan Carpenter wrote:
-> This function has a reversed if statement so it's either a no-op or it
-> leads to a NULL dereference.
+On Mon, 22 Jul 2024 16:17:38 +0100
+Colin Ian King <colin.i.king@gmail.com> wrote:
+
+> Don't populate the read-only array conversion_time_max on the stack at
+> run time, instead make it static.
 > 
-> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Applied to
+I'm almost 100% the compiler can hoist this off the stack if it feels like
+it but sure, it might not and adding the static keyword probably obliges
+it to do so. Is that better or worse? Probably better.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoc: TAS2781: Fix tasdev_load_calibrated_data()
-      commit: 92c78222168e9035a9bfb8841c2e56ce23e51f73
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Ah well, I don't feel strongly and it's probably a good thing.
+Applied to the testing branch of iio.git for now. I'll rebase on rc1 once available.
 
 Thanks,
-Mark
+
+Jonathan
+
+
+> ---
+>  drivers/iio/pressure/bmp280-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> index 49081b729618..9ead52954de3 100644
+> --- a/drivers/iio/pressure/bmp280-core.c
+> +++ b/drivers/iio/pressure/bmp280-core.c
+> @@ -1865,7 +1865,7 @@ EXPORT_SYMBOL_NS(bmp580_chip_info, IIO_BMP280);
+>  
+>  static int bmp180_wait_for_eoc(struct bmp280_data *data, u8 ctrl_meas)
+>  {
+> -	const int conversion_time_max[] = { 4500, 7500, 13500, 25500 };
+> +	static const int conversion_time_max[] = { 4500, 7500, 13500, 25500 };
+>  	unsigned int delay_us;
+>  	unsigned int ctrl;
+>  	int ret;
 
