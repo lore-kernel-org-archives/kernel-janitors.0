@@ -1,39 +1,50 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA42174EFC;
-	Mon, 22 Jul 2024 09:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7714316DC18;
+	Mon, 22 Jul 2024 14:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721641516; cv=none; b=QUhnIwDsuJdk3spdt53gQFSY5lwP5N14IrtmY97OU4KRJ7lItZ4oJaGt3Pm8h148BfTR4LgNztH5kTKWFgmgRmf4pHOkP5hlUkdR1r+j94OmXq/344GLP0jcbkWm5KHVRyT6tarLEcvyeGTfd3js4BpmEcs47MGIkrqGslIHCZo=
+	t=1721660041; cv=none; b=BNB004CfniFahEoig8tJTC4R2ZDauYWPUbms4dAkR3NJDHpsL+/HU/8iOB0Z7vFRq2pIPeQx1E5eH8ZZpUbmG+FaZty3MWLqDU5e2H3WzQ+9E60Dsf3JfsUmeDFjW1lQK+ZvLBk6HST2q8Gfg6dLvVRTZuoqRIYkiPmyyuz0/oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721641516; c=relaxed/simple;
-	bh=tziOP+ESQ+W1d+CgJqInvXWL3SJa/jSdbKvvNhetQG0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=szHcU2ek+z5Bo1FDWwXH/2eZAQN+MRNq1FNt/2lwY/VAA0gAqxKTP9XgxSHCnV4RDaxWpLnM61Bw+VaUGCOQxF28/+M9M6XJOS9J8Q1XuCfRqNPOFcwgFiA/FIxxmIZYtS5FFvVDoOoAT/k+XzHjY0N4fEtuZz4RiYWidN+91f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=A/5kNF2l; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1721660041; c=relaxed/simple;
+	bh=1e0vV1UoVXTfp55GAjrIIBKq42BYmjjNqv/c6iRw9Pc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KPeOpqylsp/AGqotSkg3qlSxu3BcFiv4+GUjjxsbMJ0zpBVeadOXDYCkMlnHtDEfUeOf35c2rEP5+vXmnCuGccb6Lol2e8vRPbkmLPMg16ndZykzb+cX3sbVZsZR3oQCn8ZUMLx+uQ/kBWXYebkan5qSpAFUUBu8Lzaruv3fzhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V4VllzWq; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="A/5kNF2l"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721641469; x=1722246269; i=markus.elfring@web.de;
-	bh=tziOP+ESQ+W1d+CgJqInvXWL3SJa/jSdbKvvNhetQG0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=A/5kNF2lRMUjggCZ4wGOPqkTrq42CzdOPyhxw1j29l0Mp2DWwdy+yBTFunqkfZc+
-	 AZlfWaejYfVie2dWf0nSTOiloryKbzHKRTwraP1uv4GvsoDjSXEuNvYSmyYAOWaUh
-	 uBylssfEpB9dvPpL04TJ/0VCkzH7Sb9pxu1Cz0Ldgkj/MtXKEUUNJLnCMrSI83Nt3
-	 q1PCF4dPf/+BZjTFwwmq1Zj7XUdOiFagHgkHqwb4C28VcP5d1xOvcGeY+oYp46Dgi
-	 mhHHc6tdH3ZYn27Kvp9VKNoLs4aByHCZQYloJ4o9VC6yIJZyyhcwgawoUEm0UZTbY
-	 di/IvQ5AdxZTHROxHw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Meler-1rvwsK2mij-00mRWx; Mon, 22
- Jul 2024 11:44:29 +0200
-Message-ID: <39a3552f-cbaa-4e29-ac76-95684859787a@web.de>
-Date: Mon, 22 Jul 2024 11:44:25 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V4VllzWq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721660039; x=1753196039;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=1e0vV1UoVXTfp55GAjrIIBKq42BYmjjNqv/c6iRw9Pc=;
+  b=V4VllzWq4s/6Xcz0AWBCf2XhxBIK9XnmZDqRvpDfEf9Gx+7g72fmqnqI
+   RNwXhSwnl0HtU6RD8/WD30CxCDgy54S/JO7AbcTIRRwLVVHbPbaeesMgk
+   8xOgA1j9Q8lvsw+RaokL1gzIVzI2Ym0kFVlytI5Z7ZCY2QOorlewDhJ8a
+   zDKLZ+r1fHaSrBneWyhBhNcUR3Gnw/eksKhuz+v1ANWvFB8bRppQUQUTE
+   MbEzsSvXN08yVKOHCP8TJqQVdWJ8XIPpZyWNprblo2eJXJ/k4oHfQORMI
+   AijVGbZBSgLtf4ThVUazTqwealmV3gMOKbHXwKxfpn2Kj0U6AF4eFapIP
+   g==;
+X-CSE-ConnectionGUID: HOT2JT74TnCmgBxz4kbrlg==
+X-CSE-MsgGUID: KuuN9yA5SFmZttOOoRpapA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="36678542"
+X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
+   d="scan'208";a="36678542"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 07:53:58 -0700
+X-CSE-ConnectionGUID: N8gUvA1JTg+HOj3rYIqe6w==
+X-CSE-MsgGUID: yVQ10b+OQfu3aOpnlOw0bQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
+   d="scan'208";a="57032016"
+Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.125.109.188]) ([10.125.109.188])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 07:53:56 -0700
+Message-ID: <7cb0179f-2b63-41c1-a17c-b3422feff501@intel.com>
+Date: Mon, 22 Jul 2024 07:53:55 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,54 +52,83 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Ian Rogers
- <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
- James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
- Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>,
- Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [RFC] perf bench: Adjusting concerns around
- asynchronous-signal-safety?
+Subject: Re: [PATCH] ntb: Constify struct bus_type
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Jon Mason <jdmason@kudzu.us>, Allen Hubbe <allenbh@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ ntb@lists.linux.dev
+References: <50a28f39b1f0d0201b2645d2a8239e1819dc924b.1721473166.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <50a28f39b1f0d0201b2645d2a8239e1819dc924b.1721473166.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:+M5y8U2ej04KHX+Faz4b48gH9S4gHWTqaNOo+v9UVE4NgkX70WA
- OfYAT/Lti6ztx+nbiHqmQotKWwnGyUeH17yhQKx0uQWhJjSByP+ZcWuQoTzrYhRpzE4QTOd
- uoBP3+J4YXvlmjvamAgpnZyWlsY0zTb70RNNT60ITJ3NT9hPegmn0bdCWhhSgLWn9TRmK6X
- Gu5Lo4D7nIgfDXOksOGQw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:g5ULUjZTu1E=;tz+ZDqwUFZrB3qnJkQ3Zj2fJ6aH
- LMxfHpSBvYMO1VhL1Iv33ILAspZi2/6p0Gj0dsmnTMDA+qkrNr1kANnBxkpUvmIZHsX67aw28
- 1q5XX7aBQ0d5ybOKdP6ha3qHAM5aPJX08Zee8Idn1FkOWUzJ/hPlBcmrCY9uGxQsiM/Bn09f7
- X5CtFkurw6noxmy7aqEMRQv3DlMtMoWnu/k1VHBC/a3yewZyZuNaZaHT8l2rb1F2F3QOe+YST
- Rro/ILvUztqAuGQWMZeDDsj03Z1JoqZXMCNyn9Y28g9bpEVNVO0dOsrKuxBWy/vThwor/GmD/
- H6QnOj3eQw6lWRd/2C7IoMiip2MJbWYs41q8K3WcMN+9DWjwwb5KVNneqEyFRBLulndJm22nE
- rc9aYx8/7sfj6dVDRCeSIHuYVJYQ8vH3ZdvW4z28SZcUY4fwUrxhAi4Pmx3LG5epountNSip2
- XDXlmj7BA89BqXZVVd6w3BdAoLybxwwnKZJixw6YscKwtYvXXYjlqKtsKMmlw+x/+7r4vXGUO
- 8Rr2V6E2MnHR+bTYHtljakcBog8lrbKF7PyHwVvhGXf3nIJW6StUJ7iNpDcc946aGKhIxE7pM
- pQuAG0aVcTBE82cLs6r9CxyCgoEpg6MWoGkDaClzOQjDug30qgPN/68jV/TeBioKRhATpngBy
- CyWGZU/bCOs6urEtLSHzP9sqG4uE5AuspPGrDfAgv1X5mLD9C8D000C6BNV7bytllVzdbKDWi
- oUpiHC6/Tlyf+GaQz7Ie48Q5d7uRy68H+T12QfiPl/7mQ3UoiJgcthyYTNiQU/NUTG++/RFjq
- fBxdGq7JKyJS9tqeq8b62zhg==
+Content-Transfer-Encoding: 7bit
 
-Hello,
 
-The functions =E2=80=9Cgettimeofday=E2=80=9D and =E2=80=9Ctimersub=E2=80=
-=9D are called within the signal
-handler =E2=80=9Ctoggle_done=E2=80=9D so far.
-https://elixir.bootlin.com/linux/v6.10/source/tools/perf/bench/epoll-ctl.c=
-#L90
 
-Do such implementation details trigger any programming concerns according =
-to
-asynchronous-signal-safety?
-https://wiki.sei.cmu.edu/confluence/display/c/SIG30-C.+Call+only+asynchron=
-ous-safe+functions+within+signal+handlers
+On 7/20/24 3:59 AM, Christophe JAILLET wrote:
+> 'struct bus_type' is not modified in this driver.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security, especially when the structure holds some
+> function pointers.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>   69682	   4593	    152	  74427	  122bb	drivers/ntb/ntb_transport.o
+>    5847	    448	     32	   6327	   18b7	drivers/ntb/core.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>   69858	   4433	    152	  74443	  122cb	drivers/ntb/ntb_transport.o
+>    6007	    288	     32	   6327	   18b7	drivers/ntb/core.o
+> 
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 
-Regards,
-Markus
+> ---
+> Compile tested-only.
+> ---
+>  drivers/ntb/core.c          | 4 ++--
+>  drivers/ntb/ntb_transport.c | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/ntb/core.c b/drivers/ntb/core.c
+> index d702bee78082..ed6f4adc6130 100644
+> --- a/drivers/ntb/core.c
+> +++ b/drivers/ntb/core.c
+> @@ -72,7 +72,7 @@ MODULE_VERSION(DRIVER_VERSION);
+>  MODULE_AUTHOR(DRIVER_AUTHOR);
+>  MODULE_DESCRIPTION(DRIVER_DESCRIPTION);
+>  
+> -static struct bus_type ntb_bus;
+> +static const struct bus_type ntb_bus;
+>  static void ntb_dev_release(struct device *dev);
+>  
+>  int __ntb_register_client(struct ntb_client *client, struct module *mod,
+> @@ -298,7 +298,7 @@ static void ntb_dev_release(struct device *dev)
+>  	complete(&ntb->released);
+>  }
+>  
+> -static struct bus_type ntb_bus = {
+> +static const struct bus_type ntb_bus = {
+>  	.name = "ntb",
+>  	.probe = ntb_probe,
+>  	.remove = ntb_remove,
+> diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
+> index 77e55debeed6..a79f68e18d3f 100644
+> --- a/drivers/ntb/ntb_transport.c
+> +++ b/drivers/ntb/ntb_transport.c
+> @@ -314,7 +314,7 @@ static void ntb_transport_bus_remove(struct device *dev)
+>  	put_device(dev);
+>  }
+>  
+> -static struct bus_type ntb_transport_bus = {
+> +static const struct bus_type ntb_transport_bus = {
+>  	.name = "ntb_transport",
+>  	.match = ntb_transport_bus_match,
+>  	.probe = ntb_transport_bus_probe,
