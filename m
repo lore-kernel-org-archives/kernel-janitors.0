@@ -1,87 +1,161 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED808DDDC;
-	Mon, 22 Jul 2024 20:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81A7374F1;
+	Mon, 22 Jul 2024 20:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721678478; cv=none; b=czsZQva9pmbLHVcrj3PNqpDjFt37OojUkyBltpsziX15TWb8xELvTckwkRz9copMNsMx/QSozM8HzOV2ujTM4Pk7tAzMG+vDzsNcEObPlalzknSx1ml4xczOcGlhXbMdLKQe4l2+FuOpzbJ6h7MnaQ/P14Mt/T17pWXHQAdFS/0=
+	t=1721680875; cv=none; b=cV5wyHNAc4UK0ogMP0IwjU3vbMvMa2iR12uZt85CINulT7FyC00zivga9Dq11+L0RuB6oZxSwZaXb7ojBLaPhfSCJMq7OeRSjy5FHzMftoCspZXIKtpuRyFTOmlyHzPaJv1i2tn0pug50bkGWsSIowUnUdheAST/A1OxHt+Dr1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721678478; c=relaxed/simple;
-	bh=cfx2IEBAJvr/Le7OR2NOFIbsx6vpBws+z8Tgwex+Ras=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=agF26Ej6qR+bYG6H6J0iYQ0upePm5nxoUWWGMVHZWstsmx0TzhKq5KOrGbunz6mUUqzAysJ9iz21wwnyf+nCf0CqjKPjiKqhLLwe8FPpSRu3SdkJFN2T3d79PTJ1MPgfLjquCRgmNUf1VuDenBA2tpHrW70TAH1+h2mXS1rarRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nGXi5th1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721680875; c=relaxed/simple;
+	bh=WejL1C18DsPa8eqF4Vv00VatYs9g+zTU6/htUiq6Pcc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FvTmmbueWVn3VsSfCRGl1NcC0JWM3LFCruPzwoF+KEm4QnRMl9pIGhUDRq2nJKXxaphwxK3Vbb5tQ/elWD3Sb9eIPHjGHY0dAZhMSu99z9t0Bo3DS85VuEuOIzJUJoX9lc1mmUSdFbcygz04F7xR75kHymRWHguij2NnMpxMXv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=G2eUgTA3; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nGXi5th1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16C75C116B1;
-	Mon, 22 Jul 2024 20:01:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721678477;
-	bh=cfx2IEBAJvr/Le7OR2NOFIbsx6vpBws+z8Tgwex+Ras=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nGXi5th1VN70wpahO3OHaswmRmu1x+884UcatqPke1zNs90KRWYIMzbrPGBUgXZJG
-	 FW2p8BSUL3ZhVEy2zjajtCHoyz3sbaj6fkue3goniZ/TJghYcb+qyWEirKufCQ2+b0
-	 wjSWjFC361B8hCRKBfHuWY+xidKW17zNH5bg1o6HFu02vjg/4x9IvL1kgZDWjbZqOF
-	 ssWsC3PQ+r5WE1Nn2eYZnoL+8oe/emvfzeKt+conzZ1S0qWfpXWn9UEnKC5F6FsJu+
-	 tP/XMQGWqw/UT/8ImWdX/4aJoM0WdEaSy9xLKcCcelC2tTVdtNWePGzB4N8w5spoDF
-	 E7EKgWfcSrMyA==
-Date: Mon, 22 Jul 2024 21:01:11 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Vasileios Amoiridis
- <vassilisamir@gmail.com>, linux-iio@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] iio: pressure: bmp280-core: Make read-only const
- array conversion_time_max static
-Message-ID: <20240722210111.49e66c4e@jic23-huawei>
-In-Reply-To: <20240722151738.572913-1-colin.i.king@gmail.com>
-References: <20240722151738.572913-1-colin.i.king@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="G2eUgTA3"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id Vzp2s6XwcnYGvVzp2seJB9; Mon, 22 Jul 2024 22:39:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1721680794;
+	bh=J/KaIQ3vNxlLzX+SbS5+57XkROzSYNQ6vt9900sOyo0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=G2eUgTA3WxuLd5kQtzxl0rzlOfVsqMOEQh2T2TU0J4FAsn+YMHE2N3mlfUAhCL72S
+	 Bs6pk9ROzulbiRQ36yfhTmhznSqAQ5mstrpPCWLD/6OWWRUChHZZvWtDsvI6WIpXed
+	 JZgS/YWbKuiFkpj+Y028o4N/XKmY5I65WfuGVPwfB/WeU7fb9xTc33BuegeXQD8Efk
+	 n+8xp6aPMWAKHzD54nTJixGhOhtQtLKJCqDot9AVNJP/kFpFrcCRyNsiF5z/vEDD02
+	 yylVh/Pn5FTcqJ2tD68PFgLDmB3eU/kRWPFRKkUavgfopC+6MSy7V8i+lXLx4nqmwP
+	 g2QHEv7q/E65Q==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 22 Jul 2024 22:39:54 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Ofir Bitton <obitton@habana.ai>,
+	Oded Gabbay <ogabbay@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] accel/habanalabs/gaudi2: Constify several structures
+Date: Mon, 22 Jul 2024 22:39:48 +0200
+Message-ID: <62ac505b660f433745f98de5ee468671e5c63a0b.1721680761.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 22 Jul 2024 16:17:38 +0100
-Colin Ian King <colin.i.king@gmail.com> wrote:
+These structures are not modified in this driver.
 
-> Don't populate the read-only array conversion_time_max on the stack at
-> run time, instead make it static.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Constifying this structure moves about 8 ko of data to a read-only section,
+so increase overall security.
 
-I'm almost 100% the compiler can hoist this off the stack if it feels like
-it but sure, it might not and adding the static keyword probably obliges
-it to do so. Is that better or worse? Probably better.
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+ 191214	 134180	    456	 325850	  4f8da	drivers/accel/habanalabs/gaudi2/gaudi2.o
 
-Ah well, I don't feel strongly and it's probably a good thing.
-Applied to the testing branch of iio.git for now. I'll rebase on rc1 once available.
-
-Thanks,
-
-Jonathan
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+ 198862	 126532	    456	 325850	  4f8da	drivers/accel/habanalabs/gaudi2/gaudi2.o
 
 
-> ---
->  drivers/iio/pressure/bmp280-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-> index 49081b729618..9ead52954de3 100644
-> --- a/drivers/iio/pressure/bmp280-core.c
-> +++ b/drivers/iio/pressure/bmp280-core.c
-> @@ -1865,7 +1865,7 @@ EXPORT_SYMBOL_NS(bmp580_chip_info, IIO_BMP280);
->  
->  static int bmp180_wait_for_eoc(struct bmp280_data *data, u8 ctrl_meas)
->  {
-> -	const int conversion_time_max[] = { 4500, 7500, 13500, 25500 };
-> +	static const int conversion_time_max[] = { 4500, 7500, 13500, 25500 };
->  	unsigned int delay_us;
->  	unsigned int ctrl;
->  	int ret;
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+
+A much bigger step, would be to constify gaudi2_irq_map_table.
+But drivers/accel/habanalabs/include/gaudi2/gaudi2_async_ids_map_extended.h
+states that this is a generated file. So I just report it here, could
+someone modify the software that generates this file.
+
+This would constify an additional 110 ko of data. Not too bad, for just 5
+more letters!
+
+   text	   data	    bss	    dec	    hex	filename
+ 310314	  14884	    456	 325654	  4f816	drivers/accel/habanalabs/gaudi2/gaudi2.o
+---
+ drivers/accel/habanalabs/gaudi2/gaudi2.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/accel/habanalabs/gaudi2/gaudi2.c b/drivers/accel/habanalabs/gaudi2/gaudi2.c
+index a38b88baadf2..40aebae29ab1 100644
+--- a/drivers/accel/habanalabs/gaudi2/gaudi2.c
++++ b/drivers/accel/habanalabs/gaudi2/gaudi2.c
+@@ -173,7 +173,7 @@ struct gaudi2_razwi_info {
+ 	char *eng_name;
+ };
+ 
+-static struct gaudi2_razwi_info common_razwi_info[] = {
++static const struct gaudi2_razwi_info common_razwi_info[] = {
+ 		{RAZWI_INITIATOR_ID_X_Y(2, 4, 0), mmDCORE0_RTR0_CTRL_BASE,
+ 				GAUDI2_DCORE0_ENGINE_ID_DEC_0, "DEC0"},
+ 		{RAZWI_INITIATOR_ID_X_Y(2, 4, 4), mmDCORE0_RTR0_CTRL_BASE,
+@@ -338,7 +338,7 @@ static struct gaudi2_razwi_info common_razwi_info[] = {
+ 				GAUDI2_ENGINE_ID_PSOC, "PSOC"}
+ };
+ 
+-static struct gaudi2_razwi_info mme_razwi_info[] = {
++static const struct gaudi2_razwi_info mme_razwi_info[] = {
+ 		/* MME X high coordinate is N/A, hence using only low coordinates */
+ 		{RAZWI_INITIATOR_ID_X_Y_LOW(7, 4), mmDCORE0_RTR5_CTRL_BASE,
+ 				GAUDI2_DCORE0_ENGINE_ID_MME, "MME0_WAP0"},
+@@ -2108,7 +2108,7 @@ struct hbm_mc_error_causes {
+ 	char cause[50];
+ };
+ 
+-static struct hl_special_block_info gaudi2_special_blocks[] = GAUDI2_SPECIAL_BLOCKS;
++static const struct hl_special_block_info gaudi2_special_blocks[] = GAUDI2_SPECIAL_BLOCKS;
+ 
+ /* Special blocks iterator is currently used to configure security protection bits,
+  * and read global errors. Most HW blocks are addressable and those who aren't (N/A)-
+@@ -2116,14 +2116,14 @@ static struct hl_special_block_info gaudi2_special_blocks[] = GAUDI2_SPECIAL_BLO
+  * and global error reading, since currently they both share the same settings.
+  * Once it changes, we must remember to use separate configurations for either one.
+  */
+-static int gaudi2_iterator_skip_block_types[] = {
++static const int gaudi2_iterator_skip_block_types[] = {
+ 		GAUDI2_BLOCK_TYPE_PLL,
+ 		GAUDI2_BLOCK_TYPE_EU_BIST,
+ 		GAUDI2_BLOCK_TYPE_HBM,
+ 		GAUDI2_BLOCK_TYPE_XFT
+ };
+ 
+-static struct range gaudi2_iterator_skip_block_ranges[] = {
++static const struct range gaudi2_iterator_skip_block_ranges[] = {
+ 		/* Skip all PSOC blocks except for PSOC_GLOBAL_CONF */
+ 		{mmPSOC_I2C_M0_BASE, mmPSOC_EFUSE_BASE},
+ 		{mmPSOC_BTL_BASE, mmPSOC_MSTR_IF_RR_SHRD_HBW_BASE},
+@@ -2132,7 +2132,7 @@ static struct range gaudi2_iterator_skip_block_ranges[] = {
+ 		{mmCPU_TIMESTAMP_BASE, mmCPU_MSTR_IF_RR_SHRD_HBW_BASE}
+ };
+ 
+-static struct hbm_mc_error_causes hbm_mc_spi[GAUDI2_NUM_OF_HBM_MC_SPI_CAUSE] = {
++static const struct hbm_mc_error_causes hbm_mc_spi[GAUDI2_NUM_OF_HBM_MC_SPI_CAUSE] = {
+ 	{HBM_MC_SPI_TEMP_PIN_CHG_MASK, "temperature pins changed"},
+ 	{HBM_MC_SPI_THR_ENG_MASK, "temperature-based throttling engaged"},
+ 	{HBM_MC_SPI_THR_DIS_ENG_MASK, "temperature-based throttling disengaged"},
+@@ -8300,9 +8300,9 @@ static void gaudi2_check_if_razwi_happened(struct hl_device *hdev)
+ 		gaudi2_ack_module_razwi_event_handler(hdev, RAZWI_ROT, mod_idx, 0, NULL);
+ }
+ 
+-static int gaudi2_psoc_razwi_get_engines(struct gaudi2_razwi_info *razwi_info, u32 array_size,
+-						u32 axuser_xy, u32 *base, u16 *eng_id,
+-						char *eng_name)
++static int gaudi2_psoc_razwi_get_engines(const struct gaudi2_razwi_info *razwi_info,
++					 u32 array_size, u32 axuser_xy,
++					 u32 *base, u16 *eng_id, char *eng_name)
+ {
+ 
+ 	int i, num_of_eng = 0;
+-- 
+2.45.2
 
