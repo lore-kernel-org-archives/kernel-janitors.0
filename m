@@ -1,78 +1,110 @@
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8EA3D6A;
-	Tue, 23 Jul 2024 07:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A4314BFB4
+	for <kernel-janitors@vger.kernel.org>; Tue, 23 Jul 2024 09:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721720906; cv=none; b=KrKWCHqn/9f/pS8nYbrWOqJjgbU9+QzXIut2u0tZQWesPAgJaCtaoWyXZIKWjk+ecCa/0SXbXflai6m/TgUSbREuUqb8jfS16S0yjX0s6D+QiAnKuYLvmlOrQi77Qv+f+IpKVZwazsNV+Q9Zjpr5kL9b+sqmZOz925uloVJEuIc=
+	t=1721725900; cv=none; b=NacDOXV8rysqwInjULC3j5jipTBo0zZtJ1Og0VUBAWELh2K7MZ8db9FOSL8D/+WVMXc5KrdCz/ZBcZVN3WWcF7Y1kuIBAakWiEC3b2HI635iN36GctvN9yCWUiW2bsTvuCgR+7tOwZdfK7nxp4PTGGzZP/zW+kLZ9WffkS/umyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721720906; c=relaxed/simple;
-	bh=vbvgwD+cGbGHd6xsCHsLBoTVpmyEcO3/PjQfo+PH4Do=;
+	s=arc-20240116; t=1721725900; c=relaxed/simple;
+	bh=wGwRA2efJxAMoIWoFALwD32rwrbzj0+/i4ryaIKcrSk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q0V9DMT8VQa/WQU8plzBlahFJqeRvNp8F0tTYuo0TmFLp/o9jsB7UOP6RRtWn5mVb3jgUnQPq5L2zst+tMYnr1PHjS2uWF80H3uTvc40n+CCHii8A94/PPBVgNKZYEEcKs8TFSFjIVpXFSWEAAlIZssI+Ls2P3aYZgeuZ6Nb/A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sWAFu-0003M0-00; Tue, 23 Jul 2024 09:48:18 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 93450C0899; Tue, 23 Jul 2024 09:48:08 +0200 (CEST)
-Date: Tue, 23 Jul 2024 09:48:08 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mips: sibyte: add missing MODULE_DESCRIPTION() macro
-Message-ID: <Zp9gOOUp3ZWXY/B8@alpha.franken.de>
-References: <20240718-md-mips-arch-mips-sibyte-common-v1-1-49b29b0555eb@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NUNlDi5Av601cqg8N0MiMzXdCdWu6ofKf2SlmOLaryFzzIItp3AEqrAqC0QWzd4Bo06W7kKlgiEZEYPiUTmpfiUPsuvVNcw9qvTeZq67CaBg/4XD41ZUhFd6AeWIIKE9/5rXT9SM8ny3WRJ7logxhvI18RMvkevSJpAt2zMJlTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Vln6SOKs; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Vln6SOKs"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a77c1658c68so569450466b.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 Jul 2024 02:11:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1721725897; x=1722330697; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C4m22+VsjFo5GUsw5jkKQPA0xLnML1JF907YjM4GD2Y=;
+        b=Vln6SOKsUMXcGrjogTHSCkJwf4th31ezK2mTPJSxqqluwZpLy3dbYDr+rHlk/Gm54q
+         +mgQiKwlbl/wKpqJJcVcBm3HjbL8b2dj54NGZTRlnL+cMxng7YIWX/RnwsdfTWnPfj2+
+         tRxVaF0Kzsu1OC08ifTHhlNGfbArO1eN8r+ZKspPdy+sPstuuukqK7CVY4E9GqVErWX5
+         iQePkfcStfSv7IgKA7pVquzsut/Z0jl7OQqZnrvwuNxvXmF3uvuQ/Eje6Cx8AgJtG1y7
+         dJeuy9odyuEMgqFLKg/OLtA2+goURAse0H0LXflxxx/UB/EWOLMkw3YFaoYnDEXXG+lf
+         6OKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721725897; x=1722330697;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C4m22+VsjFo5GUsw5jkKQPA0xLnML1JF907YjM4GD2Y=;
+        b=Pz6XWxyFCNGs/8KtecKhBdiFtarjThxtPXr+e6IwPNgp6trcO7GsQ9TlTGjGts2Jc9
+         1yveWNixvjr3kBAGfa3AKHw51+IST/nYKJnL1GC7V6ic879YzBbsrGhid58WUjivzWEj
+         ZdWEoLjAjGzvov7S/vRM+KOLWu8ckwpxL4mHdilYQ9aOYfN5BXbggV0fwgNjJEBcsSCj
+         ESoPGWsc1SrBA2NVqu1Fq1sGVK+q6gaFQeFQWt/df51uADjjTF8Fx+bTgbfVhvnhDdNv
+         sT8QPD4AZ8X/UQ8E91kFFxGZsAdTBGjoLL/X32A+diuAbU7W4e7SWwezaXHIRkeyvAcX
+         pECQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNRt7lGEjhbDeaKc8MSNDX12NpNsW66tFGRWD5kUfyPVVsfHI/5XIRewYq7KARxjCz4UN/zWHT5fXeLun+A6bZLz2ZZIOVx9RTn/v75qu+
+X-Gm-Message-State: AOJu0Yysvp6co5dhI3egvMX29zEEvszRVL/GmTxY156FdwX/LVjjbaof
+	SXfR5ddSEuIX2AFLq4A/sl7jCFMwBhDtqYPEG/1TVdtGunvtp260M/tt/JABg3A=
+X-Google-Smtp-Source: AGHT+IEIbekmGmiqBQAtRd3srRNk09NBRXsaVymPp5qO3RcRYT9XX8yD/Pdx22XxjAo3rKZNsm68YQ==
+X-Received: by 2002:a17:907:8693:b0:a77:a630:cf89 with SMTP id a640c23a62f3a-a7a87a9899emr160683366b.0.1721725897091;
+        Tue, 23 Jul 2024 02:11:37 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c78611asm519859466b.45.2024.07.23.02.11.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 02:11:36 -0700 (PDT)
+Date: Tue, 23 Jul 2024 11:11:35 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: cgroups@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] cgroup: Use seq_putc() in three functions
+Message-ID: <mbv6jl67qw43ruzf55yzgdo7zrusvuod2c3b7cfgliypyh7pgf@mqneyza5cffr>
+References: <8ff2d1aa-4c48-4cb1-b5d5-675adb90ae81@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ya2no36zmermubjy"
 Content-Disposition: inline
-In-Reply-To: <20240718-md-mips-arch-mips-sibyte-common-v1-1-49b29b0555eb@quicinc.com>
+In-Reply-To: <8ff2d1aa-4c48-4cb1-b5d5-675adb90ae81@web.de>
 
-On Thu, Jul 18, 2024 at 04:17:52PM -0700, Jeff Johnson wrote:
-> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
-> description is missing"), a module without a MODULE_DESCRIPTION() will
-> result in a warning with make W=1. The following warning is being
-> observed when ARCH=mips and CONFIG_SIBYTE_TBPROF=m:
-> 
-> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/mips/sibyte/common/sb_tbprof.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> I'm trying to fix all of these issues in 6.11, so please take this
-> through your "for current" path instead of your "for next" path. If
-> you don't have a "for current" path, Greg KH has indicated he'll pick
-> up the stragglers before the 6.11 rc-final.
-> ---
->  arch/mips/sibyte/common/sb_tbprof.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/mips/sibyte/common/sb_tbprof.c b/arch/mips/sibyte/common/sb_tbprof.c
-> index af5333986900..149a9151bc0b 100644
-> --- a/arch/mips/sibyte/common/sb_tbprof.c
-> +++ b/arch/mips/sibyte/common/sb_tbprof.c
-> @@ -589,4 +589,5 @@ module_exit(sbprof_tb_cleanup);
->  
->  MODULE_ALIAS_CHARDEV_MAJOR(SBPROF_TB_MAJOR);
->  MODULE_AUTHOR("Ralf Baechle <ralf@linux-mips.org>");
-> +MODULE_DESCRIPTION("Support for ZBbus profiling");
->  MODULE_LICENSE("GPL");
-> 
-> ---
-> base-commit: 51835949dda3783d4639cfa74ce13a3c9829de00
-> change-id: 20240718-md-mips-arch-mips-sibyte-common-7c51d90b31f2
 
-applied to mips-next.
+--ya2no36zmermubjy
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thomas.
+Hello.
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+On Sun, Jul 14, 2024 at 11:33:18AM GMT, Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+> Single characters should be put into a sequence.
+> Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
+
+seq_puts() handles internally the single char strings already and
+calling one function uniformly seems less error prone in general.  I see
+only marginal benefit of the change in this context .
+
+> This issue was transformed by using the Coccinelle software.
+
+Maybe that would better fit under scripts/coccinelle/misc for optional
+checking.
+
+Thanks,
+Michal
+
+--ya2no36zmermubjy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZp9zvgAKCRAt3Wney77B
+SbvtAQC3YXOpxBGMUUAQ9XE0rXBM7qtx9UV6TuNAybCrb0oorwD/d0DjyrSqcRDq
+f+jviqBNoiFwprsSeg3L6J6yKbWaQwM=
+=74Y9
+-----END PGP SIGNATURE-----
+
+--ya2no36zmermubjy--
