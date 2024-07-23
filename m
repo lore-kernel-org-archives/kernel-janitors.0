@@ -1,87 +1,78 @@
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7B27F;
-	Tue, 23 Jul 2024 00:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8EA3D6A;
+	Tue, 23 Jul 2024 07:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721692887; cv=none; b=Fd5JedxMNVEgrtNKHSa8vnmhtX0HQHF02/RCkJh5ygAwRZhs2gQxGW949Kk1tf442b/ckZVNE84eS4nv+pSIoDsFYq2kfMj+aBa0gljLcEYs6s21Npw+n1PvdyJkSGH9Ss/8M4Uu+Tn4mTBfGiUJGleUZcoEsheuvc1CZal6Q54=
+	t=1721720906; cv=none; b=KrKWCHqn/9f/pS8nYbrWOqJjgbU9+QzXIut2u0tZQWesPAgJaCtaoWyXZIKWjk+ecCa/0SXbXflai6m/TgUSbREuUqb8jfS16S0yjX0s6D+QiAnKuYLvmlOrQi77Qv+f+IpKVZwazsNV+Q9Zjpr5kL9b+sqmZOz925uloVJEuIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721692887; c=relaxed/simple;
-	bh=2N5hAJNc/wHGl0+Wu9SA5P6Gr5W2YtDnH5+knDo4Ff4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=B5iqJCmixegu5w+QK9p0DRiDhNqFBUEc/n/qSbaEnbdtFPehspmovNDxA6OozPPpSX1t46+/Wl94ICKCurto0/dB3Y38jV+U0CLGmRFlCQGhp5bV9HnXz8Cc6iyF6VDjXG/r6/XZ5VKsZIi3TOhvm4ppG9cwmoeMpzgQqzh7BE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=lvyK8ljQ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="lvyK8ljQ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1721692876;
-	bh=1ee9dpsEkMVtwnazsE5jJi3meNyVdkAB7jjS0GvSPX4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=lvyK8ljQXrJ70+MKwGlDyyNdspRGaVFS8sTJqSGUEFVJFCJk6ofjy9aiockxrI8GL
-	 VZlkQ5kA8ALnfJfPn+cTpikrO7xPMAAOQjqRIAOyl4sQpMahgTFtsjrfn21aaH0Uwe
-	 CwBicMo9gCli+tVNjbgIF/unZGFWs1ntjB0DZCpKNajBMwCJdIxT+YkQqX6qy21gQB
-	 WaZhYMEKjZi9UIHV9kAcn2vyPbSxGvCn+JMwFyTN94MiBkXQWjkt1RPAQ4nXiJlNwK
-	 o1chsP9+/HDPycBcKeqAVXWSFlkgB4UsjbeU9bpQz9IXzUrVM5wdASAQBWyQbVdjhw
-	 Uqhg6kHYSkoPA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WSckM1pQBz4wcR;
-	Tue, 23 Jul 2024 10:01:15 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Nicholas
- Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, Jeff
- Johnson <quic_jjohnson@quicinc.com>
-Subject: Re: [PATCH v2] cpufreq: powerpc: add missing MODULE_DESCRIPTION()
- macros
-In-Reply-To: <20240722-md-powerpc-drivers-cpufreq-v2-1-bb84d715eb3d@quicinc.com>
-References: <20240722-md-powerpc-drivers-cpufreq-v2-1-bb84d715eb3d@quicinc.com>
-Date: Tue, 23 Jul 2024 10:01:13 +1000
-Message-ID: <875xsxvuwm.fsf@mail.lhotse>
+	s=arc-20240116; t=1721720906; c=relaxed/simple;
+	bh=vbvgwD+cGbGHd6xsCHsLBoTVpmyEcO3/PjQfo+PH4Do=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q0V9DMT8VQa/WQU8plzBlahFJqeRvNp8F0tTYuo0TmFLp/o9jsB7UOP6RRtWn5mVb3jgUnQPq5L2zst+tMYnr1PHjS2uWF80H3uTvc40n+CCHii8A94/PPBVgNKZYEEcKs8TFSFjIVpXFSWEAAlIZssI+Ls2P3aYZgeuZ6Nb/A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1sWAFu-0003M0-00; Tue, 23 Jul 2024 09:48:18 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 93450C0899; Tue, 23 Jul 2024 09:48:08 +0200 (CEST)
+Date: Tue, 23 Jul 2024 09:48:08 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mips: sibyte: add missing MODULE_DESCRIPTION() macro
+Message-ID: <Zp9gOOUp3ZWXY/B8@alpha.franken.de>
+References: <20240718-md-mips-arch-mips-sibyte-common-v1-1-49b29b0555eb@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240718-md-mips-arch-mips-sibyte-common-v1-1-49b29b0555eb@quicinc.com>
 
-Jeff Johnson <quic_jjohnson@quicinc.com> writes:
-> With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/ppc-cbe-cpufreq.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/powernv-cpufreq.o
->
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
->
-> This includes three additional files which, although they did not
-> produce a warning with the powerpc allmodconfig configuration, may
-> cause this warning with specific options enabled in the kernel
-> configuration.
->
+On Thu, Jul 18, 2024 at 04:17:52PM -0700, Jeff Johnson wrote:
+> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+> description is missing"), a module without a MODULE_DESCRIPTION() will
+> result in a warning with make W=1. The following warning is being
+> observed when ARCH=mips and CONFIG_SIBYTE_TBPROF=m:
+> 
+> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/mips/sibyte/common/sb_tbprof.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
 > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
-> Changes in v2:
-> - Per Michael Ellerman updated maple-cpufreq.c and powernv-cpufreq.c
->   descriptions
-> - Did not carry forward Viresh Kumar's Acked-by due to this change
-> - Link to v1: https://lore.kernel.org/r/20240614-md-powerpc-drivers-cpufreq-v1-1-de4034d87fd2@quicinc.com
+> I'm trying to fix all of these issues in 6.11, so please take this
+> through your "for current" path instead of your "for next" path. If
+> you don't have a "for current" path, Greg KH has indicated he'll pick
+> up the stragglers before the 6.11 rc-final.
 > ---
->  drivers/cpufreq/maple-cpufreq.c   | 1 +
->  drivers/cpufreq/pasemi-cpufreq.c  | 1 +
->  drivers/cpufreq/pmac64-cpufreq.c  | 1 +
->  drivers/cpufreq/powernv-cpufreq.c | 1 +
->  drivers/cpufreq/ppc_cbe_cpufreq.c | 1 +
->  5 files changed, 5 insertions(+)
+>  arch/mips/sibyte/common/sb_tbprof.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/mips/sibyte/common/sb_tbprof.c b/arch/mips/sibyte/common/sb_tbprof.c
+> index af5333986900..149a9151bc0b 100644
+> --- a/arch/mips/sibyte/common/sb_tbprof.c
+> +++ b/arch/mips/sibyte/common/sb_tbprof.c
+> @@ -589,4 +589,5 @@ module_exit(sbprof_tb_cleanup);
+>  
+>  MODULE_ALIAS_CHARDEV_MAJOR(SBPROF_TB_MAJOR);
+>  MODULE_AUTHOR("Ralf Baechle <ralf@linux-mips.org>");
+> +MODULE_DESCRIPTION("Support for ZBbus profiling");
+>  MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: 51835949dda3783d4639cfa74ce13a3c9829de00
+> change-id: 20240718-md-mips-arch-mips-sibyte-common-7c51d90b31f2
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+applied to mips-next.
 
-cheers
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
