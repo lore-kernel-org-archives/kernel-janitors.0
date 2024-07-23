@@ -1,131 +1,95 @@
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D340514D431;
-	Tue, 23 Jul 2024 17:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2934158DBA
+	for <kernel-janitors@vger.kernel.org>; Tue, 23 Jul 2024 17:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721754248; cv=none; b=Q5gVy827t8PxAqdwhZHrwM/aEpQN2SrzrzUqEUqZt/4UgMcc3/OV5dSxvv8PNLAuDO0aaQOH1+rg0CoZJQZzm768lnR4s90PkrhfEfWg164MG17bfAA1EJU0hh4DBVhC0/Poo9RDmx80qlZT+7T00WIVdPCTczTYpS+1dFeIZdU=
+	t=1721754298; cv=none; b=tG2Sh+NnicCrY2la+aZOYKRqpAGDsNvYOzHgjmts4iiFM1a4n0KP4MA7vHK3y+rEDPQfLlx+M4ntN2T68judk2TR+eNBKzvUv49Ido8Rkb+oJkBuUlADNxXo4ST11ubVXPNjEk3dpwGDu44XxXPUH/tgIkuv1oOW/Su6CXrVFZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721754248; c=relaxed/simple;
-	bh=6+fkscHQNgKGVGb6qvOlCMO1VnaLS8Gb+rc0NXhVRXE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UnRMpEtP92hXFfxXlWG4tiB3+AwIMr7fwwwPi0xO2vwHCKw1LHEbO1S/Su2MEuRoD7Z2c/Pv4kDE5P1mJr2MCAhBKfClfY7K4Tqk9me9GnHOlrHdP88a8t1GB82/lamcd4rBjPUcTd9JtfGyNc2FuyIwYakPdRkVcqbnVih/9W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=alum.mit.edu; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=alum.mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-70448cae1e0so3083222a34.3;
-        Tue, 23 Jul 2024 10:04:06 -0700 (PDT)
+	s=arc-20240116; t=1721754298; c=relaxed/simple;
+	bh=rjm+XiXLjAv+cv8lsSElkzlnzNnwcUwpg8OI2sAcgqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=apHxADbc006GPFZw5FcC9G+bHpCssYMGOukN+A7vUJie7UUNTVkg6dM3WXI1HJhFWXdhOyj14LqM5J41p6p1TxqIQbZcAM7WnvKB68BL0HuwFzqox4ohXRGmUdOwpRNGRtzSpWhKIJOz/1i53lh4cqRRYdo5VyB0uaT6IhcEarE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QFuvWIPJ; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QFuvWIPJ"
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-70361745053so21687a34.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 Jul 2024 10:04:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721754296; x=1722359096; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=17PO6P9m/EPzTuaWqEoZXJbBkST2vM/pJLJreMB6/QU=;
+        b=QFuvWIPJcJ8EFnQdZ4+EMwvjvVaE8w/RGKJI4t/pRK55VRex3xFoPFEVLEk0ENDt77
+         oa5AhM3Lk+n81cqqKLBqTjIn0g36I8ssNpIJOp0sKYxcKp3VxWoH11vyVVjEn7ySTpJv
+         wFUCASZ+zhxITL8IyXXcHtPvJKOlvW/LzFKq41pYnElHTz0SFXZOiGMTpdYTxZgvYisw
+         GCGJ0n2m/geBoEFQUEGYUObA3Gpi+V6IyHMmwLYWI+w+uojP5U5LZZZ/ZFPL1o94XW6F
+         EcVgkg42KIPbKwW+Fgd6aTbo1hVxvCEnZCrHmmKWFHR+Sm7dxD9IIYbQ4+UklzvL9kpx
+         csow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721754246; x=1722359046;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=02xnxBX9SHHmM6dl/yiHqxrkZEzkCA7F2H6qwPrp+Fw=;
-        b=nip4dt0b+CiEnyG/Z4Rq/upEIyitNV4a+P1A4sx/jsyCdFHrcZXFkE/NHyfritVkRz
-         6wqBH5YNEfzNkicme/XmeBm3pmUu4ueHzvIv+BW2CCXp3DvhKMfVwizuI3k6P3SbIjwo
-         fk8THQYr5uaLDr+WP4Cy1yEA/qyZha4GWKlz8+z1OmLMPQw0BNbsVVw5XPfsGO3e0PIY
-         gmdjoLCHajGxLcGFbKCajojqmXY3lVNVPJUvaEQTbTYHxN2TLDH/MkV/3iY9iA7nEoa/
-         cp9v/G0h8X34OCUlHpyGaK5ZHsX1aD83D23azJ/7p7xnditoasw0PI+Of2Dhz+7+lHAm
-         VFnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3J3UBiLteoIDQptmhZQjAV8pKUQDbi2LyN88b+KWkKV1DOpjaTRl5ZkCZqTAQTfBNNVnyWbUHXXYOB8ysSHrrwfE5knviiJ2JjRPXvS61R28qJRskS5xYNhac/PAwuplKXpXmigLsLFdhCzuC
-X-Gm-Message-State: AOJu0YyMGXA5GDerfQAT3b4FOY7PwZyFb1g01i4Y8GqD6Q5P/P7eJd3R
-	tXEyPvZfiMwM5HE/G7X7zKtAVczL8iaqxd9GQRKCwMTsL1BzBCKAVtw5pFtHN4kEo7Vbn4fD9Y8
-	1WMUonxi+I/fQq+aovF+SX6HNOms=
-X-Google-Smtp-Source: AGHT+IHEX97DGXPMq/CzCwVHEuhMRWmstcgLm9QWYKkHmuYX3IYZck/qXxuiBB5Ck1P7O8YAFNAoIm3C8bt8PAfyiV0=
-X-Received: by 2002:a05:6830:498d:b0:708:f88a:e3e7 with SMTP id
- 46e09a7af769-709009f09f2mr14914971a34.34.1721754245650; Tue, 23 Jul 2024
- 10:04:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721754296; x=1722359096;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=17PO6P9m/EPzTuaWqEoZXJbBkST2vM/pJLJreMB6/QU=;
+        b=IYy5HcWuGemJemuNSz5Bnc6ag0mrV/KIl3CdXfa6avSfFwoIK9qoVj0DEZfnUBuOjH
+         ByjSMyssy08VESiHP2sV3K++Vhk+k2jQ0KzGl/LfCyy7kqEihRXt4kwIqm+Hcqd4+J6h
+         9c/cvcMiidiGr0JNVaahDv/cKJnjBAfo/vBM1vuCKv1ubNmTGGaAvDOcQ01VpGaSv0XR
+         mGErYa8R42yJkGwc7oQLPGow1O0P4ndFaneS0gXgrEvj1DqR2orFjrwE0InT8fpJw2ll
+         VzSjNsq7SG+1WPNAKOCotqqrmI8UhgGpdVQxETVM8A9tKfalxgymZHXm4GKXb2OfXYFE
+         mVig==
+X-Forwarded-Encrypted: i=1; AJvYcCVV3xmi2LQixT+okyB9g9C4VPMe0MdaSzJmHAU2YE6gW7zNMV5PDpwx44keCTktTlDH/P2osqdQ+qb931FRJSZRrZu58j1xw2UdZW/05PnZ
+X-Gm-Message-State: AOJu0YwU3hU/HkpAiXl5FRtQ2zI/h9d7SOMRrrp3VSwEgUNpI4EveamJ
+	5TxRiv5lmZfVXznAQHrcyCLDghMM9n/2PFkVH7FEkiblMlEFeWCKUsHfavOy1P0=
+X-Google-Smtp-Source: AGHT+IEA0MFAjBrBs9eGln7moHaVSCxxONpZPV/R5VMZKTqO7d8zBcegIRMtxIjGeKGufDvuoUnqhg==
+X-Received: by 2002:a05:6830:314f:b0:703:6563:9384 with SMTP id 46e09a7af769-7091aab9531mr1132985a34.1.1721754295924;
+        Tue, 23 Jul 2024 10:04:55 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:eca3:bb93:d28d:1005])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-708f61747e1sm2057512a34.64.2024.07.23.10.04.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 10:04:55 -0700 (PDT)
+Date: Tue, 23 Jul 2024 12:04:53 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Colin Ian King <colin.i.king@gmail.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Vasileios Amoiridis <vassilisamir@gmail.com>,
+	linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] iio: pressure: bmp280-core: Make read-only const
+ array conversion_time_max static
+Message-ID: <abc73704-17c5-40c4-a92c-b69c571a006f@suswa.mountain>
+References: <20240722151738.572913-1-colin.i.king@gmail.com>
+ <20240722210111.49e66c4e@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cb21950b-286b-4630-9052-cff9e7e56337@web.de> <CAKb7Uvj513trzg9bVGrjcQ8CfO4anCq7e9mgbD0eZKh=zNLy=Q@mail.gmail.com>
- <147bde68-2b66-4e0c-890d-30571a99eee1@wanadoo.fr>
-In-Reply-To: <147bde68-2b66-4e0c-890d-30571a99eee1@wanadoo.fr>
-From: Ilia Mirkin <imirkin@alum.mit.edu>
-Date: Tue, 23 Jul 2024 13:03:54 -0400
-Message-ID: <CAKb7UvjE-xLBpV637qQ8DG7odnoLvaPgBK5QRThiGYZF_tgwFg@mail.gmail.com>
-Subject: Re: [PATCH] drm/nouveau/debugfs: Simplify character output in nouveau_debugfs_vbios_image()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	kernel-janitors@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>, 
-	Danilo Krummrich <dakr@redhat.com>, David Airlie <airlied@gmail.com>, Karol Herbst <kherbst@redhat.com>, 
-	Lyude Paul <lyude@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
-	Markus Elfring <Markus.Elfring@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240722210111.49e66c4e@jic23-huawei>
 
-On Tue, Jul 23, 2024 at 12:58=E2=80=AFPM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Le 15/07/2024 =C3=A0 15:15, Ilia Mirkin a =C3=A9crit :
-> > On Mon, Jul 15, 2024 at 7:49=E2=80=AFAM Markus Elfring <Markus.Elfring@=
-web.de> wrote:
-> >>
-> >> From: Markus Elfring <elfring@users.sourceforge.net>
-> >> Date: Mon, 15 Jul 2024 13:36:54 +0200
-> >>
-> >> Single characters should be put into a sequence.
-> >> Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D for one=
- selected call.
-> >>
-> >> This issue was transformed by using the Coccinelle software.
-> >>
-> >> Suggested-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-> >> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> >> ---
-> >>   drivers/gpu/drm/nouveau/nouveau_debugfs.c | 2 +-
-> >>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/nouveau/nouveau_debugfs.c b/drivers/gpu/d=
-rm/nouveau/nouveau_debugfs.c
-> >> index e83db051e851..931b62097366 100644
-> >> --- a/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-> >> +++ b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-> >> @@ -42,7 +42,7 @@ nouveau_debugfs_vbios_image(struct seq_file *m, void=
- *data)
-> >>          int i;
-> >>
-> >>          for (i =3D 0; i < drm->vbios.length; i++)
-> >> -               seq_printf(m, "%c", drm->vbios.data[i]);
-> >> +               seq_putc(m, drm->vbios.data[i]);
-> >
-> > Is there some reason this whole thing isn't just
-> >
-> > seq_write(m, drm->vbios.data, drm->vbios.length)
->
-> Hi,
->
-> I don't know if my answer is relevant or not here but:
->         for () seq_putc();      =3D=3D> will fill 'm' with everything tha=
-t fits in
-> and
->         seq_write()             =3D=3D> is all or nothing. So if 'm' is t=
-oo small, then
-> nothing will be appended.
->
-> I've not looked at the calling tree, but I would expect 'm' to be able
-> to have PAGE_SIZE chars, so most probably 4096.
->
-> And having gpu + "vbios.rom", I would expect it to be bigger than 4096.
->
-> If I'm correct, then changing for seq_write() would just show... nothing.
->
->
-> I don't know if it can happen., but testing should be easy enough to
-> figure it out.
+On Mon, Jul 22, 2024 at 09:01:11PM +0100, Jonathan Cameron wrote:
+> On Mon, 22 Jul 2024 16:17:38 +0100
+> Colin Ian King <colin.i.king@gmail.com> wrote:
+> 
+> > Don't populate the read-only array conversion_time_max on the stack at
+> > run time, instead make it static.
+> > 
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> 
+> I'm almost 100% the compiler can hoist this off the stack if it feels like
+> it but sure, it might not and adding the static keyword probably obliges
+> it to do so.
 
-The vbios can definitely be much much larger than 4k. But it does
-currently work as-is, i.e. you don't just get the first 4k, you get
-everything. So I think there's some internal resizing/extension/etc
-going on.
+You would wish the compiler would do this correctly, but it doesn't.
+(Or it didn't the last time anyone checked).
 
-But I totally agree -- testing required here. Not sure if the author
-has done that.
+regards,
+dan carpenter
 
-Cheers,
-
-  -ilia
