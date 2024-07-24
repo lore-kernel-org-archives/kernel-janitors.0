@@ -1,103 +1,103 @@
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9A5219ED
-	for <kernel-janitors@vger.kernel.org>; Wed, 24 Jul 2024 04:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BA16FC2;
+	Wed, 24 Jul 2024 09:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721795987; cv=none; b=b0UVebuuAhoNS7Wx0RuK3gJWWvP1CE++LL0NDWD4Cs+3qu7fe3p25AywSfOh5V0+HAUPRWPBK37HcbgQ+0U5se32VkmPWKXai7qnXzFRqJyWiOw59LJDORZ8OG0NHcEjFrzoR4vHCQJNwR4169fhDaXXeC26dYXNnBK8YRPoNHU=
+	t=1721813474; cv=none; b=oOt8WOsJ4K+xifACkvlHzRj5bwQxosrPROygqJwf+xuIMLYEVmjzR493jZohZTBfTy7W15n2CxrrhXarJu4LIvP6KP8WqohN5BtdUo6HxPg/ZbAH4BG6llsXT4UMYb2s3POHybYOqewm3dugz8HEzjVSZ2xDLd3t/WlrqCBoQko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721795987; c=relaxed/simple;
-	bh=X2B2h7YCmnQxgWrjlRimRYu68yfNkuWjdFuHQ3lVJP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GHKlHtu7bQjmBuCBN3OFdI+KpfPWp+P1MfIqN0AGv7e/O4Wf1HXMXaIMpMo0tE2a74LC/e/v1iD6FusS/irbBQczk60FOBRM0PiQ3u4h8BHZcVmG9An2v0gXtkzFF3f/J/UnjRxzRXhoQCBT0zTrBg3fKcNHWWp5er5FSmJG20c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k87EGMps; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1721813474; c=relaxed/simple;
+	bh=GI16kZp/DZvJnXEv3qKUE7rVQHnu64qzaMVHUItjoNw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pcSrlXrSVRBF9elEktKx853tudSDCO3eM/tRYfG9/5FuoCiCMN7O9gTa7OcOmnGxdoQfyZFmlXSe+3mvtk7yv5KxiTAv9vJ7y84YhkxTyNEm82DmKjSvdAGv4l70Xw2oUnc2Ur2rthPmV4RcGBIRaBG7T0Lqf+KdSGTI5ZACmmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=eqWvWseX; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k87EGMps"
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3d934cb84b6so3736811b6e.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 Jul 2024 21:39:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721795984; x=1722400784; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ydzy8AybJJkkCvZrEtKcB+LO2UJxL/0lB3QK0FrhXAo=;
-        b=k87EGMpsEIVMh+8VzScAcxlXNGLnnQKqmPsbhR58r3jazUdV699Ge+ox7xzIUFvBwR
-         Ob79R3G4j5i+ohtbBuKjpPm21HbZFANSRNMFv5bV0MBaIEBZncuVTwGAeiDj3scsLtb6
-         UXVG3p3oG/aOndRkvJ8BNd+5TBF7ysUAMzR/rmlEKv7Hes9zf2tn0UJ82pLOCXU3PPEc
-         iTazR39aH3O6e46ZI58Kz2quJzwUPqjQadE4yGFludwpI6wgXV5AImXAMmftc14khZ+c
-         NTf4mXS9abqDziWWo80i0mCZ54tXr1AruvUCiZEukcko1RxGlusxp2SpqNBSNNDnJOO2
-         SH6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721795984; x=1722400784;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ydzy8AybJJkkCvZrEtKcB+LO2UJxL/0lB3QK0FrhXAo=;
-        b=JqnMP8b5reyU0aFTGoF8SCCV2URNda1Fq9MIpim3Kdw+Hwu9kWmRhV/CSHwodkTLoZ
-         O4RwPnNner7WGpoORhOZ5s3wZj09iR/KqucnTPxoWe1RkGk4YScl0ytvHrmK3YtkZblT
-         C40bhYVYKSj0uauqGHdwyEZ8CuSJUhr31+Cy7JHgHrgBwn40POP2eveprFNbrip27sIB
-         o9FC2p9zXZE8Y5BsuPMTKorpW64n2fLNYeZ71iI8Zy+VpEUmdVB9zma3+mULHMqG0R5w
-         aLdnFcfJl24QG5IOMkqQQsarVJACKmMKFuw4VnpnY1aMvbpnHJvEk8dra2aXEcTr/+3a
-         Rw1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXIl4i0OQi1F5dOfOUWF3XllHSdkQy6FFtWBDcbu4vQQfEyRzZQtZ4hNNZWpm7/iNRUTdElZ1Q62ZXXs1WulOcxKr1v+iv6Ja6dpuqT03Ie
-X-Gm-Message-State: AOJu0YyrqVWvpJGxDsUbeqr3clluzkMWRGrqJzBtPuIS1OJzsXBSraW9
-	Xne0/pI+EuF7IzFhJ9jyfvjpCcxFLHGt+kuHEB2upYacqWWYzTZ3v0O9owDXWz8HpocNB+1XQtG
-	O
-X-Google-Smtp-Source: AGHT+IFawSrYkpJ5B3GaqjAq4r8y+m8JJXA6riU411Tpew/uqsG/DaM7j/6beI731Cy6xC6aPZPTvg==
-X-Received: by 2002:a05:6870:1682:b0:260:ea0c:acc with SMTP id 586e51a60fabf-2648ccc2102mr942284fac.49.1721795984585;
-        Tue, 23 Jul 2024 21:39:44 -0700 (PDT)
-Received: from localhost ([122.172.84.129])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70cff5527e9sm7734870b3a.138.2024.07.23.21.39.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 21:39:43 -0700 (PDT)
-Date: Wed, 24 Jul 2024 10:09:41 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] cpufreq: powerpc: add missing MODULE_DESCRIPTION()
- macros
-Message-ID: <20240724043941.5wpa5di7ta4fjyl5@vireshk-i7>
-References: <20240722-md-powerpc-drivers-cpufreq-v2-1-bb84d715eb3d@quicinc.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="eqWvWseX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721813451; x=1722418251; i=markus.elfring@web.de;
+	bh=GI16kZp/DZvJnXEv3qKUE7rVQHnu64qzaMVHUItjoNw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=eqWvWseX8RDPKAwb2VcpWYv+kWCGBIWVyhmp57Dn7iSBNPaKf/2mo1q3+739GeO5
+	 FYctuKYDMo0gWeBAwfG7ZuDmFmQzdhYIzKF9e9Cv4iyAVFwJhJ6teIO3ghKA6U34y
+	 KXE3JTcrlBQfqPqNQsxJ6MjtMSeVEqJtxcqwKITMNgLsTyRA5uc/KaxeFayzfP2uK
+	 fWzcocvnMpYECZLChYebvUNNGjXuqT02ZLF2QGmxiDTALaNmaQaDtzDJdyl2Epr9I
+	 94Ett4G/bKFRf48NmvNCYDG7gh7XnscOp4Fg9uxhZhaltWESHdsFZH5UPnK+fjGG2
+	 ogTcRvwVCg1sCEwb5g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N4621-1s6FvG0jk9-00wNRB; Wed, 24
+ Jul 2024 11:30:51 +0200
+Message-ID: <6ccf3891-fd72-47de-ab89-cdc7e9425c56@web.de>
+Date: Wed, 24 Jul 2024 11:30:50 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240722-md-powerpc-drivers-cpufreq-v2-1-bb84d715eb3d@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/nouveau/debugfs: Simplify character output in
+ nouveau_debugfs_vbios_image()
+To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+ Ilia Mirkin <imirkin@alum.mit.edu>, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Cc: Daniel Vetter <daniel@ffwll.ch>, Danilo Krummrich <dakr@redhat.com>,
+ David Airlie <airlied@gmail.com>, Karol Herbst <kherbst@redhat.com>,
+ Lyude Paul <lyude@redhat.com>, LKML <linux-kernel@vger.kernel.org>
+References: <cb21950b-286b-4630-9052-cff9e7e56337@web.de>
+ <CAKb7Uvj513trzg9bVGrjcQ8CfO4anCq7e9mgbD0eZKh=zNLy=Q@mail.gmail.com>
+ <147bde68-2b66-4e0c-890d-30571a99eee1@wanadoo.fr>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <147bde68-2b66-4e0c-890d-30571a99eee1@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:RrGA6l7txMMXcnwEjtBSuPugQcQ+Aylad8jkNWgceoTGStNyfqr
+ wTlrqWtDAlH0lOi3LmxFuBdFOurzcAMSBbVSOyx+7nYCzF9yEcAoO29vnrsaXFglXk2xPCj
+ xn93kdCjgeIzu8z0n84elnUVbB32IjyF3DtuT04QF72Qb6Ozr7fwwcCvhY/mPFW43KB60nl
+ 6D7f2g3ZueR3VhfSCZLEw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:C3lcjC5oZS8=;DVJfFXGPfp7ihietJXxV4YSOv0c
+ un3HOOokhKNsh4QAHnFrfQuzuFCEpaGi1xrkfUj7MDr+0JCPOwMXLBxeAJmlQMxLPNreUsjtQ
+ roNUpubYtHHL+EVpYb0Q7I+g++Oxh5F2ZMY+vGlYo0AvceELcybcPZTxlBtb3IZCoauTU9m1S
+ ht+BIOh0cb7KGtpZBbhOxYQ8kQJl7atuVYvsAFZ0SNyv2k7HbTmS3K54k5JuI6e67KdR0XMOB
+ Y6PXS6gXmoN6QSN3uygBUPpKhfLQatXdnBL2nyMgwYa/9CzDsFuAybofJMTqd48qxJbvlEG7D
+ 1Ath9KSnstLC0AO0PDvsJgiW0gbffWXdYcDzfpyRsyQztaPnJMoW4NqlnrCsUcqXSJM3ixK0R
+ gdD/GdiU3w01EVoYYfClF/bctRxLulSi/0abkHeqYXi4hzXDMRpSr3VRstAghGzYMWs3w57hC
+ sBtXZouQ21rTIakIC9AUlAEO2h3O03M8bcoFzrnZMnMxKUAirtjr/tP1qZ0VJGC/5pOMa54VK
+ 6yCYdzL4qCqhMQOCXvkcNm/T3Aw9WkupeD4uMxwYKgDulRbnW8ka4DnRCQNH1pB/2z81XXvxf
+ Zs1LcxjShshMbARhoCdgPUxYUD85eLKlTLrfYIurRgm3oT0ryXtLiex6PfRKU9t0157H7qHa4
+ 5D9wKxcGzpyqxOIifBWUKQP0qy4JokmQSa8Gp/YZ1d1kl/i08lbfYddTuP5VgeUO+Lfyjuo/y
+ Qf95saO/iqx7QkxbB6wIaneO0g0yXG0DduVsxziGHh7v1FiyYC5l9XKd/4JVfyT1yk/6Jls5X
+ AKenXixwFu+XceBf6IsDYOUQ==
 
-On 22-07-24, 10:14, Jeff Johnson wrote:
-> With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/ppc-cbe-cpufreq.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/powernv-cpufreq.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
-> 
-> This includes three additional files which, although they did not
-> produce a warning with the powerpc allmodconfig configuration, may
-> cause this warning with specific options enabled in the kernel
-> configuration.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> Changes in v2:
-> - Per Michael Ellerman updated maple-cpufreq.c and powernv-cpufreq.c
->   descriptions
-> - Did not carry forward Viresh Kumar's Acked-by due to this change
-> - Link to v1: https://lore.kernel.org/r/20240614-md-powerpc-drivers-cpufreq-v1-1-de4034d87fd2@quicinc.com
+>> Is there some reason this whole thing isn't just
+>>
+>> seq_write(m, drm->vbios.data, drm->vbios.length)
+=E2=80=A6
+> I don't know if my answer is relevant or not here but:
+> =C2=A0=C2=A0=C2=A0=C2=A0for () seq_putc();=C2=A0=C2=A0=C2=A0 =3D=3D> wil=
+l fill 'm' with everything that fits in
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+I find such a discussion approach strange.
 
--- 
-viresh
+
+> and
+> =C2=A0=C2=A0=C2=A0=C2=A0seq_write()=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 =3D=3D> is all or nothing. So if 'm' is too small, then nothing wil=
+l be appended.
+
+The clarification can become more interesting for this system detail.
+https://elixir.bootlin.com/linux/v6.10/source/fs/seq_file.c#L816
+
+Was the sequence size (or the file capacity) appropriately configured?
+
+Regards,
+Markus
