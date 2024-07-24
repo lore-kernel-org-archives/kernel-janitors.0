@@ -1,48 +1,80 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81D34C6D;
-	Wed, 24 Jul 2024 14:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C6215884F;
+	Wed, 24 Jul 2024 14:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721831536; cv=none; b=FTQIYumiamiPVLrfwlm39m9LnLhjcNO3uUjcweleMAxx5dxpeSXtNy7+/jnTdeb5XNBVz1haG5X5t3HhIhEM2i+KfH3f/rd6swHphOyRMKapPNvMw7xolNWSKBGWTtQG1soUBhpB93aOjKzc6PCkxiPoEXnphHJWazgB21pWV5M=
+	t=1721832045; cv=none; b=iQtJEoclCV/tau5tcit4vwOG6deRrnSd2L1M/GuglGpezliN/ROKVkUxLKn7jjMdYLIuVAsAh+BHVk7lW1K7ZQwZ8qIHwZsyC0vcu0kAJd1R3BG0PVanAhjMHrg4YoExKHJ7+VAbTIjPiWqtuAyr3J5WVtxiz0y3jVYb4zIkb1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721831536; c=relaxed/simple;
-	bh=cVNdD1dtVQcawxs7xGcmE7j5UxisdjRC0FPgxYvcz0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tmZFf36JF9nfF2Dx4zytP9ezAWRXR6Hm/Tm+hcA8+tfLdeAG7TpmEV+CYj3tEbbQJbANRXxQBdkP44fGeTAVjbKCebGRa4xSgpQ015WlAskESRznhlgfpSBFYn1vDd5hLsBdJDb+KFZyvgrXCZfMMHLtp9tHm+A3+33AeWoPKfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ax5eqo9D; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1721832045; c=relaxed/simple;
+	bh=Tyv11+StWRcTJYiBlpVVwI64X4RXvYmIxnRwH2GK1sQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=leE2CL8onzCnu8KLi4IHJUrzXmLt9ChDRKszHfAGOXgD9m+MDKO3VxF05DikOjXKSycPZ5u9ghmNBn4YhLQdeanwL+jx36ERSlkQrcE2VZ/Mb+YZ5CyrkFHEpF5whVPjAcHCeQlBDb5xvoteCoGza1tScmKB1NXMR3IZU6m44Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uavkczRl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vYV9t0cp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uavkczRl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vYV9t0cp; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ax5eqo9D"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46OA0n6U024250;
-	Wed, 24 Jul 2024 14:32:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hCPhb2UixjZg1/8LztOdhqgtq8hNvIQBdrT9HHUc3+Q=; b=ax5eqo9DXQ4Bwe3/
-	xCKmsZxkSKtocOWUE5rzLAnnA3SlZ8VGCTy1hImcbIoYsAnbmECTFmn17sIOptpS
-	hmIYpUtfaw2ekzVBY7WHDc7y1OaHRuIojJJiNh8doNH0FVjpx0NEl4QBnEl8ugdr
-	OXO3hoHRLgj+kn5n2tL11wr7sjVhrIuohr69Jl2hZ5t5u9KG2+BD329mwHWUHUXN
-	ZPLbWnPOr8o00rVv3Po1KzRxC72357+4eRxiqVxy0FIx+opxqXukTA4b6UiQ6pGm
-	PxyZGfqMhDboxJxCQqZPLHYZn4gXq0+yvji13MsGs89mckxcaBYjuLNxgintYlf/
-	vaAzEQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g487j90y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jul 2024 14:32:08 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46OEW7iw009354
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jul 2024 14:32:07 GMT
-Received: from [10.111.176.36] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 24 Jul
- 2024 07:32:06 -0700
-Message-ID: <dacba423-f164-4ff4-b497-0730ddcf45df@quicinc.com>
-Date: Wed, 24 Jul 2024 07:32:06 -0700
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uavkczRl";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vYV9t0cp";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uavkczRl";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vYV9t0cp"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 64F991F7A8;
+	Wed, 24 Jul 2024 14:40:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721832042; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=K2oU6KeNMEKKrmlqYMEEXIL0CAP2uyQ2NxyjtiwdL5s=;
+	b=uavkczRlmYpLPla5thNBXjNOtQrfeZmoLODNnhDoNwt1YT4O7KRINMVR3uU/OdYyzoGAIQ
+	9FmDa6uZAeR/rN8CrdzkDvIJOSiQ6Eg3psRzaw8nQ5NO+0ahoOCTXJ/b807SlT8+0x58L+
+	8NGOxKujsAuumRKkCg0UqP8EKl/44DA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721832042;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=K2oU6KeNMEKKrmlqYMEEXIL0CAP2uyQ2NxyjtiwdL5s=;
+	b=vYV9t0cpsRrzF4ou/Se02S5+p69GDo3m/rLsX9R3uumUu3wcnC2k2lDLWKnPuNqlVQyM+C
+	r87DOnRYRQ9N6OBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721832042; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=K2oU6KeNMEKKrmlqYMEEXIL0CAP2uyQ2NxyjtiwdL5s=;
+	b=uavkczRlmYpLPla5thNBXjNOtQrfeZmoLODNnhDoNwt1YT4O7KRINMVR3uU/OdYyzoGAIQ
+	9FmDa6uZAeR/rN8CrdzkDvIJOSiQ6Eg3psRzaw8nQ5NO+0ahoOCTXJ/b807SlT8+0x58L+
+	8NGOxKujsAuumRKkCg0UqP8EKl/44DA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721832042;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=K2oU6KeNMEKKrmlqYMEEXIL0CAP2uyQ2NxyjtiwdL5s=;
+	b=vYV9t0cpsRrzF4ou/Se02S5+p69GDo3m/rLsX9R3uumUu3wcnC2k2lDLWKnPuNqlVQyM+C
+	r87DOnRYRQ9N6OBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2C05813411;
+	Wed, 24 Jul 2024 14:40:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fARjCmoSoWa1KQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 24 Jul 2024 14:40:42 +0000
+Message-ID: <38207d5c-c052-4701-8ccd-fe6381a97194@suse.cz>
+Date: Wed, 24 Jul 2024 16:40:41 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,79 +82,125 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vsprintf: add missing MODULE_DESCRIPTION() macro
+Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
 Content-Language: en-US
-To: Petr Mladek <pmladek@suse.com>
-CC: Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt
-	<rostedt@goodmis.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Sergey Senozhatsky
-	<senozhatsky@chromium.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240531-md-vsprintf-v1-1-d8bc7e21539a@quicinc.com>
- <ZmmG_dQaTpq4TkGE@pathway.suse.cz>
- <9614c130-d90a-4023-87fd-0b3b12516021@quicinc.com>
- <ZqEJYJScuEJpo778@pathway.suse.cz>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <ZqEJYJScuEJpo778@pathway.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+To: paulmck@kernel.org
+Cc: Uladzislau Rezki <urezki@gmail.com>, "Jason A. Donenfeld"
+ <Jason@zx2c4.com>, Jakub Kicinski <kuba@kernel.org>,
+ Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
+ linux-trace-kernel@vger.kernel.org,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, kvm@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
+ wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
+ ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
+ Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+ linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ kasan-dev <kasan-dev@googlegroups.com>
+References: <6711935d-20b5-41c1-8864-db3fc7d7823d@suse.cz>
+ <ZnCDgdg1EH6V7w5d@pc636> <36c60acd-543e-48c5-8bd2-6ed509972d28@suse.cz>
+ <ZnFT1Czb8oRb0SE7@pc636>
+ <5c8b2883-962f-431f-b2d3-3632755de3b0@paulmck-laptop>
+ <9967fdfa-e649-456d-a0cb-b4c4bf7f9d68@suse.cz>
+ <6dad6e9f-e0ca-4446-be9c-1be25b2536dd@paulmck-laptop>
+ <4cba4a48-902b-4fb6-895c-c8e6b64e0d5f@suse.cz> <ZnVInAV8BXhgAjP_@pc636>
+ <df0716ac-c995-498c-83ee-b8c25302f9ed@suse.cz>
+ <b3d9710a-805e-4e37-8295-b5ec1133d15c@paulmck-laptop>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
+ ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
+ Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
+ AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
+ V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
+ PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
+ KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
+ Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
+ ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
+ h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
+ De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
+ 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
+ EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
+ tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
+ eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
+ PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
+ HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
+ 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
+ w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
+ 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <b3d9710a-805e-4e37-8295-b5ec1133d15c@paulmck-laptop>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: wEw3MkRSrGxzQlD471V6rSrJ119t86ze
-X-Proofpoint-GUID: wEw3MkRSrGxzQlD471V6rSrJ119t86ze
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-24_13,2024-07-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 mlxlogscore=999
- malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2407240107
+X-Spamd-Result: default: False [-4.09 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[29];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,zx2c4.com,kernel.org,inria.fr,vger.kernel.org,lists.linux.dev,efficios.com,lists.ozlabs.org,linux.ibm.com,csgroup.eu,lists.zx2c4.com,suse.de,netapp.com,oracle.com,talpey.com,netfilter.org,googlegroups.com];
+	R_RATELIMIT(0.00)[to_ip_from(RLr583pch5u74edj9dsne3chzi)];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -4.09
 
-On 7/24/2024 7:02 AM, Petr Mladek wrote:
-> On Tue 2024-07-23 11:53:34, Jeff Johnson wrote:
->> On 6/12/2024 4:31 AM, Petr Mladek wrote:
->>> On Fri 2024-05-31 19:42:25, Jeff Johnson wrote:
->>>> make allmodconfig && make W=1 C=1 reports:
->>>> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_printf.o
->>>> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_scanf.o
->>>>
->>>> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->>>>
->>>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->>>
->>> JFYI, the patch has been comitted into printk/linux.git,
->>> branch for-6.11.
->>>
->>> Best Regards,
->>> Petr
->>
->> Hi Petr,
->> I see this landed in linux-next, but is not currently in Linus' tree for 6.11.
->> Will you be able to have this pulled during the merge window?
->> I'm trying to eradicate all of these warnings before 6.11 rc-final.
+On 7/24/24 3:53 PM, Paul E. McKenney wrote:
+> On Mon, Jul 15, 2024 at 10:39:38PM +0200, Vlastimil Babka wrote:
+>> On 6/21/24 11:32 AM, Uladzislau Rezki wrote:
+>> > On Wed, Jun 19, 2024 at 11:28:13AM +0200, Vlastimil Babka wrote:
+>> > One question. Maybe it is already late but it is better to ask rather than not.
+>> > 
+>> > What do you think if we have a small discussion about it on the LPC 2024 as a
+>> > topic? It might be it is already late or a schedule is set by now. Or we fix
+>> > it by a conference time.
+>> > 
+>> > Just a thought.
+>> 
+>> Sorry for the late reply. The MM MC turned out to be so packed I didn't even
+>> propose a slab topic. We could discuss in hallway track or a BOF, but
+>> hopefully if the current direction taken by my RFC brings no unexpected
+>> surprise, and the necessary RCU barrier side is also feasible, this will be
+>> settled by time of plumbers.
 > 
-> The pull request is still being discussed, see
-> https://lore.kernel.org/r/CAHk-=whU_woFnFN-3Jv2hNCmwLg_fkrT42AWwxm-=Ha5BmNX4w@mail.gmail.com
-> 
-> If the printk rework part is not acceptable then I'll send these
-> trivial changes separately.
-> 
-> Best Regards,
-> Petr
-> 
-> PS: I have sent the pull request late because I have had vacation
->     previous two weeks.
+> That would be even better!
 
-Thanks for the update.
+I should have linked to the RFC :)
 
-Note that, at the advice of Greg KH, after the merge window closes I'll send a
-series that contains all of the MODULE_DESCRIPTION patches that didn't make it
-in, so it can come in via that series as well.
+https://lore.kernel.org/all/20240715-b4-slab-kfree_rcu-destroy-v1-0-46b2984c2205@suse.cz/
 
-/jeff
