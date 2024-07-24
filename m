@@ -1,103 +1,116 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647F515EFC0;
-	Wed, 24 Jul 2024 16:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D4229CA;
+	Wed, 24 Jul 2024 16:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721838254; cv=none; b=A1HYIPQ71mbQxHX/Wu9cAHvAdizREu+KFNgrA7hloHtP6qNFRhxDDs0xtlFBheJq7nLTfhe5JK6Qw2lMZFtxr3lFvae71aOe0m236zlnvrJ0NEGNLGZKqY4rjhI6S0XblBIhfghEvZBbEEPeK35rdCMFZe4KPBAMRRXtdmbyiUI=
+	t=1721839952; cv=none; b=WOCnvz3SPwK+MAoKXnxS4ElzTjaX9NuYhXvxhp3L/Ek6zjbbwyGkCciJS7eg1vMAbun2viUNl7uS8nMMH2v+ekIyCjd0UG6qv006moudfJPzce8VWiQT2iAdrWTuhYGQTNmQZXB1tWQsCRzsWNtbgnVzIC1r/eI39HclLXiARSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721838254; c=relaxed/simple;
-	bh=Navrk+PFyaTDJIijMu687SZP4snjGd5YksT3s3Vgao4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X366tdbwP9r+YAYsDY9nhUKdgS+76Wmiuum6Wfl9pEPTQ0D/Sq1VNlxcLvVd6SmAi+iHXRnvy9P5yB9fYPhqjdjzksboJgEkN1eTV0xFMDgVO97/0iQV7a5RiM3yF1hYx0/QTwwBaMwGngmgZ2Q2OMmqFuhtzDlrxDO8vO7+4NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nE5ZqAw+; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1721839952; c=relaxed/simple;
+	bh=MpyQsc0hU1GnVvadkjq2d6vR2ztC0Qrs/RgR86Rgtcs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DJJpqW/JieJ8gIYpkzp8wx1mw5T0Yp/oYrJHQe1AuRhsZuP/1c+OeeYu10YCEVjkOO4HLYvNnxR2WeF4ukuF9rUW97U72DAnXly0XO4OmZW9LRZuT7x8B8OzVulM7FjJM+MJmNqZX+EQLYiTVYLcz2qKu+kVk02omz/R9xMzMH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=krDg9jBP; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nE5ZqAw+"
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46OFXWmU028769;
-	Wed, 24 Jul 2024 16:24:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=6
-	KKce3+2I+tVZGXIFIMVYPZzso6eBjCP1BtU7O1YprA=; b=nE5ZqAw+tRm/OMCzw
-	HY84XE8Gw/cOsKl56fshqs2S89iO/yAACyfC7uuWgQm7RrGcT1AW8Qqnw/aC8A8A
-	f7Bs+WRwYJGoMJDGExh6StZR4jwgYTib0BJwZ7jHY+Rs4qpwPkf/fP2oA8nA5/2k
-	BmNhRhsrZ4HRpFMeHn9/6asMO1sIMGeh7bBmwE2kcLHWxZnUplRCWvjN9VV8PyJQ
-	x1J/iTPPGGqj5WQeBXTREVtYIokFRQ/3Dqtm1ZeA7NSwfHr4t5qKPJI8uMcFI5kg
-	WsKZdYqAjTMYsz4rGmZMQFeUGsqziGFFa4Q6qbiexLX+ey1kLI0khfElrmTHwnM/
-	98FQg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40hgkt9dj6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Jul 2024 16:24:09 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46OF2Mgh011060;
-	Wed, 24 Jul 2024 16:24:08 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40h29sv9uu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Jul 2024 16:24:08 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 46OGK1m3038616;
-	Wed, 24 Jul 2024 16:24:07 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 40h29sv9r0-2;
-	Wed, 24 Jul 2024 16:24:07 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Javier Carrasco <javier.carrasco@wolfvision.net>,
-        Abdel Alkuor <abdelalkuor@geotab.com>,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com
-Subject: [PATCH 2/2] usb: typec: tipd: Delete extra semi-colon
-Date: Wed, 24 Jul 2024 09:23:51 -0700
-Message-ID: <20240724162356.992763-2-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240724162356.992763-1-harshit.m.mogalapalli@oracle.com>
-References: <20240724162356.992763-1-harshit.m.mogalapalli@oracle.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="krDg9jBP"
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70d24d0a8d4so13104b3a.0;
+        Wed, 24 Jul 2024 09:52:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721839950; x=1722444750; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nHOSXKCOPqcvZd3Rls/ZcliizqiZMqlPEJyXkYPHW+4=;
+        b=krDg9jBPA0Vu9vfu+5qH54QxTsJ6ymDwoBQvOiaUcPLWlR9E2nNb4IpsmmsfCvA4da
+         rIIAC/tQZBIm2icUN6G2ElUbF7/5jjC428vrsMT4g7SSO9MQsDGC1JV9xhRThn0RRh8f
+         8Mk8Qna/7T99lN49fU7oroQTgsMr8xvnbUyJ+ZtZZAfnk9nq/EgwRcOO4qmqsOEr1Cto
+         ZmpMJ5NJRiA/TMuhPXOPy9ebOHxKNf/onjNpFox8jHOvL6rAZcZEggkw/pG5qRczBbg7
+         B2prorCaVUhEKP8iUHC/mcHq75yiJ94G7365CLesw1hyOksi2M7ySTviI70w3xLiymbt
+         yg+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721839950; x=1722444750;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nHOSXKCOPqcvZd3Rls/ZcliizqiZMqlPEJyXkYPHW+4=;
+        b=uwr28nXK6J9QuZHlTeMfzsi813hGehxdqcfDB0WbQuaVFvYvm65kbmfemG57TKFJs8
+         IV+tlCc56yn9FINnuNMJSZUh3XOBNiXOvWu81y2PkO3SgXG7om/su3axFOh4XwqgeaCl
+         LeqPRs/cIu2i6HclC9yirEHOHp6tdcoj01Z2m7M82iMBFULzWvj55j5pqcl7hJrAycbP
+         7vEm8SP/0I6vT2zGuApFaZJ4lBQjzSoNpJG28q4FsTtf5yOB06zYJxJeGBN/3KHN3vBl
+         6isMnQ/JeKsLnnMIixJYywXBLD7qRkFIONcdYCMsh3YVFF2Mi61UFXrE7Av/v+pK8Nc5
+         lZTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZAPZ+PO5vojMuOHVuR1YswE0UI35Bfx7WdgzhvJ4v5rOWEW2ZuXolnIrbTI/6oRDV7n4Wu3iMNA5PvZrgdZSEfHjDEL0PV0wxtAKEKoqY5f3ClduaI4OO6gu2t/OUUp5+Jes2feOiJFGN1NwB
+X-Gm-Message-State: AOJu0YwbzNQn6ga23qQa++JHdZqpvAJ6eHSIKZfD7DQ84IWrxyvFpr0m
+	b/WiEuwmhu5B+AuPbfUl+nDGomLhIzyxkv+pOuuf+zxjaOMyXkcVSWYgdMfJ+Pl14viDyySCnlH
+	yeUPpxJV0X9ElaV/QTpGOMH4jpKI=
+X-Google-Smtp-Source: AGHT+IGVCG7JOT9xlzQlknfmeT16tN//PMYw1q63fUNnGbcSCCLdEteVrx6kyG3bL5BZWl10luLLhTaTz3653TByswQ=
+X-Received: by 2002:a05:6a00:b51:b0:70e:8e3a:10ee with SMTP id
+ d2e1a72fcca58-70eaa8f52camr96225b3a.21.1721839949856; Wed, 24 Jul 2024
+ 09:52:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-24_17,2024-07-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 adultscore=0
- suspectscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2407240119
-X-Proofpoint-GUID: Ph9qnNgDOM-RKjy7AVLffGCkoBxPX9wu
-X-Proofpoint-ORIG-GUID: Ph9qnNgDOM-RKjy7AVLffGCkoBxPX9wu
+References: <20240724132428.2468883-1-colin.i.king@gmail.com>
+In-Reply-To: <20240724132428.2468883-1-colin.i.king@gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 24 Jul 2024 12:52:18 -0400
+Message-ID: <CADnq5_NHwwva2vN+MjnPohpjmzW0F5uLHN1bby1jUBiqetL6uA@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amd/display: Fix spelling mistake "tolarance"
+ -> "tolerance"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There shouldn't be a ; at the end of the function, delete it.
+Applied.  Thanks!
 
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
- drivers/usb/typec/tipd/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
-index eb5596e3406a..dd51a25480bf 100644
---- a/drivers/usb/typec/tipd/core.c
-+++ b/drivers/usb/typec/tipd/core.c
-@@ -1198,7 +1198,7 @@ static int tps6598x_apply_patch(struct tps6598x *tps)
- 	release_firmware(fw);
- 
- 	return ret;
--};
-+}
- 
- static int cd321x_init(struct tps6598x *tps)
- {
--- 
-2.45.2
-
+On Wed, Jul 24, 2024 at 9:50=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
+>
+> There is a spelling mistake in a dml2_printf message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  .../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c  | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2=
+_core_dcn4_calcs.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_cor=
+e/dml2_core_dcn4_calcs.c
+> index 0b671c665373..5ba38d51382f 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_d=
+cn4_calcs.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_d=
+cn4_calcs.c
+> @@ -8267,7 +8267,7 @@ static bool dml_core_mode_support(struct dml2_core_=
+calcs_mode_support_ex *in_out
+>         dml2_printf("DML::%s: mode_lib->ms.DCFCLK =3D %f\n", __func__, mo=
+de_lib->ms.DCFCLK);
+>         dml2_printf("DML::%s: mode_lib->ms.FabricClock =3D %f\n", __func_=
+_, mode_lib->ms.FabricClock);
+>         dml2_printf("DML::%s: mode_lib->ms.uclk_freq_mhz =3D %f\n", __fun=
+c__, mode_lib->ms.uclk_freq_mhz);
+> -       dml2_printf("DML::%s: urgent latency tolarance =3D %f\n", __func_=
+_, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kb=
+ytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)=
+));
+> +       dml2_printf("DML::%s: urgent latency tolerance =3D %f\n", __func_=
+_, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kb=
+ytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)=
+));
+>  #endif
+>
+>         mode_lib->ms.support.OutstandingRequestsSupport =3D true;
+> --
+> 2.39.2
+>
