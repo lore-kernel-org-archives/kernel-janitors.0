@@ -1,68 +1,70 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D456E13E020;
-	Wed, 24 Jul 2024 13:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759C9D51E
+	for <kernel-janitors@vger.kernel.org>; Wed, 24 Jul 2024 14:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721829216; cv=none; b=Rv0Kp+InsbzBKLBu2jjtRL8k1OcREHL4Ps0hGnqAqa8NN5Z2xdK1vWK/GbM09zJATconytTYWTr9uYL73vczPY5hh2XIGuLurfbXl9mTK1Yjhd4Nwf5YF+bSP2ndZNCn5sp1ZRe5Wc3xteO1r+V/dMDI7gxPhJAvHXN/WOiQyZ0=
+	t=1721829736; cv=none; b=mJGaJ04b6MfCgwaCAxgfoFd/cPSlyUgINj6ECWHP5ej5mhx1uDaCCEWhOS7puLRsQxfpu27L500kGI1jzgIXhXSl48P7ZGh59jZKfnwoEx5SoWyEMBD1nHayiW+kokOnZqIItI2hW/sKx+YQoova831uWIyc6rezqOaJhGz+9qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721829216; c=relaxed/simple;
-	bh=07Vzl6re9ZHoHnUQaqXa2n0Sm3JNDNE/aQbliYyNUPE=;
+	s=arc-20240116; t=1721829736; c=relaxed/simple;
+	bh=wGbOuea6NOYUqz/tr1aRIds7z8JFvKE6US9qQL9rVoc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tSSzTIBDxdv0JLtBfh0RrFv+uy+NmG1dIcNFaej0eDwcxijtjKZINehLVWPm7sCdlSNsoSfv3hCj2pbUK1/QG83S9OeroYJ032d2MMwcqucsTlIq+EnuvPJ9v+IMC71o5ZXIxlDNbvlVTWO8y48uEycbC9LvRviM0O2ZagUqHrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WAP2//Vl; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=SxqtB+KRurhikAzWyqbIpvtN773mjCVaRA1r9PNqA44mVdMvf8GKA0xKn+Oei3fakn2AL4cypDztumgsT6qGsBXWPAlDuSWd5nzrpywDK7n9pd37BY9HQNcWta3DrVC8hU2Zy+Q3X5PBj2ifubHpGIwTbqtExo/kgD54MWoVZgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=d63Z0DAr; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAP2//Vl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B0F7C32781;
-	Wed, 24 Jul 2024 13:53:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721829215;
-	bh=07Vzl6re9ZHoHnUQaqXa2n0Sm3JNDNE/aQbliYyNUPE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=WAP2//VlWUSM9jrjWrTnlUR5U9gfJcKWxfEehwSsgCifqJ1HhI5rmor2MgAYiE7Hj
-	 k3H3D8gUK01HrebDYiJ8EV56b+RO+InO4F1HL2zNXYqpPk0VVAstDY9HBgwUy8+jTo
-	 8Kp+cbZnfcsDTxUnkpS1wiQgO6T2KXSlCCZwyOB4EAFefvi0zRPKDPVqPNBGFqV5Kn
-	 m54HgAjJfy8we9Y9tl7LY7L4gaHz6KkuEz0NmtF8JUJfXUWPMHmL6c8XZgfCklah1Y
-	 U/SwoGTJa9N4jZ4SGcPsHczOthJTxHkGyBSbyg3+L/BrGVV8TCmbKAOKTgYYxrZSSF
-	 Ywifo4pkBnatw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A535FCE0A6E; Wed, 24 Jul 2024 06:53:34 -0700 (PDT)
-Date: Wed, 24 Jul 2024 06:53:34 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Uladzislau Rezki <urezki@gmail.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
-	linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	kasan-dev <kasan-dev@googlegroups.com>
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <b3d9710a-805e-4e37-8295-b5ec1133d15c@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <6711935d-20b5-41c1-8864-db3fc7d7823d@suse.cz>
- <ZnCDgdg1EH6V7w5d@pc636>
- <36c60acd-543e-48c5-8bd2-6ed509972d28@suse.cz>
- <ZnFT1Czb8oRb0SE7@pc636>
- <5c8b2883-962f-431f-b2d3-3632755de3b0@paulmck-laptop>
- <9967fdfa-e649-456d-a0cb-b4c4bf7f9d68@suse.cz>
- <6dad6e9f-e0ca-4446-be9c-1be25b2536dd@paulmck-laptop>
- <4cba4a48-902b-4fb6-895c-c8e6b64e0d5f@suse.cz>
- <ZnVInAV8BXhgAjP_@pc636>
- <df0716ac-c995-498c-83ee-b8c25302f9ed@suse.cz>
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="d63Z0DAr"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so6780079e87.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 24 Jul 2024 07:02:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1721829733; x=1722434533; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=03Mi73DYQ+AbiAWB0TbqqqyX+xcerskNuxokfmAHRtQ=;
+        b=d63Z0DArKU74wS8jSf34IueN/9U0bgR3lx6Na0FSyOu/l+xFX+75At+BQpTXdDvpky
+         7EXLhd74rBDz4rdb+FQwHvZPNv+YhbDdQVhMQ4m9rRxhmiryqBnR0GeKQqSrLp1QcINc
+         oKD6bajV2fUBhV/6M18dffaMbOgzkrYjQtEHwy6gMzAHHh3r1iAswS+74YcpDWjU6mQe
+         XBofmBfg97eTlvGaDVjJ7GnZJjS9pWMhavqkUF+E6Z4PjCYMkPMCqneZsmjMmgBpYFOh
+         1b+FCv9sqxJ5lG+H7A8MxWYWaXMjETeDHiYOlJsova5prxKCFzk876IhiGIcjofVJ0Rv
+         MTTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721829733; x=1722434533;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=03Mi73DYQ+AbiAWB0TbqqqyX+xcerskNuxokfmAHRtQ=;
+        b=ZcCIRc+2WThggDjmgWngDZslE2gOuddmHiv4ClCB4NYet+2n9rz+CtXY4rellaxgf9
+         DJtPQ8JBegqX/SR/2PnwlraIExUbOQ1kY7azIWSP5bN2s9MRIZgMKpMwxNtgAPAqH1xv
+         k6gJs4/xAFZbDoTXzR/kx6nQ3OZBi1pptKBYe10hF1efn3oG5cnw7E2fZf/WBPCC2evZ
+         L6oL2sbglqXHECcBJ0pSJ6pvjihdyPsQvRU6LYGDoDjrOrdBS+dpjQ0hJAISedXUQVQ0
+         dH2SJhPdvZ9FmC14OyoM2ZXN0Xc8sh5XqfC3oL7UEKjlA2Tsa5hsq/OGoQwKTx4mkOhu
+         +/wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhbpq6N+8URQ9Na6fO3lqG31tx/Apb44Q7UFp5t+fl6yBsJQHKNTysZKDjF6qQQtrYsfOywWthHMnqAqBiicMZMfa0bnuFWRKOJmjWqUCL
+X-Gm-Message-State: AOJu0Yy0ZW3aGUv8eZBLgtgwsSKY9rcxu0wSs+29lRJwVOuaDP8+E3ey
+	NTMyfAZi0DBdd5f73EvVUaq5BUx2yB9HCJvcaGcDhw13+hfFGhnVwHg1T5EO8WM=
+X-Google-Smtp-Source: AGHT+IEut+zftTEoUgoGJWMwhaJAFLWg/pjaiJRLKgG/u9m02dE6H+2MerckWbRJ73b6hEaScPDGEQ==
+X-Received: by 2002:a05:6512:4011:b0:52c:9877:71b7 with SMTP id 2adb3069b0e04-52fcdaa8ea8mr2910247e87.59.1721829730773;
+        Wed, 24 Jul 2024 07:02:10 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c8c0218sm646875566b.128.2024.07.24.07.02.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 07:02:10 -0700 (PDT)
+Date: Wed, 24 Jul 2024 16:02:08 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] vsprintf: add missing MODULE_DESCRIPTION() macro
+Message-ID: <ZqEJYJScuEJpo778@pathway.suse.cz>
+References: <20240531-md-vsprintf-v1-1-d8bc7e21539a@quicinc.com>
+ <ZmmG_dQaTpq4TkGE@pathway.suse.cz>
+ <9614c130-d90a-4023-87fd-0b3b12516021@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,25 +73,38 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <df0716ac-c995-498c-83ee-b8c25302f9ed@suse.cz>
+In-Reply-To: <9614c130-d90a-4023-87fd-0b3b12516021@quicinc.com>
 
-On Mon, Jul 15, 2024 at 10:39:38PM +0200, Vlastimil Babka wrote:
-> On 6/21/24 11:32 AM, Uladzislau Rezki wrote:
-> > On Wed, Jun 19, 2024 at 11:28:13AM +0200, Vlastimil Babka wrote:
-> > One question. Maybe it is already late but it is better to ask rather than not.
+On Tue 2024-07-23 11:53:34, Jeff Johnson wrote:
+> On 6/12/2024 4:31 AM, Petr Mladek wrote:
+> > On Fri 2024-05-31 19:42:25, Jeff Johnson wrote:
+> >> make allmodconfig && make W=1 C=1 reports:
+> >> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_printf.o
+> >> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_scanf.o
+> >>
+> >> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> >>
+> >> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > > 
-> > What do you think if we have a small discussion about it on the LPC 2024 as a
-> > topic? It might be it is already late or a schedule is set by now. Or we fix
-> > it by a conference time.
+> > JFYI, the patch has been comitted into printk/linux.git,
+> > branch for-6.11.
 > > 
-> > Just a thought.
+> > Best Regards,
+> > Petr
 > 
-> Sorry for the late reply. The MM MC turned out to be so packed I didn't even
-> propose a slab topic. We could discuss in hallway track or a BOF, but
-> hopefully if the current direction taken by my RFC brings no unexpected
-> surprise, and the necessary RCU barrier side is also feasible, this will be
-> settled by time of plumbers.
+> Hi Petr,
+> I see this landed in linux-next, but is not currently in Linus' tree for 6.11.
+> Will you be able to have this pulled during the merge window?
+> I'm trying to eradicate all of these warnings before 6.11 rc-final.
 
-That would be even better!
+The pull request is still being discussed, see
+https://lore.kernel.org/r/CAHk-=whU_woFnFN-3Jv2hNCmwLg_fkrT42AWwxm-=Ha5BmNX4w@mail.gmail.com
 
-							Thanx, Paul
+If the printk rework part is not acceptable then I'll send these
+trivial changes separately.
+
+Best Regards,
+Petr
+
+PS: I have sent the pull request late because I have had vacation
+    previous two weeks.
