@@ -1,99 +1,95 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A370158D69;
-	Wed, 24 Jul 2024 13:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D456E13E020;
+	Wed, 24 Jul 2024 13:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721827474; cv=none; b=mnpJuNROvKpiFL2aWnjpdLvSuG2gZAiY7vanqHvC3YBDJEz+9h5Zbc/8dODafVNIO2yt4SkwClu2K+pNft7FlBplafiA5i6GrX/+OFbF2NykceOjv4izz4Xms1cCxNyUaqAO8HvANn7xZoXL0opvnZ/usIeu1EhqvCW3ibrRdbM=
+	t=1721829216; cv=none; b=Rv0Kp+InsbzBKLBu2jjtRL8k1OcREHL4Ps0hGnqAqa8NN5Z2xdK1vWK/GbM09zJATconytTYWTr9uYL73vczPY5hh2XIGuLurfbXl9mTK1Yjhd4Nwf5YF+bSP2ndZNCn5sp1ZRe5Wc3xteO1r+V/dMDI7gxPhJAvHXN/WOiQyZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721827474; c=relaxed/simple;
-	bh=ZpJ0uZhkYWLik28S/oC8SR9YTOz1pjFNpUFti1LkesM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=SXVqiUq7Qd//DbG9SsGjAex3NuhWdojKyA9thbWpbnp7zCmpYuIRhhpwbTtgaWkaIDAZwXm15RV7wMva4qFk87IUPl8c1nImoSYQK9xwfdgxcKQZr/S4yZFZzr41pNncf/4dwBJJ07NyWnYygOBBMPoI2cgZ8J9uEG/syLXVHIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RegnbWXS; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1721829216; c=relaxed/simple;
+	bh=07Vzl6re9ZHoHnUQaqXa2n0Sm3JNDNE/aQbliYyNUPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tSSzTIBDxdv0JLtBfh0RrFv+uy+NmG1dIcNFaej0eDwcxijtjKZINehLVWPm7sCdlSNsoSfv3hCj2pbUK1/QG83S9OeroYJ032d2MMwcqucsTlIq+EnuvPJ9v+IMC71o5ZXIxlDNbvlVTWO8y48uEycbC9LvRviM0O2ZagUqHrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WAP2//Vl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RegnbWXS"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4266fcb311cso50939085e9.1;
-        Wed, 24 Jul 2024 06:24:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721827471; x=1722432271; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=56EW1ghreVxrFRUF8L89H7cqgKAc3/kmAPxfhIquFsg=;
-        b=RegnbWXSIFOLwn/fBf4Bjz5RY86ereLZVIY7Fetn2vOr6gk6oQ41TUnpGOwptkTJ+9
-         tqqIpi4Xg6AIPapjooYtZRz9Z7boN+tmfkTHroaKWlVPeDtTEP+BL0YTVy0VkqQ+mxQY
-         kWgl2AFD0uYSpybKKaroh6O6+LJ5sszOnoFHfMwilyO9tb83DdDWwGzhFLCJL/rtTwQt
-         EFbhcIb5KznSpFYZYlQMKmlSLG2Eld8Kqq06v8IGD6UMrfJ/JW+6a3nhWKkrWOaZUrUx
-         v0vZCRXxxhwnPuOY+n84DW6ikqHSyjodkHpqAq1G4lUCTJa2JdvjwcevW2aCyx8JF+DE
-         /WBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721827471; x=1722432271;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=56EW1ghreVxrFRUF8L89H7cqgKAc3/kmAPxfhIquFsg=;
-        b=h4Vk2TaUBED7iEfHHAyzUMfMVZLKW2rdvZTn6T9Voa/pc4H7yGPMuJiBiP261WxAVs
-         sCAf5OvZVkE6nGOO4kgIZJ9SWGgc12Ad2T+58Q9USSmcynJ/eLbYMBvU71S/wojYmYdV
-         YM2S0nfRxXiYVaHuk1wHGMcL76+nwHz41ppV+p+pRWkn2VSnN4QMwhTpfCYNpsejGBWd
-         EqhtI8Kb6ZkezwFwt3FvakkGdl8x7h3rIpja1or3jXk9nAhzpJbp4dyMAgQBRFKJCNws
-         O8QWlg+h/y1XQoejwWSdioKnSYLoc71tFhHvE3p2JPW2ueS3Kua8NhWgO09PBy/m8ZVa
-         TGfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUm01qjVBD7DCBP7ohfKGsTp4tRwvOu+loWQ5qWKZI+CLPmwpGPkHg6J+xv0nAXN2XB7bTouiWt3/R72JDt4sGCBmDx30OYPX4t9NQ
-X-Gm-Message-State: AOJu0Yzlgen4DsFOFs2fOyq3MMEqo1LLWWylA1d195c2gviTqPY8RYZd
-	qrLTymKJjwjIIjN6gGCld6CEVc6LnJvDVpBLGqGE86DCpIr1+y3+
-X-Google-Smtp-Source: AGHT+IHQ/85EhTrpuufNo5wWg0jwh8u7SIp1MIxenQ7z0d+vfqpSBcNI9sqN2s1gmw4N+9HuBR2EIA==
-X-Received: by 2002:a05:600c:1e1f:b0:426:629f:1556 with SMTP id 5b1f17b1804b1-427f95b2bb6mr15003705e9.31.1721827469893;
-        Wed, 24 Jul 2024 06:24:29 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3687868bc91sm14351050f8f.45.2024.07.24.06.24.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 06:24:29 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Leo Li <sunpeng.li@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/display: Fix spelling mistake "tolarance" -> "tolerance"
-Date: Wed, 24 Jul 2024 14:24:28 +0100
-Message-Id: <20240724132428.2468883-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAP2//Vl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B0F7C32781;
+	Wed, 24 Jul 2024 13:53:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721829215;
+	bh=07Vzl6re9ZHoHnUQaqXa2n0Sm3JNDNE/aQbliYyNUPE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=WAP2//VlWUSM9jrjWrTnlUR5U9gfJcKWxfEehwSsgCifqJ1HhI5rmor2MgAYiE7Hj
+	 k3H3D8gUK01HrebDYiJ8EV56b+RO+InO4F1HL2zNXYqpPk0VVAstDY9HBgwUy8+jTo
+	 8Kp+cbZnfcsDTxUnkpS1wiQgO6T2KXSlCCZwyOB4EAFefvi0zRPKDPVqPNBGFqV5Kn
+	 m54HgAjJfy8we9Y9tl7LY7L4gaHz6KkuEz0NmtF8JUJfXUWPMHmL6c8XZgfCklah1Y
+	 U/SwoGTJa9N4jZ4SGcPsHczOthJTxHkGyBSbyg3+L/BrGVV8TCmbKAOKTgYYxrZSSF
+	 Ywifo4pkBnatw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id A535FCE0A6E; Wed, 24 Jul 2024 06:53:34 -0700 (PDT)
+Date: Wed, 24 Jul 2024 06:53:34 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Uladzislau Rezki <urezki@gmail.com>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
+	linux-trace-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
+	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
+	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	kasan-dev <kasan-dev@googlegroups.com>
+Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <b3d9710a-805e-4e37-8295-b5ec1133d15c@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <6711935d-20b5-41c1-8864-db3fc7d7823d@suse.cz>
+ <ZnCDgdg1EH6V7w5d@pc636>
+ <36c60acd-543e-48c5-8bd2-6ed509972d28@suse.cz>
+ <ZnFT1Czb8oRb0SE7@pc636>
+ <5c8b2883-962f-431f-b2d3-3632755de3b0@paulmck-laptop>
+ <9967fdfa-e649-456d-a0cb-b4c4bf7f9d68@suse.cz>
+ <6dad6e9f-e0ca-4446-be9c-1be25b2536dd@paulmck-laptop>
+ <4cba4a48-902b-4fb6-895c-c8e6b64e0d5f@suse.cz>
+ <ZnVInAV8BXhgAjP_@pc636>
+ <df0716ac-c995-498c-83ee-b8c25302f9ed@suse.cz>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df0716ac-c995-498c-83ee-b8c25302f9ed@suse.cz>
 
-There is a spelling mistake in a dml2_printf message. Fix it.
+On Mon, Jul 15, 2024 at 10:39:38PM +0200, Vlastimil Babka wrote:
+> On 6/21/24 11:32 AM, Uladzislau Rezki wrote:
+> > On Wed, Jun 19, 2024 at 11:28:13AM +0200, Vlastimil Babka wrote:
+> > One question. Maybe it is already late but it is better to ask rather than not.
+> > 
+> > What do you think if we have a small discussion about it on the LPC 2024 as a
+> > topic? It might be it is already late or a schedule is set by now. Or we fix
+> > it by a conference time.
+> > 
+> > Just a thought.
+> 
+> Sorry for the late reply. The MM MC turned out to be so packed I didn't even
+> propose a slab topic. We could discuss in hallway track or a BOF, but
+> hopefully if the current direction taken by my RFC brings no unexpected
+> surprise, and the necessary RCU barrier side is also feasible, this will be
+> settled by time of plumbers.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- .../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c  | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That would be even better!
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
-index 0b671c665373..5ba38d51382f 100644
---- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
-@@ -8267,7 +8267,7 @@ static bool dml_core_mode_support(struct dml2_core_calcs_mode_support_ex *in_out
- 	dml2_printf("DML::%s: mode_lib->ms.DCFCLK = %f\n", __func__, mode_lib->ms.DCFCLK);
- 	dml2_printf("DML::%s: mode_lib->ms.FabricClock = %f\n", __func__, mode_lib->ms.FabricClock);
- 	dml2_printf("DML::%s: mode_lib->ms.uclk_freq_mhz = %f\n", __func__, mode_lib->ms.uclk_freq_mhz);
--	dml2_printf("DML::%s: urgent latency tolarance = %f\n", __func__, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kbytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)));
-+	dml2_printf("DML::%s: urgent latency tolerance = %f\n", __func__, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kbytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)));
- #endif
- 
- 	mode_lib->ms.support.OutstandingRequestsSupport = true;
--- 
-2.39.2
-
+							Thanx, Paul
