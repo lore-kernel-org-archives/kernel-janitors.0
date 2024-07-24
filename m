@@ -1,101 +1,107 @@
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA8815B0FA
-	for <kernel-janitors@vger.kernel.org>; Wed, 24 Jul 2024 16:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF8415E5DC;
+	Wed, 24 Jul 2024 16:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721837399; cv=none; b=WnQp68pyUsGWm7tC2SRbEUxEQ7n2uM9SMgK+ngBi7iZ6oR20+KFYU8LWGh3IDcQ31Xk1Hz4xwdMI+Ily6lxmEaWIOlSCzgSopJhsK7dZL5L92srYuRXWkjro2mKZMHxDOhVw934IAF1f9PE+cYjN/9+lV4bFL5+6tHI+MQZtjuw=
+	t=1721838250; cv=none; b=U26G6Yjtu1C3Z6kHMq+Ku0yvf6aQj5T101h+TX/3aXnRqkecSbj0kB8b5PWBdiXIJS19e3xM/aRaDTU1Evy1UMmIdWayvJ2P+h5KXixF8O9SnaTZNJbbecDa11BEBF3pODwZ3zAnKkOHjuRWMN6+klntTCCWYvt3nTAnFt5WXck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721837399; c=relaxed/simple;
-	bh=0Yb568f1XdkBjyBiCIrW28MFVKJ0UvlZ6ZIGIqUjI78=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EkjYc+DW7SnT+OBtyidbX+4qfG9Da9JVahWZlvY0axPCTeQT754bvL9lqEzvjnHu4CUgR4xBUC6B4SMM8P/gE1F6CWgllZsGHDmTpvlT+TW0nu2fgsGQHBQD2lwq+yM2/vHOn0lxQGXY51fZIj7VNGi7CRNIBdab2iQx7fAn7I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y8FFTEq6; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1721838250; c=relaxed/simple;
+	bh=+GDXdpaA3tN+UsnM4TWXSQKP47WK9e3fMb2BieYvfZc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OJF7opBtsUL4cyMchSweWiewPYRJGFnHwjii4cexsn9WWp+Rwe38PPVyK0KcnYll88Ud1/w8HD58denncpEyXhcuqSemFlp8BA1xVs7Z8VQLcdKNg1vW/2umwSLQdweVgs+7J3kGEcKC7i1HRZSOg43TQfqjbGywPf0nJux0yy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=mMTwvg4U; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y8FFTEq6"
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-260f863109cso3622519fac.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 24 Jul 2024 09:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721837397; x=1722442197; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O2jZhMoing7DWC/lOhFYXVidQ2q+B0OoDl/QuVCkLmg=;
-        b=y8FFTEq6afb+ua2bcsCFIJmN1KVKOWZAe6UQ/ZSR3ooWEnw2s1jtuZbe5Xg/ZlvI6c
-         iGJEx/ZRZKIK5yVPYRBUm9k8T3JYggRNv1Q1lZHeauF6IJoY5fXiYjAyO76dVpD/Dz5u
-         sxLcG6q3NoYlUm4vJoGvjYOcGnMak68t995K3jbSENjqxMWHGEUIk+oacnokFe3Eve/9
-         QG+B5tP/0dYIgxn/j+jYB+p16AOxwk1Hnmyzx553csvAOV22BXSBsBTxpIDtpWFCDcWR
-         yR5+XrJ/QX7PMj+cXnB5Tfoe+nABlkmNSO8p30k/xMMQsenQDe5h8jN8CICendPcHjHP
-         Nwxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721837397; x=1722442197;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O2jZhMoing7DWC/lOhFYXVidQ2q+B0OoDl/QuVCkLmg=;
-        b=Pay/igAtheNQCeuw3hCN9ywND1EiwtW060tJlvUmnQScogQWWx42uK2/wdbESIo99a
-         j1U5syngOq6O3ehGHYIaOaskv+FC3WI4CxYSH/WxZqV9TKTv1XKG/u/zHvtEleP8SQoQ
-         ZZokmfblQ47RwDkimp9JjEJKlJj2/kTQuMrruM/cLqcZPyRgySbzdKHdeH6fV7tOdzi+
-         4aSC8QJkOlEdHF7Ui8yzCoUnSN/WvskH1+iq/AZmTpO4c28JnbkuVs29V8M+lkS9U003
-         HzyESnoBjpUEsPQFJ2JAQrA3hC7+PbYruAM8RkffBMl8BGyJ9FbvlNhXN5thgVn4XxeU
-         QNqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXwCdcFlB6iq84Dv7q/1nGwxw7qrCOJaMkiEfW+E7UTSsMshXriB9lUkgJg6p+XCjITzZwG5/5poarVCjPV5/vM12vnwG+TfYJJ4rdZiD2K
-X-Gm-Message-State: AOJu0Yyh8GmZ9tQ4jIcqraRSIyCvcurpAKyC820SRXhqcGma9axssd+Q
-	cTNINXAEEsAjkdfeoO+4G4VFCUsOx1MifvBIgvqfpOHunjdFq9me7mzkLqJZCqY=
-X-Google-Smtp-Source: AGHT+IHCvg+D37qFDPSAV2DjfuTODsZ2i9ctUl1JsN9tBVVXcEXaPTGM2Fzh7+EL/qLQElF4DzvcQw==
-X-Received: by 2002:a05:6870:c190:b0:260:fdda:5068 with SMTP id 586e51a60fabf-2648ca35f3emr2882513fac.4.1721837397103;
-        Wed, 24 Jul 2024 09:09:57 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:23ae:46cb:84b6:1002])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3db0331a01bsm637378b6e.55.2024.07.24.09.09.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 09:09:56 -0700 (PDT)
-Date: Wed, 24 Jul 2024 11:09:54 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Zack Rusin <zack.rusin@broadcom.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/client: Fix error code in drm_client_buffer_vmap_local()
-Message-ID: <89d13df3-747c-4c5d-b122-d081aef5110a@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mMTwvg4U"
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46OFXW6h026916;
+	Wed, 24 Jul 2024 16:24:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=corp-2023-11-20; bh=xHlM8Vj5GY+Sun
+	9vNdid3JtRVWESlFDCDBqVFaBIKcw=; b=mMTwvg4UdjBJNFgPqp2coCaniZn0zR
+	UTBOXDaq42i9HGAcQ1NTCIJsxK7z8xtK/0rMcsvSZMSnLNZT8PC/c1uZp27Ynysm
+	O4UtAhL6QJ4GWxhJRiSXE/22O+G8lLLESZZ8Dx9gxordjtwIwlKJsFwMW00ACd4k
+	bL2kmmiq9wMYVElwLR/wxDWBS9gMBOpwQrPvtUN3mRD5QpDVCDH6qXwGnljsQCyX
+	JAYB9e9YB1bKK9rQFtMkfGtv3tmy7V/mSzHHi9Oq1wiW5EOvYdWUPKCAQUrmE0hO
+	Wv7FamIH5KHKw87cAC4Lbsw6hu1X+rIutP64NwPgKnkNfb87aOnfEKUQ==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40hft0hd3q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 24 Jul 2024 16:24:04 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46OFIZXL011001;
+	Wed, 24 Jul 2024 16:24:03 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40h29sv9rq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 24 Jul 2024 16:24:03 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 46OGK1m1038616;
+	Wed, 24 Jul 2024 16:24:02 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 40h29sv9r0-1;
+	Wed, 24 Jul 2024 16:24:02 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Javier Carrasco <javier.carrasco@wolfvision.net>,
+        Abdel Alkuor <abdelalkuor@geotab.com>,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com
+Subject: [PATCH 1/2] usb: typec: tipd: Fix dereferencing freeing memory in tps6598x_apply_patch()
+Date: Wed, 24 Jul 2024 09:23:50 -0700
+Message-ID: <20240724162356.992763-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-24_17,2024-07-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 adultscore=0
+ suspectscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2407240119
+X-Proofpoint-GUID: la_pRtilNQS6xSM5tq_XVoIpHbfMvMqT
+X-Proofpoint-ORIG-GUID: la_pRtilNQS6xSM5tq_XVoIpHbfMvMqT
 
-This function accidentally returns zero/success on the failure path.
-It leads to locking issues and an uninitialized *map_copy in the
-caller.
+release_firmware() already frees fw, fix this my moving release_firmware
+after the dereference.
 
-Fixes: b4b0193e83cb ("drm/fbdev-generic: Fix locking with drm_client_buffer_vmap_local()")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Fixes: 916b8e5fa73d ("usb: typec: tipd: add error log to provide firmware name and size")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 ---
- drivers/gpu/drm/drm_client.c | 2 +-
+This is found with smatch, only compile tested
+---
+ drivers/usb/typec/tipd/core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
-index 2803ac111bbd..bfedcbf516db 100644
---- a/drivers/gpu/drm/drm_client.c
-+++ b/drivers/gpu/drm/drm_client.c
-@@ -355,7 +355,7 @@ int drm_client_buffer_vmap_local(struct drm_client_buffer *buffer,
+diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
+index ea768b19a7f1..eb5596e3406a 100644
+--- a/drivers/usb/typec/tipd/core.c
++++ b/drivers/usb/typec/tipd/core.c
+@@ -1191,11 +1191,11 @@ static int tps6598x_apply_patch(struct tps6598x *tps)
+ 	dev_info(tps->dev, "Firmware update succeeded\n");
  
- err_drm_gem_vmap_unlocked:
- 	drm_gem_unlock(gem);
--	return 0;
-+	return ret;
- }
- EXPORT_SYMBOL(drm_client_buffer_vmap_local);
+ release_fw:
+-	release_firmware(fw);
+ 	if (ret) {
+ 		dev_err(tps->dev, "Failed to write patch %s of %zu bytes\n",
+ 			firmware_name, fw->size);
+ 	}
++	release_firmware(fw);
  
+ 	return ret;
+ };
 -- 
-2.43.0
+2.45.2
 
