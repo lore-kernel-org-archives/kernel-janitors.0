@@ -1,35 +1,49 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C6519D068;
-	Thu, 25 Jul 2024 15:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70D2E556
+	for <kernel-janitors@vger.kernel.org>; Thu, 25 Jul 2024 20:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721920750; cv=none; b=Snl/7LL/nJvygR+OXOFG+zaKDmAeAjP5J6hWGvmvGCOnwG+SerIeRCohh14LuI5ojidHq424pugNH0RzPW9mG/VkRhEQQTNLoW7+IwV7aUXMgvQnTvgcBZr2jy/+p8DS62RDs0PYoBDjpLI7fdeR4zdu3yLPcPrSnH39giNmTh4=
+	t=1721940489; cv=none; b=uqKPrPvDXtUpmjRYWz/iStoXs98UJ2JHzbfBrf599ll3dko5fTAXcMVlCgeHvP8k8OD+ruRVBhEzQz1kN0nmDfHeTLVebPzCS02Ds92eN4EAsFdJkeqcav7I4tIFQaHNA0LwPXcbt4hvgw+TCb7R8gpGTY4MTivCwOjNK5Hp0hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721920750; c=relaxed/simple;
-	bh=lqJfRdonsEG8OP26FdvaqpluvyO5jM0D/S+FJgEgrzs=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=rhysX+uBXXgT+bj4836U5AR+uAZL0UhEdNREvo2WlqpwujmORK3CfaOAlPM7l4qZia3l+dXUXmANtOnTjXQccrFvfSvvWEwdcaej5d4HS16WuS/1rKl9c6Wu1khCwsdC5WBcvaF9LKEwXZrgE7XIF7tRqoV46xp1tvdWVe7g4sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GfgBCTKv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721940489; c=relaxed/simple;
+	bh=zLO1NlLHeLSZwvDSiFGjY7aAX3UM0dHw/gZT//5jtkw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SsVPWtcj+KyYUHGOQHSiYNAqlOF+TKJMDdobIi4JD3jZdoP6wnB35/TonCDrkSEwUkJG2yuFz0quL4CTQLpW19tYQjxWotZaVxBMVIFa3OJZ+8rg2XlxEl5/boP6qHz2NKphOYACKhdv5USKbAd1sgZ2+FwzWWIqXRqbcqQLjN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FBjGdCe/; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GfgBCTKv"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4AD9FC4AF0B;
-	Thu, 25 Jul 2024 15:19:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721920750;
-	bh=lqJfRdonsEG8OP26FdvaqpluvyO5jM0D/S+FJgEgrzs=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=GfgBCTKvht5g7wYMn0igic+me7w0vwPjdZbIKOJ2uavC3DSwg/DCD7um6Lq57TUX/
-	 5MAPqWFKxKpcOk60UAcVBek+ojYrcmRbKB7DyYBUEfe0DBvmglDrx7YcYeK8xVJgsB
-	 CbT9HkTsaR1j11NoUHU8TpJXZG8kDNW3vtJJim4RtjFuk1ztsZq3nI+m950EkAKOd5
-	 pTQ5M3Z3hKWvrAV9FKXHrTgu2BphcVV0i/wRjn7wYOMBFNWEqn9lFVf0iMX9bkkAZE
-	 JlW/93gxa9543vMxYw5+2R1/t2Ht4RZo7BC8hrsFeTQeyRuk8LdKXITI3Vbj89UP+4
-	 HZN9s6sB/f5lQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3BDC4C43338;
-	Thu, 25 Jul 2024 15:19:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FBjGdCe/"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id X5MSsJCR06bu3X5MTs68yo; Thu, 25 Jul 2024 22:46:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1721940414;
+	bh=jiHdzIKpBMjgCjVSVMxDF60tEeu32uxFn6X9R02aY5k=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=FBjGdCe/LqhDP5twVFOxTlnOKeH/V10meTO7CetJcgksP+lkfsCx5nBavPejiAGwM
+	 hVbbCzOgrvDBjKa+VgA61h1CUOIHeeTXXj/FG6TDJpai693G+d8q4uLP2jGzRdgPYx
+	 CbKqjoeHXGL59qt7+uYIb5uBfkMnmmai124M+IdQIiCs2AQnB+RAGqg6FpXcilz0nY
+	 XKY/yvg+38ZjUDV5jsi5A9SyUQn43PQeXemKppZQgeBVckKftporXjBaC6I26RlkM3
+	 CflF0KSGKVSLbHBdnBP78KzcYDxDddTMWr7Nhp7UL0QPP3G7qwOboRimtv4JxNPeEU
+	 2zesXk6cy1TLg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 25 Jul 2024 22:46:54 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: dmitry.torokhov@gmail.com,
+	vipulkumar.samar@st.com,
+	viresh.kumar@linaro.org
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/2] Input: spear-keyboard - Fix an issue and clean-up code
+Date: Thu, 25 Jul 2024 22:46:48 +0200
+Message-ID: <cover.1721939824.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -37,38 +51,25 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-XXX] mISDN: Fix a use after free in hfcmulti_tx()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172192075024.10696.13020563710746306829.git-patchwork-notify@kernel.org>
-Date: Thu, 25 Jul 2024 15:19:10 +0000
-References: <8be65f5a-c2dd-4ba0-8a10-bfe5980b8cfb@stanley.mountain>
-In-Reply-To: <8be65f5a-c2dd-4ba0-8a10-bfe5980b8cfb@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: kkeil@suse.de, isdn@linux-pingi.de, quic_jjohnson@quicinc.com,
- kuba@kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello:
+Patch 1 fixes an old double put issue in the remove function.
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Patch 2 is just a clean up to remove some lines of code. It changes the
+order of some initialization so should be reviewed with care.
+This driver looks old, without changes other than clean-up for more than
+10 years, so maybe this patch should just be dropped.
+I let you decide if safe and useful or not.
 
-On Wed, 24 Jul 2024 11:08:18 -0500 you wrote:
-> Don't dereference *sp after calling dev_kfree_skb(*sp).
-> 
-> Fixes: af69fb3a8ffa ("Add mISDN HFC multiport driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/isdn/hardware/mISDN/hfcmulti.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
 
-Here is the summary with links:
-  - [net-XXX] mISDN: Fix a use after free in hfcmulti_tx()
-    https://git.kernel.org/netdev/net/c/61ab751451f5
+Both patch are compile tested only.
 
-You are awesome, thank you!
+Christophe JAILLET (2):
+  Input: spear-keyboard - Fix a double put in spear_kbd_remove()
+  Input: spear-keyboard - Switch to devm_clk_get_prepared()
+
+ drivers/input/keyboard/spear-keyboard.c | 16 +---------------
+ 1 file changed, 1 insertion(+), 15 deletions(-)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.45.2
 
