@@ -1,40 +1,40 @@
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+Received: from msa.smtpout.orange.fr (out-72.smtpout.orange.fr [193.252.22.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B6F101F2;
-	Thu, 25 Jul 2024 21:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555671C6BE;
+	Thu, 25 Jul 2024 21:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721943088; cv=none; b=fBiY4wOEFskG1H8VS79fLdJT3OIxjEMQ8xCFNJ10tV8mvjTV2KaBCmXnDmqFbu8ToDTtq/6XAacfPVj7twU3kVvNLGrsqaN2V5VFrqSsSVMnwwVp0NZnbajm1EVzpwhfQUrij2UVCj1NWL32uKNC+IzR8S8YXFd9pAid9GUs7Qk=
+	t=1721943266; cv=none; b=G/12D7rjEWQ6rGx536qQpaK5pDHTSWuT6E7312jjZmjqofdSy/DIxVaYSzgFOT0cyfne8ai2+/Q7DkVLr27B6CzrZyf+f08PzIy3A0sXRXbz+vdX+qvvmejRbfZK1kvUfvK+tG9UGVXV3ZZfmVAcGCwB22u2Tawm0mwFCU6LwLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721943088; c=relaxed/simple;
-	bh=w1lbfo3Va5AWZ2hW/XGSHONgZEMwhfxCnYvF9DKJyRM=;
+	s=arc-20240116; t=1721943266; c=relaxed/simple;
+	bh=ENvliYBDHhnNUQ7Ss1C3ejAnQDtta+Uy8bEhB7BpKQo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lNSp2QHi31Xxs4Nl+lV3pWm0q6Ozf8Zn4ETi86qNn5I/cr8NEgCqqw5eA9nFQ9suHjqWH130P49YXRdOOdwTtVsN2rBVf9VpfHLi8lyANp+fv6GXKm/mpGHemiIJjBr5prpu6lvEmEUz8Oygn2BB+z1SKtzZOUh4M9aecRyNPuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=NuImNiXe; arc=none smtp.client-ip=80.12.242.20
+	 In-Reply-To:Content-Type; b=p0ji/1jNAc/U+im4uXFlWmClMSkvZ48ygqlSJeFlHugIFn2goCAbaXlUn82oWIJJiv6o/CdvexXwb1lOofFq8N/s+6z4SeF1vI0bj1eOG/3zBLuqCtMJofIm9y8SjQBUIcXX/6BG8jOf5WQyUQTLsZvocTVHkq6R9jaR9efPCbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=c23b/NH4; arc=none smtp.client-ip=193.252.22.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="NuImNiXe"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="c23b/NH4"
 Received: from [192.168.1.37] ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id X62Hs4pAoHEYLX62HsWoKU; Thu, 25 Jul 2024 23:30:07 +0200
+	id X66Isaw5Skc2vX66Is5muB; Thu, 25 Jul 2024 23:34:15 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1721943007;
-	bh=Kgx1QNLMEsxTr+xL+tHBsE9DV94GgKFmh+JvzmoBtiQ=;
+	s=t20230301; t=1721943255;
+	bh=3GVf49Ag0mfDTmCUha6spZlC3Hf8V+KJjEIwoWetM0c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=NuImNiXeFmlbW5MWCf2hdeT1xR6EFL3kzwiJEGpJwSBsyG9jc/wypHvsZP3NxGVW7
-	 gkU1yUNqc9YGiQTy/kG1FSnRZgZXlbpllf4AIlYh7U6MflBosKg1iaRltw1m6pA6gD
-	 qSvcjuS6hY4UIY9kNmDIc135hpH1nGITtZP9qM+hA76oHBKQ6z3rvFnw0orkAvDlff
-	 PTZvUl5u97rLxUgFgi+gHQfwsyrVmSFTwlQb4yL/0tr1Oz/PAP6xcmb74ZQ4IqaCnv
-	 ECbFa/cva4FRRLuEnZ4BgwJeNScBnBDIsC6hvbayAwo8u1AO5yxxXZQsHj1d2Z2QVc
-	 EmWGstyrQYnbw==
+	b=c23b/NH4UbAKdVV6/6Z7xMBHTuWstBgJ38Akw5MOSGJkn1mtUu2Ogtyi15UJYPTFG
+	 H8y9dJuQbsxBdmpMEVNAyj+ee+HPDnbLjP4lNBaAVlaZl4/i6KJFpPfCwJNoTEQkQU
+	 yDKDBBTt9Tq/hqrHWKU0uiB1qUkasqyigleSmH8HnyISiTOTdqChhODnlj119c25QR
+	 E3DDkNxE76ZinY754V3f02v5QnPfv3m5ybqkgor7/gCC2nv5uwm7Fy9HSDhPjLd7U0
+	 TeWj1RKFfUjQdWW8OgCav93kB39eNBE4CEWz9M1iqWwY2JdIMfRba+Pjas/VccHYNF
+	 aRntIjImJst5Q==
 X-ME-Helo: [192.168.1.37]
 X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 25 Jul 2024 23:30:07 +0200
+X-ME-Date: Thu, 25 Jul 2024 23:34:15 +0200
 X-ME-IP: 90.11.132.44
-Message-ID: <84808a6b-5a92-4679-833f-10e5a29f4cce@wanadoo.fr>
-Date: Thu, 25 Jul 2024 23:30:04 +0200
+Message-ID: <0e4f8499-97b1-49a7-b5af-11203cf625d7@wanadoo.fr>
+Date: Thu, 25 Jul 2024 23:34:14 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,67 +42,98 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86/amd/pmf: Fix a double put in
- amd_pmf_remove()
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Patil Rajesh Reddy <Patil.Reddy@amd.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- platform-driver-x86@vger.kernel.org
-References: <72a97f7989f56c50e1ca417633fe703593d49189.1721941953.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH 1/2] Input: spear-keyboard - Fix a double put in
+ spear_kbd_remove()
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: vipulkumar.samar@st.com, viresh.kumar@linaro.org,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <cover.1721939824.git.christophe.jaillet@wanadoo.fr>
+ <a39197be6248ebe5385e4f352241b4ba5e857c42.1721939824.git.christophe.jaillet@wanadoo.fr>
+ <ZqK7HQMtV8oavTsM@google.com>
 Content-Language: en-US, fr-FR
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <72a97f7989f56c50e1ca417633fe703593d49189.1721941953.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <ZqK7HQMtV8oavTsM@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 25/07/2024 à 23:13, Christophe JAILLET a écrit :
-> The 'input_dev' is a managed resource allocated with
-> devm_input_allocate_device(), so there is no need to call
-> input_unregister_device() explicitly. It will be called automatically
-> when the driver is removed.
+Le 25/07/2024 à 22:52, Dmitry Torokhov a écrit :
+> Hi Christophe,
 > 
-> Fixes: 4c92d448e3e6 ("platform/x86/amd/pmf: Use existing input event codes to update system states")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only
+> On Thu, Jul 25, 2024 at 10:46:49PM +0200, Christophe JAILLET wrote:
+>> The 'input_dev' is a managed resource allocated with
+>> devm_input_allocate_device(), so there is no need to call
+>> input_unregister_device() in the remove function.
+>>
+>> In fact, this call was correctly removed in commit 6102752eb354 ("Input:
+>> spear-keyboard - switch to using managed resources"), but silently
+>> re-introduced later in the commit in Fixes.
 > 
-> I'm not 100% confident with this change. The error handling scheme is not
-> a clear to me as what I usually see. For example, the last calls from
-> amd_pmf_probe() don't handle error at all. So the probe just succeeds in
-> these cases.
+> This change is incorrect as it leads to an active and enabled clock
+> being unprepared to early. We need to unregister input device which in
+> turn will call spear_kbd_close() if needed which will disable the clock
+> in question. Only after that we can unprepare it.
 > 
-> So, because of it, it is maybe fine to call input_unregister_device() in
-> amd_pmf_deinit_smart_pc(), even if it looks strange to me.
-> 
-> Review with care!
+> There is also no double put as input core will recognize that input
+> device was unregistered explicitly and will not attempt to unregister it
+> 2nd time through devm:
 
-NACK.
+Got it.
 
-Things have been explained to me in another similar patch proposal.
-
+Thanks for the review and the detailed explanation.
 Sorry for the noise.
+
+I'll resend as asked in patch 2/2, if saving some lines of code makes 
+enough sense for you.
+But as said in the cover letter, if there is no issue, I'm not sure it 
+worth the time for an old driver.
 
 CJ
 
-
-> ---
->   drivers/platform/x86/amd/pmf/tee-if.c | 3 ---
->   1 file changed, 3 deletions(-)
 > 
-> diff --git a/drivers/platform/x86/amd/pmf/tee-if.c b/drivers/platform/x86/amd/pmf/tee-if.c
-> index e246367aacee..cc721fbc3e0b 100644
-> --- a/drivers/platform/x86/amd/pmf/tee-if.c
-> +++ b/drivers/platform/x86/amd/pmf/tee-if.c
-> @@ -515,9 +515,6 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
->   
->   void amd_pmf_deinit_smart_pc(struct amd_pmf_dev *dev)
->   {
-> -	if (dev->pmf_idev)
-> -		input_unregister_device(dev->pmf_idev);
-> -
->   	if (pb_side_load && dev->esbin)
->   		amd_pmf_remove_pb(dev);
->   
+> void input_unregister_device(struct input_dev *dev)
+> {
+> 	if (dev->devres_managed) {
+> 		WARN_ON(devres_destroy(dev->dev.parent,
+> 					devm_input_device_unregister,
+> 					devm_input_device_match,
+> 					dev));
+> 		__input_unregister_device(dev);
+> 		/*
+> 		 * We do not do input_put_device() here because it will be done
+> 		 * when 2nd devres fires up.
+> 		 */
+> 	} else {
+> 		__input_unregister_device(dev);
+> 		input_put_device(dev);
+> 	}
+> }
+> 
+>>
+>> Fixes: 9336648978c2 ("Input: spear-keyboard - add clk_{un}prepare() support")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Compile tested-only
+>> ---
+>>   drivers/input/keyboard/spear-keyboard.c | 1 -
+>>   1 file changed, 1 deletion(-)
+>>
+>> diff --git a/drivers/input/keyboard/spear-keyboard.c b/drivers/input/keyboard/spear-keyboard.c
+>> index 557d00a667ce..5d9fc8dc9433 100644
+>> --- a/drivers/input/keyboard/spear-keyboard.c
+>> +++ b/drivers/input/keyboard/spear-keyboard.c
+>> @@ -276,7 +276,6 @@ static void spear_kbd_remove(struct platform_device *pdev)
+>>   {
+>>   	struct spear_kbd *kbd = platform_get_drvdata(pdev);
+>>   
+>> -	input_unregister_device(kbd->input);
+>>   	clk_unprepare(kbd->clk);
+>>   }
+>>   
+>> -- 
+>> 2.45.2
+>>
+> 
+> Thanks.
+> 
 
