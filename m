@@ -1,107 +1,79 @@
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 675E618754E;
-	Thu, 25 Jul 2024 09:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EAE7482;
+	Thu, 25 Jul 2024 15:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721899899; cv=none; b=l3OXUVXIbaDAxBOKc/rdsHMWKTG8IK5ccI1diqccSB03gqLq5qAFvH/+rqjLv9+fnKjAYw4YCeLDDz9kIGRf89x0wvEGloMJDam0zjh+VRXpPOkaNVZbT7FUBoIMI9/grPBJUz1Lsm2aJBJc3qgkg9aw8I5Srjsr2oIoNwj0qqc=
+	t=1721919882; cv=none; b=VKGYVr37k95zPTJDtKqvjHRZc7J9Io5xl8pvZD3+izC/NQ9euRFpjVgjlDpklYvN+Rdd8WS+twwxmSXaiPC0RLdOkzS+dxmTa1qwbE+XR0Vu8WBmfclzJG4VxE+N6B4I5oOGCuYBzbNrOLz8vtu8g8v+/xbKiNfOgC+eRXz4FRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721899899; c=relaxed/simple;
-	bh=4wZBE8Tmet51vxvCwqvFUlkmyBj1OYEmEVnRE0+8MDo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JZ/Xe3NHYmNYUvGYh2PXT2iPJ+tjq42HKhIxx5nVEbDoueSipAxkG3dlSU5JmzMW43sKBIHdUKP+2m6foEJUCDQh8W+W6DMsnVPFnMeHqbhHWEUm1Un49Id0GdOzi/SdAmGshHVTKjy1xFPYFMOm2CmRDc+CIyFQjrn1oFHBydY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 2C4906123B6B3;
-	Thu, 25 Jul 2024 17:31:20 +0800 (CST)
-X-MD-Sfrom: deshan@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Deshan Zhang <deshan@nfschina.com>
-To: akpm@linux-foundation.org,
-	philipp.reisner@linbit.com,
-	lars.ellenberg@linbit.com,
-	christoph.boehmwalder@linbit.com
-Cc: linux-kernel@vger.kernel.org,
-	drbd-dev@lists.linbit.com,
-	kernel-janitors@vger.kernel.org,
-	Deshan Zhang <deshan@nfschina.com>
-Subject: [PATCH] lib/lru_cache: fix spelling mistake "colision"->"collision"
-Date: Thu, 25 Jul 2024 17:30:45 +0800
-Message-Id: <20240725093044.1742842-1-deshan@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1721919882; c=relaxed/simple;
+	bh=4wEp9ildGGBM0btWemEtrLyvUTx7yYO7eMfkrWkPVfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zid4BEG/k1oFxZ5l9CoPUndzeOtoJ1yBg/LLeSwPV+oYJEpPyChUg2+tgCTXJWcNqKR5m6tzC//0GlwRUvuQNOcLMVKlVuKqgiSfJ6a35mPSl9GsXF+CGCMwV6lVvDEjzx0LQ2ml0ugFeg/4zZA+OlTGK2QVpeWioD3T0KoMOpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ib4mSpA3; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ib4mSpA3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEB2BC116B1;
+	Thu, 25 Jul 2024 15:04:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721919882;
+	bh=4wEp9ildGGBM0btWemEtrLyvUTx7yYO7eMfkrWkPVfQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ib4mSpA36nSnsM1u4L5SQ1K04uJJbd5V7AhJ644MTZyhfaYyBrf/KQNcGIZ7Qjodr
+	 i16qNQqhC8YWqevqr+a4EAl/6IL7v/RtPOcNlI52Y5wGmuvy8fuHXQS8Jc2UCkxTcL
+	 /EqzCIc56r4pS0hW09re62tqqTXmJHPv3XhkUu9P648Cef/ZkAq43HjT8MVFA68xmy
+	 zlyl5dNI69bqab8EaxrT0DfDxifkm9D1Yz/zlG+Eldm++qXhaJOtg+9EPdDH9+Er66
+	 P1d8TeDM8uoxQX5OZPEj1DS1D9M3VSZsBNWYm1mbHxaBULtmZb+75bpMMR3UkdByHn
+	 MzyYQnY+YhX4w==
+Date: Thu, 25 Jul 2024 08:04:40 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Stefan Chulski <stefanc@marvell.com>, Marcin Wojtas
+ <marcin.s.wojtas@gmail.com>, Russell King <linux@armlinux.org.uk>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] net: mvpp2: Don't re-use loop iterator
+Message-ID: <20240725080440.41c2fd97@kernel.org>
+In-Reply-To: <eaa8f403-7779-4d81-973d-a9ecddc0bf6f@stanley.mountain>
+References: <eaa8f403-7779-4d81-973d-a9ecddc0bf6f@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-There is a spelling mistake in a literal string. Fix it.
+On Wed, 24 Jul 2024 11:06:56 -0500 Dan Carpenter wrote:
+> This function has a nested loop.  The problem is that both the inside
+> and outside loop use the same variable as an iterator.  I found this
+> via static analysis so I'm not sure the impact.  It could be that it
+> loops forever or, more likely, the loop exits early.
 
-Signed-off-by: Deshan Zhang <deshan@nfschina.com>
----
- include/linux/lru_cache.h |  4 ++--
- lib/lru_cache.c           | 10 +++++-----
- 2 files changed, 7 insertions(+), 7 deletions(-)
+> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> index 8c45ad983abc..0d62a33afa80 100644
+> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> @@ -953,13 +953,13 @@ static void mvpp2_bm_pool_update_fc(struct mvpp2_port *port,
+>  static void mvpp2_bm_pool_update_priv_fc(struct mvpp2 *priv, bool en)
+>  {
+>  	struct mvpp2_port *port;
+> -	int i;
+> +	int i, j;
+>  
+>  	for (i = 0; i < priv->port_count; i++) {
+>  		port = priv->port_list[i];
+>  		if (port->priv->percpu_pools) {
+> -			for (i = 0; i < port->nrxqs; i++)
+> -				mvpp2_bm_pool_update_fc(port, &port->priv->bm_pools[i],
+> +			for (j = 0; j < port->nrxqs; j++)
+> +				mvpp2_bm_pool_update_fc(port, &port->priv->bm_pools[j],
+>  							port->tx_fc & en);
+>  		} else {
+>  			mvpp2_bm_pool_update_fc(port, port->pool_long, port->tx_fc & en);
 
-diff --git a/include/linux/lru_cache.h b/include/linux/lru_cache.h
-index c9afcdd9324c..ff82ef85a084 100644
---- a/include/linux/lru_cache.h
-+++ b/include/linux/lru_cache.h
-@@ -119,7 +119,7 @@ write intent log information, three of which are mentioned here.
- */
- 
- /* this defines an element in a tracked set
-- * .colision is for hash table lookup.
-+ * .collision is for hash table lookup.
-  * When we process a new IO request, we know its sector, thus can deduce the
-  * region number (label) easily.  To do the label -> object lookup without a
-  * full list walk, we use a simple hash table.
-@@ -145,7 +145,7 @@ write intent log information, three of which are mentioned here.
-  * But it avoids high order page allocations in kmalloc.
-  */
- struct lc_element {
--	struct hlist_node colision;
-+	struct hlist_node collision;
- 	struct list_head list;		 /* LRU list or free list */
- 	unsigned refcnt;
- 	/* back "pointer" into lc_cache->element[index],
-diff --git a/lib/lru_cache.c b/lib/lru_cache.c
-index b3d9187611de..9e0d469c7658 100644
---- a/lib/lru_cache.c
-+++ b/lib/lru_cache.c
-@@ -243,7 +243,7 @@ static struct lc_element *__lc_find(struct lru_cache *lc, unsigned int enr,
- 
- 	BUG_ON(!lc);
- 	BUG_ON(!lc->nr_elements);
--	hlist_for_each_entry(e, lc_hash_slot(lc, enr), colision) {
-+	hlist_for_each_entry(e, lc_hash_slot(lc, enr), collision) {
- 		/* "about to be changed" elements, pending transaction commit,
- 		 * are hashed by their "new number". "Normal" elements have
- 		 * lc_number == lc_new_number. */
-@@ -303,7 +303,7 @@ void lc_del(struct lru_cache *lc, struct lc_element *e)
- 	BUG_ON(e->refcnt);
- 
- 	e->lc_number = e->lc_new_number = LC_FREE;
--	hlist_del_init(&e->colision);
-+	hlist_del_init(&e->collision);
- 	list_move(&e->list, &lc->free);
- 	RETURN();
- }
-@@ -324,9 +324,9 @@ static struct lc_element *lc_prepare_for_change(struct lru_cache *lc, unsigned n
- 	PARANOIA_LC_ELEMENT(lc, e);
- 
- 	e->lc_new_number = new_number;
--	if (!hlist_unhashed(&e->colision))
--		__hlist_del(&e->colision);
--	hlist_add_head(&e->colision, lc_hash_slot(lc, new_number));
-+	if (!hlist_unhashed(&e->collision))
-+		__hlist_del(&e->collision);
-+	hlist_add_head(&e->collision, lc_hash_slot(lc, new_number));
- 	list_move(&e->list, &lc->to_be_changed);
- 
- 	return e;
--- 
-2.30.2
-
+Stefan, can you comment? priv->bm_pools are global (not per port)
+AFAICT, so this may be semi-intentional.
