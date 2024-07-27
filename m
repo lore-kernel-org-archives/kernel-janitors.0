@@ -1,46 +1,51 @@
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+Received: from msa.smtpout.orange.fr (out-72.smtpout.orange.fr [193.252.22.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DB9208B0;
-	Sat, 27 Jul 2024 06:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78F774077;
+	Sat, 27 Jul 2024 12:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722062295; cv=none; b=jN47Ci/dnMAjFJV9FjxFFyk4nTfgH7juNpTkbBYgqLNLRO3BiGlwLfhjLN+rge5ccA33qtkIZXBMp3TjhJNTxtQFrI830a8KpE16HZg2ad4wlkUs6ZgRT1eHfrAy+teUeldea0tDaEvQd4dt/5LgORLSkI9lF9b2cxqAXfNldNc=
+	t=1722083472; cv=none; b=T1zU+NAEDkDZ8rO0/fXwPdauIdVKKwre4hdCMIyBhwN87tc12onsqGG92K0wDTWMJ7D2izLaF5kUbpMB0eRQ5SDHq7pj+veG+z8FGy3Ae6at+tj9O/i/k3nozyf5C6laF/tW938eJB7pIUFjkMOhgUyxJgGTOZGbO3nHiuRiZzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722062295; c=relaxed/simple;
-	bh=GrJeDK2srVi+z2UkjJHob9c8b6SOSjMXZQ3r/XMlwYQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FhR+VhPzq4Ckhxo50KykFCMRE+XKzpINBnPzd9k+Id1JE/lrKcEB2iVNUcUk0Y3bqvk2AmJZ4P5A/kUnvT2RVUca+Ws8uNHbT9/vYNhI7ON2MGkEU2tPWHnQOb9uB3eH1rWRXoRkd99/I4PX2RbCZ182T+NtCgZRJU4zJqzSgG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=BdGgqL4b; arc=none smtp.client-ip=80.12.242.22
+	s=arc-20240116; t=1722083472; c=relaxed/simple;
+	bh=1kNgpcLGOMfFCKwWAt+UIHH/gXHM2fdPPDKSeY3x5Iw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fn487asR/rLYyMtmm4cbspobPP3CBtg4COb7TkWCmaBFDq2NpOW9rtTNaAfrhbvLHkhGeMN8lkgG+qsxSajMh73asPOnG06fFFxU1hwtbJBlMLUIn9gEmLROn+/rGc0SSi0Oqh6eudQGhsO450QLnzf91h4GxUnoBDF3U6FNY6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=mvXjV80+; arc=none smtp.client-ip=193.252.22.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BdGgqL4b"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="mvXjV80+"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id Xb2zsVCoM6bu3Xb2zscawa; Sat, 27 Jul 2024 08:36:53 +0200
+	id XgZdsQvW5GdLxXgZdsD4Lu; Sat, 27 Jul 2024 14:30:58 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722062213;
-	bh=ZHDCDqysapmv2ryBK6BEJxU1h57yEUk6bw3Qv1mEShs=;
+	s=t20230301; t=1722083458;
+	bh=pvdNf+vZIbOx3trn9NLOsntkBxMgNRCPD6bdIvwUm1Y=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=BdGgqL4bydrIPmm/lNBGsOHsGXsAa+Q8dwBHEn4O7+m/PqLOLNJdH9HqY4c7QYtti
-	 C8Gq6wLy+Xt7fDflgw1nohqsR4qbyLv388/Eb/UULvVVACDlW5LBjv0/OdE++MESZz
-	 96rXENTHPWC6YeNN+eJCY0s2g2bpxLb7yrMyrdiTLm6EjkKEBaT6FOa/UzXebqvk98
-	 /BW4kKokbm7FgcexUWp2YD16plDbNqFpnQvJs/rZD7UX47e2LVl10Yl8VG94w5tSX+
-	 9cEsz+6kgF33UksgZ58JzVMZ9nK7hvEw4R5PKFkv3w1V5wNUuKt+UePkt2KaMfm2Xn
-	 HieCaZrfQRlgw==
+	b=mvXjV80+XrzFQL5a8yjKmW6S8vcBYhx5Vm/LAkl6TDEFCU3Mgv2ZKFfS/2QoYVkCl
+	 ND4wj1GTqhaTrsGXo+IxEAZe1BSOFYmA1Wrh6yigNL3OLmVlQtQD/3wbWdAcgjqxR6
+	 QAJS2t/h913/HMRAIKMIdfotdEMlXAMfuqRW75Q+xjP1GgiygOYMx931c+kswHVXf3
+	 Dg59hxoKSXFObINpZW0KNV0ja4Y4AMidFvG+jZyO0u+GqPJ/STy42qSKIctYP5UiF1
+	 DfyURCNEZyh5TxcuOK0V7mbEADt62W5luuxux3XUC+k4K2mO4IbrYQD4jZDCFLR4bn
+	 sk7qiEl0tuIAQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 27 Jul 2024 08:36:53 +0200
+X-ME-Date: Sat, 27 Jul 2024 14:30:58 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: David.Laight@ACULAB.COM,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-input@vger.kernel.org
-Subject: [PATCH v2] Input: spear-keyboard - Switch to devm_clk_get_prepared()
-Date: Sat, 27 Jul 2024 08:36:49 +0200
-Message-ID: <062986b0a5105cbc61330da0e55b22c00e2c1c4f.1722062145.git.christophe.jaillet@wanadoo.fr>
+	netdev@vger.kernel.org
+Subject: [PATCH net-next] tcp: Use clamp() in htcp_alpha_update()
+Date: Sat, 27 Jul 2024 14:30:45 +0200
+Message-ID: <22c2e12d7a09202cc31a729fd29c0f2095ea34b7.1722083270.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -50,76 +55,36 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use devm_clk_get_prepared() in order to remove a clk_unprepare() in an
-error handling path of the probe and from the .remove() function.
+Using clamp instead of min(max()) is easier to read and it matches even
+better the comment just above it.
 
-This done, the whole .remove() function can also be axed because
-'input_dev' is a managed resource allocated with
-devm_input_allocate_device() and we can fully rely on devm for cleaning up.
+It also reduces the size of the preprocessed files by ~ 36 ko.
+(see [1] for a discussion about it)
+
+$ ls -l net/ipv4/tcp_htcp*.i
+ 5871593 27 juil. 10:19 net/ipv4/tcp_htcp.old.i
+ 5835319 27 juil. 10:21 net/ipv4/tcp_htcp.new.i
+
+[1]: https://lore.kernel.org/all/23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com/
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Compile tested only.
+ net/ipv4/tcp_htcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v2:
-  - Merge patch 1 and 2, because patch 1 alone introduced a bug   [Dmitry Torokhov]
-
-v1: https://lore.kernel.org/all/cover.1721939824.git.christophe.jaillet@wanadoo.fr/
----
- drivers/input/keyboard/spear-keyboard.c | 16 +---------------
- 1 file changed, 1 insertion(+), 15 deletions(-)
-
-diff --git a/drivers/input/keyboard/spear-keyboard.c b/drivers/input/keyboard/spear-keyboard.c
-index 557d00a667ce..1df4feb8ba01 100644
---- a/drivers/input/keyboard/spear-keyboard.c
-+++ b/drivers/input/keyboard/spear-keyboard.c
-@@ -222,7 +222,7 @@ static int spear_kbd_probe(struct platform_device *pdev)
- 	if (IS_ERR(kbd->io_base))
- 		return PTR_ERR(kbd->io_base);
+diff --git a/net/ipv4/tcp_htcp.c b/net/ipv4/tcp_htcp.c
+index 52b1f2665dfa..81b96331b2bb 100644
+--- a/net/ipv4/tcp_htcp.c
++++ b/net/ipv4/tcp_htcp.c
+@@ -185,7 +185,7 @@ static inline void htcp_alpha_update(struct htcp *ca)
+ 		u32 scale = (HZ << 3) / (10 * minRTT);
  
--	kbd->clk = devm_clk_get(&pdev->dev, NULL);
-+	kbd->clk = devm_clk_get_prepared(&pdev->dev, NULL);
- 	if (IS_ERR(kbd->clk))
- 		return PTR_ERR(kbd->clk);
- 
-@@ -255,14 +255,9 @@ static int spear_kbd_probe(struct platform_device *pdev)
- 		return error;
- 	}
- 
--	error = clk_prepare(kbd->clk);
--	if (error)
--		return error;
--
- 	error = input_register_device(input_dev);
- 	if (error) {
- 		dev_err(&pdev->dev, "Unable to register keyboard device\n");
--		clk_unprepare(kbd->clk);
- 		return error;
- 	}
- 
-@@ -272,14 +267,6 @@ static int spear_kbd_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static void spear_kbd_remove(struct platform_device *pdev)
--{
--	struct spear_kbd *kbd = platform_get_drvdata(pdev);
--
--	input_unregister_device(kbd->input);
--	clk_unprepare(kbd->clk);
--}
--
- static int spear_kbd_suspend(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
-@@ -373,7 +360,6 @@ MODULE_DEVICE_TABLE(of, spear_kbd_id_table);
- 
- static struct platform_driver spear_kbd_driver = {
- 	.probe		= spear_kbd_probe,
--	.remove_new	= spear_kbd_remove,
- 	.driver		= {
- 		.name	= "keyboard",
- 		.pm	= pm_sleep_ptr(&spear_kbd_pm_ops),
+ 		/* clamping ratio to interval [0.5,10]<<3 */
+-		scale = min(max(scale, 1U << 2), 10U << 3);
++		scale = clamp(scale, 1U << 2, 10U << 3);
+ 		factor = (factor << 3) / scale;
+ 		if (!factor)
+ 			factor = 1;
 -- 
 2.45.2
 
