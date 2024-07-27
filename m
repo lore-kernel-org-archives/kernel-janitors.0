@@ -1,120 +1,110 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1D61EF01;
-	Fri, 26 Jul 2024 11:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04194A05
+	for <kernel-janitors@vger.kernel.org>; Sat, 27 Jul 2024 05:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721992482; cv=none; b=ZRP9We0Awq5kwSkoih6/r8N7uWhSSS6yXR/Ohlv7nTnZMIUmo4PJBI6BNTkfftzzzTz6VRBU0gzvz8cvmncOKiKpA91b3c/WjmOF4hJO7mlcs+AO+BEw2SKk0KJFObOK0MnSwzfvMXpVJcjnS2mBPQ5vCD7U5v83VJS4DRP+CMk=
+	t=1722058341; cv=none; b=bPG0TsTa4NSByYAJhCofSehhJbVjQjq6c+/kis7YuNJk3bhmxlzbUqYUv53mXeRoshIVHB5ts/iZZVLA3tbVot4Yo4gra61nMR6eghoifC9vR8NIV82kaVns9H03pqY105sHhRfIept/5thPwtl6UEMj7TjoDqSvHLiWUzPzUyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721992482; c=relaxed/simple;
-	bh=nq7UpSRWHcqF6uFM4jUqHpH6ZGUkj46anBoNsddMUnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HSllAZaoGKO0z/SG0I9/odcfE1il17Lwg+eWBhDTZHDUOtNjamlF+s17ivZHx9udD/3uAN545UF2Pq+VY9P5PuX0gUImSHPdgc+ouDHNNjmlVOpnlrh3vKADiPa7ryFmyDvi7xkowUhxILD1HC0yMO6aOekGw+VmE1s6nanNO7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=D9/hNaTY; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1722058341; c=relaxed/simple;
+	bh=GEANmLRl3pd78CbWRm41BOno0EJdXj6oN+vaLlcrdT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KqjBXHK5x01fygw7srhF/UsDOl+NSRYBvCBQdxXXnSs4RR+YPax56IcctSav5NaPZDMS/d1ePX3YpP8N4Ic0wxc6LYSGO1kRN63FcuQcPH8s4SxJe6As+ycwfT5v7i4zGmqAcdWlyqbpQgmudtZ0IQwo/VP/L2CpyYLox62CCXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MeUtVqCH; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="D9/hNaTY"
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46QAHlA3003321;
-	Fri, 26 Jul 2024 11:14:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=pp1; bh=RyOFNbu/oCj90l0px/Bn+OUwEu/
-	+PEk8SRsUJ69RLM4=; b=D9/hNaTY61aM1LxlR7WvyP3xZSmhCNhjARYZhPD336o
-	QVEWdwCPVpRde7p0Mcl7grITuif7+vPlLhYoJlAassbs2poyMwJae5iyl4H27Q2i
-	pkop3CXu7HD7QwUf2jK0cp0ESN7pmM4OFcSy9xlngfHl3knxe60VScQzlQbCc8eY
-	C1HC8hfKklnVn/Ic3eSoPOQRdQksrwv/+Sm+m6EqqgT5TrKjsfAMeURKFy0jYFyP
-	6vM3au16CHFNR9GsCIluDAaFM+JlYcW3vM69yk05+A9Svhcc+VUXbV3IPw27epAi
-	kmd4Ux8I0cyk7OVPpt5tgeYxCrfZ+YQcq14bY1Kroqg==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40m2kv91yc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 11:14:36 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46QAEmj3006741;
-	Fri, 26 Jul 2024 11:14:35 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40gxn7tncv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Jul 2024 11:14:35 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46QBETCB20841062
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 26 Jul 2024 11:14:31 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 929F42004F;
-	Fri, 26 Jul 2024 11:14:29 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0233220040;
-	Fri, 26 Jul 2024 11:14:29 +0000 (GMT)
-Received: from localhost (unknown [9.171.57.197])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 26 Jul 2024 11:14:28 +0000 (GMT)
-Date: Fri, 26 Jul 2024 13:14:27 +0200
-From: Vasily Gorbik <gor@linux.ibm.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] s390/cio: add missing MODULE_DESCRIPTION() macros
-Message-ID: <your-ad-here.call-01721992467-ext-6555@work.hours>
-References: <20240715-md-s390-drivers-s390-cio-v2-1-97eaa6971124@quicinc.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240715-md-s390-drivers-s390-cio-v2-1-97eaa6971124@quicinc.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: cq9JifpQ1w_724O1FBr6BmHfBcQYbGui
-X-Proofpoint-ORIG-GUID: cq9JifpQ1w_724O1FBr6BmHfBcQYbGui
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MeUtVqCH"
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3d9e13ef9aaso1040840b6e.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 Jul 2024 22:32:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722058339; x=1722663139; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ll2tSeXkgEmDF6KKRHBsaNEm0CYvP0CwAGds8QRblZc=;
+        b=MeUtVqCHUSjfz0Op/DKO/rkaMvO2DUVbsh2ALrMNfZfJQg2pE/uzT0D46UmKqI0lhr
+         kCdVjUWMgAGlT9/srtA8QGR/o4AMi0vM3zm2kh2BE5PG7rWTIehNTR9J1iARp58ForTk
+         Z90A1dC6IozAhZcW6XNjJiquIgP/42JXJ+a+ut7AI9yGv+3lTG600WUBhbZO54D3i3Dx
+         Lluae7JdGPHLVOMxhtG0gUNBe/w6A6XYG6eIRNr+ol8NCO3lZAtnH7ky0usRuy4FflCS
+         Jdhscb3pjoPkwxvR4VSnUsDD74AOxxPVVDpcFZ4NAinV7z6XJ4seNSU5kSYWN3zyl8Bt
+         /EvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722058339; x=1722663139;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ll2tSeXkgEmDF6KKRHBsaNEm0CYvP0CwAGds8QRblZc=;
+        b=NVZV9MDpSgUQEv7czSzlcSU7VKWhp4EZZUBSQ+DmvxoXVLYlV0UeHyJB7Qvdlz+79v
+         ee6juvxDLx9UxOCc7CPwHFBw2ZbBUZoNgPv4U7sshiKe0neQstsmW2g5G5RFm5zEQ6p5
+         LrBT+nyo++glMi9x46cC1tmkKOcb7pfynBxIJgMXhrTQsu7eR2pNubq8BbwIGBx1iZcY
+         IPO8wQhXo/Y4ATgrkTJ8HpLew8GL0ATQQIlEPW6OFLj1HOYEr7WD43TBJLZ+34aezrF/
+         kLtXxUAF5FwNwzspzJqPllr8074r9J6rRoq0Z0KwjOe11azq687cIuXiWqJi2UJQkHVR
+         UIhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUelVCp3Olm/ZT3bvkp0DbNfUdmrL9i5SLFYbYzG4EZp/xBsGEOVQCuZRmD4x6IHshbbFQXhN8h0qvk8mMcIyQHWJFSVfZgvBi6ONLvT4di
+X-Gm-Message-State: AOJu0YyUfoJjY/aqUdZPrTZxBXdQTUbDmXSH8pCzn7MZ0j2W4azdt2p9
+	6F4aXXWwDeHpUUOPvdts+70n1c4f7oyA9IZak7MosPJy8ro8FwRLD6eqxRP+P0s=
+X-Google-Smtp-Source: AGHT+IHUCPIsi7uCYJwSWeWo164OHgRFN3CFwvOwVNjz9dDYRNJ4CXpR1iCMOHy3FSP/CtE+ihndVg==
+X-Received: by 2002:a05:6830:65c5:b0:703:802a:98a8 with SMTP id 46e09a7af769-70940c0eb3cmr2782964a34.9.1722058338829;
+        Fri, 26 Jul 2024 22:32:18 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700::1cb1])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7093070671fsm1112735a34.21.2024.07.26.22.32.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 22:32:18 -0700 (PDT)
+Date: Sat, 27 Jul 2024 00:32:15 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Zack Rusin <zack.rusin@broadcom.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/plane: Fix IS_ERR() vs NULL bug
+Message-ID: <83d9bb89-1a16-4ca4-80b4-1965fca498c1@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-26_09,2024-07-25_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
- spamscore=0 malwarescore=0 mlxlogscore=704 mlxscore=0 priorityscore=1501
- adultscore=0 bulkscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2407260072
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Mon, Jul 15, 2024 at 08:58:51AM -0700, Jeff Johnson wrote:
-> With ARCH=s390, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/cio/ccwgroup.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/cio/vfio_ccw.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> Reviewed-by: Eric Farman <farman@linux.ibm.com>
-> Reviewed-by: Vineeth Vijayan <vneethv@linux.ibm.com>
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> I hope this can get into the 6.11 merge window.
-> I originally had almost 300 patches to fix these issues treewide, and
-> this is one of only 13 left which have not landed in linux-next
-> ---
-> Changes in v2:
-> - changed CCW Group to ccwgroup in ccwgroup.c description
-> - removed "Physical" in vfio_ccw_drv.c description
-> - applied Reviewed-by tags from Eric Farman & Vineeth Vijayan since these edits
->   seem to be aligned with their comments
-> - Link to v1: https://lore.kernel.org/r/20240615-md-s390-drivers-s390-cio-v1-1-8fc9584e8595@quicinc.com
-> ---
->  drivers/s390/cio/ccwgroup.c     | 1 +
->  drivers/s390/cio/vfio_ccw_drv.c | 1 +
->  2 files changed, 2 insertions(+)
+The drm_property_create_signed_range() function returns NULL on error,
+it doesn't return error pointers.  Change the IS_ERR() tests to check
+for NULL.
+
+Fixes: 8f7179a1027d ("drm/atomic: Add support for mouse hotspots")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/drm_plane.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
+index a28b22fdd7a4..4fcb5d486de6 100644
+--- a/drivers/gpu/drm/drm_plane.c
++++ b/drivers/gpu/drm/drm_plane.c
+@@ -328,14 +328,14 @@ static int drm_plane_create_hotspot_properties(struct drm_plane *plane)
  
-Applied, thank you!
+ 	prop_x = drm_property_create_signed_range(plane->dev, 0, "HOTSPOT_X",
+ 						  INT_MIN, INT_MAX);
+-	if (IS_ERR(prop_x))
+-		return PTR_ERR(prop_x);
++	if (!prop_x)
++		return -ENOMEM;
+ 
+ 	prop_y = drm_property_create_signed_range(plane->dev, 0, "HOTSPOT_Y",
+ 						  INT_MIN, INT_MAX);
+-	if (IS_ERR(prop_y)) {
++	if (!prop_y) {
+ 		drm_property_destroy(plane->dev, prop_x);
+-		return PTR_ERR(prop_y);
++		return -ENOMEM;
+ 	}
+ 
+ 	drm_object_attach_property(&plane->base, prop_x, 0);
+-- 
+2.43.0
+
