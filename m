@@ -1,92 +1,79 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281F21D52B;
-	Sat, 27 Jul 2024 15:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62B21EA8D;
+	Sat, 27 Jul 2024 16:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722093671; cv=none; b=hqZ7S8kmXwsOx366GwzeG5HCVq7VFypDVsKzJJCu/d4jtMUp2FeEAKn0rYfRVgTaE6WXsp2WRn2yKwG75C/LLYW6vqFWZRVUrbg9h2tIbfzZtAk7W0azsBgifAeGmEMqJ1UcNoijgAi6req0r6GzFlqZ1Z3oE6+cq+9pfvpjx3s=
+	t=1722097032; cv=none; b=Ylqosb+2Khq/oURQvlhb/U9ozIq3QPUIYLn+pU9nhn9VL6ZuF+Z1DlkaTgWMFVeaPHZDYHwdHApYZ2sHHlCDgbVfe8vRKtfG7zaAOf0adPiVPP0l0zm1MQgQfzbJHgSC9/YKzav0fXgeFKK3DdesHCoktj1Y8CG08rVAhx+TKGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722093671; c=relaxed/simple;
-	bh=WtGgi1jB+7GuW/ovN0wMJJZUjOGWtNRhIUs4G2YYmuA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LW08HPkm2BmU+2MZpusAxVOASg5kr9UbYFZSgJJIkAkdOlXQFUVMA+0P7d5pI4zszmorDu5gtPdySPmzksRp7/t7GMEPu6LNaqyoj6rDT26ORwCq9Gs1Kn0MifXuvEt6vJdj5ZjmYKPwBDd7c0t4jMJ5HnaulE35nvaj6oBILaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dtrPzDin; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1722097032; c=relaxed/simple;
+	bh=NqSY7cGWR/o4o8BKGRxfjXQ4+UBje56OMKrK4V/+nas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qWtHvJe9vr3jwauf8lVPcvoHuJEmHv8gOnHJn2wXKjOpjlcrH2mZhBG797WOuBf9pHEteDgkXX0SNgVJXYh4mLbw/3Yq8VayWBzWWBqmS4WC/J1KJTHgNMkp2ZxXGwFbT2zL37Oe2768nrndDUKLWrpZVhh++E35W+YMxyAGW+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VwT6opiG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dtrPzDin"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722093662;
-	bh=WtGgi1jB+7GuW/ovN0wMJJZUjOGWtNRhIUs4G2YYmuA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dtrPzDindDUqtKeTfN/U9eGJTxRtiORH+sBa4/KNusvAqNIamb5HittPoxrpr2T9P
-	 f+ytVSEqe/UU70hK3AktguP/3/gbUb96f8aMfdxownRIlyezL0gD/EDw3ut5jbYzWX
-	 bKgCM1F8uo4JWeJ0T6vZur1olslCOP2QnJkW7voH8o4R5cw+43Y6/pdfp+9fDRna8T
-	 vWM06z/XkdocbNZ1fFmmfxU/Qdm42BkQ3oXJM2VF7wan57j+qTMBbyzmioMCyzeSKz
-	 OwulObdUDPl3Y9Iq9wJROgy4gU+6I7tfe7fUBV5FiglhZMa+oyBInIrma5JBLdE5zO
-	 jWmIL30pe/V+A==
-Received: from [100.109.49.129] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dmitry.osipenko)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6E87837821B7;
-	Sat, 27 Jul 2024 15:21:00 +0000 (UTC)
-Message-ID: <25a6acd4-551f-439f-bd5d-7026b3b5d2fe@collabora.com>
-Date: Sat, 27 Jul 2024 18:20:57 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VwT6opiG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20790C4AF0A;
+	Sat, 27 Jul 2024 16:17:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722097032;
+	bh=NqSY7cGWR/o4o8BKGRxfjXQ4+UBje56OMKrK4V/+nas=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VwT6opiGoFfluZ/7HmqzfFkjSVKigc0vkxyTd0MHd29e8BrnWOCCkEn3ceyPDz6Y0
+	 rJo/n86DRnaDA0VYNumwPCF8agRoWyflP9dPutQFSOkiUM6KuDFqkWIiurtLFjy1kg
+	 gWCIeG28HIPUXIiRoYg2H+bFmBQxevSH32hPjIt8/cU3PCdYdXXaz3OdrRMnwdG+k1
+	 HMic4JI2oZOGK2gu/TzRn/4t5Ukfvlfi1MGbasiGjeV+EnZcGiTSHXx184XDHcwuuN
+	 3gbi1eT4YJMCJrWnD+C5gtroCiZh02mrQP3qNrDKjdsJ89RW4PYWewIoo6ipTltvK0
+	 H+iHjwhG+uZdg==
+Date: Sat, 27 Jul 2024 17:17:03 +0100
+From: Simon Horman <horms@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: David.Laight@aculab.com, Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] tcp: Use clamp() in htcp_alpha_update()
+Message-ID: <20240727161703.GA1625564@kernel.org>
+References: <22c2e12d7a09202cc31a729fd29c0f2095ea34b7.1722083270.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/client: Fix error code in
- drm_client_buffer_vmap_local()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Zack Rusin <zack.rusin@broadcom.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <89d13df3-747c-4c5d-b122-d081aef5110a@stanley.mountain>
-Content-Language: en-US
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <89d13df3-747c-4c5d-b122-d081aef5110a@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22c2e12d7a09202cc31a729fd29c0f2095ea34b7.1722083270.git.christophe.jaillet@wanadoo.fr>
 
-On 7/24/24 19:09, Dan Carpenter wrote:
-> This function accidentally returns zero/success on the failure path.
-> It leads to locking issues and an uninitialized *map_copy in the
-> caller.
+On Sat, Jul 27, 2024 at 02:30:45PM +0200, Christophe JAILLET wrote:
+> Using clamp instead of min(max()) is easier to read and it matches even
+> better the comment just above it.
 > 
-> Fixes: b4b0193e83cb ("drm/fbdev-generic: Fix locking with drm_client_buffer_vmap_local()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/gpu/drm/drm_client.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> It also reduces the size of the preprocessed files by ~ 36 ko.
+> (see [1] for a discussion about it)
 > 
-> diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
-> index 2803ac111bbd..bfedcbf516db 100644
-> --- a/drivers/gpu/drm/drm_client.c
-> +++ b/drivers/gpu/drm/drm_client.c
-> @@ -355,7 +355,7 @@ int drm_client_buffer_vmap_local(struct drm_client_buffer *buffer,
->  
->  err_drm_gem_vmap_unlocked:
->  	drm_gem_unlock(gem);
-> -	return 0;
-> +	return ret;
->  }
->  EXPORT_SYMBOL(drm_client_buffer_vmap_local);
->  
+> $ ls -l net/ipv4/tcp_htcp*.i
+>  5871593 27 juil. 10:19 net/ipv4/tcp_htcp.old.i
+>  5835319 27 juil. 10:21 net/ipv4/tcp_htcp.new.i
+> 
+> [1]: https://lore.kernel.org/all/23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com/
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+## Form letter - net-next-closed
 
--- 
-Best regards,
-Dmitry
+(Adapted from text by Jakub)
 
+The merge window for v6.11 has begun and therefore net-next is closed
+for new drivers, features, code refactoring and optimizations.
+We are currently accepting bug fixes only.
+
+Please repost when net-next reopens after 28th July.
+
+RFC patches sent for review only are welcome at any time.
+
+See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
+--
+pw-bot: defer
