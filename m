@@ -1,79 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62B21EA8D;
-	Sat, 27 Jul 2024 16:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8576618643;
+	Sat, 27 Jul 2024 20:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722097032; cv=none; b=Ylqosb+2Khq/oURQvlhb/U9ozIq3QPUIYLn+pU9nhn9VL6ZuF+Z1DlkaTgWMFVeaPHZDYHwdHApYZ2sHHlCDgbVfe8vRKtfG7zaAOf0adPiVPP0l0zm1MQgQfzbJHgSC9/YKzav0fXgeFKK3DdesHCoktj1Y8CG08rVAhx+TKGk=
+	t=1722112660; cv=none; b=P0bjI3DuLMT5XSoHU+b/bCA1Lpc8zG0YI/xcJ6Vp9i33siQzWqUgfZH1h76vSRzoHGRk42k1m3OPmHwhFMZJE4p0uXuM2+0QrJVJFwFUgYq+11FRt9quXFZTjtyojxy8DRgDsR3qaTyNwJVNWvcgYR3KIXVoqYvehVa/F4H6tFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722097032; c=relaxed/simple;
-	bh=NqSY7cGWR/o4o8BKGRxfjXQ4+UBje56OMKrK4V/+nas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qWtHvJe9vr3jwauf8lVPcvoHuJEmHv8gOnHJn2wXKjOpjlcrH2mZhBG797WOuBf9pHEteDgkXX0SNgVJXYh4mLbw/3Yq8VayWBzWWBqmS4WC/J1KJTHgNMkp2ZxXGwFbT2zL37Oe2768nrndDUKLWrpZVhh++E35W+YMxyAGW+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VwT6opiG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722112660; c=relaxed/simple;
+	bh=0wv8LplG2WHF4iagJpseBcJkythLO5m0vQLh2flInxs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FIv41it9GmdjdR18cWsHrLxI8zro9J8CfmO3mzCAOcwOA4YZNHvkcvLR4/ayWloDwxggpTN5cALsIJtDfj4avWZKKfnbiRcZDLvaEtFbwZBUulZpbmaDbYDmCyrzEOUBdC4TAjjbOiYi68yGIZAMJ4efl1aaej5kDJRHEO2D0q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=U6ej5lWi; arc=none smtp.client-ip=80.12.242.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VwT6opiG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20790C4AF0A;
-	Sat, 27 Jul 2024 16:17:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722097032;
-	bh=NqSY7cGWR/o4o8BKGRxfjXQ4+UBje56OMKrK4V/+nas=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VwT6opiGoFfluZ/7HmqzfFkjSVKigc0vkxyTd0MHd29e8BrnWOCCkEn3ceyPDz6Y0
-	 rJo/n86DRnaDA0VYNumwPCF8agRoWyflP9dPutQFSOkiUM6KuDFqkWIiurtLFjy1kg
-	 gWCIeG28HIPUXIiRoYg2H+bFmBQxevSH32hPjIt8/cU3PCdYdXXaz3OdrRMnwdG+k1
-	 HMic4JI2oZOGK2gu/TzRn/4t5Ukfvlfi1MGbasiGjeV+EnZcGiTSHXx184XDHcwuuN
-	 3gbi1eT4YJMCJrWnD+C5gtroCiZh02mrQP3qNrDKjdsJ89RW4PYWewIoo6ipTltvK0
-	 H+iHjwhG+uZdg==
-Date: Sat, 27 Jul 2024 17:17:03 +0100
-From: Simon Horman <horms@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: David.Laight@aculab.com, Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next] tcp: Use clamp() in htcp_alpha_update()
-Message-ID: <20240727161703.GA1625564@kernel.org>
-References: <22c2e12d7a09202cc31a729fd29c0f2095ea34b7.1722083270.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="U6ej5lWi"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id XoAXsrPVIkc2vXoAXsClW4; Sat, 27 Jul 2024 22:37:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722112655;
+	bh=vIvNRlhJ8J1UYs1bJ4mqG+wbUkdAzoI8r7PqTBxe4YQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=U6ej5lWiSSomDCFhDS+xWGLTsUPjvg/qAq1Eep/eoo04w1fx995girCnmq28SM+P7
+	 dMzuPiR3EqUDihnl0ATX+ggOrYxFMT2/EOsOMEwAJwGFoymrYmgFd2b5ugs6vuYPyO
+	 YcbH5XJVCpBVl0BeAUVCUtlONz7Dk0dRtYfRCAoXCZcxlvsV0nMFmBNtDqa1ANCT67
+	 +YfWj2P87GiTF+5OZApYqSPqgeFv1vhbtwz+CvH2dcpiTjBatRRX2ylQaAmuKmRCWR
+	 6DHiBYYg9CVRy95zoabkxm5To9W6wznVEKwXIUYaR0Zi19IawuQ+TWFvlO4GjDfCVm
+	 aPo7NQcNSEdUA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 27 Jul 2024 22:37:35 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: James Smart <james.smart@broadcom.com>,
+	Dick Kennedy <dick.kennedy@broadcom.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH] scsi: lpfc: Use bitmap_size()
+Date: Sat, 27 Jul 2024 22:37:27 +0200
+Message-ID: <704d0aade3c8ed4ff64f6ddf81edfb409514be92.1722112623.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <22c2e12d7a09202cc31a729fd29c0f2095ea34b7.1722083270.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 27, 2024 at 02:30:45PM +0200, Christophe JAILLET wrote:
-> Using clamp instead of min(max()) is easier to read and it matches even
-> better the comment just above it.
-> 
-> It also reduces the size of the preprocessed files by ~ 36 ko.
-> (see [1] for a discussion about it)
-> 
-> $ ls -l net/ipv4/tcp_htcp*.i
->  5871593 27 juil. 10:19 net/ipv4/tcp_htcp.old.i
->  5835319 27 juil. 10:21 net/ipv4/tcp_htcp.new.i
-> 
-> [1]: https://lore.kernel.org/all/23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com/
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Use bitmap_size() instead of hand-writing it.
 
-## Form letter - net-next-closed
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/lpfc/lpfc_mem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-(Adapted from text by Jakub)
+diff --git a/drivers/scsi/lpfc/lpfc_mem.c b/drivers/scsi/lpfc/lpfc_mem.c
+index 2697da3248b3..8dfceb0938b0 100644
+--- a/drivers/scsi/lpfc/lpfc_mem.c
++++ b/drivers/scsi/lpfc/lpfc_mem.c
+@@ -21,6 +21,7 @@
+  * included with this package.                                     *
+  *******************************************************************/
+ 
++#include <linux/bitmap.h>
+ #include <linux/mempool.h>
+ #include <linux/slab.h>
+ #include <linux/pci.h>
+@@ -78,8 +79,7 @@ lpfc_mem_alloc_active_rrq_pool_s4(struct lpfc_hba *phba) {
+ 
+ 	if (max_xri <= 0)
+ 		return -ENOMEM;
+-	bytes = ((BITS_PER_LONG - 1 + max_xri) / BITS_PER_LONG) *
+-		  sizeof(unsigned long);
++	bytes = bitmap_size(max_xri);
+ 	phba->cfg_rrq_xri_bitmap_sz = bytes;
+ 	phba->active_rrq_pool = mempool_create_kmalloc_pool(LPFC_MEM_POOL_SIZE,
+ 							    bytes);
+-- 
+2.45.2
 
-The merge window for v6.11 has begun and therefore net-next is closed
-for new drivers, features, code refactoring and optimizations.
-We are currently accepting bug fixes only.
-
-Please repost when net-next reopens after 28th July.
-
-RFC patches sent for review only are welcome at any time.
-
-See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
---
-pw-bot: defer
