@@ -1,124 +1,114 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D928172D;
-	Mon, 29 Jul 2024 16:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E861553A2;
+	Mon, 29 Jul 2024 16:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722271222; cv=none; b=dh6YhFuEoV9IuJY/rgofkec+ot1akLVSn/YmuZp+xGLYpX0iM7sim6pMfZ8kX71PRqRJxGEI1tt8PXRcK51OQlmeglux2CKQ0zTxpnCTz4+X4y6oorfn4YHUIbQ4XzpZi5hibD1C+Ohron1BLxeryPUyaVnxOqztgydDuBTwVXo=
+	t=1722271492; cv=none; b=m6DHE+6zsMv5uaZie3YAkIYh+sraEAu423TE3WFnnv1eW997vzo07Q5DqDHyVgL8SnGgMs91U8ziDJT/jsDdDQElw6TCO55BIOv7uqiKw9LmstnczGYygz/0mJQXUeKmLiLhoV4YXaYiTcsydDOiJlDkIyVr4b2oSpQP97KY7U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722271222; c=relaxed/simple;
-	bh=Qqac7h68dfeMELAlP8KOuokNg5MyfdTiO6541leHuTg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VWC2bmalFUcoNoRWaDvbhlwkbG2oxpwSlerTfr4CDXgY0nxZRibZSPa3lgkCt8lJXyeIH8g6xfxlitmA7oDKzXn0SzXgzx7vJeuAh9zmgiDwhS7NIbTXbGEK7MTKtlUP0K5z4f4g0jn2xSBhGoZzODJwp112ruqP9qC1kYPqejE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OXIpy+Ry; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1722271492; c=relaxed/simple;
+	bh=oH+olM6I7y3I1y9P3irFOh3arxrk8pcDdOtNWjRHv/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X11dubpZURCPFrkty1W37MeYckygU8iHZx8jkDGNMHY4+EDkeWTqMYl5ZpZaMhGbd68/s1I5cLiqlIqQnaRDI6LtLNNYLbFgTsBO9WmoBsdtS6gQjmbWTZJ9mGDXdO+TgRtWSx2CyctKFylBRN50mbuPQoJ8F3GyiCr0rJykIok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=E/Qowm//; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OXIpy+Ry"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722271222; x=1753807222;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=Qqac7h68dfeMELAlP8KOuokNg5MyfdTiO6541leHuTg=;
-  b=OXIpy+RyUoz4jwiryYSgzUVJwkodj8gsos4jSkSkahgWg6NQPy5Fq2jV
-   FOSd4JRjbWcIvFeHmcx2ahhOBSg+Zi3Mh+szyyXfsUVuqk40lT5m79hzO
-   Oaa04THZgtOMWRWMljaAdvM1RO3EER580QkaZte/iEoT68DOA+YmkAcoY
-   0QSJcGGfWNSAPhR6ylER/gFQY7ZVEI2QaWPnau3/fqddzPbEw5buiX0CB
-   l8p5vGIqJmnbiwKaQla14eRRkMIizjWKisYe5rJvi7LwPOexUfWQBVDrD
-   rYeoC4kSt1UkyP1DjnZie3Ke9Yz3JU/lfrwnHiqAZhf2GfVVqwA2O/KoU
-   Q==;
-X-CSE-ConnectionGUID: ZS5PJIJPQUmRBc1qAi8/Ag==
-X-CSE-MsgGUID: A99gNCEGSHWUXVD7UZhIaw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="20170603"
-X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
-   d="scan'208";a="20170603"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 09:40:21 -0700
-X-CSE-ConnectionGUID: 2x184MsDSLu1Xt4hERrv7Q==
-X-CSE-MsgGUID: nGlv5BkURE+HvqK1vrFb0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
-   d="scan'208";a="53927560"
-Received: from thanhnho-mobl.amr.corp.intel.com ([10.212.114.80])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 09:40:19 -0700
-Message-ID: <d11ad678099ccce94eacf721c8d06a38129ce2d3.camel@linux.intel.com>
-Subject: Re: [PATCH] crypto: iaa - Fix potential use after free bug
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller"
-	 <davem@davemloft.net>, linux-crypto@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Date: Mon, 29 Jul 2024 11:40:18 -0500
-In-Reply-To: <e049271f-41f2-4d04-ac69-80186f2eecd9@stanley.mountain>
-References: <e049271f-41f2-4d04-ac69-80186f2eecd9@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="E/Qowm//"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1722271461; x=1722876261; i=markus.elfring@web.de;
+	bh=oH+olM6I7y3I1y9P3irFOh3arxrk8pcDdOtNWjRHv/M=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=E/Qowm//FEJpjRev5Ap4irpO9l+cXikVkU3zc3zGZsoxJYOusI2ckl4veusxgiQb
+	 Rg2yhNrrMWoDhKWMpt9DXcAOLhfgXmCKJ1MT9LP+xEP67oFF18lFkzqkvZ1pvW6K8
+	 B0+3NpEdcAoWpbHN2u9hONx1EW/r7lQNRs0gBHrJ0ncPVLmwCpOxj3ITkTAQtYJ6D
+	 vKzkhJPFPM8Gj81sWfAtZkHYEDJBycetO+Q3uUNrMukhSPP6+Nb5Pfz3ypbZx5Ogh
+	 7Ly+BG6nS1nUci1VglWeSrpxm49RxJOZHYdWdmvwmTA8NZr/BrhmDQHZzvgXPRmEO
+	 VL6hFUlPZkGYXnDUEA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MT7aV-1shW8o2Qjn-00OxHK; Mon, 29
+ Jul 2024 18:44:21 +0200
+Message-ID: <c8a42211-3b39-4258-93a7-354ce729eb7f@web.de>
+Date: Mon, 29 Jul 2024 18:44:18 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v25 01/13] rtase: Add support for a pci table in
+ this module
+To: Andrew Lunn <andrew@lunn.ch>, Justin Lai <justinlai0215@realtek.com>,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Jakub Kicinski <kuba@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jiri Pirko <jiri@resnulli.us>, Joe Damato <jdamato@fastly.com>,
+ Larry Chiu <larry.chiu@realtek.com>, Paolo Abeni <pabeni@redhat.com>,
+ Ping-Ke Shih <pkshih@realtek.com>, Ratheesh Kannoth <rkannoth@marvell.com>,
+ Simon Horman <horms@kernel.org>
+References: <20240729062121.335080-2-justinlai0215@realtek.com>
+ <446be4e4-ea7e-47ec-9eba-9130ed662e2c@web.de>
+ <7d85ae3a-28d3-4267-9182-6e799ba8ae0a@lunn.ch>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <7d85ae3a-28d3-4267-9182-6e799ba8ae0a@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:O/ElXgFssvC7tc0PdUY7AJiUcYrBLQNGzSHieilyUsCDP9652fx
+ xFi+HliWX4SGt8W/kDYov/j6hrtD0P6HNs+SozINunMOPI38nv1kzhBpEoWsgYSyCzlRqfN
+ Bm5+bYHennkBpGCi2U5uFUPRw/Jx1wup9BzRZ9hG44ovKdl3TzdzZ0F0xin+O/N3v1XUe5V
+ oj8ECaf9H6Yiv33P20SeQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:hhE2jWa+UT4=;yRxzkVhsLJGIPVHoMN7YdqsBOF/
+ Gm/rlHexnZG7P2mlsPM+/jfj2qRAKFudxIJTL9/WYfqDWrpGwpYXzM/mtelILaRFSorWL66CY
+ N0K6LD9wjJoxBhoGFJehpnwwZJ+YPA6lsyjQVifaJErTbHXLxZxn69/F1iIBXuIBn26UTPmLH
+ a1uWXqFNDhNEa6Rh88dFQWvp9EXaS+Ig5ixjrci1tERg5CNKgQQ0dpADJz6V4MteHfHIXTICS
+ ml6pAP/4e1IAI/U4IkVz2XCvymZhdLQkt3vI42KWY8cczdekZYQ8ZcVgEbEnmOb06+XRvAiL1
+ Bmx/jT5f7D+uORkC0ulb7U8DjF108xZYoanHCxJ0OZvqX5IQxtdtGqr0T7DHGIpSYVOTLGAtN
+ r/Q1QLwAEZRJmfyVyCmgQs2EA2dqsTFgcNX/nvfpgDTATVxOoJNOn/mBo4l2fOvLSv8gSM1Dp
+ NgIPLXrVXiob6yYtUXE1z4Ps1nDHaIiLIJDnXN67MQJiJH7Ahj1hcMei8mxrqgWCT4NlVvu4r
+ RYVzqZlpDlqlSGpVLlDeMPpA30hfftQnzhJm5sPCbY7YIhb3+TZUzK10qs1LSwKNdX/xFbSZu
+ +S/AN6iDslSBlaqSYxeMIKFND+aeE8eCVr19KFL7MxBI/lc0QfnA0h6VwweaWML/mBGaX8jdM
+ BjglKXN+7Fr/Q2VT1zOrpRdUkXVLx7ZliXU6F7AQ3HtOYEUOKhk76qQjqJE5nDKe3SpforiSW
+ 6Jvhts676oIKcBWbUkP7rwJMcyOI63JXVomuWip8FFPsa5ljHWakE9RUCrPjdEwtcR3ToCLu2
+ QVQmPFUzcogRqjgOS7OBh0hw==
 
-Hi Dan,
+>> =E2=80=A6
+>>> +++ b/drivers/net/ethernet/realtek/rtase/rtase.h
+>>> @@ -0,0 +1,338 @@
+>> =E2=80=A6
+>>> +#ifndef _RTASE_H_
+>>> +#define _RTASE_H_
+>> =E2=80=A6
+>>
+>> I suggest to omit leading underscores from such identifiers.
+>> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+o=
+r+define+a+reserved+identifier
+>
+> Do you have a reference to a Linux kernel document which suggests not
+> to do this?
 
-On Wed, 2024-07-24 at 11:09 -0500, Dan Carpenter wrote:
-> The free_device_compression_mode(iaa_device, device_mode) function
-> frees
-> "device_mode" but it iss passed to iaa_compression_modes[i]->free() a
-> few
-> lines later resulting in a use after free.
->=20
-> The good news is that, so far as I can tell, nothing implements the
-> ->free() function and the use after free happens in dead code.=C2=A0 But,
-> with
-> this fix, when something does implement it, we'll be ready.=C2=A0 :)
->=20
-
-Good catch, thanks for fixing this.
-
-Reviewed-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+I assume that you would become interested to clarify corresponding concern=
+s
+according to compliance (or deviations) from the standard of the programmi=
+ng language =E2=80=9CC=E2=80=9D.
 
 
-> Fixes: b190447e0fa3 ("crypto: iaa - Add compression mode management
-> along with fixed mode")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> =C2=A0drivers/crypto/intel/iaa/iaa_crypto_main.c | 4 ++--
-> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/crypto/intel/iaa/iaa_crypto_main.c
-> b/drivers/crypto/intel/iaa/iaa_crypto_main.c
-> index e810d286ee8c..237f87000070 100644
-> --- a/drivers/crypto/intel/iaa/iaa_crypto_main.c
-> +++ b/drivers/crypto/intel/iaa/iaa_crypto_main.c
-> @@ -495,10 +495,10 @@ static void
-> remove_device_compression_modes(struct iaa_device *iaa_device)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0if (!device_mode)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0con=
-tinue;
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0free_device_compression_mode(iaa_device,
-> device_mode);
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0iaa_device->compression_modes[i] =3D NULL;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0if (iaa_compression_modes[i]->free)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0iaa=
-_compression_modes[i]->free(device_mode);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0free_device_compression_mode(iaa_device,
-> device_mode);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0iaa_device->compression_modes[i] =3D NULL;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> =C2=A0}
-> =C2=A0
+> My grep foo is not great, but there appears to be around 20,000
+> instances of #define _[A-Z] in the kernel. So i doubt adding a couple
+> more is going to be an issue.
 
+I suggest to improve case distinctions accordingly.
+Can it be more desirable to avoid undefined behaviour another bit?
+
+How will development interests evolve further?
+
+Regards,
+Markus
