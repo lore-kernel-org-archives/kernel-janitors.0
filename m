@@ -1,114 +1,244 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from msa.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E861553A2;
-	Mon, 29 Jul 2024 16:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BFC71474CE;
+	Mon, 29 Jul 2024 17:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722271492; cv=none; b=m6DHE+6zsMv5uaZie3YAkIYh+sraEAu423TE3WFnnv1eW997vzo07Q5DqDHyVgL8SnGgMs91U8ziDJT/jsDdDQElw6TCO55BIOv7uqiKw9LmstnczGYygz/0mJQXUeKmLiLhoV4YXaYiTcsydDOiJlDkIyVr4b2oSpQP97KY7U0=
+	t=1722274585; cv=none; b=P56zqH5DFBirCQ/Va+zes40QoAtNGfdXufXp1fxiIqVg+NSI8GILgcCb9/esoUK1ihbOt73wHBZ/v5c3oqPs9CGS1tEymI3Pa7R4Yw+uz2Y9wB3N9N2Q+c5rMjAt61isckwiuMKD9zNOyi401ZE9OgwRtyzjPBu2J7bhdXKJdZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722271492; c=relaxed/simple;
-	bh=oH+olM6I7y3I1y9P3irFOh3arxrk8pcDdOtNWjRHv/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X11dubpZURCPFrkty1W37MeYckygU8iHZx8jkDGNMHY4+EDkeWTqMYl5ZpZaMhGbd68/s1I5cLiqlIqQnaRDI6LtLNNYLbFgTsBO9WmoBsdtS6gQjmbWTZJ9mGDXdO+TgRtWSx2CyctKFylBRN50mbuPQoJ8F3GyiCr0rJykIok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=E/Qowm//; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1722274585; c=relaxed/simple;
+	bh=8qXgcTEK1sB9juukqwPldLWJ+ngenIcIAxtBMYrrYQQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mGGjZ+RjJNFQ+wB38dLo+0fQleoucFhi2Jcdgg4mBgnkpxP0MX7Rz0jIRBbA8xSuJa28VBzsTPIh1lSuPiQC5U94cFllfiVFYlNgzgxZm+Wdn14RzD7GZUm6jEM4ciqyIrW4vVdzy3vZIoT+VWiKNdFhvLlyfkrOVg106WlieEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=jtg+bA2v; arc=none smtp.client-ip=80.12.242.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="E/Qowm//"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1722271461; x=1722876261; i=markus.elfring@web.de;
-	bh=oH+olM6I7y3I1y9P3irFOh3arxrk8pcDdOtNWjRHv/M=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=E/Qowm//FEJpjRev5Ap4irpO9l+cXikVkU3zc3zGZsoxJYOusI2ckl4veusxgiQb
-	 Rg2yhNrrMWoDhKWMpt9DXcAOLhfgXmCKJ1MT9LP+xEP67oFF18lFkzqkvZ1pvW6K8
-	 B0+3NpEdcAoWpbHN2u9hONx1EW/r7lQNRs0gBHrJ0ncPVLmwCpOxj3ITkTAQtYJ6D
-	 vKzkhJPFPM8Gj81sWfAtZkHYEDJBycetO+Q3uUNrMukhSPP6+Nb5Pfz3ypbZx5Ogh
-	 7Ly+BG6nS1nUci1VglWeSrpxm49RxJOZHYdWdmvwmTA8NZr/BrhmDQHZzvgXPRmEO
-	 VL6hFUlPZkGYXnDUEA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MT7aV-1shW8o2Qjn-00OxHK; Mon, 29
- Jul 2024 18:44:21 +0200
-Message-ID: <c8a42211-3b39-4258-93a7-354ce729eb7f@web.de>
-Date: Mon, 29 Jul 2024 18:44:18 +0200
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="jtg+bA2v"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id YUI7soyZFhajuYUI8sQhbA; Mon, 29 Jul 2024 19:36:13 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722274573;
+	bh=OMMMxQpsZCVMR8l67H2YGQ2dCZFaG5DSz7db9edlKWs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=jtg+bA2vAlqfi+cTiS2Gf1imYLuSNwgshlLsieACR9yNef8s5TO5dFfcpBYV3EWd2
+	 eXWKd19sIWEbUTZFk/gueaYcPAV1FnnQ94kEU4RlOuML3YLh+cmQDuhjB9eYgNQkQL
+	 S5gKp8Ehpv5ptcdiO849BuW42lximhOiHb5rKYxZaQf9yOZA2fg0yB/2DrZvp2xQWQ
+	 11VORJBZMItKMepoAhxvMETKxQIY7esmqgS8CI9QJUDWfoLKUe9JlwE/iHsTcUQMyG
+	 LxUAtHDlaxiahSCm8ucJVOIEhEkVUIXe1L32c3ex0eFLirLchPk4qACcsd88/oasFk
+	 GyWD2O9b238dA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 29 Jul 2024 19:36:13 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: ckeepax@opensource.cirrus.com,
+	javier.carrasco.cruz@gmail.com,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	alsa-devel@alsa-project.org,
+	patches@opensource.cirrus.com,
+	linux-sound@vger.kernel.org
+Subject: [PATCH] ASoC: cs43130: Constify snd_soc_component_driver struct
+Date: Mon, 29 Jul 2024 19:36:05 +0200
+Message-ID: <1f04bb0366d9640d7ee361dae114ff79e4b381c1.1722274212.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v25 01/13] rtase: Add support for a pci table in
- this module
-To: Andrew Lunn <andrew@lunn.ch>, Justin Lai <justinlai0215@realtek.com>,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Jakub Kicinski <kuba@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jiri Pirko <jiri@resnulli.us>, Joe Damato <jdamato@fastly.com>,
- Larry Chiu <larry.chiu@realtek.com>, Paolo Abeni <pabeni@redhat.com>,
- Ping-Ke Shih <pkshih@realtek.com>, Ratheesh Kannoth <rkannoth@marvell.com>,
- Simon Horman <horms@kernel.org>
-References: <20240729062121.335080-2-justinlai0215@realtek.com>
- <446be4e4-ea7e-47ec-9eba-9130ed662e2c@web.de>
- <7d85ae3a-28d3-4267-9182-6e799ba8ae0a@lunn.ch>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <7d85ae3a-28d3-4267-9182-6e799ba8ae0a@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:O/ElXgFssvC7tc0PdUY7AJiUcYrBLQNGzSHieilyUsCDP9652fx
- xFi+HliWX4SGt8W/kDYov/j6hrtD0P6HNs+SozINunMOPI38nv1kzhBpEoWsgYSyCzlRqfN
- Bm5+bYHennkBpGCi2U5uFUPRw/Jx1wup9BzRZ9hG44ovKdl3TzdzZ0F0xin+O/N3v1XUe5V
- oj8ECaf9H6Yiv33P20SeQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:hhE2jWa+UT4=;yRxzkVhsLJGIPVHoMN7YdqsBOF/
- Gm/rlHexnZG7P2mlsPM+/jfj2qRAKFudxIJTL9/WYfqDWrpGwpYXzM/mtelILaRFSorWL66CY
- N0K6LD9wjJoxBhoGFJehpnwwZJ+YPA6lsyjQVifaJErTbHXLxZxn69/F1iIBXuIBn26UTPmLH
- a1uWXqFNDhNEa6Rh88dFQWvp9EXaS+Ig5ixjrci1tERg5CNKgQQ0dpADJz6V4MteHfHIXTICS
- ml6pAP/4e1IAI/U4IkVz2XCvymZhdLQkt3vI42KWY8cczdekZYQ8ZcVgEbEnmOb06+XRvAiL1
- Bmx/jT5f7D+uORkC0ulb7U8DjF108xZYoanHCxJ0OZvqX5IQxtdtGqr0T7DHGIpSYVOTLGAtN
- r/Q1QLwAEZRJmfyVyCmgQs2EA2dqsTFgcNX/nvfpgDTATVxOoJNOn/mBo4l2fOvLSv8gSM1Dp
- NgIPLXrVXiob6yYtUXE1z4Ps1nDHaIiLIJDnXN67MQJiJH7Ahj1hcMei8mxrqgWCT4NlVvu4r
- RYVzqZlpDlqlSGpVLlDeMPpA30hfftQnzhJm5sPCbY7YIhb3+TZUzK10qs1LSwKNdX/xFbSZu
- +S/AN6iDslSBlaqSYxeMIKFND+aeE8eCVr19KFL7MxBI/lc0QfnA0h6VwweaWML/mBGaX8jdM
- BjglKXN+7Fr/Q2VT1zOrpRdUkXVLx7ZliXU6F7AQ3HtOYEUOKhk76qQjqJE5nDKe3SpforiSW
- 6Jvhts676oIKcBWbUkP7rwJMcyOI63JXVomuWip8FFPsa5ljHWakE9RUCrPjdEwtcR3ToCLu2
- QVQmPFUzcogRqjgOS7OBh0hw==
+Content-Transfer-Encoding: 8bit
 
->> =E2=80=A6
->>> +++ b/drivers/net/ethernet/realtek/rtase/rtase.h
->>> @@ -0,0 +1,338 @@
->> =E2=80=A6
->>> +#ifndef _RTASE_H_
->>> +#define _RTASE_H_
->> =E2=80=A6
->>
->> I suggest to omit leading underscores from such identifiers.
->> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+o=
-r+define+a+reserved+identifier
->
-> Do you have a reference to a Linux kernel document which suggests not
-> to do this?
+In order to constify `snd_soc_component_driver` struct, duplicate
+`soc_component_dev_cs43130` into a `soc_component_dev_cs43130_digital` and
+`soc_component_dev_cs43130_analog`.
 
-I assume that you would become interested to clarify corresponding concern=
-s
-according to compliance (or deviations) from the standard of the programmi=
-ng language =E2=80=9CC=E2=80=9D.
+These 2 new structures share the same .dapm_widgets and .dapm_routes
+arrays but differ for .num_dapm_widgets and .num_dapm_routes.
 
+In the digital case, the last entries are not taken into account.
 
-> My grep foo is not great, but there appears to be around 20,000
-> instances of #define _[A-Z] in the kernel. So i doubt adding a couple
-> more is going to be an issue.
+Doing so has several advantages:
+  - `snd_soc_component_driver` can be declared as const to move their
+    declarations to read-only sections.
+  - code in the probe is simpler. There is no need to concatenate some
+    arrays to handle the "analog" case
+  - this saves some memory because all_hp_widgets and analog_hp_routes can
+    be removed.
 
-I suggest to improve case distinctions accordingly.
-Can it be more desirable to avoid undefined behaviour another bit?
+Before :
+======
+   text	   data	    bss	    dec	    hex	filename
+  53965	   8265	   4512	  66742	  104b6	sound/soc/codecs/cs43130.o
 
-How will development interests evolve further?
+After :
+=====
+   text	   data	    bss	    dec	    hex	filename
+  54409	   7881	     64	  62354	   f392	sound/soc/codecs/cs43130.o
 
-Regards,
-Markus
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+
+See discussion at [1].
+
+[1]: https://lore.kernel.org/all/ZqNawRmAqBRLIoQq@opensource.cirrus.com/
+---
+ sound/soc/codecs/cs43130.c | 73 +++++++++++++++++---------------------
+ 1 file changed, 32 insertions(+), 41 deletions(-)
+
+diff --git a/sound/soc/codecs/cs43130.c b/sound/soc/codecs/cs43130.c
+index be4037890fdb..cb4ca80f36d2 100644
+--- a/sound/soc/codecs/cs43130.c
++++ b/sound/soc/codecs/cs43130.c
+@@ -1415,7 +1415,7 @@ static const char * const bypass_mux_text[] = {
+ static SOC_ENUM_SINGLE_DECL(bypass_enum, SND_SOC_NOPM, 0, bypass_mux_text);
+ static const struct snd_kcontrol_new bypass_ctrl = SOC_DAPM_ENUM("Switch", bypass_enum);
+ 
+-static const struct snd_soc_dapm_widget digital_hp_widgets[] = {
++static const struct snd_soc_dapm_widget hp_widgets[] = {
+ 	SND_SOC_DAPM_MUX("Bypass Switch", SND_SOC_NOPM, 0, 0, &bypass_ctrl),
+ 	SND_SOC_DAPM_OUTPUT("HPOUTA"),
+ 	SND_SOC_DAPM_OUTPUT("HPOUTB"),
+@@ -1447,19 +1447,16 @@ static const struct snd_soc_dapm_widget digital_hp_widgets[] = {
+ 			   CS43130_PDN_HP_SHIFT, 1, cs43130_dac_event,
+ 			   (SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU |
+ 			    SND_SOC_DAPM_POST_PMD)),
+-};
+ 
+-static const struct snd_soc_dapm_widget analog_hp_widgets[] = {
++/* Some devices have some extra analog widgets */
++#define NUM_ANALOG_WIDGETS	1
++
+ 	SND_SOC_DAPM_DAC_E("Analog Playback", NULL, CS43130_HP_OUT_CTL_1,
+ 			   CS43130_HP_IN_EN_SHIFT, 0, cs43130_hpin_event,
+ 			   (SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD)),
+ };
+ 
+-static struct snd_soc_dapm_widget all_hp_widgets[
+-			ARRAY_SIZE(digital_hp_widgets) +
+-			ARRAY_SIZE(analog_hp_widgets)];
+-
+-static const struct snd_soc_dapm_route digital_hp_routes[] = {
++static const struct snd_soc_dapm_route hp_routes[] = {
+ 	{"ASPIN PCM", NULL, "ASP PCM Playback"},
+ 	{"ASPIN DoP", NULL, "ASP DoP Playback"},
+ 	{"XSPIN DoP", NULL, "XSP DoP Playback"},
+@@ -1472,15 +1469,12 @@ static const struct snd_soc_dapm_route digital_hp_routes[] = {
+ 	{"Bypass Switch", "Internal", "HiFi DAC"},
+ 	{"HPOUTA", NULL, "Bypass Switch"},
+ 	{"HPOUTB", NULL, "Bypass Switch"},
+-};
+ 
+-static const struct snd_soc_dapm_route analog_hp_routes[] = {
++/* Some devices have some extra analog routes */
++#define NUM_ANALOG_ROUTES	1
+ 	{"Bypass Switch", "Alternative", "Analog Playback"},
+ };
+ 
+-static struct snd_soc_dapm_route all_hp_routes[
+-			ARRAY_SIZE(digital_hp_routes) +
+-			ARRAY_SIZE(analog_hp_routes)];
+ 
+ static const unsigned int cs43130_asp_src_rates[] = {
+ 	32000, 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000
+@@ -2398,7 +2392,23 @@ static int cs43130_probe(struct snd_soc_component *component)
+ 	return 0;
+ }
+ 
+-static struct snd_soc_component_driver soc_component_dev_cs43130 = {
++static const struct snd_soc_component_driver soc_component_dev_cs43130_digital = {
++	.probe			= cs43130_probe,
++	.controls		= cs43130_snd_controls,
++	.num_controls		= ARRAY_SIZE(cs43130_snd_controls),
++	.set_sysclk		= cs43130_component_set_sysclk,
++	.set_pll		= cs43130_set_pll,
++	.idle_bias_on		= 1,
++	.use_pmdown_time	= 1,
++	.endianness		= 1,
++	/* Don't take into account the ending analog widgets and routes */
++	.dapm_widgets		= hp_widgets,
++	.num_dapm_widgets	= ARRAY_SIZE(hp_widgets) - NUM_ANALOG_WIDGETS,
++	.dapm_routes		= hp_routes,
++	.num_dapm_routes	= ARRAY_SIZE(hp_routes) - NUM_ANALOG_ROUTES,
++};
++
++static const struct snd_soc_component_driver soc_component_dev_cs43130_analog = {
+ 	.probe			= cs43130_probe,
+ 	.controls		= cs43130_snd_controls,
+ 	.num_controls		= ARRAY_SIZE(cs43130_snd_controls),
+@@ -2407,6 +2417,10 @@ static struct snd_soc_component_driver soc_component_dev_cs43130 = {
+ 	.idle_bias_on		= 1,
+ 	.use_pmdown_time	= 1,
+ 	.endianness		= 1,
++	.dapm_widgets		= hp_widgets,
++	.num_dapm_widgets	= ARRAY_SIZE(hp_widgets),
++	.dapm_routes		= hp_routes,
++	.num_dapm_routes	= ARRAY_SIZE(hp_routes),
+ };
+ 
+ static const struct regmap_config cs43130_regmap = {
+@@ -2479,6 +2493,7 @@ static int cs43130_handle_device_data(struct cs43130_private *cs43130)
+ 
+ static int cs43130_i2c_probe(struct i2c_client *client)
+ {
++	const struct snd_soc_component_driver *component_driver;
+ 	struct cs43130_private *cs43130;
+ 	int ret;
+ 	unsigned int reg;
+@@ -2596,39 +2611,15 @@ static int cs43130_i2c_probe(struct i2c_client *client)
+ 	switch (cs43130->dev_id) {
+ 	case CS43130_CHIP_ID:
+ 	case CS43131_CHIP_ID:
+-		memcpy(all_hp_widgets, digital_hp_widgets,
+-		       sizeof(digital_hp_widgets));
+-		memcpy(all_hp_widgets + ARRAY_SIZE(digital_hp_widgets),
+-		       analog_hp_widgets, sizeof(analog_hp_widgets));
+-		memcpy(all_hp_routes, digital_hp_routes,
+-		       sizeof(digital_hp_routes));
+-		memcpy(all_hp_routes + ARRAY_SIZE(digital_hp_routes),
+-		       analog_hp_routes, sizeof(analog_hp_routes));
+-
+-		soc_component_dev_cs43130.dapm_widgets =
+-			all_hp_widgets;
+-		soc_component_dev_cs43130.num_dapm_widgets =
+-			ARRAY_SIZE(all_hp_widgets);
+-		soc_component_dev_cs43130.dapm_routes =
+-			all_hp_routes;
+-		soc_component_dev_cs43130.num_dapm_routes =
+-			ARRAY_SIZE(all_hp_routes);
++		component_driver = &soc_component_dev_cs43130_analog;
+ 		break;
+ 	case CS43198_CHIP_ID:
+ 	case CS4399_CHIP_ID:
+-		soc_component_dev_cs43130.dapm_widgets =
+-			digital_hp_widgets;
+-		soc_component_dev_cs43130.num_dapm_widgets =
+-			ARRAY_SIZE(digital_hp_widgets);
+-		soc_component_dev_cs43130.dapm_routes =
+-			digital_hp_routes;
+-		soc_component_dev_cs43130.num_dapm_routes =
+-			ARRAY_SIZE(digital_hp_routes);
++		component_driver = &soc_component_dev_cs43130_digital;
+ 		break;
+ 	}
+ 
+-	ret = devm_snd_soc_register_component(cs43130->dev,
+-				     &soc_component_dev_cs43130,
++	ret = devm_snd_soc_register_component(cs43130->dev, component_driver,
+ 				     cs43130_dai, ARRAY_SIZE(cs43130_dai));
+ 	if (ret < 0) {
+ 		dev_err(cs43130->dev,
+-- 
+2.45.2
+
