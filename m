@@ -1,116 +1,124 @@
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DE91E4A2
-	for <kernel-janitors@vger.kernel.org>; Mon, 29 Jul 2024 15:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D928172D;
+	Mon, 29 Jul 2024 16:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722268799; cv=none; b=oTAMQH/gt94us/G/gQS8C+mGSP9jwTWqBYzysazsjbi3OuJVyEWhLzt3oPQVREdw8MBh4TXywsWG0TjFigU5er/etffmkCx8yodkvXbJ1/lmtPMfl+uw2pENoitQChJs4RGcvhaAPTCUaD7SPpYHzCu9gok5l9S9ER5BhLVrBmM=
+	t=1722271222; cv=none; b=dh6YhFuEoV9IuJY/rgofkec+ot1akLVSn/YmuZp+xGLYpX0iM7sim6pMfZ8kX71PRqRJxGEI1tt8PXRcK51OQlmeglux2CKQ0zTxpnCTz4+X4y6oorfn4YHUIbQ4XzpZi5hibD1C+Ohron1BLxeryPUyaVnxOqztgydDuBTwVXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722268799; c=relaxed/simple;
-	bh=XlT0HYWbLqBz+dbZhicguoyqf4QgW3bMfFfjONXLltU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IIaWGl4/FOYKq6cPoaRjlU1oFf7cMV+K+NOXCodYtbTi9ke5lidZUmBH6FRvVhOm0Hm3Pfx6COfrweIYBfnV9IbAF7uyMQa42yp6nhCRqR5N8vnTe3v+mjWCHO6olbGbgmczDduehPynH4Hm67HDfnifW9L4/yuHNwzgbg5116M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R10ZU6Qs; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1722271222; c=relaxed/simple;
+	bh=Qqac7h68dfeMELAlP8KOuokNg5MyfdTiO6541leHuTg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VWC2bmalFUcoNoRWaDvbhlwkbG2oxpwSlerTfr4CDXgY0nxZRibZSPa3lgkCt8lJXyeIH8g6xfxlitmA7oDKzXn0SzXgzx7vJeuAh9zmgiDwhS7NIbTXbGEK7MTKtlUP0K5z4f4g0jn2xSBhGoZzODJwp112ruqP9qC1kYPqejE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OXIpy+Ry; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R10ZU6Qs"
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7093abb12edso2699444a34.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 29 Jul 2024 08:59:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722268797; x=1722873597; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rKORujp1kv0/6IBUNhxzZiJOGLH+iRzT6G5ZfGPNOlo=;
-        b=R10ZU6QsU1W2k25ailzgETe2aB9RJRWszEagOPudi5+JFggktOZsqDQYy8BG23Qy6v
-         sAyGLPP1yfCMZczfcBkmTUWffIszbGrBYZ7CTGDbAE/nD1nfsJ9NdPhfy4iPcX9VRHxK
-         8odEFC5QkduMqotHwFSR59O/CaIouLqcvYiWIYb43cGV9EK6XSCbBRog8Ir7KCaoEdQQ
-         2LMXi8w3y+0j5FRYE7kOf+Wzl8NnzWwioUXt64tBFAr/yutw4sM25cwgjOjJDckyHmNG
-         /K6W3AvkvC+wXMZGtIEUdM7NJzvefuJCKkEJAIb4A7jX1LCJs8v0as5q/KyImABigjPo
-         0zdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722268797; x=1722873597;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rKORujp1kv0/6IBUNhxzZiJOGLH+iRzT6G5ZfGPNOlo=;
-        b=wYEqY0/D+1RGSyi02OvMuRP5fDoYaUPa7CdkxtmZvXFcmDoJD8/xeB1FIpJLB78NE/
-         tgZLOY2q2rFVZwWy9wTq8/MGG53l+mTEkF/USKN2XUt3npADtz1pt7hZkU7PGw/w8OJk
-         KQVoATK8QY9OJLxge8Oyj5ik0xRMq6cNVttPkXtODSau8e6Gn54oZMXPImtc4ZaufN+Q
-         UdUeBBpJSMMCQ5MDKaIcGrQtD03jShhAO0XkCdWBilnBbV1UvM294/JgwzEEFKe9DqmU
-         cisf1ZbRahyR1Ljy3G3vscheQCB+2e0TSGfe16e1CYO5RUTVuqyEm13liT+MlAQXIjnP
-         A+qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyJAz2MvR+qFiOZfXB0ELS1P9jptnny+VXnnOGifyzwlXkuvnOpJQHJi/I4oesvXFNMU53Ga5PnuZamHwlkylaTDtkYIIFGaZPPULtNxmS
-X-Gm-Message-State: AOJu0Yx/Mc0x5bc/skc6v1tsH0y7rEJDfev5l6B5TLrYYjBOaEXBM20D
-	3doyOIsPHFxh8rLO3N/6dD5j58VHMVh0o8bWAY4u/oXaV9T0aBoarnv/Hb9lnz8=
-X-Google-Smtp-Source: AGHT+IEIHagVgO9pv8gb/zQ7JpvS63INgCNeENDNmOULmSa/KXAfqwBHzEaMxKrukT2FJXfnEI3QZA==
-X-Received: by 2002:a05:6870:c152:b0:260:ffaf:8126 with SMTP id 586e51a60fabf-267d4cfd510mr10157250fac.9.1722268797401;
-        Mon, 29 Jul 2024 08:59:57 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700::17c0])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-264fb59ec30sm1895997fac.0.2024.07.29.08.59.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 08:59:57 -0700 (PDT)
-Date: Mon, 29 Jul 2024 10:59:54 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Helge Deller <deller@gmx.de>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] fbdev/hpfb: Fix an error handling path in
- hpfb_dio_probe()
-Message-ID: <ac4c6712-c47b-4414-9640-3018bf09e8fa@suswa.mountain>
-References: <dc4fe3d857849ac63131c5620f1bacf1a3d7172e.1722191367.git.christophe.jaillet@wanadoo.fr>
- <698958fb-4fc8-4288-b067-5843c651b093@gmx.de>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OXIpy+Ry"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722271222; x=1753807222;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=Qqac7h68dfeMELAlP8KOuokNg5MyfdTiO6541leHuTg=;
+  b=OXIpy+RyUoz4jwiryYSgzUVJwkodj8gsos4jSkSkahgWg6NQPy5Fq2jV
+   FOSd4JRjbWcIvFeHmcx2ahhOBSg+Zi3Mh+szyyXfsUVuqk40lT5m79hzO
+   Oaa04THZgtOMWRWMljaAdvM1RO3EER580QkaZte/iEoT68DOA+YmkAcoY
+   0QSJcGGfWNSAPhR6ylER/gFQY7ZVEI2QaWPnau3/fqddzPbEw5buiX0CB
+   l8p5vGIqJmnbiwKaQla14eRRkMIizjWKisYe5rJvi7LwPOexUfWQBVDrD
+   rYeoC4kSt1UkyP1DjnZie3Ke9Yz3JU/lfrwnHiqAZhf2GfVVqwA2O/KoU
+   Q==;
+X-CSE-ConnectionGUID: ZS5PJIJPQUmRBc1qAi8/Ag==
+X-CSE-MsgGUID: A99gNCEGSHWUXVD7UZhIaw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="20170603"
+X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
+   d="scan'208";a="20170603"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 09:40:21 -0700
+X-CSE-ConnectionGUID: 2x184MsDSLu1Xt4hERrv7Q==
+X-CSE-MsgGUID: nGlv5BkURE+HvqK1vrFb0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,246,1716274800"; 
+   d="scan'208";a="53927560"
+Received: from thanhnho-mobl.amr.corp.intel.com ([10.212.114.80])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 09:40:19 -0700
+Message-ID: <d11ad678099ccce94eacf721c8d06a38129ce2d3.camel@linux.intel.com>
+Subject: Re: [PATCH] crypto: iaa - Fix potential use after free bug
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller"
+	 <davem@davemloft.net>, linux-crypto@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Date: Mon, 29 Jul 2024 11:40:18 -0500
+In-Reply-To: <e049271f-41f2-4d04-ac69-80186f2eecd9@stanley.mountain>
+References: <e049271f-41f2-4d04-ac69-80186f2eecd9@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <698958fb-4fc8-4288-b067-5843c651b093@gmx.de>
 
-On Mon, Jul 29, 2024 at 10:13:17AM +0200, Helge Deller wrote:
-> On 7/28/24 20:29, Christophe JAILLET wrote:
-> > If an error occurs after request_mem_region(), a corresponding
-> > release_mem_region() should be called, as already done in the remove
-> > function.
-> 
-> True.
-> 
-> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> 
-> I think we can drop this "Fixes" tag, as it gives no real info.
-> 
+Hi Dan,
 
-If we're backporting patches then these tags really are useful.  As
-I've been doing more and more backporting, I've come to believe this
-more firmly.
+On Wed, 2024-07-24 at 11:09 -0500, Dan Carpenter wrote:
+> The free_device_compression_mode(iaa_device, device_mode) function
+> frees
+> "device_mode" but it iss passed to iaa_compression_modes[i]->free() a
+> few
+> lines later resulting in a use after free.
+>=20
+> The good news is that, so far as I can tell, nothing implements the
+> ->free() function and the use after free happens in dead code.=C2=A0 But,
+> with
+> this fix, when something does implement it, we'll be ready.=C2=A0 :)
+>=20
 
-I don't necessarily think this patch is worth backporting, but leaving
-the Fixes tag off doesn't mean it won't happen.  People quite often
-leave the Fixes tags off of real fixes by mistake so AUTOSEL could still
-pick it up.  You'd have to add:
-Cc: <stable+noautosel@kernel.org> # reason goes here, and must be present
+Good catch, thanks for fixing this.
 
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> > *Not* even compile tested only.
-> 
-> Ok.
-> 
-> > I don't know on what architecture it relies on.
-> 
-> HP300 are old HP machines with an m68k CPU.
-> Not sure if someone still has such a machine :-)
-> 
+Reviewed-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-It surprised me how many patches we backport for ancient stuff.  But I
-guess the risk/reward equation still works because if the code isn't
-used there the risk is very small.
 
-regards,
-dan carpenter
+> Fixes: b190447e0fa3 ("crypto: iaa - Add compression mode management
+> along with fixed mode")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> =C2=A0drivers/crypto/intel/iaa/iaa_crypto_main.c | 4 ++--
+> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/crypto/intel/iaa/iaa_crypto_main.c
+> b/drivers/crypto/intel/iaa/iaa_crypto_main.c
+> index e810d286ee8c..237f87000070 100644
+> --- a/drivers/crypto/intel/iaa/iaa_crypto_main.c
+> +++ b/drivers/crypto/intel/iaa/iaa_crypto_main.c
+> @@ -495,10 +495,10 @@ static void
+> remove_device_compression_modes(struct iaa_device *iaa_device)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0if (!device_mode)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0con=
+tinue;
+> =C2=A0
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0free_device_compression_mode(iaa_device,
+> device_mode);
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0iaa_device->compression_modes[i] =3D NULL;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0if (iaa_compression_modes[i]->free)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0iaa=
+_compression_modes[i]->free(device_mode);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0free_device_compression_mode(iaa_device,
+> device_mode);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0iaa_device->compression_modes[i] =3D NULL;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> =C2=A0}
+> =C2=A0
 
