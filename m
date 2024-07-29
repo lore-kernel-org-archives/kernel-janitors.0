@@ -1,186 +1,107 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B06F135A79;
-	Mon, 29 Jul 2024 08:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3643F12DD88;
+	Mon, 29 Jul 2024 09:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722240805; cv=none; b=oy1AjgTr5YInD6piJO5HHRGzZ9QpUrlgjoiV+5zxs7MdLq5XXkL211dQ0qlI084qe5EmyIahDLS78pSkVMYgQGniQgZ6zXInfZzUrhTFCY6k0w+KTGIUN/3rtUubIHWPatGLclYHZxDyFZdP+pacCwLX70Ciy8FjQaBiuTyteXQ=
+	t=1722244659; cv=none; b=jSti2pJMR/rHeC3kabPX1UGNmagBsqxw3BNlsBse4i0IFASdMTC1PnFaipWi5pQn0rz4Nr6tU9hvP0KDy9H8nDNflHTWrnFTJE1xtu6gBZDQsds+d45WTScPwdVxrELDt/BO7t5PWgurjnlxep3vwUFQESbzCh/0SCNZxrikqMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722240805; c=relaxed/simple;
-	bh=UqgT/bo9mnvdYjLF90lvBZKBInU1iSRvmzvE0FVzXdc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sRuz8Ficz0N4KxwmjHmsK0XeSANgo4pfv/rRoglBCUI/VNeG+Tw7FBqGvhtGuxefO3k49CSeoB2H7MAxqdZZPpAIJCww1Rg1V9AIsU+p5GzunyfL6240M7d4sTrHcWcAkveLcVYP5+fhsEoNEs4WlrDPVGHGnEgPNV7/Woqn96M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=NXgNRVdn; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+	s=arc-20240116; t=1722244659; c=relaxed/simple;
+	bh=m4SWXhvAtez5my1PKqqejWoJipF/iRLRbaiuefksVe8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=BU8yzg13tr5I9bst9+TIwRPFmITrW9jCvPMcZHgnnJOCpxvKUCXm4U8HUOcIusZAPDmeoz2TDzPYQxTvVTTC9giEaFXuZBjFwgSB6Rgw8tVwkjRxQiuHTAHSr3SE4SJ2XHbzL/YGBiyYIysX2pH3bcW30w1MAkC7UJlv+AUGZ18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GgiGG/n6; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="NXgNRVdn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1722240798; x=1722845598; i=deller@gmx.de;
-	bh=ol9UZCxeHIf9f+MQNbkJKRWQS3R5GYHvb0r5duyqsWs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=NXgNRVdnN6vH6n5ktqH8+TEgRIsCOw3lhUPkpt3oZVKkN6S3hFdncLT5cWiusmzF
-	 rPoRPBM7HlabKJGnQn3evbWtjITYFA2pCEvUILUQZEg//X52+ZLlyffr6nhLSKbg+
-	 dg0vr2wHjV1tQIczrm9Uj+MruXSeQkIT4MsXSjbnnJucJd3LxhBsUJ6YZGkyug5oy
-	 AV9CE94QrXi4a4Zl+0mwv2fxC7yskdNMQ1yDrw4ofx81kJ6yRbbbc0NWpnMIG0WWD
-	 1wIgXojI3tToeVR+rnG3spjI+5MJaug2di/5hsWh6IvM+Q54CeptT4e6B7s8CExCh
-	 GYqU8Wg9AppEmHetBA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [10.8.0.6] ([78.94.87.245]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MHG8m-1sTzvK31Y8-000jXx; Mon, 29
- Jul 2024 10:13:18 +0200
-Message-ID: <698958fb-4fc8-4288-b067-5843c651b093@gmx.de>
-Date: Mon, 29 Jul 2024 10:13:17 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GgiGG/n6"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-428163f7635so12983725e9.2;
+        Mon, 29 Jul 2024 02:17:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722244656; x=1722849456; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4J4SYhEOa1gabPOMO05hjVOcl3yukqW8OZI/5xw8IwY=;
+        b=GgiGG/n6Ec6h7YgJ1EsqqMjaSVYyePus99N8To1ZqWpfkb9k8vuL2pZ3K5HPLs5e/k
+         Z+H0lrYv0MTYJfwUcIZ+w6dAFh/WpnsFNyR88+uDFGguNsm9pEKyDsjwaL1kibTQHF/k
+         iDrpBYwVyTwspXmHKi0z9W0JPuzdCECpmqrLtf/3oy4jMvMjRm0k7Xhft7+kiD+qk/BU
+         ZZAZMG4iTXHEQZ/jwGIUaopZFaPKRBn6xUO0tZeHTKvwQsJmeOlJCCSG7xsHV29rWnDY
+         AsaRJEv909ECCEnVxMF/rllAe3Ete6cBreZsevD7b3UcjmMY66irhdnTeYIDZ01N+aBe
+         PNOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722244656; x=1722849456;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4J4SYhEOa1gabPOMO05hjVOcl3yukqW8OZI/5xw8IwY=;
+        b=UrM7Bp9s6zwcU2OQ73ddbJ1zYd1gwbi5x/Rq9R0LiQeGD/J7fiQrLsfUSzU9GCMOfR
+         Olq8w1/xzFlOMy2iTYxDtWoR/aFJsOPp3Fr4kwDg+U7Ppxc0goiuwsXvUKRqkuuUnVfL
+         EqW90Logu2A+qRT8C3dyFtdP6CU6wcYPu+RaoK1aMbXNy73G1jrADRE8Ddd29vi9VE2k
+         Iqwgkm5YneSBWZ7qbgYRYiy88Ii5hoez0X8GNAxBKE7WnFoVt/rUJe4MDkI8Yh5eVC9o
+         QDALuX7SIImufO6OQLwzVe+8+cJC1KOrEtW6/QGdC85NTWzmxe/faefeWDRxGP79n8Mv
+         xbmg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3XthuYTyu8IIMkMs6+aWPICUbhO1olB24sywoK/1kdo1i+ZUI1XCjqZ6ZWUvFgguT+44piNcnOvWPDCM+oPttXS46LiqQ947j2hcFFlEmjUnq3FC4lG9KN8yVXsU/xQpRDJnXzUMzw0zn23Ip
+X-Gm-Message-State: AOJu0Yx5qwL028HtK2bu6aIeLWSR+ui+L4ZBOom9sj8CA9+yOL0hSXZt
+	hHwUFgZuB8NzSpkm8h6lGsIHme9Ix9hNqONb1iOMVZ+u+p/L/JFjNRxbjA==
+X-Google-Smtp-Source: AGHT+IF4VHDW9ojKBR3q4Jivc1+iyrtgdpimZ8JmgOjlc/xzRxT+ve0gc0P2I/uxp+rWVbQ0JWSdXQ==
+X-Received: by 2002:a05:600c:4ed4:b0:428:1ce0:4dfd with SMTP id 5b1f17b1804b1-4281ce04fafmr18629985e9.34.1722244656245;
+        Mon, 29 Jul 2024 02:17:36 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42805730e5dsm171836905e9.2.2024.07.29.02.17.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 02:17:35 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Shuah Khan <shuah@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	=?UTF-8?q?Christoph=20M=C3=BCllner?= <christoph.muellner@vrull.eu>,
+	linux-kselftest@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] tools: selftests: riscv: Fix spelling mistake "regesters" -> "registers"
+Date: Mon, 29 Jul 2024 10:17:34 +0100
+Message-Id: <20240729091734.42259-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev/hpfb: Fix an error handling path in
- hpfb_dio_probe()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <dc4fe3d857849ac63131c5620f1bacf1a3d7172e.1722191367.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <dc4fe3d857849ac63131c5620f1bacf1a3d7172e.1722191367.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:t2/FUf63T9cgYV7pKIZRxjc0By4VPKPy92SJsak9wiECptn++hi
- siIigicAFccj9cQwiItNundUMH0nK60z55pnEhDSlmpLwnXfaFuWIwENC1WBy9WML3O3Srl
- 4n3H06ndFRmzX5OGqJXDUxFJm2Fm+O6r6Z1f211yDCRvRz8RMUJPeD2VI9o99L/bg08oQjC
- 5KgintPUV5sVb0ez5AoKw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/ggZeXv6whc=;GCOsFSSBq9x41+qPur6GowYeoqU
- YRvoXomQCbTio8Y5W/H1x5lcGwXIG16zuWSssMXJay6eAUR0VF1E+Y3Bc4dSvDestDBKDgA9I
- RBrRlvcoO0QvpAJsDxaoK8hy8o0Pwfmwq2l8Cijy2Rac+qNXKn8arXH/UYIarmFNAfnuLuw2V
- dYaKbZ877y/C2rNK2H3kXu88hAmVN/HaQb27/blILeLsBUvZdHF6w7Asg0gx1NBHK8FTjx2Bz
- i2A27dH/AT0NSywYyr7OSOVktzpbBcLzsyNokXqsMn1kocQzooQCXz9CBmhdSPzTXPG9JGmrV
- uLtqSP0DoldGwzgkbNu2NU3+BCcOUvb5hlFJ+hwUheUR2VeGWqtx8wzZ3/+qIwjbLbWUvEoNL
- CM62NjuCUJqR7aWdmCevWMsWnumz8B+2ZTnE9x55w2/yMx3YwE9I3JZ81Y1URlZphxciww5zy
- ETGO5XgwGhYVw1xfLpqr/4qt9w9hWWTToSgmrTp08gQmWz73QsNA8yvCT/JPddlovEZNc0wzD
- HznbhxP9sOP9i334UsYT08XsYiNatuLqH+6EtdlEUZv19qXgP1CauPr2anpEtPAlL9VT8pD75
- XXx9oS7QPh+VYzDx1uYQaAvgknc5acMBaHYQxmn4EAVp3UhrSqjDEnC6j41PdDLpYoQRpDkCT
- AsVgwYiL+KBlmy0UcW2Fm0wq6RYISmkL0wQo1NBYW7RmfL+aEShYfdSDpqEKyfaV3Eo6GbHvM
- 0WYKN/drBiHL38KPWomOFSTJZ4PYWuyAYX4LR1xcwkG9MJ1UwkA//rQWdZBiuha9QmRjh9U4k
- zE0YKJqP6WhnmFvM+mN4Aacg==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 7/28/24 20:29, Christophe JAILLET wrote:
-> If an error occurs after request_mem_region(), a corresponding
-> release_mem_region() should be called, as already done in the remove
-> function.
+There are a couple of spelling mistakes in ksft_test_result_fail messages.
+Fix them.
 
-True.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/riscv/vector/v_initval_nolibc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-
-I think we can drop this "Fixes" tag, as it gives no real info.
-
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> *Not* even compile tested only.
-
-Ok.
-
-> I don't know on what architecture it relies on.
-
-HP300 are old HP machines with an m68k CPU.
-Not sure if someone still has such a machine :-)
-
-> So it is provided as-is
-> ---
->   drivers/video/fbdev/hpfb.c | 15 ++++++++++-----
->   1 file changed, 10 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/video/fbdev/hpfb.c b/drivers/video/fbdev/hpfb.c
-> index 66fac8e5393e..87b8dcdc1cf3 100644
-> --- a/drivers/video/fbdev/hpfb.c
-> +++ b/drivers/video/fbdev/hpfb.c
-> @@ -342,12 +342,17 @@ static int hpfb_dio_probe(struct dio_dev *d, const=
- struct dio_device_id *ent)
->   	}
->   	printk(KERN_INFO "Topcat found at DIO select code %d "
->   	       "(secondary id %02x)\n", d->scode, (d->id >> 8) & 0xff);
-> -	if (hpfb_init_one(paddr, vaddr)) {
-> -		if (d->scode >=3D DIOII_SCBASE)
-> -			iounmap((void *)vaddr);
-
-This driver hasn't changed in years, and I don't expect we will
-have many other changes, so in this case I think simply adding the one lin=
-e:
-+	release_mem_region(d->resource.start, resource_size(&d->resource));
-here is sufficient without adding additional jump targets.
-
-I can fix it up here, or please send a new patch.
-
-Helge
-
-
-> -		return -ENOMEM;
-> -	}
-> +	if (hpfb_init_one(paddr, vaddr))
-> +		goto err_unmap;
-> +
->   	return 0;
-> +
-> +err_unmap:
-> +	if (d->scode >=3D DIOII_SCBASE)
-> +		iounmap((void *)vaddr);
-> +	release_mem_region(d->resource.start, resource_size(&d->resource));
-> +
-> +	return -ENOMEM;
->   }
->
->   static void hpfb_remove_one(struct dio_dev *d)
+diff --git a/tools/testing/selftests/riscv/vector/v_initval_nolibc.c b/tools/testing/selftests/riscv/vector/v_initval_nolibc.c
+index 1dd94197da30..6838c561e4c9 100644
+--- a/tools/testing/selftests/riscv/vector/v_initval_nolibc.c
++++ b/tools/testing/selftests/riscv/vector/v_initval_nolibc.c
+@@ -49,14 +49,14 @@ int main(void)
+ 	ksft_print_msg("vl = %lu\n", vl);
+ 
+ 	if (datap[0] != 0x00 && datap[0] != 0xff) {
+-		ksft_test_result_fail("v-regesters are not properly initialized\n");
++		ksft_test_result_fail("v-registers are not properly initialized\n");
+ 		dump(datap, vl * 4);
+ 		exit(-1);
+ 	}
+ 
+ 	for (i = 1; i < vl * 4; i++) {
+ 		if (datap[i] != datap[0]) {
+-			ksft_test_result_fail("detect stale values on v-regesters\n");
++			ksft_test_result_fail("detect stale values on v-registers\n");
+ 			dump(datap, vl * 4);
+ 			exit(-2);
+ 		}
+-- 
+2.39.2
 
