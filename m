@@ -1,98 +1,86 @@
-Received: from msa.smtpout.orange.fr (smtp-83.smtpout.orange.fr [80.12.242.83])
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9AC2E859;
-	Sun, 28 Jul 2024 18:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47324522E;
+	Mon, 29 Jul 2024 00:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722191416; cv=none; b=Y1K1LPaFAQ6JaKa4EsLJqIJPaqn7ad3swl2/oRgbtBEk3NlgNAdCXxSUqgfpOrIdhDOG6TDkjSgT5UIf/TDWOtmV2kjG79CDHzl29lUBWd7I3YilMhRMU3RgN6L2UtOHUjDhLFQKsvtvd1cvfTiLG9ApMn3JIPGmF2oIk77BQNE=
+	t=1722211228; cv=none; b=sQDdf5SvUqVMbfSaPX+3d/UR03a1UDyge3ghiKmT442l1NpNMh8mhaqMmOp9Al8NoaBftLfsL4/vYP9MqP4lMYNkr6qkIFXxM5Jx5WQGLpuq8n6V0EMrMA2OVXMO6xQiCtMTI2XuqyPr+aLG2zM4LfDFb7xacFGYZPhazCZGvSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722191416; c=relaxed/simple;
-	bh=Po+jf59OgWZe7ga6gwE7Q3SbHfhVlVjb7CMLEJgb/90=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LRJnB1EMKp5tCemcqE48vZpuo9B02ADKgPYbBj8x+lgAXACXO+rFLPYihPeIKyseMjhltDqn9L+6VXgSKkz44r/QWBVNRUdgkLH+Dx9yPVTTzJMcv7TKslSBF8ejYAmPEX1xy5VwRgN4fF167sVQEhbC8KTh+EGbG4MUPwT9ZXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=mKJ18isf; arc=none smtp.client-ip=80.12.242.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1722211228; c=relaxed/simple;
+	bh=jJ6HkjJ7h2i5lkNtHPdsfS2FxU8gIMul5gx5RcbmOG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hMKYvTkQb9QrsEd/wOZPI2GFAQHJtdC6t/O10Oz/NpyiY51MQMHCTKU4lOvf+U94toleXdqjhoVfFCZHzobs+7F0SdnIfvrQS9ukn1Ycih+OmNqjry0ZRkgR7dMN36YmPs/9h2LryFwnu6AwvV5pssIiZruqTnFf8jw8oUC1tWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZJlFSmaG; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="mKJ18isf"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id Y8ehskV3jYjQzY8ehsdEJs; Sun, 28 Jul 2024 20:30:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722191406;
-	bh=aHRr46GwE+uyksv7tBA8rAadSHSqFFR/MCO6+hVj1uk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=mKJ18isfp/UdJbLq8eTjt5hzxV/dfxabgAVcoQ2rAdaQF3R2TphCNVVEvEyk7Crnq
-	 Qa47ZnqQyvVssPt0mh70NxxDhTdVxbh6U5Kq+q8Om4oYsNuLzV7hJyUqhjUfjVGYjh
-	 ktORbHXZsHJjr88ahzm48Wztm+4qlsNiUEYicMzECtX6+dXg6vVy1kDBAo/tzDMtMa
-	 XWacCL7jCB+tYoz34cMJRn68ge5VqW7guGKORGI4/2+z96jdEG0wINVC/J3H/u5D/8
-	 zw6jamr2TE3F4WOQOc8EE0z73bxTWSBhNYe63fqPJm4NxNCbZ1nHY4KjXg4W4k1KZ9
-	 3cuLhiiu6jpoQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 28 Jul 2024 20:30:06 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Helge Deller <deller@gmx.de>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH] fbdev/hpfb: Fix an error handling path in hpfb_dio_probe()
-Date: Sun, 28 Jul 2024 20:29:47 +0200
-Message-ID: <dc4fe3d857849ac63131c5620f1bacf1a3d7172e.1722191367.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZJlFSmaG"
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2cd48ad7f0dso2147917a91.0;
+        Sun, 28 Jul 2024 17:00:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722211226; x=1722816026; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XPwiohtJWANAnFeqeGFhy00VPjkQNBT2pIiXQeTq6wc=;
+        b=ZJlFSmaGCuWJv3D1SN2TxhjhYe2pCU5QP2tfEtbBgp/9sgyERlAB61jQdEyayfNIwv
+         ydgo+I5V3+kyt9WctUrxtZ+eiS3od5HFFF4mMB3EWaF42ExziD9CvAW+luffL7ASwbpp
+         gczGSq6mRsZ8LY0AENXwtxOcixdrYwYG8049N5H3qfMWJ7P4HSkAISOIWixt+lzFpwvu
+         5NYISKS8SfTXpPRxB9gysL8BJCLrNnuEd5hJuV+X0WgK6prpyLNtYAl5N80Q1MdyCgBB
+         v7iTsxO5xWaiIBblRrRIvUZMK3OsYkT5wgky9fGVFlbeXURN2ql3zQZgMefx5zaOf4Vl
+         S3Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722211226; x=1722816026;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XPwiohtJWANAnFeqeGFhy00VPjkQNBT2pIiXQeTq6wc=;
+        b=J9/VNvgS66rhxxWt3LLmTc6xKxwzfyxRXeXAO8JMzV/VvDo4KaNIFZlpaltFyXDHN+
+         MPkuJRKuKgq52v2YI40CNLBm9Fb7uuADSTXu7AZNWLudBQZYiOORzz9x0y835js5l1tV
+         xTgEJO0yDThMJ61jkvCZGqSor3zR9qBNpWVhK4q/Kgj0lVawHMajvxcUYhbDiSz5JI9F
+         jy7QK0Puo9CiqsgU79JgUFyaTZFXdblAMLGsoYG9qlXpltFCQZI9ivHQqb1P8HhEA8x0
+         2E4Mi+FQhUCtpaDh948FzLyeYpI/9QzTZgv9XSpLNayxbq2OI5O7yWGHC3SqVpKRhmls
+         slqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbnouXkGIYl9vRQ0GY4eEUUwcYothN3CjJzxkddP1mn2Q3d//qzVFFzXWPVv+99rSmknAmiTYHuwCJ8jUuRhyTA8xS8UoVNG3LLB6s9LI6hSMYNbN7qJRHjQgf6NRaOUR/lfylPp7LrFbsMBM=
+X-Gm-Message-State: AOJu0YyjKl9qx60PBEtJrOl/bVWtVW5bC+siA2epHiFDRDNG7bDrhn3+
+	uJVFCsqHaGSub1YrcdfzdTDJ3OVpK+MMJPV7yK6BALxQVZpXvm6TEHrMKQ==
+X-Google-Smtp-Source: AGHT+IHw3r8n6Jtc/MdwhlvCA89enqBR70UYDF4j84TO6veBH+/NYaXrMKjh4/pbytVeLU1Ctl315w==
+X-Received: by 2002:a17:90a:a790:b0:2c9:1012:b323 with SMTP id 98e67ed59e1d1-2cf7e5f51d7mr7234899a91.27.1722211226321;
+        Sun, 28 Jul 2024 17:00:26 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:74de:62d6:bed2:4c63])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cd8f73bd52sm4543803a91.1.2024.07.28.17.00.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Jul 2024 17:00:25 -0700 (PDT)
+Date: Sun, 28 Jul 2024 17:00:22 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-input@vger.kernel.org
+Subject: Re: [PATCH v2] Input: spear-keyboard - Switch to
+ devm_clk_get_prepared()
+Message-ID: <Zqbblj4rPjmAhvt7@google.com>
+References: <062986b0a5105cbc61330da0e55b22c00e2c1c4f.1722062145.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <062986b0a5105cbc61330da0e55b22c00e2c1c4f.1722062145.git.christophe.jaillet@wanadoo.fr>
 
-If an error occurs after request_mem_region(), a corresponding
-release_mem_region() should be called, as already done in the remove
-function.
+On Sat, Jul 27, 2024 at 08:36:49AM +0200, Christophe JAILLET wrote:
+> Use devm_clk_get_prepared() in order to remove a clk_unprepare() in an
+> error handling path of the probe and from the .remove() function.
+> 
+> This done, the whole .remove() function can also be axed because
+> 'input_dev' is a managed resource allocated with
+> devm_input_allocate_device() and we can fully rely on devm for cleaning up.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-*Not* even compile tested only.
-I don't know on what architecture it relies on.
+Applied, thank you.
 
-So it is provided as-is
----
- drivers/video/fbdev/hpfb.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/video/fbdev/hpfb.c b/drivers/video/fbdev/hpfb.c
-index 66fac8e5393e..87b8dcdc1cf3 100644
---- a/drivers/video/fbdev/hpfb.c
-+++ b/drivers/video/fbdev/hpfb.c
-@@ -342,12 +342,17 @@ static int hpfb_dio_probe(struct dio_dev *d, const struct dio_device_id *ent)
- 	}
- 	printk(KERN_INFO "Topcat found at DIO select code %d "
- 	       "(secondary id %02x)\n", d->scode, (d->id >> 8) & 0xff);
--	if (hpfb_init_one(paddr, vaddr)) {
--		if (d->scode >= DIOII_SCBASE)
--			iounmap((void *)vaddr);
--		return -ENOMEM;
--	}
-+	if (hpfb_init_one(paddr, vaddr))
-+		goto err_unmap;
-+
- 	return 0;
-+
-+err_unmap:
-+	if (d->scode >= DIOII_SCBASE)
-+		iounmap((void *)vaddr);
-+	release_mem_region(d->resource.start, resource_size(&d->resource));
-+
-+	return -ENOMEM;
- }
- 
- static void hpfb_remove_one(struct dio_dev *d)
 -- 
-2.45.2
-
+Dmitry
