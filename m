@@ -1,69 +1,61 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87FFC12FB37
-	for <kernel-janitors@vger.kernel.org>; Mon, 29 Jul 2024 21:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFF4156C4B;
+	Tue, 30 Jul 2024 08:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722290262; cv=none; b=MQGU8pxWQahAC8As523JcV1BOj5Z+P4nXKUoaYJHKNoXMXO2HJ1MZ7VHV6khKG9dWHxFxjD1Wkj/6tA+AZEdcCuJ3BCAB+EeVOFcgUPm5tMP/1NjGuMMMmpnNaVVYk5aFqKifFJxMqOJAic+qZoQ2SSetS9UHja2yjUMq00kIKA=
+	t=1722328892; cv=none; b=nhyRuP+OJ0RnMeg9+5RQBW4Iqrij13n/rcnNSy81LHqKcrxrUDoKD36yta+wvszJ6gzxcC6DTYywG+F8zWBNqo1V7aErRQ2yCPwa3gjZj2fHiy0WBfhmZEHRHf1ws0OXLhB88jjvV2niby4mh5zQvPT2lk0kArhHgXdUXz8l5YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722290262; c=relaxed/simple;
-	bh=nHl2Y5IWaProKCvXUomzic+RUjes+RyRmoyy8eze+JA=;
+	s=arc-20240116; t=1722328892; c=relaxed/simple;
+	bh=EZwgfB+SpCkB8yyda/21W0llO92QMrqgQrAHgsYlxs0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A7Ech39cKvD3pUyzUMX87fCslfYobeYziKqq7HP2joypgu7sjLJkS8a7+YQ5jwtKgEk1Spz++3sDM2fcwzDMAWqUj/bNXl0PixImMQQWhJJHYxP2FAI81J3hdJi2jMIGZm5uPD8cWWDph4A7WChvNw9qgkFAsjpkRvKgG9jQU6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=k8SFm33b; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=KxS4p0cP7WxokzLKT1ZM4vuO4evU0PDoFlpqjaeXEpT9qFjyAzmaLfjQQBZegAIO/2QR2jbjL4XZHHN6+4ZLHYfejOhVTdwCqJ5KRHExmB4K+WNlg+JtKwJwk7ucNx0fe6xH45TqX4Yke1WEXc4Sujh5HHcRK6kYN/DF8YQjVlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aPVRmtEL; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="k8SFm33b"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc5549788eso28033805ad.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 29 Jul 2024 14:57:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722290260; x=1722895060; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0/uG0RbPF+t6wEe0TF57sCA99ACL1gtkgDLZUWdqXsM=;
-        b=k8SFm33btmfByCBNlcfMVA1+1GUpX+duHXFPnIT/vPNIK54hXAgzzisdygMVLSpZGs
-         /0gmvxC3ckTqnp/6ESFzNuqR1npSrfv2rToxEZv9ebUMVcUsNox33rOO1V/IJ0aZns4d
-         +gxBV+KHY/XArV6fatKXZVk+vShwj3gVKcvi1JNsp0XJU+B6bFggpB8VcEeDKWKRIA3F
-         H9IDx9NXxJ8Hl34RfRfhZiO+qbvctBocM7AkvbiVq/fCW6rafkWtNbnL84Dea6Stqo4S
-         Xcae6LUyvPeuT9+gDhLgAhxZCWG5wB4Cfd+DG6CFyxHzRgF4qOx1KoUT0/r4EuIRgyj8
-         U91g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722290260; x=1722895060;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0/uG0RbPF+t6wEe0TF57sCA99ACL1gtkgDLZUWdqXsM=;
-        b=BaAZ7kwylKxBXELJzUA18aYc08KESuzMh3biWlpquZuLYLnEWQwMCkVbXsy83pF4jY
-         Pz+bKbh4rJ6mlBzAA487wwaUMGCGXfpC3U7pz7JYFYFkjCT/qXP1VlJImuidQ0OWKKFG
-         IhhJGACnFlvMoeoFoLQaKnSq+iS3IX0xpPbNM3wli7mKN79mT6QtuvYo4Q7dNf/R5Rnd
-         WjtS+g2orpEPnR34OKF+GPO66kF2DcSkO9NGNsHxVTKoKE3iGAZg/ZeF5n0qF2lxuX9G
-         hvskl4+yrDDEJN8sDXMJ5DhUynL58yCGWdn/4FLGikeddD4NrbW9UcJ8rZEM0jl08BAL
-         k2fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEqD1BTwMjWfORVmUh02xibSwyyzBkW99W/Hm51qHUw6SG0ePaSv31jqv/crXgDTgGNBv7VIwbOkPGLQ2LdyxaA6nswUv4bb3mWEVRaIjR
-X-Gm-Message-State: AOJu0YzzZpvDGuFvto6uK+ShrANERl5PpQ1/CaTaOlKwoWcu5yLPpSlw
-	jGrbosmPmr/5ySdfKHuqM4ysU8KbIQ3qekyW+TgUpx4Txp+8F2vDyAkqhlcyceM=
-X-Google-Smtp-Source: AGHT+IHwZkZt24czu8/lKOn2GWi2SUrhVTkh/FSI6AFzn2vEWdyOC7cANh35tDrGnaCxah8UqaL2rQ==
-X-Received: by 2002:a17:902:f542:b0:1fb:779e:4fd0 with SMTP id d9443c01a7336-1ff04824612mr112584575ad.24.1722290259864;
-        Mon, 29 Jul 2024 14:57:39 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff0fead748sm45010935ad.74.2024.07.29.14.57.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 14:57:39 -0700 (PDT)
-Date: Mon, 29 Jul 2024 14:57:36 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Christoph =?iso-8859-1?Q?M=FCllner?= <christoph.muellner@vrull.eu>,
-	linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] tools: selftests: riscv: Fix spelling mistake
- "regesters" -> "registers"
-Message-ID: <ZqgQUKmoNrSAeoQI@ghost>
-References: <20240729091734.42259-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aPVRmtEL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722328891; x=1753864891;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EZwgfB+SpCkB8yyda/21W0llO92QMrqgQrAHgsYlxs0=;
+  b=aPVRmtELCqIU2W5cXZT8cmKLTWEP8WfpiCBFsohbCmev72zofAlTlz0v
+   5AGA7LyxB/AOkYJmKD/Y4v88YFQXL+ZgkagqYKfgvADC014irp1+kJSjo
+   8ekDcXIj2c2PGiLMGHOTl1PZ1iEXBdVnD7voIVyf9PiZ0QTy4yni4gAr9
+   ozzNEzto4JTVFWdHTaXZiZ3GD9zMxvBbw6nReeKn/Iz6qIjB4iJk4y8ML
+   qtEUx51Z111PBMiCGa+VjLkEpbNm5K4R59j7lpEV4ZQ2cnnZmmlroQ4Nk
+   7qvC6+dTQEIBUQ4fvQVkzEOPG1MIbG29VJVVtIRvBhcsvJ1wQ0TxevgeW
+   Q==;
+X-CSE-ConnectionGUID: a7+ZgAnGQEKYsZqhmu63Mg==
+X-CSE-MsgGUID: Ru+odA0bQCmdLUwGniZevw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11148"; a="20281403"
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="20281403"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 01:41:30 -0700
+X-CSE-ConnectionGUID: h2tVqVDOR9iTiL029BFXEg==
+X-CSE-MsgGUID: ujmr2l5qSue4aV5FuoG2lQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="53932617"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by fmviesa006.fm.intel.com with SMTP; 30 Jul 2024 01:41:26 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 30 Jul 2024 11:41:25 +0300
+Date: Tue, 30 Jul 2024 11:41:25 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Marco Felsch <m.felsch@pengutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	RD Babiera <rdbabiera@google.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: tcpci: Fix error code in
+ tcpci_check_std_output_cap()
+Message-ID: <ZqinNYgseXFj3l7g@kuha.fi.intel.com>
+References: <b0880888-6719-4614-91fc-8ee63b71d304@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -72,49 +64,37 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240729091734.42259-1-colin.i.king@gmail.com>
+In-Reply-To: <b0880888-6719-4614-91fc-8ee63b71d304@stanley.mountain>
 
-On Mon, Jul 29, 2024 at 10:17:34AM +0100, Colin Ian King wrote:
-> There are a couple of spelling mistakes in ksft_test_result_fail messages.
-> Fix them.
+On Fri, Jul 12, 2024 at 09:05:50AM -0500, Dan Carpenter wrote:
+> The tcpci_check_std_output_cap() function is supposed to return negative
+> error codes but it's declared as type bool so the error handling doesn't
+> work.  Declare it as an int instead.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Fixes: 62ce9ef14797 ("usb: typec: tcpci: add support to set connector orientation")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
 > ---
->  tools/testing/selftests/riscv/vector/v_initval_nolibc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/usb/typec/tcpm/tcpci.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/tools/testing/selftests/riscv/vector/v_initval_nolibc.c b/tools/testing/selftests/riscv/vector/v_initval_nolibc.c
-> index 1dd94197da30..6838c561e4c9 100644
-> --- a/tools/testing/selftests/riscv/vector/v_initval_nolibc.c
-> +++ b/tools/testing/selftests/riscv/vector/v_initval_nolibc.c
-> @@ -49,14 +49,14 @@ int main(void)
->  	ksft_print_msg("vl = %lu\n", vl);
+> diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
+> index 8a18d561b063..b5e49af48f43 100644
+> --- a/drivers/usb/typec/tcpm/tcpci.c
+> +++ b/drivers/usb/typec/tcpm/tcpci.c
+> @@ -67,7 +67,7 @@ static int tcpci_write16(struct tcpci *tcpci, unsigned int reg, u16 val)
+>  	return regmap_raw_write(tcpci->regmap, reg, &val, sizeof(u16));
+>  }
 >  
->  	if (datap[0] != 0x00 && datap[0] != 0xff) {
-> -		ksft_test_result_fail("v-regesters are not properly initialized\n");
-> +		ksft_test_result_fail("v-registers are not properly initialized\n");
->  		dump(datap, vl * 4);
->  		exit(-1);
->  	}
->  
->  	for (i = 1; i < vl * 4; i++) {
->  		if (datap[i] != datap[0]) {
-> -			ksft_test_result_fail("detect stale values on v-regesters\n");
-> +			ksft_test_result_fail("detect stale values on v-registers\n");
->  			dump(datap, vl * 4);
->  			exit(-2);
->  		}
+> -static bool tcpci_check_std_output_cap(struct regmap *regmap, u8 mask)
+> +static int tcpci_check_std_output_cap(struct regmap *regmap, u8 mask)
+>  {
+>  	unsigned int reg;
+>  	int ret;
 > -- 
-> 2.39.2
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 2.43.0
 
-I fixed this and some incorrect error reporting in a different patch:
-https://lore.kernel.org/lkml/20240724-xtheadvector-v8-12-cf043168e137@rivosinc.com/
-
-- Charlie
-
+-- 
+heikki
