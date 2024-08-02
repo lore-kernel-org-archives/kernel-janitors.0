@@ -1,91 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76071E3CA7;
-	Fri,  2 Aug 2024 12:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91B8481AA;
+	Fri,  2 Aug 2024 13:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722602821; cv=none; b=LJ9/Fqg+GW/2zXAZfAmHrYoT2OpB9W+HajPTEsSr64CJ+kmdApNksV8A8ZqzhNjSXdHg4ZYRwL8/r7q957T/i+RdZ8Kg03qOgyKMpAeWnJH033PhCnSf1xetI+5lsDMOtEYMeni6cuz4Slzw/in9a/pDW/toD3TP6Pm+6Q7PShg=
+	t=1722604567; cv=none; b=DucwjaALVoUJEBPZxsynBnz/5uvJdLVSBbuqILaaQ1SPRKMLCbo3EWkeDe2H1g/fbbb1cUY3GLcWWk8i+bg1YsBnpMvpvh0sy0D2he2xjumL25b/+muTqiI0+rufGoh4c2GJn7oDyi+1EANszzaLXs7ALq4gzu/CCbHpeNvBuD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722602821; c=relaxed/simple;
-	bh=1QgdOFHc5UJ7JLTaVxoYYVwQrMYFGF8fQ1SbQIxZkhc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rddlQvwAA9Fs2zGVd3Sv5xVE1pVWkAiG9FkFQwnnP8/go8cnr9okzOMp7lcjIZorok1hVyzBS+YjePWcLg6AP95HVhVda2rPNCjOm07sHsiqf1si4NHr/hVUpQ7FTq3bya4RMMpJNy4OZ/cySu6Gi0SDqq1HbynEwKZ/BpKQx/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOPuNjPv; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOPuNjPv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B977C4AF0E;
-	Fri,  2 Aug 2024 12:47:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722602820;
-	bh=1QgdOFHc5UJ7JLTaVxoYYVwQrMYFGF8fQ1SbQIxZkhc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HOPuNjPvTZZBsjB3tap/xqosF5SQqQYpnAfbYzS12d+zdYkiM8SP/fcVGUBeqc3HC
-	 lMinvM1uFnU4HZra2cN5wfQlihPihtSBfTfDViH3rmj7nQhlY6S7WA3QZqoWhGTK1d
-	 tq+btNcsaMnEszrxEHUYcedP9A5FKqoLRU7J2bkS5FJk38Op8v/vD+BPaqBs66udDs
-	 HnTHjIQCM/iUXUNA3U8wNWM49K0nW5Mt5AnXisVBfznEoiNeCqudJfa49jbHwyrOz/
-	 h2kMC8TAuykWtLdIkBV6vjeVmkM31QuC9wJiPOO8ftEYrwSXC7XVAeZ5Iejvb3RsSM
-	 RDGqnl3DweuEw==
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3db199ec527so671535b6e.0;
-        Fri, 02 Aug 2024 05:47:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW+c0YUmfqvNXhkeg9tDXA94RlU0p0ZiVmXIN1KfnjRVh3pT7kW+0vn5xyrQ0Gc5KtRSqY6/7lmzdGnlzZEwfOD212GXAYacfIlIim2WTBeUpJNX3O/HxLFUns069Q/1gvd8kgbJTVtMR2/EUXMHWnsceFY2RHZ88kz2gSX1h+s9ff29cSGEp8=
-X-Gm-Message-State: AOJu0YxHm0Idt/4K9CXuwKYqpdBheVFtlVFa58PG9ycM+uXpx+BBCVpf
-	8p8F6OIpPJxgqq104CRjtEzJrWCcN0OOcx/gsm6mrXDBgmie8qCBOD16jijwdF+MdToK14ITJEH
-	ywjs7GImJZCxxMAIAJYkMZPzFgvs=
-X-Google-Smtp-Source: AGHT+IFEVv8eZDY5b3H89JJWLVBnt5m9XtSne/AH0CAwtm0pD7to6WgcNrLrHJUClqgyEggleITIiM5TGHtAKB4tRuk=
-X-Received: by 2002:a05:6870:56ab:b0:260:23bb:1087 with SMTP id
- 586e51a60fabf-26891732bc5mr2122828fac.0.1722602819834; Fri, 02 Aug 2024
- 05:46:59 -0700 (PDT)
+	s=arc-20240116; t=1722604567; c=relaxed/simple;
+	bh=OoXB2hBVdgHyqMnbS/Mhw5m1HI6Aj9/k1LR9cgDwqiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AvIqkxr6flyV7dnnHzrG0PHI/aa9JxbFh3M66w/Xq1v8puwJAJMDWg0WtYiMkdOxXoQtD58hli1fc3zf4SBCK7iEayGr/V0NdQ/n6/MdC2uZD66ZzE6xQbIFl6UOj2/yuaLOjJ8f+faLbUSLXLFBzbmZMy86B1SQRf1+vIPlnhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sZrzp-00203d-2O;
+	Fri, 02 Aug 2024 21:15:47 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 02 Aug 2024 21:15:46 +0800
+Date: Fri, 2 Aug 2024 21:15:46 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Danny Tsen <dtsen@linux.ibm.com>, linux-crypto@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] crypto: ppc/curve25519 - add missing
+ MODULE_DESCRIPTION() macro
+Message-ID: <ZqzcApbJomFTnc30@gondor.apana.org.au>
+References: <20240718-md-powerpc-arch-powerpc-crypto-v1-1-b23a1989248e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722-md-powerpc-drivers-cpufreq-v2-1-bb84d715eb3d@quicinc.com>
- <20240724043941.5wpa5di7ta4fjyl5@vireshk-i7>
-In-Reply-To: <20240724043941.5wpa5di7ta4fjyl5@vireshk-i7>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 2 Aug 2024 14:46:48 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iYDDQkPpnHsuJ_7du7Efg4zuLuhj2RHobJ6UiciuhphQ@mail.gmail.com>
-Message-ID: <CAJZ5v0iYDDQkPpnHsuJ_7du7Efg4zuLuhj2RHobJ6UiciuhphQ@mail.gmail.com>
-Subject: Re: [PATCH v2] cpufreq: powerpc: add missing MODULE_DESCRIPTION() macros
-To: Viresh Kumar <viresh.kumar@linaro.org>, Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240718-md-powerpc-arch-powerpc-crypto-v1-1-b23a1989248e@quicinc.com>
 
-On Wed, Jul 24, 2024 at 6:39=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> On 22-07-24, 10:14, Jeff Johnson wrote:
-> > With ARCH=3Dpowerpc, make allmodconfig && make W=3D1 C=3D1 reports:
-> > WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/ppc-c=
-be-cpufreq.o
-> > WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/power=
-nv-cpufreq.o
-> >
-> > Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> > files which have a MODULE_LICENSE().
-> >
-> > This includes three additional files which, although they did not
-> > produce a warning with the powerpc allmodconfig configuration, may
-> > cause this warning with specific options enabled in the kernel
-> > configuration.
-> >
-> > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> > ---
-> > Changes in v2:
-> > - Per Michael Ellerman updated maple-cpufreq.c and powernv-cpufreq.c
-> >   descriptions
-> > - Did not carry forward Viresh Kumar's Acked-by due to this change
-> > - Link to v1: https://lore.kernel.org/r/20240614-md-powerpc-drivers-cpu=
-freq-v1-1-de4034d87fd2@quicinc.com
->
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+On Thu, Jul 18, 2024 at 06:14:18PM -0700, Jeff Johnson wrote:
+> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+> description is missing"), a module without a MODULE_DESCRIPTION() will
+> result in a warning with make W=1. The following warning is being
+> observed when building ppc64le with CRYPTO_CURVE25519_PPC64=m:
+> 
+> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/crypto/curve25519-ppc64le.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  arch/powerpc/crypto/curve25519-ppc64le-core.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Applied as 6.12 material, thanks!
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
