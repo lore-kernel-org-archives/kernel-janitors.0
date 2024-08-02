@@ -1,123 +1,89 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3E115C13C;
-	Fri,  2 Aug 2024 16:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDD413633C;
+	Fri,  2 Aug 2024 18:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722615229; cv=none; b=QpNMhkHREivYI/YRPUSqpnavJeyVKhtiY5ImU1doU9fJpgA8OJ446fBiGvqa3KZErXcVr/1kwqz6Be2xhUnVRD9LhQI6kZXmM9znNtZxGEc3jkdK9vi0T+LhoBwrgJ3oA9QrE5pb+PMyoAU1k6BWKVnTB5G3VFMnmWB8NVy1KCs=
+	t=1722622864; cv=none; b=hXkw++M7unaIuCAP9FTrX2bEgnoK61H5+O+1j880Zqrd8cBvvW6KtTIWYcVhUEtWKopRSVxu48l/UcYURG4Z7EC8zAfoZFNkWdYx2rzjnZlP7QD6UrEL1aamYoazkHFKYD850fLj05dF0tleLkbcG59Y3DvGG63xu8MgsGGw+rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722615229; c=relaxed/simple;
-	bh=/7CaU8cFVRs8SSowdcAlAKQN0I6TZSX6MZ/rIFbdsVM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gCrUZHzxb9DvnV7kgwletHpOfO6ESeyyjKjUhzBCbPV4tvW4TpNcne8BAd0hqQkb7fYwVnlfq0czaiu3eSqHhANQx2b4ZUImJuHlVpo7Elyu79kOic47NTGUdOb7EWQpnXPXTzUzmNRp4EY9M+zsRwghLX/nhR+s5v0CAA5Ox0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VeegD1JZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1722622864; c=relaxed/simple;
+	bh=SIayKwg6/dUeT/mwVPn/+0LZgcgWn0cXJslMp5cufg4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=eR5IaNFOc4FzFcBoV1ds4bj7veSitq7G3P0oDGnFLU87hqV16inqgUVboX7c9F8DmQk7kswR5z1UvKH8wEeZ8RfUp1+XYHSlftRXbz4f52djh87WnVVGt/RctZ9eOPMo3pLnE0dbC1NumP8lTxgqmRzZIrFCFVZcG0AzJVj3akY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8AvHhuC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VeegD1JZ"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 472EACwD023760;
-	Fri, 2 Aug 2024 16:13:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zb60TfBYM+a5pMbLi9F+/DtgtdfZ9SS0BcxUtqLgWHM=; b=VeegD1JZrmp5xGu2
-	I6K4rap5+mpYCizUf66qphl7uzgasKA2evx1ZVijI31PvM6K4L2uNJp5iaWNvv0E
-	ihfb6aF9NNNWzRQS4e37SIvBTOh36P/o1QrVD4/xCOTeR+IaXTAxbmhwyXq1vkw3
-	ejCtGJ8YP8E93Nl1WYY5yC/L+COeUddgqXM6p1OhXNmk7V6xHZGvPis3pOOkDmlt
-	tCZaMvW+c74MGt+fSRc2s8Hih1cM4kVsplxqE5ILOM5Ox2aGfOMsV8veOScUhVZk
-	JvFiytj9obrxQP0UusWF5Lg9jjhlI8w4LQe2nIVAg344S463ZGPjyi9T8rd8XcoO
-	lKYKyA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40rje6t3ag-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 02 Aug 2024 16:13:28 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 472GDSRO002242
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 2 Aug 2024 16:13:28 GMT
-Received: from [10.111.177.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 2 Aug 2024
- 09:13:27 -0700
-Message-ID: <2a1f5b08-5c5e-4c16-89a9-69eb920d1f44@quicinc.com>
-Date: Fri, 2 Aug 2024 09:13:26 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8AvHhuC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C68DAC32782;
+	Fri,  2 Aug 2024 18:21:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722622863;
+	bh=SIayKwg6/dUeT/mwVPn/+0LZgcgWn0cXJslMp5cufg4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=c8AvHhuCfvhgpAl8cS4jYym4/+PoRMJY/eIMj8cS2d2POJL6GpOY81ktu+SjVs07Q
+	 rcee2NwjJqc3OHMNhfjlWsVPXoXrDNWXz9dawbgbetLI4UwMRVL3b7A76wdLIZCtUt
+	 r4PISXYw9ioHJKZXyrHRHvgA4h0YgEZX2SCY6VjVdo2TfP7ldQrDZ4jMMWwYGTM0KH
+	 wpEuRGMdl2i9cpbJia9sigPl2c2WsjpaaRWH/B3BsHYJpqGtr4yXx8tu3hdkpNBqI9
+	 9Htf/8zcwOT//dNXUU64fDrFg+qV6POBh2xZFe3AlDtBevNHSCFM4JOtui20g54u4d
+	 SodKAx0RoMldw==
+From: Mark Brown <broonie@kernel.org>
+To: ckeepax@opensource.cirrus.com, javier.carrasco.cruz@gmail.com, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ linux-sound@vger.kernel.org
+In-Reply-To: <2c08558813e3bbfae0a5302199cf6ca226e7cde1.1722544073.git.christophe.jaillet@wanadoo.fr>
+References: <2c08558813e3bbfae0a5302199cf6ca226e7cde1.1722544073.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ASoC: sti-sas: Constify snd_soc_component_driver
+ struct
+Message-Id: <172262286152.83468.908434920268261104.b4-ty@kernel.org>
+Date: Fri, 02 Aug 2024 19:21:01 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crypto: ppc/curve25519 - add missing MODULE_DESCRIPTION()
- macro
-Content-Language: en-US
-To: Arnd Bergmann <arnd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>
-CC: <kernel-janitors@vger.kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
-        <linux-kernel@vger.kernel.org>, Danny Tsen <dtsen@linux.ibm.com>,
-        Christophe
- Leroy <christophe.leroy@csgroup.eu>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        <linuxppc-dev@lists.ozlabs.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        <linux-crypto@vger.kernel.org>
-References: <20240718-md-powerpc-arch-powerpc-crypto-v1-1-b23a1989248e@quicinc.com>
- <ZqzcApbJomFTnc30@gondor.apana.org.au>
- <75a526e3-3101-4319-b42f-4482ba188abc@quicinc.com>
- <6fdd8f30-4df1-447d-9156-5d2314239e99@app.fastmail.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <6fdd8f30-4df1-447d-9156-5d2314239e99@app.fastmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Y7YufICC5Uy0q04j5zhcN7WAQ60I3hz8
-X-Proofpoint-GUID: Y7YufICC5Uy0q04j5zhcN7WAQ60I3hz8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-02_12,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- spamscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=999 clxscore=1015
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408020112
+X-Mailer: b4 0.15-dev-37811
 
-On 8/2/2024 8:16 AM, Arnd Bergmann wrote:
-> On Fri, Aug 2, 2024, at 16:27, Jeff Johnson wrote:
->> On 8/2/2024 6:15 AM, Herbert Xu wrote:
->>> On Thu, Jul 18, 2024 at 06:14:18PM -0700, Jeff Johnson wrote:
->>>> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
->>>> description is missing"), a module without a MODULE_DESCRIPTION() will
->>>> result in a warning with make W=1. The following warning is being
->>>> observed when building ppc64le with CRYPTO_CURVE25519_PPC64=m:
->>>>
->>>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/crypto/curve25519-ppc64le.o
->>>>
->>>> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->>>>
->>>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->>>> ---
->>>>  arch/powerpc/crypto/curve25519-ppc64le-core.c | 1 +
->>>>  1 file changed, 1 insertion(+)
->>>
->>> Patch applied.  Thanks.
->>
->> Great, that was the last of my MODULE_DESCRIPTION patches!!!
->>
->> There are a few more instances of the warning that Arnd has patches for,
->> covering issues that appear in randconfigs that I didn't test.
+On Thu, 01 Aug 2024 22:30:05 +0200, Christophe JAILLET wrote:
+> In order to constify `snd_soc_component_driver` struct, simplify the logic
+> and the `sti_sas_dev_data` struct.
 > 
-> Are all of your patches in linux-next now, or is there a another
-> git tree that has them all?
+> Since commit 165a57a3df02 ("ASoC: sti-sas: clean legacy in sti-sas") only
+> only chip is supported and `sti_sas_driver` can be fully defined at
+> compilation time.
 > 
-> I can send the ones I have left, but I want to avoid duplication.
-> 
->     Arnd
+> [...]
 
-When this one lands they'll all be in linux-next
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: sti-sas: Constify snd_soc_component_driver struct
+      commit: 11c2d223713b7a7fee848595e9f582d34adc552b
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
