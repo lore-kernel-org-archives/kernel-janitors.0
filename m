@@ -1,44 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDD413633C;
-	Fri,  2 Aug 2024 18:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEC27CF33;
+	Fri,  2 Aug 2024 21:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722622864; cv=none; b=hXkw++M7unaIuCAP9FTrX2bEgnoK61H5+O+1j880Zqrd8cBvvW6KtTIWYcVhUEtWKopRSVxu48l/UcYURG4Z7EC8zAfoZFNkWdYx2rzjnZlP7QD6UrEL1aamYoazkHFKYD850fLj05dF0tleLkbcG59Y3DvGG63xu8MgsGGw+rw=
+	t=1722633999; cv=none; b=qmwqvJXwgeowVaYjYPibiaTp3tPjZXtEciAIIA1rVcyqYLDhjdzZ0QgNu494qBQsBoOOeIYDh3Ps1mKAuhzMhwEzqR2pSq9S/V9L4BALrRqgdqo5ju5zeRMM6mzmqwMpopIlpTmPSJ0EBHyxrkgMxDmjmCCrEXkbKsUmFGjIc4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722622864; c=relaxed/simple;
-	bh=SIayKwg6/dUeT/mwVPn/+0LZgcgWn0cXJslMp5cufg4=;
+	s=arc-20240116; t=1722633999; c=relaxed/simple;
+	bh=xPpOgoirjlpTp6dIkK1onCx8bz+DwC/ESltou7nhPII=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=eR5IaNFOc4FzFcBoV1ds4bj7veSitq7G3P0oDGnFLU87hqV16inqgUVboX7c9F8DmQk7kswR5z1UvKH8wEeZ8RfUp1+XYHSlftRXbz4f52djh87WnVVGt/RctZ9eOPMo3pLnE0dbC1NumP8lTxgqmRzZIrFCFVZcG0AzJVj3akY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8AvHhuC; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=b5QQLjY/CalTP6m3+XchmnOiFF5xdleBf/UnmJiG0HuZeUCMN0UBCbWdnNA1Q8YzWmGunsCN554wpw8afgXG53kxvXrn5EQ9I1tMeVPTAguJppwq8TJwxafy0zfgALWO1DBWnYtBd4M7qJ8nfHZCMrkXkUHsX6+JLk98qH+AjUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uBTeeDqD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8AvHhuC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C68DAC32782;
-	Fri,  2 Aug 2024 18:21:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBTeeDqD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9B85C32782;
+	Fri,  2 Aug 2024 21:26:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722622863;
-	bh=SIayKwg6/dUeT/mwVPn/+0LZgcgWn0cXJslMp5cufg4=;
+	s=k20201202; t=1722633999;
+	bh=xPpOgoirjlpTp6dIkK1onCx8bz+DwC/ESltou7nhPII=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=c8AvHhuCfvhgpAl8cS4jYym4/+PoRMJY/eIMj8cS2d2POJL6GpOY81ktu+SjVs07Q
-	 rcee2NwjJqc3OHMNhfjlWsVPXoXrDNWXz9dawbgbetLI4UwMRVL3b7A76wdLIZCtUt
-	 r4PISXYw9ioHJKZXyrHRHvgA4h0YgEZX2SCY6VjVdo2TfP7ldQrDZ4jMMWwYGTM0KH
-	 wpEuRGMdl2i9cpbJia9sigPl2c2WsjpaaRWH/B3BsHYJpqGtr4yXx8tu3hdkpNBqI9
-	 9Htf/8zcwOT//dNXUU64fDrFg+qV6POBh2xZFe3AlDtBevNHSCFM4JOtui20g54u4d
-	 SodKAx0RoMldw==
+	b=uBTeeDqDk4FJpBnvh59txdULuMSlyeHec0h17tIktJckFKxW5lGA1LsUv5q8datEn
+	 vFbeDNsRKmwhWtSiPA+Gc7HBXQXO+h13ky4cfKFiW3bWe6tN+a1luI5DfI7ZkqpQ1j
+	 JeElDwqCv7SCS/rADZeGTsRGVFkdNzA8pHI86aJR9GXuc6SB9HJo14z+vRHb3vQ6sR
+	 yDRyn3ECafo1GyA/4L8cjqZPiGCGsK16jDMtUCcZHoeCzVu2ROS77XgVNqpEUe3/eD
+	 7v9m5pknjQCVsMF4aNmoG3Le9NqzEHqT9DH3oB/nfQvqTERXOKsXyOW0KK7FC+0Aye
+	 ESyU5lJntzVCA==
 From: Mark Brown <broonie@kernel.org>
 To: ckeepax@opensource.cirrus.com, javier.carrasco.cruz@gmail.com, 
+ David Rhodes <david.rhodes@cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
  Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
  Takashi Iwai <tiwai@suse.com>, 
  Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ alsa-devel@alsa-project.org, patches@opensource.cirrus.com, 
  linux-sound@vger.kernel.org
-In-Reply-To: <2c08558813e3bbfae0a5302199cf6ca226e7cde1.1722544073.git.christophe.jaillet@wanadoo.fr>
-References: <2c08558813e3bbfae0a5302199cf6ca226e7cde1.1722544073.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: sti-sas: Constify snd_soc_component_driver
+In-Reply-To: <1f04bb0366d9640d7ee361dae114ff79e4b381c1.1722274212.git.christophe.jaillet@wanadoo.fr>
+References: <1f04bb0366d9640d7ee361dae114ff79e4b381c1.1722274212.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ASoC: cs43130: Constify snd_soc_component_driver
  struct
-Message-Id: <172262286152.83468.908434920268261104.b4-ty@kernel.org>
-Date: Fri, 02 Aug 2024 19:21:01 +0100
+Message-Id: <172263399662.130801.3172998123321447676.b4-ty@kernel.org>
+Date: Fri, 02 Aug 2024 22:26:36 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -49,13 +52,13 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
-On Thu, 01 Aug 2024 22:30:05 +0200, Christophe JAILLET wrote:
-> In order to constify `snd_soc_component_driver` struct, simplify the logic
-> and the `sti_sas_dev_data` struct.
+On Mon, 29 Jul 2024 19:36:05 +0200, Christophe JAILLET wrote:
+> In order to constify `snd_soc_component_driver` struct, duplicate
+> `soc_component_dev_cs43130` into a `soc_component_dev_cs43130_digital` and
+> `soc_component_dev_cs43130_analog`.
 > 
-> Since commit 165a57a3df02 ("ASoC: sti-sas: clean legacy in sti-sas") only
-> only chip is supported and `sti_sas_driver` can be fully defined at
-> compilation time.
+> These 2 new structures share the same .dapm_widgets and .dapm_routes
+> arrays but differ for .num_dapm_widgets and .num_dapm_routes.
 > 
 > [...]
 
@@ -65,8 +68,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: sti-sas: Constify snd_soc_component_driver struct
-      commit: 11c2d223713b7a7fee848595e9f582d34adc552b
+[1/1] ASoC: cs43130: Constify snd_soc_component_driver struct
+      commit: 839e231a53b824a62bc3696ad3ba1dcedc4f4167
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
