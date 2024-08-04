@@ -1,108 +1,79 @@
-Received: from bues.ch (bues.ch [80.190.117.144])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0C21CAB9;
-	Sun,  4 Aug 2024 08:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.190.117.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3640D1F94A;
+	Sun,  4 Aug 2024 09:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722760829; cv=none; b=pEui2XvP7gABERKoEZKQp7tWH4VnOba8YndGxA/QfOg7V8o1Hje0KcNtG2iot2jB7yCjy8t3SlixGR6w4H8NJDApUq0H/rmb8xQzfBeAGfV73rGbATHVbDyEZnO6FZL3n004MrBEXkFXIQi/BLnD1vMkv9nu2YUTpEOYi/WLpkQ=
+	t=1722762570; cv=none; b=F55oAkjY4qerqMX8yXHZDAj1c2Vz9+azoVFNuX5QLCY2xGDgQM9gQRWVWtxtrK6ACTn5MFjkalWE7uayv/XCwxe4D1yYL67hGgFtKHjcWr3dAa+ZzOInq7rWnt6KLpOKSeHigZNfDkj2n7QSFf5nMvN5wNAjGTLBYoHJO+itFdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722760829; c=relaxed/simple;
-	bh=KDLsy9QoaiK6Y/X+0TMFFzpHTxsKNIRagpeaknjsurw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TZIBWdX5WVyOsGiv9yn4jF89OP+daTeIy6sgodtq+CamIQLJTy6EUcPch13YruGrIwVzbD+8tsMPCDDihIZQsy3GMqwGVN6SFRrinkdhbwNwXzWWRW0yr+T+B8ONv4P0D+OKYWlzG69rbU6UUQmlz6QX7tE7+7mrrRq63RIDPVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bues.ch; spf=pass smtp.mailfrom=bues.ch; arc=none smtp.client-ip=80.190.117.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bues.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bues.ch
-Received: by bues.ch with esmtpsa (Exim 4.96)
-	(envelope-from <m@bues.ch>)
-	id 1saWFo-00049Y-33;
-	Sun, 04 Aug 2024 10:06:12 +0200
-Date: Sun, 4 Aug 2024 10:05:26 +0200
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Kalle Valo <kvalo@kernel.org>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org,
- b43-dev@lists.infradead.org
-Subject: Re: [PATCH v2] wifi: b43: Constify struct lpphy_tx_gain_table_entry
-Message-ID: <20240804100526.19942fbe@barney>
-In-Reply-To: <e33bc9e6dff4a5b6cd8d0ab5399aa1abac5bef9d.1722753127.git.christophe.jaillet@wanadoo.fr>
-References: <e33bc9e6dff4a5b6cd8d0ab5399aa1abac5bef9d.1722753127.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722762570; c=relaxed/simple;
+	bh=5K0JqgWBSyP508UKS4b4thXnYjHaE4ytgB/mhkj33qA=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=t4G/ESL5Se928dd2725CX4gqRlDNWszaL4attWeHRE/9VMcStiXzHfTTzrgFY8YzCANA/C3myGRmwjR9a2DyHpRqSRtJes8CMLFR9tMpee13XiR8tT+TInKywqAj+rI4quN9eCN3WKVIXpHmlklMaL1/bAiLe0aAP4YhZQgqsTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bA25U3Kg; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bA25U3Kg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E8D6C32786;
+	Sun,  4 Aug 2024 09:09:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722762569;
+	bh=5K0JqgWBSyP508UKS4b4thXnYjHaE4ytgB/mhkj33qA=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=bA25U3Kg1wZu0KQtOHvHJlRTmPvBJFAeUHV955id7fUixv0KvP6MSuPQa7KEUU44Z
+	 05Hf2a9D9b3Wwm3ioF5B616l/do8gpq7pQ73VACO08nCu0aFzZqTa6cT4cJGFdiTN8
+	 rpPcAlO7qNjJ00dF6ykvaMAyJfMUDD1S5jjMda55g7roKVpZYjBc77UO2CVZ4JAgRl
+	 mZ1MGmiMen9XYXQn+gpktdg6tet0mY/GV/NG8oInPIdV6xhEYvxvAQBM6HIIW+S7cC
+	 g7sTn+mvSADaUjC3WYT/pfz2oPrcA41V1Tl2F6h+dSzq7xnuS1wZ4ful/8NGuni2OG
+	 jlYeSqlNAB35g==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/UpsqFUdF5AJEbJWQ0oj=SGZ";
- protocol="application/pgp-signature"; micalg=pgp-sha512
+Content-Transfer-Encoding: 7bit
+Subject: Re: [v2] wifi: brcmfmac: fwsignal: Use struct_size() to simplify
+ brcmf_fws_rxreorder()
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: 
+ <f4ca6b887ca1290c71e76247218adea4d1c42442.1721547559.git.christophe.jaillet@wanadoo.fr>
+References: 
+ <f4ca6b887ca1290c71e76247218adea4d1c42442.1721547559.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <172276256603.2804131.6125500029059282435.kvalo@kernel.org>
+Date: Sun,  4 Aug 2024 09:09:27 +0000 (UTC)
 
---Sig_/UpsqFUdF5AJEbJWQ0oj=SGZ
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-On Sun,  4 Aug 2024 08:32:44 +0200
 Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-> 'struct lpphy_tx_gain_table_entry' are not modified in this driver.
->=20
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
->=20
-> On a x86_64, with allmodconfig:
-> Before:
-> =3D=3D=3D=3D=3D=3D
->    text	   data	    bss	    dec	    hex	filename
->   16481	   6232	      0	  22713	   58b9	drivers/net/wireless/broadcom/b43=
-/tables_lpphy.o
->=20
-> After:
-> =3D=3D=3D=3D=3D
->    text	   data	    bss	    dec	    hex	filename
->   22305	    395	      0	  22700	   58ac	drivers/net/wireless/broadcom/b43=
-/tables_lpphy.o
->=20
+> In the "struct brcmf_ampdu_rx_reorder", change the 'pktslots' field into
+> flexible array.
+> 
+> It saves the size of a pointer when the memory is allocated and avoids
+> an indirection when the array is used.
+> It also removes the usage of a pointer arithmetic and saves a few lines of
+> code.
+> 
+> Finally, struct_size() can be used. It is not a must have here, because
+> it is easy to see that buf_size can not overflow, but still, it is a good
+> practice.
+> 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only.
->=20
-> lpphy_write_gain_table() and lpphy_write_gain_table_bulk() could also be
-> made static and removed from tables_lpphy.h, but without knowing the reas=
-on
-> why it is done this way, I've preferred to leave it as-is.
->=20
-> Changes in v2:
->   - remove unrelated and un-needed constification   [Michael B=C3=BCsch]
->   - update numbers in the commit log
+> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
 
+Patch applied to wireless-next.git, thanks.
 
-Acked-By: Michael B=C3=BCsch <m@bues.ch>
+16b31ecb8029 wifi: brcmfmac: fwsignal: Use struct_size() to simplify brcmf_fws_rxreorder()
 
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/f4ca6b887ca1290c71e76247218adea4d1c42442.1721547559.git.christophe.jaillet@wanadoo.fr/
 
---=20
-Michael B=C3=BCsch
-https://bues.ch/
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
---Sig_/UpsqFUdF5AJEbJWQ0oj=SGZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmavNkYACgkQ9TK+HZCN
-iw59LxAAx5uah1po1RFYdhFEMNeDkZRN/vjPNfykHH+zmBb1qeL6ZlqaWkS8ja2u
-lAMOsBdIN60E9xO2opbn6KV3Ag1ti6gVtL1inIOsdNKnIvjINe3lm7mSgiyTdMUz
-oIY1halx6umYdV5CHNi/91Zrp9wcysvAfc+Uu0dWs0Qp2sZWrJQSa8ZdIf8kNyII
-j/MeopgVWHHV3V8Pyugaps2bQvc1dDRnfq1hbxfAWG+QUQPzIoOvA3NqX/aImcnf
-dLeoAuWxeo1v9JzEOtvIH6MFojUWHw1W2X9FPB8gDckELi8XeYwiMLi38Hark6Bg
-JVAzgEx8JN9weaOpgcA8kVflKMLetSo3T73DgMM3d8E+8E4hzbVGPStL5MP4wYON
-o5lyk7AswaxK3/0SZ/L6EH5anDgoJZlv/yHlzoe8pLXMk7jlM3GM0pYq1UfPh35l
-SlcW6sAl12dNEGELaZqqHD189Wtm2Pf+1HP0YoJw4VkLLifY9Txf0uIFoyNWVoMw
-s2kZ0JnsU7uyMjB009+BM/Dt0XCjyM/m8gMxkSVSu9zen2EbU3M1wmJ4bo+Lovqm
-ffxPyx3MroDvgcLMyL40LNv1Tbjg+ynTKrE2lC7JC54YlX98bI+NUEF3FVSQUsM4
-ATS47ibyPZhmzWsohHe5+NROCK5AI+GJNrVMKcBpXQBs/tRl+8Y=
-=+81O
------END PGP SIGNATURE-----
-
---Sig_/UpsqFUdF5AJEbJWQ0oj=SGZ--
