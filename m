@@ -1,92 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from msa.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEC27CF33;
-	Fri,  2 Aug 2024 21:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CF5AD59;
+	Sun,  4 Aug 2024 06:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722633999; cv=none; b=qmwqvJXwgeowVaYjYPibiaTp3tPjZXtEciAIIA1rVcyqYLDhjdzZ0QgNu494qBQsBoOOeIYDh3Ps1mKAuhzMhwEzqR2pSq9S/V9L4BALrRqgdqo5ju5zeRMM6mzmqwMpopIlpTmPSJ0EBHyxrkgMxDmjmCCrEXkbKsUmFGjIc4I=
+	t=1722752503; cv=none; b=QQ7W2re8AnkmBoRKBveSmeA1HQl+CTJuAm79C199zNkdUBe5fKl3UDJRaFOtDsGMOlGduJS5ix3bM/w6/XJE9RF7M4H1cNRxEIwpPQ72iEA+kszvYsF/5d9a+1uuZrWcqk2R5MT9Jimo/t4p+lrRn61FyKvz0cv7Q9fa/AKu9Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722633999; c=relaxed/simple;
-	bh=xPpOgoirjlpTp6dIkK1onCx8bz+DwC/ESltou7nhPII=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=b5QQLjY/CalTP6m3+XchmnOiFF5xdleBf/UnmJiG0HuZeUCMN0UBCbWdnNA1Q8YzWmGunsCN554wpw8afgXG53kxvXrn5EQ9I1tMeVPTAguJppwq8TJwxafy0zfgALWO1DBWnYtBd4M7qJ8nfHZCMrkXkUHsX6+JLk98qH+AjUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uBTeeDqD; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722752503; c=relaxed/simple;
+	bh=oURTL4z7EwTZ+wwgMJpvnhXRloDEhni/d+4fvczDmFE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qDy+mUyRwdr3XcFDtOv9ALghpn4VBz/GiiR8Rct2wYBI3FbstTTDyX9p4Vl0nnwe7seOqHs4+M/YMj8Bgq2WHQoRJcLr7Q1d2IXOHSGqG/vdzLyLZiiknPbnQzpUENKErgEemu4oC/XUImAXe8e9a1dAOZ2bnVF1yB/qF0w1D40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Ys3DwchW; arc=none smtp.client-ip=80.12.242.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBTeeDqD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9B85C32782;
-	Fri,  2 Aug 2024 21:26:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722633999;
-	bh=xPpOgoirjlpTp6dIkK1onCx8bz+DwC/ESltou7nhPII=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=uBTeeDqDk4FJpBnvh59txdULuMSlyeHec0h17tIktJckFKxW5lGA1LsUv5q8datEn
-	 vFbeDNsRKmwhWtSiPA+Gc7HBXQXO+h13ky4cfKFiW3bWe6tN+a1luI5DfI7ZkqpQ1j
-	 JeElDwqCv7SCS/rADZeGTsRGVFkdNzA8pHI86aJR9GXuc6SB9HJo14z+vRHb3vQ6sR
-	 yDRyn3ECafo1GyA/4L8cjqZPiGCGsK16jDMtUCcZHoeCzVu2ROS77XgVNqpEUe3/eD
-	 7v9m5pknjQCVsMF4aNmoG3Le9NqzEHqT9DH3oB/nfQvqTERXOKsXyOW0KK7FC+0Aye
-	 ESyU5lJntzVCA==
-From: Mark Brown <broonie@kernel.org>
-To: ckeepax@opensource.cirrus.com, javier.carrasco.cruz@gmail.com, 
- David Rhodes <david.rhodes@cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- alsa-devel@alsa-project.org, patches@opensource.cirrus.com, 
- linux-sound@vger.kernel.org
-In-Reply-To: <1f04bb0366d9640d7ee361dae114ff79e4b381c1.1722274212.git.christophe.jaillet@wanadoo.fr>
-References: <1f04bb0366d9640d7ee361dae114ff79e4b381c1.1722274212.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: cs43130: Constify snd_soc_component_driver
- struct
-Message-Id: <172263399662.130801.3172998123321447676.b4-ty@kernel.org>
-Date: Fri, 02 Aug 2024 22:26:36 +0100
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Ys3DwchW"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id aUbMsJNvIHEYLaUbMseFez; Sun, 04 Aug 2024 08:20:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722752421;
+	bh=XhsuUlKPKCQxLvLuiaDj5BLJuAdn0Jr06e3Dg3PwYzo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Ys3DwchWGhwFiD1UbkMxIm2Np12uIUujKaV7JK4NrRNl/vgoZmWDCVL4O24V4k5Y4
+	 ExRIhS+qcsy+/ktEgA0Ajfi8pV8hmD8cM3jH/s32cdMmMEJU2x2oELCvvbMG13j79n
+	 TJeS3q1yo99xsH/MPvN+B0EHXkLyVTbEhccDOvzp81ZUqwrvaQo8EN9CKzvLvjGUf/
+	 Jix3yYgZH1mC9Y/xpFB3sSuQE4deIWqzx92xoEtMay2zvOk4LR7850zMxAlIMNZ6gZ
+	 tZHd6E9lx5BszDLHJmcdLLshGtTTa5lLyGcSQ3pE1MTm2dkm6ME+pn1MlC3RfS8Rrt
+	 /oid708nTux1g==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 04 Aug 2024 08:20:21 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next v2] tcp: Use clamp() in htcp_alpha_update()
+Date: Sun,  4 Aug 2024 08:20:17 +0200
+Message-ID: <561bb4974499a328ac39aff31858465d9bd12b1c.1722752370.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Transfer-Encoding: 8bit
 
-On Mon, 29 Jul 2024 19:36:05 +0200, Christophe JAILLET wrote:
-> In order to constify `snd_soc_component_driver` struct, duplicate
-> `soc_component_dev_cs43130` into a `soc_component_dev_cs43130_digital` and
-> `soc_component_dev_cs43130_analog`.
-> 
-> These 2 new structures share the same .dapm_widgets and .dapm_routes
-> arrays but differ for .num_dapm_widgets and .num_dapm_routes.
-> 
-> [...]
+Using clamp instead of min(max()) is easier to read and it matches even
+better the comment just above it.
 
-Applied to
+It also reduces the size of the preprocessed files by ~ 2.5 ko.
+(see [1] for a discussion about it)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+$ ls -l net/ipv4/tcp_htcp*.i
+ 5576024 27 juil. 10:19 net/ipv4/tcp_htcp.old.i
+ 5573550 27 juil. 10:21 net/ipv4/tcp_htcp.new.i
 
-Thanks!
+[1]: https://lore.kernel.org/all/23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com/
 
-[1/1] ASoC: cs43130: Constify snd_soc_component_driver struct
-      commit: 839e231a53b824a62bc3696ad3ba1dcedc4f4167
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Changes in v2:
+  - synch numbers with latest -next
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+v1: https://lore.kernel.org/all/22c2e12d7a09202cc31a729fd29c0f2095ea34b7.1722083270.git.christophe.jaillet@wanadoo.fr/
+---
+ net/ipv4/tcp_htcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/net/ipv4/tcp_htcp.c b/net/ipv4/tcp_htcp.c
+index 52b1f2665dfa..81b96331b2bb 100644
+--- a/net/ipv4/tcp_htcp.c
++++ b/net/ipv4/tcp_htcp.c
+@@ -185,7 +185,7 @@ static inline void htcp_alpha_update(struct htcp *ca)
+ 		u32 scale = (HZ << 3) / (10 * minRTT);
+ 
+ 		/* clamping ratio to interval [0.5,10]<<3 */
+-		scale = min(max(scale, 1U << 2), 10U << 3);
++		scale = clamp(scale, 1U << 2, 10U << 3);
+ 		factor = (factor << 3) / scale;
+ 		if (!factor)
+ 			factor = 1;
+-- 
+2.45.2
 
