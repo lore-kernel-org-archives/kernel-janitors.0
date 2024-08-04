@@ -1,96 +1,94 @@
 Received: from msa.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CF5AD59;
-	Sun,  4 Aug 2024 06:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB12B17999;
+	Sun,  4 Aug 2024 06:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722752503; cv=none; b=QQ7W2re8AnkmBoRKBveSmeA1HQl+CTJuAm79C199zNkdUBe5fKl3UDJRaFOtDsGMOlGduJS5ix3bM/w6/XJE9RF7M4H1cNRxEIwpPQ72iEA+kszvYsF/5d9a+1uuZrWcqk2R5MT9Jimo/t4p+lrRn61FyKvz0cv7Q9fa/AKu9Lw=
+	t=1722752841; cv=none; b=UvFDvX8ITvxPquhCEaHEKRG36GC0eBj38Z6Mey+497iE/xbCVE2mk/FPoNl7pqvbLT5H+4y8eXBMJg9iI33FctkyNmulC2bIqP4/ImVaAmX4aFhWl8gRW4WQsDjEc/H4pDNpHErq6E+Xu13E6X8IBhety4usRnqaGi6SWox0d+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722752503; c=relaxed/simple;
-	bh=oURTL4z7EwTZ+wwgMJpvnhXRloDEhni/d+4fvczDmFE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qDy+mUyRwdr3XcFDtOv9ALghpn4VBz/GiiR8Rct2wYBI3FbstTTDyX9p4Vl0nnwe7seOqHs4+M/YMj8Bgq2WHQoRJcLr7Q1d2IXOHSGqG/vdzLyLZiiknPbnQzpUENKErgEemu4oC/XUImAXe8e9a1dAOZ2bnVF1yB/qF0w1D40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Ys3DwchW; arc=none smtp.client-ip=80.12.242.74
+	s=arc-20240116; t=1722752841; c=relaxed/simple;
+	bh=lhndWAeFHr6FlmVuGr0sHq7jlCpyqORUtsItvsC44ts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CuRlqjgXb+39stNGu8XnWj3SwxPsk42bfnvrB8rdyl72Z53CLk8FlWvjmXhJf8ipEiFGL9l1q+GhsthTlfvGKEiqqKz/6JjaYDCMbVpbsbPgA2PWnqSrJhz21gVk/ZPmN7N4R3lAZPQkkfQEo9jpn4xaCIvbxAp0q++YH0dGPe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=AUB4Fw2Q; arc=none smtp.client-ip=80.12.242.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Ys3DwchW"
-Received: from fedora.home ([90.11.132.44])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="AUB4Fw2Q"
+Received: from [192.168.1.37] ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id aUbMsJNvIHEYLaUbMseFez; Sun, 04 Aug 2024 08:20:21 +0200
+	id aUi4szd3e95X4aUi4sqB7f; Sun, 04 Aug 2024 08:27:17 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722752421;
-	bh=XhsuUlKPKCQxLvLuiaDj5BLJuAdn0Jr06e3Dg3PwYzo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Ys3DwchWGhwFiD1UbkMxIm2Np12uIUujKaV7JK4NrRNl/vgoZmWDCVL4O24V4k5Y4
-	 ExRIhS+qcsy+/ktEgA0Ajfi8pV8hmD8cM3jH/s32cdMmMEJU2x2oELCvvbMG13j79n
-	 TJeS3q1yo99xsH/MPvN+B0EHXkLyVTbEhccDOvzp81ZUqwrvaQo8EN9CKzvLvjGUf/
-	 Jix3yYgZH1mC9Y/xpFB3sSuQE4deIWqzx92xoEtMay2zvOk4LR7850zMxAlIMNZ6gZ
-	 tZHd6E9lx5BszDLHJmcdLLshGtTTa5lLyGcSQ3pE1MTm2dkm6ME+pn1MlC3RfS8Rrt
-	 /oid708nTux1g==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 04 Aug 2024 08:20:21 +0200
+	s=t20230301; t=1722752837;
+	bh=8X9F99mm4QYNIwKVcFQ2SYZwZgY/uQ0zZxFeYsHM8Sc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=AUB4Fw2QEDgEJT7xUvaaoBKaLQVSpWdHt69uOZFyI+G56TcYraHSoIi60t74XUmWZ
+	 ha0OIm4aplGvzOAlMtMW280QcyKfM8bUcLK65dgQzfrtKpUeXTupRvP7fJrq9gxjfa
+	 xaAbSzyFTDhvTV19v1oWv/yLsbU83oDwP3i0FE4wVOUkKc2iZcVtMNQwNAmhdNf1X9
+	 lzC0rbEXz134298XZBibcQ/SZiSjpBsSeXrUAmrK5hgmLx3aahfQPzZUUIbCdVX7uk
+	 R349TFhMHjn6U6kdbOtYTQzriFVyfkNylVMP8gdCta1Nk/7AsVD5L6YQz70yR3pu+k
+	 zSoM7oxhA42lg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 04 Aug 2024 08:27:17 +0200
 X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v2] tcp: Use clamp() in htcp_alpha_update()
-Date: Sun,  4 Aug 2024 08:20:17 +0200
-Message-ID: <561bb4974499a328ac39aff31858465d9bd12b1c.1722752370.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+Message-ID: <68d63e24-ccd7-48ad-af38-0c9e2202a8f9@wanadoo.fr>
+Date: Sun, 4 Aug 2024 08:27:15 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: b43: Constify struct lpphy_tx_gain_table_entry
+To: =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>
+Cc: Kalle Valo <kvalo@kernel.org>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org,
+ b43-dev@lists.infradead.org
+References: <38528f48c8069187823b774a6b2a53088f6c9599.1721161231.git.christophe.jaillet@wanadoo.fr>
+ <20240717195743.31bdb01d@barney>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240717195743.31bdb01d@barney>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Using clamp instead of min(max()) is easier to read and it matches even
-better the comment just above it.
+Le 17/07/2024 à 19:57, Michael Büsch a écrit :
+> On Tue, 16 Jul 2024 22:21:13 +0200
+> Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+> 
+>>   static void lpphy_rev0_1_write_gain_table(struct b43_wldev *dev, int offset,
+>> -				struct lpphy_tx_gain_table_entry data)
+>> +				const struct lpphy_tx_gain_table_entry data)
+>>   {
+>>   	u32 tmp;
+>>   
+>> @@ -2356,7 +2356,7 @@ static void lpphy_rev0_1_write_gain_table(struct b43_wldev *dev, int offset,
+>>   }
+>>   
+>>   static void lpphy_rev2plus_write_gain_table(struct b43_wldev *dev, int offset,
+>> -				struct lpphy_tx_gain_table_entry data)
+>> +				const struct lpphy_tx_gain_table_entry data)
+>>   {
+>>   	u32 tmp;
+>>   
+>> @@ -2383,7 +2383,7 @@ static void lpphy_rev2plus_write_gain_table(struct b43_wldev *dev, int offset,
+>>   }
+>>   
+>>   void lpphy_write_gain_table(struct b43_wldev *dev, int offset,
+>> -			    struct lpphy_tx_gain_table_entry data)
+>> +			    const struct lpphy_tx_gain_table_entry data)
+>>   {
+>>   	if (dev->phy.rev >= 2)
+>>   		lpphy_rev2plus_write_gain_table(dev, offset, data);
+>> @@ -2392,7 +2392,7 @@ void lpphy_write_gain_table(struct b43_wldev *dev, int offset,
+>>   }
+> 
+> These three changes look like they are not necessary.
+> 
 
-It also reduces the size of the preprocessed files by ~ 2.5 ko.
-(see [1] for a discussion about it)
+Correct. I'll send a v2.
 
-$ ls -l net/ipv4/tcp_htcp*.i
- 5576024 27 juil. 10:19 net/ipv4/tcp_htcp.old.i
- 5573550 27 juil. 10:21 net/ipv4/tcp_htcp.new.i
-
-[1]: https://lore.kernel.org/all/23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com/
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
-
-Changes in v2:
-  - synch numbers with latest -next
-
-v1: https://lore.kernel.org/all/22c2e12d7a09202cc31a729fd29c0f2095ea34b7.1722083270.git.christophe.jaillet@wanadoo.fr/
----
- net/ipv4/tcp_htcp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/ipv4/tcp_htcp.c b/net/ipv4/tcp_htcp.c
-index 52b1f2665dfa..81b96331b2bb 100644
---- a/net/ipv4/tcp_htcp.c
-+++ b/net/ipv4/tcp_htcp.c
-@@ -185,7 +185,7 @@ static inline void htcp_alpha_update(struct htcp *ca)
- 		u32 scale = (HZ << 3) / (10 * minRTT);
- 
- 		/* clamping ratio to interval [0.5,10]<<3 */
--		scale = min(max(scale, 1U << 2), 10U << 3);
-+		scale = clamp(scale, 1U << 2, 10U << 3);
- 		factor = (factor << 3) / scale;
- 		if (!factor)
- 			factor = 1;
--- 
-2.45.2
-
+CJ
