@@ -1,36 +1,37 @@
-Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE5513DDB8
-	for <kernel-janitors@vger.kernel.org>; Mon,  5 Aug 2024 06:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0724F149002
+	for <kernel-janitors@vger.kernel.org>; Mon,  5 Aug 2024 06:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722840067; cv=none; b=KaU305M7MvzPv4ejNyHF5fsW9FjbF7MmPWh2Dx+Wb2b3kcTWCCedHqfIqHYyFmKj9sMTeqngGpynlq5VyY/rtrgUEWprug6KCZaJIWZwr9FBV++xxI+an1oxp7SKt5Ssa3Hp5aYw4KoRP7T+Dv3eSFBBhjyeic+wcZ43h22g0TM=
+	t=1722840088; cv=none; b=RIkAlXejhWOjPMRoLpWGwx3YJLTvdXGCHvccVdJMqR5pjd9+iTQt8kRvPc1pXJjsiFuHBaMuTF83TEvCoX1FlXOn2deM+dvkwNf+rOPguPXjKpaOMXLN3DaJcxX0mRpPFCosey7FXHJ60panXAluETSeWS4KS2RztOPf+3TUR4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722840067; c=relaxed/simple;
-	bh=UF7et2QqACNgp6O1SUQXlgg+/VGMgi+IZGWPoTIYheU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ocHqkDy9He1Ous4dbBwBEBufxjfGPQVPEiiGEQAr/i1TJpMsGbrnhHyYiIhb1Y7/6tfRaFAZzPhqlaac6npA0kXLLNherzpgwpkwYH6Aly/2yP4n72ElOK8qFuJmASv3jyUNd45kZ0rD89E2nh8JUzRDXrQc/+EPS85bUriUVVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ehzcHu/o; arc=none smtp.client-ip=193.252.23.217
+	s=arc-20240116; t=1722840088; c=relaxed/simple;
+	bh=mYdDauKLkFehc0PPjkbY+QSlVdHIA1mUlEQXWR7Yk6g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=G5Mo8cIQ3r+CWz6sgNEemed5F4H6HkBG8aDr4uyDS81k870EAoNWOj1ImrAhZcGDJ2cohkhheAsjdMVcs8t73qf0rhgDDABK2aulYvT2RKZqJnn4kLkaYsoDGzS/TkHovMtfjUMkId+FFZZm2tjwKPyC6mLjFxHM5YjneUeOg/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=leducTY+; arc=none smtp.client-ip=80.12.242.22
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ehzcHu/o"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="leducTY+"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id arOns5eD41n2IarOnsUUL2; Mon, 05 Aug 2024 08:40:55 +0200
+	id arOns5eD41n2IarPJsUUkH; Mon, 05 Aug 2024 08:41:25 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722840055;
-	bh=bhu0kj/E+bTLzKxE31tljXZoIT0Y2DQ63u7XVU/JDPc=;
+	s=t20230301; t=1722840085;
+	bh=fZnfV4gskIqv87dNYmFTGpAnTyJ6Dtl1w8GxFk9Ipsc=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=ehzcHu/oAgH+tJ/8KcriYSs256oALIWR7NiwC25+g8kjWSAuXtxBPK8jP6uoIWYEX
-	 m8K9a8b+oSN0bX1ZgBFfvaWs6rZYxWOOpVkrGWsEvV6FUdXsJM7fMap3f6yPEVp7WQ
-	 zU/SehWywmRy1ZoSMB27mvnmi9pt7nvyRpCGDEE2VIOZkMbhaDt0n/eAA0rVX7EYaG
-	 vitndP/CswLd1ezgrPSET3uqUDBtWAmKJYaVC4bjFqSx9EADHBfB8iXf8buvw52QLc
-	 21Xw1i4Lk3/ZTSEuKoPAUAWASMoK4EwJ9IJtyfzPJCJPicCvtcG9vnT8lTsf7xeLrq
-	 1fdKgLL3K3WDQ==
+	b=leducTY+nH174RYYnTi12fdGoxirXsmTUaoCHwknPPZws/E+6h0HBDwuc1Mtkcqjw
+	 C7U6juRV53WE3+xrABBaxXptE2+ZzEyMiII2Gp3cn/GTVvv3sN3LDuKlDbyX4jKHA5
+	 aGgDFHBbyTyGmGUPWY1YDoGz8vmVtoD6nNIr6p5VBCpCKJsLRR+gfl8gkg9WB6NaLe
+	 u8qUjB4ULngW2vz6aSxZTrunRjI7xEWb+xqznSPk11OQWaocEzZ0VpDPAfVPV8Rwur
+	 Q59OTLkzCtflgywuy296JcDEzY58E6o44Hy4ASu3RNnlt4Dz26olSGTxBSlXTHzofu
+	 EyL6pslWfeUXw==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 05 Aug 2024 08:40:55 +0200
+X-ME-Date: Mon, 05 Aug 2024 08:41:25 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: stas.yakovlev@gmail.com,
@@ -47,10 +48,12 @@ Cc: linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2 0/3] Constify struct lib80211_crypto_ops
-Date: Mon,  5 Aug 2024 08:40:36 +0200
-Message-ID: <cover.1722839425.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 3/3] staging: rtl8192e: Constify struct lib80211_crypto_ops
+Date: Mon,  5 Aug 2024 08:40:39 +0200
+Message-ID: <dfda6343781ae3d50cd2ec7bbdcf76a489b6922a.1722839425.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <cover.1722839425.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1722839425.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -59,50 +62,65 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This serie constify struct lib80211_crypto_ops. This sutructure is
-mostly some function pointers, so having it in a read-only section
-when possible is safer.
+Now that functions in lib80211 handle "const struct lib80211_crypto_ops",
+some structure can be constified as well.
 
+Constifying these structures moves some data to a read-only section, so
+increase overall security.
 
-The 1st patch, update some function prototypes and data structures in
-lib80211.
-
-The 2nd patch constifies some struct lib80211_crypto_ops in lib80211.
-This moves some data to a read-only section, so increase overall
-security.
-
-The 3rd patch does the same for staging/rtl8192e.
-
-Note that the functions have looked in staging/rtl8192e look really
-similar to the ones in lib80211. Maybe it could be removed in favor of
-the latter.
-
-
-Each patch in the serie has been compile tested only.
-
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
 
 Changes in v2:
-  - patch 1: Update ipw2x00/libipw_wx.c as well   [Simon Horman]
-  - patch 2, 3 : no changes
+  - No changes
 
+v1: https://lore.kernel.org/all/81be9eb42a2339eaa7466578773945a48904d3b5.1715443223.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/staging/rtl8192e/rtllib_crypt_ccmp.c | 2 +-
+ drivers/staging/rtl8192e/rtllib_crypt_tkip.c | 2 +-
+ drivers/staging/rtl8192e/rtllib_crypt_wep.c  | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Christophe JAILLET (3):
-  lib80211: Handle const struct lib80211_crypto_ops in lib80211
-  lib80211: Constify struct lib80211_crypto_ops
-  staging: rtl8192e: Constify struct lib80211_crypto_ops
-
- drivers/net/wireless/intel/ipw2x00/libipw_wx.c |  2 +-
- drivers/staging/rtl8192e/rtllib_crypt_ccmp.c   |  2 +-
- drivers/staging/rtl8192e/rtllib_crypt_tkip.c   |  2 +-
- drivers/staging/rtl8192e/rtllib_crypt_wep.c    |  2 +-
- drivers/staging/rtl8192e/rtllib_wx.c           |  2 +-
- include/net/lib80211.h                         |  8 ++++----
- net/wireless/lib80211.c                        | 10 +++++-----
- net/wireless/lib80211_crypt_ccmp.c             |  2 +-
- net/wireless/lib80211_crypt_tkip.c             |  2 +-
- net/wireless/lib80211_crypt_wep.c              |  2 +-
- 10 files changed, 17 insertions(+), 17 deletions(-)
-
+diff --git a/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c b/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
+index 639877069fad..138733cb00e2 100644
+--- a/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
++++ b/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
+@@ -378,7 +378,7 @@ static void rtllib_ccmp_print_stats(struct seq_file *m, void *priv)
+ 		   ccmp->dot11rsna_stats_ccmp_decrypt_errors);
+ }
+ 
+-static struct lib80211_crypto_ops rtllib_crypt_ccmp = {
++static const struct lib80211_crypto_ops rtllib_crypt_ccmp = {
+ 	.name			= "R-CCMP",
+ 	.init			= rtllib_ccmp_init,
+ 	.deinit			= rtllib_ccmp_deinit,
+diff --git a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
+index dc0917b03511..74dc8326c886 100644
+--- a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
++++ b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
+@@ -678,7 +678,7 @@ static void rtllib_tkip_print_stats(struct seq_file *m, void *priv)
+ 		   tkip->dot11RSNAStatsTKIPLocalMICFailures);
+ }
+ 
+-static struct lib80211_crypto_ops rtllib_crypt_tkip = {
++static const struct lib80211_crypto_ops rtllib_crypt_tkip = {
+ 	.name			= "R-TKIP",
+ 	.init			= rtllib_tkip_init,
+ 	.deinit			= rtllib_tkip_deinit,
+diff --git a/drivers/staging/rtl8192e/rtllib_crypt_wep.c b/drivers/staging/rtl8192e/rtllib_crypt_wep.c
+index 10092f6884ff..aa18c060d727 100644
+--- a/drivers/staging/rtl8192e/rtllib_crypt_wep.c
++++ b/drivers/staging/rtl8192e/rtllib_crypt_wep.c
+@@ -209,7 +209,7 @@ static void prism2_wep_print_stats(struct seq_file *m, void *priv)
+ 	seq_printf(m, "key[%d] alg=WEP len=%d\n", wep->key_idx, wep->key_len);
+ }
+ 
+-static struct lib80211_crypto_ops rtllib_crypt_wep = {
++static const struct lib80211_crypto_ops rtllib_crypt_wep = {
+ 	.name			= "R-WEP",
+ 	.init			= prism2_wep_init,
+ 	.deinit			= prism2_wep_deinit,
 -- 
 2.45.2
 
