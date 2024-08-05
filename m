@@ -1,153 +1,185 @@
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006D213C80A;
-	Mon,  5 Aug 2024 17:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9D714A85;
+	Mon,  5 Aug 2024 19:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722879951; cv=none; b=UVfR9P47AtA+TJB2xGAWTBLOTgv/++L1SAqDJMjkW8erb4QHRDC3clwVzNDmWrUEgGvS/uVjXm/oEiCBq3GO/gWIG862RVCeCBu9wRa+5/Cy+z13yugeaIg8ukuGFbPUdWv6e/6BKnznUJbx0Nr5N2Z3EyicNjK+8T7SlhwWvQ4=
+	t=1722887553; cv=none; b=OmE1I+b5lUBA55idkf55v5IpZus5B/ELOOqm+G2PKvnMW5jmV0sWKGUsECIsXxNiRhNwP6TMSQ0ObHoKvwQ0MdUZouUxbc+C3VppFPgzLMCFkhKgVa3Jnwc3nAwLipw8bVAirZf+TdmazlDc+L77u/tjEExzWyijUA6EsEg6Va4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722879951; c=relaxed/simple;
-	bh=R0ij0TpmdhIJn5jKNmeFNCjk6XB6VE2j/jtnDm9XQwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BwHNYAG4HNlxnk3Y6EExq6M7raJAHcxCTL6iWYi6LbBfPFJbUsiHYnZ2QOHMX1Prhbdh4o4sRfancgNRs9fZHGqtWYj8Yga+rxEnolsvODr+Ejc8AQ/PU3tDEE+y+UkbHFQlAzrEBlofnnaAB9PrGyMtA9/bjZMevGFnC1xkKuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ug529BHH; arc=none smtp.client-ip=209.85.219.173
+	s=arc-20240116; t=1722887553; c=relaxed/simple;
+	bh=9VSLOEaSeCQsM6p0uLK4UvCRpl1MQVbM/4gE04COamQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B3MuevrIwCtGBAgvjvzAeEYiQwAEjwr6RrUCeDNgrlndd4rl+U1XXnSR4M3SQ1hJ+Q8PbaMc+wP0zCkGtLL9a98a2L/GnYOJ+SDj7oPaThXc37gRK1mZKD7Rzf/8rJHfujq87mlBpp661v/C2OrcB0h5ILJJlNJClh/WFEJJR+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A9jcgOuA; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ug529BHH"
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e0b7efa1c1bso7787198276.3;
-        Mon, 05 Aug 2024 10:45:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A9jcgOuA"
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70cec4aa1e4so7400855b3a.1;
+        Mon, 05 Aug 2024 12:52:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722879949; x=1723484749; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=OX+PY7gF3U5W8FwleDOndTOyh6TKnpOOiqby/oVYKps=;
-        b=Ug529BHHEdTHudV30NhJe6LH/418i1P7oATsZJXZWnh7drlaKQ8XJFxc71AoqzxRgZ
-         kr7RvtELLazNWRTFr4FYDoERlOd6HTnWGRge+ghJe82Vb+VWeDb5epfUaXanu5nShZEx
-         c+DvudXZBTH97YYXS0fnxdyAtbMA13Yo6UCyR6GoENcB5HBmEU5HvCgI8mtJScgqqu62
-         vABg9LRgfD1ZxtBSgZbQ2X82sDG4UkaE0ClIKsuPbgNtPLF4wmVeOxYaJgnnKwC0ocxQ
-         jCThgndajAWdKE6JS5cHxMlCOqZ1ojX5rEcQmGcagRcriuv3VqYucrjjbgOkOtIukf5c
-         UVIQ==
+        d=gmail.com; s=20230601; t=1722887551; x=1723492351; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0HlAePfdGUtDDXh2mo5MYu8Z88Te8t6lOKxNdEz/0mg=;
+        b=A9jcgOuAMtZdMTyzPKZg2Eq6A3UHdhCdDr3Y96kWvCeUfJfF1uABc4d4JxWl4tjq0D
+         QHmZyP6dcD8MilY6dDixX4fQh+1+gqPPKt8LJsynVDTYhGCuh1Inidrqzz1FGfaVNs03
+         zmjBalc7S6o6syBXcaU57OrplICzFpLgDRn9lQgmcCzSsyWN36htqgRnPjWzRhptsc/I
+         uJHh5FUBBUzSl+yNpIaZt/mfRjOcWsjdBQGGEcCVzf28KYr3YOzPBPY9j17+FUqk4L77
+         1bNwv5YAE5HcI4yXWprP+o+umrZDWGsT2NN5E6JQkNCs0mBGKGIXkDtY6jzS2npDmuUl
+         sqgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722879949; x=1723484749;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OX+PY7gF3U5W8FwleDOndTOyh6TKnpOOiqby/oVYKps=;
-        b=NctiXTTB4PD+heZOwJ81BDLdNzCnsKrYNdUWwoDraOJ4zcTa2e3AKQWCNtPi0weztf
-         09OXL63X/79WXBJMsM/raqlHB5PrTTvYhdaVpXLH0kVQxt2Ot/9HttTWnlYjrK6OmNot
-         awbA876WOdBfYZfyCnk2+C9r7HHLMJnJ4SSbsAZSHDIUxV0Rl7/6Cim9DOTkZMePp4/H
-         9q3awSIX6rZzaVJqAzR80M7xhnyMyEUm6HKsG5VSrVxph8RupmVxGCx53f+wsMEITm5e
-         zYv0G3dyD9rCabLfSKsujecu4XBWBFZYaHJcmjuQRnzT/aITivlJ9qOgYhWj0WrkbqO8
-         bU3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWu5mqugMGpp7rjUjdR2WSWKWLpbYs7u4/oKjyFFSwYR/D6Na8Z8I2B3s0WE23TMXZbvc/6YL1jDUddzOne+JR4zEZM1F5h7vBZYdsZA1rofMnWRyG59EgcHXq1tDBEm9jKFH7vNhrwQLao3Hop
-X-Gm-Message-State: AOJu0Yz3UsPXrYFmRgt0TkFGwyHbNUO6C/IgPzQ0yUptt4g1vDn+9QRZ
-	Yf14edTfAVOPLIFxxNQ8rnSs/A+KKu9+Rs0uwM6yn6EEKyWvo9Ha
-X-Google-Smtp-Source: AGHT+IFbbScgWJ3FZrPKiuR3GszwrMjkfGx6vro9oZ10wFRgK99FTq/zPxkZIzItl9CrOoJilMd5sA==
-X-Received: by 2002:a25:e0d7:0:b0:e0b:5b37:d0c9 with SMTP id 3f1490d57ef6-e0bde346ab3mr13816149276.14.1722879948852;
-        Mon, 05 Aug 2024 10:45:48 -0700 (PDT)
-Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a34f6ffdf7sm372917385a.71.2024.08.05.10.45.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 10:45:48 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 184E9120006C;
-	Mon,  5 Aug 2024 13:45:48 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Mon, 05 Aug 2024 13:45:48 -0400
-X-ME-Sender: <xms:yw-xZlB_g4xAHK1qh2uCfPgtxTeicCg1mzfSl8x0PEcI_AWX0tpEZg>
-    <xme:yw-xZjgxFf6gzuYPPQj2RLJgH1yZ0TdXmVs8mtv0TJ0BxhOxJKTdvwVYMekX9enXM
-    5HfM6Bsd1G_BfVcWQ>
-X-ME-Received: <xmr:yw-xZgmdPiC1_o5jzdaOgjRryTHxcAlo0jMr0uJU6iu5zrDtsQoz2nmmv4YUd4kjqD8YL80m8P63KIVoc2wx4nFcsLI30-Rx>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeeigdduudelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggugfgjsehtqhertddttdejnecuhfhrohhmpeeuohhq
-    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
-    grthhtvghrnhepfedtvdfgudfftdfffeejvdegtddvvdfhkedugfegkeeftdffledtueet
-    gfevkeetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhht
-    hhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquh
-    hnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghp
-    thhtoheptd
-X-ME-Proxy: <xmx:zA-xZvxe7tL8fxdsdDet2f0z-_wBeJu08Kc8w_65i58OyDZjo9cvKA>
-    <xmx:zA-xZqSdaE0V3M-gETq15x7A1X7LSAr7WPKGjBzQrBfPyHUKhVnf5g>
-    <xmx:zA-xZiYTQ_-_Z2vHMF8LBECi5tDBVc5IkJ_of7DJaMmo7Cmx1NpIoQ>
-    <xmx:zA-xZrTcaABZkrX-AaI9GlauEfuiwaxjTdCYNhYqq9U6m_60cxhvIA>
-    <xmx:zA-xZoB9kPk9APgdNaGM6yqfzNwiosbKmk4TKaKc8Ky-auGTeYAyxVBw>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 5 Aug 2024 13:45:47 -0400 (EDT)
-Date: Mon, 5 Aug 2024 10:46:25 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
-	kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] locking/lockdep: Simplify character output in seq_line()
-Message-ID: <ZrEP8QlnhztnwvWy@tardis>
-References: <aa9e1986-8631-405e-96f5-86a0f5a1eab2@web.de>
- <975d2b0f-f84c-4c84-adf2-098fef59d90b@redhat.com>
- <7560b341-27b4-45b9-8b73-202ec7f27200@wanadoo.fr>
- <e346d688-7b01-462f-867c-ba52b7790d19@web.de>
+        d=1e100.net; s=20230601; t=1722887551; x=1723492351;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0HlAePfdGUtDDXh2mo5MYu8Z88Te8t6lOKxNdEz/0mg=;
+        b=L7uLam8uwSMd/HyTjHq6BYLvrGSiDgz6odEkJlW6a8oDI/nSYy+8sk1cYZG3L/3WUM
+         +HtHrsktxqgp5rb8lBHAFNXSKgU4npLwoHZejc+CjhKJO3bgz06DAIR7wf/kkYcnn99X
+         KyEZ8myeEYXgm3aIACGeoIw7y3QCmhvLy5RKHfApzMC4O+CTShdOCbu7lQTObwhWLzmd
+         w2svNAp+BXr2vBqR46Pcu/WgdKDsTEbpSKzMO/xUTEoOF/T+jMABoMj3xlRcjFhbchUh
+         9Us+mmeQEObHKTF5FtMwvHyrGu7+QoRQJbTd4woT4TqYp/zFrSAiLnvqvjp67U/qBql/
+         Hoow==
+X-Forwarded-Encrypted: i=1; AJvYcCW2ShcKINBQ0DlBUcwcDjeaHos4TVHxNOb/4P2N8ZjhCQnop5fOvyBBHH4iGsCWV+v21iVW7UVH5MmpCboevgPVVYpg7a+0cenWJI2p0lLt9BtFESlKWNBbGiAZsVfqhJHqvs5HiiOLlmGVRz8m
+X-Gm-Message-State: AOJu0YxEVaDvkPPw//Nf3YbftGftXkb/hXzxH3KSQ/OURzDDOB1kMSGK
+	7p8RchyylOLjymlY3FVajAkaBChOT9VrC7cmtGXldf+xEQCNqi5+QCmH3y0TUYDPNXqJmoJag6b
+	G7Jn32JmAw9buriPP8TypgBjyQZ0=
+X-Google-Smtp-Source: AGHT+IHD6mP8SxzNmBFzhhHmk0yrW6460OtmeCKxd9zkNwGyWG7aj7cAJ++vLvTXwtV9xxS0vkvdBsafUOrPg1LHZz4=
+X-Received: by 2002:a05:6a00:a93:b0:70b:a46:7db3 with SMTP id
+ d2e1a72fcca58-7106d02ba17mr15666583b3a.19.1722887550766; Mon, 05 Aug 2024
+ 12:52:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240802114252.449452-1-colin.i.king@gmail.com>
+In-Reply-To: <20240802114252.449452-1-colin.i.king@gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 5 Aug 2024 15:52:18 -0400
+Message-ID: <CADnq5_Ouob7zaqF1uTwL70QnWegEpvi0kkJY42yULPfCoW5d_Q@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amd/display: remove extraneous ; after statements
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Chaitanya Dhere <chaitanya.dhere@amd.com>, Jun Lei <jun.lei@amd.com>, 
+	Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Xinhui.Pan@amd.com, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <e346d688-7b01-462f-867c-ba52b7790d19@web.de>
 
-On Mon, Jul 15, 2024 at 10:51:44AM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 15 Jul 2024 10:42:17 +0200
->=20
-> Single characters should be put into a sequence.
-> Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D for one se=
-lected call.
->=20
-> This issue was transformed by using the Coccinelle software.
->=20
-> Suggested-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Applied.  Thanks!
 
-Queued this at:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux.git/ lockdep-f=
-or-tip
-
-Thanks! And given Christophe's comment, the original one is not needed,
-so drop it.
-
-Regards,
-Boqun
-
+On Fri, Aug 2, 2024 at 8:00=E2=80=AFAM Colin Ian King <colin.i.king@gmail.c=
+om> wrote:
+>
+> There are a several statements with two following semicolons, replace
+> these with just one semicolon.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  kernel/locking/lockdep_proc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
-> index e2bfb1db589d..6db0f43fc4df 100644
-> --- a/kernel/locking/lockdep_proc.c
-> +++ b/kernel/locking/lockdep_proc.c
-> @@ -424,7 +424,7 @@ static void seq_line(struct seq_file *m, char c, int =
-offset, int length)
->  	for (i =3D 0; i < offset; i++)
->  		seq_puts(m, " ");
->  	for (i =3D 0; i < length; i++)
-> -		seq_printf(m, "%c", c);
-> +		seq_putc(m, c);
->  	seq_puts(m, "\n");
->  }
->=20
+>  .../drm/amd/display/dc/dml2/dml21/dml21_translation_helper.c  | 2 +-
+>  .../dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c        | 2 +-
+>  .../display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c    | 4 ++--
+>  drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c              | 2 +-
+>  4 files changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_translation_=
+helper.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_translation_help=
+er.c
+> index 65776602648d..9956974c4527 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_translation_helper.=
+c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_translation_helper.=
+c
+> @@ -1040,7 +1040,7 @@ void dml21_copy_clocks_to_dc_state(struct dml2_cont=
+ext *in_ctx, struct dc_state
+>  void dml21_extract_legacy_watermark_set(const struct dc *in_dc, struct d=
+cn_watermarks *watermark, enum dml2_dchub_watermark_reg_set_index reg_set_i=
+dx, struct dml2_context *in_ctx)
+>  {
+>         struct dml2_core_internal_display_mode_lib *mode_lib =3D &in_ctx-=
+>v21.dml_init.dml2_instance->core_instance.clean_me_up.mode_lib;
+> -       double refclk_freq_in_mhz =3D (in_ctx->v21.display_config.overrid=
+es.hw.dlg_ref_clk_mhz > 0) ? (double)in_ctx->v21.display_config.overrides.h=
+w.dlg_ref_clk_mhz : mode_lib->soc.dchub_refclk_mhz;;
+> +       double refclk_freq_in_mhz =3D (in_ctx->v21.display_config.overrid=
+es.hw.dlg_ref_clk_mhz > 0) ? (double)in_ctx->v21.display_config.overrides.h=
+w.dlg_ref_clk_mhz : mode_lib->soc.dchub_refclk_mhz;
+>
+>         if (reg_set_idx >=3D DML2_DCHUB_WATERMARK_SET_NUM) {
+>                 /* invalid register set index */
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2=
+_core_dcn4_calcs.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_cor=
+e/dml2_core_dcn4_calcs.c
+> index 13f2c80bad4c..54197d18ab19 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_d=
+cn4_calcs.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_d=
+cn4_calcs.c
+> @@ -7218,7 +7218,7 @@ static bool dml_core_mode_support(struct dml2_core_=
+calcs_mode_support_ex *in_out
+>  #if defined(DV_BUILD)
+>                 // Assume a memory config setting of 3 in 420 mode or get=
+ a new ip parameter that reflects the programming.
+>                 if (mode_lib->ms.BytePerPixelC[k] !=3D 0.0 && display_cfg=
+->plane_descriptors[k].pixel_format !=3D dml2_rgbe_alpha) {
+> -                       lb_buffer_size_bits_luma =3D 34620 * 57;;
+> +                       lb_buffer_size_bits_luma =3D 34620 * 57;
+>                         lb_buffer_size_bits_chroma =3D 13560 * 57;
+>                 }
+>  #endif
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2=
+_core_shared.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dm=
+l2_core_shared.c
+> index c54c29711a65..8f3c1c0b1cc1 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_s=
+hared.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_s=
+hared.c
+> @@ -6464,8 +6464,8 @@ static void CalculateSwathAndDETConfiguration(struc=
+t dml2_core_internal_scratch
+>                         p->SwathHeightC[k] =3D l->MaximumSwathHeightC[k] =
+/ 2;
+>                         l->RoundedUpSwathSizeBytesY[k] =3D p->full_swath_=
+bytes_l[k] / 2;
+>                         l->RoundedUpSwathSizeBytesC[k] =3D p->full_swath_=
+bytes_c[k] / 2;
+> -                       p->request_size_bytes_luma[k] =3D ((p->BytePerPix=
+Y[k] =3D=3D 2) =3D=3D dml_is_vertical_rotation(p->display_cfg->plane_descri=
+ptors[k].composition.rotation_angle)) ? 128 : 64;;
+> -                       p->request_size_bytes_chroma[k] =3D ((p->BytePerP=
+ixC[k] =3D=3D 2) =3D=3D dml_is_vertical_rotation(p->display_cfg->plane_desc=
+riptors[k].composition.rotation_angle)) ? 128 : 64;;
+> +                       p->request_size_bytes_luma[k] =3D ((p->BytePerPix=
+Y[k] =3D=3D 2) =3D=3D dml_is_vertical_rotation(p->display_cfg->plane_descri=
+ptors[k].composition.rotation_angle)) ? 128 : 64;
+> +                       p->request_size_bytes_chroma[k] =3D ((p->BytePerP=
+ixC[k] =3D=3D 2) =3D=3D dml_is_vertical_rotation(p->display_cfg->plane_desc=
+riptors[k].composition.rotation_angle)) ? 128 : 64;
+>                 }
+>
+>                 if (p->SwathHeightC[k] =3D=3D 0)
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c b/drivers/g=
+pu/drm/amd/display/dc/dml2/dml2_utils.c
+> index 7655501e75d4..9e8ff3a9718e 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c
+> @@ -421,7 +421,7 @@ unsigned int dml2_calc_max_scaled_time(
+>
+>  void dml2_extract_writeback_wm(struct dc_state *context, struct display_=
+mode_lib_st *dml_core_ctx)
+>  {
+> -       int i, j =3D 0;;
+> +       int i, j =3D 0;
+>         struct mcif_arb_params *wb_arb_params =3D NULL;
+>         struct dcn_bw_writeback *bw_writeback =3D NULL;
+>         enum mmhubbub_wbif_mode wbif_mode =3D PACKED_444_FP16; /*for now*=
+/
 > --
-> 2.45.2
->=20
+> 2.39.2
+>
