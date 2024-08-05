@@ -1,182 +1,97 @@
-Received: from msa.smtpout.orange.fr (out-70.smtpout.orange.fr [193.252.22.70])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DC313F43B
-	for <kernel-janitors@vger.kernel.org>; Mon,  5 Aug 2024 06:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3401494C4
+	for <kernel-janitors@vger.kernel.org>; Mon,  5 Aug 2024 07:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722840614; cv=none; b=HhsbbrMjZuyFX/8gT0CveLMBGj9L9johbLUi7GwdvvWjeaUbJ9fPwuzm/mi0QP3ruBi2l+USFF4MfObrW3uPVkfSOLAv9r4CbaPSiU4GegBbXPuULQmOt0nqYbydwEXBcGKMCVZ04PfJWLtULvlNp0wLZFHg+e8z8NoG+hIdS7k=
+	t=1722842623; cv=none; b=AC4qrkgEYmohK2OEK+TaQ46OE+0tjyR2FPyZp71UEa2JNLAwMImyO3QdeweRzPncspAi4pT5P2Fx0DfwuzZdeDvaXFyseNIlv3YOVgwRqZqKkeYq3Ts4JbqyiJ720tPQ/vHa2irnhuS2e8OfUdnCAvqt1jve+g8E1GZWOFq225o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722840614; c=relaxed/simple;
-	bh=FOxLg/rjd+wx2gGUg26Wm5kTSqi5cfymcYGSwAhPckE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CKA955LuYuvNlhJy9K1I0bclZtWoXcrbVeFlpPXShMdx/yJdH0SSOezxquffrchLSEGnFmxB2jzNl1bz1cJB0/oPzTqg6JbHbovrQvuqVtylbXsHUBu/HHLTDEDSoE6aLCxTPH6R0eDfCRaVf1o8zuS7uvf8JP6X33s6NbakWkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=hoWU7ZkO; arc=none smtp.client-ip=193.252.22.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1722842623; c=relaxed/simple;
+	bh=umFpxCUn+au3HF2NxksXKJAeihuMffW9VkiyHlVMD4k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GgRKXU6fsnp769C5nC8VPCUjh07/7hPqBI9M9yAIQwWNAcJ+iZm7hSB+bSOkyXkuMuGixqMZbDMgJIM0OkDYnONhXGxQcwk5MiluL3d1tJjtPC4E4CGWYlHoF95ken/lQ0+SB5xrRXOANMhjoyJVF0orZStTOZXDU4YHrdOZV20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qVIMX+Fk; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="hoWU7ZkO"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id arOns5eD41n2IarOysUUU1; Mon, 05 Aug 2024 08:41:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722840065;
-	bh=BTMGc4u3HwGHSgbua/br9tG9eY8eSlRj2fRBlapv5XQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=hoWU7ZkOdBOFpDQo3fOvMRWc35GG2wcIDzG5LTLNRtGsWVyjsz7c9oHoBbTGrCBgY
-	 hIjitd8nHnAlqknNUyBpozmaq7SMxxBOLsvyJ89V+CJWzrAvyMQhT5WMMInw5f3tqr
-	 Vq8nj6fvxp9EYj0vEiBR7erIp1Gh9CHv3jU65s8y3/4in/51F92q7kPvnYVO7Y9f0p
-	 EL7wWzpesIOHgLjHExDH1KI8umY+GFtPNXOz86l1riwNTRnxL5+ucrgEgngeeZZunN
-	 yh9+KSJvypK8GFo9q6NFpDiZ4K/u85ojHtJQsMzR2P2dvo9EfVyD8SIJr/XZkB4UHJ
-	 GkwbZ3QQvZmjA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 05 Aug 2024 08:41:05 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: stas.yakovlev@gmail.com,
-	kvalo@kernel.org,
-	gregkh@linuxfoundation.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	johannes@sipsolutions.net
-Cc: linux-wireless@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2 1/3] lib80211: Handle const struct lib80211_crypto_ops in lib80211
-Date: Mon,  5 Aug 2024 08:40:37 +0200
-Message-ID: <c74085e02f33a11327582b19c9f51c3236e85ae2.1722839425.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1722839425.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1722839425.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qVIMX+Fk"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52efd530a4eso15765538e87.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 05 Aug 2024 00:23:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722842620; x=1723447420; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sodQ83Zi4tI79ZwD9QYiXR5Km+yKuCSvXk/CIGbleQQ=;
+        b=qVIMX+FkpbZYvB6jCVBNdEUBQEIbK/X9wSg+XrJq5sTIAc+fqFP5jFEFTBYI5Lo5fl
+         /9uuQvd2wIoOe8kFrOhBAjPTRoQdWk4a85H4hQ3fjVrxDPeEasEBWx/9D0N5n3qPu4Cy
+         6U5JGsAmWru0Ia0D2X1xrgbB6Y99vdjX3poeLLMNoospA8IJbsE1UMfaxrt+4fET+hfK
+         NMWvVPs13mJd9w6v7VX8vdWqJReErnYcgw3E6qJkuigZdMiY1h4lOFerCoQxD1hsb3Sn
+         o9wVZsDRetagQcNrnhmq2ArTPXYvKUJiGQTZpqfkiHAATPZUp3x6gmdqnfJW/BXHCdJT
+         vLwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722842620; x=1723447420;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sodQ83Zi4tI79ZwD9QYiXR5Km+yKuCSvXk/CIGbleQQ=;
+        b=bJfTofeuGizTUzmzUG67xjR8zVg19HbSi6gDyN8d5Rw2UAoUPTafG5g0PiU+D/bwPd
+         iTR+Ce3xfldC1cTrqHEZQpBOSFfK/t8TOvoeTn7eNS2uGdM7GpGsps5pMWGm+JtwHuoG
+         n3dJmy4Cxss2BbgU2mBCbv+74/0P/JEMLXihlRnMGAsRLOuj0Zk8R+nB6D7Wdok/yNcC
+         TD1HL8p1Ywn5arwNrx0TqdyAZdT+aAYUXe3jAYfVeIlnlHk5FIvvcrU2MSgXpnG9HThd
+         BqVVLrpc4uSXVJHezR5P8A6MjzTbOVNJPUMqHMm09GjNwBvDBjrPxFkTEQlvTiyJOFox
+         O41Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXu9pHYG2qmFku6gpCetmk3ELaB6Vy8DKh2jJErlEtMsl+Dfjw8+leuxBwRbR9dzMI/S5bTq6p0LMutXLkRqo/QQhVD29obRaoN1LXSnP4l
+X-Gm-Message-State: AOJu0YwKMj0iEF+5MfdDvWh7VXrOcv8wrmb7v1vGfdYuFkX2xCt1OlmR
+	EVJUk5L3JU7C60rSJe4JExK1HnGi/nI38a84QnLkkENnzvPUdu/LAEUJiRBQUPnKq+mc5BgJEcS
+	ASaByEjPtIVqcDJ4WcBTJLDm43kOjCERMoLtsKQ==
+X-Google-Smtp-Source: AGHT+IHMEDV/XB6PuAMs/y2jmCQDs4ViBP5jan/yA0s8errZ3yGWl59Dy3YOXALgdmE/wb9d85ASLLh4iw4wGNH8EhY=
+X-Received: by 2002:a05:6512:ac6:b0:52f:159:2dc5 with SMTP id
+ 2adb3069b0e04-530bb39b813mr8199730e87.42.1722842619801; Mon, 05 Aug 2024
+ 00:23:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1720556038.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1720556038.git.christophe.jaillet@wanadoo.fr>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 5 Aug 2024 09:23:28 +0200
+Message-ID: <CACRpkdbp4HhXNutMgA-tBbQSzzO0zq9Tia3WS_fXNtgJ6Xr8ag@mail.gmail.com>
+Subject: Re: [PATCH 0/3] pinctrl: ti: ti-iodelay: Fix some error handling
+ paths + 2 unrelated clean-ups
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: lokeshvutla@ti.com, nm@ti.com, robh@kernel.org, tony@atomide.com, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-lib80211_register_crypto_ops() and lib80211_unregister_crypto_ops() don't
-modify their "struct lib80211_crypto_ops *ops" argument. So, it can be
-declared as const.
+On Tue, Jul 9, 2024 at 10:37=E2=80=AFPM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 
-Doing so, some adjustments are needed to also constify some date in
-"struct lib80211_crypt_data", "struct lib80211_crypto_alg" and the
-return value of lib80211_get_crypto_ops().
+> The first patch is completly speculative. It is based on static analysis
+> when a function is called in the remove() function, but not in the
+> error handling path of the probe.
+> When looking deeper at it, it seems that part of
+> ti_iodelay_pinconf_init_dev() also needed to be fixed.
+>
+> /!\ This is completly speculative. So review with care /!\
+>
+>
+> Patch 2 and 3 are just constification patches spoted while looking at
+> the code.
+>
+> Christophe JAILLET (3):
+>   pinctrl: ti: ti-iodelay: Fix some error handling paths
+>   pinctrl: ti: ti-iodelay: Constify struct ti_iodelay_reg_data
+>   pinctrl: ti: ti-iodelay: Constify struct regmap_config
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
+Patches 1 & 2 applied, patch 3 was already contributed by
+another developer.
 
-Changes in v2:
-  - Update ipw2x00/libipw_wx.c as well   [Simon Horman]
-
-v1: https://lore.kernel.org/all/d6306f7c76015653e9539ddbcd1ed74d1681a98f.1715443223.git.christophe.jaillet@wanadoo.fr/
----
- drivers/net/wireless/intel/ipw2x00/libipw_wx.c | 2 +-
- drivers/staging/rtl8192e/rtllib_wx.c           | 2 +-
- include/net/lib80211.h                         | 8 ++++----
- net/wireless/lib80211.c                        | 8 ++++----
- 4 files changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/net/wireless/intel/ipw2x00/libipw_wx.c b/drivers/net/wireless/intel/ipw2x00/libipw_wx.c
-index 903de34028ef..dbc7153d0a3d 100644
---- a/drivers/net/wireless/intel/ipw2x00/libipw_wx.c
-+++ b/drivers/net/wireless/intel/ipw2x00/libipw_wx.c
-@@ -509,7 +509,7 @@ int libipw_wx_set_encodeext(struct libipw_device *ieee,
- 	int i, idx, ret = 0;
- 	int group_key = 0;
- 	const char *alg, *module;
--	struct lib80211_crypto_ops *ops;
-+	const struct lib80211_crypto_ops *ops;
- 	struct lib80211_crypt_data **crypt;
- 
- 	struct libipw_security sec = {
-diff --git a/drivers/staging/rtl8192e/rtllib_wx.c b/drivers/staging/rtl8192e/rtllib_wx.c
-index fbd4ec824084..c730d921463d 100644
---- a/drivers/staging/rtl8192e/rtllib_wx.c
-+++ b/drivers/staging/rtl8192e/rtllib_wx.c
-@@ -474,7 +474,7 @@ int rtllib_wx_set_encode_ext(struct rtllib_device *ieee,
- 	int i, idx;
- 	int group_key = 0;
- 	const char *alg, *module;
--	struct lib80211_crypto_ops *ops;
-+	const struct lib80211_crypto_ops *ops;
- 	struct lib80211_crypt_data **crypt;
- 
- 	struct rtllib_security sec = {
-diff --git a/include/net/lib80211.h b/include/net/lib80211.h
-index 8b47d3a51cf8..fd0f15d87d80 100644
---- a/include/net/lib80211.h
-+++ b/include/net/lib80211.h
-@@ -92,7 +92,7 @@ struct lib80211_crypto_ops {
- 
- struct lib80211_crypt_data {
- 	struct list_head list;	/* delayed deletion list */
--	struct lib80211_crypto_ops *ops;
-+	const struct lib80211_crypto_ops *ops;
- 	void *priv;
- 	atomic_t refcnt;
- };
-@@ -113,9 +113,9 @@ struct lib80211_crypt_info {
- int lib80211_crypt_info_init(struct lib80211_crypt_info *info, char *name,
-                                 spinlock_t *lock);
- void lib80211_crypt_info_free(struct lib80211_crypt_info *info);
--int lib80211_register_crypto_ops(struct lib80211_crypto_ops *ops);
--int lib80211_unregister_crypto_ops(struct lib80211_crypto_ops *ops);
--struct lib80211_crypto_ops *lib80211_get_crypto_ops(const char *name);
-+int lib80211_register_crypto_ops(const struct lib80211_crypto_ops *ops);
-+int lib80211_unregister_crypto_ops(const struct lib80211_crypto_ops *ops);
-+const struct lib80211_crypto_ops *lib80211_get_crypto_ops(const char *name);
- void lib80211_crypt_delayed_deinit(struct lib80211_crypt_info *info,
- 				    struct lib80211_crypt_data **crypt);
- 
-diff --git a/net/wireless/lib80211.c b/net/wireless/lib80211.c
-index d66a913027e0..51e31316bcb8 100644
---- a/net/wireless/lib80211.c
-+++ b/net/wireless/lib80211.c
-@@ -34,7 +34,7 @@ MODULE_LICENSE("GPL");
- 
- struct lib80211_crypto_alg {
- 	struct list_head list;
--	struct lib80211_crypto_ops *ops;
-+	const struct lib80211_crypto_ops *ops;
- };
- 
- static LIST_HEAD(lib80211_crypto_algs);
-@@ -161,7 +161,7 @@ void lib80211_crypt_delayed_deinit(struct lib80211_crypt_info *info,
- }
- EXPORT_SYMBOL(lib80211_crypt_delayed_deinit);
- 
--int lib80211_register_crypto_ops(struct lib80211_crypto_ops *ops)
-+int lib80211_register_crypto_ops(const struct lib80211_crypto_ops *ops)
- {
- 	unsigned long flags;
- 	struct lib80211_crypto_alg *alg;
-@@ -183,7 +183,7 @@ int lib80211_register_crypto_ops(struct lib80211_crypto_ops *ops)
- }
- EXPORT_SYMBOL(lib80211_register_crypto_ops);
- 
--int lib80211_unregister_crypto_ops(struct lib80211_crypto_ops *ops)
-+int lib80211_unregister_crypto_ops(const struct lib80211_crypto_ops *ops)
- {
- 	struct lib80211_crypto_alg *alg;
- 	unsigned long flags;
-@@ -206,7 +206,7 @@ int lib80211_unregister_crypto_ops(struct lib80211_crypto_ops *ops)
- }
- EXPORT_SYMBOL(lib80211_unregister_crypto_ops);
- 
--struct lib80211_crypto_ops *lib80211_get_crypto_ops(const char *name)
-+const struct lib80211_crypto_ops *lib80211_get_crypto_ops(const char *name)
- {
- 	struct lib80211_crypto_alg *alg;
- 	unsigned long flags;
--- 
-2.45.2
-
+Yours,
+Linus Walleij
