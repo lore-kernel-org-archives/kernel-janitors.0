@@ -1,90 +1,74 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from msa.smtpout.orange.fr (out-70.smtpout.orange.fr [193.252.22.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D3F1509AF
-	for <kernel-janitors@vger.kernel.org>; Mon,  5 Aug 2024 08:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C2F14E2D8
+	for <kernel-janitors@vger.kernel.org>; Mon,  5 Aug 2024 10:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722847206; cv=none; b=P+McVFYEjwY97o+codYFjQOHwqJFazznHefDEvSisnnag62gVygXywP84Wjeu3hnESz9/lWzbJH49f/7tmV6vwNr0l4clxhBZOwmY/yPtkZX04RXwlJbQoCA3NBOQ0bjI11zJjbjcgkKwmBrNZWrkPq/NW2xiwl8iOUNqO8AjWU=
+	t=1722853801; cv=none; b=JuGWP02GHLc8o5ZWFZfXgz1IoKO0p9/Iaq3EfVUU0YlIExS1r4L2dyNC/QqR3vCDpSsQs1CGyxjHx7IDN5JoML6M6kPdhZPRzgljz60i7BPXf8RPlAjFVahL44TeFityS8lIKiZ5RsgD7j/aJzHUEZTai2uXMk/+PEQHRGcg/go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722847206; c=relaxed/simple;
-	bh=+QeAcYgwZWfrituWGwqVmeQsadpHXzGektiodHZjf84=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=khZVki7LJHm3C8b3Zcv8+UhinvjKxs4JQjVIUxchca8htEriinxxuJMOmy9Fc8yEWBb62YCZN9pwdaE+LwKTmgqHXSRinUMHgz1hQr6qDZAr26gc0dxElC45qcAdeJRXyj9xfcXEbjdDvzmL1SCDuJ0m0L8oOH6Se+hG9SYduZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nFcFYrmy; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1722853801; c=relaxed/simple;
+	bh=O2djrrekEMcBpJ8Uq8DwT92ZLKhfQ6p7aCZTrhhfM0U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HlWQ1xBiz/3BLpb1srX806OGkhpIKnYOH9pt2aEAATYt/cDoZADnx1x5FmMlYwI2cDqiuhgniPXDqUDFiVNJvytjoRtNc1oD9f0plSizByUtGWiTQCTAsE9FyavlWMrY3O2iY/vfPQ9K+QOtMG4KVDKm6J9DDDRtpKQ0yi3No3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lgfonySh; arc=none smtp.client-ip=193.252.22.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nFcFYrmy"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso77188a12.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 05 Aug 2024 01:40:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722847203; x=1723452003; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=entCZfiVHBFVDEWOeIthEZ96rKxsZnXZCzUJ55LPSZs=;
-        b=nFcFYrmyqSFGntClCMY3XY0jvB4Tt/f1vGDgbxSa1S+bXPXik9gEdUcQVpWEXKn2pn
-         wSWBN0hMe9jMYOjIj4gHnImpAgjDOz5yzGDZtPRGuvIQw/s3Et0eC4w9rsUw0v/P60iC
-         Tigfsd6ErP+NpMKqG2GoSflq46YI9Qvj/C1vhSH4MwHBDGJdG18rB+c00eCHn+2sjQaV
-         ca7Wp6wq9atkZeUzWoRlri3UhEZ25c5Jx5RyXv9d5dvU5jDIzPQDbsBTFbU31E/3v6+0
-         51bhxWK1f2Tl8dxFunJoUwkkeEB12wu0EbcsoTNHcGN5/pLJUkUpr8ChChWJOkHCjs6R
-         Sjxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722847203; x=1723452003;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=entCZfiVHBFVDEWOeIthEZ96rKxsZnXZCzUJ55LPSZs=;
-        b=weeQ44rcmoPIjbti5tItp3+aBb0u1lYtOMUxAfpIqVCr84s08h8mkZHRXKXYmYwWMs
-         IdXHmGKonS0i+FRtsC5/TE74jU0kUyAgw/rmModcP+eA4Yuk4OPMzZqhCVeCyM5H0Osa
-         ZW4Mt/MoTOixttPoFvSnzKP88OKU7pmQPparOGrViceld5uPUtW7Mz1BZxElzFOoBAwO
-         ZPEPZSDCgjND0QYgX8E1I5L6/5iyfmInriEJvfkczEuaKNZPJS7eJyK+POhcEdn3gv5g
-         2NnFy0GKKmozJbMuntG8CnvsTFynRvZNku9wa7s/GT5u20Sz5TsT17FMxf/pyAC+/xsg
-         i36Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVNNUs4DSsobyJJD4NrM4qVNCufewTaRl/AwROwNKAfR0veIKuJD3WWxqsWZg7IWH0XSHFUpjm2Eiip//EFRp4HqTbMuEORZV206ItjjWkO
-X-Gm-Message-State: AOJu0Ywah+LZv3sGT2XijeFmRZkEvOCc0TxjYh7KdLX/ZPINO9ouwxJT
-	mnH0Dpz7kWm242fEtQ83VMPZiR57rDzEjiWy3hNX0ytL4S+f8c674oc0do09kECCGj/xaUwGHyK
-	gq/4b9/MnWa10e6KLWd2G5ajUzuBR1q2yMlIIkSUxUoZP1A/g6Q==
-X-Google-Smtp-Source: AGHT+IFdJr10J60UQVpdLncVN9PxgFluZr8MnNc+pMVhjD4N1bAEOas0ed5HkbYf/F1Ugm/6XTXOS9gIYlX+9dp/Zc0=
-X-Received: by 2002:a05:6402:26cb:b0:57d:436b:68d6 with SMTP id
- 4fb4d7f45d1cf-5b9caf072d4mr183817a12.7.1722847202752; Mon, 05 Aug 2024
- 01:40:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lgfonySh"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id auyPsh8Id6NRTauyQsprzR; Mon, 05 Aug 2024 12:29:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722853795;
+	bh=IPDMSYiJB4iN0nD73gIhr+VwzoVNFs4/Aaat5q255/w=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=lgfonyShjQB2kO7Js8N5oGHIs7MaACaYIyKYlYwuf0VELB2GxLZZBGeC6Z9/7g0Mr
+	 L1vnjfNqH9XRJs1mG2TrqfHQRfBWLRhKEI4lml3+NVUq5xnzcZfEkuW/Q8nTMPb3Zk
+	 MX5VB3NuQy+ynVnc6ixeyrFiCdHEY06Ezt6N2DZbjFa2XnNEJDA94SvegpQ2XXTLkA
+	 neOLzWe/XSUsEhU0wKY9hbtWKaPFtdWYwp8grAzKDgymIkdFXqHbb2rnJovSZfaLmC
+	 krrLp2l+53btaaq4xkyB4BG2D0mcPzuAmbXP8yF3YnSTdEkuiUrlhn5xJx9084IdDI
+	 bAuZyp6SMO/Gw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 05 Aug 2024 12:29:55 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: willy@infradead.org,
+	srinivas.kandagatla@linaro.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 0/3] ida: Remove the ida_simple_xxx() API
+Date: Mon,  5 Aug 2024 12:29:46 +0200
+Message-ID: <cover.1722853349.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <561bb4974499a328ac39aff31858465d9bd12b1c.1722752370.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <561bb4974499a328ac39aff31858465d9bd12b1c.1722752370.git.christophe.jaillet@wanadoo.fr>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 5 Aug 2024 10:39:49 +0200
-Message-ID: <CANn89iLaPXXNv1NC3+XyVLfX+0VVX5XQB0xobf8zAY2b95HX+g@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] tcp: Use clamp() in htcp_alpha_update()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 4, 2024 at 8:20=E2=80=AFAM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Using clamp instead of min(max()) is easier to read and it matches even
-> better the comment just above it.
->
-> It also reduces the size of the preprocessed files by ~ 2.5 ko.
-> (see [1] for a discussion about it)
->
-> $ ls -l net/ipv4/tcp_htcp*.i
->  5576024 27 juil. 10:19 net/ipv4/tcp_htcp.old.i
->  5573550 27 juil. 10:21 net/ipv4/tcp_htcp.new.i
->
-> [1]: https://lore.kernel.org/all/23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.a=
-culab.com/
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+This is the final steps to remove the ida_simple_xxx() API.
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Patch 1 updates the test suite. This is the last users of the API.
+
+Patch 2 removes the old API.
+
+Patch 3 is just a minor clean-up that still speak about the old API.
+
+Christophe JAILLET (3):
+  idr test suite: Remove usage of the deprecated ida_simple_xx() API
+  ida: Remove the ida_simple_xxx() API
+  nvmem: Update a comment related to struct nvmem_config
+
+ include/linux/idr.h                 |  8 --------
+ include/linux/nvmem-provider.h      |  2 +-
+ tools/testing/radix-tree/idr-test.c | 16 +++++++---------
+ 3 files changed, 8 insertions(+), 18 deletions(-)
+
+-- 
+2.45.2
+
