@@ -1,69 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AE213C66A;
-	Sun,  4 Aug 2024 17:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE5513DDB8
+	for <kernel-janitors@vger.kernel.org>; Mon,  5 Aug 2024 06:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722793930; cv=none; b=RxIuqCkLm579Y7FOFWkObrE0rSQhv+TD0/YRH076DjIERPbqhIFZFsaRHliiH0HZLSzBZQ8f2se2JxDSXqRuQ926WCKPy8R48k2nd62+HQ++YnIiIOa+SsUrUXoG6JkUpz1LG5Xi836uXSSeFK+0gDsBJY8lc1omGzkWuZYAIGs=
+	t=1722840067; cv=none; b=KaU305M7MvzPv4ejNyHF5fsW9FjbF7MmPWh2Dx+Wb2b3kcTWCCedHqfIqHYyFmKj9sMTeqngGpynlq5VyY/rtrgUEWprug6KCZaJIWZwr9FBV++xxI+an1oxp7SKt5Ssa3Hp5aYw4KoRP7T+Dv3eSFBBhjyeic+wcZ43h22g0TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722793930; c=relaxed/simple;
-	bh=Us0lXeHWzyR7k9ugOLi0cBmrKAZznLPVB/DSKGK+xlY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lI7lF3G3V5Fr7WifgDtg+rSl06jOOv1TV6SuIU+DqqZl305BVZOXhl2yTc0USyfS90+1yFX16mMlXGJnlqB3MH11u7Zd15AGbnDi9z6ioCDmePtQaI2FNcuAGqVBt42hUsxdZRwk8uRdkiKR40Y3uMfuMY4UfZiamLc0/Bftj5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GjKSPxcJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722840067; c=relaxed/simple;
+	bh=UF7et2QqACNgp6O1SUQXlgg+/VGMgi+IZGWPoTIYheU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ocHqkDy9He1Ous4dbBwBEBufxjfGPQVPEiiGEQAr/i1TJpMsGbrnhHyYiIhb1Y7/6tfRaFAZzPhqlaac6npA0kXLLNherzpgwpkwYH6Aly/2yP4n72ElOK8qFuJmASv3jyUNd45kZ0rD89E2nh8JUzRDXrQc/+EPS85bUriUVVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ehzcHu/o; arc=none smtp.client-ip=193.252.23.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GjKSPxcJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F001C4AF1D;
-	Sun,  4 Aug 2024 17:52:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722793930;
-	bh=Us0lXeHWzyR7k9ugOLi0cBmrKAZznLPVB/DSKGK+xlY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=GjKSPxcJCs71o677BS6gX5usbzQ4C6Bu4IuTBO0snjW3uFuCli48wzWShb2eAfm+x
-	 pjMW4mZSdyZWJGszs5blrOcGJXXzFbFT82tFH1hg2OHlq4igguH10oiQBwOa5TivXo
-	 E1sF6IM0Athg3VoSNpvvZibf/us0Mt4t87zT2QB3/CSTHDjP+vFC3jJh8VGEAQuN6M
-	 5yrHib9uPrZ0j7CtENPTl5r4CltEb3hCnmbomhlCalOIMlgHEizTygXcUqx15mLNJk
-	 eNSyhbywwKaHYy8g1tmZ+A7WuaoIHhi1smPVP6xY6MqYuQji/7+d4wbWlMgofXRX4E
-	 frstCGG0HyonA==
-From: Vinod Koul <vkoul@kernel.org>
-To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Sam Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>, 
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
-References: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
-Subject: Re: [PATCH] phy: exynos5-usbdrd: fix error code in probe()
-Message-Id: <172279392602.406224.4966447752583319349.b4-ty@kernel.org>
-Date: Sun, 04 Aug 2024 23:22:06 +0530
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ehzcHu/o"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id arOns5eD41n2IarOnsUUL2; Mon, 05 Aug 2024 08:40:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722840055;
+	bh=bhu0kj/E+bTLzKxE31tljXZoIT0Y2DQ63u7XVU/JDPc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=ehzcHu/oAgH+tJ/8KcriYSs256oALIWR7NiwC25+g8kjWSAuXtxBPK8jP6uoIWYEX
+	 m8K9a8b+oSN0bX1ZgBFfvaWs6rZYxWOOpVkrGWsEvV6FUdXsJM7fMap3f6yPEVp7WQ
+	 zU/SehWywmRy1ZoSMB27mvnmi9pt7nvyRpCGDEE2VIOZkMbhaDt0n/eAA0rVX7EYaG
+	 vitndP/CswLd1ezgrPSET3uqUDBtWAmKJYaVC4bjFqSx9EADHBfB8iXf8buvw52QLc
+	 21Xw1i4Lk3/ZTSEuKoPAUAWASMoK4EwJ9IJtyfzPJCJPicCvtcG9vnT8lTsf7xeLrq
+	 1fdKgLL3K3WDQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 05 Aug 2024 08:40:55 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: stas.yakovlev@gmail.com,
+	kvalo@kernel.org,
+	gregkh@linuxfoundation.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	johannes@sipsolutions.net
+Cc: linux-wireless@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 0/3] Constify struct lib80211_crypto_ops
+Date: Mon,  5 Aug 2024 08:40:36 +0200
+Message-ID: <cover.1722839425.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
+
+This serie constify struct lib80211_crypto_ops. This sutructure is
+mostly some function pointers, so having it in a read-only section
+when possible is safer.
 
 
-On Mon, 08 Jul 2024 12:04:33 -0500, Dan Carpenter wrote:
-> Return negative -ENOMEM instead of positive ENOMEM.
-> 
-> 
+The 1st patch, update some function prototypes and data structures in
+lib80211.
 
-Applied, thanks!
+The 2nd patch constifies some struct lib80211_crypto_ops in lib80211.
+This moves some data to a read-only section, so increase overall
+security.
 
-[1/1] phy: exynos5-usbdrd: fix error code in probe()
-      commit: 3a07703a523045cbdb0a5fa5e0902a9145ee43e9
+The 3rd patch does the same for staging/rtl8192e.
 
-Best regards,
+Note that the functions have looked in staging/rtl8192e look really
+similar to the ones in lib80211. Maybe it could be removed in favor of
+the latter.
+
+
+Each patch in the serie has been compile tested only.
+
+
+Changes in v2:
+  - patch 1: Update ipw2x00/libipw_wx.c as well   [Simon Horman]
+  - patch 2, 3 : no changes
+
+
+Christophe JAILLET (3):
+  lib80211: Handle const struct lib80211_crypto_ops in lib80211
+  lib80211: Constify struct lib80211_crypto_ops
+  staging: rtl8192e: Constify struct lib80211_crypto_ops
+
+ drivers/net/wireless/intel/ipw2x00/libipw_wx.c |  2 +-
+ drivers/staging/rtl8192e/rtllib_crypt_ccmp.c   |  2 +-
+ drivers/staging/rtl8192e/rtllib_crypt_tkip.c   |  2 +-
+ drivers/staging/rtl8192e/rtllib_crypt_wep.c    |  2 +-
+ drivers/staging/rtl8192e/rtllib_wx.c           |  2 +-
+ include/net/lib80211.h                         |  8 ++++----
+ net/wireless/lib80211.c                        | 10 +++++-----
+ net/wireless/lib80211_crypt_ccmp.c             |  2 +-
+ net/wireless/lib80211_crypt_tkip.c             |  2 +-
+ net/wireless/lib80211_crypt_wep.c              |  2 +-
+ 10 files changed, 17 insertions(+), 17 deletions(-)
+
 -- 
-Vinod Koul <vkoul@kernel.org>
+2.45.2
 
