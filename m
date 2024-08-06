@@ -1,87 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9194B76035;
-	Tue,  6 Aug 2024 18:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D80158DDF;
+	Tue,  6 Aug 2024 20:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722969878; cv=none; b=X0evJtkzTaElSjqsiR/9VyX3WqOI8syi51SzoGh6J1vxSLdiKGKL77fxrg3Kdva2gmSNUPJq8FU3v+7gsLZW19ew6jk0sluwxdIOFxyWpG5umuDwxTAGCg1Ge6FBJsXW818D39ST/8deWu7qs5ywdmYsT9DEZgSWMfavXlRboH4=
+	t=1722976087; cv=none; b=iexfwKvKWfqyjBclffDn9UdId2lbIyfLIubJ0wr79hYBTX1h5Pv4JjN62ZyKDDW8Z/qButWySuBLlsQeeSvcPnEBU4jGCUdUVkh8RN63M7YQ47detK0jHBjyJ7nCw+SY0u8OnODTjeJTpsoKDGmc6Z0xQREAqtzaKDSbc5R2aZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722969878; c=relaxed/simple;
-	bh=J9Gw7X/LLxKmQtGKAo0wwHQ+EilerhzQIkIQaw9Uj3U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jIwntmlJerNhO63uVBeU4OUo+onmLE827gOksUaSpPYmHYI/2op+Y+AV/w3CJSD1j66i63DJDE/RtToki2YTWpgcHhra7HZhJu2kTAbO3ULAFjHB806GW/7eRLe5X40HgPS5fIQnfF4VVNBkEJqfuO0iLusSyu4kiOZ65RgL+MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JR3SyHsS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722976087; c=relaxed/simple;
+	bh=UaND5S5bwiFcSdjyXg3oXyV9jhUNoq8C93n1XABl+k4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=rUtqi+bLFmNexZbCsJwhPF3hrXmgo/sCO3s0ydDCeDo7Or0U2Hfcz2iLQB/UW5TdzrweTegeWcgyHRkq0aDds3njYjpt69ku/EPg3Xb+wNeEq5Ccqc6B9iMeBiGCYTwGhD3/pniaIOU4d1CstLkGk7I+x2NOCtLwqMDl54Z/Q/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/Nza7/+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JR3SyHsS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AF28C32786;
-	Tue,  6 Aug 2024 18:44:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/Nza7/+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 369FCC4AF14;
+	Tue,  6 Aug 2024 20:28:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722969878;
-	bh=J9Gw7X/LLxKmQtGKAo0wwHQ+EilerhzQIkIQaw9Uj3U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=JR3SyHsSlHwPE5NaXK75ofhOBgNo3DjJ2zoJxZlA+38TA0aBAFVRbZU9s8XhnhQWB
-	 5MwGaY3+q9iXReJ49nnJF8N4XT0HQ4fkj3ezQCuRGQWYf1nZGmWv8BIRrfmqOaX4iZ
-	 jKFwTFVCxa/XhyHreekGHBgeri7cLRC8JWWcBIVmwfN+0wIGsTb4VQJgbq5IR5aI+e
-	 582kl7mtl5Hozk5Rltdxw6eJ1POdlCRZ+19NqgkPi6/oz1fBYwBib/fbOlvzBFk3LR
-	 QcWe3Da2bSKZ5m4+VCK3of9Y7IXf6oSPp21o3ojBcJgqziqyBCd6cg8eO2Tf0XPzl2
-	 aoJmy4wNJQPYg==
-From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <a4e37991ea7b47145ab033128c8dd49f73a983e6.1722949232.git.christophe.jaillet@wanadoo.fr>
-References: <a4e37991ea7b47145ab033128c8dd49f73a983e6.1722949232.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] regulator: bd9576: Constify struct linear_range
-Message-Id: <172296987684.432612.15051225787613847728.b4-ty@kernel.org>
-Date: Tue, 06 Aug 2024 19:44:36 +0100
+	s=k20201202; t=1722976087;
+	bh=UaND5S5bwiFcSdjyXg3oXyV9jhUNoq8C93n1XABl+k4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=W/Nza7/+HIACT0cGoRdnSgOMxG4QJAwut/yYi1nw+v4w/6H6OB8MQcHxGC2GADlp6
+	 6kxeVUcPEWuaRgNFV0pTY+Qh43XOuXkICW5UU+8QgGgdR6VHRouuhjTFSa6Iw4ViVj
+	 U+stheoDEK2OPfeK9ZVp6BgH/+EVEwkRgfAoJqAhLexOEdURFFbXuo6tfv/9ZXwhVT
+	 0hfSWRBhirnqBiVs3rTXJmNHQamFhCIE27aFGePbERthaZeXV5FSNCULp+VCwoR4l6
+	 JTDxBnwFyMgBvXKZeS6KVv000r6b2YK7ljVXmQi0g1IawnuVGmV/VeuJeiVlqW+Hla
+	 Xl8ZrAjiTphGg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 340B83824F34;
+	Tue,  6 Aug 2024 20:28:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2] tcp: Use clamp() in htcp_alpha_update()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172297608575.1692635.542797158588181224.git-patchwork-notify@kernel.org>
+Date: Tue, 06 Aug 2024 20:28:05 +0000
+References: <561bb4974499a328ac39aff31858465d9bd12b1c.1722752370.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <561bb4974499a328ac39aff31858465d9bd12b1c.1722752370.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: edumazet@google.com, davem@davemloft.net, dsahern@kernel.org,
+ kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 
-On Tue, 06 Aug 2024 15:01:04 +0200, Christophe JAILLET wrote:
-> 'struct linear_range' are not modified in these drivers.
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Sun,  4 Aug 2024 08:20:17 +0200 you wrote:
+> Using clamp instead of min(max()) is easier to read and it matches even
+> better the comment just above it.
 > 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
+> It also reduces the size of the preprocessed files by ~ 2.5 ko.
+> (see [1] for a discussion about it)
 > 
-> This is also more consistent with the other struct linear_range declaration
-> above.
+> $ ls -l net/ipv4/tcp_htcp*.i
+>  5576024 27 juil. 10:19 net/ipv4/tcp_htcp.old.i
+>  5573550 27 juil. 10:21 net/ipv4/tcp_htcp.new.i
 > 
 > [...]
 
-Applied to
+Here is the summary with links:
+  - [net-next,v2] tcp: Use clamp() in htcp_alpha_update()
+    https://git.kernel.org/netdev/net-next/c/871cdea0f82e
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Thanks!
-
-[1/1] regulator: bd9576: Constify struct linear_range
-      commit: 08b856b38c257bc23f208ef165816d7e710574e0
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
