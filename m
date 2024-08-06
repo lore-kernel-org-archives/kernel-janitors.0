@@ -1,76 +1,72 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63B716F850;
-	Mon,  5 Aug 2024 23:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3C664A;
+	Tue,  6 Aug 2024 08:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722902057; cv=none; b=ImXuVL9C4g6uu2tmyqu9MbfO8M0ooQmLrAKR6lywx2K/bs2iHj4JlwRNiQceVCQsqokI6kyDe46d+2v2PrZbPkp9Fcx3rZlQst9MQejWZ7fFuhpNtb6ywoSCdORSCFVt4pR58DtDqoH04raU1Kp/mSvdo9AYydTToAFpeq16pMA=
+	t=1722934379; cv=none; b=klPYgBT/e9AaHI3FaYZtgHledN44lRoOcYPNKqGeISDkO8qayLPBBhmaoMfEN68n9qtLiHqRXWzuB6F1tRhSY86tB/OkLIW7FficocW1mpP8vwKvTGpGiwbnKawGpbxZdpxUqeUTIPbIBYdnNy21BHqsJBLQZ3zfw8vf0GH7Hv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722902057; c=relaxed/simple;
-	bh=YOacJKFxKyNVmQpresSsfetJyoR67HqF+afcKUIrj5E=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=W92KBv4mDXe/Qe83wCuVjdZlBrgMGzsgiEEaXYbgCpPV2/RAC1/iAWrxKZpdjQtpZS4rnZR7IUH8knTAzrkCqXJwjkjxAICivsnOJG2l8esTBi0PeP39456Fy840AB9VwTEQjcsX5fAlB5tMcOZ1u7Vt5ZVSt8AFuldVmDreysA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kjcHlIg4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722934379; c=relaxed/simple;
+	bh=jLxtaqYwGejHVDr7TLr2wF+thWxAzyeocnesv8I+WjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VfsDKyHEnhnuKRutD/LPBo7QyfLfZQvaI8oF96rEiqlHUB6f94LBF54OkNyQBgWTctgFefqx6r/OoncIElb249PtNRS6O7yGLRsc4aM6iA/tJTR/A2q9SW+q+vbOxuBpQWjb4AsKfYnSYSY9b3NwD9K3QvGcCEZ7NPP7FqrfYqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5qa+F+o; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjcHlIg4"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4FB1BC4AF12;
-	Mon,  5 Aug 2024 23:54:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5qa+F+o"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF260C32786;
+	Tue,  6 Aug 2024 08:52:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722902057;
-	bh=YOacJKFxKyNVmQpresSsfetJyoR67HqF+afcKUIrj5E=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=kjcHlIg4uykzAIDVqCMRcH9/SpjV/Yq9Tn1Z8PTQx75B58Ach6dg/9mh9ST1G91N5
-	 AKWo23dAt3aC6uQP2pv+ISwTu47xXyunHbRzuswSSYyXgib2bntYVuv9+s4OG/GbAj
-	 RmfU8LRn9dUeiQR29idL+b+77dYVNXaBO8ULmmw+xdweVTtaIBlrN/KjNaBi5NbAMC
-	 5Ke6GGJsYOotrV6qPCgcXT1MiWWABsxQJZFuQFRJN4Jt90mcI66+s8q/6hrdQIWdEB
-	 V+OJ2TCGOXoncFuGBEFDfhz1FNW6wUeLq2mcH1nxhge8543oxujECJCLVfHp77DyDc
-	 JhZslccrVE5oQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3D430D20ABC;
-	Mon,  5 Aug 2024 23:54:17 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1722934379;
+	bh=jLxtaqYwGejHVDr7TLr2wF+thWxAzyeocnesv8I+WjI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t5qa+F+o1iPppiI2xZ55esXGw/puFe5lAgM1SOXNIEuRgG5VJjXxGGKK8CehV7pER
+	 XzcxjP96ZL7mouz7XSa7gyRnzzZCXBzy/gfOrKYzjIxpeKG910tyqOb298Gk0AjHcF
+	 vTETQSiuIxmAxByPhlSmLTvbpbc95vCzTnIeYhEW4XWMt6uyRG0knTPjZqh1Dbhnf1
+	 4sZsUYE529IeeSD5SeP5VpybqeQrMEdj0xW1frWGSJgdkf+hGW0tPZocUKoS6ZKZ0o
+	 GL8R12u/YY9utt4aAhr4vpkysLv8PF6rV/ktNSSHq5iYdFzPO7tXtzBvrPcdHhUkJm
+	 mQIHqBByrxNCg==
+Date: Tue, 6 Aug 2024 09:52:54 +0100
+From: Simon Horman <horms@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: stas.yakovlev@gmail.com, kvalo@kernel.org, gregkh@linuxfoundation.org,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, johannes@sipsolutions.net,
+	linux-wireless@vger.kernel.org, linux-staging@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] lib80211: Handle const struct lib80211_crypto_ops
+ in lib80211
+Message-ID: <20240806085254.GO2636630@kernel.org>
+References: <cover.1722839425.git.christophe.jaillet@wanadoo.fr>
+ <c74085e02f33a11327582b19c9f51c3236e85ae2.1722839425.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] tools: ynl: remove extraneous ; after statements
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172290205724.12421.5395655484283570485.git-patchwork-notify@kernel.org>
-Date: Mon, 05 Aug 2024 23:54:17 +0000
-References: <20240802113436.448939-1-colin.i.king@gmail.com>
-In-Reply-To: <20240802113436.448939-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: donald.hunter@gmail.com, kuba@kernel.org, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, nicolas.dichtel@6wind.com,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c74085e02f33a11327582b19c9f51c3236e85ae2.1722839425.git.christophe.jaillet@wanadoo.fr>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri,  2 Aug 2024 12:34:36 +0100 you wrote:
-> There are a couple of statements with two following semicolons,
-> replace these with just one semicolon.
+On Mon, Aug 05, 2024 at 08:40:37AM +0200, Christophe JAILLET wrote:
+> lib80211_register_crypto_ops() and lib80211_unregister_crypto_ops() don't
+> modify their "struct lib80211_crypto_ops *ops" argument. So, it can be
+> declared as const.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Doing so, some adjustments are needed to also constify some date in
+> "struct lib80211_crypt_data", "struct lib80211_crypto_alg" and the
+> return value of lib80211_get_crypto_ops().
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  tools/net/ynl/lib/ynl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Compile tested only.
+> 
+> Changes in v2:
+>   - Update ipw2x00/libipw_wx.c as well   [Simon Horman]
+> 
+> v1: https://lore.kernel.org/all/d6306f7c76015653e9539ddbcd1ed74d1681a98f.1715443223.git.christophe.jaillet@wanadoo.fr/
 
-Here is the summary with links:
-  - [next] tools: ynl: remove extraneous ; after statements
-    https://git.kernel.org/netdev/net-next/c/e8fc78eb658a
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Reviewed-by: Simon Horman <horms@kernel.org>
 
