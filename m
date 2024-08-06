@@ -1,63 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from msa.smtpout.orange.fr (out-69.smtpout.orange.fr [193.252.22.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454CA165EE2;
-	Tue,  6 Aug 2024 08:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1F71BDA83;
+	Tue,  6 Aug 2024 11:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722934450; cv=none; b=cVPaRZ2kll/4DAtuqJsikLnDlDAIzu+T5U4bVtXYVbIIX6dZSuK6Re5tPIOaumHPo1p4+AlVosRZQ5SPP4jq6YUZk3nXZTwoe4lIdgMzM+KgDabzhvq4LbVP49sdOI2+i4euiRd7ktedLtmjFv19L6iIs6m9hxMZK6Lw8IQJLtU=
+	t=1722945576; cv=none; b=CWhIBZoDy1IKfP0NI7N8MReC3ZBeUX9uBwwAIzdbhXligqrsN3bG2mEoviQT/7m10QdGBVAn3KFg7LEwl96Mj6dsWV9R9UINehzm9mYJx6SysRIAnABNhCdl/eDjcCIwIyQIF1BFHoNqWZxxi4G8G0q7kAWy6nURFRsCOS14vhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722934450; c=relaxed/simple;
-	bh=E3AV3eX7Ux9UT3jrUISKJBTttSAn+nDf+KULm/qlh3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WleYnuWLHYCetXVNslBtczZnV8MIyd3Gt5s/paMA+WgwPR2shHJbdZJeXjfL2RCl7d6Drcegt3R5IeoLXE7qP0Dq/RTf+2HBc5ikDjZY+2vMNEq4rT7+R80rrGRyPX9+mO6o2/1uQmOPhVxp+e0U/e2yTUtkJijchq/RkZi4C/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WsJl8uQ4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722945576; c=relaxed/simple;
+	bh=2RZDRULGNFQPGVSyiQ2Vvu5w8aDnL5CG79Bj6j7jxGA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZC3qy0OhtEYM7CidB46oA0TENDl4iMkD01C+mNZJyTOjztKFujE3auSxxVwr34jNpbqpS2XLTFu7Z0MHvYcndjmXMV3fy2x4BeYRUSLBL+fsB8cLeaak9L7sJ7NWcIgitnOTbcvKsYy0cTCwETYFDpQaI8eM8uChYme6xH32Zio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=R714CinT; arc=none smtp.client-ip=193.252.22.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WsJl8uQ4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08418C32786;
-	Tue,  6 Aug 2024 08:54:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722934449;
-	bh=E3AV3eX7Ux9UT3jrUISKJBTttSAn+nDf+KULm/qlh3Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WsJl8uQ4zZNauJmzBHNss8dUIfzSHt+vlWQ2rsnthwUT0MolMYFTEP1nLGrxS8Qin
-	 yGzyoH5vwR3TB7zWduCuFdZEjG030wcUfO1Vi2ir/xnfLNQwJn0iaNvWWrHnXny16h
-	 7m9FwAd5ZVI0qtTZSHVvTuViAx4XWWWHI+i2Wgf30twsAN1VueSXYgghr4duOHyV8/
-	 frEdMDGIgAEEyWzP9TYEKA6/1pRe8XqGCyGcImhGIUZgmytyF1s5dCv+zs0/QuOXoo
-	 yBlRl6zpnbmh86isc5lfrvcAjgBk3l8K9cEH1bZe5fUZ4tCiG2YovHqoqB7rcIshjw
-	 qpqoyCWroRSSA==
-Date: Tue, 6 Aug 2024 09:54:04 +0100
-From: Simon Horman <horms@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: stas.yakovlev@gmail.com, kvalo@kernel.org, gregkh@linuxfoundation.org,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, johannes@sipsolutions.net,
-	linux-wireless@vger.kernel.org, linux-staging@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] staging: rtl8192e: Constify struct
- lib80211_crypto_ops
-Message-ID: <20240806085404.GQ2636630@kernel.org>
-References: <cover.1722839425.git.christophe.jaillet@wanadoo.fr>
- <dfda6343781ae3d50cd2ec7bbdcf76a489b6922a.1722839425.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="R714CinT"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id bIqZs62idOGeabIqZs47Ch; Tue, 06 Aug 2024 13:59:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722945565;
+	bh=mW9ZcWagssNfhkWbLgfoqDnd9YloaoRJ2fJF6CbDTio=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=R714CinTBNFgikHK9WQedEvyWA0fcKeRWugctGMHmpaNM6RiRZeQSYawLWnxCUTMn
+	 EDlqGyyO4S3F4OM2/lMb8lnHoG43IYZ85kG78KfIPgN+fmAdX+hdZkmihZj8Be/eZa
+	 o0fqmW/9vxkht2Qo1LPqJtm5/WE25rg26IrrLwtH1NTICmBjt36fvV5uMY2cnje5Q8
+	 QbACgLu1Dsa1cEtKd1QDvNmOdEAYEU9Sgvwi6YhzSNszYOji2D1JvIclyMfgUJIRaG
+	 VWATgQMciqNx5PjPoXjb+W4oxLHd2rtqioTmaYuCvJa2TR18uTXUJ22D0yhKAcpgnI
+	 mZPtWLC2Tep1g==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 06 Aug 2024 13:59:25 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH 1/2] drm/dp_mst: Slightly optimize drm_dp_mst_i2c_write()    (1/2)
+Date: Tue,  6 Aug 2024 13:59:10 +0200
+Message-ID: <2705cf4c0df41f335cbe91bfd9984fcd95208788.1722945487.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dfda6343781ae3d50cd2ec7bbdcf76a489b6922a.1722839425.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 05, 2024 at 08:40:39AM +0200, Christophe JAILLET wrote:
-> Now that functions in lib80211 handle "const struct lib80211_crypto_ops",
-> some structure can be constified as well.
-> 
-> Constifying these structures moves some data to a read-only section, so
-> increase overall security.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+'txmsg' is memset()'ed in the for loop below, before usage. So we can save
+another initialization txmsg when it is allocated.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+In case of interest, on x86_64, with allmodconfig, sizeof(*txmsg) is 768
+bytes.
+---
+ drivers/gpu/drm/display/drm_dp_mst_topology.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/display/drm_dp_mst_topology.c b/drivers/gpu/drm/display/drm_dp_mst_topology.c
+index 379a449a28a2..7bf6157eb3a3 100644
+--- a/drivers/gpu/drm/display/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/display/drm_dp_mst_topology.c
+@@ -5886,7 +5886,7 @@ static int drm_dp_mst_i2c_write(struct drm_dp_mst_branch *mstb,
+ 	struct drm_dp_sideband_msg_tx *txmsg = NULL;
+ 	int ret;
+ 
+-	txmsg = kzalloc(sizeof(*txmsg), GFP_KERNEL);
++	txmsg = kmalloc(sizeof(*txmsg), GFP_KERNEL);
+ 	if (!txmsg) {
+ 		ret = -ENOMEM;
+ 		goto out;
+-- 
+2.45.2
 
