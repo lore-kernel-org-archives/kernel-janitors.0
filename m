@@ -1,57 +1,53 @@
-Received: from msa.smtpout.orange.fr (msa-212.smtpout.orange.fr [193.252.23.212])
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18D41C57A5;
-	Tue,  6 Aug 2024 13:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC3F1D54CB;
+	Tue,  6 Aug 2024 13:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722951034; cv=none; b=S92p9oxNRzK3AbREkW1yyRhJVRfFOiDJop3XdRnkctTZ9rnJR4Ug98D4NOvl+xIcomEpS/oq9cg9JHc/YMi8hyqoWnM5+CfN0z1JFFSmmldPkUUFQFr6EGOg8tsfhLbJyTSItLUfKjXFVnKJOolu6G30X1CGaP457ISK61sgSSs=
+	t=1722951799; cv=none; b=h8yQh7J34WD2pHvVaRrrf1LxJYiJRCJ4ZnncTuDGy4yrOrQKG1zagfLlukOUVrI++GdieuY2BgbtZDUuWhAa2VAJzcTnP/TZI8Sej+csPHRP1TtwzpjwbxY/YTsMLy3457jKhnk0KZvceL7Z4TBfMMRvbmvJNKyV//Sj96mNpHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722951034; c=relaxed/simple;
-	bh=1gt4DGlnEvk4C6I+MHr1KvC3pI+FOt8lCQxfWRZdjzI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S/u7noSoN2vMeACTFUbmxuxNFJBy8OsrK9OCf+YRCn0f09VVM0ZKjiphxTZfCxZa7v1ji0UZuT5baXzQQKoCZmKVaOJGtqMEoXDUPYED7U/IExBXddx+D2gAhErw0hulu2gOXhAXfr1vbri1HgQTEK42PfdN50TlM8LJWjGcIJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=rELrWL69; arc=none smtp.client-ip=193.252.23.212
+	s=arc-20240116; t=1722951799; c=relaxed/simple;
+	bh=5a1X9wFrWBvpAQTBrO/UprB7XAg2K7Y8ijJUSSEGM4M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rChdG0tOCqwgbp33Q8+tUP0ybDJIufAsBFFMAjs7UzLVY0VrQXkh1KUpb4l/xADZ0qVAWrareJ2tkVd1/YZugnfk8F9Kjohj4Tc+mMvHfLCpbg0AZMlzfrbV1Q/b1yFoPMUVBmDWAJTtrNul93nCHj3CaNZqxSArtaOSJccZHFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Cdn64Utg; arc=none smtp.client-ip=80.12.242.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="rELrWL69"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Cdn64Utg"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id bKGasMrYrk1NHbKGbsryPR; Tue, 06 Aug 2024 15:30:23 +0200
+	id bKSxsQhrDrWkDbKSxsiUeV; Tue, 06 Aug 2024 15:43:08 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722951023;
-	bh=d69VfSDFznZJlgGHUNUM34fDu7txnT5TK9v/Z+aWwNg=;
+	s=t20230301; t=1722951789;
+	bh=/3TrRDY1xrq9A6NvQnziOhi0PcSU3SG4UHNJJeoANis=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=rELrWL69hQHCACChtuDknbS5s4eLfnGaz47bWaGPjch0CNbOAuVHSFhGawJ1jGjvc
-	 WmgSRehYY7MdIl8bw/Pu1K1pnFSCNEBjHPnXLoK4qfZBh96HxwvWAQ1Zgjt2Sf+56E
-	 /OZMjdW/wHAN09NKEzJUJ+qFyxpdx3yYBMJ9G3PCkAbr7stysjVhdUGtwvWjWVyGmA
-	 8XKpo6TSmcAWFui2kD0hnqefi1Cx+s4VvLXy/xvNDQR9t56VyY1+f1u/w2yEXBgLly
-	 0rfxYWVn4YML22YLv9/26scAhEXtpUx8yb2Y6q9o0b0jy4cxvV8WtJJGMbdXPUKkvz
-	 71SB7TytRlDaw==
+	b=Cdn64UtgloRvBi5reaIPWOGLqOKXMxxD82CJboKK9NuwhH6HxHJvU8OqmvsP2jMDg
+	 KR3gAPfsvJopnBlZpdNDtx6kSA0rLGRdr2sGBFELjcDDQeU+C9xVz/Z8ui0I+FukQJ
+	 iWwAu7h4L010vJiLL75PmkB9tGYZgqoaXDIQSNW2L0gQ5FJzNL23bi6NcDx8nNrfTZ
+	 D0tSL4t1XPVSAxqWUBKuAwWUq3Z4j6UAeQTumXnbYn3xDO4v2SZcradoPEiiKDYdyu
+	 FXybXzG2rBk9sUDMBvYeQWIRr2x7y29zvPTdUteLSdpBOQtDbNEws4Eu3hXEuLv5E5
+	 r7QWsiaGxjQXg==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 06 Aug 2024 15:30:23 +0200
+X-ME-Date: Tue, 06 Aug 2024 15:43:08 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Davidlohr Bueso <dave@stgolabs.net>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
+To: David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	rcu@vger.kernel.org
-Subject: [PATCH] refscale: Constify struct ref_scale_ops
-Date: Tue,  6 Aug 2024 15:30:16 +0200
-Message-ID: <46cd762aeef493d8655e8a053bfd591f849d27ec.1722951006.git.christophe.jaillet@wanadoo.fr>
+	alsa-devel@alsa-project.org,
+	patches@opensource.cirrus.com,
+	linux-sound@vger.kernel.org
+Subject: [PATCH] ASoC: cs43130: Constify struct reg_sequence and reg_sequences
+Date: Tue,  6 Aug 2024 15:43:00 +0200
+Message-ID: <5b906a0cc9b7be15d0d6310069f54254a75ea767.1722951770.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -61,208 +57,179 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'struct ref_scale_ops' are not modified in these drivers.
+'struct reg_sequence' and 'struct reg_sequences' are not modified in this
+drivers.
 
-Constifying this structure moves some data to a read-only section, so
+Constifying these structures moves some data to a read-only section, so
 increase overall security.
 
 On a x86_64, with allmodconfig:
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-  34231	   4167	    736	  39134	   98de	kernel/rcu/refscale.o
+  54409	   7881	     64	  62354	   f392	sound/soc/codecs/cs43130.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-  35175	   3239	    736	  39150	   98ee	kernel/rcu/refscale.o
+  55562	   6729	     64	  62355	   f393	sound/soc/codecs/cs43130.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested-only.
 ---
- kernel/rcu/refscale.c | 42 +++++++++++++++++++++---------------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ sound/soc/codecs/cs43130.c | 40 +++++++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
-index cfec0648e141..0db9db73f57f 100644
---- a/kernel/rcu/refscale.c
-+++ b/kernel/rcu/refscale.c
-@@ -135,7 +135,7 @@ struct ref_scale_ops {
- 	const char *name;
+diff --git a/sound/soc/codecs/cs43130.c b/sound/soc/codecs/cs43130.c
+index cb4ca80f36d2..f8e2fb69ada2 100644
+--- a/sound/soc/codecs/cs43130.c
++++ b/sound/soc/codecs/cs43130.c
+@@ -1805,7 +1805,7 @@ static struct attribute *hpload_attrs[] = {
+ };
+ ATTRIBUTE_GROUPS(hpload);
+ 
+-static struct reg_sequence hp_en_cal_seq[] = {
++static const struct reg_sequence hp_en_cal_seq[] = {
+ 	{CS43130_INT_MASK_4, CS43130_INT_MASK_ALL},
+ 	{CS43130_HP_MEAS_LOAD_1, 0},
+ 	{CS43130_HP_MEAS_LOAD_2, 0},
+@@ -1820,7 +1820,7 @@ static struct reg_sequence hp_en_cal_seq[] = {
+ 	{CS43130_HP_LOAD_1, 0x80},
  };
  
--static struct ref_scale_ops *cur_ops;
-+static const struct ref_scale_ops *cur_ops;
- 
- static void un_delay(const int udl, const int ndl)
- {
-@@ -171,7 +171,7 @@ static bool rcu_sync_scale_init(void)
- 	return true;
- }
- 
--static struct ref_scale_ops rcu_ops = {
-+static const struct ref_scale_ops rcu_ops = {
- 	.init		= rcu_sync_scale_init,
- 	.readsection	= ref_rcu_read_section,
- 	.delaysection	= ref_rcu_delay_section,
-@@ -205,7 +205,7 @@ static void srcu_ref_scale_delay_section(const int nloops, const int udl, const
- 	}
- }
- 
--static struct ref_scale_ops srcu_ops = {
-+static const struct ref_scale_ops srcu_ops = {
- 	.init		= rcu_sync_scale_init,
- 	.readsection	= srcu_ref_scale_read_section,
- 	.delaysection	= srcu_ref_scale_delay_section,
-@@ -232,7 +232,7 @@ static void rcu_tasks_ref_scale_delay_section(const int nloops, const int udl, c
- 		un_delay(udl, ndl);
- }
- 
--static struct ref_scale_ops rcu_tasks_ops = {
-+static const struct ref_scale_ops rcu_tasks_ops = {
- 	.init		= rcu_sync_scale_init,
- 	.readsection	= rcu_tasks_ref_scale_read_section,
- 	.delaysection	= rcu_tasks_ref_scale_delay_section,
-@@ -271,7 +271,7 @@ static void rcu_trace_ref_scale_delay_section(const int nloops, const int udl, c
- 	}
- }
- 
--static struct ref_scale_ops rcu_trace_ops = {
-+static const struct ref_scale_ops rcu_trace_ops = {
- 	.init		= rcu_sync_scale_init,
- 	.readsection	= rcu_trace_ref_scale_read_section,
- 	.delaysection	= rcu_trace_ref_scale_delay_section,
-@@ -310,7 +310,7 @@ static void ref_refcnt_delay_section(const int nloops, const int udl, const int
- 	}
- }
- 
--static struct ref_scale_ops refcnt_ops = {
-+static const struct ref_scale_ops refcnt_ops = {
- 	.init		= rcu_sync_scale_init,
- 	.readsection	= ref_refcnt_section,
- 	.delaysection	= ref_refcnt_delay_section,
-@@ -347,7 +347,7 @@ static void ref_rwlock_delay_section(const int nloops, const int udl, const int
- 	}
- }
- 
--static struct ref_scale_ops rwlock_ops = {
-+static const struct ref_scale_ops rwlock_ops = {
- 	.init		= ref_rwlock_init,
- 	.readsection	= ref_rwlock_section,
- 	.delaysection	= ref_rwlock_delay_section,
-@@ -384,7 +384,7 @@ static void ref_rwsem_delay_section(const int nloops, const int udl, const int n
- 	}
- }
- 
--static struct ref_scale_ops rwsem_ops = {
-+static const struct ref_scale_ops rwsem_ops = {
- 	.init		= ref_rwsem_init,
- 	.readsection	= ref_rwsem_section,
- 	.delaysection	= ref_rwsem_delay_section,
-@@ -419,7 +419,7 @@ static void ref_lock_delay_section(const int nloops, const int udl, const int nd
- 	preempt_enable();
- }
- 
--static struct ref_scale_ops lock_ops = {
-+static const struct ref_scale_ops lock_ops = {
- 	.readsection	= ref_lock_section,
- 	.delaysection	= ref_lock_delay_section,
- 	.name		= "lock"
-@@ -454,7 +454,7 @@ static void ref_lock_irq_delay_section(const int nloops, const int udl, const in
- 	preempt_enable();
- }
- 
--static struct ref_scale_ops lock_irq_ops = {
-+static const struct ref_scale_ops lock_irq_ops = {
- 	.readsection	= ref_lock_irq_section,
- 	.delaysection	= ref_lock_irq_delay_section,
- 	.name		= "lock-irq"
-@@ -490,7 +490,7 @@ static void ref_acqrel_delay_section(const int nloops, const int udl, const int
- 	preempt_enable();
- }
- 
--static struct ref_scale_ops acqrel_ops = {
-+static const struct ref_scale_ops acqrel_ops = {
- 	.readsection	= ref_acqrel_section,
- 	.delaysection	= ref_acqrel_delay_section,
- 	.name		= "acqrel"
-@@ -524,7 +524,7 @@ static void ref_clock_delay_section(const int nloops, const int udl, const int n
- 	stopopts = x;
- }
- 
--static struct ref_scale_ops clock_ops = {
-+static const struct ref_scale_ops clock_ops = {
- 	.readsection	= ref_clock_section,
- 	.delaysection	= ref_clock_delay_section,
- 	.name		= "clock"
-@@ -556,7 +556,7 @@ static void ref_jiffies_delay_section(const int nloops, const int udl, const int
- 	stopopts = x;
- }
- 
--static struct ref_scale_ops jiffies_ops = {
-+static const struct ref_scale_ops jiffies_ops = {
- 	.readsection	= ref_jiffies_section,
- 	.delaysection	= ref_jiffies_delay_section,
- 	.name		= "jiffies"
-@@ -706,9 +706,9 @@ static void refscale_typesafe_ctor(void *rtsp_in)
- 	preempt_enable();
- }
- 
--static struct ref_scale_ops typesafe_ref_ops;
--static struct ref_scale_ops typesafe_lock_ops;
--static struct ref_scale_ops typesafe_seqlock_ops;
-+static const struct ref_scale_ops typesafe_ref_ops;
-+static const struct ref_scale_ops typesafe_lock_ops;
-+static const struct ref_scale_ops typesafe_seqlock_ops;
- 
- // Initialize for a typesafe test.
- static bool typesafe_init(void)
-@@ -769,7 +769,7 @@ static void typesafe_cleanup(void)
- }
- 
- // The typesafe_init() function distinguishes these structures by address.
--static struct ref_scale_ops typesafe_ref_ops = {
-+static const struct ref_scale_ops typesafe_ref_ops = {
- 	.init		= typesafe_init,
- 	.cleanup	= typesafe_cleanup,
- 	.readsection	= typesafe_read_section,
-@@ -777,7 +777,7 @@ static struct ref_scale_ops typesafe_ref_ops = {
- 	.name		= "typesafe_ref"
+-static struct reg_sequence hp_en_cal_seq2[] = {
++static const struct reg_sequence hp_en_cal_seq2[] = {
+ 	{CS43130_INT_MASK_4, CS43130_INT_MASK_ALL},
+ 	{CS43130_HP_MEAS_LOAD_1, 0},
+ 	{CS43130_HP_MEAS_LOAD_2, 0},
+@@ -1828,7 +1828,7 @@ static struct reg_sequence hp_en_cal_seq2[] = {
+ 	{CS43130_HP_LOAD_1, 0x80},
  };
  
--static struct ref_scale_ops typesafe_lock_ops = {
-+static const struct ref_scale_ops typesafe_lock_ops = {
- 	.init		= typesafe_init,
- 	.cleanup	= typesafe_cleanup,
- 	.readsection	= typesafe_read_section,
-@@ -785,7 +785,7 @@ static struct ref_scale_ops typesafe_lock_ops = {
- 	.name		= "typesafe_lock"
+-static struct reg_sequence hp_dis_cal_seq[] = {
++static const struct reg_sequence hp_dis_cal_seq[] = {
+ 	{CS43130_HP_LOAD_1, 0x80},
+ 	{CS43130_DXD1, 0x99},
+ 	{CS43130_DXD12, 0},
+@@ -1836,12 +1836,12 @@ static struct reg_sequence hp_dis_cal_seq[] = {
+ 	{CS43130_HP_LOAD_1, 0},
  };
  
--static struct ref_scale_ops typesafe_seqlock_ops = {
-+static const struct ref_scale_ops typesafe_seqlock_ops = {
- 	.init		= typesafe_init,
- 	.cleanup	= typesafe_cleanup,
- 	.readsection	= typesafe_read_section,
-@@ -1026,7 +1026,7 @@ static int main_func(void *arg)
+-static struct reg_sequence hp_dis_cal_seq2[] = {
++static const struct reg_sequence hp_dis_cal_seq2[] = {
+ 	{CS43130_HP_LOAD_1, 0x80},
+ 	{CS43130_HP_LOAD_1, 0},
+ };
+ 
+-static struct reg_sequence hp_dc_ch_l_seq[] = {
++static const struct reg_sequence hp_dc_ch_l_seq[] = {
+ 	{CS43130_DXD1, 0x99},
+ 	{CS43130_DXD19, 0x0A},
+ 	{CS43130_DXD17, 0x93},
+@@ -1851,12 +1851,12 @@ static struct reg_sequence hp_dc_ch_l_seq[] = {
+ 	{CS43130_HP_LOAD_1, 0x81},
+ };
+ 
+-static struct reg_sequence hp_dc_ch_l_seq2[] = {
++static const struct reg_sequence hp_dc_ch_l_seq2[] = {
+ 	{CS43130_HP_LOAD_1, 0x80},
+ 	{CS43130_HP_LOAD_1, 0x81},
+ };
+ 
+-static struct reg_sequence hp_dc_ch_r_seq[] = {
++static const struct reg_sequence hp_dc_ch_r_seq[] = {
+ 	{CS43130_DXD1, 0x99},
+ 	{CS43130_DXD19, 0x8A},
+ 	{CS43130_DXD17, 0x15},
+@@ -1866,12 +1866,12 @@ static struct reg_sequence hp_dc_ch_r_seq[] = {
+ 	{CS43130_HP_LOAD_1, 0x91},
+ };
+ 
+-static struct reg_sequence hp_dc_ch_r_seq2[] = {
++static const struct reg_sequence hp_dc_ch_r_seq2[] = {
+ 	{CS43130_HP_LOAD_1, 0x90},
+ 	{CS43130_HP_LOAD_1, 0x91},
+ };
+ 
+-static struct reg_sequence hp_ac_ch_l_seq[] = {
++static const struct reg_sequence hp_ac_ch_l_seq[] = {
+ 	{CS43130_DXD1, 0x99},
+ 	{CS43130_DXD19, 0x0A},
+ 	{CS43130_DXD17, 0x93},
+@@ -1881,12 +1881,12 @@ static struct reg_sequence hp_ac_ch_l_seq[] = {
+ 	{CS43130_HP_LOAD_1, 0x82},
+ };
+ 
+-static struct reg_sequence hp_ac_ch_l_seq2[] = {
++static const struct reg_sequence hp_ac_ch_l_seq2[] = {
+ 	{CS43130_HP_LOAD_1, 0x80},
+ 	{CS43130_HP_LOAD_1, 0x82},
+ };
+ 
+-static struct reg_sequence hp_ac_ch_r_seq[] = {
++static const struct reg_sequence hp_ac_ch_r_seq[] = {
+ 	{CS43130_DXD1, 0x99},
+ 	{CS43130_DXD19, 0x8A},
+ 	{CS43130_DXD17, 0x15},
+@@ -1896,24 +1896,24 @@ static struct reg_sequence hp_ac_ch_r_seq[] = {
+ 	{CS43130_HP_LOAD_1, 0x92},
+ };
+ 
+-static struct reg_sequence hp_ac_ch_r_seq2[] = {
++static const struct reg_sequence hp_ac_ch_r_seq2[] = {
+ 	{CS43130_HP_LOAD_1, 0x90},
+ 	{CS43130_HP_LOAD_1, 0x92},
+ };
+ 
+-static struct reg_sequence hp_cln_seq[] = {
++static const struct reg_sequence hp_cln_seq[] = {
+ 	{CS43130_INT_MASK_4, CS43130_INT_MASK_ALL},
+ 	{CS43130_HP_MEAS_LOAD_1, 0},
+ 	{CS43130_HP_MEAS_LOAD_2, 0},
+ };
+ 
+ struct reg_sequences {
+-	struct reg_sequence	*seq;
+-	int			size;
+-	unsigned int		msk;
++	const struct reg_sequence	*seq;
++	int				size;
++	unsigned int			msk;
+ };
+ 
+-static struct reg_sequences hpload_seq1[] = {
++static const struct reg_sequences hpload_seq1[] = {
+ 	{
+ 		.seq	= hp_en_cal_seq,
+ 		.size	= ARRAY_SIZE(hp_en_cal_seq),
+@@ -1951,7 +1951,7 @@ static struct reg_sequences hpload_seq1[] = {
+ 	},
+ };
+ 
+-static struct reg_sequences hpload_seq2[] = {
++static const struct reg_sequences hpload_seq2[] = {
+ 	{
+ 		.seq	= hp_en_cal_seq2,
+ 		.size	= ARRAY_SIZE(hp_en_cal_seq2),
+@@ -2041,7 +2041,7 @@ static int cs43130_update_hpload(unsigned int msk, int ac_idx,
  }
  
- static void
--ref_scale_print_module_parms(struct ref_scale_ops *cur_ops, const char *tag)
-+ref_scale_print_module_parms(const struct ref_scale_ops *cur_ops, const char *tag)
+ static int cs43130_hpload_proc(struct cs43130_private *cs43130,
+-			       struct reg_sequence *seq, int seq_size,
++			       const struct reg_sequence *seq, int seq_size,
+ 			       unsigned int rslt_msk, int ac_idx)
  {
- 	pr_alert("%s" SCALE_FLAG
- 		 "--- %s:  verbose=%d verbose_batched=%d shutdown=%d holdoff=%d lookup_instances=%ld loops=%ld nreaders=%d nruns=%d readdelay=%d\n", scale_type, tag,
-@@ -1081,7 +1081,7 @@ ref_scale_init(void)
- {
- 	long i;
- 	int firsterr = 0;
--	static struct ref_scale_ops *scale_ops[] = {
-+	static const struct ref_scale_ops *scale_ops[] = {
- 		&rcu_ops, &srcu_ops, RCU_TRACE_OPS RCU_TASKS_OPS &refcnt_ops, &rwlock_ops,
- 		&rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops, &clock_ops, &jiffies_ops,
- 		&typesafe_ref_ops, &typesafe_lock_ops, &typesafe_seqlock_ops,
+ 	int ret;
+@@ -2122,7 +2122,7 @@ static void cs43130_imp_meas(struct work_struct *wk)
+ 	int i, ret, ac_idx;
+ 	struct cs43130_private *cs43130;
+ 	struct snd_soc_component *component;
+-	struct reg_sequences *hpload_seq;
++	const struct reg_sequences *hpload_seq;
+ 
+ 	cs43130 = container_of(wk, struct cs43130_private, work);
+ 	component = cs43130->component;
 -- 
 2.45.2
 
