@@ -1,40 +1,39 @@
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC3F1D54CB;
-	Tue,  6 Aug 2024 13:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D3B1D54F2;
+	Tue,  6 Aug 2024 13:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722951799; cv=none; b=h8yQh7J34WD2pHvVaRrrf1LxJYiJRCJ4ZnncTuDGy4yrOrQKG1zagfLlukOUVrI++GdieuY2BgbtZDUuWhAa2VAJzcTnP/TZI8Sej+csPHRP1TtwzpjwbxY/YTsMLy3457jKhnk0KZvceL7Z4TBfMMRvbmvJNKyV//Sj96mNpHE=
+	t=1722952361; cv=none; b=ZOvSJq+9lq3OBWXvlw2GUuTaMIzmsMcZZz4/5Z3LU+M61qKyvTA/o1DkvvBp7MRTGPGkL87zJ21kh7/xR8CTcaeRWpohqSw5Jv4b7TldKDc3N4jTh8a8G7jlPa4UYDRU4ahZ6w///QtMqEUbU72DNwFMLdFn91R+vb6pqhmG6Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722951799; c=relaxed/simple;
-	bh=5a1X9wFrWBvpAQTBrO/UprB7XAg2K7Y8ijJUSSEGM4M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rChdG0tOCqwgbp33Q8+tUP0ybDJIufAsBFFMAjs7UzLVY0VrQXkh1KUpb4l/xADZ0qVAWrareJ2tkVd1/YZugnfk8F9Kjohj4Tc+mMvHfLCpbg0AZMlzfrbV1Q/b1yFoPMUVBmDWAJTtrNul93nCHj3CaNZqxSArtaOSJccZHFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Cdn64Utg; arc=none smtp.client-ip=80.12.242.15
+	s=arc-20240116; t=1722952361; c=relaxed/simple;
+	bh=1xp8MpcbIf4SJReiGGRUdwOnwB4XlkxoI0nTOvXGop0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F0R1Ky2M7/kN//q0K1VGvu1HEzZXYTIiI6hqvD6VWztphzyijwf2Zbx5V63UtSWBYbYzfPKZK3gFD0Iw+U7TPHt5gKOED4wA7RPJxXgSOo1NAxv53GnPPXmZksXggC8q50RDAvtCNuNo0gkXjA8VKIy09tTwsIJjSiAbEzy/PKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=hQW0CjW9; arc=none smtp.client-ip=80.12.242.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Cdn64Utg"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="hQW0CjW9"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id bKSxsQhrDrWkDbKSxsiUeV; Tue, 06 Aug 2024 15:43:08 +0200
+	id bKbzsGbpa1n2IbKbzsv4Xt; Tue, 06 Aug 2024 15:52:30 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722951789;
-	bh=/3TrRDY1xrq9A6NvQnziOhi0PcSU3SG4UHNJJeoANis=;
+	s=t20230301; t=1722952350;
+	bh=mc++s71P86r5Z0x7KKuuJQxBX0xc+KPuIQNkerrGWJc=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Cdn64UtgloRvBi5reaIPWOGLqOKXMxxD82CJboKK9NuwhH6HxHJvU8OqmvsP2jMDg
-	 KR3gAPfsvJopnBlZpdNDtx6kSA0rLGRdr2sGBFELjcDDQeU+C9xVz/Z8ui0I+FukQJ
-	 iWwAu7h4L010vJiLL75PmkB9tGYZgqoaXDIQSNW2L0gQ5FJzNL23bi6NcDx8nNrfTZ
-	 D0tSL4t1XPVSAxqWUBKuAwWUq3Z4j6UAeQTumXnbYn3xDO4v2SZcradoPEiiKDYdyu
-	 FXybXzG2rBk9sUDMBvYeQWIRr2x7y29zvPTdUteLSdpBOQtDbNEws4Eu3hXEuLv5E5
-	 r7QWsiaGxjQXg==
+	b=hQW0CjW9L9pEKnBc4HRnBH49bThclJIlf+wQTLUm+ku4twf8fJugchH1cnt7PDvIB
+	 t1UlDvFuJgY2O/V7wqFZkWPbkE8VRCeoXCCVmpbZOqM2difB2ol8ORk52NUXYNVUdi
+	 hGsFj1kwQlNn5OBHEINdGgfPJGU2a7021Ox8K7DvoszuNSdjeGT0C8+U8D3pmUFS6x
+	 H+tTCXkXuEEQqbCEENZ5umBySDXJKNT/s4SAIv0HwAfWq8fxas/8t12XT86BMEqJ4i
+	 riBkkqEP0uLk9YeObjscXBPzljWN5R6PkOLpsgHeClS3QonKg42uCVxASxMb5ryej3
+	 HMOZcvd3Lh+Kg==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 06 Aug 2024 15:43:08 +0200
+X-ME-Date: Tue, 06 Aug 2024 15:52:30 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
+To: Oder Chiou <oder_chiou@realtek.com>,
 	Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
 	Jaroslav Kysela <perex@perex.cz>,
@@ -42,12 +41,10 @@ To: David Rhodes <david.rhodes@cirrus.com>,
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	alsa-devel@alsa-project.org,
-	patches@opensource.cirrus.com,
 	linux-sound@vger.kernel.org
-Subject: [PATCH] ASoC: cs43130: Constify struct reg_sequence and reg_sequences
-Date: Tue,  6 Aug 2024 15:43:00 +0200
-Message-ID: <5b906a0cc9b7be15d0d6310069f54254a75ea767.1722951770.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] ASoC: rt1318: Constify struct reg_sequence
+Date: Tue,  6 Aug 2024 15:52:24 +0200
+Message-ID: <96561dd2962d4312eb0e68ab850027f44350d070.1722952334.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -57,179 +54,52 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'struct reg_sequence' and 'struct reg_sequences' are not modified in this
-drivers.
+'struct reg_sequence' is not modified in this driver.
 
-Constifying these structures moves some data to a read-only section, so
+Constifying this structure moves some data to a read-only section, so
 increase overall security.
+
+While at it, remove rt1318_INIT_REG_LEN which is ununsed.
 
 On a x86_64, with allmodconfig:
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-  54409	   7881	     64	  62354	   f392	sound/soc/codecs/cs43130.o
+  22062	   4859	     32	  26953	   6949	sound/soc/codecs/rt1318.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-  55562	   6729	     64	  62355	   f393	sound/soc/codecs/cs43130.o
+  24742	   2171	     32	  26945	   6941	sound/soc/codecs/rt1318.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested-only.
 ---
- sound/soc/codecs/cs43130.c | 40 +++++++++++++++++++-------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+ sound/soc/codecs/rt1318.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/cs43130.c b/sound/soc/codecs/cs43130.c
-index cb4ca80f36d2..f8e2fb69ada2 100644
---- a/sound/soc/codecs/cs43130.c
-+++ b/sound/soc/codecs/cs43130.c
-@@ -1805,7 +1805,7 @@ static struct attribute *hpload_attrs[] = {
+diff --git a/sound/soc/codecs/rt1318.c b/sound/soc/codecs/rt1318.c
+index 83b29b441be9..e12b1e96a53a 100644
+--- a/sound/soc/codecs/rt1318.c
++++ b/sound/soc/codecs/rt1318.c
+@@ -30,7 +30,7 @@
+ 
+ #include "rt1318.h"
+ 
+-static struct reg_sequence init_list[] = {
++static const struct reg_sequence init_list[] = {
+ 	{ 0x0000C000, 0x01},
+ 	{ 0x0000F20D, 0x00},
+ 	{ 0x0000F212, 0x3E},
+@@ -254,7 +254,6 @@ static struct reg_sequence init_list[] = {
+ 	{ 0x0000C320, 0x20},
+ 	{ 0x0000C203, 0x9C},
  };
- ATTRIBUTE_GROUPS(hpload);
+-#define rt1318_INIT_REG_LEN ARRAY_SIZE(init_list)
  
--static struct reg_sequence hp_en_cal_seq[] = {
-+static const struct reg_sequence hp_en_cal_seq[] = {
- 	{CS43130_INT_MASK_4, CS43130_INT_MASK_ALL},
- 	{CS43130_HP_MEAS_LOAD_1, 0},
- 	{CS43130_HP_MEAS_LOAD_2, 0},
-@@ -1820,7 +1820,7 @@ static struct reg_sequence hp_en_cal_seq[] = {
- 	{CS43130_HP_LOAD_1, 0x80},
- };
- 
--static struct reg_sequence hp_en_cal_seq2[] = {
-+static const struct reg_sequence hp_en_cal_seq2[] = {
- 	{CS43130_INT_MASK_4, CS43130_INT_MASK_ALL},
- 	{CS43130_HP_MEAS_LOAD_1, 0},
- 	{CS43130_HP_MEAS_LOAD_2, 0},
-@@ -1828,7 +1828,7 @@ static struct reg_sequence hp_en_cal_seq2[] = {
- 	{CS43130_HP_LOAD_1, 0x80},
- };
- 
--static struct reg_sequence hp_dis_cal_seq[] = {
-+static const struct reg_sequence hp_dis_cal_seq[] = {
- 	{CS43130_HP_LOAD_1, 0x80},
- 	{CS43130_DXD1, 0x99},
- 	{CS43130_DXD12, 0},
-@@ -1836,12 +1836,12 @@ static struct reg_sequence hp_dis_cal_seq[] = {
- 	{CS43130_HP_LOAD_1, 0},
- };
- 
--static struct reg_sequence hp_dis_cal_seq2[] = {
-+static const struct reg_sequence hp_dis_cal_seq2[] = {
- 	{CS43130_HP_LOAD_1, 0x80},
- 	{CS43130_HP_LOAD_1, 0},
- };
- 
--static struct reg_sequence hp_dc_ch_l_seq[] = {
-+static const struct reg_sequence hp_dc_ch_l_seq[] = {
- 	{CS43130_DXD1, 0x99},
- 	{CS43130_DXD19, 0x0A},
- 	{CS43130_DXD17, 0x93},
-@@ -1851,12 +1851,12 @@ static struct reg_sequence hp_dc_ch_l_seq[] = {
- 	{CS43130_HP_LOAD_1, 0x81},
- };
- 
--static struct reg_sequence hp_dc_ch_l_seq2[] = {
-+static const struct reg_sequence hp_dc_ch_l_seq2[] = {
- 	{CS43130_HP_LOAD_1, 0x80},
- 	{CS43130_HP_LOAD_1, 0x81},
- };
- 
--static struct reg_sequence hp_dc_ch_r_seq[] = {
-+static const struct reg_sequence hp_dc_ch_r_seq[] = {
- 	{CS43130_DXD1, 0x99},
- 	{CS43130_DXD19, 0x8A},
- 	{CS43130_DXD17, 0x15},
-@@ -1866,12 +1866,12 @@ static struct reg_sequence hp_dc_ch_r_seq[] = {
- 	{CS43130_HP_LOAD_1, 0x91},
- };
- 
--static struct reg_sequence hp_dc_ch_r_seq2[] = {
-+static const struct reg_sequence hp_dc_ch_r_seq2[] = {
- 	{CS43130_HP_LOAD_1, 0x90},
- 	{CS43130_HP_LOAD_1, 0x91},
- };
- 
--static struct reg_sequence hp_ac_ch_l_seq[] = {
-+static const struct reg_sequence hp_ac_ch_l_seq[] = {
- 	{CS43130_DXD1, 0x99},
- 	{CS43130_DXD19, 0x0A},
- 	{CS43130_DXD17, 0x93},
-@@ -1881,12 +1881,12 @@ static struct reg_sequence hp_ac_ch_l_seq[] = {
- 	{CS43130_HP_LOAD_1, 0x82},
- };
- 
--static struct reg_sequence hp_ac_ch_l_seq2[] = {
-+static const struct reg_sequence hp_ac_ch_l_seq2[] = {
- 	{CS43130_HP_LOAD_1, 0x80},
- 	{CS43130_HP_LOAD_1, 0x82},
- };
- 
--static struct reg_sequence hp_ac_ch_r_seq[] = {
-+static const struct reg_sequence hp_ac_ch_r_seq[] = {
- 	{CS43130_DXD1, 0x99},
- 	{CS43130_DXD19, 0x8A},
- 	{CS43130_DXD17, 0x15},
-@@ -1896,24 +1896,24 @@ static struct reg_sequence hp_ac_ch_r_seq[] = {
- 	{CS43130_HP_LOAD_1, 0x92},
- };
- 
--static struct reg_sequence hp_ac_ch_r_seq2[] = {
-+static const struct reg_sequence hp_ac_ch_r_seq2[] = {
- 	{CS43130_HP_LOAD_1, 0x90},
- 	{CS43130_HP_LOAD_1, 0x92},
- };
- 
--static struct reg_sequence hp_cln_seq[] = {
-+static const struct reg_sequence hp_cln_seq[] = {
- 	{CS43130_INT_MASK_4, CS43130_INT_MASK_ALL},
- 	{CS43130_HP_MEAS_LOAD_1, 0},
- 	{CS43130_HP_MEAS_LOAD_2, 0},
- };
- 
- struct reg_sequences {
--	struct reg_sequence	*seq;
--	int			size;
--	unsigned int		msk;
-+	const struct reg_sequence	*seq;
-+	int				size;
-+	unsigned int			msk;
- };
- 
--static struct reg_sequences hpload_seq1[] = {
-+static const struct reg_sequences hpload_seq1[] = {
- 	{
- 		.seq	= hp_en_cal_seq,
- 		.size	= ARRAY_SIZE(hp_en_cal_seq),
-@@ -1951,7 +1951,7 @@ static struct reg_sequences hpload_seq1[] = {
- 	},
- };
- 
--static struct reg_sequences hpload_seq2[] = {
-+static const struct reg_sequences hpload_seq2[] = {
- 	{
- 		.seq	= hp_en_cal_seq2,
- 		.size	= ARRAY_SIZE(hp_en_cal_seq2),
-@@ -2041,7 +2041,7 @@ static int cs43130_update_hpload(unsigned int msk, int ac_idx,
- }
- 
- static int cs43130_hpload_proc(struct cs43130_private *cs43130,
--			       struct reg_sequence *seq, int seq_size,
-+			       const struct reg_sequence *seq, int seq_size,
- 			       unsigned int rslt_msk, int ac_idx)
- {
- 	int ret;
-@@ -2122,7 +2122,7 @@ static void cs43130_imp_meas(struct work_struct *wk)
- 	int i, ret, ac_idx;
- 	struct cs43130_private *cs43130;
- 	struct snd_soc_component *component;
--	struct reg_sequences *hpload_seq;
-+	const struct reg_sequences *hpload_seq;
- 
- 	cs43130 = container_of(wk, struct cs43130_private, work);
- 	component = cs43130->component;
+ static const struct reg_default rt1318_reg[] = {
+ 	{ 0xc000, 0x00 },
 -- 
 2.45.2
 
