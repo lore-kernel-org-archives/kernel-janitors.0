@@ -1,178 +1,99 @@
-Received: from msa.smtpout.orange.fr (smtp-84.smtpout.orange.fr [80.12.242.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6F4171E69;
-	Wed,  7 Aug 2024 11:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9864F1CCB45;
+	Wed,  7 Aug 2024 12:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723031453; cv=none; b=THDm4ZJknkZoaABmEu35KoAQzUJe7x0dZJVLFUK6KO0ZyRx1egyu2yOCNdxmmvHJQ1I5zux9vS5HP7b0rZzKivB7vI/z6J0C5WHKsycijoGlJsD3oNGWT8lpWGnnKCZBFpTAfCyvq9WBdosqty7bOwzeHFqbaqWvAjz/kbi8w20=
+	t=1723032470; cv=none; b=lsEWfM/FOwRRWg23Z54V1AWJYgj7KJKdY+/i6Cbln/vWVsf5hUL6/aeaJQMK8k5MiE1K841ytXI7yMN9+m0EAi+P2ICeLrpTjywXK4OsF8EG0YylxC5VHVjJJYa6WAYTFCBVN0ZkyGAmeiXaHj1OnRJRwzOMCKnwIN0wkaJBgsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723031453; c=relaxed/simple;
-	bh=OVFOto6e65+c4nKCzmzscz/exRDud1tlzbTEr4N0EY4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sU+yQUVjnxURevEji6NQmFKXibeBR9YeiqjCu6HFC1Z1348TCUAZnNOoSn/9LxYkxwt4l27FBcjIPNNQkZBpJkHHW1GLSnW/s0FaPqo/p8IZQZFmF36Lb/YlWxhMXjZseFpMYuEf9CqAwwfY/19hUH49X0LQf3JFN4TpFX12K3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=g/tWAC/T; arc=none smtp.client-ip=80.12.242.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1723032470; c=relaxed/simple;
+	bh=MDDNu/zajjfFpykkUwCqlLc2ljXZwowVHH4+J5jVMIU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qu/CLzmUOqCtlBXaQLjtK5xuSK2rrrvSA7/KyZauzEkcTMYLY0nQksTeAQVTWMFgnmZE3oANqKSgMfqCJGLkZH6Uuq/a3mDw0/H6UOuwgLqE1//UFwtJpSeJp1Sys+Fm4JV3FFs9JF8Oa3tc7gotT0tu86t3WbtGjWWKfHv6vvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=Y+ABNLz8; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="g/tWAC/T"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id bfBdsxqDOGdLxbfBdsrywa; Wed, 07 Aug 2024 13:50:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1723031441;
-	bh=gGp51/nkgJ7p0vWRXfhYIn/n399BaIfjQd0IuhiOb0E=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=g/tWAC/TaNQpzvVepgA1ufqI77xsxYX2zlp8IzDHKUfIU48FOF4L7t8E3gBawNHG7
-	 ug8TJTCz9vbEbOpYgAiX/skVMEtZyFQWbyHTRTth1ddt5ifk7MuwN800RrJnozVU9B
-	 lTnAiyy3YZpU+UaqeERJ9SiJE+kfOrwzht9qc3VTU1nmCK/xKDhbiZLY1ozaI05BGq
-	 I/2iXXAblAG8jI2w5qbzchF+rM3MjfoZlrwK8mo+FOTkyuKWcho/boQtThAMulzOKo
-	 BTTKTFlK7Q9t+oh7tebHgp41vQyWLsPT07ptvL3x5ulGRLBjVyCAWe4AkzXFQO1APJ
-	 VF06KlvXJaLAQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 07 Aug 2024 13:50:41 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next] net: ibm/emac: Constify struct mii_phy_def
-Date: Wed,  7 Aug 2024 13:50:31 +0200
-Message-ID: <dfc7876d660d700a840e64c35de0a6519e117539.1723031352.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="Y+ABNLz8"
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47700RE1025336;
+	Wed, 7 Aug 2024 07:05:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=6jY5QYeGmEHK54GJH2
+	dhb4cGIv8f9TreS6EMGG3Fk3A=; b=Y+ABNLz8CbDp9UnVCRY6kbiK2VQp64N0ma
+	mp7CjNqBwUPs4g5rqe1lWhfwDyNMH0an+KtuiRFK6tqT2gbB2frzt5Ms4n78oOzv
+	B/j2NBh4qaKBShOAmrDoJNmTCHur1ImipX0HuVeyFgpZO3iTtqRzPGLgfXMjmsOh
+	X79M0F/FPiMklp8iybEanYN19byeJxy/CCp10ZgPke6GQuS0MJPKropHw9ujvw0e
+	byB6wOALPtFkO8JMfsd7M2tf3Z+vCkBCxImU5OA0LJTEbclxxvvszHQnuVWsZzhz
+	UnFQQ7oQxypxSBcBGchqWSiGkWnmAQlfsNrR0CiuzPqNUlEKlJHg==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 40sgyhvae3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 07:05:24 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
+ 13:05:22 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Wed, 7 Aug 2024 13:05:22 +0100
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id C0476820241;
+	Wed,  7 Aug 2024 12:05:22 +0000 (UTC)
+Date: Wed, 7 Aug 2024 13:05:21 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+CC: David Rhodes <david.rhodes@cirrus.com>,
+        Richard Fitzgerald
+	<rf@opensource.cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	<broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+	<tiwai@suse.com>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
+        <linux-sound@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: cs43130: Constify struct reg_sequence and
+ reg_sequences
+Message-ID: <ZrNjAdV7wG1SvX9G@opensource.cirrus.com>
+References: <5b906a0cc9b7be15d0d6310069f54254a75ea767.1722951770.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <5b906a0cc9b7be15d0d6310069f54254a75ea767.1722951770.git.christophe.jaillet@wanadoo.fr>
+X-Proofpoint-ORIG-GUID: PY5ysZ-wbzARALhasRhm8SICPhdPLjzM
+X-Proofpoint-GUID: PY5ysZ-wbzARALhasRhm8SICPhdPLjzM
+X-Proofpoint-Spam-Reason: safe
 
-'struct mii_phy_def' are not modified in this driver.
+On Tue, Aug 06, 2024 at 03:43:00PM +0200, Christophe JAILLET wrote:
+> 'struct reg_sequence' and 'struct reg_sequences' are not modified in this
+> drivers.
+> 
+> Constifying these structures moves some data to a read-only section, so
+> increase overall security.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>   54409	   7881	     64	  62354	   f392	sound/soc/codecs/cs43130.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>   55562	   6729	     64	  62355	   f393	sound/soc/codecs/cs43130.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Constifying these structures moves some data to a read-only section, so
-increase overall security.
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-
-On a x86_64, with allmodconfig:
-Before:
-======
-   4901	    464	      0	   5365	   14f5	drivers/net/ethernet/ibm/emac/phy.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   5127	    240	      0	   5367	   14f7	drivers/net/ethernet/ibm/emac/phy.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
----
- drivers/net/ethernet/ibm/emac/phy.c | 18 +++++++++---------
- drivers/net/ethernet/ibm/emac/phy.h |  2 +-
- 2 files changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/net/ethernet/ibm/emac/phy.c b/drivers/net/ethernet/ibm/emac/phy.c
-index 1e798cc9b6b8..f90abcfaf487 100644
---- a/drivers/net/ethernet/ibm/emac/phy.c
-+++ b/drivers/net/ethernet/ibm/emac/phy.c
-@@ -284,7 +284,7 @@ static const struct mii_phy_ops generic_phy_ops = {
- 	.read_link	= genmii_read_link
- };
- 
--static struct mii_phy_def genmii_phy_def = {
-+static const struct mii_phy_def genmii_phy_def = {
- 	.phy_id		= 0x00000000,
- 	.phy_id_mask	= 0x00000000,
- 	.name		= "Generic MII",
-@@ -349,14 +349,14 @@ static const struct mii_phy_ops cis8201_phy_ops = {
- 	.read_link	= genmii_read_link
- };
- 
--static struct mii_phy_def cis8201_phy_def = {
-+static const struct mii_phy_def cis8201_phy_def = {
- 	.phy_id		= 0x000fc410,
- 	.phy_id_mask	= 0x000ffff0,
- 	.name		= "CIS8201 Gigabit Ethernet",
- 	.ops		= &cis8201_phy_ops
- };
- 
--static struct mii_phy_def bcm5248_phy_def = {
-+static const struct mii_phy_def bcm5248_phy_def = {
- 
- 	.phy_id		= 0x0143bc00,
- 	.phy_id_mask	= 0x0ffffff0,
-@@ -429,7 +429,7 @@ static const struct mii_phy_ops et1011c_phy_ops = {
- 	.read_link	= genmii_read_link
- };
- 
--static struct mii_phy_def et1011c_phy_def = {
-+static const struct mii_phy_def et1011c_phy_def = {
- 	.phy_id		= 0x0282f000,
- 	.phy_id_mask	= 0x0fffff00,
- 	.name		= "ET1011C Gigabit Ethernet",
-@@ -448,7 +448,7 @@ static const struct mii_phy_ops m88e1111_phy_ops = {
- 	.read_link	= genmii_read_link
- };
- 
--static struct mii_phy_def m88e1111_phy_def = {
-+static const struct mii_phy_def m88e1111_phy_def = {
- 
- 	.phy_id		= 0x01410CC0,
- 	.phy_id_mask	= 0x0ffffff0,
-@@ -464,7 +464,7 @@ static const struct mii_phy_ops m88e1112_phy_ops = {
- 	.read_link	= genmii_read_link
- };
- 
--static struct mii_phy_def m88e1112_phy_def = {
-+static const struct mii_phy_def m88e1112_phy_def = {
- 	.phy_id		= 0x01410C90,
- 	.phy_id_mask	= 0x0ffffff0,
- 	.name		= "Marvell 88E1112 Ethernet",
-@@ -489,14 +489,14 @@ static const struct mii_phy_ops ar8035_phy_ops = {
- 	.read_link	= genmii_read_link,
- };
- 
--static struct mii_phy_def ar8035_phy_def = {
-+static const struct mii_phy_def ar8035_phy_def = {
- 	.phy_id		= 0x004dd070,
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Atheros 8035 Gigabit Ethernet",
- 	.ops		= &ar8035_phy_ops,
- };
- 
--static struct mii_phy_def *mii_phy_table[] = {
-+static const struct mii_phy_def *mii_phy_table[] = {
- 	&et1011c_phy_def,
- 	&cis8201_phy_def,
- 	&bcm5248_phy_def,
-@@ -509,7 +509,7 @@ static struct mii_phy_def *mii_phy_table[] = {
- 
- int emac_mii_phy_probe(struct mii_phy *phy, int address)
- {
--	struct mii_phy_def *def;
-+	const struct mii_phy_def *def;
- 	int i;
- 	u32 id;
- 
-diff --git a/drivers/net/ethernet/ibm/emac/phy.h b/drivers/net/ethernet/ibm/emac/phy.h
-index 2184e8373ee5..b1ede47a540f 100644
---- a/drivers/net/ethernet/ibm/emac/phy.h
-+++ b/drivers/net/ethernet/ibm/emac/phy.h
-@@ -47,7 +47,7 @@ struct mii_phy_def {
- 
- /* An instance of a PHY, partially borrowed from mii_if_info */
- struct mii_phy {
--	struct mii_phy_def *def;
-+	const struct mii_phy_def *def;
- 	u32 advertising;	/* Ethtool ADVERTISED_* defines */
- 	u32 features;		/* Copied from mii_phy_def.features
- 				   or determined automaticaly */
--- 
-2.45.2
-
+Thanks,
+Charles
