@@ -1,1076 +1,337 @@
-Received: from msa.smtpout.orange.fr (msa-210.smtpout.orange.fr [193.252.23.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03C11386C6;
-	Wed,  7 Aug 2024 18:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E4F1487D5;
+	Wed,  7 Aug 2024 23:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723053968; cv=none; b=YyrHoSeH89KjjrrZ15fnSCRCaujl/VthbkpcDlF9KrLovwnDpkZPuxOfc1cXqrehqA5THTCw7VFT8aBzfREXdB4ZAqf9pJbLONVBIUSwz5PsDjsZrHitOd9STn0qqZ14h03oTRYYD6a3SRUcpyF/3RPp3L3y16w7pU2cbXov580=
+	t=1723071627; cv=none; b=Bj2ADlm/34919gWXTbmAEK32r69ZzuiO9fXR0eA44BXR3RGmJYVz4ZTsSBtCfoIVbajKW/FqFuJO0OxqByz8rHQpNPi3jUz3wFNXlHdVVZH9Jx4C4AjODwWogprt3dVMebXh5yP1qyP1netky2nYvYKyLKhrpjeF2pL+fNQA6SU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723053968; c=relaxed/simple;
-	bh=FjR7cH/AXMgF2qcIHMvs3kP9ryNU/T4uBvQzOETdKkU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OZIl6rq2DNwU/cAAIbCLHn1K4tuD+7gyLnrSlMvKl2DGlLQgU7nnTK5h/Z0h/Sy5Di4tFNH3TLcDOpYhsdXzqDNeThpRB+Qg9HJEAIJdEw2OR0abHBbxONerE50FGidzTuOxMU8gzmniRbqkqvzhtZMgpVrZHLCNlNjJv6d5bbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lvxiRCRf; arc=none smtp.client-ip=193.252.23.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1723071627; c=relaxed/simple;
+	bh=arnnn32Ho+GL6PFkLJOb0kBKaBfwaERy1ak7dEHN3YM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hi2xTSSiCvi1oVxivKwKmchlroKBTKtGAFQCCJf1ikoBW6H8vjLdAJYI6lJd5JD3b7m2VoOuVFblYNZ7A4VMniVU7Z9sPTV2Wp+FeKDlfM8cFmuEHHSrryE5IdP+wpoWV8N93RPgIeEgslkhNxLIKqiqzjw2ad2ISXA/1RQOONI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HBn/MyOu; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lvxiRCRf"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id bl2lskduHJ0ftbl2lsPwG0; Wed, 07 Aug 2024 20:05:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1723053956;
-	bh=XsnSip/UQMIfmGG+Nu8wWlXtm1D/0x/299eGd5I7dcg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=lvxiRCRfF4KyaWIc26xf68UmUOmjY58SMy5bssxDpvg4dl5OaVAYYKBLWSbyOxRDx
-	 AlJVqkAr2rHki/q3bgO0m7u1U5EXQvzbr4qp5T2mSxCxCP3mt3ifFBBk1M4fKdgbMN
-	 Bij04lfj8RT70+hCuPbgEpTQDIlY4BhNl54ZqcLI4rIAEcqcWCigAVsTsCbmvoiTeG
-	 fJn871hGkU6gF/V2AafQ+A0gphhbw758RbAvRWsUCDKM21xgS6WXD2KFU2FdunrnRM
-	 4gSK6AqWf9XqRIb70o58fFa/ApLjcnW9uoLBx4m/ZBAVKkEg1ES6LqdefTdGEjMrZE
-	 CkPe1LQSF01CQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 07 Aug 2024 20:05:56 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH v2] pinctrl: meson: Constify some structures
-Date: Wed,  7 Aug 2024 20:05:36 +0200
-Message-ID: <f74e326bd7d48003c06219545bad7c2ef1a84bf8.1723053850.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HBn/MyOu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723071625; x=1754607625;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=arnnn32Ho+GL6PFkLJOb0kBKaBfwaERy1ak7dEHN3YM=;
+  b=HBn/MyOuW7s//k32B/8j741qHRF51D/mf34mK/1Ao5WQJ1VD1GH3OyeE
+   9H1geUngZIPuwJ2ir2TP5NSgkFZB0MpLfhNk9JmPuzeMm7SdlcDbw957R
+   yrqjHAd9ygcc05LSElq9wStWZVpCCqFX2kqhyR6CTHJBer1n6YpdMQyCf
+   2jpx/xKF7hrYjhfgNob0kFBOzoOHEORMkV0o75Zqfcofo1eFRR9Bzv4mg
+   wZ/+TM7E28CXy5TkWHY/rCnYw3oJfXLGzCxxx2j4JW9klmJk0XbrhHWqr
+   TknmM/kgQAzq/SD2owCe5rKVcD5ZEXoaqbKVqnfvZwTuVH9yi2DB+Y6Sz
+   w==;
+X-CSE-ConnectionGUID: 84wAkBpUQK2VDX05HdTyPA==
+X-CSE-MsgGUID: +BAE/1TKSx2YEWc56hc78Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="20834981"
+X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
+   d="scan'208";a="20834981"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 16:00:24 -0700
+X-CSE-ConnectionGUID: j+tkh7BuTuGNrCbOXDBslg==
+X-CSE-MsgGUID: yB1pGQNXSv2u7/sqCYaIZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
+   d="scan'208";a="87674909"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 07 Aug 2024 16:00:22 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sbpdi-0005mO-2i;
+	Wed, 07 Aug 2024 23:00:18 +0000
+Date: Thu, 8 Aug 2024 07:00:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH net-next] net: ibm/emac: Constify struct mii_phy_def
+Message-ID: <202408080631.rKnoa41D-lkp@intel.com>
+References: <dfc7876d660d700a840e64c35de0a6519e117539.1723031352.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dfc7876d660d700a840e64c35de0a6519e117539.1723031352.git.christophe.jaillet@wanadoo.fr>
 
-The following structures are not modified in these drivers.
-  - struct meson_bank
-  - struct meson_pmx_bank
-  - struct meson_pmx_func
-  - struct meson_pmx_group
-  - struct meson_pinctrl_data
-  - struct meson_axg_pmx_data
+Hi Christophe,
 
-Constifying these structures moves some data to a read-only section, so
-increase overall security.
+kernel test robot noticed the following build errors:
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  10818	  11696	      0	  22514	   57f2	drivers/pinctrl/meson/pinctrl-amlogic-c3.o
-  17198	  17680	      0	  34878	   883e	drivers/pinctrl/meson/pinctrl-amlogic-t7.o
-  14161	  11200	      0	  25361	   6311	drivers/pinctrl/meson/pinctrl-meson8b.o
-  17348	  12512	      0	  29860	   74a4	drivers/pinctrl/meson/pinctrl-meson8.o
-   3070	    324	      0	   3394	    d42	drivers/pinctrl/meson/pinctrl-meson8-pmx.o
-   9317	   9648	      0	  18965	   4a15	drivers/pinctrl/meson/pinctrl-meson-a1.o
-  12115	  11664	      0	  23779	   5ce3	drivers/pinctrl/meson/pinctrl-meson-axg.o
-   2470	    120	      0	   2590	    a1e	drivers/pinctrl/meson/pinctrl-meson-axg-pmx.o
-  15125	  15224	      0	  30349	   768d	drivers/pinctrl/meson/pinctrl-meson-g12a.o
-  13800	  10160	      0	  23960	   5d98	drivers/pinctrl/meson/pinctrl-meson-gxbb.o
-  13040	   9648	      0	  22688	   58a0	drivers/pinctrl/meson/pinctrl-meson-gxl.o
-  20507	   1132	     48	  21687	   54b7	drivers/pinctrl/meson/pinctrl-meson.o
-  12212	  12880	      0	  25092	   6204	drivers/pinctrl/meson/pinctrl-meson-s4.o
+[auto build test ERROR on net-next/main]
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  22242	    248	      0	  22490	   57da	drivers/pinctrl/meson/pinctrl-amlogic-c3.o
-  34638	    248	      0	  34886	   8846	drivers/pinctrl/meson/pinctrl-amlogic-t7.o
-  25137	    232	      0	  25369	   6319	drivers/pinctrl/meson/pinctrl-meson8b.o
-  29604	    232	      0	  29836	   748c	drivers/pinctrl/meson/pinctrl-meson8.o
-   3070	    324	      0	   3394	    d42	drivers/pinctrl/meson/pinctrl-meson8-pmx.o
-  18725	    248	      0	  18973	   4a1d	drivers/pinctrl/meson/pinctrl-meson-a1.o
-  23539	    248	      0	  23787	   5ceb	drivers/pinctrl/meson/pinctrl-meson-axg.o
-   2470	    120	      0	   2590	    a1e	drivers/pinctrl/meson/pinctrl-meson-axg-pmx.o
-  30101	    256	      0	  30357	   7695	drivers/pinctrl/meson/pinctrl-meson-g12a.o
-  23688	    248	      0	  23936	   5d80	drivers/pinctrl/meson/pinctrl-meson-gxbb.o
-  22416	    248	      0	  22664	   5888	drivers/pinctrl/meson/pinctrl-meson-gxl.o
-  20507	   1132	     48	  21687	   54b7	drivers/pinctrl/meson/pinctrl-meson.o
-  24820	    248	      0	  25068	   61ec	drivers/pinctrl/meson/pinctrl-meson-s4.o
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
+url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-JAILLET/net-ibm-emac-Constify-struct-mii_phy_def/20240807-195146
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/dfc7876d660d700a840e64c35de0a6519e117539.1723031352.git.christophe.jaillet%40wanadoo.fr
+patch subject: [PATCH net-next] net: ibm/emac: Constify struct mii_phy_def
+config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20240808/202408080631.rKnoa41D-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240808/202408080631.rKnoa41D-lkp@intel.com/reproduce)
 
-In order to compile them, I've updated Kconfig to add some "| COMPILE_TEST"
-on 'depends' line.
-Should it be useful, I can send a patch to add it, but I don't think it
-would be that useful.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408080631.rKnoa41D-lkp@intel.com/
 
-Changes in v2:
-  - Merge 3 patches into only 1   [Jerome Brunet]
-  - Add constification of struct meson_pinctrl_data and
-    struct meson_axg_pmx_data   [Jerome Brunet]
+All errors (new ones prefixed by >>):
 
-v1: https://lore.kernel.org/all/cover.1723022467.git.christophe.jaillet@wanadoo.fr/
----
- drivers/pinctrl/meson/pinctrl-amlogic-c3.c    | 12 ++++-----
- drivers/pinctrl/meson/pinctrl-amlogic-t7.c    | 12 ++++-----
- drivers/pinctrl/meson/pinctrl-meson-a1.c      | 12 ++++-----
- drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c | 12 ++++-----
- drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h |  2 +-
- drivers/pinctrl/meson/pinctrl-meson-axg.c     | 24 +++++++++---------
- drivers/pinctrl/meson/pinctrl-meson-g12a.c    | 24 +++++++++---------
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c    | 16 ++++++------
- drivers/pinctrl/meson/pinctrl-meson-gxl.c     | 16 ++++++------
- drivers/pinctrl/meson/pinctrl-meson-s4.c      | 12 ++++-----
- drivers/pinctrl/meson/pinctrl-meson.c         | 25 ++++++++++---------
- drivers/pinctrl/meson/pinctrl-meson.h         |  8 +++---
- drivers/pinctrl/meson/pinctrl-meson8-pmx.c    |  6 ++---
- drivers/pinctrl/meson/pinctrl-meson8.c        | 16 ++++++------
- drivers/pinctrl/meson/pinctrl-meson8b.c       | 16 ++++++------
- 15 files changed, 107 insertions(+), 106 deletions(-)
+   drivers/net/ethernet/ibm/emac/core.c: In function 'emac_dt_phy_connect':
+>> drivers/net/ethernet/ibm/emac/core.c:2648:30: error: assignment of member 'phy_id' in read-only object
+    2648 |         dev->phy.def->phy_id = dev->phy_dev->drv->phy_id;
+         |                              ^
+>> drivers/net/ethernet/ibm/emac/core.c:2649:35: error: assignment of member 'phy_id_mask' in read-only object
+    2649 |         dev->phy.def->phy_id_mask = dev->phy_dev->drv->phy_id_mask;
+         |                                   ^
+>> drivers/net/ethernet/ibm/emac/core.c:2650:28: error: assignment of member 'name' in read-only object
+    2650 |         dev->phy.def->name = dev->phy_dev->drv->name;
+         |                            ^
+>> drivers/net/ethernet/ibm/emac/core.c:2651:27: error: assignment of member 'ops' in read-only object
+    2651 |         dev->phy.def->ops = &emac_dt_mdio_phy_ops;
+         |                           ^
+   drivers/net/ethernet/ibm/emac/core.c: In function 'emac_init_phy':
+>> drivers/net/ethernet/ibm/emac/core.c:2818:32: error: assignment of member 'features' in read-only object
+    2818 |         dev->phy.def->features &= ~dev->phy_feat_exc;
+         |                                ^~
 
-diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-c3.c b/drivers/pinctrl/meson/pinctrl-amlogic-c3.c
-index 04f1e87bae99..776d32465ab9 100644
---- a/drivers/pinctrl/meson/pinctrl-amlogic-c3.c
-+++ b/drivers/pinctrl/meson/pinctrl-amlogic-c3.c
-@@ -375,7 +375,7 @@ static const unsigned int spi_a_mosi_a_pins[]		= { GPIOA_3 };
- static const unsigned int gen_clk_a4_pins[]		= { GPIOA_4 };
- static const unsigned int clk12_24_a_pins[]		= { GPIOA_5 };
- 
--static struct meson_pmx_group c3_periphs_groups[] = {
-+static const struct meson_pmx_group c3_periphs_groups[] = {
- 	GPIO_GROUP(GPIOE_0),
- 	GPIO_GROUP(GPIOE_1),
- 	GPIO_GROUP(GPIOE_2),
-@@ -987,7 +987,7 @@ static const char * const lcd_groups[] = {
- 	"lcd_clk_a", "lcd_clk_x", "lcd_hs", "lcd_vs",
- };
- 
--static struct meson_pmx_func c3_periphs_functions[] = {
-+static const struct meson_pmx_func c3_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(uart_a),
- 	FUNCTION(uart_b),
-@@ -1036,7 +1036,7 @@ static struct meson_pmx_func c3_periphs_functions[] = {
- 	FUNCTION(lcd),
- };
- 
--static struct meson_bank c3_periphs_banks[] = {
-+static const struct meson_bank c3_periphs_banks[] = {
- 	/* name  first  last  irq  pullen  pull  dir  out  in ds */
- 	BANK_DS("X",      GPIOX_0,      GPIOX_13,   40, 53,
- 		0x03, 0,  0x04, 0,  0x02, 0,  0x01, 0, 0x00, 0, 0x07, 0),
-@@ -1054,7 +1054,7 @@ static struct meson_bank c3_periphs_banks[] = {
- 		0x73, 0,  0x74, 0,  0x72, 0,  0x71, 0, 0x70, 0, 0x77, 0),
- };
- 
--static struct meson_pmx_bank c3_periphs_pmx_banks[] = {
-+static const struct meson_pmx_bank c3_periphs_pmx_banks[] = {
- 	/* name	            first	 last        reg offset */
- 	BANK_PMX("B",      GPIOB_0,     GPIOB_14,    0x00, 0),
- 	BANK_PMX("X",      GPIOX_0,     GPIOX_13,    0x03, 0),
-@@ -1065,12 +1065,12 @@ static struct meson_pmx_bank c3_periphs_pmx_banks[] = {
- 	BANK_PMX("TEST_N", GPIO_TEST_N, GPIO_TEST_N, 0x02, 0),
- };
- 
--static struct meson_axg_pmx_data c3_periphs_pmx_banks_data = {
-+static const struct meson_axg_pmx_data c3_periphs_pmx_banks_data = {
- 	.pmx_banks	= c3_periphs_pmx_banks,
- 	.num_pmx_banks	= ARRAY_SIZE(c3_periphs_pmx_banks),
- };
- 
--static struct meson_pinctrl_data c3_periphs_pinctrl_data = {
-+static const struct meson_pinctrl_data c3_periphs_pinctrl_data = {
- 	.name		= "periphs-banks",
- 	.pins		= c3_periphs_pins,
- 	.groups		= c3_periphs_groups,
-diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-t7.c b/drivers/pinctrl/meson/pinctrl-amlogic-t7.c
-index 0aed5de3f068..cfd98b9dcb68 100644
---- a/drivers/pinctrl/meson/pinctrl-amlogic-t7.c
-+++ b/drivers/pinctrl/meson/pinctrl-amlogic-t7.c
-@@ -535,7 +535,7 @@ static const unsigned int i2c0_sck_h_pins[]		= { GPIOH_7 };
- /* Bank H func3 */
- static const unsigned int pcieck_reqn_h_pins[]		= { GPIOH_2 };
- 
--static struct meson_pmx_group t7_periphs_groups[] = {
-+static const struct meson_pmx_group t7_periphs_groups[] = {
- 	GPIO_GROUP(GPIOB_0),
- 	GPIO_GROUP(GPIOB_1),
- 	GPIO_GROUP(GPIOB_2),
-@@ -1443,7 +1443,7 @@ static const char * const mic_mute_groups[] = {
- 	"mic_mute_key", "mic_mute_led",
- };
- 
--static struct meson_pmx_func t7_periphs_functions[] = {
-+static const struct meson_pmx_func t7_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(emmc),
- 	FUNCTION(nor),
-@@ -1524,7 +1524,7 @@ static struct meson_pmx_func t7_periphs_functions[] = {
- 	FUNCTION(mic_mute),
- };
- 
--static struct meson_bank t7_periphs_banks[] = {
-+static const struct meson_bank t7_periphs_banks[] = {
- 	/* name  first  last  irq pullen  pull  dir  out  in  ds */
- 	BANK_DS("D",      GPIOD_0,     GPIOD_12, 57, 69,
- 		0x03, 0,  0x04,  0,  0x02,  0, 0x01, 0,  0x00, 0, 0x07, 0),
-@@ -1552,7 +1552,7 @@ static struct meson_bank t7_periphs_banks[] = {
- 		0x83, 0,  0x84,  0,  0x82, 0,  0x81,  0, 0x80, 0, 0x87, 0),
- };
- 
--static struct meson_pmx_bank t7_periphs_pmx_banks[] = {
-+static const struct meson_pmx_bank t7_periphs_pmx_banks[] = {
- 	/*      name	    first	 last        reg  offset */
- 	BANK_PMX("D",      GPIOD_0,     GPIOD_12,    0x0a,  0),
- 	BANK_PMX("E",      GPIOE_0,     GPIOE_6,     0x0c,  0),
-@@ -1568,12 +1568,12 @@ static struct meson_pmx_bank t7_periphs_pmx_banks[] = {
- 	BANK_PMX("TEST_N", GPIO_TEST_N, GPIO_TEST_N, 0x09,  0),
- };
- 
--static struct meson_axg_pmx_data t7_periphs_pmx_banks_data = {
-+static const struct meson_axg_pmx_data t7_periphs_pmx_banks_data = {
- 	.pmx_banks	= t7_periphs_pmx_banks,
- 	.num_pmx_banks	= ARRAY_SIZE(t7_periphs_pmx_banks),
- };
- 
--static struct meson_pinctrl_data t7_periphs_pinctrl_data = {
-+static const struct meson_pinctrl_data t7_periphs_pinctrl_data = {
- 	.name		= "periphs-banks",
- 	.pins		= t7_periphs_pins,
- 	.groups		= t7_periphs_groups,
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-a1.c b/drivers/pinctrl/meson/pinctrl-meson-a1.c
-index d2ac9ca72a3e..20c4323d4223 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-a1.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-a1.c
-@@ -339,7 +339,7 @@ static const unsigned int tst_out11_pins[]		= { GPIOA_11 };
- static const unsigned int mute_key_pins[]		= { GPIOA_4 };
- static const unsigned int mute_en_pins[]		= { GPIOA_5 };
- 
--static struct meson_pmx_group meson_a1_periphs_groups[] = {
-+static const struct meson_pmx_group meson_a1_periphs_groups[] = {
- 	GPIO_GROUP(GPIOP_0),
- 	GPIO_GROUP(GPIOP_1),
- 	GPIO_GROUP(GPIOP_2),
-@@ -832,7 +832,7 @@ static const char * const mute_groups[] = {
- 	"mute_key", "mute_en",
- };
- 
--static struct meson_pmx_func meson_a1_periphs_functions[] = {
-+static const struct meson_pmx_func meson_a1_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(psram),
- 	FUNCTION(pwm_a),
-@@ -875,7 +875,7 @@ static struct meson_pmx_func meson_a1_periphs_functions[] = {
- 	FUNCTION(mute),
- };
- 
--static struct meson_bank meson_a1_periphs_banks[] = {
-+static const struct meson_bank meson_a1_periphs_banks[] = {
- 	/* name  first  last  irq  pullen  pull  dir  out  in  ds*/
- 	BANK_DS("P",  GPIOP_0,  GPIOP_12,  0,  12, 0x3,  0,  0x4,  0,
- 		0x2,  0,  0x1,  0,  0x0,  0,  0x5,  0),
-@@ -889,7 +889,7 @@ static struct meson_bank meson_a1_periphs_banks[] = {
- 		0x42,  0,  0x41,  0,  0x40,  0,  0x45,  0),
- };
- 
--static struct meson_pmx_bank meson_a1_periphs_pmx_banks[] = {
-+static const struct meson_pmx_bank meson_a1_periphs_pmx_banks[] = {
- 	/*  name	 first	    lask    reg	offset  */
- 	BANK_PMX("P",    GPIOP_0, GPIOP_12, 0x0, 0),
- 	BANK_PMX("B",    GPIOB_0, GPIOB_6,  0x2, 0),
-@@ -898,12 +898,12 @@ static struct meson_pmx_bank meson_a1_periphs_pmx_banks[] = {
- 	BANK_PMX("A",    GPIOA_0, GPIOA_11, 0x8, 0),
- };
- 
--static struct meson_axg_pmx_data meson_a1_periphs_pmx_banks_data = {
-+static const struct meson_axg_pmx_data meson_a1_periphs_pmx_banks_data = {
- 	.pmx_banks	= meson_a1_periphs_pmx_banks,
- 	.num_pmx_banks	= ARRAY_SIZE(meson_a1_periphs_pmx_banks),
- };
- 
--static struct meson_pinctrl_data meson_a1_periphs_pinctrl_data = {
-+static const struct meson_pinctrl_data meson_a1_periphs_pinctrl_data = {
- 	.name		= "periphs-banks",
- 	.pins		= meson_a1_periphs_pins,
- 	.groups		= meson_a1_periphs_groups,
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c b/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c
-index cad411d90727..00c3829216d6 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c
-@@ -27,10 +27,10 @@
- 
- static int meson_axg_pmx_get_bank(struct meson_pinctrl *pc,
- 			unsigned int pin,
--			struct meson_pmx_bank **bank)
-+			const struct meson_pmx_bank **bank)
- {
- 	int i;
--	struct meson_axg_pmx_data *pmx = pc->data->pmx_data;
-+	const struct meson_axg_pmx_data *pmx = pc->data->pmx_data;
- 
- 	for (i = 0; i < pmx->num_pmx_banks; i++)
- 		if (pin >= pmx->pmx_banks[i].first &&
-@@ -42,7 +42,7 @@ static int meson_axg_pmx_get_bank(struct meson_pinctrl *pc,
- 	return -EINVAL;
- }
- 
--static int meson_pmx_calc_reg_and_offset(struct meson_pmx_bank *bank,
-+static int meson_pmx_calc_reg_and_offset(const struct meson_pmx_bank *bank,
- 			unsigned int pin, unsigned int *reg,
- 			unsigned int *offset)
- {
-@@ -59,10 +59,10 @@ static int meson_pmx_calc_reg_and_offset(struct meson_pmx_bank *bank,
- static int meson_axg_pmx_update_function(struct meson_pinctrl *pc,
- 			unsigned int pin, unsigned int func)
- {
-+	const struct meson_pmx_bank *bank;
- 	int ret;
- 	int reg;
- 	int offset;
--	struct meson_pmx_bank *bank;
- 
- 	ret = meson_axg_pmx_get_bank(pc, pin, &bank);
- 	if (ret)
-@@ -82,8 +82,8 @@ static int meson_axg_pmx_set_mux(struct pinctrl_dev *pcdev,
- 	int i;
- 	int ret;
- 	struct meson_pinctrl *pc = pinctrl_dev_get_drvdata(pcdev);
--	struct meson_pmx_func *func = &pc->data->funcs[func_num];
--	struct meson_pmx_group *group = &pc->data->groups[group_num];
-+	const struct meson_pmx_func *func = &pc->data->funcs[func_num];
-+	const struct meson_pmx_group *group = &pc->data->groups[group_num];
- 	struct meson_pmx_axg_data *pmx_data =
- 		(struct meson_pmx_axg_data *)group->data;
- 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h b/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h
-index 67147ebaef1b..63b9d471e980 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h
-+++ b/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h
-@@ -17,7 +17,7 @@ struct meson_pmx_bank {
- };
- 
- struct meson_axg_pmx_data {
--	struct meson_pmx_bank *pmx_banks;
-+	const struct meson_pmx_bank *pmx_banks;
- 	unsigned int num_pmx_banks;
- };
- 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-index 8f4e7154b73f..fa2df4896390 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-@@ -352,7 +352,7 @@ static const unsigned int tdmb_dout2_pins[] = {GPIOA_12};
- static const unsigned int tdmb_din3_pins[] = {GPIOA_13};
- static const unsigned int tdmb_dout3_pins[] = {GPIOA_13};
- 
--static struct meson_pmx_group meson_axg_periphs_groups[] = {
-+static const struct meson_pmx_group meson_axg_periphs_groups[] = {
- 	GPIO_GROUP(GPIOZ_0),
- 	GPIO_GROUP(GPIOZ_1),
- 	GPIO_GROUP(GPIOZ_2),
-@@ -675,7 +675,7 @@ static const unsigned int jtag_ao_tms_pins[] = {GPIOAO_7};
- /* gen_clk */
- static const unsigned int gen_clk_ee_pins[] = {GPIOAO_13};
- 
--static struct meson_pmx_group meson_axg_aobus_groups[] = {
-+static const struct meson_pmx_group meson_axg_aobus_groups[] = {
- 	GPIO_GROUP(GPIOAO_0),
- 	GPIO_GROUP(GPIOAO_1),
- 	GPIO_GROUP(GPIOAO_2),
-@@ -955,7 +955,7 @@ static const char * const gen_clk_ee_groups[] = {
- 	"gen_clk_ee",
- };
- 
--static struct meson_pmx_func meson_axg_periphs_functions[] = {
-+static const struct meson_pmx_func meson_axg_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(emmc),
- 	FUNCTION(nor),
-@@ -987,7 +987,7 @@ static struct meson_pmx_func meson_axg_periphs_functions[] = {
- 	FUNCTION(tdmc),
- };
- 
--static struct meson_pmx_func meson_axg_aobus_functions[] = {
-+static const struct meson_pmx_func meson_axg_aobus_functions[] = {
- 	FUNCTION(gpio_aobus),
- 	FUNCTION(uart_ao_a),
- 	FUNCTION(uart_ao_b),
-@@ -1003,7 +1003,7 @@ static struct meson_pmx_func meson_axg_aobus_functions[] = {
- 	FUNCTION(gen_clk_ee),
- };
- 
--static struct meson_bank meson_axg_periphs_banks[] = {
-+static const struct meson_bank meson_axg_periphs_banks[] = {
- 	/*   name    first      last       irq	     pullen  pull    dir     out     in  */
- 	BANK("Z",    GPIOZ_0,	GPIOZ_10, 14,  24, 3,  0,  3,  0,  9,  0,  10, 0,  11, 0),
- 	BANK("BOOT", BOOT_0,	BOOT_14,  25,  39, 4,  0,  4,  0,  12, 0,  13, 0,  14, 0),
-@@ -1012,12 +1012,12 @@ static struct meson_bank meson_axg_periphs_banks[] = {
- 	BANK("Y", 	 GPIOY_0,	GPIOY_15, 84,  99, 1,  0,  1,  0,  3,  0,  4,  0,  5,  0),
- };
- 
--static struct meson_bank meson_axg_aobus_banks[] = {
-+static const struct meson_bank meson_axg_aobus_banks[] = {
- 	/*   name    first      last      irq	pullen  pull    dir     out     in  */
- 	BANK("AO",   GPIOAO_0,  GPIOAO_13, 0, 13, 0,  16,  0, 0,  0,  0,  0, 16,  1,  0),
- };
- 
--static struct meson_pmx_bank meson_axg_periphs_pmx_banks[] = {
-+static const struct meson_pmx_bank meson_axg_periphs_pmx_banks[] = {
- 	/*	 name	 first		lask	   reg	offset  */
- 	BANK_PMX("Z",	 GPIOZ_0, GPIOZ_10, 0x2, 0),
- 	BANK_PMX("BOOT", BOOT_0,  BOOT_14,  0x0, 0),
-@@ -1026,21 +1026,21 @@ static struct meson_pmx_bank meson_axg_periphs_pmx_banks[] = {
- 	BANK_PMX("Y",	 GPIOY_0, GPIOY_15, 0x8, 0),
- };
- 
--static struct meson_axg_pmx_data meson_axg_periphs_pmx_banks_data = {
-+static const struct meson_axg_pmx_data meson_axg_periphs_pmx_banks_data = {
- 	.pmx_banks	= meson_axg_periphs_pmx_banks,
- 	.num_pmx_banks = ARRAY_SIZE(meson_axg_periphs_pmx_banks),
- };
- 
--static struct meson_pmx_bank meson_axg_aobus_pmx_banks[] = {
-+static const struct meson_pmx_bank meson_axg_aobus_pmx_banks[] = {
- 	BANK_PMX("AO", GPIOAO_0, GPIOAO_13, 0x0, 0),
- };
- 
--static struct meson_axg_pmx_data meson_axg_aobus_pmx_banks_data = {
-+static const struct meson_axg_pmx_data meson_axg_aobus_pmx_banks_data = {
- 	.pmx_banks	= meson_axg_aobus_pmx_banks,
- 	.num_pmx_banks = ARRAY_SIZE(meson_axg_aobus_pmx_banks),
- };
- 
--static struct meson_pinctrl_data meson_axg_periphs_pinctrl_data = {
-+static const struct meson_pinctrl_data meson_axg_periphs_pinctrl_data = {
- 	.name		= "periphs-banks",
- 	.pins		= meson_axg_periphs_pins,
- 	.groups		= meson_axg_periphs_groups,
-@@ -1054,7 +1054,7 @@ static struct meson_pinctrl_data meson_axg_periphs_pinctrl_data = {
- 	.pmx_data	= &meson_axg_periphs_pmx_banks_data,
- };
- 
--static struct meson_pinctrl_data meson_axg_aobus_pinctrl_data = {
-+static const struct meson_pinctrl_data meson_axg_aobus_pinctrl_data = {
- 	.name		= "aobus-banks",
- 	.pins		= meson_axg_aobus_pins,
- 	.groups		= meson_axg_aobus_groups,
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-g12a.c b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-index 32830269a5b4..e2788bfc5874 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-@@ -436,7 +436,7 @@ static const unsigned int tdm_c_dout1_z_pins[]		= { GPIOZ_3 };
- static const unsigned int tdm_c_dout2_z_pins[]		= { GPIOZ_4 };
- static const unsigned int tdm_c_dout3_z_pins[]		= { GPIOZ_5 };
- 
--static struct meson_pmx_group meson_g12a_periphs_groups[] = {
-+static const struct meson_pmx_group meson_g12a_periphs_groups[] = {
- 	GPIO_GROUP(GPIOZ_0),
- 	GPIO_GROUP(GPIOZ_1),
- 	GPIO_GROUP(GPIOZ_2),
-@@ -860,7 +860,7 @@ static const unsigned int tdm_ao_b_dout2_pins[]		= { GPIOAO_6 };
- /* mclk0_ao */
- static const unsigned int mclk0_ao_pins[]		= { GPIOAO_9 };
- 
--static struct meson_pmx_group meson_g12a_aobus_groups[] = {
-+static const struct meson_pmx_group meson_g12a_aobus_groups[] = {
- 	GPIO_GROUP(GPIOAO_0),
- 	GPIO_GROUP(GPIOAO_1),
- 	GPIO_GROUP(GPIOAO_2),
-@@ -1253,7 +1253,7 @@ static const char * const mclk0_ao_groups[] = {
- 	"mclk0_ao",
- };
- 
--static struct meson_pmx_func meson_g12a_periphs_functions[] = {
-+static const struct meson_pmx_func meson_g12a_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(emmc),
- 	FUNCTION(nor),
-@@ -1295,7 +1295,7 @@ static struct meson_pmx_func meson_g12a_periphs_functions[] = {
- 	FUNCTION(tdm_c),
- };
- 
--static struct meson_pmx_func meson_g12a_aobus_functions[] = {
-+static const struct meson_pmx_func meson_g12a_aobus_functions[] = {
- 	FUNCTION(gpio_aobus),
- 	FUNCTION(uart_ao_a),
- 	FUNCTION(uart_ao_b),
-@@ -1317,7 +1317,7 @@ static struct meson_pmx_func meson_g12a_aobus_functions[] = {
- 	FUNCTION(mclk0_ao),
- };
- 
--static struct meson_bank meson_g12a_periphs_banks[] = {
-+static const struct meson_bank meson_g12a_periphs_banks[] = {
- 	/* name  first  last  irq  pullen  pull  dir  out  in  ds */
- 	BANK_DS("Z",    GPIOZ_0,  GPIOZ_15,  IRQID_GPIOZ_0,  IRQID_GPIOZ_15,
- 		4,  0,  4,  0,  12,  0, 13,  0,  14,  0,  5, 0),
-@@ -1333,7 +1333,7 @@ static struct meson_bank meson_g12a_periphs_banks[] = {
- 		2,  0,  2,  0,   6,  0,  7,  0,   8,  0,  2, 0),
- };
- 
--static struct meson_bank meson_g12a_aobus_banks[] = {
-+static const struct meson_bank meson_g12a_aobus_banks[] = {
- 	/* name  first  last  irq  pullen  pull  dir  out  in  ds */
- 	BANK_DS("AO",   GPIOAO_0, GPIOAO_11, IRQID_GPIOAO_0, IRQID_GPIOAO_11,
- 		3,  0,  2,  0,   0,  0,  4,  0,   1,  0,  0, 0),
-@@ -1342,7 +1342,7 @@ static struct meson_bank meson_g12a_aobus_banks[] = {
- 		3, 16,  2, 16,   0, 16,  4, 16,   1, 16,  1, 0),
- };
- 
--static struct meson_pmx_bank meson_g12a_periphs_pmx_banks[] = {
-+static const struct meson_pmx_bank meson_g12a_periphs_pmx_banks[] = {
- 	/*	 name	 first	  last	    reg	 offset  */
- 	BANK_PMX("Z",    GPIOZ_0, GPIOZ_15, 0x6, 0),
- 	BANK_PMX("H",    GPIOH_0, GPIOH_8,  0xb, 0),
-@@ -1352,17 +1352,17 @@ static struct meson_pmx_bank meson_g12a_periphs_pmx_banks[] = {
- 	BANK_PMX("X",    GPIOX_0, GPIOX_19, 0x3, 0),
- };
- 
--static struct meson_axg_pmx_data meson_g12a_periphs_pmx_banks_data = {
-+static const struct meson_axg_pmx_data meson_g12a_periphs_pmx_banks_data = {
- 	.pmx_banks	= meson_g12a_periphs_pmx_banks,
- 	.num_pmx_banks	= ARRAY_SIZE(meson_g12a_periphs_pmx_banks),
- };
- 
--static struct meson_pmx_bank meson_g12a_aobus_pmx_banks[] = {
-+static const struct meson_pmx_bank meson_g12a_aobus_pmx_banks[] = {
- 	BANK_PMX("AO",  GPIOAO_0, GPIOAO_11, 0x0, 0),
- 	BANK_PMX("E",   GPIOE_0,  GPIOE_2,   0x1, 16),
- };
- 
--static struct meson_axg_pmx_data meson_g12a_aobus_pmx_banks_data = {
-+static const struct meson_axg_pmx_data meson_g12a_aobus_pmx_banks_data = {
- 	.pmx_banks	= meson_g12a_aobus_pmx_banks,
- 	.num_pmx_banks	= ARRAY_SIZE(meson_g12a_aobus_pmx_banks),
- };
-@@ -1375,7 +1375,7 @@ static int meson_g12a_aobus_parse_dt_extra(struct meson_pinctrl *pc)
- 	return 0;
- }
- 
--static struct meson_pinctrl_data meson_g12a_periphs_pinctrl_data = {
-+static const struct meson_pinctrl_data meson_g12a_periphs_pinctrl_data = {
- 	.name		= "periphs-banks",
- 	.pins		= meson_g12a_periphs_pins,
- 	.groups		= meson_g12a_periphs_groups,
-@@ -1389,7 +1389,7 @@ static struct meson_pinctrl_data meson_g12a_periphs_pinctrl_data = {
- 	.pmx_data	= &meson_g12a_periphs_pmx_banks_data,
- };
- 
--static struct meson_pinctrl_data meson_g12a_aobus_pinctrl_data = {
-+static const struct meson_pinctrl_data meson_g12a_aobus_pinctrl_data = {
- 	.name		= "aobus-banks",
- 	.pins		= meson_g12a_aobus_pins,
- 	.groups		= meson_g12a_aobus_groups,
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index 2867f397fec6..4e8b9d7c2e4b 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -307,7 +307,7 @@ static const unsigned int spdif_out_ao_13_pins[] = { GPIOAO_13 };
- static const unsigned int ao_cec_pins[]		= { GPIOAO_12 };
- static const unsigned int ee_cec_pins[]		= { GPIOAO_12 };
- 
--static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
-+static const struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GPIO_GROUP(GPIOZ_0),
- 	GPIO_GROUP(GPIOZ_1),
- 	GPIO_GROUP(GPIOZ_2),
-@@ -541,7 +541,7 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GROUP(sdcard_clk,	2,	11),
- };
- 
--static struct meson_pmx_group meson_gxbb_aobus_groups[] = {
-+static const struct meson_pmx_group meson_gxbb_aobus_groups[] = {
- 	GPIO_GROUP(GPIOAO_0),
- 	GPIO_GROUP(GPIOAO_1),
- 	GPIO_GROUP(GPIOAO_2),
-@@ -798,7 +798,7 @@ static const char * const cec_ao_groups[] = {
- 	"ao_cec", "ee_cec",
- };
- 
--static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
-+static const struct meson_pmx_func meson_gxbb_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(emmc),
- 	FUNCTION(nor),
-@@ -829,7 +829,7 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
- 	FUNCTION(tsin_b),
- };
- 
--static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
-+static const struct meson_pmx_func meson_gxbb_aobus_functions[] = {
- 	FUNCTION(gpio_aobus),
- 	FUNCTION(uart_ao),
- 	FUNCTION(uart_ao_b),
-@@ -845,7 +845,7 @@ static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
- 	FUNCTION(cec_ao),
- };
- 
--static struct meson_bank meson_gxbb_periphs_banks[] = {
-+static const struct meson_bank meson_gxbb_periphs_banks[] = {
- 	/*   name    first      last       irq       pullen  pull    dir     out     in  */
- 	BANK("X",    GPIOX_0,	GPIOX_22,  106, 128, 4,  0,  4,  0,  12, 0,  13, 0,  14, 0),
- 	BANK("Y",    GPIOY_0,	GPIOY_16,   89, 105, 1,  0,  1,  0,  3,  0,  4,  0,  5,  0),
-@@ -857,12 +857,12 @@ static struct meson_bank meson_gxbb_periphs_banks[] = {
- 	BANK("CLK",  GPIOCLK_0,	GPIOCLK_3, 129, 132, 3, 28,  3, 28,  9, 28, 10, 28, 11, 28),
- };
- 
--static struct meson_bank meson_gxbb_aobus_banks[] = {
-+static const struct meson_bank meson_gxbb_aobus_banks[] = {
- 	/*   name    first      last       irq    pullen  pull    dir     out     in  */
- 	BANK("AO",   GPIOAO_0,  GPIOAO_13, 0, 13, 0,  16, 0, 0,   0,  0,  0, 16,  1,  0),
- };
- 
--static struct meson_pinctrl_data meson_gxbb_periphs_pinctrl_data = {
-+static const struct meson_pinctrl_data meson_gxbb_periphs_pinctrl_data = {
- 	.name		= "periphs-banks",
- 	.pins		= meson_gxbb_periphs_pins,
- 	.groups		= meson_gxbb_periphs_groups,
-@@ -875,7 +875,7 @@ static struct meson_pinctrl_data meson_gxbb_periphs_pinctrl_data = {
- 	.pmx_ops	= &meson8_pmx_ops,
- };
- 
--static struct meson_pinctrl_data meson_gxbb_aobus_pinctrl_data = {
-+static const struct meson_pinctrl_data meson_gxbb_aobus_pinctrl_data = {
- 	.name		= "aobus-banks",
- 	.pins		= meson_gxbb_aobus_pins,
- 	.groups		= meson_gxbb_aobus_groups,
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-index a2f25fa02852..9171de657f97 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-@@ -301,7 +301,7 @@ static const unsigned int spdif_out_ao_9_pins[] = { GPIOAO_9 };
- static const unsigned int ao_cec_pins[]		= { GPIOAO_8 };
- static const unsigned int ee_cec_pins[]		= { GPIOAO_8 };
- 
--static struct meson_pmx_group meson_gxl_periphs_groups[] = {
-+static const struct meson_pmx_group meson_gxl_periphs_groups[] = {
- 	GPIO_GROUP(GPIOZ_0),
- 	GPIO_GROUP(GPIOZ_1),
- 	GPIO_GROUP(GPIOZ_2),
-@@ -527,7 +527,7 @@ static struct meson_pmx_group meson_gxl_periphs_groups[] = {
- 	GROUP(pwm_f_clk,	8,	30),
- };
- 
--static struct meson_pmx_group meson_gxl_aobus_groups[] = {
-+static const struct meson_pmx_group meson_gxl_aobus_groups[] = {
- 	GPIO_GROUP(GPIOAO_0),
- 	GPIO_GROUP(GPIOAO_1),
- 	GPIO_GROUP(GPIOAO_2),
-@@ -763,7 +763,7 @@ static const char * const cec_ao_groups[] = {
- 	"ao_cec", "ee_cec",
- };
- 
--static struct meson_pmx_func meson_gxl_periphs_functions[] = {
-+static const struct meson_pmx_func meson_gxl_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(emmc),
- 	FUNCTION(nor),
-@@ -793,7 +793,7 @@ static struct meson_pmx_func meson_gxl_periphs_functions[] = {
- 	FUNCTION(tsin_b),
- };
- 
--static struct meson_pmx_func meson_gxl_aobus_functions[] = {
-+static const struct meson_pmx_func meson_gxl_aobus_functions[] = {
- 	FUNCTION(gpio_aobus),
- 	FUNCTION(uart_ao),
- 	FUNCTION(uart_ao_b),
-@@ -807,7 +807,7 @@ static struct meson_pmx_func meson_gxl_aobus_functions[] = {
- 	FUNCTION(cec_ao),
- };
- 
--static struct meson_bank meson_gxl_periphs_banks[] = {
-+static const struct meson_bank meson_gxl_periphs_banks[] = {
- 	/*   name    first      last       irq	     pullen  pull    dir     out     in  */
- 	BANK("X",    GPIOX_0,	GPIOX_18,   89, 107, 4,  0,  4,  0,  12, 0,  13, 0,  14, 0),
- 	BANK("DV",   GPIODV_0,	GPIODV_29,  83,  88, 0,  0,  0,  0,  0,  0,  1,  0,  2,  0),
-@@ -818,12 +818,12 @@ static struct meson_bank meson_gxl_periphs_banks[] = {
- 	BANK("CLK",  GPIOCLK_0,	GPIOCLK_1, 108, 109, 3, 28,  3, 28,  9, 28, 10, 28, 11, 28),
- };
- 
--static struct meson_bank meson_gxl_aobus_banks[] = {
-+static const struct meson_bank meson_gxl_aobus_banks[] = {
- 	/*   name    first      last      irq	pullen  pull    dir     out     in  */
- 	BANK("AO",   GPIOAO_0,  GPIOAO_9, 0, 9, 0,  16, 0, 0,   0,  0,  0, 16,  1,  0),
- };
- 
--static struct meson_pinctrl_data meson_gxl_periphs_pinctrl_data = {
-+static const struct meson_pinctrl_data meson_gxl_periphs_pinctrl_data = {
- 	.name		= "periphs-banks",
- 	.pins		= meson_gxl_periphs_pins,
- 	.groups		= meson_gxl_periphs_groups,
-@@ -836,7 +836,7 @@ static struct meson_pinctrl_data meson_gxl_periphs_pinctrl_data = {
- 	.pmx_ops	= &meson8_pmx_ops,
- };
- 
--static struct meson_pinctrl_data meson_gxl_aobus_pinctrl_data = {
-+static const struct meson_pinctrl_data meson_gxl_aobus_pinctrl_data = {
- 	.name		= "aobus-banks",
- 	.pins		= meson_gxl_aobus_pins,
- 	.groups		= meson_gxl_aobus_groups,
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-s4.c b/drivers/pinctrl/meson/pinctrl-meson-s4.c
-index 60c7d5003e8a..872948699e9f 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-s4.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-s4.c
-@@ -411,7 +411,7 @@ static const unsigned int s2_demod_gpio0_pins[]		= { GPIOZ_12 };
- static const unsigned int gen_clk_z9_pins[]		= { GPIOZ_9 };
- static const unsigned int gen_clk_z12_pins[]		= { GPIOZ_12 };
- 
--static struct meson_pmx_group meson_s4_periphs_groups[] = {
-+static const struct meson_pmx_group meson_s4_periphs_groups[] = {
- 	GPIO_GROUP(GPIOE_0),
- 	GPIO_GROUP(GPIOE_1),
- 
-@@ -1100,7 +1100,7 @@ static const char * const s2_demod_groups[] = {
- 	"s2_demod_gpio3", "s2_demod_gpio2", "s2_demod_gpio1", "s2_demod_gpio0",
- };
- 
--static struct meson_pmx_func meson_s4_periphs_functions[] = {
-+static const struct meson_pmx_func meson_s4_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(i2c0),
- 	FUNCTION(i2c1),
-@@ -1160,7 +1160,7 @@ static struct meson_pmx_func meson_s4_periphs_functions[] = {
- 	FUNCTION(s2_demod),
- };
- 
--static struct meson_bank meson_s4_periphs_banks[] = {
-+static const struct meson_bank meson_s4_periphs_banks[] = {
- 	/* name  first  last  irq  pullen  pull  dir  out  in */
- 	BANK_DS("B", GPIOB_0,    GPIOB_13,  0, 13,
- 		0x63,  0,  0x64,  0,  0x62, 0,  0x61, 0,  0x60, 0, 0x67, 0),
-@@ -1180,7 +1180,7 @@ static struct meson_bank meson_s4_periphs_banks[] = {
- 		0x83,  0,  0x84,  0,  0x82, 0,  0x81,  0, 0x80, 0, 0x87, 0),
- };
- 
--static struct meson_pmx_bank meson_s4_periphs_pmx_banks[] = {
-+static const struct meson_pmx_bank meson_s4_periphs_pmx_banks[] = {
- 	/*name	            first	 lask        reg offset*/
- 	BANK_PMX("B",      GPIOB_0,     GPIOB_13,    0x00, 0),
- 	BANK_PMX("C",      GPIOC_0,     GPIOC_7,     0x9,  0),
-@@ -1192,12 +1192,12 @@ static struct meson_pmx_bank meson_s4_periphs_pmx_banks[] = {
- 	BANK_PMX("TEST_N", GPIO_TEST_N, GPIO_TEST_N, 0xf,  0)
- };
- 
--static struct meson_axg_pmx_data meson_s4_periphs_pmx_banks_data = {
-+static const struct meson_axg_pmx_data meson_s4_periphs_pmx_banks_data = {
- 	.pmx_banks	= meson_s4_periphs_pmx_banks,
- 	.num_pmx_banks	= ARRAY_SIZE(meson_s4_periphs_pmx_banks),
- };
- 
--static struct meson_pinctrl_data meson_s4_periphs_pinctrl_data = {
-+static const struct meson_pinctrl_data meson_s4_periphs_pinctrl_data = {
- 	.name		= "periphs-banks",
- 	.pins		= meson_s4_periphs_pins,
- 	.groups		= meson_s4_periphs_groups,
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index ef002b9dd464..253a0cc57e39 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -70,7 +70,7 @@ static const unsigned int meson_bit_strides[] = {
-  * Return:	0 on success, a negative value on error
-  */
- static int meson_get_bank(struct meson_pinctrl *pc, unsigned int pin,
--			  struct meson_bank **bank)
-+			  const struct meson_bank **bank)
- {
- 	int i;
- 
-@@ -94,11 +94,12 @@ static int meson_get_bank(struct meson_pinctrl *pc, unsigned int pin,
-  * @reg:	the computed register offset
-  * @bit:	the computed bit
-  */
--static void meson_calc_reg_and_bit(struct meson_bank *bank, unsigned int pin,
-+static void meson_calc_reg_and_bit(const struct meson_bank *bank,
-+				   unsigned int pin,
- 				   enum meson_reg_type reg_type,
- 				   unsigned int *reg, unsigned int *bit)
- {
--	struct meson_reg_desc *desc = &bank->regs[reg_type];
-+	const struct meson_reg_desc *desc = &bank->regs[reg_type];
- 
- 	*bit = (desc->bit + pin - bank->first) * meson_bit_strides[reg_type];
- 	*reg = (desc->reg + (*bit / 32)) * 4;
-@@ -181,7 +182,7 @@ static int meson_pinconf_set_gpio_bit(struct meson_pinctrl *pc,
- 				      unsigned int reg_type,
- 				      bool arg)
- {
--	struct meson_bank *bank;
-+	const struct meson_bank *bank;
- 	unsigned int reg, bit;
- 	int ret;
- 
-@@ -198,7 +199,7 @@ static int meson_pinconf_get_gpio_bit(struct meson_pinctrl *pc,
- 				      unsigned int pin,
- 				      unsigned int reg_type)
- {
--	struct meson_bank *bank;
-+	const struct meson_bank *bank;
- 	unsigned int reg, bit, val;
- 	int ret;
- 
-@@ -261,7 +262,7 @@ static int meson_pinconf_set_output_drive(struct meson_pinctrl *pc,
- static int meson_pinconf_disable_bias(struct meson_pinctrl *pc,
- 				      unsigned int pin)
- {
--	struct meson_bank *bank;
-+	const struct meson_bank *bank;
- 	unsigned int reg, bit = 0;
- 	int ret;
- 
-@@ -280,7 +281,7 @@ static int meson_pinconf_disable_bias(struct meson_pinctrl *pc,
- static int meson_pinconf_enable_bias(struct meson_pinctrl *pc, unsigned int pin,
- 				     bool pull_up)
- {
--	struct meson_bank *bank;
-+	const struct meson_bank *bank;
- 	unsigned int reg, bit, val = 0;
- 	int ret;
- 
-@@ -308,7 +309,7 @@ static int meson_pinconf_set_drive_strength(struct meson_pinctrl *pc,
- 					    unsigned int pin,
- 					    u16 drive_strength_ua)
- {
--	struct meson_bank *bank;
-+	const struct meson_bank *bank;
- 	unsigned int reg, bit, ds_val;
- 	int ret;
- 
-@@ -399,7 +400,7 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
- 
- static int meson_pinconf_get_pull(struct meson_pinctrl *pc, unsigned int pin)
- {
--	struct meson_bank *bank;
-+	const struct meson_bank *bank;
- 	unsigned int reg, bit, val;
- 	int ret, conf;
- 
-@@ -435,7 +436,7 @@ static int meson_pinconf_get_drive_strength(struct meson_pinctrl *pc,
- 					    unsigned int pin,
- 					    u16 *drive_strength_ua)
- {
--	struct meson_bank *bank;
-+	const struct meson_bank *bank;
- 	unsigned int reg, bit;
- 	unsigned int val;
- 	int ret;
-@@ -528,7 +529,7 @@ static int meson_pinconf_group_set(struct pinctrl_dev *pcdev,
- 				   unsigned long *configs, unsigned num_configs)
- {
- 	struct meson_pinctrl *pc = pinctrl_dev_get_drvdata(pcdev);
--	struct meson_pmx_group *group = &pc->data->groups[num_group];
-+	const struct meson_pmx_group *group = &pc->data->groups[num_group];
- 	int i;
- 
- 	dev_dbg(pc->dev, "set pinconf for group %s\n", group->name);
-@@ -587,8 +588,8 @@ static void meson_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
- static int meson_gpio_get(struct gpio_chip *chip, unsigned gpio)
- {
- 	struct meson_pinctrl *pc = gpiochip_get_data(chip);
-+	const struct meson_bank *bank;
- 	unsigned int reg, bit, val;
--	struct meson_bank *bank;
- 	int ret;
- 
- 	ret = meson_get_bank(pc, gpio, &bank);
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
-index 34fc4e8612e4..7883ea31a001 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.h
-+++ b/drivers/pinctrl/meson/pinctrl-meson.h
-@@ -110,15 +110,15 @@ struct meson_bank {
- struct meson_pinctrl_data {
- 	const char *name;
- 	const struct pinctrl_pin_desc *pins;
--	struct meson_pmx_group *groups;
--	struct meson_pmx_func *funcs;
-+	const struct meson_pmx_group *groups;
-+	const struct meson_pmx_func *funcs;
- 	unsigned int num_pins;
- 	unsigned int num_groups;
- 	unsigned int num_funcs;
--	struct meson_bank *banks;
-+	const struct meson_bank *banks;
- 	unsigned int num_banks;
- 	const struct pinmux_ops *pmx_ops;
--	void *pmx_data;
-+	const void *pmx_data;
- 	int (*parse_dt)(struct meson_pinctrl *pc);
- };
- 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8-pmx.c b/drivers/pinctrl/meson/pinctrl-meson8-pmx.c
-index 7f22aa0f8e36..10adf52edda6 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8-pmx.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8-pmx.c
-@@ -32,7 +32,7 @@
- static void meson8_pmx_disable_other_groups(struct meson_pinctrl *pc,
- 					    unsigned int pin, int sel_group)
- {
--	struct meson_pmx_group *group;
-+	const struct meson_pmx_group *group;
- 	struct meson8_pmx_data *pmx_data;
- 	int i, j;
- 
-@@ -57,8 +57,8 @@ static int meson8_pmx_set_mux(struct pinctrl_dev *pcdev, unsigned func_num,
- 			      unsigned group_num)
- {
- 	struct meson_pinctrl *pc = pinctrl_dev_get_drvdata(pcdev);
--	struct meson_pmx_func *func = &pc->data->funcs[func_num];
--	struct meson_pmx_group *group = &pc->data->groups[group_num];
-+	const struct meson_pmx_func *func = &pc->data->funcs[func_num];
-+	const struct meson_pmx_group *group = &pc->data->groups[group_num];
- 	struct meson8_pmx_data *pmx_data =
- 		(struct meson8_pmx_data *)group->data;
- 	int i, ret = 0;
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
-index dd17100efdcf..3da7f3799c3f 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8.c
-@@ -405,7 +405,7 @@ static const unsigned int i2s_out_ch01_ao_pins[] = { GPIOAO_11 };
- 
- static const unsigned int hdmi_cec_ao_pins[]	= { GPIOAO_12 };
- 
--static struct meson_pmx_group meson8_cbus_groups[] = {
-+static const struct meson_pmx_group meson8_cbus_groups[] = {
- 	GPIO_GROUP(GPIOX_0),
- 	GPIO_GROUP(GPIOX_1),
- 	GPIO_GROUP(GPIOX_2),
-@@ -745,7 +745,7 @@ static struct meson_pmx_group meson8_cbus_groups[] = {
- 	GROUP(sdxc_cmd_b,	2,	4),
- };
- 
--static struct meson_pmx_group meson8_aobus_groups[] = {
-+static const struct meson_pmx_group meson8_aobus_groups[] = {
- 	GPIO_GROUP(GPIOAO_0),
- 	GPIO_GROUP(GPIOAO_1),
- 	GPIO_GROUP(GPIOAO_2),
-@@ -1015,7 +1015,7 @@ static const char * const hdmi_cec_ao_groups[] = {
- 	"hdmi_cec_ao"
- };
- 
--static struct meson_pmx_func meson8_cbus_functions[] = {
-+static const struct meson_pmx_func meson8_cbus_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(sd_a),
- 	FUNCTION(sdxc_a),
-@@ -1051,7 +1051,7 @@ static struct meson_pmx_func meson8_cbus_functions[] = {
- 	FUNCTION(spdif),
- };
- 
--static struct meson_pmx_func meson8_aobus_functions[] = {
-+static const struct meson_pmx_func meson8_aobus_functions[] = {
- 	FUNCTION(gpio_aobus),
- 	FUNCTION(uart_ao),
- 	FUNCTION(remote),
-@@ -1063,7 +1063,7 @@ static struct meson_pmx_func meson8_aobus_functions[] = {
- 	FUNCTION(hdmi_cec_ao),
- };
- 
--static struct meson_bank meson8_cbus_banks[] = {
-+static const struct meson_bank meson8_cbus_banks[] = {
- 	/*   name    first     last         irq       pullen  pull    dir     out     in  */
- 	BANK("X",    GPIOX_0,  GPIOX_21,    112, 133, 4,  0,  4,  0,  0,  0,  1,  0,  2,  0),
- 	BANK("Y",    GPIOY_0,  GPIOY_16,    95,  111, 3,  0,  3,  0,  3,  0,  4,  0,  5,  0),
-@@ -1074,12 +1074,12 @@ static struct meson_bank meson8_cbus_banks[] = {
- 	BANK("BOOT", BOOT_0,   BOOT_18,     39,   57, 2,  0,  2,  0,  9,  0, 10,  0, 11,  0),
- };
- 
--static struct meson_bank meson8_aobus_banks[] = {
-+static const struct meson_bank meson8_aobus_banks[] = {
- 	/*   name    first     last         irq    pullen  pull    dir     out     in  */
- 	BANK("AO",   GPIOAO_0, GPIO_TEST_N, 0, 13, 0, 16,  0,  0,  0,  0,  0, 16,  1,  0),
- };
- 
--static struct meson_pinctrl_data meson8_cbus_pinctrl_data = {
-+static const struct meson_pinctrl_data meson8_cbus_pinctrl_data = {
- 	.name		= "cbus-banks",
- 	.pins		= meson8_cbus_pins,
- 	.groups		= meson8_cbus_groups,
-@@ -1092,7 +1092,7 @@ static struct meson_pinctrl_data meson8_cbus_pinctrl_data = {
- 	.pmx_ops	= &meson8_pmx_ops,
- };
- 
--static struct meson_pinctrl_data meson8_aobus_pinctrl_data = {
-+static const struct meson_pinctrl_data meson8_aobus_pinctrl_data = {
- 	.name		= "ao-bank",
- 	.pins		= meson8_aobus_pins,
- 	.groups		= meson8_aobus_groups,
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
-index 6cd4b3ec1b40..a71e1f41358a 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8b.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
-@@ -349,7 +349,7 @@ static const unsigned int eth_ref_clk_pins[]	= { DIF_3_N };
- static const unsigned int eth_mdc_pins[]	= { DIF_4_P };
- static const unsigned int eth_mdio_en_pins[]	= { DIF_4_N };
- 
--static struct meson_pmx_group meson8b_cbus_groups[] = {
-+static const struct meson_pmx_group meson8b_cbus_groups[] = {
- 	GPIO_GROUP(GPIOX_0),
- 	GPIO_GROUP(GPIOX_1),
- 	GPIO_GROUP(GPIOX_2),
-@@ -603,7 +603,7 @@ static struct meson_pmx_group meson8b_cbus_groups[] = {
- 	GROUP(eth_rxd2,		7,	23),
- };
- 
--static struct meson_pmx_group meson8b_aobus_groups[] = {
-+static const struct meson_pmx_group meson8b_aobus_groups[] = {
- 	GPIO_GROUP(GPIOAO_0),
- 	GPIO_GROUP(GPIOAO_1),
- 	GPIO_GROUP(GPIOAO_2),
-@@ -869,7 +869,7 @@ static const char * const tsin_b_groups[] = {
- 	"tsin_d0_b", "tsin_clk_b", "tsin_sop_b", "tsin_d_valid_b"
- };
- 
--static struct meson_pmx_func meson8b_cbus_functions[] = {
-+static const struct meson_pmx_func meson8b_cbus_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(sd_a),
- 	FUNCTION(sdxc_a),
-@@ -903,7 +903,7 @@ static struct meson_pmx_func meson8b_cbus_functions[] = {
- 	FUNCTION(clk_24m),
- };
- 
--static struct meson_pmx_func meson8b_aobus_functions[] = {
-+static const struct meson_pmx_func meson8b_aobus_functions[] = {
- 	FUNCTION(gpio_aobus),
- 	FUNCTION(uart_ao),
- 	FUNCTION(uart_ao_b),
-@@ -917,7 +917,7 @@ static struct meson_pmx_func meson8b_aobus_functions[] = {
- 	FUNCTION(hdmi_cec),
- };
- 
--static struct meson_bank meson8b_cbus_banks[] = {
-+static const struct meson_bank meson8b_cbus_banks[] = {
- 	/*   name        first          last        irq       pullen   pull     dir      out      in   */
- 	BANK("X0..11",	 GPIOX_0,	GPIOX_11,   97, 108,  4,  0,   4,  0,   0,  0,   1,  0,   2,  0),
- 	BANK("X16..21",	 GPIOX_16,	GPIOX_21,  113, 118,  4, 16,   4, 16,   0, 16,   1, 16,   2, 16),
-@@ -938,12 +938,12 @@ static struct meson_bank meson8b_cbus_banks[] = {
- 	BANK("DIF",	 DIF_0_P,	DIF_4_N,    -1,  -1,  5,  8,   5,  8,  12, 12,  13, 12,  14, 12),
- };
- 
--static struct meson_bank meson8b_aobus_banks[] = {
-+static const struct meson_bank meson8b_aobus_banks[] = {
- 	/*   name    first     lastc        irq    pullen  pull    dir     out     in  */
- 	BANK("AO",   GPIOAO_0, GPIO_TEST_N, 0, 13, 0,  16, 0, 0,  0,  0,  0, 16,  1,  0),
- };
- 
--static struct meson_pinctrl_data meson8b_cbus_pinctrl_data = {
-+static const struct meson_pinctrl_data meson8b_cbus_pinctrl_data = {
- 	.name		= "cbus-banks",
- 	.pins		= meson8b_cbus_pins,
- 	.groups		= meson8b_cbus_groups,
-@@ -956,7 +956,7 @@ static struct meson_pinctrl_data meson8b_cbus_pinctrl_data = {
- 	.pmx_ops	= &meson8_pmx_ops,
- };
- 
--static struct meson_pinctrl_data meson8b_aobus_pinctrl_data = {
-+static const struct meson_pinctrl_data meson8b_aobus_pinctrl_data = {
- 	.name		= "aobus-banks",
- 	.pins		= meson8b_aobus_pins,
- 	.groups		= meson8b_aobus_groups,
+
+vim +/phy_id +2648 drivers/net/ethernet/ibm/emac/core.c
+
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2632  
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2633  static int emac_dt_phy_connect(struct emac_instance *dev,
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2634  			       struct device_node *phy_handle)
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2635  {
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2636  	dev->phy.def = devm_kzalloc(&dev->ofdev->dev, sizeof(*dev->phy.def),
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2637  				    GFP_KERNEL);
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2638  	if (!dev->phy.def)
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2639  		return -ENOMEM;
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2640  
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2641  	dev->phy_dev = of_phy_connect(dev->ndev, phy_handle, &emac_adjust_link,
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2642  				      0, dev->phy_mode);
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2643  	if (!dev->phy_dev) {
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2644  		dev_err(&dev->ofdev->dev, "failed to connect to PHY.\n");
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2645  		return -ENODEV;
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2646  	}
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2647  
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20 @2648  	dev->phy.def->phy_id = dev->phy_dev->drv->phy_id;
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20 @2649  	dev->phy.def->phy_id_mask = dev->phy_dev->drv->phy_id_mask;
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20 @2650  	dev->phy.def->name = dev->phy_dev->drv->name;
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20 @2651  	dev->phy.def->ops = &emac_dt_mdio_phy_ops;
+3c1bcc8614db10 drivers/net/ethernet/ibm/emac/core.c Andrew Lunn         2018-11-10  2652  	ethtool_convert_link_mode_to_legacy_u32(&dev->phy.features,
+3c1bcc8614db10 drivers/net/ethernet/ibm/emac/core.c Andrew Lunn         2018-11-10  2653  						dev->phy_dev->supported);
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2654  	dev->phy.address = dev->phy_dev->mdio.addr;
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2655  	dev->phy.mode = dev->phy_dev->interface;
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2656  	return 0;
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2657  }
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2658  
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2659  static int emac_dt_phy_probe(struct emac_instance *dev)
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2660  {
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2661  	struct device_node *np = dev->ofdev->dev.of_node;
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2662  	struct device_node *phy_handle;
+b793f081674e36 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-03-06  2663  	int res = 1;
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2664  
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2665  	phy_handle = of_parse_phandle(np, "phy-handle", 0);
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2666  
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2667  	if (phy_handle) {
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2668  		res = emac_dt_mdio_probe(dev);
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2669  		if (!res) {
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2670  			res = emac_dt_phy_connect(dev, phy_handle);
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2671  			if (res)
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2672  				mdiobus_unregister(dev->mii_bus);
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2673  		}
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2674  	}
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2675  
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2676  	of_node_put(phy_handle);
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2677  	return res;
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2678  }
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2679  
+fe17dc1e2bae85 drivers/net/ethernet/ibm/emac/core.c Bill Pemberton      2012-12-03  2680  static int emac_init_phy(struct emac_instance *dev)
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2681  {
+61c7a080a5a061 drivers/net/ibm_newemac/core.c       Grant Likely        2010-04-13  2682  	struct device_node *np = dev->ofdev->dev.of_node;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2683  	struct net_device *ndev = dev->ndev;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2684  	u32 phy_map, adv;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2685  	int i;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2686  
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2687  	dev->phy.dev = ndev;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2688  	dev->phy.mode = dev->phy_mode;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2689  
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2690  	/* PHY-less configuration. */
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2691  	if ((dev->phy_address == 0xffffffff && dev->phy_map == 0xffffffff) ||
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2692  	    of_phy_is_fixed_link(np)) {
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2693  		emac_reset(dev);
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2694  
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2695  		/* PHY-less configuration. */
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2696  		dev->phy.address = -1;
+9e3cb29497561c drivers/net/ibm_newemac/core.c       Victor Gallardo     2008-10-01  2697  		dev->phy.features = SUPPORTED_MII;
+9e3cb29497561c drivers/net/ibm_newemac/core.c       Victor Gallardo     2008-10-01  2698  		if (emac_phy_supports_gige(dev->phy_mode))
+9e3cb29497561c drivers/net/ibm_newemac/core.c       Victor Gallardo     2008-10-01  2699  			dev->phy.features |= SUPPORTED_1000baseT_Full;
+9e3cb29497561c drivers/net/ibm_newemac/core.c       Victor Gallardo     2008-10-01  2700  		else
+9e3cb29497561c drivers/net/ibm_newemac/core.c       Victor Gallardo     2008-10-01  2701  			dev->phy.features |= SUPPORTED_100baseT_Full;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2702  		dev->phy.pause = 1;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2703  
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2704  		if (of_phy_is_fixed_link(np)) {
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2705  			int res = emac_dt_mdio_probe(dev);
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2706  
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2707  			if (res)
+08e39982ef64f8 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2018-09-17  2708  				return res;
+08e39982ef64f8 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2018-09-17  2709  
+08e39982ef64f8 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2018-09-17  2710  			res = of_phy_register_fixed_link(np);
+08e39982ef64f8 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2018-09-17  2711  			dev->phy_dev = of_phy_find_device(np);
+08e39982ef64f8 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2018-09-17  2712  			if (res || !dev->phy_dev) {
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2713  				mdiobus_unregister(dev->mii_bus);
+08e39982ef64f8 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2018-09-17  2714  				return res ? res : -EINVAL;
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2715  			}
+08e39982ef64f8 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2018-09-17  2716  			emac_adjust_link(dev->ndev);
+08e39982ef64f8 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2018-09-17  2717  			put_device(&dev->phy_dev->mdio.dev);
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2718  		}
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2719  		return 0;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2720  	}
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2721  
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2722  	mutex_lock(&emac_phy_map_lock);
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2723  	phy_map = dev->phy_map | busy_phy_map;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2724  
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2725  	DBG(dev, "PHY maps %08x %08x" NL, dev->phy_map, busy_phy_map);
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2726  
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2727  	dev->phy.mdio_read = emac_mdio_read;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2728  	dev->phy.mdio_write = emac_mdio_write;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2729  
+0925ab5d385b6c drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2730  	/* Enable internal clock source */
+0925ab5d385b6c drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2731  #ifdef CONFIG_PPC_DCR_NATIVE
+0925ab5d385b6c drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2732  	if (emac_has_feature(dev, EMAC_FTR_440GX_PHY_CLK_FIX))
+0925ab5d385b6c drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2733  		dcri_clrset(SDR0, SDR0_MFR, 0, SDR0_MFR_ECS);
+11121e3008a928 drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2734  #endif
+11121e3008a928 drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2735  	/* PHY clock workaround */
+11121e3008a928 drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2736  	emac_rx_clk_tx(dev);
+11121e3008a928 drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2737  
+11121e3008a928 drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2738  	/* Enable internal clock source on 440GX*/
+11121e3008a928 drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2739  #ifdef CONFIG_PPC_DCR_NATIVE
+11121e3008a928 drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2740  	if (emac_has_feature(dev, EMAC_FTR_440GX_PHY_CLK_FIX))
+11121e3008a928 drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2741  		dcri_clrset(SDR0, SDR0_MFR, 0, SDR0_MFR_ECS);
+0925ab5d385b6c drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2742  #endif
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2743  	/* Configure EMAC with defaults so we can at least use MDIO
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2744  	 * This is needed mostly for 440GX
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2745  	 */
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2746  	if (emac_phy_gpcs(dev->phy.mode)) {
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2747  		/* XXX
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2748  		 * Make GPCS PHY address equal to EMAC index.
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2749  		 * We probably should take into account busy_phy_map
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2750  		 * and/or phy_map here.
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2751  		 *
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2752  		 * Note that the busy_phy_map is currently global
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2753  		 * while it should probably be per-ASIC...
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2754  		 */
+9e3cb29497561c drivers/net/ibm_newemac/core.c       Victor Gallardo     2008-10-01  2755  		dev->phy.gpcs_address = dev->gpcs_address;
+9e3cb29497561c drivers/net/ibm_newemac/core.c       Victor Gallardo     2008-10-01  2756  		if (dev->phy.gpcs_address == 0xffffffff)
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2757  			dev->phy.address = dev->cell_index;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2758  	}
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2759  
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2760  	emac_configure(dev);
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2761  
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2762  	if (emac_has_feature(dev, EMAC_FTR_HAS_RGMII)) {
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2763  		int res = emac_dt_phy_probe(dev);
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2764  
+b793f081674e36 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-03-06  2765  		switch (res) {
+b793f081674e36 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-03-06  2766  		case 1:
+b793f081674e36 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-03-06  2767  			/* No phy-handle property configured.
+b793f081674e36 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-03-06  2768  			 * Continue with the existing phy probe
+b793f081674e36 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-03-06  2769  			 * and setup code.
+b793f081674e36 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-03-06  2770  			 */
+b793f081674e36 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-03-06  2771  			break;
+b793f081674e36 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-03-06  2772  
+b793f081674e36 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-03-06  2773  		case 0:
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2774  			mutex_unlock(&emac_phy_map_lock);
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2775  			goto init_phy;
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2776  
+b793f081674e36 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-03-06  2777  		default:
+b793f081674e36 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-03-06  2778  			mutex_unlock(&emac_phy_map_lock);
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2779  			dev_err(&dev->ofdev->dev, "failed to attach dt phy (%d).\n",
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2780  				res);
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2781  			return res;
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2782  		}
+b793f081674e36 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-03-06  2783  	}
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2784  
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2785  	if (dev->phy_address != 0xffffffff)
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2786  		phy_map = ~(1 << dev->phy_address);
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2787  
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2788  	for (i = 0; i < 0x20; phy_map >>= 1, ++i)
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2789  		if (!(phy_map & 1)) {
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2790  			int r;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2791  			busy_phy_map |= 1 << i;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2792  
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2793  			/* Quick check if there is a PHY at the address */
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2794  			r = emac_mdio_read(dev->ndev, i, MII_BMCR);
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2795  			if (r == 0xffff || r < 0)
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2796  				continue;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2797  			if (!emac_mii_phy_probe(&dev->phy, i))
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2798  				break;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2799  		}
+0925ab5d385b6c drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2800  
+0925ab5d385b6c drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2801  	/* Enable external clock source */
+0925ab5d385b6c drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2802  #ifdef CONFIG_PPC_DCR_NATIVE
+0925ab5d385b6c drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2803  	if (emac_has_feature(dev, EMAC_FTR_440GX_PHY_CLK_FIX))
+0925ab5d385b6c drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2804  		dcri_clrset(SDR0, SDR0_MFR, SDR0_MFR_ECS, 0);
+0925ab5d385b6c drivers/net/ibm_newemac/core.c       Valentine Barshak   2008-04-22  2805  #endif
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2806  	mutex_unlock(&emac_phy_map_lock);
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2807  	if (i == 0x20) {
+f7ce91038d5278 drivers/net/ethernet/ibm/emac/core.c Rob Herring         2017-07-18  2808  		printk(KERN_WARNING "%pOF: can't find PHY!\n", np);
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2809  		return -ENXIO;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2810  	}
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2811  
+a577ca6badb526 drivers/net/ethernet/ibm/emac/core.c Christian Lamparter 2017-02-20  2812   init_phy:
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2813  	/* Init PHY */
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2814  	if (dev->phy.def->ops->init)
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2815  		dev->phy.def->ops->init(&dev->phy);
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2816  
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2817  	/* Disable any PHY features not supported by the platform */
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23 @2818  	dev->phy.def->features &= ~dev->phy_feat_exc;
+ae5d33723e3253 drivers/net/ethernet/ibm/emac/core.c Duc Dang            2012-03-05  2819  	dev->phy.features &= ~dev->phy_feat_exc;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2820  
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2821  	/* Setup initial link parameters */
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2822  	if (dev->phy.features & SUPPORTED_Autoneg) {
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2823  		adv = dev->phy.features;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2824  		if (!emac_has_feature(dev, EMAC_FTR_NO_FLOW_CONTROL_40x))
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2825  			adv |= ADVERTISED_Pause | ADVERTISED_Asym_Pause;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2826  		/* Restart autonegotiation */
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2827  		dev->phy.def->ops->setup_aneg(&dev->phy, adv);
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2828  	} else {
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2829  		u32 f = dev->phy.def->features;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2830  		int speed = SPEED_10, fd = DUPLEX_HALF;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2831  
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2832  		/* Select highest supported speed/duplex */
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2833  		if (f & SUPPORTED_1000baseT_Full) {
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2834  			speed = SPEED_1000;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2835  			fd = DUPLEX_FULL;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2836  		} else if (f & SUPPORTED_1000baseT_Half)
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2837  			speed = SPEED_1000;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2838  		else if (f & SUPPORTED_100baseT_Full) {
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2839  			speed = SPEED_100;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2840  			fd = DUPLEX_FULL;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2841  		} else if (f & SUPPORTED_100baseT_Half)
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2842  			speed = SPEED_100;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2843  		else if (f & SUPPORTED_10baseT_Full)
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2844  			fd = DUPLEX_FULL;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2845  
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2846  		/* Force link parameters */
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2847  		dev->phy.def->ops->setup_forced(&dev->phy, speed, fd);
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2848  	}
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2849  	return 0;
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2850  }
+1d3bb996481e11 drivers/net/ibm_newemac/core.c       David Gibson        2007-08-23  2851  
+
 -- 
-2.45.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
