@@ -1,110 +1,133 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D738D824A3;
-	Tue,  6 Aug 2024 21:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF551AE87B
+	for <kernel-janitors@vger.kernel.org>; Wed,  7 Aug 2024 09:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722979913; cv=none; b=tuArEu9kfe4v6zW4At9/Iy7U+sdkoaOHmG1RAOteypQJNAqW1XfFpJC/Sjt1In41xYeXUcEy7X7+Uncl3TfO9eyIGflJxCDeUnATv5p4BT+WZ+0XMLPAlwpeXVRBAmZhH7PGKWM7650JB5GkGuJpYBBlme2zTgtUMzBmb81gmtY=
+	t=1723023080; cv=none; b=SWS7H6vj+MfaJ50qaCTHwkUePHG/oFTnS/jHvGeXe7f//Xz7WDsS/fRhRxrH4eH1UNYd6q+gtQQDCr2LJqq/q8kVqC9r5OXMSuLkJWn9pxPZGHYct2iYNsqvSADCjdcG9vG/vUVvBCg+yi42pPM8nBVH5WV5CjWDYHqag+LQtvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722979913; c=relaxed/simple;
-	bh=FwK36ah26nQK4P5Nju4BLZcO9cGzgqakm2U5iwSxAkM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sZj3ggPgOFyRpLZumSTAlVzvr3AD9uBvxnEDODBiKWFi44wblAhmPsb6V5uucLw6gb1HR0Z3WKixpHqLLkxT3bunh4B3i0mC9LIw8o8c1Nn54BVlSz7sbxm54XCdxELARVughU18LyWV8raUXVOBHhuYQnVU27FYJVD3e6TAeP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Wjz+hN/T; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1723023080; c=relaxed/simple;
+	bh=5tPWi08O5qzNfmwk5NjD9LrsMpBYwEvC/I+o1C/aDUU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SNzUrDK8xCw5NUHCtiq1t4mf9s2VLxjD32Vd1O5Qlgx6JcdvWtgCRZN9klFRByAYFjvGXZ1G3emQiGHk5ZNQwAmaGArlA+IzIDoYH9mz+AFxpLXcOzSR2KlG3ReVZAkmTDH820fgr+fC8ELbcYTMPh+3I7Z3xSyWbxl+LD5k7bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=a5qUT5lD; arc=none smtp.client-ip=80.12.242.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Wjz+hN/T"
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 476LVhGb026046;
-	Tue, 6 Aug 2024 16:31:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722979903;
-	bh=+wUl+GeiKRh9stMga5epj0nB9x1SfRtytiwkTrjRGXU=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Wjz+hN/TvWHaI2wwVue0wotVjga/xAehisbaFm70wFN14MsH6PC5H1zqS3/ycKLlK
-	 02mAtF9DAZrtmnY5XW7xK102h0ocFxTBj831+pojKFVdkm4BZgsPzPa5I8H1RyBXWu
-	 XoVtJZX66Oz0bNxYmAHKnR6leKHBfmBroumgTs+E=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 476LVhTk017480
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 6 Aug 2024 16:31:43 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
- Aug 2024 16:31:42 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 6 Aug 2024 16:31:43 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 476LVh6Z081346;
-	Tue, 6 Aug 2024 16:31:43 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Santosh Shilimkar <ssantosh@kernel.org>,
-        Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>
-CC: Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] soc: ti: k3-ringacc: Constify struct k3_ring_ops
-Date: Tue, 6 Aug 2024 16:31:40 -0500
-Message-ID: <172297970584.486396.3910901501413905475.b4-ty@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cb9dfc18cdf890afa2c53cd74b0b330d6f1c30ab.1720546863.git.christophe.jaillet@wanadoo.fr>
-References: <cb9dfc18cdf890afa2c53cd74b0b330d6f1c30ab.1720546863.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="a5qUT5lD"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id bd0dsp4BgEfqMbd0dsKOjo; Wed, 07 Aug 2024 11:31:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1723023068;
+	bh=2qDpc338vFqtRKWlFJJWiHrZKzxO9fZfTIrYjI9ogs4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=a5qUT5lDdKymjqBOdI/vLqm1Z1CwtzAfHwkQ3nhOaGVORDnH+eSSynlNTrpH5yQN6
+	 mClMWt1l2e70ZaoEUP6hsdtHpfyygX3SA3jJndvEOiRat8EWn+wlicqc67P3zFC6uM
+	 /UA8zVl20HNeHkqFaL56mZVas2HFuR+qZBkwxtwJGA5fxCDwuHe++h/kUnvYqaTM+C
+	 0O6k9INFiyhAzMe5X7dy4Bf1XXOsNr5XDCSn4tGSlXKBEZHzpI7FUQSqikBsDlJMGQ
+	 /X+qCpabcVQ1V4ka495o4/mEO7kTfidjVBgnojXu+49WKlAEC3R5Htw/XMCakTllzn
+	 VwTmW+jj1U//Q==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 07 Aug 2024 11:31:08 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linus.walleij@linaro.org,
+	neil.armstrong@linaro.org,
+	khilman@baylibre.com,
+	jbrunet@baylibre.com,
+	martin.blumenstingl@googlemail.com
+Cc: linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/3] pinctrl: meson: Constify some structure
+Date: Wed,  7 Aug 2024 11:30:54 +0200
+Message-ID: <cover.1723022467.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Christophe JAILLET,
+These 3 patches constify some structures in order to move some data to a
+read-only section, so increase overall security.
 
-On Tue, 09 Jul 2024 19:41:29 +0200, Christophe JAILLET wrote:
-> 'struct k3_ring_ops' is not modified in this driver.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->   17090	   3304	     32	  20426	   4fca	drivers/soc/ti/k3-ringacc.o
-> 
-> [...]
+It is splitted in 3 to ease review.
+Patch 1: struct meson_pmx_group and meson_pmx_func
+patch 2: struct meson_bank
+patch 3: struct meson_pmx_bank
 
-I have applied the following to branch ti-drivers-soc-next on [1].
-Thank you!
+All patches are only compile tested.
 
-[1/1] soc: ti: k3-ringacc: Constify struct k3_ring_ops
-      commit: d9483b44c94eba6fa7451caf27cc7e993c8cc568
+In order to compile them, I update Kconfig to add some "| COMPILE_TEST"
+on depends line.
+Should it be useful, I can send a patch to add it, but I don't think it
+would be that useful.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  10818	  11696	      0	  22514	   57f2	drivers/pinctrl/meson/pinctrl-amlogic-c3.o
+  17198	  17680	      0	  34878	   883e	drivers/pinctrl/meson/pinctrl-amlogic-t7.o
+  14161	  11200	      0	  25361	   6311	drivers/pinctrl/meson/pinctrl-meson8b.o
+  17348	  12512	      0	  29860	   74a4	drivers/pinctrl/meson/pinctrl-meson8.o
+   3070	    324	      0	   3394	    d42	drivers/pinctrl/meson/pinctrl-meson8-pmx.o
+   9317	   9648	      0	  18965	   4a15	drivers/pinctrl/meson/pinctrl-meson-a1.o
+  12115	  11664	      0	  23779	   5ce3	drivers/pinctrl/meson/pinctrl-meson-axg.o
+   2470	    120	      0	   2590	    a1e	drivers/pinctrl/meson/pinctrl-meson-axg-pmx.o
+  15125	  15224	      0	  30349	   768d	drivers/pinctrl/meson/pinctrl-meson-g12a.o
+  13800	  10160	      0	  23960	   5d98	drivers/pinctrl/meson/pinctrl-meson-gxbb.o
+  13040	   9648	      0	  22688	   58a0	drivers/pinctrl/meson/pinctrl-meson-gxl.o
+  20507	   1132	     48	  21687	   54b7	drivers/pinctrl/meson/pinctrl-meson.o
+  12212	  12880	      0	  25092	   6204	drivers/pinctrl/meson/pinctrl-meson-s4.o
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  22114	    384	      0	  22498	   57e2	drivers/pinctrl/meson/pinctrl-amlogic-c3.o
+  34510	    384	      0	  34894	   884e	drivers/pinctrl/meson/pinctrl-amlogic-t7.o
+  24945	    440	      0	  25385	   6329	drivers/pinctrl/meson/pinctrl-meson8b.o
+  29412	    440	      0	  29852	   749c	drivers/pinctrl/meson/pinctrl-meson8.o
+   3070	    324	      0	   3394	    d42	drivers/pinctrl/meson/pinctrl-meson8-pmx.o
+  18597	    384	      0	  18981	   4a25	drivers/pinctrl/meson/pinctrl-meson-a1.o
+  23315	    496	      0	  23811	   5d03	drivers/pinctrl/meson/pinctrl-meson-axg.o
+   2470	    120	      0	   2590	    a1e	drivers/pinctrl/meson/pinctrl-meson-axg-pmx.o
+  29877	    504	      0	  30381	   76ad	drivers/pinctrl/meson/pinctrl-meson-g12a.o
+  23496	    456	      0	  23952	   5d90	drivers/pinctrl/meson/pinctrl-meson-gxbb.o
+  22224	    456	      0	  22680	   5898	drivers/pinctrl/meson/pinctrl-meson-gxl.o
+  20507	   1132	     48	  21687	   54b7	drivers/pinctrl/meson/pinctrl-meson.o
+  24692	    384	      0	  25076	   61f4	drivers/pinctrl/meson/pinctrl-meson-s4.o
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Christophe JAILLET (3):
+  pinctrl: meson: Constify struct meson_pmx_group and meson_pmx_func
+  pinctrl: meson: Constify struct meson_bank
+  pinctrl: meson: Constify struct meson_pmx_bank
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+ drivers/pinctrl/meson/pinctrl-amlogic-c3.c    |  8 +++---
+ drivers/pinctrl/meson/pinctrl-amlogic-t7.c    |  8 +++---
+ drivers/pinctrl/meson/pinctrl-meson-a1.c      |  8 +++---
+ drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c | 12 ++++-----
+ drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h |  2 +-
+ drivers/pinctrl/meson/pinctrl-meson-axg.c     | 16 ++++++------
+ drivers/pinctrl/meson/pinctrl-meson-g12a.c    | 16 ++++++------
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c    | 12 ++++-----
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c     | 12 ++++-----
+ drivers/pinctrl/meson/pinctrl-meson-s4.c      |  8 +++---
+ drivers/pinctrl/meson/pinctrl-meson.c         | 25 ++++++++++---------
+ drivers/pinctrl/meson/pinctrl-meson.h         |  6 ++---
+ drivers/pinctrl/meson/pinctrl-meson8-pmx.c    |  6 ++---
+ drivers/pinctrl/meson/pinctrl-meson8.c        | 12 ++++-----
+ drivers/pinctrl/meson/pinctrl-meson8b.c       | 12 ++++-----
+ 15 files changed, 82 insertions(+), 81 deletions(-)
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+2.45.2
 
