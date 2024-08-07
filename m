@@ -1,99 +1,250 @@
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9864F1CCB45;
-	Wed,  7 Aug 2024 12:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F721C9DD6;
+	Wed,  7 Aug 2024 12:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723032470; cv=none; b=lsEWfM/FOwRRWg23Z54V1AWJYgj7KJKdY+/i6Cbln/vWVsf5hUL6/aeaJQMK8k5MiE1K841ytXI7yMN9+m0EAi+P2ICeLrpTjywXK4OsF8EG0YylxC5VHVjJJYa6WAYTFCBVN0ZkyGAmeiXaHj1OnRJRwzOMCKnwIN0wkaJBgsg=
+	t=1723033425; cv=none; b=MO1TpC/a8VJdhTqgXb1c7jqCn44lSxTseznx2B3XbBSCccoD/AqCNnoLmqB3ZM+fTzK4576hZZmDV7JqJQbb3tbu4fa/6OQ1PPOm/+2D+I/VI51P5kWCqhwdQymjOwXxng/EG0Z/QZ7jLDKlSRdu7LMRbrpDzawYsiYi3s4TMAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723032470; c=relaxed/simple;
-	bh=MDDNu/zajjfFpykkUwCqlLc2ljXZwowVHH4+J5jVMIU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qu/CLzmUOqCtlBXaQLjtK5xuSK2rrrvSA7/KyZauzEkcTMYLY0nQksTeAQVTWMFgnmZE3oANqKSgMfqCJGLkZH6Uuq/a3mDw0/H6UOuwgLqE1//UFwtJpSeJp1Sys+Fm4JV3FFs9JF8Oa3tc7gotT0tu86t3WbtGjWWKfHv6vvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=Y+ABNLz8; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+	s=arc-20240116; t=1723033425; c=relaxed/simple;
+	bh=Kd8ZYPHe25vG2eDzqFvrOHnmPDTkChniLiTdkVWbau8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QCnFO0Q/EiXxNOdOE9slAsApZBPUDyG9zcK3VHxm3J9cSl4L9YPsZzwQK0uQ0mg3BpMAxdTRSk118ipMUq0A5JVwKQt+PzPRXzhvLfMSO//dFrVw++XRPOkPZsuryHsKuvFwYzAbnVVDZCFSbkZj7moZv3FMr5WUP5vIZHdMLSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RKHVsAg7; arc=none smtp.client-ip=80.12.242.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="Y+ABNLz8"
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47700RE1025336;
-	Wed, 7 Aug 2024 07:05:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=6jY5QYeGmEHK54GJH2
-	dhb4cGIv8f9TreS6EMGG3Fk3A=; b=Y+ABNLz8CbDp9UnVCRY6kbiK2VQp64N0ma
-	mp7CjNqBwUPs4g5rqe1lWhfwDyNMH0an+KtuiRFK6tqT2gbB2frzt5Ms4n78oOzv
-	B/j2NBh4qaKBShOAmrDoJNmTCHur1ImipX0HuVeyFgpZO3iTtqRzPGLgfXMjmsOh
-	X79M0F/FPiMklp8iybEanYN19byeJxy/CCp10ZgPke6GQuS0MJPKropHw9ujvw0e
-	byB6wOALPtFkO8JMfsd7M2tf3Z+vCkBCxImU5OA0LJTEbclxxvvszHQnuVWsZzhz
-	UnFQQ7oQxypxSBcBGchqWSiGkWnmAQlfsNrR0CiuzPqNUlEKlJHg==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 40sgyhvae3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 Aug 2024 07:05:24 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
- 13:05:22 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Wed, 7 Aug 2024 13:05:22 +0100
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id C0476820241;
-	Wed,  7 Aug 2024 12:05:22 +0000 (UTC)
-Date: Wed, 7 Aug 2024 13:05:21 +0100
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC: David Rhodes <david.rhodes@cirrus.com>,
-        Richard Fitzgerald
-	<rf@opensource.cirrus.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
-        <linux-sound@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: cs43130: Constify struct reg_sequence and
- reg_sequences
-Message-ID: <ZrNjAdV7wG1SvX9G@opensource.cirrus.com>
-References: <5b906a0cc9b7be15d0d6310069f54254a75ea767.1722951770.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RKHVsAg7"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id bfgVsJsx2KPqXbfgVsKM2e; Wed, 07 Aug 2024 14:22:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1723033353;
+	bh=P5S3EiUnzX8DlZ1LXJZ7HdgTZoR7+DwXQZ88EGRCynw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=RKHVsAg7q85zqrxD81rEM2BuP0isjBUjHF7q/qWPIiphEqyPJapEiyy7d5ivj+JmS
+	 KBtUKcjzIKhb/yeZbmWn7iXR7KL5O0eBMSzqFwiarzA4ncnN5oIYEOE3JX2y4WxSXU
+	 dT70jZvYcn/DWXraL4cVGx/yUUCxNLM7T8lEzDbS3xysNwe25tlTK8PDC0FsrcD712
+	 oILy5LOheHcKSotBtTKxF+qkAxV13M2r7pICb3SEgWRZjnr2xwtem7/2YDlDPkGQsT
+	 PfIY2h4NAHkmPJyI0pECHFiNqdlcAvyJ+VSRRJ49rWDmIst9ZbtpM6MoMXXJAbaTj/
+	 1zoYvVV//vTyA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 07 Aug 2024 14:22:33 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next] net: sungem_phy: Constify struct mii_phy_def
+Date: Wed,  7 Aug 2024 14:22:26 +0200
+Message-ID: <54c3b30930f80f4895e6fa2f4234714fdea4ef4e.1723033266.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <5b906a0cc9b7be15d0d6310069f54254a75ea767.1722951770.git.christophe.jaillet@wanadoo.fr>
-X-Proofpoint-ORIG-GUID: PY5ysZ-wbzARALhasRhm8SICPhdPLjzM
-X-Proofpoint-GUID: PY5ysZ-wbzARALhasRhm8SICPhdPLjzM
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 06, 2024 at 03:43:00PM +0200, Christophe JAILLET wrote:
-> 'struct reg_sequence' and 'struct reg_sequences' are not modified in this
-> drivers.
-> 
-> Constifying these structures moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->   54409	   7881	     64	  62354	   f392	sound/soc/codecs/cs43130.o
-> 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->   55562	   6729	     64	  62355	   f393	sound/soc/codecs/cs43130.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+'struct mii_phy_def' are not modified in this driver.
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Constifying these structures moves some data to a read-only section, so
+increase overall security.
 
-Thanks,
-Charles
+While at it fix the checkpatch warning related to this patch (some missing
+newlines and spaces around *)
+
+On a x86_64, with allmodconfig:
+Before:
+======
+  27709	    928	      0	  28637	   6fdd	drivers/net/sungem_phy.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  28157	    476	      0	  28633	   6fd9	drivers/net/sungem_phy.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+---
+ drivers/net/sungem_phy.c   | 35 +++++++++++++++++++----------------
+ include/linux/sungem_phy.h |  2 +-
+ 2 files changed, 20 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/net/sungem_phy.c b/drivers/net/sungem_phy.c
+index d591e33268e5..55aa8d0c8e1f 100644
+--- a/drivers/net/sungem_phy.c
++++ b/drivers/net/sungem_phy.c
+@@ -893,7 +893,7 @@ static const struct mii_phy_ops bcm5201_phy_ops = {
+ 	.read_link	= genmii_read_link,
+ };
+ 
+-static struct mii_phy_def bcm5201_phy_def = {
++static const struct mii_phy_def bcm5201_phy_def = {
+ 	.phy_id		= 0x00406210,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5201",
+@@ -912,7 +912,7 @@ static const struct mii_phy_ops bcm5221_phy_ops = {
+ 	.read_link	= genmii_read_link,
+ };
+ 
+-static struct mii_phy_def bcm5221_phy_def = {
++static const struct mii_phy_def bcm5221_phy_def = {
+ 	.phy_id		= 0x004061e0,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5221",
+@@ -930,7 +930,8 @@ static const struct mii_phy_ops bcm5241_phy_ops = {
+ 	.poll_link	= genmii_poll_link,
+ 	.read_link	= genmii_read_link,
+ };
+-static struct mii_phy_def bcm5241_phy_def = {
++
++static const struct mii_phy_def bcm5241_phy_def = {
+ 	.phy_id		= 0x0143bc30,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5241",
+@@ -949,7 +950,7 @@ static const struct mii_phy_ops bcm5400_phy_ops = {
+ 	.read_link	= bcm54xx_read_link,
+ };
+ 
+-static struct mii_phy_def bcm5400_phy_def = {
++static const struct mii_phy_def bcm5400_phy_def = {
+ 	.phy_id		= 0x00206040,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5400",
+@@ -968,7 +969,7 @@ static const struct mii_phy_ops bcm5401_phy_ops = {
+ 	.read_link	= bcm54xx_read_link,
+ };
+ 
+-static struct mii_phy_def bcm5401_phy_def = {
++static const struct mii_phy_def bcm5401_phy_def = {
+ 	.phy_id		= 0x00206050,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5401",
+@@ -987,7 +988,7 @@ static const struct mii_phy_ops bcm5411_phy_ops = {
+ 	.read_link	= bcm54xx_read_link,
+ };
+ 
+-static struct mii_phy_def bcm5411_phy_def = {
++static const struct mii_phy_def bcm5411_phy_def = {
+ 	.phy_id		= 0x00206070,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5411",
+@@ -1007,7 +1008,7 @@ static const struct mii_phy_ops bcm5421_phy_ops = {
+ 	.enable_fiber   = bcm5421_enable_fiber,
+ };
+ 
+-static struct mii_phy_def bcm5421_phy_def = {
++static const struct mii_phy_def bcm5421_phy_def = {
+ 	.phy_id		= 0x002060e0,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5421",
+@@ -1026,7 +1027,7 @@ static const struct mii_phy_ops bcm5421k2_phy_ops = {
+ 	.read_link	= bcm54xx_read_link,
+ };
+ 
+-static struct mii_phy_def bcm5421k2_phy_def = {
++static const struct mii_phy_def bcm5421k2_phy_def = {
+ 	.phy_id		= 0x002062e0,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5421-K2",
+@@ -1045,7 +1046,7 @@ static const struct mii_phy_ops bcm5461_phy_ops = {
+ 	.enable_fiber   = bcm5461_enable_fiber,
+ };
+ 
+-static struct mii_phy_def bcm5461_phy_def = {
++static const struct mii_phy_def bcm5461_phy_def = {
+ 	.phy_id		= 0x002060c0,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5461",
+@@ -1064,7 +1065,7 @@ static const struct mii_phy_ops bcm5462V_phy_ops = {
+ 	.read_link	= bcm54xx_read_link,
+ };
+ 
+-static struct mii_phy_def bcm5462V_phy_def = {
++static const struct mii_phy_def bcm5462V_phy_def = {
+ 	.phy_id		= 0x002060d0,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5462-Vesta",
+@@ -1094,7 +1095,7 @@ static const struct mii_phy_ops marvell88e1111_phy_ops = {
+ /* two revs in darwin for the 88e1101 ... I could use a datasheet
+  * to get the proper names...
+  */
+-static struct mii_phy_def marvell88e1101v1_phy_def = {
++static const struct mii_phy_def marvell88e1101v1_phy_def = {
+ 	.phy_id		= 0x01410c20,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "Marvell 88E1101v1",
+@@ -1102,7 +1103,8 @@ static struct mii_phy_def marvell88e1101v1_phy_def = {
+ 	.magic_aneg	= 1,
+ 	.ops		= &marvell88e1101_phy_ops
+ };
+-static struct mii_phy_def marvell88e1101v2_phy_def = {
++
++static const struct mii_phy_def marvell88e1101v2_phy_def = {
+ 	.phy_id		= 0x01410c60,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "Marvell 88E1101v2",
+@@ -1110,7 +1112,8 @@ static struct mii_phy_def marvell88e1101v2_phy_def = {
+ 	.magic_aneg	= 1,
+ 	.ops		= &marvell88e1101_phy_ops
+ };
+-static struct mii_phy_def marvell88e1111_phy_def = {
++
++static const struct mii_phy_def marvell88e1111_phy_def = {
+ 	.phy_id		= 0x01410cc0,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "Marvell 88E1111",
+@@ -1127,7 +1130,7 @@ static const struct mii_phy_ops generic_phy_ops = {
+ 	.read_link	= genmii_read_link
+ };
+ 
+-static struct mii_phy_def genmii_phy_def = {
++static const struct mii_phy_def genmii_phy_def = {
+ 	.phy_id		= 0x00000000,
+ 	.phy_id_mask	= 0x00000000,
+ 	.name		= "Generic MII",
+@@ -1136,7 +1139,7 @@ static struct mii_phy_def genmii_phy_def = {
+ 	.ops		= &generic_phy_ops
+ };
+ 
+-static struct mii_phy_def* mii_phy_table[] = {
++static const struct mii_phy_def *mii_phy_table[] = {
+ 	&bcm5201_phy_def,
+ 	&bcm5221_phy_def,
+ 	&bcm5241_phy_def,
+@@ -1156,9 +1159,9 @@ static struct mii_phy_def* mii_phy_table[] = {
+ 
+ int sungem_phy_probe(struct mii_phy *phy, int mii_id)
+ {
++	const struct mii_phy_def *def;
+ 	int rc;
+ 	u32 id;
+-	struct mii_phy_def* def;
+ 	int i;
+ 
+ 	/* We do not reset the mii_phy structure as the driver
+diff --git a/include/linux/sungem_phy.h b/include/linux/sungem_phy.h
+index c505f30e8b68..eecc7eb63bfb 100644
+--- a/include/linux/sungem_phy.h
++++ b/include/linux/sungem_phy.h
+@@ -40,7 +40,7 @@ enum {
+ /* An instance of a PHY, partially borrowed from mii_if_info */
+ struct mii_phy
+ {
+-	struct mii_phy_def*	def;
++	const struct mii_phy_def *def;
+ 	u32			advertising;
+ 	int			mii_id;
+ 
+-- 
+2.45.2
+
