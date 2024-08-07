@@ -1,420 +1,94 @@
-Received: from msa.smtpout.orange.fr (smtp-73.smtpout.orange.fr [80.12.242.73])
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892EF1D0DEE
-	for <kernel-janitors@vger.kernel.org>; Wed,  7 Aug 2024 09:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E691D173E;
+	Wed,  7 Aug 2024 09:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723023141; cv=none; b=Gz4yRyc0adamFBt+2R+oh/RXY0NhmCpskUELU/gryDnfJI0uVPkY4if8uAvD9YpKGlnwJuasG9EAyImsKRgS6wa4FOD6oOCN6CGvL1+WEo0IplW4+GCKYzNKvwvI3NNptf+bcNMGSjAzjKoeKxTUXuswa77iT1vOzF0Ok6R5LDg=
+	t=1723024071; cv=none; b=ejO7zIb/79pNtI1W145d3Grf/drJMj9IHbMFfC8poSs+XKnnJYoSWR/YNapPrZoM9t+0FKT251mgFFVn6/kTYtYIXl4rCCAkotuyra3pcmWrZpDisJCT6UZ15BswDSQoVC7DPVJQ1kUN6SLyHhDIKDMe5Jr+OYxWMtqYw9ZJpOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723023141; c=relaxed/simple;
-	bh=MHs5eZc9xHTNYyTHCGC6sET1uRc3FKADsedYYLneOGk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=laMB+eZA0dnlfuGfIknQagl+bhlKP4aX4em40R4ZsNgUNXI9rYd0RGbFetW6WymqsAjCTsAY7Dv5P7fww5mCJx6Cb7IldF8cHhhgfBR+grQn/4d8mpuG3ChQ0ZldF+tLmjRTy1VMeAY5EY9ygyZKLjbwoGv5ZTWEXKdaKrDwTGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MeACkENj; arc=none smtp.client-ip=80.12.242.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1723024071; c=relaxed/simple;
+	bh=/W+05LJJu3p9mNXq4i6BjmOXtbvwMphvQ98oqXMYewE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nK+Eu1QHB49BpTQGDbtD8f/z3GWH/kfq3Slv0IKrEZUTC1jdvdrXOfBXWmAv7+Bu1H/aYR2wXwsuzvOU38smbprUPNW7zFzv02K9+Td5pu26rbchDMyyIqeMSbKRUV61hPjUryNyxBGxGXdfLp8gdWitkKh4l3B9gq/g8FvxPcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ECvgJNgS; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MeACkENj"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id bd0dsp4BgEfqMbd0ksKOqu; Wed, 07 Aug 2024 11:31:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1723023078;
-	bh=bsI1qKNELC3ZAxwyF5BnU/06ie3d7l3SL5EkeyJY11Y=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=MeACkENjzmthnJ8Bn/5QsNgrPgrDcg7YvxzV/mHCmv9idL1y94bq0N+x9LG2rricy
-	 bFogyIOCDw0sK5ZGaCkYLfjsWo7FiI17NIbFwNYCgKn0kM5OwhxX2mhofVrSlljY15
-	 sZnWjWm0zIJBwecOKUkNirPf6WhQsejcOYMW8MrdJBvOQPzX2vtXfGebQR3wnanJdi
-	 10ArUxNvsYNInK3OtXMXGQMbxRTPYbBIFCQ1dx1dnn2rC1ctzofNHSiOL1nLgeDtKr
-	 AcXuQByVy9LRy+LxW6t7RCS06dMVegOMdjqgoOQW6PcP17L2UunzNkgf+qqEE/+Iit
-	 TfZ6mzYk3LyLA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 07 Aug 2024 11:31:18 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: linus.walleij@linaro.org,
-	neil.armstrong@linaro.org,
-	khilman@baylibre.com,
-	jbrunet@baylibre.com,
-	martin.blumenstingl@googlemail.com
-Cc: linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/3] pinctrl: meson: Constify struct meson_bank
-Date: Wed,  7 Aug 2024 11:30:56 +0200
-Message-ID: <9c720086e1bba8dc44f15ac435711468d0e6a591.1723022467.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1723022467.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1723022467.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ECvgJNgS"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f040733086so18376201fa.1;
+        Wed, 07 Aug 2024 02:47:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723024068; x=1723628868; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=810tWogs+Tnt7fFH5BVJ7QxBIOSjaNNzpsC9bZx2HB0=;
+        b=ECvgJNgS4yJzPWsKvRzHHZMSINaoA/veK2i8FQZQlOBE/vhn6pM/NYY7y+ONW8avTF
+         YeYMcbs1uqzap5mForN6ndhTlbfrjeLRzglmt4v927aOX9iTN7fukDPL3DiCPQoayB2e
+         uFVLDwJ1X1R4k+jf1pQqiCDHTfsrrB4/pM2LRUY/1N3xPiHqWtKtota6cIvudbkX5vij
+         dqSRqrBN9duX+u/7eJ2AgimQC244toWtju3Qmqpog6+wsXEtAUid43I65Kqk3FM8CLYE
+         CUgRVG4BlzeHO5juYuuRfVAalyu5hU7QnHUiMeI1MEq9UfW4/buzl1wXdsytPzI2a+N5
+         ofiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723024068; x=1723628868;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=810tWogs+Tnt7fFH5BVJ7QxBIOSjaNNzpsC9bZx2HB0=;
+        b=lWW073zRQDW028CiQSYyx53XC6awRMooz2jGg0viguj+AbEDTo6NDOLArQS6FwdIW+
+         HVJnj/sXwhqd0EueG5IlMK+u5/3onl6ThYIUqreh/RtlyWRS9SnYPwJZl63DpLPZ/O0W
+         SOKUOmmHpVsnRblCtfiX/k2/QpgqaQHvkzce9x3aCvs2seLNfOsddBfK1qSZAQQqUR8c
+         NdiimLmvpN48q4YW39FZxkG2coGN2/jWptZW4rxPdUOQ3ygYuBeBqS14jJ2cd9JXkXrn
+         JUBJbFXeSDRxVLLi/eeCiUxNEZKWUlaspbjol/baClCVNcf5YN18Ir8YlLCAc5248Guy
+         Tg9g==
+X-Forwarded-Encrypted: i=1; AJvYcCV+cYEDrZPnOcY1LNDl++L4mb9iYvlnc34S5jds1piNa4OwG5bVueRVZnPUmBcNMwaz3Q/JJMDDJazTeSVTxFf56C7ct3aNossha4KiT48dVTIgriBDZ/Ahfem5tZfv3EMiRICghUhs
+X-Gm-Message-State: AOJu0YzUIGNfbTM/6Zu0oWEbXmCv6oY2hoxhe2p4HIZkNTcIbbVJNKJD
+	0hI0ezuf3sdck/78G8Shh/NL9aWZhNo44FabDi8F+9PvYRuBnoyW
+X-Google-Smtp-Source: AGHT+IEuslsF1bAhVsV7NeiyR1S0Ob3GtNE0i++EGf/yFxjQpqPEUW7Y90WKuLzpWV5/I6rcZXamBQ==
+X-Received: by 2002:a2e:9b06:0:b0:2ef:2e3f:35d2 with SMTP id 38308e7fff4ca-2f15aa870d0mr114129001fa.5.1723024067227;
+        Wed, 07 Aug 2024 02:47:47 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290598e049sm20565075e9.23.2024.08.07.02.47.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 02:47:46 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] iio: Fix spelling mistake "avaialable" -> "available"
+Date: Wed,  7 Aug 2024 10:47:45 +0100
+Message-Id: <20240807094745.4174785-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-'struct meson_bank' are not modified in these drivers.
+There is a spelling mistake in a dev_warn message. Fix it.
 
-Constifying these structures moves some data to a read-only section, so
-increase overall security.
-
-
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  21410	   1096	      0	  22506	   57ea	drivers/pinctrl/meson/pinctrl-amlogic-c3.o
-  33358	   1552	      0	  34910	   885e	drivers/pinctrl/meson/pinctrl-amlogic-t7.o
-  24049	   1336	      0	  25385	   6329	drivers/pinctrl/meson/pinctrl-meson8b.o
-  28804	   1048	      0	  29852	   749c	drivers/pinctrl/meson/pinctrl-meson8.o
-   3070	    324	      0	   3394	    d42	drivers/pinctrl/meson/pinctrl-meson8-pmx.o
-  18085	    888	      0	  18973	   4a1d	drivers/pinctrl/meson/pinctrl-meson-a1.o
-  22675	   1112	      0	  23787	   5ceb	drivers/pinctrl/meson/pinctrl-meson-axg.o
-   2470	    120	      0	   2590	    a1e	drivers/pinctrl/meson/pinctrl-meson-axg-pmx.o
-  29045	   1320	      0	  30365	   769d	drivers/pinctrl/meson/pinctrl-meson-g12a.o
-  22824	   1136	      0	  23960	   5d98	drivers/pinctrl/meson/pinctrl-meson-gxbb.o
-  21616	   1064	      0	  22680	   5898	drivers/pinctrl/meson/pinctrl-meson-gxl.o
-  20507	   1132	     48	  21687	   54b7	drivers/pinctrl/meson/pinctrl-meson.o
-  23924	   1168	      0	  25092	   6204	drivers/pinctrl/meson/pinctrl-meson-s4.o
-
-After:
-=====
-  21922	    568	      0	  22490	   57da	drivers/pinctrl/meson/pinctrl-amlogic-c3.o
-  34222	    688	      0	  34910	   885e	drivers/pinctrl/meson/pinctrl-amlogic-t7.o
-  24945	    440	      0	  25385	   6329	drivers/pinctrl/meson/pinctrl-meson8b.o
-  29412	    440	      0	  29852	   749c	drivers/pinctrl/meson/pinctrl-meson8.o
-   3070	    324	      0	   3394	    d42	drivers/pinctrl/meson/pinctrl-meson8-pmx.o
-  18469	    520	      0	  18989	   4a2d	drivers/pinctrl/meson/pinctrl-meson-a1.o
-  23155	    648	      0	  23803	   5cfb	drivers/pinctrl/meson/pinctrl-meson-axg.o
-   2470	    120	      0	   2590	    a1e	drivers/pinctrl/meson/pinctrl-meson-axg-pmx.o
-  29653	    712	      0	  30365	   769d	drivers/pinctrl/meson/pinctrl-meson-g12a.o
-  23496	    456	      0	  23952	   5d90	drivers/pinctrl/meson/pinctrl-meson-gxbb.o
-  22224	    456	      0	  22680	   5898	drivers/pinctrl/meson/pinctrl-meson-gxl.o
-  20507	   1132	     48	  21687	   54b7	drivers/pinctrl/meson/pinctrl-meson.o
-  24500	    592	      0	  25092	   6204	drivers/pinctrl/meson/pinctrl-meson-s4.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-Compile tested-only.
----
- drivers/pinctrl/meson/pinctrl-amlogic-c3.c |  2 +-
- drivers/pinctrl/meson/pinctrl-amlogic-t7.c |  2 +-
- drivers/pinctrl/meson/pinctrl-meson-a1.c   |  2 +-
- drivers/pinctrl/meson/pinctrl-meson-axg.c  |  4 ++--
- drivers/pinctrl/meson/pinctrl-meson-g12a.c |  4 ++--
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c |  4 ++--
- drivers/pinctrl/meson/pinctrl-meson-gxl.c  |  4 ++--
- drivers/pinctrl/meson/pinctrl-meson-s4.c   |  2 +-
- drivers/pinctrl/meson/pinctrl-meson.c      | 23 +++++++++++-----------
- drivers/pinctrl/meson/pinctrl-meson.h      |  2 +-
- drivers/pinctrl/meson/pinctrl-meson8.c     |  4 ++--
- drivers/pinctrl/meson/pinctrl-meson8b.c    |  4 ++--
- 12 files changed, 29 insertions(+), 28 deletions(-)
+ drivers/iio/industrialio-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-c3.c b/drivers/pinctrl/meson/pinctrl-amlogic-c3.c
-index 9c14a8781680..aeaa810e855b 100644
---- a/drivers/pinctrl/meson/pinctrl-amlogic-c3.c
-+++ b/drivers/pinctrl/meson/pinctrl-amlogic-c3.c
-@@ -1036,7 +1036,7 @@ static const struct meson_pmx_func c3_periphs_functions[] = {
- 	FUNCTION(lcd),
- };
+diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+index 3f2bc6451325..6a6568d4a2cb 100644
+--- a/drivers/iio/industrialio-core.c
++++ b/drivers/iio/industrialio-core.c
+@@ -2002,7 +2002,7 @@ int iio_active_scan_mask_index(struct iio_dev *indio_dev)
+ 	}
  
--static struct meson_bank c3_periphs_banks[] = {
-+static const struct meson_bank c3_periphs_banks[] = {
- 	/* name  first  last  irq  pullen  pull  dir  out  in ds */
- 	BANK_DS("X",      GPIOX_0,      GPIOX_13,   40, 53,
- 		0x03, 0,  0x04, 0,  0x02, 0,  0x01, 0, 0x00, 0, 0x07, 0),
-diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-t7.c b/drivers/pinctrl/meson/pinctrl-amlogic-t7.c
-index 121158cce4f7..f880b36c3b54 100644
---- a/drivers/pinctrl/meson/pinctrl-amlogic-t7.c
-+++ b/drivers/pinctrl/meson/pinctrl-amlogic-t7.c
-@@ -1524,7 +1524,7 @@ static const struct meson_pmx_func t7_periphs_functions[] = {
- 	FUNCTION(mic_mute),
- };
- 
--static struct meson_bank t7_periphs_banks[] = {
-+static const struct meson_bank t7_periphs_banks[] = {
- 	/* name  first  last  irq pullen  pull  dir  out  in  ds */
- 	BANK_DS("D",      GPIOD_0,     GPIOD_12, 57, 69,
- 		0x03, 0,  0x04,  0,  0x02,  0, 0x01, 0,  0x00, 0, 0x07, 0),
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-a1.c b/drivers/pinctrl/meson/pinctrl-meson-a1.c
-index 11368ee01452..e0589ce8dd2e 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-a1.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-a1.c
-@@ -875,7 +875,7 @@ static const struct meson_pmx_func meson_a1_periphs_functions[] = {
- 	FUNCTION(mute),
- };
- 
--static struct meson_bank meson_a1_periphs_banks[] = {
-+static const struct meson_bank meson_a1_periphs_banks[] = {
- 	/* name  first  last  irq  pullen  pull  dir  out  in  ds*/
- 	BANK_DS("P",  GPIOP_0,  GPIOP_12,  0,  12, 0x3,  0,  0x4,  0,
- 		0x2,  0,  0x1,  0,  0x0,  0,  0x5,  0),
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-index 9fb99af8a348..9968bd68f129 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-@@ -1003,7 +1003,7 @@ static const struct meson_pmx_func meson_axg_aobus_functions[] = {
- 	FUNCTION(gen_clk_ee),
- };
- 
--static struct meson_bank meson_axg_periphs_banks[] = {
-+static const struct meson_bank meson_axg_periphs_banks[] = {
- 	/*   name    first      last       irq	     pullen  pull    dir     out     in  */
- 	BANK("Z",    GPIOZ_0,	GPIOZ_10, 14,  24, 3,  0,  3,  0,  9,  0,  10, 0,  11, 0),
- 	BANK("BOOT", BOOT_0,	BOOT_14,  25,  39, 4,  0,  4,  0,  12, 0,  13, 0,  14, 0),
-@@ -1012,7 +1012,7 @@ static struct meson_bank meson_axg_periphs_banks[] = {
- 	BANK("Y", 	 GPIOY_0,	GPIOY_15, 84,  99, 1,  0,  1,  0,  3,  0,  4,  0,  5,  0),
- };
- 
--static struct meson_bank meson_axg_aobus_banks[] = {
-+static const struct meson_bank meson_axg_aobus_banks[] = {
- 	/*   name    first      last      irq	pullen  pull    dir     out     in  */
- 	BANK("AO",   GPIOAO_0,  GPIOAO_13, 0, 13, 0,  16,  0, 0,  0,  0,  0, 16,  1,  0),
- };
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-g12a.c b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-index 28a3a06e40e3..0d901b2d1193 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-@@ -1317,7 +1317,7 @@ static const struct meson_pmx_func meson_g12a_aobus_functions[] = {
- 	FUNCTION(mclk0_ao),
- };
- 
--static struct meson_bank meson_g12a_periphs_banks[] = {
-+static const struct meson_bank meson_g12a_periphs_banks[] = {
- 	/* name  first  last  irq  pullen  pull  dir  out  in  ds */
- 	BANK_DS("Z",    GPIOZ_0,  GPIOZ_15,  IRQID_GPIOZ_0,  IRQID_GPIOZ_15,
- 		4,  0,  4,  0,  12,  0, 13,  0,  14,  0,  5, 0),
-@@ -1333,7 +1333,7 @@ static struct meson_bank meson_g12a_periphs_banks[] = {
- 		2,  0,  2,  0,   6,  0,  7,  0,   8,  0,  2, 0),
- };
- 
--static struct meson_bank meson_g12a_aobus_banks[] = {
-+static const struct meson_bank meson_g12a_aobus_banks[] = {
- 	/* name  first  last  irq  pullen  pull  dir  out  in  ds */
- 	BANK_DS("AO",   GPIOAO_0, GPIOAO_11, IRQID_GPIOAO_0, IRQID_GPIOAO_11,
- 		3,  0,  2,  0,   0,  0,  4,  0,   1,  0,  0, 0),
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index 64f43f4bddb2..45d292e339fa 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -845,7 +845,7 @@ static const struct meson_pmx_func meson_gxbb_aobus_functions[] = {
- 	FUNCTION(cec_ao),
- };
- 
--static struct meson_bank meson_gxbb_periphs_banks[] = {
-+static const struct meson_bank meson_gxbb_periphs_banks[] = {
- 	/*   name    first      last       irq       pullen  pull    dir     out     in  */
- 	BANK("X",    GPIOX_0,	GPIOX_22,  106, 128, 4,  0,  4,  0,  12, 0,  13, 0,  14, 0),
- 	BANK("Y",    GPIOY_0,	GPIOY_16,   89, 105, 1,  0,  1,  0,  3,  0,  4,  0,  5,  0),
-@@ -857,7 +857,7 @@ static struct meson_bank meson_gxbb_periphs_banks[] = {
- 	BANK("CLK",  GPIOCLK_0,	GPIOCLK_3, 129, 132, 3, 28,  3, 28,  9, 28, 10, 28, 11, 28),
- };
- 
--static struct meson_bank meson_gxbb_aobus_banks[] = {
-+static const struct meson_bank meson_gxbb_aobus_banks[] = {
- 	/*   name    first      last       irq    pullen  pull    dir     out     in  */
- 	BANK("AO",   GPIOAO_0,  GPIOAO_13, 0, 13, 0,  16, 0, 0,   0,  0,  0, 16,  1,  0),
- };
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-index f812393e5b2c..8744750be015 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-@@ -807,7 +807,7 @@ static const struct meson_pmx_func meson_gxl_aobus_functions[] = {
- 	FUNCTION(cec_ao),
- };
- 
--static struct meson_bank meson_gxl_periphs_banks[] = {
-+static const struct meson_bank meson_gxl_periphs_banks[] = {
- 	/*   name    first      last       irq	     pullen  pull    dir     out     in  */
- 	BANK("X",    GPIOX_0,	GPIOX_18,   89, 107, 4,  0,  4,  0,  12, 0,  13, 0,  14, 0),
- 	BANK("DV",   GPIODV_0,	GPIODV_29,  83,  88, 0,  0,  0,  0,  0,  0,  1,  0,  2,  0),
-@@ -818,7 +818,7 @@ static struct meson_bank meson_gxl_periphs_banks[] = {
- 	BANK("CLK",  GPIOCLK_0,	GPIOCLK_1, 108, 109, 3, 28,  3, 28,  9, 28, 10, 28, 11, 28),
- };
- 
--static struct meson_bank meson_gxl_aobus_banks[] = {
-+static const struct meson_bank meson_gxl_aobus_banks[] = {
- 	/*   name    first      last      irq	pullen  pull    dir     out     in  */
- 	BANK("AO",   GPIOAO_0,  GPIOAO_9, 0, 9, 0,  16, 0, 0,   0,  0,  0, 16,  1,  0),
- };
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-s4.c b/drivers/pinctrl/meson/pinctrl-meson-s4.c
-index 6a6bd767ae0a..6641bef76e58 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-s4.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-s4.c
-@@ -1160,7 +1160,7 @@ static const struct meson_pmx_func meson_s4_periphs_functions[] = {
- 	FUNCTION(s2_demod),
- };
- 
--static struct meson_bank meson_s4_periphs_banks[] = {
-+static const struct meson_bank meson_s4_periphs_banks[] = {
- 	/* name  first  last  irq  pullen  pull  dir  out  in */
- 	BANK_DS("B", GPIOB_0,    GPIOB_13,  0, 13,
- 		0x63,  0,  0x64,  0,  0x62, 0,  0x61, 0,  0x60, 0, 0x67, 0),
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index 1a58f135aca9..253a0cc57e39 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -70,7 +70,7 @@ static const unsigned int meson_bit_strides[] = {
-  * Return:	0 on success, a negative value on error
-  */
- static int meson_get_bank(struct meson_pinctrl *pc, unsigned int pin,
--			  struct meson_bank **bank)
-+			  const struct meson_bank **bank)
- {
- 	int i;
- 
-@@ -94,11 +94,12 @@ static int meson_get_bank(struct meson_pinctrl *pc, unsigned int pin,
-  * @reg:	the computed register offset
-  * @bit:	the computed bit
-  */
--static void meson_calc_reg_and_bit(struct meson_bank *bank, unsigned int pin,
-+static void meson_calc_reg_and_bit(const struct meson_bank *bank,
-+				   unsigned int pin,
- 				   enum meson_reg_type reg_type,
- 				   unsigned int *reg, unsigned int *bit)
- {
--	struct meson_reg_desc *desc = &bank->regs[reg_type];
-+	const struct meson_reg_desc *desc = &bank->regs[reg_type];
- 
- 	*bit = (desc->bit + pin - bank->first) * meson_bit_strides[reg_type];
- 	*reg = (desc->reg + (*bit / 32)) * 4;
-@@ -181,7 +182,7 @@ static int meson_pinconf_set_gpio_bit(struct meson_pinctrl *pc,
- 				      unsigned int reg_type,
- 				      bool arg)
- {
--	struct meson_bank *bank;
-+	const struct meson_bank *bank;
- 	unsigned int reg, bit;
- 	int ret;
- 
-@@ -198,7 +199,7 @@ static int meson_pinconf_get_gpio_bit(struct meson_pinctrl *pc,
- 				      unsigned int pin,
- 				      unsigned int reg_type)
- {
--	struct meson_bank *bank;
-+	const struct meson_bank *bank;
- 	unsigned int reg, bit, val;
- 	int ret;
- 
-@@ -261,7 +262,7 @@ static int meson_pinconf_set_output_drive(struct meson_pinctrl *pc,
- static int meson_pinconf_disable_bias(struct meson_pinctrl *pc,
- 				      unsigned int pin)
- {
--	struct meson_bank *bank;
-+	const struct meson_bank *bank;
- 	unsigned int reg, bit = 0;
- 	int ret;
- 
-@@ -280,7 +281,7 @@ static int meson_pinconf_disable_bias(struct meson_pinctrl *pc,
- static int meson_pinconf_enable_bias(struct meson_pinctrl *pc, unsigned int pin,
- 				     bool pull_up)
- {
--	struct meson_bank *bank;
-+	const struct meson_bank *bank;
- 	unsigned int reg, bit, val = 0;
- 	int ret;
- 
-@@ -308,7 +309,7 @@ static int meson_pinconf_set_drive_strength(struct meson_pinctrl *pc,
- 					    unsigned int pin,
- 					    u16 drive_strength_ua)
- {
--	struct meson_bank *bank;
-+	const struct meson_bank *bank;
- 	unsigned int reg, bit, ds_val;
- 	int ret;
- 
-@@ -399,7 +400,7 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
- 
- static int meson_pinconf_get_pull(struct meson_pinctrl *pc, unsigned int pin)
- {
--	struct meson_bank *bank;
-+	const struct meson_bank *bank;
- 	unsigned int reg, bit, val;
- 	int ret, conf;
- 
-@@ -435,7 +436,7 @@ static int meson_pinconf_get_drive_strength(struct meson_pinctrl *pc,
- 					    unsigned int pin,
- 					    u16 *drive_strength_ua)
- {
--	struct meson_bank *bank;
-+	const struct meson_bank *bank;
- 	unsigned int reg, bit;
- 	unsigned int val;
- 	int ret;
-@@ -587,8 +588,8 @@ static void meson_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
- static int meson_gpio_get(struct gpio_chip *chip, unsigned gpio)
- {
- 	struct meson_pinctrl *pc = gpiochip_get_data(chip);
-+	const struct meson_bank *bank;
- 	unsigned int reg, bit, val;
--	struct meson_bank *bank;
- 	int ret;
- 
- 	ret = meson_get_bank(pc, gpio, &bank);
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
-index 395362c33d59..d94d9d9fa5e9 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.h
-+++ b/drivers/pinctrl/meson/pinctrl-meson.h
-@@ -115,7 +115,7 @@ struct meson_pinctrl_data {
- 	unsigned int num_pins;
- 	unsigned int num_groups;
- 	unsigned int num_funcs;
--	struct meson_bank *banks;
-+	const struct meson_bank *banks;
- 	unsigned int num_banks;
- 	const struct pinmux_ops *pmx_ops;
- 	void *pmx_data;
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
-index af479d4b3e2a..c0db0b1c8564 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8.c
-@@ -1063,7 +1063,7 @@ static const struct meson_pmx_func meson8_aobus_functions[] = {
- 	FUNCTION(hdmi_cec_ao),
- };
- 
--static struct meson_bank meson8_cbus_banks[] = {
-+static const struct meson_bank meson8_cbus_banks[] = {
- 	/*   name    first     last         irq       pullen  pull    dir     out     in  */
- 	BANK("X",    GPIOX_0,  GPIOX_21,    112, 133, 4,  0,  4,  0,  0,  0,  1,  0,  2,  0),
- 	BANK("Y",    GPIOY_0,  GPIOY_16,    95,  111, 3,  0,  3,  0,  3,  0,  4,  0,  5,  0),
-@@ -1074,7 +1074,7 @@ static struct meson_bank meson8_cbus_banks[] = {
- 	BANK("BOOT", BOOT_0,   BOOT_18,     39,   57, 2,  0,  2,  0,  9,  0, 10,  0, 11,  0),
- };
- 
--static struct meson_bank meson8_aobus_banks[] = {
-+static const struct meson_bank meson8_aobus_banks[] = {
- 	/*   name    first     last         irq    pullen  pull    dir     out     in  */
- 	BANK("AO",   GPIOAO_0, GPIO_TEST_N, 0, 13, 0, 16,  0,  0,  0,  0,  0, 16,  1,  0),
- };
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
-index f1a8950d0bde..5b9042849966 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8b.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
-@@ -917,7 +917,7 @@ static const struct meson_pmx_func meson8b_aobus_functions[] = {
- 	FUNCTION(hdmi_cec),
- };
- 
--static struct meson_bank meson8b_cbus_banks[] = {
-+static const struct meson_bank meson8b_cbus_banks[] = {
- 	/*   name        first          last        irq       pullen   pull     dir      out      in   */
- 	BANK("X0..11",	 GPIOX_0,	GPIOX_11,   97, 108,  4,  0,   4,  0,   0,  0,   1,  0,   2,  0),
- 	BANK("X16..21",	 GPIOX_16,	GPIOX_21,  113, 118,  4, 16,   4, 16,   0, 16,   1, 16,   2, 16),
-@@ -938,7 +938,7 @@ static struct meson_bank meson8b_cbus_banks[] = {
- 	BANK("DIF",	 DIF_0_P,	DIF_4_N,    -1,  -1,  5,  8,   5,  8,  12, 12,  13, 12,  14, 12),
- };
- 
--static struct meson_bank meson8b_aobus_banks[] = {
-+static const struct meson_bank meson8b_aobus_banks[] = {
- 	/*   name    first     lastc        irq    pullen  pull    dir     out     in  */
- 	BANK("AO",   GPIOAO_0, GPIO_TEST_N, 0, 13, 0,  16, 0, 0,  0,  0,  0, 16,  1,  0),
- };
+ 	dev_warn(indio_dev->dev.parent,
+-		 "active scan mask is not part of the avaialable scan masks\n");
++		 "active scan mask is not part of the available scan masks\n");
+ 	return -EINVAL;
+ }
+ EXPORT_SYMBOL_GPL(iio_active_scan_mask_index);
 -- 
-2.45.2
+2.39.2
 
