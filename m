@@ -1,64 +1,63 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E691D173E;
-	Wed,  7 Aug 2024 09:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945F61C6899;
+	Wed,  7 Aug 2024 09:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723024071; cv=none; b=ejO7zIb/79pNtI1W145d3Grf/drJMj9IHbMFfC8poSs+XKnnJYoSWR/YNapPrZoM9t+0FKT251mgFFVn6/kTYtYIXl4rCCAkotuyra3pcmWrZpDisJCT6UZ15BswDSQoVC7DPVJQ1kUN6SLyHhDIKDMe5Jr+OYxWMtqYw9ZJpOk=
+	t=1723024268; cv=none; b=TS2WFExj3pJooHtGkHaQiaKcZqlc5EpkTMRg7OfdQIikrQpd7/ffYsRPumrCDOWlad5gmXsCmn/8G2EjZAZGMEe9pdm43A38j3bX7qvkO4mpdvjd/ics2OC6sRSdD6GKSF1W8EpCG6C775pD1MLLlGhFRB1XIVw4k+laznagZmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723024071; c=relaxed/simple;
-	bh=/W+05LJJu3p9mNXq4i6BjmOXtbvwMphvQ98oqXMYewE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nK+Eu1QHB49BpTQGDbtD8f/z3GWH/kfq3Slv0IKrEZUTC1jdvdrXOfBXWmAv7+Bu1H/aYR2wXwsuzvOU38smbprUPNW7zFzv02K9+Td5pu26rbchDMyyIqeMSbKRUV61hPjUryNyxBGxGXdfLp8gdWitkKh4l3B9gq/g8FvxPcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ECvgJNgS; arc=none smtp.client-ip=209.85.208.171
+	s=arc-20240116; t=1723024268; c=relaxed/simple;
+	bh=x9RrYOQoqM0N/+EXIAcKxOANoIPzAEMXgY3AnYDZ7Mo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=tInMfROiochYOWwUBUfBWRIyD5o69drHewuQ7LnkcOyw7WG5rICOP+oT4uvFXVutYgqFocI2MNuDC4wuJrADAgHg5HMtCl2avNJEVjxa807TDpwCAf+bXHt3lE842m8HlUeNz02vCN/nj+/xY0XZOz+HB7EJFpeJlIP0zl7d/h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GaH0JaAH; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ECvgJNgS"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f040733086so18376201fa.1;
-        Wed, 07 Aug 2024 02:47:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GaH0JaAH"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f16767830dso16532741fa.0;
+        Wed, 07 Aug 2024 02:51:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723024068; x=1723628868; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723024265; x=1723629065; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=810tWogs+Tnt7fFH5BVJ7QxBIOSjaNNzpsC9bZx2HB0=;
-        b=ECvgJNgS4yJzPWsKvRzHHZMSINaoA/veK2i8FQZQlOBE/vhn6pM/NYY7y+ONW8avTF
-         YeYMcbs1uqzap5mForN6ndhTlbfrjeLRzglmt4v927aOX9iTN7fukDPL3DiCPQoayB2e
-         uFVLDwJ1X1R4k+jf1pQqiCDHTfsrrB4/pM2LRUY/1N3xPiHqWtKtota6cIvudbkX5vij
-         dqSRqrBN9duX+u/7eJ2AgimQC244toWtju3Qmqpog6+wsXEtAUid43I65Kqk3FM8CLYE
-         CUgRVG4BlzeHO5juYuuRfVAalyu5hU7QnHUiMeI1MEq9UfW4/buzl1wXdsytPzI2a+N5
-         ofiw==
+        bh=poExAmqkt64eH1e6VYHoIlA0b9OJ8PRsnpcDsZX2m9Y=;
+        b=GaH0JaAHv+fGsB6kyup1PuDxXad3hsm0nFCvy+Bo0hulVs8sSvBe6qPeQdGHHTTO05
+         +sXN3RL7Fnr9Mhir0sin3iP3UazshrphKYCeQq5qyX4XfnEaVgtTU2VpGilU9qrzRwER
+         AGXS2fs9sNVQIGOysU14iowWlmFSVVmPoULFH6vh3JdupW2J7WyygG/P5zgjWDf+TT79
+         AVW+ovMpc5nXnIWYzs2TNoRjXj3+JuZ1aGbWs52htQPO0GDCOTt3PFWyFCMwa3C1hMra
+         sSiAY4JXBc5ktzVkl3wT9Tr57svnDZddlf8HBLMYHM5qYT/koD2l3w5oYevxf/Cdu8qH
+         ONog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723024068; x=1723628868;
+        d=1e100.net; s=20230601; t=1723024265; x=1723629065;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=810tWogs+Tnt7fFH5BVJ7QxBIOSjaNNzpsC9bZx2HB0=;
-        b=lWW073zRQDW028CiQSYyx53XC6awRMooz2jGg0viguj+AbEDTo6NDOLArQS6FwdIW+
-         HVJnj/sXwhqd0EueG5IlMK+u5/3onl6ThYIUqreh/RtlyWRS9SnYPwJZl63DpLPZ/O0W
-         SOKUOmmHpVsnRblCtfiX/k2/QpgqaQHvkzce9x3aCvs2seLNfOsddBfK1qSZAQQqUR8c
-         NdiimLmvpN48q4YW39FZxkG2coGN2/jWptZW4rxPdUOQ3ygYuBeBqS14jJ2cd9JXkXrn
-         JUBJbFXeSDRxVLLi/eeCiUxNEZKWUlaspbjol/baClCVNcf5YN18Ir8YlLCAc5248Guy
-         Tg9g==
-X-Forwarded-Encrypted: i=1; AJvYcCV+cYEDrZPnOcY1LNDl++L4mb9iYvlnc34S5jds1piNa4OwG5bVueRVZnPUmBcNMwaz3Q/JJMDDJazTeSVTxFf56C7ct3aNossha4KiT48dVTIgriBDZ/Ahfem5tZfv3EMiRICghUhs
-X-Gm-Message-State: AOJu0YzUIGNfbTM/6Zu0oWEbXmCv6oY2hoxhe2p4HIZkNTcIbbVJNKJD
-	0hI0ezuf3sdck/78G8Shh/NL9aWZhNo44FabDi8F+9PvYRuBnoyW
-X-Google-Smtp-Source: AGHT+IEuslsF1bAhVsV7NeiyR1S0Ob3GtNE0i++EGf/yFxjQpqPEUW7Y90WKuLzpWV5/I6rcZXamBQ==
-X-Received: by 2002:a2e:9b06:0:b0:2ef:2e3f:35d2 with SMTP id 38308e7fff4ca-2f15aa870d0mr114129001fa.5.1723024067227;
-        Wed, 07 Aug 2024 02:47:47 -0700 (PDT)
+        bh=poExAmqkt64eH1e6VYHoIlA0b9OJ8PRsnpcDsZX2m9Y=;
+        b=W9QNAt1hSl/mtCx9ig24NeZsv5dbrxsQQkVJ9x6STFFYJYng6DFU+O3Y9PLDEGa1yM
+         H6d7yPmFM9emQ+AFRMHI9Nuog833w0U2Tk2mW493mVI78uHmPcv98zEakeu8pTEuBGr1
+         MztfSmyGusLR+PpXxDC29KFavJVRaHD9eY0YPBZ/gUGOqLzWpSqarSZm90CpABMkGP/G
+         OWnWsIWrZZ2RnkeuBcu67AdY7uJsU16jJLdI4w9J5il5WTN5Yvv9VLU9NSusGZ/NCppS
+         C5Nzu6da4pV4s71gNQ6aqkzypjO0synn+5fPngCnp8uhl2XkLmF4TY3qXilXs37uyjn+
+         fLiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsTHoGeuLLNszNRE1GWh1Jcdb7lGpjWAo/285ZfXNcPIblKezQuSLTyII7bpYHKzVg7G9VCG/GVipAmFuLwwXJGL6c87ysduyiDKTe
+X-Gm-Message-State: AOJu0YwLGxrWw9WSyCZ+n6n9ic+3uZsbTe2+Rh2WilJY58X0eaoWDTzD
+	EdgTEhxB9FQpSHX0bEHhBz7/mSdVC171TKVK3rI2EC7tLJMVRFI8M5hJBA==
+X-Google-Smtp-Source: AGHT+IGtRm2MZyxQU5DjwTqC6R1Nmt8+aoLA0OU4Od4FnrlrFk85aBMUFhTKsEthWOj89EVGfQ9R8Q==
+X-Received: by 2002:a2e:b04b:0:b0:2f0:1a44:cdea with SMTP id 38308e7fff4ca-2f15aaab091mr108222631fa.26.1723024264260;
+        Wed, 07 Aug 2024 02:51:04 -0700 (PDT)
 Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290598e049sm20565075e9.23.2024.08.07.02.47.46
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290580c546sm21499445e9.40.2024.08.07.02.51.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 02:47:46 -0700 (PDT)
+        Wed, 07 Aug 2024 02:51:03 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	linux-iio@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] iio: Fix spelling mistake "avaialable" -> "available"
-Date: Wed,  7 Aug 2024 10:47:45 +0100
-Message-Id: <20240807094745.4174785-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] watchdog: Fix spelling mistake in ABI documentation
+Date: Wed,  7 Aug 2024 10:51:03 +0100
+Message-Id: <20240807095103.4174982-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -69,26 +68,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a dev_warn message. Fix it.
+There is a spelling mistake, pretimeout_avaialable_governors should
+be pretimeout_available_governors. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/iio/industrialio-core.c | 2 +-
+ Documentation/ABI/testing/sysfs-class-watchdog | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-index 3f2bc6451325..6a6568d4a2cb 100644
---- a/drivers/iio/industrialio-core.c
-+++ b/drivers/iio/industrialio-core.c
-@@ -2002,7 +2002,7 @@ int iio_active_scan_mask_index(struct iio_dev *indio_dev)
- 	}
+diff --git a/Documentation/ABI/testing/sysfs-class-watchdog b/Documentation/ABI/testing/sysfs-class-watchdog
+index 94fb74615951..70eabccf0557 100644
+--- a/Documentation/ABI/testing/sysfs-class-watchdog
++++ b/Documentation/ABI/testing/sysfs-class-watchdog
+@@ -76,7 +76,7 @@ Description:
+ 		timeout when the pretimeout interrupt is delivered.  Pretimeout
+ 		is an optional feature.
  
- 	dev_warn(indio_dev->dev.parent,
--		 "active scan mask is not part of the avaialable scan masks\n");
-+		 "active scan mask is not part of the available scan masks\n");
- 	return -EINVAL;
- }
- EXPORT_SYMBOL_GPL(iio_active_scan_mask_index);
+-What:		/sys/class/watchdog/watchdogn/pretimeout_avaialable_governors
++What:		/sys/class/watchdog/watchdogn/pretimeout_available_governors
+ Date:		February 2017
+ Contact:	Wim Van Sebroeck <wim@iguana.be>
+ Description:
 -- 
 2.39.2
 
