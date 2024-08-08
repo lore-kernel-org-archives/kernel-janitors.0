@@ -1,95 +1,82 @@
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 9D8A9156220;
-	Thu,  8 Aug 2024 12:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BF018A6DD;
+	Thu,  8 Aug 2024 13:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723119859; cv=none; b=Ssl2k7tBD6/Ot4tJlIvBcEb3yxrOhanCY/X/MORSyCI0j3wNhbADUIXP9z2udlax6pddw8USIBuFxUiR1OrLVgeb9QAl/VVmr63JsmAKGB/g8B8FeurUEDQEWwA1F0A7LDQ4xcTW1ixd9PkuQysY3p9/FRy/gkYZmBLMzyc4hv8=
+	t=1723122961; cv=none; b=OJbDC0eKV913dk1G6vJrGBgp1AFWv7IshJb0FTO2FFTIUUndVmO2U8Zma9d3qFjiLCUVyc93FRl05nPIAxd8bV24lC3JZjBqmvSN2J+BEY9K1KaeBonpuGYX3oJWeO81yWR0jkP5RlM9HC/MGqa9PhT8oJP3QTqHXY9k+4oOy08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723119859; c=relaxed/simple;
-	bh=SXys11+xLoBsHco0MZl/A5tIPMtTS+9EsXL6IR3Hvxk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rieHxcu8WFJ5cQD5DSkuLIe7dwPqlcYeDF+jFDSzLiSITxqu/5bKh3Dk/mFMEbPmBwpZFKUHik+gY7mywcbONNf3t0FO1vLkLDHndNnakSjNjJIlZCOxmAWRgWyGtdRsZhL9P4+viNqHnUO+Ph2zPGsS+ErjfMBGCcRQ3F9yOas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id C603B60C7B26D;
-	Thu,  8 Aug 2024 20:23:45 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: sfrench@samba.org,
-	pc@manguebit.com,
-	ronniesahlberg@gmail.com,
-	sprasad@microsoft.com,
-	tom@talpey.com,
-	bharathsm@microsoft.com,
-	nathan@kernel.org,
-	ndesaulniers@google.com,
-	morbo@google.com,
-	justinstitt@google.com
-Cc: Su Hui <suhui@nfschina.com>,
-	linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] smb/client: avoid possible NULL dereference in cifs_free_subrequest()
-Date: Thu,  8 Aug 2024 20:23:32 +0800
-Message-Id: <20240808122331.342473-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1723122961; c=relaxed/simple;
+	bh=LDwvaXSQU6mgwf6BXtOXY9FsaYa+mYPA6eepzvwf6lk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sF4kVx+ManBMOWRGNk/wkMpnIKhDqoDENjUIOr/yXEBoGwFg1Cy7QCwYLlDzh4tDfXgz5ZO/ZF0zAQIXcC62Aqqrsn5Ueu/V6oF1HkwY/+hs6HUX/YPRst7U1SvZul9eMYyetuzQrVXNnV5NQfokNGMm6W3VVNtC86ok3pvSnWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lXiLTl6L; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lXiLTl6L"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723122961; x=1754658961;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LDwvaXSQU6mgwf6BXtOXY9FsaYa+mYPA6eepzvwf6lk=;
+  b=lXiLTl6L4h3z3pdPdr8j/1DrhubkO6jx0VVdBhAUNAKHBRcHZlJyv1xQ
+   CveeYsDAww0Oo42mU1bHlu/MOZ1tAhyymikhYvb01lM//98sDAYh7ic1i
+   74D5H4x5wyDH6GST1BLqRExY3gwmdTr9JLw6egMdZOk2jsKVo41TZKaGT
+   TzRmXNLHoNqPzzf4IZ6d9KxmfVtnwpGBlrMIt+XckS+NQRoSrlPbpdUn7
+   LWSwucIAn1Cy+bH6o9tYOpsfUrJJR4mp23pndoLi/yb019BYRKb9JAcJ3
+   smO0bS7Ghh8HPpufcgsI4fEtwjA6b7sS7/bsVlsmtv/b451AjNEWcBjh3
+   A==;
+X-CSE-ConnectionGUID: 0RxPXsw6SDyxDcv2Eoicww==
+X-CSE-MsgGUID: aztUXvBASueXBCgADK47Aw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21388393"
+X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
+   d="scan'208";a="21388393"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 06:15:59 -0700
+X-CSE-ConnectionGUID: YW7BaXndT9SqanKjBLaFsA==
+X-CSE-MsgGUID: PR3hQc8tTxqLm6ocscYWzA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
+   d="scan'208";a="57924489"
+Received: from fpallare-mobl3.ger.corp.intel.com (HELO intel.com) ([10.245.245.81])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 06:15:52 -0700
+Date: Thu, 8 Aug 2024 14:15:46 +0100
+From: Andi Shyti <andi.shyti@linux.intel.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	linux-omap@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] fbdev: omapfb: Use sysfs_emit_at() to simplify code
+Message-ID: <ZrTFAk5DCmYAKR8F@ashyti-mobl2.lan>
+References: <fa1c03aded0c36585d29991d85d083853c3ca871.1723119220.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fa1c03aded0c36585d29991d85d083853c3ca871.1723119220.git.christophe.jaillet@wanadoo.fr>
 
-Clang static checker (scan-build) warning:
-	cifsglob.h:line 890, column 3
-	Access to field 'ops' results in a dereference of a null pointer.
+Hi Christophe,
 
-Commit 519be989717c ("cifs: Add a tracepoint to track credits involved in
-R/W requests") adds a check for 'rdata->server', and let clang throw this
-warning about NULL dereference.
+On Thu, Aug 08, 2024 at 02:14:22PM +0200, Christophe JAILLET wrote:
+> This file already uses sysfs_emit(). So be consistent and also use
+> sysfs_emit_at().
+> 
+> Moreover, size is always < PAGE_SIZE because scnprintf() (and now
+> sysfs_emit_at()) returns the number of characters written not including the
+> trailing '\0'. So some tests can be removed.
+> 
+> This slightly simplifies the code and makes it more readable.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-When 'rdata->credits.value != 0 && rdata->server == NULL' happens,
-add_credits_and_wake_if() will call rdata->server->ops->add_credits().
-This will cause NULL dereference problem. Add a check for 'rdata->server'
-to avoid NULL dereference.
+Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- fs/smb/client/file.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index b2405dd4d4d4..45459af5044d 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -315,7 +315,7 @@ static void cifs_free_subrequest(struct netfs_io_subrequest *subreq)
- #endif
- 	}
- 
--	if (rdata->credits.value != 0)
-+	if (rdata->credits.value != 0) {
- 		trace_smb3_rw_credits(rdata->rreq->debug_id,
- 				      rdata->subreq.debug_index,
- 				      rdata->credits.value,
-@@ -323,8 +323,12 @@ static void cifs_free_subrequest(struct netfs_io_subrequest *subreq)
- 				      rdata->server ? rdata->server->in_flight : 0,
- 				      -rdata->credits.value,
- 				      cifs_trace_rw_credits_free_subreq);
-+		if (rdata->server)
-+			add_credits_and_wake_if(rdata->server, &rdata->credits, 0);
-+		else
-+			rdata->credits.value = 0;
-+	}
- 
--	add_credits_and_wake_if(rdata->server, &rdata->credits, 0);
- 	if (rdata->have_xid)
- 		free_xid(rdata->xid);
- }
--- 
-2.30.2
-
+Thanks,
+Andi
