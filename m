@@ -1,47 +1,48 @@
-Received: from msa.smtpout.orange.fr (msa-213.smtpout.orange.fr [193.252.23.213])
+Received: from msa.smtpout.orange.fr (smtp-68.smtpout.orange.fr [80.12.242.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B4B145FE0;
-	Thu,  8 Aug 2024 11:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19AC1487C1;
+	Thu,  8 Aug 2024 12:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723117953; cv=none; b=CSowWPGA5hTjpD3r9PVvOS32kigKtEk4hGRL5fLTgQiNeonJRkDtbaOvZvq6auRMFxQD94MGIk4uJx7oK9mj7XdhSQD/xqvHa1gWKrrKAodBxcsKXURX8UAbftEu+hxFzOdRO958vx+FQ8ir2j0WqEib8VjkPl4+GT8bl6BeK7M=
+	t=1723119348; cv=none; b=e68/bgkiAG3/ZDg98P+vgjIMrQctGo+ebDrSO/Y7KOUHAcsqIKa+xiK0td+yc/ltSLjNfR5WMepbcxe5lPXuL9ShPsEYPvA5vykdAe2hjU8ZRc5GeIoz/bVe7JNwlNekM6Zq4VKwVXrMi9uT4SEDZO8GLf3t+9dz/VVsCVvf6bU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723117953; c=relaxed/simple;
-	bh=eF2ePApikNs5+k4/8u8YxnC7Eb2zSQ8xjQ/xyeX9PVs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ns8GrEZ0Ur6D/Aq3c3TzTnsUQwCwCy7qx18fDghJgYdor/txJChY3NVRV7e4jO8py5JgCla1vvTlR31bJDWGL9vlYlojEf25BBfDFmgCHVlojpB6VnT8qIFNzD/SW6aQybnfw2H/J9Gnegd3MFTU6DJaB7zWr0hftztT2XWCPFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=O7TKAKzX; arc=none smtp.client-ip=193.252.23.213
+	s=arc-20240116; t=1723119348; c=relaxed/simple;
+	bh=Zs9GV/PpP2+HT8ueJvw8gaqWxgXPaZn9fnfCTlh3r60=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jr6aAJYWzfRC8MIioi5j9pHWPgdlEXblrsp+cbaFQSVwxt+ivRbaZO34HsagjDQDsgq10opvjMcEjOv+O91K3yx5ZufjK0beH7c2uvyAkvwV4u3+WqByNzyOIGjax1lzy0eNobzQbGFj98zpmXTwpakNDodlX+Wmh0K282iYOuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=hD+Csibd; arc=none smtp.client-ip=80.12.242.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="O7TKAKzX"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="hD+Csibd"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id c1flsSTvRnx6kc1fmsWZkp; Thu, 08 Aug 2024 13:51:14 +0200
+	id c22FsjXg34i5oc22Fso0uS; Thu, 08 Aug 2024 14:14:28 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1723117874;
-	bh=cYtU3cwJ0fwnXFeK+ZEulL64nxWji9jLh3ldKu9/Uc4=;
+	s=t20230301; t=1723119268;
+	bh=TbFcLFR+Ykm8NP38Tp75wjsIr7BQ5vw52Zbiz2qPNlU=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=O7TKAKzXIBDtMMkFLkwEZLLyCekuVCRfY12OOmcEk0PpY37EmUBZyrytZCnxvK6sn
-	 jRT/FP2C5d8ihpEF42E0DvldObBocaaS08MjSQtOkEDqQ61N6MUE/AW0QI+F9hkrtR
-	 iahjEFsjC5PH5aBuXBZ+Rgh5psxy660RYLRC+w2F6mlPbPohS+UgOwMEhmDmYzutNx
-	 jsBx5D3XEx+s7Z3TRlL4Qe1OXvWoaXuzbeAHvwYcFbsO9O7UxGfZ0Bt6PzIbt3wZc1
-	 1lF8NqaH4KySj2oMnVNGnUje1kuHYqXAYpaj9B+LkQ1KgXerfL2spG7/xikerI/zMa
-	 2CZ4JfJ6OxFPw==
+	b=hD+CsibdhzHAo/JWY6/xhOGcKWFp4t1OqiinJJdJzzFWH8y6Jj68TkqUqU0MkjQid
+	 cSW9gMb9MxcyxX7PkDNh3hUIhEJwINUAdnIhMAI9jckcidhnZ5dRwMxrmkSkmTomrx
+	 tXw4lRt2hvormIgNEf7c/xqzBD5GPpbaTPHM3giGfiUCdIfp2AtZa0NhGoARpsVIb0
+	 /vbtQ1VJWGc9jxWVFpuq/cPq5scIvrkGbgf5culmP0qc9Z6NIlupfgFiR8H2Y8Gf5n
+	 /08GZ1Aye7xF0XOEWDB0f1/YjZhCBKPJTEVGK1NdMULEwQlFzWNesieeoQo1y7jZmC
+	 KPoPygM+NBp6A==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 08 Aug 2024 13:51:14 +0200
+X-ME-Date: Thu, 08 Aug 2024 14:14:28 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
+To: Helge Deller <deller@gmx.de>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH] f2fs: Use sysfs_emit_at() to simplify code
-Date: Thu,  8 Aug 2024 13:50:46 +0200
-Message-ID: <0afb817e75a84859e1a86e1a7ba2041a9b852b6e.1723117820.git.christophe.jaillet@wanadoo.fr>
+	linux-fbdev@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] fbdev: omapfb: Use sysfs_emit_at() to simplify code
+Date: Thu,  8 Aug 2024 14:14:22 +0200
+Message-ID: <fa1c03aded0c36585d29991d85d083853c3ca871.1723119220.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -54,108 +55,90 @@ Content-Transfer-Encoding: 8bit
 This file already uses sysfs_emit(). So be consistent and also use
 sysfs_emit_at().
 
+Moreover, size is always < PAGE_SIZE because scnprintf() (and now
+sysfs_emit_at()) returns the number of characters written not including the
+trailing '\0'. So some tests can be removed.
+
 This slightly simplifies the code and makes it more readable.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Compile tested only
----
- fs/f2fs/sysfs.c | 45 +++++++++++++++++++++------------------------
- 1 file changed, 21 insertions(+), 24 deletions(-)
+Compile tested only.
 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index ed4bf434207a..654a541dcc45 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -188,50 +188,50 @@ static ssize_t features_show(struct f2fs_attr *a,
- 	int len = 0;
+2 spaces are added before color_caps[i].name and color_caps[i].name, but
+not ctrl_caps[i].name.
+I wonder if it is done on purpose or if it could be removed as well.
+---
+ drivers/video/fbdev/omap/omapfb_main.c | 36 ++++++++++----------------
+ 1 file changed, 14 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/video/fbdev/omap/omapfb_main.c b/drivers/video/fbdev/omap/omapfb_main.c
+index aa31c0d26e92..e12c6019a4d6 100644
+--- a/drivers/video/fbdev/omap/omapfb_main.c
++++ b/drivers/video/fbdev/omap/omapfb_main.c
+@@ -1241,14 +1241,13 @@ static ssize_t omapfb_show_caps_num(struct device *dev,
+ {
+ 	struct omapfb_device *fbdev = dev_get_drvdata(dev);
+ 	int plane;
+-	size_t size;
++	size_t size = 0;
+ 	struct omapfb_caps caps;
  
- 	if (f2fs_sb_has_encrypt(sbi))
--		len += scnprintf(buf, PAGE_SIZE - len, "%s",
-+		len += sysfs_emit_at(buf, len, "%s",
- 						"encryption");
- 	if (f2fs_sb_has_blkzoned(sbi))
--		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+		len += sysfs_emit_at(buf, len, "%s%s",
- 				len ? ", " : "", "blkzoned");
- 	if (f2fs_sb_has_extra_attr(sbi))
--		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+		len += sysfs_emit_at(buf, len, "%s%s",
- 				len ? ", " : "", "extra_attr");
- 	if (f2fs_sb_has_project_quota(sbi))
--		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+		len += sysfs_emit_at(buf, len, "%s%s",
- 				len ? ", " : "", "projquota");
- 	if (f2fs_sb_has_inode_chksum(sbi))
--		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+		len += sysfs_emit_at(buf, len, "%s%s",
- 				len ? ", " : "", "inode_checksum");
- 	if (f2fs_sb_has_flexible_inline_xattr(sbi))
--		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+		len += sysfs_emit_at(buf, len, "%s%s",
- 				len ? ", " : "", "flexible_inline_xattr");
- 	if (f2fs_sb_has_quota_ino(sbi))
--		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+		len += sysfs_emit_at(buf, len, "%s%s",
- 				len ? ", " : "", "quota_ino");
- 	if (f2fs_sb_has_inode_crtime(sbi))
--		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+		len += sysfs_emit_at(buf, len, "%s%s",
- 				len ? ", " : "", "inode_crtime");
- 	if (f2fs_sb_has_lost_found(sbi))
--		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+		len += sysfs_emit_at(buf, len, "%s%s",
- 				len ? ", " : "", "lost_found");
- 	if (f2fs_sb_has_verity(sbi))
--		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+		len += sysfs_emit_at(buf, len, "%s%s",
- 				len ? ", " : "", "verity");
- 	if (f2fs_sb_has_sb_chksum(sbi))
--		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+		len += sysfs_emit_at(buf, len, "%s%s",
- 				len ? ", " : "", "sb_checksum");
- 	if (f2fs_sb_has_casefold(sbi))
--		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+		len += sysfs_emit_at(buf, len, "%s%s",
- 				len ? ", " : "", "casefold");
- 	if (f2fs_sb_has_readonly(sbi))
--		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+		len += sysfs_emit_at(buf, len, "%s%s",
- 				len ? ", " : "", "readonly");
- 	if (f2fs_sb_has_compression(sbi))
--		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+		len += sysfs_emit_at(buf, len, "%s%s",
- 				len ? ", " : "", "compression");
--	len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+	len += sysfs_emit_at(buf, len, "%s%s",
- 				len ? ", " : "", "pin_file");
--	len += scnprintf(buf + len, PAGE_SIZE - len, "\n");
-+	len += sysfs_emit_at(buf, len, "\n");
- 	return len;
- }
+ 	plane = 0;
+-	size = 0;
+-	while (size < PAGE_SIZE && plane < OMAPFB_PLANE_NUM) {
++	while (plane < OMAPFB_PLANE_NUM) {
+ 		omapfb_get_caps(fbdev, plane, &caps);
+-		size += scnprintf(&buf[size], PAGE_SIZE - size,
++		size += sysfs_emit_at(buf, size,
+ 			"plane#%d %#010x %#010x %#010x\n",
+ 			plane, caps.ctrl, caps.plane_color, caps.wnd_color);
+ 		plane++;
+@@ -1263,34 +1262,27 @@ static ssize_t omapfb_show_caps_text(struct device *dev,
+ 	int i;
+ 	struct omapfb_caps caps;
+ 	int plane;
+-	size_t size;
++	size_t size = 0;
  
-@@ -329,17 +329,14 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 		int hot_count = sbi->raw_super->hot_ext_count;
- 		int len = 0, i;
- 
--		len += scnprintf(buf + len, PAGE_SIZE - len,
--						"cold file extension:\n");
-+		len += sysfs_emit_at(buf, len, "cold file extension:\n");
- 		for (i = 0; i < cold_count; i++)
--			len += scnprintf(buf + len, PAGE_SIZE - len, "%s\n",
--								extlist[i]);
-+			len += sysfs_emit_at(buf, len, "%s\n", extlist[i]);
- 
--		len += scnprintf(buf + len, PAGE_SIZE - len,
--						"hot file extension:\n");
-+		len += sysfs_emit_at(buf, len, "hot file extension:\n");
- 		for (i = cold_count; i < cold_count + hot_count; i++)
--			len += scnprintf(buf + len, PAGE_SIZE - len, "%s\n",
--								extlist[i]);
-+			len += sysfs_emit_at(buf, len, "%s\n", extlist[i]);
-+
- 		return len;
- 	}
+ 	plane = 0;
+-	size = 0;
+-	while (size < PAGE_SIZE && plane < OMAPFB_PLANE_NUM) {
++	while (plane < OMAPFB_PLANE_NUM) {
+ 		omapfb_get_caps(fbdev, plane, &caps);
+-		size += scnprintf(&buf[size], PAGE_SIZE - size,
+-				 "plane#%d:\n", plane);
+-		for (i = 0; i < ARRAY_SIZE(ctrl_caps) &&
+-		     size < PAGE_SIZE; i++) {
++		size += sysfs_emit_at(buf, size, "plane#%d:\n", plane);
++		for (i = 0; i < ARRAY_SIZE(ctrl_caps); i++) {
+ 			if (ctrl_caps[i].flag & caps.ctrl)
+-				size += scnprintf(&buf[size], PAGE_SIZE - size,
++				size += sysfs_emit_at(buf, size,
+ 					" %s\n", ctrl_caps[i].name);
+ 		}
+-		size += scnprintf(&buf[size], PAGE_SIZE - size,
+-				 " plane colors:\n");
+-		for (i = 0; i < ARRAY_SIZE(color_caps) &&
+-		     size < PAGE_SIZE; i++) {
++		size += sysfs_emit_at(buf, size, " plane colors:\n");
++		for (i = 0; i < ARRAY_SIZE(color_caps); i++) {
+ 			if (color_caps[i].flag & caps.plane_color)
+-				size += scnprintf(&buf[size], PAGE_SIZE - size,
++				size += sysfs_emit_at(buf, size,
+ 					"  %s\n", color_caps[i].name);
+ 		}
+-		size += scnprintf(&buf[size], PAGE_SIZE - size,
+-				 " window colors:\n");
+-		for (i = 0; i < ARRAY_SIZE(color_caps) &&
+-		     size < PAGE_SIZE; i++) {
++		size += sysfs_emit_at(buf, size, " window colors:\n");
++		for (i = 0; i < ARRAY_SIZE(color_caps); i++) {
+ 			if (color_caps[i].flag & caps.wnd_color)
+-				size += scnprintf(&buf[size], PAGE_SIZE - size,
++				size += sysfs_emit_at(buf, size,
+ 					"  %s\n", color_caps[i].name);
+ 		}
  
 -- 
 2.46.0
