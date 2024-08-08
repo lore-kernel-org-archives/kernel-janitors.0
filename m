@@ -1,108 +1,92 @@
-Received: from msa.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD80973466;
-	Thu,  8 Aug 2024 09:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421F61487C3
+	for <kernel-janitors@vger.kernel.org>; Thu,  8 Aug 2024 10:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723110382; cv=none; b=CKkCY/w9anuNW4za3mC4ICO7bPUGqpyn9OTAHzGUWltBYswq9FopTGVmB69TmI9CDezTBzwLFfV/VTYhS2O7d0fJjdRr31pffclWtOzIszRyjuzZVJXK3KUboMGIZ7+VrOZj+Zm05ycHm93D9X9dZddOXQF5pjaxj+0gLTy8CuI=
+	t=1723111562; cv=none; b=a6ks3jeBp+hZJS9URf+zmXtnYoXJ8il7c1Yi33lkdWKt2dy+DGAhd3vgBSVhkMqgsnf84B9HoFvSWduCtjPo2yWkJ7ZgGWy6H5kULHySamQd0LLyN35kzsfkL7oknb+9Cg9tzzKN9tn15MLbJf2+DfG/K+LdStUBrK6oq7dVOZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723110382; c=relaxed/simple;
-	bh=bumPGr+ZtUkPsb174Ov4HOwOhiZCqiX0cTRRdQHd/iI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C5c7XuhOjQynWC6ekQXYdorkm5uRInoFBK38ld0XFpGxxnMfjNujt9KNydTOmzwqqqnRvy6KRoHkSUnkLokKk0RzMkfskDyT+Rl+Pjl4F6qaIsN1uSwEsvWDYkN4fyALAdrM/ogdeyRxN88dwwr+C16l8veM055bKSjk1QjeqHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=YO2BeQ7m; arc=none smtp.client-ip=80.12.242.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1723111562; c=relaxed/simple;
+	bh=6hv5xKMBa4EVOIETsZgjUJj1tDj/hE5EZ3N7WS+BMmU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=giAAnYHc9VDobKWwDQjuiVtSWoNl0NnPYokx8ZAZBEY9ASajKTAT0fi4kU2ZaZopnP0BJmFjSyTVcdaK+l/tKIV122Vo6Xp5hTIZMbr0H4jth+hnZY7dVigAAnSTnG99fV7qgexItw95m2O4ys1ks/N4XA9Bn3YXH6Wckcn/Yl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=n4HxHa5y; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="YO2BeQ7m"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id bzipsrAPUHEYLbzipszOrg; Thu, 08 Aug 2024 11:46:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1723110376;
-	bh=ya2xzpSe2RMDa9pYPN22dbVPek6YtgZI0yveQDSkuLk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=YO2BeQ7magrcKLdEkaEIDMDjzQb6CwsJZhL914LoddIA57elZMI+ZfYrM0oVKdoqa
-	 DNhCfR07NPJzmTow59qUwKsj527OFI5lSPCBTQ46y7tF+owmHHy6tmJOxXzRGYVFSL
-	 qbErfS3RejWvEGVvpj95ee2Z774m+AUMG+6SE+5lXYysnTaVxDJcyuOY5zG92upOiV
-	 lif5FsnOE9eRikrbUzL1c1y4ucLgznOVItWkoipsh1mTyOBaqkhuMUfq5D/Ww7AOyd
-	 cbiQVbo0MHqtwUh1088ZuxgIQeQ0fYphoynjg4ZI1vbUlJ8Cd8k0xohkrT3mop2kL6
-	 NHIh24i0u2xrQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 08 Aug 2024 11:46:16 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Helge Deller <deller@gmx.de>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-omap@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH] fbdev: omapfb: panel-sony-acx565akm: Simplify show_cabc_available_modes()
-Date: Thu,  8 Aug 2024 11:46:11 +0200
-Message-ID: <91fc9049558a4865d441930c8f4732461f478eca.1723110340.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="n4HxHa5y"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3687fd09251so400798f8f.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 08 Aug 2024 03:05:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723111558; x=1723716358; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/qPsQ8QVE2zEks663h1JC5K+bSl/B5g3BfpyLqR4k0g=;
+        b=n4HxHa5yTpH9UzfsbLnDthna3m6hI9+Ph9C11hPNDhuFyxyvZWvcquKzyHlfgW+zCm
+         rAM1IqSmCWhEpo7d4miB0Lz/P14bOUBykfZCtviX7G5WOp91C5cliuxD/vE2H8lWEYqa
+         ELWGQlXHECzDSmzBsGXOlJa6L/5p0Umh7ilLKhbk5+D6OmyieophBIespy/24cRMawGR
+         E5V8KopGRrH4aAinUudbK5pTvfi1XKH72VPkGSLvQjzk9mg1qeij79k5Tl2zf7DIXezD
+         23IFklpluLBYy9ZVbPNK5Qqz3W8POP2kQ657Vb+WrHiageXZYF0OjeMa32u47Kf2eUWh
+         3CpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723111558; x=1723716358;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/qPsQ8QVE2zEks663h1JC5K+bSl/B5g3BfpyLqR4k0g=;
+        b=KBWEFog0sCe7aJHN2D1tg/zPtTXevlI7+a6PfN3u0cHKpvpynfIW5klAaJISW1t2dK
+         S9WNcDKzTAY94uv1Pe31IKJ4TJ7JOeaXuT8Q5dNeCbMokdb9Xv1m4ToOCWS5/Q5v5uZ3
+         tFgy0AMzotUlPp5YWQm/Q2x/MKZ7Fz58vRLX+Dy8ry9a8+Byk372Y5uhAnrTS4u1bX5i
+         W4LjHBtx7TldmLWTGN6w5106d5q/0q6GXXp9K/TTc1hQVdK3c/nCvalMMk1r78dXbq+t
+         J7ldbIceX1cvhCxkMFFt2kKLAX4VNWcHIrnYSpDG0OE6BqbRoqFoH2/azc7xv/1SB7Fb
+         /+5g==
+X-Forwarded-Encrypted: i=1; AJvYcCV4tN420SryxWZjGQ5JGDx901y9Wdsb5XlLt1R9P6pJUAVzM+2oT8Zrvq5K+1dVnlaYEwCUI8CGeNA1q73Ytyg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAIFxSflUngoME3SEXVOFs+nodEEV8AIY0ARAueP1s9pRG2D3Y
+	1iB57HOZoswzwrNgvR+V7XLc98efiQn+CzTCidL6xwVJOPEToXFrbxsLWXhvb5o=
+X-Google-Smtp-Source: AGHT+IHuYbrCTlKt5TCgiFSu5JCjZWHBFhE44QTQFbwLXgNURs2glTBXxCRbpAs970Ya85dt2iUAZw==
+X-Received: by 2002:a05:6000:259:b0:368:4e98:6e9e with SMTP id ffacd0b85a97d-36d275900a9mr806392f8f.63.1723111558368;
+        Thu, 08 Aug 2024 03:05:58 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:ae7:4e79:8821:15db])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d27209a5esm1390336f8f.80.2024.08.08.03.05.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 03:05:57 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Linus Walleij <linus.walleij@linaro.org>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,
+  linux-kernel@vger.kernel.org,  kernel-janitors@vger.kernel.org,
+  linux-gpio@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH v2] pinctrl: meson: Constify some structures
+In-Reply-To: <f74e326bd7d48003c06219545bad7c2ef1a84bf8.1723053850.git.christophe.jaillet@wanadoo.fr>
+	(Christophe JAILLET's message of "Wed, 7 Aug 2024 20:05:36 +0200")
+References: <f74e326bd7d48003c06219545bad7c2ef1a84bf8.1723053850.git.christophe.jaillet@wanadoo.fr>
+Date: Thu, 08 Aug 2024 12:05:57 +0200
+Message-ID: <1jplqjxray.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Use sysfs_emit_at() instead of snprintf() + custom logic.
-Using sysfs_emit_at() is much more simple.
+On Wed 07 Aug 2024 at 20:05, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-Also, sysfs_emit() is already used in this function, so using
-sysfs_emit_at() is more consistent.
+> The following structures are not modified in these drivers.
+>   - struct meson_bank
+>   - struct meson_pmx_bank
+>   - struct meson_pmx_func
+>   - struct meson_pmx_group
+>   - struct meson_pinctrl_data
+>   - struct meson_axg_pmx_data
+>
+> Constifying these structures moves some data to a read-only section, so
+> increase overall security.
+>
 
-Also simplify the logic:
-  - always add a space after an entry
-  - change the last space into a '\n'
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Finally it is easy to see that, given the size of cabc_modes, PAGE_SIZE
-can not be reached.
-So better keep everything simple (and correct).
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- .../omap2/omapfb/displays/panel-sony-acx565akm.c  | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c b/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c
-index 71d2e015960c..fc975615d5c9 100644
---- a/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c
-+++ b/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c
-@@ -466,19 +466,20 @@ static ssize_t show_cabc_available_modes(struct device *dev,
- 		char *buf)
- {
- 	struct panel_drv_data *ddata = dev_get_drvdata(dev);
--	int len;
-+	int len = 0;
- 	int i;
- 
- 	if (!ddata->has_cabc)
- 		return sysfs_emit(buf, "%s\n", cabc_modes[0]);
- 
--	for (i = 0, len = 0;
--	     len < PAGE_SIZE && i < ARRAY_SIZE(cabc_modes); i++)
--		len += snprintf(&buf[len], PAGE_SIZE - len, "%s%s%s",
--			i ? " " : "", cabc_modes[i],
--			i == ARRAY_SIZE(cabc_modes) - 1 ? "\n" : "");
-+	for (i = 0; i < ARRAY_SIZE(cabc_modes); i++)
-+		len += sysfs_emit_at(buf, len, "%s ", cabc_modes[i]);
-+
-+	/* Remove the trailing space */
-+	if (len)
-+		buf[len - 1] = '\n';
- 
--	return len < PAGE_SIZE ? len : PAGE_SIZE - 1;
-+	return len;
- }
- 
- static DEVICE_ATTR(cabc_mode, S_IRUGO | S_IWUSR,
--- 
-2.46.0
-
+On the vim3l:
+Tested-by: Jerome Brunet <jbrunet@baylibre.com>
