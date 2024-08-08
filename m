@@ -1,89 +1,162 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from msa.smtpout.orange.fr (msa-213.smtpout.orange.fr [193.252.23.213])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C423C189F56;
-	Thu,  8 Aug 2024 10:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B4B145FE0;
+	Thu,  8 Aug 2024 11:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723112725; cv=none; b=eo559+QwOHGN6BReJwykoq0HONiZrQSSJDT6mYJ976/UU5vLO16T7ELWeYiiWKHMGH32GcTQJK8l4feG4F3bBzKOrS8sMTrqjcQl/omDIWhbqsnuGdkT/lkrhkcZi3GxuklMSYhp8L26jru7l/D/66Kh1UCKoyOYkZIQuQ9FjLE=
+	t=1723117953; cv=none; b=CSowWPGA5hTjpD3r9PVvOS32kigKtEk4hGRL5fLTgQiNeonJRkDtbaOvZvq6auRMFxQD94MGIk4uJx7oK9mj7XdhSQD/xqvHa1gWKrrKAodBxcsKXURX8UAbftEu+hxFzOdRO958vx+FQ8ir2j0WqEib8VjkPl4+GT8bl6BeK7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723112725; c=relaxed/simple;
-	bh=fZP8HxgFzg8Q/VBokT/unDJoCN9dymrjvbxzxf0FNFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HA8PPVAsuYN87QCR2QWpKB08CVx0ptN/VJizBFs3YVZ+o8tLx8aksY0sHwO2zMu9PMpjdfLwbVX+JQoodGAoPD8QSpGUCXhBYtoVqX06I5LpLfrZurN3lBu/xrDmyOCe6rFIv5ECi2oAZ6lRx1fR7uMVJG+QFs7qm4glrhg4yrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BnXv3khZ; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1723117953; c=relaxed/simple;
+	bh=eF2ePApikNs5+k4/8u8YxnC7Eb2zSQ8xjQ/xyeX9PVs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ns8GrEZ0Ur6D/Aq3c3TzTnsUQwCwCy7qx18fDghJgYdor/txJChY3NVRV7e4jO8py5JgCla1vvTlR31bJDWGL9vlYlojEf25BBfDFmgCHVlojpB6VnT8qIFNzD/SW6aQybnfw2H/J9Gnegd3MFTU6DJaB7zWr0hftztT2XWCPFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=O7TKAKzX; arc=none smtp.client-ip=193.252.23.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BnXv3khZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723112724; x=1754648724;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fZP8HxgFzg8Q/VBokT/unDJoCN9dymrjvbxzxf0FNFY=;
-  b=BnXv3khZNeNfHNOiYhhhhBaO1g9TuXtaJjOAkyQT0b7uxvy01oqCh13Y
-   ru6n5ngeteZplVzAz7TooDeQBjteIceOGSpHFedy/Ox8wWHVdx387ZFI8
-   xU501ygVaKlgn1B8Y3WcRiRtpajrFT9xHVzmP0P8ArsxJhy2Bo6dlpiOB
-   OU2HYfXedFIkYYzKnZvm8R3DJ+RHyaWrGf7hSsdCbDCpBrQA2mbta8Wh9
-   tfWrlR9A0hRH2L8sOIW3e4bQeA4tOJPitL+H9qFyOo6C3jbHDpKXdNhBF
-   SBndLpha8uKCbtUvCKAp9r3BWo/GJ30yx6jkF9sgSWFZncYUnuqQZGCsR
-   Q==;
-X-CSE-ConnectionGUID: XeQABdknTEOk4j0Q/TmBmQ==
-X-CSE-MsgGUID: ewA+kMXNQwq3Xgbz3IMG4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="43749108"
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="43749108"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 03:25:23 -0700
-X-CSE-ConnectionGUID: e7YznkWoQMuCjEYa1nZS7Q==
-X-CSE-MsgGUID: 1nbyhsx0QneJSAGsF9GiDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="57731589"
-Received: from dneilan-mobl1.ger.corp.intel.com (HELO intel.com) ([10.245.245.71])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 03:25:19 -0700
-Date: Thu, 8 Aug 2024 11:25:14 +0100
-From: Andi Shyti <andi.shyti@linux.intel.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] fbdev: omapfb: panel-sony-acx565akm: Simplify
- show_cabc_available_modes()
-Message-ID: <ZrSdCtS2okz9ivBW@ashyti-mobl2.lan>
-References: <91fc9049558a4865d441930c8f4732461f478eca.1723110340.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="O7TKAKzX"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id c1flsSTvRnx6kc1fmsWZkp; Thu, 08 Aug 2024 13:51:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1723117874;
+	bh=cYtU3cwJ0fwnXFeK+ZEulL64nxWji9jLh3ldKu9/Uc4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=O7TKAKzXIBDtMMkFLkwEZLLyCekuVCRfY12OOmcEk0PpY37EmUBZyrytZCnxvK6sn
+	 jRT/FP2C5d8ihpEF42E0DvldObBocaaS08MjSQtOkEDqQ61N6MUE/AW0QI+F9hkrtR
+	 iahjEFsjC5PH5aBuXBZ+Rgh5psxy660RYLRC+w2F6mlPbPohS+UgOwMEhmDmYzutNx
+	 jsBx5D3XEx+s7Z3TRlL4Qe1OXvWoaXuzbeAHvwYcFbsO9O7UxGfZ0Bt6PzIbt3wZc1
+	 1lF8NqaH4KySj2oMnVNGnUje1kuHYqXAYpaj9B+LkQ1KgXerfL2spG7/xikerI/zMa
+	 2CZ4JfJ6OxFPw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 08 Aug 2024 13:51:14 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH] f2fs: Use sysfs_emit_at() to simplify code
+Date: Thu,  8 Aug 2024 13:50:46 +0200
+Message-ID: <0afb817e75a84859e1a86e1a7ba2041a9b852b6e.1723117820.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <91fc9049558a4865d441930c8f4732461f478eca.1723110340.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 
-Hi Christophe,
+This file already uses sysfs_emit(). So be consistent and also use
+sysfs_emit_at().
 
-On Thu, Aug 08, 2024 at 11:46:11AM +0200, Christophe JAILLET wrote:
-> Use sysfs_emit_at() instead of snprintf() + custom logic.
-> Using sysfs_emit_at() is much more simple.
-> 
-> Also, sysfs_emit() is already used in this function, so using
-> sysfs_emit_at() is more consistent.
-> 
-> Also simplify the logic:
->   - always add a space after an entry
->   - change the last space into a '\n'
-> 
-> Finally it is easy to see that, given the size of cabc_modes, PAGE_SIZE
-> can not be reached.
-> So better keep everything simple (and correct).
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+This slightly simplifies the code and makes it more readable.
 
-neat!
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ fs/f2fs/sysfs.c | 45 +++++++++++++++++++++------------------------
+ 1 file changed, 21 insertions(+), 24 deletions(-)
 
-Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index ed4bf434207a..654a541dcc45 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -188,50 +188,50 @@ static ssize_t features_show(struct f2fs_attr *a,
+ 	int len = 0;
+ 
+ 	if (f2fs_sb_has_encrypt(sbi))
+-		len += scnprintf(buf, PAGE_SIZE - len, "%s",
++		len += sysfs_emit_at(buf, len, "%s",
+ 						"encryption");
+ 	if (f2fs_sb_has_blkzoned(sbi))
+-		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
++		len += sysfs_emit_at(buf, len, "%s%s",
+ 				len ? ", " : "", "blkzoned");
+ 	if (f2fs_sb_has_extra_attr(sbi))
+-		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
++		len += sysfs_emit_at(buf, len, "%s%s",
+ 				len ? ", " : "", "extra_attr");
+ 	if (f2fs_sb_has_project_quota(sbi))
+-		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
++		len += sysfs_emit_at(buf, len, "%s%s",
+ 				len ? ", " : "", "projquota");
+ 	if (f2fs_sb_has_inode_chksum(sbi))
+-		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
++		len += sysfs_emit_at(buf, len, "%s%s",
+ 				len ? ", " : "", "inode_checksum");
+ 	if (f2fs_sb_has_flexible_inline_xattr(sbi))
+-		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
++		len += sysfs_emit_at(buf, len, "%s%s",
+ 				len ? ", " : "", "flexible_inline_xattr");
+ 	if (f2fs_sb_has_quota_ino(sbi))
+-		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
++		len += sysfs_emit_at(buf, len, "%s%s",
+ 				len ? ", " : "", "quota_ino");
+ 	if (f2fs_sb_has_inode_crtime(sbi))
+-		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
++		len += sysfs_emit_at(buf, len, "%s%s",
+ 				len ? ", " : "", "inode_crtime");
+ 	if (f2fs_sb_has_lost_found(sbi))
+-		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
++		len += sysfs_emit_at(buf, len, "%s%s",
+ 				len ? ", " : "", "lost_found");
+ 	if (f2fs_sb_has_verity(sbi))
+-		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
++		len += sysfs_emit_at(buf, len, "%s%s",
+ 				len ? ", " : "", "verity");
+ 	if (f2fs_sb_has_sb_chksum(sbi))
+-		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
++		len += sysfs_emit_at(buf, len, "%s%s",
+ 				len ? ", " : "", "sb_checksum");
+ 	if (f2fs_sb_has_casefold(sbi))
+-		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
++		len += sysfs_emit_at(buf, len, "%s%s",
+ 				len ? ", " : "", "casefold");
+ 	if (f2fs_sb_has_readonly(sbi))
+-		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
++		len += sysfs_emit_at(buf, len, "%s%s",
+ 				len ? ", " : "", "readonly");
+ 	if (f2fs_sb_has_compression(sbi))
+-		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
++		len += sysfs_emit_at(buf, len, "%s%s",
+ 				len ? ", " : "", "compression");
+-	len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
++	len += sysfs_emit_at(buf, len, "%s%s",
+ 				len ? ", " : "", "pin_file");
+-	len += scnprintf(buf + len, PAGE_SIZE - len, "\n");
++	len += sysfs_emit_at(buf, len, "\n");
+ 	return len;
+ }
+ 
+@@ -329,17 +329,14 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+ 		int hot_count = sbi->raw_super->hot_ext_count;
+ 		int len = 0, i;
+ 
+-		len += scnprintf(buf + len, PAGE_SIZE - len,
+-						"cold file extension:\n");
++		len += sysfs_emit_at(buf, len, "cold file extension:\n");
+ 		for (i = 0; i < cold_count; i++)
+-			len += scnprintf(buf + len, PAGE_SIZE - len, "%s\n",
+-								extlist[i]);
++			len += sysfs_emit_at(buf, len, "%s\n", extlist[i]);
+ 
+-		len += scnprintf(buf + len, PAGE_SIZE - len,
+-						"hot file extension:\n");
++		len += sysfs_emit_at(buf, len, "hot file extension:\n");
+ 		for (i = cold_count; i < cold_count + hot_count; i++)
+-			len += scnprintf(buf + len, PAGE_SIZE - len, "%s\n",
+-								extlist[i]);
++			len += sysfs_emit_at(buf, len, "%s\n", extlist[i]);
++
+ 		return len;
+ 	}
+ 
+-- 
+2.46.0
 
-Andi
