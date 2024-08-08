@@ -1,92 +1,89 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421F61487C3
-	for <kernel-janitors@vger.kernel.org>; Thu,  8 Aug 2024 10:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C423C189F56;
+	Thu,  8 Aug 2024 10:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723111562; cv=none; b=a6ks3jeBp+hZJS9URf+zmXtnYoXJ8il7c1Yi33lkdWKt2dy+DGAhd3vgBSVhkMqgsnf84B9HoFvSWduCtjPo2yWkJ7ZgGWy6H5kULHySamQd0LLyN35kzsfkL7oknb+9Cg9tzzKN9tn15MLbJf2+DfG/K+LdStUBrK6oq7dVOZc=
+	t=1723112725; cv=none; b=eo559+QwOHGN6BReJwykoq0HONiZrQSSJDT6mYJ976/UU5vLO16T7ELWeYiiWKHMGH32GcTQJK8l4feG4F3bBzKOrS8sMTrqjcQl/omDIWhbqsnuGdkT/lkrhkcZi3GxuklMSYhp8L26jru7l/D/66Kh1UCKoyOYkZIQuQ9FjLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723111562; c=relaxed/simple;
-	bh=6hv5xKMBa4EVOIETsZgjUJj1tDj/hE5EZ3N7WS+BMmU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=giAAnYHc9VDobKWwDQjuiVtSWoNl0NnPYokx8ZAZBEY9ASajKTAT0fi4kU2ZaZopnP0BJmFjSyTVcdaK+l/tKIV122Vo6Xp5hTIZMbr0H4jth+hnZY7dVigAAnSTnG99fV7qgexItw95m2O4ys1ks/N4XA9Bn3YXH6Wckcn/Yl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=n4HxHa5y; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1723112725; c=relaxed/simple;
+	bh=fZP8HxgFzg8Q/VBokT/unDJoCN9dymrjvbxzxf0FNFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HA8PPVAsuYN87QCR2QWpKB08CVx0ptN/VJizBFs3YVZ+o8tLx8aksY0sHwO2zMu9PMpjdfLwbVX+JQoodGAoPD8QSpGUCXhBYtoVqX06I5LpLfrZurN3lBu/xrDmyOCe6rFIv5ECi2oAZ6lRx1fR7uMVJG+QFs7qm4glrhg4yrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BnXv3khZ; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="n4HxHa5y"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3687fd09251so400798f8f.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 08 Aug 2024 03:05:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723111558; x=1723716358; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/qPsQ8QVE2zEks663h1JC5K+bSl/B5g3BfpyLqR4k0g=;
-        b=n4HxHa5yTpH9UzfsbLnDthna3m6hI9+Ph9C11hPNDhuFyxyvZWvcquKzyHlfgW+zCm
-         rAM1IqSmCWhEpo7d4miB0Lz/P14bOUBykfZCtviX7G5WOp91C5cliuxD/vE2H8lWEYqa
-         ELWGQlXHECzDSmzBsGXOlJa6L/5p0Umh7ilLKhbk5+D6OmyieophBIespy/24cRMawGR
-         E5V8KopGRrH4aAinUudbK5pTvfi1XKH72VPkGSLvQjzk9mg1qeij79k5Tl2zf7DIXezD
-         23IFklpluLBYy9ZVbPNK5Qqz3W8POP2kQ657Vb+WrHiageXZYF0OjeMa32u47Kf2eUWh
-         3CpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723111558; x=1723716358;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/qPsQ8QVE2zEks663h1JC5K+bSl/B5g3BfpyLqR4k0g=;
-        b=KBWEFog0sCe7aJHN2D1tg/zPtTXevlI7+a6PfN3u0cHKpvpynfIW5klAaJISW1t2dK
-         S9WNcDKzTAY94uv1Pe31IKJ4TJ7JOeaXuT8Q5dNeCbMokdb9Xv1m4ToOCWS5/Q5v5uZ3
-         tFgy0AMzotUlPp5YWQm/Q2x/MKZ7Fz58vRLX+Dy8ry9a8+Byk372Y5uhAnrTS4u1bX5i
-         W4LjHBtx7TldmLWTGN6w5106d5q/0q6GXXp9K/TTc1hQVdK3c/nCvalMMk1r78dXbq+t
-         J7ldbIceX1cvhCxkMFFt2kKLAX4VNWcHIrnYSpDG0OE6BqbRoqFoH2/azc7xv/1SB7Fb
-         /+5g==
-X-Forwarded-Encrypted: i=1; AJvYcCV4tN420SryxWZjGQ5JGDx901y9Wdsb5XlLt1R9P6pJUAVzM+2oT8Zrvq5K+1dVnlaYEwCUI8CGeNA1q73Ytyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAIFxSflUngoME3SEXVOFs+nodEEV8AIY0ARAueP1s9pRG2D3Y
-	1iB57HOZoswzwrNgvR+V7XLc98efiQn+CzTCidL6xwVJOPEToXFrbxsLWXhvb5o=
-X-Google-Smtp-Source: AGHT+IHuYbrCTlKt5TCgiFSu5JCjZWHBFhE44QTQFbwLXgNURs2glTBXxCRbpAs970Ya85dt2iUAZw==
-X-Received: by 2002:a05:6000:259:b0:368:4e98:6e9e with SMTP id ffacd0b85a97d-36d275900a9mr806392f8f.63.1723111558368;
-        Thu, 08 Aug 2024 03:05:58 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:ae7:4e79:8821:15db])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d27209a5esm1390336f8f.80.2024.08.08.03.05.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 03:05:57 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BnXv3khZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723112724; x=1754648724;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fZP8HxgFzg8Q/VBokT/unDJoCN9dymrjvbxzxf0FNFY=;
+  b=BnXv3khZNeNfHNOiYhhhhBaO1g9TuXtaJjOAkyQT0b7uxvy01oqCh13Y
+   ru6n5ngeteZplVzAz7TooDeQBjteIceOGSpHFedy/Ox8wWHVdx387ZFI8
+   xU501ygVaKlgn1B8Y3WcRiRtpajrFT9xHVzmP0P8ArsxJhy2Bo6dlpiOB
+   OU2HYfXedFIkYYzKnZvm8R3DJ+RHyaWrGf7hSsdCbDCpBrQA2mbta8Wh9
+   tfWrlR9A0hRH2L8sOIW3e4bQeA4tOJPitL+H9qFyOo6C3jbHDpKXdNhBF
+   SBndLpha8uKCbtUvCKAp9r3BWo/GJ30yx6jkF9sgSWFZncYUnuqQZGCsR
+   Q==;
+X-CSE-ConnectionGUID: XeQABdknTEOk4j0Q/TmBmQ==
+X-CSE-MsgGUID: ewA+kMXNQwq3Xgbz3IMG4Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="43749108"
+X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
+   d="scan'208";a="43749108"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 03:25:23 -0700
+X-CSE-ConnectionGUID: e7YznkWoQMuCjEYa1nZS7Q==
+X-CSE-MsgGUID: 1nbyhsx0QneJSAGsF9GiDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
+   d="scan'208";a="57731589"
+Received: from dneilan-mobl1.ger.corp.intel.com (HELO intel.com) ([10.245.245.71])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 03:25:19 -0700
+Date: Thu, 8 Aug 2024 11:25:14 +0100
+From: Andi Shyti <andi.shyti@linux.intel.com>
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Linus Walleij <linus.walleij@linaro.org>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,
-  linux-kernel@vger.kernel.org,  kernel-janitors@vger.kernel.org,
-  linux-gpio@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v2] pinctrl: meson: Constify some structures
-In-Reply-To: <f74e326bd7d48003c06219545bad7c2ef1a84bf8.1723053850.git.christophe.jaillet@wanadoo.fr>
-	(Christophe JAILLET's message of "Wed, 7 Aug 2024 20:05:36 +0200")
-References: <f74e326bd7d48003c06219545bad7c2ef1a84bf8.1723053850.git.christophe.jaillet@wanadoo.fr>
-Date: Thu, 08 Aug 2024 12:05:57 +0200
-Message-ID: <1jplqjxray.fsf@starbuckisacylon.baylibre.com>
+Cc: Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] fbdev: omapfb: panel-sony-acx565akm: Simplify
+ show_cabc_available_modes()
+Message-ID: <ZrSdCtS2okz9ivBW@ashyti-mobl2.lan>
+References: <91fc9049558a4865d441930c8f4732461f478eca.1723110340.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <91fc9049558a4865d441930c8f4732461f478eca.1723110340.git.christophe.jaillet@wanadoo.fr>
 
-On Wed 07 Aug 2024 at 20:05, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Hi Christophe,
 
-> The following structures are not modified in these drivers.
->   - struct meson_bank
->   - struct meson_pmx_bank
->   - struct meson_pmx_func
->   - struct meson_pmx_group
->   - struct meson_pinctrl_data
->   - struct meson_axg_pmx_data
->
-> Constifying these structures moves some data to a read-only section, so
-> increase overall security.
->
+On Thu, Aug 08, 2024 at 11:46:11AM +0200, Christophe JAILLET wrote:
+> Use sysfs_emit_at() instead of snprintf() + custom logic.
+> Using sysfs_emit_at() is much more simple.
+> 
+> Also, sysfs_emit() is already used in this function, so using
+> sysfs_emit_at() is more consistent.
+> 
+> Also simplify the logic:
+>   - always add a space after an entry
+>   - change the last space into a '\n'
+> 
+> Finally it is easy to see that, given the size of cabc_modes, PAGE_SIZE
+> can not be reached.
+> So better keep everything simple (and correct).
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+neat!
 
-On the vim3l:
-Tested-by: Jerome Brunet <jbrunet@baylibre.com>
+Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
+
+Andi
