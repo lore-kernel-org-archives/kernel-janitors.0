@@ -1,117 +1,124 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C985A629E4
-	for <kernel-janitors@vger.kernel.org>; Fri,  9 Aug 2024 18:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF9049643
+	for <kernel-janitors@vger.kernel.org>; Fri,  9 Aug 2024 20:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723228942; cv=none; b=J8gnEZJ2cNVBP2fZE9wrvyIgD7+7t4gwu/opZwoz/glYWIZUoeWh1JOBTNE3kp/YxW9U6fvn7xM4MPcCPAq71mkzNoD1sZeS+JufgyO1ULP0c/On51HpvROb+v06ulNwCMtQgHsh8/R1jD5yU2moN2ty2q0+ONyZ1q2ITqjVRy8=
+	t=1723233707; cv=none; b=dYpOtxJ5FqpWWQoq+tJj2tGndHODGZ9h1bc5p3IgM02EXK3B24klxP1tU2OvEp4ESHQfJaTxELlzhAyGV0V8jSYFIqnmawpR5MQht3NO4SRJncFNn/lIjN467FjyGjvNjS0qxukqx5KAlakELODIwTa+FRm27W6MOMflnwkAWY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723228942; c=relaxed/simple;
-	bh=o3gI+eWBz9OdExdT/y37sLpjS+ho3xXPI1CduZtOCuo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Fr2b9/RAPoFhq+Yk0QFjNvGI2f7Jto8OOyYMKoRdDk89lFCM/AACDJUed24YFkOkP9JsSOj+dGcNxiqFbp9EnJHOpEd4sjTNxXOJ06JH6XyfFsYoXSksY+24Mas11qwdavF+gwuZBL6505lphVrr4cNpCxWS7rLcSifA0VZlnMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EAl3UGdo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1723233707; c=relaxed/simple;
+	bh=TNLYKaOh+vXkzGubqpxPtUj8YBAHq2VsF1/p5ZbPDrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GR8j+JvaECXJSkyvC2ebOh+mfcwTct9T+Rl3lloWk16TDFRqnBNssrjvzR94ODHg72ZelaPrz9XsE0HLXekk9L3w7PDfFhOZPRksHB1AqFtEC/lmaId8DWWelX6AOKhzTtgvvnGTPL317+7BSQJxTdQUIkfy4VawqkNXHh60uwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=akdgBJIZ; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EAl3UGdo"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723228938;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mTmJUzIYH5xdCwgnyXYAGeRQ3EOacpMfgAoosgsxAQU=;
-	b=EAl3UGdoVzbKPU4Kd0qVBHEozF6ZdJ8gceN85knxz3Pr2w9lA+fOgiRIypr2AGunMpy3ZM
-	8tK91tMMK4agViOk7TYU9tc70Vj+0w3BCysOIRvLZnzzS9fyoz3PZBdz3sh9R4Yr1+oEof
-	2Ec/HXCTYipctWx+kQHHQmVqk7t+j9g=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-498-m7zbLOtvM6KD_olGYjI8Lg-1; Fri, 09 Aug 2024 14:42:17 -0400
-X-MC-Unique: m7zbLOtvM6KD_olGYjI8Lg-1
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7a1df9ced6fso317617585a.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 09 Aug 2024 11:42:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="akdgBJIZ"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so3207194a12.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 09 Aug 2024 13:01:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723233703; x=1723838503; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KMUz/aPsGaSf3AR0ZEFloy0Ww3muXJ6eOj3CetN6o6E=;
+        b=akdgBJIZpjyZS7QnEJfkRXvuNHjgeh+ItYaNR1DnLujQokt8AOG7cpumc415ZqeHbo
+         RpK3z0nbaeupy9x4ByOOJCiTCkxCLiO710J+FSR9TuCq1qOB5WsXffIV59ethMTzRL2W
+         BRBy280WyYzsm3Ue7nO4VMphrZE4UWxis+iKPP+RDQ4Onhl73wQ779KJLMBu44pS8dOt
+         VSwgcKUoRJKxYJaiS8sfs2pj3nCEwjKlhvcWkX8nk/q2XcOfrbUgB6NvtYDAuGlCdUQA
+         ElsahOwBzRv41ir3XFKH/9BXPp5ZlaGOxAS4fZi6wnrIR6FFVKodDTfdBrLyi0ZV5/F5
+         yC3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723228937; x=1723833737;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mTmJUzIYH5xdCwgnyXYAGeRQ3EOacpMfgAoosgsxAQU=;
-        b=a9G/NZSEnK90zgWHwtF6RNz6/6hRdCAl7iQ+fixvpTYL7subeMSUf6ux4ffhDn5+4G
-         h/LKsyfR8ZEFljhN8W9780zFmSEFrKBA9Ax7W2/pMv0xP3ABXKHn9/LU1KHZfAgIe3pj
-         nf/tEkGAMQjgd59bHKNYUX4gqnYYvGHg1Z5qi2bLLeaDZx7zdzq+cbhzmLlGKosrdoix
-         q7+m4zkNGeWzO1uRgSmRcrVIXvGA8uP3k0pV19f/rA1KDVDxHwAPA3wh6Hk24+zuQocs
-         tbGh4PvamSb/mP0/8yBHJDcPLHZS7Y+xD88IHfYSuFxSjSAxncgL03hpZwqhrM9S4KZa
-         ncPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnQcgCaRJPsmwBoGvhbroZooIYY7j/hIyGMS1ZBKWbtBvC9MorRJ7oUt9+KcIBhyifNifIvsQ8Qk1nqWK5x8lSpL+uPsRtUGlpQo7BctOh
-X-Gm-Message-State: AOJu0Yzx1TPs1wuubpTIfv86rx15OClX6oZYxF+5mCZA2f6Vn/T6zfLW
-	02+F+6kbcVWXFANSesg8VasZk9Jre8Zzs6c35yyXMg/mmzJzPYnKyTvBhA3Db0rjYsnZrAPEATm
-	x0flkYoLom5ioZkFdDWDD9IAO6AFxVBPShEd5VbJlDdMOSuUFo56v29n2xFEDNG6Nzg==
-X-Received: by 2002:a05:620a:24d6:b0:7a1:e001:bb1b with SMTP id af79cd13be357-7a4c18c2d1bmr260014885a.60.1723228936978;
-        Fri, 09 Aug 2024 11:42:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEXXXCv7azVX3+7vSHxmPbJNeW7P2HuAh5Ji2ZQSlJNOIDr1NBkSTa19JwsluzgDU1JZcECjw==
-X-Received: by 2002:a05:620a:24d6:b0:7a1:e001:bb1b with SMTP id af79cd13be357-7a4c18c2d1bmr260012185a.60.1723228936553;
-        Fri, 09 Aug 2024 11:42:16 -0700 (PDT)
-Received: from fionn ([142.189.102.234])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7d7a531sm4115085a.58.2024.08.09.11.42.15
+        d=1e100.net; s=20230601; t=1723233703; x=1723838503;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KMUz/aPsGaSf3AR0ZEFloy0Ww3muXJ6eOj3CetN6o6E=;
+        b=P+AMphBdQgddps5C/zEiL0JS+yO1pOBZ5mYCvglqP7qcfirlNusC87QIw0i0SL80qN
+         f+VHP4AEzG6Ax8W71OUkw3rx2mzulgmYh+sNymOeYDix8eEilTpGS6wY69kZGB7D1b3j
+         mRUzlW3hdBgpdTLjZsNVoCJmxybUpDIDsiuEsFfraTb5zuZ0JEhFQML9pFrU2AIOL/w/
+         ooEGO6cVAvB4kacvQIGhS3weR0O1SLfWfQTdngpwdVDILa+2ItqSww7RoZCm74DDei1d
+         wfUGwLnAQh1dCwfpmZSSo3jpqtHZRHqY6SY4dtbB+0AxyVbP13qggq4NeAUxHcn/UprH
+         O8SA==
+X-Forwarded-Encrypted: i=1; AJvYcCVd6Z5APMnnESIZgTU8njShuD+zGsx+Tz/7XXq3Jx3ZMt/im3MjZy4k/xKuuf9vkBR6u7OllFa+DdxeIx9k2FmaXj+eV3VzcPqN07IpAftg
+X-Gm-Message-State: AOJu0YwsfuAnasSe+7LS3ea1tnrtj2OLDsuWowM143w9alY+7Sawc5jy
+	p3it0xrNhHFzGSTMFN76ZVl1AR9P0vX8C120pyujcd5k2G/pkoTgz0p41j4xxd+2IsvX565Km1V
+	5
+X-Google-Smtp-Source: AGHT+IFp6SPqZJvmY4Rp3COtc6Vyho6/Ic6I4+ja8ES14iyIMQ5Ho1Cxum8VvNzfD9FABxLcWUIK0w==
+X-Received: by 2002:a05:6402:43cb:b0:5a1:7362:91d9 with SMTP id 4fb4d7f45d1cf-5bd0a56c918mr1327974a12.22.1723233703104;
+        Fri, 09 Aug 2024 13:01:43 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd191a20fcsm58144a12.36.2024.08.09.13.01.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 11:42:16 -0700 (PDT)
-Date: Fri, 9 Aug 2024 14:42:13 -0400 (EDT)
-From: John Kacur <jkacur@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-cc: Dan Carpenter <dan.carpenter@linaro.org>, 
-    Daniel Bristot de Oliveira <bristot@kernel.org>, 
-    "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>, 
-    Clark Williams <williams@redhat.com>, linux-trace-kernel@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] rtla/osnoise: prevent NULL dereference in error
- handling
-In-Reply-To: <20240809140545.698f654e@gandalf.local.home>
-Message-ID: <25b597bd-bdc4-411f-e5d9-78ed4d042c4b@redhat.com>
-References: <f964ed1f-64d2-4fde-ad3e-708331f8f358@stanley.mountain> <c73c51ae-99da-793a-6dcb-2fbc6871261d@redhat.com> <20240809134133.751723e5@gandalf.local.home> <7ece353a-36a6-6154-97d9-b255728b9807@redhat.com>
- <20240809140545.698f654e@gandalf.local.home>
+        Fri, 09 Aug 2024 13:01:42 -0700 (PDT)
+Date: Fri, 9 Aug 2024 23:01:38 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Dev Jain <dev.jain@arm.com>, Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] selftests/mm: compaction_test: Fix off by one in
+ check_compaction()
+Message-ID: <20ad879e-689b-4b09-823c-4cb4f9b010e7@stanley.mountain>
+References: <87470c06-b45a-4e83-92ff-aac2e7b9c6ba@stanley.mountain>
+ <4c709253-50de-45ee-9cbf-8bed65eff857@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4c709253-50de-45ee-9cbf-8bed65eff857@linuxfoundation.org>
 
-
-
-On Fri, 9 Aug 2024, Steven Rostedt wrote:
-
-> On Fri, 9 Aug 2024 13:53:33 -0400 (EDT)
-> John Kacur <jkacur@redhat.com> wrote:
-> 
-> 
-> > > > Although your fix appears to be correct, I wonder if it would be better to 
-> > > > create a second error label, such as out_destroy_tool: as described in 
-> > > > section 7 of the coding-style.rst
-> > > >   
-> > > 
-> > > There's no reason for that. It's the only error path. That is, nothing
-> > > would jump to the original out_err:
-> > > 
-> > > And for a single error, an if statement is good enough.
-> > > 
-> > > -- Steve
-> > > 
-> > >   
+On Fri, Aug 09, 2024 at 11:20:48AM -0600, Shuah Khan wrote:
+> On 8/9/24 06:32, Dan Carpenter wrote:
+> > The "initial_nr_hugepages" variable is unsigned long so it takes up to
+> > 20 characters to print, plus 1 more character for the NUL terminator.
+> > Unfortunately, this buffer is not quite large enough for the terminator
+> > to fit.  Also use snprintf() for a belt and suspenders approach.
 > > 
-> > Ah, right of course.
-> > Okay in that case, Signed-off-by: John Kacur <jkacur@redhat.com>
-> > (applied the patch, built and ran)
+> > Fixes: fb9293b6b015 ("selftests/mm: compaction_test: fix bogus test success and reduce probability of OOM-killer invocation")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >   tools/testing/selftests/mm/compaction_test.c | 5 +++--
+> >   1 file changed, 3 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/mm/compaction_test.c b/tools/testing/selftests/mm/compaction_test.c
+> > index e140558e6f53..2c3a0eb6b22d 100644
+> > --- a/tools/testing/selftests/mm/compaction_test.c
+> > +++ b/tools/testing/selftests/mm/compaction_test.c
+> > @@ -89,9 +89,10 @@ int check_compaction(unsigned long mem_free, unsigned long hugepage_size,
+> >   	int fd, ret = -1;
+> >   	int compaction_index = 0;
+> >   	char nr_hugepages[20] = {0};
+> > -	char init_nr_hugepages[20] = {0};
+> > +	char init_nr_hugepages[24] = {0};
 > 
-> Note, "Signed-off-by" is for the author of a patch or someone pushing it
-> through their tree. I believe you want either "Acked-by" or "Reviewed-by",
-> and since you ran it you could also add "Tested-by".
+> Can we exceed this limit too? Can you make this a define?
 > 
-> -- Steve
 
-Thanks Steve,
+It's based on counting the digits in U64_MAX.
 
-Reviewed-by: John Kacur <jkacur@redhat.com>
-Tested-by: John Kacur <jkacur@redhat.com>
+18446744073709551615X
+123456789012345678901
+
+We don't have any defines for that kind of thing.  It's not a bad idea.
+#define STRLEN_U64_MAX 20
+char init_nr_hugepages[STRLEN_U64_MAX + 1];
+
+But it should be done as part of a kernel wide clean up and not part of this
+buffer overflow fix.  The line above it could be changed as well, for example.
+Let me create a KTODO and hope the internet will take care of it.
+
+KTODO: create defines for STRLEN_[SU]8/16/32/64_MIN/MAX.
+
+Btw, I rounded up to 24 just because I like buffer sizes that are divisible
+by 4 but the compiler is probably going to do that automatically either way.
+
+regards,
+dan carpenter
 
