@@ -1,213 +1,136 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F168194C71;
-	Fri,  9 Aug 2024 13:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317CF18C93F;
+	Fri,  9 Aug 2024 13:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723209885; cv=none; b=SCVdsj4i49IjaYzSEtIcAyJh/pm/5vwQcagX8KPLVMGI6u2FYaI5ClSCs9BlfhY63yk2sEOT1pc9C7AunbJLUvmKDshbKIiCRaX9hacARyicwTKjB/pjAVFz/JJ+PQMcunQE61hBVXZW6MUdd9DNVCkdKjpPF8qfcbkZ5ugg7ZM=
+	t=1723211043; cv=none; b=ZHwHpXOrgQK+TCPIIuoun++M0XQlBc4Gs4iw/KBO+oMOANOapaokMo60WUUm+obQ27TjbAZDcBIDHsRLoCUA2NQQBL1MIMCwr6iq6Dk/6kRvcNvfW2+LbGv+NzIMkT3I9cxYcaSggK6/fY1U3yvBeVp+Fr+/lXSH935RQdv3mlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723209885; c=relaxed/simple;
-	bh=HoNMici2M9XELTGoU46kDtkhZqJs0Kh5Xji2VMiLZSA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rJVXFqG3iE/pces2y9lDeXzLuSiQCt9+LBM3QbcDCgSqs6oa+Xp+5s3yDGlgccpbUmkU9/pPXpT069R65y6y0IwI1Q2tl3y9pAgV9Z+/ppnK11tE8ebUxBcRRUPbA5WMgYHUDZUDREjKDdq1/m3sMP4Q5p3paOcbwz86gJ3f+/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XlTsS5lG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=viHRRgel; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XlTsS5lG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=viHRRgel; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1723211043; c=relaxed/simple;
+	bh=2q0JM7DrkXRljkEfvXBBolWlbIn4WXdGt6ny9v9+17A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sgCI3je0STqMdFQvyT7SK4TgK6YuLuoYlrPy+VW6Ga+FGWOnj8fy/4ZYNIZFxza2lqip/hHOjRO4Hez0TuUUaS5bvWuVxMlCHqAoLC1+tq86yYiYhm3pquuEMxsn3BpneCGGei+YroNMoGtbdcHyELnDcbULakWcpONxI4ARj2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aFuU4szb; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XlTsS5lG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="viHRRgel";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XlTsS5lG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="viHRRgel"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4AB171FF6E;
-	Fri,  9 Aug 2024 13:24:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723209876; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WTGUgtTmxT45ZRjVIc8bVYVrSavjJUVarJ3B7QZmEAc=;
-	b=XlTsS5lGpZT+IAhDZXQAEeN4PyqfhYJmSJGwnsLFQui8bs/ia0K1JI8rbCAJ6ZnAsR1olr
-	npQpxHllqnBx1OGL6p4pJonLpFYUrdijA8SxcTJckyTcVtHo29IRM7qafXZhlpvnAg6SdI
-	SsiPATaQNEX8QQ+WGiydriHFmdOo/IA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723209876;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WTGUgtTmxT45ZRjVIc8bVYVrSavjJUVarJ3B7QZmEAc=;
-	b=viHRRgelVRmwQuXugxEL1bxjw81mtTJCFXogPjeZsvpy4KNasmP7h1Fi28GTDLrSXnz4kz
-	yar5in3WjbFQs6Bw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=XlTsS5lG;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=viHRRgel
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723209876; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WTGUgtTmxT45ZRjVIc8bVYVrSavjJUVarJ3B7QZmEAc=;
-	b=XlTsS5lGpZT+IAhDZXQAEeN4PyqfhYJmSJGwnsLFQui8bs/ia0K1JI8rbCAJ6ZnAsR1olr
-	npQpxHllqnBx1OGL6p4pJonLpFYUrdijA8SxcTJckyTcVtHo29IRM7qafXZhlpvnAg6SdI
-	SsiPATaQNEX8QQ+WGiydriHFmdOo/IA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723209876;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WTGUgtTmxT45ZRjVIc8bVYVrSavjJUVarJ3B7QZmEAc=;
-	b=viHRRgelVRmwQuXugxEL1bxjw81mtTJCFXogPjeZsvpy4KNasmP7h1Fi28GTDLrSXnz4kz
-	yar5in3WjbFQs6Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0887F1379A;
-	Fri,  9 Aug 2024 13:24:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id P3ykAJQYtmYifwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Fri, 09 Aug 2024 13:24:36 +0000
-Message-ID: <57cea156-1abc-4860-9a6a-0a5fdb4a2971@suse.de>
-Date: Fri, 9 Aug 2024 15:24:35 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aFuU4szb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723211041; x=1754747041;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=2q0JM7DrkXRljkEfvXBBolWlbIn4WXdGt6ny9v9+17A=;
+  b=aFuU4szbdvI/evgEdadBUKbgVnSxpiBn9z1IKXTH81RzMeshPpCn/9NP
+   53+kqAy0g8XWRH3rsV7WqNxMOBiDQpiBMyYluXJN3nSIKoqNjIOKTAtF/
+   sRZJtqXtiFj8efgUuLQ5d0zVglMwpbrzCOpa+qThiZ8mXtsYHILqoCWO8
+   szQBhmqL1gJzI+mukmLwaFVrZe8gznyqZm4Bwv7Dabp9AAO+zWtUvtIt1
+   Kjoh3MRTeEqJ9BEdXR9SGNVfAP+Wq3ws4+eZf6g6AKLAlw9wrMlhYQBBa
+   bXpSIhz3CV4bjVwgM95bBcdxjTvtVZmp3z4vzZMzTlhxbg76XanpZfNe5
+   A==;
+X-CSE-ConnectionGUID: MzQm/uSRSSuV2kUGM8RvtA==
+X-CSE-MsgGUID: v9+dF5FUTrKw5WSVBQe1Tg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21042862"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="21042862"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 06:44:00 -0700
+X-CSE-ConnectionGUID: NkD5g5i3Qpuz8Ulnc2Fw+Q==
+X-CSE-MsgGUID: sKqde5szQASt+0rtduSOPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="58140371"
+Received: from mklonows-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.18])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 06:43:56 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>, Dan Carpenter
+ <dan.carpenter@linaro.org>
+Cc: Dave Airlie <airlied@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, David Airlie <airlied@gmail.com>, Daniel Vetter
+ <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm/ast: astdp: fix pre-op vs post-op bug
+In-Reply-To: <57cea156-1abc-4860-9a6a-0a5fdb4a2971@suse.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <f7790a38-6b72-44dd-aaeb-550d2de14cf2@stanley.mountain>
+ <57cea156-1abc-4860-9a6a-0a5fdb4a2971@suse.de>
+Date: Fri, 09 Aug 2024 16:43:51 +0300
+Message-ID: <87h6bt3j6w.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/ast: astdp: fix pre-op vs post-op bug
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Dave Airlie <airlied@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <f7790a38-6b72-44dd-aaeb-550d2de14cf2@stanley.mountain>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <f7790a38-6b72-44dd-aaeb-550d2de14cf2@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-1.50 / 50.00];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -1.50
-X-Rspamd-Queue-Id: 4AB171FF6E
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, 09 Aug 2024, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+> Hi,
+>
+> thanks a lot for the bugfix.
+>
+> Am 09.08.24 um 14:33 schrieb Dan Carpenter:
+>> The test for "Link training failed" expect the loop to exit with "i"
+>> set to zero but it exits when "i" is set to -1.  Change this from a
+>> post-op to a pre-op so that it exits with "i" set to zero.  This
+>> changes the number of iterations from 10 to 9 but probably that's
+>> okay.
+>
+> Yes, that's ok.
+>
+>>
+>> Fixes: 2281475168d2 ("drm/ast: astdp: Perform link training during atomi=
+c_enable")
+>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>> ---
+>>   drivers/gpu/drm/ast/ast_dp.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/ast/ast_dp.c b/drivers/gpu/drm/ast/ast_dp.c
+>> index 5d07678b502c..4329ab680f62 100644
+>> --- a/drivers/gpu/drm/ast/ast_dp.c
+>> +++ b/drivers/gpu/drm/ast/ast_dp.c
+>> @@ -148,7 +148,7 @@ void ast_dp_link_training(struct ast_device *ast)
+>>   	struct drm_device *dev =3D &ast->base;
+>>   	unsigned int i =3D 10;
+>>=20=20=20
+>> -	while (i--) {
+>> +	while (--i) {
+>
+> If this loop ever starts with i =3D 0, it would break again. Can we use
+>
+> while (i) {
+>  =C2=A0 --i;
+>  =C2=A0=C2=A0 ...
+> }
+>
+> instead?
 
-thanks a lot for the bugfix.
+FWIW, I personally *always* use for loops when there isn't a compelling
+reason to do otherwise. You know at a glance that
 
-Am 09.08.24 um 14:33 schrieb Dan Carpenter:
-> The test for "Link training failed" expect the loop to exit with "i"
-> set to zero but it exits when "i" is set to -1.  Change this from a
-> post-op to a pre-op so that it exits with "i" set to zero.  This
-> changes the number of iterations from 10 to 9 but probably that's
-> okay.
+	for (i =3D 0; i < N; i++)
 
-Yes, that's ok.
+gets run N times and what i is going to be afterwards.
+
+Sure, you may have to restructure other things, but I think it's almost
+always worth it.
+
+BR,
+Jani.
+
+
 
 >
-> Fixes: 2281475168d2 ("drm/ast: astdp: Perform link training during atomic_enable")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/gpu/drm/ast/ast_dp.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Best regards
+> Thomas
 >
-> diff --git a/drivers/gpu/drm/ast/ast_dp.c b/drivers/gpu/drm/ast/ast_dp.c
-> index 5d07678b502c..4329ab680f62 100644
-> --- a/drivers/gpu/drm/ast/ast_dp.c
-> +++ b/drivers/gpu/drm/ast/ast_dp.c
-> @@ -148,7 +148,7 @@ void ast_dp_link_training(struct ast_device *ast)
->   	struct drm_device *dev = &ast->base;
->   	unsigned int i = 10;
->   
-> -	while (i--) {
-> +	while (--i) {
+>>   		u8 vgacrdc =3D ast_get_index_reg(ast, AST_IO_VGACRI, 0xdc);
+>>=20=20=20
+>>   		if (vgacrdc & AST_IO_VGACRDC_LINK_SUCCESS)
 
-If this loop ever starts with i = 0, it would break again. Can we use
-
-while (i) {
-   --i;
-    ...
-}
-
-instead?
-
-Best regards
-Thomas
-
->   		u8 vgacrdc = ast_get_index_reg(ast, AST_IO_VGACRI, 0xdc);
->   
->   		if (vgacrdc & AST_IO_VGACRDC_LINK_SUCCESS)
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+--=20
+Jani Nikula, Intel
