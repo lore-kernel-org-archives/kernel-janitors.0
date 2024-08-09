@@ -1,146 +1,113 @@
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1890F197A7A;
-	Fri,  9 Aug 2024 15:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91AA197A7A
+	for <kernel-janitors@vger.kernel.org>; Fri,  9 Aug 2024 15:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723216181; cv=none; b=UxKwahAiDlz7jsl2s7Ssg9KuJp+4YBjP9gam8VqBuVBDV2f/s1Fl4Lumbys6burubFMrzAPIk+sqonlunLi7WLc/b1yQk7ogN9IAN4MvqkhiEAAAdirhhCt09nrONitOVeeTGYUw+XGq4+ki0iVSyrxE7/P607ykYxcO6MlDWqM=
+	t=1723216281; cv=none; b=GUEgYkEH1ykvZZwJkykI1IczTRCyUChlbSp9AnK9ykjYLQqwqP4GpBIza8vNDGnXadCE8mWVbOlmIfMT+M6RHxgCs2blm2jpmob/E3r7g4Kipns8AFEbuM80jLTL9vPt4Vpq7MHemwSb4jcaRSHZQurWmBntAlnLNR8dTnjj464=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723216181; c=relaxed/simple;
-	bh=OuHZ5Ys/4q21gD7TrBJvv6OUB8KQ14N9UVhninn1ulM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GTcoorqCrwvzp+HCpciSH2+5oRdsMhH/OfUO42yipL+a7NbiLuwhbjCY8Jry3p96qApz4YrGqwGMz7e6Bidu9VG2GwVjkuj5/hyb17pUMkPygCm2ixwSHn39gEDNZfk8VHu+8tSCNJlQMEcfi2RYawJ54NPaZKiA/INNkHjGK9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=OuT1iyRv; arc=none smtp.client-ip=80.12.242.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1723216281; c=relaxed/simple;
+	bh=7qv5/5ztgjnBd8ABlrZklhWeB1+KbwrFTx+b/38oBVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RJNB/7H+3kagP01k9JtGd715VGFKpqXbtyDLsUck3xcLFPqRvkHxljWeAJzS7grBWZFcPmhTiC9qfOMCNT093YCyXi9eKiiGgxmVD7V44m/C3u11rWMGe8FQH0X9PIVa5l1EYfCK4PnugDpX+4p4qc+F2K1efwGCp3BX7Ilttag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dumN3CSD; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="OuT1iyRv"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id cRFBsyKbPIDadcRFBsE0us; Fri, 09 Aug 2024 17:09:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1723216170;
-	bh=Za0QZIRDiSzOXQG6QHcalUfH/TEPCTSjMejkNNfjFls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=OuT1iyRvtWRj5GvKLCgK2vzSaKajOO0qmnMYjqU89Rcu0pwJP6moSu5o5FB4zUVEM
-	 2FbbAa8lt856bu765fHwjRLxld8QT6w5aoPpBmK/325GjdGeYj3r8E23kHiBDML7d2
-	 k8esYkbADuxng1/OrnaWmu1eDDLqUBndXOorbZvhvOrwBmGzaTffRuHSaC87aygliH
-	 iq6RYYBRdwifsk9Iw08bmturP0gMVU8pRXh2sVJSczSTB6yOwflmttcJNVJi3QKGxn
-	 BamA5rjxdh7jHv/JExkYiq4oeYYCwJSoV0avzWGFDq4QCbCA6sPgWeyEy0smkPzlvY
-	 8xmReqbkEL8Dg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 09 Aug 2024 17:09:30 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <7b65dbd8-1129-4fcc-97ba-43400fc98e31@wanadoo.fr>
-Date: Fri, 9 Aug 2024 17:09:28 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dumN3CSD"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a61386so2843576a12.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 09 Aug 2024 08:11:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723216276; x=1723821076; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HCnFjP8yeSTbgg04jO70aNmUrU3V0BlhkT72Qsh0eiU=;
+        b=dumN3CSDg61IqILdGhI6uKDjeqWFaLYRztBAdAEylQiCpRw1EcT6viaBp6jKfpdM02
+         NgHICBOHKDfikhPodtVd1qTDR7LCTUqBF3ah/YsBqRxLKXW7aUQbPxcs709ZYexdu0ae
+         kzmxm6qNecQMCZZHq9J6vbJFSvxF1IwYPEKQ+i8QXVc8U9sxqh0ueyfnTFhRbn2byohl
+         5xhIYLB7xsjdsgIn6I6DmvDHVLT5f6YG62m8imQYyZnXu8piG3tvRZWbod6cLdN8B9+y
+         ba4SkJkxztKZZlqEdtd7UOiXuN5z0e38XK8XD7+TjpGKQjOKgW5pA+zDp8mibVTwQif7
+         oftw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723216276; x=1723821076;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HCnFjP8yeSTbgg04jO70aNmUrU3V0BlhkT72Qsh0eiU=;
+        b=HGtMeasEeU3Bia9Eh9DHj4Oz3hML8wWvIsuDCH+YenaBj+9oXK8TF6AdpPrSCOJ3DV
+         XXicxA9qOOY14kzQ+47vBwsf9y0HdUNslBLKf1dIl2YFucsJiZNO5I/LU5LiEUZxhmwp
+         yNGQbVnBkdHsasMP1LQA3Bisok3eQjEh+Zp0m6qh/a7HyaWutkoKK/vGTbc5MJgtAvjz
+         yeVlCD3i80pCbYOMd3jUbp/vHXySCAnxQwUkf7js7C8GPB052+5ox+83hvjpjpK3z7+3
+         nnOM7rn1RkCN1xFawOE1bc+p/AXXzc/F3+LJbM2WEpuTEIu7hqkfiMIP10GNrrjR9ogY
+         W+NA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSPXPjXjBTpzwmVhEoL/NfT3uFk1gM2+BNP9lKCDqsJD5bOFWCAqOHdRKdsbQP+QAVbZqJ4wNjarRkYE9PO/2QeNbmAOR/wS+F3QUiZDR2
+X-Gm-Message-State: AOJu0YzWJPFfdCqIkwbWsOgsoO0zZgTio52YvXupzXK71uTF/OPD+STU
+	iky+/iExcaYJoZxIotAwL5Fes4CFNr6HQWbdpLfSYD+BNsR8vcHYWy0l3pbjx0I=
+X-Google-Smtp-Source: AGHT+IHM6/NyJG0fypeFEFHE1MSoC6qNiWwYqrml/FzF4jdvuVfqudW3tenaS4EdJbwoBirlwLdtnA==
+X-Received: by 2002:a05:6402:348b:b0:5a2:4d19:4c08 with SMTP id 4fb4d7f45d1cf-5bd0a58a137mr1382401a12.11.1723216275896;
+        Fri, 09 Aug 2024 08:11:15 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c1dbe4sm1590031a12.27.2024.08.09.08.11.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 08:11:15 -0700 (PDT)
+Date: Fri, 9 Aug 2024 18:11:11 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Su Hui <suhui@nfschina.com>, David Howells <dhowells@redhat.com>
+Cc: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com,
+	sprasad@microsoft.com, tom@talpey.com, bharathsm@microsoft.com,
+	nathan@kernel.org, ndesaulniers@google.com, morbo@google.com,
+	justinstitt@google.com, linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] smb/client: avoid possible NULL dereference in
+ cifs_free_subrequest()
+Message-ID: <a08c6b03-6d23-4711-a891-14b0250b90be@stanley.mountain>
+References: <20240808122331.342473-1-suhui@nfschina.com>
+ <893f2ebb-2979-4e34-bdab-a7cbb0c7e7b8@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev: omapfb: panel-sony-acx565akm: Simplify
- show_cabc_available_modes()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <91fc9049558a4865d441930c8f4732461f478eca.1723110340.git.christophe.jaillet@wanadoo.fr>
- <aa43c1f8-05bc-4edd-b7ba-474953f28f5c@stanley.mountain>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <aa43c1f8-05bc-4edd-b7ba-474953f28f5c@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <893f2ebb-2979-4e34-bdab-a7cbb0c7e7b8@stanley.mountain>
 
-Le 09/08/2024 à 16:42, Dan Carpenter a écrit :
-> On Thu, Aug 08, 2024 at 11:46:11AM +0200, Christophe JAILLET wrote:
->> Use sysfs_emit_at() instead of snprintf() + custom logic.
->> Using sysfs_emit_at() is much more simple.
->>
->> Also, sysfs_emit() is already used in this function, so using
->> sysfs_emit_at() is more consistent.
->>
->> Also simplify the logic:
->>    - always add a space after an entry
->>    - change the last space into a '\n'
->>
->> Finally it is easy to see that, given the size of cabc_modes, PAGE_SIZE
->> can not be reached.
->> So better keep everything simple (and correct).
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   .../omap2/omapfb/displays/panel-sony-acx565akm.c  | 15 ++++++++-------
->>   1 file changed, 8 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c b/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c
->> index 71d2e015960c..fc975615d5c9 100644
->> --- a/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c
->> +++ b/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c
->> @@ -466,19 +466,20 @@ static ssize_t show_cabc_available_modes(struct device *dev,
->>   		char *buf)
->>   {
->>   	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->> -	int len;
->> +	int len = 0;
->>   	int i;
->>   
->>   	if (!ddata->has_cabc)
->>   		return sysfs_emit(buf, "%s\n", cabc_modes[0]);
->>   
->> -	for (i = 0, len = 0;
->> -	     len < PAGE_SIZE && i < ARRAY_SIZE(cabc_modes); i++)
->> -		len += snprintf(&buf[len], PAGE_SIZE - len, "%s%s%s",
->> -			i ? " " : "", cabc_modes[i],
->> -			i == ARRAY_SIZE(cabc_modes) - 1 ? "\n" : "");
->> +	for (i = 0; i < ARRAY_SIZE(cabc_modes); i++)
->> +		len += sysfs_emit_at(buf, len, "%s ", cabc_modes[i]);
->> +
->> +	/* Remove the trailing space */
->> +	if (len)
->> +		buf[len - 1] = '\n';
+On Fri, Aug 09, 2024 at 06:00:26PM +0300, Dan Carpenter wrote:
+> On Thu, Aug 08, 2024 at 08:23:32PM +0800, Su Hui wrote:
+> > Clang static checker (scan-build) warning:
+> > 	cifsglob.h:line 890, column 3
+> > 	Access to field 'ops' results in a dereference of a null pointer.
+> > 
+> > Commit 519be989717c ("cifs: Add a tracepoint to track credits involved in
+> > R/W requests") adds a check for 'rdata->server', and let clang throw this
+> > warning about NULL dereference.
+> > 
+> > When 'rdata->credits.value != 0 && rdata->server == NULL' happens,
+> > add_credits_and_wake_if() will call rdata->server->ops->add_credits().
+> > This will cause NULL dereference problem. Add a check for 'rdata->server'
+> > to avoid NULL dereference.
+> > 
+> > Signed-off-by: Su Hui <suhui@nfschina.com>
 > 
-> I'm uncomfortable with this line.  It assumes we don't overflow PAGE_SIZE where
-> the original code was careful about checking.  Probably easiest to do what the
-> original code did and say:
+> Needs a Fixes tag.
+> 
+> Also when you add a Fixes tag, then get_maintainer will add the David Howells
+> automatically.  I've added him manually.
 > 
 
-Hi Dan,
+Actually, David should have been CC'd but the fixes tag wouldn't have pointed
+to his patch.
 
-I don't follow you. AFAIK, it does not assume anything.
+This is an inconsistent NULL checking warning.  It's not clear to me if the NULL
+checks should be removed or more added.  If David were trying to fix a NULL
+pointer dereference and accidentally left one unchecked dereference out then the
+Fixes tag would point to his patch.  Since David was doing something unrelated
+then we don't point to his patch.  Instead it would point to the first patch to
+introduce the dereference.
 
-Thanks to sysfs_emit_at(), len can only be in [0..PAGE_SIZE-1] because 
-the trailing \0 is not counted.
-
-So, as len != 0, len-1 is in [0..PAGE_SIZE-2].
-
-How do you think an overflow could happen?
-
-
-Also, all this code does is buildind:
-	"off, ui, still-image, moving-image\n"
-
-So in any case, an overflow is impossible, and really unlikely in the 
-future as well.
-
-
- From my PoV, my proposed patch is both much more readable and still 
-correct in all cases.
-
-CJ
-
-> 	for (i = 0; i < ARRAY_SIZE(cabc_modes); i++)
-> 		len += sysfs_emit_at(buf, len, "%s%s", cabc_modes[i],
-> 				     i == ARRAY_SIZE(cabc_modes) - 1 ? "\n" : "");
-> 
-> regards,
-> dan carpenter
-> 
-> 
-> 
-> 
+regards,
+dan carpenter
 
