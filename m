@@ -1,66 +1,66 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25755193088
-	for <kernel-janitors@vger.kernel.org>; Fri,  9 Aug 2024 12:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA7A193088
+	for <kernel-janitors@vger.kernel.org>; Fri,  9 Aug 2024 12:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723206758; cv=none; b=dQSpHZ97UTTyvvlQv39R3Oa6B/wZQdPLGM8E0n86ClNxg/hgUkICQAhWhQXHZ6D95yQhsAspsol/ogNMvS/dKV5IoorIDEnkTxT0FzWW70AxD25DoaaeWpCc8a4nIziwD8McAFx5RZ7jL10lF9RhA86vMJeWOZ83bu/nlSy1ceM=
+	t=1723206804; cv=none; b=OoZTToltg6Ca010E5M1LKQ9WlMwqnpoZ3ouDoFxfndardtDqBWGUyW0TVsfyg01W6IxGUZCRoVh7gnHiH9qd47vFzOhzbSlf/6vPmYxOM3gHMPE0OVKO0RLJGiYpU/ZwYKBh7lhuAcdgjFfMQuNRfSj4ueWJSdtj+Jdce/k4mVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723206758; c=relaxed/simple;
-	bh=QNcaoqLsaVCec6Cy7SIaExvsGVbtIi52cpW6p62gqfU=;
+	s=arc-20240116; t=1723206804; c=relaxed/simple;
+	bh=0ZavsDR4N4XecV4AJY2WN3XKvj3Rm4Qc6yItCGbtQrk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ekOneJJJq+FroPppMFgfcA30jHq3kL6eQ6oiEb0ucSKMV6RdDb7KGcRhCSeacnMP18Ykk4hHg2XZyJUD5w3LNjyBEY883PpMpX/aV1BnQwBzIY+1cYvfas7b0ltnvaFOn1PssuCh4dubH86teOVXuceaBQZ2tdUqP4SgXeGUd2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IiRELPhf; arc=none smtp.client-ip=209.85.167.41
+	 Content-Disposition; b=HSwHjeHxoZ6MzSN8pJqhiiR51aJMVGV297YSv7JSRjuv+L4xRRQ6FenNfU0QAFx0DbyV9ktcDx3IikzIR0p8CNZTABmtYImp+VwRYpHScrfLJhmHNMeXRaPffvDmlDg9ccUX/2K6H7S848pzYDA5IqOxYnGWEsztKrUEprg0C8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hf12Oi0z; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IiRELPhf"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52f00ad303aso2529741e87.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 09 Aug 2024 05:32:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hf12Oi0z"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7aa212c1c9so277080266b.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 09 Aug 2024 05:33:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723206755; x=1723811555; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723206801; x=1723811601; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XEvmrJApAdAdB8IUGlSUXCcZKgELg0TXzRkX9FYQA2E=;
-        b=IiRELPhffhyMMLf9Mkhbx5pVy7wSrrlRl2m5A7RuUOv8hgePIATFegZEYow0ytnnl6
-         3V4qbdwEmcwS76zXHfVbikZCgIMxwEm+v9T2g4hpTaZOOER71xh68PTrfVE2J6TQBcbu
-         i4pPUAVNsPFyIIelLvbmmLcariEOS2P+f4JZaWh7JeiPu5Zl2Aha7HHQ2hSXq3GY5jSU
-         EoJC8kysXtJEOVEFwu5iGGOLLklOEnMv7yKG4blbs0VpdNegiMrYJKKqlyQga/iEjQWh
-         Nbh6gXXEnAdTR2q3eYMKj7DyBvYMKWh4ufZIRgCe9UcEaY3Oe5V8kd7WBaBp0JaEh+TO
-         XOMA==
+        bh=1T9HTo7YuUX/e0pBQrzS8G/CpwBUyTZ2HB8zoVX3uIY=;
+        b=hf12Oi0zOuUyuRk0N40fLv40Eozds9bMiab2EpQKKHYcs5AI8QljT9aWEgit0kv9v/
+         EtFm7W3c1ylGHycXCOZ0PFOHXu8HewVl4Kpm+ezClhqdKmvhfN5rbFqNqjyTw2co0jn4
+         XoabJtHzCTW22naSOjqXFWZkJtd2i6di0bD/7xn2XuEMcsxl6X2XRGg6C4VHkY6hPsV2
+         iE8QZmi9OIDFz+ZPSctjuMLoaK++/MfUFIUGt4+BPYqJprICUswkMbJqGwykGTiQTSJ8
+         vY2F+LWICMLj2DOWmuqIKzY9YWIAEorABagnos/dz3rf+Kch3hGWs4wAR+dG86UnLBpS
+         AYrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723206755; x=1723811555;
+        d=1e100.net; s=20230601; t=1723206801; x=1723811601;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XEvmrJApAdAdB8IUGlSUXCcZKgELg0TXzRkX9FYQA2E=;
-        b=UbqBpvxgMs+RYw0+5n7UQEo5uSHWjGGrpi40IzhHMyjXCJuW718y8cxrIHXfy2g7pN
-         ennbIzAgaLcLuuBEuMR5ELesSXbNpFOxxait6fByYERuQnWCtiLs+AeyI7N9/YqucUym
-         NPQ2m+9afqIC5C7PgvXje3ka5PUHS/KMhNNPJv5W8WpMgBUaJ4Y+F8O7a/X95Qu/7Dve
-         6F3D8xMGm8nnC9cJANkhpSj5SjzpYa0tR0pkLS+pZwyTNdaf7//2BLwDpVuhv5kHqFkl
-         6mo7lwyOlrUp7LaQvqyTqGcfxW1WaqKG0lxkyKplOVm0dukYiXUjkB0qomLPtdm7jgI2
-         NjtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+wl6wOGY4LfdlFoYkJozYljRtNAV6IwhD5Fe7Lb07XixCsMtA2G1zn+dfQNgMLqgy7sTKynMZXlVA0nKye9odkaqeIqkjpR0vtrC/CedP
-X-Gm-Message-State: AOJu0YyYYl6Tv/e3tAm8YrOcZIA1gV9ub9J3IEDW5W3blIbIz8YLPX8m
-	q6pGWi4+oHnSdQ+k2sGMcic14hRXyMLKmrBkbZbUmYzaA8cGVo6qgGdsPVIci3xV8B2JoDkINPK
-	I
-X-Google-Smtp-Source: AGHT+IGzPu2doVLDNZ6syQ8+456inTtlzazWj4IP4I0oNXM1Sz9cwjKQLoWzh+mGsvT5bHuN4rBo4A==
-X-Received: by 2002:a05:6512:3b0b:b0:52c:6461:e913 with SMTP id 2adb3069b0e04-530ee97436fmr1248689e87.16.1723206754996;
-        Fri, 09 Aug 2024 05:32:34 -0700 (PDT)
+        bh=1T9HTo7YuUX/e0pBQrzS8G/CpwBUyTZ2HB8zoVX3uIY=;
+        b=tAEhbUuesIroY4jsnQyNirE59OMUr3JVUtCUdrSJnTwql7Wk01awatRCY8s7LlnlwH
+         RTY4fXmouU1lECRgGdzTCagSF1gspz+s9GN3U5XxMdwXr2oox7ZDiHS7qVQqbVMz7V5d
+         hV4t1tLV8oDdBef/4EsUYvo2wYcoOrhKVPDtvGxkre+CArTG3sjgmmtZJggzn9U0BgUp
+         kCb45zG0ALn/KFmTS5Y/ERBSFU9FNQsABVVXaX8vrrsFnhmK9Zi6jM3S+WBegJ5dUDXR
+         znSGHw8u3ViQ2klIpI9b8UoPwyQEB6EYoE6L5kJ3HhXsNpjc5ZtJX0EPlmjeeFRcedtZ
+         tuWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUA/2iGQdEp0595yTEFxnhkMc8AHxIlF9aejZTvZuRAReRYJUT16zHrdr25wbFYQPR99L279+r00II/rC5fW2G0j8GHaCs+4T5W7IVmJcE8
+X-Gm-Message-State: AOJu0YwmPRYOY4FuOBMo5hnkopfqfaCa4LZl/adqf/4rkpYixsVopQl3
+	K9yZAhLik+Lgsofhw9SpLFR9FXzG21uvwhq6u862grsu3ZlGb5kD+QwjHx+CkX4=
+X-Google-Smtp-Source: AGHT+IGfuyRpbD5V4xldOFw4WjAJic6XGUVn3OQ2mq4qUmdJmCTvIzhHm4FAOhWT0pdhLWFXDAB0Ig==
+X-Received: by 2002:a17:907:d599:b0:a72:6849:cb0f with SMTP id a640c23a62f3a-a80aa67b98amr113030566b.62.1723206800818;
+        Fri, 09 Aug 2024 05:33:20 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2bf8666sm1495151a12.9.2024.08.09.05.32.33
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9ec8cc7sm838307066b.215.2024.08.09.05.33.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 05:32:34 -0700 (PDT)
-Date: Fri, 9 Aug 2024 15:32:30 +0300
+        Fri, 09 Aug 2024 05:33:19 -0700 (PDT)
+Date: Fri, 9 Aug 2024 15:33:16 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dev Jain <dev.jain@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Dave Airlie <airlied@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] selftests/mm: compaction_test: Fix off by one in
- check_compaction()
-Message-ID: <87470c06-b45a-4e83-92ff-aac2e7b9c6ba@stanley.mountain>
+Subject: [PATCH] drm/ast: astdp: fix pre-op vs post-op bug
+Message-ID: <f7790a38-6b72-44dd-aaeb-550d2de14cf2@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,34 +71,31 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "initial_nr_hugepages" variable is unsigned long so it takes up to
-20 characters to print, plus 1 more character for the NUL terminator.
-Unfortunately, this buffer is not quite large enough for the terminator
-to fit.  Also use snprintf() for a belt and suspenders approach.
+The test for "Link training failed" expect the loop to exit with "i"
+set to zero but it exits when "i" is set to -1.  Change this from a
+post-op to a pre-op so that it exits with "i" set to zero.  This
+changes the number of iterations from 10 to 9 but probably that's
+okay.
 
-Fixes: fb9293b6b015 ("selftests/mm: compaction_test: fix bogus test success and reduce probability of OOM-killer invocation")
+Fixes: 2281475168d2 ("drm/ast: astdp: Perform link training during atomic_enable")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- tools/testing/selftests/mm/compaction_test.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/ast/ast_dp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/mm/compaction_test.c b/tools/testing/selftests/mm/compaction_test.c
-index e140558e6f53..2c3a0eb6b22d 100644
---- a/tools/testing/selftests/mm/compaction_test.c
-+++ b/tools/testing/selftests/mm/compaction_test.c
-@@ -89,9 +89,10 @@ int check_compaction(unsigned long mem_free, unsigned long hugepage_size,
- 	int fd, ret = -1;
- 	int compaction_index = 0;
- 	char nr_hugepages[20] = {0};
--	char init_nr_hugepages[20] = {0};
-+	char init_nr_hugepages[24] = {0};
+diff --git a/drivers/gpu/drm/ast/ast_dp.c b/drivers/gpu/drm/ast/ast_dp.c
+index 5d07678b502c..4329ab680f62 100644
+--- a/drivers/gpu/drm/ast/ast_dp.c
++++ b/drivers/gpu/drm/ast/ast_dp.c
+@@ -148,7 +148,7 @@ void ast_dp_link_training(struct ast_device *ast)
+ 	struct drm_device *dev = &ast->base;
+ 	unsigned int i = 10;
  
--	sprintf(init_nr_hugepages, "%lu", initial_nr_hugepages);
-+	snprintf(init_nr_hugepages, sizeof(init_nr_hugepages),
-+		 "%lu", initial_nr_hugepages);
+-	while (i--) {
++	while (--i) {
+ 		u8 vgacrdc = ast_get_index_reg(ast, AST_IO_VGACRI, 0xdc);
  
- 	/* We want to test with 80% of available memory. Else, OOM killer comes
- 	   in to play */
+ 		if (vgacrdc & AST_IO_VGACRDC_LINK_SUCCESS)
 -- 
 2.43.0
 
