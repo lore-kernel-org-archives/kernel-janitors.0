@@ -1,139 +1,113 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F109238384
-	for <kernel-janitors@vger.kernel.org>; Fri,  9 Aug 2024 17:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24CC18030
+	for <kernel-janitors@vger.kernel.org>; Fri,  9 Aug 2024 17:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723223221; cv=none; b=iV4B+pFulC2GHzScVY/N9IR/XEZBOpRkV9lzJDE/Ymx0wsv6KkiJ9e9v47J9TQikMdpI2C5IOx9yunEM/FVkto6YadfK8gEJmXkiv5HeUWdlTopjx6IfryRalXN5sFbQ5r3a3q1eIGSIvmZQJ5TX1EtYZ7cYnvOM4suZy6nxEb8=
+	t=1723224052; cv=none; b=MnBt8c22+f7IbITLIheqFskP12y7xL2eYzwY9QonPBAdGv+vlqzGwOjWTsQHcfgpa0mNzRIm2KCrLY+WAsGU3ZkVzv89q9Pv05DRWCGDCzN5SF8wdnzqBYVrLIdkdXYqkHAVFoqdpTkkQy5faGxUxj9GIwESIep5inM9i/57sWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723223221; c=relaxed/simple;
-	bh=l7eARIMGO+uf5UjJKVMnVM4+4lbCKlslOzkuIgSl39c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pJ5T+WW/q1IYpwM/V3EAiPCr8uPSB1DtEiyZWLyZweElKqYcX1vTfAIQSk+g2bpr2/OCDrJ3vsuCoWPzvZBWC3ATAuDi+qM8KiP+IPvO7UuvBiUkHQocD9jEoq6+bUQHQirbsnOHDlMxUV3qGZ69NKy2vBjs4jIqtjlfC71bT2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VofiiuQX; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1723224052; c=relaxed/simple;
+	bh=VX0GHmStDkrYMdFhonCa5iBMpED55dhUQufG4AGVFbE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hCJ0xZSd3MeIUNLiOt1W7stL0y+dR0VnNMUJr/i8tApVTPUl3OPtckYCAgFiSbQVontn8teC5vYl5wOxMJhQ/s0vMOSFtSQZMs3nHLMBJIruZ4rPOB141HWBfrvQL44tMoweLdQj08Bw3Asb8rdzAkE4f1ZbduUyoVe5ldJyOi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UNzLhwPm; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VofiiuQX"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a94478a4eso545009866b.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 09 Aug 2024 10:06:59 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UNzLhwPm"
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-810ca166fd4so9093639f.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 09 Aug 2024 10:20:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723223218; x=1723828018; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Bqi0R8E9+yWkIxspBX3nFOrKOj6LKnr9GEzzF8YTptU=;
-        b=VofiiuQXYK5SmISEYdu3lGKyS0BUnwgrTvg9tvmVR8Rc6+rYnJlJF6WQCl519yYc4W
-         VpTuhMd5dBdq9DkOQqxgs9GvsmGl7fGH1Pbju6s4iWZQxAmTRnGXD9kvYGpoM4kyhIJa
-         0ohWBCdEdy2C+fWyztr+sD3kiHuZ4CXUCdNbGUYnXUPyJuZuCZUzX4BpwpUetyuIegVM
-         SHAvZXGd2QYCd9PRmoglSPjq461iQdnfs1S1QDIsdGlNpAyhm0jLb0QbU1ZuqkzGKmW0
-         zhktBfDuyT+7f9hVhQaXTGJM9i6lPc4TEKFbVK88jVjcPrMtLMYbItNdRjVH1UAtd5+1
-         4fFw==
+        d=linuxfoundation.org; s=google; t=1723224050; x=1723828850; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=V0VlmBrSrKPI0nvLOBL3lacDzUDCnPoKiOWhQVarU+s=;
+        b=UNzLhwPmbH71csQ4hTt2BRT2yjrbaD2HoXPdX911ai05lPTjOpkIiex212lLVMRTtv
+         9XrODhQfbY1qETG1anDW5GVgQdNcpDliw465t8D1+n3qmmHHGdC8foXVLmxA3dR6/VtI
+         4EWsDLe6OSlbYFvWXASZOuUDqL912ab9ce9nU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723223218; x=1723828018;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1723224050; x=1723828850;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bqi0R8E9+yWkIxspBX3nFOrKOj6LKnr9GEzzF8YTptU=;
-        b=KOYoDI91YuIu21SgM/YdswIPNQtHlU9Bo0iMlhgiVaoMIfyIE/HGhOrudUkVLxtDkc
-         gD01Z7cigRJLHpsgBidbHWZ7O39OHJD3P35NyOHFvGi49p3z0dhSirWSe/XKFZR7JKVv
-         HZcOl/0eWG+/xftH7zjVeURfM0ed+EnXApzunfIpPa2qWWzfZ6uXiSgas7ot1eovbWKq
-         h/ILuigV71KBiBZPzhuEdXsY7SVPI/pB0sjXOxOwo0LLj2peU41hI3Yl+Om64dyNLiqx
-         IZXxZSuw18EHi5fx0UN3JyaPBpK93njPmFNaADHyADAP+yfqt9lQUpsvXrY3QR6bfRGc
-         sFMg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/qMV2AYx1+7o/QhPAQHULMA9r01sTcuSxhSwesGRCO/rRemaShsEC9y/e0jDDipEyMQxJ6Li1xpDJmarxmVG72adUBmamXw0MrLax7ZzU
-X-Gm-Message-State: AOJu0YwGVcgCpJjEQFEIBgDpnOUrfoMHm9RFzklC1aF0ykKrqI0nXrmY
-	bhe+gzjZUXLyAYObDcIao+/8gof52+r//tLNn51sNbiYUY+vdmmRLsaOgcfuGBE=
-X-Google-Smtp-Source: AGHT+IEeCFPLP0xfg9I587Tui8Mvgeq3K/jroE1CYOnUpQ9zZAYa3E+EGGh4PFeyvJx4Oey5IN0PeA==
-X-Received: by 2002:a17:907:368c:b0:a7a:8dcd:ffb4 with SMTP id a640c23a62f3a-a8091f1998dmr492925166b.17.1723223218128;
-        Fri, 09 Aug 2024 10:06:58 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d89a8esm872794066b.144.2024.08.09.10.06.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 10:06:57 -0700 (PDT)
-Date: Fri, 9 Aug 2024 20:06:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
-	Dave Airlie <airlied@redhat.com>,
-	Jocelyn Falempe <jfalempe@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/ast: astdp: fix pre-op vs post-op bug
-Message-ID: <359e5aa5-5908-44d3-8359-4605aac3f5d5@stanley.mountain>
-References: <f7790a38-6b72-44dd-aaeb-550d2de14cf2@stanley.mountain>
- <57cea156-1abc-4860-9a6a-0a5fdb4a2971@suse.de>
- <87h6bt3j6w.fsf@intel.com>
+        bh=V0VlmBrSrKPI0nvLOBL3lacDzUDCnPoKiOWhQVarU+s=;
+        b=wuk6uChyagUYTu3SRCYDFY0WeqHqbY+TfrbMc1ee1g9uA1YAdCq92v4TJrzywgZvXU
+         OnEz+wR2F+dEr90MXT92KIPmqoAVUElyRShUVpS6crK4jGEPEaiHAeGJrncYVfXf/l9+
+         Mu+YPfo6oeTN4b11sEfbmhIMXUVRp1Nvt9A3MXqzy5G1YzA+8HVMgHRYOgdKTCyHksWn
+         qc1tqcuPWi4lRLp9r3brbmQXy0aQyozJyw2j8Pc+PM3kueTCBbnfpL4ZkzeNar5f1qNK
+         ueei5Nizl/dClLwKIrui8byvuHe9EGEFoGQwVbkX8b091QYhm4osZzlh8puw9BRxf8at
+         scxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgUuh2fFer2oWGvm6kPrzGzf0qhpke9H0/3lL4hhFLQyomvGR9cF1yNrPdPxUUowvAnYUYX8Xe/+Bmpet+vwU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdDDy5XV2/Z+nxNbxaX3kKfEE8zT3i/Zb4OrprWOG7f0iaKzOv
+	nlb9qXaErgjr++d9WnFF5a4y+s7UqzM+Acpz0cRM2ERdeexix0P3MXuIMfqTg+E=
+X-Google-Smtp-Source: AGHT+IFCIxawOy6BLCebkOf6m3SU/t1bf8oP/2bn7t0rnS01Eibjkom6BbLknNPEfkJ4Vfow8JDQhw==
+X-Received: by 2002:a5d:97ce:0:b0:81f:8f3a:5689 with SMTP id ca18e2360f4ac-8225ecc63d8mr174936339f.0.1723224049926;
+        Fri, 09 Aug 2024 10:20:49 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ca769102e2sm19814173.10.2024.08.09.10.20.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 10:20:49 -0700 (PDT)
+Message-ID: <4c709253-50de-45ee-9cbf-8bed65eff857@linuxfoundation.org>
+Date: Fri, 9 Aug 2024 11:20:48 -0600
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87h6bt3j6w.fsf@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/mm: compaction_test: Fix off by one in
+ check_compaction()
+To: Dan Carpenter <dan.carpenter@linaro.org>, Dev Jain <dev.jain@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <87470c06-b45a-4e83-92ff-aac2e7b9c6ba@stanley.mountain>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <87470c06-b45a-4e83-92ff-aac2e7b9c6ba@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 09, 2024 at 04:43:51PM +0300, Jani Nikula wrote:
-> On Fri, 09 Aug 2024, Thomas Zimmermann <tzimmermann@suse.de> wrote:
-> > Hi,
-> >
-> > thanks a lot for the bugfix.
-> >
-> > Am 09.08.24 um 14:33 schrieb Dan Carpenter:
-> >> The test for "Link training failed" expect the loop to exit with "i"
-> >> set to zero but it exits when "i" is set to -1.  Change this from a
-> >> post-op to a pre-op so that it exits with "i" set to zero.  This
-> >> changes the number of iterations from 10 to 9 but probably that's
-> >> okay.
-> >
-> > Yes, that's ok.
-> >
-> >>
-> >> Fixes: 2281475168d2 ("drm/ast: astdp: Perform link training during atomic_enable")
-> >> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> >> ---
-> >>   drivers/gpu/drm/ast/ast_dp.c | 2 +-
-> >>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/ast/ast_dp.c b/drivers/gpu/drm/ast/ast_dp.c
-> >> index 5d07678b502c..4329ab680f62 100644
-> >> --- a/drivers/gpu/drm/ast/ast_dp.c
-> >> +++ b/drivers/gpu/drm/ast/ast_dp.c
-> >> @@ -148,7 +148,7 @@ void ast_dp_link_training(struct ast_device *ast)
-> >>   	struct drm_device *dev = &ast->base;
-> >>   	unsigned int i = 10;
-> >>   
-> >> -	while (i--) {
-> >> +	while (--i) {
-> >
-> > If this loop ever starts with i = 0, it would break again. Can we use
-> >
-> > while (i) {
-> >    --i;
-> >     ...
-> > }
-> >
-> > instead?
+On 8/9/24 06:32, Dan Carpenter wrote:
+> The "initial_nr_hugepages" variable is unsigned long so it takes up to
+> 20 characters to print, plus 1 more character for the NUL terminator.
+> Unfortunately, this buffer is not quite large enough for the terminator
+> to fit.  Also use snprintf() for a belt and suspenders approach.
 > 
-> FWIW, I personally *always* use for loops when there isn't a compelling
-> reason to do otherwise. You know at a glance that
+> Fixes: fb9293b6b015 ("selftests/mm: compaction_test: fix bogus test success and reduce probability of OOM-killer invocation")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>   tools/testing/selftests/mm/compaction_test.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> 	for (i = 0; i < N; i++)
-> 
-> gets run N times and what i is going to be afterwards.
-> 
-> Sure, you may have to restructure other things, but I think it's almost
-> always worth it.
+> diff --git a/tools/testing/selftests/mm/compaction_test.c b/tools/testing/selftests/mm/compaction_test.c
+> index e140558e6f53..2c3a0eb6b22d 100644
+> --- a/tools/testing/selftests/mm/compaction_test.c
+> +++ b/tools/testing/selftests/mm/compaction_test.c
+> @@ -89,9 +89,10 @@ int check_compaction(unsigned long mem_free, unsigned long hugepage_size,
+>   	int fd, ret = -1;
+>   	int compaction_index = 0;
+>   	char nr_hugepages[20] = {0};
+> -	char init_nr_hugepages[20] = {0};
+> +	char init_nr_hugepages[24] = {0};
 
-A for statement works here.  I need to resend the patch anyway because
-the if (i) msleep() code doesn't make sense now.
+Can we exceed this limit too? Can you make this a define?
 
-regards,
-dan carpenter
+>   
+> -	sprintf(init_nr_hugepages, "%lu", initial_nr_hugepages);
+> +	snprintf(init_nr_hugepages, sizeof(init_nr_hugepages),
+> +		 "%lu", initial_nr_hugepages);
+>   
+>   	/* We want to test with 80% of available memory. Else, OOM killer comes
+>   	   in to play */
 
+With that change:
+
+Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
