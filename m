@@ -1,41 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A8314659F;
-	Sat, 10 Aug 2024 10:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F16155A32;
+	Sat, 10 Aug 2024 10:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723285440; cv=none; b=bqrgLNS1CqP3kD+MFG0JtpcaINI9mp6YT2LGiw4toY8/ldebDYKawhQQCV2vwt7+XyT7ywz52m/bSPxb3iIjWvviQOOGcMLcaoR99x0xyZ1uzWBl3RSW3hEv7Jfikz7AQaqNAz8dnPBb1Qu/QDfPB+rFbvMva8GcoliS/tHAkl8=
+	t=1723286126; cv=none; b=ccqMEcNX1z7uHn2hb/RgplbQOofHtGrvUgRx0goienMryDt2SZph9QI+wYOobisWdgizLrlH2X1TKae/jyxa4Z2IREKp7mRaUSLwv384598kBLH5yibcncgHHKTcU2y3RfPJsrzeLjhQhMv79JX9LI4Mmqk+d/p+zzgnD3lT8oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723285440; c=relaxed/simple;
-	bh=qSupJuTLLZG8dgIkdJ6OXIxbntFMHCvge0X4lvT7rsE=;
+	s=arc-20240116; t=1723286126; c=relaxed/simple;
+	bh=ZnGSufR7s2y1R0aQ0nDt624omjlslN8ADPJg5cctc50=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=doEMvlcSX4z2fwgM2iFK1FnCwXuMVJrP+AVQYDWVPNO7IIwxsyebdft8K+iFvdifFkas78g+Am8vtv4r8dXkcbE3Ovh5SVF5uZ8Hd8LLw/bigeIIQLdj/i71ZzY8U87o+iRTLNuQ1risZ6fT0gvjSJ/dhrsLEmPn8bRhc+hM+8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAcFWNhc; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=sn81EktwxIbwCXUxVBS3IOkvbKVetIxxKpi052CyJ6YQohLLGOsGXZHXrxKVlhn/NV84sovo5pLvRry38oHuJy+bSXADzfMzM3caFTKm47wVAXDanqvOcuM7BfwboPkl0VVnDcrDyTa1zmx9U3e6XelbWY0w42gXo6ZxlgTYOMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JR2rs4p7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAcFWNhc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCA7CC32781;
-	Sat, 10 Aug 2024 10:23:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JR2rs4p7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53041C32781;
+	Sat, 10 Aug 2024 10:35:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723285440;
-	bh=qSupJuTLLZG8dgIkdJ6OXIxbntFMHCvge0X4lvT7rsE=;
+	s=k20201202; t=1723286125;
+	bh=ZnGSufR7s2y1R0aQ0nDt624omjlslN8ADPJg5cctc50=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GAcFWNhcKH/J7bESxsG/LBAiUaJlz+pmoCMf+YKs5K/IEKEOX0RIUwKwXQ0qOAIg+
-	 r+/3sYcZr2xCyn/ynjJbVdmywg8NgcFBm7VicnIJxqcCM4nnqsgT2akcIr9tS9vZbL
-	 pyBEaZSAvvgG10BxF0VyCgiffsIwFCEnF3RN2+yAj2iRrrZ6lMnxhExy/JFrv+QaYL
-	 i5KYt5VbKDW6vAwC7oSGMub25RUuB+kn5jepVaWD7oQpboqy6RZ0M7zyXCeUIxHLa6
-	 FO9P0Pi7bW17XjKkQST/mnjze3GvrvqFki/DlxKqTWrK9WEsFERzjj3mGNd8WTWQtw
-	 ENZroe43y6j3A==
-Date: Sat, 10 Aug 2024 11:23:54 +0100
+	b=JR2rs4p7/9Vyb3rJnUhMyiKeHKLx9G2zdgJyJYXGFMFeRhZ87TeO2+zqHP2EnCG+U
+	 PA3wGZtNkZ5n2HjS2TsTkq2/Gxsr59W/WmUamkaEEVBUIhEL+gp/zDQqHk1Bj1wdtW
+	 eKkHEnoSCbWScBkWLwKDLxql1cPRokrMJyUeAxHlOINMwjjG/FzglJ2YSJAh9fns6E
+	 Ymu7uZacU5Jp0D0UxjfITnDdtotrgJ9BNfsOMEQeptQYDhtfHJD9a/0nAqiPVE+aTP
+	 hrVU74nej3PjWbHyychcNtLg7/A8nEsS/UPN9tj8LQzPUpojSlWKCGgfQ4ovGnlChV
+	 Vmw7SBsMQplCw==
+Date: Sat, 10 Aug 2024 11:35:18 +0100
 From: Jonathan Cameron <jic23@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] iio: Fix spelling mistake "avaialable" ->
- "available"
-Message-ID: <20240810112354.0985ba35@jic23-huawei>
-In-Reply-To: <20240807094745.4174785-1-colin.i.king@gmail.com>
-References: <20240807094745.4174785-1-colin.i.king@gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Matteo Martelli <matteomartelli3@gmail.com>, Christophe JAILLET
+ <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org,
+ lars@metafoo.de, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: pac1921: add missing error return in probe()
+Message-ID: <20240810113518.2cbceb66@jic23-huawei>
+In-Reply-To: <9a98aab5-bb68-4206-9ecf-32fbf6c9c7ef@stanley.mountain>
+References: <1fa4ab12-0939-477d-bc92-306fd32e4fd9@stanley.mountain>
+	<36b1a47a-7af2-4baf-8188-72f6eed78529@wanadoo.fr>
+	<66b5c5df76766_133d37031@njaxe.notmuch>
+	<9a98aab5-bb68-4206-9ecf-32fbf6c9c7ef@stanley.mountain>
 X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -43,35 +46,59 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed,  7 Aug 2024 10:47:45 +0100
-Colin Ian King <colin.i.king@gmail.com> wrote:
+On Fri, 9 Aug 2024 18:18:13 +0300
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-> There is a spelling mistake in a dev_warn message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-Applied.
+> On Fri, Aug 09, 2024 at 09:31:43AM +0200, Matteo Martelli wrote:
+> > Christophe JAILLET wrote: =20
+> > > Le 08/08/2024 =C3=A0 21:28, Dan Carpenter a =C3=A9crit=C2=A0: =20
+> > > > This error path was intended to return, and not just print an error=
+.  The
+> > > > current code will lead to an error pointer dereference.
+> > > >=20
+> > > > Fixes: 371f778b83cd ("iio: adc: add support for pac1921")
+> > > > Signed-off-by: Dan Carpenter <dan.carpenter-QSEj5FYQhm4dnm+yROfE0A@=
+public.gmane.org>
+> > > > ---
+> > > >   drivers/iio/adc/pac1921.c | 4 ++--
+> > > >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
+> > > > index d04c6685d780..8200a47bdf21 100644
+> > > > --- a/drivers/iio/adc/pac1921.c
+> > > > +++ b/drivers/iio/adc/pac1921.c
+> > > > @@ -1168,8 +1168,8 @@ static int pac1921_probe(struct i2c_client *c=
+lient)
+> > > >  =20
+> > > >   	priv->regmap =3D devm_regmap_init_i2c(client, &pac1921_regmap_co=
+nfig);
+> > > >   	if (IS_ERR(priv->regmap))
+> > > > -		dev_err_probe(dev, (int)PTR_ERR(priv->regmap),
+> > > > -			      "Cannot initialize register map\n");
+> > > > +		return dev_err_probe(dev, (int)PTR_ERR(priv->regmap), =20
+> > >=20
+> > > The (int) is unusual.
+> > > =20
+> > The (int) explicit cast is to address Wconversion warnings since dev_er=
+r_probe
+> > takes an int as argument. =20
+>=20
+> I don't want to remove the int because it's unrelated, but Christophe is =
+right
+> that the int is unusual.  We really would want to discourage that.
+
+Applied, but I'd ideally like a follow up patch removing the int and the
+couple of similar instances from this driver.  Anyone want to spin one?
 
 Thanks,
 
-J
-> ---
->  drivers/iio/industrialio-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-> index 3f2bc6451325..6a6568d4a2cb 100644
-> --- a/drivers/iio/industrialio-core.c
-> +++ b/drivers/iio/industrialio-core.c
-> @@ -2002,7 +2002,7 @@ int iio_active_scan_mask_index(struct iio_dev *indio_dev)
->  	}
->  
->  	dev_warn(indio_dev->dev.parent,
-> -		 "active scan mask is not part of the avaialable scan masks\n");
-> +		 "active scan mask is not part of the available scan masks\n");
->  	return -EINVAL;
->  }
->  EXPORT_SYMBOL_GPL(iio_active_scan_mask_index);
+Jonathan
+
+>=20
+> regards,
+> dan carpenter
+>=20
 
