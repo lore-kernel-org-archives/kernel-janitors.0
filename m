@@ -1,50 +1,50 @@
-Received: from msa.smtpout.orange.fr (out-68.smtpout.orange.fr [193.252.22.68])
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4F01870;
-	Sat, 10 Aug 2024 21:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B402206E;
+	Sun, 11 Aug 2024 09:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723325960; cv=none; b=YDvb6D7zTfSg+TRFV51LkG8/jhMp+uGQMWtTXd8F1pLpgUA5G3WC0sWVgvz2u67swqvQrqMJ5Nx+aMueKL+Rw19pNkjAnZF1gWRf0nRwcBbiN1c79EbX4yFi6UxFAC+4nRD58u8S5hoYD+96RV3nMahAdGhJB6ZzjXIDxEBrKjc=
+	t=1723368638; cv=none; b=dATimAlid3kRbUhIpED9z/Azyit3oCcoqoXu1q9HTDHh7bX1kSWcu/S52/lLHlYx2bPfsuPY+Y1P6RbPi29z5MaotINJO1SvFQ8OmV/gWV1pgEcs+Zs6DuMTY6LLFDvlNP7Ryp/hg8OL96KTrQAXGuSnWedo47di0R5ucvePBW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723325960; c=relaxed/simple;
-	bh=qw508Tk/XwtcTC+TKFUZtcPOAckkkwI0TQgE8/DqTHY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c84dGRGjAIDRJCuZLLalNGb/5BrYII2iwQ2PEsp+RpmtZT2CDfrtlbQ3KPC3OzS3RzcTVaIOx79qmIWhZxPtlVbBg6Vo7e+pC3RqPGkN6x4Gd83E7Cskg0VQsH416/ISmQcSHlid4ypJMGcnnGAZxQVHPXIhyvT39/sg5eiocJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=p3PIkjY5; arc=none smtp.client-ip=193.252.22.68
+	s=arc-20240116; t=1723368638; c=relaxed/simple;
+	bh=GN0A5EbIfQaHhXtYr8sTGVmRQRCvKxqIVGy51w+O5G0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oLA5x2ItBOQAt5rK+Uupag17xk3O0gP0t8vPl7yoNWxox3JJuyt565HnBupXw0o5VRovMtZB1V1I7y1vs8JMAMmdvpGhddSUiicUQretUaegi+/gM8IRFkUJj0rCPYa+KLT+O/QxG+Y6iLOyxSKb9aUMnH0h78gOY0gzeiEYG50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ejLoU/KY; arc=none smtp.client-ip=80.12.242.30
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="p3PIkjY5"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ejLoU/KY"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id ctnoscLicxIArctnosgKqX; Sat, 10 Aug 2024 23:39:10 +0200
+	id d4u8sXXQdPZ0yd4u8seuKK; Sun, 11 Aug 2024 11:30:27 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1723325950;
-	bh=AGjcovfArtVFIWghu9zLuhCEXgg863nLZWImSfRoqro=;
+	s=t20230301; t=1723368627;
+	bh=vH6776X2q6P6GBwTwVrFQw2I+W41yFf77V4n/US8fFg=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=p3PIkjY5oFWsWRuCPx45WQ9m4+El7JnIEJcla/v4EFisIZwg7Iqja5M5BmhhDCxF8
-	 fkWjoXXXQ16oHJMhDEhj0VrJz0a+yNEZnoSNIUt3yMF4JKLZEmbmrKJ3SIP+ouFAwl
-	 f/EhkNOBbJmGkSrTY7gBoxZvuLhmR92HL3A555gsh9Dy0xQGIe8cN+7Q3SXZRZLPZr
-	 MVzvxXX8KRUyQhok01WgFA7YHqI79uNJkTWPH4ygB/975d+ZriGH139+QG8U/x0LdS
-	 dhaq850tYf4fLbmnpz8IL/a6uzBkVaP4nNGRVny+Tfi5VHvpl5q1HTfcvkwI8QJhyd
-	 pDbRsGGpXu+Rw==
+	b=ejLoU/KYvz82OqY5KPL8/I6MerFK5CJr+IDJ8AO8pJMYBsBZY85GrI80CGexz55SO
+	 9FRMKvzSP9JNRVosZ8HCssAV35JOvIWm6ByRWNph0Q2xStJmen/CE6tCXx2DGOhwvd
+	 z1baL4vtT0en8xo3DKSMB8bRIAnoFu/7vRp1h0StPEXvfkqpcn8tqGV7oi9jT5e2Qw
+	 IV/s/PmaqC/46mIvRLk5lCZoLUm89Ez7rmSRLcnAWSPew8DWYvksX76ztfHCemvWv7
+	 CtebWI4ee9kv/+AASqzrhR+cBgtSADI2bYKS0o2IHWuzdaX1ZlCLRd3VS1UmFGKAMn
+	 a+PdM02r/naSw==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 10 Aug 2024 23:39:10 +0200
+X-ME-Date: Sun, 11 Aug 2024 11:30:27 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Breno Leitao <leitao@debian.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next] net: netconsole: Constify struct config_item_type
-Date: Sat, 10 Aug 2024 23:39:04 +0200
-Message-ID: <9c205b2b4bdb09fc9e9d2cb2f2936ec053da1b1b.1723325900.git.christophe.jaillet@wanadoo.fr>
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] coresight: configfs: Constify struct config_item_type
+Date: Sun, 11 Aug 2024 11:30:20 +0200
+Message-ID: <1011717e5ed35ec12113a0d8c233823e820fb524.1723368522.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -56,11 +56,10 @@ Content-Transfer-Encoding: 8bit
 
 'struct config_item_type' is not modified in this driver.
 
-This structure is only used with config_group_init_type_name() which takes
-a const struct config_item_type* as a 3rd argument.
-
-This also makes things consistent with 'netconsole_target_type' witch is
-already const.
+These structures are only used with config_group_init_type_name() which
+takes a "const struct config_item_type *" as a 3rd argument or with
+struct config_group.cg_item.ci_type which is also a "const struct
+config_item_type	*".
 
 Constifying this structure moves some data to a read-only section, so
 increase overall security, especially when the structure holds some
@@ -70,33 +69,78 @@ On a x86_64, with allmodconfig:
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-  33007	   3952	   1312	  38271	   957f	drivers/net/netconsole.o
+   4904	   1376	    136	   6416	   1910	drivers/hwtracing/coresight/coresight-syscfg-configfs.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-  33071	   3888	   1312	  38271	   957f	drivers/net/netconsole.o
+   5264	   1120	     16	   6400	   1900	drivers/hwtracing/coresight/coresight-syscfg-configfs.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested-only.
 ---
- drivers/net/netconsole.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../hwtracing/coresight/coresight-syscfg-configfs.c  | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index ffedf7648bed..48b309e0a93a 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -778,7 +778,7 @@ static struct configfs_group_operations userdata_ops = {
- 	.drop_item		= userdatum_drop,
+diff --git a/drivers/hwtracing/coresight/coresight-syscfg-configfs.c b/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
+index 433ede94dd63..213b4159b062 100644
+--- a/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
++++ b/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
+@@ -160,7 +160,7 @@ static struct configfs_attribute *cscfg_config_view_attrs[] = {
+ 	NULL,
  };
  
--static struct config_item_type userdata_type = {
-+static const struct config_item_type userdata_type = {
- 	.ct_item_ops	= &userdatum_ops,
- 	.ct_group_ops	= &userdata_ops,
- 	.ct_attrs	= userdata_attrs,
+-static struct config_item_type cscfg_config_view_type = {
++static const struct config_item_type cscfg_config_view_type = {
+ 	.ct_owner = THIS_MODULE,
+ 	.ct_attrs = cscfg_config_view_attrs,
+ };
+@@ -170,7 +170,7 @@ static struct configfs_attribute *cscfg_config_preset_attrs[] = {
+ 	NULL,
+ };
+ 
+-static struct config_item_type cscfg_config_preset_type = {
++static const struct config_item_type cscfg_config_preset_type = {
+ 	.ct_owner = THIS_MODULE,
+ 	.ct_attrs = cscfg_config_preset_attrs,
+ };
+@@ -272,7 +272,7 @@ static struct configfs_attribute *cscfg_feature_view_attrs[] = {
+ 	NULL,
+ };
+ 
+-static struct config_item_type cscfg_feature_view_type = {
++static const struct config_item_type cscfg_feature_view_type = {
+ 	.ct_owner = THIS_MODULE,
+ 	.ct_attrs = cscfg_feature_view_attrs,
+ };
+@@ -309,7 +309,7 @@ static struct configfs_attribute *cscfg_param_view_attrs[] = {
+ 	NULL,
+ };
+ 
+-static struct config_item_type cscfg_param_view_type = {
++static const struct config_item_type cscfg_param_view_type = {
+ 	.ct_owner = THIS_MODULE,
+ 	.ct_attrs = cscfg_param_view_attrs,
+ };
+@@ -380,7 +380,7 @@ static struct config_group *cscfg_create_feature_group(struct cscfg_feature_desc
+ 	return &feat_view->group;
+ }
+ 
+-static struct config_item_type cscfg_configs_type = {
++static const struct config_item_type cscfg_configs_type = {
+ 	.ct_owner = THIS_MODULE,
+ };
+ 
+@@ -414,7 +414,7 @@ void cscfg_configfs_del_config(struct cscfg_config_desc *config_desc)
+ 	}
+ }
+ 
+-static struct config_item_type cscfg_features_type = {
++static const struct config_item_type cscfg_features_type = {
+ 	.ct_owner = THIS_MODULE,
+ };
+ 
 -- 
 2.46.0
 
