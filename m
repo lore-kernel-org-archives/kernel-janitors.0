@@ -1,137 +1,226 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A77A136328
-	for <kernel-janitors@vger.kernel.org>; Mon, 12 Aug 2024 06:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7431D15B0E2;
+	Mon, 12 Aug 2024 07:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723445689; cv=none; b=MqxsliDvD9S6ThwTTiw20CvOD9cWKfRtutI1sVRQBk7J1410ruumgBeSu4ayZ+h9C72mDcme8yFCiyxblkz83ufLQxM6Oz/v38QVZYX371tKCHfzla73XSyYFgJu7+d7rrXFEupa763lY0J0Jym/XILYZ+z7zW90fQV7aM59EJ4=
+	t=1723447805; cv=none; b=Xa9dXlbc7xmS1ExwK/m4UOcyQPNsz4pFPs2aXlSqJyGg9V+aCXh4J5/EwR/okVHRQYwQwHdUC0vta687XBHWUuYqrKRrVr2zt8mLLU/M6L2fhbkCKIprnafyyD1yhlxPRPTEYs9fbc6Qh0lU/srbyO/XiizBylvotQQhnYT5rRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723445689; c=relaxed/simple;
-	bh=NEQn/jklUKMpYiGlzYQqyXfeUdJDYoPjcB5z+lJTciI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ho+gqa3r9cjV78T5GK/Bgi6+gmDHwQaX/lQ7GQApvSfwhZBj+Qox0SHGY9QtZn32+vJ3OLCaZEvAmWW0n3HgXLb+I0Wq38YXDoZq1s986QcYtIyYZt3OnGi3qAGvE6Q3MFcpn/4d/72vBnqp9ArXy4ib0wRwA+7sk3fUJ6ED68A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u5qB7oU8; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1723447805; c=relaxed/simple;
+	bh=ggv43w81ScIG3OS7vKr2XHhndhPAbuGC32yW+QdKpdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ReXA+9u4xfuCZQ0pZSnT7GZrUZEYpCA2oq5M68+YjE+4ej+VFdXXCZXRSBxSoveluKHEAI0y69anhlI0mWCEedGDkEup4mn0eD24s1Ez9pFhfuiLauOQbnUtHp98bbMyBrTSn3LmesJrLBaYw4Yo7PE5yb6BmVMOyVBiv0TEp/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ekhPfcBa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=v74hFElO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ekhPfcBa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=v74hFElO; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u5qB7oU8"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a15692b6f6so4430915a12.0
-        for <kernel-janitors@vger.kernel.org>; Sun, 11 Aug 2024 23:54:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723445686; x=1724050486; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0fQcBx/yhtEJalnoutc2Qp0GWGGUElulCgKYdofD76A=;
-        b=u5qB7oU87ldICzdHds6+R4lchb02w7PSjsxqnaYrkglv3YH8VANoczuTsXBAoHrEA0
-         XClOvSObYXuD+xbmsy2dx7IRxlHkYRvoedldQHLjW4pzyTIBOo6W6xKDVKC/+zeUGXGX
-         GPcUHTwj7FedtrsXB8kkjNEo0XBBW5h/fQVRrQKJDmTMcyGwOgpQuK3p9VTya0YG/TiW
-         aODRUjzQ1pI/Xfv6KdtgBQiP1wHGu+ixPEGS5WHleCob91/wgcGCZ7cWjkJE9+MDMEql
-         Ra88HnL8+MC1c0s7s5yNLyqlB68bW2TkYaPy5VU6S+tjD8t2knAt6iA8LRSoUQ6Vmnjb
-         5ztw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723445686; x=1724050486;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0fQcBx/yhtEJalnoutc2Qp0GWGGUElulCgKYdofD76A=;
-        b=dyUyxQZmT4YADeLx8LjdqfLXwhgPOLmm5/rcCMi70uOC2Jvu3Y4nXbRdFumM+jOfWg
-         Vd64l7f7/O/GPu9SuD1ah0jcZ17H2shPEMZmfl6q+uEk7ZiXikXiVHs0fScB0a1sbvP/
-         oTUf/5EhPYjlmg3XubkRfgcLPgU4wwHALixErijacvmxTB7VWwZb5b636LHm5gzOToK5
-         Ao/UH4E01rrXYA+1d/gCF1a66raQiE79M7sQEOgo2pMa7/8nz3xBdEOD7d0HGebFgS2d
-         sUB7YPClghEjS4wcrpQg7FVRdfqJ85vfvBlPzB+rWoEcRroBmz9nB0MdvMB6J0BlSx7M
-         DzAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHuLYM7/7C8ILZQ4G3Ve9zJJcHAZDLh74FkV9pavU0acyRfpNCG0i4MaGW2HmQ9wCmiLyRCUNZT7em8uyXzu7Gko3cvZKTX2h3QXYlKwWJ
-X-Gm-Message-State: AOJu0YzOWryzATFd7/2EsM1rr1re6u3iX/wN2burk2MJPSPbj/p037T9
-	1peKLVY5NWV1KTe1qj9bIBlSanCg3UixPS/33krlQYTnXdf7YWkzGIc179Rk0NY=
-X-Google-Smtp-Source: AGHT+IHqItAaYkq1CnYLYCG46rQAAVYiJweMtHCZU5ynOtcYUTt5FmVrj2hFnIpnEigVtDeRa1vwUg==
-X-Received: by 2002:a17:907:72d0:b0:a7a:9226:6511 with SMTP id a640c23a62f3a-a80aa5d9ae5mr688705066b.31.1723445685533;
-        Sun, 11 Aug 2024 23:54:45 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb0904f5sm207822166b.18.2024.08.11.23.54.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 23:54:45 -0700 (PDT)
-Date: Mon, 12 Aug 2024 09:54:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Dave Airlie <airlied@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Jani Nikula <jani.nikula@linux.intel.com>
-Subject: Re: [PATCH v2] drm/ast: astdp: fix loop timeout check
-Message-ID: <10624c71-d134-441f-a7e6-d757b60f54f8@stanley.mountain>
-References: <9dbd4d2c-0757-4d5f-aa11-7d9e665e7633@stanley.mountain>
- <8c1ad0a1-bbc5-4274-bdf5-fcf2e043a869@suse.de>
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ekhPfcBa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="v74hFElO";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ekhPfcBa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="v74hFElO"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8B55C2022C;
+	Mon, 12 Aug 2024 07:30:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723447801; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=85ZTHYXISTff7ib7JZXld7Nng4tieLpucbbA0ZLZL94=;
+	b=ekhPfcBaxPWSReJ33Gxp+IVhiLM/qLhAfJ6pSYqm8odoIirVPX7F9g5V7TWu2UW4nyLarX
+	zj5d3Q+YGV6emqxHZ0D+kLm4MSlU42pN+deLgzLrh82E8hnOjeA1x29/qAToiZ+drZo5/e
+	d1zh/1dUZ9vSTklf2LQwg1Z1HCe0N2M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723447801;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=85ZTHYXISTff7ib7JZXld7Nng4tieLpucbbA0ZLZL94=;
+	b=v74hFElOy4xWD2bdpkBxti5pnVYYaD/NCQr2I8bIRgP/vMhZJ/jD82Vh8pOk4cIcLrCyON
+	l7enAaJqUYO6lkDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723447801; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=85ZTHYXISTff7ib7JZXld7Nng4tieLpucbbA0ZLZL94=;
+	b=ekhPfcBaxPWSReJ33Gxp+IVhiLM/qLhAfJ6pSYqm8odoIirVPX7F9g5V7TWu2UW4nyLarX
+	zj5d3Q+YGV6emqxHZ0D+kLm4MSlU42pN+deLgzLrh82E8hnOjeA1x29/qAToiZ+drZo5/e
+	d1zh/1dUZ9vSTklf2LQwg1Z1HCe0N2M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723447801;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=85ZTHYXISTff7ib7JZXld7Nng4tieLpucbbA0ZLZL94=;
+	b=v74hFElOy4xWD2bdpkBxti5pnVYYaD/NCQr2I8bIRgP/vMhZJ/jD82Vh8pOk4cIcLrCyON
+	l7enAaJqUYO6lkDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 370A3137BA;
+	Mon, 12 Aug 2024 07:30:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Z2wvDPm5uWZpDgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 12 Aug 2024 07:30:01 +0000
+Message-ID: <2af277bf-f07d-421b-8ffd-25c9761e3eed@suse.de>
+Date: Mon, 12 Aug 2024 09:30:00 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/ast: astdp: fix loop timeout check
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Dave Airlie <airlied@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Jani Nikula <jani.nikula@linux.intel.com>
+References: <9dbd4d2c-0757-4d5f-aa11-7d9e665e7633@stanley.mountain>
+ <8c1ad0a1-bbc5-4274-bdf5-fcf2e043a869@suse.de>
+ <10624c71-d134-441f-a7e6-d757b60f54f8@stanley.mountain>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <10624c71-d134-441f-a7e6-d757b60f54f8@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8c1ad0a1-bbc5-4274-bdf5-fcf2e043a869@suse.de>
+X-Spam-Score: -4.29
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, Aug 12, 2024 at 08:48:16AM +0200, Thomas Zimmermann wrote:
-> Hi
-> 
-> Am 12.08.24 um 08:42 schrieb Dan Carpenter:
-> > This code has an issue because it loops until "i" is set to UINT_MAX but
-> > the test for failure assumes that "i" is set to zero.  The result is that
-> > it will only print an error message if we succeed on the very last try.
-> > Reformat the loop to count forwards instead of backwards.
-> > 
-> > Fixes: 2281475168d2 ("drm/ast: astdp: Perform link training during atomic_enable")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > v2: In version one, I introduced a bug where it would msleep(100) after failure
-> >      and that is a pointless thing to do.  Also change the loop to a for loop.
-> > ---
-> >   drivers/gpu/drm/ast/ast_dp.c | 12 +++++-------
-> >   1 file changed, 5 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/ast/ast_dp.c b/drivers/gpu/drm/ast/ast_dp.c
-> > index 5d07678b502c..9bc21dd6a54d 100644
-> > --- a/drivers/gpu/drm/ast/ast_dp.c
-> > +++ b/drivers/gpu/drm/ast/ast_dp.c
-> > @@ -146,18 +146,16 @@ void ast_dp_power_on_off(struct drm_device *dev, bool on)
-> >   void ast_dp_link_training(struct ast_device *ast)
-> >   {
-> >   	struct drm_device *dev = &ast->base;
-> > -	unsigned int i = 10;
-> > +	int i;
-> > -	while (i--) {
-> > +	for (i = 0; i < 10; i++) {
-> >   		u8 vgacrdc = ast_get_index_reg(ast, AST_IO_VGACRI, 0xdc);
-> >   		if (vgacrdc & AST_IO_VGACRDC_LINK_SUCCESS)
-> > -			break;
-> > -		if (i)
-> > -			msleep(100);
-> > +			return;
-> > +		msleep(100);
-> 
-> But we don't want to wait during the final iteration of this loop. If you
-> want to use the for loop, it should be something like
-> 
-> for (i= 0; i < 10; ++i) {
-> 
->     if (i)
->       msleep(100)
-> 
->     // now test vgacrdc
-> }
-> 
-> Best regards
-> Thomas
+Hi
 
-I feel like if we really hit this failure path then we won't care about the
-tenth msleep().  I can resend if you want, but I'd prefer to just leave it.
+Am 12.08.24 um 08:54 schrieb Dan Carpenter:
+> On Mon, Aug 12, 2024 at 08:48:16AM +0200, Thomas Zimmermann wrote:
+>> Hi
+>>
+>> Am 12.08.24 um 08:42 schrieb Dan Carpenter:
+>>> This code has an issue because it loops until "i" is set to UINT_MAX but
+>>> the test for failure assumes that "i" is set to zero.  The result is that
+>>> it will only print an error message if we succeed on the very last try.
+>>> Reformat the loop to count forwards instead of backwards.
+>>>
+>>> Fixes: 2281475168d2 ("drm/ast: astdp: Perform link training during atomic_enable")
+>>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>>> ---
+>>> v2: In version one, I introduced a bug where it would msleep(100) after failure
+>>>       and that is a pointless thing to do.  Also change the loop to a for loop.
+>>> ---
+>>>    drivers/gpu/drm/ast/ast_dp.c | 12 +++++-------
+>>>    1 file changed, 5 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/ast/ast_dp.c b/drivers/gpu/drm/ast/ast_dp.c
+>>> index 5d07678b502c..9bc21dd6a54d 100644
+>>> --- a/drivers/gpu/drm/ast/ast_dp.c
+>>> +++ b/drivers/gpu/drm/ast/ast_dp.c
+>>> @@ -146,18 +146,16 @@ void ast_dp_power_on_off(struct drm_device *dev, bool on)
+>>>    void ast_dp_link_training(struct ast_device *ast)
+>>>    {
+>>>    	struct drm_device *dev = &ast->base;
+>>> -	unsigned int i = 10;
+>>> +	int i;
+>>> -	while (i--) {
+>>> +	for (i = 0; i < 10; i++) {
+>>>    		u8 vgacrdc = ast_get_index_reg(ast, AST_IO_VGACRI, 0xdc);
+>>>    		if (vgacrdc & AST_IO_VGACRDC_LINK_SUCCESS)
+>>> -			break;
+>>> -		if (i)
+>>> -			msleep(100);
+>>> +			return;
+>>> +		msleep(100);
+>> But we don't want to wait during the final iteration of this loop. If you
+>> want to use the for loop, it should be something like
+>>
+>> for (i= 0; i < 10; ++i) {
+>>
+>>  Â Â Â  if (i)
+>>  Â Â Â Â Â  msleep(100)
+>>
+>>  Â Â Â  // now test vgacrdc
+>> }
+>>
+>> Best regards
+>> Thomas
+> I feel like if we really hit this failure path then we won't care about the
+> tenth msleep().  I can resend if you want, but I'd prefer to just leave it.
 
-regards,
-dan carpenter
+Please resend. Even if the link training ultimately fails, the rest of 
+DRM keeps running. 100 msec is not so short to shrug it off IMHO.
+
+Best regards
+Thomas
+
+>
+> regards,
+> dan carpenter
+>
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
