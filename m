@@ -1,80 +1,59 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7431D15B0E2;
-	Mon, 12 Aug 2024 07:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F5716D332
+	for <kernel-janitors@vger.kernel.org>; Mon, 12 Aug 2024 09:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723447805; cv=none; b=Xa9dXlbc7xmS1ExwK/m4UOcyQPNsz4pFPs2aXlSqJyGg9V+aCXh4J5/EwR/okVHRQYwQwHdUC0vta687XBHWUuYqrKRrVr2zt8mLLU/M6L2fhbkCKIprnafyyD1yhlxPRPTEYs9fbc6Qh0lU/srbyO/XiizBylvotQQhnYT5rRo=
+	t=1723453952; cv=none; b=DKvnpfaSVER7EFOyTK18BkDO23hpqz5paETT/00C7gPEu9ZQ3aURp/udTXDZ/ei6PEuAxxRelGyD/bKuw47W31diz5+V0bZ0nmOCMZBcMNEOmR5dyW+XAN+fDcQfODvJfDDs2Ql1v0glD80f/89kqNELMrqeeLK2NfyRSyuPTRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723447805; c=relaxed/simple;
-	bh=ggv43w81ScIG3OS7vKr2XHhndhPAbuGC32yW+QdKpdM=;
+	s=arc-20240116; t=1723453952; c=relaxed/simple;
+	bh=Khm3nWFS9ZC/TfTWLB3+984Z3CcI8S5v1VR5r79ksBE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ReXA+9u4xfuCZQ0pZSnT7GZrUZEYpCA2oq5M68+YjE+4ej+VFdXXCZXRSBxSoveluKHEAI0y69anhlI0mWCEedGDkEup4mn0eD24s1Ez9pFhfuiLauOQbnUtHp98bbMyBrTSn3LmesJrLBaYw4Yo7PE5yb6BmVMOyVBiv0TEp/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ekhPfcBa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=v74hFElO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ekhPfcBa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=v74hFElO; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	 In-Reply-To:Content-Type; b=sb5ei8LhcpCPFoVnqWPO7SC7m/cQYnMHMgKWGfIFAiaIHTIJZHr2PC00UFVnKalscditJtdrKZKY0Uz4C58ikXC2S2NG7BGvyXl+1PVwgJvIdWF/WOkFvmDYgJsHf0LFpbatNQ0vvsWLOt32U5MasWCri2RypG0TB0Mj3VcdeXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tWg67dbl; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ekhPfcBa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="v74hFElO";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ekhPfcBa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="v74hFElO"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8B55C2022C;
-	Mon, 12 Aug 2024 07:30:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723447801; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=85ZTHYXISTff7ib7JZXld7Nng4tieLpucbbA0ZLZL94=;
-	b=ekhPfcBaxPWSReJ33Gxp+IVhiLM/qLhAfJ6pSYqm8odoIirVPX7F9g5V7TWu2UW4nyLarX
-	zj5d3Q+YGV6emqxHZ0D+kLm4MSlU42pN+deLgzLrh82E8hnOjeA1x29/qAToiZ+drZo5/e
-	d1zh/1dUZ9vSTklf2LQwg1Z1HCe0N2M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723447801;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=85ZTHYXISTff7ib7JZXld7Nng4tieLpucbbA0ZLZL94=;
-	b=v74hFElOy4xWD2bdpkBxti5pnVYYaD/NCQr2I8bIRgP/vMhZJ/jD82Vh8pOk4cIcLrCyON
-	l7enAaJqUYO6lkDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723447801; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=85ZTHYXISTff7ib7JZXld7Nng4tieLpucbbA0ZLZL94=;
-	b=ekhPfcBaxPWSReJ33Gxp+IVhiLM/qLhAfJ6pSYqm8odoIirVPX7F9g5V7TWu2UW4nyLarX
-	zj5d3Q+YGV6emqxHZ0D+kLm4MSlU42pN+deLgzLrh82E8hnOjeA1x29/qAToiZ+drZo5/e
-	d1zh/1dUZ9vSTklf2LQwg1Z1HCe0N2M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723447801;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=85ZTHYXISTff7ib7JZXld7Nng4tieLpucbbA0ZLZL94=;
-	b=v74hFElOy4xWD2bdpkBxti5pnVYYaD/NCQr2I8bIRgP/vMhZJ/jD82Vh8pOk4cIcLrCyON
-	l7enAaJqUYO6lkDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 370A3137BA;
-	Mon, 12 Aug 2024 07:30:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Z2wvDPm5uWZpDgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 12 Aug 2024 07:30:01 +0000
-Message-ID: <2af277bf-f07d-421b-8ffd-25c9761e3eed@suse.de>
-Date: Mon, 12 Aug 2024 09:30:00 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tWg67dbl"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so28549025e9.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 12 Aug 2024 02:12:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723453949; x=1724058749; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=otmQtjUnHdhUFyCUXEQnuCmx4X7aHI52s1lrQeUIOKc=;
+        b=tWg67dblmaxVhLiNmFu56GfGq45TZUYUkV0R/0Ey+Hy4F1QBQnImAghvcmspdvZbVJ
+         3MEkMKHxZY45+Zmf19hvkjstnrAOsCXduQoAUdB6gDDG75qLX5eVn0MGfN3kf3m7TYIL
+         tjZCCqH9CHthzK/hnlKUc0a4af5FPGpMtnDrrPcIPxLCJbJ0XXXHhOXO2URtum4FelE1
+         jRhKld+79EAKtBjsiTNTYz17MrsjP3xWWEM/Npp5fEDi/mO+yfgdJnGB5NWKB2WyREL3
+         SVtnx4X3O98+Ji20PJl60dnzt/TsdsYp9jKayKp93q2BS/H/N06I14Lq5wLhNG5Plzgo
+         rYog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723453949; x=1724058749;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=otmQtjUnHdhUFyCUXEQnuCmx4X7aHI52s1lrQeUIOKc=;
+        b=TkSENuHSDztrllQ49fBe3IPGC3EFKMl1H0L/rsK2VhJMdPJYJeE0Kmuto11xXELaos
+         sHrlD/gRenDox9Kh4vCZr247bTpUwaFDqfUUQ4VdDKIa5KzpmmrCEhNBBQ4lvp1h8P3u
+         gQNgUMSf5fgjBtH8MXdj8l8+3cHMkVV3AMVumaRl5Ali2MhvEBY9UWSPhWMydAxmCTiQ
+         1BtFVosfGBrJhhody980pbscoj0PKKD+hLu5vt+Wn1sFj1WtXxw+RVDC19XG1ylONXtS
+         SuN6AYJtqf1DKv4600sBtwOkbg443glh9OW1/6dyG5/HZVAu60k7hTe/9hrRtrQlPDnN
+         m9yA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwqS4XrlLl1fNmwF8w976F1saxd6V08uFEcxqGSyHlXm2NkiOQVgsj/KLvjIEzjk6LNxNfTgY/QB9bRDJpIouQMKVElHCGT5f2WIu9pqyk
+X-Gm-Message-State: AOJu0YyegnTVREGt8HtOzIsS3i3KW1zpBGMAjU62NxbI3Wwy79Lkh6IZ
+	BQOp/zfOJIh7Qj5oC//9pmNPo8fvgRhj0N8/SCvtSj/R280raH6XhDVOQ3ubE+k=
+X-Google-Smtp-Source: AGHT+IEQhChTySXXAXyus4QQjPlrOoUKIwMOqwv3b3OCrnrDlEW8Ji+zatdgSVTR7qUKlPt6Zht0QQ==
+X-Received: by 2002:a5d:498e:0:b0:367:326b:f257 with SMTP id ffacd0b85a97d-36d5ff6f2c3mr5494258f8f.33.1723453948717;
+        Mon, 12 Aug 2024 02:12:28 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4f0a6d76sm6937701f8f.115.2024.08.12.02.12.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Aug 2024 02:12:28 -0700 (PDT)
+Message-ID: <d8164311-83e7-4fb0-ab82-90e1a2762b01@linaro.org>
+Date: Mon, 12 Aug 2024 10:12:27 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -82,145 +61,110 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/ast: astdp: fix loop timeout check
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Dave Airlie <airlied@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Jani Nikula <jani.nikula@linux.intel.com>
-References: <9dbd4d2c-0757-4d5f-aa11-7d9e665e7633@stanley.mountain>
- <8c1ad0a1-bbc5-4274-bdf5-fcf2e043a869@suse.de>
- <10624c71-d134-441f-a7e6-d757b60f54f8@stanley.mountain>
+Subject: Re: [PATCH] coresight: configfs: Constify struct config_item_type
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ Mike Leach <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+References: <1011717e5ed35ec12113a0d8c233823e820fb524.1723368522.git.christophe.jaillet@wanadoo.fr>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <10624c71-d134-441f-a7e6-d757b60f54f8@stanley.mountain>
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <1011717e5ed35ec12113a0d8c233823e820fb524.1723368522.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -4.29
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 7bit
 
-Hi
 
-Am 12.08.24 um 08:54 schrieb Dan Carpenter:
-> On Mon, Aug 12, 2024 at 08:48:16AM +0200, Thomas Zimmermann wrote:
->> Hi
->>
->> Am 12.08.24 um 08:42 schrieb Dan Carpenter:
->>> This code has an issue because it loops until "i" is set to UINT_MAX but
->>> the test for failure assumes that "i" is set to zero.  The result is that
->>> it will only print an error message if we succeed on the very last try.
->>> Reformat the loop to count forwards instead of backwards.
->>>
->>> Fixes: 2281475168d2 ("drm/ast: astdp: Perform link training during atomic_enable")
->>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->>> ---
->>> v2: In version one, I introduced a bug where it would msleep(100) after failure
->>>       and that is a pointless thing to do.  Also change the loop to a for loop.
->>> ---
->>>    drivers/gpu/drm/ast/ast_dp.c | 12 +++++-------
->>>    1 file changed, 5 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/ast/ast_dp.c b/drivers/gpu/drm/ast/ast_dp.c
->>> index 5d07678b502c..9bc21dd6a54d 100644
->>> --- a/drivers/gpu/drm/ast/ast_dp.c
->>> +++ b/drivers/gpu/drm/ast/ast_dp.c
->>> @@ -146,18 +146,16 @@ void ast_dp_power_on_off(struct drm_device *dev, bool on)
->>>    void ast_dp_link_training(struct ast_device *ast)
->>>    {
->>>    	struct drm_device *dev = &ast->base;
->>> -	unsigned int i = 10;
->>> +	int i;
->>> -	while (i--) {
->>> +	for (i = 0; i < 10; i++) {
->>>    		u8 vgacrdc = ast_get_index_reg(ast, AST_IO_VGACRI, 0xdc);
->>>    		if (vgacrdc & AST_IO_VGACRDC_LINK_SUCCESS)
->>> -			break;
->>> -		if (i)
->>> -			msleep(100);
->>> +			return;
->>> +		msleep(100);
->> But we don't want to wait during the final iteration of this loop. If you
->> want to use the for loop, it should be something like
->>
->> for (i= 0; i < 10; ++i) {
->>
->>      if (i)
->>        msleep(100)
->>
->>      // now test vgacrdc
->> }
->>
->> Best regards
->> Thomas
-> I feel like if we really hit this failure path then we won't care about the
-> tenth msleep().  I can resend if you want, but I'd prefer to just leave it.
 
-Please resend. Even if the link training ultimately fails, the rest of 
-DRM keeps running. 100 msec is not so short to shrug it off IMHO.
+On 11/08/2024 10:30 am, Christophe JAILLET wrote:
+> 'struct config_item_type' is not modified in this driver.
+> 
+> These structures are only used with config_group_init_type_name() which
+> takes a "const struct config_item_type *" as a 3rd argument or with
+> struct config_group.cg_item.ci_type which is also a "const struct
+> config_item_type	*".
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security, especially when the structure holds some
+> function pointers.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>     text	   data	    bss	    dec	    hex	filename
+>     4904	   1376	    136	   6416	   1910	drivers/hwtracing/coresight/coresight-syscfg-configfs.o
+> 
+> After:
+> =====
+>     text	   data	    bss	    dec	    hex	filename
+>     5264	   1120	     16	   6400	   1900	drivers/hwtracing/coresight/coresight-syscfg-configfs.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested-only.
+> ---
+>   .../hwtracing/coresight/coresight-syscfg-configfs.c  | 12 ++++++------
+>   1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-syscfg-configfs.c b/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
+> index 433ede94dd63..213b4159b062 100644
+> --- a/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
+> +++ b/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
+> @@ -160,7 +160,7 @@ static struct configfs_attribute *cscfg_config_view_attrs[] = {
+>   	NULL,
+>   };
+>   
+> -static struct config_item_type cscfg_config_view_type = {
+> +static const struct config_item_type cscfg_config_view_type = {
+>   	.ct_owner = THIS_MODULE,
+>   	.ct_attrs = cscfg_config_view_attrs,
+>   };
+> @@ -170,7 +170,7 @@ static struct configfs_attribute *cscfg_config_preset_attrs[] = {
+>   	NULL,
+>   };
+>   
+> -static struct config_item_type cscfg_config_preset_type = {
+> +static const struct config_item_type cscfg_config_preset_type = {
+>   	.ct_owner = THIS_MODULE,
+>   	.ct_attrs = cscfg_config_preset_attrs,
+>   };
+> @@ -272,7 +272,7 @@ static struct configfs_attribute *cscfg_feature_view_attrs[] = {
+>   	NULL,
+>   };
+>   
+> -static struct config_item_type cscfg_feature_view_type = {
+> +static const struct config_item_type cscfg_feature_view_type = {
+>   	.ct_owner = THIS_MODULE,
+>   	.ct_attrs = cscfg_feature_view_attrs,
+>   };
+> @@ -309,7 +309,7 @@ static struct configfs_attribute *cscfg_param_view_attrs[] = {
+>   	NULL,
+>   };
+>   
+> -static struct config_item_type cscfg_param_view_type = {
+> +static const struct config_item_type cscfg_param_view_type = {
+>   	.ct_owner = THIS_MODULE,
+>   	.ct_attrs = cscfg_param_view_attrs,
+>   };
+> @@ -380,7 +380,7 @@ static struct config_group *cscfg_create_feature_group(struct cscfg_feature_desc
+>   	return &feat_view->group;
+>   }
+>   
+> -static struct config_item_type cscfg_configs_type = {
+> +static const struct config_item_type cscfg_configs_type = {
+>   	.ct_owner = THIS_MODULE,
+>   };
+>   
+> @@ -414,7 +414,7 @@ void cscfg_configfs_del_config(struct cscfg_config_desc *config_desc)
+>   	}
+>   }
+>   
+> -static struct config_item_type cscfg_features_type = {
+> +static const struct config_item_type cscfg_features_type = {
+>   	.ct_owner = THIS_MODULE,
+>   };
+>   
 
-Best regards
-Thomas
-
->
-> regards,
-> dan carpenter
->
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Reviewed-by: James Clark <james.clark@linaro.org>
 
