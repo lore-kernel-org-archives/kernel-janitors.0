@@ -1,77 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446112E3E5;
-	Wed, 14 Aug 2024 02:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F6719F464;
+	Wed, 14 Aug 2024 09:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723602633; cv=none; b=oIvpbprA1DU/TbA2032yrRyWwL4UMrAp4aGl3PYu10FXHDNjrs/bmoV1xduZvGt3xXdQLYmmA/c2VOQ+BcCSgJFGkJzC2nPkVPjg/jJ9FxgRgXe8RfIcDw7jT+A6ZgArFChdl3TJ2ah/QXmKgP4tipCz49Hyjd6j0ScuBhlyEMo=
+	t=1723629486; cv=none; b=qSD7UwUinJtKyShsVmvvJa7Or7jcaru/FFkzh+Ni3idKci/49fznSL3cCLrIzSY24wzUj4thsRE8n7t00VXTkVz1TB6HXsuLrMolexCpskBwQfuBfbpLyCVJvjn9+ex7wWtewHR+yl3swBcQbxlRLqScFlvIQShfwnpUcZD+8t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723602633; c=relaxed/simple;
-	bh=pTXsDROpgeiLeVqrrcK9A3g0rJSyI9w+eE1VQDJ7JL4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=sfgeOF2kS1kcAL9NGdQvgs5v7KGL6A0K/K8tWG3iObqh1eB4r9PjDI/cVd7BgMESzuYhfHm+T3Jq94crM8REHf1nROL9qErn4TOjg/Ev2T3Upd87r7zNPinqdEnNbC6U8gn2CMd4fFhIPtX1FIZi8rw6xVjSegkZdEfFwct8QBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRqMbOpG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723629486; c=relaxed/simple;
+	bh=c1DRi6NyZ8YeV/Jy6vvGJBLjP3EAf16yRRK8oKda6ws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s890KY/YfFZnUcqGteht78PILt97IPRE0Us2iaimROqBr2h1vBY4A+vU1Vf9tLdHt3bMrzq6J5KtaaQ+jOBXnpeQflCPE3+pWHURkTPh/9ZDt89z7bB/CoHKD8LXNQkmROim3f1EGeoqtgX8yz6SRpGwAkOHr9C3NayDtlo7/r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MtUf2Fde; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRqMbOpG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0834C32782;
-	Wed, 14 Aug 2024 02:30:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MtUf2Fde"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79DDCC32786;
+	Wed, 14 Aug 2024 09:58:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723602632;
-	bh=pTXsDROpgeiLeVqrrcK9A3g0rJSyI9w+eE1VQDJ7JL4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=CRqMbOpG0TqHIkC0Gm9TewUOtkCwBvUuUwTcMdXoPzV1muoxMFfl4MH4f4ri/fHVZ
-	 5sJSY4tUnkN510eO83ALMOIStA7gpLsL3uUvoxunyPf5B8cCzvjoY+mef/8QVDFxxw
-	 AFH1pS36a4L235msR0UL6uB83UfdQ33tDCpjTY8jVNSPkCNGkef1l+P+s7DlQCyZNv
-	 z6Y17+na56fDGUL2GKdrKnpStuFW3uAfWCpZ4ECvZHgSnCagQbNP4dNXEbXqrN0i/J
-	 +vOzuJ4VNuzqwO6GVYyVfefY3Js4KGRjhqbE2tCAt8DTY141YKHkV5v/S6viLTI3Bi
-	 yBV8SePx+ontA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C0F3823327;
-	Wed, 14 Aug 2024 02:30:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1723629485;
+	bh=c1DRi6NyZ8YeV/Jy6vvGJBLjP3EAf16yRRK8oKda6ws=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MtUf2FdeFRqOGdcCUM5bgD1AXWndhJkKX8W9H8BhmeLL+hueXS8i2+E3mrqHJUU7w
+	 ho6ZgYru45RAZ+AtOlDy4Ooli8jN3XXPzoxKhXSPYpBYjD7Qfufhfq/9vgWYVQDotR
+	 /WEWnN5r2F3rCZ6NDbRhf+QD9o5r4vjAbXs/YvpLD0WCuTkN2f8nhP2mGd+YmvVLiV
+	 qQjIYVNvqDhV4TeRFEcbDuecL+mmyxU8ntq8DXbZ2NxF5ckZIVOl5GzJGQ05FU00D1
+	 ldWLI7Np8dRpYYtrXNlN53StzC1X/pHnIULZL8JvVy6Sesc1cHLHxI7k11TCNIDEh4
+	 dDcRo1LrmLMwQ==
+Message-ID: <99199c2a-1dbf-439c-ad24-68ed8844e096@kernel.org>
+Date: Wed, 14 Aug 2024 17:58:01 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: netconsole: Constify struct config_item_type
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172360263174.1842448.3843615046791513447.git-patchwork-notify@kernel.org>
-Date: Wed, 14 Aug 2024 02:30:31 +0000
-References: <9c205b2b4bdb09fc9e9d2cb2f2936ec053da1b1b.1723325900.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <9c205b2b4bdb09fc9e9d2cb2f2936ec053da1b1b.1723325900.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: leitao@debian.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] f2fs: Use sysfs_emit_at() to simplify code
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+References: <0afb817e75a84859e1a86e1a7ba2041a9b852b6e.1723117820.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <0afb817e75a84859e1a86e1a7ba2041a9b852b6e.1723117820.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sat, 10 Aug 2024 23:39:04 +0200 you wrote:
-> 'struct config_item_type' is not modified in this driver.
+On 2024/8/8 19:50, Christophe JAILLET wrote:
+> This file already uses sysfs_emit(). So be consistent and also use
+> sysfs_emit_at().
 > 
-> This structure is only used with config_group_init_type_name() which takes
-> a const struct config_item_type* as a 3rd argument.
+> This slightly simplifies the code and makes it more readable.
 > 
-> This also makes things consistent with 'netconsole_target_type' witch is
-> already const.
-> 
-> [...]
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Here is the summary with links:
-  - [net-next] net: netconsole: Constify struct config_item_type
-    https://git.kernel.org/netdev/net-next/c/ed4290f39f41
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks,
