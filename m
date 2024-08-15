@@ -1,68 +1,70 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BD114A084
-	for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 11:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583691714C7
+	for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 11:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723721353; cv=none; b=UhI7KEEZqyJsRoOGhtOfm3Ivi7nyz+LHhxCYLXx+xp5VWg0SA3l9zF/0PRO/qhJpXwBe01QnabBpR2F0huHdzLrdSBJ1q6FgOfDE0TFk1FSLU084o5jDpULsRhbjMJhzrMav2QTdfuDmDQk4YWgE5/AJKULGGfZ4pXoNYRyhbn8=
+	t=1723721375; cv=none; b=ghxsyWQ5qyaUB87ZREBUeSuJmqOhQahWqn5DSx8E+ca2ix6ZOtz/VkHBZX1fSUKet0nKFKxB1BcFSkdLtA0S9U8yVsJ4JBzdxT7MoNaVclG+qRbYj0qTCirMuUCaKi8ukR1Bvj2Ub4wyH/CaLYQ8WJl1DQpGPNKEhL3jkC5Yb+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723721353; c=relaxed/simple;
-	bh=5yq7ytwNHn2qEvgK7GpGxCanu4fLp9NgxjldEljV6Iw=;
+	s=arc-20240116; t=1723721375; c=relaxed/simple;
+	bh=sr7j5UxC4QXw2ypOBkx4S07fGjjwP6NxkB/0YC95P0c=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TaJO0is5mPaQWS3bmHRWEDTeG3j+c7pvwYMExKzXx1HZpJZXJLWUL4OXJV1yfWbjBDIZyTzSwAjoJCnr4QPUDdLisZezXpBslugKuzKarjREr/xJkL95lQM7h1Kmpk8EnTwOCzWeh6P+Zu8XsE+nPoJHruYdXAQK8GJae747vos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s1JqzpUG; arc=none smtp.client-ip=209.85.208.44
+	 Content-Disposition; b=p/MLr4BzrBfcIVC20eafjdgQD9HnC2AZJqO74qnKtNRO1UKi1BCF2BazpbzV90M7r65CvZFoY/lche6AHsOI70JjPMTUOOU2VVwPwbQHtNjaIWQXwsom5uTVGZ4KTZj5YlBoubnbwPXkZKt8uAdMcNtJoQZZhVuUi1EYr0koJso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GuDeUI+P; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s1JqzpUG"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5bba25c1e15so1189194a12.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 04:29:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GuDeUI+P"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a156557026so1057032a12.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 04:29:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723721350; x=1724326150; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723721371; x=1724326171; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=54Zuy7nrqOr7HzwudR7mUSOwh6Bt+KzFm1OF0/li1xk=;
-        b=s1JqzpUGhteq3nJA6TbhRNhk945JVTr+EAbdJpJ9lSNj54j75VdexDFqAlu1cQ97I/
-         d0usb0OOAjR0jJkeBlL00zTFyQ3rx5qb3KKCr1QGx0LzkUNbovs9sBd8+uP3on+zwWJa
-         2tSLlG9hSVyeD2c2IvS5NDPsMGkdzjKNLMEbGQnUMaLYm93FVQS1iZNETVUXL0cAPqQq
-         +l9c5kdJC6ahjxpmSprYeWyjF+PEEs+OM3kXab0HDiQOFgnveks6Q4j1PuENI92pIMFJ
-         WuTolzzfTJyLN5y08TR0Hc2QFSY/GlfLNv1KwdZds9kTeEiuUyC4KvVkOZ//q4pF0Bwb
-         A+hw==
+        bh=JTAEGW3OQZ1pLkxp14RqDDaQpOm9zbUm4HJdeRXWAT0=;
+        b=GuDeUI+PD6t2GHTXyS9clkXdr5c+3iuodVEPzDFGaNMIQdJaAH7SSLCdokYM0mHziE
+         f3xmzmjqbbHnbbz8j17h/+xSxLFWVn1wyieDUbEXydIKsg8Lq6jeSQfZbHupzRHfpJ+a
+         cyvqAetO1Yz3psYN9MaRJg3vuduXx2+ybclb1jwo5gy4WkQ2Hxt/slrWBeXTnjZJ1Tq7
+         Q3vMmV2c1rhESMyQClBAU+RpS0ZqFAhcijQiTams4dTPAy5zl+gHgREr4/jZgm8JyASy
+         SNMzEJ+Ey5Q5vi2/q/DXg0/ktaNck4x/wmhFIYMEICgWDqSb6UXaWX0HlbsEaGYIL9Yd
+         MohA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723721350; x=1724326150;
+        d=1e100.net; s=20230601; t=1723721371; x=1724326171;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=54Zuy7nrqOr7HzwudR7mUSOwh6Bt+KzFm1OF0/li1xk=;
-        b=nHPuHtAUEe1Pp/IlLZ6UZojJ3LDoRa+mbVnRhvMbTcQX06LHpVZ12j32Ljrp+M5B1t
-         xQKVyf/DtRN1V/E1YQanEpJ27kKl9ZXUAaW0ZgIUEoSRog95ZeMPCD6El81770cOZXSJ
-         wjNol97PCvP8WlLqBUgzQThvIVpb9tnW1kpQl6TMdAHVhxn6ino9inFXnW9CEXBpH2JJ
-         qPP1V8OAhOXxydaHoOtnO17rZczLWpTdJdAdPMn23JtnrGieTeveAJb1ugz/3XDoECo5
-         x5d/IwmbgVCau5u3Bq4r6UMiEPjlVMFCShyxjtZON58G+LNMm2zWMaEHRUP6h4GHvHr3
-         F03A==
-X-Forwarded-Encrypted: i=1; AJvYcCXlLRV8Sqcb4ZS9Cc841ykJM2d7ATnEY6RMDGxCNXg1Yw3qvy8vrPvElWDYlJIdv52CbMMFEb+DHYEz+ywCocPnDpf6ycmgJv4j0Jx/JHKy
-X-Gm-Message-State: AOJu0YzT0nc6Rr1UDM1UhcM8AV6BMWFuSy92OOw8YT++txa6am6J1paO
-	po17YAx/GOQFF+z6jBSbNHQME4hZb5r5qAQSB4Iw3eDQLNZWPUmf9VXameNMHBk=
-X-Google-Smtp-Source: AGHT+IHodIlI/PTrXRzPvp5z7NIYGt15OMaZASUJrA7ZoG5lrLvhWQzVLdVc0XUqFxReFzqVCQiEnA==
-X-Received: by 2002:a05:6402:e81:b0:5be:9d95:3910 with SMTP id 4fb4d7f45d1cf-5bea1c7b6efmr3910351a12.22.1723721349606;
-        Thu, 15 Aug 2024 04:29:09 -0700 (PDT)
+        bh=JTAEGW3OQZ1pLkxp14RqDDaQpOm9zbUm4HJdeRXWAT0=;
+        b=Ba06DuBUgSpjB0Wrzp1gKzozzFps5l1mASRIxIaVYPIuK3908frE2hcWPgWeg6LbBk
+         2OZvcxIi5LLgquEE3KQy+jahsCsczE9oLG9dmjCMQ4vKt6DbjT4oqo89+bTtNm7uuPgS
+         JZWJW4joEBfg7MWU2ZcKx375vjrfExAHQdDPE0GR9AtJTzHfaQ8XgDHpUhq2fmrURW/w
+         Th0x1wtgvNkVC/pecfi0REcaQUIw4azxp+eq1nZXBtdKMX18kOjpQirN0Z+cxtQf7L3J
+         WjUJQAS0BHi0cG9eDZKtPqYRegRMzrYrO3wR2uRcPdDvRYwxurYbpRgLxZ+BM1zw9V+5
+         z8+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXdkZx/laRUJRjpu1Nh6P6g+gtlj06KiMAXVqTntoCjnWbIMdiHnj13AjcFPXBvfSa+epuA7sNLskCOd9MPOhWK3VaCyoMh8/L+svNMvUX7
+X-Gm-Message-State: AOJu0Yw7j9x7AeMVZPC1ENmyjxdIk0PdjtCt1XYVjTgwiw4T/rQEOQ0u
+	opCNmGF/vqShMMdRMgYlbE8VziS9BVuU/w9qGFRzv/27Yz6VpmCVStwOrTBIu/E=
+X-Google-Smtp-Source: AGHT+IH9/KXxc6zq/fnEB4afFMropsvLrpcMCVRcWcQLh3uIT597PZfVNI/aJoEfYCz472UFpsw6NQ==
+X-Received: by 2002:a17:907:e9e:b0:a77:c330:ad9d with SMTP id a640c23a62f3a-a836709548emr424568866b.61.1723721371552;
+        Thu, 15 Aug 2024 04:29:31 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbbe26f1sm802131a12.3.2024.08.15.04.29.08
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839356e2sm87568266b.105.2024.08.15.04.29.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 04:29:09 -0700 (PDT)
-Date: Thu, 15 Aug 2024 14:29:05 +0300
+        Thu, 15 Aug 2024 04:29:31 -0700 (PDT)
+Date: Thu, 15 Aug 2024 14:29:27 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: James Smart <jsmart2021@gmail.com>
-Cc: James Smart <james.smart@broadcom.com>,
-	Ram Vegesna <ram.vegesna@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Daniel Wagner <dwagner@suse.de>, linux-scsi@vger.kernel.org,
-	target-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] scsi: elx: libefc: potential use after free in
- efc_nport_vport_del()
-Message-ID: <b666ab26-6581-4213-9a3d-32a9147f0399@stanley.mountain>
+To: David Lin <yu-hao.lin@nxp.com>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Kalle Valo <kvalo@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Aloka Dixit <quic_alokad@quicinc.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Rafael Beims <rafael.beims@toradex.com>,
+	Ruan Jinjie <ruanjinjie@huawei.com>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] wifi: mwifiex: Fix uninitialized variable in
+ mwifiex_cfg80211_authenticate()
+Message-ID: <d7d043b2-95d5-4e1d-b340-5d7330053ac6@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,34 +75,33 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The kref_put() function will call nport->release if the refcount drops
-to zero.  The nport->release release function is _efc_nport_free() which
-frees "nport".  But then we dereference "nport" on the next line which
-is a use after free.  Re-order these lines to avoid the use after free.
+Smatch complains that:
 
-Fixes: fcd427303eb9 ("scsi: elx: libefc: SLI and FC PORT state machine interfaces")
+    drivers/net/wireless/marvell/mwifiex/cfg80211.c:4408 mwifiex_cfg80211_authenticate()
+    error: uninitialized symbol 'varptr'.
+
+It's a check for NULL, but "varptr" is either non-NULL or uninitialized.
+Initialize it to NULL.
+
+Fixes: 36995892c271 ("wifi: mwifiex: add host mlme for client mode")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-From static analysis.  Untested.  But it seems low risk.
----
- drivers/scsi/elx/libefc/efc_nport.c | 2 +-
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/elx/libefc/efc_nport.c b/drivers/scsi/elx/libefc/efc_nport.c
-index 2e83a667901f..1a7437f4328e 100644
---- a/drivers/scsi/elx/libefc/efc_nport.c
-+++ b/drivers/scsi/elx/libefc/efc_nport.c
-@@ -705,9 +705,9 @@ efc_nport_vport_del(struct efc *efc, struct efc_domain *domain,
- 	spin_lock_irqsave(&efc->lock, flags);
- 	list_for_each_entry(nport, &domain->nport_list, list_entry) {
- 		if (nport->wwpn == wwpn && nport->wwnn == wwnn) {
--			kref_put(&nport->ref, nport->release);
- 			/* Shutdown this NPORT */
- 			efc_sm_post_event(&nport->sm, EFC_EVT_SHUTDOWN, NULL);
-+			kref_put(&nport->ref, nport->release);
- 			break;
- 		}
- 	}
+diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+index 722ead51e912..7505de304052 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
++++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+@@ -4284,7 +4284,7 @@ mwifiex_cfg80211_authenticate(struct wiphy *wiphy,
+ 	struct mwifiex_txinfo *tx_info;
+ 	u32 tx_control = 0, pkt_type = PKT_TYPE_MGMT;
+ 	u8 trans = 1, status_code = 0;
+-	u8 *varptr;
++	u8 *varptr = NULL;
+ 
+ 	if (GET_BSS_ROLE(priv) == MWIFIEX_BSS_ROLE_UAP) {
+ 		mwifiex_dbg(priv->adapter, ERROR, "Interface role is AP\n");
 -- 
 2.43.0
 
