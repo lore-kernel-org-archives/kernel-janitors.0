@@ -1,87 +1,104 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CAE1AC8AD;
-	Thu, 15 Aug 2024 10:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E501AC8A2
+	for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 11:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723718459; cv=none; b=Qmuq+NxDe5jyYBRrlb9NkZCfkpPCLt3Y8yhShWc75pOZsxJn4fPtsJDZJcPFNf5en0KpfKPBxkObRnPO0D8mHAxjA8DS9lRs6QEQrQfy9UozTLU5L/yxhrujobVHkejj768+FxjspYWlaZEtAe+9nyyz/aRiXKY+na4y+9qTVS4=
+	t=1723721085; cv=none; b=MFMiaakS3S33mox89zp0F5/jUW9sNmT8Q+QGFjXoki8YR9CJhbslVaDeUG9pkRuQA1PgjzILZtuJ5F2bko1fm7XrAz26xiqfpkbL5WKdi5WBqtAorVSeWhxf0U0erN9QUj5h0DouS8DihkqBh5YKcpWGQQ9n2ivg7cKEI3GkkdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723718459; c=relaxed/simple;
-	bh=VZ9cTNHZpkO3l6Y2yfF3tTY4MRCPr2pj+l0Y2SBdlow=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LpVhtyNAKIRUfT1f92g4LAWu1xJwqmH5uKT9NStKlW2/mPqlm3ob8xWaI44LuTqqKv3ZWUooxjkX8YODWFLGLfXdekMHAPlv3ka3IhlqGoTSniUQM06KmIdFlmEn8AYxfmUzKc+9d3L22HuArT1FaqBbAsI9D301qff5HgtJeds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=KnZffoTb; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1723721085; c=relaxed/simple;
+	bh=hK9x6dzRpGC8KUkGCpjPQhxBbwERUW/es9KBxYVU670=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KGqm2nbkBILa1QKWjL5Q9NObUc+Cfkg85R5JmetfAZRD1lkZpHZEKHqHBKE5Od2CZbIWZKPpqmB2yDNDTV57Fe8PFbrV5dazizUNcq2EpdhW1TQ7c4t9/Rjr61FI+4F/yw10pLJL93E+ox70qBoIEkl1Qm0BoLuFrh2WtSW1o+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DOu4dnhl; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="KnZffoTb"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=a9GBbYPkeTfUE5fCEbTb5Vw8tBG93HmtU9gtgrmT2E4=; b=KnZffoTboGeiLJ31fWWRKFDwo8
-	gj8Ve/5+yxpOV6um7lLHc8KK4lyjkpPHARerdBEoi1xe4aupb2DWRJZF41FaR/zyzb/maEN6EKJBS
-	ozdIBQerQM9CUW5TBcCzcbUWqSf2UpF6/W33zSHPR0wIsVDTJlqrJ49qMipD5oyMhiE/hxr9G95eR
-	qVSd0IBduLgAnKu5pqnj69AN3uX3LoaN4Y8qexV1+B9BcNrpZdYzfAP8PGhtqQ9gKLHicaQeSsviZ
-	g7UBWPcr6yZqIClmLcrctpZDlu6i2aZySE0DB6T8mGy9aviB36/8Sx+n3BGIqjwM+kcrRCQeInA42
-	/Oa88cIg==;
-Received: from i53875a9f.versanet.de ([83.135.90.159] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1seXuE-0000nZ-US; Thu, 15 Aug 2024 12:40:35 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Daniel Vetter <daniel@ffwll.ch>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Maxime Ripard <mripard@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	David Airlie <airlied@gmail.com>,
-	Sandy Huang <hjc@rock-chips.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH] drm/rockchip: Constify struct drm_encoder_helper_funcs
-Date: Thu, 15 Aug 2024 12:40:28 +0200
-Message-Id: <172371788341.684432.4454726624748844330.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <128f9941aab3b1367eb7abca4ac26e2e5dd6ad21.1720903899.git.christophe.jaillet@wanadoo.fr>
-References: <128f9941aab3b1367eb7abca4ac26e2e5dd6ad21.1720903899.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DOu4dnhl"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52f024f468bso938193e87.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 04:24:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723721081; x=1724325881; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GwOw2yZJcLkYGRSEzM30uACAh5jcGiNrXqca9PAg4GE=;
+        b=DOu4dnhlT3BZlVlaSKn1nz9803EQDGtFuKsRgzrsaEuiBIW/rBLQERQKBonHnj9E6j
+         UFHBTxJf5+W6Sv0C++RENrF9f/T8NPghIXiUywpCWoVV2NS917FORrZzmcq2pS5KBWLT
+         N8+68l412t7zLBIPmQKw3izH2usF8//i/DAf2yyRN2hBnlDAa4zoC3xLpUYyIRGUOrWT
+         OSl3tQl2CC/JErtlp7s24NsjxKy+jQQGEk54lb0qU3VNuFCUYx7qQqhCm8lpvDyNqd1h
+         wqfjiiz5EyJDRhcHCxLWDzp84XOKSwvueKFczqUvAKVi2CZcGC2wfEIrB53cyYOI2Lxv
+         E4QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723721081; x=1724325881;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GwOw2yZJcLkYGRSEzM30uACAh5jcGiNrXqca9PAg4GE=;
+        b=Y9c39FwVtuLI/VENbWlW6t7rn+D4109BAart6oO/c7rM0gIOG8OnPyM4QxbQtRFkdi
+         hcEZc0PLVEYq8o4G24AbLQPvHRONnzbT9q3JOFY0LZpuynnUZiJrR2TNXuXuEI7iVKRO
+         Zt+xPCO9kTt+yEHbf/4lpnV2lhuCDQxydvhBsqqGSRXaSeyqkF238UtNEWWJC0tHX3ZA
+         h/vs8VOUTO/sTjZnacxEFx0+b9wCt3ZLspZX6XOE7GbXCQPshVqnKbBd8pLlntS7vS69
+         yd5JJO7IaXMwLMOs+rguyfCrHZhcTQyTuan1oZggWmINz1eLoUat7SpckC9S/+ht5VXk
+         DDlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWTkGmxwg3DZBew50fmFKf4sOJC/qyDzCZhiyN6GOu3iJfrwD8aIvWEsVphe2M6EgHUspb8AE+sTLByEulMoCKafjJHmDiEGmc78EgcbcLX
+X-Gm-Message-State: AOJu0Yz5qgKoj3MW3xK08gS8o+WxGsjI1ST5dOoC7+erz7Icua5woH6G
+	FdQhIuDaaeA3FJX0Qqbwx+F2X4QLVqi9szI5tMhq7U7zLjKwLRVXY/Frh9PcgjY=
+X-Google-Smtp-Source: AGHT+IFnZ0lunFouQFuMLE7ezWjdZu72TNWMHe+GJtkHOdU5m2D8sEMH3Uv1CpSNRxgkEkrOrUQ8HA==
+X-Received: by 2002:a05:6512:3c89:b0:52f:d15f:d46b with SMTP id 2adb3069b0e04-532eda7595cmr3980479e87.14.1723721080615;
+        Thu, 15 Aug 2024 04:24:40 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838cf05dsm86767766b.53.2024.08.15.04.24.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 04:24:40 -0700 (PDT)
+Date: Thu, 15 Aug 2024 14:24:36 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Nitin Rawat <quic_nitirawa@quicinc.com>,
+	Can Guo <quic_cang@quicinc.com>, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] scsi: ufs: ufshcd-pltfrm: Signedness bug in
+ ufshcd_parse_clock_info()
+Message-ID: <404a4727-89c6-410b-9ece-301fa399d4db@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Sat, 13 Jul 2024 22:52:05 +0200, Christophe JAILLET wrote:
-> 'struct drm_encoder_helper_funcs' is not modified in these drivers.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->    7458	    552	      0	   8010	   1f4a	drivers/gpu/drm/rockchip/analogix_dp-rockchip.o
-> 
-> [...]
+The "sz" variable needs to be a signed type for the error handling to
+work as intended.  Fortunately, there is some sanity checking on "sz" on
+the next line, so negative values would be caught and it doesn't really
+affect runtime.
 
-Applied, thanks!
+Fixes: eab0dce11dd9 ("scsi: ufs: ufshcd-pltfrm: Use of_property_count_u32_elems() to get property length")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/ufs/host/ufshcd-pltfrm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1/1] drm/rockchip: Constify struct drm_encoder_helper_funcs
-      commit: 7af62003181f8589b3b597ef96b147d4303771c4
-
-Best regards,
+diff --git a/drivers/ufs/host/ufshcd-pltfrm.c b/drivers/ufs/host/ufshcd-pltfrm.c
+index 0c9b303ccfa0..1f4f30d6cb42 100644
+--- a/drivers/ufs/host/ufshcd-pltfrm.c
++++ b/drivers/ufs/host/ufshcd-pltfrm.c
+@@ -31,7 +31,7 @@ static int ufshcd_parse_clock_info(struct ufs_hba *hba)
+ 	const char *name;
+ 	u32 *clkfreq = NULL;
+ 	struct ufs_clk_info *clki;
+-	size_t sz = 0;
++	ssize_t sz = 0;
+ 
+ 	if (!np)
+ 		goto out;
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.43.0
+
