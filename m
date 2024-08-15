@@ -1,87 +1,89 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC4517C9AD;
-	Thu, 15 Aug 2024 13:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D521B40862
+	for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 17:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723727036; cv=none; b=pM/BE3mnvJz/hnAbYF6i7yipl9GDhPgW/IfdRJ1imPqJwrGEJF4/jjAU4k4Ni/5oAqMx2vxccXbX9tGUk5YfGzt0OydBJgyCW+Voh8ioWl8B3okKeElZov0be/RA0ZsBaqaC5MFXH+cWA04bfcBd8NHRKQ8pE2Lf+jwSfqarlBg=
+	t=1723743125; cv=none; b=p240ABBy9sEGMVs0adN3GvBoux1pczU+56uIAH3nI+WAeqaEklN+42n2iV8oPbPCC8q/pIx6nMfse32ltkM+I+vIkb2Nk2HJiU2JxwrJlHTc2t+CGU2cNZ1cTYIs8Z35b12pw68+QzCyXVlLUh+emfxrTxEVDcRCxl+geAs7Dvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723727036; c=relaxed/simple;
-	bh=x9o4Z9egIeMfXj7TtgkdZQCXnCjreD361HEnOwUrCEs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=TWHtdrABSaUg8mRN8ag8mDbyAMjXJpJq42QQtgMoXJkJkmxKnNAfDD0nTs38A8vtd71ldvCWjPv8qWHkOfC2iDi2Kr1IVZsxDxikurRC6GgGhnHWFrijkJ2KhjC5Y8MnLRrEq1JF5CCt54flpRs1bvc/GlyeIvg1icVkwaCbog4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wl4xd4jCQz6K98G;
-	Thu, 15 Aug 2024 21:01:09 +0800 (CST)
-Received: from lhrpeml100003.china.huawei.com (unknown [7.191.160.210])
-	by mail.maildlp.com (Postfix) with ESMTPS id B00F0140B73;
-	Thu, 15 Aug 2024 21:03:50 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (7.191.163.240) by
- lhrpeml100003.china.huawei.com (7.191.160.210) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 15 Aug 2024 14:03:50 +0100
-Received: from lhrpeml500005.china.huawei.com ([7.191.163.240]) by
- lhrpeml500005.china.huawei.com ([7.191.163.240]) with mapi id 15.01.2507.039;
- Thu, 15 Aug 2024 14:03:50 +0100
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+	s=arc-20240116; t=1723743125; c=relaxed/simple;
+	bh=bJF14wmu9jsa43+2yR+/HNeL1nQvM/2EmjSz0o16s0I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T7JcYaNox8BpQMQLf0jVWDF3GBLNxCNe0DFxD6pdnSAosP4D4gsz82H870X7e0XHp1uqRwuispjqgxgfyk/VaW41IjZLhI9wmhTciCZ/eXqkOb16pz355OauI7PXSh5IMe+Tumm3nTZD6R++azGodJqIjzlz4cANxALA6kZoPAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=i+mps/zp; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i+mps/zp"
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70ea2f25bfaso925681b3a.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 10:32:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723743123; x=1724347923; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KJF/UOMD5eEDAA8HbpPiltNYMc2YMJhbR1FeAQVndRg=;
+        b=i+mps/zpqec7OWA39EeUDR6ldZZRxjf1SaUE1I+9ayfcr+x0OF/zFKuWisWwHhvqA4
+         tks3FyQD/WlSNm43djYyZ57hhoEvuORj7brCekyaopRjh8tOkKIhYZIvaYqAGbAaXtuN
+         YQn6Jq1Hbl61Z+/fOoTDf/Uo8WRXIozpQDzFU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723743123; x=1724347923;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KJF/UOMD5eEDAA8HbpPiltNYMc2YMJhbR1FeAQVndRg=;
+        b=suVi55o/EcIT9Eu07+u5LV47k0L6XN2cIqyQc9AGqWarC6H1eRQJwWTjjtzDhno3CU
+         TOf4e4tE7kf6vZaI3wOOTKFQYcUypxSJJ0xQANk0FRZhYGuxXF1cQf5rg5V+yc8byHKJ
+         +5qUEjCEr4F6WTGa2vd9GoN9po6GQ9jaH7UJtCw817gwmtW5AchU2LNLKYwizxTJhs49
+         vagiFwBfuxuw4uw2gP0R7sTGFnK2zICCfheqqFWeTb8fPOek+3JJ3/yffc0UCGUMk7fo
+         jKA+vj3Fzaohg2BbAFyc2uDjg54tMHQTzT6Wlg0LvV4VizGdav4pHA/OE76kiO+D/g13
+         ICpA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+La+4xVBFHbgwGUYsY8brjB5pssQEF1IH3XSbVsyGSUgPMJLbgJiiOlVYjE27lgp6VxsOBs4AdFI9W4GJqaDVVHctrxIUW4zCKZs6ESDg
+X-Gm-Message-State: AOJu0YwARAcDtAjY7KlCWG5BP6XXhh7dQYGyNIDcFKX5NChZRUxmXxbi
+	4TKGyyGyMkPHU54sS6qG9eDjTyX1qQg5JG44R+Qh7zdchtubSj/MalUtsxawJw==
+X-Google-Smtp-Source: AGHT+IFLsfQwfWCjQHECvs9QdlrI8dsI849S+aGHrh3pWIyHIF/blT6qN6I3iN7jmcbQFzZw6wEX9w==
+X-Received: by 2002:a05:6a00:14d2:b0:705:9a28:aa04 with SMTP id d2e1a72fcca58-713c4ed2c6fmr532021b3a.23.1723743123067;
+        Thu, 15 Aug 2024 10:32:03 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:5afb:2a2e:f5be:2aed])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7127aef68casm1234886b3a.108.2024.08.15.10.32.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2024 10:32:02 -0700 (PDT)
+Date: Thu, 15 Aug 2024 10:31:59 -0700
+From: Brian Norris <briannorris@chromium.org>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Joerg
- Roedel" <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>, Nicolin Chen
-	<nicolinc@nvidia.com>, Michael Shavit <mshavit@google.com>, Mostafa Saleh
-	<smostafa@google.com>, Lu Baolu <baolu.lu@linux.intel.com>, Kevin Tian
-	<kevin.tian@intel.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
-	<kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] iommu/arm-smmu-v3: Fix a NULL vs IS_ERR() check
-Thread-Topic: [PATCH] iommu/arm-smmu-v3: Fix a NULL vs IS_ERR() check
-Thread-Index: AQHa7wXNPo+CG2I9vkChFeAuisDOE7IoSPZg
-Date: Thu, 15 Aug 2024 13:03:50 +0000
-Message-ID: <cc6b31a1cb334ecf8458e888d66e362a@huawei.com>
-References: <9208cd0d-8105-40df-93e9-bdcdf0d55eec@stanley.mountain>
-In-Reply-To: <9208cd0d-8105-40df-93e9-bdcdf0d55eec@stanley.mountain>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Cc: David Lin <yu-hao.lin@nxp.com>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Kalle Valo <kvalo@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Aloka Dixit <quic_alokad@quicinc.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Rafael Beims <rafael.beims@toradex.com>,
+	Ruan Jinjie <ruanjinjie@huawei.com>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] wifi: mwifiex: Fix uninitialized variable in
+ mwifiex_cfg80211_authenticate()
+Message-ID: <Zr47j60F2NjclfcE@google.com>
+References: <d7d043b2-95d5-4e1d-b340-5d7330053ac6@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d7d043b2-95d5-4e1d-b340-5d7330053ac6@stanley.mountain>
 
-
-
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@linaro.org>
-> Sent: Thursday, August 15, 2024 12:25 PM
-> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-> Cc: Will Deacon <will@kernel.org>; Robin Murphy
-> <robin.murphy@arm.com>; Joerg Roedel <joro@8bytes.org>; Jason
-> Gunthorpe <jgg@ziepe.ca>; Nicolin Chen <nicolinc@nvidia.com>; Michael
-> Shavit <mshavit@google.com>; Mostafa Saleh <smostafa@google.com>; Lu
-> Baolu <baolu.lu@linux.intel.com>; Kevin Tian <kevin.tian@intel.com>; linu=
-x-
-> arm-kernel@lists.infradead.org; iommu@lists.linux.dev; linux-
-> kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [PATCH] iommu/arm-smmu-v3: Fix a NULL vs IS_ERR() check
->=20
-> The arm_smmu_domain_alloc() function returns error pointers on error.  It
-> doesn't return NULL.  Update the error checking to match.
->=20
-> Fixes: 52acd7d8a413 ("iommu/arm-smmu-v3: Add support for
-> domain_alloc_user fn")
+On Thu, Aug 15, 2024 at 02:29:27PM +0300, Dan Carpenter wrote:
+> Smatch complains that:
+> 
+>     drivers/net/wireless/marvell/mwifiex/cfg80211.c:4408 mwifiex_cfg80211_authenticate()
+>     error: uninitialized symbol 'varptr'.
+> 
+> It's a check for NULL, but "varptr" is either non-NULL or uninitialized.
+> Initialize it to NULL.
+> 
+> Fixes: 36995892c271 ("wifi: mwifiex: add host mlme for client mode")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-
-Thanks,
-Shameer
+Acked-by: Brian Norris <briannorris@chromium.org>
