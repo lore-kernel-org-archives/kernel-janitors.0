@@ -1,68 +1,103 @@
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4091A17C9
-	for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 01:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F41210198
+	for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 09:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723686393; cv=none; b=epJb5yaDfvzuJyu6Qzrv4Uf4c1POl9s8e1CVyWza2O7qkfbbEZSiLz7zqoTpiE2NV2NfkiOL7qS+vcZmVwtdiRlhvT8bWzuHedMax8EG3U2h7UJK52TqquH1AXqqrTY4JYOxNCvAhHvJ199y7R/OCxPwmSRJEzFalAuLHOp2VMs=
+	t=1723713913; cv=none; b=jy7EIbneRgKJgnaSGNJPwkBNMkV2CK1F5kvO059lySBNsT0WXgQMxde34uQhxsDK7I5fSlKElBWrkQVMueE35c2FLn7NnvmK69ZlPQMiTTA3ez/5vLs74B9gAdxvlNlZy1voxcXIvflI6kRsH43oO6RwcDntjOkr9qLEsgbKQGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723686393; c=relaxed/simple;
-	bh=JfNXTbN2vFBA4WbPegiGnNE5kdJG80WG624ogmB90wc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OaZVz7x6qZLKsjpymOQrpwg1zipO0OicJhX2vRc2SBoyyLnbMXIlOzGCk04meeqcrrimx19CBrs/X6JlwgJtKjQJG4if/dSIT4ived9F5ELX6mENZr/I4sgLoYIzS1rchLqrmKeOZpbPX/Ugzpj7R7rMA5od1jQTukkswzxUsNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=UDe3cKc5; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1723713913; c=relaxed/simple;
+	bh=g/lyUWU8eCPaBAfe7GWY+aklIjDnUSlq0pYrPSLfBH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IugUUCP8z4nUCXm4Av8y8YW0w2GfVbpxPKf4zHt2kYXkUOg4cjiMrOrwll8CYjg7awZMyb6cOI5h8cjdnivJbMMFZT3ITpPPdgpggG3jZUVUhjb6m44RqQUvBBD0LJtrQl+vHSEKXCNkJ70p7lihvY9nrfYpUATvr4ix2tLpzSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W03e3rnW; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="UDe3cKc5"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W03e3rnW"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4280b3a7efaso4309295e9.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 02:25:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1723686388;
-	bh=JfNXTbN2vFBA4WbPegiGnNE5kdJG80WG624ogmB90wc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=UDe3cKc5KJJlKqWSL/NjS+MuyiwRB50kZTn99b6pgB9GiKGfTOYSdgq40fcnSx+MB
-	 gQKGD3yLhs7l+zaQ9NSwmhnv8RGFhkdLePbeZ2Bid5zf8z516saYNcDhFkOZh12zWi
-	 hEKneNyMapJOLfJryKLQ6H1mQ3ZQpzPfW6q4IXx/ESss4Du2MGAbC8VDxhYKC4WO5C
-	 NthkcgmYGzZK8vmmViXCPrOsE5QLJjlOoWSrkx/WV+OY5JKIsk74hPEFHcfJ2a/SAk
-	 SJqZnQ9qZmXk8mI0v8En25hByAzPI1kHllHTOdHLKIRc8VcU5CZHHkWjHjnJdArKCT
-	 56kgoCmlmnPcA==
-Received: from [192.168.2.60] (210-10-213-150.per.static-ipl.aapt.com.au [210.10.213.150])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 21EF664C85;
-	Thu, 15 Aug 2024 09:46:28 +0800 (AWST)
-Message-ID: <770014ad705a6d9fb4fb22149743ca09886b05be.camel@codeconstruct.com.au>
-Subject: Re: [bug report] mctp: Add route input to socket tests
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: kernel-janitors@vger.kernel.org
-Date: Thu, 15 Aug 2024 09:46:27 +0800
-In-Reply-To: <f8de2605-e21c-44d4-af5a-2fd139830ae2@stanley.mountain>
-References: <f8de2605-e21c-44d4-af5a-2fd139830ae2@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.46.4-2 
+        d=linaro.org; s=google; t=1723713909; x=1724318709; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GIRH8ZYT8hEH2GbZtKPw+s8BGj/6k9t0nmVaDj+JHRA=;
+        b=W03e3rnW/HgTS1NY2F1u5dD8MRAA1C+JCTjFBJDdicpnyXxw5Md/4ncMhOc5oOxCCj
+         6PfdlTaJjDi1SdSx2BgFz5ByhBLEdF+YvdT+kft4hdy/RkvF9l+9wYO+kH+DMjnnnvb5
+         YOkQ3Ov1562yS5mhVLPBNRS+qd8wXlcKuPILA6Agf3wbIXBDdxMbgaJWG8pEd++ysE+y
+         6aAC2zN5iNt0vEUg0jpPGQX4mAPhaatge3JL5lheDaG5X9w4Yef5lVhZJlim/C0jt90w
+         sTHpbKgU7kDx4MOl9jzZgTRK18ufg2P0we9HRiai3kvoYsY5gFZBePJyGEHMfVvS5p84
+         pDoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723713909; x=1724318709;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GIRH8ZYT8hEH2GbZtKPw+s8BGj/6k9t0nmVaDj+JHRA=;
+        b=MH02P7rloUz7jYqULso0IhXr0poZLxwbxWbATMqzUfdmfD6XLMUQf/YlucUyyhvIr9
+         C+kYAnt/qiJl7RodcKHfKSqNhkvsVZI+O8Z5TWit8THAsSIBmIkCcv31rM2BNENpFsjN
+         lnuFhh9woOOtbm31pfEw+FZwL7Yq4CKYIV9rYxtV9Z/KBqXfW0z0wo4TCJoWKB5Iq8Ee
+         1sOgEfatMg76iBYUMdHZ8IDvWWWbOOmdjV0aozCo3HebuNgPl09IAB+EqJOm6jBHvCrD
+         vJCNwgcFPNvwh5ef8CVQFnlJJcz3wWFEHhHoI1Z+FAhrbZP32eQZ1HI0ntJ4cl1jvF0Z
+         Zf0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWHciNVbTvH3ardlGU60ZrR6wup1usuDGCsmCad1vD8YOIQo+U0naya97P0voMjnrLxwPw8xAxBHwFa+IUSrdhsic+wFXJH4F6vaMbLiM/c
+X-Gm-Message-State: AOJu0YwIIkK3NoLiGDwRA2r21hwvMgUO1mDiLducNax3eI+HZ6/IwJwD
+	Lv5aEncbkFfXj6lenrU8xPmZwiLEFw72sODsuS4KKGuMajmSf5+IPfpSNfwlzAk=
+X-Google-Smtp-Source: AGHT+IE+tPJUHOuuXvabrngdhrbZZWdr80Ttb/0EIb25+QGq4bWEGFirvdOTImNxC7SQrW407I5RNg==
+X-Received: by 2002:a05:600c:4f45:b0:426:5b29:b5c8 with SMTP id 5b1f17b1804b1-429dd25f6camr34903405e9.28.1723713909406;
+        Thu, 15 Aug 2024 02:25:09 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded71ef0sm42739315e9.36.2024.08.15.02.25.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 02:25:08 -0700 (PDT)
+Date: Thu, 15 Aug 2024 12:25:04 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Amol Maheshwari <amahesh@qti.qualcomm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Sukrut Bellary <sukrut.bellary@linux.com>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH v2] misc: fastrpc: Fix double free of 'buf' in error path
+Message-ID: <a301b77e-b833-482e-afa1-5306bd8fc8e7@stanley.mountain>
+References: <20230602113602.1271695-1-sukrut.bellary@linux.com>
+ <168656748193.162074.17313550564907901438.b4-ty@linaro.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <168656748193.162074.17313550564907901438.b4-ty@linaro.org>
 
-SGkgRGFuLApUaGFua3MgZm9yIHRoZSByZXBvcnQuCgo+IENvbW1pdCA4ODkyYzA0OTA3NzkgKCJt
-Y3RwOiBBZGQgcm91dGUgaW5wdXQgdG8gc29ja2V0IHRlc3RzIikgZnJvbQo+IE9jdCAzLCAyMDIx
-IChsaW51eC1uZXh0KSwgbGVhZHMgdG8gdGhlIGZvbGxvd2luZyBTbWF0Y2ggc3RhdGljCj4gY2hl
-Y2tlciB3YXJuaW5nOgo+IAo+IMKgwqDCoMKgwqDCoMKgwqBuZXQvbWN0cC90ZXN0L3JvdXRlLXRl
-c3QuYzozNjkgbWN0cF90ZXN0X3JvdXRlX2lucHV0X3NrKCkKPiDCoMKgwqDCoMKgwqDCoMKgd2Fy
-bjogJ3NrYicgd2FzIGFscmVhZHkgZnJlZWQuIChsaW5lIDM2NSkKClsuLi5dCgo+IMKgwqDCoCAz
-NjMgCj4gwqDCoMKgIDM2NMKgwqDCoMKgwqDCoMKgwqAgaWYgKHBhcmFtcy0+ZGVsaXZlcikgewo+
-IMKgwqDCoCAzNjXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBLVU5JVF9FWFBFQ1Rf
-RVEodGVzdCwgcmMsIDApOwo+IMKgwqDCoCAzNjYgCj4gwqDCoMKgIDM2N8KgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIHNrYjIgPSBza2JfcmVjdl9kYXRhZ3JhbShzb2NrLT5zaywgTVNH
-X0RPTlRXQUlULCAmcmMpOwo+IMKgwqDCoCAzNjjCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCBLVU5JVF9FWFBFQ1RfTk9UX0VSUl9PUl9OVUxMKHRlc3QsIHNrYjIpOwo+IC0tPiAzNjnC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBLVU5JVF9FWFBFQ1RfRVEodGVzdCwgc2ti
-LT5sZW4sIDEpOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBeXl5eXl5eXgo+
-IEkgd29uZGVyIGlmIHRoaXMgd2FzIGludGVuZGVkIHRvIGJlIHNrYjItPmxlbj8KClllcCwgZXhh
-Y3RseS4gR29vZCBjYXRjaC4KCkknbGwgZ2V0IGEgcGF0Y2ggc2VudCBzb29uLgoKQ2hlZXJzLAoK
-CkplcmVteQo=
+On Mon, Jun 12, 2023 at 11:58:01AM +0100, Srinivas Kandagatla wrote:
+> 
+> On Fri, 02 Jun 2023 04:36:02 -0700, Sukrut Bellary wrote:
+> > smatch warning:
+> > drivers/misc/fastrpc.c:1926 fastrpc_req_mmap() error: double free of 'buf'
+> > 
+> > In fastrpc_req_mmap() error path, the fastrpc buffer is freed in
+> > fastrpc_req_munmap_impl() if unmap is successful.
+> > 
+> > But in the end, there is an unconditional call to fastrpc_buf_free().
+> > So the above case triggers the double free of fastrpc buf.
+> > 
+> > [...]
+> 
+> Applied, thanks!
+> 
+> [1/1] misc: fastrpc: Fix double free of 'buf' in error path
+>       commit: 5b3006fffce89706a12741d7f657869ca2be1640
+> 
+
+This patch wasn't actually applied.  I'm not sure what went wrong.
+
+regards,
+dan carpenter
 
