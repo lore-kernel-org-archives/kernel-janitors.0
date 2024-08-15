@@ -1,103 +1,87 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F41210198
-	for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 09:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CAE1AC8AD;
+	Thu, 15 Aug 2024 10:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723713913; cv=none; b=jy7EIbneRgKJgnaSGNJPwkBNMkV2CK1F5kvO059lySBNsT0WXgQMxde34uQhxsDK7I5fSlKElBWrkQVMueE35c2FLn7NnvmK69ZlPQMiTTA3ez/5vLs74B9gAdxvlNlZy1voxcXIvflI6kRsH43oO6RwcDntjOkr9qLEsgbKQGM=
+	t=1723718459; cv=none; b=Qmuq+NxDe5jyYBRrlb9NkZCfkpPCLt3Y8yhShWc75pOZsxJn4fPtsJDZJcPFNf5en0KpfKPBxkObRnPO0D8mHAxjA8DS9lRs6QEQrQfy9UozTLU5L/yxhrujobVHkejj768+FxjspYWlaZEtAe+9nyyz/aRiXKY+na4y+9qTVS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723713913; c=relaxed/simple;
-	bh=g/lyUWU8eCPaBAfe7GWY+aklIjDnUSlq0pYrPSLfBH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IugUUCP8z4nUCXm4Av8y8YW0w2GfVbpxPKf4zHt2kYXkUOg4cjiMrOrwll8CYjg7awZMyb6cOI5h8cjdnivJbMMFZT3ITpPPdgpggG3jZUVUhjb6m44RqQUvBBD0LJtrQl+vHSEKXCNkJ70p7lihvY9nrfYpUATvr4ix2tLpzSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W03e3rnW; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1723718459; c=relaxed/simple;
+	bh=VZ9cTNHZpkO3l6Y2yfF3tTY4MRCPr2pj+l0Y2SBdlow=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LpVhtyNAKIRUfT1f92g4LAWu1xJwqmH5uKT9NStKlW2/mPqlm3ob8xWaI44LuTqqKv3ZWUooxjkX8YODWFLGLfXdekMHAPlv3ka3IhlqGoTSniUQM06KmIdFlmEn8AYxfmUzKc+9d3L22HuArT1FaqBbAsI9D301qff5HgtJeds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=KnZffoTb; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W03e3rnW"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4280b3a7efaso4309295e9.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 02:25:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723713909; x=1724318709; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GIRH8ZYT8hEH2GbZtKPw+s8BGj/6k9t0nmVaDj+JHRA=;
-        b=W03e3rnW/HgTS1NY2F1u5dD8MRAA1C+JCTjFBJDdicpnyXxw5Md/4ncMhOc5oOxCCj
-         6PfdlTaJjDi1SdSx2BgFz5ByhBLEdF+YvdT+kft4hdy/RkvF9l+9wYO+kH+DMjnnnvb5
-         YOkQ3Ov1562yS5mhVLPBNRS+qd8wXlcKuPILA6Agf3wbIXBDdxMbgaJWG8pEd++ysE+y
-         6aAC2zN5iNt0vEUg0jpPGQX4mAPhaatge3JL5lheDaG5X9w4Yef5lVhZJlim/C0jt90w
-         sTHpbKgU7kDx4MOl9jzZgTRK18ufg2P0we9HRiai3kvoYsY5gFZBePJyGEHMfVvS5p84
-         pDoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723713909; x=1724318709;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GIRH8ZYT8hEH2GbZtKPw+s8BGj/6k9t0nmVaDj+JHRA=;
-        b=MH02P7rloUz7jYqULso0IhXr0poZLxwbxWbATMqzUfdmfD6XLMUQf/YlucUyyhvIr9
-         C+kYAnt/qiJl7RodcKHfKSqNhkvsVZI+O8Z5TWit8THAsSIBmIkCcv31rM2BNENpFsjN
-         lnuFhh9woOOtbm31pfEw+FZwL7Yq4CKYIV9rYxtV9Z/KBqXfW0z0wo4TCJoWKB5Iq8Ee
-         1sOgEfatMg76iBYUMdHZ8IDvWWWbOOmdjV0aozCo3HebuNgPl09IAB+EqJOm6jBHvCrD
-         vJCNwgcFPNvwh5ef8CVQFnlJJcz3wWFEHhHoI1Z+FAhrbZP32eQZ1HI0ntJ4cl1jvF0Z
-         Zf0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWHciNVbTvH3ardlGU60ZrR6wup1usuDGCsmCad1vD8YOIQo+U0naya97P0voMjnrLxwPw8xAxBHwFa+IUSrdhsic+wFXJH4F6vaMbLiM/c
-X-Gm-Message-State: AOJu0YwIIkK3NoLiGDwRA2r21hwvMgUO1mDiLducNax3eI+HZ6/IwJwD
-	Lv5aEncbkFfXj6lenrU8xPmZwiLEFw72sODsuS4KKGuMajmSf5+IPfpSNfwlzAk=
-X-Google-Smtp-Source: AGHT+IE+tPJUHOuuXvabrngdhrbZZWdr80Ttb/0EIb25+QGq4bWEGFirvdOTImNxC7SQrW407I5RNg==
-X-Received: by 2002:a05:600c:4f45:b0:426:5b29:b5c8 with SMTP id 5b1f17b1804b1-429dd25f6camr34903405e9.28.1723713909406;
-        Thu, 15 Aug 2024 02:25:09 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded71ef0sm42739315e9.36.2024.08.15.02.25.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 02:25:08 -0700 (PDT)
-Date: Thu, 15 Aug 2024 12:25:04 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Amol Maheshwari <amahesh@qti.qualcomm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Sukrut Bellary <sukrut.bellary@linux.com>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="KnZffoTb"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=a9GBbYPkeTfUE5fCEbTb5Vw8tBG93HmtU9gtgrmT2E4=; b=KnZffoTboGeiLJ31fWWRKFDwo8
+	gj8Ve/5+yxpOV6um7lLHc8KK4lyjkpPHARerdBEoi1xe4aupb2DWRJZF41FaR/zyzb/maEN6EKJBS
+	ozdIBQerQM9CUW5TBcCzcbUWqSf2UpF6/W33zSHPR0wIsVDTJlqrJ49qMipD5oyMhiE/hxr9G95eR
+	qVSd0IBduLgAnKu5pqnj69AN3uX3LoaN4Y8qexV1+B9BcNrpZdYzfAP8PGhtqQ9gKLHicaQeSsviZ
+	g7UBWPcr6yZqIClmLcrctpZDlu6i2aZySE0DB6T8mGy9aviB36/8Sx+n3BGIqjwM+kcrRCQeInA42
+	/Oa88cIg==;
+Received: from i53875a9f.versanet.de ([83.135.90.159] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1seXuE-0000nZ-US; Thu, 15 Aug 2024 12:40:35 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Daniel Vetter <daniel@ffwll.ch>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Maxime Ripard <mripard@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	David Airlie <airlied@gmail.com>,
+	Sandy Huang <hjc@rock-chips.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
 	kernel-janitors@vger.kernel.org,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH v2] misc: fastrpc: Fix double free of 'buf' in error path
-Message-ID: <a301b77e-b833-482e-afa1-5306bd8fc8e7@stanley.mountain>
-References: <20230602113602.1271695-1-sukrut.bellary@linux.com>
- <168656748193.162074.17313550564907901438.b4-ty@linaro.org>
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] drm/rockchip: Constify struct drm_encoder_helper_funcs
+Date: Thu, 15 Aug 2024 12:40:28 +0200
+Message-Id: <172371788341.684432.4454726624748844330.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <128f9941aab3b1367eb7abca4ac26e2e5dd6ad21.1720903899.git.christophe.jaillet@wanadoo.fr>
+References: <128f9941aab3b1367eb7abca4ac26e2e5dd6ad21.1720903899.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <168656748193.162074.17313550564907901438.b4-ty@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 12, 2023 at 11:58:01AM +0100, Srinivas Kandagatla wrote:
+On Sat, 13 Jul 2024 22:52:05 +0200, Christophe JAILLET wrote:
+> 'struct drm_encoder_helper_funcs' is not modified in these drivers.
 > 
-> On Fri, 02 Jun 2023 04:36:02 -0700, Sukrut Bellary wrote:
-> > smatch warning:
-> > drivers/misc/fastrpc.c:1926 fastrpc_req_mmap() error: double free of 'buf'
-> > 
-> > In fastrpc_req_mmap() error path, the fastrpc buffer is freed in
-> > fastrpc_req_munmap_impl() if unmap is successful.
-> > 
-> > But in the end, there is an unconditional call to fastrpc_buf_free().
-> > So the above case triggers the double free of fastrpc buf.
-> > 
-> > [...]
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
 > 
-> Applied, thanks!
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>    7458	    552	      0	   8010	   1f4a	drivers/gpu/drm/rockchip/analogix_dp-rockchip.o
 > 
-> [1/1] misc: fastrpc: Fix double free of 'buf' in error path
->       commit: 5b3006fffce89706a12741d7f657869ca2be1640
-> 
+> [...]
 
-This patch wasn't actually applied.  I'm not sure what went wrong.
+Applied, thanks!
 
-regards,
-dan carpenter
+[1/1] drm/rockchip: Constify struct drm_encoder_helper_funcs
+      commit: 7af62003181f8589b3b597ef96b147d4303771c4
 
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
