@@ -1,70 +1,69 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E501AC8A2
-	for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 11:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BB87DA7D
+	for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 11:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723721085; cv=none; b=MFMiaakS3S33mox89zp0F5/jUW9sNmT8Q+QGFjXoki8YR9CJhbslVaDeUG9pkRuQA1PgjzILZtuJ5F2bko1fm7XrAz26xiqfpkbL5WKdi5WBqtAorVSeWhxf0U0erN9QUj5h0DouS8DihkqBh5YKcpWGQQ9n2ivg7cKEI3GkkdU=
+	t=1723721111; cv=none; b=s76qAw+nTwApbHDKOSc0GHsCxD1vAGRleabINYNMs+PtVXeb58qowrE7f+6revXsB2Z9fBAUEnl4hO9hIlsrYXBwFiheWJzssW5lPFDox4ghheuY00WIjwohZMaSMRZ7EoARYtQ6/RQ07ZSoie/RKbcMcoXFqVlgZr1GtCuH+2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723721085; c=relaxed/simple;
-	bh=hK9x6dzRpGC8KUkGCpjPQhxBbwERUW/es9KBxYVU670=;
+	s=arc-20240116; t=1723721111; c=relaxed/simple;
+	bh=lFo5gIFDvq0nCBY9vqftpLu+gTHD6YABYYNyYZUhWPg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KGqm2nbkBILa1QKWjL5Q9NObUc+Cfkg85R5JmetfAZRD1lkZpHZEKHqHBKE5Od2CZbIWZKPpqmB2yDNDTV57Fe8PFbrV5dazizUNcq2EpdhW1TQ7c4t9/Rjr61FI+4F/yw10pLJL93E+ox70qBoIEkl1Qm0BoLuFrh2WtSW1o+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DOu4dnhl; arc=none smtp.client-ip=209.85.167.52
+	 Content-Disposition; b=gFPEVjlzkik5aa4o2PPo8cIFHA9gmvA66Xdy5Zw3UTXV1bQYf3Z23FqdNDOMCW6dRR9/kdc4F1G/jjs22NsK8tng2WlcB5VQX19Sieo7BgT7UgIK1wq9IiPUwEuRrSOuBG4PYpcLLnGwu5xTkkW0H0U9q4Y8vVaAEv3pJ72EvPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UUIfyvYr; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DOu4dnhl"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52f024f468bso938193e87.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 04:24:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UUIfyvYr"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso1267178a12.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 04:25:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723721081; x=1724325881; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723721108; x=1724325908; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=GwOw2yZJcLkYGRSEzM30uACAh5jcGiNrXqca9PAg4GE=;
-        b=DOu4dnhlT3BZlVlaSKn1nz9803EQDGtFuKsRgzrsaEuiBIW/rBLQERQKBonHnj9E6j
-         UFHBTxJf5+W6Sv0C++RENrF9f/T8NPghIXiUywpCWoVV2NS917FORrZzmcq2pS5KBWLT
-         N8+68l412t7zLBIPmQKw3izH2usF8//i/DAf2yyRN2hBnlDAa4zoC3xLpUYyIRGUOrWT
-         OSl3tQl2CC/JErtlp7s24NsjxKy+jQQGEk54lb0qU3VNuFCUYx7qQqhCm8lpvDyNqd1h
-         wqfjiiz5EyJDRhcHCxLWDzp84XOKSwvueKFczqUvAKVi2CZcGC2wfEIrB53cyYOI2Lxv
-         E4QA==
+        bh=sJgccsMLKlvTr7kW7rYfi0K+07lJJOFz1A3IB6P2Qqs=;
+        b=UUIfyvYrsE6q+q7OtagMyPLfJcAWaELhx+at2X0k+00LmoCsU4raacO+uj9L6nwtMB
+         ENi7JCTaQ5lZahVNxn1bsg1xQeA1JC9czjzys3ZG479YcYQQKiECxYCdhEZLOcILHCTl
+         zLq/9aYKJPFCEvRkabPo5K+lWJkh3Ei6uKYnEggBSQWiN02xAFANr8BnyBJj3rrb3/rR
+         XBDMKt13ArvR+WrCAyR61kcqUI1YEL/uBp2/AALVTWNjRKbi9shsqHIq/t6P/FzfIinn
+         irWfJhlsDV0bG8g1OEnEmnpoefyqjFypyV+WFZh8QkkML4j8o8AYOswEcRhws6t3wdEJ
+         tXpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723721081; x=1724325881;
+        d=1e100.net; s=20230601; t=1723721108; x=1724325908;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GwOw2yZJcLkYGRSEzM30uACAh5jcGiNrXqca9PAg4GE=;
-        b=Y9c39FwVtuLI/VENbWlW6t7rn+D4109BAart6oO/c7rM0gIOG8OnPyM4QxbQtRFkdi
-         hcEZc0PLVEYq8o4G24AbLQPvHRONnzbT9q3JOFY0LZpuynnUZiJrR2TNXuXuEI7iVKRO
-         Zt+xPCO9kTt+yEHbf/4lpnV2lhuCDQxydvhBsqqGSRXaSeyqkF238UtNEWWJC0tHX3ZA
-         h/vs8VOUTO/sTjZnacxEFx0+b9wCt3ZLspZX6XOE7GbXCQPshVqnKbBd8pLlntS7vS69
-         yd5JJO7IaXMwLMOs+rguyfCrHZhcTQyTuan1oZggWmINz1eLoUat7SpckC9S/+ht5VXk
-         DDlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTkGmxwg3DZBew50fmFKf4sOJC/qyDzCZhiyN6GOu3iJfrwD8aIvWEsVphe2M6EgHUspb8AE+sTLByEulMoCKafjJHmDiEGmc78EgcbcLX
-X-Gm-Message-State: AOJu0Yz5qgKoj3MW3xK08gS8o+WxGsjI1ST5dOoC7+erz7Icua5woH6G
-	FdQhIuDaaeA3FJX0Qqbwx+F2X4QLVqi9szI5tMhq7U7zLjKwLRVXY/Frh9PcgjY=
-X-Google-Smtp-Source: AGHT+IFnZ0lunFouQFuMLE7ezWjdZu72TNWMHe+GJtkHOdU5m2D8sEMH3Uv1CpSNRxgkEkrOrUQ8HA==
-X-Received: by 2002:a05:6512:3c89:b0:52f:d15f:d46b with SMTP id 2adb3069b0e04-532eda7595cmr3980479e87.14.1723721080615;
-        Thu, 15 Aug 2024 04:24:40 -0700 (PDT)
+        bh=sJgccsMLKlvTr7kW7rYfi0K+07lJJOFz1A3IB6P2Qqs=;
+        b=AfvYTCAKp7I4LPsQFOzhRJYuDv4iHrq7gCrDjeVrSBb8Slyc9NVPegCdfAgBa24814
+         MbB2GK8cmkNfz6WL2uXu2YPAvkh0M/KtYMYQTL2Xo7PxnoiEJAKiJk7KzVlplbYHD5b6
+         N4ostNOsMwZ/GpXTmtoIK/zZIkAAlFq9NnwD25zuS+Q6kIJT/fDkmBtBHtfDmwO6WNpx
+         MWVx7ly2Y8DU2nXS3OZTX/hu5703qbHvboBzES8C/NcVlE86/0OiaUkbee0Pt/puKJoW
+         LByEfGAW4mUZj8dkASi0BcDPXRP8UwNG4qYef/zWc72VfOSwMj1g89tyx26mnQhrVXrB
+         OYFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVreM9282BQoDgyfY8yfGNDZ8RupQhXn5nX4DP16xhTZuAUW4VE30umlEk63k9BQs+kA7lhQDNJvEJV0myt2BO4Pqb295SEy+t8kFRPZJh
+X-Gm-Message-State: AOJu0Yx3sHdFthsO+fG3wYMPDlCJyF/abfXGPcbYzUm407EKps1t/r3a
+	hFMiiKzeNLWvaCau6TVkgHldtPCSMWHIBaYfMomk/Ls73a9FTlrRCNIld+qgyNE=
+X-Google-Smtp-Source: AGHT+IHwCYaVWrDMM/XxSAgRaGSfa25IQdFx+8Hr+PoYjdMN7joZtfNCMY3zxeI7foru5gpy24rJbQ==
+X-Received: by 2002:a05:6402:3227:b0:5be:bd48:e4ca with SMTP id 4fb4d7f45d1cf-5bebd48e74bmr1231063a12.26.1723721107693;
+        Thu, 15 Aug 2024 04:25:07 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838cf05dsm86767766b.53.2024.08.15.04.24.39
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbde48fdsm769217a12.28.2024.08.15.04.25.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 04:24:40 -0700 (PDT)
-Date: Thu, 15 Aug 2024 14:24:36 +0300
+        Thu, 15 Aug 2024 04:25:07 -0700 (PDT)
+Date: Thu, 15 Aug 2024 14:25:00 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Nitin Rawat <quic_nitirawa@quicinc.com>,
-	Can Guo <quic_cang@quicinc.com>, linux-scsi@vger.kernel.org,
+To: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	Michael Shavit <mshavit@google.com>,
+	Mostafa Saleh <smostafa@google.com>,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] scsi: ufs: ufshcd-pltfrm: Signedness bug in
- ufshcd_parse_clock_info()
-Message-ID: <404a4727-89c6-410b-9ece-301fa399d4db@stanley.mountain>
+Subject: [PATCH] iommu/arm-smmu-v3: Fix a NULL vs IS_ERR() check
+Message-ID: <9208cd0d-8105-40df-93e9-bdcdf0d55eec@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -75,30 +74,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "sz" variable needs to be a signed type for the error handling to
-work as intended.  Fortunately, there is some sanity checking on "sz" on
-the next line, so negative values would be caught and it doesn't really
-affect runtime.
+The arm_smmu_domain_alloc() function returns error pointers on error.  It
+doesn't return NULL.  Update the error checking to match.
 
-Fixes: eab0dce11dd9 ("scsi: ufs: ufshcd-pltfrm: Use of_property_count_u32_elems() to get property length")
+Fixes: 52acd7d8a413 ("iommu/arm-smmu-v3: Add support for domain_alloc_user fn")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/ufs/host/ufshcd-pltfrm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/ufs/host/ufshcd-pltfrm.c b/drivers/ufs/host/ufshcd-pltfrm.c
-index 0c9b303ccfa0..1f4f30d6cb42 100644
---- a/drivers/ufs/host/ufshcd-pltfrm.c
-+++ b/drivers/ufs/host/ufshcd-pltfrm.c
-@@ -31,7 +31,7 @@ static int ufshcd_parse_clock_info(struct ufs_hba *hba)
- 	const char *name;
- 	u32 *clkfreq = NULL;
- 	struct ufs_clk_info *clki;
--	size_t sz = 0;
-+	ssize_t sz = 0;
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+index 9bc50bded5af..cf21d7d2e737 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+@@ -3062,8 +3062,8 @@ arm_smmu_domain_alloc_user(struct device *dev, u32 flags,
+ 		return ERR_PTR(-EOPNOTSUPP);
  
- 	if (!np)
- 		goto out;
+ 	smmu_domain = arm_smmu_domain_alloc();
+-	if (!smmu_domain)
+-		return ERR_PTR(-ENOMEM);
++	if (IS_ERR(smmu_domain))
++		return ERR_CAST(smmu_domain);
+ 
+ 	smmu_domain->domain.type = IOMMU_DOMAIN_UNMANAGED;
+ 	smmu_domain->domain.ops = arm_smmu_ops.default_domain_ops;
 -- 
 2.43.0
 
