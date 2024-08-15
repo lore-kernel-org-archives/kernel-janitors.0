@@ -1,89 +1,80 @@
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D521B40862
-	for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 17:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D56381B9;
+	Thu, 15 Aug 2024 17:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723743125; cv=none; b=p240ABBy9sEGMVs0adN3GvBoux1pczU+56uIAH3nI+WAeqaEklN+42n2iV8oPbPCC8q/pIx6nMfse32ltkM+I+vIkb2Nk2HJiU2JxwrJlHTc2t+CGU2cNZ1cTYIs8Z35b12pw68+QzCyXVlLUh+emfxrTxEVDcRCxl+geAs7Dvs=
+	t=1723744064; cv=none; b=V/mjEzSnDbP5ZY15LxV81VFzaSRqx8M741vhlMjDo8351vboe00TNRHG9Lu14FDzdC+GGJECTMUtQ+WwuevZ9kdF6rEjSWS4X8W0cj9MY9rTEyIW6cWbkl7qn4+eXkcI+zgKQAYsNCf4ALa7qbJRmilenYFsH3XPOkuGerVG5cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723743125; c=relaxed/simple;
-	bh=bJF14wmu9jsa43+2yR+/HNeL1nQvM/2EmjSz0o16s0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T7JcYaNox8BpQMQLf0jVWDF3GBLNxCNe0DFxD6pdnSAosP4D4gsz82H870X7e0XHp1uqRwuispjqgxgfyk/VaW41IjZLhI9wmhTciCZ/eXqkOb16pz355OauI7PXSh5IMe+Tumm3nTZD6R++azGodJqIjzlz4cANxALA6kZoPAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=i+mps/zp; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1723744064; c=relaxed/simple;
+	bh=DTY5vhhVs/JFNuUFMNzI7mcxoohJksI8QzqLh34g294=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rMR6OzS94OaJEcCWouPc7YSM1f3o+RYh2UYogAtzvSPq+ufrOuJrxiqJsVusz3sTLru2HvMm/vgJC+j5aeA7eBUIXI/iRW4SdxBsQCZ7l05qqCmTsNxOGIS9fI0aAI1e250CgyKIunBgkh80VdiXOxycOQ7iN/P8kWJ0CjY+kO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=MxKGdfXE; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i+mps/zp"
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70ea2f25bfaso925681b3a.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 15 Aug 2024 10:32:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723743123; x=1724347923; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KJF/UOMD5eEDAA8HbpPiltNYMc2YMJhbR1FeAQVndRg=;
-        b=i+mps/zpqec7OWA39EeUDR6ldZZRxjf1SaUE1I+9ayfcr+x0OF/zFKuWisWwHhvqA4
-         tks3FyQD/WlSNm43djYyZ57hhoEvuORj7brCekyaopRjh8tOkKIhYZIvaYqAGbAaXtuN
-         YQn6Jq1Hbl61Z+/fOoTDf/Uo8WRXIozpQDzFU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723743123; x=1724347923;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KJF/UOMD5eEDAA8HbpPiltNYMc2YMJhbR1FeAQVndRg=;
-        b=suVi55o/EcIT9Eu07+u5LV47k0L6XN2cIqyQc9AGqWarC6H1eRQJwWTjjtzDhno3CU
-         TOf4e4tE7kf6vZaI3wOOTKFQYcUypxSJJ0xQANk0FRZhYGuxXF1cQf5rg5V+yc8byHKJ
-         +5qUEjCEr4F6WTGa2vd9GoN9po6GQ9jaH7UJtCw817gwmtW5AchU2LNLKYwizxTJhs49
-         vagiFwBfuxuw4uw2gP0R7sTGFnK2zICCfheqqFWeTb8fPOek+3JJ3/yffc0UCGUMk7fo
-         jKA+vj3Fzaohg2BbAFyc2uDjg54tMHQTzT6Wlg0LvV4VizGdav4pHA/OE76kiO+D/g13
-         ICpA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+La+4xVBFHbgwGUYsY8brjB5pssQEF1IH3XSbVsyGSUgPMJLbgJiiOlVYjE27lgp6VxsOBs4AdFI9W4GJqaDVVHctrxIUW4zCKZs6ESDg
-X-Gm-Message-State: AOJu0YwARAcDtAjY7KlCWG5BP6XXhh7dQYGyNIDcFKX5NChZRUxmXxbi
-	4TKGyyGyMkPHU54sS6qG9eDjTyX1qQg5JG44R+Qh7zdchtubSj/MalUtsxawJw==
-X-Google-Smtp-Source: AGHT+IFLsfQwfWCjQHECvs9QdlrI8dsI849S+aGHrh3pWIyHIF/blT6qN6I3iN7jmcbQFzZw6wEX9w==
-X-Received: by 2002:a05:6a00:14d2:b0:705:9a28:aa04 with SMTP id d2e1a72fcca58-713c4ed2c6fmr532021b3a.23.1723743123067;
-        Thu, 15 Aug 2024 10:32:03 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:5afb:2a2e:f5be:2aed])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7127aef68casm1234886b3a.108.2024.08.15.10.32.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2024 10:32:02 -0700 (PDT)
-Date: Thu, 15 Aug 2024 10:31:59 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: David Lin <yu-hao.lin@nxp.com>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Kalle Valo <kvalo@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Aloka Dixit <quic_alokad@quicinc.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Rafael Beims <rafael.beims@toradex.com>,
-	Ruan Jinjie <ruanjinjie@huawei.com>, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] wifi: mwifiex: Fix uninitialized variable in
- mwifiex_cfg80211_authenticate()
-Message-ID: <Zr47j60F2NjclfcE@google.com>
-References: <d7d043b2-95d5-4e1d-b340-5d7330053ac6@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="MxKGdfXE"
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WlCJ83GN4z6ClY8q;
+	Thu, 15 Aug 2024 17:47:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1723744053; x=1726336054; bh=DTY5vhhVs/JFNuUFMNzI7mcx
+	oohJksI8QzqLh34g294=; b=MxKGdfXEQKbSpQIAD6+UxQ7iSouXuwNJhBIHTE3c
+	vbytkuTYqmKxpMTHR67oEInSusNueT1qLr9mAsOZsJtsLyuOm/9o2qP5Qd2RaVym
+	BFyEDQNKeYDIxxE3iAQoPrEx+V1PoBgjZWjPlryXBVtuOaxCUyWQPrlZ9nORmcJf
+	2ZPhB1TajFvVrwxdGJgJZBd49GKCfx+0ca4SlD0eK/62uhIRoMC+1n17o5rvhhsr
+	ZOr213tFH8NLoYCYRwMr3ntBhM4nbVt+TvnvEwM2HBvrEybFHTg2ykTEr6DS19Bc
+	eOpY/nbWGLrcNn5IlwyQ6QmFe3m98VOUVPJ9zAXToGka8Q==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id Ngpqyb4JQK5x; Thu, 15 Aug 2024 17:47:33 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WlCJ34Wgbz6ClbJ9;
+	Thu, 15 Aug 2024 17:47:31 +0000 (UTC)
+Message-ID: <b613d16f-1167-456d-a5cd-807db875adb9@acm.org>
+Date: Thu, 15 Aug 2024 10:47:30 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d7d043b2-95d5-4e1d-b340-5d7330053ac6@stanley.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: ufs: ufshcd-pltfrm: Signedness bug in
+ ufshcd_parse_clock_info()
+To: Dan Carpenter <dan.carpenter@linaro.org>, Rob Herring <robh@kernel.org>
+Cc: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Brian Masney <bmasney@redhat.com>, Nitin Rawat <quic_nitirawa@quicinc.com>,
+ Can Guo <quic_cang@quicinc.com>, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <404a4727-89c6-410b-9ece-301fa399d4db@stanley.mountain>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <404a4727-89c6-410b-9ece-301fa399d4db@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 15, 2024 at 02:29:27PM +0300, Dan Carpenter wrote:
-> Smatch complains that:
-> 
->     drivers/net/wireless/marvell/mwifiex/cfg80211.c:4408 mwifiex_cfg80211_authenticate()
->     error: uninitialized symbol 'varptr'.
-> 
-> It's a check for NULL, but "varptr" is either non-NULL or uninitialized.
-> Initialize it to NULL.
-> 
-> Fixes: 36995892c271 ("wifi: mwifiex: add host mlme for client mode")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On 8/15/24 4:24 AM, Dan Carpenter wrote:
+> The "sz" variable needs to be a signed type for the error handling to
+> work as intended.
 
-Acked-by: Brian Norris <briannorris@chromium.org>
+What error handling are you referring to? I haven't found any code that
+assigns a negative value to 'sz' in ufshcd_parse_clock_info(). Did I
+perhaps overlook something?
+
+Thanks,
+
+Bart.
