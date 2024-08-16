@@ -1,113 +1,55 @@
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.hotelshavens.com (mail.hotelshavens.com [217.156.64.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833E7155726
-	for <kernel-janitors@vger.kernel.org>; Fri, 16 Aug 2024 11:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F4A1B8E9B
+	for <kernel-janitors@vger.kernel.org>; Fri, 16 Aug 2024 13:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.156.64.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723808827; cv=none; b=GRGYfHKEpp9CnAI5fgaEXYLRe0znzwbOy8y7xNSUdHZH5+n3+jZCdHnisNew+/XIf5Sg11MhZvznYqDXURD1+YhCP5GI8jWSmYVZCqIuTOiW6Zw+mMeSCcRv+Lvb3oAPKDaEeBCqVKigeidMNwwq+0v6MGDxyQ8j2pxFfXmYNqg=
+	t=1723814474; cv=none; b=o5lAWt2xmPDldV6LAi3nWYGRxtuGPSKbOFH1kBcLs0N6q9pgb7hhGXcQfHvKECVkaCpnvmpS+Oii9nWKXw3sdoJvCbgK1sZVcYLK3DpXp9jZ7XAzYKJkJ9cfRF/PWpz9NESG1LNAwwsYpJPeHBS76mS5J6fr/pO06hGBa61y2uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723808827; c=relaxed/simple;
-	bh=BYNOuo7VdELGAZCeJracaEuuvIf7F0bO1297z3Jgw60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rBHuH4mOfRkjyWIWGckoDVVZt0Zb9iqp6EbGkCGqvWkS9g2TEt3KmqyPn2b0j2xF/Jp7C1wsaszLMK5FUjesUXed2Jt3JnVG4A6qYkTWImSFSXxyInYDe9ZwmmOS34x7ORtAxBF3iNnDvUZraoeGC48hX73AZvMkElqBJZo556o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cbBjmOEz; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1723814474; c=relaxed/simple;
+	bh=eqIB1n7zlCOOcw4IuG40Cpbx4jC4Dou+yQt/keQqOzY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F8ldxrHRzMoF0gBPNgDWDCvx7maHG/JwmM1IFY0SQ3Q/EdzZVUbgX/2lTyRVM7hrJkM0IXINfzQQ2wbX00oRkCa/wfm29lDDv035HcV3y86wnqxBqF/3hYjsfzSeyj1qppP0PC2eP2ebrbCTm5GiDQk+RSZZJr1jBfWFZqYa/38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotelshavens.com; spf=pass smtp.mailfrom=hotelshavens.com; dkim=pass (4096-bit key) header.d=hotelshavens.com header.i=admin@hotelshavens.com header.b=LKNpBlWW; arc=none smtp.client-ip=217.156.64.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotelshavens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotelshavens.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cbBjmOEz"
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f3b8eb3df5so18624051fa.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 16 Aug 2024 04:47:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723808824; x=1724413624; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wV3f3tgXbZ6RS8PMVxuGaxCBTXr8Z51l89FQdcyx9OA=;
-        b=cbBjmOEzsdagCdA7RgQgdfMCNfGkm1QlompTPTii/5qlUNEQD2VwZtitGDD5ml6UdD
-         Dv0wndhGQUZ3IKb7KhsV/5j63j3hq4wdvDVxf/ltBoj0g/uRhTpOwLH3Lza27QvEVnRJ
-         Be7dccccavnXAnMw1z0lykWuMsrmWY87Jp3O3wAwUjFoxfsHBHx2t5pZ3o3Sboo6ztDN
-         ItOfTlORXy8qZ0LArXlliaNrlHGeZiUFTL5FE1lx0L14VouJW2t6lQCIpBALnAdmnm20
-         gyaUYCX7AdUn+ZiblsonXeP/u9l3npO+55Xdhwt7uZUciKgYgDERnbbU5jM97jGZqkej
-         0bUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723808824; x=1724413624;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wV3f3tgXbZ6RS8PMVxuGaxCBTXr8Z51l89FQdcyx9OA=;
-        b=UXajl9FzUwaIQsl7CKoWw6mFV8PXJ+d5BGIjm+xVOHDNAPjznLG3ZXk/Vy3aXijY5Q
-         IT/HFpgw1WQYzf1k4arsFN6QP3dsJaDgMPwahNJHUSmgFmaCY7AGjyXccjrEeovSpzlc
-         Xz3R8EdYJ2IeKDqVkZWnUUTMtfjgzT7AMW/K+6Sq4rEOCeS4GhWqzDkR3Gqulw0Bo3Zh
-         vvWlSdhZMKfOHNNn8AwizDYr2rn6HHIFhrkvG3ro5aK4kiJYZ5cR1qQNbEoJ26naU0tB
-         RCwqSQ3BsiPO9u4CtHhhK2h5hpMr3T5KKKZ+GAyyVwVYM9ejJUZqVL0enqzVk609+og4
-         6R9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXR98URjGIS6ZOMIbC9wubOpRK2t9/zI5m9O2o/BkL24AdUArwEUkro2WTnB/jeV4b1ynXnbjOtfjW1HwQ3CWjMTB5WMEU+I2wtmj868OiP
-X-Gm-Message-State: AOJu0YysOIvMyKHA8dSCM5Wt8GRTf1BT2cNcoElmGvGslyJOrbRZCOjC
-	dWevMM1eLNnQLwLPM4meBiCRQjfP1kK6oTNldEMN8c1EbXoeGLZ61c+P3KGy/FQ=
-X-Google-Smtp-Source: AGHT+IFsJvShCAzHPXv9NfhSPB7MlpUN8gvqY9PXC7ZNR3VQQoCvobHbpuluFO6/2tEVHSxFNSgARA==
-X-Received: by 2002:a05:651c:2224:b0:2f1:6cb1:44c0 with SMTP id 38308e7fff4ca-2f3be577d8emr20100601fa.6.1723808823479;
-        Fri, 16 Aug 2024 04:47:03 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898aada4sm3446023f8f.94.2024.08.16.04.47.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 04:47:02 -0700 (PDT)
-Date: Fri, 16 Aug 2024 14:46:58 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Nitin Rawat <quic_nitirawa@quicinc.com>,
-	Can Guo <quic_cang@quicinc.com>, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] scsi: ufs: ufshcd-pltfrm: Signedness bug in
- ufshcd_parse_clock_info()
-Message-ID: <cd5c2315-1d40-44db-a2d9-c4fd7ab3e7f4@stanley.mountain>
-References: <404a4727-89c6-410b-9ece-301fa399d4db@stanley.mountain>
- <b613d16f-1167-456d-a5cd-807db875adb9@acm.org>
- <6beba3f4-dfa1-4871-829c-ed1e44b5bd39@stanley.mountain>
- <20240816063404.GH2331@thinkpad>
+	dkim=pass (4096-bit key) header.d=hotelshavens.com header.i=admin@hotelshavens.com header.b="LKNpBlWW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=dkim; d=hotelshavens.com;
+ h=Reply-To:From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:
+ Content-Transfer-Encoding; i=admin@hotelshavens.com;
+ bh=eqIB1n7zlCOOcw4IuG40Cpbx4jC4Dou+yQt/keQqOzY=;
+ b=LKNpBlWWSi1zZw+Nm+bQvKEptHorEt3ycIRaxNXY9Yrf7uCBPHUAS9WgVk4ipT71UEdOhgT93tTC
+   aC0Z1YsIlemIAlsrHVgwjym1sWg1xgprMvwQBJuNNa3INcnbgdCf/p4Ixd+GcNZ0SvSpBbhUhXYd
+   dDn+woOTGYnc1K+/bYmZKbaWdATPhhj2nW5hVa05L7mEDXHLlTfDSVLZn45C3ESUvigG9iuoh7/n
+   b2GDlI+qTUkf5vL9bCdsuwRaDbJmc5vDLpQsAugiG7WBloycAeYR8v/4jT5c0q/gR3VvL5RRX9HF
+   34kIZcX1UrO/vg5Tpabv/6ZU1DL6a3S6/VcBYd7IvyE4gMatfBYFve5f3fBxh1OjaU8Bbg1sLFyw
+   s3RHRc0wI7iUD53RTLssB4dD7xZK6Vf66LTJUQ2DyKNIA+OcwcGgz+QD0JLpUNbKUsAancx2JbIj
+   /tVm0Cgp7FGxftkHeQlej0Gz6I7YP73owhXmZi3szjuh9GDKK0judC7Kau9w1qYIRUeVL8y7mdjl
+   6w2HCFGVUoSO2cuG0D3hX5NsSN3UESjUZWd1xWwciBbzMs65UJwrIh43nf6HiojJ/UbVUxM88iHR
+   +NtjHtwd8p5QXSV0ZQlZqUe9XdRnnsStoJUnj12xEzZQBXmNX2E3U9UISFJYrbovGdBaFPuQfdw=
+Reply-To: boris@undpkh.com
+From: Boris Soroka <admin@hotelshavens.com>
+To: kernel-janitors@vger.kernel.org
+Subject: HI DEAR !
+Date: 16 Aug 2024 15:16:04 +0200
+Message-ID: <20240816134828.DEF4292231A677AB@hotelshavens.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240816063404.GH2331@thinkpad>
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 16, 2024 at 12:04:04PM +0530, Manivannan Sadhasivam wrote:
-> On Fri, Aug 16, 2024 at 12:35:22AM +0300, Dan Carpenter wrote:
-> > On Thu, Aug 15, 2024 at 10:47:30AM -0700, Bart Van Assche wrote:
-> > > On 8/15/24 4:24 AM, Dan Carpenter wrote:
-> > > > The "sz" variable needs to be a signed type for the error handling to
-> > > > work as intended.
-> > > 
-> > > What error handling are you referring to? I haven't found any code that
-> > > assigns a negative value to 'sz' in ufshcd_parse_clock_info(). Did I
-> > > perhaps overlook something?
-> > > 
-> > 
-> > Rob's patch in linux-next.
-> > 
-> 
-> It would've been helpful if you added 'next' in the patch subject prefix.
-> 
+Greetings,
 
-I guess that would helped in this case.  But most of the time when I see this
-question it's because there are two different upstream maintainers modifying the
-same code...  Anyway, sure, I can change my script to add "next" to the subject
-when the FIXES_COMMIT isn't in Linus's tree.
+Did you receive my last email message I sent to this Email=20
+address: ( kernel-janitors@vger.kernel.org ) concerning=20
+relocating my investment to your country due to the on going war=20
+in my country Russia.
 
-if [ "$FIXES_COMMIT" != "" ] ; then
-    if ! git merge-base --is-ancestor $FIXES_COMMIT origin/master ; then
-        TREE=" next"
-    fi
-fi
-
-regards,
-dan carpenter
-
+Best Regards,
+Mr.Boris Soroka.
