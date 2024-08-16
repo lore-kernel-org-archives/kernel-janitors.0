@@ -1,55 +1,79 @@
-Received: from mail.hotelshavens.com (mail.hotelshavens.com [217.156.64.234])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F4A1B8E9B
-	for <kernel-janitors@vger.kernel.org>; Fri, 16 Aug 2024 13:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.156.64.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD2C1BD4E3;
+	Fri, 16 Aug 2024 15:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723814474; cv=none; b=o5lAWt2xmPDldV6LAi3nWYGRxtuGPSKbOFH1kBcLs0N6q9pgb7hhGXcQfHvKECVkaCpnvmpS+Oii9nWKXw3sdoJvCbgK1sZVcYLK3DpXp9jZ7XAzYKJkJ9cfRF/PWpz9NESG1LNAwwsYpJPeHBS76mS5J6fr/pO06hGBa61y2uU=
+	t=1723821379; cv=none; b=NgjRbImyuUgyeE3T7eXtOcvUQWs3nUN+r2kABB8lUeGNWzLd3ZDIMe/6kgvFUDJw9R/pbHe3D3qwcNfIo1+GNmmRnD07Jhddwli7mpw0MsTYeUxQCY+dqLr2jzHej34qwHYwCgr6fDsSYBYu/TFZ2i1XXw0EerExSDhZuGu32as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723814474; c=relaxed/simple;
-	bh=eqIB1n7zlCOOcw4IuG40Cpbx4jC4Dou+yQt/keQqOzY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F8ldxrHRzMoF0gBPNgDWDCvx7maHG/JwmM1IFY0SQ3Q/EdzZVUbgX/2lTyRVM7hrJkM0IXINfzQQ2wbX00oRkCa/wfm29lDDv035HcV3y86wnqxBqF/3hYjsfzSeyj1qppP0PC2eP2ebrbCTm5GiDQk+RSZZJr1jBfWFZqYa/38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotelshavens.com; spf=pass smtp.mailfrom=hotelshavens.com; dkim=pass (4096-bit key) header.d=hotelshavens.com header.i=admin@hotelshavens.com header.b=LKNpBlWW; arc=none smtp.client-ip=217.156.64.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotelshavens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotelshavens.com
+	s=arc-20240116; t=1723821379; c=relaxed/simple;
+	bh=W+Lr43/9q2mk/Wh1qTIPGzXl34zaCk1BMS1ZofHjcjQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sohfa211y/yAHuDmTXsgsFWtRVcVGxy0sb5E8DxNpJREd8ll03KLzPg3fzJ2ZAmSnWjBFj2+Ip2cCChaw7oG6lqY2bttUocJRIozCxg5rJW46AhbMoDSQV9n5dWQUC1GV2H2oh6E81ydLf/5SiQErDhR5tO27pGcUqh6RC8MMXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ahny4w7C; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=hotelshavens.com header.i=admin@hotelshavens.com header.b="LKNpBlWW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=dkim; d=hotelshavens.com;
- h=Reply-To:From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:
- Content-Transfer-Encoding; i=admin@hotelshavens.com;
- bh=eqIB1n7zlCOOcw4IuG40Cpbx4jC4Dou+yQt/keQqOzY=;
- b=LKNpBlWWSi1zZw+Nm+bQvKEptHorEt3ycIRaxNXY9Yrf7uCBPHUAS9WgVk4ipT71UEdOhgT93tTC
-   aC0Z1YsIlemIAlsrHVgwjym1sWg1xgprMvwQBJuNNa3INcnbgdCf/p4Ixd+GcNZ0SvSpBbhUhXYd
-   dDn+woOTGYnc1K+/bYmZKbaWdATPhhj2nW5hVa05L7mEDXHLlTfDSVLZn45C3ESUvigG9iuoh7/n
-   b2GDlI+qTUkf5vL9bCdsuwRaDbJmc5vDLpQsAugiG7WBloycAeYR8v/4jT5c0q/gR3VvL5RRX9HF
-   34kIZcX1UrO/vg5Tpabv/6ZU1DL6a3S6/VcBYd7IvyE4gMatfBYFve5f3fBxh1OjaU8Bbg1sLFyw
-   s3RHRc0wI7iUD53RTLssB4dD7xZK6Vf66LTJUQ2DyKNIA+OcwcGgz+QD0JLpUNbKUsAancx2JbIj
-   /tVm0Cgp7FGxftkHeQlej0Gz6I7YP73owhXmZi3szjuh9GDKK0judC7Kau9w1qYIRUeVL8y7mdjl
-   6w2HCFGVUoSO2cuG0D3hX5NsSN3UESjUZWd1xWwciBbzMs65UJwrIh43nf6HiojJ/UbVUxM88iHR
-   +NtjHtwd8p5QXSV0ZQlZqUe9XdRnnsStoJUnj12xEzZQBXmNX2E3U9UISFJYrbovGdBaFPuQfdw=
-Reply-To: boris@undpkh.com
-From: Boris Soroka <admin@hotelshavens.com>
-To: kernel-janitors@vger.kernel.org
-Subject: HI DEAR !
-Date: 16 Aug 2024 15:16:04 +0200
-Message-ID: <20240816134828.DEF4292231A677AB@hotelshavens.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ahny4w7C"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14143C4AF0C;
+	Fri, 16 Aug 2024 15:16:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723821379;
+	bh=W+Lr43/9q2mk/Wh1qTIPGzXl34zaCk1BMS1ZofHjcjQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Ahny4w7C4w3+gimSf8XZWQU9IJ7brnt4sumDBq9a8GWRAk6K88KBiF7Z/1wumen5K
+	 QfHfk4ur64/R2yWHhUUgQ01q4N0EqRGSiwTYow2sVypDdszo6lW1qqKyhfqRN0a0WP
+	 kBb6iYqOeK5hBTCR0uPcEc98UGlRtHel7QRqvDA23LhnrNznmb4qMNy6CVutHVDKwi
+	 UATdVDI9M2QDVDaKxlsfyfGLwM4/LAPMXTKxH+d0ozMQN05wx73Q22EVzOBuF4G6nb
+	 SXge1yDQ9CMlXszZmOEXfCiDBV7U8OAvBf+KiB9x8p7ge79Pdzvbw0/5Bq54fwjVE7
+	 9EsM6qELXzETQ==
+From: Will Deacon <will@kernel.org>
+To: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	Michael Shavit <mshavit@google.com>,
+	Mostafa Saleh <smostafa@google.com>,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iommu/arm-smmu-v3: Fix a NULL vs IS_ERR() check
+Date: Fri, 16 Aug 2024 16:15:53 +0100
+Message-Id: <172381875518.1794999.1134549433569030700.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <9208cd0d-8105-40df-93e9-bdcdf0d55eec@stanley.mountain>
+References: <9208cd0d-8105-40df-93e9-bdcdf0d55eec@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Greetings,
+On Thu, 15 Aug 2024 14:25:00 +0300, Dan Carpenter wrote:
+> The arm_smmu_domain_alloc() function returns error pointers on error.  It
+> doesn't return NULL.  Update the error checking to match.
+> 
+> 
 
-Did you receive my last email message I sent to this Email=20
-address: ( kernel-janitors@vger.kernel.org ) concerning=20
-relocating my investment to your country due to the on going war=20
-in my country Russia.
+Applied to will (for-joerg/arm-smmu/updates), thanks!
 
-Best Regards,
-Mr.Boris Soroka.
+[1/1] iommu/arm-smmu-v3: Fix a NULL vs IS_ERR() check
+      https://git.kernel.org/will/c/af048ec9c051
+
+Cheers,
+-- 
+Will
+
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
