@@ -1,86 +1,44 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374E117C77;
-	Mon, 19 Aug 2024 06:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718EC143C63;
+	Mon, 19 Aug 2024 09:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724050656; cv=none; b=PCRVgzWb3aUPlkwYusfaEkWmmK/YiQTt8d+u8ClXNOin9eW6o+yA7zRoEepnfEy0RSBfcMhEXB4khrWYm6zGYbH0nj7OBaNmsT42eB8NhMD84Gwm37Hz2U5AC1ZkcWx66BQfqU0SGkwrT/4zcmp6pZBX761k7DvtD4N8jo4TJQI=
+	t=1724059821; cv=none; b=qpr7tIEXn7tTF0ARYWKuk1h0Ko106arJo5T7gdwIbngpFEBgbatLiaWm+G1HhM1P04P+r2syN9rWtFLBGs+DYWfApaEf640tsglGOWqms3ShDXCumOyEgQMFzoGusHmCovYMDpSiEzFLxx5GxTHsa3t9aNEVFP0duPpSBfpzjjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724050656; c=relaxed/simple;
-	bh=pioZNQSaZ0K9PQCElGjkothCXVvqpP3lbq9EPYtX+FE=;
+	s=arc-20240116; t=1724059821; c=relaxed/simple;
+	bh=UPsNRKG9Zu2jfztwxlXBjO6UIO3owH6Aie6P2dQqTUA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O4umzG2KYTsNu7caT1v2WPJlf21EGRsNgD8rYEFQZL826L6tYA9isXZRubo8I9LI78mtlBYBv66gW3IB09E331aX1Q6vroDhjU2hXjhwW3kkhJS+sc4ahm7IsrrhU4WP65W9/Fxy95rMkDQmrjlZXMH+mFryyiS3tif3KrhXR4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LXFfGfnH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bQdgxIcO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LXFfGfnH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bQdgxIcO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	 Content-Type:Content-Disposition:In-Reply-To; b=nQRtBCkdz2Cq/cNASSHRTsF2u0HXN+l+IPbWcNyH4ucJ7tXxKR7zuFvItxXgFhKeADDzDUjOMeSc+6NZQC4e3wad9CLrw09Q2p9vARct/0AGwko209kBFA0poOTzQAgmqXU/lnKGHjfk9rqAMh1Ek3VWMJjnzYT6pebnyJ26chA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RpWUk2oI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LXFfGfnH";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bQdgxIcO";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LXFfGfnH";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bQdgxIcO"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1EE6621EE1;
-	Mon, 19 Aug 2024 06:57:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724050653; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RrTw/ETigKxKU0RpYb1EDM/y8WBPl9JCdtsbKFUq/U0=;
-	b=LXFfGfnH0gYMNi2WEJ1XNw6sdZdruUNehw5N4PUTaToc4wHOe20+1VZROquS1JIc1sbMQR
-	T5umQED7S8t2o+ZDI91smkd+4xfBav9HrOMTaRS37mbUis9/kiU+xnQ9q4ExhOyqUbD4lP
-	2kl1EQC4udJcsC+M5g58YZeqwMjkyVo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724050653;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RrTw/ETigKxKU0RpYb1EDM/y8WBPl9JCdtsbKFUq/U0=;
-	b=bQdgxIcOoPbptbR/4uYJ36cWYWCcwRXbUixV5yN4kJRZc81atJNpiUaTnVytXL02ve61h3
-	rTlMPnGYytXwysBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724050653; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RrTw/ETigKxKU0RpYb1EDM/y8WBPl9JCdtsbKFUq/U0=;
-	b=LXFfGfnH0gYMNi2WEJ1XNw6sdZdruUNehw5N4PUTaToc4wHOe20+1VZROquS1JIc1sbMQR
-	T5umQED7S8t2o+ZDI91smkd+4xfBav9HrOMTaRS37mbUis9/kiU+xnQ9q4ExhOyqUbD4lP
-	2kl1EQC4udJcsC+M5g58YZeqwMjkyVo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724050653;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RrTw/ETigKxKU0RpYb1EDM/y8WBPl9JCdtsbKFUq/U0=;
-	b=bQdgxIcOoPbptbR/4uYJ36cWYWCcwRXbUixV5yN4kJRZc81atJNpiUaTnVytXL02ve61h3
-	rTlMPnGYytXwysBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 07FF11397F;
-	Mon, 19 Aug 2024 06:57:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1nWDAN3swmZxdwAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Mon, 19 Aug 2024 06:57:33 +0000
-Date: Mon, 19 Aug 2024 08:57:32 +0200
-From: Daniel Wagner <dwagner@suse.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpWUk2oI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12958C32782;
+	Mon, 19 Aug 2024 09:30:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724059821;
+	bh=UPsNRKG9Zu2jfztwxlXBjO6UIO3owH6Aie6P2dQqTUA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RpWUk2oIsMLC+VEeRCCFjfKYRFNuJuROvNWAb+cJ6wESf0yxk8Cmcuqtwv+WdlHS/
+	 sANOy85MEOZsBG2qPTZlMHkftb28TUruwlu9zqjXB0epzcZpdyKhigGshJqHxRGb99
+	 Kj9ZkHv9AT6MiVG1DnzIA9u0b3zd9Lm880bewk983IIC4s0QbAG3yHAL6+Gy/6zAiq
+	 ADxI5inbh9wZbvNxKxVvjMOQlOFvKjKKCsuXpB0WfkCf0E+dpMKt+MKbign9+6Cp6g
+	 b3z1d5RDodCRW6d0XrGxy3ynj74InMki0POKQm4BIsfh+iujz7SDJspA2AroJfjRYN
+	 5/uTRNOVbU3lA==
+Date: Mon, 19 Aug 2024 10:30:16 +0100
+From: Simon Horman <horms@kernel.org>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: James Smart <jsmart2021@gmail.com>, 
-	James Smart <james.smart@broadcom.com>, Ram Vegesna <ram.vegesna@broadcom.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] scsi: elx: libefc: potential use after free in
- efc_nport_vport_del()
-Message-ID: <11af2cbb-9474-477b-9067-aeb551ac382a@flourine.local>
-References: <b666ab26-6581-4213-9a3d-32a9147f0399@stanley.mountain>
+Cc: Ioana Ciornei <ioana.ciornei@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] dpaa2-switch: Fix error checking in
+ dpaa2_switch_seed_bp()
+Message-ID: <20240819093016.GB11472@kernel.org>
+References: <eec27f30-b43f-42b6-b8ee-04a6f83423b6@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -89,43 +47,23 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b666ab26-6581-4213-9a3d-32a9147f0399@stanley.mountain>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.26 / 50.00];
-	BAYES_HAM(-2.96)[99.83%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,broadcom.com,hansenpartnership.com,oracle.com,vger.kernel.org];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MISSING_XM_UA(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.26
+In-Reply-To: <eec27f30-b43f-42b6-b8ee-04a6f83423b6@stanley.mountain>
 
-On Thu, Aug 15, 2024 at 02:29:05PM GMT, Dan Carpenter wrote:
-> The kref_put() function will call nport->release if the refcount drops
-> to zero.  The nport->release release function is _efc_nport_free() which
-> frees "nport".  But then we dereference "nport" on the next line which
-> is a use after free.  Re-order these lines to avoid the use after free.
+On Sat, Aug 17, 2024 at 09:52:46AM +0300, Dan Carpenter wrote:
+> The dpaa2_switch_add_bufs() function returns the number of bufs that it
+> was able to add.  It returns BUFS_PER_CMD (7) for complete success or a
+> smaller number if there are not enough pages available.  However, the
+> error checking is looking at the total number of bufs instead of the
+> number which were added on this iteration.  Thus the error checking
+> only works correctly for the first iteration through the loop and
+> subsequent iterations are always counted as a success.
 > 
-> Fixes: fcd427303eb9 ("scsi: elx: libefc: SLI and FC PORT state machine interfaces")
+> Fix this by checking only the bufs added in the current iteration.
+> 
+> Fixes: 0b1b71370458 ("staging: dpaa2-switch: handle Rx path on control interface")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
-> From static analysis.  Untested.  But it seems low risk.
+> >From reviewing the code.  Not tested.
 
-Look reasonable.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Reviewed-by: Daniel Wagner <dwagner@suse.de>
