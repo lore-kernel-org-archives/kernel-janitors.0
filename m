@@ -1,84 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F2E1854;
-	Sat, 17 Aug 2024 12:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374E117C77;
+	Mon, 19 Aug 2024 06:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723899136; cv=none; b=gEKNHzz/N28QKGfPNaHIoB//T/mTMkqQgwZSIqBGHFx0ACs1gC8o33Omqj8PzfZIINesQGAFaveIC756U7mlri+1fvOFG3Er8Q8WzHhv/ENRuNkxRiPJAYE7p0ckv70PaCm0/CNlOggUgGzaiCpJcr7/2CVFyUjCOmQN/zPiPBw=
+	t=1724050656; cv=none; b=PCRVgzWb3aUPlkwYusfaEkWmmK/YiQTt8d+u8ClXNOin9eW6o+yA7zRoEepnfEy0RSBfcMhEXB4khrWYm6zGYbH0nj7OBaNmsT42eB8NhMD84Gwm37Hz2U5AC1ZkcWx66BQfqU0SGkwrT/4zcmp6pZBX761k7DvtD4N8jo4TJQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723899136; c=relaxed/simple;
-	bh=SmjSm6dPOdqbI09p+V3ZSjlCLAvjlilK7PvolZNdICU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OziYJZ6XEfGgXFR/HUp+6idacS3krL0v7fIWnDl23TeQJlaNIJ2Ox26zIETJ/MBtkKy7k1ydmbRMfoS20F+MNp7k4B6EgrPmwKUb7n2P4IHQssWycCO2YCqVc5UU/TuGw65RPhC6zxWLXk+BnfjxNO53++XfKnXrzYkUDeq8St0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MQv6Rsy5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724050656; c=relaxed/simple;
+	bh=pioZNQSaZ0K9PQCElGjkothCXVvqpP3lbq9EPYtX+FE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O4umzG2KYTsNu7caT1v2WPJlf21EGRsNgD8rYEFQZL826L6tYA9isXZRubo8I9LI78mtlBYBv66gW3IB09E331aX1Q6vroDhjU2hXjhwW3kkhJS+sc4ahm7IsrrhU4WP65W9/Fxy95rMkDQmrjlZXMH+mFryyiS3tif3KrhXR4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LXFfGfnH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bQdgxIcO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LXFfGfnH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bQdgxIcO; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MQv6Rsy5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAEBEC116B1;
-	Sat, 17 Aug 2024 12:52:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723899136;
-	bh=SmjSm6dPOdqbI09p+V3ZSjlCLAvjlilK7PvolZNdICU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MQv6Rsy5Mi5Gkm5ZtxlQ4hCKWG7CMIOlruAt0vANygQUIGzxy1CxXFhVODYpqZ1VG
-	 Vsk+WVornbRpIqXE22RatCFBEM8PhJBx9CT76yGpgeQSvfWXomr6JLvSjOc3vOfAlK
-	 l7nQGFfrnVE2gcMfGaViOA9EGiCANCOcn8QwcxXsbF6GR3hCBkgYnZ5kh6K6hH1IWe
-	 iG48pTcadQ5SA6OzpQz2H95yrWQbCx9XwhdgFA08LWULdDTe/120XrU8ERhsjNIQa6
-	 8S5q9LiGQVlJ52NAXJKkQJHY4CXmq964DoEv+YwS/dipWspSKaQfDZ9kGr2UCq3+Du
-	 X8mFJ4TyiNSCQ==
-Date: Sat, 17 Aug 2024 13:52:09 +0100
-From: Jonathan Cameron <jic23@kernel.org>
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LXFfGfnH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bQdgxIcO";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LXFfGfnH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bQdgxIcO"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1EE6621EE1;
+	Mon, 19 Aug 2024 06:57:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724050653; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RrTw/ETigKxKU0RpYb1EDM/y8WBPl9JCdtsbKFUq/U0=;
+	b=LXFfGfnH0gYMNi2WEJ1XNw6sdZdruUNehw5N4PUTaToc4wHOe20+1VZROquS1JIc1sbMQR
+	T5umQED7S8t2o+ZDI91smkd+4xfBav9HrOMTaRS37mbUis9/kiU+xnQ9q4ExhOyqUbD4lP
+	2kl1EQC4udJcsC+M5g58YZeqwMjkyVo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724050653;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RrTw/ETigKxKU0RpYb1EDM/y8WBPl9JCdtsbKFUq/U0=;
+	b=bQdgxIcOoPbptbR/4uYJ36cWYWCcwRXbUixV5yN4kJRZc81atJNpiUaTnVytXL02ve61h3
+	rTlMPnGYytXwysBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724050653; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RrTw/ETigKxKU0RpYb1EDM/y8WBPl9JCdtsbKFUq/U0=;
+	b=LXFfGfnH0gYMNi2WEJ1XNw6sdZdruUNehw5N4PUTaToc4wHOe20+1VZROquS1JIc1sbMQR
+	T5umQED7S8t2o+ZDI91smkd+4xfBav9HrOMTaRS37mbUis9/kiU+xnQ9q4ExhOyqUbD4lP
+	2kl1EQC4udJcsC+M5g58YZeqwMjkyVo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724050653;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RrTw/ETigKxKU0RpYb1EDM/y8WBPl9JCdtsbKFUq/U0=;
+	b=bQdgxIcOoPbptbR/4uYJ36cWYWCcwRXbUixV5yN4kJRZc81atJNpiUaTnVytXL02ve61h3
+	rTlMPnGYytXwysBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 07FF11397F;
+	Mon, 19 Aug 2024 06:57:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1nWDAN3swmZxdwAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Mon, 19 Aug 2024 06:57:33 +0000
+Date: Mon, 19 Aug 2024 08:57:32 +0200
+From: Daniel Wagner <dwagner@suse.de>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Yasin Lee <yasin.lee.x@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Nuno Sa <nuno.sa@analog.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iio: proximity: hx9023s: Fix error code in
- hx9023s_property_get()
-Message-ID: <20240817135209.0682b74e@jic23-huawei>
-In-Reply-To: <49b5a9bc-e5ca-43a7-a665-313eb06fbe27@stanley.mountain>
-References: <49b5a9bc-e5ca-43a7-a665-313eb06fbe27@stanley.mountain>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+Cc: James Smart <jsmart2021@gmail.com>, 
+	James Smart <james.smart@broadcom.com>, Ram Vegesna <ram.vegesna@broadcom.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] scsi: elx: libefc: potential use after free in
+ efc_nport_vport_del()
+Message-ID: <11af2cbb-9474-477b-9067-aeb551ac382a@flourine.local>
+References: <b666ab26-6581-4213-9a3d-32a9147f0399@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b666ab26-6581-4213-9a3d-32a9147f0399@stanley.mountain>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.26 / 50.00];
+	BAYES_HAM(-2.96)[99.83%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,broadcom.com,hansenpartnership.com,oracle.com,vger.kernel.org];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MISSING_XM_UA(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.26
 
-On Mon, 12 Aug 2024 09:43:05 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
-
-> If we're returning because "reg >= HX9023S_CH_NUM" then set the error code
-> to -ENIVAL instead of success.
+On Thu, Aug 15, 2024 at 02:29:05PM GMT, Dan Carpenter wrote:
+> The kref_put() function will call nport->release if the refcount drops
+> to zero.  The nport->release release function is _efc_nport_free() which
+> frees "nport".  But then we dereference "nport" on the next line which
+> is a use after free.  Re-order these lines to avoid the use after free.
 > 
-> Fixes: 60df548277b7 ("iio: proximity: Add driver support for TYHX's HX9023S capacitive proximity sensor")
+> Fixes: fcd427303eb9 ("scsi: elx: libefc: SLI and FC PORT state machine interfaces")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Hi Dan,
-
-Applied,
-
-Thanks,
-
-Jonathan
-
 > ---
->  drivers/iio/proximity/hx9023s.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/proximity/hx9023s.c b/drivers/iio/proximity/hx9023s.c
-> index fe14a62a1342..8b9f84400e00 100644
-> --- a/drivers/iio/proximity/hx9023s.c
-> +++ b/drivers/iio/proximity/hx9023s.c
-> @@ -598,7 +598,8 @@ static int hx9023s_property_get(struct hx9023s_data *data)
->  	device_for_each_child_node_scoped(dev, child) {
->  		ret = fwnode_property_read_u32(child, "reg", &reg);
->  		if (ret || reg >= HX9023S_CH_NUM)
-> -			return dev_err_probe(dev, ret, "Failed to read reg\n");
-> +			return dev_err_probe(dev, ret < 0 ? ret : -EINVAL,
-> +					     "Failed to read reg\n");
->  		__set_bit(reg, &data->chan_in_use);
->  
->  		ret = fwnode_property_read_u32(child, "single-channel", &temp);
+> From static analysis.  Untested.  But it seems low risk.
 
+Look reasonable.
+
+Reviewed-by: Daniel Wagner <dwagner@suse.de>
