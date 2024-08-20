@@ -1,173 +1,194 @@
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2082.outbound.protection.outlook.com [40.107.93.82])
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2061.outbound.protection.outlook.com [40.107.94.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30662192B6D;
-	Tue, 20 Aug 2024 15:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C22101C4
+	for <kernel-janitors@vger.kernel.org>; Tue, 20 Aug 2024 17:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.61
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724167527; cv=fail; b=o4uJAG0Z0qJcQx3LPczUQK9ZF21S8qq+xoL7gmNvsYpzfSBbYNEXJlk/CoR0FjEHPL26UrpjoQQcbM7vJ2MnNV1RqFeiM2YT4My5yD6chk6vhudkgSZBpnx1coRRoD4A2AV7zEP3hAVSWSdq/wP1DHk0ae6Qq0kUDXzMnZXrnDA=
+	t=1724173385; cv=fail; b=Nhu1ZrHzBNJ93a68Q++X7cXmITrhHFwc2g5vNxNKWr0D2pdo7VGi/yNp1hWmh0ZM/1i/lgyl53QrIRjORq1LT5PKEwBQ4Xx3fqs0ZJqwCdKv0oOuilvdNgfKJw2n1n95qg6j6DXntnSyKn+F55Q5ORuZV/IM3s5yF2DBFr/X+ww=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724167527; c=relaxed/simple;
-	bh=tJ7x2H6uLS576w1kTrAiKutIZwFeQvXj0blKf0MI/uw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UtU2reBq27v7GuwEAQ07Se4EekotA5zlJIOR5hBUZBEhFsbjPm/OI/m73faP9CfDbN776WHE6kyN5/eUq0wrhmE7VJVvRYoWZN4aPDoxv59zrmzm+FawLJk4bK+Z1g5jN802Le5iV/vGzF4Q3+WR4siccd5p4cLFfhSCRy0KtBg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4nFxawo4; arc=fail smtp.client-ip=40.107.93.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1724173385; c=relaxed/simple;
+	bh=LIqYPqiZzooN7kkDfkkySuzrWgUN9Giob5gElG7cO+s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=g/0tqXDtr9rFe9uK0mQ7N5RRA5sZsENOmYcx8RvRgExSkMmyzVG7EexPMvWFJ6VSQUOGJDBAh24qPkFCykC6Zu0Gxh27rhfJZcalQStzgsXHg0AFo6DXdCXCfVJjvwlfj8XbtrHljRlIvukHul0h/ODIstqDj2OhAYWgIJ7oRfM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=b0cbWxSi; arc=fail smtp.client-ip=40.107.94.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4nFxawo4"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="b0cbWxSi"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jgksb0k40NrEJc2VAm9cKSLjtI2zCQvrc+3XtH1cjw9VlnJ5iWT31AUG5k7GrkXSQD/HP6JTGlEwq+aKNsQJWjj3o2iZQY/Wm32RuYAYuJ17Z8r9UgCSGKe9cl3d/s4MFduw/XBSQrINzN/JNOsmkUrGOVjV9Poi1Hpo0Yh/CcGYq+LQO8UygpgzllPJAFLoCD83TzEWylYwG5+UVdIVVzwFSUJOeuMXDkLfch9A2D0HoQO+ysAKn0whfJRAUGHaoOvt44/lZuxXal8Po580JWY4xRqvV9kHnysnL8cWfypUFNhRroe9tC9FpLQKiD7dQdyJqzUBh0PDt2BY8RYmWw==
+ b=EO+O5lhT5Pp1rwDlzNjngFnbgcbpfrfG8mWbaI5uakquKmL36zeNLwpfjPvbEK3O1cz33T3UIpKvLv1oDkME84YyQHOiJ3LCLJqQPUM5FMm1sWsIYnrOvUlgclAxltEpePiFbBI76qsu/2ZqW308B8rZGaQfa4hVwKeCmE2aWsHoL3ZcEGAKxdeiX0pTKcCMEuwD6dXZPRVIK07PvUQiGNz8GjzfN1XjWzqMBMTu71eWMVPTbLooWscNSFF54rgb7uus8jpQdIgDNAhbAs7m4LYfqFTkuT7+9IUIdNRuW/ff2LxpySWILMBEKBV6+PRTyJFrNF1O+xwrsp2SRYAYvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=llqad0cFFvQc7sKDp/bsjtDLIvcOk4axwDcubIFxzqM=;
- b=iT05k2U/BCAf3bpPaj7vC4YHn4H529fLTh86aPPAR8rN2H2l62cODIqNIUDIZpjZXXRK6ziWSunbbueEeIarfkC8t4YeePLjBOSQtb0JMSa4Bt5ddHjqAu5k8vinMThPyw9LUFcw8d08qnwhUpk7RgRWXth+5FHaVo1FJcXmIEQ1EonKccoegxH9VM7mCm8OQrTKsnUHa077314yXrf9Su91C+he22Z71QTIvsbDM6dhQuS+5bjdwWsXit1Q2O++U0wKaHqlvOHLo9hyzQyuFhmiep1JbwuoGdAlpwUkwJsVdARrAJn63dRTqFJxOulSmCdKcPThw2m9xkaODdOq+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=oracle.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=6KaY12iDHP5ZSJJLvLksjnLGRLaZA+cmFlHtFwpIz9w=;
+ b=Dhu+57dT+PTT+p52L81mL/FaMhk+2zdnfIF/j0pc86HY/xbwTy1TyBsXXm2bjwya4qrF6MWbZAINArNEEP2JhnDlmaj8wtzelP1FkD4qWpYsxWBb71Ja0DhDn3EEKwBp9TORFBsG28qHiY7JmXAjZeQAE9gUuvHSO7i+2uMViaUVrAIgDZRyh9ny8HOM0gclA5mVaixkIIyhHUhqnbhBstgvA1hy5RcqAEky7hpI5ztxuxOxPERZBElvrp1NQXQP+L0898M0dupfiNYdtMM0h3JnnUPYkgNARmRXIkVylCmRMsy9qr61jffnRo6kVPikHAGtCXj2c0CQZQomFsNjNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=llqad0cFFvQc7sKDp/bsjtDLIvcOk4axwDcubIFxzqM=;
- b=4nFxawo4SJsVDqNV1cOESoZ4o4GK5WGcmYLrpE4Wt3KKivOAxlVmGfSijmXL/wIzw/0uNoebo7HDva8UKbctfn8+RdXQziudCjNizrfvQGbKRVai4pR28kJWf8SoKTyRqzVtGh7ybE1dHvwvDGp7Rip3V3GWdnq5pW/HWo4DGKU=
-Received: from BN9PR03CA0620.namprd03.prod.outlook.com (2603:10b6:408:106::25)
- by IA1PR12MB7567.namprd12.prod.outlook.com (2603:10b6:208:42d::19) with
+ bh=6KaY12iDHP5ZSJJLvLksjnLGRLaZA+cmFlHtFwpIz9w=;
+ b=b0cbWxSiJiOSLMXrff33pKvWTDUAENZDJyV1xKCxpitmel79qQqXJZ+cjyFO+SKv7MPa74km+qM743G7v4MUiYpUhtL7W85EDfS41Av5o/IjkjbhukfxSwk758NCO5hGAUfX6vnMkOGuMQ5RV4846sqMlWN32B4tX23Zo8vjYe5ksGs4Qr4yP5OUo5GuH8Du3lg7vMOEARgse9qFQiSetLho7MTbLrOizPaYfdpm0FxLKQWO6qE1Ojs6o1xMWEUjV3nktUBRdn9EwvMGF3CHj4GdWKV5RX85UAyosqAFYSFE8qu1ZGoGHd/OxTEx6NdNmas2WURI8oZavNSh0OnPUQ==
+Received: from CY5PR12MB6646.namprd12.prod.outlook.com (2603:10b6:930:41::14)
+ by PH8PR12MB6700.namprd12.prod.outlook.com (2603:10b6:510:1cf::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.16; Tue, 20 Aug
- 2024 15:25:19 +0000
-Received: from BN1PEPF00005FFD.namprd05.prod.outlook.com
- (2603:10b6:408:106:cafe::d2) by BN9PR03CA0620.outlook.office365.com
- (2603:10b6:408:106::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21 via Frontend
- Transport; Tue, 20 Aug 2024 15:25:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BN1PEPF00005FFD.mail.protection.outlook.com (10.167.243.229) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7897.11 via Frontend Transport; Tue, 20 Aug 2024 15:25:19 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 20 Aug
- 2024 10:25:18 -0500
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 20 Aug 2024 10:25:17 -0500
-Message-ID: <9ff03528-b416-182f-6404-ff66f67087a9@amd.com>
-Date: Tue, 20 Aug 2024 08:25:16 -0700
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
+ 2024 17:03:00 +0000
+Received: from CY5PR12MB6646.namprd12.prod.outlook.com
+ ([fe80::8880:c187:3bc8:e17a]) by CY5PR12MB6646.namprd12.prod.outlook.com
+ ([fe80::8880:c187:3bc8:e17a%5]) with mapi id 15.20.7875.023; Tue, 20 Aug 2024
+ 17:02:59 +0000
+From: David Thompson <davthompson@nvidia.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [bug report] mlxbf_gige: disable RX filters until RX path
+ initialized
+Thread-Topic: [bug report] mlxbf_gige: disable RX filters until RX path
+ initialized
+Thread-Index: AQHa8HIfMzuALaSzzUeuUyMsnKFNG7IwZIVw
+Date: Tue, 20 Aug 2024 17:02:59 +0000
+Message-ID:
+ <CY5PR12MB6646444576F9368D3F1D0F31C78D2@CY5PR12MB6646.namprd12.prod.outlook.com>
+References: <9f301498-d8d6-4ff8-8208-6b86b557f2e5@stanley.mountain>
+In-Reply-To: <9f301498-d8d6-4ff8-8208-6b86b557f2e5@stanley.mountain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY5PR12MB6646:EE_|PH8PR12MB6700:EE_
+x-ms-office365-filtering-correlation-id: 5cc6d831-b589-49e2-79b4-08dcc139f21b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?tpJ1RgXoI5eOuuNU8F7lmNK+t8W+oNe+nO++hnpE9gUGQm7MaolMvoYxgt8D?=
+ =?us-ascii?Q?Gbuk4LuNX+yeXD0HRLgXLtALTWz6YgI+7MMirIeQ0gwll4/UaklFinmnD5Zm?=
+ =?us-ascii?Q?vD2hgE4DiHxdBoPDX/z5n6z+92mA3mw1lwSaeqZzCp0DmjRg1Tc0pG+izA6C?=
+ =?us-ascii?Q?ocWYzJGV814CYuQ+16AMZUXEyRn0duw2D9+HLbODRh6G+8GICogJb/nhBzcT?=
+ =?us-ascii?Q?ndKDVOfgWGoe7hf/qEDXfcoLsYgXK6AZgLbZSg0CjQNTpee3RC5svs5FPE15?=
+ =?us-ascii?Q?eY0GLP+TvAS45Op9moQ4mjei/eHHm3yTzNHIdCuQ1o8hpAemYmRg0B08ZbK8?=
+ =?us-ascii?Q?tRxO85mHqzSsVFZxZ3wTadR2vt7tJsmiqNB89kKGOi7/Cf4r9UIf6GWeiK63?=
+ =?us-ascii?Q?WenYb0MSPLihDEAr3x5EY4lI5ukQq6KMdlbWQRoOzYPIxVonm+fB2oQ57ij2?=
+ =?us-ascii?Q?s5oplrX4I9bwIfQQcExlJN/cOmOxxfcYQ8kFetbyaZ3AEf3Vb0ZktgBRRtjj?=
+ =?us-ascii?Q?T6aSJaJKgi7ZJv13BeElIgkNh4nADrT1dZUzhFf+FUiHsCX/UIvLJXhMoeyh?=
+ =?us-ascii?Q?BOczAx/bLxPRg4yqD+VeB4c2t2wvKBlLcO3J/mQCnGqYCUAeMphlfoytBG6f?=
+ =?us-ascii?Q?0bXEmocil6/+QWU98MJhQOIdCivtw13lM1S9fmOa97gw6EhRD7lkx+YcV5QK?=
+ =?us-ascii?Q?j/ScpEAVLP0R/CJycyxLCw7+uW6cXUWCl6+INmHa4DGuTl+Lyq8UON8ERHp/?=
+ =?us-ascii?Q?jdn2o8saXyY0Iu9MRKkL4uV8Y+boHhsupv4an9IIYKRTyBdQ4g4NkE6l1V+f?=
+ =?us-ascii?Q?w9PowpKnusWqdXcvq3EMOrPaQGiuX9vzTMjTdtFC/ZGuMQRH0zv2q59VnTYx?=
+ =?us-ascii?Q?gGRBB+3W72pGy3hMR2W5N1065RWPQaIOBuDJaqwvagRKO4zTkhoAZQU/owkN?=
+ =?us-ascii?Q?bybf8yD1WY0ROm8ToRZnCaEJ+GmzZWgJZbdnQbhR4oQyupwzj/axcu7TlEFO?=
+ =?us-ascii?Q?tATnl2nfZqs1XTluiyuh+pijPsb5tEiOR1GzvVAfBwnE0TVBdJ69dyTaw0BM?=
+ =?us-ascii?Q?O6fWnllVB5T99Qrz1El8MMi7Y0Qc7jer5mgsGWMxVtr17W3vNcTjQo2iaaMd?=
+ =?us-ascii?Q?9BmryjRqho+loTIySmLBgw5Q50l6sEl8wg8rJRSjPlGQEqElC/c3Yu8+ftih?=
+ =?us-ascii?Q?aMh52dINEHc7XHS3GEvo0RyWX36y2N0bDm0FOQCUgG/BLzDcuyFPMxhf8ODs?=
+ =?us-ascii?Q?DhwzBpPEeqWlzsM8tLCDuct7/Pji67lgE65T2RkySD59lZdttG3jUGs5In21?=
+ =?us-ascii?Q?1B9cEYju5V8nBann8nIyhV6Vokmb5yEOqhSarE4Poi6cThE2pDQy3k7fJCv6?=
+ =?us-ascii?Q?rfDRsfG/KoBtKiWFnhWUlG43ALdebmcHXZC62u3ElBnnjV9L2Q=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6646.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?0q3t0tK/atK/YRs/xBAcC2wQyXBAptDv7AddrWInxQPDDmlzCSl9ACCkLf7E?=
+ =?us-ascii?Q?tM4Gg4VlM6uZwReVrPpHl/pHW6BFISBACy2hk2zmKmAELB5Rj/dVzKGEFl+D?=
+ =?us-ascii?Q?YcoaOrsjPuj4ZO4PGr1iMVHG9FlBU3Zc43XMaextvcTL9c8+7R8fo0BwP8Hv?=
+ =?us-ascii?Q?vJ881js9B1/iaD6ePNaqoGcXAzqiSoZhTlAFrEC30Db6LGQeWSRW2AMBdPNW?=
+ =?us-ascii?Q?s+FQjkx7kd6Rswy+Nvu4wr5b+9NbBCmKEwnGe+Qxm40NXJMOst1PSlZJutoQ?=
+ =?us-ascii?Q?LPR4BcvWaUw2ixuH/Rt2BfX83Rq/XGVEyW3/uAc49OF9h0d11eA8XFSM6u9v?=
+ =?us-ascii?Q?D0apEht64Emaw/ufsLXGx8hpiEqBBMzBPz9IrWjw+uSB+QQ3SWwe70O0NcKR?=
+ =?us-ascii?Q?tROvP3BM6d0nL2dl2Xpn7XZHh7Q0Z0nYRF3BQmka2eb87vAJKQpjgnrl7ku4?=
+ =?us-ascii?Q?aAlmJt5G2s+v+omf0CKYP3OWS8wl4v2YMz4/BXxd5iijCbEYXVVcLh6+boUQ?=
+ =?us-ascii?Q?6+cQUYwRM5lWUtRouyhfzAGV2Z+DRMKHz2BqvBX8tf0iL7yjyUubS63Vf1SL?=
+ =?us-ascii?Q?LjciDa6WGmywUZ8lurQw3LCL5lDQSbOHLeknlb9n4WzotWowf3P/ImgTXTRA?=
+ =?us-ascii?Q?bwOKKfT+H21ZOg6PXqTQrJjqnu1fgM7Tu1FgR1PInBBM2B0ioY4mvDNVTk9T?=
+ =?us-ascii?Q?N+vFuiGBYl+X9v/ANVSPQA2Q/of9LvZKT8C8LH+pRuRrAe8LTQfmuFj/xGlu?=
+ =?us-ascii?Q?N3ZaAeAe9vYNedxqoM4rfJnl2BcLHNtYoh/5ke6yOk5iufxDVoU98gskvjC+?=
+ =?us-ascii?Q?F7uz1M99xTHuqBQ0yawd6+LI9RzpK2TEpjfJJPWWACyPmbLznDmowN862LMV?=
+ =?us-ascii?Q?bQGNpjG7vEtApuI4TJATvJ8RvfRiW1eH5e3XxfrKfGfDCVrMysBiNf2jdxvc?=
+ =?us-ascii?Q?p3zct4v5wvG2XIG3vp/UNZGmQaviR8hVdCt9Dvi+ITXwxWx+ZwFHfGHuoyXQ?=
+ =?us-ascii?Q?1oDg0m0KR6v+ohvE7vh1JZIpZfqf8fKJ1pyd+oWDfrjDYgAiOLix2XMv2XSN?=
+ =?us-ascii?Q?C8B/aCaWlsocZkUz5CC2siy+gZeOyQufQj67F3e6b/D6tWEtuOz2aP0r7lGm?=
+ =?us-ascii?Q?MXl983RgbPVstHijBcBIt6UnUq9hVuvcGKXlyAzfFqTHceFjClUG5HSj1w4w?=
+ =?us-ascii?Q?jFIWkFVL4owULYNnKGyBgx5/T8mL0MXnU896lf22S88iYTEUtBkRL15alb21?=
+ =?us-ascii?Q?mQbjDVwqQiL7+uaKt78tSFLDVd92FlPe70619Ink/09OSyJG0TlDoXJSpkEi?=
+ =?us-ascii?Q?hNKXNAyUu9lx/+B1RDA/gAjOmn19aDcm9IGceY3Nr3wiWY5L2PBGryqIZFx9?=
+ =?us-ascii?Q?369fXjNKejGrCAcg5vETA088TEesz2yGRbm/Jt2S7m7dzJvB8HlGiDol+mEs?=
+ =?us-ascii?Q?+qLytCmk2m+NKtx4thEA+76si9gQaJ9FBziJGmFLKldw17Ai+M3h4C6ygQg8?=
+ =?us-ascii?Q?3KwdnOoH8JFpLOBTlopajw4LnG523oca/6qY5iU9vJfYwWF8BPYv/6XuYvVh?=
+ =?us-ascii?Q?/1udSHi/OPrXNw5PdCMKHtBle4qfGSw8sgVNKcwb?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] dmaengine: xilinx: xdma: Fix IS_ERR() vs NULL bug in
- xdma_probe()
-Content-Language: en-US
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>, Brian Xu
-	<brian.xu@amd.com>, Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>, "Vinod
- Koul" <vkoul@kernel.org>, Michal Simek <michal.simek@amd.com>, Sonal Santan
-	<sonal.santan@amd.com>, Max Zhen <max.zhen@amd.com>,
-	<dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <dan.carpenter@linaro.org>, <kernel-janitors@vger.kernel.org>,
-	<error27@gmail.com>
-References: <20240819193641.600176-1-harshit.m.mogalapalli@oracle.com>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <20240819193641.600176-1-harshit.m.mogalapalli@oracle.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Received-SPF: None (SATLEXMB03.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00005FFD:EE_|IA1PR12MB7567:EE_
-X-MS-Office365-Filtering-Correlation-Id: a9f279e9-6b13-4a40-e817-08dcc12c4ce1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aHlKZ1NZUURWSjFpTDljL0dzaEpkMUJKZ0ZNNTNMaXBEeUxqN2MyMUtnMTJy?=
- =?utf-8?B?M1drYVhMYWxyNjZNL1R1SzE0MHpSSjBjOEwxWUsyeFB1eUdWRjliMnBlWnJS?=
- =?utf-8?B?VURneFE1V1ZhNlBob0hKVXhxNWlEaS9OR3dRWTJNeEZrdDhEV0tScm1sQ0xI?=
- =?utf-8?B?UHAxajloclNmL01tWTZsN1Zaa0xCZldRbE10d2xpK3ZnNTZvOGk5U0lTK2R6?=
- =?utf-8?B?WmlqVDlRanRWS1hoclZPMTdiZmhsdERaYmpGbzcvdjAxZTJDcGZHMEpMY2Uz?=
- =?utf-8?B?eUo0NEVIZUd2eEpucEs0ZVh3NytwZjVjbUNMU3dhVWNGT0xVTlE1dUR1ejNv?=
- =?utf-8?B?UXBJa2lLb3hHVWpLdU01cUNuaUVXbmFRNEp0ajZOaVZ2eGk4eEg1Z0xib2xD?=
- =?utf-8?B?MlZ6THFsRERxN1ZTVkVNZ0Z4OTg4VXZlbWo0RUMwTFp5SnpSYmUxZ0VFeWdn?=
- =?utf-8?B?azI4YU1RbTNLL3VteFd4ZUx2OEtuRUw5WGZvMTIwTE8vMi9qdnJmSUwxM1hu?=
- =?utf-8?B?aUY0WjRDM0xyMk80ck1aMjdvSnN3YjJxdGxaT1p1ZW9mSG5EY1dIb1FpeUtz?=
- =?utf-8?B?alFMc0RSZk8zc1lreHIwL204MkNNMTBpbmFVNm5memgzME11S1VrTGJVcmJT?=
- =?utf-8?B?S093ZXJYQlFiam9PVXJsbDJvQVA0Z0wxYnc5aFFmcEJLT0U2VUJQSEx2WmRW?=
- =?utf-8?B?VnE0UTBYVVFPYzhXM2hUZVBzVnFhNEQvTkpCRUlWbThvMDNaV1VIWnkwRHFC?=
- =?utf-8?B?WkducVgvMDd2YmxsVHNTMXd3REJpTGdQQjBKTTdOM0hGemlGcDlLZ3d5enpy?=
- =?utf-8?B?czJ3R3FUNDNuNnVSR2hzOHpTSitqTkZDRGJkTXNpdHFXV2taM1JjeERaRlBH?=
- =?utf-8?B?eGdqNUxjNTdGc2dIRnBLclpjb05NSVdIVVYxVHY5c3BNaFBrVHBGRU0vQzhs?=
- =?utf-8?B?M1hXSkRCZ2plcnUzN3JyZUp3RVJUSGRQUWRDblZQYno5b2xVR0xjMkdFVERy?=
- =?utf-8?B?YTBkY2daYWd2Q2VlTjRpSjdoL3c0RHd1YmJmaHFwMDlZc3g5c0FjZTh4cStI?=
- =?utf-8?B?em5Zb0VVbWR5d1k1dDMzbkk2NUN0dmJrS0ZIY0dDRCtvaWtLditiUVQ2YXBH?=
- =?utf-8?B?UTQ5OEFDYU5VTnBVV3l0aE5ocEpONGNDcTNKZWlBTzAveFlxNSsrOWZLdXJ4?=
- =?utf-8?B?cTVjUEE4UU1pamp4ODVObW5xWkxkL0t5YmVOd3M5dysxdm9kWVRqSGR3bFBG?=
- =?utf-8?B?TFVFT0R0YWtJY2JzWnlhSGhicFR5UGMvSmJVT3B4TnFDditIRXF0cHBBMmpH?=
- =?utf-8?B?eWUxanJJZ0NYck9McDl3UktpaFdka3ZzeHdSUHdPMThwZkkzNHJDYStDQ2Ry?=
- =?utf-8?B?eFJQcFdMejZ0dUk3aDVveTZDaHB0RTIrZlBPL1NTSWlIUlBmZFFKZEdlLy9y?=
- =?utf-8?B?NUFrRzRQRTR3NjkvdEFlR2VzcUhpSFlEM0JrWDJES2dDQmIwSWVuempQN1VF?=
- =?utf-8?B?T0JCRzRmd0poWk5EZmMwb3I3ZjVXc0h6amR4ZHlHODJJNUpWV2VSNlU0cTZz?=
- =?utf-8?B?eCtOL3d3V0lhRTBTcE43OGh4Tmk4Ym1pUTNIaEU1SHhkTFRlQkhBei95Wmw3?=
- =?utf-8?B?Wll0WmxYQ0tBU29pS0xlTzlCU3NRbi9LTjV3ZndaTGg4UVA3SDNHeU8rUVB2?=
- =?utf-8?B?Qkgzdk43WDh6QXQyZ1JrY1RITldLUXA3cU9kU2JCLzYzeUZZNjk2Q1B1Zkw2?=
- =?utf-8?B?Z0ltbW9BQXRWMW5jOVVMenlpRU1LMGtjQit4TUkrSDczNzhPazlKeWpHUUlv?=
- =?utf-8?B?eWwvTGF3YnMxdGpabVNYQVRIL2ZxSy93L0RBeXFreW1SUVl2VVc0VTVDTXVV?=
- =?utf-8?B?aHdvU0RJL0xjc0V0R0ZmRHROV2NMZ1BxUW5GUWR6UHBNZ1NpVmE3TjBhZVhP?=
- =?utf-8?B?d0Q4Zzg2NVA4WWRrUXVDZXBLbUVONW5USmRKNUhlNHNTTmJVQW1Zb2Vpb0ZC?=
- =?utf-8?B?TjAwVE0ybE1RPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 15:25:19.1738
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6646.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5cc6d831-b589-49e2-79b4-08dcc139f21b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2024 17:02:59.8739
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a9f279e9-6b13-4a40-e817-08dcc12c4ce1
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00005FFD.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7567
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 0+D4f9UGdLFjF5KDJt84dqdkenNiygiKEQPyGXR5YPEl31l9FHHTJ0Y3El0aCFxqwt8LmkOtVk/kQhZ094nMEQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6700
 
+> -----Original Message-----
+> From: Dan Carpenter <dan.carpenter@linaro.org>
+> Sent: Saturday, August 17, 2024 2:53 AM
+> To: David Thompson <davthompson@nvidia.com>
+> Cc: kernel-janitors@vger.kernel.org
+> Subject: [bug report] mlxbf_gige: disable RX filters until RX path initia=
+lized
+>=20
+> Hello David Thompson,
+>=20
+> Commit df934abb185c ("mlxbf_gige: disable RX filters until RX path
+> initialized") from Aug 9, 2024 (linux-next), leads to the following Smatc=
+h static
+> checker warning:
+>=20
+> drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_rx.c:30
+> mlxbf_gige_disable_multicast_rx() warn: was expecting a 64 bit value inst=
+ead of
+> '((((1))) << (1))'
+> drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_rx.c:54
+> mlxbf_gige_disable_mac_rx_filter() warn: was expecting a 64 bit value ins=
+tead of
+> '(((((1))) << (4)) << index)'
+>=20
+> drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_rx.c
+>     24 void mlxbf_gige_disable_multicast_rx(struct mlxbf_gige *priv)
+>     25 {
+>     26         void __iomem *base =3D priv->base;
+>     27         u64 data;
+>     28
+>     29         data =3D readq(base + MLXBF_GIGE_RX_MAC_FILTER_GENERAL);
+> --> 30         data &=3D ~MLXBF_GIGE_RX_MAC_FILTER_EN_MULTICAST;
+>=20
+> I don't know what's stored in "data", but it's a type u64.  The type of
+> MLXBF_GIGE_RX_MAC_FILTER_EN_MULTICAST is unsigned long.  This means
+> that on a 32bit system, the &=3D will zero out the top 32 bits as well as=
+ the
+> MULICAST bit.
+> Use BIT_ULL() to fix this bug?
+>=20
+>     31         writeq(data, base + MLXBF_GIGE_RX_MAC_FILTER_GENERAL);
+>     32 }
+>=20
+> regards,
+> dan carpenter
 
-On 8/19/24 12:36, Harshit Mogalapalli wrote:
-> devm_regmap_init_mmio() returns error pointers on error, it doesn't
-> return NULL. Update the error check.
->
-> Fixes: 17ce252266c7 ("dmaengine: xilinx: xdma: Add xilinx xdma driver")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-> ---
-> This is based on static analysis with smatch, only compile tested.
-> ---
->   drivers/dma/xilinx/xdma.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
-> index 718842fdaf98..44fae351f0a0 100644
-> --- a/drivers/dma/xilinx/xdma.c
-> +++ b/drivers/dma/xilinx/xdma.c
-> @@ -1240,7 +1240,8 @@ static int xdma_probe(struct platform_device *pdev)
->   
->   	xdev->rmap = devm_regmap_init_mmio(&pdev->dev, reg_base,
->   					   &xdma_regmap_config);
-> -	if (!xdev->rmap) {
-> +	if (IS_ERR(xdev->rmap)) {
-> +		ret = PTR_ERR(xdev->rmap);
-Reviewed-by: Lizhi Hou <lizhi.hou@amd.com>
->   		xdma_err(xdev, "config regmap failed: %d", ret);
->   		goto failed;
->   	}
+Thanks for the heads-up Dan.
+
+I will review your proposed fix and verify with smatch locally.
+
+- Dave
