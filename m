@@ -1,114 +1,123 @@
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456CA18A6C6
-	for <kernel-janitors@vger.kernel.org>; Tue, 20 Aug 2024 09:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131BA18FC6F
+	for <kernel-janitors@vger.kernel.org>; Tue, 20 Aug 2024 11:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724145586; cv=none; b=F7cyRHkHmvCs1WzPwO/wQ9eACaMHZxXIt7vi0BNhNc+jmQY6GyF3RIQTG4TZMj/WyyfPVL1zp5+czhXIjZiCItVVvKWQE3tbfHdeXmnkuhCC8AySWRqFyd+ww3mRxV34v+zg4vhNeq8BlhZNUZ6nXoDuXtXxLb+Wo/m0HOcAuDA=
+	t=1724154645; cv=none; b=cxkGhp4gFECGnW3q/wXDW9xhh1LR6dxRrmewIkvwq99o9rQioVKTnzsKsrHZKFCejw80rKVl5OU26QHYNGIyRB99Y1brh6qkts20ZVCZ+jaAb2OvmWPt3VdPOnvCpWJOchpDqYg4CkcACwT4RcR+tJRnhjwGRyN50TbZ9LZA2pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724145586; c=relaxed/simple;
-	bh=0MV9FrI9hg0tXVB/R3eu45u9Q78QI3UyLxdQGYcO0ME=;
+	s=arc-20240116; t=1724154645; c=relaxed/simple;
+	bh=+N0fCfo75321OdOJcVcEyAnRKFBXqAIaZvFl/KyVYCA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SkFYNmY0hpezwffIbge1JOEZlsoGfzADEHhK3cxNsKcjLueQQikfcL+LJw++a0AtqwMwAEm3DB8JtqnYKfPY+jaNzRCeavdfhcWMpoGUv+MPX0q2l1LG5umRqdkO3v7JY3pvTVp8/hgIEFLvdkZrN+MnoIK47eQMlLLBZ/UrgVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=SWZhXGNK; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+	 To:Cc:Content-Type; b=Vx4qo2liSlNzUtqWQeKR+gf3iBLUg6gDmZK9KRJZNA0qTM8LXRV7FQnsoYdafA4Vto2vez2CdrVjtNoAEoKSN6QMwTWvRVD+VzEnTgr1x7o4de3O53PtmxsJhAyEeqNdbIxC/Nzgtq3m7B6hQy2GXSvRn0j1hfpeEow70zAEvKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=naH22V54; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="SWZhXGNK"
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-39d2256ee95so22368475ab.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 20 Aug 2024 02:19:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="naH22V54"
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e1659e9a982so387343276.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 20 Aug 2024 04:50:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1724145583; x=1724750383; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zwPbfctzRfZa2/zhqSrtwrO42MOMX85GRmKfc11Yv8c=;
-        b=SWZhXGNKuSYcSUEuFcqmbXccpN09Xc3E0ToiQ9K0AkH+p8uevuD0F3fRqbhSHiwpMi
-         WZJkjYUjw9f4y01WszDLEM6HNqQNHSMrxOe5RRmcCQV32VE1IoqTEIMbesr6cGqJrozM
-         T8ZQbDtUvltTFQfRY9K6mKtNkY3bnv7UnRxS0MTP069ac/9mIIcaEgfZanuLOzFFWfv2
-         hk7wEZf5zmeC55wm7WV+BUdkNpuIxBF10HAQB4R+XFMIB9Doi30sNYCOp3i7rDql1jbu
-         vhsEBCef65PRuISh2DyPAngLt8RVem8KFRsOYJL6Sy9dQaInmhDMQ5ZSCnLhjILShQiK
-         UuCw==
+        d=linaro.org; s=google; t=1724154643; x=1724759443; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9DVd0Gefl7PHpJ5IcyG9GzUh0GMs/G2HRBX2T94h5zQ=;
+        b=naH22V54vnmnpUC0mBpyC/NRdrlRbT6takB5P5dnQm3rOJKXC+Nd70ThDge7XAccan
+         AeB1X+7eFglWcQjxhwmrpaRgRXvYWKr3nyllQlzsJ244GspXZfGy7BaareRy0GalWyQd
+         yfKpEox6sIs1qfKPp/Gr9KEK1T1JMbNwva1Hkris63try70xC3L9HETl/7kcM9U31kis
+         ILSPsWJP9wTxRgSGV14jKCFmDwGpp3IEwxHZMnCkmtsvO8bSFcTg8vEiZWPvHVJEBJMt
+         qHnQmGL2D3SJm7SZBUqvxSoQlat9uvDsSOtjRX8E7M2WpB8CRyrd6zBlZbn0oYNTnxx8
+         yVUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724145583; x=1724750383;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zwPbfctzRfZa2/zhqSrtwrO42MOMX85GRmKfc11Yv8c=;
-        b=WzrQxL1AGx5CBNVUFV7PnV6iF0L5tJ8xYHLeQJmskD6Zn/RxOJVLN4MZfZnz3s/poI
-         MLFAqb5/dzsSleKj0UdLEgu7glzuvndzlSFWJy4HErFjWw5kUuRkKZF/GDNiLak5kaHA
-         NfJxukzefPlTXE8aqaMlGJtU3BKBjylfprCXZNDF0svzn0U5dggE3i/GbtJqzneohX55
-         ifsysNAzcmJZ9TM+BBTyiujBxwvC5TXcTzniNDMbVfLZ4zb7Wc5vcCekGY/fm5IVvNUf
-         2PQaTERz49R0xmOLQuSQNKuMJHMGgKPIO+I0uemNAy5r+sKIqlYssRn/WWs5wlEgBGEQ
-         3lyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUa7glcLhA0HB3qKMwJiX94KeTvZz8HVoVTcc+GCGMRR3b8z0ddFogEHoqPvO93ADuwznWaZ/D3Q8x7XC31y0Kerk0Z4KfLWOWFBvQI2SNy
-X-Gm-Message-State: AOJu0YxHnTmlexdXGLnIfJ8jaMsJk8Ic9J5p882+vIQrZnw6ms9ubXvm
-	FxZgUvkPb4YLYSZoy5JiUsxC5QurmhuY86z3sprKcsnMY5FO6JwFkgXt9iVCwDLK9qRX9hHqfk4
-	KYrYV3BkTpQbxDnz8CI3pgzYgahEeF6278UCPjQ==
-X-Google-Smtp-Source: AGHT+IExX7dzgemFOY+5Vhm6vcIRzonwTa1j3n/gS7/d7T+aopXOQDlPfujd3coFGkXkPVCcQNAlbebtpfJSDbgjJjI=
-X-Received: by 2002:a05:6e02:1fcf:b0:39b:1ed5:4a55 with SMTP id
- e9e14a558f8ab-39d26d64ac5mr163368045ab.24.1724145583225; Tue, 20 Aug 2024
- 02:19:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724154643; x=1724759443;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9DVd0Gefl7PHpJ5IcyG9GzUh0GMs/G2HRBX2T94h5zQ=;
+        b=Ky/MSJvNQwt/8BTaGqlkJACBpq3pTC0AFwH+LUCt1Gl7Lh9n/btKyBVBpbpdYAt9hX
+         HpLE7nhsEdJZ5AV6fGlrSaFRgUw7BIcmuUyDwqHC+eyLO/Axu2v4zahjEVr2uV7hdUUH
+         a2+aDP+KS57hAUrsOE2vsg1ruCvvwuibL0DH4ou/x61w9RYpaXU1MGhIzcsragG4XF+Q
+         xFkcS/dX7odk/2oGLW69DDq7r2mlsV45Ts0d2HI7HZWjcnFl55ukXbXUlSUUb6VkTWqf
+         tSn13uTY7+B6XdVBMBBuQaOVMgaJW3KIyLJN0yidolUJkF8QwMEaFbr20n73y4ctwhFe
+         0law==
+X-Forwarded-Encrypted: i=1; AJvYcCXS1LtLjtkCpfQN3DK/HOVpJBAIzQQKeCx1iODJI+44GLt4ocuJjgFl5dztV7gxwsMRYmn0bAUvLze/DC52rs0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1UGHXOyZA9Pgyf6C8616mtWcWBJSxwzLOC/RaaP5X980fvrzu
+	itifBkSv+BRAOSlzadTdKHpXzX8AB3EX89Z/N+blizPP/PfWSfAFNSMcpDCT2XBlGFl8ARpf/dd
+	vM8qRdKG1z5Y8NhVW0kt2HbhrV1bptJx5SpdIQg==
+X-Google-Smtp-Source: AGHT+IEMB3TMQoKoMENuYx3+vgX9Vhmt9+GFb4+PSf+bt1316IqMO95UvkjliFqkRrK+xxXvuI3QTNie11Iwttdbqgk=
+X-Received: by 2002:a05:6902:e10:b0:e0b:eb96:fd95 with SMTP id
+ 3f1490d57ef6-e1650d3fd97mr1995243276.19.1724154643077; Tue, 20 Aug 2024
+ 04:50:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a5a628d6-81d8-4933-81a8-64aad4743ec4@stanley.mountain>
-In-Reply-To: <a5a628d6-81d8-4933-81a8-64aad4743ec4@stanley.mountain>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 20 Aug 2024 14:49:31 +0530
-Message-ID: <CAAhSdy1n54TxAiPHwrRBmvNZrijoFGXbgq3xb8LXVtPCD8udow@mail.gmail.com>
-Subject: Re: [PATCH] irqchip/riscv-aplic: Fix an IS_ERR() vs NULL bug in probe()
+References: <8c90be28-67b4-4b0d-a105-034dc72a0b31@stanley.mountain>
+In-Reply-To: <8c90be28-67b4-4b0d-a105-034dc72a0b31@stanley.mountain>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 20 Aug 2024 13:50:07 +0200
+Message-ID: <CAPDyKFrdNWTsP_cKM4+RmmL-j=nu+r2HktFRxGxhcOhPcSt8vA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: mmc_test: Fix NULL dereference on allocation failure
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Anup Patel <apatel@ventanamicro.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
+Cc: Pierre Ossman <drzeus@drzeus.cx>, Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 20, 2024 at 2:12=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
+On Tue, 20 Aug 2024 at 10:44, Dan Carpenter <dan.carpenter@linaro.org> wrote:
 >
-> The devm_platform_ioremap_resource() function doesn't return NULL, it
-> returns error pointers.  Fix the error handling to match.
+> If the "test->highmem = alloc_pages()" allocation fails then calling
+> __free_pages(test->highmem) will result in a NULL dereference.  Also
+> change the error code to -ENOMEM instead of returning success.
 >
-> Fixes: 2333df5ae51e ("irqchip: Add RISC-V advanced PLIC driver for direct=
--mode")
+> Fixes: 2661081f5ab9 ("mmc_test: highmem tests")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-LGTM.
+Applied for fixes, thanks!
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+Kind regards
+Uffe
 
-Regards,
-Anup
 
 > ---
->  drivers/irqchip/irq-riscv-aplic-main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> This code is from 2008 so it must not be that much of an issue in real
+> life.
 >
-> diff --git a/drivers/irqchip/irq-riscv-aplic-main.c b/drivers/irqchip/irq=
--riscv-aplic-main.c
-> index 28dd175b5764..981fad6fb8f7 100644
-> --- a/drivers/irqchip/irq-riscv-aplic-main.c
-> +++ b/drivers/irqchip/irq-riscv-aplic-main.c
-> @@ -175,9 +175,9 @@ static int aplic_probe(struct platform_device *pdev)
+>  drivers/mmc/core/mmc_test.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 >
->         /* Map the MMIO registers */
->         regs =3D devm_platform_ioremap_resource(pdev, 0);
-> -       if (!regs) {
-> +       if (IS_ERR(regs)) {
->                 dev_err(dev, "failed map MMIO registers\n");
-> -               return -ENOMEM;
-> +               return PTR_ERR(regs);
->         }
+> diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
+> index 8f7f587a0025..b7f627a9fdea 100644
+> --- a/drivers/mmc/core/mmc_test.c
+> +++ b/drivers/mmc/core/mmc_test.c
+> @@ -3125,13 +3125,13 @@ static ssize_t mtf_test_write(struct file *file, const char __user *buf,
+>         test->buffer = kzalloc(BUFFER_SIZE, GFP_KERNEL);
+>  #ifdef CONFIG_HIGHMEM
+>         test->highmem = alloc_pages(GFP_KERNEL | __GFP_HIGHMEM, BUFFER_ORDER);
+> +       if (!test->highmem) {
+> +               count = -ENOMEM;
+> +               goto free_test_buffer;
+> +       }
+>  #endif
 >
->         /*
+> -#ifdef CONFIG_HIGHMEM
+> -       if (test->buffer && test->highmem) {
+> -#else
+>         if (test->buffer) {
+> -#endif
+>                 mutex_lock(&mmc_test_lock);
+>                 mmc_test_run(test, testcase);
+>                 mutex_unlock(&mmc_test_lock);
+> @@ -3139,6 +3139,7 @@ static ssize_t mtf_test_write(struct file *file, const char __user *buf,
+>
+>  #ifdef CONFIG_HIGHMEM
+>         __free_pages(test->highmem, BUFFER_ORDER);
+> +free_test_buffer:
+>  #endif
+>         kfree(test->buffer);
+>         kfree(test);
 > --
 > 2.43.0
 >
