@@ -1,116 +1,87 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F043818A6CA
-	for <kernel-janitors@vger.kernel.org>; Tue, 20 Aug 2024 08:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E494918E352;
+	Tue, 20 Aug 2024 08:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724143455; cv=none; b=S/DZ7fGYOXmmx6Ny05H1e7AGkWYnCDLApEiSbqipx8KLa4iGHwB8ZIKph7RX145dhYacFxDMsR/uGF+uTWvUUPoQGw+0qtc5yhQWG2nbdYIYbHK5HzLv6gypmgn1aWvPDxIjkC582isYTz6zbYAwdiiiFtQHwLU9vSLgOfRcLzY=
+	t=1724144083; cv=none; b=EJnBzuu9cWz4JAVPyNl2qjYcADFCBJ3EaGH84FiNlLDB+CdRddzROivGET6k1BxYJHbbx7c0YDWiwjvRAjEcHJkMGRThDEuN7gzXjI92lsbLZpKDimAP/UXtPd2MSVH4zg4XoqUrjgzDiTzfjtJC+x7HJpDMd+Bd72Oi//ZVnDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724143455; c=relaxed/simple;
-	bh=3HY5A4mBT4lcDgE79BnGp8q3zg7WEhsKws3g9VNoPKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rxkDjWnBTGWB1HDo60OA6oH7XRIfegwKluHdJH8bsqz4KWZLBkv/5o4pJNm7qQw7nJLIkkbF3Q0jK9T3Cuqrnawis5eyFLcOnyGztqYTolmlWKG2aYBRHNtKE0ZmrwgM8l+oeHOLV/rr+jWiyzz+kNrK7SaNcr91TutbyZgEJGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iCgpFzGC; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iCgpFzGC"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5bec4fc82b0so7897887a12.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 20 Aug 2024 01:44:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724143452; x=1724748252; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=p8gt5QHwzh5IDznDoPANZQT7end38k7a/M7L1Zdp8Es=;
-        b=iCgpFzGCpagz3iG6wxXaWspQ+jK6fp17R9rIxxupo/EWduXhHCdWXisLy+96/qCetc
-         1pV7YF39dv5oaPcZO6z8i3hdhthukR/Jbw4XmG+szQMxKumKGZrAb+IS+4tHVulrpm5p
-         xA1Ct7FrlO8A7dpnMAoKpEhHvGnkNItcPBGT3j1XFqKUI3FS4PEM4JJQfghhG+6UNWhV
-         IkEUdwuFt0jbo7/n3DFhmEYWeCNLhdhYzN/UCiqgYB6QAeGkWfGHB4nWVfoW/80pTggN
-         bh2cAcPoCD7FTtIdQbdlK6wdBY3Wz2Too0v8MfyNaY9OquOtDwcXi9NWw4PU7G6l8xfg
-         sUrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724143452; x=1724748252;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p8gt5QHwzh5IDznDoPANZQT7end38k7a/M7L1Zdp8Es=;
-        b=awuUY+cL3+FjR3T8fgnohdreYcEBF+x5A9WQMWNnKmaqLlYNAJLj1Ad+neQAD1c1Gs
-         4oNeEbNfFPkfmtTqjZk2L9qynVRJYV1NvW7buv1bxXRSK+6x6pQ0yog5Casrq8/E8q60
-         JBiViUHTHxXug9HIrFcn/2bzit45CeO+U2hCjpxOYhjHlYoKjKkGN++8cOlDam4qz3Oc
-         sY1QZtFZWLJuk92dcWict9lkEAwrF0/oPKthAcIpegR66fcRfx3P8mwZqNsZQnROz+JO
-         8QoWXZYFAyIOvzMPitckSJ3kF2b8Tnok7mjb+KdYYs8IisG/wze77zWj6Bdi5T6Unsmc
-         t1XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWuNa/ILq7CjCxKmUMp0S6gp4MaSf0d7DF3C0UY64wRYENVntZiYfo4pMxvva3DWjzFYRtqYtfitC88a6xksq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfT/nldNy9fljOsxMODD7MYdSyvlf9cmcVp+7qY6rANWdWxa36
-	8pQNXcPeXJYdaeGGoRcVSMgizKBAPEUqUYFwNMTun/2rngpOGkCPloKDQ5i96Mc=
-X-Google-Smtp-Source: AGHT+IHXBQUe4OAAniXOKMeQ4CSeHZIMmFC9sBk0Tiyh3i+5IhY3tULZEGkvSWW4yb/23VdkMbOuYw==
-X-Received: by 2002:a05:6402:34c4:b0:5b8:eb1d:7fec with SMTP id 4fb4d7f45d1cf-5bf0ac1caabmr2057368a12.6.1724143452210;
-        Tue, 20 Aug 2024 01:44:12 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebc080277sm6520511a12.80.2024.08.20.01.44.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 01:44:11 -0700 (PDT)
-Date: Tue, 20 Aug 2024 11:44:08 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Pierre Ossman <drzeus@drzeus.cx>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] mmc: mmc_test: Fix NULL dereference on allocation failure
-Message-ID: <8c90be28-67b4-4b0d-a105-034dc72a0b31@stanley.mountain>
+	s=arc-20240116; t=1724144083; c=relaxed/simple;
+	bh=288MkP3JqUQevQlkGrbOta9LibnOtTMr1XKPO1zHzE0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MXHsHqR5+hTHVBqYWohgs47JBwOVuWm3e0VvHRApiF8j5dJapETbEOeKfMtXtNHEwkXPx8rxYhGIXYBgacOhNXUGGABHYIGSxekB5FwMGBlbEwa+gviMGrfLygiItaAlVF8pOhW8QHcJ8bXHEEHAaj9a2VIe2xkZF5SABov1av0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wp3725pvrz2Cn5v;
+	Tue, 20 Aug 2024 16:49:34 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6A69F1401F2;
+	Tue, 20 Aug 2024 16:54:34 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 20 Aug 2024 16:54:33 +0800
+Message-ID: <ae6a4702-3225-620c-e83b-b8736ac486a8@huawei.com>
+Date: Tue, 20 Aug 2024 16:54:32 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH] irqchip/riscv-aplic: Fix an IS_ERR() vs NULL bug in
+ probe()
+Content-Language: en-US
+To: Dan Carpenter <dan.carpenter@linaro.org>, Anup Patel
+	<apatel@ventanamicro.com>
+CC: Anup Patel <anup@brainfault.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+	<palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<kernel-janitors@vger.kernel.org>
+References: <a5a628d6-81d8-4933-81a8-64aad4743ec4@stanley.mountain>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <a5a628d6-81d8-4933-81a8-64aad4743ec4@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-If the "test->highmem = alloc_pages()" allocation fails then calling
-__free_pages(test->highmem) will result in a NULL dereference.  Also
-change the error code to -ENOMEM instead of returning success.
 
-Fixes: 2661081f5ab9 ("mmc_test: highmem tests")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-This code is from 2008 so it must not be that much of an issue in real
-life.
 
- drivers/mmc/core/mmc_test.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+On 2024/8/20 16:42, Dan Carpenter wrote:
+> The devm_platform_ioremap_resource() function doesn't return NULL, it
+> returns error pointers.  Fix the error handling to match.
+> 
+> Fixes: 2333df5ae51e ("irqchip: Add RISC-V advanced PLIC driver for direct-mode")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/irqchip/irq-riscv-aplic-main.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-riscv-aplic-main.c b/drivers/irqchip/irq-riscv-aplic-main.c
+> index 28dd175b5764..981fad6fb8f7 100644
+> --- a/drivers/irqchip/irq-riscv-aplic-main.c
+> +++ b/drivers/irqchip/irq-riscv-aplic-main.c
+> @@ -175,9 +175,9 @@ static int aplic_probe(struct platform_device *pdev)
+>  
+>  	/* Map the MMIO registers */
+>  	regs = devm_platform_ioremap_resource(pdev, 0);
+> -	if (!regs) {
+> +	if (IS_ERR(regs)) {
+>  		dev_err(dev, "failed map MMIO registers\n");
+> -		return -ENOMEM;
+> +		return PTR_ERR(regs);
 
-diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
-index 8f7f587a0025..b7f627a9fdea 100644
---- a/drivers/mmc/core/mmc_test.c
-+++ b/drivers/mmc/core/mmc_test.c
-@@ -3125,13 +3125,13 @@ static ssize_t mtf_test_write(struct file *file, const char __user *buf,
- 	test->buffer = kzalloc(BUFFER_SIZE, GFP_KERNEL);
- #ifdef CONFIG_HIGHMEM
- 	test->highmem = alloc_pages(GFP_KERNEL | __GFP_HIGHMEM, BUFFER_ORDER);
-+	if (!test->highmem) {
-+		count = -ENOMEM;
-+		goto free_test_buffer;
-+	}
- #endif
- 
--#ifdef CONFIG_HIGHMEM
--	if (test->buffer && test->highmem) {
--#else
- 	if (test->buffer) {
--#endif
- 		mutex_lock(&mmc_test_lock);
- 		mmc_test_run(test, testcase);
- 		mutex_unlock(&mmc_test_lock);
-@@ -3139,6 +3139,7 @@ static ssize_t mtf_test_write(struct file *file, const char __user *buf,
- 
- #ifdef CONFIG_HIGHMEM
- 	__free_pages(test->highmem, BUFFER_ORDER);
-+free_test_buffer:
- #endif
- 	kfree(test->buffer);
- 	kfree(test);
--- 
-2.43.0
+LGTM
+Reviewed-by:  Jinjie Ruan <ruanjinjie@huawei.com>
 
+>  	}
+>  
+>  	/*
