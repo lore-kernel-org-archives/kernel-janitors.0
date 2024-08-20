@@ -1,89 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5A318E344;
-	Tue, 20 Aug 2024 19:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760CE3A8D2;
+	Tue, 20 Aug 2024 22:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724183098; cv=none; b=fXvG10q632PngVcSA3dyksUBTgE2ZpV8AujGzCgpkol91HBEf8yceiFY/4CQ3X2hqYLUu366o8pT4TXIGQZF/GF2A2sydJQ7Q09RGd/n64nowgKxMycHggfBwN9cPAV7cwLlN5gcgvDvdNZ2Q8/UlmcGms21YdTN/Ve1E4R10G8=
+	t=1724193030; cv=none; b=CwY22HmSP0eeVtgu21oF5YCz17sSckii1O9ZLsOXm3PBHdW9ubarmE453W/iv79frVhs4qsdyNpIwNz0ZWdiaE2cmQXSex4nuC6zOe/15LmIoN1b7WiFr87+K8RrXpumR7AEWHRU6pkJkau9/UB1fmyr8lqALE/7+UGRvXhSlrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724183098; c=relaxed/simple;
-	bh=5zNMj6jOkWngChBd/1xsuHniRvKqUbXx1HRiMAzGvUI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hnxsrW54OdPE+k2HIbCz2uvEIWysS/TrDasqRykXulKLGD4K5TF+Q6oB9hRGgVg7rQYkCLBGY5ozWaOuncNlnuby5NQIWlb7EjV8fiFa3+ytDAvjKRktaZ+Z2DGVAN3NP/q1SsF/NOpXJNKVZxyUWMtNZttpJ3uBLazvp6Pkn9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hKtMlnN3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724193030; c=relaxed/simple;
+	bh=QIvy4TO9GSD5doYUaryT1LCKdL1T8Hc0PAdoyn5yFrc=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Y1SSdeuKcWKMnkh9IhzgBjiMjnHihtIXV1T/xCOOxaA9aslQuwyqjbbT36OnJ1UgDhyhpdt+C0dDhhjDun2OqJ/M41WP6omqlgwbrO2Kk5OTAz1EbdmC4B+f0pXxoHzWeXirHbKYAIzTCwchvfRYewrTf04QimVR1nvUviBYqHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UGlCPsuE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKtMlnN3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57E40C4AF0B;
-	Tue, 20 Aug 2024 19:44:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UGlCPsuE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB510C4AF0B;
+	Tue, 20 Aug 2024 22:30:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724183098;
-	bh=5zNMj6jOkWngChBd/1xsuHniRvKqUbXx1HRiMAzGvUI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hKtMlnN3srgkr78qdhVU8x+LRFQioBuWD9xyS5SuiQX5KnBrquFH7C+dtigb6+OdG
-	 tbiYjSzBn2kVjf4NDhkvdgKodu2RPleOBVTsC68LHkthvEOjy38u7X4KQfTD9QJNET
-	 4aWxwvdV3uGuOwSi8WXgPVR8DNinvSffRAVA8V+IpctDWMtbNOfOimr8RM43DaoZQb
-	 4iX3JyU8mII1Tm3xhK5bGXurcJZ/Gb83pHdjfecb0rtB2os1CbBmzzD4kf+yCj7AIv
-	 M5QlhdUNzl7t+r2EiksXEuSzS8Bq71YpUfM1XzC8rpEo6wrh1nCnYfhxVokwrK0yty
-	 r5YwsYS16VDDQ==
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7093d565310so4454037a34.2;
-        Tue, 20 Aug 2024 12:44:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUAct0MqKow3HZqzw/wAsp05+UKf0K57skVj150zacXOXIO3PR6nBc8eHa6G5O32knz1wDllrCVQKj5wIzJ@vger.kernel.org, AJvYcCWgSyhHILkOA8ssFLWWUp1b26Ngr4kPMXC17EfTbVUT9X2VT4mP7kNVbjAIfS2k9Klv7tgfQC6h+dCTK+hruPs=@vger.kernel.org, AJvYcCXgUaNkdOsp+nV6t4NizUxYujsBlDTaOUnaArajQG7r66KTLyEuG7/mv9Z85yDZDmwLpBPV/WdoLhI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymQPRkVR6NdoQXDTW5u1PpjLaCpvgETHettFbAMP9ou99DHFoY
-	R2Ywmrn1dGMyha9nQP1rrxvCeD5pS6ZZaiNT6CrHI/2h9Ppy6VSaVFA5OvzHm1nOpbYoSaOWsxn
-	f6Qb2YajSRKXaEQFmCUiDkLFpkRE=
-X-Google-Smtp-Source: AGHT+IEv5xnvO58H1asFV+sqhstPmFN30r9iiFj5GLMWIrz4UaJDHnD6zG2CIWOSdjqPqqD8aC30Ankwg/xC7z4VbMI=
-X-Received: by 2002:a05:6871:8a8:b0:260:e2ed:1abe with SMTP id
- 586e51a60fabf-270815de11bmr3621294fac.39.1724183097689; Tue, 20 Aug 2024
- 12:44:57 -0700 (PDT)
+	s=k20201202; t=1724193029;
+	bh=QIvy4TO9GSD5doYUaryT1LCKdL1T8Hc0PAdoyn5yFrc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=UGlCPsuEk3q1g7Z/NPG0kgWw6vFChi2HcUSKu4hBcV5gYOaAvfAZBNhp6BvaeltpN
+	 Ie768J42dqWFdE2b1J80g5SSKUxEYKoP1g8DdmcYdpNpohgGFjobaW1PDip7YOFSZQ
+	 RBlLl/7Wt8BQCHauK7HlIC7kaHTm9ete55GmGB+1P+A4PD/OIFtpFQWxzaCNM6h95b
+	 fUtEJIpgsC+Mi6UJEN6WrUBBuAUqV2ZMblTzoPa7mc9mcdLepTg0YqDkTT0Meyv+cR
+	 yOoCcUW5CwAN9I7184i+GPQHZpS2xTtUVoN+QMWnVof3kHA8Cyic0uyAk1TFDqDFHV
+	 oeOTr9LUOEugQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 342A53804CAE;
+	Tue, 20 Aug 2024 22:30:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <86e3a059-504d-4795-a5ea-4a653f3b41f8@stanley.mountain>
-In-Reply-To: <86e3a059-504d-4795-a5ea-4a653f3b41f8@stanley.mountain>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 20 Aug 2024 21:44:46 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ixtyB4FFEBAUru-hRh5bfCKeCEJw2+_0gvWMiboRrs2Q@mail.gmail.com>
-Message-ID: <CAJZ5v0ixtyB4FFEBAUru-hRh5bfCKeCEJw2+_0gvWMiboRrs2Q@mail.gmail.com>
-Subject: Re: [PATCH] powercap: intel_rapl: Fix off by one in get_rpi()
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] dpaa2-switch: Fix error checking in
+ dpaa2_switch_seed_bp()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172419302902.1256151.15717439778691554579.git-patchwork-notify@kernel.org>
+Date: Tue, 20 Aug 2024 22:30:29 +0000
+References: <eec27f30-b43f-42b6-b8ee-04a6f83423b6@stanley.mountain>
+In-Reply-To: <eec27f30-b43f-42b6-b8ee-04a6f83423b6@stanley.mountain>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Zhang Rui <rui.zhang@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc: ioana.ciornei@nxp.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, vladimir.oltean@nxp.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 
-On Tue, Aug 20, 2024 at 10:41=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
-o.org> wrote:
->
-> The rp->priv->rpi array is either rpi_msr or rpi_tpmi which have
-> NR_RAPL_PRIMITIVES number of elements.  Thus the > needs to be >=3D
-> to prevent an off by one access.
->
-> Fixes: 98ff639a7289 ("powercap: intel_rapl: Support per Interface primiti=
-ve information")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/powercap/intel_rapl_common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/inte=
-l_rapl_common.c
-> index 8b7a5a31e8c1..67aec73511a7 100644
-> --- a/drivers/powercap/intel_rapl_common.c
-> +++ b/drivers/powercap/intel_rapl_common.c
-> @@ -740,7 +740,7 @@ static struct rapl_primitive_info *get_rpi(struct rap=
-l_package *rp, int prim)
->  {
->         struct rapl_primitive_info *rpi =3D rp->priv->rpi;
->
-> -       if (prim < 0 || prim > NR_RAPL_PRIMITIVES || !rpi)
-> +       if (prim < 0 || prim >=3D NR_RAPL_PRIMITIVES || !rpi)
->                 return NULL;
->
->         return &rpi[prim];
-> --
+Hello:
 
-Applied as 6.12 material, thanks!
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Sat, 17 Aug 2024 09:52:46 +0300 you wrote:
+> The dpaa2_switch_add_bufs() function returns the number of bufs that it
+> was able to add.  It returns BUFS_PER_CMD (7) for complete success or a
+> smaller number if there are not enough pages available.  However, the
+> error checking is looking at the total number of bufs instead of the
+> number which were added on this iteration.  Thus the error checking
+> only works correctly for the first iteration through the loop and
+> subsequent iterations are always counted as a success.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] dpaa2-switch: Fix error checking in dpaa2_switch_seed_bp()
+    https://git.kernel.org/netdev/net/c/c50e7475961c
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
