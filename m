@@ -1,46 +1,62 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F11518A6BC;
-	Tue, 20 Aug 2024 08:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6517818A6C8
+	for <kernel-janitors@vger.kernel.org>; Tue, 20 Aug 2024 08:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724142657; cv=none; b=Lr9Jhim03sUnzjDs+hRm/MXnfovTFHPU5uvsRI2YyBv1+nqDfEB9LvtbtdpXQkzSJuR160VQf8PkafRH5+I7dBJtEmUwcQ1KCpUevz19jAeS2fo0qelwbxtLE67tC5XoQeQQpKKZ7xlNQPhoVMAcTwr6YBaNH54N5INuTm6omlY=
+	t=1724143302; cv=none; b=IZQJAyrDTgKg96N/BSN8ul+0GdLU9PUhT97y9CE9JhaTD05nVlFjpgygJyMVibIXGQxwq4EE87nWrF7BhFyUhetPWdII2hWhJwTuczugr3Sdk8ZjyQzwUreJR3miFoAxykrBWAZRdXviXk+WPl7e/uNyaA5DvUYuwqxSdHRpyAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724142657; c=relaxed/simple;
-	bh=BmInGksExZlBWkn/07xLCLQVvYFAfRl0PNPyW6MxqbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=klhdvM+97wsG6RWWCa4L0SMhfj4iuxawYAqVUJrWWllH+g0V+JTkCM1dZiH8AivS0Dj7B/l/COhKU7MwMVck4tJaFcXEdx68O6/eQiz8mrSB18lcGsyA4Pe75ZXc3SagHSxKs0vkU2oKhrF4s/TGVteHqKgJeh/0Oh3iWaOAeW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ug+iSR6C; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724143302; c=relaxed/simple;
+	bh=5N0nCpfI+nhaOWK3OttM8gAvu11x+K2UOJAXcQngNTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nH9lfA95ZWNxwnegwKQiTy/i8+5lNmyyeLsmSA83kpG8Mj+wFJeGW2mY1nfl5dpALlpp9VTFvZnRFeyktMzrWha1xPY3qGNMhuJ2fo64Ix+RSOF6z0dH2DaiV98AwBRFu+iGp6l+wN50rv+ZEQSu7g/fdBBg6/F5/cQEBpGUIKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R0iM8Bl3; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ug+iSR6C"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9921C4AF0F;
-	Tue, 20 Aug 2024 08:30:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724142656;
-	bh=BmInGksExZlBWkn/07xLCLQVvYFAfRl0PNPyW6MxqbQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ug+iSR6CN9Cx6AdKo3T2Z4aOuprJDe79l4wOJkPZe6TzyzBDKIJRYNVGM2vjOuzut
-	 BdNbeSfqTPPHXcxYWx03I8eT817/xpq7oTbq5BsbGOfG5ywPHvmuTzhT5YHiVL25Js
-	 CFK3gsCdwK05HOArVVNrmissVuO2lB9AxzzkExum+yIJKXlzPxPajAlrsWS5vnpsxc
-	 qcmIxRJIgio3Fuvu2UhbUOBHCPWU1oMB2Fx314R6rTOEJbHYdvmr5k+gm9mcZ8nuXl
-	 RM/G3YOSR/WmauKmGoSLhQp7AJIvfGcgCOJp3XMtbZNYwsDHeHM6VYg9LXuW2+I/lY
-	 9H1E9mnKxYymw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sgKGV-000000000hj-2hYk;
-	Tue, 20 Aug 2024 10:30:55 +0200
-Date: Tue, 20 Aug 2024 10:30:55 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: add missing MODULE_DESCRIPTION() macros
-Message-ID: <ZsRUP7ZcKvcUBL4t@hovoldconsulting.com>
-References: <20240611-md-drivers-usb-serial-v1-1-c6ada535890a@quicinc.com>
- <ZofajSjhaaZsFRro@hovoldconsulting.com>
- <108d8399-9b09-4a1d-8424-a6fa69b63d77@quicinc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R0iM8Bl3"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a864574429aso75260366b.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 20 Aug 2024 01:41:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724143299; x=1724748099; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UWAdMcy/9NR2ReZJmKOUCazwYMQpggfHiZptQK0YIT0=;
+        b=R0iM8Bl3McqDIFGmosSr6kZxYcvG7PLG2u35SOxIo3ClI8TzujyHo2VnhbuFG/PsK8
+         CJxdkG0Gk3tr7T8nJmn8HiE2Xi/izsT8hGsftcLbHTcnMhZgUPNNz9YVKxa4SQN+ymus
+         JnmDT3erjxdzxJAFyWdNpyegD86dCXLj3fwoajz83mwewLA/NKBhXXBxKGxKLzIZO1v/
+         X2Xf53PF+tGXe1HA9Ro7xeMdbiRB25GXcQhGPTYdDNXXJYQOLnwF2sqMuucarhT+XjfI
+         3HLt4zR7rcVRCtLfK69Td+5+YEZIAiIuB9IcfweW9vQmOxDotIpqtmOBI6EW0T68Qflz
+         QNdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724143299; x=1724748099;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UWAdMcy/9NR2ReZJmKOUCazwYMQpggfHiZptQK0YIT0=;
+        b=FoddDGcEMsSnHrwyXHTA8Fn0LIFnn52jZZm0V15DcCb/N+vcQO924Wro8IM9HhkneR
+         t34mZaeoGJ/ygh/AElIuWxmKccO8WvIYnkbfTde+xASo6g7Z6B+5lkVa23gW9N69CoEw
+         e4hMF35DG9xm4EUZUTTV8e7an+Xbx7r/iV1ZxaM0SNJZztkqywGGupZRXcOD9tyiTJyg
+         y4dv9ipWkTzdMkGdbbeKJ8Zrcr0bHvwJartaTeB/Q4G2ij/dcGBQDh6ebvsQ0vrincCJ
+         1VhzXr1rO2Uc5JlbYRXzXexnh7DjgYhRTuJndkPe2B2rGMR3H43t5sdpGwiljh/9xntj
+         E8+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUj+2EHseiMAjz2iyCrY5eXCJPZ5+ri0VixX4HArE8dfsUcRNS8J80d/toBooHG3EY5f+UKwBLTupaoxk4JINU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAg23/OH5goEVNAHxydMTE5IOuu+K24CEX2LcvG3MBCli8D0nR
+	nRuhgPJ/NnREcLb+UCPZ0kiSWaJa0MKwPzNr1dVWDFmNsXH494kEXaqwHdSuMEw=
+X-Google-Smtp-Source: AGHT+IFnTZZhFh0VCiwtDwh6MDqi/R4yLEzQF1vj4INSiVJzn84a9KH3cF4dzK2xWm1zg8MzWtyOCA==
+X-Received: by 2002:a17:907:e22a:b0:a7d:391f:17af with SMTP id a640c23a62f3a-a83929d3755mr994995066b.51.1724143298645;
+        Tue, 20 Aug 2024 01:41:38 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838394880esm729365066b.185.2024.08.20.01.41.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 01:41:38 -0700 (PDT)
+Date: Tue, 20 Aug 2024 11:41:34 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] powercap: intel_rapl: Fix off by one in get_rpi()
+Message-ID: <86e3a059-504d-4795-a5ea-4a653f3b41f8@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -49,34 +65,31 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <108d8399-9b09-4a1d-8424-a6fa69b63d77@quicinc.com>
+X-Mailer: git-send-email haha only kidding
 
-On Tue, Jul 23, 2024 at 11:44:05AM -0700, Jeff Johnson wrote:
-> On 7/5/2024 4:35 AM, Johan Hovold wrote:
-> > On Tue, Jun 11, 2024 at 10:52:54AM -0700, Jeff Johnson wrote:
-> >> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/ch341.o
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb_debug.o
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/mxuport.o
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/navman.o
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/qcaux.o
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb-serial-simple.o
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/symbolserial.o
-> >>
-> >> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> >>
-> >> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> > 
-> > I amended the commit message with the (recent) commit that added this
-> > W=1 warning (and dropped C=1). I also tweaked three descriptions
-> > slightly. End result is here:
-> > 
-> > 	https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git/commit/?h=usb-next&id=9f4dc05107a6db3743e6b9ea4014cbdc3795682d
+The rp->priv->rpi array is either rpi_msr or rpi_tpmi which have
+NR_RAPL_PRIMITIVES number of elements.  Thus the > needs to be >=
+to prevent an off by one access.
 
-> I see this landed in linux-next, but is not currently in Linus' tree for 6.11.
-> Will you be able to have this pulled during the merge window?
-> I'm trying to eradicate all of these warnings before 6.11 rc-final.
+Fixes: 98ff639a7289 ("powercap: intel_rapl: Support per Interface primitive information")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/powercap/intel_rapl_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This one is now in Linus' tree.
+diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/intel_rapl_common.c
+index 8b7a5a31e8c1..67aec73511a7 100644
+--- a/drivers/powercap/intel_rapl_common.c
++++ b/drivers/powercap/intel_rapl_common.c
+@@ -740,7 +740,7 @@ static struct rapl_primitive_info *get_rpi(struct rapl_package *rp, int prim)
+ {
+ 	struct rapl_primitive_info *rpi = rp->priv->rpi;
+ 
+-	if (prim < 0 || prim > NR_RAPL_PRIMITIVES || !rpi)
++	if (prim < 0 || prim >= NR_RAPL_PRIMITIVES || !rpi)
+ 		return NULL;
+ 
+ 	return &rpi[prim];
+-- 
+2.43.0
 
-Johan
