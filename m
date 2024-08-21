@@ -1,83 +1,85 @@
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5511B2520;
-	Wed, 21 Aug 2024 14:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEC714F13A;
+	Wed, 21 Aug 2024 15:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724250492; cv=none; b=tRlkVeTPWUawK55p3mZnSyA4CyreU1nSMq463vTfsubAkJ4/g9XbPIIdLcFeonafx7SjVPJAgxcVQ8ES3y7ImmkwVJmoZ3rH3lUAtHeAPvKYPcBqLVQFqduKNj5u1vZMQhaY4tK0TR7hrF4Cu8LEun6vZqTsECdwpOTFTsNlidw=
+	t=1724253890; cv=none; b=cNJQq1Jr3rxjVsYGO+fDqh1S0cKFZBgywwLYeDpbp5/dIC7IDs2OJuGlo3LkuhA5OxHbob5sflCQPmhkqTOBJFUHU90oXXvQnqTKfCWDtgJrz/gCgyxG9rLsMFininqCevTj67i92g20qBogyAYWMCWj3UnKf9n0PxajmFEtdSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724250492; c=relaxed/simple;
-	bh=yIC/eliA3Rct3SZ2+ZmelKDHsCE3ohn9pDGoiaGXrAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KtSuUfnBPvNLZsjKoyF14HuyxAaEp4fILoMiNHrWRUK0hMMbe7YW0iKFQb9FAnNIH/1gaEgMzS+dyz8+YJcfjW7zcg3VB+/CTKIzk3r3PNgGnQr26u+Mdba0pk1X348okKZU6jPPF7wQRjfj5mJ8dy+GbR2NWI9QgHL3gzNFNy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lczDN4wr; arc=none smtp.client-ip=80.12.242.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1724253890; c=relaxed/simple;
+	bh=W6Dm+pw4jKVI1NoMBaeLuQYMNAlSSIuKPuzkfQBk0wU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=C6wBhOgx4hX/1nPuA3ydjCCkbGfg+diyp2SropG+IE3ttuzq6iIIV/m7et6/F3IQ3DhG2LZzZTQwUiwcyPskhG9zUbDs4SchI8VgBY5YUcT8ihcN9LzGUngj/dMt8lFdF3zgYyqshq25PCN1WSHIoA6qzpzegP0iAPmD7dUxYq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YVXmxd1e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lczDN4wr"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id gmJgsBD1Gy802gmJhsL3aC; Wed, 21 Aug 2024 16:28:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724250486;
-	bh=FKaRraVbqkBDXVLLTv7roD4oeXin47AqKDSX9eLt7UI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=lczDN4wrpFUqhmeJ3X7Orhilq2u9/zNDAq+Alwx1iMNVULZUyze1cDnIp/cFk55df
-	 OEA4w9v0E6f620EY+zwqTRnIJMT5pw+9WCp/Wlo0uEGlHREA6AJQcLl53PpyS0r0gk
-	 lLLRlCyqmCH95K0hl6yGcGh4THBVfD9PoykPNPX8PVf3vEtIpCBwDx76sZ+M1TOGmM
-	 37XmxtLHLmw7TJU3nvJj4Dwx2gmSMeog9KM74JjkIjpxK+t42NtrmYu8lUtyJvZPKv
-	 QL3fnZitzPyiVK8JBnIoZpU/T5aBg1/zY+IAbsf5nO1W/rUtApwGqVx5gJLRiJ6Ld5
-	 GOsHTWc9n4hcQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 21 Aug 2024 16:28:06 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-afs@lists.infradead.org
-Subject: [PATCH] afs: Remove the unused lock_manager_mutex field from struct afs_net
-Date: Wed, 21 Aug 2024 16:27:57 +0200
-Message-ID: <7fa750b2be9523b229105e780c0ef3d9eed20009.1724250464.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YVXmxd1e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D56EC32781;
+	Wed, 21 Aug 2024 15:24:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724253890;
+	bh=W6Dm+pw4jKVI1NoMBaeLuQYMNAlSSIuKPuzkfQBk0wU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=YVXmxd1eK1rsVkqeL1K3kB85wpV5tsEhKpBR7XuGnOPqUwBOqNEcxhL0cvCXR9l2J
+	 QkixuXmAmzleeGVMTlAAaW4PUhlGy2Ik+eP7EMqc5LQEaJL70m+kAlousN44o2lNoN
+	 6YLvZyb2iBqgwccb0ckkq5bCwef5FpwNqbLZGqyEnAFWYZOAV4VI72XWiJY7seFnnc
+	 pLW1Yzr5Mbcn85sx9TVhsaEzBlYue48aXHMyBEeuqd8d2nMH6lBN7R8JC2M93an0HO
+	 ur93a+PHoXdbrVZ+3jNjYoDtSO7myjqO7NHoug1uxh8uWcUswhgwZNbdAYSZPRs5t7
+	 kc0HkwI38pC4Q==
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, 
+ linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
+ Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240821114927.520193-1-colin.i.king@gmail.com>
+References: <20240821114927.520193-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] ASoC: codecs: wcd934x: make read-only array
+ minCode_param static const
+Message-Id: <172425388817.1704682.13476563163594836442.b4-ty@kernel.org>
+Date: Wed, 21 Aug 2024 16:24:48 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-'lock_manager_mutex' has been introduced in commit f044c8847bb6 ("afs: Lay
-the groundwork for supporting network namespaces") in 2017-12, but was
-already unused at this time.
+On Wed, 21 Aug 2024 12:49:27 +0100, Colin Ian King wrote:
+> Don't populate the read-only array minCode_param on the stack at
+> run time, instead make it static const.
+> 
+> 
 
-It is still unused now, so remove it.
+Applied to
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- fs/afs/internal.h | 3 ---
- 1 file changed, 3 deletions(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 6e1d3c4daf72..a09459cebba9 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -331,9 +331,6 @@ struct afs_net {
- 	struct timer_list	fs_probe_timer;
- 	atomic_t		servers_outstanding;
- 
--	/* File locking renewal management */
--	struct mutex		lock_manager_mutex;
--
- 	/* Misc */
- 	struct super_block	*dynroot_sb;	/* Dynamic root mount superblock */
- 	struct proc_dir_entry	*proc_afs;	/* /proc/net/afs directory */
--- 
-2.46.0
+Thanks!
+
+[1/1] ASoC: codecs: wcd934x: make read-only array minCode_param static const
+      commit: 6f6d8b2d49299492e704030632ab79257685e5d3
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
