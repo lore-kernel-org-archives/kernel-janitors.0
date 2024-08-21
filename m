@@ -1,102 +1,105 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+Received: from msa.smtpout.orange.fr (msa-216.smtpout.orange.fr [193.252.23.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6472019259A;
-	Wed, 21 Aug 2024 11:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE33919ABAF;
+	Wed, 21 Aug 2024 13:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724240973; cv=none; b=gNYpUCuq525ITb47KVVmTwPPlcOAI9NL2bKmJqM6nDYhe8n30dQrnxg26wKc0w43vIrD5elhF87YM8wmzsxF06GALLOLmFC8AqQ5sS0j1tJItJ4v99Uk2RGZk6hhWeUxVMY8FbcFdNBiGsM/f98NjfUoCPVoZQ0eR4z4wbPdFkA=
+	t=1724247216; cv=none; b=dCj2xJe937kg6Gw3TnNkxVne3nh370/yRHd34nNoTly0dOfXy/jlhSGIguffNvyWodKnPIVADhkxvAqJKb9M42ijXat2lJfXZ6GcZkT4W6OuflbA/gPV9WaoIgWIKXNhwwa7IlJj4ZrIBFXlOXqN6xL06IvH1Jvb3BVH3we0UCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724240973; c=relaxed/simple;
-	bh=ZNOIiksq+oIvdQ6nChxSzgVj3WAtiicwlWk2MzXMfF8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ftiVi/HZszCEfxRnlvxP4rOJ02tgxbOd4gR7Lkbsrmkiv4Z7TiJfM9Wn2bpsqNW8k0ueq6uYYZB7zdUOkWS+ct3b88hgAJ6mZ8rKL2SYUvqP3SJ+uFxTFwnvH0ZpB+R2Ef/F6FYmva8v8yxs0w9YAhETcaOmZgZ5egrRXWYOT7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=On+GWy28; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724247216; c=relaxed/simple;
+	bh=bGhQMQoqy6xj9S5PtIbnidaE79AttQ5nPqV+aP81t6g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VwHMnOGZuibOfCxdVt/tYbgVi+V0FeVnDEzvaKPhDRPvRTtqY/67I8fqtiPX164RIa1CV5HKJiz3LfuDn27NHbuYpnICgE6z0m8kUShBNwqrVmtTyTeiOObcqWBPP1ElMYjj6Acis2k9PPqFjCer6FP56rgHqzRNIxGxETbC7bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tMIWd+Hr; arc=none smtp.client-ip=193.252.23.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="On+GWy28"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-533462b9428so2109285e87.3;
-        Wed, 21 Aug 2024 04:49:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724240969; x=1724845769; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MuMMiFy/GV/lo8qvjkEdntUASLQW+h7BP1y0eXqQ2Fk=;
-        b=On+GWy28spkefp1kxyhb8ci3UmCdA7uos/e34JEbPlNGvO3VibxHnV+QPRdeAlbD8j
-         ujuKRVZvwupv4RpaaI7W0TOaE6rFL6mX8FXWWcYYpAgvBAsEAFcKH1mZiJOxq8fRxd9I
-         +P/LsOvU0/Xhf6P1luQmum5VNsuI4RSY7INNllf72AYSEFaWma9H/ynbVWW3nnuO8X9o
-         bqEPsmIB0eVIvwATgUaGhf0EThrCEOKdek/8DUStVU0neXDbBB6ffIcacP2ZIdOoWw7w
-         kkgKYVPxanqLzoXctLYNrkpYk+BUfxFr9K9Gp2DKJTmBhSZg+0lK7pJiLRMS5e30lGte
-         Lk7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724240969; x=1724845769;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MuMMiFy/GV/lo8qvjkEdntUASLQW+h7BP1y0eXqQ2Fk=;
-        b=nd+mDTOrn9m78YGvOOAswY69Tu1S5pxRlwgOldPDS2YpSWpD3+JrAXYkIqZHogzGk3
-         kXnj+mKBwhqAM3k9O+7jyOyyeQXq2WhEI2c+GE1MweFYoihVdlDQpgU4pObw6CPYuc1J
-         5kU7lVBde5zhMMqucWnd5RTVKDPL5r+DvoPT+XpTLTTwXvb3iNVDaqipGn5+nSXUNFmw
-         Bwr1JWT5bxE0Sdw37QHcnRl+P3ADpdckOOUxyLbQsLg7RzJ7vfT40BtDK0QjLgYncqhL
-         6OQ9gGHzadPfJOSmDrT5HuBCC4gfk+8Kw5dN9vQ2Vj7YMYmBLEOcB6yOHXjva5oTOkjP
-         Y/Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCUgcabg/EhPBeDCUL/rAXl+7WcqBmGDckc2tj1KHOacjEbYCG0udaixAgyqS9SbVxw0ecsLlLO9E1ilGfcr@vger.kernel.org, AJvYcCXaeL4AWosMUnOld6EXa8NXyqv04RtoqGb+CgK2OC+D/ORo30mLA9BEun6WB+Orxik+rgc/GFg3xDwhBn4=@vger.kernel.org, AJvYcCXmdVyXlfBm4J0ctPZv8TCPMS/wDyfxOxiRj9daMym4DevyEF/u3/N8WhBpSnex0KpZ0NC19coB4hf1nPYw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxPRb+xVEZwhCMZecZSTsANDymhU5og8haLnEeC88sqekyi/mE
-	WkVShB6SOdvzLxElA6iBulzCURiEZO1/L2LEQAv/Ew+EA6zJTjsz
-X-Google-Smtp-Source: AGHT+IERUWWgK3HBz7H/4+znx84XAekugvyQB1GyHzWt3CJXUdgvULEOKqQjl6jNQIER3p0yxeZlVg==
-X-Received: by 2002:a05:6512:1256:b0:533:324a:9df6 with SMTP id 2adb3069b0e04-533485928cdmr2036535e87.29.1724240969163;
-        Wed, 21 Aug 2024 04:49:29 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86702ad43fsm89820966b.136.2024.08.21.04.49.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 04:49:28 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	alsa-devel@alsa-project.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: codecs: wcd934x: make read-only array minCode_param static const
-Date: Wed, 21 Aug 2024 12:49:27 +0100
-Message-Id: <20240821114927.520193-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tMIWd+Hr"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id glJrs0PPp730VglJrsKzX3; Wed, 21 Aug 2024 15:24:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724246651;
+	bh=+fKgP6jNj7KiFHV3HJYLl7HCZ95eoEhddiFK//VjAsY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=tMIWd+HrAVY0P09rCIAztJZGPhsUYNFfnuz2MGupwZlzpDNq4fL3Tk/+a7EzSYBrT
+	 URKcT3EHKikjQMHTSmHJ62vJ2yZR9HJMi+LuNsVua/SqknGIqMcvZfA8j62VnwiBRY
+	 Ixj46Ls+MkuuRyWzWC4uqxp0OiwcEoWeBwofPcgf6W4A2hjOoBM5icxsQwPZUNRqyp
+	 VqU8OzgjorlSeFP6NVUNrsJ8vRi4sDv+qV72DM2EkQO9m4jdB7rvscs/hDplQ0lqxc
+	 QWhYwJFuyJJK2AqP6iIrO+09xkgEwb1ghlFeiBgN94oPTE+ZfqP5/2hmAh00PkYaJi
+	 wlqvOH1HftO5w==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 21 Aug 2024 15:24:11 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-mmc@vger.kernel.org
+Subject: [PATCH] mmc: core: Remove struct mmc_context_info
+Date: Wed, 21 Aug 2024 15:24:06 +0200
+Message-ID: <232106a8a6a374dee25feea9b94498361568c10b.1724246389.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Don't populate the read-only array minCode_param on the stack at
-run time, instead make it static const.
+The 'mmc_context_info' structure is unused.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+It has been introduced in:
+
+  - commit 2220eedfd7ae ("mmc: fix async request mechanism for sequential
+    read scenarios")
+
+in 2013-02 and its usages have been removed in:
+
+  - commit 126b62700386 ("mmc: core: Remove code no longer needed after the
+    switch to blk-mq")
+  - commit 0fbfd1251830 ("mmc: block: Remove code no longer needed after
+    the switch to blk-mq")
+
+in 2017-12.
+
+Now remove this unused structure.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- sound/soc/codecs/wcd934x.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Compile tested in drivers/mmc/ only
+---
+ include/linux/mmc/host.h | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-diff --git a/sound/soc/codecs/wcd934x.c b/sound/soc/codecs/wcd934x.c
-index 291d0c80a6fc..910852eb9698 100644
---- a/sound/soc/codecs/wcd934x.c
-+++ b/sound/soc/codecs/wcd934x.c
-@@ -2643,8 +2643,8 @@ static void wcd934x_mbhc_get_result_params(struct wcd934x_codec *wcd934x,
- 	s16 c1;
- 	s32 x1, d1;
- 	int32_t denom;
--	int minCode_param[] = {
--			3277, 1639, 820, 410, 205, 103, 52, 26
-+	static const int minCode_param[] = {
-+		3277, 1639, 820, 410, 205, 103, 52, 26
- 	};
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index 49470188fca7..545bddfd7e1f 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -292,20 +292,6 @@ struct mmc_slot {
+ 	void *handler_priv;
+ };
  
- 	regmap_update_bits(wcd934x->regmap, WCD934X_ANA_MBHC_ZDET, 0x20, 0x20);
+-/**
+- * mmc_context_info - synchronization details for mmc context
+- * @is_done_rcv		wake up reason was done request
+- * @is_new_req		wake up reason was new request
+- * @is_waiting_last_req	mmc context waiting for single running request
+- * @wait		wait queue
+- */
+-struct mmc_context_info {
+-	bool			is_done_rcv;
+-	bool			is_new_req;
+-	bool			is_waiting_last_req;
+-	wait_queue_head_t	wait;
+-};
+-
+ struct regulator;
+ struct mmc_pwrseq;
+ 
 -- 
-2.39.2
+2.46.0
 
