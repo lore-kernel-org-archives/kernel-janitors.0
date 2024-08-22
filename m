@@ -1,96 +1,83 @@
-Received: from msa.smtpout.orange.fr (msa-216.smtpout.orange.fr [193.252.23.216])
+Received: from msa.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B43AD2D;
-	Thu, 22 Aug 2024 06:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B1881727;
+	Thu, 22 Aug 2024 06:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724307325; cv=none; b=rLKBKzoDDeNkTm1FbZ3FiFJYppr1NkEZ74kak78sTrQqYcwA0VOvCKCwtCCiWt2MQLCYy+Ayoo/RG8/aVSAY9zKE6iZk7FP+TfkAJfayXBfFbRbXxclNMBN7XvVBcFW/B3zT7nzR5FoIT+7E2AVOYXDDejiNCSQHP4Zva3O3Ob4=
+	t=1724309306; cv=none; b=dd6j4aOYJT4DF+ZnMKAqtwvx66DQZ3gGMp8YZJ1pXhPiJ66Wl4wUDhS+SnyxLphSIGelr9F1TKeu9BOHSjS1Nu4UNKKHpSG+VTgh/WtCnNhlKnTMtY2XM2FB/mzVtPZwoGdUTl6kUnf2ySrchv+kP+1u0isjrnY52F1bjGj4Auo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724307325; c=relaxed/simple;
-	bh=gE7HJGwPzb9QwFIDqoz16H+LTbNCegLBqEQAzMPOryM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FdGcp9ABERb+xH4atNpxQqmpbhZs93oADDNS3WK4KvjdNt+pZixWy0+WlKNS1xF2DQyIVPUC/mrnIVlMtmG7a31aTmBKarDtryOpWugrJ9nieERkNHWRLj+WjaBjO5HgWpYjkDGPvg/EIXQIV2Bnj9WJGMnDxak7U/ag1iyHDtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=HgTGu5RU; arc=none smtp.client-ip=193.252.23.216
+	s=arc-20240116; t=1724309306; c=relaxed/simple;
+	bh=Vv+JFD2CzkTAfMbhy5w7mtzbTJmq3u64ky+VpulKiJk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mLr9b1NA7yzQhg2GrQ3UE3uKqYGkjXYEDO+z1G/2eN17o3suB1mRjlwlkr0FPeOLeTSiFXvt4voAzdmio2Rq5wrTt98lu+TAojQ7zFybgj7xz4bVy68lyoguxa8mRfp0OfUCKkhVbnkegWOFNGVfoDERsiwN6/J3eQd/Ys35LdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=pIBOMqcw; arc=none smtp.client-ip=80.12.242.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="HgTGu5RU"
-Received: from [192.168.1.37] ([90.11.132.44])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="pIBOMqcw"
+Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id h16OsqfTTiKc3h16OsNh1C; Thu, 22 Aug 2024 08:15:21 +0200
+	id h1cJsOmCubNNsh1cKsvK1R; Thu, 22 Aug 2024 08:48:21 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724307321;
-	bh=f+FyGUC0UH+gHN6I+2BobiU0UCvWGk6MFyKe4vtFVeY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=HgTGu5RUBF8u71VJSAxWt5rzA3Llul87ftxb0PUUOOv70yF/WsKCP/rwUJ3EXB5bT
-	 rvDwt48XcvwlrJFKk/cEBt/I2CQFZPxwq/Otn4Xe2xZybxOBstyUzZPNxKfiwhzmk3
-	 J+qRo1Oc80eRsEh8PN7JxaiRvbhunGTCJtQ/3LmYGXpR3qb8EjC4enHyrteHiK/Mpt
-	 ypxs8ILczMaXjbg0fDRzekCw0i1zepIHcozKzfSIbcq4UY9tfmGiDgy4fk32DCOBxF
-	 6X22Hpkk7Mq62DfJZY9WRkPsJDuMTZ8zZLSsez/QeAtFmpNeMuEyJ4lZtSnTiTC6H2
-	 2sn3eDzkL0X5w==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 22 Aug 2024 08:15:21 +0200
+	s=t20230301; t=1724309301;
+	bh=gZvRex1A2ur/vW3xkDlKJFyOKmg+Ssh3nUW61ACjodo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=pIBOMqcwXP0nUBUNua+0sxM4VSHBxoTg7p6ZZJhLl4ThgGCnhyueJmg+Pc/E8hol5
+	 4RjAd97yCultEiBCQAkUl6J16ZpvSd7epGKJVE5QVQWhrHH2eIWnTPXqpsGGMPAaSg
+	 gemmynbBiz5lQTHN5AZdHnavWolp+FcwEBXLHax0smFq3QgG/C2OjUcK3musLpTC8+
+	 bbUIfU1jPTAHlEY1qrODHs1oYb3WohRki2ARzeN7SJC/vHp6Edb9zoNPvUgNAsWkdZ
+	 XCdIIhu4PoRFtr2we1woMVeopZq6iF8caWKDmSVK0fkgyQLYmfpJsKagNn+95gz4ik
+	 vcVoE5MUUiKCg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 22 Aug 2024 08:48:21 +0200
 X-ME-IP: 90.11.132.44
-Message-ID: <fe5a258e-3cf9-47f3-aa36-802813c9866f@wanadoo.fr>
-Date: Thu, 22 Aug 2024 08:15:20 +0200
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	netdev@vger.kernel.org
+Subject: [PATCH ne]t-next net: netlink: Remove the dump_cb_mutex field from struct netlink_sock
+Date: Thu, 22 Aug 2024 08:48:15 +0200
+Message-ID: <c15ce0806e0bed66342d80f36092c386c6148d00.1724309198.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2] HID: corsair-void: Add Corsair Void headset family driver
-To: Stuart <stuart.a.hayhurst@gmail.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-input@vger.kernel.org,
- kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>
-References: <20240818231940.34635-5-stuart.a.hayhurst@gmail.com>
- <bd07e14e-eae8-4264-b275-9efdf635cd82@web.de>
- <CALTg27mgOx3W3WENxFh0sEEeNYKEjrZCEQGoBi9=vjgiaZnZtQ@mail.gmail.com>
- <65b8f7e4-358f-4943-8ce0-c28e4c947016@web.de>
- <CALTg27nu2_26WwFKc2hWbWY9B40QQLxJ_bM97OWY9VoRo-d_FA@mail.gmail.com>
- <f0aa2ca0-6256-48e4-8d2a-dfd5da072ad4@web.de>
- <78b667fa-8e54-4023-9187-4ecb999d3c01@wanadoo.fr>
- <CALTg27nmNR=AXg=Ku_nXtwFQLxMypdbK4_Bu9CruB=vEDzxZoA@mail.gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <CALTg27nmNR=AXg=Ku_nXtwFQLxMypdbK4_Bu9CruB=vEDzxZoA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 22/08/2024 à 03:11, Stuart a écrit :
->> If I recollect correctly, there may be an alignment issue and just using
->> the stack is not enough to guaranty what is needed.
-> 
-> I can't find any reference to issues with it, I'm not sure what I saw before.
-> Also, it seems like the hid-asus driver is using it:
-> https://elixir.bootlin.com/linux/v6.11-rc4/source/drivers/hid/hid-asus.c#L391
-> 
-> Stuart
-> 
-> 
+Commit 5fbf57a937f4 ("net: netlink: remove the cb_mutex "injection" from
+netlink core") has removed the usage of the 'dump_cb_mutex' field from the
+struct netlink_sock.
 
-It's not.
+Remove the field itself now. It saves a few bytes in the structure.
 
-asus_kbd_set_report() is called, and there, the array is explicitly 
-kmemdup()'ed to a variable called dmabuf before calling 
-hid_hw_raw_request().
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ net/netlink/af_netlink.h | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/net/netlink/af_netlink.h b/net/netlink/af_netlink.h
+index 9751e29d4bbb..5b0e4e62ab8b 100644
+--- a/net/netlink/af_netlink.h
++++ b/net/netlink/af_netlink.h
+@@ -41,7 +41,6 @@ struct netlink_sock {
+ 	struct netlink_callback	cb;
+ 	struct mutex		nl_cb_mutex;
+ 
+-	struct mutex		*dump_cb_mutex;
+ 	void			(*netlink_rcv)(struct sk_buff *skb);
+ 	int			(*netlink_bind)(struct net *net, int group);
+ 	void			(*netlink_unbind)(struct net *net, int group);
+-- 
+2.46.0
 
-
-I've not found an explicit documentation, but here are a few results 
-from Google related to HID and DMA related issues:
-
-
-[1]: 
-https://linux.kernel.narkive.com/2bRjLz9p/patch-hid-lenovo-don-t-use-stack-variables-for-dma-buffers
-
-[2]: https://bugzilla.kernel.org/show_bug.cgi?id=87991
-
-[3]: 
-https://git.kontron-electronics.de/estoll/linux-stm-lvds/-/commit/3d1355b3cfad53feba76a73b052c757a7de7f4de
-
-CJ
