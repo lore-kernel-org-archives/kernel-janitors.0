@@ -1,36 +1,36 @@
-Received: from msa.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
+Received: from msa.smtpout.orange.fr (out-68.smtpout.orange.fr [193.252.22.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B1881727;
-	Thu, 22 Aug 2024 06:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2882D17588;
+	Thu, 22 Aug 2024 07:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724309306; cv=none; b=dd6j4aOYJT4DF+ZnMKAqtwvx66DQZ3gGMp8YZJ1pXhPiJ66Wl4wUDhS+SnyxLphSIGelr9F1TKeu9BOHSjS1Nu4UNKKHpSG+VTgh/WtCnNhlKnTMtY2XM2FB/mzVtPZwoGdUTl6kUnf2ySrchv+kP+1u0isjrnY52F1bjGj4Auo=
+	t=1724310216; cv=none; b=A92OTalOY9zBOe/f4ZzPLCpcN+48hSxw0Q3AQR+jlHfv7vl6uPHuKJLeVJMNdkl9KFYkYwMUdHxio/zBIfbssPfgLvEg90HNScqo7DIAuuoAFO3MjAmBgWD3VU94k1LnUzQ21YuiJfQc7oZIDvnjlFoQFGOZtD+9qL7hfWtmV5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724309306; c=relaxed/simple;
+	s=arc-20240116; t=1724310216; c=relaxed/simple;
 	bh=Vv+JFD2CzkTAfMbhy5w7mtzbTJmq3u64ky+VpulKiJk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mLr9b1NA7yzQhg2GrQ3UE3uKqYGkjXYEDO+z1G/2eN17o3suB1mRjlwlkr0FPeOLeTSiFXvt4voAzdmio2Rq5wrTt98lu+TAojQ7zFybgj7xz4bVy68lyoguxa8mRfp0OfUCKkhVbnkegWOFNGVfoDERsiwN6/J3eQd/Ys35LdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=pIBOMqcw; arc=none smtp.client-ip=80.12.242.81
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qZP7DW23cGGnAlzIVHvH1u7C0fzmuWP9ofwHIom+IcPyuQN/m1zkww6d6TB/cZZRGxXPnxpddRVEgjK1Y3W0eFkB+VCRW282MPIlyed/86TQAQo4p/PhTM/GluzFoz0hwYUhvKiY+j+03jIsfjHYJ/D/bHA7wZnu+wwDpdcfsm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=qa2XUw+h; arc=none smtp.client-ip=193.252.22.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="pIBOMqcw"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="qa2XUw+h"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id h1cJsOmCubNNsh1cKsvK1R; Thu, 22 Aug 2024 08:48:21 +0200
+	id h1qusCYiPaOqrh1qusvPyJ; Thu, 22 Aug 2024 09:03:25 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724309301;
+	s=t20230301; t=1724310205;
 	bh=gZvRex1A2ur/vW3xkDlKJFyOKmg+Ssh3nUW61ACjodo=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=pIBOMqcwXP0nUBUNua+0sxM4VSHBxoTg7p6ZZJhLl4ThgGCnhyueJmg+Pc/E8hol5
-	 4RjAd97yCultEiBCQAkUl6J16ZpvSd7epGKJVE5QVQWhrHH2eIWnTPXqpsGGMPAaSg
-	 gemmynbBiz5lQTHN5AZdHnavWolp+FcwEBXLHax0smFq3QgG/C2OjUcK3musLpTC8+
-	 bbUIfU1jPTAHlEY1qrODHs1oYb3WohRki2ARzeN7SJC/vHp6Edb9zoNPvUgNAsWkdZ
-	 XCdIIhu4PoRFtr2we1woMVeopZq6iF8caWKDmSVK0fkgyQLYmfpJsKagNn+95gz4ik
-	 vcVoE5MUUiKCg==
+	b=qa2XUw+hB59f6aBnAOE7dhU+6z8YPgMBDhVlcrHfSDrWLignA2FykA27UFVEoSpDR
+	 A01QotHlUfRwZzm7HUdTC7kMVuidHF4+hilRle7d9CE4yOuwlQ8CdiO240iSWp1Dzp
+	 Xk5v9JU6CMSnsJZuinGO1hlMUoWE1VxAwoL7I8sf2FXGDuTTJo5XXdneX7J+5dYbli
+	 r5c6y8c4qhZ+Gxip3l95Z8g/N/xAp0DZKJHuY/s2BIf4S3L/vVuap5BUfClUSjztjg
+	 4Nj09kIF3yQuGdv3rseAYuFKZL8QjG7Vrml/C1z93GCcmbOXdxjs73twIyjoEIE57I
+	 CWID5j5U929eQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 22 Aug 2024 08:48:21 +0200
+X-ME-Date: Thu, 22 Aug 2024 09:03:25 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: "David S. Miller" <davem@davemloft.net>,
@@ -41,9 +41,9 @@ Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	netdev@vger.kernel.org
-Subject: [PATCH ne]t-next net: netlink: Remove the dump_cb_mutex field from struct netlink_sock
-Date: Thu, 22 Aug 2024 08:48:15 +0200
-Message-ID: <c15ce0806e0bed66342d80f36092c386c6148d00.1724309198.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH net-next] net: netlink: Remove the dump_cb_mutex field from struct netlink_sock
+Date: Thu, 22 Aug 2024 09:03:20 +0200
+Message-ID: <c15ce0846e0aed6f342d85f36092c386c6148d00.1724309198.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
