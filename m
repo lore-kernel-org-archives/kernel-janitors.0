@@ -1,65 +1,68 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24583BBC5;
-	Thu, 22 Aug 2024 16:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4F013AA2E;
+	Thu, 22 Aug 2024 20:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724345198; cv=none; b=Koccn/sWv1KQR65ZX0OG+BsxSP10UalPl++jfJXszXXsPbLgdY2VG1cYMV11DFMywf4T8PSO29XTQb4TPIoz4LSg243EAMwaofD9AUO+v4ZTpxt8gTEQFhuZ8Gn0iwV+ZvkBwCPH/6qsV9Ab9+gELkat9QWeEgQGiLshLbS+Huk=
+	t=1724359852; cv=none; b=rh82TGoCkDsmzSY1Z0IaJMRQk3MtAKGIeyu1TQ49lH5qdbG3xLzHPqpAMiSnoBtGVl04hkVQ0hZMynab1S69jCtJUDg4CpaJCjjjh2NRxjdu4wmMXPMFngymUOiEfkayBse3BKCtop+4ujHAFV4B44hdWnnN4YkqyGxoTWxetq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724345198; c=relaxed/simple;
-	bh=0jS0aXk+V+RT0OK2eNz0b5a/mNafWFdE4+OvVCPcZfs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=YZmDo/WVPUbQt+emV1IrgH01/JHnjw6biUotHsGW0krmbn1Di/hB5BNS9OFU2pmJyBJD7fE8JMootXWxhJWzHRkbWKbZKGy04Y3JcewGp96o/G4m9kFKNuY/0ta+G7k0SPVUHa65qV7TDjgE447FAtMkgSvIJmAEjxnQWM4D7/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XzNfSg0f; arc=none smtp.client-ip=209.85.208.177
+	s=arc-20240116; t=1724359852; c=relaxed/simple;
+	bh=Q54Nx+O2Sl23E88hssQiSTeCj8d0ltDBodtJOVav6nk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ldN2jPdcn4bVd3+m7sJW//0r5Es7lZ0dQYpKasnSwWm4y5OY72CHipqesT93USlPRXx18lLZqrmdHwmvcoXrBKrSk0k44z/+BFUJyjtY7WJjMXmGvX6w5jRqMcWzSttB6ar7Lr+sY76und6gnRHP5gDhBHXcV1HOmaHY8Ly0vyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfvArPAW; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XzNfSg0f"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f3f163e379so16655851fa.3;
-        Thu, 22 Aug 2024 09:46:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfvArPAW"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8666734767so164786966b.1;
+        Thu, 22 Aug 2024 13:50:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724345194; x=1724949994; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724359849; x=1724964649; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XfmAhjWG2sOwGq6j8+6XVe0OoaQ5ib14uvk/YZBFpuY=;
-        b=XzNfSg0fR8Few7sYRohOeViB3jbrQ+fbdk036sXDLe8DZ1qpt3hw/3hQm6p7Nk1FnG
-         FegE9O10rztOL2jIRJzGlHyLPSyldUzQVPYd6coBl9bL8Jn42km9nO9pnQmWaEgU8m5h
-         UZRgr48i08mV97ZAhMv6T+kJw9/EEGKMiK3NXsM5UcJRyRC6yi6WdPcYA3aw04pCjoqW
-         7KEgQRlQC4p47ov2rPxZtTx0y4fzOYcNo4Ut2fOWtbErM/WMa7lB2mlNpy7WlwDcUULX
-         LC2UgQoCO1bG8HDrrhQDOp/ovrjNpsQA57/FsYHNLJT7n6Kc3EWuOl7Yfg+buzfFlYGH
-         5CCA==
+        bh=Fw3+iCjTPQFvMhYVXHpivZMghgw126sYI/qUY4SnqZ8=;
+        b=XfvArPAWBQxV/l4RpMToC5J2cagnMhlCCEG/Oih54fT5N49ok6oPRcxss/nBH+d5vO
+         7ltB8iKupdXZzIi89E5YLdv4tv0TfBomSWVyou0hWltABx8pkBQe2i75vtXMt3/BXznB
+         /0YEfn9d4lZ+Her7XQ8RBA35WsZsMFtc2baJ26UZdiXcK1PgbNGNU2Po9f/2CO+RnADR
+         BNPStNZqXDcBeSdfgHDRtJQMaL02hCexB/c9Ti3XPLnf9cyIYK21Av9h1HVHXFe2HTi1
+         ZiSwyRZ/2Iw1S07x7De8oPINrwbOEWjIwpO7v9lVyGa8dAJ19d6LYOQ88hp0MM/Od4JS
+         3Skw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724345194; x=1724949994;
+        d=1e100.net; s=20230601; t=1724359849; x=1724964649;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XfmAhjWG2sOwGq6j8+6XVe0OoaQ5ib14uvk/YZBFpuY=;
-        b=ge+05VR1kNzEpoPxBQK0YBi3vNx+6eye1z77ae9Uon8bF10zxmyXVtfsbvzXHKUwEl
-         NHtVphwXFvurRe6Yfh4Armd/H8Af8hW60IpcRizRD7W3EAbYEuqT7x8zhGT9TgCh/Yzq
-         Bym1UuPWZkheAQbNtcm90dP9NH1w2CNLFJ747DVH4wBb7aiJpfu/6iozOZ5oQ6y7Rg2l
-         fNBeT6cOi7GYPirWVX8hnXGBMvYzZkS/4qxyFZhQnd4p2uYwcxRxSsdRXI42p71X2T3+
-         OT/XAE8js0uuEZFWLz1auDTt+fQifnuY8GdZkxN5nUfTbxVCv6mI4VNHgGWd46rb32FT
-         9pLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWRF/ko8zJfPNGzvfYsTKHjczmyYxyfJdOhfBx9u2G6oVZ0LueO7LNEQJ0ROpSFF6vRSvfz/k/pLN1nIlU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIjMmQnFaD5+GPukEUNVIW6aiKvoGMlLRZOWoe3hnXqZ/bm89c
-	MJoygf0v1uW9vTM04OA57noLmhQAbeKb9FRIcb9SdG3jB6Rln+Vd
-X-Google-Smtp-Source: AGHT+IF6GUoQW921ObHker7LldBOgNZ9yNjYnuSAy6U38EnS2MbSKP4J9uiayEbJDgQhtps2Tnm92Q==
-X-Received: by 2002:a2e:5152:0:b0:2ef:29cd:3191 with SMTP id 38308e7fff4ca-2f405ef037cmr20766221fa.35.1724345193572;
-        Thu, 22 Aug 2024 09:46:33 -0700 (PDT)
+        bh=Fw3+iCjTPQFvMhYVXHpivZMghgw126sYI/qUY4SnqZ8=;
+        b=lCpmZ8nFBWQy/ZheaNE6p8/7cRgwVrmzPfe+UOS8tY8QKC9AQrBYgMt6cf5GkAvAYv
+         ihW3Nqdprgf/KQRhSOOUxm/j8vLtfXVMACH9qwR9y+Hk1VTCrpTrC9D3N92s1j8x6Dga
+         3phUfmrWr+hO16265k909xst42e/UzfwczIAIioUr1BXen9eZSQaFOjpwj+AcjfzynN8
+         WO9k30LZ9C/Q/oo67JvdJMuBPuyQ1xCqmiuV1f5NOfu1tKUAF+vyxwYyd4OIdCTw0rSH
+         kxfNAmg9RTwZOxUwwl0kf0L3WvBXrEC8geYLWqt+ObXXS0v/rYrAJF0Ey9v1X5JrnI5a
+         y6Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUFzCYG86Gu9N5y+IaDlxsjoS7p17WVFuKeUwG6ldNxi8AuPpzdJNkxawhUVR695LGcQ99J7+X5j5QN+rU=@vger.kernel.org, AJvYcCVx299T+s9LpHaGYBuffglL52N4W4mHNj9Mq902mgZz+aTk6ezAkPgSjcctxELqIczluODuYv21cnjc1kc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwQtC5EgbloxYQL3h1Si3ddHRo98IRlW7+R1qrNeNDdyErIL78
+	tk48tWhslvpGyPxKSs7K/9v2iAhdVf+oNviUBe9CyliBceIK0i8F
+X-Google-Smtp-Source: AGHT+IHva2stwTSqG7rGZTaZUHh+/wTMO8O+48GKKMUS8dBUyWj5Buqho3Efd6rTd7pGcg1cwITIAQ==
+X-Received: by 2002:a17:906:eec4:b0:a7a:3928:3529 with SMTP id a640c23a62f3a-a866f110c45mr589588266b.13.1724359848540;
+        Thu, 22 Aug 2024 13:50:48 -0700 (PDT)
 Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0515a6342sm1110560a12.79.2024.08.22.09.46.32
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f436ba2sm162067366b.120.2024.08.22.13.50.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 09:46:33 -0700 (PDT)
+        Thu, 22 Aug 2024 13:50:48 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mtd: parsers: bcm47xxpart: make read-only array possible_nvram_sizes static const
-Date: Thu, 22 Aug 2024 17:46:32 +0100
-Message-Id: <20240822164632.638171-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] drm/tegra: hdmi: make read-only const array possible_nvram_sizes static
+Date: Thu, 22 Aug 2024 21:50:47 +0100
+Message-Id: <20240822205047.642845-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -70,27 +73,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Don't populate the read-only array possible_nvram_sizes on the stack at
-run time, instead make it static const.
+Don't populate the const read-only array possible_nvram_sizes on the
+stack at run time, instead make it static.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/mtd/parsers/bcm47xxpart.c | 2 +-
+ drivers/gpu/drm/tegra/hdmi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/parsers/bcm47xxpart.c b/drivers/mtd/parsers/bcm47xxpart.c
-index 13daf9bffd08..49c8e7f27f21 100644
---- a/drivers/mtd/parsers/bcm47xxpart.c
-+++ b/drivers/mtd/parsers/bcm47xxpart.c
-@@ -95,7 +95,7 @@ static int bcm47xxpart_parse(struct mtd_info *master,
- 	uint32_t blocksize = master->erasesize;
- 	int trx_parts[2]; /* Array with indexes of TRX partitions */
- 	int trx_num = 0; /* Number of found TRX partitions */
--	int possible_nvram_sizes[] = { 0x8000, 0xF000, 0x10000, };
-+	static const int possible_nvram_sizes[] = { 0x8000, 0xF000, 0x10000, };
- 	int err;
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index 09987e372e3e..6bf2dae82ca0 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -434,7 +434,7 @@ tegra_hdmi_get_audio_config(unsigned int audio_freq, unsigned int pix_clock,
  
- 	/*
+ static void tegra_hdmi_setup_audio_fs_tables(struct tegra_hdmi *hdmi)
+ {
+-	const unsigned int freqs[] = {
++	static const unsigned int freqs[] = {
+ 		32000, 44100, 48000, 88200, 96000, 176400, 192000
+ 	};
+ 	unsigned int i;
 -- 
 2.39.2
 
