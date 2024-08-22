@@ -1,88 +1,76 @@
-Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8974613A244;
-	Thu, 22 Aug 2024 07:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9B215855A;
+	Thu, 22 Aug 2024 08:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724310233; cv=none; b=jp+YWH+aMfSz4Z6QaQL9OY5mdt108JlCwTKvxLN7/2NWvdc3ZxXYp8OAgdc+bDhI1D+9x++gnBwpfC6pHgQpZD1ZqlrEUCXKS8n6PaXPXMtXmHh+aBK36VJsVlzoqes+EqatDdtc+l8+dU3K6RTrqYoLsR+5OP1jpWqyH2HRpt8=
+	t=1724316109; cv=none; b=Q2GMb9+2wiqd9uMzIP+me8CMLmeJhZvwS5aUfpAphPHbdFZ4wjrtRsy/zX0QRnXFjCvhAUafzPDMfDypj0WyncFXWGqAJ5CuePiId93aoAWtd2UBrF+pwRrwrkj+MgM276usi1+U7/A6GyXKPMydOwjJAckc/opaYbkpRS9aAtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724310233; c=relaxed/simple;
-	bh=VPDDM0layls9xmmc8uG/PyvPq/+sbEB17Yu9El5exD4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AvFSy6jl1tMRJC+KrUkCflz/WwdNGI5qGcO0DzV6DvHKkytwxQHrvQM1hbostkNHPfpU3//X7Cn1A3/6xK6CajsnHIYKsYnNmMAhlo5eQukksC1U/gybJA0Lm9VRAfRSLr4Xi45aevM46u/bFM2sfs+WsvSo0Nl6uzD6A07e2kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=iVujkQzw; arc=none smtp.client-ip=193.252.23.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1724316109; c=relaxed/simple;
+	bh=xFzOdzJN39N76WVAyxTbnW6oFSCY9ft8H8of/4mE5Vo=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=rrrrPlST/V4FobriProIpqYqi9pfFWErMJt5kB4UhAIhRMagpm1Nko+MRp3YwNjnrVT3eekj2XeT/r3SgWhJjGDTd1kSmwUaVrYiy/XBq7bUu8f5Jk023Q/r67cT+u5O/eqWy6ZUiWBG9q+h1un/yAZEXz1LtxudZUfu79dFmC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fucd5aE+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="iVujkQzw"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id h1q1sdlp1jDE7h1q1sAMlK; Thu, 22 Aug 2024 09:02:31 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724310151;
-	bh=2yXceyA2s1ttKyfSYyTV8Ma38g/C8rOkCLO1885tTkc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=iVujkQzwzTwC2rGGWdrAHwj9dIzSnFLAI8EY1GulxNqEewejVu0rUoeZyAZet9y1+
-	 lQycjZJ0EWGdkH1Jx096cl/YXxJh3ZzuzUWnQ3qSGPnuQqfbR7u25K1wd88wfJ62sl
-	 ftYJtTHWYv+QM2lGvQawkxWrsw9TQxY2/KgoSAcs0qoYgehQDPFP+71hQsUSDGpokM
-	 QKlhRHNn8quPdz9+SCUh0KuvDZJ2KjkH2Qs2m349B/hWWZB21C73JuL+xS66qeXUz6
-	 HGCdUStb8+2W8nbKWq8Mg0OgH3k2W2vcEiNJem+E5IrXwkMtx87VlSMgNHJNjCcIdL
-	 qzexiO8PNZRNw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 22 Aug 2024 09:02:31 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <fb0ac894-9e84-4628-b4cd-88d594eba2c5@wanadoo.fr>
-Date: Thu, 22 Aug 2024 09:02:29 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fucd5aE+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58322C4AF0C;
+	Thu, 22 Aug 2024 08:41:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724316108;
+	bh=xFzOdzJN39N76WVAyxTbnW6oFSCY9ft8H8of/4mE5Vo=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=fucd5aE+vz/qzWOpx6pBqfnwKjStrFYkVl0tLHpD/42meBVXsnxAySz8xhghJ54e4
+	 Ul0I0JMQH+5BiSCft4e2XZWuQHD4CLLUN5UtKRygnXDJlGKAj/ZzmNze/DcpJ9UIhT
+	 o+W2sfRh+NEiK5cXVoImRQahGCcyD9bKvNY4Pg6G7iaexRojlaDb3oAilTZn7CPpg+
+	 jRrtkKhW+49FxJcUoxS0eY7Ymi0Y3QyGsOJwjiXBUxlgrcBBDOmb0892oSg7Vbi5Se
+	 XI8bDC9s1m/0SJGm9j5/kHUgwEkiwpw6vxuBlBYv7GYvMsKzAmuyLHYP0MX4hnJK+v
+	 OlTwcUSbRlZXQ==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH ne]t-next net: netlink: Remove the dump_cb_mutex field
- from struct netlink_sock
-To: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- netdev@vger.kernel.org
-References: <c15ce0806e0bed66342d80f36092c386c6148d00.1724309198.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <c15ce0806e0bed66342d80f36092c386c6148d00.1724309198.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wifi: mwifiex: Fix uninitialized variable in
+ mwifiex_cfg80211_authenticate()
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <d7d043b2-95d5-4e1d-b340-5d7330053ac6@stanley.mountain>
+References: <d7d043b2-95d5-4e1d-b340-5d7330053ac6@stanley.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: David Lin <yu-hao.lin@nxp.com>, Brian Norris <briannorris@chromium.org>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ Johannes Berg <johannes.berg@intel.com>,
+ Aloka Dixit <quic_alokad@quicinc.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Rafael Beims <rafael.beims@toradex.com>, Ruan Jinjie <ruanjinjie@huawei.com>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <172431610439.2217900.17742585529305793068.kvalo@kernel.org>
+Date: Thu, 22 Aug 2024 08:41:46 +0000 (UTC)
 
-Le 22/08/2024 à 08:48, Christophe JAILLET a écrit :
-> Commit 5fbf57a937f4 ("net: netlink: remove the cb_mutex "injection" from
-> netlink core") has removed the usage of the 'dump_cb_mutex' field from the
-> struct netlink_sock.
-> 
-> Remove the field itself now. It saves a few bytes in the structure.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only
-> ---
->   net/netlink/af_netlink.h | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/net/netlink/af_netlink.h b/net/netlink/af_netlink.h
-> index 9751e29d4bbb..5b0e4e62ab8b 100644
-> --- a/net/netlink/af_netlink.h
-> +++ b/net/netlink/af_netlink.h
-> @@ -41,7 +41,6 @@ struct netlink_sock {
->   	struct netlink_callback	cb;
->   	struct mutex		nl_cb_mutex;
->   
-> -	struct mutex		*dump_cb_mutex;
->   	void			(*netlink_rcv)(struct sk_buff *skb);
->   	int			(*netlink_bind)(struct net *net, int group);
->   	void			(*netlink_unbind)(struct net *net, int group);
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-Sorry for the broken subject, I'll resend.
+> Smatch complains that:
+> 
+>     drivers/net/wireless/marvell/mwifiex/cfg80211.c:4408 mwifiex_cfg80211_authenticate()
+>     error: uninitialized symbol 'varptr'.
+> 
+> It's a check for NULL, but "varptr" is either non-NULL or uninitialized.
+> Initialize it to NULL.
+> 
+> Fixes: 36995892c271 ("wifi: mwifiex: add host mlme for client mode")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Acked-by: Brian Norris <briannorris@chromium.org>
 
-CJ
+Patch applied to wireless-next.git, thanks.
+
+c9f4c1ec6972 wifi: mwifiex: Fix uninitialized variable in mwifiex_cfg80211_authenticate()
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/d7d043b2-95d5-4e1d-b340-5d7330053ac6@stanley.mountain/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
