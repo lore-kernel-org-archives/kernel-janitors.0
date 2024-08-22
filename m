@@ -1,95 +1,95 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFBA282E5;
-	Thu, 22 Aug 2024 15:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5791CCB32;
+	Thu, 22 Aug 2024 16:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724341021; cv=none; b=AK9eOqpLi+K0Zb4o3wUuTRPaAYPdVnLv5RCLVa3TMx8j2HQGIkY4g2xMkt4I7sf1OPpaY2ZOhI36rFJk+20tJE/3pTSFj4cV4WCiRLolckHGk7s1r6yY0RBp3oGuznRAoCgpmzEEsl9+VasjchpXetkCDktD2s4dAk8fzany8Bg=
+	t=1724342873; cv=none; b=SXyKAZGwqJWhMt6/PNA9nHr2EYiT1a2+kBNQkNqqX0knUNflH1BBILxsouHNNEgMW1Uj0Ra0teA82CWYt+T81GZ+0iTsfhsYVb6SWKISaHOwfPWuAU1brLMbiJjq4QVz7monyQMbeRrW8T+UhOsQFCkQPWuwnLKxD3i+9gGKsFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724341021; c=relaxed/simple;
-	bh=UT5JSX7NkLhSkoZlzoteQKFbXqJHbW7UDcXhF8lXT2Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ObNBFGvnreKUQsIis9YrWqCAAJl0FrIRdwqaogYXZazGSDrBDGDAiooaedr9WJp7lZYLjURmUjxG08MoWa+jNSVC8SVc//jAzY82otmbSEf64wupTezTVAAiQN3CdxF8oZL+hAM5YQtmppCll9jI/aM8d0HaNRywzKmzV6oGaQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fpVo8HC8; arc=none smtp.client-ip=209.85.221.50
+	s=arc-20240116; t=1724342873; c=relaxed/simple;
+	bh=cUzKD+tbdq4LCnt/hKs7v+W/NuTP44c3Dn9kHLS0iE4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=RCCRxIyprG9nVJGbWn70l7yyfE+fJ+fxrUwBknfSXTxlPx6vgq+b5pua2kUwLbpMtHJMKSwgCBrWboxsVDUaAnHwwMdJuZNsJbREM8XVzJif8mq8CHyHrUXm8cPu+CnP2mK5uA1rWUbVdPFj9g/1Db5/zp+MYWwGMn6x4SIOTnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RlzsDJsS; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fpVo8HC8"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-371941bbfb0so494759f8f.0;
-        Thu, 22 Aug 2024 08:36:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RlzsDJsS"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5bf006f37daso1680271a12.1;
+        Thu, 22 Aug 2024 09:07:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724341018; x=1724945818; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UT5JSX7NkLhSkoZlzoteQKFbXqJHbW7UDcXhF8lXT2Q=;
-        b=fpVo8HC8iJoLs3PeHaoZKKsDHOstg6Syo2l8mGKcAtJrByj9pEbWLDvm4It4ZPcrMD
-         R+TJjrhFJfCaXHR60ztjErcmEtZQbQGS4U3RbflufYyQEtT23EsUGto4iN4X+a4KoSD6
-         FryQv3QwBvaT77flxEY3yDJr/chZb0cO6awbJYqlLwaqCvu7B7i04w9Qxynw+/OGNHkX
-         RWAkjBjoKqND1GDHVjQ61VdEqdVA0O63Z4GXferl8CE49G6Z4A6YBczPAYGcgntL6P7j
-         BQ8aayBTjzoX0bLATTkEzYXG32bOD1E55tkD1Tx/kRjGs0reOUYv9FDer7y1WXKhXsO5
-         uVAQ==
+        d=gmail.com; s=20230601; t=1724342870; x=1724947670; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IEbh7R+lyfHz4shEop2PmKNu/aR/WKGPaVWFITmcvSs=;
+        b=RlzsDJsShzecQDul2EyWbgMQSI/Nol9RKu93SOonmHaVgnjQ+KtlLl1wZ3L0alNqMz
+         UsQM5uZnLhP6lAPyTTeWLppOdV+937A+88FyaBSJ51DRpJ0d0Lr3md30x9vFI5AdVMCR
+         5yDa1J+TbD8OwHESkI4g6NWsVcPumr6tOoPNF4ZmSMx8WJzPBpMILykedhaTptawgfLC
+         fWzofLcU2nrwy8rt36RffDI7iLd7aDgVGF7d6mE9X49x4p3nJgiBh2XKry6zXLYxcljQ
+         /g8rWs/RNBJqA3bg2yzUSbZvbDjWPIXRHwLQOFTgUeqNAXMSYJYKog5j3KW+cbxPsbxz
+         v/mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724341018; x=1724945818;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UT5JSX7NkLhSkoZlzoteQKFbXqJHbW7UDcXhF8lXT2Q=;
-        b=XL6taQiW0X7uN+CAmqsRJTLRBFoffNvEGCnTKBFoLILxAol0YsgDDHHcvQwmrYn+nZ
-         FncSekKJWRCFwluPI2YHJ2B1XM8yLPuaXdaXTGU2U0Fc/UcoOkYRR4RFBPHZiAOjfH4B
-         ltPkZtQp3RmnzAfr1hlfp821hQSBJQw5g1Yep78wfBq60QkM3VU25V/L4etwY/bXhY16
-         hdSNiYD85blypmChefG1fiIs0+cQlJodhOaY4NmQ3W2jYey90mqvFBz38T7B5gcWabJ1
-         tGxFIvwh70EeYQjV7rQwCxNxXpL44nv86yMg4fEGlDrGCnXG/bsYbXT5VwJwp4KgzYka
-         +xgw==
-X-Forwarded-Encrypted: i=1; AJvYcCURTnkwrQVMs/SZBy/Vla+JRMd5seBkfRnYWZn/5CPb5j95iiMdDG1zCicBd1fa7ooW7j88u6ECVnYH2oA=@vger.kernel.org, AJvYcCVIdTEeNTXuVg2GRUessWoIpr3H6MFdxeJbIRccOScKAXg2F4+p0WRW075lW1pRUa5e+6Wud0RzGetZbOKX@vger.kernel.org, AJvYcCWnkAKWVGIcH1k6A5QjydlsX9FbC8lYnGhFSwaD3R32L/B/9pEXhmb+Rvm6K/eC1juUP+++d/teKgY1EimNemE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1CCqntU1dv3lyJjUF0pFg+groE7S8mXttehDtLwIxM5ETJzcA
-	3n8sa7swstF1R3c6nyCE5eJhti826ffrIhclNFrMhJIV0k4St7xgyZw/mpZAfXgyN6JvD1t8UL5
-	Bh5Qe6URQesdpVw2z/c6PDW8zWYg=
-X-Google-Smtp-Source: AGHT+IEQ4hUaoGkM7iUabyWcXfrSPEMvBjGboImrtSv+c67yMSVsqMNryIsGZhdrpflCMtOKsHNrZXgtlX0TLg8ChVs=
-X-Received: by 2002:adf:ab17:0:b0:36b:c126:fe5e with SMTP id
- ffacd0b85a97d-372fd5a9cbemr4008374f8f.30.1724341017960; Thu, 22 Aug 2024
- 08:36:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724342870; x=1724947670;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IEbh7R+lyfHz4shEop2PmKNu/aR/WKGPaVWFITmcvSs=;
+        b=n+zbU3Pn+aVaTq7oV1zA5jbDv5bzIlaUfRTf4R9x7gQ7cmNjshs2LjHlygVjivT+lx
+         kR1TSAZxM8BD4u9TZzunmP48VdPmNZ3CLqCA/DALLSBl7ZSXi7fabFO89UtDUdIUFeMQ
+         mwVvTtKnxMfoUl+w+OUkZfywkdODAoGEdi9LBg4fKUry2ewsig3hv6OMmfZuvPYU0YaW
+         dl4l6FuqJrHp04IvzRD/OowsJDT4AnPFqIXSIVAMDNrvSp+n8/ljMCrMgxWxRjTwIVUr
+         J/iS1RtTdA8C2tCEsXpJYtB3BWwd76nrq0CRYN8RuBzc4FwAvZ93h9qOiVG7DFsbtC2+
+         7riQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmVr9v09/M4DkpDsXD9rviw2hVgftGJ/8OJ36kQKuVY1HLtpuEOK9EADPgcGDkyV3mS3KhGdEZtHVlnA==@vger.kernel.org, AJvYcCXjOdaHhL+nyjfptqlQZRIbr/qhBCTnmIT2hPI3NAhRtlRaNTg8tzR8AUxHkdJ/tFoIov1vX3QCHuv6g3kU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8bMTmoDOgtxkwNmkByd+q2favdgiDuwQd1vu8AKdHjwXZQKY4
+	83fJL8AjocDdR8jF27woK9odADCU/Xpfc6JkFdSCchr+DUscXNFW
+X-Google-Smtp-Source: AGHT+IEQK0DXEj0cR9UbP/9Q3VS+SCXUX+hL3q26r9MJ66k5phO/X/TjOVexBqoVQB5Hw9KG2Ba+qQ==
+X-Received: by 2002:a05:6402:26c7:b0:58c:b2b8:31b2 with SMTP id 4fb4d7f45d1cf-5bf2c032b11mr3590049a12.17.1724342870286;
+        Thu, 22 Aug 2024 09:07:50 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3eac85sm1070680a12.48.2024.08.22.09.07.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 09:07:49 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] HID: uclogic: make const read-only array touch_ring_model_params_buf static
+Date: Thu, 22 Aug 2024 17:07:49 +0100
+Message-Id: <20240822160749.635225-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240818231940.34635-5-stuart.a.hayhurst@gmail.com>
- <bd07e14e-eae8-4264-b275-9efdf635cd82@web.de> <CALTg27mgOx3W3WENxFh0sEEeNYKEjrZCEQGoBi9=vjgiaZnZtQ@mail.gmail.com>
- <65b8f7e4-358f-4943-8ce0-c28e4c947016@web.de> <CALTg27nu2_26WwFKc2hWbWY9B40QQLxJ_bM97OWY9VoRo-d_FA@mail.gmail.com>
- <f0aa2ca0-6256-48e4-8d2a-dfd5da072ad4@web.de> <78b667fa-8e54-4023-9187-4ecb999d3c01@wanadoo.fr>
- <CALTg27nmNR=AXg=Ku_nXtwFQLxMypdbK4_Bu9CruB=vEDzxZoA@mail.gmail.com> <nycvar.YFH.7.76.2408221355360.12664@cbobk.fhfr.pm>
-In-Reply-To: <nycvar.YFH.7.76.2408221355360.12664@cbobk.fhfr.pm>
-From: Stuart <stuart.a.hayhurst@gmail.com>
-Date: Thu, 22 Aug 2024 16:36:46 +0100
-Message-ID: <CALTg27kV7px7TQ0nQuEUPHEqXFxsi3ieXekZK1Ze_oVkWEVjSg@mail.gmail.com>
-Subject: Re: [v2] HID: corsair-void: Add Corsair Void headset family driver
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Markus Elfring <Markus.Elfring@web.de>, 
-	linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 22, 2024 at 12:57=E2=80=AFPM Jiri Kosina <jikos@kernel.org> wro=
-te:
+Don't populate the const read-only array touch_ring_model_params_buf on
+the stack at run time, instead make it static const.
 
-> > > If I recollect correctly, there may be an alignment issue and just us=
-ing
-> > > the stack is not enough to guaranty what is needed.
-> >
-> > I can't find any reference to issues with it, I'm not sure what I saw b=
-efore.
-> > Also, it seems like the hid-asus driver is using it:
-> > https://elixir.bootlin.com/linux/v6.11-rc4/source/drivers/hid/hid-asus.=
-c#L391
->
-> You can't do DMA from stack; see section "What memory is DMA'able?" of
-> Documentation/core-api/dma-api-howto.rst
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/hid/hid-uclogic-params.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for the link, I knew I'd seen something somewhere,
-I'll leave the allocation as-is then
+diff --git a/drivers/hid/hid-uclogic-params.c b/drivers/hid/hid-uclogic-params.c
+index 5bab006ec165..d5277d2fd229 100644
+--- a/drivers/hid/hid-uclogic-params.c
++++ b/drivers/hid/hid-uclogic-params.c
+@@ -842,7 +842,7 @@ static int uclogic_params_huion_init(struct uclogic_params *params,
+ 	__u8 *params_ptr = NULL;
+ 	size_t params_len = 0;
+ 	/* Parameters string descriptor of a model with touch ring (HS610) */
+-	const __u8 touch_ring_model_params_buf[] = {
++	static const __u8 touch_ring_model_params_buf[] = {
+ 		0x13, 0x03, 0x70, 0xC6, 0x00, 0x06, 0x7C, 0x00,
+ 		0xFF, 0x1F, 0xD8, 0x13, 0x03, 0x0D, 0x10, 0x01,
+ 		0x04, 0x3C, 0x3E
+-- 
+2.39.2
 
-Stuart
