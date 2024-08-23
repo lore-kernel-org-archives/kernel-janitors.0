@@ -1,65 +1,63 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841DA186604
-	for <kernel-janitors@vger.kernel.org>; Fri, 23 Aug 2024 12:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6DC188937
+	for <kernel-janitors@vger.kernel.org>; Fri, 23 Aug 2024 12:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724417495; cv=none; b=Nv/pMAB+247qoYE4bZZnFlTD5GZIWfjQwZIGLtcEmoIKjmgOTZb58QXUgsNInLAin/TOI4KrTVW2vpu4mt1XL1nmgwdLTlWX4HvC4n+y8EmzH6VL/yDEO6N0zAysLLI7gHwbIpj3WP1Zu6+H7+axN8x6X/1hk8tqxx5jfOMutTs=
+	t=1724417504; cv=none; b=dsMcSwpLJ0koTJV8JWT4d18kKKV1JZg5uUT3nn7V7JTBYsAMs421G+OdNrdlqs+BsqqZ2iMC5BI5LfnwzukfGIIfnVldtD/U9CRHApaUzCRqM73obS/+5OGKqNizpxl0JRwXkrTxPwgqPn/XRUNBQeTTTDcZlIQZ5eMPxxZDN0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724417495; c=relaxed/simple;
-	bh=TyzgdhWB7wc4Oocm7h8CUf5+ccWAlJpS6Qze8g7MVCg=;
+	s=arc-20240116; t=1724417504; c=relaxed/simple;
+	bh=0GYm2ySTIWpR5t1AhOZzOLn2pSAeaQl/xmm0Un/1iQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UK/ydZexvPAgMnYB/v21Dict2TTcydYtaKfSWjk+Ag5uoyCEgvbxEIrEUVnoqgT5Rqq0nKwhmIPtmKUPLz/U5rajmT7dcrIP6ILme9xYNVGDyIQAOSTG9WZCncPw4Ehx9fo6QLezn2dE9/t7BYHCUMjrBnWHwx33hiDBs+hw4w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KZoUL26R; arc=none smtp.client-ip=209.85.128.50
+	 Content-Disposition; b=hov5snh7HU6VieiQWTeJ8FO8/Jh4Gf7ryRPYdwIujnfmk3xgMlbt4QP9Zf7xklMK3Rqu7eMoLD+1Z6qY22M3iJC2PspHzWOXMNzCDvKEMjUdrkw40pMRwCmqYqfDCbLu4POQ7JlzQhN0r1sj6ab8xrPQZH4DjtfT0J5O2arJPQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t6spEVrL; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KZoUL26R"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-428163f7635so14773445e9.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 23 Aug 2024 05:51:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t6spEVrL"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-428163f7635so14774715e9.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 23 Aug 2024 05:51:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724417492; x=1725022292; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724417501; x=1725022301; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wxEehQwCYE19lD5kSpNMOUjLeWoaZ9JR6aNfHSrkYjI=;
-        b=KZoUL26RujwmTqGbIfsLemWF7phJGhDTslGQ3umr6jdd2rNEEEtYfAsvxVZk34pO9Z
-         MKElc6ZiPKwDsGSw2g8UrXgjL6pd8tx6S3Z+HqroQLtRxInxFC+roZpg6giiVO7QWhj/
-         L92RzZDXyTgX+gDzYYaVPCiyM510xGXiShr97QwfPx6ugU1U7ZbjIDjEGBQXghBZiUn2
-         Mv1Yan8wBxP9ewEx3BY6TiayRSp0lC2ZftwR0hbYopKTjL5gaGcmEWalSFkLwSOMsYy3
-         HGhbQRpTiZrwm6lrNvDyEdwTxAwBL+EdeLByeTfwK14/xLETd4JpWTNzqU8qH7L812sn
-         UsZA==
+        bh=hoe5j+zL5nAbiCIUvREYQpVSE2yifQUHpqXLQ7XWoEA=;
+        b=t6spEVrLkloBDjLQeUDFN+MUth0UW8hqeZpFlanPz2oBDR3JDzu/fbfPbXX43b0cOY
+         a8BLTtQZSX3u41B/IwylFYhNl2BPxA1K3MT93NS3QD47sCw36DvzJqTGZu3B5hKQaP8m
+         5Up9cRi4WJHnUQSEomb3SU1wzHy8x7OPoVxeOph1AXsWs4RdLMScglQZsBBmtiQWYJEv
+         bYnzXfk2ZW6YGfw1/HPDbeMJJq9fVsLoIPzlRnCc3n5/pTIEtlqX7ragzk4FKYp01iyD
+         VXOWcWYwx+v8dljmchxKr/L5psdvXUxor1baIibjrQ0kM4SxdU25GLpcmEwtPfCVM9Xm
+         C1cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724417492; x=1725022292;
+        d=1e100.net; s=20230601; t=1724417501; x=1725022301;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wxEehQwCYE19lD5kSpNMOUjLeWoaZ9JR6aNfHSrkYjI=;
-        b=MNZ36sXMfv1dwODEk2owFzaY0avhHIgbaUTktS8OYfZz25maGkdlhWBk54fiYn59Z3
-         fk173aK/j6muMOnOcTZcrogypKljfSVmLPdpCGjPlosW+1YP3eXckMFRtuEfTKGuHYW6
-         yBf5DVMUw/Ub4QM/0VSpzaZk2KcEyxxWn+RAFWQhm2pWijjoPbbmY6oUzPTPY1O3AhBO
-         O2ovUbs8U8CdUMG4PWAhR5VOQlSJtRTM6XMfWf088gO+om25bT7Y9fWAw2tMEM5HU1jg
-         YyGtlh/akxbYTlAhF3psLwhX7Y3+GSYMFtWg1a3Qgys1YmPJpWb4c5a5AnhmQUg7sn11
-         AL4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXAu1CCZ8WhkPkC2eWyajmE9r15hciCFaT6ExB/065io3Omray/QHbP134LQEKMYPEEKW/lYPdxevFAR850sXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8wcutnYwUkrEMYxPcgetTR2FK4vN9js1mMNn7SEXBn/AQRJvg
-	YXCYGM8wHIVzkpyQbwMqVjPpJiYu/1P////U6uZb4WH4+NA0Nsrv9p98F/BtHkk=
-X-Google-Smtp-Source: AGHT+IFhHLlc095ixSKUu6CrmrIUdCI1EJL4zfC+W4OjuIo9Se2eQ/YR+U4xra16yh9krliC8NQqAg==
-X-Received: by 2002:a05:600c:470d:b0:426:6921:e3e5 with SMTP id 5b1f17b1804b1-42acc9fe1e7mr16108185e9.24.1724417491866;
-        Fri, 23 Aug 2024 05:51:31 -0700 (PDT)
+        bh=hoe5j+zL5nAbiCIUvREYQpVSE2yifQUHpqXLQ7XWoEA=;
+        b=f3XlwmKI7g13P5OJYW/kR8LxIhIXfBGV3kFzKLjc9QI0dID3g4rnVmM4gjMcg/cbov
+         dQ5KjfOH3AN4Vb4aIzwmWv1cOlpp6SSNyfxFOAHn3Z0VWY+GQqhz3NhZbS+qo0L8I/Hd
+         UqcCS/CA25WsjtiG8dHfOWGvaCjYYPHjJdW5nJ3eSU9EQBE+W7rCtvUiSgyZ3z2ZpGUc
+         5us5z3KOqQee3SH/hTlt0l2O084dDtUJ1BRQNx0/gayszGGCJp3sbpJXe1Q1yGXz+7N3
+         3IWTkF4v73VjdaC55gQRgekFHnv/oaSDBmygNZVYABVnQhCBQABPGz4RPonx6uAdj7iG
+         lbzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnmnsAOC3bkldAXlJo2TLWMctMm2UNq1DhbugkBIsAk/XsvFvOUcpU6Ak/AcGX35w9umWDFKXYxyBgJCj/KoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUeEyGR3DXznMgCCYCgdL6ljsaQsIGpZAbrsgGjCCpjButlbUL
+	vt8B8JmF/HJpiX+vHPRZN/kSJIl4/1bcMZ2/WVL5Z81Etu6ddCjoIHg8oYQseX8=
+X-Google-Smtp-Source: AGHT+IHkggqQwYF252ozofkl8OYWm3rlLNjamoptyTPU8soyrbqGqbFpghbuhPHDyrmStFxt8rYQdw==
+X-Received: by 2002:adf:e54a:0:b0:371:8dcc:7f9e with SMTP id ffacd0b85a97d-37311840e04mr1346482f8f.2.1724417501372;
+        Fri, 23 Aug 2024 05:51:41 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730815b7e3sm4095492f8f.53.2024.08.23.05.51.30
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-373081ffeb8sm4092416f8f.88.2024.08.23.05.51.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 05:51:31 -0700 (PDT)
-Date: Fri, 23 Aug 2024 15:51:27 +0300
+        Fri, 23 Aug 2024 05:51:41 -0700 (PDT)
+Date: Fri, 23 Aug 2024 15:51:36 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Charles Wang <charles.goodix@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] HID: hid-goodix: Fix a signedness bug in
- goodix_hid_get_raw_report()
-Message-ID: <8e6fe9f1-fcd8-4264-b28d-a1ee99b592b8@stanley.mountain>
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] powercap: intel_rapl: Change an error pointer to NULL
+Message-ID: <fa719c6a-8d3b-4cca-9b43-bcd477ff6655@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -70,33 +68,29 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-GOODIX_HID_PKG_LEN_SIZE defined as sizeof(u16) (type size_t).  If the
-goodix_hid_check_ack_status() function times out and return -EINVAL then,
-because of type promotion, the negative error code is treated as a high
-positive value which is success.
+The rapl_find_package_domain_cpuslocked() function is supposed to
+return NULL on error.  This new error patch returns ERR_PTR(-EINVAL) but
+none of the callers check for that so it would lead to an Oops.
 
-Fix this by adding an explicit check for negative error codes.
-
-Fixes: 75e16c8ce283 ("HID: hid-goodix: Add Goodix HID-over-SPI driver")
+Fixes: 26096aed255f ("powercap/intel_rapl: Fix the energy-pkg event for AMD CPUs")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/hid/hid-goodix-spi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/powercap/intel_rapl_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-goodix-spi.c b/drivers/hid/hid-goodix-spi.c
-index 5103bf0aada4..59415f95c675 100644
---- a/drivers/hid/hid-goodix-spi.c
-+++ b/drivers/hid/hid-goodix-spi.c
-@@ -435,7 +435,8 @@ static int goodix_hid_get_raw_report(struct hid_device *hid,
- 
- 	/* Step2: check response data status */
- 	response_data_len = goodix_hid_check_ack_status(ts);
--	if (response_data_len <= GOODIX_HID_PKG_LEN_SIZE)
-+	if (response_data_len < 0 ||
-+	    response_data_len <= GOODIX_HID_PKG_LEN_SIZE)
- 		return -EINVAL;
- 
- 	len = min(len, response_data_len - GOODIX_HID_PKG_LEN_SIZE);
+diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/intel_rapl_common.c
+index d110c5da5cfe..2881687d7900 100644
+--- a/drivers/powercap/intel_rapl_common.c
++++ b/drivers/powercap/intel_rapl_common.c
+@@ -2157,7 +2157,7 @@ struct rapl_package *rapl_find_package_domain_cpuslocked(int id, struct rapl_if_
+ 		      topology_physical_package_id(id) : topology_logical_die_id(id);
+ 		if (uid < 0) {
+ 			pr_err("topology_logical_(package/die)_id() returned a negative value");
+-			return ERR_PTR(-EINVAL);
++			return NULL;
+ 		}
+ 	}
+ 	else
 -- 
 2.43.0
 
