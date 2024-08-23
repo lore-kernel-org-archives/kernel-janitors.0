@@ -1,100 +1,127 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157A62E644;
-	Fri, 23 Aug 2024 08:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DB8140397
+	for <kernel-janitors@vger.kernel.org>; Fri, 23 Aug 2024 09:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724402788; cv=none; b=Zjszt5lSyia7MpFLEJoAq39q8i0NUy3s7ucoNXJMvMsZRlbRhn1LtYyde3jU9PgdTYIOKOaFx0D4bjtfX4dU0n/zWn1cat5aOAGzV8Tn4YKsIyaipZ8XPIO0/VdetpDSV9J2bdhWMv8j0nOULdIoQ9Osj7aZ/CXEw8zqr2DFT4A=
+	t=1724404248; cv=none; b=LlQT93CWVl31WbAbqz6AXJyUN7XaE3tM4XrT8Xp1JDUQ+gfBeoMdpdgppN+hJlvALyjM/RWLW4M8jCtgUyhFFj2jT9PXLDx6ulEI2cMwlO7goqSbi5zS90/UcXid7XVkQ/Gy8/HDl6Kgdiz31Ko+pc56mh1B2Zm1CA8BsJZy+Uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724402788; c=relaxed/simple;
-	bh=s4XMzS2qLSsdhJFnl+AXGI1oAfA4VKS9oWCX+k3urHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Os5KeqwPwGHTAcFDPdVKH+GqlXbIWBvWasTWjM2beViRJZEzneoXqcll6dyDBCpd4UM+bkGbCOqdDAd0c1m1m8KzLVzy+sn6vuoIsR1iG4CH2DpixQug8ozgqjOHpq3RnPWhkgs8b0pxlW61JzxoUi24XnznbzChcQQcVnJ08XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LdE0GSNP; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1724404248; c=relaxed/simple;
+	bh=Jg5ia3aHONUUadtyXlIgwVR+JddSADOSM/MNOrpTPos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bc7jzR0Ea+TfHjpROs4r1duOkfItI9r6cx0Dj92HY9WTI8hgnGtfsnXUQdKRjrT2ik9aPNSeo+Bx27FtBEyHeGwRVh6vg5TkbEVuCLm36vi8jj4pr77ZbL52MmaBm9mV8ab8GtWKE2o48174ppEr+FCj17s8zOIZQYnC14ME910=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nXTDR0Q/; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LdE0GSNP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1724402767; x=1725007567; i=markus.elfring@web.de;
-	bh=s4XMzS2qLSsdhJFnl+AXGI1oAfA4VKS9oWCX+k3urHc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=LdE0GSNPLXyH66T0p2+T3ZblW4Wq3pVuL3dLLeetT5IeISs98K3rxqAE1SH4MDdC
-	 W2OSgHp73WMMv1G2XxtVsV/tml1BfHGvBxyvrMXx9k0r36tn7DTPrdFQs/GQEjFyu
-	 coHNAbD+85x47ZocWnx3JgcmK+khXQbnYvG84LWD8fkANQ4RHAgs8SbMWDkxP1RGx
-	 RXiuUAX//cUryo2SkB94M06cgPqRe1XvL4BVCU4cRD6B435VWoRTixXRKKCN5b/rU
-	 Ie1E2WmkLVcG4vSEkjn3mHtCGUFl5E6gXeJPThLr6ATRbD79K0zL2IQdGBcxrxmef
-	 F01lOZbQmc+Ic4VK4w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MuVKK-1rrF3F1sKQ-017jKu; Fri, 23
- Aug 2024 10:46:07 +0200
-Message-ID: <20f2ff71-fa9c-4282-9a16-566ff85c1247@web.de>
-Date: Fri, 23 Aug 2024 10:45:55 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nXTDR0Q/"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a86883231b4so232371366b.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 23 Aug 2024 02:10:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724404245; x=1725009045; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6AhXsDMlvtQOFjb81q++WnGuzMYwKiixG4cCIOvamkc=;
+        b=nXTDR0Q/zKG7a371r/C+Qox3UpjNVYReGEAUlEQ+v32xynpD+ysfyJG7JkwkdamYl/
+         WmhE7SJppdQmw+AB4HDaObMKIYibeyKqS9Ga1VDXaD2Z0e5C2iGg1mg+ff6NEge1Rf9V
+         rC6XBVYqqvKiwQ9TiHub19DcpVpB0gXRCycVj2Hg3soA0gyYT7Ltqt8jib65SwGGnUne
+         KFvFR9S6gKUm2nCTmk173+3OFsnNFtbZ0RN4khUSqahmgjpmGZvgsVsdfEJcvLvrmnN5
+         VdBs36Cqj57IRBqEldujJabIbRqBDzJyU11nyJD3dOvGA0bLeKurv6DxB8qcm/9FbRXm
+         julA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724404245; x=1725009045;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6AhXsDMlvtQOFjb81q++WnGuzMYwKiixG4cCIOvamkc=;
+        b=doUZ/B5FbUyvmbqD/E0pzztcv2PUTVwkI7b2ByoVX5iQA/BRBqzMYPGeJs18fBFrrZ
+         Ax5K1+SzzJ4rjPuYZABPNE9U3Sa5cqkH55lnHmU4Pjg5zPVJ7Z6II1fM7nzyLpvv3chx
+         37EmGoBgg33DK2PG11gRyCwHibg9t1UkSEXc8kMhab0KisqXl5qwcluG/XVZN41XYL3Q
+         98W7JG8w5YnIDZDGnRcmdeoAZz2gGFLGJHzB7+1fvy4ItaFS5AMD5V4KxgXpEzfed2ul
+         dGkH65c3W7BE6xQAvX1EkXzemq+VNov7iz9E/YGq0OxU0VKN1rZxPuUEtQwTocbwE90b
+         bsIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoOJple0DFOBM0IovEPrb09SgJapY1YBb9IbiBydE6eg8DJ5kimUqlGIEZq8XgvFT3ecBs1oUISWe6ulpBL/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxVPMUGIRB0miOH1QijWWP0Y7ln7YPIPSnDnbcQ6JhtrkPapAw
+	smDklUNJEoiUVrGYK6drve2zWseLdiQO85SjkXq5CEiC6ZcPo56FMIBlnMvcUDk+Qoo4sGPgOsd
+	S
+X-Google-Smtp-Source: AGHT+IG6BzmUUMzpD/+Pr+Wo1DEsgeyuZhet4hGF2/3wMnlt4qwkqUwDqWOnA0zjSrMvDtOD42xikQ==
+X-Received: by 2002:a17:906:6a14:b0:a86:6a26:fec7 with SMTP id a640c23a62f3a-a86a52c70ecmr110389066b.30.1724404244722;
+        Fri, 23 Aug 2024 02:10:44 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f2202fdsm232702266b.13.2024.08.23.02.10.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 02:10:44 -0700 (PDT)
+Date: Fri, 23 Aug 2024 12:10:40 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] idpf: Slightly simplify memory management in
+ idpf_add_del_mac_filters()
+Message-ID: <c786a345-9ec4-4e41-8e69-506239db291c@stanley.mountain>
+References: <fa4f19064be084d5e740e625dcf05805c0d71ad0.1724394169.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2] HID: corsair-void: Add Corsair Void headset family driver
-To: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>,
- linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>
-References: <20240818231940.34635-5-stuart.a.hayhurst@gmail.com>
- <bd07e14e-eae8-4264-b275-9efdf635cd82@web.de>
- <CALTg27mgOx3W3WENxFh0sEEeNYKEjrZCEQGoBi9=vjgiaZnZtQ@mail.gmail.com>
- <65b8f7e4-358f-4943-8ce0-c28e4c947016@web.de>
- <CALTg27nu2_26WwFKc2hWbWY9B40QQLxJ_bM97OWY9VoRo-d_FA@mail.gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CALTg27nu2_26WwFKc2hWbWY9B40QQLxJ_bM97OWY9VoRo-d_FA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:VQmvx4YoPNQuSrYJ/XKqJ+GhyHHr/+qt+7Ic1k/elT2w6OzsMZr
- n5KATzmz4/0/TNrSUYxpwkfy+cDiKMiaq5iAO/G+pHnXAMkON0V3tdc0R1D8HV3ZZgH9QOb
- fh9Y3V0iqa6MAYSN+v5aEbQiX07yOkjlZs8iuUi6lc3Xq7bZbjKTQv6YEWqB+31AIACb7az
- tcbN4rxomhvS48PXIPxPg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:koNXlGavHxs=;sIIuj/CZ7dY3l6Lo41BWOySHNh7
- Orp/o6NwP6UKsZUP6h5JAirVaQsBhLCeVd4tVDzQrfwScrnSBzZNAPi1zSvfdYKXKMx2Tb3jx
- wTPILtSyHqiaT/BXxOG01hVF8wxwhH1WgltauhFkxPegTWkeiqD19z4RB69bgZ04DQ6xmBtg5
- 4B/RMS9DaDMRSwF1B3PK6X5913NaueYnCJEA39TmU6rP89/XLoE3GrBEwXurziXJzzxE/wd+R
- DAoeYOUzTL6mW5IK64dZp/XiYRltmR2MUoszI3ZhX1Cmn6jGqKdLqoHU+QIYC4IY/6XwVg4cd
- 0PNRHdo7Wy2MrrTWwOgzl2tktqCugFIwuN6l0ME4A3qemOhv6T1ORUui9K7CkpcZHtHe+ydX8
- Sq0XY0fj5GooR3t/4PZDdFBG7ngd+KaIpWi1SnrFvG6lPmbGSiwjjXlgUYUTvxtCiowltGuPc
- qvJhXEaxZNSpImTWf9JGtEi7LGuiYDFgSCfr0s38EvyytKIFSLJ+jHT2ASBuan0ocEB9AA6kV
- iDiCfzayc5fZUGBwm7O6K+mi/AVoX+21wEOLI1qv1IPc8G61BSA957WQUApgixA36cG6SMgyc
- yFy/TsrYDe+FX/EKrDPBt5FnwpqPU4hN3ZUSSo+3XhDCmugf8vEj034GljhUjj+RdcI5VQeXt
- CJ+LvK6PjMvFn1vHBK9tM+RhgK9334N2WHEZYtEX29yM4n9dLrfbfBjXF4v2AA5jyN4gr4F5z
- cAgTW29hTHWKOsDl65YwZF4656UY1qjG4w8v/9c71jlFRSXps/O/Syg4PmTBTVdWwRq4eCmTX
- kweuJOgzG/KJJpkozF3cQ/BA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fa4f19064be084d5e740e625dcf05805c0d71ad0.1724394169.git.christophe.jaillet@wanadoo.fr>
 
->> How do you think about to collaborate with other data structures
->> than character arrays?
->>
->> See also:
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/process/coding-style.rst?h=3Dv6.11-rc4#n953
->
-> Hm, I picked a character array since all it's doing is sending a
-> buffer to the device.
-> There's no published specification to follow, only "Well the Windows
-> driver sends these bytes and this happens".
-> So there isn't really a structure that really comes naturally,
-> especially with all the magic numbers.
+On Fri, Aug 23, 2024 at 08:23:29AM +0200, Christophe JAILLET wrote:
+> In idpf_add_del_mac_filters(), filters are chunked up into multiple
+> messages to avoid sending a control queue message buffer that is too large.
+> 
+> Each chunk has up to IDPF_NUM_FILTERS_PER_MSG entries. So except for the
+> last iteration which can be smaller, space for exactly
+> IDPF_NUM_FILTERS_PER_MSG entries is allocated.
+> 
+> There is no need to free and reallocate a smaller array just for the last
+> iteration.
+> 
+> This slightly simplifies the code and avoid an (unlikely) memory allocation
+> failure.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+> index 70986e12da28..b6f4b58e1094 100644
+> --- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+> +++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+> @@ -3669,12 +3669,15 @@ int idpf_add_del_mac_filters(struct idpf_vport *vport,
+>  		entries_size = sizeof(struct virtchnl2_mac_addr) * num_entries;
+>  		buf_size = struct_size(ma_list, mac_addr_list, num_entries);
+>  
+> -		if (!ma_list || num_entries != IDPF_NUM_FILTERS_PER_MSG) {
+> -			kfree(ma_list);
+> +		if (!ma_list) {
+>  			ma_list = kzalloc(buf_size, GFP_ATOMIC);
+>  			if (!ma_list)
+>  				return -ENOMEM;
+>  		} else {
+> +			/* ma_list was allocated in the first iteration
+> +			 * so IDPF_NUM_FILTERS_PER_MSG entries are
+> +			 * available
+> +			 */
+>  			memset(ma_list, 0, buf_size);
+>  		}
 
-Is there still a desire and need to achieve a more meaningful interpretati=
-on
-for involved data exchanges?
-https://en.wikipedia.org/wiki/Header_(computing)
+It would be even nicer to move the ma_list allocation outside the loop:
 
-Regards,
-Markus
+        buf_size = struct_size(ma_list, mac_addr_list, IDPF_NUM_FILTERS_PER_MSG);
+        ma_list = kmalloc(buf_size, GFP_ATOMIC);
+
+regards,
+dan carpenter
+
