@@ -1,92 +1,377 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from msa.smtpout.orange.fr (msa-218.smtpout.orange.fr [193.252.23.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FEEA1922F8
-	for <kernel-janitors@vger.kernel.org>; Fri, 23 Aug 2024 22:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F6D15098F;
+	Sat, 24 Aug 2024 13:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724450495; cv=none; b=LlZuXCcHExEDWvsVwUBZTsQxzyY3tFFwc9hC7m9qjW1Dgz+ECGuZ6eZzPgancbrj26fvsNYRG3xghzZKEiDf/hkzBrS9JXVRGv/OO3ENFV0Zh6P0LZgviPHQWbfMseyw8MDDQeaIaU2I0no0hKtut3u5Lgs0bpLkmJHGJ0i4444=
+	t=1724507255; cv=none; b=r3J5gHdkvQGbxq6dAobebbSOsFOdtX9bdZkHEohhmcwyuu9nbrRgRZzGEejcJCeG9gaZrXtuVjByLc0MZhUfaSWG6vBpuZEQsN8vQpNqENSZOQrlvFN0DbcURM+MRDhQODX8IcfFli8Pf+KTMoMb40/qhBlXrtk1RhLeQQTiSQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724450495; c=relaxed/simple;
-	bh=VvJKpJJfmD7iLRFCJk1VXjjaQa41DmLkUJVxiqmPuus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c2ngFDMVeQSTfvt5IFdHvr8oA/RTJGbfZEDV7fIh4aZbwJWsrFUiY+Xiz2JMuMqs8QPHtzH2DQipLgPKfz7GO4XTjmUDbnALwnOwc8f9cynE5JlZ+SL3mgIImX6vEb3CJuPiAiYD+PW+V8RHS8+grBSY4FLcMGxiAi9lKrBPu8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lup3u9e3; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1724507255; c=relaxed/simple;
+	bh=rYV7YbbPPMai7nwihdtZF7TUUXb9Shf6UFzB1mgO7XM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DvrnFIeS2fdPpTd1s1OPjAseEnoCHjtM5qqEW0BmqflxNcBwgIr3yLDyXZFHeCIrKWSQbrqdS+zb4VCqcDNuJvRyreL3RMW9Bs/ctYsiyY/0sZ7sFkpXjPX3Zc1knfRdYNzbq9GFL9uphaTSA5sLESiaIdyq6Eo4Iyp2HoL3aJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=AQac5zvA; arc=none smtp.client-ip=193.252.23.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lup3u9e3"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso19229525e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 23 Aug 2024 15:01:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724450492; x=1725055292; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lFadsMRdLC68efTKJRnWoj9CJBJeNBa9X0F1mBmwwOE=;
-        b=Lup3u9e3B+cuOhuCeLCJ92DbMc871BpUA8BDRsPo/pnmsurw4Zdcjh22cHE0B4clOl
-         1L4NYqfD6wHWBCmjJkMlqwIXZ+uLdZy0yxJVxDqoj8oIsVeYe52c3S3a9jOLcOQOJjj4
-         9CN6xdyzYMMUfxNVvaiwEyqLhwiwOIrIkzZ/6UHbsAvCTIp2k60mMKBwa3J0q+vXUI7d
-         ro8xvlo5RsyebjVuc2esbTUVyQYfsFZoKuQr1CLaKpPD7vO0BNecw/XZD0eVPGJiqj/A
-         SHdZ8YkfuG0tGk/NpxbSbAaPC62FNdQFshym90ftSsYHy7XxZ0KfQsJiI9usGftUrGa+
-         Za9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724450492; x=1725055292;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lFadsMRdLC68efTKJRnWoj9CJBJeNBa9X0F1mBmwwOE=;
-        b=PBI7y1MPb9lXvmbKH9omEQbs3MM8LIIySFVmEcZ1pTichtdQuXhhIETfkzi7IBIfL7
-         aOrZHKIGaEOZRcGEqj7lIOXGYbZReEanuNMbw6LiRSUXLR8vAxIc96pmX2udTzwdzL5c
-         cQA1pF3o+JX1Nm2YZ3+Rpv+nZ55VdjHdJQmcQbt/U68h0IS7W1lEGqEo7ULgQb4yQAMx
-         ucUlsyRTGf28cH2Bj1At5HoH3V6807Vi9m/Ss3uEBjsLZ2QFeh9gBinjGwDIHlBLeJyi
-         986k6Y4KDJmGTPPlxPk4lmHio722hzXhx710i5L1se1k2T5CdXLRZay0j21LfqssVuZB
-         3aFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfCTRvYjyWxyCSmVAkIqTnAVpufvl52SW9orQGLdzR+7WGwbERxwD1r6sWzYOPoOiyw528HwjTn2pqz3pLGiQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyuj4Cs9c/tFlykQQykdRzQOigAbGYgHxuov1VvIEytHR5lWx8d
-	0pDwFWH0tUn/DzuxEjTOrfqsdKRszZcXGohyRz4fbZXCZOIhF/M1xjHLfFQCXsk=
-X-Google-Smtp-Source: AGHT+IGGy3Wdnvs0hhS/uAOkCfiTUkdDsGvNJsG42+IyR5Xa1O/wChhS3aoA3RbjU4k7MpOb56ez1Q==
-X-Received: by 2002:a05:600c:4453:b0:426:4978:65f0 with SMTP id 5b1f17b1804b1-42acc8dd846mr27740605e9.18.1724450492090;
-        Fri, 23 Aug 2024 15:01:32 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac517a68dsm74182985e9.33.2024.08.23.15.01.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 15:01:31 -0700 (PDT)
-Date: Sat, 24 Aug 2024 01:01:27 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Charles Wang <charles.goodix@gmail.com>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] HID: hid-goodix: Fix a signedness bug in
- goodix_hid_get_raw_report()
-Message-ID: <8d51a7cc-5e7a-4503-b236-720aca44e305@stanley.mountain>
-References: <8e6fe9f1-fcd8-4264-b28d-a1ee99b592b8@stanley.mountain>
- <ZsjsydZtMu3RyM0P@google.com>
- <5660b5ea-0806-493e-8364-15b0d519be76@stanley.mountain>
- <ZskF9ROgsO-mfIJ2@google.com>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="AQac5zvA"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id hr6vsE2q1aZQfhr6vsx39B; Sat, 24 Aug 2024 15:47:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724507243;
+	bh=VrJTdN+d9FOn7wLbxMX7FhFh6wourAJWHL5OBIY5qyw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=AQac5zvAUw06SiL2gDL5rQBUQzYSIbh6IknnF7+y55uxiEzIlQuapT67rrpo3oJoz
+	 /ABktPMfiaDKYf5YeXRMB95hhl4ozTVAEJgIKtlT2aiOLxQeY4r3j/DsJeEv0R8W2O
+	 /azzfQjdXST+2JQ+UAk5q1xur6RKcNKrO02Szr7NCAIpuwIVLpC+TEKaJ4MipWPfJx
+	 iWxZN7zx+M1Y8gBMCeQrxs1yf8Iz68txBVgnUNQrz2QNTIxXsJL8H2gWgTpj9npJbB
+	 6waoLYdnD9M/RHwCWNlSpkvMW39kVARdfKzsAWWXadx7NEWJLBxZfYHNUENViwNdtK
+	 Qh0Ix69/XmM4A==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 24 Aug 2024 15:47:23 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Alan Stern <stern@rowland.harvard.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Oliver Neukum <oneukum@suse.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-usb@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH] usb-storage: Constify struct usb_device_id and us_unusual_dev
+Date: Sat, 24 Aug 2024 15:47:07 +0200
+Message-ID: <b1b75a2a64b1f6cfad2a611f71393f281178fd3f.1724507157.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZskF9ROgsO-mfIJ2@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 23, 2024 at 02:58:13PM -0700, Dmitry Torokhov wrote:
-> On Sat, Aug 24, 2024 at 12:32:53AM +0300, Dan Carpenter wrote:
-> > 
-> > I can also resend.  I don't mind doing that.  I've already written the patch
-> > that you're describing and I just have to write the commit message and hit send.
-> > I can send it on Monday.  Whatever is easiest.
-> 
-> Yes, please send it unless you hear from Jiri/Benjamin that they like
-> current version more.
+'struct usb_device_id' and 'struct us_unusual_dev' are not modified in
+these drivers.
 
-Sure.  Will do.
+Constifying these structures moves some data to a read-only section, so
+increase overall security, especially when the structure holds some
+function pointers (which is the case for struct us_unusual_dev).
 
-regards,
-dan carpenter
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  25249	   4261	    896	  30406	   76c6	drivers/usb/storage/alauda.o
+   3969	    672	    360	   5001	   1389	drivers/usb/storage/cypress_atacb.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  25461	   4041	    896	  30398	   76be	drivers/usb/storage/alauda.o
+   4225	    400	    360	   4985	   1379	drivers/usb/storage/cypress_atacb.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+
+I hope that a single patch for all drivers in drivers/usb/storage/ is fine.
+---
+ drivers/usb/storage/alauda.c        | 4 ++--
+ drivers/usb/storage/cypress_atacb.c | 4 ++--
+ drivers/usb/storage/datafab.c       | 4 ++--
+ drivers/usb/storage/ene_ub6250.c    | 4 ++--
+ drivers/usb/storage/freecom.c       | 4 ++--
+ drivers/usb/storage/isd200.c        | 4 ++--
+ drivers/usb/storage/jumpshot.c      | 4 ++--
+ drivers/usb/storage/karma.c         | 4 ++--
+ drivers/usb/storage/onetouch.c      | 4 ++--
+ drivers/usb/storage/sddr09.c        | 4 ++--
+ drivers/usb/storage/sddr55.c        | 4 ++--
+ drivers/usb/storage/shuttle_usbat.c | 4 ++--
+ drivers/usb/storage/uas.c           | 2 +-
+ 13 files changed, 25 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
+index 40d34cc28344..a9d3c58ce7d9 100644
+--- a/drivers/usb/storage/alauda.c
++++ b/drivers/usb/storage/alauda.c
+@@ -132,7 +132,7 @@ static int init_alauda(struct us_data *us);
+ { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
+   .driver_info = (flags) }
+ 
+-static struct usb_device_id alauda_usb_ids[] = {
++static const struct usb_device_id alauda_usb_ids[] = {
+ #	include "unusual_alauda.h"
+ 	{ }		/* Terminating entry */
+ };
+@@ -154,7 +154,7 @@ MODULE_DEVICE_TABLE(usb, alauda_usb_ids);
+ 	.initFunction = init_function,	\
+ }
+ 
+-static struct us_unusual_dev alauda_unusual_dev_list[] = {
++static const struct us_unusual_dev alauda_unusual_dev_list[] = {
+ #	include "unusual_alauda.h"
+ 	{ }		/* Terminating entry */
+ };
+diff --git a/drivers/usb/storage/cypress_atacb.c b/drivers/usb/storage/cypress_atacb.c
+index 98b3ec352a13..30dfd0082474 100644
+--- a/drivers/usb/storage/cypress_atacb.c
++++ b/drivers/usb/storage/cypress_atacb.c
+@@ -33,7 +33,7 @@ MODULE_IMPORT_NS(USB_STORAGE);
+ { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
+   .driver_info = (flags) }
+ 
+-static struct usb_device_id cypress_usb_ids[] = {
++static const struct usb_device_id cypress_usb_ids[] = {
+ #	include "unusual_cypress.h"
+ 	{ }		/* Terminating entry */
+ };
+@@ -55,7 +55,7 @@ MODULE_DEVICE_TABLE(usb, cypress_usb_ids);
+ 	.initFunction = init_function,	\
+ }
+ 
+-static struct us_unusual_dev cypress_unusual_dev_list[] = {
++static const struct us_unusual_dev cypress_unusual_dev_list[] = {
+ #	include "unusual_cypress.h"
+ 	{ }		/* Terminating entry */
+ };
+diff --git a/drivers/usb/storage/datafab.c b/drivers/usb/storage/datafab.c
+index bcc4a2fad863..3ea5601d16b8 100644
+--- a/drivers/usb/storage/datafab.c
++++ b/drivers/usb/storage/datafab.c
+@@ -80,7 +80,7 @@ static int datafab_determine_lun(struct us_data *us,
+ { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
+   .driver_info = (flags) }
+ 
+-static struct usb_device_id datafab_usb_ids[] = {
++static const struct usb_device_id datafab_usb_ids[] = {
+ #	include "unusual_datafab.h"
+ 	{ }		/* Terminating entry */
+ };
+@@ -102,7 +102,7 @@ MODULE_DEVICE_TABLE(usb, datafab_usb_ids);
+ 	.initFunction = init_function,	\
+ }
+ 
+-static struct us_unusual_dev datafab_unusual_dev_list[] = {
++static const struct us_unusual_dev datafab_unusual_dev_list[] = {
+ #	include "unusual_datafab.h"
+ 	{ }		/* Terminating entry */
+ };
+diff --git a/drivers/usb/storage/ene_ub6250.c b/drivers/usb/storage/ene_ub6250.c
+index 97c66c0d91f4..73dd276ce59c 100644
+--- a/drivers/usb/storage/ene_ub6250.c
++++ b/drivers/usb/storage/ene_ub6250.c
+@@ -43,7 +43,7 @@ MODULE_FIRMWARE(MS_RW_FIRMWARE);
+ { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
+ 	.driver_info = (flags)}
+ 
+-static struct usb_device_id ene_ub6250_usb_ids[] = {
++static const struct usb_device_id ene_ub6250_usb_ids[] = {
+ #	include "unusual_ene_ub6250.h"
+ 	{ }		/* Terminating entry */
+ };
+@@ -65,7 +65,7 @@ MODULE_DEVICE_TABLE(usb, ene_ub6250_usb_ids);
+ 	.initFunction = init_function,	\
+ }
+ 
+-static struct us_unusual_dev ene_ub6250_unusual_dev_list[] = {
++static const struct us_unusual_dev ene_ub6250_unusual_dev_list[] = {
+ #	include "unusual_ene_ub6250.h"
+ 	{ }		/* Terminating entry */
+ };
+diff --git a/drivers/usb/storage/freecom.c b/drivers/usb/storage/freecom.c
+index c3ce51c2dabd..cab27ba7a32a 100644
+--- a/drivers/usb/storage/freecom.c
++++ b/drivers/usb/storage/freecom.c
+@@ -119,7 +119,7 @@ static int init_freecom(struct us_data *us);
+ { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
+   .driver_info = (flags) }
+ 
+-static struct usb_device_id freecom_usb_ids[] = {
++static const struct usb_device_id freecom_usb_ids[] = {
+ #	include "unusual_freecom.h"
+ 	{ }		/* Terminating entry */
+ };
+@@ -141,7 +141,7 @@ MODULE_DEVICE_TABLE(usb, freecom_usb_ids);
+ 	.initFunction = init_function,	\
+ }
+ 
+-static struct us_unusual_dev freecom_unusual_dev_list[] = {
++static const struct us_unusual_dev freecom_unusual_dev_list[] = {
+ #	include "unusual_freecom.h"
+ 	{ }		/* Terminating entry */
+ };
+diff --git a/drivers/usb/storage/isd200.c b/drivers/usb/storage/isd200.c
+index 300aeef160e7..f2254eb3c0d7 100644
+--- a/drivers/usb/storage/isd200.c
++++ b/drivers/usb/storage/isd200.c
+@@ -67,7 +67,7 @@ static int isd200_Initialization(struct us_data *us);
+ { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
+   .driver_info = (flags) }
+ 
+-static struct usb_device_id isd200_usb_ids[] = {
++static const struct usb_device_id isd200_usb_ids[] = {
+ #	include "unusual_isd200.h"
+ 	{ }		/* Terminating entry */
+ };
+@@ -89,7 +89,7 @@ MODULE_DEVICE_TABLE(usb, isd200_usb_ids);
+ 	.initFunction = init_function,	\
+ }
+ 
+-static struct us_unusual_dev isd200_unusual_dev_list[] = {
++static const struct us_unusual_dev isd200_unusual_dev_list[] = {
+ #	include "unusual_isd200.h"
+ 	{ }		/* Terminating entry */
+ };
+diff --git a/drivers/usb/storage/jumpshot.c b/drivers/usb/storage/jumpshot.c
+index 229bf0c1afc9..0e71a8f33c2b 100644
+--- a/drivers/usb/storage/jumpshot.c
++++ b/drivers/usb/storage/jumpshot.c
+@@ -62,7 +62,7 @@ MODULE_IMPORT_NS(USB_STORAGE);
+ { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
+   .driver_info = (flags) }
+ 
+-static struct usb_device_id jumpshot_usb_ids[] = {
++static const struct usb_device_id jumpshot_usb_ids[] = {
+ #	include "unusual_jumpshot.h"
+ 	{ }		/* Terminating entry */
+ };
+@@ -84,7 +84,7 @@ MODULE_DEVICE_TABLE(usb, jumpshot_usb_ids);
+ 	.initFunction = init_function,	\
+ }
+ 
+-static struct us_unusual_dev jumpshot_unusual_dev_list[] = {
++static const struct us_unusual_dev jumpshot_unusual_dev_list[] = {
+ #	include "unusual_jumpshot.h"
+ 	{ }		/* Terminating entry */
+ };
+diff --git a/drivers/usb/storage/karma.c b/drivers/usb/storage/karma.c
+index 38ddfedef629..d6a5e54f2ca8 100644
+--- a/drivers/usb/storage/karma.c
++++ b/drivers/usb/storage/karma.c
+@@ -51,7 +51,7 @@ static int rio_karma_init(struct us_data *us);
+ { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
+   .driver_info = (flags) }
+ 
+-static struct usb_device_id karma_usb_ids[] = {
++static const struct usb_device_id karma_usb_ids[] = {
+ #	include "unusual_karma.h"
+ 	{ }		/* Terminating entry */
+ };
+@@ -73,7 +73,7 @@ MODULE_DEVICE_TABLE(usb, karma_usb_ids);
+ 	.initFunction = init_function,	\
+ }
+ 
+-static struct us_unusual_dev karma_unusual_dev_list[] = {
++static const struct us_unusual_dev karma_unusual_dev_list[] = {
+ #	include "unusual_karma.h"
+ 	{ }		/* Terminating entry */
+ };
+diff --git a/drivers/usb/storage/onetouch.c b/drivers/usb/storage/onetouch.c
+index 01f3c2779ccf..f97cf6cadb8e 100644
+--- a/drivers/usb/storage/onetouch.c
++++ b/drivers/usb/storage/onetouch.c
+@@ -55,7 +55,7 @@ struct usb_onetouch {
+ { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
+   .driver_info = (flags) }
+ 
+-static struct usb_device_id onetouch_usb_ids[] = {
++static const struct usb_device_id onetouch_usb_ids[] = {
+ #	include "unusual_onetouch.h"
+ 	{ }		/* Terminating entry */
+ };
+@@ -77,7 +77,7 @@ MODULE_DEVICE_TABLE(usb, onetouch_usb_ids);
+ 	.initFunction = init_function,	\
+ }
+ 
+-static struct us_unusual_dev onetouch_unusual_dev_list[] = {
++static const struct us_unusual_dev onetouch_unusual_dev_list[] = {
+ #	include "unusual_onetouch.h"
+ 	{ }		/* Terminating entry */
+ };
+diff --git a/drivers/usb/storage/sddr09.c b/drivers/usb/storage/sddr09.c
+index 51bcd4a43690..03d1b9c69ea1 100644
+--- a/drivers/usb/storage/sddr09.c
++++ b/drivers/usb/storage/sddr09.c
+@@ -63,7 +63,7 @@ static int usb_stor_sddr09_init(struct us_data *us);
+ { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
+   .driver_info = (flags) }
+ 
+-static struct usb_device_id sddr09_usb_ids[] = {
++static const struct usb_device_id sddr09_usb_ids[] = {
+ #	include "unusual_sddr09.h"
+ 	{ }		/* Terminating entry */
+ };
+@@ -85,7 +85,7 @@ MODULE_DEVICE_TABLE(usb, sddr09_usb_ids);
+ 	.initFunction = init_function,	\
+ }
+ 
+-static struct us_unusual_dev sddr09_unusual_dev_list[] = {
++static const struct us_unusual_dev sddr09_unusual_dev_list[] = {
+ #	include "unusual_sddr09.h"
+ 	{ }		/* Terminating entry */
+ };
+diff --git a/drivers/usb/storage/sddr55.c b/drivers/usb/storage/sddr55.c
+index 0aa079405d23..b8227478a7ad 100644
+--- a/drivers/usb/storage/sddr55.c
++++ b/drivers/usb/storage/sddr55.c
+@@ -40,7 +40,7 @@ MODULE_IMPORT_NS(USB_STORAGE);
+ { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
+   .driver_info = (flags) }
+ 
+-static struct usb_device_id sddr55_usb_ids[] = {
++static const struct usb_device_id sddr55_usb_ids[] = {
+ #	include "unusual_sddr55.h"
+ 	{ }		/* Terminating entry */
+ };
+@@ -62,7 +62,7 @@ MODULE_DEVICE_TABLE(usb, sddr55_usb_ids);
+ 	.initFunction = init_function,	\
+ }
+ 
+-static struct us_unusual_dev sddr55_unusual_dev_list[] = {
++static const struct us_unusual_dev sddr55_unusual_dev_list[] = {
+ #	include "unusual_sddr55.h"
+ 	{ }		/* Terminating entry */
+ };
+diff --git a/drivers/usb/storage/shuttle_usbat.c b/drivers/usb/storage/shuttle_usbat.c
+index f0d0ca37163d..e7c224b7c464 100644
+--- a/drivers/usb/storage/shuttle_usbat.c
++++ b/drivers/usb/storage/shuttle_usbat.c
+@@ -162,7 +162,7 @@ static int init_usbat_flash(struct us_data *us);
+ { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
+   .driver_info = (flags) }
+ 
+-static struct usb_device_id usbat_usb_ids[] = {
++static const struct usb_device_id usbat_usb_ids[] = {
+ #	include "unusual_usbat.h"
+ 	{ }		/* Terminating entry */
+ };
+@@ -184,7 +184,7 @@ MODULE_DEVICE_TABLE(usb, usbat_usb_ids);
+ 	.initFunction = init_function,	\
+ }
+ 
+-static struct us_unusual_dev usbat_unusual_dev_list[] = {
++static const struct us_unusual_dev usbat_unusual_dev_list[] = {
+ #	include "unusual_usbat.h"
+ 	{ }		/* Terminating entry */
+ };
+diff --git a/drivers/usb/storage/uas.c b/drivers/usb/storage/uas.c
+index c223b4dc1b19..03043d567fa1 100644
+--- a/drivers/usb/storage/uas.c
++++ b/drivers/usb/storage/uas.c
+@@ -927,7 +927,7 @@ static const struct scsi_host_template uas_host_template = {
+ { USB_DEVICE_VER(id_vendor, id_product, bcdDeviceMin, bcdDeviceMax), \
+ 	.driver_info = (flags) }
+ 
+-static struct usb_device_id uas_usb_ids[] = {
++static const struct usb_device_id uas_usb_ids[] = {
+ #	include "unusual_uas.h"
+ 	{ USB_INTERFACE_INFO(USB_CLASS_MASS_STORAGE, USB_SC_SCSI, USB_PR_BULK) },
+ 	{ USB_INTERFACE_INFO(USB_CLASS_MASS_STORAGE, USB_SC_SCSI, USB_PR_UAS) },
+-- 
+2.46.0
 
