@@ -1,169 +1,70 @@
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEA51946DA;
-	Mon, 26 Aug 2024 17:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CF9194AEF;
+	Mon, 26 Aug 2024 20:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724692511; cv=none; b=Bbm24jVwcYVZWGIWpL8CW0EQiD6EEaF7Wx4Ex4Ul1VXuEOwAQAKcKlLc1CIQvHABZ9CQfiXe15GnbMfYf6coTS69xBvHTgBZDDp67r7tMR88jOO6QmSWAiHePWt/ek6jtZCtF01m8a8mpYCKkBd/aK2MIi8qpuqyyqYaCXAMBOQ=
+	t=1724703806; cv=none; b=YrQyse1yDuzAR9o9B54IB4R1ZSWK6DV7bQ0Oh0lHr+FIWivcEpAhYxUldlKYXn2Tvm5C39hGL8mMYL05SMaO8Cc2W1iNrlnywbelXBrxeSDPQlPJ6zQPV1ZSLXxsvglwg2YrKX26E5ARfik32s7tSWJXCanGBXwSxUnWyj764W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724692511; c=relaxed/simple;
-	bh=XO/V8hWz4NH2myBpWtZGoY/SK13uVHnn+BzlOVcF39I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IOXE+WHecr0FPJVLqreKmwKMDm0K/A8evQtFtEqcfUr5OcR1COUZ9RJJlkyNi4AIrq3wjl8Kmwj/Tz/2aLLYRWa+mhqxQCLQXiZjmsLVEWC5FIfQI5T772RvN/uNhIVEf/d5knqjtbIzM/NcEe8TlYk0OSw32sdNcQGjPy5KpeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RdlVNqXD; arc=none smtp.client-ip=80.12.242.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1724703806; c=relaxed/simple;
+	bh=L3bK6BpLXd46wksh02/AMkGz4G9cO87HEzLfASgUxZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iuGxwxweO62ibzlKqXmUTN51ScAraeDfxAydarDsRSL0byM8zp0NGRhbP3dkwSb7ZcX+/woCtWEMYCiTHA5SPTmM8ovD0bN74xFNaxpD3ZHQKK4X74bJGBqvjs9olA0Mo9o2WMSgCMcfFCuCy5VgdVpqdMQ20VDSLwC+2vZ0ZY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bjpD7Gma; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RdlVNqXD"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id idIusKUkBFtEmidIus4Qnh; Mon, 26 Aug 2024 19:15:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724692500;
-	bh=NoAjW2R+o80sdyLbdCHHBi35GI05J7LD2G0MnQa6MWo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=RdlVNqXDGoIcfOHx16drsR+hMe5aGLy1GFtGLONfa7t0tUPljKNgfBzgYSkDvMuxG
-	 RILfXksBLAaN1wlZokC2GYKU2m7jyMde44Bp4jlaVCfHDS3dL0wqkaLPE8LNCe8oxX
-	 RMPZ1uwuumGbYzi59I0rFTg6NPB6kMWgbgt3Uem/CBHvAfdF9Kd7JfdgsRaKYsgRUi
-	 9vs12BmYVjT3OJ8ewJn+YslnWH5BKNmZRuD3emjhEH87R4tGHUQ4/K64JZCvfR++JG
-	 bDslmHqL+dyHAabDSR3ngKZWBtwfXIFWZ8oQGLAOuSWeHFr0aOLbx6dWkuVW5izlH/
-	 UE29btMe4pKCQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Mon, 26 Aug 2024 19:15:00 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <bbe06f51-459a-4973-9322-56b3d27427f1@wanadoo.fr>
-Date: Mon, 26 Aug 2024 19:14:55 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bjpD7Gma"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD25CC8B7B7;
+	Mon, 26 Aug 2024 20:23:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724703805;
+	bh=L3bK6BpLXd46wksh02/AMkGz4G9cO87HEzLfASgUxZk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bjpD7GmadzAfml40vB6FOmHLSX6y6Yjs0VSY5XlxwcrfFrRN0/dKu0NlZjIm02057
+	 mGOasYjHBDALSRgucyhLj0aLKCGXJyveZs01JFW5M5v+IeOLA9GL43RMMT3V/gduHn
+	 n9H2+R+thzJw/Bt/Kla8Masy+UZ/6sGWgIoQZFRndDUIlQIDeBuAEvX02+5YIJVrGd
+	 yPpPtJ6LbXMHCHA1jgh2yuNQQ5rOvzdXjrEjIy4W1VZVRH5QEIADFAPjpe4iCForDX
+	 RuTIhl3IjA0da0Mkz6Ckl2Xe6axJFXFLdg+MdmuIRlFoElmMFZMyHxcpX7Sb+0Xdhy
+	 5jS091F7oTOcg==
+Date: Mon, 26 Aug 2024 13:23:24 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Shahed Shaikh <shshaikh@marvell.com>, Manish Chopra
+ <manishc@marvell.com>, GR-Linux-NIC-Dev@marvell.com, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] qlcnic: make read-only const array key static
+Message-ID: <20240826132324.14572112@kernel.org>
+In-Reply-To: <20240822211028.643682-1-colin.i.king@gmail.com>
+References: <20240822211028.643682-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] idpf: Slightly simplify memory management in
- idpf_add_del_mac_filters()
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- Pavan Kumar Linga <pavan.kumar.linga@intel.com>,
- Alexander Lobakin <aleksander.lobakin@intel.com>
-References: <fa4f19064be084d5e740e625dcf05805c0d71ad0.1724394169.git.christophe.jaillet@wanadoo.fr>
- <c786a345-9ec4-4e41-8e69-506239db291c@stanley.mountain>
- <2896a4b2-2297-44cd-b4c7-a4d320298740@intel.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <2896a4b2-2297-44cd-b4c7-a4d320298740@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Le 26/08/2024 à 11:15, Przemek Kitszel a écrit :
-> On 8/23/24 11:10, Dan Carpenter wrote:
->> On Fri, Aug 23, 2024 at 08:23:29AM +0200, Christophe JAILLET wrote:
->>> In idpf_add_del_mac_filters(), filters are chunked up into multiple
->>> messages to avoid sending a control queue message buffer that is too 
->>> large.
->>>
->>> Each chunk has up to IDPF_NUM_FILTERS_PER_MSG entries. So except for the
->>> last iteration which can be smaller, space for exactly
->>> IDPF_NUM_FILTERS_PER_MSG entries is allocated.
->>>
->>> There is no need to free and reallocate a smaller array just for the 
->>> last
->>> iteration.
->>>
->>> This slightly simplifies the code and avoid an (unlikely) memory 
->>> allocation
->>> failure.
->>>
-> 
-> Thanks, that is indeed an improvement.
-> 
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>> ---
->>>   drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 7 +++++--
->>>   1 file changed, 5 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c 
->>> b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
->>> index 70986e12da28..b6f4b58e1094 100644
->>> --- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
->>> +++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
->>> @@ -3669,12 +3669,15 @@ int idpf_add_del_mac_filters(struct 
->>> idpf_vport *vport,
->>>           entries_size = sizeof(struct virtchnl2_mac_addr) * 
->>> num_entries;
->>>           buf_size = struct_size(ma_list, mac_addr_list, num_entries);
->>> -        if (!ma_list || num_entries != IDPF_NUM_FILTERS_PER_MSG) {
->>> -            kfree(ma_list);
->>> +        if (!ma_list) {
->>>               ma_list = kzalloc(buf_size, GFP_ATOMIC);
->>>               if (!ma_list)
->>>                   return -ENOMEM;
->>>           } else {
->>> +            /* ma_list was allocated in the first iteration
->>> +             * so IDPF_NUM_FILTERS_PER_MSG entries are
->>> +             * available
->>> +             */
->>>               memset(ma_list, 0, buf_size);
->>>           }
->>
->> It would be even nicer to move the ma_list allocation outside the loop:
->>
->>          buf_size = struct_size(ma_list, mac_addr_list, 
->> IDPF_NUM_FILTERS_PER_MSG);
->>          ma_list = kmalloc(buf_size, GFP_ATOMIC);
-> 
-> good point
-> 
-> I've opened whole function for inspection and it asks for even more,
-> as of now, we allocate an array in atomic context, just to have a copy
-> of some stuff from the spinlock-protected list.
-> 
-> It would be good to have allocation as pointed by Dan prior to iteration
-> and fill it on the fly, sending when new message would not fit plus once
-> at the end. Sending procedure is safe to be called under a spinlock.
+On Thu, 22 Aug 2024 22:10:28 +0100 Colin Ian King wrote:
+> diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
+> index bcef8ab715bf..5a91e9f9c408 100644
+> --- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
+> +++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
+> @@ -2045,9 +2045,11 @@ int qlcnic_83xx_config_rss(struct qlcnic_adapter *adapter, int enable)
+>  	int err;
+>  	u32 word;
+>  	struct qlcnic_cmd_args cmd;
+> -	const u64 key[] = { 0xbeac01fa6a42b73bULL, 0x8030f20c77cb2da3ULL,
+> -			    0xae7b30b4d0ca2bcbULL, 0x43a38fb04167253dULL,
+> -			    0x255b0ec26d5a56daULL };
+> +	static const u64 key[] = {
+> +		0xbeac01fa6a42b73bULL, 0x8030f20c77cb2da3ULL,
+> +		0xae7b30b4d0ca2bcbULL, 0x43a38fb04167253dULL,
+> +		0x255b0ec26d5a56daULL
+> +	};
 
-If I understand correctly, you propose to remove the initial copy in 
-mac_addr and hold &vport_config->mac_filter_list_lock till the end of 
-the function?
-
-That's it?
-
-There is a wait_for_completion_timeout() in idpf_vc_xn_exec() and the 
-default time-out is IDPF_VC_XN_DEFAULT_TIMEOUT_MSEC	(60 * 1000)
-
-So, should an issue occurs, and the time out run till the end, we could 
-hold the 'mac_filter_list_lock' spinlock for up to 60 seconds?
-Is that ok?
-
-
-And if in asynch update mode, idpf_mac_filter_async_handler() also takes 
-&vport_config->mac_filter_list_lock;. Could we dead-lock?
-
-
-So, I'm not sure to understand what you propose, or the code in 
-idpf_add_del_mac_filters() and co.
-
-> 
-> CCing author; CCing Olek to ask if there are already some refactors that
-> would conflict with this.
-
-I'll way a few days for these feedbacks and send a v2.
-
-CJ
-
-> 
->>
->> regards,
->> dan carpenter
->>
-> 
-> 
-> 
-
+Move it up, please, reverse xmas tree
+-- 
+pw-bot: cr
