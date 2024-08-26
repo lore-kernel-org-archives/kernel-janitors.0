@@ -1,218 +1,169 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95F5179958;
-	Mon, 26 Aug 2024 14:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724681591; cv=fail; b=rTW8qDidPLE2jd3Lrwdz1Z696F2vdPN62pqXhakEFdmZlr+lEyqSSDk6qIl9SgkZ06l35s69+9k3I5dh540xdeG54PDBfDBD0vHG/crpX9snj2NpcaPlP136tnfyx8jp3tnBrvEKOt5aglMjTqNOHc41f1PX+/txnwKq0NRpRgQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724681591; c=relaxed/simple;
-	bh=0bB03QwM/HJS5OykW70daKhqyNvGKzWvi3i4H+YRpkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=MMaRTEkwMw3pRetzVsmuxjaR0CCsEuCd0b0B4oG5QaQXJF3LkccbmmyBbvYI7bGrHGMpBpxuz4mHLTft5TDCMMG5EU9d0i6Fv738KiJjzu6XtcaZ1WdRPfXeLWtPK7H6qfqI6e3y2begwQHUItMTpRRSKxGAANT1sW5GPa2ljOw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=M27RiTUH; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=pRYUvmom; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEA51946DA;
+	Mon, 26 Aug 2024 17:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724692511; cv=none; b=Bbm24jVwcYVZWGIWpL8CW0EQiD6EEaF7Wx4Ex4Ul1VXuEOwAQAKcKlLc1CIQvHABZ9CQfiXe15GnbMfYf6coTS69xBvHTgBZDDp67r7tMR88jOO6QmSWAiHePWt/ek6jtZCtF01m8a8mpYCKkBd/aK2MIi8qpuqyyqYaCXAMBOQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724692511; c=relaxed/simple;
+	bh=XO/V8hWz4NH2myBpWtZGoY/SK13uVHnn+BzlOVcF39I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IOXE+WHecr0FPJVLqreKmwKMDm0K/A8evQtFtEqcfUr5OcR1COUZ9RJJlkyNi4AIrq3wjl8Kmwj/Tz/2aLLYRWa+mhqxQCLQXiZjmsLVEWC5FIfQI5T772RvN/uNhIVEf/d5knqjtbIzM/NcEe8TlYk0OSw32sdNcQGjPy5KpeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RdlVNqXD; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="M27RiTUH";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="pRYUvmom"
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47QE2aHU020932;
-	Mon, 26 Aug 2024 14:12:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=4/NEzwftIQ5LNVt
-	VCwmZf2zWCjtAvx0Hu/1yJnzBUrE=; b=M27RiTUHMdK+xD40PzAlMapQpKnH8LT
-	S7uY0pkKn5H4bB8F5VHxlCKWQOdVe3ZbiExhIKP9Xo7h++rmd18u35bKdxsFrYNN
-	YlQd4Jx7lZbHrISICVFc60gVF0oKVplew/9DbaBg0OD0Of8jV+J5nudYqGZOg1I/
-	lCP1NzyyWAxqgLKZih5yab/HytT8ydgE1pHaGWYc2diOqHsk7LexjA/EPNs5uSxi
-	xr7ONpgeCkYndCalJYrz7jlgZTKR7L2j1LjvXBDSzT+DNbIWH0Bo+RJ+i5Df2hgX
-	M62L2CYq+wPukq9eGDh5qJWIm1AF9lJP4kRCvwuunK7Yjh0vxIzRSaw==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4177hwk6um-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 26 Aug 2024 14:12:57 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47QD9J3Z010512;
-	Mon, 26 Aug 2024 14:12:57 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2169.outbound.protection.outlook.com [104.47.55.169])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41894kk8uw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 26 Aug 2024 14:12:57 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gLIbcMShLMpjfP/4aRywRrrf6go/5Kv4xh8YBuk9WarF/T3ATk0uMDZJ4aA1Aqf5ZSMyR7GaqrB6cExbrogl6y7sOL+yYD+udYupMFflv0AHT9ZqnBTnMkoR4vVFdXk0aWk/vwq9ZZemGKCgWHHwV6r+bfwyoymumIu7Hj5mYUWIWAaRr26Q5xjfOFsJ+RMzP5rCYYC6MzIOnvMMwilHYFu7kXv4p9RXvmXAK2CvtyGrCByub2wI/HoqSGBM99Svje5pWf8hHBY8k8bNliuB7K+wOOxzU2tA+Eo7u7EqJMLIRu0t2n7R5Gew0nCDsC4eaauPmqkqj+fpqiuRlIQWFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4/NEzwftIQ5LNVtVCwmZf2zWCjtAvx0Hu/1yJnzBUrE=;
- b=AG/HtzLs4zchOUeMHhOk130jLdACrLQKAl6bUfwiM/DviJJk+O3due2sECxTVVF3bXNXeZmNV9u8TRelkdHVdv9TKeyoQXxesveHI2SC+UOoyxy+cSXy/N+AD+UqEZzmRiaL9nwcAf65c9w+ocZkA+Z7M0Xnkyo06U15JOfXjlGgkNJ9ID5rMmClbwi8SxEnzcVWw3UASxcUaOwkwXqLyrXWW0EHym0Q8uiSuijhsLOnJU03d0VzJEfXbA5Gz0YSQ95W1NRQcAlX/LC6dh12wBcnJ7OX4mfL5K/Z+57qMcYrq2IKyEYuW7z/JCi+hgn/sXxjaSEiqMkdIceXe26pUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4/NEzwftIQ5LNVtVCwmZf2zWCjtAvx0Hu/1yJnzBUrE=;
- b=pRYUvmomx7yRM9Qfav9E4+jA/Z+QVYqgFCAoxgPdvFG+DuHhgyonk87fuD02OL5uGA15uleuryixnfyZB4QrDVKJvjZN0eo8xaF84v0ghQemavHhbn9JbNvn7zN4xM1J4MboGs3AV8zq7Y+ABLxXWS3YZ86WlxyCQrvxLG2Rn2U=
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
- by SA1PR10MB6520.namprd10.prod.outlook.com (2603:10b6:806:2b2::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.13; Mon, 26 Aug
- 2024 14:12:54 +0000
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490%3]) with mapi id 15.20.7918.012; Mon, 26 Aug 2024
- 14:12:54 +0000
-Date: Mon, 26 Aug 2024 10:12:52 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>, maple-tree@lists.infradead.org,
-        linux-mm@kvack.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in MAPLE TREE
-Message-ID: <7rh5ar45l2uecrjppinhoahouhdlfnz7rncxi72xlc5wegzvgb@ftylod6nhtzc>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Lukas Bulwahn <lbulwahn@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Matthew Wilcox <willy@infradead.org>, maple-tree@lists.infradead.org, linux-mm@kvack.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-References: <20240826110215.19894-1-lukas.bulwahn@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826110215.19894-1-lukas.bulwahn@redhat.com>
-User-Agent: NeoMutt/20240425
-X-ClientProxiedBy: YT4PR01CA0219.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:eb::24) To DS0PR10MB7933.namprd10.prod.outlook.com
- (2603:10b6:8:1b8::15)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RdlVNqXD"
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id idIusKUkBFtEmidIus4Qnh; Mon, 26 Aug 2024 19:15:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724692500;
+	bh=NoAjW2R+o80sdyLbdCHHBi35GI05J7LD2G0MnQa6MWo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=RdlVNqXDGoIcfOHx16drsR+hMe5aGLy1GFtGLONfa7t0tUPljKNgfBzgYSkDvMuxG
+	 RILfXksBLAaN1wlZokC2GYKU2m7jyMde44Bp4jlaVCfHDS3dL0wqkaLPE8LNCe8oxX
+	 RMPZ1uwuumGbYzi59I0rFTg6NPB6kMWgbgt3Uem/CBHvAfdF9Kd7JfdgsRaKYsgRUi
+	 9vs12BmYVjT3OJ8ewJn+YslnWH5BKNmZRuD3emjhEH87R4tGHUQ4/K64JZCvfR++JG
+	 bDslmHqL+dyHAabDSR3ngKZWBtwfXIFWZ8oQGLAOuSWeHFr0aOLbx6dWkuVW5izlH/
+	 UE29btMe4pKCQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 26 Aug 2024 19:15:00 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <bbe06f51-459a-4973-9322-56b3d27427f1@wanadoo.fr>
+Date: Mon, 26 Aug 2024 19:14:55 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|SA1PR10MB6520:EE_
-X-MS-Office365-Filtering-Correlation-Id: 42b8806e-96bb-42a4-5913-08dcc5d92d76
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?H1uCtSw/S9lyfX5bNekthcPXxAgjwiy5o0xEk36ePHOjEf4hHzTTbfhPLf5B?=
- =?us-ascii?Q?BTkkmTvcYgmaxuM96XF3ric+GgrvB0PAN/19IfxW/9qHmbaJ9IKtLRfYBAxO?=
- =?us-ascii?Q?i1cSi7eOhPEw9UAw4Y5wJHi8gEwE0xXfgj3HNbmxZaRPpbxy94AIP4XA3hsC?=
- =?us-ascii?Q?2XIYfBAMZ+8Xl+9H5lviSudP9xTfxSC9JzXyBq6Yiu2g4lqtep/f/6AUkYQb?=
- =?us-ascii?Q?J/zUi76ON0w6AGYmm9iGxhhHNSLpvPLVIh6Qe/SFBPkQv+RtVyjT9hZCMJJU?=
- =?us-ascii?Q?Tvl2lWgU+FlZG3pfrstANhxuudFEtaDsj/ianM+L6stLK2HaDrwKBm73BRK6?=
- =?us-ascii?Q?CGLzYtuhSzFq5X/awB0oDI0mt6HfeD/9tsBWH2IAAdX+8pWHIn/FsudtlV0Q?=
- =?us-ascii?Q?i5xif4Dnd4zgWybOw19I9ePVJOw6dDGfNeGQj4NBAr1E6MKJR0mZ7YqKFQYI?=
- =?us-ascii?Q?FYdxu+aDEloVXt4ITqL47V7l4o+DbS1vTIwL0pNFOlyZ8QMgaPlmdwUVBTpJ?=
- =?us-ascii?Q?Fyn8SDKTgNR0eNpAgDrY35XTPRETmYGK+cSNYshVEI0QHgqWN6jsKyRQNgXr?=
- =?us-ascii?Q?ohzuciZgiu8Zo1izbamGZ3AmZE5tXbbjUypt8o/q+n0wdU4VJBCK3ZQV6Ww7?=
- =?us-ascii?Q?LqI+Wqf5PWOTazkOtjC4ezKzEattfkXuQDJyaUbiSukrDJsMpS/TOxWfo2gS?=
- =?us-ascii?Q?4qGMSvc4YPMUqDczzlFpGitzeFar7Euxpv2cwUCUd5PjVZV16MYc+a12fkF5?=
- =?us-ascii?Q?mWT94arkRUpwBsKNaL0ej0hHthd2eKryiFRFPvL733n94nqFDQH4/u1S7s1j?=
- =?us-ascii?Q?S+6Sdjc2de7vuFosKbdDrgDDGUTRRKLrZReQ0uB5BIjMlNjB+IRX7WrtpatD?=
- =?us-ascii?Q?LfEEUWaqqGA9A7/ZxxAOV9poNIapjbx8gZ2SmNn6m8ObVUoww/QN76zKk5IW?=
- =?us-ascii?Q?oPE1DEhSjN/jM+QyUKQ2GQS1IGIWLTlJ0K8/jVWCfDMN6vC0nUSlc37pDB3i?=
- =?us-ascii?Q?h8cNKrrKqodh6Ir8bIWlwGgtD+KquTmzIuChiD9rnSNfLaGu6voWDbgS8jet?=
- =?us-ascii?Q?cvjqIEOkdiJxMMwvLgZHK99oa6a/l1QQ2wI9QpATEhcKxd+zg05GJWJmgKDU?=
- =?us-ascii?Q?z99n9pd8wqO47Rmm+EcZC7eBAUgQriLmHVK7ycJvxPIe9sScI/7vU1zkcNq+?=
- =?us-ascii?Q?mXgLLe41v/nJe9kG7MQknKVsglAtX9WgBun0wuXPcTC4M3C7ufbsBKmQGW6W?=
- =?us-ascii?Q?9Uay6fidSlQi3g1fwPZVH72qB1JOR0/fov04ucCA8cFxSMDpHN6E9cMcIXp3?=
- =?us-ascii?Q?Dt9oNkKPKLVPFxNJLkFWb+f+z/LPcgwYNz+CrVFvLYySaw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?kd656e8eF+bAZ0GtwTzu5ntHUzEr5wZp6bSE/535CenmSY/XVkXKALnARPmN?=
- =?us-ascii?Q?qGzPXIN7mKKeQGUQI6Ju3fDi+xBrVFC4fFEG3BtE8k/YcxOPImdr9amlc9BX?=
- =?us-ascii?Q?cRYcG7Fox/vH2tg5O4cTnyqfMXtGvb1moZkTdZUxGJsLvaiQI3IXd5lUfa3N?=
- =?us-ascii?Q?gVK5c+Arcxt4oo3CeXo6tIbcAaXTPzXwITjqFykzeLPCc756fj0bpRr0aJVt?=
- =?us-ascii?Q?alTF5f5ZwF9wIoHrb+OP10Tg7EToCJDIeVqb77OrB0BqQVacIureS7HWWYAX?=
- =?us-ascii?Q?5J4QBuU94QAUwiHjyaf/hlCIyqiwHSBN9OiWLM6fJbuyeyV9DyZzH/7Zvs/w?=
- =?us-ascii?Q?Kx2UUmx3Gxgb0gspWPVFgP9Vm42Yu2PVYTWc4zF0wG0viVQTwmOlmLIO/Ydu?=
- =?us-ascii?Q?qLhALI/Lzahxe2LYYRMkHXJAyeMKIYZh/cMgB9UOhoWFB+zBDgXRoNdhAOru?=
- =?us-ascii?Q?rGwGdznMd5wuLnr/b3aR8k7sJ4pmEDGyCLlunBB2klAZav7axYHON1ldF8Rk?=
- =?us-ascii?Q?WiJTjcTZOGYpC/RIi86rW5Xn0WmHw1Z0n9iuftq10qX0AofvzDKBEhUKvp+H?=
- =?us-ascii?Q?rUCiUjFioM1Gq8a5YJEp4nyHOfapb7Kly8wVvihm3DjKZiT8YrPe8Bsyrkl4?=
- =?us-ascii?Q?CM+P8iXhPThrAQh0hSTx+7bR0sQ4FaRw5BLwK7uUTGAvL995CGvrHel+910M?=
- =?us-ascii?Q?LTu411eYQ3c/YHAIAN0k8OvTbOSnHtoq8p2VSKhdQsZQltEtHbbFmZNSvgFX?=
- =?us-ascii?Q?CuQha3aLI5z9nGWfb8Sb+2SDyROI9FXcoTYXnftP4m6ifMimkLWb8TQI/Ntw?=
- =?us-ascii?Q?WPhB+ci6ycQg0HZU1FOPRS/etzenxovOYrlxXJ9KwqI39axKK1LlOYbJhaKW?=
- =?us-ascii?Q?+F1LqFrtmnqW+41yhpAUulI7CNn+V0R3di+/D08Uoun6ei5UoSyH95U/vEj6?=
- =?us-ascii?Q?BxWbFSI2zsxFlmTPEBpDDu7PxPwAThJ3R0SYLOjSGCYaUh53MyygF8VC/vXW?=
- =?us-ascii?Q?CccHUDoQ9Opb2uGjXyG7t7mRgVP/y1TSKsj6uSDIIAsfBWsWppsaa/5NNXrW?=
- =?us-ascii?Q?HvFLpCm5j2hJ3JeaUWm1H2piRCFlvH5FGshUlSJHVkHOTiVrB77AvJLQtZjC?=
- =?us-ascii?Q?lqDxg4Snb1FV2ti6FDpwW6Seqo1buawsRHONwg/xCWc8/WxgR/SgUK8yFVhJ?=
- =?us-ascii?Q?htVRVoS61FN6mYO/6IR/kDMkWXShS9IaBHwuaExiyxPALQsbKyaUAXjSTmIl?=
- =?us-ascii?Q?Gq3cUrjt9cN7397r/ylOeirNJx1VvqF1MO7U+tBZUquGeBjpus6dnJSycjxy?=
- =?us-ascii?Q?hy9CO92v8mF/UqSAenmTKmpb4VRrTWdR474dR0t4FZZz6NEjBSVY0h0GrdHd?=
- =?us-ascii?Q?P674SFHmTsLKgVH0Ct35XU+BQEbQk5I3cEs7LgrIcfk1OZIQ2lC4rO/K42tR?=
- =?us-ascii?Q?eBF0fPOKcpXoB+72b2n8LPGEsONF5SqNB5iBHOGL3PqAUReQgBKwBmuxGslN?=
- =?us-ascii?Q?Dx/1gnC3CSaXoyZlP7NGAVjubrawDvQs0c4jtN4iYrUWcj6QziXjI1vbj5fE?=
- =?us-ascii?Q?zCBgLrONkyr9FnyJedvXrqGZgHMFkQSxB5ZCxEKe?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	XP0I5Rxxf5GHrwldXDl4Ie6zbo4Fr8QYaBZ9gdCHIUk0zOELOnnq9WGVN213+sOD0q9Z58jSut9fywMmP1FZcxf+o035SEqcftGkzatwB2le7ielgVf9T8XMGV6USp7U/8I8obLw+NKb+cpGKPATZDjQuMnFMYxl6+ELisMZu3xnPxkfCAoZeqikLYPg5BVd0D1AjFwdQCSD4TcGDKRojWQWErNvfhHpx9GeuOvaMYr1XIrzfJwOW6uGDecy5Pd//FTJuFOotfNnV/Ud4zGIH2AfpRYX0+RxO0mm8RL9CnL8fcrAHX9ZiETm+C5hl3GrRdWAgS0PJCHJKqAlcq7bSY4zdsuzTjYi1OcyKEBbM+Wi5MNXN/OWlnPDqq50KzPiFqhrvk9p1GZS4TACBTroDf6sJzxuQ6Un6dDbZYqwCl884rrfZA5FBYzaVvT29OnQ0vqGiCgwoe+TUZXZWrNNLBjdxTR3hEsSyMJvVk+aXyEDIsvUYY4lWV/SXBR5uOaziz9kZVLjRDPQxaBH+DSgUv3bLNGAorofafV0vE/LoiQ5qv7ewbFHA59sDjUIK/teNoEWsPD5hA+fU3OMbNV69MDTTzNspYU8FIPTe3MLSQg=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42b8806e-96bb-42a4-5913-08dcc5d92d76
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 14:12:54.2425
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6R/XjPlVhoTtDb53qGyxdMe9ZRpGPjAZAmT9t/vMJJTm8U1uItVm+74Bv/PpFJKb28VpCqFfsuj/hMZwMXMAWA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB6520
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-26_11,2024-08-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0 spamscore=0
- mlxlogscore=999 adultscore=0 suspectscore=0 phishscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408260109
-X-Proofpoint-GUID: sn1I1_UCoi7CvsmAvhs1xX-a7mcePoDB
-X-Proofpoint-ORIG-GUID: sn1I1_UCoi7CvsmAvhs1xX-a7mcePoDB
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] idpf: Slightly simplify memory management in
+ idpf_add_del_mac_filters()
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ Pavan Kumar Linga <pavan.kumar.linga@intel.com>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>
+References: <fa4f19064be084d5e740e625dcf05805c0d71ad0.1724394169.git.christophe.jaillet@wanadoo.fr>
+ <c786a345-9ec4-4e41-8e69-506239db291c@stanley.mountain>
+ <2896a4b2-2297-44cd-b4c7-a4d320298740@intel.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <2896a4b2-2297-44cd-b4c7-a4d320298740@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-* Lukas Bulwahn <lbulwahn@redhat.com> [240826 07:02]:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Le 26/08/2024 à 11:15, Przemek Kitszel a écrit :
+> On 8/23/24 11:10, Dan Carpenter wrote:
+>> On Fri, Aug 23, 2024 at 08:23:29AM +0200, Christophe JAILLET wrote:
+>>> In idpf_add_del_mac_filters(), filters are chunked up into multiple
+>>> messages to avoid sending a control queue message buffer that is too 
+>>> large.
+>>>
+>>> Each chunk has up to IDPF_NUM_FILTERS_PER_MSG entries. So except for the
+>>> last iteration which can be smaller, space for exactly
+>>> IDPF_NUM_FILTERS_PER_MSG entries is allocated.
+>>>
+>>> There is no need to free and reallocate a smaller array just for the 
+>>> last
+>>> iteration.
+>>>
+>>> This slightly simplifies the code and avoid an (unlikely) memory 
+>>> allocation
+>>> failure.
+>>>
+> 
+> Thanks, that is indeed an improvement.
+> 
+>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>>> ---
+>>>   drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 7 +++++--
+>>>   1 file changed, 5 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c 
+>>> b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+>>> index 70986e12da28..b6f4b58e1094 100644
+>>> --- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+>>> +++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+>>> @@ -3669,12 +3669,15 @@ int idpf_add_del_mac_filters(struct 
+>>> idpf_vport *vport,
+>>>           entries_size = sizeof(struct virtchnl2_mac_addr) * 
+>>> num_entries;
+>>>           buf_size = struct_size(ma_list, mac_addr_list, num_entries);
+>>> -        if (!ma_list || num_entries != IDPF_NUM_FILTERS_PER_MSG) {
+>>> -            kfree(ma_list);
+>>> +        if (!ma_list) {
+>>>               ma_list = kzalloc(buf_size, GFP_ATOMIC);
+>>>               if (!ma_list)
+>>>                   return -ENOMEM;
+>>>           } else {
+>>> +            /* ma_list was allocated in the first iteration
+>>> +             * so IDPF_NUM_FILTERS_PER_MSG entries are
+>>> +             * available
+>>> +             */
+>>>               memset(ma_list, 0, buf_size);
+>>>           }
+>>
+>> It would be even nicer to move the ma_list allocation outside the loop:
+>>
+>>          buf_size = struct_size(ma_list, mac_addr_list, 
+>> IDPF_NUM_FILTERS_PER_MSG);
+>>          ma_list = kmalloc(buf_size, GFP_ATOMIC);
+> 
+> good point
+> 
+> I've opened whole function for inspection and it asks for even more,
+> as of now, we allocate an array in atomic context, just to have a copy
+> of some stuff from the spinlock-protected list.
+> 
+> It would be good to have allocation as pointed by Dan prior to iteration
+> and fill it on the fly, sending when new message would not fit plus once
+> at the end. Sending procedure is safe to be called under a spinlock.
 
-Thanks Lukas
+If I understand correctly, you propose to remove the initial copy in 
+mac_addr and hold &vport_config->mac_filter_list_lock till the end of 
+the function?
+
+That's it?
+
+There is a wait_for_completion_timeout() in idpf_vc_xn_exec() and the 
+default time-out is IDPF_VC_XN_DEFAULT_TIMEOUT_MSEC	(60 * 1000)
+
+So, should an issue occurs, and the time out run till the end, we could 
+hold the 'mac_filter_list_lock' spinlock for up to 60 seconds?
+Is that ok?
+
+
+And if in asynch update mode, idpf_mac_filter_async_handler() also takes 
+&vport_config->mac_filter_list_lock;. Could we dead-lock?
+
+
+So, I'm not sure to understand what you propose, or the code in 
+idpf_add_del_mac_filters() and co.
 
 > 
-> Commit 0f3b602e1bad ("tools: separate out shared radix-tree components")
-> moves files from radix-tree/linux to shared/linux in the
-> ./tools/testing/ directory, but misses to adjust a file entry in MAPLE
-> TREE. Hence, ./scripts/get_maintainer.pl --self-test=patterns complains
-> about a broken reference.
-> 
-> Adjust the file entry in MAPLE TREE.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> CCing author; CCing Olek to ask if there are already some refactors that
+> would conflict with this.
 
-Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+I'll way a few days for these feedbacks and send a v2.
 
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+CJ
+
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 6aa85a43d8c1..2af37835c735 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13572,8 +13572,8 @@ F:	include/linux/maple_tree.h
->  F:	include/trace/events/maple_tree.h
->  F:	lib/maple_tree.c
->  F:	lib/test_maple_tree.c
-> -F:	tools/testing/radix-tree/linux/maple_tree.h
->  F:	tools/testing/radix-tree/maple.c
-> +F:	tools/testing/shared/linux/maple_tree.h
->  
->  MARDUK (CREATOR CI40) DEVICE TREE SUPPORT
->  M:	Rahul Bedarkar <rahulbedarkar89@gmail.com>
-> -- 
-> 2.45.2
+>>
+>> regards,
+>> dan carpenter
+>>
 > 
+> 
+> 
+
