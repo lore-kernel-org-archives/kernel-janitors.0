@@ -1,80 +1,72 @@
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC544198A34
-	for <kernel-janitors@vger.kernel.org>; Tue, 27 Aug 2024 11:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DCA1BC090
+	for <kernel-janitors@vger.kernel.org>; Tue, 27 Aug 2024 12:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724757659; cv=none; b=hCMjbkn6wQK6AiT1ucsMqg+dinaQmYcVk1QbA/WzA1PUzPvAyMgjT0jZ2udtRkZVPLxKwpD3G0HBU+dd1LFy/aNRxGZoqtUyycwhEw9Gdn8SxZoj0+o2DA1XxN8FMpjvHNFtch2D8kpD0VQh/Lvy98S4zlyMwELqBJtr6o6hXGY=
+	t=1724762870; cv=none; b=YswVCHMIEN+EnysyHQ9ZOTbBUqUlJVXjveGZ5x5Y+tG+UnGQcVwd92Jj1sUOWablfUqn3c2neQitcKtAgM5ldaICKeYk/YjfH6ZTu9f4esIesGBiF2TaJGxX5X4yZPAVd1IcdjEuvAxWyxxbX8Z0f2E0I19Xe9RenEGAwwD+n+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724757659; c=relaxed/simple;
-	bh=8pia1feesvxBJZi9aGcp2gCAqGRHsGlwJB0apfaP3tY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UcBcyWZRpCjhG6M3YH+TSwO40pUYOiqJ+hVhgeTRynWDlriRWGPQ+FvMyOSbZhijcfH2TRS8kglfxRDRKZb0yrvBfg2/lKeC7cxdFwO5a1fUtQmppyQHH5CVMC3YWpQR5I4V5m9MTjHq5PglpRlyRnfkRXfgFAqYIW5wOjVi6dA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WtQ680zThz1xwK2;
-	Tue, 27 Aug 2024 19:18:56 +0800 (CST)
-Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
-	by mail.maildlp.com (Postfix) with ESMTPS id 59F7418002B;
-	Tue, 27 Aug 2024 19:20:53 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 27 Aug 2024 19:20:52 +0800
-Message-ID: <00af1fd2-a4ef-4a8f-b196-3ac5f3e9b44c@huawei.com>
-Date: Tue, 27 Aug 2024 19:20:52 +0800
+	s=arc-20240116; t=1724762870; c=relaxed/simple;
+	bh=LYqmpaIdE1wYPo3wHu0ijU4oRzcYiUcPh5Apz2eAs7o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gqdc+eDcnX6TuHsQ6GRw+KAHwbjIxoQqdLy6urAeVlfvzfwyAihS/dAjPTgpiHwtNkc9dsh3yknQLh6xmMzSx0l9esMJbyM0DPX3eTSZdpONV9WdQFPjWY0hRb4wD2ly7QfRBwLbGC+Hwdn2Kv/UBvtW0tnY+/ZgHCUmAhtPzds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=MxaVnte3; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="MxaVnte3"
+Received: from cwcc.thunk.org (pool-173-48-112-93.bstnma.fios.verizon.net [173.48.112.93])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 47RClevf021489
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 08:47:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1724762863; bh=O9aqUbJiflq+Jj5TMarn+kwjgS0QFHmSlvz6N5WUEwo=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=MxaVnte3Hmv04Y05uQQWhcVr0C3AGSHPc216zcjDTwwMwcMwY2NvzufimrCbSx7JA
+	 Ozg963EHK9wkdEhooN5yViXtDjWvdz2BE8kXX173OIg9kztqR6ilJDD+2ssLJmQRCi
+	 m0lvyW9IwfjJbkQ2HYD5ZFFH1cTAQiCYui3FbMeO5LvqnyZlsYa4dQ1+Un20ITq40T
+	 4rJUemu0JP0zSKKGhSaqNaEM9hEIZJlaCnZRsdnJqHTggWG44drlxDAMLg8LLTAf8y
+	 +LF/0DpBsyjSv2WHdBWQvnyiQTi6qAWxn/eeWdNhWYPqHLiNrp0MaLC8pFaChilwz+
+	 0AnYGLi75EonQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id B9E5B15C1942; Tue, 27 Aug 2024 08:47:38 -0400 (EDT)
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Markus Elfring <Markus.Elfring@web.de>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ext4: Use seq_putc() in two functions
+Date: Tue, 27 Aug 2024 08:47:27 -0400
+Message-ID: <172476284016.635532.5082003928541749251.b4-ty@mit.edu>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <076974ab-4da3-4176-89dc-0514e020c276@web.de>
+References: <076974ab-4da3-4176-89dc-0514e020c276@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/memory-failure: small white space tweak
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>, Miaohe Lin
-	<linmiaohe@huawei.com>
-CC: Naoya Horiguchi <nao.horiguchi@gmail.com>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-	<kernel-janitors@vger.kernel.org>
-References: <acb3b809-7ef7-42cb-a98b-7654d00e5e54@stanley.mountain>
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <acb3b809-7ef7-42cb-a98b-7654d00e5e54@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf100008.china.huawei.com (7.185.36.138)
 
-Hi Dan，
 
-On 2024/8/27 18:22, Dan Carpenter wrote:
-> This uses 7 space to indent instead of a tab.
+On Sat, 13 Jul 2024 20:15:44 +0200, Markus Elfring wrote:
+> Single characters (line breaks) should be put into a sequence.
+> Thus use the corresponding function “seq_putc”.
+> 
+> This issue was transformed by using the Coccinelle software.
+> 
+> 
 
-Thanks you for catching this. Since David and Miaohe give some more
-comments about v2, I will resend  the whole patchset to handle all the
-comments and issue, also will fix this, thanks.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> This should likely be folded into commit 4e3a04695e25
-> ("mm-migrate-add-isolate_folio_to_list-fix").
-> 
->   mm/memory-failure.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 3438595d0a43..1213649c088b 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -2711,7 +2711,7 @@ static int soft_offline_in_use_page(struct page *page)
->   		return 0;
->   	}
->   
-> -       isolated = isolate_folio_to_list(folio, &pagelist);
-> +	isolated = isolate_folio_to_list(folio, &pagelist);
->   
->   	/*
->   	 * If we succeed to isolate the folio, we grabbed another refcount on
+Applied, thanks!
+
+[1/1] ext4: Use seq_putc() in two functions
+      commit: bd8daa7717d94752ecd4a60b67a928d7159c2825
+
+Best regards,
+-- 
+Theodore Ts'o <tytso@mit.edu>
