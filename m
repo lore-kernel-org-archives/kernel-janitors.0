@@ -1,94 +1,82 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D063158DDC;
-	Wed, 28 Aug 2024 09:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5AE17C9BA;
+	Wed, 28 Aug 2024 12:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724837692; cv=none; b=bOq7Q8yQNRoYmVHfq1ZiVoJNsiElj5PimJ29UP0w1GAOaBdTRqlwDHFioljTzQMLqb85mMVtPxTTlvK3BJTPw7Kid7EYY/afl75kQhAU7EF7OQlHHhFuJioLh//c5x1wqsY3FXUzvmQ+lUVczLgGOxmxPUFvPGSHnJ1DdU3SUag=
+	t=1724849629; cv=none; b=st98vM4nE0rUdRY9kXxbzK9H/BR28QVwvQ6Vdekvc0HL/luFnipiFJfpiMrAs/L0LEzdNOlgxc/tV1ixOG8M6DYChw6hLlvj4grIWP2dk53KGR7orE3f3OHio4ogC7btMtaxzCJeEZPeiVLKg4G1tn+PiGoJFqnyfK2Z8fWDHvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724837692; c=relaxed/simple;
-	bh=IUnqRlbr0wiz0/0c6/AwmbAy7u1uF+9E4klP56kBXxM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=HZBY5rJhWeenJYITviWbRrfNY1G/Rl5ngaETmpOtlxgKsprwnbWVpUJLij//oH95ojFjN0lO2NQI/oIMyxC9CASYMkU38+ipitPO4HcMELe0KEPlFWJVJ3D2F+UdIv305hYptIrACfaFBu+FnN/y2FwQfyflvO/TRmaSf36YRY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=boAJWQv5; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="boAJWQv5"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5333b2fbedaso2186665e87.0;
-        Wed, 28 Aug 2024 02:34:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724837689; x=1725442489; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xvOsbFqyxy/I/yBNj8feA5YCODboFCH7uLFBn1jcSpA=;
-        b=boAJWQv5XIVI9RcXtBhkmlXUi8GuWfHqtzdNo3kAaE+kt6md8GuAgPqAzBf/DdpkcC
-         Yd7bXrthv/ZqBb4A7k5tEqHQXiM8l76tCNVzUcqHor/PIotAeNDWOv6lxqjWIKoe41jk
-         e/28NBnwrQQabr6LfYlZj5TQjWXju8BoQZDdhTV6ZI0fjZyrYOszDwV4AxqBpXIpP5L8
-         xr8HoL5ukxMRVWBxlsAj7yc2tBtl3URsm1Ncn73voycqSgimWxlZwXrbTgWOuEcsu/Xi
-         PSbIjixEiyOsgZKrtaKcp1tGqWpowWkLt9JgKgbw9YgVZpvTJ8TYqT0foF/egProjUme
-         visQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724837689; x=1725442489;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xvOsbFqyxy/I/yBNj8feA5YCODboFCH7uLFBn1jcSpA=;
-        b=Qhut62bqJdA/UF1fMd3QpQfmABxIg9jU61Hy1Gr+9IWA39ZB9WnRTOPA8Wf/PXnhyp
-         FdBK7M0h5dDtO+PNV3sqBsKsaLTKLU5M56WKbKa39+W2WJ2qB2UORNF2fUGXrjRdJudi
-         8JzU1+RvfQXhZ6N6VlptIsElsHEg7J1BiJaOGytYoQE6dC7Zad+IN863vE8fgrlD7SlR
-         ZH2x7IV5uUcWhD/vvauJObP3lPj7XTsCRNjHlXYS6NwythlSc6PTz0Js53CKLz32oJzP
-         X1NVP3Apx+IuLSN22hfokFKwmbql13Rm1RpaT7+Bdf5kSl/besKmeuywcNMWBXSTyApX
-         e81w==
-X-Forwarded-Encrypted: i=1; AJvYcCVLb/KxvQvplY/krRv81c3dJaCeJl32fzfkrQqjn+pMFAdje/261UHMmBbwpCyLHRS7JlfpJi3vNX7pdxg=@vger.kernel.org, AJvYcCWM9K4S8ivuTRohPdKncVRHm+tUFIuHt8eHmgdbwRY/YbYn7XMxwRPgG9ijDfvIWtvwNvHAPzYCH1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycYhfoow28sxTaqBAn2DD2lk+dbXF5BpKxs4Vhyb9Cj+ihXSc0
-	JqX2YrV8OurpAr6jGiliTUi5oCH0XszvPViUp2cRXEcWRtVldf4Y
-X-Google-Smtp-Source: AGHT+IHqZY+GwoxSkVEtuDNFelr3AU2O0zp5bxBRDGF6GEE/fpskmq+uEcLqysuoVOlZepYwyix2Vw==
-X-Received: by 2002:a05:6512:3187:b0:52e:f99e:5dd1 with SMTP id 2adb3069b0e04-5346c763522mr957117e87.47.1724837688773;
-        Wed, 28 Aug 2024 02:34:48 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5885fdcsm217462766b.163.2024.08.28.02.34.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 02:34:48 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Sebastian Reichel <sre@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] power: supply: axp20x_usb_power: Fix spelling mistake "reqested" -> "requested"
-Date: Wed, 28 Aug 2024 10:34:47 +0100
-Message-Id: <20240828093447.271503-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724849629; c=relaxed/simple;
+	bh=iJABBce2yqZMbaxDvBMY/LZjkjggxq+k4dcuQAm1i5c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XZWDfH4E24OMXZpK5IJ6mGwT4iD9FiUHQwUxPfQD2VMrn8AtDVHmnqjD9X4Nrn9Xrna9MvOQnL7irz+5LiGjaKLFt8Ul77t0N4eLf2+nN0iFHfC41/ygtTIGi93aYBjIZcmdkF4wnF0ytfoiyvkjoGxvvQE4zkzsSBmuNcza9RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wv43X2QMSz20n22;
+	Wed, 28 Aug 2024 20:48:56 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
+	by mail.maildlp.com (Postfix) with ESMTPS id C46471A016C;
+	Wed, 28 Aug 2024 20:53:45 +0800 (CST)
+Received: from [10.67.111.176] (10.67.111.176) by
+ kwepemd500012.china.huawei.com (7.221.188.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 28 Aug 2024 20:53:45 +0800
+Message-ID: <40421bdb-4573-4768-8d6d-39b0d0df9260@huawei.com>
+Date: Wed, 28 Aug 2024 20:53:44 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] btrfs: Fix reversed condition in
+ copy_inline_to_page()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba
+	<dsterba@suse.com>, <linux-btrfs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <3a05145b-6c24-4101-948e-1a457b92ea3e@stanley.mountain>
+From: Li Zetao <lizetao1@huawei.com>
+In-Reply-To: <3a05145b-6c24-4101-948e-1a457b92ea3e@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggpeml500018.china.huawei.com (7.185.36.186) To
+ kwepemd500012.china.huawei.com (7.221.188.25)
 
-There is a spelling mistake in a dev_warn message. Fix it.
+Hi Dan,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/power/supply/axp20x_usb_power.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+在 2024/8/27 18:21, Dan Carpenter 写道:
+> This if statement is reversed leading to locking issues.
+> 
+> Fixes: 8e603cfe05f0 ("btrfs: convert copy_inline_to_page() to use folio")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> This patch is obviously correct but it's from static analysis so additional
+> testing would be good as well.
+> 
+>   fs/btrfs/reflink.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/btrfs/reflink.c b/fs/btrfs/reflink.c
+> index 1681d63f03dd..f0824c948cb7 100644
+> --- a/fs/btrfs/reflink.c
+> +++ b/fs/btrfs/reflink.c
+> @@ -146,7 +146,7 @@ static int copy_inline_to_page(struct btrfs_inode *inode,
+>   	btrfs_folio_clear_checked(fs_info, folio, file_offset, block_size);
+>   	btrfs_folio_set_dirty(fs_info, folio, file_offset, block_size);
+>   out_unlock:
+> -	if (IS_ERR(folio)) {
+> +	if (!IS_ERR(folio)) {
+This is a mistake caused by my carelessness,thank you for the patch
+>   		folio_unlock(folio);
+>   		folio_put(folio);
+>   	}
 
-diff --git a/drivers/power/supply/axp20x_usb_power.c b/drivers/power/supply/axp20x_usb_power.c
-index 69fbb5861934..ab45ee6c283c 100644
---- a/drivers/power/supply/axp20x_usb_power.c
-+++ b/drivers/power/supply/axp20x_usb_power.c
-@@ -326,7 +326,7 @@ static int axp20x_usb_power_set_input_current_limit(struct axp20x_usb_power *pow
- 
- 	if (power->max_input_cur && (intval > power->max_input_cur)) {
- 		dev_warn(power->dev,
--			 "reqested current %d clamped to max current %d\n",
-+			 "requested current %d clamped to max current %d\n",
- 			 intval, power->max_input_cur);
- 		intval = power->max_input_cur;
- 	}
--- 
-2.39.2
+Can I merge your patch into my patchset and add you as a co-author?
 
+Thanks,
+Li Zetao.
