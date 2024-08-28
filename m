@@ -1,100 +1,145 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E298218E02A;
-	Wed, 28 Aug 2024 14:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AA11A4F33;
+	Wed, 28 Aug 2024 18:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724854437; cv=none; b=FLp/+wTxbgWrZnJcgNrDGTjuAEFfEiFzN8q6Ew2pYgGdYDGlkIuffQSSnF7IyKNUGR503o33Hr6lccesA0HX0AtpbysF0E42XGh2coIceoyHTtDvkalexS0bz5Hu7LwNR+1NLi+iUoxDO/08jUaIwy9kCI78YmnqC4DiiDsBJDA=
+	t=1724868520; cv=none; b=OA6qssjuP+vLgwT2IACtLsRmfgLN0C+9jjbpHpqWZqwSpHBuxiXREt5Y98tuxsjhsw7To/hTBraXdgFpvtH1vHAfiyexF+KVNW6ZvjwZ91aa9gFzKFOc+5tNKSpCLrrK2YD/moghQvD1/HzgyCd6hEHmEymqBBGg60EWeShluy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724854437; c=relaxed/simple;
-	bh=lQw5IXbIgR7J91Fs5P8TJVg4q3mpXXl2Homce8Cp3Vk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SLws8Ty/3LIgpSMI7yHb9K3aI5SMQ5ccTQEyGfqQyo5Q64xdreWbWjRtvRhj7preLbK8EHmB407GLjhmEbFCH7vIqcC8eMZ9JMt16WMYRfJsTI6hm+SUEwvSFlBdx4QBXBMfrr7sN6FmqTmarSrZEY2Be4vEe2FwUnWqS2J4Y4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53436e04447so708259e87.1;
-        Wed, 28 Aug 2024 07:13:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724854432; x=1725459232;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rfggEhwHyOU2sq8xoB6q7hwwxN+IvnAAtnYfI0ptIPU=;
-        b=EK2tXSMQCVflkGcQ+2sQAtl/J2/trvD2AUCaBfgL8pu7BGeTo7BlH36V4kr4qeg+Yt
-         gkD9K4pc7BR4EIEhnFIXpDSn7QD8UQ7zx3qI7n6rmAhjOFFHnHDsBnOP8Fh7Ju44putS
-         Xt9GOsTOeUYXGm8a1jld10AbWTMD0Wv/CcO+W/3LXzyaiaHgWQ7KayGk+5Apx/GSwe9r
-         y4XZ44lrDEVMEFimZl7OZJcuWSG1t3VDL2zgadGXWwVi2rv222fVmQwDauzS8Sj/WGlN
-         isHjzr2ndJOM7DTeXS5X/Jl+vUZvfzUQyJBSC2MUBGZB0lOlO3RLY5aDOEFI4X9Wk9zE
-         FNVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTyEwjoOjl5lnrVguHL/pOHhC6PVJNdGJ0JkxNBIMRSPwTXs44P8b2g/PsgB0KcVVzwA5enGMZYrs4kyis@vger.kernel.org, AJvYcCUVs5+4i+V6yp/cfNayfIiWLm+KDBgExrnwqqpl6kosXQJ6vwoJpGvG6I5YwtdiRcM9VL76FH8J3qM=@vger.kernel.org, AJvYcCVJ6DIih71RFCRG8oXJWNDpV2hJ5JCq+7MBv6WDQmqt/nhzyJysrFhHgSjPq2h9wb0pCjjR90zAXHBQRIoLDN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKFByun4f2nHKaFNbyBSuSPbaHC4EsPLV9dxO56l0n59l7m/OA
-	/axVoIfb5ws3dDkhPFwo8yK2VNQqKzXnefphMM7njDFIqJYTla2oeA1yhg==
-X-Google-Smtp-Source: AGHT+IEFiEsRkjyQY12sznbZL9UdZkjyFLeKD2kKWSFTCYTWyWg/zh4C69GCQF7H2Q0l4CF2BVR9pQ==
-X-Received: by 2002:a05:6512:2806:b0:52f:cc9e:449d with SMTP id 2adb3069b0e04-5345673d65amr680560e87.3.1724854431598;
-        Wed, 28 Aug 2024 07:13:51 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea2a64fsm2187537e87.57.2024.08.28.07.13.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 07:13:50 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f401b2347dso6937721fa.1;
-        Wed, 28 Aug 2024 07:13:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVXk03NCi8elueuoMLyvwjgFOSFotaKMU/HWems1MPWdbjmDu8gzQf0lDrIHtS8aoEBlFFLltbps8o=@vger.kernel.org, AJvYcCWhxrI3+Dv3+n9+NI3ddG0ddu+PUvw1SV/jA2CMVxAxax74uHRExbuAawQ9MV5mEyW3UGSut0AdT1bR10LW@vger.kernel.org, AJvYcCWvacXAT1iU9iqlx/5hnV8a7Ef7Tw6yfkMKooUkcx6GcH25hoP2Roa4TyZ/fb+rGzuFqks7ovWbQdxfFGDHdY4=@vger.kernel.org
-X-Received: by 2002:a05:651c:546:b0:2ef:1f5e:92be with SMTP id
- 38308e7fff4ca-2f5232705c1mr9467481fa.9.1724854430536; Wed, 28 Aug 2024
- 07:13:50 -0700 (PDT)
+	s=arc-20240116; t=1724868520; c=relaxed/simple;
+	bh=hQpnFMo+laQY9oMla/2RFq3qRhnKHxoflRCzLAn2eB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C7N9P87XhCLmzLPL8Yv+2FOd6G5/MIeC1krRhje1bX0UoBM+aK+8A0T0s08UPiMDjf5I43VtBqUepGlhO38NgSl3LTGhv1pr1DdlNe6TRpS+cZBRzgc6dqNrHUsLhfVMBxXddsfpEW+3rieTSeFSCKf2szCNkGk4/jh67GB+6oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=FuSf36dM; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="FuSf36dM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1724868513; x=1725473313; i=deller@gmx.de;
+	bh=Hud0DI9YV21RAJ2KGzjy/vBH5kORqs//+22MFMlye5w=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=FuSf36dMwtmvwicmeUBj/MX3dL4poZiO/leZJhPk33B8aguDpaPVIvKOnMXiV3hu
+	 MbUyPWFslP9V7nDDQhMEFF7hBkvS0IwbDyReALZhjuL8w5lIE5dKO2yWIXNslBFqc
+	 9nmpuTOs54viXOPlidbWkInWreA/5jQZnUNzibX3UhTp2Fo6WPLSFodUb/UTjG77m
+	 rbke9rdB3Bh8e4dEPY6gbi73ISUdfX9KuMCZmybezklSYGo3Z7Z4veJysFktMFMNL
+	 UkHJRloinR9f4P1jUGe7FyKzYGLN22YTQ9LY7bKiCj6srB2U1X3/uG3TzBsGXA3+1
+	 IfvMXvUFocxvAI9bCw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([109.250.63.126]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MYNNo-1seKlW3K0w-00TK58; Wed, 28
+ Aug 2024 20:08:32 +0200
+Message-ID: <d60d6c37-3726-477c-8d69-5b49be8c921c@gmx.de>
+Date: Wed, 28 Aug 2024 20:08:32 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828093447.271503-1-colin.i.king@gmail.com>
-In-Reply-To: <20240828093447.271503-1-colin.i.king@gmail.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 28 Aug 2024 22:13:37 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64D9ciU1UPMii9P9yiP4jEjsNH_3SVhaN3XmR85QH3q6Q@mail.gmail.com>
-Message-ID: <CAGb2v64D9ciU1UPMii9P9yiP4jEjsNH_3SVhaN3XmR85QH3q6Q@mail.gmail.com>
-Subject: Re: [PATCH][next] power: supply: axp20x_usb_power: Fix spelling
- mistake "reqested" -> "requested"
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: omapfb: Use sysfs_emit_at() to simplify code
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+References: <fa1c03aded0c36585d29991d85d083853c3ca871.1723119220.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <fa1c03aded0c36585d29991d85d083853c3ca871.1723119220.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:kpndym5g7jHBuKWmmsmXtKTqJZHimbfDpYO2hL9Z0usUf4ZgN9D
+ ziEtYiOKxiHCwJT2SmgeqTfSlXw1sm4w6WvyBzXq6Yu3pWX3gAvoDuncyybDpwSDzy8jU1L
+ dHjWF7mlvWR94lZLhlD6Wglo7quMGzf4nTTLf7X4Dr422NKupukR85Mv50NgK0PwYMhHKYa
+ j60RNK64+Oz+Qr9mpxNRw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:MV9b1EM5y0E=;oa5b73fgnWG2aVd+RnZcqp17m06
+ 1foU/NMg4F2hKCmtvPp5c6Vegom7w0o09Bgsi/1/KKvdpkRcm5oYSHGas1iO2WquBeJIBqVtI
+ eBVWk28ZDzcLK0+js+RYDDIlD7G46qbSp7aQ1bP99+UdgSNACBQ2MQm1/HTAWfu+bOmxo368X
+ ro60Fl1HNgKRMv79FxnYNJ/6MOko/TqxoZE6g+rZ/isntVktakf0SZlHRvcU7PUddhvd6ukSo
+ 3aYwVyMMg+Rz30zrReQzOKUZfsVaNfmyo7Mq/cUHRulLiRaCb72wTUdIL+wUfG5R98nKIIG8+
+ i0HbsmY9EbdbJmql5saBKqTc0B5XK8Fw5lXHdvPLgSLFUltGluOU0ZDblv4V+/ULgMyRICAvV
+ T2vegnPDOOp1Px/m0XIJtjQq6ooBJSXASffmbjPSj/jzRrFN4Dd8GIsM3KZ3oq8yRIESzpUro
+ 3fKfTiCSOQ1OndOhorb/ONjo1Gt/ZlKvEBi/Lg4RYCQ0PHyVj7eMrz4bYb1deKVTyQTZnAXSv
+ Q3GWy2ylDx2GPnEXNdOtztWUKg12f1wDW1USwMHMVKytyAmr+FSIbPraWe3O3fKYXlwyZvexr
+ eYPXzDAE9tCb0vetKj19zXQxb2s806dLVpGD0lC7mBZW+0ilHShopcsYmoZhrfe7f5oByp6Mz
+ b5Sktn60XUhSEdXBpadSrUrAvhMOJKd+uGRrSTHiQ0k964E7LpZb/T0NHp3TKoX9maOjqAcVR
+ +fjFx4sC7v8r3kv9EP17oPGaLQoC608aflc8QJE7lqH1T/rlg1ixaM+/zQDGNotUb+p+IAy6Q
+ 4D51eGeoQE2he+iLISnPWXeA==
 
-On Wed, Aug 28, 2024 at 5:34=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
+On 8/8/24 14:14, Christophe JAILLET wrote:
+> This file already uses sysfs_emit(). So be consistent and also use
+> sysfs_emit_at().
 >
-> There is a spelling mistake in a dev_warn message. Fix it.
+> Moreover, size is always < PAGE_SIZE because scnprintf() (and now
+> sysfs_emit_at()) returns the number of characters written not including =
+the
+> trailing '\0'. So some tests can be removed.
 >
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-
+> This slightly simplifies the code and makes it more readable.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/power/supply/axp20x_usb_power.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Compile tested only.
 >
-> diff --git a/drivers/power/supply/axp20x_usb_power.c b/drivers/power/supp=
-ly/axp20x_usb_power.c
-> index 69fbb5861934..ab45ee6c283c 100644
-> --- a/drivers/power/supply/axp20x_usb_power.c
-> +++ b/drivers/power/supply/axp20x_usb_power.c
-> @@ -326,7 +326,7 @@ static int axp20x_usb_power_set_input_current_limit(s=
-truct axp20x_usb_power *pow
->
->         if (power->max_input_cur && (intval > power->max_input_cur)) {
->                 dev_warn(power->dev,
-> -                        "reqested current %d clamped to max current %d\n=
-",
-> +                        "requested current %d clamped to max current %d\=
-n",
->                          intval, power->max_input_cur);
->                 intval =3D power->max_input_cur;
->         }
-> --
-> 2.39.2
->
+> 2 spaces are added before color_caps[i].name and color_caps[i].name, but
+> not ctrl_caps[i].name.
+> I wonder if it is done on purpose or if it could be removed as well.
+> ---
+>   drivers/video/fbdev/omap/omapfb_main.c | 36 ++++++++++----------------
+>   1 file changed, 14 insertions(+), 22 deletions(-)
+
+applied.
+
+Thanks!
+Helge
+
