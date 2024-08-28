@@ -1,113 +1,90 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAD2178CF2
-	for <kernel-janitors@vger.kernel.org>; Wed, 28 Aug 2024 13:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C2617839E;
+	Wed, 28 Aug 2024 13:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724850809; cv=none; b=UQa4Ial33ogG1xyf9w34UgE9kTacKa4WIV+ia5mTF6cXGLQcFOYXJ+l8zr2eeSM5u+velqw0C8L0FV8q+qt3qj1iZORqBXxAW0NAV2Igy0xatThGfyuCEh1q8NHoyICHfTlpJJU8tTrVk1OljhBHJwmcnM97ZKErvXX5+kUI4Mo=
+	t=1724852281; cv=none; b=plk4c2rw1CdqZg+3kUTLsZTy0xnjrA758verYgEP4mi4JLXcLtqLEyMAhEYaPbKbnLz7TLswMZGNsGJZAzOB7rnpyi/nbHx6W747fTg5F0HFd5uvWPVgAbcBI3ETAHqE1ejdWG1/xjhq8Ps9+04AnB02x7qyxEuVWx5UMFsU9bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724850809; c=relaxed/simple;
-	bh=c/zc+UsOMGU7+W7R+4O3camx+C1Cz8Nz25luYqSOAOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZAaPJ91LH7X0oVg/WHMITGBgbSYG1Tm7tm2qkEQY/KkuaC9nX9UiJ8p5ZrzSVujCPDg2o/fS1XB5pTGnXSdQ08nfNn3e5tIKQapPPOVoBlLYLo7+oqvtHFKrqC4MaZsqnli1bAlYXHX0/VwyP1A1GWr5TDxzJu/IqZtXn2YXnJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Pv4EmUsP; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1724852281; c=relaxed/simple;
+	bh=2NTH+PcNYqTCW8E4NFaKCpPvnrGFF2ZwzQVr+NzLD6k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hzuiCF1QSJuBp6CHqOFtkOnQGP9cOls5b7PTB1BA5TSNWjl0+N2Y+nPQ3DI25EnNn1G6zIYOTJlVk8Jfg0L5o79eRJIp0OSuGec/z+CdVxGyiLn68UmdO5czuBKgVT+nGqVfIyGr2MEve7LXKXAxKngGlLT6usoZwpdKoTQg0O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RS40OcAf; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pv4EmUsP"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3719896b7c8so3526175f8f.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 28 Aug 2024 06:13:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724850806; x=1725455606; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oKFxTdVhG0vl9VERtDu2+jX5SZIfs0u5rZfANIo5dLc=;
-        b=Pv4EmUsPR+RhkhJm3FqTYbbdMUR44zZK4F5eddJyZ4O3QO/mjkjsj5kR5HaKr8NswT
-         sok37IC+taVc23VsrZ6A2Fp08lNSoOjsCtKuH2v1qYqZIftQBu630JZS1bG5ULB3GBsD
-         6rRcIaXVPc48oT0RQgjR5y4B0MdhN6BYCLQ99ugKUOIERbtFjQkJRGk5vX2UmEL7aPlc
-         niCGA+Z7xOqOtmE1a1FpzJbM1qDf3xdFB1bS5mgeWDQ0VLskN+HK4sh0BiduKvEXr4ro
-         9txj3RGfG2glD0kusqc2WBt7eGyUAc4TRqett87tauG0zO4YCKTyW+Oae/s7rIWvm6zo
-         LxEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724850806; x=1725455606;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oKFxTdVhG0vl9VERtDu2+jX5SZIfs0u5rZfANIo5dLc=;
-        b=lpOhHlP9nHyF8QTZ7Ig/wVpywj4QoYzL0VIbHIT98Ttll/PF5+rM1Ift4/TpW1YDKN
-         zoMI2R2Yii9uhAv7WsiA9w6kToH4C5wSvIupu7AhZudDN2fonBrPpEU7OjPb6bgIxjH/
-         q714e2P1uvkkhVgDgRaS0jgNsqz4RjBN91OcQsegQ/TzArx5jrOaMWcM8IXx2AucobqK
-         oDh/qRz8t6zIbQZBgKgDnWCQfGLkYtcdt+JVIeGh1sInTXP+vGkyt+ej157YeWQiMuJe
-         AefpldNpc1pJjiQWbEqKPmd6xLFMsKq1chfpKINXGHQBhXklfk/OEgRRYsa0I26Sx/q6
-         0uTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWa5f8IiYq/E/VqcrHFG+L5TsnBjTKgPdd0MqU9ekOmuvqYeUiqoLvpUGs8n4uAFK2pyb4jAfmhx/8egFLPg5A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymgI4WsZ3Xr5T5Ggot47NP3t+nbGN22QTof7hQjbII1h84WobF
-	6dm7n1Ok2taqCHgkUzGomljc71DIS0IzbUOUU/6nkrwwAeyP4X6uz8SGX135lGQ=
-X-Google-Smtp-Source: AGHT+IGG2FnZQPb+umi9NbaPw0r2wgnClzF57CwQ4CjBjoGjUZ26/eTfZhl9zE3dVOSPHBTGIqLBeg==
-X-Received: by 2002:adf:f7c9:0:b0:367:9575:2820 with SMTP id ffacd0b85a97d-373118d12a4mr10702272f8f.45.1724850805948;
-        Wed, 28 Aug 2024 06:13:25 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37308110603sm15621246f8f.2.2024.08.28.06.13.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 06:13:25 -0700 (PDT)
-Date: Wed, 28 Aug 2024 16:13:21 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Li Zetao <lizetao1@huawei.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] btrfs: Fix reversed condition in
- copy_inline_to_page()
-Message-ID: <5a19b8a7-385c-4616-a5b7-212e19c9ddc1@stanley.mountain>
-References: <3a05145b-6c24-4101-948e-1a457b92ea3e@stanley.mountain>
- <40421bdb-4573-4768-8d6d-39b0d0df9260@huawei.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RS40OcAf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1724852185; x=1725456985; i=markus.elfring@web.de;
+	bh=2NTH+PcNYqTCW8E4NFaKCpPvnrGFF2ZwzQVr+NzLD6k=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=RS40OcAfSS++bbn5S2DyYxUzHLbBwts5htcTdaW58W0W+IbIbr1OLrc6pW26YmzC
+	 Qmh6DaR1Fp8HLzQ+/du/wq+OGStTSWgBiQ9aJY3vQ8ZbPSkkYzrE4f4tgZw7qdAld
+	 pcvu6LPhlRB5KwHWZmNfWx4WVyC91fCK9CQFNmvyDvgrf646yl8pWdKEoYcv7BzWx
+	 ++qELW3f1D5N2UzV8hhk3RrrP6hCFJpNR/dPY8yJ0cL+scfjV5DxDqWjnKES/Cl3e
+	 exolQMx8WTjJA52gU+7Azm9iFzeHFffZfiVBeXcULTEfxeGlqtKYHBr+6Yi/iEuvj
+	 5vUSa8KY4LRt88XzoA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mmho4-1sHLpP3VDS-00gKUA; Wed, 28
+ Aug 2024 15:36:25 +0200
+Message-ID: <7c91459e-5f65-4dac-9c96-26da88ffec4a@web.de>
+Date: Wed, 28 Aug 2024 15:36:05 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <40421bdb-4573-4768-8d6d-39b0d0df9260@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched: Simplify sched_set_rq_online()
+To: Yang Yingliang <yangyingliang@huawei.com>, kernel-janitors@vger.kernel.org
+Cc: Yang Yingliang <yangyingliang@huaweicloud.com>,
+ LKML <linux-kernel@vger.kernel.org>, Ben Segall <bsegall@google.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>,
+ Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Valentin Schneider <vschneid@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, Wei Li <liwei391@huawei.com>
+References: <20240828090336.905676-1-yangyingliang@huaweicloud.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240828090336.905676-1-yangyingliang@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:JqQJums5aOG8GgmNo2TpJ5F3kMTaI4qFL+LiI7IEt0Vq7Kexs0U
+ 6CxJ3LieS1+iZy6u8GvtLg9h/LumhYXG6/9bwDYzeis8GscRYNXrngK0Rr2oj8UBdb7V2Sj
+ 65e765IV47C+Xz4T8TcoYcKEauuAtPxDjufRGbCLs+zsne7ayaid/8p6Ly1RT5/WFo7Hf5t
+ fvmGPgsJGLZJVurhACnvA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:oOOF6oacCXo=;p8cFoIz5uLf0KKGyXRMpPfWDNTR
+ e0vumHOBuBKTcsew7GHLZ0aOIOK9DGEpiuIqcvBOG0SmhhFguqiCPUHY8dH4RQd362rtNxs5Z
+ dbRuJ+u8as62cLGBCKhvgE6pXm/+MMkWJECBVmz/cwpORmxd+OrqGwUglAvWGP2RClS+zOm61
+ /m+XHdzv4YqWgoDdi2elsSbxctNgk3cRAgPKdQJ6KkdZroSWRIllwWOj1GFqfWXUHyco1vs0T
+ YIzOQk3qHfhxP9GqPe5Sm+HY47d4Bgn3mxsjOcJvenPViBjGdSbn5sJs7pBEv0HPFGh1dcdHV
+ ZT5jAH/ewQUy2HYyfE9lxC63FMUErbau45skgKU3+2AvTR75+5hJ5oBPjU9zS3u5nWuVgLzzf
+ lm4Tk+J9+g0BXI4Bmp+BuJIddxg6LNe8N34eYUvGzHZQcXUI1c0jC7JmuUuM5AFJiwGLmJf8k
+ mpTR/X91wGeJwt+QEMQoLZRghg4jAHPEYKb7gr5kuRE9jjxXXiyD5ccmjQI3mxyyKIDyU2ybs
+ 2yAFWimyAqk2EAXFWuJfoaQ3i11a2e5AljnsQmPLUOtFoJq3ADi4RHnEmwjmaWc4hn833CbUt
+ fqcyi12PBYEZRpQLpjKqsqXxAOOHTGLpiKthaxj+oZX+2crs7w1wr92wtL7IJROj2NmG0wesA
+ CLpnEw7v1jq08oFrGNMlRNWuA4NUlHBn8V9OFa6dy4k22LnOo73RHVcwsnVTyK1Wt/Ru5/YFJ
+ rJre3uBvlnvVNnosXCT2wISpz0acozDcdwOrVRxhsPNDvvU/hAEBssuOjQhPql4VIN2f1Yf4h
+ PJ7FNiB6MDm91ZNhLTBzKnJQ==
 
-On Wed, Aug 28, 2024 at 08:53:44PM +0800, Li Zetao wrote:
-> Hi Dan,
-> 
-> 在 2024/8/27 18:21, Dan Carpenter 写道:
-> > This if statement is reversed leading to locking issues.
-> > 
-> > Fixes: 8e603cfe05f0 ("btrfs: convert copy_inline_to_page() to use folio")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > This patch is obviously correct but it's from static analysis so additional
-> > testing would be good as well.
-> > 
-> >   fs/btrfs/reflink.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/btrfs/reflink.c b/fs/btrfs/reflink.c
-> > index 1681d63f03dd..f0824c948cb7 100644
-> > --- a/fs/btrfs/reflink.c
-> > +++ b/fs/btrfs/reflink.c
-> > @@ -146,7 +146,7 @@ static int copy_inline_to_page(struct btrfs_inode *inode,
-> >   	btrfs_folio_clear_checked(fs_info, folio, file_offset, block_size);
-> >   	btrfs_folio_set_dirty(fs_info, folio, file_offset, block_size);
-> >   out_unlock:
-> > -	if (IS_ERR(folio)) {
-> > +	if (!IS_ERR(folio)) {
-> This is a mistake caused by my carelessness,thank you for the patch
-> >   		folio_unlock(folio);
-> >   		folio_put(folio);
-> >   	}
-> 
-> Can I merge your patch into my patchset and add you as a co-author?
+> Use guards to simplify sched_set_rq_online()
 
-Just merge it.  No need for co-author credit for something tiny like this.  :P
+Wording suggestion:
+Replace lock function calls by guard definitions so that two function implementations
+can benefit more from applications of scope-based resource management.
 
-regards,
-dan carpenter
 
+Were further update candidates left over according to this programming interface?
+
+Regards,
+Markus
