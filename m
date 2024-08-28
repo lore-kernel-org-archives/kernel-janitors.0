@@ -1,71 +1,64 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B986154C14;
-	Wed, 28 Aug 2024 09:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D063158DDC;
+	Wed, 28 Aug 2024 09:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724837574; cv=none; b=QW2tBD8Cul3Qd/2S6WYfzLchkinElC0aPSfW4EWw4w0qYv2VTOd6F/+kLkd0/ElOrYHGOZlQ9AzQyUXJgueDF7dFvhF0ZG5uLSxMDZayYfTI1whWJNaeZEAzxnu9wDoonXFXYQ8kq2rT0lZqwzCk4pwur4rsORyysdPCMdrZb74=
+	t=1724837692; cv=none; b=bOq7Q8yQNRoYmVHfq1ZiVoJNsiElj5PimJ29UP0w1GAOaBdTRqlwDHFioljTzQMLqb85mMVtPxTTlvK3BJTPw7Kid7EYY/afl75kQhAU7EF7OQlHHhFuJioLh//c5x1wqsY3FXUzvmQ+lUVczLgGOxmxPUFvPGSHnJ1DdU3SUag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724837574; c=relaxed/simple;
-	bh=C7CJ6sxhVfA6wEi+9qrcBIbF+BVzBOVHgkgIM2/lF8o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=oSam7eGg7C/P8N7/pf+qRWbT6SNFqZxu9OM5IvVfYlR688qKtBmQcQHbRIfL9qBbRnfkb+gLfxAG/AkFMjoJGlWuufbqBEG5lqOHhiYriNWonn6H0h4KOV0Gkvvw1VwDkaG/0TLYwKo74jvQWnixHHDrMg9cPbpf80I+/tsm79o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DiHvfsjS; arc=none smtp.client-ip=209.85.218.50
+	s=arc-20240116; t=1724837692; c=relaxed/simple;
+	bh=IUnqRlbr0wiz0/0c6/AwmbAy7u1uF+9E4klP56kBXxM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=HZBY5rJhWeenJYITviWbRrfNY1G/Rl5ngaETmpOtlxgKsprwnbWVpUJLij//oH95ojFjN0lO2NQI/oIMyxC9CASYMkU38+ipitPO4HcMELe0KEPlFWJVJ3D2F+UdIv305hYptIrACfaFBu+FnN/y2FwQfyflvO/TRmaSf36YRY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=boAJWQv5; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DiHvfsjS"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a86910caf9cso79097466b.1;
-        Wed, 28 Aug 2024 02:32:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="boAJWQv5"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5333b2fbedaso2186665e87.0;
+        Wed, 28 Aug 2024 02:34:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724837571; x=1725442371; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724837689; x=1725442489; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ljlQm4Z756d2n9EnFl4azi2/3XalhuzYi2PKJHl8biM=;
-        b=DiHvfsjSWCUQYGrs4vkhqzDA88FH2/z3LAgb4fzyB032BliRdPZpdutG060M+r7510
-         YBhBNoJMBwYftI9txCkNm6tmvFr4QQY2zae8cS+DuecHsphz16w4EC8Qtj7I2hSbzBsZ
-         ikTENf6BOuDyYYJ06Mpu62XDOm360SryEOvSoZu+xpNAShxYSGghEQlUFfke96zYntdu
-         SRz0R1nqAJRfbwy71+CipVkPfG5EgJzYVwckuTLeBozpe+rTykjn+N7mOrSuociLgjpH
-         wlgufFqxGLI1e+rSU4QFQac41BFLVmDAUiEGHx2f7PGZckpKVE3+FGzpxE8Fymki8R56
-         YR0w==
+        bh=xvOsbFqyxy/I/yBNj8feA5YCODboFCH7uLFBn1jcSpA=;
+        b=boAJWQv5XIVI9RcXtBhkmlXUi8GuWfHqtzdNo3kAaE+kt6md8GuAgPqAzBf/DdpkcC
+         Yd7bXrthv/ZqBb4A7k5tEqHQXiM8l76tCNVzUcqHor/PIotAeNDWOv6lxqjWIKoe41jk
+         e/28NBnwrQQabr6LfYlZj5TQjWXju8BoQZDdhTV6ZI0fjZyrYOszDwV4AxqBpXIpP5L8
+         xr8HoL5ukxMRVWBxlsAj7yc2tBtl3URsm1Ncn73voycqSgimWxlZwXrbTgWOuEcsu/Xi
+         PSbIjixEiyOsgZKrtaKcp1tGqWpowWkLt9JgKgbw9YgVZpvTJ8TYqT0foF/egProjUme
+         visQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724837571; x=1725442371;
+        d=1e100.net; s=20230601; t=1724837689; x=1725442489;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ljlQm4Z756d2n9EnFl4azi2/3XalhuzYi2PKJHl8biM=;
-        b=OqBFQnEkQZrfwWV9KJnTgWN3JqHLNMFRH+Nqw8iYAHeCYCTPLeBkEs7JcQHbkUrKyE
-         5gbKwTU5tzIF5cCuHPNUQrY48ht+mbjZ94BenCzTq7WC2vuAiSpGeZ/jr1MZlq26xA8A
-         kcnyx7VAS3P37OFN5B02JSdKkUmTw8BWpBTdsXgEcLJ5kQoWgPdf1gx1ZC/i1ofwxd7A
-         jvb2AHymhJV29IBqZmk01lDo6nLqzZ9MymJpLEUMNSuCu8UOOe3O1UhRV+gc2s1Id+i3
-         RhMurC8O88J7TAdRusTTcGZ2xM6O3kyMxaMahVkI6Sl8OXHy2BZGlWYd+3O+PrScq7AN
-         AewQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVv4gPckn0vIZb4Y6JCuxEnbpPpNqdzsA4D5gSSMf7e4nSzoF1WuZkdLzqi1Ofl7/Hw+MIhL8wZrV8UNGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA0yaI3vApsSvbQ9E+ROdOrO8F7iql8uitE1YVnt6QtoqaFbeo
-	jjDWccgnns8Oqn21PMVP8xvl+8pAXXiVZlpB2g+TPx9L/FOATuqU
-X-Google-Smtp-Source: AGHT+IFZqJB6vFvBK0EcgsYJ7T2OksI6qWVL0bPPi01r8q10EQ7avC39obDkdaWm65VsU3qbjrEM7A==
-X-Received: by 2002:a17:907:7da0:b0:a86:a6ee:7d92 with SMTP id a640c23a62f3a-a870a9ba661mr180942766b.18.1724837571236;
-        Wed, 28 Aug 2024 02:32:51 -0700 (PDT)
+        bh=xvOsbFqyxy/I/yBNj8feA5YCODboFCH7uLFBn1jcSpA=;
+        b=Qhut62bqJdA/UF1fMd3QpQfmABxIg9jU61Hy1Gr+9IWA39ZB9WnRTOPA8Wf/PXnhyp
+         FdBK7M0h5dDtO+PNV3sqBsKsaLTKLU5M56WKbKa39+W2WJ2qB2UORNF2fUGXrjRdJudi
+         8JzU1+RvfQXhZ6N6VlptIsElsHEg7J1BiJaOGytYoQE6dC7Zad+IN863vE8fgrlD7SlR
+         ZH2x7IV5uUcWhD/vvauJObP3lPj7XTsCRNjHlXYS6NwythlSc6PTz0Js53CKLz32oJzP
+         X1NVP3Apx+IuLSN22hfokFKwmbql13Rm1RpaT7+Bdf5kSl/besKmeuywcNMWBXSTyApX
+         e81w==
+X-Forwarded-Encrypted: i=1; AJvYcCVLb/KxvQvplY/krRv81c3dJaCeJl32fzfkrQqjn+pMFAdje/261UHMmBbwpCyLHRS7JlfpJi3vNX7pdxg=@vger.kernel.org, AJvYcCWM9K4S8ivuTRohPdKncVRHm+tUFIuHt8eHmgdbwRY/YbYn7XMxwRPgG9ijDfvIWtvwNvHAPzYCH1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycYhfoow28sxTaqBAn2DD2lk+dbXF5BpKxs4Vhyb9Cj+ihXSc0
+	JqX2YrV8OurpAr6jGiliTUi5oCH0XszvPViUp2cRXEcWRtVldf4Y
+X-Google-Smtp-Source: AGHT+IHqZY+GwoxSkVEtuDNFelr3AU2O0zp5bxBRDGF6GEE/fpskmq+uEcLqysuoVOlZepYwyix2Vw==
+X-Received: by 2002:a05:6512:3187:b0:52e:f99e:5dd1 with SMTP id 2adb3069b0e04-5346c763522mr957117e87.47.1724837688773;
+        Wed, 28 Aug 2024 02:34:48 -0700 (PDT)
 Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5487810sm219558766b.6.2024.08.28.02.32.50
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5885fdcsm217462766b.163.2024.08.28.02.34.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 02:32:50 -0700 (PDT)
+        Wed, 28 Aug 2024 02:34:48 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
+To: Sebastian Reichel <sre@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-pm@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/display: Fix spelling mistake "recompte" -> "recompute"
-Date: Wed, 28 Aug 2024 10:32:50 +0100
-Message-Id: <20240828093250.271358-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] power: supply: axp20x_usb_power: Fix spelling mistake "reqested" -> "requested"
+Date: Wed, 28 Aug 2024 10:34:47 +0100
+Message-Id: <20240828093447.271503-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -76,26 +69,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a DRM_DEBUG_DRIVER message. Fix it.
+There is a spelling mistake in a dev_warn message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 2 +-
+ drivers/power/supply/axp20x_usb_power.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-index 0859a7173a06..669fd8fb6c24 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-@@ -1325,7 +1325,7 @@ static bool is_dsc_need_re_compute(
- 		if (new_crtc_state->enable && new_crtc_state->active) {
- 			if (new_crtc_state->mode_changed || new_crtc_state->active_changed ||
- 					new_crtc_state->connectors_changed) {
--				DRM_DEBUG_DRIVER("%s:%d MST_DSC dsc recompte required."
-+				DRM_DEBUG_DRIVER("%s:%d MST_DSC dsc recompute required."
- 						 "stream 0x%p in new dc_state\n",
- 						 __func__, __LINE__, stream);
- 				is_dsc_need_re_compute = true;
+diff --git a/drivers/power/supply/axp20x_usb_power.c b/drivers/power/supply/axp20x_usb_power.c
+index 69fbb5861934..ab45ee6c283c 100644
+--- a/drivers/power/supply/axp20x_usb_power.c
++++ b/drivers/power/supply/axp20x_usb_power.c
+@@ -326,7 +326,7 @@ static int axp20x_usb_power_set_input_current_limit(struct axp20x_usb_power *pow
+ 
+ 	if (power->max_input_cur && (intval > power->max_input_cur)) {
+ 		dev_warn(power->dev,
+-			 "reqested current %d clamped to max current %d\n",
++			 "requested current %d clamped to max current %d\n",
+ 			 intval, power->max_input_cur);
+ 		intval = power->max_input_cur;
+ 	}
 -- 
 2.39.2
 
