@@ -1,98 +1,96 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08DD49634;
-	Thu, 29 Aug 2024 02:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD36214F9DD;
+	Thu, 29 Aug 2024 06:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724899893; cv=none; b=JEowW8hU0ylJwCfPWDItoOoebrufVgh9aWfKNamP5oi0FtDUIxzo88Y5PYT7al1BdOZaq8NjVfjoLDLuen4BgWo74k/aTdjW1azr38YfWyleX2mWHdPVJ+Ev1F94SwBHN89CdxLxTMOawwmjdLC+yNprOJ4sM9Y66XKYAfw6wcA=
+	t=1724912761; cv=none; b=cM2NGxBOXS6P95FQU/WQqD5Vd7P/D6jJV4UVWmohe4YNpgoE2YAHYr0iMW0L8OfpIMmmZlXRiN/vsKD7r6aHVDqwgU/aFRyivtLM4ml7AgxqD93YlKP8T1JZc0qt91eZGMrr8LPe6SjRGvnwmFQ7KI1Qg4t5wUhOhQZdM0XjoKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724899893; c=relaxed/simple;
-	bh=+u1mD/GNcOvBp7Or6Rq8lskpdUt6C4ZFcwxI4h2WsKY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UrMIkz3trsqwtxEBn1Swxxg+HvWd1l0k/gFpxFkj2mWLnnDnZ6kMcW3idHE5R0ZmfZGeR/XIBn0n8MA3RmlcvzB5keV3nyhZFAS1y0Pm4rgEh+HIFVNZcWN2Mwcsjx4xA9kp7mPmQETtD8ybVMmeM7+YCF3lTvuv/otgAKS/sBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=JwFCz/yv; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1724912761; c=relaxed/simple;
+	bh=XX5yiFG40Vu0EaajbD7Aharb11NO9doEpS4fEzZSC+0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=vGDe5s2quo0paeJMlmhjStPYE2ybdtdGCc2JiRbbTZgQ/fvf8Hg0DwpvH2ZVeG+xiah1ervJq0Tczkji0EAdw2Zxd73K0DRbBU1KoG19e3s3SywgdAj7nuiK9bxoOZyBXsd4G36fA4QwWpci6NEzkFmBY95rkCgJcqFm2RtALIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BbD8ahth; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JwFCz/yv"
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47T1fbeD005695;
-	Thu, 29 Aug 2024 02:51:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=
-	corp-2023-11-20; bh=aXqT3MQg0aTXbnTc4l5s7y27eLcWSg7gQ0UluBV+c7U=; b=
-	JwFCz/yvbLFLj4BTpy3VGlZ7yNQ0g904JWYzD68xwGg+3Zajiek/6XXo4aRkY0PF
-	hOvP4IM4vRPT4unJi/7eOefdQQOrJUbE2AGr+6YERjBI9xDXY5H25uRl3Ok7svBB
-	p4hS9wEaOS2p09syWdWn/XE+4Ndzqy+xmsT2GCTUXnDA53R+zwNWg+Zc+wQKSSUn
-	LHsLpD5f07NKu4wN7+EyaOIY4rxCjIk12UY98qnBsdd+6AudNMm9Cyt2z3RhtUfX
-	I+VyvuYAbctFszbADd9Rn9Sakxod+Ad8+9e61hW3iEX2Lf3UUU919AxFwbuNDAeW
-	da6JQMayUNVbaU6JN17RcQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 419pwyu4wb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 29 Aug 2024 02:51:24 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47SNFwSO010448;
-	Thu, 29 Aug 2024 02:51:23 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41894q4qm1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 29 Aug 2024 02:51:23 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47T2pKYo013333;
-	Thu, 29 Aug 2024 02:51:22 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 41894q4qje-3;
-	Thu, 29 Aug 2024 02:51:22 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: James Smart <jsmart2021@gmail.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        James Smart <james.smart@broadcom.com>,
-        Ram Vegesna <ram.vegesna@broadcom.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Daniel Wagner <dwagner@suse.de>, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] scsi: elx: libefc: potential use after free in efc_nport_vport_del()
-Date: Wed, 28 Aug 2024 22:50:44 -0400
-Message-ID: <172489245035.551134.9407681936193800615.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <b666ab26-6581-4213-9a3d-32a9147f0399@stanley.mountain>
-References: <b666ab26-6581-4213-9a3d-32a9147f0399@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BbD8ahth"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1724912747; x=1725517547; i=markus.elfring@web.de;
+	bh=HIW23CZzXcXcZJuHDzldiRyWNruWFM0jw+ALZdzsRJI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=BbD8ahthxTdDh4iOqi8w/69UdP4aQ3VREJnUDlX559vTevgUEVJAQTx84crfsPdL
+	 5WXY1eRSBtLBg7ZojoWecyD9BEK0m3cojOgVT0C65by4pH9CSdmdgPqeOZpve1k1v
+	 VMRRU+2CfFIxqlE3R7rE3uxemmwo7LqiffgM48qU1u20TGwFZEgWKbwB1FyYOxgEk
+	 GEXnye9JIUHOG8ym6+beQsFXAOwxVCnxG5pvtgQEfFxd0lSFUFJDx4812LIcjM7x+
+	 dWTR8UcfF0lGQVlOHicRyHc2hOoutZwEcQZu7H+U+jYS2QnERLyWqcvZ9HRCJcFhR
+	 uqUkxnQLfspi6WoDVQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N4eCL-1s3iyj3rbr-00xbLA; Thu, 29
+ Aug 2024 08:25:46 +0200
+Message-ID: <716f7466-562d-4bbe-a8ec-851a0b289db5@web.de>
+Date: Thu, 29 Aug 2024 08:25:45 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-29_02,2024-08-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0 spamscore=0
- mlxlogscore=603 adultscore=0 suspectscore=0 phishscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408290020
-X-Proofpoint-ORIG-GUID: lsGmAbYZ7XUXIOfa-hJw4li39Vm2d5_e
-X-Proofpoint-GUID: lsGmAbYZ7XUXIOfa-hJw4li39Vm2d5_e
+User-Agent: Mozilla Thunderbird
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>, linux-mm@kvack.org,
+ kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240829055621.3890-1-zhujun2@cmss.chinamobile.com>
+Subject: Re: [PATCH] tools/mm: Use calloc and check the potential memory
+ allocation failure
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240829055621.3890-1-zhujun2@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:9prvbxVevokm958741Min2OcUnei7T7YdduuG/Xc3BV5BGBfg0C
+ ye1/tUbYLxKdBNxgR5QsRpuCSa0aRX1EYjfreae41IPQXqCQTaRVVfVfoDxX781dytZkZCM
+ 2SEKZfQ9/MtsjxNE0WMJJyW/acU4wb6orZWb0uAEyCEQZxCgxT4lSHACHjA2Zbiad10e/kN
+ H+bXBLSVVAJKcXqllkh6Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:HRznMeMAbUg=;dGwIw0IeJ/A+SqIhr7kg9ecNdjU
+ kqH1WmdGyjmsTEYp0Y0UNuh83lB0H1KhzRG6DKahpqziFNRqaXk9IXdg7l4tRUH8qDz9gL5ou
+ pWLYhZuWi137xuU7dIurc8NlFdU3LFbbulSc+FAyrcIvvbhPvlL/WXq3hK3eOmk4Tkpquy2Pl
+ 16TyKaVkq8YtfLxsKUfqgZl1YTf5bumjgP3NfPuvxWGJtsBYJ6AZIuSj0yPn7+0mdDHXQIFRV
+ uhdLTKgz+qI1EuIyj8kAprTnfW6jF34Zl3RSV+m3xFvHM6aH3CBf0fWY47Yi7EDefsdMHH69P
+ 1WR2VlTSeW/0IyotHM5uzg2UrdrUqhxOkM1xxIpaOqu8WwJOUa9NEvywCa+Cyf0bwNwYJEhDK
+ XG1/1vX5tTN+QNcEBwqlLr8FBseQ256BLvGuAjflYQ5KJ14g7sP7PAyGRyTvGcYRyYOHZBteg
+ CLwCd1F6YYCq8M27amplH55myXzzFnY3EaPiKnX76atuaoXNxDebfBDGuOJ9xn3OzazeMpqIh
+ 1XUUW84qmtaGQvmv+cbtktVBP49xs7Sk00wpxf7xAcgT4NiIq3w9AcFzNh/ex7lK6WDr5NMnX
+ u1t+Ts6VJDHo+QKkmpx+y2rx81P+rHVb+Z2X46JvNgiC7yH6Afq5YWSaEIL3G18DoNTsDiiej
+ 1PghmRF+6QBJSqZLkbHVpw7EmM08jpWORf6Kr9dzH1GBBRHA9dpeGbEkqBf+TAcooEY93KLaI
+ 2gFOpZQLoAoKD0JVmZHQXfQxAqpKCiHGGvMB3JpW0nejNnzAwMS0CtUlqweOmco8IOGNXGIP1
+ CfrGV3XxN+i0YgyGtwnfij+Q==
 
-On Thu, 15 Aug 2024 14:29:05 +0300, Dan Carpenter wrote:
+> Replace malloc with calloc and add memory allocating check
 
-> The kref_put() function will call nport->release if the refcount drops
-> to zero.  The nport->release release function is _efc_nport_free() which
-> frees "nport".  But then we dereference "nport" on the next line which
-> is a use after free.  Re-order these lines to avoid the use after free.
-> 
-> 
+                      memset(=E2=80=A6, 0, =E2=80=A6) call by calloc()?
 
-Applied to 6.12/scsi-queue, thanks!
 
-[1/1] scsi: elx: libefc: potential use after free in efc_nport_vport_del()
-      https://git.kernel.org/mkp/scsi/c/2e4b02fad094
+> of comm_str before used.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+* Add also a null pointer check for the detection of a memory allocation f=
+ailure.
+
+* Would you like to improve such a change description another bit
+  (with tags like =E2=80=9CFixes=E2=80=9D and =E2=80=9CCc=E2=80=9D)?
+
+* How do you think about to omit the statement =E2=80=9Cfprintf(stderr, "O=
+ut of memory\n");=E2=80=9D?
+
+* I suggest to omit the word =E2=80=9Cpotential=E2=80=9D from the summary =
+phrase.
+
+
+Regards,
+Markus
