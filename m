@@ -1,96 +1,99 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E371B3F2D;
-	Thu, 29 Aug 2024 15:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC60A1B86F2
+	for <kernel-janitors@vger.kernel.org>; Thu, 29 Aug 2024 19:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724946724; cv=none; b=cGUdv0fLLdbBCwoKvb3QV9AGMvtqSrFWOjokymnFN48th6cVtDw8wvjE1Yz9ZTJos6/OdT3t4fIprgts3D+o+ah6xuf29S68AEepXEz3spH/gZSDH169kF3YFv1GJbX8TLum1ycutwRMS41NfCETHTYYd0O/g/D7pBrEJoX75ys=
+	t=1724959362; cv=none; b=A8c+lejRgoTPLNL0loggm8rIKbjXRAJ2Qi9hLV/7QhRoV1OjdtUvPCrb0fLZEk5DiAdo10zSFkaITYorrHTidfEcukdX+G26mCKhxbefI1dQBYyeVoVBP92TwtEU63VdiFebugmUe5DuxGwmSIWKxcVocTnupnMXPEIE/bwL4LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724946724; c=relaxed/simple;
-	bh=6ybnj9xuMyLJPe9tCIoju5s2NkxrXxfmd2ADNwQ8CUM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YeDAtACEhAOnrxyou5DnR/qQXRy8IrVRRZuFahS8nSycmuiz1+0oaXSLeD86uC8AGVeO1w1/Sa0INoscCQForPNPt1SrGlGo/aGLy+kqQkp3ro3ot0K/cDNwB23rkDrfDHTpDQjDHsbBC2iXAwdVTeXmmBarOXMpraAlCFFHKg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TmNcy8jk; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724959362; c=relaxed/simple;
+	bh=qm19Gvoz82XJIblwayPtkbMrwDBs9ju0c2xYk5h7T9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LW2UEFmMU3T/pbNhec0GJVsnUikMBN9WWCbMRJ59Q/ZkeNcfMIKJBMUOkWG+qQrl9DanbQxcZjuuqMbrQ4SLeqMPuCGARExW/EbuAbSWntP8CRfl1D654igd1AQ19hURT3s+CzFhvxEFh9hWWfa9SsF1VUOMOXb7g3VYLMB2Fh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JsKlCMUy; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TmNcy8jk"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c210e23651so912860a12.3;
-        Thu, 29 Aug 2024 08:52:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JsKlCMUy"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42bb8c6e250so5574485e9.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 29 Aug 2024 12:22:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724946721; x=1725551521; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1724959359; x=1725564159; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LkzGyg+YpeAYRQA8bRsHPMUzJcZCB8L3Y8kiytwETbg=;
-        b=TmNcy8jkTHMJnyae1VHYnrn1tsC+kyDY8u2X5sAxf65QaMEfK/mrFxILLF2dWrPTiG
-         LbQ7vge8h+w3qEZy2pcSgnoNnTFQndsMtKpPgSgBWm2mTG/YYcSvISS8vlmHjihtEypq
-         xwXG/deQXjRd3WFbBCxk2wreA9CfqYIVH0C1bSpKMpfstGB5QshqWDHxEWN3Vne6WmCE
-         K4dsl7HDaOn6gu8+isPUj4TnAbAQpep8p30Ltwd4PpBW1lN7nO6Mxh68yuFqgzZRWfbN
-         lt2qsC2f0GeMoKN6bpzEKoL8FdVcRB1pnHldEElGX4CmFc3OdwZ8kX5Ql+aq894O3JE4
-         E4rQ==
+        bh=7hIZjb11n3DqyAA9+P4eJZLp72biRJ3AAbi9kWILsZ0=;
+        b=JsKlCMUyICUC04SoUZs2LyYmTJ7lryHd95jPzMWyQXhaCeWQlVwBDVaPuCNMoixJZU
+         71Ka2Gs9JqMwCTL1T+DhhBFEo5UZAyUNZ8vQAVDwpl7thB6PHlz3gYo1cMW9u6yTq0dQ
+         VngGxCHTmVP2aDr6eM//PLJ2TkIplXhHDv4DFJSrddAWQ8G7Zu7Ej2JzL15+mqAZCl4B
+         GlA8xf0vIaQ3A0IqPQUtTw5S+qbEqcXHRN8xvgAmFzL67eUhJHdE7kMuooq7aHSrqsXS
+         Vwn8vwaZ9vIKHfwifhQhKSLd0sRsohDnuj10aXka6WZACyahQrQtnHs+K/WvKE8MU/1R
+         sWNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724946721; x=1725551521;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1724959359; x=1725564159;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LkzGyg+YpeAYRQA8bRsHPMUzJcZCB8L3Y8kiytwETbg=;
-        b=oZHk7bRDCPh2ABO52ChmMlNqVPbFmSirUD2NygCAjKWUDH5TJQTxlfBv0LDCMYOq8S
-         CQuZ0rjcbpoKIqLuUpoZiAmGAGa9URPcCDLkP6yjDIIGuX9CvpzBwJGKUBLaxVAg4/1D
-         nyAsmfTKHmQBIA8G8yx16RoBqs1588iyyoNNoAS6baWuK/9yaYaXmLt61qbYk34eNsNo
-         4bAPqz0ViD7hUpgiEdoj+IdIDDASZqSkggmFIp0tuQAxgd4H/kgckKvXW0rERLCBLtJP
-         VmqOxXZPz1FHJMMcjxjM8Vpd1coY4Z9b9nLSYIwYvyzG+qcMrYyUWCJmf3cL9LANPcdM
-         Z6Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCUywEIhJ5i5LVLLVtjXMZ7RzBldp4zxQ3ApYdvIptk68Awa90k8gtXOukOoGJZqPCyE/5LTNc5ZjCfIHNA=@vger.kernel.org, AJvYcCWogKEYr64ZjCApkVkwrxUVZweFaJLb4Q7RzrtNisYtM5v1ENYbvfa3KdJMcHTj6wPsX0qZiUYwQ4yPJqUg@vger.kernel.org, AJvYcCXTuHIHm637KJImhNMRjctL0r3S4enCZ4ILn5O3qtk4RZnnONjIKtepbd3GJTFaFZypEHUnXNLhOIewepTJ8pI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx62mJ0xlnuNGoNV1Tlk0lK/koj3ehz1kKXjIMteWVDady6Bwti
-	l7n/UsytETuQH4T7Zp+Dif8zMUXVVUdAFAMLOyOeKkHL0dJKL/jg
-X-Google-Smtp-Source: AGHT+IEHax0znxV7voU1XWsSmK6e3PzUEkJanhV5ouCAG7d9c0TJRpfmciNspiwHOZgvpH4UKWgPnA==
-X-Received: by 2002:a05:6402:26c1:b0:5be:dc90:d14d with SMTP id 4fb4d7f45d1cf-5c21ed34a93mr2893643a12.1.1724946720388;
-        Thu, 29 Aug 2024 08:52:00 -0700 (PDT)
-Received: from [192.168.0.101] (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a8989222588sm92753766b.200.2024.08.29.08.51.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 08:51:59 -0700 (PDT)
-Message-ID: <794ca7cc-f27f-410c-8b95-d5403f4ad638@gmail.com>
-Date: Thu, 29 Aug 2024 16:51:58 +0100
+        bh=7hIZjb11n3DqyAA9+P4eJZLp72biRJ3AAbi9kWILsZ0=;
+        b=twV6asnfbS4s6u1hmUGl1AcCyzU0AZA6+pLiOH1iqoL4OuwsPI6Hrzn/+QStYJRIe9
+         oPbnTmFhZLmaGg1sTRO1Uc9k75ebHBkJz8+6ScUcof8Pinwy248mlxlO/FrIBPEbfHIC
+         Vgx2D3rDBfrOewrpCsvaoZYnU1AD+h8HwenotOCMmqMo3IjYUILUsv3L37vyX4HGr3a8
+         s9SSqBCEozzmj4Vsge8oyiwxRLLT/hYhj9xhDy4aDBzAxvWV6ueQnOwhHyGGzM1CfVMi
+         diwdmQCTi+o760ugzr/K24Yre39Of65i63S9u7aj1M2+q5n8yQrXBfVGXnQPa2UAZev5
+         4fUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbL7uZmush3obcVYZyoDekx4bNIiFGoZePXkNIkFa028XNDhZJQiZ2qQfnt3TvyFeE4y8oj5rATEM2caFIrVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmVqBy4k7vWAEND0jO2DG2unBiajBQPbP2Hdw5lPzLPQ5hHPQ3
+	W1xcgSz3Tm1Wt6d/MQU/KCd4VoR6TJIqmCCdTJPAoC13nEWDfo4jnPFmpgHRRRc=
+X-Google-Smtp-Source: AGHT+IGTymteNaS4QWlAktRpMUvs68NdpmgcKtVmjCHiVHP/sCFsHOFzLywZcr2xcxkbNPQRnu+rOg==
+X-Received: by 2002:a05:600c:3596:b0:426:629f:154e with SMTP id 5b1f17b1804b1-42bb02d970dmr25349155e9.30.1724959359098;
+        Thu, 29 Aug 2024 12:22:39 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba642593asm59424265e9.39.2024.08.29.12.22.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 12:22:38 -0700 (PDT)
+Date: Thu, 29 Aug 2024 22:22:35 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Namjae Jeon <namjae.jeon@samsung.com>
+Cc: Namjae Jeon <linkinjeon@kernel.org>, Steve French <sfrench@samba.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Tom Talpey <tom@talpey.com>, Hyunchul Lee <hyc.lee@gmail.com>,
+	Ronnie Sahlberg <lsahlber@redhat.com>, linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] ksmbd: Unlock on in ksmbd_tcp_set_interfaces()
+Message-ID: <89c440a9-27bd-45d9-9d5b-5b4bf51ec950@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] drm/tegra: hdmi: make read-only const array
- possible_nvram_sizes static
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org,
- linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240822205047.642845-1-colin.i.king@gmail.com>
- <a3itbzv4hhkbpa3lhe7w42qtyxwiuwdsdntemtzn25uj27skci@trg63xzeh3dp>
-Content-Language: en-US
-From: "Colin King (gmail)" <colin.i.king@gmail.com>
-In-Reply-To: <a3itbzv4hhkbpa3lhe7w42qtyxwiuwdsdntemtzn25uj27skci@trg63xzeh3dp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On 29/08/2024 16:50, Thierry Reding wrote:
-> On Thu, Aug 22, 2024 at 09:50:47PM GMT, Colin Ian King wrote:
->> Don't populate the const read-only array possible_nvram_sizes on the
-> 
-> I've changed this (and the occurrence in the subject) to reflect the
-> actual array name ("freqs") that's being changed here.
+Unlock before returning an error code if this allocation fails.
 
-Thanks, my bad.
+Fixes: 0626e6641f6b ("cifsd: add server handler for central processing and tranport layers")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/smb/server/transport_tcp.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Colin
-
-> 
-> Applied, thanks.
-> 
-> Thierry
-
+diff --git a/fs/smb/server/transport_tcp.c b/fs/smb/server/transport_tcp.c
+index a84788396daa..aaed9e293b2e 100644
+--- a/fs/smb/server/transport_tcp.c
++++ b/fs/smb/server/transport_tcp.c
+@@ -624,8 +624,10 @@ int ksmbd_tcp_set_interfaces(char *ifc_list, int ifc_list_sz)
+ 		for_each_netdev(&init_net, netdev) {
+ 			if (netif_is_bridge_port(netdev))
+ 				continue;
+-			if (!alloc_iface(kstrdup(netdev->name, GFP_KERNEL)))
++			if (!alloc_iface(kstrdup(netdev->name, GFP_KERNEL))) {
++				rtnl_unlock();
+ 				return -ENOMEM;
++			}
+ 		}
+ 		rtnl_unlock();
+ 		bind_additional_ifaces = 1;
+-- 
+2.45.2
 
