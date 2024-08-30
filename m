@@ -1,70 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388E420EB;
-	Fri, 30 Aug 2024 00:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB5A16A931
+	for <kernel-janitors@vger.kernel.org>; Fri, 30 Aug 2024 07:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724977392; cv=none; b=q1EJa1eUFRhRGgzjz7LMpqzIB5b88MDGuSPqPCSt2rAD+oItXx2SeJ6IcmBGdX6NtwpASOL64OSL5mF7tGpebMcmPeL1uMad3IwIPHrsxFEHk++mchHRQNjSwhWE5tUoZxa0Nn9TNfMr1mI3WofJuf/fY7T+MSa/XiFGxxNIZZo=
+	t=1725003750; cv=none; b=fHTlw+KJBtO7BS8q/rAwQf8sCvfDlmZxLHxLNOnB8ayy5Hg1ntZlZAQexRUC/JJxX7JP0AYheF+fMADeHIStoV9eqt2cKvMNhG0CuiX679Jq54t5fLYeAfHRltmkB+PteiSekunbRTlPhZYbjgnhOwOF63r6z4Es/1zn2uJwzi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724977392; c=relaxed/simple;
-	bh=lh7JLnFP5s1aJ5xS8eg+yLx07MrFuSLffVxCf49ZDdA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l2i/wOwPdfUjiFPTbcfOlS1LTqNV0RnOlkYNJjGEohyhXqSPWVlMwgei7LRA4P7eK7a54+dfeKupYF3ieGWWw+YbpwyvmeTeA3p3pwfcoUT9mXYv+oQpMh0B+z9uzmi6Lig2R9wOJSW2T32CS2tMbop1H4Hv8299zyX/Fs+SA2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UgUuwC0F; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725003750; c=relaxed/simple;
+	bh=cAvE5yFRIWBiOv7ycyzdrJ4hxw730Ffg6FwXu8x8lP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uxTmIq28Udl9+rIhn9drXK9GcVcwtG58V/nbkRcMz5WPDhzqR5iWuI7GoW+y6G6jqQPLdeksaPrwqSjThprL+jKoZw2jVNLyEfaeRlhzQDPpWeeuWOLuwOBBy6MmwlTItc9Z5p9iFI4VSH+fcBLsn3jWTGim7+W/vdmDab8ndPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yIaNXdj1; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UgUuwC0F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3CE0C4CEC5;
-	Fri, 30 Aug 2024 00:23:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724977391;
-	bh=lh7JLnFP5s1aJ5xS8eg+yLx07MrFuSLffVxCf49ZDdA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UgUuwC0F/jwl0XlnE+41/CzyQeeMhrt8Bl0bZHck3USg+o4ZKZYON1GfHiuxOkGki
-	 qEicXvp9dujgeif7ji02FsPdClxBTWMqfMGHqJq8h4i/ytwr8wanzqEmW3uLSxGeq5
-	 OJz5hrFmQ4GV+H9zxVixMpPwCne4wDt9wZ+sTsxvIKRbDCWcC7YUVo+gYxTO5lJ0SQ
-	 mRT271mx5zP5Y75pRIZ1pjeQDSJWTO0lFI0jXalC6FM0MQvrkn9xW2hjHeKTVnOhd2
-	 6i+uTUnp06Hr2cywFhl6p+xqLLUaSBV/p3+T5vcKD9sPEzyeTkRkvdX1XcmqEO8EFg
-	 UTX39C3pY4YTQ==
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-70f670eb827so189606a34.0;
-        Thu, 29 Aug 2024 17:23:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUBjj+TG7kpmHOtSxszaLpFIXbi14CX+Kzr2GFQuTGiBctYVVSflZt+Kab86C5ZTxG3GL4W8GxPIOVTAkKV1Gk=@vger.kernel.org, AJvYcCUU3v4i7IDRe0QsZ9DOqjhhHSobjzL9858KLQ6XzBV673ubONaBTkCMavvDVIzhJchAkB7p2yxJgCmSpuDW@vger.kernel.org, AJvYcCXWK0IlLsWJoQMOK/8RtiE3U6IiKazNzXWLHMlfv+Q1+asiENEIR4daHN60KV4ys3aihTumuMRFOnJxxA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK7X67KsQSIAplBfVTnOdALFBH5Jmww9xsFk7DFHDZAVbo69vd
-	Q3kcWbmErCrbqR3ZJ+b4omOGp9iR1zuK5rIuIH27W2O70hGvw4+YaBSVYrc9CLvhsvGujQOLdjW
-	0WsSUVebwn2CnPnU+SzjF1ulMmS0=
-X-Google-Smtp-Source: AGHT+IF1HOIvuR07ISWkm9lOBPvOjH1Fv+cPfeKw7L2knPjRe2Cbni0rIZvQV07RTjTSNXDkJ41oZxVbgwUNcvuSAdo=
-X-Received: by 2002:a05:6830:278a:b0:703:6b11:33a4 with SMTP id
- 46e09a7af769-70f5da97fd4mr1154441a34.9.1724977390911; Thu, 29 Aug 2024
- 17:23:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yIaNXdj1"
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f4f24263acso23738641fa.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 30 Aug 2024 00:42:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725003747; x=1725608547; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Gj6cEC3ZMBXWaI7qMCGVoLP3OYeBsgUhcL+MAyzmM4=;
+        b=yIaNXdj1YZUbRqPDD8lXbXSqvU3mqqsA9dfKnqCux7afSrU7q94E8nL7tImxTk5/SR
+         vwYhOkZfzCXb2aWc/MlpioR9sHZSKBF85ZgLC4ZsE5ab6dyjMZ306KNa3n53s8TlqRer
+         UEQe52XfSal4P5IDkn9bZ99QVoNVX5Y+VlLZtxGJGslrYoyxQROouw1kElbrrJ98Bf80
+         xEAj8NV5Lbm11en7sxg7sRPuEL5g9ztWDeLgAUF4UAsENu8+4ZbojcEqBPoky9O3kikG
+         d8GyXtaPGikoPj1xfh6YC9Q8AoSeZ0jZqrWCm0dDDieKk5AkKmiFd+CZDePZmVgROq5W
+         zcDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725003747; x=1725608547;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Gj6cEC3ZMBXWaI7qMCGVoLP3OYeBsgUhcL+MAyzmM4=;
+        b=dAbKexkMD/FRkOqoyrAu8IwjJti21sGQsY2rE/h1jKOr68ox5M1MIrv2txqVOYkNC/
+         qtNuj+IJ5hLJiJDDv+BLQ/9ad26KEOmeY44ruVOtdkbSoe+uY1NkstzJgkd/cGQmqzTV
+         CZrfOozK4qYd8l0DIYID9JaTCBGmdDdnqK5BtzEtx4TonIR+05vuu/fs3cocA2XO4Tlf
+         GqDHPYsCBsGRqfSyiUjabyjLpP5LT4ceDahoaYkQGrjI3SIFWPcmKPH9qpvnf6YwQw2T
+         TtFcBLU1WtnENXzObTmhCCDByAIHmUotp+y02kXOyXG+q1N8eMX+VuW3h+cLuUpSH593
+         jiOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVwgmeRgTswMn7lrh4QkNjSDliIbkl0OLOyVRhxOeQoaBiI//vRvu1J56Aku8ASz6YoYz9qIXfIpnXhx2bkJi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRD7j4pgNcN+qw/UXLVR9p8STzC91Po1FMvO6wv9HMtYz3OeDz
+	a/ulB+oimyKTWdHVLalAwiqcPAgo3xiHUEFSuAWImLiBsCs2AMQh52JYe52w5zI=
+X-Google-Smtp-Source: AGHT+IEzw81bh2xRm223q+buyjOAOITiTdwAwoJZDyd2Aep0W6LeSNiYRUypwNF+qHr8zX8FOHbh4w==
+X-Received: by 2002:a05:651c:b0f:b0:2f3:e9fb:6d5a with SMTP id 38308e7fff4ca-2f6105d755amr51329681fa.13.1725003746710;
+        Fri, 30 Aug 2024 00:42:26 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f614ed15f1sm5150601fa.4.2024.08.30.00.42.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 00:42:26 -0700 (PDT)
+Date: Fri, 30 Aug 2024 10:42:24 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Maximilian Luz <luzmaximilian@gmail.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Johan Hovold <johan+linaro@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] firmware: qcom: uefisecapp: Fix deadlock in
+ qcuefi_acquire()
+Message-ID: <zxs47gq4v3tbm3jircy4wudrm3guvfbwgrlsckrnwzemyinws5@osk5jfie3gc5>
+References: <19829bc4-1b6f-47f7-847a-e90c25749e40@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <89c440a9-27bd-45d9-9d5b-5b4bf51ec950@stanley.mountain>
-In-Reply-To: <89c440a9-27bd-45d9-9d5b-5b4bf51ec950@stanley.mountain>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Fri, 30 Aug 2024 09:23:00 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_Wdb+Ss1GODQBh8Mxrrx=dWWD1zSiR6JCeMYQyR5h0Fw@mail.gmail.com>
-Message-ID: <CAKYAXd_Wdb+Ss1GODQBh8Mxrrx=dWWD1zSiR6JCeMYQyR5h0Fw@mail.gmail.com>
-Subject: Re: [PATCH] ksmbd: Unlock on in ksmbd_tcp_set_interfaces()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Namjae Jeon <namjae.jeon@samsung.com>, Steve French <sfrench@samba.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Tom Talpey <tom@talpey.com>, 
-	Hyunchul Lee <hyc.lee@gmail.com>, Ronnie Sahlberg <lsahlber@redhat.com>, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19829bc4-1b6f-47f7-847a-e90c25749e40@stanley.mountain>
 
-On Fri, Aug 30, 2024 at 4:22=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> Unlock before returning an error code if this allocation fails.
->
-> Fixes: 0626e6641f6b ("cifsd: add server handler for central processing an=
-d tranport layers")
+On Thu, Aug 29, 2024 at 10:23:04PM GMT, Dan Carpenter wrote:
+> If the __qcuefi pointer is not set, then in the original code, we would
+> hold onto the lock.  That means that if we tried to set it later, then
+> it would cause a deadlock.  Drop the lock on the error path.  That's
+> what all the callers are expecting.
+> 
+> Fixes: 759e7a2b62eb ("firmware: Add support for Qualcomm UEFI Secure Application")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Looks good to me.
-Applied it to #ksmbd-for-next-next.
-Thanks!
+> ---
+>  drivers/firmware/qcom/qcom_qseecom_uefisecapp.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+
+-- 
+With best wishes
+Dmitry
