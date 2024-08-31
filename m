@@ -1,75 +1,69 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C082A1C1AB3;
-	Fri, 30 Aug 2024 20:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5746913A879;
+	Sat, 31 Aug 2024 03:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725051105; cv=none; b=L2g0/GhQ0ESn8/zG3ViPZxfDejqUlowCaRQEjejcubKgH6HQrh9k12aIx5ruae9YMH5T5/T726uvWa2QUR0rM/+1LNhk2Vil/pydZ/ZnCF0dugFveneatVPg/M0g78KYyGtt/6/ZgLFQue1d7LVaxdKKDRIid9UbREslP2WCEJ0=
+	t=1725074335; cv=none; b=mh//C82/8AMqKBk5fit4rlEowcLDec/I32UyBGPpFQvJJXL/9aw57B7L+gv6NW5BEj/nCnNktR9m8dPgKfuU9bwKM4uSCnm/jwOLqfpULSl4C1PqA7cjtBKyc3zzr908KaNEed377WVXsk0/eN1WIClbh84bUEjYUbLIQkF+C60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725051105; c=relaxed/simple;
-	bh=tQRa7q0D+LkWLy/OI2DyVMxkZHU1QU8d28Z3XzOwl90=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=cGj0/8SHIuZfPGYncluE5XWsTeT3RYCplJ1WNVMEjx+kcW0VTNh/iKJBrHMi26dWFAStFp8i/90zKQ83ZoJh4MsrUk30os7QChqW/VZNCx25DGDVywJDx2S6LbNyU3HZzkm/9VFb/J93cA6h/YXoeP8zgl3FwHhMh1hHoU7l6hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KF6V+2LU; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725074335; c=relaxed/simple;
+	bh=60PbYa+oI13EfnqfL1AUpKq+Th2buRR1Z5BMJvF4jRI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TZ4Jhiojt8tohS6EJ1AfXvsDo2+nfRRmzhXKRUGEUOfl1VXMLhVeNSMXE+jNs6sgv4IxtWjYNTVwYlF+5F3nAD2WA5NQqY2GJYsjfeBMbKBq9L2wBRkFm4O0bdaxUVNBtSzgdNz459AxVC5oZxFtIuih9HQFsWskfrIq69s6qb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m6SYfbkW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KF6V+2LU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BF52C4CEC2;
-	Fri, 30 Aug 2024 20:51:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m6SYfbkW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34DB2C4AF09;
+	Sat, 31 Aug 2024 03:18:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725051105;
-	bh=tQRa7q0D+LkWLy/OI2DyVMxkZHU1QU8d28Z3XzOwl90=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=KF6V+2LUggpoxduIVgSjPBj9ABhgGMXDEoPRaogn0sAWI+CGGYjfuuZhHGf1r5hW2
-	 TfgaB+e1PFbZROMBvLetywx1IXyGfwBMtA1NBM0BOkJySLwUu9mmhGA53/lHeUD/Ae
-	 xiT3yxk/uIicALyS4A/udF9W7fOCpS3wfkI6SGxz1wQ1Q8y8uX/kNLewAqkkPYjH6z
-	 rRmjmwf2Jo9rVPn5Sanbf54gRIOkCObjU8QTeK+G3u1z9Cpxynx4PpX5bfWcAdhOeO
-	 XgazP+c4L2iJNsmSURTTpb+adhPkLsTuOzSPH7hw7dxQchFHZ+Pz8VtLghPcOSJXV1
-	 P2czZgwDsal2w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE223809A80;
-	Fri, 30 Aug 2024 20:51:46 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1725074334;
+	bh=60PbYa+oI13EfnqfL1AUpKq+Th2buRR1Z5BMJvF4jRI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=m6SYfbkWfNPexzIlSQ4MGj0YPthMAJ4OMjYYnHEmyfByHjghUo32QnV5HBUSl26TV
+	 cfOCB5oTJd55nk1HbHNn4PeY5vHTt/GtXhpzAEjJHutqf0FvZQO6ugMkSAEz5EHC0C
+	 MCdXTvGxU9FPoMIUu1/tcbqb/mCWP21OkMxYlEpqZA//guKiVmwFsqF2ZZMvOsjYfI
+	 U7+jNWskxdWTzoLOcGrPqmXizrq/PSL0w9WW57QT3pB+OnVJub5mlmJ/Cacbe2nOCw
+	 usQmqnf74t8ee1xJPO+l1LwYi2Bn+ODVc2+nqUD+17VQmIxCzF4ZKgLUeRP7PkQwEe
+	 8uCdfrubsnocQ==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Maximilian Luz <luzmaximilian@gmail.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] firmware: qcom: uefisecapp: Fix deadlock in qcuefi_acquire()
+Date: Fri, 30 Aug 2024 22:18:37 -0500
+Message-ID: <172507431835.12792.13483541380565226946.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <19829bc4-1b6f-47f7-847a-e90c25749e40@stanley.mountain>
+References: <19829bc4-1b6f-47f7-847a-e90c25749e40@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH] f2fs: Use sysfs_emit_at() to simplify code
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: 
- <172505110550.2712133.8948730888225333311.git-patchwork-notify@kernel.org>
-Date: Fri, 30 Aug 2024 20:51:45 +0000
-References: <0afb817e75a84859e1a86e1a7ba2041a9b852b6e.1723117820.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <0afb817e75a84859e1a86e1a7ba2041a9b852b6e.1723117820.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: jaegeuk@kernel.org, chao@kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Thu,  8 Aug 2024 13:50:46 +0200 you wrote:
-> This file already uses sysfs_emit(). So be consistent and also use
-> sysfs_emit_at().
+On Thu, 29 Aug 2024 22:23:04 +0300, Dan Carpenter wrote:
+> If the __qcuefi pointer is not set, then in the original code, we would
+> hold onto the lock.  That means that if we tried to set it later, then
+> it would cause a deadlock.  Drop the lock on the error path.  That's
+> what all the callers are expecting.
 > 
-> This slightly simplifies the code and makes it more readable.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
 
-Here is the summary with links:
-  - [f2fs-dev] f2fs: Use sysfs_emit_at() to simplify code
-    https://git.kernel.org/jaegeuk/f2fs/c/f7a678bbe5a8
+Applied, thanks!
 
-You are awesome, thank you!
+[1/1] firmware: qcom: uefisecapp: Fix deadlock in qcuefi_acquire()
+      commit: db213b0cfe3268d8b1d382b3bcc999c687a2567f
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Bjorn Andersson <andersson@kernel.org>
