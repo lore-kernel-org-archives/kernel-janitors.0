@@ -1,75 +1,100 @@
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from msa.smtpout.orange.fr (smtp-77.smtpout.orange.fr [80.12.242.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD5728387;
-	Sun,  1 Sep 2024 17:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69291E517;
+	Sun,  1 Sep 2024 20:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725212041; cv=none; b=PB8YBpWbknT/iVTb9zLDDOMGDqJclLI9Tt+QR/duClQqJruC74Ed43FZLtycDqbpQ6RuLjXcnrzF1uSohuxYD3v8wZFkCazB3jxRyyH5SuJP+C4DGxu8vuv1w/zJCauSVHBH7U3EW4w5r1GCz24T03FzbmjzTUyoz/4lXQRzw1I=
+	t=1725223546; cv=none; b=JwIja2z/JEULinWjIeGafgu0zy4Xmf3Qap3bnmyuXuWq+9exEuRVHtYOf79DFFXQ/xt/uRPT3HLjeJ1iDtfFyOBO+9zx/gSI2us299zr2JLLfX2iXG/zXYuIkH2xQr7HPy3fdod4Z/Sxwknsi+MZ+Rz4dRtdG/b9aVYF7s0re/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725212041; c=relaxed/simple;
-	bh=PzDrXFfzqFVdCV2JfpY1TCCOml/OGOWPD8/E2HMkxiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUaBKH0I7+Yukv0WnSUmX731Te8/NASPFObtCmbVljItiSYGe2DtXdR72puC/pHeMnBGFstWxUuUrhaBCu9iD2qb2lBCzAbncuQC9rzRB3prN3nY/Ozbg/GVe99P9Q5B7x68+6N8QA7UNKcw/CfdfShOr4U089O3ANoYNwJQ4WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7141e20e31cso2877830b3a.3;
-        Sun, 01 Sep 2024 10:33:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725212039; x=1725816839;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TYbqkAtoq8ECBqJqS2WA0sHMNuKw8v0jwauE2w39rHY=;
-        b=ii6kYArK7dR9NhoLXKanlwUAjjPIPrG3Tash9UwdGkKGB8s+c99sIF8P81jZwfpWsS
-         Y+okivLCb6jA37e0BgOGct9WkFKhzb4SkWoxa4i36XaNy7ahH6YaVNX4q+KCf2N1ARz1
-         e3VL0tBbR+IhJZYZm8nU7jFfyJPojHL5pMR0RKXj+sczjoGnkOk91a2eqVDwuE5RtJum
-         TUxfqFG30IvrSmwaGNkSbtlNARNKd3PKvrTl9+vSMzNgLILbDbeaH7ndKBAH6ArUN1Dw
-         +AgmcfaLmml+MMU2n96mm1sQ6XLFNA3+zCGFJUr+plL9J8UZzpUeMFpyQrxq8kToRnlp
-         STqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQRdbcxF+lPAilRa+GnP2NHnfXMvsCkwVHz+NMHYxQZ1G4ScOBCdy1IQEezydQATBMDlWO96vWDluJuxeF@vger.kernel.org, AJvYcCUhE20kRkSHID5t7ezMm59zDvcRGwB9VqyqzPl9n4CEu2MXo9KEmJbRZI0UpKc6dw3aFyY/4CGp1I3As55FYeY=@vger.kernel.org, AJvYcCVCRMoIv69ZlCZGraF+Ynw4EQLSh+K+nmupu2fYH0U2n0/OMXjsQPGhAT1jMkbZkctP+9e/zArDVCZBSO19KXjvAn4=@vger.kernel.org, AJvYcCWsTA53gOTqN5HthhD84cDchtS9SZTaCR9Yh4Gkc+bhlcc8tQtAnhvuopVwqDO+stSAo8jQMGudFSEK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwarxmhzqJ1XZPX6JGYbhatqAMDVAW+JA8pVFQ0ksXwWZoIV8om
-	Y8K7Q5LqiSWdOSLSnE6AziWe5MOVl7j0DY4gotAkbFtNROlZCTXW
-X-Google-Smtp-Source: AGHT+IEFQMytQM6n1pdKGwJuMZ05wwyEdA7f61XnLpDQzaPQVkTiJH9ySeXrhOSznpoV8xzQYWje1w==
-X-Received: by 2002:a05:6a20:b418:b0:1c6:a562:997f with SMTP id adf61e73a8af0-1cecf757f5cmr6024916637.42.1725212038844;
-        Sun, 01 Sep 2024 10:33:58 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205439dadabsm26453685ad.166.2024.09.01.10.33.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 10:33:58 -0700 (PDT)
-Date: Mon, 2 Sep 2024 02:33:56 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] PCI: rcar-gen4: make read-only const array
- check_addr static
-Message-ID: <20240901173356.GK235729@rocinante>
-References: <20240822205941.643187-1-colin.i.king@gmail.com>
+	s=arc-20240116; t=1725223546; c=relaxed/simple;
+	bh=IpzzL+qffAylT1Kp4b+8Sun0IWPin7IZV0K9T+zFQd8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EtpZXa94DQZ255VTDGsMlhMCH+OQciJpOU7+5iqd8R6UjY4cJTJWdwwN4B4icZM5biJ2oymducmktNZ6T+ww8qqrCkDCyNgzNOU/T1XRJctT41z1QsgctsYVqgle5G0BgX2MR5Bn9MhVGjwSPIc0inNaNv/mp/AfDTvU0bgGKII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=O7vUT6oD; arc=none smtp.client-ip=80.12.242.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="O7vUT6oD"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id krRzstoQfjDE7krRzsjq0N; Sun, 01 Sep 2024 22:45:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725223534;
+	bh=OaYwBpcpMqzp3pLDAjlo6pUpuKE0rzYUGot8WgUmNng=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=O7vUT6oD4tCaFxdpGALRGzKNoacDx8+CfVJ4hEoSmoR75kFAoveYEZ+cSTdFe1xvI
+	 cmT2gkMputZBR2hFgYFzAGq+nwV8OwPM4+/S7wCVmPt0p1nt5qxbH9mrrhoTg8WWxe
+	 WtPb5ODITjxYbjjvKb3y5QJ/irjeMzOKH/zLA78/fSNDhGoTMIx6juFyodwAM7UL1d
+	 GKSUUmcDsZemGo/p70fFUEVpSbHGas52ah6zc8ljyXHuSIMLMA0tJPFbdQ+3qcTSuT
+	 khc0fBCY22DxxXvCGcU0zLnROpvySn7RgLGzT5vITABYvmarp5baXI/e4AOYSZKF10
+	 NbYbPGJSb3iJw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 01 Sep 2024 22:45:34 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH] scsi: libcxgbi: Remove an unused field in struct cxgbi_device
+Date: Sun,  1 Sep 2024 22:45:27 +0200
+Message-ID: <58f77f690d85e2c653447e3e3fc4f8d3c3ce8563.1725223504.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822205941.643187-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Usage of .dev_ddp_cleanup() in libcxgbi was removed by commit 5999299f1ce9
+("cxgb3i,cxgb4i,libcxgbi: remove iSCSI DDP support") on 2016-07.
 
-> Don't populate the const read-only array check_addr on the stack at
-> run time, instead make it static.
+.csk_rx_pdu_ready() and debugfs_root have apparently never been used since
+introduction by commit 9ba682f01e2f ("[SCSI] libcxgbi: common library for
+cxgb3i and cxgb4i")
 
-Applied to controller/rcar-gen4, thank you!
+Remove the now unused function pointer from struct cxgbi_device.
 
-[1/1] PCI: rcar-gen4: Make read-only const array check_addr static
-      https://git.kernel.org/pci/pci/c/5603a3491b36
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+---
+ drivers/scsi/cxgbi/libcxgbi.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
-	Krzysztof
+diff --git a/drivers/scsi/cxgbi/libcxgbi.h b/drivers/scsi/cxgbi/libcxgbi.h
+index d92cf1dccc2f..0909b03e2497 100644
+--- a/drivers/scsi/cxgbi/libcxgbi.h
++++ b/drivers/scsi/cxgbi/libcxgbi.h
+@@ -485,7 +485,6 @@ struct cxgbi_device {
+ 	unsigned char nmtus;
+ 	unsigned char nports;
+ 	struct pci_dev *pdev;
+-	struct dentry *debugfs_root;
+ 	struct iscsi_transport *itp;
+ 	struct module *owner;
+ 
+@@ -499,7 +498,6 @@ struct cxgbi_device {
+ 	unsigned int rxq_idx_cntr;
+ 	struct cxgbi_ports_map pmap;
+ 
+-	void (*dev_ddp_cleanup)(struct cxgbi_device *);
+ 	struct cxgbi_ppm* (*cdev2ppm)(struct cxgbi_device *);
+ 	int (*csk_ddp_set_map)(struct cxgbi_ppm *, struct cxgbi_sock *,
+ 			       struct cxgbi_task_tag_info *);
+@@ -512,7 +510,6 @@ struct cxgbi_device {
+ 				   unsigned int, int);
+ 
+ 	void (*csk_release_offload_resources)(struct cxgbi_sock *);
+-	int (*csk_rx_pdu_ready)(struct cxgbi_sock *, struct sk_buff *);
+ 	u32 (*csk_send_rx_credits)(struct cxgbi_sock *, u32);
+ 	int (*csk_push_tx_frames)(struct cxgbi_sock *, int);
+ 	void (*csk_send_abort_req)(struct cxgbi_sock *);
+-- 
+2.46.0
+
