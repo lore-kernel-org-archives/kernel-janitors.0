@@ -1,69 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5746913A879;
-	Sat, 31 Aug 2024 03:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCDE17DFE9;
+	Sun,  1 Sep 2024 15:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725074335; cv=none; b=mh//C82/8AMqKBk5fit4rlEowcLDec/I32UyBGPpFQvJJXL/9aw57B7L+gv6NW5BEj/nCnNktR9m8dPgKfuU9bwKM4uSCnm/jwOLqfpULSl4C1PqA7cjtBKyc3zzr908KaNEed377WVXsk0/eN1WIClbh84bUEjYUbLIQkF+C60=
+	t=1725204411; cv=none; b=VMoEKQ5lwTJRODGdPtBcFeGnK0mCMROegamFGQL/MTSm4h18bdFADX4bYNl/VrxJY91Yl12QleFxInhEpwqCed/ebeDZE4Xnt9tXAAEmy7t4s9EjVJpSemhm7TtJfio+UyfXXDaS0ZSa9P5T58EsDMDgVqDOkkPXSVvFYZyFIB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725074335; c=relaxed/simple;
-	bh=60PbYa+oI13EfnqfL1AUpKq+Th2buRR1Z5BMJvF4jRI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TZ4Jhiojt8tohS6EJ1AfXvsDo2+nfRRmzhXKRUGEUOfl1VXMLhVeNSMXE+jNs6sgv4IxtWjYNTVwYlF+5F3nAD2WA5NQqY2GJYsjfeBMbKBq9L2wBRkFm4O0bdaxUVNBtSzgdNz459AxVC5oZxFtIuih9HQFsWskfrIq69s6qb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m6SYfbkW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725204411; c=relaxed/simple;
+	bh=+oifxVqYLcNvH3TFN5BAAGfli+t14t1naa2f/ObStAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=shAApzKfrbfXfMOGHjI8istTUzHit7F6tsOlkruVYVd64SMrLqlYbJWDWQ1ztFvVFzZm4mPor3r1ooii+Rll6q2lklLD6Jbf7uyk/s7VUJJExwPRuqFP2ksVAPcED5RvXImKDoXJMIqB2GVselMrzM/dEYlPAH3v4pEkIORfHck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lEXqHMKr; arc=none smtp.client-ip=80.12.242.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m6SYfbkW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34DB2C4AF09;
-	Sat, 31 Aug 2024 03:18:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725074334;
-	bh=60PbYa+oI13EfnqfL1AUpKq+Th2buRR1Z5BMJvF4jRI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=m6SYfbkWfNPexzIlSQ4MGj0YPthMAJ4OMjYYnHEmyfByHjghUo32QnV5HBUSl26TV
-	 cfOCB5oTJd55nk1HbHNn4PeY5vHTt/GtXhpzAEjJHutqf0FvZQO6ugMkSAEz5EHC0C
-	 MCdXTvGxU9FPoMIUu1/tcbqb/mCWP21OkMxYlEpqZA//guKiVmwFsqF2ZZMvOsjYfI
-	 U7+jNWskxdWTzoLOcGrPqmXizrq/PSL0w9WW57QT3pB+OnVJub5mlmJ/Cacbe2nOCw
-	 usQmqnf74t8ee1xJPO+l1LwYi2Bn+ODVc2+nqUD+17VQmIxCzF4ZKgLUeRP7PkQwEe
-	 8uCdfrubsnocQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Maximilian Luz <luzmaximilian@gmail.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] firmware: qcom: uefisecapp: Fix deadlock in qcuefi_acquire()
-Date: Fri, 30 Aug 2024 22:18:37 -0500
-Message-ID: <172507431835.12792.13483541380565226946.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <19829bc4-1b6f-47f7-847a-e90c25749e40@stanley.mountain>
-References: <19829bc4-1b6f-47f7-847a-e90c25749e40@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lEXqHMKr"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id kmKIsidNBCul1kmKIssdEm; Sun, 01 Sep 2024 17:17:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725203836;
+	bh=yMZLdMo/JqwLkmyPxql8GWXtKMmhtxUaz8IUp+tEwGw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=lEXqHMKrvk3EmUMskjBe4akGxwLbP0rxLetnREdXUjVchWkcVt+83IY6Di9th7+/W
+	 hmdKIN1km+D8RNlUTl+s6bKTWzkFDHdJ/XUSYg0X9FNkryptbUV1hK0gCBqDwKOZyQ
+	 UcgGwWi2EUyAEbncUgpZeePcvOzXZi6gpFJq/h3dJEGxzD/+K7pKiA1sNy7AIDHyNm
+	 lJL8lP/ogPji4OfRZ5ufIj4fz5zCjrF/VH0fcbBTPeuy0sNHDrdeTCeEozw6SIjV6h
+	 0opMTXGzRDc4FmZTv4E3+6fgmErNWl1LawAN5I5hLMkrYL9Mgmmzv4r3XloyK5QMnv
+	 8ElmmS7NxMoFw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 01 Sep 2024 17:17:16 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Jan Kara <jack@suse.cz>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-fsdevel@vger.kernel.org,
+	nvdimm@lists.linux.dev
+Subject: [PATCH] dax: Remove an unused field in struct dax_operations
+Date: Sun,  1 Sep 2024 17:17:09 +0200
+Message-ID: <56b92b722ca0a6fd1387c871a6ec01bcb9bd525e.1725203804.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+.dax_supported() was apparently removed by commit 7b0800d00dae ("dax:
+remove dax_capable") on 2021-11.
 
-On Thu, 29 Aug 2024 22:23:04 +0300, Dan Carpenter wrote:
-> If the __qcuefi pointer is not set, then in the original code, we would
-> hold onto the lock.  That means that if we tried to set it later, then
-> it would cause a deadlock.  Drop the lock on the error path.  That's
-> what all the callers are expecting.
-> 
-> 
+Remove the now unused function pointer from the struct dax_operations.
 
-Applied, thanks!
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Slightly compile tested only, but "git grep dax_supported" now returns
+nothing.
+---
+ include/linux/dax.h | 6 ------
+ 1 file changed, 6 deletions(-)
 
-[1/1] firmware: qcom: uefisecapp: Fix deadlock in qcuefi_acquire()
-      commit: db213b0cfe3268d8b1d382b3bcc999c687a2567f
-
-Best regards,
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index 9d3e3327af4c..df41a0017b31 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -27,12 +27,6 @@ struct dax_operations {
+ 	 */
+ 	long (*direct_access)(struct dax_device *, pgoff_t, long,
+ 			enum dax_access_mode, void **, pfn_t *);
+-	/*
+-	 * Validate whether this device is usable as an fsdax backing
+-	 * device.
+-	 */
+-	bool (*dax_supported)(struct dax_device *, struct block_device *, int,
+-			sector_t, sector_t);
+ 	/* zero_page_range: required operation. Zero page range   */
+ 	int (*zero_page_range)(struct dax_device *, pgoff_t, size_t);
+ 	/*
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.46.0
+
