@@ -1,64 +1,65 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4961C183090;
-	Sun,  1 Sep 2024 16:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2364533987;
+	Sun,  1 Sep 2024 16:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725207690; cv=none; b=BW11e9GRPrWXsSkDrptfe8631tmPB9P86TFvBRo2FfCIEMYES8H0Srei9kr3Wg5TcDOCuiGPPWbtfPMuUhZBc4tdi6ize6ePn/+RvjmL3lWpNKU2RL8FbqubriJHmcgbl8VGkwTbELT5DEK6pWPZjeO8aZxMl7TPamE4rU2Av5o=
+	t=1725207842; cv=none; b=cyoVxjtjDlrdz0JkLEKlhedAlHMNOpnp2hd3r6gCxLd6dtSxLiHGh9F+7E5nFclKY5SLcrQu3ZFul85ICFXpsz+W/r/riwkYbkYHRuOjGakbALB1Tv0XXceBWBl5H9HYbw0ibpZ3W0bUPDlrf+H+jDNhetckyscf5Q9esT7cdro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725207690; c=relaxed/simple;
-	bh=HfLhhyK8ZjmZxmpk87z3JzSSJ2B6fRAkJGHcXbFr3Y4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ikLRZD9+U8sOejunAvMwYE0bdoQQrQyV0EFHAto3Llr981uI6UuioD/a/9aSHqd8wg2pM8aTVVtxaPjewwVDNrFV6SGr2UiM6sWF1ypKn5QhWqfIOY9TnbgoEiYtWqM6ZexwbKCbgzpMiC6McH29iFoLLHjJuKf4q5wrPGPEgJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JMpmk1Ct; arc=none smtp.client-ip=209.85.167.46
+	s=arc-20240116; t=1725207842; c=relaxed/simple;
+	bh=BNoiP49H2z8AE1VQ81ykFPgUatiEllMk/05bWH3VtII=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=XiVfA/mdhHdQwPp7N8eGze3SyDVEux8+DOoVoL0jmEAifUnIrSTPUC6U7y6S9lw62CwJXzMswi/Xo4FtKc44DaXoIuRYSHb4WvlH+wBGoYId9eoB1X/yxMFA90SLPP1UphcbXlep/4ukUCTNqrLTihCt78y0v50BsuT/iRKbpWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PvJeG1yJ; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JMpmk1Ct"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5334c4cc17fso4727989e87.2;
-        Sun, 01 Sep 2024 09:21:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvJeG1yJ"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a86cc0d10aaso371336666b.2;
+        Sun, 01 Sep 2024 09:24:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725207687; x=1725812487; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725207839; x=1725812639; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CuCUp3dtlERSrvFobjZyRBsC7Z86P+xyj/8tqs+RWFM=;
-        b=JMpmk1Ctmx2aU5Xoi4jjldKRAeBaGnLyEUzfePTeFNywpfMlfktIyfscP91u2zzytd
-         NW8KHrPFhnE1RCSl0m/XCZf3YM4bJwtNMPToMDubi/HhgEIvLE7nw20PxYXIxuQhXgoE
-         +8fkIgiPT5jvFzjKt2DMyuzVmNzHda8NJmSCxrd5OdlE6yLTWU+Mr7TLFd+I2w7e+SQF
-         3bojODX2dJOhuZnwL5k7DMTNJCb/vOR5ZvuAjsMwWqyVdFEgpyD8W06sCin4sYgSNq+r
-         sZXyL69KyYTbnx+s3pW3Q8Nbdy3ZMVuHJacKoNp39MPiFiPNQXLGDddfVWuo530md1mz
-         zNFQ==
+        bh=KUuL6QBjyNPCBEmjXxaQIzhNE/f9uMT8997Jwx/E9YQ=;
+        b=PvJeG1yJBz8N2+iXsN1lP2wDluPHg+h4z2OKcaTk1L3k1PKWS7McRVQ6Pp1qDsGXLR
+         +TwzAbrZ3hwLaTs6h/dTiKKFiEbumQVBz3r7/M5yuX18hp2E82UiGtkcRFAK7tQrzyMi
+         0mFoedw7H1DwslMwAAYVOe8J66hf+EUzJBGFvgc1LwSf77eE+gpoOTG8WYOdhRzxiq4F
+         0APkpF76GeB3oJKwVLy0z8JZdXNuVOJPhmRr3eadwCq9Rqj0065N6zhOH2RLkLXPAG5I
+         xiFTxO61O6qBfiicKin79hDR0wrsOi+4Blo+SVHwyvhu5GK0kFFBkl04NGSaq5ZqR0Wa
+         NEWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725207687; x=1725812487;
+        d=1e100.net; s=20230601; t=1725207839; x=1725812639;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CuCUp3dtlERSrvFobjZyRBsC7Z86P+xyj/8tqs+RWFM=;
-        b=QoMkQFz2nlDFa3xP6VB4KhzMBJT7rFl+VExNxcVUMCMTBVgMur24ZrFhfA2WliSTwM
-         lIMj4NQWqc5sE9pL/o3n8s8LZkWSBv6WYa6y9hk7cRDafOGnAuhxFLSFQgimNqFWb9Dk
-         T3Mgp5Yzp0SX23MIZQvGWN/MqyKtZO4mOC9W3EfVBtHNqxhpBP58JRAeII2worj46xHP
-         ohIvST6bdU/PaCC56dPCebzzipFVOPBoE7dvV4tegXpVdWY1Q2be54vBJSQ1TsYxaLw1
-         y2uRDwge/JSje54RZBKu0CVp9dCPmk9xo58w3/nm2WSfuVxYSGEdOTRW9WgJO+k9eE5C
-         wfhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWX5nE8mHG8gUPJs6gqOwbF3luoT6I9eSEFVcaFP/b3pksyLdd5QfSZI7CoBuznMJlRHCLpxwM2QWxQLCU=@vger.kernel.org, AJvYcCXQr77uwQ5abwG691CWI0FuF4jNuOxbcEv91zHc8pEUs1Yd8pp7r+C/MUBp0BDGujSmlI+p6HLT7I7knqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCjjOkRKU3+RaKcHqcKa2Z9xgrDkF07RoqdHQPc9YUecCzCatl
-	f7U9xWXeMYzSG1EoB73o7Q+UwL/XCAy8SXknEHwoAKHs02vKZE/0AW6U0l0f
-X-Google-Smtp-Source: AGHT+IEGB7s1ist5UbduRK69b+q1RkRwi4CIl6+uwr/fcPQj8RE6S+v26D6lpS1ABs+eeFzW7FhuNg==
-X-Received: by 2002:a05:6512:3e08:b0:533:97b:e272 with SMTP id 2adb3069b0e04-53546b92a89mr5932754e87.41.1725207687017;
-        Sun, 01 Sep 2024 09:21:27 -0700 (PDT)
+        bh=KUuL6QBjyNPCBEmjXxaQIzhNE/f9uMT8997Jwx/E9YQ=;
+        b=EF1wq1aju85/N/4fSVE1pnApGYjLm/jWzJYffejF2n4tsGEwAAqGpPQxVHdalhPtK6
+         p8hqb1x0BzfIOz91uEqW0rt6d4Yx/NGpLXA+YCu9G6exFa5B0Xkx1GSdbPcSKN9jJ0dG
+         OQyZhCnZDINRdQNHNK7ru1slkOKOd50Oan1r4d44BL8o2Iyq+7B5xrW8Ua79Trqo27ao
+         HHL8u8Z3wB4CjXKq5KKenWHXjZefGIwGBugAUYRI3QGfc91oaKbW245+GSfmTkrU5DZX
+         ReTGlMC6xhbE+xtmk/oKuVFt5Jtz0CFEdBpWIBMeu482PaZhvxE/zDhikb3ZUSG7megF
+         ADdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWT8NVe2l+Lb1gCEh25hicbEIYYIK2xOf/I0UMJQoLPP4pvBsQqAPbANUmrGZyqZzrI2lVJzKFb3oG9LGw=@vger.kernel.org, AJvYcCXld8d/j8wrMe3DNspArbdlLlee3L1Lcd3MMKXZ13etXVmKl5IG/R6jgGHvjgYj+xkB3GYN+HR5lma+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFcx16KWSNdwo+P9LU+WfITzXrhS4KI+4Grx5t7vAFjiJ22eHB
+	2H+IypdNiy6MsHvXzGWFCit3XrVsouOZA5FECQguDhFlRt3zxf33
+X-Google-Smtp-Source: AGHT+IGUggvoc407nwCWVSL3MosOBwDkAAp63jf1RZDnvSHH+WPbx7ttpqzJt9D183+hQXnbmCGsyQ==
+X-Received: by 2002:a17:907:3f08:b0:a77:cb7d:f361 with SMTP id a640c23a62f3a-a897fa6a90emr928025566b.43.1725207839124;
+        Sun, 01 Sep 2024 09:23:59 -0700 (PDT)
 Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898919686bsm448214166b.134.2024.09.01.09.21.26
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891dbd2csm451332666b.187.2024.09.01.09.23.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 09:21:26 -0700 (PDT)
+        Sun, 01 Sep 2024 09:23:58 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ALSA: ali5451: Remove trailing space after \n newline
-Date: Sun,  1 Sep 2024 17:21:25 +0100
-Message-Id: <20240901162125.144069-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] usb: gadget: udc-xilinx: Remove trailing space after \n newline
+Date: Sun,  1 Sep 2024 17:23:57 +0100
+Message-Id: <20240901162357.144222-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -74,22 +75,22 @@ Remove it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- sound/pci/ali5451/ali5451.c | 2 +-
+ drivers/usb/gadget/udc/udc-xilinx.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/pci/ali5451/ali5451.c b/sound/pci/ali5451/ali5451.c
-index 31e51e2df655..793d2f13267e 100644
---- a/sound/pci/ali5451/ali5451.c
-+++ b/sound/pci/ali5451/ali5451.c
-@@ -292,7 +292,7 @@ static int snd_ali_codec_ready(struct snd_ali *codec,
- 	}
+diff --git a/drivers/usb/gadget/udc/udc-xilinx.c b/drivers/usb/gadget/udc/udc-xilinx.c
+index 74590f93ea61..ebc45565c33e 100644
+--- a/drivers/usb/gadget/udc/udc-xilinx.c
++++ b/drivers/usb/gadget/udc/udc-xilinx.c
+@@ -947,7 +947,7 @@ static int xudc_ep_disable(struct usb_ep *_ep)
+ 	ep->desc = NULL;
+ 	ep->ep_usb.desc = NULL;
  
- 	snd_ali_5451_poke(codec, port, res & ~0x8000);
--	dev_dbg(codec->card->dev, "ali_codec_ready: codec is not ready.\n ");
-+	dev_dbg(codec->card->dev, "ali_codec_ready: codec is not ready.\n");
- 	return -EIO;
- }
- 
+-	dev_dbg(udc->dev, "USB Ep %d disable\n ", ep->epnumber);
++	dev_dbg(udc->dev, "USB Ep %d disable\n", ep->epnumber);
+ 	/* Disable the endpoint.*/
+ 	epcfg = udc->read_fn(udc->addr + ep->offset);
+ 	epcfg &= ~XUSB_EP_CFG_VALID_MASK;
 -- 
 2.39.2
 
