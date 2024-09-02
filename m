@@ -1,95 +1,95 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30ED75680;
-	Mon,  2 Sep 2024 18:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70492032A;
+	Mon,  2 Sep 2024 23:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725301965; cv=none; b=ayXJgjjae8iewKw9UN5GHWSAGE6sFg9t6GkDAAWWMsp0g2TPqnWqJqCuRz+AVeSS2ryir+mIe6XCfyta7QPwtUusE68Lg3y9aQuURuyp1quB0l2Un4RrjHMyE9TJJiuf7nmns9DFiznUCaUSFzkSbd4VdKCZyzSQSWFSeXlPQ3c=
+	t=1725319201; cv=none; b=hp9MP+JJAmuxihUmSadnahHIKadb3xBzPITfbQk/HwQDfAXYWKtw/Xv88Pyqe2CBryyvqLd86vT71W6JLdLgUWm7Yi6vaDtNlN8Io3fn67Kae/Nwvt0eOKCXANQgPJ2DQeP9uXNll9hGdTTAJn8YP2lH2HGHAklr6GgARrthKZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725301965; c=relaxed/simple;
-	bh=1PzOhJJY2LeQBaJd2Bcw0TdQoPlV8i5sNgTxX2h7qYQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AtsTBaeaDxt5raUXWJLqfr/ZYkSRdVTK3AITiZRxVRnuWQgi/kFa+MBN+RYB7KDZkEsO14KDXDnJMmrZyOWSyEZNwlpG16Q9DM+/5HuSqZzkFPlZR67lEXyAs7OzrsznuTTFT0NHCi+o62zSrS8yaadvyglzz6pDwXtGHBQrswg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HFriyin2; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1725319201; c=relaxed/simple;
+	bh=YAGrIzusnyTr0rxXlKRJ2lrCnH+Sp4JMoe5jlxXvGHk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EiCFTIUomDUprvscH9lsUfqw76wEcqcaqJhin10eJDEOmpuuuXFvoG8ZlCr2xZVdZin5a9ZkTuvheNvkepOBsEodBfocxhbe20RK4kpJIKmSd8/Kr4G7Y9S3cPpBfyFXtjQuA8lcc8Ib3agbulWTDrUbYsAeA8wudrZMV52wzhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=D6w6EoT2; arc=none smtp.client-ip=80.12.242.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HFriyin2"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42bac9469e8so37599955e9.3;
-        Mon, 02 Sep 2024 11:32:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725301962; x=1725906762; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=b6Vltd8viCzWqgRL1P5eoxbS5xCxFYSk50A+3pCWiIk=;
-        b=HFriyin2fLn9nF/y0DzHn8wdRY8Ir9sjPvXPds7MzVLXXcxsmGhUwd4CEFmsGjwvys
-         82gSVK/7HFjV1GQBPzeo8NGzOKZg07xvaLO9HIAAnatpi1sbtD9+c1zahZOyjBBmA0fI
-         7UoOvp2rsfq4OM9HLm4m0/8SocEqazs5/xPQAnwK26mGyQyDitqIGDyQti9QQ+E6Bon2
-         YXy4hAZ1ufoIi7apU5o5e8JouoZg5uQVkahhwwYe31pLa6cUe4OxaTJ3RxDF5ad1WHi2
-         v3HEIDVPhBRz5K8XSCttfEDg9M3PNvmEXN3of8QJMXXt1s0RAOcWTXOPTMt43UWrpFrr
-         8SzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725301962; x=1725906762;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b6Vltd8viCzWqgRL1P5eoxbS5xCxFYSk50A+3pCWiIk=;
-        b=TfN3eO79NgTsvR0PNSLNO4h84OGzb2imhD4gd95JUOTASCQXDoHnCRsl8mMO6qQJTC
-         WhWQlGPpRtBaWoBa/CnCWoSBu/jI1sYMGWA7nTXZ61OIsoOz0bdX16dZcsCY5LILttvc
-         86/+cwtYYiZSWv2Jvym9IOrw1fKFvQG5ciSLOcPkcGugZo/l6Tn5DtahmJc5bwb12mUQ
-         KuNHMAah0P8xOVLKFB9RzfDIlck0SQP83E42e+oy4TPtcQcO7IZgdn7RLX2UJpl6IYhk
-         88e+SrvM5zGgDTWHaIcVKGZ6bcCV/qQy65I/lVbnE0ILaHUuX7byA14ALDrVFqdK02Ly
-         elIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKuFbKzdToMBVBb6lPsGJuyFZA4bqrMBmLe91W+ascXPto2/tUKLaCsac+qykt3dows3/MJg6qviq/v2X2@vger.kernel.org, AJvYcCWOV2h1od3CgogiIKRf6fwz8Kl48sHQD0MUnYuU00IHOzDMf/Y/ex5/nnbs7iBflFxXOZvoTKb3pZeo@vger.kernel.org, AJvYcCXE/h//+Ib1YbKFLn7raUdGlZ+/iAmDe+u3omL3DDdGAT1y39K0Ba0OnMFuaCsBRL9Ul2jkv0X7n6BqZFdSVqg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyicNrWX+BCmKjn4G/byr69eXn1M/5s7wY7JSFafKbV61I1ES7o
-	qNXDuuR6//lZOBq8MSPsoscMDBNk9Y9v7228tVmfAvTJ7+2oXzxj
-X-Google-Smtp-Source: AGHT+IEuijIqFI6OQlhAdRImRAPPN07texv3tKxOiUMeIi1SzD5bVxGHWNZ7z/oU6Gc9t12Xhw4Zxw==
-X-Received: by 2002:a05:600c:4f53:b0:426:55a3:71af with SMTP id 5b1f17b1804b1-42c82f6cf51mr28782565e9.33.1725301961742;
-        Mon, 02 Sep 2024 11:32:41 -0700 (PDT)
-Received: from void.void ([141.226.8.198])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6deb43esm146783615e9.7.2024.09.02.11.32.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 11:32:41 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH] docs/mm: fix a typo
-Date: Mon,  2 Sep 2024 21:32:05 +0300
-Message-ID: <20240902183210.2130-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="D6w6EoT2"
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id lAd3stLcybNNslAd3sOnCp; Mon, 02 Sep 2024 19:14:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725297254;
+	bh=dsK29Y8mrgSSPkIHZ+2Q9mnnt52c5HZqPwvsqeoeFw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=D6w6EoT2JPD2gA2xOUrhWPJnv4/1h2HHHrOYD0eP5I1o1kfiOZN5U/8t+jFlscxro
+	 tJkNAP2neZSPL64zcnebyKF0ha3eAJHOmX5GliFcdZP4NZnQQ4R8ELAt+hYr8RGr80
+	 AJuGd+rr/SgvPVoR89744yLAgfqUPloAm0zSEJupJRZVOMJyEFLdBV2PUIC1i6oOA0
+	 EEE43NopSS3q9AfA8tgqIUlmEZpDQeJQkVckDflx6Q3mgLrncEsGhYkXcXSf0USDkk
+	 zkpoP0iD5mMz25yGBZeg5grU1rr7bZexJ332hRkgrg2ZfKwlbsPOyMkrbJoFjijOu0
+	 piIc6snyHarEw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 02 Sep 2024 19:14:14 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <0729c1a1-3d3c-4734-8e1a-6fd722b73e02@wanadoo.fr>
+Date: Mon, 2 Sep 2024 19:14:12 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] scsi: mpt3sas: Remove trailing space after \n
+ newline
+To: Colin Ian King <colin.i.king@gmail.com>,
+ Sathya Prakash <sathya.prakash@broadcom.com>,
+ Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+ Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
+ "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240902143645.309537-1-colin.i.king@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240902143645.309537-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Fix a typo in documentation.
+Le 02/09/2024 à 16:36, Colin Ian King a écrit :
+> There is a extraneous space after a newline in an ioc_info message.
+> Remove it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>   drivers/scsi/mpt3sas/mpt3sas_base.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+> index 9a24f7776d64..ebe4cbbc16e4 100644
+> --- a/drivers/scsi/mpt3sas/mpt3sas_base.c
+> +++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+> @@ -8899,8 +8899,8 @@ _base_check_ioc_facts_changes(struct MPT3SAS_ADAPTER *ioc)
+>   		if (!device_remove_in_progress) {
+>   			ioc_info(ioc,
+>   			    "Unable to allocate the memory for "
+> -			    "device_remove_in_progress of sz: %d\n "
+> -			    , pd_handles_sz);
+> +			    "device_remove_in_progress of sz: %d\n",
 
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- Documentation/mm/hmm.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi,
 
-diff --git a/Documentation/mm/hmm.rst b/Documentation/mm/hmm.rst
-index 0595098a74d9..3dcf1b69e807 100644
---- a/Documentation/mm/hmm.rst
-+++ b/Documentation/mm/hmm.rst
-@@ -405,7 +405,7 @@ can be used to make a memory range inaccessible from userspace.
- 
- This replaces all mappings for pages in the given range with special swap
- entries. Any attempt to access the swap entry results in a fault which is
--resovled by replacing the entry with the original mapping. A driver gets
-+resolved by replacing the entry with the original mapping. A driver gets
- notified that the mapping has been changed by MMU notifiers, after which point
- it will no longer have exclusive access to the page. Exclusive access is
- guaranteed to last until the driver drops the page lock and page reference, at
--- 
-2.46.0
+I think that the 2 parts of the string should be put on the same line.
+
+Another call just a few lines above is already written like that.
+
+CJ
+
+> +			    pd_handles_sz);
+>   			return -ENOMEM;
+>   		}
+>   		memset(device_remove_in_progress +
 
