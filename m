@@ -1,171 +1,95 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C9219E992;
-	Mon,  2 Sep 2024 14:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526CB19F103;
+	Mon,  2 Sep 2024 14:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725286155; cv=none; b=auSHQHbW9lMeLqoI4I6gffyrAsxEh/DmdYSfFT++xKam7RpaQ3wRZxp/uCSGcXvRY8exV5S7sFQ+s7/xnfAe6Ly902cjo/uOZf/lC74SvoIUf0JPcdzTPeycvRl+z+MZn8JGmJQqoETwbR85yX2EAJNdZs+lH8J0YV7jXzOw9no=
+	t=1725286326; cv=none; b=MPBKbbXRQXJ2Hg+6D+H8UZi7zJSt72Ci51GVH4yiF+UbbV585GZtKd4ChW2lTl4OOXc4jVIW2D4mzH3IO6WFNlnur60hablz+P2ZpRKcSYxw8JsobozZ44O79M6Z9KO8DQ/NUtpS+MEzGpuZZ5ZtqP+h1mJDuVu6ZPnnOdrc37s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725286155; c=relaxed/simple;
-	bh=0F/1tTzmeC08x83pDFWJWbgZAtpxfw8k/NcbcoX/BDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QpmLUKR6Rjhxpmuu/j+EmFxthYKAsSG0rYFTfHCIMvsuL61zUpHO7yP3yJdyXLZoPlq6jQYukvRr3kGMneFGtRxbF3p/mz2GlMtqiWcHCdImtirApIdekLT0qecG3aG75sKbp5aUhs3ZKg1zQXoU9UtZLpK6nazV6Y4DI5cIZbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=X8U5Th4E; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xqc0+d6q; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=X8U5Th4E; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xqc0+d6q; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1725286326; c=relaxed/simple;
+	bh=Y3dT1cqEaGxeNcpHnUz7gh7yRKuWdeTj/5wcehnNv6A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=CYn3mwPcYy17x7uozVf/5KJJTOwp8retbQk2FBXF13jtgOzXTEwldLFt8Fe8shv1Ln9ne8s/vqLTcS35jTu1P4ilzpHpPJ8UivwWcn+oF5/cm5B/zJvDXGhGTmsPHZC7ZYvQNYjYSLgp3F+MpHcbv88+WY50gv5ZRG0tWsloakU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NoE6E7dt; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="X8U5Th4E";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xqc0+d6q";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="X8U5Th4E";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xqc0+d6q"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 566201FBB3;
-	Mon,  2 Sep 2024 14:09:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725286152; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6zl525NZI+rdwb8hTQ8OaF32cmelBg9hHtUjXQ5wYcc=;
-	b=X8U5Th4EjpfV1n5yl9ycU/I+YQX8PHZUAtR2FrO+0/ZiWI0NFbQOnmqfKDETIwM8c1woei
-	18h9EyHrKHzcLb4H4oCTlZmwtoIFxJcFKIjCVznfhwvcPFBt1r+bruShFDV1ipX5Oe7vEM
-	Fr0ZDvXAcKWbGF6sVGrWrdt2CwRVC9E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725286152;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6zl525NZI+rdwb8hTQ8OaF32cmelBg9hHtUjXQ5wYcc=;
-	b=Xqc0+d6ql8l+3mka2z8wv4PpOsNeR/LwJ3Qx9NAA0py50Wx3ITi4DG1ysbEGM2rf/P9Key
-	PLn9zhVXG89PtQBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=X8U5Th4E;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Xqc0+d6q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725286152; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6zl525NZI+rdwb8hTQ8OaF32cmelBg9hHtUjXQ5wYcc=;
-	b=X8U5Th4EjpfV1n5yl9ycU/I+YQX8PHZUAtR2FrO+0/ZiWI0NFbQOnmqfKDETIwM8c1woei
-	18h9EyHrKHzcLb4H4oCTlZmwtoIFxJcFKIjCVznfhwvcPFBt1r+bruShFDV1ipX5Oe7vEM
-	Fr0ZDvXAcKWbGF6sVGrWrdt2CwRVC9E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725286152;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6zl525NZI+rdwb8hTQ8OaF32cmelBg9hHtUjXQ5wYcc=;
-	b=Xqc0+d6ql8l+3mka2z8wv4PpOsNeR/LwJ3Qx9NAA0py50Wx3ITi4DG1ysbEGM2rf/P9Key
-	PLn9zhVXG89PtQBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4685313AE0;
-	Mon,  2 Sep 2024 14:09:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hsgxEQjH1WbDLwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 02 Sep 2024 14:09:12 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id BD0A0A0965; Mon,  2 Sep 2024 16:09:11 +0200 (CEST)
-Date: Mon, 2 Sep 2024 16:09:11 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev
-Subject: Re: [PATCH] dax: Remove an unused field in struct dax_operations
-Message-ID: <20240902140911.puhunqx4qg7rqy6b@quack3>
-References: <56b92b722ca0a6fd1387c871a6ec01bcb9bd525e.1725203804.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NoE6E7dt"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c26815e174so639852a12.0;
+        Mon, 02 Sep 2024 07:12:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725286323; x=1725891123; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RptCdAZky21+tAU1YnkwI1FByFYF8uROiRobK4HGMq4=;
+        b=NoE6E7dtXsy56oVOfAKVjeeNYvTR8pC3oe1mRFKP/iCgfeaBcl5mXDvcflZU0WJ1+L
+         cLs5bUYaDWY1oQxE+/cD5WbLy2mCj1AVQ7OUXalKJ0BshKghrZQUJMOgBPmykYd7p3se
+         8EGaqqshME1cySaeRK7I0Xtil8XH0QS1rrN5MXtYHarVu61JCoJXTVeAYiIXBnTaRgZA
+         0+7giRS6EuDOlb02i33NKpfPo/HrbYeK6NDTnEf86w9G2or+i+5+v5kqMfuP0RdSBvI/
+         x6rSbAZvks3RhOdsYoKSbLR4p7Tr79+mz+sCyzHVg3+7cWB1a3OQO+dFl6XyqOqje5YB
+         0m+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725286323; x=1725891123;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RptCdAZky21+tAU1YnkwI1FByFYF8uROiRobK4HGMq4=;
+        b=m0PNCzqyUFVCFFMkBJhz8LtF27QdQVn61iZR5TCX0jC//bp9S08jSSNRGhcsqN7MXv
+         TVcA7ZFELAJJv4iLWyW3VoiME8+9HZC+JYQhHxtvhMjLpYm6RNHdV1iwFe8dQKtVCzy3
+         cpOJ2GQQ504VHHZT917C5DYuAHq6Jaqgta+9iJagtsiYDEy1VERVqJZsrd8MIueNUXJD
+         p3+ZLYdgvttU6q8urjAAva0gvb8KSz04h2RVE6zvGPhmHKY9A1mqaqO0+8ndgMvmWg+V
+         0ZfU7N5qif7JHhpw1PPDopefRExLY0xKmg08jBEW3e74m5PuMum1v6o2gnVyK+XOLPjj
+         Fo+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVUs+Kvuy4gohNPgW3UJUQ45hgGEVgc6b/8A00gXxOEOcuDjVTCGQCd5KVkKymBVQVnEgqZ1rJDSWb0PA==@vger.kernel.org, AJvYcCWlS0/svOCTsdbdvAP0Vq+51IUCRrOWkStu3mMa/bSC10QdyeNBKu3eeHouL+KO5bZJuVrKdhtGm69Xz6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxayVQK91SL5zT/5t3NvkOu+36rw5WX7a7BL/YAMQKKQs48nTJz
+	OuWFyr4gcLte/OqdR87TXPCG6wLZ+GpgxRlME/EyGiLvQ3bWbRj9
+X-Google-Smtp-Source: AGHT+IH8+ym5kCfrw/asOTbITqJyF7SOHJahHtR/KU4AxQeW5WnCSDCJSg5AiZSfLxAdOIT83maKXQ==
+X-Received: by 2002:a17:906:da86:b0:a86:722c:1460 with SMTP id a640c23a62f3a-a89d8782136mr498124666b.18.1725286323328;
+        Mon, 02 Sep 2024 07:12:03 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a1cc8a2d5sm12301266b.28.2024.09.02.07.12.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 07:12:02 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] scsi: zalon: Remove trailing space after \n newline
+Date: Mon,  2 Sep 2024 15:12:02 +0100
+Message-Id: <20240902141202.308632-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <56b92b722ca0a6fd1387c871a6ec01bcb9bd525e.1725203804.git.christophe.jaillet@wanadoo.fr>
-X-Rspamd-Queue-Id: 566201FBB3
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[wanadoo.fr];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sun 01-09-24 17:17:09, Christophe JAILLET wrote:
-> .dax_supported() was apparently removed by commit 7b0800d00dae ("dax:
-> remove dax_capable") on 2021-11.
-> 
-> Remove the now unused function pointer from the struct dax_operations.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+There is a extraneous space after a newline in a dev_printk message,
+remove it. Also fix non-tabbed indentation of the statement.
 
-Looks good. Feel free to add:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/scsi/zalon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
-> Slightly compile tested only, but "git grep dax_supported" now returns
-> nothing.
-> ---
->  include/linux/dax.h | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index 9d3e3327af4c..df41a0017b31 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -27,12 +27,6 @@ struct dax_operations {
->  	 */
->  	long (*direct_access)(struct dax_device *, pgoff_t, long,
->  			enum dax_access_mode, void **, pfn_t *);
-> -	/*
-> -	 * Validate whether this device is usable as an fsdax backing
-> -	 * device.
-> -	 */
-> -	bool (*dax_supported)(struct dax_device *, struct block_device *, int,
-> -			sector_t, sector_t);
->  	/* zero_page_range: required operation. Zero page range   */
->  	int (*zero_page_range)(struct dax_device *, pgoff_t, size_t);
->  	/*
-> -- 
-> 2.46.0
-> 
+diff --git a/drivers/scsi/zalon.c b/drivers/scsi/zalon.c
+index 22d412cab91d..15602ec862e3 100644
+--- a/drivers/scsi/zalon.c
++++ b/drivers/scsi/zalon.c
+@@ -139,7 +139,7 @@ zalon_probe(struct parisc_device *dev)
+ 		return -ENODEV;
+ 
+ 	if (request_irq(dev->irq, ncr53c8xx_intr, IRQF_SHARED, "zalon", host)) {
+-	  dev_printk(KERN_ERR, &dev->dev, "irq problem with %d, detaching\n ",
++		dev_printk(KERN_ERR, &dev->dev, "irq problem with %d, detaching\n",
+ 		     dev->irq);
+ 		goto fail;
+ 	}
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.39.2
+
