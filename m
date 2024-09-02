@@ -1,77 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D60B2570;
-	Mon,  2 Sep 2024 12:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3541210194;
+	Mon,  2 Sep 2024 14:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725281427; cv=none; b=Ardz5khKj7xVSsTsq/5dUQY0TJJpMFvkKhUGeotJHjBrmwD6i99V+YYHPOda+7tA8i8kQFayMFLaD2gTgnDpSv4NHfeXLnFVv4cJsxGHcpt0gZtsJvvS1dm36yGk7qMKMynHHKmWJtmGz1ei/feBP7gwEyMDOSHwWftvlJ84Bmg=
+	t=1725286083; cv=none; b=FMmkBeKttAZKWw/IqVR2v0eo1ppc+9QvuOR2tAiiFVeOp+IHCxydq+xK4rcw7U3AuARRA2EhqERNKWvYNZeGmr1sRGa4YbgK0EuQuShVtDwbJqobyDh6ngaC+1ivRh/lnfiavILEgNhMmU+RLlKjsfiSMW4AtQs80nCxEW50JT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725281427; c=relaxed/simple;
-	bh=gSSyow/y/SlSqbX4VOuxPJjKb9gx+BXqg2I1lVC/NNA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=NZ0J7bisd4fDjdR20tohqJ3+gP8zYbXHkIn67V+2iPCRO+VZWLpP1DipcDJxgwzpFMlTI7X/Eb4Jgccy48OMHTbLNZlBxJr4huyPoepLyLcSab8cLo9MVWobPJaSbc+tPirmYL3q9Jo6t7tfPUXjXBAJzwTQSYuy7f5/VhYEMjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+J4ej3n; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725286083; c=relaxed/simple;
+	bh=aSyUMv+phorKQkVAQmMtTKKipCQUv4QLRusinzzXTMg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=VPRbL4Rpec3QKKXy1Bm8vucpO0OJDDf+Nx91ILAq2phFKBPiNkWO0lZrLF5o1CoSwYJbrODGU2PvKumBKMZyhQ9h69X+yz+H8BSRRJBz3fM6ElmCogwywktxp8PnKU3h1jFPjzKnRLPoDWtmiYXfqIwHd6Y9GxPZcgGg2Xee8fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NDtmVYQE; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+J4ej3n"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D53DC4CEC2;
-	Mon,  2 Sep 2024 12:50:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725281426;
-	bh=gSSyow/y/SlSqbX4VOuxPJjKb9gx+BXqg2I1lVC/NNA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=p+J4ej3nbbuZ6OvlbrZXXA1GuBPG1BIrKoCjvtj+j/Z+8iZ237JM1yYcJX1Rg/nnH
-	 4CxCC4i/Zf2GausECeNH6J92rzJfGQV6PAxaKkTY6E/NCRoM1NsOnHoqcolo6Vc4GA
-	 l18mQLtLoh4XAHz6BYd9Vosq23g9dM+c3x+fKAXyioQiwro6gfhEFrYj2bMqNWDE91
-	 PIKZME1xIrvbBUIqWPCGcT21mtJXIekMXHmQB6dlKEDciuPpPiheM29ObgASOuNov3
-	 moioFZzo1OnSLh1/5me5qvdCPp4HuMxZQjrPDd9TD0yRa6WKPwKNJIFmpRxEEzzkvP
-	 zb1/qZ8Sn5DMw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E223805D82;
-	Mon,  2 Sep 2024 12:50:28 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NDtmVYQE"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f4f505118fso48726981fa.3;
+        Mon, 02 Sep 2024 07:08:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725286080; x=1725890880; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aiC3B7wWel8g1IjOYuF3tkcRLgYjGThJArjLJQX88Ug=;
+        b=NDtmVYQENKLBjNcLscAC59OT0ZdcputRfiNl8k1Uv8fy5V29RKP44QwPOthcsjemuX
+         WVUcIBxMEIITpwzOe/T8uDFXoN+Pk8j3WLd9rcDafhH21UZyIqr7QkoSX8y7pfL10Fny
+         N5a4j1CL/93ppU+GN4jB5m2eYQnKEgGBM0IVCzO4IPSeAMXZl7QT0mx7TVWjd77EVTzS
+         ucArt7rqLugMfRyh6HTC9OZb6UxKJ3s+5pZdKwabqCcwR4jXLKBF7RzNsubB9KCTs1ZI
+         bmnD0h7hDbSMhq/CDpxLIczANV8KEwZnnmd9kScria47OhJYzTnape7jmRo4GhKtyR1L
+         e1dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725286080; x=1725890880;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aiC3B7wWel8g1IjOYuF3tkcRLgYjGThJArjLJQX88Ug=;
+        b=FMcMQ0EJSA81lo8BwHQmTaU8oA21mXyuq4uXXjdZKmKclz5VAVf8zhggEhQT+1gmh9
+         wiKqXeDe8b7ed9/MszQPv/A2C58UP1yqMaufeW29uPtTZrKYazU7vkjgOtiBc1tP68aO
+         3sR6mlJAKoRApFwuWz12AGxAXAlORAMMRz0ooUUGUZeDqajsJnNdsCnMm8uc8HcTf22Y
+         IENy20Jwr0xLP1IzZNNPgnV0VA6NSbbOxZCR0avIqT2+7IVTL7o2+DohjL7v6jII+F6j
+         oTx+y6rjDQZeH9YDZbV+/vYU/IFW/hhsj8Kvk2ScbsCSeTy+PuP9V5J206KgizHkMImf
+         3NJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/nL9xSM8W7HPrY0XnFR47EFmb3m2+lqNnalNVLD6hhdYUuHB3ykg/gjLzpHBkmgY8Pu0iQ43q04JC+6E=@vger.kernel.org, AJvYcCV/1cKs6w6X7VrOLQdFcUc/M1LOJJm8DQa3E1Z/GvLqcyVFUQrT8G1NQ5U/0tBMNq23rH19SlCbqCz5hQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP/AdJh+GkgVs9vFQs9mSOiihXMcyAzzgMZQD77kpFd5jC9uQI
+	/bARbX2H96PTsoSppkstEgP9Puaoiqh35iHuB3C4lHVB2fU0oxxfzmu6WZUn
+X-Google-Smtp-Source: AGHT+IFoj5VV4GIPUolNGR2fXp6lt0IDaKyyQn244yprTyyO8JNuLOnzwjTsIlOH+K2Z1aj6fOdTTw==
+X-Received: by 2002:a05:651c:549:b0:2ef:1d8d:2201 with SMTP id 38308e7fff4ca-2f6265841aemr53419881fa.23.1725286079480;
+        Mon, 02 Sep 2024 07:07:59 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bbd46b60bsm82240025e9.1.2024.09.02.07.07.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 07:07:58 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Tiffany Lin <tiffany.lin@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] media: mediatek: vcodec: Remove trailing space after \n newline
+Date: Mon,  2 Sep 2024 15:07:58 +0100
+Message-Id: <20240902140758.308202-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] igc: Unlock on error in igc_io_resume()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172528142727.3879101.4427744206513284824.git-patchwork-notify@kernel.org>
-Date: Mon, 02 Sep 2024 12:50:27 +0000
-References: <64a982d3-a2f5-4ef7-ad75-61f6bb1fae24@stanley.mountain>
-In-Reply-To: <64a982d3-a2f5-4ef7-ad75-61f6bb1fae24@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: sasha.neftin@intel.com, anthony.l.nguyen@intel.com,
- przemyslaw.kitszel@intel.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
 
-Hello:
+There is a extraneous space after a newline in a mtk_venc_debug message.
+Remove it.
 
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ .../media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, 29 Aug 2024 22:22:45 +0300 you wrote:
-> Call rtnl_unlock() on this error path, before returning.
-> 
-> Fixes: bc23aa949aeb ("igc: Add pcie error handler support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/net/ethernet/intel/igc/igc_main.c | 1 +
->  1 file changed, 1 insertion(+)
-
-Here is the summary with links:
-  - [net] igc: Unlock on error in igc_io_resume()
-    https://git.kernel.org/netdev/net/c/ef4a99a0164e
-
-You are awesome, thank you!
+diff --git a/drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c b/drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c
+index f8145998fcaf..59e56b81d5e0 100644
+--- a/drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c
++++ b/drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c
+@@ -515,7 +515,7 @@ static int h264_encode_frame(struct venc_h264_inst *inst,
+ 	struct venc_frame_info frame_info;
+ 	struct mtk_vcodec_enc_ctx *ctx = inst->ctx;
+ 
+-	mtk_venc_debug(ctx, "frm_cnt = %d\n ", inst->frm_cnt);
++	mtk_venc_debug(ctx, "frm_cnt = %d\n", inst->frm_cnt);
+ 
+ 	if (MTK_ENC_IOVA_IS_34BIT(ctx)) {
+ 		gop_size = inst->vsi_34->config.gop_size;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.39.2
 
