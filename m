@@ -1,81 +1,53 @@
-Received: from msa.smtpout.orange.fr (smtp-84.smtpout.orange.fr [80.12.242.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05B11A3057;
-	Tue,  3 Sep 2024 20:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEB7126BF5;
+	Tue,  3 Sep 2024 21:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725394249; cv=none; b=RLzr5kt1QY3GVyExIrvzWyNeCH4KICbo/yn1+NUyJUkOJ7o+PzZpYhfTpl+9nHCJ1edIvDudi8GbEQbkFplS+HUpKSeBDamcMfLPY+8+PBDmtK2x79bNcGK9KHivi7hdvPjnMWHZrtjvkPsUi3u9XuVJlMwTB1ouu7jKhDWyTNk=
+	t=1725400680; cv=none; b=KSlmbk7O22g+UQ1zjG9Dil4ZujbTczz7FNkNCF3eBRTb1euK2UWWcoLs/lnAPJAhY0+CkfKqxBPrIgUEEAQHMSJANxQnynfcq0soBxZS00Id4bYOwmDWbkexQ4lyXr+zXQ9vTF/k7Lsde7pasR+UHfmP5tNsRIqOc8l3VY5F7mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725394249; c=relaxed/simple;
-	bh=QqaaHpNpRoVdiDpL5M+17nve1cS60O+MVRVWdYynLzs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a6k9RIUXcSf73UKAcwWoZHIYFbxNiR9It7zifYseWCjmbrLeBu/6oUy4kBwqjsDwURVETdLnxcpIh+2DylrWxakEHpT1H2ls/jMP6eDgR+tsONc+w/RIeZ1fdqt436mdTL3F9XX+/8DhfBufv/07ohbVxZyd9hYqVM5C9ivsito=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=i700OaBU; arc=none smtp.client-ip=80.12.242.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="i700OaBU"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id lZrKsfDJa41DAlZrKsk3Um; Tue, 03 Sep 2024 22:10:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725394238;
-	bh=HXvGRblJckpJgnRTWzq4VwyDlvBY3FPkUJEamxYaz6U=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=i700OaBUGhNTb2q5K8bBJtWF8rCwthe/VF17hVK69t+bKm3SseOZE1MTqP5ecSrSI
-	 xr8xl9g9WCKI1GbuCUBC0QLZupTOzB5svRYvwUcrR16KYub+nxvkK8i2AYcR3uBYC4
-	 8ApDmCPWaA6nUDgjNHnqxdQ50Cq/vj8D0aDBk/VdxhUjY/G1L4lGSqwxjXgFA1bCWo
-	 LjSdwT914Wmtg2q7FmAOVSLA3V1H8iBzjJ6VKG7kYm1mdQj5zJWP1zvt4/DpG3f0sh
-	 cyGl7H6XjbI1r/8o720QmwnD4uA09mOvZPOwzfIl7PQeJnSsXzf891790xRfxSMYxt
-	 8Ujjn7e7ThRPw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 03 Sep 2024 22:10:38 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-wireless@vger.kernel.org
-Subject: [PATCH] wifi: rsi: Remove an unused field in struct rsi_debugfs
-Date: Tue,  3 Sep 2024 22:10:32 +0200
-Message-ID: <15b0609d7b1569ec6c500a175caef4c9189f33e2.1725394207.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725400680; c=relaxed/simple;
+	bh=Q86S46dRZelh06st+psy3jtzAJ3A1R462K9GLQJ2uUA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nGxfh5j+DDryHrYM65NM63XxhR2YKpulbdcBiOaAAStebPRZ6J3FMKsyesghNb3QXfUQsIizCASifszGhwlN29vBKFKjkuxal51IR8JQU1BzmWxsEC/wuNXx/HBvUYfo5VHCaRSzhvBQQTCiD//9H1QUeclApqPDuS4u68W0hoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79D69C4CEC4;
+	Tue,  3 Sep 2024 21:58:00 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id 3BDBF10604AF; Tue, 03 Sep 2024 23:57:58 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Sebastian Reichel <sre@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ linux-pm@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240828093447.271503-1-colin.i.king@gmail.com>
+References: <20240828093447.271503-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] power: supply: axp20x_usb_power: Fix spelling
+ mistake "reqested" -> "requested"
+Message-Id: <172540067823.972525.7995943081797942437.b4-ty@collabora.com>
+Date: Tue, 03 Sep 2024 23:57:58 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-dfs_get_ops has apparently never been used since its introduction by
-commit dad0d04fa7ba ("rsi: Add RS9113 wireless driver") in 2014-03.
 
-More-over struct rsi_dbg_ops is not defined.
+On Wed, 28 Aug 2024 10:34:47 +0100, Colin Ian King wrote:
+> There is a spelling mistake in a dev_warn message. Fix it.
+> 
+> 
 
-Remove the unused field from struct rsi_debugfs.
+Applied, thanks!
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
----
- drivers/net/wireless/rsi/rsi_debugfs.h | 1 -
- 1 file changed, 1 deletion(-)
+[1/1] power: supply: axp20x_usb_power: Fix spelling mistake "reqested" -> "requested"
+      commit: 57dfd4455bd270d1efebf950c2f722977b09c57a
 
-diff --git a/drivers/net/wireless/rsi/rsi_debugfs.h b/drivers/net/wireless/rsi/rsi_debugfs.h
-index a6a28640ad40..bbc1200dbb62 100644
---- a/drivers/net/wireless/rsi/rsi_debugfs.h
-+++ b/drivers/net/wireless/rsi/rsi_debugfs.h
-@@ -39,7 +39,6 @@ struct rsi_dbg_files {
- 
- struct rsi_debugfs {
- 	struct dentry *subdir;
--	struct rsi_dbg_ops *dfs_get_ops;
- 	struct dentry *rsi_files[MAX_DEBUGFS_ENTRIES];
- };
- int rsi_init_dbgfs(struct rsi_hw *adapter);
+Best regards,
 -- 
-2.46.0
+Sebastian Reichel <sebastian.reichel@collabora.com>
 
