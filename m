@@ -1,53 +1,37 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEB7126BF5;
-	Tue,  3 Sep 2024 21:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id F35AB83A09
+	for <kernel-janitors@vger.kernel.org>; Wed,  4 Sep 2024 06:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725400680; cv=none; b=KSlmbk7O22g+UQ1zjG9Dil4ZujbTczz7FNkNCF3eBRTb1euK2UWWcoLs/lnAPJAhY0+CkfKqxBPrIgUEEAQHMSJANxQnynfcq0soBxZS00Id4bYOwmDWbkexQ4lyXr+zXQ9vTF/k7Lsde7pasR+UHfmP5tNsRIqOc8l3VY5F7mY=
+	t=1725430828; cv=none; b=LCfG/26IgrCeI1ho4jKmUaZmF6omhVm/EGZvEcevYrDFjQxOpVExALAOaNsD1RXjLD8+/7+0h3gQuteYtmJehRrRzXVYJQZsE6ittXCtcP6WrRvpkLtFmf0Fq8DAw4+ohzWwgBe/Dea85aWwRPEGWsUNym6AtK3oHw1PglsJRbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725400680; c=relaxed/simple;
-	bh=Q86S46dRZelh06st+psy3jtzAJ3A1R462K9GLQJ2uUA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nGxfh5j+DDryHrYM65NM63XxhR2YKpulbdcBiOaAAStebPRZ6J3FMKsyesghNb3QXfUQsIizCASifszGhwlN29vBKFKjkuxal51IR8JQU1BzmWxsEC/wuNXx/HBvUYfo5VHCaRSzhvBQQTCiD//9H1QUeclApqPDuS4u68W0hoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79D69C4CEC4;
-	Tue,  3 Sep 2024 21:58:00 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id 3BDBF10604AF; Tue, 03 Sep 2024 23:57:58 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
- linux-pm@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240828093447.271503-1-colin.i.king@gmail.com>
-References: <20240828093447.271503-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] power: supply: axp20x_usb_power: Fix spelling
- mistake "reqested" -> "requested"
-Message-Id: <172540067823.972525.7995943081797942437.b4-ty@collabora.com>
-Date: Tue, 03 Sep 2024 23:57:58 +0200
+	s=arc-20240116; t=1725430828; c=relaxed/simple;
+	bh=fy929IoTYQhMMlC/XyibXOpsB8K6AOi104HNogjsQbk=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=sdyJvePlat81msV7aLiXT/jDJbYrzOvpEz0Uc+C2X21jkXIRr/rhw6IXpNnIDACQGLsFobfexqRL+V6f7RLYVF94d9d5rJExxHDz1CDP8rzRiQXoGSR5+9BJUb72336UZcVxDu1zz7oKNEi9bI5ghjj1vrsg+hYOD763uBAr1PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.101] (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 99D386047A8DC
+	for <kernel-janitors@vger.kernel.org>; Wed,  4 Sep 2024 14:20:17 +0800 (CST)
+Message-ID: <a0294eec-723d-a564-9df3-9945ea2c6050@nfschina.com>
+Date: Wed, 4 Sep 2024 14:20:17 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Content-Language: en-US
+To: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+Subject: ping
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
 
-
-On Wed, 28 Aug 2024 10:34:47 +0100, Colin Ian King wrote:
-> There is a spelling mistake in a dev_warn message. Fix it.
-> 
-> 
-
-Applied, thanks!
-
-[1/1] power: supply: axp20x_usb_power: Fix spelling mistake "reqested" -> "requested"
-      commit: 57dfd4455bd270d1efebf950c2f722977b09c57a
-
-Best regards,
--- 
-Sebastian Reichel <sebastian.reichel@collabora.com>
+ping test
 
