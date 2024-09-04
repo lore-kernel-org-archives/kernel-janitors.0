@@ -1,69 +1,69 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558221474A2
-	for <kernel-janitors@vger.kernel.org>; Wed,  4 Sep 2024 08:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEB214F9FD
+	for <kernel-janitors@vger.kernel.org>; Wed,  4 Sep 2024 08:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725436912; cv=none; b=BgmhiU7ZPf6deObED7ilXsHNf6PlTf7jZjS10bbqLJlv5ymbgdfKo8PvWbFDgzNDB42ZHIlz9maw4ek7RkFonWK2XcGEZgnSIcQBTHMfrbO4nneqFRinqsbqP5U415zOCwFqq/DZjoZty8tOs89uZnNxwlDl6aDxgtPL8O++sjM=
+	t=1725436971; cv=none; b=Rc+up2IUQQRSDhgYFkGTL56uSXnAhkkDKEoBaWBlsl4HPp0uKC5oNJUhRBrZtNNNiANiUzNY8DOSxtYhDUTPNCduWG3dPmaXeQod0mvVx93O+5HjTAmuLcLm1E5i6tlXeQB5nXToiM0nwsdchguK+PCLgfjYoysIqKEo44I4RMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725436912; c=relaxed/simple;
-	bh=APWfeT1fxJI1indcIyDuFdWS6Mb3IjNuk4/9AjF6lNA=;
+	s=arc-20240116; t=1725436971; c=relaxed/simple;
+	bh=dDcdKq7ppSYN4Yv4rxqWl4NK1gtCIBnTvMkiH0xJG6A=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZO+gNhB0wn4RsDqRJzb2qqS66DF6uSp61BjHEke1ekcTJwFysRz7u9+ceAhK/X73VjTwM8Vxnfa1rU9zCBi6mij0XxYRX87yk910I47OR2TPdEG4kBD4AxqWZN57TEJw1T3UGpaoDHsant+x66wtIZzUBvnr8PRyXGaWml1XQ1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fZ/qnxgL; arc=none smtp.client-ip=209.85.221.52
+	 Content-Disposition; b=X0e4TuvT0CQF04ZmWHaGMgv/LZ4uZEfcsz2+j1JwO2SkkxE9t1UM6NFsodENmQI1ppWq8VmMDZHOwZga86iTFNIXXjIfhFqunsWigGizAP7IORzfGl319o8sYkuFmQoR8Mi1qd0dfC+3gPOTJJMuU+RNg3m5j/gcUiGuIE+EDa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g0AVtAK1; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fZ/qnxgL"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-374b25263a3so2720878f8f.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 04 Sep 2024 01:01:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g0AVtAK1"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42bb7298bdeso69787095e9.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 04 Sep 2024 01:02:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725436908; x=1726041708; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1725436967; x=1726041767; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=RPGRyZgor+ICRd/PoCXOyw7qG7eZQ2SIyPr9G8EXgT8=;
-        b=fZ/qnxgLmIC3DDPXOkHdLjzREWRCFbxawCxqngmrzQxkoVtCskLB8Ti1mK7gwpJgir
-         vCG3HbRUFyMCOOzwrMJzpJCu8lj2/sxKsGWKtCrhHU/tZFqvbVdy2FuMd6V6wBJOby6b
-         PA0zk9IufhXeKc9TCaBG0nbh+HsFky1BY93TwjeICQ1YnA3zrLxnn3FgXJgYjki5fZ0s
-         tt4+v5e9K8PZez6NxeUyP8KltfDCmtskJ45THsC2QLGVfJL4tdcmp8T+o9mhhdETef8Q
-         Mc9iyyXoAMwSMfylt3aXt/E0uGR5vYjN4ArybFxxpREo8BIu9c4EpQzACFgx7tV/gG0B
-         V3sQ==
+        bh=dbsiPwHzdU7yQfw0bVfDw6SqwSWkWnRdJycvBly0WUw=;
+        b=g0AVtAK1iEnn/iWInE2LZounTfgvg9QgLlTJuXSKcm26scsd5c8wi9KrrKt5KrMYR+
+         4fnRw1ho9tHknXL9GxqneyaRhymcKXOMFraZdfhylBXFglJyfBA7MOarnj3UnE2B/13d
+         GaR36EVG7o6WKB/wK0F0EAMT1Pxh0DB++qoeHwvo83/l8Yy08yJcAir5OoZ1kDoIm1wW
+         PVH1iKMPJfbm0h5VlQINaQATRYm626DILTgOiV6JVNtEvVmPupqvOfqKOIeRUNqTzNj7
+         5xwP44BwZEy97mB783w60rzohzAz6l6MhZTamW8vpxSyDo5xqSAftQinyI05hcDuDg4d
+         ztpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725436908; x=1726041708;
+        d=1e100.net; s=20230601; t=1725436967; x=1726041767;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RPGRyZgor+ICRd/PoCXOyw7qG7eZQ2SIyPr9G8EXgT8=;
-        b=liCOpQqN5k6VmUucIxKDXl9bfbtqnzTrkMarXpKsGUGAtTaLzS3YSugLtBL0A/4K1+
-         oxQAcZGZmYav0tomLBjjDK3stAxi9gQhSQj06Rj1JvUUMa2G+V5707zg19IM4FyO5zzJ
-         h6vqxdjilemAzzkTAM37hQTrJbyLWt/ZF5GnUrcBBMLCZRLUV3rmiZG0Xcw93b82Zi/q
-         UOM9dBpfAiG+MsgVcC68zGKITCuxfmTuUPbQjLClAslFe0nuVBV5QXLroZBVHbNNfAff
-         6busG1jvQeGoKkz2wquRstXN3UN6cRb1PCG96u4K73dufeu+Lx6y9itOCknZEJeCmAM8
-         v4kg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3QYzFEAAEeMpBtUr8yOWQ3lBr5C6YhHKBOU8DjbhLVhdwgPx7UDZPO+Z5NwVo8YXbfgpOe0Daao+mhdVLWDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu3HFQIiGCFyuvx7jqdPheQw8jqzAMkViM93TvFy4+oCGbKDLc
-	sZGK2JLelWYVnh6DRvMkcctfGMyMEIO8mdbdzeVKu2vNVlGKFW5DO/kupSXkirA=
-X-Google-Smtp-Source: AGHT+IHKnu53nThpZGWQqPEljZp+OwL7w/w0X/6FdYop1bPaA9q53NpXOxJ4zAW3vWCLnYcSEXQUDw==
-X-Received: by 2002:a05:6000:144e:b0:374:d2a3:9806 with SMTP id ffacd0b85a97d-374d2a3989cmr5576698f8f.2.1725436908416;
-        Wed, 04 Sep 2024 01:01:48 -0700 (PDT)
+        bh=dbsiPwHzdU7yQfw0bVfDw6SqwSWkWnRdJycvBly0WUw=;
+        b=TlAdtdya3/uDK8ULBZea1cUfPT705X6b00mTqRjck+boKuHqnJk9dJ0pRBX/VBcrjQ
+         b5ErUd5QC0VBt6UoRY/JASTQk/WGylIgevsjMbGgLNik8U+QBKw3FNDwtTHJwt2+XLPu
+         23oRMZb4KngHRwL4hWnvzXRyBGQL27Qafrr+iBB2Nqu9PLNqtunbFvGE6ErXZ4IlbzDh
+         J+OBMEz+0nkkl4VbAQZ+2iwE8ZQyB5kRVvNBmRySg9p56vR/G0Y+IuLYHQyNUVU6HHJT
+         8/Vy3AKOdEPe1YBu8uD5oE0Vxhzl2bnA4aP3ZrT/AK/grjzgBslmyzviwhASYynyPV2H
+         rLQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxWofVKZrXIlXEror5mT+2QQNFnxg86LQMFGusFmy87K0z616JiwZZbxicYJZi95tbOzRtGuAt6rJQSPH4KuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYiksMcdGMznlopC/Z8TxXpFYAmIE0EYsyyJtiF5QHx5+G4zi2
+	A+aBSBKeuZITlmWWmV2T4trjUsb7uIiSOPybP+TTtPt9+t/2CSPZfChY0nueeUs=
+X-Google-Smtp-Source: AGHT+IGyDGx5cm2clgCM+58D1DQI6ScWGOORu/UwO/wHkk24NWcrYuEi0RVx30LWqkM6S3wJfZbhMA==
+X-Received: by 2002:a05:600c:4512:b0:426:5e8e:aa48 with SMTP id 5b1f17b1804b1-42bb01c1ff9mr187146885e9.22.1725436967102;
+        Wed, 04 Sep 2024 01:02:47 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c4059811sm10059317f8f.4.2024.09.04.01.01.47
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374b9859486sm12993928f8f.111.2024.09.04.01.02.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 01:01:47 -0700 (PDT)
-Date: Wed, 4 Sep 2024 11:01:43 +0300
+        Wed, 04 Sep 2024 01:02:46 -0700 (PDT)
+Date: Wed, 4 Sep 2024 11:02:43 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jiadong Zhu <Jiadong.Zhu@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>, Jack Xiao <Jack.Xiao@amd.com>,
-	Hawking Zhang <Hawking.Zhang@amd.com>,
-	Yifan Zhang <yifan1.zhang@amd.com>, shaoyunl <shaoyun.liu@amd.com>,
-	Sunil Khatri <sunil.khatri@amd.com>, Tim Huang <Tim.Huang@amd.com>,
-	chongli2 <chongli2@amd.com>, amd-gfx@lists.freedesktop.org,
+To: Nate Watterson <nwatterson@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Krishna Reddy <vdumpa@nvidia.com>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Nicolin Chen <nicolinc@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/amdgpu/mes11: Indent an if statment
-Message-ID: <4152e10c-2ec5-4ac3-be47-c97fcafdb35f@stanley.mountain>
+Subject: [PATCH next] iommu/tegra241-cmdqv: Fix ioremap() error handling in
+ probe()
+Message-ID: <5a6c1e9a-0724-41b1-86d4-36335d3768ea@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,26 +74,35 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Indent the "break" statement one more tab.
+The ioremap() function doesn't return error pointers, it returns NULL
+on error so update the error handling.  Also just return directly
+instead of calling iounmap() on the NULL pointer.  Calling
+iounmap(NULL) doesn't cause a problem on ARM but on other architectures
+it can trigger a warning so it'a bad habbit.
 
+Fixes: 918eb5c856f6 ("iommu/arm-smmu-v3: Add in-kernel support for NVIDIA Tegra241 (Grace) CMDQV")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/amd/amdgpu/mes_v11_0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c b/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
-index 0f055d1b1da6..ee91ff9e52a2 100644
---- a/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
-@@ -415,7 +415,7 @@ static int mes_v11_0_reset_queue_mmio(struct amdgpu_mes *mes, uint32_t queue_typ
- 		/* wait till dequeue take effects */
- 		for (i = 0; i < adev->usec_timeout; i++) {
- 			if (!(RREG32_SOC15(GC, 0, regCP_HQD_ACTIVE) & 1))
--			break;
-+				break;
- 			udelay(1);
- 		}
- 		if (i >= adev->usec_timeout) {
+diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+index 03fd13c21dcc..240b54192177 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
++++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+@@ -772,9 +772,9 @@ __tegra241_cmdqv_probe(struct arm_smmu_device *smmu, struct resource *res,
+ 	static_assert(offsetof(struct tegra241_cmdqv, smmu) == 0);
+ 
+ 	base = ioremap(res->start, resource_size(res));
+-	if (IS_ERR(base)) {
+-		dev_err(smmu->dev, "failed to ioremap: %ld\n", PTR_ERR(base));
+-		goto iounmap;
++	if (!base) {
++		dev_err(smmu->dev, "failed to ioremap\n");
++		return NULL;
+ 	}
+ 
+ 	regval = readl(base + TEGRA241_CMDQV_CONFIG);
 -- 
 2.45.2
 
