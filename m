@@ -1,83 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D9D1DFE09;
-	Wed,  4 Sep 2024 16:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id F2DBA2746A;
+	Thu,  5 Sep 2024 05:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725466363; cv=none; b=Dp8L04ILl7TlFik3G4e1SMEXMeMdTw4vodE7uCXjFHBckKSWBLk7Py/Cfev2qlVLlTbnOcWgz9pgAZOl8apsH8whjlIeGXFTtBdpkWRM11engzjeRnQx5lwOt+pV8ABl3P1SIklCMWlymvsmcxH+wqfZiPBnC2k9vlLbmNKpxGU=
+	t=1725512596; cv=none; b=H8PUYWBqDg7dQ31egHkj83X6JM5xYXJVZHiFgM3DiqkqcKesUcr/jQcCQi2sGtiqj/QYadXDfjTyIJf4Jm2EuNrR4F+p70ubtGRwrFR1iXJkT0fYGiayRSYqDJJiIffIti8RlXpi65lAqSYRR0gKI1eM/dA0s5n+fusWGkELuW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725466363; c=relaxed/simple;
-	bh=ccD051nw8bhJzyVq5/F/tF57fRYGPu80Rt8YQCVY858=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XCUY5+Zrbb/JFUSE7N+eHtZZZhcrZuK/ptGX6Oq4butUag9GsIkWYl4JM/WOlIjpvyNxA/nK4AZQ0fWeCuOQJw9951f0j2zo5Fq+RXu9kIs38zy86AJNAPLsvquh1R7L72efizfKgO336yz4taBous7cxkiisiLatk2cwCd9kV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ohAkgLCP; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ohAkgLCP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A33C1C4CEC2;
-	Wed,  4 Sep 2024 16:12:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725466362;
-	bh=ccD051nw8bhJzyVq5/F/tF57fRYGPu80Rt8YQCVY858=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ohAkgLCPdyXQsjQLek+04BD/vW5L5JZ1vWz5/GMvv9gBGXsZI4wUyU6Hp/RfpDsB5
-	 oqi7Mg/NT0rDI3qwhhdbY0An1dGTTx8MD3ykbwKHoRs3VM+JOdxWHskChey/tujphb
-	 3pHjAQfER2Ty65QBjaOu9zfvJopJ4FnKkHHhrMvg2ISBEFzXZisaDm388SKuFu1Qgm
-	 v+j2CvepZI20PKgtfljPp6mbwHOnagbQ03FOYWGEt8yRkwnXL8jUvIO8THHniDgP0o
-	 Qmk8mhnGcMmDYSlAd6cN8Ou9kNGcUpIONu3ukBQvMWsMIhbEGuzoguNhgTLlB6Xj8i
-	 MKSYdyhqUQOKA==
-From: Will Deacon <will@kernel.org>
-To: Nate Watterson <nwatterson@nvidia.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Krishna Reddy <vdumpa@nvidia.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev,
+	s=arc-20240116; t=1725512596; c=relaxed/simple;
+	bh=1OVdmWxQnf2gL69JNspl8eWwRpgkMv2erIHv+Q/JQ7A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U/uc7O3BEFvWmyYfil/VLrOg81Jbu/UZYdvADWrkncn5usGUEAw0cWzMi0LJA2KDAhOZONpkbNjftqAWqiJ0OC6teseoSb5ifk6stB/bZHlvkZmkZUoNbJM/KjyTR6WrTC1Ds8JrcP8eebAwZAceEJxLgesDuZY1JM8h5WzWI5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 03187604FCB3F;
+	Thu,  5 Sep 2024 13:02:53 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: njavali@marvell.com,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: Su Hui <suhui@nfschina.com>,
+	JBottomley@Parallels.com,
+	saurav.kashyap@qlogic.com,
+	atul.deshmukh@qlogic.com,
+	linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] iommu/tegra241-cmdqv: Fix ioremap() error handling in probe()
-Date: Wed,  4 Sep 2024 17:12:32 +0100
-Message-Id: <172546457078.2664706.4987719467063191375.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <5a6c1e9a-0724-41b1-86d4-36335d3768ea@stanley.mountain>
-References: <5a6c1e9a-0724-41b1-86d4-36335d3768ea@stanley.mountain>
+Subject: [PATCH] scsi: qla2xxx: avoid possible garbage in qla8044_rd_reg_indirect()
+Date: Thu,  5 Sep 2024 13:02:28 +0800
+Message-Id: <20240905050226.1959592-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 04 Sep 2024 11:02:43 +0300, Dan Carpenter wrote:
-> The ioremap() function doesn't return error pointers, it returns NULL
-> on error so update the error handling.  Also just return directly
-> instead of calling iounmap() on the NULL pointer.  Calling
-> iounmap(NULL) doesn't cause a problem on ARM but on other architectures
-> it can trigger a warning so it'a bad habbit.
-> 
-> 
-> [...]
+Clang static checker (scan-build) warning:
+drivers/scsi/qla2xxx/qla_nx2.c:line 2542, column 16:
+Assigned value is garbage or undefined.
 
-Applied to will (for-joerg/arm-smmu/updates), thanks!
+In qla8044_minidump_process_l1cache(), there is a garbage value
+problem as follows.
 
-[1/1] iommu/tegra241-cmdqv: Fix ioremap() error handling in probe()
-      https://git.kernel.org/will/c/086a3c40ebd0
+'r_value' is garbage when qla8044_rd_reg_indirect() failed, so
+'*data_ptr++ = r_value' assigned  garbage value to 'data_ptr'.
+There are many others examples like this which using
+qla8044_rd_reg_indirect() but not checking the return value.
+When qla8044_rd_reg_indirect() failed, let 'r_value = 0' to avoid these
+garbage values.
 
-Cheers,
+Fixes: 7ec0effd30bb ("[SCSI] qla2xxx: Add support for ISP8044.")
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ drivers/scsi/qla2xxx/qla_nx2.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_nx2.c b/drivers/scsi/qla2xxx/qla_nx2.c
+index 41ff6fbdb933..97fd1c7833b4 100644
+--- a/drivers/scsi/qla2xxx/qla_nx2.c
++++ b/drivers/scsi/qla2xxx/qla_nx2.c
+@@ -92,11 +92,13 @@ qla8044_rd_reg_indirect(scsi_qla_host_t *vha, uint32_t addr, uint32_t *data)
+ 	struct qla_hw_data *ha = vha->hw;
+ 
+ 	ret_val = qla8044_set_win_base(vha, addr);
+-	if (!ret_val)
++	if (!ret_val) {
+ 		*data = qla8044_rd_reg(ha, QLA8044_WILDCARD);
+-	else
++	} else {
++		*data = 0;
+ 		ql_log(ql_log_warn, vha, 0xb088,
+ 		    "%s: failed read of addr 0x%x!\n", __func__, addr);
++	}
+ 	return ret_val;
+ }
+ 
 -- 
-Will
+2.30.2
 
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
