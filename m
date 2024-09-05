@@ -1,64 +1,64 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCE1198852
-	for <kernel-janitors@vger.kernel.org>; Thu,  5 Sep 2024 13:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3C819CD19
+	for <kernel-janitors@vger.kernel.org>; Thu,  5 Sep 2024 13:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725542223; cv=none; b=ohQ/IzxxdcDxj1O4wx09/2uWHe/UbeavinOQn2W/v0RE9ol0uXOiZkqWMHSI6PLnPOqRuJQWYZ1lqJJu1yG/2AAqbKGEhqR7ge/mo9UtY2Q9mtykI+GB//ugsfQ+HVO7tncPveNOJHJp9uar+g7kTslYuFeKSaHO4EPH65YYeZE=
+	t=1725542245; cv=none; b=XodvxvRK3xlqv2/GpfNX4MPGiyQYP9TglpVcqHHUFqh/KIW9C8OqdkTBAPyu3YyEp2iriOVYRdDvTP/gAE/A9itu7zuUZhqwOdfCVlOJJ+WC8XAgwMFee07xULqsEdcaohdvztgddJi4ybAATCnNXygQmfo1nLsNYL/r2LLtWns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725542223; c=relaxed/simple;
-	bh=BMTo3carnvYp9GhWjQhnE96UE0W8/j+fbBiWuyJ/RUQ=;
+	s=arc-20240116; t=1725542245; c=relaxed/simple;
+	bh=7WOKCry+PgcK2CgYU9uF3wTclhygWLEcTw/JlspvEpI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ehfLbNd0cbXFrM8MWbIX/UhPSTLudCwZFMfyXaD1WMrPS2bJpPuZ7v1xzbJJL516b/mgdqNLZuaUsSd3kd5jM2DVAqCE0Q/BUhJXzhmB2vS62e16Jt7waCvFAPxBIctaFhfg7N8wJbac5vjUL0dClPTAF30ZCScYVW2YauJ5uOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fbf53t1H; arc=none smtp.client-ip=209.85.221.49
+	 Content-Disposition; b=ZEo2KKDN3vkr9ysmGQgyO7kqF8qUuiAXIscUkis9K6QkbWVgKoN8qewCUhWwkpvNww+Hl5iWukqq2s+XAMQ9EG8tCLjcWIQEPQnKTwEZ3tAObJ2A8JggVODhzgj3bmKQFidxvtLQ4nMbGWZXI5dmMiBMIGOZufl+s2NTyNkbj7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fM3KtwMX; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fbf53t1H"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-374b9761eecso471137f8f.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 05 Sep 2024 06:17:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fM3KtwMX"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-374c7e64b60so423916f8f.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 05 Sep 2024 06:17:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725542220; x=1726147020; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1725542242; x=1726147042; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=AVGZO5DUGSRAZiLVSjLJKdfhQDqbVUzzhoobR/BWTM0=;
-        b=fbf53t1H2Z5RqfcjQ+SP6pkMw3AYFU3cecY8Ix8tlDv+mlyUS1HcqX2LYR3Acxy5ov
-         f2DSATaC8W+7myNjIV16bIKUoPoLrkVdzO9RlJvHkqopvoPC7zWf8QQqjy34EhP06f+4
-         0jVQ0IvehHxS4d6Bn99GqjixXdFE4LUKEC21mmLgYQUmTmQNASIQZRH8eiYOAebLGBGz
-         yZh9wvl8CHoGYE5Cj/DmCsnivQ1oO1PEDw1W+TfuQsg6NdUlEc5yeybVRzwAs3Xynt46
-         95lrW3N8XCvPaz2OFKqwDAYGa78YfCKTyi/ckeugHZdEdVqhFgpKMmRJGKtJFoEcWEfm
-         ae6g==
+        bh=drlaC6b9qjiLFP3rq1kjthnVypsuaHWfHNQNM9Rok0I=;
+        b=fM3KtwMXl1nprdeeYyOhb051UViv1zsOWwpKc5mfqb3yyEdp8mf0LIH+lOh+Vploaf
+         RisRbUbtplP1uyTouigwD9iWw/NRtRT2Jf6/yJBHG6BshcUBtWEhlv/WT2lhrzUFhDLw
+         vz1h6h4aGcdfbiWKU4afhmKWXvJtqnsVrgLDtN+5PJWzlWdpVn8BdOLSo1ezbWeqiDv2
+         +Nlsf4vgjAQmEbBwb8iVzezbiOYXCTLDykS5LHUPNYfqvaoQpmxovxK++bY6boVKtJo6
+         /A2Zh3+SkGcOMLvMf9W2vSbZjNQgU7IrN7PHwFVAH6/QrcUXVcFxkj6nu9ne3aEbjN9l
+         bEjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725542220; x=1726147020;
+        d=1e100.net; s=20230601; t=1725542242; x=1726147042;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AVGZO5DUGSRAZiLVSjLJKdfhQDqbVUzzhoobR/BWTM0=;
-        b=mOhzlV9FkzNe0XDN++NABTgbnywC+mp4l4lvoKKHDwfk68wi2awIkTv2svOiO006Mp
-         BFhbGDBuj8p7tuClR0yd0Rcv3A19sK/tUwFgYkNDo/NCyhbXwyXuagPMoj0OURuoXX7Z
-         N7cDyJnCU/Yb8yzaZ+huQoLO5fjtF4SAamjPBwdIl90yKMbncvVQiVERhiGUHuo1NSVD
-         nKQhkh9GlAu9fzotZ5adQ+zU3VrHvEMlSQQQsvjeabhygSXQBDu7UI6WGM88TZtO2uQt
-         sWvSxMZIRiSi5+bC9OzSaYCJKQVtYap8MWqwPWvOFahZnz2KedAMkf4ilaucCYphCkZm
-         6NZw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/WfwYCXo8n8riGksJ6nFeVUnX/xB/zQy9SJ5rYnHrJmkdPTU/9EHA/SX64lEmHRu9qQYWnZDvEfNAWCZ1qus=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH+LzK/aHhjvx5E9kgxnqrR4BvwKDmoJoX6Qdz8DMOgOQsDqjm
-	0uwq5QETQ4K/cgSz94MJLPO3WhZdo9BMeYGdlKagIbVpepjI3c23VxzBLCL0SwE=
-X-Google-Smtp-Source: AGHT+IHXGHeVl08sm0U4IEIbIKLtRMyu+iDC3lyWmyaA7RnL33Vci6SlP3CfCB7hLVvFD9z0PpmXjA==
-X-Received: by 2002:a5d:590d:0:b0:367:8383:6305 with SMTP id ffacd0b85a97d-374bcff3aaamr11078324f8f.55.1725542219822;
-        Thu, 05 Sep 2024 06:16:59 -0700 (PDT)
+        bh=drlaC6b9qjiLFP3rq1kjthnVypsuaHWfHNQNM9Rok0I=;
+        b=cxVmy5vZDGzAwaelGU85FAJcs54XOFhCJehj8HY+ixASBVfYZz+5yxywb7Va2ZrN5c
+         /HK8uBNmugYybvS7A2R65smJ7u5q1SxATvZqzVkcYA3YHSdNbhR21VbrVMEz7wIv4lQn
+         z9Y09eANGVVA9obxS7JSC8f/dfWgHp06nFxT+qWRAkUJ2wW7N2a5AYfRcVEb93UOvnqJ
+         7229HrW8igffj6xO1/blvjeoTAWBrFb2yVw92azPu5sITR5dwhpZrCL+3CISPMj4Ri/X
+         d0uiyoYscFFtLu+7+FcmpTAfUxqiW/xEoap+qnlttQ0RXTvv05r/DEBrXfAIlZT0wIUj
+         iPeg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZh9rkVvPbrU6cjI+azzmSjrsriB3QALZeSHIFYq74hdNlLuJmotyg9CGXIOnttwPNxUfDWQE03u2tmXd3P/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9MgPHxm6rBPrpIJOOwM0p22dnloVRRq0Q5LfEblL9CSTHijEd
+	D4GZ2+yv0Ff1zqSevHM5fjlauZUVSX/ATLk2tw14huXeqxPc6jkZrrr8G8tVkf0=
+X-Google-Smtp-Source: AGHT+IEWDXdlgjsXwSq7CPnIA9hri5eaktnWflPdUTktLMLuV7xyR0shsUMVkxH5ljve0mKWgllfjA==
+X-Received: by 2002:adf:e84a:0:b0:371:8c61:577c with SMTP id ffacd0b85a97d-374ecc8f32cmr7813347f8f.26.1725542241841;
+        Thu, 05 Sep 2024 06:17:21 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee4ac81sm19250718f8f.14.2024.09.05.06.16.58
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749eea60e2sm19275925f8f.62.2024.09.05.06.17.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 06:16:59 -0700 (PDT)
-Date: Thu, 5 Sep 2024 16:16:53 +0300
+        Thu, 05 Sep 2024 06:17:21 -0700 (PDT)
+Date: Thu, 5 Sep 2024 16:17:06 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: Sumit Garg <sumit.garg@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] platform: cznic: turris-omnia-mcu: Fix error check in
- omnia_mcu_register_trng()
-Message-ID: <2b10f2e1-82d1-4f33-92c4-e0cb28b9edac@stanley.mountain>
+Subject: [PATCH next] optee: Fix a NULL vs IS_ERR() check
+Message-ID: <f8c12aed-b5d1-4522-bf95-622b8569706d@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -69,35 +69,28 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The gpiod_to_irq() function never returns zero.  It returns negative
-error codes or a positive IRQ number.  Update the checking to check
-for negatives.
+The tee_shm_get_va() function never returns NULL, it returns error
+pointers.  Update the check to match.
 
-Fixes: 41bb142a4028 ("platform: cznic: turris-omnia-mcu: Add support for MCU provided TRNG")
+Fixes: f0c8431568ee ("optee: probe RPMB device using RPMB subsystem")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-For more information about the history of IRQ return values see my blog:
-https://staticthinking.wordpress.com/2023/08/07/writing-a-check-for-zero-irq-error-codes/
-The gpiod_to_irq() function was modified to not return zero in 2016.
+ drivers/tee/optee/rpc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/platform/cznic/turris-omnia-mcu-trng.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/platform/cznic/turris-omnia-mcu-trng.c b/drivers/platform/cznic/turris-omnia-mcu-trng.c
-index ad953fb3c37a..9a1d9292dc9a 100644
---- a/drivers/platform/cznic/turris-omnia-mcu-trng.c
-+++ b/drivers/platform/cznic/turris-omnia-mcu-trng.c
-@@ -70,8 +70,8 @@ int omnia_mcu_register_trng(struct omnia_mcu *mcu)
- 
- 	irq_idx = omnia_int_to_gpio_idx[__bf_shf(OMNIA_INT_TRNG)];
- 	irq = gpiod_to_irq(gpio_device_get_desc(mcu->gc.gpiodev, irq_idx));
--	if (!irq)
--		return dev_err_probe(dev, -ENXIO, "Cannot get TRNG IRQ\n");
-+	if (irq < 0)
-+		return dev_err_probe(dev, irq, "Cannot get TRNG IRQ\n");
- 
- 	/*
- 	 * If someone else cleared the TRNG interrupt but did not read the
+diff --git a/drivers/tee/optee/rpc.c b/drivers/tee/optee/rpc.c
+index a4b49fd1d46d..ebbbd42b0e3e 100644
+--- a/drivers/tee/optee/rpc.c
++++ b/drivers/tee/optee/rpc.c
+@@ -332,7 +332,7 @@ static void handle_rpc_func_rpmb_probe_next(struct tee_context *ctx,
+ 	}
+ 	buf = tee_shm_get_va(params[1].u.memref.shm,
+ 			     params[1].u.memref.shm_offs);
+-	if (!buf) {
++	if (IS_ERR(buf)) {
+ 		arg->ret = TEEC_ERROR_BAD_PARAMETERS;
+ 		return;
+ 	}
 -- 
 2.45.2
 
