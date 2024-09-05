@@ -1,57 +1,58 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D45617C9B;
-	Thu,  5 Sep 2024 14:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD234AEF5;
+	Thu,  5 Sep 2024 16:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725546730; cv=none; b=bE4rfM/EmFR+HQNkLdxmxGot95RSrvASJ16NpPGaFlewb5/vACR+pvCJuU2rtivSAJg7kQGgRGissHXBhMP9jtfTxu6PCdVQpmS0nYxEwVYqWJYApHsF0C4uuE1zVMgUxfiwjhxMI97K9TLV5gj6B8/pP+4945E3/bjks5ZiV0Y=
+	t=1725552466; cv=none; b=WHtFCJxS3LoNj/C/w9YlkYqvk/Yxe8ljpJgQNEU6Cge4StZzSrZTDsGL4zlpErwej3ucHQPI1TP4nc4Wuq2xtTIofXE7TqQ/TlZ2kiF22r5p7lI08MXBzMpIg3G2ptIl8+vV4QrTHKnBgUqX7lTHpZbeFscGxOoJnAvQ2vf37tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725546730; c=relaxed/simple;
-	bh=55OjlP3iUWYoGk6en4lD65WOZ0/EzVYL/xp/dr2dwxk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rauG/roE2beEcM5vY4iYbKRL6MVWHeda3Mx3CiUt7L9q2iFGSyvo18YcdQNtCM+gHBmXR0Os8YFuuesrNeMQy/36OOU4YUqiIdHEWeBY2FDodEBvB17BLsAarLQbdFlJOfnPBS8fwIgQEZmLAbjfxRVsewHD3hStWD9PxmBVRXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A028C4CEC5;
-	Thu,  5 Sep 2024 14:32:09 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id 2436510604BA; Thu, 05 Sep 2024 16:32:07 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <9c2f76e7-5679-473b-9b9c-e11b492b96ac@stanley.mountain>
-References: <9c2f76e7-5679-473b-9b9c-e11b492b96ac@stanley.mountain>
-Subject: Re: [PATCH next] power: supply: fix a double free on error in
- probe()
-Message-Id: <172554672712.1074347.2449586209838548923.b4-ty@collabora.com>
-Date: Thu, 05 Sep 2024 16:32:07 +0200
+	s=arc-20240116; t=1725552466; c=relaxed/simple;
+	bh=gE4cIYVvpMUsnGYIYOONEV53n8Erqn9pZiaYicry22U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=njSqdYL0ZF4scP88YAZjfTFNvzdDa7CPwHtuBb7LrQmegZcr5BInVzt6JSa78Mooskq3AtGgH5q+I+S15KxwSyYWjw+5QGPH6mfJ3PjnwVU0NwOh2AxuDOVj8zf7Zm5zg3DWVfT6jyAbLMoxlJyDltMt2ch+TCIF8geC1EJv89c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P33b3tU5; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P33b3tU5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 288BEC4CEC5;
+	Thu,  5 Sep 2024 16:07:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725552465;
+	bh=gE4cIYVvpMUsnGYIYOONEV53n8Erqn9pZiaYicry22U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P33b3tU5RBL0T3XS7IDCEgY4bHXCPjLsYKFCaUiEtTQMZpHE/tS+/bQOr6whA9za5
+	 DwTR7WoHwGDFNvvObYoJ5YypB7evESL2cx3uti2JjLK8i/uax+kRqq+kKXQSvOWzm7
+	 KrGtBFxX0Pxz9Y6dR4GOvQmpWnhELjalRgAfG655eKqJn0p1UG4s4oBBoCIQD6ry4F
+	 LT+oCMe1zDUvRjrAUFjQJnOfS/tfNEo9JhpagHpZBuJhzjOOCI8lrmEndWMuLnPYwY
+	 qpkDsJ6giNcZgDXWxSocpPJexMd4Sxx+h7GwLCHgMXjZkiA9j0KSuc1U9CsXbkcYAH
+	 TzKKczFJz7QjA==
+Date: Thu, 5 Sep 2024 18:07:41 +0200
+From: Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform: cznic: turris-omnia-mcu: Fix error check in
+ omnia_mcu_register_trng()
+Message-ID: <csrrgt4lzrzgdbanq64lhgxklhfcn62f4lkdxfkwaoxxoexre2@33ccc3g4wbmy>
+References: <2b10f2e1-82d1-4f33-92c4-e0cb28b9edac@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2b10f2e1-82d1-4f33-92c4-e0cb28b9edac@stanley.mountain>
 
-
-On Thu, 05 Sep 2024 16:28:59 +0300, Dan Carpenter wrote:
-> In this code, if devm_add_action_or_reset() fails, it will call
-> max1720x_unregister_ancillary() which in turn calls
-> i2c_unregister_device().  Thus the call to i2c_unregister_device() on the
-> following line is not required and is a double unregister.  Delete it.
+On Thu, Sep 05, 2024 at 04:16:53PM +0300, Dan Carpenter wrote:
+> The gpiod_to_irq() function never returns zero.  It returns negative
+> error codes or a positive IRQ number.  Update the checking to check
+> for negatives.
 > 
-> 
+> Fixes: 41bb142a4028 ("platform: cznic: turris-omnia-mcu: Add support for MCU provided TRNG")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Applied, thanks!
-
-[1/1] power: supply: fix a double free on error in probe()
-      commit: 48f703d6a3d7cf345fe9c6209ea3703fe9024628
-
-Best regards,
--- 
-Sebastian Reichel <sebastian.reichel@collabora.com>
-
+Reviewed-by: Marek Behún <kabel@kernel.org>
