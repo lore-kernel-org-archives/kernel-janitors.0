@@ -1,77 +1,74 @@
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25445154C0D;
-	Thu,  5 Sep 2024 19:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+Received: from ybb.ne.jp (unknown [188.127.240.97])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EFE47F5F
+	for <kernel-janitors@vger.kernel.org>; Fri,  6 Sep 2024 05:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.127.240.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725564106; cv=none; b=fmWd5HYNloninMTPTSLKzMcfSfY+N6uPeY+zpQrcL/jMPGpAzcm3NZxOQNXesAjgkcn9dRwzUky91R+NPVs3/6UsrXNYuszIg5EUE/MKGQL4R2eg4QMb3boewfYGUIgszyM+4sJeQLN3ny8MOqm6aa0pSkeLvSABqu/YRO7BLjg=
+	t=1725599703; cv=none; b=LE9AJrLRhCTz1sxdXEWmIMeMsyAXQpsY3ZQT5/0ro6j2aecSrHy+YMKrtamrXl1drnqIjs3SGyrJUvcVJB7rj2rwwI2miGPZfVmltDeWoBUQDUR6LdaayMBGMpzOcOASmZK6ouNnKgae2RbJwPXinh4xkMb0YN9Y7OyHO+Tx1KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725564106; c=relaxed/simple;
-	bh=Zt80gJU/E8JxJfEAs4fZfFSGot7J84Ph3ZlW7fe7r6c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rlbE4FFZXABwP9GNX12cXWfeoNz3PrdcWOF3HB3E57iUdnR/X9lxDELTpFbb/VqAD6Rb3H5y8sSF58gW+rypGnEIC6kA4zxt073g4NB0W4LvXz/d9sH7ph8SLBNssYmm8UeJBJHWvIoJpPbtrMGMJudteTJTtVpnbYCvjJr6ScQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=XuETjLHE; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="XuETjLHE"
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3BB5842B29
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1725564104; bh=uagHCIsyAYAmFT/BSQs+jNz+k84PCsehN66qqYLVdCI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=XuETjLHEeWRQ64a+XV7bXheW6gFnEOf3EkGW34ycSkRMNTB5D8DJANn/r3IxhBtz7
-	 o39HP6eUQ7f3gDZ5Z/Jx3NPjI5iMv5yfdl5X94SGlG5qTW4LmJrzdfqAWkkq98WkMg
-	 fNqbXfUd8DDi0Rzorgj9qAtDZ3aV6gm4hFJRnnPTrHaZsAxmJafxbDA6Tdx7sj7rKo
-	 2D7Qn5Q92y3GvXVmTVoNTjo1QwmkqkTBk6EBeXn/euxgMpLg8ieJ2tjUD+HLzRsfqp
-	 rZRd9Su3N3yNNzSsHuLx3N8NZR4Z1RkvQLSJ2U44YZ+S/VG9dzjIRN3dZvgaHFHdll
-	 xnHKCv0du+/Iw==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 3BB5842B29;
-	Thu,  5 Sep 2024 19:21:44 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Andrew Kreimer <algonell@gmail.com>, =?utf-8?B?SsOpcsO0bWU=?= Glisse
- <jglisse@redhat.com>
-Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew
- Kreimer <algonell@gmail.com>
-Subject: Re: [PATCH] docs/mm: fix a typo
-In-Reply-To: <20240902183210.2130-1-algonell@gmail.com>
-References: <20240902183210.2130-1-algonell@gmail.com>
-Date: Thu, 05 Sep 2024 13:21:43 -0600
-Message-ID: <87y145hpo8.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1725599703; c=relaxed/simple;
+	bh=nLrJSIn4BUI240a3JGE5wEqrpi3zQYWZqRjv0FweO+I=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Vp2NykrgaUua/tz76Q3MYRBJbRHKX7rM6r8ZvIBr5q5nmSR93FSasqMrBC2AigwYsUIKmopU1acOIzFfZI7EksF/XhOg8anXEgvjmmybvJ4pOU2xqRscgDFtJIGCFgn+pYaQDPby/96/2tP8hpm8SAiV2aAnQD4O64l9UW0lEvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=frontier.com; spf=fail smtp.mailfrom=frontier.com; arc=none smtp.client-ip=188.127.240.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=frontier.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=frontier.com
+Received: from 198-23-219-245-host.colocrossing.com (localhost [IPv6:::1])
+	by ybb.ne.jp (Postfix) with ESMTP id 4C0FBA72C7F
+	for <kernel-janitors@vger.kernel.org>; Fri,  6 Sep 2024 08:08:55 +0300 (MSK)
+Reply-To: croitoru@vaasile.com
+From: dandsmiller@frontier.com
+To: kernel-janitors@vger.kernel.org
+Subject: Business  Proposal
+Date: 5 Sep 2024 22:08:54 -0700
+Message-ID: <20240905220853.57FD490AB08280C3@frontier.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Andrew Kreimer <algonell@gmail.com> writes:
 
-> Fix a typo in documentation.
->
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-> ---
->  Documentation/mm/hmm.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/mm/hmm.rst b/Documentation/mm/hmm.rst
-> index 0595098a74d9..3dcf1b69e807 100644
-> --- a/Documentation/mm/hmm.rst
-> +++ b/Documentation/mm/hmm.rst
-> @@ -405,7 +405,7 @@ can be used to make a memory range inaccessible from userspace.
->  
->  This replaces all mappings for pages in the given range with special swap
->  entries. Any attempt to access the swap entry results in a fault which is
-> -resovled by replacing the entry with the original mapping. A driver gets
-> +resolved by replacing the entry with the original mapping. A driver gets
->  notified that the mapping has been changed by MMU notifiers, after which point
+Good day.
 
-Applied, thanks.
+I am seeking a reliable and experienced partner to manage our=20
+real estate investments in your country. The ideal partner will=20
+possess:
 
-jon
+- In-depth knowledge of the local real estate market
+- Proven track record in property management and development
+- Strong network and connections in the industry
+- Ability to navigate regulatory requirements
+- Transparency, integrity, and a commitment to delivering results
+
+Responsibilities:
+
+The partner will be responsible for:
+
+- Sourcing and evaluating investment opportunities
+- Conducting due diligence and risk assessments
+- Managing property acquisition, development, and sales
+- Ensuring compliance with local laws and regulations
+- Providing regular updates and performance reports
+
+Benefits:
+
+By partnering with us, you will benefit from:
+
+- Access to substantial investment capital
+- Opportunity to collaborate with a reputable UK-based company
+- Shared success and returns on investment.
+
+I look forward to the possibility of working together and=20
+achieving mutual success in the real estate market.
+
+If you are interested in exploring this partnership opportunity,=20
+I would be delighted to schedule a call or meeting to discuss=20
+further.
+
+
+
+Best regards
+Croitoru Vasile.
