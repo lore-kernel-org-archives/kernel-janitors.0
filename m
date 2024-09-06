@@ -1,156 +1,70 @@
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA25328DB;
-	Fri,  6 Sep 2024 07:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEC0145B11;
+	Fri,  6 Sep 2024 07:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725606054; cv=none; b=gHyFmGtF5OAPjooWtPRfOpi5aP/4eJlE4+3Og/iAPxOu4BYqNLcuM3xUpFhf+UqzxW9dAUJLxbAQ4TWzIJbtyRC/JxbO+QfTmxJw4l4OPYG6zXEWryhfTCAnDzdShJwu0oFL+KkqL8EXufY7Fsi+wMHi6BoG3b+3kZs040lslvM=
+	t=1725606635; cv=none; b=ufTwIQ6w77BTyfhQJ5JBejWgArHHphW9ulSxJNMYaC01mk+wTbfAGXeRTu2JjSpTXmiwYlDLWxWXyIKUBIinz0mnl2tCof5gv4bNOTkCth0k97Z1qllEyDoSkFAyS5skVfH1Yh2YXDxVl7CmO0MmAeRflATHE3PH5El6aFuIbSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725606054; c=relaxed/simple;
-	bh=a0IpK29gcRaxiGzYOqvJwcXihlwviNea9FYnuHFI7gc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jOYprlEsBRxkmilLz0GRnCnQfxM6jnVoe7HYbuaeqIE5phmO9TRXVyRRCqYVt+ZTGHdHxeEC4Ble9gEWeZqs6nw+em1zffPrrvPmpPspRrDSVElVAVqGDA1dGGtsNex3jUtMcANs3frEtYD61i0vpJkw7fBDNoeVs8TK1WQJEOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/uRYJmt; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1725606635; c=relaxed/simple;
+	bh=+F4Q3l1w/86+9+zNV+gh0ba/kqzPI1JMkDFat9cgZeA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EcLHeH5VgFziOL5LvWx0WakfXY9sUZU4/OCUvMmsJQEAstABbUt+Lb8N9Tzp9pwh5wuQ7H7sV0kJGSok6yfgGQfGQbiN9WLKVb85jAd2XHslvKOm9gFJJVeyyStOrc8h6iph9Uw6Ppnd9jMgKViAweYFY5i20Rs2gr2K2erng/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=gRI5uGcB; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/uRYJmt"
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-49be3d534ffso49470137.0;
-        Fri, 06 Sep 2024 00:00:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725606052; x=1726210852; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m3Ez8XYl6eL7ErMydWXe0O3lPOV2uCplEY60l4avJJ4=;
-        b=Z/uRYJmtkz142oOnZp2sd3uC3Y4fxN81ZcPaeG2KHZIup3kRZJXwFw6p3fjYJUKAjv
-         n5zDIVpVCD2dg7bZ4bqOBN5LMjOOClRsEuyOhiLxBZ/SLZbzHN1F+mUn1KsAVjmLPBpM
-         292p3CWG9xd4WUoRPoOEB2prA4Q2Cxa4T4iePC/ZcOJpPegefgF0ghRfziaMJ2FvJc1+
-         1OSrxjVL8Zab6pR7BJbLRhwvbmcGRjcxQjC3GeZo7EznpJqZAEH1EVBecTokB1LP8CVe
-         u3borzCwCdLrNpE+oycn8Hh7oeYXonOJBQx/zgzP/qsD6VrMkp1xRXjWu3z6XM2QEKDJ
-         bL2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725606052; x=1726210852;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m3Ez8XYl6eL7ErMydWXe0O3lPOV2uCplEY60l4avJJ4=;
-        b=sPGvkHfrAuuT3+7VTBSoTjtlQyn76pFz08sWUNmxT/K0ijyVYJ4GMAuBRwvcK7O4SQ
-         zDRtA5m8fq3JM/I/0WxVolEGp1HX0b7HkrN+zUkkjLZVU4QO1HJWh8W7McsxJcev19tn
-         NO8oyMXpeIWxXtFgh7iXkg/8OLt+skrynvF8HkYtZIMqVwzC4La8bS+8wJSbSfx9gXp9
-         QMZ0PI6cux997x7pnnp+ZEWe7YqXvqM4A/XzlSH8BJCwnztgdq6Omj4jfEo1OQigskce
-         bjJAIxKfoanSdrECrOLbSTvV6oBVn4v2fA1Ljzp/irYX2E/4ATm9gQcW2HbS1tlei2G+
-         NPFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrsjQUt36o1sQW0t0qFlay4KGh3HqoWfKoSIfH3zYOizSVgQ7MLpNcIvuCsxMrHYQR5njD0NFORiru6p4Q@vger.kernel.org, AJvYcCVSqcC7KmsdBOgNFqY3h5weI7cS9YR+BKaC5t1KyDoMYa6ej33s3kC1Bzan/5caZfAFtCNw8M2tFrnRMkT/00U=@vger.kernel.org, AJvYcCW87F9mj+V0fLVyIw/4EYKOktv1w3LdCXdayNzu5C6CrODsu9rVJIQLYW2BMz0yIvl8OqWfBMZAqgrCVkUYWgj+g1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/tETGBPjfUdEFLbKHq7lb0c+fMMgJRd+gd7X4Xp1xuWxqmV4U
-	2c7QJSjCi9mGPEGWpbqqKdR/iyG55vRyt8/yMwd4uYKTIXBRMZMI4LqE2j0ufDOQAsYR97IKXnT
-	GLeXDLnumd/pwjrJ+xU7hdQSGxB0=
-X-Google-Smtp-Source: AGHT+IGdsNQUsmbUOUI+orNngMgxpsTQdp0snOH8gbX5DALySfY8923JRytGglN6HweIwISXhyNuq567FwNajE1v7us=
-X-Received: by 2002:a05:6102:1625:b0:49b:dd30:d168 with SMTP id
- ada2fe7eead31-49bde130e32mr1997788137.2.1725606051772; Fri, 06 Sep 2024
- 00:00:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="gRI5uGcB"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=0M9gSM0LGbvHFT8vxtke9782uGKuGhEYIqzbKdzgri4=; b=gRI5uGcBx4fVzvwiW6sQJROUY6
+	il0kWYDO7ADj8LrCF+fGhd1N4/Ja+OoPGhIb/35z6TjUepq9gRTiqKaT1o7nJsTiUXUdeEjZOG/Kr
+	EJC9XzjsWwon2CCffknR3GdHT+Ekukj+KWw0DChCPcPZ2IXlAFG3GWn4tfc879LhGtrTSpBbOSGGp
+	2MwpopqNsfvzcumal2042v3qvcj7M3fgS3Q4c7zu6i3tS0MIpLuvwDevItfzkR0eX4ASPPtl1E6z1
+	T6+8SmIRcmTQwE5MoM9CLoJghQqd+08QqmtIjAchrWYlMFYyZlRFFH0VTa6LRLiuUjkOq1fGG9BW+
+	5ILlMljA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1smSx3-000Wai-0S;
+	Fri, 06 Sep 2024 15:10:27 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 06 Sep 2024 15:10:26 +0800
+Date: Fri, 6 Sep 2024 15:10:26 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] crypto: hisilicon/sec - Remove trailing space
+ after \n newline
+Message-ID: <Ztqq4lRe7crT7mA2@gondor.apana.org.au>
+References: <20240901160430.143143-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <7c4a1ca4525a1d1429c9f16ccfc6d8bf80fc2b63.1720942618.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <7c4a1ca4525a1d1429c9f16ccfc6d8bf80fc2b63.1720942618.git.christophe.jaillet@wanadoo.fr>
-From: Inki Dae <daeinki@gmail.com>
-Date: Fri, 6 Sep 2024 16:00:15 +0900
-Message-ID: <CAAQKjZPN742hd=BJHmS+ATOwpR+AdhyhF4W0J8vWAonMKfPXhg@mail.gmail.com>
-Subject: Re: [PATCH] drm/exynos: Constify struct exynos_drm_ipp_funcs
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240901160430.143143-1-colin.i.king@gmail.com>
 
-Hi Christophe JAILLET,
-
-2024=EB=85=84 7=EC=9B=94 14=EC=9D=BC (=EC=9D=BC) =EC=98=A4=ED=9B=84 4:37, C=
-hristophe JAILLET
-<christophe.jaillet@wanadoo.fr>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> 'struct exynos_drm_ipp_funcs' are not modified in these drivers.
->
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
->
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> =3D=3D=3D=3D=3D=3D
->    text    data     bss     dec     hex filename
->   20446    1746      16   22208    56c0 drivers/gpu/drm/exynos/exynos_drm=
-_fimc.o
->
-> After:
-> =3D=3D=3D=3D=3D
->    text    data     bss     dec     hex filename
->   20446    1714      16   22176    56a0 drivers/gpu/drm/exynos/exynos_drm=
-_fimc.o
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Applied. Thank for contribution,
-Inki Dae
-
+On Sun, Sep 01, 2024 at 05:04:30PM +0100, Colin Ian King wrote:
+> There is a extraneous space after a newline in a dev_err message.
+> Remove it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
-> Compile tested-only.
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fimc.c   | 2 +-
->  drivers/gpu/drm/exynos/exynos_drm_gsc.c    | 2 +-
->  drivers/gpu/drm/exynos/exynos_drm_scaler.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/e=
-xynos/exynos_drm_fimc.c
-> index 142184c8c3bc..4d7ea65b7dd8 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> @@ -1125,7 +1125,7 @@ static void fimc_abort(struct exynos_drm_ipp *ipp,
->         }
->  }
->
-> -static struct exynos_drm_ipp_funcs ipp_funcs =3D {
-> +static const struct exynos_drm_ipp_funcs ipp_funcs =3D {
->         .commit =3D fimc_commit,
->         .abort =3D fimc_abort,
->  };
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/ex=
-ynos/exynos_drm_gsc.c
-> index 1b111e2c3347..d80b0d1eb734 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> @@ -1162,7 +1162,7 @@ static void gsc_abort(struct exynos_drm_ipp *ipp,
->         }
->  }
->
-> -static struct exynos_drm_ipp_funcs ipp_funcs =3D {
-> +static const struct exynos_drm_ipp_funcs ipp_funcs =3D {
->         .commit =3D gsc_commit,
->         .abort =3D gsc_abort,
->  };
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm=
-/exynos/exynos_drm_scaler.c
-> index a9d469896824..2788105ac780 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-> @@ -403,7 +403,7 @@ static int scaler_commit(struct exynos_drm_ipp *ipp,
->         return 0;
->  }
->
-> -static struct exynos_drm_ipp_funcs ipp_funcs =3D {
-> +static const struct exynos_drm_ipp_funcs ipp_funcs =3D {
->         .commit =3D scaler_commit,
->  };
->
-> --
-> 2.45.2
->
->
+>  drivers/crypto/hisilicon/sec/sec_drv.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
