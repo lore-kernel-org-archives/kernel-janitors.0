@@ -1,49 +1,51 @@
-Received: from msa.smtpout.orange.fr (out-71.smtpout.orange.fr [193.252.22.71])
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2821B85DA;
-	Fri,  6 Sep 2024 20:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A448414C5B3;
+	Fri,  6 Sep 2024 20:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725654109; cv=none; b=k3zslRhm4MJKA5u/s+Wel+b6nd8JVmkiIOnHUnmzsjjxhb8gIQgX8XIZiQz8MedqudV4prvmT6EL9XQZMb3r4Y8KCNmffbXrIPNz6k+0+oVPKxpHknAB+ag65FrFHdXkfZYKEhau5UzIY8pRgXTdyxIPe0dpFg0a9gvopzdFDsg=
+	t=1725654691; cv=none; b=usQUzbHtb2agv/wpU+3ydd3eTyqPprrgFuELaPceA2JwbzJq2IAJy0eAMFZ05+31I3yNwiXeP8AiEWOARxBgL9V4yjSMddbMi18dDjLa0JfeYdQ2VdjUd9UQCe9XbPmwq5QYqF2jsgYA14f/UejhmXCwLjx0XLtWMcMbCflJZtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725654109; c=relaxed/simple;
-	bh=uC0ydIMdg0ZCO0gSWKl7+jBSAf+ViD9hpKkjnf6nImY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OmHy0UUle3twUBruyHxmo1uCKotD8IIk/SevTfVfKMPOGdNsklBSJ0m+t34wXevvAK7wSZgnBAoetE4Ro0wGWaq6dCGxF67h5r85fr+/yh96m6lKy62/cBDqwGcocyFrt8y9IZSYo5PFAepLMToz9DVnqScMAzf9hW6Um35LVn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=A1MGBYcr; arc=none smtp.client-ip=193.252.22.71
+	s=arc-20240116; t=1725654691; c=relaxed/simple;
+	bh=5OSiCUxRsvtARcou56wXI3cDIiAdAe6GQc7hKq0JdXo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qqbfVMIXEHgM5EhTeQeqFQRBTLWmqvCF7ZkXc2Ro4rKCSg50GWsVblzodVDxuAX2b0pqdCIBPdVt1cZ+fAkHSJQQjBaS0CvdrR00ZJrrE0rjEqZazmnl2xuBNZFg1RjNdswb7FH9zEOkPeWbJWFacRtRLo0hA7YXLYfe8yRSAbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UKRALhwG; arc=none smtp.client-ip=80.12.242.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="A1MGBYcr"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UKRALhwG"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id mfJxsDep9rSO8mfJxsbsNN; Fri, 06 Sep 2024 22:12:43 +0200
+	id mf5asaRIOjDE7mf5asHg0n; Fri, 06 Sep 2024 21:57:54 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725653563;
-	bh=n4hPyoyvbAXaAbLake+2SOrhOz+bTth/ETkGDgZ9rEA=;
+	s=t20230301; t=1725652674;
+	bh=xYR3kPiysp0DAu3hHTCdnVZ7J5OM+i5euxXxIpGksJ4=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=A1MGBYcr1k8zA8EJkd4bnZpyPA51yt6GW/VgUIyA2P9R1tcXViFWYB+3mfZuDtuY2
-	 6Qho8tDCd+o+EHSDiwFf8zL+mfEWd87Z52lJJkWP0vFyza1XzDMgrN4foL0PX7Qn1X
-	 t43zhB1pC1KCgJfrCh+9kMHK58HROXBtAY4uGAjwlt+dLYynXr/1LmsX3ykLFiCYSH
-	 SZpYoDIlgdpejdfYKghpVQi7kQ8qt49kHIb0pagvc6XByUu+HI3tRW7w88NIVTiUrq
-	 1lVygnVj3Icg6XaIHhM1YdCvobM2jNiCYHtWviPEn93t6nwxrX+Sq7v1eOSTX8cUre
-	 IuIdoU6iHIv7A==
+	b=UKRALhwGsYTuYigKVxKoo0JZ69+DDjBvnn6qfJcKI3njUqRapI3Rh51o8+diJHjuE
+	 MhgHF9HQnh1G5UdkHXe+Ijsp4HwEphBpO9KK5OVMJFcd1p0m1Pev8lY98FjLHnsM6f
+	 14VKjI/kFW9y/n/yw4te7mKEm3UoVH3om1zmYXAzE5RkqmUOR1DrZpSaEDSD0NMSMp
+	 eejwB1pfMfRrESQd9sqWBRs0d/TIwnau3gBlyaEzdY2962egpIlD+AW0VPde039ebG
+	 vvN3mh6SEx9MoGRI1HzwpCnk8TLGWyHyaCnwki82Fl13TdSFCPotd6vRaQjmVzARAG
+	 bK5cf5AD8YdUA==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 06 Sep 2024 22:12:43 +0200
+X-ME-Date: Fri, 06 Sep 2024 21:57:54 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Beleswar Padhi <b-padhi@ti.com>,
-	Andrew Davis <afd@ti.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-remoteproc@vger.kernel.org
-Subject: [PATCH] remoteproc: k3-dsp: Fix an error handling path in max77686_rtc_probe()
-Date: Fri,  6 Sep 2024 22:12:38 +0200
-Message-ID: <9485e127a00419c76cf13dbccf4874af395ef6ba.1725653543.git.christophe.jaillet@wanadoo.fr>
+	linux-renesas-soc@vger.kernel.org,
+	linux-phy@lists.infradead.org
+Subject: [PATCH] phy: renesas: rcar-gen3-usb2: Fix an error handling path in rcar_gen3_phy_usb2_probe()
+Date: Fri,  6 Sep 2024 21:57:47 +0200
+Message-ID: <fc9f7b444f0ca645411868992bbe16514aeccfed.1725652654.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -53,59 +55,58 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If an error occurs after the k3_dsp_rproc_request_mbox() call,
-mbox_free_channel() must be called, as already done in the remove function.
+If an error occurs after the rcar_gen3_phy_usb2_init_bus(),
+reset_control_assert() must be called, as already done in the remove
+function.
 
-Instead of adding an error handling path in the probe and changing all
-error handling in the function, add a new devm_add_action_or_reset() and
-simplify the .remove() function.
-
-Fixes: ea1d6fb5b571 ("remoteproc: k3-dsp: Acquire mailbox handle during probe routine")
+Fixes: 4eae16375357 ("phy: renesas: rcar-gen3-usb2: Add support to initialize the bus")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Compile tested only
----
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index 8be3f631c192..f29780de37a5 100644
---- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -610,6 +610,13 @@ static void k3_dsp_release_tsp(void *data)
- 	ti_sci_proc_release(tsp);
- }
- 
-+static void k3_dsp_free_channel(void *data)
-+{
-+	struct k3_dsp_rproc *kproc = data;
-+
-+	mbox_free_channel(kproc->mbox);
-+}
-+
- static int k3_dsp_rproc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -649,6 +656,10 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	ret = devm_add_action_or_reset(dev, k3_dsp_free_channel, rproc);
-+	if (ret)
-+		return ret;
-+
- 	kproc->ti_sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
- 	if (IS_ERR(kproc->ti_sci))
- 		return dev_err_probe(dev, PTR_ERR(kproc->ti_sci),
-@@ -741,8 +752,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
- 		if (ret)
- 			dev_err(dev, "failed to detach proc (%pe)\n", ERR_PTR(ret));
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 58e123305152..8577056491de 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -770,7 +770,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 		if (IS_ERR(channel->rphys[i].phy)) {
+ 			dev_err(dev, "Failed to create USB2 PHY\n");
+ 			ret = PTR_ERR(channel->rphys[i].phy);
+-			goto error;
++			goto err_control_assert;
+ 		}
+ 		channel->rphys[i].ch = channel;
+ 		channel->rphys[i].int_enable_bits = rcar_gen3_int_enable[i];
+@@ -784,7 +784,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 	if (IS_ERR(channel->vbus)) {
+ 		if (PTR_ERR(channel->vbus) == -EPROBE_DEFER) {
+ 			ret = PTR_ERR(channel->vbus);
+-			goto error;
++			goto err_control_assert;
+ 		}
+ 		channel->vbus = NULL;
  	}
--
--	mbox_free_channel(kproc->mbox);
- }
+@@ -793,15 +793,17 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 	if (IS_ERR(provider)) {
+ 		dev_err(dev, "Failed to register PHY provider\n");
+ 		ret = PTR_ERR(provider);
+-		goto error;
++		goto err_control_assert;
+ 	} else if (channel->is_otg_channel) {
+ 		ret = device_create_file(dev, &dev_attr_role);
+ 		if (ret < 0)
+-			goto error;
++			goto err_control_assert;
+ 	}
  
- static const struct k3_dsp_mem_data c66_mems[] = {
+ 	return 0;
+ 
++err_control_assert:
++	reset_control_assert(channel->rstc);
+ error:
+ 	pm_runtime_disable(dev);
+ 
 -- 
 2.46.0
 
