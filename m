@@ -1,47 +1,52 @@
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7928537F5;
-	Sat,  7 Sep 2024 06:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AFF1384BF;
+	Sat,  7 Sep 2024 09:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725691000; cv=none; b=uLJwSuncSW0wmOZk5ueRWvzLbCPPxqqZ033IrxyLTF60GCAoSvwauECnjonVHwa6gWTnFmfbTYztSnGAzfOoiPxe0dOQqTYD0z5fw90fCqA9VAfM0Ek3+xZwkmGZR3h66UAUS51/StQMWJa6O1Cwr4YRfdFtObYORclAcFbPn24=
+	t=1725699615; cv=none; b=RxvLJ7E5KzqoPsUwiVfdbqF2j8pOZdCg5481lNT0iHwnbplepsXHAZ1wI66kFeyRQW09WpedurpLbm8Sl+E1JVNDUITXaIVqIgZc2LxdGQbk2coMDMy8uj2eK2glIbXyqWB5++ZAXzgV07kI+0wAbnr3FT3GWyOwa73Q42DSijg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725691000; c=relaxed/simple;
-	bh=S8uBneI7PpV05fm7xVEpV7bYxOY1zUNfKM8lVvwCKyw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cx7B1we06j5ztNupUh/wtOSVpjVeGsoPhQkLqIiF1KQAh7yTT7OfFRorW1xQx8mw3/RZTcAB/Rv/BQRG9m6XbB9KlmtcG7JdBBziDV64RgXPrvwgcjCUSY+1RQIyV6Q+cgVGdOJH6q1G0BDzK66d4MA9ygXIW0YEiIUOPdhd5Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tIVan0CG; arc=none smtp.client-ip=80.12.242.30
+	s=arc-20240116; t=1725699615; c=relaxed/simple;
+	bh=iW4kPlXxu37yfL9FJ/tJj3k3DqFzi26mGnjj8suS9lg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q9Lj3dTAd2qLe0VfQ6QNOVeO5CMI+voy2qpUt+cY1x/vZrjQDNUqYNhmw2wkYJJxY4HtzWmsC9iigqs62AOx5OdNbJDymr2rANsh3Wn3ZaLYrEZBSnek0lTlewDx69/DdyXKuzAzc0GKA30fg+HRAZ+3UDYntG//dilKErnCdRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=KSf9TGV6; arc=none smtp.client-ip=80.12.242.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tIVan0CG"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="KSf9TGV6"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id mouss9ADDJokxmousseWhW; Sat, 07 Sep 2024 08:27:28 +0200
+	id mpQXsPTZ8Ne0ImpQYsxdp4; Sat, 07 Sep 2024 09:00:17 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725690448;
-	bh=UXFZxJayFVmRBjL/YPnjN27oAjTntbi+iSfWBhiI8ug=;
+	s=t20230301; t=1725692417;
+	bh=rX81KQHUGSEqEz2QKyT6FzHMJ4cGxuCMFPTkegHxuyY=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=tIVan0CGAvSAm6oQdCCvHTvobKSxinMOQ5ciJwly1/qJ1aO6rcgyzEOI3/0qg6aVC
-	 HMejnHSYGV+20xtw7WnnN6/02QMsU6m/7r5Ns7PslzvH6vJOUaNzn1HZhxm2ZXlxJ5
-	 PaVi0PoCMQ6baUq5jsq5SjZqDh1P91t1/idnIdfqp8dmHPPWCIlKeoI9yFPBXjcq5Y
-	 Sgs0ToJpwGptReAdqhbt1Xu/WKpG12Dohwd7N6YFANC1msStX2bQsd9qlbxTDtJ4nQ
-	 Nd9PhCgIk/5XO/jTcpiMhlWA5+Rd73WscZAyVNHHwG2hJ5PM9Y7qKyKcm7flYwqs2M
-	 eczI/V/b3TuMQ==
+	b=KSf9TGV69Sur6qViQeAfUSY3LTR3tH7pAHSL7Qa5xvsuvuj0CHN/DmkXDVnmDnJo5
+	 jOK5OO3iRLaw8e6FFoRxvQvUCIZws3dCr8BLaO2m6o4K+E+DoVVwlePo4xy+DFwCZ5
+	 dslVcbiiV81rD+fY9bJr28wkJj7a9HVfeiApuGl5mQXHhr1bXtQxvbURwHu4FfO7CS
+	 6hmJHrubc6zYMPNhcZZ7gwZh6ezlvgXlJvhjgqi+PN34iNJaI75vLUSE71/hNkGvfz
+	 f1MmZagPwYTPkPiFkPG8TPN6BNff+Ahu6T1NuwLCt+sJw2JgpMO/xiUSTJN7wL4oDy
+	 qEwvhMdrlQAGQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 07 Sep 2024 08:27:28 +0200
+X-ME-Date: Sat, 07 Sep 2024 09:00:17 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
+To: Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>,
+	Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Iwona Winiarska <iwona.winiarska@intel.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-scsi@vger.kernel.org
-Subject: [PATCH] scsi: scsi_debug: Remove a useless memset()
-Date: Sat,  7 Sep 2024 08:27:22 +0200
-Message-ID: <6296722174e39a51cac74b7fc68b0d75bd0db2a3.1725690433.git.christophe.jaillet@wanadoo.fr>
+	openbmc@lists.ozlabs.org
+Subject: [PATCH] =?UTF-8?q?peci:=20npcm:=20Constify=20struct=20peci=5Fcont?= =?UTF-8?q?roller=5Fops=E2=80=8B?=
+Date: Sat,  7 Sep 2024 09:00:04 +0200
+Message-ID: <3c7d455745c2265c19ed02f026dfc9610271d3c2.1725692376.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -49,31 +54,46 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-'arr' is kzalloc()'ed, so there is no need to call memset(.., 0, ...) on
-it. It is already cleared.
+'struct peci_controller_ops' is not modified in this driver.
 
-This is a follow up of commit b952eb270df3 ("scsi: scsi_debug: Allocate the
-MODE SENSE response from the heap").
+Constifying this structure moves some data to a read-only section, so
+increase overall security, especially when the structure holds some
+function pointers.
+
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   8003	    784	     48	   8835	   2283	drivers/peci/controller/peci-npcm.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   8003	    776	     48	   8827	   227b	drivers/peci/controller/peci-npcm.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/scsi/scsi_debug.c | 1 -
- 1 file changed, 1 deletion(-)
+Compile tested only
+---
+ drivers/peci/controller/peci-npcm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index a9d8a9c62663..d95f417e24c0 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -2760,7 +2760,6 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
- 	else
- 		bd_len = 0;
- 	alloc_len = msense_6 ? cmd[4] : get_unaligned_be16(cmd + 7);
--	memset(arr, 0, SDEBUG_MAX_MSENSE_SZ);
- 	if (0x3 == pcontrol) {  /* Saving values not supported */
- 		mk_sense_buffer(scp, ILLEGAL_REQUEST, SAVING_PARAMS_UNSUP, 0);
- 		return check_condition_result;
+diff --git a/drivers/peci/controller/peci-npcm.c b/drivers/peci/controller/peci-npcm.c
+index ec613d35c796..fa91be58f6f3 100644
+--- a/drivers/peci/controller/peci-npcm.c
++++ b/drivers/peci/controller/peci-npcm.c
+@@ -224,7 +224,7 @@ static const struct regmap_config npcm_peci_regmap_config = {
+ 	.fast_io = true,
+ };
+ 
+-static struct peci_controller_ops npcm_ops = {
++static const struct peci_controller_ops npcm_ops = {
+ 	.xfer = npcm_peci_xfer,
+ };
+ 
 -- 
 2.46.0
 
