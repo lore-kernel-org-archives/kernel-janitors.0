@@ -1,49 +1,46 @@
-Received: from msa.smtpout.orange.fr (smtp-70.smtpout.orange.fr [80.12.242.70])
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC97A31;
-	Sun,  8 Sep 2024 06:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648B71CA81;
+	Sun,  8 Sep 2024 07:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725778345; cv=none; b=IqXSX9Paq5KyxfDAj05e45mPbkT+yqJabjeccBTFSRS3/eE74M3kIGX4uRJ7Ja0A/oW/W8YfsFKc7Jd1DJ9rhRJ7wfbZozKw+4L6dk+e5Txb/kKxaacykK6gzh3PpgOOkc5wLJfbLdnvxZ47IRojpQsKPB70qxV0jtr2rfGY3DY=
+	t=1725780055; cv=none; b=SquHgSRJK/vydgu177rsOeHbJmX+Bh9XsLF7+T+k0c/jS5zW8XzTDVK0xOLKUz/Ebk2mixzlwyLtmI5iL6h6Dv8J/Sw6FsFpnox4Twh7AueKAB6+ksQ0GZcsSRxORlk5eh3PVZRrhe75ExGrqNGr0NHkjATw7LKte6NSFQ/wHCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725778345; c=relaxed/simple;
-	bh=zPAg7VNhQvNNsfra+KnaQcSnvxjOSaUhSh5rAlZU1ac=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lEdJmI3Fnr+dVQiHPYmgS0IWcb7scDYMA5Kb/H53tsBFBOkcDuwJWoZ06VntnJe8NaZAFheGcqO8BtAnNKMjSNAB5Ll2jXATRx2Uj0BXuuoizsXnm8cTJ+L2ZYg75QI2VkWHMpAVIPJ/JUyDjX3d0V0IUsCgoASsNOXDMV0pv3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Am4E9osx; arc=none smtp.client-ip=80.12.242.70
+	s=arc-20240116; t=1725780055; c=relaxed/simple;
+	bh=HeG2uL8Bqswn5W8MK5eBY16hS8/iTMvLaKfm0muxDTo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GyaXp7eX46QVboRKe72CXtFmLOkG9OAAQfUIXWcDNmhqHvXWT+Y0Qx7KMhpsha4MxNHjztHnOpoTV9NeeUu3KIyCNDA5ohpBi7ikgQd+pATd+ipdJk8Pn8AF2VEImEOQnWML1fCimhErchMpzejWMuNCSqq5NcGDwLh7tAWhYfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MxDhUpew; arc=none smtp.client-ip=80.12.242.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Am4E9osx"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MxDhUpew"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id nBmTs6D2ClL4CnBmUs81fW; Sun, 08 Sep 2024 08:52:19 +0200
+	id nCDzsEBBjH7HInCDzsT8vQ; Sun, 08 Sep 2024 09:20:44 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725778339;
-	bh=wv3WFe0KxwUo6zf2E3vPHM9Wor5nA2RClGvCNFKZsVI=;
+	s=t20230301; t=1725780044;
+	bh=tmhFCMafs4w7/ikKQfk8iMWvMCPuQdk70+cMn7alsA8=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Am4E9osxNI8CqTI+8JwTgwxpCW+Gb/Fz0hzjEHGqO5wkkYbUgG29UOKphKF5zIWA9
-	 lC0R1EmTIQI327JhyOBUoXFOX7HWcUmvQeZm/1nqJ80hUht5aYWJryno0f8YcuWjPf
-	 LPtg5QzluOjJhkddmJXqP+n9lvo+ObQmh0JwrfXSZSB4uSoZJf9MM1RkPt1Eduzzq6
-	 BzijJZv/8tuaPDjF1dKyE32EatccHPMn89iMKVuJN5xMIFLR2xJyCRbxPJVpxxTIG+
-	 MsWcJOBQA0xnusiZtgHr2w8LmMl2g6gkghHJ1QeBMwHPA+mfjyR7f9xpspijGV3E2A
-	 yj23vREDRk/oQ==
+	b=MxDhUpewEFnAOziGUSMo3wFmMdeYNJHhK4WsSVwrFHgUejtmqHIwZyP0Vn4edjK+y
+	 Y45Y9L4ofHE0wRXzNSu+1h7OhLar2+ekng1+bqztcqGSSGrtHkVmQhRtLHpwCY/IZk
+	 h+D8hGeeJNOfVL+GUyOJoR4QIWgVZZR3Zi+3XJvoTf7bF4Fb1ZPZYBzJKBtLDLDb1O
+	 dEDXFWUuK6XYzqz/MDgFLx31cgd6bE0d5EpVq2usBU4zs1FO9tAlLkHBE+kP8LmthR
+	 2DUL+AtoHcXAIazHE9CDUxhLVw2lUCs+8af+5jneHUAjGDmghcDo5I0gDP5S0J2Ier
+	 wu6xOnHO1DXSw==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 08 Sep 2024 08:52:19 +0200
+X-ME-Date: Sun, 08 Sep 2024 09:20:44 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Viresh Kumar <viresh.kumar@linaro.org>,
-	"Chen, Jian Jun" <jian.jun.chen@intel.com>,
-	Andi Shyti <andi.shyti@kernel.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-i2c@vger.kernel.org,
-	virtualization@lists.linux.dev
-Subject: [PATCH] i2c: virtio: Constify struct i2c_algorithm and struct virtio_device_id
-Date: Sun,  8 Sep 2024 08:52:07 +0200
-Message-ID: <b98c3fa7072bf519ce8a9bc771e9d18c091b3509.1725778305.git.christophe.jaillet@wanadoo.fr>
+	linux-media@vger.kernel.org
+Subject: [PATCH] media: dibx000_common: Constify struct i2c_algorithm
+Date: Sun,  8 Sep 2024 09:20:37 +0200
+Message-ID: <6539cac4d4eb239e9d2528ae7e34be46fe0e1544.1725780011.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -56,50 +53,76 @@ Content-Transfer-Encoding: 8bit
 'struct i2c_algorithm' and 'struct virtio_device_id' are not modified in
 this driver.
 
+To do so, the prototype of i2c_adapter_init() has to be updated as well.
+
 Constifying this structure moves some data to a read-only section, so
 increase overall security, especially when the structure holds some
-function pointers, which is the case for struct i2c_algorithm.
+function pointers.
 
 On a x86_64, with allmodconfig:
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-   6663	    568	     16	   7247	   1c4f	drivers/i2c/busses/i2c-virtio.o
+  17213	    932	     20	  18165	   46f5	drivers/media/dvb-frontends/dibx000_common.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-   6735	    472	     16	   7223	   1c37	drivers/i2c/busses/i2c-virtio.o
+  17490	    660	     20	  18170	   46fa	drivers/media/dvb-frontends/dibx000_common.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 --
 Compile tested only
 ---
- drivers/i2c/busses/i2c-virtio.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/dvb-frontends/dibx000_common.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-virtio.c b/drivers/i2c/busses/i2c-virtio.c
-index 52ba1e0845ca..2a351f961b89 100644
---- a/drivers/i2c/busses/i2c-virtio.c
-+++ b/drivers/i2c/busses/i2c-virtio.c
-@@ -182,7 +182,7 @@ static u32 virtio_i2c_func(struct i2c_adapter *adap)
- 	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
+diff --git a/drivers/media/dvb-frontends/dibx000_common.c b/drivers/media/dvb-frontends/dibx000_common.c
+index 63a4c6a4afb5..bd5c5d7223aa 100644
+--- a/drivers/media/dvb-frontends/dibx000_common.c
++++ b/drivers/media/dvb-frontends/dibx000_common.c
+@@ -250,12 +250,12 @@ static int dibx000_i2c_master_xfer_gpio34(struct i2c_adapter *i2c_adap, struct i
+ 	return num;
  }
  
--static struct i2c_algorithm virtio_algorithm = {
-+static const struct i2c_algorithm virtio_algorithm = {
- 	.xfer = virtio_i2c_xfer,
- 	.functionality = virtio_i2c_func,
+-static struct i2c_algorithm dibx000_i2c_master_gpio12_xfer_algo = {
++static const struct i2c_algorithm dibx000_i2c_master_gpio12_xfer_algo = {
+ 	.master_xfer = dibx000_i2c_master_xfer_gpio12,
+ 	.functionality = dibx000_i2c_func,
  };
-@@ -237,7 +237,7 @@ static void virtio_i2c_remove(struct virtio_device *vdev)
- 	virtio_i2c_del_vqs(vdev);
+ 
+-static struct i2c_algorithm dibx000_i2c_master_gpio34_xfer_algo = {
++static const struct i2c_algorithm dibx000_i2c_master_gpio34_xfer_algo = {
+ 	.master_xfer = dibx000_i2c_master_xfer_gpio34,
+ 	.functionality = dibx000_i2c_func,
+ };
+@@ -324,7 +324,7 @@ static int dibx000_i2c_gated_gpio67_xfer(struct i2c_adapter *i2c_adap,
+ 	return ret;
  }
  
--static struct virtio_device_id id_table[] = {
-+static const struct virtio_device_id id_table[] = {
- 	{ VIRTIO_ID_I2C_ADAPTER, VIRTIO_DEV_ANY_ID },
- 	{}
+-static struct i2c_algorithm dibx000_i2c_gated_gpio67_algo = {
++static const struct i2c_algorithm dibx000_i2c_gated_gpio67_algo = {
+ 	.master_xfer = dibx000_i2c_gated_gpio67_xfer,
+ 	.functionality = dibx000_i2c_func,
  };
+@@ -369,7 +369,7 @@ static int dibx000_i2c_gated_tuner_xfer(struct i2c_adapter *i2c_adap,
+ 	return ret;
+ }
+ 
+-static struct i2c_algorithm dibx000_i2c_gated_tuner_algo = {
++static const struct i2c_algorithm dibx000_i2c_gated_tuner_algo = {
+ 	.master_xfer = dibx000_i2c_gated_tuner_xfer,
+ 	.functionality = dibx000_i2c_func,
+ };
+@@ -422,7 +422,7 @@ void dibx000_reset_i2c_master(struct dibx000_i2c_master *mst)
+ EXPORT_SYMBOL(dibx000_reset_i2c_master);
+ 
+ static int i2c_adapter_init(struct i2c_adapter *i2c_adap,
+-				struct i2c_algorithm *algo, const char *name,
++				const struct i2c_algorithm *algo, const char *name,
+ 				struct dibx000_i2c_master *mst)
+ {
+ 	strscpy(i2c_adap->name, name, sizeof(i2c_adap->name));
 -- 
 2.46.0
 
