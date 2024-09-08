@@ -1,46 +1,47 @@
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8736D481D1;
-	Sun,  8 Sep 2024 08:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7745B6CDBA
+	for <kernel-janitors@vger.kernel.org>; Sun,  8 Sep 2024 08:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725783678; cv=none; b=buiQwrf1T9JJekw3SEePUVntPp5PkJl0H4De6maNA5+X/VzcugBKgYkZ/pb4vAVVAnUgLq5E9nTkdxG911j/q5bKhDdmbYx6pB0c3+EUkQoCMSxrz+5ut+tNe4LIjHW/hrQEWQ/917CMv3lw1WsHDEHM+hGloWnkgKGDGlzoga8=
+	t=1725783972; cv=none; b=V8i6vI+/3NjKFvAAUJWYTCjrHbc0hc0qflGIzA4K3cHKmblr0cD8fCTjH99gCV04FUKHAQZmIV+ZFlzjUia9TUGkR+S30809BQif22GiB8qxOuPWSy/kE++mSQyC/Kk8L/LNphPLTO9T6EWnfdnkICZeGkHEhXOqJEVt6iEB3fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725783678; c=relaxed/simple;
-	bh=KmyIw4s7JcNk9rW5F8w4aDMjCMIawXFYRFVG+FdSl2U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kYw+WHcpmbTmQ9+JLgowuBqUkEL4kW5/kVqpwE6Z1VJhNW9kHY3T6cytRZsNTPsrznfqLm19kyWH2DQH9+crsCSJjUEvJ70NKvKdVK3w/HYL3hYW4k9X8IexDH8+9CEUkX3k8+joNU9sm0OCT3S61Qw4Uyd/gT7VdB4M4wKvXmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FlZu3XJY; arc=none smtp.client-ip=80.12.242.20
+	s=arc-20240116; t=1725783972; c=relaxed/simple;
+	bh=DfkdlPUfDySCXQfllv/L5FJiiCumbjxKGF4SWK/9nKg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hnwkqpJzE89nHEl/VewXo6GhPl2rW+dZzzMnfYygi4sks1Ey/5/jl8xSH4zozHvrJbyoSVyj3HgCQ9JGlXyKB6lNtO6zKYHEx9xdGx27fLd1heqa8p/h5324uXpWd6GsvgXrCOqIDE1VZqvst+NET4TIvFf7WFbVva6Hz5fQPvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=YTzUNxR4; arc=none smtp.client-ip=80.12.242.26
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FlZu3XJY"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="YTzUNxR4"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id nDAQsWqBbNe0InDAQsCb5p; Sun, 08 Sep 2024 10:21:06 +0200
+	id nDFCsY7IoLYfJnDFCsQfT1; Sun, 08 Sep 2024 10:26:03 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725783666;
-	bh=mB8r9utYDzoQqJnYPb9tbgFFpnfU8g77w3vPVA1MzE4=;
+	s=t20230301; t=1725783963;
+	bh=JTx9U7B4mTDpVstGREnAMeH1Gx0YQU+eDThFVipLUz0=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=FlZu3XJYsL7mc5dtbv9g+pg2e9cOagmcUgUuwoXIhHOsz/3n6vYFQjdcxqpvp8ygD
-	 DAGapcl2GX/KfGazF/u/RLQK+GHiAl7sMkrCKOPUTSVoFSDQ6fp2dbXkr+A2P1AYae
-	 BwRjvARwTJyz5TeZJryHkcaB19pF8znMHTg7KD9/hPKmIvW2G/rEc/Brc+1dTfBo6Z
-	 KIpbYwc7BbBKFA0cAVfmIScDfKaq+Ao91wLBuLwZQ7j7nQ/TmFYXFYD1KMtW9S1/zz
-	 EL20WTbosbM7px7xzYre0gSrjpV+5mIshe9Ntt/d48lOtVW/6ls64f2Q80rAKECDZJ
-	 dBqkY3LOpo8pQ==
+	b=YTzUNxR45S4lTUa8vc5TcTKGOMk0fSKhrS2kJe6ov9oF7OI0IeYhwrgobDAyQ1Hxx
+	 VHJflGEF2fYKM5ch27rMO9HKiy5IzsXsk/qhHfll98cpj0LZgfnWbXRyBlnXBjW9sf
+	 Ho8Ni1KkcPbD5rwqFYzfatTIVu3NYnR1FREElQaKVb9C5uUKlFTP503XDWIgcolnr/
+	 JYc8/BvZdKCCUKWJ6xAMtTyhMxA/jYJLGHhGj7zYQpoAFfncoq/tpkm48t7cERBuiB
+	 C3vFxJLrwjkK0EDYNAoaIeIjr72Ckj9OjpG6K9Hcsj2K0BwW1mfbwDgERuGRY49qzL
+	 k79v7L3wPRERQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 08 Sep 2024 10:21:06 +0200
+X-ME-Date: Sun, 08 Sep 2024 10:26:03 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Karel Balej <balejk@matfyz.cz>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-media@vger.kernel.org
-Subject: [PATCH v2] media: dibx000_common: Constify struct i2c_algorithm
-Date: Sun,  8 Sep 2024 10:21:00 +0200
-Message-ID: <6539caa4d0eb235e9d2a28ae8e341e46fece1544.1725780011.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] regulator: 88pm886: Constify struct regulator_desc
+Date: Sun,  8 Sep 2024 10:25:56 +0200
+Message-ID: <0261f8b951a489859ee0fa41c584804b2e3f1557.1725783921.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -50,83 +51,54 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'struct i2c_algorithm' is not modified in this driver.
+'struct regulator_desc' is not modified in this driver.
 
 Constifying this structure moves some data to a read-only section, so
 increase overall security, especially when the structure holds some
 function pointers.
 
-To do so, the prototype of i2c_adapter_init() has to be updated as well.
-
 On a x86_64, with allmodconfig:
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-  17213	    932	     20	  18165	   46f5	drivers/media/dvb-frontends/dibx000_common.o
+   3251	   6928	     16	  10195	   27d3	drivers/regulator/88pm886-regulator.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-  17490	    660	     20	  18170	   46fa	drivers/media/dvb-frontends/dibx000_common.o
+   9795	    360	     16	  10171	   27bb	drivers/regulator/88pm886-regulator.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 --
 Compile tested only
-
-Changes in v2:
-  - Fix commit message
-
-v1: https://lore.kernel.org/all/6539cac4d4eb239e9d2528ae7e34be46fe0e1544.1725780011.git.christophe.jaillet@wanadoo.fr/
 ---
- drivers/media/dvb-frontends/dibx000_common.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/regulator/88pm886-regulator.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/dibx000_common.c b/drivers/media/dvb-frontends/dibx000_common.c
-index 63a4c6a4afb5..bd5c5d7223aa 100644
---- a/drivers/media/dvb-frontends/dibx000_common.c
-+++ b/drivers/media/dvb-frontends/dibx000_common.c
-@@ -250,12 +250,12 @@ static int dibx000_i2c_master_xfer_gpio34(struct i2c_adapter *i2c_adap, struct i
- 	return num;
- }
- 
--static struct i2c_algorithm dibx000_i2c_master_gpio12_xfer_algo = {
-+static const struct i2c_algorithm dibx000_i2c_master_gpio12_xfer_algo = {
- 	.master_xfer = dibx000_i2c_master_xfer_gpio12,
- 	.functionality = dibx000_i2c_func,
+diff --git a/drivers/regulator/88pm886-regulator.c b/drivers/regulator/88pm886-regulator.c
+index a38bd4f312b7..68c83a4ebda8 100644
+--- a/drivers/regulator/88pm886-regulator.c
++++ b/drivers/regulator/88pm886-regulator.c
+@@ -56,7 +56,7 @@ static const struct linear_range pm886_buck_volt_ranges2[] = {
+ 	REGULATOR_LINEAR_RANGE(1600000, 80, 114, 50000),
  };
  
--static struct i2c_algorithm dibx000_i2c_master_gpio34_xfer_algo = {
-+static const struct i2c_algorithm dibx000_i2c_master_gpio34_xfer_algo = {
- 	.master_xfer = dibx000_i2c_master_xfer_gpio34,
- 	.functionality = dibx000_i2c_func,
- };
-@@ -324,7 +324,7 @@ static int dibx000_i2c_gated_gpio67_xfer(struct i2c_adapter *i2c_adap,
- 	return ret;
- }
- 
--static struct i2c_algorithm dibx000_i2c_gated_gpio67_algo = {
-+static const struct i2c_algorithm dibx000_i2c_gated_gpio67_algo = {
- 	.master_xfer = dibx000_i2c_gated_gpio67_xfer,
- 	.functionality = dibx000_i2c_func,
- };
-@@ -369,7 +369,7 @@ static int dibx000_i2c_gated_tuner_xfer(struct i2c_adapter *i2c_adap,
- 	return ret;
- }
- 
--static struct i2c_algorithm dibx000_i2c_gated_tuner_algo = {
-+static const struct i2c_algorithm dibx000_i2c_gated_tuner_algo = {
- 	.master_xfer = dibx000_i2c_gated_tuner_xfer,
- 	.functionality = dibx000_i2c_func,
- };
-@@ -422,7 +422,7 @@ void dibx000_reset_i2c_master(struct dibx000_i2c_master *mst)
- EXPORT_SYMBOL(dibx000_reset_i2c_master);
- 
- static int i2c_adapter_init(struct i2c_adapter *i2c_adap,
--				struct i2c_algorithm *algo, const char *name,
-+				const struct i2c_algorithm *algo, const char *name,
- 				struct dibx000_i2c_master *mst)
+-static struct regulator_desc pm886_regulators[] = {
++static const struct regulator_desc pm886_regulators[] = {
+ 	{
+ 		.name = "LDO1",
+ 		.regulators_node = "regulators",
+@@ -340,9 +340,9 @@ static struct regulator_desc pm886_regulators[] = {
+ static int pm886_regulator_probe(struct platform_device *pdev)
  {
- 	strscpy(i2c_adap->name, name, sizeof(i2c_adap->name));
+ 	struct pm886_chip *chip = dev_get_drvdata(pdev->dev.parent);
++	const struct regulator_desc *rdesc;
+ 	struct regulator_config rcfg = { };
+ 	struct device *dev = &pdev->dev;
+-	struct regulator_desc *rdesc;
+ 	struct regulator_dev *rdev;
+ 	struct i2c_client *page;
+ 	struct regmap *regmap;
 -- 
 2.46.0
 
