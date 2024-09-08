@@ -1,79 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F441114;
-	Sun,  8 Sep 2024 19:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDF63A1B5;
+	Sun,  8 Sep 2024 23:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725823207; cv=none; b=setIgbZZ9L5UBY0ieLe/357baDaHaNG7RlgRKyQAaIFqZWdiyFJKNQtbneETqag035wIeIne3fr54sjcAOkRpthgUMAd1wl0gT7TohZBbFkyMdSRnfxoe44ToWs0XLIDeDFWK2JUiq10o+yC8Jv/wDAdNO0/x4+QaIpCTdERXOg=
+	t=1725838695; cv=none; b=FgTIGBo3/MqRl64CD9FNtJZ6erZvAWTnqaYtqphGvRy56pvrmn8WxdRkcky/6kj50O/k2a3Npk4WM3W5hSnq8dNhw8oeoRD9DZ7SsHdDjL4bkQzkfvokv2jgGielbKTqkEwmkRJJn0bi+IGTmsq1xZ8IocbwsYnpoVvbR3q3UPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725823207; c=relaxed/simple;
-	bh=fPzRhjNMvX2wVQZqO7nLiFSOLSviBH/ZaPY/0H3vcjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h99CX6d66NJccG019sSeF/y3T6i9H7e/gXjv+LhUVmd2gts9kuN8x3h2Qqe/US1bmGCgO7u0n+h2+vhW/4rAzu4Jx8s2V7Yk/LE9kVJkawyos32I66oD31O5x2pDKAPgLSODptSP0YSb8/JXkskHeyYMJ9tXSOtgrBXBIv7U8FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VzY+I+E6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725838695; c=relaxed/simple;
+	bh=FY/BjhsgiyH0daYlzg5bOZKtsRLtohljcQZ3TCBxMaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=If+BFHF/FJHuLrOR3KxD0SJg6Givivsx1fVoVcmoqew6WQGgbYO3VI+wvqXarN6r44dpWq0FBasTtNjkbVrhlh++dvXBPA4ia907Z7QijxixV+a/sVq3m6RTo4rus0agiy+jg3gv/HIbg6+OZpWSo8P9WWHK+iw7gX9bzlFmrXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XLoMjLY7; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VzY+I+E6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE16C4CECA;
-	Sun,  8 Sep 2024 19:20:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725823206;
-	bh=fPzRhjNMvX2wVQZqO7nLiFSOLSviBH/ZaPY/0H3vcjw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VzY+I+E6IvXzqIcugLikR2Kl8TDc9RGC95OA/VWBKZEjqTMNfnr/5xCQNJGTY58/N
-	 0tJdwOhj7URs1g/yO2Pgm8hUH9YdSC3cjc37ZqdEuZFP1WY59eYCd5IUBcfaChKpKg
-	 3Hps6usetCMrUL6t3ZO/+7k8RbGkPqeJMGsq1N+SuiYTxSiXVmB3ZaIyBeHuxpWTaA
-	 bpPug1eu0o5sgpt9YGb70bJXkaJEFe1WBkiO9hu3htJ+oS2ZzFG5gIiZfAHs3ddhJN
-	 vKpyV1D9mDnGQ4MylXY+3PAz66BIog5itMQJzXmAKIygUoCYsvhuJn0s9WLZJDJEaF
-	 Y6jkHYxUm2T/Q==
-Message-ID: <c63c6c0d-80f0-4e44-8e02-b12ff365f4eb@kernel.org>
-Date: Sun, 8 Sep 2024 20:20:01 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XLoMjLY7"
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7cb3db0932cso2924576a12.1;
+        Sun, 08 Sep 2024 16:38:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725838693; x=1726443493; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n3eHjycKFrqwvUbRNtshDfNjCTOFbe1oyIgmCT0dxeE=;
+        b=XLoMjLY7IsGTqBEEXhfUL5dVtTvxlCu/ZVIJkjpW9PFY+xdx/lvgSGNBua4TwoISr3
+         w941jg9K5vUPQGuJCpAnsWOkZDSex9GbGDCZz3sHW+XWT7P31KUXcOZ5kYyYJAU3lSEQ
+         qXHPN5JpfC6EBx5EP4ydlP/3l52j05TyNxcBn03ZZq/9KQkrBWFNft1szyST1Y+jm9V2
+         JjA8Lf8OuODh8V/liGgLKkGtuuWjrinOJOPSVvyfLennwLZCq+jh/mQl4UuFptWcVc9H
+         zX+XHndwUBjcoHroTRHDp5nmy5uZw1dxk8lKbDyrUIqdGtgc6fffcONMx0gc+bAa/Mao
+         Bp9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725838693; x=1726443493;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n3eHjycKFrqwvUbRNtshDfNjCTOFbe1oyIgmCT0dxeE=;
+        b=sFGW25roKiaBhP+loG+5FgwZObHFzkjDD7GefB3dbaOeAIIDTkAE+FWUJOYhS1S+0W
+         QQboShn9AyTB2gV2kq7Se8pC1vgwyveMiS3VHm/asEo7B+GGjgwHwVvKRe9s50Qu5Nge
+         xz7J5IqLcqPYBhnXc6lyG559w7e7sDwnj644jUT45C6WABBlpGxln8MsrzunC9hGACRH
+         Aqa5tJcOXfEnQQZ2s6owyvt3abl+jrMgcxiCHPLzyYCaQ1Wpbl44snRCHtXvKGL2rD5H
+         VdwW5AhsF2PsuA+od++L3dZmLXmovqU7A1Hsx0uLmN6b6mkGRUHzEzzoOotBAshW/PbX
+         k3ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUgOwDa/NPrpe7I9SvGeSP88EeX0yqK6ut58anKMp2t0h2GfebEjmmaQ97E2PwzYlFyMEVXCEVLAuoSbWJI@vger.kernel.org, AJvYcCV1TEkSuHJdj32DCBLMuDkiIumGWJ71YHRAhrVWfW8TUK6lYBL36Xqd7Ws0ZCMvyEftqeJYYPpt6e8ZcrmURKE=@vger.kernel.org, AJvYcCXnejJITNWE2ujHFsgWoaJubI/mvCM/qwzGtUDuLxYNUY1gcjAFmqedE7sH6huCiJH319wScfUFG+xMi4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ+RKWYRwoWzzR9tQviieZYUga8KQABdxHJbpu1XrPPn7oKA/I
+	7fSi7blVaT4FH9K5jMcfPjXaEtIvSXzM2tyGsb0KvlBQrVkPvAaA
+X-Google-Smtp-Source: AGHT+IGOmnvuP7qDYxfamyY7dTZnsjSbc3Swnm6V4JGaI+iN0fr4DKRu9NEUxrBwfTThDs1aZuxc/A==
+X-Received: by 2002:a05:6a20:718a:b0:1cf:55e:f893 with SMTP id adf61e73a8af0-1cf2a0e58ecmr5896375637.36.1725838692810;
+        Sun, 08 Sep 2024 16:38:12 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e5982ebasm2465733b3a.164.2024.09.08.16.38.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Sep 2024 16:38:12 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Sun, 8 Sep 2024 16:38:10 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Saravanan Sekar <sravanhome@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (pmbus/mpq7932) Constify struct regulator_desc
+Message-ID: <f6c39166-19bb-4e63-97ce-abf50c6f915d@roeck-us.net>
+References: <c0585a07547ec58d99a5bff5e02b398114bbe312.1725784343.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH] bpftool: Fix a typo
-To: Andrew Kreimer <algonell@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-References: <20240907231028.53027-1-algonell@gmail.com>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <20240907231028.53027-1-algonell@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c0585a07547ec58d99a5bff5e02b398114bbe312.1725784343.git.christophe.jaillet@wanadoo.fr>
 
-On 08/09/2024 00:10, Andrew Kreimer wrote:
-> Fix a typo in documentation.
+On Sun, Sep 08, 2024 at 10:32:38AM +0200, Christophe JAILLET wrote:
+> 'struct regulator_desc' is not modified in this driver.
 > 
-> Reported-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security, especially when the structure holds some
+> function pointers.
+> 
+> This also makes mpq7932_regulators_desc consistent with
+> mpq7932_regulators_desc_one which is already a "static const struct
+> regulator_desc".
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>    3516	   2264	      0	   5780	   1694	drivers/hwmon/pmbus/mpq7932.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>    5396	    384	      0	   5780	   1694	drivers/hwmon/pmbus/mpq7932.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  tools/bpf/bpftool/Documentation/bpftool-gen.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/bpf/bpftool/Documentation/bpftool-gen.rst b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-> index c768e6d4ae09..6c3f98c64cee 100644
-> --- a/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-> +++ b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-> @@ -172,7 +172,7 @@ bpftool gen min_core_btf *INPUT* *OUTPUT* *OBJECT* [*OBJECT*...]
->      CO-RE based application, turning the application portable to different
->      kernel versions.
->  
-> -    Check examples bellow for more information how to use it.
-> +    Check examples below for more information how to use it.
-Thanks! Since we're at it, would you mind fixing the rest of the
-sentence, too?
-“Check _the_ examples below for more information _on_ how to use it”
 
-Quentin
+Applied.
+
+Thanks,
+Guenter
