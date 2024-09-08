@@ -1,77 +1,49 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from msa.smtpout.orange.fr (smtp-70.smtpout.orange.fr [80.12.242.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1645814F109;
-	Sat,  7 Sep 2024 23:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC97A31;
+	Sun,  8 Sep 2024 06:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725750651; cv=none; b=ayAGWqs8sbVOoCMpGuAynGV3zgkqpjioGbe3z92OGIu/zVzOwqMWSkeSSq8aF/D1LebgwD9l0EvY6pI4z1F26pNk3O8f09aIzP5r6jMfQ+kh+otpin6JgqwKfT9QyUtMP7S91LrNoItOOrZlmje4R73PJ7O5kBiN3D726/b0Nio=
+	t=1725778345; cv=none; b=IqXSX9Paq5KyxfDAj05e45mPbkT+yqJabjeccBTFSRS3/eE74M3kIGX4uRJ7Ja0A/oW/W8YfsFKc7Jd1DJ9rhRJ7wfbZozKw+4L6dk+e5Txb/kKxaacykK6gzh3PpgOOkc5wLJfbLdnvxZ47IRojpQsKPB70qxV0jtr2rfGY3DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725750651; c=relaxed/simple;
-	bh=l2kQYB77bC2AxhU+af9yBzS2fBMywHuBKH/qnAgGpeI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V+/iEeW1mqsJ7QMETA22jvwDd9CkxmlglHVrQlkXYUzlfsmalXAdY12MB5DsOmNTqOcedMh9oV3eT/zmthCpsvaRjzUx6VsFX1FT3QwuQ/eIPzAMnAtmK14efoMeXDnd22dqRi2dPXeJsE1R/1XGygWHBJMdw5BPSL0WYeSR8J4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XdmPObxu; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1725778345; c=relaxed/simple;
+	bh=zPAg7VNhQvNNsfra+KnaQcSnvxjOSaUhSh5rAlZU1ac=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lEdJmI3Fnr+dVQiHPYmgS0IWcb7scDYMA5Kb/H53tsBFBOkcDuwJWoZ06VntnJe8NaZAFheGcqO8BtAnNKMjSNAB5Ll2jXATRx2Uj0BXuuoizsXnm8cTJ+L2ZYg75QI2VkWHMpAVIPJ/JUyDjX3d0V0IUsCgoASsNOXDMV0pv3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Am4E9osx; arc=none smtp.client-ip=80.12.242.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XdmPObxu"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42bbbff40bbso26789415e9.2;
-        Sat, 07 Sep 2024 16:10:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725750648; x=1726355448; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yT3dqWHm/QQeGC3GsIPG3eqkFd/IFt3zVxvD83TpSdU=;
-        b=XdmPObxut5yFEMq/QCe3Qm3ntSLmdMQUfuLuxE7KIMA3RHB0ytU7u9nQZaVV/6LrDA
-         ZmIaMlFs3O3wPtBc7/OaD4mPW7j8ti5doSe4nMqxT7Cj4MD/2Ln2g/6XkP+z3XrmiiQS
-         S0QrBKdnUsoJ9M+kmHbMR9+sn3/OwQgVyugAT7m6a1+b07aqgCyPdhjd8Ak8e44rwZ60
-         asJKlRmAUVXWNOm2I1jLZirKCwwOHT8XPk4h3kk6eTuCC1jm/HyX6BTbrmffE70jc4rQ
-         t32OIv36/Op5NS64Yd1tP6qxPyu2icIRvkK78psXh4X45+bNKARQZ24G+aDff3DARkS1
-         Qxyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725750648; x=1726355448;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yT3dqWHm/QQeGC3GsIPG3eqkFd/IFt3zVxvD83TpSdU=;
-        b=qGDgPSNv6pSeUMi3CJbB48mBsaNfpj2zO7HwuvZnp8enyC6vqx4ESbUt2Obi525a2T
-         j0pukeAXoJeStkTeu3bYQx5tz9hqQeCUhbLl6Z/QEFncn2OXO3P+oTdLgY6XbeWt0/dH
-         U/xyq53WIo2IhLUL/JKY1E3DxmbnjIqLncIvX6fb7K1fQuS8X3eLKARI3VSF6e1PdLN0
-         Y8Vl06DZxpaWSuZumtyY9HwULazKASzEOMvC7+v+gE8CQ2rt8lKkFype0J6DU1xS6Nwv
-         pmijqExig69d0IQagbx2wW35hGr8ESWTkqB01/X31JNEvP3zdB6DR2x8idaTXzdVL7bB
-         0NYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/DGkur4YwHWShaqb2vy+5G0+iMXxMhaqDJGidmdIr/mboWUQREqVZLv9uvdVtOSjplA2fZsvQF3nZ7Hcd@vger.kernel.org, AJvYcCUxPWxv5Z4DPxc3JN+HtNXije7z578SvDjOBnLNt6QE8XlWhY8pYBBcxyrgWUM1qSxMIcgXSy+ULGf7t+AEBVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK+E+cQ/2Tvv1dB+/BWW6g0a3LSAbOc6hYfuzf3EX+iCLd0ZIH
-	NBcTHRbB9Y+Us/dUuD0GCkzxpggM8Lo3oOCx6PD6C2ZNgrCNWqvn
-X-Google-Smtp-Source: AGHT+IGRlh7xezCJGsZisParei4WZZPnc8M77SkuN4s19NYt8Sx7WPkDUFWcZGbzQ038g0whCgsHAg==
-X-Received: by 2002:a5d:4b47:0:b0:374:c56c:fbb4 with SMTP id ffacd0b85a97d-378895c9ee0mr4444881f8f.22.1725750647370;
-        Sat, 07 Sep 2024 16:10:47 -0700 (PDT)
-Received: from void.void ([141.226.8.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d363asm2232537f8f.72.2024.09.07.16.10.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Sep 2024 16:10:47 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Quentin Monnet <qmo@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Am4E9osx"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id nBmTs6D2ClL4CnBmUs81fW; Sun, 08 Sep 2024 08:52:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725778339;
+	bh=wv3WFe0KxwUo6zf2E3vPHM9Wor5nA2RClGvCNFKZsVI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Am4E9osxNI8CqTI+8JwTgwxpCW+Gb/Fz0hzjEHGqO5wkkYbUgG29UOKphKF5zIWA9
+	 lC0R1EmTIQI327JhyOBUoXFOX7HWcUmvQeZm/1nqJ80hUht5aYWJryno0f8YcuWjPf
+	 LPtg5QzluOjJhkddmJXqP+n9lvo+ObQmh0JwrfXSZSB4uSoZJf9MM1RkPt1Eduzzq6
+	 BzijJZv/8tuaPDjF1dKyE32EatccHPMn89iMKVuJN5xMIFLR2xJyCRbxPJVpxxTIG+
+	 MsWcJOBQA0xnusiZtgHr2w8LmMl2g6gkghHJ1QeBMwHPA+mfjyR7f9xpspijGV3E2A
+	 yj23vREDRk/oQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 08 Sep 2024 08:52:19 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+	"Chen, Jian Jun" <jian.jun.chen@intel.com>,
+	Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] bpftool: Fix a typo
-Date: Sun,  8 Sep 2024 02:10:10 +0300
-Message-ID: <20240907231028.53027-1-algonell@gmail.com>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-i2c@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: [PATCH] i2c: virtio: Constify struct i2c_algorithm and struct virtio_device_id
+Date: Sun,  8 Sep 2024 08:52:07 +0200
+Message-ID: <b98c3fa7072bf519ce8a9bc771e9d18c091b3509.1725778305.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -81,27 +53,53 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix a typo in documentation.
+'struct i2c_algorithm' and 'struct virtio_device_id' are not modified in
+this driver.
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+Constifying this structure moves some data to a read-only section, so
+increase overall security, especially when the structure holds some
+function pointers, which is the case for struct i2c_algorithm.
+
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   6663	    568	     16	   7247	   1c4f	drivers/i2c/busses/i2c-virtio.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   6735	    472	     16	   7223	   1c37	drivers/i2c/busses/i2c-virtio.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+--
+Compile tested only
 ---
- tools/bpf/bpftool/Documentation/bpftool-gen.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-virtio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/bpf/bpftool/Documentation/bpftool-gen.rst b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-index c768e6d4ae09..6c3f98c64cee 100644
---- a/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-+++ b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-@@ -172,7 +172,7 @@ bpftool gen min_core_btf *INPUT* *OUTPUT* *OBJECT* [*OBJECT*...]
-     CO-RE based application, turning the application portable to different
-     kernel versions.
+diff --git a/drivers/i2c/busses/i2c-virtio.c b/drivers/i2c/busses/i2c-virtio.c
+index 52ba1e0845ca..2a351f961b89 100644
+--- a/drivers/i2c/busses/i2c-virtio.c
++++ b/drivers/i2c/busses/i2c-virtio.c
+@@ -182,7 +182,7 @@ static u32 virtio_i2c_func(struct i2c_adapter *adap)
+ 	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
+ }
  
--    Check examples bellow for more information how to use it.
-+    Check examples below for more information how to use it.
+-static struct i2c_algorithm virtio_algorithm = {
++static const struct i2c_algorithm virtio_algorithm = {
+ 	.xfer = virtio_i2c_xfer,
+ 	.functionality = virtio_i2c_func,
+ };
+@@ -237,7 +237,7 @@ static void virtio_i2c_remove(struct virtio_device *vdev)
+ 	virtio_i2c_del_vqs(vdev);
+ }
  
- bpftool gen help
-     Print short help message.
+-static struct virtio_device_id id_table[] = {
++static const struct virtio_device_id id_table[] = {
+ 	{ VIRTIO_ID_I2C_ADAPTER, VIRTIO_DEV_ANY_ID },
+ 	{}
+ };
 -- 
 2.46.0
 
