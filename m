@@ -1,122 +1,104 @@
-Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
+Received: from msa.smtpout.orange.fr (msa-208.smtpout.orange.fr [193.252.23.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3CA4503C
-	for <kernel-janitors@vger.kernel.org>; Sun,  8 Sep 2024 11:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593B618C22;
+	Sun,  8 Sep 2024 11:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725795669; cv=none; b=EdXrc4DZV4KHaUwKfj32WiL9PW+V8euV9ZsB84lq80x+bpRfPdU51qYA1iWWgyfg4O/XWlGsZG3/DEDtCZNA9G8TEryVy1oDGmG074BqLVmJgS1UUBjbXL/GxV27CmBbZEOPppwabbVwmLhCzFuVo7u4UyxozA3jKV4r20Ygf9Y=
+	t=1725795882; cv=none; b=AamoG1rwlahtEQondsp4OrjVnm+9ZPuhjk0hGom/KaGITR32LNSE3RjR7g+XVW9kViwl6Nf7Pv+//u3RgJXmiqOs0FURa83eeDi+j1p3Z3fZ8ond/HCn/Vbu9lh844NnK9m2kCRysCfS6bwaEUwbjxtD3L0U1jw31TebslxMeUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725795669; c=relaxed/simple;
-	bh=ltZOXOEbg7XQE/584SV9e7dnc4lbUDxScr6IpzLIAQ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HeoGPoGo7BD2ycN40+rcMPQMJSlPwDK74hGiguCi9CJV39YPXH8M22cSlvTk8edDmLpSZzwtJYkTXLeWMa1UkG0crCG92e10zCYfpydMWDevElVutIcsperdaUQSyY5J8saclOuOdjHsf8ytxDo9DmB2C0iiZ8mmRO/0v8uLrwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VA6oGiuR; arc=none smtp.client-ip=193.252.23.217
+	s=arc-20240116; t=1725795882; c=relaxed/simple;
+	bh=X54QgKZkowUFWekxz5jn1MXRDbhBtNSUV2+YPjIO3lY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A4aMkubsCbYkzDJSPM1ao2/lLkhgdIX4w8d7KMLkAbAs1CfsxHdKM0VU+G0/TyWTbY6RWzooppL3qGvVN9ZgTXy/KnqQgTncevOgUwC8TJRcRM/MH4R+UN01Czf8cx9ReEm1bUCc46zduHWX+FGref5/xwlo/FFVe4waQxqVtv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=NJ0YRBV6; arc=none smtp.client-ip=193.252.23.208
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VA6oGiuR"
-Received: from fedora.home ([90.11.132.44])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="NJ0YRBV6"
+Received: from [192.168.1.37] ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id nGHgsexU2GrBenGHxswgxl; Sun, 08 Sep 2024 13:41:06 +0200
+	id nGLKsM1d52iYJnGLKsH1eE; Sun, 08 Sep 2024 13:44:38 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725795666;
-	bh=5e0Qm15ALIQxn7vbSh4VAly854bRiZwGfw2gToWMa2U=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=VA6oGiuROfQ+8eZe7YNRCPyi3xSK0Z5UyvoIYIrInT2NY5rKSQbBI7OA91eDKMEgD
-	 HVDB4dxFBqOiVQ6drvPnY75PaeTNKvs+Sst8eFpGjpb7ak5r692PwhJXIjr4Gz0X8k
-	 ePHR+soRJsRaYIk9roBC1UQ4eHM4xTZZfHS294ZXA6W0xpCXEsXxfttPu/mioIoBRr
-	 /uBzfoYX8FPBn9rVF0W51oNoop0OhkuDA9O/XXRpj8RayFyzIGWd/QtD4FlNguppts
-	 dY8ZlsjbtsDovUJmTv2PuMPyWingZ03g7fZ76PVkt13CdvuV0ICTE5kCbYGYAy7an6
-	 rYvTffOUAsSww==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 08 Sep 2024 13:41:06 +0200
+	s=t20230301; t=1725795878;
+	bh=O7lWOpC+TJoMHHozDCqt61jx1ZWnzh85Y8vzc+JCg+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=NJ0YRBV61CW3WPmbnIZrQPCymP9w08VhacUQSWX8uzP6PWbTlD3E+pOny5Xqrte9M
+	 df6KYzPaT0u9Npft0iFlsyLDzYetPebXkqCFpkNy5x6uLqcHnsxwup0nZv9/WPELu5
+	 ElUFy7wZWHD2ajTVCQ4acY8o4idmOYECbfAzAULJhwa7cUEc4TioWs+j76WAdc9h81
+	 itckHpGXtwVAqbsgCx5dria+JjWUabOsuJ7gFrTAMGqBYbwAw5AA3juTgg5ZzjP9ZN
+	 6uaWTygyGOrqtxmKR1YqT0rbVY+Z9tIdp4IAKVhM2F4t9vlWCy6NlxrDIh8PmnUmhu
+	 FtqpnHNgaTq4A==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 08 Sep 2024 13:44:38 +0200
 X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: lgirdwood@gmail.com,
-	iskren.chernev@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2] regulator: max77826: Simplify max77826_i2c_probe()
-Date: Sun,  8 Sep 2024 13:40:45 +0200
-Message-ID: <583fa0bebbe18f8cb6e215a895f57b2eb944218e.1725791361.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1725791361.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1725791361.git.christophe.jaillet@wanadoo.fr>
+Message-ID: <eb89a77d-c733-4efd-be19-b95039ae10ee@wanadoo.fr>
+Date: Sun, 8 Sep 2024 13:44:33 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] iio: adc: Constify struct iio_map
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Chen-Yu Tsai <wens@csie.org>,
+ Support Opensource <support.opensource@diasemi.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+References: <5729dc3cc3892ecf0d8ea28c5f7307b34e27493e.1725729801.git.christophe.jaillet@wanadoo.fr>
+ <20240908114546.395661ef@jic23-huawei>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240908114546.395661ef@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-'struct max77826_regulator_info' is unused and can be removed.
+Le 08/09/2024 à 12:45, Jonathan Cameron a écrit :
+> On Sat,  7 Sep 2024 19:24:46 +0200
+> Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org> wrote:
+> 
+>> 'struct iio_map' are not modified in these drivers.
+>>
+>> Constifying this structure moves some data to a read-only section, so
+>> increase overall security.
+>>
+>> In order to do it, the prototype of iio_map_array_register() and
+>> devm_iio_map_array_register(), and a few structures that hold a
+>> "struct iio_map *" need to be adjusted.
+>>
+>> On a x86_64, with allmodconfig, as an example:
+>> Before:
+>> ======
+>>     text	   data	    bss	    dec	    hex	filename
+>>    21086	    760	      0	  21846	   5556	drivers/iio/adc/axp20x_adc.o
+>>
+>> After:
+>> =====
+>>     text	   data	    bss	    dec	    hex	filename
+>>    21470	    360	      0	  21830	   5546	drivers/iio/adc/axp20x_adc.o
+>>    33842	   1697	    384	  35923	   8c53	drivers/iio/addac/ad74413r.o
+> Cropping was a bit random, given before and after have different files.
 
-There is no i2c_get_clientdata().
-Resources are managed, so there is no need to keep references unless
-explicitly needed.
+Argh, the 2nd line related to ad74413r.o should be removed. Only the 1st 
+one is relevant.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
---
-Compile tested only.
+Sorry about that.
 
-This patch IS SPECULATIVE, review with care!
----
- drivers/regulator/max77826-regulator.c | 18 ------------------
- 1 file changed, 18 deletions(-)
+> 
+> Anyhow, doesn't matter much, so applied as is.
+> Note this is 6.13 material now.
+> 
+> Thanks,
 
-diff --git a/drivers/regulator/max77826-regulator.c b/drivers/regulator/max77826-regulator.c
-index 376e3110c695..3b12ad361222 100644
---- a/drivers/regulator/max77826-regulator.c
-+++ b/drivers/regulator/max77826-regulator.c
-@@ -149,13 +149,6 @@ enum max77826_regulators {
- 		.owner = THIS_MODULE,					\
- 	}
- 
--
--
--struct max77826_regulator_info {
--	struct regmap *regmap;
--	const struct regulator_desc *rdesc;
--};
--
- static const struct regmap_config max77826_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
-@@ -235,30 +228,19 @@ static int max77826_read_device_id(struct regmap *regmap, struct device *dev)
- static int max77826_i2c_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
--	struct max77826_regulator_info *info;
- 	struct regulator_config config = {};
- 	struct regulator_dev *rdev;
- 	struct regmap *regmap;
- 	int i;
- 
--	info = devm_kzalloc(dev, sizeof(struct max77826_regulator_info),
--				GFP_KERNEL);
--	if (!info)
--		return -ENOMEM;
--
--	info->rdesc = max77826_regulators_desc;
- 	regmap = devm_regmap_init_i2c(client, &max77826_regmap_config);
- 	if (IS_ERR(regmap)) {
- 		dev_err(dev, "Failed to allocate regmap!\n");
- 		return PTR_ERR(regmap);
- 	}
- 
--	info->regmap = regmap;
--	i2c_set_clientdata(client, info);
--
- 	config.dev = dev;
- 	config.regmap = regmap;
--	config.driver_data = info;
- 
- 	for (i = 0; i < MAX77826_MAX_REGULATORS; i++) {
- 		rdev = devm_regulator_register(dev,
--- 
-2.46.0
+Thanks,
+
+CJ
+
+> 
+> Jonathan
 
