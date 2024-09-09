@@ -1,117 +1,116 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327F61B3B2A;
-	Mon,  9 Sep 2024 10:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F89179658;
+	Mon,  9 Sep 2024 10:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725877769; cv=none; b=bWgDavHc9oMangpxAatQNV6d6Gg1Sp7F+RSTZTbKUlPZk1hwrYnzoPhqOkkJqZd/T8RCcOHfMc5enjkMpkHywuESMBOc3Ul1pFREC7VpmU9e2mBuztryduXbkxSVF34xyYPMqpFpuTmXC3WDGMhFsMW1YbTdMNZA0JSITR59Ufo=
+	t=1725878735; cv=none; b=nZo5Fw3Tdnlp6MydX7y3wTr7WCdwixMqfarC5ei8R8s25D00E5PdXyem0AlTwYaCsYGc7r06Kpu2RJ5CxCJ8ua1lzBqLB8pU+9YFYmuj4qi7Xg2LAUJTCOeC2eDNzdh5p3tF+785NUIkF7REDdst3hKXkjO/jm+qeuc1YmQbwPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725877769; c=relaxed/simple;
-	bh=SXu+KN414hj/lwNJJEVMgjiKQvEk/dkZL54sBGNdtaQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vjv6V4ddkB8BHcNW/n4nhk2p0wN8v9YAhcThE9F5EVcfMWVwqagF9vN1PxkJ9Xjpj2kcEufbkUsdyPJVw25mYnZBbPYqYbM3DRrL7crijTV/LAsNU0UhQHaKk7v3igHDF0VFtkFYD+1abalOCOTStk9LKDrjXq2j8P+5xI22M2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kP9Ui+b3; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1725878735; c=relaxed/simple;
+	bh=5Ta/4DSgQoX8eSaZBH8uX7f7kA1cIdCF5+cIjyuspMo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:To:From:
+	 References:In-Reply-To; b=Zf9Dz49W4CZcGqmUYcAYXhLryRmB9k8FdKkcvljkfcj9FNXRwTOvTVtpXCc77O5Ia8fGloVu0FCOlzuqSyD0iGEm5Jie+tWVVKirMa59s5C2LkEoDuValhma8uSLmBjnWlIu8nkOFmllKsCvodKu4NMvlYw/PMENH1MfZEZ3FLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=N3Jbr3qp; arc=none smtp.client-ip=195.113.20.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kP9Ui+b3"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso9486835e9.2;
-        Mon, 09 Sep 2024 03:29:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725877766; x=1726482566; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FAsp+hsPUDz1Xlxx3Pt4VK/5oi4jWW+27XM18rtoe0s=;
-        b=kP9Ui+b3nzlhwCdEz7nH0dd8Xo3NsAJi/v5hXgg0xiH+KlaRhFW02lsOHntYo1R7KA
-         mJH3Mh0Fa3AqQX3ml0Hp/tpmqMUJa8MZoXx1N0QIsOs4cBLtTiCi8tecKhpgbygbIaR/
-         1SQbwIvoCahfw1tughaPY/NTwPJLQh4f0cRW9onZ0M5DKRq1u8fTAkTvSTZ108Zmfem1
-         rLNeyvPfm0+hbVWFqoMUbErtbtyHAEYl9+DwMWWqa/2rUwUWDz9G7EaOQJFAi5KABkz9
-         VSwBoxO+L1TeAvC8WGIUbMb4Q5qiKM8rTKzv+RwVMDPzL9npTDLSzbne0x9Fxa+2zb8g
-         hAIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725877766; x=1726482566;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FAsp+hsPUDz1Xlxx3Pt4VK/5oi4jWW+27XM18rtoe0s=;
-        b=Y54LPGN4rO8A/a0zFp76xYYY2De3IbiI1jjxrSjCBWxbPJ4Lsalr8ubrIGuq+EPQcb
-         kqjRpE9WHgcSdWdd/MQLEIUHhE+cYE+nIQtqTGbVUvdOgf8BGZ/GricBhVzV4jc9XPvJ
-         Bc7b8Bm5U7nJFBJ5xxlQHAMsjsp6Luv079VmuG/BCxOLSDXA9hDAn4TBUbs/LJi9+0rv
-         qhkVO05go7Sd0fjt2TiUwiGVv/K0LsTgeQqOT750F4lYL8UBGnYc4LBBJvBmrRuNh9Y2
-         0m0vn1pE/Vit4f15RExIrzuDeoFLiffDum4tbAg/TTKL5W8fJjxWBXa5VJsyJJ59qJMJ
-         1+MA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYxIrQWWJUVaQvsP9BA7bI1pzpBOW1WKYY/ghTDSHqJsY3JZKmRXA6keYVChkAykuRccpun4Izg4i37Eby1/A=@vger.kernel.org, AJvYcCXVVabmxHxVDwmOzt00J3MS3ufzlu6KPTPznRNQG5Z0DjyZx1Q5/qM8GDB/J1Fe1KtxP4WbLLessqS36lvx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrieYTTba3IVk3MyQBSUfVryBElq+M73K1ewjkaP9Rv+35evmu
-	OsWXjH/Uf/5bKlKmMQYDWADL/O6okrZDcKSFyFqvxki/CcbM+cb+
-X-Google-Smtp-Source: AGHT+IExMTUofqcguf6fDVu6C3XE4WrbFEN09GsrU/tVFwiMhS7OIZzFORoOXK79ZdwkysUEcI/bPg==
-X-Received: by 2002:a05:600c:3155:b0:426:6455:f124 with SMTP id 5b1f17b1804b1-42c9f8bf258mr75867495e9.0.1725877765782;
-        Mon, 09 Sep 2024 03:29:25 -0700 (PDT)
-Received: from void.void ([141.226.14.150])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d3765sm5677125f8f.74.2024.09.09.03.29.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 03:29:25 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Russell King <linux@armlinux.org.uk>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Peter Xu <peterx@redhat.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] arm/mm: fix typos
-Date: Mon,  9 Sep 2024 13:28:51 +0300
-Message-ID: <20240909102907.9187-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="N3Jbr3qp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
+	s=submission; t=1725877000; x=1727177000;
+	bh=09mAxXk5yZQ1FHGrWz6yzqQxvAU0gLKA91bNZ0jSFDQ=; h=From;
+	b=N3Jbr3qplkKFBNIhWyfhI0/ftYyX1QYS8sQtNXWbN6B4OTsw0dTznEX6ZRLyoymWo
+	 HblPc/hQ2j7f/kU05dM76Ik8FCzMapfz6qEOyYqq3X+0XuFnGXZvbZaUl/zTBQKuc+
+	 NLQS4o9zMk8yn42kiCou+9ZO+6PP7jqHIU6Gy1GwJ3tG/S6mRISTDhH4tIIhLeSUUr
+	 ADQlUMLkfgTwGfaEvtDCHp4v/jX4iTP5h935D9Jio6oEigV7QYS+lbkGbvWmVx+j3t
+	 BXLsZh4manj+XP55OuTvas4SmbtfP9DxzzFxW49mHtfA2pq/rum70p67GUJJlR+U+Z
+	 kto3xhVBsrzZQ==
+Received: from localhost (internet5.mraknet.com [185.200.108.250])
+	(authenticated)
+	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 489AGc2d025308
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
+	Mon, 9 Sep 2024 12:16:40 +0200 (CEST)
+	(envelope-from balejk@matfyz.cz)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 09 Sep 2024 12:16:38 +0200
+Message-Id: <D41OC3PTUHE6.1V0FU4PAW4O9Q@matfyz.cz>
+Cc: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Liam
+ Girdwood" <lgirdwood@gmail.com>,
+        "Mark Brown" <broonie@kernel.org>
+Subject: Re: [PATCH] regulator: 88pm886: Constify struct regulator_desc
+To: "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>
+From: "Karel Balej" <balejk@matfyz.cz>
+References: <0261f8b951a489859ee0fa41c584804b2e3f1557.1725783921.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <0261f8b951a489859ee0fa41c584804b2e3f1557.1725783921.git.christophe.jaillet@wanadoo.fr>
 
-Fix typos in comments.
+Christophe JAILLET, 2024-09-08T10:25:56+02:00:
+> 'struct regulator_desc' is not modified in this driver.
+>
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security, especially when the structure holds some
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- arch/arm/mm/kasan_init.c | 2 +-
- arch/arm/mm/pmsa-v7.c    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+"increases"?
 
-diff --git a/arch/arm/mm/kasan_init.c b/arch/arm/mm/kasan_init.c
-index 111d4f703136..b394b14838c3 100644
---- a/arch/arm/mm/kasan_init.c
-+++ b/arch/arm/mm/kasan_init.c
-@@ -215,7 +215,7 @@ void __init kasan_init(void)
- 	/*
- 	 * We are going to perform proper setup of shadow memory.
- 	 *
--	 * At first we should unmap early shadow (clear_pgds() call bellow).
-+	 * At first we should unmap early shadow (clear_pgds() call below).
- 	 * However, instrumented code can't execute without shadow memory.
- 	 *
- 	 * To keep the early shadow memory MMU tables around while setting up
-diff --git a/arch/arm/mm/pmsa-v7.c b/arch/arm/mm/pmsa-v7.c
-index 59d916ccdf25..4844ae40d4bc 100644
---- a/arch/arm/mm/pmsa-v7.c
-+++ b/arch/arm/mm/pmsa-v7.c
-@@ -434,7 +434,7 @@ void __init pmsav7_setup(void)
- 		/*
-                  * In case we overwrite RAM region we set earlier in
-                  * head-nommu.S (which is cachable) all subsequent
--                 * data access till we setup RAM bellow would be done
-+                 * data access till we setup RAM below would be done
-                  * with BG region (which is uncachable), thus we need
-                  * to clean and invalidate cache.
- 		 */
--- 
-2.46.0
+> function pointers.
+>
+> On a x86_64, with allmodconfig:
+> Before:
+> =3D=3D=3D=3D=3D=3D
+>    text	   data	    bss	    dec	    hex	filename
+>    3251	   6928	     16	  10195	   27d3	drivers/regulator/88pm886-regulat=
+or.o
+>
+> After:
+> =3D=3D=3D=3D=3D
+>    text	   data	    bss	    dec	    hex	filename
+>    9795	    360	     16	  10171	   27bb	drivers/regulator/88pm886-regulat=
+or.o
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> --
+> Compile tested only
+> ---
+>  drivers/regulator/88pm886-regulator.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/regulator/88pm886-regulator.c b/drivers/regulator/88=
+pm886-regulator.c
+> index a38bd4f312b7..68c83a4ebda8 100644
+> --- a/drivers/regulator/88pm886-regulator.c
+> +++ b/drivers/regulator/88pm886-regulator.c
+> @@ -56,7 +56,7 @@ static const struct linear_range pm886_buck_volt_ranges=
+2[] =3D {
+>  	REGULATOR_LINEAR_RANGE(1600000, 80, 114, 50000),
+>  };
+> =20
+> -static struct regulator_desc pm886_regulators[] =3D {
+> +static const struct regulator_desc pm886_regulators[] =3D {
+>  	{
+>  		.name =3D "LDO1",
+>  		.regulators_node =3D "regulators",
+> @@ -340,9 +340,9 @@ static struct regulator_desc pm886_regulators[] =3D {
+>  static int pm886_regulator_probe(struct platform_device *pdev)
+>  {
+>  	struct pm886_chip *chip =3D dev_get_drvdata(pdev->dev.parent);
+> +	const struct regulator_desc *rdesc;
+>  	struct regulator_config rcfg =3D { };
+>  	struct device *dev =3D &pdev->dev;
+> -	struct regulator_desc *rdesc;
+>  	struct regulator_dev *rdev;
+>  	struct i2c_client *page;
+>  	struct regmap *regmap;
+> --=20
+> 2.46.0
 
+Reviewed-by: Karel Balej <balejk@matfyz.cz>
+
+Thanks,
+K. B.
