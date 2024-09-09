@@ -1,147 +1,116 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF33C2B9B7;
-	Mon,  9 Sep 2024 09:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B481AC8BF
+	for <kernel-janitors@vger.kernel.org>; Mon,  9 Sep 2024 10:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725874989; cv=none; b=ImWq2EBb5kN7wyg4xwjHMizI3H74eeaLkUB499yevxJHEMaglTkQ22ilPAJpENeeISaJ0wJWIbDR0wQQl2CRDf6E/z4MrUhpFPdKBEunVulNZVyk3mJzIGddf3aJBWmVSvQtlZvaSbGdJQMu4D1ueI66QEyHSAeHb1CibUFIn6A=
+	t=1725877507; cv=none; b=XZSIxdOI7X6IbHRJtVAMs8WT73QSABrrH7DnMrJVmE+CTWJbzUu7V6TqeMgB368IzChOwV8UcIdNYD4MSeeYqjxZNYe6xzw1Nwkuv3niVR178tWGD/DAoA4MQ/ITRj5z67/1R5YO6qgw0axGiolxQ0Qd94My4u1GyL8M8H5hXT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725874989; c=relaxed/simple;
-	bh=oaQTAchEaBkSQcwrLccybjUtspKB7+exoP4r1K4V8Q4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=u1bRmRgpEVanbU/3SLcbcZhAj0HRd+y3NIi52FOcaXudT5FGouDmt4IlRKaDvPif2RKpPSaUxw404FEaszAyvG87chON6Jd0dyGtScqdwYODCBCXyPfSBDmrNrq2JkqTiAex78tzwhOMHiYP++5rQb73cmqhUdYqhcFE38kzXWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jRuMaP3k; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1725877507; c=relaxed/simple;
+	bh=igWYc2HLTlHgxbHeBp+GlEfh+jAfbhcDCLq3lozYnok=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O5hZP+hD8GIf/MPX0TYzoNjcQFWvWb45E9aHcPVecEggzfmLYd/UpvL3bbPytg/JOyoHG0keumidpH54KK97FjoilmaW+YU0H/IwqnEHzWGsru4zVslt2rdi2fNg8DReZ+J8baivNMDVi60JMJih9QLh3RGbdBJjyYalZhdhPOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OypH+DJN; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jRuMaP3k"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1725874946; x=1726479746; i=markus.elfring@web.de;
-	bh=EBlqzeibcHmLE8jmEMvY/kGvwXFkAdrNBvVf/DUWlqQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=jRuMaP3kv/79914X8WkyFcRufIcKEX1mn6+C3ACulpE1FKCVk4WN2pliQPxLddu5
-	 2iOcXpyeEShRv5pJnxYaV5bQF73LcEBCQRIQhgFcEjrNzPjIG54dqi2N1Xoomm/AF
-	 RAvJHyXe3dbJOnt7OjtZnErFGqo1X5Rrx91P1SHFt5Yz4XQoHgdavxivTw4Wzbc0Q
-	 BUC3P4OHjZ4dXpTpSC1zJwpgeHsv4qNBUMWscFh9iTAiUmCZv8fkKrBUCYY7/sKom
-	 13beFEvK/fSEBlsHH8kyANynfLlsOaA2wX/nYZMmzppU1N9g/maHX1cyfw7+YQb19
-	 WlxX4ZOzuDZHSIzLVg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M1aIB-1sl7o90LFL-00EbI9; Mon, 09
- Sep 2024 11:42:26 +0200
-Message-ID: <d4136720-e6c8-490b-933a-4a884412b38a@web.de>
-Date: Mon, 9 Sep 2024 11:42:23 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OypH+DJN"
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e1a80979028so4156286276.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 09 Sep 2024 03:25:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725877505; x=1726482305; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g45hI+dbrFl5zHoBA8y+ci0W/+L8ASesTKBmhCZ596o=;
+        b=OypH+DJN7iibmaapq+CHuoX/GP+h8ScuNv9tksQ3w7N1WcnflZ44COjGxxLe/k4z/7
+         LqYb3jwKikCznDGySu36BHDI5Kn5jATJ6fCfQigHjmeaK1/vrXPHdEjAAcRBS4ZwNwHK
+         v5H9bWtCJNc3YuSi2JN/exJ0CtGi1CLPBgIDYgw6as/AwGe/rcBxh9EveAbkLsOO8YHS
+         8xNUNhpzuaCSguD8GgDbaDm7/dWBk9t3NrQA1LXtdFVKXMlcH/mOtveT/VZZyL9UTrc0
+         Ijo26T2oWvv9y/zOXP+4ZtdpduoDmZlbj8+ae4BXVzlPjrPqYqSZaXWR5wwnpHwJrvVg
+         WjzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725877505; x=1726482305;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g45hI+dbrFl5zHoBA8y+ci0W/+L8ASesTKBmhCZ596o=;
+        b=vMICXw9ScqNRh8w0toxloM3gUCViHw9RcO2IUVlqst003L6yY5TKSvV/ubpJ2BbcP3
+         C4lJp8IZF9+AWtF+Q2HVlod6tB3v6m5ujs7QXsMKiN+bW5tqmbLBJYAOUCztQc5V1P3b
+         LtK7hzbcz+Hxu6tjhTuCNTV0zTmFfJZg63OhMs8qbq7CtGPVPJBc3ZkGnD5V50HuS2xy
+         kw6aDFAOO2dKmEFiowAzYh8sR15Jbqk5uvRu6uyYCxJ44ba7O67dLupUPGRnPzGOX5JS
+         /nrdT/3eLrZ3xknuXlFCTxAFIny0HyI2pSVVPCF8XVOKpLJl3D04rpyzZsoLGtfjWq5o
+         SuuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVd5/oyF6F/sKfSKYaVtv9Pp/4IBMHFKpyIZb52DRvUu40qBfCGLmS3/5SAyH9kWiVKcu/q62HjIJmdJ5rdj8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyjzn1NtrgC7BTkeYFdyXcgLr8SB1TgzDM9nZRMwBikUoCVfiN1
+	A2275b1nIcfiNVNEd1nwD+kE083aRSheSSVUWHZOH4IpNCwgJFdeiAaEzgSBSUq0yF5ASbQNQpU
+	RnGGjlT+/CCPuVC5AjMMQWTlJwdxeL4BDXXUq9g==
+X-Google-Smtp-Source: AGHT+IFDQSlZUFFqwjtBGFubuT/aNajcR0fBHSdSHs9NmXKaik+0yq5I6jj/Abm0bIMeVTTkEEVdl1mf2/pkFTxLiWY=
+X-Received: by 2002:a05:6902:2188:b0:e1a:3dc9:c422 with SMTP id
+ 3f1490d57ef6-e1d348829edmr9561915276.19.1725877505183; Mon, 09 Sep 2024
+ 03:25:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] drm/amdgpu: Move a variable assignment behind a null
- pointer check in amdgpu_ras_interrupt_dispatch()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Alan Liu <HaoPing.Liu@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>, Alex Hung <alex.hung@amd.com>,
- Alexey Kodanev <aleksei.kodanev@bell-sw.com>,
- Aurabindo Pillai <aurabindo.pillai@amd.com>,
- Bhanuprakash Modem <bhanuprakash.modem@intel.com>,
- Candice Li <candice.li@amd.com>, Charlene Liu <charlene.liu@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- David Tadokoro <davidbtadokoro@usp.br>, Eryk Brol <eryk.brol@amd.com>,
- Felix Kuehling <felix.kuehling@amd.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Hamza Mahfooz <hamza.mahfooz@amd.com>,
- Harry Wentland <harry.wentland@amd.com>,
- Hawking Zhang <Hawking.Zhang@amd.com>, hersen wu <hersenxs.wu@amd.com>,
- Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, Jun Lei <jun.lei@amd.com>,
- Leo Li <sunpeng.li@amd.com>, Lijo Lazar <lijo.lazar@amd.com>,
- Ma Jun <Jun.Ma2@amd.com>, Mikita Lipski <mikita.lipski@amd.com>,
- Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Stanley Yang <Stanley.Yang@amd.com>, Tao Zhou <tao.zhou1@amd.com>,
- Tom Rix <trix@redhat.com>, Victor Zhao <Victor.Zhao@amd.com>,
- Wayne Lin <Wayne.Lin@amd.com>, Wenjing Liu <wenjing.liu@amd.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>, YiPeng Chai <YiPeng.Chai@amd.com>,
- Zhan Liu <zhan.liu@amd.com>
-Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <2258ce64-2a14-6778-8319-b342b06a1f33@web.de>
- <0d4b92ab-f7c2-4f18-f3c3-c0f82ba47fc8@web.de>
-Content-Language: en-GB
-In-Reply-To: <0d4b92ab-f7c2-4f18-f3c3-c0f82ba47fc8@web.de>
-Content-Type: text/plain; charset=UTF-8
+References: <f8c12aed-b5d1-4522-bf95-622b8569706d@stanley.mountain> <CAHUa44H4XHOxn_=TxTUM=S6oqUNL6-kVVU2=jFPZyobzmtbQPg@mail.gmail.com>
+In-Reply-To: <CAHUa44H4XHOxn_=TxTUM=S6oqUNL6-kVVU2=jFPZyobzmtbQPg@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 9 Sep 2024 12:24:29 +0200
+Message-ID: <CAPDyKFoe+_m8VLWFdB_jgv915WcyLbjkFJq_Regb1qXwQaVchQ@mail.gmail.com>
+Subject: Re: [PATCH next] optee: Fix a NULL vs IS_ERR() check
+To: Jens Wiklander <jens.wiklander@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Sumit Garg <sumit.garg@linaro.org>, op-tee@lists.trustedfirmware.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0FinRSsoYLcUBzW5CselKtDxWi72MFZcC3KilliEKBsQUeKXYei
- FR2I8NrqAgdIr7ze6KALJPaM7wknBcUXSmvlGyO7sm9JokMjRgJonKx2kUM2LDr2R2qlBew
- oHpIeeJnmJltdTUQ2q2AREeQHxSuBS/F94J2yTpY+UIAZtqw2TB5gH2spYfpgruDPCjvV+f
- dPM9jIAK7/z0nl5PCkokg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4mNfO0uCz2s=;QgAKWGK+oCVd1C58nJsisjfUumH
- UMZmClwq9WwbmEwKs0+o3InvaH49mHbVoA43aHpnciXuMv++wM97ehl85Nab5/LXN0js53AiO
- EzYUt9sYSBwxlWlR+9nFnwyG/TDN73Kv8BkgsREn3EA7hFIbppbXE+zmt+MabpUhiIK66iJ03
- aXjpemLGO7cZhg5mcC2VGg1tf/bs2hdO0PmiGFxOATsywO80kwExz8zHnPHQAZrsvG0i7a+sA
- xSjvaCOz5t84lyOuaL7csvkuQ7lp2PghHkcDb0ZfpBlN/J1zmj+62HIPRyWS7HwGWYFJcZFpg
- k+FAOoQ7JazBLKMLigp+yG2X6dO7PVjV4uGwAwkWNCvrrnGtNfHQQGjg0bD+resJXlx2Voqjv
- OXRlDX5OPmmPXiDJrqk/sLY8LVVTphwEXblDdXb9RqoyRlmYxusqGpcF+SUiPpAOIAe5xGo8+
- 5TCdEqgocUXf2JbtOgJ9ayZ8JrLKFbYe6TPdJpyOrI7nyxTG6HKgi9dE/Gnw4KG8/4kWZPy6k
- Pw+99s3sXF0SR0OxlIP+Fkl4DRslS1Vui5yj4jzEwiZaVoNp/jPG4SRBkdzWycNAlIPr8h7pB
- AiUokGue70Z16SqzBH+ZJNWb7CwJu9whs/ZITLd1cShfdDaXav+gEVWBa4EtRNMprGrKZsQwO
- oGpFqHnJSf0ZYOP+xNVgjLETz0/LvRK5H9LcsqiXRaB0K7sx1IH6hgEixESofMowET5qtP8BN
- DnvYQwP227HLP4OM7L50krSK+sVZ0p2IGxOMUUtgTaUvVJY2vP7dORRcd8kx3dyEcCov491na
- 5yIA4CEHwoVpxpFHGIbbbRMA==
 
-> Date: Tue, 11 Apr 2023 10:52:48 +0200
+On Thu, 5 Sept 2024 at 16:09, Jens Wiklander <jens.wiklander@linaro.org> wr=
+ote:
 >
-> The address of a data structure member was determined before
-> a corresponding null pointer check in the implementation of
-> the function =E2=80=9Camdgpu_ras_interrupt_dispatch=E2=80=9D.
+> On Thu, Sep 5, 2024 at 3:17=E2=80=AFPM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
+> >
+> > The tee_shm_get_va() function never returns NULL, it returns error
+> > pointers.  Update the check to match.
+> >
+> > Fixes: f0c8431568ee ("optee: probe RPMB device using RPMB subsystem")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  drivers/tee/optee/rpc.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/tee/optee/rpc.c b/drivers/tee/optee/rpc.c
+> > index a4b49fd1d46d..ebbbd42b0e3e 100644
+> > --- a/drivers/tee/optee/rpc.c
+> > +++ b/drivers/tee/optee/rpc.c
+> > @@ -332,7 +332,7 @@ static void handle_rpc_func_rpmb_probe_next(struct =
+tee_context *ctx,
+> >         }
+> >         buf =3D tee_shm_get_va(params[1].u.memref.shm,
+> >                              params[1].u.memref.shm_offs);
+> > -       if (!buf) {
+> > +       if (IS_ERR(buf)) {
+> >                 arg->ret =3D TEEC_ERROR_BAD_PARAMETERS;
+> >                 return;
+> >         }
+> > --
+> > 2.45.2
+> >
 >
-> Thus avoid the risk for undefined behaviour by moving the assignment
-> for the variable =E2=80=9Cdata=E2=80=9D behind the null pointer check.
+> Good catch.
+> Reviewed-by: Jens Wiklander <jens.wiklander@linaro.org>
 >
-> This issue was detected by using the Coccinelle software.
+> Ulf, this is a fix for a patch in your next tree so if you could pick
+> up this patch, please.
 >
-> Fixes: c030f2e4166c3f5597c7e7a70bcd9ab383695de4 ("drm/amdgpu: add amdgpu=
-_ras.c to support ras (v2)")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c b/drivers/gpu/drm/a=
-md/amdgpu/amdgpu_ras.c
-> index 4069bce9479f..a920c7888d07 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-> @@ -1730,11 +1730,12 @@ int amdgpu_ras_interrupt_dispatch(struct amdgpu_=
-device *adev,
->  		struct ras_dispatch_if *info)
->  {
->  	struct ras_manager *obj =3D amdgpu_ras_find_obj(adev, &info->head);
-> -	struct ras_ih_data *data =3D &obj->ih_data;
-> +	struct ras_ih_data *data;
->
->  	if (!obj)
->  		return -EINVAL;
->
-> +	data =3D &obj->ih_data;
->  	if (data->inuse =3D=3D 0)
->  		return 0;
->
+> Thanks,
+> Jens
 
-I would like to point out that another software adjustment got the desired
-development attention (on 2024-05-11).
+Patch applied to the next branch to my mmc tree, thanks!
 
-See also:
-Commit 4c11d30c95576937c6c35e6f29884761f2dddb43 ("drm/amdgpu:
-Fix the null pointer dereference to ras_manager")
-
-Regards,
-Markus
+Kind regards
+Uffe
