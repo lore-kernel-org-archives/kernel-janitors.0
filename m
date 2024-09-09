@@ -1,116 +1,117 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B481AC8BF
-	for <kernel-janitors@vger.kernel.org>; Mon,  9 Sep 2024 10:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327F61B3B2A;
+	Mon,  9 Sep 2024 10:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725877507; cv=none; b=XZSIxdOI7X6IbHRJtVAMs8WT73QSABrrH7DnMrJVmE+CTWJbzUu7V6TqeMgB368IzChOwV8UcIdNYD4MSeeYqjxZNYe6xzw1Nwkuv3niVR178tWGD/DAoA4MQ/ITRj5z67/1R5YO6qgw0axGiolxQ0Qd94My4u1GyL8M8H5hXT4=
+	t=1725877769; cv=none; b=bWgDavHc9oMangpxAatQNV6d6Gg1Sp7F+RSTZTbKUlPZk1hwrYnzoPhqOkkJqZd/T8RCcOHfMc5enjkMpkHywuESMBOc3Ul1pFREC7VpmU9e2mBuztryduXbkxSVF34xyYPMqpFpuTmXC3WDGMhFsMW1YbTdMNZA0JSITR59Ufo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725877507; c=relaxed/simple;
-	bh=igWYc2HLTlHgxbHeBp+GlEfh+jAfbhcDCLq3lozYnok=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O5hZP+hD8GIf/MPX0TYzoNjcQFWvWb45E9aHcPVecEggzfmLYd/UpvL3bbPytg/JOyoHG0keumidpH54KK97FjoilmaW+YU0H/IwqnEHzWGsru4zVslt2rdi2fNg8DReZ+J8baivNMDVi60JMJih9QLh3RGbdBJjyYalZhdhPOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OypH+DJN; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1725877769; c=relaxed/simple;
+	bh=SXu+KN414hj/lwNJJEVMgjiKQvEk/dkZL54sBGNdtaQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vjv6V4ddkB8BHcNW/n4nhk2p0wN8v9YAhcThE9F5EVcfMWVwqagF9vN1PxkJ9Xjpj2kcEufbkUsdyPJVw25mYnZBbPYqYbM3DRrL7crijTV/LAsNU0UhQHaKk7v3igHDF0VFtkFYD+1abalOCOTStk9LKDrjXq2j8P+5xI22M2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kP9Ui+b3; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OypH+DJN"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e1a80979028so4156286276.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 09 Sep 2024 03:25:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kP9Ui+b3"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso9486835e9.2;
+        Mon, 09 Sep 2024 03:29:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725877505; x=1726482305; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g45hI+dbrFl5zHoBA8y+ci0W/+L8ASesTKBmhCZ596o=;
-        b=OypH+DJN7iibmaapq+CHuoX/GP+h8ScuNv9tksQ3w7N1WcnflZ44COjGxxLe/k4z/7
-         LqYb3jwKikCznDGySu36BHDI5Kn5jATJ6fCfQigHjmeaK1/vrXPHdEjAAcRBS4ZwNwHK
-         v5H9bWtCJNc3YuSi2JN/exJ0CtGi1CLPBgIDYgw6as/AwGe/rcBxh9EveAbkLsOO8YHS
-         8xNUNhpzuaCSguD8GgDbaDm7/dWBk9t3NrQA1LXtdFVKXMlcH/mOtveT/VZZyL9UTrc0
-         Ijo26T2oWvv9y/zOXP+4ZtdpduoDmZlbj8+ae4BXVzlPjrPqYqSZaXWR5wwnpHwJrvVg
-         WjzA==
+        d=gmail.com; s=20230601; t=1725877766; x=1726482566; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FAsp+hsPUDz1Xlxx3Pt4VK/5oi4jWW+27XM18rtoe0s=;
+        b=kP9Ui+b3nzlhwCdEz7nH0dd8Xo3NsAJi/v5hXgg0xiH+KlaRhFW02lsOHntYo1R7KA
+         mJH3Mh0Fa3AqQX3ml0Hp/tpmqMUJa8MZoXx1N0QIsOs4cBLtTiCi8tecKhpgbygbIaR/
+         1SQbwIvoCahfw1tughaPY/NTwPJLQh4f0cRW9onZ0M5DKRq1u8fTAkTvSTZ108Zmfem1
+         rLNeyvPfm0+hbVWFqoMUbErtbtyHAEYl9+DwMWWqa/2rUwUWDz9G7EaOQJFAi5KABkz9
+         VSwBoxO+L1TeAvC8WGIUbMb4Q5qiKM8rTKzv+RwVMDPzL9npTDLSzbne0x9Fxa+2zb8g
+         hAIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725877505; x=1726482305;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g45hI+dbrFl5zHoBA8y+ci0W/+L8ASesTKBmhCZ596o=;
-        b=vMICXw9ScqNRh8w0toxloM3gUCViHw9RcO2IUVlqst003L6yY5TKSvV/ubpJ2BbcP3
-         C4lJp8IZF9+AWtF+Q2HVlod6tB3v6m5ujs7QXsMKiN+bW5tqmbLBJYAOUCztQc5V1P3b
-         LtK7hzbcz+Hxu6tjhTuCNTV0zTmFfJZg63OhMs8qbq7CtGPVPJBc3ZkGnD5V50HuS2xy
-         kw6aDFAOO2dKmEFiowAzYh8sR15Jbqk5uvRu6uyYCxJ44ba7O67dLupUPGRnPzGOX5JS
-         /nrdT/3eLrZ3xknuXlFCTxAFIny0HyI2pSVVPCF8XVOKpLJl3D04rpyzZsoLGtfjWq5o
-         SuuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVd5/oyF6F/sKfSKYaVtv9Pp/4IBMHFKpyIZb52DRvUu40qBfCGLmS3/5SAyH9kWiVKcu/q62HjIJmdJ5rdj8U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyjzn1NtrgC7BTkeYFdyXcgLr8SB1TgzDM9nZRMwBikUoCVfiN1
-	A2275b1nIcfiNVNEd1nwD+kE083aRSheSSVUWHZOH4IpNCwgJFdeiAaEzgSBSUq0yF5ASbQNQpU
-	RnGGjlT+/CCPuVC5AjMMQWTlJwdxeL4BDXXUq9g==
-X-Google-Smtp-Source: AGHT+IFDQSlZUFFqwjtBGFubuT/aNajcR0fBHSdSHs9NmXKaik+0yq5I6jj/Abm0bIMeVTTkEEVdl1mf2/pkFTxLiWY=
-X-Received: by 2002:a05:6902:2188:b0:e1a:3dc9:c422 with SMTP id
- 3f1490d57ef6-e1d348829edmr9561915276.19.1725877505183; Mon, 09 Sep 2024
- 03:25:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725877766; x=1726482566;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FAsp+hsPUDz1Xlxx3Pt4VK/5oi4jWW+27XM18rtoe0s=;
+        b=Y54LPGN4rO8A/a0zFp76xYYY2De3IbiI1jjxrSjCBWxbPJ4Lsalr8ubrIGuq+EPQcb
+         kqjRpE9WHgcSdWdd/MQLEIUHhE+cYE+nIQtqTGbVUvdOgf8BGZ/GricBhVzV4jc9XPvJ
+         Bc7b8Bm5U7nJFBJ5xxlQHAMsjsp6Luv079VmuG/BCxOLSDXA9hDAn4TBUbs/LJi9+0rv
+         qhkVO05go7Sd0fjt2TiUwiGVv/K0LsTgeQqOT750F4lYL8UBGnYc4LBBJvBmrRuNh9Y2
+         0m0vn1pE/Vit4f15RExIrzuDeoFLiffDum4tbAg/TTKL5W8fJjxWBXa5VJsyJJ59qJMJ
+         1+MA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYxIrQWWJUVaQvsP9BA7bI1pzpBOW1WKYY/ghTDSHqJsY3JZKmRXA6keYVChkAykuRccpun4Izg4i37Eby1/A=@vger.kernel.org, AJvYcCXVVabmxHxVDwmOzt00J3MS3ufzlu6KPTPznRNQG5Z0DjyZx1Q5/qM8GDB/J1Fe1KtxP4WbLLessqS36lvx@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrieYTTba3IVk3MyQBSUfVryBElq+M73K1ewjkaP9Rv+35evmu
+	OsWXjH/Uf/5bKlKmMQYDWADL/O6okrZDcKSFyFqvxki/CcbM+cb+
+X-Google-Smtp-Source: AGHT+IExMTUofqcguf6fDVu6C3XE4WrbFEN09GsrU/tVFwiMhS7OIZzFORoOXK79ZdwkysUEcI/bPg==
+X-Received: by 2002:a05:600c:3155:b0:426:6455:f124 with SMTP id 5b1f17b1804b1-42c9f8bf258mr75867495e9.0.1725877765782;
+        Mon, 09 Sep 2024 03:29:25 -0700 (PDT)
+Received: from void.void ([141.226.14.150])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d3765sm5677125f8f.74.2024.09.09.03.29.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 03:29:25 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Russell King <linux@armlinux.org.uk>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Peter Xu <peterx@redhat.com>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] arm/mm: fix typos
+Date: Mon,  9 Sep 2024 13:28:51 +0300
+Message-ID: <20240909102907.9187-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f8c12aed-b5d1-4522-bf95-622b8569706d@stanley.mountain> <CAHUa44H4XHOxn_=TxTUM=S6oqUNL6-kVVU2=jFPZyobzmtbQPg@mail.gmail.com>
-In-Reply-To: <CAHUa44H4XHOxn_=TxTUM=S6oqUNL6-kVVU2=jFPZyobzmtbQPg@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 9 Sep 2024 12:24:29 +0200
-Message-ID: <CAPDyKFoe+_m8VLWFdB_jgv915WcyLbjkFJq_Regb1qXwQaVchQ@mail.gmail.com>
-Subject: Re: [PATCH next] optee: Fix a NULL vs IS_ERR() check
-To: Jens Wiklander <jens.wiklander@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Sumit Garg <sumit.garg@linaro.org>, op-tee@lists.trustedfirmware.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 5 Sept 2024 at 16:09, Jens Wiklander <jens.wiklander@linaro.org> wr=
-ote:
->
-> On Thu, Sep 5, 2024 at 3:17=E2=80=AFPM Dan Carpenter <dan.carpenter@linar=
-o.org> wrote:
-> >
-> > The tee_shm_get_va() function never returns NULL, it returns error
-> > pointers.  Update the check to match.
-> >
-> > Fixes: f0c8431568ee ("optee: probe RPMB device using RPMB subsystem")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  drivers/tee/optee/rpc.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/tee/optee/rpc.c b/drivers/tee/optee/rpc.c
-> > index a4b49fd1d46d..ebbbd42b0e3e 100644
-> > --- a/drivers/tee/optee/rpc.c
-> > +++ b/drivers/tee/optee/rpc.c
-> > @@ -332,7 +332,7 @@ static void handle_rpc_func_rpmb_probe_next(struct =
-tee_context *ctx,
-> >         }
-> >         buf =3D tee_shm_get_va(params[1].u.memref.shm,
-> >                              params[1].u.memref.shm_offs);
-> > -       if (!buf) {
-> > +       if (IS_ERR(buf)) {
-> >                 arg->ret =3D TEEC_ERROR_BAD_PARAMETERS;
-> >                 return;
-> >         }
-> > --
-> > 2.45.2
-> >
->
-> Good catch.
-> Reviewed-by: Jens Wiklander <jens.wiklander@linaro.org>
->
-> Ulf, this is a fix for a patch in your next tree so if you could pick
-> up this patch, please.
->
-> Thanks,
-> Jens
+Fix typos in comments.
 
-Patch applied to the next branch to my mmc tree, thanks!
+Reported-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ arch/arm/mm/kasan_init.c | 2 +-
+ arch/arm/mm/pmsa-v7.c    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Kind regards
-Uffe
+diff --git a/arch/arm/mm/kasan_init.c b/arch/arm/mm/kasan_init.c
+index 111d4f703136..b394b14838c3 100644
+--- a/arch/arm/mm/kasan_init.c
++++ b/arch/arm/mm/kasan_init.c
+@@ -215,7 +215,7 @@ void __init kasan_init(void)
+ 	/*
+ 	 * We are going to perform proper setup of shadow memory.
+ 	 *
+-	 * At first we should unmap early shadow (clear_pgds() call bellow).
++	 * At first we should unmap early shadow (clear_pgds() call below).
+ 	 * However, instrumented code can't execute without shadow memory.
+ 	 *
+ 	 * To keep the early shadow memory MMU tables around while setting up
+diff --git a/arch/arm/mm/pmsa-v7.c b/arch/arm/mm/pmsa-v7.c
+index 59d916ccdf25..4844ae40d4bc 100644
+--- a/arch/arm/mm/pmsa-v7.c
++++ b/arch/arm/mm/pmsa-v7.c
+@@ -434,7 +434,7 @@ void __init pmsav7_setup(void)
+ 		/*
+                  * In case we overwrite RAM region we set earlier in
+                  * head-nommu.S (which is cachable) all subsequent
+-                 * data access till we setup RAM bellow would be done
++                 * data access till we setup RAM below would be done
+                  * with BG region (which is uncachable), thus we need
+                  * to clean and invalidate cache.
+ 		 */
+-- 
+2.46.0
+
