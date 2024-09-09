@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D9A189B95;
-	Mon,  9 Sep 2024 20:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACC918951A;
+	Mon,  9 Sep 2024 21:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725912517; cv=none; b=fUExuI6MrmILP/5/ViaIhngjO0dnFH2aEtqgggeplWl4oJhalkaeMFAuTYmuBYC6mtsJ4QdihPw8P6JcW6olhfxcOWwmQEUbLYEPDM6RLMCLBW8y/eR867ix65aAZ0tRWkNtdzkpnDNN2jnEBoh6s/dcOONjk9PXu9tb4l1gddo=
+	t=1725917730; cv=none; b=fwiEn5/YDcz/lXN2bz7jnoEulTGMrUvF7F9ttPrpWFRXvZMmPRPtSK8B8YKELtHo/zg4JpdR9y4txaoVsCF0BPl07xVM6LHuIbX6rhibkof8lda0hS3+VJ4Xsd+Kn9IKcNc43hzq9FT7RwfaRenyeG89lZl1jzKOQGkqh67Posw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725912517; c=relaxed/simple;
-	bh=C4zDe1A5VTIL8iAyQvoyiHCNJ1fLL1JCgVhP0BOhBOA=;
+	s=arc-20240116; t=1725917730; c=relaxed/simple;
+	bh=67Wl61W7prEC4aHcO2AHbGlPF3SeL1G0pJmsaKDtL0M=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gFY3GmQVN/5kTDs6Zn1dYA00WsBQJVP82O6yvaQsNKynhzhhmp03+MuRLt4ZxLIgW8okk2AMV9/GdMovYJhvflTihc6bcAnzRND9yfImrX8SZ6E1iyIJQfs9LE4rPKTVYXnRW7LW7ZUN6RSLhFHKmvPaiKTAbmF7ZPJTcV1aFWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlS4rOXx; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=mC1++pSKzDVd9Ymah+isbTmddCV9JcqWaTPMRY2XOy2s1eMM8k5+0BugM+UmwXpZ5cRrh35VunWbwt1aHqVo8tPd6Jf0tjYBhAQ2X/LuV1IcjWKcXNkw9aPTUIRDYNnkhyTJkDneEZ/9XfPJu7P9azEgfQxFOds6KmfUw1OlQ0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HHsX7qdU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlS4rOXx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDADEC4CECA;
-	Mon,  9 Sep 2024 20:08:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HHsX7qdU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C578FC4CECA;
+	Mon,  9 Sep 2024 21:35:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725912517;
-	bh=C4zDe1A5VTIL8iAyQvoyiHCNJ1fLL1JCgVhP0BOhBOA=;
+	s=k20201202; t=1725917729;
+	bh=67Wl61W7prEC4aHcO2AHbGlPF3SeL1G0pJmsaKDtL0M=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=rlS4rOXxU74UAWvfzqWY7autHXMFvhCYItA22/OdaUFBMwtFVlUL1gabn1OnTdYb7
-	 K7BzTmDwCQcGHy2otbYJY5Ta8JdU8/sGZtgGUZNjPTWZLLoSgZM+ln7wamu092AihG
-	 DX6HHvr0b/Rdk+u4ZbDxKe6Y98w4clF1bMeEgrzro34HYTe9s+nfh1puRfQ9IgKDrq
-	 XtIK/ocd13qM47o35iL6LKZzomOXsMZHdHmAGJFmA6Y3oivWHNive44/gJBXHU8Wx2
-	 Tt4vUNZMHA3XQjuGso6af4wINVzsGzfAD70LWbFGF5ZFl8NRU7yt3ypa53xtQy6nC2
-	 iX5/bpbZ5Prxw==
+	b=HHsX7qdU7WZr4d7tIlu2RiSH1yogzdQIVgtOMDRTTZRuMGzVzgtGq54LdPBv6Ukl0
+	 KFCEn27xygPbzOtMsTn/HwVdALTEsQXU5wZGDo+hmP8rQhxH6wg+MoIL26jtX2bnTr
+	 sPB2D5NKVN5ZZqIOc8e18nciMYT4Dh3RvAx1NVDfDjafzjRuH6bfUyHctd4MXByxO+
+	 t8rrRvKjUxCbJdxlVAZecZzDvE4JCvcSp1eifnaOd/EqQ1MHKYi3lpWWrFCoih9Wtc
+	 RkMNv0QTpfidkZilj+y8sp51jGbUoUfpAe+OgquLKQclN6khVkM0ormNI14p9JduDY
+	 /2f2D/mffS5zw==
 From: Mark Brown <broonie@kernel.org>
-To: Support Opensource <support.opensource@diasemi.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, 
+To: Liam Girdwood <lgirdwood@gmail.com>, 
  Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <54258bfe11112d70d2f1eb1deda2791eb9ef99c1.1725784852.git.christophe.jaillet@wanadoo.fr>
-References: <54258bfe11112d70d2f1eb1deda2791eb9ef99c1.1725784852.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] regulator: da9211: Constify struct regulator_desc
-Message-Id: <172591251569.127770.3107235861067404635.b4-ty@kernel.org>
-Date: Mon, 09 Sep 2024 21:08:35 +0100
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ patches@opensource.cirrus.com
+In-Reply-To: <fde33ecfd9bbdbdc1da1620c9f3b1b7a72f9d805.1725906876.git.christophe.jaillet@wanadoo.fr>
+References: <fde33ecfd9bbdbdc1da1620c9f3b1b7a72f9d805.1725906876.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] regulator: wm8400: Constify struct regulator_desc
+Message-Id: <172591772852.144124.10966520564484131490.b4-ty@kernel.org>
+Date: Mon, 09 Sep 2024 22:35:28 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -46,18 +46,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-99b12
 
-On Sun, 08 Sep 2024 10:41:11 +0200, Christophe JAILLET wrote:
+On Mon, 09 Sep 2024 20:35:08 +0200, Christophe JAILLET wrote:
 > 'struct regulator_desc' is not modified in this driver.
 > 
 > Constifying this structure moves some data to a read-only section, so
-> increase overall security, especially when the structure holds some
+> increases overall security, especially when the structure holds some
 > function pointers.
 > 
 > On a x86_64, with allmodconfig:
 > Before:
 > ======
 >    text	   data	    bss	    dec	    hex	filename
->   13982	   2118	     16	  16116	   3ef4	drivers/regulator/da9211-regulator.o
+>    4419	   2512	      0	   6931	   1b13	drivers/regulator/wm8400-regulator.o
 > 
 > [...]
 
@@ -67,8 +67,8 @@ Applied to
 
 Thanks!
 
-[1/1] regulator: da9211: Constify struct regulator_desc
-      commit: 0c0966b5019f97e2af0ab802c1453162748b1166
+[1/1] regulator: wm8400: Constify struct regulator_desc
+      commit: 48cc042bd68e0225f1e6b137452e3d867e7c0942
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
