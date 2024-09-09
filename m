@@ -1,103 +1,108 @@
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDF63A1B5;
-	Sun,  8 Sep 2024 23:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1B16AB8
+	for <kernel-janitors@vger.kernel.org>; Mon,  9 Sep 2024 00:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725838695; cv=none; b=FgTIGBo3/MqRl64CD9FNtJZ6erZvAWTnqaYtqphGvRy56pvrmn8WxdRkcky/6kj50O/k2a3Npk4WM3W5hSnq8dNhw8oeoRD9DZ7SsHdDjL4bkQzkfvokv2jgGielbKTqkEwmkRJJn0bi+IGTmsq1xZ8IocbwsYnpoVvbR3q3UPA=
+	t=1725841851; cv=none; b=X0ZhLZ+UJjQBfUvGRczZ4PSP3Y3hcq1KQLzpXKZhBcppRYLXobUrm4tZHi1bqDpXU51QAXQTNISVUk2DpiTQrNLfgPX6grLlC7OmfQyYYqX0mNyRTrS7HWS4LyWwOqddtCgpLuv7RbaLOB5SM8UGk4dqZj3ermCXjOT/KjMxmrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725838695; c=relaxed/simple;
-	bh=FY/BjhsgiyH0daYlzg5bOZKtsRLtohljcQZ3TCBxMaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=If+BFHF/FJHuLrOR3KxD0SJg6Givivsx1fVoVcmoqew6WQGgbYO3VI+wvqXarN6r44dpWq0FBasTtNjkbVrhlh++dvXBPA4ia907Z7QijxixV+a/sVq3m6RTo4rus0agiy+jg3gv/HIbg6+OZpWSo8P9WWHK+iw7gX9bzlFmrXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XLoMjLY7; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1725841851; c=relaxed/simple;
+	bh=wPV8YEoYLGqTx9bO1llFaMyCiCsTU5XfDU4kupMd/c0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iLkuYWQNr9foGE3EZ83uOkqjs3zkmusZ6Jm8zEW0yebgxniplN9N5jctMHTO9YtVsCpd3TspOuxd/RwkYw4699+VmjYbYrPZe53+dJvHj5+AxaUFILiljwmCw2xq0L+629qt6eir0J0BmnS6G6Sy57s8TTkljQR6xOftv/A9TCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TW78uOL3; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XLoMjLY7"
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7cb3db0932cso2924576a12.1;
-        Sun, 08 Sep 2024 16:38:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TW78uOL3"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20546b8e754so261575ad.1
+        for <kernel-janitors@vger.kernel.org>; Sun, 08 Sep 2024 17:30:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725838693; x=1726443493; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n3eHjycKFrqwvUbRNtshDfNjCTOFbe1oyIgmCT0dxeE=;
-        b=XLoMjLY7IsGTqBEEXhfUL5dVtTvxlCu/ZVIJkjpW9PFY+xdx/lvgSGNBua4TwoISr3
-         w941jg9K5vUPQGuJCpAnsWOkZDSex9GbGDCZz3sHW+XWT7P31KUXcOZ5kYyYJAU3lSEQ
-         qXHPN5JpfC6EBx5EP4ydlP/3l52j05TyNxcBn03ZZq/9KQkrBWFNft1szyST1Y+jm9V2
-         JjA8Lf8OuODh8V/liGgLKkGtuuWjrinOJOPSVvyfLennwLZCq+jh/mQl4UuFptWcVc9H
-         zX+XHndwUBjcoHroTRHDp5nmy5uZw1dxk8lKbDyrUIqdGtgc6fffcONMx0gc+bAa/Mao
-         Bp9A==
+        d=google.com; s=20230601; t=1725841848; x=1726446648; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pJjhNLbpnc53C/tv3mczouRD8+CJs7f+bOzNSZ5DZtA=;
+        b=TW78uOL3GeTLI+Hxjui4q3GiWM5unwxfp0CbM7cgFCkzqhf5JVL3rk9eQOTHCF47Y5
+         NXEzcMmUX6rfCV38Iv0lVQOeOGFY3CuH/DfT+SaSNS81+r2eTEtsx9+ArPSPduWSJwWC
+         SVFumkZzfhudHieEDWSsH4z+uL9+g4Q6JYsav6LylfpBIa/nqtyB+w+n57UG3COrypw+
+         jMCSstM5n9bHDMozwIC5suAmmaAHUU+KJ6+HO0sQ43X2eq0KtzULt3D+yr2Ap0HVfPWC
+         qi3XnU4GpfluU0Iyk7ANcPNjNhx5+AHH2/rGSY7kz4/l59klmDBMqpguFGSMU9gz27l7
+         cK8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725838693; x=1726443493;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1725841848; x=1726446648;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n3eHjycKFrqwvUbRNtshDfNjCTOFbe1oyIgmCT0dxeE=;
-        b=sFGW25roKiaBhP+loG+5FgwZObHFzkjDD7GefB3dbaOeAIIDTkAE+FWUJOYhS1S+0W
-         QQboShn9AyTB2gV2kq7Se8pC1vgwyveMiS3VHm/asEo7B+GGjgwHwVvKRe9s50Qu5Nge
-         xz7J5IqLcqPYBhnXc6lyG559w7e7sDwnj644jUT45C6WABBlpGxln8MsrzunC9hGACRH
-         Aqa5tJcOXfEnQQZ2s6owyvt3abl+jrMgcxiCHPLzyYCaQ1Wpbl44snRCHtXvKGL2rD5H
-         VdwW5AhsF2PsuA+od++L3dZmLXmovqU7A1Hsx0uLmN6b6mkGRUHzEzzoOotBAshW/PbX
-         k3ug==
-X-Forwarded-Encrypted: i=1; AJvYcCUgOwDa/NPrpe7I9SvGeSP88EeX0yqK6ut58anKMp2t0h2GfebEjmmaQ97E2PwzYlFyMEVXCEVLAuoSbWJI@vger.kernel.org, AJvYcCV1TEkSuHJdj32DCBLMuDkiIumGWJ71YHRAhrVWfW8TUK6lYBL36Xqd7Ws0ZCMvyEftqeJYYPpt6e8ZcrmURKE=@vger.kernel.org, AJvYcCXnejJITNWE2ujHFsgWoaJubI/mvCM/qwzGtUDuLxYNUY1gcjAFmqedE7sH6huCiJH319wScfUFG+xMi4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ+RKWYRwoWzzR9tQviieZYUga8KQABdxHJbpu1XrPPn7oKA/I
-	7fSi7blVaT4FH9K5jMcfPjXaEtIvSXzM2tyGsb0KvlBQrVkPvAaA
-X-Google-Smtp-Source: AGHT+IGOmnvuP7qDYxfamyY7dTZnsjSbc3Swnm6V4JGaI+iN0fr4DKRu9NEUxrBwfTThDs1aZuxc/A==
-X-Received: by 2002:a05:6a20:718a:b0:1cf:55e:f893 with SMTP id adf61e73a8af0-1cf2a0e58ecmr5896375637.36.1725838692810;
-        Sun, 08 Sep 2024 16:38:12 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-718e5982ebasm2465733b3a.164.2024.09.08.16.38.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Sep 2024 16:38:12 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sun, 8 Sep 2024 16:38:10 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Saravanan Sekar <sravanhome@gmail.com>,
-	Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (pmbus/mpq7932) Constify struct regulator_desc
-Message-ID: <f6c39166-19bb-4e63-97ce-abf50c6f915d@roeck-us.net>
-References: <c0585a07547ec58d99a5bff5e02b398114bbe312.1725784343.git.christophe.jaillet@wanadoo.fr>
+        bh=pJjhNLbpnc53C/tv3mczouRD8+CJs7f+bOzNSZ5DZtA=;
+        b=t5uH2E3pmPVoQT79EUsJhxSzKRf/nlIqSSTGaO2y+3FTf7ufKIWK36gRnot0CqIOR4
+         XAVfan+KLy85od1hsjfTxeBAo8B4WWltPnZA19jNrneSmkFonNGRGfTL4gXyHOlub8Wv
+         8D5MC2zK+QUeHrthMZxoYsuyMnttGJuG+ACZ3el3+f+MFkiSBApUisbYsBccoDUiZ4TX
+         zTZYTtjBmlunNZ8xQ57MzEJfzzofEJ99Odj8dMLyLm6seuuBr6cMXGsFPJpFycZpb8HN
+         AbTLniU41/bGCBoocm8Mkum3kN2pBZFwYxbktCPxkaIFxj826hCgmx+mbZ2/L91d8VQc
+         hFjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMVOFLBtaN/xTI4pC3f2CmrWfrjE2kBcqo8JjuRCPbwfOvu4G6o2Bg+9WEvCLQlTNremFWwDRrf+glL/Ih8dk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9qbUQuOIAXJXZaRPeBR+Ijwzk71v4sq3z/ktue+dRaXyJGKIv
+	a7BGFvvBCaMeoVi0vphamwrXBFoYXGFFXwRbpngRRr9h+j3JSQA/CH6tZvkTwoZt42ETIkTK+4v
+	tvmfY7BA1qmbvUexlrJ6Om0CiAe9dXfwcac28
+X-Google-Smtp-Source: AGHT+IGowZzSEmTKRevgtTKEx/JN1+vLY4SrQ8bcDLX5CnwXX5QhslEZ/rC448FW8Ec5061Ba82Z65wAVG0P2JfReNo=
+X-Received: by 2002:a17:902:c401:b0:1eb:3f4f:6f02 with SMTP id
+ d9443c01a7336-2070a839333mr3341795ad.12.1725841847501; Sun, 08 Sep 2024
+ 17:30:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c0585a07547ec58d99a5bff5e02b398114bbe312.1725784343.git.christophe.jaillet@wanadoo.fr>
+References: <20240907131006.18510-1-algonell@gmail.com>
+In-Reply-To: <20240907131006.18510-1-algonell@gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Sun, 8 Sep 2024 17:30:36 -0700
+Message-ID: <CAP-5=fUW1z++JdFHke8X8Ou-grBRK_8rYPgd+CNjVLB9iZ5csA@mail.gmail.com>
+Subject: Re: [PATCH] perf tools: Fix a typo
+To: Andrew Kreimer <algonell@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Liang Kan <kan.liang@linux.intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 08, 2024 at 10:32:38AM +0200, Christophe JAILLET wrote:
-> 'struct regulator_desc' is not modified in this driver.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security, especially when the structure holds some
-> function pointers.
-> 
-> This also makes mpq7932_regulators_desc consistent with
-> mpq7932_regulators_desc_one which is already a "static const struct
-> regulator_desc".
-> 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->    3516	   2264	      0	   5780	   1694	drivers/hwmon/pmbus/mpq7932.o
-> 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->    5396	    384	      0	   5780	   1694	drivers/hwmon/pmbus/mpq7932.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+On Sat, Sep 7, 2024 at 6:10=E2=80=AFAM Andrew Kreimer <algonell@gmail.com> =
+wrote:
+>
+> Fix a typo in comments.
+>
+> Reported-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 
-Applied.
+Reviewed-by: Ian Rogers <irogers@google.com>
 
 Thanks,
-Guenter
+Ian
+
+> ---
+>  tools/perf/builtin-help.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/builtin-help.c b/tools/perf/builtin-help.c
+> index b2a368ae295a..0854d3cd9f6a 100644
+> --- a/tools/perf/builtin-help.c
+> +++ b/tools/perf/builtin-help.c
+> @@ -417,7 +417,7 @@ static void open_html(const char *path)
+>  static int show_html_page(const char *perf_cmd)
+>  {
+>         const char *page =3D cmd_to_page(perf_cmd);
+> -       char *page_path; /* it leaks but we exec bellow */
+> +       char *page_path; /* it leaks but we exec below */
+>
+>         if (get_html_page_path(&page_path, page) < 0)
+>                 return -1;
+> --
+> 2.46.0
+>
