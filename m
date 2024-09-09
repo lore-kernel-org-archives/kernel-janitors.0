@@ -1,55 +1,88 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362FE191;
-	Mon,  9 Sep 2024 10:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66DC1531E0;
+	Mon,  9 Sep 2024 12:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725878776; cv=none; b=r7xONBjsYzd6O9BYFw7Bbnaq2P4UQsvQPf2vs6j0KV2hW7NPlZ5YhZsXYE0noNVBR83wLW6f43uHQA10cbfkeeuMs3KgTlDoyIZLlNsbJge3Aat+YSCHzYWDrtSCfkstXJK3LNw0NAlPYlP4ivnTFSs1Y6TbDlORbTtYXnYwEEU=
+	t=1725883441; cv=none; b=C/CidW1G2wEoVJ+qpDhi9sQAyd1DyqfnLmM/exq/AtFQmMAveLCzcFukB0Ixy3ZkBSv5vz7eTg9Fdz+0RZBf+sYD3PuAff9O1b8DbGTjdXfkIMwEsF+WV8wfnf0qnSSU35BtUokWgRj/TMZZKTNxASn4x0pquAY/BP8q7NDIve4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725878776; c=relaxed/simple;
-	bh=QmlBIFpFsQ98urNXZuP2OSPX7p9ga2galSnpHluKEs0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JlvggMG0aDYFHSFd3DHiUNq6cjczrGMj9SKcnRrJvqFDwY/45k8fjSuycUDpF3WJSn7jbl/XUJGmQYL5hHQ9Wm5a35euYQLHi1qBZg4S/NpzbTihsmdyGwUbH8HqUMTeMXOZ/0RRnUFPv1dnKIz6TNNQe5HOBv/JZhvL8apff5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0ECBFFEC;
-	Mon,  9 Sep 2024 03:46:42 -0700 (PDT)
-Received: from [10.162.43.35] (e116581.arm.com [10.162.43.35])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DEDF23F66E;
-	Mon,  9 Sep 2024 03:46:08 -0700 (PDT)
-Message-ID: <af0ca290-82bd-44b7-b66f-f05a91e7afff@arm.com>
-Date: Mon, 9 Sep 2024 16:16:05 +0530
+	s=arc-20240116; t=1725883441; c=relaxed/simple;
+	bh=gzsvO2iD7JIym/mcLsJQSZM62CIKSBUEmMy9AW3fv0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kujx6N4tTVE9dkozwYZ2fy+vnn8c1CfDMOh/sGSl7Jq0BQz+8ngM1evTg/3Obm4cWQgjL8dQhDQl5vzKgCNsAFnewmRWakJBW8MdsIHt7c8qu7uWQQ0ikKOnhe7NXnzXxQ92WcqiTnaF/HHUERxq/r5pQk4nvyXG4AXTKBNjk+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qR0EKqwv; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qR0EKqwv"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=wIrwxiU2sI6CPIK1O2C6jwUn1fiYoV2NS1Jz9hz/afk=; b=qR0EKqwvseERBzPgUWa9bfMkKz
+	8bbDG5nYC/cGoN8ObALeXdsbcQtvfMXMu37cMBl37BJEL+OvNETbDeYkzJAmLCxJGow1aEF2TMO9/
+	aAM/mmv3q+NmBojF0mFSQIq9UZz1cGmMSqIoCnRgOQPrRILcXKad/00X72CTt7TK05AI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1snd7E-00704w-Q0; Mon, 09 Sep 2024 14:03:32 +0200
+Date: Mon, 9 Sep 2024 14:03:32 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: =?utf-8?B?5Zue6KaGOiBbUEFUQ0ggbmV0LW5l?= =?utf-8?Q?xt=5D_net?=
+ =?utf-8?Q?=3A?= ftgmac100: Fix potential NULL dereference in error handling
+Message-ID: <6261c529-0a15-4395-a8e9-3840ae4dddd6@lunn.ch>
+References: <3f196da5-2c1a-4f94-9ced-35d302c1a2b9@stanley.mountain>
+ <SEYPR06MB51342F3EC5D457CC512937259D9E2@SEYPR06MB5134.apcprd06.prod.outlook.com>
+ <6c60860b-dd3c-4d1c-945b-edb8ef6a8618@lunn.ch>
+ <SEYPR06MB513433B0DBD9E8008F094CE39D992@SEYPR06MB5134.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm/mm: fix typos
-To: Andrew Kreimer <algonell@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Russell King <rmk+kernel@armlinux.org.uk>,
- Linus Walleij <linus.walleij@linaro.org>,
- Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Sami Tolvanen <samitolvanen@google.com>, Peter Xu <peterx@redhat.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>,
- Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-References: <20240909102907.9187-1-algonell@gmail.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20240909102907.9187-1-algonell@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SEYPR06MB513433B0DBD9E8008F094CE39D992@SEYPR06MB5134.apcprd06.prod.outlook.com>
 
+> > Are you actually saying:
+> > 
+> >         if (netdev->phydev) {
+> >                 /* If we have a PHY, start polling */
+> >                 phy_start(netdev->phydev);
+> >         }
+> > 
+> > is wrong, it is guaranteed there is always a phydev?
+> > 
+> This patch is focus on error handling when using NC-SI at open stage.
+> 
+>          if (netdev->phydev) {
+>                  /* If we have a PHY, start polling */
+>                  phy_start(netdev->phydev);
+>          }
+> 
+> This code is used to check the other cases.
+> Perhaps, phy-handle or fixed-link property are not added in DTS.
 
-On 9/9/24 15:58, Andrew Kreimer wrote:
-> Fix typos in comments.
->
-> Reported-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+I'm guessing, but i think the static analysers see this condition, and
+deducing that phydev might be a NULL. Hence when phy_stop() is called,
+it needs the check.
 
-Reviewed-by: Dev Jain <dev.jain@arm.com>
+You say the static analyser is wrong, probably because it cannot check
+the bigger context. It can be NULL for phy_start() but not for
+phy_stop(). Maybe you can give it some more hints?
 
+Dan, is this Smatch? Is it possible to dump the paths through the code
+where it thinks it might be NULL?
+
+	Andrew
