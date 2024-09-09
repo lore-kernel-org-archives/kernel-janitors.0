@@ -1,97 +1,108 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3A61BBBF8;
-	Mon,  9 Sep 2024 13:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E4417837E;
+	Mon,  9 Sep 2024 14:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725890227; cv=none; b=DxNzH1pS9et1P41IcHHfB+Nz6y2ML6YmKTbqiegFOavLMOtRLcUulvf/io+doa657ZqoweGxTsmVT0fLNkJ1htjmoHRp0PTUPMl/P2Dyyk9S8AVtlIRnfV3WQ2sBZFURz2pAWcv9gxKL9NU8pXFdon5bLRJdejN3O4L13IUPorY=
+	t=1725890426; cv=none; b=dCKNGc9YV0lYvDav1W9XdkTxoR9omlc+tbTTwpAORL5qo2nWJL5gzqek7al0nX0KB7W6ZkRy7zBJKMpDD4CqFBn+ssoctPJaDvzEO5fViwM+sYaBTfNkeGKQkqDuH0khWvh3TPmS9c35aglWs7wejbJyBDaX1YJMDd7RAFmzGTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725890227; c=relaxed/simple;
-	bh=K/YF07QvVB4pjMrCY5CC3H2YEBaImarIAH3FFuhYvTI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vw0ALKS2excCGxWKlBK84pIM7IQLOOsXBSbspHEWJ/GIsNzmvdmeXsfVJcwB4oy1z+ZrZQFJYiiHe+kpx2qDjv9HXtBrzahrkkGfjjArTE5Fo1k2tuRG16etopu+Kd+O+HsG0ZRTH4NXbnRcoYnbAZq2PQ4CVhfP/w7NCl47Fhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QfxSyHaS; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1725890426; c=relaxed/simple;
+	bh=gNnTh3LDR404ka1WYkhWiCpwzdp+4c52j69G32URQw8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=sdPYP5rkuoz3ixVPqSopc25ELIZsKfv4IInJeQZbM3DJWO2FKoxLLHgVJoDs441CrRLT1ijOeRuhZx3N7ZKoof9XLbP72A2KfxbDh4fU7F37dCBf+ZtYrq/OAy+sqTWIX1RRy89s0b7MQ2cj+c1dn63apPVwvM+M3u1l3LxCyWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZECbhG/N; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QfxSyHaS"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cba6cdf32so5266695e9.1;
-        Mon, 09 Sep 2024 06:57:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZECbhG/N"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so20379065e9.0;
+        Mon, 09 Sep 2024 07:00:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725890224; x=1726495024; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725890423; x=1726495223; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7+QMbzautmlcHBhreHHmtbMmq5qanob45DDspc/nC+0=;
-        b=QfxSyHaSDbP8LWxj3suo0X8xanDyDnQdmj1w41j+9TiCMUxqFRvIwkGsGku1qdinGl
-         dk1APH6OmqeATD4P1Jn4DliOAqP3boRiAc03vjQHK7cghA9rTfu1uSym9lOr+YJjOhoO
-         w8HZpqM/MOTiWGN7ILXXFGPUHmHGm1hZESiX8wEwU/+7qO4j3B5hThz85qJiCuaVT+3t
-         LaXPDoSNTGll1RvcDJ0ZV4/dKjTleNNlDhYTXoUyPYHcbqaRe9fR5FVMqG6kF0f5qCFO
-         zo3Rc+bQElqWzTGtyPF+u3WjnRyLcUlhK12x5Q03jgsUQnangQWQ8l8GzlbFzxGWTQoR
-         KkOQ==
+        bh=oUU8OesX2mRNuKc6ApWuC7lB5t5F5qw1rMRsMoepUzI=;
+        b=ZECbhG/NwGbY4zL9QlvwqeiEEdAUlWrajvvkp2YePsl7lbeGHeJKqEk+UX3KwSlVW5
+         1MqPGEdurh4ypDJMeGI5xDK2GL7HW2VGhWN2sBn2jEOt4pb4qNzYkFlv4sFTNhyfKF2L
+         0frW9jK153Vf6+vl8Vb1Kz7hmZkeAO65PiPWnX6XBgexixbSColOI8wwXM0zNYAP0IrO
+         u1KW704TebLIzQENVF27tuW4m/Va632Mq/uu4MuusLpMsozIVlrA56M+rS5dzt3a32vB
+         Q7uIaPkRSCIpAoi5Uew7FL6RFjGEvk40IIzCR0ZqiH/5ymSKnEvHHEDg9xj2ANhVNNiS
+         TiSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725890224; x=1726495024;
+        d=1e100.net; s=20230601; t=1725890423; x=1726495223;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7+QMbzautmlcHBhreHHmtbMmq5qanob45DDspc/nC+0=;
-        b=WKHqJJ3edkU3aROMDYwrPjD18WWR0b3uAJFYJr3eaXxdckyW0Ku5kdZlYc2eEcq6IG
-         sOX5h6UwYkA/2j62tkYe3GtyUGo4FGIHTaTP5KhLLFYxaC61rXZt06kgRE8u4/UbBvj+
-         xT60Y9Cnj/wOpAaezsCtOCqLJ1ZDTdLDP3rLvAYibNIhJtwisyUhE2qG1mCMq4L5UlFv
-         I6JgCzOjC14tmOGkmp3lskJIa1Eq99f2UE2fR7pyB4NvdUG3wsZsIaJRrkIP2wrGxuss
-         wUQXoeL3jZCIHKHdPkendddFxDEk9hOHkd3QUxV7bAM8I+64DU6Xs0+m34as+peZrcW+
-         FW0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWPk/c+EhpU2k4kEvT8oTzE79gvTX0YFXgAVpB6e/tNNaNJpldwE6UA5bc24tshZKFIrImk4SWsZdsa3nKQGjs=@vger.kernel.org, AJvYcCXix3cHzy+JGPvl9TX0qCZXpo6UZh6zBM7h/X9/Y1k7DPW/VPNhos3KpzicxgZM54JpiNlJ6eo7Vc3dOaHF@vger.kernel.org
-X-Gm-Message-State: AOJu0YziT+DP/+ODrjnVe+34rhY9kWtKVm0HKIZfKm6sNSt93G5QwHmp
-	BeKVKZ8xSQ4VWa6fgpoH6eAP5R3FTGjX7irVJw4WCrso/50G5ijb
-X-Google-Smtp-Source: AGHT+IGNiwsklAcwJsZ31JpPrYhy+/GxiLBGkeOy+QCaF9wlyRktASdo5P3FRt0YHXiCITrSxdhrHg==
-X-Received: by 2002:a05:6000:136e:b0:371:8ed6:663f with SMTP id ffacd0b85a97d-3788967492emr7094167f8f.37.1725890223631;
-        Mon, 09 Sep 2024 06:57:03 -0700 (PDT)
-Received: from void.void ([141.226.14.150])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d3743sm6147963f8f.79.2024.09.09.06.57.02
+        bh=oUU8OesX2mRNuKc6ApWuC7lB5t5F5qw1rMRsMoepUzI=;
+        b=INNs4gInZvHFmoLuoRWUSYJzLBM3KrzuApw8I2t8+ZC2dKWBcoBpQbIZr9CEZ+pAAc
+         nf3cfGeZQpiLYg89cyyllyzwsV58LvefiSxic3UfB5VaXqCzga8cwU2I63SZ3ssGB0oc
+         NfbYNFofhtejXRQPivF8skJ9lzctQKU1NJ2tTzX/tyNeKpIixK0E9uz5R7CjMUxff746
+         sQEVMeu8XPJm9HeucFxSboxtzfaLzFY/q3Mp5mIxnR3PzfvXumUKBvIziFy8ZbEC196I
+         KpcbmmZVQPK3P7o0h1mFN1LM+PNu/7KZtv2Kb2+zeaFBEc5Fin2XkdIj6tX7w7/8Z1Jr
+         uZmg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9kUAdHfeho70aG2YfWNBGYcqo2YBnsZSRUGeaT0KO/TX3hB0y4M/wjxmYudyYBUhMQ3MTyVccr4VueMM=@vger.kernel.org, AJvYcCXx++BPQPNc/s6y4+2j73WnimsREBVBbpuM0LIyErbHj7EMoDxuPacYa78MtngqQGhkjujCellh@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNzn5QJsezbsWoCsY8xU7z7mg69k4td5S+FiEhYszpdeTHWGds
+	GPg9dpNnZI30zWTrCRVdMPlG1tzrzm06f7Su7YztbBUgD9y2yfS1
+X-Google-Smtp-Source: AGHT+IEbnLVlRBkcSRuNlfSSwfwARQeoDY1+UfMGncemGENczAtqCu1y2uoRqpDMrd8K+NOj4+HXkg==
+X-Received: by 2002:a05:600c:54e7:b0:42c:acb0:ddb6 with SMTP id 5b1f17b1804b1-42cacb0e00bmr60323505e9.9.1725890422761;
+        Mon, 09 Sep 2024 07:00:22 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cadda5a07sm81807995e9.0.2024.09.09.07.00.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 06:57:03 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
-	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-	Oded Gabbay <ogabbay@kernel.org>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] accel/ivpu: Fix a typo
-Date: Mon,  9 Sep 2024 16:56:38 +0300
-Message-ID: <20240909135655.45938-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.46.0
+        Mon, 09 Sep 2024 07:00:22 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Heiner Kallweit <hkallweit1@gmail.com>,
+	nic_swsd@realtek.com,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] r8169: Fix spelling mistake: "tx_underun" -> "tx_underrun"
+Date: Mon,  9 Sep 2024 15:00:21 +0100
+Message-Id: <20240909140021.64884-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Fix a typo in comments.
+There is a spelling mistake in the struct field tx_underun, rename
+it to tx_underrun.
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/accel/ivpu/vpu_boot_api.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/realtek/r8169_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/accel/ivpu/vpu_boot_api.h b/drivers/accel/ivpu/vpu_boot_api.h
-index 82954b91b748..d474bc7b15c0 100644
---- a/drivers/accel/ivpu/vpu_boot_api.h
-+++ b/drivers/accel/ivpu/vpu_boot_api.h
-@@ -8,7 +8,7 @@
+diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
+index 3cb1c4f5c91a..45ac8befba29 100644
+--- a/drivers/net/ethernet/realtek/r8169_main.c
++++ b/drivers/net/ethernet/realtek/r8169_main.c
+@@ -578,7 +578,7 @@ struct rtl8169_counters {
+ 	__le64	rx_broadcast;
+ 	__le32	rx_multicast;
+ 	__le16	tx_aborted;
+-	__le16	tx_underun;
++	__le16	tx_underrun;
+ };
  
- /*
-  * =========== FW API version information beginning ================
-- *  The bellow values will be used to construct the version info this way:
-+ *  The below values will be used to construct the version info this way:
-  *  fw_bin_header->api_version[VPU_BOOT_API_VER_ID] = (VPU_BOOT_API_VER_MAJOR << 16) |
-  *  VPU_BOOT_API_VER_MINOR;
-  *  VPU_BOOT_API_VER_PATCH will be ignored. KMD and compatibility is not affected if this changes
+ struct rtl8169_tc_offsets {
+@@ -1843,7 +1843,7 @@ static void rtl8169_get_ethtool_stats(struct net_device *dev,
+ 	data[9] = le64_to_cpu(counters->rx_broadcast);
+ 	data[10] = le32_to_cpu(counters->rx_multicast);
+ 	data[11] = le16_to_cpu(counters->tx_aborted);
+-	data[12] = le16_to_cpu(counters->tx_underun);
++	data[12] = le16_to_cpu(counters->tx_underrun);
+ }
+ 
+ static void rtl8169_get_strings(struct net_device *dev, u32 stringset, u8 *data)
 -- 
-2.46.0
+2.39.2
 
