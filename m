@@ -1,93 +1,80 @@
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EFC1CA9E
-	for <kernel-janitors@vger.kernel.org>; Mon,  9 Sep 2024 18:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F94114B06C;
+	Mon,  9 Sep 2024 18:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725906995; cv=none; b=Pt1kxMtBSGiqb2YMCKtQypVki7xqmFwRtY8xpM3KtG1ZofH56HiyYcFCQXEcctFupf24MNwntXhusvcsuugugovNQQxGvS32HtpTn6aJNEX9wu1uhBJcK4LohPSGSr1lyQCRJrnx2DM6+NJ7gpChyHYMcn4Kr5BPlcGXW/CRYAY=
+	t=1725908090; cv=none; b=Fub7x8vs6Xp+sqAXc1vruomkwkY80ONHPRSnPRmSo8zfzFe4f6T2CyRmGf9tDTY2Js26o/Cgt/iwEC4iL/Jxlkpii/DxUTRgz8Sk/WdF4o1hfAmB8SDG+zEDlMkuqCN37gik5CCRigc5oxkjzyoG1+HnGVrgXx8J4aG1IVlx3FQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725906995; c=relaxed/simple;
-	bh=28Vh0FDQd5/QA5SXE5lLz7s8CGcA02HisBIGph5waW4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B0AL8qN/dnC4RhohUlavU2xe7h85cCBvk9zig8iUXw5suzABS7Xuplq3VhGXHbVyQcuQ91SGdk5pzy6CUaVvYXz9NI29Np1iPAvcpsauReok19AXeK3d4tDSMaYeQfg81oYo9w/PptHEEzI0tukYBpn59g379QbInhUiviOquDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=fwIzJDZM; arc=none smtp.client-ip=80.12.242.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1725908090; c=relaxed/simple;
+	bh=1SjYNS+Gnxohf1/QLOdFsJAnTKBfVS66HOjnBtSpeaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XmTYmLGVbSxP7ynhJ+0n0KOXp0QtCcpI7YT347D46AtRp9AdLFcz67ITGa5IQPbLyHVHj14CzcqEmgT9r/kFxtDgwxXOU6/ME1J0mz3/goHNVL631O3Z2FZoVCk+IUd831u/+Il/CoSJgeraApQvaQ1tDZwNS7wT2AuGGuDJEMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n56NqTLN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="fwIzJDZM"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id njEGsHZy04lSjnjEGs0dic; Mon, 09 Sep 2024 20:35:13 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725906913;
-	bh=K2hlH2ab5/0XKaw9GaNDmz2ys+LddPEedIbMg1S8VjY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=fwIzJDZMp0/cRKG8GpuH3zdwai+tZHSQzebtinF+P8/4F68Gij3iKk+JaoGF+M+Vy
-	 01a9375enLKB4KDWR4uOCDLTZi1AjkucYQ4fpeHGLxvONh9s2ZPdCtHHyjikFy1tty
-	 Z/PMlmXesgzsJWKt2GfCpzZw3TLvIRl/BjRlMGLOX4VO4XcG+cDweonojLhigVxZ7Z
-	 +W9rqcf9bf6Ye/81ol8/YQTbPXwhn0SNotSsO1eVzCaFB8O7El8RVug/rNqtadgHMF
-	 hZwZ3vzyVE7FiZ9nYitXz+D4QEYGq+SGFCUwpwndnJHZwcSfefaX8n00jyfzTydu3f
-	 1EmkcDBjBm+yQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 09 Sep 2024 20:35:13 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	patches@opensource.cirrus.com
-Subject: [PATCH] regulator: wm8400: Constify struct regulator_desc
-Date: Mon,  9 Sep 2024 20:35:08 +0200
-Message-ID: <fde33ecfd9bbdbdc1da1620c9f3b1b7a72f9d805.1725906876.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n56NqTLN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D7A3C4CEC5;
+	Mon,  9 Sep 2024 18:54:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725908089;
+	bh=1SjYNS+Gnxohf1/QLOdFsJAnTKBfVS66HOjnBtSpeaY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n56NqTLNOlk8S5um8v/ocDpKErEGp+Wm6uFh/NM0eACc1z6xp0rQ4BGV01uHUOLmC
+	 pp5CA6/Det9PK0Avz7a9DHI5NZBUUbfllY4kEsAq1nZ1INB94telg446y0SfQGMS6H
+	 HyYxOj1E0sgXjfcr3wF5bLuKQ6KylEnnyTFnhDOTeLxkDKPAk8iS4aSQh4Zaf8/COu
+	 ydrWKYlMxk4mqpdG7yLafXgxi5UlsyWjoAnQz9oKm7D2O7Xw40YLXYP52B7Dhq1olG
+	 gVhB+RbYplJvttIBdl9Nj/ZLLTt0O34353GD4yZaA5xGTaaBuKXYcL3tFwykkQTUa3
+	 HgqjP5kkhMDgA==
+Date: Mon, 9 Sep 2024 20:54:45 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, 
+	"Chen, Jian Jun" <jian.jun.chen@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, virtualization@lists.linux.dev
+Subject: Re: [PATCH] i2c: virtio: Constify struct i2c_algorithm and struct
+ virtio_device_id
+Message-ID: <cnetcfge6r7votsarnvk3dlqec4ufz3uyfkkf4wuhkxhlhw5wu@ckkns42r5psi>
+References: <b98c3fa7072bf519ce8a9bc771e9d18c091b3509.1725778305.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b98c3fa7072bf519ce8a9bc771e9d18c091b3509.1725778305.git.christophe.jaillet@wanadoo.fr>
 
-'struct regulator_desc' is not modified in this driver.
+Hi Christophe,
 
-Constifying this structure moves some data to a read-only section, so
-increases overall security, especially when the structure holds some
-function pointers.
+On Sun, Sep 08, 2024 at 08:52:07AM GMT, Christophe JAILLET wrote:
+> 'struct i2c_algorithm' and 'struct virtio_device_id' are not modified in
+> this driver.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security, especially when the structure holds some
+> function pointers, which is the case for struct i2c_algorithm.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>    6663	    568	     16	   7247	   1c4f	drivers/i2c/busses/i2c-virtio.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>    6735	    472	     16	   7223	   1c37	drivers/i2c/busses/i2c-virtio.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> --
+> Compile tested only
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   4419	   2512	      0	   6931	   1b13	drivers/regulator/wm8400-regulator.o
+Makes sense to me... if this works, you could pioneer a sequence
+of simiar changes :-)
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   6307	    624	      0	   6931	   1b13	drivers/regulator/wm8400-regulator.o
+Merged to i2c/i2c-host.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
---
-Compile tested only
----
- drivers/regulator/wm8400-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/wm8400-regulator.c b/drivers/regulator/wm8400-regulator.c
-index c4a229f66dec..fb3ca7956d00 100644
---- a/drivers/regulator/wm8400-regulator.c
-+++ b/drivers/regulator/wm8400-regulator.c
-@@ -112,7 +112,7 @@ static const struct regulator_ops wm8400_dcdc_ops = {
- 	.get_optimum_mode = wm8400_dcdc_get_optimum_mode,
- };
- 
--static struct regulator_desc regulators[] = {
-+static const struct regulator_desc regulators[] = {
- 	{
- 		.name = "LDO1",
- 		.id = WM8400_LDO1,
--- 
-2.46.0
-
+Thanks,
+Andi
