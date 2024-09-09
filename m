@@ -1,117 +1,128 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BCB41C79;
-	Mon,  9 Sep 2024 07:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70EE1B150B;
+	Mon,  9 Sep 2024 07:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725867581; cv=none; b=QnxLZLMG/oSe99K+p9GTExedseG5TMFZVUCA8l0JCfHX+2Cx0UgWzCSZzUW60AsgZSdkltgR8oLJUyNWqldSZ1rZPxP2lm4qWUTQkNL0XtlVNtjscO1er7ldP69luF7kDSi1FPv5xTRsOvsfWtpXeoH3Yd9C+k3k3TeFbnHAJIc=
+	t=1725868097; cv=none; b=AudAyrAmQi/Gd+qTICvOzhxUveRJ2CJNi/n6+eyENin0RmwKEmG6PQVfMosB4VNdc2QO1RIIiBx83pnRDcVoWZM9vSvYQcVZO7s9sS16AL1/ZpuVJIal187dqP/I9gVWkJP+xkHHWKsOzsURlE+tboiDpM+7o4yWM/uYWP5Zb44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725867581; c=relaxed/simple;
-	bh=RiD2W5cm7ORoR6DJBKgPlV0gjZv3FnjVx+Rnl87vOcQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uhyEIDGCZNkMoWEYOVfJB3XWPSCV1qyXD3wCAkBRiYQae9ohVmaX5JPJxaCq4dnzm4D+SV2qCahB1KGgs8tz91clD14DUc6PNJBMEQgtELA48gGxupY+pkcaUiawV00ICtnuR3T9er9i8U4RH1zOr6sxRXEU2Kt8Bn/7ZsNPGAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FeuaEMzW; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1725868097; c=relaxed/simple;
+	bh=RCblciRLmG9vwIGMPBDV32VowG4pF6LjK3qZle6qcVI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jEyYo4+6W85NeWIr8c8pr7s5TCLtIrXlyHgxjpZvQ5XfSFE9GEYiLJq+RUyAq6vsDOAPgYZPWcPhNNFqeQk3dUyfqlkc3SdO2EbKxyA1DnVsw+y/CTHtdaVEGICjPKwUyetvk4WBcvi/3v47zvvfKc7y7CNKqihegYvCW11NVvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D0YWHXAD; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FeuaEMzW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725867578; x=1757403578;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=RiD2W5cm7ORoR6DJBKgPlV0gjZv3FnjVx+Rnl87vOcQ=;
-  b=FeuaEMzWeOXlZBU0HBZF+Fyl25QiRi535XfBUAM2ykhoZuDWwMWe0+/y
-   plQP5gTuqtES9Wgxb2RA17YVBPo+DgTeyeNVQNeEYAFL2sS49tn3RuS2G
-   kXUkt7KsGJalfLUKassq08wh8zxYpeLsqQvk7DC6LGZGfeJ1DUrMZGA4R
-   O07l76f0+PbGUaU+KV70nzNbg/7lnp6J/m67IsOu08r5Nkxuu1hTW8Ptb
-   /3BTPZnGdoFdgF6IKhM1g9iYlwgfzn2F9xDRPxOYj/qOtVTqHbNUpVAlv
-   is/jF3PXATKR+RcQxvPYO9yQXWjA859PK1hMusu8PhZlAAgv64qBirwPF
-   Q==;
-X-CSE-ConnectionGUID: nTJgk/y2T6SMZi8uR6GUTg==
-X-CSE-MsgGUID: al3Pq7N5Rn2MMRcKqPPKRA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11189"; a="35135407"
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="35135407"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 00:39:37 -0700
-X-CSE-ConnectionGUID: SsRybWOSQ56/LtMdihn0sA==
-X-CSE-MsgGUID: gd9/a/KITH2+Ip6Ta53C5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,213,1719903600"; 
-   d="scan'208";a="71377491"
-Received: from hrotuna-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.176])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 00:39:32 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Philipp Zabel
- <p.zabel@pengutronix.de>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Simona Vetter
- <simona.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] drm/ipuv3/parallel: Fix an error handling path in
- imx_pd_probe()
-In-Reply-To: <1cdd8523443d8850c5531462b30064cb2058924a.1725651992.git.christophe.jaillet@wanadoo.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <1cdd8523443d8850c5531462b30064cb2058924a.1725651992.git.christophe.jaillet@wanadoo.fr>
-Date: Mon, 09 Sep 2024 10:39:28 +0300
-Message-ID: <87cyldmg27.fsf@intel.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D0YWHXAD"
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-84876d069acso1066330241.3;
+        Mon, 09 Sep 2024 00:48:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725868095; x=1726472895; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A9C1TrwRuNl2V3GdBORwdTZyl/hPud0NNpEnj3t5Hu0=;
+        b=D0YWHXADo8ECBmnz/ZTZ2yhNVTE569SJKPYclvx5KpStwYJ3l6WgK9iYmV1Z8MU/++
+         PkUTXQWG3M6hU7OSidujHRovcSA+wk4OALkly5sGs4daR7n00c9MBc7hOftFyij/0dL4
+         wajbiPPehSSnvPBQXKiutYpgZjaSh0p1wBCzH5I66gPKc51yocxrKxuWS8m3qdWkDrYU
+         S3qneWtcWEerxZt8jJ/LXKS1JmFc2h/EvxYDUSWJ0M1MDFLN8Je46lquY5tUjigA4UT0
+         a1Zkvk/WA0rurOpd/AnM/xg/ITxaYNL/88+sBN1RB/Buh2vRrPquyQA1YD8NCtX1iLH6
+         EX1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725868095; x=1726472895;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A9C1TrwRuNl2V3GdBORwdTZyl/hPud0NNpEnj3t5Hu0=;
+        b=PCENI+H1nWZ5DOel4WJcY1Jz+u5AQsdWnnIV6i8CbL+nZsV6oAUMf6wdrPkrdWnvKP
+         6KIL3XX4oADi8xKBwzQZL1+UEJv+iv4ESaMaBKSralXEn86yz8UbDGmY4C9CLNwTUf1W
+         LoOTvrtnsvq+V85MufzxhFl09vRdfnvMKmIJkHgwNzecQxsy962+ZBjAf21zZVS82rqo
+         SjxrkjKKyn7zf1D/eI411BHpjYvSrZXumvZBtlJ7OLTegBImdjAqZsPp6Ld8XiyXqWXI
+         vl+RY+mjCYNceXSF05FPKejU+36rU7D+3H+CFWfRWM8917t0a35C1ZmkOMhkik79qd5R
+         /EnA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpYkKUPEXRL5JBjOeJfZ27JLZXHwY8AsxsyZFdGFd55roei2nffMyb77dxTne7rVJ60tvIFSqBWC2JSCAW@vger.kernel.org, AJvYcCWl390D6pnwMg40n0mbFtWQ+bwXtTcd6wRFTwa/8RSBhp6L/BJXUi7DaiEX8gjMnjTYxc78UqpfK58L0m+sVLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiCp78W/20kyEhUIIPiqiBTYoXXxWuw9quoGu6NlREamOD+Aga
+	C2BajFYY8Xg6ni30a8nf12ZupY3rQ9q2c9ARpxyEnabkzvensJ+yvARsjwIrC8oo9XOpbIY8USi
+	ImcL7L2nuyyQ9Re1aIaU1/dyC+Lo=
+X-Google-Smtp-Source: AGHT+IHiWIxeOUfdstmRt3zKkEtldlv+HPEGhxFdfwRbfddLjqQ4CbgWfszpdINyzfVt+SIxOKtfIyXhSXbma0f1ztw=
+X-Received: by 2002:a05:6102:3f44:b0:48f:89cc:dd2b with SMTP id
+ ada2fe7eead31-49bde1960d3mr7916750137.11.1725868094457; Mon, 09 Sep 2024
+ 00:48:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <cover.1725791361.git.christophe.jaillet@wanadoo.fr> <1aaff0efb601832cd11949653d5872e7e39fbd7f.1725791361.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1aaff0efb601832cd11949653d5872e7e39fbd7f.1725791361.git.christophe.jaillet@wanadoo.fr>
+From: Iskren Chernev <iskren.chernev@gmail.com>
+Date: Mon, 9 Sep 2024 10:48:03 +0300
+Message-ID: <CAL7jhicmTD5Ukwjwdpp14L9aoe4PeqNAUijGnhHZ+DDhetZxiA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] regulator: max77826: Constify struct regulator_desc
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: lgirdwood@gmail.com, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 06 Sep 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-> If component_add() fails, we need to undo a potential previous
-> drm_edid_alloc() call.
+Reviewed-by: Iskren Chernev <iskren.chernev@gmail.com>
+
+On Sun, Sep 8, 2024 at 2:41=E2=80=AFPM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 >
-> Add an error handling path and the missing drm_edid_free(), as already done
-> in the reomve function.
-
-See commit fe30fabf229f ("drm/imx: parallel-display: drop edid override
-support").
-
-BR,
-Jani.
-
-
+> 'struct regulator_desc' is not modified in this driver.
 >
-> Fixes: 42e08287a318 ("drm/ipuv3/parallel: convert to struct drm_edid")
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security, especially when the structure holds some
+> function pointers.
+>
+> On a x86_64, with allmodconfig:
+> Before:
+> =3D=3D=3D=3D=3D=3D
+>    text    data     bss     dec     hex filename
+>    3906    5808      16    9730    2602 drivers/regulator/max77826-regula=
+tor.o
+>
+> After:
+> =3D=3D=3D=3D=3D
+>    text    data     bss     dec     hex filename
+>    9218     496      16    9730    2602 drivers/regulator/max77826-regula=
+tor.o
+>
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> --
+> Compile tested only
 > ---
->  drivers/gpu/drm/imx/ipuv3/parallel-display.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+>  drivers/regulator/max77826-regulator.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/imx/ipuv3/parallel-display.c b/drivers/gpu/drm/imx/ipuv3/parallel-display.c
-> index 91d7808a2d8d..6d51203f7f0f 100644
-> --- a/drivers/gpu/drm/imx/ipuv3/parallel-display.c
-> +++ b/drivers/gpu/drm/imx/ipuv3/parallel-display.c
-> @@ -350,7 +350,15 @@ static int imx_pd_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, imxpd);
->  
-> -	return component_add(dev, &imx_pd_ops);
-> +	ret = component_add(dev, &imx_pd_ops);
-> +	if (ret)
-> +		goto free_edid;
-> +
-> +	return 0;
-> +
-> +free_edid:
-> +	drm_edid_free(imxpd->drm_edid);
-> +	return ret;
->  }
->  
->  static void imx_pd_remove(struct platform_device *pdev)
-
--- 
-Jani Nikula, Intel
+> diff --git a/drivers/regulator/max77826-regulator.c b/drivers/regulator/m=
+ax77826-regulator.c
+> index 5590cdf615b7..376e3110c695 100644
+> --- a/drivers/regulator/max77826-regulator.c
+> +++ b/drivers/regulator/max77826-regulator.c
+> @@ -153,7 +153,7 @@ enum max77826_regulators {
+>
+>  struct max77826_regulator_info {
+>         struct regmap *regmap;
+> -       struct regulator_desc *rdesc;
+> +       const struct regulator_desc *rdesc;
+>  };
+>
+>  static const struct regmap_config max77826_regmap_config =3D {
+> @@ -187,7 +187,7 @@ static const struct regulator_ops max77826_buck_ops =
+=3D {
+>         .set_voltage_time_sel   =3D max77826_set_voltage_time_sel,
+>  };
+>
+> -static struct regulator_desc max77826_regulators_desc[] =3D {
+> +static const struct regulator_desc max77826_regulators_desc[] =3D {
+>         MAX77826_LDO(1, NMOS),
+>         MAX77826_LDO(2, NMOS),
+>         MAX77826_LDO(3, NMOS),
+> --
+> 2.46.0
+>
