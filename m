@@ -1,116 +1,55 @@
-Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F89179658;
-	Mon,  9 Sep 2024 10:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362FE191;
+	Mon,  9 Sep 2024 10:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725878735; cv=none; b=nZo5Fw3Tdnlp6MydX7y3wTr7WCdwixMqfarC5ei8R8s25D00E5PdXyem0AlTwYaCsYGc7r06Kpu2RJ5CxCJ8ua1lzBqLB8pU+9YFYmuj4qi7Xg2LAUJTCOeC2eDNzdh5p3tF+785NUIkF7REDdst3hKXkjO/jm+qeuc1YmQbwPk=
+	t=1725878776; cv=none; b=r7xONBjsYzd6O9BYFw7Bbnaq2P4UQsvQPf2vs6j0KV2hW7NPlZ5YhZsXYE0noNVBR83wLW6f43uHQA10cbfkeeuMs3KgTlDoyIZLlNsbJge3Aat+YSCHzYWDrtSCfkstXJK3LNw0NAlPYlP4ivnTFSs1Y6TbDlORbTtYXnYwEEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725878735; c=relaxed/simple;
-	bh=5Ta/4DSgQoX8eSaZBH8uX7f7kA1cIdCF5+cIjyuspMo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:To:From:
-	 References:In-Reply-To; b=Zf9Dz49W4CZcGqmUYcAYXhLryRmB9k8FdKkcvljkfcj9FNXRwTOvTVtpXCc77O5Ia8fGloVu0FCOlzuqSyD0iGEm5Jie+tWVVKirMa59s5C2LkEoDuValhma8uSLmBjnWlIu8nkOFmllKsCvodKu4NMvlYw/PMENH1MfZEZ3FLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=N3Jbr3qp; arc=none smtp.client-ip=195.113.20.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="N3Jbr3qp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
-	s=submission; t=1725877000; x=1727177000;
-	bh=09mAxXk5yZQ1FHGrWz6yzqQxvAU0gLKA91bNZ0jSFDQ=; h=From;
-	b=N3Jbr3qplkKFBNIhWyfhI0/ftYyX1QYS8sQtNXWbN6B4OTsw0dTznEX6ZRLyoymWo
-	 HblPc/hQ2j7f/kU05dM76Ik8FCzMapfz6qEOyYqq3X+0XuFnGXZvbZaUl/zTBQKuc+
-	 NLQS4o9zMk8yn42kiCou+9ZO+6PP7jqHIU6Gy1GwJ3tG/S6mRISTDhH4tIIhLeSUUr
-	 ADQlUMLkfgTwGfaEvtDCHp4v/jX4iTP5h935D9Jio6oEigV7QYS+lbkGbvWmVx+j3t
-	 BXLsZh4manj+XP55OuTvas4SmbtfP9DxzzFxW49mHtfA2pq/rum70p67GUJJlR+U+Z
-	 kto3xhVBsrzZQ==
-Received: from localhost (internet5.mraknet.com [185.200.108.250])
-	(authenticated)
-	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 489AGc2d025308
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Mon, 9 Sep 2024 12:16:40 +0200 (CEST)
-	(envelope-from balejk@matfyz.cz)
+	s=arc-20240116; t=1725878776; c=relaxed/simple;
+	bh=QmlBIFpFsQ98urNXZuP2OSPX7p9ga2galSnpHluKEs0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JlvggMG0aDYFHSFd3DHiUNq6cjczrGMj9SKcnRrJvqFDwY/45k8fjSuycUDpF3WJSn7jbl/XUJGmQYL5hHQ9Wm5a35euYQLHi1qBZg4S/NpzbTihsmdyGwUbH8HqUMTeMXOZ/0RRnUFPv1dnKIz6TNNQe5HOBv/JZhvL8apff5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0ECBFFEC;
+	Mon,  9 Sep 2024 03:46:42 -0700 (PDT)
+Received: from [10.162.43.35] (e116581.arm.com [10.162.43.35])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DEDF23F66E;
+	Mon,  9 Sep 2024 03:46:08 -0700 (PDT)
+Message-ID: <af0ca290-82bd-44b7-b66f-f05a91e7afff@arm.com>
+Date: Mon, 9 Sep 2024 16:16:05 +0530
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 09 Sep 2024 12:16:38 +0200
-Message-Id: <D41OC3PTUHE6.1V0FU4PAW4O9Q@matfyz.cz>
-Cc: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Liam
- Girdwood" <lgirdwood@gmail.com>,
-        "Mark Brown" <broonie@kernel.org>
-Subject: Re: [PATCH] regulator: 88pm886: Constify struct regulator_desc
-To: "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>
-From: "Karel Balej" <balejk@matfyz.cz>
-References: <0261f8b951a489859ee0fa41c584804b2e3f1557.1725783921.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <0261f8b951a489859ee0fa41c584804b2e3f1557.1725783921.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm/mm: fix typos
+To: Andrew Kreimer <algonell@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Russell King <rmk+kernel@armlinux.org.uk>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Sami Tolvanen <samitolvanen@google.com>, Peter Xu <peterx@redhat.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+References: <20240909102907.9187-1-algonell@gmail.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <20240909102907.9187-1-algonell@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Christophe JAILLET, 2024-09-08T10:25:56+02:00:
-> 'struct regulator_desc' is not modified in this driver.
->
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security, especially when the structure holds some
 
-"increases"?
+On 9/9/24 15:58, Andrew Kreimer wrote:
+> Fix typos in comments.
+>
+> Reported-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 
-> function pointers.
->
-> On a x86_64, with allmodconfig:
-> Before:
-> =3D=3D=3D=3D=3D=3D
->    text	   data	    bss	    dec	    hex	filename
->    3251	   6928	     16	  10195	   27d3	drivers/regulator/88pm886-regulat=
-or.o
->
-> After:
-> =3D=3D=3D=3D=3D
->    text	   data	    bss	    dec	    hex	filename
->    9795	    360	     16	  10171	   27bb	drivers/regulator/88pm886-regulat=
-or.o
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> --
-> Compile tested only
-> ---
->  drivers/regulator/88pm886-regulator.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/regulator/88pm886-regulator.c b/drivers/regulator/88=
-pm886-regulator.c
-> index a38bd4f312b7..68c83a4ebda8 100644
-> --- a/drivers/regulator/88pm886-regulator.c
-> +++ b/drivers/regulator/88pm886-regulator.c
-> @@ -56,7 +56,7 @@ static const struct linear_range pm886_buck_volt_ranges=
-2[] =3D {
->  	REGULATOR_LINEAR_RANGE(1600000, 80, 114, 50000),
->  };
-> =20
-> -static struct regulator_desc pm886_regulators[] =3D {
-> +static const struct regulator_desc pm886_regulators[] =3D {
->  	{
->  		.name =3D "LDO1",
->  		.regulators_node =3D "regulators",
-> @@ -340,9 +340,9 @@ static struct regulator_desc pm886_regulators[] =3D {
->  static int pm886_regulator_probe(struct platform_device *pdev)
->  {
->  	struct pm886_chip *chip =3D dev_get_drvdata(pdev->dev.parent);
-> +	const struct regulator_desc *rdesc;
->  	struct regulator_config rcfg =3D { };
->  	struct device *dev =3D &pdev->dev;
-> -	struct regulator_desc *rdesc;
->  	struct regulator_dev *rdev;
->  	struct i2c_client *page;
->  	struct regmap *regmap;
-> --=20
-> 2.46.0
+Reviewed-by: Dev Jain <dev.jain@arm.com>
 
-Reviewed-by: Karel Balej <balejk@matfyz.cz>
-
-Thanks,
-K. B.
