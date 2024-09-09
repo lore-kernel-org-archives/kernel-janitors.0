@@ -1,88 +1,70 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66DC1531E0;
-	Mon,  9 Sep 2024 12:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB421E522;
+	Mon,  9 Sep 2024 12:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725883441; cv=none; b=C/CidW1G2wEoVJ+qpDhi9sQAyd1DyqfnLmM/exq/AtFQmMAveLCzcFukB0Ixy3ZkBSv5vz7eTg9Fdz+0RZBf+sYD3PuAff9O1b8DbGTjdXfkIMwEsF+WV8wfnf0qnSSU35BtUokWgRj/TMZZKTNxASn4x0pquAY/BP8q7NDIve4=
+	t=1725885063; cv=none; b=GxVoslaQHm74m2zwtmRq9F1XHnOX2pBI+LEYDU/+L6/P83ualioyhwFyB2mn28p1PQM5gK8GHwGFz5k3+5pDKeJxZIMX7CHZORuP2UKQvBGZ6XubdsvB1ieFC5/ZyPErGw4hg6iu2lXuvPugaWp9BhhhIfiINyNfQHKZFi5EEsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725883441; c=relaxed/simple;
-	bh=gzsvO2iD7JIym/mcLsJQSZM62CIKSBUEmMy9AW3fv0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kujx6N4tTVE9dkozwYZ2fy+vnn8c1CfDMOh/sGSl7Jq0BQz+8ngM1evTg/3Obm4cWQgjL8dQhDQl5vzKgCNsAFnewmRWakJBW8MdsIHt7c8qu7uWQQ0ikKOnhe7NXnzXxQ92WcqiTnaF/HHUERxq/r5pQk4nvyXG4AXTKBNjk+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qR0EKqwv; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1725885063; c=relaxed/simple;
+	bh=l3Qw41g/LdHI5Dx7E5uUQi6js5WOTJmE2q/s1jrkDq8=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=jkwuY395wwyQBv5VoblgNzSXQGMzYB0qzUT+3VD4nt9tYuP+ot8cjwFdllnCQ/xa0zfyoTXhreZG9f7jI1t+uza+VMv36Mw/5GTsol1lK8FxtlfRxiJdjx4/hr3eivvT9IcQgnWFIzkVYYqF7o4VoQEEnKdc3x7kYxjnID4Vt4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t7IpzCNX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qR0EKqwv"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=wIrwxiU2sI6CPIK1O2C6jwUn1fiYoV2NS1Jz9hz/afk=; b=qR0EKqwvseERBzPgUWa9bfMkKz
-	8bbDG5nYC/cGoN8ObALeXdsbcQtvfMXMu37cMBl37BJEL+OvNETbDeYkzJAmLCxJGow1aEF2TMO9/
-	aAM/mmv3q+NmBojF0mFSQIq9UZz1cGmMSqIoCnRgOQPrRILcXKad/00X72CTt7TK05AI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1snd7E-00704w-Q0; Mon, 09 Sep 2024 14:03:32 +0200
-Date: Mon, 9 Sep 2024 14:03:32 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: =?utf-8?B?5Zue6KaGOiBbUEFUQ0ggbmV0LW5l?= =?utf-8?Q?xt=5D_net?=
- =?utf-8?Q?=3A?= ftgmac100: Fix potential NULL dereference in error handling
-Message-ID: <6261c529-0a15-4395-a8e9-3840ae4dddd6@lunn.ch>
-References: <3f196da5-2c1a-4f94-9ced-35d302c1a2b9@stanley.mountain>
- <SEYPR06MB51342F3EC5D457CC512937259D9E2@SEYPR06MB5134.apcprd06.prod.outlook.com>
- <6c60860b-dd3c-4d1c-945b-edb8ef6a8618@lunn.ch>
- <SEYPR06MB513433B0DBD9E8008F094CE39D992@SEYPR06MB5134.apcprd06.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t7IpzCNX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5EBEC4CEC5;
+	Mon,  9 Sep 2024 12:31:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725885062;
+	bh=l3Qw41g/LdHI5Dx7E5uUQi6js5WOTJmE2q/s1jrkDq8=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=t7IpzCNXPH61gjJq3kptojZc9hXbtxSA0oqDoL2m4U/RCFIcrgXg7kYlCQM5U457o
+	 8u+k4YgFDSH2kDzeZnXp+FBlHWq6IZEm93zxHaZ0hIcwNKzbZ9h0nV+cNRhkbo8kc/
+	 6x6uJcqMWAEisN0LaO734WojkEEkgguIkt36g2twQD2SfQ2XHRhuh1macPlzFFD8Jv
+	 g0biuaMNtOOv/pLi31/X2x5RVbniFdqLOm4wInVzlZH2vyFmGfaKXBV40JeNBHXfcY
+	 QcWTL/BKmzrGVLBb5UG33r3a8/GSlWZ+DFPAnfVk4w+Ox5xcY9s5salorrf31FiRKP
+	 cLDrhwZUNNpug==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SEYPR06MB513433B0DBD9E8008F094CE39D992@SEYPR06MB5134.apcprd06.prod.outlook.com>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wifi: rsi: Remove an unused field in struct rsi_debugfs
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: 
+ <15b0609d7b1569ec6c500a175caef4c9189f33e2.1725394207.git.christophe.jaillet@wanadoo.fr>
+References: 
+ <15b0609d7b1569ec6c500a175caef4c9189f33e2.1725394207.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ linux-wireless@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <172588505901.2095526.16919940351663808564.kvalo@kernel.org>
+Date: Mon,  9 Sep 2024 12:31:00 +0000 (UTC)
 
-> > Are you actually saying:
-> > 
-> >         if (netdev->phydev) {
-> >                 /* If we have a PHY, start polling */
-> >                 phy_start(netdev->phydev);
-> >         }
-> > 
-> > is wrong, it is guaranteed there is always a phydev?
-> > 
-> This patch is focus on error handling when using NC-SI at open stage.
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+
+> dfs_get_ops has apparently never been used since its introduction by
+> commit dad0d04fa7ba ("rsi: Add RS9113 wireless driver") in 2014-03.
 > 
->          if (netdev->phydev) {
->                  /* If we have a PHY, start polling */
->                  phy_start(netdev->phydev);
->          }
+> More-over struct rsi_dbg_ops is not defined.
 > 
-> This code is used to check the other cases.
-> Perhaps, phy-handle or fixed-link property are not added in DTS.
+> Remove the unused field from struct rsi_debugfs.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-I'm guessing, but i think the static analysers see this condition, and
-deducing that phydev might be a NULL. Hence when phy_stop() is called,
-it needs the check.
+Patch applied to wireless-next.git, thanks.
 
-You say the static analyser is wrong, probably because it cannot check
-the bigger context. It can be NULL for phy_start() but not for
-phy_stop(). Maybe you can give it some more hints?
+eeccaa46cb6f wifi: rsi: Remove an unused field in struct rsi_debugfs
 
-Dan, is this Smatch? Is it possible to dump the paths through the code
-where it thinks it might be NULL?
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/15b0609d7b1569ec6c500a175caef4c9189f33e2.1725394207.git.christophe.jaillet@wanadoo.fr/
 
-	Andrew
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
