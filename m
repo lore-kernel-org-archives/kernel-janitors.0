@@ -1,90 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D8018C91D;
-	Mon,  9 Sep 2024 21:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF7318A920;
+	Mon,  9 Sep 2024 22:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725917731; cv=none; b=r1E2WjfFH8dWm2fYA4jUneTaY8hnkK5wLr1JkVnR34L78ojsAxWzUZYlFWLdTfTgWUVDCj4AXAxwK1qL6aswQfiB4mgJH7sbUR3xy6UzESC8WKHLepAed69TkBUTjtaedhyW2jlI6tTya6Lfvm+a6fi6bgcT9ZAoNZxbyohooVg=
+	t=1725919762; cv=none; b=V7ZnSKj6gANL909b/j2uUBVD5OCp6Va1z+LVS1Sn5fgcvLJ7MDfU1B1Fg7Hua4S/blGgS/K8NDfRYS7jym/B8UTKEaB4KSkJI6iOkyMNkWgENts+eDicBfPsI4fYluuzs9BImsft2g2sTJk88niq3F1INEsyxM5UDfpPCakoYWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725917731; c=relaxed/simple;
-	bh=ABb+ZfLdlG2gN2f3g7xwpoPiZYnjKAV1QkEg+j4S0Ao=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=OvYsgebwpPaITYz2P40XN0wt/h7dbteYnqFmqvYTcfRbYplIKfTpPLuYm6GUSob+5yLMlA+bc/i8w9xFJBhZUy7mwWDR1j6lqJa2R2rVB9ECjehi5BAhtFLAq47urK25xkqnQ/zc82BM8ptZRT/Z2+gQjLNXmAFYBeje5gsrc7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLfXetRZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725919762; c=relaxed/simple;
+	bh=xAan0RdLevLXlBWZJIEkjT6XCXYGpk7zDfotdpBDGoM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f/ryrHZCKGm9gw36YpkOEU660gG/PgnePQLZI0Cqu/4BtepeOqLOVIBf7InUgEeDHHC0ZpEJfd6ZOSQRW60RtnGVEM/leg+wJXt+NvBA2tf8a+w4nPAQtgQv6NiGkHdb86Kwhl0BE8iknqW7FraWg6+FZqqWp+/JiFHJqgIuXec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2nvGm2F; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLfXetRZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F3B1C4CEC5;
-	Mon,  9 Sep 2024 21:35:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725917731;
-	bh=ABb+ZfLdlG2gN2f3g7xwpoPiZYnjKAV1QkEg+j4S0Ao=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=YLfXetRZaE+IlnMKFzAHZRjZcgvbDyjuJ9meGmHoDLtuxxMwv50dWZZLfudtNl819
-	 CagTeOSoc2ORs4UpMDtZ9U6F44rUrPM1YY4pJ9iGzkUA4z31djT4bu6dHEoA71rz2H
-	 VkVhmccyf2r32Wb+BAnechbw2JtMSNV6vgMhp1UWllrmdMMVdowYpXm90QKVf5P+Ne
-	 0OOBFtpx2ky9pGNT2ISEVGCXuY4mq3sjg9t/n+ASxqDMaXvwip7M631UhPl0FBm/nr
-	 VFnek6n2mUHuXAiThTgA2APL50SKBJI1SL5bCvJfjZswSpwDjYlvmIRADJJAlzte3b
-	 ibktNe/S9VYDA==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <7727e493490d37775a653905dfe0cc1d8478f8e0.1725908163.git.christophe.jaillet@wanadoo.fr>
-References: <7727e493490d37775a653905dfe0cc1d8478f8e0.1725908163.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] regulator: tps6287x: Constify struct regulator_desc
-Message-Id: <172591772999.144124.1097678117910341898.b4-ty@kernel.org>
-Date: Mon, 09 Sep 2024 22:35:29 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2nvGm2F"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb8dac900so12809135e9.3;
+        Mon, 09 Sep 2024 15:09:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725919759; x=1726524559; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YsPDqkVnY6G76KUOE5YeGyTOTZj2B3ANCn40xAGj0dQ=;
+        b=D2nvGm2F3gwT90qkc7EyoPf6g+Mb9DjrxStLZXpX2vUWDi4/R00Ml8A6+pbp+OIGyX
+         BAfBVwWreFfDwoVCerBfpYYkfJ7e5SwNnDjZsqN58WK/JniYiBo04CwsUQ5qUOk7y0oG
+         CeLNmiD2YAvKC9RLGkjmVeKLYj5aLsjUJY3oT64QWVcQLBvF3F7aEYYufNCopZmMs/Sj
+         ddUUIKjnlMF58yXUd+pxcSoShrdwzqUSVaXgIt5GUQzLcZXK2QBaCQhgDaiMIbMl4CVI
+         Lr5US3JF08YhTlcCBsxzRaonkCUhKpHyZZA/px98yrfQNVRUkzUsVv9YX8DKsYj1BoZa
+         iLwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725919759; x=1726524559;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YsPDqkVnY6G76KUOE5YeGyTOTZj2B3ANCn40xAGj0dQ=;
+        b=TG9Iv3e1j398mmo3vnELYH2EeL8+xrH2IfdPL9+tXWb0lX+w8oPMPyCde7NKu6nAiZ
+         Q/328LZZSy9d23X84aKhHlqY/rdOGvdKIFCicHtb3Mz0ZlmzVJu0OlkKqWj11fS/eTb8
+         fTQVNscxqow12H80+c8lplfxRrD6EkIr+GHLoqitzZU0M5LwkIIgKVlP6XZEyHZfbCfj
+         JDHHolhaTmQ/tvFypzChdOSYo4//3BKcjAeTLM35iSKv85d+ogO1h7O1NkoRTN3XPJCO
+         5WTdJpiGZyuqctCdqM+uwX0NT8OXjInMjcDnxKzhxicjseS6/4NqmXFXVgKxku51rvA+
+         f0Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnoxAuHz3RoOjWbyCjc+pI2q7bLo1pFhvQqYqRJcs1ZLitRTqAxTmWxumvQNnHux6gBLWcFfPQ6z7TicvIPGk=@vger.kernel.org, AJvYcCXvKP7cWpvtIxODbeZ2uoW1JnTH/gBayRMJtTwNs1oQU1euItE6COoUjTlnDxCC6cumUHRZrBOT2uSi9joS@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGCUJNe/ewSfpqTIT4LMtlvCrNu6jAMIop1qW8oOICMBqwSUZs
+	XPE94SV9wrkPMKbpwx26aly2M4qtcQAxIUG5gM9HRkHr19d6AZV6
+X-Google-Smtp-Source: AGHT+IGTA24UWctI2WhTeyP5yfImnBelxgK80xoDKneqoLWLg+fsK+poqgxMhAw3AklJuPb0kl/NiA==
+X-Received: by 2002:a05:600c:3c94:b0:426:5fbc:f319 with SMTP id 5b1f17b1804b1-42c9f9d7c3dmr91573115e9.33.1725919758150;
+        Mon, 09 Sep 2024 15:09:18 -0700 (PDT)
+Received: from void.void ([141.226.14.150])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb815f4sm90110955e9.30.2024.09.09.15.09.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 15:09:17 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Tony Luck <tony.luck@intel.com>,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>
+Cc: linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] EDAC/sb_edac: Fix typos
+Date: Tue, 10 Sep 2024 01:08:49 +0300
+Message-ID: <20240909220904.11461-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+Content-Transfer-Encoding: 8bit
 
-On Mon, 09 Sep 2024 20:56:19 +0200, Christophe JAILLET wrote:
-> 'struct regulator_desc' is not modified in this driver.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increases overall security, especially when the structure holds some
-> function pointers.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->    4974	    736	     16	   5726	   165e	drivers/regulator/tps6287x-regulator.o
-> 
-> [...]
+Fix typos in comments.
 
-Applied to
+Reported-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ drivers/edac/sb_edac.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/1] regulator: tps6287x: Constify struct regulator_desc
-      commit: 63a68ee1c27f5d1a17b78a2c937b86b0fb1fd99a
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
+index d5f12219598a..d47f1240c738 100644
+--- a/drivers/edac/sb_edac.c
++++ b/drivers/edac/sb_edac.c
+@@ -1797,7 +1797,7 @@ static void get_memory_layout(const struct mem_ctl_info *mci)
+ 	 * Step 2) Get SAD range and SAD Interleave list
+ 	 * TAD registers contain the interleave wayness. However, it
+ 	 * seems simpler to just discover it indirectly, with the
+-	 * algorithm bellow.
++	 * algorithm below.
+ 	 */
+ 	prv = 0;
+ 	for (n_sads = 0; n_sads < pvt->info.max_sad; n_sads++) {
+@@ -2055,7 +2055,7 @@ static int get_memory_error_data(struct mem_ctl_info *mci,
+ 
+ 	/*
+ 	 * Step 0) Check if the address is at special memory ranges
+-	 * The check bellow is probably enough to fill all cases where
++	 * The check below is probably enough to fill all cases where
+ 	 * the error is not inside a memory, except for the legacy
+ 	 * range (e. g. VGA addresses). It is unlikely, however, that the
+ 	 * memory controller would generate an error on that range.
+-- 
+2.46.0
 
