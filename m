@@ -1,111 +1,91 @@
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F76C17C9B9;
-	Mon,  9 Sep 2024 19:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A42218B474;
+	Mon,  9 Sep 2024 20:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725910700; cv=none; b=qKNi+vrgiGcJQRhxUMeJwa/hPXozqPjK95CYJn/E8iu4FFzGqKK7z3rJ7o80OXAkE80QmMoAxicfkf0r+N6+f4CnEq7Db2HvfCzgCDmPN48K0dU22oyuu6cjhaTiqtjginX3ldlLmKFL69+8FHg5X6p2kfz2/MU/YVVkMxUwTVI=
+	t=1725912515; cv=none; b=PJvJiviHBObYb1vMLzh5ORuUZJUk4zyrFF5JDy3p5xxUxLZqyAe+3n6RSm/JjaSx8W65ko0p056v8vZ1oLOSmR7IDteiD5Y650E/R5LHBcvKrEDQm7aimmSj5gtHBlNVtTy/nWDRBATiXhtUJj7E1BKdu5spwKbVr7htH3UT01o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725910700; c=relaxed/simple;
-	bh=oqpwAjUwZudqDFsnJpCB62K4YG/tVUObT5DJQf3YbLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QD/i9fQP8V8kdEB21lA1Y/jSCt+5vW6HewR3cE6TdCDPzWITIVcDXqfA3TzID9++dGf/sUdYNkPJcC/vvq/ufum/VOe3QSgSQ885t67R5L1zIdMcAGDaWjIhFF3L98EPD6RqWeLG2ZcXdc1rWh3vtPDd2uc5ypsEe31vzekAl8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Dqla8ih3; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1725912515; c=relaxed/simple;
+	bh=RSL8rK9M+0+000gkIhOfhVy0hPI7m6w7XzcYGaicM1Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=La52bxZZEP/Hoa9WgxtWhz6TtbnT46mR/tljG0Xs3Ajdtr1aGyb1lHInpxVoFEbSTJ0auC5vrMR9hrxcRisi8dHGGKO4lo2Cyk33vbV8V2M+No/unfBWzdY73tWrLXhWbrZKfGtbo9QwbcShglCJE0KNs2HU0HxxXko1nHWcb9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M7rxi6DB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Dqla8ih3"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id nkDBsbmZ2Z40ankDCslDGW; Mon, 09 Sep 2024 21:38:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725910696;
-	bh=snDT6fdR+dce492GpmRveGiYtkuWD7UIg+y2AlQOpAI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=Dqla8ih3/L24wSd7ICP3kDatH5nTEj2ogStOh8eh0T7uk2iMy2slKKnVw2lCJx604
-	 daDWqLj8vwFGtT6wpOco7oU6GoPBr6ZDXrvEdSC/L+sk3Uuk0xIYuUpXX+Cm4bHOnf
-	 PfGX3R0dRNT5K73ZAEUH+Qvb0dzmB3gL+C6m7atzAdAzLQc8IKiF1IQAQxTEr0sl9z
-	 4izwMzKGvqOeyuGsAFLvuv7jZLHU90Cazr/Bt6NKXM0t3sxbfisjz5dUD/2oXi8tKB
-	 kTO/gKf9ZrKk+3W+eYSXp11/85rpkQVPsC2eCBlke37IGam+ho7S36p6OqqUaqz3Xn
-	 p+pstblWaN2+w==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Mon, 09 Sep 2024 21:38:16 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <c83a517b-2a48-4bbb-9946-e267238bd234@wanadoo.fr>
-Date: Mon, 9 Sep 2024 21:38:09 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M7rxi6DB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 739E9C4CEC5;
+	Mon,  9 Sep 2024 20:08:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725912515;
+	bh=RSL8rK9M+0+000gkIhOfhVy0hPI7m6w7XzcYGaicM1Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=M7rxi6DBsPbRl+qrmEgeS9o1gWI1uVxbXg0jneskyxyIs1x78tdHeVxiKnOPNsQRQ
+	 o8CKrjsWRhtmVTXYA8m1JvN20V9VYXi1+zm4/eL+dqh9ZF1G0G+5fAEZaytOayY2aF
+	 nwX6rpNjxeQnYMf5LRTAZFaR7ZINFgyVfc9SB7jBBtJfwHn/S486LOMvuQQeJYwbom
+	 Um+LPlfBdX0sNEoYLkM0udexMztZ5rKGmALiTsjUEo6Yr54Sb1C16Jt4AqRYT+gqW3
+	 9gJbvV06VT5OFwGTr8tuCQlTJ77bx6+WQoSH3h/tBThNlUMjrXiocIi3Weqjc7jHCt
+	 7I8WTCB/uT7VA==
+From: Mark Brown <broonie@kernel.org>
+To: Saravanan Sekar <sravanhome@gmail.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <fd8d1307f211ec7754f46b6678c04309556003bc.1725807320.git.christophe.jaillet@wanadoo.fr>
+References: <fd8d1307f211ec7754f46b6678c04309556003bc.1725807320.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] regulator: mp5416: Constify struct regulator_desc
+Message-Id: <172591251419.127770.16591249074261510379.b4-ty@kernel.org>
+Date: Mon, 09 Sep 2024 21:08:34 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i2c: virtio: Constify struct i2c_algorithm and struct
- virtio_device_id
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
- "Chen, Jian Jun" <jian.jun.chen@intel.com>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org,
- virtualization@lists.linux.dev
-References: <b98c3fa7072bf519ce8a9bc771e9d18c091b3509.1725778305.git.christophe.jaillet@wanadoo.fr>
- <cnetcfge6r7votsarnvk3dlqec4ufz3uyfkkf4wuhkxhlhw5wu@ckkns42r5psi>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cnetcfge6r7votsarnvk3dlqec4ufz3uyfkkf4wuhkxhlhw5wu@ckkns42r5psi>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
-Le 09/09/2024 à 20:54, Andi Shyti a écrit :
-> Hi Christophe,
+On Sun, 08 Sep 2024 16:55:58 +0200, Christophe JAILLET wrote:
+> 'struct regulator_desc' is not modified in this driver.
 > 
-> On Sun, Sep 08, 2024 at 08:52:07AM GMT, Christophe JAILLET wrote:
->> 'struct i2c_algorithm' and 'struct virtio_device_id' are not modified in
->> this driver.
->>
->> Constifying this structure moves some data to a read-only section, so
->> increase overall security, especially when the structure holds some
->> function pointers, which is the case for struct i2c_algorithm.
->>
->> On a x86_64, with allmodconfig:
->> Before:
->> ======
->>     text	   data	    bss	    dec	    hex	filename
->>     6663	    568	     16	   7247	   1c4f	drivers/i2c/busses/i2c-virtio.o
->>
->> After:
->> =====
->>     text	   data	    bss	    dec	    hex	filename
->>     6735	    472	     16	   7223	   1c37	drivers/i2c/busses/i2c-virtio.o
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> --
->> Compile tested only
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security, especially when the structure holds some
+> function pointers.
 > 
-> Makes sense to me... if this works, you could pioneer a sequence
-> of simiar changes :-)
-
-Hi,
-
-I already did some other ones [1]. A few more still need to be checked.
-
-I'll finish it after ending struct regulator_desc that I'm currently 
-looking at. [2]
-
-
-[1]: https://lore.kernel.org/all/?q=%22Constify+struct+i2c_algorithm%22
-[2]: https://lore.kernel.org/all/?q=%22Constify+struct+regulator_desc%22
-
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>    3516	   5320	     32	   8868	   22a4	drivers/regulator/mp5416.o
 > 
-> Merged to i2c/i2c-host.
+> [...]
 
-Thanks.
-CJ
+Applied to
 
-> 
-> Thanks,
-> Andi
-> 
-> 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[1/1] regulator: mp5416: Constify struct regulator_desc
+      commit: 97e63bc35f4c086ab7ad3894c9693e18e79162d9
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
