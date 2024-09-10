@@ -1,102 +1,67 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174BC1F951;
-	Tue, 10 Sep 2024 21:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D01176FCF;
+	Tue, 10 Sep 2024 21:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726002793; cv=none; b=IGHBE2EB9j5BknUVi4siTNpe34emqvpb4XJK8ZpDURMGqAGx2gPW3XaVUcaKV1CqJOexxKzlPLMi9Z2xStLgVT+f6FRUuY8CKScrW7C5M113D9nFDqw7yzL6hEQ1u4Gj1b1lSxfACz51jUsaz2PZ1/rRmVi/C2KFPltb2EiKFeU=
+	t=1726003004; cv=none; b=lXouyFWls88wJFwGgcjLV7D8hEKheoeoq+Srk6ie6/IXFXL6k9geo3RtX7Kvo0WtJTgwhCS2iO2rMlNaFdVvX9ZqA+ZQgCQxfI6mwfL1ocR4cansGsdvlu+er1PTbSfXU4MyilSd2iHbaefjPupduoPJlg4JG9eMghoDwu2RidQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726002793; c=relaxed/simple;
-	bh=vDgjIBjhHTJrGIyXLK3F1O9eH8ttQJqEQh1v0D44fkc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r/mXnLgXxsBMXkXQwDhv6BVmBVp0pKz6QVLhznf5oc5G1k2VYqdv2Z7stKAl0nHeslPBYS/q4RiDyeeP9BELpuQE4K7CIks2S4/hu6Ck5HBGaxcGJH33g0K5hGThrsvt/3/c1jw00I0i9ardeA2AJ4kYmJcU6FtilFTwaiGC3jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KdqZIi1c; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1726003004; c=relaxed/simple;
+	bh=yY98ZnPqutD75dS1CZ6FtP8zEL2DopNaLCFMIdLjsDY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bcZBjRnOayMsDEyatIDt0Xd46JXqslMU0NSow9j3yev8zksV5E3I+jwq8f3JnOoaM2DpAsG2IDi5SsMIjSJqCbzpoC92eQvRP2r+K+AqXRE3ZK5yAXIzUpv2Cj6odfLHnOokUb7lYBFnJcP5yxHCyr5TQ0VPyfH62HnuYQ43pkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=lYwCp1Uy; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KdqZIi1c"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37747c1d928so3774669f8f.1;
-        Tue, 10 Sep 2024 14:13:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726002790; x=1726607590; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mShm0KIU0OZ83/t9phYF8kP86kSg8BrKV+H1Ffpa/nc=;
-        b=KdqZIi1cHKGNj8OdeyCeoofuDUKgGQREHww1bby3ui17q2k9IDs6TUcrghNik0AoCs
-         vQ8eiXBikvikn0I9Kglntqlt0y3+1v2f+SGZVA5B9S0WojEj//UfPDsvdINZtT2Hd/8L
-         YD26XPeTt9X87TGUe9Kbss1W5Pih9BTsLHA2BWAtgz8CRU6l6QdpinZ+6bYrfkj0LjbF
-         xISlXm43ImSbzHtByHpFL5hetpFA9PAneAaj0A7dxl/oHkJyoV6PAlVyKzKS3ILVSZ/u
-         ABQ/82dEOt7nlDTKTtLdDYwAfgzcnKzFdriqwzyOfJgm6cY92V/iVoTbSginf67FhJMl
-         x8LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726002790; x=1726607590;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mShm0KIU0OZ83/t9phYF8kP86kSg8BrKV+H1Ffpa/nc=;
-        b=q0CMwzgx4KLTED5k36l+iRXZ9r7ze3e1X8QBRDm+UpC9m8u2S2o4D5tcrG82lX2COg
-         AK82bSi4laOfT0OakfioCfEDw0A9yeHMJAMb/BJvw2rqOJELgGCi1XLu6/lafxUQjXcs
-         D9GOsRlBLe9i62rXjU7L3xaiF+9vlwe268X6Q/fOHIiMwHphnQeQDWeXUKLXk48Z6Z5X
-         P0ylcsx26DI/uQWeuFVm0OWfXm2S+mKLYJ5goFfOerZYlTqBW2DgoFO7gd95v5eSOX/S
-         0/m9ePkmPV96j+gwptpJ18MadS4E+p799vO/eNzbAQ/1U793JNdVpLz4QFp6az9tB6Dz
-         Zz0g==
-X-Forwarded-Encrypted: i=1; AJvYcCU+MuJv5/F/4WhJzABsHQZyRsP3L46Tf+QFOkL+amBxZ8eegRoZDMFKym51usmyUylccbwL13IxonGpraOMBgQ=@vger.kernel.org, AJvYcCVQsJpBnfugb++Oio+AwkRX/CQiDWWLbJKdZIAx08cT8OSRvibRSMJsALn+oJ6h3HIbpUSVfOX/voe2xgZw@vger.kernel.org, AJvYcCXZQPODkPORY0Q25CsvRjLvSjVWSpHeMhniqlTNvESZ8QErPXVtWj0AkN6PqE+InZ6aL9mIJ53XFMOiOns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLw6tgi8VypSmsdKOXUQYV33DgvD13sxol81W/hB0smy01DyAU
-	hfdB2rXUAXFH7BGOOW4MBC+tXe1RFHACG1B1OXkcFcuRYRfiK2rr
-X-Google-Smtp-Source: AGHT+IFwmCNPL5aE3FgmJvUfyIwFUQvYFcinWghCIonakDEYeycDzAajn6O7VZPeDDDMSpsKOoIGHw==
-X-Received: by 2002:a5d:6aca:0:b0:371:8688:1660 with SMTP id ffacd0b85a97d-378896c800cmr11271977f8f.51.1726002789527;
-        Tue, 10 Sep 2024 14:13:09 -0700 (PDT)
-Received: from void.void ([188.120.129.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a279sm9879024f8f.9.2024.09.10.14.13.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 14:13:09 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] ASoC: tlv320aic31xx: Fix typos
-Date: Wed, 11 Sep 2024 00:12:41 +0300
-Message-ID: <20240910211302.8909-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="lYwCp1Uy"
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 17F034188E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1726003002; bh=3BCuHwWtjEsbkVAy+MWuOWEp+1aiLJTFeNM0th+mSVY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=lYwCp1Uy8PWuJwBvdd4aS7lt8Z3RH5h8jKHHdBI1kAXRXyLcxfqNzKTpEmcFhls2g
+	 Jl80W79rF1SoaTYeONVMRgWySBW5kcogcLvL3TQOLWBiscGdAiIsnB+xuviDDBhZFY
+	 o6QQbh1GXd6Dft0RNW2a/6bJ0JR7TOLF4FXIUYTIau/JOmrFBNk7rQ6RMyTF3lqdsO
+	 guo9F+mL9MDHzYefA9fX71jAjVXBExz+bLuMJ824EC3a0SdlBxNd7AS7G0zDH7aRwH
+	 L5Lc/9Kvi9tMAiA7VWAnWSgKfCu2nUocekn6uJZvBMVgUuFdaSaxWjTj1Y8mxxqpWh
+	 pB0iJUwl6e1Zw==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 17F034188E;
+	Tue, 10 Sep 2024 21:16:42 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Andrew Kreimer <algonell@gmail.com>
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew
+ Kreimer <algonell@gmail.com>
+Subject: Re: [PATCH v2] docs/process: fix typos
+In-Reply-To: <20240907122534.15998-1-algonell@gmail.com>
+References: <20240907122534.15998-1-algonell@gmail.com>
+Date: Tue, 10 Sep 2024 15:16:41 -0600
+Message-ID: <87ikv36wg6.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Fix typos in comments.
+Andrew Kreimer <algonell@gmail.com> writes:
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- sound/soc/codecs/tlv320aic31xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Fix typos in documentation.
+>
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+> ---
+> Synced with docs-next as requested.
+>
+>  Documentation/process/coding-style.rst   | 2 +-
+>  Documentation/process/maintainer-tip.rst | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/tlv320aic31xx.c b/sound/soc/codecs/tlv320aic31xx.c
-index 7e624c4b77b6..187d68e8688c 100644
---- a/sound/soc/codecs/tlv320aic31xx.c
-+++ b/sound/soc/codecs/tlv320aic31xx.c
-@@ -895,7 +895,7 @@ static int aic31xx_setup_pll(struct snd_soc_component *component,
- 		dev_err(component->dev,
- 			"%s: Sample rate (%u) and format not supported\n",
- 			__func__, params_rate(params));
--		/* See bellow for details how fix this. */
-+		/* See below for details on how to fix this. */
- 		return -EINVAL;
- 	}
- 	if (bclk_score != 0) {
--- 
-2.46.0
+Applied, thanks.
 
+jon
