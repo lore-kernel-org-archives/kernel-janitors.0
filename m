@@ -1,116 +1,141 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B587F13E02D;
-	Tue, 10 Sep 2024 12:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BAA194132
+	for <kernel-janitors@vger.kernel.org>; Tue, 10 Sep 2024 15:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725970002; cv=none; b=mTo/4QcVdqFtxPwkT4UU2dl1KGpBvA1cnMRAwSE/aut3vuqyGxZiIsTyeaG8YZmp5472NJf/0wcrr9OtPetHJc11clA+Eba628oHyTD6pYGvbdCBiHysQjqzorxwg0N+04pCd8LyP8JweDwVyJHqSybfg/FgGgBeI6GxZurCAFc=
+	t=1725982147; cv=none; b=tldvCkWt+tOd1YxDKWHIrxpubW9FtIHt0fyH7FGy13MSewUToEqdcD3/2ieBmST2iZyVtVpC68ibxVcvRL54M8T+naPtlRQjLOek4eLCHRAsvMk0RVHcXqUI/O/Dh8GuiU2Mo3ro3n6rv7MNwDx2jCqxIlY04uBOuIH6wC/Q6Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725970002; c=relaxed/simple;
-	bh=0uHqGyWQTKBICcZgWP5SFyBnuC7UuUXsU/vLXQ0WYN0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=uMizCusGUl+X7jxDtkxe6svgguYrjZno7kPKOv2d1EzA8jvgmvlnevtNkeTMIsPc4YsyKQnvlmdPGu9FXt9pk32vN9P81bU2Mpv23yogKn5cCzdgz9UF7qtohgJ+wiSknBiZuDtt95O6zTvxOFrFrH+bIDwdwOOLHETDeV9sauk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l2/jyXDR; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1725982147; c=relaxed/simple;
+	bh=bYKKDH1pcTzczLC911ccBgziQmQOZ7SdfO/eF7GVhHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GO2shJLHGlDdCFDTsoTasA5M8D5lW3nC1HtmNVKtuVGDSZ6N9o4YXYuxjeUQq27YkRJ3tGvfE2jPqzk4jiwkavsP00dFW3HNX37+dnYCn2xr3ToIhS88ivOj9ALD+yPDABFJXf1V/gWfKy1gBn9oaUAU+jNmVZBR+cOaNbklYT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YDOW4hSY; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l2/jyXDR"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-374c3400367so4704078f8f.2;
-        Tue, 10 Sep 2024 05:06:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YDOW4hSY"
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e0402a98caso385187b6e.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 10 Sep 2024 08:29:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725969999; x=1726574799; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z3O0+X2UyQ0gOuFyiHB5oW6tIQsBBcRW3/8B2cCf8EM=;
-        b=l2/jyXDR3leqH8NzQlvlQ2hG0tK6qLY3S1VcW1ygpaTvuBNu+h3xKcGjRUPFWq8Sb8
-         slz1sRWElKKLd81nGA4kI0Km08Ngo/G2nBbF/9eylXQvpOlA+6FCw8RV/322xBbLeqnK
-         38KH+Pbj437fN+KAetjSwQXsBwY1xJpnlVoLQWYlUDMCRC64vArmlh7AsDdBodRdLtt3
-         XWwEBn/ZmOZq/sRnn75fRJDh6CfQbwKa+feWHIuxKTN36eZ4DAh/IaCQmhLrDIByZ8Ls
-         /2nAEbDh8K8capeyvX7TJsQb+/fESx2Xji27AOTI+5LL2a1bNqJOPrEt65iQNWBw5P2g
-         i2xg==
+        d=linaro.org; s=google; t=1725982145; x=1726586945; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dtCCy/Lr6nar/YEsY1Qs666TLKhgRo30yNScB/fYqd8=;
+        b=YDOW4hSYXmoYNEkq9dKIQMukDnNOtf4YvUQxdopXuGmxVmJG8w5SyDozOPkiLTOy4Q
+         L0qrlfphm4Z9gsAs5+Uazg0g3IdEJzbLcFyRmNI+jGWlcEIuycCWlvvn1eaCnCYbNTFE
+         ypSoVfYqLs4IYkXtKBPa5SPTflXvWeiwAvJrZbDH9qaS4fZXPKcmYYzOkAxbsfiFt7L/
+         Wog1FGz7eP/Wjo0roqnZh5xBKW9xl5ucW1nGfCI0FCQT1sS5A6KNazjX18VVBLmkJqch
+         bBqVSxqOXZ+T7xUrfYazo4N9CvehMLgq70JUzQBNc0pUcu3oJv3tRIGGzLlXSv0kQ8Ex
+         t/Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725969999; x=1726574799;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z3O0+X2UyQ0gOuFyiHB5oW6tIQsBBcRW3/8B2cCf8EM=;
-        b=gys38Q5YSoIWNOqSE4z71ST1XiV13R31NSEjLAWL0gacQiEpiXGgJCPPK1y8AIIVGL
-         dbbR0iveIL74FbShX190HRF9EjTIEdutEIoyLMBzqK1awz8abjtXkJUlg5POZmhTCs73
-         RVIBbw+0NeKfKuURuO/Bbd8bkkhw6zetuEggxTM1FQFd3OueEKfk3tQnCL1cmxcK99Oj
-         oVQr59pbrps+EIHNXUNFrUv6UrkeVb45cOhEWO/yYmh2v6IbLGzmitF+VD+snh0fzVMc
-         uK5TwhlSAItkDmFKWtxyTnsanh5cTuSzfAQBeFwBf4LH10eYplDBrOAy8fQLYS4LqaXr
-         6Wrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMkQVNU/l3zVGyx5TjFSasRfT+I7E3LxKi+CTsYbFLIiziFo63YRmvxCoY9YUnL9yTcLKPAAhi@vger.kernel.org, AJvYcCUzsYbSeCgWHj/xUmbsIALZT/PQKR8x+rjTH3k3hY1Co2vY0Wpl1Z+BP/cSY7zJjJylmbDRiYsP7FGc43M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWq/cT+mxX9iznuAN/t3VyYlBvH7HIC7XQKkcfkWI1E7YWA1dX
-	G3DGot5stvsUReDJjzpW8SCKcsI+QkiOFmnsdaEeu5M0eywnCzagqaP9AC1s
-X-Google-Smtp-Source: AGHT+IHQn/8VjDWddQEtqhPD6spb3CN4HWurt39gX0dd8Pllpw2ltiFpG//CzBeUnit4t0a3ce2WTw==
-X-Received: by 2002:a05:6000:544:b0:374:b30b:9ae7 with SMTP id ffacd0b85a97d-3789243fb20mr8658299f8f.49.1725969998573;
-        Tue, 10 Sep 2024 05:06:38 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a340sm8714115f8f.24.2024.09.10.05.06.36
+        d=1e100.net; s=20230601; t=1725982145; x=1726586945;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dtCCy/Lr6nar/YEsY1Qs666TLKhgRo30yNScB/fYqd8=;
+        b=HTMfedMOlWTNqT7w0JSXJnwKwPvsR0BGdmP17tyqYVtlwdhXXtfLZs0fZyj2/TZLki
+         fCIeqqJzwIcD+z+HHwBsV400IoF9sNih4ctUZxUtahKUeGZPB3xhv8xaQrRWGrok1c12
+         UbquuzmrvnGhdqsGh/+0vV4gforz/cgcL2zpn3MGYwffrTFHNH7jt0UxWEADCaOkHowJ
+         txb3CaNYLWQO4mGWgsUUzkgHxiUB0Zs3RtD1x8Z9orp3zU6tBiq9yhKi3iro7pphiyCY
+         ZV/+BlmYkQZpEHwymlTpTr8kZZh95WEkmWVVFqCKVqUdzVziWYdta+8VAoG5gmC0vX80
+         XJ3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUqXpQDaMtVYLjkSd5Ft6eYkeLp41C+UWMjmczRWvFb9GCbuNaBd2mjf2IZ4byCKzCZAgNzbkz4eoOWk7b7KBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXG+u+sO9vI30WhlKmjVoG67TDHYIFoG6wywgkLHuUabZ/rWOe
+	26tkZ/NA6z4enaTh8NX6A/1hCH/UX9fGCabngzPQv39SWe2GLgUed02xHfiQfGM=
+X-Google-Smtp-Source: AGHT+IErRAQeZ0Hl/JEzF5IWPZ6vJR6FZdIf6CsVCDWAFI8dDPPPNQ20QdqyaZ+vsooRQe4sBsvW+Q==
+X-Received: by 2002:a05:6808:648f:b0:3d9:3a2f:959e with SMTP id 5614622812f47-3e0680b508amr122683b6e.0.1725982145032;
+        Tue, 10 Sep 2024 08:29:05 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:b385:464:5921:35eb])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d8255dc130sm5764644a12.72.2024.09.10.08.29.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 05:06:37 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Shahed Shaikh <shshaikh@marvell.com>,
-	Manish Chopra <manishc@marvell.com>,
-	GR-Linux-NIC-Dev@marvell.com,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next][V2] qlcnic: make read-only const array key static
-Date: Tue, 10 Sep 2024 13:06:35 +0100
-Message-Id: <20240910120635.115266-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Tue, 10 Sep 2024 08:29:04 -0700 (PDT)
+Date: Tue, 10 Sep 2024 09:29:02 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Bjorn Andersson <andersson@kernel.org>, Beleswar Padhi <b-padhi@ti.com>,
+	Andrew Davis <afd@ti.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2] remoteproc: k3-dsp: Fix an error handling path in
+ k3_dsp_rproc_probe()
+Message-ID: <ZuBlvhf5AszNHV1e@p14s>
+References: <9485e427a9041cc76cfd3dbcc34874af495e160a.1725653543.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9485e427a9041cc76cfd3dbcc34874af495e160a.1725653543.git.christophe.jaillet@wanadoo.fr>
 
-Don't populate the const read-only array key on the stack at
-run time, instead make it static.
+On Sat, Sep 07, 2024 at 08:33:36AM +0200, Christophe JAILLET wrote:
+> If an error occurs after the k3_dsp_rproc_request_mbox() call,
+> mbox_free_channel() must be called, as already done in the remove function.
+> 
+> Instead of adding an error handling path in the probe and changing all
+> error handling in the function, add a new devm_add_action_or_reset() and
+> simplify the .remove() function.
+> 
+> Fixes: ea1d6fb5b571 ("remoteproc: k3-dsp: Acquire mailbox handle during probe routine")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Reviewed-by: Andrew Davis <afd@ti.com>
+> ---
+> Compile tested only
+> 
+> Change in v2:
+>   - fix the subject (cut'n'paste issue)   [Andrew Davis]
+>   - add R-b tag
+>   
+> v1: https://lore.kernel.org/all/9485e127a00419c76cf13dbccf4874af395ef6ba.1725653543.git.christophe.jaillet@wanadoo.fr/
+> ---
+>  drivers/remoteproc/ti_k3_dsp_remoteproc.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> index 8be3f631c192..f29780de37a5 100644
+> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> @@ -610,6 +610,13 @@ static void k3_dsp_release_tsp(void *data)
+>  	ti_sci_proc_release(tsp);
+>  }
+>  
+> +static void k3_dsp_free_channel(void *data)
+> +{
+> +	struct k3_dsp_rproc *kproc = data;
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+How did the struct rproc from devm_add_action_or_reset() got turned into a
+struct k3_dsp_rproc?
 
----
-
-V2: re-order declarations for reverse christmas tree layout
-
----
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-index bcef8ab715bf..d7cdea8f604d 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-@@ -2042,12 +2042,14 @@ int qlcnic_83xx_config_hw_lro(struct qlcnic_adapter *adapter, int mode)
- 
- int qlcnic_83xx_config_rss(struct qlcnic_adapter *adapter, int enable)
- {
--	int err;
--	u32 word;
- 	struct qlcnic_cmd_args cmd;
--	const u64 key[] = { 0xbeac01fa6a42b73bULL, 0x8030f20c77cb2da3ULL,
--			    0xae7b30b4d0ca2bcbULL, 0x43a38fb04167253dULL,
--			    0x255b0ec26d5a56daULL };
-+	static const u64 key[] = {
-+		0xbeac01fa6a42b73bULL, 0x8030f20c77cb2da3ULL,
-+		0xae7b30b4d0ca2bcbULL, 0x43a38fb04167253dULL,
-+		0x255b0ec26d5a56daULL
-+	};
-+	u32 word;
-+	int err;
- 
- 	err = qlcnic_alloc_mbx_args(&cmd, adapter, QLCNIC_CMD_CONFIGURE_RSS);
- 	if (err)
--- 
-2.39.2
-
+> +
+> +	mbox_free_channel(kproc->mbox);
+> +}
+> +
+>  static int k3_dsp_rproc_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -649,6 +656,10 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> +	ret = devm_add_action_or_reset(dev, k3_dsp_free_channel, rproc);
+> +	if (ret)
+> +		return ret;
+> +
+>  	kproc->ti_sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
+>  	if (IS_ERR(kproc->ti_sci))
+>  		return dev_err_probe(dev, PTR_ERR(kproc->ti_sci),
+> @@ -741,8 +752,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
+>  		if (ret)
+>  			dev_err(dev, "failed to detach proc (%pe)\n", ERR_PTR(ret));
+>  	}
+> -
+> -	mbox_free_channel(kproc->mbox);
+>  }
+>  
+>  static const struct k3_dsp_mem_data c66_mems[] = {
+> -- 
+> 2.46.0
+> 
