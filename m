@@ -1,63 +1,69 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAF839FE5
-	for <kernel-janitors@vger.kernel.org>; Wed, 11 Sep 2024 07:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886B613C80C
+	for <kernel-janitors@vger.kernel.org>; Wed, 11 Sep 2024 07:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726040406; cv=none; b=NqjQTlZa4fDYlXEwYydH6FyquL8zj0HubyGmWDWDQ0i07oGKzVGS5aOsb9Iuz4BuFpw5TYVQaKKS2RzrB7lbBlmKrHY3PUlWfALayV80stc77GnIpY0n+DRwTmD/3uIRF0C+iN5rZq1f5xZiJQk7s9cjbnPM6KNvfk9LhbIIWbc=
+	t=1726040590; cv=none; b=l3FKfY/mw0kKtfAb9wcX5jNnPnKKsT7KhTaRzcuNz80FWpWOMKamj3sOm52w1F/ZBksi2tQHpLd5op1rPAQunkKOxicvkduz3wWzujOB+e7Q98d7PfckV6Kj9rfLsoeMU9L6fAIIo2MHedrYCmx/Yj18nBZklpko6TETJUi1/oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726040406; c=relaxed/simple;
-	bh=mD1x8nHG1g3JEsBBm+z40nPQ/B6nXDs/HRMrcAOfnQA=;
+	s=arc-20240116; t=1726040590; c=relaxed/simple;
+	bh=y6up1TEn4mGUO5E3alCcfTTaJPWeVhjSNuijasM6Hzo=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=u0kwYTf0fPJ27HFPStEqKqCho1Rd8Lf4JpKlsAhHaqcyZYjUFcouFpeSBxoRRFsX5mKGicZqztxTo/BP/Ad3PNkZeLpL+arUVtyzlzMM1Fza/blD53w7ux2H+x/D1B/aj6aRGhhQDXcwaZLjYEqyyuByKemBv/aox//UjiNhAmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a6Pr9ngQ; arc=none smtp.client-ip=209.85.128.48
+	 Content-Disposition; b=Xb5zFP+j72ktGc23kWAehAanEBVYeWGs/icIFdFgYxV/jgHSoos+fKdkmxwt+MAUByxBd7jo+vw88RKxuZbFo6Xf+T+SJBZpOtnaq49eTm5wuGhZh15GZiS2qlplYpJoQxT7u2PP+UB5AyoRjWqaQsorjrOiRJliCwOPfsWMqfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U9Q3gFTZ; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a6Pr9ngQ"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cbc22e1c4so19854875e9.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 11 Sep 2024 00:40:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U9Q3gFTZ"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-374c3eef39eso3660227f8f.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 11 Sep 2024 00:43:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726040403; x=1726645203; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1726040587; x=1726645387; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7Vm+jEHhLAKPjaWuMJ4d76NlcE1THre8Dm/y67wAWD4=;
-        b=a6Pr9ngQ5DiKEoc8nx/pp/ypjOuZU5NjJ+r2oOiqcKjV0Cz+Jmzj4SRxw/KmL4BiqI
-         reISonqkiUfOcYcUYoBA0PlJ5rjX6vjmVNHqgPl7+QrmI5/b+lvw23E2ZDTTl4mdK74c
-         OwCrLacZO5NUOMcEGjFJW/PCVNJ0aG1F80tGp1t1GbWdf9QdeHF5HNDLGOxIuOf0Rll3
-         AQGa0pMi1BO8pXLAAJiSN4iBCbH1dBRelJucAj9kVXT3nyAz66SiXMKFyDca20IMVxY0
-         EPcLrsrmvdeVeWzU7mcoqxCDDbzG5Qi/i9Z70sbRGgPIdX2T+u0fIL/AX97FAv3+yCd4
-         6shA==
+        bh=As6Mh+lzj3Gz1WRcYQZrDI90Xpd0PmMaVKgj6FhuHj4=;
+        b=U9Q3gFTZ1IbioGMTWVKQ4MRn10YaFqvlb5RRePchpiyrwBpJ+6RX4CT9TFiJ+YH2Wf
+         vTpE0Xl62bTzLZ1dFLL2qSZQueOfNiWANpWFjawWz6ckmzJqS0Tl/O1ume49SJofsu0v
+         ugnFeILSwNr2jnyb2W1GjS4WOULuZgiiwKnb8Ojy4Kkgf2lTpsdh4rc+2tBYYnmjtZAz
+         QM/0AOT3jbBWPdVbKbW1rb+za8VHG62Q7GXvbd+G9Et4WS/1ZS9xCd0CEU5HctLu+XJS
+         liocgOvHKHuvZF99+w1SrroNvFvYrHDC0/CAWc/Yqtr5QGfdfwzf1PcWE2+gsbWASmDR
+         HujA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726040403; x=1726645203;
+        d=1e100.net; s=20230601; t=1726040587; x=1726645387;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Vm+jEHhLAKPjaWuMJ4d76NlcE1THre8Dm/y67wAWD4=;
-        b=wajv9gyTxIh3nHRR2taAVQA+Nw9AKJrd+NIshxxfsZ5e2zH40EqdxkJO+kP9VK/E9o
-         +qYo6eX7wYbLCoLxPLxnK2pm5ye2vqtB421o4HYF242h1GAbKnEnTzJgQYrMGuAyRzRj
-         JIuOvqP/X09H7slrkA0/oN7fDzQkCocppEvdvBX44H5pTyQ5/RtniTwdinbAB9BEQqn/
-         JHf1rgmMdC42sx4sudKtucxcfqTHrjwar81iinkqUBX3nEhUq0nbWGU4OerlrQcQTKZ+
-         E+Eek9PKFThhMCWpSbHeoe7IUoExKQ28b99CnN7jIap3ndUBkV3KEUEXoc5fCW9mfSul
-         4ZMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhuwJqxa4eq99DWjPMZFIEtExiEOnctpRPVf/c013EZo/62vzD4mBY1mqIzZItJUluHhN6oVhtsf2tlUK4YWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCYl17L4mU/JiNcZe/UDO3kdRaljpDgRssnyt8tsazjZZJ5Q8O
-	oN3IHZsWc/72JUdYjbdeNi/WM4I7zWRhCRu8o3+g4fN+5lCH1c+4uk5A0DtkCkw=
-X-Google-Smtp-Source: AGHT+IHoNK+/nUMKYaelXKxN8yhTKmMxOo/BiZURjSF1S6UHYQvazTlTL0voyGPl2bhSF2Y66u2XRg==
-X-Received: by 2002:a5d:654e:0:b0:374:c87c:6653 with SMTP id ffacd0b85a97d-37894a6bdf2mr7336145f8f.59.1726040402949;
-        Wed, 11 Sep 2024 00:40:02 -0700 (PDT)
+        bh=As6Mh+lzj3Gz1WRcYQZrDI90Xpd0PmMaVKgj6FhuHj4=;
+        b=Fz+P/ormwWbm4oL7ce4dU8PXFZCImtqUhPqyM67gEH3uiH+W4Gv8mWTAppB+qmucLF
+         rJrbCF+NU/51AleqKRUr+53t0AAUdq8vll+2k/mV7K7EtE11tqiK+tZ6frEs1ZhBte2U
+         ynh68KjjrCfqmR5VOczuSltsYodfoeSl5ah/4n5l8wjeQ8kjeohBVMIRIHLb5kiM8WxK
+         RsVYWJpVTAV84Rn59FMI3V+UN9s2khOooHYeDe4C7FTTOvEwBwAzkUjdE88UGyXFwl2c
+         3yEOrpUGjrg6RQ39tCiU7s4MxbPf4rf/j7Q5etgMFYJLMTnZzYUT08VJwXdLGCmoMaxH
+         V6yA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3Ga1XX0pfmPkFt1dXNMVdIWC/K8kJY8kED3Edpy86nPphQMroGIDgvvHznEY1mbqM/w/tmAK5/LAnJ2tby7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkeIA/chPdAAahFm5VaLw0bbS8J8ZjU3I4bwcgNNnZjgrIj8jw
+	jJMn5ta/7WZ1KhgOfJPUvthxaCom6kNaZwSDV3QOdYycqErtj+neP23NmGrM0MY=
+X-Google-Smtp-Source: AGHT+IHOJBC9xWxtEz333I412PsRAnwCCXfRzkH+Q812eYtVEcfH3PlSFuvh4othUga0PEr6w0xhXg==
+X-Received: by 2002:adf:f4cc:0:b0:371:86bc:6c05 with SMTP id ffacd0b85a97d-378895c31ddmr9796759f8f.10.1726040586743;
+        Wed, 11 Sep 2024 00:43:06 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca7cccd35sm151748545e9.18.2024.09.11.00.40.01
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956e8a98sm10786306f8f.117.2024.09.11.00.43.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 00:40:02 -0700 (PDT)
-Date: Wed, 11 Sep 2024 10:39:59 +0300
+        Wed, 11 Sep 2024 00:43:06 -0700 (PDT)
+Date: Wed, 11 Sep 2024 10:43:03 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] perf: arm-ni: Fix an NULL vs IS_ERR() bug
-Message-ID: <04d6ccc3-6d31-4f0f-ab0f-7a88342cc09a@stanley.mountain>
+To: Ming Yen Hsieh <mingyen.hsieh@mediatek.com>
+Cc: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Shayne Chen <shayne.chen@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>, Kalle Valo <kvalo@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Deren Wu <deren.wu@mediatek.com>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] wifi: mt76: mt7925: fix off by one in mt7925_load_clc()
+Message-ID: <84bf5dd2-2fe3-4410-a7af-ae841e41082a@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -68,30 +74,28 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The devm_ioremap() function never returns error pointers, it returns a
-NULL pointer if there is an error.
+This comparison should be >= instead of > to prevent an out of bounds
+read and write.
 
-Fixes: 4d5a7680f2b4 ("perf: Add driver for Arm NI-700 interconnect PMU")
+Fixes: 9679ca7326e5 ("wifi: mt76: mt7925: fix a potential array-index-out-of-bounds issue for clc")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/perf/arm-ni.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/mediatek/mt76/mt7925/mcu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/perf/arm-ni.c b/drivers/perf/arm-ni.c
-index b72df3aea93e..90fcfe693439 100644
---- a/drivers/perf/arm-ni.c
-+++ b/drivers/perf/arm-ni.c
-@@ -603,8 +603,8 @@ static int arm_ni_probe(struct platform_device *pdev)
- 	 */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
--	if (IS_ERR(base))
--		return PTR_ERR(base);
-+	if (!base)
-+		return -ENOMEM;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
+index 748ea6adbc6b..0c2a2337c313 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
+@@ -638,7 +638,7 @@ static int mt7925_load_clc(struct mt792x_dev *dev, const char *fw_name)
+ 	for (offset = 0; offset < len; offset += le32_to_cpu(clc->len)) {
+ 		clc = (const struct mt7925_clc *)(clc_base + offset);
  
- 	arm_ni_probe_domain(base, &cfg);
- 	if (cfg.type != NI_GLOBAL)
+-		if (clc->idx > ARRAY_SIZE(phy->clc))
++		if (clc->idx >= ARRAY_SIZE(phy->clc))
+ 			break;
+ 
+ 		/* do not init buf again if chip reset triggered */
 -- 
 2.45.2
 
