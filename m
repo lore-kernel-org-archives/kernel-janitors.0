@@ -1,25 +1,40 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E395B187342;
-	Wed, 11 Sep 2024 12:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8C02F860;
+	Wed, 11 Sep 2024 13:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726056828; cv=none; b=ZIxHMLi3RbXDLa7Kh2JQWnRjuT0aA0DXKa8HyrEl9/a2yBEsd9Rbyv/hQne+se1usL++3PavyPCdW/FHJHws2GPNasyPx8zs+PcYcH5e9M1TlbdAsh3kTg4VL3unse66CYRJo/7MBIl1HUwQepvrM3jj2y4XXnmSKR1kl3zzbWY=
+	t=1726059939; cv=none; b=j/x8WEaFkgkb1YCj++yBFWJyRaMNv7I476MIZe5kWTjc8PbXYt5Yc/8oNu4RAm3bFKpcqPgpjE0KfPYWvcEzT3ofUBySB1VoiNu5WxdeBDyzwa9yIuDuMj7c78nd1JkLcuI+CWcNbmtIO8RwZIdiC//qrEGF3Ja7duFKVIBNuC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726056828; c=relaxed/simple;
-	bh=jx5Wlnh9G6QigmBJO1dFY8YiPBCehSxeoR4AHtmUFcc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D5tgSk9noNXtoPlg8Yfl/dFM7XlXhxRJL2oAq29ufLqfZssP555ydzqmodcQAz+N6KpbQtxUOZ+5IAeHPgZnWZrq+IRkA59NR87sIiIwiQJvIN7fwGpI1ZKeCeQqhdcRLGs6IqpL5LfcoaNEoed6jO0DkNNrAmJL8bFEHZXGh+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4CCA1007;
-	Wed, 11 Sep 2024 05:14:15 -0700 (PDT)
-Received: from [10.57.76.6] (unknown [10.57.76.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 336653F66E;
-	Wed, 11 Sep 2024 05:13:45 -0700 (PDT)
-Message-ID: <948daae7-8d94-4d44-93e7-1764f6500be6@arm.com>
-Date: Wed, 11 Sep 2024 13:13:44 +0100
+	s=arc-20240116; t=1726059939; c=relaxed/simple;
+	bh=bDYUgYOw46wNC7ut0zToIHWGq3V5JzUlJWPhGwJuAuc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=r3LxM767uTUpggKkPtH9e466N1nbfLKZ3PnLKld4IIKHup5z43dY3RZNBykZ4D4P0krZH2PlXHeD/GIeML1RdXK4hBFXxpjNVxXg3IXWWYw3bi5OiHI/hII3ZqlI5TzS449UH5PKpv3BMuG+x+uFaBmcWZvr04s2+l/wErRoPTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=R8Fm2Vnb; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="R8Fm2Vnb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726059924; x=1726664724; i=markus.elfring@web.de;
+	bh=VRkf3qtyEuvNPD1JX1MQIlWJSiOtwVTdx3GCCgh4S5s=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=R8Fm2VnbqfNd78zQHzBufZariiC1mKsWsK9p5SU8IarkvPvo95/3QgwS9yvaKs4T
+	 +CrqLJNnbRwe6ys5oeEIS2Ynp8KHnlE6IBS3rDbtog7Oq1kfq/Lo5VqD4PGfPrN0K
+	 dlvDH9uIjMSHB7Xe78L0QPMTb9e2YHBVr1axk8R9m3r/WpxoSErPyxVaPfO3WyOPb
+	 9MAoai2hdH7EYWarT/roiUgGpNttquO6A8jZIs0iVEr249QzCVogh8sPHmk9NGRE3
+	 65/CBS+PNrSysUh0QQseH7Lar8RX6EDL5Rn3rJsoez3XsH9MhAOZVwyS0ld+z3vhE
+	 8LE8sWXXEw7MvTgsvQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mhnvw-1sJPvg2Noe-00lz87; Wed, 11
+ Sep 2024 15:05:24 +0200
+Message-ID: <aca066e5-8f8c-4c08-8c8c-8743e98ff7f7@web.de>
+Date: Wed, 11 Sep 2024 15:05:20 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -27,46 +42,52 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] perf: arm-ni: Fix an NULL vs IS_ERR() bug
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <04d6ccc3-6d31-4f0f-ab0f-7a88342cc09a@stanley.mountain>
-From: Robin Murphy <robin.murphy@arm.com>
+To: Ruihai Zhou <zhou.ruihai@qq.com>, kernel-janitors@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Markus Schneider-Pargmann <msp@baylibre.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <tencent_C3AF1A5AA6C84EC8AFBC9434383912612209@qq.com>
+Subject: Re: [PATCH] nvmem: core: Fix memleak in nvmem_add_cells_from_dt error
+ path
 Content-Language: en-GB
-In-Reply-To: <04d6ccc3-6d31-4f0f-ab0f-7a88342cc09a@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <tencent_C3AF1A5AA6C84EC8AFBC9434383912612209@qq.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:SJ3aD2gaL90RIFjIU0KY1WCukPSJqpp0AO1aOZN1wvN/uaQDRIa
+ KWWCliQKc/KJiRygSN2B9fUqShbBHfh5hLv/ubzk6rvopxNH48YlzkmI6KcguXt1p+pI8Xj
+ 84oS33UYSGj35wBRa/MhziN8mBE+7/WOzqgT2+Mxw93mUv13glEoOhgutpNkkyz9MOyPbZi
+ uWMw+0vBTzlp9YAWlh/BQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:JLStHIiRUyc=;oXwhKkvxpqSxrd7EPWOJNj3EHN3
+ pidhAMjBnAWxB346QEIyy2MSF31mRLapRNCEZyBL5c6Et9XZtc8F+uAT+Ykg/0LBRxmA/1/Tz
+ veHiHoXHGqnWAWDDmIci6tkzPsCbwz5Dr8btZqqdiJ3gjKCkMnNnjFdr1vfr7s4IR9veU1L0n
+ 2KookwqSyYjTboGZBJ0sm7vDh1+NR2TxYBOydFqCFRFLukYa2t8xFvgSiir9Bore5oM1ZzMlb
+ xOlTBuhivQ8wD4Zlkh8DIJ0cljToWEbBrQb454TnWbsAazL82TND0O8z6+INMg+NKV0E0nS6M
+ ve32TkJoH+FDQNaMfH+m87ZwgOQdGvWrLfFVSLslsZLBOdpqDaikGwk0+zz995Kkifvx6I4qZ
+ mP0GJhSxhtUxpHzKgpM3y/Oiv4s8uWNkHCpWMpf3fW+Q615t7SN7v4iZ4qmXjwL8P/NQytJ2H
+ aK9RtcSXe3n7jwouJKquZcd8rFkwgwGhHbvFf6rnBQ5vD09zhgQOFVGhCJxHqlbDxzNKfQFKQ
+ CveMyPOUD8VIkOIKORgyes/q50e7EQz+3arFhXck2zrVS8DuAqPEWn9RLgcagOBz0uu0haUir
+ ye3j3Kn2Y5vTDrcVuCwjZiJIj8sJgq1Tx62cbLywS41OuplbnU63DG5FHAf4bb7NN7uYM0dYF
+ kSPPQJDo+Kwqp9h5O+wUFQk3hu5c91pF1aR3/nof5RihvaQeBvIhvZeL+E0tIew9tkoC+Pygy
+ usDRSbSGDwLxtpxgOS2qNUuE4uhPjF/OcEMyL9hoD5ao/k9szyOwu1ESON3KtPqukKWSoggLL
+ SRl/lYgkg25pvW8C0GK+5+jw==
 
-On 2024-09-11 8:39 am, Dan Carpenter wrote:
-> The devm_ioremap() function never returns error pointers, it returns a
-> NULL pointer if there is an error.
+=E2=80=A6
+> is outside of the valid range, the info.name alloc by kasprintf will
 
-Ah, this code went through a few evolutions, and apparently I missed 
-that devm_ioremap() and devm_ioremap_resource() helpfully have different 
-behaviour, urgh. Thanks Dan!
+                                               allocated by kasprintf()?
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
-> Fixes: 4d5a7680f2b4 ("perf: Add driver for Arm NI-700 interconnect PMU")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/perf/arm-ni.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/perf/arm-ni.c b/drivers/perf/arm-ni.c
-> index b72df3aea93e..90fcfe693439 100644
-> --- a/drivers/perf/arm-ni.c
-> +++ b/drivers/perf/arm-ni.c
-> @@ -603,8 +603,8 @@ static int arm_ni_probe(struct platform_device *pdev)
->   	 */
->   	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->   	base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
-> -	if (IS_ERR(base))
-> -		return PTR_ERR(base);
-> +	if (!base)
-> +		return -ENOMEM;
->   
->   	arm_ni_probe_domain(base, &cfg);
->   	if (cfg.type != NI_GLOBAL)
+> cause memleak. Just free before return from nvmem_add_cells_from_dt
+=E2=80=A6
+
+        a memory leak?                                               ()?
+
+
+How do you think about to increase the application of scope-based resource=
+ management?
+
+Regards,
+Markus
