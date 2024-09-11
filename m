@@ -1,96 +1,86 @@
-Received: from forward501d.mail.yandex.net (forward501d.mail.yandex.net [178.154.239.209])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A80F2C859;
-	Wed, 11 Sep 2024 08:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA9CAD24
+	for <kernel-janitors@vger.kernel.org>; Wed, 11 Sep 2024 08:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726042978; cv=none; b=W64LCSb/6BppAf29m77vXksEj6KQu7taGDH6NfiIMR/9gH/dTjsn7CTU7Um00Oq4qvMAbofllwjurQFUHMXjecHARTtY6+jcSSCNDAGWMeA/y9n6+/R7vcf87SMlGdxjRa5ebvQoXb7BAxajzwTS9p+HEdYtGUdmCV/wiMY7xyc=
+	t=1726043184; cv=none; b=CPhm8PARnzpYBSXYT1lJKD8pC7pM5kcMmdlnRqTLMisRfbMg0rE9/7OjqhXYa9fjbiQFzIG9mQPoJJPxrYT89lZZiMDq3Kci5PnxxAVVc3tqybkN80nFPGNX2dX7r0z4vVD0fSqW6wM4/BrvwrplZCgvg/K6htrwn0idy65bQvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726042978; c=relaxed/simple;
-	bh=9ncGzqtpiWgjyq35hElyjIoVwEnaH+a6wWns+spW8Jc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nb0qw9JeRHxVT4sJHflPpajsNeIJwAgRdxji25tch1JnH9JZ4btAxsU9GCIG+l/SDzeEAEdynEg2R8WqXcmvltwamoZ9bZ8Ypz7OH8QdQBoE6MhC2srAm7XEAl1HN564uE2pjJK27UFIagoHGyi2S13mOie4reR6Ug8qYwbot3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=Xj3wITdQ; arc=none smtp.client-ip=178.154.239.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
+	s=arc-20240116; t=1726043184; c=relaxed/simple;
+	bh=AG/8RtBynRt+mEGh3AS9RZKy1USA0iGqiFfWqJqmzDU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vw6EyV9PIFzL54ZOEsTJkOtSMPMGAvZLpnD5wEdkmTNqAaY8wRk4hunb7zFyd5N/ojC9/8ubufX+OtVYpgBf+qnh9/Sbg/saK7yIUKBCMqUD5Rb7pdXS95Mqv0RDm58mc4ro0oIeAajXlncdzitmDghq7SmW/IfyZ6UQ46rElU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l+/B/r9p; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="Xj3wITdQ"
-Received: from mail-nwsmtp-smtp-production-main-23.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-23.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:51a0:0:640:3bf:0])
-	by forward501d.mail.yandex.net (Yandex) with ESMTPS id 0B9F4614F7;
-	Wed, 11 Sep 2024 11:14:25 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-23.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id NEer0R0Of8c0-w1ouJzf4;
-	Wed, 11 Sep 2024 11:14:24 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
-	t=1726042464; bh=9ncGzqtpiWgjyq35hElyjIoVwEnaH+a6wWns+spW8Jc=;
-	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-	b=Xj3wITdQtKiEe4f6xbwAU/AQXN4qH3xLcTgo3KdQhAp8z/Ex0Rr5FZN2z772f8Zqg
-	 wZNpHTyJR5/gX5XPOW2tUKLZKtqo8zOho31m913ek4l458jxaTCu06wFgJWvnBIB0P
-	 YGrMumDa9SgVDO5G1sqB5QFjy1tijTyltW/7Oabo=
-Authentication-Results: mail-nwsmtp-smtp-production-main-23.myt.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
-Message-ID: <246de2986dce9d867894bb006a1b2b3601e94a4e.camel@maquefel.me>
-Subject: Re: [PATCH] ep93xx: clock: Fix off by one in
- ep93xx_div_recalc_rate()
-From: Nikita Shubin <nikita.shubin@maquefel.me>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Alexander Sverdlin
-	 <alexander.sverdlin@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Hartley Sweeten <hsweeten@visionengravers.com>, Russell King
-	 <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Date: Wed, 11 Sep 2024 11:14:23 +0300
-In-Reply-To: <a05454f8-e409-4f60-93f7-6aa2ea0a2a23@stanley.mountain>
-References: <a05454f8-e409-4f60-93f7-6aa2ea0a2a23@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l+/B/r9p"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f754d4a6e4so56620691fa.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 11 Sep 2024 01:26:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726043181; x=1726647981; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AG/8RtBynRt+mEGh3AS9RZKy1USA0iGqiFfWqJqmzDU=;
+        b=l+/B/r9pkHmvXFCMPAHD2+7MjpS4StaVWBnqaKS7Hua6CBpT7ezSS8waIPqIrjWDsp
+         Y1Ecincx+V1eu2FGEb4CVzeYOTvgSQphXfKeAoxXNtk/wl2Q+/kwp1FqkDdJEd5g+C7x
+         UWS/c822jhx9Yu8DB8c0udkEZUYfED1g3FqjFAJ9cevYEkhEHWauK/N9e5LK9N4eTwQm
+         QfFdfVk/ykVxhB/nDg8kVkPtbVKPLjX222G5VZvoLsW01ITCACRrUsJXEzOXOhfTmaYI
+         2zoDlQRwUPQqpdeNGbf2UKqu9FSc7gn3I/Lmf5aucmx4Ww6ypR/3m2kNXsj5kDqRAH4B
+         EQZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726043181; x=1726647981;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AG/8RtBynRt+mEGh3AS9RZKy1USA0iGqiFfWqJqmzDU=;
+        b=rbUXJImyZQAS1kuQS29xOJjTZ6BFxm8kQwFuyhePkg6q2wuTPd9hwNHS4W3KxrL4ES
+         iBE/uLpvuUbL3H+Kam145An/kU1dKnEQ8mAcGIDQXUPpzPdAflrgV7aWdHfVlHCwzFCZ
+         1xPFQSmJZ41kVpcgcbOdx0P/YuMnob+mre4Dydu1evPEnktYc1neMT90nNwK5/DCRkgp
+         rx6lKgT+3T8H2i3LwcOkn9xVUcX7Swam98+3QCWom95AVhQ+vH5qeEIpc82o2Dx3/7MS
+         UKomaYRrfF4ECX0AdrO93AmwfHycalo6i2kwGRqGy1IIY/oi466UxMIkuqaLisZxgx54
+         rkKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWOD+yrg9N+4yEQmALN3FET+WXl9OLYgcXMTrXg/x+EKcnNpV5xykr8TuvzbGgpRh5Y3WU3oME1WdNpN3lAI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQOVTrDH3uNeNTD1GEVlWQD0fB6j8TVEiwrJ0XUSSyxuk92Jxh
+	FWzFDbU1qDmh4qIUkosnihswt5l6TB5qQGugfX+PwJKtOixa818GU9V8BpFS1Ld20OCMSS4dlnw
+	pbDVHTQnfFR53T4WpONWgsH9hIlShtfn42+Zn8g==
+X-Google-Smtp-Source: AGHT+IEjiTjcEZy1dr3ZvMNOud/SL7eq3MhGmRuYcQFWDTE2sXgqA6CmAkpweizSlnMP5APvFB4W7TkNG6pa7ib+fuw=
+X-Received: by 2002:a05:651c:1541:b0:2f7:7cc3:306 with SMTP id
+ 38308e7fff4ca-2f77cc30691mr9511981fa.17.1726043179612; Wed, 11 Sep 2024
+ 01:26:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240909102907.9187-1-algonell@gmail.com>
+In-Reply-To: <20240909102907.9187-1-algonell@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 11 Sep 2024 10:26:07 +0200
+Message-ID: <CACRpkdbbB3kMYvFTNSa_jhAw0iQHjFU+qKZZpY2goRvwL2hycA@mail.gmail.com>
+Subject: Re: [PATCH] arm/mm: fix typos
+To: Andrew Kreimer <algonell@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>, Russell King <rmk+kernel@armlinux.org.uk>, 
+	Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Sami Tolvanen <samitolvanen@google.com>, Peter Xu <peterx@redhat.com>, 
+	Kefeng Wang <wangkefeng.wang@huawei.com>, Randy Dunlap <rdunlap@infradead.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dan!
+On Mon, Sep 9, 2024 at 12:29=E2=80=AFPM Andrew Kreimer <algonell@gmail.com>=
+ wrote:
 
-Reviewed-by: Nikita Shubin <nikita.shubin@maquefel.me>
+> Fix typos in comments.
+>
+> Reported-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 
-Alexander, Arnd
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-unfortunately, the ep93xx DT conversion series is also affected by this
-bug.
-
-On Wed, 2024-09-11 at 10:39 +0300, Dan Carpenter wrote:
-> The psc->div[] array has psc->num_div elements.=C2=A0 These values come
-> from
-> when we call clk_hw_register_div().=C2=A0 It's adc_divisors and
-> ARRAY_SIZE(adc_divisors)) and so on.=C2=A0 So this condition needs to be
-> >=3D
-> instead of > to prevent an out of bounds read.
->=20
-> Fixes: 9645ccc7bd7a ("ep93xx: clock: convert in-place to COMMON_CLK")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> =C2=A0arch/arm/mach-ep93xx/clock.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm/mach-ep93xx/clock.c b/arch/arm/mach-
-> ep93xx/clock.c
-> index 85a496ddc619..e9f72a529b50 100644
-> --- a/arch/arm/mach-ep93xx/clock.c
-> +++ b/arch/arm/mach-ep93xx/clock.c
-> @@ -359,7 +359,7 @@ static unsigned long
-> ep93xx_div_recalc_rate(struct clk_hw *hw,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 val =3D __raw_readl(p=
-sc->reg);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 index =3D (val & psc->=
-mask) >> psc->shift;
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (index > psc->num_div)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (index >=3D psc->num_div)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0return 0;
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return DIV_ROUND_UP_ULL(p=
-arent_rate, psc->div[index]);
-
+Yours,
+Linus Walleij
