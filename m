@@ -1,60 +1,65 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA1113A3F7
-	for <kernel-janitors@vger.kernel.org>; Wed, 11 Sep 2024 07:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF14139CEC
+	for <kernel-janitors@vger.kernel.org>; Wed, 11 Sep 2024 07:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726040118; cv=none; b=J9WBKSoEpR7s/cErKMh689Fki5ftstorSACxU8BvqoOUCvXIbDDS65aLVk2E6MWuGPXuKQqQlQ87c91IEFAFp8256a0btmy5sepGlvs4enYeHAuZs6tJN2oQh1GH1XneJsIdU3N1mALCfoA056EcMIcl02HLEqP4p/lNIOtIaAE=
+	t=1726040362; cv=none; b=bTyxGUua5t4+A3OWXfSWQgGACv+l6+mH8LeFN1HH1WgJx1pxpW4ToheClxvEshFbrF81CYwCsjsdj9tXF3qwrS64tqmjH7Y4EgV5Iyocn/4jg4g3GO5BV6f+5yaeKysHU8cTcfdhB920B8zWdRZkSQ8CU4LUuLs0tsqfknACsS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726040118; c=relaxed/simple;
-	bh=nQmq7VkgcVU3sxzdfrwtJZx9fzJEFpAmynfuFhaLMww=;
+	s=arc-20240116; t=1726040362; c=relaxed/simple;
+	bh=HoxR8vfEtIHFIrwB9+FtaybMhmPgqhhqbF2v2L94xzE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ibZph7I5B9WoeAq6eo5acc4u5kmRkQq/EN0TYaJoWhxR3VBWV1S9ZEJQXGOX5vapu5lyaWwPIsikF0w8g3hLwOMyTF8sRwbBF/PqBEJ/hzAzsCkWi4/oovCN9tpC6l/xKQP+5mfSp+dusiHz1cqpb+EHoNpwO7tNKsoKT5uavtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TCUKYpqe; arc=none smtp.client-ip=209.85.128.43
+	 Content-Disposition; b=sN65XE+gm8JukCcOzOa61JkU4QzDUZft4Xbs5xSatvE7W0uH5Sh7SanECW5lWP/6jwF5HnQ5HOSvsLptLNplNNJtrGpSMz22ViSYYSjZeec19PmnKXqwQF0XzZj8kPmChQw5hqQYyy+NhgLmoQOOEVH8khoYeJEKUYeK1XZbmaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cDT+bkpY; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TCUKYpqe"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cb8dac900so28621595e9.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 11 Sep 2024 00:35:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cDT+bkpY"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3787f30d892so3936145f8f.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 11 Sep 2024 00:39:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726040115; x=1726644915; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1726040359; x=1726645159; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=MUTWz8H8Tz2LMT6jhiMgaAcLsjgnM5k3iEXbMv49Vgs=;
-        b=TCUKYpqeaOP/gJb1f7fO29MT4iVXiUu+lNt829uOXeNOYKpCZUO/Y5m9tM+BlnDhrs
-         EQYFe83v7GUVZh3Sqy3oKoEhwtKTaVqDUf5dxxer5Qh2CicuRls7WnAObwaIaLPIsaCw
-         xOUAYiJlB/2k++8yvHFvIiN1100cNKRg0EdC2/Sjfuhk6kbkSoZXt2ENrNmBnwEsBw1y
-         dDYXM5dYEUVBOA/jvZOkETTH/+kiEQ8TyTHC+GrrPEM/Cmj2+UROcsO0xAZmOHvbMjin
-         may0si1hiwt8z7sh+E9/HU24qM75etJuZ/JGxfgHsphWm3Zp/Rwfg/uDjP6wjZIgCPCf
-         oItQ==
+        bh=jMhPnhQLGUUwFA6J63dF4flmVGV7ie7Si62HtCm+ens=;
+        b=cDT+bkpYQyZGhu3P5SC+9wRt3DDUZDG+o0mFvWTTbUaSkPeNFz/0SOtFj3dxIms8jI
+         88G9BPmqnbCSP9qddzulYeAxdZ239W7TjoWuKTMsYwjE6PqYoRc9MOrC8WcFI+/GuWWQ
+         iZUPADirUTqITvaVUW3gWT1bR0es7jI0NGBHZiKH0A6HMo+lVvG0BZJ4NZSuDREwvg3b
+         p2wTJWtiGdxIJ9ucgntp7yRv9DKIXiQxEuR+fi0VJqSbmBwcs2Oc9EXBn8SVJgrLXHkl
+         aja71qCS5dOQMsRZ6KwAXoEUDzOe7ATFjN/jkT7REtA5NaIdDbMcjJw6QZjW5ME9e/0s
+         tmuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726040115; x=1726644915;
+        d=1e100.net; s=20230601; t=1726040359; x=1726645159;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MUTWz8H8Tz2LMT6jhiMgaAcLsjgnM5k3iEXbMv49Vgs=;
-        b=Vs59KrMdHpyuXZsulxveV6g/2gEntoWAfzczR1wJDsv8yTE72jE+MUHhNUa/MwA4sU
-         X3NQv2doNcJVQa4f436vRV1DBgw7qSOngA5JdZNkWGDZjHAslyga0uurYti63e4OZte2
-         buhE56z/uKon47koE2H3PgIBCrRestjr3XpiYxZ6MTj5+M1+s1s5gA+7PGQOu8iICCPf
-         1vBfKPVrKVmclu4Frz4eTFLj8h9hthd0+uE0sEBAqerllQauM382knOvibu++y7AiUCB
-         J/0YJ5qMNoWY/rWWia9QeRctOfwOuYNUXLe68KD0NOvZp77G6sOlozqAJBQQT6jnUCa0
-         DSpg==
-X-Gm-Message-State: AOJu0YwZN06mtxiqbTC17G4/+PeGfBxC/R7y7LgWTJeP0v7RH8yphVhH
-	KPGop1UA8zRhuEfX6iTcObxx2THxJ4uigy41fhx0xK8DdmxRKjV3l7xFDeVuia4=
-X-Google-Smtp-Source: AGHT+IEXdh3VOQbERbctB/+VRwxHaPy47lwhldsNprQakXUrLbELoU9PyEfR50TxBXILRwnl40y7Ow==
-X-Received: by 2002:a05:600c:5114:b0:42c:bb41:a05a with SMTP id 5b1f17b1804b1-42cbb41a16cmr61534835e9.34.1726040114760;
-        Wed, 11 Sep 2024 00:35:14 -0700 (PDT)
+        bh=jMhPnhQLGUUwFA6J63dF4flmVGV7ie7Si62HtCm+ens=;
+        b=utPNYSlhZH8KjpXorjjWn70PXVbqxvWRnPdUKyDJvZru0BDv3EH41WDGzs8G+Qx6sD
+         ZAdcjHhb4FQEUYRIxlQvA5MnT3mXOMltObhMsCo9OAClB/bqxE7LArERCJbthLcWD5e5
+         q/2Ny7jK4pt6qv2L7ZtFgs85erWnHr1LDIZe4f86esArFQM2lIBYOWq4E4wxonqPywpQ
+         acEsq0aNJldl2uxREyhl0nV1JJcO6k2RwmWLo+ju6zvaFiHJTdarwInXaHmx6oxTxC1J
+         JomghkvbRXJaWjBUk/8Ob4mlxTa1jqSgeqTtv/diUPcZU+pC/WqlCnPOvwhKZtT+VePm
+         aoWA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9OVwERLGa0fn70yPVUoNY/wUW48Li2aSZnG2Hs2XKZ/OD4fxJHC/eHmlSZwuAfXHci8DHEhOm4kVxsXadGmA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYSy4PYRc27UMBVVwJN8UX1pp4mCkIX1IRyU4qbSYXaHD5Bid8
+	6+W6PPsCJx5/HAPDbVSNaVZQLvkwIHUMipgnVFV9kB65z4dMVLZmQ8ACeL3F83A=
+X-Google-Smtp-Source: AGHT+IESuS36LExi/2RVMu8sWMe6uqy4QE6i31lVfI6gt/QUy4qRreYxyP5mTDnkIk3YvBnM5tmX7A==
+X-Received: by 2002:a5d:6945:0:b0:374:b24e:d2bf with SMTP id ffacd0b85a97d-378895d46c9mr11371355f8f.27.1726040359142;
+        Wed, 11 Sep 2024 00:39:19 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956650f2sm10717147f8f.26.2024.09.11.00.35.14
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cc01d3d17sm41603025e9.0.2024.09.11.00.39.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 00:35:14 -0700 (PDT)
-Date: Wed, 11 Sep 2024 10:35:11 +0300
+        Wed, 11 Sep 2024 00:39:18 -0700 (PDT)
+Date: Wed, 11 Sep 2024 10:39:15 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: kernel-janitors@vger.kernel.org
-Subject: [bug report] rtase: Add support for a pci table in this module
-Message-ID: <7df38a5a-761c-409c-90bf-5ac264ed5a1a@stanley.mountain>
+To: Nikita Shubin <nikita.shubin@maquefel.me>
+Cc: Hartley Sweeten <hsweeten@visionengravers.com>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] ep93xx: clock: Fix off by one in ep93xx_div_recalc_rate()
+Message-ID: <a05454f8-e409-4f60-93f7-6aa2ea0a2a23@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -63,129 +68,32 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Hello Justin Lai,
+The psc->div[] array has psc->num_div elements.  These values come from
+when we call clk_hw_register_div().  It's adc_divisors and
+ARRAY_SIZE(adc_divisors)) and so on.  So this condition needs to be >=
+instead of > to prevent an out of bounds read.
 
-Commit a36e9f5cfe9e ("rtase: Add support for a pci table in this
-module") from Sep 4, 2024 (linux-next), leads to the following Smatch
-static checker warning:
+Fixes: 9645ccc7bd7a ("ep93xx: clock: convert in-place to COMMON_CLK")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ arch/arm/mach-ep93xx/clock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-drivers/net/ethernet/realtek/rtase/rtase_main.c:2185 rtase_init_one()
-warn: inconsistent refcounting 'pdev->enable_cnt.counter':
-  inc on: 2108
-  dec on: 2185
+diff --git a/arch/arm/mach-ep93xx/clock.c b/arch/arm/mach-ep93xx/clock.c
+index 85a496ddc619..e9f72a529b50 100644
+--- a/arch/arm/mach-ep93xx/clock.c
++++ b/arch/arm/mach-ep93xx/clock.c
+@@ -359,7 +359,7 @@ static unsigned long ep93xx_div_recalc_rate(struct clk_hw *hw,
+ 	u32 val = __raw_readl(psc->reg);
+ 	u8 index = (val & psc->mask) >> psc->shift;
+ 
+-	if (index > psc->num_div)
++	if (index >= psc->num_div)
+ 		return 0;
+ 
+ 	return DIV_ROUND_UP_ULL(parent_rate, psc->div[index]);
+-- 
+2.45.2
 
-drivers/net/ethernet/realtek/rtase/rtase_main.c
-    2081 static int rtase_init_one(struct pci_dev *pdev,
-    2082                           const struct pci_device_id *ent)
-    2083 {
-    2084         struct net_device *dev = NULL;
-    2085         struct rtase_int_vector *ivec;
-    2086         void __iomem *ioaddr = NULL;
-    2087         struct rtase_private *tp;
-    2088         int ret, i;
-    2089 
-    2090         if (!pdev->is_physfn && pdev->is_virtfn) {
-    2091                 dev_err(&pdev->dev,
-    2092                         "This module does not support a virtual function.");
-    2093                 return -EINVAL;
-    2094         }
-    2095 
-    2096         dev_dbg(&pdev->dev, "Automotive Switch Ethernet driver loaded\n");
-    2097 
-    2098         ret = rtase_init_board(pdev, &dev, &ioaddr);
-    2099         if (ret != 0)
-    2100                 return ret;
-    2101 
-    2102         tp = netdev_priv(dev);
-    2103         tp->mmio_addr = ioaddr;
-    2104         tp->dev = dev;
-    2105         tp->pdev = pdev;
-    2106 
-    2107         /* identify chip attached to board */
-    2108         if (!rtase_check_mac_version_valid(tp))
-    2109                 return dev_err_probe(&pdev->dev, -ENODEV,
-    2110                                      "unknown chip version, contact rtase maintainers (see MAINTAINERS file)\n");
-
-The static checker wants this error path to do some cleanup.
-
-    2111 
-    2112         rtase_init_software_variable(pdev, tp);
-    2113         rtase_init_hardware(tp);
-    2114 
-    2115         ret = rtase_alloc_interrupt(pdev, tp);
-    2116         if (ret < 0) {
-    2117                 dev_err(&pdev->dev, "unable to alloc MSIX/MSI\n");
-    2118                 goto err_out_1;
-    2119         }
-    2120 
-    2121         rtase_init_netdev_ops(dev);
-    2122 
-    2123         dev->pcpu_stat_type = NETDEV_PCPU_STAT_TSTATS;
-    2124 
-    2125         dev->features |= NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_CTAG_RX |
-    2126                          NETIF_F_IP_CSUM | NETIF_F_HIGHDMA |
-    2127                          NETIF_F_RXCSUM | NETIF_F_SG |
-    2128                          NETIF_F_TSO | NETIF_F_IPV6_CSUM |
-    2129                          NETIF_F_TSO6;
-    2130 
-    2131         dev->hw_features = NETIF_F_SG | NETIF_F_IP_CSUM |
-    2132                            NETIF_F_TSO | NETIF_F_RXCSUM |
-    2133                            NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_CTAG_RX |
-    2134                            NETIF_F_RXALL | NETIF_F_RXFCS |
-    2135                            NETIF_F_IPV6_CSUM | NETIF_F_TSO6;
-    2136 
-    2137         dev->vlan_features = NETIF_F_SG | NETIF_F_IP_CSUM | NETIF_F_TSO |
-    2138                              NETIF_F_HIGHDMA;
-    2139         dev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
-    2140         netif_set_tso_max_size(dev, RTASE_LSO_64K);
-    2141         netif_set_tso_max_segs(dev, RTASE_NIC_MAX_PHYS_BUF_COUNT_LSO2);
-    2142 
-    2143         rtase_get_mac_address(dev);
-    2144 
-    2145         tp->tally_vaddr = dma_alloc_coherent(&pdev->dev,
-    2146                                              sizeof(*tp->tally_vaddr),
-    2147                                              &tp->tally_paddr,
-    2148                                              GFP_KERNEL);
-    2149         if (!tp->tally_vaddr) {
-    2150                 ret = -ENOMEM;
-    2151                 goto err_out;
-    2152         }
-    2153 
-    2154         rtase_tally_counter_clear(tp);
-    2155 
-    2156         pci_set_drvdata(pdev, dev);
-    2157 
-    2158         netif_carrier_off(dev);
-    2159 
-    2160         ret = register_netdev(dev);
-    2161         if (ret != 0)
-    2162                 goto err_out;
-    2163 
-    2164         netdev_dbg(dev, "%pM, IRQ %d\n", dev->dev_addr, dev->irq);
-    2165 
-    2166         return 0;
-    2167 
-    2168 err_out:
-    2169         if (tp->tally_vaddr) {
-    2170                 dma_free_coherent(&pdev->dev,
-    2171                                   sizeof(*tp->tally_vaddr),
-    2172                                   tp->tally_vaddr,
-    2173                                   tp->tally_paddr);
-    2174 
-    2175                 tp->tally_vaddr = NULL;
-    2176         }
-    2177 
-    2178 err_out_1:
-    2179         for (i = 0; i < tp->int_nums; i++) {
-    2180                 ivec = &tp->int_vector[i];
-    2181                 netif_napi_del(&ivec->napi);
-    2182         }
-    2183 
-    2184         rtase_release_board(pdev, dev, ioaddr);
---> 2185 
-    2186         return ret;
-    2187 }
-
-regards,
-dan carpenter
