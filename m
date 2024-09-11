@@ -1,140 +1,131 @@
-Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F3B15C13F;
-	Wed, 11 Sep 2024 14:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33AC1A76D1;
+	Wed, 11 Sep 2024 14:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726066492; cv=none; b=ObRDQQOemtIS5riiyEOvrl4CrYpgNlDbY6eNMfmVPUHGM5/A8aZqvQKlD3wlTB/7BA77tP7O174xAjEf4l0cknCACUUI0lZCbKCqc9aV7pLgzpPCXWSjqtGBXkVG7En+Z1fDm0V8sDVVwrqxTUVgXQ9aLHb6Cfx6hYZRcIT1ek8=
+	t=1726066786; cv=none; b=lls3q1MfpRhwSs5xF/wwkMhhTZTFD9NwZmkFMnEA8Ii/udcU7QykseHOLS0vCB3PcZ5bJmVKQ/ECA0GIgkifkDjrwlLOkID+RDr6Cmm1d6Xa7n0yJZJgsUH3uQgDSmWXIB+BltzOG3hQkaRPpIgXHw1swUHXTRYRbjGZ0NS92T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726066492; c=relaxed/simple;
-	bh=TEGsLt1jeouhgGKvWBnhX2IAfldS80tGzCPn3MIWvjQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=r3mjig/d8HSkOo204peEzXTpFLJm9aXGJnHdLlOsnPSvfrTbNow8a1itBqtQr8bqg1UqNpY17hUPmhjEB6EXx3pwh+CTVEsHA3gpUZBgI+BycAv9eqxBtf1xLIqheE4kkpAgIa+HsX374uzfgMZf2sMxK/fKgc6ND5Ld0t+beE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=QCtU0Wrg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Sz3G0FAt; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1726066786; c=relaxed/simple;
+	bh=UJbKAzpoA0Kzv6Jj//Qm4/uvIRTw+Wh+5UZkaP4eW2Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KHHds/4OZnPFK1AnkIGfZZwT5b1pi7jGRLDognGCDcbAvXxt5nLMN+lo8DRGG5I4oumICt+2JIEV/Qj3UJF64Zhu6lM2Thdrkn/gX7rEfX3rsd1Vjp6dZLH5eKuzLkHgJklVmpZ0QCJy9jVwifqsEbxkocHspS4QLAgdeHaxci0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h68HPS2l; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="QCtU0Wrg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Sz3G0FAt"
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id A899E1140162;
-	Wed, 11 Sep 2024 10:54:49 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 11 Sep 2024 10:54:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1726066489;
-	 x=1726152889; bh=o31KnfvC+LHhCIJAD2586HDBNBdNcofxhPOGlMMUPUo=; b=
-	QCtU0WrgDQxoCHeKmBDc6R63ChRlU5hUM90Hoku381EWq3g0CKmtvHyKLWQTVxrV
-	+H9APqJBeokfChc7910FOKN7Cv+hksEg9IEgAVsrJMO6ymsK6hI1s3Obta+kqtBO
-	LKso3g9bvN9Sk7zQE2NIlG69N0NrsS4I/1EzA2PYnC5AiGkYtnHjUsFutmSvJrT+
-	LrRYPROiz90Q43wtCNXiAGjspg3hc/OmBpNYGoy6wkJfWo1z2TATx/SjhEEWkbeg
-	MScaATOH1LfN3AqbTfF+vWic2PijIcfwvAvrB02tchRpdRgg9gTEhEDDFViKzc7H
-	M2EfoQf9bZ7xjWh0mjoD8g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726066489; x=
-	1726152889; bh=o31KnfvC+LHhCIJAD2586HDBNBdNcofxhPOGlMMUPUo=; b=S
-	z3G0FAtclbvFLfaMcrjSCO78eBG3LCNZWuA+l/+EmMJjmc5eZf+YfF9RY/dHWwU9
-	d0wygw9jDZguZrEPGiOSTz+WGZlgZq7ZHLYYGgGYFr62pROUgV67s9HaNtD0Zfx2
-	hLRJEF/nC7l0dBXy0XmX61eCwMMLOTwQExorN2JdXWI+M9Som05d7DrjrvQybAaG
-	LpRJyth8wFH1sciGD/x+mPr59FxxpfGEWEPxm5XBma9UzxtwB0G4YNuSnC+yheKe
-	2ewz4R1++ffwLzNAw3ueWyMS9hN1n9Qw6JnFb0Yy+Mu/VSot5cSPqSWqO8aXl6H4
-	iebCZnQC/Crjf4JAzfERg==
-X-ME-Sender: <xms:OK_hZjHSDxXV5G6iegUpFDvE24omDHSmTboLCr8uHJaBbeYEQPdY5w>
-    <xme:OK_hZgWhtrnEr0F1TPX0Z8NrfLXxrprnB35GnT801MApPwwrfcELi05y15_BOwSyf
-    acX1ZhxAGjzFGkilm4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejuddgkedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepkedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrd
-    horhhgrdhukhdprhgtphhtthhopegrlhgvgigrnhguvghrrdhsvhgvrhgulhhinhesghhm
-    rghilhdrtghomhdprhgtphhtthhopegurghnrdgtrghrphgvnhhtvghrsehlihhnrghroh
-    drohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdr
-    ihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehnihhkihhtrgdrshhhuhgsihhnse
-    hmrghquhgvfhgvlhdrmhgvpdhrtghpthhtohepkhgvrhhnvghlqdhjrghnihhtohhrshes
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehhshifvggvthgvnhesvhhi
-    shhiohhnvghnghhrrghvvghrshdrtghomh
-X-ME-Proxy: <xmx:Oa_hZlJlaeV6S3piIFOMyZSw9R27_Dl17HgwJaJPqxG8v-nv-Fwpcw>
-    <xmx:Oa_hZhE8YycP-7ydAsD_N8c_4CnCs6DNt4n2swjyY8FHLKAZNFC8Jw>
-    <xmx:Oa_hZpWdJ0fhn6WWNSUZn-KCkxATptiXt5--scjH4SwtFy9NaIUV0g>
-    <xmx:Oa_hZsOStN-jBj4XnuOCevMTZNjwg9q7KQxJjbiH5lQAbhbj6nXntQ>
-    <xmx:Oa_hZoF2Tl1tS3rdBortOMb8B6ZzkmxM-KkVRhXM1nOC6_iXlPuCFYYm>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id DE1192220071; Wed, 11 Sep 2024 10:54:48 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h68HPS2l"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3780c8d689aso4376998f8f.0;
+        Wed, 11 Sep 2024 07:59:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726066783; x=1726671583; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UJbKAzpoA0Kzv6Jj//Qm4/uvIRTw+Wh+5UZkaP4eW2Y=;
+        b=h68HPS2l7aAJNXSQI5b+0yWm58ZkL3ooHFXndT6kPJ5Zn1DQOkZovmZYsF4fpVs7cw
+         cjPYLoJyd4vPKcyujaNYKJ+kKf0sh8R1JRXGAqdu1dX20NjBcOVqlF4/2o+KcTOVuVBt
+         2RVtv3duD587J8QIWvTWKQ2Px7MBDEaw6bEvcPKoBfnNEuN9ZRPYz7wd91rpJhM07Ioz
+         1waVcIIUCuF6RS4rN5OCvUzvJ8RSYNos4IZ5TTOR5zs2XSDIBfRd2+IpIzz/sca/f9ph
+         tpDNwdnoZf4sE2hUjkO/n7TebTRTqiekXQeaZGW5e2oo1X7TQlBETIMUXaYPBlrVT6FQ
+         9vTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726066783; x=1726671583;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UJbKAzpoA0Kzv6Jj//Qm4/uvIRTw+Wh+5UZkaP4eW2Y=;
+        b=F+qsaYkWFBu+6hlpCLPVcTrE6QFu1RrcEfgtaNV5bZCQ9gPAL+D7U9FdaC2iIphhic
+         iZ88ZRZLsuPz6rESJ7LGcJT2dBCeChD3LUtEo9a9+fy4tnS4mMlBo8680kyG+wGXUqD6
+         3W0TBGk8b0qTmg+XOPi2E9ggX8t4+nhmumgte2qGdgdiodeK5f89MlUOE3EvOakidu0g
+         ZmfiOSTWbhtffcUiqJC6ALhpgNqge2FOxyWug9wxsPhfVVr53j0gROWm6W7EQZVxZj3+
+         ySMd40/eX6A+TgRWzIfuwUooyLWpmOlULXKxWisI3n+WW1L4PGd0BS1l+aMiVp/yT3J7
+         AjXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtXBVhI8/P0/ZzR7X3WSYeexBCbNwTILyM41XbT2Ok68M4N4p0F9CiZ8Sk1ANC3wkjeMT9af2gySF0E8IF@vger.kernel.org, AJvYcCWIIoop7Rjr1TAXOHdpU7BMh+WFfFzwVwWxe0DeFa2XZW3Q8+OiP6onwDsJn6Ur6VacZ6QR4H62dE7j0c7c2lI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGwhBjIg5MwWS1oEDEWQFFJ2raLE0wOXrve3wgx3G4lcHGqIVQ
+	AKrOE1S1tvgqSyGQtkBfHU/6YUL/jha4403LQk0PfEKb5fohKXVC
+X-Google-Smtp-Source: AGHT+IFYkvCW+c9TuCPJmiVI8o2vP7AuZHROvSNybQpWJAoJA9bQB5SF5MIoe9/Z4QcRseO8AG/Irw==
+X-Received: by 2002:a5d:6290:0:b0:374:c847:852 with SMTP id ffacd0b85a97d-378895de57fmr10078743f8f.29.1726066782850;
+        Wed, 11 Sep 2024 07:59:42 -0700 (PDT)
+Received: from giga-mm-1.home ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956de4b9sm11813507f8f.111.2024.09.11.07.59.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 07:59:42 -0700 (PDT)
+Message-ID: <548605182873dadad9ee33dc6ed70e0eba4bf495.camel@gmail.com>
+Subject: Re: [PATCH] ep93xx: clock: Fix off by one in
+ ep93xx_div_recalc_rate()
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>, Nikita Shubin
+ <nikita.shubin@maquefel.me>,  Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Hartley Sweeten <hsweeten@visionengravers.com>, Russell King
+	 <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Date: Wed, 11 Sep 2024 16:59:54 +0200
+In-Reply-To: <a1ceab99-f26c-4edb-8f72-12abf20eec9f@app.fastmail.com>
+References: <a05454f8-e409-4f60-93f7-6aa2ea0a2a23@stanley.mountain>
+	 <246de2986dce9d867894bb006a1b2b3601e94a4e.camel@maquefel.me>
+	 <a1ceab99-f26c-4edb-8f72-12abf20eec9f@app.fastmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 11 Sep 2024 14:54:28 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Nikita Shubin" <nikita.shubin@maquefel.me>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Alexander Sverdlin" <alexander.sverdlin@gmail.com>
-Cc: "Hartley Sweeten" <hsweeten@visionengravers.com>,
- "Russell King" <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Message-Id: <a1ceab99-f26c-4edb-8f72-12abf20eec9f@app.fastmail.com>
-In-Reply-To: <246de2986dce9d867894bb006a1b2b3601e94a4e.camel@maquefel.me>
-References: <a05454f8-e409-4f60-93f7-6aa2ea0a2a23@stanley.mountain>
- <246de2986dce9d867894bb006a1b2b3601e94a4e.camel@maquefel.me>
-Subject: Re: [PATCH] ep93xx: clock: Fix off by one in ep93xx_div_recalc_rate()
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 11, 2024, at 08:14, Nikita Shubin wrote:
-> Hi Dan!
->
-> Reviewed-by: Nikita Shubin <nikita.shubin@maquefel.me>
->
-> Alexander, Arnd
->
-> unfortunately, the ep93xx DT conversion series is also affected by this
-> bug.
+Hi Arnd, Nikita,
 
-Here is what I did now:
+On Wed, 2024-09-11 at 14:54 +0000, Arnd Bergmann wrote:
+> On Wed, Sep 11, 2024, at 08:14, Nikita Shubin wrote:
+> > Hi Dan!
+> >=20
+> > Reviewed-by: Nikita Shubin <nikita.shubin@maquefel.me>
+> >=20
+> > Alexander, Arnd
+> >=20
+> > unfortunately, the ep93xx DT conversion series is also affected by this
+> > bug.
+>=20
+> Here is what I did now:
+>=20
+> 1. applied Dan's patch on a new branch
+> 2. applied the DT conversion series on top of that,
+> =C2=A0=C2=A0 removing that file.
+> 3. applied the first patch (with minor context changes)
+> =C2=A0=C2=A0 in drivers/clk/clk-ep93xx.c again, along with
+> =C2=A0=C2=A0 the MODULE_LICENSE fix I did.
+> 4. finally, merged the entire branch into my for-next
+> =C2=A0=C2=A0 branch so it actually makes it into linux-next
+>=20
+> My plan now is to keep the branch in linux-next for at
+> least a week and send all the other pull requests for
+> the merge window first. If no other problems show up
+> (either with this branch or my other 6.12 contents),
+> I hope to send it all later in the merge window. If
+> something goes wrong, I'll send only the bugfix as part
+> of my first fixes branch for 6.12 and we'll defer the
+> DT conversion once more.
+>=20
+> I should have merged it earlier, but wasn't sure about
+> interdependencies with the parts that already got merged
+> elsewhere and with the comments about DTC warnings.
+>=20
+> From what I can tell, the current state is as good as
+> it gets, as we'll always get more comments or conflicts
+> with new reversions of the series. Let's hope we can
+> address any other issues on top of what I've merged
+> now and stop rebasing.
 
-1. applied Dan's patch on a new branch
-2. applied the DT conversion series on top of that,
-   removing that file.
-3. applied the first patch (with minor context changes)
-   in drivers/clk/clk-ep93xx.c again, along with
-   the MODULE_LICENSE fix I did.
-4. finally, merged the entire branch into my for-next
-   branch so it actually makes it into linux-next
+thanks Arnd for resolving this finally and Nikita for
+your relentless efforts!
 
-My plan now is to keep the branch in linux-next for at
-least a week and send all the other pull requests for
-the merge window first. If no other problems show up
-(either with this branch or my other 6.12 contents),
-I hope to send it all later in the merge window. If
-something goes wrong, I'll send only the bugfix as part
-of my first fixes branch for 6.12 and we'll defer the
-DT conversion once more.
+PS. I've archived Subject patch now in soc patchwork
+(because I think I've messed up the author info, but
+all of this seems to be obsolete now)
 
-I should have merged it earlier, but wasn't sure about
-interdependencies with the parts that already got merged
-elsewhere and with the comments about DTC warnings.
+--=20
+Alexander Sverdlin.
 
-From what I can tell, the current state is as good as
-it gets, as we'll always get more comments or conflicts
-with new reversions of the series. Let's hope we can
-address any other issues on top of what I've merged
-now and stop rebasing.
-
-    Arnd
