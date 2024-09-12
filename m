@@ -1,66 +1,63 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A5B1A28D
-	for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 08:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8297A1A28D
+	for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 08:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726130959; cv=none; b=eDgtuMMyzcUymQAHckTqJCNuRlIRnmYZ0nKDPcRHLbTcJeZyp3x7XVsWmU9O5GsEnwbI2GZ6OEDpZ6RQp2j6KH9kOLADIJFN72k7NttWI8VtA1cklDiyDXnQN6E4G4fIXJhXLLiDH9INajQF5fwjbhcM2LA/dtu5sQNjp1w9I9U=
+	t=1726131083; cv=none; b=HdGN4UpERVHbIUjJi5BX0LBiuTEQLtALtZNnft6Ym8ncA6rWIeUbWjtKj28cOc3VqlntXHwAMehgkAvd2DjEt4urIL0Te2NSscudKNr9M0p/QPSlevzijuJNw7iquhQQGzHHoIyTx/pEuXoiK9g6JbDz2/+NFACAZbGqT3WQX9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726130959; c=relaxed/simple;
-	bh=1J3zCxy9ale5iPnZvhLv3BIL0HELGZX5YdbP0RlIDCk=;
+	s=arc-20240116; t=1726131083; c=relaxed/simple;
+	bh=Oqpf6WxrvhQNA4h2zZSOyiF1FFl+HVlkz3Sk47rCQfQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oEYRSbMwSMRfhyaZJhaLNfMmnNIS0I4NR4Drv95E3XZBEX5pUQZNiAmSkxeeKPXEbXitc/glPY6quaZsN/vogCdCzn74kNteVOMA8KQmcu1d5ZjjZYAzIzTUDkZAeYmdO7fwsh0dUT6I1VT2D1/VorqM0+vA6J/bu38m+mbFKl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jqo6VpIY; arc=none smtp.client-ip=209.85.128.48
+	 Content-Disposition; b=jC6alheXEl6TbsKy8dm24fg8YI8T2LmPDOmJgGxUUN+9gJ7FDwx+2pWh7b2hdQ1W5uqdby18HU/dGnMRMnK8828Xka2K4B86g5xBQH1niHq7wm5n6ntyTVJHwhrXqv/Pe7v6WT6BV3gjWre17vCWqSZOJlDyQ3+nwKxFg4h5EHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z2TBpeNb; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jqo6VpIY"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cafda818aso6074835e9.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 01:49:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z2TBpeNb"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-374d29ad8a7so557399f8f.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 01:51:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726130955; x=1726735755; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1726131080; x=1726735880; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ABTI+i6mJ4CMOQCHX/yBx2eOYtdjf5jrjUW+ELTOTP8=;
-        b=Jqo6VpIYxXYgopCeVNiihBtgOQywzUOcijkwXm0Eob9wlMZWFt2ZssPK4DhN5r3o1e
-         pnq0yvmPoXP2s8vFXRGZk7Y8cm1fM5ku1OSCSk3iv4XhXVuLk++bdSw0eFFtnBekpzpW
-         mQ6k3EcjCXewk01Y0p0gUscm3UMEzqf46zx/dkx4kCN9sP4nCaZM09t+71hnsx9awrzQ
-         6VoWeHqbcRMgJ+EE1erd4/ug7CKWOHa76ztWY8dg589W2plkLrdpzqqpxNKzvJ1+HEe8
-         Tymp+fNhzXRSQkJRSRO3S2notZ14q7nrUUFeUZuDl7k6LMS26yZhiQOdWIMD1wYQE4Ws
-         E5mA==
+        bh=8XjXALdKFm1l8dDisZb/hkbZwF++A+4h5dCECeJO6Cg=;
+        b=z2TBpeNbRdd3p6Lv7R/3jZj3CsQ1oAerqK8tln44K6iS2tKujELfNGp39njS9RP6/U
+         0eWCohtejIR27hP2l+9tUCR70/GQ54MoMqs4Pz1w237+ZJ9AU9nChb43KOQKOv0YMmbF
+         SEAlLNA5nB/MwiVqrBDvv1M9njT/PVP7oAtUSjnpdlrjvej6e5k/3vOOKQAAcwO9zmsd
+         WFVEGY5Fhe0lhagsnbwB9PF+gs6IAP0BGSd4FBxUJIBBJynYeG27WSFBKx2lvxNXzUxo
+         7s9x/T8wbhQ46Xs5ptJhvC6HUR0KmVaVIcMaYdOvmdaC3ZTn6MlGfqUz6R5qdr8n4mrE
+         wyIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726130955; x=1726735755;
+        d=1e100.net; s=20230601; t=1726131080; x=1726735880;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ABTI+i6mJ4CMOQCHX/yBx2eOYtdjf5jrjUW+ELTOTP8=;
-        b=b3eyNpFzkF74DhhD+/YOdabF2Xj0dCC0ypNvw9V3Ajxea4TGq4rQWx5fYAgbI+J3g3
-         8eLSzyvDwzT11K+TD35azGpWHwp3gJHZVjALMoMctjt9cUP9gdM15lo2XdGIzpPcF66O
-         JKJTEyUwWtRocUF0mq9VhDXFnd1JzfCmZJa4bIQUf1Yesr0TubSD3ZhcL4IPKpdG9Nu6
-         dlLWeVXzte3bEVnUnaxZsAby6fGZWw+KkMs47geZMTgAwp9HxTW7yaPTAK4eEKhDRukI
-         mYmYfLb1nYVJcBuplJu3FeKCvNiB2DNlkkTS+D5MJ274qjX/7yuga3a0q/6S4yiNAE3L
-         EEgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGHKeGpcI9NhaIZKS1nI4+SVg8ikZ/yNkSIR3FmZ4mufohl4gFm8YZeDbGkColm9yoiRhJSh35/K7MP7vIRRc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdHrDiFF9ax7GQxCnorSXzNwU0nD/krRVa93UYBZOUGt9+aQ9I
-	MZM4WhLUriiqC3J8lRknZy87GLId2nCbYcE8cHTCI+oRULz2xrYBj0roGdW8ajY=
-X-Google-Smtp-Source: AGHT+IFtFhvViZFvTwkPEdAJJREABhf7QxIe71ol7T4wz3pTBiMjTRfKnT+ODmIORLshY159TZO6IQ==
-X-Received: by 2002:a05:600c:5127:b0:42c:c080:7954 with SMTP id 5b1f17b1804b1-42cdb575510mr17534465e9.30.1726130954537;
-        Thu, 12 Sep 2024 01:49:14 -0700 (PDT)
+        bh=8XjXALdKFm1l8dDisZb/hkbZwF++A+4h5dCECeJO6Cg=;
+        b=nnbY8uAAtldudIVXj4YXKKd429WUrZQboe94yYdtf1VAMp6bMdtMvidZlD5h/PVEsS
+         ElIt0s3HHGiRdD0S2dCRG9nl20g7U1czEXsv64z8VYw0y3KG7RYl7xyOzJj2NaEq8Kgu
+         UIz+aoPZj0iRNN6tub/QEyEjZPdLXcUknbdz3+cVdBmMT2Dj5Jix8ayhcIvDmLxaUHh0
+         LbvpQSLd19RJCxZCJGC7DwXbwePKf9LgDHTOgjCHkshKXK0TFoXgy0IQUgfJfbCLdlm+
+         0YOesAPYmPema9R6tw9qVGtebn6srni7VrCljiwMcR0FmnFaZv7aVOtKdGaedI9NPvm8
+         zfSw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNw5RVO15NnlyC4bBcgQqWzFLZ1Vr5Hc73PBD6defpI7/fz+eBy7ILwzW6MOxjJyZMX953QDElWlql01LmLig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZOdZ71Y215s5x/6DmMQNgkwKVezkYwPxgbYuxQ/uueGg7RXuc
+	+lp9sMfSvuR6ZVSyWAumJWX7m+q2l4easJQ/WcsDEahehmfUUJlbIM1QLBm4yG4=
+X-Google-Smtp-Source: AGHT+IHLHcB/HCgQjKnUW7bwjv1XmnDSqMuyvP2XcLeTnW9k2A9PadCFA/1sq6R/1Xv5W3/sfWKXWg==
+X-Received: by 2002:a5d:5582:0:b0:371:8319:4dcc with SMTP id ffacd0b85a97d-378c2cd5da5mr1059565f8f.2.1726131079586;
+        Thu, 12 Sep 2024 01:51:19 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb8120asm164411255e9.37.2024.09.12.01.49.13
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d365fsm13753381f8f.82.2024.09.12.01.51.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 01:49:14 -0700 (PDT)
-Date: Thu, 12 Sep 2024 11:49:10 +0300
+        Thu, 12 Sep 2024 01:51:19 -0700 (PDT)
+Date: Thu, 12 Sep 2024 11:51:14 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
-	Yi Liu <yi.l.liu@intel.com>, Christian Brauner <brauner@kernel.org>,
-	Kunwu Chan <chentao@kylinos.cn>, Ankit Agrawal <ankita@nvidia.com>,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] vfio/pci: clean up a type in
- vfio_pci_ioctl_pci_hot_reset_groups()
-Message-ID: <262ada03-d848-4369-9c37-81edeeed2da2@stanley.mountain>
+To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] ALSA: control: prevent some integer overflow issues
+Message-ID: <0f03d569-9804-4617-a806-f0e5c32399fb@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,32 +68,60 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "array_count" value comes from the copy_from_user() in
-vfio_pci_ioctl_pci_hot_reset().  If the user passes a value larger than
-INT_MAX then we'll pass a negative value to kcalloc() which triggers an
-allocation failure and a stack trace.
+I believe the this bug affects 64bit systems as well, but analyzing this
+code is easier if we assume that we're on a 32bit system.  The problem is
+in snd_ctl_elem_add() where we do:
 
-It's better to make the type unsigned so that if (array_count > count)
-returns -EINVAL instead.
+sound/core/control.c
+  1669          private_size = value_sizes[info->type] * info->count;
+  1670          alloc_size = compute_user_elem_size(private_size, count);
+                                                                  ^^^^^
+count is info->owner.  It's a non-zero u32 that comes from the user via
+snd_ctl_elem_add_user().  So the math in compute_user_elem_size() could
+have an integer overflow resulting in a smaller than expected size.
 
+  1671
+  1672          guard(rwsem_write)(&card->controls_rwsem);
+  1673          if (check_user_elem_overflow(card, alloc_size))
+
+The math is check_user_elem_overflow() can also overflow.  Additionally,
+large positive values are cast to negative and thus do not exceed
+max_user_ctl_alloc_size so they are treated as valid.  It should be the
+opposite, where negative sizes are invalid.
+
+  1674                  return -ENOMEM;
+
+Fixes: 2225e79b9b03 ("ALSA: core: reduce stack usage related to snd_ctl_new()")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/vfio/pci/vfio_pci_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/core/control.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-index 077d4a2629c8..1ab58da9f38a 100644
---- a/drivers/vfio/pci/vfio_pci_core.c
-+++ b/drivers/vfio/pci/vfio_pci_core.c
-@@ -1324,7 +1324,7 @@ static int vfio_pci_ioctl_get_pci_hot_reset_info(
+diff --git a/sound/core/control.c b/sound/core/control.c
+index 4f55f64c42e1..f36af27e68d5 100644
+--- a/sound/core/control.c
++++ b/sound/core/control.c
+@@ -1397,9 +1397,9 @@ struct user_element {
+ };
  
- static int
- vfio_pci_ioctl_pci_hot_reset_groups(struct vfio_pci_core_device *vdev,
--				    int array_count, bool slot,
-+				    u32 array_count, bool slot,
- 				    struct vfio_pci_hot_reset __user *arg)
+ // check whether the addition (in bytes) of user ctl element may overflow the limit.
+-static bool check_user_elem_overflow(struct snd_card *card, ssize_t add)
++static bool check_user_elem_overflow(struct snd_card *card, size_t add)
  {
- 	int32_t *group_fds;
+-	return (ssize_t)card->user_ctl_alloc_size + add > max_user_ctl_alloc_size;
++	return size_add(card->user_ctl_alloc_size, add) > max_user_ctl_alloc_size;
+ }
+ 
+ static int snd_ctl_elem_user_info(struct snd_kcontrol *kcontrol,
+@@ -1593,7 +1593,7 @@ static int snd_ctl_elem_init_enum_names(struct user_element *ue)
+ 
+ static size_t compute_user_elem_size(size_t size, unsigned int count)
+ {
+-	return sizeof(struct user_element) + size * count;
++	return size_add(sizeof(struct user_element), size_mul(size, count));
+ }
+ 
+ static void snd_ctl_elem_user_free(struct snd_kcontrol *kcontrol)
 -- 
 2.45.2
 
