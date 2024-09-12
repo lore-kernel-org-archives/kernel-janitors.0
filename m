@@ -1,206 +1,89 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B475919341C;
-	Thu, 12 Sep 2024 10:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0882A187552;
+	Thu, 12 Sep 2024 10:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726135487; cv=none; b=Ejg7p2fuVILD5wOOsIBYtMBbNZsCjWe0Ah5tz0TGHXH4iIp2fyM/0KNF/shdqWIXBWuTC3psfydWZaEYKZuWjWlzWqxfC25DujCHJfBEyqP+oj/dbno3LvnuE91IQu8WHvUgd0jgr9sPxziqUvMCeeLq47Ghb/kdrzAoTnzfuWI=
+	t=1726136585; cv=none; b=KAtHFO2YsM1NBtDy+E81Xym0CHQ6FHGVh7mC0VqijObff6HrdL2f7+h46OIyVLbWDd8DkyxsZYrwmJiPdgnmNvyPSoiDYYordESMnIE8YWsDDaINTe83buKUmbMVMEHha4YZom6s2xyg8T1QvaKJNaa5Gx/0QB3+oAX4wzTYSls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726135487; c=relaxed/simple;
-	bh=ogvSFFSm7bsuGcIAX+zX4t5EIqX9rz45vkV1Vw1w0Q0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OVacEdZ2DSLAQCagMOseDGKk3M8Ns3SA38FFd6fdQvluZRxPGSATXTPEiCM4knr1jhlQlhaJzIQirENDKdl+DUvYngo4JE9M+xRLRMCiegB/n+LchB6RU2dLFIOeJ/nQmg0BuKmDz6X3X0g0OO6vQHJbnTzM5HN6C5cj0C50CQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Js2fqRSf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gOFEknf2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Js2fqRSf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gOFEknf2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1726136585; c=relaxed/simple;
+	bh=eAib8kqTn24Z6ArFmJ7JIiLd9ZzbtiIGu7pAuQWyrlk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=anhq5k+WhbJzdZ2VMI2sRRVOlSWtzxAGZjjvjh6BfpMw7v0HUoDV8JqsC6A/ShLTOcf4lcBYeUI69MCQCTn7HF9zjabUW5K4ipcaDEa7qjXg93w/7pda09BOtVPbz4YqnNwLipHWHRiuCzZaYBUOEL3rDFmWJxbVf4ufFMyZP7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gEUpaAfW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Js2fqRSf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gOFEknf2";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Js2fqRSf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gOFEknf2"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9504F21AA4;
-	Thu, 12 Sep 2024 10:04:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726135483; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IpWTLo4PiQ/ADwGe8YGgwnxDcDKej5qqjnNe59NmPlk=;
-	b=Js2fqRSfWmWD+vWHuIZQNqOHkzhT9jpWFBrAAOHwGEBAf+cN+OV2c1zuSNj8BRE/TEA6Or
-	06GaTnK34HMdhdxbFEDXLvQCvLvwV/+F4jdyT8bkzQigfuwSc6fUxcQZoMawcBKztmWvgG
-	rkZMTuz3iRR32MlLWdxtVd31Gn/txJs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726135483;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IpWTLo4PiQ/ADwGe8YGgwnxDcDKej5qqjnNe59NmPlk=;
-	b=gOFEknf2aPxPGNHRWKxnoqYnR0+yk7p1uOCJizbxUJzW+LggluBSW6E95gt0G8PHrNCQhX
-	OrI7xkN1ceOcLTBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726135483; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IpWTLo4PiQ/ADwGe8YGgwnxDcDKej5qqjnNe59NmPlk=;
-	b=Js2fqRSfWmWD+vWHuIZQNqOHkzhT9jpWFBrAAOHwGEBAf+cN+OV2c1zuSNj8BRE/TEA6Or
-	06GaTnK34HMdhdxbFEDXLvQCvLvwV/+F4jdyT8bkzQigfuwSc6fUxcQZoMawcBKztmWvgG
-	rkZMTuz3iRR32MlLWdxtVd31Gn/txJs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726135483;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IpWTLo4PiQ/ADwGe8YGgwnxDcDKej5qqjnNe59NmPlk=;
-	b=gOFEknf2aPxPGNHRWKxnoqYnR0+yk7p1uOCJizbxUJzW+LggluBSW6E95gt0G8PHrNCQhX
-	OrI7xkN1ceOcLTBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 501E913A73;
-	Thu, 12 Sep 2024 10:04:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1G3uEbu84mYFLgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 12 Sep 2024 10:04:43 +0000
-Date: Thu, 12 Sep 2024 12:05:31 +0200
-Message-ID: <87v7z1yyok.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ALSA: control: prevent some integer overflow issues
-In-Reply-To: <0f03d569-9804-4617-a806-f0e5c32399fb@stanley.mountain>
-References: <0f03d569-9804-4617-a806-f0e5c32399fb@stanley.mountain>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gEUpaAfW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B60FC4CECC;
+	Thu, 12 Sep 2024 10:23:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726136584;
+	bh=eAib8kqTn24Z6ArFmJ7JIiLd9ZzbtiIGu7pAuQWyrlk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gEUpaAfWWShrDauhVGeX7LZIHj3TpkkULAydo7jq560vI7tvSbsVtiMSzGusU6HYA
+	 gIjWm2vjCI7OnEe1TUrmNBCc9SUyx2Z6y5RXvUeZ47glvKqpEPHBA9MWG8bjOX53Zk
+	 sNb5vLB1MsxRk+yAaWS3d3gq838UWKE4MWwKksz62pK5611mId7h0aeSmUqJe/2caz
+	 I164uISGbVQgqXk0DaXG5RctL6XgteoKyB2VqwFgksNyOP0ZaLMYX3IWDWg29PhhRW
+	 QnhpNinBLTu+GDyHTVapM3PRgXRDH3iI9ty6wLiX5wg0m8VJBxn9JojcAs9ctyo0E9
+	 9Co+Nmm5U6lsg==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5365c060f47so904721e87.2;
+        Thu, 12 Sep 2024 03:23:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVklkkpTm6Lbce7u3ohvrAEGsLNy6dheUIlFbKJ+9ALh7cftnzjdutOt1v0AsVTaeNnKjgiXJJ2QoVxiL1fxNg=@vger.kernel.org, AJvYcCX0nJO7j+y2NDAHWIMQmd3z8GaBzFlqWO7X9taPgfKbIm3RE9aeGQjJlM1l88+bMXtiR+GGKMz+uooO@vger.kernel.org, AJvYcCXcXvQnnAPqHCTrgHgb0dAFwRbn7Mq3VZ+ojKsrpkXv/UNMGC2Z7LuaqaUk/I0tCgv5I3kjcsa/HlgAQGRE@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLxDjMLNVUEeIZvHA8cj1m0xBxXodo3XtLb9GNETgHDGz3HOU/
+	GX+zDh4uDvo2SonKQJ99Li6MyAdMWyE8SHzKWGKsRQ/0RPY0L8Z+fv7mz23r+48lq9Fxg5FqMLL
+	VJoHWpUh+hCNvV1QY4TAttYJNNs4=
+X-Google-Smtp-Source: AGHT+IFh1pfkWT1DFyZt9UtketjYZWfTJfgUijZmiN2juUQU2soaBAAMakKGvUeJpkVa1WzQveeA41sPsA3f4d8JBJY=
+X-Received: by 2002:a05:6512:3e02:b0:535:683c:cc67 with SMTP id
+ 2adb3069b0e04-53678fc1842mr1424531e87.14.1726136582876; Thu, 12 Sep 2024
+ 03:23:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo,linaro.org:email]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+MIME-Version: 1.0
+References: <a0fdf90803ab44508aa07f9190af5e00272231df.1704545258.git.christophe.jaillet@wanadoo.fr>
+ <z5qdyk2onwohenaclbflb7jlfn3wadafjpxsxzpvkmax75mpvg@vhhasuuutjzh>
+In-Reply-To: <z5qdyk2onwohenaclbflb7jlfn3wadafjpxsxzpvkmax75mpvg@vhhasuuutjzh>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 12 Sep 2024 12:22:51 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFH+zB_YuUS+vaEpguhuVGLYbQw55VNDCxnBfSPe6b-nw@mail.gmail.com>
+Message-ID: <CAMj1kXFH+zB_YuUS+vaEpguhuVGLYbQw55VNDCxnBfSPe6b-nw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] i2c: synquacer: Fix an error handling path in synquacer_i2c_probe()
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+	Andy Shevchenko <andy.shevchenko@gmail.com>, Wolfram Sang <wsa@kernel.org>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 12 Sep 2024 10:51:14 +0200,
-Dan Carpenter wrote:
-> 
-> I believe the this bug affects 64bit systems as well, but analyzing this
-> code is easier if we assume that we're on a 32bit system.  The problem is
-> in snd_ctl_elem_add() where we do:
-> 
-> sound/core/control.c
->   1669          private_size = value_sizes[info->type] * info->count;
->   1670          alloc_size = compute_user_elem_size(private_size, count);
->                                                                   ^^^^^
-> count is info->owner.  It's a non-zero u32 that comes from the user via
-> snd_ctl_elem_add_user().  So the math in compute_user_elem_size() could
-> have an integer overflow resulting in a smaller than expected size.
+On Mon, 6 May 2024 at 11:03, Andi Shyti <andi.shyti@kernel.org> wrote:
+>
+> Hi Christophe,
+>
+> On Sat, Jan 06, 2024 at 01:48:24PM +0100, Christophe JAILLET wrote:
+> > If an error occurs after the clk_prepare_enable() call, it should be undone
+> > by a corresponding clk_disable_unprepare() call, as already done in the
+> > remove() function.
+> >
+> > As devm_clk_get() is used, we can switch to devm_clk_get_enabled() to
+> > handle it automatically and fix the probe.
+> >
+> > Update the remove() function accordingly and remove the now useless
+> > clk_disable_unprepare() call.
+> >
+> > Fixes: 0d676a6c4390 ("i2c: add support for Socionext SynQuacer I2C controller")
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>
+> Applied to i2c/i2c-host-fixes.
+>
 
-So this should also use the overflow macro, too, in addition to your
-changes?  Something like:
+These patches should be reverted: ACPI boot on SynQuacer based systems
+now fails with
 
---- a/sound/core/control.c
-+++ b/sound/core/control.c
-@@ -1618,7 +1618,7 @@ static int snd_ctl_elem_add(struct snd_ctl_file *file,
- 	struct snd_kcontrol *kctl;
- 	unsigned int count;
- 	unsigned int access;
--	long private_size;
-+	size_t private_size;
- 	size_t alloc_size;
- 	struct user_element *ue;
- 	unsigned int offset;
-@@ -1666,7 +1666,7 @@ static int snd_ctl_elem_add(struct snd_ctl_file *file,
- 	/* user-space control doesn't allow zero-size data */
- 	if (info->count < 1)
- 		return -EINVAL;
--	private_size = value_sizes[info->type] * info->count;
-+	private_size = array_size(value_sizes[info->type], info->count);
- 	alloc_size = compute_user_elem_size(private_size, count);
- 
- 	guard(rwsem_write)(&card->controls_rwsem);
+[    6.206022] synquacer_i2c SCX0003:00: error -ENOENT: failed to get
+and enable clock
+[    6.235762] synquacer_i2c SCX0003:00: probe with driver
+synquacer_i2c failed with error -2
 
-
-thanks,
-
-Takashi
-
-> 
->   1671
->   1672          guard(rwsem_write)(&card->controls_rwsem);
->   1673          if (check_user_elem_overflow(card, alloc_size))
-> 
-> The math is check_user_elem_overflow() can also overflow.  Additionally,
-> large positive values are cast to negative and thus do not exceed
-> max_user_ctl_alloc_size so they are treated as valid.  It should be the
-> opposite, where negative sizes are invalid.
-> 
->   1674                  return -ENOMEM;
-> 
-> Fixes: 2225e79b9b03 ("ALSA: core: reduce stack usage related to snd_ctl_new()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  sound/core/control.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/core/control.c b/sound/core/control.c
-> index 4f55f64c42e1..f36af27e68d5 100644
-> --- a/sound/core/control.c
-> +++ b/sound/core/control.c
-> @@ -1397,9 +1397,9 @@ struct user_element {
->  };
->  
->  // check whether the addition (in bytes) of user ctl element may overflow the limit.
-> -static bool check_user_elem_overflow(struct snd_card *card, ssize_t add)
-> +static bool check_user_elem_overflow(struct snd_card *card, size_t add)
->  {
-> -	return (ssize_t)card->user_ctl_alloc_size + add > max_user_ctl_alloc_size;
-> +	return size_add(card->user_ctl_alloc_size, add) > max_user_ctl_alloc_size;
->  }
->  
->  static int snd_ctl_elem_user_info(struct snd_kcontrol *kcontrol,
-> @@ -1593,7 +1593,7 @@ static int snd_ctl_elem_init_enum_names(struct user_element *ue)
->  
->  static size_t compute_user_elem_size(size_t size, unsigned int count)
->  {
-> -	return sizeof(struct user_element) + size * count;
-> +	return size_add(sizeof(struct user_element), size_mul(size, count));
->  }
->  
->  static void snd_ctl_elem_user_free(struct snd_kcontrol *kcontrol)
-> -- 
-> 2.45.2
-> 
+as in this case, there is no clock to enable, and the clock rate is
+specified in the PRP0001 device node.
