@@ -1,90 +1,116 @@
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5E71BA299
-	for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 15:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F85914EC51
+	for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 17:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726154147; cv=none; b=mgwyv/8CsA5MQdNSj7XcR1VjB5TIhOiakkShrh7JmhleO/BWKtIDEO7tzkBBl0HHgvGFqB0/eKD99lhs1qcVKVdjDFBlmsNhogYtH5Rps0D7+qD2kaT+BsEbQyxVe+zUUdCk6djCVtB3jUJYmQYn+CUSPdcJ4Wh+RqfKxmZ0Ubk=
+	t=1726161062; cv=none; b=hXqQsX6sOP1RJrHm+SsGkibuYi/UdHR287GbWAi14l77O3kMw66FI18yUe84NPfm2IJfQJTwnoKl6VpW2VvVe3JXlSlZiadIvL+XGQQ06MRw6nJQkA5aTA327I9Sy4dYXbq+rky95SCquNt5E+D+0jxxq0Av4zOLB7JrXoEET+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726154147; c=relaxed/simple;
-	bh=6DeNJKisdHYMTlnWCPVFWo+z9XDLlOGPOF91RO/mKyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=goCMcjnl8eOjrtpjaFzOGsTKyuYr0AoSOiwYAqx1lLWf+41M3q4VETUukoHaZj9LEJrT+652OVOhR1flZElQBJ55WeACFTCvTcgtY3K/PakBPksJZvdG7TPIecM4gFlwSGAK4djWtR51KPIO9I69rMEqjZE/MxVAAVvPhsT69kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m+c5MCJb; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1726161062; c=relaxed/simple;
+	bh=5gJ6l5wVgyMHD+DRrXFNhJNf/Ygal/hUcFQKO+ht7iY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eFhSebpyadhCX9AJakGbjahBESn67+jAbz3w2TXP1el8h28c7weCtoJXJeGC6N+Fbji5eX97EnisrsMdM0VcgVfaF/kdXGrFEQv6X9mQPvS8xh7Y/SOqFSy5AF9tEzpLASMSA5zsm1v7GkAT1U1j1To5wPG3o6KCrpK77fO18W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=kFFr7uNL; arc=none smtp.client-ip=80.12.242.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m+c5MCJb"
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f66423686bso10830781fa.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 08:15:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726154144; x=1726758944; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TPI6G/S5031LI8BZfD5KQZOQrwoKDAX7R4Xz8VDkK7A=;
-        b=m+c5MCJb9kVsj82Xu37so6GB9Pbjz8WlGaNo6yPhg1+bWxxUPOGdc/CEjCE5hPL0xQ
-         HhIaFsA15nzQWQheb/qMjDTCv7i0tVhFwoHHPF/lp7vcyIoWEYyl0Om4K5Th24PcPhOY
-         jmEdq9sfaOnUDCj++5eOgTu4PJAPm5O949KnxjyuRMTe2zMUj9kWSVwSdDgkJxXrL4DK
-         qgRsRbw0PlQlruhnbCRSmMV2MxW6f2iWzSGfHFdwFW+U2tmd2FLrubt3E8Ztz7kDI+7d
-         nkVwjgp4BlOpAfRf6zrItqnb+nPhMl5dXfB+3tca84xzMu5f4iSkaTNsGpcwvFuEHDaC
-         UYsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726154144; x=1726758944;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TPI6G/S5031LI8BZfD5KQZOQrwoKDAX7R4Xz8VDkK7A=;
-        b=GOrXXhUtm2jwGDhyoOOjAYsF8vIPIwIGCrlW0xHlAZBtPGSdbtnHWdd3YyF1K3hYDv
-         BeI1VW1CnEpRzY5R8pF3g3A0Yv18wMMAc0V95QL0jDYKREpDvhEvAGeKEAbPM39L+NJt
-         v5xeqUOsn+DWS3S3oLc3L7nb4LmEDUetlai57cqydYNOj/edkH7p9VZQ4ACYzCR291Gh
-         Vv962mv6YM01yooJ9G3Bveq+pCb2eEm3Znknyvlm/3X5LHwd/ZdDgLl1v2+BQcCkr/yJ
-         bPAjCtgRXbOV/PejU2hsX4nUEwZ6vQt8L6u8ORnWsbz7tyo5MFYlQCdWjo8hy+qq+4Dw
-         YtZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKt9e8U5uwZSkQDwI8ikD2JrhjhQd6ivYXMpfTh9t38rcxn2AOrzSLLvdSCFYU/zjmnxT493VlQwZDpBQY0ME=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yygzei2e9POjvJvw1Y2a/66j7rfHlRaADiRMSjr5nsIY0cf2KpO
-	dgZ5GwpgKMTrj/VMFuhiqGgZ8Lcoaezh2F7liHHau0JC6fESig0WPV8EbxC3YQY=
-X-Google-Smtp-Source: AGHT+IEq3+0QP1kTu16Ee8cKa/6tDbQAbGkULUNu0YLqrcV48CRN+wczhR73Rl5UaQW8a6CDxJLzNg==
-X-Received: by 2002:a05:651c:b0c:b0:2f3:f193:d2d0 with SMTP id 38308e7fff4ca-2f787f2dacfmr18360581fa.33.1726154142906;
-        Thu, 12 Sep 2024 08:15:42 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75c0b2138sm18952261fa.137.2024.09.12.08.15.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 08:15:42 -0700 (PDT)
-Date: Thu, 12 Sep 2024 18:15:40 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/msm8998: make const arrays ratio_list and
- band_list static
-Message-ID: <fbgqvfhansee6zklmziht7igpebsbwt7xdfzqdq4qwkjbff2p3@cb43iqi4oxxx>
-References: <20240912151037.592477-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="kFFr7uNL"
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id onLHsHKzxfEYhonLHs9PCQ; Thu, 12 Sep 2024 19:10:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1726161052;
+	bh=2Ee2CxsZWgzD01X0OHNp/hegrnEnDGrKsW9T6JRCD+4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=kFFr7uNL2TlFiAJNHp/EI53/sJtSLLtbceO30Z3953ZzruJjsPTVbz5JVB51c2Cok
+	 FMhLg6gj+c7Z/6e9OmYO3Zx4VgcV75Z1RoUWnYk+9lBRVe0ruJ8zwN6BiKpGUM0TnM
+	 F8Zq+sbxhLycbyFeBc5BFka5LNWSqB9YiwJFejX2Mn582LyB6CxuokfGCcQEN699SV
+	 wTDev48JTr0aRlJRDO6fi5v9uPDqO/U9ZGXouHpjDGgrAes9KIAwxP7l/XkLYUOEmo
+	 Y3W9poJuH2N/7C2kf6ku+q8dXFgBRhpxSIA42oIgKCIY3/mYgqf/CAkhIjIop2F2xS
+	 OhzNA6UyhOm7g==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 12 Sep 2024 19:10:52 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <5ed76217-c30e-4b9a-9462-0dbd859b2a79@wanadoo.fr>
+Date: Thu, 12 Sep 2024 19:10:50 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912151037.592477-1-colin.i.king@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] i2c/synquacer: Deal with optional PCLK correctly
+To: Ard Biesheuvel <ardb+git@google.com>, linux-i2c@vger.kernel.org
+Cc: Ard Biesheuvel <ardb@kernel.org>, stable@vger.kernel.org,
+ Andi Shyti <andi.shyti@kernel.org>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>, Wolfram Sang <wsa@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Kernel Janitors <kernel-janitors@vger.kernel.org>
+References: <20240912104630.1868285-2-ardb+git@google.com>
+Content-Language: en-US, fr-FR
+From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240912104630.1868285-2-ardb+git@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 12, 2024 at 04:10:37PM GMT, Colin Ian King wrote:
-> Don't populate the const read-only arrays ratio_list and band_list on the
-> stack at run time, instead make them static.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+(trying to merge t and cc fields from Ard's and Andy's messages)
+
+
+Le 12/09/2024 à 12:46, Ard Biesheuvel a écrit :
+> From: Ard Biesheuvel <ardb@kernel.org>
+>
+> ACPI boot does not provide clocks and regulators, but instead, provides
+> the PCLK rate directly, and enables the clock in firmware. So deal
+> gracefully with this.
+>
+> Fixes: 55750148e559 ("i2c: synquacer: Fix an error handling path in synquacer_i2c_probe()")
+
+Hi,
+
+If that matters, I'm not sure that the Fixes tag is correct.
+
+IIUC, either it is a new functionally that is added (now it works with 
+ACPI...), or if considered as a fix, then I think that it is linked to 
+commit 0d676a6c4390 ("i2c: add support for Socionext SynQuacer I2C 
+controller").
+
+I don't think that 55750148e559 introduced a regression. The issue seems 
+to be there since the beginning. Agreed?
+
+If yes, then it may be needed to backport it in older kernels too.
+
+CJ
+
+> Cc: <stable@vger.kernel.org>
+> Cc: Andi Shyti <andi.shyti@kernel.org>
+> Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 > ---
->  drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
--- 
-With best wishes
-Dmitry
+> https://lore.kernel.org/all/CAMj1kXFH+zB_YuUS+vaEpguhuVGLYbQw55VNDCxnBfSPe6b-nw@mail.gmail.com/T/#u
+>
+>   drivers/i2c/busses/i2c-synquacer.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-synquacer.c b/drivers/i2c/busses/i2c-synquacer.c
+> index 4eccbcd0fbfc..bbb9062669e4 100644
+> --- a/drivers/i2c/busses/i2c-synquacer.c
+> +++ b/drivers/i2c/busses/i2c-synquacer.c
+> @@ -550,12 +550,13 @@ static int synquacer_i2c_probe(struct platform_device *pdev)
+>   	device_property_read_u32(&pdev->dev, "socionext,pclk-rate",
+>   				 &i2c->pclkrate);
+>   
+> -	pclk = devm_clk_get_enabled(&pdev->dev, "pclk");
+> +	pclk = devm_clk_get_optional_enabled(&pdev->dev, "pclk");
+>   	if (IS_ERR(pclk))
+>   		return dev_err_probe(&pdev->dev, PTR_ERR(pclk),
+>   				     "failed to get and enable clock\n");
+>   
+> -	i2c->pclkrate = clk_get_rate(pclk);
+> +	if (pclk)
+> +		i2c->pclkrate = clk_get_rate(pclk);
+>   
+>   	if (i2c->pclkrate < SYNQUACER_I2C_MIN_CLK_RATE ||
+>   	    i2c->pclkrate > SYNQUACER_I2C_MAX_CLK_RATE)
