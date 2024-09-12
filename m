@@ -1,99 +1,81 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from a7-44.smtp-out.eu-west-1.amazonses.com (a7-44.smtp-out.eu-west-1.amazonses.com [54.240.7.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BB8136338
-	for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 08:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0E2136338;
+	Thu, 12 Sep 2024 09:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726131434; cv=none; b=FpD0o5klRYsLfurqK6no1v3EqoYvMMwTVW6lCmQG6qKUxpjX/2TRG42abDTLMy3ZTZmlLAxNxmDJssPw4EkRMc3Ak7Bmcdcq6g/rjlfO336WturVybYhunAOxVoRmoUHfYJQE54pJoqhx6Qp0JoizS+hWTZtwYdWl5fmazv4Q0g=
+	t=1726131913; cv=none; b=qoSiK71L9lBjGEVnNoDmAGfXCjuLI3up2qCAJhcTV8JMPXZ5DNeYwcTp0f0lrKmenDDzQYWn421M6OIlCYNHhcueztMBj2IIY7RoGa4uDnyck+Fjw75FrHZD4AhiLOcbkU3P39XpgN9eGaIKz8h7wccA2kvnSjLGUDQtvUK4h4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726131434; c=relaxed/simple;
-	bh=DjtjHEGrvANFI5B9lVHCDNbOIvLuaXQEHlBzxQ+GrD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZUOtMojwiiuH0hzUJRZDJagUa0bMP5ZqRZmy75Qw7njQWnGzpP6/oSkRsfl0kLhkba1DYG6R1eCFjinCP1vc1ygf41cEPQp9iuL8PAybhyHNGNUPmEUJ6uvX+SS3ltof5hzVQt2BZKleFqFfTNU1W101CkQOsoYUuR6z0+NT/dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iaJUlmOj; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1726131913; c=relaxed/simple;
+	bh=cU5d1gV2+5V9tfSQ7PLewaaCXoMfhGGhE2QKuS1Cbb4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BdTztKJm8N+JpidlSdR4h8bKysAJDii5bP+Ai8VsvhB9fJkqXFbDpfocqrKJaRlow7XqRDYdCWMZ7K7a63UEYUFSKnvz0NzRQBf1LBvcRGzcSmOWZWWtonk/fTjTD1ogsBmjcZ2AgGdBk/wLPe+r6m6mJeBBUvfd2Y6ZX5ZOk5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aCUFUUto; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=XNjiDcpC; arc=none smtp.client-ip=54.240.7.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iaJUlmOj"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-374ca65cafdso486964f8f.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 01:57:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726131431; x=1726736231; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6GB2egBmowzD1BmyczzI/bnYTjW28edWluz9NwGsMtk=;
-        b=iaJUlmOjKxDaMOBKXtRgFCUWa40wevVN/1VF0qOP2LPqgM3V/Pm3wK9BWcnMcvXVVX
-         wwZLl9ppQAqOyrpjQcXXy2EtzQch1FpNI6EGviMX0spfdUSq0N6A76R5W0i/lEUfrMCc
-         egMNVdqdA6njVK5NifQlEcik7tOfraRcXjOpCg2A2190xnrQIiAKIdjQS0wWiXKLtvOM
-         OW9xyQelGI2Q9/bp+lsfFcVdIBoIbsjvbvE+vh647IjF+37r1VD7iB5Agg46KLQcM/0b
-         i8PcAgBZ5WGH0o0DKACTpRD6gX6pbtY5b959biMB+S36UakfqFUaNbpg0eMwJzqtwfz+
-         WM2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726131431; x=1726736231;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6GB2egBmowzD1BmyczzI/bnYTjW28edWluz9NwGsMtk=;
-        b=jnjWDdmtRlIVUcNMcLl5IfcubS5dvBgJUAz3QGfZLzDiB61SqVk3MMUJ7OyI1qX8uA
-         SRFaPPXS4RJ59hx3Hv6w2ARjo93bfFEsev1zCIAAMntj8Y4Ddhrs1TEvuPwMjpz9E7xE
-         L2DdkROHsc8S0V8hC6QSqSuWs8f+X2PTNUDQgIjm4FcJA/of8rUSiSnRDZfHgl3TMJOY
-         HjblBFzbWZEicCqn31MbTfWHDowYndyhA2pgknBdElpSmMwHZovo05P+m+gBo4Ydm7OA
-         6NMYCRTElfOZDJFjPdsRTxK7DrdG3JJSNT3qIQvYZYvIEkxT8R2PC4cVuw9Gr/a5e25/
-         xTXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzNViqiS96Nhrr/Hlw+2y8ZI5xY06q/o+uEP21oyb0eOmtF2TucQlrPmvWCwk7iXu+LmBV1wbYofSFxGj3GxA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyglJgH3VaFDiJIK2eHFMa5iTQzvSuNRD4DnLI+Ng4Xjkf4gFj
-	fyYCIx91UaqpciaaxZDvqOT5evWBrUZnRMAOv1OZ0lNAEREQzID/xbptcK2c9ls=
-X-Google-Smtp-Source: AGHT+IEOtJzJsuwuqY2oaUeNN42g94gx2ZHs0ZQuD1RVXqzgi2ozhnck9PoCMtBGjepfFwTy/BEe8Q==
-X-Received: by 2002:a5d:65c9:0:b0:374:c793:7bad with SMTP id ffacd0b85a97d-378c2cf3c57mr1155356f8f.16.1726131431260;
-        Thu, 12 Sep 2024 01:57:11 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789567609esm13746480f8f.59.2024.09.12.01.57.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 01:57:10 -0700 (PDT)
-Date: Thu, 12 Sep 2024 11:57:06 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: Larry Chiu <larry.chiu@realtek.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] rtase: Fix error code in rtase_init_board()
-Message-ID: <f53ed942-5ac2-424b-a1ed-9473c599905e@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aCUFUUto";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="XNjiDcpC"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726131909;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=cU5d1gV2+5V9tfSQ7PLewaaCXoMfhGGhE2QKuS1Cbb4=;
+	b=aCUFUUtoA6CaviWyQUW8BFB5LSp7jxDQJASTzRZyljZ2NGVHgwHPy+yFMvrrZkli
+	sigAY1NBIXlivAa+SiEDhWg3TOmEtvdqiww7YuI/A9aa3aLihWSbQAxVeYeQ5LxOyQ/
+	HqV2DtubHM8UH4WEuxClMOmZ6dofFu53NQdNCjoFHxGpPXe2kNBctzJauPskY0vWEnr
+	MR9A9d5JxsN8ynf6nnv/1bU1DBALmQRvc/ovzd9DDNtzaxz59fXmQbEXPEcq2wzhWmD
+	WWseEc+rRCqekmVGCbVHIV7xfCSnB/LEFNdbEll/G8HawdAe8az+PfZ6TkZMmyLUofC
+	XRULCmMBnw==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726131909;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
+	bh=cU5d1gV2+5V9tfSQ7PLewaaCXoMfhGGhE2QKuS1Cbb4=;
+	b=XNjiDcpCvS80r6n8buYYjtUVfC+b8ki7uKSY1vF2aSJnotG1AYmi/hnkmG1WjRat
+	KLNSgdZr3+133CzYSs/PJYGlm+bC86tKUKjBbtnz93qszw4TzDKgqwrIv/Oicdyjntt
+	25hZtya2gSfxhvKHG9k5M12xVfY6bBA1VG4eILgQ=
+Message-ID: <01020191e57ab41a-424e6c2f-08fb-43db-b45a-af4aaa22ef0b-000000@eu-west-1.amazonses.com>
+Date: Thu, 12 Sep 2024 09:05:09 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/mediatek: Fix potential NULL dereference in
+ mtk_crtc_destroy()
+To: Dan Carpenter <dan.carpenter@linaro.org>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kernel-janitors@vger.kernel.org, 
+	=?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
+References: <cc537bd6-837f-4c85-a37b-1a007e268310@stanley.mountain>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <cc537bd6-837f-4c85-a37b-1a007e268310@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.12-54.240.7.44
 
-Return an error if dma_set_mask_and_coherent() fails.  Don't return
-success.
+Il 12/09/24 10:44, Dan Carpenter ha scritto:
+> In mtk_crtc_create(), if the call to mbox_request_channel() fails then we
+> set the "mtk_crtc->cmdq_client.chan" pointer to NULL.  In that situation,
+> we do not call cmdq_pkt_create().
+> 
+> During the cleanup, we need to check if the "mtk_crtc->cmdq_client.chan"
+> is NULL first before calling cmdq_pkt_destroy().  Calling
+> cmdq_pkt_destroy() is unnecessary if we didn't call cmdq_pkt_create() and
+> it will result in a NULL pointer dereference.
+> 
+> Fixes: 7627122fd1c0 ("drm/mediatek: Add cmdq_handle in mtk_crtc")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Fixes: a36e9f5cfe9e ("rtase: Add support for a pci table in this module")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/net/ethernet/realtek/rtase/rtase_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-index 7882f2c0e1a4..ffebc67cba5a 100644
---- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
-+++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-@@ -2023,7 +2023,8 @@ static int rtase_init_board(struct pci_dev *pdev, struct net_device **dev_out,
- 	if (ret < 0)
- 		goto err_out_disable;
- 
--	if (dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
-+	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-+	if (ret) {
- 		dev_err(&pdev->dev, "no usable dma addressing method\n");
- 		goto err_out_free_res;
- 	}
--- 
-2.45.2
 
