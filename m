@@ -1,81 +1,60 @@
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 4526F19C54C;
-	Thu, 12 Sep 2024 11:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27A319F413;
+	Thu, 12 Sep 2024 11:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726138906; cv=none; b=IPh1WxG0RjXdt/1qBZb6NTQOaLZhRS/9d8d/npRWmNizkGBLJclFPjbrbP84R/9tCtrUuHQARbkucdjs+JZ7WLqMtBhN79JelQBhbOIFczLZcjacn0NfTdbTgksI6PKDdezDW3gfy0SXEYOeqL0hkFy9BpcSSqIhbooYwPVMVtw=
+	t=1726140190; cv=none; b=k86QLLxR8DRmrdi9X/h4ICKyl6MGXtT+6ykEpIuGgaD+Gwg0suv/nB2byNQ1bUGmvv7VL4Z+JQzc3akaWmahw60dOMGjjyZGbcsKf/xpFNZuShofKO12Yzg+wiqRAV7+Y5ISyo+2XdDk1+DsiiDyMV1Sr/QOgHqaczjvc4K7o2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726138906; c=relaxed/simple;
-	bh=DOwjT7TF12kMcyCuBjmBn894pvmkAHrK1vHq8KlIlTo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ly/ry/qqhW4I7aWaP3mlrLyIZT0iWPnlQyrB3XfdMoSJix2jSzR6i7+aXFewHiTdhB1LRXEiG2NOu7FbnLcKRjeqoHvxOQFddzpX4RUMVvRFYGnNeJsaNvOyfRT3gIYtsU/jqsNyOKoMSAi9KUJOv5IWPuC4xSo3kRf4Sfv8H2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id EB8F7609E6C40;
-	Thu, 12 Sep 2024 19:01:27 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: jmaloy@redhat.com,
-	ying.xue@windriver.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	nathan@kernel.org,
-	ndesaulniers@google.com,
-	morbo@google.com,
-	justinstitt@google.com
-Cc: Su Hui <suhui@nfschina.com>,
-	tuong.t.lien@dektech.com.au,
-	netdev@vger.kernel.org,
-	tipc-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
+	s=arc-20240116; t=1726140190; c=relaxed/simple;
+	bh=33KehDS2Zh2JpRsyuh9H8ALYXCPuFVSL2YvbS3cyYWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mbCvbJigNnUD9BB7I4wQQd7GXiWHSVANpiNxyy0lT8G2p+m8UVZzjJVkHUm0MzrWFF/3MGBuBCFzwceXVb+Lldp0l9u4DnFtKGVwnSwdLCTjtiuakUh+A/aPQj0c2mriADaycptHE3YHgTAFO0QjWlILcbAb9tLuK8zXEDYLbT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U9Uz8dRX; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U9Uz8dRX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3033DC4CEC4;
+	Thu, 12 Sep 2024 11:23:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726140190;
+	bh=33KehDS2Zh2JpRsyuh9H8ALYXCPuFVSL2YvbS3cyYWE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U9Uz8dRXuyoGD/QXOlGC0Bxx3xcYdStYD+JkCNOVbYzSGNJh7Xvis3YN0KlRYa47m
+	 mOXOieyItzt71M0J9GVeKDSibGTSSDt77GWo4V1GIrIh5UufNE4O/p3MxLzsSUHBfL
+	 91J1ezMkSURtdO3MOlBKlxWmQFTlxt2qyVT35Kc9qiC0qaDJOPOLJu5EK3OTmMUgeq
+	 4qEsI3N/TpCnkw9hJuBYmTjHqNQSy77HXn3nvAC7YCSYaWfJON59eD8Cq9uD5PKMPz
+	 tB4dLoYE0QI+uH47pZs40Kd9ZtZvCaO5W4LW5LAsphvlaXtOORU3WRwwiWbdPScZm1
+	 bwybqpjbBudVQ==
+Date: Thu, 12 Sep 2024 12:23:05 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Justin Lai <justinlai0215@realtek.com>,
+	Larry Chiu <larry.chiu@realtek.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: tipc: avoid possible garbage value
-Date: Thu, 12 Sep 2024 19:01:20 +0800
-Message-Id: <20240912110119.2025503-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+Subject: Re: [PATCH net-next] rtase: Fix error code in rtase_init_board()
+Message-ID: <20240912112305.GJ572255@kernel.org>
+References: <f53ed942-5ac2-424b-a1ed-9473c599905e@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f53ed942-5ac2-424b-a1ed-9473c599905e@stanley.mountain>
 
-Clang static checker (scan-build) warning:
-net/tipc/bcast.c:305:4:
-The expression is an uninitialized value. The computed value will also
-be garbage [core.uninitialized.Assign]
-  305 |                         (*cong_link_cnt)++;
-      |                         ^~~~~~~~~~~~~~~~~~
+On Thu, Sep 12, 2024 at 11:57:06AM +0300, Dan Carpenter wrote:
+> Return an error if dma_set_mask_and_coherent() fails.  Don't return
+> success.
+> 
+> Fixes: a36e9f5cfe9e ("rtase: Add support for a pci table in this module")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-tipc_rcast_xmit() will increase cong_link_cnt's value, but cong_link_cnt
-is uninitialized. Although it won't really cause a problem, it's better
-to fix it.
-
-Fixes: dca4a17d24ee ("tipc: fix potential hanging after b/rcast changing")
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- net/tipc/bcast.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/tipc/bcast.c b/net/tipc/bcast.c
-index 593846d25214..a3699be6a634 100644
---- a/net/tipc/bcast.c
-+++ b/net/tipc/bcast.c
-@@ -321,7 +321,7 @@ static int tipc_mcast_send_sync(struct net *net, struct sk_buff *skb,
- 	struct tipc_msg *hdr, *_hdr;
- 	struct sk_buff_head tmpq;
- 	struct sk_buff *_skb;
--	u16 cong_link_cnt;
-+	u16 cong_link_cnt = 0;
- 	int rc = 0;
- 
- 	/* Is a cluster supporting with new capabilities ? */
--- 
-2.30.2
+Reviewed-by: Simon Horman <horms@kernel.org>
 
