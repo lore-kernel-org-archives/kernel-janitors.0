@@ -1,71 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D441A2627;
-	Thu, 12 Sep 2024 12:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C369E1A42DA;
+	Thu, 12 Sep 2024 12:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726145834; cv=none; b=gD465qF0xnIX74nyX7GMh2MM8C+Hl7DP1j3Qu+P76iCieE3/RUOVF3nvXgl/ZJwg0MaqQ3ugfmMgyoZepVkaBAys3KAn2VvL/O/sfBQj6NaBvhQgTk/n3AAFF+xyiDBr6JoEkbsebZZZLNB4D3jLwT+8EHuYyfmaTAoe3j8OitI=
+	t=1726145864; cv=none; b=Etn0wWGvGFuIr1y6g2TT4+/RT4hHvdDWW0Yc9suXp8k3ZAlSjZnoQ6LBkpfX54qq49Xt4zgNVtHvNrN0XBo8PYastjc4nKS4/VfLlu+LX7K6J4gvnIi12zmiIsl1E7hkX3fSh3FX0xTT1hQShPgp2OqgmEf2Oh1i25DvDSTdAOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726145834; c=relaxed/simple;
-	bh=ypklNkeJF0WTtFhNxFpydyFuEDD+4niLJfPzNhiugkU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GTxRMxG+TBpU3q9yCDMp1vz1GX7a5/kk6y+HyLIGAKDgEKUfNDw+aDtz3EEprW1DUfmsY3/yx0SyUs5nWrNnnbD3xB3qq3o9LACJ1DNm0qz1iF+Vk7Nv8SCMkLFvxO3a1wG1HpBzFKfeFJ5fjQ0zeYWwLAk+dMQqOjcbf9X0FBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nsed5LIo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726145864; c=relaxed/simple;
+	bh=GHdrrCPZBSpx1b6Iq3VDSPGBIaEiUJ/gvyMfyBioWZk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eM7F2FJhntE+ByF2wN8ED2dM6uWxJrZKeSNemhdmVRo3lvODGJbYt0xiuwsI5JFVwyKBY95AAfNtVUfhrek7YL2pjGPNW+QA0YLjpmF4yMGooUE6WgMaLurD8PPev9VBXDpMwRO8gnvwRDzrKwQAcB9l5U6DAeZC7r1SGBDUmvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kGwUs6O6; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nsed5LIo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5E85C4CEC4;
-	Thu, 12 Sep 2024 12:57:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726145833;
-	bh=ypklNkeJF0WTtFhNxFpydyFuEDD+4niLJfPzNhiugkU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Nsed5LIo0DqJ3LGqIWkekU64NT+us3TTeN+DEwaagVjSdOxwtk7FbQ1SANMns/OjD
-	 ZKG5tk9CrXb/PrCeUHm7ivRUWxvqiRX6pyMnqyNR5lk+aJdiuJz3ICoVf62gE7y8BL
-	 Td3PEQSv9G0SZUkEtWhe17gakozJ8K/dwPX85gOFF6vIDc/BoTosnCaM07hsgJIF4i
-	 oK+HwT1bSSodn3vhyX4oRecqF+NdmaYB4A5qq3kJtTHa91MKqXmK/KtvseMnlNQu8m
-	 4wr4L8d+Wm8xW11tnszU5geO2k07TXQTe8Vy/sdMpjk/aVdSCNGOKKCpvKKANeEBRy
-	 U8rasScibxFqg==
-From: Will Deacon <will@kernel.org>
-To: Robin Murphy <robin.murphy@arm.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGwUs6O6"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cd46f3ac9so8633945e9.3;
+        Thu, 12 Sep 2024 05:57:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726145861; x=1726750661; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=radmw+TmBlscrRZxkZ+tHMrAuVzmASyCuq4LLVLeMxk=;
+        b=kGwUs6O6AwRYRJzvqLsqoN1drJn8AFTHDdjq586LmqjO16iHyg4Xzda7npeSRbHXqR
+         u+u+Tkcn+3MPcmaVtyCiG0IKCqfAet/qgaKW8aNvcTTp9vAne/xZnYBwu8SimGMd2BbN
+         3CBX46yNcZit1O9ML2JQSmimLxvJe//EjVdxQIaesW5Q2IP5XMq4Roa8mz2cgMvwXIcY
+         9MBJl4sg+7Zj7vhZOlb7FioiwjfDIihddtL5ceNWnmpuwDNw2J/OlCRjBTkvMY5w4qXz
+         nDHpBDDJ+T3pAdnpk/lkfwvI2+/jQafbjb997nsHVWoyeooEuo+0cT7vP7HTyA8xlhey
+         +yew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726145861; x=1726750661;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=radmw+TmBlscrRZxkZ+tHMrAuVzmASyCuq4LLVLeMxk=;
+        b=PaQC0KLFLmgWYgj34Tin0sGP4lJVFTGilW1bvjBUGwGqsyJd7+UucolXnyUely2EsQ
+         D1Oq3MPFsTUwnexmpsyjEoeVEu0v/OxcvDZJy9cBD9y8vuKfwF/Fh2BeTT1NEy98wZll
+         Q1xJzDX4E+CFFo+GudWJ8ww0PXOUWQPgW1qzhbpkMPROB5XRxEFpuCul+8O9gCwHR2XA
+         7qtQhQCwhzWd2exnFESgaz5sDgrIzMRzwhLn0cBhz0XsgLLQ4TtBdvH/ClcryOGkKEVg
+         0uh8t331ul2Yqq0fzSwVR7bKk10qXcPEubl/RNaXFjjvsKSNbpyci2lqIkLwcVgbjPQu
+         AN8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUgfWQHzAVRZhidHOt+YZqqkGSLTxQ0bcz84qBTaA9kXHCSdyqWYS5MY+8CmXZw7rtwAUPtiRNkk6pIHnp6@vger.kernel.org, AJvYcCXjFandc2G3FDzFSDrPmiPGCWyXsTDRtnZsC6J7yy0dWTe6ylrSGZoN3ZTyClPYOXmCleWjOkJW7X9tYT1s13M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxdY8ajuzLIVCzfnNpOzt0k6FisUrh2VsWC8wn42OBKDfEowOu
+	UmKejzrsXjvTqo+j7lpRAVrE0deK79T9uCwt8+mQXgYcBURpmWO4
+X-Google-Smtp-Source: AGHT+IH4upBG1YMo8IZ9xkFa7vwnLeVv89WopCWiWfGSfCazpwQKdz/gbnuU8tS0Sds2dPgrxjO7cw==
+X-Received: by 2002:a5d:6183:0:b0:374:c454:dbb3 with SMTP id ffacd0b85a97d-378c2d620femr1414942f8f.55.1726145860209;
+        Thu, 12 Sep 2024 05:57:40 -0700 (PDT)
+Received: from void.void ([141.226.9.101])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956653c6sm14313315f8f.32.2024.09.12.05.57.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 05:57:39 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Jyri Sarha <jyri.sarha@iki.fi>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] perf: arm-ni: Fix an NULL vs IS_ERR() bug
-Date: Thu, 12 Sep 2024 13:57:06 +0100
-Message-Id: <172614177458.4013007.6131513569519977732.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <04d6ccc3-6d31-4f0f-ab0f-7a88342cc09a@stanley.mountain>
-References: <04d6ccc3-6d31-4f0f-ab0f-7a88342cc09a@stanley.mountain>
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] drm/tidss: Fix typos
+Date: Thu, 12 Sep 2024 15:57:24 +0300
+Message-ID: <20240912125735.45114-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 11 Sep 2024 10:39:59 +0300, Dan Carpenter wrote:
-> The devm_ioremap() function never returns error pointers, it returns a
-> NULL pointer if there is an error.
-> 
-> 
+Fix typos in comments.
 
-Applied to will (for-next/perf), thanks!
+Reported-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ drivers/gpu/drm/tidss/tidss_dispc_regs.h | 2 +-
+ drivers/gpu/drm/tidss/tidss_plane.c      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-[1/1] perf: arm-ni: Fix an NULL vs IS_ERR() bug
-      https://git.kernel.org/will/c/2e091a805feb
-
-Cheers,
+diff --git a/drivers/gpu/drm/tidss/tidss_dispc_regs.h b/drivers/gpu/drm/tidss/tidss_dispc_regs.h
+index 13feedfe5d6d..e88148e44937 100644
+--- a/drivers/gpu/drm/tidss/tidss_dispc_regs.h
++++ b/drivers/gpu/drm/tidss/tidss_dispc_regs.h
+@@ -49,7 +49,7 @@ enum dispc_common_regs {
+ /*
+  * dispc_common_regmap should be defined as const u16 * and pointing
+  * to a valid dss common register map for the platform, before the
+- * macros bellow can be used.
++ * macros below can be used.
+  */
+ 
+ #define REG(r) (dispc_common_regmap[r ## _OFF])
+diff --git a/drivers/gpu/drm/tidss/tidss_plane.c b/drivers/gpu/drm/tidss/tidss_plane.c
+index a5d86822c9e3..1396bbf9616f 100644
+--- a/drivers/gpu/drm/tidss/tidss_plane.c
++++ b/drivers/gpu/drm/tidss/tidss_plane.c
+@@ -59,7 +59,7 @@ static int tidss_plane_atomic_check(struct drm_plane *plane,
+ 
+ 	/*
+ 	 * The HW is only able to start drawing at subpixel boundary
+-	 * (the two first checks bellow). At the end of a row the HW
++	 * (the two first checks below). At the end of a row the HW
+ 	 * can only jump integer number of subpixels forward to the
+ 	 * beginning of the next row. So we can only show picture with
+ 	 * integer subpixel width (the third check). However, after
 -- 
-Will
+2.46.0
 
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
