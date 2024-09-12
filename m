@@ -1,117 +1,120 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B88A1C0DEB
-	for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 20:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6182C80
+	for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 21:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726174140; cv=none; b=JAzp+tkwtfYB2IH8q/JgjYP4QrtP6LN77fw5BJJ6uHlJcFm/vlsHjmiPX5TDd9CfVmT4yqmQv+d17HTWkfygb94DZXa9P1XXN+u9zaFthmbQmng8eWjbNVOtmJoqUtY8wGwo3jNhEualHzcdmhEAuwLM2msJyTtfsUPeDN7LFMc=
+	t=1726177148; cv=none; b=hMH3OaGFZ3XZ2ljI/F69kzsPamWckTGgN4Vmkm8sUok9kJnKQkTtMPWXh7WAg/YaHR+qySb0hPJ0vpTcy4pf/8EQZ2xrUq8dllKO+XE+ZQnxDD6qI5jdWrElPRz96+B6eBCKlZ2QkLG8IAiGVBW5/hPHy8UE9GOdXUl7+RPp1u0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726174140; c=relaxed/simple;
-	bh=yIP6S9iCrMiW5fAQkDzldFnKUGGLDTbn0cgLJErdI/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KApunTq/1OnCLeRd3xq1l6V2pW2Gp7zANVtmkN8h1RQsEQE3wGlV8jFvEF374ewVVvNBgniK5zGVYgSPVpAXQt5DUudAxmuIc3JaOk7LL/4O9HE+Be1GAHgo93J2XG0PdgZncMmyHIBXjb0t+ikaFOqZr/RG6GrX9C9W+V6PY2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GqzAI6WT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1726177148; c=relaxed/simple;
+	bh=4Z3y2ExjN+sfTTdyRG0DobCkSSROnQTal3/BbxZMT9I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T/7kRLZCJ/D1JOKrbZVjx0nhElnSWUmiRxOJm1hs0/NmosJZqOt7tDOJCOMhz8kdy370yHoq5/tvrgtcgBZBjlnDHnW324QF7vKFh820h3XoVAFKlgUALRiu6owXhpTuKNPSy6gKUmYrvrk4gfDZdMjsovjnteT2PeCcdC4I98M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Vfs2330D; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GqzAI6WT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726174137;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vDpmMjelNalx2jwG4t1xNYLZluds06xeruDv/xAuYKQ=;
-	b=GqzAI6WT9OUelHs+BnwoUiyfBmTvEEOJcjxQqrjXcqIIXUlLJmeYGAnk0a2KB4AnezkyXQ
-	1mEGm+ILmwM3lAWSobikCzpOIKHxA7jsZk1BuJc8TgRjRE16jzLChXgYjKwfx8S2exsRSP
-	EXifLEN3g/AqAhH8tuFX/AZPs5c9knI=
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
- [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-28-2JBgcoUFOk-9iCLijvWMsQ-1; Thu, 12 Sep 2024 16:48:56 -0400
-X-MC-Unique: 2JBgcoUFOk-9iCLijvWMsQ-1
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82aaa33c18aso24868539f.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 13:48:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vfs2330D"
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-49bd221ef66so515052137.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 14:39:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726177145; x=1726781945; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SnUGUKViCW+3BbsFSQi1k9zreDMxoTLJCm+OUAY9KGo=;
+        b=Vfs2330DNJLq5xxxuyFZxGs3WNFutnpK40tzMZWQmWVEW3SlXjEoNQY+83ncFFP8AL
+         VtPIKa5W+jTlDZivm4/B01taHcY1psLA7U2zgECcxQlqDyODTD2Nt0N1JweEyDnfXeyu
+         Du1prOVsF2+tpJevfSU3nXj9tJwO98i2Er+9mqXFNCieK2TWFB3kc4u3eMsbeBXdaafw
+         nrrgVayxzf9c7Srfzdb4WX1FViw7Ic1a3lJPvui3PxtnOPi8nh5fkddMtCpAvMhFveTC
+         RAqsXdPu7Tv5vkjxBWH9t7VRAiKw4d/PMuWi0+/2ylsNun4Ig8+7dadL7FmDKJ80Q1tE
+         bDBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726174136; x=1726778936;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1726177145; x=1726781945;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vDpmMjelNalx2jwG4t1xNYLZluds06xeruDv/xAuYKQ=;
-        b=UBO5a7aoPzRLkT/OClJ8eIHBnb5Ja5MlteqY0CyknrTqlgGZpoQDcVLqTmBc36SKl5
-         8NlFTsWbjZwYj26kOL9pIZlDK49eS8XJqqGpWvb909Ce8fRdTED3Y5KaVEFdd9pdlHY1
-         ulylCjU9o4BsiBXxsp4GEmLWK2Tw+JumGKbUCOBh6/bu3e2l5OpCp3vJoBb84Dyka9Dn
-         W47hZepulQCnwK4T4DW4JKeTLrQUa0Jisbeh89fCFJRNukfXjYYQW39ld5ETFSRgiKew
-         i/v3R1QwuN4YrVz3hJI4OzACMA1NaPGadZh8Ar6CUlOob9J2reVsfiQwKIANpHszmsEH
-         KuXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWswbmRVf+H9teCSiSiY81g7TkHX8xwZ7jh7cxYAzFv0JfxIfrF8Y8Lmrlu23AdLj40/5JoUnzB7DWq9fHJ2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwELo8JYgD9CxGwnJw4c3G8f2Zeu56Aj5OP75dgNJWyaEhE4vMN
-	tosVK9Sk/QLIF47+ohmNQuf89AJmyqFCs1ZFfGCwXmr4E5d8imoHTCn/FeuOdBjpR77fJKBKWwC
-	J280dnO+GuebTApfHw3zCHvdPq9uCI6Lc14qmnksXGlVnIfnt4PssF6+kGCoRQyqBGg==
-X-Received: by 2002:a05:6e02:17c9:b0:3a0:4bd3:6cd with SMTP id e9e14a558f8ab-3a0847cde94mr11229485ab.0.1726174135789;
-        Thu, 12 Sep 2024 13:48:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF27lLlFUrUcBat8oysYWhOtTVjDxFqpMhIx9lYi5bD/C/pP0LIVOh0yQJnIQl2kFEKYKcbRw==
-X-Received: by 2002:a05:6e02:17c9:b0:3a0:4bd3:6cd with SMTP id e9e14a558f8ab-3a0847cde94mr11229455ab.0.1726174135458;
-        Thu, 12 Sep 2024 13:48:55 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d35f949133sm778323173.164.2024.09.12.13.48.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 13:48:55 -0700 (PDT)
-Date: Thu, 12 Sep 2024 14:48:53 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, Yi
- Liu <yi.l.liu@intel.com>, Christian Brauner <brauner@kernel.org>, Kunwu
- Chan <chentao@kylinos.cn>, Ankit Agrawal <ankita@nvidia.com>,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] vfio/pci: clean up a type in
- vfio_pci_ioctl_pci_hot_reset_groups()
-Message-ID: <20240912144853.42ceb733.alex.williamson@redhat.com>
-In-Reply-To: <262ada03-d848-4369-9c37-81edeeed2da2@stanley.mountain>
-References: <262ada03-d848-4369-9c37-81edeeed2da2@stanley.mountain>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        bh=SnUGUKViCW+3BbsFSQi1k9zreDMxoTLJCm+OUAY9KGo=;
+        b=V9DbcndKDAk6F5vDH44MG9K8VKS+Nks/TeaUSqtICUIVZp/7HE99Yxg9p9suVQn/Lw
+         +uPtEtNrqS1zyBjtZG/6W/fa2Nnoa6piMpLN1wVid78BodPpP+ZR8dgKSLQw2qaXQARK
+         jwURoEWpCoUZ6G1wbHtLiYfR83ZBy9P11zCdbkdO91dSXXDWE4SvZa+OOqhSwhFoZ+hP
+         LeMnZ+1WeRY4IIA+tsVoAoe9rbl/hMpmv4Iero/2Pn9MzdpMRU5L8L/8h7zxa2BrlKud
+         O+D7YbsWHK/+w0J6H6t6HoX79P2cO/lky24lEH4QLgo1U5Si71JVK1OjS2Lx3oQXHx17
+         as8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXa5bm37Upm1wGjm5+NyGmtFt0oAhZLWzThTgS3wmssX01KG/yTFwlWlge/cxgMld22hqRfmAK50VO2q4nQS9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC3GwbNy7jQcHucwjb0rBg4XH7QGRxEzT/aLTTdyVqDEn2sAMS
+	3FNhaS6aH+ZJQQsWf9cU1h6ndeX2VkCaGOjSpcSCkFGwVqlPE3FiZAXAWzPzZyMX6/dDrXCOTlV
+	CeD4n7/fae1w5bIa3CdsXKVpPlM7WFrs5MjbG
+X-Google-Smtp-Source: AGHT+IE9lzQsVM3OtKM1DDO5bp6YhBv9ztTqMYR0Z4axeHZ0pxVhuPDcMiTJqM5GQZoQwIGD5+xxoKWGH0xp0FCEwsY=
+X-Received: by 2002:a05:6102:3750:b0:494:3a01:e340 with SMTP id
+ ada2fe7eead31-49d4147e662mr4516160137.6.1726177144959; Thu, 12 Sep 2024
+ 14:39:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240912110119.2025503-1-suhui@nfschina.com>
+In-Reply-To: <20240912110119.2025503-1-suhui@nfschina.com>
+From: Justin Stitt <justinstitt@google.com>
+Date: Thu, 12 Sep 2024 14:38:53 -0700
+Message-ID: <CAFhGd8ruRrZM0Q2Z0UJdf98gKvtP64H2k08gvB_=97pWs4p8cA@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: tipc: avoid possible garbage value
+To: Su Hui <suhui@nfschina.com>
+Cc: jmaloy@redhat.com, ying.xue@windriver.com, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, nathan@kernel.org, 
+	ndesaulniers@google.com, morbo@google.com, tuong.t.lien@dektech.com.au, 
+	netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 12 Sep 2024 11:49:10 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+Hi,
 
-> The "array_count" value comes from the copy_from_user() in
-> vfio_pci_ioctl_pci_hot_reset().  If the user passes a value larger than
-> INT_MAX then we'll pass a negative value to kcalloc() which triggers an
-> allocation failure and a stack trace.
-> 
-> It's better to make the type unsigned so that if (array_count > count)
-> returns -EINVAL instead.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Thu, Sep 12, 2024 at 4:01=E2=80=AFAM Su Hui <suhui@nfschina.com> wrote:
+>
+> Clang static checker (scan-build) warning:
+> net/tipc/bcast.c:305:4:
+> The expression is an uninitialized value. The computed value will also
+> be garbage [core.uninitialized.Assign]
+>   305 |                         (*cong_link_cnt)++;
+>       |                         ^~~~~~~~~~~~~~~~~~
+>
+> tipc_rcast_xmit() will increase cong_link_cnt's value, but cong_link_cnt
+> is uninitialized. Although it won't really cause a problem, it's better
+> to fix it.
+
+Agreed.
+
+Reviewed-by: Justin Stitt <justinstitt@google.com>
+>
+> Fixes: dca4a17d24ee ("tipc: fix potential hanging after b/rcast changing"=
+)
+> Signed-off-by: Su Hui <suhui@nfschina.com>
 > ---
->  drivers/vfio/pci/vfio_pci_core.c | 2 +-
+>  net/tipc/bcast.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-> index 077d4a2629c8..1ab58da9f38a 100644
-> --- a/drivers/vfio/pci/vfio_pci_core.c
-> +++ b/drivers/vfio/pci/vfio_pci_core.c
-> @@ -1324,7 +1324,7 @@ static int vfio_pci_ioctl_get_pci_hot_reset_info(
->  
->  static int
->  vfio_pci_ioctl_pci_hot_reset_groups(struct vfio_pci_core_device *vdev,
-> -				    int array_count, bool slot,
-> +				    u32 array_count, bool slot,
->  				    struct vfio_pci_hot_reset __user *arg)
->  {
->  	int32_t *group_fds;
+>
+> diff --git a/net/tipc/bcast.c b/net/tipc/bcast.c
+> index 593846d25214..a3699be6a634 100644
+> --- a/net/tipc/bcast.c
+> +++ b/net/tipc/bcast.c
+> @@ -321,7 +321,7 @@ static int tipc_mcast_send_sync(struct net *net, stru=
+ct sk_buff *skb,
+>         struct tipc_msg *hdr, *_hdr;
+>         struct sk_buff_head tmpq;
+>         struct sk_buff *_skb;
+> -       u16 cong_link_cnt;
+> +       u16 cong_link_cnt =3D 0;
+>         int rc =3D 0;
+>
+>         /* Is a cluster supporting with new capabilities ? */
+> --
+> 2.30.2
+>
 
-Applied to vfio next branch for v6.12.  Thanks!
-
-Alex
-
+Thanks
+Justin
