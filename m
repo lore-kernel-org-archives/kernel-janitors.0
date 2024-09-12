@@ -1,130 +1,180 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F80F19FA91;
-	Thu, 12 Sep 2024 13:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B19F19F43E;
+	Thu, 12 Sep 2024 14:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726149220; cv=none; b=nl0z9Npddb2N4Elg/hv8R6XULFDHZbh7WMzQ391qL5q25ou2pbS7YlVkA4ylaJqiytwsdbU2RbLWNFhnCdnlgjJVg6t0JCK7l4fp5xxJsXa5iyHn1xYGvKgI8KZYwPpJSAYTJJx6BjZcXkd/TQTfbk1w5frGY9Y5WeCzWS7yNUw=
+	t=1726149794; cv=none; b=XCMO3G5e8KN1CJfkaRvltjy+j+Dct5vhAZY2Yn2KDK6UqR5F6ek4WHpV3Q2ADmCMiBPVCDej6Crkudv0TV8PbTv4JP/WN77269Ub42oKWWNXVOccRlYaIevuApjfffk79XFQwijrXjpk8ml/ahXPvyX+EosqOhYALpA4eSm60qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726149220; c=relaxed/simple;
-	bh=zrZNPt5QonukQny2WMS7XcM8c81dAvEiuCu94Zb0S5k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ot9eyDOH1crMfDDwnrRqFnQ7Ab3PvLw9iJOc8on+o6qufLJiWfELsL1svKZDGYmihfPE9JaWYzwFi4EAT5d2q+U9gAK6LHJLBPHZi7nQKZPexDq+YpJy1QnAa/qHVfMcwSdLOuZmGO4/V5jo4UurYlDr/yGrVGI2JaeysnP71rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QoWTZglg; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1726149794; c=relaxed/simple;
+	bh=pU9EDLH8YOlI7K9VrpwxvKT6yC9pj2rCPVeHAQU1uBQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LXxbpwHTre92udd6/fRnAVJswHWjepaTgIbJwiqPtrWvCokmF+Bx8d2eMzVYr5pWyb0iU9kFxjroXGRq51qh9dgDFInlThvgouzJof3ZrZT19/cj91K5XUguDKfbWTM48HfSOy7xfda9YE1WrNynU6QClcRaq1xPJisT8xWd6JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CMZ1lW6c; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=P7JH6P8b; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CMZ1lW6c; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=P7JH6P8b; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QoWTZglg"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-374c84dcc90so720764f8f.1;
-        Thu, 12 Sep 2024 06:53:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726149217; x=1726754017; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tnrCWFAarNQ9FhphdRh3bfMZwRdSY8tJKESHBkiSHo0=;
-        b=QoWTZglgPH67iuUJC3xZecbKKmTkw4aOrFuvlc23zibmqE16htRZAi+n9NdPuvD5lV
-         BRxctdFp2ZcWXpZ4Gx6MoAIBFJkDmGYQ7JRIr6wzDlNzaIWmroTJKSlxlpNCfwXZFAbk
-         6zj8Qtolxf+SDCd4JUviscZMmrJspGbr7sMQosZ0c71Fwelr0Pf8apuc7LyKt0FoQips
-         zUgJdDUZfkpukMdoPza3z3ufmrbYRp7QYU0y7gEoEqtvorPjWUz7lVsHwaaen9FVkuU/
-         r1SZznr3sNiIeetP7SlGlG0rmpPrCMk/1UeLXGjOD8RrN2stHdDwNomwmjyCnhmdQ+RV
-         /dyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726149217; x=1726754017;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tnrCWFAarNQ9FhphdRh3bfMZwRdSY8tJKESHBkiSHo0=;
-        b=a5WffU5Y/SMl9w70+OLgdmD9kxmsgYi9qLfZO/cGQjlhObgFwnCMEQtzI/4UAgWRi9
-         AE13yfKwSE4+RAf1vRWtfhNsGNhGCA2KJ23NxQ0NTW2P0pJX4+baSSoxQPNs8E+6n7py
-         oVqpTENspvta59jb1ISiRnz90gxwCVydim8iI3wr+iagoHpJtVZR76TQ8mRscmb+qtNp
-         L0exPgqzVNymx0XU1Tqx9ftL6WVpRqS1tlyQdIGp6RbONDS0O5Z9KTw+gzSSEtuAEzGo
-         950tlRTRdMI/y5Uw7QUe+0V+2PWB6Agy0jBfwKUcwDjPeJYhplN/Qiv/n8hsC/BQglNl
-         3axA==
-X-Forwarded-Encrypted: i=1; AJvYcCULIXkIokdiaeEZ3vscKBGZiV9xh2uW9UvzhzCl0LW3OqP235awm2xBkq80/X87pNofMNOl3+76NHRzSvD3TtE=@vger.kernel.org, AJvYcCVvuXtFajfsU1wd0BQU5YKJc3WT2a2QgRyBhGhZybW/9i5Mzl7le3LMA4pvDs4QAQoCEhx+ZWqC0/c3nB0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6b6vgSD4JVbjS5/kAi0OE63ZssMEzgZGDzH+yvDjPI5o/gSoB
-	U4K7DJQraLQov9QMgR8/KKxU/i+3loKErWQ3w0S59dYgQiSmj3iU
-X-Google-Smtp-Source: AGHT+IH0nkooPLIJ3P85N3obDRyVnvq3Vt55M2xXwEhBSW0gfYXhX1dJVuzwwz0IJ+DI6MNuoJQmKw==
-X-Received: by 2002:a5d:5747:0:b0:374:c4e2:3cad with SMTP id ffacd0b85a97d-378c2d5b237mr1525655f8f.52.1726149217282;
-        Thu, 12 Sep 2024 06:53:37 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956653d1sm14430067f8f.33.2024.09.12.06.53.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 06:53:36 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Ping-Ke Shih <pkshih@realtek.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Dmitry Antipov <dmantipov@yandex.ru>,
-	linux-wireless@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] wifi: rtlwifi: make read-only arrays static const
-Date: Thu, 12 Sep 2024 14:53:35 +0100
-Message-Id: <20240912135335.590464-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CMZ1lW6c";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="P7JH6P8b";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CMZ1lW6c";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="P7JH6P8b"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8546B219B8;
+	Thu, 12 Sep 2024 14:03:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726149790; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HBsxw1L2t1ColpoRoRCyZTlOXVTERMyxbhoF1TUdq/8=;
+	b=CMZ1lW6cTvMdjxTvTspPNghdaDtJtCh7bWp/ocpsmktR4BpBFtfkemMaiu22A3DOfisBbt
+	wPOdBYa72NXs3pJFgYlBWVtmoIbDPaVC9qw6zb5w17tl5PywRHyjXZtW3+KLjUf5kQSdto
+	ZOELaSpjNF/JHTqBRbYFQpeknSNTQSw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726149790;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HBsxw1L2t1ColpoRoRCyZTlOXVTERMyxbhoF1TUdq/8=;
+	b=P7JH6P8bKk+/Qr/MfLkxtXmF4Yw6mmMxYEF6tM8up6UMN5ney/voYLuQZ4Ogtb2Zp1uiCs
+	SXu0pkKRCH9qQ7Dw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726149790; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HBsxw1L2t1ColpoRoRCyZTlOXVTERMyxbhoF1TUdq/8=;
+	b=CMZ1lW6cTvMdjxTvTspPNghdaDtJtCh7bWp/ocpsmktR4BpBFtfkemMaiu22A3DOfisBbt
+	wPOdBYa72NXs3pJFgYlBWVtmoIbDPaVC9qw6zb5w17tl5PywRHyjXZtW3+KLjUf5kQSdto
+	ZOELaSpjNF/JHTqBRbYFQpeknSNTQSw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726149790;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HBsxw1L2t1ColpoRoRCyZTlOXVTERMyxbhoF1TUdq/8=;
+	b=P7JH6P8bKk+/Qr/MfLkxtXmF4Yw6mmMxYEF6tM8up6UMN5ney/voYLuQZ4Ogtb2Zp1uiCs
+	SXu0pkKRCH9qQ7Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 432BA13A73;
+	Thu, 12 Sep 2024 14:03:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id H+4uD5704mYbewAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 12 Sep 2024 14:03:10 +0000
+Date: Thu, 12 Sep 2024 16:03:58 +0200
+Message-ID: <87r09pynn5.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ALSA: control: prevent some integer overflow issues
+In-Reply-To: <72907305-eddc-4fb4-9c74-7e1d2750f4b9@stanley.mountain>
+References: <0f03d569-9804-4617-a806-f0e5c32399fb@stanley.mountain>
+	<87v7z1yyok.wl-tiwai@suse.de>
+	<20c99f50-948e-4076-ba28-9640c3cd982d@stanley.mountain>
+	<72907305-eddc-4fb4-9c74-7e1d2750f4b9@stanley.mountain>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -3.30
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Don't populate the read-only arrays params, toshiba_smid1, toshiba_smid2,
-samsung_smid and lenovo_smid on the stack at run time, instead make them
-static const.
+On Thu, 12 Sep 2024 14:44:30 +0200,
+Dan Carpenter wrote:
+> 
+> On Thu, Sep 12, 2024 at 02:29:58PM +0300, Dan Carpenter wrote:
+> > On Thu, Sep 12, 2024 at 12:05:31PM +0200, Takashi Iwai wrote:
+> > > On Thu, 12 Sep 2024 10:51:14 +0200,
+> > > Dan Carpenter wrote:
+> > > > 
+> > > > I believe the this bug affects 64bit systems as well, but analyzing this
+> > > > code is easier if we assume that we're on a 32bit system.  The problem is
+> > > > in snd_ctl_elem_add() where we do:
+> > > > 
+> > > > sound/core/control.c
+> > > >   1669          private_size = value_sizes[info->type] * info->count;
+> > > >   1670          alloc_size = compute_user_elem_size(private_size, count);
+> > > >                                                                   ^^^^^
+> > > > count is info->owner.  It's a non-zero u32 that comes from the user via
+> > > > snd_ctl_elem_add_user().  So the math in compute_user_elem_size() could
+> > > > have an integer overflow resulting in a smaller than expected size.
+> > > 
+> > > So this should also use the overflow macro, too, in addition to your
+> > > changes?  Something like:
+> > > 
+> > > --- a/sound/core/control.c
+> > > +++ b/sound/core/control.c
+> > > @@ -1618,7 +1618,7 @@ static int snd_ctl_elem_add(struct snd_ctl_file *file,
+> > >  	struct snd_kcontrol *kctl;
+> > >  	unsigned int count;
+> > >  	unsigned int access;
+> > > -	long private_size;
+> > > +	size_t private_size;
+> > >  	size_t alloc_size;
+> > >  	struct user_element *ue;
+> > >  	unsigned int offset;
+> > > @@ -1666,7 +1666,7 @@ static int snd_ctl_elem_add(struct snd_ctl_file *file,
+> > >  	/* user-space control doesn't allow zero-size data */
+> > >  	if (info->count < 1)
+> > >  		return -EINVAL;
+> > > -	private_size = value_sizes[info->type] * info->count;
+> > > +	private_size = array_size(value_sizes[info->type], info->count);
+> > >  	alloc_size = compute_user_elem_size(private_size, count);
+> > >  
+> > >  	guard(rwsem_write)(&card->controls_rwsem);
+> > > 
+> > 
+> > I've reviewed this some more and those changes are harmless but unnecessary.
+> > info->count is checked in snd_ctl_check_elem_info().
+> > 
+> 
+> I also considered if I should fix this bug by adding checks to
+> snd_ctl_check_elem_info() but I don't think that's the right approach.  I
+> couldn't see how it would work at least.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- .../wireless/realtek/rtlwifi/rtl8723be/hw.c    | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+OK, so it doesn't seem affected in the end.
+The input values have been checked, and they can't overflow.
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/hw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/hw.c
-index 0e77de1baaf8..bcfc53af4c1a 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/hw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/hw.c
-@@ -2040,31 +2040,33 @@ static void _rtl8723be_read_adapter_info(struct ieee80211_hw *hw,
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
- 	struct rtl_efuse *rtlefuse = rtl_efuse(rtl_priv(hw));
- 	struct rtl_hal *rtlhal = rtl_hal(rtl_priv(hw));
--	int params[] = {RTL8723BE_EEPROM_ID, EEPROM_VID, EEPROM_DID,
--			EEPROM_SVID, EEPROM_SMID, EEPROM_MAC_ADDR,
--			EEPROM_CHANNELPLAN, EEPROM_VERSION, EEPROM_CUSTOMER_ID,
--			COUNTRY_CODE_WORLD_WIDE_13};
-+	static const int params[] = {
-+		RTL8723BE_EEPROM_ID, EEPROM_VID, EEPROM_DID,
-+		EEPROM_SVID, EEPROM_SMID, EEPROM_MAC_ADDR,
-+		EEPROM_CHANNELPLAN, EEPROM_VERSION, EEPROM_CUSTOMER_ID,
-+		COUNTRY_CODE_WORLD_WIDE_13
-+	};
- 	u8 *hwinfo;
- 	int i;
- 	bool is_toshiba_smid1 = false;
- 	bool is_toshiba_smid2 = false;
- 	bool is_samsung_smid = false;
- 	bool is_lenovo_smid = false;
--	u16 toshiba_smid1[] = {
-+	static const u16 toshiba_smid1[] = {
- 		0x6151, 0x6152, 0x6154, 0x6155, 0x6177, 0x6178, 0x6179, 0x6180,
- 		0x7151, 0x7152, 0x7154, 0x7155, 0x7177, 0x7178, 0x7179, 0x7180,
- 		0x8151, 0x8152, 0x8154, 0x8155, 0x8181, 0x8182, 0x8184, 0x8185,
- 		0x9151, 0x9152, 0x9154, 0x9155, 0x9181, 0x9182, 0x9184, 0x9185
- 	};
--	u16 toshiba_smid2[] = {
-+	static const u16 toshiba_smid2[] = {
- 		0x6181, 0x6184, 0x6185, 0x7181, 0x7182, 0x7184, 0x7185, 0x8181,
- 		0x8182, 0x8184, 0x8185, 0x9181, 0x9182, 0x9184, 0x9185
- 	};
--	u16 samsung_smid[] = {
-+	static const u16 samsung_smid[] = {
- 		0x6191, 0x6192, 0x6193, 0x7191, 0x7192, 0x7193, 0x8191, 0x8192,
- 		0x8193, 0x9191, 0x9192, 0x9193
- 	};
--	u16 lenovo_smid[] = {
-+	static const u16 lenovo_smid[] = {
- 		0x8195, 0x9195, 0x7194, 0x8200, 0x8201, 0x8202, 0x9199, 0x9200
- 	};
- 
--- 
-2.39.2
 
+thanks,
+
+Takashi
