@@ -1,77 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A48137E;
-	Thu, 12 Sep 2024 00:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5307D18DF6C
+	for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 07:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726099831; cv=none; b=hCJeHrjPop5Yavwlv7hzn5o7eYmZQkm8E2H7D0aGD59tXjumGHGwS9ekPenz1QpbXXyhnlbf7TFBiUXYoHLXXkx3DxrPG6/NHb0iuklkC9gR9yrzuMl1PV2ES4+Jq0eSLfdTmAbPuggyr6ZncgY1CQEnIoPc7UuiOJGmIkj2MBg=
+	t=1726127480; cv=none; b=dNHnh80s2M1OvSCsyw1qyH7Clk387zO2TGd2MGq18kB9Dc668jOE7HwU55GMuSn9dswfALqMOA3fqN4Co9S4wVxox0EoUesCEvEED+rK/EoCESkkmk0Yf0KF8/7DYG0VC1yiDYTpYZPusucaSyBBvbkSlaj83zge3xbyMv/t30A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726099831; c=relaxed/simple;
-	bh=8szpGKsPyE2ggZ+fRL53OKU95x+zzxKFLvmT9LonEHM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ODCLbo29NdfKTbImBXJ6038WWBhxpKS0SBS8+xVGXdp0XiNXUEi/2G0eVV0KPSFRFmorGDSayfVSDttePNJyNGJw6zost7vg3kJQgctcy3xpXBdbqSlCn4zxbV6uFDE95AIc/fPcIrsMfAE73/8yalsJ8T9HR0u/gKjKthBxi0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q3UkPlUf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726127480; c=relaxed/simple;
+	bh=Jn/WmmWqV6Oz1qW8UzAzsc2CIj0g9WeIqPQj9OAxD2Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UT4MB874qbwhEhjGCraSw8UyqwKIO0caC5tn55QnSwRGN6IiA2DQ+NXCqCBnon7rA8OeijGREB3Jp3rPXbEYVp03DxEOJZwMnqjNkmxkI7ZAQL5EJCPy7iI4Gd1FYq23pj+L5N4/6qZxZQ1ooanJYpgeGNXH7NjOISsdpzLzXZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OwEPxOA6; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3UkPlUf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF8DBC4CED0;
-	Thu, 12 Sep 2024 00:10:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726099830;
-	bh=8szpGKsPyE2ggZ+fRL53OKU95x+zzxKFLvmT9LonEHM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Q3UkPlUf34kbhKPc4MTXH8wCCxMZVn5bpfbFcbGjd+pVVcm7BwR7w0EX1AIZ9w+jq
-	 qBq4d2T60uHuSDb/bkfIrZlpwunNt9X+zzaWJVJFojCD6oF+7Wu6mRIDe12NPH+Nuf
-	 04VYxaQSqgljnnNkKf2G/dne1E+VjvUk4TOBDlcKl2iW4eVTC8lGOM2/vMx2qWZYTc
-	 Foj2OQ52HXMk3zf6Mu0xIHJ3R8+18qgvn52BKafNcB1UdHg9I6VgzuXNqxwR2K+Vl+
-	 rSrkr/2Hf4mOEmB3nQ85M2FMmJGR2ZBLxcLp4579F+ZvNTU1YCjzy8xP5DYEbPGV93
-	 xzutCbtbdAyxg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 341383806656;
-	Thu, 12 Sep 2024 00:10:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OwEPxOA6"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5356d34ef19so90345e87.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 00:51:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726127476; x=1726732276; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XSC5IYlX2GVw7tHTObPeS1hh+2TPL2GlXnJ0/a7Cp54=;
+        b=OwEPxOA62FQlkq7Dv3Pw/+gyhwagwK7yrulzJXAZ8+BpM0BrK6XaTRJI6sNduO7dlQ
+         cpFMHkRinbEONroK6eyuWisSrjbnjlR+S8eoINfPxVrySRDOGHhFhtXuNdBMuI4c09fn
+         FzmMeyBC6D722RLg2SopeRYB+3ZhGRZUHL5B6t4apobXAmM53ebyFLt+PnwirqEmU55Y
+         d9Sk/JDDQ5p0cS4nVTYAIr886K5y8MC1CKPJBl1ZJ03RKh6zOJ1sNRxkp+bJF0WbQFUf
+         2R4BK3oh1HBDqYMoJ8u30iIRk2PoifiP1h2rzlSkRun72OwREF4HZmBW7oofjpJXjYw8
+         namg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726127476; x=1726732276;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XSC5IYlX2GVw7tHTObPeS1hh+2TPL2GlXnJ0/a7Cp54=;
+        b=a9jkmb3aR9CSIkBYmHpDp+YJWGXm0SRIubUuvjFp20WbGPQf01E4WLXfiNRDaIH/QD
+         IwTpDqRhlfgQMrjjAB6PcD0LashzDns34H01d5c1iBQ57Q0O8gkQjf2f99SuBg0eJhTs
+         H1vT7U38L/7j2od7jj6EW64Ht9iVjac4lb9phTKRYh755fzHlTlqFrQfdDqTDWfiawYQ
+         Sz5WksSPyZ0USZuhz8+PYbBoEyjB0nDTB8VP0MDdmSXwlhiuC8OS/hjsg1c/RTQFuycA
+         gxrvQ+eVrvbGjHLCCyqbXFnAeRhEszePtDElOs00oWhvkunXip8n49GIsmsCUq/UwNcb
+         1HUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEhSVKt4mUYkAZqp580tDTN3BTeE3hh9xD2g8xyZw+4AdVuh6V5uLkpi/V3bpK7tJPixVqCosoaFvo2Bmn5BM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ9PjCtx4P7joCeYt4NfpUV3T6rqtxDYk7pi/jDtpLeelwVVr8
+	3gTc+idFk7e9UFnwHf10P+3dI3FQC1i6O26U19ULzLihlnUH/RLnAza9DBQpm/A=
+X-Google-Smtp-Source: AGHT+IFzTejAnj+md6Dum/Fvnlg7LUCWhb1+849LYpXkIst84RpIK/lVMWVk/YwkXD38Y3yT3kHjhQ==
+X-Received: by 2002:a05:6512:401d:b0:535:6a7b:9c03 with SMTP id 2adb3069b0e04-53678fef731mr300477e87.6.1726127475898;
+        Thu, 12 Sep 2024 00:51:15 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f8cb76fsm1826761e87.177.2024.09.12.00.51.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 00:51:15 -0700 (PDT)
+Message-ID: <14bfc031-63f7-4c70-b860-f2dcf592d19f@linaro.org>
+Date: Thu, 12 Sep 2024 10:51:14 +0300
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next][V2] qlcnic: make read-only const array key static
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172609983202.1114191.463835337083384525.git-patchwork-notify@kernel.org>
-Date: Thu, 12 Sep 2024 00:10:32 +0000
-References: <20240910120635.115266-1-colin.i.king@gmail.com>
-In-Reply-To: <20240910120635.115266-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: shshaikh@marvell.com, manishc@marvell.com, GR-Linux-NIC-Dev@marvell.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: qcom: camss: Fix potential crash in cleanup in
+ camss_configure_pd()
+Content-Language: en-US
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <7883f30a-0646-440c-95d5-937062ce10b6@moroto.mountain>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <7883f30a-0646-440c-95d5-937062ce10b6@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello:
+Hello Dan,
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 10 Sep 2024 13:06:35 +0100 you wrote:
-> Don't populate the const read-only array key on the stack at
-> run time, instead make it static.
+On 9/10/24 22:55, Dan Carpenter wrote:
+> This function calls dev_pm_domain_detach(camss->genpd, true) in the
+> cleanup path.  But calling detach is only necessary if the attach
+> succeeded.  If it didn't succeed then "camss->genpd" is either an error
+> pointer or NULL and it leads to a crash.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> 
+> Fixes: 23aa4f0cd327 ("media: qcom: camss: Move VFE power-domain specifics into vfe.c")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
+>   drivers/media/platform/qcom/camss/camss.c | 15 +++++----------
+>   1 file changed, 5 insertions(+), 10 deletions(-)
 > 
-> [...]
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+> index 1923615f0eea..f4531e7341d4 100644
+> --- a/drivers/media/platform/qcom/camss/camss.c
+> +++ b/drivers/media/platform/qcom/camss/camss.c
+> @@ -2130,10 +2130,8 @@ static int camss_configure_pd(struct camss *camss)
+>   	if (camss->res->pd_name) {
+>   		camss->genpd = dev_pm_domain_attach_by_name(camss->dev,
+>   							    camss->res->pd_name);
+> -		if (IS_ERR(camss->genpd)) {
+> -			ret = PTR_ERR(camss->genpd);
+> -			goto fail_pm;
+> -		}
+> +		if (IS_ERR(camss->genpd))
+> +			return PTR_ERR(camss->genpd);
+>   	}
+>   
+>   	if (!camss->genpd) {
+> @@ -2141,13 +2141,10 @@ static int camss_configure_pd(struct camss *camss)
+>   		 */
+>   		camss->genpd = dev_pm_domain_attach_by_id(camss->dev,
+>   							  camss->genpd_num - 1);
+> -	}
+> -	if (IS_ERR_OR_NULL(camss->genpd)) {
+> +		if (IS_ERR(camss->genpd))
+> +			return PTR_ERR(camss->genpd);
+>   		if (!camss->genpd)
+> -			ret = -ENODEV;
+> -		else
+> -			ret = PTR_ERR(camss->genpd);
+> -		goto fail_pm;
+> +			return -ENODEV;
+>   	}
+>   	camss->genpd_link = device_link_add(camss->dev, camss->genpd,
+>   					    DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME |
 
-Here is the summary with links:
-  - [next,V2] qlcnic: make read-only const array key static
-    https://git.kernel.org/netdev/net-next/c/af647fe240a9
+the problem has been already addressed, it is a real crash, not just
+a potential one.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Please see https://lore.kernel.org/all/20240813210342.1765944-1-vladimir.zapolskiy@linaro.org/
 
-
+--
+Best wishes,
+Vladimir
