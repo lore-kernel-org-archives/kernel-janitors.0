@@ -1,117 +1,97 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADA91A7AF0;
-	Thu, 12 Sep 2024 13:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32DB1A7245
+	for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 13:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726146622; cv=none; b=VJ5eFE6i8st2jCZx4TMi/chOhsbGGamIKm4K+SgcIzhdzsfQVGNFEZ/FIR/djM6zppuisUGCklPhOgqhvq7FhTuwysgw8LsygPz7wsaj/yjlzlasejMUSUTA71YZOujBH7iVWTKgv92RraZ+n0RtmpDl3GZ21XtKNfwT6sN0t0g=
+	t=1726146725; cv=none; b=CpgjGIXU/EA+m+MY9D7ZlKt2iPAzWbRKOW2xDaG8X+TlNfolgI1st+QuDjmfV7X6GYEKiyFhONYhBPefu3CCShxPv0zMCNAv8M0wwcOE+kq7wTFcfoP/A89Ek/5a90eM+k51KlNyzQgdUjyymnQlrG5JiCGhTVL0ViBe5RAkO9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726146622; c=relaxed/simple;
-	bh=YQGtkVY1orJH2WVfTKflWZP/90r9WvrbC+Ne4huJ70E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=B6qeqlSLNWJwhMKEo2sRNKd8cCA4h/u22B+QZce6oKkBwmkpUSnPIBISRA2cwzaDOmZ9Hr79Tj4JTpNXKdjTUeh8y+LJ+v+FH+MEuQPUQ9jWxsbWk3Q7jTbmcPQWoA94A5LpCRW3MDbnNEh5tn0kmMG9/pvCu6onqom3al57mjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F8DtkmgN; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1726146725; c=relaxed/simple;
+	bh=RaydOSJFL3Q9Fw7f0XuBKFvCOwlO2D1b/uIs9scmK6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pQGUuV6Y5ce1D+bUQqFNxiB0rWjkPIbDTh7h7aEyqQXtph9nYIHfQxuCAb3G1FROxA1VxBVS5BNvO7Nnf6gr1m1jDki1ZRIVtZ8+EOhy0l4jVSlO1ahFCarUryFPuOe9PgKNcfi2QwXo30sV35Qq4GZjaVBKSwXo68HLTqwxaRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=CKxcCSwR; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F8DtkmgN"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-374cacf18b1so690802f8f.2;
-        Thu, 12 Sep 2024 06:10:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="CKxcCSwR"
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7a9ab8e5f96so72119985a.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 06:12:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726146619; x=1726751419; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=U8JQOeJOkNWzk5hF7kdBbJfmcbjNOYJyTlSnkrngbv8=;
-        b=F8DtkmgNQgKKtvue38o+D9aRzbcq1WPyMabKhC3vUQY7R+S//HHUDFCXLZDUOLXCi6
-         MJ4OdEjezLvGK9Du/FHyPenijmKV13jEEzyQpRmuF0jnkUn8H9GbyTG54yVvAkf2t45v
-         vtWYTxyt+7oprRf40X7Qu5z+oPxfBHkljvGz7wHlovzo/LgwCnNLW0LASTOVMJHD8GS5
-         8L48Ophk9bIPEDvNBCSmTdrvrFODQ7OJ2s4mVnYruOAlpfvjB1nS4Y9ihoZVWwJQ7GlI
-         W1t5wWIHS05bsm08UTNGxAuKZjJOEMkbsh3KlYdy9hlM2R/Z+lZn7iKiPs57iJkotp0j
-         5Rag==
+        d=ziepe.ca; s=google; t=1726146721; x=1726751521; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VBD1supAppfnGRodOiWLEHyXSpQurWFz61I765SalUk=;
+        b=CKxcCSwRlcQuIVHcElXMPyQ2gIgVj1QyFGTHHrqdZoIDWjvjlEuUaCEFecmFI5xqLi
+         ZXze9mK1O0RsHTpXK2sKunz0ziAKPEJoCiD0nw+FjO05EAm+w0IrlDOUBQQNnIj88EcI
+         ejLLCP03LYePKuOR0X4dYZ8NmlDF9hg00iBDJHqUP8MCMN0bENu5Rh//ott/e7iQI1GU
+         fZPy5d7r7ZstUEhS6V+CKWWCs3DobzW5L0ovZs+pMzXft4h3ZYl8B84hFPEvzfUH8z95
+         tUfonciUhStqheDdIT1jIpzCIX5G8CubuwTOXaTLMlffuZ8g93N2P30vw3Ess1siIwba
+         3gVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726146619; x=1726751419;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U8JQOeJOkNWzk5hF7kdBbJfmcbjNOYJyTlSnkrngbv8=;
-        b=LURuF7ogyyp6EbOhWvY88//CwCCmlLO5z53VNPkFPjLfMpZYrqD1Uv5eTfZ48GONwL
-         mWc522W21ju5mUE4+usojvTJR7kaXkVWWjvvFtEzdimuYgLCxPJQ7P/efEXakVQGbQqc
-         50rVxHc2FbEvy6TvbdQ9+XSxedp736C2QWE7vcPjfhP5BpOCyUX4dWKdWq2IwpV0cz6F
-         tntgEJFnmqWuazz1a/F/vRDiXTEym3WuLB5RI03Yg2nh8PA/wrAUGpUmfbSBCf6ZzY5T
-         /9CbgPQtj/6LKn0CvKbbH5Nd9XTUJ82CbljFdAEwilz+qA6bzrVvPiBQCtWqKj3/zRug
-         HAEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFl6qg2HhHZ96WJ32+j4uGEjrCmEq+5ThycKBsLn0E3ljBX2qnNxuskOffJf8iDw3Cd0wqabCw4fcIxlDm@vger.kernel.org, AJvYcCWQtKWWysABGa4aSATGbTYOIbnh0ebwulPun3izQ2HzLhttsTNwlqrsR+E0+2Ze6qveGsVbhS7gPdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxpn6/NpaRzZjQBA9j42J22tSVUCselS5Kbmuwb11WIazv35dbw
-	vfwIjz+JMb9ndGy1BmV/6ZNArYHwOreLhZGHCFL22UNOUxlFQZ0y
-X-Google-Smtp-Source: AGHT+IGctPJ+ZKxq4ZLB6qdJLoKPvcS3oXjmyhA8DvW7ar/5awAjITqMWam/yxTvaCY3cBuBCuYUKA==
-X-Received: by 2002:a5d:6443:0:b0:374:bf97:ba10 with SMTP id ffacd0b85a97d-378c2d047e6mr1551574f8f.25.1726146618581;
-        Thu, 12 Sep 2024 06:10:18 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a067sm14346787f8f.13.2024.09.12.06.10.17
+        d=1e100.net; s=20230601; t=1726146721; x=1726751521;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VBD1supAppfnGRodOiWLEHyXSpQurWFz61I765SalUk=;
+        b=w2/5PN7j7cnD/hUiWQj0gYCGQg60TESVy3C+WT+SPsUQUW6K2t0UlGY+n/uXalGZDe
+         X+cIhf9zArNQyHxLsEHo0MZaBuJa5pZpk/cWVlS/AQlEwcNLYApFjtVtehylV48CcHX/
+         g2ONJjGdDFr9GYjdrIZc5ONxlcQy5Fojy7xI5FHZtapizzRz9g0b+qaOEBwiWSQV0dx/
+         LE0e6f16+hBdRGtuKyoEDbXcbYyJgOwATEdJ/fNE3wq35XHvFf5Uaq7EuYyDjsa3KY5t
+         JDnpDC6Rax39tZ02tr1QjFZnwjh124/J7ydTfhSWFGvBJpgqer49yFJ+ZCxw2Y4VH5os
+         R13g==
+X-Forwarded-Encrypted: i=1; AJvYcCXWb8kyZRgueMV5xyHEcfOOPDtrapNWIl6ySGXwOgp9CED8LmcTKnZSjFJ/1IrfKYZ+SqEED9D5T7pjX3JMb18=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjMS07BXnYuWDlrXOALyLlLL3U0zzjVxUEz0rEUnvaTw0gIv0f
+	ujZC/aoXFa0FEca89QRXJsBB9UP60XqVH5FqMCaNbFarhFRqjO0Oepk+nSd8WnM=
+X-Google-Smtp-Source: AGHT+IG9WyRXWSNrKA444XIFeHToPFPIZbf+sv4Odz1gHEboQOTlEfHF2PRWRKXrNZsoGdWZluUUWQ==
+X-Received: by 2002:a05:620a:2a01:b0:79f:1cf:551e with SMTP id af79cd13be357-7a9e5ee5707mr318668085a.5.1726146720738;
+        Thu, 12 Sep 2024 06:12:00 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a7a283adsm533918285a.129.2024.09.12.06.12.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 06:10:18 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Nishad Saraf <nishads@amd.com>,
-	Lizhi Hou <lizhi.hou@amd.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	dmaengine@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] dmaengine: amd: qdma: make read-only arrays h2c_types and c2h_types static const
-Date: Thu, 12 Sep 2024 14:10:17 +0100
-Message-Id: <20240912131017.588141-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Thu, 12 Sep 2024 06:12:00 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sojc7-00CzIH-H0;
+	Thu, 12 Sep 2024 10:11:59 -0300
+Date: Thu, 12 Sep 2024 10:11:59 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+	Kevin Tian <kevin.tian@intel.com>, Yi Liu <yi.l.liu@intel.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Kunwu Chan <chentao@kylinos.cn>, Ankit Agrawal <ankita@nvidia.com>,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] vfio/pci: clean up a type in
+ vfio_pci_ioctl_pci_hot_reset_groups()
+Message-ID: <20240912131159.GC1304783@ziepe.ca>
+References: <262ada03-d848-4369-9c37-81edeeed2da2@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <262ada03-d848-4369-9c37-81edeeed2da2@stanley.mountain>
 
-Don't populate the read-only arrays h2c_types and c2h_types on the
-stack at run time, instead make them static const.
+On Thu, Sep 12, 2024 at 11:49:10AM +0300, Dan Carpenter wrote:
+> The "array_count" value comes from the copy_from_user() in
+> vfio_pci_ioctl_pci_hot_reset().  If the user passes a value larger than
+> INT_MAX then we'll pass a negative value to kcalloc() which triggers an
+> allocation failure and a stack trace.
+> 
+> It's better to make the type unsigned so that if (array_count > count)
+> returns -EINVAL instead.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/vfio/pci/vfio_pci_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/dma/amd/qdma/qdma.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-diff --git a/drivers/dma/amd/qdma/qdma.c b/drivers/dma/amd/qdma/qdma.c
-index b0a1f3ad851b..17a876df9fb3 100644
---- a/drivers/dma/amd/qdma/qdma.c
-+++ b/drivers/dma/amd/qdma/qdma.c
-@@ -283,16 +283,20 @@ static int qdma_check_queue_status(struct qdma_device *qdev,
- 
- static int qdma_clear_queue_context(const struct qdma_queue *queue)
- {
--	enum qdma_ctxt_type h2c_types[] = { QDMA_CTXT_DESC_SW_H2C,
--					    QDMA_CTXT_DESC_HW_H2C,
--					    QDMA_CTXT_DESC_CR_H2C,
--					    QDMA_CTXT_PFTCH, };
--	enum qdma_ctxt_type c2h_types[] = { QDMA_CTXT_DESC_SW_C2H,
--					    QDMA_CTXT_DESC_HW_C2H,
--					    QDMA_CTXT_DESC_CR_C2H,
--					    QDMA_CTXT_PFTCH, };
-+	static const enum qdma_ctxt_type h2c_types[] = {
-+		QDMA_CTXT_DESC_SW_H2C,
-+		QDMA_CTXT_DESC_HW_H2C,
-+		QDMA_CTXT_DESC_CR_H2C,
-+		QDMA_CTXT_PFTCH,
-+	};
-+	static const enum qdma_ctxt_type c2h_types[] = {
-+		QDMA_CTXT_DESC_SW_C2H,
-+		QDMA_CTXT_DESC_HW_C2H,
-+		QDMA_CTXT_DESC_CR_C2H,
-+		QDMA_CTXT_PFTCH,
-+	};
- 	struct qdma_device *qdev = queue->qdev;
--	enum qdma_ctxt_type *type;
-+	const enum qdma_ctxt_type *type;
- 	int ret, num, i;
- 
- 	if (queue->dir == DMA_MEM_TO_DEV) {
--- 
-2.39.2
-
+Jason
