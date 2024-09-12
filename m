@@ -1,115 +1,117 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C369E1A42DA;
-	Thu, 12 Sep 2024 12:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADA91A7AF0;
+	Thu, 12 Sep 2024 13:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726145864; cv=none; b=Etn0wWGvGFuIr1y6g2TT4+/RT4hHvdDWW0Yc9suXp8k3ZAlSjZnoQ6LBkpfX54qq49Xt4zgNVtHvNrN0XBo8PYastjc4nKS4/VfLlu+LX7K6J4gvnIi12zmiIsl1E7hkX3fSh3FX0xTT1hQShPgp2OqgmEf2Oh1i25DvDSTdAOc=
+	t=1726146622; cv=none; b=VJ5eFE6i8st2jCZx4TMi/chOhsbGGamIKm4K+SgcIzhdzsfQVGNFEZ/FIR/djM6zppuisUGCklPhOgqhvq7FhTuwysgw8LsygPz7wsaj/yjlzlasejMUSUTA71YZOujBH7iVWTKgv92RraZ+n0RtmpDl3GZ21XtKNfwT6sN0t0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726145864; c=relaxed/simple;
-	bh=GHdrrCPZBSpx1b6Iq3VDSPGBIaEiUJ/gvyMfyBioWZk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eM7F2FJhntE+ByF2wN8ED2dM6uWxJrZKeSNemhdmVRo3lvODGJbYt0xiuwsI5JFVwyKBY95AAfNtVUfhrek7YL2pjGPNW+QA0YLjpmF4yMGooUE6WgMaLurD8PPev9VBXDpMwRO8gnvwRDzrKwQAcB9l5U6DAeZC7r1SGBDUmvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kGwUs6O6; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1726146622; c=relaxed/simple;
+	bh=YQGtkVY1orJH2WVfTKflWZP/90r9WvrbC+Ne4huJ70E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=B6qeqlSLNWJwhMKEo2sRNKd8cCA4h/u22B+QZce6oKkBwmkpUSnPIBISRA2cwzaDOmZ9Hr79Tj4JTpNXKdjTUeh8y+LJ+v+FH+MEuQPUQ9jWxsbWk3Q7jTbmcPQWoA94A5LpCRW3MDbnNEh5tn0kmMG9/pvCu6onqom3al57mjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F8DtkmgN; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGwUs6O6"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cd46f3ac9so8633945e9.3;
-        Thu, 12 Sep 2024 05:57:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F8DtkmgN"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-374cacf18b1so690802f8f.2;
+        Thu, 12 Sep 2024 06:10:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726145861; x=1726750661; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726146619; x=1726751419; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=radmw+TmBlscrRZxkZ+tHMrAuVzmASyCuq4LLVLeMxk=;
-        b=kGwUs6O6AwRYRJzvqLsqoN1drJn8AFTHDdjq586LmqjO16iHyg4Xzda7npeSRbHXqR
-         u+u+Tkcn+3MPcmaVtyCiG0IKCqfAet/qgaKW8aNvcTTp9vAne/xZnYBwu8SimGMd2BbN
-         3CBX46yNcZit1O9ML2JQSmimLxvJe//EjVdxQIaesW5Q2IP5XMq4Roa8mz2cgMvwXIcY
-         9MBJl4sg+7Zj7vhZOlb7FioiwjfDIihddtL5ceNWnmpuwDNw2J/OlCRjBTkvMY5w4qXz
-         nDHpBDDJ+T3pAdnpk/lkfwvI2+/jQafbjb997nsHVWoyeooEuo+0cT7vP7HTyA8xlhey
-         +yew==
+        bh=U8JQOeJOkNWzk5hF7kdBbJfmcbjNOYJyTlSnkrngbv8=;
+        b=F8DtkmgNQgKKtvue38o+D9aRzbcq1WPyMabKhC3vUQY7R+S//HHUDFCXLZDUOLXCi6
+         MJ4OdEjezLvGK9Du/FHyPenijmKV13jEEzyQpRmuF0jnkUn8H9GbyTG54yVvAkf2t45v
+         vtWYTxyt+7oprRf40X7Qu5z+oPxfBHkljvGz7wHlovzo/LgwCnNLW0LASTOVMJHD8GS5
+         8L48Ophk9bIPEDvNBCSmTdrvrFODQ7OJ2s4mVnYruOAlpfvjB1nS4Y9ihoZVWwJQ7GlI
+         W1t5wWIHS05bsm08UTNGxAuKZjJOEMkbsh3KlYdy9hlM2R/Z+lZn7iKiPs57iJkotp0j
+         5Rag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726145861; x=1726750661;
+        d=1e100.net; s=20230601; t=1726146619; x=1726751419;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=radmw+TmBlscrRZxkZ+tHMrAuVzmASyCuq4LLVLeMxk=;
-        b=PaQC0KLFLmgWYgj34Tin0sGP4lJVFTGilW1bvjBUGwGqsyJd7+UucolXnyUely2EsQ
-         D1Oq3MPFsTUwnexmpsyjEoeVEu0v/OxcvDZJy9cBD9y8vuKfwF/Fh2BeTT1NEy98wZll
-         Q1xJzDX4E+CFFo+GudWJ8ww0PXOUWQPgW1qzhbpkMPROB5XRxEFpuCul+8O9gCwHR2XA
-         7qtQhQCwhzWd2exnFESgaz5sDgrIzMRzwhLn0cBhz0XsgLLQ4TtBdvH/ClcryOGkKEVg
-         0uh8t331ul2Yqq0fzSwVR7bKk10qXcPEubl/RNaXFjjvsKSNbpyci2lqIkLwcVgbjPQu
-         AN8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUgfWQHzAVRZhidHOt+YZqqkGSLTxQ0bcz84qBTaA9kXHCSdyqWYS5MY+8CmXZw7rtwAUPtiRNkk6pIHnp6@vger.kernel.org, AJvYcCXjFandc2G3FDzFSDrPmiPGCWyXsTDRtnZsC6J7yy0dWTe6ylrSGZoN3ZTyClPYOXmCleWjOkJW7X9tYT1s13M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxdY8ajuzLIVCzfnNpOzt0k6FisUrh2VsWC8wn42OBKDfEowOu
-	UmKejzrsXjvTqo+j7lpRAVrE0deK79T9uCwt8+mQXgYcBURpmWO4
-X-Google-Smtp-Source: AGHT+IH4upBG1YMo8IZ9xkFa7vwnLeVv89WopCWiWfGSfCazpwQKdz/gbnuU8tS0Sds2dPgrxjO7cw==
-X-Received: by 2002:a5d:6183:0:b0:374:c454:dbb3 with SMTP id ffacd0b85a97d-378c2d620femr1414942f8f.55.1726145860209;
-        Thu, 12 Sep 2024 05:57:40 -0700 (PDT)
-Received: from void.void ([141.226.9.101])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956653c6sm14313315f8f.32.2024.09.12.05.57.38
+        bh=U8JQOeJOkNWzk5hF7kdBbJfmcbjNOYJyTlSnkrngbv8=;
+        b=LURuF7ogyyp6EbOhWvY88//CwCCmlLO5z53VNPkFPjLfMpZYrqD1Uv5eTfZ48GONwL
+         mWc522W21ju5mUE4+usojvTJR7kaXkVWWjvvFtEzdimuYgLCxPJQ7P/efEXakVQGbQqc
+         50rVxHc2FbEvy6TvbdQ9+XSxedp736C2QWE7vcPjfhP5BpOCyUX4dWKdWq2IwpV0cz6F
+         tntgEJFnmqWuazz1a/F/vRDiXTEym3WuLB5RI03Yg2nh8PA/wrAUGpUmfbSBCf6ZzY5T
+         /9CbgPQtj/6LKn0CvKbbH5Nd9XTUJ82CbljFdAEwilz+qA6bzrVvPiBQCtWqKj3/zRug
+         HAEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFl6qg2HhHZ96WJ32+j4uGEjrCmEq+5ThycKBsLn0E3ljBX2qnNxuskOffJf8iDw3Cd0wqabCw4fcIxlDm@vger.kernel.org, AJvYcCWQtKWWysABGa4aSATGbTYOIbnh0ebwulPun3izQ2HzLhttsTNwlqrsR+E0+2Ze6qveGsVbhS7gPdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxpn6/NpaRzZjQBA9j42J22tSVUCselS5Kbmuwb11WIazv35dbw
+	vfwIjz+JMb9ndGy1BmV/6ZNArYHwOreLhZGHCFL22UNOUxlFQZ0y
+X-Google-Smtp-Source: AGHT+IGctPJ+ZKxq4ZLB6qdJLoKPvcS3oXjmyhA8DvW7ar/5awAjITqMWam/yxTvaCY3cBuBCuYUKA==
+X-Received: by 2002:a5d:6443:0:b0:374:bf97:ba10 with SMTP id ffacd0b85a97d-378c2d047e6mr1551574f8f.25.1726146618581;
+        Thu, 12 Sep 2024 06:10:18 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a067sm14346787f8f.13.2024.09.12.06.10.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 05:57:39 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Jyri Sarha <jyri.sarha@iki.fi>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] drm/tidss: Fix typos
-Date: Thu, 12 Sep 2024 15:57:24 +0300
-Message-ID: <20240912125735.45114-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.46.0
+        Thu, 12 Sep 2024 06:10:18 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Nishad Saraf <nishads@amd.com>,
+	Lizhi Hou <lizhi.hou@amd.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	dmaengine@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] dmaengine: amd: qdma: make read-only arrays h2c_types and c2h_types static const
+Date: Thu, 12 Sep 2024 14:10:17 +0100
+Message-Id: <20240912131017.588141-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Fix typos in comments.
+Don't populate the read-only arrays h2c_types and c2h_types on the
+stack at run time, instead make them static const.
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/tidss/tidss_dispc_regs.h | 2 +-
- drivers/gpu/drm/tidss/tidss_plane.c      | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/dma/amd/qdma/qdma.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/tidss/tidss_dispc_regs.h b/drivers/gpu/drm/tidss/tidss_dispc_regs.h
-index 13feedfe5d6d..e88148e44937 100644
---- a/drivers/gpu/drm/tidss/tidss_dispc_regs.h
-+++ b/drivers/gpu/drm/tidss/tidss_dispc_regs.h
-@@ -49,7 +49,7 @@ enum dispc_common_regs {
- /*
-  * dispc_common_regmap should be defined as const u16 * and pointing
-  * to a valid dss common register map for the platform, before the
-- * macros bellow can be used.
-+ * macros below can be used.
-  */
+diff --git a/drivers/dma/amd/qdma/qdma.c b/drivers/dma/amd/qdma/qdma.c
+index b0a1f3ad851b..17a876df9fb3 100644
+--- a/drivers/dma/amd/qdma/qdma.c
++++ b/drivers/dma/amd/qdma/qdma.c
+@@ -283,16 +283,20 @@ static int qdma_check_queue_status(struct qdma_device *qdev,
  
- #define REG(r) (dispc_common_regmap[r ## _OFF])
-diff --git a/drivers/gpu/drm/tidss/tidss_plane.c b/drivers/gpu/drm/tidss/tidss_plane.c
-index a5d86822c9e3..1396bbf9616f 100644
---- a/drivers/gpu/drm/tidss/tidss_plane.c
-+++ b/drivers/gpu/drm/tidss/tidss_plane.c
-@@ -59,7 +59,7 @@ static int tidss_plane_atomic_check(struct drm_plane *plane,
+ static int qdma_clear_queue_context(const struct qdma_queue *queue)
+ {
+-	enum qdma_ctxt_type h2c_types[] = { QDMA_CTXT_DESC_SW_H2C,
+-					    QDMA_CTXT_DESC_HW_H2C,
+-					    QDMA_CTXT_DESC_CR_H2C,
+-					    QDMA_CTXT_PFTCH, };
+-	enum qdma_ctxt_type c2h_types[] = { QDMA_CTXT_DESC_SW_C2H,
+-					    QDMA_CTXT_DESC_HW_C2H,
+-					    QDMA_CTXT_DESC_CR_C2H,
+-					    QDMA_CTXT_PFTCH, };
++	static const enum qdma_ctxt_type h2c_types[] = {
++		QDMA_CTXT_DESC_SW_H2C,
++		QDMA_CTXT_DESC_HW_H2C,
++		QDMA_CTXT_DESC_CR_H2C,
++		QDMA_CTXT_PFTCH,
++	};
++	static const enum qdma_ctxt_type c2h_types[] = {
++		QDMA_CTXT_DESC_SW_C2H,
++		QDMA_CTXT_DESC_HW_C2H,
++		QDMA_CTXT_DESC_CR_C2H,
++		QDMA_CTXT_PFTCH,
++	};
+ 	struct qdma_device *qdev = queue->qdev;
+-	enum qdma_ctxt_type *type;
++	const enum qdma_ctxt_type *type;
+ 	int ret, num, i;
  
- 	/*
- 	 * The HW is only able to start drawing at subpixel boundary
--	 * (the two first checks bellow). At the end of a row the HW
-+	 * (the two first checks below). At the end of a row the HW
- 	 * can only jump integer number of subpixels forward to the
- 	 * beginning of the next row. So we can only show picture with
- 	 * integer subpixel width (the third check). However, after
+ 	if (queue->dir == DMA_MEM_TO_DEV) {
 -- 
-2.46.0
+2.39.2
 
