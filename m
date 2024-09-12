@@ -1,64 +1,65 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094E618028;
-	Thu, 12 Sep 2024 13:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F80F19FA91;
+	Thu, 12 Sep 2024 13:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726148832; cv=none; b=IFGWi++aSBZnp8OVYJHY80nzCoSPou1EYqUAKg3qefyj93g0TbZUfNd+RUL6MpXhe/ePjyqO+72MLie1zPOIUkWVB+4+12VSWj4PuuHt8AA4Fan14+x0kB/0SaD2AAePW+mnNUt7TRs1lq9IgzD1BTrRXmYMQmssr+KYxKajiPk=
+	t=1726149220; cv=none; b=nl0z9Npddb2N4Elg/hv8R6XULFDHZbh7WMzQ391qL5q25ou2pbS7YlVkA4ylaJqiytwsdbU2RbLWNFhnCdnlgjJVg6t0JCK7l4fp5xxJsXa5iyHn1xYGvKgI8KZYwPpJSAYTJJx6BjZcXkd/TQTfbk1w5frGY9Y5WeCzWS7yNUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726148832; c=relaxed/simple;
-	bh=vxlZxlE7+5rpc2cmj8uCHYV4Bo6FpRGIrzc8t3rw/dM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=OYPkqU5ZAvU7H3tlilXDjJopFoPKSXp7PScMQZO+0XpLeIYfhixoOLuLPN9/Pz573bWBuivcH5cdRCiB3yso45X8TxOScMc8Yw49Tti7TLWoeclWCtG6cIL5SLXaKP8KJ9+nthoClHRCLLnL/OYt3bHDOTLcTYuI/eaOAytqBxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gMEHe9CK; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1726149220; c=relaxed/simple;
+	bh=zrZNPt5QonukQny2WMS7XcM8c81dAvEiuCu94Zb0S5k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ot9eyDOH1crMfDDwnrRqFnQ7Ab3PvLw9iJOc8on+o6qufLJiWfELsL1svKZDGYmihfPE9JaWYzwFi4EAT5d2q+U9gAK6LHJLBPHZi7nQKZPexDq+YpJy1QnAa/qHVfMcwSdLOuZmGO4/V5jo4UurYlDr/yGrVGI2JaeysnP71rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QoWTZglg; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gMEHe9CK"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42bb7298bdeso11170155e9.1;
-        Thu, 12 Sep 2024 06:47:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QoWTZglg"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-374c84dcc90so720764f8f.1;
+        Thu, 12 Sep 2024 06:53:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726148829; x=1726753629; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726149217; x=1726754017; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iX3nLJDVZKTgpr5b7V5HsEySQIl9g2HiZwb8C583JSM=;
-        b=gMEHe9CKI0PrzisyCJ80AVwyo53dH30tN2QqpK3HZcAUVuUYAcBdyujrZDvEkwJdGH
-         SaxQcE1TgqXVFV3XvEQEoyULa3IlCu9k+tzOYJxWBdD5kWgXaWF1KunfGDqPMvJ7DYuP
-         1V1xGWbgRea/DzWTa6qIznb1BbU1e4oJV5b739XNRvY0Mmqt2yn1Ogo7Gh7Xzdpj9Zk5
-         cCShtnLudDMCtOe5QCwJt33+V8SczKqZ+Hor0L/nFdyJ5bCWyZObKA9hnRxxPpCN0td0
-         Sa6Lg32HIiwhj9/nnYw2TdEas/J2b0Eg3ebP/3U98/vUW9LHize17ULp2TPQ4Dpl3Yw3
-         2Few==
+        bh=tnrCWFAarNQ9FhphdRh3bfMZwRdSY8tJKESHBkiSHo0=;
+        b=QoWTZglgPH67iuUJC3xZecbKKmTkw4aOrFuvlc23zibmqE16htRZAi+n9NdPuvD5lV
+         BRxctdFp2ZcWXpZ4Gx6MoAIBFJkDmGYQ7JRIr6wzDlNzaIWmroTJKSlxlpNCfwXZFAbk
+         6zj8Qtolxf+SDCd4JUviscZMmrJspGbr7sMQosZ0c71Fwelr0Pf8apuc7LyKt0FoQips
+         zUgJdDUZfkpukMdoPza3z3ufmrbYRp7QYU0y7gEoEqtvorPjWUz7lVsHwaaen9FVkuU/
+         r1SZznr3sNiIeetP7SlGlG0rmpPrCMk/1UeLXGjOD8RrN2stHdDwNomwmjyCnhmdQ+RV
+         /dyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726148829; x=1726753629;
+        d=1e100.net; s=20230601; t=1726149217; x=1726754017;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iX3nLJDVZKTgpr5b7V5HsEySQIl9g2HiZwb8C583JSM=;
-        b=u737fuSK6Rk7+qMpqhsfK4pdb9YVRsWMc3djKJ2NH979LX4eUFaiI0XjswyWr0b4CE
-         L33W1XPk116dCa966KWPjnTkPNoDN8sM9FMqRmfdK2tpSsVXEhfVu3jQXox4bB9DUI60
-         jcCWDq2XhE3M0subb6E/Iyeg2VeTSPPi6wTXV1gHQokZN5YgkivDEf7F7RJxkHjdLl7e
-         Ny6a7Dg4nqsd/kGi5T4R1jRi57unDTyyOAoMxol8jDky770cjqma+jwFdzDSKRsM4s24
-         T8Bs/+59jOCN4RbU85GRr7Hb2fX4+dQQot50FjuyS/I7Luw6UCCN1AzE1dowY4IW6210
-         aPjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJnrOjYRfyGqBaLzPLa/1hWWHJsJmOW5dsHtNbuU4AeYpc38LRCB6KaQ4rCedBaY7URSrJ4Y8X8QQ=@vger.kernel.org, AJvYcCVqAIgCnxzRc+FMFKk3FBGtLJH5ITantcJZMsFLQikEB+3lUxKqdRMhmYlThHxPoK/0OC8qdzmLZB8Z1+DY@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRo/rgj7LwUQF/EuXRTkmxhEYiPBy2oFyyTBSJZ7G54oD829e4
-	S+fun5o5SR380rRjHvbXpMHGQUIg1EY+NnT/+pjui0W8SZulTUYw
-X-Google-Smtp-Source: AGHT+IHC9XdTfjx/pAFpCWOVNlEvNdPSxj0PhGBxUQzvdOJaDkYwYMFE0pIfnhtZoKKfXpXw6UMUhw==
-X-Received: by 2002:adf:a356:0:b0:374:ce15:9995 with SMTP id ffacd0b85a97d-378c2d03afbmr2287871f8f.34.1726148829162;
-        Thu, 12 Sep 2024 06:47:09 -0700 (PDT)
+        bh=tnrCWFAarNQ9FhphdRh3bfMZwRdSY8tJKESHBkiSHo0=;
+        b=a5WffU5Y/SMl9w70+OLgdmD9kxmsgYi9qLfZO/cGQjlhObgFwnCMEQtzI/4UAgWRi9
+         AE13yfKwSE4+RAf1vRWtfhNsGNhGCA2KJ23NxQ0NTW2P0pJX4+baSSoxQPNs8E+6n7py
+         oVqpTENspvta59jb1ISiRnz90gxwCVydim8iI3wr+iagoHpJtVZR76TQ8mRscmb+qtNp
+         L0exPgqzVNymx0XU1Tqx9ftL6WVpRqS1tlyQdIGp6RbONDS0O5Z9KTw+gzSSEtuAEzGo
+         950tlRTRdMI/y5Uw7QUe+0V+2PWB6Agy0jBfwKUcwDjPeJYhplN/Qiv/n8hsC/BQglNl
+         3axA==
+X-Forwarded-Encrypted: i=1; AJvYcCULIXkIokdiaeEZ3vscKBGZiV9xh2uW9UvzhzCl0LW3OqP235awm2xBkq80/X87pNofMNOl3+76NHRzSvD3TtE=@vger.kernel.org, AJvYcCVvuXtFajfsU1wd0BQU5YKJc3WT2a2QgRyBhGhZybW/9i5Mzl7le3LMA4pvDs4QAQoCEhx+ZWqC0/c3nB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6b6vgSD4JVbjS5/kAi0OE63ZssMEzgZGDzH+yvDjPI5o/gSoB
+	U4K7DJQraLQov9QMgR8/KKxU/i+3loKErWQ3w0S59dYgQiSmj3iU
+X-Google-Smtp-Source: AGHT+IH0nkooPLIJ3P85N3obDRyVnvq3Vt55M2xXwEhBSW0gfYXhX1dJVuzwwz0IJ+DI6MNuoJQmKw==
+X-Received: by 2002:a5d:5747:0:b0:374:c4e2:3cad with SMTP id ffacd0b85a97d-378c2d5b237mr1525655f8f.52.1726149217282;
+        Thu, 12 Sep 2024 06:53:37 -0700 (PDT)
 Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956ddaf3sm14460588f8f.96.2024.09.12.06.47.08
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956653d1sm14430067f8f.33.2024.09.12.06.53.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 06:47:08 -0700 (PDT)
+        Thu, 12 Sep 2024 06:53:36 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
+To: Ping-Ke Shih <pkshih@realtek.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Dmitry Antipov <dmantipov@yandex.ru>,
+	linux-wireless@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] clk: lmk04832: make read-only const arrays static
-Date: Thu, 12 Sep 2024 14:47:07 +0100
-Message-Id: <20240912134707.590224-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] wifi: rtlwifi: make read-only arrays static const
+Date: Thu, 12 Sep 2024 14:53:35 +0100
+Message-Id: <20240912135335.590464-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -69,36 +70,61 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Don't populate the read-only const arrays pll2_p and dclk_div_adj
-on the stack at run time, instead make them static.
+Don't populate the read-only arrays params, toshiba_smid1, toshiba_smid2,
+samsung_smid and lenovo_smid on the stack at run time, instead make them
+static const.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/clk/clk-lmk04832.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../wireless/realtek/rtlwifi/rtl8723be/hw.c    | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
-index c997e7491996..2bcf422f0b04 100644
---- a/drivers/clk/clk-lmk04832.c
-+++ b/drivers/clk/clk-lmk04832.c
-@@ -375,7 +375,7 @@ static unsigned long lmk04832_vco_recalc_rate(struct clk_hw *hw,
- 					      unsigned long prate)
- {
- 	struct lmk04832 *lmk = container_of(hw, struct lmk04832, vco);
--	const unsigned int pll2_p[] = {8, 2, 2, 3, 4, 5, 6, 7};
-+	static const unsigned int pll2_p[] = {8, 2, 2, 3, 4, 5, 6, 7};
- 	unsigned int pll2_n, p, pll2_r;
- 	unsigned int pll2_misc;
- 	unsigned long vco_rate;
-@@ -637,7 +637,7 @@ static int lmk04832_register_vco(struct lmk04832 *lmk)
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/hw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/hw.c
+index 0e77de1baaf8..bcfc53af4c1a 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/hw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/hw.c
+@@ -2040,31 +2040,33 @@ static void _rtl8723be_read_adapter_info(struct ieee80211_hw *hw,
+ 	struct rtl_priv *rtlpriv = rtl_priv(hw);
+ 	struct rtl_efuse *rtlefuse = rtl_efuse(rtl_priv(hw));
+ 	struct rtl_hal *rtlhal = rtl_hal(rtl_priv(hw));
+-	int params[] = {RTL8723BE_EEPROM_ID, EEPROM_VID, EEPROM_DID,
+-			EEPROM_SVID, EEPROM_SMID, EEPROM_MAC_ADDR,
+-			EEPROM_CHANNELPLAN, EEPROM_VERSION, EEPROM_CUSTOMER_ID,
+-			COUNTRY_CODE_WORLD_WIDE_13};
++	static const int params[] = {
++		RTL8723BE_EEPROM_ID, EEPROM_VID, EEPROM_DID,
++		EEPROM_SVID, EEPROM_SMID, EEPROM_MAC_ADDR,
++		EEPROM_CHANNELPLAN, EEPROM_VERSION, EEPROM_CUSTOMER_ID,
++		COUNTRY_CODE_WORLD_WIDE_13
++	};
+ 	u8 *hwinfo;
+ 	int i;
+ 	bool is_toshiba_smid1 = false;
+ 	bool is_toshiba_smid2 = false;
+ 	bool is_samsung_smid = false;
+ 	bool is_lenovo_smid = false;
+-	u16 toshiba_smid1[] = {
++	static const u16 toshiba_smid1[] = {
+ 		0x6151, 0x6152, 0x6154, 0x6155, 0x6177, 0x6178, 0x6179, 0x6180,
+ 		0x7151, 0x7152, 0x7154, 0x7155, 0x7177, 0x7178, 0x7179, 0x7180,
+ 		0x8151, 0x8152, 0x8154, 0x8155, 0x8181, 0x8182, 0x8184, 0x8185,
+ 		0x9151, 0x9152, 0x9154, 0x9155, 0x9181, 0x9182, 0x9184, 0x9185
+ 	};
+-	u16 toshiba_smid2[] = {
++	static const u16 toshiba_smid2[] = {
+ 		0x6181, 0x6184, 0x6185, 0x7181, 0x7182, 0x7184, 0x7185, 0x8181,
+ 		0x8182, 0x8184, 0x8185, 0x9181, 0x9182, 0x9184, 0x9185
+ 	};
+-	u16 samsung_smid[] = {
++	static const u16 samsung_smid[] = {
+ 		0x6191, 0x6192, 0x6193, 0x7191, 0x7192, 0x7193, 0x8191, 0x8192,
+ 		0x8193, 0x9191, 0x9192, 0x9193
+ 	};
+-	u16 lenovo_smid[] = {
++	static const u16 lenovo_smid[] = {
+ 		0x8195, 0x9195, 0x7194, 0x8200, 0x8201, 0x8202, 0x9199, 0x9200
+ 	};
  
- static int lmk04832_clkout_set_ddly(struct lmk04832 *lmk, int id)
- {
--	const int dclk_div_adj[] = {0, 0, -2, -2, 0, 3, -1, 0};
-+	static const int dclk_div_adj[] = {0, 0, -2, -2, 0, 3, -1, 0};
- 	unsigned int sclkx_y_ddly = 10;
- 	unsigned int dclkx_y_ddly;
- 	unsigned int dclkx_y_div;
 -- 
 2.39.2
 
