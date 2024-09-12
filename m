@@ -1,156 +1,112 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67E51A2620
-	for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 14:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B51C1B29D8;
+	Thu, 12 Sep 2024 14:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726151664; cv=none; b=VSLA2A+ZDnQ2HFg2uKWzDUZHsOEBeOdtVvqk8bgOxOrt5gB8nU0lvo3EMN1yUa9T2/Vbi0xvLWHHIE4YsA1G30d1hHyfrerFPzLqBTgAFyQ+VwiLNJCZwdRyt9gq4uSzKDtVimVA1FN+oN+g5FFX4EY4VWWOdXR9u3ajqYB/lyo=
+	t=1726152159; cv=none; b=cXvEgqea1Bole+XcAJjBd+r7qo3erH6l9h9o2GMl//JDv8693MbWY5MWuY4VyT7sNGAlMPtTqhJMdY8hG6/uQhVE+ZTwX16HdVSwFCYdK18xOHyAcZzzmSi7TpjuevTphFnBiEboqWG39L3EuSmz9OyzVJAAINQbn0cSiNKo37I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726151664; c=relaxed/simple;
-	bh=DJE0DRhRrZx0poW9FyD9I9S+fR0Mtw1PPBG6E2yQo80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YJ/Aa835a2gQaD7LfPG+iOiFkx1/aSoW9m5cK0kjXjOKQhbLRl59pqgFUeGlrF+ej06q1PhQJFmH2tCS3kZhIpHOWh9hpOvBuAJdogtbea4sfSHQzko0PoP6KkJ9Ellki7hfHgEVxQxEmr/r+PwvP+wCdyfgs3ugVTZaJLeMGh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G2ZjJpoP; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1726152159; c=relaxed/simple;
+	bh=91sx6RJPRKi/SF2wNV/FtFMeGIDPbpp1+rwQhhnZcWo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gMcGHxmQVh1m/2hgC6jY4MdZQpG04C/1BMkl3o8t17g/t834fZXm2deHcr8IpeLw+xqIZIoXqhwXUG70Lp2gIk7UYhgDu4ypthGV026ErtUa8N+4pb8e1d2GYv/zSXzX7v8cd1ZKvLxB6FLAwLhLuG0iGeE6FBPUg00sFnirbmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=caoD8z4U; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G2ZjJpoP"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d4979b843so143474566b.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Sep 2024 07:34:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="caoD8z4U"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f753375394so10864531fa.0;
+        Thu, 12 Sep 2024 07:42:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726151660; x=1726756460; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=C0EX2HgjxVqPKhpgg8LeyGWrmDZwY+66ETGwtRW0sa0=;
-        b=G2ZjJpoPppCbyN8g0vJ0FfDBrT17EsgQwimGq1VKzeO9ZjGIIqcbjdFFdVAciZ75x+
-         4F4lKxDVRAb27hRFLWZ5pPhnPQPKLEqANP4+hhbtZ485OszbquwUMvIg1gtfOIElN4lH
-         ILfXi4gq4pmDRlQ2QEMZRM8qgubMoCkQdb0PCeDfXmtzseWY/XY4kXW9hUI3eOAReY/F
-         XNnMTjflX2A9X9g6cx+um7WLkgLUt/jz1r1IDzMVlTqAAZNZXXaUQpP74+Nd8hQgDQCN
-         iZ2O7ZsXbClDAY2FdxmNqL1JBL4by2hBGfQTbny7qmivyAf4xNDHDLSkqh3/PA5FTMH5
-         p8QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726151660; x=1726756460;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1726152156; x=1726756956; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C0EX2HgjxVqPKhpgg8LeyGWrmDZwY+66ETGwtRW0sa0=;
-        b=kKs0xA7GV+xcU/26pRjDDVzLn+pDvurxJSjKSAyvypC0SR9B6kUBAhQSyzmHOx2UtT
-         0YbWt+7DV9hXgdBu2+HkeUgndgWmpeIeXw80VCRzyw7Q48b8ITNM+5vyMs7oXbE+VbJI
-         rYqF+3qtVdRofK9ReprvO+ezLz3Wor1PH9mb7vvstJTblIy/K4RuAlrzoZRx9+KvnM0o
-         M2D2lRppzyMn1Ww1sF9zUK5ArH2OoS5rWCntAuhy0yfubKEDIQxeXhkx2aHRIkjJo5Ig
-         Z6iqqM7BKK8CbheKals8Ai5Eg94S8t7IxX4l1au9Ylyo9FfB3JRhQidXymT1VPI5bFJR
-         TG+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXODT4tQfrWetCh/f4xN9UEJk7uN5yBuwXgWpQKqHcVKhnthcbhhLTkS8JOF6iy42SSRzLsO0excCT7JlRlLSc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpShuRpH0TTFa3NQnBBJjcMf4T60Zo+Miba8U43M67VhNYIKKE
-	23cxyuVawqy+iuVKfEKN769ght/CBjlabhyYGhAHVT8bipjnaP9kPV4Ip45o5LLTDHyQZxECEnC
-	u
-X-Google-Smtp-Source: AGHT+IEZpHU5GPSEYNt4f6RP6dOCgWy9SFNFI4vKccv9wXlXdQJTjacS5RvK88el5ye4+T2LAQ4vRQ==
-X-Received: by 2002:a17:907:961e:b0:a8d:4f8e:f64d with SMTP id a640c23a62f3a-a902966826dmr288121066b.54.1726151659983;
-        Thu, 12 Sep 2024 07:34:19 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ceed73sm759096666b.174.2024.09.12.07.34.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 07:34:19 -0700 (PDT)
-Date: Thu, 12 Sep 2024 17:34:15 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ALSA: control: prevent some integer overflow issues
-Message-ID: <e364e109-5dac-4a24-b179-af0ee5659990@stanley.mountain>
-References: <0f03d569-9804-4617-a806-f0e5c32399fb@stanley.mountain>
- <87v7z1yyok.wl-tiwai@suse.de>
- <20c99f50-948e-4076-ba28-9640c3cd982d@stanley.mountain>
- <72907305-eddc-4fb4-9c74-7e1d2750f4b9@stanley.mountain>
- <87r09pynn5.wl-tiwai@suse.de>
+        bh=iG3G/xLcDil7XGiRva1vgweHYXBREJkLBp9yBjpfHAc=;
+        b=caoD8z4Uh4EDnhyAEtd3UnCO6T8s0lpgYWKfPlBN0QBQxvD1r8F/dzeNFxyH696t1+
+         MSOrcgx3DocXDapuRE0+s7UFg5lKz0YlhkBLxYyw4xHS5/xtm2zoixwSmd/hnwHUw9lw
+         sBfiP/yAhKf8wT8QybtLlf9ZxT9FklsmUxnLYh6WwV8sc+AfPcyckqvAaEMACBQ90EUi
+         aOFSHwHHi9pegylf6nVR4wLhAEH+fZYCoiX90o7TwsHUdVuvtVDWJVpteMUsyvOpP5Lx
+         El4DUtizjnSbNOH4cd/Xkdf6w53xYOHPL+mm+kHa8Pu9x1C7BXsd5YQwwkhaUnlKpunD
+         21+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726152156; x=1726756956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iG3G/xLcDil7XGiRva1vgweHYXBREJkLBp9yBjpfHAc=;
+        b=bvodwjXqbYkmw9KlK0I/BaAtQ78OLTPQoBMRzvCjh0w0/73CvJzw782qSwAGJb3uj5
+         G1rdRCAvAqd/YekWTQ86IE2Vb1Dw4RqIHwxBuu5Mr2abVLxSZVhu5uipZveNjEbeqYi8
+         DmMwp+WrlWEa9UJU/naPc+jF3W0j9QLKrzhaS5mMHqpr1DYmVyp/xH4330qXyoDQwxQ/
+         r1ZQ1jBwc3Kfbf5TDAFpgyDj2vdqOSH1SidqeRhU/XHNfW+d8WpfE9LdJPIKv2cDM5j5
+         fBC5OKnypBUIl1YUdrgGGIBj62N0CDJRNENzq9tA3m049K9P46HX65VfKSlbpMF8LlMX
+         VFMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPPs9Q4kaCrLBDijJ0fnmBQdJJ5sFm9PZfuJEa5RUvT+TFH92dh9AinwdlMn5VXcLBenfuFeeuORyA@vger.kernel.org, AJvYcCV4kKnyME+/3RCaEckx8dEa1Lf/3jJqKelECQtwcm+1rsrjunqwiP1UK7QuMberOzl7/N97s130HoCv4Buq8nQ=@vger.kernel.org, AJvYcCXXNHPzD4wZ4M+PpvOA2jkL2uuJ41DsSQ/sjdKC+DMpIkAyZXDnI/TVljO1MWzHfyVx51SThRdVVEIw4HL+@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlvwNbAzpvKSPye/Iji1EGDwjudtshHhWXb6wF/IWjfYBJdScE
+	BUICyugZNiEIjvaa1xg0GKJyMd2OqyWekJDmBsHterTDpQpiIAMMQbTYhREoG4b48NjpOcNszHP
+	OAPsz5YaXXlP0sYQR/ywmvQqJ87w=
+X-Google-Smtp-Source: AGHT+IGdobJgRH1oCohv5p95eKFDPxU3nMr6+b6rc7idMrPbiLUTkf1xpRJT4kpxo76xtfNW/i/DACn6DwZgd8XJkhM=
+X-Received: by 2002:a2e:bc29:0:b0:2f6:9787:5fc0 with SMTP id
+ 38308e7fff4ca-2f787f4f415mr20374301fa.40.1726152155860; Thu, 12 Sep 2024
+ 07:42:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87r09pynn5.wl-tiwai@suse.de>
+References: <a0fdf90803ab44508aa07f9190af5e00272231df.1704545258.git.christophe.jaillet@wanadoo.fr>
+ <z5qdyk2onwohenaclbflb7jlfn3wadafjpxsxzpvkmax75mpvg@vhhasuuutjzh> <CAMj1kXFH+zB_YuUS+vaEpguhuVGLYbQw55VNDCxnBfSPe6b-nw@mail.gmail.com>
+In-Reply-To: <CAMj1kXFH+zB_YuUS+vaEpguhuVGLYbQw55VNDCxnBfSPe6b-nw@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 12 Sep 2024 17:41:58 +0300
+Message-ID: <CAHp75Ve7ZfiT-apRwSS8Cjh7n4CptC2h8AWxfGh346mNhPL1tg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] i2c: synquacer: Fix an error handling path in synquacer_i2c_probe()
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Andi Shyti <andi.shyti@kernel.org>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Wolfram Sang <wsa@kernel.org>, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 12, 2024 at 04:03:58PM +0200, Takashi Iwai wrote:
-> On Thu, 12 Sep 2024 14:44:30 +0200,
-> Dan Carpenter wrote:
-> > 
-> > On Thu, Sep 12, 2024 at 02:29:58PM +0300, Dan Carpenter wrote:
-> > > On Thu, Sep 12, 2024 at 12:05:31PM +0200, Takashi Iwai wrote:
-> > > > On Thu, 12 Sep 2024 10:51:14 +0200,
-> > > > Dan Carpenter wrote:
-> > > > > 
-> > > > > I believe the this bug affects 64bit systems as well, but analyzing this
-> > > > > code is easier if we assume that we're on a 32bit system.  The problem is
-> > > > > in snd_ctl_elem_add() where we do:
-> > > > > 
-> > > > > sound/core/control.c
-> > > > >   1669          private_size = value_sizes[info->type] * info->count;
-> > > > >   1670          alloc_size = compute_user_elem_size(private_size, count);
-> > > > >                                                                   ^^^^^
-> > > > > count is info->owner.  It's a non-zero u32 that comes from the user via
-> > > > > snd_ctl_elem_add_user().  So the math in compute_user_elem_size() could
-> > > > > have an integer overflow resulting in a smaller than expected size.
-> > > > 
-> > > > So this should also use the overflow macro, too, in addition to your
-> > > > changes?  Something like:
-> > > > 
-> > > > --- a/sound/core/control.c
-> > > > +++ b/sound/core/control.c
-> > > > @@ -1618,7 +1618,7 @@ static int snd_ctl_elem_add(struct snd_ctl_file *file,
-> > > >  	struct snd_kcontrol *kctl;
-> > > >  	unsigned int count;
-> > > >  	unsigned int access;
-> > > > -	long private_size;
-> > > > +	size_t private_size;
-> > > >  	size_t alloc_size;
-> > > >  	struct user_element *ue;
-> > > >  	unsigned int offset;
-> > > > @@ -1666,7 +1666,7 @@ static int snd_ctl_elem_add(struct snd_ctl_file *file,
-> > > >  	/* user-space control doesn't allow zero-size data */
-> > > >  	if (info->count < 1)
-> > > >  		return -EINVAL;
-> > > > -	private_size = value_sizes[info->type] * info->count;
-> > > > +	private_size = array_size(value_sizes[info->type], info->count);
-> > > >  	alloc_size = compute_user_elem_size(private_size, count);
-> > > >  
-> > > >  	guard(rwsem_write)(&card->controls_rwsem);
-> > > > 
-> > > 
-> > > I've reviewed this some more and those changes are harmless but unnecessary.
-> > > info->count is checked in snd_ctl_check_elem_info().
-> > > 
-> > 
-> > I also considered if I should fix this bug by adding checks to
-> > snd_ctl_check_elem_info() but I don't think that's the right approach.  I
-> > couldn't see how it would work at least.
-> 
-> OK, so it doesn't seem affected in the end.
-> The input values have been checked, and they can't overflow.
-> 
+On Thu, Sep 12, 2024 at 1:23=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
+ote:
+> On Mon, 6 May 2024 at 11:03, Andi Shyti <andi.shyti@kernel.org> wrote:
+> > On Sat, Jan 06, 2024 at 01:48:24PM +0100, Christophe JAILLET wrote:
+> > > If an error occurs after the clk_prepare_enable() call, it should be =
+undone
+> > > by a corresponding clk_disable_unprepare() call, as already done in t=
+he
+> > > remove() function.
+> > >
+> > > As devm_clk_get() is used, we can switch to devm_clk_get_enabled() to
+> > > handle it automatically and fix the probe.
+> > >
+> > > Update the remove() function accordingly and remove the now useless
+> > > clk_disable_unprepare() call.
+> > >
+> > > Fixes: 0d676a6c4390 ("i2c: add support for Socionext SynQuacer I2C co=
+ntroller")
+> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> >
+> > Applied to i2c/i2c-host-fixes.
+> >
+>
+> These patches should be reverted: ACPI boot on SynQuacer based systems
+> now fails with
+>
+> [    6.206022] synquacer_i2c SCX0003:00: error -ENOENT: failed to get
+> and enable clock
+> [    6.235762] synquacer_i2c SCX0003:00: probe with driver
+> synquacer_i2c failed with error -2
+>
+> as in this case, there is no clock to enable, and the clock rate is
+> specified in the PRP0001 device node.
 
-Ugh...  I need to send a v2.
+I have just sent a fix, please test.
 
-The bug is real on 32bit systems, but reviewing it more, I don't think it affects
-64bit systems.  And I made a mistake.  We do need to change the types in
-check_user_elem_overflow() but the negative values were intentional in
-replace_user_tlv().
-
-	if (check_user_elem_overflow(ue->card, (ssize_t)(size - ue->tlv_data_size)))
-
-The size variable is the new size and the ue->tlv_data_size is the previous
-size.  So making the buffer smaller is fine but going over the user limit is
-not.  So I need to re-write this as:
-
-	if (size > ue->tlv_data_size &&
-            check_user_elem_overflow(ue->card, size - ue->tlv_data_size))
-		return -ENOMEM;
-
-regards,
-dan carpenter
-
+--=20
+With Best Regards,
+Andy Shevchenko
