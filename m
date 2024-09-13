@@ -1,112 +1,127 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263571C14;
-	Fri, 13 Sep 2024 17:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DBA148317;
+	Fri, 13 Sep 2024 19:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726249087; cv=none; b=OAt5GOsWWdpQ/i/5EelzWW1PewpejryH0aQlRryAE/gfvfq3AdOR8lCoYwZDVMdEk60VNHN8knsYusnio7v+brRyw1bLhdYSoCInWrQ2y35P4ZXY8EnQK2p4FUcoUNeN4BHoXjWXSlxEMnVkopEOmNpOQ1iCiC7sQFHm1ShQDWU=
+	t=1726256396; cv=none; b=SoFkJrRKymsZRpDcg3+0W6Xa1o5gWXPdc/Zi96NWcyXFr3SBIPTzFSmI0i4lV404/zklr+p8wxIKgys959NhNLmQsZ8wM8btOIgaGAAwwio6/+uIuJml6ehfK7xnp8c8jw/Ppn5fBUH4pbuUWtqJR3sYtZhOJXdDPZxczQT+2yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726249087; c=relaxed/simple;
-	bh=fY3qP5ltlCZX+yqPpCa+44KaFwjOZwWMYefZqtJZzKk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sFlYSyDGUKkJcuBByUm7G5u0MGqVJVAi8wCtbCBnvDK8hWFs2eMT5jgta5qFzTwtIEQRjpuWFlkZtZYd2NtRmpq0YdaKn0JMNxUpQWKKQCfS9NVBD6E8EQ4teUgVuTlBgk0I8sA+P2N+byunL6kdBOXcjd5W0cQX5OackJC3oCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VlKRSWa5; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1726256396; c=relaxed/simple;
+	bh=RUEVWgvk6mTpIhbMZyR3ybMcrifXc1NcuV8nvnQ7Z2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=vCxdK4OLFKC0LK+XisbOKCIj6R5G9DJFAg0R+zDGUOP+dt3qc0nTXaJt3E2A09EwYND+DvaNI8QcI2g5tlD5eJyEAkyL614jGZpkUyPIW8KNBH1+V1IbU0F+JLu3g4/A+Z5a/htxr8ZFmgQtQt0IfrGRc18Y2IiU1CqbHCsHWTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XkPfKM2l; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VlKRSWa5"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a90349aa7e5so249833066b.0;
-        Fri, 13 Sep 2024 10:38:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726249084; x=1726853884; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1ZYRNlSQLbgqSh8L6zRzv83U3SkXdqIYSdeXiPhSUzo=;
-        b=VlKRSWa5vmbSPZ89gmzFDrSV5ntEt9eFMzL9IK03AIniXn6XKDOx7lJxPMRa2jrlpJ
-         ejzMa/ThPSQDUhcS3k/RYcKBZfixifgTnzYT06Df9PJgrB6UC0FwNM6wXR35woZPaUbQ
-         Dj9l6wUurw6fz43LK67b8RHEAqyzM9Rtmwet1W2dfvn2sRBDHU2TWMv3H/8hv1RJmqXj
-         XunpfZJAlpAzr75moc3alrtTJ0tcCJbZaV1yvgN3MAMPMapaltECXew8SDrbi3kxXeQ7
-         fFoCprcZvJyo6hlyfvsciAb2UsN/wLcmetJfe9MbAIbQ88lp6rM+dmnF0I2XvFGqgIIS
-         oNrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726249084; x=1726853884;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1ZYRNlSQLbgqSh8L6zRzv83U3SkXdqIYSdeXiPhSUzo=;
-        b=QQ2m/XDkau0RzH5AjZqC2k4v5xmkRBbVM16tAgij2ODNisg5yTZEp8miBMISgXGG52
-         RnX/+zeL9LN8I6bRjF1TwoIfAYz5Jgj3/ecCuYOU43vHB4vO7VM1i2we7/1YSnritDNV
-         MFg0QXXgZ2pTLW9gPqEyDBbFF8RPEPkW7b+iQr0oIJtzAit4V6d07Ijm9mgBqE280JIF
-         bTsZQhQ4V5Gwvoa6dMzVD8fwKRieHnLu+CcL4/voHMMefvdazlk1Q9bEPa/h7hfg7VOG
-         i2MX4rv396Psb1JDf8wRWxmZyc8uG5ZNrGFUmTAe0nfoBGIuoZil7cC74ne5usm4ZfQQ
-         6VZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPWlB9KCqVSnsNRxx6tziJ3hxK6DY02UbRnHzIayvjOArc5m74npvKkqBUAbHve9N3/hZ3ZT+kLuQNjj1Cac1C@vger.kernel.org, AJvYcCVt8h0lMX6WXFtSI8Taf+/q+WX9+2Ho9HlPocdh3Wj9YXP6QhDqjAEaMo6UkDAY47onlojgjbICsCM=@vger.kernel.org, AJvYcCWkFkVD67NWr0WRGNuqXBYtGzFO7Rthu1d8wrymAdQjEHlCW0XSjCG7+MfGy8gZpre88OTy3E5zSpnXY5tL@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLPJcypOHRSAmENZPUojP9gDWrzuHzy51Wc/YegjMrtbWoU6vS
-	RexuBgm6NIJlHhgY+zHtMRPPfhUYgvcVraZwXVOL4AeiNk+qiTd/mSKWFg==
-X-Google-Smtp-Source: AGHT+IHIPf2510kWSaFZLijAQCgplBcwd6nKeIqcCMsTFc9d1JBSI93TxnKzIR2l1szbD/0jgEvkWA==
-X-Received: by 2002:a17:907:f156:b0:a8d:11c2:2b5 with SMTP id a640c23a62f3a-a9029448c46mr615050166b.21.1726249084081;
-        Fri, 13 Sep 2024 10:38:04 -0700 (PDT)
-Received: from giga-mm-1.home ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25835551sm895717866b.24.2024.09.13.10.38.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 10:38:03 -0700 (PDT)
-Message-ID: <de829772e1928cb5707fdae9cb72fe5885216db7.camel@gmail.com>
-Subject: Re: [PATCH next] dmaengine: ep93xx: Fix a NULL vs IS_ERR() check in
- probe()
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Nikita Shubin
-	 <nikita.shubin@maquefel.me>
-Cc: Vinod Koul <vkoul@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Date: Fri, 13 Sep 2024 19:39:10 +0200
-In-Reply-To: <459a965f-f49c-45b1-8362-5ac27b56f5ff@stanley.mountain>
-References: <459a965f-f49c-45b1-8362-5ac27b56f5ff@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XkPfKM2l"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1AF3C4CECC;
+	Fri, 13 Sep 2024 19:39:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726256396;
+	bh=RUEVWgvk6mTpIhbMZyR3ybMcrifXc1NcuV8nvnQ7Z2Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XkPfKM2lxkNEq4p+g6nAtThYVWFspucb3zEcTqZK0ROXAA8mOSrVtvQLoozYScctH
+	 SBTLXvGAh0lKJ5YHPyPyocQi+ovGSmFHemw3x8I+O1ThIiSM2bR/efSkt1QUQvC+UL
+	 VHuiUdLcTt18LUH5/ZwYQWiDUAKqLPcGg4CwCY/zjHNDntiY4QSyHffri6UqkZeMkd
+	 YilGwuzVXjyDh83cj/j8sUQeB2pIkEyXnf46W6SnRw3YPEpAyMfZvIpNcJFieqMrXj
+	 iVlG5hZ6DKPDJhPAsLT4mxbDFpY5VLEjv2z/TI+I1hggUciRsR6Nr/uGfSo24Aq7Ru
+	 lNH23BRAfpEGQ==
+Date: Fri, 13 Sep 2024 20:39:50 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matteo Martelli <matteomartelli3@gmail.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Dan Carpenter
+ <dan.carpenter@linaro.org>, kernel-janitors@vger.kernel.org,
+ lars@metafoo.de, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: pac1921: add missing error return in probe()
+Message-ID: <20240913203950.06ed1603@jic23-huawei>
+In-Reply-To: <172604712407.3581.15543200034844778072@njaxe.localdomain>
+References: <1fa4ab12-0939-477d-bc92-306fd32e4fd9@stanley.mountain>
+	<36b1a47a-7af2-4baf-8188-72f6eed78529@wanadoo.fr>
+	<66b5c5df76766_133d37031@njaxe.notmuch>
+	<9a98aab5-bb68-4206-9ecf-32fbf6c9c7ef@stanley.mountain>
+	<20240810113518.2cbceb66@jic23-huawei>
+	<172604712407.3581.15543200034844778072@njaxe.localdomain>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dan,
+On Wed, 11 Sep 2024 11:32:04 +0200
+Matteo Martelli <matteomartelli3@gmail.com> wrote:
 
-thanks for fixing this!
-
-On Fri, 2024-09-13 at 17:35 +0300, Dan Carpenter wrote:
-> This was intended to be an IS_ERR() check, not a NULL check.=C2=A0 The
-> ep93xx_dma_of_probe() function doesn't return NULL pointers.
+> Quoting Jonathan Cameron (2024-08-10 12:35:18)
+> > On Fri, 9 Aug 2024 18:18:13 +0300
+> > Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >  =20
+> > > On Fri, Aug 09, 2024 at 09:31:43AM +0200, Matteo Martelli wrote: =20
+> > > > Christophe JAILLET wrote:   =20
+> > > > > Le 08/08/2024 =C3=A0 21:28, Dan Carpenter a =C3=A9crit=C2=A0:   =
+=20
+> > > > > > This error path was intended to return, and not just print an e=
+rror.  The
+> > > > > > current code will lead to an error pointer dereference.
+> > > > > >=20
+> > > > > > Fixes: 371f778b83cd ("iio: adc: add support for pac1921")
+> > > > > > Signed-off-by: Dan Carpenter <dan.carpenter-QSEj5FYQhm4dnm+yROf=
+E0A@public.gmane.org>
+> > > > > > ---
+> > > > > >   drivers/iio/adc/pac1921.c | 4 ++--
+> > > > > >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > > >=20
+> > > > > > diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac192=
+1.c
+> > > > > > index d04c6685d780..8200a47bdf21 100644
+> > > > > > --- a/drivers/iio/adc/pac1921.c
+> > > > > > +++ b/drivers/iio/adc/pac1921.c
+> > > > > > @@ -1168,8 +1168,8 @@ static int pac1921_probe(struct i2c_clien=
+t *client)
+> > > > > >  =20
+> > > > > >         priv->regmap =3D devm_regmap_init_i2c(client, &pac1921_=
+regmap_config);
+> > > > > >         if (IS_ERR(priv->regmap))
+> > > > > > -               dev_err_probe(dev, (int)PTR_ERR(priv->regmap),
+> > > > > > -                             "Cannot initialize register map\n=
+");
+> > > > > > +               return dev_err_probe(dev, (int)PTR_ERR(priv->re=
+gmap),   =20
+> > > > >=20
+> > > > > The (int) is unusual.
+> > > > >   =20
+> > > > The (int) explicit cast is to address Wconversion warnings since de=
+v_err_probe
+> > > > takes an int as argument.   =20
+> > >=20
+> > > I don't want to remove the int because it's unrelated, but Christophe=
+ is right
+> > > that the int is unusual.  We really would want to discourage that. =20
+> >=20
+> > Applied, but I'd ideally like a follow up patch removing the int and the
+> > couple of similar instances from this driver.  Anyone want to spin one?
+> >  =20
 >=20
-> Fixes: 4e8ad5ed845b ("dmaengine: cirrus: Convert to DT for Cirrus EP93xx"=
-)
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> I can spin the patch, but at this point I am wondering whether I should r=
+emove all
+> the unnecessary explicit casts that I put to address Wconversion
+> and Wsign-compare warnings. If that's the general approach to help readab=
+ility I
+> am totally fine with it.
 
-Reviewed-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+I think it is probably sensible to do so as mostly we know the value ranges
+etc so they don't matter.
 
-> ---
-> =C2=A0drivers/dma/ep93xx_dma.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+Jonathan
+
 >=20
-> diff --git a/drivers/dma/ep93xx_dma.c b/drivers/dma/ep93xx_dma.c
-> index d084bd123c1c..ca86b2b5a913 100644
-> --- a/drivers/dma/ep93xx_dma.c
-> +++ b/drivers/dma/ep93xx_dma.c
-> @@ -1504,7 +1504,7 @@ static int ep93xx_dma_probe(struct platform_device =
-*pdev)
-> =C2=A0	int ret;
-> =C2=A0
-> =C2=A0	edma =3D ep93xx_dma_of_probe(pdev);
-> -	if (!edma)
-> +	if (IS_ERR(edma))
-> =C2=A0		return PTR_ERR(edma);
-> =C2=A0
-> =C2=A0	dma_dev =3D &edma->dma_dev;
-
---=20
-Alexander Sverdlin.
+> > Thanks,
+> >=20
+> > Jonathan
+> >  =20
+>=20
+> Thanks,
+> Matteo Martelli
 
