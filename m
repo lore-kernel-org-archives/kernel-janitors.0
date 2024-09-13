@@ -1,107 +1,101 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C071DB522;
-	Fri, 13 Sep 2024 13:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BEA18054
+	for <kernel-janitors@vger.kernel.org>; Fri, 13 Sep 2024 14:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726233415; cv=none; b=ap+EW0zEUb6OMIwG6sQEb4Sc5LDDUPabzPtq5+9G0E/fJauSJTNF/NNxnXI4/2yKvL775n5qcPGIcHsx49b+99FAwHjBVyAkrinHMsRJIAP4BaQPVPuLYn+ZFXVI0F1Scnv627U8aBNOGkAFEGpKIncKx5VFETE/TGdK7cNROBc=
+	t=1726238103; cv=none; b=kHcaFtTFBgrFr2mybNTYUFp4ohsSKii7VBcZdkP+k2s2vPvxNM3rKl+sgCyWKwxLL9O3kumcmSErtyzBeCfcowjyKCvnAyV53yJA+f9UqaG34fbUHILozPI+7tH6AUhHzcgAYly2TDvjzSLu1gtDV+8YbpMH46fHzx/BfCePN+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726233415; c=relaxed/simple;
-	bh=nbZRQ5VfiGPJOUcj1BhoToeRLsOwqy/4ntRWm+FnBVU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Z6QIAI3APoRkwKS73+h0JdJSi2qnAv3ghetQ+JZfMLti5bg3jTz2VWxj/0lHHBq5xd99CYbQoMjTIuREwFRWGiIGmBzBv5yDsGdONoXFV21MAe9U27g0BBToLkTX//TRGByzDamCiv3KBmswSiRTyCuLNTHRcMRbkmc2a7MbDu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dQgqPPdb; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1726238103; c=relaxed/simple;
+	bh=3ELOloAX6onr0kSBIqXF0Gy4XUjDOYml68qqMcjO/Ws=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=l2ZCM/JikPGCHIjkZJY9Scu2aCvAWN/8OKTFs/fX54IOqqAEj2Lxeht2VDujXy3dI0AScMpHkJAwvELcW74cDpF0r/L8LTWYcWdV0q20QSP2W2k7k9Lb5eg4b+DbHFILAr9/Dw0SGEvqjeBppGBe971ECf7AUUcxny8LeBJAu3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tKYhLYR3; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dQgqPPdb"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1726233381; x=1726838181; i=markus.elfring@web.de;
-	bh=8LFZzyCZ81TZMkUL3zNXl93k6bEo5DfK2Ms9KdHmW5o=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=dQgqPPdb0UNlX80mTu0/7knW1GjbII001Q7PMngwMx8yVkzAAw2bxKemvdEVkmII
-	 3tpR2vTs2lSThFuQoFKjUzG1LSjs8Ftqn8nyjALngNSAp8Gh+//vcT4D2cff1c226
-	 arnM1Mh6YFoUiYnmDAKtDOgfTKEjsPJ6N5lZrLbhFC21Tf4I9sifJAWw9RmTSiqx8
-	 7Z4ZZl7St/fKNKpHx0azBq7iSnu5J2hgr97xWhDR2VlObkMtAtStZ4CJw01hb6JJD
-	 1FHPp4MR4yjy0fLbFzcPXiwBDoMXRS0olaeVM9SnqUg+Zr/hhq0okpGS7cxwnWaJb
-	 cWIgpUaVaFOczXDw3g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MY5bT-1sUUEi1uhx-00JwqP; Fri, 13
- Sep 2024 15:16:21 +0200
-Message-ID: <186de981-7a3c-4fdb-8911-8dfee597c759@web.de>
-Date: Fri, 13 Sep 2024 15:16:09 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tKYhLYR3"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53658f30749so2591471e87.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 13 Sep 2024 07:35:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726238099; x=1726842899; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NOZr+XBM5WUt/TfPaFfV5hj8BjCZLS7DmNzXffMIGd4=;
+        b=tKYhLYR3mQ+/XuW8uk/ZCfFtCe2FGj5ADWQqw92fsgttVhh7MJ/M16465IDfYENOT4
+         WcX2CH5MV5W5nDoQEslcTivn+HjqfnmgvjCU9EKZ6tzGrUvTdLzOVOTCba5xzDbrmTZD
+         2k4q2rguiW3iJ/kWjnE0s8XsdggWCny+eCO6ExH4CN3H97BuXrEtiU5U/uzAUlnRvJkF
+         /gYxsuyqHPB/MK5y3MmqA9djB8OvBeK0LovTbVjWSgLoobRqopRKXQdei/iwFAU/6M2m
+         ECBcgp1/bGWqugDgWDk/6zxsE4Gr6dFDFW4Ut5fwGRXwJ/36xYvM2Wm1nqQnCz9h/kPv
+         PcXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726238099; x=1726842899;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NOZr+XBM5WUt/TfPaFfV5hj8BjCZLS7DmNzXffMIGd4=;
+        b=nGhDoBprgOydGd6ZzTG25M3rsxTgqmPvBODkErQJ1pIh81Vq1mGhLUK0sTszqEcaG0
+         RMdYwq6guKiRcvrp15Q79gj/uASuyYkUFS/Mln8hF3z/mRbeHjqMHxThbjZQ3G3uSvul
+         Fq5VpOQ03oEe9wNl5L5wdsGfML9H1OmFTZznZ4l/9LJ7sveQXlHzMa+muOB6S1mM+RWg
+         TEC6xS+L2XEeI2FvmYATIuZ655MWDPpbYLMceuYLVsm3/tVjK4OUoztOSoysrxzSb5AH
+         VY1IZWaBflOSNGYb+gi3esjtnQlBI5vBO7frzLhioLsL3pY2PIU303YqBXbAO8W9PoB7
+         X3kw==
+X-Forwarded-Encrypted: i=1; AJvYcCXv2ngxFOV6heXW28JlF11B0/Gm4tsW7iZTANMhoBAk161Fo0qvzruoWzXJAjJMpGmnAvyAkiGW+/Eaw5bWbTg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8AcRDXnoLuVHD9fp3aO3+Y4Aep5/o+JxBpnr9zQU4eez028AT
+	P13BWVKtbaU/NAMpgmX+dRCNgBaho7vWfauj4tACoRnTVi1MZDxU4Vnp12c+4zs=
+X-Google-Smtp-Source: AGHT+IHjq2mTTdTFTKK8BFKScueI01WIN6K5Za4D/dlGAyZ5cP1Y+EQegQPXkmLZH/xNBLTD7hORWw==
+X-Received: by 2002:a05:6512:1289:b0:533:e4d:3374 with SMTP id 2adb3069b0e04-53678ff4b06mr4059065e87.57.1726238099288;
+        Fri, 13 Sep 2024 07:34:59 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd466dcsm7692145a12.24.2024.09.13.07.34.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 07:34:58 -0700 (PDT)
+Date: Fri, 13 Sep 2024 17:34:54 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/tegra: Fix NULL vs IS_ERR() check in probe()
+Message-ID: <ba31cf3a-af3d-4ff1-87a8-f05aaf8c780b@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- cocci@inria.fr, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240825183116.102953-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] pmdomain: rockchip: Simplify dropping OF node reference
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240825183116.102953-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lSxIoQdC+s9CRKUItPCu1XcxxG4YbA4iSVgECTs4ptBWwKgy6yg
- 3cBXw7xtPULueXwfcZJo+Jq+PBr6OmaCRiU/x4Yk8rlsidhuDvJbpTr0dstBpHsd8ysLR+E
- 7yu59zCw63BverAZYGnwstXWXAYdGY+L88Mlg4kOiY2aF7bkm0LKrHdy86MCnf0rVrJjLf8
- CrSw63uxpFefauF1uqWjg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:nWtRG0sGK6I=;wDB3ikrhfP6m2ODBCoYTUaGaS8H
- fMZzMZC4QJhtXwjyhKrTHseO+JjtqAyHDNMIewHvd2FbIgsPfeIomTB3sjGk6fd3HqAuTKWzL
- mKusbLgaBqRMSEKTCsFpVOE7WZg5qhnQMnFPakRrM+p2rgq1StJXOCWBnu177R1hBTgPZNs9x
- S4OJVWxip7Ko/8VT4ImOaTrKQ1L7l0xrKDftm14raSbd4XNbaK4kQosFmEK0V3sQK7KvED1Yg
- LXR7mvNc+C4x4+IteYYcJ8n9ahbC+YiGcAB425zBVHrwgXetXQRF3fgQwFKXqh3nA1HcgEiRJ
- Pc+t0kILVeIDFCSjFrAb6iLfIoyCAV25k7UhJ/iFD+csOksY90yzlCIJUZMnFsYSwlTDCWn1m
- OY+iBr8A/sT/CFxTTXvTbxERAe17IB+4WxFmPV6aM5vIJsegx+iFpEMW5TmypFOGXSGDbw5kR
- 5TpzcozuMIRE9G5a90mPqo7OSHr97Q4n02uN6oYOi9v5+eCSNvc7J3sBW4HjyLpNgK+SVPXHa
- ZopbqrtRTuVgsLCyXKnuML+Twp4XCdLa5xJxSq18Ny2fQ9RwvAiJi126iddPJfZOoM/F6eumQ
- DUeQ++omb11+Uzv7H2IJ1rusQ6+C0A7JErFp5C4n2qeO6sJU6pFJpdbNCKBzb1gfxYlBXNu7C
- CLIZXE2U7Pw4ByU/ROmhQpa33eM2BXZcvsFI9CwSxEorv7TXAwcf5xPgM1LBl0+0Bk4tpcsau
- mhq+obtBjfz2y76y6idIOcuDaYfP9E5av4odxR/2dMGJLJ5xZeIa3nGK2DnzWJFYhtKql5j++
- /xs6aDc9FcgiZ3Kc+Zc+aPVg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-> Drop OF node reference immediately after using it in
-> syscon_node_to_regmap(), which is both simpler and typical/expected
-> code pattern.
+The iommu_paging_domain_alloc() function doesn't  return NULL pointers,
+it returns error pointers.  Update the check to match.
 
-Dear Krzysztof,
+Fixes: 45c690aea8ee ("drm/tegra: Use iommu_paging_domain_alloc()")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/tegra/drm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I noticed also this contribution.
-I found it easy to convert it also into the following small script variant
-for the semantic patch language (Coccinelle software).
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index c9eb329665ec..34d22ba210b0 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1153,8 +1153,8 @@ static int host1x_drm_probe(struct host1x_device *dev)
+ 
+ 	if (host1x_drm_wants_iommu(dev) && device_iommu_mapped(dma_dev)) {
+ 		tegra->domain = iommu_paging_domain_alloc(dma_dev);
+-		if (!tegra->domain) {
+-			err = -ENOMEM;
++		if (IS_ERR(tegra->domain)) {
++			err = PTR_ERR(tegra->domain);
+ 			goto free;
+ 		}
+ 
+-- 
+2.45.2
 
-
-@adjustment@
-expression e, x;
-@@
-+of_node_put(e);
- if (...)
- {
- <+... when !=3D e =3D x
--   of_node_put(e);
- ...+>
- }
--of_node_put(e);
-
-
-58 patches were accordingly generated for source files of the software =E2=
-=80=9CLinux next-20240913=E2=80=9D.
-How would we like to tackle remaining update candidates according to simil=
-ar transformation patterns?
-
-Regards,
-Markus
