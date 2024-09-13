@@ -1,65 +1,73 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826A713CABC;
-	Fri, 13 Sep 2024 09:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABF81BFDF6
+	for <kernel-janitors@vger.kernel.org>; Fri, 13 Sep 2024 11:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726220914; cv=none; b=aRAcj+WL5eJqMTY9kNIotY8jScsrEUFVxE86o6q2afobLutWMCnWxVXwW22jG62PZJ74ZSmTBLnCOCpfmYCfaEpqc4oPBpdnylKl+/ZUaQqDMCv4+E4lxX+cXADZ8WKG5UOwUDMK04BkTLfsnyrvzY82w3a3JKSwuna/qAGA878=
+	t=1726228236; cv=none; b=ay/4gojPkNTcB0SqkDvZu1fnlEgmlX+W6DfSlyVOZogdAZX2U5I9cdGXIQz84X/5bltgTdw4NC8yB9aTxuaUjw8s97C8WHuynOq14xVBwBPfK3VYTwxueEnP50jDNrbSmF3uD+P5F2LQjsZlfkD3gK/aJqGMJNgaSfyHkce7Wb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726220914; c=relaxed/simple;
-	bh=xgpGRsCTpAi5fY/qcvLV7YM6QgUN1NxtneHSZ5GnC5g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kpu9iqv3IieO34S8qNQwbWeonLN9stNeK60Z+REDI+fTT9DW8/5zhLU63RnL7GrjQp6qh78dXucePnxv1SlaNKuurimHUXkO8eRAPvglunKO1sjowvnCacXX/rrEkCnz10tEL2f7Mz5oFe8tSwg4UntfiN7xzwS4vUR02bDu+MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BZA1Jyzi; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1726228236; c=relaxed/simple;
+	bh=6+CCqLiTlnbAOqwKpOu2V8VVZpz4SFARlyK/H9WWw1o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=as0Plv4ozffT+9MAJ+mMMfkht0YjKGwCEqmi7bLohlGYGCVQx355tA4CiTLWBCJhfONbXherkFaAX5+1eauswGddZMQ6H4zFRaHsvm6hG/nXEBKALjdeRlSKnT9ARrZ+hSptU73ystcReFEpdcQn9j9SezLFJsPHPix5mNyRlZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bBmqOddq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZA1Jyzi"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-374bd0da617so1340574f8f.3;
-        Fri, 13 Sep 2024 02:48:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726220911; x=1726825711; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6/eKjE/ZIiv+2bvRdfHp+82zpO7/8oX80AIbfHpCg2M=;
-        b=BZA1JyziZfhAEesEopFOlTktKPscz/wNlXzfC3BG0znvq5ZIOWlA5S1l6mH95zwG/y
-         NAM2aSLVWt1fOzHMgO1xDn8k7ECR06Rwzb3CH2Z6+mTOIZU152n1YtQuhzD9PKPeQfpQ
-         5Qfi+vZb58bvb035JFsIPa04DWPa3yeOpQqaVZbh+fi8+qmDhQ7izTzfsZaxPnv7CR7Z
-         F3yMUfXu6agTz04weQhIuZQnmKNs3UvkYXqyfLv00JI3EUl9nQ5V03P63hzf1299HIRq
-         FSdH7nloot3sAjnif4Mwz2xKf5GCRy8du6gIMbRqG8pGROXxUxxCNJiajjttYs2s70Fu
-         NC/A==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bBmqOddq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726228233;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DzsuH7HNLxmJ8c6STpWbL+svm6fJdpP+EHkpqLBMKjE=;
+	b=bBmqOddqSzN3hHqM0k76XXdZrsa3sI/k/HRjskbPCNJYZlmW+84iIKt0eb5q+rjzuSySRb
+	kl0UrCzyuzsxK+zdjOVJH8zyvWNzX4h34a/MhWIb4WafG7hlz3BegQWqhayGG0M17DVAj2
+	RavSTBvmP6qyTAPoKESDrpM+cWgow6w=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-672-jNfjLED_NRCIIGolWEVYdA-1; Fri, 13 Sep 2024 07:50:32 -0400
+X-MC-Unique: jNfjLED_NRCIIGolWEVYdA-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-374b385b146so1002885f8f.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 13 Sep 2024 04:50:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726220911; x=1726825711;
+        d=1e100.net; s=20230601; t=1726228231; x=1726833031;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6/eKjE/ZIiv+2bvRdfHp+82zpO7/8oX80AIbfHpCg2M=;
-        b=QcEHLVbDfngQHpZlM3FiXHCn3sMHW0CyNacIr8LqEYc7tzMw66VuorsLY/HhTjP+Sd
-         SrPJiYoEZXasNJ/Qi2mwGuqIK9z3e2yaRg0XFmlokGI+cQG1H32t7A+ii1pDm/V/WBh+
-         +8qZN4mgCbXZAR66H/stgOPRvcINOazVuAPjTX5aGta9iiqHGBsVtmIYuf+pynEp4Quv
-         eamUs8B0K42dzzUKkQNejxA4O74OgOYkTPznzl4q8HAcWVt0UzWZXDsE5JiweqlbOQlT
-         ll6UTK0W2e/rspeSkdDbZdfWLJm7rzaE86Axivn/+g0XHR2xocX8Wzay2jAYxFQ5yo3f
-         UynQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrL/pLVY5+CbPwXHD1VeRCcIHcf1py21D4CUt9c26lE2GhgHUGstNR+m/SvlFZbrbMYaAoUW9HqQqRFdZn2RI=@vger.kernel.org, AJvYcCXkwXFfSjwWtOwXwNarCF0CAAQCpui6+IgcwRX1qMERutlPI4JTNvZ4LxGpDEtj+SeLkpWCforTUwQ380du@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCVSQZbpCBDiGj4l/b77r6vPyoCqmoOVE2CYa+eA7SqiIJ15uJ
-	yY1dHmBHxqwoeqxGfrMNQY5BarDgqf0nu8ZPLwNCadjGtd/IGzm5
-X-Google-Smtp-Source: AGHT+IH8ykEdbL6dIm9/qmwfUe0sUH2Gi88huy6I1kPGc5tApxXUPMHDJ5VEoMIfhcjSz3r8nvkT8A==
-X-Received: by 2002:a5d:6788:0:b0:371:a844:d326 with SMTP id ffacd0b85a97d-378c2d4c9bbmr3754253f8f.43.1726220910171;
-        Fri, 13 Sep 2024 02:48:30 -0700 (PDT)
-Received: from void.void ([141.226.9.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895676093sm16326846f8f.65.2024.09.13.02.48.29
+        bh=DzsuH7HNLxmJ8c6STpWbL+svm6fJdpP+EHkpqLBMKjE=;
+        b=LktPfdbgZm1jhP/85hriuAPPr/yv28vX6Z/K5o771CUYGqEl/8b+DCcJoSSyJaY+Ar
+         /RUFcWPXinBq5cVDjYMSWp3h+HNN++iBHFRKL+NPzePY2vnnXWPJdOzjZ1bvXMtlSuC+
+         YADlSldv0qtdpHp2zubI3S5cnsAJQVVmqUad8ahUK+02Xrh2urLvQC2YIYHU9cz1zNg/
+         pkq1GoLHKNJixRlR0932+PM/wLx8ZF5t7po+7HfVVEo1BDCWhXc5vjVMuWKprf+DJuw2
+         yeLEsu5h71yfVCfF6/4OaX5PLYfXDnEkw1SPjoTi+hsE07btEmHZ9OSbMFie17VTMm26
+         ccBw==
+X-Gm-Message-State: AOJu0Yy6/2erteo6nwq53O+Z08bi3EPf8tT+O9oicYZhaapcuy2P/yNI
+	K9RtKUmmSJBQmVPcBRLmS7hlmtBaoXRm9u4yHZcWmxwst7NxFu3HWphZpF1Cw6Ri2vtOe/4TGc9
+	ZoH3j7Dg9BBGn7YSDtVpI3mOdZnTRadwfHkycrDUjFxga+lmQ1M7RETWkrx8+BVmwyQ==
+X-Received: by 2002:adf:ec05:0:b0:374:c45a:8afb with SMTP id ffacd0b85a97d-378c2d0751cmr4180381f8f.19.1726228231276;
+        Fri, 13 Sep 2024 04:50:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHHJ1H8Rwnaa1DIdW+rQ4X4iS0OLgLw1U12qROIerX9bfZfLhkIcHw4REHfmZmfNMyqXWcA2A==
+X-Received: by 2002:adf:ec05:0:b0:374:c45a:8afb with SMTP id ffacd0b85a97d-378c2d0751cmr4180360f8f.19.1726228230716;
+        Fri, 13 Sep 2024 04:50:30 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b05df7esm22569645e9.20.2024.09.13.04.50.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 02:48:29 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: linux-wireless@vger.kernel.org,
+        Fri, 13 Sep 2024 04:50:30 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Lukasz Majewski <lukma@denx.de>,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] wifi: ath6kl: fix typos
-Date: Fri, 13 Sep 2024 12:48:10 +0300
-Message-ID: <20240913094818.14456-1-algonell@gmail.com>
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: move BK3 machine support to CREDITS
+Date: Fri, 13 Sep 2024 13:50:12 +0200
+Message-ID: <20240913115021.58405-1-lukas.bulwahn@redhat.com>
 X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -67,54 +75,61 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=y
 Content-Transfer-Encoding: 8bit
 
-Fix typos in comments.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+Commit 3e0bae7f35c9 ("ARM: ep93xx: delete all boardfiles") removes
+ts72xx.c, but misses to adjust the ARM/CIRRUS LOGIC BK3 MACHINE SUPPORT
+section, which is referring to this file. Hence,
+./scripts/get_maintainer.pl --self-test=patterns complains about a broken
+reference.
+
+As the corresponding file of this section is gone, remove the whole section
+and note this previous contribution in the CREDITS instead.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 ---
- drivers/net/wireless/ath/ath6kl/wmi.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Arnd, please pick this quick administration fix on top of the commit
+above. Thanks.
 
-diff --git a/drivers/net/wireless/ath/ath6kl/wmi.h b/drivers/net/wireless/ath/ath6kl/wmi.h
-index b4fcfb72991c..68384159870b 100644
---- a/drivers/net/wireless/ath/ath6kl/wmi.h
-+++ b/drivers/net/wireless/ath/ath6kl/wmi.h
-@@ -1249,7 +1249,7 @@ struct wmi_rssi_threshold_params_cmd {
- 	/* highest of upper */
- 	a_sle16 thresh_above6_val;
+ CREDITS     | 4 ++++
+ MAINTAINERS | 6 ------
+ 2 files changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/CREDITS b/CREDITS
+index d439f5a1bc00..b2f16d191f3c 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -2539,6 +2539,10 @@ S: PO BOX 220, HFX. CENTRAL
+ S: Halifax, Nova Scotia
+ S: Canada B3J 3C8
  
--	/* lowest of bellow */
-+	/* lowest of below */
- 	a_sle16 thresh_below1_val;
++N: Lukasz Majewski
++E: lukma@denx.de
++D: arm/Cirrus Logic BK3 machine support
++
+ N: Kai Mäkisara
+ E: Kai.Makisara@kolumbus.fi
+ D: SCSI Tape Driver
+diff --git a/MAINTAINERS b/MAINTAINERS
+index deb3c0cd392a..7c9c88d447e0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2257,12 +2257,6 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Supported
+ F:	drivers/net/ethernet/cavium/thunder/
  
- 	a_sle16 thresh_below2_val;
-@@ -1257,7 +1257,7 @@ struct wmi_rssi_threshold_params_cmd {
- 	a_sle16 thresh_below4_val;
- 	a_sle16 thresh_below5_val;
- 
--	/* highest of bellow */
-+	/* highest of below */
- 	a_sle16 thresh_below6_val;
- 
- 	/* "alpha" */
-@@ -1287,13 +1287,13 @@ struct wmi_snr_threshold_params_cmd {
- 	/* highest of upper */
- 	u8 thresh_above4_val;
- 
--	/* lowest of bellow */
-+	/* lowest of below */
- 	u8 thresh_below1_val;
- 
- 	u8 thresh_below2_val;
- 	u8 thresh_below3_val;
- 
--	/* highest of bellow */
-+	/* highest of below */
- 	u8 thresh_below4_val;
- 
- 	u8 reserved[3];
+-ARM/CIRRUS LOGIC BK3 MACHINE SUPPORT
+-M:	Lukasz Majewski <lukma@denx.de>
+-L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-S:	Maintained
+-F:	arch/arm/mach-ep93xx/ts72xx.c
+-
+ ARM/CIRRUS LOGIC CLPS711X ARM ARCHITECTURE
+ M:	Alexander Shiyan <shc_work@mail.ru>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
 -- 
 2.46.0
 
