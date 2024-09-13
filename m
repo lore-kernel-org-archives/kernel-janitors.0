@@ -1,88 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9121C1C2BF;
-	Fri, 13 Sep 2024 19:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93906762DF;
+	Fri, 13 Sep 2024 23:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726256633; cv=none; b=rAhcLRbLACt4e7P2WaLCURt4b0mNNwQTRkObktJQqWvNHVwLXekTuhYKNTQwA5vIQJsUnxZTN4NwaK2ziTKLjm4XhkHnkdW7YxWWeCEYoPn9JYA33jOg+IeE+xfRAQEP2OCx8r6IKgVWNUR1JO76DgUqEkYkrghSWcCRDAvVXBk=
+	t=1726269534; cv=none; b=XtW14lIOgCipiM5cSqmUOunwJmEpyavSASXNbL1jYcd31pMbQrmG1dNkmb89Y9TNCZZwJ9IZtC+wdJ8GsiuC0oidIqkuRYxhFTquBaGJSd/jHxS0LC+gEbk3lKquXpFuFOd4Jilol/h03ejonCFEwPk2KJzb92TK2nmXbC/M/PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726256633; c=relaxed/simple;
-	bh=jpwz5agnsjXEH5QEUiOdi7lBl/sCefc1GJWZXXqfxRM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=tH/Gza3JzRC1SZKcHrZ/mxEjDXGxwAynAJHrB1qWj2ZjO3Vs6f21kQ70+LLyPt/REXY/wtL2ogkoSKRQ1zsrL3rC3H84dT4+l3QEwdvQhRaHWcV30RltzDuFhLQoNDJgCR3XeZPhatHmhvo0ZgVzsmxTop8BGXNHdanTkDwyRik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=khE1yw+3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726269534; c=relaxed/simple;
+	bh=h1qtDRbu5yoZIiGh5c2Kuk5E17UEPhcW2ztvozgmpzo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NuB/ggD9bA1D3CWMWciuCEiUgwznFvl2FSHAcLe8jMHLAXpgSKzGb6RaxjukU/9zrI/+Aw/X6plpRLDh5AQC4W3IJbm3GHL794dO74I8dWLboFB7X9sVAL+lFmWzPk//sIMPJGU1ZHO65iz/au8ynHLW+4VlgSmuYRUNqXeceBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NGss14ch; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="khE1yw+3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B82EC4CEC0;
-	Fri, 13 Sep 2024 19:43:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726256633;
-	bh=jpwz5agnsjXEH5QEUiOdi7lBl/sCefc1GJWZXXqfxRM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=khE1yw+3ghJ98kTlPZS1sT/M70pIUAa8T4mpTkVrDD4RtruYMDKgGHblL6FE3FL2G
-	 PxPJsOhqGwj70K9XVJ7mCWApHe0XooqIX/+riqoa1Xpjcv+vqGh4kO8aBsn0IwNoXs
-	 e82N7xme3OC3W3d17VyMw62s7j4ZPDdWUIIvk7woqdO9wcgVQUzX80GXW3fc0ctAdg
-	 DUELDac6+MGvxG0ECRfPbsBU1NmkHkTNrM3jon4UgV3/rWD+CD8g9ZpepuqaxMifVC
-	 OHoAXw+2QJstwzFTWNgzzfP/lZ8qM6CN0uTSqUaQaPcUkIesq4Li+hzft9SLAgA9iB
-	 +Osz1ALP4EQCw==
-From: Mark Brown <broonie@kernel.org>
-To: markuss.broks@gmail.com, Liam Girdwood <lgirdwood@gmail.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <0f5da91a05e7343d290c88e3c583b674cf6219ac.1725910247.git.christophe.jaillet@wanadoo.fr>
-References: <0f5da91a05e7343d290c88e3c583b674cf6219ac.1725910247.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] regulator: sm5703: Remove because it is unused and
- fails to build
-Message-Id: <172625663174.87505.7759301350549819413.b4-ty@kernel.org>
-Date: Fri, 13 Sep 2024 20:43:51 +0100
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NGss14ch"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48DAjut1017607;
+	Fri, 13 Sep 2024 23:18:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OBvkUg5X9mhGHmFmGr0xVkAZBb8Krghfxg7slECJQp4=; b=NGss14chz1DUB3v9
+	2uw+BXyC+qnpGs3OZahQle58SPKt6tt4NfQAbfpGsxgQqh/37y/shogEUvegGx3V
+	ViWRhIUBvVwQhAV3USGpH0IAFt6K5oLor9Cm0fA8F8HQOFRRJe9x93gd6Y6ayPIZ
+	4H2tT3V209NPM0fpI/WlF3zTicKUYqzVanDNoL3tUfcWkFlT9t6OJBrULU533YvH
+	0RxoOpwiKL4ForZUOSDj1ZuZ5MbhvcZb3o8Nj2IL/vrad2wR7QkZ9LtExzehTsBP
+	VR4FKbbFRpKueIyYiYgY65N0qu4t5/h6vIqZbVx+22hx6SJK0V6llWdhjTw22YLC
+	2coZ4Q==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy5rt3xf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 23:18:38 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48DNIbuo001933
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 23:18:37 GMT
+Received: from [10.111.181.97] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Sep
+ 2024 16:18:36 -0700
+Message-ID: <789e2e2f-2054-4804-b496-d1459cb89155@quicinc.com>
+Date: Fri, 13 Sep 2024 16:18:35 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: wcn36xx: fix a typo
+To: Andrew Kreimer <algonell@gmail.com>,
+        Loic Poulain
+	<loic.poulain@linaro.org>, Kalle Valo <kvalo@kernel.org>
+CC: <wcn36xx@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Matthew
+ Wilcox <willy@infradead.org>
+References: <20240913094319.13718-1-algonell@gmail.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20240913094319.13718-1-algonell@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3MrkxYhmT7ljUZmg8TIsxff4pj93ebtk
+X-Proofpoint-ORIG-GUID: 3MrkxYhmT7ljUZmg8TIsxff4pj93ebtk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ clxscore=1011 malwarescore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
+ mlxscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=594 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409130165
 
-On Mon, 09 Sep 2024 21:30:51 +0200, Christophe JAILLET wrote:
-> This file does not compile because <linux/mfd/sm5703.h> is missing.
-> In KConfig, it depends on MFD_SM5703.
+On 9/13/2024 2:43 AM, Andrew Kreimer wrote:
+> Fix a typo in comments.
 > 
-> Both MFD_SM5703 and the missing include rely on another patch that never
-> got merged. The last iteration related to this patch is [1].
-> 
-> So remove this dead-code and undo commit e8858ba89ca3 ("regulator:
-> sm5703-regulator: Add regulators support for SM5703 MFD")
-> 
-> [...]
-
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/1] regulator: sm5703: Remove because it is unused and fails to build
-      commit: 4591a2271f2e4c320eaa63c348169e4e6e6f2852
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+> Reported-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
