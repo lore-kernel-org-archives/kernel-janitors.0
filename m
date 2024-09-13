@@ -1,67 +1,65 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BEA18054
-	for <kernel-janitors@vger.kernel.org>; Fri, 13 Sep 2024 14:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C2610A0D
+	for <kernel-janitors@vger.kernel.org>; Fri, 13 Sep 2024 14:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726238103; cv=none; b=kHcaFtTFBgrFr2mybNTYUFp4ohsSKii7VBcZdkP+k2s2vPvxNM3rKl+sgCyWKwxLL9O3kumcmSErtyzBeCfcowjyKCvnAyV53yJA+f9UqaG34fbUHILozPI+7tH6AUhHzcgAYly2TDvjzSLu1gtDV+8YbpMH46fHzx/BfCePN+4=
+	t=1726238118; cv=none; b=TgX2AVKDais0K1B08FfzQdayP2FnuQuAaNKw9TNIF6s2/PJXIsUDxTp2XBeYCJbY0dbgg4qHkrPADOklA1yM6WzOvMsOXLRN4oveN6cmOZwvB46iyd/+tR4PqgyjaWEJG+1yWbqWVILGuyBOqZd+Yn8WDnYwu/33gqZo7cw/Jpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726238103; c=relaxed/simple;
-	bh=3ELOloAX6onr0kSBIqXF0Gy4XUjDOYml68qqMcjO/Ws=;
+	s=arc-20240116; t=1726238118; c=relaxed/simple;
+	bh=fA4AWaAbXnOOYk1783H913R2EXn6N6behOyf1uOVEVE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=l2ZCM/JikPGCHIjkZJY9Scu2aCvAWN/8OKTFs/fX54IOqqAEj2Lxeht2VDujXy3dI0AScMpHkJAwvELcW74cDpF0r/L8LTWYcWdV0q20QSP2W2k7k9Lb5eg4b+DbHFILAr9/Dw0SGEvqjeBppGBe971ECf7AUUcxny8LeBJAu3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tKYhLYR3; arc=none smtp.client-ip=209.85.167.53
+	 Content-Disposition; b=FXr7lzHwr0+RCb2/NVR1QqbYVlgk/0AyTEyrlxOlHRi6A7yVc1zt8+nyGhMZGAU6YUre9Pt3EXY09zw94FUs5b0sSfg1A0Sh4bO+flV8FdIar6d24jzj7I3H94b1DgBqRqdLAxzYL/kr3xuJcbc2U+kJTv1Ngg9YWCqosxwUTRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fvxhms9T; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tKYhLYR3"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53658f30749so2591471e87.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 13 Sep 2024 07:35:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fvxhms9T"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8d100e9ce0so257895266b.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 13 Sep 2024 07:35:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726238099; x=1726842899; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1726238116; x=1726842916; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NOZr+XBM5WUt/TfPaFfV5hj8BjCZLS7DmNzXffMIGd4=;
-        b=tKYhLYR3mQ+/XuW8uk/ZCfFtCe2FGj5ADWQqw92fsgttVhh7MJ/M16465IDfYENOT4
-         WcX2CH5MV5W5nDoQEslcTivn+HjqfnmgvjCU9EKZ6tzGrUvTdLzOVOTCba5xzDbrmTZD
-         2k4q2rguiW3iJ/kWjnE0s8XsdggWCny+eCO6ExH4CN3H97BuXrEtiU5U/uzAUlnRvJkF
-         /gYxsuyqHPB/MK5y3MmqA9djB8OvBeK0LovTbVjWSgLoobRqopRKXQdei/iwFAU/6M2m
-         ECBcgp1/bGWqugDgWDk/6zxsE4Gr6dFDFW4Ut5fwGRXwJ/36xYvM2Wm1nqQnCz9h/kPv
-         PcXA==
+        bh=QPpJqdDj9nMsP3j5hQglMwhS09myjVI2wZ8NOXrgLTQ=;
+        b=fvxhms9TCHrIhpMaGXRfjvMxAwdEAgXaCcqOlka2DKTPH6DRj6PDbKj+y1VJsCUTv5
+         /duKxZQDo4iHGMCVBtVwT9oOXz8O5h+UqPEmCoBArVwjX/J/Yj4ciYh7fsXjZTQA1Xe/
+         vmmo0KE+Ikds1/C9Pk6gXzNPA2mSKciwH6siGIz62auvtngWB6rIZuXPuE/Ns6KCAzUh
+         qsBTpgdDvRr1aAL7gZutUfLEOoQyV5Am0bHQMWXHNUk3X6RwDRg/m4kysm9vjWUksM/r
+         M/kUq8JIMheUT316lW226UP7CuMTpYTn0rBGGmN5vHsidv51/qHDP5+95sVFD0xX3yDJ
+         ghqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726238099; x=1726842899;
+        d=1e100.net; s=20230601; t=1726238116; x=1726842916;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NOZr+XBM5WUt/TfPaFfV5hj8BjCZLS7DmNzXffMIGd4=;
-        b=nGhDoBprgOydGd6ZzTG25M3rsxTgqmPvBODkErQJ1pIh81Vq1mGhLUK0sTszqEcaG0
-         RMdYwq6guKiRcvrp15Q79gj/uASuyYkUFS/Mln8hF3z/mRbeHjqMHxThbjZQ3G3uSvul
-         Fq5VpOQ03oEe9wNl5L5wdsGfML9H1OmFTZznZ4l/9LJ7sveQXlHzMa+muOB6S1mM+RWg
-         TEC6xS+L2XEeI2FvmYATIuZ655MWDPpbYLMceuYLVsm3/tVjK4OUoztOSoysrxzSb5AH
-         VY1IZWaBflOSNGYb+gi3esjtnQlBI5vBO7frzLhioLsL3pY2PIU303YqBXbAO8W9PoB7
-         X3kw==
-X-Forwarded-Encrypted: i=1; AJvYcCXv2ngxFOV6heXW28JlF11B0/Gm4tsW7iZTANMhoBAk161Fo0qvzruoWzXJAjJMpGmnAvyAkiGW+/Eaw5bWbTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8AcRDXnoLuVHD9fp3aO3+Y4Aep5/o+JxBpnr9zQU4eez028AT
-	P13BWVKtbaU/NAMpgmX+dRCNgBaho7vWfauj4tACoRnTVi1MZDxU4Vnp12c+4zs=
-X-Google-Smtp-Source: AGHT+IHjq2mTTdTFTKK8BFKScueI01WIN6K5Za4D/dlGAyZ5cP1Y+EQegQPXkmLZH/xNBLTD7hORWw==
-X-Received: by 2002:a05:6512:1289:b0:533:e4d:3374 with SMTP id 2adb3069b0e04-53678ff4b06mr4059065e87.57.1726238099288;
-        Fri, 13 Sep 2024 07:34:59 -0700 (PDT)
+        bh=QPpJqdDj9nMsP3j5hQglMwhS09myjVI2wZ8NOXrgLTQ=;
+        b=VxV1obiDTTt0s+QQnO2DgSI4sa8LXQ3M2fV4YS6duTLirFQeAD7fpX7JqQcRCLOI2m
+         PxdCaH2DXDXz4+lYkBjJuDQJE3eCF1rPQTIs3GCSmqhnbUS91x4FINEpKxjftZaRnuZH
+         zJqr9Oi/+/RZQgboszFJG87XZpmm5qKELpJ/2Rzj+SWRwxxbPZTrQyQx1PMQz7DMOLEu
+         Lo6C5L0twF/lsQOnBuyTa2zUBr4H6MoEek76EFsWXnZ/z2pUk5wCUhFdY19dR4aHOh+u
+         BBa22qv1ous4vz+H9fq9+BEMcA/4b90VgYbjSAwoWBgBQTuqoGy7I8cgp2crEW4+S75o
+         LCvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgz1FIC94VA7h9/WemdWgbwdB0qzIxnPdhdCBlvNi1B4HZK5YzRnX+LkA8KxQmBjLh1UE/cd1GbzFl4kxhJ5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKckKLnYjqSeJ01HWpLdmtWjTW55tL0uo0HOUzSaTunkFpxC37
+	f/KIhkVjhjQmh/eqbZgxf6iABevnYVlaeyVAibHl9dZALY4j1UfEhU/EnhtW7wg=
+X-Google-Smtp-Source: AGHT+IE7zfPqYBpqVTOIdWqsFzLTQ9zGoS19bNShZp/HujGmJgWJRxZEfBbSVizhrSTnrvtHw8zm3A==
+X-Received: by 2002:a17:907:f75b:b0:a8d:4d76:a75e with SMTP id a640c23a62f3a-a90294d0958mr616258366b.30.1726238115474;
+        Fri, 13 Sep 2024 07:35:15 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd466dcsm7692145a12.24.2024.09.13.07.34.58
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ceed73sm882316566b.174.2024.09.13.07.35.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 07:34:58 -0700 (PDT)
-Date: Fri, 13 Sep 2024 17:34:54 +0300
+        Fri, 13 Sep 2024 07:35:15 -0700 (PDT)
+Date: Fri, 13 Sep 2024 17:35:11 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/tegra: Fix NULL vs IS_ERR() check in probe()
-Message-ID: <ba31cf3a-af3d-4ff1-87a8-f05aaf8c780b@stanley.mountain>
+To: Nikita Shubin <nikita.shubin@maquefel.me>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] dmaengine: ep93xx: Fix a NULL vs IS_ERR() check in
+ probe()
+Message-ID: <459a965f-f49c-45b1-8362-5ac27b56f5ff@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -72,30 +70,28 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The iommu_paging_domain_alloc() function doesn't  return NULL pointers,
-it returns error pointers.  Update the check to match.
+This was intended to be an IS_ERR() check, not a NULL check.  The
+ep93xx_dma_of_probe() function doesn't return NULL pointers.
 
-Fixes: 45c690aea8ee ("drm/tegra: Use iommu_paging_domain_alloc()")
+Fixes: 4e8ad5ed845b ("dmaengine: cirrus: Convert to DT for Cirrus EP93xx")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/tegra/drm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/dma/ep93xx_dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index c9eb329665ec..34d22ba210b0 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1153,8 +1153,8 @@ static int host1x_drm_probe(struct host1x_device *dev)
+diff --git a/drivers/dma/ep93xx_dma.c b/drivers/dma/ep93xx_dma.c
+index d084bd123c1c..ca86b2b5a913 100644
+--- a/drivers/dma/ep93xx_dma.c
++++ b/drivers/dma/ep93xx_dma.c
+@@ -1504,7 +1504,7 @@ static int ep93xx_dma_probe(struct platform_device *pdev)
+ 	int ret;
  
- 	if (host1x_drm_wants_iommu(dev) && device_iommu_mapped(dma_dev)) {
- 		tegra->domain = iommu_paging_domain_alloc(dma_dev);
--		if (!tegra->domain) {
--			err = -ENOMEM;
-+		if (IS_ERR(tegra->domain)) {
-+			err = PTR_ERR(tegra->domain);
- 			goto free;
- 		}
+ 	edma = ep93xx_dma_of_probe(pdev);
+-	if (!edma)
++	if (IS_ERR(edma))
+ 		return PTR_ERR(edma);
  
+ 	dma_dev = &edma->dma_dev;
 -- 
 2.45.2
 
