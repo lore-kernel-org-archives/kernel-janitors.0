@@ -1,71 +1,67 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EEF175D45;
-	Fri, 13 Sep 2024 09:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184901BD00C;
+	Fri, 13 Sep 2024 09:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726220261; cv=none; b=YHYObShzlpergT6N0RSbJ9RE0q8LunxqMGxi4BbF3fOAdfFrVC59N43j/iDVbDrix1eevFsa26dWmeREOECEIxGeWIS7YFixrCH6bFmidkaTBTlwLqmdmOvC9fasRwi87rx9F+Cp2bf48IU5ubAqp/CCv15liPzWSRJvqRXvUFs=
+	t=1726220619; cv=none; b=LVnx7UdFDz/XF9OT/P4KNzSPa2ZZYlyCmyk+x5kz1PFUkS+0XMkSnI+cNGCWka4JqvcfshXu0Z6IeVnuAwDmSZT4UYNGm8BFEFNp7q+508zzf1Esc25O0D1f4LMz3GW31DOLHXwZ0I7zroMjRT7ecXYqfRjcEZMHCwmIJSigN10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726220261; c=relaxed/simple;
-	bh=Muc8CTJ6tUBeBmqYfUSLjI05P6c+7aACxxpXBvHZK3g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RiC/IVXBmEhQdW1kiFkioDWvRgOvPUXgP0vcRKI8oQAozpzhcK1LW0orWB455mQEIWapoTJ3XE5wghND6eEtzB8xY4GgzXMrGxa4RAWpV20+x/16+UBw4ghzjk0pPxux8d1wrVlroIC/mqcBK7G9it8MkL+89gyptpo4eTB48dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ADHNJSSe; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1726220619; c=relaxed/simple;
+	bh=NNM6NFpc00s5ibSztPzQ0f4egmjl3EyQzE/l2jhgxas=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rfixcjdbVWIgSMBMplpOJI9o7MUFO6uiCEcfze8/SmTjRWeGZY4b5khyP5UBz4MKRJlQrN2brKkkxgXnOuqZnv/K4p7R/GW2NR398VHJpWmZ6YHkmnC0ey8xvIRGxGoKPxkSKJ6NUXG2IQd9LghxPTWSA4HWLKyPwLBKotPelz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mZ/KImvz; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ADHNJSSe"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53661ac5ba1so2068562e87.2;
-        Fri, 13 Sep 2024 02:37:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mZ/KImvz"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cb0f28bfbso17623675e9.1;
+        Fri, 13 Sep 2024 02:43:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726220257; x=1726825057; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726220615; x=1726825415; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=poNRBe+GqBqtFV5yIuKftcM+UDfFRe/cSM7MSFErS7k=;
-        b=ADHNJSSeKzR8q5Xokl7KOsGHY9bEXVEC6Lfhm+zhflJscS8OUZyzPguvvCw2hnCPAD
-         YFB1pBIccoqbbchh5J8YAyouV7JCZ3t3I2Pf63B9HXMPv2FCbQyaBp+YUvYgQmqOmyZ5
-         EHmx5lbz54QDxtiJ6aUNMkW6Yu3BUvbnFLdmHBPXW0/Tsv22mDfOVtWkoezPvihyWQFj
-         x27aivG6KXcJh0hZPDtcgC42z9Nve5jzW8a5Ma/8W55nZmL9Z5GrqY3/5nPdkQl6rURb
-         AEx42KlEWt0vBIcS95q00JHgufvs4QFNdJdFgBV1eRL9LQRFTBAE3q5DI1ZtTSfe/XYk
-         2l+w==
+        bh=M+LszOSkNNFgaKX3BXxyztS0BS91MBez+e7KxoIOAVE=;
+        b=mZ/KImvznvN8x2P6qti7Sr7fXwFrca9w6Ovd2M7PcQDaZMKhMpjBuOcmr+kvHjOLQN
+         ELIZGKBl6pwH0BklWNZs23VCnuePVX39LELa5blMpjOIIwXsYHmQhxm11ixji7TylFiW
+         19FEYmCtKczFD1wqRHtHSivRVXErZsbyKYiWp2NvX04n6IqThdGqmyhpItzqfz/YexCa
+         7Lm+2mlJJSRgdeMu6GHCPHS/hpKWMvu/wnxIK6rOiuwaubHYqPzC3UH8hkCt9IGSFbFH
+         N5zUtPoQWbIOKj5iif01okBK5/4j2r7XVkJVvXWn+VgkJgGO9P74yHV8N7J7XHEVxBFx
+         rwIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726220257; x=1726825057;
+        d=1e100.net; s=20230601; t=1726220615; x=1726825415;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=poNRBe+GqBqtFV5yIuKftcM+UDfFRe/cSM7MSFErS7k=;
-        b=hkVG2bxZQTMGUDhfFh2qIGEXcfJMv+ZOR14h+D+R/HTAOBEwU0+miLZHM874G5Njpe
-         e1R2Te+ZHX2+Uk8gMNFyU9JC2+qh8hK+Q5n6jiPK6wIYUNrPAZiodF4t4PJTXCTW38mX
-         gZKB48NKtjU0WLxRnzJGmsnx6ZepKhI0c0zh3VxfAMbbiDrCXj5mIKUoQ0IUfJ2/tucK
-         7Zb7BLL1c+EHuKK9o7+3ggVhmvLnRut6ewY7b0GEu5/W/qtEoHhsoUuC2xVzQW+Q2w0X
-         xdG4qUP1Vo0/RuZ1/T6XcY0fSt2iLN6By2TEio8TQ0pN7qix97qm+hk6zdL4+Zd+hhFA
-         Rz6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVGID/F7GcvfiBgaXKsdk6Oqhwt55dD7rFvjZkm2D+Dav6yr2HVpiccEopn1TiXXXASjbxv8alAkL0y0Yo3zkM=@vger.kernel.org, AJvYcCWpwg5cDsh1hGC7hecahiQV0GnkICojpIIaCJnH0F3gp+e4MvfYtzS6H/BLQj+T6eFhX/H/kn58+7F9og==@vger.kernel.org, AJvYcCX/uqkMhVpnZxWx6B7ogAf/astLx5Oao6+vRz2uvutwREHO+vON9Px0Hdn3t2Jj6Rpx+s79ruNsyuVQ33q0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNqlXtUfBth+JipXHqfh5NSQ6wQzmfRolr8et9ll2ZWTn6ce3d
-	ls+7w6vXyFOMonm1RFeRynp3Pqy5V3X0Vq6TAGeEIB0AC3cLUXJ8
-X-Google-Smtp-Source: AGHT+IHPJDR3vrgdy7/5HudOfik7GjSbGIw/RQHKxVrRjeXrJNFMhS6eIKZWgtPsUyW4DKS7qLG5Ow==
-X-Received: by 2002:a05:6512:230b:b0:535:6d34:5cd7 with SMTP id 2adb3069b0e04-53678fb2001mr3195481e87.11.1726220257027;
-        Fri, 13 Sep 2024 02:37:37 -0700 (PDT)
+        bh=M+LszOSkNNFgaKX3BXxyztS0BS91MBez+e7KxoIOAVE=;
+        b=iGiJuYtmmbd71wRDkX47jN9losUWYodEkyzEiJDsuZLLRE0x3o4BzRLWYay94SV1Rb
+         REnrEkKxFFwW0ljlZEt+WBO/RFCKLrJglDLuBxNMYKRtgbVYZ9Hou550pJffVTxWO9hv
+         8dlkYHndAvq4F5oH/Eq4NUMHSUfVfzCYy3OBaeF3BTB0B9ecZwYDAkNypopEgo4m+nrj
+         asJDdYb47eyehgwh3I5DhXOWTjJ3jsYth7knhD+ITKbJpNQ8jGb/p5QdZVUQa2EuauNE
+         P6dT1MzLK1/HOt4eOu8s0qo0ZgFxz1/Li5FGmMjoz7/3rpsVrAR3cmDwvxAzJlRl+kIR
+         IXxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2/g9sndMVHvlgk+QRcbg5oYNNVfzSq085waEEmrllstYQluQB9CsUYj/QdWLJz90WZEFcpiHLpPYzzPwB@vger.kernel.org, AJvYcCW4OD66GqmFO85CwM7/s0FQdNhwA7kkg95YubrYQV3Il7vSCuw0OmkA6Oy+esBlgafLUh+yyqDlrb2eE+L2WoQ=@vger.kernel.org, AJvYcCW5M7+9OL85NsuTfnpq/BEF26IKtcOlGMI4I8vN63z/V0Ysy5y2rtEDPJ54iH2nFnCDql0fuCm6He+CgEfMc4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUgbdLt9/2CiDie305IjDM088ANNSUwj9EEwn4vwtgxWSCBteR
+	ARBAoLWn5C7zOsGsyBSNZ5I8BRXJbPgNdkvKFNVzXxonJMJo6rtL
+X-Google-Smtp-Source: AGHT+IGYG+SImZloXijYbltE5rVdzNdwV+Adbn8SFOU36KV8fBrL+SjzcQUp0Wnt1jy1zzV7zxVQGw==
+X-Received: by 2002:adf:b30e:0:b0:374:c33d:377b with SMTP id ffacd0b85a97d-378c2d5a7ddmr3562864f8f.45.1726220614583;
+        Fri, 13 Sep 2024 02:43:34 -0700 (PDT)
 Received: from void.void ([141.226.9.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a340sm16347128f8f.24.2024.09.13.02.37.35
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895649733sm16388057f8f.8.2024.09.13.02.43.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 02:37:36 -0700 (PDT)
+        Fri, 13 Sep 2024 02:43:34 -0700 (PDT)
 From: Andrew Kreimer <algonell@gmail.com>
-To: Eduardo Valentin <edubezval@gmail.com>,
-	Keerthy <j-keerthy@ti.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>
-Cc: linux-pm@vger.kernel.org,
-	linux-omap@vger.kernel.org,
+To: Loic Poulain <loic.poulain@linaro.org>,
+	Kalle Valo <kvalo@kernel.org>
+Cc: wcn36xx@lists.infradead.org,
+	linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Andrew Kreimer <algonell@gmail.com>,
 	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] thermal/ti-soc-thermal: Fix typos
-Date: Fri, 13 Sep 2024 12:37:05 +0300
-Message-ID: <20240913093713.12376-1-algonell@gmail.com>
+Subject: [PATCH] wifi: wcn36xx: fix a typo
+Date: Fri, 13 Sep 2024 12:43:10 +0300
+Message-ID: <20240913094319.13718-1-algonell@gmail.com>
 X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -75,100 +71,27 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix typos in comments.
+Fix a typo in comments.
 
 Reported-by: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 ---
- drivers/thermal/ti-soc-thermal/dra752-bandgap.h   | 4 ++--
- drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h | 8 ++++----
- drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h | 4 ++--
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/net/wireless/ath/wcn36xx/wcn36xx.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/ti-soc-thermal/dra752-bandgap.h b/drivers/thermal/ti-soc-thermal/dra752-bandgap.h
-index d1b5b699cf23..1402b8c44c6b 100644
---- a/drivers/thermal/ti-soc-thermal/dra752-bandgap.h
-+++ b/drivers/thermal/ti-soc-thermal/dra752-bandgap.h
-@@ -74,7 +74,7 @@
- /**
-  * Register bitfields for DRA752
-  *
-- * All the macros bellow define the required bits for
-+ * All the macros below define the required bits for
-  * controlling temperature on DRA752. Bit defines are
-  * grouped by register.
-  */
-@@ -125,7 +125,7 @@
- /**
-  * Temperature limits and thresholds for DRA752
-  *
-- * All the macros bellow are definitions for handling the
-+ * All the macros below are definitions for handling the
-  * ADC conversions and representation of temperature limits
-  * and thresholds for DRA752. Definitions are grouped
-  * by temperature domain.
-diff --git a/drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h b/drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h
-index c63f439e01d6..3963f1badfc9 100644
---- a/drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h
-+++ b/drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h
-@@ -32,7 +32,7 @@
- /**
-  * Register and bit definitions for OMAP4430
-  *
-- * All the macros bellow define the required bits for
-+ * All the macros below define the required bits for
-  * controlling temperature on OMAP4430. Bit defines are
-  * grouped by register.
-  */
-@@ -48,7 +48,7 @@
- /**
-  * Temperature limits and thresholds for OMAP4430
-  *
-- * All the macros bellow are definitions for handling the
-+ * All the macros below are definitions for handling the
-  * ADC conversions and representation of temperature limits
-  * and thresholds for OMAP4430.
-  */
-@@ -102,7 +102,7 @@
- /**
-  * Register bitfields for OMAP4460
-  *
-- * All the macros bellow define the required bits for
-+ * All the macros below define the required bits for
-  * controlling temperature on OMAP4460. Bit defines are
-  * grouped by register.
-  */
-@@ -135,7 +135,7 @@
- /**
-  * Temperature limits and thresholds for OMAP4460
-  *
-- * All the macros bellow are definitions for handling the
-+ * All the macros below are definitions for handling the
-  * ADC conversions and representation of temperature limits
-  * and thresholds for OMAP4460.
-  */
-diff --git a/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h b/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-index 3880e667ea96..b70084b8013a 100644
---- a/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-+++ b/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-@@ -56,7 +56,7 @@
- /**
-  * Register bitfields for OMAP5430
-  *
-- * All the macros bellow define the required bits for
-+ * All the macros below define the required bits for
-  * controlling temperature on OMAP5430. Bit defines are
-  * grouped by register.
-  */
-@@ -101,7 +101,7 @@
- /**
-  * Temperature limits and thresholds for OMAP5430
-  *
-- * All the macros bellow are definitions for handling the
-+ * All the macros below are definitions for handling the
-  * ADC conversions and representation of temperature limits
-  * and thresholds for OMAP5430. Definitions are grouped
-  * by temperature domain.
+diff --git a/drivers/net/wireless/ath/wcn36xx/wcn36xx.h b/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
+index bccc27de848d..7ee79593cd23 100644
+--- a/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
++++ b/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
+@@ -167,7 +167,7 @@ struct wcn36xx_vif {
+  * @dpu_desc_index: DPU descriptor index is returned from HW after config_sta
+  * call and is used in TX BD.
+  * @bss_sta_index: STA index is returned from HW after config_bss call and is
+- * used in both SMD channel and TX BD. See table bellow when it is used.
++ * used in both SMD channel and TX BD. See table below when it is used.
+  * @bss_dpu_desc_index: DPU descriptor index is returned from HW after
+  * config_bss call and is used in TX BD.
+  * ______________________________________________
 -- 
 2.46.0
 
