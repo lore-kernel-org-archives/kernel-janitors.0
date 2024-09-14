@@ -1,48 +1,50 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79ABC762DF;
-	Fri, 13 Sep 2024 23:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0190179DC;
+	Sat, 14 Sep 2024 02:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726269543; cv=none; b=HS5OSrbUbwctsAMnSegQuLmCEyaqHNRigbZxN7A+ko8b/I1+wMPL/adeUDmBONgS9qhdJ66XYHxDFSXKhrKtXAJi+LQwoyE3A+KbXCmcbgwKf+pJMAh1MmxSf3KsjnH+F6iRIHupMiWbyr7ttwzyJg+7EuAL0TRkU2McevCEyDI=
+	t=1726279578; cv=none; b=HTKGZHX1b38VhQSQnG2GDEEmShz/nd5NA8WtddiC7h95ZkaIVf1s2B2pl7L1O75BtNUS2pInBQVfwo8PX3nOgLDXURMYeha2fPUq6ZnuAGRVCfU/fK/S5rJAMMp/rYN78iTmwCRahANlFTPttZtB9WCzb1wl+5IVj//TccSfw5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726269543; c=relaxed/simple;
-	bh=Mp3LD4Gy9gL1JgCsgPpVmsoOy9gUPHa0UyuZIi4S3aY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=INQNWqBizoSrtD7D41jNpYg27W6TQkdi8hPXfwObvNb2LnOLGx2VWMY7BpwK5NkMNA5VoCB++YhyI34KKbJ+ZKU1zMIaRj43as/q/4oe5vTc9VMMx0vB6+Ose68OLsGk4XKMl4daqFvdidIPnLvvKZvmZZEC88ayJcsZNekDT4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SKM/AnK+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1726279578; c=relaxed/simple;
+	bh=r1SPEaFbtgONlYp9N92wMuvszR631+QcjZT+HAM08G8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rA7P6qI2i/xQ2yCaacnD3csUwSNfIb9YZ4RGYiHkeZKux8RTgtFRpjfjENtH9mxWe3DoTyM4/FObOlOh+o+VPWOYJgbpnd0GfhMS6M3vcrNl5O7TvjHZnP7TMUlkhNRR9QOvToqAfa4mf3kkuMDa+bCqBjwLpJ2DOKuzmpNq4OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wx0lFibl; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SKM/AnK+"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48DATZc7019767;
-	Fri, 13 Sep 2024 23:18:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3QFWJvsh0p+nExgBe0zxKaCw3UaPyS98VTmcoydLqy8=; b=SKM/AnK+TwJnT2Wm
-	8edUiSgS/TP78pcedqRSQfvbR7x/L726l/BHGsavpFI4x8ptSrGDi0CX2vhfrida
-	sdq+46T5TljK7EV7Zc3v9Zf9436Yht3yLHUlH/9lZIzkH3nnP8+Rz2dN3nFpUm8j
-	eRXk9HtyjRUyfaANiNT1yw0/7u2smoyerJOiuVrhxzY2rsWaDsz3EyZ9M3yR10r/
-	d4qcExjhOG2vxgAGJbg7oW0PZx7GQDrNktGU8kPTAncEV1z1g+xGYo0v9heqfmZM
-	hbUdkB9ZzS8uM+lgCEkJe/3ZlIhuxL7cSVoxHftLvXlvL4c68qdKELqLSWguRAQJ
-	SJ5hUg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy5p2acc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Sep 2024 23:18:55 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48DNIsfU025992
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Sep 2024 23:18:54 GMT
-Received: from [10.111.181.97] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Sep
- 2024 16:18:53 -0700
-Message-ID: <add42b03-3703-49db-857c-711c9ac1eec6@quicinc.com>
-Date: Fri, 13 Sep 2024 16:18:52 -0700
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wx0lFibl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726279576; x=1757815576;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=r1SPEaFbtgONlYp9N92wMuvszR631+QcjZT+HAM08G8=;
+  b=Wx0lFiblieA/9/9zel9rjGGqiBhBg5zYjJ/ObIHxufVPcAMw1Fk+5oEb
+   zjOJOQL72vzWiy8zQsKghpnSbtgajYcGTpXhEBXRi9FkGj/Q7G3uHH/k6
+   Mp6q9arZJUfEnohcT+UYK9SFpVyVg8lfV+784+4Kc3JSkMqmKfyfZf8l3
+   1fSe3I8qlsUlHfu1PSil9tghCgNGIa+ZCDyWZFVxhf8+D3hJskkidrG+u
+   8y2xVFJhTo7kBnkBtA1zftgd7EosIg7aXwbmWoHQ6B2E3lw32By4gB1MF
+   HvIqeRGlSQns9/n+49kVgwbAc6m84o675WYdjX7T5Ea9Rc23HTk1zQ702
+   A==;
+X-CSE-ConnectionGUID: 7++i2EDnTCq797+HfENnXQ==
+X-CSE-MsgGUID: 3+9wc8S+TgyxDSnps6brwg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="47706728"
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="47706728"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 19:06:15 -0700
+X-CSE-ConnectionGUID: hrcCDiI6S7qL/42olX80Rg==
+X-CSE-MsgGUID: gzoUIxuVSy6K+Ux6zmuDmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="67968803"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.127]) ([10.239.159.127])
+  by fmviesa007.fm.intel.com with ESMTP; 13 Sep 2024 19:06:12 -0700
+Message-ID: <42bbc500-578c-474b-98ec-1988906f31ef@linux.intel.com>
+Date: Sat, 14 Sep 2024 10:02:05 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,36 +52,32 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: ath6kl: fix typos
-To: Andrew Kreimer <algonell@gmail.com>, Kalle Valo <kvalo@kernel.org>
-CC: <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-References: <20240913094818.14456-1-algonell@gmail.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: baolu.lu@linux.intel.com, Thierry Reding <thierry.reding@gmail.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] drm/tegra: Fix NULL vs IS_ERR() check in probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+References: <ba31cf3a-af3d-4ff1-87a8-f05aaf8c780b@stanley.mountain>
 Content-Language: en-US
-In-Reply-To: <20240913094818.14456-1-algonell@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <ba31cf3a-af3d-4ff1-87a8-f05aaf8c780b@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Gv2OZ70UpYsWzbKVYqRJAjts975kraa4
-X-Proofpoint-ORIG-GUID: Gv2OZ70UpYsWzbKVYqRJAjts975kraa4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- mlxlogscore=567 bulkscore=0 clxscore=1015 impostorscore=0 phishscore=0
- spamscore=0 malwarescore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409130165
 
-On 9/13/2024 2:48 AM, Andrew Kreimer wrote:
-> Fix typos in comments.
+On 9/13/24 10:34 PM, Dan Carpenter wrote:
+> The iommu_paging_domain_alloc() function doesn't  return NULL pointers,
+> it returns error pointers.  Update the check to match.
 > 
-> Reported-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> Fixes: 45c690aea8ee ("drm/tegra: Use iommu_paging_domain_alloc()")
+> Signed-off-by: Dan Carpenter<dan.carpenter@linaro.org>
+> ---
+>   drivers/gpu/drm/tegra/drm.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+
+Thanks,
+baolu
