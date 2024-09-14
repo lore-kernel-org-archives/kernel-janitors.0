@@ -1,77 +1,99 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C86428689;
-	Sat, 14 Sep 2024 04:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15ABD1448C5;
+	Sat, 14 Sep 2024 09:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726288244; cv=none; b=tqnhu5oZA/d4MhVDklW4xU43PWj485bEmsLB5zRLsadgnj+VdGVsr0I8fK4/eln0l3cKp8b4uvJ0JfPnTqB/vya5Suw26K6jvMbKw7gUJj6QWWwX0KDOpGp8JkjfyjAPfhZwX/dtGfNvJru3l/IRsycDi8S7nvgK9+K/kcV0gAE=
+	t=1726306970; cv=none; b=C3x/bcCyDRDx5U6olJJGvMNZK6NZI20PWlwaMjqyWeKbvyg5udrgC7alluQPsc0Ijp/BUyN89acu1m+fbbZHUNaCFvwmY3YHu02HLXBgWqcgQLiQlbeUoBiC8qHZClkcjuls+ILCJlZvLG0OBMW8At3A0oNb1i4rijsqkTQkDgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726288244; c=relaxed/simple;
-	bh=gX8FjFm8+rZzyOuFKZmByOKTL8BxWdICKbVdqrOJtjE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=YGtzT1wICx18CnHLc8lViTdk/hzlwOOCPLKmf6ADyTFDPDKUDe7CU9HBfZVSX+4X84/h6DoPdz73PBCxJEfEM8zfSXH0zUCR2LwdyYkQK8zudJMZCj3Tavlhj1JGEXCnzl+X9JUp2C48RO/m6STwp1IVAAtJ3O2OVHKUqRQfCqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eP/ioJ61; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726306970; c=relaxed/simple;
+	bh=nFdqN8ZIg9d56NL0UDelISUEoSXmQsSo2jA9nIE+K08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pmw8uHi5FCE9J2TdhaWNcZw0YTne8r7EI7KmQrFux24olavUUHTvZd9Bw8aRswPvvepftWv+gdc/CfIJPcrlkuL+7YGREEwkObwWZ4iyYNibscYAPJZkpTLcvzKGJ50wMsQtgQrEWYJgDrNsA1lzEUTtnhG9+o+jcac1QFMKTmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTPuLtMc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eP/ioJ61"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3ABEC4CEC4;
-	Sat, 14 Sep 2024 04:30:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTPuLtMc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E751C4CEC0;
+	Sat, 14 Sep 2024 09:42:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726288243;
-	bh=gX8FjFm8+rZzyOuFKZmByOKTL8BxWdICKbVdqrOJtjE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=eP/ioJ61s44REdmUGkyUmVIJGt3cHDGInxWArBLMlarVPqJEYqPp2rM0pFUaEqpaM
-	 VG6Ql9KXMt4e3/jLbfApP6EUhf0kNmpC9mHyyjdoWiERRiSThjrGkKoo5dL8p3ftOi
-	 Fq4XDp6Svea5npVa7TDnPFsGa6O8cFNdLkK30UaSFXu3xpgzmHhXub1r5ifujO4QJa
-	 yis3rW/in42uX3KplgvePw0J3K49SEtWCL2NuMQNiD8QvqEMfv8xvGQLmegm2rEzYV
-	 ZFjY2l9WmyoIJlTF+6+rO7SJMxNAsCwWzR5ZW+FSrevlJT87p84k9kGNqyd3Kpk0bN
-	 X0BML/rhXu6CQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 346B43806655;
-	Sat, 14 Sep 2024 04:30:46 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1726306969;
+	bh=nFdqN8ZIg9d56NL0UDelISUEoSXmQsSo2jA9nIE+K08=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BTPuLtMcxIJ6UJQ6YPL+PPzx6chFHXkjTXGCSVE5L6Q6B83OyN19nNUYshONpb4pa
+	 uI6/ki1GtGw8r1G5qKqJQ0C1KFm03LPFPNc/OD7pdhahOX2XGxf5pqRNg4dvFz7ddb
+	 zQcJdSP66MVeHnyijY5BXTh+t8rZnp82iizIJXqQoixmBpRnq/iMJc0EtRDfR2A2f3
+	 8ebriMWS6k/WkGUePHo82DHUHVIE0/uUpIbRU7Jy+iWUgng7Vg3ZG3ClGyEwep9vs8
+	 Tzvv4yZxLbRXG02N84X6pks6zLDtBfw+vR6E4igfSLCokKB4ZCV7bn2GsemQaXzh/y
+	 2UgtzJOmfqSzw==
+Date: Sat, 14 Sep 2024 10:42:44 +0100
+From: Simon Horman <horms@kernel.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: jmaloy@redhat.com, ying.xue@windriver.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	nathan@kernel.org, ndesaulniers@google.com, morbo@google.com,
+	justinstitt@google.com, tuong.t.lien@dektech.com.au,
+	netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] net: tipc: avoid possible garbage value
+Message-ID: <20240914094244.GG12935@kernel.org>
+References: <20240912110119.2025503-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] rtase: Fix error code in rtase_init_board()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172628824486.2458848.11010446236065995234.git-patchwork-notify@kernel.org>
-Date: Sat, 14 Sep 2024 04:30:44 +0000
-References: <f53ed942-5ac2-424b-a1ed-9473c599905e@stanley.mountain>
-In-Reply-To: <f53ed942-5ac2-424b-a1ed-9473c599905e@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: justinlai0215@realtek.com, larry.chiu@realtek.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912110119.2025503-1-suhui@nfschina.com>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 12 Sep 2024 11:57:06 +0300 you wrote:
-> Return an error if dma_set_mask_and_coherent() fails.  Don't return
-> success.
+On Thu, Sep 12, 2024 at 07:01:20PM +0800, Su Hui wrote:
+> Clang static checker (scan-build) warning:
+> net/tipc/bcast.c:305:4:
+> The expression is an uninitialized value. The computed value will also
+> be garbage [core.uninitialized.Assign]
+>   305 |                         (*cong_link_cnt)++;
+>       |                         ^~~~~~~~~~~~~~~~~~
 > 
-> Fixes: a36e9f5cfe9e ("rtase: Add support for a pci table in this module")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> tipc_rcast_xmit() will increase cong_link_cnt's value, but cong_link_cnt
+> is uninitialized. Although it won't really cause a problem, it's better
+> to fix it.
+> 
+> Fixes: dca4a17d24ee ("tipc: fix potential hanging after b/rcast changing")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+
+Hi Su Hui,
+
+This looks like a bug fix. If so it should be targeted at net rather than
+net-next. If not, the Fixes tag should be dropped, and the commit can be
+referenced in the patch description with some other text around:
+
+commit dca4a17d24ee ("tipc: fix potential hanging after b/rcast changing")
+
 > ---
->  drivers/net/ethernet/realtek/rtase/rtase_main.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  net/tipc/bcast.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/tipc/bcast.c b/net/tipc/bcast.c
+> index 593846d25214..a3699be6a634 100644
+> --- a/net/tipc/bcast.c
+> +++ b/net/tipc/bcast.c
+> @@ -321,7 +321,7 @@ static int tipc_mcast_send_sync(struct net *net, struct sk_buff *skb,
+>  	struct tipc_msg *hdr, *_hdr;
+>  	struct sk_buff_head tmpq;
+>  	struct sk_buff *_skb;
+> -	u16 cong_link_cnt;
+> +	u16 cong_link_cnt = 0;
+>  	int rc = 0;
 
-Here is the summary with links:
-  - [net-next] rtase: Fix error code in rtase_init_board()
-    https://git.kernel.org/netdev/net-next/c/37551b4540bd
+I think we should preserve reverse xmas tree order - longest like to
+shortest - for these local variable declarations.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+>  
+>  	/* Is a cluster supporting with new capabilities ? */
+> -- 
+> 2.30.2
+> 
+> 
