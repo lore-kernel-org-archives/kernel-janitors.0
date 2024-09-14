@@ -1,130 +1,61 @@
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19A8208DA
-	for <kernel-janitors@vger.kernel.org>; Sat, 14 Sep 2024 17:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006D56F066;
+	Sat, 14 Sep 2024 22:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726333382; cv=none; b=OrwdnjclCXWshdWjzyrm+3pCgPNtKbMTVCWoW4qtrR7lBkSEB/HipeRCZP44YjdoDfH1i5GsbJ2IQREHoTqeZJfKhh1Cu+wowxeRSzLsbbZ/hY7vcQuAmhURZPD4LWpjhMeAAXX2ho3ui1XbM6znPLQfhOu8cOrLtWqmve8FdqU=
+	t=1726351669; cv=none; b=nE1DWyzLt98/PovmKGEGbWy38m2c+FspQ/eKRkx+qN+FQkbueI9jnlI1iX+gau3NGoOKZM9ll00fLm8+VDnsK8CGOBlYOP6hDTky30k66zV/HlF8I+1Fc1+noPtNt46qJvFMqroye77rsuqLJg9AR4uqJ4nu+vhUMb8up2Ltm7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726333382; c=relaxed/simple;
-	bh=CfOgQpo0wd5FNYZlcNhUIiMkd4jJ7pzoQSKISw4XJu0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zra8L5hKLaKu9vJ1fs1zcIwW3q990XCZx+ppgVFhHeR/5BRERPZyD/ZMCNxxRIwnBP4Q3DSUs32DQjTP0BIRKFel9iX21RpLrSsEXKxUVpkK/ZfSG6rtoohWJQn28+3eDmf6bR3M0mDuHkQ7QtIqdxhXxvYw/v4F5UJad4bJqNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XFXCeKKS; arc=none smtp.client-ip=80.12.242.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XFXCeKKS"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id pWAYsZyXRERiZpWAZsSBCx; Sat, 14 Sep 2024 19:02:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1726333371;
-	bh=9mmHPrhPQ42BfgqjlGF5PD7LXLG84dsNAms6oZMuxi8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=XFXCeKKSgs/6kEZR+yw8/6YixXB2Ry4EgFcEoDs730RFo8/mVKjYYcz769o/M9usl
-	 f3ZanConqPx6SBi2+cViQDQZgqiOisduInT/PDD1obuCa4A43nilp+v6UEp42Gaec0
-	 X+OgTrPmaqVmnt4o8hDlW/z80AscVjI+RP6PZ2Kx58FQecBcWvp1whSasZxOQquz/W
-	 r6bu1QH553Bu4oGAzJDQQG/ykTgGI3BLxLlnoVXl/YUXarNqd0BJpCO9CJ4Ts+Qiy4
-	 JQYAWQpX/SKoAXurjVrUcjqZwBcvGodhJrniBkVkxpdSuBXQqX/QjFPSXRJQ8agSrE
-	 Ir6aUFAU5jaQw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 14 Sep 2024 19:02:51 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: biju.das.jz@bp.renesas.com,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-phy@lists.infradead.org
-Subject: [PATCH v4] phy: renesas: rcar-gen3-usb2: Fix an error handling path in rcar_gen3_phy_usb2_probe()
-Date: Sat, 14 Sep 2024 19:02:44 +0200
-Message-ID: <1457c401e3cdf792c5170f5c703cb24de137c19a.1726333335.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726351669; c=relaxed/simple;
+	bh=8UYJTps9ziYwnwbXUxK+LWRqU6OAMrQVi8OKICgzcwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O+G6o6HtWGLbogBGiSMG/KsbFdITkTS68Y4ukJ6ihSPIE2TLvbjjD1iNVEudEM8NZnHLcYaz+Pk1dTLTWq83FeAYRwN9bHBeTrWfiBTA3Bv4K3b9AHx9X2SpSx00nGRARVwr2XrnDdKmJB24lRotorverv3cC4/f4tlldCzCWNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=53302 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1spavX-00CioL-9K; Sun, 15 Sep 2024 00:07:37 +0200
+Date: Sun, 15 Sep 2024 00:07:34 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Florian Westphal <fw@strlen.de>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] netfilter: nft_socket: Fix a NULL vs IS_ERR() bug in
+ nft_socket_cgroup_subtree_level()
+Message-ID: <ZuYJJonibwaFdpab@calendula>
+References: <bbc0c4e0-05cc-4f44-8797-2f4b3920a820@stanley.mountain>
+ <20240914111940.GA19902@breakpoint.cc>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240914111940.GA19902@breakpoint.cc>
+X-Spam-Score: -1.9 (-)
 
-If an error occurs after the reset_control_deassert(),
-reset_control_assert() must be called, as already done in the remove
-function.
+On Sat, Sep 14, 2024 at 01:19:40PM +0200, Florian Westphal wrote:
+> Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > The cgroup_get_from_path() function never returns NULL, it returns error
+> > pointers.  Update the error handling to match.
+> 
+> Good news, I will retire in the next few years so I don't send shit
+> patches anymore.
+> 
+> Acked-by: Florian Westphal <fw@strlen.de>
 
-Use devm_add_action_or_reset() to add the missing call and simplify the
-.remove() function accordingly.
+This is also my fault, I did not help to catch this error in any way:
 
-Fixes: 4eae16375357 ("phy: renesas: rcar-gen3-usb2: Add support to initialize the bus")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch changes the order of function calls when releasing the resources
-in the .remove function(). Looks fine to me, but pm_ functions are
-sometimes tricky.
-
-Changes in v4:
-  - Use the error handling path in rcar_gen3_phy_usb2_init_bus()
-
-Changes in v3:
-  - Use devm_add_action_or_reset()   [Biju Das]
-v3: https://lore.kernel.org/all/290b25827e3f0742808940719455ff0c5cb9d01d.1726329925.git.christophe.jaillet@wanadoo.fr/
-
-Changes in v2: (broken proposal)
-  - Re-use 'error' to simplify the patch   [claudiu beznea]
-  - Update the commit description to explain why it is safe.
-v2: https://lore.kernel.org/all/4efe2d0419cbe98163e2422ebe0c7896b8a5efed.1725717505.git.christophe.jaillet@wanadoo.fr/
-
-v1: https://lore.kernel.org/all/fc9f7b444f0ca645411868992bbe16514aeccfed.1725652654.git.christophe.jaillet@wanadoo.fr/
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 58e123305152..f900fe42c311 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -668,6 +668,13 @@ static enum usb_dr_mode rcar_gen3_get_dr_mode(struct device_node *np)
- 	return candidate;
- }
- 
-+static void rcar_gen3_reset_assert(void *data)
-+{
-+	struct reset_control *rstc = data;
-+
-+	reset_control_assert(rstc);
-+}
-+
- static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
- {
- 	struct device *dev = channel->dev;
-@@ -686,6 +693,11 @@ static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
- 	if (ret)
- 		goto rpm_put;
- 
-+	ret = devm_add_action_or_reset(dev, rcar_gen3_reset_assert,
-+				       channel->rstc);
-+	if (ret)
-+		goto rpm_put;
-+
- 	val = readl(channel->base + USB2_AHB_BUS_CTR);
- 	val &= ~USB2_AHB_BUS_CTR_MBL_MASK;
- 	val |= USB2_AHB_BUS_CTR_MBL_INCR4;
-@@ -815,7 +827,6 @@ static void rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
- 	if (channel->is_otg_channel)
- 		device_remove_file(&pdev->dev, &dev_attr_role);
- 
--	reset_control_assert(channel->rstc);
- 	pm_runtime_disable(&pdev->dev);
- };
- 
--- 
-2.46.0
-
+Acked-by: Pablo Neira Ayuso <pablo@netfilter.org>
