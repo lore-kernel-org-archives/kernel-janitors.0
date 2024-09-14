@@ -1,174 +1,66 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59FB1CF7BA;
-	Sat, 14 Sep 2024 14:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10DE179BF;
+	Sat, 14 Sep 2024 15:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726324901; cv=none; b=nMqwW5WWLhEsXxmVAKklAA+TSG/JaMXp+OSGFy1sSDTY8/h5+CyeS+qHxEcJhzb0TcetqOsQnt7T+aurJOAvQPmb4+K2rZNpy2NzSqqXwg134XhQwWigYglkdfQDj4iCOnlPJ3llsdQ9wdfnPO2yIYJlcrbcdIqJbEeKXd4te2M=
+	t=1726327317; cv=none; b=KoS5xIFGW9CPEu3+WXKdcR/7qwRxR6iUaF2K8EA5cM/JWaJfEjM/N/RSd4i4ijK99PWG03GYQlSKvvE2ri6BLUmKdg8gQxJZemxS9UkeCRytafCZSxNqbdLArJ5Uw9XR3uABzTycfjYwYWzVwFhJu8fZHDkQxOWQb07EFgh9hNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726324901; c=relaxed/simple;
-	bh=12hUWoTateuFqGVq4jVrb41kOiU/YeYQ2gkJmLbjaHo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JAD+OLYgWw/PJBKFw9OdBITIKfKvMrLETF5wEmAHyWypq3DCssZozRepAaZ1iiUIpiNWAqpk6LyLVt011P/YJTbg/g5h0ehbfm4G4rr6IiY7VCfK8b5QnEeqpYEN2ZSrhiT7yIK43haE0pRxZ8Pjm6VjjuUwMb7oFyPNN+mObAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=B7v1HI+k; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1726327317; c=relaxed/simple;
+	bh=vVbuT2PkbiZL2oGC7T+8Tw6ga9ngmRsKtudtTJXUgnI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qZxii28dCrJuJc5YgxUDSJTCap1iJZXVh3Q5AysvHAAIuhw26QHK1TAEpadGmNMNrTC/yk8Nu7Oga/IhAuDotFZpS/hSNvab+Vt0R7wAGffSWo5SvgwaDgWqGYeqtQDlFyqPpEbOWCOQEHNp+QIpdCBnCzPtXkTFCx8rWTM/K6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nWaN+8jm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="B7v1HI+k"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1726324872; x=1726929672; i=markus.elfring@web.de;
-	bh=otr/Fanph/ZBx2E0YWs7aAENovFVbw+paDqnBja9p6Q=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=B7v1HI+k9UL1LkX1EczHGObCNAvPsOaEoNlKe0xDTtRi5u4HilzgywIZ1QSOVPDH
-	 +cMsNb096xHsj5C3k8cLFWK49vM0O1jYDM+HDRVUK9RpUOUXsYiMAWEUuPh4Fykjj
-	 HUJSdNeFOp6qN1G4W+75FFZxQbt4kubTmNThg49uF81UXlHFjGuZ7kH0xpxoy0+4k
-	 u1JJ0+XI2LgZAeUpKERajoRV4LPVMiEJGrmzxsROTKArO4qDL4SPYjkxvSJ8FXuL8
-	 IFDxC6XXsuWSsXkUimw/fMRzYXismyEYLXT5K68UacKUUHzP3+SJ81VG2XhoTF0+y
-	 mEQOHaY5ZqsXMdQ8Uw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MY5bV-1sUNHh0k3B-00JM7i; Sat, 14
- Sep 2024 16:41:12 +0200
-Message-ID: <300b5d1a-ab88-4548-91d2-0792bc15e15e@web.de>
-Date: Sat, 14 Sep 2024 16:40:49 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nWaN+8jm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1531C4CEC0;
+	Sat, 14 Sep 2024 15:21:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726327317;
+	bh=vVbuT2PkbiZL2oGC7T+8Tw6ga9ngmRsKtudtTJXUgnI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nWaN+8jmxXZQmoGzbOiKHglQ47GMu2Z+l01o1N+NukiwUTayXJ5sd+Gi9TDL4yml/
+	 HgzlD/r2qBF+9VXl5fL5/+PgrEqJqC8MbLzWbqzAHVReW2GzokoowdMcjiL+/f5jST
+	 jBtxb45SWFvstOK1YLrQUBI5Ov7Tbm8suYJaiS8wEtKBbZkEfXpUPTYpABCl3ZBwf0
+	 1v2s/ELNeaw+kELN5zq14BggtTGtnDMyDRocK4j0iKtehTGubfRGCZV9a9dRgbzTgH
+	 eSVpQUpPWQMsUhjn4ObnZRr56q51vAgDZIMYPWGMv0lxaXi4LoPiOMmEeVw9slms7M
+	 f8/EtKTLLt0AQ==
+Date: Sat, 14 Sep 2024 16:21:52 +0100
+From: Simon Horman <horms@kernel.org>
+To: Florian Westphal <fw@strlen.de>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] netfilter: nft_socket: Fix a NULL vs IS_ERR() bug in
+ nft_socket_cgroup_subtree_level()
+Message-ID: <20240914152152.GB11774@kernel.org>
+References: <bbc0c4e0-05cc-4f44-8797-2f4b3920a820@stanley.mountain>
+ <20240914111940.GA19902@breakpoint.cc>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Generalising a transformation with SmPL?
-From: Markus Elfring <Markus.Elfring@web.de>
-To: cocci@inria.fr, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Ulf Hansson <ulf.hansson@linaro.org>
-References: <20240825183116.102953-1-krzysztof.kozlowski@linaro.org>
- <186de981-7a3c-4fdb-8911-8dfee597c759@web.de>
-Content-Language: en-GB
-In-Reply-To: <186de981-7a3c-4fdb-8911-8dfee597c759@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:HoPsqyKslKdr1/wDHKIm21VHDAszlWtNHLl9bGyfP1+Hg9zGId1
- QqconPycwS+U7U7P6YZzvSULENsCcC6IMS9ZbFvtF43P7ylEFrrqy2UiTFTCAnG/t3xGJPv
- jIy3AbBYK2pS6S91iO8bYnbU/0eGUrfQo/ZpvQYGmEzGUGQloRigSHs+QjCycxpCFWRUubR
- ikpwux6/SRiUOLtTMeufQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:9t68vCu+5is=;nwxrIk6VB5MbEnzetXnqx5U2p6i
- 9ype9tcoamIuXMwI8S0Y6oEVcN0fW7/1CgNjFw6ITdkNUTPSSGGPGKuTidxsqvlLMP4URI8oN
- 1Y2XMwrRzSmun5ObFsURie8sv+m/4EDEBn8BQ9e3p9fqOKomDEL+D7y6HJTXMGq5bwxLoLEuc
- EDyrxabmDnrlPJGuKBDTQT6cL/HJfr8bE1XyJ1igFgXo03ZveIo1CgTLZKSXJHTP5LYGZJwFw
- oIeXR1GATrPL28gH828b7rl0nnPJ17+0rT6Y8iQfBR3Hl1etwslEGAYJieNKMGI0igP4tRjEE
- NhLyw7KzKvI0/z9nnuF1ZthvE6UV8/+Ub6TdoJmYK4nlJ+0oYgMwIz9kAsbok0+JTWVrMNKvI
- m2Lh12PId+3YPWPoaFnhfVExQxWDkaB4lfTi3Lk8izykTyxNVd/d9E4LKdCkivkIhXO0G4dbD
- zehFF/QkLEIlWdU4FDKhsZqxgW2q5O6dVjARZvdy0eDo5LC7cQt/zDKS4Tbp4O62px+CA4gK1
- e8D6msSQVrDNXHOMm7GK+VM4Ic+z60IhKCc73MZnvHMOIso/6fUVVha5u83gxqY5Hex4UzjdC
- HPGoxYx1kaiRazKT/VE8KHYAo6NGtntnYgnurf3XFDghNUCUnwu4FtuuIMO/M7fWXGCoDjm5y
- i2LZPT5xJWQ55LMbig2B2z4PwkCPYy+kc2XbQC0kXyzWzsPme2QcYSswg4f0ibN1/15uK9TEJ
- 4Rzj12o2qsc/gCriD2MjmMuX5l3W0KjpiPoZyGUEt20psLLvFFzC55YPXncbZzt/zFE0m8BND
- KE2QnWaKpHHdjiNTdCQBd7Rw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240914111940.GA19902@breakpoint.cc>
 
-=E2=80=A6
-> I found it easy to convert it also into the following small script varia=
-nt
-> for the semantic patch language (Coccinelle software).
->
->
-> @adjustment@
-> expression e, x;
-> @@
-> +of_node_put(e);
->  if (...)
->  {
->  <+... when !=3D e =3D x
-> -   of_node_put(e);
->  ...+>
->  }
-> -of_node_put(e);
->
->
-> 58 patches were accordingly generated for source files of the software =
-=E2=80=9CLinux next-20240913=E2=80=9D.
-=E2=80=A6
+On Sat, Sep 14, 2024 at 01:19:40PM +0200, Florian Westphal wrote:
+> Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > The cgroup_get_from_path() function never returns NULL, it returns error
+> > pointers.  Update the error handling to match.
+> 
+> Good news, I will retire in the next few years so I don't send shit
+> patches anymore.
+> 
+> Acked-by: Florian Westphal <fw@strlen.de>
 
-This SmPL script references a known function name.
-https://elixir.bootlin.com/linux/v6.11-rc7/source/drivers/of/dynamic.c#L43
-
-I imagine that it can become helpful to avoid duplicate function calls
-also in combination with other functions.
-But there are development challenges to consider for functions like mutex_=
-unlock()
-which get addresses passed for data structure members.
-Thus I hoped that something can be achieved with the following script vari=
-ant.
-
-
-@extended_adjustment@
-expression e, f, x, y;
-@@
-+f(e);
- if (...)
- {
- <+... when !=3D \( e =3D x \| y(..., &e, ...) \)
-(   f(&e);
-|
--   f(e);
-)
- ...+>
- }
-(f(&e);
-|
--f(e);
-)
-
-
-But the software combination =E2=80=9CCoccinelle 1.2-00038-g2297fc0f=E2=80=
-=9D points details out
-for further development considerations.
-
-Markus_Elfring@Sonne:=E2=80=A6/Projekte/Linux/next-analyses> spatch driver=
-s/pmdomain/rockchip/pm-domains.c =E2=80=A6/Projekte/Coccinelle/janitor/avo=
-id_duplicate_function_call.cocci
-=E2=80=A6
-previous modification:
-
-  <<< f(e);
-CONTEXT
-
-According to environment 2:
-   extended_adjustment.e -> pmu->mutex
-
-   extended_adjustment.f -> mutex_unlock
-
-
-current modification:
-
-  <<< f(e);
-CONTEXT
-
-According to environment 2:
-   extended_adjustment.e -> &pmu->mutex
-
-   extended_adjustment.f -> mutex_unlock
-
-
-exn while in timeout_function
-extended_adjustment: already tagged token:
-C code context
-File "drivers/pmdomain/rockchip/pm-domains.c", line 538, column 1, charpos=
- =3D 14292
-  around =3D 'if',
-  whole content =3D       if (rockchip_pmu_domain_is_on(pd) !=3D power_on)=
- {
-
-
-
-How can such a software situation be improved?
-
-Regards,
-Markus
+Everyone makes mistakes, don't be too hard on yourself :)
