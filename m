@@ -1,89 +1,54 @@
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 11B1B139CE9;
-	Sat, 14 Sep 2024 10:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DF61CE71F;
+	Sat, 14 Sep 2024 11:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726309613; cv=none; b=Tfcl01xgmYGiV2TY7TPn3uW0UibLX9zfOmFqgdWJOrI9ani+tNLoPisoDUVxlAUJOUdcpF9FKNnFS65AoAl4KEVwUVbeO+0e0f+6TcuJwmIKXgZRqgz8dBSImV4P4S9l9UYPE5bcUno0L/DFQ3bX6XmNwczZAAni6NcKNmD++EA=
+	t=1726312801; cv=none; b=aI+dNOya08A0lbi/78GJOkYAEWyQMGeNPlKuLMUJhZjGaGNuSyGNRTOEN9L+g54LsRvOCJ8QlS6xNp5D4ZNgg5A3+iK/7elDYfz9yi9cqwJ9UDdaVMHs+YDRSFQ5nK+poJKnZDmbIWQTkZLhERALG9sk0JiyBC4aj3JA/P4oNLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726309613; c=relaxed/simple;
-	bh=fTgHgYrxq8ERpTbnxCewRt4jdubSmOVdRC43Fb/8CL0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CrgsedbGB7FFTZYb0YliuoI74cfursXKSjfUKA3oO2b0ybdlxaojZ9UEwx7s3KMQPcwTwm2NTQ5B8Xko7EZw7Z7d3ZMPIXnBvu09CJzQqmi5KMs5Ii7PyI2C0p1CR+LfhCSrNyrzmFqsIzO30ATPzIBDFP69GvitSL6FKUhnhcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id C024B602EDA6E;
-	Sat, 14 Sep 2024 18:26:44 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: jmaloy@redhat.com,
-	ying.xue@windriver.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	nathan@kernel.org,
-	ndesaulniers@google.com,
-	morbo@google.com,
-	justinstitt@google.com
-Cc: Su Hui <suhui@nfschina.com>,
-	horms@kernel.org,
-	dan.carpenter@linaro.org,
-	tuong.t.lien@dektech.com.au,
-	netdev@vger.kernel.org,
-	tipc-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
+	s=arc-20240116; t=1726312801; c=relaxed/simple;
+	bh=B/e4582x5/eQYicpm4MVSH0gKsfgYsgnmvIVQhvpiRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b1HcKvAWH46O1pttwfd+kXBplvXeRbbfiwphrxFw9prBeZlMr33Ad0g3Kfh3iQvhtOHGYxp1YYsDYgwnNMjFHAZbiCANa9SJQHyOv3eVDdOk7xIgy9tYvhatgMYLTmFiEwT+udJjvCzJ8yVSFlX/3gUXKlRwTJZGhXMHERUDPWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1spQoW-0005BJ-Ba; Sat, 14 Sep 2024 13:19:40 +0200
+Date: Sat, 14 Sep 2024 13:19:40 +0200
+From: Florian Westphal <fw@strlen.de>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Florian Westphal <fw@strlen.de>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH net v2] net: tipc: avoid possible garbage value
-Date: Sat, 14 Sep 2024 18:26:21 +0800
-Message-Id: <20240914102620.1411089-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+Subject: Re: [PATCH net] netfilter: nft_socket: Fix a NULL vs IS_ERR() bug in
+ nft_socket_cgroup_subtree_level()
+Message-ID: <20240914111940.GA19902@breakpoint.cc>
+References: <bbc0c4e0-05cc-4f44-8797-2f4b3920a820@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bbc0c4e0-05cc-4f44-8797-2f4b3920a820@stanley.mountain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Clang static checker (scan-build) warning:
-net/tipc/bcast.c:305:4:
-The expression is an uninitialized value. The computed value will also
-be garbage [core.uninitialized.Assign]
-  305 |                         (*cong_link_cnt)++;
-      |                         ^~~~~~~~~~~~~~~~~~
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> The cgroup_get_from_path() function never returns NULL, it returns error
+> pointers.  Update the error handling to match.
 
-tipc_rcast_xmit() will increase cong_link_cnt's value, but cong_link_cnt
-is uninitialized. Although it won't really cause a problem, it's better
-to fix it.
+Good news, I will retire in the next few years so I don't send shit
+patches anymore.
 
-Fixes: dca4a17d24ee ("tipc: fix potential hanging after b/rcast changing")
-Signed-off-by: Su Hui <suhui@nfschina.com>
-Reviewed-by: Justin Stitt <justinstitt@google.com>
----
-v2:
-- sending to net rather than net-next
-- keeping xmas tree order
-
- net/tipc/bcast.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/tipc/bcast.c b/net/tipc/bcast.c
-index 593846d25214..114fef65f92e 100644
---- a/net/tipc/bcast.c
-+++ b/net/tipc/bcast.c
-@@ -320,8 +320,8 @@ static int tipc_mcast_send_sync(struct net *net, struct sk_buff *skb,
- {
- 	struct tipc_msg *hdr, *_hdr;
- 	struct sk_buff_head tmpq;
-+	u16 cong_link_cnt = 0;
- 	struct sk_buff *_skb;
--	u16 cong_link_cnt;
- 	int rc = 0;
- 
- 	/* Is a cluster supporting with new capabilities ? */
--- 
-2.30.2
-
+Acked-by: Florian Westphal <fw@strlen.de>
