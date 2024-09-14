@@ -1,83 +1,77 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0190179DC;
-	Sat, 14 Sep 2024 02:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C86428689;
+	Sat, 14 Sep 2024 04:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726279578; cv=none; b=HTKGZHX1b38VhQSQnG2GDEEmShz/nd5NA8WtddiC7h95ZkaIVf1s2B2pl7L1O75BtNUS2pInBQVfwo8PX3nOgLDXURMYeha2fPUq6ZnuAGRVCfU/fK/S5rJAMMp/rYN78iTmwCRahANlFTPttZtB9WCzb1wl+5IVj//TccSfw5g=
+	t=1726288244; cv=none; b=tqnhu5oZA/d4MhVDklW4xU43PWj485bEmsLB5zRLsadgnj+VdGVsr0I8fK4/eln0l3cKp8b4uvJ0JfPnTqB/vya5Suw26K6jvMbKw7gUJj6QWWwX0KDOpGp8JkjfyjAPfhZwX/dtGfNvJru3l/IRsycDi8S7nvgK9+K/kcV0gAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726279578; c=relaxed/simple;
-	bh=r1SPEaFbtgONlYp9N92wMuvszR631+QcjZT+HAM08G8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rA7P6qI2i/xQ2yCaacnD3csUwSNfIb9YZ4RGYiHkeZKux8RTgtFRpjfjENtH9mxWe3DoTyM4/FObOlOh+o+VPWOYJgbpnd0GfhMS6M3vcrNl5O7TvjHZnP7TMUlkhNRR9QOvToqAfa4mf3kkuMDa+bCqBjwLpJ2DOKuzmpNq4OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wx0lFibl; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1726288244; c=relaxed/simple;
+	bh=gX8FjFm8+rZzyOuFKZmByOKTL8BxWdICKbVdqrOJtjE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=YGtzT1wICx18CnHLc8lViTdk/hzlwOOCPLKmf6ADyTFDPDKUDe7CU9HBfZVSX+4X84/h6DoPdz73PBCxJEfEM8zfSXH0zUCR2LwdyYkQK8zudJMZCj3Tavlhj1JGEXCnzl+X9JUp2C48RO/m6STwp1IVAAtJ3O2OVHKUqRQfCqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eP/ioJ61; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wx0lFibl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726279576; x=1757815576;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=r1SPEaFbtgONlYp9N92wMuvszR631+QcjZT+HAM08G8=;
-  b=Wx0lFiblieA/9/9zel9rjGGqiBhBg5zYjJ/ObIHxufVPcAMw1Fk+5oEb
-   zjOJOQL72vzWiy8zQsKghpnSbtgajYcGTpXhEBXRi9FkGj/Q7G3uHH/k6
-   Mp6q9arZJUfEnohcT+UYK9SFpVyVg8lfV+784+4Kc3JSkMqmKfyfZf8l3
-   1fSe3I8qlsUlHfu1PSil9tghCgNGIa+ZCDyWZFVxhf8+D3hJskkidrG+u
-   8y2xVFJhTo7kBnkBtA1zftgd7EosIg7aXwbmWoHQ6B2E3lw32By4gB1MF
-   HvIqeRGlSQns9/n+49kVgwbAc6m84o675WYdjX7T5Ea9Rc23HTk1zQ702
-   A==;
-X-CSE-ConnectionGUID: 7++i2EDnTCq797+HfENnXQ==
-X-CSE-MsgGUID: 3+9wc8S+TgyxDSnps6brwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="47706728"
-X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
-   d="scan'208";a="47706728"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 19:06:15 -0700
-X-CSE-ConnectionGUID: hrcCDiI6S7qL/42olX80Rg==
-X-CSE-MsgGUID: gzoUIxuVSy6K+Ux6zmuDmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
-   d="scan'208";a="67968803"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.127]) ([10.239.159.127])
-  by fmviesa007.fm.intel.com with ESMTP; 13 Sep 2024 19:06:12 -0700
-Message-ID: <42bbc500-578c-474b-98ec-1988906f31ef@linux.intel.com>
-Date: Sat, 14 Sep 2024 10:02:05 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eP/ioJ61"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3ABEC4CEC4;
+	Sat, 14 Sep 2024 04:30:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726288243;
+	bh=gX8FjFm8+rZzyOuFKZmByOKTL8BxWdICKbVdqrOJtjE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=eP/ioJ61s44REdmUGkyUmVIJGt3cHDGInxWArBLMlarVPqJEYqPp2rM0pFUaEqpaM
+	 VG6Ql9KXMt4e3/jLbfApP6EUhf0kNmpC9mHyyjdoWiERRiSThjrGkKoo5dL8p3ftOi
+	 Fq4XDp6Svea5npVa7TDnPFsGa6O8cFNdLkK30UaSFXu3xpgzmHhXub1r5ifujO4QJa
+	 yis3rW/in42uX3KplgvePw0J3K49SEtWCL2NuMQNiD8QvqEMfv8xvGQLmegm2rEzYV
+	 ZFjY2l9WmyoIJlTF+6+rO7SJMxNAsCwWzR5ZW+FSrevlJT87p84k9kGNqyd3Kpk0bN
+	 X0BML/rhXu6CQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 346B43806655;
+	Sat, 14 Sep 2024 04:30:46 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Thierry Reding <thierry.reding@gmail.com>,
- Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>,
- Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/tegra: Fix NULL vs IS_ERR() check in probe()
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] rtase: Fix error code in rtase_init_board()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172628824486.2458848.11010446236065995234.git-patchwork-notify@kernel.org>
+Date: Sat, 14 Sep 2024 04:30:44 +0000
+References: <f53ed942-5ac2-424b-a1ed-9473c599905e@stanley.mountain>
+In-Reply-To: <f53ed942-5ac2-424b-a1ed-9473c599905e@stanley.mountain>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-References: <ba31cf3a-af3d-4ff1-87a8-f05aaf8c780b@stanley.mountain>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <ba31cf3a-af3d-4ff1-87a8-f05aaf8c780b@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Cc: justinlai0215@realtek.com, larry.chiu@realtek.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 
-On 9/13/24 10:34 PM, Dan Carpenter wrote:
-> The iommu_paging_domain_alloc() function doesn't  return NULL pointers,
-> it returns error pointers.  Update the check to match.
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Thu, 12 Sep 2024 11:57:06 +0300 you wrote:
+> Return an error if dma_set_mask_and_coherent() fails.  Don't return
+> success.
 > 
-> Fixes: 45c690aea8ee ("drm/tegra: Use iommu_paging_domain_alloc()")
-> Signed-off-by: Dan Carpenter<dan.carpenter@linaro.org>
+> Fixes: a36e9f5cfe9e ("rtase: Add support for a pci table in this module")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->   drivers/gpu/drm/tegra/drm.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/net/ethernet/realtek/rtase/rtase_main.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Here is the summary with links:
+  - [net-next] rtase: Fix error code in rtase_init_board()
+    https://git.kernel.org/netdev/net-next/c/37551b4540bd
 
-Thanks,
-baolu
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
