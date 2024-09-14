@@ -1,85 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from msa.smtpout.orange.fr (smtp-72.smtpout.orange.fr [80.12.242.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964E739ACC;
-	Sat, 14 Sep 2024 15:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D93E1E4AD
+	for <kernel-janitors@vger.kernel.org>; Sat, 14 Sep 2024 16:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726328777; cv=none; b=aY/pxRsC0eVbxpWfa41NAPep2F1/tn6pymC2XNagbbg8MXjVyGlmE0JdZDoUVXHcQmqbhjEJUOtvIbm17BhcYFhDigxkOpmg4g7QIbDN8YMkxQLeuLAdRrbkNsT9IsHyuiRsvnHPBlojFG9Mb2CU3ljM0pUfMBku1YXND3KV6yM=
+	t=1726330071; cv=none; b=dLRnQ+tn5sRAnIp4ew6MkHyEzsQfR9u9KXz+ySMcHAKrzjQ6rHnXStUMsUG6q8Yf4j0v8YD1unoh0S9mGGzaXVyreXFIXIrXd+RgdX8uBvn279tqKjX+euQLm5Is/9lgFS324yzSXz70Gqlulu7SitQbuJayJyc8RlLgcx8pshM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726328777; c=relaxed/simple;
-	bh=E+sZ1BUnpUiXyBvhWY2ZCb218Q3rYMJ5THsYte1+QpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FOTGean3XRurduot6y6A/G/mr0BAOa31xOMm5WZ6klBs4PLY1V84EGSoGf2WgiEuwV10KuUK/ENiEm7oL/c5BGEhXWdbd/CxqhKnpUhvoOO4BKWQYOMLW/dsrBRuBZevy7IuBqtVOPz6sLIJuF2u7zzjOJidkD+E1FHlt4xCtWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nWk6yPJN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726330071; c=relaxed/simple;
+	bh=4sBx9Pok9ci2U6rCdVYCCf2eawSqaEDxsKn9nhdoqx8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ofZc9Eyu7vIcLtXKW5rSFuheJSHgoMKMpIeXGweopBKtuGN5ezN17ZqJjdyl1DVdRlNpD3lWe3mJDYTd8PO0w1GJpANUFPisVxhLDPpc9YjImxxQ0c77jwJ41bsPPnsC+57La1iMmK9pfi+JRlOeEwIHuBnn6lzEomIn+wtChf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dFLl+TTw; arc=none smtp.client-ip=80.12.242.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nWk6yPJN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF73C4CEC0;
-	Sat, 14 Sep 2024 15:46:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726328777;
-	bh=E+sZ1BUnpUiXyBvhWY2ZCb218Q3rYMJ5THsYte1+QpU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nWk6yPJNceiPrsyqSGJ2uY1SbcWnosV9794sfjTVLLX/hacgn06FlOJoyizfZI/3E
-	 OsvPzBuBfmmk13ZSWN7OP1s40K/ia9oUUmyF0hbY6We5OWcOHXXk28WhrV7DNCJZYD
-	 ZSYlK2S/zr1XupLEuofLNTTscHk1BmFmKaNpupcF+a60ovJw/ULHg1jpVFcnMKJ+Um
-	 puqcF2OFZI+lv1y9eDaQo40zuhhnUMjF//hyVmx/0sSWzKg1O39rNuwG7VEy4yfDqt
-	 Lm37rRl/djFUCAMAXV8wrDbv58/MNKl9nS4jWc0GtVIMInuk9KgXeBr+dQCO3TQDPh
-	 RQZx0IOri7y0w==
-Date: Sat, 14 Sep 2024 16:46:12 +0100
-From: Simon Horman <horms@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bryan Whitehead <bryan.whitehead@microchip.com>,
-	Raju Lakkaraju <Raju.Lakkaraju@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: lan743x: clean up a check in
- lan743x_netdev_open()
-Message-ID: <20240914154612.GG11774@kernel.org>
-References: <f2483839-687f-4f30-b5fa-20eac90c1885@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dFLl+TTw"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id pVJIseX6XZkdcpVJIsxPA7; Sat, 14 Sep 2024 18:07:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1726330066;
+	bh=3K7AI48QI2FbNvgXLRmIkhjGNi47KFNECaCiYHSyQbw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=dFLl+TTwv3G1/KfT9nw1cqsJ+7ILIdiOX2VCQMiLqGRNUDl1yEJEfSeqv7R6W/9SB
+	 g+xbrqxkuVQzAs3hipVm8DwhRzdtN4Q9wvoHhWkZkFTrQG62/uNXrG/XDaMXOgWiYP
+	 dKwmHdpvr82dD2gDK5iKCnn66GGNJnYZ2kgnatiZ8p6yspye+TEffcDPth75+dfpfo
+	 k6Ruxq0iQjTzUaeFdSSK2RjgzrZGid+N3yGCKVE6GoDEXiBVoFOFLq+p4SMcVAuPak
+	 cHn3iLLJmWR5sl9GTOkXO54JkPM9Gj2VnL0Rv0IDL1lMwezXTTMf3P2Z8TdAorbZam
+	 6vfeMBY5QEhmg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 14 Sep 2024 18:07:46 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: biju.das.jz@bp.renesas.com,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-phy@lists.infradead.org
+Subject: [PATCH v3] phy: renesas: rcar-gen3-usb2: Fix an error handling path in rcar_gen3_phy_usb2_probe()
+Date: Sat, 14 Sep 2024 18:07:24 +0200
+Message-ID: <290b25827e3f0742808940719455ff0c5cb9d01d.1726329925.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f2483839-687f-4f30-b5fa-20eac90c1885@stanley.mountain>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 14, 2024 at 12:59:01PM +0300, Dan Carpenter wrote:
-> The "adapter->netdev->phydev" and "netdev->phydev" pointers are different
-> names for the same thing.  Use them consistently.  It makes the code more
-> clear to humans and static checkers alike.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+If an error occurs after the reset_control_deassert(),
+reset_control_assert() must be called, as already done in the remove
+function.
 
-Hi Dan,
+Use devm_add_action_or_reset() to add the missing call and simplify the
+.remove() function accordingly.
 
-net-next is currently closed, other than for bug fixes.
-So please repost this once it re-opens, after v6.12-rc1 is released.
+Fixes: 4eae16375357 ("phy: renesas: rcar-gen3-usb2: Add support to initialize the bus")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch changes the order of function calls when releasing the resources
+in the .remove function(). Looks fine to me, but pm_ functions are
+sometimes tricky.
 
-> ---
-> I noticed a different static checker warning that I never reported because it
-> was too old.  However, I think it's a valid issue.
-> drivers/net/ethernet/microchip/lan743x_main.c:109 lan743x_pci_init() warn: missing error code 'ret'
-> I think we should set an error code on that path.  It disables the PCI device
-> and then we continue to do PCI stuff even though the device is disabled.
+Changes in v3:
+  - Use devm_add_action_or_reset()   [Biju Das]
 
-Yes, I agree.
+Changes in v2: (broken proposal)
+  - Re-use 'error' to simplify the patch   [claudiu beznea]
+  - Update the commit description to explain why it is safe.
+v2: https://lore.kernel.org/all/4efe2d0419cbe98163e2422ebe0c7896b8a5efed.1725717505.git.christophe.jaillet@wanadoo.fr/
 
-I tend to think that is a bug. Though perhaps
-there is no urgency in fixing it as it seems unlikely
-to occur in practice and it seems to date back to when the
-driver was added in 2018 / v4.17.
+v1: https://lore.kernel.org/all/fc9f7b444f0ca645411868992bbe16514aeccfed.1725652654.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-commit 23f0703c125b ("lan743x: Add main source files for new lan743x driver")
-
-...
-
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 58e123305152..c8a3727f56aa 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -668,6 +668,13 @@ static enum usb_dr_mode rcar_gen3_get_dr_mode(struct device_node *np)
+ 	return candidate;
+ }
+ 
++static void rcar_gen3_reset_assert(void *data)
++{
++	struct reset_control *rstc = data;
++
++	reset_control_assert(rstc);
++}
++
+ static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
+ {
+ 	struct device *dev = channel->dev;
+@@ -686,6 +693,11 @@ static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
+ 	if (ret)
+ 		goto rpm_put;
+ 
++	ret = devm_add_action_or_reset(dev, rcar_gen3_reset_assert,
++				       channel->rstc);
++	if (ret)
++		return ret;
++
+ 	val = readl(channel->base + USB2_AHB_BUS_CTR);
+ 	val &= ~USB2_AHB_BUS_CTR_MBL_MASK;
+ 	val |= USB2_AHB_BUS_CTR_MBL_INCR4;
+@@ -815,7 +827,6 @@ static void rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
+ 	if (channel->is_otg_channel)
+ 		device_remove_file(&pdev->dev, &dev_attr_role);
+ 
+-	reset_control_assert(channel->rstc);
+ 	pm_runtime_disable(&pdev->dev);
+ };
+ 
 -- 
-pw-bot: defer
+2.46.0
+
