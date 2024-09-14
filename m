@@ -1,54 +1,72 @@
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DF61CE71F;
-	Sat, 14 Sep 2024 11:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC624210E9;
+	Sat, 14 Sep 2024 14:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726312801; cv=none; b=aI+dNOya08A0lbi/78GJOkYAEWyQMGeNPlKuLMUJhZjGaGNuSyGNRTOEN9L+g54LsRvOCJ8QlS6xNp5D4ZNgg5A3+iK/7elDYfz9yi9cqwJ9UDdaVMHs+YDRSFQ5nK+poJKnZDmbIWQTkZLhERALG9sk0JiyBC4aj3JA/P4oNLo=
+	t=1726323176; cv=none; b=k3lOZ0i9NXBUZ9cDkt+bSxAUO5lazMGZqXHkVt+Lq/aX/m8PtYzYn0FpyRerV9fDUjF/K/1YOsXGzwZTu+mY2uGIv39IKeSKdEMiqLht2+8SHf//a2ictHl7E3iaV66FJ09KfMn0hNdHLi+RUn0S69IX1RQT+rg9qutDAZM+dH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726312801; c=relaxed/simple;
-	bh=B/e4582x5/eQYicpm4MVSH0gKsfgYsgnmvIVQhvpiRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b1HcKvAWH46O1pttwfd+kXBplvXeRbbfiwphrxFw9prBeZlMr33Ad0g3Kfh3iQvhtOHGYxp1YYsDYgwnNMjFHAZbiCANa9SJQHyOv3eVDdOk7xIgy9tYvhatgMYLTmFiEwT+udJjvCzJ8yVSFlX/3gUXKlRwTJZGhXMHERUDPWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1spQoW-0005BJ-Ba; Sat, 14 Sep 2024 13:19:40 +0200
-Date: Sat, 14 Sep 2024 13:19:40 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Florian Westphal <fw@strlen.de>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] netfilter: nft_socket: Fix a NULL vs IS_ERR() bug in
- nft_socket_cgroup_subtree_level()
-Message-ID: <20240914111940.GA19902@breakpoint.cc>
-References: <bbc0c4e0-05cc-4f44-8797-2f4b3920a820@stanley.mountain>
+	s=arc-20240116; t=1726323176; c=relaxed/simple;
+	bh=OUWNoD7awRpxEl9pyzhx0ChN/RlHBzUSmYfsZU4Hbgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uTFqn50wbElfPFXBF9h1r2aqbDCKpFgt6UCrWQX9EHZaOE3vyiy8W/npPbLTWvn5XqcuCGNBNUuV974Zvb7fWA4TvFFHFC1pN4K0sJUcGL0mLb8EMgX+W2HbZ9vk4duuuBpR7eEE+YxnQseyl/0cjilFARPljKWsECZj0yhvwpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wh+vxoxA; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wh+vxoxA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69B0EC4CEC0;
+	Sat, 14 Sep 2024 14:12:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726323176;
+	bh=OUWNoD7awRpxEl9pyzhx0ChN/RlHBzUSmYfsZU4Hbgg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Wh+vxoxArUV81MlvJ7XMJ4uoLE0HpX+6thoKTx/cIpAfjj1RpuaKh+XlqKSyLPZS/
+	 Oc8kwWefeCSFZ6YOkeRHhDYevDYF+9+xnog6+bRJRylD17Cbg8x87VNOB+B/eBF308
+	 rz3vg67zsU4DL19zWCXq2HZ7mOTcev1da+gQtpV6/T6ZhjXnzIzRaXbubw5QqO1ehX
+	 TjAIF5mKDNsMR7NXNVLO5oEIeInC3oryLwWNUOCUqxpvrj7xEDxvBnZWXmP9LoVpU8
+	 aWgjHwyaRx+1GegkQGkZg/6rWx4o+yK26VxUIfPPXEJ7S/VfGRe0rw3hfxogjC0uvg
+	 LCmQuVd2XT6zg==
+Date: Sat, 14 Sep 2024 07:12:54 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: jmaloy@redhat.com, ying.xue@windriver.com, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, nathan@kernel.org,
+ ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
+ horms@kernel.org, dan.carpenter@linaro.org, tuong.t.lien@dektech.com.au,
+ netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net v2] net: tipc: avoid possible garbage value
+Message-ID: <20240914071254.7b376031@kernel.org>
+In-Reply-To: <20240914102620.1411089-1-suhui@nfschina.com>
+References: <20240914102620.1411089-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bbc0c4e0-05cc-4f44-8797-2f4b3920a820@stanley.mountain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> The cgroup_get_from_path() function never returns NULL, it returns error
-> pointers.  Update the error handling to match.
+On Sat, 14 Sep 2024 18:26:21 +0800 Su Hui wrote:
+> Clang static checker (scan-build) warning:
+> net/tipc/bcast.c:305:4:
+> The expression is an uninitialized value. The computed value will also
+> be garbage [core.uninitialized.Assign]
+>   305 |                         (*cong_link_cnt)++;
+>       |                         ^~~~~~~~~~~~~~~~~~
+> 
+> tipc_rcast_xmit() will increase cong_link_cnt's value, but cong_link_cnt
+> is uninitialized. Although it won't really cause a problem, it's better
+> to fix it.
+> 
+> Fixes: dca4a17d24ee ("tipc: fix potential hanging after b/rcast changing")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> Reviewed-by: Justin Stitt <justinstitt@google.com>
 
-Good news, I will retire in the next few years so I don't send shit
-patches anymore.
+Applied, thanks:
 
-Acked-by: Florian Westphal <fw@strlen.de>
+https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=99655a304e450baaae6b396cb942b9e47659d644
+-- 
+pw-bot: accept
