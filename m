@@ -1,67 +1,70 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2971CE6F6
-	for <kernel-janitors@vger.kernel.org>; Sat, 14 Sep 2024 09:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B5B157468
+	for <kernel-janitors@vger.kernel.org>; Sat, 14 Sep 2024 10:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726307949; cv=none; b=QwaX7ggQmP+kO7+RiFIaYWUWo/8dWrD3eRfx+uy2gbfColQXdAWWUdypnoIm9e+KwLiaF4Zy5QfUlEkSezfOyXGuS/Q7h5Svdb7KhiWJ/RX5bKqj0dhPJqMnU5M5Ir5iwNMb42bckVN+mXFeEbNON0fqSjIc7jbMolYOXT9y+5o=
+	t=1726308337; cv=none; b=uxww9Lp/UTuLiWX+ycUqYKNBZjrSyYFxPR34y8Ir9sVJMxaCmu6+xj+e1rjVTXVjXV2db5DMY9VqcfFwpTrW1zfh7LHHZrVjRnevaJasyNZYp6IyyfqWV6Sl0ycysHLAK/mBnt9pCa/wFpPWgmz7joB1kxSCp7tO6hcNxVntk1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726307949; c=relaxed/simple;
-	bh=H+3JuBd9mljp5tywseAzvY42o3nzP65j7tN8PSllVis=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=i9GC+nvhiSIBYIoaqW/uDFQ9qUoxCq4w/d/MCflA9TtXdFmN8kW/WHGi02CKZzbrXoL1HnpSldvScdhqj4Jzjay827v91m171uZL3R8UQ8FLzMxmm2Ql95+nmF5x+O5D5Xd+Yv5OgZN1r9I/A1oBFePiJkOPKr7OVxY6Mcd2bcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eUdgDJ+j; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1726308337; c=relaxed/simple;
+	bh=uyUo2fF7wfyuRfSxg2fJMYfWzcWgmdiUEo5RMmlO/3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tcvKyu639paYiPgtxNMTZ3KCR1ldO87qKoUwuvlk4FLvsvTJRqd+hGzBV4HTBQOc4iVtHE3ThLDqi6iBZbczNM2Ou0hMAfufdBETrm2z4WPfWIFP/NEOBfRMokjwcoS7nMv6R1/8UzHRlLJoeWnJDePk0DjyHGm1PlrSemlPVWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QXsLhkbd; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eUdgDJ+j"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c3d2f9f896so2153332a12.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 14 Sep 2024 02:59:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QXsLhkbd"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7a81bd549eso341742266b.3
+        for <kernel-janitors@vger.kernel.org>; Sat, 14 Sep 2024 03:05:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726307946; x=1726912746; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sLR1LdrdWoek5k6vcLJ4wJbjv1o0UlgVrCVA4EoYNzA=;
-        b=eUdgDJ+jjHs0JwobXKXxKC167YOwJHo9MiORf13/GB2yHaJrawFu+jon7eb/Jaw3OM
-         8BLQn2aSym2tFiEotYsgyP089kaZy1glZQfy8WKo2gfUxWt+Vty1Qa1S/MAOa1xFRd+7
-         S1YZ/yf2e4W5dRss25LEjN2GirPupbT2tPcZdE/kC6ySKz5eeqByC3ZS2cFo0fiB1UAn
-         R4eDqRtp2YCsUV1vuRmpoWY4he6YUlQ3PDEchnAzkK6WzTnTfptFQe5+BCv2QbQyET4T
-         UOXyJHyAaB15cs3s378yrRC6ky1VhKZOSr8DM6qWUMeem9C8HmR2qcAy1mIYmykHo8/O
-         734A==
+        d=linaro.org; s=google; t=1726308333; x=1726913133; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VQaP07kUjh9Hh3Vx1aYpBskYDsvr/ETiwaom9aVLxSk=;
+        b=QXsLhkbdUv3OzkynxfeZvpleBXmyOxG55sl10ZgoZC6KcgEjo0cXvfKprt5kMCBcVf
+         W8yLamK04g+xLBsK0hrhEvGxWRnW0BvRMfp21Xv1kfMYOU7/onrZNl4HKwmN/A9Q0H12
+         saa5Ge5TWuMRYChA7wOW32FapGrIy/EOyUEd4G17AGQ7N3UYf2jr0+t5Y5uOttISSD0k
+         h4/LDQ+kus4J0/x9bNMIVGWZoy3QsxRtMRYxTa/bcPu5f9CW8oiou14RUDZJccqW5Zcd
+         JQ8rxask7Sr+ei7cY9Mt8ZHtJES1WYDrQkVdCyf+2BZblvBHYHJAetDN1fB7I40YRJKy
+         P6XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726307946; x=1726912746;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sLR1LdrdWoek5k6vcLJ4wJbjv1o0UlgVrCVA4EoYNzA=;
-        b=p0W79wIyHbuhZVZ8PPQBeXb8+ci0e7uhrC0bpoUJ+bttpr5iUnUedrnrkvVbuPboSM
-         fsVGgSEDTz8zJSPgcxrlvExlpDjZAu3BCL5r7YmeTmnbt6CCtZ9P2+MTMEouqQW7Tv7e
-         vk6lT1G1w6MKUvZh7vio1gsdY7QWLgW3fVZrgXvIOQloyuX1ExqNEBSiFL6T+NLMJtVj
-         quwtWyTKpO27sSyzRXs6+1HBT5KG+ueA2NB80T21w6+RWmZsmtfCeSwl4HtZhdRMVwGP
-         3pES/7Z7au2GOKzlDny+VPIibdLFxa2ajURDY9uET8CNOK0quUR6rD49Y1Ciy36lr1bu
-         K6zA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTD8ruGR51hj+K7ECIUDMKMCNw5RmO7Mw37ksyLJ7I8+f4osGEmj8f9bqyzcGdAorMyty8LBd22MTr5PrqMTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykWGg+xfThJvRlEV+2QcW1H4BcW0D1/ueoDBFe0edcy9/w2MKx
-	S6AczPVaCMzpipg/dlC5/XBQgHFdFb0Eo3nsG1qn1CFYWgBCZdG6L3dXb88y1Es=
-X-Google-Smtp-Source: AGHT+IEmamaFtiQks6EQA/58DDUZK1tAOjmtLmuXTiDcTiIt0u2Q9COe7kNjD2a0VxyS3xWdA0xvRg==
-X-Received: by 2002:a05:6402:1d53:b0:5c2:6e51:9d11 with SMTP id 4fb4d7f45d1cf-5c41e1ace3bmr4559018a12.27.1726307945688;
-        Sat, 14 Sep 2024 02:59:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726308333; x=1726913133;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VQaP07kUjh9Hh3Vx1aYpBskYDsvr/ETiwaom9aVLxSk=;
+        b=o3aMR0Mcky4aZRvi8gGKKn+jp9sVxrY+3Wn26j7+mV10Yic6VKxMV7Cp10fYB7TmTG
+         sCdweEJmTtB3+MZuxQVQd6eq9fXh+PO5F0MBDBKkHCXpIrYeGwkV9fUm0sR74XgdG161
+         ueYnIReOIGKOCp3uThanSJXEmdh5CA9ST3W1ePFkSbVl+5jbRWRYHdrbmlSslu2mFeFQ
+         hNrPNzeuUeHka0v5/T8Pv2ygA0SNNDucD+BSQrNNvMTiArCo2aMsPrVIDoHOMTHmq5oe
+         eT1jxn/5rLR7ITZgHdSjBl1b4hspyPbh6EehCQzRvCL2iiGqXah4oiPjCzYgiqHZKipS
+         6JTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgKXFUwJS+e2YLGspg+75M8wCltITnZoBJ2pmND/WLrOdGyX+GlUoL8Msjb2iFjVgrd29lglHZ7qhoh6cnM8Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvoPbOSdRRHsgNveZzGeSAEnHN3acOmxRFzBV9xE4XpwtI2UAD
+	cPRAiDvZKBimSK2lscrdOp0EBFiJKa2t5VrHaWePvN3y1GTw6OyJrcXTA/WoaRI=
+X-Google-Smtp-Source: AGHT+IFUGe/YZnTvrPrKTN9LdMp4s56tVPxGhPOwQHgiH6EffJdxr/Zlk+uPLUhxjZOYMNerF5RjBA==
+X-Received: by 2002:a17:906:478a:b0:a8a:8c04:ce9f with SMTP id a640c23a62f3a-a90296eabbemr942716766b.52.1726308333391;
+        Sat, 14 Sep 2024 03:05:33 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb53620sm506170a12.27.2024.09.14.02.59.04
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a906109676esm61912566b.33.2024.09.14.03.05.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Sep 2024 02:59:05 -0700 (PDT)
-Date: Sat, 14 Sep 2024 12:59:01 +0300
+        Sat, 14 Sep 2024 03:05:32 -0700 (PDT)
+Date: Sat, 14 Sep 2024 13:05:29 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Bryan Whitehead <bryan.whitehead@microchip.com>,
-	Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-Cc: UNGLinuxDriver@microchip.com, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: lan743x: clean up a check in
- lan743x_netdev_open()
-Message-ID: <f2483839-687f-4f30-b5fa-20eac90c1885@stanley.mountain>
+To: Simon Horman <horms@kernel.org>
+Cc: Su Hui <suhui@nfschina.com>, jmaloy@redhat.com, ying.xue@windriver.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, nathan@kernel.org, ndesaulniers@google.com,
+	morbo@google.com, justinstitt@google.com,
+	tuong.t.lien@dektech.com.au, netdev@vger.kernel.org,
+	tipc-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] net: tipc: avoid possible garbage value
+Message-ID: <f1279370-a127-4946-8c46-cc89fd2a90a6@stanley.mountain>
+References: <20240912110119.2025503-1-suhui@nfschina.com>
+ <20240914094244.GG12935@kernel.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -70,36 +73,39 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <20240914094244.GG12935@kernel.org>
 
-The "adapter->netdev->phydev" and "netdev->phydev" pointers are different
-names for the same thing.  Use them consistently.  It makes the code more
-clear to humans and static checkers alike.
+On Sat, Sep 14, 2024 at 10:42:44AM +0100, Simon Horman wrote:
+> On Thu, Sep 12, 2024 at 07:01:20PM +0800, Su Hui wrote:
+> > Clang static checker (scan-build) warning:
+> > net/tipc/bcast.c:305:4:
+> > The expression is an uninitialized value. The computed value will also
+> > be garbage [core.uninitialized.Assign]
+> >   305 |                         (*cong_link_cnt)++;
+> >       |                         ^~~~~~~~~~~~~~~~~~
+> > 
+> > tipc_rcast_xmit() will increase cong_link_cnt's value, but cong_link_cnt
+> > is uninitialized. Although it won't really cause a problem, it's better
+> > to fix it.
+> > 
+> > Fixes: dca4a17d24ee ("tipc: fix potential hanging after b/rcast changing")
+> > Signed-off-by: Su Hui <suhui@nfschina.com>
+> 
+> Hi Su Hui,
+> 
+> This looks like a bug fix. If so it should be targeted at net rather than
+> net-next. If not, the Fixes tag should be dropped, and the commit can be
+> referenced in the patch description with some other text around:
+> 
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-I noticed a different static checker warning that I never reported because it
-was too old.  However, I think it's a valid issue.
-drivers/net/ethernet/microchip/lan743x_main.c:109 lan743x_pci_init() warn: missing error code 'ret'
-I think we should set an error code on that path.  It disables the PCI device
-and then we continue to do PCI stuff even though the device is disabled.
 
- drivers/net/ethernet/microchip/lan743x_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It's one of those borderline things.  As the commit message says it doesn't
+really cause a problem because cong_link_cnt is never used.  I guess if you had
+UBSan turned on it would generate a runtime warning.  Still it also doesn't seem
+intentional so I would probably count it as a bugfix and target net like you
+suggest.
 
-diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
-index 4dc5adcda6a3..0b8c82ff5e8e 100644
---- a/drivers/net/ethernet/microchip/lan743x_main.c
-+++ b/drivers/net/ethernet/microchip/lan743x_main.c
-@@ -3262,7 +3262,7 @@ static int lan743x_netdev_open(struct net_device *netdev)
- 		phy_support_eee(netdev->phydev);
- 
- #ifdef CONFIG_PM
--	if (adapter->netdev->phydev) {
-+	if (netdev->phydev) {
- 		struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
- 
- 		phy_ethtool_get_wol(netdev->phydev, &wol);
--- 
-2.45.2
+regards,
+dan carpenter
+
 
