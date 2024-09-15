@@ -1,72 +1,71 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9511625570;
-	Sun, 15 Sep 2024 11:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E831C946C;
+	Sun, 15 Sep 2024 12:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726400566; cv=none; b=pegEnFMW+996AkUXLz6VmPZhXb3I6GGhyOy9QlWABUWw3jeSFztKBgdoWQHY0gnBBIhaJoljHvaedtNCsIIc1iDz8oWfWgFiI4+kv/F6YFZHXKtJE2AQuCtnXmBZiL5HZ3BF+A01Alg7BlK5TYuZ80k07wEXS2cpJ52857rASXM=
+	t=1726401737; cv=none; b=AtHqdAbpVq+70wdAamZ5vBz72mZgDg5mrA/HdKV+a8m6ATDIaxxCmuhI/gIac9br0lnnL/C081O6nj/JIJqt2uCG5R/9bg3pzsGQTd552/e1j0ygOiKPZdkW0QH/VYpLZxuCc9XR/z0UMgld9sB5OCx2H4nyuPo6aQHkO2nyS4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726400566; c=relaxed/simple;
-	bh=V7BSTAtZFlkGUrqoLYcf78IeSSWOtXpI74x9W4dHEEM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DQFTBStHxJMrdjIz3jitqd/rsajdC7TilTZslmxNm5CUken8XeV56KHQBzObo0CMa3ebAvO4Dcj+otxfo2+OVZkwvnVoSCTwlzGz/WfkGBc60N1c2kw18S1dkwawpQBPPAnJSdz8jja4WH6DnYFStI+7h62KuzIG9FJjagvwfio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AJtX8d58; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1726401737; c=relaxed/simple;
+	bh=8NYrX81w/hNuTph7kpeCh4h7CSnq9hQYHjgMmE65ApI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HRhhBjfFbW3iwWvLAQbpkIxtCYv3utVhQ5f6zveS2MFVQjfhep+SjMPHwVQpl+QAVJ4NSiWlbTy29LPh7FaeNfh/0EGAJJA7xOU0hfVGEbYYDFZUArRvWZhrYhQxGbCLsjswWOShPUgn6A2mnfi5L0Opon8z4mbwT13dOcYhtLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M0DKSLkl; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJtX8d58"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cc43454d5so18960425e9.3;
-        Sun, 15 Sep 2024 04:42:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M0DKSLkl"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-374c5bab490so3062353f8f.1;
+        Sun, 15 Sep 2024 05:02:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726400563; x=1727005363; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726401734; x=1727006534; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lynL6C4hkouH3XP1yfEpNa/RXQ4liCR3A0iI32ucKD8=;
-        b=AJtX8d58X2P5P9ruP9Tu32dDnAn/MPLbvRAxqhJk2I8USZQhBgkO4TP2SQbhxZG/zW
-         ntWldP2/qV7Bkem2b+WKdQcrCMgsgKzqnIR4t2QRegt2clLIMMeF6f4MzinR5unwwo0D
-         j8xiYnA0ae3+dfvFpDzNw8MFauptmvujI+9KdDjAZyXIlSkrYkmy3xzohErkFmJwJfiN
-         7N9zn14/kU9Tgni4UkWUm1TwOL9NZomNIATCkr7b29rCDGM1FEZ2ygaPL2g3OlwOOKU8
-         8bRogtnOaBUzLf2pp07LwZBzuKoyREvzeyn39ctbq2iqWTKBuRi0AyNFU+9yVjhEBnR/
-         5NGg==
+        bh=P40wET+w71UJyEkZ9BoZfs/VvG0c/BBfUWCIfkdVP7I=;
+        b=M0DKSLklfy3U4giMgV7flMdbiwuk4PSNPHqeanKgU0gBQjYLHadlTt4fAkrU1Qiarf
+         fidWklNof3dGR0zRVMJeIibrl86qCVn7B0u+mdCz1+lpZtGaMfIrJCxhB67iE5TyU9VN
+         D/e1TBMxYT56vniwlweETHIhj/bK5pSfDXrp3E+6C/38ApdCelyek4bEWqwpJrgsNjaK
+         HCQxTlDrPXrB1swJgw8tAcwTSoMBce/6qgYaVk2nCp0fBcVwJCj5KTwlw9v4b7FUGLZs
+         mnx7vXsXfBa7jylcG/UftyL46DlFfeQK6pQc+cIUILOJMyvEpJzetk96R9rbvGiWk2go
+         o7cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726400563; x=1727005363;
+        d=1e100.net; s=20230601; t=1726401734; x=1727006534;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lynL6C4hkouH3XP1yfEpNa/RXQ4liCR3A0iI32ucKD8=;
-        b=g+/UFolut7qPg3d7XQNA8g5j8c0EwESoDUndB4VyKAJaHRdw9GSIRyTKNA6QKSNpgm
-         8yH+3IMUciDGV+A6ki4WSwr+aGI8ra/A7F5DOM6bcMzSDAx0XEadGofdgVZ9yz0WIKlD
-         eIlHTIBctNicef5sgpI30OsNxFwpiSOgtrhjslCnON8R2NHlaL8boSe2fcZiBz0fqMBy
-         X5aqf84mcrMcQwgKHy2ahtxwj3WDtHZX9ZNaxXPaRoFcphPGvGBA3aXZY72rXvnQcYON
-         4Q9Rxo87R0lzrPzhaNwAIIXXBKI0qwu+o+UEvAw+ksqDycROcXAL0aypxoW9ofHcj9PQ
-         zWVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEGLkkhKWTzxrpVpVI8U3dTNS+VK4qR1J4mT92YEIe0P/GcoPHZtGX3CUXlPtPXWrhud0ZgVUcuR60hHuL@vger.kernel.org, AJvYcCVy+AVOcIAutI3Rk2sanOvep4Ob6pMEqyamodpwk8jCiLDrSaWM7CT9UQVdoqm647qIEMLw4B/Efb+pxw==@vger.kernel.org, AJvYcCXFxpAHtAP0rOYFPlw1+9gCPdeqexKiMYrXqYWd1HhqgRVq9OgU9x0TxF1Kpfp7I7grNXWtYaH9UOegN95K/2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRCD3vtLi7D70TjSUlmD+UBAsICXcW568EOSS2bckk8JCDWj3g
-	xmJ0QSxT3mNKrMsDtYIvL4PmjubK3WOVFxyiAqM4kfO074GBu71n
-X-Google-Smtp-Source: AGHT+IFc0ijcmTZXOGVPK+Zk6DrSX+Gw9wOVUakAcGKwQpuRuUvsUpbaTUw4X0AcNIyoG255bHioTQ==
-X-Received: by 2002:a05:600c:4447:b0:429:e6bb:a436 with SMTP id 5b1f17b1804b1-42d9081b3d6mr53676555e9.9.1726400561903;
-        Sun, 15 Sep 2024 04:42:41 -0700 (PDT)
+        bh=P40wET+w71UJyEkZ9BoZfs/VvG0c/BBfUWCIfkdVP7I=;
+        b=AuvwUrAc6u04MzukhxWofjhRbEfDnujdy/jOjDTYnKskogt7LCc99AlitZnko3LKIZ
+         mAIPFvX25JjHg7oyevj3D0hPcwSBADV20/a8qK0oA8YjTFDpiHYbngqHdCVjyN7Pj7gm
+         Qs70XkMWyDPqfoLBHZzUz8Sgm4YMg2GmO5QlAPmmT+vhNO/T9TSRARqn7TqsH+jxCfT/
+         Xz/brgbuxI7l0Vm8SSqICNRPUe+wkWWJXpPVe4M4QXBVjOf43qCLAo/8DZagtsUt06Rt
+         RHBUriM3Ia9GkeEc8UVKzpVjGEn9jKCyiTvwKIH3OoWve3toBU3iSQHUmIKwc/IZ05PV
+         5z2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUdzQZcai969/8+QcaaG59cIGPXc2aNizwpJdx37XTP5UY9Bd8XmVSwpcIVWo1JVzALX+StQOOMyHoX/19E@vger.kernel.org, AJvYcCWLcBK3CGUgJFG4WmE6Lq7rCgnChmNKxA6+P/T3aBKT1r276x/qZ1sKKygXGI8QekznWNSODjKNRbibZqbi71Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8MoAegL5Yd5pEXPIVJCXTjodVUOs5R/LM+5kNCvD2lsZQxozf
+	DWuCd4Duhn+4sjAXpYjlz0r4JlQTBWQBDFyQ/zMd7Xkktzwcdu9lDku6brxx
+X-Google-Smtp-Source: AGHT+IEMZq4/JjBZ/u6UVGa7+slA/nrX41Tt9k6PRPk4mhaKvy6qtno+rb2b7xGKC7WriVIwr6K5xA==
+X-Received: by 2002:a5d:5745:0:b0:374:ca0c:51b0 with SMTP id ffacd0b85a97d-378c27a8a55mr7714570f8f.12.1726401734007;
+        Sun, 15 Sep 2024 05:02:14 -0700 (PDT)
 Received: from void.void ([141.226.169.213])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cc137556esm174961325e9.1.2024.09.15.04.42.40
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e78054b6sm4497832f8f.107.2024.09.15.05.02.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2024 04:42:41 -0700 (PDT)
+        Sun, 15 Sep 2024 05:02:13 -0700 (PDT)
 From: Andrew Kreimer <algonell@gmail.com>
-To: Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Andrew Kreimer <algonell@gmail.com>,
 	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] net/mlx5: Fix typos
-Date: Sun, 15 Sep 2024 14:42:25 +0300
-Message-Id: <20240915114225.99680-1-algonell@gmail.com>
+Subject: [PATCH] drm/i915: Fix typos
+Date: Sun, 15 Sep 2024 15:01:55 +0300
+Message-Id: <20240915120155.101395-1-algonell@gmail.com>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -76,41 +75,41 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix typos in comments.
+Fix typos in documentation.
 
 Reported-by: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c | 2 +-
- drivers/net/ethernet/mellanox/mlx5/core/main.c         | 2 +-
+ drivers/gpu/drm/i915/display/intel_psr.c | 2 +-
+ drivers/gpu/drm/i915/gt/shaders/README   | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c b/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c
-index 1477db7f5307..4336ac98d85d 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c
-@@ -80,7 +80,7 @@ irq_pool_request_irq(struct mlx5_irq_pool *pool, struct irq_affinity_desc *af_de
-  * isn't subset of req_mask, so we will skip it. irq1_mask is subset of req_mask,
-  * we don't skip it.
-  * If pool is sf_ctrl_pool, then all IRQs have the same mask, so any IRQ will
-- * fit. And since mask is subset of itself, we will pass the first if bellow.
-+ * fit. And since mask is subset of itself, we will pass the first if below.
-  */
- static struct mlx5_irq *
- irq_pool_find_least_loaded(struct mlx5_irq_pool *pool, const struct cpumask *req_mask)
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-index c6e951b8ebdb..a6bf3f975d52 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-@@ -1647,7 +1647,7 @@ void mlx5_unload_one(struct mlx5_core_dev *dev, bool suspend)
- 	devl_unlock(devlink);
- }
+diff --git a/drivers/gpu/drm/i915/display/intel_psr.c b/drivers/gpu/drm/i915/display/intel_psr.c
+index 1f83b3b67ea6..062e61cf70a0 100644
+--- a/drivers/gpu/drm/i915/display/intel_psr.c
++++ b/drivers/gpu/drm/i915/display/intel_psr.c
+@@ -1017,7 +1017,7 @@ static void hsw_activate_psr2(struct intel_dp *intel_dp)
+ 		};
+ 		/*
+ 		 * Still using the default IO_BUFFER_WAKE and FAST_WAKE, see
+-		 * comments bellow for more information
++		 * comments below for more information
+ 		 */
+ 		int tmp;
  
--/* In case of light probe, we don't need a full query of hca_caps, but only the bellow caps.
-+/* In case of light probe, we don't need a full query of hca_caps, but only the below caps.
-  * A full query of hca_caps will be done when the device will reload.
-  */
- static int mlx5_query_hca_caps_light(struct mlx5_core_dev *dev)
+diff --git a/drivers/gpu/drm/i915/gt/shaders/README b/drivers/gpu/drm/i915/gt/shaders/README
+index e7e96d7073c7..4f5dab3fdcca 100644
+--- a/drivers/gpu/drm/i915/gt/shaders/README
++++ b/drivers/gpu/drm/i915/gt/shaders/README
+@@ -24,7 +24,7 @@ on building.
+ Please make sure your Mesa tool is compiled with "-Dtools=intel" and
+ "-Ddri-drivers=i965", and run this script from IGT source root directory"
+ 
+-The instructions bellow assume:
++The instructions below assume:
+     *  IGT gpu tools source code is located on your home directory (~) as ~/igt
+     *  Mesa source code is located on your home directory (~) as ~/mesa
+        and built under the ~/mesa/build directory
 -- 
 2.39.5
 
