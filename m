@@ -1,121 +1,77 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C191C7B63;
-	Sun, 15 Sep 2024 18:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B099C38DC7;
+	Mon, 16 Sep 2024 09:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726426562; cv=none; b=lpunwgFv3BAfuCYATssCzqI5WQvHoFtm8CdaJ9XvKV4vk1B9rT6tYP2ZlrkTs3hUGWJoualiwuEE2E8tYeHjELJOdOjyd7jEtGRvcB+Yj12OiWIfof1p89+rM7ncatAeXcUmzeuOzDaO7v9Nd9xhJGL6wgu5HifugQP1T/XAG/E=
+	t=1726479987; cv=none; b=u47kg5KknLYzUHIM461UmM/2Nm6+4VL9JOHptLtAUk4II6xOAu8EdnKYb7JiwtFQlgvvya/fvIDGudNqHTJ5853a6tXJTSyRx5i9n4P7FEBjC7b2XjKVpOlN54ab7URQZfaxLWt88D+UlEa3HrmAy/HViSBlGw94DK8PHCtcGTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726426562; c=relaxed/simple;
-	bh=pyXg3C+MBpFzSvMkYmhK5H0sNHIDq/A8dTv59B/xh+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j6hYN955lm1cwL14Hc76TezJ2/oDZYdhbq3aRVkK3kNGjnAsz3BhKdV+eboLyWwdoZGCgxhVUuOj16nH/UpXnYt3szikA0GuleJjA/ZZZvXl8ykMU+3OMXM5OA/J4quExBiAX8yvrSHpiOZIgcnMycQRZe0zdnr1oejCnnEU+RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UbWpzrev; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1726479987; c=relaxed/simple;
+	bh=N0hSmsJ9SspBVIxg9LCiOaQ+R0TFE+D+mdPXzQN+nJ8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=rLd0kaQTsG7eIzPOq86Y1sa/81PtHFxCyq4s0X/QqSvJCZgu8iZ19W9slipNmLIk44KYBIvAyKUVpCRTV8tMRAxN0QBtAU2KDMBszJ67O9mpV9HADaKz8sDRt3SjEYjpJUzdrd8wgY3Zmt1YaBBBeVSBr7M0vcodoD8PjsKIZTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=ILGixXNO reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbWpzrev"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb9a0c300so32251785e9.0;
-        Sun, 15 Sep 2024 11:55:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726426558; x=1727031358; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FUXAf1Wvy+TtP7gfZ+RggUrHuJgfqEsJuKNT6i/ikoY=;
-        b=UbWpzrev8IgpJtBelqRADgWMctuMs2q0xaDm4mW8CEDR4b7VT34BdmBlOMvkyEVLOd
-         L8rExg0CHmiyA+yJDUIwzPgPO354tebBn6qmlnElkySe7L3qN635vLu9q/XPFiaZaqdz
-         +Tcmipu4p71jodoHGN+PWE8WW4r/wRBDZj0kNmeqz9RVLs0hqbihlPkP4f5/6KJ5YuYA
-         +BM1sT/lIjZJvLW7+L3NfD60lPdei+34SGXCDXedug+xY+tXNT8X5MZNCxt56sLk+9tC
-         Uqqc22sv8sqzzzc46H5uNPhPFRLVEiRGU343ajgirigJdx3iV9gYnLT6OawrRcD4MQDT
-         5EIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726426558; x=1727031358;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FUXAf1Wvy+TtP7gfZ+RggUrHuJgfqEsJuKNT6i/ikoY=;
-        b=gg3+o6CIddoGHTsgGULwTMsnc/ndOXlK9ofYRONdgV1NZPSqMWQn6YdNydJaVReRq6
-         YDK58f0hJdQe0dm6wMCMsV3qjIphGLlKexRs7HSIs0fUSJQwjUrOZ53EYLer3OtC//83
-         lkuqm01ZlWHQOZTeyr6NI0YzclXXu8Rqbe1E57mVgtYLVqhOOiPErwIInntxtBC/rBzm
-         SNWu7BU7qm8vLl5mDj5pp51TEFbi5dxuvYL3FsvH2cM6vafmcTzL9BfWqWZkIDFZlEYl
-         PrJPA/7hL97CLT1UiM0rtRG/bfiP237EpFfhEAvit1VPgLhotcDtcJETTQpc/+1iiMyC
-         hYjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUb6B2NhDRaUEbKwLs2ZUik6Fa3asE1ppEjQOqHp6cX+E0CvRSz+s9aGFoClgk2kfqHtln9uAJ7@vger.kernel.org, AJvYcCVdbeTGHhzaiMFoRuVKJjq8Bi1LC/9Yclnb2Y6JAqh89EYcnq1ckvkxupQ0HFdreTi7+8JkACzs75jCUR8uEeo=@vger.kernel.org, AJvYcCXe+VvJNRhTYi5Xc8dEl/fwshJvKGuoxCtaUo/GUkAhpVtq20CACs6l6ZI5wqgQBYM8vMBwd9WkbkD+B/b3@vger.kernel.org
-X-Gm-Message-State: AOJu0YziUg/APIqvibwq5m5pvSzf3z4z/2C0SA3B+wts/VdfqoSTVvE4
-	ITgsof2TuT7m0kC+6VQw+oNKP4tL+hI9/uYT95mhLfLhhoZcvG/j
-X-Google-Smtp-Source: AGHT+IF0QEQ10abt4tDQYvW+SUo7hwzkw9XEuJL5muO4z7HqRzE4YD+BvBRUoFlDJ2+cYJ4q40HwzQ==
-X-Received: by 2002:adf:fbc3:0:b0:374:cb5c:2966 with SMTP id ffacd0b85a97d-378c2d5a6f5mr7476056f8f.40.1726426557557;
-        Sun, 15 Sep 2024 11:55:57 -0700 (PDT)
-Received: from void.void ([141.226.169.213])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e71ed099sm5278847f8f.5.2024.09.15.11.55.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Sep 2024 11:55:57 -0700 (PDT)
-Date: Sun, 15 Sep 2024 21:55:54 +0300
-From: Andrew Kreimer <algonell@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Matthew Wilcox <willy@infradead.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v2] ethernet: chelsio: fix a typo
-Message-ID: <Zuctuiz-F3M7uFli@void.void>
-References: <20240915132133.109268-1-algonell@gmail.com>
- <20240915184853.GC167971@kernel.org>
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="ILGixXNO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=4yrTVGgIy8ST+hf/b9VptZkzz6CVN2HRxPnjWXf8szk=; b=I
+	LGixXNOnXrB2EpN6VeQmeGc0D2LktLGIlPpcho0GRaVdesWzd6jOd6TJC3EY1k1r
+	Hbj3Gmk/ghkkY6VZXktwzY91FAVp512FsrLDeYg6xaytOTmdLUKwpPL+88U3C3nb
+	FROqoIDnuIj17la+odVaWE860fVCaPdtJHLEdQORjI=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-132 (Coremail) ; Mon, 16 Sep 2024 17:44:37 +0800
+ (CST)
+Date: Mon, 16 Sep 2024 17:44:37 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Andrew Kreimer" <algonell@gmail.com>
+Cc: "Sandy Huang" <hjc@rock-chips.com>, 
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	"Andy Yan" <andy.yan@rock-chips.com>, 
+	"Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, 
+	"Maxime Ripard" <mripard@kernel.org>, 
+	"Thomas Zimmermann" <tzimmermann@suse.de>, 
+	"David Airlie" <airlied@gmail.com>, 
+	"Simona Vetter" <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, 
+	"Matthew Wilcox" <willy@infradead.org>
+Subject: Re:[PATCH] drm/rockchip: Fix a typo
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <20240915123943.105118-1-algonell@gmail.com>
+References: <20240915123943.105118-1-algonell@gmail.com>
+X-NTES-SC: AL_Qu2ZBPictkAs4SmebOkXn0kXhec2W8Czvvgg34JRP5k0myXQ+AYEbXByEX7m/uioBASPvxeqVAdHxud8X7RnUJjQG8iUxgAelyfrXp/vh0iD
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240915184853.GC167971@kernel.org>
+Message-ID: <3516596d.2131.191fa38475a.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wDn7_QG_udmDhYPAA--.10499W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqRdcXmVOC6kEnAACsv
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Sun, Sep 15, 2024 at 07:48:53PM +0100, Simon Horman wrote:
-> On Sun, Sep 15, 2024 at 04:21:32PM +0300, Andrew Kreimer wrote:
-> > Fix a typo in comments.
-> > 
-> > Reported-by: Matthew Wilcox <willy@infradead.org>
-> > Reported-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-> > ---
-> > Keep the layout intact.
-> > 
-> >  drivers/net/ethernet/chelsio/cxgb/suni1x10gexp_regs.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/ethernet/chelsio/cxgb/suni1x10gexp_regs.h b/drivers/net/ethernet/chelsio/cxgb/suni1x10gexp_regs.h
-> > index 4c883170683b..422e147f540b 100644
-> > --- a/drivers/net/ethernet/chelsio/cxgb/suni1x10gexp_regs.h
-> > +++ b/drivers/net/ethernet/chelsio/cxgb/suni1x10gexp_regs.h
-> > @@ -49,7 +49,7 @@
-> >  /******************************************************************************/
-> >  /** S/UNI-1x10GE-XP REGISTER ADDRESS MAP                                     **/
-> >  /******************************************************************************/
-> > -/* Refer to the Register Bit Masks bellow for the naming of each register and */
-> > +/* Refer to the Register Bit Masks below for the naming of each register and  */
-> >  /* to the S/UNI-1x10GE-XP Data Sheet for the signification of each bit        */
-> >  /******************************************************************************/
-> 
-> Hi,
-> 
-> net-next is currently closed, as the merge window is open.
-> Please repost once net-next opens, after v6.12-rc1 has been released,
-> which will be in in approximately two weeks.
-
-My bad.
-> 
-> Also, please explicitly target the patch at net-next.
-> 
-> 	Subject: [PATCH net-next vN] ...
-> 
-> Link: https://docs.kernel.org/process/maintainer-netdev.html
-
-Thank you.
-> 
-> -- 
-> pw-bot: defer
+Ckhp77yMCgpBdCAyMDI0LTA5LTE1IDIwOjM5OjQzLCAiQW5kcmV3IEtyZWltZXIiIDxhbGdvbmVs
+bEBnbWFpbC5jb20+IHdyb3RlOgo+Rml4IGEgdHlwbyBpbiBjb21tZW50cy4KPgo+UmVwb3J0ZWQt
+Ynk6IE1hdHRoZXcgV2lsY294IDx3aWxseUBpbmZyYWRlYWQub3JnPgo+U2lnbmVkLW9mZi1ieTog
+QW5kcmV3IEtyZWltZXIgPGFsZ29uZWxsQGdtYWlsLmNvbT4KCkFja2VkLWJ5OiAgQW5keSBZYW48
+YW5keXNocmtAMTYzLmNvbT4KClRoYW5rcy4KCgo+LS0tCj4gZHJpdmVycy9ncHUvZHJtL3JvY2tj
+aGlwL2Nkbi1kcC1yZWcuaCB8IDIgKy0KPiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyks
+IDEgZGVsZXRpb24oLSkKPgo+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9j
+ZG4tZHAtcmVnLmggYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvY2RuLWRwLXJlZy5oCj5pbmRl
+eCA0NDEyNDhiN2E3OWUuLmM3NzgwYWUzMjcyYSAxMDA2NDQKPi0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9yb2NrY2hpcC9jZG4tZHAtcmVnLmgKPisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9j
+ZG4tZHAtcmVnLmgKPkBAIC03Nyw3ICs3Nyw3IEBACj4gI2RlZmluZSBTT1VSQ0VfUElGX1BLVF9B
+TExPQ19XUl9FTgkweDMwODMwCj4gI2RlZmluZSBTT1VSQ0VfUElGX1NXX1JFU0VUCQkweDMwODM0
+Cj4gCj4tLyogYmVsbG93IHJlZ2lzdGVycyBuZWVkIGFjY2VzcyBieSBtYWlsYm94ICovCj4rLyog
+YmVsb3cgcmVnaXN0ZXJzIG5lZWQgYWNjZXNzIGJ5IG1haWxib3ggKi8KPiAvKiBzb3VyY2UgY2Fy
+IGFkZHIgKi8KPiAjZGVmaW5lIFNPVVJDRV9IRFRYX0NBUgkJCTB4MDkwMAo+ICNkZWZpbmUgU09V
+UkNFX0RQVFhfQ0FSCQkJMHgwOTA0Cj4tLSAKPjIuMzkuNQo=
